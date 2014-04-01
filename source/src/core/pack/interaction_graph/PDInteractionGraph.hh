@@ -24,6 +24,8 @@
 #include <core/pack/interaction_graph/SparseMatrixIndex.hh>
 #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 
+#include <core/types.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -608,7 +610,7 @@ PDEdge::get_alternate_state_energy_first_node(
 	int first_node_state_offset_minus_1,
 	int second_node_curr_num_states_per_aatype,
 	int aa_neighbor_offset,
-	FArray1< core::PackerEnergy > & edge_energy_table
+	ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 )
 {
 
@@ -684,7 +686,7 @@ PDEdge::get_alternate_state_energy_second_node(
 	SparseMatrixIndex const & second_node_alternate_state_sparse_info,
 	int second_node_alt_state_num_states_per_aatype,
 	int aa_neighbor_offset,
-	FArray1< core::PackerEnergy > & edge_energy_table
+	ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 )
 {
 

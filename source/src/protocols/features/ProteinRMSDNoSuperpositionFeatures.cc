@@ -210,7 +210,7 @@ ProteinRMSDNoSuperpositionFeatures::report_features(
 		return 0;
 	}
 
-	FArray1D_bool subset_array (relevant_residues.size(), false);
+	ObjexxFCL::FArray1D_bool subset_array (relevant_residues.size(), false);
 	for(Size i = 1; i <= relevant_residues.size(); ++i){
 		if(relevant_residues[i]) subset_array[i-1] = true;
 	}

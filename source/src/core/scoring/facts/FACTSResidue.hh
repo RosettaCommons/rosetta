@@ -28,8 +28,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-using namespace std;
-
 namespace core {
 namespace scoring {
 

@@ -35,10 +35,7 @@
 namespace core {
 namespace scoring {
 namespace sasa {
-	using namespace core;
-	using utility::vector1;
-	using ObjexxFCL::ubyte;
-	
+
 ///@brief LeGrand SASA approximation method
 ///  Used by SasaCalc but can be used by itself.
 ///
@@ -50,43 +47,43 @@ namespace sasa {
 ///  Cleanup/Bugfixes/OOP: Jared Adolf-Bryfogle
 ///
 class LeGrandSasa : public SasaMethod {
-	
+
 
 public:
-	
+
 	LeGrandSasa(Real probe_radius, SasaRadii radii_set);
 	virtual ~ LeGrandSasa();
-	
-	  
+
+
 	//Real
 	//calculate(const pose::Pose & pose);
-	
-	///@brief Calculate Sasa.  Atoms not calculated have -1 sasa.  This is carried over for compatability purposes.  	
+
+	///@brief Calculate Sasa.  Atoms not calculated have -1 sasa.  This is carried over for compatability purposes.
 	virtual Real
 	calculate(
 		const pose::Pose & pose,
 		const id::AtomID_Map<bool> & atom_subset,
 		id::AtomID_Map<Real> & atom_sasa,
-		vector1< Real > & rsd_sasa);
-	
+		utility::vector1< Real > & rsd_sasa);
+
 	virtual std::string
 	get_name() const ;
 
 public:
-	
+
 	///@brief
 	/// Returns const access to the angles FArray, which contains the information in the SASA database file sampling/SASA-angles.dat.
 	/// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 	///
 	ObjexxFCL::FArray2D_int const &
 	get_angles() const;
-	
+
 	///@brief
 	/// Returns const access to the masks FArray, which contains the information in the SASA database file sampling/SASA-masks.dat.
 	/// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 	ObjexxFCL::FArray2D_ubyte const &
 	get_masks() const;
-	
+
 	/// @details
 	/// getting overlap from a to b (or i to j, as the atoms are referred to in calc_per_atom_sasa below).
 	/// this returns the degree of overlap between two atoms adapted from erics code in area.c GetD2 and returns value
@@ -107,7 +104,7 @@ public:
 	///
 	void
 	get_overlap( Real const radius_a, Real const radius_b, Real const distance_ijxyz, int & degree_of_overlap ) const;
-	
+
 	/// @brief
 	/// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 	///
@@ -149,7 +146,7 @@ public:
 	///
 	void
 	get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_index, int & theta_index, Real distance_ijxyz ) const;
-	
+
 	/// @brief
 	/// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 	///
@@ -179,40 +176,40 @@ public:
 
 
 private:
-	
+
 	///@brief Initialize the class - allows alternate constructors, copy constructors, etc.
 	void
 	init();
-	
+
 	///@brief Read angles db file into private FArray
 	void
 	read_angles();
-	
+
 	///@brief Read masks db file into private FArray
 	void
 	read_masks();
-	
-	
+
+
 	///@brief
 	/// helper method to try to confirm that the dots are being overlapped and bits are being set correctly (ronj).
 	///
 	void
 	print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) const;
-	
-	
+
+
 private:
-	
-	
+
+
 	int num_bytes_;
 	int num_phi_;
 	int num_theta_;
 	int num_overlaps_;
 	int num_orientations_;
-	int maskbits_;	
-	
+	int maskbits_;
+
 	ObjexxFCL::FArray2D<int> angles_;
-	ObjexxFCL::FArray2D<ubyte> masks_;
-	
+	ObjexxFCL::FArray2D<ObjexxFCL::ubyte> masks_;
+
 	//std::string angles_db_file_;
 	//std::string masks_db_file_;
 };
@@ -224,4 +221,3 @@ private:
 
 
 #endif	//#ifndef INCLUDED_protocols/antibody_design_LEGRANDSASA_HH
-

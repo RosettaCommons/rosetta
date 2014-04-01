@@ -133,7 +133,7 @@ void PDNode::update_one_body_energy( int state, core::PackerEnergy energy )
 }
 
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
-void PDNode::update_one_body_energies( FArray1< core::PackerEnergy > & energies )
+void PDNode::update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies )
 {
 	assert( energies.size() == (unsigned int) get_num_states() );
 	for (int ii = 1; ii <= get_num_states(); ++ii) {
@@ -153,7 +153,7 @@ void PDNode::add_to_one_body_energy( int state, core::PackerEnergy energy )
 }
 
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
-void PDNode::add_to_one_body_energies( FArray1< core::PackerEnergy > & energies )
+void PDNode::add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies )
 {
 	assert( energies.size() == (unsigned int) get_num_states() );
 	for (int ii = 1; ii <= get_num_states(); ++ii) {
@@ -352,7 +352,7 @@ void PDNode::update_internal_vectors()
 
 	edge_matrix_ptrs_.clear();
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
-	edge_matrix_ptrs_.push_back( FArray1A< core::PackerEnergy >() ); //occupy the 0th position
+	edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >() ); //occupy the 0th position
 
 	aa_offsets_for_edges_.dimension(
 		num_aa_types_, get_num_incident_edges(), num_aa_types_);
@@ -376,13 +376,13 @@ void PDNode::update_internal_vectors()
 		int edge_table_size = get_incident_pd_edge(ii)->get_two_body_table_size();
 		if ( edge_table_size != 0 ) {
 			float & edge_table_ref = get_incident_pd_edge(ii)->get_edge_table_ptr();
-			edge_matrix_ptrs_.push_back( FArray1A< core::PackerEnergy >( edge_table_ref ));
+			edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >( edge_table_ref ));
 			edge_matrix_ptrs_[ii].dimension( edge_table_size );
 		} else {
-			edge_matrix_ptrs_.push_back( FArray1A< core::PackerEnergy >() );
+			edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >() );
 		}
 
-		FArray2D_int const & edge_aa_neighb_offsets =
+		ObjexxFCL::FArray2D_int const & edge_aa_neighb_offsets =
 			get_incident_pd_edge(ii)->get_offsets_for_aatypes();
 		utility::vector1< int > const & neighb_num_states_per_aa =
 			get_incident_pd_edge(ii)->get_second_node_num_states_per_aa();
@@ -506,7 +506,7 @@ PDNode::count_dynamic_memory() const
 	total_memory += num_states_for_aa_type_for_higher_indexed_neighbor_.size() * sizeof( int );
 	total_memory += neighbors_curr_state_.size() * sizeof( int );
 	total_memory += neighbors_curr_state_sparse_info_.size() * sizeof( SparseMatrixIndex );
-	total_memory += edge_matrix_ptrs_.size() * sizeof( FArray1A< core::PackerEnergy > );
+	total_memory += edge_matrix_ptrs_.size() * sizeof( ObjexxFCL::FArray1A< core::PackerEnergy > );
 
 	total_memory += curr_state_two_body_energies_.size() * sizeof( float );
 	total_memory += alternate_state_two_body_energies_.size() * sizeof( float );
@@ -808,7 +808,7 @@ PDEdge::~PDEdge()
 ///
 /// @remarks idea borrowed from energy2b implementation
 ///
-void PDEdge::set_sparse_aa_info(FArray2_bool const & sparse_conn_info)
+void PDEdge::set_sparse_aa_info(ObjexxFCL::FArray2_bool const & sparse_conn_info)
 {
 	two_body_energies_.set_sparse_aa_info( sparse_conn_info );
 	energies_updated_since_last_prep_for_simA_ = true;
@@ -874,7 +874,7 @@ void PDEdge::add_to_two_body_energy
 ///
 void PDEdge::add_to_two_body_energies
 (
-	FArray2< core::PackerEnergy > const & res_res_energy_array
+	ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array
 )
 {
 	for ( int ii = 1; ii <= get_num_states_for_node(0); ++ii ) {
@@ -1081,7 +1081,7 @@ void PDEdge::acknowledge_state_zeroed( int node_ind )
 
 
 
-FArray2D_int const &
+ObjexxFCL::FArray2D_int const &
 PDEdge::get_offsets_for_aatypes( )
 {
 	return two_body_energies_.getAANeighborOffsets();
@@ -1555,7 +1555,7 @@ float PDInteractionGraph::set_state_for_node(int node_ind, int new_state)
 /// accumulated during the transition.
 ///
 /// @param node_states - [in] - array of states, one for each node.
-float PDInteractionGraph::set_network_state( FArray1_int & node_states)
+float PDInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
 {
 	//node_states.dimension( get_num_nodes() );
 	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
@@ -2093,7 +2093,7 @@ void PDNode::project_deltaE_for_substitution
 	float & prevE_unweighted,
 	float & deltaE_weighted,
 	float & prevE_weighted,
-	FArray2D< core::PackerEnergy > const & weights
+	ObjexxFCL::FArray2D< core::PackerEnergy > const & weights
 )
 {
 
@@ -2153,7 +2153,7 @@ namespace {
 /// @brief Paul's code
 
 float
-PDNode::get_weighted_energy_with_higher_indexed_nodes( FArray2D< core::PackerEnergy > const & weights ) const
+PDNode::get_weighted_energy_with_higher_indexed_nodes( ObjexxFCL::FArray2D< core::PackerEnergy > const & weights ) const
 {
 	float rval = curr_state_one_body_energy_;
 	for( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
@@ -2168,7 +2168,7 @@ PDNode::get_weighted_energy_with_higher_indexed_nodes( FArray2D< core::PackerEne
 } // PDNode::get_biased_energy_with_higher_indexed_nodes
 
 
-float PDInteractionGraph::get_weighted_energy(const FArray2D< core::PackerEnergy >& weights) const {
+float PDInteractionGraph::get_weighted_energy(const ObjexxFCL::FArray2D< core::PackerEnergy >& weights) const {
 	// Compute and return biased energy
 	float rval = 0;
 	for( int ii = 1; ii <= get_num_nodes(); ++ii ) {
@@ -2178,12 +2178,12 @@ float PDInteractionGraph::get_weighted_energy(const FArray2D< core::PackerEnergy
 } // PDInteractionGraph::get_weighted_energy
 
 
-float PDInteractionGraph::set_network_state( FArray1_int & node_states, FArray2D< core::PackerEnergy > const & weights) {
+float PDInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states, ObjexxFCL::FArray2D< core::PackerEnergy > const & weights) {
 	set_network_state(node_states);
 	return get_weighted_energy(weights);
 }
 
-float PDInteractionGraph::commit_considered_substitution(const FArray2D< core::PackerEnergy >& weights) {
+float PDInteractionGraph::commit_considered_substitution(const ObjexxFCL::FArray2D< core::PackerEnergy >& weights) {
 	commit_considered_substitution();
 	return get_weighted_energy(weights);
 }
@@ -2196,7 +2196,7 @@ void PDInteractionGraph::consider_substitution
 	float & prevE_unweighted,
 	float & deltaE_weighted,
 	float & prevE_weighted,
-	const FArray2D< core::PackerEnergy >& weights
+	const ObjexxFCL::FArray2D< core::PackerEnergy >& weights
 )
 {
 
@@ -2216,4 +2216,3 @@ void PDInteractionGraph::consider_substitution
 } //end namespace interaction_graph
 } //end namespace pack
 } //end namespace core
-

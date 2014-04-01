@@ -329,11 +329,11 @@ figure_out_number_base_contacts(
 	//	}
 
 	if ( N_W >= N_H && N_W >= N_S ) {
-		edge_classification = WATSON_CRICK;
+		edge_classification = core::chemical::rna::WATSON_CRICK;
 	} else if (N_H >= N_S ) {
-		edge_classification = HOOGSTEEN;
+		edge_classification = core::chemical::rna::HOOGSTEEN;
 	} else {
-		edge_classification = SUGAR;
+		edge_classification = core::chemical::rna::SUGAR;
 	}
 
 	//	return n_hbonds;
@@ -613,7 +613,7 @@ classify_base_pairs(
 
 			//			if ( n_i > 0 && n_j > 0 ) {
 			base_pair_list.push_back( core::scoring::rna::Base_pair( i, j, edge_classification_i, edge_classification_j , orientation ) );
-			if ( false ) std::cout << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << get_edge_from_num( edge_classification_i ) << " " << get_edge_from_num( edge_classification_j ) << " " << orientation << std::endl;
+			if ( false ) std::cout << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << core::chemical::rna::get_edge_from_num( edge_classification_i ) << " " << core::chemical::rna::get_edge_from_num( edge_classification_j ) << " " << orientation << std::endl;
 
 				//			}
 

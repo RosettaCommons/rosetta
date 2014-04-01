@@ -202,7 +202,7 @@ public:
 	virtual
 	void
 	set_sparse_aa_info(
-		FArray2_bool const &
+		ObjexxFCL::FArray2_bool const &
 	);
 
 	virtual
@@ -420,7 +420,7 @@ public:
 	virtual void prepare_for_simulated_annealing();
 	virtual void  blanket_assign_state_0();
 	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual core::PackerEnergy set_network_state( FArray1_int & node_states);
+	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
 	virtual void consider_substitution(
 		int node_ind,
 		int new_state,
@@ -776,5 +776,3 @@ DoubleLazyNode::acknowledge_neighbors_state_substitution(
 }
 
 #endif
-
-

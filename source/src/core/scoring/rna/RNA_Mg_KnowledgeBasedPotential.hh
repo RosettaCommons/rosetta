@@ -30,8 +30,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 
-using namespace core::chemical::rna;
-
 namespace core {
 namespace scoring {
 namespace rna {
@@ -43,54 +41,52 @@ public:
 	/// @brief ctor, reads data file
 	RNA_Mg_KnowledgeBasedPotential();
 
-	GaussianParameter
+	core::chemical::rna::GaussianParameter
 	get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j, bool & is_phosphate_oxygen ) const;
 
-	GaussianParameter
+	core::chemical::rna::GaussianParameter
 	get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
-	GaussianParameter
+	core::chemical::rna::GaussianParameter
 	get_mg_potential_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
 	void setup_info_for_mg_calculation( core::pose::Pose & pose ) const;
 
-	GaussianParameter
+	core::chemical::rna::GaussianParameter
 	get_mg_potential_costheta_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
-	GaussianParameter
+	core::chemical::rna::GaussianParameter
 	get_mg_potential_costheta_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
 private: //data
 
-	GaussianParameter const gaussian_parameter_phosphate_oxygen_;
-	GaussianParameter const gaussian_parameter_imine_           ;
-	GaussianParameter const gaussian_parameter_exocyclic_oxygen_;
-	GaussianParameter const gaussian_parameter_o2prime_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_phosphate_oxygen_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_imine_           ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_exocyclic_oxygen_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_o2prime_          ;
 
-	GaussianParameter const gaussian_parameter_phosphate_p_     ;
-	GaussianParameter const gaussian_parameter_polar_H_         ;
-	GaussianParameter const gaussian_parameter_nonpolar_H_         ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_phosphate_p_     ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_polar_H_         ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_nonpolar_H_         ;
 
-	GaussianParameter const gaussian_parameter_phosphate_oxygen_indirect_;
-	GaussianParameter const gaussian_parameter_imine_indirect_           ;
-	GaussianParameter const gaussian_parameter_exocyclic_oxygen_indirect_;
-	GaussianParameter const gaussian_parameter_o2prime_indirect_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_phosphate_oxygen_indirect_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_imine_indirect_           ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_exocyclic_oxygen_indirect_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_o2prime_indirect_          ;
 
-	GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_;
-	GaussianParameter const gaussian_parameter_costheta_imine_           ;
-	GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_;
-	GaussianParameter const gaussian_parameter_costheta_o2prime_          ;
-	GaussianParameter const gaussian_parameter_costheta_polar_H_          ;
-	GaussianParameter const gaussian_parameter_costheta_nonpolar_H_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_imine_           ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_polar_H_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_nonpolar_H_          ;
 
-	GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_indirect_;
-	GaussianParameter const gaussian_parameter_costheta_imine_indirect_           ;
-	GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-	GaussianParameter const gaussian_parameter_costheta_o2prime_indirect_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_indirect_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_imine_indirect_           ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_indirect_          ;
 
 	};
-
-
 
 }
 }

@@ -139,7 +139,7 @@ private:
 
 	Real
 	calc_sc_radius( conformation::Residue const & res, Vector const & centroid );*/
-	
+
 
 private:
 	bool moved_;
@@ -240,7 +240,7 @@ private:
 	Real current_energy_;
 	Real proposed_energy_;
 
-	bool bb_bbE_calced_[ 3 ][ 3 ]; // indexed 0 for non-pro&non-gly, 1 for pro, 2 for gly 
+	bool bb_bbE_calced_[ 3 ][ 3 ]; // indexed 0 for non-pro&non-gly, 1 for pro, 2 for gly
 	Real bb_bbE_[ 3 ][ 3 ];        // indexed 0 for non-pro&non-gly, 1 for pro, 2 for gly
 
 }; //SimpleEdge

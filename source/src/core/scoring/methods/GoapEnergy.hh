@@ -41,7 +41,6 @@ namespace core{
 namespace scoring{
 namespace methods{
 
-using namespace core;
 
 ////////////////////////////////////////////////////////
 class GoapRsdType : public utility::pointer::ReferenceCount

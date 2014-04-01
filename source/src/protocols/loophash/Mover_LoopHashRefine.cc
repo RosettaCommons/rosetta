@@ -149,7 +149,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 	}
 
   for(int round = 0; round < option[ OptionKeys::lh::rounds ]; round ++ ){
-		std::string checkpoint_id = "chk" + string_of( round );
+		std::string checkpoint_id = "chk" + ObjexxFCL::string_of( round );
 		if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
 			core::pose::Pose opose = pose;
 			std::vector< core::io::silent::SilentStructOP > lib_structs;
@@ -188,7 +188,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 							lib_structs[h]->add_energy( "rms", rms, 1.0 );
 							lib_structs[h]->add_energy( "gdtmm", gdtmm, 1.0 );
 						}
-						lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+						lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
 						lib_structs[h]->sort_silent_scores();
 						sfd.write_silent_struct( *(lib_structs[h]) , silent_file_ );
 				}
@@ -242,7 +242,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 							boinc::Boinc::update_graphics_last_accepted( pose, score );
 					#endif
 					select_lib_structs[h]->add_energy( "round", round, 1.0 );
-					select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+					select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
 					select_lib_structs[h]->sort_silent_scores();
 
 					sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
@@ -301,5 +301,3 @@ int loophash_main(){
 
 }
 }
-
-

@@ -218,7 +218,7 @@ public:
 	    	rC = 116;
 	    	rD = 117;
 	    }
-	    
+
 	    std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
 
 	    get_VdRdPhi(pose, rA, rB, rC, rD);
@@ -331,7 +331,7 @@ protected:
 	    for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
 	    //cholesky, get L^t, L^-1
 	    Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
-	    
+
 	    //W_old *= exp(-d^2)
 	    Real W_old = detL*exp(-d2/2.0);
 	    //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
@@ -508,7 +508,7 @@ int main( int argc, char * argv [] )
 void
 get_resmap( pose::Pose const &pose,
 				pose::Pose const &ref_pose,
-				std::map< Size, Size > &resmap 
+				std::map< Size, Size > &resmap
 		)
 {
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -632,7 +632,7 @@ my_main( void* )
 	sidechainmover.set_task_factory(main_task_factory);
 	sidechainmover.set_prob_uniform(option[ mc::sc_prob_uniform ]);
 	sidechainmover.set_prob_withinrot(option[ mc::sc_prob_withinrot ]);
-	sidechainmover.set_prob_random_pert_current( option[ mc::sc_prob_random_pert_current ] ); 
+	sidechainmover.set_prob_random_pert_current( option[ mc::sc_prob_random_pert_current ] );
 	sidechainmover.set_preserve_detailed_balance(option[ mc::detailed_balance ]);
 
 	//setup switch mover
@@ -711,13 +711,13 @@ my_main( void* )
 		for ( Size i = 1; i<=nmonomerres; ++i ) {
 			if ( !p.residue(i).is_polymer() ) continue;
 				core::conformation::Residue const & nat_i_rsd( p.residue(i) );
-				
+
 				//add constraints on CA
 				Size CA_i = nat_i_rsd.atom_index("CA");
-				p.add_constraint( new core::scoring::constraints::CoordinateConstraint( 
+				p.add_constraint( new core::scoring::constraints::CoordinateConstraint(
 					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ),
 					new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
-			
+
 		}
 	}
 
@@ -751,7 +751,7 @@ my_main( void* )
 	if (option[mc::score_stride]) {
 		//dump score only
 		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "score" );
-		ss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(0, 6));
+		ss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(0, 6));
 		ss->add_energy( "temperature", 0.0 );
 		ss->add_energy( "GDTMM", 0.0 );
 		ss->add_energy( "GDTHA", 0.0 );
@@ -778,7 +778,7 @@ my_main( void* )
 		if (rank==0) { //only one proc do this
 			for (core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj) {
 				if( option[mc::follow_classic_naming_convention ]() ) {
-					trajss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(0, 6));
+					trajss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(0, 6));
 				}else {
 					trajss->fill_struct(p, get_tag( 0, option[mc::trajectory_tlist]()[ndx_traj], rank ) );
 				}
@@ -807,7 +807,7 @@ my_main( void* )
 					}
 					//find last pose
 					if (maxstep>0) {
-							SilentStructOP ress = resfd[ maxtag ];	
+							SilentStructOP ress = resfd[ maxtag ];
 							ress->fill_pose(p);
 							core::pose::clearPoseExtraScores(p);
 							i = maxstep+1;
@@ -970,7 +970,7 @@ my_main( void* )
 		TR << "sc_ntrials are " << scmc.ntrials() << std::endl;
 		scmc.set_prob_uniform( option[ mc::sc_prob_uniform ] );
 		scmc.set_prob_withinrot( option[ mc::sc_prob_withinrot ] );
-		scmc.set_prob_random_pert_current( option[ mc::sc_prob_random_pert_current ] ); 
+		scmc.set_prob_random_pert_current( option[ mc::sc_prob_random_pert_current ] );
 		scmc.set_preserve_detailed_balance(option[ mc::detailed_balance ]);
 		scmc.set_temperature( kT ); //only for intra mc criteria
 		core::scoring::ScoreFunctionOP scfxn = score_fxn->clone();
@@ -1181,7 +1181,7 @@ my_main( void* )
 				//dump silent file
 				int ndump = static_cast<int>(i/option[mc::score_stride]);
 				if(option[mc::follow_classic_naming_convention]()) {
-					ss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(ndump, 6));
+					ss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(ndump, 6));
 				}else{
 					ss->fill_struct(p, get_tag(i,mc->temperature(),rank) );
 				}
@@ -1204,7 +1204,7 @@ my_main( void* )
 					//dump silent file
 					int ndump = static_cast<int>(i/option[mc::trajectory_stride]);
 					if( option[mc::follow_classic_naming_convention]() ){
-						trajss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(ndump, 6));
+						trajss->fill_struct(p, inputfn.str()+"_"+ObjexxFCL::lead_zero_string_of(ndump, 6));
 					} else {
 						trajss->fill_struct(p, get_tag(i,mc->temperature(),rank) );
 					}
@@ -1239,4 +1239,3 @@ my_main( void* )
 
 	return 0;
 }
-

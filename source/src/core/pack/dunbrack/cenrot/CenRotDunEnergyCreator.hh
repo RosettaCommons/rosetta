@@ -26,23 +26,19 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-using namespace scoring;
-using namespace scoring::methods;
+//using namespace scoring;
+//using namespace scoring::methods;
 
-class CenRotDunEnergyCreator : public EnergyMethodCreator
+class CenRotDunEnergyCreator : public scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new CenRotDunEnergy
-	virtual
-	methods::EnergyMethodOP
-		create_energy_method(
-		methods::EnergyMethodOptions const &
-	) const;
+	virtual scoring::methods::EnergyMethodOP create_energy_method(scoring::methods::EnergyMethodOptions const &) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
 	virtual
-	ScoreTypes
+	scoring::ScoreTypes
 	score_types_for_method() const;
 
 };

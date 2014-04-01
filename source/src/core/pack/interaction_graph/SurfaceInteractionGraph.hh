@@ -502,7 +502,7 @@ class SurfaceInteractionGraph : public AdditionalBackgroundNodesInteractionGraph
 		virtual void prepare_for_simulated_annealing();
 		virtual void  blanket_assign_state_0();
 		virtual core::PackerEnergy set_state_for_node( int node_ind, int new_state );
-		virtual core::PackerEnergy set_network_state( FArray1_int& node_states );
+		virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int& node_states );
 
 		virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
 		virtual core::PackerEnergy commit_considered_substitution();
@@ -3789,7 +3789,7 @@ core::PackerEnergy SurfaceInteractionGraph< V, E, G >::commit_considered_substit
 /// node_states - [in] - the array of states, one for each vertex in the graph
 ///
 template < typename V, typename E, typename G >
-core::PackerEnergy SurfaceInteractionGraph< V, E, G >::set_network_state( FArray1_int & node_states) {
+core::PackerEnergy SurfaceInteractionGraph< V, E, G >::set_network_state( ObjexxFCL::FArray1_int & node_states) {
 
 #ifdef FILE_DEBUG
 	TR_SIG << "set_network_state() called with states: " << node_states << std::endl;

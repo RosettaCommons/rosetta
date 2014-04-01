@@ -294,7 +294,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
           core::Real rms = scoring::CA_rmsd( native_pose, rpose );
           select_lib_structs[h]->add_energy( "round", round, 1.0 );
           select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-          select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+          select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
           sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
       }
 
@@ -378,7 +378,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 					core::Real rms = scoring::CA_rmsd( native_pose, rpose );
 					select_lib_structs[h]->add_energy( "round", round, 1.0 );
 					select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-					select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+					select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
 					select_lib_structs[h]->sort_silent_scores();
 					select_lib_structs[h]->print_score_header( std::cout );
 
@@ -586,5 +586,3 @@ main( int argc, char * argv [] )
 
 	return 0;
 }
-
-

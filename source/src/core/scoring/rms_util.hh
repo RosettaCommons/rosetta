@@ -45,8 +45,6 @@
 namespace core {
 namespace scoring {
 
-using namespace ObjexxFCL;
-
 typedef std::list< core::Size > ResidueSelection;
 typedef utility::vector1< core::Size > ResidueSelectionVector;
 
@@ -412,16 +410,16 @@ CA_maxsub(
 
 
 int xyz_maxsub(
-	FArray2D< core::Real > p1a,
-	FArray2D< core::Real > p2a,
+	ObjexxFCL::FArray2D< core::Real > p1a,
+	ObjexxFCL::FArray2D< core::Real > p2a,
 	int natoms
 );
 
 /// @brief Calculate gdtmm based on the given sets of xyz coordinates in p1a and p2a.
 core::Real
 xyz_gdtmm(
-	FArray2D< core::Real > p1a,
-	FArray2D< core::Real > p2a,
+	ObjexxFCL::FArray2D< core::Real > p1a,
+	ObjexxFCL::FArray2D< core::Real > p2a,
 	core::Real& m_1_1,
 	core::Real& m_2_2,
 	core::Real& m_3_3,
@@ -432,8 +430,8 @@ xyz_gdtmm(
 /// @brief Calculate gdtmm based on the given sets of xyz coordinates in p1a and p2a.
 core::Real
 xyz_gdtmm(
-	FArray2D< core::Real > p1a,
-	FArray2D< core::Real > p2a
+	ObjexxFCL::FArray2D< core::Real > p1a,
+	ObjexxFCL::FArray2D< core::Real > p2a
 );
 
 
@@ -506,8 +504,8 @@ CA_gdttm(
 
 void
 xyz_gdttm(
-	FArray2D< core::Real > p1a,
-	FArray2D< core::Real > p2a,
+	ObjexxFCL::FArray2D< core::Real > p1a,
+	ObjexxFCL::FArray2D< core::Real > p2a,
 	core::Real &gdttm_score,
 	core::Real &gdtha_score
 );

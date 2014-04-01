@@ -322,8 +322,8 @@ create_bp_jump_database_test( ){
 
 		char const orientation = ( base_pair.orientation == 1) ? 'A' : 'P';
 
-		char const edge_i = get_edge_from_num( k );
-		char const edge_j = get_edge_from_num( m );
+		char const edge_i = core::chemical::rna::get_edge_from_num( k );
+		char const edge_j = core::chemical::rna::get_edge_from_num( m );
 
 		//Figure out jump.
 		conformation::Residue const & rsd_i( pose.residue( i ) );

@@ -146,13 +146,13 @@ private:
 															) const;
 	Real
 	get_gaussian_potential_score(
-															 GaussianParameter const & mg_potential_gaussian_parameter,
+															 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
 															 Vector const & pos1,
 															 Vector const & pos2 ) const;
 
 	Real
 	get_gaussian_score(
-										 GaussianParameter const & mg_potential_gaussian_parameter,
+										 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
 										 Real const d ) const;
 
 	Real

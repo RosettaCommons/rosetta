@@ -24,7 +24,6 @@
 #include <core/id/AtomID.hh>
 
 using core::scoring::func::FuncOP;
-using namespace core;
 
 namespace core {
 namespace scoring {

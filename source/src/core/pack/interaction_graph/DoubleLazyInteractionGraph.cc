@@ -651,7 +651,7 @@ DoubleLazyEdge::~DoubleLazyEdge()
 
 void
 DoubleLazyEdge::set_sparse_aa_info(
-	FArray2_bool const & aa_neighbors
+	ObjexxFCL::FArray2_bool const & aa_neighbors
 )
 {
 	sparse_aa_neighbors_ = aa_neighbors;
@@ -1416,7 +1416,7 @@ DoubleLazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
 /// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
-DoubleLazyInteractionGraph::set_network_state( FArray1_int & node_states)
+DoubleLazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
 {
 	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_dlazy_node( ii )->partial_assign_state( node_states( ii ) );

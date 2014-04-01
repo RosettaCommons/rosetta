@@ -31,8 +31,6 @@
 
 #include <map>
 
-using namespace core;
-
 namespace core {
 namespace scoring {
 namespace loop_graph {

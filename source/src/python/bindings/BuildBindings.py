@@ -390,7 +390,9 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         print command_line
 
     while True:
-        if Platform == 'cygwin': (res, output) = commands.getstatusoutput(command_line)
+        if Platform == 'cygwin':
+            (res, output) = commands.getstatusoutput(command_line)
+            print output
         else:
             po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

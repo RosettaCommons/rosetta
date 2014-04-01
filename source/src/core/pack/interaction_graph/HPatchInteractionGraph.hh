@@ -645,7 +645,7 @@ class HPatchInteractionGraph : public AdditionalBackgroundNodesInteractionGraph<
 
 		virtual core::PackerEnergy commit_considered_substitution();
 
-		virtual core::PackerEnergy set_network_state( FArray1_int & node_states );
+		virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states );
 
 		virtual core::PackerEnergy get_energy_current_state_assignment();
 		virtual int get_edge_memory_usage() const;
@@ -3598,7 +3598,7 @@ void HPatchInteractionGraph< V, E, G >::blanket_assign_state_0() {
 	some_node_in_state_0_ = true;
 	fc_nodes_near_rotsub_.resize( (Size)parent::get_num_nodes() );
 	bg_nodes_near_rotsub_.resize( (Size)parent::get_num_background_nodes() );
-	
+
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { fc_nodes_near_rotsub_[ ii ] = ii; }
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_bool_.size(); ++ii ) { fc_nodes_near_rotsub_bool_[ ii ] = true; }
 
@@ -3938,7 +3938,7 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::calculate_hpatch_deltaE() 
 
 ///
 /// @begin HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0()
-/// 
+///
 /// @detailed
 /// Initialized to true in the constructor, and also set to true after a call to blanket_assign_state0.  After all nodes
 /// get assigned a state, then this boolean is set to false.  It is used to reduce the number of operations that are performed
@@ -3969,27 +3969,27 @@ void HPatchInteractionGraph< V, E, G >::register_fc_node_affected_by_rotsub( int
 	// is reset to true for all positions in the blanket_assign_state_0() call, we potentially neglect to add some FC nodes to the fc_nodes_near_rotsub_ vector
 	// because the value is already true.  that's bad. -ronj
 	// 2/5/2013:  if you don't comment out the conditional below (and the analogous one in the function after this one), the IG begins to fail when multiple
-	// packing runs are used (e.g. in pmut_scan_scan protocol).  however, if you do comment them out, some of the unit tests begin to fail.  need to update the 
-	// unit tests with a more appropriate test. or figure out why the unit tests fail when they are commented out and fix the IG. 
-	
+	// packing runs are used (e.g. in pmut_scan_scan protocol).  however, if you do comment them out, some of the unit tests begin to fail.  need to update the
+	// unit tests with a more appropriate test. or figure out why the unit tests fail when they are commented out and fix the IG.
+
 	//if ( ! fc_nodes_near_rotsub_bool_[ fc_node_ind ] ) {
 		fc_nodes_near_rotsub_.push_back( fc_node_ind );
 		fc_nodes_near_rotsub_bool_[ fc_node_ind ] = true;
 	//}
 
-	// we instead could place an if statement above that says if any node is in the unassigned state, then don't bother updating either of these vectors. but 
+	// we instead could place an if statement above that says if any node is in the unassigned state, then don't bother updating either of these vectors. but
 	// as these functions (this one and the one below) get called millions of times, better not to stick an if statement that only applies during the beginning of
 	// annealing smack-dab in the middle of them.  the implication of this, though, is that after the first consider-substitution-that-happens-once-every-node-goes-into
 	// the-assigned-state (regardless of whether it gets committed or not), the fc_nodes_near_rotsub_ vectors will have duplicate values in them (lots of duplicates,
-	// potentially).  that's because they will be getting values added to them while the annealer slowly gets all the nodes to assigned states. The multi cool annealer 
+	// potentially).  that's because they will be getting values added to them while the annealer slowly gets all the nodes to assigned states. The multi cool annealer
 	// will reach this very quickly as it force inits all nodes to assigned states. the standard fixbb annealer could take a long time to reach assigned states for every
 	// node.  after the first substitutions processing is done, the IG will reset after that sub consideration.  in there, it will iterate through these vectors and reset
-	// the nodes and bgnodes.  it will visit some nodes and bgnodes more than once, but at the beginning of the reset...() function calls in nodes and bgnodes, there's 
+	// the nodes and bgnodes.  it will visit some nodes and bgnodes more than once, but at the beginning of the reset...() function calls in nodes and bgnodes, there's
 	// a check for whether anything needs to be done.  after the first visit, repeat visits to nodes/bgnodes won't require much runtime.  I'm thinking this expense that
 	// occurs only once when the IG become fully assigned is better than having two extra if statements in this function and the one below (which get called millions
 	// of times).  the only real way to know would be to check runtimes of a couple design runs, but I don't feel like doing that. so I'm going with taking out the if
 	// statements and accepting the one-time cost that occurs once the IG is fully assigned. crossing my fingers. -ronj
-	// 
+	//
 
 }
 
@@ -4838,7 +4838,7 @@ void HPatchInteractionGraph< V, E, G >::track_hpatch_E_min() {
 /// This function is the last major entry point from the Annealer into the HIG.
 ///
 template < typename V, typename E, typename G >
-core::PackerEnergy HPatchInteractionGraph< V, E, G >::set_network_state( FArray1_int & node_states ) {
+core::PackerEnergy HPatchInteractionGraph< V, E, G >::set_network_state( ObjexxFCL::FArray1_int & node_states ) {
 
 #ifdef FILE_DEBUG
 	TR_HIG << "set_network_state() called with states: " << node_states << std::endl;
@@ -5253,4 +5253,3 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_n_exp
 } //end namespace
 
 #endif
-

@@ -21,8 +21,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
-using namespace core;
-
 namespace core {
 namespace scoring {
 namespace loop_graph {

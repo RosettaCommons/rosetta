@@ -148,9 +148,9 @@ private:
 private:
 	// DATA
 
-	FArray3D_int aa_offsets_for_edges_;
-	FArray2D_int num_states_for_aa_type_for_higher_indexed_neighbor_;
-	std::vector< FArray1A< core::PackerEnergy > > edge_matrix_ptrs_;
+	ObjexxFCL::FArray3D_int aa_offsets_for_edges_;
+	ObjexxFCL::FArray2D_int num_states_for_aa_type_for_higher_indexed_neighbor_;
+	std::vector< ObjexxFCL::FArray1A< core::PackerEnergy > > edge_matrix_ptrs_;
 	std::vector< int > neighbors_curr_state_;
 	std::vector< SparseMatrixIndex > neighbors_curr_state_sparse_info_;
 
@@ -190,7 +190,7 @@ public:
 	virtual
 	void
 	set_sparse_aa_info(
-		FArray2_bool const &
+		ObjexxFCL::FArray2_bool const &
 	);
 
 	virtual
@@ -238,7 +238,7 @@ public:
 		int first_node_state_offset_minus_1,
 		int second_node_curr_num_states_per_aatype,
 		int aa_neighbor_offset,
-		FArray1< core::PackerEnergy > & edge_energy_table
+		ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 	);
 
 	static
@@ -250,7 +250,7 @@ public:
 		SparseMatrixIndex const & second_node_alternate_state_sparse_info,
 		int second_node_alt_state_num_states_per_aatype,
 		int aa_neighbor_offset,
-		FArray1< core::PackerEnergy > & edge_energy_table
+		ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 	);
 
 	static
@@ -262,7 +262,7 @@ public:
 		int first_node_state_offset_minus_1,
 		int second_node_curr_num_states_per_aatype,
 		int aa_neighbor_offset,
-		FArray1< core::PackerEnergy > & edge_energy_table,
+		ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table,
 		core::PackerEnergy interaction_energy
 	);
 
@@ -276,7 +276,7 @@ public:
 		SparseMatrixIndex const & second_node_alternate_state_sparse_info,
 		int second_node_alt_state_num_states_per_aatype,
 		int aa_neighbor_offset,
-		FArray1< core::PackerEnergy > & edge_energy_table,
+		ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table,
 		core::PackerEnergy interaction_energy
 	);
 
@@ -297,7 +297,7 @@ public:
 
 	bool build_sc_only_rotamer() { return true;}
 
-	FArray2D_int const & get_offsets_for_aatypes( );
+	ObjexxFCL::FArray2D_int const & get_offsets_for_aatypes( );
 	utility::vector1< int > const & get_second_node_num_states_per_aa();
 
 	ObjexxFCL::FArray2D< core::PackerEnergy >
@@ -353,7 +353,7 @@ public:
 	//virtual methods inherited from InteractionGraphBase
 	virtual void  blanket_assign_state_0();
 	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual core::PackerEnergy set_network_state( FArray1_int & node_states);
+	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
 	virtual void consider_substitution(
 		int node_ind,
 		int new_state,
@@ -613,7 +613,7 @@ LazyEdge::store_interaction_energy_first_node(
 	int first_node_state_offset_minus_1,
 	int second_node_curr_num_states_per_aatype,
 	int aa_neighbor_offset,
-	FArray1< core::PackerEnergy > & edge_energy_table,
+	ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table,
 	core::PackerEnergy interaction_energy
 )
 {
@@ -656,7 +656,7 @@ LazyEdge::store_interaction_energy_second_node(
 	SparseMatrixIndex const & second_node_alternate_state_sparse_info,
 	int second_node_alt_state_num_states_per_aatype,
 	int aa_neighbor_offset,
-	FArray1< core::PackerEnergy > & edge_energy_table,
+	ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table,
 	core::PackerEnergy interaction_energy
 )
 {
@@ -700,7 +700,7 @@ LazyEdge::get_alternate_state_energy_second_node(
 	SparseMatrixIndex const & second_node_alternate_state_sparse_info,
 	int second_node_alt_state_num_states_per_aatype,
 	int aa_neighbor_offset,
-	FArray1< core::PackerEnergy > & edge_energy_table
+	ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 )
 {
 
@@ -907,7 +907,7 @@ LazyEdge::get_alternate_state_energy_first_node(
 	int first_node_state_offset_minus_1,
 	int second_node_curr_num_states_per_aatype,
 	int aa_neighbor_offset,
-	FArray1< core::PackerEnergy > & edge_energy_table
+	ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 
 )
 {
@@ -956,5 +956,3 @@ LazyNode::get_sparse_mat_info_for_curr_state() const
 }
 
 #endif
-
-

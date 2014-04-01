@@ -37,8 +37,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <iostream>
 
-using namespace std;
-
 namespace core {
 namespace scoring {
 

@@ -48,10 +48,6 @@
 
 // Utility headers
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace core {
 namespace pack {
@@ -390,7 +386,7 @@ public:
 	set_sparse_aa_info_for_edge(
 		int node1,
 		int node2,
-		FArray2_bool const & sparse_conn_info
+		ObjexxFCL::FArray2_bool const & sparse_conn_info
 	);
 
 
@@ -520,4 +516,3 @@ OnTheFlyNode::get_on_the_fly_owner() const
 }
 
 #endif //INCLUDED_core_pack_interaction_graph_OnTheFlyInteractionGraph_HH
-

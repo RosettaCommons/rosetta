@@ -89,7 +89,7 @@ void
 setup_secstruct_dssp( pose::Pose & pose )
 {
   core::scoring::dssp::Dssp dssp( pose );
-  FArray1D_char dssp_secstruct( pose.total_residue() );
+  ObjexxFCL::FArray1D_char dssp_secstruct( pose.total_residue() );
   dssp.dssp_reduced( dssp_secstruct );
   for (Size i = 1; i <= pose.total_residue(); i++ ) {
     pose.set_secstruct(i,  dssp_secstruct(i) );
@@ -241,6 +241,3 @@ std::set <std::string> interface;
 	return 0;
 
 }
-
-
-

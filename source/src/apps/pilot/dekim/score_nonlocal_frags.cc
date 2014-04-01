@@ -262,9 +262,9 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 			native_pose_coords.push_back( native_.residue(respos).xyz("CA") );
 		}
 		int const natoms = orig_pose_coords.size();
-		FArray2D< core::Real > p1a( 3, natoms );  // orig pose
-		FArray2D< core::Real > p2a( 3, natoms );  // relaxed pose
-		FArray2D< core::Real > p3a( 3, natoms );  // native pose
+		ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );  // orig pose
+		ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );  // relaxed pose
+		ObjexxFCL::FArray2D< core::Real > p3a( 3, natoms );  // native pose
 		for ( int i = 0; i < natoms; ++i ) {
 			for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
 				p1a(k+1,i+1) = orig_pose_coords[i][k];
@@ -323,4 +323,3 @@ main( int argc, char * argv [] )
 	}
 	return 0;
 }
-

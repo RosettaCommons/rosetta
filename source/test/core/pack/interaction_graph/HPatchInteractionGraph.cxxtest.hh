@@ -95,7 +95,7 @@ public:
 	task::PackerTaskOP designtask;
 	annealer::SimAnnealerBaseOP annealer;
 
-	FArray1D_int bestrotamer_at_seqpos;
+	ObjexxFCL::FArray1D_int bestrotamer_at_seqpos;
 	PackerEnergy bestenergy;
 	PackerEnergy currentenergy, previous_energy_for_node, delta_energy;
 	float threshold_for_deltaE_inaccuracy;  // has to be a raw float; otherwise lots of function sigs would have to change
@@ -191,15 +191,15 @@ public:
 		bestrotamer_at_seqpos.dimension( pose.total_residue() );
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
-		FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
 		annealer = annealer::AnnealerFactory::create_annealer(
 			designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, pdhig, rotsets, current_rot_index, calc_rot_freq, rot_freq );
 
 		// temperature isn't so important, but to make things easy use the SA setup_temp() method
-		FArray1D_float loopenergy( 500, 0.0 );  // hardcore the number of loops for this array to the maxnumberofouteriterations
+		ObjexxFCL::FArray1D_float loopenergy( 500, 0.0 );  // hardcore the number of loops for this array to the maxnumberofouteriterations
 		annealer->setup_temperature( loopenergy, 1 );  // 1 would be the first iteration of outer loop
 		threshold_for_deltaE_inaccuracy = std::sqrt( annealer->get_temperature() );
 
@@ -786,15 +786,15 @@ public:
 		// --- InteractionGraph ---
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
-		FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
 		annealer::SimAnnealerBaseOP redesign_annealer = annealer::AnnealerFactory::create_annealer(
 			designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, pdhig, rotsets, current_rot_index, calc_rot_freq, rot_freq );
 
 		// temperature isn't so important, but to make things easy use the SA setup_temp() method
-		FArray1D_float loopenergy( 500, 0.0 );  // hardcore the number of loops for this array to the maxnumberofouteriterations
+		ObjexxFCL::FArray1D_float loopenergy( 500, 0.0 );  // hardcore the number of loops for this array to the maxnumberofouteriterations
 		annealer->setup_temperature( loopenergy, 1 );  // 1 would be the first iteration of outer loop
 
 		redesign_annealer->run();
@@ -829,7 +829,7 @@ public:
 			atom_subset, true /* use_naccess_sasa_radii */, true /* expand polar radii */ );
 
 		// put all the Nodes/BGNodes into the final best state, not the state that simA ended at
-		FArray1D_int states;
+		ObjexxFCL::FArray1D_int states;
 		states.dimension( rotsets->nmoltenres() );
 		for ( core::uint ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 			core::uint iiresid = rotsets->moltenres_2_resid( ii );
@@ -890,8 +890,8 @@ public:
 		/// Parameters passed by reference in annealers constructor to which it writes at the completion of sim annealing.
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
-		FArray1D< PackerEnergy > linmem_ig_test_rot_freq( lmhig->get_num_total_states(), 0.0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D< PackerEnergy > linmem_ig_test_rot_freq( lmhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
 		annealer::SimAnnealerBaseOP redesign_annealer = annealer::AnnealerFactory::create_annealer(
@@ -930,7 +930,7 @@ public:
 			atom_subset, true /* use_naccess_sasa_radii */, true /* expand polar radii */ );
 
 		// put all the Nodes/BGNodes into the final best state, not the state that simA ended at
-		FArray1D_int states;
+		ObjexxFCL::FArray1D_int states;
 		states.dimension( rotsets->nmoltenres() );
 		for ( core::uint ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 			core::uint iiresid = rotsets->moltenres_2_resid( ii );
@@ -954,4 +954,3 @@ public:
 	}
 
 };
-

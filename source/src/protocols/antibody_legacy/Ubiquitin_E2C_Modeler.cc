@@ -2100,7 +2100,7 @@ ubi_e2c_modeler::calc_Lrmsd (
 
 	using namespace core::scoring;
 
-	FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+	ObjexxFCL::FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
 
 	Size compute_rmsd_start(0), compute_rmsd_end(0);
 
@@ -3199,7 +3199,7 @@ ubi_e2c_modeler::monoub_calc_Lrmsd (
 
 	using namespace core::scoring;
 
-	FArray1D_bool superpos_partner ( monoub_end_, false );
+	ObjexxFCL::FArray1D_bool superpos_partner ( monoub_end_, false );
 
 	Size compute_rmsd_start(0), compute_rmsd_end(0);
 
@@ -3216,4 +3216,3 @@ ubi_e2c_modeler::monoub_calc_Lrmsd (
 } // end ub_e2c
 
 } // end protocols
-

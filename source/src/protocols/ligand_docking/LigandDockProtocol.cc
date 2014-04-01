@@ -839,7 +839,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 		// Ligands tend to bind in outstretched conformations...
 		core::Real lig_rg = 0;
 		int lig_rg_natoms = 0;
-		FArray1D_bool is_upstream ( before.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_upstream ( before.total_residue(), false );
 		before.fold_tree().partition_by_jump( jump_id, is_upstream );
 		for(core::Size i = 1, i_end = before.total_residue(); i <= i_end; ++i) {
 			if( is_upstream(i) ) continue; // only downstream residues

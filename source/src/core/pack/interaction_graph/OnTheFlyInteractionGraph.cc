@@ -527,7 +527,7 @@ void
 OnTheFlyInteractionGraph::set_sparse_aa_info_for_edge(
 	int node1,
 	int node2,
-	FArray2_bool const & sparse_conn_info
+	ObjexxFCL::FArray2_bool const & sparse_conn_info
 )
 {
 	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );

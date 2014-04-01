@@ -205,7 +205,7 @@ namespace rna {
 				iter->fill_pose( pose_from_silent_file, *rsd_set );
 			}
 
-			if ( num_struct != 1 ) utility_exit_with_message( "num_struct = ( " + string_of( num_struct ) + " ) != 1" );
+			if ( num_struct != 1 ) utility_exit_with_message( "num_struct = ( " + ObjexxFCL::string_of( num_struct ) + " ) != 1" );
 			if ( found_tag == false ) utility_exit_with_message( "Could not find specified tag ( " + debug_tag + " ) in silent file ( " + debug_silent_file + " )!" );
 
 			if ( file_exists( debug_silent_file ) == false ){
@@ -234,7 +234,7 @@ namespace rna {
 		std::string const ERROR_silent_file = "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".out";
 		silent_file_data.write_silent_struct( ERROR_silent_struct, ERROR_silent_file, false );
 
-		utility_exit_with_message( "Fail to write pose ( " + debug_tag + " ) to silent_file after " + string_of( NUM_trials ) + " trials " );
+		utility_exit_with_message( "Fail to write pose ( " + debug_tag + " ) to silent_file after " + ObjexxFCL::string_of( NUM_trials ) + " trials " );
 
 		////////////This is just to prevent compiler WARNING MESSAGES/////////
 		BinaryRNASilentStruct EMPTY_silent_struct;

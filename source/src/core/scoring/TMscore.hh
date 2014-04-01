@@ -27,8 +27,6 @@
 namespace core{
 namespace scoring{
 
-using namespace ObjexxFCL;
-
 ////////////
 class TMscoreStore
 {
@@ -70,7 +68,7 @@ public:
   }
 
   inline
-  void add_residue_dis( core::Real const d0, 
+  void add_residue_dis( core::Real const d0,
 												core::Real const dis )
   {
     if(dis<=8) n_GDT8++;
@@ -88,8 +86,8 @@ public:
     /// for TM-score10:
     if(dis < 10.0) TM_sum10 += 1/(1+(dis/d0)*(dis/d0));
   }
-  
-  inline 
+
+  inline
 	void update()
   {
     // update score if get better
@@ -146,18 +144,18 @@ class TMscore
 {
 
 public:
-  TMscore( FArray2D< core::Real > const &p1 );
+  TMscore( ObjexxFCL::FArray2D< core::Real > const &p1 );
   ~TMscore();
 
   void
-  apply( FArray2D< core::Real > const &p2 );
+  apply( ObjexxFCL::FArray2D< core::Real > const &p2 );
 
   void
-  apply( FArray2D< core::Real > const &p2,
+  apply( ObjexxFCL::FArray2D< core::Real > const &p2,
 				 utility::vector0< core::Vector > &u,
 				 core::Vector &t,
 				 bool const get_ut );
- 
+
   // Accessor
   core::Real get_TMscore() const { return score_.TM_max; }
   core::Real get_GDTTS() const { return score_.GDTTS; }
@@ -172,15 +170,15 @@ private:
   set_default();
 
   void
-  convert_FArray2D_to_vector0( FArray2D< core::Real > const & p1,
+  convert_FArray2D_to_vector0( ObjexxFCL::FArray2D< core::Real > const & p1,
 			       utility::vector0< core::Vector > &xyz
 			       );
 
   void
   get_ali_params();
 
-	utility::vector0< core::Size > 
-  score_fun( core::Real const d, 
+	utility::vector0< core::Size >
+  score_fun( core::Real const d,
 						 utility::vector0< core::Vector > const vt,
 						 TMscoreStore &score ) const;
 
@@ -194,7 +192,7 @@ private:
 					utility::vector0< core::Size > &k_ali0
 					) const;
 
-  utility::vector0< core::Vector > 
+  utility::vector0< core::Vector >
   get_transrot_ref( utility::vector0< core::Size > const &k_ali,
 										utility::vector0< core::Vector > &u,
 										core::Vector &t

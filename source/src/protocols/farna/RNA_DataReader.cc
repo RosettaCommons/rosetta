@@ -114,15 +114,15 @@ RNA_DataReader::read_data_info( std::istringstream & line_stream ) {
 		line_stream >> pos >> edge >> weight;
 
 		if ( edge == 'W' ){
-			rna_data_info_.add_datum( RNA_Datum( pos, WATSON_CRICK, weight ) );
+			rna_data_info_.add_datum( RNA_Datum( pos, core::chemical::rna::WATSON_CRICK, weight ) );
 		} else if ( edge == 'H' ) {
-			rna_data_info_.add_datum( RNA_Datum( pos, HOOGSTEEN, weight ) );
+			rna_data_info_.add_datum( RNA_Datum( pos, core::chemical::rna::HOOGSTEEN, weight ) );
 		} else if ( edge == 'S' ) {
-			rna_data_info_.add_datum( RNA_Datum( pos, SUGAR, weight ) );
+			rna_data_info_.add_datum( RNA_Datum( pos, core::chemical::rna::SUGAR, weight ) );
 		} else if ( edge == 'X' ) {
-			rna_data_info_.add_datum( RNA_Datum( pos, WATSON_CRICK, weight ) );
-			rna_data_info_.add_datum( RNA_Datum( pos, HOOGSTEEN, weight ) );
-			rna_data_info_.add_datum( RNA_Datum( pos, SUGAR, weight ) );
+			rna_data_info_.add_datum( RNA_Datum( pos, core::chemical::rna::WATSON_CRICK, weight ) );
+			rna_data_info_.add_datum( RNA_Datum( pos, core::chemical::rna::HOOGSTEEN, weight ) );
+			rna_data_info_.add_datum( RNA_Datum( pos, core::chemical::rna::SUGAR, weight ) );
 		} else {
 			utility_exit_with_message(  "Problem with data format on DATA line. " );
 		}
@@ -196,6 +196,3 @@ RNA_DataReader::setup_rna_data( core::pose::Pose & pose )
 
 } //farna
 } //protocols
-
-
-

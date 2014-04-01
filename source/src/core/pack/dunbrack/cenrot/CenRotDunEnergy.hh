@@ -35,13 +35,13 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-using namespace scoring;
-using namespace scoring::methods;
+//using namespace scoring;
+//using namespace scoring::methods;
 
 ///
-class CenRotDunEnergy : public ContextIndependentOneBodyEnergy  {
+class CenRotDunEnergy : public scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef scoring::methods::ContextIndependentOneBodyEnergy  parent;
 public:
 
 	///
@@ -50,7 +50,7 @@ public:
 
 	/// clone
 	virtual
-	EnergyMethodOP
+	scoring::methods::EnergyMethodOP
 	clone() const;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -59,14 +59,14 @@ public:
 
 	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const & ) const;
 
 	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		scoring::EnergyMap & emap
 	) const;
 
 	bool
@@ -76,18 +76,18 @@ public:
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		scoring::EnergyMap const & weights,
+		utility::vector1< scoring::DerivVectorPair > & atom_derivs
 	) const;
 
 	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &// totals
+		scoring::ScoreFunction const &,
+		scoring::EnergyMap &// totals
 	) const;
 
 	/// @brief Yes.  The DunbrackEnergy defines derivatives

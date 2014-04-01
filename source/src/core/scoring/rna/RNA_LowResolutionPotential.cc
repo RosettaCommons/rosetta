@@ -349,8 +349,8 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 	assert( res_i.is_RNA() );
 	assert( res_j.is_RNA() );
 
-	Size const res_i_bin = convert_acgu_to_1234( res_i.name1() );
-	Size const res_j_bin = convert_acgu_to_1234( res_j.name1() );
+	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
+	Size const res_j_bin = core::chemical::rna::convert_acgu_to_1234( res_j.name1() );
 
 	assert( res_i_bin > 0 );
 	assert( res_j_bin > 0 );
@@ -565,7 +565,7 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 	deriv_y = 0.0;
 	deriv_z = 0.0;
 
-	Size const res_i_bin = convert_acgu_to_1234( res_i.name1() );
+	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
 
 	assert( res_i_bin > 0 );
 	assert( atom_num_j_bin > 0 );
@@ -830,9 +830,9 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 					get_zeta_cutoff( res_i, zeta_hoogsteen_cutoff, zeta_sugar_cutoff );
 
 					Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x ) );
-					if ( zeta < zeta_hoogsteen_cutoff && zeta > zeta_sugar_cutoff )      edge_bin = WATSON_CRICK;  //Watson-Crick edge
-					else if ( zeta > zeta_hoogsteen_cutoff )   edge_bin = HOOGSTEEN; // Hoogsteen edge
-					else                       edge_bin = SUGAR; // Sugar edge
+					if ( zeta < zeta_hoogsteen_cutoff && zeta > zeta_sugar_cutoff )      edge_bin = core::chemical::rna::WATSON_CRICK;  //Watson-Crick edge
+					else if ( zeta > zeta_hoogsteen_cutoff )   edge_bin = core::chemical::rna::HOOGSTEEN; // Hoogsteen edge
+					else                       edge_bin = core::chemical::rna::SUGAR; // Sugar edge
 
 					if ( rna_verbose_ ){
 						Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
@@ -935,7 +935,7 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 	Vector const & x_i = M_i.col_x();
 	Vector const & y_i = M_i.col_y();
 
-	Size const res_i_bin = convert_acgu_to_1234( rsd->name1() );
+	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( rsd->name1() );
 
 	Real dist_x( 0.0 ), dist_y( 0.0 ), zeta( 0.0 );
 
@@ -988,7 +988,7 @@ RNA_LowResolutionPotential::get_zeta_cutoff(
 ) const
 {
 	if ( more_precise_base_pair_classification_ ) {
-		Size const res_i_bin = convert_acgu_to_1234( res_i.name1() );
+		Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
 		zeta_hoogsteen_cutoff = zeta_hoogsteen_cutoff_precise_( res_i_bin );
 		zeta_sugar_cutoff = zeta_sugar_cutoff_precise_( res_i_bin );
 	} else {
@@ -1031,7 +1031,7 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 	Size const j( res_j.seqpos() );
 
 	// Zero out these arrays for the residue pair of interest.
-	for ( Size k = 1; k <= NUM_EDGES; k++ ){
+	for ( Size k = 1; k <= core::chemical::rna::NUM_EDGES; k++ ){
 	  base_pair_array( i, j, k ) = 0.0;
 	  base_axis_array( i, j, k ) = 0.0;
 	  base_stagger_array( i, j, k ) = 0.0;
@@ -1080,9 +1080,9 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 			get_zeta_cutoff( res_i, zeta_hoogsteen_cutoff, zeta_sugar_cutoff );
 
 			Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x ) );
-			if ( zeta < zeta_hoogsteen_cutoff && zeta > zeta_sugar_cutoff )      edge_bin = WATSON_CRICK;  //Watson-Crick edge
-			else if ( zeta > zeta_hoogsteen_cutoff )   edge_bin = HOOGSTEEN; // Hoogsteen edge
-			else                       edge_bin = SUGAR; // Sugar edge
+			if ( zeta < zeta_hoogsteen_cutoff && zeta > zeta_sugar_cutoff )      edge_bin = core::chemical::rna::WATSON_CRICK;  //Watson-Crick edge
+			else if ( zeta > zeta_hoogsteen_cutoff )   edge_bin = core::chemical::rna::HOOGSTEEN; // Hoogsteen edge
+			else                       edge_bin = core::chemical::rna::SUGAR; // Sugar edge
 
 			if ( rna_verbose_ ){
 				Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
@@ -1141,7 +1141,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 	//First an easy filter -- only need to put derivs on base's torsion.
 
-	if ( atom_num_i != chi1_torsion_atom_index( res_i ) ) return;
+	if ( atom_num_i != core::chemical::rna::chi1_torsion_atom_index( res_i ) ) return;
 
 	// Information saved from the last score.
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -1521,7 +1521,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 	//Either we're a backbone oxygen atom, or we're the RNA first base atom (N1 or N9).
 
 	//	std::cout << rsd1.aa() << " CHI1 TORSION ATOM ==> "  << chi1_torsion_atom_index( rsd1 )  << " " << chi1_torsion_atom( rsd1 )  << std::endl;
-	if ( atom_num_i == chi1_torsion_atom_index( rsd1 ) ) {
+	if ( atom_num_i == core::chemical::rna::chi1_torsion_atom_index( rsd1 ) ) {
 
 		Vector const & centroid_i( base_centroids[i] );
 		kinematics::Stub const & stub_i( base_stubs[i] );

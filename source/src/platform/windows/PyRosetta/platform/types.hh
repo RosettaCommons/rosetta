@@ -45,6 +45,10 @@
 	#endif
 #endif
 
+#ifndef WIN_PYROSETTA
+typedef  int  ssize_t;
+#endif
+
 
 namespace platform {
 

@@ -414,7 +414,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-using namespace ObjexxFCL;
+//using namespace ObjexxFCL;
 
 template < Size T >
 SemiRotamericSingleResidueDunbrackLibrary< T >::SemiRotamericSingleResidueDunbrackLibrary(
@@ -2331,7 +2331,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::memory_usage_dynamic() const
 	for ( Size ii = 1; ii <= bbdep_nrc_interpdata_.size(); ++ii ) {
 		total_memory += bbdep_nrc_interpdata_[ ii ].size() * sizeof( BBDepScoreInterpData );
 	}
-	total_memory += bbdep_nrc_interpdata_.size() * sizeof( FArray3D< BBDepScoreInterpData > );
+	total_memory += bbdep_nrc_interpdata_.size() * sizeof( ObjexxFCL::FArray3D< BBDepScoreInterpData > );
 
 	/// for bbind nrchi scoring
 	total_memory += bbind_non_rotameric_chi_scores_.size() * sizeof( Real );
@@ -2408,8 +2408,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_rotameric_data(
 	utility::vector1< DunbrackReal > mean( DUNBRACK_MAX_SCTOR, 0.0 );
 	utility::vector1< DunbrackReal > stdev( DUNBRACK_MAX_SCTOR, 0.0 );
 
-	FArray2D< Size > rotameric_count( parent::N_PHIPSI_BINS, parent::N_PHIPSI_BINS, Size( 0 ) );
-	FArray2D< Size > semi_rotameric_count( parent::N_PHIPSI_BINS, parent::N_PHIPSI_BINS, Size( 0 ));
+	ObjexxFCL::FArray2D< Size > rotameric_count( parent::N_PHIPSI_BINS, parent::N_PHIPSI_BINS, Size( 0 ) );
+	ObjexxFCL::FArray2D< Size > semi_rotameric_count( parent::N_PHIPSI_BINS, parent::N_PHIPSI_BINS, Size( 0 ));
 
 	while ( in_rotameric ) {
 		/// 1. peek at the line; if it starts with #, skip to the next line.
@@ -2977,4 +2977,3 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::interpolate_bbdep_nrchi_sample(
 } // namespace core
 
 #endif // INCLUDED_core_pack_dunbrack_SemiRotamericSingleResidueDunbrackLibrary_TMPL_HH
-

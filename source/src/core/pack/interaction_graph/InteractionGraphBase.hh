@@ -17,6 +17,7 @@
 // Unit Headers
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 
+
 // Package Headers
 
 #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
@@ -39,7 +40,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1_bool.hh>
-
 
 namespace core {
 namespace pack {

@@ -29,7 +29,7 @@
 #include <core/pack/interaction_graph/SparseMatrixIndex.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+//namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -95,7 +95,7 @@ public:
 	void
 	set_sparse_aa_info
 	(
-		FArray2_bool const & sparse_conn_info
+		ObjexxFCL::FArray2_bool const & sparse_conn_info
 	)
 	{
 		aa_offsets_.dimension( num_aa_, num_aa_ );
@@ -196,7 +196,7 @@ public:
 		SparseMatrixIndex const & ind2,
 		int ind2num_states_per_aatype,
 		int aa_offset,
-		FArray1< value_type > const & sparse_matrix
+		ObjexxFCL::FArray1< value_type > const & sparse_matrix
 	)
 	{
 		if (aa_offset == -1)
@@ -235,7 +235,7 @@ public:
 		int ind1_node_state_offset_minus_1,
 		int ind2_num_states_per_aatype,
 		int aa_offset,
-		FArray1< value_type > const & sparse_matrix
+		ObjexxFCL::FArray1< value_type > const & sparse_matrix
 	)
 	{
 
@@ -320,7 +320,7 @@ public:
 		SparseMatrixIndex const & ind2,
 		int ind2num_states_per_aatype,
 		int aa_offset,
-		FArray1< value_type > & sparse_matrix,
+		ObjexxFCL::FArray1< value_type > & sparse_matrix,
 		value_type val
 	)
 	{
@@ -360,7 +360,7 @@ public:
 		int ind1_node_state_offset_minus_1,
 		int ind2_num_states_per_aatype,
 		int aa_offset,
-		FArray1< value_type > & sparse_matrix,
+		ObjexxFCL::FArray1< value_type > & sparse_matrix,
 		value_type val
 	)
 	{
@@ -455,7 +455,7 @@ public:
 /// efficiency during simulated annealing.
 ///
 	inline
-	FArray2D_int const &
+	ObjexxFCL::FArray2D_int const &
 	getAANeighborOffsets()
 	{
 		return aa_offsets_;
@@ -513,16 +513,16 @@ public:
 	void force_all_aa_neighbors()
 	{
 		if (table_size_ != 0 ) {
-			FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
-			FArray1D< value_type > old_sparse_matrix;
+			ObjexxFCL::FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
+			ObjexxFCL::FArray1D< value_type > old_sparse_matrix;
 			old_sparse_matrix.swap( sparse_matrix_ );
 
-			FArray2D_bool new_aa_neighbors( num_aa_, num_aa_, true);
+			ObjexxFCL::FArray2D_bool new_aa_neighbors( num_aa_, num_aa_, true);
 
 			set_sparse_aa_info(new_aa_neighbors);
 			copy_old_data_into_new_table( old_aa_offsets, old_sparse_matrix );
 		} else {
-			FArray2D_bool new_aa_neighbors( num_aa_, num_aa_, true);
+			ObjexxFCL::FArray2D_bool new_aa_neighbors( num_aa_, num_aa_, true);
 			set_sparse_aa_info(new_aa_neighbors);
 		}
 	}
@@ -534,11 +534,11 @@ public:
 	{
 		if ( aa_offsets_( node2aa, node1aa ) != -1 ) return;
 
-		FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
-		FArray1D< value_type > old_sparse_matrix;
+		ObjexxFCL::FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
+		ObjexxFCL::FArray1D< value_type > old_sparse_matrix;
 		old_sparse_matrix.swap( sparse_matrix_ );
 
-		FArray2D_bool new_aa_neighbors( num_aa_, num_aa_, false );
+		ObjexxFCL::FArray2D_bool new_aa_neighbors( num_aa_, num_aa_, false );
 		for ( int ii = 1; ii <= num_aa_; ++ii ) {
 			for ( int jj = 1; jj <= num_aa_; ++jj ) {
 				if ( old_aa_offsets(jj, ii) != -1 ) {
@@ -566,7 +566,7 @@ public:
 /// @param epsilon - [in] - threshold for submatrix preservation
 	void drop_small_submatrices_where_possible( value_type const epsilon )
 	{
-		FArray2D_bool submatrix_worth_keeping( num_aa_, num_aa_, false);
+		ObjexxFCL::FArray2D_bool submatrix_worth_keeping( num_aa_, num_aa_, false);
 		bool found_submatrix_not_worth_keeping = false;
 
 		for ( int ii = 1; ii <= num_aa_; ++ii ) {
@@ -607,10 +607,10 @@ public:
 
 		if (! found_submatrix_not_worth_keeping ) return;
 
-		FArray1D_float old_sparse_matrix;
+		ObjexxFCL::FArray1D_float old_sparse_matrix;
 		old_sparse_matrix.swap( sparse_matrix_ );
 
-		FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
+		ObjexxFCL::FArray2D_int old_aa_offsets( aa_offsets_ ); //deep copy
 		set_sparse_aa_info( submatrix_worth_keeping );
 		copy_old_data_into_new_table( old_aa_offsets, old_sparse_matrix );
 
@@ -661,8 +661,8 @@ protected:
 /// @param old_sparse_matrix - [in] - original table
 	void copy_old_data_into_new_table
 	(
-		FArray2D_int const & old_aa_offsets,
-		FArray1D< value_type > const & old_sparse_matrix
+		ObjexxFCL::FArray2D_int const & old_aa_offsets,
+		ObjexxFCL::FArray1D< value_type > const & old_sparse_matrix
 	)
 	{
 		for ( int ii = 1; ii <= num_aa_; ++ii ) {
@@ -698,10 +698,10 @@ protected:
 // Protected Member Data
 
 	int const num_aa_;
-	FArray2D_int aa_offsets_;
+	ObjexxFCL::FArray2D_int aa_offsets_;
 	utility::vector1< int > const & first_node_num_states_per_aatype_;
 	utility::vector1< int > const & second_node_num_states_per_aatype_;
-	FArray1D< value_type > sparse_matrix_;
+	ObjexxFCL::FArray1D< value_type > sparse_matrix_;
 	int table_size_;
 };
 

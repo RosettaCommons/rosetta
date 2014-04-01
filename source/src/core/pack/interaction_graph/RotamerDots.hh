@@ -26,6 +26,10 @@
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/ubyte.hh>
 
+#ifdef PYROSETTA
+#include <ObjexxFCL/FArray2D.hh>
+#endif
+
 // Numeric headers
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 

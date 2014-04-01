@@ -1103,9 +1103,9 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
 
-		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
+		if ( ( k == core::chemical::rna::WATSON_CRICK && m == core::chemical::rna::WATSON_CRICK
 					 && base_pair.orientation == 1 )  &&
-				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )		{
+				 core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )		{
 			N_WC++;
 		} else {
 			N_NWC++;
@@ -1211,7 +1211,7 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 		//std::cout << " NATIVE BASE PAIR " << i << " " << j << " " << k << " " << m << " " << it->first << std::endl;
 
-		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
+		if ( ( k == core::chemical::rna::WATSON_CRICK && m == core::chemical::rna::WATSON_CRICK
 					 && base_pair.orientation == 1 )  &&
 				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )		{
 			N_WC_NATIVE++;
@@ -1348,4 +1348,3 @@ std::ostream &operator<< ( std::ostream &os, RNA_DeNovoProtocol const &mover )
 
 } //farna
 } //protocols
-

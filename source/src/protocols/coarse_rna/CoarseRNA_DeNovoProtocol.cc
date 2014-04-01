@@ -70,6 +70,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
+
 using namespace ObjexxFCL::format; // AUTO USING NS
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +198,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	///////////////////////////////////////////////////////////////////////////
 	for (Size n = 1; n <= nstruct_; n++ ) {
 
-		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
+std::string const out_file_tag = "S_" + ObjexxFCL::lead_zero_string_of( n, 6 );
 		if (tag_is_done_[ out_file_tag ] ) continue; // put this in later!
 
 		pose = start_pose;

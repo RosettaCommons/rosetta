@@ -515,7 +515,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 				core::Real rms = scoring::CA_rmsd( native_pose, rpose );
 				select_lib_structs[h]->add_energy( "round", round, 1.0 );
 				select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-				select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(	h )	);
+				select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(	h )	);
 				sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
 			}
 
@@ -566,7 +566,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 				core::Real rms = scoring::CA_rmsd( native_pose, rpose );
 				select_lib_structs[h]->add_energy( "round", round, 1.0 );
 				select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-				select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(	h )	);
+				select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(	h )	);
 				sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
 			}
 		}
@@ -1140,7 +1140,3 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 
 } // namespace loops
 } // namespace protocols
-
-
-
-

@@ -886,7 +886,7 @@ sym_rmsd_with_super_subset(
 
     int const N ( symm_info->subunits() );
     int const nres ( symm_info->num_total_residues_without_pseudo() );
-    FArray2D< core::Real > p1a_shuffle( 3, nres );
+    ObjexxFCL::FArray2D< core::Real > p1a_shuffle( 3, nres );
 
   core::Real rms = 1e3; //Since fast_rms has not been evaluated yet
 	int const num_atoms_subunit (natoms);

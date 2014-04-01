@@ -23,7 +23,6 @@
 
 //using core::Size;
 //using core::Real;
-using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {
@@ -44,7 +43,7 @@ class Base_pair
 		edge1( 0 ),
 		edge2( 0 ),
 		orientation( 0 ),
-		LW_orientation( 0 ), //Leontis Westhof base-pair orientation (1 = cis; 2 = trans). This is not yet implemented! (PS. 12/26/2011) 
+		LW_orientation( 0 ), //Leontis Westhof base-pair orientation (1 = cis; 2 = trans). This is not yet implemented! (PS. 12/26/2011)
 		num_hbonds( 0 )
 	{
 	};
@@ -57,8 +56,8 @@ class Base_pair
 		edge1( edge1_input ),
 		edge2( edge2_input ),
 		orientation( orientation_input ),
-		LW_orientation( 0 ), 
-		num_hbonds( 0 ) 
+		LW_orientation( 0 ),
+		num_hbonds( 0 )
 	{
 	};
 
@@ -67,18 +66,18 @@ class Base_pair
   Size edge1;
   Size edge2;
   Size orientation; // 1 = antiparallel; 2 = parallel
-	Size LW_orientation; // 1 = cis; 2 = trans 
-	Size num_hbonds; 
+	Size LW_orientation; // 1 = cis; 2 = trans
+	Size num_hbonds;
 
 
 	void
 	print_info( std::ostream & out = std::cout ) const {
-		out << "res1 = "  << std::setw( 4 ) << res1; 
+		out << "res1 = "  << std::setw( 4 ) << res1;
 		out << " res2 = " << std::setw( 4 ) << res2;
-		out << " edge1 =	 " << std::setw( 6 ) << get_full_edge_from_num( edge1 );
-		out << " edge2 =	 " << std::setw( 6 ) << get_full_edge_from_num( edge2 );
-		out << " LW_orient = " << std::setw( 5 ) << get_full_LW_orientation_from_num( LW_orientation );
-		out << " orient = " << std::setw( 5 ) << get_full_orientation_from_num( orientation );
+		out << " edge1 =	 " << std::setw( 6 ) << core::chemical::rna::get_full_edge_from_num( edge1 );
+		out << " edge2 =	 " << std::setw( 6 ) << core::chemical::rna::get_full_edge_from_num( edge2 );
+		out << " LW_orient = " << std::setw( 5 ) << core::chemical::rna::get_full_LW_orientation_from_num( LW_orientation );
+		out << " orient = " << std::setw( 5 ) << core::chemical::rna::get_full_orientation_from_num( orientation );
 		out << " #hbonds= " << std::setw(4) << num_hbonds;
 		out << " ";
 	}

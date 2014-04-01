@@ -206,7 +206,7 @@ LazyNode::count_dynamic_memory() const
 	total_memory += num_states_for_aa_type_for_higher_indexed_neighbor_.size() * sizeof( int );
 	total_memory += neighbors_curr_state_.size() * sizeof( int );
 	total_memory += neighbors_curr_state_sparse_info_.size() * sizeof( SparseMatrixIndex );
-	total_memory += edge_matrix_ptrs_.size() * sizeof( FArray1A< core::PackerEnergy > );
+	total_memory += edge_matrix_ptrs_.size() * sizeof( ObjexxFCL::FArray1A< core::PackerEnergy > );
 
 	total_memory += curr_state_two_body_energies_.size() * sizeof( core::PackerEnergy );
 	total_memory += alternate_state_two_body_energies_.size() * sizeof( core::PackerEnergy );
@@ -631,7 +631,7 @@ void LazyNode::update_internal_vectors()
 
 	edge_matrix_ptrs_.clear();
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
-	edge_matrix_ptrs_.push_back( FArray1A< core::PackerEnergy >() ); //occupy the 0th position
+	edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >() ); //occupy the 0th position
 
 	aa_offsets_for_edges_.dimension(
 		get_num_aa_types(), get_num_incident_edges(), get_num_aa_types());
@@ -647,13 +647,13 @@ void LazyNode::update_internal_vectors()
 
 		core::PackerEnergy & edge_table_ref =
 			get_incident_lazy_edge(ii)->get_edge_table_ptr();
-		edge_matrix_ptrs_.push_back( FArray1A< core::PackerEnergy >( edge_table_ref ));
+		edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >( edge_table_ref ));
 
 
 		int edge_table_size = get_incident_lazy_edge(ii)->get_two_body_table_size();
 		edge_matrix_ptrs_[ii].dimension( edge_table_size );
 
-		FArray2D_int const & edge_aa_neighb_offsets =
+		ObjexxFCL::FArray2D_int const & edge_aa_neighb_offsets =
 			get_incident_lazy_edge(ii)->get_offsets_for_aatypes();
 		utility::vector1< int > const & neighb_num_states_per_aa =
 			get_incident_lazy_edge(ii)->get_second_node_num_states_per_aa();
@@ -782,7 +782,7 @@ LazyEdge::~LazyEdge()
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::set_sparse_aa_info(
-	FArray2_bool const & aa_neighbors
+	ObjexxFCL::FArray2_bool const & aa_neighbors
 )
 {
 	two_body_energies_.set_sparse_aa_info( aa_neighbors );
@@ -1248,7 +1248,7 @@ int LazyEdge::get_two_body_table_size() const
 ///
 /// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
-FArray2D_int const &
+ObjexxFCL::FArray2D_int const &
 LazyEdge::get_offsets_for_aatypes( )
 {
 	return two_body_energies_.getAANeighborOffsets();
@@ -1525,7 +1525,7 @@ LazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
 /// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
-LazyInteractionGraph::set_network_state( FArray1_int & node_states)
+LazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
 {
 	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_lazy_node( ii )->partial_assign_state( node_states( ii ) );

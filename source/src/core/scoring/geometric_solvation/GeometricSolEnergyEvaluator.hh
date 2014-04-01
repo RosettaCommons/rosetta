@@ -35,8 +35,6 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
-using namespace core;
-
 enum RNAAtomType { PHOSPHATE=1, SUGAR=2, BASE=3 };
 
 namespace core {

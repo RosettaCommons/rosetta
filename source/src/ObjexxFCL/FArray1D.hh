@@ -14,7 +14,6 @@
 // Use of this source code or any derivative of it is restricted by license.
 // Licensing is available from Objexx Engineering, Inc.:  http://objexx.com  Objexx@objexx.com
 
-
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1.hh>

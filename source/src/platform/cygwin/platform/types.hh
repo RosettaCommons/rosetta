@@ -35,7 +35,7 @@
 namespace platform {
 
 typedef std::size_t  Size;
-typedef ssize_t      SSize;
+typedef std::ssize_t SSize;
 typedef std::size_t  uint;
 
 // Floating point precision control scalar

@@ -1606,7 +1606,7 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 		// Only include protein residues within 6A of touching the ligand
 		utility::vector1<bool> include_rsd( context_pose.total_residue(), false );
 		int const jump_id = context_pose.num_jump(); // assume ligand is last jump
-		FArray1D_bool is_upstream ( context_pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_upstream ( context_pose.total_residue(), false );
 		context_pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 		for(core::Size i = 1, i_end = context_pose.total_residue(); i <= i_end; ++i) {
 			// Nothing on ligand side can move

@@ -320,7 +320,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 						for ( Size i=1; i <= n_relax ; ++i ){
 
 
-							std::string outfilename_n_rlx =  option [OptionKeys::out::prefix] + "dr_" + right_string_of(i,3,'0')+"_" ;
+							std::string outfilename_n_rlx =  option [OptionKeys::out::prefix] + "dr_" + ObjexxFCL::right_string_of(i,3,'0')+"_" ;
 
 
 							design_excluding_swap_loops (  input_pose, loops_, scorefxn_fa );
