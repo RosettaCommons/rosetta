@@ -706,7 +706,7 @@ RigidBodyTransMover::RigidBodyTransMover(
 	step_size_ = 1.0;
 	trans_axis_ = centroid_axis(pose_in);
 }
-	
+
 RigidBodyTransMover::RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in  ) :
 	RigidBodyMover( rb_jump_in ), trans_axis_(trans_axis)
 {
@@ -1123,7 +1123,7 @@ void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
 	last_slide_good_ = true;
   core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	int c2n(-1);
-    TRBM.Debug << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
+	TRBM.Debug << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
 	Vector trans_start ( flexible_jump.get_translation() );
 	if ( jump_dir_ == c2n ) flexible_jump.reverse();
 
@@ -1139,7 +1139,7 @@ void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
 	}
   flexible_jump.set_translation( x_i );
 	if ( jump_dir_ == c2n ) flexible_jump.reverse();
-    TRBM.Debug << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
+	TRBM.Debug << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
   pose.set_jump( rb_jump_, flexible_jump );
 }
 
@@ -1413,9 +1413,9 @@ void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 			// if range2_is_bound is set, make sure jump stays within bound
 			if (dof_.has_range2_lower(i) && dof_.range2_is_bound(i)) {
 				core::Vector trans_i = flexible_jump.rt().get_translation();
-				trans_i(i) = std::min( dof_.range2_lower(i), trans_i(i) );
-				trans_i(i) = std::max( dof_.range2_upper(i), trans_i(i) );
-				flexible_jump.rt().set_translation( trans_i );
+				trans_i(i) = std::max( dof_.range2_lower(i), trans_i(i) );
+				trans_i(i) = std::min( dof_.range2_upper(i), trans_i(i) );
+				flexible_jump.set_translation( trans_i );
 			}
 		}
 	}

@@ -526,14 +526,6 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 	if (icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
 	if (cst_score >= distance_constraint_cutoff ) passed_filter = false;
 
-	// OLD
-	//if (pose.energies().total_energies()[ interchain_contact ] >= interchain_contact_cutoff ) passed_filter = false;
-	//if (pose.energies().total_energies()[ interchain_vdw ] >= interchain_vdw_cutoff ) passed_filter = false;
-	//if ( option[ OptionKeys::constraints::cst_file ].user() ){
-	//	if (pose.energies().total_energies()[ atom_pair_constraint ] >= distance_constraint_cutoff ) passed_filter = false;
-	//}
-
-
 	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
 		protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();

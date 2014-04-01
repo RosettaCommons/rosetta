@@ -137,15 +137,15 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 	if ( slide_ ) {
 		if ( slide_info.get_slide_type() == SEQUENTIAL ) {
 			SequentialSymmetrySlider symm_slider = SequentialSymmetrySlider( pose,
-																																			 slide_info.get_SlideCriteriaType(),
-																																			 slide_info.get_SlideCriteriaVal() );
+				slide_info.get_SlideCriteriaType(),
+				slide_info.get_SlideCriteriaVal() );
 			symm_slider.apply( pose );
 		}
 		if ( slide_info.get_slide_type() == ORDERED_SEQUENTIAL ) {
 			OrderedSequentialSymmetrySlider symm_slider = OrderedSequentialSymmetrySlider( pose,
-																																										 slide_info.get_SlideCriteriaType(),
-																																										 slide_info.get_SlideCriteriaVal(),
-																																										 slide_info.get_slide_order() );
+				slide_info.get_SlideCriteriaType(),
+				slide_info.get_SlideCriteriaVal(),
+				slide_info.get_slide_order() );
 			symm_slider.apply( pose );
 		}
 		if ( slide_info.get_slide_type() == RANDOM ) {
@@ -154,7 +154,6 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 																															 slide_info.get_SlideCriteriaVal() );
 			symm_slider.apply( pose );
 		}
-
 //		SymDockingSlideIntoContact slide( dofs );
 //		slide.apply( pose );
 	}
@@ -685,6 +684,8 @@ bool SymmetrySlider::dofmover_compresses( core::pose::Pose & pose, protocols::ri
 	dofmover.trans_axis().negate();
 	dofmover.apply( pose );
 	dofmover.trans_axis().negate();
+
+	//TR << "pick direction: " << radius_before << " vs " << radius_after << std::endl;
 
 	if (radius_before > radius_after)
 		return true;
