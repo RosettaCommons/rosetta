@@ -1190,6 +1190,9 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 		for( core::Size j = 1; j <= enz_input_data_->mcfi_list( i )->num_mcfis(); ++j){
 			protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoCOP cur_mcfi( enz_input_data_->mcfi_list( i )->mcfi( j ) );
 			core::Size ds_matchres( cur_mcfi->downstream_res() );
+			if( cur_mcfi->allowed_restypes( ds_matchres ).size() == 0 ) {
+					utility_exit_with_message("No allowed residue types seen for downstream residue for constraint " + utility::to_string( i ) + " block " + utility::to_string( j ) );
+			}
 			core::chemical::ResidueTypeCOP ds_restype( cur_mcfi->allowed_restypes( ds_matchres )[1] );
 
 			for( core::Size k = 1; k <= 3; ++k){

@@ -464,6 +464,9 @@ MatchConstraintFileInfo::process_data()
 			}
 		}
 
+		if( map_it->second->atom_inds_for_restype_begin() == map_it->second->atom_inds_for_restype_end() ) {
+			tr.Warning << "WARNING: No appropriate atoms found for entry " << map_it->first << " in constraint " << index_ << std::endl;
+		}
 	} //loop over all Enz_cst_template-res
 
 }
