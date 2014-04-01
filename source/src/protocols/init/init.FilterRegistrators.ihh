@@ -109,6 +109,7 @@ static FilterRegistrator< protocols::simple_filters::NMerPSSMEnergyFilterCreator
 static FilterRegistrator< protocols::simple_filters::NMerSVMEnergyFilterCreator > reg_NMerSVMEnergyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::OperatorFilterCreator > reg_OperatorFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PackStatFilterCreator > reg_PackStatFilterCreator;
+static FilterRegistrator< protocols::simple_filters::PoseCommentFilterCreator > reg_PoseCommentFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PoseInfoFilterCreator > reg_PoseInfoFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RangeFilterCreator > reg_RangeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ReportFilterCreator > reg_ReportFilterCreator;

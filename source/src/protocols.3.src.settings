@@ -464,6 +464,7 @@ sources = {
 		"PoolEvaluatorCreator",
 		"PoseInfoFilter",
 		"SavePoseConstraintToFileFilter",
+		"PoseCommentFilter",
 		"PredictedBurialEvaluator",
 		"PredictedBurialFnEvaluatorCreator",
 		"RangeFilter",
