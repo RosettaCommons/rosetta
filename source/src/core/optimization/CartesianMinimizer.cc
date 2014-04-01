@@ -47,6 +47,8 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace optimization {
 
+static basic::Tracer TR("core.optimization.CartesianMinimizer");
+
 CartesianMinimizer::CartesianMinimizer()
 {}
 
@@ -63,6 +65,10 @@ CartesianMinimizer::run(
 {
 	if( ! scorefxn.ready_for_nonideal_scoring() ) {
 		utility_exit_with_message( "Scorefunction not set up for nonideal/Cartesian scoring" );
+	}
+	if( options.min_type() != "lbfgs_armijo_nonmonotone" ) {
+		TR.Warning << "WARNING: Use of the 'lbfgs_armijo_nonmonotone' minimizer with Cartesian minimization is recommended " <<
+				"for better runtime performance. (Using '" << options.min_type() << "' minimizer instead.)" << std::endl;
 	}
 
 	if ( options.deriv_check() ) {

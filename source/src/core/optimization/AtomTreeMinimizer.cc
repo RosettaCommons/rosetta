@@ -151,7 +151,7 @@ void
 AtomTreeMinimizer::check_setup(pose::Pose const &,
 		kinematics::MoveMap const & move_map,
 		scoring::ScoreFunction const & scorefxn,
-		MinimizerOptions const &) const {
+		MinimizerOptions const & options) const {
 
 	// Do we have any nonideal bond length/bond angle settings in the movemap?
 	bool nonideal( move_map.get( core::id::D ) || move_map.get( core::id::THETA ) );
@@ -177,6 +177,11 @@ AtomTreeMinimizer::check_setup(pose::Pose const &,
 		TR.Warning << "** WARNING: Non-ideal minimization used with a ScoreFunction **" << std::endl;
 		TR.Warning << "**    which isn't set up for non-ideal minimization          **" << std::endl;
 		TR.Warning << "***************************************************************" << std::endl;
+	}
+
+	if( nonideal && options.min_type() != "lbfgs_armijo_nonmonotone" ) {
+		TR.Warning << "WARNING: Use of the 'lbfgs_armijo_nonmonotone' minimizer with nonideal minimization is recommended " <<
+				"for better runtime performance. (Using '" << options.min_type() << "' minimizer instead.)" << std::endl;
 	}
 }
 
