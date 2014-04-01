@@ -47,7 +47,7 @@ PoseComment::~PoseComment() {}
 void
 PoseComment::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	comment_name( tag->getOption< std::string >( "comment_name" ) );
+	comment_name( tag->getOption< std::string >( "comment_name","" ) );
 	comment_value( tag->getOption< std::string >( "comment_value", "" ) );
 	comment_exists( tag->getOption< bool > ( "comment_exists", false ) );
 
@@ -78,7 +78,20 @@ PoseComment::compute(
 	std::string val( "" );
 	bool exists( false );
 
-	exists = core::pose::get_comment( pose, comment_name(), val );
+	using namespace core::pose;
+
+	if( comment_name() == "" ){
+		std::map< std::string, std::string > const comments = get_all_comments( pose );
+		if( comment_exists() && comments.size() > 0 )
+			return 1.0;
+		for( std::map< std::string, std::string >::const_iterator it = comments.begin(); it != comments.end(); ++it ){// iterate over all comments and find the one with the value
+			if( it->second == comment_value() )
+				return 1.0;
+		}
+		return 0.0;
+	}
+
+	exists = get_comment( pose, comment_name(), val );
 	if( comment_exists() ){
 		if( exists )
 			return 1.0;
