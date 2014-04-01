@@ -96,7 +96,6 @@ void Pose::init(void)
 
 	metrics_ = new metrics::PoseMetricContainer;
 	metrics_->attach_to( *this );
-
 }
 
 

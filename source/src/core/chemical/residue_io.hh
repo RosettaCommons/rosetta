@@ -29,6 +29,9 @@
 namespace core {
 namespace chemical {
 
+/// @brief  If polymer, determine a list of main chain atoms by shortest path from LOWER to UPPER.
+AtomIndices define_mainchain_atoms( ResidueTypeOP rsd );
+
 /// @brief virtual constructor for ResidueType objects
 ResidueTypeOP
 read_topology_file(
@@ -53,10 +56,7 @@ read_topology_file(
 );
 
 /// @brief writes a .params file from a given ResidueType object
-void
-write_topology_file(
-	ResidueType const & rsd
-);
+void write_topology_file( ResidueType const & rsd );
 
 } // chemical
 } // core

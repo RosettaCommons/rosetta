@@ -38,7 +38,6 @@ using namespace chemical;
 using namespace conformation;
 
 
-//string const PATH = "../test/core/chemical/carbohydrates/";
 string const PATH = "input/";
 
 
@@ -58,16 +57,7 @@ test_sugar(Pose & sugar)
 	Size n_res = sugar.total_residue();
 	for (core::uint i = 1; i <= n_res; ++i) {
 		Residue res = sugar.residue(i);
-		cout << "Residue " << i << ": " << endl;
-		cout << " 3-Letter Code: " << res.name3();
-		cout << "  1-Letter Code: " << res.name1() << endl;
-		cout << " PDB ID: " << sugar.pdb_info()->pose2pdb(i) << endl;
-		cout << res << endl;
-		cout << "Main chain atom indices: ";
-		for (core::uint j = 1; j <= res.mainchain_atoms().size(); ++j) {
-			cout << res.mainchain_atom(j) << ", ";
-		}
-		cout << endl << endl;
+		cout << "PDB ID: " << sugar.pdb_info()->pose2pdb(i) << ": " << res << endl << endl;
 	}
 }
 
@@ -81,7 +71,7 @@ main(int argc, char *argv[])
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
-				neuraminate, Lex;
+				neuraminate, Lex, GalCer;
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
@@ -187,6 +177,14 @@ main(int argc, char *argv[])
 		pose_from_pdb(Lex, PATH + "Lex.pdb");
 
 		test_sugar(Lex);
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing GalCer:" << endl;
+
+		pose_from_pdb(GalCer, PATH + "GalCer.pdb");
+
+		test_sugar(GalCer);
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;

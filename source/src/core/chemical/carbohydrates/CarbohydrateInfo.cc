@@ -168,7 +168,7 @@ CarbohydrateInfo::show(std::ostream & output) const
 		output << " Ring Form: " << ring_form << endl;
 		output << " Anomeric Form: " << anomer_ << endl;
 	}
-	output << " Modifications: " << endl << modifications << endl;
+	output << " Modifications: " << endl << modifications;
 	output << " Polymeric Information:" << endl;
 	if (mainchain_glycosidic_bond_acceptor_) {
 		output << "  Main chain connection: (_->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;

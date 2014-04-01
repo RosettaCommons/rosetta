@@ -40,10 +40,12 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
+
+// Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
@@ -51,13 +53,6 @@
 #include <map>
 #include <iosfwd>
 #include <limits>
-
-//#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
-
-#include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -115,9 +110,11 @@ public:
 
 	~Residue();
 
-	///@brief Copy this residue( allocate actual memory for it )
-	ResidueOP
-	clone() const;
+	/// @brief Copy this residue( allocate actual memory for it )
+	ResidueOP clone() const;
+
+	/// @brief  Generate string representation of Residue for debugging purposes.
+	void show( std::ostream & output=std::cout ) const;
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////

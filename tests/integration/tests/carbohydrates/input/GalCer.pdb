@@ -1,0 +1,58 @@
+HEADER    GalCer from 2EVL                        26-MAR-14   XXXX
+AUTHOR    Labonte
+HETNAM     SPH SPHINGOSINE
+HETNAM     Gal A   1  ->4)-beta-D-Galp
+HETNAM     EIC LINOLEIC ACID
+LINK         N2  SPH A   0                 C1  EIC B   0     1555   1555  1.29
+HETATM    1  O1  SPH A   0      22.404  -0.622  19.162  1.00 26.53           O
+HETATM    2  C1  SPH A   0      22.550  -1.935  18.880  1.00 27.80           C
+HETATM    3  C2  SPH A   0      21.499  -2.813  19.544  1.00 28.65           C
+HETATM    4  N2  SPH A   0      20.200  -2.428  19.032  1.00 30.99           N
+HETATM    5  C3  SPH A   0      21.617  -2.679  21.057  1.00 30.79           C
+HETATM    6  O3  SPH A   0      22.906  -3.195  21.413  1.00 25.20           O
+HETATM    7  C4  SPH A   0      20.589  -3.483  21.810  1.00 32.35           C
+HETATM    8  C5  SPH A   0      19.652  -2.883  22.540  1.00 35.20           C
+HETATM    9  C6  SPH A   0      18.665  -3.727  23.317  1.00 36.74           C
+HETATM   10  C7  SPH A   0      19.277  -4.027  24.704  1.00 39.07           C
+HETATM   11  C8  SPH A   0      20.072  -5.351  24.737  1.00 40.60           C
+HETATM   12  C9  SPH A   0      21.231  -5.364  25.733  1.00 41.34           C
+HETATM   13  C10 SPH A   0      20.957  -6.302  26.898  1.00 42.04           C
+HETATM   15  C11 SPH A   0      22.070  -6.311  27.944  1.00 42.83           C
+HETATM   15  C12 SPH A   0      21.531  -6.382  29.379  1.00 44.84           C
+HETATM   16  C13 SPH A   0      22.569  -6.883  30.391  1.00 45.44           C
+HETATM   17  C14 SPH A   0      21.967  -6.930  31.798  1.00 46.05           C
+HETATM   18  C15 SPH A   0      22.953  -7.420  32.859  1.00 46.06           C
+HETATM   19  C16 SPH A   0      22.359  -8.396  33.878  1.00 46.05           C
+HETATM   20  C17 SPH A   0      21.612  -7.680  34.997  1.00 45.88           C
+HETATM   21  C18 SPH A   0      22.542  -7.294  36.131  1.00 45.92           C
+HETATM   22  C1  Gal A   1      22.898   0.390  18.312  1.00 23.92           C
+HETATM   23  C2  Gal A   1      22.277   1.735  18.658  1.00 24.35           C
+HETATM   24  C3  Gal A   1      22.933   2.813  17.787  1.00 25.11           C
+HETATM   25  C4  Gal A   1      24.469   2.758  17.853  1.00 26.43           C
+HETATM   26  C5  Gal A   1      24.913   1.346  17.493  1.00 24.53           C
+HETATM   27  C6  Gal A   1      26.438   1.195  17.534  1.00 24.65           C
+HETATM   28  O2  Gal A   1      20.872   1.674  18.430  1.00 22.79           O
+HETATM   29  O3  Gal A   1      22.453   4.084  18.132  1.00 26.77           O
+HETATM   30  O4  Gal A   1      24.928   3.075  19.159  1.00 29.07           O
+HETATM   31  O5  Gal A   1      24.309   0.404  18.369  1.00 22.33           O
+HETATM   32  O6  Gal A   1      26.721  -0.032  16.887  1.00 23.91           O
+HETATM   33  C1  EIC B   0      19.001  -2.652  18.612  1.00 33.33           C
+HETATM   34  C2  EIC B   0      17.547  -2.323  18.264  1.00 33.35           C
+HETATM   35  C3  EIC B   0      16.645  -2.622  19.461  1.00 35.13           C
+HETATM   36  C4  EIC B   0      15.151  -2.603  19.109  1.00 37.08           C
+HETATM   37  C5  EIC B   0      14.417  -3.687  19.893  1.00 39.55           C
+HETATM   38  C6  EIC B   0      12.934  -3.848  19.558  1.00 41.61           C
+HETATM   39  C7  EIC B   0      12.341  -4.864  20.549  1.00 44.35           C
+HETATM   40  C8  EIC B   0      10.918  -4.486  20.937  1.00 46.47           C
+HETATM   41  C9  EIC B   0      10.180  -5.371  21.944  1.00 48.59           C
+HETATM   42  C10 EIC B   0      10.541  -6.527  22.545  1.00 50.16           C
+HETATM   43  C11 EIC B   0      11.830  -7.320  22.387  1.00 50.99           C
+HETATM   44  C12 EIC B   0      12.055  -8.197  23.605  1.00 51.05           C
+HETATM   45  C13 EIC B   0      11.330  -9.282  23.899  1.00 51.56           C
+HETATM   46  C14 EIC B   0      10.179  -9.788  23.054  1.00 52.23           C
+HETATM   47  C15 EIC B   0       8.842  -9.436  23.710  1.00 53.27           C
+HETATM   48  C16 EIC B   0       7.840  -8.817  22.730  1.00 54.00           C
+HETATM   49  C17 EIC B   0       6.731  -8.024  23.430  1.00 53.51           C
+HETATM   50  C18 EIC B   0       6.133  -6.990  22.496  1.00 53.57           C
+HETATM   51  O1  EIC B   0      19.279  -4.016  18.239  1.00 31.46           O
+END

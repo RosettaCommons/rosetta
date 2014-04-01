@@ -7,63 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-//////////////////////////////////////////////////////////////////////
 /// @file ResidueType.cc
-///
-/// @brief
-/// A class for defining a type of residue
-///
-/// @details
-/// This class contains the "chemical" information for residues as well as the ideal xyz and internal coordinates for a
-/// residue (generated xyz coordinates are found in core/conformation/Residue.hh).  A residuetype in rosetta can be a
-/// ligand, DNA, amino acid, or basically anything. ResidueTypes are generated through params files, which are read from
-/// the database chemical/residue_types.  For ligands, a parameter has to be provided to rosetta through the -extra_res_fa
-/// flag. Primary data is set through the residue_io.cc class. The primary data that are set are: atoms, mmatoms,
-/// orbitals, and properties of the particular residue type.  These properties can be modified through patches, which
-/// is controlled through PatchOperations.cc.
-///
-/// The data structure of a residuetype is based on a boost::graph implementation. Vertex descriptors (VD, yeah, I know,
-/// the name is kind of bad..) are the atoms while the edge descriptors (ED, yet another bad name) are the bonds. Initially,
-/// when a residuetype is constructed, the following primary data is set:
-///
-///	atom_base_;
-///	chi_atoms_;
-///	nu_atoms_;
-///	mainchain_atoms_;
-///	nbr_atom_;
-///	actcoord_atoms_;
-///	cut_bond_neighbor_;
-//	atom_shadowed_;
-///
-/// When this data is set, it is set based on vertex descriptors. Because vertex descriptors never change, like atom
-/// indices, there is no need to reorder this primary data; however, because Rosetta relies heavily on atom indices
-/// to access data, atom indices for the above data has to be generated. To do this, when finalized is called, a function
-/// specifically designed to generate the atom indices for the primary data is called: generate_atom_indices. This function
-/// iterates over the vertex descriptors assigned in each primary data and creates private data based on atom indices. For
-/// example, atom_base_ has atom_base_indices_. When the function atom_base(atomno) is called, the private data atom_base_indices_
-/// is called. This allows for the external interface of ResidueType to be accessed by atom indices while the internal
-/// functions in ResidueType work off of vertex descriptors. This also removes the need to have old2new reordering scheme.
-///
-///
-/// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
-/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.On any given residue, the
-/// heavy atoms are put into the vector first, (their indices are first,) and hydrogens are put in last.
-///
-/// Properties: Properties of a residue include things like DNA, PROTEIN, CHARGED, etc.  These properties
-/// indicate the type of residue it is and what properties are associated with the residue.  They are set when read in.
-/// Several lines of code must be modified to get them to work, all found here in ResidueType.cc.
-///
-/// Orbitals: Orbitals are indexed separately from atoms.  They function much the same way as atoms, except for some
-/// key differences.  To find atoms bonded to orbitals, you must provide the atom index, not the orbital index.  (I
-/// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
-/// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
-/// orbitals, use the flag -output_orbitals.
-///
+/// @brief Method definitions for ResidueType
 /// @author
 /// Phil Bradley
-/// Steven Combs - these comments
+/// Steven Combs
 /// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
-////////////////////////////////////////////////////////////////////////
+/// Jason W. Labonte (code related to lipids, carbohydrates, and other non-AAs)
 
 // Unit headers
 #include <core/chemical/ResidueType.hh>
@@ -79,7 +29,6 @@
 #include <core/chemical/Element.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
@@ -175,6 +124,7 @@ ResidueType::ResidueType(
 		is_RNA_( false ),
 		is_NA_( false ),
 		is_carbohydrate_( false ),
+		is_lipid_( false ),
 		is_ligand_( false ),
 		is_metal_( false ), //Is this residue type a metal ion?
 		is_metalbinding_( false ), //Is this residue type a type that has the potential to bind to metal ions?
@@ -274,7 +224,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		proton_chi_extra_samples_(residue_type.proton_chi_extra_samples_),
 		nu_atoms_(residue_type.nu_atoms_),
 		path_distance_(residue_type.path_distance_),
-		atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
+		atom_name_to_vd_(), // This must be regenerated below to hold the new new vertex_descriptors
 		ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
 		orbitals_index_(residue_type.orbitals_index_),
 		chi_rotamers_(residue_type.chi_rotamers_),
@@ -299,9 +249,10 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		is_RNA_( residue_type.is_RNA_ ),
 		is_NA_( residue_type.is_NA_ ),
 		is_carbohydrate_( residue_type.is_carbohydrate_ ),
+		is_lipid_( residue_type.is_lipid_ ),
 		is_ligand_( residue_type.is_ligand_ ),
 		is_metal_( residue_type.is_metal_ ), //Is this residue type a metal ion?
-		is_metalbinding_( residue_type.is_metalbinding_ ), //Is this residue type a type capable of binding to a metal ion?
+		is_metalbinding_( residue_type.is_metalbinding_ ), //Is this residue type capable of binding to a metal ion?
 		is_surface_( residue_type.is_surface_ ),
 		is_terminus_( residue_type.is_terminus_ ),
 		is_lower_terminus_( residue_type.is_lower_terminus_ ),
@@ -355,10 +306,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		base_restype_name_(residue_type.base_restype_name_),
 		serialized_(residue_type.serialized_)
 {
-	//when you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph. New vertexs are assigned.
-	//you have to map the old vertex to the new vertex.
-
-
+	// When you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph.
+	// New vertices are assigned.  You have to map the old vertex to the new vertex.
 
 	std::map<ED, ED> old_edges_to_new_edges;
 	for(
@@ -407,7 +356,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		atom_name_to_vd_.insert( NameVDPair( strip_whitespace( a.name() ), vd) );
 		//assert(strip_name_vd_inserted.second); // If this is 4 chars, than it will be the same as before.
 	}
-	/// Setup the temporary ordered_atoms_ vector for refactor
+	// Setup the temporary ordered_atoms_ vector for refactor
 	VDs::const_iterator begin = residue_type.ordered_atoms_.begin();
 	VDs::const_iterator const end = residue_type.ordered_atoms_.end();
 	for(; begin != end; ++begin){
@@ -1220,7 +1169,7 @@ ResidueType::add_cut_bond(
 	finalized_ = false;
 
 	if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
-		std::string message = "add_cut_bond: atoms " + atom_name1 + " and " + atom_name2 + " dont exist!";
+		std::string message = "add_cut_bond: atoms " + atom_name1 + " and " + atom_name2 + " don't exist!";
 		utility_exit_with_message( message  );
 	}
 
@@ -1229,7 +1178,7 @@ ResidueType::add_cut_bond(
 
 	utility::vector1<VD> const i1_nbrs(cut_bond_neighbor_.find(vd_source)->second );
 	if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
-		utility_exit_with_message( "dont add residue bonds more than once!" );
+		utility_exit_with_message( "don't add residue bonds more than once!" );
 	}
 
 	cut_bond_neighbor_[vd_source].push_back(vd_target);
@@ -1482,6 +1431,8 @@ ResidueType::add_property( std::string const & property )
 		is_polymer_ = true;
 	} else if ( property == "CARBOHYDRATE") {
 		is_carbohydrate_ = true;
+	} else if ( property == "LIPID" ) {
+		is_lipid_ = true;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = true;
 	} else if ( property == "METAL" ) { //Is this a metal ion?
@@ -1587,6 +1538,8 @@ ResidueType::delete_property( std::string const & property )
 		is_RNA_ = false;
 	} else if ( property == "CARBOHYDRATE") {
 		is_carbohydrate_ = false;
+	} else if ( property == "LIPID") {
+		is_lipid_ = false;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = false;
 	} else if ( property == "METAL" ) {
@@ -1705,7 +1658,6 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 void
 ResidueType::setup_atom_ordering()
 {
-
 	utility::vector1<VD> bb_atoms, sidechain_atoms, hydrogens;
 	utility::vector1<Size> h_begin;
 	utility::vector1<Size> h_end;
@@ -2381,20 +2333,18 @@ ResidueType::nonadduct_variants_match( ResidueType const & other ) const
 }
 
 
-
 Size
 ResidueType::atom_index( std::string const & name ) const
 {
 	// NOTE: Currently we have to iterate twice because atom_name_to_vd_ stores vertex_descriptors not indices.
 	// A substantial change to the interface will fix this, but everyone's code will need to switch too.
 
-	NameVDMap::const_iterator graph_iter
-	( atom_name_to_vd_.find( name ) );
+	NameVDMap::const_iterator graph_iter( atom_name_to_vd_.find( name ) );
 	if ( graph_iter == atom_name_to_vd_.end() ) {
-#if defined BOINC
+		#if defined BOINC
 		// chu temporary graphic fix for boinc
 		if ( name == "CA" && !is_protein() ) return 1;
-#endif
+		#endif
 		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
@@ -2402,29 +2352,28 @@ ResidueType::atom_index( std::string const & name ) const
 	}
 	VD const & vd = graph_iter->second;
 
-	Size ordered_index=0;
-	Size i=1;
-	for(; i <= ordered_atoms_.size(); ++i){
-		if( &graph_[ordered_atoms_[i]] == &graph_[vd]){
+	Size ordered_index = 0;
+	for( Size i = 1; i <= ordered_atoms_.size(); ++i ) {
+		if( &graph_[ordered_atoms_[i]] == &graph_[vd]) {
 			ordered_index = i;
 			break;
 		}
 	}
 
-	if( ordered_index==0){
-#if defined BOINC
-// chu temporary graphic fix for boinc
-if ( name == "CA" && !is_protein() ) return 1;
-#endif
-tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
-show_all_atom_names( tr.Error );
-tr.Error << std::endl;
-std::cout << "printing ordered_atomns names" << std::endl;
-for(Size index=1; index <= ordered_atoms_.size(); ++index){
-	std::cout << graph_[ordered_atoms_[index]].name() << " " << &graph_[ordered_atoms_[index]] << std::endl;
-}
-std::cout << "vd memory address: " << &graph_[vd] << std::endl;
-utility_exit_with_message("unknown atom_name: " + name3() + "  " + name );
+	if( ordered_index == 0 ) {
+		#if defined BOINC
+		// chu temporary graphic fix for boinc
+		if ( name == "CA" && !is_protein() ) return 1;
+		#endif
+		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
+		show_all_atom_names( tr.Error );
+		tr.Error << std::endl;
+		tr.Error << "printing ordered_atomns names" << std::endl;
+		for(Size index=1; index <= ordered_atoms_.size(); ++index){
+			tr.Error << graph_[ordered_atoms_[index]].name() << " " << &graph_[ordered_atoms_[index]] << std::endl;
+		}
+		tr.Error << "vd memory address: " << &graph_[vd] << std::endl;
+		utility_exit_with_message("unknown atom_name: " + name3() + "  " + name );
 	}
 
 	return ordered_index;
@@ -2433,8 +2382,8 @@ utility_exit_with_message("unknown atom_name: " + name3() + "  " + name );
 /// @brief get atom index by VD
 Size
 ResidueType::atom_index( VD const & vd) const{
-	//// NOTE: Currently we have to iterate twice because atom_name_to_vd_ stores vertex_descriptors not indices.
-	//// A substantial change to the interface will fix this but everyone's code will need to switch to
+	/// NOTE: Currently we have to iterate twice because atom_name_to_vd_ stores vertex_descriptors not indices.
+	/// A substantial change to the interface will fix this but everyone's code will need to switch to
 	if( vd == ResidueGraph::null_vertex()) return 0;
 
 	for( core::Size ii(1); ii <= ordered_atoms_.size(); ++ii ) {
@@ -2491,7 +2440,8 @@ ResidueType::add_residue_connection( std::string const & atom_name )
 	finalized_ = false;
 
 	++n_non_polymeric_residue_connections_;
-	residue_connections_.push_back( ResidueConnection( atom_index( atom_name ), ordered_atoms_[atom_index( atom_name )] ) );
+	residue_connections_.push_back(
+			ResidueConnection( atom_index( atom_name ), ordered_atoms_[atom_index( atom_name )] ) );
 	update_residue_connection_mapping();
 	return residue_connections_.size();
 }
@@ -2515,7 +2465,6 @@ ResidueType::update_actcoord( conformation::Residue & rot ) const
 ///
 /// will update the xyz coords as well if desired, useful inside a patching operation where new
 /// atoms are being added.
-///
 void
 ResidueType::set_icoor(
 		Size const & index,
@@ -3398,8 +3347,7 @@ ResidueType::select_orient_atoms(
 	}
 }
 
-/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
-
+// A graph-based function to determine the size of the smallest ring that involves a given atom.
 core::Size
 ResidueType::smallest_ring_size( VD const & atom, core::Size const & max_size /*= 999999*/ ) const
 {
@@ -3471,6 +3419,57 @@ ResidueType::RNA_type() const{
 			return ( *rna_residue_type_ );
 		}
 
+
+/// @author Labonte
+void
+ResidueType::show( std::ostream & output ) const
+{
+	using namespace std;
+
+	output << name_ << " (" << name3_ << ", " << name1_ << "):" << endl;
+
+	output << " Properties:";
+	Size n_properties = properties_.size();
+	for ( uint i = 1; i <= n_properties; ++i ) {
+		output << ' ' << properties_[ i ];
+	}
+	output << endl;
+
+	output << " Main-chain atoms:";
+	Size n_mainchain_atoms = mainchain_atoms_indices_.size();
+	for ( uint i = 1; i <= n_mainchain_atoms; ++i ) {
+		output << ' ' << atom_name( mainchain_atoms_indices_[ i ] );
+	}
+	output << endl;
+
+	output << " Backbone atoms:  ";
+	Size n_bb_atoms = all_bb_atoms_.size();
+	for ( uint i = 1; i <= n_bb_atoms; ++i ) {
+		output << ' ' << atom_name( all_bb_atoms_[ i ] );
+	}
+	output << endl;
+
+	output << " Side-chain atoms:";
+	Size n_sc_atoms = all_sc_atoms_.size();
+	for ( uint i = 1; i <= n_sc_atoms; ++i ) {
+		output << ' ' << atom_name( all_sc_atoms_[ i ] );
+	}
+	output << endl;
+
+	if ( is_carbohydrate_ ) {
+		carbohydrate_info_->show(output);
+	}
+}
+
+
+// Helper methods //////////////////////////////////////////////////////////////
+// Insertion operator (overloaded so that ResidueType can be "printed" in PyRosetta).
+std::ostream &
+operator<<(std::ostream & output, ResidueType const & object_to_output)
+{
+	object_to_output.show(output);
+	return output;
+}
 
 } // chemical
 } // core

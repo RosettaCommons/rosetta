@@ -109,7 +109,7 @@ atom_next_to_connect_atom(conformation::Residue const & residue, core::uint cons
 
 	// Search for heavy atoms.  (A residue connection is not an atom.)
 	Size const n_indices = atom_indices.size();
-	for (uint i = 1; i < n_indices; ++i) {
+	for (uint i = 1; i <= n_indices; ++i) {
 		if (!residue.atom_is_hydrogen(atom_indices[i])) {
 			return atom_indices[i];
 		}
@@ -343,7 +343,8 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		uint HOY_ref = atom_next_to_connect_atom(*parent_res, OY_ref);
 
 		conf.set_xyz(AtomID(HOY, sequence_position), conf.xyz(AtomID(HOY_ref, parent_res_seqpos)));
-		TR.Debug << "  HOY aligned." << endl;
+		TR.Debug << "  HOY aligned with atom " << parent_res->atom_name(HOY_ref) <<
+				" of residue " << parent_res_seqpos << endl;
 
 		TR.Debug << "   Updating torsions..." << endl;
 		ResidueCAP dummy = & conf.residue(sequence_position);  // to trigger private method commented below
@@ -351,7 +352,8 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		TR.Debug << "   Torsions updated." << endl;
 
 		conf.set_xyz(AtomID(OY, sequence_position), conf.xyz(AtomID(OY_ref, parent_res_seqpos)));
-		TR.Debug << "  OY aligned." << endl;
+		TR.Debug << "  OY aligned with atom " << parent_res->atom_name(OY_ref) <<
+				" of residue " << parent_res_seqpos << endl;
 	}
 
 	// Find and align HOZ(s), if applicable.

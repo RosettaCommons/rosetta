@@ -6,63 +6,14 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-//////////////////////////////////////////////////////////////////////
-/// @file ResidueType.cc
-///
-/// @brief
-/// A class for defining a type of residue
-///
-/// @details
-/// This class contains the "chemical" information for residues as well as the ideal xyz and internal coordinates for a
-/// residue (generated xyz coordinates are found in core/conformation/Residue.hh).  A residuetype in rosetta can be a
-/// ligand, DNA, amino acid, or basically anything. ResidueTypes are generated through params files, which are read from
-/// the database chemical/residue_types.  For ligands, a parameter has to be provided to rosetta through the -extra_res_fa
-/// flag. Primary data is set through the residue_io.cc class. The primary data that are set are: atoms, mmatoms,
-/// orbitals, and properties of the particular residue type.  These properties can be modified through patches, which
-/// is controlled through PatchOperations.cc.
-///
-/// The data structure of a residuetype is based on a boost::graph implementation. Vertex descriptors (VD, yeah, I know,
-/// the name is kind of bad..) are the atoms while the edge descriptors (ED, yet another bad name) are the bonds. Initially,
-/// when a residuetype is constructed, the following primary data is set:
-///
-///	atom_base_;
-///	chi_atoms_;
-///	nu_atoms_;
-///	mainchain_atoms_;
-///	nbr_atom_;
-///	actcoord_atoms_;
-///	cut_bond_neighbor_;
-//	atom_shadowed_;
-///
-/// When this data is set, it is set based on vertex descriptors. Because vertex descriptors never change, like atom
-/// indices, there is no need to reorder this primary data; however, because Rosetta relies heavily on atom indices
-/// to access data, atom indices for the above data has to be generated. To do this, when finalized is called, a function
-/// specifically designed to generate the atom indices for the primary data is called: generate_atom_indices. This function
-/// iterates over the vertex descriptors assigned in each primary data and creates private data based on atom indices. For
-/// example, atom_base_ has atom_base_indices_. When the function atom_base(atomno) is called, the private data atom_base_indices_
-/// is called. This allows for the external interface of ResidueType to be accessed by atom indices while the internal
-/// functions in ResidueType work off of vertex descriptors. This also removes the need to have old2new reordering scheme.
-///
-///
-/// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
-/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.On any given residue, the
-/// heavy atoms are put into the vector first, (their indices are first,) and hydrogens are put in last.
-///
-/// Properties: Properties of a residue include things like DNA, PROTEIN, CHARGED, etc.  These properties
-/// indicate the type of residue it is and what properties are associated with the residue.  They are set when read in.
-/// Several lines of code must be modified to get them to work, all found here in ResidueType.cc.
-///
-/// Orbitals: Orbitals are indexed separately from atoms.  They function much the same way as atoms, except for some
-/// key differences.  To find atoms bonded to orbitals, you must provide the atom index, not the orbital index.  (I
-/// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
-/// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
-/// orbitals, use the flag -output_orbitals.
-///
+
+/// @file ResidueType.hh
+/// @brief Method declarations and simple accessors/getters for ResidueType
 /// @author
 /// Phil Bradley
-/// Steven Combs - these comments
-////////////////////////////////////////////////////////////////////////
-
+/// Steven Combs
+/// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
+/// Jason W. Labonte (code related to lipids, carbohydrates, and other non-AAs)
 
 
 #ifndef INCLUDED_core_chemical_ResidueType_hh
@@ -117,7 +68,6 @@
 #include <utility/vector1.hh>
 
 // External headers
-//#include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
 #include <boost/graph/floyd_warshall_shortest.hpp>
@@ -132,20 +82,62 @@ typedef utility::keys::Key3Tuple< Size, Size, Size > bondangle_atom_set;
 typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 typedef std::map< VD, std::string > ElementMap;
 
+/// @brief A class for defining a type of residue
+/// @details
+/// This class contains the "chemical" information for residues as well as the ideal xyz and internal coordinates for a
+/// residue (generated xyz coordinates are found in core/conformation/Residue.hh).  A ResidueType in Rosetta can be a
+/// ligand, DNA, amino acid, or basically anything. ResidueTypes are generated through .params files, which are read
+/// from the database chemical/residue_types.  For ligands, a parameter has to be provided to rosetta through the
+/// -extra_res_fa flag.  Primary data are set through the residue_io.cc class.  The primary data that are set are:
+/// atoms, mmatoms, orbitals, and properties of the particular ResidueType.  These properties can be modified through
+/// patches, which create new ResidueTypes, and are controlled through PatchOperations.cc.
+///
+/// The data structure of a ResidueType is based on a boost::graph implementation.  Vertex descriptors (VD, yeah, I
+/// know, the name is kind of bad) are the atoms, while the edge descriptors (ED, yet another bad name) are the bonds.
+/// Initially, when a ResidueType is constructed, the following primary data are set:
+///
+///	atom_base_;
+///	chi_atoms_;
+///	nu_atoms_;
+///	mainchain_atoms_;
+///	nbr_atom_;
+///	actcoord_atoms_;
+///	cut_bond_neighbor_;
+///	atom_shadowed_;
+///
+/// When this data is set, it is set based on vertex descriptors.  Because vertex descriptors never change, like atom
+/// indices, there is no need to reorder this primary data; however, because Rosetta relies heavily on atom indices
+/// to access data, atom indices for the above data have to be generated.  To do this, when finalized is called, a
+/// function specifically designed to generate the atom indices for the primary data is called: generate_atom_indices.
+/// This function iterates over the vertex descriptors assigned in the primary data and creates private data based on
+/// atom indices.  For example, atom_base_ has atom_base_indices_.  When the function atom_base(atomno) is called, the
+/// private datum atom_base_indices_ is called.  This allows for the external interface of ResidueType to be accessed by
+/// atom indices while the internal functions in ResidueType work off of vertex descriptors.  This also removes the need
+/// to have the former old2new reordering scheme.
+///
+///
+/// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
+/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.  On any given residue, the
+/// heavy atoms are put into the vector first, (their indices are first,) and hydrogens are put in last.
+///
+/// Properties: Properties of a residue include things like DNA, PROTEIN, CHARGED, etc.  These properties indicate the
+/// type of residue it is and what properties are associated with the residue.  They are set when read in.
+/// Several lines of code must be modified to get them to work, all found in ResidueType.cc.
+///
+/// Orbitals: Orbitals are indexed separately from atoms.  They function much the same way as atoms, except for some
+/// key differences.  To find atoms bonded to orbitals, you must provide the atom index, not the orbital index.  (I
+/// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
+/// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
+/// orbitals, use the flag -output_orbitals.
 class ResidueType : public utility::pointer::ReferenceCount {
 
 public:
-
 	/// @brief destructor
-	virtual
-	~ResidueType();
+	virtual ~ResidueType();
 
 	/// @brief constructor
-	/**
-		 We use the AtomTypeSet object to assign atom_types to atoms inside
-		 add_atom, and to identify (polar) hydrogens, acceptors, etc.
-	 **/
-
+	/// @details We use the AtomTypeSet object to assign atom_types to atoms inside add_atom,
+	/// and to identify (polar) hydrogens, acceptors, etc.
 	ResidueType(
 			AtomTypeSetCAP atom_types,
 			ElementSetCAP element_types,
@@ -156,8 +148,8 @@ public:
 	ResidueType(ResidueType const & residue_type);
 
 	/// @brief make a copy
-	ResidueTypeOP
-	clone() const;
+	ResidueTypeOP clone() const;
+
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -477,6 +469,7 @@ public:
 		return graph_[ordered_atoms_[atomno]].is_polar_hydrogen();
 	}
 
+
 	/// @brief indices of all mainchain atoms
 	AtomIndices const &
 	mainchain_atoms() const
@@ -484,18 +477,15 @@ public:
 		return mainchain_atoms_indices_;
 	}
 
-
 	/// @brief index of mainchain atom
 	Size
-	mainchain_atom( Size const atm) const
+	mainchain_atom( Size const atm ) const
 	{
 		return mainchain_atoms_indices_[atm];
 	}
 
-
 	/// @brief set indices of all mainchain atoms
-	void
-	set_mainchain_atoms( AtomIndices const & mainchain );
+	void set_mainchain_atoms( AtomIndices const & mainchain );
 
 	/// @brief is this atom present in this residue?
 	bool
@@ -1310,6 +1300,9 @@ public:
 	/// @brief is carbohydrate?
 	bool is_carbohydrate() const { return is_carbohydrate_; }
 
+	/// @brief is lipid?
+	bool is_lipid() const { return is_lipid_; }
+
 	bool is_ligand() const { return is_ligand_; }
 
 	/// @brief Returns true if this residue type is a metal ion, false otherwise.  The METAL property is specified in the params file under PROPERTIES.
@@ -1554,7 +1547,7 @@ public:
 	///
 	/// @details Used for knowledge-based scores, dunbrack, etc.
 	/// could be "aa_unk".
-  ///
+	///
 	/// AA is an enum.  There are values for the 20 standard amino acids, the
 	/// 19 canonical D-amino acids, common beta-amino acids and nucleic acids,
 	/// and aa_unk as a general catch-all.
@@ -1798,7 +1791,8 @@ public:
 		return rings_and_their_edges_;
 	}
 
-
+	/// @brief  Generate string representation of ResidueType for debugging purposes.
+	void show( std::ostream & output=std::cout ) const;
 
 
 public:
@@ -1828,7 +1822,7 @@ private:
 	void
 	setup_atom_ordering();
 
-	///// GRAPH FUNCTION to provide backward compatibility ////////
+	/// GRAPH FUNCTION to provide backward compatibility ////////
 	void order_atoms();
 
 	/// reorder primary data in ResidueType given the old2new map, called by finalize()
@@ -1916,7 +1910,7 @@ private:
 		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
 		If you add new properties that are associated with atoms, You need
-		o make sure that you iterate over the VDs! Then in the generate
+		to make sure that you iterate over the VDs! Then in the generate
 		indices function, associate your VDs to atom ordering.
 
 		There is no more old2new ordering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2117,6 +2111,7 @@ private:
 	bool is_RNA_;
 	bool is_NA_;
 	bool is_carbohydrate_;
+	bool is_lipid_;
 	bool is_ligand_;
 	bool is_metal_; //Is this residue type a metal ion?
 	bool is_metalbinding_; //Is this residue type a type capable of binding to a metal ion?
@@ -2292,9 +2287,11 @@ public:
 
 	// this is a total hack, I'm tired
 	mutable bool serialized_;
-private:
 	// end hack?
-};
+};  // class ResidueType
+
+// Insertion operator (overloaded so that ResidueType can be "printed" in PyRosetta).
+std::ostream & operator<<(std::ostream & output, ResidueType const & object_to_output);
 
 } // chemical
 } // core

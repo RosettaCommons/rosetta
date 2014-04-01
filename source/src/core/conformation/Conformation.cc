@@ -78,8 +78,6 @@
 
 
 using basic::T;
-using basic::Error;
-using basic::Warning;
 
 
 static basic::Tracer TR("core.conformation.Conformation");
@@ -981,7 +979,8 @@ Conformation::detect_bonds()
 {
 	using namespace graph;
 
-	utility::vector1< Size > resid_2_incomp( size(), 0 );
+	// Determine how many residues have incomplete connections.
+	utility::vector1< Size > resid_2_incomp( size(), 0 );  // residue id to "incomplete connection number"
 	Size num_incomp( 0 );
 	for ( Size ii = 1; ii <= size(); ++ii ) {
 		if ( residue(ii).has_incomplete_connection() ) {
@@ -993,14 +992,15 @@ Conformation::detect_bonds()
 
 	TR.Debug << "Looking for connection partners for " << num_incomp << " residues" << std::endl;
 
-	utility::vector1< Size > incomp_2_resid( num_incomp );
+	utility::vector1< Size > incomp_2_resid( num_incomp );  // "incomplete connection number" to residue id
 	for ( Size ii = 1; ii <= size(); ++ii ) {
 		if ( resid_2_incomp[ ii ] != 0 ) {
-			incomp_2_resid[ resid_2_incomp[ ii ]] = ii;
+			incomp_2_resid[ resid_2_incomp[ ii ] ] = ii;
 		}
 	}
 
-	/// Create point graph
+	// Create point graph of nbr_atoms of incomplete residues only.
+	// Also, calculate maximum distance that a connected residue could be.
 	PointGraphOP pg = new PointGraph;
 	pg->set_num_vertices( num_incomp );
 	Distance maxrad( 0.0 );
@@ -1018,7 +1018,7 @@ Conformation::detect_bonds()
 		}
 	}
 
-	// Two angstrom extra radius for finding bonds... very generous
+	// two Angstrom extra radius for finding bonds... very generous
 	maxd += 2.0;
 	Distance neighbor_cutoff = maxrad + maxd;
 	find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, neighbor_cutoff );
@@ -1031,6 +1031,7 @@ Conformation::detect_bonds()
 		for ( Size jj = 1; jj <= ii_n_conn; ++jj ) {
 			if ( ! ii_res.connection_incomplete( jj ) ) continue;
 
+			// Get the atom index of the jjth ResidueConnection of the iith incomplete residue.
 			Size const jjatom = ii_res.residue_connection( jj ).atomno();
 			bool multiple_connections_for_jjatom = ii_res.type().n_residue_connections_for_atom( jjatom ) > 1;
 
@@ -1038,8 +1039,8 @@ Conformation::detect_bonds()
 			Size best_match_resid( 0 );
 			Size best_match_connid( 0 );
 
-			for ( PointGraph::UpperEdgeListConstIter
-					ii_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
+			// Search the PointGraph for neighbor residues to the iith incomplete residue.
+			for ( PointGraph::UpperEdgeListConstIter ii_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
 					ii_end_iter = pg->get_vertex( ii ).upper_edge_list_end();
 					ii_iter != ii_end_iter; ++ii_iter ) {
 				Size const neighb_id = ii_iter->upper_vertex();
@@ -1047,17 +1048,18 @@ Conformation::detect_bonds()
 				Residue const & neighb( residue( neighb_resid ) );
 				Size const neighb_n_conn = neighb.type().n_residue_connections();
 
+				// Get the atom index of the kkth ResidueConnection of the iith incomplete residue's neighbor.
 				for ( Size kk = 1; kk <= neighb_n_conn; ++kk ) {
 					if ( ! neighb.connection_incomplete( kk ) ) continue;
 
 					Size const kkatom = neighb.residue_connection( kk ).atomno();
-
 					bool multiple_connections_for_kkatom = neighb.type().n_residue_connections_for_atom(kkatom) > 1;
-					Distance kk_distance = ii_res.connection_distance( *this,
-						jj, neighb.atom( neighb.type().residue_connection( kk ).atomno() ).xyz() );
 
+					// Calculate distances between expected atoms and actual atoms for these two connections.
+					Distance kk_distance = ii_res.connection_distance( *this,
+						jj, neighb.atom( kkatom /*neighb.type().residue_connection( kk ).atomno()*/ ).xyz() );
 					Distance jj_distance = neighb.connection_distance( *this,
-						kk, ii_res.atom( ii_res.type().residue_connection( jj ).atomno() ).xyz() );
+						kk, ii_res.atom( jjatom /*ii_res.type().residue_connection( jj ).atomno()*/ ).xyz() );
 
 					//std::cout << "kk_distance: " << kk_distance << " jj_distance: " << jj_distance << std::endl;
 
@@ -1065,7 +1067,6 @@ Conformation::detect_bonds()
 						Vector jj_expected_coord = ii_res.residue_connection( jj ).icoor().build( ii_res, *this );
 						jj_distance += jj_expected_coord.distance( neighb.xyz( kkatom ) );
 					}
-
 					if ( multiple_connections_for_kkatom ) {
 						Vector kk_expected_coord = neighb.residue_connection( kk ).icoor().build( neighb, *this );
 						kk_distance += kk_expected_coord.distance( ii_res.xyz( jjatom ));
@@ -1078,10 +1079,11 @@ Conformation::detect_bonds()
 						best_match_connid = kk;
 					}
 				}
-			}
+			}  // Loop while the iith incomplete residue still has neighbors.
 
 			if ( best_match_resid == 0 ) {
-				TR.Warning << "Failed to find a residue connection for residue " << ii_resid << " with connection point " << jj << std::endl;
+				TR.Warning << "Failed to find a residue connection for residue " << ii_resid <<
+						" with connection point " << jj << std::endl;
 				continue;
 			}
 
@@ -1090,14 +1092,15 @@ Conformation::detect_bonds()
 			TR.Info << " at atoms ";
 			TR.Info << ii_res.type().atom_name( ii_res.type().residue_connection( jj ).atomno() );
 			TR.Info << " and ";
-			TR.Info << residue( best_match_resid ).type().atom_name( residue( best_match_resid ).type().residue_connection( best_match_connid ).atomno() );
+			TR.Info << residue( best_match_resid ).type().atom_name(
+					residue( best_match_resid ).type().residue_connection( best_match_connid ).atomno() );
 			TR.Info << std::endl;
-			TR.Info << " with mututal distances: " << best_jj << " and " << best_kk << std::endl;
+			TR.Info << " with mutual distances: " << best_jj << " and " << best_kk << std::endl;
 
 			residues_[ ii_resid ]->residue_connection_partner( jj, best_match_resid, best_match_connid );
 			residues_[ best_match_resid ]->residue_connection_partner( best_match_connid, ii_resid, jj );
-		}
-	}
+		}  // Loop while the iith incomplete residue still has connections.
+	}  // Loop to the next incomplete residue.
 }
 
 void

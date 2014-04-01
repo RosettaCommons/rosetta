@@ -438,3 +438,9 @@ residue_types/carbohydrates/to8-alpha-Neup.params
 ## Membrane Types
 residue_types/membrane/MEM.params
 residue_types/membrane/EMB.params
+
+## Lipid Types (require -include_lipids flag to be loaded in)
+### Sphingolipids
+residue_types/lipids/sphingosine.params
+### Fatty Acids
+residue_types/lipids/linoleate.params

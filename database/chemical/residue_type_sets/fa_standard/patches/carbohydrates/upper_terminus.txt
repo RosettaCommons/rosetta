@@ -1,6 +1,6 @@
 ## full-atom carbohydrate upper terminus patch
 
-NAME upper_terminus
+NAME non-reducing_end
 TYPES UPPER_TERMINUS
 
 BEGIN_SELECTOR

@@ -72,7 +72,7 @@ static basic::Tracer tr("core.chemical.ResidueTypeSet");
 /// @brief c-tor from directory
 ResidueTypeSet::ResidueTypeSet(
 		std::string const & name,
-		std	::string const & directory,
+		std::string const & directory,
 		std::vector< std::string > const & extra_res_param_files, // defaults to empty
 		std::vector< std::string > const & extra_patch_files // defaults to empty
 ) :
@@ -110,8 +110,14 @@ ResidueTypeSet::ResidueTypeSet(
 			if ( no_proton_states ) continue;
 
 			// Skip carbohydrate ResidueTypes unless included with include_sugars flag.
-			if ((!option[OptionKeys::in::include_sugars]) &&
-					(line.substr(0, 27) == "residue_types/carbohydrates")) {
+			if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
+					( line.substr( 0, 27 ) == "residue_types/carbohydrates" ) ) {
+				continue;
+			}
+
+			// Skip lipid ResidueTypes unless included with include_lipids flag.
+			if ( ( ! option[ OptionKeys::in::include_lipids ] ) &&
+					( line.substr( 0, 20 ) == "residue_types/lipids" ) ) {
 				continue;
 			}
 

@@ -590,7 +590,12 @@ void build_pose(
 	TR.Debug << "build_pose... Ok." << std::endl;
 }
 
-void build_pose_as_is2( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing, ImportPoseOptions const & options );
+void build_pose_as_is2(
+		io::pdb::FileData & fd,
+		pose::Pose & pose,
+		chemical::ResidueTypeSet const & residue_set,
+		id::AtomID_Mask & missing,
+		ImportPoseOptions const & options );
 
 // "super-simple" (C) by Phil
 //
@@ -648,11 +653,13 @@ void build_pose_as_is2(
 		}
 	}
 
-	//If the user has set appropriate flags, check whether the pose contains metal ions, and automatically set up covalent bonds and constraints to them.
+	// If the user has set appropriate flags, check whether the pose contains metal ions,
+	// and automatically set up covalent bonds and constraints to them.
 	if( options.set_up_metal_bonds() ) {	
 		core::util::auto_setup_all_metal_bonds(pose, options.metal_bond_LJ_multiplier(), true);
 		if( options.set_up_metal_constraints() ) {
-			core::util::auto_setup_all_metal_constraints(pose, options.metal_bond_dist_constraint_multiplier(), options.metal_bond_dist_constraint_multiplier() );
+			core::util::auto_setup_all_metal_constraints( pose, options.metal_bond_dist_constraint_multiplier(),
+					options.metal_bond_dist_constraint_multiplier() );
 		}
 	}
 

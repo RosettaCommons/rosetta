@@ -1345,7 +1345,8 @@ build_pose_as_is1(
 		pose_temps.push_back( rinfo.temps );
 
 		// update the pose-internal chain label if necessary
-		if ( ( is_lower_terminus || !check_Ntermini_for_this_chain || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
+		if ( ( is_lower_terminus || !check_Ntermini_for_this_chain || is_branch_lower_terminus ) &&
+				pose.total_residue() > 1 ) {
 			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 		}
 
@@ -1354,8 +1355,6 @@ build_pose_as_is1(
 
 
 	// Check termini status of newly created pose residues.
-	// Will this ever happen? ~ Labonte
-
 	Size const nres( pose.total_residue() );
 	for ( Size i=1; i<= nres; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
@@ -1552,22 +1551,22 @@ build_pose_as_is1(
 
 		std::string line;
 		while( getline( data, line ) ) {
-		if( line != "##Begin comments##")
-		continue;
-		getline( data, line );
-		while (line != "##End comments##"){
-		//TR<<"Testing read comments! :"<<line<<std::endl;
-		std::string const key;
-		std::string const value;
-		utility::vector1<std::string> comment_line(utility::string_split(line,' '));
-		if (comment_line.size()<2){
-			getline( data, line );
+			if( line != "##Begin comments##")
 			continue;
+			getline( data, line );
+			while (line != "##End comments##") {
+				//TR<<"Testing read comments! :"<<line<<std::endl;
+				std::string const key;
+				std::string const value;
+				utility::vector1<std::string> comment_line(utility::string_split(line,' '));
+				if (comment_line.size()<2) {
+					getline( data, line );
+					continue;
+				}
+				core::pose::add_comment(pose,comment_line[1],comment_line[2]);
+				getline( data, line );
+			}
 		}
-		core::pose::add_comment(pose,comment_line[1],comment_line[2]);
-		getline( data, line );
-	}
-	}
 	}
 }
 

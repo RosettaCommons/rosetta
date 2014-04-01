@@ -205,6 +205,27 @@ Residue::clone() const
 	return new Residue( *this );
 }
 
+void
+Residue::show( std::ostream & output ) const
+{
+	using namespace std;
+
+	output << "Residue " << seqpos_ << ": ";
+	rsd_type_.show(output);
+
+	output << "Atom Coordinates:" << endl;
+	Size n_atoms = natoms();
+	for ( Size i = 1; i <= n_atoms; ++i ) {
+		Atom const & atom ( atoms_[ i ] );
+		output << atom_name( i ) << ": ";
+		output << atom.xyz().x() << ", " << atom.xyz().y() << ", " << atom.xyz().z();
+		if ( is_virtual( i ) ) {
+			output << " (virtual)";
+		}
+		output << endl;
+	}
+}
+
 
 Size
 Residue::atom_type_index( Size const atomno ) const
@@ -786,6 +807,8 @@ Residue::update_sequence_numbering( utility::vector1< Size > const & old2new )
 	determine_nonstandard_polymer_status();
 }
 
+
+// Distance between a potential residue connection match and the position of the expected atom
 Distance
 Residue::connection_distance(
 	conformation::Conformation const & conf,
@@ -1109,20 +1132,7 @@ Residue::is_virtual( Size const & atomno ) const
 //ja
 std::ostream & operator << ( std::ostream & os, Residue const & res )
 {
-	os << res.name() << ' ' << res.seqpos() << ": \n";
-	for ( Size j=1; j<=res.natoms(); ++j ) {
-		Atom const & atom ( res.atom(j) );
-		os << res.atom_name(j) << ": ";
-		os << atom.xyz().x() << ' ' << atom.xyz().y() << ' '<< atom.xyz().z();
-		if (res.is_virtual(j)) {
-			os << " (virtual)";
-		}
-		os << std::endl;
-	}
-	if (res.is_carbohydrate()) {
-		os << std::endl;
-		res.carbohydrate_info()->show(os);
-	}
+	res.show(os);
 	return os;
 }
 

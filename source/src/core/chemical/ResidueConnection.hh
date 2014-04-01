@@ -39,8 +39,8 @@ namespace chemical {
 /// parts of the residue where there are chemical bonds beyond the intra-residue
 /// chemical bonds are expected -- places where they can be chemically linked
 /// to the outside world.  A conformation::Residue will require that its
-/// ResidueConnections be fullfilled by other Residues -- the ResConnID class
-/// describes how two residues are connected: e.g. the third ResConnID for
+/// ResidueConnections be fulfilled by other Residues -- the ResConnID class
+/// describes how two residues are connected: e.g., the third ResConnID for
 /// residue 10 would say "I connect to residue 58 at residue 58's third residue
 /// connection" if residue 10 and residue 58 were disulfide bonded as the disulfide
 /// connection id is "3" for two mid-protein cystine residues.  The advantages

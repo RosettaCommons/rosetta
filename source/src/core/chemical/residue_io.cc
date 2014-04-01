@@ -97,6 +97,48 @@ atom_id_from_icoor_line(
 }
 
 
+// If polymer, determine a list of main chain atoms by shortest path from LOWER to UPPER.
+AtomIndices
+define_mainchain_atoms( ResidueTypeOP rsd )
+{
+	AtomIndices mainchain;
+
+	if ( rsd->is_polymer() ) {
+		// Test that this is really a polymer residue.
+		if ( rsd->upper_connect_id() && rsd->upper_connect_atom() &&
+				rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
+			Size upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
+			// Default main chain: defined by shortest path from LOWER to UPPER.
+			// IMO, everyone should really explicitly define the main chain from the topology file.  ~Labonte
+			FArray2D_int D( get_residue_path_distances( *rsd ) );
+			uint atom( lower_connect );
+			while ( atom != upper_connect ) {
+				mainchain.push_back( atom );
+				AtomIndices const & nbrs( rsd->nbrs( atom ) );
+				int min_d( D( atom, upper_connect ) );
+				uint next_atom( atom );
+
+				for ( uint i=1; i<= nbrs.size(); ++i ) {
+					uint const nbr( nbrs[i] );
+					if ( D( nbr, upper_connect ) < min_d ) {
+						min_d = D( nbr, upper_connect );
+						next_atom = nbr;
+					}
+				}
+				assert( next_atom != atom );
+				atom = next_atom;
+			}
+			mainchain.push_back( upper_connect );
+		} else {
+			tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, " <<
+					"but it doesn't have the appropriate UPPER and LOWER connection points specified.  " <<
+					"Set MAINCHAIN_ATOMS in the topology file to remove this warning." << std::endl;
+		}
+	}
+	return mainchain;
+}
+
+
 ResidueTypeOP
 read_topology_file(
 	std::string const & filename,
@@ -171,6 +213,13 @@ read_topology_file(
 /// if the "parse_charge" flag is on (whatever that is).
 /// E.g., "ATOM  CB  CH3  CT3  -0.27   0.000" from ALA.params.
 ///
+/// BACKBONE_AA:
+/// Sets the "backbone_aa" for a particular residue, which can be used
+/// to template the backbone scoring (rama and p_aa_pp terms).  For example,
+/// "ROTAMER_AA ILE" in the non-canonical 4,5-dihydroxyisoleucine params file
+/// tells Rosetta to use isoleucine's ramachandran map and p_aa_pp scoring for
+/// this noncanonical.
+///
 /// BOND:
 /// Declares a bond between two atoms giving their names. This line is
 /// whitespace delimited.  E.g., "BOND  N    CA" from ALA.params.
@@ -207,7 +256,10 @@ read_topology_file(
 /// for ARG).  CONNECT tags are processed in the order they are
 /// listed in the input file.  For polymeric residue types
 /// (e.g., proteins, DNA, RNA, saccharides) "LOWER_CONNECT" and "UPPER_CONNECT"
-/// should be listed before any additional CONNECT records.
+/// should be listed before any additional CONNECT records.  CONNECTs are
+/// assigned an index beginning after the LOWER_CONNECT and UPPER_CONNECT, if
+/// present.  That is, if a topology file lists both a LOWER_CONNECT and an UPPER_CONNECT,
+/// the 1st CONNECT will we given the index 3.
 ///
 /// CUT_BOND:
 /// Declares a previously-declared bond to be off-limits to the
@@ -219,10 +271,10 @@ read_topology_file(
 /// FIRST_SIDECHAIN_ATOM:
 /// Gives the name of the first side-chain atom.  All heavy atoms that were
 /// declared before the first side-chain atom in the topology file
-/// are considered backbone atoms.  All heavy atoms after the first
-/// side-chain atom are considered side-chain atoms. Hydrogen atoms
-/// are either side-chain or backbone depending on the heavy atom to
-/// which they are bound. E.g., "FIRST_SIDECHAIN_ATOM CB" from SER.params.
+/// are considered backbone atoms (but not necessarily main-chain atoms).
+/// All heavy atoms after the first side-chain atom are considered side-chain atoms.
+/// Hydrogen atoms are either side-chain or backbone depending on the heavy atom to
+/// which they are bound.  E.g., "FIRST_SIDECHAIN_ATOM CB" from SER.params.
 ///
 /// IO_STRING:
 /// Gives the three-letter and one-letter codes that are used to read and
@@ -248,10 +300,10 @@ read_topology_file(
 /// 3) at3 list at2 as its parent, at1 as its grand parent, and itself as its great-grandparent.
 /// The atoms "LOWER" and "UPPER" are given for polymeric residues to describe the
 /// ideal coordinate of the previous and next residues. For non-polymeric inter-residue
-/// connections, atoms "CONN#" should be given (e.g. CONN3 for the disulfide connection in CYD).
+/// connections, atoms "CONN#" should be given (e.g., CONN3 for the disulfide connection in CYD).
 /// The number for an inter-residue connection comes from the order in which the connection is
 /// declared in the file, and includes the LOWER_CONNECT and UPPER_CONNECT connections in this
-/// count (e.g. for CYD, there is a LOWER_CONNECT, and UPPER_CONNECT, and only a single
+/// count (e.g., for CYD, there is a LOWER_CONNECT, and UPPER_CONNECT, and only a single
 /// CONNECT declaration, so the disulfide connection is the third connection). The order in which
 /// internal coordinate data for atoms are given, excepting the first three, must define a "tree"
 /// in that atom geometry must only be specified in terms of atoms whose geometry has already been
@@ -265,6 +317,19 @@ read_topology_file(
 /// connection (chemical bond), i.e., the bond to residue i-1.  E.g.,
 /// "LOWER_CONNECT N" from SER.params.
 ///
+/// MAINCHAIN_ATOMS:
+/// This is a list of atom names that define the main chain.  The main chain describes the linear connection of atoms
+/// from the lower-terminus to the upper-terminus in a residue.  This is NOT synonymous with "backbone atoms".
+/// (Backbone atoms are any atoms NOT included in a side chain, as defined by FIRST_SIDECHAIN_ATOM.  See above.)  All
+/// main-chain atoms will necessarily be backbone atoms, but not all backbone atoms are main-chain atoms because some
+/// residues include rings and/or non-rotatable functional groups.  For example, the carbonyl oxygen of an amino acid
+/// residue is a backbone atom but NOT a part of the main chain.
+/// If a topology file does not include a MAINCHAIN_ATOMS record, Rosetta will determine the main chain by finding the
+/// shortest path from lower terminus to upper terminus, which may be through any CUT_BONDs you have defined!
+/// Use of this tag is required for those residue types that ONLY come in LOWER_TERMINUS or UPPER_TERMINUS varieties,
+/// such as any residue type that serves exclusively as a "cap" for a larger polymer.
+/// E.g., "MAINCHAIN_ATOMS  C1 C2 C3 C4 O4" from an aldohexopyranose topology file.
+///
 /// METAL_BINDING_ATOMS:
 /// For polymer residue types that can bind metals (METALBINDING property), this is a list of the atoms
 /// that can form a direct bond to the metal.  For example, in ASP.params, it would read:
@@ -272,7 +337,7 @@ read_topology_file(
 ///
 /// NAME:
 /// Gives the name for this ResidueType.  The name for each ResidueType
-/// must be unique within a ResidueTypeSet.  It is not limited to three latters.
+/// must be unique within a ResidueTypeSet.  It is not limited to three letters.
 /// E.g., "NAME SER" from SER.params.
 ///
 /// NBR_ATOM:
@@ -354,13 +419,6 @@ read_topology_file(
 /// to describe to the RotamerLibrary what amino acid to mimic for the
 /// sake of building rotamers.  E.g., "ROTAMER_AA SER" No examples
 /// currently found in the database (10/13).
-///
-/// BACKBONE_AA:
-/// Sets the "backbone_aa" for a particular residue, which can be used
-/// to template the backbone scoring (rama and p_aa_pp terms).  For example,
-/// "ROTAMER_AA ILE" in the non-canonical 4,5-dihydroxyisoleucine params file
-/// tells Rosetta to use isoleucine's ramachandran map and p_aa_pp scoring for
-/// this noncanonical.
 ///
 /// STRING_PROPERTY:
 /// Stores an arbitrary string value with a given string key.
@@ -510,6 +568,7 @@ read_topology_file(
 	bool found_AA_record = false;
 	bool found_PDB_ROTAMERS_record = false;
 	std::string pdb_rotamers_filename = "";
+	AtomIndices mainchain_atoms;
 
 	for (Size i=1; i<= nlines; ++i) {
 		std::string const & line( lines[i] );
@@ -522,7 +581,6 @@ read_topology_file(
 			l >> atom1;
 			l >> rotate; // not used here
 			rsd->add_residue_connection( atom1);
-			//std::cout << "CONNECT record deprecated " << std::endl;
 		} else if ( tag == "TYPE" ) {
 			// will probably handle this differently later on
 			l >> tag;
@@ -635,11 +693,28 @@ read_topology_file(
 				rsd->add_variant_type( tag );
 				l >> tag;
 			}
+		} else if ( tag == "MAINCHAIN_ATOMS" ) {
+			// Note: Main-chain atoms describe the linear connection of atoms from the lower-terminus to the upper-
+			// terminus in a residue.  This is NOT synonymous with "backbone atoms".  (Backbone atoms are any atoms NOT
+			// included in a side chain, as defined by FIRST_SIDECHAIN_ATOM.  See below.)  All main-chain atoms will
+			// necessarily be backbone atoms, but not all backbone atoms are main-chain atoms because some residues
+			// include rings and/or non-rotatable functional groups.  For example, the carbonyl oxygen of an amino acid
+			// residue is a backbone atom but NOT a part of the main chain.
+			// If a topology file does not include a MAINCHAIN_ATOMS record, Rosetta will determine the main chain by
+			// finding the shortest path from lower terminus to upper terminus.
+			l >> tag;
+			while ( !l.fail() ) {
+				mainchain_atoms.push_back( rsd->atom_index( tag ) );
+				l >> tag;
+			}
 		} else if ( tag == "FIRST_SIDECHAIN_ATOM" ) {
-			// note-- atoms are sidechain by default
+			// Note: Atoms are side-chain by default.
+			// In this case, the opposite of "side-chain" is "backbone"; the "main chain" will be a subset of the
+			// backbone atoms, because some residues may contain rings or non-rotatable functional groups, such as a
+			// carbonyl.  The main chain is defined separately.  (See above.)
 			l >> tag;
 			if ( tag == "NONE" ) {
-				// set all atoms to backbone
+				// Set all atoms to backbone.
 				for ( Size j=1; j<= rsd->natoms(); ++j ) {
 					rsd->set_backbone_heavyatom( rsd->atom_name(j) );
 				}
@@ -749,7 +824,7 @@ read_topology_file(
 
 
 	if ( !found_AA_record ) {
-		basic::Warning() << "No AA record found for " << rsd->name()
+		tr.Warning << "No AA record found for " << rsd->name()
 				<< "; assuming " << name_from_aa( rsd->aa() ) << std::endl;
 	}
 
@@ -758,7 +833,7 @@ read_topology_file(
 	// also sets up base_atom
 	{
 
-		std::map< std::string, Vector > rsd_xyz;
+		std::map< std::string, Vector > rsd_xyz;  // The coordinates of each atom in the residue.
 
 		for ( Size i=1; i<= nlines; ++i ) {
 
@@ -792,7 +867,6 @@ read_topology_file(
 						utility_exit_with_message("In second ICOOR atom in topology file - parent atom not found.");
 					}
 					rsd_xyz[ child_atom ] = Vector( d, 0.0, 0.0 );
-
 				} else {
 					Vector torsion_xyz;
 					if ( child_atom == torsion_atom ) {
@@ -806,7 +880,9 @@ read_topology_file(
 					} else {
 						if( ! ( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
 								rsd_xyz.count( torsion_atom ) ) ) {
-							utility_exit_with_message("In ICOOR atom line in topology file: reference atoms must be specified in earlier line. One of "+parent_atom+" or "+angle_atom+" or "+torsion_atom);
+							utility_exit_with_message("In ICOOR atom line in topology file:"
+									"reference atoms must be specified in earlier line.  Missing " +
+									parent_atom + " or " + angle_atom + " or " + torsion_atom);
 						}
 						torsion_xyz = rsd_xyz[ torsion_atom ];
 					}
@@ -814,7 +890,6 @@ read_topology_file(
 					rsd_xyz[ child_atom ] = stub.spherical( phi, theta, d );
 				}
 			}
-
 
 			// set atom_base
 			if ( child_atom != "UPPER" && child_atom != "LOWER" && child_atom.substr(0,4) != "CONN" ) {
@@ -833,7 +908,6 @@ read_topology_file(
 
 			// set icoor
 			rsd->set_icoor( i, child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
-
 
 		} // loop over file lines looking for ICOOR_INTERNAL lines
 
@@ -855,45 +929,14 @@ read_topology_file(
 			}
 		}
 
-		// If polymer, fill list of main chain atoms.
-		if ( rsd->is_polymer() ) {
-			// Test that this is really a polymer residue.
-			if ( rsd->upper_connect_id() && rsd->upper_connect_atom() &&
-					rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
-				Size upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
-				AtomIndices mainchain;
-				if (!rsd->is_NA()) {  // Default main chain: defined by order in .params file
-					for (uint atom = lower_connect; atom <= upper_connect; ++atom) {
-						mainchain.push_back(atom);
-					}
-				} else /* rsd->is_NA() */ {  // Alternative main chain: defined by shortest path from LOWER to UPPER
-					FArray2D_int D( get_residue_path_distances( *rsd ) );
-					uint atom( lower_connect );
-					while ( atom != upper_connect ) {
-						mainchain.push_back( atom );
-						AtomIndices const & nbrs( rsd->nbrs( atom ) );
-						int min_d( D( atom, upper_connect ) );
-						uint next_atom( atom );
 
-						for ( uint i=1; i<= nbrs.size(); ++i ) {
-							uint const nbr( nbrs[i] );
-							if ( D( nbr, upper_connect ) < min_d ) {
-								min_d = D( nbr, upper_connect );
-								next_atom = nbr;
-							}
-						}
-						assert( next_atom != atom );
-
-						atom = next_atom;
-					}
-					mainchain.push_back( upper_connect );
-				}
-				rsd->set_mainchain_atoms( mainchain );
-			} else {
-				tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, " <<
-						"but it doesn't have the appropriate UPPER and LOWER connection points specified." << std::endl;
-			}
+		// If polymer, fill list of main chain atoms, if not already defined by MAINCHAIN_ATOMS.
+		// (This must occur after internal coordinates and connections are set.)
+		if ( mainchain_atoms.size() == 0 ) {
+			mainchain_atoms = define_mainchain_atoms( rsd );
 		}
+		rsd->set_mainchain_atoms( mainchain_atoms );
+
 
 		// now also need to store the information about the geometry at the links...
 
@@ -926,19 +969,15 @@ read_topology_file(
 	}
 
     return rsd;
-
 }
 
 
-/// @brief function to write out a topology file given a residue type, can be used to
-/// @brief debug on the fly generated residue types. Note: not perfect yet, the enums for
-/// @brief the connection types are given in numbers instead of names
+/// @details function to write out a topology file given a residue type, can be used to
+/// debug on the fly generated residue types. Note: not perfect yet, the enums for
+/// the connection types are given in numbers instead of names
 void
-write_topology_file(
-	ResidueType const & rsd
-)
+write_topology_file( ResidueType const & rsd )
 {
-
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
 

@@ -76,6 +76,10 @@ ICoorAtomID::ICoorAtomID(
 		atomno_ = int_of( name.substr(4) );
 		vd_ = rsd_type.get_vertex(atomno_);
 		assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
+		if ( atomno_ != rsd_type.n_residue_connections() ) {
+			tw.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
+					" either has an incorrect index or is listed out of order in the file." << std::endl;
+		}
 	} else if ( name == "LOWER" ) {
 		type_ = POLYMER_LOWER; atomno_ = 0;
 		// atomno is unused

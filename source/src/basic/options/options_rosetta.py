@@ -121,6 +121,12 @@ Options = Option_Group( '',
 				short="Load carbohydrate residues into memory?",
 				legal=["true", "false"],
 				default="false"),
+		Option("include_lipids", "Boolean",
+				desc='Sets whether or not lipid residues will be'
+						'loaded into Rosetta.  The default value is false.',
+				short="Load lipid residues into memory?",
+				legal=["true", "false"],
+				default="false"),
 		Option("include_surfaces", "Boolean",
 				desc='Sets whether or not mineral surface residues will be'
 						'loaded into Rosetta.  The default value is false.',
