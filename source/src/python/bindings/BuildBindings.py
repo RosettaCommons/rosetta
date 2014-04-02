@@ -731,10 +731,18 @@ def prepareMiniLibs(mini_path, bindings_path):
 
     add_loption = getLinkerOptions()
 
-    execute("Linking mini lib...",
-            "cd %(mini_path)s && cd %(lib_path)s && gcc %(add_loption)s \
-            %(objs)s -lz -lstdc++ -o %(mini)s" % dict(mini_path=mini_path, lib_path=lib_path, add_loption=add_loption, mini=mini, objs=objs, compiler=Options.compiler)
-             )
+    rebuild = True
+    if Options.update:
+        if os.path.isfile(mini):
+            rebuild = False
+            for f in objs.split():
+                if not f.startswith('/'): f = mini_path+'/'+lib_path+f
+                if os.path.getmtime(f) > os.path.getmtime(mini): rebuild=True;  break
+
+    if rebuild: execute("Linking mini lib...",
+                        "cd %(mini_path)s && cd %(lib_path)s && gcc %(add_loption)s \
+                        %(objs)s -lz -lstdc++ -o %(mini)s" % dict(mini_path=mini_path, lib_path=lib_path, add_loption=add_loption, mini=mini, objs=objs, compiler=Options.compiler)
+                    )
 
     #if Platform == 'cygwin':
     #        execute("cp libs...", "cd %s && cp %s/*.dll %s" % (mini_path, lib_path, bindings_path) )
@@ -749,15 +757,17 @@ def prepareMiniLibs(mini_path, bindings_path):
             for k in libs:
                 execute('Adjustin lib path in %s' % l, 'install_name_tool -change %s rosetta/%s %s' % (os.path.abspath(mini_path+'/'+lib_path+k), k, bindings_path+'/'+l) )
 
-
     binding_source_path = os.path.abspath( bindings_path+'/../..' if Options.debug else bindings_path+'/..' )
     shutil.copyfile(binding_source_path+'/src/__init__.py' , bindings_path+'/__init__.py')
 
     if Options.debug:  # creating some symlinks for debug version
-        for l in 'TestBindings.py test demos toolbox'.split() + ['libboost_python.'+suffix]:
+        for l in 'TestBindings.py test demos toolbox'.split():
             if os.path.islink('./debug/'+l): os.remove('./debug/'+l)
             os.symlink('./../'+l, './debug/'+l)
 
+        l = 'libboost_python.'+suffix  # linking libboost_python to rosetta/ dir instead of root
+        if os.path.islink('./debug/'+l): os.remove('./debug/'+l)
+        os.symlink('./../rosetta/'+l, './debug/'+l)
 
 
 def getAllRosettaSourceFiles():
