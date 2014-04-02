@@ -324,6 +324,10 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 				if( delta != 0 )
 					continue;
 			}
+			if( equal_length() ){ // if equal_length, don't select different loop lengths
+         		if( delta != 0 )
+           			continue;
+      		}
 			bool const fit = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
 
 			if( fit || database_pdb_entry_ != "" || dbase_entry != 0 ){
@@ -357,7 +361,8 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 	} // fi dbase_iterate
 	else if( dbase_entry == 0 ){
 		if( database_pdb_entry_ == "" )//randomize dbase entry
-			dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
+			dbase_subset_[ ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 ) ];
+			//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
 		else{ // look for the pdb_entry name
 			for( core::Size count = 1; count <= dbase_subset_.size(); ++count ){
 				if( torsion_database_[ dbase_subset_[ count ] ].source_pdb() == database_pdb_entry_ ){
@@ -1723,7 +1728,8 @@ Splice::rb_adjust_template( core::pose::Pose const & pose ) const{
 	RBOutMover rbo;
 	//	template_pose_->dump_pdb( "pre_jump_template.pdb" );
 	core::pose::Pose copy_pose( pose ); /// I don't want the fold tree to change on pose...
-	core::kinematics::Jump const pose_jump = rbo.get_disulf_jump( copy_pose, *template_pose_ );
+	core::pose::Pose chainA = *pose.split_by_chain( 1 );
+	core::kinematics::Jump const pose_jump = rbo.get_disulf_jump( copy_pose, chainA );
 
 	RBInMover rbi;
 	rbi.set_fold_tree( *template_pose_ );
