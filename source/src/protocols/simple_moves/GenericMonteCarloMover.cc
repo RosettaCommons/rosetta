@@ -114,7 +114,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	saved_accept_file_name_( "" ),
 	saved_trial_number_file_( "" ),
 	mover_tag_( NULL ),
-	reset_baselines_( true )
+	reset_baselines_( true ),
+	progress_file_( "" )
 {
   initialize();
 }
@@ -573,6 +574,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
 {
   ++trial_counter_;
   TR.Debug <<"filters.size() "<<filters_.size()<<std::endl;
+	core::Real filter_val(0.0);
   if( filters_.size() ){
     runtime_assert( filters_.size() == adaptive_.size() );
 		runtime_assert( filters_.size() == temperatures_.size() );
@@ -590,7 +592,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
       bool const adaptive( adaptive_[ index ] );
       Real const temp( temperatures_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
-			core::Real const filter_val( filter->report_sm( pose ));
+			filter_val = filter->report_sm( pose );
 			TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores_[index]<<"; last="<<last_accepted_scores_[index]<<" )"<<std::endl;
 
       provisional_scores.push_back( flip * filter_val );
@@ -612,6 +614,28 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
         accepted = true;
 			}
     }//for index
+
+		if( progress_file_ != "" ){ //write progress data to file
+/// write a table to a progress file that has the following structure
+/// Trial# filter_val pose_comments protein_sequence
+
+ 	 		std::ofstream data;
+  		data.open( progress_file().c_str(), std::ios::app );
+  		if( !data.good() )
+   	 		utility_exit_with_message( "Unable to open GenericMonteCarlo progress file for writing: " + progress_file() + "\n" );
+
+			std::string pose_sequence( "" );
+			for( core::Size chaini = 1 ; chaini <= pose.conformation().num_chains(); ++chaini )
+				pose_sequence += pose.chain_sequence( chaini );
+
+			using namespace std;
+			string stringed_comments("");
+			map< string, string > const comments = core::pose::get_all_comments(pose);
+	 	  for( map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i )
+	 	     stringed_comments += i->first + ":" + i->second + " ";
+  		data<<trial_counter_<<" "<<accepted<<" "<<filter_val<<" "<<stringed_comments<<" "<<pose_sequence<<'\n';
+			data.flush();
+		}
 
     if( accepted ){
 	    TR<<"Accept"<<std::endl;
@@ -1036,9 +1060,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 
 	saved_accept_file_name_ = tag->getOption< std::string >( "saved_accept_file_name", "" );
 	saved_trial_number_file_ = tag->getOption< std::string >( "saved_trial_number_file", "" );
-	if( tag->hasOption( "mover_tag" ) )
+	if( tag->hasOption( "mover_tag" ) ) // mover_tag isn't used. It's good to have this if needed in future to communicate splice -> monte carlo
 		mover_tag_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
 	reset_baselines( tag->getOption< bool >( "reset_baselines", true ) );
+	progress_file( tag->getOption< std::string >( "progress_file", "" ) );
   initialize();
 }
 

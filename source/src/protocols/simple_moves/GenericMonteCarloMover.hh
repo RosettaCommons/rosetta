@@ -330,6 +330,9 @@ protected:
 	utility::vector1< core::Real >
 	generate_random() const;
 
+	std::string progress_file() const{ return progress_file_; }
+	void progress_file( std::string const s ){ progress_file_ = s; }
+
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
 	Real scoring( Pose & pose );
@@ -438,6 +441,7 @@ private:
 	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
 	std::string user_defined_mover_name_; // dflt ""; the mover being called by GenericMC. Used to add values to the poses DataCache.
 	bool reset_baselines_; ///dflt true; reset the filters' baseline at trial=1?
+	std::string progress_file_; // dflt ""; a file name where data on each step is saved.
 };
 
 } // namespace simple_moves
