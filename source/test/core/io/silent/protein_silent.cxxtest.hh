@@ -27,6 +27,7 @@
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/Energies.hh>

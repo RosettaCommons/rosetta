@@ -21,7 +21,7 @@
 #include <protocols/jumping/SheetBuilder.hh>
 #include <protocols/jumping/SameStrand.hh>
 #include <protocols/jumping/PairingLibrary.hh>
-
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <protocols/simple_filters/JumpEvaluator.hh>
 
 // project headers
