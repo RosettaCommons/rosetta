@@ -193,7 +193,10 @@ RBInMover::apply( Pose & pose ){
     //TR<<"Current RBO jump: "<<RBMoveString<<std::endl;
     //core::pose::add_comment(pose,"RBO ",RBMoveString);
 
-    ++current_entry_;
+    if( current_entry_ == jump_library_.size() ) // rewind to the beginning of the library
+			current_entry_ = 1;
+		else
+			++current_entry_; // go up one entry
 	checkpoint();
 }
 

@@ -619,7 +619,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
 	    return true;
     }// fi accepted
     else{
-      TR.Debug <<"Reject"<<std::endl;
+      TR<<"Reject"<<std::endl;
       mc_accepted_ = MCA_rejected;
       return false;
     }

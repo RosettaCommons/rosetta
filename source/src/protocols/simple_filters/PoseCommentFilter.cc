@@ -57,6 +57,11 @@ PoseComment::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::Dat
 bool
 PoseComment::apply( core::pose::Pose const & pose ) const {
 	core::Real const val ( compute( pose ) );
+	TR<<"Pose comment ";
+	if( val >= 0.9999 )
+		TR<<"found"<<std::endl;
+	else
+		TR<<"not found"<<std::endl;
 	return( val >= 0.9999 );
 }
 
@@ -84,6 +89,8 @@ PoseComment::compute(
 		std::map< std::string, std::string > const comments = get_all_comments( pose );
 		if( comment_exists() && comments.size() > 0 )
 			return 1.0;
+		if( comments.size() == 0 )
+			return 0.0;
 		for( std::map< std::string, std::string >::const_iterator it = comments.begin(); it != comments.end(); ++it ){// iterate over all comments and find the one with the value
 			if( it->second == comment_value() )
 				return 1.0;
