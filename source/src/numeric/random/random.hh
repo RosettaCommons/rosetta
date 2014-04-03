@@ -79,6 +79,11 @@ enum RND_RunType { _RND_NormalRun_, _RND_TestRun_ };
 /// @brief Random number generator system
 class RandomGenerator
 {
+private:
+	// RandomGenerators must be initialized with a magicNumber.
+	RandomGenerator(); // Unimplemented private -- do not use.
+	// Do not make copies of RandomGenerators - pass by reference instead.
+	RandomGenerator( RandomGenerator const & ); // Unimplemented private -- do not use.
 public:
 	RandomGenerator(int const magicNumber);
 	~RandomGenerator();

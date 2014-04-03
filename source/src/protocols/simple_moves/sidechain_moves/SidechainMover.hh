@@ -294,7 +294,7 @@ private:
 
 	void
 	perturb_chi(
-		numeric::random::RandomGenerator Rand,
+		numeric::random::RandomGenerator & Rand,
 		core::Real max_deviation,
 		utility::vector1<core::Real> & current_chi,
 		utility::vector1<core::Real> & new_chi

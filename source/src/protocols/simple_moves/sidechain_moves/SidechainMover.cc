@@ -241,7 +241,7 @@ SidechainMover::initialize_simulation(
 
 void
 SidechainMover::perturb_chi(
-	numeric::random::RandomGenerator Rand,
+	numeric::random::RandomGenerator & Rand,
 	core::Real max_deviation,
 	utility::vector1< core::Real > & old_chi,
 	utility::vector1< core::Real > & new_chi
