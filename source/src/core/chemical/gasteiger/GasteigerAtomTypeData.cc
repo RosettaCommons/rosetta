@@ -56,7 +56,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief element type property as string
     //! @param PROPERTY the property desired
     //! @return the property as string
-    const std::string &GasteigerAtomTypeData::GetPropertyName( const GasteigerAtomTypeData::Properties &PROPERTY)
+    const std::string &GasteigerAtomTypeData::GetPropertyName( const GasteigerAtomTypeData::Properties PROPERTY)
     {
       static const std::string s_properties[] =
       {
@@ -196,7 +196,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     GasteigerAtomTypeData::GasteigerAtomTypeData
     (
       const std::string &NAME,
-      const ElementOP &ELEMENT_TYPE,
+      const ElementOP ELEMENT_TYPE,
       const short &CHARGE
     ) :
       name_( NAME ),
@@ -317,7 +317,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
 
     //! @brief returns the hybridization of the atom type
     //! @return the type of hybrid orbital
-    const GasteigerAtomTypeData::HybridOrbitalType &GasteigerAtomTypeData::get_hybrid_orbital_type() const
+    GasteigerAtomTypeData::HybridOrbitalType GasteigerAtomTypeData::get_hybrid_orbital_type() const
     {
       return hybridization_;
     }
@@ -376,7 +376,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     }
 
     //! return Charge
-    const short &GasteigerAtomTypeData::get_formal_charge() const
+    short GasteigerAtomTypeData::get_formal_charge() const
     {
       return charge_;
     }
@@ -390,7 +390,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief atom type property as core::Real
     //! @param PROPERTY the property desired
     //! @return the property as core::Real
-    core::Real GasteigerAtomTypeData::get_atom_type_property( const GasteigerAtomTypeData::Properties &PROPERTY) const
+    core::Real GasteigerAtomTypeData::get_atom_type_property( const GasteigerAtomTypeData::Properties PROPERTY) const
     {
       return properties_[ PROPERTY];
     }
@@ -590,7 +590,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
 
     //! @brief GetAverageNeutralSigmaIVToEARatio helper function for AtomTypes::CalculateElectronegativityValues
     //! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for neutral atoms vs. anions
-    core::Real &GasteigerAtomTypeData::get_average_neutral_sigma_ip_to_anion_ip_ratio()
+    core::Real GasteigerAtomTypeData::get_average_neutral_sigma_ip_to_anion_ip_ratio()
     {
       static core::Real s_Data( numeric::get_undefined_real() );
       return s_Data;
@@ -598,7 +598,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
 
     //! @brief get_average_neutral_pi_ip_to_anion_ip_ratio helper function for AtomTypes::CalculateElectronegativityValues
     //! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for neutral atoms vs. anions
-    core::Real &GasteigerAtomTypeData::get_average_neutral_pi_ip_to_anion_ip_ratio()
+    core::Real GasteigerAtomTypeData::get_average_neutral_pi_ip_to_anion_ip_ratio()
     {
       static core::Real s_Data( numeric::get_undefined_real() );
       return s_Data;
@@ -606,7 +606,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
 
     //! @brief get_average_cation_sigma_ip_to_neutral_ip_ratio helper function for AtomTypes::CalculateElectronegativityValues
     //! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for cations vs. neutral atoms
-    core::Real &GasteigerAtomTypeData::get_average_cation_sigma_ip_to_neutral_ip_ratio()
+    core::Real GasteigerAtomTypeData::get_average_cation_sigma_ip_to_neutral_ip_ratio()
     {
       static core::Real s_Data( numeric::get_undefined_real() );
       return s_Data;
@@ -614,7 +614,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
 
     //! @brief get_average_cation_pi_ip_to_neutral_ip_ratio helper function for AtomTypes::CalculateElectronegativityValues
     //! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for cations vs. neutral atoms
-    core::Real &GasteigerAtomTypeData::get_average_cation_pi_ip_to_neutral_ip_ratio()
+    core::Real GasteigerAtomTypeData::get_average_cation_pi_ip_to_neutral_ip_ratio()
     {
       static core::Real s_Data( numeric::get_undefined_real() );
       return s_Data;
@@ -622,7 +622,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief type difference as string
     //! @param TYPE_DIFFERENCE the type difference for which a string is desired
     //! @return the type difference as a string
-    const std::string &GasteigerAtomTypeData::get_type_difference_name( const GasteigerAtomTypeData::TypeDifference &TYPE_DIFFERENCE)
+    const std::string &GasteigerAtomTypeData::get_type_difference_name( const GasteigerAtomTypeData::TypeDifference TYPE_DIFFERENCE)
     {
       static const std::string s_Properties[] =
       {
@@ -640,7 +640,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief get the electronegativity type corresponding to TypeDifference
     //! @param TYPE_DIFFERENCE the type difference to get the corresponding electronegativity for
     //! @return the electronegativity type corresponding to TypeDifference
-    core::Real GasteigerAtomTypeData::get_electronegativity( const GasteigerAtomTypeData::TypeDifference &TYPE_DIFFERENCE) const
+    core::Real GasteigerAtomTypeData::get_electronegativity( const GasteigerAtomTypeData::TypeDifference TYPE_DIFFERENCE) const
     {
       switch( TYPE_DIFFERENCE)
       {
@@ -656,7 +656,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief set a particular data
     //! @param DATA the property to set
     //! @param VALUE the value to set the property to
-    void GasteigerAtomTypeData::set_property( const Properties &DATA, const core::Real &VALUE)
+    void GasteigerAtomTypeData::set_property( const Properties DATA, const core::Real VALUE)
     {
       properties_[ DATA] = VALUE;
     }
@@ -664,7 +664,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief get the average ionization potential ratio between cation and neutral atom type that differ by TYPE_DIFFERENCE
     //! @param TYPE_DIFFERENCE the type difference to get the corresponding ratio for
     //! @return the ratio
-    core::Real GasteigerAtomTypeData::get_average_ip_change_cation_to_neutral( const TypeDifference &TYPE_DIFFERENCE) const
+    core::Real GasteigerAtomTypeData::get_average_ip_change_cation_to_neutral( const TypeDifference TYPE_DIFFERENCE) const
     {
       switch( TYPE_DIFFERENCE)
       {
@@ -681,7 +681,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief get the average ionization potential ratio between neutral and cation atom type that differ by TYPE_DIFFERENCE
     //! @param TYPE_DIFFERENCE the type difference to get the corresponding ratio for
     //! @return the ratio
-    core::Real GasteigerAtomTypeData::get_average_ip_change_neutral_to_anion( const TypeDifference &TYPE_DIFFERENCE) const
+    core::Real GasteigerAtomTypeData::get_average_ip_change_neutral_to_anion( const TypeDifference TYPE_DIFFERENCE) const
     {
       switch( TYPE_DIFFERENCE)
       {
@@ -698,7 +698,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief get the ionization potential type corresponding to TypeDifference
     //! @param TYPE_DIFFERENCE the type difference to get the corresponding ionization potential for
     //! @return the ionization potential type corresponding to TypeDifference
-    core::Real GasteigerAtomTypeData::get_ionization_potential( const TypeDifference &TYPE_DIFFERENCE) const
+    core::Real GasteigerAtomTypeData::get_ionization_potential( const TypeDifference TYPE_DIFFERENCE) const
     {
       switch( TYPE_DIFFERENCE)
       {
@@ -714,7 +714,7 @@ const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
     //! @brief get the electron affinity type corresponding to TypeDifference
     //! @param TYPE_DIFFERENCE the type difference to get the corresponding electron affinity for
     //! @return the electron affinity type corresponding to TypeDifference
-    core::Real GasteigerAtomTypeData::get_electron_affinity( const TypeDifference &TYPE_DIFFERENCE) const
+    core::Real GasteigerAtomTypeData::get_electron_affinity( const TypeDifference TYPE_DIFFERENCE) const
     {
       switch( TYPE_DIFFERENCE)
       {

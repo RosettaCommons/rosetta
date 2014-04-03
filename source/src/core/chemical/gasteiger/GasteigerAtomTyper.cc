@@ -58,7 +58,7 @@ PossibleAtomTypesForAtom::gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTE
 /// @brief store the atomic environment for each atom type in a map for fast lookup when
 /// determining atom types
 std::map< std::string, PossibleAtomTypesForAtom >
-PossibleAtomTypesForAtom::CreateAtomicEnvironmentToTypesMap ( const bool &IN_AROMATIC_RING, GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {
+PossibleAtomTypesForAtom::CreateAtomicEnvironmentToTypesMap ( const bool IN_AROMATIC_RING, GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {
 	std::map< std::string, PossibleAtomTypesForAtom > atomic_environment_to_possible_types;
 	for ( core::Size ii(1); ii <= GASTEIGER_ATOM_TYPE_SET->n_types(); ++ii ) {
 		GasteigerAtomTypeDataCOP const & type( (*GASTEIGER_ATOM_TYPE_SET)[ii] );
@@ -178,12 +178,12 @@ PossibleAtomTypesForAtom::PossibleAtomTypesForAtom() :
 PossibleAtomTypesForAtom
 PossibleAtomTypesForAtom::FindPossibleAtomTypesForAtom
 (
-		const GasteigerAtomTypeSetCOP & gasteiger_atom_type_set,
+		GasteigerAtomTypeSetCOP gasteiger_atom_type_set,
 		const Element &ELEMENT,
-		const core::Size &NUMBER_ELECTRONS_IN_BONDS,
-		const core::Size &NUMBER_BONDS,
-		const int &SUSPECTED_CHARGE,
-		const bool &IN_AROMATIC_RING
+		const core::Size NUMBER_ELECTRONS_IN_BONDS,
+		const core::Size NUMBER_BONDS,
+		const int SUSPECTED_CHARGE,
+		const bool IN_AROMATIC_RING
 ) {
 	// create maps from atomic environment to possible types
 	typedef std::map< std::string, PossibleAtomTypesForAtom> EnvTypesMap;
@@ -254,7 +254,7 @@ PossibleAtomTypesForAtom::FindPossibleAtomTypesForAtom
 //// data access //
 ///////////////////
 
-bool PossibleAtomTypesForAtom::CouldHaveHybridization( const GasteigerAtomTypeData::HybridOrbitalType &HYBRID) const
+bool PossibleAtomTypesForAtom::CouldHaveHybridization( const GasteigerAtomTypeData::HybridOrbitalType HYBRID) const
 {
 	return m_NumberAtomTypesWithHybridization[ HYBRID ];
 }
@@ -334,7 +334,7 @@ GasteigerAtomTypeDataCOP PossibleAtomTypesForAtom::GetMostStableType() const
 
 //! @brief add an atom type to be considered
 //! @param ATOM_TYPE the type of atom to consider
-void PossibleAtomTypesForAtom::AddAtomType( const GasteigerAtomTypeDataCOP & ATOM_TYPE)
+void PossibleAtomTypesForAtom::AddAtomType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 {
 	const GasteigerAtomTypeData::HybridOrbitalType hybrid( ATOM_TYPE->get_hybrid_orbital_type());
 
@@ -407,7 +407,7 @@ void PossibleAtomTypesForAtom::AddAtomType( const GasteigerAtomTypeDataCOP & ATO
 
 //! @brief set this object to only consider the given atom type
 //! @param ATOM_TYPE the atom type desired
-void PossibleAtomTypesForAtom::SetToType( const GasteigerAtomTypeDataCOP &ATOM_TYPE)
+void PossibleAtomTypesForAtom::SetToType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 {
 	if( std::find (
 			m_AtomTypesByDecreasingStability.begin(),
@@ -497,7 +497,7 @@ void PossibleAtomTypesForAtom::Finalize(const core::chemical::RealResidueGraph &
 //// helper functions //
 ////////////////////////
 
-core::Size PossibleAtomTypesForAtom::hybridization_rank( GasteigerAtomTypeData::HybridOrbitalType const & hybrid ) {
+core::Size PossibleAtomTypesForAtom::hybridization_rank( GasteigerAtomTypeData::HybridOrbitalType const hybrid ) {
 	switch ( hybrid ) {
 	case GasteigerAtomTypeData::Unhybridized:
 		return 3;
@@ -515,7 +515,7 @@ core::Size PossibleAtomTypesForAtom::hybridization_rank( GasteigerAtomTypeData::
 
 //! @brief remove a particular hybrid orbital type from the possible types, unless that would remove all possibilities
 //! @param HYBRID the type of hybrid orbital to remove
-void PossibleAtomTypesForAtom::RemoveHybridization( const GasteigerAtomTypeData::HybridOrbitalType &HYBRID)
+void PossibleAtomTypesForAtom::RemoveHybridization( const GasteigerAtomTypeData::HybridOrbitalType HYBRID)
 {
 	// if there are no alternatives to HYBRID for this type, just return
 	if( m_NumberAtomTypesWithHybridization[ HYBRID ] == GetNumberPossibleTypes())
@@ -547,7 +547,7 @@ void PossibleAtomTypesForAtom::RemoveHybridization( const GasteigerAtomTypeData:
 	}
 }
 
-void PossibleAtomTypesForAtom::AddAromaticAtomType( const GasteigerAtomTypeDataCOP &ATOM_TYPE, const int &DESIRED_CHARGE)
+void PossibleAtomTypesForAtom::AddAromaticAtomType( GasteigerAtomTypeDataCOP ATOM_TYPE, const int DESIRED_CHARGE)
 {
 	const GasteigerAtomTypeData::HybridOrbitalType hybrid( ATOM_TYPE->get_hybrid_orbital_type());
 	const int charge_diff( std::abs( ATOM_TYPE->get_formal_charge() - DESIRED_CHARGE));
@@ -816,7 +816,7 @@ void PossibleAtomTypesForAtom::FinalizeUnhybridized()
 //! @param DESIRED_CHARGE the preferred charge
 //! used during construction of the maps when there is no part of standardization that
 //! should edit this class
-void PossibleAtomTypesForAtom::FinalizeAromatic( const int &DESIRED_CHARGE)
+void PossibleAtomTypesForAtom::FinalizeAromatic( const int DESIRED_CHARGE)
 {
 	// to work in any aromatic system, one of several different types may be necessary to satisfy hueckels rule
 	// thus, always choose the first type in the list with the given number of pi electrons that has the best
@@ -1241,7 +1241,7 @@ bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealRes
 /// * The bridge nitrogens of fused ring structures like PO5, C7M and AZQ are typed trig versus gasteiger tet.
 
 void
-assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set, bool keep_existing) {
+assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing) {
 	assert( gasteiger_atom_type_set );
 	// This functionality was taken from AtomsCompleteStandardizer
 
@@ -1302,7 +1302,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 				const core::chemical::RealResidueGraph & graph,
 				VD const & atomVD,
-				GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set,
+				GasteigerAtomTypeSetCOP gasteiger_atom_type_set,
 				core::Size connections )
 {
 	// determine number of sigma orbitals (assume one per bond)

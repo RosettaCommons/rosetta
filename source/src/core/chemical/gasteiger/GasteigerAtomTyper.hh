@@ -39,12 +39,12 @@ namespace gasteiger {
 
 class PossibleAtomTypesForAtom; // Forward declaration
 
-void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set, bool keep_existing);
+void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing);
 
 PossibleAtomTypesForAtom GetPossibleTypesForAtom(
-				const core::chemical::RealResidueGraph & graph,
+				core::chemical::RealResidueGraph const & graph,
 				RealResidueVD const & atomVD,
-				GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set,
+				GasteigerAtomTypeSetCOP gasteiger_atom_type_set,
 				core::Size connections );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,13 +82,13 @@ class PossibleAtomTypesForAtom :
   //! Parameters are
   //! 1. the atom
   //! 2. the size of the smallest ring that this atom is part of
-  void ( PossibleAtomTypesForAtom::*m_FinalizeFunction)( const core::chemical::RealResidueGraph &, const core::chemical::RealResidueVD & );
+  void ( PossibleAtomTypesForAtom::*m_FinalizeFunction)( core::chemical::RealResidueGraph const &, core::chemical::RealResidueVD const & );
 
   //! @brief Create the map from atom environment string to possible atom types
   //! @param IN_AROMATIC_RING whether to only include types that could be in an aromatic ring
   static std::map< std::string, PossibleAtomTypesForAtom> CreateAtomicEnvironmentToTypesMap
   (
-    const bool &IN_AROMATIC_RING, GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET
+    const bool IN_AROMATIC_RING, GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET
   );
 
 public:
@@ -120,12 +120,12 @@ public:
   static PossibleAtomTypesForAtom
   FindPossibleAtomTypesForAtom
   (
-	const GasteigerAtomTypeSetCOP &GASTEIGER_ATOM_TYPE_SET,
+		GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET,
     const Element &ELEMENT,
-    const core::Size &NUMBER_ELECTRONS_IN_BONDS,
-    const core::Size &NUMBER_BONDS,
-    const int &SUSPECTED_CHARGE,
-    const bool &IN_AROMATIC_RING
+    const core::Size NUMBER_ELECTRONS_IN_BONDS,
+    const core::Size NUMBER_BONDS,
+    const int SUSPECTED_CHARGE,
+    const bool IN_AROMATIC_RING
   );
 
 //  //! @brief Clone function
@@ -145,11 +145,11 @@ public:
   //! @brief tell whether a particular hybrid orbital type is possible given what we know about this atom
   //! @param HYBRID the type of hybrid orbital
   //! @return true iff there is a possible atom type for that hybrid orbital
-  bool CouldHaveHybridization( const GasteigerAtomTypeData::HybridOrbitalType &HYBRID) const;
+  bool CouldHaveHybridization( const GasteigerAtomTypeData::HybridOrbitalType HYBRID) const;
 
   //! @brief return the number of types that the atom has the potential to become
   //! @return the number of types that the atom has the potential to become
-  std::size_t GetNumberPossibleTypes() const;
+  core::Size GetNumberPossibleTypes() const;
 
   //! @brief return the most stable type
   //! @return the most stable type - NULL if no such type exists
@@ -182,11 +182,11 @@ public:
 
   //! @brief add an atom type to be considered
   //! @param ATOM_TYPE the type of atom to consider
-  void AddAtomType( const GasteigerAtomTypeDataCOP & ATOM_TYPE);
+  void AddAtomType( GasteigerAtomTypeDataCOP ATOM_TYPE);
 
   //! @brief set this object to only consider the given atom type
   //! @param ATOM_TYPE the atom type desired
-  void SetToType( const GasteigerAtomTypeDataCOP &ATOM_TYPE);
+  void SetToType( GasteigerAtomTypeDataCOP ATOM_TYPE);
 
   //! @brief set the final type based on the given atom and smallest ring size
   void Finalize( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD);
@@ -216,18 +216,18 @@ public:
 //// helper functions //
 ////////////////////////
 
-  core::Size hybridization_rank( GasteigerAtomTypeData::HybridOrbitalType const & hybrid );
+  core::Size hybridization_rank( GasteigerAtomTypeData::HybridOrbitalType const hybrid );
 
   //! @brief remove a particular hybrid orbital type from the possible types, unless that would remove all possibilities
   //! @param HYBRID the type of hybrid orbital to remove
-  void RemoveHybridization( const GasteigerAtomTypeData::HybridOrbitalType &HYBRID);
+  void RemoveHybridization( const GasteigerAtomTypeData::HybridOrbitalType HYBRID);
 
   //! @brief add an atom type to the search using a set of rules for atom types in aromatic rings
   //! @param ATOM_TYPE the type of atom to consider
   //! @param DESIRED_CHARGE the charge desired
   //! The atom type will be ordered using the distance from the desired charge as the first sort key, second by
   //! the stability.  Unlike AddAtomType, AddAromaticAtomType always adds the type to the considered list
-  void AddAromaticAtomType( const GasteigerAtomTypeDataCOP &ATOM_TYPE, const int &DESIRED_CHARGE);
+  void AddAromaticAtomType( GasteigerAtomTypeDataCOP ATOM_TYPE, const int DESIRED_CHARGE);
 
   //! @brief Select the best choice for the atom type wherever possible
   //! @see @link https://structbio.vanderbilt.edu:8443/display/MeilerLab/RethinkingAtomTypeDetection @endlink
@@ -242,7 +242,7 @@ public:
   //! @param DESIRED_CHARGE the preferred charge
   //! used during construction of the maps when there is no part of standardization that
   //! should edit this class
-  void FinalizeAromatic( const int &DESIRED_CHARGE);
+  void FinalizeAromatic( const int DESIRED_CHARGE);
 
   //! @brief choose the final atom type for Nitrogen with two single bonds
   void FinalizeNitrogenTwoSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );

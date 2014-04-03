@@ -89,7 +89,7 @@ public:
 	//! @brief element type property as string
 	//! @param PROPERTY the property desired
 	//! @return the property as string
-	static const std::string &GetPropertyName( const Properties &PROPERTY);
+	static const std::string &GetPropertyName( const Properties PROPERTY);
 
 	//#      //! PropertyEnum simplifies the usage of the Properties enum of this class
 	//#      typedef util::WrapperEnum< Properties, &GetPropertyName, NumberOfProperties> PropertyEnum;
@@ -194,7 +194,7 @@ public:
 	GasteigerAtomTypeData
 	(
 			const std::string &NAME,
-			const ElementOP &ELEMENT_TYPE,
+			ElementOP ELEMENT_TYPE,
 			const short &CHARGE
 	);
 
@@ -225,7 +225,7 @@ public:
 
 	//! @brief returns the hybridization of the atom type
 	//! @return the type of hybrid orbital
-	const HybridOrbitalType &get_hybrid_orbital_type() const;
+	HybridOrbitalType get_hybrid_orbital_type() const;
 
 	//! @brief returns the number of hybridized orbitals
 	//! @return the number of hybridized orbitals
@@ -254,7 +254,7 @@ public:
 	core::Size get_number_pi_orbitals() const;
 
 	//! @return Charge
-	const short &get_formal_charge() const;
+	short get_formal_charge() const;
 
 	//! @return valence electrons in sp orbitals
 	core::Size get_valence_electrons_sp() const;
@@ -268,7 +268,7 @@ public:
 	//! @brief atom type property as core::Real
 	//! @param PROPERTY the property desired
 	//! @return the property as core::Real
-	core::Real get_atom_type_property( const GasteigerAtomTypeData::Properties &PROPERTY) const;
+	core::Real get_atom_type_property( const GasteigerAtomTypeData::Properties PROPERTY) const;
 
 	//! @return the orbital electronegativity associated with the charged state
 	core::Real get_orbital_E_neg_pos() const;
@@ -373,17 +373,17 @@ public:
 	//! @brief get the average ionization potential ratio between cation and neutral atom type that differ by TYPE_DIFFERENCE
 	//! @param TYPE_DIFFERENCE the type difference to get the corresponding ratio for
 	//! @return the ratio
-	core::Real get_average_ip_change_cation_to_neutral( const TypeDifference &TYPE_DIFFERENCE) const;
+	core::Real get_average_ip_change_cation_to_neutral( const TypeDifference TYPE_DIFFERENCE) const;
 
 	//! @brief get the average ionization potential ratio between neutral and cation atom type that differ by TYPE_DIFFERENCE
 	//! @param TYPE_DIFFERENCE the type difference to get the corresponding ratio for
 	//! @return the ratio
-	core::Real get_average_ip_change_neutral_to_anion( const TypeDifference &TYPE_DIFFERENCE) const;
+	core::Real get_average_ip_change_neutral_to_anion( const TypeDifference TYPE_DIFFERENCE) const;
 
 	//! @brief type difference as string
 	//! @param TYPE_DIFFERENCE the type difference for which a string is desired
 	//! @return the type difference as a string
-	static const std::string &get_type_difference_name( const TypeDifference &TYPE_DIFFERENCE);
+	static const std::string &get_type_difference_name( const TypeDifference TYPE_DIFFERENCE);
 
 	//! @brief determine the difference betweent his atom type data and another
 	//! @param OTHER the atom type data to compare this atom type data to
@@ -393,17 +393,17 @@ public:
 	//! @brief get the electronegativity type corresponding to a TypeDifference
 	//! @param TYPE_DIFFERENCE the type difference to get the corresponding electronegativity for
 	//! @return the electronegativity type corresponding to TypeDifference
-	core::Real get_electronegativity( const TypeDifference &TYPE_DIFFERENCE) const;
+	core::Real get_electronegativity( const TypeDifference TYPE_DIFFERENCE) const;
 
 	//! @brief get the ionization potential type corresponding to a TypeDifference
 	//! @param TYPE_DIFFERENCE the type difference to get the corresponding ionization potential for
 	//! @return the ionization potential type corresponding to TypeDifference
-	core::Real get_ionization_potential( const TypeDifference &TYPE_DIFFERENCE) const;
+	core::Real get_ionization_potential( const TypeDifference TYPE_DIFFERENCE) const;
 
 	//! @brief get the electron affinity type corresponding to a TypeDifference
 	//! @param TYPE_DIFFERENCE the type difference to get the corresponding electron affinity for
 	//! @return the electron affinity type corresponding to TypeDifference
-	core::Real get_electron_affinity( const TypeDifference &TYPE_DIFFERENCE) const;
+	core::Real get_electron_affinity( const TypeDifference TYPE_DIFFERENCE) const;
 
 	//#      //! @brief get the electronegativity from charge corresponding to a TypeDifference
 	//#      //! @param TYPE_DIFFERENCE the type difference to get the corresponding function for
@@ -413,23 +413,23 @@ public:
 	//! @brief set a particular data
 	//! @param DATA the property to set
 	//! @param VALUE the value to set the property to
-	void set_property( const Properties &DATA, const core::Real &VALUE);
+	void set_property( const Properties DATA, const core::Real VALUE);
 
 	//! @brief GetAverageNeutralSigmaIVToEARatio helper function for AtomTypes::CalculateElectronegativityValues
 	//! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for neutral atoms vs. anions
-	static core::Real &get_average_neutral_sigma_ip_to_anion_ip_ratio();
+	static core::Real get_average_neutral_sigma_ip_to_anion_ip_ratio();
 
 	//! @brief get_average_neutral_pi_ip_to_anion_ip_ratio helper function for AtomTypes::CalculateElectronegativityValues
 	//! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for neutral atoms vs. anions
-	static core::Real &get_average_neutral_pi_ip_to_anion_ip_ratio();
+	static core::Real get_average_neutral_pi_ip_to_anion_ip_ratio();
 
 	//! @brief get_average_cation_sigma_ip_to_neutral_ip_ratio helper function for AtomTypes::CalculateElectronegativityValues
 	//! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for cations vs. neutral atoms
-	static core::Real &get_average_cation_sigma_ip_to_neutral_ip_ratio();
+	static core::Real get_average_cation_sigma_ip_to_neutral_ip_ratio();
 
 	//! @brief get_average_cation_pi_ip_to_neutral_ip_ratio helper function for AtomTypes::CalculateElectronegativityValues
 	//! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for cations vs. neutral atoms
-	static core::Real &get_average_cation_pi_ip_to_neutral_ip_ratio();
+	static core::Real get_average_cation_pi_ip_to_neutral_ip_ratio();
 
 private:
 
