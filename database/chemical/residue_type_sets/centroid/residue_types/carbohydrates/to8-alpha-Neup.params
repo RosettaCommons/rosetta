@@ -2,47 +2,54 @@ NAME ->8)-alpha-Neup       # ->8)-alpha-neuraminic acid
 IO_STRING Neu Z            # Note lower case!
 TYPE POLYMER
 AA UNK
-ATOM  C2  CH1   X   0.00   # anomeric carbon
-ATOM  C3  CH2   X   -0.18
-ATOM  C4  CH1   X   0.14
-ATOM  C5  CH1   X   0.22
-ATOM  C6  CH1   X   0.04
-ATOM  C7  CH1   X   0.14
-ATOM  C8  CH1   X   0.14
-ATOM  O8  OOC   X   -0.66
-ATOM  HO8 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
-ATOM  C1  COO   X   0.52
-ATOM  C9  CH2   X   0.05
-ATOM 1O1  OOC   X   -0.76
-ATOM 2O1  OOC   X   -0.76
-ATOM  O2  VIRT VIRT 0.00   # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atom by patch for lower terminus
-ATOM  O3  VIRT VIRT 0.00   # allows for consistent chi angles
-ATOM  O4  OH    X   -0.66
-ATOM  N5  Nlys  X   -0.30
-ATOM  O6  OOC   X   -0.13
-ATOM  VO6 VIRT VIRT 0.00   # to superimpose with O6
-ATOM  O7  OH    X   -0.66
-ATOM  O9  OH    X   -0.66
-ATOM H1O1 VIRT VIRT 0.00   # allows for consistent chi angles; replaced with real atom for a protonated patch
-ATOM  HO2 VIRT VIRT 0.0    # for internal res, virtual; allows for consistent chi angles; replaced with real atom by patch for lower terminus
-ATOM HO3  VIRT VIRT 0.00   # allows for consistent chi angles
-ATOM 1H3  Hapo  X   0.09   # pro-S
-ATOM 2H3  Hapo  X   0.09   # pro-R
-ATOM  H4  Hapo  X   0.09
-ATOM  HO4 Hpol  X   0.43
-ATOM  H5  Hapo  X   0.09
-ATOM 1HN5 Hpol  X   0.33
-ATOM 2HN5 Hpol  X   0.33
-ATOM 3HN5 Hpol  X   0.33
-ATOM  H6  Hapo  X   0.09
-ATOM  H7  Hapo  X   0.09
-ATOM  HO7 Hpol  X   0.43
-ATOM  H8  Hapo  X   0.09
-ATOM 1H9  Hapo  X   0.09   # pro-S
-ATOM 2H9  Hapo  X   0.09   # pro-R
-ATOM  HO9 Hpol  X   0.43
-UPPER_CONNECT O8
+
+# Main-chain atoms:
+ATOM  C2  CH1  CT1   0.00  # anomeric carbon
+ATOM  C3  CH2  CT2  -0.18
+ATOM  C4  CH1  CT1   0.14
+ATOM  C5  CH1  CT1   0.22
+ATOM  C6  CH1  CT1   0.04
+ATOM  C7  CH1  CT1   0.14
+ATOM  C8  CH1  CT1   0.14
+ATOM  O8  OOC   OS  -0.66
+# Other backbone heavy atoms:
+ATOM  O6  OOC   OS  -0.13
+ATOM  VO6 VIRT VIRT  0.00  # to superimpose with O6
+# Side-chain heavy atoms:
+ATOM  C1  COO   CC   0.52
+ATOM 1O1  OOC   OC  -0.76
+ATOM 2O1  OOC   OC  -0.76
+ATOM  O2  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atom by patch for lower terminus
+ATOM  O3  VIRT VIRT  0.00  # allows for consistent chi angles
+ATOM  O4  OH   OH1  -0.66
+ATOM  N5  Nlys NH3  -0.30
+ATOM  O7  OH   OH1  -0.66
+ATOM  C9  CH2  CT2   0.05
+ATOM  O9  OH   OH1  -0.66
+# Hydrogens:
+ATOM H1O1 VIRT VIRT  0.00  # allows for consistent chi angles; replaced with real atom for a protonated patch
+ATOM  HO2 VIRT VIRT  0.0   # for internal res, virtual; allows for consistent chi angles; replaced with real atom by patch for lower terminus
+ATOM HO3  VIRT VIRT  0.00  # allows for consistent chi angles
+ATOM 1H3  Hapo  HA   0.09  # pro-S
+ATOM 2H3  Hapo  HA   0.09  # pro-R
+ATOM  H4  Hapo  HA   0.09
+ATOM  HO4 Hpol  H    0.43
+ATOM  H5  Hapo  HB   0.09
+ATOM 1HN5 Hpol  HC   0.33
+ATOM 2HN5 Hpol  HC   0.33
+ATOM 3HN5 Hpol  HC   0.33
+ATOM  H6  Hapo  HA   0.09
+ATOM  H7  Hapo  HA   0.09
+ATOM  HO7 Hpol  H    0.43
+ATOM  H8  Hapo  HA   0.09
+ATOM  HO8 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
+ATOM 1H9  Hapo  HA   0.09  # pro-S
+ATOM 2H9  Hapo  HA   0.09  # pro-R
+ATOM  HO9 Hpol  H    0.43
+
 LOWER_CONNECT C2
+UPPER_CONNECT O8
+
 BOND  C2   C3
 BOND  C3   C4
 BOND  C4   C5
@@ -83,6 +90,7 @@ BOND  C8   H8
 BOND  C9  1H9
 BOND  C9  2H9
 BOND  O9   HO9
+
 CHI 1  C2   C1  1O1  H1O1  # meaningless chi; this is just a placeholder
 CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
 CHI_ROTAMERS 2   0 0
@@ -143,9 +151,15 @@ NU 1  VO6  C2   C3   C4    # duplicates BB 1, but defined differently
 NU 2  C2   C3   C4   C5    # duplicates BB 2
 NU 3  C3   C4   C5   C6    # duplicates BB 3
 NU 4  C4   C5   C6   O6    # duplicates BB 4, but defined differently
+
 PROPERTIES  POLAR CYCLIC CHARGED CARBOHYDRATE KETOSE D_SUGAR PYRANOSE ALPHA_SUGAR SIALIC_ACID 2-KETOALDONIC_ACID 3-DEOXY_SUGAR 5-AMINO_SUGAR
+
 NBR_ATOM  C5
 NBR_RADIUS 8.667101
+
+MAINCHAIN_ATOMS  C2 C3 C4 C5 C6 C7 C8 O8
+FIRST_SIDECHAIN_ATOM C1
+
 # must build main chain 1st!
 ICOOR_INTERNAL    C2     0.000000    0.000000    0.000000   C2    C3    C4
 ICOOR_INTERNAL    C3     0.000000  180.000000    1.576621   C2    C3    C4
@@ -156,20 +170,22 @@ ICOOR_INTERNAL    C7   176.215069   74.527831    1.519130   C6    C5    C4
 ICOOR_INTERNAL    C8   177.044309   64.960631    1.566085   C7    C6    C5
 ICOOR_INTERNAL    O8   -65.966186   68.871891    1.435000   C8    C7    C6
 ICOOR_INTERNAL  UPPER  -60.063625   70.448994    1.500000   O8    C8    C7
-ICOOR_INTERNAL    HO8  -60.063625   70.448994    1.0        O8    C8    C7
+# then the rest of the backbone heavy atoms
 ICOOR_INTERNAL    O6    60.4175     70.000114    1.492341   C6    C5    C4
-ICOOR_INTERNAL    C1    71.4418     66.231       1.52547    C2    C3    C4
-ICOOR_INTERNAL    C9   178.796536   69.706481    1.533804   C8    C7    C6
+ICOOR_INTERNAL   VO6   -55.0917     71.25        1.46771    C2    C3    C4  # must build as branch from main chain
 ICOOR_INTERNAL  LOWER -171.866263   70.670487    1.438104   C2    C3    C4
-ICOOR_INTERNAL    O2  -171.866263   70.670487    1.438104   C2    C3    C4
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    C1    71.4418     66.231       1.52547    C2    C3    C4
 ICOOR_INTERNAL   1O1  -168.982701   58.806538    1.297254   C1    C2    C3
 ICOOR_INTERNAL   2O1    16.7429     61.393840    1.283012   C1    C2    C3
+ICOOR_INTERNAL    O2  -171.866263   70.670487    1.438104   C2    C3    C4
 ICOOR_INTERNAL    O3   -48.8355     71.048       1.5        C3    C2    C1
 ICOOR_INTERNAL    O4   117.916905   68.944369    1.460957   C4    C3    C5
 ICOOR_INTERNAL    N5  -122.690379   69.447507    1.536366   C5    C4    C6
-ICOOR_INTERNAL   VO6   -55.0917     71.25        1.46771    C2    C3    C4  # must build as branch from main chain
 ICOOR_INTERNAL    O7   120.592929   78.229971    1.413762   C7    C6    C8
+ICOOR_INTERNAL    C9   178.796536   69.706481    1.533804   C8    C7    C6
 ICOOR_INTERNAL    O9   174.858983   73.799381    1.424053   C9    C8    C7
+# now all the Hs
 ICOOR_INTERNAL   H1O1 -180.0        120.0        1.05      1O1    C1    C2
 ICOOR_INTERNAL    HO2   62.272749   70.463075    1.050176   O2    C2    C1
 ICOOR_INTERNAL    HO3   62.272749   70.463075    1.050176   O3    C3    C2
@@ -185,6 +201,7 @@ ICOOR_INTERNAL    H6  -123.592383   68.838571    1.089701   C6    C5    O6
 ICOOR_INTERNAL    H7   115.675192   70.553354    1.089759   C7    C6    O7
 ICOOR_INTERNAL    HO7  -60.019675   70.546104    1.050016   O7    C7    C6
 ICOOR_INTERNAL    H8   122.652681   69.688873    1.089896   C8    C7    O8
+ICOOR_INTERNAL    HO8  -60.063625   70.448994    1.0        O8    C8    C7
 ICOOR_INTERNAL   1H9   119.439454   69.775137    1.089907   C9    C8    O9
 ICOOR_INTERNAL   2H9   121.080538   69.713485    1.089644   C9    C8   1H9
 ICOOR_INTERNAL    HO9  -60.026894   70.457493    1.049815   O9    C9    C8
