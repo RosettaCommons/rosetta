@@ -29,9 +29,8 @@
 #include <utility/vector1.hh>
 
 
-using namespace std;
 using namespace core;
-  using namespace pose;
+using namespace pose;
 
 namespace protocols{
 namespace moves{
@@ -42,7 +41,7 @@ class StructureRestrictor : public protocols::moves::Mover {
 public:
   StructureRestrictor();
 
-  StructureRestrictor( string const & name);
+  StructureRestrictor( std::string const & name);
 
   StructureRestrictor(StructureRestrictor const & src);
 
@@ -66,18 +65,18 @@ public:
 
   void
   setup_relevant_chains(
-			string const & relevant_chains_fname,
-			map<string const, string const> & chain_map
+			std::string const & relevant_chains_fname,
+			std::map<std::string const, std::string const> & chain_map
 			);
 
   // this is a hack because poses do not have canonical names!
-  string pose_name(Pose const & pose);
+  std::string pose_name(Pose const & pose);
 
   void apply( Pose& pose );
 
 private:
-  map<string const, string const> chain_map;
-  string relevant_chains_fname;
+  std::map<std::string const, std::string const> chain_map;
+  std::string relevant_chains_fname;
   bool initialized;
 };
 

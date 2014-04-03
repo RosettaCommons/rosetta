@@ -46,7 +46,6 @@ namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
 
-using namespace std;
 using core::Size;
 
 // ===============================================================================
@@ -73,11 +72,11 @@ private:
 	int xlen, ylen, minlen;                                 //length of proteins
 	std::vector < numeric::xyzVector<core::Real> > xa, ya;  //for input vectors xa[0...xlen-1][0..2], ya[0...ylen-1][0..2]
 	std::vector < int >   xresno, yresno;                   //residue numbers, used in fragment gapless threading
-	vector < numeric::xyzVector <core::Real> > xtm, ytm;    //for TMscore search engine
-	vector < numeric::xyzVector <core::Real> > xt;          //for saving the superposed version of r_1 or xtm
+	std::vector < numeric::xyzVector <core::Real> > xtm, ytm;    //for TMscore search engine
+	std::vector < numeric::xyzVector <core::Real> > xt;          //for saving the superposed version of r_1 or xtm
 	std::string   seqx, seqy;                               //for the protein sequence
 	std::vector < int >   secx, secy;                       //for the secondary structure
-	vector < numeric::xyzVector <core::Real> > r1, r2;      //for Kabsch rotation
+	std::vector < numeric::xyzVector <core::Real> > r1, r2;      //for Kabsch rotation
 	numeric::xyzVector <core::Real> t;
 	numeric::xyzMatrix <core::Real> u;                      //Kabsch translation vector and rotation matrix
 
@@ -91,8 +90,8 @@ private:
 	double TM3, TM4, TM5;
 
 public:
-	void PrintErrorAndQuit(string sErrorString) {
-		cout << sErrorString << endl;
+	void PrintErrorAndQuit(std::string sErrorString) {
+		std::cout << sErrorString << std::endl;
 		exit(1);
 	}
 
@@ -105,7 +104,7 @@ public:
 			core::pose::Pose const & pose,
 			std::list <core::Size> const & residue_list,
 			std::vector < numeric::xyzVector < core::Real > > & a,
-			string & seq, std::vector < int > & resno) {
+			std::string & seq, std::vector < int > & resno) {
 		int i=0;
 		seq.resize(residue_list.size());
 		for (std::list<core::Size>::const_iterator it = residue_list.begin();
@@ -152,7 +151,7 @@ public:
 	//     one layer of the matrix. This code was exploited in TM-align
 	//     because it is about 1.5 times faster than a complete N-W code
 	//     and does not influence much the final structure alignment result.
-	void NWDP_TM(Size const len1, Size const len2, double const gap_open, vector < int > & j2i)
+	void NWDP_TM(Size const len1, Size const len2, double const gap_open, std::vector < int > & j2i)
 	{
 		//NW dynamic programming for alignment
 		//not a standard implementation of NW algorithm
@@ -228,7 +227,7 @@ public:
 			std::vector < numeric::xyzVector<core::Real> > const y,
 			int const len1, int const len2,
 			numeric::xyzVector <core::Real> const t, numeric::xyzMatrix <core::Real> const u,
-			double d02, double gap_open, vector < int > & j2i) {
+			double d02, double gap_open, std::vector < int > & j2i) {
 		//NW dynamic programming for alignment
 		//not a standard implementation of NW algorithm
 		//Input: vectors x, y, rotation matrix t, u, scale factor d02, and gap_open
@@ -307,7 +306,7 @@ public:
 			std::vector < int > const secx,
 			std::vector < int > const secy,
 			int const len1, int const len2,
-			double gap_open, vector < int > & j2i)
+			double gap_open, std::vector < int > & j2i)
 	{
 		//NW dynamic programming for alignment
 		//not a standard implementation of NW algorithm
@@ -386,7 +385,7 @@ public:
 	void
 	convert_xyz_to_vector(
 			numeric::xyzVector <core::Real> const x,
-			vector <core::Real> & xx) {
+			std::vector <core::Real> & xx) {
 		xx.resize(3);
 		xx[0]= x.x();
 		xx[1]= x.y();
@@ -396,7 +395,7 @@ public:
 	void
 	convert_xyz_to_matrix(
 			numeric::xyzMatrix <core::Real> const x,
-			vector <vector <core::Real> > & xx) {
+			std::vector <std::vector <core::Real> > & xx) {
 		xx.resize(3);
 		for (Size i = 0; i<3; ++i) {
 			xx[i].resize(3);
@@ -409,7 +408,7 @@ public:
 
 	void
 	convert_vector_to_xyz(
-			vector <core::Real> const x,
+			std::vector <core::Real> const x,
 			numeric::xyzVector <core::Real> & xx) {
 		xx.x() = x[0];
 		xx.y() = x[1];
@@ -417,7 +416,7 @@ public:
 	}
 	void
 	convert_matrix_to_xyz(
-			vector <vector <core::Real> > const x,
+			std::vector <std::vector <core::Real> > const x,
 			numeric::xyzMatrix <core::Real> & xx) {
 		for (Size i = 0; i<3; ++i) {
 			for (Size j = 0; j<3; ++j) {
@@ -428,8 +427,8 @@ public:
 
 	void
 	convert_xyz_v_to_vectors(
-			vector < numeric::xyzVector <core::Real> > const x,
-			vector < vector < double > > & xx) {
+			std::vector < numeric::xyzVector <core::Real> > const x,
+			std::vector < std::vector < double > > & xx) {
 		xx.resize(x.size());
 		for (Size i=0;i<xx.size();++i) {
 			convert_xyz_to_vector(x[i],xx[i]);
@@ -439,23 +438,23 @@ public:
 
 	// wrapper is a temp fix -yfsong
 	bool Kabsch(
-			vector < numeric::xyzVector <core::Real> > const x,
-			vector < numeric::xyzVector <core::Real> > const y,
+			std::vector < numeric::xyzVector <core::Real> > const x,
+			std::vector < numeric::xyzVector <core::Real> > const y,
 			int const n,
 			int const mode,
 			double *rms,
 			numeric::xyzVector <core::Real> & t,
 			numeric::xyzMatrix <core::Real> & u ) {
-		vector < vector < double > > xx;
+		std::vector < std::vector < double > > xx;
 		convert_xyz_v_to_vectors(x,xx);
 
-		vector < vector < double > > yy;
+		std::vector < std::vector < double > > yy;
 		convert_xyz_v_to_vectors(y,yy);
 
-		vector < double > tt;
+		std::vector < double > tt;
 		convert_xyz_to_vector(t,tt);
 
-		vector < vector < double > > uu;
+		std::vector < std::vector < double > > uu;
 		convert_xyz_to_matrix(u,uu);
 
 		bool retval =
@@ -478,13 +477,13 @@ public:
 	// u    - u(i,j) is   rotation  matrix for best superposition  (output)
 	// t    - t(i)   is translation vector for best superposition  (output)
 	bool Kabsch(
-			vector < vector < double > > const x,
-			vector < vector < double > > const y,
+			std::vector < std::vector < double > > const x,
+			std::vector < std::vector < double > > const y,
 			int const n,
 			int const mode,
 			double *rms,
-			vector < double > & t,
-			vector < vector < double > > & u ) {
+			std::vector < double > & t,
+			std::vector < std::vector < double > > & u ) {
 		int i, j, m, m1, l, k;
 		double e0, rms1, d, h, g;
 		double cth, sth, sqrth, p, det, sigma;
@@ -769,7 +768,7 @@ public:
 		//------get length first------>
 		xlen=residue_list1.size();
 		ylen=residue_list2.size();
-		minlen=min(xlen, ylen);
+		minlen=std::min(xlen, ylen);
 
 		//------allocate memory for x and y------>
 		xa.resize(xlen);
@@ -801,11 +800,11 @@ public:
 	//     1, collect those residues with dis<d;
 	//     2, calculate TMscore
 	int score_fun8(
-			vector < numeric::xyzVector <core::Real> > const xa,
-			vector < numeric::xyzVector <core::Real> > const ya,
+			std::vector < numeric::xyzVector <core::Real> > const xa,
+			std::vector < numeric::xyzVector <core::Real> > const ya,
 			int const n_ali,
 			double const d,
-			vector <int> & i_ali,
+			std::vector <int> & i_ali,
 			double *score1,
 			int score_sum_method ) {
 		double score_sum=0, di;
@@ -855,8 +854,8 @@ public:
 	//                            8 for socre over the pairs with dist<score_d8
 	// output:  the best rotaion matrix t0, u0 that results in highest TMscore
 	double TMscore8_search(
-			vector < numeric::xyzVector <core::Real> > const  xtm,
-			vector < numeric::xyzVector <core::Real> > const  ytm,
+			std::vector < numeric::xyzVector <core::Real> > const  xtm,
+			std::vector < numeric::xyzVector <core::Real> > const  ytm,
 			int Lali,
 			numeric::xyzVector <core::Real> & t0,
 			numeric::xyzMatrix <core::Real> & u0,
@@ -866,7 +865,7 @@ public:
 		int i, m;
 		double score_max, score, rmsd;
 		const int kmax=Lali;
-		vector <int> k_ali(kmax);
+		std::vector <int> k_ali(kmax);
 		int ka, k;
 		numeric::xyzVector<core::Real> t;
 		numeric::xyzMatrix<core::Real> u;
@@ -875,7 +874,7 @@ public:
 		//iterative parameters
 		int n_it=20;            //maximum number of iterations
 		const int n_init_max=6; //maximum number of different fragment length
-		vector <int> L_ini(n_init_max);  //fragment lengths, Lali, Lali/2, Lali/4 ... 4
+		std::vector <int> L_ini(n_init_max);  //fragment lengths, Lali, Lali/2, Lali/4 ... 4
 		int L_ini_min=4;
 		if(Lali<4) L_ini_min=Lali;
 		int n_init=0, i_init;
@@ -894,7 +893,7 @@ public:
 
 		//find the maximum score starting from local structures superposition
 		score_max=-1;
-		vector <int> i_ali(kmax);
+		std::vector <int> i_ali(kmax);
 		int n_cut;
 		int L_frag; //fragment length
 		int iL_max; //maximum starting postion for the fragment
@@ -988,11 +987,11 @@ public:
 	//                            8 for socre over the pairs with dist<score_d8
 	// output:  the best rotaion matrix t, u that results in highest TMscore
 	double detailed_search(
-			vector < numeric::xyzVector <core::Real> > const x,
-			vector < numeric::xyzVector <core::Real> > const y,
+			std::vector < numeric::xyzVector <core::Real> > const x,
+			std::vector < numeric::xyzVector <core::Real> > const y,
 			int const,
 			int const y_len,
-			vector < int > const invmap0,
+			std::vector < int > const invmap0,
 			numeric::xyzVector <core::Real> & t,
 			numeric::xyzMatrix <core::Real> & u,
 			int simplify_step,
@@ -1020,9 +1019,9 @@ public:
 
 	//compute the score quickly in three iterations
 	double get_score_fast(
-			vector < numeric::xyzVector <core::Real> > const x,
-			vector < numeric::xyzVector <core::Real> > const y,
-			int const , int const y_len, vector < int > const invmap) {
+			std::vector < numeric::xyzVector <core::Real> > const x,
+			std::vector < numeric::xyzVector <core::Real> > const y,
+			int const , int const y_len, std::vector < int > const invmap) {
 		double rms, tmscore, tmscore1, tmscore2;
 		int i, j, k=0;
 
@@ -1044,7 +1043,7 @@ public:
 		//evaluate score
 		double di;
 		const int len=k;
-		vector <double> dis(len);
+		std::vector <double> dis(len);
 		double d00=d0_search;
 		double d002=d00*d00;
 		double d02=d0*d0;
@@ -1092,7 +1091,7 @@ public:
 
 			//third iteration
 			d002t=d002+1;
-				
+
 			while(1) {
 				j=0;
 				for(k=0; k<n_ali; k++) {
@@ -1138,11 +1137,11 @@ public:
 	//the jth element in y is aligned to the ith element in x if i>=0
 	//the jth element in y is aligned to a gap in x if i==-1
 	double get_initial(
-			vector < numeric::xyzVector <core::Real> > const x,
-			vector < numeric::xyzVector <core::Real> > const y,
+			std::vector < numeric::xyzVector <core::Real> > const x,
+			std::vector < numeric::xyzVector <core::Real> > const y,
 			int const x_len,
 			int const y_len,
-			vector < int > & y2x ) {
+			std::vector < int > & y2x ) {
 		int min_len=getmin(x_len, y_len);
 		if(min_len<=5) {
 			return 0.;
@@ -1192,7 +1191,7 @@ public:
 		return tmscore_max;
 	}
 
-	void smooth(vector < int > & sec, int const len) {
+	void smooth(std::vector < int > & sec, int const len) {
 		int i, j;
 		//smooth single  --x-- => -----
 		for(i=2; i<len-2; i++) {
@@ -1302,13 +1301,13 @@ public:
 
 		if(dis15 < 8) {
 			s=3; //turn
-		}	
+		}
 
 		return s;
 	}
 
 	//1->coil, 2->helix, 3->turn, 4->strand
-	void make_sec(std::vector < numeric::xyzVector <core::Real> > const x, int const len, vector < int > & sec) {
+	void make_sec(std::vector < numeric::xyzVector <core::Real> > const x, int const len, std::vector < int > & sec) {
 		int j1, j2, j3, j4, j5;
 		double d13, d14, d15, d24, d25, d35;
 		for(int i=0; i<len; i++) {
@@ -1376,7 +1375,7 @@ public:
 		double GLmax=0;
 		int n_frag=20; //length of fragment for superposition
 		int ns=20; //tail length to discard
-		vector < int > invmap(y_len+1);
+		std::vector < int > invmap(y_len+1);
 
 		int aL=getmin(x_len, y_len);
 		if(aL>250) {
@@ -1466,11 +1465,11 @@ public:
 	}
 
 	void score_matrix_rmsd_sec(
-			vector < numeric::xyzVector <core::Real> > const x,
-			vector < numeric::xyzVector <core::Real> > const  y,
+			std::vector < numeric::xyzVector <core::Real> > const x,
+			std::vector < numeric::xyzVector <core::Real> > const  y,
 			int const x_len,
 			int const y_len,
-			vector < int > const y2x ) {
+			std::vector < int > const y2x ) {
 		numeric::xyzVector <core::Real> t;
 		numeric::xyzMatrix <core::Real> u;
 		double rmsd, dij;
@@ -1600,9 +1599,9 @@ public:
 			std::vector < numeric::xyzVector < core::Real > > const y,
 			int const x_len,
 			int const y_len,
-			vector < int > const xresno,
-			vector < int > const yresno,
-			vector < int > & y2x ) {
+			std::vector < int > const xresno,
+			std::vector < int > const yresno,
+			std::vector < int > & y2x ) {
 		int fra_min=4;           //minimum fragment for search
 		int fra_min1=fra_min-1;  //cutoff for shift, save time
 		int xstart=0, ystart=0, xend=0, yend=0;
@@ -1612,7 +1611,7 @@ public:
 
 		int Lx = xend-xstart+1;
 		int Ly = yend-ystart+1;
-		vector < int > ifr, y2x_;
+		std::vector < int > ifr, y2x_;
 		int L_fr=getmin(Lx, Ly);
 		ifr.resize(L_fr);
 		y2x_.resize(y_len+1);
@@ -1718,16 +1717,16 @@ public:
 	//       vectors x and y, d0
 	//output: best alignment that maximizes the TMscore, will be stored in invmap
 	double DP_iter(
-			vector < numeric::xyzVector < core::Real > > const x,
-			vector < numeric::xyzVector < core::Real > > const y,
+			std::vector < numeric::xyzVector < core::Real > > const x,
+			std::vector < numeric::xyzVector < core::Real > > const y,
 			int const x_len, int const y_len,
 			numeric::xyzVector < core::Real > t,
 			numeric::xyzMatrix < core::Real > u,
-			vector < int > & invmap0,
+			std::vector < int > & invmap0,
 			int const g1, int const g2, int const iteration_max ) {
 		double gap_open[2]={-0.6, 0};
 		double rmsd;
-		vector < int > invmap(y_len+1);
+		std::vector < int > invmap(y_len+1);
 		int iteration, i, j, k;
 		double tmscore, tmscore_max, tmscore_old=0;
 		int score_sum_method=8, simplify_step=40;
@@ -1822,9 +1821,9 @@ public:
 	}
 
 	void alignment2strings(
-			string & seqxA,
-			string & seqyA,
-			string & seqM ) {
+			std::string & seqxA,
+			std::string & seqyA,
+			std::string & seqM ) {
 		double seq_id;
 		int i, j, k;
 		double d;
@@ -1986,8 +1985,8 @@ public:
 		int score_sum_method  = 8;                //for scoring method, whether only sum over pairs with dis<score_d8
 
 		int i;
-		vector < int > invmap0(ylen+1);
-		vector < int > invmap(ylen+1);
+		std::vector < int > invmap0(ylen+1);
+		std::vector < int > invmap(ylen+1);
 		double TM, TMmax=-1;
 		for(i=0; i<ylen; i++) {
 			invmap0[i]=-1;
@@ -2051,7 +2050,7 @@ public:
 				}
 			}
 		}else{
-			cout << endl << endl << "Warning: initial alignment from local superposition fail!" << endl << endl <<endl;
+			std::cout << std::endl << std::endl << "Warning: initial alignment from local superposition fail!" << std::endl << std::endl <<std::endl;
 		}
 
 
@@ -2106,8 +2105,8 @@ public:
 			}
 		}
 		if(!flag) {
-			cout << "There is no alignment between the two proteins!" << endl;
-			cout << "Program stop with no result!" << endl;
+			std::cout << "There is no alignment between the two proteins!" << std::endl;
+			std::cout << "Program stop with no result!" << std::endl;
 			return 1;
 		}
 

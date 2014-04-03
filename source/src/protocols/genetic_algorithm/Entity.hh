@@ -32,7 +32,6 @@
 #include <boost/functional/hash.hpp> // hash_range
 
 ///#include <ObjexxFCL/format.hh> // apl needed?
-///using namespace ObjexxFCL;
 
 // C++ headers
 // AUTO-REMOVED #include <iostream>

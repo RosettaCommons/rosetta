@@ -168,17 +168,17 @@ void
 HybridizeSetup::init() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	domain_assembly_ = false;
 	add_hetatm_ = false;
-	
+
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	auto_frag_insertion_weight_ = option[cm::hybridize::auto_frag_insertion_weight]();
 	frag_1mer_insertion_weight_ = option[cm::hybridize::frag_1mer_insertion_weight]();
 	small_frag_insertion_weight_ = option[cm::hybridize::small_frag_insertion_weight]();
 	big_frag_insertion_weight_ = option[cm::hybridize::big_frag_insertion_weight]();
-	
+
 	hetatm_self_cst_weight_ = 10.;
 	hetatm_prot_cst_weight_ = 0.;
 }
@@ -318,13 +318,13 @@ void HybridizeSetup::add_template(
 			pdb_numbering.push_back( ires );
 			pdb_chains.push_back( 'A' );
 		}
-		
+
 		new_pdb_info->set_numbering( pdb_numbering );
 		new_pdb_info->set_chains( pdb_chains );
 		template_pose->pdb_info( new_pdb_info );
 		template_pose->pdb_info()->obsolete( false );
 	}
-	
+
 	// find ss chunks in template
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
@@ -377,35 +377,35 @@ void HybridizeSetup::realign_templates(core::pose::PoseCOP ref_pose)
 	domains_all_templ.resize( templates_.size() );
 	for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
 		domains_all_templ[i_template] = ddom.split( *templates_[i_template], templates_[i_template]->total_residue() );
-		
+
 		// protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
 		// convert domain numbering to target pose numbering
 		for (Size iloops=1; iloops<=domains_all_templ[i_template].size(); ++iloops) {
 			for (Size iloop=1; iloop<=domains_all_templ[i_template][iloops].num_loop(); ++iloop) {
 				Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ[i_template][iloops][iloop].start());
 				domains_all_templ[i_template][iloops][iloop].set_start( seqpos_start_pose );
-				
+
 				Size seqpos_stop_pose = templates_[i_template]->pdb_info()->number(domains_all_templ[i_template][iloops][iloop].stop());
 				domains_all_templ[i_template][iloops][iloop].set_stop( seqpos_stop_pose );
 			}
 		}
-		
+
 		TR << "Found " << domains_all_templ[i_template].size() << " domains for template " << template_fn_[i_template] << std::endl;
 		for (Size i=1; i<=domains_all_templ[i_template].size(); ++i) {
 			TR << "domain " << i << ": " << domains_all_templ[i_template][i] << std::endl;
 		}
 	}
-	
+
 	// combine domains that are not in the initial template
 	domains_ = expand_domains_to_full_length(domains_all_templ, initial_template_index(), nres_tgt_);
 	TR << "Final decision: " << domains_.size() << " domains" << std::endl;
 	for (Size i=1; i<= domains_.size(); ++i) {
 		TR << "domain " << i << ": " << domains_[i] << std::endl;
 	}
-	
+
 	// local align
 	align_by_domain(templates_, domains_, ref_pose);
-	
+
 	// update chunk, contig informations
 	for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
 		// default minimum length is 3 and CA distance is 4
@@ -448,24 +448,24 @@ void HybridizeSetupMover::apply( core::pose::Pose & pose )
 			}
 		}
 	}
-	
+
 
 	// symmetrize
 	std::string symmdef_file = hybridize_setup_->symmdef_files()[hybridize_setup_->initial_template_index()];
 	if (!symmdef_file.empty() && symmdef_file != "NULL") {
 		protocols::simple_moves::symmetry::SetupForSymmetryMover makeSymm( symmdef_file );
 		makeSymm.apply(pose);
-		
+
         TR << "After applying symmetry" << std::endl;
-        
+
 		//fpd   to get the right rotamer set we need to do this
 		basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
-		
+
 		// xyz copy hetatms -- this makes helical symmetries a little easier to setup
 		if (hybridize_setup_->add_hetatm()) {
 			for ( Size ihet=1; ihet <= hetatms.size(); ++ihet ) {
 				core::conformation::Residue const &res_in = hybridize_setup_->template_poses()[hybridize_setup_->initial_template_index()]->residue(hetatms[ihet].first);
-				
+
 				for (Size iatm=1; iatm<=res_in.natoms(); ++iatm) {
 					core::id::AtomID tgt(iatm,hetatms[ihet].second);
 					pose.set_xyz( tgt, res_in.xyz( iatm ) );
@@ -473,7 +473,7 @@ void HybridizeSetupMover::apply( core::pose::Pose & pose )
 			}
 		}
 	}
-	
+
     // initialize template history
     // >> keep this after symmetry
     TemplateHistoryOP history = new TemplateHistory(pose);
@@ -580,7 +580,7 @@ HybridizeSetup::align_by_domain(core::pose::Pose & pose, core::pose::Pose const 
 				}
 			}
 		}
-		
+
 		Loop ref_domain(domains[i_domain][1]);
 		for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
 			if (!ref_pose.residue_type(jres).is_protein()) continue;
@@ -600,8 +600,8 @@ HybridizeSetup::align_by_domain(core::pose::Pose & pose, core::pose::Pose const 
 		overlapped_domain.set_start(pose_domain.start() > ref_domain.start() ? pose_domain.start() : ref_domain.start());
 		overlapped_domain.set_stop(pose_domain.stop() < ref_domain.stop() ? pose_domain.stop() : ref_domain.stop());
 		// done looking for overlapped domain
-		
-		
+
+
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
 		core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
 		std::list <Size> residue_list;
@@ -627,7 +627,7 @@ HybridizeSetup::align_by_domain(core::pose::Pose & pose, core::pose::Pose const 
 		}
 
 		TMalign tm_align;
-		string seq_pose, seq_ref, aligned;
+		std::string seq_pose, seq_ref, aligned;
 		int reval = tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
 		if (reval == 0) {
 			tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
@@ -664,10 +664,10 @@ HybridizeSetup::run_domain_assembly(){
 	DomainAssembly domain_assembly(templates_, domain_assembly_weights_);
 	domain_assembly.run();
 }
-	
+
 HybridizeSetupOP HybridizeSetup::clone() const { return new HybridizeSetup( *this ); }
 
-	
+
 protocols::moves::MoverOP HybridizeSetupMover::clone() const { return new HybridizeSetupMover( *this ); }
 protocols::moves::MoverOP HybridizeSetupMover::fresh_instance() const { return new HybridizeSetupMover; }
 
@@ -736,7 +736,7 @@ HybridizeSetupMover::parse_my_tag(
 				for (core::Size i=1; i<= frag_files.size(); ++i )
 					hybridize_setup_->add_fragments_small(core::fragment::FragmentIO().read_data( frag_files[i] ));
 			}
-			
+
 			if ( (*tag_it)->hasOption( "9mers" ) ) {
 				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "9mers" ) );
 				hybridize_setup_->add_fragments_big(frags);
@@ -746,7 +746,7 @@ HybridizeSetupMover::parse_my_tag(
 					hybridize_setup_->add_fragments_big(core::fragment::FragmentIO().read_data( frag_files[i] ));
 			}
 		}
-		
+
 		// templates
 		if ( (*tag_it)->getName() == "Template" ) {
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
@@ -759,7 +759,7 @@ HybridizeSetupMover::parse_my_tag(
 		}
 
 	}
-	
+
 	// Additional setup
 	// number of residues in asu without VRTs
 	core::Size nres_tgt = pose.total_residue();
@@ -769,7 +769,7 @@ HybridizeSetupMover::parse_my_tag(
 	if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
 				dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose_copy.conformation()) );
-		
+
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
 		nres_protein_tgt = symm_info->num_independent_residues();
@@ -778,7 +778,7 @@ HybridizeSetupMover::parse_my_tag(
 	while (!pose.residue(nres_protein_tgt).is_protein()) nres_protein_tgt--;
 	hybridize_setup_->set_nres_tgt(nres_tgt);
 	hybridize_setup_->set_nres_protein(nres_protein_tgt);
-	
+
 	// make fragments if we don't have them at this point
 	hybridize_setup_->check_and_create_fragments( pose );
 
@@ -788,14 +788,13 @@ HybridizeSetupMover::parse_my_tag(
 	if (hybridize_setup_->domain_assembly()) {
 		hybridize_setup_->run_domain_assembly();
 	}
-	
+
 	using namespace ObjexxFCL::format;
 	TR << "Using initial template: " << I(4,hybridize_setup_->initial_template_index()) << " " << hybridize_setup_->template_file_names()[hybridize_setup_->initial_template_index()] << std::endl;
-	
+
 	data.add( "HybridizeSetup", setup_data_name, hybridize_setup_);
 
 }
 
 } // hybridization
 } // protocols
-

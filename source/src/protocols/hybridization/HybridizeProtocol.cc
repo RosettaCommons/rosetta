@@ -1313,7 +1313,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		}
 
 		TMalign tm_align;
-		string seq_pose, seq_ref, aligned;
+		std::string seq_pose, seq_ref, aligned;
 		int reval = tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
 		if (reval == 0) {
 			tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
@@ -1540,4 +1540,3 @@ HybridizeProtocol::parse_my_tag(
 
 } // hybridization
 } // protocols
-

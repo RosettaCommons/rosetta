@@ -26,8 +26,6 @@
 
 
 using namespace core;
-using namespace std;
-
 
 namespace protocols {
 namespace pockets {

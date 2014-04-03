@@ -42,13 +42,13 @@ public:
 
 	//
 
-	inline utility::vector1< utility::vector1< std::pair< Size, Real > > > shifts() {
+	inline utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > shifts() {
 		return secondary_shifts_;
 	}
 
 private:
 
-	std::map< char, std::map< std::string, Real > >
+	std::map< char, std::map< std::string, core::Real > >
 	read_adjust_table( std::string const & file_name );
 
 	std::map<char,std::map<std::string,std::pair< core::Real, core::Real > > >
@@ -56,7 +56,7 @@ private:
 
 	std::string also_check_fix_disulf( std::string instring );
 
-	utility::vector1< utility::vector1< std::pair< Size, Real > > > secondary_shifts_;
+	utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > secondary_shifts_;
 
 };
 
@@ -64,4 +64,3 @@ private:
 } // protocols
 
 #endif /* INCLUDED_protocols_frag_picker_CSTalosIO_HH */
-

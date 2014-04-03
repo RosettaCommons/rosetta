@@ -27,17 +27,10 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-// C++ headers
-#include <cstdlib>
-#include <cmath>
-#include <math.h>
-#include <stdio.h>
 #include <string>
 
 namespace protocols {
 namespace frag_picker {
-
-using namespace core;
 
 class Contact: public utility::pointer::ReferenceCount {
 public:

@@ -35,15 +35,12 @@
 namespace protocols {
 namespace frag_picker {
 
-using namespace ObjexxFCL;
-using namespace core;
-
 /// @brief selects fragments by running several selectors
 class DiversifyCrmsdSelector: public FragmentSelectingRule {
 public:
 
 	/// @brief  Constructor sets the desired number of fragments and crmsd cutoff.
-	DiversifyCrmsdSelector(Size frags_per_pos,Real cutoff) : FragmentSelectingRule(frags_per_pos) {
+	DiversifyCrmsdSelector(core::Size frags_per_pos, core::Real cutoff) : FragmentSelectingRule(frags_per_pos) {
 		cutoff_ = cutoff;
 	}
 
@@ -53,11 +50,11 @@ public:
 	virtual ~DiversifyCrmsdSelector() {	}
 
 private:
-	void copy_coordinates(FragmentCandidateOP src,FArray2D_double & dst);
-	Real cutoff_;
-	FArray2D_double fi_;
-	FArray2D_double fj_;
-	FArray1D_double weights_;
+	void copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst);
+	core::Real cutoff_;
+	ObjexxFCL::FArray2D_double fi_;
+	ObjexxFCL::FArray2D_double fj_;
+	ObjexxFCL::FArray1D_double weights_;
 };
 
 } // frag_picker

@@ -526,7 +526,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
               last_res_seen = end_res;
               num_satisfied_ = sat_hbonds;
               //fill pair with begining and end of different sheets
-              sheet_endpts.push_back( make_pair(ii, end_res) );
+              sheet_endpts.push_back( std::make_pair(ii, end_res) );
               //print this sheet info if we are not checking the RMSD
               if (!check_rmsd_){
                   print_sheets(pose, ii, end_res, sat_hbonds);

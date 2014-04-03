@@ -361,7 +361,7 @@ protected:
 	}
 
 private:
-	utility::vector1< string > end_atom_list_;
+	utility::vector1< std::string > end_atom_list_;
 	utility::vector1< Real > dphi;
 	Real factorA_;
 	Real factorB_;
@@ -410,14 +410,14 @@ std::string get_ABGEO_string( core::pose::Pose & p, core::Size start, core::Size
   return ABGEO_assignment;
 }
 
-string get_tag( core::Size itrial, core::Real kT, int rank ) {
+std::string get_tag( core::Size itrial, core::Real kT, int rank ) {
 	using namespace ObjexxFCL;
 	return   "S_" + lead_zero_string_of( itrial, 8 ) + "_"
     + lead_zero_string_of( kT, 5 ).substr(0,8) + "_"
     + lead_zero_string_of( rank, 5);
 }
 
-string get_filename(string const suffix, core::Real t) {
+std::string get_filename(std::string const suffix, core::Real t) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -1057,7 +1057,7 @@ my_main( void* )
 	//"i", init from 1 or traj
 	for (; i <= ntrials; ++i) {
 		//init
-		string move_type("fake");
+		std::string move_type("fake");
 		Real proposal_density_ratio=1.0;
 		//random number
 		core::Real prob = RG.uniform();

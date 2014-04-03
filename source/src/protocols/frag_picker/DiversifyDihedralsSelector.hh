@@ -26,14 +26,12 @@
 namespace protocols {
 namespace frag_picker {
 
-using namespace core;
-
 /// @brief selects fragments by running several selectors
 class DiversifyDihedralsSelector: public FragmentSelectingRule {
 public:
 
 	/// @brief  Constructor sets the desired number of fragments and crmsd cutoff.
-	DiversifyDihedralsSelector(Size frags_per_pos,Real cutoff) : FragmentSelectingRule(frags_per_pos) {
+	DiversifyDihedralsSelector(core::Size frags_per_pos, core::Real cutoff) : FragmentSelectingRule(frags_per_pos) {
 		cutoff_ = cutoff;
 	}
 
@@ -43,10 +41,10 @@ public:
 	virtual ~DiversifyDihedralsSelector() {
 	}
 
-	Real dihedral_rmsd(FragmentCandidateOP,FragmentCandidateOP);
+	core::Real dihedral_rmsd(FragmentCandidateOP,FragmentCandidateOP);
 
 private:
-	Real cutoff_;
+	core::Real cutoff_;
 	utility::vector1<core::Real> phi_;
 	utility::vector1<core::Real> psi_;
 };

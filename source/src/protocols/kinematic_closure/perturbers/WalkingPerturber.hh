@@ -28,7 +28,7 @@ public:
 	WalkingPerturber(Real magnitude=10);
 
 	/// @copydoc Perturber::get_name
-	string get_name() const { return "WalkingPerturber"; }
+	std::string get_name() const { return "WalkingPerturber"; }
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
@@ -52,4 +52,3 @@ private:
 }
 
 #endif
-

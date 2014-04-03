@@ -33,8 +33,6 @@
 //std
 #include <string>
 
-using namespace std;
-
 namespace protocols {
 namespace simple_moves {
 

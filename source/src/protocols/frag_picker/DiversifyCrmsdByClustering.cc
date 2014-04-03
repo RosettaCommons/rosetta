@@ -36,7 +36,7 @@ using namespace core;
 static basic::Tracer trDiversifyCrmsdByClustering(
                 "protocols.frag_picker.DiversifyCrmsdByClustering");
 
-void DiversifyCrmsdByClustering::copy_coordinates(FragmentCandidateOP src,FArray2D_double & dst) {
+void DiversifyCrmsdByClustering::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {
 
     pose::PoseOP pose = src->get_chunk()->get_pose();
     Size len = src->get_length();

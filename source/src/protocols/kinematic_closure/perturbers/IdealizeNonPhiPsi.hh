@@ -20,12 +20,12 @@ namespace kinematic_closure {
 namespace perturbers {
 
 /// @brief Set all the non-phi/psi DOFs to ideal values.
-/// 
-/// @details The phi and psi torsion angles don't really have ideal values; 
-/// that's what the Ramachandran distribution is.  Use the RamaPerturber to set 
-/// sample those DOFs and this perturber to idealize all the others.  Note that 
-/// this perturber uses hard-coded ideal values that were inherited from the 
-/// legacy kinematic closure implementation.  I don't know how they were 
+///
+/// @details The phi and psi torsion angles don't really have ideal values;
+/// that's what the Ramachandran distribution is.  Use the RamaPerturber to set
+/// sample those DOFs and this perturber to idealize all the others.  Note that
+/// this perturber uses hard-coded ideal values that were inherited from the
+/// legacy kinematic closure implementation.  I don't know how they were
 /// measured.
 
 class IdealizeNonPhiPsi : public Perturber {
@@ -33,7 +33,7 @@ class IdealizeNonPhiPsi : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name
-	string get_name() const { return "IdealizeNonPhiPsi"; }
+	std::string get_name() const { return "IdealizeNonPhiPsi"; }
 
 	/// @copydoc Perturber::get_subset
 	void perturb_subset(
@@ -54,4 +54,3 @@ public:
 }
 
 #endif
-

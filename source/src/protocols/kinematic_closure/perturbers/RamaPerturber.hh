@@ -25,7 +25,7 @@ class RamaPerturber : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name
-	string get_name() const { return "RamaPerturber"; }
+	std::string get_name() const { return "RamaPerturber"; }
 
 	/// @copydoc Perturber::get_subset
 	void perturb_subset(
@@ -46,4 +46,3 @@ public:
 }
 
 #endif
-

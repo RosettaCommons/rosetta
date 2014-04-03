@@ -766,8 +766,8 @@ def prepareMiniLibs(mini_path, bindings_path):
             os.symlink('./../'+l, './debug/'+l)
 
         l = 'libboost_python.'+suffix  # linking libboost_python to rosetta/ dir instead of root
-        if os.path.islink('./debug/'+l): os.remove('./debug/'+l)
-        os.symlink('./../rosetta/'+l, './debug/'+l)
+        if os.path.islink('./debug/rosetta/'+l): os.remove('./debug/rosetta/'+l)
+        os.symlink('./../../rosetta/'+l, './debug/rosetta/'+l)
 
 
 def getAllRosettaSourceFiles():

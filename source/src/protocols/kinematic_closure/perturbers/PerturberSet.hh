@@ -34,7 +34,7 @@ public:
 	~PerturberSet();
 
 	/// @copydoc Perturber::get_name
-	string get_name() const { return "PerturberSet"; }
+	std::string get_name() const { return "PerturberSet"; }
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
@@ -48,14 +48,14 @@ public:
 			IndexList const & residues,
 			ClosureProblemOP problem);
 
-	/// @brief Add a new perturber to the set.  Any default perturbers are 
+	/// @brief Add a new perturber to the set.  Any default perturbers are
 	/// removed.
 	void add(PerturberOP perturber);
 
 	/// @brief Remove all perturbers from this set.
 	void clear();
 
-	/// @brief Indicate that the current set of perturbers is meant as some sort 
+	/// @brief Indicate that the current set of perturbers is meant as some sort
 	/// of default, and should be cleared if a new perturber is manually added.
 	void mark_as_default();
 
@@ -70,4 +70,3 @@ private:
 }
 
 #endif
-

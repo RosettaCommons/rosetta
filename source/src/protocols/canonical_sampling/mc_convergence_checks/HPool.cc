@@ -351,7 +351,7 @@ core::Size HPool_RMSD::evaluate(
     	//save this strcuture into subcluster's silent file
     	std::string filename(protocols::toolbox::file_full_path(best_decoy));
     	utility::file::create_directory_recursive(utility::file::FileName(filename).path());
-    	io::silent::SilentFileData clusters;
+		core::io::silent::SilentFileData clusters;
     	TR << "tag:" << best_decoy << " -> " << filename << std::endl;
     	pss.set_decoy_tag(best_decoy);
     	clusters.write_silent_struct(pss,filename);
@@ -411,7 +411,7 @@ core::Size HPool_RMSD::evaluate(
         std::ostringstream tag;
         //tag << "new." << (++n_extra_);
         //new tag, same format as old structure
-        tag << tag_prefix_ << setfill ('0') << setw (5) << (++n_extra_+old_size_);
+        tag << tag_prefix_ << std::setfill ('0') << std::setw (5) << (++n_extra_+old_size_);
         best_decoy = tag.str();
         add(coord, best_decoy);
         best_rmsd = 0.0;
@@ -542,7 +542,3 @@ void HPool_RMSD::clear_lib(core::Size nc)
 }//mc_conv
 }//moves
 }//prot
-
-
-
-

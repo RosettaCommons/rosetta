@@ -24,8 +24,6 @@
 namespace protocols {
 namespace kinematic_closure {
 
-using namespace std;
-
 using core::Size;
 using core::Real;
 using core::pose::Pose;

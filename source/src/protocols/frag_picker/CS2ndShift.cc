@@ -39,6 +39,7 @@
 namespace protocols {
 namespace frag_picker {
 
+using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

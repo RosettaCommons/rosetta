@@ -33,7 +33,7 @@ using namespace core;
 static basic::Tracer trDiversifyCrmsdSelector(
                 "protocols.frag_picker.DiversifyCrmsdSelector");
 
-void DiversifyCrmsdSelector::copy_coordinates(FragmentCandidateOP src,FArray2D_double & dst) {
+void DiversifyCrmsdSelector::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {
 
     pose::PoseOP pose = src->get_chunk()->get_pose();
     Size len = src->get_length();

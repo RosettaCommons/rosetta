@@ -27,8 +27,6 @@
 namespace protocols {
 namespace frag_picker {
 
-using namespace std;
-
 template<class T, class StrictWeakOrdering>
 class BoundedPriorityQueue : public utility::pointer::ReferenceCount {
 public:

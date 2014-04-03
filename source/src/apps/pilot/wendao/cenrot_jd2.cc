@@ -40,7 +40,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-// 
+//
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -194,7 +194,7 @@ int main( int argc, char * argv [] ) {
 	NEW_OPT(output_cenrot_score, "score the centroid pdbs", "cenrot_score.out");
 	NEW_OPT(output_cenrot_dir, "dir for output centroid pdbs", ".");
 	NEW_OPT(output_cenrot_prefix, "prefix for pdbs", "idealized_");
-	
+
 	NEW_OPT(repack_cenrot, "repack the centroid rotamer model", false);
 	NEW_OPT(repack_bfactor_cutoff, "count repack side-chain with Bfactor lower than default 100", 100.0);
 	NEW_OPT(repack_buried_cutoff, "count repack side-chain with buried cutoff", 0);
@@ -253,7 +253,7 @@ public:
 			id::DOF_ID id_dih(id::AtomID(p.residue(i).atom_index("CEN"), i), id::PHI);
 
 			//output internal coordinates of centroids
-			//as well as phi/psi angle 
+			//as well as phi/psi angle
 			if ( !rsd.is_terminus() ) {
 				TR << "CEN-INT: " << rsd.name3() << " " << i << " "
 				<< p.dof(id_dis) << " "
@@ -418,7 +418,7 @@ public:
 		}
 
 		for (Size i=1; i<=mc_steps_; i++) {
-			string move_type("fake");
+			std::string move_type("fake");
 			Real proposal_density_ratio=1.0;
 			core::Real prob = RG.uniform();
 
@@ -493,7 +493,7 @@ public:
 		core::optimization::MinimizerOptions cstoptions( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false );
 		cstoptions.nblist_auto_update(true);
 		cstoptions.max_iter(option[run::max_min_iter]);
-		
+
 		core::Real max_vdw = scorefxn_dock_->get_weight( core::scoring::vdw );
 		int ncyc = option[ relax::default_repeats ]();
 
@@ -515,7 +515,7 @@ public:
 
 		//foldtree
 		//default only handle the first jump
-		DockJumps movable_jumps(utility::tools::make_vector1<core::SSize>(1)); 
+		DockJumps movable_jumps(utility::tools::make_vector1<core::SSize>(1));
 		std::string partners="_";
 		setup_foldtree(pose, partners, movable_jumps);
 		TR << "new fold tree: " << pose.fold_tree();
@@ -643,7 +643,7 @@ public:
 		TR << "1. Setting up docking foldtree" << std::endl;
 		TR << "old fold tree: " << pose.fold_tree();
 		//default only handle the first jump
-		DockJumps movable_jumps(utility::tools::make_vector1<core::SSize>(1)); 
+		DockJumps movable_jumps(utility::tools::make_vector1<core::SSize>(1));
 		std::string partners="_";
 		setup_foldtree(pose, partners, movable_jumps);
 		TR << "new fold tree: " << pose.fold_tree();
@@ -668,7 +668,7 @@ public:
 		rb_mover_ = new rigid::RigidBodyPerturbNoCenterMover( pose, mm, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c );
 		combo_ = new moves::SequenceMover();
 		combo_->add_mover(rb_mover_);
-		
+
 		if (do_repack_) combo_->add_mover(pack_rotamers_);
 
 		// Monte Carlo
@@ -741,8 +741,8 @@ public:
 		scorefxn_ = core::scoring::getScoreFunction();
 
 		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
-		movemap->set_bb( true ); 
-		
+		movemap->set_bb( true );
+
 		fragset_small_ = FragmentIO(option[ abinitio::number_3mer_frags ] ).read_data( option[in::file::frag3] );
 		sms_ = new SmoothFragmentMover ( fragset_small_, movemap, new GunnCost );
 
@@ -853,7 +853,7 @@ public:
 		minoptions.max_iter( option[run::max_min_iter] );
 
 		core::kinematics::MoveMap mm;
-		mm.set_bb  ( false ); 
+		mm.set_bb  ( false );
 		mm.set_chi ( false );
 		mm.set_jump( false );
 
@@ -875,8 +875,8 @@ public:
 			mm.set_chi(true);
 			for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = p.residue(ii);
-				if ( res_i.aa()!=chemical::aa_gly 
-				     && res_i.aa()!=chemical::aa_ala 
+				if ( res_i.aa()!=chemical::aa_gly
+				     && res_i.aa()!=chemical::aa_ala
 				     && res_i.type().has( "CEN")) {
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::D ), true );
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::THETA ), true );
@@ -931,8 +931,8 @@ public:
 			//setup movemap for sidechain
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if ( res_i.aa()!=chemical::aa_gly 
-				     && res_i.aa()!=chemical::aa_ala 
+				if ( res_i.aa()!=chemical::aa_gly
+				     && res_i.aa()!=chemical::aa_ala
 				     && res_i.type().has( "CEN")) {
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::D ), true );
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::THETA ), true );
@@ -1038,8 +1038,8 @@ public:
 			//setup movemap for sidechain
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if ( res_i.aa()!=chemical::aa_gly 
-				     && res_i.aa()!=chemical::aa_ala 
+				if ( res_i.aa()!=chemical::aa_gly
+				     && res_i.aa()!=chemical::aa_ala
 				     && res_i.type().has( "CEN")) {
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::D ), true );
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::THETA ), true );
@@ -1133,7 +1133,7 @@ my_main( void* ) {
 			utility::pointer::owning_ptr< CenRotCanonicalMover > cenrotcan = new CenRotCanonicalMover();
 			do_cenrot->add_mover(cenrotcan);
 		}
-		
+
 		//rescore anyway
 		utility::pointer::owning_ptr< RescoreCenrot > rescore = new RescoreCenrot();
 		rescore->set_scfxn(score_fxn);
@@ -1152,5 +1152,3 @@ my_main( void* ) {
 
 	return 0;
 }
-
-

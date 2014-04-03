@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
 	TR.Info << "PoseVec.size(): "<< PoseVec.size() << std::endl;
 
-	//compute similarity matrix 
+	//compute similarity matrix
 	//use boost threads frank/rr_opt.cc
 	//protocols/frag_picker/FragmentPicker.cc
         ObjexxFCL::FArray2D< core::Real > sc_matrix( PoseVec.size(),PoseVec.size(), 0.0 );
@@ -116,10 +116,10 @@ int main(int argc, char *argv[])
 	boost::thread_group threads;
 	for ( Size i = 1; i <= PoseVec.size(); ++i ) {
     		for ( Size j = i ; j <= PoseVec.size(); ++j ) {
-			TR << "i " << i << " j " << j << " "; 
+			TR << "i " << i << " j " << j << " ";
 			//boost::thread*  threadij = new boost::thread( &do_align, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)));
 			//threads.add_thread(threadij);
-			threads.create_thread( boost::bind( &do_align, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)) )) ; 
+			threads.create_thread( boost::bind( &do_align, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)) )) ;
 			TR << "thread created"<< endl;
 		}
 	}
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
         for ( Size i = 1; i <= PoseVec.size(); ++i ) {
                 for ( Size j = i+1 ; j <= PoseVec.size(); ++j ) {
                         do_align(*PoseVec[i], *PoseVec[j], sc_matrix(i,j));
-			TR << "rms("<<i<<","<<j<<"): " << sc_matrix(i,j) << endl;
+						TR << "rms("<<i<<","<<j<<"): " << sc_matrix(i,j) << std::endl;
                 }
         }
 	//std::cerr << "compile with extras=boost_thread-mt!" << std::endl;
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 	std::vector <int> clustercentre;
 
         TR.Info << "Clustering of " << listsize << " structures with radius (bbrms) " <<  cluster_radius_ <<  std::endl;
-	
+
   	// now assign groupings
   	while(true) {
     	// count each's neighbors
@@ -210,11 +210,11 @@ int main(int argc, char *argv[])
 
   	}
 
-	TR.Info << "ncluster: " << nclusters << std::endl; 
-	
+	TR.Info << "ncluster: " << nclusters << std::endl;
+
 	for (i=0;i<clustercentre.size();++i ) {
-		TR.Info << "CLUSTER " << i << " : ";  
-		//TR.Info << "CLUSTER " << i << ", " << clustercentre[i] <<" : ";  
+		TR.Info << "CLUSTER " << i << " : ";
+		//TR.Info << "CLUSTER " << i << ", " << clustercentre[i] <<" : ";
     		for (j=0;j<listsize;++j ) {
       			if (clusternr[j] == clustercentre[i]) {
 				//TR.Info << j << " " ;

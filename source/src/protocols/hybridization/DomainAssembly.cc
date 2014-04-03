@@ -56,7 +56,7 @@ bool TMalign_poses(core::pose::Pose & aligned_pose,
 				   std::list <Size> const & residue_list,
 				   std::list <Size> const & ref_residue_list) {
 	TMalign tm_align;
-	string seq_pose, seq_ref, aligned;
+	std::string seq_pose, seq_ref, aligned;
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, aligned_pose, core::id::BOGUS_ATOM_ID );
 	core::Size n_mapped_residues=0;
@@ -294,7 +294,7 @@ DomainAssembly::run()
 				if (j_residue_list.size() < 0.3 * normalize_length) continue;
 
 				TMalign tm_align;
-				string seq_pose, seq_ref, aligned;
+				std::string seq_pose, seq_ref, aligned;
 				core::id::AtomID_Map< core::id::AtomID > atom_map;
 				core::pose::initialize_atomid_map( atom_map, *poses_[ipose], core::id::BOGUS_ATOM_ID );
 				core::Size n_mapped_residues=0;

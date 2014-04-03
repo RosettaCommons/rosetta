@@ -37,10 +37,6 @@
 
 #include <utility/vector1.hh>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-//Auto using namespaces end
-
 //#include <algorithm>
 
 namespace protocols {
@@ -161,8 +157,7 @@ public:
 	}
 
 private:
-	utility::vector1<LazySortedVector1<pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> , StrictWeakOrdering> > storage_;
+	utility::vector1< LazySortedVector1< std::pair< FragmentCandidateOP, scores::FragmentScoreMapOP> , StrictWeakOrdering> > storage_;
 };
 
 // Concrete version for PyRosetta

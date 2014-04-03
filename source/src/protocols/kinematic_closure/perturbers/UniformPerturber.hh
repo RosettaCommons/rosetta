@@ -25,7 +25,7 @@ class UniformPerturber : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name
-	string get_name() const { return "UniformPerturber"; }
+	std::string get_name() const { return "UniformPerturber"; }
 
 	/// @copydoc Perturber::perturb_subset()
 	void perturb_subset(
@@ -46,4 +46,3 @@ public:
 }
 
 #endif
-

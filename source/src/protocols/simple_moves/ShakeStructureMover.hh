@@ -34,8 +34,6 @@ namespace protocols {
 namespace simple_moves {
 
 	// no using in .hh files !
-	// using namespace core;
-	// using namespace scoring;
 
 class ShakeStructureMover: public protocols::moves::Mover{
 public:

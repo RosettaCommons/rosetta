@@ -40,7 +40,6 @@
 namespace protocols {
 namespace scoring {
 namespace methods {
-//using namespace core::scoring::methods;
 ///
 class ResidualDipolarCouplingEnergyRigidSegments : public core::scoring::methods::WholeStructureEnergy  {
 public:

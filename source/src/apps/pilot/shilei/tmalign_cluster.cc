@@ -76,7 +76,7 @@ static basic::Tracer TR("tmalign_cluster");
 
 void do_tmscore( core::pose::Pose const &pose1, core::pose::Pose const &pose2, core::Real &tmscore) {
 	protocols::hybridization::TMalign tm_align;
-	if (pose1.total_residue()==0 && pose2.total_residue()==0) 
+	if (pose1.total_residue()==0 && pose2.total_residue()==0)
 		tmscore=0;
 	else {
 		int reval = tm_align.apply(pose1,pose2);
@@ -160,20 +160,20 @@ int main(int argc, char *argv[])
 
 	TR.Info << "PoseVec.size(): "<< PoseVec.size() << std::endl;
 
-	//compute similarity matrix 
+	//compute similarity matrix
 	//use boost threads frank/rr_opt.cc
 	//protocols/frag_picker/FragmentPicker.cc
         ObjexxFCL::FArray2D< core::Real > sc_matrix( PoseVec.size(),PoseVec.size(), 1.0 );
 	#ifdef USE_BOOST_THREAD
-	TR << " Running multi-thread version " << endl;
+		TR << " Running multi-thread version " << std::endl;
 	boost::thread_group threads;
 	for ( Size i = 1; i <= PoseVec.size(); ++i ) {
     		for ( Size j = i ; j <= PoseVec.size(); ++j ) {
-			TR << "i " << i << " j " << j << " "; 
+			TR << "i " << i << " j " << j << " ";
 			//boost::thread*  threadij = new boost::thread( &do_tmscore, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)));
 			//threads.add_thread(threadij);
-			threads.create_thread( boost::bind( &do_tmscore, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)) )) ; 
-			TR << "thread created"<< endl;
+			threads.create_thread( boost::bind( &do_tmscore, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)) )) ;
+			TR << "thread created"<< std::endl;
 		}
 	}
         threads.join_all();
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
         for ( Size i = 1; i <= PoseVec.size(); ++i ) {
                 for ( Size j = i+1 ; j <= PoseVec.size(); ++j ) {
                         do_tmscore(*PoseVec[i], *PoseVec[j], sc_matrix(i,j));
-			TR << "TMscore("<<i<<","<<j<<"): " << sc_matrix(i,j) << endl;
+						TR << "TMscore("<<i<<","<<j<<"): " << sc_matrix(i,j) << std::endl;
                 }
         }
 	//std::cerr << "compile with extras=boost_thread-mt!" << std::endl;
@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
 	std::vector <int> clustercentre;
 
         TR.Info << "Clustering of " << listsize << " structures with radius (TMscore) " <<  cluster_radius_ <<  std::endl;
-	
+
   	// now assign groupings
   	while(true) {
     	// count each's neighbors
@@ -263,9 +263,9 @@ int main(int argc, char *argv[])
 
   	}
 
-	TR.Info << "ncluster: " << nclusters << std::endl; 
+	TR.Info << "ncluster: " << nclusters << std::endl;
 	for (i=0;i<clustercentre.size();++i ) {
-		TR.Info << "CLUSTER " << i << ", " << clustercentre[i] <<" : ";  
+		TR.Info << "CLUSTER " << i << ", " << clustercentre[i] <<" : ";
     		for (j=0;j<listsize;++j ) {
       			if (clusternr[j] == clustercentre[i]) {
 				TR.Info << j << " " ;

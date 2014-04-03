@@ -34,7 +34,6 @@ namespace movers {
 class VLB : public protocols::moves::Mover
 {
 public:
-	//using namespace protocols::forge::components;
 	VLB(); // default ctor//design_ = true;
 	VLB( VLB const & init ); // copy ctor
 	~VLB(); // dtor

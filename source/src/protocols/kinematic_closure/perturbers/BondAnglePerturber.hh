@@ -20,9 +20,9 @@ namespace kinematic_closure {
 namespace perturbers {
 
 /// @brief Resample each backbone bond angle from a gaussian distribution.
-/// @details The parameters for the underlying gaussian distribution were taken 
-/// from a fit of the bond angle distribution observed in the Top8000 database 
-/// in 2013.  Also note that bond angles (3 atoms) are different than torsion 
+/// @details The parameters for the underlying gaussian distribution were taken
+/// from a fit of the bond angle distribution observed in the Top8000 database
+/// in 2013.  Also note that bond angles (3 atoms) are different than torsion
 /// angles (4 atoms).
 
 class BondAnglePerturber : public Perturber {
@@ -30,7 +30,7 @@ class BondAnglePerturber : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name()
-	string get_name() const { return "BondAnglePerturber"; }
+	std::string get_name() const { return "BondAnglePerturber"; }
 
 	/// @copydoc Perturber::perturb_subset()
 	void perturb_subset(
@@ -45,4 +45,3 @@ public:
 }
 
 #endif
-

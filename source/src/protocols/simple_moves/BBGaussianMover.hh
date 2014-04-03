@@ -34,8 +34,6 @@
 #include <numeric/xyzVector.hh>
 
 
-using namespace std;
-
 namespace protocols {
 namespace simple_moves {
 
@@ -176,7 +174,7 @@ protected:
 	Real get_L_prime();
 
 private:
-	utility::vector1< string > end_atom_list_;
+	utility::vector1< std::string > end_atom_list_;
 	utility::vector1< Real > dphi;
 	Real factorA_;
 	Real factorB_;

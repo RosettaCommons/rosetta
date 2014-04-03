@@ -32,6 +32,8 @@
 namespace protocols {
 namespace frag_picker {
 
+using namespace core;
+
 static basic::Tracer tr("protocols.frag_picker.TalosReader");
 
 utility::vector1<utility::vector1<std::pair<Size, Real> > > CSTalosIO::repack_to_matrix() {

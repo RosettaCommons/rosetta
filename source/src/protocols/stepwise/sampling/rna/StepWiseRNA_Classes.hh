@@ -41,7 +41,6 @@
 
 #define GAP_SIZE_DUMMY 999 //encodes for an 'infinite' gap between residues, e.g., if on different chains.
 
-//using namespace core;
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {

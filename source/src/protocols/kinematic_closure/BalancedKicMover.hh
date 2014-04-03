@@ -36,23 +36,23 @@ namespace kinematic_closure {
 
 /// @brief Make a kinematic closure move that obeys detailed balance.
 ///
-/// @details This class is very conceptually similar to KicMover, so check 
-/// out its documentation for a general overview of the kinematic closure 
-/// algorithm.  Here I will just highlight some details associated with making 
-/// a balanced version of the move.  Detailed balance is a useful property, 
-/// because it allows a Monte Carlo simulation to recapitulate ensembles with 
-/// correct equilibrium populations (so long as sampling is good, of course).  
-/// There are a two reasons why the standard KicMover algorithm does not obey 
-/// detailed balance.  The first is that the geometry of the closure move 
-/// itself introduces some inherent bias which has to be explicitly canceled 
-/// out.  The second is that care needs to be taken to perturb the non-pivot 
+/// @details This class is very conceptually similar to KicMover, so check
+/// out its documentation for a general overview of the kinematic closure
+/// algorithm.  Here I will just highlight some details associated with making
+/// a balanced version of the move.  Detailed balance is a useful property,
+/// because it allows a Monte Carlo simulation to recapitulate ensembles with
+/// correct equilibrium populations (so long as sampling is good, of course).
+/// There are a two reasons why the standard KicMover algorithm does not obey
+/// detailed balance.  The first is that the geometry of the closure move
+/// itself introduces some inherent bias which has to be explicitly canceled
+/// out.  The second is that care needs to be taken to perturb the non-pivot
 /// torsions in a way that also obeys detailed balance, as well.
 ///
-/// The add_perturber() method works much like it does in KicMover.  The only 
-/// conceptual difference is that when the added perturbers are used internally 
-/// within apply(), perturbers::Perturber::perturb_with_balance() is called 
-/// instead of perturbers::Perturber::perturb().  This makes it easy to make 
-/// variants of the perturber algorithms which obey detailed balance.  The 
+/// The add_perturber() method works much like it does in KicMover.  The only
+/// conceptual difference is that when the added perturbers are used internally
+/// within apply(), perturbers::Perturber::perturb_with_balance() is called
+/// instead of perturbers::Perturber::perturb().  This makes it easy to make
+/// variants of the perturber algorithms which obey detailed balance.  The
 /// set_pivot_picker() method is no different from the KicMover version.
 
 class BalancedKicMover
@@ -73,7 +73,7 @@ public:
 	void apply(Pose & pose);
 
 	/// @copydoc KicMover::get_name
-	string get_name() const { return "BalancedKicMover"; }
+	std::string get_name() const { return "BalancedKicMover"; }
 
 public:
 
@@ -94,7 +94,7 @@ public:
 	/// @brief This mover always obeys detailed balance, so this is a no-op.
 	void set_preserve_detailed_balance(bool) {}
 
-	/// @details Right now the proposal probabilities are balanced internally, so 
+	/// @details Right now the proposal probabilities are balanced internally, so
 	/// this ratio will always be unity.  This could change eventually, though.
 	Real last_proposal_density_ratio() { return 1; }
 
@@ -103,14 +103,14 @@ public:
 
 public:
 
-	/// @brief Pick a solution in a way that cancels out the geometrical bias of 
+	/// @brief Pick a solution in a way that cancels out the geometrical bias of
 	/// the kinematic closure algorithm.
 	static ClosureSolutionCOP pick_solution(
 			SolutionList const & unperturbed_solutions,
 			SolutionList const & perturbed_solutions);
 
 
-	/// @brief Return true if the given solution is the same as the input pose.  
+	/// @brief Return true if the given solution is the same as the input pose.
 	/// This allows for a more accurate reporting of Monte Carlo statistics.
 	static bool is_solution_trivial(
 			ClosureProblemCOP problem,

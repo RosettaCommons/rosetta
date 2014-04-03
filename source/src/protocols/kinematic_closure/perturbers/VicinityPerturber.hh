@@ -22,18 +22,18 @@ namespace protocols {
 namespace kinematic_closure {
 namespace perturbers {
 
-/// @brief Limit sampling to phi/psi pairs within some distance of a target 
+/// @brief Limit sampling to phi/psi pairs within some distance of a target
 /// loop.
 class VicinityPerturber : public Perturber {
 
 public:
 
-	/// @brief Constructor which takes a target.  Sampling will be limited to 
+	/// @brief Constructor which takes a target.  Sampling will be limited to
 	/// phi/psi pairs within some delta of this target.
 	VicinityPerturber(Pose const & target);
 
 	/// @copydoc Perturber::get_name
-	string get_name() const { return "VicinityPerturber"; }
+	std::string get_name() const { return "VicinityPerturber"; }
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
@@ -58,4 +58,3 @@ private:
 }
 
 #endif
-
