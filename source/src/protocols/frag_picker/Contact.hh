@@ -28,6 +28,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
+#include <cmath>
 
 namespace protocols {
 namespace frag_picker {
@@ -35,28 +36,28 @@ namespace frag_picker {
 class Contact: public utility::pointer::ReferenceCount {
 public:
 
-  Contact( Size i, Size j, Real dist_squared, ContactType type ) {
+	Contact( core::Size i, core::Size j, core::Real dist_squared, ContactType type ) {
 		i_ = i;
 		j_ = j;
 		dist_squared_ = dist_squared;
 		type_ = type;
-  }
+	}
 
-  ~Contact(){};
+	~Contact(){};
 
-  Size & i() {
+  core::Size & i() {
     return i_;
   }
 
-	Size & j() {
+	core::Size & j() {
 		return j_;
 	}
 
-	Real & dist_squared() {
+	core::Real & dist_squared() {
 		return dist_squared_;
 	}
 
-	Real dist() {
+	core::Real dist() {
 		return std::sqrt(dist_squared_);
 	}
 
@@ -69,9 +70,9 @@ public:
 	}
 
 private:
-	Size i_;
-	Size j_;
-	Real dist_squared_;
+	core::Size i_;
+	core::Size j_;
+	core::Real dist_squared_;
 	ContactType type_;
 };
 
