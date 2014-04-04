@@ -146,6 +146,7 @@ ResidueType::ResidueType(
 		name3_(),
 		name1_(),
 		interchangeability_group_(),
+		nbr_atom_( ResidueGraph::null_vertex() ),
 		nbr_radius_( 0 ),
 		force_nbr_atom_orient_(false),
 		mass_(0),
@@ -155,6 +156,7 @@ ResidueType::ResidueType(
 		n_non_polymeric_residue_connections_( 0 ),
 		n_polymeric_residue_connections_( 0 ),
 		carbohydrate_info_(NULL),
+		nbr_atom_indices_( 0 ),
 		finalized_(false),
 		nondefault_(false),
 		base_restype_name_(""),
@@ -417,8 +419,10 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		mainchain_atoms_.push_back( old_to_new[ old_mainchain[i] ]);
 	}
 
-	VD old_nbr = nbr_atom_;
-	nbr_atom_ = old_to_new[old_nbr];
+	if( nbr_atom_ != ResidueGraph::null_vertex() ) {
+		VD old_nbr = nbr_atom_;
+		nbr_atom_ = old_to_new[old_nbr];
+	}
 
 	utility::vector1<VD> old_act(actcoord_atoms_);
 	actcoord_atoms_.clear();
@@ -1843,9 +1847,13 @@ ResidueType::generate_atom_indices()
 		mainchain_atoms_indices_.push_back(vd_to_index_.find(mainchain_atoms_[i])->second);
 	}
 
-
-	nbr_atom_indices_ = vd_to_index_.find(nbr_atom_)->second;
-
+	if( nbr_atom_ == ResidueGraph::null_vertex() ) {
+		nbr_atom_indices_ = 0;
+	} else {
+		std::map<VD, Size>::const_iterator nbr_translation( vd_to_index_.find(nbr_atom_) );
+		assert( nbr_translation != vd_to_index_.end() );
+		nbr_atom_indices_ = nbr_translation->second;
+	}
 
 	for(Size index=1; index<= natoms(); ++index){
 		utility::vector1< core::Size > const orbs(graph_[ordered_atoms_[index]].bonded_orbitals());
