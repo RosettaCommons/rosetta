@@ -146,9 +146,17 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 		core::pose::Pose posecopy( pose );
 		dssp.apply( posecopy );
 		wanted_ss = posecopy.secstruct();
+		std::string pruned_ss( "" );
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( pose.residue(i).is_protein() ) {
+				pruned_ss += wanted_ss[i-1];
+			}
+		}
+		wanted_ss = pruned_ss;
 	}
-	utility::vector1<core::Size> const & ligands( find_ligands( pose ) );
-	std::string bp_ss( secstruct_with_ligand( wanted_ss, ligands ) );
+	std::string bp_ss( wanted_ss );
+	//utility::vector1<core::Size> const & ligands( find_ligands( pose ) );
+	//std::string bp_ss( secstruct_with_ligand( wanted_ss, ligands ) );
 
 	utility::vector1< core::Size > residues_to_design;
 	TR << "Calculating predicted SS" << std::endl;
@@ -174,10 +182,9 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 
 	if ( regions_to_design() == 0 ) {
 		TR << "Going to design all residues with psipred that doesn't match blueprint secondary structure." << std::endl;
-		pred_ss = secstruct_with_ligand( pred_ss, ligands );
+		//pred_ss = secstruct_with_ligand( pred_ss, ligands );
 		TR << "Blueprint SS = " << bp_ss << std::endl;
 		TR << "Predicted SS = " << pred_ss << std::endl;
-		runtime_assert( bp_ss.size() == pose.total_residue() );
 		residues_to_design = denovo_design::filters::nonmatching_residues( bp_ss, pred_ss );
 	} else {
 		TR << "Going to design the worst " << regions_to_design() << " residues." << std::endl;
@@ -225,7 +232,13 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 		core::pose::Pose posecopy( pose );
 		protocols::moves::DsspMover dssp;
 		dssp.apply( posecopy );
-		wanted_ss = posecopy.secstruct();
+		std::string dssp_ss( posecopy.secstruct() );
+		// look for ligands and don't include them in the SS
+		for ( core::Size i=0; i<dssp_ss.size(); ++i ) {
+				if ( pose.residue(i+1).is_protein() ) {
+						wanted_ss += dssp_ss[i];
+				}
+		}
 	}
 
 	// if we are told to, scan for point mutants which would have a bad effect on psipred
