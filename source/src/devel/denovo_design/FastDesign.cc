@@ -304,10 +304,13 @@ void FastDesign::apply( core::pose::Pose & pose ){
 	utility::vector1< core::Size > not_allowed;
 	//TR << "Num_redesigns=" << num_redesigns_ << std::endl;
 
+	// create and print task
+	core::pack::task::PackerTaskOP clear_task = get_task_factory()->create_task_and_apply_taskoperations( pose );
+	clear_task->show( TR );
+
 	// if requested, clear all residues marked as designable
 	if ( clear_designable_residues_ ) {
 		TR << "Clearing designable residues...";
-		core::pack::task::PackerTaskOP clear_task = get_task_factory()->create_task_and_apply_taskoperations( pose );
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 			if ( pose.residue( i ).is_protein() && clear_task->being_designed(i) ) {
 				// skip glycine, proline
