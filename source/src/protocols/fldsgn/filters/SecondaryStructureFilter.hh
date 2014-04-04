@@ -96,7 +96,9 @@ public:// accessor
 	// @brief get name of this filter
 	virtual std::string name() const { return "SecondaryStructureFilter"; }
 
-
+	/// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
+	void set_blueprint( std::string const blueprint_file );
+			
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,

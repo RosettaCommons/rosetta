@@ -17,6 +17,8 @@
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 
 // Project Headers
+#include <protocols/fldsgn/topology/StrandPairing.hh>
+#include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
@@ -116,8 +118,6 @@ SecondaryStructureFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using protocols::jd2::parser::BluePrint;
-
  	filtered_ss_ = tag->getOption<String>( "ss", "" );
 
 	String abego( tag->getOption<String>( "abego", "" ) );
@@ -139,9 +139,7 @@ SecondaryStructureFilter::parse_my_tag(
 			filtered_abego_.clear();
 		}
 
-		BluePrint blue( blueprint );
-		filtered_ss_ = blue.secstruct();
-		filtered_abego_ = blue.abego();
+		set_blueprint( blueprint );
 		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
 	}
 
@@ -155,6 +153,71 @@ SecondaryStructureFilter::parse_my_tag(
 	if( filtered_abego_.size() >= 1 && use_abego_ ) {
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
 	}
+}
+
+/// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
+void
+SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
+{	
+	using protocols::jd2::parser::BluePrint;	
+	BluePrint blue( blueprint_file );
+	std::string ss = blue.secstruct();
+	filtered_abego_ = blue.abego();
+	
+	// now we check the strand pairing definitions in the BluePrint -- if some of them are impossible, DSSP will never return 'E',
+	// so we will want these residues to be L/E (which is specified as 'h').
+	protocols::fldsgn::topology::SS_Info2_COP ss_info;
+ 	ss_info = new protocols::fldsgn::topology::SS_Info2( blue.secstruct() );
+	protocols::fldsgn::topology::StrandPairingSet spairs( blue.strand_pairings(), ss_info );
+	protocols::fldsgn::topology::StrandPairings pairs( spairs.strand_pairings() );
+
+	// initialize map that says which residues are paired
+	std::map< core::Size, utility::vector1< bool > > paired_residues;
+	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
+		paired_residues[pairs[strand]->s1()] = utility::vector1< bool >( pairs[strand]->size1(), false );
+	}
+
+	// determine paired residues
+	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
+		core::Size const s1( pairs[strand]->s1() );
+		core::Size const s2( pairs[strand]->s2() );
+		int const shift( pairs[strand]->rgstr_shift() );
+		core::Size const len1( pairs[strand]->size1() );
+		core::Size const len2( pairs[strand]->size2() );
+		for ( core::Size res=1; res<=len1; ++res ) {
+			core::Size const res2( res-shift );
+			if ( res2 >= 1 && res2 <= len2 ) {
+				paired_residues[s1][res] = true;
+				paired_residues[s2][res2] = true;
+			} 
+		}
+	}	
+
+	// determine unpaired residues and alter them in the string
+	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
+		core::Size const s1( pairs[strand]->s1() );
+		core::Size const s2( pairs[strand]->s2() );
+		for ( core::Size res=1; res<=paired_residues[s1].size(); ++res ) {
+			if ( !paired_residues[s1][res] ) {
+				tr << "unpaired " << s1 << " : " << res << std::endl;
+				// pairs has begin and end only on paired residues...
+				core::Size const pose_res( ss_info->strand(s1)->begin() + res - 1 );
+				runtime_assert( pose_res <= ss.size() );
+				tr << "pose residue is " << pose_res << std::endl;
+				ss[pose_res-1] = 'h'; 
+			}
+		}
+		for ( core::Size res=1; res<=paired_residues[s2].size(); ++res ) {
+			if ( !paired_residues[s2][res] ) {
+				tr << "unpaired " << s2 << " : " << res << std::endl;
+				core::Size const pose_res( ss_info->strand(s2)->begin() + res - 1 );
+				runtime_assert( pose_res <= ss.size() );
+				tr << "pose residue is " << pose_res << std::endl;
+				ss[pose_res-1] = 'h';
+			}
+		}
+	}
+	filtered_ss_ = ss;
 }
 
 /// returns the number of residues in the protein that have matching secondary structure
