@@ -1305,7 +1305,7 @@ FoldTree::tree_from_jumps_and_cuts(
 		//			}
 			vertex_list.push_back( pos );
 		}
-		assert( jump_point_in(1,i) < jump_point_in(2,i) );
+		runtime_assert( jump_point_in(1,i) < jump_point_in(2,i) );
 		int const cut( cuts(i) );
 		assert( cut >= 1 && cut < nres_in );
 		is_cut( cut ) = true;

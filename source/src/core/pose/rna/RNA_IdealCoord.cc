@@ -259,7 +259,7 @@ void RNA_IdealCoord::apply(
 	using namespace chemical;
 	using namespace conformation;
 
-	assert( pucker <= 2 );
+	runtime_assert( pucker <= 2 );
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;

@@ -802,7 +802,7 @@ sources = {
 	    #"designability_stats",
 	    #"CXdock",
 	    #"symdock_enum_3_1",
-	    #"sym_multicomp_test",
+	    "sym_multicomp_test",
 	    #"FunGroupTK",
 	    #"FunGroupTK_test",
 	    #"IKFGDB",

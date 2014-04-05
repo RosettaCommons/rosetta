@@ -383,6 +383,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	core::Size
 	sub_to_full( core::Size const i, core::pose::Pose const & pose ){
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		runtime_assert( i > 0 && i <= full_model_info.res_list().size() );
 		return full_model_info.res_list()[ i ];
 	}
 
