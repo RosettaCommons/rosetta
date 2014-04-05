@@ -67,10 +67,10 @@ bool check_coords_match(
 
 
 vector1<Vec>
-chain_coords(Pose const & pose, char chain, Size nres) {
+chain_coords(Pose const & pose, char chain, core::Size nres) {
 	vector1<Vec> result;
 	std::map<int,char> conf2chain = core::pose::conf2pdb_chain(pose);
-	for(Size i = 1; i <= nres; ++i) {
+	for(core::Size i = 1; i <= nres; ++i) {
 		if(conf2chain[pose.chain(i)] == chain) {
 			result.push_back(pose.xyz(AtomID(2,i)));
 		}
@@ -78,10 +78,10 @@ chain_coords(Pose const & pose, char chain, Size nres) {
 	return result;
 }
 vector1<Vec>
-non_chain_coords(Pose const & pose, char chain, Size nres) {
+non_chain_coords(Pose const & pose, char chain, core::Size nres) {
 	vector1<Vec> result;
 	std::map<int,char> conf2chain = core::pose::conf2pdb_chain(pose);
-	for(Size i = 1; i <= nres; ++i) {
+	for(core::Size i = 1; i <= nres; ++i) {
 		if(conf2chain[pose.chain(i)] != chain) {
 			result.push_back(pose.xyz(AtomID(2,i)));
 		}
@@ -106,7 +106,7 @@ int main (int argc, char *argv[]) {
 	for(int ifile = 1; ifile <= (int)files.size(); ++ifile) {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb(pose,files[ifile]);
-		Size nres = pose.n_residue();
+		core::Size nres = pose.n_residue();
 		Pose init(pose);
 		core::pose::symmetry::make_symmetric_pose(pose);
 		Pose test;
@@ -117,8 +117,8 @@ int main (int argc, char *argv[]) {
 		}
 		bool fail = false;
 		core::conformation::symmetry::SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
-		std::map<Size,core::conformation::symmetry::SymDof> dofs( syminfo->get_dofs() );
-		for(std::map<Size,core::conformation::symmetry::SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
+		std::map<core::Size,core::conformation::symmetry::SymDof> dofs( syminfo->get_dofs() );
+		for(std::map<core::Size,core::conformation::symmetry::SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
 			std::string jname = syminfo->get_jump_name(i->first);
 			char chain = jname[jname.size()-1];
 			vector1<Vec> preC   =     chain_coords(pose,chain,nres);
