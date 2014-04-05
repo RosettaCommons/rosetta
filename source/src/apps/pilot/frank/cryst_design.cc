@@ -103,6 +103,13 @@ OPT_1GRP_KEY(Boolean, crystdock, ssonly)
 OPT_1GRP_KEY(Boolean, crystdock, debug)
 OPT_1GRP_KEY(Boolean, crystdock, debug_exact)
 OPT_1GRP_KEY(Boolean, crystdock, eval_native)
+OPT_1GRP_KEY(Real, crystdock, n_clashdist)
+OPT_1GRP_KEY(Real, crystdock, ca_clashdist)
+OPT_1GRP_KEY(Real, crystdock, c_clashdist)
+OPT_1GRP_KEY(Real, crystdock, o_clashdist)
+OPT_1GRP_KEY(Real, crystdock, cb_clashdist)
+OPT_1GRP_KEY(Real, crystdock, sigwidth)
+OPT_1GRP_KEY(Real, crystdock, interfacedist)
 
 ////////////////////////////////////////////////
 // helper functions
@@ -739,12 +746,12 @@ private:
 public:
 	CrystDock() {
 		// to do: make these options
-		n_clashdist_  = 1.75;   // ros VDW=1.75
-		ca_clashdist_ = 2.00;   // ros VDW=2.0
-		c_clashdist_  = 2.00;   // ros VDW=2.0
-		o_clashdist_  = 1.55;   // ros VDW=1.55
-		cb_clashdist_ = 1.70;   // ros VDW=2.0    .. make this a bit smaller to encourage better packing
-		interfacedist_ = 4.0;
+		n_clashdist_  =  option[crystdock::n_clashdist];   // ros VDW=1.75
+		ca_clashdist_ =  option[crystdock::ca_clashdist];   // ros VDW=2.0
+		c_clashdist_  =  option[crystdock::c_clashdist];   // ros VDW=2.0
+		o_clashdist_  =  option[crystdock::o_clashdist];   // ros VDW=1.55
+		cb_clashdist_ =  option[crystdock::cb_clashdist];   // ros VDW=2.0    .. make this a bit smaller to encourage better packing
+		interfacedist_ = option[crystdock::interfacedist];
 
 		mininterface_ = option[ crystdock::mininterface ]();
 		maxclash_ = option[ crystdock::maxclash ]();
@@ -934,7 +941,7 @@ void
 CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Real trans_step) {
 	Real ATOM_MASK_PADDING = 2.0;
 	Real UNIT_CELL_PADDING = 4.0;  // IN GRID POINTS!
-
+	Real sigwidth=option[crystdock::sigwidth];
 	Size minmult = sg_.minmult();
 
 	// find true grid
@@ -996,7 +1003,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 						core::Real d2 = (cart_del_ij).length_squared();
 						if (d2 <= (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) {
 							core::Real doff = sqrt(d2) - clashdist;
-							core::Real sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' is sigmoid dropoff ... (grid spacing dependent?)
+							core::Real sig = 1 / ( 1 + exp ( -sigwidth*doff ) );   // '6' is sigmoid dropoff ... (grid spacing dependent?)
 							rho_ca(x,y,z) *= sig;
 						}
 					}
@@ -1034,7 +1041,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 
 						if (!ss_only_ || pose.secstruct(i)!='L') {
 							doff = sqrt(d2) - interfacedist_;
-							sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' gives sigmoid dropoff
+							sig = 1 / ( 1 + exp ( -sigwidth*doff ) );   // '6' gives sigmoid dropoff
 							rho_cb(x,y,z) *= sig;
 						}
 					}
@@ -2063,6 +2070,14 @@ try {
 	NEW_OPT(crystdock::debug, "[debug] dump intermediate info", false);
 	NEW_OPT(crystdock::debug_exact, "[debug] debug mode with exact (non-FFT) calculations (slow!)", false);
 	NEW_OPT(crystdock::eval_native, "[debug] evaluate input structure without docking", false);
+	NEW_OPT(crystdock::n_clashdist, "n_clashdist", 1.75);
+    NEW_OPT(crystdock::ca_clashdist, "ca_clashdist", 2.00);
+    NEW_OPT(crystdock::c_clashdist, "c_clashdist", 2.00);
+    NEW_OPT(crystdock::o_clashdist, "o_clashdist", 1.55);
+    NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.70);
+    NEW_OPT(crystdock::sigwidth, "sigwidth", 6.00);
+    NEW_OPT(crystdock::interfacedist, "interfacedistance", 4.00);
+
 
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
