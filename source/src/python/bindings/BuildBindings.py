@@ -851,7 +851,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         '''
 
     latest = None
-    for s in sum(sources, []):
+    for s in sorted( sum(sources, []) ):
         try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
         except OSError: pass
 

@@ -40,7 +40,7 @@
 #include <ObjexxFCL/format.hh>
 
 #include <numeric/numeric.functions.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 #include <fstream>
 #include <ostream>

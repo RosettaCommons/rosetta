@@ -13,13 +13,24 @@
 
 // Platform headers
 #include <platform/types.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
 
 #include <cmath>
 #include <cfloat>
 #include <limits>
+
+#if defined(WIN32) || defined(WIN_PYROSETTA)
+#include <float.h>
+#include <amp_math.h>
+namespace std {
+	int isnan(double x) { return _isnan(x); }
+    int isinf(double x) { return !_finite(x); }
+}
+double copysign(double x, double y) { return _copysign(x, y); }
+#endif
+
 
 // defines for error functions
 typedef std::complex<double> cmplx;

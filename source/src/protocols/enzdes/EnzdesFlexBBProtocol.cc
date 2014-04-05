@@ -76,7 +76,7 @@
 #include <utility/file/file_sys_util.hh> //checking file existence for loop pdb reading
 
 // Numeric headers
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 //C++ Headers
 // AUTO-REMOVED #include <ctime>

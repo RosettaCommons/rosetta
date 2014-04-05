@@ -33,7 +33,7 @@
 // Numeric headers
 #include <numeric/constants.hh>
 #include <numeric/interpolation/Histogram.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/distance_deriv.hh>

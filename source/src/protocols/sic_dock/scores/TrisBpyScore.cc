@@ -177,7 +177,7 @@ TrisBpyScore::score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real
 	if(x1s.size()!=1) utility_exit_with_message("foo");
 	if(x2s.size()!=1) utility_exit_with_message("foo");
 	BOOST_FOREACH(Xform const & x1,x1s){
-		for(uint ir = 1; ir <= bbx_.size(); ++ir){
+		for(core::Size ir = 1; ir <= bbx_.size(); ++ir){
 			Xform const & bbx(bbx_[ir]);
 			Vec cb = x1*bbx*CBlocal;
 			Vec tmp(cb.x(),cb.y(),0);

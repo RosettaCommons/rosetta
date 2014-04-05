@@ -15,7 +15,7 @@
 
 #include <utility/vector1.hh>
 #include <numeric/types.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 class StatisticsFunctionsTests : public CxxTest::TestSuite {
 

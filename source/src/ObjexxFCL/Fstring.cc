@@ -131,6 +131,14 @@ std::string const WHITESPACE( " \t\0", 3 );
 		std::memset( str_, SPACE, len_ );
 	}
 
+	Fstring::Fstring( unsigned long long const len_a ) :
+		len_( static_cast< size_type >( len_a ) ),
+		str_( len_ > 0 ? new char[ len_ ] : 0 ),
+		c_str_( 0 ),
+		sub_( false )
+	{
+		std::memset( str_, SPACE, len_ );
+	}
 
 	/// @brief Length + Fstring Constructor
 	Fstring::Fstring( size_type const len_a, Fstring const & s ) :
@@ -1142,7 +1150,7 @@ std::string const WHITESPACE( " \t\0", 3 );
 	Fstring &
 	Fstring::overlay( std::string const & s, size_type const pos )
 	{
-		(*this)( pos, std::min( ( pos + s.length() ) - 1, len_ ) ) = s;
+		(*this)( pos, std::min<size_type>( ( pos + s.length() ) - 1, len_ ) ) = s;
 		return *this;
 	}
 
@@ -1151,7 +1159,7 @@ std::string const WHITESPACE( " \t\0", 3 );
 	Fstring &
 	Fstring::overlay( c_cstring const s, size_type const pos )
 	{
-		(*this)( pos, std::min( ( pos + std::strlen( s ) ) - 1, len_ ) ) = s;
+		(*this)( pos, std::min<size_type>( ( pos + std::strlen( s ) ) - 1, len_ ) ) = s;
 		return *this;
 	}
 

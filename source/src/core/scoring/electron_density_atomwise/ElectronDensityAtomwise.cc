@@ -34,7 +34,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 #include <core/scoring/electron_density/SplineInterp.hh>
 

@@ -26,7 +26,7 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>

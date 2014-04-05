@@ -39,7 +39,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 #include <numeric/util.hh>
 //#include <math.h>
 

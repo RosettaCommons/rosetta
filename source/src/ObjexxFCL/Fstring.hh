@@ -62,7 +62,6 @@ private: // Friend
 
 public: // Types
 
-
 	// STL Style
 	typedef  std::size_t  size_type;
 	typedef  void (*initializer_function)( Fstring & );
@@ -164,6 +163,11 @@ public: // Creation
 	/// @brief Length Constructor
 	explicit
 	Fstring( unsigned long int const len_a );
+
+
+	/// @brief Length Constructor
+	explicit
+	Fstring( unsigned long long const len_a );
 
 
 	/// @brief Length + Fstring Constructor

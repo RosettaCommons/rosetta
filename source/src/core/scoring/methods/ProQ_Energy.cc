@@ -55,7 +55,7 @@
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 #include <numeric/util.hh>
 //#include <math.h>
 

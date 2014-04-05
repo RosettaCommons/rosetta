@@ -69,8 +69,10 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN_PYROSETTA)
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh> // WIN32 INCLUDE
+#include <core/scoring/etable/Etable.hh>
 #endif
 
 

@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 // Numeric Headers
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 // ObjecxxFCL Headers
 #include <ObjexxFCL/format.hh>

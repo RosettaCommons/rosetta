@@ -27,7 +27,7 @@
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 

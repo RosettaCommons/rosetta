@@ -41,7 +41,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 
 //
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>

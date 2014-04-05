@@ -44,6 +44,11 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/environment/DofPassport.fwd.hh>
+
+#ifdef WIN_PYROSETTA
+#include <core/environment/DofPassport.hh>
+#endif
+
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>

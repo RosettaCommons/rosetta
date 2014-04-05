@@ -30,7 +30,6 @@
 #include <utility/vector1.functions.hh> // to get arg_min()
 
 // AUTO-REMOVED #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/statistics.functions.hh>
 
 // C++ headers
 #include <fstream>

@@ -20,7 +20,6 @@ sources = {
 		"polynomial",
 		"prob_util",
 		"roc_curve",
-		"statistics.functions",
 		"util",
 	],
 	"numeric/expression_parser": [
@@ -81,6 +80,9 @@ sources = {
 	"numeric/random": [
 		"random",
 		"WeightedSampler",
+	],
+	"numeric/statistics": [
+		"functions",
 	],
 }
 include_path = [

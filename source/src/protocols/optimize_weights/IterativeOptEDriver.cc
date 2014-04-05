@@ -95,7 +95,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/statistics.functions.hh>
+#include <numeric/statistics/functions.hh>
 #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/FArray1D.hh>

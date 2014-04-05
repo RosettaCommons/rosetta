@@ -907,7 +907,7 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 
 	if ( option[ grid_boundary ].user() ) {
 
-		std::string filename = option[ grid_boundary ];
+		std::string filename = option[ grid_boundary ]();
 		utility::io::izstream istr( filename.c_str() );
 		std::string name, liggrid;
 		istr >> name >> liggrid;
@@ -1338,7 +1338,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 				! option[ active_site_definition_by_gridlig ].user() ) {
 			utility_exit_with_message( "Flag match::required_active_site_atom_names must be used in combination with\n" "either the match::active_site_definition_by_residue flag or the match::active_site_definition_by_gridlig flag" );
 		}
-		std::string filename = option[ required_active_site_atom_names ];
+		std::string filename = option[ required_active_site_atom_names ]();
 		utility::io::izstream istr( filename.c_str() );
 		while ( istr ) {
 			std::string atname;
@@ -1365,7 +1365,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 			std::cerr << "ERROR: found incompatible flags active_site_definition_by_residue and active_site_definition_by_gridlig on the command line" << std::endl;
 			utility_exit_with_message( "Ambiguous command line." );
 		}
-		std::string filename = option[ active_site_definition_by_residue ];
+		std::string filename = option[ active_site_definition_by_residue ]();
 		utility::io::izstream istr( filename.c_str() );
 		while ( istr ) {
 			Size resid; Real radius;
@@ -1512,4 +1512,3 @@ MatcherTask::initialize_output_options_from_command_line()
 
 }
 }
-
