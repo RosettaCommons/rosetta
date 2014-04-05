@@ -57,11 +57,11 @@ PoseComment::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::Dat
 bool
 PoseComment::apply( core::pose::Pose const & pose ) const {
 	core::Real const val ( compute( pose ) );
-	TR<<"Pose comment ";
+	TR<<"Pose comment "<<comment_name()<<":"<<comment_value();
 	if( val >= 0.9999 )
-		TR<<"found"<<std::endl;
+		TR<<" found"<<std::endl;
 	else
-		TR<<"not found"<<std::endl;
+		TR<<" not found"<<std::endl;
 	return( val >= 0.9999 );
 }
 

@@ -489,11 +489,11 @@ Splice::apply( core::pose::Pose & pose )
 		runtime_assert( dbase_entry <= torsion_database_.size() );
 		dofs = torsion_database_[ dbase_entry ];
 		std::string const source_pdb_name( dofs.source_pdb() );
-		dofs_pdb_name = source_pdb_name;
-		if( use_sequence_profiles_ ){
+		Pdb4LetName_ = dofs_pdb_name = source_pdb_name;
+//		if( use_sequence_profiles_ ){
 			load_pdb_segments_from_pose_comments( pose );
 			modify_pdb_segments_with_current_segment( source_pdb_name );
-		}
+//		}
 		TR<<"Taking loop from source pdb "<<source_pdb_name<<std::endl;
 		if( mover_tag_() != NULL )
 			mover_tag_->obj = "segment_" + source_pdb_name;
@@ -1407,12 +1407,10 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		else {
 			Pdb4LetName_ = parse_pdb_code(source_pdb_);//
 		}
-
-		if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
-			TR<<"The currnet segment is: "<<segment_type_<<" and the source pdb is "<<Pdb4LetName_<<std::endl;
-			core::pose::add_comment(pose,"segment_"+segment_type_,Pdb4LetName_);//change correct association between current loop and pdb file
-		}
-
+    if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
+      TR<<"The currnet segment is: "<<segment_type_<<" and the source pdb is "<<Pdb4LetName_<<std::endl;
+      core::pose::add_comment(pose,"segment_"+segment_type_,Pdb4LetName_);//change correct association between current loop and pdb file
+    }
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
 		TR<<"There are "<<pdb_segments_.size()<<" PSSM segments"<<std::endl;
 
@@ -1469,7 +1467,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 void
 Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
-	if(use_sequence_profiles_){
+//	if(use_sequence_profiles_){
 		//If we are using sequence profiles then the condition is true and function can run
 		using namespace std;
 		map< string, string > const comments = core::pose::get_all_comments( pose );
@@ -1488,7 +1486,7 @@ Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
 			TR<<"recording segment/pdb pair: "<<short_key<<'/'<<val<<std::endl;
 			++j;
 		}
-	}
+//	}
 }
 
 void
@@ -1531,6 +1529,11 @@ find_residues_on_chain1_inside_interface( core::pose::Pose const & pose,core::Si
 
 void
 Splice::add_sequence_constraints( core::pose::Pose & pose){
+	if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
+		TR<<"The current segment is: "<<segment_type_<<" and the source pdb is "<<Pdb4LetName_<<std::endl;
+		core::pose::add_comment(pose,"segment_"+segment_type_,Pdb4LetName_);//change correct association between current loop and pdb file
+	}
+
 	if(use_sequence_profiles_){
 		using namespace core::scoring::constraints;
 
