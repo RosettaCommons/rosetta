@@ -420,7 +420,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	for( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if this residue is not a protein residue, we shouldn't process it further
 		if ( ! pose.residue( i ).is_protein() ) continue;
-		char ss( secstruct[i] );
+		char ss( secstruct[i-1] );
 		if( ss == 'H' && flag == false && i != 1 ) {
 			initial_helix[ i ] = true;
 			helix_capping[ i-1 ] = true;
@@ -458,7 +458,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 				active_layers.push_back( layer_pair.first );
 		}
 
-		char ss( secstruct[i] );
+		char ss( secstruct[i-1] );
 		TR << "Residue " << i << std::endl;
 		TR << "    ss=" << ss << " ";
 		
