@@ -221,15 +221,15 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
 	runtime_assert( from_nearest_on_source && to_nearest_on_source );
 	// change loop length:
-	TR << "2 residue_diff: to_nearest_on_source" << to_nearest_on_source << "  from_nearest_on_source "<<from_nearest_on_source<<" to_res "<<to_res<<" from_res "<<from_res<<std::endl;
+	TR << "to_nearest_on_source" << to_nearest_on_source << " from_nearest_on_source "<<from_nearest_on_source<<" to_res "<<to_res<<" from_res "<<from_res<<std::endl;
 	int const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res )); // SF&CN changed from core::Size to int, as residue_diff can be negative.
 	//	if( residue_diff == 0 ){
 	//		TR<<"skipping copy_stretch since loop lengths are identical"<<std::endl;
 	//		return;
 	//	}
 	core::kinematics::FoldTree const saved_ft( target.fold_tree() );
-	TR<<"DEBUG: copy_stretch foldtree: "<<saved_ft<<std::endl;
-	TR<<" from res "<<from_res<<" to res "<<to_res<<" residue_diff"<<std::endl;
+	TR<<"copy_stretch foldtree: "<<saved_ft<<std::endl;
+	TR<<"from res: "<<from_res<<" to res: "<<to_res<<" residue_diff: "<<residue_diff<<std::endl;
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res );
 	llc.loop_end( to_res );
