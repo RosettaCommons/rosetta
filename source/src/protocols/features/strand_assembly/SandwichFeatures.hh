@@ -55,6 +55,7 @@ class SandwichFeatures : public protocols::features::FeaturesReporter
 public:
 
 	SandwichFeatures();
+	~SandwichFeatures();
 
 	virtual
 	std::string
@@ -302,7 +303,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_i);
 
-	std::pair<core::Size, core::Size>
+	std::pair<int, int>
 	get_central_residues_in_each_of_two_edge_strands(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,

@@ -143,6 +143,11 @@ SandwichFeatures::SandwichFeatures()
 	//TR << "A SandwichFeatures constructor called" << endl;
 }
 
+SandwichFeatures::~SandwichFeatures()
+{
+	//TR << "A SandwichFeatures destructor called" << endl;
+}
+
 utility::vector1<std::string>
 SandwichFeatures::features_reporter_dependencies() const
 {
@@ -2940,7 +2945,7 @@ SandwichFeatures::check_whether_this_sheet_is_too_short(
 
 
 //get_central_residues_in_each_of_two_edge_strands
-std::pair<Size, Size>
+std::pair<int, int>
 SandwichFeatures::get_central_residues_in_each_of_two_edge_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -2949,7 +2954,7 @@ SandwichFeatures::get_central_residues_in_each_of_two_edge_strands(
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_i);
 
 	// get central residue numbers in edge strands
-	vector<Size> vector_of_central_residues_in_sheet_i;
+	vector<int> vector_of_central_residues_in_sheet_i;
 	for(Size i=1; i<=strands_from_sheet_i.size(); ++i){
 		if (strands_from_sheet_i[i].get_size() <= 2){
 			continue;
@@ -3023,8 +3028,8 @@ SandwichFeatures::get_central_residues_in_each_of_two_edge_strands(
 		}
 	}
 
-	Size terminal_cen_res_pos_1 = vector_of_central_residues_in_sheet_i[index_terminal_cen_res_pos_1];	// index of the first central_residue
-	Size terminal_cen_res_pos_2 = vector_of_central_residues_in_sheet_i[index_terminal_cen_res_pos_2];	// index of the second central_residue
+	int terminal_cen_res_pos_1 = vector_of_central_residues_in_sheet_i[index_terminal_cen_res_pos_1];	// index of the first central_residue
+	int terminal_cen_res_pos_2 = vector_of_central_residues_in_sheet_i[index_terminal_cen_res_pos_2];	// index of the second central_residue
 
 	return std::make_pair(terminal_cen_res_pos_1, terminal_cen_res_pos_2);
 } //get_central_residues_in_each_of_two_edge_strands
@@ -3217,12 +3222,12 @@ SandwichFeatures::judge_facing(
 
 	if (angle_with_cen_res > max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_)
 	{
-		return 0; // these two sheets are linear or do not face to each other properly!
+		return 0; // these two sheets are linear or do not face each other properly!
 	}
 
 
 	// <begin> identify four terminal central residues
-	std::pair<Size, Size>
+	std::pair<int, int>
 	two_central_residues_in_two_edge_strands =	get_central_residues_in_each_of_two_edge_strands(
 		struct_id,
 		db_session,
@@ -3358,15 +3363,15 @@ SandwichFeatures::judge_facing(
 		(angle_1 < max_sheet_angle_by_four_term_cen_res_) &&
 		(angle_2 > min_sheet_angle_by_four_term_cen_res_) &&
 		(angle_2 < max_sheet_angle_by_four_term_cen_res_) &&
-		(torsion_i_j > min_sheet_torsion_cen_res_)
-		&& (torsion_i_j < max_sheet_torsion_cen_res_))
+		(torsion_i_j > min_sheet_torsion_cen_res_)	&&
+		(torsion_i_j < max_sheet_torsion_cen_res_))
 	{
-		return 1; // these two strand_pairs face to each other properly, so constitute a sandwich
+		return 1; // these two strand_pairs face each other properly, so constitute a sandwich
 	}
 
 	else
 	{
-		return 0; // these two strand_pairs are linear or do not face to each other properly!
+		return 0; // these two strand_pairs are linear or	do not face	each other properly!
 	}
 
 } //SandwichFeatures::judge_facing
@@ -4626,7 +4631,7 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	"	sum(A+V+I+L+M+F+Y+W), \n"
 	"	sum(R+H+K+D+E+S+T+N+Q), \n"
 	"	sum(C+G+P), \n"
-	"	sum(R+H+K), \n"
+	"	sum(R+K), \n"
 	"	sum(D+E) \n"
 	"FROM\n"
 	"	sw_by_components\n"
@@ -7115,10 +7120,14 @@ SandwichFeatures::parse_my_tag(
 	max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_ = tag->getOption<Real>("max_sheet_angle_with_cen_res", 130.0);
 					//	definition: Maximum angle between sheets (CA and CA) with two terminal residues and one central residue
 					//	example: I need to remove non-facing sheets
-	min_sheet_angle_by_four_term_cen_res_ = tag->getOption<Real>("min_sheet_angle", 30.0);
+
+	min_sheet_angle_by_four_term_cen_res_ = tag->getOption<Real>("min_sheet_angle_by_four_term_cen_res", 25.0);
 					//	definition: Minimum angle between sheets (CA and CA)
+					//	defined by: 3 middle residues in each edge strand among 4 middle residues
 					//	usage: used in judge_facing "angle_1 > min_sheet_angle_by_four_term_cen_res_"
-	max_sheet_angle_by_four_term_cen_res_ = tag->getOption<Real>("max_sheet_angle", 150.0);
+					//	[example]	during repopulated de novo design of 3_1L9N, 27.2 of min_sheet_angle was observed for ideal-looking decoy
+
+	max_sheet_angle_by_four_term_cen_res_ = tag->getOption<Real>("max_sheet_angle_by_four_term_cen_res", 150.0);
 					//	definition: Maximum angle between sheets (CA and CA)
 					// In [1TEN] even 155 degree comes from same sheet!
 
@@ -7140,7 +7149,6 @@ SandwichFeatures::parse_my_tag(
 					//	example:	(in 1A64_chain_A) shortest_avg_dis_inter_sheet between sheet 1 and 2 = 25 A (and these sheets should not be a sandwich)
 					//	example:	(in 1A1M) the average distance between sheet 1 and 4 > 20 A (but these sheets should be a sandwich)
 					//	example:	(in 1ASQ) the average distance between sheet 1 and 4 > 20 A (and these sheets should not be a sandwich)
-
 
 	max_inter_strand_angle_to_not_be_same_direction_strands_ = tag->getOption<Real>("max_inter_strand_angle_to_not_be_same_direction_strands", 120.0);
 					//	usage: 	if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)
@@ -7726,13 +7734,13 @@ SandwichFeatures::report_features(
 					
 					if ( return_of_check_sw_by_dis_anti == -999 || return_of_check_sw_by_dis_parallel == -999)
 					{
-							//TR.Info << "these sheets will not be sandwich ever because these are too close or distant to each other!" << endl;
+							TR.Info << "these sheets will not be sandwich ever because these are too close or distant to each other!" << endl;
 						chance_of_being_sandwich_w_these_2_sheets = false;
 					}
 					
 					if ( return_of_check_sw_by_dis_anti != -99 || return_of_check_sw_by_dis_parallel != -99)
 					{
-						//	TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " are in the ideal distance range" << endl;
+							TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " are in the ideal distance range" << endl;
 						found_sandwich_w_these_2_sheets = true;
 						chance_of_being_sandwich_w_these_2_sheets = false; // these are sandwich, but no more sheet search is needed! (this "false" false assignment is needed (confirmed! by experiment))
 					}
@@ -7749,11 +7757,11 @@ SandwichFeatures::report_features(
 		}
 		
 		int facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
-		// if false, these two strand_pairs are linear to each other or do not face properly to each other
+		// if false, these two strand_pairs are linear to each other or do not face each other	properly
 		
 		if	(facing == 0)
 		{
-			//	TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " do not face each other" << endl;
+				TR.Debug << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << "	do	not	face	each other" << endl;
 			continue; // skip this sheet
 		}
 		else if (facing == -99)
@@ -7762,9 +7770,7 @@ SandwichFeatures::report_features(
 			continue; // skip this sheet
 		}
 		else
-
-				//	TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
-		
+				TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
 			write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, all_distinct_sheet_ids[i], strands_from_sheet_i.size());
 			sw_can_by_sh_PK_id_counter++;
 			
