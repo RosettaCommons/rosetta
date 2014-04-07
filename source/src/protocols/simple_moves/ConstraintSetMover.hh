@@ -60,11 +60,14 @@ public:
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 
+	void add_constraints( bool const a ){ add_constraints_ = a; }
+	bool add_constraints() const { return add_constraints_; }
 private:
 	ConstraintSetOP constraint_set_low_res_;
 	ConstraintSetOP constraint_set_high_res_;
 	std::string cst_file_;
 	std::string cst_fa_file_;
+	bool add_constraints_; // dflt false; if true add the constraints, rather than replacing
 
 };
 

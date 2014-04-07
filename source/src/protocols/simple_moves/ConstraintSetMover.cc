@@ -81,6 +81,7 @@ ConstraintSetMover::read_options()
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() )
 		cst_fa_file_ = option[ OptionKeys::constraints::cst_fa_file ]().front();
 	else cst_fa_file_=cst_file_;
+	add_constraints_ = false;
 }
 
 void
@@ -129,14 +130,20 @@ ConstraintSetMover::apply( Pose & pose )
 	}
 
 	if ( pose.is_fullatom() ) {
-		pose.constraint_set( constraint_set_high_res_ );
+		if( add_constraints() )
+			pose.add_constraints( constraint_set_high_res_->get_all_constraints());
+		else
+			pose.constraint_set( constraint_set_high_res_ );
 		if (TR.Debug.visible()) {
 			TR.Debug << "High-res constraints:" << std::endl;
 			constraint_set_high_res_->show_definition(TR.Debug, pose);
 			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
 		}
 	} else {
-		pose.constraint_set( constraint_set_low_res_ );
+		if( add_constraints() )
+			pose.add_constraints( constraint_set_low_res_->get_all_constraints() );
+		else
+			pose.constraint_set( constraint_set_low_res_ );
 		if (TR.Debug.visible()) {
 			TR.Debug << "Low-res constraints:" << std::endl;
 			constraint_set_low_res_->show_definition(TR.Debug, pose);
@@ -165,6 +172,7 @@ ConstraintSetMover::parse_my_tag(
 	if ( tag->hasOption("cst_file") ) cst_file_ = tag->getOption<std::string>("cst_file");
 	if ( tag->hasOption("cst_fa_file") ) cst_fa_file_ = tag->getOption<std::string>("cst_fa_file");
 	else cst_fa_file_=cst_file_;
+	add_constraints( tag->getOption< bool >( "add_constraints", false ) );
 	TR << "of type ConstraintSetMover with constraint file: "<< cst_file_ <<std::endl;
 	if ( cst_fa_file_ != cst_file_ ) {
 		TR << "of type ConstraintSetMover with fullatom constraint file: "<< cst_fa_file_ <<std::endl;
