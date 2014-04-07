@@ -314,8 +314,8 @@ public:
 protected:
 
 	//Hooks for SASAEdge< V, E, G > class
-	void declare_energies_final_no_deletion() { prepare_for_simulated_annealing(); }
-	void prepare_for_simulated_annealing_no_deletion() { prepare_for_simulated_annealing(); }
+	void declare_energies_final_no_deletion() { LazyEdge::prepare_for_simulated_annealing(); }
+	void prepare_for_simulated_annealing_no_deletion() { LazyEdge::prepare_for_simulated_annealing(); }
 	bool pd_edge_table_all_zeros() const { return false;}
 
 private:
