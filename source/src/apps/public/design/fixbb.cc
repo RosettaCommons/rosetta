@@ -163,5 +163,6 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-	} 
+		return -1;
+	}
 }

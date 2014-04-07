@@ -149,21 +149,21 @@ get_chis_complicated(
 	core::pack::rotamer_set::RotamerSetOP rotset10 = get_rotamers(pose,irsd, true,false);
 	core::pack::rotamer_set::RotamerSetOP rotset01 = get_rotamers(pose,irsd,false, true);
 	core::pack::rotamer_set::RotamerSetOP rotset11 = get_rotamers(pose,irsd, true, true);
-	rotset1[ 0] = rotset00; rotset2[ 0] = rotset00; 
-	rotset1[ 1] = rotset00; rotset2[ 1] = rotset10; 
-	rotset1[ 2] = rotset10; rotset2[ 2] = rotset00; 
-	rotset1[ 3] = rotset10; rotset2[ 3] = rotset10; 
-	rotset1[ 4] = rotset00; rotset2[ 4] = rotset01; 
-	rotset1[ 5] = rotset01; rotset2[ 5] = rotset00; 
-	rotset1[ 6] = rotset10; rotset2[ 6] = rotset01; 
-	rotset1[ 7] = rotset01; rotset2[ 7] = rotset10; 
-	rotset1[ 8] = rotset01; rotset2[ 8] = rotset01; 
-	rotset1[ 9] = rotset00; rotset2[ 9] = rotset11; 
-	rotset1[10] = rotset11; rotset2[10] = rotset00; 
-	rotset1[11] = rotset10; rotset2[11] = rotset11; 
-	rotset1[12] = rotset11; rotset2[12] = rotset10; 
-	rotset1[13] = rotset01; rotset2[13] = rotset11; 
-	rotset1[14] = rotset11; rotset2[14] = rotset01; 
+	rotset1[ 0] = rotset00; rotset2[ 0] = rotset00;
+	rotset1[ 1] = rotset00; rotset2[ 1] = rotset10;
+	rotset1[ 2] = rotset10; rotset2[ 2] = rotset00;
+	rotset1[ 3] = rotset10; rotset2[ 3] = rotset10;
+	rotset1[ 4] = rotset00; rotset2[ 4] = rotset01;
+	rotset1[ 5] = rotset01; rotset2[ 5] = rotset00;
+	rotset1[ 6] = rotset10; rotset2[ 6] = rotset01;
+	rotset1[ 7] = rotset01; rotset2[ 7] = rotset10;
+	rotset1[ 8] = rotset01; rotset2[ 8] = rotset01;
+	rotset1[ 9] = rotset00; rotset2[ 9] = rotset11;
+	rotset1[10] = rotset11; rotset2[10] = rotset00;
+	rotset1[11] = rotset10; rotset2[11] = rotset11;
+	rotset1[12] = rotset11; rotset2[12] = rotset10;
+	rotset1[13] = rotset01; rotset2[13] = rotset11;
+	rotset1[14] = rotset11; rotset2[14] = rotset01;
 	rotset1[15] = rotset11; rotset2[15] = rotset11;
 	for(Size irs = 0; irs < 16; ++irs) {
 		for(Size irot = 1; irot <= rotset1[irs]->num_rotamers(); ++irot) {
@@ -189,8 +189,8 @@ get_chis_complicated(
 					tmp[4] = chi2j;
 					chis.push_back(tmp);
 				}
-			}			
-		}		
+			}
+		}
 	}
 	return chis;
 }
@@ -216,8 +216,8 @@ get_chis(
 			tmp[3] = chi1j;
 			tmp[4] = chi2j;
 			chis.push_back(tmp);
-		}			
-	}		
+		}
+	}
 	return chis;
 }
 
@@ -228,7 +228,7 @@ int get_N(core::pose::Pose const & inp) {
 	for(i = 2; i <= inp.n_residue(); ++i) {
 		if(inp.chain(i) != (int)c) {
 			break;
-		}		
+		}
 	}
 	Size N = i-1;
 	if( inp.n_residue() % N != 0 ) {
@@ -236,16 +236,16 @@ int get_N(core::pose::Pose const & inp) {
 			+ObjexxFCL::string_of(N)+" "+ObjexxFCL::string_of(inp.n_residue()) );
 	} else if( inp.residue(N).name() != inp.residue(2*N).name() ) {
 		utility_exit_with_message("res N & 2*N not same type!!!");
-	} else if( inp.residue(N).nchi() > 0 && fabs(norm_degrees(inp.residue(N).chi(1)) - norm_degrees(inp.residue(2*N).chi(1))) > 1.0 ) { 
+	} else if( inp.residue(N).nchi() > 0 && fabs(norm_degrees(inp.residue(N).chi(1)) - norm_degrees(inp.residue(2*N).chi(1))) > 1.0 ) {
 		utility_exit_with_message("res N & 2*N not same chi1: "+
 			ObjexxFCL::string_of(inp.residue(N).chi(1))+" "+ObjexxFCL::string_of(inp.residue(2*N).chi(1)));
-	} else if( inp.residue(N).nchi() > 1 && fabs(norm_degrees(inp.residue(N).chi(2)) - norm_degrees(inp.residue(2*N).chi(2))) > 1.0 ) { 
+	} else if( inp.residue(N).nchi() > 1 && fabs(norm_degrees(inp.residue(N).chi(2)) - norm_degrees(inp.residue(2*N).chi(2))) > 1.0 ) {
 		utility_exit_with_message("res N & 2*N not same chi2: "+
 			ObjexxFCL::string_of(inp.residue(N).chi(2))+" "+ObjexxFCL::string_of(inp.residue(2*N).chi(2)));
-	} else if( inp.residue(N).nchi() > 2 && fabs(norm_degrees(inp.residue(N).chi(3)) - norm_degrees(inp.residue(2*N).chi(3))) > 1.0 ) { 
+	} else if( inp.residue(N).nchi() > 2 && fabs(norm_degrees(inp.residue(N).chi(3)) - norm_degrees(inp.residue(2*N).chi(3))) > 1.0 ) {
 		utility_exit_with_message("res N & 2*N not same chi3: "+
 			ObjexxFCL::string_of(inp.residue(N).chi(3))+" "+ObjexxFCL::string_of(inp.residue(2*N).chi(3)));
-	} else if( inp.residue(N).nchi() > 3 && fabs(norm_degrees(inp.residue(N).chi(4)) - norm_degrees(inp.residue(2*N).chi(4))) > 1.0 ) { 
+	} else if( inp.residue(N).nchi() > 3 && fabs(norm_degrees(inp.residue(N).chi(4)) - norm_degrees(inp.residue(2*N).chi(4))) > 1.0 ) {
 		utility_exit_with_message("res N & 2*N not same chi4: "+
 			ObjexxFCL::string_of(inp.residue(N).chi(4))+" "+ObjexxFCL::string_of(inp.residue(2*N).chi(4)));
 	}
@@ -336,7 +336,7 @@ bool clash_check_bb(core::pose::Pose & pose, Size icys, Size N, Size Nsub) {
 	for(Size ir = 1; ir <= Nsub*N; ++ir) {
 		Size inatom = pose.residue(ir).aa() == core::chemical::aa_gly ? 4 : 5;
 		for(Size ia = 1; ia <= inatom; ++ia) {
-			Vec iX = pose.xyz(AtomID(ia,ir));			
+			Vec iX = pose.xyz(AtomID(ia,ir));
 			if( ir!=icys && pose.xyz(AtomID(6,Nsub*N+icys)).distance_squared(iX) < 7.0 ) return false;
 			for(Size jr = Nsub*N+1; jr <= 2*Nsub*N; ++jr) {
 				Size jnatom = pose.residue(jr).aa() == core::chemical::aa_gly ? 4 : 5;
@@ -394,7 +394,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	tmp.dump_pdb("test.pdb");
 	Real score_ref = repackmin(tmp,*scorefxn,icys,N);
 	tmp.dump_pdb("testmin.pdb");
-	
+
 
 	if( pose.residue(icys).xyz("SG").distance(pose.residue(3*N+icys).xyz("SG")) > 2.2 ) {
 		utility_exit_with_message("BAD DISULFIDE!!!");
@@ -413,7 +413,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	cys.set_dof(core::id::DOF_ID(core::id::AtomID(cys.residue(1).atom_index("HG"),1),core::id::D    ),2.02);
 	cys.set_dof(core::id::DOF_ID(core::id::AtomID(cys.residue(1).atom_index("HG"),1),core::id::THETA),1.322473);
 	cys.set_chi(1,1,start_chi1);
-	cys.set_chi(2,1,start_chi2);	
+	cys.set_chi(2,1,start_chi2);
 	pose.replace_residue(0*N+icys,cys.residue(1),true);
 	pose.replace_residue(1*N+icys,cys.residue(1),true);
 	pose.replace_residue(2*N+icys,cys.residue(1),true);
@@ -460,7 +460,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	vector1<vector1<Real> > chis = get_chis(pose,icys);
 	for(Size irot = 1; irot <= chis.size(); ++irot){
 		Real chi1i = chis[irot][1];
-		Real chi2i = chis[irot][2];	
+		Real chi2i = chis[irot][2];
 		Real chi1j = chis[irot][3];
 		Real chi2j = chis[irot][4];
 		std::cout << "progress " << 2*irot << " of " << 2*chis.size() << std::endl;
@@ -478,18 +478,18 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 			set_disulf(small,smallicys,nsmall,1,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(small,smallicys,nsmall,1) ) {
 				std::cout << "clash small  " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
-				continue;					
+				continue;
 			}
 			set_disulf(med,medicys,nmed,1,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(med,medicys,nmed,1) ) {
 				std::cout << "clash medium " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
-				continue;					
+				continue;
 			}
 			// now full
 			set_disulf(pose,icys,N,3,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(pose,icys,N,3) ) {
 				std::cout << "clash full   " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
-				continue;					
+				continue;
 			}
 			if( core::scoring::CA_rmsd(in_pose,pose) < option[gendsf::rms_cutoff]() ) {
 				std::cout << "same " << " " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
@@ -514,7 +514,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 			// utility_exit_with_message("arst");
 		}
 	}
-	for(Size ihit = 1; ihit <= alts.size(); ++ihit) {		
+	for(Size ihit = 1; ihit <= alts.size(); ++ihit) {
 		std::cout << "alt_disulfide ddG " << alts[ihit].ddg << " " << alts[ihit].fn << std::endl;
 		alts[ihit].pose.dump_pdb(option[out::file::o]+"/"+alts[ihit].fn);
 	}
@@ -540,6 +540,7 @@ int main (int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

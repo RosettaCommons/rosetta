@@ -72,53 +72,53 @@
 basic::options::StringOptionKey const interface("interface");
 class TestMMOP : public protocols::moves::Mover{
 
-public:	
-	
+public:
+
 	TestMMOP(){};
-	
+
 	virtual ~TestMMOP(){};
-	
+
 	virtual
 	std::string
 	get_name() const {
 		return "TestMMOP";
 	}
-	
+
 	virtual
 	void
 	apply(core::pose::Pose & pose){
-		
+
 		using namespace core::pack::task::operation;
 		using namespace protocols::toolbox::task_operations;
 		using namespace protocols::simple_moves;
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		
+
 		core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
 		tf->push_back(new InitializeFromCommandline);
-		
+
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
-		
+
 		if (option[ OptionKeys::in::file::movemap ].user()) {
 			movemap->init_from_file(option[ OptionKeys::in::file::movemap ]() );
 		}
 		else{
 			movemap->set_jump( option[ OptionKeys::relax::jump_move ]() );
 			movemap->set_bb( option[ OptionKeys::relax::bb_move ]() );
-			movemap->set_chi( option[ OptionKeys::relax::chi_move ]() );	
+			movemap->set_chi( option[ OptionKeys::relax::chi_move ]() );
 		}
 		RestrictToMoveMapChiOperationOP mmop = new RestrictToMoveMapChiOperation(movemap);
 		mmop->set_design(true);
 		mmop->set_include_neighbors(true);
 		mmop->set_cutoff_distance(10.0);
-		
+
 		tf->push_back(mmop);
-		
+
 		PackRotamersMoverOP packer = new PackRotamersMover(core::scoring::getScoreFunction(true));
 		packer->task_factory(tf);
 		packer->apply(pose);
 	}
-	
+
 };
 
 
@@ -131,29 +131,29 @@ class InterfaceFeaturesTests : public protocols::moves::Mover{
 public:
 	//Unit test times out - limit not long enough to test.
 	InterfaceFeaturesTests(){};
-	
+
 	virtual ~InterfaceFeaturesTests(){};
-	
+
 	virtual
 	std::string
 	get_name() const {
 		return "InterfaceFeaturesTests";
 	}
-	
+
 	virtual
 	void
 	apply(core::pose::Pose & pose){
-		
+
 		//setUp();
 		//test_interfaces();
 		//tearDown();
-		
+
 		setUp();
 		test_reporter(pose);
 		tearDown();
-		
 
-		
+
+
 
 	}
 	//"/home/jadolfbr/Documents/modeling/databases/antibody_databases/PyIgClassify/DBOUT/renumbered_pdbs/1pg7L-1pg7H.pdb"
@@ -180,59 +180,59 @@ public:
 	void test_reporter(core::pose::Pose & pose) {
 		TR << "Testing features reporter" << std::endl;
 		utility::vector1<bool> relavant_residues(pose.total_residue(), true);
-		
+
 		reporter_->set_dSASA_cutoff(150); //Not real value
 		reporter_->set_pack_separated(false); //speed
 		reporter_->set_pack_together(false);
-		
+
 		std::string i = basic::options::option[ interface ].value();
 		vector1<std::string> interfaces;
 		//interfaces.push_back("L_A");
 		interfaces.push_back(i);
 		//interfaces.push_back("H_A");
 		//interfaces.push_back("LH_A");
-		
+
 		reporter_->set_interface_chains(interfaces);
 		reporter_->set_dSASA_cutoff(150);
 		reporter_->set_pack_separated(false);
 		reporter_->set_pack_together(true);
-		
+
 		StructureFeaturesOP structure_reporter = new StructureFeatures();
 		structure_reporter->write_schema_to_db(db_session_);
 		StructureID parent_id = structure_reporter->report_features(0, db_session_);
-		
+
 		TR << "Reported StructureFeatures" << std::endl;
 		ResidueFeaturesOP residue_reporter = new ResidueFeatures();
 		residue_reporter->write_schema_to_db(db_session_);
 		residue_reporter->report_features(pose, relavant_residues, parent_id, db_session_);
-		
+
 		TR << "Reported Residue Features" << std::endl;
 		PdbDataFeaturesOP pdb_info_features = new PdbDataFeatures();
 		pdb_info_features->write_schema_to_db(db_session_);
 		pdb_info_features->report_features(pose, relavant_residues, parent_id, db_session_);
-		
+
 		TR << "Reported PDBData Features" << std::endl;
-		
+
 		reporter_->write_schema_to_db(db_session_);
 		reporter_->report_features(pose, relavant_residues, parent_id, db_session_);
 		TR<<"Done reporting features" << std::endl;
-		
+
 	}
 private:
 	core::pose::Pose multimer_;
 	InterfaceFeaturesOP reporter_;
 	std::string db_name_;
 	utility::sql_database::sessionOP db_session_;
-	
+
 };
 
 
 
 int main(int argc, char* argv[]){
-	
-	
 
-	
+
+
+
 	try{
 		using basic::options::option;
 		option.add( interface, "dock_chains interface definition, optional, ex LH_A.  Can handle any number of chains. ");
@@ -241,7 +241,8 @@ int main(int argc, char* argv[]){
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cerr );
+		return -1;
 	}
-	
+
 	return(0);
 }

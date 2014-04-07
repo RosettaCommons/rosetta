@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /src/apps/pilot/chrisk/rotamer_analysis.cc
-/// @brief  
+/// @brief
 
 //core library
 #include <math.h>
@@ -180,7 +180,7 @@ Stub
 build_water_frame(
 	Residue const & rsd,
 	Size const & atm )
-{ 
+{
 	//if atm is O
 	Size base( 4 ), base2( 5 );
 	//else
@@ -191,18 +191,18 @@ build_water_frame(
 	Vector const & Dxyz( rsd.atom( base ).xyz() );
 	Vector const & DBxyz( rsd.atom( base2 ).xyz() );
 	return Stub(Hxyz Hxyz, Hxyz - Dxyz, Dxyz - DBxyz);
-} 
+}
 
 //return acc_base --> hydrogen angle close to ideal
 // *actual* ideal angles would involve a db lookup, but we just wanna get in the neighborhood
 Real
 get_ideal_BAH_angle(
 	Residue const & rsd,
-	Size const & aatm) 
-{ 
+	Size const & aatm)
+{
 	Hybridization const & acc_hybrid( rsd.atom_type(aatm).hybridization());
 
-	switch(acc_hybrid){ 
+	switch(acc_hybrid){
 		case SP2_HYBRID:
 			return 122.6;
 			break;
@@ -223,25 +223,25 @@ get_ideal_BAH_angle(
 Stub
 build_donor_frame(
 	Residue const & rsd,
-	Size const & hatm ) 
-{ 
+	Size const & hatm )
+{
 	Vector const & Hxyz( rsd.atom( hatm ).xyz() );
 	Vector const & Dxyz( rsd.atom(rsd.atom_base( hatm )).xyz());
 	Vector const & DBxyz( rsd.atom(rsd.atom_base(rsd.atom_base(hatm))).xyz());
 	return Stub(Hxyz Hxyz, Dxyz, DBxyz);
-} 
+}
 
 Stub
 build_acceptor_frame(
 	Residue const & rsd,
-	Size const & aatm) 
-{ 
+	Size const & aatm)
+{
 	Vector const & Axyz( rsd.atom( aatm ).xyz() );
 	Vector const & ABxyz( rsd.atom( rsd.atom_base( aatm ) ).xyz() );
 	Vector const & AB2xyz( rsd.atom(rsd.abase2(aatm)).xyz());
 	Hybridization const & acc_hybrid( rsd.atom_type(aatm).hybridization());
 
-	switch(acc_hybrid){ 
+	switch(acc_hybrid){
 		case SP2_HYBRID:
 			return Stub(Axyz, Axyz, ABxyz, AB2xyz );
 			break;
@@ -501,7 +501,7 @@ pose.dump_pdb( "ah.pdb" );
 	pose.fold_tree( f_jump );
 
 	//new cutpoint at end of chain
-//	Size new_cutpoint( pose.conformation().chain_end( pose.chain( seqpos ) ) ); 	
+//	Size new_cutpoint( pose.conformation().chain_end( pose.chain( seqpos ) ) );
 	//if we're already at end of chain, swap jump to first res
 //	if( new_cutpoint == seqpos ){
 //		f_rot.new_jump( 1, new_seqpos, seqpos );
@@ -625,8 +625,8 @@ append_water_by_hbond_jump_near_atom(
 	else{ utility_exit_with_message( "ERROR: res " + string_of( seqpos ) + " atom " + string_of( atomno ) +
 		" res " + string_of( new_seqpos ) + " atom " + string_of( new_atomno ) + " is not HB don/acc pair!!\n" );
 	}
-	//need to reset actual 
-	
+	//need to reset actual
+
 	//now get their base atoms to get datm and batm
 	Size datm( pose.residue( don_pos ).atom_base( hatm ) );
 	Size batm( pose.residue( acc_pos ).atom_base( aatm ) );
@@ -643,13 +643,13 @@ append_water_by_hbond_jump_near_atom(
 	mm->set_jump( jump_number, true );
 	protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
 
-	//now go to chemical bond 
+	//now go to chemical bond
 	FoldTree f_rot( pose.total_residue() );
 
 	//run through oxygen regardless
 	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.total_residue() - 2 );
 	pose.fold_tree( f_rot );
-	
+
 	//must import from hbonds/constants.hh
 	Size steps( option[ byres_data::nloop_hbscan ] ); //default 10 --> 10^5 total
 	Real AHdist_min(MIN_R), AHdist_max(MAX_R); Size AHdist_steps(steps);
@@ -831,13 +831,13 @@ solvate_residue_test(
 	scorefxn->set_weight( fa_sol, 0.0 );
 
 	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(),
-		anume = rsd.accpt_pos().end(); anum != anume; ++anum ){ 
+		anume = rsd.accpt_pos().end(); anum != anume; ++anum ){
 		Size const iatom( *anum );
 		append_rsd_by_kinematic_hbond_jump_near_atom( pose, seqpos, iatom, *wat_rsd, 2, min_dist, shell_cutoff );
 		pose = in_pose;
 	}
 	for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),
-		hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) { 
+		hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const iatom( *hnum );
 		append_rsd_by_kinematic_hbond_jump_near_atom( pose, seqpos, iatom, *wat_rsd, 1, min_dist, shell_cutoff );
 		pose = in_pose;
@@ -868,11 +868,11 @@ solvate_residue(
 
 	//do polar hydrogens
 	for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),
-		hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) { 
+		hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const iatom( *hnum );
 		Size n_wat( 0 );
 		//try a few times to append water molecules
-		for( Size i_mc = 1; i_mc <= max_attempt_per_atom; ++i_mc ){	
+		for( Size i_mc = 1; i_mc <= max_attempt_per_atom; ++i_mc ){
 			if( n_wat >= max_wat_per_atom ) break;
 			//append water molecule from iatom to water oxygen (atom 1)
 //			append_rsd_by_hbond_jump_near_atom( pose, seqpos, iatom, *wat_rsd, 1, min_dist, shell_cutoff );
@@ -894,11 +894,11 @@ solvate_residue(
 	}
 	//then do acceptors
 	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(),
-		anume = rsd.accpt_pos().end(); anum != anume; ++anum ){ 
+		anume = rsd.accpt_pos().end(); anum != anume; ++anum ){
 		Size const iatom( *anum );
 		Size n_wat( 0 );
 		//try a few times to append water molecules
-		for( Size i_mc = 1; i_mc <= max_attempt_per_atom; ++i_mc ){	
+		for( Size i_mc = 1; i_mc <= max_attempt_per_atom; ++i_mc ){
 			if( n_wat >= max_wat_per_atom ) break;
 			//append water molecule from iatom to water H (atom 4)
 //			append_rsd_by_hbond_jump_near_atom( pose, seqpos, iatom, *wat_rsd, 4, min_dist, shell_cutoff );
@@ -945,8 +945,8 @@ set_pose_occ_and_bfac(
 		Residue rsd( pose.residue( seqpos ) );
 		for( Size ii = 1; ii <= rsd.natoms(); ++ii ){
 			if( rsd.atom_is_hydrogen( ii ) ) continue;
-			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( native_seqpos, ii ) ); 
-			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( native_seqpos, ii ) ); 
+			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( native_seqpos, ii ) );
+			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( native_seqpos, ii ) );
 		}
 	}
 }
@@ -1098,7 +1098,7 @@ calc_lk_burial_for_single_atom(
 		conformation::Residue const & rsd1,
 		pose::Pose const & pose
 		)
-{ 
+{
 
 
 	PROF_START( util::CALC_LK_BURIAL_FOR_SINGLE_ATOM );
@@ -1382,12 +1382,12 @@ get_res_water_energy(
 			ir  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
 			ire = energy_graph.get_node( seqpos )->const_edge_list_end();
 			ir != ire; ++ir ){
-		Size nbr( (*ir)->get_other_ind( seqpos ) ); 
+		Size nbr( (*ir)->get_other_ind( seqpos ) );
 		if( pose.residue( nbr ).name1() != 'w' ) continue;
 		EnergyEdge const * edge( static_cast< const EnergyEdge *> (*ir) );
 		EnergyMap const & emap( edge->fill_energy_map());
 		total_water_energy += emap.dot( scorefxn.weights() );
-	}    
+	}
 	return total_water_energy;
 }
 
@@ -1478,7 +1478,7 @@ get_sc_automorphic_rmsd(
 	Residue rsd( pose.residue( seqpos ) );
 	Residue ref_rsd( ref_pose.residue( ref_seqpos ) );
 
-	Real sc_rmsd( scoring::automorphic_rmsd( pose.residue( seqpos ), ref_pose.residue( ref_seqpos ), super /*superpose*/ ) );	
+	Real sc_rmsd( scoring::automorphic_rmsd( pose.residue( seqpos ), ref_pose.residue( ref_seqpos ), super /*superpose*/ ) );
 	return sc_rmsd;
 }
 
@@ -1652,7 +1652,7 @@ get_res_data_ss(
 
 	//n hbonds
 /*
-	Size n_sc_hbonds( 0 ), n_bb_hbonds( 0 ), n_sc_wat_hbonds( 0 ), n_bb_wat_hbonds( 0 ), n_hbonds( 0 ), n_unsat_hbonds( 0 );  
+	Size n_sc_hbonds( 0 ), n_bb_hbonds( 0 ), n_sc_wat_hbonds( 0 ), n_bb_wat_hbonds( 0 ), n_hbonds( 0 ), n_unsat_hbonds( 0 );
 	get_n_hbonds( pose, seqpos, n_sc_hbonds, n_bb_hbonds, n_sc_wat_hbonds, n_bb_wat_hbonds, n_hbonds, n_unsat_hbonds );
 	ss->add_energy( "n_sc_hbonds", static_cast< Real >( n_sc_hbonds ) );
 	ss->add_energy( "n_bb_hbonds", static_cast< Real >( n_bb_hbonds ) );
@@ -1661,7 +1661,7 @@ get_res_data_ss(
 	ss->add_energy( "n_hbonds", static_cast< Real >( n_hbonds ) );
 	ss->add_energy( "n_unsat_hbonds", static_cast< Real >( n_unsat_hbonds ) );
 */
-	
+
 	//water energy
 	Real res_water_energy( get_res_water_energy( pose, *scorefxn, seqpos ) );
 	ss->add_energy( "res_water_energy", res_water_energy );
@@ -1672,7 +1672,7 @@ get_res_data_ss(
 	Real rotbin_val( 0 );
 	Size n_rotbins( 4 );
 	for( Size i_rotvec = 1; i_rotvec <= n_rotbins; ++i_rotvec ){
-		if( i_rotvec <= rotvec.size() ) rotbin_val += ( ( rotvec[ i_rotvec ] + 1 ) * std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) ) ); 
+		if( i_rotvec <= rotvec.size() ) rotbin_val += ( ( rotvec[ i_rotvec ] + 1 ) * std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) ) );
 		else rotbin_val += std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) );
 	}
 	ss->add_energy( "rotbin", rotbin_val );
@@ -1682,24 +1682,24 @@ get_res_data_ss(
 	ss->add_energy( "psi", pose.psi( seqpos ) );
   vector1< Real > chi_data( n_rotbins, 0. );
   vector1< Real > chis( pose.residue( seqpos ).chi() );
-  for( Size i = 1; i <= chis.size(); ++i ) chi_data[ i ] = chis[ i ]; 
-  ss->add_energy( "chi1", chi_data[ 1 ] ); 
-  ss->add_energy( "chi2", chi_data[ 2 ] ); 
-  ss->add_energy( "chi3", chi_data[ 3 ] ); 
-  ss->add_energy( "chi4", chi_data[ 4 ] ); 
+  for( Size i = 1; i <= chis.size(); ++i ) chi_data[ i ] = chis[ i ];
+  ss->add_energy( "chi1", chi_data[ 1 ] );
+  ss->add_energy( "chi2", chi_data[ 2 ] );
+  ss->add_energy( "chi3", chi_data[ 3 ] );
+  ss->add_energy( "chi4", chi_data[ 4 ] );
 
   vector1< Real > nat_chi_data( n_rotbins, 0. );
   vector1< Real > nat_chis( native_pose.residue( native_seqpos ).chi() );
-  for( Size i = 1; i <= nat_chis.size(); ++i ) nat_chi_data[ i ] = nat_chis[ i ]; 
+  for( Size i = 1; i <= nat_chis.size(); ++i ) nat_chi_data[ i ] = nat_chis[ i ];
   vector1< Real > d_chi_data( n_rotbins, 0. );
   for( Size i = 1; i <= chi_data.size(); ++i ){
 		d_chi_data[ i ] = std::abs( chi_data[ i ] - nat_chi_data[ i ] );
 		if ( d_chi_data[ i ] > 180. ) d_chi_data[ i ] -= 180.;
 	}
-  ss->add_energy( "d_chi1", d_chi_data[ 1 ] ); 
-  ss->add_energy( "d_chi2", d_chi_data[ 2 ] ); 
-  ss->add_energy( "d_chi3", d_chi_data[ 3 ] ); 
-  ss->add_energy( "d_chi4", d_chi_data[ 4 ] ); 
+  ss->add_energy( "d_chi1", d_chi_data[ 1 ] );
+  ss->add_energy( "d_chi2", d_chi_data[ 2 ] );
+  ss->add_energy( "d_chi3", d_chi_data[ 3 ] );
+  ss->add_energy( "d_chi4", d_chi_data[ 4 ] );
 
 	//sidechain bfactor from native
 	Real sc_bfactor( get_sc_bfactor( native_pose, native_seqpos ) );
@@ -1809,7 +1809,7 @@ byres_analysis(
 			seq_map.show( TR );
 			native_seqpos_map = seq_map.mapping();
 		}
-		set_pose_occ_and_bfac( pose, native_pose, native_seqpos_map );		
+		set_pose_occ_and_bfac( pose, native_pose, native_seqpos_map );
 	}
 
 	scorefxn->score( pose );
@@ -1840,7 +1840,7 @@ byres_analysis(
 	//use resfile to note residues to analyze...
 	Pose start_pose( pose );
 	if( option[ packing::resfile ].user() ) task_factory->push_back( new core::pack::task::operation::ReadResfile );
-	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() ); 
+	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() );
 	core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
 
 	Size nres( pose.total_residue() );
@@ -1904,7 +1904,7 @@ byres_analysis(
 			// WARNING TMP HACK BAIL IF NO NATIVE RES //
 			if( seqpos > native_seqpos_map.size() ) continue;
 			// WARNING TMP HACK BAIL IF NO NATIVE RES //
-	
+
 			//is the native seqpos the same, or coming from a seq alignment?
 			Size native_seqpos( seqpos );
 			if( option[ byres_data::align_native_seq ] ) native_seqpos = native_seqpos_map[ seqpos ];
@@ -1921,7 +1921,7 @@ byres_analysis(
 			io::silent::SilentStructOP atom_ss( new io::silent::ScoreFileSilentStruct );
 			Residue const rsd( pose.residue( seqpos ) );
 			for( Size iatom = 1; iatom <= rsd.natoms(); ++iatom ){
-				id::AtomID const id( iatom, seqpos );	
+				id::AtomID const id( iatom, seqpos );
 				if( !( rsd.atom_type( iatom ).is_acceptor() || rsd.atom_type( iatom).is_donor() ) ) continue;
 				std::string atom_name( rsd.atom_name( iatom ) );
 				atom_name.erase( 0, atom_name.find_first_not_of( " " ) );
@@ -1942,7 +1942,7 @@ byres_analysis(
 				for( Size hcount = rsd.type().attached_H_begin( iatom );
 						hcount<= rsd.type().attached_H_end( iatom ); hcount++){
 					this_sasa += atom_sasa.value()[ core::id::AtomID ( hcount, seqpos ) ];
-				}			
+				}
 				atom_ss->add_energy( "sasa", this_sasa );
 				Real atom_lk_burial( get_atom_lk_burial( pose, scorefxn, seqpos, iatom ) );
 				atom_ss->add_energy( "atom_lk_burial", atom_lk_burial );
@@ -1951,7 +1951,7 @@ byres_analysis(
 
 				//iter thru atom's hbonds
 				Real hbond_prot_prot( 0.0 );
-				Real hbond_prot_water( 0.0 ); 
+				Real hbond_prot_water( 0.0 );
 				Real hbond_prot_water_ref( 0.0 );
 				Real hbond_water_ref( -0.353 );
 				if( rsd.atom_type( iatom ).is_acceptor() ){
@@ -1974,7 +1974,7 @@ byres_analysis(
 				if( rsd.atom_type( iatom ).is_donor() ){
 					for( Size ihatom = rsd.type().attached_H_begin( iatom );
 							ihatom <= rsd.type().attached_H_end( iatom ); ihatom++){
-						id::AtomID const h_id( ihatom, seqpos );	
+						id::AtomID const h_id( ihatom, seqpos );
 						vector1< hbonds::HBondCOP > const atom_hbset( hbset.atom_hbonds( h_id ) );
 						for( Size ihb = 1; ihb <= atom_hbset.size(); ++ihb ){
 							scoring::hbonds::HBond hb( *atom_hbset[ ihb ] );
@@ -2152,6 +2152,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

@@ -20,7 +20,7 @@
 
 // Project Headers
 #include <core/membrane/MembraneInfo.hh>
-#include <core/conformation/Conformation.hh> 
+#include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -49,14 +49,14 @@ static basic::Tracer TR( "apps.pilot.ralford.membrane_foldtree" );
 
 /// @brief Load Membrane Pose
 core::pose::PoseOP load_pose() {
-    
+
     using namespace core::import_pose;
     using namespace core::pose;
-    
+
     TR << "Loading 1afo from PDB" << std::endl;
     PoseOP pose = new Pose();
     pose_from_pdb( *pose, "test/core/membrane/io/1afo_test.pdb" );
-    
+
     return pose;
 }
 
@@ -64,43 +64,44 @@ core::pose::PoseOP load_pose() {
 int main( int argc, char* argv[] )
 {
     try {
-		
+
 		using namespace core::membrane;
-        
+
         // Initialize Options System, RG, and All Factory_Registrators
         devel::init(argc, argv);
-        
+
         TR << "Pilot App: Membrane Info Object" << std::endl;
         TR << "Author: Rebecca Alford lm: 3/17/14" << std::endl;
         TR << "Testing membrane info object" << std::endl;
-		
+
         // Set up a pose from pdb
         core::pose::PoseOP pose = load_pose();
-        
+
 				// Printig pose total residue
 				TR << "The number of residues in my pose is " << pose->total_residue() << std::endl;
 
 		// Create embres and membrane data
-				utility::vector1< std::pair< int, int > >  embres_map; 				
+				utility::vector1< std::pair< int, int > >  embres_map;
         embres_map.resize( 2 );
         embres_map[ 1 ] = std::pair< int, int >( 1, 82 );
         embres_map[ 2 ] = std::pair< int, int >( 41, 83 );
-        
+
         // Setup the membrane root
         int membrane = 81;
 
 				// Checking that I am passing a valid conformation
 				Conformation const & conf = pose->conformation();
 				TR << "Printing the size of my conformation " << conf.size() << std::endl;
-	
+
 
 				TR << "About to dereference" << std::endl;
 		// initialize MembraneInfo
 		MembraneInfoOP mp = new MembraneInfo( pose->conformation(), embres_map, membrane );
-        
+
         TR << "Done!" << std::endl;
-        
+
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cout << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
 }

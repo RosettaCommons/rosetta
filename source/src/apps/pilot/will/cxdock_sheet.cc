@@ -49,7 +49,7 @@ void register_options() {
 	OPT( in::file::s );
 	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.5 );
-	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 7.0 );	
+	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 7.0 );
 	NEW_OPT( cxdock::hb_dis      ,"max acceptable hb dis", 4.7 );	 // very loose!
 	NEW_OPT( cxdock::num_contacts ,"required no. contacts", 30.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
@@ -102,8 +102,8 @@ void get_avail_don_acc(Pose & pose, std::set<Size> & actdon, std::set<Size> & ac
  	core::scoring::hbonds::fill_hbond_set( pose, false, hbset, false, true, true, true );
  	for(Size i = 1; i <= hbset.nhbonds(); ++i) {
 		actdon.insert( hbset.hbond(i).don_res() );
-		actacc.insert( hbset.hbond(i).acc_res() );		
-	}	
+		actacc.insert( hbset.hbond(i).acc_res() );
+	}
 }
 
 
@@ -116,14 +116,14 @@ bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
 void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 	using namespace basic::options;
-	
+
 	Real cbcth = basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]();
-	
+
 	std::set<Size> actdon,actacc; {
 		get_avail_don_acc(init,actdon,actacc);
 	}
 	vector1<int> availdon,availacc;
-			
+
 	vector1<Size> syms = basic::options::option[basic::options::OptionKeys::cxdock::syms]();
 	if(syms.size()==0) utility_exit_with_message("you must specify cbdock::syms");
 	vector1<Real> asamp; for(Real i = 0.0; i < 180.0; i+=1.5) asamp.push_back(i); // just 0-179
@@ -180,7 +180,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 				for(vector1<Vec>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym[ic]*(*i);
 				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
 				Real cbc, nhb;
-				Real t = sicfast(bb1,bb2,cb1,cb2,availdon,availacc,cbc,nhb);				
+				Real t = sicfast(bb1,bb2,cb1,cb2,availdon,availacc,cbc,nhb);
 
 				if(nhb > 3) {
 				// if(nhb>0.0&&cbc>=cbcth*1.0||nhb>1.0&&cbc>=cbcth*0.9||nhb>2.0&&cbc>=cbcth*0.8||nhb>3.0&&cbc>=cbcth*0.7||
@@ -195,13 +195,13 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 // #endif
 // 					hits[ic].push_back(h);
 
-					if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {	
+					if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {
 						string tag = utility::file_basename(fn)+"_C"+str(syms[ic])+"_"+str(iss)+"_"+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())+"_"+str(irt)+"_"+str(cbc);
 						{
 
 							cout << "HIT " << nhb << " " << cbc << " " << tag << std::endl;
 
-							option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+".sym");							
+							option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+".sym");
 						  Pose p(init);
 						  rot_pose(p,ssamp[iss],asamp[irt]);
 						  trans_pose(p,Vec(0,0,t));
@@ -209,7 +209,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 						  trans_pose(p,-cen);
 							rot_pose(p,Vec(0,1,0),90.0); // align sym Z
 							p.dump_pdb(option[OptionKeys::out::file::o]+"/"+tag+"_aln_mono.pdb.gz");
-							
+
 							core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 						  ss_out->fill_struct(p,option[OptionKeys::out::file::o]+"/"+tag+"_aln_mono.pdb.gz");
 						  ss_out->add_energy("sym",syms[ic]);
@@ -271,14 +271,14 @@ int main(int argc, char *argv[]) {
 	for(Size i = 1; i <= ssamp.size(); ++i) {
 		vector1<Real> mnv(NTOP,9e9);
 		vector1<Size> mni(NTOP,0);
-		for(Size j = 1; j <= ssamp.size(); ++j) {		
+		for(Size j = 1; j <= ssamp.size(); ++j) {
 			if(i==j) continue;
 			for(Size k = 1; k <= NTOP; k++) {
 				Real d = ssamp[i].distance_squared(ssamp[j]);
 				if(mnv[k] > d) {
 					for(Size l = NTOP; l > k; --l) {
 						mnv[l] = mnv[l-1];
-						mni[l] = mni[l-1];						
+						mni[l] = mni[l-1];
 					}
 					mnv[k] = d;
 					mni[k] = j;
@@ -289,7 +289,7 @@ int main(int argc, char *argv[]) {
 		cerr << i;
 		for(Size j = 1; j <= NTOP; ++j) {
 			if( j > 1 && ssamp[i].distance(ssamp[mni[j]]) > 1.5*ssamp[i].distance(ssamp[mni[j-1]]) ) {
-				cerr << " 0";				
+				cerr << " 0";
 			} else {
 				cerr << " " << mni[j];
 			}
@@ -323,6 +323,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

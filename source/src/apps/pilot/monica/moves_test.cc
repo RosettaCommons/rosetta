@@ -170,5 +170,6 @@ main( int argc, char * argv [] )
 	shear_moves_test( pose );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

@@ -245,11 +245,11 @@ main( int argc, char * argv [] ) {
 		clustering->sort_groups_by_energy( );
 		clustering->export_only_low( option[ export_only_low ]() );
 	}
-	
+
 	if( option[ sort_groups_by_size ].user() ) {
 		clustering->sort_groups_by_size();
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Results:
 	clustering->print_summary();
@@ -281,9 +281,10 @@ main( int argc, char * argv [] ) {
 						<< "s\n  Additional Clustering: " << time_total - time_initialc
 						<< "s\n  Total: " << time_total - time_start
 						<< std::endl;
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

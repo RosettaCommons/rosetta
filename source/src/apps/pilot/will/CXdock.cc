@@ -162,7 +162,7 @@ bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 // compute_xform_score(
 // 	protocols::sic_dock::XfoxmScore const & xfs,
 // 	core::pose::Pose const & pose1,
-// 	core::pose::Pose const & pose2	
+// 	core::pose::Pose const & pose2
 // ){
 // 	float tot_score = 0.0;
 // 	for(core::Size ir = 1; ir <= pose1.n_residue(); ++ir){
@@ -430,7 +430,7 @@ dock(
 				Real rscore = 0.0;
 				Xform tmp(x1);
 				Real const t = slide_into_contact_and_score(sic,*rigidsfxn,tmp,x2,Vec(0,0,1),rscore);
-				
+
 				Hit h(iss,irt,rscore,syms[ic]);
 				h.x1 = x1;
 				h.x2 = x2;
@@ -438,7 +438,7 @@ dock(
 				// h.xscore = compute_xform_score(xfs,h.x1,h.x2,stubs,ss);
 				if(bench) h.rmsd = get_rmsd( native_ca, init_ca, h );
 				// Xform x = get_cx_stub(h);
-	
+
 				// cout << "XFORM " << x.R << " " << x.t << endl;
 
 				if(rscore >= CONTACT_TH){
@@ -451,12 +451,12 @@ dock(
 						// Pose olig;
 						// make_dock_olig(init_pose,olig,h);
 						// Real actualrmsd = core::scoring::CA_rmsd(olig,native_olig);
-						
-							// std::cout << "RMSD " 
-							//           // << actualrmsd << " " 
-							//           << h.rmsd << " " 
+
+							// std::cout << "RMSD "
+							//           // << actualrmsd << " "
+							//           << h.rmsd << " "
 							//           << h.rscore << " "
-							//           << h.xscore << " " 
+							//           << h.xscore << " "
 							//           << std::endl;
 
 						// if( fabs(actualrmsd - h.rmsd) > 5.0 && h.rmsd < 5.0 ){
@@ -493,14 +493,14 @@ dock(
 	// 		// tmp2.dump_pdb("test2.pdb");
 
 	// 		// Xform const a( h.x1.R * stubs[1].R, h.x1.R * stubs[1].t + h.x1.t );
-	// 		// Xform const b( h.x2.R * stubs[1].R, h.x2.R * stubs[1].t + h.x2.t );			
+	// 		// Xform const b( h.x2.R * stubs[1].R, h.x2.R * stubs[1].t + h.x2.t );
 	// 		// std::cout << Xform(tmp1.residue(1).xyz("CB"),tmp1.residue(1).xyz("CA"),tmp1.residue(1).xyz("N")) << std::endl;
 	// 		// std::cout << a << std::endl;
 	// 		// std::cout << Xform(tmp2.residue(1).xyz("CB"),tmp2.residue(1).xyz("CA"),tmp2.residue(1).xyz("N")) << std::endl;
 	// 		// std::cout << b << std::endl;
 
 	// 		// std::cout << compute_xform_score(xfs,tmp1,tmp2) << " == "
-	// 		//           << compute_xform_score(xfs,h.x1,h.x2,stubs,ss) << " " 
+	// 		//           << compute_xform_score(xfs,h.x1,h.x2,stubs,ss) << " "
 	// 		//           << h.rscore << " " << h.xscore << std::endl;;
 
 	// 		// utility_exit_with_message("test");
@@ -526,7 +526,7 @@ dock(
 			// xform_pose(tmp1,h.x1);
 			// xform_pose(tmp2,h.x2);
 			// tmp1.dump_pdb("tmp1.pdb");
-			// tmp2.dump_pdb("tmp2.pdb");			
+			// tmp2.dump_pdb("tmp2.pdb");
 			// utility_exit_with_message("test");
 
 			// redundency check
@@ -546,17 +546,17 @@ dock(
 					// 	make_dock_olig(init_pose,tmp1, h);
 					// 	make_dock_olig(init_pose,tmp2,*j);
 					// 	tmp1.dump_pdb("tosim1.pdb");
-					// 	tmp2.dump_pdb("tosim2.pdb");					
+					// 	tmp2.dump_pdb("tosim2.pdb");
 					// 	utility_exit_with_message("redundancy_cut test");
 					// }
 				}
-			}	
+			}
 			if(toosimilar) continue;
 			dumpedit.push_back(h);
 
 			std::string tag = utility::file_basename(fn);
 			if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
+			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);
 			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_score"+ObjexxFCL::string_of(i)+".pdb";
 			cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 			Pose tmp;
@@ -574,7 +574,7 @@ dock(
 	// 		Hit & h(hits[ic][i]);
 	// 		std::string tag = utility::file_basename(fn);
 	// 		if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-	// 		if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
+	// 		if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);
 	// 		tag += "_C"+ObjexxFCL::string_of(h.sym)+"_xsc"+ObjexxFCL::string_of(i)+".pdb";
 	// 		cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 	// 		Pose tmp;
@@ -592,7 +592,7 @@ dock(
 				Hit & h(hits[ic][i]);
 				std::string tag = utility::file_basename(fn);
 				if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-				if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
+				if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);
 				tag += "_C"+ObjexxFCL::string_of(h.sym)+"_rmsd"+ObjexxFCL::string_of(i)+".pdb";
 				cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 				Pose tmp;
@@ -626,7 +626,7 @@ dock(
 		// rms_goodscore /= 10.0;
 		// rms_goodxsc /= 10.0;
 		std::cout << "Best RMSD in top 20 by num. contacts: " << rms_goodscore << " top " << best_score << std::endl;
-		// std::cout << "Best RMSD in top 20 by xform score:   " << rms_goodxsc << " top " << best_xsc << std::endl;		
+		// std::cout << "Best RMSD in top 20 by xform score:   " << rms_goodxsc << " top " << best_xsc << std::endl;
 
 	}
 
@@ -690,7 +690,7 @@ read_sphere(
 		is >> x >> y >> z;
 		ssamp[i] = Vec(x,y,z);
 	}
-	is.close();	
+	is.close();
 }
 
 void
@@ -786,6 +786,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

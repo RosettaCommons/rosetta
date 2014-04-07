@@ -87,9 +87,10 @@ int main(int argc, char* argv[]) {
     vector1<Real> rmsds;
     compute_windowed_rmsd(*reference, model, window, &rmsds);
     show(filename, rmsds);
-  } 
+  }
   } catch ( utility::excn::EXCN_Base const & e ) {
                             std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                 }
       return 0;
 }

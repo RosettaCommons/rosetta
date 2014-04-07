@@ -1,5 +1,5 @@
 /**********
-	This file was written by Will Sheffler to search the PDB for short loops with a disulfide bridge at their base. 
+	This file was written by Will Sheffler to search the PDB for short loops with a disulfide bridge at their base.
 	This file was modified by Vikram K. Mulligan on 23 August 2012 to check for breaks and to score the degree of loop exposure.
 	Modify by Lei Shi to grafting a disulfide geometry to an exisiting scaffold.
 **********/
@@ -51,8 +51,8 @@ OPT_1GRP_KEY(String,match_disulfide_to_scaffold,input_disulfide)
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	NEW_OPT( match_disulfide_to_scaffold::cdsf_max_res ,"loop size" , 27 ); 
-	NEW_OPT( match_disulfide_to_scaffold::input_disulfide,"input pdb containting disulfide to be matched","dummy"); 
+	NEW_OPT( match_disulfide_to_scaffold::cdsf_max_res ,"loop size" , 27 );
+	NEW_OPT( match_disulfide_to_scaffold::input_disulfide,"input pdb containting disulfide to be matched","dummy");
 }
 
 int main(int argc, char *argv[]) {
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	if ( pose1.energies().total_energies().dot( disulfide_scorefxn->weights() ) >= 0.0 ) {
 		utility_exit_with_message(input_disulfide+" does not seem to have disulfide");
 	}
-	
+
 	//need to find out which residues are in the disulfide
 	core::scoring::disulfides::FullatomDisulfideEnergyContainerCOP dec = new core::scoring::disulfides::FullatomDisulfideEnergyContainer( pose1 );
 	core::Size dslf_i=0,dslf_j=0;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 		if (dec->residue_forms_disulfide(i)) {
 			dslf_i=i;
 			dslf_j=dec->other_neighbor_id(i);
-			TR << "found first disulfide between " << dslf_i << " and " << dslf_j << std::endl;		 	
+			TR << "found first disulfide between " << dslf_i << " and " << dslf_j << std::endl;
 			break;
 		}
 	}
@@ -118,10 +118,10 @@ int main(int argc, char *argv[]) {
 		core::import_pose::pose_from_pdb(pose,fnames[ifile]); //Import the current PDB file
 		for(int ir=1; ir <= (int)pose.n_residue(); ++ir) { //Loop through all residues
 			if(pose.residue(ir).aa() != core::chemical::aa_cys) continue; //If the current residue isn't a cys, go on to the next.
-			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) { 
-				if(jr > (int)pose.n_residue()) break; 
-				if(pose.residue(jr).aa() != core::chemical::aa_cys) continue; 
-				if(!core::conformation::is_disulfide_bond( pose.conformation(),ir,jr)) continue; 
+			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) {
+				if(jr > (int)pose.n_residue()) break;
+				if(pose.residue(jr).aa() != core::chemical::aa_cys) continue;
+				if(!core::conformation::is_disulfide_bond( pose.conformation(),ir,jr)) continue;
 				bool terminus = false;
 				bool gaps = false;
 				bool baddistance = false;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
 				//Add elements to the SASA vectors:
 				loop_sasa_alone.push_back(0);
 				loop_sasa_instruct.push_back(0);
-				loop_sasa_ratio.push_back(0);	
+				loop_sasa_ratio.push_back(0);
 				//Calculate the SASA for the whole structure (to get the loop SASA in the context of the structure):
 				core::id::AtomID_Map<double> atom_sasa;
 				utility::vector1<double> rsd_sasa;
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
 				//Dump the PDB to a file ONLY if the loop is particularly exposed.
 				if(loop_sasa_ratio[loop_sasa_ratio.size()] > 0.85) {
 					printf("85% exposed loop!  Writing to file.\n");
-					tmp.dump_pdb(outfile); }				
+					tmp.dump_pdb(outfile); }
 			}
 		}
 		cout << "DONE " << fn << endl;
@@ -228,7 +228,8 @@ int main(int argc, char *argv[]) {
 	*/
 
         } catch ( utility::excn::EXCN_Base const & e ) {
-            std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
         }
 
 	return 0;

@@ -98,10 +98,10 @@ public:
 	void apply( core::pose::Pose & pose) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-	
+
 		using namespace protocols::moves;
 		using namespace scoring;
-	
+
 		// steal relax flags
 		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 		kinematics::MoveMap mm;
@@ -110,15 +110,15 @@ public:
 		mm.set_jump( true );
 		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_mainchain_bond_angles ]() );
 		mm.set( core::id::D, option[ OptionKeys::relax::minimize_mainchain_bond_lengths ]() );
-	
+
 		if ( option[ OptionKeys::relax::jump_move ].user() )
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
 		if ( option[ OptionKeys::relax::bb_move ].user() )
 			mm.set_bb( option[ OptionKeys::relax::bb_move ]() );
 		if ( option[ OptionKeys::relax::chi_move ].user() )
 			mm.set_chi( option[ OptionKeys::relax::chi_move ]() );
-			
-	
+
+
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 			symm->apply( pose );
@@ -133,12 +133,12 @@ public:
 				loadCsts->apply(pose);
 		}
 		*/
-	
+
 		// now add density scores from cmd line
 		if ( option[ edensity::mapfile ].user() ) {
 			core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
 		}
-	
+
 		// set pose for density scoring if a map was input
 		//   + (potentially) dock map into density
 		if ( option[ edensity::mapfile ].user() || option[ cryst::mtzfile ].user() ) {
@@ -146,7 +146,7 @@ public:
 											 ( new protocols::electron_density::SetupForDensityScoringMover );
 			edens->apply( pose );
 		}
-	
+
 		Vector COM( 0.0, 0.0, 0.0 );
 		utility::vector1< id::AtomID > IDs;
 		for( Size ires = 1; ires <= pose.total_residue(); ++ires){
@@ -177,11 +177,11 @@ public:
 
 		(*scorefxn)(pose);
 		scorefxn->show(std::cout, pose);
-	
+
 		bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
 		bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
 		std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
-	
+
 		// setup the options
 		if ( !option[ OptionKeys::min::cartesian ]() )  {
 			if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {

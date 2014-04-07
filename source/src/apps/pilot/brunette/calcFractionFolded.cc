@@ -106,7 +106,7 @@ int main( int argc, char * argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
     devel::init(argc, argv);
-    Real threshold = 0.5; 
+    Real threshold = 0.5;
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
     Pose native_pose;
     pose_from_pdb(
@@ -117,7 +117,7 @@ int main( int argc, char * argv [] ) {
     SequenceOP native_sequence = new Sequence(native_pose);
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
-    vector1 < vector1 < Real> > rmsd_by_position(native_pose.total_residue()-8); 
+    vector1 < vector1 < Real> > rmsd_by_position(native_pose.total_residue()-8);
  	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
@@ -147,6 +147,7 @@ int main( int argc, char * argv [] ) {
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
 	return 0;
 }

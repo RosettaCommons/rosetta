@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 	NEW_OPT(cluster_hotspot_docking::column, "Score column for clustering","ddg");
 	core::init::init(argc, argv);
 
-	//read in silent file	
+	//read in silent file
 	std::string silentin = option[ in::file::silent ]()[1];
   	SilentFileData sfd,sfd2;
   	sfd.read_file( silentin );
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 		Size chainend(pose.conformation().chain_end( inputchain ) );
 		pose.conformation().delete_residue_range_slow( chainstart, chainend);
 		TR.Info << "PoseSize: "<< pose.conformation().size() << " " << scorecolumn<< "Score: " << score << " description "<< tags[ ii ] << std::endl;
-		
+
 		poselist.push_back( pose );
 		ddglist.push_back( score);
 		taglist.push_back( tags[ ii ] );
@@ -166,23 +166,23 @@ int main(int argc, char *argv[])
 	if ( basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::heavyatom] ) {
 		for ( Size i = 0; i < poselist.size(); i++ ) {
 	    	for ( Size j = i+1 ; j < poselist.size(); j++ ) {
-				sc_matrix(i+1,j+1)=aa2sim_all(poselist[i],poselist[j]);	
+				sc_matrix(i+1,j+1)=aa2sim_all(poselist[i],poselist[j]);
 			}
 		}
 	} else if ( basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::ca] ) {
 		for ( Size i = 0; i < poselist.size(); i++ ) {
 	    	for ( Size j = i+1 ; j < poselist.size(); j++ ) {
-				sc_matrix(i+1,j+1)=aa2sim_ca(poselist[i],poselist[j]);	
+				sc_matrix(i+1,j+1)=aa2sim_ca(poselist[i],poselist[j]);
 			}
 		}
 	} else {
 		for ( Size i = 0; i < poselist.size(); i++ ) {
 	    	for ( Size j = i+1 ; j < poselist.size(); j++ ) {
-				sc_matrix(i+1,j+1)=aa2sim_sc(poselist[i],poselist[j]);	
+				sc_matrix(i+1,j+1)=aa2sim_sc(poselist[i],poselist[j]);
 			}
 		}
 	}
-	
+
 
 	//assign the other half of the matrix
 	for ( Size i = 0; i < poselist.size(); i++ ) {
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 	std::vector <int> clustercentre;
 
         TR.Info << "Clustering of " << listsize << " structures with radius " <<  cluster_radius_ << " with max of  " << max_total_cluster << " cluster "<< " and output lowest " <<  output_ddg_clusters << " " << scorecolumn << " cluster centers"<<  std::endl;
-	
+
   	// now assign groupings
   	while(true) {
     	// count each's neighbors
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
     	//TR.Info.flush();
   	}
 
-	TR.Info << "ncluster: " << nclusters << std::endl; 
+	TR.Info << "ncluster: " << nclusters << std::endl;
 	core::Real bestddg;
 	core::Size bestj;
 	core::Size sizei=0;
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 	std::multimap< core::Real, core::Size> ddgclustermap;
 
 	for (i=0;i<clustercentre.size();i++ ) {
-		TR.Info << "CLUSTER " << i << " : ";  
+		TR.Info << "CLUSTER " << i << " : ";
 		bestddg=999;
 		bestj=999;
     		for (j=0;j<listsize;j++ ) {
@@ -275,8 +275,8 @@ int main(int argc, char *argv[])
 				}
 				sizei++;
         			//new_cluster.add_member(j);         // add structure
-				//TR.Info << " "<< taglist[j]<<".pdb" << " " << ddglist[j] << " " ; 
-				TR.Info << " "<< taglist[j] << " "; 
+				//TR.Info << " "<< taglist[j]<<".pdb" << " " << ddglist[j] << " " ;
+				TR.Info << " "<< taglist[j] << " ";
       			}
     		}
 		TR.Info << std::endl;
@@ -320,10 +320,11 @@ int main(int argc, char *argv[])
 		std::string fn( out_prefix + tag + ".pdb" );
 		pose.dump_pdb(fn);
 	}
-	
+
 	TR.Info << "done cluster_hotspot_docking" << std::endl;
 
   } catch ( utility::excn::EXCN_Base const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
   }
 }

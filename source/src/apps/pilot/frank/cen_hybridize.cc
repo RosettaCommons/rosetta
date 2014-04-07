@@ -152,7 +152,7 @@ public:
 		// 			pose2s_.push_back( pose_j );
 		// 			pose2_insert_points_.push_back( pose1_insert_points_[i]+j-1 );
 		// 			TR << "Created " << pose_j->total_residue() << "-residue subfragment"
-		// 					  << " from PDB " << files[i].name() 
+		// 					  << " from PDB " << files[i].name()
 		// 					  << " insert point " << pose_i->pdb_info()->number(j) << std::endl;
 		// 		}
 		// 	}
@@ -220,14 +220,14 @@ public:
 			int n_atoms;
 			ObjexxFCL::FArray2D< core::Real > p1a, p2a;
 			protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
-	
+
 			core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 			gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
 		}
 		return gdtmm;
 	}
 
-	void superpose( core::pose::Pose &frag, core::pose::Pose &pose, 
+	void superpose( core::pose::Pose &frag, core::pose::Pose &pose,
 	                numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {
 		// com of both
 		core::Size len = frag.total_residue();
@@ -256,7 +256,7 @@ public:
 			numeric::xyzVector< core::Real > y_3 = pose.residue(frag.pdb_info()->number(i)).atom(" CA ").xyz();
 			numeric::xyzVector< core::Real > y_4 = pose.residue(frag.pdb_info()->number(i)).atom(" N  ").xyz();
 			postT += y_1+y_2+y_3+y_4;
-			for (int j=0; j<3; ++j) { 
+			for (int j=0; j<3; ++j) {
 				init_coords(j+1,4*(i-1)+1) = x_1[j];
 				init_coords(j+1,4*(i-1)+2) = x_2[j];
 				init_coords(j+1,4*(i-1)+3) = x_3[j];
@@ -281,7 +281,7 @@ public:
 		ObjexxFCL::FArray1D< numeric::Real > ww( 4*len, 1.0 );
 		ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
 		numeric::Real ctx;
-	
+
 		numeric::model_quality::findUU( init_coords, final_coords, ww, 4*len, uu, ctx );
 		R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 		R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
@@ -298,7 +298,7 @@ public:
 		// it might make sense to change this based on gap width
 		// for really large gaps make it one sided to emulate fold-tree fragment insertion
 		int aln_len = 3;
-	
+
 		bool nterm = (start == 1);
 		bool cterm = (start == pose.total_residue()-8);
 
@@ -330,7 +330,7 @@ public:
 				numeric::xyzVector< core::Real > x_3 = pose.residue(start+i).atom(" CA ").xyz();
 				numeric::xyzVector< core::Real > x_4 = pose.residue(start+i).atom(" N  ").xyz();
 				com1 += x_1+x_2+x_3+x_4;
-				for (int j=0; j<3; ++j) { 
+				for (int j=0; j<3; ++j) {
 					init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
 					init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
 					init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
@@ -365,7 +365,7 @@ public:
  			for (int ii=0; ii<2*4*aln_len; ++ii) {
 				for ( int j=0; j<3; ++j ) final_coords(j+1,ii+1) -= com2[j];
 			}
-	
+
 			numeric::Real ctx;
 			float rms;
 
@@ -382,7 +382,7 @@ public:
 		R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 		R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
 		R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
-	
+
 		// apply rotation to ALL atoms
 		// x_i' <- = R*x_i + com1;
 		for ( Size i = 0; i < len; ++i ) {
@@ -434,7 +434,7 @@ public:
 		core::Size ncycles = option[ fpd::ncycles ]();
 		core::Size nmacrocycles = option[ fpd::nmacrocycles ]();
 		TR << "RUNNING FOR " << nmacrocycles << " MACROCYCLES" << std::endl;
-		
+
 		if (nmacrocycles > 0) {
 		sampler:
 			// do cycle 1
@@ -443,7 +443,7 @@ public:
 				core::Size frag_id = numeric::random::random_range(1, pose1s_.size() );
 				core::pose::PoseOP frag = pose1s_[frag_id];
 				protocols::loops::LoopsOP loops = loop1s_[frag_id];
-	
+
 				// xyz copy starting model
 				for (int i=1; i<=NRES; ++i)
 				for (int j=1; j<=frag->residue(i).natoms(); ++j) {
@@ -458,7 +458,7 @@ public:
 					protocols::loops::fold_tree_from_loops( pose, *loops, f_new);
 					pose.fold_tree( f_new );
 					protocols::loops::add_cutpoint_variants( pose );
-	
+
 					// set movemap
 					core::kinematics::MoveMapOP mm_loop = new core::kinematics::MoveMap();
 					for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
@@ -467,29 +467,29 @@ public:
 							mm_loop->set_chi(i, true); // chi of loop residues
 						}
 					}
-	
+
 					// setup fragment movers
 					protocols::simple_moves::ClassicFragmentMoverOP frag3mover, frag9mover;
 					frag3mover = new protocols::simple_moves::ClassicFragmentMover( fragments3_, mm_loop );
 					frag3mover->set_check_ss( false );frag3mover->enable_end_bias_check( false );
 					frag9mover = new protocols::simple_moves::ClassicFragmentMover( fragments9_, mm_loop );
 					frag9mover->set_check_ss( false );frag9mover->enable_end_bias_check( false );
-	
+
 					// extend + idealize loops
 					for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
 						protocols::loops::set_extended_torsions( pose, *it );
 					}
-	
+
 					// setup MC
 					lr_scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.5 );
 					(*lr_scorefxn_)(pose);
 					protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *lr_scorefxn_, 2.0 );
-	
+
 					core::Size neffcycles = 2*ncycles;
 					for (int n=1; n<=neffcycles; ++n) {
 						frag9mover->apply( pose ); (*lr_scorefxn_)(pose); mc1->boltzmann( pose , "frag9" );
 						frag3mover->apply( pose ); (*lr_scorefxn_)(pose); mc1->boltzmann( pose , "frag3" );
-	
+
 						if (n%100 == 0) {
 							mc1->show_scores();
 							mc1->show_counters();
@@ -504,7 +504,7 @@ public:
 					for (int n=1; n<=neffcycles; ++n) {
 						frag9mover->apply( pose ); (*lr_scorefxn_)(pose); mc2->boltzmann( pose , "frag9" );
 						frag3mover->apply( pose ); (*lr_scorefxn_)(pose); mc2->boltzmann( pose , "frag3" );
-	
+
 						if (n%100 == 0) {
 							mc2->show_scores();
 							mc2->show_counters();
@@ -530,7 +530,7 @@ public:
 				if (m==3) bonded_weight = 0.01*max_cart;
 				if (m==4) bonded_weight = 0.1*max_cart;
 				if (m==5) bonded_weight = max_cart;
-	
+
 				core::Real cst_weight = max_cst;
 				if (m<5)  cst_weight = 2*max_cst;
 
@@ -539,7 +539,7 @@ public:
 				if (m==2)  vdw_weight = 0.1*max_vdw;
 				if (m==3)  vdw_weight = 0.1*max_vdw;
 				if (m==4)  vdw_weight = 0.1*max_vdw;
-	
+
 				TR << "CYCLE " << m << std::endl;
 				TR << "  setting bonded weight = " << bonded_weight << std::endl;
 				TR << "  setting cst    weight = " << cst_weight << std::endl;
@@ -548,10 +548,10 @@ public:
 				lowres_scorefxn_->set_weight( core::scoring::cart_bonded, bonded_weight );
 				lowres_scorefxn_->set_weight( core::scoring::atom_pair_constraint, cst_weight );
 				lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
-	
+
 				(*lowres_scorefxn_)(pose);
 				protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
-	
+
 				core::Size neffcycles = ncycles;
 				if (m==5) neffcycles /=2;
 				for (int n=1; n<=neffcycles; ++n) {
@@ -560,7 +560,7 @@ public:
 					numeric::xyzVector< core::Real > preT(0,0,0), postT(0,0,0);
 					R.xx() = R.yy() = R.zz() = 1;
 					R.xy() = R.yx() = R.zx() = R.zy() = R.yz() = R.xz() = 0;
-	
+
 					// 1 - insert homologue template, global frame
 					// 2 - insert homologue subfrag, global frame
 					// 3 - insert homologue frag, local frame
@@ -587,7 +587,7 @@ public:
 					if (action == 3) action_string = "frag";
 					if (action == 4) action_string = "subfrag";
 					if (action == 5) action_string = "picker";
-	
+
 					if (action == 5) {
 						// pick an insert position
 						utility::vector1<core::Real> residuals( NRES , 0.0 );
@@ -610,19 +610,19 @@ public:
 								max_poses[3] = i;
 							}
 						}
-	
+
 						// 25% chance of random position
 						max_poses[ 4 ] = numeric::random::random_range(1,NRES);
 						int select_position = numeric::random::random_range(1,4);
 						if (select_position == 4)
 							action_string = action_string+"_rand";
 						core::Size max_pos = max_poses[ select_position ];
-	
+
 						// select random pos in [i-8,i]
 						core::Size insert_pos = max_pos - numeric::random::random_range(3,5);
 						insert_pos = std::min( insert_pos, NRES-8);
 						insert_pos = std::max( (int)insert_pos, 1);
-	
+
 						apply_frame (pose, library_[insert_pos]);
 					} else {
 						// pick a fragment at random
@@ -643,7 +643,7 @@ public:
 
 						if (action == 3 || action == 4)
 							superpose( *frag, pose, R, preT, postT);
-	
+
 						// xyz copy fragment to pose
 						for (int i=1; i<=frag->total_residue(); ++i)
 						for (int j=1; j<=frag->residue(i).natoms(); ++j) {
@@ -662,10 +662,10 @@ public:
 							minimizer.run( pose, mm, *min3_scorefxn_, options );
 						else
 							minimizer.run( pose, mm, *min3_scorefxn_, options_minilbfgs );
-	
+
 						mc->boltzmann( pose , action_string );
 					} catch( utility::excn::EXCN_Base& excn ) {
-						//fpd hbond shit 
+						//fpd hbond shit
 						mc->recover_low( pose );
 					}
 					if (n%100 == 0) {
@@ -674,19 +674,19 @@ public:
 					}
 				}
 				mc->recover_low(pose);
-	
-	
+
+
 				// GDTMM
 				core::Real gdtmm = get_gdtmm( pose );
 				TR << "CYCLE " << m << "  GDTMM = " << gdtmm << std::endl;
 
-				// final minimization	
+				// final minimization
 				if (m==5) {
 					(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 					(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 					(*min1_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 					(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
-	
+
 					core::Real gdtmm = get_gdtmm( pose );
 					TR << "CYCLE " << m << "+min  GDTMM = " << gdtmm << std::endl;
 
@@ -780,6 +780,7 @@ main( int argc, char * argv [] ) {
 	protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
     }

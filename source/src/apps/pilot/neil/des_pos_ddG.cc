@@ -125,7 +125,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 		task->nonconst_residue_task(revert_pos[ipos]).restrict_absent_canonical_aas(allowed_aas);
 		task->nonconst_residue_task(revert_pos[ipos]).initialize_from_command_line();
 		allowed_aas[aa_from_name(aa_name)] = false;
-	}	
+	}
 
   // Actually perform design
 	make_symmetric_PackerTask_by_truncation(pose, task);
@@ -191,11 +191,11 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
   // print_movemap( *movemap );
   protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   m.apply(pose);
-} 
+}
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
-  using core::id::AtomID; 
+  using core::id::AtomID;
   utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
   core::id::AtomID_Map<Real> atom_sasa;
   core::id::AtomID_Map<bool> atom_mask;
@@ -205,7 +205,7 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
     for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
       atom_mask[AtomID(j,i)] = true;
     }
-  } 
+  }
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
   utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
   for(Size i = 1; i <= pose.n_residue(); i++) {
@@ -229,7 +229,7 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	scc.Init();
 
 	// Figure out which chains touch chain A, and add the residues from those chains
-	// into the sc surface objects	
+	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
 	for (Size i=1; i<=nres_monomer; ++i) {
 		scc.AddResidue(0, pose.residue(i));
@@ -337,15 +337,15 @@ void
 	using namespace scoring;
 	using namespace utility;
 	using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 
 	// Iterate through files
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
@@ -368,7 +368,7 @@ void
 	 	}
 
     // Define which subs are part of the oligomeric building block.
-    Sizes intra_subs; 
+    Sizes intra_subs;
     if (!option[matdes::design::num_subs_building_block].user()) {
       utility_exit_with_message("ERROR: You have not set the required option -matdes::design::num_subs_building_block");
     } else {
@@ -490,7 +490,7 @@ void
 	    TR << files[ifile] << " ddG for mutation " << revert_ids[ipos] << revert_pos[ipos] << "ALA = " << ddG << std::endl;
 	    ddG_mover.report_ddG(TR);
 		}
-			
+
 	} // ifile
 
 	return NULL;
@@ -513,6 +513,7 @@ main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 

@@ -70,8 +70,8 @@ main( int argc, char * argv [] )
 #endif
 
 #ifdef USEMPI
-	int num_partitions = option[lh::num_partitions]();  
-	int assigned_num = 1;  
+	int num_partitions = option[lh::num_partitions]();
+	int assigned_num = 1;
 
 	int mpi_rank_, mpi_npes_;
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank_ ) );
@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 
 		TR << "Creating partition..." << std::endl;
 		loop_hash_library->create_db();
-		
+
 		TR << "Saving partition..." << std::endl;
 		try
 		{
@@ -129,7 +129,7 @@ main( int argc, char * argv [] )
 			{
 				TR << "Divisor = " << divisor << std::endl;
 			}
-			
+
 			if( mpi_rank_ % divisor != 0 || mpi_rank_ + divisor/2 >= num_partitions)
 			{
 				MPI_Barrier( MPI_COMM_WORLD );
@@ -184,6 +184,7 @@ main( int argc, char * argv [] )
 #endif
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
     return 0;
 }

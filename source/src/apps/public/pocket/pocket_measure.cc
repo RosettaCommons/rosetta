@@ -158,10 +158,10 @@ main( int argc, char * argv [] )
       input_pose.apply_transform_Rx_plus_v(y_rot_mat, v);
       input_pose.apply_transform_Rx_plus_v(z_rot_mat, v);
 */
-      pg.randomAngle();  
+      pg.randomAngle();
     }else{
       pg.zeroAngle();
-    }   
+    }
     //protocols::pockets::PocketGrid pg( input_pose.conformation().residue(seqpos) );
     //if ( pg.autoexpanding_pocket_eval( input_pose.conformation().residue(seqpos), input_pose ) ){
     if ( pg.autoexpanding_pocket_eval( residues, input_pose ) ){
@@ -184,7 +184,8 @@ main( int argc, char * argv [] )
 	std::cout << "Pocket score (unweighted) is: " << constraint_pocket_score << std::endl;
 	std::cout << "Largest pocket score (unweighted) is: " << largest_pocket_score << std::endl;
   } catch ( utility::excn::EXCN_Base const & e ) {
-	  std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
   }
 	return 0;
 }

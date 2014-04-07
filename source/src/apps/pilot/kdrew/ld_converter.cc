@@ -167,6 +167,7 @@ main( int argc, char* argv[] )
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
     return 0;
 }//main
@@ -193,7 +194,7 @@ LDConverterMover::apply(
 		core::Size respos = pose_map.find( *l_pdb_positions[i].c_str(), atoi(l_pdb_positions[i+1].c_str()) );
         l_positions.push_back(respos);
 	}
-	
+
 	for(Size i = 1; i <= l_positions.size(); ++i )
 	{
 		TR << "residue id: " << l_positions[i] << std::endl;

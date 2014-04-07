@@ -139,14 +139,14 @@ public: // constructor/deconstructor
 		std::ostringstream filename;
 		filename <<  option[ output ]();
 		output_.open( filename.str().c_str() ,std::ios::out );
-	
+
 		if ( option[ in::file::native ].user() ) {
 			core::import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::in::file::native ] );
 		}
 
 		std::ostringstream header;
 		header << "filename " << "foldname " << "strand_pairs " << "fullE " << "cenE ";
-		
+
 		if( option[ in::file::native ].user() ) {
 			header << "rms";
 		}
@@ -259,7 +259,7 @@ public: // apply
 			output_ << me << " " << foldname << " " << spair_string << " "
 					<< fullE << " " << cenE << " ";
 		}
-	
+
 		if( rms > 0.0 ) {
 			output_ << " " << rms << std::endl;
 		} else {
@@ -303,6 +303,7 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 

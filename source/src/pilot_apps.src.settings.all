@@ -488,7 +488,7 @@ sources = {
 		"test_CarbohydrateInfo"
 	],
 	"pilot/lemmon" : [
-		"undirected_graph"
+		#"undirected_graph"
 	],
 	"pilot/lin" : [
 		#"SymmSilentFile",
@@ -662,7 +662,7 @@ sources = {
 	"pilot/rhiju" : [
 		"rna_test",
 		#"rna_assemble_test",
-	        "gaussian_chain_func_test",
+	        #"gaussian_chain_func_test",
 	        "mg_test",
 		"mg_pdbstats",
                 "rna_features",

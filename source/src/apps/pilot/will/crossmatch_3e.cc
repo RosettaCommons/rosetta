@@ -139,12 +139,12 @@ static basic::Tracer TR("crossmatch_3e");
 static core::io::silent::SilentFileData sfd;
 
 void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & matchres, bool designall = false ){
-	using namespace core::pack::task;	
-	
+	using namespace core::pack::task;
+
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
-	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);	
+	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
-	
+
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	// task->initialize_extra_rotamer_flags_from_command_line();
 	vector1< bool > aas(20,true);
@@ -159,11 +159,11 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 			aas[core::chemical::aa_ser] = false;
 			aas[core::chemical::aa_thr] = false;
 			aas[core::chemical::aa_asp] = false;
-			aas[core::chemical::aa_glu] = false;		
-			aas[core::chemical::aa_lys] = false;		
-			aas[core::chemical::aa_arg] = false;		
-			aas[core::chemical::aa_asn] = false;		
-			aas[core::chemical::aa_gln] = false;		
+			aas[core::chemical::aa_glu] = false;
+			aas[core::chemical::aa_lys] = false;
+			aas[core::chemical::aa_arg] = false;
+			aas[core::chemical::aa_asn] = false;
+			aas[core::chemical::aa_gln] = false;
 		}
 	}
 
@@ -182,14 +182,14 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 			if(pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 100.0) {
 				interface.push_back(i);
 			}
-		}		
+		}
 	}
 
 	// TR << "INTERFACE ";
 	for(Size i = 1; i <= end_of_prot_1; ++i) {
 		if(std::find(matchres.begin(),matchres.end(),i)!=matchres.end()) {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){						
+		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){
 			// TR << i << " ";
 			bool tmp = aas[pose.residue(i).aa()];
 			aas[pose.residue(i).aa()] = true;
@@ -203,22 +203,22 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 		}
 	}
 	// TR << std::endl;
-	
+
 	core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
 	// TR << *task << std::endl;
-	
+
 	// pose.dump_pdb("test.pdb");
 	// if(uniform() > 0.2) std::exit(-1);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );		
-	repack.apply(pose);		
-	
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	repack.apply(pose);
+
 	// cleanup 2
 	pose.remove_constraints( res_cst );
 	sf->set_weight(core::scoring::res_type_constraint,worig);
-	
+
 }
 
- 
+
 
 
 int main (int argc, char *argv[])
@@ -228,11 +228,11 @@ int main (int argc, char *argv[])
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	devel::init(argc,argv);
-	
+
 	ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction( core::scoring::getScoreFunction() );
-	
+
 	Pose nat;
 	core::import_pose::pose_from_pdb(nat,option[willmatch::native1]());
 	vector1<Pose> m;
@@ -243,13 +243,13 @@ int main (int argc, char *argv[])
 		// TR << lig.pdb_info()->number(1) << " " << lig.pdb_info()->number(2) << " " << lig.pdb_info()->number(3) << std::endl;
 		core::pose::remove_lower_terminus_type_from_pose_residue(lig,1);
 		core::pose::remove_lower_terminus_type_from_pose_residue(lig,2);
-		core::pose::remove_lower_terminus_type_from_pose_residue(lig,3);				
+		core::pose::remove_lower_terminus_type_from_pose_residue(lig,3);
 		core::pose::remove_upper_terminus_type_from_pose_residue(lig,1);
 		core::pose::remove_upper_terminus_type_from_pose_residue(lig,2);
-		core::pose::remove_upper_terminus_type_from_pose_residue(lig,3);				
+		core::pose::remove_upper_terminus_type_from_pose_residue(lig,3);
 		base.replace_residue( lig.pdb_info()->number(1), lig.residue(1), true );
 		base.replace_residue( lig.pdb_info()->number(2), lig.residue(2), true );
-		base.replace_residue( lig.pdb_info()->number(3), lig.residue(3), true );				
+		base.replace_residue( lig.pdb_info()->number(3), lig.residue(3), true );
 		Vec cen = lig.residue(4).xyz(1);
 		Vec ori = (lig.residue(5).xyz(1) - cen).normalized();
 		Vec axs = (lig.residue(3).xyz("CD") - cen).normalized();
@@ -268,12 +268,12 @@ int main (int argc, char *argv[])
 				}
 				if(clash) break;
 			}
-			if(clash) break;			
+			if(clash) break;
 		}
 		if(clash) continue;
-		
-		vector1<Size> matchres; matchres.push_back(lig.pdb_info()->number(1)); matchres.push_back(lig.pdb_info()->number(2)); matchres.push_back(lig.pdb_info()->number(3)); 
-		// base.dump_pdb("init.pdb");		
+
+		vector1<Size> matchres; matchres.push_back(lig.pdb_info()->number(1)); matchres.push_back(lig.pdb_info()->number(2)); matchres.push_back(lig.pdb_info()->number(3));
+		// base.dump_pdb("init.pdb");
 		design_homodimer(base,sf,matchres);
 		sf->score(base);
 		// base.dump_pdb("desn.pdb");
@@ -291,7 +291,7 @@ int main (int argc, char *argv[])
 		// base.energies().show(cout);
 
 		// utility_exit_with_message("testing");
-		
+
 		TR << "dumping pdb " << ilig << " " << "3E_homo_"+string_of(ilig-1)+".pdb" << std::endl;
 		utility::io::ozstream out("3E_homo_"+string_of(ilig-1)+".pdb");
 		base.dump_pdb(out);
@@ -305,6 +305,7 @@ int main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

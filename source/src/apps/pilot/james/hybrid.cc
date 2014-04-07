@@ -271,7 +271,7 @@ main( int argc, char* argv [] ) {
 		SilentStructOP ss_out( new ScoreFileSilentStruct );
 		ss_out->scoreline_prefix( "" );
 		ss_out->decoy_tag( string_of(ii) );
-	
+
 		Real min_dist( upper_dist_limit );
 		for ( Size jj = 1; jj <= aln_ids.size(); ++jj ) {
 			string const & aln_id( aln_ids[jj] );
@@ -290,6 +290,7 @@ main( int argc, char* argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

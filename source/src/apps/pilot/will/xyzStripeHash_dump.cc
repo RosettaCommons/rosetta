@@ -47,7 +47,7 @@ get_surface_points(core::pose::Pose const & p, Real /*DIST*/) {
 	ss.pdb_from_level(4,"test4.pdb");
 	ss.pdb_from_level(5,"test5.pdb");
 	ss.pdb_from_level(6,"test6.pdb");
-	ss.pdb_from_level(7,"test7.pdb");						
+	ss.pdb_from_level(7,"test7.pdb");
 
 	utility::vector1<Vec>	points;
 	for(Size ir = 1; ir <= p.n_residue(); ++ir) {
@@ -55,7 +55,7 @@ get_surface_points(core::pose::Pose const & p, Real /*DIST*/) {
 			points.push_back(p.xyz(AtomID(ia,ir)));
 		}
 	}
-	
+
 //	for(Size )
 	return points;
 }
@@ -78,14 +78,14 @@ int main(int argc, char *argv[]) {
 	if(false) {
 		for(Size ir = 1; ir <= p.n_residue(); ++ir) {
 			if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
-			if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);		
+			if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);
 		}
 	}
-	
+
 	utility::vector1<Vec> points = get_surface_points(p,DIST);
-	
+
 	utility_exit_with_message("TEST GET SURF PTS");
-	
+
 	protocols::sic_dock::xyzStripeHashPoseWithMeta xyzhash(DIST,p,protocols::sic_dock::ALL);
 	xyzhash.sanity_check();
 
@@ -107,6 +107,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

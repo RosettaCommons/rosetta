@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
 		//pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
     return 0;
 }

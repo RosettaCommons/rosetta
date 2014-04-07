@@ -131,7 +131,7 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	Vector centroid = get_rna_base_centroid( rsd, true /*verbose*/ );
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
 	kinematics::Stub stub( M, centroid );
-	
+
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		Residue const & res = pose.residue(i);
 		for (Size j = 1; j <= res.natoms(); j++ ){
@@ -215,6 +215,7 @@ main( int argc, char * argv [] )
   protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 

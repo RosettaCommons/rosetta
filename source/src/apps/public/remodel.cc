@@ -132,7 +132,7 @@ void init_usage_prompt( std::string exe ) {
 			<< "\n\t[-overwrite]"
 			<< "\n\t[-ignore_unrecognized_res]"
 			<< "\n\t[-mute core.io core.conformation core.pack core.scoring]"
-			
+
 			<< "\n\nPlease see the Rosetta Remodel documentation in the Rosetta Manual for more information, including a list of all available options."
 			<< "\nhttp://www.rosettacommons.org/manual_guide"
 
@@ -597,6 +597,7 @@ try {
 	protocols::viewer::viewer_main( graphics_main );
 } catch ( utility::excn::EXCN_Base const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
 }
 	return 0;
 }

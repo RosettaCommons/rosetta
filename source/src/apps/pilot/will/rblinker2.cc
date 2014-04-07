@@ -69,7 +69,7 @@ using core::Real;
 static basic::Tracer TR("rblinker2");
 
 // static numeric::random::RandomGenerator RG(8334046);
-// 
+//
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
 // 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -78,9 +78,9 @@ static basic::Tracer TR("rblinker2");
 // 		}
 // 	}
 // }
-// 
-// 
-// 
+//
+//
+//
 // // petf   37   42   45   75
 // // hyd   101  156  334  338
 // // psI  1492 1536 1489 1495
@@ -94,7 +94,7 @@ static basic::Tracer TR("rblinker2");
 // 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
 // 	return sf4A.distance(spetf.local2global(sf4B));
 // }
-// 
+//
 // // get stup that aligns r1 to r2
 // Stub getxform(Residue const & r1, Residue const & r2) {
 // 	Stub s;
@@ -132,7 +132,7 @@ class SimpleBBMover : public protocols::moves::Mover {
 public:
 	SimpleBBMover(Size start, Size stop, Real mag) : start_(start),stop_(stop),mag_(mag) {}
 	Real magnitude(        ) { return mag_; }
-	void magnitude(Real mag) { mag_ = mag; }	
+	void magnitude(Real mag) { mag_ = mag; }
 	void apply(core::pose::Pose & pose) {
 		Size i = start_-1 + (Size)std::ceil(uniform()*(stop_-start_+1));
 		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
@@ -167,7 +167,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {		
+	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -227,13 +227,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
 	cuts(1) = lnk.n_residue()/2;
-	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);		
+	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_UPPER",cuts(1)+1);
 	jump_point(1,1) = 1;
 	jump_point(2,1) = lnk.n_residue();
 	ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
 	ft.set_jump_atoms(1,"N","C");
-	lnk.fold_tree(ft);		
+	lnk.fold_tree(ft);
 
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
 	xform_pose(lnk, getxform(lnk.residue(lnk.n_residue()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
@@ -249,8 +249,8 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 			lnk.set_psi(lnk.n_residue()-i, oldlnk.psi(oldlnk.n_residue()-i) );
 		}
 		// lnk.dump_pdb("lnk.pdb");
-		// oldlnk.dump_pdb("oldlnk.pdb");	
-	}	
+		// oldlnk.dump_pdb("oldlnk.pdb");
+	}
 	return lnk;
 }
 
@@ -302,13 +302,13 @@ void* doit(void*) {
 	// 		lnk.set_psi  (i,-45);
 	// 		lnk.set_omega(i,180);
 	// 	}
-	// 	
+	//
 	// 	utility::io::izstream in( basic::options::option[basic::options::OptionKeys::score::fastclash::implicit_clash_aln_config]() );
 	// 	Size c1,c2,c3,c4;
 	// 	char t1,t2,t3,t4;
 	// 	std::string fn;
 	// 	Size count = 0;
-	// 	while( in >> c1 >> t1 >> c2 >> t2 >> fn >> c3 >> t3 >> c4 >> t4 ) {			
+	// 	while( in >> c1 >> t1 >> c2 >> t2 >> fn >> c3 >> t3 >> c4 >> t4 ) {
 	// 		count++;
 	// 	}
 	// 	if(count!=1) utility_exit_with_message("require exactly one line in fastclash aln config");
@@ -332,15 +332,15 @@ void* doit(void*) {
 	// 			}
 	// 		}
 	// 	}
-	// 	
+	//
 	// 	// init test...
 	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp0.pdb",lnk);	lnk.dump_pdb("pose0.pdb"); lnk.set_phi(10,uniform()*360.0);
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp1.pdb",lnk);	lnk.dump_pdb("pose1.pdb"); lnk.set_phi(30,uniform()*360.0); 
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp2.pdb",lnk);	lnk.dump_pdb("pose2.pdb"); lnk.set_phi(22,uniform()*360.0); 
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp3.pdb",lnk); lnk.dump_pdb("pose3.pdb"); lnk.set_psi(22,uniform()*360.0); 
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp4.pdb",lnk);	lnk.dump_pdb("pose4.pdb"); lnk.set_phi(23,uniform()*360.0); 
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp5.pdb",lnk);	lnk.dump_pdb("pose5.pdb"); lnk.set_psi(23,uniform()*360.0); 
-	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp6.pdb",lnk);	lnk.dump_pdb("pose6.pdb"); 
+	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp1.pdb",lnk);	lnk.dump_pdb("pose1.pdb"); lnk.set_phi(30,uniform()*360.0);
+	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp2.pdb",lnk);	lnk.dump_pdb("pose2.pdb"); lnk.set_phi(22,uniform()*360.0);
+	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp3.pdb",lnk); lnk.dump_pdb("pose3.pdb"); lnk.set_psi(22,uniform()*360.0);
+	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp4.pdb",lnk);	lnk.dump_pdb("pose4.pdb"); lnk.set_phi(23,uniform()*360.0);
+	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp5.pdb",lnk);	lnk.dump_pdb("pose5.pdb"); lnk.set_psi(23,uniform()*360.0);
+	// 	protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures("imp6.pdb",lnk);	lnk.dump_pdb("pose6.pdb");
 	// 	utility_exit_with_message("3 RB 2 linker systems not working properly yet!");
 	// }
 
@@ -354,7 +354,7 @@ void* doit(void*) {
 
 	bool CHAINBREAK = false;
 	if(option[in::file::s].user()) {
-		utility::vector1<std::string> fns = option[in::file::s]();		
+		utility::vector1<std::string> fns = option[in::file::s]();
 		sf->set_weight(core::scoring::linear_chainbreak,20.0);
 		for(Size ifn = 1; ifn <= fns.size(); ++ifn) {
 			std::string fn = fns[ifn];
@@ -362,15 +362,15 @@ void* doit(void*) {
 			Pose alnpose;
 			core::import_pose::pose_from_pdb(alnpose,fn);
 			if(alnpose.n_residue() != 2) utility_exit_with_message("reference pose must have only two residues");
-			
-			try {			
+
+			try {
 				Pose start;
 				for(Size LNKLEN = 2; LNKLEN < 53; LNKLEN++) {
 					start = build_algned_linker(alnpose,LNKLEN,cenresset,start);
 					Pose best = start;
 					bool linkable = false;
 					for(Size CBTRIAL = 1; CBTRIAL <= 10; CBTRIAL++) {
-						lnk = start;			
+						lnk = start;
 						if(option[rblinker::debug]()) TR << "try to find starting config without clash...." << std::endl;
 						MoverOP bigbbmove = new SimpleBBMover(1,lnk.n_residue(),9e6);
 						for(int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
@@ -380,7 +380,7 @@ void* doit(void*) {
 						Pose cbtrial_best = lnk;
 						if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) {
 							throw std::string("EVER-CLASH");
-							utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));							
+							utility_exit_with_message("failed to find starting pos w/o clash! nclashtrial "+string_of(option[rblinker::nclashtrials]()));
 						}
 						SimpleBBMoverOP bbmove = new SimpleBBMover(1,lnk.n_residue(),option[rblinker::ntrials]()*2-20);
 						sf->score(cbtrial_best);
@@ -477,12 +477,12 @@ void* doit(void*) {
 		std::set<unsigned long> coverage;
 		Size accepts = 0;
 		for(int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++) {
-			// TR << "ITER " << ITER << std::endl;	
-	
+			// TR << "ITER " << ITER << std::endl;
+
 			MonteCarloOP mc1 = new MonteCarlo( lnk, *sf, 2.0 );
 			mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 			TrialMover trial(bbmove,mc1);
-		
+
 			for(int j = 1; j <= option[rblinker::nsubtrials](); j++) {
 				trial.apply(lnk);
 				coverage.insert( pose2bin(lnk) );
@@ -490,16 +490,16 @@ void* doit(void*) {
 				hist[numeric::max(numeric::min(100,int(d)),1)]++;
 			}
 			accepts += trial.num_accepts();
-		
+
 			if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) utility_exit_with_message("has clash!!!! exiting!");
-		
+
 			TR << "ITER: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " HIST ";
 			for(Size i = 1; i <= hist.size(); ++i) {
 				TR << hist[i] << " ";
 			}
 			TR << "HISTEND" << std::endl;
-		
-		
+
+
 			Real d = lnk.energies().total_energies()[core::scoring::implicitdock];
 			std::string  fn = "rblinker2_out_"+ObjexxFCL::lead_zero_string_of(ITER,9)+"_unbnd.pdb";
 			if(d < 15.0) {
@@ -509,7 +509,7 @@ void* doit(void*) {
 			protocols::scoring::methods::ImplicitClashEnergy::dump_implicit_structures(fn,lnk);
 
 		}
-	}	
+	}
 
 	return NULL;
 }
@@ -532,6 +532,7 @@ int main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

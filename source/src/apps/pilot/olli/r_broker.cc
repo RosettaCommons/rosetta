@@ -66,6 +66,7 @@ int main( int argc, char * argv [] ) {
 	devel::init( argc, argv ); //d
 	protocols::viewer::viewer_main( rBroker_main_local );
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

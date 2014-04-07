@@ -215,6 +215,7 @@ main( int argc, char * argv [] )
 //	scorefxn->show(std::cout, *pose);
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
     return 0;
 }

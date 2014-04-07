@@ -343,14 +343,15 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
 	// initialize option and random number system
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  }
-        return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

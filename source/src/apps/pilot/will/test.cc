@@ -23,7 +23,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-int main(int argc, char *argv[]) {	
+int main(int argc, char *argv[]) {
 
 	try {
 
@@ -32,13 +32,14 @@ int main(int argc, char *argv[]) {
 	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
 	core::import_pose::pose_from_pdb(q,basic::options::option[basic::options::OptionKeys::in::file::s]()[2]);
 	// core::pose::symmetry::make_symmetric_pose(p);
-	// core::pose::symmetry::make_symmetric_pose(q);	
+	// core::pose::symmetry::make_symmetric_pose(q);
 	core::Real x = core::scoring::CA_rmsd(p,q);
 	std::cout << x << std::endl;
 	return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

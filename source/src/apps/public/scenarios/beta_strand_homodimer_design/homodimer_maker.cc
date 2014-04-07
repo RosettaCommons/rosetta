@@ -510,6 +510,7 @@ try {
   TR<< "Complete." << std::endl;
 } catch ( utility::excn::EXCN_Base const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
 }
 return 0;
 }//main

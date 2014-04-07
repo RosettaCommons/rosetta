@@ -135,7 +135,7 @@
  #include <basic/options/keys/score.OptionKeys.gen.hh>
  #include <basic/options/keys/pepspec.OptionKeys.gen.hh>
  #include <basic/options/keys/constraints.OptionKeys.gen.hh>
- 
+
 #include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
@@ -393,7 +393,7 @@ dump_efactor_pdb(
 	out << "MODEL     " << tag << "\n";
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );  
+		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 
@@ -417,7 +417,7 @@ dump_efactor_pdb(
 	out << "ENDMDL\n\n\n";
 	out << "###residue_total_energies###\n";
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );  
+		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		out << string_of( i ) << " " << pose.residue( i ).name1() << " " << pose.energies().residue_total_energies( i ).weighted_string_of( scorefxn->weights() ) << "\t" << residue_total_energy << "\n";
 	}
 }
@@ -605,7 +605,7 @@ get_clash_pairs(
 			EnergyMap const & emap( edge->fill_energy_map());
 			Real const clash( emap[ fa_rep ] );
 			if ( clash > clash_threshold ){
-				clash_pairs.push_back( std::pair< Size, Size >( seqpos, j ) ); 
+				clash_pairs.push_back( std::pair< Size, Size >( seqpos, j ) );
 			}
 		}
 		// and downstream
@@ -620,7 +620,7 @@ get_clash_pairs(
 			EnergyMap const & emap( edge->fill_energy_map());
 			Real const clash( emap[ fa_rep ] );
 			if ( clash > clash_threshold ){
-				clash_pairs.push_back( std::pair< Size, Size >( seqpos, j ) ); 
+				clash_pairs.push_back( std::pair< Size, Size >( seqpos, j ) );
 			}
 		}
 	}
@@ -643,10 +643,10 @@ pep_rmsd_analysis(
 	if( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
 	Size ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_in ) );
 	Size ref_pep_chain( ref_pose.chain( ref_pep_anchor ) );
-	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) ); 
-	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) ); 
-	Size this_pep_begin( pep_begin ); 
-	Size this_pep_end( pep_end ); 
+	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
+	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
+	Size this_pep_begin( pep_begin );
+	Size this_pep_end( pep_end );
 
 	Size ref_prot_chain;
 	for( Size i = 1; i <= ref_pose.conformation().num_chains(); ++i ){
@@ -657,8 +657,8 @@ pep_rmsd_analysis(
 			break;
 		}
 	}
-	Size ref_prot_begin( ref_pose.conformation().chain_begin( ref_prot_chain ) ); 
-	Size ref_prot_end( ref_pose.conformation().chain_end( ref_prot_chain ) ); 
+	Size ref_prot_begin( ref_pose.conformation().chain_begin( ref_prot_chain ) );
+	Size ref_prot_end( ref_pose.conformation().chain_end( ref_prot_chain ) );
 	Size ref_prot_anchor( ref_prot_begin );
 
 	Size pep_nterm( pep_anchor - this_pep_begin );
@@ -668,12 +668,12 @@ pep_rmsd_analysis(
 
 	Size nterm( pep_nterm );
 	Size cterm( pep_cterm );
-	if( pep_nterm < ref_pep_nterm ) ref_pep_begin += ref_pep_nterm - pep_nterm; 
+	if( pep_nterm < ref_pep_nterm ) ref_pep_begin += ref_pep_nterm - pep_nterm;
 	else if( pep_nterm > ref_pep_nterm ){
 		this_pep_begin += pep_nterm - ref_pep_nterm;
 		nterm = ref_pep_nterm;
 	}
-	if( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm; 
+	if( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
 	else if( pep_cterm > ref_pep_cterm ){
 		this_pep_end -= pep_cterm - ref_pep_cterm;
 		cterm = ref_pep_cterm;
@@ -681,14 +681,14 @@ pep_rmsd_analysis(
 	//superpose if needed
 	if( option[ pepspec::native_align ] ){
 		id::AtomID_Map< id::AtomID > atom_map;
-		pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID ); 
+		pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
 
 		for ( Size i = prot_begin; i <= prot_end; ++i ) {
 			id::AtomID const id1( pose.residue( i ).atom_index( "CA" ), i );
 			id::AtomID const id2( ref_pose.residue( i + static_cast< int >( ref_prot_begin ) - static_cast< int >( prot_begin ) ).atom_index( "CA" ), i + static_cast< int >( ref_prot_begin ) - static_cast< int >( prot_begin ) );
 			atom_map[ id1 ] = id2;
 		}
-		core::scoring::ScoreFunctionOP full_scorefxn(  getScoreFunction() );			
+		core::scoring::ScoreFunctionOP full_scorefxn(  getScoreFunction() );
 		core::scoring::superimpose_pose( pose, ref_pose, atom_map );
 
 	}
@@ -723,10 +723,10 @@ pep_phipsi_analysis(
 	if( option[ pepspec::native_pep_chain ].user() ) ref_pep_chain_in = option[ pepspec::native_pep_chain ];
 	Size ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_in ) );
 	Size ref_pep_chain( ref_pose.chain( ref_pep_anchor ) );
-	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) ); 
-	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) ); 
-	Size this_pep_begin( pep_begin ); 
-	Size this_pep_end( pep_end ); 
+	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) );
+	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) );
+	Size this_pep_begin( pep_begin );
+	Size this_pep_end( pep_end );
 
 	Size pep_nterm( pep_anchor - this_pep_begin );
 	Size ref_pep_nterm( ref_pep_anchor - ref_pep_begin );
@@ -735,12 +735,12 @@ pep_phipsi_analysis(
 
 	Size nterm( pep_nterm );
 	Size cterm( pep_cterm );
-	if( pep_nterm < ref_pep_nterm ) ref_pep_begin += ref_pep_nterm - pep_nterm; 
+	if( pep_nterm < ref_pep_nterm ) ref_pep_begin += ref_pep_nterm - pep_nterm;
 	else if( pep_nterm > ref_pep_nterm ){
 		this_pep_begin += pep_nterm - ref_pep_nterm;
 		nterm = ref_pep_nterm;
 	}
-	if( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm; 
+	if( pep_cterm < ref_pep_cterm ) ref_pep_end -= ref_pep_cterm - pep_cterm;
 	else if( pep_cterm > ref_pep_cterm ){
 		this_pep_end -= pep_cterm - ref_pep_cterm;
 		cterm = ref_pep_cterm;
@@ -937,7 +937,7 @@ set_pep_csts(
 /*
 void
 refine_fa_pep_bb(
-	Pose & pose,	
+	Pose & pose,
 	vector1< bool > is_pep,
 	scoring::ScoreFunctionOP cen_scorefxn
 )
@@ -1005,7 +1005,7 @@ make_1mer_frags(
 	Size const nfrags
 )
 {
-	core::Size const frags_length( 1 ); 
+	core::Size const frags_length( 1 );
 	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( frags_length ) );
 	//80% L, 10% H, 10% S
 	core::fragment::FragDataOPs list;
@@ -1034,7 +1034,7 @@ make_1mer_frags(
 }
 
 void
-gen_pep_bb_sequential(	
+gen_pep_bb_sequential(
 	pose::Pose & pose,
 	scoring::ScoreFunctionOP cen_scorefxn
 )
@@ -1115,7 +1115,7 @@ gen_pep_bb_sequential(
 			Size moveable_seqpos( pep_begin + ii - 1 );
 			mm_frag->set_bb( moveable_seqpos, true );
 //			is_insert[ ii ] = true;
-		}	
+		}
 		for( Size ii = nres_pep; ii >= nres_pep - this_append; --ii ){
 			Size moveable_seqpos( pep_begin + ii - 1 );
 			mm_frag->set_bb( moveable_seqpos, true );
@@ -1156,8 +1156,8 @@ gen_pep_bb_sequential(
 */
 				frag_mover.apply( pose );
 				//random perturb angles +/- 1 degree
-//				pose.set_phi( insert_seqpos, pose.phi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) ); 
-//				pose.set_psi( insert_seqpos, pose.psi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) ); 
+//				pose.set_phi( insert_seqpos, pose.phi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) );
+//				pose.set_psi( insert_seqpos, pose.psi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) );
 
 				if( mc_frag->boltzmann( pose ) ){
 					Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
@@ -1165,7 +1165,7 @@ gen_pep_bb_sequential(
 					if( test_score <= best_score ){
 						best_score = test_score;
 						mc_frag->reset( pose );
-					} 
+					}
 				}
 			}
 			mc_frag->recover_low( pose );
@@ -1233,7 +1233,7 @@ gen_pep_bb_sequential(
 					//check clashes one last time
 					vector1< bool > check_clash( pose.total_residue(), false );
 					for( Size i = 1; i <= pose.total_residue() - 1; ++i ) if( is_pep[ i ] || ( repack_this[ i ] && !ignore_clash[ i ] ) ) check_clash[ i ] = true;
-					
+
 					this_has_clash = has_clash( pose, check_clash, cen_scorefxn, clash_cutoff );
 				}
 			}
@@ -1291,7 +1291,7 @@ perturb_pep_bb(
 			if( test_score <= best_score ){
 				best_score = test_score;
 				mc_cg->reset( pose );
-			} 
+			}
 		}
 	}
 	mc_cg->recover_low( pose );
@@ -1425,7 +1425,7 @@ print_pep_analysis(
 	std::fstream & out_file,
 	Pose pose,
 	Real prot_score,
-	ScoreFunctionOP full_scorefxn,	
+	ScoreFunctionOP full_scorefxn,
 	bool dump_pdb
 )
 {
@@ -1475,7 +1475,7 @@ print_pep_analysis(
 //	if( option[ pepspec::rmsd_analysis ] ) out_file << pep_rmsd_analysis( pose );
 //	if( option[ pepspec::phipsi_analysis ] ) out_file << pep_phipsi_analysis( pose );
 	out_file<<std::endl;
-	if( dump_pdb ) pose.dump_scored_pdb( pdb_name, *full_scorefxn ); 
+	if( dump_pdb ) pose.dump_scored_pdb( pdb_name, *full_scorefxn );
 
 }
 
@@ -1489,7 +1489,7 @@ RunPepSpec()
 	//data out
 	std::string out_nametag( "data" );
 	if( option[ out::file::o ].user() ) out_nametag = option[ out::file::o ];
-	std::string pdb_dir( out_nametag + ".pdbs" ); 
+	std::string pdb_dir( out_nametag + ".pdbs" );
 	std::string pdb_name;
 	utility::file::create_directory( pdb_dir );
 	std::string out_file_name_str( out_nametag + ".spec" );
@@ -1644,13 +1644,13 @@ RunPepSpec()
 			std::string const pep_chain_in( option[ pepspec::pep_chain ] );
 			pep_anchor = pose.pdb_info()->pdb2pose( pep_chain_in[ 0 ], pep_anchor_in );
 			pep_chain = pose.chain( pep_anchor );
-			pep_begin = pose.conformation().chain_begin( pep_chain ); 
-			pep_end = pose.conformation().chain_end( pep_chain ); 
+			pep_begin = pose.conformation().chain_begin( pep_chain );
+			pep_end = pose.conformation().chain_end( pep_chain );
 		}
 		else{
 			pep_chain = 2;
-			pep_begin = pose.conformation().chain_begin( pep_chain ); 
-			pep_end = pose.conformation().chain_end( pep_chain ); 
+			pep_begin = pose.conformation().chain_begin( pep_chain );
+			pep_end = pose.conformation().chain_end( pep_chain );
 			pep_anchor = pep_begin + static_cast< int >( ( pose.conformation().chain_end( pep_chain ) -  pose.conformation().chain_begin( pep_chain ) ) * RG.uniform() );
 		}
 
@@ -1663,8 +1663,8 @@ RunPepSpec()
 				break;
 			}
 		}
-		prot_begin = pose.conformation().chain_begin( prot_chain ); 
-		prot_end =pose.conformation().chain_end( prot_chain ); 
+		prot_begin = pose.conformation().chain_begin( prot_chain );
+		prot_end =pose.conformation().chain_end( prot_chain );
 		prot_anchor =prot_begin;
 
 		Real cutoff( option[ pepspec::interface_cutoff ] );
@@ -1699,7 +1699,7 @@ RunPepSpec()
 		( *full_scorefxn )( prot_pose );
 		packmin_unbound_pep( prot_pose, full_scorefxn );
 		Real prot_score( prot_pose.energies().total_energies().dot( full_scorefxn->weights() ) );
-	
+
 		protocols::viewer::add_conformation_viewer( pose.conformation(), "pepspec_pose" );
 
 		//init peptide
@@ -1727,7 +1727,7 @@ RunPepSpec()
 		if( option[ pepspec::homol_csts ].user() ){
 			cen_scorefxn->set_weight( coordinate_constraint, option[ OptionKeys::constraints::cst_weight ] );
 			set_pep_csts( pose );
-		} 
+		}
 
 		( *cen_scorefxn )( pose );
 		if( peptide_loop > 1 && pose.energies().total_energies()[ vdw ] > min_vdw + 0.1 ){
@@ -1774,11 +1774,11 @@ RunPepSpec()
 			}
 
 			//debug dump CG data and pdb//
-			if( option[ pepspec::dump_cg_bb ] ){			
+			if( option[ pepspec::dump_cg_bb ] ){
 				//remove buffer res
 				std::string pdb_name( pdb_dir + "/" + out_nametag + "_" + string_of( peptide_loop ) + ".pdb" );
 				if( n_cgrelax_loop > 1 ) pdb_name = pdb_dir + "/" + out_nametag + "_" + string_of( peptide_loop ) + "_" + string_of( cgrelax_loop ) + ".pdb";
-				if( option[ pepspec::save_low_pdbs ] ) pose.dump_scored_pdb( pdb_name, *full_scorefxn ); 
+				if( option[ pepspec::save_low_pdbs ] ) pose.dump_scored_pdb( pdb_name, *full_scorefxn );
 				( *cen_scorefxn )( pose );
 				out_file << pdb_name + "\t"<<pose.energies().total_energies().weighted_string_of( cen_scorefxn->weights() );
 				out_file<<"\ttotal_score:\t"<<pose.energies().total_energies()[ total_score ]<<"\t";
@@ -1812,7 +1812,7 @@ RunPepSpec()
 
 			//randomize pep sequence//
 			if( !( option[ pepspec::no_design ] || option[ pepspec::input_seq ].user() ) ){
-				for( Size mut_site = pep_begin; mut_site <= pep_end; ++mut_site ){ 
+				for( Size mut_site = pep_begin; mut_site <= pep_end; ++mut_site ){
 					if( mut_site==pep_anchor ) continue;
 					int resindex;
 					resindex = static_cast< int > ( 20 * RG.uniform() + 1 );
@@ -1850,7 +1850,7 @@ RunPepSpec()
 
 			MonteCarloOP mc_relax ( new MonteCarlo( pose, *full_scorefxn, 1.0 ) );
 
-			Real bind_score( get_binding_score( pose, pep_chain, full_scorefxn ) );			
+			Real bind_score( get_binding_score( pose, pep_chain, full_scorefxn ) );
 			myMC mc_bind( pose, bind_score, 1.0 );
 
 			//define design task and repack task
@@ -1874,7 +1874,7 @@ RunPepSpec()
 				dz_task_factory->push_back( restrict_to_repack_taskop );
 				dz_task_factory->push_back( prevent_repack_taskop );
 			}
-			std::string wts_name( option[ score::weights ] ), soft_wts_name( option[ pepspec::soft_wts ] ); 
+			std::string wts_name( option[ score::weights ] ), soft_wts_name( option[ pepspec::soft_wts ] );
 			//full_wts
 			{
 				pack::task::PackerTaskOP dz_task( dz_task_factory->create_task_and_apply_taskoperations( pose ));
@@ -1902,7 +1902,7 @@ RunPepSpec()
 				else mc_relax->boltzmann( pose );
 				pdb_name = pdb_dir + "/" + out_nametag + "_" + string_of( peptide_loop ) + "_full";
 				print_pep_analysis( pdb_name, out_file, pose, prot_score, full_scorefxn, save_all_pdbs );
-			}	
+			}
 			//design again with soft_wts
 			if( option[ pepspec::soft_wts ].user() ){
 				pack::task::PackerTaskOP dz_task( dz_task_factory->create_task_and_apply_taskoperations( pose ));
@@ -1982,6 +1982,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

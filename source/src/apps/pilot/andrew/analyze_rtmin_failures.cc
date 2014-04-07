@@ -144,7 +144,7 @@ int main( int argc, char * argv [] )
 		Pose minpose( pose );
 		minpose.replace_residue( residue_of_interest, *roi_rotset->rotamer( ii ), false );
 		minmover.apply( minpose );
-		
+
 		Real totalE = minpose.energies().total_energy();
 		if ( is_nat_rot( pose, minpose, residue_of_interest )) {
 			if ( best_natrot() == 0 || totalE < best_natrot_energy ) {
@@ -192,6 +192,7 @@ int main( int argc, char * argv [] )
 	}
   } catch ( utility::excn::EXCN_Base const & e ) {
     std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
   }
 }
 

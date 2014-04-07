@@ -11,7 +11,7 @@
 // (C) 199x-2007 Vanderbilt University
 
 /// @file   apps/pilot/ronj/find_position_matches_using_inverse_rotamers.cc
-/// @brief  Program which scans for backbone positions in a list of scaffolds with low rmsd to 
+/// @brief  Program which scans for backbone positions in a list of scaffolds with low rmsd to
 ///			specific positions in a reference structure by building inverse rotamers
 /// @author Ron Jacak (ron.jacak@gmail.com)
 
@@ -121,7 +121,7 @@ void init_usage_prompt( std::string exe ) {
 /// @brief
 /// function which returns a set of backbone-independent rotamers for the given ResidueType.
 /// basically a copy of the function in core::pack::rotamer_set::bb_independent_rotamers.hh, but it samples more chi angles
-/// thereby building more rotamers. 
+/// thereby building more rotamers.
 ///
 void build_bb_independent_rotamers( core::chemical::ResidueTypeCOP target_res_restype, utility::vector1< core::conformation::ResidueOP > & rotamers ) {
 
@@ -132,7 +132,7 @@ void build_bb_independent_rotamers( core::chemical::ResidueTypeCOP target_res_re
 	using namespace core::pack;
 	using namespace core::pack::rotamer_set;
 	using namespace core::graph;
-	
+
 	conformation::Residue target_res( *target_res_restype, true ); // boolean is a required dummy argument for Residue constructor
 	pose::Pose dummy_pose;
 	dummy_pose.append_residue_by_jump( target_res, (core::Size) 0 );
@@ -209,9 +209,9 @@ void parse_position( std::string position, char & chain, core::Size & pdb_resnum
 	// use an istringstream to convert the string chain id to char chain id
 	std::istringstream iss( parsed_tokens[ 1 ] );
 	iss >> chain;
-	
+
 	std::string position_code = parsed_tokens[ 2 ];
-	
+
 	// check to see if an insertion code is present in the position_code string
 	// if the string is made of all digits, no icode is present
 	std::stringstream ss;
@@ -241,7 +241,7 @@ void parse_position( std::string position, char & chain, core::Size & pdb_resnum
 ///
 /// @brief
 /// function which writes out a PDB file of the rotamers in the passed in vector
-/// this should really be a function of the RotamerSet class, but it's not. there is a similar function in the class RotamerSets, 
+/// this should really be a function of the RotamerSet class, but it's not. there is a similar function in the class RotamerSets,
 /// but I don't want the multiple MODELS in there.
 /// only using this function to check that the inverse rotamers are aligned properly to the reference residue(s).
 ///
@@ -294,7 +294,7 @@ main( int argc, char * argv [] ) {
 
 	option.add( find_position_matches_using_inverse_rotamers::assume_command_line_has_pose_numbering, "assume_command_line_has_pose_numbering" ).def( false );
 
-	
+
 	// initialize rosetta
 	devel::init( argc, argv );
 
@@ -306,7 +306,7 @@ main( int argc, char * argv [] ) {
 	fprintf( fout, "chain-resi-icode\tconformation\tfilename\taligned_scaffold\tno.residues\tchain-resi-icode\tRMSD\tno.clashes\tchi1\tchi2\tchi3\tchi4\tdotp_angle\tdihedral\n" );
 	fflush( fout );
 
-	// the reference structure contains the antibody and the glycosylated epitope. 
+	// the reference structure contains the antibody and the glycosylated epitope.
 	// read it in up here, outside of the loop of all scaffolds to match
 	pose::Pose reference_structure;
 	import_pose::pose_from_pdb( reference_structure, option[ find_position_matches_using_inverse_rotamers::reference_structure ]() );
@@ -331,7 +331,7 @@ main( int argc, char * argv [] ) {
 
 	if ( !option[ find_position_matches_using_inverse_rotamers::assume_command_line_has_pose_numbering ] ) {
 		// convert PDB numbering to pose numbering, because we use the pose numbering later
-		Size pdb_resnum; 
+		Size pdb_resnum;
 		char chain, icode;
 		parse_position( reference_structure_epitope_residue_start_pdb, chain, pdb_resnum, icode );
 		reference_structure_epitope_residue_start = (reference_structure.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
@@ -342,14 +342,14 @@ main( int argc, char * argv [] ) {
 	} else {
 		std::istringstream iss( reference_structure_epitope_residue_start_pdb );
 		iss >> reference_structure_epitope_residue_start;
-		
+
 		iss.clear();
 		iss.str( reference_structure_epitope_residue_stop_pdb );
 		iss >> reference_structure_epitope_residue_stop;
 	}
 
 	TR << "reference structure epitope residue range (pose numbering): " << reference_structure_epitope_residue_start << "-" << reference_structure_epitope_residue_stop << std::endl;
-		
+
 	// make sure the user specified asparagine positions; these are the positions we are trying to match for in the scaffolds
 	if ( !option[ find_position_matches_using_inverse_rotamers::reference_structure_positions_to_match ].user() ) {
 		std::cerr << "ERROR: No positions on reference structure to match specified." << std::endl;
@@ -453,13 +453,13 @@ main( int argc, char * argv [] ) {
 		std::string scaffold_epitope_residue_stop_pdb = option[ find_position_matches_using_inverse_rotamers::scaffold_epitope_residue_range ]()[ 2 ];
 
 		TR << "scaffold epitope residue range (PDB numbering): " << scaffold_epitope_residue_start_pdb  << "-" << scaffold_epitope_residue_stop_pdb << std::endl;
-			
+
 		Size scaffold_epitope_residue_start;
 		Size scaffold_epitope_residue_stop;
 
 		if ( !option[ find_position_matches_using_inverse_rotamers::assume_command_line_has_pose_numbering ] ) {
 			// convert PDB numbering to pose numbering, because we use the pose numbering later
-			Size pdb_resnum; 
+			Size pdb_resnum;
 			char chain, icode;
 			parse_position( scaffold_epitope_residue_start_pdb, chain, pdb_resnum, icode );
 			scaffold_epitope_residue_start = (scaffold.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
@@ -470,7 +470,7 @@ main( int argc, char * argv [] ) {
 		} else {
 			std::istringstream iss( scaffold_epitope_residue_start_pdb );
 			iss >> scaffold_epitope_residue_start;
-			
+
 			iss.clear();
 			iss.str( scaffold_epitope_residue_stop_pdb );
 			iss >> scaffold_epitope_residue_stop;
@@ -481,18 +481,18 @@ main( int argc, char * argv [] ) {
 		// Make sure the number of epitope residues in the reference and scaffold structures is the same.
 		Size number_epitope_residues_scaffold = scaffold_epitope_residue_stop - scaffold_epitope_residue_start + 1;
 		Size number_epitope_residues_reference_structure = reference_structure_epitope_residue_stop - reference_structure_epitope_residue_start + 1;
-		
+
 		if ( number_epitope_residues_scaffold != number_epitope_residues_reference_structure ) {
 			TR << "ERROR: reference epitope and scaffold epitope do not contain same number of residues!" << std::endl;
 			utility_exit();
 		}
 
 		// align the scaffold to the reference structure using just the epitope residues in both.
-		// use function superimpose_pose in rms_util.cc to do the alignment. 
+		// use function superimpose_pose in rms_util.cc to do the alignment.
 
 		id::AtomID_Map< id::AtomID > atom_correspondence_map;
 		pose::initialize_atomid_map( atom_correspondence_map, scaffold, id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
-		
+
 		// let's say the "match" on the scaffold is over residues 125-129, and the epitope in the reference structure is residues
 		// 521-525.  if we iterate from 125 to 129, to get the offset we should use ii - scaffold_epitope_residue_start.
 		Size reference_structure_residue;
@@ -523,29 +523,29 @@ main( int argc, char * argv [] ) {
 			//Size const position = option[ find_position_matches_using_inverse_rotamers::reference_structure_positions_to_match ]()[ ii ];
 			Size const position = positions_to_match[ ii ];
 			conformation::Residue const & reference_res = reference_structure.residue( position );
-			
+
 			TR << "Building generic residues for residue " << reference_res.name3() << "-" << reference_res.seqpos() << std::endl;
 
 			// use a function written for the enzyme design application to build residue specific rotamers
 			core::chemical::ResidueTypeCOP invrot_restype( reference_res.type() );
-			
+
 			utility::vector1< conformation::ResidueOP > rotamers;
 			build_bb_independent_rotamers( invrot_restype, rotamers );
 			runtime_assert( rotamers.size() > 0 );
 			TR << "built " << rotamers.size() << " bbindependent rotamers for residue " << rotamers[1]->type().name() << "." << std::endl;
 
-			// so the function above should have built all possible rotamers of an asparagine residue. but these will all 
-			// presumably be aligned on the backbone atoms (in an arbitrary coordinate system), with differing chi angles (obviously). 
+			// so the function above should have built all possible rotamers of an asparagine residue. but these will all
+			// presumably be aligned on the backbone atoms (in an arbitrary coordinate system), with differing chi angles (obviously).
 			// what we need to do is align the ND2, OD1 and CG atoms of each rotamer to the reference structure residue so that the backbone
 			// atoms of each rotamer are all over the place. once we have that we can go through every position in every scaffold and calculate
 			// the rmsd (and other measurements) to every rotamer and see if there are any scaffolds that can accomodate the asn (and glycan) well.
-			// not sure what the best function for aligning the inverse rotamer to the scaffold residue is. it seems like the enzyme design 
+			// not sure what the best function for aligning the inverse rotamer to the scaffold residue is. it seems like the enzyme design
 			// machinery is doing a manual alignment by using the set_xyz() function in Residue on every atom of the rotamer. it's precalculating
-			// what the xyz values of every atom should be and then setting the inverse rotamer atom coordinates to those values. 
+			// what the xyz values of every atom should be and then setting the inverse rotamer atom coordinates to those values.
 
 			// Invert the rotamer library as specified by the motif
 			for( Size ir = 1; ir <= rotamers.size(); ++ir ) {
-				
+
 				// the Residue class contains alignment methods that will align one Residue onto another. specifically, there is a function which
 				// takes an atom pair vector which is the set of atoms to use to do the alignment.
 				// the function assumes 1) that the atom pairs are made up of strings of the atom type names, and 2) that the first atom pair
@@ -554,7 +554,7 @@ main( int argc, char * argv [] ) {
 				atom_pairs.push_back( std::make_pair< std::string, std::string >( "CG", "CG" ) );
 				atom_pairs.push_back( std::make_pair< std::string, std::string >( "ND2", "ND2" ) );
 				atom_pairs.push_back( std::make_pair< std::string, std::string >( "OD1", "OD1" ) );
-				
+
 				rotamers[ ir ]->orient_onto_residue( reference_res, atom_pairs );
 
 			}
@@ -569,12 +569,12 @@ main( int argc, char * argv [] ) {
 			// now, iterate over each position in the scaffold to see if any of the inverse rotamers are close to it.
 
 			for ( Size ir = 1; ir <= rotamers.size(); ++ir ) {
-			
+
 				conformation::Residue const & inverse_rotamer = *(rotamers[ ir ]);
 
 				Real chi1 = inverse_rotamer.chi( 1 ); if ( chi1 < 0 ) { chi1 += 360; } // Rosetta uses the bounds [-180,180] for all dihedral. convert to [0,360] range.
 				Real chi2 = inverse_rotamer.chi( 2 ); if ( chi2 < 0 ) { chi2 += 360; }
-				
+
 				Real chi3 = 0.0; Real chi4 = 0.0;
 				if ( option[ find_position_matches_using_inverse_rotamers::check_for_valid_chi3_chi4_dihedrals ] ) {
 					chi3 = inverse_rotamer.chi( 3 ); if ( chi3 < 0 ) { chi3 += 360; }
@@ -610,7 +610,7 @@ main( int argc, char * argv [] ) {
 					Real sum = 0.0;
 					core::Vector ca_diff = inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ) - scaffold_res.xyz( scaffold_res.atom_index( "CA" ) );
 					sum += ca_diff.length_squared();
-					
+
 					core::Vector cb_diff;
 					if ( scaffold_res.name3() == "GLY" ) {
 						// use the 2HA atom instead of CB for glycine
@@ -625,19 +625,19 @@ main( int argc, char * argv [] ) {
 						cb_diff = inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ) - scaffold_res.xyz( scaffold_res.atom_index( "CB" ) );
 					}
 					sum += cb_diff.length_squared();
-					
+
 					Real rmsd = std::sqrt( sum / 2 );
 					if ( rmsd < option[ find_position_matches_using_inverse_rotamers::ir_rmsd ] ) {
 
 						if ( scaffold_res.name3() != "GLY" ) {
-							TR << "calculated rmsd for point irCA: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).z() 
-								<< "), irCB: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).z() 
+							TR << "calculated rmsd for point irCA: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).z()
+								<< "), irCB: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).z()
 								<< "), sCA: (" << scaffold_res.xyz( scaffold_res.atom_index( "CA" ) ).x() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "CA" ) ).y() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "CA" ) ).z()
 								<< "), sCB: (" << scaffold_res.xyz( scaffold_res.atom_index( "CB" ) ).x() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "CB" ) ).y() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "CB" ) ).z()
 								<< ")" << std::endl;
 						} else {
-							TR << "calculated rmsd for point irCA: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).z() 
-								<< "), irCB: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).z() 
+							TR << "calculated rmsd for point irCA: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CA" ) ).z()
+								<< "), irCB: (" << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).x() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).y() << ", " << inverse_rotamer.xyz( inverse_rotamer.atom_index( "CB" ) ).z()
 								<< "), sCA: (" << scaffold_res.xyz( scaffold_res.atom_index( "CA" ) ).x() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "CA" ) ).y() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "CA" ) ).z()
 								<< "), sCB: (" << scaffold_res.xyz( scaffold_res.atom_index( "2HA" ) ).x() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "2HA" ) ).y() << ", " << scaffold_res.xyz( scaffold_res.atom_index( "2HA" ) ).z()
 								<< ")" << std::endl;
@@ -647,21 +647,21 @@ main( int argc, char * argv [] ) {
 
 						// also scan the hit for glycan clashes
 						Size number_glycan_clashes = 0;
-						
+
 						for ( Size glycan_res_index = 1; glycan_res_index <= reference_structure_glycan_residues.size(); ++glycan_res_index ) {
 							conformation::Residue const & glycan_res = reference_structure.residue( reference_structure_glycan_residues[ glycan_res_index ] );
 
 							for ( Size glycan_atom_index = 1; glycan_atom_index <= glycan_res.natoms(); ++glycan_atom_index ) {
-								
+
 								for ( Size scaffold_res_index = 1; scaffold_res_index <= scaffold.total_residue(); ++scaffold_res_index ) {
 									conformation::Residue const & scaffold_res = scaffold.residue( scaffold_res_index );
 
 									for ( Size scaffold_atom_index = 1; scaffold_atom_index <= scaffold.residue( scaffold_res_index ).natoms(); ++scaffold_atom_index ) {
-									
+
 										Real dist_sq = scaffold_res.xyz( scaffold_atom_index ).distance_squared( glycan_res.xyz( glycan_atom_index ) );
 										if ( dist_sq < 4.0 ) {
 #ifdef FILE_DEBUG
-											TR << "scaffold residue '" << scaffold_res_index << "' atom '" << scaffold_res.atom_name( scaffold_atom_index ) 
+											TR << "scaffold residue '" << scaffold_res_index << "' atom '" << scaffold_res.atom_name( scaffold_atom_index )
 												<< "' comes within 4.0 Ang of glycan residue '" << reference_structure_glycan_residues[ glycan_res_index ]
 												<< "' atom '" << glycan_res.atom_name( scaffold_atom_index ) << "'. dist_sq: " << ObjexxFCL::format::F( 4,2,dist_sq ) << std::endl;
 #endif
@@ -671,9 +671,9 @@ main( int argc, char * argv [] ) {
 									} // end scaffold residue atoms
 
 								} // end scaffold residues
-							
+
 							} // end glycan residue atoms
-							
+
 						} // end glycan residues
 
 						TR << "\tnumber of glycan clashes " << number_glycan_clashes << " beneath maximum of " << number_glycan_clashes_allowed << ". checking dihedral angles." << std::endl;
@@ -698,7 +698,7 @@ main( int argc, char * argv [] ) {
 								// chi4 must be between 260.2 +/- 21.1, so [239.1,281.3]
 								if ( !( 239.1 < chi4 && chi4 < 281.3 ) ) { continue; }
 							}
-							
+
 							// passed all dihedral checks...
 							/*VectorPair bond_vectors( scaffoldCaCb(0).getCoor(), scaffoldCaCb(1).getCoor(), inverseCaCb(0).getCoor(), inverseCaCb(1).getCoor() );
 							//TR << "a1/scCA: " << scaffoldCaCb(0).getCoor()
@@ -711,7 +711,7 @@ main( int argc, char * argv [] ) {
 							bond_vectors.calcTorsion();
 							double dihedral = bond_vectors.getTorsion();
 							*/
-							
+
 							if ( option[ find_position_matches_using_inverse_rotamers::check_for_valid_chi3_chi4_dihedrals ] ) {
 								//fprintf( fout, "%c/%d%c\t%d\t%s\t%c/%d%c\t%4.2f\t%d\t%4.1f\t%4.1f\t%4.1f\t%4.1f\t%4.1f\t%4.1f\n",
 								fprintf( fout, "%c/%d%c\t%d\t%s\t%s\t%d\t%c/%c%d%c\t%5.3f\t%d\t%4.1f\t%4.1f\t%4.1f\t%4.1f\n",
@@ -761,8 +761,8 @@ main( int argc, char * argv [] ) {
 								Size atom_counter = 0;
 								core::io::pdb::dump_pdb_residue( inverse_rotamer, atom_counter, out );
 								out.close();
-							}	
-						
+							}
+
 						} else {
 							TR << "\t\tscaffold postion " << scaffold_resnum << " failed clash check. number_glycan_clashes: " << number_glycan_clashes
 								<< ", number_glycan_clashes_allowed: " << number_glycan_clashes_allowed << std::endl;
@@ -771,7 +771,7 @@ main( int argc, char * argv [] ) {
 #ifdef FILE_DEBUG
 					} else {
 						TR << "scaffold position " << scaffold_resnum << " inverse rotamer: " << ir << " failed rmsd check. ca_diff.length_squared: "
-							<< ca_diff.length_squared() << ", cb_diff.length_squared(): " << cb_diff.length_squared() 
+							<< ca_diff.length_squared() << ", cb_diff.length_squared(): " << cb_diff.length_squared()
 							<< ", rmsd: " << ObjexxFCL::format::F( 4,2,rmsd )
 							<< ", cutoff: " << option[ find_position_matches_using_inverse_rotamers::ir_rmsd ] << std::endl;
 #endif
@@ -790,6 +790,7 @@ main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

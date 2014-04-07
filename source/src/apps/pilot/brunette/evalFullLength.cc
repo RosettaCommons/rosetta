@@ -81,7 +81,7 @@ basic::Tracer tr( "evalFullLength" );
 Size ala_ct(const core::pose::Pose& pose){
   Size score = 0;
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if(pose.residue(ii).name3() == "ALA") 
+		if(pose.residue(ii).name3() == "ALA")
             score++;
 	}
 	std::cout << "score: " << score << std::endl;
@@ -91,7 +91,7 @@ Size ala_ct(const core::pose::Pose& pose){
 Size glu_ct(const core::pose::Pose& pose){
   Size score = 0;
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if(pose.residue(ii).name3() == "GLU") 
+		if(pose.residue(ii).name3() == "GLU")
             score++;
 	}
 	std::cout << "score: " << score << std::endl;
@@ -101,7 +101,7 @@ Size glu_ct(const core::pose::Pose& pose){
 Size tyr_ct(const core::pose::Pose& pose){
   Size score = 0;
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if(pose.residue(ii).name3() == "TYR") 
+		if(pose.residue(ii).name3() == "TYR")
             score++;
 	}
 	std::cout << "score: " << score << std::endl;
@@ -135,7 +135,7 @@ int main( int argc, char * argv [] ) {
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
 	vector1<core::pose::PoseOP> poses;
-	output << "score  holes  alaCt  gluCt tyrCt tag" << std::endl; 
+	output << "score  holes  alaCt  gluCt tyrCt tag" << std::endl;
  	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
@@ -158,6 +158,7 @@ int main( int argc, char * argv [] ) {
         }
     } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

@@ -107,22 +107,22 @@ void
   using namespace scoring;
   using namespace utility;
   using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
-	
+
 		// Handle all of the symmetry stuff
 		core::pose::symmetry::make_symmetric_pose(pose);
 
 		// Get scorefxn
-		ScoreFunctionOP scorefxn = getScoreFunction();	
+		ScoreFunctionOP scorefxn = getScoreFunction();
 		scorefxn->score(pose);
 
 		// Calculate binding energy
@@ -138,7 +138,7 @@ void
 		pose.dump_pdb(out);
 		out.close();
 		*/
-			
+
 	} // ifile
 
 	return NULL;
@@ -161,6 +161,7 @@ main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 

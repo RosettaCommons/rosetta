@@ -141,6 +141,7 @@ main( int argc, char * argv [] )
 		excn.show( std::cerr );
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cout ); //so its also seen in a >LOG file
+		return -1;
 	}
 	return 0;
 }

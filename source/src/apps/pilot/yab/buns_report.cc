@@ -91,7 +91,8 @@ int main( int argc, char * argv [] ) {
 
 	// run job
 	JobDistributor::get_instance()->go( seqmover );
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

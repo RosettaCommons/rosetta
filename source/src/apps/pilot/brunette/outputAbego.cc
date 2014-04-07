@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh> 
+#include <core/pose/util.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
@@ -35,7 +35,7 @@
 
 #include <core/util/ABEGOManager.hh>
 #include <core/types.hh>
-#include <devel/init.hh>   
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 
 //protocols
@@ -49,7 +49,7 @@ using namespace ObjexxFCL::format;
 using utility::vector1;
 using core::Size;
 using core::Real;
-using core::pose::Pose; 
+using core::pose::Pose;
 
 basic::Tracer tr( "ouputAbego" );
 
@@ -67,7 +67,7 @@ int main( int argc, char * argv [] ) {
 			input.fill_pose(*input_poseOP,*rsd_set);
 			std::string tag = core::pose::tag_from_pose(*input_poseOP);
         		std::string outFile = (tag + ".abego");
-        		utility::io::ozstream output(outFile);   
+        		utility::io::ozstream output(outFile);
        		utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
        		 for (Size ii=1; ii<=abego_vector.size(); ++ii){
 				output << abego_vector[ii];
@@ -75,7 +75,8 @@ int main( int argc, char * argv [] ) {
        		output.close();
    		 }
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
     return 0;
 }

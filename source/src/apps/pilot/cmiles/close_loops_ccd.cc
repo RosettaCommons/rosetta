@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
   using protocols::comparative_modeling::LoopRelaxMover;
   using protocols::loops::Loops;
   using protocols::loops::LoopsOP;
-  using protocols::simple_moves::SwitchResidueTypeSetMover;  
+  using protocols::simple_moves::SwitchResidueTypeSetMover;
   using utility::vector1;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -75,6 +75,7 @@ int main(int argc, char* argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

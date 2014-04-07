@@ -89,7 +89,7 @@ core::Real saxs_energy(core::pose::Pose & a_pose) {
         core::kinematics::MoveMap final_mm;
         final_mm.set_chi( true );
         final_mm.set_bb( false );
-        core::optimization::AtomTreeMinimizer().run( a_pose, final_mm, *scorefxn, 
+        core::optimization::AtomTreeMinimizer().run( a_pose, final_mm, *scorefxn,
     		core::optimization::MinimizerOptions( min_type, 0.001, true ) );
     }
     core::scoring::saxs::SAXSEnergyFA en;
@@ -108,9 +108,9 @@ int main( int argc, char * argv [] ) {
     core::pose::Pose native_pose;
     bool if_native = false;
 //------------- Read the native pose  ----------
-    if ( option[ in::file::native ].user() ) 
+    if ( option[ in::file::native ].user() )
         core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
-    
+
 //------------- Read the pose for scoring ----------
 //    core::chemical::ResidueTypeSetCAP rsd_set_fa = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
     core::pose::Pose fa_pose;
@@ -118,13 +118,14 @@ int main( int argc, char * argv [] ) {
     for(Size i=1;i<=s.size();i++) {
 	core::import_pose::pose_from_pdb( fa_pose, s[i].name());
 	std::cout<< saxs_energy(fa_pose);
-	if( if_native ) 
+	if( if_native )
 	    std::cout << ' ' << core::scoring::CA_rmsd( native_pose, fa_pose ) << std::endl;
 	else
 	    std::cout << std::endl;
-    }    
+    }
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
 
     return 0;

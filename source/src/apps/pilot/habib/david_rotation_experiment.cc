@@ -220,17 +220,17 @@ main( int argc, char * argv [] )
       y=0;
       z=0;
     }
-  
+
     std::stringstream rotpdbtag;
     std::stringstream tag;
     std::stringstream tag2;
     rotpdbtag << input_pdb_name << ".alignedto." << template_fname << ".pdb";
     tag << input_pdb_name << ".rotation_experiment." << x <<"-"<<y<<"-"<<z<< ".rotated";
     tag2 << input_pdb_name << ".rotation_experiment." << x <<"-"<<y<<"-"<<z<< ".reset";
-    
+
     input_pose.dump_pdb(rotpdbtag.str());
 
-    pose::Pose rotated_pose(input_pose);   
+    pose::Pose rotated_pose(input_pose);
     numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(x) );
     numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(y) );
     numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(z) );
@@ -288,7 +288,8 @@ main( int argc, char * argv [] )
   }
 
   } catch ( utility::excn::EXCN_Base const & e ) {
-	  std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
   }
 	return 0;
 }

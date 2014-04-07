@@ -8,9 +8,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
-/// @brief  
-/// @author 
+/// @file
+/// @brief
+/// @author
 
 #include <core/conformation/Conformation.hh>
 
@@ -157,7 +157,7 @@ int main( int argc, char** argv ) {
     typedef boost::tuple<Real, std::string, Size, std::string, std::string, char, Size> FragRMSDAndSequence;
     for ( FrameIterator frame = orig_frags->begin(), eframe=orig_frags->end(); frame != eframe; ++frame ) {
         assert( frame->length() == 9);
-        out << "\nstart: " << LJ(5,frame->start())  << "end: " << LJ(5,frame->end())<< std::endl; 
+        out << "\nstart: " << LJ(5,frame->start())  << "end: " << LJ(5,frame->end())<< std::endl;
 				out << RJ(16,"rmsd") << RJ(5,"sequence") <<RJ(15,"secstruct") <<RJ(15,"pdb") <<RJ(8,"chain")<< RJ(6,"start")<< std::endl;
         std::set<FragRMSDAndSequence> data;
         for ( Size i=1; i<=frame->nr_frags(); i++ ) {
@@ -171,8 +171,9 @@ int main( int argc, char** argv ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	
+
 	return 0;
 
 }

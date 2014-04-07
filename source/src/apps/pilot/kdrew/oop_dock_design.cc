@@ -248,7 +248,7 @@ main( int argc, char* argv[] )
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
 	devel::init(argc, argv);
- 
+
 	scoring::ScoreFunctionOP score_fxn = getScoreFunction();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
@@ -286,6 +286,7 @@ main( int argc, char* argv[] )
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
     return 0;
 }//main

@@ -104,6 +104,7 @@ main( int argc, char *argv[] )
 		cout << "Omega is now " << pose.omega(3) << endl << endl;
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "caught exception " << e.msg() << endl;
+		return -1;
 	}
 	return 0;
 }

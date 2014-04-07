@@ -95,8 +95,9 @@ main( int argc, char * argv [] ) {
 		driver.set_ddG_cutoff(DDG_cutoff);
 		driver.go();
 	}
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

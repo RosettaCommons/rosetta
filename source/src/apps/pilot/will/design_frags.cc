@@ -40,7 +40,7 @@ using core::Size;
 
 struct Quat {
 	float w,x,y,z;
-	Quat(numeric::xyzMatrix<Real> M) {		
+	Quat(numeric::xyzMatrix<Real> M) {
 		Real r = 2.0 * std::sqrt( 1 + M.xx() - M.yy() - M.zz() );
 		w = (M.zy()-M.yz()) / r;
 		x = r / 4.0;
@@ -81,7 +81,7 @@ main (int argc, char *argv[]) {
 	try {
 
 	using namespace basic::options;
-	
+
 	devel::init( argc, argv );
 
 
@@ -100,6 +100,7 @@ main (int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

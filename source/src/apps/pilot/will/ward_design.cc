@@ -114,7 +114,7 @@ vector1<Size> interface_residues(core::pose::Pose const & pose, vector1<Size> pr
 			iface_res.push_back(i);
 		}
 	}
-	
+
 	return iface_res;
 }
 
@@ -137,7 +137,7 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 	aas[core::chemical::aa_cys] = false;
 	aas[core::chemical::aa_pro] = false;
 	aas[core::chemical::aa_gly] = false;
-	
+
 	sf->score(pose);
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
 	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
@@ -156,15 +156,15 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 		    pose.residue(i).name3()=="CYD"
 		){
 			bool design_this_res = false;
-			bool repack_this_res = false;			
+			bool repack_this_res = false;
 		} else if( std::find(iface_res.begin(),iface_res.end(),i) != iface_res.end() ) { // is interface res
 			design_this_res = true;
 			repack_this_res = false;
 		} else {
 			design_this_res = false;
-			repack_this_res = true;			
+			repack_this_res = true;
 		}
-		
+
 		if( design_this_res ) {
 			bool tmp = aas[pose.residue(i).aa()];
 			aas[pose.residue(i).aa()] = true;
@@ -179,14 +179,14 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 		} else {
 			task->nonconst_residue_task(i).prevent_repacking();
 		}
-		
+
 	}
 
 	// do the design
 	core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
-	
+
 
 	// clean up
 	pose.remove_constraints( res_cst );
@@ -224,37 +224,38 @@ main( int argc, char * argv [] )
 	primary_subs.push_back(2);
 
 	for(Size ifile = 1; ifile <= option[in::file::s]().size(); ifile++) {
-		
+
 		std::string  in_fname = option[in::file::s]()[ifile];
 		std::string out_fname = utility::file_basename(in_fname);
-		
+
 		Pose init;
 		import_pose::pose_from_pdb(init,in_fname);
-	
+
 		Pose init_sym = init;
 		core::pose::symmetry::make_symmetric_pose(init_sym);
-	
+
 		init_sym.dump_pdb( outdir + out_fname + "_init_sym.pdb" );
 		vector1<Size> iface_res = interface_residues(init_sym,primary_subs);
-		
+
 		TR << "interface residues " << std::endl;
 		for(vector1<Size>::iterator i = iface_res.begin(); i != iface_res.end(); ++i) TR << *i << "+";
 		TR << std::endl;
-	
-	
+
+
 		Pose pose = init_sym;
-		
+
 		design(pose,sf,iface_res);
 		pose.dump_pdb( outdir + out_fname + "_design_test.pdb" );
-			
+
 		// minimize(pose,sf,iface_res);
 		// pose.dump_pdb( outdir + out_fname + "_minimize_test.pdb" );
-	
+
 	}
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

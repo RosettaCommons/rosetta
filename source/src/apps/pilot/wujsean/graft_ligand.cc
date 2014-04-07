@@ -150,7 +150,7 @@ main( int argc, char * argv [] ) {
 		protocols::toolbox::match_enzdes_util::split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id );
 
 		//std::cout<<"chainA:"<<chainA<<"	resA:"<<resA<<" pdbposA:"<<pdbposA<<"	chainB:" << chainB<< "	resB:"<<resB<<" pdbposB:"<<pdbposB<<std::endl;
-		
+
     std::string query_chainA, query_chainB, query_resA, query_resB;
 		int query_posA, query_posB;
 		char model_last_chain = core::pose::chr_chains[comparative_modeling_pose.residue(old_comparative_model_length).chain()];
@@ -244,8 +244,9 @@ main( int argc, char * argv [] ) {
 	//Testing
 	//comparative_modeling_pose.pdb_info() -> show(std::cout);
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 } // int main

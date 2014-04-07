@@ -124,12 +124,12 @@ main( int argc, char * argv [] )
 		movemap->set_chi(true);
 		movemap->set_jump(false);
 		protocols::simple_moves::MinMover minimizer(movemap, scorefxn, "dfpmin_armijo_atol", 0.01, true /*nb_list*/);
-		
+
 		//////////////////////!!!!!!!!!!!!1111
 		/////////////!!!!!!!!!!!!!!!!
 		/////////////////********   FOR DEBUG THIS IS COMMENTED OUT
 		//		minimizer.apply(pose);
-		
+
 		//pose.dump_pdb("./after_minimize.pdb");
 
 		//remove constraint weight from scorefxn
@@ -222,6 +222,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;
@@ -239,7 +240,7 @@ Real calculateInterfaceScore ( core::pose::Pose & pose, core::scoring::ScoreFunc
     core::pose::Pose unbound_pose = pose;
     float trans_magnitude = 1000; // 1000A
     Size rb_jump = 1;     //rigid-body jump number is assumed to be 1 - this will work for two monomers.
-		protocols::rigid::RigidBodyTransMoverOP translate_away ( 
+		protocols::rigid::RigidBodyTransMoverOP translate_away (
 		                new protocols::rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 

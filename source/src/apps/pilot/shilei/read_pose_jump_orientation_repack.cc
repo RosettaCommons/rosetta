@@ -154,12 +154,12 @@ void run() {
         }
 
 	utility::vector1< core::Real > saved_transformations_;
-        if ( !basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation].user() ||  
+        if ( !basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation].user() ||
              basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation].size()!=12) {
               	throw( utility::excn::EXCN_BadInput("expected jump_orientation be provided as a vector of 12") );
         } else {
 	    for (core::Size i=1; i <= 12; i++) {
-		saved_transformations_.push_back(basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation][i]);	
+		saved_transformations_.push_back(basic::options::option[ basic::options::OptionKeys::read_pose_jump_orientation_repack::jump_orientation][i]);
 	    }
         }
 
@@ -210,7 +210,7 @@ void run() {
 	core::scoring::ScoreFunctionOP scorefxn_cen( ScoreFunctionFactory::create_score_function("interchain_cen") );
 	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
         core::scoring::ScoreFunctionOP cst_score_( core::scoring::ScoreFunctionFactory::create_score_function("empty") );
-	
+
 	//add cst to the scoring
         if (basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()) {
                 protocols::simple_moves::ConstraintSetMoverOP docking_constraint_ = new protocols::simple_moves::ConstraintSetMover();
@@ -229,7 +229,7 @@ void run() {
 //        operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
 //        local_tf->push_back( unboundrot_operation );
 //        core::pack::dunbrack::load_unboundrot(pose);
-	
+
         //protocols::docking::DockingHighResLegacyOP docking_highres_mover_ = new protocols::docking::DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_high_);
 	protocols::docking::DockingProtocolOP docking_highres_mover_ = new protocols::docking::DockingProtocol( movable_jumps_, false, true, true, scorefxn_cen, docking_scorefxn_high_);
 
@@ -301,5 +301,6 @@ int main( int argc, char * argv [] ) {
 
   } catch ( utility::excn::EXCN_Base const & e ) {
     std::cout << "caught exception " << e.msg() << std::endl;
+    return -1;
   }
 }

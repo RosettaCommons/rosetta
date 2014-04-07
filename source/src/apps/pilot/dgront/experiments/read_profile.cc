@@ -36,7 +36,7 @@ void register_options() {
 }
 
 int main( int argc, char * argv [] ) {
-    
+
     try {
 	using namespace core;
         using namespace basic::options;
@@ -51,10 +51,11 @@ int main( int argc, char * argv [] ) {
                 core::sequence::SequenceProfile q_prof;
                 q_prof.read_from_binary_chk(option[chk_file]());
     }
-    
+
 
     } catch ( utility::excn::EXCN_Base const & e ) {
               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
     return 0;
 }

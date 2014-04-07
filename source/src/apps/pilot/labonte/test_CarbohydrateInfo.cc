@@ -188,6 +188,7 @@ main(int argc, char *argv[])
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;
+		return -1;
 	}
 	return 0;
 }

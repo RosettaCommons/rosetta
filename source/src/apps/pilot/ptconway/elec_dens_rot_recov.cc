@@ -115,13 +115,13 @@ bool output_cmp( std::string line1, std::string line2 )
 	std::istringstream l2(line2);
 
 	// sort column = 3 for dens_diff
-	for ( int col = 1; col <= 3; ++col ) {	
+	for ( int col = 1; col <= 3; ++col ) {
 		l1 >> key1;
 		l2 >> key2;
 	}	*/
 
-	key1 = atof(line1.substr(18, 14).c_str()); 
-	key2 = atof(line2.substr(18, 14).c_str()); 
+	key1 = atof(line1.substr(18, 14).c_str());
+	key2 = atof(line2.substr(18, 14).c_str());
 
 	//std::cout << key1 << " " << key2 << std::endl;
 	return (key1 < key2);
@@ -141,7 +141,7 @@ public:
 	{
 		using namespace std;
 		using namespace basic::options;
-	
+
 		float dens_diff_cutoff = option[ OptionKeys::edrr::dens_diff_cutoff ];			// above: high second pass - low first pass = positive
 		float auto_rmsd_cutoff = option[ OptionKeys::edrr::auto_rmsd_cutoff ];			// above
 		float chi_diff_cutoff = option[ OptionKeys::edrr::chi_diff_cutoff ];			// above
@@ -168,7 +168,7 @@ public:
 				case 0:	break;
 				default:	cout << "wtf? this shouldn't happen..." << endl;
 			}
-		
+
 			if ( ! option[ OptionKeys::edrr::print_all ]() ) {
 				if ( dens_diff < dens_diff_cutoff )	continue;
 				if ( auto_rmsd < auto_rmsd_cutoff )	continue;
@@ -177,11 +177,11 @@ public:
 
 			// print intersections
 			// save to string and add string to list for later sorting
-			output_line << fixed << setprecision(2) << setw(4) << output_id << setw(8) << first_pass.residue( ii ).name3() << setw(6) << ii << setw(14) << 
-								setw(14) << dens_diff << setw(14) << auto_rmsd << 
-								setw(14) << chi1_diff << setw(14) << chi2_diff << 
+			output_line << fixed << setprecision(2) << setw(4) << output_id << setw(8) << first_pass.residue( ii ).name3() << setw(6) << ii << setw(14) <<
+								setw(14) << dens_diff << setw(14) << auto_rmsd <<
+								setw(14) << chi1_diff << setw(14) << chi2_diff <<
 								setw(14) << chi3_diff << setw(14) << chi4_diff;// << endl;
-			output.push_back( output_line.str() );	
+			output.push_back( output_line.str() );
 		}
 	}
 
@@ -197,7 +197,7 @@ public:
 			int num_nodes;
 			MPI_Comm_size(MPI_COMM_WORLD, &num_nodes);
 			MPI_Gather( NULL, NULL, NULL, output, 1, MPI_STRING, 0, MPI_COMM_WORLD );
-			MPI_Barrier(MPI_COMM_WORLD); 
+			MPI_Barrier(MPI_COMM_WORLD);
 		else
 			cout << "slave" << endl;
 			//send lists here
@@ -227,10 +227,10 @@ public:
 	void apply( core::pose::Pose & pose) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-	
+
 		using namespace protocols::moves;
 		using namespace scoring;
-	
+
 		// steal relax flags
 		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
@@ -241,8 +241,8 @@ public:
 		mm->set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
 		mm->set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 
-		int nres = pose.total_residue();	//only consider the residues in the original pose, not symmetric copies	
-	
+		int nres = pose.total_residue();	//only consider the residues in the original pose, not symmetric copies
+
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 			symm->apply( pose );
@@ -253,7 +253,7 @@ public:
 		if ( option[ edensity::mapfile ].user() ) {
 			core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
 		}
-	
+
 		// set pose for density scoring if a map was input
 		//   + (potentially) dock map into density
 		if ( option[ edensity::mapfile ].user() ) {
@@ -265,7 +265,7 @@ public:
 		// setup the minimizer mover
 		protocols::simple_moves::MinMoverOP minimizer = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn, option[ OptionKeys::relax::min_type ]() , 0.0001, true, false, false );
 		minimizer->cartesian( true );
-				
+
 		// setup the packer mover
 		core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
 		task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -284,7 +284,7 @@ public:
 		// setup the GenericMonteCarlo mover
 		protocols::simple_moves::GenericMonteCarloMoverOP gmc = new protocols::simple_moves::GenericMonteCarloMover();
 		protocols::filters::FilterOP falseFilter = new protocols::filters::FalseFilter;
-		gmc->stopping_condition( falseFilter ); 
+		gmc->stopping_condition( falseFilter );
 		gmc->set_drift( false );
 		gmc->set_preapply( false );
 		gmc->set_scorefxn( scorefxn );
@@ -317,7 +317,7 @@ public:
 		// run first pass
 		Pose first_pass = pose;
 		scorefxn->set_weight( core::scoring::elec_dens_fast, 100 );
-		gmc->apply( first_pass );																		
+		gmc->apply( first_pass );
 
 		// run second pass
 		Pose second_pass = first_pass;
@@ -328,7 +328,7 @@ public:
 			std::cout << "last pose vs recover_low all atom rms " << core::scoring::all_atom_rmsd( second_pass, recov_low ) << std::endl;*/
 
 
-		// output results	
+		// output results
 		std::string cur_output_name = protocols::jd2::JobDistributor::get_instance()->current_output_name();
 		cur_output_name = cur_output_name.substr(0,4);
 
@@ -346,10 +346,10 @@ public:
 		}
 		globals::reporter.find_flips( first_pass, second_pass, cur_output_name, nres );
 
-		/*(if ( option[ OptionKeys::edrr::print_scores ]() )      
+		/*(if ( option[ OptionKeys::edrr::print_scores ]() )
     {
 						(*scorefxn)(pose);
-						scorefxn->show(cout, pose);	
+						scorefxn->show(cout, pose);
 
 						(*scorefxn)(first_pass);
 						scorefxn->show(cout, first_pass);
@@ -407,6 +407,7 @@ main( int argc, char * argv [] )
 	std::ofstream out( outfile.c_str() );
 	globals::reporter.print_flips( out );
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

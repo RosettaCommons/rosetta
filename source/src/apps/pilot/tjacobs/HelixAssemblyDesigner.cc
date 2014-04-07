@@ -9,7 +9,7 @@
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
 /// @file /rosetta/rosetta_source/src/apps/pilot/tjacobs/HelixAssemblyDesigner.cc
-/// @brief 
+/// @brief
 /// @author Tim Jacobs
 
 // Core
@@ -82,13 +82,13 @@ main( int argc, char * argv [] )
 	option.add( HelixAssemblyDesigner::native_residue_file, "File of rotamers from native residues");
 	devel::init(argc, argv);
 
-	
+
 	///////////////////Setup task factory to design using native residue files///////////////////
 	if ( !option[ HelixAssemblyDesigner::native_residue_file ].user() )  {
 		utility_exit_with_message("Must provide the native_residue_file option for helix design executable!");
 	}
 	utility::file::FileName native_res_file( option[ HelixAssemblyDesigner::native_residue_file ]() );
-	
+
 	NativeResidueReader native_res_reader;
 	std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > nat_ro_map =
 			native_res_reader.generateResiduesFromFile(native_res_file.name());
@@ -109,7 +109,7 @@ main( int argc, char * argv [] )
 
 		//Create rotamer set operation from a list of residues
 		core::pack::rotamer_set::AddResiduesRotamerSetOperation nat_ro_set(map_it->second);
-	
+
 		//Add AppendResidueRotamerSet task operation to the task factory. This task operation
 		//adds the rotamer set to the residue-level task for the given residue
 		main_task_factory->push_back(
@@ -122,16 +122,16 @@ main( int argc, char * argv [] )
 	}
 
 	///////////////////Setup pack rotamers mover with task factory/////////////////
-	
+
 	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
-	
+
 	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
-	
-	
+
+
 	////////////////Setup minmover//////////////////
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_bb(true);
@@ -143,8 +143,8 @@ main( int argc, char * argv [] )
 		0.01,
 		true
 	);
-	
-	
+
+
 	///////////////////Setup loop creation mover/////////////////
 	core::Real min_rms = option[lh::min_rms];
 	core::Real max_rms = option[lh::max_rms];
@@ -175,19 +175,20 @@ main( int argc, char * argv [] )
 			new devel::sewing::LoopCreationMover(
 				loop_sizes, max_radius, max_rms, min_rms, num_residues_to_match, num_helices_in_repeat, nat_ro_map);
 	}
-	
+
 	///////////Add all movers and RUN//////////////
 	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
 	seq_mover->add_mover( pack_mover );
 //	seq_mover->add_mover( min_mover );
 	seq_mover->add_mover( loop_creation_mover );
 //	seq_mover->add_mover( min_mover );
-	
+
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
 	cout << "-------------DONE-------------" << endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

@@ -110,7 +110,7 @@ MyScoreMover::MyScoreMover():
 	if ( option[ rescore::skip ]() ){
 		set_skip_scoring();
 	}
-		
+
 	// add cst scores from cmd line
 	if( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *sfxn_ );
@@ -174,7 +174,7 @@ main( int argc, char * argv [] )
 	container->add_mover( new MyScoreMover );
 
 	using namespace protocols::jd2;
-	
+
 	//rayyrw: when rescoring ignore those residues which were being defined as replsive energy only
 
 
@@ -201,8 +201,9 @@ main( int argc, char * argv [] )
 		excn.show( std::cout ); //so its also seen in a >LOG file
 	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }
 

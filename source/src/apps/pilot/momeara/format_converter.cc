@@ -36,7 +36,7 @@ using std::endl;
 int
 main( int argc, char* argv [] ) {
 
-    try {
+	try {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -178,7 +178,6 @@ main( int argc, char* argv [] ) {
 	cout << "   Database Output:" << endl;
 	cout << "      -out:use_database                           Output structures to database (see General Database Options)" << endl;
 
-	try {
 		// options, random initialization
 		devel::init( argc, argv );
 
@@ -189,10 +188,7 @@ main( int argc, char* argv [] ) {
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
+		return -1;
 	}
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
 	return 0;
 } // main

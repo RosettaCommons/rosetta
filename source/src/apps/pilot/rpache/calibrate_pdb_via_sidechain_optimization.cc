@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file calibrate_pdb.cc
-/// @brief Calibrates the input structure for the Rosetta forcefield, using repacking, rotamer trials and minimization. 
+/// @brief Calibrates the input structure for the Rosetta forcefield, using repacking, rotamer trials and minimization.
 /// @author Roland A. Pache, PhD
 
 //Unit Headers
@@ -170,6 +170,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

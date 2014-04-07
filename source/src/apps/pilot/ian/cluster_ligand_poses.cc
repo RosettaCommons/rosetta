@@ -219,6 +219,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) { //YOU ADD
 		std::cout << "caught exception " << e.msg() << std::endl; //YOU ADD
+		return -1;
 	}
 
 	return 0;

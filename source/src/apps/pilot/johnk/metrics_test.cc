@@ -199,7 +199,8 @@ main( int argc, char * argv [] )
 	std::cout << "JK Successfully finishing hotspot test" << std::endl;
 
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
 	return 0;
 }

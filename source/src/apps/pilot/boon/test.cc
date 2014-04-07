@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 	ft2.show();*/
 
 /*	//Reformatting
-		
+
 	// PyMOL mover
 	protocols::moves::PyMolMover pmm;
 	pmm.update_energy(true);
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 
 /*	protocols::docking::ConformerSwitchMover mover;
 	std::cout << mover << std::endl;*/
-	
+
  // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
   mm->set_bb(begin2, false);
 	mm->set_jump(2, true);
 	mm->set_jump(5, false);
-	// create a standard scorefxn 
+	// create a standard scorefxn
 	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
 		scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	// setup other inputs
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
 /*	// create a PyMOL mover
 	protocols::moves::PyMolMover pmm;
 	std::cout << pmm << std::endl;
-	
+
 	// create another PyMOL mover
 	protocols::moves::PyMolMover pmm2;
 	pmm2.update_energy(true);
@@ -306,12 +306,12 @@ int main(int argc, char *argv[])
 /*  // create a loops object
 	core::Size start = 15, start2 = 51;
 	core::Size stop = 24, stop2 = 60;
-	core::Size cutpoint = 19; 
+	core::Size cutpoint = 19;
 	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
 	protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2) );
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
 	loops->add_loop(loop);
-	loops->add_loop(loop2);	
+	loops->add_loop(loop2);
 
 	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
@@ -373,12 +373,12 @@ int main(int argc, char *argv[])
 	// create a loops object
 	core::Size start = 15, start2 = 51;
 	core::Size stop = 24, stop2 = 60;
-	core::Size cutpoint = 19, cutpoint2 = 55; 
+	core::Size cutpoint = 19, cutpoint2 = 55;
 	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
 	protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2, cutpoint2) );
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
 	loops->add_loop(loop);
-	loops->add_loop(loop2);	
+	loops->add_loop(loop2);
 	// create and print a loopmover
 	protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD loopmover;
 	std::cout << loopmover << std::endl;
@@ -388,5 +388,6 @@ int main(int argc, char *argv[])
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
 }

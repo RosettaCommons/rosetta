@@ -9,9 +9,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
-/// @brief  
-/// @author 
+/// @file
+/// @brief
+/// @author
 
 
 #include <core/pose/Pose.hh>
@@ -144,7 +144,7 @@ public:
 		symmdef.read_symmetry_data_from_file( path_to_symdef );
 		core::pose::symmetry::make_symmetric_pose( new_pose, symmdef );
 		pose = new_pose;
-		
+
 	}
 
 	virtual std::string get_name() const {return "DetectSymmetry";}
@@ -171,7 +171,8 @@ int main( int argc, char** argv ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
-	return 0;	
+	return 0;
 }

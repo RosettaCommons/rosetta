@@ -68,7 +68,7 @@
 //#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 //#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
-// Utility Headers 
+// Utility Headers
 #include <devel/init.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
@@ -128,6 +128,7 @@ main( int argc, char* argv[] )
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
     return 0;
 
@@ -145,11 +146,11 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 	core::import_pose::pose_from_pdb(primary_hs_pose, option[ inverse_rotlib_dump::primary_hs].value() );
 	core::pose::add_variant_type_to_pose_residue( primary_hs_pose, "SHOVE_BB", primary_hs_pose.total_residue());
 	//kdrew: create starting pose by combining the target pose and the scaffold pose
-	
+
 	// the hotspot residue is the final one in the file, i.e. primary_hs_pose.residue(primary_hs_pose.total_residue())
-	
+
 	core::conformation::ResidueCOP primary_hs_residue  =  &primary_hs_pose.residue(primary_hs_pose.total_residue());
-	
+
 	// structure sort of cobbled together from Florian's bb independent rotamers and invrottree dumping logic
 	utility::vector1< core::conformation::ResidueCOP > primary_rots = core::pack::rotamer_set::bb_independent_rotamers (&primary_hs_residue->type());
 
@@ -172,9 +173,9 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 		core::pose::Pose secondary_hs_pose;
 		core::import_pose::pose_from_pdb(secondary_hs_pose, ancillary_locations[iii]);
 		core::pose::add_variant_type_to_pose_residue( secondary_hs_pose, "SHOVE_BB", secondary_hs_pose.total_residue());
-		
+
 		core::conformation::ResidueCOP secondary_hs_residue  =  &primary_hs_pose.residue(secondary_hs_pose.total_residue());
-	
+
 		// structure sort of cobbled together from Florian's bb independent rotamers and invrottree dumping logic
 
 		utility::vector1< core::conformation::ResidueCOP > secondary_rots = core::pack::rotamer_set::bb_independent_rotamers (&secondary_hs_residue->type());

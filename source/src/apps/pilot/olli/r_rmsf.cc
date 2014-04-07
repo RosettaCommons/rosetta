@@ -209,11 +209,11 @@ void run() {
 
 	if ( option[ rigid::in ].user() ) {
 			std::ifstream is( option[ rigid::in ]().name().c_str() );
-			
+
 			if (!is.good()) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
 			}
-			
+
 			loops::PoseNumberedLoopFileReader reader;
 			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
@@ -333,8 +333,9 @@ main( int argc, char * argv [] )
 		excn.show( std::cerr );
 	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }
 

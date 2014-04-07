@@ -77,12 +77,12 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/rms_util.tmpl.hh> 
+#include <core/scoring/rms_util.tmpl.hh>
 
-#include <core/pack/pack_rotamers.hh> 
-#include <core/pack/rotamer_trials.hh> 
-#include <core/pack/task/PackerTask.hh> 
-#include <core/pack/task/TaskFactory.hh> 
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_trials.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -96,8 +96,8 @@
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> 
-#include <protocols/farna/RNA_ProtocolUtil.hh> 
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_BasePairClassifier.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
@@ -198,14 +198,14 @@ OPT_KEY( Boolean, idl_close_chainbreaks)			  //FOR rna_idealize_test()
 OPT_KEY( Real, atom_pair_constraint_weight )  //FOR rna_idealize_test()
 OPT_KEY( Real, coordinate_constraint_weight ) //FOR rna_idealize_test()
 OPT_KEY( StringVector, list_of_virtual_res )
-OPT_KEY( RealVector, list_of_energy ) 
-OPT_KEY( String, native_tag_name ) 
-OPT_KEY( StringVector, decoy_tag_name ) 
-OPT_KEY( Boolean, dump ) 
+OPT_KEY( RealVector, list_of_energy )
+OPT_KEY( String, native_tag_name )
+OPT_KEY( StringVector, decoy_tag_name )
+OPT_KEY( Boolean, dump )
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-core::scoring::ScoreFunctionOP 
+core::scoring::ScoreFunctionOP
 create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 
 	using namespace core::scoring;
@@ -219,7 +219,7 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
 		num_score_weight_file++;
-	}	
+	}
 
 
 	if(num_score_weight_file==0){
@@ -231,7 +231,7 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 		std::cout << "num_score_weight_file (inputted by user)=" << num_score_weight_file << std::endl;
 		utility_exit_with_message("num_score_weight_file>1");
 	}
-	
+
 	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
 
 	std::cout << "---------score function weights----------" << std::endl;
@@ -239,14 +239,14 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 	std::cout << "-----------------------------------------" << std::endl;
 
 
-	return scorefxn; 
+	return scorefxn;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
 multiple_variant_type_test(){
-	
+
 	  using namespace core::pose;
 	  using namespace core::chemical;
 	  using namespace core::kinematics;
@@ -269,30 +269,30 @@ multiple_variant_type_test(){
 		std::cout << "ADD VIRTUAL_RNA_RESIDUE_UPPER" << std::endl;
 		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num);
 		output_pose_name+="iAU";
-		dump_pdb( pose, output_pose_name+ ".pdb" );	
+		dump_pdb( pose, output_pose_name+ ".pdb" );
 
 		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
 		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
-	
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
 		std::cout << "ADD VIRTUAL_PHOSPHATE" << std::endl;
 		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", seq_num);
 		output_pose_name+="iAP";
-		dump_pdb( pose, output_pose_name+ ".pdb" );	
-	
-		
+		dump_pdb( pose, output_pose_name+ ".pdb" );
+
+
 		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
 		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
-	
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		std::cout << "REMOVE VIRTUAL_PHOSPHATE " << std::endl;
 		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", seq_num);
 		output_pose_name+="iRP";
-		dump_pdb( pose, output_pose_name+ ".pdb" );	
+		dump_pdb( pose, output_pose_name+ ".pdb" );
 
 		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
 		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
@@ -301,21 +301,21 @@ multiple_variant_type_test(){
 		std::cout << "REMOVE VIRTUAL_RNA_RESIDUE_UPPER " << std::endl;
 		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num);
 		output_pose_name+="iRU";
-		dump_pdb( pose, output_pose_name+ ".pdb" );		
+		dump_pdb( pose, output_pose_name+ ".pdb" );
 
 		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
 		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 
 }
 
 
 void
 align_pdbs_function(pose::Pose const static_pose,
-									utility::vector1< pose_data_struct2 > & moving_pose_data_list, 
+									utility::vector1< pose_data_struct2 > & moving_pose_data_list,
 									utility::vector1< std::string > const & alignment_res_pair_list,
 									Real const alignment_RMSD_cutoff){
 
@@ -370,7 +370,7 @@ align_pdbs_function(pose::Pose const static_pose,
 		std::string const moving_pdb_tag=moving_pose_data_list[n].tag;
 
 		////////////////////////////////////create the alignment map////////////////////////////////////////////////////////////////////
-		id::AtomID_Map< id::AtomID > atom_ID_map; 
+		id::AtomID_Map< id::AtomID > atom_ID_map;
 		pose::initialize_atomid_map( atom_ID_map, moving_pose, id::BOGUS_ATOM_ID );
 
 		std::string const static_sequence=static_pose.sequence();
@@ -385,13 +385,13 @@ align_pdbs_function(pose::Pose const static_pose,
 			if( (static_sequence[static_seq_num-1])!=(moving_sequence[moving_seq_num-1]) ){
 				std::cout << "static_seq_num= " << static_seq_num << " static_sequence= " << static_sequence << " static_sequence[static_seq_num-1]= " << static_sequence[static_seq_num-1] << std::endl;
 				std::cout << "moving_sequence= " << moving_seq_num << " moving_sequence= " << moving_sequence << " moving_sequence[moving_seq_num-1]= " << moving_sequence[moving_seq_num-1] << std::endl;
-				utility_exit_with_message( "(static_sequence[static_seq_num-1])!=(moving_sequence[moving_seq_num-1])" );				
+				utility_exit_with_message( "(static_sequence[static_seq_num-1])!=(moving_sequence[moving_seq_num-1])" );
 			}
 
 			setup_suite_atom_id_map(moving_pose.residue(moving_seq_num), static_pose.residue(static_seq_num),  atom_ID_map);
 
 		}
-		core::scoring::superimpose_pose(moving_pose, static_pose, atom_ID_map);		
+		core::scoring::superimpose_pose(moving_pose, static_pose, atom_ID_map);
 
 		Size total_atom_count=0;
 		Real total_sum_sd=0.0;
@@ -402,7 +402,7 @@ align_pdbs_function(pose::Pose const static_pose,
 			Size const static_seq_num=static_pdb_align_res[ii];
 
 			//bool verbose= (ii==1) ? true : false;
-			bool verbose= false;	
+			bool verbose= false;
 
 			Size atom_count=0;
 			Real sum_sd=0.0;
@@ -418,7 +418,7 @@ align_pdbs_function(pose::Pose const static_pose,
 			if(rmsd>alignment_RMSD_cutoff ){ //change on Sept 26, 2010..problem arise when use this in non-long-loop mode...
 				std::cout << "rmsd= " << rmsd  << " is greater than " << alignment_RMSD_cutoff << " Angstrom between res " << moving_seq_num << " of moving_pose and res " << static_seq_num << " of static_pose" << std::endl;
 				std::cout << "moving_pdb_tag= " << moving_pdb_tag << std::endl;
-				utility_exit_with_message( "rmsd>alignment_RMSD_cutoff!"); 
+				utility_exit_with_message( "rmsd>alignment_RMSD_cutoff!");
 			}
 
 			total_atom_count+=atom_count;
@@ -465,7 +465,7 @@ convert_silent_file_to_pose_data_list(std::string const silent_file){
 
 		PoseOP pose_op( new Pose );
 
-		silent_struct->fill_pose( *pose_op,*(rsd_set)  ); 
+		silent_struct->fill_pose( *pose_op,*(rsd_set)  );
 
 		Real score( 0.0 );
 		getPoseExtraScores( *pose_op, "score", score );
@@ -522,11 +522,11 @@ copy_virtual_variant_type(pose::Pose & full_pose, pose::Pose const & start_pose_
 		}
 
 		if(start_pose_with_variant.residue(n).has_variant_type("VIRTUAL_RNA_RESIDUE")){
-	
+
 			if( (n+1)>start_pose_with_variant.total_residue()){ //Check in range
 				std::cout << "(n+1)= " << (n+1)  << std::endl;
 				utility_exit_with_message( "(n+1)>start_pose_with_variant.total_residue()!" );
-			} 
+			}
 
 			if(start_pose_with_variant.residue(n+1).has_variant_type("VIRTUAL_RNA_RESIDUE_UPPER")==false){
 				std::cout << "n= " << n << std::endl;
@@ -534,12 +534,12 @@ copy_virtual_variant_type(pose::Pose & full_pose, pose::Pose const & start_pose_
 			}
 
 			apply_virtual_rna_residue_variant_type( full_pose, input_res_map[n] , false /*apply_check*/ ) ;
-		} 
+		}
 
 		if(start_pose_with_variant.residue(n).has_variant_type("VIRTUAL_RIBOSE")){
 			add_variant_type_to_pose_residue( full_pose, "VIRTUAL_RIBOSE", input_res_map[n] );
 
-		} 
+		}
 	}
 }
 
@@ -558,8 +558,8 @@ remove_all_variant_types(pose::Pose & pose){
 		remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", n );
-		remove_variant_type_from_pose_residue( pose, "BULGE", n );	
-		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );	
+		remove_variant_type_from_pose_residue( pose, "BULGE", n );
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 	}
 
 }
@@ -599,11 +599,11 @@ hermann_phase_two_minimize(){
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
-	clock_t const time_start( clock() ); 
+	clock_t const time_start( clock() );
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-	
+
 	protocols::farna::RNA_LoopCloser rna_loop_closer;
 
 	bool const biox_submit=option[ USER_BIOX_SUBMIT ]();
@@ -612,7 +612,7 @@ hermann_phase_two_minimize(){
 	bool output_copy_DOF=true;
 
 	if(biox_submit){
-		output_copy_DOF=false; 
+		output_copy_DOF=false;
 		output_silentfile_every_round=false;
 	}
 
@@ -632,9 +632,9 @@ hermann_phase_two_minimize(){
 
 	pose::Pose helical_ends_pose;
 
-	utility::vector1< core::Size > helical_ends_to_full_map;	
+	utility::vector1< core::Size > helical_ends_to_full_map;
 	if( option[ helical_ends ].user() ){
- 
+
 		if ( !option[ helical_ends_to_full_res ].user() ) utility_exit_with_message( "User must supply helical_ends_to_full_res in copy_DOF mode!" );
 		helical_ends_to_full_map=option[ helical_ends_to_full_res ]();
 
@@ -692,16 +692,16 @@ hermann_phase_two_minimize(){
 		std::cout << "native_pose_ACT.sequence()= " << native_pose_ACT.sequence() << std::endl;
 		std::cout << "full_sequence= " << full_sequence << std::endl;
 		utility_exit_with_message( "native_pose_ACT.sequence()!=full_sequence!" );
-		
+
 	}
 
-	utility::vector1< core::Size > const cutpoint_closed_list= option[ cutpoint_closed  ]();	
+	utility::vector1< core::Size > const cutpoint_closed_list= option[ cutpoint_closed  ]();
 
 	utility::vector1< core::Size > const minimize_res_list= option[ minimize_res ]();
-	
+
 	output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
 
-	utility::vector1< std::string > const	fold_tree_string_list= option[ fold_tree_strings ]();	
+	utility::vector1< std::string > const	fold_tree_string_list= option[ fold_tree_strings ]();
 	std::string const filtered_tag_file=option[ filter_filename  ]();
 
 
@@ -712,14 +712,14 @@ hermann_phase_two_minimize(){
 	utility::vector1< core::scoring::ScoreFunctionOP > scorefxn_list;
 	scorefxn_list.clear();
 
-	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn(); 
+	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
 
 	scorefxn->set_weight( angle_constraint, 5.0 );
 	scorefxn->set_weight( atom_pair_constraint, 5.0 );
 
 	core::scoring::ScoreFunctionOP close_CB_scorefxn = scorefxn->clone();
 
-	close_CB_scorefxn->set_weight( linear_chainbreak, 0.0); //no point having linear_CB since the torsion is not minimized anyways. 
+	close_CB_scorefxn->set_weight( linear_chainbreak, 0.0); //no point having linear_CB since the torsion is not minimized anyways.
 	close_CB_scorefxn->set_weight( coordinate_constraint, 0.00 );
 
 
@@ -742,7 +742,7 @@ hermann_phase_two_minimize(){
 				coord_const_weight=0.05;
 			}
 			*/
-		
+
 			extra_round_scorefxn->set_weight( coordinate_constraint, coord_const_weight );
 			scorefxn_list.push_back(extra_round_scorefxn);
 		}
@@ -781,7 +781,7 @@ hermann_phase_two_minimize(){
 		std::cout << "five_prime_seq_num= " << five_prime_seq_num << " three_prime_seq_num= " << three_prime_seq_num << " cut_point= " << cut_point << std::endl;
 
 		fold_tree.new_jump( five_prime_seq_num, three_prime_seq_num, cut_point );
-	}		
+	}
 	output_fold_tree_info(fold_tree, "fold_tree derived from user inputted fold_tree_strings");
 
 
@@ -806,7 +806,7 @@ hermann_phase_two_minimize(){
 			std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= true"; ;  std::cout << std::endl;
 		}
 	}
-	
+
 	core::kinematics::MoveMap mm_first=fixed_mm;
 	core::kinematics::MoveMap mm_final=fixed_mm;
 
@@ -814,8 +814,8 @@ hermann_phase_two_minimize(){
 		Size const seq_num=minimize_res_list[n];
 		mm_final.set_bb(seq_num, true);
 		mm_final.set_chi(seq_num, true );
-	}	
-	
+	}
+
 
 	mm_list.push_back(mm_first);
 
@@ -824,7 +824,7 @@ hermann_phase_two_minimize(){
 			mm_list.push_back(mm_final);
 		}
 	}
-	
+
 	mm_list.push_back(mm_final);
 
 	if(scorefxn_list.size()!=mm_list.size()){
@@ -844,10 +844,10 @@ hermann_phase_two_minimize(){
 	if(JOB_ID>=JOB_ID_MOD_CUTOFF){
 		JOB_ID=JOB_ID-JOB_ID_MOD_CUTOFF;
 	}
-							
-	std::cout << "ACT_JOB_ID=" << JOB_ID << std::endl;							
 
-	
+	std::cout << "ACT_JOB_ID=" << JOB_ID << std::endl;
+
+
 	Size const start_nstruct=(num_nstruct_per_node*JOB_ID)+1;
 	Size const end_nstruct=(num_nstruct_per_node*(JOB_ID+1));
 
@@ -855,8 +855,8 @@ hermann_phase_two_minimize(){
 	std::cout << "end_nstruct=" << end_nstruct << std::endl;
 
 
-	//extract LOW RMSD tag from filter_filename.	
-	std::ifstream infile;	
+	//extract LOW RMSD tag from filter_filename.
+	std::ifstream infile;
  	infile.open(filtered_tag_file.c_str());
 
 	if (infile.fail()){
@@ -874,7 +874,7 @@ hermann_phase_two_minimize(){
 
 	Size curr_nstruct=0;
 
-	while(getline(infile, line_string) ){	
+	while(getline(infile, line_string) ){
 
 		utility::vector1< std::string > const line_list=Tokenize(line_string," \t\n\f\v"); //Oct 19, 2010..now filterer_outfile contain other terms.
 
@@ -882,7 +882,7 @@ hermann_phase_two_minimize(){
 			if(line_list[1]!="lower_tag")  utility_exit_with_message( "line_list[1]!=\"lower_tag");
 			if(line_list[2]!="upper_tag")  utility_exit_with_message( "line_list[2]!=\"upper_tag");
 			if(line_list[3]!="sum_score")  utility_exit_with_message( "line_list[3]!=\"sum_score");
-			if(line_list[4]!="base_rmsd")  utility_exit_with_message( "line_list[4]!=\"base_rmsd");                                                              
+			if(line_list[4]!="base_rmsd")  utility_exit_with_message( "line_list[4]!=\"base_rmsd");
 			first_line=false;
 			continue;
 		}
@@ -908,7 +908,7 @@ hermann_phase_two_minimize(){
 
 	infile.close();
 
-	
+
 	//////////////////////////////////Import lower_to_full_map and upper_to_full_map///////////////////////////////////////////////////
 
 	utility::vector1< core::Size > lower_to_full_map=option[ lower_to_full_res ]();
@@ -920,7 +920,7 @@ hermann_phase_two_minimize(){
 	utility::vector1< std::string > silent_files_list = option[ in::file::silent ]();
 
 	if(silent_files_list.size()!=2) utility_exit_with_message( "silent_files_list.size()!=2" );
-	
+
 	std::string const upper_silent_file=silent_files_list[2];
 
 
@@ -935,7 +935,7 @@ hermann_phase_two_minimize(){
 
 	Size num_tag_pair_found=0;
 
-	for(Size lower_ID=1; lower_ID<=lower_pose_data_list.size(); lower_ID++){	
+	for(Size lower_ID=1; lower_ID<=lower_pose_data_list.size(); lower_ID++){
 	for(Size upper_ID=1; upper_ID<=upper_pose_data_list.size(); upper_ID++){
 
 		pose_data_struct2 const & lower_pose_data=lower_pose_data_list[lower_ID];
@@ -961,7 +961,7 @@ hermann_phase_two_minimize(){
 				import_pose_tag="COMBINE_PDB/"+ combine_tag_info.lower_tag + "_" + combine_tag_info.upper_tag + ".pdb" ;
 
 				found_tag_pair++;
-				FOUND_combine_tag_info=	combine_tag_info;			
+				FOUND_combine_tag_info=	combine_tag_info;
 			}
 		}
 
@@ -970,10 +970,10 @@ hermann_phase_two_minimize(){
 		}
 
 		if(found_tag_pair==0) continue;
-		
+
 		num_tag_pair_found++;
 		std::cout << "SO_FAR: num_tag_pair_found= " << num_tag_pair_found << " time_taken=" << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC <<std::endl;
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if(copy_DOF){
 			output_title_text("COPY DOFS", TR );
 
@@ -982,8 +982,8 @@ hermann_phase_two_minimize(){
 			make_pose_from_sequence( copy_DOF_pose, full_sequence, *rsd_set, false /*auto_termini*/);
 
 			full_pose=copy_DOF_pose; //This ensures that everything in full_pose is initialized from scratch
-	
-			full_pose.fold_tree( fold_tree ); 
+
+			full_pose.fold_tree( fold_tree );
 
 			pose::Pose lower_pose_without_variant_types=	lower_pose;
 			pose::Pose upper_pose_without_variant_types=	upper_pose;
@@ -993,13 +993,13 @@ hermann_phase_two_minimize(){
 
 			//Commented out on Jan 12, 2012...This used to called the version of remove_all_variant_types() in parin_test.cc which has been commented out and replaced with the one StepWsieRNA_Util.cc
 			//If want to use this code, then need to ensure that the version of remove_all_variant_types() in StepWsieRNA_Util.cc reproduce the results of the local remove_all_variant_types() function
-			//remove_all_variant_types(lower_pose_without_variant_types); 
-			//remove_all_variant_types(upper_pose_without_variant_types); 
-			//remove_all_variant_types(helical_ends_without_variant_types); 
+			//remove_all_variant_types(lower_pose_without_variant_types);
+			//remove_all_variant_types(upper_pose_without_variant_types);
+			//remove_all_variant_types(helical_ends_without_variant_types);
 			//////////////////////////////////////////////////////////////////////////////////
 
 			copy_DOFS_local(full_pose, helical_ends_without_variant_types, helical_ends_to_full_map);
-		
+
 			if(verbose && output_copy_DOF) dump_pdb(full_pose, "copy_DOF_1_" + full_pose_tag + ".pdb");
 
 			copy_DOFS_local(full_pose, lower_pose_without_variant_types, lower_to_full_map);
@@ -1030,8 +1030,8 @@ hermann_phase_two_minimize(){
 				remove_variant_type_from_pose_residue( full_pose, "CUTPOINT_UPPER", n );
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RNA_RESIDUE", n );
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RNA_RESIDUE_UPPER", n );
-				remove_variant_type_from_pose_residue( full_pose, "BULGE", n );	
-				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RIBOSE", n );	
+				remove_variant_type_from_pose_residue( full_pose, "BULGE", n );
+				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RIBOSE", n );
 			}
 
 			full_pose.fold_tree( fold_tree );
@@ -1053,19 +1053,19 @@ hermann_phase_two_minimize(){
 		if(upper_pose.total_residue()!=upper_to_full_map.size()){
 			utility_exit_with_message( "upper_pose.total_residue()(" + string_of(upper_pose.total_residue())+")!=upper_to_full_map.size()("+string_of(upper_to_full_map.size())+")" );
 		}
-		
+
 
 		copy_virtual_variant_type(full_pose, lower_pose, lower_to_full_map);
 		copy_virtual_variant_type(full_pose, upper_pose, upper_to_full_map);
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+
 		//Setup cutpoint upper and lower variant type.
 
 
 		for(Size n=1; n<=cutpoint_closed_list.size(); n++){
 
-			Size const cutpoint_closed=cutpoint_closed_list[n]; 	
+			Size const cutpoint_closed=cutpoint_closed_list[n];
 
 			if ( cutpoint_closed == 0 ) utility_exit_with_message( "cutpoint_closed == 0" );
 
@@ -1080,9 +1080,9 @@ hermann_phase_two_minimize(){
 			Add_harmonic_chainbreak_constraint(full_pose, cutpoint_closed );
 
 		}
-		dump_pdb( full_pose, "full_pose_after_add_cutpoint_variant.pdb");	
+		dump_pdb( full_pose, "full_pose_after_add_cutpoint_variant.pdb");
 
-		//std::cout << "Dec 26 Check point 1 "<< std::endl;	
+		//std::cout << "Dec 26 Check point 1 "<< std::endl;
 
 		AtomTreeMinimizer minimizer;
 		float const dummy_tol( 0.00000025);
@@ -1099,7 +1099,7 @@ hermann_phase_two_minimize(){
 		ConstraintSetOP cst_set = full_pose.constraint_set()->clone();
 
 		for ( Size i=1; i<= full_pose.total_residue();  i++ ) {
-		
+
 			if(Contain_seq_num(i, minimize_res_list)) continue;
 
 			Residue const & i_rsd( full_pose.residue(i) );
@@ -1120,7 +1120,7 @@ hermann_phase_two_minimize(){
 
 		for(Size round_ID=1; round_ID<=total_rounds; round_ID++){
 			if(SKIP_POSE_DUE_TO_ABNORMALLY_BAD_ENERGY==true) continue; //Need this to prevent minimization error message.
-		
+
 			core::kinematics::MoveMap const mm=mm_list[round_ID];
 
 			if(skip_minimize==false){
@@ -1128,26 +1128,26 @@ hermann_phase_two_minimize(){
 				//if( (scorefxn_list[round_ID]->get_weight(coordinate_constraint)) > 0.0001){
 
 					//if(verbose) std::cout << "scorefxn_list[" << round_ID << "] coordinate_constraint >0.0001, do_minimize_with_constraints!" << std::endl;
-				
+
 					//minimize_with_constraints(full_pose, mm, (scorefxn_list[round_ID]), options);
 				//}else{
-					minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );		
+					minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );
 				//}
 
 				o2prime_trials(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) );
 
 				for(Size cc_ID=1; cc_ID<=cutpoint_closed_list.size(); cc_ID++){
 
-					Size const cutpoint_closed=cutpoint_closed_list[cc_ID]; 	
-		
+					Size const cutpoint_closed=cutpoint_closed_list[cc_ID];
+
 					Real mean_dist_err = rna_loop_closer.apply( full_pose, cutpoint_closed );
 					std::cout << "mean_dist_err for cutpoint_closed ("<< cutpoint_closed <<", round_ID= " << round_ID << " ) = " <<  mean_dist_err << std::endl;
 				}
 
-				o2prime_trials(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) ); 
+				o2prime_trials(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) );
 				minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );
 
-			}			
+			}
 
 			std::string full_pose_tag_MOD=full_pose_tag;
 
@@ -1195,8 +1195,8 @@ hermann_phase_two_minimize(){
 				}
 
 				//std::map< core::Size, core::Size > full_to_sub;
-				//full_to_sub.clear();	
-	
+				//full_to_sub.clear();
+
 				if(full_pose.total_residue()!=native_pose.total_residue()){
 					std::cout << "full_pose.total_residue()= " << full_pose.total_residue() << std::endl;
 					std::cout << "native_pose.total_residue()= " << native_pose.total_residue() << std::endl;
@@ -1214,7 +1214,7 @@ hermann_phase_two_minimize(){
 				s.add_energy( "COMBINE_SCORE" , FOUND_combine_tag_info.combine_score);
 				s.add_energy( "OVERLAP_RMSD" , FOUND_combine_tag_info.overlap_rmsd);
 
-				silent_file_data.write_silent_struct(s, act_silent_outfile, false); 
+				silent_file_data.write_silent_struct(s, act_silent_outfile, false);
 
 			}
 
@@ -1262,11 +1262,11 @@ hermann_phase_two(){
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	utility::vector1< std::string > const RMSD_res_pair_list = option[ RMSD_res_pairs ]();	
+	utility::vector1< std::string > const RMSD_res_pair_list = option[ RMSD_res_pairs ]();
 
 	utility::vector1< core::Size > lower_pdb_RMSD_res;
 	utility::vector1< core::Size > upper_pdb_RMSD_res;
-	
+
 	lower_pdb_RMSD_res.clear();
 	upper_pdb_RMSD_res.clear();
 
@@ -1296,10 +1296,10 @@ hermann_phase_two(){
 
 	std::string const static_pdb_tag = option[ in::file::native ]();
 
-	utility::vector1< std::string > const lower_alignment_res_pair_list = option[ alignment_res_pairs ]();	
-	utility::vector1< std::string > const upper_alignment_res_pair_list = option[ alignment_res_pairs_two ]();	
+	utility::vector1< std::string > const lower_alignment_res_pair_list = option[ alignment_res_pairs ]();
+	utility::vector1< std::string > const upper_alignment_res_pair_list = option[ alignment_res_pairs_two ]();
 
-	Real const alignment_RMSD_cutoff=option[ alignment_RMSD_CUTOFF ]();	 
+	Real const alignment_RMSD_cutoff=option[ alignment_RMSD_CUTOFF ]();
 
 
 	pose::Pose static_pose;
@@ -1311,7 +1311,7 @@ hermann_phase_two(){
 	utility::vector1< std::string > silent_files_list = option[ in::file::silent ]();
 
 	if(silent_files_list.size()!=2) utility_exit_with_message( "silent_files_list.size()!=2" );
-	
+
 	std::string const upper_silent_file=silent_files_list[2];
 
 
@@ -1334,17 +1334,17 @@ hermann_phase_two(){
 	for(Size n=1; n<=lower_pose_data_list.size(); n++){
 		pose_data_struct2 & pose_data=lower_pose_data_list[n];
 		pose_data.tag= "aligned_lower_" +pose_data.tag;
-	
-		dump_pdb( *(pose_data.pose_OP), align_lower_SWA_folder + pose_data.tag + ".pdb");	
-	
+
+		dump_pdb( *(pose_data.pose_OP), align_lower_SWA_folder + pose_data.tag + ".pdb");
+
 	}
 
 	for(Size n=1; n<=upper_pose_data_list.size(); n++){
 		pose_data_struct2 & pose_data=upper_pose_data_list[n];
-		pose_data.tag= "aligned_upper_" +pose_data.tag;	
+		pose_data.tag= "aligned_upper_" +pose_data.tag;
 
-		dump_pdb( *(pose_data.pose_OP), align_upper_SWA_folder + pose_data.tag + ".pdb");	
-	
+		dump_pdb( *(pose_data.pose_OP), align_upper_SWA_folder + pose_data.tag + ".pdb");
+
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -1355,15 +1355,15 @@ hermann_phase_two(){
 	std::ofstream outfile;
 	outfile.open(outfile_name.c_str()); //Opening the file with this command removes all prior content..
 
-	outfile << std::setw(50) << std::left << "lower_tag" ; 
-	outfile << std::setw(50) << std::left << "upper_tag" ; 
+	outfile << std::setw(50) << std::left << "lower_tag" ;
+	outfile << std::setw(50) << std::left << "upper_tag" ;
 	outfile << std::setw(15) << std::left << "sum_score" ;
 	outfile << std::setw(15) << std::left << "base_rmsd";
-	outfile << "\n"; 
+	outfile << "\n";
 	////////////////////////Calculate the overlap helix RMSD///////////////////////////////////
 
 
-	for(Size lower_ID=1; lower_ID<=lower_pose_data_list.size(); lower_ID++){	
+	for(Size lower_ID=1; lower_ID<=lower_pose_data_list.size(); lower_ID++){
 	for(Size upper_ID=1; upper_ID<=upper_pose_data_list.size(); upper_ID++){
 
 		pose_data_struct2 & lower_pose_data=lower_pose_data_list[lower_ID];
@@ -1405,11 +1405,11 @@ hermann_phase_two(){
 
 		//std::string output_tag= lower_pose_data.tag + "_" + upper_pose_data.tag;
 
-		outfile << std::setw(50) << std::left << lower_pose_data.tag; 
-		outfile << std::setw(50) << std::left << upper_pose_data.tag; 
+		outfile << std::setw(50) << std::left << lower_pose_data.tag;
+		outfile << std::setw(50) << std::left << upper_pose_data.tag;
 		outfile << std::setw(15) << std::left << sum_score ;
 		outfile << std::setw(15) << std::left << all_base_rmsd;
-		outfile << "\n"; 
+		outfile << "\n";
 
 
 	}
@@ -1438,19 +1438,19 @@ journal_club_syn_chi(){
 		pose::Pose pose;
 		make_pose_from_sequence( pose, sequence, *rsd_set, false /*auto_termini*/);
 
-		pose.set_torsion( TorsionID( 1, CHI, 1 ) , 79.430);	
+		pose.set_torsion( TorsionID( 1, CHI, 1 ) , 79.430);
 
-		dump_pdb( pose, "anti_chi.pdb" );	
+		dump_pdb( pose, "anti_chi.pdb" );
 
-		pose.set_torsion( TorsionID( 1, CHI, 1 ) , -51.00);	
+		pose.set_torsion( TorsionID( 1, CHI, 1 ) , -51.00);
 
 		dump_pdb( pose, "syn_chi_51.pdb" );
 
-		pose.set_torsion( TorsionID( 1, CHI, 1 ) , -71.00);	
+		pose.set_torsion( TorsionID( 1, CHI, 1 ) , -71.00);
 
 		dump_pdb( pose, "syn_chi_71.pdb" );
 
-		pose.set_torsion( TorsionID( 1, CHI, 1 ) , -31.00);	
+		pose.set_torsion( TorsionID( 1, CHI, 1 ) , -31.00);
 
 		dump_pdb( pose, "syn_chi_31.pdb" );
 
@@ -1480,7 +1480,7 @@ calculate_theoretical_RNA_length(){
 	make_pose_from_sequence( pose, sequence, *rsd_set, false /*auto_termini*/);
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "test", 400, 400 );
-						
+
 	std::string start_atom=" O3'"; //" C5'", " C1'";
 	core::Size start_res=2;
 	std::string end_atom=" O3'"; //" O3'" , "P";
@@ -1490,10 +1490,10 @@ calculate_theoretical_RNA_length(){
 //	Size num_bin=360/bin_size;
 
 	Real max_dist=0;
-	Real mean_dist=0;	
+	Real mean_dist=0;
 	Size count=0;
 
-	Size const min_angle=0;	
+	Size const min_angle=0;
 	Size const max_angle=360;
 	//prepend
 //	for(Size a3=min_angle; a3<=max_angle; a3+=bin_size){
@@ -1504,15 +1504,15 @@ calculate_theoretical_RNA_length(){
 	for(Size a2=min_angle; a2<=max_angle; a2+=bin_size){
 
 
-//		pose.set_torsion( TorsionID( 3, BB, 1 ) , a3);		
-//		pose.set_torsion( TorsionID( 2, BB, 6 ) , z2);			
-//		pose.set_torsion( TorsionID( 2, BB, 5 ) , e2);		
-		pose.set_torsion( TorsionID( 2, BB, 3 ) , g2);		
-		pose.set_torsion( TorsionID( 2, BB, 2 ) , b2);			
-		pose.set_torsion( TorsionID( 2, BB, 1 ) , a2);		
+//		pose.set_torsion( TorsionID( 3, BB, 1 ) , a3);
+//		pose.set_torsion( TorsionID( 2, BB, 6 ) , z2);
+//		pose.set_torsion( TorsionID( 2, BB, 5 ) , e2);
+		pose.set_torsion( TorsionID( 2, BB, 3 ) , g2);
+		pose.set_torsion( TorsionID( 2, BB, 2 ) , b2);
+		pose.set_torsion( TorsionID( 2, BB, 1 ) , a2);
 
 		for(Size d2=1; d2<=2; d2++){
-			Real d2_angle = (d2==1) ? 85.418:152.467;  
+			Real d2_angle = (d2==1) ? 85.418:152.467;
 			pose.set_torsion( TorsionID( 2, BB, 4 ) , d2_angle);
 
 
@@ -1525,7 +1525,7 @@ calculate_theoretical_RNA_length(){
 			std::cout << "distance= " << distance;
 
 //			std::cout << " a3_angle= " << a3 << " z2_angle= " << z2 << " e2_angle= " << e2;
-			std::cout << " g2_angle= " << g2 << " b2_angle= " << b2 << " a2_angle= " << a2; 
+			std::cout << " g2_angle= " << g2 << " b2_angle= " << b2 << " a2_angle= " << a2;
 			std::cout << " d2= " << d2_angle << std::endl;
 		}
 	}
@@ -1575,7 +1575,7 @@ calculate_bulge_length_distribution(){
 
 	Size const bin_size=10;
 
-	Size const min_angle=0;	
+	Size const min_angle=0;
 	Size const max_angle=360;
 
 
@@ -1632,8 +1632,8 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 	core::Size end_res=2;
 
 	Size bin_size=10;
-	
-	Size min_angle=0;	
+
+	Size min_angle=0;
 	Size max_angle=360;
 
 	std::ofstream outfile;
@@ -1659,10 +1659,10 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 	for(Size z2=min_angle; z2<=max_angle; z2+=5){
 //	for(Size e2=min_angle; e2<=max_angle; e2+=10){
 
-		pose.set_torsion( TorsionID( 3, BB, 2 ) , b3);		
-		pose.set_torsion( TorsionID( 3, BB, 1 ) , a3);			
-		pose.set_torsion( TorsionID( 2, BB, 6 ) , z2);		
-//		pose.set_torsion( TorsionID( 2, BB, 5 ) , e2);		
+		pose.set_torsion( TorsionID( 3, BB, 2 ) , b3);
+		pose.set_torsion( TorsionID( 3, BB, 1 ) , a3);
+		pose.set_torsion( TorsionID( 2, BB, 6 ) , z2);
+//		pose.set_torsion( TorsionID( 2, BB, 5 ) , e2);
 
 			Real C5_O3_distance=(pose.residue(start_res).xyz(start_atom_1)- pose.residue(end_res).xyz(end_atom_1)).length();
 			Real C4_C3_distance=(pose.residue(start_res).xyz(start_atom_2)- pose.residue(end_res).xyz(end_atom_2)).length();
@@ -1755,9 +1755,9 @@ extract_clash_list(){
 	using namespace scoring::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
-	using namespace core::id; 
+	using namespace core::id;
 
-	clock_t const time_start( clock() ); 	
+	clock_t const time_start( clock() );
 
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "Must supply in::file::s!" );
 
@@ -1767,7 +1767,7 @@ extract_clash_list(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
-	std::string const pdb_file=   option[ in::file::s ]()[1];	
+	std::string const pdb_file=   option[ in::file::s ]()[1];
 
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
@@ -1785,7 +1785,7 @@ extract_clash_list(){
 
 	for(Size seq_num_2=1; seq_num_2<=pose.total_residue(); seq_num_2++){
 
-	
+
 		conformation::Residue const & sample_rsd= pose.residue(sample_res_ID);
 
 		conformation::Residue const & other_rsd= pose.residue(other_res_ID);
@@ -1794,23 +1794,23 @@ extract_clash_list(){
 
 			std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
 			if(atom_name_1=="HO2'") continue;
-			if(rsd_1.is_virtual(atomno_1) ) continue; 
+			if(rsd_1.is_virtual(atomno_1) ) continue;
 
 
 			bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-			bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
+			bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P
 
 			bool const is_base_sugar_1=(is_3_prime_phosphate_1==false && is_5_prime_phosphate_1==false);
 
 			for(Size atomno_2=1; atomno_2<=other_rsd.natoms(); atomno_2++){ //include hydrogen atoms
 
 				if(seq_num_1==seq_num_2){
-					if(atomno_1>=atomno_2) continue; 
+					if(atomno_1>=atomno_2) continue;
 				}
 
 				std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
 				if(atom_name_2=="HO2'") continue;
-				//if(rsd_2.is_virtual(atomno_2) ) continue; 
+				//if(rsd_2.is_virtual(atomno_2) ) continue;
 
 				bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
 				bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
@@ -1828,11 +1828,11 @@ extract_clash_list(){
 
 				}
 
-				if(seq_num_1==1 && seq_num_2==2){ 
+				if(seq_num_1==1 && seq_num_2==2){
 					if( is_3_prime_phosphate_1 && is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
-				} 
+				}
 
-				if(seq_num_2==1 && seq_num_1==2){ 
+				if(seq_num_2==1 && seq_num_1==2){
 					if( is_3_prime_phosphate_2 && is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
 				}
 
@@ -1883,10 +1883,10 @@ extract_hydrogen_bonds_statistic(){
 	using namespace scoring::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
-	using namespace core::id; 
+	using namespace core::id;
 
 
-	clock_t const time_start( clock() ); 	
+	clock_t const time_start( clock() );
 
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "Must supply in::file::s!" );
 
@@ -1900,7 +1900,7 @@ extract_hydrogen_bonds_statistic(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
-	std::string const pdb_file=   option[ in::file::s ]()[1];	
+	std::string const pdb_file=   option[ in::file::s ]()[1];
 
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
@@ -1942,7 +1942,7 @@ extract_hydrogen_bonds_statistic(){
 	utility::vector1< Hydrogen_Bond_Info > hydrogen_bond_info_list;
 
 	bool verbose=true;
-	
+
 	for(Size sample_res_ID=1; sample_res_ID<=sample_res_list.size(); sample_res_ID++){
 
 		bool is_five_prime_edge=false;
@@ -1982,20 +1982,20 @@ extract_hydrogen_bonds_statistic(){
 		std::cout << "base_pair # " << n << " : "; RHIJU_base_pair_list[n].print_info(); std::cout << " (RHIJU METHOD) " << std::endl;
 	}
 
-	std::cout << "--------------------------NUM ClASSIFED BASE PAIR (RHIJU METHOD)= " << RHIJU_base_pair_list.size()<< "--------------------------" << std::endl; 
+	std::cout << "--------------------------NUM ClASSIFED BASE PAIR (RHIJU METHOD)= " << RHIJU_base_pair_list.size()<< "--------------------------" << std::endl;
 
 	std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
 	std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------------ " << std::endl;
 	std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------------ " << std::endl;
 	std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------------ " << std::endl;
-	
+
 
 
 	std::cout << "--------------------------Classify Base Pairs-------------------------- " << std::endl;
 
 	utility::vector1< core::scoring::rna::Base_pair> base_pair_list=classify_base_pairs_strict(pose, input_sample_res_list, hydrogen_bond_info_list, false);
 
-	
+
 
 	if(double_count_BP==false){
 		utility::vector1< core::scoring::rna::Base_pair> double_count_base_pair_list=base_pair_list;
@@ -2003,11 +2003,11 @@ extract_hydrogen_bonds_statistic(){
 
 		for(Size n=1; n<=double_count_base_pair_list.size(); n++){
 			core::scoring::rna::Base_pair const base_pair=double_count_base_pair_list[n];
-		
+
 			if(base_pair.res1==base_pair.res2){
 				std::cout << "base_pair.res1=" << base_pair.res1 << "base_pair.res2=" << base_pair.res2 << std::endl;
 				utility_exit_with_message("base_pair.res1==base_pair.res2");
-			}	
+			}
 
 			if(base_pair.res1>base_pair.res2) continue;
 			base_pair_list.push_back(base_pair);
@@ -2023,7 +2023,7 @@ extract_hydrogen_bonds_statistic(){
 
 	for(Size n=1; n<=base_pair_list.size(); n++){
 		std::cout << "base_pair # " << n << " : "; base_pair_list[n].print_info(); std::cout << std::endl;
-		outfile << "base_pair # " << n << " : "; base_pair_list[n].print_info( outfile ); outfile << "\n"; 
+		outfile << "base_pair # " << n << " : "; base_pair_list[n].print_info( outfile ); outfile << "\n";
 	}
 
 	outfile.close();
@@ -2051,7 +2051,7 @@ extract_hydrogen_bonds_statistic(){
 
 	std::cout << "--------------------------NUM ClASSIFED BASE PAIR= " << total_classified_BP << "--------------------------" << std::endl; std::cout << std::endl;
 
-	
+
 	std::cout << "--------------------------Potential Hydrogen Bonds-------------------------- " << std::endl;
 
 	Hydrogen_Bond_Count hbond_count;
@@ -2063,7 +2063,7 @@ extract_hydrogen_bonds_statistic(){
 		std::string const hbond_type=get_hbond_type(hbond);
 
 		if(hbond_type=="BASE-BASE" || hbond_type=="BASE-BASE" ) hbond_count.base_base++;
-		
+
 		if(hbond_type=="BASE-2*OH" || hbond_type=="2*OH-BASE" ) hbond_count.base_O2prime++;
 
 		if(hbond_type=="BASE-O4'*" || hbond_type=="O4'*-BASE" ) hbond_count.base_O4prime++;
@@ -2078,8 +2078,8 @@ extract_hydrogen_bonds_statistic(){
 
 
 		if(std::abs(int(hbond.acceptor_res-hbond.donor_res))==1) hbond.comment+="I and I+1 case, ";
-		
-		std::cout << "#" << std::setw(5) << std::left << n << " "; 
+
+		std::cout << "#" << std::setw(5) << std::left << n << " ";
 
 		print_hydrogen_bond_info(hbond);
 	}
@@ -2144,7 +2144,7 @@ test_function(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 	SilentFileData silent_file_data;
 
-	std::string const pdb_file=   option[ in::file::s ]()[1];	
+	std::string const pdb_file=   option[ in::file::s ]()[1];
 	std::string pose_name;
 
   size_t found=pdb_file.rfind(".pdb");
@@ -2152,7 +2152,7 @@ test_function(){
 
   if(found!=std::string::npos){
 		pose_name = pdb_file.substr(found+1);
-	} else { 
+	} else {
 		pose_name=pdb_file;
 	}
 
@@ -2175,11 +2175,11 @@ test_function(){
 
 
 	BinaryRNASilentStruct s( pose, pose_name );
-	silent_file_data.write_silent_struct(s, silent_file, false); 
+	silent_file_data.write_silent_struct(s, silent_file, false);
 
 
 
-//~/src/mini/bin/parin_test.macosgccrelease -algorithm test_function -s start.pdb -database ~/minirosetta_database 
+//~/src/mini/bin/parin_test.macosgccrelease -algorithm test_function -s start.pdb -database ~/minirosetta_database
 }
 
 /*
@@ -2201,7 +2201,7 @@ silent_struct_slice(){
 	utility::vector1< Size >  const delete_res_list =	option[delete_res]()[1];
 
 	std::string silent_files_in = option[ in::file::silent ]()[1];
-	std::string input_tags = option[ in::file::tags ]()[1];  
+	std::string input_tags = option[ in::file::tags ]()[1];
 
 
 	pose::Pose pose;
@@ -2209,10 +2209,10 @@ silent_struct_slice(){
 
 	for( Size seq_num = pose.total_residue(); seq_num >= 1 ; seq_num--){
  		if(Contain_seq_num(seq_num, delete_res_list)){
-			pose.conformation().delete_residue_slow(seq_num );	
+			pose.conformation().delete_residue_slow(seq_num );
 		}
 	}
-	
+
 
 
 }
@@ -2243,7 +2243,7 @@ get_pose_energy_breakdown(){
 
 	pose::Pose pose;
 
-	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn(); 
+	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
 
 	if(option[ in::file::s].user()){
 
@@ -2252,10 +2252,10 @@ get_pose_energy_breakdown(){
 		std::cout << "importing pose from pdb_file: " << pdb_file << std::endl;
 
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-	
+
 		protocols::farna::make_phosphate_nomenclature_matches_mini( pose);
 
-	}else if( (option[ in::file::silent ].user()) && (option[ in::file::tags ].user() ) ){ 
+	}else if( (option[ in::file::silent ].user()) && (option[ in::file::tags ].user() ) ){
 		std::string const silent_file=option[ in::file::silent]()[1];
 		std::string const input_tag=option[ in::file::tags ]()[1];
 
@@ -2295,9 +2295,9 @@ minimize_pdb(){
 	if ( !option[ fold_tree_strings].user() ) utility_exit_with_message( "User must supply fold_tree_strings!" );
 
 
-	utility::vector1< std::string > const	pdb_tag_list= option[ in::file::s ]();	
-	utility::vector1< Size > const	minimize_res_list= option[ minimize_res ]();	
-	utility::vector1< std::string > const	fold_tree_string_list= option[ fold_tree_strings ]();	
+	utility::vector1< std::string > const	pdb_tag_list= option[ in::file::s ]();
+	utility::vector1< Size > const	minimize_res_list= option[ minimize_res ]();
+	utility::vector1< std::string > const	fold_tree_string_list= option[ fold_tree_strings ]();
 
   AtomTreeMinimizer minimizer;
   float const dummy_tol( 0.00000025);
@@ -2321,7 +2321,7 @@ minimize_pdb(){
 		mm.set_chi(seq_num, true );
 
 		minimize_res_string+= string_of(seq_num) + "_";
-	}		
+	}
 
 	for(Size n=1; n<=pdb_tag_list.size(); n++){
 
@@ -2336,9 +2336,9 @@ minimize_pdb(){
 
 		kinematics::FoldTree const start_fold_tree=pose.fold_tree();
 		if(start_fold_tree.is_simple_tree()==false){
-			output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;	
+			output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;
 			utility_exit_with_message("Error: imported_pose does not have a simple fold_tree");
-		}	
+		}
 		Size const nres=pose.total_residue();
 
 		core::kinematics::FoldTree fold_tree( nres );
@@ -2356,22 +2356,22 @@ minimize_pdb(){
 			std::cout << "five_prime_seq_num= " << five_prime_seq_num << " three_prime_seq_num= " << three_prime_seq_num << " cut_point= " << cut_point << std::endl;
 
 			fold_tree.new_jump( five_prime_seq_num, three_prime_seq_num, cut_point );
-		}		
+		}
 
 
 		move_jump_atom_to_base(fold_tree, pose.sequence());
 
 		pose.fold_tree( fold_tree);
-		
+
 		std::cout << "----------------------------------------------------------" << std::endl;
 		std::cout << "FINAL_fold_Tree:" << std::endl;
-		output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;	
+		output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;
 		std::cout << "----------------------------------------------------------" << std::endl;
 
 
 		minimizer.run( pose, mm, *(scorefxn), options );
 
-		dump_pdb( pose, output_pdb_tag + ".pdb");	
+		dump_pdb( pose, output_pdb_tag + ".pdb");
 
 	}
 
@@ -2431,12 +2431,12 @@ hack_create_rotamer_string( core::pose::Pose const & pose, bool const is_prepend
 }
 
 bool
-is_new_cluster_center_rotamer(pose::Pose const & pose, 
-														pose::Pose & cluster_center_pose, 
+is_new_cluster_center_rotamer(pose::Pose const & pose,
+														pose::Pose & cluster_center_pose,
 														Size const rotamer_count,
 														Size const sample_res,
-														bool const is_prepend, 
-														Real const cluster_rmsd, 
+														bool const is_prepend,
+														Real const cluster_rmsd,
 														utility::vector1< utility::vector1< Torsion_Info > > const & cluster_center_rotamer_list){
 
 	bool const verbose=false;
@@ -2445,15 +2445,15 @@ is_new_cluster_center_rotamer(pose::Pose const & pose,
 
 		apply_rotamer( cluster_center_pose, cluster_center_rotamer_list[cluster_ID] );
 
-		Real const rmsd=suite_rmsd(pose, cluster_center_pose, sample_res, is_prepend, true); 			
+		Real const rmsd=suite_rmsd(pose, cluster_center_pose, sample_res, is_prepend, true);
 
 		if(rmsd < cluster_rmsd) {
 			if(verbose) std::cout << "rotamer_count= "<< rotamer_count << " is part of cluster center " << cluster_ID << ". RMSD= " << rmsd << std::endl;
 			return false;
-		}  
+		}
 
 	}
-	
+
 	return true;
 }
 
@@ -2515,23 +2515,23 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 			}
 
 		}
- 
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 bool
-is_new_cluster_center_xyz(pose::Pose const & pose, 
-												 Size const rotamer_count, 
-												 Size const sample_res, 
-												 bool const is_prepend, 
-												 Real const cluster_rmsd,  
+is_new_cluster_center_xyz(pose::Pose const & pose,
+												 Size const rotamer_count,
+												 Size const sample_res,
+												 bool const is_prepend,
+												 Real const cluster_rmsd,
 												 utility::vector1< utility::vector1< numeric::xyzVector<Real> > >	& cluster_center_xyz_list){
 
 	bool const verbose=false;
 
-	utility::vector1< numeric::xyzVector<Real> > curr_xyz_list;	
+	utility::vector1< numeric::xyzVector<Real> > curr_xyz_list;
 
 	get_residue_xyz_list( pose, sample_res, is_prepend, curr_xyz_list);
 
@@ -2568,8 +2568,8 @@ is_new_cluster_center_xyz(pose::Pose const & pose,
 			}
 
 		}
-	
-	}		
+
+	}
 
 	cluster_center_xyz_list.push_back(curr_xyz_list);
 	return true;
@@ -2577,8 +2577,8 @@ is_new_cluster_center_xyz(pose::Pose const & pose,
 
 
 bool
-is_cluster_member(utility::vector1< numeric::xyzVector<Real> > const & cluster_center_xyzs, 
-								 utility::vector1< numeric::xyzVector<Real> > const & curr_xyz_list, 
+is_cluster_member(utility::vector1< numeric::xyzVector<Real> > const & cluster_center_xyzs,
+								 utility::vector1< numeric::xyzVector<Real> > const & curr_xyz_list,
 								 Real const CUTOFF_sum_square_deviation){
 
 
@@ -2604,18 +2604,18 @@ is_cluster_member(utility::vector1< numeric::xyzVector<Real> > const & cluster_c
 }
 
 bool
-is_new_cluster_center_second_stage(pose::Pose const & pose, 
-												 				Size const rotamer_count, 
-												 				Size const sample_res, 
-												 				bool const is_prepend, 
-												 				Real const cluster_rmsd, 
-												 				Real const large_cluster_rmsd, 
-																utility::vector1< utility::vector1<Size> > & large_to_small_cluster_center_map_list, 
+is_new_cluster_center_second_stage(pose::Pose const & pose,
+												 				Size const rotamer_count,
+												 				Size const sample_res,
+												 				bool const is_prepend,
+												 				Real const cluster_rmsd,
+												 				Real const large_cluster_rmsd,
+																utility::vector1< utility::vector1<Size> > & large_to_small_cluster_center_map_list,
 												 				utility::vector1< utility::vector1< numeric::xyzVector<Real> > >	& small_cluster_center_xyz_list,
 												 				utility::vector1< utility::vector1< numeric::xyzVector<Real> > >	const & large_cluster_center_xyz_list){
 
 
-	utility::vector1< numeric::xyzVector<Real> > curr_xyz_list;	
+	utility::vector1< numeric::xyzVector<Real> > curr_xyz_list;
 
 	get_residue_xyz_list( pose, sample_res, is_prepend, curr_xyz_list);
 
@@ -2633,7 +2633,7 @@ is_new_cluster_center_second_stage(pose::Pose const & pose,
 			Size const small_cluster_ID=large_to_small_cluster_center_map[n];
 			if(is_cluster_member(small_cluster_center_xyz_list[small_cluster_ID], curr_xyz_list, second_stage_CUTOFF_sum_square_deviation)){
 				 return false;
-			}			
+			}
 		}
 
 	}
@@ -2653,13 +2653,13 @@ is_new_cluster_center_second_stage(pose::Pose const & pose,
 
 			sum_square_deviation+=( curr_xyz_list[atomno]-large_cluster_center_xyz_list[large_cluster_ID][atomno] ).length_squared();
 
-		} 
+		}
 
-		if(sum_square_deviation<large_CUTOFF_sum_square_deviation){	
+		if(sum_square_deviation<large_CUTOFF_sum_square_deviation){
 			large_to_small_cluster_center_map_list[large_cluster_ID].push_back(small_cluster_center_xyz_list.size() );
 			found_large_to_small_map=true;
 			break;
-		}	
+		}
 	}
 
 	if(found_large_to_small_map==false){
@@ -2667,7 +2667,7 @@ is_new_cluster_center_second_stage(pose::Pose const & pose,
 		std::cout << "rotamer_count= " << rotamer_count << std::endl;
 		utility_exit_with_message("found_large_to_small_map==false!");
 	}
-	
+
 
 	return true;
 
@@ -2688,7 +2688,7 @@ is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 	if(is_O3prime_atom(atom_name_1)){
 
-		if(seq_num_1==seq_num_2){ 
+		if(seq_num_1==seq_num_2){
 
 			//Take care of this outside...basically O3prime is considered as part of the sugar as well.
 
@@ -2702,7 +2702,7 @@ is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 	if(is_P_atom(atom_name_1)){
 
-		if(seq_num_1==(seq_num_2+1)){ 
+		if(seq_num_1==(seq_num_2+1)){
 
 			if(is_C3prime_atom(atom_name_2)) return true; //2 bond
 
@@ -2712,7 +2712,7 @@ is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 			if(is_C2prime_atom(atom_name_2)) return true; //3 bond
 
-		}else if(seq_num_1==seq_num_2){ 
+		}else if(seq_num_1==seq_num_2){
 
 			if(is_C5prime_atom(atom_name_2)) return true; //2 bond
 
@@ -2728,11 +2728,11 @@ is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 	if( (is_OP2_atom(atom_name_1) || is_OP1_atom(atom_name_1) ) ){
 
-		if(seq_num_1==(seq_num_2+1)){ 
+		if(seq_num_1==(seq_num_2+1)){
 
 			if(is_C3prime_atom(atom_name_2)) return true; //3 bond
 
-		}else if(seq_num_1==seq_num_2){ 
+		}else if(seq_num_1==seq_num_2){
 
 			if(is_C5prime_atom(atom_name_2)) return true; //3 bond
 
@@ -2741,11 +2741,11 @@ is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 	if(is_O5prime_atom(atom_name_1)){
 
-		if(seq_num_1==(seq_num_2+1)){ 
+		if(seq_num_1==(seq_num_2+1)){
 
 			if(is_C3prime_atom(atom_name_2)) return true; //3 bond
 
-		}else if(seq_num_1==seq_num_2){ 
+		}else if(seq_num_1==seq_num_2){
 
 			if(is_C5prime_atom(atom_name_2)) return true; //1 bond
 
@@ -2782,18 +2782,18 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 
 		std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
 		if(atom_name_1=="HO2'") continue;
-		if(rsd_1.is_virtual(atomno_1) ) continue; 
+		if(rsd_1.is_virtual(atomno_1) ) continue;
 
 
 		bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-		bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
+		bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P
 
 		bool const is_base_sugar_1=(is_3_prime_phosphate_1==false && is_5_prime_phosphate_1==false);
 
 		////////////////////////////////////////////////////////////////////////////////////
 		std::pair<Size,Size> const res_1_atom_ID = std::make_pair(seq_num_1, atomno_1);
 		utility::vector1< std::pair<Size,Size> > res_2_atom_ID_list;
-		////////////////////////////////////////////////////////////////////////////////////		
+		////////////////////////////////////////////////////////////////////////////////////
 
 		for(Size seq_num_2=seq_num_1; seq_num_2<=2; seq_num_2++){
 			conformation::Residue const & rsd_2= pose.residue(seq_num_2);
@@ -2801,12 +2801,12 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 			for(Size atomno_2=1; atomno_2<=rsd_2.natoms(); atomno_2++){ //include hydrogen atoms
 
 				if(seq_num_1==seq_num_2){
-					if(atomno_1>=atomno_2) continue; 
+					if(atomno_1>=atomno_2) continue;
 				}
 
 				std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
 				if(atom_name_2=="HO2'") continue;
-				if(rsd_2.is_virtual(atomno_2) ) continue; 
+				if(rsd_2.is_virtual(atomno_2) ) continue;
 
 				bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
 				bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
@@ -2824,11 +2824,11 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 
 				}
 
-				if(seq_num_1==1 && seq_num_2==2){ 
+				if(seq_num_1==1 && seq_num_2==2){
 					if( is_3_prime_phosphate_1 && is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
-				} 
+				}
 
-				if(seq_num_2==1 && seq_num_1==2){ 
+				if(seq_num_2==1 && seq_num_1==2){
 					if( is_3_prime_phosphate_2 && is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
 				}
 
@@ -2865,7 +2865,7 @@ pass_VDW_replusion_screen_fast(pose::Pose const & pose, Real const VDW_overlap_d
 	Size num_atom_clash_so_far=0;
 
 	for(Size n=1; n<=VDW_rep_atom_map_list.size(); n++){
-		
+
 		Size const seq_num_1=VDW_rep_atom_map_list[n].first.first;
 		Size const atomno_1=VDW_rep_atom_map_list[n].first.second;
 
@@ -2879,17 +2879,17 @@ pass_VDW_replusion_screen_fast(pose::Pose const & pose, Real const VDW_overlap_d
 			Real const VDW_radius_TWO=pose.residue(seq_num_2).atom_type(atomno_2).lj_radius();
 
 			Real const cutoff_sum_VDW_radius=VDW_radius_ONE+VDW_radius_TWO-VDW_overlap_dist_cutoff;
-	
+
 			if( ( pose.residue(seq_num_1).xyz(atomno_1)-pose.residue(seq_num_2).xyz(atomno_2) ).length_squared()<(cutoff_sum_VDW_radius*cutoff_sum_VDW_radius) ){
 
 				num_atom_clash_so_far++;
 				if(verbose){
 					std::cout << "FAST_VDW CLASH between: " << seq_num_1 << pose.residue(seq_num_1).type().atom_name(atomno_1) << " and " << seq_num_2 << pose.residue(seq_num_2).type().atom_name(atomno_2);
-					std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO; 
+					std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO;
 					std::cout << " VDW_overlap_dist_cutoff= " << VDW_overlap_dist_cutoff << " cutoff_sum_VDW_radius= " << cutoff_sum_VDW_radius;
 					std::cout << " atom_atom_dist= " << ( pose.residue(seq_num_1).xyz(atomno_1)-pose.residue(seq_num_2).xyz(atomno_2) ).length();
 					std::cout << " num_atom_clash= " << num_atom_clash_so_far << "/" << num_atom_VDW_clash_cutoff << std::endl;
-				} 				
+				}
 				if(num_atom_clash_so_far>=num_atom_VDW_clash_cutoff) return false;
 			}
 
@@ -2921,23 +2921,23 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 
 		std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
 		if(atom_name_1=="HO2'") continue;
-		if(rsd_1.is_virtual(atomno_1) ) continue; 
+		if(rsd_1.is_virtual(atomno_1) ) continue;
 
 
 		bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-		bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
+		bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P
 
 		bool const is_base_sugar_1=(is_3_prime_phosphate_1==false && is_5_prime_phosphate_1==false);
 
 		for(Size atomno_2=1; atomno_2<=rsd_2.natoms(); atomno_2++){ //include hydrogen atoms
 
 			if(seq_num_1==seq_num_2){
-				if(atomno_1>=atomno_2) continue; 
+				if(atomno_1>=atomno_2) continue;
 			}
 
 			std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
 			if(atom_name_2=="HO2'") continue;
-			if(rsd_2.is_virtual(atomno_2) ) continue; 
+			if(rsd_2.is_virtual(atomno_2) ) continue;
 
 			bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
 			bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
@@ -2955,11 +2955,11 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 
 			}
 
-			if(seq_num_1==1 && seq_num_2==2){ 
+			if(seq_num_1==1 && seq_num_2==2){
 				if( is_3_prime_phosphate_1 && is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
-			} 
+			}
 
-			if(seq_num_2==1 && seq_num_1==2){ 
+			if(seq_num_2==1 && seq_num_1==2){
 				if( is_3_prime_phosphate_2 && is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
 			}
 
@@ -2978,17 +2978,17 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 			Real const VDW_radius_TWO=rsd_2.atom_type(atomno_2).lj_radius();
 
 			Real const cutoff_sum_VDW_radius=VDW_radius_ONE+VDW_radius_TWO-VDW_overlap_dist_cutoff;
-	
+
 			if( ( rsd_1.xyz(atomno_1)-rsd_2.xyz(atomno_2) ).length_squared()<(cutoff_sum_VDW_radius*cutoff_sum_VDW_radius) ){
 
 				num_atom_clash_so_far++;
 				if(verbose){
 					std::cout << "SLOW_VDW CLASH between: " << seq_num_1 << rsd_1.type().atom_name(atomno_1) << " and " << seq_num_2 << rsd_2.type().atom_name(atomno_2);
-					std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO; 
+					std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO;
 					std::cout << " VDW_overlap_dist_cutoff= " << VDW_overlap_dist_cutoff << " cutoff_sum_VDW_radius= " << cutoff_sum_VDW_radius;
 					std::cout << " atom_atom_dist= " << ( rsd_1.xyz(atomno_1)-rsd_2.xyz(atomno_2) ).length();
 					std::cout << " num_atom_clash= " << num_atom_clash_so_far << "/" << num_atom_VDW_clash_cutoff << std::endl;
-				} 				
+				}
 				if(num_atom_clash_so_far>=num_atom_VDW_clash_cutoff) return false;
 			}
 		}
@@ -3006,8 +3006,8 @@ void
 cluster_rotamers(bool const second_stage,
 								bool const optimize_screening,
 								Real const cluster_rmsd,
-								Real const large_cluster_rmsd, 
-								utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & input_cluster_center_xyz_list, 
+								Real const large_cluster_rmsd,
+								utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & input_cluster_center_xyz_list,
 								utility::vector1< utility::vector1< numeric::xyzVector<Real> > > & cluster_center_xyz_list){
 
 	if(second_stage){
@@ -3046,7 +3046,7 @@ cluster_rotamers(bool const second_stage,
 	bool const replusion_screen=option[ cluster_rotamer_replusion_screen ]();
 	bool const VDW_rep_screening_slow_check=option[ cluster_rotamer_VDW_rep_screening_slow_check ] ();
 
-	std::string const silent_file = option[output_silent_file](); 
+	std::string const silent_file = option[output_silent_file]();
 	bool create_rotamer_silent_file= (silent_file!="") ? true : false;
 
 	bool const two_stage_clustering =option[ two_stage_rotamer_clustering ]();
@@ -3055,7 +3055,7 @@ cluster_rotamers(bool const second_stage,
 	Size const bin_size= option[ cluster_rotamer_bin_size]();
 	Real const VDW_overlap_dist_cutoff=0.5;
 	Size const num_atom_VDW_clash_cutoff=4;  //(0.8,3), (0.8,1), (0.5,1)
-	
+
 	if(two_stage_clustering==true && create_rotamer_silent_file==true){
 		utility_exit_with_message("two_stage_clustering==true && create_rotamer_silent_file==true");
 	}
@@ -3090,29 +3090,29 @@ cluster_rotamers(bool const second_stage,
 	if(option[ graphic ]()) protocols::viewer::add_conformation_viewer( pose.conformation(), "pose", 400, 400 );
 
 
-	dump_pdb( pose, "before_set_to_A_form_" + sequence + ".pdb");	
+	dump_pdb( pose, "before_set_to_A_form_" + sequence + ".pdb");
 
 	set_nucleotide_to_A_form( pose, 1);
 	set_nucleotide_to_A_form( pose, 2);
 
-	dump_pdb( pose, "after_set_to_A_form_" + sequence + ".pdb");	
-	
-	dump_pdb( pose, "before_virtualize_" + sequence + ".pdb");	
+	dump_pdb( pose, "after_set_to_A_form_" + sequence + ".pdb");
 
-	
-	//add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE", anchor_res );	
-	add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );	
-	
-	dump_pdb( pose, "after_virtualize_" + sequence + ".pdb");	
-	
+	dump_pdb( pose, "before_virtualize_" + sequence + ".pdb");
+
+
+	//add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE", anchor_res );
+	add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
+
+	dump_pdb( pose, "after_virtualize_" + sequence + ".pdb");
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	core::kinematics::FoldTree fold_tree=pose.fold_tree();
 	if(fold_tree.is_simple_tree()==false) utility_exit_with_message( "starting fold_tree is not a simple tree!" );
-	
+
 	core::kinematics::FoldTree rerooted_fold_tree = fold_tree;
 	bool reorder_went_OK = rerooted_fold_tree.reorder( anchor_res );
 	if( !reorder_went_OK) utility_exit_with_message( "!reorder_went_OK" );
-	pose.fold_tree( rerooted_fold_tree); 		
+	pose.fold_tree( rerooted_fold_tree);
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -3142,7 +3142,7 @@ cluster_rotamers(bool const second_stage,
 	rotamer_generator->set_extra_syn_chi(false);
 	rotamer_generator->set_exclude_alpha_beta_gamma_sampling(false);
 	rotamer_generator->set_allow_syn_pyrimidine(false);
-	rotamer_generator->set_bin_size(bin_size); 
+	rotamer_generator->set_bin_size(bin_size);
 	rotamer_generator->initialize_rotamer_generator_list();
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3151,9 +3151,9 @@ cluster_rotamers(bool const second_stage,
 	//scorefxn_->set_weight( fa_atr  , 0.23 ); //standard weight
 	//scorefxn_->set_weight( fa_rep  , 0.12 ); //standard weight
 
-	scorefxn->set_weight( fa_rep  , 1.0 ); 
-	scorefxn->set_weight( fa_atr  , 1.0 ); 
-	scorefxn->set_weight( fa_intra_rep  , 1.0 ); 
+	scorefxn->set_weight( fa_rep  , 1.0 );
+	scorefxn->set_weight( fa_atr  , 1.0 );
+	scorefxn->set_weight( fa_intra_rep  , 1.0 );
 
 	(*scorefxn)(pose);
 
@@ -3170,10 +3170,10 @@ cluster_rotamers(bool const second_stage,
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	SilentFileData silent_file_data;
-	
+
 	utility::vector1< utility::vector1< Torsion_Info > > cluster_center_rotamer_list;
 	cluster_center_rotamer_list.clear();
-	
+
 	utility::vector1< utility::vector1< numeric::xyzVector<Real> > > check_cluster_center_xyz_list;
 	check_cluster_center_xyz_list.clear();
 
@@ -3183,7 +3183,7 @@ cluster_rotamers(bool const second_stage,
 		utility::vector1< Size > empty_size_list;
 		empty_size_list.clear();
 		large_to_small_cluster_center_map_list.clear();
-		large_to_small_cluster_center_map_list.assign(input_cluster_center_xyz_list.size(), empty_size_list);	
+		large_to_small_cluster_center_map_list.assign(input_cluster_center_xyz_list.size(), empty_size_list);
 
 		if(large_to_small_cluster_center_map_list.size()!=input_cluster_center_xyz_list.size()){
 			std::cout << "large_to_small_cluster_center_map_list.size()!=input_cluster_center_xyz_list.size()" << std::endl;
@@ -3198,13 +3198,13 @@ cluster_rotamers(bool const second_stage,
 	Size cluster_count=0;
 	Size pass_VDW_rep_screen_count=0;
 
-	pose::Pose cluster_center_pose=pose;	
+	pose::Pose cluster_center_pose=pose;
 
 
 /////////////////////////////////
 /*
 	bool const extra_chi_rotamer=false;
-	BaseState base_state = (core::scoring::rna::is_purine( pose.residue( sample_res ) )) ? BOTH: ANTI;	
+	BaseState base_state = (core::scoring::rna::is_purine( pose.residue( sample_res ) )) ? BOTH: ANTI;
 
 	PuckerState pucker_state=ALL;
 	core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -3237,7 +3237,7 @@ cluster_rotamers(bool const second_stage,
 	VDW_rep_atom_map_list.clear();
 
 	if(replusion_screen) setup_VDW_rep_atom_map_list(pose, VDW_rep_atom_map_list);
-	
+
 
 	while( rotamer_generator->has_another_rotamer() ){
 		utility::vector1< Torsion_Info > const current_rotamer = rotamer_generator->get_next_rotamer();
@@ -3261,7 +3261,7 @@ cluster_rotamers(bool const second_stage,
 					output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen, TR ); std::cout << std::endl;
 					output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen_check, TR ); std::cout << std::endl;
 					utility_exit_with_message("pass_VDW_rep_screen!=pass_VDW_rep_screen_check");
-				}	
+				}
 
 			}
 
@@ -3273,20 +3273,20 @@ cluster_rotamers(bool const second_stage,
 			(*scorefxn)(pose);
 
 
-			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8); 
-		
+			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8);
+
 			BinaryRNASilentStruct s( pose, tag ); //Does this take a long time to create?
 			silent_file_data.write_silent_struct(s, silent_file, true);
 
-			dump_pdb( pose, tag+".pdb");	
+			dump_pdb( pose, tag+".pdb");
 
 		}else{
 
 			bool pass_screen;
 
 			if(second_stage){
-				pass_screen=is_new_cluster_center_second_stage(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, large_cluster_rmsd, 
-																				 large_to_small_cluster_center_map_list, cluster_center_xyz_list, input_cluster_center_xyz_list);													
+				pass_screen=is_new_cluster_center_second_stage(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, large_cluster_rmsd,
+																				 large_to_small_cluster_center_map_list, cluster_center_xyz_list, input_cluster_center_xyz_list);
 			}else{
 				pass_screen=is_new_cluster_center_xyz(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, cluster_center_xyz_list);
 			}
@@ -3294,7 +3294,7 @@ cluster_rotamers(bool const second_stage,
 
 			if(optimize_screening==false){
 
-				bool pass_screen_check;		
+				bool pass_screen_check;
 
 				if(second_stage){
 					pass_screen_check=is_new_cluster_center_xyz(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, check_cluster_center_xyz_list);
@@ -3309,7 +3309,7 @@ cluster_rotamers(bool const second_stage,
 					output_boolean("pass_screen=", pass_screen, TR ); std::cout << std::endl;
 					output_boolean("pass_screen_check=", pass_screen_check, TR ); std::cout << std::endl;
 					utility_exit_with_message("pass_screen!=pass_screen_check for rotamer_count");
-				}				
+				}
 			}
 
 
@@ -3328,7 +3328,7 @@ cluster_rotamers(bool const second_stage,
 					std::cout << " rotamer_count= " << rotamer_count << " cluster_count= " << cluster_count << " time_taken= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 
 					if(replusion_screen) std::cout << " pass_VDW_rep_screen_count= " << pass_VDW_rep_screen_count;
-					
+
 					std::cout << std::endl;
 
 				}
@@ -3518,19 +3518,19 @@ main( int argc, char * argv [] )
 	utility::vector1< Real > blank_real_vector;
 
 
-	NEW_OPT( delete_res, "delete_res", blank_size_vector); 
-	NEW_OPT( sample_res, "sample_res", blank_size_vector ); 
-	NEW_OPT( minimize_res, "minimize_res", blank_size_vector ); 
-	NEW_OPT( fold_tree_strings, "fold_tree_strings", blank_string_vector );  //five_prime_seq_num-three_prime_seq_num-cut_point 
+	NEW_OPT( delete_res, "delete_res", blank_size_vector);
+	NEW_OPT( sample_res, "sample_res", blank_size_vector );
+	NEW_OPT( minimize_res, "minimize_res", blank_size_vector );
+	NEW_OPT( fold_tree_strings, "fold_tree_strings", blank_string_vector );  //five_prime_seq_num-three_prime_seq_num-cut_point
 	NEW_OPT( input_res, "Residues already present in starting file", blank_size_vector );
 	NEW_OPT( fast, "quick runthrough for debugging", false );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "");
 	NEW_OPT( alignment_res_pairs, "alignment_res_pairs", blank_string_vector );  //1-3 4-5 ,res 1 of static to res 3 of moving...res 4 of static to res 5 of moving.
 	NEW_OPT( alignment_res_pairs_two, "alignment_res_pairs_two", blank_string_vector );  //1-3 4-5 ,res 1 of static to res 3 of moving...res 4 of static to res 5 of moving.
 	NEW_OPT( RMSD_res_pairs, "RMSD_res_pairs", blank_string_vector );  //1-3 4-5 ,RMDS res 1 of first pdb to res 3 of second pdb..res 4 of first pdb to res 5 of second pdb.
-	NEW_OPT( alignment_RMSD_CUTOFF, "alignment_RMSD_CUTOFF", 0.0 );  
-	NEW_OPT( graphic, "Turn graphic on/off", true); //May 5, 2010 
-	NEW_OPT( tag_name, "tag_name", "BLAH_TAG"); //Nov 13, 2010 
+	NEW_OPT( alignment_RMSD_CUTOFF, "alignment_RMSD_CUTOFF", 0.0 );
+	NEW_OPT( graphic, "Turn graphic on/off", true); //May 5, 2010
+	NEW_OPT( tag_name, "tag_name", "BLAH_TAG"); //Nov 13, 2010
 	NEW_OPT( output_silent_file, "output_silent_file", "");
 
 	NEW_OPT( lower_to_full_res, "lower_to_full_res", blank_size_vector);
@@ -3588,8 +3588,9 @@ main( int argc, char * argv [] )
 
   protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 }
 

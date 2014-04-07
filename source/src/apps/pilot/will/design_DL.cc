@@ -87,19 +87,19 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-	
+
 	devel::init(argc,argv);
 
-	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );		
+	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	for(Size ifile = 1; ifile <= basic::options::option[basic::options::OptionKeys::in::file::s]().size(); ++ifile) {
 		std::string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[ifile];
 		Pose pose;
 		core::import_pose::pose_from_pdb(pose,infile);
 		infile = utility::file_basename(infile);
-	
+
 		ScoreFunctionOP sf = core::scoring::getScoreFunction();
-	
+
 		using namespace core::pack::task;
 		PackerTaskOP task = TaskFactory::create_packer_task(pose);
 		vector1< bool > aas(20,false);
@@ -110,21 +110,22 @@ int main (int argc, char *argv[]) {
 		for(Size i = 1; i <= pose.n_residue(); ++i) {
 			if(pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR") {
 				task->nonconst_residue_task(i).prevent_repacking();
-			} else {	
+			} else {
 				task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 				task->nonconst_residue_task(i).allow_noncanonical_aa("DAL",*rs);
 				// task->nonconst_residue_task(i).allow_noncanonical_aa("DPR",*rs);
 			}
 		}
-	
+
 		protocols::simple_moves::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
-	
+
 		pose.dump_pdb(infile+"_DL.pdb");
-	}	
+	}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }
@@ -132,8 +133,8 @@ int main (int argc, char *argv[]) {
 
 
 
-// 
-// 
+//
+//
 
 
 

@@ -102,7 +102,7 @@ public: // constructor/deconstructor
 		if( option[ segments ]() != "" ) {
 			parts = string_split( option[ segments ](), ',' );
 		} else {
-			utility_exit_with_message( "[ERROR] No segments to be deleted. " );			
+			utility_exit_with_message( "[ERROR] No segments to be deleted. " );
 		}
 		if( parts.size() < 1 ) {
 			utility_exit_with_message( "[ERROR] Segments are not defined properly: ',' is required to separete segments. " );
@@ -123,7 +123,7 @@ public: // constructor/deconstructor
 
 		// set scorefxn
 		scorefxn_ = core::scoring::getScoreFunction();
-		
+
 		if ( option[ in::file::native ].user() ) {
 			core::import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::in::file::native ] );
 		}
@@ -194,7 +194,7 @@ private: // data
 	core::scoring::ScoreFunctionOP scorefxn_;
 	std::map< Size, Size > segments_region_;
 	Pose native_;
-	
+
 };
 
 typedef utility::pointer::owning_ptr< DeleteSegments > DeleteSegmentsOP;
@@ -217,6 +217,7 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 

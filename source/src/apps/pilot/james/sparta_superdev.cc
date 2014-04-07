@@ -235,10 +235,10 @@ public:
 			utility::io::ozstream output_stream( output_fn );
 			core::io::pdb::dump_bfactor_pdb( native_pose_, bfactors, output_stream );
 			output_stream.close();
-	
+
 			vector1< float > scores( sparta_.score_pose_per_residue(native_pose_) );
 			core::pose::initialize_atomid_map( bfactors, native_pose_, 0.0 );
-	
+
 			for ( Size ii = 1; ii <= native_pose_.total_residue(); ++ii ) {
 				float const score( scores[ii] );
 				sparta_scores_[ii].push_back(score);
@@ -246,7 +246,7 @@ public:
 					bfactors[ AtomID(jj,ii) ] = score;
 				}
 			}
-	
+
 			output_fn = ( tag + ".sparta_dev.pdb" );
 			float const total_sparta_score(
 				std::accumulate( scores.begin(), scores.end(), 0.0 ) / 4
@@ -310,6 +310,7 @@ main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

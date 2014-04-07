@@ -213,7 +213,7 @@ interface_rmsd(
       if ( mod_pose.pdb_info()->chain(jj) != ref_pose.pdb_info()->chain(ii)) continue;
       if ( mod_pose.pdb_info()->number(jj) != ref_pose.pdb_info()->number(ii)) continue;
       Size num_atoms ( ref_pose.residue(ii).natoms() );
-    
+
       for ( core::Size i = 1; i <= num_atoms; ++i ) {
         if ( predicate ( ref_pose, mod_pose, ii, i) ){
       	  Size num_atoms2 ( mod_pose.residue(jj).natoms() );
@@ -330,6 +330,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

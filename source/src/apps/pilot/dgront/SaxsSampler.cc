@@ -178,6 +178,7 @@ int main(int argc, char * argv[]) {
 	abrelax->fold(init_pose, prot_ptr);
     } catch ( utility::excn::EXCN_Base const & e ) {
                              std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                 }
-       return 0; 
+       return 0;
 }

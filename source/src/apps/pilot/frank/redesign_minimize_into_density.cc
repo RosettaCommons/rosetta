@@ -109,7 +109,7 @@ main( int argc, char * argv [] )
 							  new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
 		}
 	}
-	
+
 	if ( !option[ symmetry::symmetry_definition ].user() )  {
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 		movemap->set_bb(true);
@@ -131,6 +131,7 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 }

@@ -23,7 +23,7 @@ main( int argc, char * argv [] ) {
         using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	devel::init(argc, argv);
-	
+
 	utility::vector1<core::pose::PoseOP> models = core::import_pose::poseOPs_from_pdbs(option[OptionKeys::in::file::s]());
 	core::Real mapreso = option[OptionKeys::edensity::mapreso]();
 	core::Real gridspacing = option[OptionKeys::edensity::grid_spacing]();
@@ -32,6 +32,7 @@ main( int argc, char * argv [] ) {
 	edens.writeMRC(outfile);
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
     }

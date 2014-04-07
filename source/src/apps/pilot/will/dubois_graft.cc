@@ -104,7 +104,7 @@ public:
 		pose.set_chi(3,1, pose.chi(3,1) + n     );
 		pose.set_chi(4,1, pose.chi(4,1) + d     );
 		// pose.set_psi(2,pose.psi(2)+10.0*numeric::random::gaussian());
-	}	
+	}
 };
 
 
@@ -160,7 +160,7 @@ main( int argc, char * argv [] )
 		// add pept res
 		utility::vector1<Pose> pepts;
 		import_pose::pose_from_pdb(pepts,*fa_residue_set,option[in::file::s]()[ifile]);
-		
+
 		for(Size imodel = 1; imodel <= pepts.size(); ++imodel) {
 			Pose pept = pepts[imodel];
 			core::pose::remove_lower_terminus_type_from_pose_residue(pept,1);
@@ -170,7 +170,7 @@ main( int argc, char * argv [] )
 			core::kinematics::Stub s = getxform(pept.residue(1),init.residue(1));
 			xform_pose(pept,s);
 			// pept.dump_pdb("pept.pdb");
-	
+
 			Pose init_pept = init;
 			for(Size i = 2; i <= pept.n_residue(); ++i) {
 				init_pept.append_polymer_residue_after_seqpos( pept.residue(i), i-1, false );
@@ -179,11 +179,11 @@ main( int argc, char * argv [] )
 			add_lower_terminus_type_to_pose_residue(init_pept,1);
 			add_variant_type_to_pose_residue(init_pept,"VIRTUAL_NTERM",1);
 			// init_pept.dump_pdb("test0.pdb");
-			
+
 			TR << "init score " << init_sym_sc << " " << pept_sc << " " << pept_sc+init_sym_sc << std::endl;
-	
+
 			core::pose::symmetry::make_symmetric_pose(init_pept);
-		
+
 			std::string fname = utility::file_basename( option[in::file::s]()[ifile] );
 			core::io::silent::SilentFileData sfd;
 			Pose pose = init_pept;
@@ -225,7 +225,7 @@ main( int argc, char * argv [] )
 							ss_out->fill_struct(pose,tag+"_MIN");
 							sfd.write_silent_struct( *ss_out, option[out::file::o]+"/"+fname+"__"+lead_zero_string_of(imodel,2)+".sc" );
 						}
-				
+
 					}
 				}
 			}
@@ -238,6 +238,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

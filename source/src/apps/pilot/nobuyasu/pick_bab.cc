@@ -134,34 +134,34 @@ public: // constructor/deconstructor
 		} else {
 			ssinfo_ = new SS_Info2;
 		}
-		
+
 		// output file
 		std::ostringstream filename;
 		filename <<  option[ output ]() << ".out";
 		output_.open( filename.str().c_str() ,std::ios::out );
-		
+
 		// output file for phi psi
 		filename.str("");
 		filename <<  option[ output ]() << ".phipsi.out";
 		output2_.open( filename.str().c_str() ,std::ios::out );
 
 		output_ << "id " << "filename " << "updown1 " << "updown2 " << "positions " << "babmotif " << "cross_over "
-				<< "hs_dist " << "hs_angle1 " << "hs_angle2 " << "dsasa " << "broken_hb " << "lp_hb " << "helix_cycle " 
+				<< "hs_dist " << "hs_angle1 " << "hs_angle2 " << "dsasa " << "broken_hb " << "lp_hb " << "helix_cycle "
 				<< "helix_bend " << "rama1 " << "rama2 " << "lp1E " << "lp2E "
-				<< "len_s1 " << "len_l1 " << "len_h " << "len_l2 " << "len_s2 " 
+				<< "len_s1 " << "len_l1 " << "len_h " << "len_l2 " << "len_s2 "
 				<< "abe_s1e " << "abe_l1 " << "abe_hb "
 				<< "seq_s1e " << "seq_l1 " << "seq_hb "
-				<< "abe_he " << "abe_l2 " << "abe_s2b " 
-				<< "seq_he " << "seq_l2 " << "seq_s2b " 
+				<< "abe_he " << "abe_l2 " << "abe_s2b "
+				<< "seq_he " << "seq_l2 " << "seq_s2b "
 				<< "spairs " << std::endl;
-				
+
 		// set scorefxn
 		scorefxn_centroid_ = core::scoring::getScoreFunction( false );
 		scorefxn_fullatom_ = core::scoring::getScoreFunction();
-		
+
 		num_bab_ = 0;
 		nstruct_ = 0;
-		
+
 	}
 	virtual ~PickBAB(){ output_.close(); }
 
@@ -209,17 +209,17 @@ public: // apply
 
 		// calc bab
 		BetaAlphaBetaMotifSet babset( ssinfo_, sheet_set );
-		
-		// make poly ala		
+
+		// make poly ala
 		protocols::simple_moves::MakePolyXMover make_poly_ala( "ALA", false, false, false );
 		make_poly_ala.apply( pose );
 
 		// set rama to score function
 		scorefxn_fullatom_->set_weight( core::scoring::rama, 1.0 );
-		
-		// calc fullatom energy		
+
+		// calc fullatom energy
 		( *scorefxn_fullatom_ )( pose );
-		
+
 		// make poly gly
 		protocols::simple_moves::MakePolyXMover make_poly_gly( "GLY", false, false, false );
 		Pose gly_pose( pose );
@@ -228,7 +228,7 @@ public: // apply
 
 //		read abego setup
 		Size level( option[ abego ]() );
-		
+
 		for( BetaAlphaBetaMotifs::const_iterator iter = babset.bab_motifs().begin(),
 					 iter_end = babset.bab_motifs().end(); iter != iter_end; ++iter ) {
 			BetaAlphaBetaMotif & bab( **iter );
@@ -237,7 +237,7 @@ public: // apply
 				StrandCOP strand1 = ssinfo_->strand( bab.strand1() );
 				StrandCOP strand2 = ssinfo_->strand( bab.strand2() );
 				HelixCOP helix = ssinfo_->helix( bab.helix() );
-				
+
 				using protocols::forge::build::Interval;
 				utility::vector1< Interval > intervals;
 				Interval interval( strand1->end()+1, strand2->begin()-1 );
@@ -252,10 +252,10 @@ public: // apply
 				Size loop2_length = strand2->begin() - helix->end() - 1;
 				if( loop1_length > 10 ) continue;
 				if( loop2_length > 10 ) continue;
-				
+
 				Size pdblen = pose.pdb_info()->number( strand2->end() ) - pose.pdb_info()->number( strand1->begin() );
 				if( pdblen != ( strand2->end() - strand1->begin() ) ) continue;
-				
+
 				// get inout of pleats
 				if( pose.aa( strand1->end() ) == core::chemical::aa_gly &&
 						pose.aa( strand1->end()-1 ) == core::chemical::aa_gly ) continue;
@@ -328,7 +328,7 @@ public: // apply
 				utility::vector1< String > abegop2 = am_.get_symbols( pose, loop2_begin, loop2_end, level );
 				utility::vector1< String > abegop2_a = am_.get_symbols( pose, loop2_end+1, loop2_end+2, level);
 
-				
+
 				Real rama2( 0.0 );
 				for( Size ii=loop2_begin; ii<=loop2_end; ii++ ) {
 					Real r1( pose.energies().residue_total_energies( ii )[ core::scoring::rama ] );
@@ -339,7 +339,7 @@ public: // apply
 						rama2 += r1;
 					}
 				}
-				
+
 				// make loop pose
 				// Pose loop1_pose( pose ), loop2_pose( pose );
 				// loop1_pose.conformation().delete_residue_range_slow( helix->begin() + 1 , pose.total_residue() );
@@ -347,23 +347,23 @@ public: // apply
 				// make_poly_gly.apply( loop1_pose );
 				// (*scorefxn_fullatom_)( loop1_pose );
 				// Real loop1E( loop1_pose.energies().total_energies()[ core::scoring::fa_rep ] );
-				
+
 				Real loop1E( 0.0 );
 				for( Size ii=loop1_begin-1; ii<=loop1_end+5; ii++ ) {
 					loop1E += gly_pose.energies().residue_total_energies( ii )[ core::scoring::fa_rep ];
 				}
-				
+
 				// loop2_pose.conformation().delete_residue_range_slow( strand2->begin() + 1, pose.total_residue() );
 				// loop2_pose.conformation().delete_residue_range_slow( 1, helix->end() - 1 );
 				// make_poly_gly.apply( loop2_pose );
 				// (*scorefxn_fullatom_)( loop2_pose );
 				// Real loop2E( loop2_pose.energies().total_energies()[ core::scoring::fa_rep ] );
-				
+
 				Real loop2E( 0.0 );
 				for( Size ii=loop2_begin-5; ii<=loop2_end+1; ii++ ) {
 					loop2E += gly_pose.energies().residue_total_energies( ii )[ core::scoring::fa_rep ];
 				}
-				
+
 
 				using core::chemical::oneletter_code_from_aa;
 
@@ -374,24 +374,24 @@ public: // apply
 				name << pose.pdb_info()->number( strand1->begin() ) << "-" << pose.pdb_info()->number( strand1->end() ) << ";"
 					 << pose.pdb_info()->number( helix->begin() ) << "-" << pose.pdb_info()->number( helix->end() ) << ";"
 					 << pose.pdb_info()->number( strand2->begin() ) << "-" << pose.pdb_info()->number( strand2->end() );
-					 
+
 				String id( "A00000" );
 				std::ostringstream num;
 				num << ++num_bab_;
 				id.replace( 6 - num.str().length(), num.str().length(), num.str() );
-						 							
+
 				output_ << A( 6, id ) << " " << LJ( 20, me ) << A( 5, inout1 ) << " " << A( 5, inout2 ) << " "
 						<< LJ( 27, name.str() ) << " " <<  LJ( 8, bab.name() ) << " "
 						<< I( 2, cross_over ) << "  "
 						<< F( 5, 2, bab.hsheet_dist() ) << " " << F( 7, 2, bab.hs_angle() ) << " " << F( 7, 2, bab.hsheet_elev_angle() ) << " "
 						<< F( 6, 1, dsasa ) << " "
 						<< I( 2, broken_hydrogen ) << " " << I( 2, lp_hbonds.size() ) << " " << A( 3, bab.helix_cycle_as_string() ) << " "
-						<< F( 5, 2, helix->bend() ) << " " << F( 5, 2, rama1 ) << " " << F( 5, 2, rama2 ) << " " 
+						<< F( 5, 2, helix->bend() ) << " " << F( 5, 2, rama1 ) << " " << F( 5, 2, rama2 ) << " "
 				        << F( 6, 2, loop1E ) << " " << F( 6, 2, loop2E ) << " "
 						<< I( 3, strand1->length() ) << " " << I( 3, loop1_length ) << " "
 						<< I( 3, helix->length() )   << " " << I( 3, loop2_length ) << " "
 						<< I( 3, strand2->length() ) << " ";
-								
+
 				output2_ << A(6, id ) << " " << A( 20, me ) << " ";
 				// write abego for loop1
 				name.str("");
@@ -402,14 +402,14 @@ public: // apply
 				if( name.str() == "" ) name << ".";
 				output_ << LJ( 10, name.str() ) << " ";
 				output_ << abegop1_a[ 1 ] << abegop1_a[ 2 ] << "  ";
-				
+
 				// write phi psi for loop1
-				output2_ << LJ( 7, name.str() ) << " ";				
+				output2_ << LJ( 7, name.str() ) << " ";
 				for( Size i=1; i<=loop1_length; i++ ) {
 					output2_ <<  F( 7, 2, pose.phi( strand1->end() + i ) ) << " " << F( 7, 2, pose.psi( strand1->end() + i ) ) << " ";
 				}
 				output2_ << " ";
-				
+
 				// write sequence for loop1
 				name.str("");
 				output_ << oneletter_code_from_aa( pose.aa( loop1_begin-2 ) ) << oneletter_code_from_aa( pose.aa( loop1_begin-1 ) ) << " ";
@@ -429,17 +429,17 @@ public: // apply
 				if( name.str() == "" ) name << ".";
 				output_ << LJ( 10, name.str() ) << " ";
 				output_ << abegop2_a[ 1 ] << abegop2_a[ 2 ] << "  ";
-																					 
-                // write phi psi for loop2 																						
-				output2_ << LJ( 7, name.str() ) << " ";				
+
+                // write phi psi for loop2
+				output2_ << LJ( 7, name.str() ) << " ";
 				for( Size i=1; i<=loop2_length; i++ ) {
 					output2_ <<  F( 7, 2, pose.phi( helix->end() + i ) ) << " " << F( 7, 2, pose.psi( helix->end() + i ) ) << " ";
-                }																					 
-				
+                }
+
 				// write phi psi for 1st res of 2nd strand
 				output2_ <<  F( 7, 2, pose.phi( strand2->begin() ) ) << " " << F( 7, 2, pose.psi( strand2->begin() ) ) << " ";
 				output2_ << std::endl;
-				
+
 				// write sequence for loop2
 				name.str("");
 				output_ << oneletter_code_from_aa( pose.aa( loop2_begin-2 ) ) << oneletter_code_from_aa( pose.aa( loop2_begin-1 ) )<< " ";
@@ -449,7 +449,7 @@ public: // apply
 				if( name.str() == "" ) name << ".";
 				output_ << LJ( 10, name.str() ) << " ";
 				output_ << oneletter_code_from_aa( pose.aa( loop2_end+1 ) ) << oneletter_code_from_aa( pose.aa( loop2_end+2 ) );
-				
+
 				// output spairset name
 				output_ << " " << spairset->name() << std::endl;
 
@@ -462,7 +462,7 @@ private: // data
 
 	protocols::fldsgn::topology::SS_Info2_OP ssinfo_;
 	std::ofstream output_;
-    std::ofstream output2_;																				   
+    std::ofstream output2_;
 	core::scoring::ScoreFunctionOP scorefxn_centroid_;
 	core::scoring::ScoreFunctionOP scorefxn_fullatom_;
 	core::util::ABEGOManager am_;
@@ -491,6 +491,7 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 
@@ -516,14 +517,14 @@ main( int argc, char * argv [] )
 //    String spairs_string = option[ spairs ]();
 //		utility::vector1< String > sp( utility::string_split( spairs_string, '.' ) );
 //		if( sp.size() == 2 ) {
-//			if( spairs_string != "" && spairset->name_wo_rgstr() != spairs_string ) return;		
+//			if( spairs_string != "" && spairset->name_wo_rgstr() != spairs_string ) return;
 //		} else if ( sp.size() == 3 ) {
 //			if( spairs_string != "" && spairset->name() != spairs_string ) return;
 //		}
 
 //		    using namespace protocols::toolbox::pose_metric_calculators;
 //				BuriedUnsatisfiedPolarsCalculator bu_calc( "default", "default" );
-//				bu_calc.special_region( region );	
+//				bu_calc.special_region( region );
 //				basic::MetricValue< Size > val;
 //				bu_calc.get( "special_region_bur_unsat_polars", val, pose );
 //				std::cout << val.value() << std::endl;

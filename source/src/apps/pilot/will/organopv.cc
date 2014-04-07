@@ -108,8 +108,8 @@ static basic::Tracer TR("organopv");
 static numeric::random::RandomGenerator RG(765456);
 
 
-void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd, 
-			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint) 
+void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,
+			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
 {
 	core::scoring::constraints::ConstraintOP cc = new core::scoring::constraints::AtomPairConstraint(
 		aid1, aid2, new core::scoring::constraints::HarmonicFunc(mean,sd), st );
@@ -139,7 +139,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf) {
 	movemap->set_jump(true);
 	core::conformation::symmetry::make_symmetric_movemap( pose, *movemap );
 	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-	m.apply(pose);		
+	m.apply(pose);
 }
 
 // void moverb(Pose & pose, ScoreFunctionOP sf)
@@ -185,10 +185,10 @@ void* doit(void* /*x = NULL*/) {
 
 
 	Pose pose;
-	// chemical::ResidueTypeSetCAP rs( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );	
+	// chemical::ResidueTypeSetCAP rs( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 	// chemical::make_pose_from_sequence(pose,std::string("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),*rs,false);
 	// for(Size i = 1; i <= pose.n_residue(); ++i) {
-	// 	pose.set_phi  (i,-60); pose.set_psi  (i,-45); pose.set_omega(i,180);		
+	// 	pose.set_phi  (i,-60); pose.set_psi  (i,-45); pose.set_omega(i,180);
 	// }
 	// pose.dump_pdb("helix.pdb");
 	// std::exit(-1);
@@ -211,12 +211,12 @@ void* doit(void* /*x = NULL*/) {
 	// chemical::add_variant_type_to_pose_residue( pose, "VIRTUAL_N", 1 );
 	// chemical::add_variant_type_to_pose_residue( pose, "VIRTUAL_C", 2 );
 	pose.set_phi  (1,-58.4193);
-	pose.set_psi  (1,-46.555);	
-	pose.set_omega(1,-179.774);	
+	pose.set_psi  (1,-46.555);
+	pose.set_omega(1,-179.774);
 	pose.set_phi  (2,-58.4193);
-	pose.set_psi  (2,-46.555);	
-	pose.set_omega(2,-179.774);	
-	pose.set_xyz(AtomID(8,1),numeric::xyzVector<Real>(1.404,0.540,-3.183));	
+	pose.set_psi  (2,-46.555);
+	pose.set_omega(2,-179.774);
+	pose.set_xyz(AtomID(8,1),numeric::xyzVector<Real>(1.404,0.540,-3.183));
 
 	// for(Size i=1; i<= pose.residue(1).natoms(); ++i) {
 	// 	std::cerr << "ATOM " << i << " " << pose.residue(1).atom_name(i) << std::endl;
@@ -229,12 +229,12 @@ void* doit(void* /*x = NULL*/) {
 	// }
 	// std::exit(-1);
 
-	
+
 	core::conformation::symmetry::make_symmetric_pose( pose );
-	
+
 	// pose.dump_pdb("sym_test.pdb");
 	// std::exit(-1);
-	
+
 	// std::cerr << "TMP " << pose.residue(3).atom_index("C1") << std::endl;
 	using namespace core::scoring::constraints;
 	std::map<std::string,std::string> atomRO,atomLO,atomL,atomR,atomLO2;
@@ -269,7 +269,7 @@ void* doit(void* /*x = NULL*/) {
 	// hbonding
 	pose.add_constraint(new ResDepAngleConstraint(atomR,atomLO,atomLO2,1,3, 4, new HarmonicFunc(2.094395,0.03) ));
 	pose.add_constraint(new ResDepAngleConstraint(atomR,atomLO,atomLO2,2,4,11, new HarmonicFunc(2.094395,0.03) ));
-	
+
 	pose.add_constraint(new AngleConstraint( AtomID(2,3), AtomID(3,3), AtomID(1,4 ), new HarmonicFunc(2.094395,0.03) ));
 	pose.add_constraint(new AngleConstraint( AtomID(2,4), AtomID(3,4), AtomID(1,11), new HarmonicFunc(2.094395,0.03) ));
 
@@ -292,11 +292,11 @@ void* doit(void* /*x = NULL*/) {
 	sf->show(pose);
 
 	std::string tag = string_of(uniform());
-	
-	if (option[ basic::options::OptionKeys::parser::view ]()) {		
+
+	if (option[ basic::options::OptionKeys::parser::view ]()) {
 		protocols::viewer::add_conformation_viewer(pose.conformation(),"smhybrid",1200,1200);
 	}
-	
+
 	Pose min = pose;
 	for(Size i = 1; i < 9999; ++i) {
 		for(Size k = 1; k < 9; ++k) {
@@ -308,7 +308,7 @@ void* doit(void* /*x = NULL*/) {
 				jmp.set_rotation(numeric::rotation_matrix_degrees(numeric::xyzVector<Real>(0,0,1),gaussian())*jmp.get_rotation());
 				jmp.set_translation(jmp.get_translation()+(gaussian()/3.0)*numeric::xyzVector<Real>(1,0,0));
 				jmp.set_translation(jmp.get_translation()+(gaussian()/3.0)*numeric::xyzVector<Real>(0,1,0));
-				jmp.set_translation(jmp.get_translation()+(gaussian()/3.0)*numeric::xyzVector<Real>(0,0,1));			
+				jmp.set_translation(jmp.get_translation()+(gaussian()/3.0)*numeric::xyzVector<Real>(0,0,1));
 				pose.set_jump(j,jmp);
 			}
 			design(pose,sf);
@@ -319,7 +319,7 @@ void* doit(void* /*x = NULL*/) {
 	}
 	std::cerr << "SCORE " << (*sf)(pose) << " " << tag << std::endl;
 	sf->show(pose);
-	
+
 	pose.dump_pdb("organopv"+tag+".pdb");
 
 	// std::exit(-1);
@@ -335,16 +335,17 @@ main( int argc, char * argv [] )
 	try {
 
 	devel::init(argc,argv);
-	
+
 	if (option[ basic::options::OptionKeys::parser::view ]()) {
 		protocols::viewer::viewer_main( &doit );
 	} else {
 		while(1) doit(NULL);
 	}
-	
+
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

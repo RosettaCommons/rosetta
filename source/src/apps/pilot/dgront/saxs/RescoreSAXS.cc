@@ -111,6 +111,7 @@ int main( int argc, char * argv [] ) {
     not_universal_main( debay );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
 
     return 0;

@@ -1346,8 +1346,9 @@ int main(int argc, char** argv) {
 #ifdef _DEBUG
 	  boinc_finish_diag();
 #endif
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
+		 return -1;
 	}
 }
 
@@ -1357,6 +1358,7 @@ int main(int argc, char** argv) {
 
 int main(int /*argc*/, char** /*argv*/) {
 	std::cout << "Build with boinc api (scons extras=boinc,static)!" << std::endl;
+	return -1;
 }
 
 #endif

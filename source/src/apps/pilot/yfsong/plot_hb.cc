@@ -115,7 +115,8 @@ main (int argc, char *argv[]){
 
 	//	if ( option[ plot_hb::show_poly ]() ) core::scoring::hbonds::show_poly();
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

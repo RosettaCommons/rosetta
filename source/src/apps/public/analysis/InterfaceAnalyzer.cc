@@ -76,9 +76,9 @@ public:
 
 	virtual bool reinitialize_for_new_input() const { return true; }
 	virtual protocols::moves::MoverOP fresh_instance() const {return new IAMover;}
-	
-	
-	
+
+
+
 	void assign_IA_mover(core::pose::Pose & pose);
 
 private:
@@ -114,7 +114,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 			 jobname
 		);
 	}
-	else if (basic::options::option[fixedchains].active()){ 
+	else if (basic::options::option[fixedchains].active()){
 		utility::vector1<std::string> fixed_chains_string (basic::options::option[fixedchains].value());
 		//parse the fixed chains to figure out pose chain nums
 		std::set< int > fixed_chains; //This is a set of the CHAIN IDs, not residue ids
@@ -204,8 +204,9 @@ main( int argc, char* argv[] )
 	protocols::jd2::JobDistributor::get_instance()->go(new IAMover());
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

@@ -212,7 +212,7 @@ main (int argc, char *argv[]){
 	    Mat start_rot   = symm_pose.jump(sym_jump).get_rotation();
 			Vec neg_disp = Vec(1.0,0,0);
 			if (ang >= 90.0) {
-				neg_disp = Vec(-1.0,0,0);	
+				neg_disp = Vec(-1.0,0,0);
 			}
 
 			for(Size r=30; r<=60; r++) {
@@ -232,7 +232,7 @@ main (int argc, char *argv[]){
         } else {
           h1_axis = get_helix_axis(symm_pose, cstart, cstop);
           h1_cent = get_helix_center(symm_pose, cstart, cstop);
-        } 
+        }
         h1_axis.normalize();
 
 				// Figure out which subunit is next to chain A. The helices in each chain will be antiparallel by construction.
@@ -265,7 +265,7 @@ main (int argc, char *argv[]){
 					for (Size iw=0; iw<360; iw++) {
 		        Mat rot = numeric::x_rotation_matrix_degrees(w) * start_rot;
 		    	  j.set_rotation(rot);
-    		    symm_pose.set_jump(sym_jump,j);	
+    		    symm_pose.set_jump(sym_jump,j);
 
 
 		        // Recalculate the helical axes and positions at the new radius.
@@ -346,6 +346,7 @@ main (int argc, char *argv[]){
   } // ifile
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
   return 0;

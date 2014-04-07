@@ -164,7 +164,7 @@ generate_factory(){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char* argv[] )
-{ 
+{
 	try{
 	std::cout << "blah" << std::endl;
 	using basic::options::option;
@@ -299,6 +299,7 @@ main( int argc, char* argv[] )
 	out.close();
  }
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

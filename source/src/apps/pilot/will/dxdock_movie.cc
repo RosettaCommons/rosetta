@@ -211,10 +211,10 @@ dock(
 	int S1 = 3;
 	int S2 = 2;
 	Vec A1 = Ux;
-	Vec A2 = Uy;	
+	Vec A2 = Uy;
 	Mat swapXZ = rotation_matrix_degrees(Vec(1,0,1),180.0); // swap axis
 	Real ANG1 = 360.0/Real(S1);
-	Real ANG2 = 360.0/Real(S2);	
+	Real ANG2 = 360.0/Real(S2);
 
 	Mat Rsym1 = rotation_matrix_degrees(Ux,ANG1);
 	Mat Rsym2 = rotation_matrix_degrees(Uy,ANG2);
@@ -230,7 +230,7 @@ dock(
 		Mat R = Ry*Rx*Rz;
 		Xform const x1(       R, V0);
 		Xform const x2( Rsym1*R, V0 );
-		
+
 		Real t = sic.slide_into_contact(x1,x2,Uz);
 
 		Hit h(1,1,1,S1); h.s1 = x1; h.s2 = x2; h.s1.t += t*Uz;
@@ -245,7 +245,7 @@ dock(
 		tmp1.dump_pdb("tmp1.pdb");
 		tmp2.dump_pdb("tmp2.pdb");
 		utility_exit_with_message("test c2");
-		
+
 		for(Real dx = 0; dx < ANG1; dx += 5.0){
 			Real t = 0.0;
 			Xform xd = rotation_matrix_degrees(A1,dx) * x;
@@ -274,7 +274,7 @@ dock(
 			Vec cen = get_rot_center(x3,x4,S2);
 			// Xform xout( x3.R, x3.t-cen-t/2.0*A1 );
 
-			Xform xout( x4.R, x4.t - cen );			
+			Xform xout( x4.R, x4.t - cen );
 			xout = swapXZ * xout;
 			xforms_out << ((numeric::xyzMatrix<Real>)(xout.R)) << " " << xout.t << std::endl;
 
@@ -285,7 +285,7 @@ dock(
 			tmp0.dump_pdb("tmp0.pdb");
 			tmp1.dump_pdb("tmp1.pdb");
 			tmp2.dump_pdb("tmp2.pdb");
-			cout << swapXZ*cen << endl;			
+			cout << swapXZ*cen << endl;
 			utility_exit_with_message("test d3");
 
 		}
@@ -341,7 +341,7 @@ read_sphere(
 		is >> x >> y >> z;
 		ssamp[i] = Vec(x,y,z);
 	}
-	is.close();	
+	is.close();
 }
 
 void
@@ -436,6 +436,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }
@@ -470,7 +471,7 @@ int main(int argc, char *argv[]) {
 // compute_xform_score(
 // 	protocols::sic_dock::XfoxmScore const & xfs,
 // 	core::pose::Pose const & pose1,
-// 	core::pose::Pose const & pose2	
+// 	core::pose::Pose const & pose2
 // ){
 // 	float tot_score = 0.0;
 // 	for(core::Size ir = 1; ir <= pose1.n_residue(); ++ir){

@@ -97,7 +97,7 @@ void read_fragdata( vector1< core::fragment::FragDataOP > & fds, utility::io::iz
 	in.close();
 }
 
-std::map<string, vector1<core::fragment::FragDataOP> > 
+std::map<string, vector1<core::fragment::FragDataOP> >
 get_frags_map( bool design = false ) {
 	using namespace core::fragment;
 	TR << "reading frags" << std::endl;
@@ -180,14 +180,14 @@ struct ClashCheck {
 		using numeric::square;
 		typedef  numeric::xyzTriple< platform::Size >  CubeDim; // Cube dimensions
 		typedef  numeric::xyzTriple< platform::Size >  CubeKey; // Cube index-triple key
-		
+
 		neighbor_cutoff_ = neighbor_cutoff;
 		neighbor_cutoff_sq_ = ( neighbor_cutoff*neighbor_cutoff);
 		points_.resize(pose_.n_residue()*5);
 		for(Size i = 0; i < pose_.n_residue(); ++i) {
 			for(Size j = 1; j <= 5; ++j) points_[5*i+j] = pose_.xyz(AtomID(j,i+1));
 		}
-		
+
 		bbl_ = bbu_ = points_[1]; // Lower and upper corners of bounding box
 		for ( Size ii = 2; ii <= points_.size(); ++ii ) { bbl_.min( points_[ ii ] ); bbu_.max( points_[ ii ] ); }
 		bbl_ -= 10 * std::numeric_limits< Real >::epsilon();
@@ -202,7 +202,7 @@ struct ClashCheck {
 		);
 
 		cubes_.dimension( cube_dim_.x(), cube_dim_.y(), cube_dim_.z() );
-		
+
 		for ( Size i = 1; i <= points_.size(); ++i ) {
 			Vec const pp( points_[ i ]);
 			CubeKey const cube_key(
@@ -458,9 +458,9 @@ void* doit(void*) {
 	// for(Size i = 1; i <= lnk1 .n_residue(); ++i ) lnk1 .residue(i).chain(2);
 	// for(Size i = 1; i <= lnk2 .n_residue(); ++i ) lnk2 .residue(i).chain(3);
 	// for(Size i = 1; i <= hyda1.n_residue(); ++i ) hyda1.residue(i).chain(4);
-	// for(Size i = 1; i <= petf .n_residue(); ++i ) petf .residue(i).chain(5);				
+	// for(Size i = 1; i <= petf .n_residue(); ++i ) petf .residue(i).chain(5);
 
-	if (option[ basic::options::OptionKeys::parser::view ]()) {		
+	if (option[ basic::options::OptionKeys::parser::view ]()) {
 		protocols::viewer::add_conformation_viewer(lnk2.conformation(),"rblinker",1000,1000);
 	}
 
@@ -655,7 +655,7 @@ void* doit(void*) {
 				}
 				if(clash) continue;
 			}
-			
+
 			// clash check linkers against each other
 			if( clashcheck_petf && clashcheck_hyd ) {
 				for( Size ir = 1; ir <= lnk1.n_residue(); ++ir ) {
@@ -666,7 +666,7 @@ void* doit(void*) {
 				if( lnk1.residue(ir).atom(ia).xyz().distance_squared( lnk2.residue(jr).atom(ja).xyz() ) < 10.0 ) {
 					clash = true;
 					break;
-				}								
+				}
 				}
 				if(clash) break;
 				}
@@ -677,8 +677,8 @@ void* doit(void*) {
 				if(clash) break;
 			}
 			if(clash) continue;
-			
-			
+
+
 			break;
 		}
 
@@ -728,7 +728,7 @@ void* doit(void*) {
 		//std::cerr << "OUTTEST " << option[rblinker::output_pdb_bound].user() << " " << psIdis << " " << hyddis << std::endl;
 		bool bound =  (psIdis <= 15.0 || hyddis <= 15.0);
 		if( option[rblinker::output_pdb].user() || bound ) {
-			if( ( option[rblinker::output_pdb]() && (uniform() < 0.01 || bound) ) || 
+			if( ( option[rblinker::output_pdb]() && (uniform() < 0.01 || bound) ) ||
 				 ( option[rblinker::output_pdb_bound]() && bound && uniform() < 1.0/(Real(noutput)+1.0) ) )
 			{
 				Pose tmphyd=hyd,tmppetf=petf;
@@ -774,6 +774,7 @@ int main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

@@ -61,8 +61,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 
-	virtual std::string get_name() const  
-	{ return std::string("RMSByResStatistics"); }	
+	virtual std::string get_name() const
+	{ return std::string("RMSByResStatistics"); }
 };
 
 
@@ -161,6 +161,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

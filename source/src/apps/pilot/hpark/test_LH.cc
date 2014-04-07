@@ -82,10 +82,10 @@ loophash_search( pose::Pose const pose,
 								 Size const ires )
 {
 
-	chemical::ResidueTypeSetCAP cen_rsdset = 
+	chemical::ResidueTypeSetCAP cen_rsdset =
 		chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
-	protocols::moves::MoverOP tocen 
+	protocols::moves::MoverOP tocen
 		= new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 
 	// Pick replacing resid
@@ -96,7 +96,7 @@ loophash_search( pose::Pose const pose,
 	pose::Pose pose_cen( pose );
 	tocen->apply( pose_cen );
 	std::vector< core::io::silent::SilentStructOP > decoys;
-	
+
 	LHsampler->build_structures( pose_cen, decoys );
 
 	/*
@@ -119,9 +119,9 @@ int main( int argc, char *argv [] ){
   core::pose::Pose pose, native;
   core::chemical::ResidueTypeSetCAP rsd_set
     = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-  
-  core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ](1) ); 
-  //core::import_pose::pose_from_pdb( native, *rsd_set, option[ in::file::native ]() ); 
+
+  core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ](1) );
+  //core::import_pose::pose_from_pdb( native, *rsd_set, option[ in::file::native ]() );
 
 	LoopHashSamplerOP LHsampler = setup_LHsampler();
 	loophash_search( pose, LHsampler, 20 );

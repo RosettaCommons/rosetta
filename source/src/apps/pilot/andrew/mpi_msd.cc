@@ -122,7 +122,7 @@ public:
 				entity.set_entity_element( ii, choices()[ ii ][ new_element_ind ] );
 			}
 		} else {
-			Size pos_to_mutate = static_cast< Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;		
+			Size pos_to_mutate = static_cast< Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;
 			core::Size const n_mutation_choices( choices()[ pos_to_mutate ].size() );
 			Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
 			entity.set_entity_element( pos_to_mutate, choices()[ pos_to_mutate ][ new_element_ind ] );
@@ -326,6 +326,7 @@ int main( int argc, char ** argv )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

@@ -133,7 +133,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 		task->nonconst_residue_task(revert_pos[ipos]).restrict_absent_canonical_aas(allowed_aas);
 		task->nonconst_residue_task(revert_pos[ipos]).initialize_from_command_line();
 		allowed_aas[aa_from_name(aa_name)] = false;
-	}	
+	}
 
   // Actually perform design
 	make_symmetric_PackerTask_by_truncation(pose, task);
@@ -233,11 +233,11 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
   // print_movemap( *movemap );
   protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   m.apply(pose);
-} 
+}
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
-  using core::id::AtomID; 
+  using core::id::AtomID;
   utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
   core::id::AtomID_Map<Real> atom_sasa;
   core::id::AtomID_Map<bool> atom_mask;
@@ -247,7 +247,7 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
     for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
       atom_mask[AtomID(j,i)] = true;
     }
-  } 
+  }
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
   utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
   for(Size i = 1; i <= pose.n_residue(); i++) {
@@ -271,7 +271,7 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	scc.Init();
 
 	// Figure out which chains touch chain A, and add the residues from those chains
-	// into the sc surface objects	
+	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
 	for (Size i=1; i<=nres_monomer; ++i) {
 		scc.AddResidue(0, pose.residue(i));
@@ -441,15 +441,15 @@ void
 	using namespace scoring;
 	using namespace utility;
 	using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 
 	// Iterate through files
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
@@ -474,7 +474,7 @@ void
 	 	}
 
     // Define which subs are part of the oligomeric building block.
-    Sizes intra_subs; 
+    Sizes intra_subs;
     if (!option[matdes::num_subs_building_block].user()) {
       utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_building_block");
     } else {
@@ -511,14 +511,14 @@ void
 			utility::vector1<std::string> mutalyze_ids;
 		  for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
 				mutalyze_ids.push_back(pose.residue(mutalyze_pos[ipos]).name3());
-		  }	
-	
+		  }
+
 			// Repack and minimize using scorefxn
 			repack(pose, scorefxn, mutalyze_pos);
 			bool min_rb = option[matdes::mutalyze::min_rb]();
 			minimize(pose, scorefxn, mutalyze_pos, false, true, min_rb);
 			scorefxn->score(pose);
-	
+
 			// Write the pdb file of the design
       std::ostringstream r_string;
       r_string << std::fixed << std::setprecision(1) << radial_disps[iconfig];
@@ -530,7 +530,7 @@ void
 
 			// Calculate the AverageDegree of the designed positions
 			Real avg_deg = average_degree(pose, mutalyze_pos, intra_subs.size());
-	
+
 	    // Calculate the change in SASA upon complex formation
 	    Real bound_sasa = core::scoring::calc_total_sasa(pose, 1.4);
 	    j.set_translation(Vec(1000,0,0));
@@ -553,14 +553,14 @@ void
 		      std::cout << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
 		    }
 			}
-	
+
 	    // Calculate the surface area and surface complementarity for the interface
 	    Real int_area = 0; Real sc = 0;
 	    new_sc(pose, intra_subs, int_area, sc);
-	
+
 	    // Get the packing score
 	    Real packing = get_atom_packing_score(pose, intra_subs, 9.0);
-	
+
 			// Calculate per-residue energies for interface residues
 			Real interface_energy = 0;
 			core::scoring::EnergyMap em;
@@ -572,14 +572,14 @@ void
 			avg_interface_energy = interface_energy / mutalyze_pos.size();
 			// Multiply those energies by the weights
 			em *= scorefxn->weights();
-	
+
 			// Calculate the ddG of the monomer in the assembled and unassembled states
 	   	protocols::protein_interface_design::movers::ddG ddG_mover2 = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
 	    ddG_mover2.calculate(pose);
 	    Real ddG2 = ddG_mover2.sum_ddG();
 	    TR << files[ifile] << " mutalyzed ddG = " << ddG2 << std::endl;
 	    ddG_mover2.report_ddG(TR);
-	
+
 			// Create a scorefile struct, add custom metrics to it
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			ss_out->fill_struct(pose,fn);
@@ -595,10 +595,10 @@ void
 			ss_out->add_energy("sasa_int_area", buried_sasa);
 			ss_out->add_energy("sc_int_area", int_area);
 			ss_out->add_energy("sc", sc);
-	
+
 			// Write the scorefile
 			sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
-	
+
 			// Loop through the design positions and mutate each non-Gly/Pro residue to alanine, then
 			// calculate the ddG to get a measure of the contribution of each residue to the interface
 			Sizes pos;
@@ -616,7 +616,7 @@ void
 
 				// Design
 		    design(pose_for_ala_scan, scorefxn, pos, id);
-	
+
 		    // Calculate the ddG of the monomer in the assembled and unassembled states
 		    protocols::protein_interface_design::movers::ddG ddG_mover3 = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
 		    ddG_mover3.calculate(pose_for_ala_scan);
@@ -625,7 +625,7 @@ void
 		    ddG_mover3.report_ddG(TR);
 			}
 		} // for iconfig in radial_disps
-			
+
 	} // ifile
 
 	return NULL;
@@ -649,6 +649,7 @@ main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

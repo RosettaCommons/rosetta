@@ -9,7 +9,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @file   CutOutDomain.cc
 //
-/// @brief Created to extract domain 
+/// @brief Created to extract domain
 /// @author Gideon Lapidoth (glapidoth@gmail.com)
 /// @date 08 May, 2013
 
@@ -68,7 +68,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-clock_t clk1; //for timing the process 
+clock_t clk1; //for timing the process
 clock_t clk2;
 
 
@@ -107,21 +107,21 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::cutoutdomain;
 	static basic::Tracer TR("CutOutDomain:");
-	
+
    option.add_relevant( OptionKeys::cutoutdomain::start                       );
-   
+
    if ( !option[ OptionKeys::in::file::s ].user() ||
     !option[ OptionKeys::cutoutdomain::start ].user() ||
     !option[ OptionKeys::cutoutdomain::end ].user()
   ) {
     TR  << "Usage: " <<std:: endl <<
       "-s <Template file> <aligned PDB files> " <<
-      "  -cutoutdomain:start <residue number> -cutoutdomain:end <residue number> " 
+      "  -cutoutdomain:start <residue number> -cutoutdomain:end <residue number> "
       "  -database <minirosetta_db>"  << std::endl;
     exit(-1);
   }
-    
-	
+
+
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 	core::Size count = 0;
 	core::pose::Pose pose; //Contains the first pdb (template pdb) in the command line
@@ -131,11 +131,11 @@ main( int argc, char * argv [] )
 	core::Size start(
 		option[ basic::options::OptionKeys::cutoutdomain::start ]()
 	);
-	
+
 	core::Size end(
 		option[ basic::options::OptionKeys::cutoutdomain::end ]()
 	);
-	
+
 	while( input.has_another_pose() && (count < 1000 ) ) {
 		try{
 		core::pose::Pose Temp_pose;
@@ -157,12 +157,12 @@ main( int argc, char * argv [] )
 		TR<<"End resdiue in the target pose "<<name<<" : "<<Temp_pose.residue(to).name1()<<to<<std::endl;
 		Temp_pose.conformation().delete_residue_range_slow( to+1,Temp_pose.total_residue() );
 		Temp_pose.conformation().delete_residue_range_slow( 1,from-1 );
-		
+
 		TR<<"First resdiue in the target pose "<<name<<" : "<<to<<std::endl;
 		std::string output_name = Temp_pose.pdb_info()->name()+"_loop.pdb";
 		Temp_pose.dump_pdb(output_name);
-	
-		
+
+
 		count ++;
 	}
 	catch (int k) {
@@ -173,7 +173,8 @@ main( int argc, char * argv [] )
 	clk2 = clock();
 	TR<<"The entire process took: "<<(clk2-clk1)/CLOCKS_PER_SEC<<std::endl;
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+			std::cerr << "caught exception " << e.msg() << std::endl;
+			return -1;
     }
 	return 0;
 }

@@ -65,29 +65,29 @@ public:
 	void apply( Pose & pose ) {
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
 		core::Size n_res = pose.n_residue();
-	
+
 		//mc
 		TR << "MC mover" << std::endl;
 		to_centroid.apply(pose);
 		protocols::moves::MonteCarlo mc(pose, *scorefxn_low, kT);
-	
+
 		protocols::viewer::add_monte_carlo_viewer(mc, "Gaussian", 600, 600);
-	
+
 		protocols::simple_moves::BBG8T3AMover bbg8t3amover;
 
 		//ref pose
 		core::pose::Pose ref_pose(pose);
-	
+
 		std::string move_type = bbg8t3amover.type();
 		core::Real proposal_density_ratio=1.0;
 		for (Size i = 1; i <= ntrials; ++i) {
 			bbg8t3amover.apply(pose);
 			proposal_density_ratio = bbg8t3amover.last_proposal_density_ratio();
-	
+
 			//TR << "proposal density ratio = " << proposal_density_ratio << endl;
 			mc.boltzmann(pose, move_type, proposal_density_ratio);
 		}
-	
+
 		mc.show_counters();
 	}
 
@@ -133,6 +133,7 @@ int main(int argc, char *argv[])
     protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
     return 0;
 }

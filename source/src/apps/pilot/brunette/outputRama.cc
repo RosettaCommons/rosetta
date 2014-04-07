@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh> 
+#include <core/pose/util.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
@@ -38,7 +38,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 
-#include <devel/init.hh>   
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 
 //protocols
@@ -54,7 +54,7 @@ using namespace core::scoring;
 using utility::vector1;
 using core::Size;
 using core::Real;
-using core::pose::Pose; 
+using core::pose::Pose;
 
 basic::Tracer tr( "ouputrama" );
 
@@ -69,7 +69,7 @@ vector1< Real> calc_rama(Pose & pose){
     }
     return(rama_v);
 }
- 
+
 vector1< Real> calc_rama2b(Pose & pose){
     core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
     scorefxn->set_weight( core::scoring::rama, 0.0 );
@@ -98,14 +98,14 @@ int main( int argc, char * argv [] ) {
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
         std::string outFile = (tag + ".rama");
-        utility::io::ozstream output(outFile);   
+        utility::io::ozstream output(outFile);
         output << ">" << tag << std::endl;
         vector1<Real> rama_v =  calc_rama(*input_poseOP);
         for(Size ii=1; ii<=rama_v.size(); ++ii)
             output << ii << " " << rama_v[ii] << std::endl;
         output.close();
         std::string outFile2 = (tag + ".rama2b");
-        utility::io::ozstream output2(outFile2);   
+        utility::io::ozstream output2(outFile2);
         output2 << ">" << tag << std::endl;
         vector1<Real> rama2b_v =  calc_rama2b(*input_poseOP);
         for(Size ii=1; ii<=rama2b_v.size(); ++ii)
@@ -114,7 +114,8 @@ int main( int argc, char * argv [] ) {
         std::cout <<"finished " << tag << std::endl;
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
     return 0;
 }

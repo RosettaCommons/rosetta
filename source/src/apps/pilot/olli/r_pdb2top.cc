@@ -227,8 +227,9 @@ int main( int argc, char** argv ) {
 		}
 	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	// finish with 0 when there's no error
 	return 0;
 }

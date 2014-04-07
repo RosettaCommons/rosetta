@@ -103,7 +103,7 @@ void register_options() {
 // 			psi = atan2(R.xy(),R.xz());
 // 		} else {
 // 			theta = -numeric::constants::d::pi / 2.0;
-// 			psi = atan2(-R.xy(),-R.xz());			
+// 			psi = atan2(-R.xy(),-R.xz());
 // 		}
 // 		phi = 0;
 // 	}
@@ -200,7 +200,7 @@ void register_options() {
 // 		if( ss1=='L' && ss2=='L' ) a = ll;
 // 		if( ss1=='H' && ss2=='E' || ss1=='E' && ss2=='H' ) a = he;
 // 		if( ss1=='H' && ss2=='L' || ss1=='L' && ss2=='H' ) a = hl;
-// 		if( ss1=='E' && ss2=='L' || ss1=='L' && ss2=='E' ) a = el;		
+// 		if( ss1=='E' && ss2=='L' || ss1=='L' && ss2=='E' ) a = el;
 // 		Real dx,dy,dz,ex,ey,ez;
 // 		if(ss1=='E' && ss2=='H' || ss1=='L' && ss2=='H' || ss1=='L' && ss2=='E'){
 // 			   get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
@@ -215,7 +215,7 @@ void register_options() {
 // 		if( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("FOO");
 // 		// expensive memory lookup
 // 		char val = a[index];
-// 		// 
+// 		//
 // 		// std::cout << (int)val << "'" << val << "'"<< std::endl;
 // 		return val == -127 ? 0.0 : exp(((float)val)/12.0-2.5);
 // 	}
@@ -243,7 +243,7 @@ void register_options() {
 // 	float
 // 	score(
 // 		core::pose::Pose & pose,
-// 		bool compute_ss = true		
+// 		bool compute_ss = true
 // 	) const {
 // 		if(compute_ss){
 // 			core::scoring::dssp::Dssp dssp(pose);
@@ -255,7 +255,7 @@ void register_options() {
 // 				float s1 = score(pose,ir,jr);
 // 				float s2 = score(pose,jr,ir);
 // 				// if( s1 < 0.0f ) std::cout << s1 << std::endl;
-// 				// if( s2 < 0.0f ) std::cout << s2 << std::endl;				
+// 				// if( s2 < 0.0f ) std::cout << s2 << std::endl;
 // 				tot_score += (s1<0.0f) ? 0.0f : s1;
 // 				tot_score += (s2<0.0f) ? 0.0f : s2;
 // 			}
@@ -272,7 +272,7 @@ void register_options() {
 // 				float s1 = score(pose,ir,jr);
 // 				float s2 = score(pose,jr,ir);
 // 				// if( s1 < 0.0f ) std::cout << s1 << std::endl;
-// 				// if( s2 < 0.0f ) std::cout << s2 << std::endl;				
+// 				// if( s2 < 0.0f ) std::cout << s2 << std::endl;
 // 				tot_score += (s1<0.0f) ? 0.0f : s1;
 // 				tot_score += (s2<0.0f) ? 0.0f : s2;
 // 			}
@@ -371,7 +371,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			std::cout << "DONE " << tot << " " << count << std::endl;
-		}		
+		}
 	} else if( option[dstat::make_hist].user() ){
 		utility::io::izstream in(option[dstat::make_hist]());
 		double dx,dy,dz,ex,ey,ez;
@@ -405,7 +405,7 @@ int main(int argc, char *argv[]) {
 				for( int diex = -1; diex <= 1; ++diex ) {
 				for( int diey = -1; diey <= 1; ++diey ) {
 				for( int diez = -1; diez <= 1; ++diez ) {
-				
+
 					int i = (idx+didx);
 					int j = (idy+didy);
 					int k = (idz+didz);
@@ -415,10 +415,10 @@ int main(int argc, char *argv[]) {
 
 					if( 0 > i || i > 15 ) continue;
 					if( 0 > j || j > 15 ) continue;
-					if( 0 > k || k > 15 ) continue;										
+					if( 0 > k || k > 15 ) continue;
 					if( 0 > l || l > 23 ) continue;
 					if( 0 > m || m > 11 ) continue;
-					if( 0 > n || n > 23 ) continue;										
+					if( 0 > n || n > 23 ) continue;
 
 					int index = i + 16*j + 16*16*k + 16*16*16*l + 16*16*16*24*m + 16*16*16*24*12*n;
 					if( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("bad index");
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
 					double ndelt_l = (cex-ex/pi_2*24.0);
 					double ndelt_m = (cey-ey/pi_2*24.0);
 					double ndelt_n = (cez-ez/pi_2*24.0);
-					
+
 					// std::cout <<ndelt_i<<" "<<ndelt_j<<" "<<ndelt_k<<" "<<ndelt_l<<" "<<ndelt_m<<" "<<ndelt_n<<std::endl;
 
 					double dist2 = ndelt_i*ndelt_i+ndelt_j*ndelt_j+ndelt_k*ndelt_k+ndelt_l*ndelt_l+ndelt_m*ndelt_m+ndelt_n*ndelt_n;
@@ -486,7 +486,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
-	  std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

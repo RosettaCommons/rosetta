@@ -153,7 +153,7 @@ void append_sequence_to_pose(
 
 		// do the actual append
 		if ( rsd_type.has_variant_type( LOWER_TERMINUS ) )
-					utility_exit_with_message( "did not expect a lower terminus residue\n" );			
+					utility_exit_with_message( "did not expect a lower terminus residue\n" );
 		if( new_rsd->aa() == aa_unk || new_rsd->aa() == aa_vrt ) {
 				TR.Error << "found unknown aminoacid or X in sequence at position " << i <<  std::endl;
 				if ( i< ie ) {
@@ -215,6 +215,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

@@ -8,9 +8,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
-/// @brief  
-/// @author 
+/// @file
+/// @brief
+/// @author
 
 
 #include <ObjexxFCL/string.functions.hh>
@@ -160,11 +160,12 @@ int main( int argc, char** argv ) {
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-	
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	
+
 	return 0;
 
 }

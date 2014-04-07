@@ -346,10 +346,11 @@ main( int argc, char* argv [] ) {
 
 	tr.Debug << "finished rescoring alignments." << std::endl;
 	tr.flush();
-	
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	
+
 	return 0;
 } // int main( int argc, char * argv [] )

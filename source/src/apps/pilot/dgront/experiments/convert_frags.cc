@@ -45,12 +45,13 @@ main( int argc, char * argv [] ) {
 
 	devel::init(argc, argv);
 	register_options();
-	
+
 	ConstantLengthFragSetOP frags = new ConstantLengthFragSet;
 	std::string filename = "frags.9mers";
-	frags->read_fragment_file( filename );	
+	frags->read_fragment_file( filename );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 

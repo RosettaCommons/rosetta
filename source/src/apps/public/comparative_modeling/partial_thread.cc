@@ -202,6 +202,7 @@ main( int argc, char* argv [] ) {
 	tr.Debug << "finished building partial models." << std::endl;
 	tr.flush_all_channels();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 } // int main( int argc, char * argv [] )

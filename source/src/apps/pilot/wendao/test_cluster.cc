@@ -37,7 +37,7 @@ void show_cluster_assignment(KClusterElementOP elem, KClusterData dat){
 		TR << elem->get_distance(ii) <<std::endl;
 	}
 	utility::vector1<Size> cluster_ndx = elem->get_ndx_list();
-	
+
 
 }
 
@@ -65,7 +65,7 @@ void save_cluster_tree_lite(KClusterElementOP elem, KClusterData dat) {
   utility::vector1<std::string> tags;
   utility::vector1< std::string > uniq_source_files;
   Size count_tags_found = 0;
-  
+
   for( Size jj = 1; jj <= source_files.size(); jj++ ) {
     if( std::find( uniq_source_files.begin(), uniq_source_files.end(), source_files[ jj ] ) == uniq_source_files.end() ) {
       uniq_source_files.push_back( source_files[ jj ] );
@@ -95,7 +95,7 @@ void save_cluster_tree_lite(KClusterElementOP elem, KClusterData dat) {
     }
     sfd.clear();
   }
-  
+
 }
 
 void set_up_engine(KClusterOP &engine, Size ndx)
@@ -207,6 +207,7 @@ int main(int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

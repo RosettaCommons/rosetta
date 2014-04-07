@@ -200,7 +200,7 @@ centroid_dist( core::pose::Pose & pose ){
 	} else {
 		centroid2 = rsd2.nbr_atom_xyz(); //Just use the nbr atom if not RNA
 	}
-	
+
 	return (centroid1 - centroid2).length();
 }
 
@@ -514,7 +514,7 @@ adenine_probe_score_test()
 	//////////////////////////////////////////////
 	std::cout << "Doing XY scan... Z = +1.5" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_1.5.table", 1.5, probe_jump_num, box_bins, translation_increment, sample_water_ );
-	
+
 	std::cout << "Doing XY scan... Z = +3.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
@@ -644,6 +644,7 @@ main( int argc, char * argv [] )
   protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 

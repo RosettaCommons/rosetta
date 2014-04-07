@@ -72,7 +72,7 @@ public:
 
 		core::scoring::ScoreFunctionOP score_function_ref = core::scoring::getScoreFunction();
 		core::scoring::ScoreFunctionOP rosetta_scorefxn = new core::scoring::ScoreFunction();
-	
+
 		core::kinematics::MoveMap move_map;
 		move_map.set_bb  ( true );
 		move_map.set_chi ( true );
@@ -81,9 +81,9 @@ public:
 			core::conformation::symmetry::SymmetricConformation const & symm_conf (
 					dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 			core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-	
+
 			// symmetrize scorefunct & movemap
-			rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) ); 
+			rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
 			core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 		}
 
@@ -92,7 +92,7 @@ public:
 		min_map.setup( pose, move_map );
 		Multivec vars( min_map.ndofs() ), dExtal_dvars;
 		min_map.copy_dofs_from_pose( pose, vars );
-	
+
 		utility::vector1< Multivec > dEros_dvars(14);
 		for (int ii=0; ii<14; ++ii) {
 			rosetta_scorefxn->set_weight( core::scoring::fa_atr      , (ii==0 || ii==1)? score_function_ref->get_weight(core::scoring::fa_atr) : 0.0 );
@@ -108,7 +108,7 @@ public:
 			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_angle, (ii==0 || ii==11)? score_function_ref->get_weight(core::scoring::cart_bonded_angle) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_length , (ii==0 || ii==12)? score_function_ref->get_weight(core::scoring::cart_bonded_length) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_torsion , (ii==0 || ii==13)? score_function_ref->get_weight(core::scoring::cart_bonded_torsion) : 0.0 );
-			
+
 			(*rosetta_scorefxn)(pose);  // score pose first
 			rosetta_scorefxn->setup_for_minimizing( pose, min_map );
 			CartesianMultifunc f_ros( pose, min_map, *rosetta_scorefxn, false, false );
@@ -131,7 +131,7 @@ public:
 				std::cerr << std::endl;
 			}
 		}
-	} 
+	}
 
 	virtual std::string get_name() const {
 		return "CustomMover";
@@ -170,6 +170,7 @@ main( int argc, char * argv [] ) {
 	protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
     }

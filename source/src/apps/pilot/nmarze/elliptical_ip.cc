@@ -50,12 +50,13 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		protocols::docking::DockingInitialPerturbationOP elliptical_ip = new protocols::docking::DockingInitialPerturbation( 1, true );
-		
+
 //		protocols::docking::EllipsoidalRandomizationMoverOP elliptical_ip = new protocols::docking::EllipsoidalRandomizationMover( 1, false );
 		protocols::jd2::JobDistributor::get_instance()->go( elliptical_ip );
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
     return 0;
 }

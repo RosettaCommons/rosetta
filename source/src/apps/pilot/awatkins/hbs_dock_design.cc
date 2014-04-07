@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-//awatkins: based heavily on code from kdrew/oop_dock_design.cc 
+//awatkins: based heavily on code from kdrew/oop_dock_design.cc
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -239,9 +239,10 @@ main( int argc, char* argv[] )
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( HDDM_mover );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }//main
 
@@ -289,7 +290,7 @@ HbsDockDesignMinimizeMover::apply(
 
 	// create a monte carlo object for the pertubation phase
 	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *pert_score_fxn, option[ hddm::pert_mc_temp ].value() ) );
-	
+
 	TR << "pert_mc object created" << std::endl;
 	/*********************************************************
 	Docking Setup
@@ -298,7 +299,7 @@ HbsDockDesignMinimizeMover::apply(
 	// create a rigid body mover to move the peptide around in the pocket
 	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, option[ hddm::pert_dock_rot_mag].value(),  option[ hddm::pert_dock_trans_mag].value()) );
 	TR << "pert_dock_rbpm object created" << std::endl;
-	
+
 	/*********************************************************
 	Peptide Setup
 	**********************************************************/
@@ -347,10 +348,10 @@ HbsDockDesignMinimizeMover::apply(
 			//hbs_seq_positions.push_back( i+3 );
 			hbs_seq_position = i;
 			TR << "hbs_seq_position is " << i;
-			
+
 			//awatkins: set up constraints
 			add_hbs_constraint( pose, i );
-			
+
 			//awatkins: do not use small/shear mover on hbs positions, use hbs mover instead
 			//pert_pep_mm->set_bb( i, false );
 			//pert_pep_mm->set_bb( i+1, false );
@@ -382,7 +383,7 @@ HbsDockDesignMinimizeMover::apply(
 	pert_pep_random->add_mover( pert_pep_shear, 1 );
 	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, option[ hddm::pert_pep_num_rep ].value() ) );
 	//hbs::HbsRandomSmallMoverOP hpm_small( new hbs::HbsRandomSmallMover( hbs_seq_position, hbs_length, 2.0 ) );
-	
+
 	/******************************************************************************
 	Rotamer Trials Setup
 	*******************************************************************************/
@@ -478,7 +479,7 @@ HbsDockDesignMinimizeMover::apply(
 	desn_sequence->add_mover( desn_ta_min );
 
 	TR << "Main loop..." << std::endl;
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 //kdrew: only turn on pymol observer in debug mode
@@ -495,7 +496,7 @@ if( option[ hddm::pymol ].value() )
 
 		pert_mc->reset(pose);
 
-		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector 
+		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector
 		//kdrew: and do not want to perturb away until designed in hotspot residue
 		if( k == 1 && option[ hddm::hbs_design_first ].value() )
 		{
@@ -529,7 +530,7 @@ if( option[ hddm::pymol ].value() )
 		mc->boltzmann( pose );
 		TR<< "post mc->boltzmann" << std::endl;
 		mc->show_state();
-		
+
 	}//dock_design for loop
 
 	mc->recover_low( pose );
@@ -617,7 +618,7 @@ if( option[ hddm::pymol ].value() )
 	//stats_pose.dump_pdb("stats_trans1000.pdb");
 
 	Pose repack_stats_pose( stats_pose );
-	
+
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
 	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -684,8 +685,8 @@ if( option[ hddm::pymol ].value() )
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-HbsDockDesignMinimizeMover::setup_pert_foldtree( 
-	core::pose::Pose & pose 
+HbsDockDesignMinimizeMover::setup_pert_foldtree(
+	core::pose::Pose & pose
 )
 {
 	using namespace kinematics;

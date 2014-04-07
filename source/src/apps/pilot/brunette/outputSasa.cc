@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh> 
+#include <core/pose/util.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
@@ -35,7 +35,7 @@
 
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
-#include <devel/init.hh>   
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 
 //protocols
@@ -49,7 +49,7 @@ using namespace ObjexxFCL::format;
 using utility::vector1;
 using core::Size;
 using core::Real;
-using core::pose::Pose; 
+using core::pose::Pose;
 
 basic::Tracer tr( "ouputSasa" );
 
@@ -84,7 +84,7 @@ std::string calc_burial(Pose const & pose, Real pore_radius, Real boundarySasaTh
     }
     return(burial);
 }
- 
+
 
 int main( int argc, char * argv [] ) {
 	try{
@@ -102,7 +102,7 @@ int main( int argc, char * argv [] ) {
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
         std::string outFile = (tag + ".sasa");
-        utility::io::ozstream output(outFile);   
+        utility::io::ozstream output(outFile);
         output << ">" << tag << std::endl;
         vector1<Real> sasa =  calc_sasa(*input_poseOP,PORE_RADIUS);
         for(Size ii=1; ii<=sasa.size(); ++ii)
@@ -111,7 +111,8 @@ int main( int argc, char * argv [] ) {
         std::cout <<"finished " << tag << std::endl;
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
     return 0;
 }

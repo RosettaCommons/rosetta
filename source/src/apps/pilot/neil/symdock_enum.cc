@@ -122,8 +122,8 @@ int pose_cbcount(Pose const & a, Pose const & b) {
 		for(core::Size j = 1; j <= b.n_residue(); ++j) {
 			if(a.residue(i).xyz(2).distance_squared(b.residue(j).xyz(2)) < 100.0) {
 				count++;
-			}			
-		}		
+			}
+		}
 	}
 	return count;
 }
@@ -153,7 +153,7 @@ sicfast(
 		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
 		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
 	}
-	
+
 	// get bounds for plane hashes
 	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
 	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
@@ -166,11 +166,11 @@ sicfast(
 	}
 	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
-	
-	
+
+
 	int xlb = floor(xmn/BIN)-2; int xub = ceil(xmx/BIN)+2; // one extra on each side for correctness,
 	int ylb = floor(ymn/BIN)-2; int yub = ceil(ymx/BIN)+2; // and one extra for outside atoms
-	
+
 	// TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
 	// TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
 
@@ -185,7 +185,7 @@ sicfast(
 		int const iy = (int)ceil(ia->y()/BIN)-ylb;
 		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 		if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
-	}	
+	}
 	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
 		// int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
 		// int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
@@ -194,7 +194,7 @@ sicfast(
 		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 		if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
 	}
-	
+
 	// check hashes for min dis
 	int imna=0,jmna=0,imnb=0,jmnb=0;
 	double mindis = 9e9;
@@ -209,15 +209,15 @@ sicfast(
 					double const xb = hb(i+k,j+l).x();
 					double const yb = hb(i+k,j+l).y();
 					double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-					
+
 					if( d2 < 16.0 ) {
 						double dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(16.0-d2);
-						if( dz < mindis ) {						
+						if( dz < mindis ) {
 							mindis = dz;
 							imna = i;
 							jmna = j;
 							imnb = i+k;
-							jmnb = j+l;						
+							jmnb = j+l;
 						}
 					}
 				}
@@ -258,7 +258,7 @@ sicfast(
 	}
 	// out.close();
 	// TR << "CB1 " << cbcount << std::endl;
-	
+
 	// // rotate points back -- needed iff pa/pb come by reference
 	rot = rot.transposed();
 	// if( rot != Matf::identity() ) {
@@ -269,7 +269,7 @@ sicfast(
 	// uncomment this to get hashes in local space
 	// rot = Matf::identity();
 	// ori = Vec(0,0,1);
-	
+
 	if(debug){
 	{
 		utility::io::ozstream out("hasha.pdb");
@@ -296,9 +296,9 @@ sicfast(
 		Vecf viz = rot*hb(imnb,jmnb);
 		out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"C"<<I(4,100+jmnb)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 		out.close();
-	}	
-	}	
-	
+	}
+	}
+
 	return mindis;
 }
 
@@ -334,10 +334,10 @@ void run(  ) {
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 	using numeric::conversions::radians;
-	
+
 	core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
-	
-	
+
+
 	Pose t_in,p_in;
 	core::import_pose::pose_from_pdb(t_in,*crs,option[in::file::s]()[1]);
 	core::import_pose::pose_from_pdb(p_in,*crs,option[in::file::s]()[2]);
@@ -359,13 +359,13 @@ void run(  ) {
 	// rot_pose(t_in,taxs,dihedral_degrees(paxs,Vec(0,0,0),taxs,tcom));
 	// rot_pose(p_in,paxs,dihedral_degrees(taxs,Vec(0,0,0),paxs,pcom));
 	// t_in.dump_pdb("t0.pdb");
-	// p_in.dump_pdb("p0.pdb");	
+	// p_in.dump_pdb("p0.pdb");
 	// utility_exit_with_message("debug");
-	
+
 	Pose const tinit(t_in);
 	Pose const pinit(p_in);
 
-	
+
 	int ANGLE_INCR = 6;
 
 	// compute high/low min dis for pent and tri here, input to sicfast and don't allow any below
@@ -433,8 +433,8 @@ void run(  ) {
 				if(cbc==0) break;
 			}
 		}
-		
-		
+
+
 		for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 			Pose t = tinit;
 			rot_pose(t,taxs,(core::Real)itri);
@@ -470,14 +470,14 @@ void run(  ) {
 			// trans_pose(p2,tax2*trimnpos[itri/ANGLE_INCR+1]);
 			// p1.dump_pdb("tritri1.pdb");
 			// p2.dump_pdb("tritri2.pdb");
-			// TR << "PNT NEG D " << -d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;			
+			// TR << "PNT NEG D " << -d/2.0/sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;
 			// for(int i = 1; i <= 145; ++i) {
 			// 	TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbpos(itri/ANGLE_INCR+1,i) << std::endl;
 			// 	trans_pose(p1,taxs*0.1);
 			// 	trans_pose(p2,tax2*0.1);
-			// }			
+			// }
 			// TR << "D " << trimnpos[itri/ANGLE_INCR+1] << std::endl;
-			// // utility_exit_with_message("test");			
+			// // utility_exit_with_message("test");
 		}
 		for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 			Pose t = tinit;
@@ -514,12 +514,12 @@ void run(  ) {
 			// trans_pose(p2,tax2*trimnneg[itri/ANGLE_INCR+1]);
 			// p1.dump_pdb("test1.pdb");
 			// p2.dump_pdb("test2.pdb");
-			// TR << "PNT NEG D " << d << " " << sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;			
+			// TR << "PNT NEG D " << d << " " << sin( angle_radians(tax2,Vec(0,0,0),taxs)/2.0 ) << std::endl;
 			// for(int i = 1; i <= 145; ++i) {
 			// 	TR << "CB " << i << " " << pose_cbcount(p1,p2) << " " << tricbneg(itri/ANGLE_INCR+1,i) << std::endl;
 			// 	trans_pose(p1,-taxs*0.1);
 			// 	trans_pose(p2,-tax2*0.1);
-			// }			
+			// }
 			// TR << "D " << trimnneg[itri/ANGLE_INCR+1] << std::endl;
 			// utility_exit_with_message("test");
 		}
@@ -532,7 +532,7 @@ void run(  ) {
 	ObjexxFCL::FArray3D<float> surfdis((core::Size)floor(72.0/ANGLE_INCR),(core::Size)floor(120.0/ANGLE_INCR),(core::Size)floor(360.0/ANGLE_INCR),0.0);
 	{
 		double mxd = 0;
-		int cbmax = 0, mxiori = 0, mxipnt = 0, mxitri = 0;	
+		int cbmax = 0, mxiori = 0, mxipnt = 0, mxitri = 0;
 		for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
 			TR << "pent rot: " << ipnt << " cbmax: " << cbmax << std::endl;
 			Pose p = pinit;
@@ -554,8 +554,8 @@ void run(  ) {
 				}
 				int iori = -1, ori_stage = 1;
 				bool newstage = true;
-				// for(iori = 0; iori < 360; iori+=ANGLE_INCR) 
-				while(ori_stage < 5) {						
+				// for(iori = 0; iori < 360; iori+=ANGLE_INCR)
+				while(ori_stage < 5) {
 					if(newstage) {
 						if( ori_stage == 1 || ori_stage == 2 ) iori = ( 90.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
 						if( ori_stage == 3 || ori_stage == 4 ) iori = (270.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
@@ -575,7 +575,7 @@ void run(  ) {
 					double x = d * sin(numeric::conversions::radians(gamma));
 					double y = d * cos(numeric::conversions::radians(gamma));
 					double w = x / sin(numeric::conversions::radians(alpha));
-					double z = x / tan(numeric::conversions::radians(alpha));				
+					double z = x / tan(numeric::conversions::radians(alpha));
 					double dpnt = y+z;
 					double dtri = w;
 					double pntmn,trimn;
@@ -587,25 +587,25 @@ void run(  ) {
 						if( dp < 1 )  { ori_stage++; newstage=true; continue; };
 						if( dt < 1 )  { ori_stage++; newstage=true; continue; };
 						// if(ipnt==18 && itri==72 && iori==276)
-						// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp) 
+						// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos(ipnt/ANGLE_INCR+1,dp)
 						// 	  << "    " << dt << " " << dtri << " " << trimn << " " << tricbpos(itri/ANGLE_INCR+1,dt) << std::endl;
 						if( dp <= 97  ) tmpcbc += pntcbpos(ipnt/ANGLE_INCR+1,dp);
 						if( dt <= 145 ) tmpcbc += tricbpos(itri/ANGLE_INCR+1,dt);
 						// TR << "CHK " << dpnt << " " << pntmn << "    " << dtri << " " << trimn << std::endl;
 					} else {
 						pntmn = pntmnneg[ipnt/ANGLE_INCR+1];
-						trimn = trimnneg[itri/ANGLE_INCR+1];					
+						trimn = trimnneg[itri/ANGLE_INCR+1];
 						int dp = (-dpnt+pntmn)*10+1;
 						int dt = (-dtri+trimn)*10+1;
 						if( dp < 1 )  { ori_stage++; newstage=true; continue; };
 						if( dt < 1 )  { ori_stage++; newstage=true; continue; };
 						// if(ipnt==18 && itri==72 && iori==276)
-						// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp) 
+						// 	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg(ipnt/ANGLE_INCR+1,dp)
 						// 	  << "    " << dt << " " << dtri << " " << trimn << " " << pntcbneg(itri/ANGLE_INCR+1,dt) << std::endl;
 						if( dp <= 97  ) tmpcbc += pntcbneg(ipnt/ANGLE_INCR+1,dp);
 						if( dt <= 145 ) tmpcbc += tricbneg(itri/ANGLE_INCR+1,dt);
 					}
-				
+
 					surfdis(ipnt/ANGLE_INCR+1,itri/ANGLE_INCR+1,iori/ANGLE_INCR+1) = d;
 					cbcount(ipnt/ANGLE_INCR+1,itri/ANGLE_INCR+1,iori/ANGLE_INCR+1) = tmpcbc;
 					// d = sicfast(t,p,sicaxis,cbcount);
@@ -622,9 +622,9 @@ void run(  ) {
 		}
 		TR << "MAX " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
 		// TR << "MAX " << mxipnt << " " << mxitri << " " << mxiori << " " << cbcount(mxipnt/ANGLE_INCR+1,mxitri/ANGLE_INCR+1,mxiori/ANGLE_INCR+1) << " " << surfdis(mxipnt/ANGLE_INCR+1,mxitri/ANGLE_INCR+1,mxiori/ANGLE_INCR+1) << std::endl;
-	}		
-	
-	ObjexxFCL::FArray3D<int> cbcount_local((core::Size)floor(72.0/ANGLE_INCR),(core::Size)floor(120.0/ANGLE_INCR),(core::Size)floor(360.0/ANGLE_INCR),0);	
+	}
+
+	ObjexxFCL::FArray3D<int> cbcount_local((core::Size)floor(72.0/ANGLE_INCR),(core::Size)floor(120.0/ANGLE_INCR),(core::Size)floor(360.0/ANGLE_INCR),0);
 	int delta = ceil(5.0/(core::Real)ANGLE_INCR);
 	TR << "scanning results for local maxima +- " << delta*ANGLE_INCR << "°" << std::endl;
 	for(int ipnt = 1; ipnt <=  72/ANGLE_INCR; ++ipnt) {
@@ -637,15 +637,15 @@ void run(  ) {
 							int i = (ipnt+dipnt-1) % ( 72/ANGLE_INCR) + 1;
 							int j = (itri+ditri-1) % (120/ANGLE_INCR) + 1;
 							int k = (iori+diori-1) % (360/ANGLE_INCR) + 1;
-							if( cbcount(i,j,k) > lmaxcb ) lmaxcb = cbcount(i,j,k);							
+							if( cbcount(i,j,k) > lmaxcb ) lmaxcb = cbcount(i,j,k);
 						}
 					}
 				}
 				if( cbcount(ipnt,itri,iori) >= lmaxcb ) cbcount_local(ipnt,itri,iori) = cbcount(ipnt,itri,iori);
 			}
-		}		
+		}
 	}
-	
+
 	TR << "cbcount_local size " << cbcount_local.size() << std::endl;
 	vector1<int> cbtmp;
 	for(core::Size i = 0; i < cbcount_local.size(); ++i) {
@@ -654,14 +654,14 @@ void run(  ) {
 	std::sort(cbtmp.begin(),cbtmp.end());
 	int top10 = cbtmp[cbtmp.size()-9];
 	TR << "outputting top10 with cb count >= " << top10 << std::endl;
-	
+
 	for(int ipnt = 1; ipnt <=  72/ANGLE_INCR; ++ipnt) {
 		for(int itri = 1; itri <= 120/ANGLE_INCR; ++itri) {
 			for(int iori = 1; iori <= 360/ANGLE_INCR; ++iori) {
 				if(cbcount_local(ipnt,itri,iori) < top10) continue;
 
 				std::string fname;
-				fname +=       utility::file_basename(option[in::file::s]()[1]); 
+				fname +=       utility::file_basename(option[in::file::s]()[1]);
 				fname += "_" + utility::file_basename(option[in::file::s]()[2]);
 				fname += "_" + ObjexxFCL::lead_zero_string_of(cbcount_local(ipnt,itri,iori),4);
 				fname += "_" + ObjexxFCL::lead_zero_string_of((ipnt-1)*ANGLE_INCR,3);
@@ -685,7 +685,7 @@ void run(  ) {
 				core::Real w = x / sin(numeric::conversions::radians(alpha));
 				core::Real z = x / tan(numeric::conversions::radians(alpha));
 				trans_pose(p,(y+z)*paxs);
-				trans_pose(t,  w  *taxs);	
+				trans_pose(t,  w  *taxs);
 
 				Pose symm;
 				symm.append_residue_by_jump(t.residue(1),1);
@@ -696,10 +696,10 @@ void run(  ) {
 				}
 				symm.append_residue_by_jump(p.residue(1),1);
 				for(core::Size i = 2; i <= p.n_residue()/5; ++i) symm.append_residue_by_bond(p.residue(i));
-	
+
 				core::pose::symmetry::make_symmetric_pose(symm);
 				core::io::pdb::dump_pdb(symm,fname);
-	
+
 			}
 		}
 	}
@@ -707,20 +707,21 @@ void run(  ) {
 }
 
 
-int main (int argc, char *argv[]) {	
+int main (int argc, char *argv[]) {
 	try{
-	devel::init(argc,argv);	
+	devel::init(argc,argv);
 	run();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 
 
 
 
-// 
-// 
+//
+//
 
 
 

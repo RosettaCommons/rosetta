@@ -737,7 +737,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 																		//                    TR << isctfast(tmp1,tmp3,Vec(1,0,0)) << " " << isctfast(tmp1,tmp3,Vec(-1,0,0)) << " " << std::endl;
 																		//  if( isctfast(tmp1,tmp3,Vec(1,0,0)) < -0.5 && isctfast(tmp1,tmp3,Vec(-1,0,0)) < -0.5 ) continue;
 
-																		//TR << h4sa1 << " " << 
+																		//TR << h4sa1 << " " <<
 																		rot_pose(tmp3,Rsym2_0,symcen1);
 																		trans_pose(tmp3,delta);
 
@@ -958,6 +958,7 @@ int main (int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

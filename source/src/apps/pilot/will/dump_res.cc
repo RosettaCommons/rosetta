@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 	// for(ResidueTypeSet::const_residue_iterator i = rs->all_residues_begin(); i != rs->all_residues_end(); ++i) {
 	// 	TR << i->first << " " << i->second->name() << std::endl;
 	// }
-	
+
 	{
 		Pose pose;
 		conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rs->name_map("CH5") );
@@ -127,6 +127,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

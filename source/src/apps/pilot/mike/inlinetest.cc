@@ -99,6 +99,7 @@ main( int argc, char * argv [] )
 //std::cout << __FILE__ << __LINE__ << std::endl;
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
     return 0;
 }

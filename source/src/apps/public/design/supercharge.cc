@@ -1115,8 +1115,8 @@ public:
 		//pose.dump_scored_pdb("pose.pdb", *scorefxn_);
 
 		//talaris2013 score terms
-		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref 
-		
+		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref
+
 		utility::vector1< Real > total_native;
 		utility::vector1< Real > fa_atr_native;
 		utility::vector1< Real > fa_rep_native;
@@ -1134,7 +1134,7 @@ public:
 		utility::vector1< Real > fa_dun_native;
 		utility::vector1< Real > p_aa_pp_native;
 		utility::vector1< Real > ref_native;
-		
+
 		utility::vector1< Real > total;
 		utility::vector1< Real > fa_atr;
 		utility::vector1< Real > fa_rep;
@@ -1152,7 +1152,7 @@ public:
 		utility::vector1< Real > fa_dun;
 		utility::vector1< Real > p_aa_pp;
 		utility::vector1< Real > ref;
-		
+
 		utility::vector1< Real > diff_total;
 		utility::vector1< Real > diff_fa_atr;
 		utility::vector1< Real > diff_fa_rep;
@@ -1170,10 +1170,10 @@ public:
 		utility::vector1< Real > diff_fa_dun;
 		utility::vector1< Real > diff_p_aa_pp;
 		utility::vector1< Real > diff_ref;
-		
+
 
 		utility::vector1< Size > resnums;
-		
+
 		//talaris2013 score terms
 		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref
 
@@ -1406,8 +1406,9 @@ int main( int argc, char* argv[] )
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
   return 0;
 }

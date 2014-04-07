@@ -479,8 +479,9 @@ int main(int argc, char* argv[])
 		MPI_Barrier( MPI_COMM_WORLD );
 		MPI_Finalize();
 #endif
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
-                                }
-       return 0; 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

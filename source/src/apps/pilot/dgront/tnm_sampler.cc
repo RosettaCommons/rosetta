@@ -51,7 +51,7 @@ using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
 
 void register_options() {
-    
+
 	OPT(in::file::s);
 	OPT(in::file::native);
 	OPT(in::file::residue_type_set);
@@ -62,7 +62,7 @@ void register_options() {
 }
 
 void tokenize_string(const std::string& sentence, utility::vector1<std::string>& words) {
-    
+
     std::istringstream iss(sentence);
     words.clear();
     std::copy(std::istream_iterator<std::string>(iss),
@@ -100,7 +100,7 @@ private:
 };
 
 void TNM::write_modes(std::ostream& out) {
-    
+
     // Print evalues as the first line, make it a comment
     out<<"# evalues:";
     for (core::Size i_mode=1; i_mode<=modes.size(); ++i_mode) {
@@ -110,7 +110,7 @@ void TNM::write_modes(std::ostream& out) {
 
     // Print Psi for the very first residue
     out<<"         1";
-    for (core::Size i_mode=1; i_mode<=modes.size(); ++i_mode) 
+    for (core::Size i_mode=1; i_mode<=modes.size(); ++i_mode)
         out<<" "<< setw(10) << setprecision(7)<< modes[i_mode].psi(1);
     out<<" Psi1\n";
 
@@ -131,7 +131,7 @@ void TNM::write_modes(std::ostream& out) {
 }
 
 void TNM::apply(core::Size which_mode, core::Real lambda, core::pose::Pose& pose) {
-    
+
     for(core::Size i=2;i<pose.total_residue();++i) {
 	pose.set_phi( i, pose.phi(i) + lambda * modes[which_mode].phi(i) );
 	pose.set_psi( i, pose.psi(i) + lambda * modes[which_mode].psi(i) );
@@ -139,18 +139,18 @@ void TNM::apply(core::Size which_mode, core::Real lambda, core::pose::Pose& pose
 }
 
 void TNM::load_normal_modes(const std::string& fname) {
-    
+
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
     utility::io::izstream data(fname);
-    
+
     std::string line;
     utility::vector1< core::Real > evalues;
     utility::vector1< std::string > tokens;
     utility::vector1< utility::vector1<std::string> > lines;
 
     std::cerr <<"Reading TNM from "<<fname<<"\n";
-    
+
     while (!data.fail()) {
         char c = data.peek();
         if (c == '#' || c == '\n') {
@@ -182,24 +182,24 @@ void TNM::load_normal_modes(const std::string& fname) {
 }
 
 int main(int argc, char * argv[]) {
-    
+
     try {
         using namespace core;
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
         using std::string;
-        
+
         register_options();
         devel::init(argc, argv);
-        
+
         core::pose::Pose extended_pose;
         std::string out_file_name = (option[out::pdb]());
-        
+
         core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
                                                                                                                       option[ in::file::residue_type_set ]()
                                                                                                                       );
         string sequence;
-        
+
         if (!option[in::file::s].user()) {
             std::cerr << "Please provide input structure with -in::file::s option" << std::endl;
             return 0;
@@ -213,17 +213,17 @@ int main(int argc, char * argv[]) {
         std::string fnn = option[in::file::native];
         core::import_pose::pose_from_pdb(*reference_pose, fnn);
 
-        
+
         if (!option[tnm::input_modes].user()) {
             std::cerr << "Please provide input normal modes with -tnm::input_modes option" << std::endl;
             return 0;
         }
-        
+
         TNM tnm(option[tnm::input_modes]().name());
 //        tnm.write_modes(std::cout);
 
 	core::scoring::ScoreFunction scorefxn = *( core::scoring::getScoreFunction(false) );
-        
+
 //        core::Size i_mode = 1;
         cout << scorefxn(*tmp_pose) << endl;
 
@@ -233,7 +233,7 @@ int main(int argc, char * argv[]) {
         for(core::Size i_mode=1;i_mode<=n_modes;++i_mode) {
           core::import_pose::pose_from_pdb(*tmp_pose, fn);
           cout << "Loaded pose from: "<<fn<<", en = "<<" "<<scorefxn(*tmp_pose) << endl;
-          
+
           for(int i=-n_steps;i<=n_steps; ++i) {
             core::Real lambda = i*step;
             tnm.apply(i_mode,lambda,*tmp_pose);
@@ -242,9 +242,10 @@ int main(int argc, char * argv[]) {
             tnm.apply(i_mode,-lambda,*tmp_pose);
           }
        }
-        
+
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cout << "caught exception " << e.msg() << std::endl;
-    } 
+		return -1;
+    }
 	return 0;
 }

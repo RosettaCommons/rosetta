@@ -110,10 +110,10 @@ int main( int argc, char* argv [] ) {
 						if ( atoms_wanted.size() > 0 ) {
 							std::string const & atom_m( resi.atom_type(m).name() );
 							std::string const & atom_n( resj.atom_type(n).name() );
-							utility::vector1< std::string >::const_iterator find_m( 
+							utility::vector1< std::string >::const_iterator find_m(
 								std::find(atoms_wanted.begin(),atoms_wanted.end(),atom_m)
 							);
-							utility::vector1< std::string >::const_iterator find_n( 
+							utility::vector1< std::string >::const_iterator find_n(
 								std::find(atoms_wanted.begin(),atoms_wanted.end(),atom_n)
 							);
 							if ( find_m == atoms_wanted.end() || find_n == atoms_wanted.end() ) {
@@ -167,7 +167,8 @@ int main( int argc, char* argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	
+
 	return 0;
 }

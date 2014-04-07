@@ -596,5 +596,6 @@ main( int argc, char * argv [] )
   std::cout << "Done! -------------------------------"<< std::endl;
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 } //end main

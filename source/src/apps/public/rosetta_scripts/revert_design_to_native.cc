@@ -117,6 +117,7 @@ main( int argc, char * argv [] )
 	pose_des.dump_scored_pdb( des_fname+".revert.pdb", *scorefxn );//, *scorefxn );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

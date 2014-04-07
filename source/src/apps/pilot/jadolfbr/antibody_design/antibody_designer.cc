@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody_design/antibody_designer.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -31,7 +31,8 @@ int main(int argc, char* argv[])
 	}catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception: "<<std::endl;
 		excn.show(std::cerr);
+		return -1;
 	}
-	
+
 	return(0);
 }

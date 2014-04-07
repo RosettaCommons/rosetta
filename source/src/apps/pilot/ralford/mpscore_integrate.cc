@@ -46,15 +46,15 @@ my_main( void* )
 {
 	using namespace protocols::membrane;
 	using namespace protocols::jd2;
-	
+
 	// Setup MP Unit Testing Mover
 	MembraneUnitTestMoverOP mp = new MembraneUnitTestMover();
 	JobDistributor::get_instance()->go(mp);
-	
+
 	// Score a Membrane Pose and
 	mp->score_lowres();
 	mp->score_highres();
-	
+
 	return NULL;
 }
 
@@ -63,13 +63,14 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	
+
 }
 

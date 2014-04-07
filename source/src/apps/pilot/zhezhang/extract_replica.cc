@@ -177,8 +177,9 @@ main( int argc, char * argv [] )
 
 	core::io::silent::SilentStructOP st = extract_replica( "for_test.out" , "P_0002" , 1);
 	st->print_scores( std::cout );
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

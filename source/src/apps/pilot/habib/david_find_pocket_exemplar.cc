@@ -155,7 +155,8 @@ std::cout<<std::endl<<p_min[4]<<" "<<p_max[4]<<" "<<p_min[5]<<" "<<p_max[5]<<" "
   outPDB_stream.clear();
 
         } catch ( utility::excn::EXCN_Base const & e ) {
-                std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
         }
 	return 0;
 

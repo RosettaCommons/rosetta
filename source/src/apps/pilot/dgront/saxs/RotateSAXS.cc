@@ -86,7 +86,7 @@ public:
 	        pose.set_psi(ires_,psi_is + j*step_);
 		core::Real score = (*scorefxn_)(pose);
 		core::scoring::EnergyMap emap = pose.energies().total_energies();
-		
+
 		std::cerr<< phi_is + i*step_ << " " << psi_is + j*step_ << " "<< emap[ core::scoring::saxs_fa_score ] << std::endl;
 	    }
 	  }
@@ -94,8 +94,8 @@ public:
 	virtual std::string get_name() const { return "RotateSAXS"; }
 
 private:
-    Real step_; 
-    Size ires_; 
+    Real step_;
+    Size ires_;
     core::scoring::ScoreFunctionOP scorefxn_;
     bool is_fa_;
 };
@@ -117,6 +117,7 @@ try {
     not_universal_main( debay );
 } catch ( utility::excn::EXCN_Base const & e ) {
                           std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                               }
     return 0;
 }

@@ -58,7 +58,7 @@ OPT_1GRP_KEY( String, sfxnfprnt, output_fingerprint_file )
 using namespace core;
 
 
-class ScoreFunctionFingerprintMover : public protocols::moves::Mover 
+class ScoreFunctionFingerprintMover : public protocols::moves::Mover
 {
 public:
 	ScoreFunctionFingerprintMover();
@@ -97,7 +97,7 @@ ScoreFunctionFingerprintMover::sfxn( scoring::ScoreFunctionOP sfxn )
 	sfxn_ = sfxn;
 	utility::vector1< std::pair< std::string, std::string > > version_term_lines;
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
-		if ( sfxn_->weights()[ ScoreType(ii) ] == 0.0 ) continue; 
+		if ( sfxn_->weights()[ ScoreType(ii) ] == 0.0 ) continue;
 		for ( ScoreFunction::AllMethodsIterator iter = sfxn_->all_energies_begin(),
 				iter_end = sfxn_->all_energies_end(); iter != iter_end; ++iter ) {
 			ScoreTypes const & iter_types = (*iter)->score_types();
@@ -144,7 +144,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 					" " + ObjexxFCL::format::F( 9, 3, pose.energies().onebody_energies( ii )[ ScoreType(jj) ] ) + "\n";
 				lines.push_back( newline );
 			}
-		} 
+		}
 	}
 	EnergyGraph const &  eg = pose.energies().energy_graph();
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -200,7 +200,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 			}
 		}
 	}
-				
+
 	for ( Size ii = 1; ii <= scoring::n_score_types; ++ii ) {
 		if ( sfxn_->has_nonzero_weight( ScoreType(ii) ) && pose.energies().total_energies()[ ScoreType(ii) ] != 0.0 ) {
 			std::string newline = "total " + ScoreTypeManager::name_from_score_type( ScoreType(ii) ) +
@@ -242,7 +242,7 @@ int main( int argc, char ** argv )
 
 	protocols::jd2::JobDistributor::get_instance()->go(sffm);
 
-	std::ofstream output_file( option[ sfxnfprnt::output_fingerprint_file ]().c_str() ); 
+	std::ofstream output_file( option[ sfxnfprnt::output_fingerprint_file ]().c_str() );
 
 	utility::vector1< std::list< std::string > > lines = sffm->lines_for_jobs();
 	for ( Size ii = 1; ii <= lines.size(); ++ii ) {
@@ -254,6 +254,7 @@ int main( int argc, char ** argv )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

@@ -145,7 +145,7 @@ iface_pdb_superimpose_pose(
 
 /// General testing code
 int main( int argc, char * argv [] ) {
-	
+
 	try{
 
 	NEW_OPT( comparison_relax_pdb_num, "comparison residue", "-1");
@@ -196,16 +196,16 @@ int main( int argc, char * argv [] ) {
       ifs >> intres;
       interface.insert(intres);
     }
-    
+
     iface_pdb_superimpose_pose( comparison_pose, template_pose);
   }else{
- 
+
 
     // align comparison pose to template pose
 	//	protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover( template_pose );
         protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover();
         sp_mover->set_reference_pose( template_pose, 1, template_pose.total_residue() );
-        sp_mover->set_target_range( 1, template_pose.total_residue() ); 
+        sp_mover->set_target_range( 1, template_pose.total_residue() );
         sp_mover->apply( comparison_pose );
   }
 	// call function to make a grid around a target residue (seqpos)
@@ -237,6 +237,7 @@ int main( int argc, char * argv [] ) {
 	TR << "Done!" << std::endl;
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
     }
 	return 0;
 

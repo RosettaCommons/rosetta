@@ -519,8 +519,9 @@ main( int argc, char * argv [] )
 	 ddg_output << std::endl;
 	 **/
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 

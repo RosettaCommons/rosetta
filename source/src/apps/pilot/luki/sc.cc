@@ -138,10 +138,11 @@ main( int argc, char * argv [] )
 	if(count != 1)
 		std::cout << count << " structures processed." << std::endl;
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 
 int process_pose(

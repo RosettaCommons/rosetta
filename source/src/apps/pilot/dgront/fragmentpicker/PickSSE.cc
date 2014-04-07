@@ -47,7 +47,7 @@ class PickSSE {
 public:
     /// \brief constructor parses command line and sets up picking
     PickSSE() {
-    
+
 	using namespace core;
 	using namespace core::sequence;
 	using namespace core::options;
@@ -60,7 +60,7 @@ public:
 	SequenceProfileOP q_prof(new SequenceProfile);
 	q_prof->read_from_checkpoint(option[in::file::checkpoint]());
 	my_picker.set_query_seq(q_prof);
-	
+
 	n_res_ = q_prof->size();
 
 	my_picker.n_candidates_ = option[frags::n_candidates]();
@@ -91,7 +91,7 @@ private:
 	    istringstream line_stream( line );
 	    std::string type;
 	    Size from, to;
-	    Real x,y,z;	
+	    Real x,y,z;
 	    line_stream >> type >> from >> to >> x >> y >> z;
 	    if (type.find("HELIX") !=string::npos) {
 		sse_type.push_back( 'H' );
@@ -107,7 +107,7 @@ private:
 	    }
 	}
     }
-    
+
     void pick_sse() {
 
 	CompareTotalScore comparator( my_picker->get_score_manager() );
@@ -139,6 +139,7 @@ int main(int argc, char * argv[]) {
 	devel::init(argc, argv);
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 
@@ -146,7 +147,7 @@ int main(int argc, char * argv[]) {
 //	my_picker->set_candidates_collector(3, collector);
 //	my_picker->set_candidates_collector(9, collector);
 //	my_picker->selector_ = new BestTotalScoreSelector(my_picker->n_frags_, scoring);
-	
+
 //	my_picker->prefix_ = "fragments";
 
 //	my_picker->bounded_protocol();

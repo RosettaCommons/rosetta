@@ -49,7 +49,7 @@ public:
 
     PrintFeatures() {
     }
-    
+
     virtual void apply( core::pose::Pose & pose ) {
 
 	for(Size i=1;i<=pose.n_residue();i++) {
@@ -58,9 +58,9 @@ public:
 	    std::cout<<tmp;
 	}
 	std::cout<<'\n';
-    }    
-    
-private: 
+    }
+
+private:
     Size n_;
 
 char torsion2big_bin(core::Real const phi,  core::Real const psi,  core::Real const omega) {
@@ -98,9 +98,10 @@ try {
     devel::init(argc, argv);
 
     PrintFeatures f;
-    not_universal_main( f );    
+    not_universal_main( f );
 } catch ( utility::excn::EXCN_Base const & e ) {
                          std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                             }
     return 0;
 }

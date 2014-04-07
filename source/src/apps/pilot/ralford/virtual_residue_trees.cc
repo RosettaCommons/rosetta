@@ -59,28 +59,28 @@ static basic::Tracer TR( "apps.pilot.ralford.virtual_residue_tree" );
 
 /// @brief Build Toy Pose
 core::pose::PoseOP build_toy_pose() {
-    
+
     using namespace core::conformation;
     using namespace core::chemical;
     using namespace core::pose;
     using namespace core::kinematics;
-    
+
     // Make a new pose
     PoseOP pose = new Pose();
-    
+
     // Option Setting for residue type set
     ResidueTypeSetCAP const & residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ));
-    
+
     // Set up options for adding alanines
     core::chemical::ResidueTypeCOPs const & rsd_type_list1( residue_set->name3_map("ALA") );
     core::chemical::ResidueType alanine = *rsd_type_list1[1];
-    
+
     // Make a bunch of alanines
     core::conformation::ResidueOP rsd1( core::conformation::ResidueFactory::create_residue(alanine) );
     core::conformation::ResidueOP rsd2( core::conformation::ResidueFactory::create_residue(alanine) );
     core::conformation::ResidueOP rsd3( core::conformation::ResidueFactory::create_residue(alanine) );
     core::conformation::ResidueOP rsd4( core::conformation::ResidueFactory::create_residue(alanine) );
-    
+
     // Append these residues first to make a small pose
     pose->append_residue_by_bond( *rsd1 );
     pose->append_residue_by_bond( *rsd2 );
@@ -90,47 +90,47 @@ core::pose::PoseOP build_toy_pose() {
     // Set up options for adding a string of virtual residues afterwards
     core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
     core::chemical::ResidueType virtuals = *rsd_type_list[1];
-    
+
     // Make a few virtual residues
     core::conformation::ResidueOP rsd5( core::conformation::ResidueFactory::create_residue(virtuals) );
     core::conformation::ResidueOP rsd6( core::conformation::ResidueFactory::create_residue(virtuals) );
     core::conformation::ResidueOP rsd7( core::conformation::ResidueFactory::create_residue(virtuals) );
     core::conformation::ResidueOP rsd8( core::conformation::ResidueFactory::create_residue(virtuals) );
-    
+
     // Add a string of virtual residues
     pose->append_residue_by_jump( *rsd5, 1, "", "", true );
     pose->append_residue_by_jump( *rsd6, 2, "", "", false );
     // will add the rest later
-    
+
     TR << "Printing information about my newly constructed pose!" << std::endl;
     TR << "Number of residues: " << pose->total_residue() << std::endl;
     TR << "Number of chains: " << pose->conformation().num_chains() << std::endl;
     TR << "Printing the resulting foldtree" << std::endl;
     pose->fold_tree().show(std::cout);
-    
+
     TR << "Modifying the foldtree topology from scratch to have a membrane-like topology" << std::endl;
     // Make a new fold tree with the desired topology
     FoldTreeOP ft = new FoldTree();
     ft->add_edge( 1, 5, 1);
     ft->add_edge( 1, 4, -1);
     ft->add_edge( 1, 6, 2);
-    
+
     // Try reorder
     ft->reorder( 5 );
-    
+
     // Add variant types!!!
     core::pose::add_variant_type_to_pose_residue( *pose, "LOWER_TERMINUS", 1);
     core::pose::add_variant_type_to_pose_residue( *pose, "UPPER_TERMINUS", 4);
-    
+
     // Take the fold tree and try to reset it
     pose->fold_tree( *ft );
-    
+
     // Reorder
-    
-    
+
+
     TR << "Showing the new foldtree" << std::endl;
     pose->fold_tree().show(std::cout);
-    
+
     return pose;
 
 }
@@ -138,19 +138,20 @@ core::pose::PoseOP build_toy_pose() {
 /// @brief Main
 int main( int argc, char* argv[] )
 {
-    
+
     try {
-        
+
         // Initialize Options System, RG, and All Factory_Registrators
         devel::init(argc, argv);
-        
+
         TR << "Building a toy pose which contains a string of alanine residues and then a proceeding string of virtual residues" << std::endl;
         build_toy_pose();
-        
+
         TR << "Done!" << std::endl;
-        
+
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cout << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
 }
 

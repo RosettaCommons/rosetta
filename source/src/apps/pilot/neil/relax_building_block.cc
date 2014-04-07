@@ -104,25 +104,25 @@ void
 	using namespace scoring;
 	using namespace utility;
 	using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 
 	// Get a random number tag for the tmp dir for sc calculations
 	std::string sctag = string_of(numeric::random::uniform()).substr(2,4);
 
 	// Create a score function object, get the fa_rep weight from it (default = 0.44)
-	ScoreFunctionOP sf = getScoreFunction();	
+	ScoreFunctionOP sf = getScoreFunction();
 
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
 		Pose mono = pose;
-	
+
 		// Parse the input filename so that the output filenames can be constructed
 /*
 	  	std::vector<std::string> path_fn_vector = string_split(string_of(file), '/');
@@ -160,13 +160,13 @@ void
 		frelax.apply(pose_for_relax);
 		TR << "Finished relaxing" << std::endl;
 
-/*			
+/*
 				std::string tag = string_of(numeric::random::uniform()).substr(2,4);
 				std::string fn = string_of(fn_vector[0])+"_"+string_of(fn_vector[1])+"_"+string_of(fn_vector[2])+"_"+string_of(input_trans+trans.x())+"_"+string_of(input_angle+delta_ang)+"_"+tag+"_final.pdb.gz";
 */
-			
+
 				// Rescore with scorefxn
-				//ScoreFunctionOP scorefxn = getScoreFunction();	
+				//ScoreFunctionOP scorefxn = getScoreFunction();
 				//scorefxn->score(pose_for_design);
 
 				// Write the pdb file of the design
@@ -174,7 +174,7 @@ void
 				pose_for_relax.dump_pdb(out);
 				core::io::pdb::extract_scores(pose_for_relax,out);
 				out.close();
-			
+
 	} // ifile
 
 	return NULL;
@@ -197,6 +197,7 @@ main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 

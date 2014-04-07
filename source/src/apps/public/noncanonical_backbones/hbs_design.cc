@@ -174,7 +174,8 @@ try{
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
 } catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 }
 }//main
 
@@ -211,9 +212,9 @@ HbsDesignMover::apply(
 	// create movemap for hbs
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
-	
+
 	//kdrew: automatically find hbs positions
-	utility::vector1< core::Size > hbs_seq_positions; 
+	utility::vector1< core::Size > hbs_seq_positions;
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
 	{
 		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1)
@@ -282,7 +283,7 @@ HbsDesignMover::apply(
 	**********************************************************************************************************************/
 
 	TR << "Main loop..." << std::endl;
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	//pose.dump_pdb("pre_main_loop.pdb");
@@ -299,7 +300,7 @@ HbsDesignMover::apply(
 
 		// design
 		TR << "DESIGN: " << k << std::endl;
-		//kdrew: treating packer task as throw away object because it becomes invalid after design substitutions.  
+		//kdrew: treating packer task as throw away object because it becomes invalid after design substitutions.
 		PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 		//PackerTaskOP task = desn_tf->create_packer_task( pose ) ;
 
@@ -327,7 +328,7 @@ HbsDesignMover::apply(
 				TR << "  not designed" << std::endl;
 				task->nonconst_residue_task(i).restrict_to_repacking();
 				task->nonconst_residue_task(i).initialize_from_command_line();
-			} 
+			}
 			else {
 				TR << "  designed" << std::endl;
 				bool temp = allowed_aas[pose.residue(i).aa()];
@@ -355,7 +356,7 @@ HbsDesignMover::apply(
 		mc->boltzmann( pose );
 		TR<< "post mc->boltzmann" << std::endl;
 		mc->show_state();
-		
+
 	}//dock_design for loop
 
 	mc->recover_low( pose );
@@ -407,7 +408,7 @@ HbsDesignMover::apply(
 	//stats_pose.dump_pdb("stats_trans1000.pdb");
 
 	Pose repack_stats_pose( stats_pose );
-	
+
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
 	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -474,8 +475,8 @@ HbsDesignMover::apply(
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-HbsDesignMover::setup_pert_foldtree( 
-	core::pose::Pose & pose 
+HbsDesignMover::setup_pert_foldtree(
+	core::pose::Pose & pose
 )
 {
 	using namespace kinematics;

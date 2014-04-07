@@ -149,11 +149,11 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 		}
 		if ( option[ residue_subset ].user() ) { //filter
 			std::ifstream is( option[ residue_subset ]().name().c_str() );
-			
+
 			if (!is.good()) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ residue_subset ]().name() + "'" );
 			}
-			
+
 			loops::PoseNumberedLoopFileReader reader;
 			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, option[ residue_subset ](), false );
@@ -242,8 +242,9 @@ main( int argc, char * argv [] )
 		//		anExcn.show( std::cerr );
 		//	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }
 

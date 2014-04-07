@@ -39,7 +39,7 @@ int main( int argc, char * argv [] ) {
     using namespace basic::options::OptionKeys;
     register_options();
     devel::init( argc, argv );
-    
+
 // grep OPT fragment_picker.cc | sed 's/OPT//' | tr -d '; \t' | awk '{printf "&%s,\n",$i}'
 
     static const OptionKey* opts[] = {
@@ -69,7 +69,7 @@ int main( int argc, char * argv [] ) {
 &(frags::picking::quota_config_file),
 &(frags::picking::query_pos),
 &(constraints::cst_file),
-&(out::file::frag_prefix)	
+&(out::file::frag_prefix)
     };
 
     for(int i=0;i<30;i++) {
@@ -84,6 +84,7 @@ int main( int argc, char * argv [] ) {
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
     return 0;
 }

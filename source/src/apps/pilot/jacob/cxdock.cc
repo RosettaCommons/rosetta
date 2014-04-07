@@ -50,7 +50,7 @@ void register_options() {
 	OPT( in::file::s );
 	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.6 );
-	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );	
+	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );
 	NEW_OPT( cxdock::hb_dis       ,"max acceptable hb dis", 6.0 );
 	NEW_OPT( cxdock::num_contacts ,"required no. contacts", 20.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
@@ -191,7 +191,7 @@ utility::vector1<core::Real> get_ang_samp() {
 	TR << "using angsamp: " << angsamp << " (closest feasible value to requested "<<requested <<")" << endl;
 	for(int i = 0; i < int(360.0/angsamp); ++i  ) {
 		asamp.push_back( (Real(i))*angsamp );
-	}	
+	}
 	// for(Size i = 1; i <= asamp.size(); ++i) {
 	// 	if( fabs( asamp[i]+angsamp/2.0 - (360.0-asamp[asamp.size()-i+1]) ) > 0.00001 ) utility_exit_with_message("angle samp issue!!!!");
 	// }
@@ -201,7 +201,7 @@ utility::vector1<core::Real> get_ang_samp() {
 
 void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp) {
 	using namespace basic::options;
-	
+
 	vector1<Size> syms = basic::options::option[ basic::options::OptionKeys::cxdock::syms ]();
 	if(syms.size()==0) utility_exit_with_message("you must specify cbdock::syms");
 
@@ -230,15 +230,15 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 	int count = 0;
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
-#endif	
+#endif
 	//for(vector1<int>::const_iterator issi = ssamp.half_w_nbr_begin(); issi != ssamp.half_w_nbr_end(); ++issi) {
 	for(Size issi = 1; issi <= ssamp.half_w_nbr_size(); ++issi) {
 		int const iss( ssamp.half_w_nbr()[issi] );
-		count++; 
+		count++;
 		if(count%100==0) {
 #ifdef USE_OPENMP
 #pragma omp critical
-#endif									
+#endif
 			TR << " ..." << F(4,1, Real(count)/Real(ssamp.half_w_nbr_size())*100.0) << "\%" << endl;
 		}
 		Vec axs = ssamp[iss];
@@ -260,11 +260,11 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*( *i );
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
-				
+
 				//cout << I(5,iss) << " " << I(3,irt) << " " << cbc << endl;
-				
+
 				grids[ic](irt,iss) = cbc;
-				//grids[ic](irt,iss) = -fabs(t);//cbc;				
+				//grids[ic](irt,iss) = -fabs(t);//cbc;
 			}
 		}
 	}
@@ -277,26 +277,26 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 
 
 
-	
+
 	for(Size ic = 1; ic <= syms.size(); ++ic) {
 		Size nlocalmax = 0;
 		Size NTOP = 10;
 		vector1<Hit> tophits(NTOP,Hit(-9e9,0,0,0));
-		
-		float mx = -9e9; { 
-			for(Size iss = 1; iss <= ssamp.size(); ++iss) 
-				for(Size irt = 2; irt <= asamp.size()-1; ++irt) 
+
+		float mx = -9e9; {
+			for(Size iss = 1; iss <= ssamp.size(); ++iss)
+				for(Size irt = 2; irt <= asamp.size()-1; ++irt)
 					mx = max(mx,grids[ic](irt,iss));
 		}
 		//cout << "sym " << ic << " " << syms[ic] << " cbc mx: " << mx << endl;
-		
+
 		for(vector1<int>::const_iterator issi = ssamp.half_begin(); issi != ssamp.half_end(); ++issi) {
 			int const iss(*issi);
 			for(Size irt = 1; irt <= asamp.size(); ++irt) {
 				float cbc = grids[ic](irt,iss);
 				if( cbc < 0.0 ) utility_exit_with_message("BAD CBC!!!");
 				if( cbc < 1.0 ) continue;
-				
+
 				bool is_local_max = true;
 				for(vector1<int>::const_iterator inb = ssamp.nbr_begin(iss); inb != ssamp.nbr_end(iss); inb++) {
 					float ncbc = grids[ic]( irt, *inb );
@@ -306,7 +306,7 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 				float ancbc1 = grids[ic]( irt==1 ? asamp.size() : irt-1 , iss ); if( ancbc1 < 0.0 ) utility_exit_with_message("BAD ANCBC1!!!");
 				float ancbc2 = grids[ic]( irt==asamp.size() ? 1 : irt+1 , iss ); if( ancbc2 < 0.0 ) utility_exit_with_message("BAD ANCBC2!!!");
 				if( ancbc1 > cbc || ancbc2 > cbc ) is_local_max = false;
-				
+
 				if(is_local_max==false) continue;
 				nlocalmax++;
 				Hit h(cbc,iss,irt,syms[ic]);
@@ -333,7 +333,7 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 			// 	ang = 360.0 - ang;
 			// }
 			TR << "TOPHIT C" << h.sym << " " << F(11,7,h.cbc) << "  axs: " << F(16,13,a.x())<<","<<F(16,13,a.y())<<","<<F(16,13,a.z()) << "  ang: " << F(20,16,ang) << endl;
-			
+
 			Mat const R = rotation_matrix_degrees(ssamp[h.iss],asamp[h.irt]);
 			vector1<Vec> bb1 = bb0;
 			vector1<Vec> cb1 = cb0;
@@ -345,8 +345,8 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 			for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*( *i );
 			Real tmp;
 			Real t = sicfast(bb1,bb2,cb1,cb2,tmp);
-			
-			option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(h.sym)+"_Z.sym");			
+
+			option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(h.sym)+"_Z.sym");
 		  Pose p(init);
 		  rot_pose(p,ssamp[h.iss],asamp[h.irt]);
 		  trans_pose(p,Vec(0,0,t));
@@ -394,32 +394,32 @@ void testone(vector1<Vec> const & bb0,
 
 	Real cbc;
 	Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
-		
+
 	TR << i << " " << j << " " << k << " " << cbc << " " << mindis(bb1,bb2,t) << endl;
-	
+
 
 	for(vector1<Vec>::iterator it = bb1.begin(); it != bb1.end(); ++it) *it += Vec(0,0,t);
 	for(vector1<Vec>::iterator it = cb1.begin(); it != cb1.end(); ++it) *it += Vec(0,0,t);
 	dump_points_pdb(bb1,"test"+str(k)+"A.pdb");
-	dump_points_pdb(bb2,"test"+str(k)+"B.pdb");	
+	dump_points_pdb(bb2,"test"+str(k)+"B.pdb");
 	//TR << i+N+1 << " " << j+N+1 << " " << k+N+1 << endl;
-	
+
 }
 
 void visualize(Pose const & init) {
- 
+
 	//Vec axs0(-0.7475852223468591,0.2098162208303284,0.6301535438327303);
-	//Real ang0(308.327); 
+	//Real ang0(308.327);
 	// Vec axs0(-0.6719036788257763  ,   0.03696683782422633   ,   0.7397154177665476 );
 	// Real ang0(297.32700000);
 	Vec axs0(-0.8906229656427180  ,    0.1436574080368423  ,    0.4314548437389231 );
 	Real ang0(305.83700000);
-	
+
 	Vec X = Vec(1,0,0).cross(axs0);
 	Vec Y = X.cross(axs0);
 	int N = 30;
 	Real step = 0.001;
-	
+
 	// set up n-ca-c-o-cb ord arrays
 	vector1<Vec> bb0tmp,cb0tmp;
 	for(int ir = 1; ir <= init.n_residue(); ++ir) {
@@ -432,14 +432,14 @@ void visualize(Pose const & init) {
 	}
 	vector1<Vec> const bb0(bb0tmp);
 	vector1<Vec> const cb0(cb0tmp);
-	
+
 	Mat Rsym = rotation_matrix_degrees(Vec(1,0,0),120.0);
-	
+
 	ObjexxFCL::FArray3D<float> grid(2*N+1,2*N+1,2*N+1,0.0f);
-	
+
 	// testone(bb0,cb0,12-N-1,33-N-1,11-N-1);
 	// testone(bb0,cb0,12-N-1,33-N-1,11-N);
-	// 
+	//
 	// utility_exit_with_message("aorstn");
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
@@ -452,7 +452,7 @@ void visualize(Pose const & init) {
 				axs = rotation_matrix_degrees(X,Real(i)*step) * axs;
 				axs = rotation_matrix_degrees(Y,Real(j)*step) * axs;
 				Mat R = rotation_matrix_degrees(axs,ang0+Real(k)*step);
-	
+
 				vector1<Vec> bb1 = bb0;
 				vector1<Vec> cb1 = cb0;
 				for(vector1<Vec>::iterator it = bb1.begin(); it != bb1.end(); ++it) *it = R*(*it);
@@ -465,14 +465,14 @@ void visualize(Pose const & init) {
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
 				grid(i+N+1,j+N+1,k+N+1) = cbc;
-				
+
 			//mndis(i+N+1,j+N+1,k+N+1) = mindis(bb1,bb2,t);
 				//TR << i+N+1 << " " << j+N+1 << " " << k+N+1 << endl;
 			}
 		}
 	}
 	cout << endl;
-	
+
 	// ObjexxFCL::FArray3D<float> gridsmooth(2*N+1,2*N+1,2*N+1,0.0f);
 	// for(int k = 2; k < 2*N+1; k++) {
 	// for(int j = 2; j < 2*N+1; j++) {
@@ -480,7 +480,7 @@ void visualize(Pose const & init) {
 	// 	float wtot=0.0, smval=0.0;
 	// 	for(int di = -1; di <= 1; ++di) {
 	// 	for(int dj = -1; dj <= 1; ++dj) {
-	// 	for(int dk = -1; dk <= 1; ++dk) {						
+	// 	for(int dk = -1; dk <= 1; ++dk) {
 	// 		float wt = 2.0;
 	// 		if( di!=0 || dj!=0 || dk!=0 ) {
 	// 			wt = 1.0 / sqrt( di*di +  )
@@ -492,7 +492,7 @@ void visualize(Pose const & init) {
 	// 	gridsmooth(i,j,k) = smval;
 	// }
 	// }
-	// }	
+	// }
 
 	for(int k = 1; k <= 2*N+1; k++) {
 	for(int j = 1; j <= 2*N+1; j++) {
@@ -500,13 +500,13 @@ void visualize(Pose const & init) {
 		cerr << grid(i,j,k) << endl;
 	}
 	}
-	}	
+	}
 
 	int nlocalmax = 0, nsamp=0;
 	float mxcbc = -9e9;
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
-#endif	
+#endif
 	for(int i = 3; i < 2*N; i++) {
 	for(int j = 3; j < 2*N; j++) {
 	for(int k = 3; k < 2*N; k++) {
@@ -518,12 +518,12 @@ void visualize(Pose const & init) {
 		float nbavg=0.0,nbmin=9e9,nbmax=0.0;
 		for(int di = -1; di <= 1; ++di) {
 		for(int dj = -1; dj <= 1; ++dj) {
-		for(int dk = -1; dk <= 1; ++dk) {						
+		for(int dk = -1; dk <= 1; ++dk) {
 			if(di==0&&dj==0&&dk==0) continue;
 			float nbcbc = grid(i+di,j+dj,k+dk);
 			nbavg += nbcbc;
 			nbmin = min(nbmin,nbcbc);
-			nbmax = max(nbmax,nbcbc);			
+			nbmax = max(nbmax,nbcbc);
 			if( nbcbc > cbc ) is_local_max = false;
 		}
 		}
@@ -533,11 +533,11 @@ void visualize(Pose const & init) {
 		nbavg /= 26.0;
 		float avg_slope = (cbc-nbavg)/step;
 		float min_slope = (cbc-nbmax)/step;
-		float max_slope = (cbc-nbmin)/step;		
+		float max_slope = (cbc-nbmin)/step;
 		if( min_slope < 0.1 ) continue;
 		if( avg_slope < 1.0 ) continue;
-		
-		
+
+
 		Vec axs = axs0;
 		axs = rotation_matrix_degrees(X,Real(i-N-1)*step) * axs;
 		axs = rotation_matrix_degrees(Y,Real(j-N-1)*step) * axs;
@@ -545,14 +545,14 @@ void visualize(Pose const & init) {
 
 #ifdef USE_OPENMP
 #pragma omp critical
-#endif						
+#endif
 		TR<<"local max "<<F(7,3,cbc)<<" "<<F(6,3,min_slope)<<" "<<F(6,3,avg_slope)<<" "<<F(6,3,max_slope)<<"     "<<i<<" "<<j<<" "<<k<<" "<<axs<<" "<<F(12,8,ang)<<endl;
 		nlocalmax++;
 	}
 	}
 	}
 	TR << "max " << mxcbc << " local max " << nlocalmax << " of " << nsamp << endl;
-	
+
 }
 
 
@@ -565,7 +565,7 @@ int main(int argc, char *argv[]) {
 
 	Size const NSS = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
 	SphereSampler ssamp(NSS);
-	
+
 	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
 		string fn = option[in::file::s]()[ifn];
 		Pose pnat;
@@ -591,8 +591,9 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	
+
 	return 0;
 }
 

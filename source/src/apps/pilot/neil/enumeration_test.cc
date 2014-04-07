@@ -97,7 +97,7 @@ count_int_CBs_clashes (pose::Pose const &pose, Size i, Size j, Real contact_dist
 
   conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
   Size nsub = sym_info->subunits();
-  
+
   if (i > nsub || j > nsub) {
     utility_exit_with_message("There are not that many subunits!");
   }
@@ -131,7 +131,7 @@ count_int_CBs_clashes (pose::Pose const &pose, Size i, Size j, Real contact_dist
               }
             }
 /*//////////
-            
+
             if (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) <= clash_dist_sq) {
               TR<< "CLASH: Chain " << i << ", Atom " << ia << ", Resi " << ir << ", " << chemical::name_from_aa(pose.aa(ir)) << " is sqrt(" << pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) << ") from Chain " << j << ", Atom " << ja << ", Resi " << jr << ", " << chemical::name_from_aa(pose.aa(jr)) << ", jtype=" << jtype << std::endl;
               return -1;
@@ -295,5 +295,6 @@ main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

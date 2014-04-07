@@ -9,7 +9,7 @@
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
 /// @file apps/pilot/jacobs/InterfaceStrandFinder.cc
-/// @brief uses a library of known gtpase effectors to locate pdb files with beta strands that may be good 
+/// @brief uses a library of known gtpase effectors to locate pdb files with beta strands that may be good
 /// candidates for beta-strand interface design with gtpases
 /// @author tim jacobs
 
@@ -421,7 +421,7 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
   //	}
 
   //////////////////////////////////////////////////////
-  // find all beta strands in pose 
+  // find all beta strands in pose
   //////////////////////////////////////////////////////
 
   //set up dssp info
@@ -557,6 +557,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

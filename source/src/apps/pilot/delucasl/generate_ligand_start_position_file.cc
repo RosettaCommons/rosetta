@@ -80,7 +80,8 @@ int main(int argc, char*argv[])
 	outfile <<utility::json_spirit::write(json_data,utility::json_spirit::pretty_print);
 	outfile.close();
     } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  } 
-    return 0;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

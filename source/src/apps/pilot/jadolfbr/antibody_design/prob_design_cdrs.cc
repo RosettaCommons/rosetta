@@ -29,16 +29,16 @@ using namespace protocols::antibody::design;
 ///@brief Wrapper to AntibodyCDRDesigner due to needed ab_info object.  Designs CDRs based on cluster using probability and conservative strategies.
 ///
 class Designer : public protocols::moves::Mover {
-	
+
 	Designer(){};
-	
+
 	virtual ~Designer(){};
-	
+
 	virtual std::string
 	get_name() const{
 		return "AntibodyCDRDesignerWrapper";
 	}
-	
+
 	void
 	apply(core::pose::Pose pose){
 		if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
@@ -50,7 +50,7 @@ class Designer : public protocols::moves::Mover {
 		AntibodyCDRDesigner des = new AntibodyCDRDesigner(ab_info);
 		des->apply(pose);
 	}
-	
+
 };
 
 
@@ -64,8 +64,9 @@ int main(int argc, char* argv[]){
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cerr );
+		return -1;
 	}
-	
+
 	return(0);
 }
 

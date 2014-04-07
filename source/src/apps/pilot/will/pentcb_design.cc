@@ -99,8 +99,8 @@ void register_options() {
 	OPT( in::file::s );
 	NEW_OPT( cxdock::syms	       ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"max acceptable clash dis", 3.6 );
-	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );	
-	NEW_OPT( cxdock::hb_dis      ,"min acceptable hb dis", 4.5 );	
+	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );
+	NEW_OPT( cxdock::hb_dis      ,"min acceptable hb dis", 4.5 );
 	//NEW_OPT( cxdock::num_contacts ,"required no. contacts", 20.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
 }
@@ -245,7 +245,7 @@ vector1<Size> design(Pose & p, Size nmono) {
   if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(p);
   p.add_constraints( res_cst );
-	
+
   core::pack::make_symmetric_PackerTask_by_truncation(p,task);
   protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(p);
@@ -487,6 +487,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

@@ -165,7 +165,7 @@ public:
 
 	//read hotspot_name
 	Size num_hotspot_name=0;
-	num_hotspot_name=basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size();	
+	num_hotspot_name=basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size();
 
 	//print out input information
   /*
@@ -234,7 +234,7 @@ public:
   //protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag()
 
    // job distributor iterates ...
-    if ( CenScore > basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::centroidscore_filter] 
+    if ( CenScore > basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::centroidscore_filter]
       || CstScore> basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspotcst_filter] ) {
     	set_last_move_status( protocols::moves::FAIL_RETRY );
     	//set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
@@ -261,11 +261,11 @@ void* my_main( void* ) {
         SequenceMoverOP seq( new SequenceMover() );
         seq->add_mover( new run_score_patchdock_hotspot() );
 
-        if ( basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].user() && basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight].user()  && 
+        if ( basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].user() && basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight].user()  &&
              basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size()==basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight].size()) {
 // 	 	  		  TR << "Will read: " << basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size() << " hotspot files" << std::endl;
         } else {
-              throw( utility::excn::EXCN_BadInput("expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );  
+              throw( utility::excn::EXCN_BadInput("expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );
  	 	  }
 
         try{
@@ -302,6 +302,7 @@ int main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

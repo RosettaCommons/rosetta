@@ -302,7 +302,7 @@ main( int argc, char * argv [] ) {
 	for ( Size ii = 1; ii <= align_fns.size(); ++ii ) {
 		vector1< SequenceAlignment > tmp_alns = core::sequence::read_aln(
 								 option[ cm::aln_format ](), align_fns[ii]
-	
+
 								 );
 		for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
       string aln_id = tmp_alns[jj].sequence(2)->id();
@@ -327,7 +327,7 @@ main( int argc, char * argv [] ) {
 	Size max_pose_len(0);
   vector1< Pose >   poses;
   vector1< string > aln_ids;
-	multimap<Size,Size> tmpContact_map; 
+	multimap<Size,Size> tmpContact_map;
 	vector1 <vector1 < Size > > contactCount_array2D(
 																									 query_sequence.size(),
 																									 vector1<Size>(query_sequence.size(),0));
@@ -354,8 +354,8 @@ main( int argc, char * argv [] ) {
 																					query_pose, query_sequence, *(rsd_set_from_cmd_line())
 																					);
 			core::pose::Pose template_pose = pose_it->second;
-			
-			
+
+
 			std::cout << "generating contacts " << std::endl
 								<< aln_id << std::endl;
 			PartialThreadingMover mover( rankedAlignments[ii], template_pose );
@@ -383,7 +383,7 @@ main( int argc, char * argv [] ) {
 	}
 	string filename(option[ out::file::o ]());
 	utility::io::ozstream output(filename.c_str());
-		
+
 	for(Size jj = 1; jj<=query_sequence.size(); jj++)
 		for(Size kk = jj+AA_SEPARATION; kk<=query_sequence.size(); kk++){
 			if(contactCount_array2D[jj][kk] != 0){
@@ -403,7 +403,7 @@ main( int argc, char * argv [] ) {
 	//---also output the top ranked structure
 	filename ="top_" + filename;
 	utility::io::ozstream topOutput(filename.c_str());
-	
+
 	for(Size jj = 1; jj<=query_sequence.size(); jj++)
 		for(Size kk = jj+AA_SEPARATION; kk<=query_sequence.size(); kk++){
 			topOutput << jj << " " << kk << " " << topcontactCount_array2D[jj][kk] << std::endl;
@@ -418,11 +418,12 @@ main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;
 }
 
-	
-	
-																	 
+
+
+

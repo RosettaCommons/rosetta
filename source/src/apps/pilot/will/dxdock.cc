@@ -49,8 +49,8 @@ void register_options() {
 	OPT( in::file::s );
 //	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.5 );
-	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 7.0 );	
-	NEW_OPT( cxdock::hb_dis      ,"max acceptable hb dis", 4.7 );	
+	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 7.0 );
+	NEW_OPT( cxdock::hb_dis      ,"max acceptable hb dis", 4.7 );
 	NEW_OPT( cxdock::num_contacts ,"required no. contacts", 20.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
 	NEW_OPT( cxdock::dumpfirst    ,"stop on first hit", false );
@@ -94,12 +94,12 @@ static core::io::silent::SilentFileData sfd;
 
 void dump_points_pdb(vector1<Vec> & p, string fn, vector1<int> const & d, vector1<int> const & a) {
 	// for(Size i = 1; i <= d.size(); ++i) cout << "DON " << d[i] << endl;
-	// for(Size i = 1; i <= a.size(); ++i) cout << "ACC " << a[i] << endl;	
+	// for(Size i = 1; i <= a.size(); ++i) cout << "ACC " << a[i] << endl;
 	std::ofstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		string rn = "VIZ";
 		if(std::find(d.begin(),d.end(),i)!=d.end()) rn="DON";
-		if(std::find(a.begin(),a.end(),i)!=a.end()) rn="ACC";		
+		if(std::find(a.begin(),a.end(),i)!=a.end()) rn="ACC";
 		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	}
 	o.close();
@@ -118,8 +118,8 @@ void get_avail_don_acc(Pose & pose, std::set<Size> & actdon, std::set<Size> & ac
  	core::scoring::hbonds::fill_hbond_set( pose, false, hbset, false, true, true, true );
  	for(Size i = 1; i <= hbset.nhbonds(); ++i) {
 		actdon.insert( hbset.hbond(i).don_res() );
-		actacc.insert( hbset.hbond(i).acc_res() );		
-	}	
+		actacc.insert( hbset.hbond(i).acc_res() );
+	}
 }
 
 
@@ -132,25 +132,25 @@ bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
 void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 	using namespace basic::options;
-	
+
 	std::set<Size> actdon,actacc; {
 		get_avail_don_acc(init,actdon,actacc);
 	}
 	vector1<int> availdon,availacc;
-	
+
 	Real cbcth = basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]();
-	
+
 	// Pose ala;
 	// core::pose::make_pose_from_sequence(ala,"A",init.residue(1).residue_type_set(),false);
 	// Pose pala(init);
 	// for(Size i = 1; i <= pala.n_residue(); ++i) {
-	// 	if(!pala.residue(i).is_protein()) continue;		
+	// 	if(!pala.residue(i).is_protein()) continue;
 	// 	if(pala.residue(i).aa()!=core::chemical::aa_gly) {
 	// 		pala.replace_residue(i,ala.residue(1),true);
 	// 	}
 	// }
-	
-	
+
+
 	vector1<Size> syms;// = basic::options::option[basic::options::OptionKeys::cxdock::syms]();
 	syms.push_back(2);
 	if(syms.size()==0) utility_exit_with_message("you must specify cbdock::syms");
@@ -173,10 +173,10 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 	}
 	vector1<Vec> const & bb0(bb0tmp);
 	vector1<Vec> const & cb0(cb0tmp);
-		
+
 	vector1<int> c2availdon(availdon),c2availacc(availacc);
 	for(Size i=1,s=availdon.size(); i <= s; ++i) c2availdon.push_back(availdon[i]+bb0.size());
-	for(Size i=1,s=availacc.size(); i <= s; ++i) c2availacc.push_back(availacc[i]+bb0.size());	
+	for(Size i=1,s=availacc.size(); i <= s; ++i) c2availacc.push_back(availacc[i]+bb0.size());
 
 	vector1<Matf> Rsym(syms.size());
 	for(Size ic = 1; ic <= syms.size(); ++ic) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/(Real)syms[ic]);
@@ -210,7 +210,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
 				Real cbc,nhb;
 				Real t = sicfast(bb1,bb2,cb1,cb2,availdon,availacc,cbc,nhb);
-				
+
 				if(          cbc>=cbcth*1.0||nhb> 0.0&&cbc>=cbcth*0.9||nhb> 2.0&&cbc>=cbcth*0.8||nhb> 4.0&&cbc>=cbcth*0.5||
 				   nhb> 6.0&&cbc>=cbcth*0.3||nhb> 8.0      )//&&cbc>=cbcth*0.5||nhb>10.0&&cbc>=cbcth*0.4||nhb>12.0&&cbc>=cbcth*0.3||
 //			   nhb>14.0&&cbc>=cbcth*0.2||nhb>16.0&&cbc>=cbcth*0.1||nhb>18.0&&cbc>=cbcth*0.0  )
@@ -219,11 +219,11 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 					// 		cerr << "clash fail!" << endl;
 					// 		continue;
 					// }
-					if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {	
+					if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {
 						string tag = utility::file_basename(fn)+"_C"+str(syms[ic])+"_"+str(iss)+"_"
 						+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())+"_"+str(irt)+"_"+str(cbc);
 						{
-							option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+"_Z.sym");							
+							option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+"_Z.sym");
 						  Pose p(init);
 						  rot_pose(p,ssamp[iss],asamp[irt]);
 						  trans_pose(p,Vec(0,0,t));
@@ -238,13 +238,13 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 							// core::pose::symmetry::make_symmetric_pose(p);
 							// p.dump_pdb("test.pdb");
 							// utility_exit_with_message("arst");
-							
+
 							Mat R180z = rotation_matrix_degrees(Vec(0.0,0.0,1.0),180.0);
 							Mat R180x = rotation_matrix_degrees(Vec(1.0,0.0,0.0),180.0);
 							Mat R90y  = rotation_matrix_degrees(Vec(0.0,1.0,0.0), 90.0);
 							Mat R2z   = rotation_matrix_degrees(Vec(0.0,0.0,1.0),  2.0);
 
-							// make C2 coords							
+							// make C2 coords
 							vector1<Vec> c2bb1,c2cb1;
 							for(int ir = 1; ir <= init.n_residue(); ++ir) {
 								if(!p.residue(ir).is_protein()) continue;
@@ -259,17 +259,17 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 							for(int ir = 1; ir <= init.n_residue(); ++ir) {
 								if(!p.residue(ir).is_protein()) continue;
 								for(int ia = 1; ia <= ((p.residue(ir).has("CB"))?5:4); ++ia) {
-									c2bb1.push_back(  R180z * p.xyz(AtomID(ia,ir))  );			
+									c2bb1.push_back(  R180z * p.xyz(AtomID(ia,ir))  );
 								}
 								if(p.secstruct(ir)=='H') {
 									Size i = p.residue(ir).has("CB") ? 5 : 4;
-									c2cb1.push_back(  R180z * p.xyz(AtomID(i,ir))  );									
+									c2cb1.push_back(  R180z * p.xyz(AtomID(i,ir))  );
 								}
 							}
-							
+
 							for(Size if4 = 0; if4 < 2; ++if4) {
 								for(vector1<Vec>::iterator i = c2bb1.begin(); i != c2bb1.end(); ++i) *i = R180x*(*i);
-								for(vector1<Vec>::iterator i = c2cb1.begin(); i != c2cb1.end(); ++i) *i = R180x*(*i);								
+								for(vector1<Vec>::iterator i = c2cb1.begin(); i != c2cb1.end(); ++i) *i = R180x*(*i);
 								rot_pose(p,                                                               R180x);
 
 								// make partner c2 coords
@@ -285,7 +285,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 									Real t2 = sicfast(c2bb1,c2bb2,c2cb1,c2cb2,c2availdon,c2availacc,cbc2,nhb2);
 									cbc2 *= 0.5;
 									nhb2 /= 2.0;
-									
+
 									if(           cbc2>=cbcth*1.0||nhb2> 0.0&&cbc2>=cbcth*0.9||nhb2> 2.0&&cbc2>=cbcth*0.8||nhb2> 4.0&&cbc2>=cbcth*0.5||
 									   nhb2> 6.0&&cbc2>=cbcth*0.3||nhb2> 8.0      )//&&cbc2>=cbcth*0.5||nhb2>10.0&&cbc2>=cbcth*0.4||nhb2>12.0&&cbc2>=cbcth*0.3||
 //									   nhb2>14.0&&cbc2>=cbcth*0.2||nhb2>16.0&&cbc2>=cbcth*0.1||nhb2>18.0&&cbc2>=cbcth*0.0  )
@@ -304,7 +304,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 										// core::pose::symmetry::make_asymmetric_pose(tmp2);
 										string tag2 = tag + "_"+str(if4)+"_"+str(ir4);
 
-										cout << "HIT " << cbc << " " << cbc2 << " " << nhb << " " << nhb2 << " " << tag2 << std::endl;											
+										cout << "HIT " << cbc << " " << cbc2 << " " << nhb << " " << nhb2 << " " << tag2 << std::endl;
 										tmp.dump_pdb(option[OptionKeys::out::file::o]()+"/"+tag2+".pdb.gz");
 
 										// for(Size i = 1; i <= c2bb1.size(); ++i) c2bb1[i] += Vec(0,0, t2/2);
@@ -383,6 +383,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

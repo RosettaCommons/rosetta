@@ -48,12 +48,12 @@ int main(int argv, char **argc){
 		X I,x;
 		// std::istringstream iss("1 -9 0\n 0 1 3\n 0 0 1\n 1 2 3\n");
 		// iss >> x;
-	
+
 		x   = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), V(gaussian(),gaussian(),gaussian()) );
 		X y = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), V(gaussian(),gaussian(),gaussian()) );
-		X z = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), V(gaussian(),gaussian(),gaussian()) );	
+		X z = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), V(gaussian(),gaussian(),gaussian()) );
 		V u(gaussian(),gaussian(),gaussian());
-		V v(gaussian(),gaussian(),gaussian());	
+		V v(gaussian(),gaussian(),gaussian());
 		M m( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()) );
 		M n( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()) );
 
@@ -81,13 +81,13 @@ int main(int argv, char **argc){
 		X x = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), 30*V(gaussian(),gaussian(),gaussian()) );
 		X y = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), 30*V(gaussian(),gaussian(),gaussian()) );
 		Rose const rx = x*r;
-		Rose const sy = y*s;		
+		Rose const sy = y*s;
 		bool const c1 = (rx).clashes( sy );
 		core::Size const c2 = (sy).contacts_naive( rx );
 		if( c1 != (0<c2) ) utility_exit_with_message("clash fail");
 		// if(c2>0 && c2<10 && dumpcl){
 		// 	rx.dump_pdb("clash1_test.pdb");
-		// 	sy.dump_pdb("clash2_test.pdb");			
+		// 	sy.dump_pdb("clash2_test.pdb");
 		// 	dumpcl=false;
 		// }
 		// if(!c1 && dumpnc){
@@ -102,7 +102,8 @@ int main(int argv, char **argc){
 	return 0;
 
   } catch ( utility::excn::EXCN_Base const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
   }
 
 }

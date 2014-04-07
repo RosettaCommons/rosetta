@@ -116,7 +116,7 @@ void adesign(core::pose::Pose & pose, ScoreFunctionOP sf, core::chemical::Residu
 	TR << *task << std::endl;
 	protocols::simple_moves::PackRotamersMover repack( sf, task );
 	repack.apply(pose);
-	
+
 }
 
 void mydumppdb(core::pose::Pose & pose,std::string fname) {
@@ -148,20 +148,20 @@ main( int argc, char * argv [] )
 	// rs.nonconst_name_map("CH5").set_RotamerLibraryName("input/CH5.pdb");
 	// rs.nonconst_name_map("NH5").set_RotamerLibraryName("input/NH5.pdb");
 	// rs.nonconst_name_map("CR5").set_RotamerLibraryName("input/CR5.pdb");
-	
+
 	ScoreFunctionOP sf = core::scoring::getScoreFunction();
 
 	Pose pose;
 	import_pose::pose_from_pdb(pose,rs,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
 	pose.dump_pdb("init.pdb");
-	
+
 	// replace_pose_residue_copying_existing_coordinates(pose,1,rs.name_map("NH5"));
 	// replace_pose_residue_copying_existing_coordinates(pose,2,rs->name_map("CR5"));
 
 	core::pack::optimizeH(pose,*sf);
 	mydumppdb(pose,"pre_design.pdb");
 	utility::vector1<std::string> tgrp1; tgrp1.push_back("CH5"); /*tgrp1.push_back("CR5");*/ /*tgrp1.push_back("NH5");*/
-	
+
 	Size start_pos = 0;
 	for(Size i = 1; i <= 2; ++i) {
 		for(Size j = 1; j <= tgrp1.size(); ++j) {
@@ -188,6 +188,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

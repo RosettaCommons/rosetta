@@ -94,41 +94,42 @@ void MyMover::apply( core::pose::Pose& pose ) {
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace protocols;
-	using namespace protocols::jd2;
+  try {
+		using namespace protocols;
+		using namespace protocols::jd2;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
 
-	jd2::register_options();
+		jd2::register_options();
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	MoverOP mymover = new MyMover;
+		MoverOP mymover = new MyMover;
 
-	using namespace protocols::jd2;
+		using namespace protocols::jd2;
 
-	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	PDBJobOutputterOP jobout = new PDBJobOutputter;
+		// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
+		PDBJobOutputterOP jobout = new PDBJobOutputter;
 
-	// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
-	// file and nothing else.
-	protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
+		// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
+		// file and nothing else.
+		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-	try{
-		JobDistributor::get_instance()->go( mymover );
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
+		try{
+			JobDistributor::get_instance()->go( mymover );
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			std::cerr << "Exception: " << std::endl;
+			excn.show( std::cerr );
+			std::cout << "Exception: " << std::endl;
+			excn.show( std::cout ); //so its also seen in a >LOG file
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
-                                }
-    return 0;
+	return 0;
 }
 

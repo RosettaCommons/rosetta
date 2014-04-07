@@ -102,7 +102,7 @@
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <boost/timer.hpp> 
+#include <boost/timer.hpp>
 #include <protocols/docking/util.hh>
 
 using namespace core;
@@ -418,7 +418,7 @@ void run_parallel_docking() {
 	utility::vector1< double > results(18);
 	if ( my_rank%num_master== 0 ) {
 		utility::vector1< utility::vector1<double> > cached_results_;
-		  
+
 		//silent io setup
 		std::string outtag= basic::options::option[basic::options::OptionKeys::docking_parallel::outtag];
 		std::string silentfilename=outtag+"highres_dock_" + string_of( my_rank ) + ".sc";
@@ -452,12 +452,12 @@ void run_parallel_docking() {
 		boost::timer timer;
 		Size total=saved_transformations_.size();
                	Size random_start=numeric::random::random_range(1,total);
-		
+
 		//std::cout << "Run Rosetta on " << my_rank << " processor " << curr_struct << std::endl;
 		if ( curr_struct % restart_freq ==0 ) {
                         utility::vector1< double > transformation=saved_transformations_[random_start];
                         transform_pose( pose, 2, transformation );
-        
+
 			original_pose=pose;
                         //protocols::scoring::Interface interface( rb_move_jump );
                         //interface.calculate( pose );
@@ -472,12 +472,12 @@ void run_parallel_docking() {
 			//original_ft = pose.fold_tree();
 			//protocols::docking::setup_foldtree( pose, utility::to_string("_"), movable_jumps_);
 		}
-        
+
 		//run docking
 		//if ( basic::options::option[basic::options::OptionKeys::docking_parallel::pert] ) perturber->apply(pose);
 		docking_highres_mover_->apply(pose);
 		//pose.fold_tree(original_ft);
-        
+
 		//compute the energy
 		double CstScore=0.0;
 		if (basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()) {
@@ -507,7 +507,7 @@ void run_parallel_docking() {
 		//protocols::docking::DockJumps movable_jumps_out(1);
 		//protocols::docking::setup_foldtree( pose, utility::to_string("_"), movable_jumps_out);
 		//std::cout << "reset fold-tree afterdocking: "<< pose.fold_tree() << std::endl;
-		
+
 		//utility::vector1< double > results(6+12+total_atoms*3);
 		//results.assign(6+12+total_atoms*3,0);
 		//int non_zero_size=dump_pose_diff(pose, original_pose,results,7);
@@ -537,13 +537,13 @@ void run_parallel_docking() {
 		//send data to writing node
 		//std::cout << "Finish " << curr_struct<<  " on " << my_rank << " rms " << rms << " Isc " << Isc << " random_start " << random_start <<  " send to " << my_rank/num_master<< " transformation " << results[7] << " " << results[8] << " " << results[9] << " " << results[10] << " " << results[11] << " " << results[12] << " " << results[13] << " " << results[14] << " " << results[15] << " " << results[16] << " " << results[17] << " " << results[18] << " fold_tree: "<<  pose.fold_tree() << std::endl;
                 utility::send_doubles_to_node((my_rank/num_master)*num_master,results);
-        
+
 		//compute the rmsd/results/packer information
-        
+
 		pose=original_pose;
-        
+
 		curr_struct++;
-        
+
 		} //done compute one structures
 		while (curr_struct<=nstruct);
 	}//end of worker

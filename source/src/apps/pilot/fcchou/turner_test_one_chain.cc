@@ -136,7 +136,7 @@ static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not 
 
 typedef std::pair<unsigned int, float[4]> RNA_scores; //count, total_score, hbond_sc, fa_stack, rna_torsion
 /*
-void 
+void
 write_scores( utility::vector1 < RNA_scores > const & scores, std::string const & out_name) {
 	std::ofstream out_file (out_name.c_str(), std::ios::out | std::ios::binary);
 	Size const vector_size = scores.size();
@@ -182,7 +182,7 @@ get_suite_ideal_A_form_torsions(){
 }
 //////////////////////////////////
 void
-apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set, 
+apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 													pose::Pose & pose,
 													Size const moving_res){
 
@@ -207,7 +207,7 @@ apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 }
 //////////////////////////////////
 void
-apply_suite_torsion( utility::vector1< Real > const & torsion_set, 
+apply_suite_torsion( utility::vector1< Real > const & torsion_set,
 											pose::Pose & pose,
 											Size const moving_suite,
 											bool const sample_3prime_pucker = true){
@@ -285,7 +285,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 }
 //////////////////////////////////
 void
-initialize_o2prime_pack( pose::Pose const & pose, 
+initialize_o2prime_pack( pose::Pose const & pose,
 												scoring::ScoreFunctionOP const scorefxn,
 												scoring::ScoreFunctionOP o2prime_pack_scorefxn,
 												pack::task::PackerTaskOP o2prime_pack_task ) {
@@ -490,7 +490,7 @@ one_chain_MC_sampling(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2prime rotamer trials. 	
+	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2prime_trials ]() ) {
@@ -589,9 +589,9 @@ one_chain_MC_sampling(){
 			current_scores.second[1] = (*hbond_sc_scorefxn)(pose);
 			current_scores.second[2] = (*fa_stack_scorefxn)(pose);
 			current_scores.second[3] = (*rna_torsion_scorefxn)(pose);
-	
+
 			if (score < lowest_score) {
-				lowest_score = score; 
+				lowest_score = score;
 				lowest_pose = pose;
 			}
 		} else {
@@ -612,7 +612,7 @@ one_chain_MC_sampling(){
 		++hist[bin];
 
 	}
-	
+
 	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
 	std::cout << "sampling stdev: " << sample_range << std::endl;
 	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
@@ -630,7 +630,7 @@ one_chain_MC_sampling(){
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
-	
+
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -725,7 +725,7 @@ one_chain_ST_MC () {
 		first_res = 1;
 	}
 
-	// initialize for o2prime rotamer trials. 	
+	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2prime_trials ]() ) {
@@ -809,7 +809,7 @@ one_chain_ST_MC () {
 			++n_accpet;
 
 			if (score < lowest_score) {
-				lowest_score = score; 
+				lowest_score = score;
 				lowest_pose = pose;
 			}
 		} else {
@@ -847,7 +847,7 @@ one_chain_ST_MC () {
 		}
 
 	}
-	
+
 	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
 	std::cout << "sampling stdev: " << sample_range << std::endl;
 	std::cout << "accept rate:" << (double(n_accpet) / num_cycle) << std::endl;
@@ -866,7 +866,7 @@ one_chain_ST_MC () {
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
-	
+
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -957,7 +957,7 @@ one_chain_SWA_cluster(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2prime rotamer trials. 	
+	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2prime_trials ]() ) {
@@ -1034,7 +1034,7 @@ one_chain_SWA_cluster(){
 
 
 			if (score < lowest_score) {
-				lowest_score = score; 
+				lowest_score = score;
 				lowest_pose = pose;
 			}
 
@@ -1083,7 +1083,7 @@ one_chain_SWA_cluster(){
 		++hist[bin];
 
 	}
-	
+
 	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
 	std::cout << "sampling stdev: " << sample_range << std::endl;
 	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
@@ -1101,7 +1101,7 @@ one_chain_SWA_cluster(){
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
-	
+
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -1135,7 +1135,7 @@ utility::vector1< Real > id2torsion(Size torsion_id) {
 	static utility::vector1< Real > const  A_form_torsion_set = get_suite_ideal_A_form_torsions();
 	static const Real delta_north = rna_fitted_torsion_info.delta_north();
 	static const Real delta_south = rna_fitted_torsion_info.delta_south();
-	Size remainder; 
+	Size remainder;
 	Real angle;
 	for (Size i = 1; i <= 7; ++i) {
 		remainder = torsion_id % 12;
@@ -1165,8 +1165,8 @@ utility::vector1< Real > id2torsion(Size torsion_id) {
 	return torsion_list;
 }
 //Convert torsions in torsion_id (start with 0)
-Size 
-torsion2id ( utility::vector1< Real > const & nucleoside_torsion, 
+Size
+torsion2id ( utility::vector1< Real > const & nucleoside_torsion,
              utility::vector1< Real > const & suite_torsion) {
 
 	static utility::vector1< Real > const A_form_torsion = get_suite_ideal_A_form_torsions();
@@ -1209,7 +1209,7 @@ torsion2id ( utility::vector1< Real > const & nucleoside_torsion,
 	//delta1
 	if ( abs (nucleoside_torsion[1] - delta_south) < 1) id += multiplier;
 	multiplier *= 2;
-		
+
 	//delta2
 	if (abs (suite_torsion[6] - delta_south) < 1) id += multiplier;
 	multiplier *= 2;
@@ -1218,8 +1218,8 @@ torsion2id ( utility::vector1< Real > const & nucleoside_torsion,
 }
 
 //Convert torsions to 1d torsion_list
-utility::vector1< Real >  
-torsion_convert ( utility::vector1< Real > const & nucleoside_torsion, 
+utility::vector1< Real >
+torsion_convert ( utility::vector1< Real > const & nucleoside_torsion,
                   utility::vector1< Real > const & suite_torsion) {
 
 	utility::vector1< Real >  torsion_list;
@@ -1235,7 +1235,7 @@ torsion_convert ( utility::vector1< Real > const & nucleoside_torsion,
 
 	//delta1
 	torsion_list.push_back(nucleoside_torsion[1]);
-		
+
 	//delta2
 	torsion_list.push_back(suite_torsion[6]);
 
@@ -1306,7 +1306,7 @@ one_chain_torsion_cluster(){
 	//Initialize suite test
 	protocols::farna::RNA_suite_list const suite_list;
 	utility::vector1 <protocols::farna::suite_info> const & all_suites = suite_list.full_list();
-	utility::vector1 <std::string> suite_names;	
+	utility::vector1 <std::string> suite_names;
 	utility::vector1 <Size> suite_counts;
 	for (Size i = 1; i <= all_suites.size(); ++i) {
 		suite_names.push_back( all_suites[i].name );
@@ -1356,7 +1356,7 @@ one_chain_torsion_cluster(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2prime rotamer trials. 	
+	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2prime_trials ]() ) {
@@ -1430,7 +1430,7 @@ one_chain_torsion_cluster(){
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
-			
+
 			//Calculate suite
 			std::pair< std::string, std::pair <Size, Real> > suite = protocols::farna::suite_assign(pose, 2);
 			suite_index = suite.second.first;
@@ -1483,7 +1483,7 @@ one_chain_torsion_cluster(){
 		++hist[bin];
 
 	}
-	
+
 	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
 	std::cout << "sampling stdev: " << sample_range << std::endl;
 	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
@@ -1500,7 +1500,7 @@ one_chain_torsion_cluster(){
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
-	
+
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -1563,7 +1563,7 @@ torsion2decoy () {
 	std::cout << suite.first << ' ' << suite.second.second << std::endl;
 	pose.dump_pdb("decoy.pdb");
 }
-/*	
+/*
 //////////////////////////////////
 void
 unpack_binary () {
@@ -1604,7 +1604,7 @@ my_main( void* ) {
 		one_chain_MC_sampling();
 	} else if ( algorithm_name == "one_chain_ST" ) {
 		one_chain_ST_MC();
-/*	
+/*
   } else if ( algorithm_name == "one_chain_cluster_SWA_test" ) {
 		one_chain_SWA_cluster();
 
@@ -1612,7 +1612,7 @@ my_main( void* ) {
 		one_chain_torsion_cluster();
 
 	} else if ( algorithm_name == "torsion2decoy" ) {
-		torsion2decoy();	
+		torsion2decoy();
 	} else if ( algorithm_name == "unpack_binary" ) {
 		unpack_binary();
 */
@@ -1658,6 +1658,7 @@ main( int argc, char * argv [] ) {
 	protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 

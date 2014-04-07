@@ -61,6 +61,7 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go(new protocols::ligand_docking::GrowLigand("X"));
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
     }
     return 0;
 }

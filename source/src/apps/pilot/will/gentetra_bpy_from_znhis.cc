@@ -129,11 +129,11 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	for(Size i = 1; i <= nres; ++i) {
 		if(pose.residue(i).name3()=="BPY") {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else {			
+		} else {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 		}
 	}
-	// TR << *task << std::endl;	
+	// TR << *task << std::endl;
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
@@ -145,7 +145,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		atom_map.set(AtomID(2,ir) , true );
 		atom_map.set(AtomID(3,ir) , true );
 		atom_map.set(AtomID(5,ir) , true );
-	}			
+	}
 	core::id::AtomID_Map<Real> atom_sasa; utility::vector1<Real> sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, sasa, 2.3, false, atom_map );
 	for(Size i = 1; i <= sasa.size(); ++i) if( atom_sasa.n_atom(i) > 4 ) sasa[i] = atom_sasa[AtomID(5,i)];
@@ -164,11 +164,11 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		aas[core::chemical::aa_ser] = false;
 		aas[core::chemical::aa_thr] = false;
 		aas[core::chemical::aa_asp] = false;
-		aas[core::chemical::aa_glu] = false;		
-		aas[core::chemical::aa_lys] = false;		
-		aas[core::chemical::aa_arg] = false;		
-		aas[core::chemical::aa_asn] = false;		
-		aas[core::chemical::aa_gln] = false;		
+		aas[core::chemical::aa_glu] = false;
+		aas[core::chemical::aa_lys] = false;
+		aas[core::chemical::aa_arg] = false;
+		aas[core::chemical::aa_asn] = false;
+		aas[core::chemical::aa_gln] = false;
 	}
 
 	vector1<Size> fixed;
@@ -191,7 +191,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 				if(pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 49) {
 					interface.push_back(i);
 				}
-			}		
+			}
 		}
 		for(Size i = 1; i <= nres; ++i) {
 			Vec xyz = pose.xyz(AtomID(5,i));
@@ -203,11 +203,11 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		if(pose.residue(i).name3()=="BPY") {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// std::exit(-1);
-		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){			
+		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).or_ex1_sample_level( core::pack::task::EX_ONE_STDDEV );
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
-		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){			
+		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
 		} else {
@@ -220,7 +220,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		task->nonconst_residue_task(i).prevent_repacking();
 	}
 	TR << *task << std::endl;
-	
+
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
@@ -287,7 +287,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
 	m.apply(pose);
-		
+
 }
 
 std::pair<Size,Size> makesplitwork_3bpy(Size total) {
@@ -314,7 +314,7 @@ std::pair<Size,Size> makesplitwork_3bpy(Size total) {
 
 vector1<Vec> get_zn_axes(core::pose::Pose const & pose) {
 	Vec nd1 = pose.residue(1).xyz("ND1");
-	Vec ne1 = pose.residue(1).xyz("NE2");	
+	Vec ne1 = pose.residue(1).xyz("NE2");
 	Vec nd2 = pose.residue(2).xyz("ND1");
 	Vec ne2 = pose.residue(2).xyz("NE2");
 	Vec zn  = pose.residue(3).xyz("ZN");
@@ -339,12 +339,12 @@ void fixH(core::pose::Pose & pose) {
 		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
-	}	
+	}
 }
 
 
 void run() {
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -352,12 +352,12 @@ void run() {
 	ScoreFunctionOP sfrep = new core::scoring::ScoreFunction;
 	sfrep->set_weight(core::scoring::fa_rep,1.0);
 
-	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );		
+	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Pose bpy;
 	core::import_pose::pose_from_pdb(bpy ,*rs,"input/bpy_ideal.pdb");
 	core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
 	core::pose::remove_upper_terminus_type_from_pose_residue(bpy,1);
-	
+
 	Pose nat;
 	core::import_pose::pose_from_pdb(nat,*rs,option[in::file::s]()[1]);
 	std::string infile = utility::file_basename(option[in::file::s]()[1]);
@@ -383,9 +383,9 @@ void run() {
 					Vec xi = Rzn*(base.xyz(AtomID(ia,ir))-c2f1)+c2f1;
 					for(Size ja = 6; ja <= lig.residue(1).nheavyatoms(); ja++) {
 						if( xi.distance_squared(lig.xyz(AtomID(ja,1))) < 9.0 ) goto clash1;
-						if( xi.distance_squared(lig.xyz(AtomID(ja,2))) < 9.0 ) goto clash1;						
-					}					
-					for(Size jr = 1; jr <= base.n_residue(); ++jr) {					
+						if( xi.distance_squared(lig.xyz(AtomID(ja,2))) < 9.0 ) goto clash1;
+					}
+					for(Size jr = 1; jr <= base.n_residue(); ++jr) {
 						for(Size ja = 1; ja <= base.residue(jr).nheavyatoms(); ja++) {
 							if( base.xyz(AtomID(ja,jr)).distance_squared( xi ) < 9.0 ) goto clash1;
 						}
@@ -405,8 +405,8 @@ void run() {
 				if(ibpy == ihis || ibpy == jhis ) continue;
 				base = nat;
 				base.replace_residue(ihis,lig.residue(1),true);
-				base.replace_residue(jhis,lig.residue(2),true);			
-				core::pose::replace_pose_residue_copying_existing_coordinates(base,ibpy,rs->name_map("BPY"));				
+				base.replace_residue(jhis,lig.residue(2),true);
+				core::pose::replace_pose_residue_copying_existing_coordinates(base,ibpy,rs->name_map("BPY"));
 				Real chi1_incr = option[willmatch::chi1_increment]();
 				for(Real bch1 = 0.0; bch1 <= 360; bch1 += chi1_incr) {
 					base.set_chi(1,ibpy,bch1);
@@ -418,7 +418,7 @@ void run() {
 							if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz("CM")) < 9.0 ) goto clash2;
 						}
 					}
-					goto noclash2;	clash2: continue; noclash2:					
+					goto noclash2;	clash2: continue; noclash2:
 					Vec CB = base.residue(ibpy).xyz("CB");
 					Vec CG = base.residue(ibpy).xyz("CG");
 					Vec FE = base.residue(ibpy).xyz("ZN");
@@ -427,7 +427,7 @@ void run() {
 						Vec isct = baxes[jaxs].first;
 						Vec c3f1 = baxes[jaxs].second;
 						if( isct.distance_squared(c3f1) < 25.0 ) continue;
-						if( isct.distance_squared(c2f1) < 25.0 ) continue;						
+						if( isct.distance_squared(c2f1) < 25.0 ) continue;
 						Vec a3f1 = (isct-c3f1).normalized();
 						Real orig_ang = angle_degrees( c2f1, isct, c3f1);
 						Real ang = (orig_ang > 90.0) ? 180.0-orig_ang : orig_ang;
@@ -439,13 +439,13 @@ void run() {
 						for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 							if(ir==ibpy) continue;
 							for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
-								for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {								
+								for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {
 									if( base.xyz(AtomID(ia,ir)).distance_squared(base.xyz(AtomID(ja,ibpy))) < 9.0 ) goto clash3;
 								}
 							}
 						}
-						goto noclash3;	clash3: continue; noclash3:					
-						
+						goto noclash3;	clash3: continue; noclash3:
+
 						Mat R1 = rotation_matrix_degrees(a3f1,120.0);
 						Mat R2 = rotation_matrix_degrees(a3f1,240.0);
 						for(Size ir = 1; ir <= base.n_residue(); ++ir) {
@@ -457,7 +457,7 @@ void run() {
 								}
 								Vec x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 								Vec x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-								for(Size jr = 1; jr <= base.n_residue(); ++jr) {					
+								for(Size jr = 1; jr <= base.n_residue(); ++jr) {
 									for(Size ja = 1; ja <= 5; ja++) {
 										if( x1.distance_squared(base.xyz(AtomID(ja,jr))) < 9.0 ) goto clash4;
 										if( x1.distance_squared( Rzn*(base.xyz(AtomID(ja,jr))-c2f1)+c2f1 ) < 9.0 ) goto clash4;
@@ -467,14 +467,14 @@ void run() {
 								}
 							}
 						}
-						goto noclash4;	clash4: continue; noclash4:					
-																		
-						
+						goto noclash4;	clash4: continue; noclash4:
+
+
 						Mat                 Rsymm = alignVectorSets( (c3f1-isct).normalized(), (c2f1-isct).normalized(), Vec(0,0,1), Vec( 0.816496579408716,0, 0.57735027133783) );
 						if(orig_ang > 90.0) Rsymm = alignVectorSets( (c3f1-isct).normalized(), (c2f1-isct).normalized(), Vec(0,0,1), Vec(-0.816496585484756,0,-0.577350262745012) );
-						
+
 						Real baserep = sfrep->score(base);
-						
+
 						Pose symm = base;
 						Pose symm_bare = symm;
 						symm.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue(rs->name_map("FE")),ibpy);
@@ -483,12 +483,12 @@ void run() {
 						symm.set_xyz(AtomID(1,symm.n_residue()),c2f1);
 
 						trans_pose(symm,-isct);
-						rot_pose(symm,Rsymm);											
+						rot_pose(symm,Rsymm);
 						core::pose::symmetry::make_symmetric_pose(symm);
 						trans_pose(symm_bare,-isct);
-						rot_pose(symm_bare,Rsymm);											
+						rot_pose(symm_bare,Rsymm);
 						core::pose::symmetry::make_symmetric_pose(symm_bare);
-						
+
 							// utility::io::ozstream out("test.pdb");
 							// base.dump_pdb(out);
 							// Vec viz(0,0,0);
@@ -497,7 +497,7 @@ void run() {
 							// viz = Rsymm*(c3f1        - isct); out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"C"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 							// viz = Rsymm*(c3f1+a3f1*5 - isct); out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"D"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 							// viz = Rsymm*(isct        - isct); out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"I"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-							// out.close();					
+							// out.close();
 							// utility_exit_with_message("debug");
 
 						// symm.conformation().declare_chemical_bond( ihis, "ND1", jhis, "ND1" );
@@ -512,34 +512,34 @@ void run() {
 						sf->score(symm_bare);
 						// TR << "REP " << 2*baserep << " " << symm_bare.energies().total_energies()[core::scoring::fa_rep] << std::endl;
 						if( symm_bare.energies().total_energies()[core::scoring::fa_rep] - 2*baserep > 1000.0) continue;
-						
+
 						TR << "HIT " << ihis << "-" << jhis << " " << ibpy << " " << bch1 << " " << iaxs << " " << jaxs << std::endl;
 
 						Real tmp1 = symm.chi(1,ibpy);
-						Real tmp2 = symm.chi(2,ibpy);						
+						Real tmp2 = symm.chi(2,ibpy);
 						core::pose::replace_pose_residue_copying_existing_coordinates(symm,ibpy,rs->name_map("PHE"));
 						symm.set_chi(1,ibpy,tmp1);
-						symm.set_chi(2,ibpy,tmp2);						
+						symm.set_chi(2,ibpy,tmp2);
 
 						symm.dump_pdb(fname);
 						core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 						ss_out->fill_struct(symm_bare,fname);
 						sfd.write_silent_struct( *ss_out, option[ basic::options::OptionKeys::out::file::silent ]() );
-						
+
 						core::pose::replace_pose_residue_copying_existing_coordinates(base,ibpy,rs->name_map("BPY"));
 						symm.set_chi(1,ibpy,tmp1);
-						symm.set_chi(2,ibpy,tmp2);						
-							
+						symm.set_chi(2,ibpy,tmp2);
+
 					}
 				}
 			}
 		}
 	}
-	
-	
-	
-/*	
-						
+
+
+
+/*
+
 							string fname = infile+"_"+lead_zero_string_of(irsd,3)+"_"+lead_zero_string_of((Size)(chi1+180.0),3)+"_"+lead_zero_string_of((Size)(chi2+180.0),3)+"_"+lead_zero_string_of(jrsd,3)+"_"+lead_zero_string_of((Size)(totrot),3)+"_"+lead_zero_string_of(iaxs,3)+".pdb";
 
 							sf->score(symm);
@@ -554,11 +554,11 @@ void run() {
 							core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 							ss_out->fill_struct(symm,fname);
 							sfd.write_silent_struct( *ss_out, option[ basic::options::OptionKeys::out::file::silent ]() );
-												
-						}					
-					
+
+						}
+
 					}
-				
+
 
 
 				}
@@ -567,9 +567,9 @@ void run() {
 				//matches?;
 			}
 
-		
+
 		}
-	}	
+	}
 */
 }
 
@@ -577,7 +577,7 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-	
+
 	// Vec p(-6.456746, 5.922204, -0.982538);
 	// Vec d(0.393718,  0.677101,  0.621707);
 	// Vec v(0.000000,  0.000000,  0.000000);
@@ -587,13 +587,14 @@ int main (int argc, char *argv[]) {
 	// for(Size i = 1; i <= X.size(); ++i) {
 	// 	TR << "X " << i << " " << X[i] << std::endl;
 	// }
-	// utility_exit_with_message("debug line_cone_intersection");	
+	// utility_exit_with_message("debug line_cone_intersection");
 
 	devel::init(argc,argv);
 	run();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }
@@ -601,8 +602,8 @@ int main (int argc, char *argv[]) {
 
 
 
-// 
-// 
+//
+//
 
 
 

@@ -204,7 +204,7 @@ Real res_type_score(const core::pose::Pose& pose){
 Real ala_ct(const core::pose::Pose& pose){
   Real score = 0;
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if(pose.residue(ii).name3() == "ALA") 
+		if(pose.residue(ii).name3() == "ALA")
             score++;
 	}
 	std::cout << "score: " << score << std::endl;
@@ -228,7 +228,7 @@ Size get_helixCAInContact(const core::pose::Pose& pose,protocols::loops::Loops h
     Size contactCt = 0;
     for(Size ii=1; ii<helices.num_loop(); ++ii){
         if(helices[ii].stop() <= maxToCheck){
-            for(Size kk=ii+1; kk<helices.num_loop(); ++kk){   
+            for(Size kk=ii+1; kk<helices.num_loop(); ++kk){
                 if(helices[kk].stop()<=maxToCheck){
                     for(Size aa=helices[ii].start(); aa<= helices[ii].stop(); ++aa){
                         for(Size bb=helices[kk].start(); bb<= helices[kk].stop(); ++bb){
@@ -244,8 +244,8 @@ Size get_helixCAInContact(const core::pose::Pose& pose,protocols::loops::Loops h
     }
     return(contactCt);
 }
-                            
-    
+
+
 
 int main( int argc, char * argv [] ) {
     try {
@@ -266,7 +266,7 @@ int main( int argc, char * argv [] ) {
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
 	vector1<core::pose::PoseOP> poses;
-	output << "score  holes  h1_2dist  h1_3dist  h1_4dist  h2_4dist  h2_5dist  h3_6dist  tag  resTypeScore  alaCt  hContact  abego" << std::endl; 
+	output << "score  holes  h1_2dist  h1_3dist  h1_4dist  h2_4dist  h2_5dist  h3_6dist  tag  resTypeScore  alaCt  hContact  abego" << std::endl;
  	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
@@ -305,9 +305,9 @@ int main( int argc, char * argv [] ) {
         }
         Real resTypeScore = res_type_score(*input_poseOP);
 		Real alaCt = ala_ct(*input_poseOP);
-        Size helixCAInContact = get_helixCAInContact(*input_poseOP,helices,repeatLength*2); 
+        Size helixCAInContact = get_helixCAInContact(*input_poseOP,helices,repeatLength*2);
       	output << F(8,3,score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,d1_2) << " "<< F(8,3,d1_3) << " "<< F(8,3,d1_4) << " "<< F(8,3,d2_4)  <<" " << F(8,3,d2_5) <<" " << F(8,3,d3_6) << " "<< " " << I(6,tag) <<" " << I(4,resTypeScore) << " " << I(4,alaCt) << " " << I(4,helixCAInContact) << " ";
-        
+
         utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
 		for (Size ii=1; ii<(2*repeatLength); ++ii){
 			output << abego_vector[ii];
@@ -317,6 +317,7 @@ int main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

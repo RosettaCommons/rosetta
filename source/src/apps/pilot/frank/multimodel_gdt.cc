@@ -81,7 +81,7 @@ multimodel_gdt( core::pose::Pose const & ref_pose, utility::vector1<core::pose::
 			numeric::xyzVector<core::Real> x_n = ref_pose.residue(i).xyz(2);
 
 			//core::Size n_idx = models[j].pdb_info()->pdb2pose( 'A', n );
-			//if (n_idx == 0) 
+			//if (n_idx == 0)
 			//	n_idx = models[j].pdb_info()->pdb2pose( ' ', n );
 
 			// assumes single chain
@@ -101,7 +101,7 @@ multimodel_gdt( core::pose::Pose const & ref_pose, utility::vector1<core::pose::
 		}
 
 		r1/=nres; r2/=nres; r3/=nres; r4/=nres; r7/=nres;
-		std::cout << j << " models:  maxsub1=" << r1 << "  maxsub2=" << r2 << "  maxsub3=" << r3 << "  maxsub4=" << r4 << "  maxsub7=" << r7 
+		std::cout << j << " models:  maxsub1=" << r1 << "  maxsub2=" << r2 << "  maxsub3=" << r3 << "  maxsub4=" << r4 << "  maxsub7=" << r7
 		  << "  gdtmm=" << (r1+r2+r3+r4+r7)/5.0 << std::endl;
 	}
 }
@@ -113,7 +113,7 @@ main( int argc, char * argv [] ) {
         using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	devel::init(argc, argv);
-	
+
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	utility::vector1<core::pose::Pose> models = core::import_pose::poses_from_pdbs( *residue_set, option[OptionKeys::in::file::s](), false);
 	core::pose::PoseOP native = core::import_pose::pose_from_pdb(*residue_set, option[OptionKeys::in::file::native]());
@@ -124,6 +124,7 @@ main( int argc, char * argv [] ) {
 	multimodel_gdt( *native, models );
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
     }

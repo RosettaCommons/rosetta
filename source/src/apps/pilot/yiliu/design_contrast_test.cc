@@ -121,8 +121,9 @@ int main( int argc, char * argv [] )
 			dc.output_sqc_file(native_poses[j], decoy_poses[j], pdb_codes[j], sqc);
 		}
 	}
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 

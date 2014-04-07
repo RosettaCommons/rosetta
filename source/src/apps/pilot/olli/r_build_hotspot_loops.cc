@@ -450,6 +450,7 @@ main( int argc, char * argv [] )
 	devel::init( argc, argv );
 	LoopBuild_main();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

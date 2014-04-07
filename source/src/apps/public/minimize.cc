@@ -101,13 +101,13 @@ Minimize::Minimize() :
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	if ( option[ in::file::fullatom ]() ){
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *score_function_ );
 	}else{
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *score_function_ );
 	}
-		
+
 
 }
 
@@ -174,5 +174,6 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

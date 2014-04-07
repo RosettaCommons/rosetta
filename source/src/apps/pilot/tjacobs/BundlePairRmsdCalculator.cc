@@ -140,7 +140,7 @@ main( int argc, char * argv [] )
 //	"	res.atomno IN (1,2,3,4) AND\n"
 //	"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
 //	"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
-	
+
 	/**For smotifs**/
 	"SELECT sp.smotif_pair_id, sss.segment_id, res.x, res.y, res.z\n"
 	"FROM smotif_pairs sp\n"
@@ -195,7 +195,7 @@ main( int argc, char * argv [] )
 	}
 	count_nodes_res >> n_nodes;
 	TR << "Done counting nodes from the database.  n_nodes = " << n_nodes  << std::endl;
-	
+
 	//FILL VECTOR OF NODE DATA
 	std::string select_all_nodes =
 		"SELECT\n"
@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 		basic::database::safely_prepare_statement(select_all_nodes, db_session);
 
 	cppdb::result select_all_nodes_res=basic::database::safely_read_from_database(select_all_nodes_stmt);
-	
+
 	utility::vector1< node_data > nodes( n_nodes );
 	for ( core::Size ii = 1; ii <= n_nodes; ++ii ) {
 		if ( ! select_all_nodes_res.next() ) {
@@ -214,12 +214,12 @@ main( int argc, char * argv [] )
 		}
 		select_all_nodes_res >> nodes[ii].node_index >> nodes[ii].bundle_index >> nodes[ii].helix_1_ind >> nodes[ii].helix_2_ind;
 	}
-	
+
 	//INSERT STATEMENT
 	std::string comparison_insert =
 	"INSERT INTO node_comparisons(node_id_1, node_id_2, rmsd, clash_score) VALUES(?,?,?,?);";
 	cppdb::statement comparison_insert_stmt(basic::database::safely_prepare_statement(comparison_insert,db_session));
-	
+
 	//LOOP THROUGH ALL NODES
 	db_session->begin();
 	for(core::Size ii=1; ii<=n_nodes; ++ii)
@@ -229,11 +229,11 @@ main( int argc, char * argv [] )
 			//ensure the secondary structure elements we are comparing are the right size
 			if(helix_coords[ nodes[ii].helix_1_ind ].size() != helix_coords[ nodes[jj].helix_1_ind ].size()) continue;
 			if(helix_coords[ nodes[ii].helix_2_ind ].size() != helix_coords[ nodes[jj].helix_2_ind ].size()) continue;
-			
+
 			//ensure we aren't comparing the same smotif to itself. This could be easier if we had the smotif id and not the smotif pair id
 			if(helix_coords[ nodes[ii].helix_1_ind ] == helix_coords[ nodes[jj].helix_1_ind ]) continue;
 			if(helix_coords[ nodes[ii].helix_2_ind ] == helix_coords[ nodes[jj].helix_2_ind ]) continue;
-			
+
 			utility::vector1< numeric::xyzVector<core::Real> > node_1_coords;
 			node_1_coords.insert( node_1_coords.end(),
 				helix_coords[ nodes[ii].helix_1_ind ].begin(),
@@ -399,7 +399,7 @@ main( int argc, char * argv [] )
 //			}
 //			core::Real third_helix_rmsd = std::sqrt(tot/node_1_other_helix_coords.size() );
 			core::Real third_helix_rmsd = 0;
-			
+
 			TR << "ALL THE RMSDS: " << bundle_pair_rmsd << " " << test_rmsd << " " << third_helix_rmsd << std::endl;
 
 			comparison_insert_stmt.bind(1, nodes[ii].node_index);
@@ -414,6 +414,7 @@ main( int argc, char * argv [] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

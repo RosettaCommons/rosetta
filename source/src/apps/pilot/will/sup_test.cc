@@ -30,14 +30,14 @@ int main (int argc, char *argv[])
 
 	try {
 
-	
+
 	devel::init(argc,argv);
-	
+
 	core::pose::Pose mod_pose,ref_pose;
-	
+
 	core::import_pose::pose_from_pdb(mod_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
-	core::import_pose::pose_from_pdb(ref_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[2]);	
-	
+	core::import_pose::pose_from_pdb(ref_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[2]);
+
 	using namespace core::id;
 	AtomID_Map<AtomID> atom_map;
 	core::pose::initialize_atomid_map(atom_map,mod_pose,BOGUS_ATOM_ID);
@@ -47,11 +47,11 @@ int main (int argc, char *argv[])
 			atom_map[ AtomID(ia,ir) ] = AtomID(ia,ref_rsd);
 		}
 	}
-	
+
 	core::Real rms = core::scoring::superimpose_pose(mod_pose,ref_pose,atom_map);
-	
+
 	std::cout << "aligned region rms: " << rms << std::endl;
-	
+
 	mod_pose.dump_pdb("moved_pose.pdb");
 	ref_pose.dump_pdb("fixed_pose.pdb");
 
@@ -59,6 +59,7 @@ int main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

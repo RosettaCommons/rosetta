@@ -41,18 +41,18 @@ main (int argc, char *argv[])
 {
 	try{
 		using namespace core;
-		
+
 		devel::init(argc, argv);
-		protocols::moves::MoverOP mover = new protocols::simple_moves::RepulsiveOnlyMover(); 
-		scoring::ScoreFunctionOP score = scoring::getScoreFunction(); 
-		
+		protocols::moves::MoverOP mover = new protocols::simple_moves::RepulsiveOnlyMover();
+		scoring::ScoreFunctionOP score = scoring::getScoreFunction();
+
 		pose::Pose pose;
-	//changing fa_standard to centroid	
+	//changing fa_standard to centroid
 		chemical::ResidueTypeSetCAP centroid_residue_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::CENTROID );
 
-	//Will changed the sequence of the argument here by checking out src/core/io/pdb/pose_io.hh	
+	//Will changed the sequence of the argument here by checking out src/core/io/pdb/pose_io.hh
 		core::import_pose::pose_from_pdb( pose, *centroid_residue_set, basic::options::option[basic::options::OptionKeys::in::file::s][1]) ;
-			
+
 
 		score->show(pose);
 		pose.dump_scored_pdb("before.pdb",*score);
@@ -60,10 +60,11 @@ main (int argc, char *argv[])
 		score->show(pose);
 		pose.dump_scored_pdb("after.pdb",*score);
 
-	  
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 		return 0;
 
 }

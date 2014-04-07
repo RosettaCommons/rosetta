@@ -159,29 +159,29 @@ main( int argc, char * argv [] )
 		Size const start ( frame->start() );
 		if( ( start + ( frame->length() - 1 ) ) > pose.total_residue() ) continue;
 		runtime_assert( start <= pose.total_residue() );
-		
+
 		for ( Size i=1; i<=frame->nr_frags(); i++ ) {
 			// insert fragment
-			
+
 			frame->apply( i, test_pose );
 			// calc rmsd
 			core::Real rmsd = CA_rmsd( pose, test_pose, start, start + frame->length() - 1 );
 
-			
+
 			if( rmsd <= rmsd_cutoff_ ) {
 				FragData fragdat = frame->fragment( i );
 				for( Size j=1; j<=fragdat.size(); j++ ) {
-					
+
 					Size res = start + j - 1;
 					freq[ res ][ core::chemical::aa_from_oneletter_code( fragdat.sequence( j ) ) ] ++;
-					
+
 					// std::cout << j << " " << res << " " << fragdat.sequence( j ) << " " << fragdat.sequence() << std::endl;
-					
+
 				}
 			}
 		}
 	} // FrameIterator
-	
+
 	/// output //////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > total;
 	total.resize( pose.total_residue() );
@@ -272,6 +272,7 @@ main( int argc, char * argv [] )
 	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

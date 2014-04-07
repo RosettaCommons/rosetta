@@ -55,21 +55,21 @@ main( int argc, char * argv [] ) {
 
 //------------- Read the native pose  ----------
     core::pose::Pose native_pose;
-    if ( option[ in::file::native ].user() ) 
+    if ( option[ in::file::native ].user() )
         core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
-    
-    
+
+
     core::scoring::ResidualDipolarCoupling rdc;
     rdc.read_RDC_file();
     std::cout << "native:\t" << rdc.compute_dipscore(native_pose) << 	std::endl;
-    
+
 //------------- Read the pose for scoring ----------
     core::pose::Pose fa_pose;
     utility::vector1<utility::file::FileName> s = option[in::file::s]();
     for(core::Size i=1;i<=s.size();i++) {
 	core::import_pose::pose_from_pdb( fa_pose, s[i].name());
 	std::cout << s[i].name() << ":\t" << rdc.compute_dipscore(fa_pose) << std::endl;
-    }    
+    }
 
 //------------- Now, let's find a best-scoring fragment based on RDC ----------
     core::Size Nmer_size = 35;
@@ -78,22 +78,22 @@ main( int argc, char * argv [] ) {
     core::scoring::ResidualDipolarCoupling::RDC_lines data = rdc.get_RDC_data();
     for ( core::scoring::ResidualDipolarCoupling::RDC_lines::const_iterator it = data.begin(); it != data.end(); ++it ) {
 	if ( it->res1() >= frag_from && it->res1() <= frag_from + Nmer_size - 1 ) {
-	
+
 	    core::scoring::RDC clone(it->res1() - frag_from + 1, it->atom1(), it->res2() - frag_from + 1,
 			it->atom2(), it->Jdipolar());
 	    rdc_data_on_fragment.push_back( clone );
 
 //	    std::cerr << "Copied: "<< *it << " as " << clone << std::endl;
-	} 	
+	}
     }
     core::scoring::ResidualDipolarCoupling rdc_on_Nmer( rdc_data_on_fragment );
 
     core::pose::Pose frag_pose;
-    core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );    
+    core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
     std::string seq = native_pose.sequence().substr(frag_from-1,Nmer_size);
     core::pose::make_pose_from_sequence(frag_pose, seq,*rsd_set);
     core::scoring::store_RDC_in_pose( &rdc_on_Nmer, frag_pose );
-    
+
     for(core::Size ires=1;ires< native_pose.total_residue() - Nmer_size - 1;ires++) {
 	for(core::Size j=0;j<Nmer_size;j++) {
     	    frag_pose.set_phi( j+1, native_pose.phi(ires+j) );
@@ -104,6 +104,7 @@ main( int argc, char * argv [] ) {
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 }

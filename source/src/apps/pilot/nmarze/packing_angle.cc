@@ -56,12 +56,12 @@ virtual void apply( core::pose::Pose & pose_in )
 	using namespace core::pose;
 	using namespace protocols::moves;
 	using namespace protocols::antibody;
-			
+
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	
+
 	antibody::AntibodyInfoCOP ab_info_ = new AntibodyInfo( pose_in );
 	PoseCOP new_pose = new Pose( pose_in );
-	
+
 	vector1< Real > orientation_coords_ = vl_vh_orientation_coords( *new_pose , *ab_info_ );
 
 	job->add_string_real_pair( "VL_VH_distance", orientation_coords_[1] );
@@ -74,9 +74,9 @@ virtual void apply( core::pose::Pose & pose_in )
 	job->add_string_real_pair( "L1_length", ab_info_->get_CDR_length( l1 ) );
 	job->add_string_real_pair( "L2_length", ab_info_->get_CDR_length( l2 ) );
 	job->add_string_real_pair( "L3_length", ab_info_->get_CDR_length( l3 ) );
-			
+
 	TR << "Finished applying Packing Angle Calculator" << std::endl;
-			
+
 	return;
 } // PackingAngle::apply()
 
@@ -119,6 +119,7 @@ main( int argc, char * argv [] )
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
     return 0;
 }

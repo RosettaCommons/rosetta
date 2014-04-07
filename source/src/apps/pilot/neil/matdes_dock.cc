@@ -81,7 +81,7 @@ count_int_CBs_clashes (pose::Pose const &pose, Size i, Size j, Real contact_dist
 
   conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
   Size nsub = sym_info->subunits();
-  
+
   if (i > nsub || j > nsub) {
     utility_exit_with_message("There are not that many subunits!");
   }
@@ -256,5 +256,6 @@ main (int argc, char *argv[])
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

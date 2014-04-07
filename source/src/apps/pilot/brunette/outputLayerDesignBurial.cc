@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh> 
+#include <core/pose/util.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
@@ -35,7 +35,7 @@
 
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
-#include <devel/init.hh>   
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 
 //protocols
@@ -49,7 +49,7 @@ using namespace ObjexxFCL::format;
 using utility::vector1;
 using core::Size;
 using core::Real;
-using core::pose::Pose; 
+using core::pose::Pose;
 
 basic::Tracer tr( "ouputLayerDesignBurial" );
 
@@ -84,7 +84,7 @@ std::string calc_burial(Pose const & pose, Real pore_radius, Real boundarySasaTh
     }
     return(burial);
 }
- 
+
 
 int main( int argc, char * argv [] ) {
 	try{
@@ -104,7 +104,7 @@ int main( int argc, char * argv [] ) {
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
         std::string outFile = (tag + ".burial");
-        utility::io::ozstream output(outFile);   
+        utility::io::ozstream output(outFile);
         output << ">" << tag << std::endl;
         std::string burial =  calc_burial(*input_poseOP,PORE_RADIUS, BOUNDARY_SASA_THRESH,SURFACE_SASA_THRESH);
         output << burial << std::endl;
@@ -113,6 +113,7 @@ int main( int argc, char * argv [] ) {
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
     return 0;
 }

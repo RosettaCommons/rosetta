@@ -411,7 +411,7 @@ struct TCDock {
 		string cmp2pdb,
 		string cmp1type,
 		string cmp2type
-	): 
+	):
 		cmp1type_(cmp1type),
 		cmp2type_(cmp2type),
 		abort_(false),
@@ -459,7 +459,7 @@ struct TCDock {
 		core::scoring::dssp::Dssp(cmp1in_).insert_ss_into_pose(cmp1in_);
 		core::scoring::dssp::Dssp(cmp2in_).insert_ss_into_pose(cmp2in_);
 		if(option[tcdock::debug]()) cmp1in_.dump_pdb("cmp1in.pdb");
-		if(option[tcdock::debug]()) cmp2in_.dump_pdb("cmp2in.pdb");		
+		if(option[tcdock::debug]()) cmp2in_.dump_pdb("cmp2in.pdb");
 
 		// for(int i = 1; i <= cmp1in_.n_residue(); ++i) cout << cmp1in_.secstruct(i); cout << endl;
 		// for(int i = 1; i <= cmp2in_.n_residue(); ++i) cout << cmp2in_.secstruct(i); cout << endl;
@@ -511,7 +511,7 @@ struct TCDock {
 		axismap_["O2"] = Vecf( 1.00000000000000, 1.00000000000000, 0.00000000000000 ).normalized();
 		axismap_["O3"] = Vecf( 1.00000000000000, 1.00000000000000, 1.00000000000000 ).normalized();
 		axismap_["O4"] = Vecf( 1.00000000000000, 0.00000000000000, 0.00000000000000 ).normalized();
-		
+
 		axismap_["T2"] = Vecf( 0.81649657940871, 0.00000000000000, 0.57735027133783 ).normalized();
 		axismap_["T3"] = Vecf( 0.00000000000000, 0.00000000000000, 1.00000000000000 ).normalized();
 
@@ -780,19 +780,19 @@ struct TCDock {
 		Real const contact_dis = basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]();
 		Real const contact_dis2 = contact_dis*contact_dis;
 		// std::cerr << p1.residue(1).xyz("CB") << endl << cmp1cbs_[1] << endl;
-		// std::cerr << p2.residue(1).xyz("CB") << endl << cmp2cbs_[1] << endl << endl;		
+		// std::cerr << p2.residue(1).xyz("CB") << endl << cmp2cbs_[1] << endl << endl;
 
 		// pick rotations with best num contacts
 		core::kinematics::Stub x1(rotation_matrix_degrees(cmp1axs_,icmp1),dcmp1*cmp1axs_);
-		core::kinematics::Stub x2(rotation_matrix_degrees(cmp2axs_,icmp2),dcmp2*cmp2axs_);		
+		core::kinematics::Stub x2(rotation_matrix_degrees(cmp2axs_,icmp2),dcmp2*cmp2axs_);
 		// xform_pose(p1,x1);
 		// xform_pose(p2,x2);
 
 				// std::cerr << p1.residue(1).xyz("CB") << endl << x1.local2global(cmp1cbs_[1]) << endl;
-				// std::cerr << p2.residue(1).xyz("CB") << endl << x2.local2global(cmp2cbs_[1]) << endl << endl;		
+				// std::cerr << p2.residue(1).xyz("CB") << endl << x2.local2global(cmp2cbs_[1]) << endl << endl;
 
 		// cerr << cmp1cbs_.size() << " " << p1.n_residue() << std::endl;
-		// cerr << cmp2cbs_.size() << " " << p2.n_residue() << std::endl;		
+		// cerr << cmp2cbs_.size() << " " << p2.n_residue() << std::endl;
 
 		int best1=0,best2=0,bestcount=0;
 		for(int ir1 = 0; ir1 < cmp1nsub_; ++ir1){
@@ -800,7 +800,7 @@ struct TCDock {
 				int ccount = 0;
 				for(Size ir=1; ir<=cmp1cbs_.size()/cmp1nsub_; ++ir){ Vec const cb1( x1.local2global(cmp1cbs_[ir]) );
 				for(Size jr=1; jr<=cmp2cbs_.size()/cmp2nsub_; ++jr){ Vec const cb2( x2.local2global(cmp2cbs_[jr]) );
-					if( cb1.distance_squared(cb2) < contact_dis2 ) ccount++;					
+					if( cb1.distance_squared(cb2) < contact_dis2 ) ccount++;
 					// if( p1.residue(ir).xyz(2).distance_squared(p2.residue(jr).xyz(2)) < dist2 ) ccount++;
 				}}
 				if(ccount > bestcount){
@@ -810,7 +810,7 @@ struct TCDock {
 				}
 
 				// std::cerr << p1.residue(1).xyz("CB") << endl << x1.local2global(cmp1cbs_[1]) << endl;
-				// std::cerr << p2.residue(1).xyz("CB") << endl << x2.local2global(cmp2cbs_[1]) << endl << endl;		
+				// std::cerr << p2.residue(1).xyz("CB") << endl << x2.local2global(cmp2cbs_[1]) << endl << endl;
 
 				// rot_pose(p2,rotation_matrix_degrees(cmp2axs_,(Real)cmp2nangle_));
 				x2.M = rotation_matrix_degrees(cmp2axs_,(Real)cmp2nangle_) * x2.M;
@@ -851,9 +851,9 @@ struct TCDock {
 			if(termini && !p2.residue(       1      ).is_lower_terminus()) add_lower_terminus_type_to_pose_residue(p2,      1       );
 			if(termini && !p2.residue(p2.n_residue()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p2,p2.n_residue());
 		}
-		
+
 		core::kinematics::Stub x1(rotation_matrix_degrees(cmp1axs_,(Real)icmp1),dcmp1*cmp1axs_);
-		core::kinematics::Stub x2(rotation_matrix_degrees(cmp2axs_,(Real)icmp2),dcmp2*cmp2axs_);		
+		core::kinematics::Stub x2(rotation_matrix_degrees(cmp2axs_,(Real)icmp2),dcmp2*cmp2axs_);
 		xform_pose(p1,x1);
 		xform_pose(p2,x2);
 
@@ -1298,7 +1298,7 @@ struct TCDock {
 							max_score = score;
 							// max_i1 = icmp1;
 							// max_i2 = icmp2;
-							// max_io = iori;																
+							// max_io = iori;
 						}
 					}
 				}
@@ -1527,7 +1527,7 @@ struct TCDock {
 				dump_pdb(h.icmp2+(int)da2,h.icmp1+(int)da1,h.iori,fn+"_sub1.pdb"+(option[tcdock::dump_gz]()?".gz":""),ilm, false, true );
 			}
 			if(option[tcdock::dump_pdb]() || std::find(dumpg.begin(),dumpg.end(),ilm)!=dumpg.end() ) {
-				dump_pdb(h.icmp2+(int)da2,h.icmp1+(int)da1,h.iori,fn+"_full.pdb"+(option[tcdock::dump_gz]()?".gz":""),ilm, true, option[tcdock::separate_components]() );		
+				dump_pdb(h.icmp2+(int)da2,h.icmp1+(int)da1,h.iori,fn+"_full.pdb"+(option[tcdock::dump_gz]()?".gz":""),ilm, true, option[tcdock::separate_components]() );
 			}
 			#ifdef USE_OPENMP
 			#pragma omp critical
@@ -1628,6 +1628,7 @@ int main (int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

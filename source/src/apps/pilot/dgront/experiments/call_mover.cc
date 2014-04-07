@@ -59,7 +59,7 @@ void use_backrub(core::pose::PoseOP & pose,core::scoring::ScoreFunctionOP scoref
                 backrubmover.set_input_pose( pose );
 
                 (*scorefxn)(p);
-                
+
 		std::string move_type = backrubmover.type();
                 for ( int trial = 1, ntrials = 10; trial <= ntrials; ++trial ) {
                         backrubmover.apply(p);
@@ -93,6 +93,7 @@ main( int argc, char * argv [] )
 	std::cout << "Done! -------------------------------\n";
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-	} 
+		return -1;
+	}
 }
 

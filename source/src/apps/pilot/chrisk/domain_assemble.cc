@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 
-/// @brief  
+/// @file
+/// @brief
 
 //core library
 #include <math.h>
@@ -172,7 +172,7 @@ public:
 	)	:
 		src_map_( src_map )
 	{}
-	
+
 	ResidueOP src_res(
 		Size seqpos
 	){
@@ -183,7 +183,7 @@ public:
 	{
 		return src_map_;
 	}
-	
+
 private:
 	vector1< ResidueOP > src_map_;
 
@@ -199,8 +199,8 @@ get_atomatom_rt(
 	string atom2
 ){
 	assert( seqpos1 < seqpos2 );
-	Residue rsd1( pose.residue( seqpos1 ) ); 
-	Residue rsd2( pose.residue( seqpos2 ) ); 
+	Residue rsd1( pose.residue( seqpos1 ) );
+	Residue rsd2( pose.residue( seqpos2 ) );
 	//get atom ids
 	core::id::AtomID id1( rsd1.atom_index( atom1 ), seqpos1 );
 	core::id::AtomID id2( rsd2.atom_index( atom2 ), seqpos2 );
@@ -435,7 +435,7 @@ append_pose_by_jump(
 //trim poses at cutpair, then append poses 2…N to pose 1 by jumps from pose1 cterm cutpoint
 void
 build_pose_by_jumps_from_domains(
-	vector1< Pose > domain_poses, 
+	vector1< Pose > domain_poses,
 	vector1< std::pair< Size, Size > > const & domain_cutpairs,
 	Pose & construct_pose
 ){
@@ -511,7 +511,7 @@ dump_insert_pdb_and_remodel_blueprint(
 			cutpose.secstruct( cut_cutpair.second ) == inpose.secstruct( in_cutpair.second ) );
 
 	//inpose cutpairs are now out of date!
-	//make this basename.cut1_cut2.pdb 
+	//make this basename.cut1_cut2.pdb
 	std::string cut_pdbname( cutpose.pdb_info()->name() );
   Size cut_pdbnamestart( 0 );
   if( cut_pdbname.find_last_of( "/" ) < ( cut_pdbname.size() - 1 ) ) cut_pdbnamestart = cut_pdbname.find_last_of( "/" ) + 1;
@@ -533,7 +533,7 @@ dump_insert_pdb_and_remodel_blueprint(
 	//this now just trims to the end of chain instead of end of pose
 	trim_pose_termini( inpose, in_cutpair.first + 1, in_cutpair.second - 1 );
 	inpose.dump_pdb( in_pdbname );
-	
+
 	//need to go ahead and figure out secstruct, design requirements
 	//define linkers in boolean vectors
 	vector1< bool > is_link_cut( cutpose.total_residue(), false );
@@ -661,7 +661,7 @@ simple_domain_insertion(
 			cutpose, cutpose_cutpair.first + inpose_cutpair.second - inpose_cutpair.first,
 			cutpose_cutpair.second + 1 );
 }
-*/	
+*/
 
 /*
 multiplex these thigs:
@@ -753,8 +753,8 @@ go(
 	Size cterm_in_start( inpose.total_residue() - Size( option[ chrisk::trim_tol ] ) ); //cterm cutpoint for inserter
 	Size cterm_in_end( inpose.total_residue() ); //cterm cutpoint for inserter
 	//no looping if user-defined
-	if( option[ chrisk::nterm_in ].user() ) nterm_in_start = nterm_in_end = Size( option[ chrisk::nterm_in ] ); 
-	if( option[ chrisk::cterm_in ].user() ) cterm_in_start = cterm_in_end = Size( option[ chrisk::cterm_in ] ); 
+	if( option[ chrisk::nterm_in ].user() ) nterm_in_start = nterm_in_end = Size( option[ chrisk::nterm_in ] );
+	if( option[ chrisk::cterm_in ].user() ) cterm_in_start = cterm_in_end = Size( option[ chrisk::cterm_in ] );
 //	assert( nterm_in < cterm_in );
 	for( Size nterm_in = nterm_in_start; nterm_in <= nterm_in_end; ++nterm_in ){
 		for( Size cterm_in = cterm_in_start; cterm_in <= cterm_in_end; ++cterm_in ){
@@ -783,12 +783,12 @@ go(
 					atm_map[ id::AtomID( iatm, inpose_cutpair.first ) ] = id::AtomID( iatm, cutpose_cutpair.first );
 					atm_map[ id::AtomID( iatm, inpose_cutpair.second ) ] = id::AtomID( iatm, cutpose_cutpair.second );
 				}
-				scoring::superimpose_pose( cutpose, inpose, atm_map );	
+				scoring::superimpose_pose( cutpose, inpose, atm_map );
 				std::string cut_pdbname( cutpose.pdb_info()->name() );
 				Size cut_pdbnamestart( 0 );
 				if( cut_pdbname.find_last_of( "/" ) < ( cut_pdbname.size() - 1 ) ) cut_pdbnamestart = cut_pdbname.find_last_of( "/" ) + 1;
 				cut_pdbname = cut_pdbname.substr( cut_pdbnamestart, cut_pdbname.size() - cut_pdbnamestart - 4 );
-				std::string cut_name( cut_pdbname + "." + utility::to_string( cutpose_cutpair.first ) + 
+				std::string cut_name( cut_pdbname + "." + utility::to_string( cutpose_cutpair.first ) +
 						"-" + utility::to_string( cutpose_cutpair.second ) + ".pdb" );
 				cutpose.dump_pdb( cut_name );
 

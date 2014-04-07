@@ -71,7 +71,7 @@ using core::Real;
 static basic::Tracer TR("rblinker2_overlay_bound");
 
 // static numeric::random::RandomGenerator RG(8334046);
-// 
+//
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
 // 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -80,9 +80,9 @@ static basic::Tracer TR("rblinker2_overlay_bound");
 // 		}
 // 	}
 // }
-// 
-// 
-// 
+//
+//
+//
 // // petf   37   42   45   75
 // // hyd   101  156  334  338
 // // psI  1492 1536 1489 1495
@@ -96,7 +96,7 @@ static basic::Tracer TR("rblinker2_overlay_bound");
 // 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
 // 	return sf4A.distance(spetf.local2global(sf4B));
 // }
-// 
+//
 // // get stup that aligns r1 to r2
 // Stub getxform(Residue const & r1, Residue const & r2) {
 // 	Stub s;
@@ -114,7 +114,7 @@ class SimpleBBMover : public protocols::moves::Mover {
 public:
 	SimpleBBMover(Size start, Size stop, Real mag) : start_(start),stop_(stop),mag_(mag) {}
 	Real magnitude(        ) { return mag_; }
-	void magnitude(Real mag) { mag_ = mag; }	
+	void magnitude(Real mag) { mag_ = mag; }
 	void apply(core::pose::Pose & pose) {
 		Size i = start_-1 + (Size)std::ceil(uniform()*(stop_-start_+1));
 		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
@@ -149,7 +149,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {		
+	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -199,13 +199,13 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
 	cuts(1) = lnk.n_residue()/2;
-	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);		
+	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_UPPER",cuts(1)+1);
 	jump_point(1,1) = 1;
 	jump_point(2,1) = lnk.n_residue();
 	ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
 	ft.set_jump_atoms(1,"N","C");
-	lnk.fold_tree(ft);		
+	lnk.fold_tree(ft);
 
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
 	xform_pose(lnk, getxform(lnk.residue(lnk.n_residue()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
@@ -221,8 +221,8 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 			lnk.set_psi(lnk.n_residue()-i, oldlnk.psi(oldlnk.n_residue()-i) );
 		}
 		// lnk.dump_pdb("lnk.pdb");
-		// oldlnk.dump_pdb("oldlnk.pdb");	
-	}	
+		// oldlnk.dump_pdb("oldlnk.pdb");
+	}
 	return lnk;
 }
 
@@ -260,13 +260,13 @@ void get_aln(Pose const & lnk, Pose const & psi, Pose const & hyd, Size & psialn
 // NOTE: moves hyd!!!!!!!
 bool bound_petf_clash(
 	Pose const & lnk,
-	Pose const & psi, 
+	Pose const & psi,
 	Pose const & hyd,
 	Size psialnlnk,
 	Size psialnpsi,
 	Size hydalnlnk,
 	Size hydalnhyd,
-	protocols::scoring::ImplicitFastClashCheck const & psi_ifc, 
+	protocols::scoring::ImplicitFastClashCheck const & psi_ifc,
 	protocols::scoring::ImplicitFastClashCheck const & hyd_ifc,
 	bool & hydpetflnkclash,
 	bool & psipetflnkclash,
@@ -281,7 +281,7 @@ bool bound_petf_clash(
 	core::kinematics::Stub xpsi = getxform(psi.residue(psialnpsi),lnk.residue(psialnlnk));
 	core::kinematics::Stub xhyd = getxform(hyd.residue(hydalnhyd),lnk.residue(hydalnlnk));
 
-	// check lnk against both petf 
+	// check lnk against both petf
 	for(Size ir = 1; ir <= lnk.n_residue(); ++ir) {
 		for(Size ia = 1; ia <= lnk.residue(ir).nheavyatoms(); ++ia) {
 			if( !psi_ifc.clash_check( xpsi.global2local( lnk.residue(ir).xyz(ia) ) ) ) {
@@ -292,7 +292,7 @@ bool bound_petf_clash(
 			}
 		}
 	}
-	
+
 	// check hyd (lnk aln) against petf (bound to psi),
 	for(Size ir = 1; ir <= hyd.n_residue(); ++ir) {
 		for(Size ia = 1; ia <= 5; ++ia) {
@@ -311,7 +311,7 @@ bool bound_petf_clash(
 		}
 	}
 
-	
+
 	return hydpetflnkclash || psipetflnkclash || hydpetfpsiclash || psipetfhydclash;
 }
 
@@ -349,7 +349,7 @@ void* doit(void*) {
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
 	}
-	
+
 	core::pose::Pose psi_ori, hyd_ori, psi, hyd;
 
 	core::import_pose::pose_from_pdb(psi,"input/psI_0001_strip_0001.pdb");
@@ -385,7 +385,7 @@ void* doit(void*) {
 	protocols::scoring::ImplicitFastClashCheck hyd_petf_ifc(hyd_petf_poses, 3.0, ignore);
 	TR << "done creating clash check, " << psi_petf_ifc.size() << " " << hyd_petf_ifc.size() << std::endl;
 
-	
+
 	protocols::moves::MoverOP bbmove;
 	string const bb_samp_method = option[ rblinker::bb_samp_method ]();
 	/**/ if( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
@@ -430,12 +430,12 @@ void* doit(void*) {
 	Size accepts=0, totsamp=0, totclash=0;
 	Size tothydpetflnkclash=0,totpsipetflnkclash=0,tothydpetfpsiclash=0,totpsipetfhydclash=0;
 	for(int ITER = 1; ITER <= option[rblinker::ntrials](); ITER++) {
-		// TR << "ITER " << ITER << std::endl;	
+		// TR << "ITER " << ITER << std::endl;
 
 		MonteCarloOP mc1 = new MonteCarlo( lnk, *sf, 2.0 );
 		mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 		TrialMover trial(bbmove,mc1);
-	
+
 		for(int j = 1; j <= option[rblinker::nsubtrials](); j++) {
 			trial.apply(lnk);
 			coverage.insert( pose2bin(lnk) );
@@ -450,19 +450,19 @@ void* doit(void*) {
 			if(psipetflnkclash) totpsipetflnkclash++;
 			if(hydpetfpsiclash) tothydpetfpsiclash++;
 			if(psipetfhydclash) totpsipetfhydclash++;
-			
+
 		}
 		accepts += trial.num_accepts();
-	
+
 		if(lnk.energies().total_energies()[core::scoring::fastclash] > 9e5) utility_exit_with_message("has clash!!!! exiting!");
-	
-		TR << "PETFCLASH: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " bclash frac " << Real(totclash)/Real(totsamp) << " " 
+
+		TR << "PETFCLASH: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " bclash frac " << Real(totclash)/Real(totsamp) << " "
 		   << Real(tothydpetflnkclash)/Real(totclash) << " " << Real(totpsipetflnkclash)/Real(totclash) << " " << Real(tothydpetfpsiclash)/Real(totclash) << " " << Real(totpsipetfhydclash)/Real(totclash) << std::endl;
 		TR << "ITER: " << ITER*10000 << " accepts: " << accepts << " coverage: " << coverage.size() << " bclash frac " << Real(totclash)/Real(totsamp) << " HIST ";
 		for(Size i = 1; i <= hist .size(); ++i) TR << hist [i] << " ";
 		for(Size i = 1; i <= histc.size(); ++i) TR << histc[i] << " ";
 		TR << "HISTEND" << std::endl;
-	
+
 		if(false) {
 			std::string  fn = option[out::file::o]()+"/"+"rblinker2_out_"+ObjexxFCL::lead_zero_string_of(ITER,9)+"_nclsh.pdb";
 			bool tmpa,tmpb,tmpc,tmpd;
@@ -487,8 +487,8 @@ void* doit(void*) {
 				tmp.dump_pdb(out);
 			}
 			out.close();
-		}		
-		
+		}
+
 		// output in LNK coord frame
 		// {
 		// 	Pose tmp = psi;
@@ -535,6 +535,7 @@ int main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

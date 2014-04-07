@@ -141,9 +141,9 @@ bool clashcheck(Pose const & p, Vec v) {
     if(p.xyz(AtomID(1,ir)).distance_squared(v) < 9.0) return false;
     if(p.xyz(AtomID(2,ir)).distance_squared(v) < 9.0) return false;
     if(p.xyz(AtomID(3,ir)).distance_squared(v) < 9.0) return false;
-    if(p.xyz(AtomID(4,ir)).distance_squared(v) < 9.0) return false;            
+    if(p.xyz(AtomID(4,ir)).distance_squared(v) < 9.0) return false;
     if(p.residue(ir).name3()=="GLY") continue;
-    if(p.xyz(AtomID(5,ir)).distance_squared(v) < 9.0) return false;                
+    if(p.xyz(AtomID(5,ir)).distance_squared(v) < 9.0) return false;
   }
   return true;
 }
@@ -152,9 +152,9 @@ bool clashcheckhalf(Pose const & p, Vec v) {
     if(p.xyz(AtomID(1,ir)).distance_squared(v) < 4.0) return false;
     if(p.xyz(AtomID(2,ir)).distance_squared(v) < 4.0) return false;
     if(p.xyz(AtomID(3,ir)).distance_squared(v) < 4.0) return false;
-    if(p.xyz(AtomID(4,ir)).distance_squared(v) < 4.0) return false;            
+    if(p.xyz(AtomID(4,ir)).distance_squared(v) < 4.0) return false;
     if(p.residue(ir).name3()=="GLY") continue;
-    if(p.xyz(AtomID(5,ir)).distance_squared(v) < 4.0) return false;                
+    if(p.xyz(AtomID(5,ir)).distance_squared(v) < 4.0) return false;
   }
   return true;
 }
@@ -162,10 +162,10 @@ bool clashcheckhalf(Pose const & p, Vec v) {
 enum RTYPE {
   CYS = 1,
   HIS1,
-  HIS2,  
+  HIS2,
   ASP1,
   ASP2,
-  ASP3,    
+  ASP3,
   NRTYPES = ASP3
 };
 
@@ -174,7 +174,7 @@ struct Hit {
   Size ir,jr,itype,jtype;
   Real ich1,ich2,jch1,jch2;
   Hit(){}
-  Hit(Vec c, Vec a, Vec o, Size irs, Size jrs, Size _itype, Size _jtype, Real ic1, Real ic2, Real jc1, Real jc2) 
+  Hit(Vec c, Vec a, Vec o, Size irs, Size jrs, Size _itype, Size _jtype, Real ic1, Real ic2, Real jc1, Real jc2)
   : cen(c),axs(a.normalized()),ori(o.normalized()),ir(irs),jr(jrs),itype(_itype),jtype(_jtype),ich1(ic1),ich2(ic2),jch1(jc1),jch2(jc2) {}
 };
 std::ostream & operator<<(std::ostream & o, Hit const & h) {
@@ -297,7 +297,7 @@ Pose make_single_res_pose(string rt) {
   Pose tmp;
   make_pose_from_sequence(tmp,rt,"fa_standard",false);
   remove_lower_terminus_type_from_pose_residue(tmp,1);
-  remove_upper_terminus_type_from_pose_residue(tmp,1);  
+  remove_upper_terminus_type_from_pose_residue(tmp,1);
   return tmp;
 }
 Real sqr(Real x) { return x*x; }
@@ -323,17 +323,17 @@ void dock(Pose init, std::string const & fn) {
   vector1<Pose> res(NRTYPES);
   res[CYS ] = make_single_res_pose("C[CYS_M]" );
   res[HIS1] = make_single_res_pose("H[HIS_M1]");
-  res[HIS2] = make_single_res_pose("H[HIS_M2]");  
+  res[HIS2] = make_single_res_pose("H[HIS_M2]");
   res[ASP1] = make_single_res_pose("D[ASP_M1]");
   res[ASP2] = make_single_res_pose("D[ASP_M2]");
   res[ASP3] = make_single_res_pose("D[ASP_M3]");
   vector1<Size> matom(NRTYPES),batom(NRTYPES);
   matom[CYS ] = res[CYS ].residue(1).atom_index("ZN"); batom[CYS ] = res[CYS ].residue(1).atom_index("SG" );
   matom[HIS1] = res[HIS1].residue(1).atom_index("ZN"); batom[HIS1] = res[HIS1].residue(1).atom_index("ND1");
-  matom[HIS2] = res[HIS2].residue(1).atom_index("ZN"); batom[HIS2] = res[HIS2].residue(1).atom_index("NE2");  
+  matom[HIS2] = res[HIS2].residue(1).atom_index("ZN"); batom[HIS2] = res[HIS2].residue(1).atom_index("NE2");
   matom[ASP1] = res[ASP1].residue(1).atom_index("ZN"); batom[ASP1] = res[ASP1].residue(1).atom_index("OD1");
-  matom[ASP2] = res[ASP2].residue(1).atom_index("ZN"); batom[ASP2] = res[ASP2].residue(1).atom_index("OD1");  
-  matom[ASP3] = res[ASP3].residue(1).atom_index("ZN"); batom[ASP3] = res[ASP3].residue(1).atom_index("CG" );  
+  matom[ASP2] = res[ASP2].residue(1).atom_index("ZN"); batom[ASP2] = res[ASP2].residue(1).atom_index("OD1");
+  matom[ASP3] = res[ASP3].residue(1).atom_index("ZN"); batom[ASP3] = res[ASP3].residue(1).atom_index("CG" );
   vector1<Real> discbm(NRTYPES);
   for(Size i = 1; i <= NRTYPES; ++i) discbm[i] = res[i].xyz(AtomID(5,1)).distance(res[i].xyz(AtomID(matom[i],1)));
   /*////////////////////////////////////////////////////////////////////////////////*/ tr << "make rotamers" << endl; /*//////////////////////*/
@@ -353,7 +353,7 @@ void dock(Pose init, std::string const & fn) {
     allrots[HIS2] = allrots[HIS1];
     allrots[ASP1].push_back(makerots(init,ir,res[ASP1]));
     allrots[ASP2] = allrots[ASP1];
-    allrots[ASP3] = allrots[ASP1];    
+    allrots[ASP3] = allrots[ASP1];
   }
   /*////////////////////////////////////////////////////////////////////////////////*/ tr << "find pairs" << endl; /*//////////////////////*/
   for(Size ir = 1; ir <= p.n_residue(); ++ir) {
@@ -391,7 +391,7 @@ void dock(Pose init, std::string const & fn) {
               for(Size ia = 5; ia <= p.residue(ir).nheavyatoms(); ++ia) {
                 if(p.residue(ir).is_virtual(ia)) continue;
                 for(Size ja = 5; ja <= p.residue(jr).nheavyatoms(); ++ja) {
-                  if(p.residue(jr).is_virtual(ja)) continue;      
+                  if(p.residue(jr).is_virtual(ja)) continue;
                   if( p.xyz(AtomID(ia,ir)).distance_squared(p.xyz(AtomID(ja,jr))) < 9.0 ) clash=true;
                 }
               }
@@ -455,7 +455,7 @@ void dock(Pose init, std::string const & fn) {
       for(Size iaxs = 0; iaxs < 360; iaxs++) {
         Vec c2axs = rotation_matrix_degrees(c2ori,(Real)iaxs)*c2ori.cross(Vec(1,0,0));
         Mat c2rot = rotation_matrix_degrees(c2axs,180.0);
-        // axes must be opposite ~180° 
+        // axes must be opposite ~180°
         if(hi.axs.dot(c2rot*hj.axs) > -0.984807753012208) continue;// cos(10°)
         // oris must be 90° rotated
         if(fabs(hi.ori.dot(c2rot*hj.ori)) > 0.17364817766693041) continue; //cos(80°)
@@ -467,7 +467,7 @@ void dock(Pose init, std::string const & fn) {
         }
         if(clash) continue;
         tr << "FULLHIT!!!!!!" << endl;
-        /*////////////////////////////////////////////////////////////////////////////////*/ tr << "pose setup" << endl; /*//////////////////////*/        
+        /*////////////////////////////////////////////////////////////////////////////////*/ tr << "pose setup" << endl; /*//////////////////////*/
         Pose q(p2);
         q.replace_residue(hi.ir,res[hi.itype].residue(1),true);
         q.replace_residue(hi.jr,res[hi.jtype].residue(1),true);
@@ -476,15 +476,15 @@ void dock(Pose init, std::string const & fn) {
         q.set_chi(1,hi.ir,hi.ich1);
         q.set_chi(2,hi.ir,hi.ich2);
         q.set_chi(1,hi.jr,hi.jch1);
-        q.set_chi(2,hi.jr,hi.jch2);      
+        q.set_chi(2,hi.jr,hi.jch2);
         q.set_chi(1,hj.ir,hj.ich1);
-        q.set_chi(2,hj.ir,hj.ich2);      
+        q.set_chi(2,hj.ir,hj.ich2);
         q.set_chi(1,hj.jr,hj.jch1);
         q.set_chi(2,hj.jr,hj.jch2);
         trans_pose(q,-c2cen);
         alignaxis(q,Vec(0,0,1),c2axs);
         core::pose::symmetry::make_symmetric_pose(q);
-        /*////////////////////////////////////////////////////////////////////////////////*/ tr << "csts" << endl; /*//////////////////////*/        
+        /*////////////////////////////////////////////////////////////////////////////////*/ tr << "csts" << endl; /*//////////////////////*/
         using namespace core::scoring::constraints;
         q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir)              , AtomID(matom[hi.jtype],hi.jr)              , new HarmonicFunc(0.0,0.1) ) );
         q.add_constraint( new AtomPairConstraint( AtomID(matom[hj.itype],hj.ir)              , AtomID(matom[hj.jtype],hj.jr)              , new HarmonicFunc(0.0,0.1) ) );
@@ -516,7 +516,7 @@ void dock(Pose init, std::string const & fn) {
         //utility_exit_with_message("aorsitn");
 
         q.dump_pdb(utility::file_basename(fn)+"_"+lzs(ih,3)+lzs(jh,3)+lzs(iaxs,3)+str(nc)+"C"+str(nd)+"D"+str(nh)+"H"+"_A.pdb");
-        //utility_exit_with_message("aosnrt");  
+        //utility_exit_with_message("aosnrt");
       }
     }
   }
@@ -537,7 +537,7 @@ int main(int argc, char *argv[]) {
     tr << "checking " << fn << std::endl;
     core::import_pose::pose_from_pdb(pnat,fn);
     if(pnat.n_residue() < 20) continue;
-    if(pnat.n_residue() > 250) continue;    
+    if(pnat.n_residue() > 250) continue;
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);
     Size cyscnt=0, nhelix=0;
@@ -554,6 +554,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

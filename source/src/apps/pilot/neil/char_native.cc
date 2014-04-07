@@ -105,7 +105,7 @@ void
 print_movemap(core::kinematics::MoveMap const & movemap) {
 	using namespace core::id;
 	using namespace core::kinematics;
-	TR << "movemap " << std::endl;		
+	TR << "movemap " << std::endl;
 	for(std::map< TorsionType, bool >::const_iterator i = movemap.torsion_type_begin(); i != movemap.torsion_type_end(); ++i) {
 		TR << "TorsionType " << i->first << " " << i->second << std::endl;
 	}
@@ -124,7 +124,7 @@ print_movemap(core::kinematics::MoveMap const & movemap) {
 	for(std::map< JumpID, bool >::const_iterator i = movemap.jump_id_begin(); i != movemap.jump_id_end(); ++i) {
 		TR << "JumpID " << i->first << " " << i->second << std::endl;
 	}
-	
+
 }
 
 
@@ -210,13 +210,13 @@ utility::vector1<Real> sidechain_sasa(core::pose::Pose const & pose, Real probe_
 	for(Size i = 1; i <= pose.n_residue(); i++) {
 		for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
 			atom_mask[AtomID(j,i)] = true;
-		}	
+		}
 	}
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
 	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
 	for(Size i = 1; i <= pose.n_residue(); i++) {
 		// Use CA as the side chain for Glys
-		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];		
+		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
 		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
 			sc_sasa[i] += atom_sasa[AtomID(j,i)];
 		}
@@ -291,9 +291,9 @@ void
 	using namespace scoring;
 	using namespace utility;
 	using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 
 	// Get a random number tag for the tmp dir for sc calculations
 	std::string sctag = string_of(numeric::random::uniform()).substr(2,4);
@@ -301,7 +301,7 @@ void
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
@@ -343,7 +343,7 @@ void
 		Mat start_rot   = pose.jump(sym_jump).get_rotation();
 
 		// Create a score function object, get the fa_rep weight from it (default = 0.44)
-		ScoreFunctionOP sf = getScoreFunction();	
+		ScoreFunctionOP sf = getScoreFunction();
 		core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 		eo.exclude_monomer_fa_elec(true);
 		sf->set_energy_method_options(eo);
@@ -368,14 +368,14 @@ void
 		Real grid_start_angle   = -grid_size_angle / 2.0;
 		Real grid_start_radius  = -grid_size_radius / 2.0;
 		Real grid_incr_angle    = grid_size_angle  / (grid_nsamp_angle -1);
-		Real grid_incr_radius   = grid_size_radius / (grid_nsamp_radius-1);	
+		Real grid_incr_radius   = grid_size_radius / (grid_nsamp_radius-1);
 		if( grid_nsamp_angle == 1 ) {
 			grid_start_angle = 0.0;
-			grid_incr_angle = 0.0;						
+			grid_incr_angle = 0.0;
 		}
 		if( grid_nsamp_radius == 1 ) {
 			grid_start_radius = 0.0;
-			grid_incr_radius = 0.0;						
+			grid_incr_radius = 0.0;
 		}
 		if( grid_nsamp_radius == 1 && grid_nsamp_angle == 1 ) {
 			pose.dump_pdb(option[out::file::o]() + "/native.pdb");
@@ -388,13 +388,13 @@ void
 			Mat rot = numeric::x_rotation_matrix_degrees(delta_ang) * start_rot;
 			for(Size iradius = 1; iradius <= grid_nsamp_radius; iradius++) {
 				Vec trans = start_trans + (grid_start_radius + (iradius-1)*grid_incr_radius) * Vec(1,0,0);
-				// Move the pose to the current point on the rigid body grid			
+				// Move the pose to the current point on the rigid body grid
 				core::kinematics::Jump j = start_pose.jump(sym_jump);
 				j.set_translation(trans);
 				j.set_rotation(rot);
 				Pose pose_for_design = start_pose;
 				pose_for_design.set_jump(sym_jump,j);
-	
+
 					// Find out which positions are near the inter-subunit interfaces
 					// These will be further screened below, then passed to design() and minimize()
 					Real const contact_dist = option[in::olig_design::contact_dist]();
@@ -443,7 +443,7 @@ void
 								}
 								if (contact == true) break;
 							}
-							if (contact == true) break;					
+							if (contact == true) break;
 						}
 						if (!contact) nontrimer_pos.push_back(ir);
 					}
@@ -469,7 +469,7 @@ void
 				std::string tag = string_of(numeric::random::uniform()).substr(2,4);
 				std::string fn = string_of(fn_vector[0])+"_"+string_of(fn_vector[1])+"_"+string_of(fn_vector[2])+"_"+string_of(input_trans+trans.x())+"_"+string_of(input_angle+delta_ang)+"_"+tag+"_native.pdb.gz";
 //				std::string fn = string_of(fn_vector[0])+"_"+string_of(fn_vector[1])+"_"+string_of(fn_vector[2])+"_native.pdb.gz";
-			
+
 					// Spit these positions out for visual debugging
 					TR << "select interface_pos, " << fn << " and resi ";
 					for (Size index=1; index<=interface_pos.size(); index++) {
@@ -521,14 +521,14 @@ void
 
 				// Write the scorefile
 				sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
-			
+
 				// Write the pdb file of the design
 				utility::io::ozstream out( option[out::file::o]() + "/" + fn );
 				pose_for_design.dump_pdb(out);
 				//core::scoring::packstat::output_packstat_pdb(pose_for_design, out); // Currently too slow for many structures
 				core::io::pdb::extract_scores(pose_for_design,out);
 				out.close();
-			
+
 			} // iradius
 		} // iangle
 	} // ifile
@@ -552,6 +552,7 @@ main (int argc, char *argv[])
 	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

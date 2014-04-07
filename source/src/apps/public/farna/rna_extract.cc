@@ -64,60 +64,60 @@ extract_pdbs_test()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::io::silent;
-    
+
 	// setup residue types
 	core::chemical::ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
-    
+
 	// configure silent-file data object
 	core::io::silent::SilentFileData silent_file_data;
 	std::string infile  = option[ in::file::silent ][1];
-    
+
 	if ( option[ in::file::silent ].user() ) {
 		silent_file_data.read_file( infile );
 	} else {
 		utility_exit_with_message( "Error: can't get any structures! Use -in::file::silent <silentfile>" );
 	}
-    
+
 	core::pose::Pose pose;
-    
-    
+
+
 	bool use_tags = false;
 	std::set< std::string > desired_tags;
 	if( option[ in::file::tags ].active() ) {
 		use_tags = true;
 		desired_tags.insert( option[ in::file::tags ]().begin(), option[ in::file::tags ]().end() );
 	}
-    
+
 	for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(), end = silent_file_data.end(); iter != end; ++iter ) {
-        
+
 		std::string const tag = iter->decoy_tag();
-        
+
 		if (use_tags && ( !desired_tags.count( tag ) ) ) continue;
-        
+
 		std::cout << "Extracting: " << tag << std::endl;
-        
+
 		iter->fill_pose( pose, *rsd_set );
-        
+
 		//Fang: This outputing will fail if the pose contains virtual residue.
 		//std::cout << "debug_rmsd(" << tag << ") = " << iter->get_debug_rmsd() << " over " << pose.total_residue() << " residues... \n";
-        
-        
+
+
 		if( option[ remove_variant_cutpoint_atoms ]()==true ){
 			for ( Size n = 1; n <= pose.total_residue(); n++  ) {
 				pose::remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", n );
 				pose::remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", n );
 			}
 		}
-        
+
         std::string out_prefix = "";
-        
+
         if( option[out::prefix].user() ) out_prefix = option[out::prefix]();
-        
+
 		pose.dump_pdb( out_prefix + tag + ".pdb" );
-        
+
 	}
-    
+
 }
 ///////////////////////////////////////////////////////////////
 void*
@@ -134,23 +134,24 @@ main( int argc, char * argv [] )
 {
     try {
         using namespace basic::options;
-        
+
         std::cout << std::endl << "Basic usage:  " << argv[0] << "  -in::file::silent <silent file> -tags <model tag like S_00001> " << std::endl;
         std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
-        
+
         NEW_OPT( remove_variant_cutpoint_atoms , "remove_variant_cutpoint_atoms", false );
         ////////////////////////////////////////////////////////////////////////////
         // setup
         ////////////////////////////////////////////////////////////////////////////
         core::init::init(argc, argv);
-        
+
         ////////////////////////////////////////////////////////////////////////////
         // end of setup
         ////////////////////////////////////////////////////////////////////////////
-        
+
         protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cout << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
 }
 

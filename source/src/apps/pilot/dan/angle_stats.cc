@@ -50,13 +50,14 @@ anglestats_local( void* ) {
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 	// options, random initialization
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( anglestats_local );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  }
-        return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 

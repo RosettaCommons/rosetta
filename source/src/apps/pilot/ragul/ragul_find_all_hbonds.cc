@@ -95,16 +95,17 @@ int main( int argc, char * argv [] )
 		core::conformation::Residue const & accep =	pose_init.residue( hb.acc_res() );
 		TR << i << ":" <<
 			chemical::oneletter_code_from_aa(donor.aa()) <<
-			pose_init.pdb_info()->number(donor.seqpos()) << pose_init.pdb_info()->chain(donor.seqpos()) << ' ' << 
+			pose_init.pdb_info()->number(donor.seqpos()) << pose_init.pdb_info()->chain(donor.seqpos()) << ' ' <<
 			'(' << donor.seqpos() << ')' <<
-			donor.atom_name( hb.don_hatm()) << " --- " << 
+			donor.atom_name( hb.don_hatm()) << " --- " <<
 			chemical::oneletter_code_from_aa(accep.aa()) <<
-			pose_init.pdb_info()->number(accep.seqpos()) << pose_init.pdb_info()->chain(accep.seqpos()) << ' ' <<	
+			pose_init.pdb_info()->number(accep.seqpos()) << pose_init.pdb_info()->chain(accep.seqpos()) << ' ' <<
 			'(' << accep.seqpos() << ')' <<
 			accep.atom_name( hb.acc_atm()) << "\n";
 	}
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
 }
 

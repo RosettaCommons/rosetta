@@ -74,6 +74,7 @@ main( int argc, char* argv [] ) {
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
+		return -1;
 	}
     return 0;
 } // main

@@ -218,9 +218,10 @@ main( int argc, char* argv [] ) {
 			} // found a pose
 		} // for alns
 	} // for aln_files
-	
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

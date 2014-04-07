@@ -276,7 +276,7 @@ std::cout<<"source contact list\n";
       ifs >> intres;
       source_interface.push_back(intres);
     }
-    
+
     std::string const tcfilename = option[ template_contact_list ];
     if ( tcfilename != "" ){
 std::cout<<"template contact list\n";
@@ -300,13 +300,13 @@ std::cout<<"no template contact list\n";
     }
   }else{
 std::cout<<"no source contact list\n";
- 
+
 
     // align comparison pose to template pose
 	//	protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover( template_pose );
         protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover();
         sp_mover->set_reference_pose( template_pose, 1, template_pose.total_residue() );
-        sp_mover->set_target_range( 1, template_pose.total_residue() ); 
+        sp_mover->set_target_range( 1, template_pose.total_residue() );
         sp_mover->apply( comparison_pose );
   }
   }
@@ -330,7 +330,7 @@ std::cout << "Pocket score (unweighted) is: " << comparison_pg.netTargetPocketVo
 		std::stringstream out_exfname;
 		out_exfname << comparison_pdb_name << tag << ".exemplar.pdb";
 		std::cout<<out_exfname.str() <<std::endl;
-		comparison_pg.dumpExemplarToFile( out_exfname.str() );	
+		comparison_pg.dumpExemplarToFile( out_exfname.str() );
 	}
 	std::stringstream out_pfname;
 	out_pfname << comparison_pdb_name << tag << ".pocket";
@@ -345,7 +345,8 @@ std::cout<<out_pfname.str() <<std::endl;
 
 	TR << "Done!" << std::endl;
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
 	return 0;
 

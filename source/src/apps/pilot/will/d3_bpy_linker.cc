@@ -189,7 +189,7 @@ dock(
 			Mat R = rotation_matrix_degrees(ssamp[iss],(Real)asamp[irt]);
 			Stub x1(    R , Vec(0,0,0) );
 			Stub x2( R3*R , Vec(0,0,0) );
-			Real score; 
+			Real score;
 			Real t = sics_[thread_num()]->slide_into_contact(x1,x2,Vec(0,0,1),score);
 			if(score >= CONTACT_TH){
 				Hit h(iss,irt,score,3);
@@ -238,7 +238,7 @@ read_sphere(
 		is >> x >> y >> z;
 		ssamp[i] = Vec(x,y,z);
 	}
-	is.close();	
+	is.close();
 }
 
 
@@ -268,6 +268,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

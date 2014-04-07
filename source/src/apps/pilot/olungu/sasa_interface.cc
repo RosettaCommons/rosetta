@@ -71,6 +71,7 @@ main( int argc, char* argv[] ){
 	std::cout << "peritope charge " << p_charge << std::endl;
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
     }
 	return 0;
 }

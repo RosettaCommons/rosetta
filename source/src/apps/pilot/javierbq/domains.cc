@@ -68,7 +68,7 @@ class Domain : public utility::pointer::ReferenceCount {
 						pose_(pose),
 						start_(start),
 						end_(end)		{ 		}
-		
+
 
 		private:
 				PoseOP pose_;
@@ -83,7 +83,7 @@ typedef boost::tuple<Size, Size> DomainMatch;
 class DomainDescription : public utility::pointer::ReferenceCount {
 
 		// the three vectors on the tuple represent strand pairs of the sheet ordered from
-		// one edge of the sheet to the oposite edge. 
+		// one edge of the sheet to the oposite edge.
 		// _1 = strand number vector
 		// _2 = orientation vector( 'P' for parallel, 'A' for antiparallel)
 		// _3 = comparison vector, obtained by applying less_than_sequencial_comparison to
@@ -91,12 +91,12 @@ class DomainDescription : public utility::pointer::ReferenceCount {
 		typedef boost::tuple< vector1<Size>, vector1<char>, vector1<bool> > SheetDescription;
 
 		public:
-			DomainDescription(const std::string& name, const std::string& sheet_descriptions, 
+			DomainDescription(const std::string& name, const std::string& sheet_descriptions,
 							const std::string& regex_pattern, bool barrel = false)
-				 : name_(name), 
+				 : name_(name),
 				 regex_pattern_(regex_pattern),
 				 barrel_(barrel)
-		 	{ 
+		 	{
 				 regex_expression_ = boostx::sregex::compile(regex_pattern_);
 				 ss_info_ = new topology::SS_Info2;
 				 boostx::sregex sheets_delim = boostx::as_xpr(';');
@@ -134,7 +134,7 @@ class DomainDescription : public utility::pointer::ReferenceCount {
 			bool
 		  ss_match(const Pose& p, vector1<DomainMatch>& ss_matches){
 					std::string secstruct = p.secstruct();
-					boostx::sregex_iterator cur(secstruct.begin(), secstruct.end(), regex_expression_); 
+					boostx::sregex_iterator cur(secstruct.begin(), secstruct.end(), regex_expression_);
 					boostx::sregex_iterator end;
 					bool found(cur != end);
 					if(found) {
@@ -149,7 +149,7 @@ class DomainDescription : public utility::pointer::ReferenceCount {
 					}
 					return found;
 			}
-			
+
 			vector1<DomainOP>
 			sheet_match(const PoseOP& p, vector1<DomainMatch>& ss_matches){
 					vector1<DomainOP> results;
@@ -181,11 +181,11 @@ class DomainDescription : public utility::pointer::ReferenceCount {
 					}
 					return results;
 			}
-			
+
 	  //methods
 	  private:
-			/// @brief return the index of a compatible SheetDescription for a sheet, 0 if non of the 
-			/// sheets are compatible. 
+			/// @brief return the index of a compatible SheetDescription for a sheet, 0 if non of the
+			/// sheets are compatible.
 			Size compatible_sheet(const topology::SheetOP& sheet, std::set<Size> exclude_sheets) {
 					for(Size i = 1; i <= sheet_descriptions_.size(); ++i){
 							if(exclude_sheets.count(i))
@@ -213,7 +213,7 @@ class DomainDescription : public utility::pointer::ReferenceCount {
 					}
 					return 0;
 			}
-				
+
 		vector1<bool> less_than_sequencial_comparison(const vector1<Size>& elements) {
   				vector1<bool> results;
   				Size prev = 0;
@@ -229,7 +229,7 @@ class DomainDescription : public utility::pointer::ReferenceCount {
   				return results;
 		}
 
-	  //data 
+	  //data
 		private:
 			std::string name_;
 			std::string regex_pattern_;
@@ -286,6 +286,7 @@ main ( int argc, char* argv[] ){
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
     return 0;

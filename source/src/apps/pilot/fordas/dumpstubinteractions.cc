@@ -134,7 +134,7 @@ int main( int argc, char * argv [] )
     std::getline(stubinput, filename);
 
     core::pose::Pose stubpose;
-    core::import_pose::pose_from_pdb( stubpose, filename); 
+    core::import_pose::pose_from_pdb( stubpose, filename);
 
     if(!stubpose.total_residue() == 1)
     {
@@ -188,7 +188,7 @@ int main( int argc, char * argv [] )
 			}
 			else if (eedge_other_residue > stub_residue)
 			{
-				// Only emit edge when passing to greater indexed node so edges are only emitted once. 
+				// Only emit edge when passing to greater indexed node so edges are only emitted once.
 				ReportStubStubEnergy(i, residue_indicies_to_stub[eedge_other_residue], eedge_energy);
 			}
 		}
@@ -201,6 +201,7 @@ int main( int argc, char * argv [] )
 	stubtargetEnergyFile.close();
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 

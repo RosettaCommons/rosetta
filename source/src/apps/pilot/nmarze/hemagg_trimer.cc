@@ -45,47 +45,47 @@ public:
 	HemaggTrimer(){};
 	// destructor
 	virtual ~HemaggTrimer(){};
-	
+
 	virtual void apply( core::pose::Pose & pose_in )
 	{
 		TR << "Applying HemaggTrimer" << std::endl;
-		
+
 		using namespace core;
 		using namespace protocols;
 		using namespace core::pose;
 		using namespace protocols::moves;
-		
+
 		protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-		
+
 		core::Size com = protocols::geometry::residue_center_of_mass( pose_in, 1, pose_in.total_residue() );
-		
+
 		core::pose::symmetry::make_symmetric_pose( pose_in );
-				
+
 		TR << "Center of mass residue = " << com << std::endl;
-		
+
 		TR << "Finished applying HemaggTrimer" << std::endl;
-		
+
 		return;
 	} // HemaggTrimer::apply()
-	
+
 	std::string get_name() const { return "PackingAngle"; }
-	
+
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
 		return new HemaggTrimer;
 	}
-	
+
 	virtual
 	bool
 	reinitialize_for_each_job() const { return false; }
-	
+
 	virtual
 	bool
 	reinitialize_for_new_input() const { return false; }
-	
+
 private:
-	
+
 };
 
 typedef utility::pointer::owning_ptr< HemaggTrimer > HemaggTrimerOP;
@@ -96,17 +96,18 @@ int
 main( int argc, char * argv [] )
 {
     try {
-		
+
 		protocols::jd2::register_options();
-		
+
 		// initialize core
 		devel::init(argc, argv);
-		
+
 		HemaggTrimerOP hemagg_trimer = new HemaggTrimer;
 		protocols::jd2::JobDistributor::get_instance()->go( hemagg_trimer );
-		
+
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
+				return -1;
     }
     return 0;
 }

@@ -78,7 +78,7 @@ using numeric::conversions::degrees;
 
 static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
-utility::vector1 < utility::vector1 < Real > > 
+utility::vector1 < utility::vector1 < Real > >
 get_torsion_set( Pose const & pose )
 {
 	using namespace id;
@@ -153,7 +153,7 @@ update_torsion_set( utility::vector1 < utility::vector1 < Real > > & torsion_set
 }
 
 bool
-pose_list_compare( std::pair <Real, Pose> const & i, std::pair <Real, Pose> const & j) 
+pose_list_compare( std::pair <Real, Pose> const & i, std::pair <Real, Pose> const & j)
 {
 	return (i.first < j.first);
 }
@@ -173,7 +173,7 @@ lariat_modeling ()
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          residue_type_set ( RNA );	
+	          residue_type_set ( RNA );
 
 	Pose pose;
 	std::string pdb_name;
@@ -206,7 +206,7 @@ lariat_modeling ()
 	Vector const coord_O3prime = pose.residue(total_res - 3).xyz("O3'");
 	Vector const PO3_bond_norm = (coord_O3prime - coord_P).normalize();
 	Vector const coord_O2prime = coord_P - PO3_bond_norm * 3.7;
-	cst_set->add_constraint( new CoordinateConstraint( AtomID(atm_indexO2prime, total_res), 
+	cst_set->add_constraint( new CoordinateConstraint( AtomID(atm_indexO2prime, total_res),
 																						AtomID(1, 1), coord_O2prime,
 																						new HarmonicFunc( 0.0, 0.5 ) ) );
 	pose.constraint_set ( cst_set );
@@ -272,7 +272,7 @@ lariat_modeling ()
 	std::cout << "accept rate = " << double(n_accept) / n_step << std::endl;
 
 	pose_list.push_back( std::pair <Real, Pose> (0.0, lowest_pose) );
-	
+
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
 	MinimizerOptions min_options1 ( "dfpmin_armijo", dummy_tol, true, false, false );
@@ -325,6 +325,7 @@ main( int argc, char * argv [] )
 	lariat_modeling();
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                   }
         return 0;
 

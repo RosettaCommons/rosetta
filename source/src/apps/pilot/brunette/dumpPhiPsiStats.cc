@@ -78,16 +78,17 @@ int main( int argc, char * argv [] ) {
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
         std::string tag_no_pdb = tag.substr(0,tag.size()-4);
-		utility::io::ozstream output(tag_no_pdb+".stats"); 
+		utility::io::ozstream output(tag_no_pdb+".stats");
         output << "pos abego  dssp    phi     psi     omega" << std::endl;
         utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
-         protocols::jumping::assign_ss_dssp( *input_poseOP );    
+         protocols::jumping::assign_ss_dssp( *input_poseOP );
         for(int ii=1; ii<=(int)input_poseOP->total_residue(); ++ii){
             output << I(4,ii)<<"  " <<abego_vector[ii] << "    " << input_poseOP->secstruct(ii) << "   " << F(8,1,input_poseOP->phi(ii)) << F(8,1,input_poseOP->psi(ii)) << F(8,1,input_poseOP->omega(ii)) << std::endl;
         }
     }
     } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
     }
 	return 0;
 }

@@ -52,7 +52,7 @@ class ThisApplication {
 		}
 
 
-std::string 
+std::string
 pose_to_string(const core::pose::Pose& pose){
 	std::ostringstream ss;
 	core::io::silent::SilentFileData sfd;
@@ -102,11 +102,11 @@ main ( int argc, char* argv[] ){
 		//core::pose::PoseOP p = import_pose::pose_from_pdb( option[pdb]());
 		core::pose::PoseOP pop = import_pose::pose_from_pdb( option[pdb]());
 		SerializablePose p(*pop);
-		
+
 
 
 		TR << "size of pose to flatten " << p.total_residue() << std::endl;
-		
+
 		TR << "ss1:" << p.secstruct() << std::endl;
 		p.set_secstruct(2,'H');
 		TR << "ss2:" << p.secstruct() << std::endl;
@@ -118,7 +118,8 @@ main ( int argc, char* argv[] ){
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-		
+
     return 0;
 }

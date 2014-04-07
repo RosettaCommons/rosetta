@@ -208,8 +208,9 @@ int main( int argc, char** argv ) {
   ThisApplication app;
   app.run();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 
 }

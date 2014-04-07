@@ -99,6 +99,7 @@ int main( int argc, char** argv ) {
 
   FragmentIO().write_data( option[ OptionKeys::o ](), *new_frags );
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

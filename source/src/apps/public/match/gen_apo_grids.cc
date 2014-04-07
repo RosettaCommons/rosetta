@@ -602,6 +602,7 @@ int main( int argc, char * argv [] )
 	}//cluster
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return EXIT_SUCCESS;
 }

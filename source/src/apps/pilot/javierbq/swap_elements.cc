@@ -9,9 +9,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
-/// @brief  
-/// @author 
+/// @file
+/// @brief
+/// @author
 
 
 #include <core/pose/Pose.hh>
@@ -156,21 +156,21 @@ public:
   	using core::fragment::Frame;
   	using core::fragment::FrameOP;
   	using core::fragment::IndependentBBTorsionSRFD;
-  
+
   	using core::fragment::picking_old::vall::pick_fragments;
   	using core::fragment::picking_old::vall::pick_fragments_by_ss;
   	using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
-  
+
   	FrameList frames;
-  
+
   	for ( Size j = 0, je = interval.length(); j < je; ++j ) {
   		TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
-  
+
   		std::string ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
   		if ( ss_sub.length() < frag_length ) {
   			ss_sub.append( frag_length - ss_sub.length(), 'D' );
   		}
-  
+
   		std::string aa_sub;
   		if ( !complete_aa.empty() ) {
   			aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
@@ -195,13 +195,13 @@ public:
   		} else {
   			abego_sub.clear(); // make sure it is empty
   		}
-  
+
   		FrameOP frame = new Frame( interval.left + j, frag_length );
-  
+
   		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
   		frames.push_back( frame );
   	}
-  
+
   	return frames;
   }
 
@@ -251,7 +251,7 @@ public:
 			movemap.set_bb(true);
 			movemap.set_chi(true);
 		}
-		
+
 		TR << "inserting fragments" << std::endl;
 		// connect a virtual atom from the center of mass of each moving region to the center of
 		// mass of the other.
@@ -279,7 +279,7 @@ public:
 					Real dist = working_pose.residue(idx_a).xyz("X").distance( working_pose.residue(idx_b).xyz("X") );
 					TR << "distance " << dist << std::endl;
 					clash =  clash_monomer(working_pose);
-					if( !clash && dist < distance_threshold_ ) 
+					if( !clash && dist < distance_threshold_ )
 						break;
 					else {
 						TR << "monomer clash, trial "<< trial <<" of " << rebuild_max_iterations_ << std::endl;
@@ -293,13 +293,13 @@ public:
 		}
 		// check if the insertion move away the moving region and if it is close to the its partner
 			//check for clashes
-		if( ! clash_monomer(working_pose) ) { 
+		if( ! clash_monomer(working_pose) ) {
 			set_last_move_status( MS_SUCCESS );
 			pose = working_pose;
 		} else {
 			set_last_move_status( FAIL_DO_NOT_RETRY );
 		}
-			
+
 	}
 
 	virtual std::string get_name() const { return "SwapElementsMover1"; }
@@ -317,7 +317,7 @@ private:
 	Real clash_distance_;
 };
 
-// insert fragments in one chain, perform alignment and rotation for 
+// insert fragments in one chain, perform alignment and rotation for
 // getting the partner.
 class SwapElementsMover2 : public protocols::moves::Mover {
 public:
@@ -373,21 +373,21 @@ public:
   	using core::fragment::Frame;
   	using core::fragment::FrameOP;
   	using core::fragment::IndependentBBTorsionSRFD;
-  
+
   	using core::fragment::picking_old::vall::pick_fragments;
   	using core::fragment::picking_old::vall::pick_fragments_by_ss;
   	using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
-  
+
   	FrameList frames;
-  
+
   	for ( Size j = 0, je = interval.length(); j < je; ++j ) {
   		TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
-  
+
   		std::string ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
   		if ( ss_sub.length() < frag_length ) {
   			ss_sub.append( frag_length - ss_sub.length(), 'D' );
   		}
-  
+
   		std::string aa_sub;
   		if ( !complete_aa.empty() ) {
   			aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
@@ -412,13 +412,13 @@ public:
   		} else {
   			abego_sub.clear(); // make sure it is empty
   		}
-  
+
   		FrameOP frame = new Frame( interval.left + j, frag_length );
-  
+
   		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
   		frames.push_back( frame );
   	}
-  
+
   	return frames;
   }
 
@@ -437,7 +437,7 @@ public:
 	virtual void apply(Pose & pose) {
 		using protocols::moves::MS_SUCCESS;
 		using protocols::moves::FAIL_DO_NOT_RETRY;
-		using namespace ObjexxFCL::format;	
+		using namespace ObjexxFCL::format;
 		// pick up the fragments for the junction
 		utility::vector1< std::string > abego;
 		std::string ss = pose.secstruct();
@@ -457,7 +457,7 @@ public:
 		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 		core::chemical::ResidueType vrt( rsd_set.name_map( "VRT" ) ) ;
 		core::conformation::ResidueOP anchor( core::conformation::ResidueFactory::create_residue( vrt ) ) ;
-		
+
 		// connect a virtual atom from the center of mass of each segment and  to the center of
 		// mass of each other.
 		core::conformation::ResidueOP vrt_a( core::conformation::ResidueFactory::create_residue( vrt ) );
@@ -468,7 +468,7 @@ public:
 		vrt_b->set_xyz( "X", com_B );
 		working_pose.append_residue_by_jump( *vrt_b, resi_nearest_to_com_B );
 		Size idx_b = working_pose.fold_tree().downstream_jump_residue( 2 );
-		
+
 		core::conformation::ResidueOP center_to_vrt_a( core::conformation::ResidueFactory::create_residue( vrt ) );
 		center_to_vrt_a->set_xyz( "X", (com_A + com_B)/2 );
 		working_pose.append_residue_by_jump( *center_to_vrt_a, idx_a );
@@ -505,7 +505,7 @@ public:
 					const Vector to_origin = ( new_center_to_a_1 + new_center_to_b_1 ) / 2;
   				Matrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
 					pose_for_fragment_insertion.apply_transform_Rx_plus_v( id_rot_mat, -1 *to_origin	);
-					Real angle_vrt_a_orig_x_axis = numeric::angle_degrees(Vector(new_center_to_a_1[0],to_origin[1],new_center_to_a_1[2]), to_origin, Vector(to_origin[0] + 1, to_origin[1],to_origin[2])); 
+					Real angle_vrt_a_orig_x_axis = numeric::angle_degrees(Vector(new_center_to_a_1[0],to_origin[1],new_center_to_a_1[2]), to_origin, Vector(to_origin[0] + 1, to_origin[1],to_origin[2]));
 					Matrix y_rot = numeric::y_rotation_matrix_degrees(  angle_vrt_a_orig_x_axis );
 					pose_for_fragment_insertion.apply_transform_Rx_plus_v( y_rot, Vector(0,0,0)	);
 					// rotate around the z-axis and align the guides to the x-axis
@@ -551,14 +551,14 @@ public:
 					transformed_z << "HETATM  5    C   ACY     5   "<< F(8,3,c3b[0])  <<  F(8,3,c3b[1])<<  F(8,3,c3b[2]) <<"  0.00  0.00" << std::endl;
 					transformed_z.close();
 					*/
-    
+
     			// append pose_for_fragment_insertion and pose_for_rotation into the working pose
     //			core::pose::remove_virtual_residues( &pose_for_fragment_insertion );
     //			core::pose::remove_virtual_residues( &pose_for_rotation );
     			//core::pose::remove_upper_terminus_type_from_pose_residue( pose_for_rotation, 1);
     			//core::pose::remove_lower_terminus_type_from_pose_residue( two_chains_pose, two_chains_pose.total_residue() );
     			//two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.total_residue(), "", "", true);
-    
+
     			Pose two_chains_pose;
     			for(Size i = 1; i <= pose_for_fragment_insertion.total_residue(); i++) {
     				if( pose_for_fragment_insertion.residue( i ).name1() == 'X' ) continue;
@@ -579,7 +579,7 @@ public:
 				}
 			}
 		}
-	
+
 		TR << "best dimer number of clashes " << best_pose_nclashes << std::endl;
 		// Set the movemap, add constraints and perform symmetric minimization to the pose
 		if( symm_min_ ) {
@@ -616,12 +616,12 @@ public:
 			vrt_B_chA->set_xyz( "X", com_B_ch_A );
 			vrt_B_chB->set_xyz( "X", com_B_ch_B );
 			working_pose.append_residue_by_jump( *vrt_A_chA,  resi_nearest_to_com_A_chA ); //jump 2?
-			working_pose.append_residue_by_jump( *vrt_A_chB,  resi_nearest_to_com_A_chB ); 
+			working_pose.append_residue_by_jump( *vrt_A_chB,  resi_nearest_to_com_A_chB );
 			working_pose.append_residue_by_jump( *vrt_B_chA,  resi_nearest_to_com_B_chA );
 			working_pose.append_residue_by_jump( *vrt_B_chB,  resi_nearest_to_com_B_chB );
 			// check that the jumps are write create the constriants and add them to symm_pose
 			//Size idx_a = working_pose.fold_tree().downstream_jump_residue( 1 );
-			
+
 
 			std::string db_file = "symmetry/cyclic/C2_Z.sym";
 			std::string path_to_symdef = basic::database::full_name(db_file);
@@ -629,30 +629,30 @@ public:
 			symmdef.read_symmetry_data_from_file( path_to_symdef );
 			core::pose::symmetry::make_symmetric_pose( symm_pose, symmdef );
 
-			
-			
+
+
 			//minimize
 			option[OptionKeys::symmetry::symmetry_definition].value( path_to_symdef );
 			core::pose::symmetry::make_symmetric_movemap( symm_pose, *movemap );
 			protocols::simple_moves::symmetry::SymMinMover symm_min( movemap, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 			symm_min.apply(symm_pose);
 			option[OptionKeys::symmetry::symmetry_definition].value( "" );
-			
+
 			pose = core::pose::symmetry::get_asymmetric_pose_copy_from_symmetric_pose( symm_pose );
 */
 
 		} else {
 			pose = best_pose_after_fragment_insertion;
 		}
-		
-	//	if( ! clash_monomer(pose_for_fragment_insertion) ) { 
+
+	//	if( ! clash_monomer(pose_for_fragment_insertion) ) {
 	//		set_last_move_status( MS_SUCCESS );
 //			pose = working_pose;
 	//	} else {
 	//		set_last_move_status( FAIL_DO_NOT_RETRY );
 	//	}
-		
-			
+
+
 	}
 
 	virtual std::string get_name() const { return "SwapElementsMover2"; }
@@ -685,9 +685,10 @@ int main( int argc, char** argv ) {
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-	
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return 0;

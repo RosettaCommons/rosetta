@@ -263,7 +263,7 @@ main( int argc, char * argv [] )
 		}
 	//---code to do a in spot score cut necessary for running centroid abinitio through boinc
 	double runtime = -1; //-1 does not do filtering
-	double minTimePerModel = 61;  //seconds per model min time for boinc. 
+	double minTimePerModel = 61;  //seconds per model min time for boinc.
 #ifdef BOINC
 		runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
 #endif
@@ -294,7 +294,8 @@ main( int argc, char * argv [] )
 	}
 
 	 } catch ( utility::excn::EXCN_Base const & e ) {
-		 std::cout << "caught exception " << e.msg() << std::endl;
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }

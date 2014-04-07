@@ -94,7 +94,7 @@ using namespace basic::options;
 
 basic::Tracer TR("cycgly_superimpose");
 
-// 
+//
 // OPT_1GRP_KEY(Real,probabilities,localbb)
 // OPT_1GRP_KEY(Real, probabilities,sc)
 // OPT_1GRP_KEY(Real, probabilities, sc_prob_uniform)
@@ -107,9 +107,9 @@ basic::Tracer TR("cycgly_superimpose");
 // OPT_1GRP_KEY(Boolean,probabilities,no_jd2_output)
 // OPT_1GRP_KEY(Boolean,probabilities,use_hierarchical_clustering)
 // OPT_1GRP_KEY(Integer, probabilities, hierarchical_max_cache_size)
-// 
-// 
-// 
+//
+//
+//
 // struct AbsFunc : public core::scoring::constraints::Func {
 // 	AbsFunc( Real const x0_in, Real const sd_in ): x0_( x0_in ), sd_( sd_in ){}
 // 	core::scoring::constraints::FuncOP
@@ -125,7 +125,7 @@ basic::Tracer TR("cycgly_superimpose");
 // 	}
 // 	void read_data( std::istream & in ){ in >> x0_ >> sd_;  }
 // 	void show_definition( std::ostream &out ) const { out << "ABS " << x0_ << " " << sd_ << std::endl; }
-// 	Real x0() const { return x0_; }  
+// 	Real x0() const { return x0_; }
 // 	Real sd() const { return sd_; }
 // 	void x0( Real x ) { x0_ = x; }
 // 	void sd( Real sd ) { sd_ = sd; }
@@ -133,14 +133,14 @@ basic::Tracer TR("cycgly_superimpose");
 // 	Real x0_;
 // 	Real sd_;
 // };
-// 
-// 
+//
+//
 // Real mod360(Real x) {
 // 	while(x >  180.0) x -= 360.0;
-// 	while(x < -180.0) x += 360.0;	
+// 	while(x < -180.0) x += 360.0;
 // 	return x;
 // }
-// 
+//
 // class CycBBMover : public protocols::moves::Mover {
 // 	Size nres_;
 // 	Size copyres_;
@@ -169,8 +169,8 @@ basic::Tracer TR("cycgly_superimpose");
 // 	}
 // 	std::string get_name() const { return "CycBBMover"; }
 // };
-// 
-// 
+//
+//
 // void bb_sample(Pose & pose, ScoreFunctionOP sf, Size niter) {
 // 	protocols::moves::MoverOP bbmove = new CycBBMover(pose,10.0);
 // 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sf, 2.0 );
@@ -178,7 +178,7 @@ basic::Tracer TR("cycgly_superimpose");
 // 	mc->set_temperature( 2.0 );
 // 	protocols::moves::RepeatMover( new protocols::moves::TrialMover(bbmove,mc), niter ).apply( pose );
 // }
-// 
+//
 // void BBG8T3A_sample(Pose & pose, ScoreFunctionOP sf, Size niter, Real temp = 2.0) {
 // 	protocols::simple_moves::BBG8T3AMoverOP bbmove = new protocols::simple_moves::BBG8T3AMover();
 // 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sf, temp );
@@ -186,7 +186,7 @@ basic::Tracer TR("cycgly_superimpose");
 // 	mc->set_temperature(temp);
 // 	protocols::moves::RepeatMover( new protocols::moves::TrialMover(bbmove,mc), niter ).apply( pose );
 // }
-// 
+//
 // void minimize(Pose & pose, ScoreFunctionOP sf) {
 // 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 // 	movemap->set_bb(true);
@@ -241,7 +241,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // typedef unsigned short BINTYPE;
 // BINTYPE const BINBITS = 1;
 // BINTYPE const BINSIZE = 2; // == 2 ** BINBITS
-// 
+//
 // std::string printbits(BINTYPE nn) {
 // 	std::string s = "";
 // 	for(Size i = 0; i < 8*sizeof(nn); ++i) {
@@ -251,7 +251,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 	}
 // 	return s;
 // }
-// 
+//
 // std::string bin2string(BINTYPE bin, Size nres) {
 // 	std::string s = "";
 // 	for(Size i = 0; i < nres; ++i) {
@@ -263,7 +263,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 	}
 // 	return s;
 // }
-// 
+//
 // BINTYPE makemask(Size n) {
 // 	BINTYPE ONE = 1u;
 // 	BINTYPE mask = 0;
@@ -272,14 +272,14 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 	}
 // 	return mask;
 // }
-// 
+//
 // BINTYPE cyclic_unique_bin(BINTYPE bin, Size nres) {
 // 	// for debuggung....
 // 	// TR << "testmask " << printbits( makemask(8) ) << std::endl;
 // 	// TR << "testmask " << printbits( makemask(13) ) << std::endl;
-// 	// TR << "testmask " << printbits( MASK ) << std::endl;	
+// 	// TR << "testmask " << printbits( MASK ) << std::endl;
 // 	// bin = 1UL<<0*9 | 1UL<<1*9 | 1UL<<2*9 | 1UL<<3*9 | 1UL<<4*9 | 1UL<<5*9;// | 1UL<<6*9 ;
-// 	// TR << "bin " << printbits(bin) << std::endl;	
+// 	// TR << "bin " << printbits(bin) << std::endl;
 // 	BINTYPE MASK = makemask(2*BINBITS*nres);
 // 	BINTYPE mn = bin;
 // 	for(Size i = 0; i < nres; ++i) {
@@ -292,11 +292,11 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 	// utility_exit_with_message("debug pose2bin");
 // 	return mn;
 // }
-// 
+//
 // BINTYPE pose2bin(core::pose::Pose const & pose) {
 // 	using namespace ObjexxFCL::format;
 // 	BINTYPE bin = 0;
-// 	for(int i = 0; i < (int)pose.n_residue(); ++i) {		
+// 	for(int i = 0; i < (int)pose.n_residue(); ++i) {
 // 		// Real phid = pose.phi(i+1);
 // 		// Real psid = pose.psi(i+1);
 // 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
@@ -328,7 +328,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 	}
 // 	return s;
 // }
-// 
+//
 // std::string bin2string(BINTYPE bin, Size nres) {
 // 	std::string s = "";
 // 	for(Size i = 0; i < nres; ++i) {
@@ -340,11 +340,11 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 	}
 // 	return s;
 // }
-// 
+//
 // BINTYPE pose2bin(core::pose::Pose const & pose) {
 // 	using namespace ObjexxFCL::format;
 // 	BINTYPE bin = 0;
-// 	for(int i = 0; i < (int)pose.n_residue(); ++i) {		
+// 	for(int i = 0; i < (int)pose.n_residue(); ++i) {
 // 		// Real phid = pose.phi(i+1);
 // 		// Real psid = pose.psi(i+1);
 // 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
@@ -407,7 +407,7 @@ int main( int argc, char * argv [] ) {
 	targets_in = core::import_pose::poses_from_pdbs( option[in::file::s]() );
 	for(Size i = 1; i <= targets_in.size(); i++) {
 		core::pose::remove_lower_terminus_type_from_pose_residue(targets_in[i],           1             );
-		core::pose::remove_upper_terminus_type_from_pose_residue(targets_in[i],targets_in[i].n_residue());			
+		core::pose::remove_upper_terminus_type_from_pose_residue(targets_in[i],targets_in[i].n_residue());
 	}
 	ObjexxFCL::FArray2D_float rmsmat(targets_in.size(),targets_in.size(),0.0);
 	TR << "computing central structure out of " << targets_in.size() << std::endl;
@@ -421,7 +421,7 @@ int main( int argc, char * argv [] ) {
 			rmsmat(j,i) = rmsmat(i,j);
 		}
 	}
-	
+
 	for(Size i = 1; i <= targets_in.size(); i++) {
 		Real meanrms = 0;
 		for(Size j = 1; j <= targets_in.size(); j++) {
@@ -433,7 +433,7 @@ int main( int argc, char * argv [] ) {
 			argmin = i;
 		}
 	}
-	
+
 	for(Size i = 1; i <= targets_in.size(); ++i) {
 		cyclic_superimpose(targets_in[i],targets_in[argmin]);
 		targets_in[i].dump_pdb("aligned_"+ObjexxFCL::lead_zero_string_of(i,6)+".pdb");
@@ -442,6 +442,7 @@ int main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

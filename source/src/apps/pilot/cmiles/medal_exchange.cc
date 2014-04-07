@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
       protocols::medal::MedalExchange_main);
     } catch ( utility::excn::EXCN_Base const & e ) {
                              std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
                                 }
-       return 0; 
+       return 0;
 }

@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-//kdrew: this app attempts to find the orientation of a scaffold that best satisifies the positions of hotspot residues (provided as inverse rotamer libraries).  
-//scaffold in this case is generally meant as a small noncanonical backbone with a handful of designable positions.  
-//		 
+//kdrew: this app attempts to find the orientation of a scaffold that best satisifies the positions of hotspot residues (provided as inverse rotamer libraries).
+//scaffold in this case is generally meant as a small noncanonical backbone with a handful of designable positions.
+//
 
 //Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
@@ -72,7 +72,7 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
-// Utility Headers 
+// Utility Headers
 #include <devel/init.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
@@ -143,6 +143,7 @@ main( int argc, char* argv[] )
 
   } catch ( utility::excn::EXCN_Base const & e ) {
     std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
   }
   return 0;
 
@@ -196,11 +197,11 @@ HotspotPlacementMover::apply(
 	// get peptide start and end positions
 	Size pep_start( start_pose.conformation().chain_begin( 2 ) ); Size pep_end( start_pose.total_residue() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
-	
+
   ////kdrew: automatically find ncbb positions
 	utility::vector1< core::Size > ncbb_seq_positions = core::pose::ncbb::initialize_ncbbs(start_pose);
 
-	//kdrew: turn on atom pair constraints if not already on 
+	//kdrew: turn on atom pair constraints if not already on
 	if( ncbb_seq_positions.size() > 0 && score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
 		score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 
@@ -219,7 +220,7 @@ HotspotPlacementMover::apply(
 	//Secondary Hotspot Setup
 	utility::vector1<protocols::hotspot_hashing::HotspotStubSetOP> ancillary_stubs;
 	utility::vector1<std::string> ancillary_stub_locations =  option[ scaffold_matcher::ancillary_hs_stub_libs ]();
-	
+
 	for (core::Size i = 1; i <= ancillary_stub_locations.size(); ++i) {
 		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_set2OP = new protocols::hotspot_hashing::HotspotStubSet;
 		hotspot_stub_set2OP->read_data(ancillary_stub_locations[i]);
@@ -252,9 +253,9 @@ HotspotPlacementMover::apply(
 
 	//kdrew: setup default packer task for both L and D residues
 	utility::vector1< bool > aas(20,false);
-	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );		
+	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( start_pose );
-	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum ) 
+	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum )
 	{
 		core::chemical::ResidueType rtype = start_pose.residue_type( resnum );
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = packer_task->residue_task(resnum).allowed_residue_types();
@@ -262,7 +263,7 @@ HotspotPlacementMover::apply(
 		{
 			packer_task->nonconst_residue_task(resnum).restrict_absent_canonical_aas(aas);
 			for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
-					 restype != allowed_aas.end(); ++restype) 
+					 restype != allowed_aas.end(); ++restype)
 			{
 
 				core::chemical::ResidueType allowed_rtype =  **restype;
@@ -273,7 +274,7 @@ HotspotPlacementMover::apply(
 		}
 	}
 
-	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum ) 
+	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum )
 	{
 		core::chemical::ResidueType rtype = start_pose.residue_type( resnum );
 
@@ -290,8 +291,8 @@ HotspotPlacementMover::apply(
 			Size hs_index = 0;
 
 			protocols::hotspot_hashing::HotspotStubSet::Hotspots res_stub_set( hotspot_stub_setOP->retrieve( (*restype )->name3() ) );
-			
-			for (std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin(); hs_stub != res_stub_set.end(); ++hs_stub) 
+
+			for (std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin(); hs_stub != res_stub_set.end(); ++hs_stub)
 			{
 				Pose pose( start_pose );
 
@@ -304,7 +305,7 @@ HotspotPlacementMover::apply(
 				hs_index++;
 
 				TR << "resnum: " << resnum << " stub: "<< hs_stub->second->residue()->name() << " is residue stub #" << hs_index << std::endl;
-				
+
 				core::Size fixed_res(1);
 				core::id::AtomID fixed_atom = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 
@@ -312,8 +313,8 @@ HotspotPlacementMover::apply(
 				core::Real distance = 0.0;
 				core::Real stdev = 0.05;
 				core::scoring::func::HarmonicFuncOP harm_func  (new core::scoring::func::HarmonicFunc( distance, stdev ) );
-																						 
-				//kdrew: probably cannot do atom pair constraint because stub is not really part of pose, 
+
+				//kdrew: probably cannot do atom pair constraint because stub is not really part of pose,
 				//kdrew: try xyz constraint?
 				core::id::AtomID aid_scaffold_CA( pose.residue( resnum ).atom_index("CA"), resnum );
 				core::id::AtomID aid_scaffold_CB( pose.residue( resnum ).atom_index("CB"), resnum );
@@ -340,7 +341,7 @@ HotspotPlacementMover::apply(
 				TR << "Place_hs full score with coord cst: " << place_hs_full_coord_score << std::endl;
 				TR << "Place_hs total score with coord constraints is: " << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
 				TR << "Place_hs coord cst score : " << pose.energies().total_energies()[ core::scoring::coordinate_constraint] << std::endl;
-					
+
 				place_hs_min->apply(pose);
 
 				place_hs_full_coord_score = (*place_hs_score_fxn)(pose);
@@ -369,7 +370,7 @@ HotspotPlacementMover::apply(
 				core::Real stub_bonus_value = hs_stub->second->bonus_value();
 				core::Real const force_constant = 5.0;
 
-				//core::scoring::constraints::ConstraintCOP bbstub_cst = new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, force_constant, "CB","CA","N","C" ); 
+				//core::scoring::constraints::ConstraintCOP bbstub_cst = new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, force_constant, "CB","CA","N","C" );
 
 				//kdrew: TODO: make target_residue a pose
 				core::pose::Pose stub_pose = core::pose::Pose();
@@ -381,7 +382,7 @@ HotspotPlacementMover::apply(
 				core::scoring::constraints::ConstraintCOPs additional_hs_constraints;
 				//kdrew: put additional constraints to satisify other hotspot residues
 				//kdrew: for each residue in scaffold (peptide)
-				for ( core::Size resnum2=pep_start; resnum2 <= pep_end; ++resnum2 ) 
+				for ( core::Size resnum2=pep_start; resnum2 <= pep_end; ++resnum2 )
 				{
 
 					core::chemical::ResidueType rtype2 = pose.residue_type( resnum2 );
@@ -395,28 +396,28 @@ HotspotPlacementMover::apply(
 						//kdrew: for each allowed type at this position
 						std::list< core::chemical::ResidueTypeCOP > allowed_aas2 = packer_task->residue_task( resnum2 ).allowed_residue_types();
 						for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype2 = allowed_aas2.begin();
-								 restype2 != allowed_aas2.end(); ++restype2) 
+								 restype2 != allowed_aas2.end(); ++restype2)
 						{
 							//kdrew: for each inverse rotamer in stub set
 							for (core::Size jjj = 1; jjj <= ancillary_stubs.size(); ++jjj) {
 								protocols::hotspot_hashing::HotspotStubSet::Hotspots res_stub_set2( ancillary_stubs[jjj]->retrieve( (*restype2 )->name3() ) );
-								for (std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub2 = res_stub_set2.begin(); 
-										hs_stub2 != res_stub_set2.end(); ++hs_stub2) 
+								for (std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub2 = res_stub_set2.begin();
+										hs_stub2 != res_stub_set2.end(); ++hs_stub2)
 								{
 									core::pose::Pose stub2_pose = core::pose::Pose();
 									stub2_pose.append_residue_by_bond( *(hs_stub2->second->residue()) );
 									core::Real stub_bonus_value2 = hs_stub2->second->bonus_value();
-									ambig_csts.push_back( 
-												new core::scoring::constraints::BackboneStubConstraint( pose, 
-																		resnum2, 
-																		fixed_atom, 
+									ambig_csts.push_back(
+												new core::scoring::constraints::BackboneStubConstraint( pose,
+																		resnum2,
+																		fixed_atom,
 																		stub2_pose,
 																		1, //kdrew: assuming stub is in pose with only one residue, change for peptoids
-																		stub_bonus_value2, 
-																		force_constant ) 
+																		stub_bonus_value2,
+																		force_constant )
 											);
-								}	
-							}	
+								}
+							}
 						}
 							if ( ambig_csts.size() > 0 )
 							{
@@ -425,7 +426,7 @@ HotspotPlacementMover::apply(
 							}
 					}
 				}
-				
+
 				additional_hs_constraints = pose.add_constraints( additional_hs_constraints );
 				core::Real full_stub_score = (*score_fxn)(pose);
 
@@ -437,13 +438,13 @@ HotspotPlacementMover::apply(
 					packer->apply( pose );
 				else // sample scaffold conformations
 					NDDP_mover->apply( pose );
-				
+
 				//min->apply( pose );
 
 				//kdrew: need to use restrict to repack to properly do rotamer trials
 				//core::pack::task::PackerTaskOP bump_packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
 				//core::pack::rotamer_trials( pose , *bump_scorefxn, bump_packer_task );
-				
+
 				full_stub_score = (*score_fxn)(pose);
 
 				std::stringstream repack_pdbname;
@@ -465,7 +466,7 @@ HotspotPlacementMover::apply(
 }
 
 void
-HotspotPlacementMover::setup_pert_foldtree( 
+HotspotPlacementMover::setup_pert_foldtree(
 	core::pose::Pose & pose
 )
 {
@@ -483,8 +484,8 @@ HotspotPlacementMover::setup_pert_foldtree(
 
 }
 void
-HotspotPlacementMover::setup_pert_foldtree_byres( 
-	core::pose::Pose & pose, 
+HotspotPlacementMover::setup_pert_foldtree_byres(
+	core::pose::Pose & pose,
 	Size dock_jump_pos_pro,
 	Size dock_jump_pos_pep
 )

@@ -94,22 +94,22 @@ class RosettaJob {
       utility::json_spirit::mArray parsed_json_task_array;
       parsed_json_task_array =  utility::json_spirit::read_mArray( data );
 
-      if( parsed_json_task_array.size() == 0 ){ 
+      if( parsed_json_task_array.size() == 0 ){
         std::cout << "No work on server" << std::endl;
         return false;
       }
-      
-      if( parsed_json_task_array.size()  > 1 ){ 
+
+      if( parsed_json_task_array.size()  > 1 ){
         std::cout << "ERROR: Server returned more than 1 task!" << std::endl;
         return false;
       }
 
-      utility::json_spirit::mArray::const_iterator it = parsed_json_task_array.begin(); 
-      
+      utility::json_spirit::mArray::const_iterator it = parsed_json_task_array.begin();
+
       if( parsed_json_task_array.begin()->type() != utility::json_spirit::obj_type ){
         throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for tasklist member:'");
-      }; 
-      const utility::json_spirit::mObject &parsed_json = parsed_json_task_array.begin()->get_obj();     
+      };
+      const utility::json_spirit::mObject &parsed_json = parsed_json_task_array.begin()->get_obj();
 
       std::string payload;
       try{
@@ -212,7 +212,7 @@ class RosettaJob {
       std::string std_err;
       if( rpc_ ){
         std_err = rpc_->tracer();
-      } 
+      }
       std::cout << "STDERROR:" <<  std_err << std::endl;
       root.push_back( utility::json_spirit::Pair( "stderr", std_err ) ); // stderr output for debugging
 
@@ -266,7 +266,7 @@ class RosettaBackend {
       serverinfo_(serverinfo),
       basic_init_(basic_init)
     {}
- 
+
  public:
 
     void run(){
@@ -325,10 +325,11 @@ main( int argc, char * argv [] )
     ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() );
     std::cout << "server: " << server.url_gettask() << std::endl;
     RosettaBackend backend( server, &basic_init );
-    
+
     backend.run();
   } catch ( utility::excn::EXCN_Base const & e ) {
     std::cerr << "Caught exception " << e.msg() << std::endl;
+    return -1;
   }
   return 0;
 }

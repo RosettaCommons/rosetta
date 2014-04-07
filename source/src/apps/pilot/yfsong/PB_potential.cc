@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Yifan Song
 
@@ -36,7 +36,7 @@
 // protocols
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/jobdist/standard_mains.hh>       
+#include <protocols/jobdist/standard_mains.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 // utility
@@ -80,7 +80,7 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 			}
 		}
 	}
-	
+
 	//min_r -= numeric::xyzVector <core::Real> (20,20,20);
 	//max_r += numeric::xyzVector <core::Real> (20,20,20);
 	numeric::xyzVector <core::Real> length = max_r - min_r;
@@ -94,14 +94,14 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 	numeric::xyzVector <core::Size> n_grid = static_cast< numeric::xyzVector <core::Size> > (dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.));
 
 	// Shrink fine dimensions if they exceed coarse dimensions
-	for (core::Size i = 0; i < 3 ; i++) 
+	for (core::Size i = 0; i < 3 ; i++)
 	{
 		if(dimension_fine[i] > dimension_coarse[i])
 		{
 			dimension_fine[i] = dimension_coarse[i];
 		}
 	}
-	
+
 	using namespace ObjexxFCL::format;
 	config_file << "#" << std::endl;
 	config_file << "# Note that most of the comments here were taken from sample" << std::endl;
@@ -181,12 +181,12 @@ apply ( core::pose::Pose & pose )
 		zero_charge_chains = basic::options::option[PB_potential::no_charge_on_chain]();
 	}
 	core::scoring::dump_pqr(pose, out_pqr, tag, zero_charge_chains);
-	
+
 	std::string config_fn = tag + ".in";
 	std::ofstream out_config(config_fn.c_str());
 	write_APBS_config(pose, out_config, pqr_fn);
 	out_config.close();
-	
+
 	if (!basic::options::option[PB_potential::apbs_exe].user()) {
 		std::cerr << "Need to know where the APBS executable is to proceed." << std::endl;
 		std::cerr << "Or, run apbs from a command line." << std::endl;
@@ -197,10 +197,10 @@ apply ( core::pose::Pose & pose )
 		system(command_line.c_str());
 	}
 }
-	
+
 void initialize() {
 }
-	
+
 std::string
 get_name() const {
 	return "PBPotentialMover";
@@ -219,9 +219,10 @@ main( int argc, char * argv [] )
 	devel::init( argc, argv );
 	PBPotentialMover PB_potential_mover;
 	PB_potential_mover.initialize();
-	
+
 	protocols::jobdist::universal_main( PB_potential_mover );
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }

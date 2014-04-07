@@ -288,9 +288,9 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 	core::pack::task::parse_resfile(pose,*task, resfile);
 
 
-	// If design_pos is populated then we are doing design	
+	// If design_pos is populated then we are doing design
 	if(design_pos.size() > 0){
-		
+
 		for(Size i=1; i<=pose.n_residue(); i++) {
 			if(!sym_info->bb_is_independent(i)) {
 				task->nonconst_residue_task(i).prevent_repacking();
@@ -501,7 +501,7 @@ get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, str
 				buried_unsat_polars++;
 				if (flag == 0) {
 					TR << "buried unsat polar(s): " << bound.residue(ir).name3() << ir << "\t" << bound.residue(ir).atom_name(ia);
-					select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");   
+					select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");
 					flag = 1;
 				} else {
 					TR << "," << bound.residue(ir).atom_name(ia);
@@ -550,7 +550,7 @@ Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_sub
 }
 
 
-Real average_degree(Pose const &pose, vector1<Size> mutalyze_pos, Sizes intra_subs1, Sizes intra_subs2, 
+Real average_degree(Pose const &pose, vector1<Size> mutalyze_pos, Sizes intra_subs1, Sizes intra_subs2,
 	                  Pose const & p1, Pose const & p2, Real distance_threshold=10.0){
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = sym_info->num_independent_residues();
@@ -829,7 +829,7 @@ void *dostuff(void*) {
 						// Design
 						//design(pose_for_design, sf, design_pos, true);
 						utility::vector1<utility::file::FileName> resfile = option[basic::options::OptionKeys::packing::resfile]();
-						design_using_resfile(pose_for_design, sf, resfile[1], design_pos); 
+						design_using_resfile(pose_for_design, sf, resfile[1], design_pos);
 
 						// 120206: Get min_rb commandline to implement rigid body minimization
       			bool min_rb = option[matdes::mutalyze::min_rb]();
@@ -892,7 +892,7 @@ void *dostuff(void*) {
 						// ddG_mover.calculate(pose_for_design);
 						Real ddG;// = ddG_mover.sum_ddG();
 						//must do ddG manually, moving each BB separately
-						
+
 							Pose boundpose(pose_for_design);
 							Pose unboundpose(pose_for_design);
 							trans_pose(unboundpose,cmp1axs*1000.0,               1,p1.n_residue()               );
@@ -902,8 +902,8 @@ void *dostuff(void*) {
 							Real ubounde = scorefxn->score(unboundpose);
 							Real bounde = scorefxn->score(boundpose);
 							ddG = bounde - ubounde;
-						
-						
+
+
 
 						// Calculate the number of hbonding groups buried by the interface, also prints them to TR
 						Size nres_monomer = sym_info->num_independent_residues();
@@ -972,6 +972,7 @@ main (int argc, char *argv[])
 		func(NULL);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

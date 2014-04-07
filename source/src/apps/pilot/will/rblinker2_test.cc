@@ -69,7 +69,7 @@ using core::Real;
 static basic::Tracer TR("rblinker2");
 
 // static numeric::random::RandomGenerator RG(8334046);
-// 
+//
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
 // 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -78,9 +78,9 @@ static basic::Tracer TR("rblinker2");
 // 		}
 // 	}
 // }
-// 
-// 
-// 
+//
+//
+//
 // // petf   37   42   45   75
 // // hyd   101  156  334  338
 // // psI  1492 1536 1489 1495
@@ -94,7 +94,7 @@ static basic::Tracer TR("rblinker2");
 // 	Vec sf4B = (petf.xyz(AtomID(5,  37))+petf.xyz(AtomID(5,  42))+petf.xyz(AtomID(5,  45))+petf.xyz(AtomID(5,  75)))/4.0;
 // 	return sf4A.distance(spetf.local2global(sf4B));
 // }
-// 
+//
 // // get stup that aligns r1 to r2
 // Stub getxform(Residue const & r1, Residue const & r2) {
 // 	Stub s;
@@ -132,7 +132,7 @@ class SimpleBBMover : public protocols::moves::Mover {
 public:
 	SimpleBBMover(Size start, Size stop, Real mag) : start_(start),stop_(stop),mag_(mag) {}
 	Real magnitude(        ) { return mag_; }
-	void magnitude(Real mag) { mag_ = mag; }	
+	void magnitude(Real mag) { mag_ = mag; }
 	void apply(core::pose::Pose & pose) {
 		Size i = start_-1 + std::ceil(uniform()*(stop_-start_+1));
 		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
@@ -167,7 +167,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {		
+	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -227,17 +227,17 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
 	cuts(1) = lnk.n_residue()/2;
-	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);		
+	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_UPPER",cuts(1)+1);
 	jump_point(1,1) = 1;
 	jump_point(2,1) = lnk.n_residue();
 	ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
 	ft.set_jump_atoms(1,"N","C");
-	lnk.fold_tree(ft);		
+	lnk.fold_tree(ft);
 
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
 	xform_pose(lnk, getxform(lnk.residue(lnk.n_residue()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
-	
+
 	return lnk;
 }
 
@@ -283,23 +283,23 @@ void* doit(void*) {
 	sf->set_weight(core::scoring::cbeta,1.0);
 	sf->set_weight(core::scoring::rama ,1.0);
 	sf = core::scoring::getScoreFunction();
-		
+
 	Pose test,hyd;
 	core::import_pose::pose_from_pdb(test,*cenresset,"input/psI_0001_strip_0001.pdb");
 	core::import_pose::pose_from_pdb(hyd ,*cenresset,"input/hyda1_0001_strip_0001.pdb");
 	Size st = test.n_residue();
-	
+
 	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.n_residue());
 	core::pose::remove_lower_terminus_type_from_pose_residue(lnk,1);
 	for(Size i = 1; i <= lnk.n_residue(); ++i) test.append_residue_by_bond(lnk.residue(i),true);
 	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.n_residue());
 	core::pose::remove_lower_terminus_type_from_pose_residue(hyd,1);
 	for(Size i = 1; i <= hyd.n_residue(); ++i) test.append_residue_by_bond(hyd.residue(i),true);
-	
+
 	test = lnk;
-	
-	// MoverOP bbmove = new SimpleBBMover(st+2,st+lnk.n_residue(),30.0); 	
-	MoverOP bbmove = new SimpleBBMover(1,lnk.n_residue(),30.0); 	
+
+	// MoverOP bbmove = new SimpleBBMover(st+2,st+lnk.n_residue(),30.0);
+	MoverOP bbmove = new SimpleBBMover(1,lnk.n_residue(),30.0);
 	MonteCarloOP mc1 = new MonteCarlo( test, *sf, 2.0 );
 	mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 	TrialMover trial(bbmove,mc1);
@@ -332,6 +332,7 @@ int main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

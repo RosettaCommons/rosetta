@@ -54,7 +54,7 @@
 #define BATCH_STRING_SIZE 2000
 
 #define SSTR( x ) dynamic_cast< std::ostringstream & >( \
-        ( std::ostringstream() << std::dec << x ) ).str() 
+        ( std::ostringstream() << std::dec << x ) ).str()
 
 // new options
 OPT_1GRP_KEY(String, batchrelax_mpi, jobfile)
@@ -75,7 +75,7 @@ void wait_for_gdb()
 string split_string( string str, int index ) {
 	vector<string> split_string;
 	boost::split( split_string, str, boost::is_any_of("\t ") );
-	return split_string[index]; 
+	return split_string[index];
 }
 
 bool isUnique( utility::vector1<string> & str )
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 	core::chemical::ResidueTypeSetCAP rsd_set;
 	if ( option[ in::file::fullatom ]() )
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	else 
+	else
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
 	// init sfxn
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 	if (rank == 0 && numprocs > 1) {
 		// create job list
 		if ( ! option[ OptionKeys::batchrelax_mpi::jobfile ].user() )
-			utility_exit_with_message( "supply a jobfile with flag -batchrelax_mpi::jobfile in format <silentfile native.pdb>" );	
+			utility_exit_with_message( "supply a jobfile with flag -batchrelax_mpi::jobfile in format <silentfile native.pdb>" );
 		string jobs_file_str = option[ OptionKeys::batchrelax_mpi::jobfile ];
 		ifstream jobs_file( jobs_file_str.c_str() );
 		vector<string> jobs;
@@ -163,14 +163,14 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			jobs_file.close();
-		}	
+		}
 
 		// parse jobs list and split into batches
 		vector<string> batches;				// yes, im mixing vector0 and vector1 in this app - sue me
 		SilentFileData sfd;
 		string silent_file_name;
 		int infile_size;				// number of incoming structures
-		int num_batches_in_file;		
+		int num_batches_in_file;
 		utility::vector1<string> tags;
 		for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) {	// for each job in list, get structures and divide into batches
 			silent_file_name = split_string( *it, 0 );				// sf path is first word on job line (native path is second word)
@@ -182,9 +182,9 @@ int main(int argc, char *argv[]) {
 			int start, end = 1;
 			bool breakLoop = false;
 			// create batches by computing tag indexes and pushing start/end of range with silent file name
-			for ( start = 1; ; start += batch_size ) {						
+			for ( start = 1; ; start += batch_size ) {
 				end = start + batch_size - 1;
-				if ( end >= infile_size ) {							
+				if ( end >= infile_size ) {
 					end = infile_size;							// don't run over end of file, recompute index of last structure
 					breakLoop = true;							// we're done with this file, signal exit from loop
 				}
@@ -198,7 +198,7 @@ int main(int argc, char *argv[]) {
 		// if batch size is less than 1/4 of batch_size, move it to the end - "stable sort" preserves input order
 		// do this later - it's not THAT important, but a good idea nonetheless
 
-		//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it ) 
+		//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it )
 			//cout << *it << endl;
 
 		#ifdef USEMPI
@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
 
 		MPI_Bcast( &batch_size, 1, MPI_INT, 0, MPI_COMM_WORLD );
 		for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it ) {
-			if ( it->size() > BATCH_STRING_SIZE ) 
+			if ( it->size() > BATCH_STRING_SIZE )
 				utility_exit_with_message("batch string size exceeds BATCH_STRING_SIZE (" + SSTR(BATCH_STRING_SIZE) + ")");
 			std::strcpy( batch_string, it->c_str() );
 			MPI_Bcast( batch_string, BATCH_STRING_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD );
@@ -217,8 +217,8 @@ int main(int argc, char *argv[]) {
 		// initial batch assignments - iterate thru nodes and send
 		int next_batch;
 		for (next_batch = 0; next_batch < batches.size(); ++next_batch) {
-			if (next_batch > numprocs - 2)	// - 2 to count head node and 0-based indexing	
-				break;			// all slaves are full, move on 
+			if (next_batch > numprocs - 2)	// - 2 to count head node and 0-based indexing
+				break;			// all slaves are full, move on
 			MPI_Send( &next_batch, 1, MPI_INT, next_batch+1, TAG_BATCH_ASSIGN, MPI_COMM_WORLD );
 		}
 
@@ -228,8 +228,8 @@ int main(int argc, char *argv[]) {
 			for ( int ii = next_batch; ii <= numprocs - 2; ++ii ) {
                                 MPI_Send( &EXIT_BATCH_ID, 1, MPI_INT, ii+1, TAG_BATCH_ASSIGN, MPI_COMM_WORLD );
 			}
-		}	
-			
+		}
+
 		// go thru rest of batches - block until a node frees up and then assign that node a new batch
 		int batch_id;
 		vector< pair<int,int> > write_approve_queue;	// pair( batch_id, node_id )
@@ -265,10 +265,10 @@ int main(int argc, char *argv[]) {
 
 			if (status.MPI_TAG == TAG_WRITE_REQUEST) {
 				TR << "master Recv loop: processing TAG_WRITE_REQUEST from " << status.MPI_SOURCE << endl;
-				if ( filelock[ split_string(batches[batch_id],0) ] ) 
+				if ( filelock[ split_string(batches[batch_id],0) ] )
 					write_approve_queue.push_back( make_pair( batch_id, status.MPI_SOURCE ) );
-				
-				else {				
+
+				else {
 					MPI_Send( &batch_id, 1, MPI_INT, status.MPI_SOURCE, TAG_WRITE_APPROVE, MPI_COMM_WORLD );
 					filelock[ split_string(batches[batch_id],0) ] = true;
 				}
@@ -298,7 +298,7 @@ int main(int argc, char *argv[]) {
 
 		} //end recv loop
 		#endif
-	} //end master 
+	} //end master
 
 
 	//handle slaves here
@@ -309,10 +309,10 @@ int main(int argc, char *argv[]) {
 		core::pose::PoseOP native_pose;
 		string silent_filename = "";
 		string silent_out_filename = "";
-		
+
 		#ifdef USEMPI
 
-		// receive batch list here 
+		// receive batch list here
 		char batch_string[BATCH_STRING_SIZE];
 		int expected_batch_size;
 
@@ -324,7 +324,7 @@ int main(int argc, char *argv[]) {
 			batches.push_back( batch_string );
 		}
 		TR << "expected batch_size: " << expected_batch_size << " actual batch_size: " << batches.size() << endl;
-		
+
 		// block for messages until receive batch_id: EXIT_BATCH_ID, then quit loop
 		while ( true )
 		{
@@ -345,7 +345,7 @@ int main(int argc, char *argv[]) {
 				silent_filename = split_string(batches[batch_id],0);
 				sfd_in = new SilentFileData();
 				sfd_in->read_file( silent_filename );
-			
+
 				string native_pdb_file = split_string(batches[batch_id],1);
 				native_pose = core::import_pose::pose_from_pdb( native_pdb_file );
 			}
@@ -357,11 +357,11 @@ int main(int argc, char *argv[]) {
 			std::vector<SilentStructOP> input_structs;
 			for ( int tag_index = start; tag_index <= end; ++tag_index) {
 				//SilentStructOP new_struct = sfd_in.get_structure( tags[tag_index] ).clone();
-				input_structs.push_back( sfd_in->get_structure( tags[tag_index] ).clone() ); 
+				input_structs.push_back( sfd_in->get_structure( tags[tag_index] ).clone() );
 			}
 
 			nstruct = 1; 	// use batch list to distribute nstruct rather than forcing a sequential loop
-					// get rid of deep copy when it becomes obvious i'll never use a sequential loop 
+					// get rid of deep copy when it becomes obvious i'll never use a sequential loop
 
 			for ( core::Size j=0;j<nstruct;j++ ) {
 				// make a deep copy of the input_structs list so we can reuse input_structs
@@ -374,10 +374,10 @@ int main(int argc, char *argv[]) {
 					new_struct = (*it)->clone();
 					relax_structs.push_back( new_struct );
 				}
-				
+
 				protocols::relax::FastRelax relax( scorefxn, option[ OptionKeys::relax::sequence_file ]() );
 				relax.set_native_pose( native_pose );
-				
+
 				TR << "BATCHSIZE: " <<  relax_structs.size() << endl;
 				long starttime = time(NULL);
 				relax.batch_apply( relax_structs );
@@ -398,7 +398,7 @@ int main(int argc, char *argv[]) {
 					sfd_out->add_structure( *(*it) );
 				}
 			} //end nstruct loop
-			
+
 			// request write approval
 			MPI_Send( &batch_id, 1, MPI_INT, 0, TAG_WRITE_REQUEST, MPI_COMM_WORLD );
 			// block for write approval
@@ -406,7 +406,7 @@ int main(int argc, char *argv[]) {
 			// write
 			// todo: use JobOutputter::affixed_number_name convention for output names
 			silent_out_filename = option[ OptionKeys::out::prefix ]();
-			silent_out_filename += utility::file_basename( silent_filename ) + ".batchrelax"; 
+			silent_out_filename += utility::file_basename( silent_filename ) + ".batchrelax";
 			silent_out_filename += option[ OptionKeys::out::suffix ]();
 			TR << "Saving to " << silent_out_filename << endl;
 			sfd_out->write_all( silent_out_filename );
@@ -426,6 +426,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << endl;
+		return -1;
 	}
 
 	return 0;

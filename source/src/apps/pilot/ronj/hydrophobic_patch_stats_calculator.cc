@@ -1290,7 +1290,7 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 			// round this residues fa_atr energy to the nearest 0.5 kcal
 			// off a quick test, fa_atr residue energies range from 0 to -15. So let's use a size of 32.
 			float atrE = (pose.energies().residue_total_energies( ii ))[ core::scoring::fa_atr ];
-			
+
 			//float rounded_atrE = ceil( atrE * 2 - 0.5 ) / 2;
 			//-2.2498, -2.0
 			// -2.495, -2.5
@@ -1411,7 +1411,7 @@ get_residue_key( core::pose::Pose & pose, core::Size pose_resid, bool mse ) {
 	residue_key << pose.pdb_info()->chain(pose_resid) << ",";
 	if ( mse ) {
 		residue_key << "MSE,";
-	} else { 
+	} else {
 		residue_key << pose.residue(pose_resid).name3() << ",";
 	}
 	residue_key << pdb_resid;
@@ -1593,7 +1593,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 			// now that we know how much exposed hASA this residue has, save it somewhere
 			if ( patchArea != 0.0 ) {
 				hASA_within_10A.push_back( patchArea );
-				
+
 				//if ( patchArea < 1.0 ) {
 				//	TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
 				//		<< ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
@@ -1784,7 +1784,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 			// now that we know how much exposed hASA this residue has, save it somewhere
 			if ( patchArea != 0.0 ) {
 				hASA_within_10A.push_back( patchArea );
-				
+
 				//if ( patchArea < 1.0 ) {
 				//	TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
 				//		<< ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
@@ -2045,7 +2045,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 			// reset the area size for every surface-exposed residue
 			total_area = 0.0;
 			total_hydrophobic_area = 0.0;
-			
+
 			// add in the hASA contribution of this residue regardless of whether the residue is polar or hydrophobic
 			total_area += residue_sasa[ ii ];
 			total_hydrophobic_area += residue_hsasa[ ii ];
@@ -2071,7 +2071,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 			//values.push_back( total_hydrophobic_area );
 			//values.push_back( total_area );
 			//values.push_back( total_hydrophobic_area / total_area );
-			
+
 			// now that we know how much exposed hASA this residue has, save it somewhere
 			//hASA_within_10A[ countNeighbors ].push_back( values );
 			hASA_within_10A[ countNeighbors ].push_back( total_hydrophobic_area );
@@ -2509,7 +2509,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 		// Now go through every residue (except the termini) and if it's on the surface, add that residues's hASA (based on its
 		// neighbor count) and all neighboring residues hASA's to the total.  Save that final sum in the hASA_within_10A vector.
-		// Do we want to include only the surface-exposed neighbors or should I include all neighbors since the average 
+		// Do we want to include only the surface-exposed neighbors or should I include all neighbors since the average
 		// hydrophobic ASA values include a neighbor dependence to them.
 
 		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
@@ -2519,7 +2519,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 			// our definition of surface residue is that the residue has fewer than 16 (or 20) neighbors
 			// only calculate the hpatch data for residues with fewer than that # of nbs.
-			// but neighboring residues which will contribute to this residues patch area should be allowed to have up to 24 nbs 
+			// but neighboring residues which will contribute to this residues patch area should be allowed to have up to 24 nbs
 			// before they contribute no hASA.
 			core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 			countNeighbors = tenA_neighbor_graph.get_node( ii )->num_neighbors_counting_self();
@@ -2529,7 +2529,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 			// passed the surface-exposed check...
 			// reset the area size for every surface-exposed residue
 			patchArea = 0.0;
-			
+
 			// add in the hASA contribution even if the residue is polar
 			std::string key = get_map_key( pose.residue(ii).name3(), countNeighbors );
 			if ( res_to_average_hASA.find( key ) != res_to_average_hASA.end() ) {
@@ -2679,16 +2679,16 @@ main( int argc, char* argv[] )
 	//calculate_hydrophobic_accessible_surface_area( pdb_file_names );
 	//calculate_total_hASA_within_distance_exact_hASA_values( pdb_file_names );
 	//calculate_total_hASA_within_distance_exact_hASA_values_allnbs( pdb_file_names );
-	
+
 	//calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditionalonnumnbs( pdb_file_names );
 	//calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_conditionalonnumnbs( pdb_file_names );
-	
+
 	//calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs( pdb_file_names );
 	//calculate_hASA_by_type_and_exposure( pdb_file_names );
 	//calculate_hASA_by_type_and_attractiveE( pdb_file_names );
-	
+
 	//calculate_hydrophobic_accessible_surface_area( pdb_file_names );
-	
+
 	//calculate_hASA_by_type_and_nbcount( pdb_file_names );
 	calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs( pdb_file_names );
 
@@ -2700,6 +2700,7 @@ main( int argc, char* argv[] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

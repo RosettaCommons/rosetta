@@ -343,7 +343,7 @@ void test_kc2() {
 		atoms.push_back(pose.residue(i).xyz("N" ));
 		atoms.push_back(pose.residue(i).xyz("CA"));
 		atoms.push_back(pose.residue(i).xyz("C" ));
-	}	
+	}
 	// {
 	// 	utility::io::ozstream out("start.pdb");
 	// 	using namespace ObjexxFCL::format;
@@ -389,6 +389,7 @@ int main (int argc, char *argv[]) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }

@@ -50,7 +50,12 @@ echo "App exception handling log" > log
 for app in %(bin)s/*.%(binext)s 
 do
 	app_prefix=$( echo $app | sed 's:.%(binext)s::' | sed 's:/: :g' | awk '{print $NF}')
-	eval "$app -nodelay  -bogus_input_option" >> log_${app_prefix} 2>&1 
+	eval "$app -nodelay  -bogus_input_option" >> log_${app_prefix} 2>&1
+	# On error, the application should exit with a non-zero status.
+	if [ $? -eq 0 ]; then 
+		 echo "Error does not result in non-zero exit code in application $app_prefix" >> log
+	fi
+	# Now check that the exception was handled appropriately
 	if [[ $( grep -i "abort"  log_${app_prefix} | wc -l ) -gt 0 ]]; then
 		 guilty=$( git blame --line-porcelain %(bin)s/../src/pilot_apps.src.settings.all | grep -B 12 ${app_prefix} | awk '$1 == "author"' | sed 's:author ::' )
 		 echo "Unhandled exceptions in application $app_prefix added by $guilty " $(date) >> log

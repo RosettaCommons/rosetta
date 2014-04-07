@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-//kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc 
+//kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc
 //			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
 
 //Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
@@ -186,6 +186,7 @@ main( int argc, char* argv[] )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 }//main
@@ -223,7 +224,7 @@ OopDesignMover::apply(
 	// create movemap for oop
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
-	
+
 	//kdrew: automatically find oop positions
 	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
 
@@ -238,7 +239,7 @@ OopDesignMover::apply(
 
 	}
 
-	//utility::vector1< core::Size > oop_seq_positions; 
+	//utility::vector1< core::Size > oop_seq_positions;
 	//for ( Size i = 1; i <= pose.total_residue(); ++i )
 	//{
 	//	if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1)
@@ -277,7 +278,7 @@ OopDesignMover::apply(
 
 	oop::OopRandomSmallMoverOP opm_small( new oop::OopRandomSmallMover( oop_seq_positions, 2.0 ) );
 	oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( oop_seq_positions ) );
-	
+
 	/*********************************************************
 	Common Setup
 	**********************************************************/
@@ -330,7 +331,7 @@ OopDesignMover::apply(
 	**********************************************************************************************************************/
 
 	TR << "Main loop..." << std::endl;
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	//pose.dump_pdb("pre_main_loop.pdb");
@@ -347,7 +348,7 @@ OopDesignMover::apply(
 
 		// design
 		TR << "DESIGN: " << k << std::endl;
-		//kdrew: treating packer task as throw away object because it becomes invalid after design substitutions.  
+		//kdrew: treating packer task as throw away object because it becomes invalid after design substitutions.
 		PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 		//PackerTaskOP task = desn_tf->create_packer_task( pose ) ;
 
@@ -375,7 +376,7 @@ OopDesignMover::apply(
 				TR << "  not designed" << std::endl;
 				task->nonconst_residue_task(i).restrict_to_repacking();
 				task->nonconst_residue_task(i).initialize_from_command_line();
-			} 
+			}
 			else {
 				TR << "  designed" << std::endl;
 				bool temp = allowed_aas[pose.residue(i).aa()];
@@ -403,7 +404,7 @@ OopDesignMover::apply(
 		mc->boltzmann( pose );
 		TR<< "post mc->boltzmann" << std::endl;
 		mc->show_state();
-		
+
 	}//dock_design for loop
 
 	mc->recover_low( pose );
@@ -455,7 +456,7 @@ OopDesignMover::apply(
 	//stats_pose.dump_pdb("stats_trans1000.pdb");
 
 	Pose repack_stats_pose( stats_pose );
-	
+
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
 	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -522,8 +523,8 @@ OopDesignMover::apply(
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-OopDesignMover::setup_pert_foldtree( 
-	core::pose::Pose & pose 
+OopDesignMover::setup_pert_foldtree(
+	core::pose::Pose & pose
 )
 {
 	using namespace kinematics;

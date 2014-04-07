@@ -45,15 +45,15 @@ using namespace protocols::antibody::design;
 class RelaxCDRsMover : public protocols::moves::Mover {
 public:
 	RelaxCDRsMover(){};
-	
+
 	virtual ~RelaxCDRsMover(){};
-	
+
 	virtual
 	std::string
 	get_name() const {
 		return "RelaxCDRs";
 	}
-	
+
 	void
 	apply(core::pose::Pose & pose){
 
@@ -61,11 +61,11 @@ public:
 		AntibodyInfoOP ab_info = new AntibodyInfo(pose, AHO_Scheme, North);
 		ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(true);
 		AntibodyDesignModeler modeler = AntibodyDesignModeler(ab_info);
-	
+
 		//Setup Constraints
 		scorefxn->set_weight(dihedral_constraint, 1.0);
 		add_harmonic_cluster_constraints(ab_info, pose);
-	
+
 		//Run Relax.
 		modeler.set_scorefunction(scorefxn);
 		modeler.relax_cdrs(pose, false);
@@ -83,6 +83,7 @@ int main(int argc, char* argv[]){
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 
 	return(0);
