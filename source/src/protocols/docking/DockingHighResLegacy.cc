@@ -244,7 +244,7 @@ void DockingHighResLegacy::set_move_map(core::kinematics::MoveMapOP movemap_in){
 void DockingHighResLegacy::set_protocol( pose::Pose & pose )
 {
 	using namespace basic::options;
-	
+
 	if ( option[ OptionKeys::docking::dock_min ]() ) {
 		set_dock_min_protocol();
 	} else if ( option[ OptionKeys::docking::dock_ppk ]() ){
@@ -262,7 +262,7 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
     TR << "This method clears the loop set the is passed in.  Before using this, please investigate it thoroughly." << std::endl;
 
 	loop_set->clear();
-    
+
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
@@ -442,7 +442,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	//set up sidechain movers for each movable jump
 
 	TaskFactoryOP tf = new TaskFactory( *task_factory() );
-	tf->push_back( new RestrictToInterface( movable_jumps() ) );   
+	tf->push_back( new RestrictToInterface( movable_jumps() ) );
 	set_task_factory( tf );
 	//RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), task_factory() );
 
@@ -645,7 +645,7 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	// set up protocol
 	docking_highres_protocol_mover_ = new SequenceMover;
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_back_vec.end(); ++it ) {
+	for( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_away_vec.end(); ++it ) {
 		docking_highres_protocol_mover_->add_mover( *it );
 	}
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );

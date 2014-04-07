@@ -270,7 +270,7 @@ int GPU::Init()
 
 		this_device().ndevice = ndevice_;
 		this_device().device = devices[ndevice_];
-		delete devices;
+		delete [] devices;
 	}
 
 	// Device initialization: 1) init GPU
@@ -533,10 +533,10 @@ cl_mem GPU::AllocateMemoryReuse(cl_mem &old_mem, unsigned int &old_size, unsigne
 	}
 
 	cl_mem mem = old_mem;
-	
+
 	if(!mem)
 		mem = AllocateMemory(new_size, NULL, flags);
-		
+
 	if(mem) {
 		old_mem = mem;
 		old_size = new_size;

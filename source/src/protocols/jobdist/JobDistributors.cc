@@ -230,37 +230,6 @@ bool BaseJobDistributor::find_available_job()
 	return false;
 }
 
-#ifdef AN_UNDEFINED_MACRO // never define this!  replacing #if 0 for code parsing purposes
-//............replaced by above because its unecessarily obfuscated...
-	while(true) {
-		JobDistributorTracer << "Looking for an available job: " << current_nstruct_ << " " << current_job_ << " " << curr_jobid_ << std::endl;
-#ifdef BOINC
-		if (protocols::boinc::Boinc::worker_is_finished( current_nstruct_-1 )) {
-			return false;
-		}
-#endif
-		if( current_job_ > jobs_.size() ) return false;
-		if( current_nstruct_ > jobs_[ current_job_ ]->nstruct() ) {
-			current_nstruct_ = 1;
-			current_job_ += 1;
-			curr_jobid_ += 1;
-		}
-		if( current_job_ > jobs_.size() ) return false;
-		if( !overwrite_ && is_finished( jobs_[ current_job_ ], current_nstruct_ ) ) {
-			current_nstruct_ += 1;
-			curr_jobid_ += 1;
-			continue;
-		}
-		if ( nproc_ && numeric::mod( curr_jobid_, nproc_ ) != ( proc_id_ - 1 ) ) {
-			current_nstruct_ += 1;
-			continue; //only process stuff that is assigned to this Distributor
-		}
-		return true; // the pair (current_job_, current_nstruct_) represent a job that needs doing.
-	}
-	return false; // make compiler happy
-}
-#endif
-
 ///@details
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::startup()

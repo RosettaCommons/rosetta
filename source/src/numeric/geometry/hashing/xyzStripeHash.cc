@@ -119,8 +119,8 @@ namespace hashing {
 		//       TR<<F(7,3,gatom[ig].x)<<" "<<F(7,3,gatom[ig].y)<<" "<<F(7,3,gatom[ig].z)<<std::endl;
 		//     }
 		//   }
-		delete gridc;
-		delete gindex;
+		delete [] gridc;
+		delete [] gindex;
 	}
 
 	bool xyzStripeHash::sanity_check() const {

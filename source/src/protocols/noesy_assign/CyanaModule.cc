@@ -63,3 +63,6 @@ NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
   }
 
 }
+
+} // namespace noesy_assign
+} // namespace protocols

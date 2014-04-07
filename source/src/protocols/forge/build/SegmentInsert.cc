@@ -41,6 +41,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
+#include <algorithm>
 
 
 namespace protocols {
@@ -1071,16 +1072,8 @@ void SegmentInsert::modify_impl( Pose & pose ) {
       // DEBUG -- PRINT JUMPS AND CUTS
       //TR.Error << " jump " << i << " : " << jumps(1,i) << " , " << jumps(2,i) << std::endl;
     }
-    //for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) {
     //erase the new cut created
-    for (utility::vector1<Size>::iterator it=cuts.begin(), ite=cuts.end(); it != ite; it++){
-        //std::cout << *it << " vs " << new_cut << std::endl;
-        if (*(it) == new_cutpoint){
-          //std::cout << "erasing " << *it << std::endl;
-          cuts.erase(it);
-        }
-    }
-
+    cuts.erase( std::remove( cuts.begin(), cuts.end(), new_cutpoint ), cuts.end() );
 
     for ( Size i = 1; i<= cuts.size(); ++i ) {
       //std::cout << "cut " << (int)cuts[i] << std::endl;

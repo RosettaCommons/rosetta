@@ -111,4 +111,8 @@ private:
 
 extern PeakAssignment const BOGUS_ASSIGNMENT;
 
+
+} //namespace noesy_assign
+} //namespace protocols
+
 #endif

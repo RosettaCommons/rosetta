@@ -205,11 +205,11 @@ int ShapeComplementarityCalculator::Calc()
 	run_.results.area = run_.results.surface[2].trimmedArea;
 	run_.results.valid = 1;
 
-	TR.Debug << 
+	TR.Debug <<
 		"Done. Atoms: " << run_.results.surface[0].nAtoms << " + " << run_.results.surface[1].nAtoms <<
-		"; sc = " << run_.results.sc << 
-		", area = " << run_.results.area << 
-		", distance " << run_.results.distance << 
+		"; sc = " << run_.results.sc <<
+		", area = " << run_.results.area <<
+		", distance " << run_.results.distance <<
 		std::endl;
 
 	return 1;
@@ -613,9 +613,9 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 		}
 	}
 
-	delete hAccDotCoords;
-	delete hBurDotCoords;
-	delete hDotColl;
+	delete [] hAccDotCoords;
+	delete [] hBurDotCoords;
+	delete [] hDotColl;
 
 	TR.Debug << "Peripheral trimming GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl;
 
@@ -692,10 +692,10 @@ int ShapeComplementarityCalculator::gpuFindClosestNeighbors(
 	for(int i = 0; i < nNeighbors; ++i)
 		neighbors.push_back( hTheirDots[hNeighbors[i]] );
 
-	delete hMyDotCoords;
-	delete hTheirDotCoords;
-	delete hTheirDots;
-	delete hNeighbors;
+	delete [] hMyDotCoords;
+	delete [] hTheirDotCoords;
+	delete [] hTheirDots;
+	delete [] hNeighbors;
 
 	TR.Debug << "Find Neighbors GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl;
 

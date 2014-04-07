@@ -19,7 +19,7 @@ Documentation for more classes and functions can be found by looking at the Name
 
 @section core_index Core
   - core::chemical
-  - core::chemical::ResidueType
+  	- core::chemical::ResidueType
   - core::conformation
     - core::conformation::Residue
     - core::conformation::Conformation

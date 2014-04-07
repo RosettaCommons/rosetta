@@ -38,7 +38,7 @@ namespace serialization {
 		BUFFER(char * buf, std::size_t size) :
 		buf_(buf),start_(0),end_(0),size_(size),ownbuf_(false) { }
 		~BUFFER() {
-			if(ownbuf_) delete buf_;
+			if(ownbuf_) delete [] buf_;
 		}
 		int write(char * x, std::size_t nchar) {
 			if ( end_+nchar >= size_ ) return -1;

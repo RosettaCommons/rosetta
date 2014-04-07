@@ -5226,14 +5226,17 @@ ElectronDensity::readMRCandResize(
 			// datablock with the correct slice ordering.
 			if ( mapin.eof() ) {
 				TR << "[ ERROR ] Unexpected end-of-file. Not loading map." << std::endl;
+				delete [] rowdata;
 				return false;
 			}
 			if ( mapin.fail() ) {
 				TR << "[ ERROR ] Problem reading the file. Not loading map." << std::endl;
+				delete [] rowdata;
 				return false;
 			}
 			if ( !mapin.read( reinterpret_cast< char* >(rowdata), sizeof(float)*extent[0]) ) {
 				TR << "[ ERROR ] Error reading data row. Not loading map." << std::endl;
+				delete [] rowdata;
 				return false;
 			}
 

@@ -8,6 +8,8 @@
 #include <limits.h>
 #include <locale.h>
 #include <iostream>
+#include <cassert>
+
 #include "Svm.hh"
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
@@ -2723,7 +2725,9 @@ static char* readline(FILE *input)
 	while(strrchr(line,'\n') == NULL)
 	{
 		max_line_len *= 2;
-		line = (char *) realloc(line,max_line_len);
+		char * newline = (char *) realloc(line,max_line_len);
+		assert( newline ); // realloc returns a null pointer and doesn't free the memory on failure.
+		line = newline;
 		len = (int) strlen(line);
 		if(fgets(line+len,max_line_len-len,input) == NULL)
 			break;

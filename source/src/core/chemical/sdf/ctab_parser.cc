@@ -166,7 +166,7 @@ void ctabV2000Parser::set_atom_type(core::Size atomno, std::string atomname)
 	core::Size atom_type_index = atom_type_set->atom_type_index(typer.getType());
 	core::Size parameter_index = atom_type_set->extra_parameter_index("CHARGE");
 	core::Real charge = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_index);
-	molecule_container_->atom( atomname ).charge(charge));
+	molecule_container_->atom( atomname ).charge(charge);
 }
 
 void ctabV2000Parser::ParseAtom(std::string atom_line, core::Size atom_number)

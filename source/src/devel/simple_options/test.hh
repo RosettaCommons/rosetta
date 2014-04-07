@@ -30,7 +30,7 @@ namespace ObjexxFCL {
 	 friend class LapackFunctions<T, Symmetric <T> >;
 	 friend class LapackFunctions<T, NonSymmetric<T> >;
 	 friend class LapackFunctions<T, ToBeDetermined<T> >;
-	 friend bool Seigsolv_(ObjexxFCL::FArray2D<T>& tmp,ObjexxFCL::FArray2D<T>& eigvec, ObjexxFCL::FArray1D<T>& eigval,bool ComputeVecs=true)<T,Symmetric<T> >);
+	 friend bool Seigsolv_(ObjexxFCL::FArray2D<T>& tmp,ObjexxFCL::FArray2D<T>& eigvec, ObjexxFCL::FArray1D<T>& eigval,bool ComputeVecs=true)<T,Symmetric<T> >;
  protected:
 	 T* data(){};
  };

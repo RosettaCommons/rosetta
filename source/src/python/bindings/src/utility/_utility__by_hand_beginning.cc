@@ -415,7 +415,7 @@ class streambuf : public std::basic_streambuf<char>
                      std::ios_base::openmode which=  std::ios_base::in
                                                    | std::ios_base::out)
     {
-      return streambuf::seekoff(sp, std::ios_base::beg, which);
+      return seekoff(sp, std::ios_base::beg, which);
     }
 
   private:

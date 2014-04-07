@@ -700,9 +700,10 @@ path_rover::run(){
 		Towards_partial_data_RRT rrt(this);
 		rrt.run();
 	}
-
+}
 
 
 
 
 } // namespace pathways
+} // namespace protocols
