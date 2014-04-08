@@ -172,7 +172,7 @@ RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 		return;
 	}
 
-	std::cout << "Reading basepair x - y potential file: " << filename << std::endl; ;
+	tr << "Reading basepair x - y potential file: " << filename << std::endl; ;
 	// read data
 	Size res1, res2, xbin, ybin, direction;
 	Real potential;
@@ -181,7 +181,7 @@ RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 		rna_basepair_xy_( xbin, ybin, res1, res2, direction ) = potential;
 	}
 
-	std::cout << "Finished reading basepair x - y potential file: " << filename << std::endl; ;
+	tr << "Finished reading basepair x - y potential file: " << filename << std::endl; ;
 
 	//close file
 	data_stream.close();
@@ -259,7 +259,7 @@ RNA_LowResolutionPotential::initialize_rna_base_backbone_xy(){
 		return;
 	}
 
-	std::cout << "Reading non - base - base x - y potential file: " << filename << std::endl; ;
+	tr << "Reading non - base - base x - y potential file: " << filename << std::endl; ;
 	// read data
 	Size res1, xbin, ybin, atomindex;
 	Real potential;
@@ -300,7 +300,7 @@ RNA_LowResolutionPotential::initialize_rna_backbone_backbone()
 		return;
 	}
 
-	std::cout << "Reading RNA backbone backbone potential file: " << filename << std::endl; ;
+	tr << "Reading RNA backbone backbone potential file: " << filename << std::endl; ;
 	// read data
 	Size rbin;
 	Real r1, r2, potential;
@@ -836,7 +836,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 
 					if ( rna_verbose_ ){
 						Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
-						std::cout << " Possible base pair: "
+						tr        << " Possible base pair: "
 											<< res_i.name3() << I( 3, i ) << "-"
 											<< res_j.name3() << I( 3, j )
 											<< " edge: " << I( 1, edge_bin )
@@ -1086,7 +1086,7 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 
 			if ( rna_verbose_ ){
 				Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
-				std::cout << " Possible base pair: "
+				tr        << " Possible base pair: "
 									<< res_i.name3() << I( 3, i ) << "-"
 									<< res_j.name3() << I( 3, j )
 									<< " edge: " << I( 1, edge_bin )
@@ -1465,7 +1465,7 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 		  total_score += score_contribution;
 
 			if ( rna_verbose_ ){
-				std::cout <<
+				tr <<
 					"BASE - BACKBONE " <<
 					rsd1.name3() <<
 					I( 3, i ) << " " <<
@@ -1719,7 +1719,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 
 		if ( rna_verbose_ && score_contribution < -0.01 ){
 			std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
-			std::cout <<
+			tr <<
 				"BACKBONE_BACKBONE " <<
 				rsd1.name1() <<
 				I( 3, i ) << " " <<
@@ -1979,7 +1979,7 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 		rna_repulsive_score += score_contribution;
 
 		if ( rna_verbose_  && score_contribution > 0.01 ){
-			std::cout <<
+			tr <<
 				"REPULSIVE " <<
 				rsd1.name3() <<
 				I( 3, i ) << " " <<

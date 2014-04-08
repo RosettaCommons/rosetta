@@ -1116,6 +1116,10 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 			j = rna_pairing.pos1;
 		}
 
+		// Check for non-RNA residues
+		if ( !pose.residue(i).is_RNA() ) continue;
+		if ( !pose.residue(j).is_RNA() ) continue;
+
 		// are these part of the pose that is actually being moved?
 		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1'", i ), pose ) ) ) continue;
 		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1'", j ), pose ) ) ) continue;

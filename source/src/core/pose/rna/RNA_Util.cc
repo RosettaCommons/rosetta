@@ -370,7 +370,7 @@ apply_ideal_c2endo_sugar_coords(
 {
 
 	static bool const use_phenix_geo = basic::options::option[  basic::options::OptionKeys::rna::corrected_geo ]();
-	if ( use_phenix_geo ){
+	if ( use_phenix_geo ) {
 		apply_pucker( pose, i, SOUTH, false /*skip_same_state*/, true /*idealize_coord*/ );
 		return;
 	}

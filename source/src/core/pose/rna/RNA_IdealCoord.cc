@@ -109,7 +109,7 @@ void RNA_IdealCoord::init() {
 //	if ( !res.is_RNA() ) return result;
 //
 //	if ( pucker == WHATEVER ) {
-//		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
+//		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
 //		if ( delta > delta_cutoff_ ) {
 //			pucker = SOUTH;
 //		} else {
@@ -259,13 +259,12 @@ void RNA_IdealCoord::apply(
 	using namespace chemical;
 	using namespace conformation;
 
-	runtime_assert( pucker <= 2 );
-
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
+	runtime_assert( pucker <= 2 );
 
 	if ( pucker == ANY_PUCKER ) {
-		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
+		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
 		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
 		} else {
@@ -309,7 +308,7 @@ void RNA_IdealCoord::apply_pucker(
 	if ( !res.is_RNA() ) return;
 
 	if ( pucker == ANY_PUCKER ) {
-		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
+		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
 		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
 		} else {

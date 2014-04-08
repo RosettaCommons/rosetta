@@ -56,6 +56,51 @@ OPT_KEY( RealVector, temps )
 OPT_KEY( RealVector, st_weights )
 OPT_KEY( String, out_prefix )
 OPT_KEY( Boolean, save_terms )
+OPT_KEY( Boolean, save_scores )
+OPT_KEY( Boolean, dump_pdb )
+//////////////////////////////////////////////////////////////////////////////
+class Histogram {
+public:
+	Histogram( Real const min, Real const max, Real const spacing ):
+		min_( min ),
+		max_( max ),
+		spacing_( spacing )
+	{
+		runtime_assert( max > min );
+		n_elem_ = static_cast<Size>( ( max - min ) / spacing ) + 1;
+		for ( Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
+	}
+
+	void add( float const value, Size const n_items ) {
+		Size bin_index;
+		if ( value <= min_ ) {
+			bin_index = 1;
+		} else if ( value >= max_ ) {
+			bin_index = n_elem_;
+		} else {
+			bin_index = static_cast<Size>( ( value - min_ ) / spacing_ ) + 1;
+		}
+		hist_[bin_index] += n_items;
+	}
+
+	void clear() {
+		for ( Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
+	}
+
+	utility::vector1<Real> get_scores() const {
+		utility::vector1<Real> scores;
+		for ( Size i = 1; i <= n_elem_; ++i )
+			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
+		return scores;
+	}
+
+	utility::vector1<Size> get_hist() const { return hist_;	}
+
+private:
+	Real const min_, max_, spacing_;
+	Size n_elem_;
+	utility::vector1<Size> hist_;
+};
 //////////////////////////////////////////////////////////////////////////////
 utility::vector1<scoring::ScoreType> const & get_scoretypes() {
 	using namespace scoring;
@@ -72,12 +117,6 @@ utility::vector1<scoring::ScoreType> const & get_scoretypes() {
 		scoretypes.push_back( stack_elec );
 	}
 	return scoretypes;
-}
-//////////////////////////////////////////////////////////////////////////////
-Size data_dim() {
-	using namespace scoring;
-	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
-	return score_types.size() + 2;
 }
 //////////////////////////////////////////////////////////////////////////////
 void update_scores(
@@ -112,6 +151,34 @@ Real gaussian_stdev( Real const n_rsd, Real const temp, bool const is_bp ) {
 	return 6 * pow( temp / n_rsd, 0.75 );
 }
 //////////////////////////////////////////////////////////////////////////////
+template<typename T>
+void vector2disk_in1d(
+	std::string const & out_filename,
+	utility::vector1<T> const & out_vector
+) {
+		utility::io::ozstream out (
+				out_filename.c_str(), std::ios::out | std::ios::binary );
+		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+		out.close();
+}
+//////////////////////////////////////////////////////////////////////////////
+template<typename T>
+void vector2disk_in2d(
+	std::string const & out_filename,
+	Size const dim1,
+	Size const dim2,
+	utility::vector1<T> const & out_vector
+) {
+		utility::io::ozstream out (
+				out_filename.c_str(), std::ios::out | std::ios::binary );
+		runtime_assert( dim1 * dim2 == out_vector.size() );
+		out.write( (const char*) &dim1, sizeof(Size) );
+		out.write( (const char*) &dim2, sizeof(Size) );
+		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+		out.close();
+}
+//////////////////////////////////////////////////////////////////////////////
+
 void set_gaussian_stdev(
 	rotamer_sampler::rna::RNA_McMultiSuite & sampler,
 	moves::SimulatedTempering const & tempering,
@@ -140,6 +207,12 @@ PoseOP pose_setup(
 	if ( seq1 != "" && seq2 != "" )	add_variant_type_to_pose_residue(
 			*pose, "VIRTUAL_PHOSPHATE", len1 + 1 );
 	return pose;
+}
+////////////////////////////////////////////////////////////////////////////////
+Size data_dim() {
+	using namespace scoring;
+	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
+	return score_types.size() + 2;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -194,7 +267,7 @@ MC_run () {
 	RNA_McMultiSuite sampler;
 	for ( Size i = 1; i <= total_len; ++i ) {
 		bool const sample_near_a_form( bp_rsd.has_value( i ) );
-		if  ( i == 1 || ( i > len1 && i != total_len ) ) {
+		if ( i == 1 || ( i > len1 && i != total_len ) ) {
 			RNA_McSuiteOP suite_sampler( new RNA_McSuite( i ) );
 			suite_sampler->set_sample_bb( i != 1 );
 			suite_sampler->set_sample_lower_nucleoside( true );
@@ -226,36 +299,57 @@ MC_run () {
 	utility::vector1<utility::vector1<float> > data(
 			temps_.size(), null_arr_ );
 
+	Real const min( -100.05 ), max( 100.05 ), spacing( 0.1 );
+	Histogram null_hist( min, max, spacing);
+	utility::vector1<Histogram> hist_list( temps_.size(), null_hist );
+
 	// Useful coounters and variables during the loop
 	Size n_accept_total( 0 ), n_t_jumps_accept( 0 );
 	Size const t_jump_interval( 10 );
 	Size const n_t_jumps( n_cycle_ / t_jump_interval );
 	Size temp_id( tempering.temp_id() );
+	bool const is_save_scores( option[save_scores]() );
+
+	// Min-score pose
+	Pose min_pose = pose;
+	Real min_score( 99999 );
 
 	std::cout << "Start the main sampling loop." << std::endl;
-	//pose.dump_pdb( "init.pdb" );
+	if ( option[dump_pdb]() ) pose.dump_pdb( "init.pdb" );
 
 	// Main sampling cycle
 	for ( Size n = 1; n <= n_cycle_; ++n ) {
 		++sampler;
 		sampler.apply( pose );
-		if ( tempering.boltzmann( pose ) ) {
+		if ( tempering.boltzmann( pose ) || n == n_cycle_ ) {
+			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
+			hist_list[temp_id].add( scores[1], curr_counts );
+			update_scores( scores, pose, scorefxn );
+			if ( n == n_cycle_ ) break;
 			sampler.update();
 			++n_accept_total;
-			fill_data( data[temp_id], curr_counts, scores );
 			curr_counts = 1;
-			update_scores( scores, pose, scorefxn );
+			if ( option[dump_pdb]() && scores[1] < min_score ) {
+				min_score = scores[1];
+				min_pose = pose;
+			}
 		} else {
 			++curr_counts;
 		}
 
 		if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
 			++n_t_jumps_accept;
-			fill_data( data[temp_id], curr_counts, scores );
+			if ( is_save_scores )	fill_data( data[temp_id], curr_counts, scores );
+			hist_list[temp_id].add( scores[1], curr_counts );
 			curr_counts = 1;
 			set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
 			temp_id = tempering.temp_id();
 		}
+	}
+	if ( option[dump_pdb]() ) {
+		pose.dump_pdb( "end.pdb" );
+		min_pose.dump_pdb( "min.pdb" );
+		scorefxn->show( min_pose );
 	}
 
 	// Output simple statistics and the data
@@ -271,18 +365,21 @@ MC_run () {
 	std::cout << "Time in sampler: " <<  time_in_test << std::endl;
 
 	for (Size i = 1; i <= temps_.size(); ++i) {
+		if ( is_save_scores ) {
+			std::ostringstream oss;
+			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
+					<< temps_[i] << ".bin.gz";
+			Size const data_dim2( data_dim() );
+			Size const data_dim1( data[i].size() / data_dim2 );
+			vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[i] );
+		}
 		std::ostringstream oss;
 		oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
-				<< temps_[i] << ".bin.gz";
-		utility::io::ozstream out (
-				oss.str().c_str(), std::ios::out | std::ios::binary );
-		Size const data_dim1( data_dim() );
-		Size const data_dim2( data[i].size() / data_dim1 );
-		runtime_assert( data_dim1 * data_dim2 == data[i].size() );
-		out.write( (const char*) &data_dim2, sizeof(Size) );
-		out.write( (const char*) &data_dim1, sizeof(Size) );
-		out.write( (const char*) &data[i][1], sizeof(float) * data[i].size() );
-		out.close();
+				<< temps_[i] << ".hist.gz";
+		utility::vector1<Size> const & hist( hist_list[i].get_hist() );
+		utility::vector1<Real> const & scores( hist_list[i].get_scores() );
+		vector2disk_in1d( oss.str(), hist );
+		vector2disk_in1d( "hist_scores.gz", scores );
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -304,7 +401,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( temps, "Simulated tempering temperatures", null_real_vector );
 	NEW_OPT( st_weights, "Simulated tempering weights", null_real_vector );
 	NEW_OPT( out_prefix, "prefix for the out file", "turner" );
-	NEW_OPT( save_terms, "Save individual score terms", true );
+	NEW_OPT( save_terms, "Save individual score terms", false );
+	NEW_OPT( save_scores, "Save scores of all sampled conformers", false );
+	NEW_OPT( dump_pdb, "Dump pdb files", false );
 
 	try {
 		core::init::init ( argc, argv );

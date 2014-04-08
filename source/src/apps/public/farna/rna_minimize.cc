@@ -164,7 +164,7 @@ rna_fullatom_minimize_test()
 			// Not sure why but the constraint depends on the start pose given.
 			// Initialize a new pose to avoid the instability.
 			core::pose::Pose test_pose;
-			core::pose::make_pose_from_sequence( test_pose,	pose.sequence(),	*rsd_set );
+			core::pose::make_pose_from_sequence( test_pose,	pose.annotated_sequence(),	*rsd_set );
 			ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints(
 					option[OptionKeys::constraints::cst_fa_file][1], new ConstraintSet, test_pose );
 			pose.constraint_set( cst_set );
