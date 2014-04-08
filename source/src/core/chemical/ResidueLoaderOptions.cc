@@ -35,7 +35,7 @@ basic::resource_manager::ResourceOptionsOP ResidueLoaderOptionsCreator::create_o
 ResidueLoaderOptions::ResidueLoaderOptions() :
 		atom_type_set_tag_("fa_standard"),
 		mm_atom_type_set_tag_("fa_standard"),
-		element_set_tag_("fa_standard"),
+		element_set_tag_("default"),
 		residue_type_set_tag_("fa_standard"),
 		orbital_set_tag_("fa_standard")
 {
@@ -49,7 +49,7 @@ void ResidueLoaderOptions::parse_my_tag(
 
 	atom_type_set_tag_ = tag->getOption< std::string >( "atom_type_set_tag", "fa_standard");
 	mm_atom_type_set_tag_ = tag->getOption<std::string>("mm_atom_type_set_tag", "fa_standard");
-	element_set_tag_ = tag->getOption<std::string>("element_set_tag", "fa_standard");
+	element_set_tag_ = tag->getOption<std::string>("element_set_tag", "default");
 	residue_type_set_tag_ = tag->getOption<std::string>("residue_type_set_tag", "fa_standard");
 	orbital_set_tag_ = tag->getOption<std::string>("residue_type_set_tag", "fa_standard");
 }
