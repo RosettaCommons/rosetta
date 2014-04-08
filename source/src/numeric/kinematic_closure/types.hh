@@ -20,18 +20,14 @@
 namespace numeric {
 namespace kinematic_closure {
 
-using numeric::Size;
-using numeric::Real;
-
-typedef utility::vector1<Size> IndexList;
-typedef utility::vector1<Real> Coordinate;
+typedef utility::vector1<numeric::Size> IndexList;
+typedef utility::vector1<numeric::Real> Coordinate;
 typedef utility::vector1<Coordinate> CoordinateList;
 
-typedef utility::vector1<Real> ParameterList;
+typedef utility::vector1<numeric::Real> ParameterList;
 typedef utility::vector1<ParameterList> ParameterMatrix;
 
 } // end namespace kinematic_closure
 } // end namespace numeric
 
 #endif
-

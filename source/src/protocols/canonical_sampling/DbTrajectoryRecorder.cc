@@ -135,8 +135,9 @@ bool DbTrajectoryRecorder::restart_simulation( // {{{1
 		MetropolisHastingsMover &,
 		core::Size &, core::Size &, core::Real &) {
 
-	utility_exit_with_message(
-			"DbTrajectoryRecorder does not support restarting trajectories.");
+	utility_exit_with_message("DbTrajectoryRecorder does not support restarting trajectories.");
+
+	return false;
 }
 
 void DbTrajectoryRecorder::write_schema_to_db() const { // {{{1
@@ -144,9 +145,9 @@ void DbTrajectoryRecorder::write_schema_to_db() const { // {{{1
 	using namespace basic::database::schema_generator;
 
 #ifdef USEMPI
-	// Avoid writing the schema to the database from a bunch of different 
-	// processes at the same time.  The problem isn't that the schema would 
-	// somehow get written twice.  Rather, it's that sqlite can't handle any 
+	// Avoid writing the schema to the database from a bunch of different
+	// processes at the same time.  The problem isn't that the schema would
+	// somehow get written twice.  Rather, it's that sqlite can't handle any
 	// parallelism at all.
 
 	int rank; MPI_Comm_rank(jd2::current_mpi_comm(), &rank);
@@ -215,12 +216,12 @@ void DbTrajectoryRecorder::write_model( // {{{1
 
 	Real temp_level = 0;
 
-	// The mover argument may not be provided.  If it is, use it to decide 
+	// The mover argument may not be provided.  If it is, use it to decide
 	// whether or not the current trajectory should be recorded.
-	
+
 	if (mover) {
 		Real temp_level = mover->tempering()->temperature_level();
-		if (temp_level_ != 0 and temp_level != temp_level_) return;
+		if (temp_level_ != 0 && temp_level != temp_level_) return;
 	}
 
 	// Add the current frame to the cache and flush the cache if necessary.

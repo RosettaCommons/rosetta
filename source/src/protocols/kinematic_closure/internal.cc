@@ -31,9 +31,17 @@ const Real IdealParameters::max_n_ca_c_angle = 118.94;
 Size num_rama_filter_fails = 0;
 Size num_bump_filter_fails = 0;
 
+
+// ChainedSolutionList::Iterator::Iterator() :
+// 	parent_( (ChainedSolutionList *)0 ),
+// 	bookmark_(0),
+// 	state_(FIRST)
+// {}
+
+ChainedSolutionList::Iterator::Iterator(ChainedSolutionList const *parent, SolutionList::const_iterator bookmark) :
+	parent_(parent), bookmark_(bookmark), state_(FIRST)
+{}
+
+
 } // end namespace kinematic_closure
 } // end namespace protocols
-
-
-
-

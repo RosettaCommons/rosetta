@@ -54,8 +54,8 @@ LoopBuilder::LoopBuilder() { // {{{1
 	using protocols::kinematic_closure::solution_pickers::FilteredSolutionsOP;
 	using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
 
-	// The rama check works by comparing the generated torsions to the input 
-	// torsions.  Since the purpose of loop rebuilding is to forget everything 
+	// The rama check works by comparing the generated torsions to the input
+	// torsions.  Since the purpose of loop rebuilding is to forget everything
 	// about the input structure, the rama check shouldn't be used.
 
 	FilteredSolutionsOP solution_picker = new FilteredSolutions;
@@ -79,7 +79,7 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	// Only attempt to rebuild loops that are marked as "extended".
 
-	if (not loop.is_extended()) return true;
+	if (! loop.is_extended()) return true;
 
 	// Setup the loop movers.
 
@@ -88,12 +88,12 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	// Make a strong effort to rebuild the loop with KIC.
 
-	for (Size i = 1; i <= 1000 and not kic_mover_->was_successful(); i++) {
+	for (Size i = 1; i <= 1000 && ! kic_mover_->was_successful(); i++) {
 		tr << "Loop building attempt: " << i << endl;
 		kic_mover_->apply(pose);
 	}
 
-	if (not kic_mover_->was_successful()) return false;
+	if (! kic_mover_->was_successful()) return false;
 
 	// Minimize the loop if it was successfully built.
 

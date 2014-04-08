@@ -85,7 +85,7 @@ void ClosureProblem::frame( // {{{1
 			unperturbed_angles_,
 			unperturbed_torsions_);
 
-	// Copy the unperturbed DOFS into the matrices that will eventually be 
+	// Copy the unperturbed DOFS into the matrices that will eventually be
 	// modified by the perturbers.
 
 	perturbed_torsions_ = ParameterList(unperturbed_torsions_);
@@ -133,8 +133,8 @@ SolutionList ClosureProblem::solve() const { // {{{1
 
 // {{{1
 
-/// @details This method is typically used to restore the pose if no solutions 
-/// to the closure problem could be found.  It should only be called after 
+/// @details This method is typically used to restore the pose if no solutions
+/// to the closure problem could be found.  It should only be called after
 /// frame() and solve().
 
 void ClosureProblem::restore(Pose & pose) const {
@@ -287,13 +287,13 @@ Real ClosureProblem::c_n(Size residue) const { // {{{1
 }
 
 bool ClosureProblem::is_pivot_residue(Size residue) const { // {{{1
-	return residue == first_residue() or
-	       residue == cut_residue() or
+	return residue == first_residue() ||
+	       residue == cut_residue() ||
 	       residue == last_residue();
 }
 
 bool ClosureProblem::is_nonpivot_residue(Size residue) const { // {{{1
-	return not is_pivot_residue(residue);
+	return ! is_pivot_residue(residue);
 }
 
 Loop ClosureProblem::pivot_loop() const { // {{{1
@@ -346,7 +346,7 @@ IndexList ClosureProblem::pivot_atoms() const { // {{{1
 // }}}1
 
 // {{{1
-/// @details This method does not change anything about the problem object 
+/// @details This method does not change anything about the problem object
 /// itself.  All changes are made to the given `atom_xyzs` pseudo-matrix.
 
 void ClosureProblem::extract_cartesian_coordinates (
@@ -354,16 +354,16 @@ void ClosureProblem::extract_cartesian_coordinates (
 
 	atom_xyzs.resize(num_atoms());
 
-	// The closure algorithm requires coordinates for the two residues which 
-	// frame the region being closed.  If the region coincides with the end of a 
-	// chain, this is becomes a nontrivial problem.  For that reason, this step 
+	// The closure algorithm requires coordinates for the two residues which
+	// frame the region being closed.  If the region coincides with the end of a
+	// chain, this is becomes a nontrivial problem.  For that reason, this step
 	// has been delegated out to the two functions called below.
-	
+
 	frame_lower_pivot(pose, atom_xyzs);
 	frame_upper_pivot(pose, atom_xyzs);
 
-	// The remaining code simply copies Cartesian coordinates from the given pose 
-	// into the given matrix structure.  The copying starts with the 4th position 
+	// The remaining code simply copies Cartesian coordinates from the given pose
+	// into the given matrix structure.  The copying starts with the 4th position
 	// in the matrix, to prevent overwriting the work done above.
 
 	Size index = 4;
@@ -371,9 +371,9 @@ void ClosureProblem::extract_cartesian_coordinates (
 	for (Size i = first_residue(); i <= last_residue(); i++) {
 		core::conformation::Residue const &residue = pose.residue(i);
 
-		// This inner loop assumes that atoms 1, 2, & 3 are the backbone atoms.  
-		// This will break if the residue in question is, for example, a metal ion.  
-		// Metal ions only have one atom, so attempts to access the second and 
+		// This inner loop assumes that atoms 1, 2, & 3 are the backbone atoms.
+		// This will break if the residue in question is, for example, a metal ion.
+		// Metal ions only have one atom, so attempts to access the second and
 		// third ones will crash the program.
 
 		for (Size j = 1; j <= 3; j++) {
@@ -434,7 +434,7 @@ void ClosureProblem::extract_internal_coordinates( // {{{1
 		vecs[2] << atom_xyzs[index + 2];
 		vecs[3] << atom_xyzs[index + 3];
 
-		torsion_angles[(index % num_atoms()) + 1] = 
+		torsion_angles[(index % num_atoms()) + 1] =
 			dihedral_radians(vecs[0], vecs[1], vecs[2], vecs[3]);
 	}
 }
@@ -465,7 +465,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 				ids[0], ids[1], bond_lengths[index]);
 	}
 
-	// Set the bond angles in the solution pose.  Note that in bond_angles, index 
+	// Set the bond angles in the solution pose.  Note that in bond_angles, index
 	// x refers to the angle between atoms x-1 and x+1.
 
 	for (Size index = 1; index <= num_bond_angles; index++) {
@@ -485,7 +485,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 		ids[1] = id_from_index(index + 1);
 		ids[2] = id_from_index(index + 2);
 		ids[3] = id_from_index(index + 3);
-		
+
 		conformation.set_torsion_angle(                                //quiet
 					ids[0], ids[1], ids[2], ids[3], torsion_angles[index + 1], true);
 	}
@@ -500,11 +500,11 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 	ResidueOP frame_residue;
 	Residue pivot_residue = pose.residue(first_residue());
 
-	// The closure algorithm requires coordinates for the two residues framing 
-	// the region being sampled.  This method finds those coordinates for the 
-	// residue framing the lower (N-terminal) side of the region.  If the lower 
-	// pivot is also the N-terminus, this residue doesn't exist and the needed 
-	// coordinates are from a "pseudo-residue" that is artificially build with 
+	// The closure algorithm requires coordinates for the two residues framing
+	// the region being sampled.  This method finds those coordinates for the
+	// residue framing the lower (N-terminal) side of the region.  If the lower
+	// pivot is also the N-terminus, this residue doesn't exist and the needed
+	// coordinates are from a "pseudo-residue" that is artificially build with
 	// ideal coordinates.
 
 	if (pivot_residue.is_lower_terminus()) {
@@ -529,22 +529,22 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 
 		// Set the junction omega angle to its ideal value.
 		buffer.set_torsion(
-				core::id::TorsionID(1, core::id::BB, 3), 
+				core::id::TorsionID(1, core::id::BB, 3),
 				IdealParameters::omega_dihedral);
 
 		// Get a pointer to the pseudo-residue.
 		frame_residue = buffer.residue(1).clone();
 	}
 
-	// If the lower pivot isn't the N-terminus, then simply identify the frame 
+	// If the lower pivot isn't the N-terminus, then simply identify the frame
 	// residue as the one right below it.  This is the standard case.
-	
+
 	else {
 		frame_residue = pose.residue(first_residue() - 1).clone();
 	}
 
-	// Append the coordinates of the frame residue into the list of atoms for the 
-	// kinematic closure algorithm to consider.  The coordinates are added in the 
+	// Append the coordinates of the frame residue into the list of atoms for the
+	// kinematic closure algorithm to consider.  The coordinates are added in the
 	// order: N, CA, C.
 
 	for (Size i = 1; i <= 3; i++) {
@@ -564,11 +564,11 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 	ResidueOP frame_residue;
 	Residue pivot_residue = pose.residue(last_residue());
 
-	// The closure algorithm requires coordinates for the two residues framing 
-	// the region being sampled.  This method finds those coordinates for the 
-	// residue framing the upper (C-terminal) side of the region.  This residue 
-	// won't exist if the lower pivot is the C-terminus.  In this case, the 
-	// needed coordinates are extracted from a "pseudo-residue" that is 
+	// The closure algorithm requires coordinates for the two residues framing
+	// the region being sampled.  This method finds those coordinates for the
+	// residue framing the upper (C-terminal) side of the region.  This residue
+	// won't exist if the lower pivot is the C-terminus.  In this case, the
+	// needed coordinates are extracted from a "pseudo-residue" that is
 	// artificially build with ideal coordinates.
 
 	if (pivot_residue.is_upper_terminus()) {
@@ -593,24 +593,24 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 
 		// Set the junction omega angle to its ideal value.
 		buffer.set_torsion(
-				core::id::TorsionID(2, core::id::BB, 3), 
+				core::id::TorsionID(2, core::id::BB, 3),
 				IdealParameters::omega_dihedral);
 
 		// Get a pointer to the pseudo-residue.
 		frame_residue = buffer.residue(2).clone();
 	}
 
-	// If the upper pivot isn't the C-terminus, then simply identify the frame 
+	// If the upper pivot isn't the C-terminus, then simply identify the frame
 	// residue as the one right above it.  This is the standard case.
-	
+
 	else {
 		frame_residue = pose.residue(last_residue() + 1).clone();
 	}
 
-	// Append the coordinates of the frame residue into the list of atoms for the 
-	// kinematic closure algorithm to consider.  The coordinates are added in the 
+	// Append the coordinates of the frame residue into the list of atoms for the
+	// kinematic closure algorithm to consider.  The coordinates are added in the
 	// order: N, CA, C.
-	
+
 	Size offset = atom_xyzs.size() - 3;
 
 	for (Size i = 1; i <= 3; i++) {
@@ -626,8 +626,8 @@ bool ClosureProblem::ids_span_cut(AtomID left, AtomID right) const { // {{{1
 }
 
 // {{{1
-/// @details More specifically, the first atom in the loop is taken to be the 
-/// backbone nitrogen of the residue preceding the first pivot.  Thus the index 
+/// @details More specifically, the first atom in the loop is taken to be the
+/// backbone nitrogen of the residue preceding the first pivot.  Thus the index
 /// of the first pivot is 5 (pivots must be alpha carbons).
 
 AtomID ClosureProblem::id_from_index(Size index) const {
@@ -639,4 +639,3 @@ AtomID ClosureProblem::id_from_index(Size index) const {
 
 } // end namespace kinematic_closure
 } // end namespace protocols
-

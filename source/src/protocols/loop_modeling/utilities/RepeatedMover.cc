@@ -26,7 +26,7 @@ RepeatedMover::RepeatedMover(LoopMoverOP mover, Size iterations)
 bool RepeatedMover::do_apply(Pose & pose) {
 	for (Size i = 1; i <= iterations_; i++) {
 		mover_->apply(pose);
-		if (not mover_->was_successful()) return false;
+		if (! mover_->was_successful()) return false;
 	}
 	return true;
 }
@@ -34,4 +34,3 @@ bool RepeatedMover::do_apply(Pose & pose) {
 } // namespace utilities
 } // namespace kinematic_closure
 } // namespace protocols
-

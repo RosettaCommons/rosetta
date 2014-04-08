@@ -20,6 +20,10 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/ElementSet.hh>
 
+#ifdef WIN32
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+#endif
+
 // Project headers
 
 // Utility headers

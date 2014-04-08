@@ -427,7 +427,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 											Real psi
 											) const
 	{
-		return not phipsi_in_allowed_rama(aa, phi, psi);
+		return ! phipsi_in_allowed_rama(aa, phi, psi);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////

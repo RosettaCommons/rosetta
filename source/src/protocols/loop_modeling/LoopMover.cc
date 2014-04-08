@@ -77,13 +77,14 @@ bool LoopMover::do_apply(Pose & pose) { // {{{1
 	Loops::const_iterator loop;
 	for (loop = loops_.begin(); loop != loops_.end(); loop++) {
 		bool was_successful = do_apply(pose, *loop);
-		if (not was_successful) return false;
+		if (! was_successful) return false;
 	}
 	return true;
 }
 
 bool LoopMover::do_apply(Pose &, Loop const &) { // {{{1
 	utility_exit_with_message("LoopMover::do_apply was not reimplemented.");
+	return false;
 }
 // }}}1
 

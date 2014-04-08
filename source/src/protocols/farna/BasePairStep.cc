@@ -31,7 +31,7 @@ namespace farna {
 	}
 
 	//Destructor
-	BasePairStep::BasePairStep::~BasePairStep()
+	BasePairStep::~BasePairStep()
 	{}
 
 } //farna

@@ -206,11 +206,7 @@ public:
 	virtual int Init();
 	virtual void Reset();
 
-#ifdef WIN32
-	int AddAtomA(int molecule, Atom &atom);
-#else
 	int AddAtom(int molecule, Atom &atom);
-#endif
 
 	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
 
@@ -218,11 +214,11 @@ public:
   /// @brief Generate molecular surfaces for the given pose.
   ///// @detailed
 	// This function initializes the calculator, adds all residues in the given pose, and generates molecular surfaces.
-	// 
+	//
 	// The pose is partitioned into separate molecules across the given jump. If the given jump is 0, the entire pose is
 	// loaded as molecule 1.
 	virtual int Calc(core::pose::Pose const & pose, core::Size jump_id = 0);
-	
+
   /// @begin MolecularSurfaceCalculator::Calc()
   /// @brief Generate molecular surfaces for loaded atoms.
   ///// @detailed
@@ -301,4 +297,3 @@ private:
 } //namespace protocols
 
 #endif
-

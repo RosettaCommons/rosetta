@@ -28,7 +28,7 @@ using namespace std;
 
 Loop LoopPivots::pick(Pose const &, Loop const & loop) {
 	Loop pivots = loop;
-	if (pivots.cut() <= pivots.start() or pivots.cut() >= pivots.stop()) {
+	if (pivots.cut() <= pivots.start() || pivots.cut() >= pivots.stop()) {
 		pivots.set_cut(pivots.midpoint() - 1);
 	}
 	return pivots;

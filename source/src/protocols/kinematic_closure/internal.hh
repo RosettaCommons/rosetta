@@ -26,10 +26,10 @@ namespace kinematic_closure {
 
 /// @cond DOCUMENT_KIC_INTERNALS
 
-/// @brief Catalog ideal geometries for a number of different lengths, angles, 
+/// @brief Catalog ideal geometries for a number of different lengths, angles,
 /// and torsions.
-/// @details This class should definitely not exist.  It is basically just a 
-/// bunch of magic numbers that must exist somewhere in the database already.  
+/// @details This class should definitely not exist.  It is basically just a
+/// bunch of magic numbers that must exist somewhere in the database already.
 /// Unfortunately, I can't find them and so we're stuck with this shit.
 
 struct IdealParameters {
@@ -51,82 +51,78 @@ struct IdealParameters {
 
 };
 
-/// @brief Two global parameters that are sometimes useful for debugging.  They 
+/// @brief Two global parameters that are sometimes useful for debugging.  They
 /// may be removed at any time.
 
 extern Size num_rama_filter_fails;
 extern Size num_bump_filter_fails;
 
 /// @brief Iterate sequentially through two solution lists.
-/// @details This functionality is very important to the balanced solution 
-/// picker.  While it could be done without this class (basically by doubling 
-/// the number of for-loops) I think that this class meaningfully improves the 
+/// @details This functionality is very important to the balanced solution
+/// picker.  While it could be done without this class (basically by doubling
+/// the number of for-loops) I think that this class meaningfully improves the
 /// readability of the code.
 
 class ChainedSolutionList {
 
-	public:
+public:
 
-		ChainedSolutionList(SolutionList const &a, SolutionList const &b):
-			first_(a), second_(b) {}
+	ChainedSolutionList(SolutionList const &a, SolutionList const &b):
+		first_(a), second_(b) {}
 
-		class Iterator : public boost::iterator_facade // {{{1
-				<Iterator, ClosureSolutionCOP,
-						boost::forward_traversal_tag, ClosureSolutionCOP> {
+	class Iterator : public boost::iterator_facade // {{{1
+			<Iterator, ClosureSolutionCOP,
+					boost::forward_traversal_tag, ClosureSolutionCOP> {
 
-			public:
-				Iterator():
-						parent_(0), bookmark_(0), state_(FIRST) {}
+		public:
+		//Iterator();
 
-				Iterator(
-						ChainedSolutionList const *parent,
-						SolutionList::const_iterator bookmark):
-					parent_(parent), bookmark_(bookmark), state_(FIRST) {}
+		Iterator(ChainedSolutionList const *parent, SolutionList::const_iterator bookmark);
 
-			private:
-				friend class boost::iterator_core_access;
+		private:
+			friend class boost::iterator_core_access;
 
-				void increment() {
+			void increment() {
 
-					bookmark_++;
+				bookmark_++;
 
-					if (state_ == FIRST && bookmark_ == parent_->first_.end()) {
-						bookmark_ = parent_->second_.begin();
-						state_ = SECOND;
-					}
+				if (state_ == FIRST && bookmark_ == parent_->first_.end()) {
+					bookmark_ = parent_->second_.begin();
+					state_ = SECOND;
 				}
+			}
 
-				bool equal (Iterator const &other) const {
-					return bookmark_ == other.bookmark_;
-				}
+			bool equal (Iterator const &other) const {
+				return bookmark_ == other.bookmark_;
+			}
 
-				ClosureSolutionCOP const dereference() const {
-					return *bookmark_;
-				}
+			ClosureSolutionCOP const dereference() const {
+				return *bookmark_;
+			}
 
-				ChainedSolutionList const *parent_;
-				SolutionList::const_iterator bookmark_;
-				enum {FIRST, SECOND} state_;
+			ChainedSolutionList const *parent_;
+			SolutionList::const_iterator bookmark_;
+			enum {FIRST, SECOND} state_;
 
-		}; // }}}1
+	}; // }}}1
 
-		// These typedefs allow chained solution lists within boost foreach-loops. 
-		typedef Iterator iterator;
-		typedef Iterator const_iterator;
+	// These typedefs allow chained solution lists within boost foreach-loops.
+	typedef Iterator iterator;
+	typedef Iterator const_iterator;
 
-		Iterator begin() { return Iterator(this, first_.begin()); }
-		Iterator end() { return Iterator(this, second_.end()); }
+	Iterator begin() { return Iterator(this, first_.begin()); }
+	Iterator end() { return Iterator(this, second_.end()); }
 
-		ClosureSolutionCOP const front() { return first_.front(); }
-		ClosureSolutionCOP const back() { return second_.back(); }
+	ClosureSolutionCOP const front() { return first_.front(); }
+	ClosureSolutionCOP const back() { return second_.back(); }
 
-		bool size() { return first_.size() + second_.size(); }
-		bool empty() { return first_.empty() && second_.empty(); }
-		bool not_empty() { return !empty(); }
+	bool size() { return first_.size() + second_.size(); }
+	bool empty() { return first_.empty() && second_.empty(); }
+	bool not_empty() { return !empty(); }
 
-	private:
-		SolutionList const &first_;
-		SolutionList const &second_;
+private:
+	SolutionList const &first_;
+	SolutionList const &second_;
 
 };
 
@@ -136,4 +132,3 @@ class ChainedSolutionList {
 /// @endcond DOCUMENT_KIC_INTERNALS
 
 #endif
-

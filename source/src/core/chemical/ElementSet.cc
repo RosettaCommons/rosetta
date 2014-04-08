@@ -17,12 +17,13 @@
 // Project headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>  
+#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <locale>
 
 namespace core {
 namespace chemical {
@@ -83,13 +84,14 @@ ElementSet::read_file( std::string const & filename )
 bool
 ElementSet::contains_element_type( std::string const & element_symbol ) const
 {
+	std::locale loc;
 	std::map< std::string, core::Size >::const_iterator
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
 	// (BCL elements are title cased: Cl versus CL)
 	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
-		std::string title( 1, std::toupper(element_symbol[0]) );
-		if( element_symbol.size() == 2 ) { title += std::tolower( element_symbol[1] ); }
+		std::string title( 1, std::toupper(element_symbol[0], loc) );
+		if( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
 		iter = element_index_.find( title );
 	}
 	return iter != element_index_.end();
@@ -100,13 +102,14 @@ ElementSet::contains_element_type( std::string const & element_symbol ) const
 Size
 ElementSet::element_index( std::string const & element_symbol ) const
 {
+	std::locale loc;
 	std::map< std::string, core::Size >::const_iterator
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
 	// (BCL elements are title cased: Cl versus CL)
 	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
-		std::string title( 1, std::toupper(element_symbol[0]) );
-		if( element_symbol.size() == 2 ) { title += std::tolower( element_symbol[1] ); }
+		std::string title( 1, std::toupper(element_symbol[0], loc) );
+		if( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
 		iter = element_index_.find( title );
 	}
 	if( iter == element_index_.end() ) {

@@ -57,8 +57,8 @@ using core::pose::Pose;
 using numeric::constants::r::pi;
 
 // {{{1
-/// @details This constructor is called by ClosureProblem, which is a friend 
-/// class.  It is declared as private because it should only be called from 
+/// @details This constructor is called by ClosureProblem, which is a friend
+/// class.  It is declared as private because it should only be called from
 /// code that has been specifically written to solve a closure problem.
 
 ClosureSolution::ClosureSolution(
@@ -81,32 +81,32 @@ void ClosureSolution::apply(Pose & pose) const { // {{{1
 bool ClosureSolution::apply_if_reasonable( // {{{1
 		Pose & pose, bool rama_on, bool bump_on, bool be_lenient) const {
 
-	// It's very important to perform the rama check before updating the pose.  
-	// If the pose is updated before the rama check, the rama check will cause 
-	// the conformation to update its coordinates, which becomes a bottleneck.  
-	// Since so many solutions fail the rama check, it is much better just to 
-	// update the pose afterwards.  Note that this means the pose passed into the 
+	// It's very important to perform the rama check before updating the pose.
+	// If the pose is updated before the rama check, the rama check will cause
+	// the conformation to update its coordinates, which becomes a bottleneck.
+	// Since so many solutions fail the rama check, it is much better just to
+	// update the pose afterwards.  Note that this means the pose passed into the
 	// rama check is expected to have out-of-date coordinates!
 
 	Real const temperature = be_lenient ? 2.0 : 1.0;
 
-	if (rama_on and not check_rama(pose, temperature)) {
+	if (rama_on && ! check_rama(pose, temperature)) {
 		num_rama_filter_fails += 1;
 		return false;
 	}
 
-	// On the other hand, the solution must be applied to the pose before the 
-	// bump check is performed, because the bump check uses only the cartesian 
-	// coordinates in the given pose.  If the solution is not applied before 
-	// calling this method, the check will meaninglessly act on whatever is 
-	// already in the pose, even though the check is a method of the current 
+	// On the other hand, the solution must be applied to the pose before the
+	// bump check is performed, because the bump check uses only the cartesian
+	// coordinates in the given pose.  If the solution is not applied before
+	// calling this method, the check will meaninglessly act on whatever is
+	// already in the pose, even though the check is a method of the current
 	// solution.
 
 	apply(pose);
 
 	Real const scale_factor = be_lenient ? 0.40 : 0.49;
 
-	if (bump_on and not check_overlap(pose, scale_factor)) {
+	if (bump_on && ! check_overlap(pose, scale_factor)) {
 		problem_->restore(pose);
 		num_bump_filter_fails += 1;
 		return false;
@@ -142,8 +142,8 @@ bool ClosureSolution::check_rama( // {{{1
 		Real old_psi = degrees(problem_->unperturbed_torsions_[ca]);
 		Real old_score = rama.eval_rama_score_residue(type, old_phi, old_psi);
 
-		// Apply the Metropolis criterion to decide whether or not the new rama 
-		// score should be accepted.  This seems like a pretty arbitrary way to 
+		// Apply the Metropolis criterion to decide whether or not the new rama
+		// score should be accepted.  This seems like a pretty arbitrary way to
 		// make a decision, but performance is much worse with a fixed cutoff.
 
 		if (new_score > old_score) {
@@ -177,7 +177,7 @@ bool ClosureSolution::check_overlap(
 
 			// Don't do adjacent residues.
 			if ((j == i) || (j == i+1) || (j == i-1)) continue;
-			
+
 			// Don't do loop residues multiple times.
 			if ((j >= first_residue) && (j <= i)) continue;
 
@@ -191,7 +191,7 @@ bool ClosureSolution::check_overlap(
 
 			if (nbr_distance_sq > nbr_cutoff_sq) continue;
 
-			// Check for clashes between the N, CA, C, O, and CB (except for glycine) 
+			// Check for clashes between the N, CA, C, O, and CB (except for glycine)
 			// atoms of the two residues.
 			Size num_atoms_i = min<Size>(5, residue_i.nheavyatoms());
 
@@ -226,9 +226,9 @@ Size ClosureSolution::get_index() const { // {{{1
 }
 
 // {{{1
-/// @details This quantity indicates how much the dihedral space around the 
-/// pivots was warped by the choice of controls and is used as a normalization 
-/// factor when picking a move in such a way that obeys detailed balance.  The 
+/// @details This quantity indicates how much the dihedral space around the
+/// pivots was warped by the choice of controls and is used as a normalization
+/// factor when picking a move in such a way that obeys detailed balance.  The
 /// return value is cached, so it's cheap to call this function multiple times.
 
 Real ClosureSolution::get_jacobian() const {
@@ -240,8 +240,8 @@ Real ClosureSolution::get_jacobian() const {
 		Eigen::Matrix<Real, 3, 1> cross_i, cross_45, delta;
 		Eigen::Matrix<Real, 4, 4> J;
 
-		// Convert the solution from internal coordinates to  cartesian ones.  
-		// Since the jacobian is invariant under rigid-body transformations, the 
+		// Convert the solution from internal coordinates to  cartesian ones.
+		// Since the jacobian is invariant under rigid-body transformations, the
 		// origin and reference frame used in this conversion are unimportant.
 
 		Coordinate dummy_origin;
@@ -275,7 +275,7 @@ Real ClosureSolution::get_jacobian() const {
 			r2(j+1, 2) = atom_xyzs[pivot+1][3];
 		}
 
-		// Calculate the jacobian following the method outlined by Nilmeier, Hua, 
+		// Calculate the jacobian following the method outlined by Nilmeier, Hua,
 		// Coutsias, and Jacobson in their 2011 JCTC paper.
 
 		for (Size i = 0; i < 6; i++) {
@@ -302,8 +302,8 @@ Real ClosureSolution::get_jacobian() const {
 }
 
 // {{{1
-/// @details Note that this is not a rigorous distance metric.  It's just meant 
-/// to distinguish one solution that's nearly identical to the given problem 
+/// @details Note that this is not a rigorous distance metric.  It's just meant
+/// to distinguish one solution that's nearly identical to the given problem
 /// from several solutions that aren't.
 Real ClosureSolution::get_distance(ClosureProblemCOP problem) const {
 	Real distance = 0;
@@ -323,4 +323,3 @@ Real ClosureSolution::get_distance(ClosureProblemCOP problem) const {
 
 } // namespace kinematic_closure
 } // namespace protocols
-

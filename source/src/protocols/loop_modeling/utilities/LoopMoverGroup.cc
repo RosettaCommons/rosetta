@@ -34,7 +34,7 @@ using core::scoring::ScoreFunctionOP;
 bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
 	foreach (LoopMoverOP child, children_) {
 		child->apply(pose);
-		if (not child->was_successful()) return false;
+		if (! child->was_successful()) return false;
 	}
 	return true;
 }

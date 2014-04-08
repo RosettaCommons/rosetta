@@ -43,7 +43,7 @@ RDFBaseOP RDFEtableCreator::create_rdf_function() const
 {
 	return new RDFEtableFunction;
 }
-	
+
 std::string RDFEtableCreator::type_name() const
 {
 	return "RDFEtableFunction";
@@ -55,10 +55,10 @@ RDFEtableFunction::RDFEtableFunction() : RDFBase("RDFEtableFunction"), etable_ev
 	this->add_function_name("rep");
 	this->add_function_name("solv");
 }
-	
+
 RDFEtableFunction::~RDFEtableFunction()
 {
-	
+
 }
 
 void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap & data_map)
@@ -67,13 +67,13 @@ void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 	{
 		throw utility::excn::EXCN_RosettaScriptsOption("'RDFEtableFunction' requires 'scorefxn' tag");
 	}
-	
+
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
 	core::scoring::etable::EtableCAP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
 	etable_evaluator_ = new core::scoring::etable::AnalyticEtableEvaluator(*etable);
-	
+
 }
 
 RDFResultList RDFEtableFunction::operator()(AtomPairData const & atom_data )
@@ -83,7 +83,7 @@ RDFResultList RDFEtableFunction::operator()(AtomPairData const & atom_data )
 	core::Real rep_energy = 0.0;
 	core::Real solv_energy = 0.0;
 	core::Real d2 = 0.0;
-	
+
 	etable_evaluator_->atom_pair_energy(
 		atom_data.protein_atom,
 		atom_data.ligand_atom,
@@ -99,7 +99,7 @@ RDFResultList RDFEtableFunction::operator()(AtomPairData const & atom_data )
 	results.push_back(std::make_pair("solv", solv_energy));
 	return results;
 }
-	
+
 RDFBaseOP RDFElecCreator::create_rdf_function() const
 {
 	return new RDFElecFunction;
@@ -114,10 +114,10 @@ RDFElecFunction::RDFElecFunction() : RDFBase("RDFElecFunction"), coloumb_(NULL)
 {
 	this->add_function_name("elec");
 }
-	
+
 RDFElecFunction::~RDFElecFunction()
 {
-	
+
 }
 void RDFElecFunction::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -127,7 +127,7 @@ void RDFElecFunction::parse_my_tag(
 	{
 		throw utility::excn::EXCN_RosettaScriptsOption("'RDFEtableFunction' requires 'scorefxn' tag");
 	}
-	
+
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
@@ -135,7 +135,7 @@ void RDFElecFunction::parse_my_tag(
 	coloumb_->initialize();
 
 }
-	
+
 RDFResultList RDFElecFunction::operator()(AtomPairData const & atom_data )
 {
 	RDFResultList results;
@@ -144,29 +144,29 @@ RDFResultList RDFElecFunction::operator()(AtomPairData const & atom_data )
 		atom_data.protein_atom_charge,
 		atom_data.ligand_atom_coords,
 		atom_data.ligand_atom_charge);
-	
+
 	results.push_back(std::make_pair("elec", fa_elec));
 	return results;
 }
-	
+
 RDFBaseOP RDFChargeCreator::create_rdf_function() const
 {
 	return new RDFChargeFunction;
 }
-	
+
 std::string RDFChargeCreator::type_name() const
 {
 	return "RDFChargeFunction";
 }
-	
+
 RDFChargeFunction::RDFChargeFunction() : RDFBase("RDFChargeFunction")
 {
-	
+
 }
-	
+
 RDFChargeFunction::~RDFChargeFunction()
 {
-	
+
 }
 void RDFChargeFunction::parse_my_tag(
 								   utility::tag::TagCOP tag,
@@ -178,7 +178,7 @@ void RDFChargeFunction::parse_my_tag(
 	{
 		function_sign_ = LigandPlusProteinMinus;
 		function_name_ = "charge_plus";
-		
+
 	}else if(sign_mode == "ligand_minus")
 	{
 		function_sign_ = LigandMinusProteinPlus;
@@ -193,11 +193,11 @@ void RDFChargeFunction::parse_my_tag(
 	}
 	this->add_function_name(function_name_);
 }
-	
+
 RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
 {
 	RDFResultList results;
-	
+
 	core::Real charge_product = atom_data.protein_atom_charge*atom_data.ligand_atom_charge;
 	if(function_sign_ == LigandMinusProteinPlus &&
 		atom_data.ligand_atom_charge < 0 &&
@@ -219,10 +219,10 @@ RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
 	{
 		results.push_back(std::make_pair(function_name_, charge_product));
 	}
-	
+
 	return results;
 }
-	
+
 RDFBaseOP RDFHbondCreator::create_rdf_function() const
 {
 	return new RDFHbondFunction;
@@ -232,15 +232,15 @@ std::string RDFHbondCreator::type_name() const
 {
 	return "RDFHbondFunction";
 }
-	
+
 RDFHbondFunction::RDFHbondFunction() : RDFBase("RDFHbondFunction"),hbond_set_(NULL)
 {
-	
+
 }
 
 RDFHbondFunction::~RDFHbondFunction()
 {
-	
+
 }
 
 void RDFHbondFunction::parse_my_tag(
@@ -253,7 +253,7 @@ void RDFHbondFunction::parse_my_tag(
 	{
 		function_sign_ = LigandPlusProteinMinus;
 		function_name_ = "hbond_acceptor";
-		
+
 	}else if(sign_mode == "ligand_donor")
 	{
 		function_sign_ = LigandMinusProteinPlus;
@@ -307,10 +307,10 @@ RDFResultList RDFHbondFunction::operator()(AtomPairData const & atom_data )
 			return results;
 		}
 	}
-	
+
 	results.push_back(std::make_pair(function_name_, 0.0));
 	return results;
-	
+
 }
 
 RDFBaseOP RDFBinaryHbondCreator::create_rdf_function() const
@@ -325,12 +325,12 @@ std::string RDFBinaryHbondCreator::type_name() const
 
 RDFBinaryHbondFunction::RDFBinaryHbondFunction() : RDFBase("RDFBinaryHbindFunction")
 {
-	
+
 }
 
 RDFBinaryHbondFunction::~RDFBinaryHbondFunction()
 {
-	
+
 }
 
 void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::datacache::DataMap &)
@@ -345,7 +345,7 @@ void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::dataca
 	{
 		function_sign_ = LigandMinusProteinPlus;
 		function_name_ = "hbond_binary_donor";
-		
+
 	}else if(sign_mode == "matching_pair")
 	{
 		function_sign_ = SameSign;
@@ -365,7 +365,7 @@ RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 	if((function_sign_ == LigandPlusProteinMinus) &&
 		( atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_acceptor()) )
 	{
-		
+
 		hbond_binary = 1.0;
 	}else if((function_sign_ == LigandMinusProteinPlus) &&
 		(atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_donor()))
@@ -381,7 +381,7 @@ RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 	else{
 		hbond_binary = 0.0;
 	}
-	
+
 	results.push_back(std::make_pair(function_name_, hbond_binary));
 	return results;
 }
@@ -407,39 +407,39 @@ RDFOrbitalFunction::RDFOrbitalFunction() : RDFBase("RDFOrbitalFunction"),pose_(N
 
 RDFOrbitalFunction::~RDFOrbitalFunction()
 {
-	
+
 }
 
 void RDFOrbitalFunction::parse_my_tag(
 	utility::tag::TagCOP ,
 	basic::datacache::DataMap & )
 {
-	
+
 }
 
-RDFResultList RDFOrbitalFunction::RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
+RDFResultList RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
 {
 	core::scoring::EnergyMap emap;
 	emap.clear();
 	orbital_score_->get_E_haro_one_way(*pose_,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
 	orbital_score_->get_E_haro_one_way(*pose_,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
-	
+
 	orbital_score_->get_E_hpol_one_way(*pose_,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
 	orbital_score_->get_E_hpol_one_way(*pose_,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
-	
+
 	orbital_score_->get_orb_orb_E(*pose_,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
 	orbital_score_->get_orb_orb_E(*pose_,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
-	
+
 	RDFResultList results;
-	
+
 	results.push_back(std::make_pair("pci_cation_pi", emap[core::scoring::pci_cation_pi]));
 	results.push_back(std::make_pair("pci_pi_pi", emap[core::scoring::pci_pi_pi]));
 	results.push_back(std::make_pair("pci_hbond", emap[core::scoring::pci_hbond]));
 	results.push_back(std::make_pair("orbitals_hpol_bb", emap[core::scoring::orbitals_hpol_bb]));
 	results.push_back(std::make_pair("pci_salt_bridge", emap[core::scoring::pci_salt_bridge]));
-	
+
 	return results;
-	
+
 }
 
 void RDFOrbitalFunction::preamble(core::pose::Pose & pose)
@@ -458,30 +458,30 @@ std::string RDFBinaryOrbitalFunctionCreator::type_name() const
 {
 	return "RDFBinaryOrbitalFunction";
 }
- 
-	
+
+
 RDFBinaryOrbitalFunction::RDFBinaryOrbitalFunction() : RDFBase("RDFBinaryOrbitalFunction"),pose_(NULL)
 {
-	
+
 	this->add_function_name("pi_pi_counts");
 	this->add_function_name("salt_bridge_counts");
 	this->add_function_name("hbond_orbital_counts");
 	this->add_function_name("cation_pi_counts");
 
 }
-	
+
 RDFBinaryOrbitalFunction::~RDFBinaryOrbitalFunction()
 {
-	
+
 }
-	
+
 void RDFBinaryOrbitalFunction::parse_my_tag(utility::tag::TagCOP, basic::datacache::DataMap &) {}
-	
+
 RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_data )
 {
 	core::conformation::Residue const & protein_residue(pose_->conformation().residue(atom_data.protein_atom_id.rsd()));
 	core::conformation::Residue const & ligand_residue(pose_->conformation().residue(atom_data.ligand_atom_id.rsd()));
-	
+
 	utility::vector1< core::Size > const & protein_orbitals(protein_residue.bonded_orbitals(atom_data.protein_atom_id.atomno()));
 	utility::vector1< core::Size > const & ligand_orbitals(ligand_residue.bonded_orbitals(atom_data.ligand_atom_id.atomno()));
 	core::Real pi_pi_counts = 0.0;
@@ -511,7 +511,7 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 			}
 		}
 	}
-	
+
 	std::string protein_atom_name = protein_residue.type().atom_type((atom_data.protein_atom_id.atomno())).name();
 	std::string ligand_atom_name = ligand_residue.type().atom_type((atom_data.ligand_atom_id.atomno())).name();
 	if(protein_atom_name == "Hpol" || protein_atom_name == "Haro")
@@ -573,21 +573,21 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 			}
 		}
 	}
-	
+
 	RDFResultList results;
 	results.push_back(std::make_pair("pi_pi_counts", pi_pi_counts));
 	results.push_back(std::make_pair("salt_bridge_counts",salt_bridge_counts));
 	results.push_back(std::make_pair("hbond_orbital_counts",hbond_orbital_counts));
 	results.push_back(std::make_pair("cation_pi_counts",cation_pi_counts));
 	return results;
-	
+
 }
-	
+
 void RDFBinaryOrbitalFunction::preamble(core::pose::Pose & pose)
 {
 	pose_ = pose;
 }
-	
+
 }
 }
 }

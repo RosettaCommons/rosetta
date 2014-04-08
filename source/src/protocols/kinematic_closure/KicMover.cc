@@ -61,17 +61,17 @@ bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	bool problem_solved = false;
 
-	// Make 2000 attempts to find a closure solution which passes which passes 
+	// Make 2000 attempts to find a closure solution which passes which passes
 	// both rama and bump checks.  If no solution is found by then, give up.
 
-	for (Size i = 1; i <= 500 and not problem_solved; i++) {
+	for (Size i = 1; i <= 500 && ! problem_solved; i++) {
 		perturbers_->perturb(pose, problem);
 		SolutionList solutions = problem->solve();
 		problem_solved = solution_picker_->pick_and_apply(pose, solutions);
 	}
 
 	// Set the move type based on whether or not the move succeeded.
-	
+
 	type(problem_solved ? "kic" : "kic-no-op");
 	return problem_solved;
 }
@@ -85,9 +85,9 @@ solution_pickers::SolutionPickerOP KicMover::get_solution_picker() { // {{{1
 }
 
 // {{{1
-/// @details The KicMover starts off with a default set of perturbers.  Then 
-/// first time this method is called, all of the default perturbers are cleared 
-/// and only the specified perturber is kept.  Subsequent calls to this method 
+/// @details The KicMover starts off with a default set of perturbers.  Then
+/// first time this method is called, all of the default perturbers are cleared
+/// and only the specified perturber is kept.  Subsequent calls to this method
 /// simply add the specified perturbers.  Nothing you add manually gets erased.
 
 void KicMover::add_perturber(perturbers::PerturberOP perturber) {

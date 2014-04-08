@@ -65,7 +65,7 @@ void BalancedKicMover::apply(Pose & pose) { // {{{1
 	ClosureSolutionCOP solution;
 	SolutionList unperturbed_solutions, perturbed_solutions;
 
-	if (loop_.start() == 0 and loop_.stop() == 0) {
+	if (loop_.start() == 0 && loop_.stop() == 0) {
 		utility_exit_with_message(
 				"Before calling BalancedKicMover.apply(), you must provide a loop "
 				"via BalancedKicMover.set_loop().");
@@ -126,13 +126,13 @@ vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose &) { // {{{1
 // Static member functions:
 
 // {{{1
-/// @details Note that this is a static method, which means that it can be used 
-/// outside the context of this class.  The inputs are two sets of closure 
-/// solutions.  The first set should contain the starting conformation, and the 
-/// second should contain novel conformations.  The first set can be generated 
-/// by running the KIC algorithm without perturbing the non-pivot torsions.  
-/// For each solution in these two sets, a jacobian will have to be calculated.  
-/// The solution that is returned will be free of bias.  See apply() for an 
+/// @details Note that this is a static method, which means that it can be used
+/// outside the context of this class.  The inputs are two sets of closure
+/// solutions.  The first set should contain the starting conformation, and the
+/// second should contain novel conformations.  The first set can be generated
+/// by running the KIC algorithm without perturbing the non-pivot torsions.
+/// For each solution in these two sets, a jacobian will have to be calculated.
+/// The solution that is returned will be free of bias.  See apply() for an
 /// example of how this method is used.
 
 ClosureSolutionCOP BalancedKicMover::pick_solution(
@@ -145,18 +145,18 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 	ChainedSolutionList all_solutions(
 			unperturbed_solutions, perturbed_solutions);
 
-	runtime_assert(not all_solutions.empty())
+	runtime_assert(! all_solutions.empty())
 
-	// Calculate the Jacobian for each solution and keep the sum.  The Jacobian 
-	// relates to the probability that a certain set of pivot torsions will lead 
+	// Calculate the Jacobian for each solution and keep the sum.  The Jacobian
+	// relates to the probability that a certain set of pivot torsions will lead
 	// to a closed solution.
 
 	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
 		total_jacobian += solution->get_jacobian();
 	}
 
-	// Use the Jacobian weights to pick a balanced solution.  The pick must be 
-	// made from both the perturbed and unperturbed pools of solutions, otherwise 
+	// Use the Jacobian weights to pick a balanced solution.  The pick must be
+	// made from both the perturbed and unperturbed pools of solutions, otherwise
 	// the forward and reverse move probabilities won't be equivalent.
 
 	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
@@ -164,22 +164,22 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 		if (selection_chance >= random_threshold) return solution;
 	}
 
-	// Execution will only get this far if random_threshold is very close to one 
-	// and floating point error causes the sum of all the selection_chance terms 
-	// to be slightly less than that.  In this case, the right course of action 
+	// Execution will only get this far if random_threshold is very close to one
+	// and floating point error causes the sum of all the selection_chance terms
+	// to be slightly less than that.  In this case, the right course of action
 	// is clearly to return the last solution.
 
 	return all_solutions.back();
 }
 
 // {{{1
-/// @details In order to obey detailed balance, the set of unperturbed 
-/// solutions must contain one solution that is identical to the input pose.  
-/// When this solution is picked and applied, the resulting move will pass the 
-/// Metropolis criterion and lead to an artificially inflated acceptance rate.  
-/// This method provides a way to report what really happened in the move, so 
-/// that an accurate acceptance rate can be conveyed.  Note that this is a 
-/// static method, so it can be used outside the context of this class.  The 
+/// @details In order to obey detailed balance, the set of unperturbed
+/// solutions must contain one solution that is identical to the input pose.
+/// When this solution is picked and applied, the resulting move will pass the
+/// Metropolis criterion and lead to an artificially inflated acceptance rate.
+/// This method provides a way to report what really happened in the move, so
+/// that an accurate acceptance rate can be conveyed.  Note that this is a
+/// static method, so it can be used outside the context of this class.  The
 /// input pose conformation is inferred from the given problem.
 
 bool BalancedKicMover::is_solution_trivial(
