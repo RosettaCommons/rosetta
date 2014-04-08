@@ -1036,12 +1036,12 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 					core::Real d2 = (cart_del_ij).length_squared();
 					if (d2 <= (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) {
 						core::Real doff = sqrt(d2) - cb_clashdist_;
-						core::Real sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' gives sigmoid dropoff
+						core::Real sig = 1 / ( 1 + exp ( -sigwidth*doff ) );   // '6' gives sigmoid dropoff
 						rho_ca(x,y,z) *= sig;
 
 						if (!ss_only_ || pose.secstruct(i)!='L') {
 							doff = sqrt(d2) - interfacedist_;
-							sig = 1 / ( 1 + exp ( -sigwidth*doff ) );   // '6' gives sigmoid dropoff
+							sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' gives sigmoid dropoff
 							rho_cb(x,y,z) *= sig;
 						}
 					}
