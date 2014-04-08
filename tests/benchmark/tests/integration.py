@@ -58,7 +58,8 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
 
-    build_command_line = './scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
+    # removing all symlinks from bin/ and then building binaries...
+    build_command_line = 'find bin -type l ! -name ".*" -exec rm {{}} \\; && ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
 
     if debug:
         res, output = 0, 'integration.py: debug is enabled, skippig build...\n'
