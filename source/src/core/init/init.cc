@@ -226,7 +226,7 @@
 	#include <platform/types.hh>
 #endif
 
-#ifdef MAC
+#if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__)
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
 #endif
 #endif
@@ -929,7 +929,8 @@ locate_rosetta_database(){
 			uint32_t path_size = sizeof( path );
 			std::string path_string;
 
-#ifdef MAC
+
+#if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__)
 			uint32_t result = _NSGetExecutablePath(path, &path_size );
 
 			// _NSGetExecutablePath returns 0 if the path was successfully copied.

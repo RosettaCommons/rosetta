@@ -218,7 +218,7 @@ PyMolMover::PyMolMover() :
 	keep_history_(false),
 	update_interval_(0),
 	last_packet_sent_time_(0),
-	name_()
+	pymol_name_()
 {}
 
 /// @breif cctor
@@ -230,7 +230,7 @@ PyMolMover::PyMolMover( PyMolMover const & other ) :
 	keep_history_( other.keep_history_ ),
 	update_interval_( other.update_interval_ ),
 	last_packet_sent_time_( other.last_packet_sent_time_ ),
-	name_( other.name_ )
+	pymol_name_( other.pymol_name_ )
 {}
 
 PyMolMover::~PyMolMover()
@@ -243,7 +243,7 @@ std::string PyMolMover::get_name() const
 
 std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 {
-	if( name_.size() ) return name_;
+	if( pymol_name_.size() ) return pymol_name_;
     else {
 		core::pose::PDBInfoCOP info = pose.pdb_info();
 		if( info ) {

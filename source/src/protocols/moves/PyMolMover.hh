@@ -312,7 +312,12 @@ public:
 	/// @brief Tell PyMOL to color protein with supplied custom colors
 	virtual void send_colors(Pose const &, std::map<int, int> const & colors, X11Colors default_color=protocols::moves::XC_blue );
 
+	/// @brief Specify PyMOL model name
+	std::string pymol_name() { return pymol_name_; }
+	void pymol_name(std::string new_pymol_name) { pymol_name_ = new_pymol_name; }
 
+
+	/// @brief Flag that specify if PyMOL mover should send current Pose energy on every apply. If name set to empty string (default) then name derived from pdb_info will be used
 	bool update_energy() { return update_energy_; }
 	void update_energy(bool f) { update_energy_ = f; }
 
@@ -373,7 +378,7 @@ private:
 	core::Real last_packet_sent_time_;
 
 	/// @brief  Name of model in pymol.
-	std::string name_;
+	std::string pymol_name_;
 };  // class PyMolMover
 
 // Insertion operator (overloaded so that PyMolMover can be "printed") in PyRosetta).
