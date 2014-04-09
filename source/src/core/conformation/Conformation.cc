@@ -2553,9 +2553,12 @@ Conformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const
 	Residue const & rsd( residue_(seqpos) );
 
  	for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
+		// OP1 and OP2 could in principle be figured out to 'depend on polymer lower'; they
+		// currently depend on atoms which themselves can depend on LOWER. Following has hacks
+		// until a general fix is tested and checked in. --rhiju.
  		if ( ( upper_lower == -1 && rsd.icoor(i).depends_on_polymer_lower() ) ||
-				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || //TERRIBLE HACK! FIX bEFORE CHECKING IN!
-				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || //TERRIBLE HACK! FIX BEFORE CHECKING IN!
+				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || // hack1
+				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || // hack2
  				 ( upper_lower ==  1 && rsd.icoor(i).depends_on_polymer_upper() ) ) {
  			set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
  		}
