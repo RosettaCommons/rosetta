@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/id/TorsionID.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
@@ -72,6 +73,7 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 	runtime_assert( is_init() );
 	PuckerState pucker_state = pucker_states_[i];
 	assert( pucker_state <= 2 );
+	assert( pose.residue(i).is_RNA() );
 
 	static const RNA_IdealCoord ideal_coord;
 	static const RNA_FittedTorsionInfo torsion_info;

@@ -2199,9 +2199,14 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const chains =	figure_out_chains_from_full_model_info_const( pose );
 		utility::vector1< Size > const & res_list =	get_res_list_from_full_model_info_const( pose );
 		Size five_prime_chain_break( 0 ), three_prime_chain_break( 0 );
+		return;
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
 
 			if ( !pose.fold_tree().is_cutpoint( n ) ) continue;
+
+			// Skip virtual anchors
+			if ( pose.residue( n ).aa() == core::chemical::aa_vrt ) continue;
+			if ( pose.residue( n+1 ).aa() == core::chemical::aa_vrt ) continue;
 
 			// must be in different partitions to qualify as 'moving'
 			if ( moving_partition_pos.has_value( n ) == moving_partition_pos.has_value( n+1 ) ) continue;
@@ -2224,7 +2229,6 @@ rotate( pose::Pose & pose, Matrix const M,
 			runtime_assert( res_list[ three_prime_chain_break ] > res_list[ five_prime_chain_break ] );
 			Size const gap_size = res_list[ three_prime_chain_break ] - res_list[ five_prime_chain_break ] - 1;
 			chain_break_gap_sizes.push_back( gap_size );
-
 			if ( gap_size == 0 ){
 				runtime_assert( five_prime_chain_break == n ); // no rewind past bulges
 				runtime_assert( three_prime_chain_break == n + 1 ); // no fast forward past bulges

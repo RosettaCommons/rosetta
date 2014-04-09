@@ -86,7 +86,7 @@ using namespace core;
 using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 
-static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_ConnectionSampler" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.connection.StepWiseRNA_ConnectionSampler" ) ;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

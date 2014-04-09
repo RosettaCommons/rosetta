@@ -185,6 +185,9 @@ void RNA_IdealCoord::apply_coords(
 	using namespace chemical;
 	using namespace conformation;
 
+	Residue const & res = pose.residue( seqpos );
+	if ( !res.is_RNA() ) return;
+
 	//Record the torsions in starting pose
 	utility::vector1 < TorsionID > saved_torsion_id;
 	utility::vector1 < Real > saved_torsions;
@@ -302,10 +305,10 @@ void RNA_IdealCoord::apply_pucker(
 	using namespace chemical;
 	using namespace conformation;
 
-	assert( pucker <= 2 );
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
+	assert( pucker <= 2 );
 
 	if ( pucker == ANY_PUCKER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );

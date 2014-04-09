@@ -708,7 +708,8 @@ pdb_minimizer() {
 			ScoreFunctionFactory::create_score_function ( score_weight_file );
 
 	core::scoring::ScoreFunctionOP edens_scorefxn = new ScoreFunction;
-	edens_scorefxn -> set_weight( elec_dens_atomwise, 1.0 );
+	edens_scorefxn -> set_weight(
+			elec_dens_atomwise, scorefxn -> get_weight(elec_dens_atomwise) );
 
 	//Setup fold tree using user input or using Rhiju's function
 	if ( cutpoint_list.size() == 0 ) {
