@@ -2,7 +2,6 @@
 -algorithm rna_sample
 -erraser true
 -out:file:silent test.out
--sampler_perform_o2star_pack true
 -sampler_extra_chi_rotamer true
 -sampler_extra_epsilon_rotamer true
 -sampler_cluster_rmsd 0.3
