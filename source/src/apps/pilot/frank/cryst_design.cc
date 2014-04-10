@@ -156,39 +156,36 @@ core::Real interp_linear(
 	numeric::xyzVector< core::Real > fpart,neg_fpart;
 	numeric::xyzVector<int> srcgrid(data.u1(),data.u2(),data.u3());
 
-	// 0->1-based indexing
-	pt000[0] = (int)(std::floor(idxX[0]+1e-6))+1;
-	pt000[1] = (int)(std::floor(idxX[1]+1e-6))+1;
-	pt000[2] = (int)(std::floor(idxX[2]+1e-6))+1;
-
-	// bound check
-	if (pt000[0] < -srcgrid[0]/2+1 || pt000[0] >= srcgrid[0]/2+1) return 0.0;
-	if (pt000[1] < -srcgrid[1]/2+1 || pt000[1] >= srcgrid[1]/2+1) return 0.0;
-	if (pt000[2] < -srcgrid[2]/2+1 || pt000[2] >= srcgrid[2]/2+1) return 0.0;
-	if (pt000[0] <= 0 ) pt000[0] += srcgrid[0];
-	if (pt000[1] <= 0 ) pt000[1] += srcgrid[1];
-	if (pt000[2] <= 0 ) pt000[2] += srcgrid[2];
+	pt000[0] = (int)(std::floor(idxX[0]+1e-6));
+	pt000[1] = (int)(std::floor(idxX[1]+1e-6));
+	pt000[2] = (int)(std::floor(idxX[2]+1e-6));
 
 	// interpolation coeffs
-	fpart[0] = idxX[0]-std::floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
-	fpart[1] = idxX[1]-std::floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
-	fpart[2] = idxX[2]-std::floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
-
+	fpart[0] = idxX[0]-pt000[0]; neg_fpart[0] = 1-fpart[0];
+	fpart[1] = idxX[1]-pt000[1]; neg_fpart[1] = 1-fpart[1];
+	fpart[2] = idxX[2]-pt000[2]; neg_fpart[2] = 1-fpart[2];
 	S retval = (S)0.0;
 
-	pt111[0] = (pt000[0]+1); if (pt111[0]>srcgrid[0]) pt111[0]=1;
-	pt111[1] = (pt000[1]+1); if (pt111[1]>srcgrid[1]) pt111[1]=1;
-	pt111[2] = (pt000[2]+1); if (pt111[2]>srcgrid[2]) pt111[2]=1;
+	// bound check
+	if (pt000[0] < -srcgrid[0]/2 || pt000[0] > srcgrid[0]/2) return 0.0;
+	if (pt000[1] < -srcgrid[1]/2 || pt000[1] > srcgrid[1]/2) return 0.0;
+	if (pt000[2] < -srcgrid[2]/2 || pt000[2] > srcgrid[2]/2) return 0.0;
+	if (pt000[0] < 0 ) pt000[0] += srcgrid[0];
+	if (pt000[1] < 0 ) pt000[1] += srcgrid[1];
+	if (pt000[2] < 0 ) pt000[2] += srcgrid[2];
 
-	retval += neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt000[0],pt000[1],pt000[2]);
-	retval += neg_fpart[0]*neg_fpart[1]*    fpart[2] * data(pt000[0],pt000[1],pt111[2]);
-	retval += neg_fpart[0]*    fpart[1]*neg_fpart[2] * data(pt000[0],pt111[1],pt000[2]);
-	retval += neg_fpart[0]*    fpart[1]*    fpart[2] * data(pt000[0],pt111[1],pt111[2]);
-	retval +=     fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt111[0],pt000[1],pt000[2]);
-	retval +=     fpart[0]*neg_fpart[1]*    fpart[2] * data(pt111[0],pt000[1],pt111[2]);
-	retval +=     fpart[0]*    fpart[1]*neg_fpart[2] * data(pt111[0],pt111[1],pt000[2]);
-	retval +=     fpart[0]*    fpart[1]*    fpart[2] * data(pt111[0],pt111[1],pt111[2]);
+	pt111[0] = (pt000[0]+1); if (pt111[0]>=srcgrid[0]) pt111[0]=0;
+	pt111[1] = (pt000[1]+1); if (pt111[1]>=srcgrid[1]) pt111[1]=0;
+	pt111[2] = (pt000[2]+1); if (pt111[2]>=srcgrid[2]) pt111[2]=0;
 
+	retval += neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt000[0]+1,pt000[1]+1,pt000[2]+1);
+	retval += neg_fpart[0]*neg_fpart[1]*    fpart[2] * data(pt000[0]+1,pt000[1]+1,pt111[2]+1);
+	retval += neg_fpart[0]*    fpart[1]*neg_fpart[2] * data(pt000[0]+1,pt111[1]+1,pt000[2]+1);
+	retval += neg_fpart[0]*    fpart[1]*    fpart[2] * data(pt000[0]+1,pt111[1]+1,pt111[2]+1);
+	retval +=     fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt111[0]+1,pt000[1]+1,pt000[2]+1);
+	retval +=     fpart[0]*neg_fpart[1]*    fpart[2] * data(pt111[0]+1,pt000[1]+1,pt111[2]+1);
+	retval +=     fpart[0]*    fpart[1]*neg_fpart[2] * data(pt111[0]+1,pt111[1]+1,pt000[2]+1);
+	retval +=     fpart[0]*    fpart[1]*    fpart[2] * data(pt111[0]+1,pt111[1]+1,pt111[2]+1);
 	return (core::Real)retval;
 }
 
@@ -826,6 +823,12 @@ public:
 	// get the score per interface
 	core::Real
 	get_interface_score(
+			utility::vector1<SingleInterface> &allInterfaces,
+			utility::vector1<core::kinematics::RT> const &rts_all );
+
+	// get the score per interface
+	void
+	get_interfaces(
 			utility::vector1<core::kinematics::RT> const &rts,
 			numeric::xyzMatrix<Real> R,
 			numeric::xyzVector<Real> xyz_grid,
@@ -937,10 +940,11 @@ CrystDock::writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_ove
 
 // build occupancy and interaction masks from pose
 // since we will be sampling rotations from this map, we sample over a larger volume than the unit cell
+//  ASSUMES POSE IS CENTERED
 void
 CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Real trans_step) {
 	Real ATOM_MASK_PADDING = 2.0;
-	Real UNIT_CELL_PADDING = 4.0;  // IN GRID POINTS!
+	Real UNIT_CELL_PADDING = 6.0;  // IN GRID POINTS!
 	Real sigwidth=option[crystdock::sigwidth];
 	Size minmult = sg_.minmult();
 
@@ -963,7 +967,8 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 		for (int j=1; j<=4; ++j) {
 			numeric::xyzVector< core::Real> xyz_j = pose.residue(i).atom(j).xyz();
 			numeric::xyzVector< core::Real> atm_idx = c2i_*xyz_j;
-			for (int k=0; k<3; ++k) oversamplegrid_[k] = std::max(oversamplegrid_[k], 2*(int)std::floor( (atm_idx[k]+UNIT_CELL_PADDING) )+1 );
+			for (int k=0; k<3; ++k)
+				oversamplegrid_[k] = std::max(oversamplegrid_[k], 2*(int)std::floor( (std::abs(atm_idx[k])+UNIT_CELL_PADDING) )+1 );
 		}
 	}
 	TR << "Base grid = [" <<  oversamplegrid_[0] << " , " <<  oversamplegrid_[1]<< " , " << oversamplegrid_[2] << "]" << std::endl;
@@ -1073,13 +1078,33 @@ CrystDock::resample_maps_and_get_self(
 	FArray3D<Real> r_rho_cb_base = r_rho_cb;
 
 	numeric::xyzMatrix<Real> Ri = numeric::inverse(R);
+	numeric::xyzMatrix<Real> Rgridspace = c2i_*Ri*i2c_;
 
-	int AMAX = (int)std::ceil( 0.5*(oversamplegrid_[0]/grid_[0]-1) );
-	int BMAX = (int)std::ceil( 0.5*(oversamplegrid_[1]/grid_[1]-1) );
-	int CMAX = (int)std::ceil( 0.5*(oversamplegrid_[2]/grid_[2]-1) );
+	// rotate "oversmaple grid and find the boundaries
+	Real xmax=0, ymax=0, zmax=0;
+	{
+		numeric::xyzVector<Real> boundbox;
+		boundbox = Rgridspace * numeric::xyzVector<Real>(0, 0, oversamplegrid_[2]);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+		boundbox = Rgridspace * numeric::xyzVector<Real>(0, oversamplegrid_[1], 0);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+		boundbox = Rgridspace * numeric::xyzVector<Real>(oversamplegrid_[0], 0, 0);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+		boundbox = Rgridspace * numeric::xyzVector<Real>(0, oversamplegrid_[1], oversamplegrid_[2]);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+		boundbox = Rgridspace * numeric::xyzVector<Real>(oversamplegrid_[0], 0, oversamplegrid_[2]);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+		boundbox = Rgridspace * numeric::xyzVector<Real>(oversamplegrid_[0], oversamplegrid_[1], 0);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+		boundbox = Rgridspace * numeric::xyzVector<Real>(oversamplegrid_[0], oversamplegrid_[1], oversamplegrid_[2]);
+		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
+	}
+
+	int AMAX = (int)std::ceil( 0.5*(xmax/grid_[0]-1) );
+	int BMAX = (int)std::ceil( 0.5*(ymax/grid_[1]-1) );
+	int CMAX = (int)std::ceil( 0.5*(zmax/grid_[2]-1) );
 
 	// calculate base transformation
-	numeric::xyzMatrix<Real> Rgridspace = c2i_*Ri*i2c_;
 	for (int z=1; z<=grid_[2]; ++z)
 	for (int y=1; y<=grid_[1]; ++y)
 	for (int x=1; x<=grid_[0]; ++x) {
@@ -1568,8 +1593,8 @@ CrystDock::do_convolution( FArray3D<Real> const &rho, FArray3D<Real> const &Srho
 //    break down the contribution into individual interfaces
 //    find the weakest connection in fully connected lattice
 // work in the space of oversample_grid_
-core::Real
-CrystDock::get_interface_score(
+void
+CrystDock::get_interfaces(
 		utility::vector1<core::kinematics::RT> const &rts,
 		numeric::xyzMatrix<Real> R,
 		numeric::xyzVector<Real> xyz_grid,
@@ -1640,11 +1665,18 @@ CrystDock::get_interface_score(
 			}
 		}
 	}
+}
 
+
+core::Real
+CrystDock::get_interface_score(
+		utility::vector1<SingleInterface> &allInterfaces,
+		utility::vector1<core::kinematics::RT> const &rts_all ) {
 	// [STAGE 2] see if we form a connected lattice
 	//    * idea: expand all contacting symmops
-	//    *       see if we generate (+/-1,0,0), (0,+/-1,0), and (0,0,+/-1)
-	int EXPAND_ROUNDS=3;  // no idea if this is sufficient
+	//    *       ensure we generate all symmops
+	//    *       ensure we generate (+/-1,0,0), (0,+/-1,0), and (0,0,+/-1)
+	int EXPAND_ROUNDS=8;  // no idea if this is sufficient
 	int nxformsOrig = (int)allInterfaces.size();
 
 	// stopping conditions
@@ -1673,6 +1705,9 @@ CrystDock::get_interface_score(
 				numeric::xyzMatrix<Real> Sij = Si*Sj;
 				numeric::xyzVector<Real> Tij = Sj*Ti + Tj;
 				Real overlap_ij = std::min( allInterfaces[i].cb_overlap_, allInterfaces[j].cb_overlap_ );
+
+				if ((Tij[0])>1 || (Tij[1])>1 || (Tij[2])>1) continue;
+				if ((Tij[0])<-1 || (Tij[1])<-1 || (Tij[2])<-1) continue;
 
 				// check if it is in the set
 				// we could hash these for a small speed increase...
@@ -1703,26 +1738,46 @@ CrystDock::get_interface_score(
 		}
 	}
 
+
+	// check if we are fully connected
+	//   1--- all symmops
+	Real score = 1e30;
+	bool connected = true;
+	for (int i=2; i<=(int)rts_all.size() && connected; ++i) {  // 1 is identity
+		bool contains_j = false;
+		for (int j=1; j<=(int)allInterfaces.size() && !contains_j; ++j) {
+			numeric::xyzMatrix<Real> const &Si=allInterfaces[j].R_;
+			numeric::xyzVector<Real> const &Ti=allInterfaces[j].T_;
+			if ( transforms_equiv( Si, Ti, rts_all[i].get_rotation(), rts_all[i].get_translation()) ) {
+				contains_j = true;
+				score = std::min( score, allInterfaces[j].cb_overlap_ );
+			}
+		}
+		connected &= contains_j;
+	}
+	if (!connected) return 0.0;
+
+	//   2--- +/- 1 in each direction
 	Real score_00p=0, score_00m=0, score_0m0=0, score_0p0=0, score_p00=0, score_m00=0;
 	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 	for (int i=1; i<=(int)allInterfaces.size(); ++i) {
 		numeric::xyzMatrix<Real> const &Si=allInterfaces[i].R_;
 		numeric::xyzVector<Real> const &Ti=allInterfaces[i].T_;
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,0, 1)))
-			score_00p = std::max( score_00p, allInterfaces[i].cb_overlap_ );
+			score_00p = allInterfaces[i].cb_overlap_;
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,0,-1)))
-			score_00m = std::max( score_00m, allInterfaces[i].cb_overlap_ );
+			score_00m = allInterfaces[i].cb_overlap_;
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0, 1,0)))
-			score_0p0 = std::max( score_0p0, allInterfaces[i].cb_overlap_ );
+			score_0p0 = allInterfaces[i].cb_overlap_;
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,-1,0)))
-			score_0m0 = std::max( score_0m0, allInterfaces[i].cb_overlap_ );
+			score_0m0 = allInterfaces[i].cb_overlap_;
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>( 1,0,0)))
-			score_p00 = std::max( score_p00, allInterfaces[i].cb_overlap_ );
+			score_p00 = allInterfaces[i].cb_overlap_;
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(-1,0,0)))
-			score_m00 = std::max( score_m00, allInterfaces[i].cb_overlap_ );
+			score_m00 = allInterfaces[i].cb_overlap_;
 	}
 
-	Real score = std::min( score_00p, score_00m);
+	score = std::min( score, std::min(score_00p, score_00m));
 	score = std::min( score, std::min(score_0m0, score_0p0));
 	score = std::min( score, std::min(score_p00, score_m00));
 
@@ -1749,10 +1804,10 @@ CrystDock::get_clash_score_exact(
 		shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
 	}
 	transform_map( shift_rho_ca, R,T, s_shift_rho_ca);
+
 	Real retval = 0;
 	for (int i=0; i<(int)Npoints; ++i)
 		retval += shift_rho_ca[i] * s_shift_rho_ca[i];
-
 	return retval;
 }
 
@@ -1856,10 +1911,17 @@ CrystDock::apply( Pose & pose) {
 			ca_score += get_clash_score_exact( offset_grid_pt, rts[s].get_rotation(), rts[s].get_translation(), r_rho_ca );
 		}
 
-		core::Real cb_score = get_interface_score( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
+		get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
+		core::Real cb_score = get_interface_score( iinfo, rts );
 
-		TR << "ca_score = " << ca_score << std::endl;
-		TR << "cb_score = " << cb_score << std::endl;
+		TR << "OVERLAP_score = " << ca_score << std::endl;
+		TR << "INTERACTION_score = " << cb_score << std::endl;
+
+		//numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
+		//std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+		//InterfaceHit ih(cb_score, xyz[0], xyz[1], xyz[2], 0, utility::vector1<SingleInterface>() );
+		//std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( 1, 8, '0' )+".pdb";
+		//dump_transformed_pdb( pose, ih, urs, outname );
 
 		return;
 	}
@@ -1985,18 +2047,15 @@ CrystDock::apply( Pose & pose) {
 		for (int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z)
 		for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 		for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
-			// (*) we could be more aggressive and verify that sum (interface area) is more than
-			if (collision_map(x,y,z) < maxclash ) {//&& sum_interface_area(x,y,z) > sg_.min_interfaces_req()*mininterface_) {
+			if (collision_map(x,y,z) < maxclash && sum_interface_area(x,y,z) > sg_.min_interfaces_req()*mininterface_) {
 				nnonclashing++;
 
 				// get_interface_score populates iinfo
 				//    then computes the weakest connection necessary to construct the lattice
 				utility::vector1<SingleInterface> iinfo = p1_interface_map;
 				numeric::xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
-				core::Real score_xyz = get_interface_score(
-					rts, r_local, xyz,
-					ambiguous_interface_map(x,y,z),
-					rho_cb, iinfo );
+				get_interfaces( rts, r_local, xyz, ambiguous_interface_map(x,y,z), rho_cb, iinfo );
+				Real score_xyz = get_interface_score ( iinfo, rts );
 
 				if (score_xyz > mininterface_) {
 					nconnected++;
