@@ -198,6 +198,8 @@ RemodelMover::RemodelMover() :
 	rosetta_scripts_build_disulfide_ = false;
 	rosetta_scripts_fast_disulfide_ = false;
 	rosetta_scripts_bypass_fragments_ = false;
+	rosetta_scripts_include_current_ds_ = false;
+	rosetta_scripts_keep_current_ds_ = false;
 	rosetta_scripts_match_rt_limit_ = 1;
 	rosetta_scripts_min_disulfides_ = 1;
 	rosetta_scripts_max_disulfides_ = 1;
@@ -236,6 +238,8 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 	rosetta_scripts_match_rt_limit_( rval.rosetta_scripts_match_rt_limit_),
 	rosetta_scripts_min_disulfides_( rval.rosetta_scripts_min_disulfides_),
 	rosetta_scripts_max_disulfides_( rval.rosetta_scripts_max_disulfides_),
+	rosetta_scripts_include_current_ds_( rval.rosetta_scripts_include_current_ds_),
+	rosetta_scripts_keep_current_ds_( rval.rosetta_scripts_keep_current_ds_),
 	rosetta_scripts_min_loop_( rval.rosetta_scripts_min_loop_),
 	rosetta_scripts_( rval.rosetta_scripts_),
 	last_input_pose_(rval.last_input_pose_),
@@ -889,7 +893,7 @@ void RemodelMover::apply( Pose & pose ) {
 					match_rt_limit = option[OptionKeys::remodel::match_rt_limit];
 				}
 
-				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit, rosetta_scripts_min_loop_ );
+				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit, rosetta_scripts_min_loop_, rosetta_scripts_include_current_ds_, rosetta_scripts_keep_current_ds_);
 				if ( disulfPass != true ) {
 					i--; //for now control disulf with num_trajectory flag, too.
 					continue;
@@ -1234,8 +1238,8 @@ void RemodelMover::apply( Pose & pose ) {
 
 
 			Real score = 0.0;
-
-			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by path length.
+		
+			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by entropy.
 			if (rosetta_scripts_fast_disulfide_) {
 				simple_filters::DisulfideEntropyFilterOP DisulfideEntropy=new simple_filters::DisulfideEntropyFilter();
 				score = - DisulfideEntropy->compute_residual( *(*it) );
@@ -2359,6 +2363,20 @@ RemodelMover::parse_my_tag(
 		rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 );
 	}	else {
 		rosetta_scripts_min_loop_ = 1;
+	}
+	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
+
+	if( tag->hasOption("keep_current_disulfides") ) {
+		rosetta_scripts_keep_current_ds_ = tag->getOption< bool>( "keep_current_disulfides", false); 
+	}	else {
+		rosetta_scripts_keep_current_ds_ = false;
+	}
+	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
+
+	if( tag->hasOption("include_current_disulfides") ) {
+		rosetta_scripts_include_current_ds_ = tag->getOption< bool>( "include_current_disulfides", false ); 
+	}	else {
+		rosetta_scripts_include_current_ds_ = false;
 	}
 	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
 }

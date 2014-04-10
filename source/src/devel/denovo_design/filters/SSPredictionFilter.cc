@@ -47,6 +47,7 @@ SSPredictionFilter::SSPredictionFilter()
 		cmd_( "" ),
 		blueprint_( NULL ),
 		use_probability_( false ),
+		mismatch_probability_(false),
 		use_confidence_( false ),
 		use_svm_( true ),
 		temp_( 0.6 ),
@@ -58,12 +59,14 @@ SSPredictionFilter::SSPredictionFilter()
 SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 																				std::string const cmd,
 																				std::string const blueprint_filename,
-																				bool const use_probability )
+																				bool const use_probability,
+																				bool const mismatch_probability)
 	: protocols::filters::Filter( "SSPrediction" ),
 		threshold_( threshold ),
 		cmd_( cmd ),
 		blueprint_( new protocols::jd2::parser::BluePrint( blueprint_filename ) ),
 		use_probability_( use_probability ),
+		mismatch_probability_ (mismatch_probability),
 		use_confidence_( false ),
 		use_svm_( true ),
 		temp_( 0.6 ),
@@ -78,6 +81,7 @@ SSPredictionFilter::SSPredictionFilter( SSPredictionFilter const & rval )
 		cmd_( rval.cmd_ ),
 		blueprint_( rval.blueprint_ ),
 		use_probability_( rval.use_probability_ ),
+		mismatch_probability_( rval.mismatch_probability_),
 		use_confidence_( rval.use_confidence_ ),
 		use_svm_( rval.use_svm_ ),
 		temp_( rval.temp_ ),
@@ -130,6 +134,20 @@ SSPredictionFilter::compute_boltz_sum( utility::vector1< core::Real > const & pr
 	}
 	TR << "Boltzmann sum is " << sum << " -- Final value=" << sum/probabilities.size() << std::endl;
 	return sum/probabilities.size();
+}
+
+/// @brief computes the overall probability P as the product of each residue probability p.
+/// Then returns the Nth root of P for N residues.
+core::Real
+SSPredictionFilter::compute_mismatch_prob( utility::vector1< core::Real > const & probabilities ) const
+{
+	core::Real sum( 0.0 );
+	for ( core::Size i=1; i<=probabilities.size(); ++i ) {
+		sum += log( probabilities[i]);
+	}
+
+	TR << "Probability of correct secondary structure is " << exp(sum/probabilities.size()) << "^(n_residues) -- Final value=" << 1-exp(sum/probabilities.size()) << std::endl;
+	return 1-exp(sum/probabilities.size());
 }
 
 // @brief Calculates the score. if probabilities are used, it compute the boltzmann sum, which will be a number between 0 and 1, where 0 is the best, and 1 is the worst.
@@ -187,8 +205,13 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 				runtime_assert( wanted_ss.size() == psipred_result.psipred2_confidence.size() );
 				return compute_boltz_sum( generate_prob( psipred_result, wanted_ss ) );
 			} else {
-				runtime_assert( wanted_ss.size() == psipred_result.psipred_prob.size() );
-				return compute_boltz_sum( psipred_result.psipred_prob );
+				if (mismatch_probability_) {
+					runtime_assert( wanted_ss.size() == psipred_result.psipred2_confidence.size() );
+					return compute_mismatch_prob( generate_prob( psipred_result, wanted_ss ) );
+				} else {
+					runtime_assert( wanted_ss.size() == psipred_result.psipred_prob.size() );
+					return compute_boltz_sum( psipred_result.psipred_prob );
+				}
 			}
 		} else {
 			core::Real const count( psipred_result.nres );
@@ -207,6 +230,7 @@ void SSPredictionFilter::parse_my_tag(
 	core::pose::Pose const & ){
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 	use_probability_ = tag->getOption< bool >( "use_probability", use_probability_ );
+	mismatch_probability_ = tag->getOption< bool >( "mismatch_probability", mismatch_probability_ );
 	use_confidence_ = tag->getOption< bool >( "use_confidence", use_confidence_ );
 	temp_ = tag->getOption< core::Real >( "temperature", temp_ );
 	use_svm_ = tag->getOption< bool >( "use_svm", use_svm_ );

@@ -200,45 +200,62 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		TR << "found output for " << pose.sequence() << " in the cache; returning it; " << std::endl;
 		return it;
 		}*/
-	std::string const fasta_filename( create_fasta_file( pose ) );
-	core::Size replace_pos( fasta_filename.find( ".fasta" ) );
-	runtime_assert( replace_pos != std::string::npos ); //sanity check
-	std::string psipred_filename( fasta_filename );
-	std::string psipred_horiz_filename( fasta_filename );
-	psipred_filename.replace( replace_pos, 6, ".ss2" );
-	psipred_horiz_filename.replace( replace_pos, 6, ".horiz" );
 
-	//TR << "Psipred filename: " << psipred_filename << std::endl;
-	// ensure we can get a shell
-	runtime_assert( cmd_ != "" );
-	// Call psipred on the fasta file
-	std::string command = cmd_ + " " + fasta_filename;
-#ifndef WIN32
-	command += " > /dev/null";
-#endif
-	TR.Debug << "Trying to run " << command << std::endl;
+	utility::vector1< core::pose::PoseOP > poses( pose.split_by_chain() );
+	PsiPredResult result;
+	core::Size start_residue = 1;
 
-#ifdef __native_client__
-  core::Size retval = 1;
-#else
-  core::Size retval = system( command.c_str() );
-#endif
-  if ( retval != 0 ){
-		utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
-	}
+	for (core::Size i=1; i<=poses.size(); ++i) {
+		std::string const fasta_filename( create_fasta_file( *(poses[i]) ) );
+		core::Size replace_pos( fasta_filename.find( ".fasta" ) );
+		runtime_assert( replace_pos != std::string::npos ); //sanity check
+		std::string psipred_filename( fasta_filename );
+		std::string psipred_horiz_filename( fasta_filename );
+		psipred_filename.replace( replace_pos, 6, ".ss2" );
+		psipred_horiz_filename.replace( replace_pos, 6, ".horiz" );
 
-	// open and read psipred output into a stringstream buffer
-	utility::io::izstream t( psipred_filename );
-	std::stringstream buffer;
-	buffer << t.rdbuf();
-	t.close();
+		//TR << "Psipred filename: " << psipred_filename << std::endl;
+		// ensure we can get a shell
+		runtime_assert( cmd_ != "" );
+		// Call psipred on the fasta file
+		std::string command = cmd_ + " " + fasta_filename;
+		#ifndef WIN32
+			command += " > /dev/null";
+		#endif
+			TR.Debug << "Trying to run " << command << std::endl;
 
-	PsiPredResult result( parse_psipred_output( pose, buffer.str(), blueprint_ss, psipred_horiz_filename ) );
+		#ifdef __native_client__
+	  		core::Size retval = 1;
+		#else
+	  		core::Size retval = system( command.c_str() );
+		#endif
+	  	if ( retval != 0 ){
+			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
+		}
 
-	// clean up psipred files
-	cleanup_after_psipred( psipred_filename );
+		// open and read psipred output into a stringstream buffer
+		utility::io::izstream t( psipred_filename );
+		std::stringstream buffer;
+		buffer << t.rdbuf();
+		t.close();
+
+		std::string chain_blueprint(blueprint_ss.substr(start_residue-1, poses[i]->total_residue()));
+
+		PsiPredResult chain_result( parse_psipred_output( *(poses[i]), buffer.str(), chain_blueprint, psipred_horiz_filename ) );
+
+		result.psipred_prob.insert(result.psipred_prob.end(), chain_result.psipred_prob.begin(), chain_result.psipred_prob.end());
+		result.psipred2_confidence.insert(result.psipred2_confidence.end(), chain_result.psipred2_confidence.begin(), chain_result.psipred2_confidence.end());
+		result.pred_ss += chain_result.pred_ss;
+		result.nres += chain_result.nres;
+
+		// clean up psipred files
+		cleanup_after_psipred( psipred_filename );
+
+		start_residue += poses[i]->total_residue();
 
 	// parse and save result in the cache
+	}
+
 	return result;
 }
 

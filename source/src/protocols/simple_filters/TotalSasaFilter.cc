@@ -207,16 +207,36 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 		pose.metric( "sasa", "atom_sasa", atom_sasa );
 		core::Real polar_sasa( 0.0 ), hydrophobic_sasa( 0.0 );
 		for( core::Size pos(1); pos<=pose.total_residue(); ++pos ){
+			core::Real pos_polar_sasa( 0.0 ), pos_hydrophobic_sasa( 0.0 );
+
 			if( task && ! task->being_packed(pos) ) { continue; }
 			for( core::Size atomi( 1 ); atomi <= atom_sasa.value().n_atom( pos ); ++atomi ){
 				core::Real const atomi_sasa( atom_sasa.value()( pos, atomi ) );
 				core::conformation::Residue const pos_rsd( pose.residue( pos ) );
 				core::chemical::AtomType const atom_type( pos_rsd.atom_type( atomi ) );
 				bool const is_polar( atom_type.is_donor() || atom_type.is_acceptor() || atom_type.is_polar_hydrogen() );
-				if( is_polar ) polar_sasa += atomi_sasa;
-				else hydrophobic_sasa += atomi_sasa;
+				if( is_polar ) {
+					polar_sasa += atomi_sasa;
+					pos_polar_sasa += atomi_sasa;
+				} else {
+					hydrophobic_sasa += atomi_sasa;
+					pos_hydrophobic_sasa += atomi_sasa;
+				}
 			}
+			
+			if (report_per_residue_sasa_ && (polar_ || hydrophobic_)) {
+				char res_chain = pose.pdb_info()->chain(pos);
+				int res_pdbnum = pose.pdb_info()->number(pos);
+
+				TR << pose.residue( pos ).name3() << res_pdbnum << " " << res_chain << " ";
+				if (polar_) { TR << "POLAR SASA : " << pos_polar_sasa << std::endl; }
+				if (hydrophobic_) { TR << "HYDROPHOBIC SASA : " << pos_hydrophobic_sasa << std::endl; }
+			}
+
+
 		}
+
+		
 		if( hydrophobic_ ) return hydrophobic_sasa;
 		if( polar_ ) return polar_sasa;
 	}

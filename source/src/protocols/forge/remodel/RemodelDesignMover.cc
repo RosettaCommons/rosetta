@@ -567,7 +567,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 }
 
 
-bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop_) {
+bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop_,
+															const bool & rosetta_scripts_include_current_ds_, const bool & rosetta_scripts_keep_current_ds_) {
 
 	using core::scoring::disulfides::DisulfideMatchingPotential;
 	using namespace core::chemical;
@@ -672,34 +673,63 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
-			if (nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) {
+			if ((nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) && 
+				abs(*itr2 - *itr) > rosetta_scripts_min_loop_ && 
+				(*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart) {
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
 				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
 					//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+					if (!rosetta_scripts_keep_current_ds_ || ( pose.residue(*itr).name() != "CYD" && pose.residue(*itr2).name() != "CYD")) {
+						Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
+						if ( dist_squared > 25 ) {
+							TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
 
-					Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
-					if ( dist_squared > 25 ) {
-						TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
+						} else {
+							disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
+							TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
+							int seqGap = (int)*itr2 - (int)*itr;
+							//if ( match_rt < option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
+							if ( match_rt < match_rt_limit && std::abs( seqGap ) > 1  ) {
+								TR << "DISULF possible " << dist_squared << std::endl;
+								TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+								TR << "match_rt " << match_rt << std::endl;
+								std::pair< Size, Size > temp_pair;
+								std::pair< Size, Size > alt_pair;
+								
+								temp_pair = std::make_pair( *itr, *itr2 );
+								alt_pair = std::make_pair( *itr2, *itr );
+								
+								if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
+									std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
+									disulf_partners.push_back( temp_pair );									
+								}
+
+									
+
+
+								pass = 1;
+							} else {
+								if (rosetta_scripts_include_current_ds_ && pose.residue(*itr).is_bonded(pose.residue(*itr2))) {
+									TR << "DISULF \tIncluding pre-existing disulfide despite failed match_rt_limit check." << std::endl;
+									std::pair< Size, Size > temp_pair;
+									std::pair< Size, Size > alt_pair;
+									
+									temp_pair = std::make_pair( *itr, *itr2 );
+									alt_pair = std::make_pair( *itr2, *itr );
+									
+									if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
+										std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
+										disulf_partners.push_back( temp_pair );									
+									}
+								} else {
+									TR << "DISULF \tFailed match_rt_limit check." << std::endl;
+								}
+							}
+						}
 
 					} else {
-						disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
-						TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
-						int seqGap = (int)*itr2 - (int)*itr;
-						//if ( match_rt < option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
-						if ( match_rt < match_rt_limit && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
-							TR << "DISULF possible " << dist_squared << std::endl;
-							TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-							TR << "match_rt " << match_rt << std::endl;
-							std::pair< Size, Size > temp_pair;
-							temp_pair = std::make_pair( *itr, *itr2 );
-
-							disulf_partners.push_back( temp_pair );
-
-							pass = 1;
-						} else {
-							TR << "DISULF \tFailed match_rt_limit check." << std::endl;
-						}
+						TR <<"DISULF \tkeep_current_ds set to True, skipping residues that are already in disulfides." << std::endl;
 					}
 				} else {
 					TR << "DISULF \tFailed glycine check. Cysteines cannot replace glycine positions in the native pose." << std::endl;
