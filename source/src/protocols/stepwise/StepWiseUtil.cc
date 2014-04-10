@@ -2199,7 +2199,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const chains =	figure_out_chains_from_full_model_info_const( pose );
 		utility::vector1< Size > const & res_list =	get_res_list_from_full_model_info_const( pose );
 		Size five_prime_chain_break( 0 ), three_prime_chain_break( 0 );
-		return;
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
 
 			if ( !pose.fold_tree().is_cutpoint( n ) ) continue;
