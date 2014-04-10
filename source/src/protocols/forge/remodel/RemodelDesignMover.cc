@@ -674,7 +674,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
 			if ((nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) && 
-				abs(*itr2 - *itr) > rosetta_scripts_min_loop_ && 
+				abs(*itr2 - *itr) > abs(rosetta_scripts_min_loop_) && 
 				(*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart) {
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
