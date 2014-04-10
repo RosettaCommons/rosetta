@@ -480,12 +480,12 @@ private: // data
     bool rosetta_scripts_quick_and_dirty_ ;
     bool rosetta_scripts_build_disulfide_ ;
     bool rosetta_scripts_fast_disulfide_ ;
-    bool rosetta_scripts_include_current_ds_ ;
-    bool rosetta_scripts_keep_current_ds_ ;
     bool rosetta_scripts_bypass_fragments_ ;
     core::Real rosetta_scripts_match_rt_limit_ ;
     Size rosetta_scripts_min_disulfides_ ;
 	Size rosetta_scripts_max_disulfides_ ;
+    bool rosetta_scripts_include_current_ds_ ;
+    bool rosetta_scripts_keep_current_ds_ ;
 	Size rosetta_scripts_min_loop_ ;
 	bool rosetta_scripts_ ;
 
