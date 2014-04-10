@@ -3,7 +3,6 @@
 # Desc: defines a membrane coordinate system
 # Author: Rebecca Alford (rfalford12@gmail.com)
 # Last Modified: 1/19/13
-# version 0.1
 NAME MEM
 IO_STRING MEM X
 TYPE LIGAND #residue type

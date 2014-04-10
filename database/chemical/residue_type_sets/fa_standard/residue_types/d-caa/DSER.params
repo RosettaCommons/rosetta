@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DSER
 IO_STRING DSE S
 TYPE POLYMER #residue type

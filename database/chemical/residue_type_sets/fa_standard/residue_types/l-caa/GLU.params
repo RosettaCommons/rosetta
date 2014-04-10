@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME GLU
 IO_STRING GLU E
 TYPE POLYMER #residue type

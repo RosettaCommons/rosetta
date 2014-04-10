@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 #Deprotonated Tyrosine by Krishna
 #WARNING: Be cautious while using this version of TYR. The partial charges are not from CHARMM toppar file. They are based on quantum chemical calculations by Rabenstein et al. 1998
 NAME TYR_D

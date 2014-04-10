@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 #protonated HIS by Krishna
 #partial charges from CHARMM27
 NAME HIS_P

@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME B3Q
 IO_STRING B3Q Q
 TYPE POLYMER #residue type

@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME B3T
 IO_STRING B3T T
 TYPE POLYMER #residue type

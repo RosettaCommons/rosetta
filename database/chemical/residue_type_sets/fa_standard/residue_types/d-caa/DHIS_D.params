@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DHIS_D
 IO_STRING DHI H
 TYPE POLYMER #residue type

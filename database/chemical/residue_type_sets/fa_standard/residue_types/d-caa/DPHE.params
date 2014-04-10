@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DPHE
 IO_STRING DPH F
 TYPE POLYMER #residue type

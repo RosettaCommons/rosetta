@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DLEU
 IO_STRING DLE L
 TYPE POLYMER #residue type

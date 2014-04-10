@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME GLY
 IO_STRING GLY G
 TYPE POLYMER #residue type

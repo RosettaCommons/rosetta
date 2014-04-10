@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME RCY
 IO_STRING   C c
 TYPE POLYMER #residue type

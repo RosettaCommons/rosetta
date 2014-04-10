@@ -1,5 +1,4 @@
 # rosetta residue topology file
-# version 0.2
 # KH 04/12/13 updated to fix electron pair geometry
 #
 # taken from TP5 params in amber: dat/leap/lib/solvents.cmd

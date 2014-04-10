@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DGLN
 IO_STRING DGN Q
 TYPE POLYMER #residue type

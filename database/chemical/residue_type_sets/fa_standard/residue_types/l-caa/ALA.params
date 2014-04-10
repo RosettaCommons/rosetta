@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME ALA
 IO_STRING ALA A
 TYPE POLYMER #residue type

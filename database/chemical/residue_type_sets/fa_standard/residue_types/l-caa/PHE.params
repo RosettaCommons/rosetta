@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME PHE
 IO_STRING PHE F
 TYPE POLYMER #residue type

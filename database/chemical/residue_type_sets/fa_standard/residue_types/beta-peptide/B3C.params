@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME B3C
 IO_STRING B3C C
 TYPE POLYMER #residue type

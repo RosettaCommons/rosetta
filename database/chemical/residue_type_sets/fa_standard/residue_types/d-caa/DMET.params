@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DMET
 IO_STRING DME M
 TYPE POLYMER #residue type

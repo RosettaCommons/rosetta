@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DILE
 IO_STRING DIL I
 TYPE POLYMER #residue type

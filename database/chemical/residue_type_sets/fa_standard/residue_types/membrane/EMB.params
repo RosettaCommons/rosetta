@@ -3,7 +3,6 @@
 # Desc: defines a membrane protein chain embedding
 # Author: Rebecca Alford (rfalford12@gmail.com) 
 # Last Modified: 1/19/13
-# version 0.1
 NAME EMB
 IO_STRING EMB X
 TYPE LIGAND #residue type

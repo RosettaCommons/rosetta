@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 # icoor for disulfide bond is not accurate or ideal.
 # measured from a few disulfides in 1ni1
 NAME DCYD

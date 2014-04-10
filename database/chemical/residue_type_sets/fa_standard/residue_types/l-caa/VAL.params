@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME VAL
 IO_STRING VAL V
 TYPE POLYMER #residue type

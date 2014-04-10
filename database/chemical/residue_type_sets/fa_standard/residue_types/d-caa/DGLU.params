@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DGLU
 IO_STRING DGU E
 TYPE POLYMER #residue type

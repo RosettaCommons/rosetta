@@ -1,5 +1,4 @@
 #rosetta residue topology file
-#version 0.1
 NAME DASN
 IO_STRING DAN N
 TYPE POLYMER #residue type
