@@ -20,6 +20,8 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <string>
+
 namespace protocols {
 namespace rosetta_scripts {
 

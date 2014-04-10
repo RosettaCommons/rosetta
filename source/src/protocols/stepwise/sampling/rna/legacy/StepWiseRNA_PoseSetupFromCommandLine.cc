@@ -125,9 +125,16 @@
 #include <map>
 #include <cstdlib>
 #include <ctime>
-#include <unistd.h>
-#include <libgen.h>
-#define GetCurrentDir getcwd
+
+#ifdef WIN32
+	#include <direct.h>
+    #define GetCurrentDir _getcwd
+
+#else
+	#define GetCurrentDir getcwd
+	#include <libgen.h>
+	#include <unistd.h>
+#endif
 
 #include <list>
 #include <stdio.h>
@@ -924,10 +931,10 @@ void check_if_silent_file_exists(){
 //
 bool
 get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
-																		std::string & out_tag,
-																		Size const & n,
-																		bool const & multiple_shots,
-																		std::string const & silent_file ){
+									std::string & out_tag,
+									Size const & n,
+									bool const & multiple_shots,
+									std::string const & silent_file ){
 
 	swa_silent_file = silent_file; // default
 
@@ -968,7 +975,13 @@ ensure_directory_for_out_silent_file_exists(){
 			// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
 			TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
 			char * outfile_char = strdup( outfile.c_str() );
+			#ifdef WIN32
+				char * outdir;
+			 	utility_exit_with_message( "protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
+			#else
 			char * outdir =  dirname( outfile_char );
+			#endif
+
 			std::stringstream mkdir_command;
 			mkdir_command << "mkdir -p " << outdir;
 			int return_code = system( mkdir_command.str().c_str() );

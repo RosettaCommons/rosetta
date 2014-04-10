@@ -38,6 +38,11 @@
 
 #include <cstdio>
 
+#ifdef _WIN32
+    #include <io.h>
+//__declspec(dllexport) int isatty(int fd) { return _isatty(fd); }
+#endif
+
 namespace utility {
 
 

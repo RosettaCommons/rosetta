@@ -12,7 +12,7 @@
 ## @brief  Build Python buidings for Rosetta
 ## @author Sergey Lyskov
 
-import os, re, sys, time, commands, shutil, platform, os.path, gc, json, types
+import os, re, sys, time, commands, shutil, platform, os.path, gc, json, types, glob
 import subprocess #, errno
 
 # Create global 'Platform' that will hold info of current system
@@ -250,15 +250,17 @@ def main(args):
     bindings_path = os.path.abspath('debug/rosetta') if Options.debug else os.path.abspath('rosetta')
 
     if Options.cross_compile:
-        bindings_path = os.path.abspath('rosetta.window')
+        bindings_path = os.path.abspath('rosetta.windows')
         if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
         execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
 
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
-    #shutil.copyfile('src/__init__.py', bindings_path + '/__init__.py')
-    execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)
+    #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
+    for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
+
+
 
     if Platform == "windows":  # we dealing with windows native build
         #bindings_path = os.path.abspath('python/bindings/rosetta')
@@ -390,9 +392,19 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         print command_line
 
     while True:
+        #print 'Platform:', Platform
         if Platform == 'cygwin':
             (res, output) = commands.getstatusoutput(command_line)
-            print output
+            if print_output or res: print output
+            #sys.stdout.flush()
+            #sys.stderr.flush()
+
+        elif Platform == 'windows':
+            res = 0
+            try: output = subprocess.check_output(command_line, shell=True)
+            except subprocess.CalledProcessError as e: res, output = e.returncode, e.output
+            if print_output: print output
+
         else:
             po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -424,6 +436,8 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         print "Error while executing %s: %s\n" % (message, output)
         print "Sleeping 60s... then I will retry..."
         time.sleep(60)
+
+    if return_ == 'tuple': return(res, output)
 
     if res:
         if print_output: print "\nEncounter error while executing: " + command_line
@@ -824,6 +838,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
 
+    pre_generated_sources = os.path.abspath(Options.use_pre_generated_sources)
+
     os.chdir( './../../' )
 
     #if Options.BuildMiniLibs:
@@ -844,7 +860,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
                     /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
                     /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
                     /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0 \
-                    /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
+                    /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
 
         '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
            -DCPPDB_DISABLE_THREAD_SAFETY -DCPPDB_SOVERSION=\"0\" -DCPPDB_WITH_SQLITE3
@@ -859,9 +875,9 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
             execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
-                    )  # return_=True)
+                    return_= 'tuple' if Options.continue_ else False, print_output=True)
 
-        latest = max(latest, os.path.getmtime(obj) )
+        if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
 
 
     sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
@@ -912,8 +928,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     objs = []
     symbols = []
     #latest = None  # keeping track of dates of local .def files
-    for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
-        l = wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
+    for dir_name, _, files in os.walk(pre_generated_sources):
+        l = wn_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
         latest = max(l, latest)
 
         py_objs = os.path.join(build_dir,'py_objs' )
@@ -931,8 +947,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
         execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
 
-    for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
-        wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
+    for dir_name, _, files in os.walk(pre_generated_sources):
+        wn_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
 
     print 'Done building PyRosetta bindings for Windows!'
 
@@ -973,7 +989,8 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
                 execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_CL_Options(), source)  #  /D__PYROSETTA_ONE_LIB__
-                   + ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
+                   #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
+                   + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
                    + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=25'
                    + ' /Fo%s ' % obj ) )
                 #  /Iplatform/windows/32/msvc
@@ -995,7 +1012,8 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
 
             #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
             res = execute('Getting list of missed symbols... Creating DLL %s...' % dummy,
-                            'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
+                          #'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
+                          'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib.64 /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
             symbols = []
             for l in res.split('\n'):
                 if   l.find('error LNK2001: unresolved external symbol __DllMainCRTStartup') >=0 : continue  # error LNK2001: unresolved external symbol __DllMainCRTStartup@12

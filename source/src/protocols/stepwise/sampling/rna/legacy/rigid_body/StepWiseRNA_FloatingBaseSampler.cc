@@ -47,6 +47,8 @@
 #include <numeric/xyz.functions.hh>
 
 
+using namespace protocols::stepwise::sampling::rna::rigid_body;
+
 using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 
@@ -96,6 +98,11 @@ using namespace protocols::stepwise::sampling::rna;
 //   -- Rhiju, 2013.
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using namespace core;
+using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::sampling::rna::rigid_body;
+
 
 namespace protocols {
 namespace stepwise {
@@ -447,9 +454,9 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_checkers( pose::
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Setup Residue of moving and reference of various rsd conformation (syn/anti chi, 2' and 3' endo) with
 	// base at origin coordinate frame
-	moving_rsd_at_origin_list_                 = setup_residue_at_origin_list(	pose,	                 moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
-	screening_moving_rsd_at_origin_list_	     = setup_residue_at_origin_list( *screening_pose_,       moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
-	sugar_screening_moving_rsd_at_origin_list_ = setup_residue_at_origin_list( *sugar_screening_pose_, moving_res_,	options_->extra_chi(), options_->use_phenix_geo() );
+	moving_rsd_at_origin_list_                 = protocols::stepwise::sampling::rna::rigid_body::setup_residue_at_origin_list(	pose,	                 moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+	screening_moving_rsd_at_origin_list_       = protocols::stepwise::sampling::rna::rigid_body::setup_residue_at_origin_list( *screening_pose_,       moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+	sugar_screening_moving_rsd_at_origin_list_ = protocols::stepwise::sampling::rna::rigid_body::setup_residue_at_origin_list( *sugar_screening_pose_, moving_res_,	options_->extra_chi(), options_->use_phenix_geo() );
 	runtime_assert ( moving_rsd_at_origin_list_.size() == screening_moving_rsd_at_origin_list_.size() );
 	runtime_assert ( moving_rsd_at_origin_list_.size() == sugar_screening_moving_rsd_at_origin_list_.size() );
 
@@ -711,9 +718,9 @@ StepWiseRNA_FloatingBaseSampler::get_pose_list(){
 /////////////////////////////////////////////////////////////////////////////////////
 // diagnostics
 void
-StepWiseRNA_FloatingBaseSampler::update_base_bin_map( BaseBin const & base_bin ){
+StepWiseRNA_FloatingBaseSampler::update_base_bin_map( protocols::stepwise::sampling::rna::rigid_body::BaseBin const & base_bin ){
 
-	std::map< BaseBin, int, compare_base_bin > ::const_iterator it = base_bin_map_.find( base_bin );
+	std::map< protocols::stepwise::sampling::rna::rigid_body::BaseBin, int, compare_base_bin > ::const_iterator it = base_bin_map_.find( base_bin );
 	if ( it == base_bin_map_.end() )	base_bin_map_[base_bin] = 0;
 	base_bin_map_[base_bin] ++;
 }
@@ -722,7 +729,7 @@ StepWiseRNA_FloatingBaseSampler::update_base_bin_map( BaseBin const & base_bin )
 // diagnostics
 void
 StepWiseRNA_FloatingBaseSampler::update_base_bin_map( utility::vector1< Real > const & rigid_body_values ){
-	BaseBin base_bin;
+	protocols::stepwise::sampling::rna::rigid_body::BaseBin base_bin;
 	base_bin.centroid_x  = static_cast<int>( rigid_body_values[6] );
 	base_bin.centroid_y  = static_cast<int>( rigid_body_values[5] );
 	base_bin.centroid_z  = static_cast<int>( rigid_body_values[4] );

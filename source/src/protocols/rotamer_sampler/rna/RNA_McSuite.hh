@@ -26,7 +26,16 @@
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/TorsionID.hh>
 
-using namespace core::chemical::rna;
+
+#ifdef WIN32
+	#include <protocols/rotamer_sampler/McOneTorsion.hh>
+	#include <protocols/rotamer_sampler/rna/RNA_McSugar.hh>
+#endif
+
+// using namespace core::chemical::rna;
+// Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
+// by our coding convention due to problems it create on modern compilers and because of the name clashing.
+// For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -82,8 +91,7 @@ public:
 
 	/// @brief Set starting torsions and pucker states
 	void set_init_states(
-		utility::vector1<core::Real> const & init_torsions,
-		PuckerState const init_pucker
+		utility::vector1<core::Real> const & init_torsions, core::chemical::rna::PuckerState const init_pucker
 	) {
 		init_torsions_ = init_torsions;
 		init_pucker_ = init_pucker;
@@ -105,7 +113,7 @@ private:
 			 sample_lower_nucleoside_, sample_upper_nucleoside_;
 	core::Real pucker_flip_rate_, gaussian_stdev_;
 	core::Real const a_form_range_;
-	PuckerState init_pucker_;
+	core::chemical::rna::PuckerState init_pucker_;
 	utility::vector1<core::Real> a_form_torsions_, init_torsions_;
 	utility::vector1<core::id::TorsionID> torsion_ids_;
 	utility::vector1<McOneTorsionOP> bb_samplers_;

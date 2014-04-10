@@ -19,7 +19,7 @@
 #define INCLUDED_protocols_stepwise_rna_RNA_BaseCentroidChecker_HH
 
 #include <core/types.hh>
-#include <core/kinematics/Stub.fwd.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
@@ -173,4 +173,3 @@ namespace checker {
 } //protocols
 
 #endif
-

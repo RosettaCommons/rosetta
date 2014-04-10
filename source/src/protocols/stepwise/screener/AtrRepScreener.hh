@@ -21,6 +21,13 @@
 #include <protocols/stepwise/sampling/rna/checker/AtrRepChecker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+
+#ifdef WIN32
+	#include <protocols/stepwise/sampling/rna/checker/AtrRepChecker.hh>
+	#include <protocols/stepwise/screener/AtrRepScreener.hh>
+#endif
+
+
 namespace protocols {
 namespace stepwise {
 namespace screener {

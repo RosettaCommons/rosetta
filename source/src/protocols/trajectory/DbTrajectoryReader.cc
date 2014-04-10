@@ -73,12 +73,12 @@ Size DbTrajectoryReader::get_num_iterations() const { // {{{1
 }
 
 vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
-	if (not table_exists(db_session_, "trajectories")) {
+	if (! table_exists(db_session_, "trajectories")) {
 		utility_exit_with_message("no 'trajectories' table in the database.");
 	}
 
 	vector1<Size> iterations;
-	string select_string = 
+	string select_string =
 		"SELECT iteration "
 		"FROM trajectories "
 		"WHERE job_id = ?;";
@@ -88,21 +88,21 @@ vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
 	select_statement.bind(1, job_id_);
 	result select_result = safely_read_from_database(select_statement);
 
-	if (not select_result.next()) {
+	if (! select_result.next()) {
 		stringstream error_message;
 		error_message << "Unable to locate job with id '" << job_id_ << "'";
 		utility_exit_with_message(error_message.str());
 	}
 
-	while (not select_result.empty()) {
+	while (! select_result.empty()) {
 		Size iteration;
 		select_result >> iteration;
 		select_result.next();
 		iterations.push_back(iteration);
 	}
 
-	// I imagine this list will already be sorted by the database, but there's no 
-	// reason not to be safe.  This class is meant to be used in after-the-fact 
+	// I imagine this list will already be sorted by the database, but there's no
+	// reason not to be safe.  This class is meant to be used in after-the-fact
 	// analysis scripts, so it's not performance-critical.
 
 	sort(iterations.begin(), iterations.end());
@@ -110,11 +110,11 @@ vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
 }
 
 Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
-	if (not table_exists(db_session_, "trajectories")) {
+	if (! table_exists(db_session_, "trajectories")) {
 		utility_exit_with_message("no 'trajectories' table in this database.");
 	}
 
-	string select_string = 
+	string select_string =
 		"SELECT silent_pose "
 		"FROM trajectories "
 		"WHERE job_id = ? AND iteration = ?;";
@@ -125,7 +125,7 @@ Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
 	select_statement.bind(2, iteration);
 	result select_result = safely_read_from_database(select_statement);
 
-	if (not select_result.next()) {
+	if (! select_result.next()) {
 		stringstream error_message;
 		error_message << "Unable to locate iteration '" << iteration << "' ";
 		error_message << "in job with id '" << job_id_ << "'.";
@@ -144,16 +144,16 @@ Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
 	silent_file["db"]->fill_pose(pose);
 	silent_file["db"]->energies_into_pose(pose);
 
-	// I can't get the silent file machinery to set the "total score" of the 
-	// pose, so I'm setting it manually.  I borrowed these two lines from the 
-	// ScoreFunction class, but this is fragile.  I also wouldn't be surprised if 
+	// I can't get the silent file machinery to set the "total score" of the
+	// pose, so I'm setting it manually.  I borrowed these two lines from the
+	// ScoreFunction class, but this is fragile.  I also wouldn't be surprised if
 	// the silent file machinery left the pose incomplete in other ways, too.
-	
+
 	Real score = silent_file["db"]->get_energy("score");
 	pose.energies().total_energy() = score;
 	pose.energies().total_energies()[core::scoring::total_score] = score;
 
-	if (not select_result.empty()) {
+	if (! select_result.empty()) {
 		stringstream error_message;
 		error_message << "More than one pose found with job id '" << job_id_;
 		error_message << "' and iteration '" << iteration << "'.";

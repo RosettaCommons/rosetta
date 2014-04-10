@@ -25,6 +25,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
+#include <core/types.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -673,8 +674,8 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
-			if ((nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) && 
-				abs(*itr2 - *itr) > abs(rosetta_scripts_min_loop_) && 
+			if ((nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) &&
+				abs( core::SSize(*itr2 - *itr) )  > abs( core::SSize(rosetta_scripts_min_loop_) ) &&
 				(*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart) {
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
@@ -696,16 +697,16 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 								TR << "match_rt " << match_rt << std::endl;
 								std::pair< Size, Size > temp_pair;
 								std::pair< Size, Size > alt_pair;
-								
+
 								temp_pair = std::make_pair( *itr, *itr2 );
 								alt_pair = std::make_pair( *itr2, *itr );
-								
+
 								if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
 									std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
-									disulf_partners.push_back( temp_pair );									
+									disulf_partners.push_back( temp_pair );
 								}
 
-									
+
 
 
 								pass = 1;
@@ -714,13 +715,13 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 									TR << "DISULF \tIncluding pre-existing disulfide despite failed match_rt_limit check." << std::endl;
 									std::pair< Size, Size > temp_pair;
 									std::pair< Size, Size > alt_pair;
-									
+
 									temp_pair = std::make_pair( *itr, *itr2 );
 									alt_pair = std::make_pair( *itr2, *itr );
-									
+
 									if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
 										std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
-										disulf_partners.push_back( temp_pair );									
+										disulf_partners.push_back( temp_pair );
 									}
 								} else {
 									TR << "DISULF \tFailed match_rt_limit check." << std::endl;

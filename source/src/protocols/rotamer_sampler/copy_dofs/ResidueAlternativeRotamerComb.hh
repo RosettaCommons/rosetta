@@ -21,7 +21,18 @@
 #include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamer.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
+#ifdef WIN32
+	#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamer.hh>
+#endif
+
+
+/*
 using namespace core::conformation;
+
+Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
+by our coding convention due to problems it create on modern compilers and because of the name clashing.
+For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
+*/
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -39,11 +50,11 @@ namespace copy_dofs {
 
 	public:
 
-		Residue const &
+		core::conformation::Residue const &
 		get_residue_at_origin( Size const seqpos );
 
-		Residue const &
-		get_residue_at_origin_with_matching_type( Size const seqpos, Residue const & rsd_in );
+		core::conformation::Residue const &
+		get_residue_at_origin_with_matching_type( Size const seqpos, core::conformation::Residue const & rsd_in );
 
 		void
 		add_residue_alternative_rotamer( ResidueAlternativeRotamerOP const & rotamer );

@@ -60,6 +60,7 @@
 #include <basic/Tracer.hh>
 
 using namespace core;
+using namespace core::pose;
 using utility::tools::make_vector1;
 
 static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_VirtualSugarSampler" );
@@ -812,4 +813,3 @@ StepWiseRNA_VirtualSugarSampler::fast_full_atom_VDW_repulsion_screen( core::pose
 } //sampling
 } //stepwise
 } //protocols
-

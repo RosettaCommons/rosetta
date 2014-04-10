@@ -41,6 +41,15 @@
 ///  standard - build in C++ random generator
 ///  ran3 - old generator from previos version of rosetta
 
+#if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
+	#undef min
+#endif
+
+#if (defined max) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define max
+	#undef max
+#endif
+
+
 namespace numeric {
 namespace random {
 

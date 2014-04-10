@@ -22,7 +22,17 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-using namespace core;
+#include <utility/tag/Tag.fwd.hh>
+
+#ifdef WIN32
+	#include <utility/tag/Tag.hh>
+#endif
+
+
+// using namespace core;
+// Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
+// by our coding convention due to problems it create on modern compilers and because of the name clashing.
+// For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
 
 namespace protocols {
 namespace stepwise {
@@ -109,8 +119,8 @@ namespace rna {
 		bool const & minimizer_allow_variable_bond_geometry() const { return minimizer_allow_variable_bond_geometry_; }
 		void set_minimizer_allow_variable_bond_geometry( bool const & setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
 
-		Real const & minimizer_vary_bond_geometry_frequency() const { return minimizer_vary_bond_geometry_frequency_; }
-		void set_minimizer_vary_bond_geometry_frequency( Real const & setting ){ minimizer_vary_bond_geometry_frequency_ = setting; }
+		core::Real const & minimizer_vary_bond_geometry_frequency() const { return minimizer_vary_bond_geometry_frequency_; }
+		void set_minimizer_vary_bond_geometry_frequency( core::Real const & setting ){ minimizer_vary_bond_geometry_frequency_ = setting; }
 
 		core::Real const & switch_focus_frequency() const { return switch_focus_frequency_; }
 		void set_switch_focus_frequency( core::Real const & setting ){ switch_focus_frequency_ = setting; }
@@ -121,23 +131,23 @@ namespace rna {
 		core::Real const & temperature() const { return temperature_; }
 		void set_temperature(  core::Real const & setting ){ temperature_ = setting; }
 
-		utility::vector1< Size > const & sample_res() const { return sample_res_; }
-		void set_sample_res(  utility::vector1< Size > const & setting ){  sample_res_ = setting; }
+		utility::vector1< core::Size > const & sample_res() const { return sample_res_; }
+		void set_sample_res(  utility::vector1< core::Size > const & setting ){  sample_res_ = setting; }
 
-		utility::vector1< Size > const & bulge_res() const { return bulge_res_; }
-		void set_bulge_res( utility::vector1< Size > const & setting ){ bulge_res_ = setting; }
+		utility::vector1< core::Size > const & bulge_res() const { return bulge_res_; }
+		void set_bulge_res( utility::vector1< core::Size > const & setting ){ bulge_res_ = setting; }
 
-		Real const & max_missing_weight() const { return max_missing_weight_; }
-		void set_max_missing_weight( Real const & setting ){ max_missing_weight_ = setting; }
+		core::Real const & max_missing_weight() const { return max_missing_weight_; }
+		void set_max_missing_weight( core::Real const & setting ){ max_missing_weight_ = setting; }
 
-		Real const & chainbreak_weight() const { return chainbreak_weight_; }
-		void set_chainbreak_weight(  Real const & setting ){ chainbreak_weight_ = setting; }
+		core::Real const & chainbreak_weight() const { return chainbreak_weight_; }
+		void set_chainbreak_weight(  core::Real const & setting ){ chainbreak_weight_ = setting; }
 
 		bool const & allow_skip_bulge() const { return allow_skip_bulge_; }
 		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
 
-		Real const & from_scratch_frequency() const { return from_scratch_frequency_; }
-		void set_from_scratch_frequency( Real const & setting ){ from_scratch_frequency_ = setting; }
+		core::Real const & from_scratch_frequency() const { return from_scratch_frequency_; }
+		void set_from_scratch_frequency( core::Real const & setting ){ from_scratch_frequency_ = setting; }
 
 		bool const & allow_split_off() const { return allow_split_off_; }
 		void set_allow_split_off( bool const & setting ){ allow_split_off_ = setting; }
@@ -197,16 +207,16 @@ namespace rna {
 		core::Real intermolecular_frequency_;
 		core::Real minimize_single_res_frequency_;
 		bool minimizer_allow_variable_bond_geometry_;
-		Real minimizer_vary_bond_geometry_frequency_;
+		core::Real minimizer_vary_bond_geometry_frequency_;
 		core::Real switch_focus_frequency_;
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;
-		utility::vector1< Size > sample_res_;
-		utility::vector1< Size > bulge_res_; // disallow addition of these.
-		Real max_missing_weight_;
-		Real chainbreak_weight_;
+		utility::vector1< core::Size > sample_res_;
+		utility::vector1< core::Size > bulge_res_; // disallow addition of these.
+		core::Real max_missing_weight_;
+		core::Real chainbreak_weight_;
 		bool allow_skip_bulge_;
-		Real from_scratch_frequency_;
+		core::Real from_scratch_frequency_;
 		bool allow_split_off_;
 		bool virtual_sugar_keep_base_fixed_;
 		bool virtual_sugar_do_minimize_;

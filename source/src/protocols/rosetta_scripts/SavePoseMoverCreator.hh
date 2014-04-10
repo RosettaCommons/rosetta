@@ -16,6 +16,8 @@
 
 #include <protocols/moves/MoverCreator.hh>
 
+#include <string>
+
 namespace protocols {
 namespace rosetta_scripts {
 
@@ -30,4 +32,3 @@ public:
 }
 
 #endif
-

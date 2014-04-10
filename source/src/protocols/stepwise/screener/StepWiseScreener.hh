@@ -24,6 +24,13 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <string>
 
+
+#ifdef WIN32
+	#include <protocols/rotamer_sampler/RotamerBase.hh>
+	#include <protocols/moves/CompositionMover.hh>
+#endif
+
+
 namespace protocols {
 namespace stepwise {
 namespace screener {

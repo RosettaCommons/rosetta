@@ -384,7 +384,7 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 				str_p("-->");
 
 			tag
-				= leaf_tag[ bind(set_name_and_options)(tag.value,arg1) ]
+				= leaf_tag[ phoenix::bind(set_name_and_options)(tag.value,arg1) ]
 				| branch_tag[ tag.value = arg1 ];
 
 
@@ -393,15 +393,15 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 				name_and_options[ leaf_tag.value = arg1 ] >>
 				ch_p('/') >> *space_p >> ch_p('>');
 
-			name_and_options = name[ bind( &name_and_options_value_type::first )( name_and_options.value ) = arg1 ] >> *space_p >> options[ bind( &name_and_options_value_type::second)(name_and_options.value) = arg1 ] >> *space_p;
+			name_and_options = name[ phoenix::bind( &name_and_options_value_type::first )( name_and_options.value ) = arg1 ] >> *space_p >> options[ phoenix::bind( &name_and_options_value_type::second)(name_and_options.value) = arg1 ] >> *space_p;
 
 			name = (+(alnum_p | ch_p('_') | ch_p(':') | ch_p('-') | ch_p('.') | ch_p('*') | ch_p(',') ))[ name.value = construct_<string>(arg1,arg2) ];
 
 			typedef pair< options_value_type::iterator,bool> (options_value_type::*insert_t)( pair<const string,string> const&);
 			insert_t ins = &options_value_type::insert;
-			options = *option[bind( ins )( options.value, arg1 ) ]; // without the typedef, C++ can't figure out the type of &::insert since it is templatized
+			options = *option[ phoenix::bind( ins )( options.value, arg1 ) ]; // without the typedef, C++ can't figure out the type of &::insert since it is templatized
 
-			option  = name[ bind( &option_value_type::first)(option.value) = arg1 ] >> *space_p >> ch_p('=') >> *space_p >> name_or_quote[ bind( &option_value_type::second)(option.value) = arg1 ] >> *space_p;
+			option  = name[ phoenix::bind( &option_value_type::first)(option.value) = arg1 ] >> *space_p >> ch_p('=') >> *space_p >> name_or_quote[ phoenix::bind( &option_value_type::second)(option.value) = arg1 ] >> *space_p;
 
 			name_or_quote = name[name_or_quote.value = arg1 ] | quote[name_or_quote.value = arg1 ];
 
@@ -409,9 +409,9 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 
 
 			branch_tag =
-				open_tag[ bind(set_name_and_options)(branch_tag.value,arg1) ] >>
-				*( tag[ bind(add_tag)(branch_tag.value,arg1) ] | misc ) >>
-				close_tag[ bind(assert_matching_tag_names)(branch_tag.value,arg1) ];
+				open_tag[ phoenix::bind(set_name_and_options)(branch_tag.value,arg1) ] >>
+				*( tag[ phoenix::bind(add_tag)(branch_tag.value,arg1) ] | misc ) >>
+				close_tag[ phoenix::bind(assert_matching_tag_names)(branch_tag.value,arg1) ];
 
 			open_tag =
 				ch_p('<') >> *space_p >>

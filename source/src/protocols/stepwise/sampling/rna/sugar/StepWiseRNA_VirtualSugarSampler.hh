@@ -30,8 +30,14 @@
 #include <utility/vector1.hh>
 #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
 
+/*
+Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
+by our coding convention due to problems it create on modern compilers and because of the name clashing.
+For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
+
 using namespace core;
 using namespace core::pose;
+*/
 
 namespace protocols {
 namespace stepwise {
@@ -50,11 +56,10 @@ namespace sugar {
 		//destructor
 		~StepWiseRNA_VirtualSugarSampler();
 
-		virtual void apply( Pose & pose_to_visualize );
+		virtual void apply( core::pose::Pose & pose_to_visualize );
 
 		virtual void
-		apply( utility::vector1< pose::PoseOP > & pose_list,
-					 Pose & pose_to_visualize );
+		apply( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose_to_visualize );
 
 		virtual std::string get_name() const;
 
@@ -79,62 +84,57 @@ namespace sugar {
 	private:
 
 		void
-		setup_sugar_conformations( utility::vector1< PoseOP > & pose_list, pose::Pose & pose );
+		setup_sugar_conformations( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose );
 
 		void
-		minimize_sugar( pose::Pose & pose_with_sugar );
+		minimize_sugar( core::pose::Pose & pose_with_sugar );
 
 		void
-		get_sugar_setup_scorefxns( scoring::ScoreFunctionOP & sugar_scorefxn, scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const;
+		get_sugar_setup_scorefxns( core::scoring::ScoreFunctionOP & sugar_scorefxn, core::scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, core::scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const;
 
 		void
-		do_chain_closure_sampling( utility::vector1< PoseOP > & pose_list,
-															 pose::Pose & viewer_pose );
+		do_chain_closure_sampling( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		void
-		initialize_pose_variants_for_chain_closure( utility::vector1< pose::PoseOP > & pose_list );
+		initialize_pose_variants_for_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
 
 		void
-		restore_pose_variants_after_chain_closure( utility::vector1< pose::PoseOP > & pose_list );
+		restore_pose_variants_after_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
 
 		void
-		bulge_chain_closure( utility::vector1< PoseOP > & pose_list,
-																 pose::Pose & viewer_pose );
+		bulge_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		void
-		bulge_chain_closure_complete( utility::vector1< PoseOP > & pose_list,
-																					pose::Pose & viewer_pose );
+		bulge_chain_closure_complete( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		void
-		bulge_chain_closure_legacy( utility::vector1< PoseOP > & pose_list,
-																				pose::Pose & viewer_pose );
+		bulge_chain_closure_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		void
-		bulge_chain_minimize_legacy( utility::vector1< PoseOP > & pose_list,
-																 Pose & viewer_pose );
+		bulge_chain_minimize_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		bool
 		fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const is_prepend );
 
 		void
-		setup_VDW_bin_checker( pose::Pose const & input_pose );
+		setup_VDW_bin_checker( core::pose::Pose const & input_pose );
 
 		void
-		virtualize_distal_partition( pose::Pose & input_pose );
+		virtualize_distal_partition( core::pose::Pose & input_pose );
 
 		void
-		reinstantiate_distal_partition( utility::vector1< PoseOP > & final_pose_list );
+		reinstantiate_distal_partition( utility::vector1< core::pose::PoseOP > & final_pose_list );
 
 		void
-		reinstantiate_distal_partition( pose::Pose & current_pose );
+		reinstantiate_distal_partition( core::pose::Pose & current_pose );
 
 		void
-		reinstate_original_constraints( utility::vector1< pose::PoseOP >  & pose_list );
+		reinstate_original_constraints( utility::vector1< core::pose::PoseOP >  & pose_list );
 
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_;
-		SugarModeling & sugar_modeling_; // trick -- inputs some modeling info, and holds pose_list as output.
+		SugarModeling & sugar_modeling_; // trick -- inputs some modeling info, and holds poses_list as output.
 		std::string tag_;
 		bool use_phenix_geo_;
 		bool keep_base_fixed_;
@@ -148,13 +148,13 @@ namespace sugar {
 		Size const max_tries_for_random_overall_;
 		Size const max_tries_for_random_sugar_setup_;
 		bool sugar_setup_success_;
-		scoring::ScoreFunctionOP scorefxn_;
+		core::scoring::ScoreFunctionOP scorefxn_;
 		checker::RNA_VDW_BinCheckerOP VDW_bin_checker_;
 
 		utility::vector1 < core::Size > distal_partition_pos_;
 		utility::vector1 < core::Size > already_virtualized_res_list_;
 		bool moving_phosphate_virtualized_;
-		PoseOP pose_with_original_terminal_phosphates_;
+		core::pose::PoseOP pose_with_original_terminal_phosphates_;
 
  		core::scoring::constraints::ConstraintSetOP original_constraint_set_;
 

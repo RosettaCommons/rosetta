@@ -198,7 +198,7 @@ void PClusterSet::clear(){
 	clusters_.clear();
 }
 
-std::_List_iterator<protocols::pockets::PCluster> PClusterSet::add(core::Size x, core::Size y, core::Size z, core::Real step){
+std::list<protocols::pockets::PCluster>::iterator PClusterSet::add(core::Size x, core::Size y, core::Size z, core::Real step){
 	PCluster tmp(x,y,z, step);
 	clusters_.push_front(tmp);
 	return clusters_.begin();
@@ -356,7 +356,7 @@ core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Re
 		clusters_.clear();
 	}
 
-	std::_List_iterator<protocols::pockets::CCluster> CClusterSet::add(core::Size x, core::Size y, core::Size z, std::string aname, core::Real step, core::Real absX, core::Real absY, core::Real absZ){
+	std::list<protocols::pockets::CCluster>::iterator CClusterSet::add(core::Size x, core::Size y, core::Size z, std::string aname, core::Real step, core::Real absX, core::Real absY, core::Real absZ){
 		CCluster tmp(x,y,z, aname, step, absX, absY, absZ);
 		clusters_.push_front(tmp);
 		return clusters_.begin();

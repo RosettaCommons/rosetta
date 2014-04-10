@@ -21,6 +21,10 @@
 #include <protocols/simple_moves/CopyDofMover.fwd.hh>
 #include <core/pose/Pose.hh>
 
+#ifdef WIN32
+	#include <protocols/simple_moves/CopyDofMover.hh>
+#endif
+
 namespace protocols {
 namespace rotamer_sampler {
 namespace copy_dofs {
