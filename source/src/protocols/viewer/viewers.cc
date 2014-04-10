@@ -541,8 +541,10 @@ viewer_main( VoidFunc worker_main )
 
 	// start glut
 	int argc(1);
-//  char * argv[] = NULL; //{"test"};
-	glutInit( &argc, NULL );
+	char **argv = new char*[1];
+	argv[0] = new char[1];
+	argv[0][0] = ' ';
+	glutInit( &argc, argv );
 
 	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
 
