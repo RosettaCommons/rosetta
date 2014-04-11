@@ -1048,7 +1048,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 
 						if (!ss_only_ || pose.secstruct(i)!='L') {
 							doff = sqrt(d2) - interfacedist_;
-							sig = 1 / ( 1 + exp ( -interface_sigwidth*doff ) );  
+							sig = 1 / ( 1 + exp ( -interface_sigwidth*doff ) );
 							rho_cb(x,y,z) *= sig;
 						}
 					}
@@ -1966,6 +1966,12 @@ CrystDock::apply( Pose & pose) {
 			if (debug_) writeMRC( r_rho_ca, "clash.mrc" );
 			continue; // next rotation
 		}
+
+		Real sum_interface_p1 = 0;
+		for (int i=1; i<=p1_interface_map.size(); ++i) {
+			sum_interface_p1 += p1_interface_map[i].cb_overlap_;
+		}
+		sum_interface_area = sum_interface_p1;
 
 		// P1 interactions are OK, now compute the rest
 		FArray3D<Real> collision_map, ex_collision_map;
