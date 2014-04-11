@@ -2141,11 +2141,11 @@ try {
 	NEW_OPT(crystdock::debug, "[debug] dump intermediate info", false);
 	NEW_OPT(crystdock::debug_exact, "[debug] debug mode with exact (non-FFT) calculations (slow!)", false);
 	NEW_OPT(crystdock::eval_native, "[debug] evaluate input structure without docking", false);
-	NEW_OPT(crystdock::n_clashdist, "n_clashdist", 1.75);
+	NEW_OPT(crystdock::n_clashdist, "n_clashdist", 1.40);
     NEW_OPT(crystdock::ca_clashdist, "ca_clashdist", 2.00);
     NEW_OPT(crystdock::c_clashdist, "c_clashdist", 2.00);
-    NEW_OPT(crystdock::o_clashdist, "o_clashdist", 1.55);
-    NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.70);
+    NEW_OPT(crystdock::o_clashdist, "o_clashdist", 1.30);
+    NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.50);
     NEW_OPT(crystdock::sigwidth, "sigwidth", 6.00);
     NEW_OPT(crystdock::interfacedist, "interfacedistance", 4.00);
     NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 6.00);
