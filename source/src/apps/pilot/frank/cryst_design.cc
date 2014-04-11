@@ -110,6 +110,7 @@ OPT_1GRP_KEY(Real, crystdock, o_clashdist)
 OPT_1GRP_KEY(Real, crystdock, cb_clashdist)
 OPT_1GRP_KEY(Real, crystdock, sigwidth)
 OPT_1GRP_KEY(Real, crystdock, interfacedist)
+OPT_1GRP_KEY(Real, crystdock, interface_sigwidth)
 
 ////////////////////////////////////////////////
 // helper functions
@@ -607,11 +608,11 @@ public:
 
 	void init( std::string name_in ) {
  		name_ = name_in;
-
+		TR << " Input Spacegroup: " << name_<< std::endl;
 		// setting
 		if ( name_ == "P1" )
 			setting_ = TRICLINIC;
-		else if ( (name_ == "P2") ||  (name_ == "P21") ||  (name_ == "C2") )
+		else if ( (name_ == "P2") ||  (name_ == "P121") ||  (name_ == "P21") || (name_ == "P1211") ||  (name_ == "C2") ||(name_ == "C121"))
 			setting_ = MONOCLINIC;
 		else if ( (name_ == "P23") ||  (name_ == "F23") ||  (name_ == "I23") ||
 			      (name_ == "P213") ||  (name_ == "I213") ||  (name_ == "P432") ||
@@ -946,6 +947,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 	Real ATOM_MASK_PADDING = 2.0;
 	Real UNIT_CELL_PADDING = 6.0;  // IN GRID POINTS!
 	Real sigwidth=option[crystdock::sigwidth];
+	Real interface_sigwidth=option[crystdock::interface_sigwidth];
 	Size minmult = sg_.minmult();
 
 	// find true grid
@@ -1046,7 +1048,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 
 						if (!ss_only_ || pose.secstruct(i)!='L') {
 							doff = sqrt(d2) - interfacedist_;
-							sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' gives sigmoid dropoff
+							sig = 1 / ( 1 + exp ( -interface_sigwidth*doff ) );  
 							rho_cb(x,y,z) *= sig;
 						}
 					}
@@ -1808,7 +1810,17 @@ CrystDock::get_clash_score_exact(
 	Real retval = 0;
 	for (int i=0; i<(int)Npoints; ++i)
 		retval += shift_rho_ca[i] * s_shift_rho_ca[i];
-	return retval;
+
+//  Use it to dump maps
+
+// 	static int dump_count=0;
+// 	std::ostringstream oss; oss << "symmmap" << dump_count << ".mrc";
+// 	writeMRC( s_shift_rho_ca, oss.str() );
+//
+// 	std::ostringstream oss2; oss2 << "map" << dump_count << ".mrc";
+// 	writeMRC( shift_rho_ca, oss2.str() );
+// 	dump_count++;
+ 	return retval;
 }
 
 
@@ -2136,6 +2148,7 @@ try {
     NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.70);
     NEW_OPT(crystdock::sigwidth, "sigwidth", 6.00);
     NEW_OPT(crystdock::interfacedist, "interfacedistance", 4.00);
+    NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 6.00);
 
 
 	devel::init( argc, argv );
