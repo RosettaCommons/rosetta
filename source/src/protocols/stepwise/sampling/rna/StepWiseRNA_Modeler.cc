@@ -99,14 +99,13 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	num_sampled_ = src.num_sampled_;
 	native_pose_ = src.native_pose_;
 	moving_res_ = src.moving_res_;
-	fixed_res_ = src.fixed_res_;
-	minimize_res_ = src.minimize_res_;
+	working_fixed_res_ = src.working_fixed_res_;
+	working_minimize_res_ = src.working_minimize_res_;
 	terminal_res_ = src.terminal_res_;
 	scorefxn_ = src.scorefxn_;
 	options_ = src.options_;
 	stepwise_rna_minimizer_ = src.stepwise_rna_minimizer_;
 	minimize_move_map_ = src.minimize_move_map_;
-	minimizer_extra_minimize_res_ = src.minimizer_extra_minimize_res_;
 	syn_chi_res_list_ = src.syn_chi_res_list_;
 
 	return *this;
@@ -130,10 +129,6 @@ void
 StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 
 	using namespace core::pose;
-	using namespace core::chemical;
-	using namespace core::kinematics;
-	using namespace core::scoring;
-	using namespace protocols::stepwise::sampling::rna;
 
 	initialize_job_parameters_and_root( pose );
 
@@ -225,7 +220,7 @@ StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP 
 		stepwise_rna_minimizer_->set_move_map( minimize_move_map_ );
 		stepwise_rna_minimizer_->set_allow_insert( allow_insert_ );
 	}
-	stepwise_rna_minimizer_->set_extra_minimize_res( minimizer_extra_minimize_res_ );
+	stepwise_rna_minimizer_->set_extra_minimize_res( const_full_model_info( pose ).extra_minimize_res() );
 
 	stepwise_rna_minimizer_->apply ( pose );
 
@@ -243,9 +238,9 @@ StepWiseRNA_Modeler::setup_job_parameters_for_stepwise_with_full_model_info( cor
 	StepWiseRNA_JobParametersOP job_parameters;
 	job_parameters = setup_job_parameters_for_swa( moving_res_, pose,
 																								 get_native_pose(),
-																								 rmsd_res_list_, terminal_res_,
-																								 syn_chi_res_list_, minimizer_extra_minimize_res_,
-																								 fixed_res_, minimize_res_,
+																								 calc_rms_res_, terminal_res_,
+																								 syn_chi_res_list_, const_full_model_info( pose ).extra_minimize_res(),
+																								 working_fixed_res_, working_minimize_res_,
 																								 allow_insert_, minimize_move_map_ );
 	return job_parameters;
 }
@@ -253,15 +248,6 @@ StepWiseRNA_Modeler::setup_job_parameters_for_stepwise_with_full_model_info( cor
 ///////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Modeler::set_job_parameters( StepWiseRNA_JobParametersCOP job_parameters ){ job_parameters_ = job_parameters;	}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-StepWiseRNA_Modeler::set_native_pose( core::pose::PoseCOP native_pose ){ native_pose_ = native_pose; }
-
-///////////////////////////////////////////////////////////////////////////////
-core::pose::PoseCOP
-StepWiseRNA_Modeler::get_native_pose(){ return native_pose_; }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -281,16 +267,6 @@ StepWiseRNA_Modeler::add_to_pose_list( utility::vector1< core::pose::PoseOP > & 
 	pose_list.push_back( pose_op );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// may be deprecated soon...
-void
-StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters ){
-	utility::vector1< Size > root_partition_res, moving_partition_res;
-	figure_out_root_partition_res( pose, job_parameters,
-																 root_partition_res, moving_partition_res );
-	reroot_based_on_full_model_info( pose, root_partition_res );
-
-}
 
 /////////////////////////////////////////////////////
 StepWiseRNA_ModelerOptionsCOP

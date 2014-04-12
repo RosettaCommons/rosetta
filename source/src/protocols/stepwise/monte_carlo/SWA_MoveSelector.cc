@@ -51,7 +51,8 @@ namespace monte_carlo {
 		from_scratch_frequency_( 0.0 ),
 		intermolecular_frequency_( 0.0 ),
 		only_dock_preexisting_chunks_( false ),
-		allow_shared_chains_in_dock_poses_( false )
+		allow_shared_chains_in_dock_poses_( false ),
+		resampling_( false )
 	{}
 
 	//Destructor
@@ -85,7 +86,7 @@ namespace monte_carlo {
 		if ( swa_moves.size() == 0  ) get_from_scratch_add_and_delete_elements( pose, swa_moves, sample_res ); // docking
 		if ( swa_moves.size() == 0  ) get_intermolecular_add_and_delete_elements( pose, swa_moves, sample_res ); // folding
 
-		for ( Size n = 1; n <= swa_moves.size(); n++ )	TR.Debug << swa_moves[ n ] << std::endl;
+		for ( Size n = 1; n <= swa_moves.size(); n++ )	TR.Debug << TR.Green << swa_moves[ n ] << TR.Reset << std::endl;
 
 		if ( swa_moves.size() == 0 ){
 			swa_move = SWA_Move();
@@ -109,6 +110,7 @@ namespace monte_carlo {
 	void
 	SWA_MoveSelector::get_resample_move_elements( pose::Pose const & pose,
 																								utility::vector1< SWA_Move > & swa_moves ) {
+		resampling_ = true;
 		if ( allow_internal_hinge_ ){
 			get_resample_internal_move_elements( pose, swa_moves );
 		} else {
@@ -120,6 +122,7 @@ namespace monte_carlo {
 		if ( allow_internal_local_ ){
 			get_resample_internal_local_move_elements( pose, swa_moves );
 		}
+		resampling_ = false;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,6 +369,7 @@ namespace monte_carlo {
 	bool
 	SWA_MoveSelector::check_for_fixed_domain_or_from_scratch(  pose::Pose const & pose,
 																														 utility::vector1< Size> const & partition_res ) const {
+		if ( resampling_ ) return true;
 		if ( from_scratch_frequency_ > 0.0 ) return true;
 		return check_for_fixed_domain( pose, partition_res );
 	}
@@ -583,10 +587,17 @@ namespace monte_carlo {
 
 			SWA_Move const & swa_move = swa_moves[ i ];
 
-			if ( swa_move.move_type() == ADD ){
-				if ( ! sample_res.has_value( swa_move.moving_res() ) ) continue;
+			if ( swa_move.move_type() == ADD || swa_move.move_type() == FROM_SCRATCH ){
+				MoveElement add_element = swa_move.move_element();
+				bool in_sample_res( true );
+				for ( Size n = 1; n <= add_element.size(); n++ ){
+					if ( !sample_res.has_value( add_element[ n ] ) ) {
+						in_sample_res = false;
+						break;
+					}
+				}
+				if ( !in_sample_res ) continue;
 			}
-
 			swa_moves_filtered.push_back( swa_move );
 		}
 

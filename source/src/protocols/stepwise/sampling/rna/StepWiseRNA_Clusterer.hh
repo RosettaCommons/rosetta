@@ -43,16 +43,15 @@ namespace rna {
 	class SlicedPoseJobParameters: public utility::pointer::ReferenceCount{
 
 		public:
-	
+
 			 SlicedPoseJobParameters():
-				verbose_( true ),
 				is_setup_( false )
 			{
 			}
 
 			virtual ~SlicedPoseJobParameters(); // auto-removing definition from header{};
 
-			void 
+			void
 			setup( protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersCOP & job_parameters );
 
 			core::pose::Pose
@@ -60,19 +59,15 @@ namespace rna {
 
 		public:
 			utility::vector1< core::Size > sliced_pose_best_alignment; //check
-			utility::vector1 < core::Size > sliced_pose_rmsd_res_list; 
+			utility::vector1 < core::Size > sliced_pose_calc_rms_res;
 			std::map< core::Size, core::Size > sliced_pose_full_to_sub;
 			std::map< core::Size, bool > sliced_pose_is_prepend_map;
-			
-
-
 
  	 	private:
 			utility::vector1< bool > is_sliced_res_;
-			utility::vector1 < core::Size > working_to_sliced_res_map_; 
-			utility::vector1 < core::Size > sliced_to_working_res_map_; 
+			utility::vector1 < core::Size > working_to_sliced_res_map_;
+			utility::vector1 < core::Size > sliced_to_working_res_map_;
 			utility::vector1< std::pair < core::Size, core::Size > > delete_res_range_list_;
-			bool verbose_;
 			bool is_setup_;
 
 	};
@@ -118,7 +113,7 @@ namespace rna {
 
     /// @brief Filter a list of poses by score.
 
-		
+
 		void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
 
 		void set_score_diff_cut( core::Real const & setting ){ score_diff_cut_ = setting; }
@@ -144,7 +139,7 @@ namespace rna {
 		void set_quick_alignment( bool const & setting ){ quick_alignment_ = setting; }
 
 		void set_align_only_over_base_atoms( bool const & setting ){ align_only_over_base_atoms_ = setting; }
-	
+
 		void set_optimize_memory_usage(  bool const & setting ){ optimize_memory_usage_ = setting; }
 
 		void set_keep_pose_in_memory(  bool const & setting ){ keep_pose_in_memory_ = setting; }
@@ -160,7 +155,7 @@ namespace rna {
 		output_silent_file( std::string const & silent_file );
 
 		void
-		recalculate_rmsd_and_output_silent_file( std::string const & silent_file, 
+		recalculate_rmsd_and_output_silent_file( std::string const & silent_file,
 				                                    protocols::stepwise::sampling::rna::legacy::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
 																					bool const write_score_only );
 
@@ -224,10 +219,10 @@ namespace rna {
 		create_large_cluster_centers_member_list();
 
 
-		bool 
-		is_old_individual_suite_cluster( core::pose::Pose const & current_pose, 
+		bool
+		is_old_individual_suite_cluster( core::pose::Pose const & current_pose,
                                     core::pose::Pose const & cluster_center_pose,
-                                    utility::vector1 < core::Size > const & rmsd_res_list,
+                                    utility::vector1 < core::Size > const & calc_rms_res,
 																	std::map< core::Size, core::Size > const & full_to_sub,
 																	std::map< core::Size, bool > const & is_prepend_map,
 																	core::Real const & cluster_radius ) const;
@@ -240,7 +235,7 @@ namespace rna {
 		setup_fail_triangle_inequailty_list( core::pose::Pose & current_pose, std::string const & tag, utility::vector1< bool > & fail_triangle_inequality_list );
 
 
-		bool 
+		bool
 		is_new_cluster_center_with_job_parameters( core::pose::PoseOP const & pose_op, std::string const & tag );
 
 		bool
@@ -254,7 +249,7 @@ namespace rna {
 		get_act_alignment_res()  const;
 
 		utility::vector1 < core::Size > const &
-		get_act_rmsd_res_list()	 const;
+		get_act_calc_rms_res()	 const;
 
 		std::map< core::Size, core::Size > const &
 		get_act_full_to_sub()	 const;

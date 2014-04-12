@@ -1260,6 +1260,7 @@ build_pose_as_is1(
 		// and if we're not checking it then it's a different chain from the previous
 		else if ( ( (is_lower_terminus && check_Ntermini_for_this_chain) || !same_chain_prev )
 						|| is_branch_lower_terminus ||
+							pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) ||
 						!new_rsd->is_polymer() ||
 						!pose.residue_type(old_nres).is_polymer() ||
 						!last_residue_was_recognized ) {

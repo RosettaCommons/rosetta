@@ -76,6 +76,9 @@ namespace full_model_info {
 	core::Size
 	sub_to_full( core::Size const i, core::pose::Pose const & pose );
 
+	utility::vector1< Size >
+	sub_to_full( utility::vector1< Size > const & res_list, core::pose::Pose const & pose );
+
 	core::Size
 	full_to_sub( core::Size const i, core::pose::Pose const & pose );
 

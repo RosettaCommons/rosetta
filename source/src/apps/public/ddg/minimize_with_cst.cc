@@ -97,7 +97,7 @@
 
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 
 //protocols
@@ -258,7 +258,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 		}
 
 		if(write_silent_file){
-			core::io::silent::BinaryProteinSilentStruct ss(p,(out_pdb_prefix+"."+output_tag+"_0001.pdb"));
+			core::io::silent::BinarySilentStruct ss(p,(out_pdb_prefix+"."+output_tag+"_0001.pdb"));
 			sfd.write_silent_struct(ss,silentfilename,false);
 		}else{
 			p.dump_pdb(output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb");

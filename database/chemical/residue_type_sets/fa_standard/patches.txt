@@ -1,5 +1,5 @@
 patches/CtermProteinFull.txt
-patches/Cterm_amidation.txt
+#patches/Cterm_amidation.txt
 patches/NtermProteinFull.txt
 patches/SpecialRotamer.txt
 patches/protein_cutpoint_upper.txt
@@ -9,9 +9,10 @@ patches/ShoveBB.txt
 patches/VirtualNterm.txt
 patches/RepulsiveOnly_fa.txt
 patches/VirtualProteinResidue.txt
+patches/VirtualProteinSideChain.txt
 
 ## uncomment this Brian
-patches/CtermConnect.txt
+#patches/CtermConnect.txt
 
 ##fpd
 #patches/CtermTruncation.txt
@@ -37,15 +38,17 @@ patches/nucleic/rna/rna_cutpoint_lower.txt
 patches/nucleic/rna/rna_cutpoint_upper.txt
 patches/nucleic/rna/Virtual_Phosphate.txt
 patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
-patches/nucleic/rna/BulgeRNA.txt
+#patches/nucleic/rna/BulgeRNA.txt
 patches/nucleic/rna/Virtual_RNA_Residue.txt
 patches/nucleic/rna/Virtual_RNA_Residue_Upper.txt
 patches/nucleic/rna/Virtual_Ribose.txt
 patches/nucleic/rna/Protonated_H1_Adenosine.txt
 patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
-patches/nucleic/rna/3prime_end_OH.txt
-patches/nucleic/rna/5prime_end_OH.txt
-patches/nucleic/rna/5prime_end_phosphate.txt
+#patches/nucleic/rna/3prime_end_OH.txt
+#patches/nucleic/rna/5prime_end_OH.txt
+#patches/nucleic/rna/5prime_end_phosphate.txt
+patches/nucleic/rna/5prime_phosphate.txt
+patches/nucleic/rna/3prime_phosphate.txt
 
 
 ## The following were added by Andy M. Chen in June 2009
@@ -70,6 +73,9 @@ patches/glu_carboxylated.txt
 ##  since the hydrogen to be removed isn't there. And since there is no variant code
 ##  added to HIS_D, I have no way of applying a patch to HIS without affecting HIS_D.
 ##  The added methyl group otherwise works fine.
+##
+## Note (from rhiju): I added a TAUTOMER property to HIS_D which would allow its exclusion by the path
+##  but I didn't implement yet on his_methylated.
 ##
 patches/cys_acetylated.txt
 patches/tyr_diiodinated.txt

@@ -36,6 +36,8 @@ namespace moves {
 
 	public:
 
+		using protocols::moves::Mover::apply;
+
 		virtual void apply( Pose & ) = 0;
 
 		// just apply to each member of the pose_list.

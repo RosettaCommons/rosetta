@@ -32,9 +32,11 @@ public:
 
 	GaussianChainFunc(
 			 Real const gaussian_variance,
+			 Real const loop_fixed_cost,
 			 utility::vector1< Real > const & other_distances );
 
-	GaussianChainFunc( Real const gaussian_variance );
+	GaussianChainFunc( Real const gaussian_variance,
+										 Real const loop_fixed_cost );
 
 	FuncOP
 	clone() const;
@@ -59,11 +61,11 @@ private:
 
 	// needed to define function.
 	Real gaussian_variance_;
+	Real loop_fixed_cost_;
 	utility::vector1< Real > other_distances_;
 
 	// following have nice default values.
 	Real kB_T_;
-	Real loop_fixed_cost_;
 	bool force_combined_gaussian_approximation_;
 
 	FuncOP func_;

@@ -691,10 +691,13 @@ rmsfitca2(
 
 	COMAS(xx,ww,npoints,XPC,YPC,ZPC);
 	COMAS(yy,ww,npoints,XEC,YEC,ZEC);
-
 	temp3 = 0.0;
 	for ( i = 1; i <= npoints; ++i ) {
 		temp3 += ww(i);
+		// this is outrageous, but there are cases (e.g. in a single-residue pose) where
+		// all the z's are at 0, and this makes the det zero.
+		xx(3,i) -= 1.0e-7;
+		yy(3,i) += 1.0e-7;
 	}
 
 //       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
@@ -707,7 +710,6 @@ rmsfitca2(
 			m_moment(k,j) = temp1    /(temp3); // rescale by temp3
 		}
 	}
-
 	det = det3(m_moment); // will get handedness  of frame from determinant
 
 	if ( std::abs(det) <= 1.0E-24 ) {

@@ -39,6 +39,7 @@ public:
 	void add_mover( MoverOP m );
 	void clear();
 
+	using Mover::apply;
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 

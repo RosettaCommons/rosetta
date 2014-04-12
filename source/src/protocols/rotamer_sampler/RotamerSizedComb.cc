@@ -16,6 +16,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 // Numeric Headers
@@ -34,7 +35,16 @@ RotamerSizedComb::RotamerSizedComb():
 	size_( 0 )
 {}
 
+RotamerSizedComb::RotamerSizedComb( RotamerSizedOP outer_loop_rotamer, RotamerSizedOP inner_loop_rotamer ):
+	size_( 0 ) //will be fixed on init()
+{
+	add_rotamer( inner_loop_rotamer );
+	add_rotamer( outer_loop_rotamer );
+	init();
+}
+
 RotamerSizedComb::~RotamerSizedComb(){}
+
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::init() {
 	runtime_assert( !rotamer_list_.empty() );
@@ -54,7 +64,6 @@ void RotamerSizedComb::init() {
 		if ( curr_size == 0 ) TR << "Got a null rotamer sampler!" << std::endl;
 	}
 	set_init( true );
-	reset();
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::reset() {
@@ -72,20 +81,12 @@ void RotamerSizedComb::reset() {
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::operator++() {
 	runtime_assert( not_end() );
-
 	if ( random() ) {
 		id_ = RG.random_range( 1, size() );
-		id_list_ = id2list( id_ );
 	} else {
 		++id_;
-		++id_list_[1];
-		for ( Size i = 1; i < id_list_.size(); ++i ) {
-			if ( id_list_[i] > size_list_[i] ) {
-				id_list_[i] = 1;
-				++id_list_[i+1];
-			}
-		}
 	}
+	id_list_ = id2list( id_ );
 	update_rotamer_ids();
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -96,15 +97,11 @@ void RotamerSizedComb::update_rotamer_ids() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::apply( Pose & pose ) {
-	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->apply( pose, id_list_[i] );
-	}
+	apply( pose, id_ );
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::apply( core::pose::Pose & pose, Size const id ) {
 	runtime_assert( is_init() );
-
 	utility::vector1<Size> new_id_list = id2list( id );
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		rotamer_list_[i]->apply( pose, new_id_list[i] );
@@ -114,7 +111,6 @@ void RotamerSizedComb::apply( core::pose::Pose & pose, Size const id ) {
 utility::vector1<Size>
 RotamerSizedComb::id2list( core::Size const id ) const {
 	runtime_assert( is_init() );
-	runtime_assert( id <= size() );
 
 	utility::vector1<Size> new_id_list ( id_list_.size(), 1 );
 

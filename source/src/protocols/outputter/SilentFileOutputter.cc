@@ -13,7 +13,7 @@
 
 // Unit Headers
 #include <protocols/outputter/SilentFileOutputter.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 
@@ -55,8 +55,8 @@ void SilentFileOutputter::write( Pose & p ) {
 	core::io::silent::SilentStructOP tmp;
 	// who knew ternary requires 2nd and 3rd to be the same type
 	if( binary_ ) {
-		tmp = new core::io::silent::BinaryProteinSilentStruct(); // changing from silent struct factory to binary silent struct - broke build on gcc 4.4 @ralford changed 3/21/14
-	} else { 
+		tmp = new core::io::silent::BinarySilentStruct();
+	} else {
 		tmp = new core::io::silent::ProteinSilentStruct();
 	}
 	tmp->fill_struct( p, tag );

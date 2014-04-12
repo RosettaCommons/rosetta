@@ -26,7 +26,7 @@
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -300,7 +300,7 @@ RigidBodySampler::~RigidBodySampler() {}
 
 		(*scorefxn_)( pose );
 
-		BinaryRNASilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
+		BinarySilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
 
 		if ( assign_WC_edges_ ) assign_WC_edges_to_base_pair12( pose, s );
 
@@ -382,7 +382,7 @@ RigidBodySampler::~RigidBodySampler() {}
 			count_total_++;
 			std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( count_total_, 6 );
 
-			BinaryRNASilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
+			BinarySilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
 			sfd_->add_structure( s );
 
 		}

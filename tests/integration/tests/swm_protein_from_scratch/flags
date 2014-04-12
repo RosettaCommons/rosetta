@@ -1,0 +1,6 @@
+-fasta 2jof.fasta 
+-native 2jof.pdb 
+-score:weights stepwise/protein/protein_res_level_energy.wts
+-silent swm_rebuild.out
+-cycles 5
+-nstruct 1

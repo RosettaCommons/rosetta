@@ -60,7 +60,7 @@ namespace phosphate {
 
 	//////////////////////////////
 	MultiPhosphateSamplerOP
-	MultiPhosphateSampler::clone() {
+	MultiPhosphateSampler::clone_sampler() const {
 		MultiPhosphateSamplerOP multi_phosphate_sampler = new MultiPhosphateSampler( *pose_with_original_phosphates_ );
 		multi_phosphate_sampler->set_screen_all( screen_all_ );
 		multi_phosphate_sampler->set_phosphate_move_list( phosphate_move_list_ );
@@ -249,6 +249,7 @@ namespace phosphate {
 	void
 	MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose, Size const moving_res ) {
 		PoseOP pose_to_split = pose.clone();
+		pose_to_split->remove_constraints(); // floating point errors if coordinate constraints are in there.
 		Size const jump_nr = split_pose( *pose_to_split, moving_res, pose.fold_tree().get_parent_residue( moving_res )  );
 
 		moving_partition_res_.clear(); // ensures that all phosphates will be packed!

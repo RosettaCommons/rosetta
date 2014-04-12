@@ -16,7 +16,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 	{
 		stringstream string_stream;
 		SilentFileData silent_file;
-		SilentStructOP silent_data = new BinaryProteinSilentStruct(pose, "db");
+		SilentStructOP silent_data = new BinarySilentStruct(pose, "db");
 		silent_file._write_silent_struct(*silent_data, string_stream);
 		silent_pose = string_stream.str();
 	}

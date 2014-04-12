@@ -82,6 +82,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	preserve_c_beta_( false ),
 	flip_HNQ_( false ),
 	fix_his_tautomer_( false ),
+	include_virtual_side_chain_( false ),
 	disabled_( false ),
 	design_disabled_( false ),
 	sample_proton_chi_( true ),
@@ -655,6 +656,18 @@ bool ResidueLevelTask_::fix_his_tautomer() const
 	return fix_his_tautomer_;
 }
 
+
+///@details this function samples a protein conformation with a virtualized side chain.
+void ResidueLevelTask_::or_include_virtual_side_chain( bool setting )
+{
+	include_virtual_side_chain_ |= setting;
+}
+
+bool ResidueLevelTask_::include_virtual_side_chain() const
+{
+	return include_virtual_side_chain_;
+}
+
 ///@details and operation -- min -- move only toward a lower cutoff for #neighbors w/i 10A that
 ///qualify a residue to be considered buried.
 void ResidueLevelTask_::and_extrachi_cutoff( Size num_neighbors_to_be_called_buried )
@@ -1131,6 +1144,7 @@ ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 	preserve_c_beta_             |= o.preserve_c_beta_;
 	flip_HNQ_                    |= o.flip_HNQ_;
 	fix_his_tautomer_            |= o.fix_his_tautomer_;
+	include_virtual_side_chain_  |= o.include_virtual_side_chain_;
 	sample_proton_chi_           |= o.sample_proton_chi_;
 	ex1_                         |= o.ex1_;
 	ex2_                         |= o.ex2_;
@@ -1222,6 +1236,7 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	preserve_c_beta_             &= o.preserve_c_beta_;
 	flip_HNQ_                    &= o.flip_HNQ_;
 	fix_his_tautomer_            &= o.fix_his_tautomer_;
+	include_virtual_side_chain_  &= o.include_virtual_side_chain_;
 	sample_proton_chi_           &= o.sample_proton_chi_;
 	ex1_                         &= o.ex1_;
 	ex2_                         &= o.ex2_;
@@ -1264,6 +1279,7 @@ ResidueLevelTask_::update_commutative(
 	preserve_c_beta_              |= o.preserve_c_beta_;
 	flip_HNQ_                     |= o.flip_HNQ_;
 	fix_his_tautomer_             |= o.fix_his_tautomer_;
+	include_virtual_side_chain_   |= o.include_virtual_side_chain_;
 	disabled_                     |= o.disabled_;
 	design_disabled_              |= o.design_disabled_;
 	sample_proton_chi_            = o.sample_proton_chi_; // <--- apparently sample_proton_chi is not commutatively assigned

@@ -16,12 +16,16 @@
 #include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
@@ -42,6 +46,73 @@ namespace core {
 namespace pose {
 namespace full_model_info {
 
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	// might be better to move these into core (e.g., core::pose::full_model_info ),
+	// or into a new protocols/full_model_setup/ directory.
+	core::pose::PoseOP
+	get_pdb_and_cleanup( std::string const input_file,
+											 core::chemical::ResidueTypeSetCAP rsd_set )
+	{
+		using namespace core::pose;
+		PoseOP input_pose = new Pose;
+		import_pose::pose_from_pdb( *input_pose, *rsd_set, input_file );
+		cleanup( *input_pose );
+		return input_pose;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	// currently have stuff we need for RNA... put any protein cleanup here too.
+	void
+	cleanup( pose::Pose & pose ){
+		rna::figure_out_reasonable_rna_fold_tree( pose );
+		rna::virtualize_5prime_phosphates( pose );
+		pose.conformation().detect_disulfides();
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	pose::PoseOP
+	initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set ){
+
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::silent;
+
+		utility::vector1< std::string > const & input_pdb_files    = option[ in::file::s ]();
+		utility::vector1< std::string > const & input_silent_files = option[ in::file::silent ]();
+
+		utility::vector1< pose::PoseOP > input_poses;
+		for ( Size n = 1; n <= input_pdb_files.size(); n++ ) {
+			input_poses.push_back( get_pdb_and_cleanup( input_pdb_files[ n ], rsd_set ) );
+		}
+		for ( Size n = 1; n <= input_silent_files.size(); n++ ) {
+			PoseOP pose = new Pose;
+			SilentFileData silent_file_data;
+			silent_file_data.read_file( input_silent_files[n] );
+			silent_file_data.begin()->fill_pose( *pose, *rsd_set );
+			input_poses.push_back( pose );
+		}
+
+		if ( input_poses.size() == 0 ) input_poses.push_back( new Pose ); // just a blank pose for now.
+
+		if ( option[ full_model::other_poses ].user() ) {
+			get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
+		}
+
+		fill_full_model_info_from_command_line( input_poses ); 	//FullModelInfo (minimal object needed for add/delete)
+		return input_poses[1];
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_other_poses( utility::vector1< pose::PoseOP > & other_poses,
+									 utility::vector1< std::string > const & other_files,
+									core::chemical::ResidueTypeSetCAP rsd_set ){
+
+		for ( Size n = 1; n <= other_files.size(); n++ ){
+			other_poses.push_back( get_pdb_and_cleanup( other_files[ n ], rsd_set ) );
+		}
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -87,7 +158,7 @@ namespace full_model_info {
 		using namespace basic::options::OptionKeys;
 
 		if ( !option[ in::file::fasta ].user() ){
-			for ( Size n = 1; n <= pose_pointers.size(); n++ ) nonconst_full_model_info( *pose_pointers[n] );
+			for ( Size n = 1; n <= pose_pointers.size(); n++ ) make_sure_full_model_info_is_setup( *pose_pointers[n] );
 			return;
 		}
 
@@ -95,13 +166,13 @@ namespace full_model_info {
 		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
 		std::string const desired_sequence = fasta_sequence->sequence();
 
-		FullModelInfoOP full_model_info =	new FullModelInfo( desired_sequence );
+		FullModelParametersOP full_model_parameters =	new FullModelParameters( desired_sequence );
 
-		vector1< Size > cutpoint_open_in_full_model;
-		if ( option[ full_model::cutpoint_open ].user()) cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
-
+		vector1< Size > cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
+		vector1< Size > extra_minimize_res = option[ full_model::extra_min_res ]();
 		vector1< Size > input_res_list = option[ in::file::input_res ]();
 		bool const get_res_list_from_pdb = !option[ in::file::input_res ].user();
+		vector1< Size > sample_res = option[ full_model::sample_res ](); //stuff that can be resampled.
 		vector1< vector1< Size > > pose_res_lists;
 		vector1< Size > domain_map( desired_sequence.size(), 0 );
 		Size input_res_count( 0 );
@@ -121,7 +192,7 @@ namespace full_model_info {
 				runtime_assert( input_res_count <= input_res_list.size() );
 				Size const & number_in_full_model = input_res_list[ input_res_count ];
 				input_res_for_pose.push_back( number_in_full_model );
-				domain_map[ number_in_full_model ] = n;
+				if ( !sample_res.has_value( number_in_full_model ) ) domain_map[ number_in_full_model ] = n;
 			}
 			pose_res_lists.push_back( input_res_for_pose );
 		}
@@ -133,31 +204,35 @@ namespace full_model_info {
 			Pose & pose = *pose_pointers[n];
 			vector1< Size > const & res_list = pose_res_lists[ n ];
 			for ( Size i = 1; i < pose.total_residue(); i++ ){
+				if ( (res_list[ i+1 ] > res_list[ i ] + 1) && !pose.fold_tree().is_cutpoint(i) ){
+					//					TR << "Adding jump between non-contiguous residues [in full model numbering]: " <<
+					//						res_list[i] << " and " << res_list[ i+1 ] << std::endl;
+					put_in_cutpoint( pose, i );
+				}
 				if ( cutpoint_open_in_full_model.has_value( res_list[ i ]) ) continue;
 				if ( (res_list[ i+1 ] == res_list[ i ] + 1) &&
 						 pose.fold_tree().is_cutpoint( i ) ){
 					TR << "There appears to be a strand boundary at " << res_list[ i ] << " so adding to cutpoint_in_full_model." << std::endl;
 					cutpoint_open_in_full_model.push_back( res_list[ i ] );
 				}
-				if ( (res_list[ i+1 ] > res_list[ i ] + 1) && !pose.fold_tree().is_cutpoint(i) ){
-					TR << "Adding jump between non-contiguous residues [in full model numbering]: " <<
-						res_list[i] << " and " << res_list[ i+1 ] << std::endl;
-					put_in_cutpoint( pose, i );
-				}
 			}
 			add_cutpoint_closed( pose, res_list, option[ full_model::cutpoint_closed ]()  );
 			update_pose_fold_tree( pose, res_list,
-														 option[ full_model::extra_min_res ](), option[ full_model::jump_res ](), option[ full_model::root_res ]() );
+														 extra_minimize_res, sample_res,
+														 option[ full_model::jump_res ](), option[ full_model::root_res ]() );
 			add_virtual_sugar_res( pose, res_list, option[ full_model::virtual_sugar_res ]() );
 		}
 
 
-		full_model_info->set_fixed_domain_map( domain_map );
-		full_model_info->set_cutpoint_open_in_full_model( cutpoint_open_in_full_model );
+		full_model_parameters->set_parameter( FIXED_DOMAIN,  domain_map );
+		full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
+		full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
+		full_model_parameters->set_parameter_as_res_list( SAMPLE, sample_res );
+		full_model_parameters->set_parameter_as_res_list( CALC_RMS, option[ full_model::calc_rms_res ]() );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
-			FullModelInfoOP full_model_info_for_pose = full_model_info->clone_info();
+			FullModelInfoOP full_model_info_for_pose = new FullModelInfo( full_model_parameters );
 			full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
 			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_for_pose );
 			update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
@@ -170,13 +245,16 @@ namespace full_model_info {
 	update_pose_fold_tree( pose::Pose & pose,
 												 vector1< Size > const & res_list,
 												 vector1< Size > const & extra_min_res,
+												 vector1< Size > const & sample_res,
 												 vector1< Size > const & jump_res,
 												 vector1< Size > const & root_res ){
 
 		if ( pose.total_residue() == 0 ) return;
 
 		vector1< vector1< Size > > all_res_in_chain, all_fixed_res_in_chain;
-		define_chains( pose, all_res_in_chain, all_fixed_res_in_chain, res_list, extra_min_res );
+		vector1< Size > moveable_res = sample_res;
+		for ( Size n = 1; n <= extra_min_res.size(); n++ ) moveable_res.push_back( extra_min_res[n] );
+		define_chains( pose, all_res_in_chain, all_fixed_res_in_chain, res_list, moveable_res );
 		Size nchains = all_res_in_chain.size();
 
 		vector1< Size > jump_partners1, jump_partners2, cuts, blank_vector;
@@ -189,7 +267,6 @@ namespace full_model_info {
 
 		setup_jumps( jump_partners1, jump_partners2, chain_connected, all_fixed_res_in_chain );
 		setup_jumps( jump_partners1, jump_partners2, chain_connected, all_res_in_chain );
-		TR << jump_partners1.size() << " " << jump_partners2.size() << " " << nchains << std::endl;
 		runtime_assert( jump_partners1.size() == (nchains - 1) );
 
 		for ( Size n = 1; n < nchains; n++ ) cuts.push_back( all_res_in_chain[n][ all_res_in_chain[n].size() ] );
@@ -207,7 +284,7 @@ namespace full_model_info {
 								 vector1< vector1< Size > > & all_res_in_chain,
 								 vector1< vector1< Size > > & all_fixed_res_in_chain,
 								 vector1< Size > const & res_list,
-								 vector1< Size > const & extra_min_res ){
+								 vector1< Size > const & moveable_res ){
 
 		Size chain_start( 1 ), chain_end( 0 );
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
@@ -217,7 +294,7 @@ namespace full_model_info {
 			vector1< Size > res_in_chain, fixed_res_in_chain;
 			for ( Size i = chain_start; i <= chain_end; i++ ){
 				res_in_chain.push_back( i );
-				if ( !extra_min_res.has_value( res_list[ i ] ) ) fixed_res_in_chain.push_back( i );
+				if ( !moveable_res.has_value( res_list[ i ] ) ) fixed_res_in_chain.push_back( i );
 			}
 			all_res_in_chain.push_back( res_in_chain );
 			all_fixed_res_in_chain.push_back( fixed_res_in_chain );
@@ -330,6 +407,7 @@ namespace full_model_info {
 												jump_partners1[ i ], jump_atoms1[ i ],
 												jump_partners2[ i ], jump_atoms2[ i ], KeepStubInResidue );
 		}
+		f.reassign_atoms_for_intra_residue_stubs(); // it seems silly that we need to do this separately.
 
 		return f;
 	}

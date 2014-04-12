@@ -3,24 +3,24 @@ ATOM_TYPE_SET fa_standard
 ELEMENT_SET default
 MM_ATOM_TYPE_SET fa_standard
 
-residue_types/RAD_n.params
-residue_types/RCY_n.params
-residue_types/RGU_n.params
-residue_types/URA_n.params
+../fa_standard/residue_types/nucleic/rna_phenix/RAD_n.params
+../fa_standard/residue_types/nucleic/rna_phenix/RCY_n.params
+../fa_standard/residue_types/nucleic/rna_phenix/RGU_n.params
+../fa_standard/residue_types/nucleic/rna_phenix/URA_n.params
 
 ../fa_standard/residue_types/rosetta_specific/VRT.params
 ../fa_standard/residue_types/rosetta_specific/VRT1.params
 
 ##probe atom for testing solvation stuff:
-#residue_types/extra/C.params
+#../fa_standard/residue_types/extra/C.params
 
 ## water & metal ions
 #../fa_standard/residue_types/water/TP3.params
 #../fa_standard/residue_types/metal_ions/MG.params
 
 # Non-natural na
-residue_types/INO.params
-residue_types/IGU.params
-residue_types/ICY.params
-residue_types/1AP.params
+../fa_standard/residue_types/nucleic/rna_nonnatural/INO.params
+../fa_standard/residue_types/nucleic/rna_nonnatural/IGU.params
+../fa_standard/residue_types/nucleic/rna_nonnatural/ICY.params
+../fa_standard/residue_types/nucleic/rna_nonnatural/1AP.params
 

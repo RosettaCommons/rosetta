@@ -33,7 +33,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-
+#include <basic/Tracer.hh>
 
 // RNA stuff
 #include <protocols/farna/RNA_ProtocolUtil.hh>
@@ -47,6 +47,28 @@
 using namespace core;
 using core::Real;
 
+static basic::Tracer TR( "protocols.stepwise.sampling.protein.InputStreamWithResidueInfo" );
+
+///////////////////////////////////////////////////////////////////////////////////
+//
+// This class was setup in 2009 for readin of protein silent/PDB files, including
+// potential templates whose residues do not line up with target (for homology
+// modeling).
+//
+// Later also set up ChunkLibrary (used in FragmentLibrary -- uses MiniPose for
+//  memory savings) and CopyDofRotamer (used in stepwise sample-and-screen --
+//  some useful cacheing). Probably should choose one of these, and get rid of the
+//  rest -- need to define use cases & decide.
+//
+// Had to add 'advance_to_next_pose_segment', 'apply_current_pose_segment' operations
+//  to enable wiring up to stepwise sample-and-screen code as InputStreamRotamer, so this
+//  is really getting unwieldy.
+//
+//      -- rhiju, 2014
+//
+//////////////////////////////////////////////////////////////////////////////////
+
+
 namespace protocols {
 namespace stepwise {
 namespace sampling {
@@ -55,16 +77,13 @@ namespace protein {
 	//////////////////////////////////////////////////////////////////////
 	// This is for file readin.
 	//////////////////////////////////////////////////////////////////////
-	core::import_pose::pose_stream::PoseInputStreamOP
+	import_pose::pose_stream::PoseInputStreamOP
 	setup_pose_input_stream(
 													utility::options::StringVectorOption const & option_s1,
 													utility::options::StringVectorOption const & option_silent1,
 													utility::options::StringVectorOption const & option_tags1
-													//utility::vector1< std::string > const & option_s1,
-													//utility::vector1< std::string > const & option_silent1,
-													//utility::vector1< std::string > const & option_tags1
 													){
-		using namespace core::import_pose::pose_stream;
+		using namespace import_pose::pose_stream;
 
 		PoseInputStreamOP input1;
 
@@ -97,7 +116,7 @@ namespace protein {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace basic::options::OptionKeys::stepwise;
-		using namespace core::import_pose::pose_stream;
+		using namespace import_pose::pose_stream;
 
 		// my options.
 		utility::vector1< Size > blank_size_vector;
@@ -152,7 +171,7 @@ namespace protein {
 
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
-	InputStreamWithResidueInfo::InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
+	InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 																													utility::vector1< Size > const & input_res,
 																													utility::vector1< Size > const & slice_res ):
 		pose_input_stream_( pose_input_stream ),
@@ -164,7 +183,7 @@ namespace protein {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	InputStreamWithResidueInfo::InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
+	InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 																													utility::vector1< Size > const & input_res ):
 		pose_input_stream_( pose_input_stream ),
 		input_res_( input_res ),
@@ -187,7 +206,7 @@ namespace protein {
 	//////////////////////////////////////////////////////////////////////////
 	InputStreamWithResidueInfo::~InputStreamWithResidueInfo(){}
 	//////////////////////////////////////////////////////////////////////////
-	core::import_pose::pose_stream::PoseInputStreamOP &
+	import_pose::pose_stream::PoseInputStreamOP &
 	InputStreamWithResidueInfo::pose_input_stream(){ return pose_input_stream_; }
 	//////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > const &
@@ -206,7 +225,7 @@ namespace protein {
 	InputStreamWithResidueInfo::set_full_to_sub( std::map< Size, Size > const & full_to_sub ){ full_to_sub_ = full_to_sub; }
   //////////////////////////////////////////////////////////////////////////
 	void
-	InputStreamWithResidueInfo::set_rsd_set( core::chemical::ResidueTypeSetCAP & rsd_set ){
+	InputStreamWithResidueInfo::set_rsd_set( chemical::ResidueTypeSetCAP & rsd_set ){
 		rsd_set_ = rsd_set;
 	}
 
@@ -222,12 +241,20 @@ namespace protein {
 		return ( pose_input_stream_->has_another_pose() );
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	InputStreamWithResidueInfo::advance_to_next_pose_segment(){
+		// Read in pose.
+		runtime_assert( rsd_set_ != 0 );
+		import_pose_ = new Pose;
+		pose_input_stream_->fill_pose( *import_pose_, *rsd_set_ );
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	InputStreamWithResidueInfo::copy_next_pose_segment( pose::Pose & pose ){
-		pose::Pose import_pose;
-		copy_next_pose_segment( pose, import_pose, false /*check_sequence_matches*/);
+		advance_to_next_pose_segment();
+		apply_current_pose_segment( pose, *import_pose_, false /*check_sequence_matches*/);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,20 +263,31 @@ namespace protein {
 																											pose::Pose & import_pose,
 																											bool const check_sequence_matches,
 																											bool const align_pose_to_import_pose ){
+		using namespace conformation;
+		advance_to_next_pose_segment();
+		import_pose = *import_pose_;
+		apply_current_pose_segment( pose, import_pose, check_sequence_matches, align_pose_to_import_pose );
+	}
 
-		using namespace core::conformation;
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	InputStreamWithResidueInfo::apply_current_pose_segment( pose::Pose & pose ){
+		apply_current_pose_segment( pose, *import_pose_, false /*check sequence matches*/ );
+	}
 
-		if ( rsd_set_ == 0 )  utility_exit_with_message( "Hey, need to define rsd_set for pose input stream" );
-
-		// Read in pose.
-		pose_input_stream_->fill_pose( import_pose, *rsd_set_ );
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	InputStreamWithResidueInfo::apply_current_pose_segment( pose::Pose & pose,
+																													pose::Pose & import_pose,
+																													bool const check_sequence_matches,
+																													bool const align_pose_to_import_pose ){
 
 		if ( check_sequence_matches && !backbone_only_ ) check_sequence( pose, import_pose );
 
 		// Dec 2010 -- why do we need this? copy is based on atom names not indexes.
 		//cleanup_pose( import_pose );
 
-		std::map< core::Size, core::Size > res_map;  //This is map from sub numbering to input_res numbering..
+		std::map< Size, Size > res_map;  //This is map from sub numbering to input_res numbering..
 
 		for ( Size n = 1; n <= input_res_.size(); n++ ) {
 			res_map[ full_to_sub_[ input_res_[n] ] ] = slice_res_[ n ];
@@ -266,7 +304,7 @@ namespace protein {
 		//Does this work for the "overlap residue" case?? If there is a overlap residue, then order of input_res will manner...Parin Jan 2, 2010.
 		//Is it possible to copy only backbone torsions?? Parin Jan 2, 2010.
 
-		std::cout << "IMPORT_POSE DURING COPY_NEXT_SEGMENT: " <<  import_pose.annotated_sequence( true ) << std::endl;
+		//std::cout << "IMPORT_POSE DURING COPY_NEXT_SEGMENT: " <<  import_pose.annotated_sequence( true ) << std::endl;
 		//		std::cout << "FOLD TREE OF POSE: " << pose.fold_tree() << std::endl;
 
 		//copy_dofs_match_atom_names( pose, import_pose, res_map, backbone_only_, false /*ignore_virtual*/ );
@@ -283,10 +321,20 @@ namespace protein {
 
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	void
-	InputStreamWithResidueInfo::cleanup_pose( core::pose::Pose & import_pose ) const {
+	Size
+	InputStreamWithResidueInfo::compute_size(){
+		runtime_assert( rsd_set_ != 0 );
+		utility::vector1< PoseOP > import_pose_list_ = pose_input_stream_->get_all_poses( *rsd_set_ );
+		Size const size = import_pose_list_.size();
+		pose_input_stream_->reset();
+		return size;
+	}
 
-		using namespace core::chemical;
+	////////////////////////////////////////////////////////////////////////////////////////
+	void
+	InputStreamWithResidueInfo::cleanup_pose( pose::Pose & import_pose ) const {
+
+		using namespace chemical;
 
 		protocols::farna::make_phosphate_nomenclature_matches_mini( import_pose );
 
@@ -340,13 +388,13 @@ namespace protein {
 	initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
 																							utility::vector1< std::string > const & pdb_tags,
 																							utility::vector1< std::string > const & silent_files_in,
-																							utility::vector1< core::Size > const & input_res,
-																							utility::vector1< core::Size > const & input_res2
+																							utility::vector1< Size > const & input_res,
+																							utility::vector1< Size > const & input_res2
 																							){
 
-		using namespace core::import_pose::pose_stream;
+		using namespace import_pose::pose_stream;
 
-		utility::vector1< utility::vector1< core::Size > > input_res_vectors;
+		utility::vector1< utility::vector1< Size > > input_res_vectors;
 		input_res_vectors.push_back( input_res );
 		input_res_vectors.push_back( input_res2 );
 

@@ -17,10 +17,8 @@
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
-#include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/RNA_Util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -31,6 +29,7 @@
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -88,55 +87,6 @@ namespace farna {
 ///////////////////////////////////////////////////////////////////////////////
 // A bunch of helper functions used in rna apps...
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-void
-figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
-{
-	using namespace core::conformation;
-
-	//Look for chainbreaks in PDB.
-	Size const nres = pose.total_residue();
-	kinematics::FoldTree f( nres );
-
-	Size m( 0 );
-
-	for (Size i=1; i < nres; ++i) {
-
-		if ( !pose.residue(i).is_RNA() && !pose.residue(i+1).is_RNA() )  continue;
-
-		if ( (  pose.residue(i).is_RNA() && !pose.residue(i+1).is_RNA() ) ||
-				 ( !pose.residue(i).is_RNA() &&  pose.residue(i+1).is_RNA() ) ) {
-			f.new_jump( i, i+1, i );
-			m++;
-			continue;
-		}
-
-		if ( pose::rna::is_rna_chainbreak( pose, i ) ){
-
-			//std::cout << "CHAINBREAK between " << i << " and " << i+1 << std::endl;
-
-			f.new_jump( i, i+1, i );
-			m++;
-
-			Residue const & current_rsd( pose.residue( i   ) ) ;
-			Residue const &    next_rsd( pose.residue( i+1 ) ) ;
-			//			Size dummy( 0 ), jump_atom1( 0 ), jump_atom2( 0 );
-			//rna_basepair_jump_atoms( current_rsd.aa(), jump_atom1, dummy, dummy );
-			//rna_basepair_jump_atoms( next_rsd.aa(), jump_atom2, dummy, dummy );
-			//f.set_jump_atoms( m, current_rsd.atom_name( jump_atom1 ), next_rsd.atom_name( jump_atom2 ) );
-
-			f.set_jump_atoms( m,
-												chemical::rna::chi1_torsion_atom( current_rsd ),
-												chemical::rna::chi1_torsion_atom( next_rsd )   );
-
-		}
-
-	}
-
-	pose.fold_tree( f );
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_base_pairing_info( pose::Pose const & pose,
@@ -314,7 +264,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 
 	Size const total_residue = pose.total_residue();
 
-	figure_out_reasonable_rna_fold_tree( pose );
+	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 	// Need some stuff to figure out which residues are base paired. First score.
 	ScoreFunctionOP scorefxn( new ScoreFunction );
@@ -348,7 +298,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 				mini_pose.append_residue_by_bond( pose.residue( i+1 ) );
 			}
 
-			figure_out_reasonable_rna_fold_tree( mini_pose );
+			core::pose::rna::figure_out_reasonable_rna_fold_tree( mini_pose );
 			idealizer.apply( mini_pose );
 			idealizer.apply( mini_pose );
 
@@ -1095,23 +1045,6 @@ remove_cutpoints_closed( pose::Pose & pose ){
 
 }
 
-////////////////////////////////////////////////////////
-void
-virtualize_5prime_phosphates( pose::Pose & pose ){
-
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-
-		if ( i==1 || (( pose.fold_tree().is_cutpoint( i-1 ) &&
-									 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-									 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) &&
-				 pose.residue(i).is_RNA()) ){
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
-		}
-
-	}
-
-}
-
 ///////////////////////////////////////////////////////////////////////
 // One of these days I'll put in residue 1 as well.
 void
@@ -1282,28 +1215,6 @@ involved_in_phosphate_torsion( std::string atomname )
 	return false;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-bool
-mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
-
-	using namespace core::conformation;
-	using namespace core::chemical;
-
-	if ( new_seq == pose.sequence()[i-1] ) return false;
-
-	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
-
-	ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).match_variants( pose.residue(i).type() ).select( rsd_set )[1] );
-	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
-
-	Real const save_chi = pose.chi(i);
-	pose.replace_residue( i, *new_rsd, false );
-	pose.set_chi( i, save_chi );
-
-	return true;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 set_output_res_num( pose::Pose & extended_pose,
@@ -1397,7 +1308,7 @@ process_input_file( std::string const & input_file,
 		pose::PoseOP pose_op( new pose::Pose );
 		core::import_pose::pose_from_pdb( *pose_op, *rsd_set, input_file );
 		//			ensure_phosphate_nomenclature_matches_mini( *pose_op );
-		figure_out_reasonable_rna_fold_tree( *pose_op );
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( *pose_op );
 		pose_list.push_back( pose_op );
 
 	} else { //its a silent file.
@@ -1426,7 +1337,7 @@ process_input_file( std::string const & input_file,
 			*pose_op = coarse_pose;
 		}
 
-		virtualize_5prime_phosphates( *pose_op );
+		core::pose::rna::virtualize_5prime_phosphates( *pose_op );
 	}
 
 	if ( pose_list.size() < 1)  {

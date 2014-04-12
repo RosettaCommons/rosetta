@@ -23,7 +23,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>

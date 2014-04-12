@@ -193,8 +193,8 @@ sources = {
 	    "swa_rna_main",
 	    "swa_rna_util",
 	],
-	"public/stepwise/monte_carlo/rna": [
-		"swm_rna",
+	"public/stepwise/monte_carlo/": [
+		"swm",
 	],
 	"public/stepwise/enumerate/protein": [
 		"swa_protein_main",

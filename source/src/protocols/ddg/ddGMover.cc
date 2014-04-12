@@ -56,7 +56,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <basic/options/util.hh>
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
@@ -1186,7 +1186,7 @@ ddGMover::relax_wildtype_structure(
 			} else if ((restrict_to_nbrhood_ && dmp_pdb_) || output_silent) {
 				//if you optimize the local neighborhood, automatically dumps out in silent file form
 				//otherwise there'll be too many files!!!
-				core::io::silent::BinaryProteinSilentStruct ss(resulting_pose,"repacked_wt_round_" + q.str());
+				core::io::silent::BinarySilentStruct ss(resulting_pose,"repacked_wt_round_" + q.str());
 				sfd.write_silent_struct(ss,silentfilename,false);
 			}
 		}
@@ -1532,7 +1532,7 @@ ddGMover::apply(core::pose::Pose & pose)
 						this->mutation_label(pose) + "_" + "round_" + q.str() + ".pdb";
 					resulting_pose.dump_pdb(output_pdb);
 				}else if((dmp_pdb_ && restrict_to_nbrhood_) || output_silent){
-					core::io::silent::BinaryProteinSilentStruct ss(resulting_pose,"mut_" + this->mutation_label(pose) + "_round_" + q.str());
+					core::io::silent::BinarySilentStruct ss(resulting_pose,"mut_" + this->mutation_label(pose) + "_round_" + q.str());
 					sfd.write_silent_struct(ss,silentfilename,false);
 				}
 				mutants_.push_back(resulting_pose);

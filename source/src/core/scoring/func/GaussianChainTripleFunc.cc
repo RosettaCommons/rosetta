@@ -34,8 +34,10 @@ namespace scoring {
 namespace func {
 
 GaussianChainTripleFunc::GaussianChainTripleFunc( Real const gaussian_variance,
+																									Real const loop_fixed_cost,
 																									Real const D2, Real const D3 ):
 	gaussian_variance_( gaussian_variance ),
+	loop_fixed_cost_( loop_fixed_cost ),
 	D2_( D2 ),
 	D3_( D3 )
 {
@@ -45,13 +47,12 @@ GaussianChainTripleFunc::GaussianChainTripleFunc( Real const gaussian_variance,
 FuncOP
 GaussianChainTripleFunc::clone() const
 {
-	return new GaussianChainTripleFunc( gaussian_variance_, D2_, D3_ );
+	return new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_ );
 }
 
 void
 GaussianChainTripleFunc::initialize_parameters(){
 	kB_T_ = 1.0; // choice of energy units.
-	loop_fixed_cost_ = -0.29; // from fits to RNA data.
 	recompute_parameters();
 }
 

@@ -186,7 +186,7 @@ lariat_modeling ()
 	}
 
 	//Setup score function.
-	std::string score_weight_file = "rna_hires";
+	std::string score_weight_file = "farna/rna_hires";
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
@@ -302,7 +302,7 @@ lariat_modeling ()
 	for (Size j = 1; j <= pose_list.size(); ++j) {
 		std::ostringstream oss;
 		oss << "decoy_" << j;
-		core::io::silent::BinaryRNASilentStruct s( pose_list[j].second, oss.str() );
+		core::io::silent::BinarySilentStruct s( pose_list[j].second, oss.str() );
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 	}
 

@@ -94,7 +94,7 @@ namespace rna {
 		ObjexxFCL::FArray1D < bool > const & partition_definition() const;
 
 		utility::vector1< core::Size > const &  working_fixed_res() const;
-		utility::vector1< core::Size > const &  rmsd_res_list() const;
+		utility::vector1< core::Size > const &  calc_rms_res() const;
 		utility::vector1< core::Size > const &  terminal_res() const;
 		utility::vector1< core::Size > const &  working_terminal_res() const;
 		utility::vector1< core::Size > const &  working_moving_partition_pos() const;
@@ -150,7 +150,7 @@ namespace rna {
 		void set_working_native_pose( core::pose::PoseOP & pose );
 		void set_working_native_pose( core::pose::PoseCOP pose );
 		void set_working_fixed_res(	utility::vector1< core::Size > const & working_fixed_res );
-		void set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list );
+		void set_calc_rms_res(	utility::vector1< core::Size > const & calc_rms_res );
 		void set_terminal_res(	utility::vector1< core::Size > const & terminal_res );
 		void set_working_terminal_res(	utility::vector1< core::Size > const & working_terminal_res );
 		void set_working_moving_partition_pos(	utility::vector1< core::Size > const & working_moving_partition_pos );
@@ -217,7 +217,7 @@ namespace rna {
 		core::pose::PoseCOP working_native_pose_;
 
 		utility::vector1< core::Size > working_fixed_res_;
-		utility::vector1< core::Size > rmsd_res_list_;
+		utility::vector1< core::Size > calc_rms_res_;
 		utility::vector1< core::Size > terminal_res_;
 		utility::vector1< core::Size > working_terminal_res_;
 		utility::vector1< core::Size > working_moving_partition_pos_;

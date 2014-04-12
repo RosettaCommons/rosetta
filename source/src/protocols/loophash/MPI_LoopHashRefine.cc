@@ -33,7 +33,7 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -316,8 +316,8 @@ MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::Si
 			core::Real the_rms;
 		// downcast
 		if ( option[ OptionKeys::lh::bss]() ) {
-				core::io::silent::BinaryProteinSilentStruct *jt_pss = dynamic_cast < core::io::silent::BinaryProteinSilentStruct * > ( &(*(*jt)) );
-				core::io::silent::BinaryProteinSilentStruct *ss = dynamic_cast < core::io::silent::BinaryProteinSilentStruct * > ( &(pss) );
+				core::io::silent::BinarySilentStruct *jt_pss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(*(*jt)) );
+				core::io::silent::BinarySilentStruct *ss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(pss) );
 				if ( jt_pss == NULL || ss == NULL ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Binary Protein SilentStructs " );
 				the_rms = ss->CA_rmsd( *jt_pss );
 		} else {

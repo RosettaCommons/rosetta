@@ -316,7 +316,7 @@ try {
 	NEW_OPT( relax_rna, "Relax RNA after fragment assembly",false );
 	NEW_OPT( simple_relax, "Relax by minimizing after any fragment insertion",false );
 	NEW_OPT( ignore_secstruct, "Ignore sec struct in input file",false );
-	NEW_OPT( lores_scorefxn, "Low resolution scorefunction weights file", "rna_lores.wts" );
+	NEW_OPT( lores_scorefxn, "Low resolution scorefunction weights file", "farna/rna_lores.wts" );
 	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters", true );
 	NEW_OPT( filter_lores_base_pairs_early, "Filter for models that satisfy structure parameters at round 2 of 10", true );
 	NEW_OPT( filter_chain_closure, "Filter for models that have closed chains after lores before minimize",true );

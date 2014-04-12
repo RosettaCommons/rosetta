@@ -119,6 +119,7 @@ namespace checker {
 
 		///////////////////////////////Old_way////////////////////////////////////////////
 		pose::Pose base_pose_screen = pose; //hard copy
+		base_pose_screen.remove_constraints(); // floating point errors if coordinate constraints are in there.
 		if ( output_pdb_ )		base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
 
 		Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( moving_res_, reference_res_ );

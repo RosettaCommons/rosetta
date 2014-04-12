@@ -48,7 +48,7 @@
 
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -536,7 +536,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 
 		utility::vector1< core::Size > const & alignment_res =  get_act_alignment_res();
-		utility::vector1 < core::Size > const & rmsd_res_list = get_act_rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = get_act_calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = get_act_full_to_sub();
 		std::map< core::Size, bool > const & is_prepend_map = get_act_is_prepend_map();
 
@@ -582,7 +582,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 				if ( quick_alignment_ == false ) align_poses( *pose_op, "current_pose", cluster_center_pose, "large_cluster_center", alignment_res, align_only_over_base_atoms_ );
 
-				Real const RMSD = rmsd_over_residue_list( *pose_op, cluster_center_pose, rmsd_res_list, full_to_sub, is_prepend_map, false );
+				Real const RMSD = rmsd_over_residue_list( *pose_op, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, false );
 
 				if ( RMSD < ( loop_cluster_radius_*1.5 ) ){ //A neigbor/member of this cluster_center
 					Cluster_Member member;
@@ -894,19 +894,19 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	bool
 	StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & current_pose,
                                                      pose::Pose const & cluster_center_pose,
-                                                     utility::vector1 < core::Size > const & rmsd_res_list,
+                                                     utility::vector1 < core::Size > const & calc_rms_res,
 																									std::map< core::Size, core::Size > const & full_to_sub,
 																									std::map< core::Size, bool > const & is_prepend_map,
 																									core::Real const & cluster_radius ) const{
 
 
-		utility::vector1< Real > rmsd_list( rmsd_res_list.size(), 9999.99 );
-		utility::vector1< bool > same_sugar_pucker_list( rmsd_res_list.size(), false );
+		utility::vector1< Real > rmsd_list( calc_rms_res.size(), 9999.99 );
+		utility::vector1< bool > same_sugar_pucker_list( calc_rms_res.size(), false );
 
 
-		for ( Size i = 1; i <= rmsd_res_list.size(); i++ ){
+		for ( Size i = 1; i <= calc_rms_res.size(); i++ ){
 
- 			Size const full_seq_num = rmsd_res_list[i];
+ 			Size const full_seq_num = calc_rms_res[i];
 
 			if ( full_to_sub.find( full_seq_num ) == full_to_sub.end() ) utility_exit_with_message( "full_to_sub.find( full_seq_num ) == full_to_sub.end()!" );
 			if ( is_prepend_map.find( full_seq_num ) == is_prepend_map.end() ) utility_exit_with_message( "is_prepend_map.find( full_seq_num ) == is_prepend_map.end()!" );
@@ -979,9 +979,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		}
 
 		if ( verbose_ ){
-			for ( Size i = 1; i <= rmsd_res_list.size(); i++ ){
+			for ( Size i = 1; i <= calc_rms_res.size(); i++ ){
 
- 				Size const full_seq_num = rmsd_res_list[i];
+ 				Size const full_seq_num = calc_rms_res[i];
  				Size const seq_num = full_to_sub.find( full_seq_num )->second;
 				bool is_prepend = is_prepend_map.find( full_seq_num )->second;
 				bool both_pose_res_is_virtual = false;
@@ -1051,7 +1051,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace ObjexxFCL;
 
 		utility::vector1< core::Size > const & alignment_res =  get_act_alignment_res();
-		utility::vector1 < core::Size > const & rmsd_res_list = get_act_rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = get_act_calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = get_act_full_to_sub();
 		std::map< core::Size, bool > const & is_prepend_map = get_act_is_prepend_map();
 
@@ -1080,7 +1080,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			num_cluster_center_used++;
 
-			Real const RMSD = rmsd_over_residue_list( current_pose, cluster_center_pose, rmsd_res_list, full_to_sub, is_prepend_map, false );
+			Real const RMSD = rmsd_over_residue_list( current_pose, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, false );
 			//problem is that bulge residues are excluded?? The weight of the RMSD and member.RMSD might not be the same... Aug 9, 2010
 
 			utility::vector1< Cluster_Member > const & member_list = cluster_centers_neighbor_list_[n];
@@ -1127,7 +1127,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		//////////////////////////////////////////////////////////////////
 
 		utility::vector1< core::Size > const & alignment_res =  get_act_alignment_res();
-		utility::vector1 < core::Size > const & rmsd_res_list = get_act_rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = get_act_calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = get_act_full_to_sub();
 		std::map< core::Size, bool > const & is_prepend_map = get_act_is_prepend_map();
 
@@ -1152,7 +1152,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			//////////////////////////////////////////////////////////
 
-			bool old_suite_cluster = is_old_individual_suite_cluster( current_pose, cluster_center_pose, rmsd_res_list, full_to_sub, is_prepend_map, suite_cluster_radius_ );
+			bool old_suite_cluster = is_old_individual_suite_cluster( current_pose, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, suite_cluster_radius_ );
 
 
 			Real loop_rmsd = 99.99;
@@ -1160,9 +1160,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if ( full_length_loop_rmsd_clustering_ ){
 				if ( optimize_memory_usage_ ) utility_exit_with_message( "Both full_length_loop_rmsd_clustering_ and optimize_memory_usage_ equal true" );
 				std::string const & full_sequence = job_parameters_->full_sequence();
-				loop_rmsd = full_length_rmsd_over_residue_list( current_pose, cluster_center_pose, rmsd_res_list, full_sequence, false /*verbose*/, false /*ignore_virtual_atom*/ );
+				loop_rmsd = full_length_rmsd_over_residue_list( current_pose, cluster_center_pose, calc_rms_res, full_sequence, false /*verbose*/, false /*ignore_virtual_atom*/ );
 			} else{
-				loop_rmsd = rmsd_over_residue_list( current_pose, cluster_center_pose, rmsd_res_list, full_to_sub, is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/ );
+				loop_rmsd = rmsd_over_residue_list( current_pose, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/ );
 			}
 
 			bool old_loop_cluster = ( loop_rmsd < loop_cluster_radius_ );
@@ -1282,7 +1282,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		SilentFileData silent_file_data;
 
-		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
 
 		//bool const ignore_min_decoys=true; //Over the keep min_decoy mode...Comment out on Dec 11, 2011.
@@ -1334,7 +1334,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 
 			s->add_energy( "NEW_all_rms", rms_at_corresponding_heavy_atoms( pose, *native ) );
-			s->add_energy( "NEW_loop_rmsd", rmsd_over_residue_list( pose, *native, rmsd_res_list, full_to_sub, is_prepend_map, false, false ) );
+			s->add_energy( "NEW_loop_rmsd", rmsd_over_residue_list( pose, *native, calc_rms_res, full_to_sub, is_prepend_map, false, false ) );
 
 			///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1343,10 +1343,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			} else{ //default
 				align_poses( ( *native ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ ); //REDUNDANT
 			}
-			s->add_energy( "NEW_O_loop_rmsd", rmsd_over_residue_list( pose, *native, rmsd_res_list, full_to_sub, is_prepend_map, false, false ) );
+			s->add_energy( "NEW_O_loop_rmsd", rmsd_over_residue_list( pose, *native, calc_rms_res, full_to_sub, is_prepend_map, false, false ) );
 
 			if ( is_full_length_pose ){
-				s->add_energy( "NEW_Full_L_rmsd", full_length_rmsd_over_residue_list( pose, *native, rmsd_res_list, full_sequence, false, false ) );
+				s->add_energy( "NEW_Full_L_rmsd", full_length_rmsd_over_residue_list( pose, *native, calc_rms_res, full_sequence, false, false ) );
 			}
 
 			////////Simple loop RMSD exclude only virtual atoms in native_pdb (mostly just the native virtual_res)//////////////
@@ -1359,13 +1359,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				align_poses( ( *native ), "native", curr_pose_no_variants, tag + "_no_variants", working_best_alignment, align_only_over_base_atoms_ );
 			}
 
-			s->add_energy( "NEW_NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native, rmsd_res_list, full_to_sub, is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
+			s->add_energy( "NEW_NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
 
 			////March 7, 2011....Output BASE-PAIRS STATISTIC///////////////////////////////
-			//utility::vector1< core::Size > const working_rmsd_res_list=apply_full_to_sub_mapping(rmsd_res_list, job_parameters_);
+			//utility::vector1< core::Size > const working_calc_rms_res=apply_full_to_sub_mapping(calc_rms_res, job_parameters_);
 
 			//Nov 01, 2011 WARNING THIS currently does not work if there is protonated Adenosine!
-			//add_base_pair_stats( s, pose, *native, working_rmsd_res_list);
+			//add_base_pair_stats( s, pose, *native, working_calc_rms_res);
 
 
 			if ( rename_tags_ ){
@@ -1406,7 +1406,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		utility::vector1< core::Size > const & working_best_alignment = job_parameters_->working_best_alignment();
 
-		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
 
 		std::map< core::Size, bool > is_prepend_map;
@@ -1473,15 +1473,15 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				if ( quick_alignment_ == false ) align_poses( other_pose, other_tag, current_pose, tag, working_best_alignment, align_only_over_base_atoms_ );
 
 
-				bool old_suite_cluster = is_old_individual_suite_cluster( current_pose, other_pose, rmsd_res_list, full_to_sub, is_prepend_map, suite_cluster_radius_ );
+				bool old_suite_cluster = is_old_individual_suite_cluster( current_pose, other_pose, calc_rms_res, full_to_sub, is_prepend_map, suite_cluster_radius_ );
 
 				Real loop_rmsd = 99.99;
 
 				if ( is_full_length_pose ){
 					if ( optimize_memory_usage_ ) utility_exit_with_message( "Both full_length_loop_rmsd_clustering_ and optimize_memory_usage_ equal true" );
-					loop_rmsd = full_length_rmsd_over_residue_list( current_pose, other_pose, rmsd_res_list, full_sequence, false /*verbose*/, false /*ignore_virtual_atom*/ );
+					loop_rmsd = full_length_rmsd_over_residue_list( current_pose, other_pose, calc_rms_res, full_sequence, false /*verbose*/, false /*ignore_virtual_atom*/ );
 				} else{
-					loop_rmsd = rmsd_over_residue_list( current_pose, other_pose, rmsd_res_list, full_to_sub, is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/ );
+					loop_rmsd = rmsd_over_residue_list( current_pose, other_pose, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/ );
 				}
 
 				bool old_loop_cluster = ( loop_rmsd < loop_cluster_radius_ );
@@ -1679,9 +1679,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	}
 
 	utility::vector1 < core::Size > const &
-	StepWiseRNA_Clusterer::get_act_rmsd_res_list()	 const {
-		utility::vector1 < core::Size > const & rmsd_res_list = ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_rmsd_res_list : job_parameters_->rmsd_res_list();
-		return rmsd_res_list;
+	StepWiseRNA_Clusterer::get_act_calc_rms_res()	 const {
+		utility::vector1 < core::Size > const & calc_rms_res = ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_calc_rms_res : job_parameters_->calc_rms_res();
+		return calc_rms_res;
 	}
 
 	std::map< core::Size, core::Size > const &
@@ -1708,12 +1708,12 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		Size const nres = ( job_parameters->working_sequence() ).size();
 		utility::vector1< core::Size > const & working_best_alignment( job_parameters->working_best_alignment() );
-		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters->rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = job_parameters->calc_rms_res();
 		std::map< core::Size, bool > const & is_prepend_map = job_parameters->is_prepend_map();
 		std::map< core::Size, core::Size > const & sub_to_full( job_parameters->const_sub_to_full() );
 
 
-		utility::vector1< core::Size > working_rmsd_res_list = apply_full_to_sub_mapping( rmsd_res_list, job_parameters );
+		utility::vector1< core::Size > working_calc_rms_res = apply_full_to_sub_mapping( calc_rms_res, job_parameters );
 
 		Size sliced_seq_num = 1;
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
@@ -1725,18 +1725,18 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			}
 
 
-			if ( working_rmsd_res_list.has_value( seq_num ) ){
-				TR << "seq_num " << seq_num << " is in working_rmsd_res_list " << std::endl;
+			if ( working_calc_rms_res.has_value( seq_num ) ){
+				TR << "seq_num " << seq_num << " is in working_calc_rms_res " << std::endl;
 				keep_res = true;
 			}
 
-			if ( keep_res == false && ( seq_num + 1 ) <= nres && working_rmsd_res_list.has_value( seq_num + 1 ) ){
-				TR << "seq_num " << seq_num << " is in working_rmsd_res_list - 1 " << std::endl;
+			if ( keep_res == false && ( seq_num + 1 ) <= nres && working_calc_rms_res.has_value( seq_num + 1 ) ){
+				TR << "seq_num " << seq_num << " is in working_calc_rms_res - 1 " << std::endl;
 				keep_res = true;
 			}
 
-			if ( keep_res == false && ( seq_num - 1 ) >= 1 && working_rmsd_res_list.has_value( seq_num - 1 ) ){
-				TR << "seq_num " << seq_num << " is in working_rmsd_res_list + 1 " << std::endl;
+			if ( keep_res == false && ( seq_num - 1 ) >= 1 && working_calc_rms_res.has_value( seq_num - 1 ) ){
+				TR << "seq_num " << seq_num << " is in working_calc_rms_res + 1 " << std::endl;
 				keep_res = true;
 			}
 
@@ -1758,7 +1758,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			TR << seq_num << "----> " << working_to_sliced_res_map_[seq_num] << std::endl;
 
 			if ( working_best_alignment.has_value( seq_num ) ) sliced_pose_best_alignment.push_back( working_to_sliced_res_map_[seq_num] ) ;
-			if ( working_rmsd_res_list.has_value( seq_num ) ) sliced_pose_rmsd_res_list.push_back( working_to_sliced_res_map_[seq_num] ) ;
+			if ( working_calc_rms_res.has_value( seq_num ) ) sliced_pose_calc_rms_res.push_back( working_to_sliced_res_map_[seq_num] ) ;
 		}
 		TR << "-----------------------------------------------------------" << std::endl;
 
@@ -1809,7 +1809,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		//output debug
 		output_seq_num_list( "sliced_pose_best_alignment = ", sliced_pose_best_alignment, TR, 50 );
-		output_seq_num_list( "sliced_pose_rmsd_res_list = ", sliced_pose_rmsd_res_list, TR, 50 );
+		output_seq_num_list( "sliced_pose_calc_rms_res = ", sliced_pose_calc_rms_res, TR, 50 );
 		output_is_prepend_map( "sliced_pose_is_prepend_map = ", sliced_pose_is_prepend_map, working_to_sliced_res_map_.size(), TR, 50 );
 		output_pair_size( delete_res_range_list_, "delete_res_range_list = ", TR, 50 );
 

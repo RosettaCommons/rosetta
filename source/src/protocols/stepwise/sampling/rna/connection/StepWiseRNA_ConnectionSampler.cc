@@ -133,7 +133,7 @@ namespace connection {
 StepWiseRNA_ConnectionSampler::StepWiseRNA_ConnectionSampler( StepWiseRNA_JobParametersCOP & job_parameters ):
 	moving_res_( job_parameters->working_moving_res() ),
 	reference_res_( 0 ), // updated below.
-	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
+	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
 	max_distance_squared_( 0.0 ), // updated below
 	rigid_body_sampling_( false ), // will be updated below.
@@ -160,14 +160,6 @@ StepWiseRNA_ConnectionSampler::get_name() const {
 ///////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_ConnectionSampler::apply( core::pose::Pose & pose ){
-	using namespace core::chemical;
-	using namespace core::conformation;
-	using namespace core::scoring;
-	using namespace core::pose;
-	using namespace core::io::silent;
-	using namespace core::id;
-	using namespace core::kinematics;
-	using namespace protocols::rotamer_sampler::rigid_body;
 
 	output_title_text( "Enter StepWiseRNA_ConnectionSampler::floating_base_sampling", TR.Debug );
 
@@ -178,7 +170,7 @@ StepWiseRNA_ConnectionSampler::apply( core::pose::Pose & pose ){
 	initialize_screeners( pose );
 	check_job_parameters( pose );
 
-	bool const verbose = ( !options_->choose_random() && !options_->integration_test_mode() );
+	bool const verbose = ( !options_->choose_random() || options_->integration_test_mode() );
 
 	StepWiseSampleAndScreen sample_and_screen( sampler_, screeners_ );
 	sample_and_screen.set_max_ntries( get_max_ntries() );
@@ -478,10 +470,10 @@ StepWiseRNA_ConnectionSampler::get_max_ntries() {
 	Size max_ntries( 0 );
 	if ( rigid_body_sampling_ ) {
 		max_ntries = std::max( 100000, 1000 * int( options_->num_random_samples() ) );
-		//		if ( chain_closure_checkers_.size() > 0 ) max_ntries *= 10;
 		if ( options_->sampler_native_rmsd_screen() ) max_ntries *= 10;
 	} else {
 		max_ntries = std::max( 10000, 100 * int( options_->num_random_samples() ) );
+		if ( chain_closure_checkers_.size() > 0 ) max_ntries *= 10;
 		if ( kic_sampling_ ) max_ntries = 5 * options_->num_random_samples(); // some chains just aren't closable.
 	}
 	return max_ntries;

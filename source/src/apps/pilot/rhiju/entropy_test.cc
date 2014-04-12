@@ -69,7 +69,7 @@
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 #include <core/pack/pack_rotamers.hh>

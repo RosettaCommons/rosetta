@@ -21,6 +21,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/interaction_graph/SurfacePotential.hh>
@@ -40,6 +41,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/graph/Graph.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -310,7 +312,6 @@ RotamerSet_::build_rotamers_for_concrete(
 		bump_selector_.set_max_rot_bumpenergy( task.max_rotbump_energy() );
 
 		utility::vector1< ResidueOP > suggested_rotamers;
-
 		dunbrack::SingleResidueRotamerLibraryCAP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 		if (rotlib) {
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
@@ -404,6 +405,28 @@ RotamerSet_::build_rotamers_for_concrete(
 			ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
 			push_back_rotamer( rot );
 		}
+
+		// not ready for design yet.
+		if ( task.residue_task( resid() ).include_virtual_side_chain() ) {
+			if ( existing_residue.nchi() > 0 &&
+					 existing_residue.aa() != chemical::aa_pro ) {
+				dunbrack::RotamerLibraryScratchSpace scratch;
+				Size n_min( 0 );
+				Real fa_dun_min( 0.0 );
+				for ( Size n = 1; n <= suggested_rotamers.size(); n++ ){
+					Real const fa_dun = rotlib->rotamer_energy( *suggested_rotamers[ n ], scratch );
+					if ( n_min == 0 || fa_dun < fa_dun_min ) {
+						n_min = n; fa_dun_min = fa_dun;
+					}
+					// hack for now. PackerTask must be instantiated with a pose without virtual sidechains.
+					runtime_assert( !suggested_rotamers[n]->has_variant_type( "VIRTUAL_SIDE_CHAIN" ) );
+				}
+				ResidueOP rot = core::pose::add_variant_type_to_residue( *suggested_rotamers[ n_min ], "VIRTUAL_SIDE_CHAIN", pose);
+				push_back_rotamer( rot );
+			}
+		}
+
+
 	}
 }
 

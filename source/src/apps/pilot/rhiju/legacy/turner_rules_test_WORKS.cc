@@ -43,7 +43,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -272,7 +272,7 @@ search_translations( pose::Pose & pose,
 				Z += Z_increment;
 
 				if ( energy < (best_energy + energy_cutoff) && sfd ){
-					BinaryRNASilentStruct s( pose, tag );
+					BinarySilentStruct s( pose, tag );
 					sfd->add_structure( s );
 				}
 				if ( energy < best_energy ) best_energy = energy;

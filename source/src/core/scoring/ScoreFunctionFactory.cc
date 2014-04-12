@@ -147,45 +147,55 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 		scorefxn->set_weight( rg, scorefxn->get_weight( rg ) * option[ abinitio::rg_reweight ]() );
 	}
 	// offset reference energies using user options, for example: -score:ref_offsets TRP 0.9 HIS 0.3
-	if ( option[ score::ref_offsets ].user() ) {
+	if ( option[ score::ref_offsets ].user() || option[ score::ref_offset ].user()) {
 
 		// get the ref weights from the EnergyMethodOptions object
 		methods::EnergyMethodOptions energy_method_options(scorefxn->energy_method_options());
 		if (!energy_method_options.has_method_weights(ref)) {
-			utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
-		}
-		utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
+			//	utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
+		} else {
+			utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
 
-		// get the offsets vector and make sure it contains pairs
-		utility::vector1<std::string> const & ref_offsets( option[ score::ref_offsets ]() );
-		if (ref_offsets.size() % 2 != 0) {
-			utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
-		}
+			if ( option[ score::ref_offset ].user() ) {
+				Real const offset = option[ score::ref_offset ]();
+				for (Size n = 1; n <= ref_weights.size(); n++ )	{
+					ref_weights[ n ] += offset;
+				}
+			} else {
+				runtime_assert(  option[ score::ref_offsets ].user() );
+				// get the offsets vector and make sure it contains pairs
+				utility::vector1<std::string> const & ref_offsets( option[ score::ref_offsets ]() );
+				if (ref_offsets.size() % 2 != 0) {
+					utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
+				}
 
-		// iterate over all pairs
-		for (utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
-		     iter != iter_end; ++iter) {
-			// get the aa type from the pair
-			std::istringstream aa_iss(*iter);
-			core::chemical::AA aa;
-			if (!(aa_iss >> aa)) {
-				utility_exit_with_message(aa_iss.str()+" is not a valid 3 character residue type for -score:ref_offsets");
+				// iterate over all pairs
+				for (utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
+						 iter != iter_end; ++iter) {
+					// get the aa type from the pair
+					std::istringstream aa_iss(*iter);
+					core::chemical::AA aa;
+					if (!(aa_iss >> aa)) {
+						utility_exit_with_message(aa_iss.str()+" is not a valid 3 character residue type for -score:ref_offsets");
+					}
+					// get the offset from the pair
+					std::istringstream offset_iss(*(++iter));
+					core::Real offset;
+					if (!(offset_iss >> offset)) {
+						utility_exit_with_message(offset_iss.str()+" is not a valid offset for -score:ref_offsets");
+					}
+					// offset the weight
+					ref_weights[aa] += offset;
+				}
 			}
-			// get the offset from the pair
-			std::istringstream offset_iss(*(++iter));
-			core::Real offset;
-			if (!(offset_iss >> offset)) {
-				utility_exit_with_message(offset_iss.str()+" is not a valid offset for -score:ref_offsets");
-			}
-			// offset the weight
-			ref_weights[aa] += offset;
+			// load the ref weights back into the EnergyMethodOptions object
+			energy_method_options.set_method_weights(ref, ref_weights);
+			scorefxn->set_energy_method_options(energy_method_options);
 		}
-
-		// load the ref weights back into the EnergyMethodOptions object
-		energy_method_options.set_method_weights(ref, ref_weights);
-		scorefxn->set_energy_method_options(energy_method_options);
 	}
+
 }
+
 
 void ScoreFunctionFactory::load_weights_file( std::string weights_tag, ScoreFunctionOP scorefxn )
 {
@@ -200,9 +210,9 @@ std::string const SOFT_REP_DESIGN_WTS( "soft_rep_design" );
 std::string const DNA_INT_WTS( "dna_no_gb" );
 std::string const DNA_INT_WTS_GB( "dna" );
 std::string const MM_STD_WTS( "mm_std" );
-std::string const RNA_LORES_WTS( "rna_lores" );
-std::string const RNA_HIRES_WTS( "rna_hires" );
-std::string const RNA_LORES_PLUS_HIRES_WTS( "rna_lores_plus_hires" );
+std::string const RNA_LORES_WTS( "farna/rna_lores" );
+std::string const RNA_HIRES_WTS( "farna/rna_hires" );
+std::string const RNA_LORES_PLUS_HIRES_WTS( "farna/rna_lores_plus_hires" );
 std::string const MEMB_HIGHRES_WTS( "membrane_highres" ); //pba
 
 std::string const SCORE12_PATCH( "score12" );

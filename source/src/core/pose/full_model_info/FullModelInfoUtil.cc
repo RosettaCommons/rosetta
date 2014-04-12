@@ -382,9 +382,15 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	/////////////////////////////////////////////////////////
 	core::Size
 	sub_to_full( core::Size const i, core::pose::Pose const & pose ){
+		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+		runtime_assert( i >= 1 && i <= res_list.size() );
+		return res_list[ i ];
+	}
+
+	utility::vector1< Size >
+	sub_to_full( utility::vector1< Size > const & res_list, core::pose::Pose const & pose ){
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		runtime_assert( i > 0 && i <= full_model_info.res_list().size() );
-		return full_model_info.res_list()[ i ];
+		return full_model_info.sub_to_full( res_list );
 	}
 
 	/////////////////////////////////////////////////////////
@@ -408,8 +414,10 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		for ( Size k = 1; k <= res_list.size(); k++ ) pose_domain_map[ res_list[k] ] = pose_domain_number;
-
+		for ( Size k = 1; k <= res_list.size(); k++ ) {
+			//			TR << pose_domain_number << " " << k << " " << res_list[k]  << " " << pose_domain_map.size() << std::endl;
+			pose_domain_map[ res_list[k] ] = pose_domain_number;
+		}
 		utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
 		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
 			update_pose_domain_map( *(other_pose_list[ n ]), ++pose_domain_number, pose_domain_map );
@@ -422,7 +430,6 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	figure_out_pose_domain_map( pose::Pose & pose ){
 
 		utility::vector1< Size > pose_domain_map( full_model_size( pose ), 0 );
-
 		Size pose_domain_number = 1;
 		update_pose_domain_map( pose, pose_domain_number, pose_domain_map );
 		return pose_domain_map;
@@ -476,7 +483,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 		PDBInfoCOP pdb_info = pose.pdb_info();
 
-		if ( pdb_info )	{
+		if ( pdb_info && !pdb_info->obsolete())	{
 			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
 		} else {
 			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );

@@ -185,26 +185,12 @@ namespace stepwise {
 	void
 	translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i );
 
-	void
-	add_to_atom_id_map_after_checks( std::map< id::AtomID, id::AtomID> & atom_id_map,
-																	 std::string const & atom_name,
-																	 Size const & n1, Size const & n2,
-																	 pose::Pose const & pose1, pose::Pose const & pose2 );
+	Real
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose,
+																									bool skip_bulges = false );
 
 	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, bool skip_bulges = false );
-
-	void
-	clear_constraints_recursively( pose::Pose & pose );
-
-	void
-	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, Real const & constraint_x0, Real const & constraint_tol );
-
-	void
-	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, Real const & constraint_x0, Real const & constraint_tol );
-
-	void
-	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, Real const & constraint_x0, Real const & constraint_tol );
+	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose );
 
 	Size
 	get_number_missing_residue_connections( pose::Pose & pose );
@@ -301,18 +287,6 @@ namespace stepwise {
 	bool
 	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn = 0, bool force_switch = false );
 
-	pose::PoseOP
-	get_pdb_and_cleanup( std::string const input_file,
-											 chemical::ResidueTypeSetCAP rsd_set );
-
-	void
-	cleanup( pose::Pose & pose );
-
-	void
-	get_other_poses( 	utility::vector1< pose::PoseOP > & other_poses,
-										utility::vector1< std::string > const & other_files,
-										chemical::ResidueTypeSetCAP rsd_set );
-
 	utility::vector1< Size >
 	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );
 
@@ -339,6 +313,9 @@ namespace stepwise {
 
 	utility::vector1< Size >
 	figure_out_moving_cutpoints_closed( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos );
+
+	utility::vector1< Size >
+	figure_out_moving_cutpoints_closed_from_moving_res( pose::Pose const & pose, Size const moving_res );
 
 	void
 	figure_out_moving_chain_breaks( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos,
@@ -370,15 +347,43 @@ namespace stepwise {
 																						Size const jump_nr );
 
 	void
-	figure_out_root_partition_res( pose::Pose const & pose, Size const moving_res,
-																 utility::vector1< Size > & root_partition_res,
-																 utility::vector1< Size > & moving_partition_res );
+	figure_out_root_and_moving_partition_res( pose::Pose const & pose, Size const moving_res,
+																						utility::vector1< Size > & root_partition_res,
+																						utility::vector1< Size > & moving_partition_res );
 
-	void
+	utility::vector1< Size >
+	figure_out_moving_partition_res( pose::Pose const & pose,
+																	 Size const moving_res );
+
+	utility::vector1< Size >
+	figure_out_moving_partition_res( pose::Pose const & pose,
+																	 utility::vector1< Size > const & moving_res_list );
+
+	utility::vector1< Size >
+	figure_out_root_partition_res( pose::Pose const & pose,
+																 utility::vector1< Size > const & moving_res_list );
+
+	bool
 	revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that this can change too*/ );
+
+	bool
+	revise_root_and_moving_res_list( pose::Pose & pose,
+																	 utility::vector1< Size > & moving_res_list /* note that this can change too*/ );
 
 	Size
 	split_pose( pose::Pose & pose, Size const moving_res, Size const reference_res );
+
+	void
+	split_pose( pose::Pose & pose, utility::vector1< Size > const & moving_res_list );
+
+	void
+	fix_up_jump_atoms( pose::Pose & pose );
+
+	void
+	fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix );
+
+	void
+	fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const atom_name );
 
 
 } //stepwise

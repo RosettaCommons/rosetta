@@ -39,9 +39,9 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/sampling/rna/phosphate/PhosphateMover.hh>
 #include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
-#include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloUtil.hh>
+#include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
+#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloUtil.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -119,7 +119,7 @@ screen_phosphates()
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
-	else  scorefxn = ScoreFunctionFactory::create_score_function( "rna/rna_res_level_energy.wts" );
+	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 
 	// actual pose to be sampled...
 	PoseOP pose_op = input_poses[ 1 ];
@@ -197,6 +197,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( out::nstruct );
 		option.add_relevant( score::weights );
 		option.add_relevant( OptionKeys::full_model::extra_min_res );
+		option.add_relevant( OptionKeys::full_model::sample_res );
 		option.add_relevant( basic::options::OptionKeys::stepwise::monte_carlo::cycles );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::verbose_scores );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
@@ -209,14 +210,11 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_x0 );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_tol );
-		option.add_relevant( OptionKeys::stepwise::rna::num_random_samples );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
-		option.add_relevant( OptionKeys::stepwise::rna::sample_res );
 		option.add_relevant( OptionKeys::stepwise::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
+		option.add_relevant( OptionKeys::stepwise::num_random_samples );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );

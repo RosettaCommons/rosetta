@@ -27,7 +27,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -149,8 +149,8 @@ rna_build_helix_test(){
 		rna_helix_assembler.apply( pose, full_sequence );
 
 		if ( output_silent ) {
-			std::string const tag( "S_" + ObjexxFCL::lead_zero_string_of(n, 3) );
-			BinaryRNASilentStruct s( pose, tag );
+			std::string const tag( "S_"+ObjexxFCL::lead_zero_string_of(n, 3) );
+			BinarySilentStruct s( pose, tag );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
 

@@ -17,15 +17,15 @@
 #ifndef INCLUDED_protocols_stepwise_protein_StepWiseProteinPoseMinimizer_HH
 #define INCLUDED_protocols_stepwise_protein_StepWiseProteinPoseMinimizer_HH
 
-#include <core/pose/Pose.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinPoseMinimizer.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/types.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <string>
 #include <map>
 
@@ -39,10 +39,8 @@ namespace protein {
   class StepWiseProteinPoseMinimizer: public protocols::moves::Mover {
   public:
 
-    //constructor!
-		StepWiseProteinPoseMinimizer( core::io::silent::SilentFileDataOP sfd, utility::vector1< Size > const & moving_residues );
-
-    StepWiseProteinPoseMinimizer( PoseList & pose_list, utility::vector1< Size > const & moving_residues );
+    StepWiseProteinPoseMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
+																	utility::vector1< Size > const & moving_residues );
 
     //destructor -- necessary?
     ~StepWiseProteinPoseMinimizer();
@@ -50,13 +48,15 @@ namespace protein {
     /// @brief Apply the minimizer to one pose
     virtual void apply( core::pose::Pose & pose_to_visualize );
 
-	virtual std::string get_name() const;
+		virtual std::string get_name() const;
 
-    void set_silent_file( std::string const & setting );
     void set_min_tolerance( core::Real const & setting );
     void set_min_type( std::string const & setting );
     void set_fixed_res( utility::vector1< core::Size > const & fixed_res );
     void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
+
+		core::Size const & num_pose_minimize() const { return num_pose_minimize_; }
+		void set_num_pose_minimize( core::Size const & setting ){ num_pose_minimize_ = setting; }
 
 		void
 		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
@@ -75,15 +75,16 @@ namespace protein {
 		//		void
 		//		set_constraint_set( core::scoring::constraints::ConstraintSetOP const & cst_set );
 
-		core::io::silent::SilentFileDataOP & silent_file_data();
+		void set_use_coordinate_constraints( bool const & setting ){ use_coordinate_constraints_ = setting; }
+		bool use_coordinate_constraints() const{ return use_coordinate_constraints_; }
+
+		utility::vector1< pose::PoseOP >
+		pose_list() const { return pose_list_; }
 
   private:
 
 		void
 		initialize_parameters();
-
-		void
-		initialize_protein_input_silent_file_data_from_pose_list( PoseList & pose_list );
 
 		void
 		let_neighboring_chis_minimize(
@@ -93,7 +94,6 @@ namespace protein {
 		bool
 		pose_has_chainbreak( core::pose::Pose const & pose );
 
-    PoseList pose_list_;
     utility::vector1< core::Size > const & moving_residues_;
     utility::vector1< core::Size > fixed_res_;
     utility::vector1< core::Size > calc_rms_res_;
@@ -101,15 +101,15 @@ namespace protein {
 		bool rescore_only_;
 		bool move_jumps_between_chains_;
 		bool cartesian_;
-    std::string silent_file_;
 
 		core::scoring::ScoreFunctionOP fa_scorefxn_;
 
-		core::io::silent::SilentFileDataOP sfd_, input_silent_file_data_;
+		utility::vector1< pose::PoseOP > pose_list_;
 
 		std::string min_type_;
 		core::Real min_tolerance_;
-
+		bool use_coordinate_constraints_;
+		Size num_pose_minimize_;
   };
 
 } //protein

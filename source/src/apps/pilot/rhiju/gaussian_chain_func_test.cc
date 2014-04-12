@@ -17,6 +17,9 @@
 #include <iostream>
 #include <ObjexxFCL/format.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 using namespace core;
 using namespace core::scoring::func;
 using ObjexxFCL::format::F;
@@ -26,6 +29,9 @@ using utility::tools::make_vector1;
 // This could become a unit test.
 ///////////////////////////////////////////////////////////////
 
+Real const loop_fixed_cost = basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]();
+
+
 ///////////////////////////////////////////////////////////////
 void
 double_func_test( Distance const distance2  ){
@@ -34,9 +40,9 @@ double_func_test( Distance const distance2  ){
 	other_distances.push_back( distance2 );
 
 	Real const gaussian_variance( 5.0 * 5.0 );
-	FuncOP func1 = new GaussianChainFunc( gaussian_variance ); // single func
-	FuncOP func2 = new GaussianChainFunc( gaussian_variance, other_distances );
-	GaussianChainFuncOP func2_approx = new GaussianChainFunc( gaussian_variance, other_distances );
+	FuncOP func1 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost ); // single func
+	FuncOP func2 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances );
+	GaussianChainFuncOP func2_approx = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances );
 	func2_approx->set_force_combined_gaussian_approximation( true );
 
 	// sweep through distance1.
@@ -56,13 +62,13 @@ triple_func_test( Distance const distance2, Distance const distance3  ){
 	other_distances.push_back( distance3 );
 
 	Real const gaussian_variance( 5.0 * 5.0 );
-	FuncOP func1 = new GaussianChainFunc( gaussian_variance ); // single func
-	FuncOP func2 = new GaussianChainFunc( gaussian_variance, make_vector1( distance2 ) );
-	FuncOP func3 = new GaussianChainFunc( gaussian_variance, other_distances );
-	GaussianChainFuncOP func3_approx = new GaussianChainFunc( gaussian_variance, other_distances );
+	FuncOP func1 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost ); // single func
+	FuncOP func2 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, make_vector1( distance2 ) );
+	FuncOP func3 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances );
+	GaussianChainFuncOP func3_approx = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances );
 	func3_approx->set_force_combined_gaussian_approximation( true );
 
-	FuncOP func0 = new GaussianChainFunc( gaussian_variance ); // single func
+	FuncOP func0 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost ); // single func
 
 	// sweep through distance1.
 	std::cout << "-- GAUSSIAN_CHAIN_TRIPLE_FUNC --" << std::endl;
@@ -83,13 +89,13 @@ quadruple_func_test( Distance const distance2, Distance const distance3, Distanc
 	other_distances.push_back( distance4 );
 
 	Real const gaussian_variance( 5.0 * 5.0 );
-	//	FuncOP func1 = new GaussianChainFunc( gaussian_variance ); // single func
-	//	FuncOP func2 = new GaussianChainFunc( gaussian_variance, make_vector1( distance2 ) );
-	FuncOP func4 = new GaussianChainFunc( gaussian_variance, other_distances );
-	GaussianChainFuncOP func4_approx = new GaussianChainFunc( gaussian_variance, other_distances );
+	//	FuncOP func1 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost ); // single func
+	//	FuncOP func2 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, make_vector1( distance2 ) );
+	FuncOP func4 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances );
+	GaussianChainFuncOP func4_approx = new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances );
 	func4_approx->set_force_combined_gaussian_approximation( true );
 
-	FuncOP func0 = new GaussianChainFunc( gaussian_variance ); // single func
+	FuncOP func0 = new GaussianChainFunc( gaussian_variance, loop_fixed_cost ); // single func
 
 	// sweep through distance1.
 	std::cout << "-- GAUSSIAN_CHAIN_QUADRUPLE_FUNC --" << std::endl;

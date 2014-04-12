@@ -310,8 +310,8 @@ bool SilentFileData::write_silent_struct(
 	return success;
 }
 
-/// @details Unlike write_silent_struct(), this method writes both the header 
-/// and the body of the silent file to the given stream.  Therefore this is 
+/// @details Unlike write_silent_struct(), this method writes both the header
+/// and the body of the silent file to the given stream.  Therefore this is
 /// probably the more appropriate method to use in high-level codes.
 bool SilentFileData::_write_silent_struct(
 	SilentStruct & s,
@@ -321,9 +321,9 @@ bool SilentFileData::_write_silent_struct(
 	return write_silent_struct(s,out,bWriteScoreOnly);
 }
 
-/// @details Note that this method does not write the header to the given 
-/// stream.  As such, I would guess that method is meant for internal use only, 
-/// even though it isn't declared as private.  If you want to write a complete 
+/// @details Note that this method does not write the header to the given
+/// stream.  As such, I would guess that method is meant for internal use only,
+/// even though it isn't declared as private.  If you want to write a complete
 /// silent file to a stream, use the _write_silent_struct() method instead.
 bool SilentFileData::write_silent_struct(
 	SilentStruct & s,
@@ -705,11 +705,7 @@ SilentFileData::read_silent_struct_type_from_remark(
 
 	if ( line.substr(0,6) != "SCORE:" ) {
 		if (( line.find( "BINARY_SILENTFILE" ) != std::string::npos ) || ( line.find ("BINARY SILENTFILE" ) != std::string::npos )) {
-			if ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna" ) {
-				silent_struct_type_ = "binary_rna";
-			} else {
-				silent_struct_type_ = "binary";
-			}
+			silent_struct_type_ = "binary";
 			changed = true;
 		} else if ( header && ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna") &&
 								silent_struct_type_ != "binary_rna" && silent_struct_type_ != "rna" ) {

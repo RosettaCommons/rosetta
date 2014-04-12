@@ -19,6 +19,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/init/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
@@ -70,8 +71,8 @@ rna_suitename()
 		i++;
 
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
-		protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
-		protocols::farna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
+		core::pose::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
 
 		std::cout << "-----Pose " << i << "-----" << std::endl;
 		for (Size j = 1; j <= pose.total_residue(); ++j){

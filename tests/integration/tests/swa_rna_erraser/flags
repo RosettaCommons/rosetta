@@ -23,7 +23,7 @@
 -alignment_res 1-4
 -rmsd_res 2
 -score:rna_torsion_potential RNA11_based_new
--score:weights rna/rna_hires_elec_dens
+-score:weights stepwise/rna/rna_hires_elec_dens
 -rna::corrected_geo true
 -edensity:mapfile 1Q9A_map.ccp4
 -edensity:mapreso 2.0

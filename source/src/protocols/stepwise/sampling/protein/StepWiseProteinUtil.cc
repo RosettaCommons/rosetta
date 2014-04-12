@@ -23,7 +23,7 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/types.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/id/NamedAtomID.hh>
@@ -81,7 +81,7 @@ namespace protein {
     using namespace core::io::silent;
     using namespace core::scoring;
 
-    BinaryProteinSilentStruct s( pose, tag );
+    BinarySilentStruct s( pose, tag );
 
 		if ( native_pose_op != 0 ){
 
@@ -248,51 +248,6 @@ namespace protein {
 		}
 
  	}
-
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
-											utility::vector1< core::Size > const & slice_res ){
-
-		using namespace core::fragment;
-
-		Size const len( fragset->max_frag_length() );
-
-		ConstantLengthFragSetOP fragset_new = new ConstantLengthFragSet;
-
-		for ( Size n = 1; n <= (slice_res.size() - len + 1); n++ ) {
-
-			Size const & pos = slice_res[ n ];
-
-			FrameList frames;
-
-			if ( pos > (fragset->max_pos()-len+1) ) {
-				std::cout << "WARNING: NO FRAGS FOR POSITION " << pos << std::endl;
-				continue;
-			}
-
-			fragset->frames( pos, frames );
-
-			// CURRENTLY ONLY WORKS FOR CONST FRAG LENGTH SETS!!!! ASSUMES ONE FRAME!!!
-			assert( frames.size() == 1 );
-
-			FrameOP & frame( frames[1] );
-			FrameOP frame_new = new Frame( n, len );
-
-			for ( Size n = 1; n <= frame->nr_frags(); n++ ) {
-				frame_new->add_fragment( frame->fragment_ptr( n ) );
-			}
-
-			fragset_new->add( frame_new );
-
-		}
-
-		fragset = fragset_new;
-
-	}
-
-
 
 
 } //protein

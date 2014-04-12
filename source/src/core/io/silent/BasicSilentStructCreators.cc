@@ -19,8 +19,8 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/ScoreJumpFileSilentStruct.hh>
@@ -69,14 +69,14 @@ std::string RNA_SilentStructCreator::keyname() const {
 	return "rna";
 }
 
-// class def for BinaryProteinSilentStruct
-BinaryProteinSilentStructCreator::BinaryProteinSilentStructCreator() {}
-BinaryProteinSilentStructCreator::~BinaryProteinSilentStructCreator() {}
-SilentStructOP BinaryProteinSilentStructCreator::create_silent_struct() const {
-	return new BinaryProteinSilentStruct;
+// class def for BinarySilentStruct
+BinarySilentStructCreator::BinarySilentStructCreator() {}
+BinarySilentStructCreator::~BinarySilentStructCreator() {}
+SilentStructOP BinarySilentStructCreator::create_silent_struct() const {
+	return new BinarySilentStruct;
 }
 
-std::string BinaryProteinSilentStructCreator::keyname() const {
+std::string BinarySilentStructCreator::keyname() const {
 	return "binary";
 }
 
@@ -101,19 +101,6 @@ SilentStructOP ScoreJumpFileSilentStructCreator::create_silent_struct() const {
 std::string ScoreJumpFileSilentStructCreator::keyname() const {
   return "score_jump";
 }
-
-// class def for BinaryRNASilentStruct
-BinaryRNASilentStructCreator::BinaryRNASilentStructCreator() {}
-BinaryRNASilentStructCreator::~BinaryRNASilentStructCreator() {}
-SilentStructOP BinaryRNASilentStructCreator::create_silent_struct() const {
-	return new BinaryRNASilentStruct;
-}
-
-std::string BinaryRNASilentStructCreator::keyname() const {
-	return "binary_rna";
-}
-
-
 
 } //namespace silent
 } //namespace io

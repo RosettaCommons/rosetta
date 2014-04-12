@@ -108,11 +108,11 @@ main( int argc, char* argv [] ) {
 	);
 
 	MetaPoseInputStream input = streams_from_cmd_line();
-	vector1< Pose > poses( input.get_all_poses( *rsd_set ) );
+	vector1< core::pose::PoseOP > poses( input.get_all_poses( *rsd_set ) );
 
 	vector1< vector1< unsigned int > > data_points;
 	for ( unsigned int ii = 1; ii <= poses.size(); ++ii ) {
-		data_points.push_back( get_dm(poses[ii]) );
+		data_points.push_back( get_dm(*poses[ii]) );
 		//std::cout << "point " << ii << ":";
 		//print_dm( data_points[ii] );
 	}

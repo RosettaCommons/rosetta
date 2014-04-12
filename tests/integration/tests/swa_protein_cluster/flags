@@ -1,0 +1,11 @@
+# adapted from Das (2013). http://dx.doi.org/10.1371/journal.pone.0074830
+-cluster_test 
+-silent_read_through_errors 
+-in:file:silent region_215_205_sample.cluster.out
+-cluster:radius 0.25 
+-calc_rms_res 203-214 
+-out:file:silent region_215_205_sample.RECLUSTER_TEST.out 
+-nstruct 400 
+-score_diff_cut 10.000 
+-working_res 1-205 215-399
+

@@ -64,7 +64,7 @@ namespace rna {
 //constructor!
 StepWiseRNA_ResidueSampler::StepWiseRNA_ResidueSampler( StepWiseRNA_JobParametersCOP & job_parameters ):
 	job_parameters_( job_parameters ),
-	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
+	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_hires.wts" ) ), // can be replaced from the outside
 	options_( new StepWiseRNA_ModelerOptions ),
 	sampling_silent_file_( "default.out" )
 {

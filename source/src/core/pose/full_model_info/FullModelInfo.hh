@@ -24,6 +24,7 @@
 #include <utility/vector1.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
+#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 
 // C++
 #include <string>
@@ -35,18 +36,20 @@ namespace full_model_info {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of all information related to how a subpose 'fits in' to global modeling scheme.
+///
+/// @details  See FullModelParameters for more information on the global modeling scheme, including
+///           full_sequence, etc.
+///
 class FullModelInfo: public basic::datacache::CacheableData  {
 
 public:
 
-  FullModelInfo(); //empty...
 
-  FullModelInfo( std::string  const full_sequence );
-
-	FullModelInfo( pose::Pose & pose,
-								 std::string const & full_sequence,
+	FullModelInfo( std::string const & full_sequence,
 								 utility::vector1< Size > const & cutpoint_open_in_full_model,
 								 utility::vector1< Size > const & res_numbers_in_pose );
+
+	FullModelInfo( FullModelParametersCOP full_model_parameters );
 
 	FullModelInfo( pose::Pose & pose );
 
@@ -67,13 +70,15 @@ public:
   }
 
 	// properties of full model.
-	std::string const & full_sequence() const{ return full_sequence_;}
+	FullModelParametersCOP full_model_parameters() const;
+	void set_full_model_parameters( FullModelParametersCOP setting );
 
-	utility::vector1< Size > const & cutpoint_open_in_full_model() const { return cutpoint_open_in_full_model_;}
-
-	utility::vector1< Size > const & fixed_domain_map() const { return fixed_domain_map_;}
-
-	utility::vector1< Size > const & conventional_numbering() const { return conventional_numbering_;}
+	std::string const & full_sequence() const;
+	utility::vector1< int > const & conventional_numbering() const;
+	utility::vector1< Size > const & cutpoint_open_in_full_model() const;
+	utility::vector1< Size > const & fixed_domain_map() const;
+	utility::vector1< Size > const & extra_minimize_res() const;
+	utility::vector1< Size > const & sample_res() const;
 
 	void clear_res_list();
 
@@ -95,14 +100,6 @@ public:
 
 	void add_other_pose( core::pose::PoseOP pose );
 
-	// set properties of full model.
-	void set_full_sequence( std::string const & setting ) { full_sequence_ = setting;}
-
-	void set_cutpoint_open_in_full_model( utility::vector1< Size > const & setting ){ cutpoint_open_in_full_model_ = setting;}
-
-	void set_fixed_domain_map( utility::vector1< Size > const & setting ){ fixed_domain_map_ = setting;}
-
-	void set_conventional_numbering( utility::vector1< Size > const & setting ){ conventional_numbering_ = setting;}
 
 	void set_other_pose_list( utility::vector1< pose::PoseOP > const & setting );
 
@@ -120,7 +117,7 @@ public:
 
 	utility::vector1< Size > moving_res_in_full_model() const;
 
-	Size size() const { return full_sequence_.size(); }
+	Size size() const;
 
 private:
 
@@ -134,12 +131,6 @@ private:
 
 private:
 
-	// properties of full model.
-	std::string full_sequence_;
-	utility::vector1< Size > cutpoint_open_in_full_model_;
-	utility::vector1< Size > fixed_domain_map_; //in case model involves several fixed regions.
-	utility::vector1< Size > conventional_numbering_; // permits user to start numbering without beginning at 1.
-
 	// residues that go with pose. In principle, this is redundant with PDBInfo,
 	// but not in eventual case where user has favorite numbering/chain scheme.
 	utility::vector1< Size > res_list_;
@@ -147,12 +138,11 @@ private:
 	// what's known about this pose and any neighbors in a "PoseTree"
 	utility::vector1< core::pose::PoseOP > other_pose_list_;
 
-	// Following would be great, but would cause a headache in cloning --
-	//  the FullModelInfo doesn't know what pose it is inside.
-	//  instead, we'll probably need to create a lightweight PoseTree object that
-	//  infers daughters and parents from FullModelInfo when it is needed.
-	//	PoseOP pose_tree_parent;
-
+	// FullModelParameters: properties of full model.
+	// Note that this holds full_sequence, cutpoint_open_in_full_model,
+	//  conventional numbering scheme, etc.
+	// And it should not change as pieces are added/deleted from the pose!
+	FullModelParametersCOP full_model_parameters_;
 
 };
 

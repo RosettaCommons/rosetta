@@ -90,7 +90,7 @@
 #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/io/silent/PDBSilentStruct.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 
 #include <utility/vector1.hh>
@@ -946,7 +946,7 @@ main( int argc, char* argv [] )
 		(*scorefxn_centr)(extended_pose); // score of the native structure
 
 
-				core::io::silent::BinaryProteinSilentStructOP ss_init ( new core::io::silent::BinaryProteinSilentStruct(extended_pose,"NATIVE" ));
+				core::io::silent::BinarySilentStructOP ss_init ( new core::io::silent::BinarySilentStruct(extended_pose,"NATIVE" ));
 
 
 			sfd_cent.add_structure(ss_init);
@@ -1086,7 +1086,7 @@ main( int argc, char* argv [] )
 		(*scorefxn_centr)(fold_pose); // score of the native structure
 
 
-		core::io::silent::BinaryProteinSilentStructOP ss_cent ( new core::io::silent::BinaryProteinSilentStruct(fold_pose, outfile_extended ));
+		core::io::silent::BinarySilentStructOP ss_cent ( new core::io::silent::BinarySilentStruct(fold_pose, outfile_extended ));
 
 
 		sfd_cent.add_structure(ss_cent);
@@ -1199,7 +1199,7 @@ main( int argc, char* argv [] )
 
 
 
-		core::io::silent::BinaryProteinSilentStructOP ss_fa_nat_rlx ( new core::io::silent::BinaryProteinSilentStruct( fold_pose_relax, outfilename_rlx ));
+		core::io::silent::BinarySilentStructOP ss_fa_nat_rlx ( new core::io::silent::BinarySilentStruct( fold_pose_relax, outfilename_rlx ));
 
 
 		sfd_fa.add_structure( ss_fa_nat_rlx );
@@ -1215,7 +1215,7 @@ main( int argc, char* argv [] )
 
 				relax_protocol.apply( fold_pose_relax );
 
-				core::io::silent::BinaryProteinSilentStructOP ss_fa_nat_rlx_cycle ( new core::io::silent::BinaryProteinSilentStruct( fold_pose_relax, outfilename_n_rlx ));
+				core::io::silent::BinarySilentStructOP ss_fa_nat_rlx_cycle ( new core::io::silent::BinarySilentStruct( fold_pose_relax, outfilename_n_rlx ));
 
 				sfd_fa.add_structure( ss_fa_nat_rlx_cycle );
 			}
@@ -1252,7 +1252,7 @@ main( int argc, char* argv [] )
 
 			//save the designed decoy
 
-			core::io::silent::BinaryProteinSilentStructOP ss_fa_des ( new core::io::silent::BinaryProteinSilentStruct( fold_pose, outfilename_des ));
+			core::io::silent::BinarySilentStructOP ss_fa_des ( new core::io::silent::BinarySilentStruct( fold_pose, outfilename_des ));
 
 
 			sfd_des.add_structure( ss_fa_des );
@@ -1271,7 +1271,7 @@ main( int argc, char* argv [] )
 			(*scorefxn_fa)(fold_pose); // score of the fold_pose
 
 
-			core::io::silent::BinaryProteinSilentStructOP ss_fa_rlx ( new core::io::silent::BinaryProteinSilentStruct( fold_pose, outfilename_rlx_1 ));
+			core::io::silent::BinarySilentStructOP ss_fa_rlx ( new core::io::silent::BinarySilentStruct( fold_pose, outfilename_rlx_1 ));
 
 
 			sfd_fa.add_structure( ss_fa_rlx );
@@ -1289,7 +1289,7 @@ main( int argc, char* argv [] )
 
 			pose::setPoseExtraScores( fold_pose, "rms",  final_rmsd_rlx );
 
-			core::io::silent::BinaryProteinSilentStructOP ss_fa_rlx_2 ( new core::io::silent::BinaryProteinSilentStruct( fold_pose, outfilename_rlx_2 ));
+			core::io::silent::BinarySilentStructOP ss_fa_rlx_2 ( new core::io::silent::BinarySilentStruct( fold_pose, outfilename_rlx_2 ));
 
 			sfd_fa.add_structure( ss_fa_rlx_2 );
 

@@ -27,6 +27,9 @@
 #include <core/scoring/func/GaussianChainFunc.hh>
 #include <core/chemical/VariantType.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
@@ -41,6 +44,7 @@ namespace loop_graph {
 	LoopGraph::LoopGraph():
 		rna_gaussian_variance_per_residue_( 5.0 * 5.0 ), // in Angstroms^2
 		protein_gaussian_variance_per_residue_( 3.0 * 3.0 ), // in Angstroms^2
+		loop_fixed_cost_( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() ), // -0.29 default, in Rosetta energy units
 		total_energy_( 0.0 )
 	{
 	}
@@ -131,9 +135,10 @@ namespace loop_graph {
 			}
 
 			// Note loop_fixed_cost_ needs to be my current loop_fixed_cost_ but corrected by 1.5 * k_B_T_ * log( rna_persistence_length2_ )
-			core::scoring::func::FuncOP func = new core::scoring::func::GaussianChainFunc( total_gaussian_variance, other_distances );
+			core::scoring::func::FuncOP func = new core::scoring::func::GaussianChainFunc( total_gaussian_variance, loop_fixed_cost_, other_distances );
 			Real const loop_closure_energy = func->func( main_distance );
 			total_energy_ += loop_closure_energy;
+			//			TR << "Variance " << total_gaussian_variance << "  distance: " << main_distance << " ==> " << loop_closure_energy << std::endl;
 
 			if ( current_pose_idx_in_cycle ){
 				// save information to allow derivative computation.

@@ -30,6 +30,7 @@ class GaussianChainQuadrupleFunc : public Func {
 public:
 
 	GaussianChainQuadrupleFunc( Real const gaussian_variance_,
+															Real const loop_fixed_cost,
 															Real const D2, Real const D3, Real const D4 );
 
 	FuncOP
@@ -50,11 +51,11 @@ private:
 private:
 
 	Real gaussian_variance_;
+	Real loop_fixed_cost_;
 	Real D2_, D3_, D4_;
 
 	// following have nice default values
 	Real kB_T_;
-	Real loop_fixed_cost_;
 
 	// derived from above.
 	Real loop_fixed_cost_total_;

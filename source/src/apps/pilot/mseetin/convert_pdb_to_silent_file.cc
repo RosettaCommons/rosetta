@@ -120,7 +120,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -230,7 +230,7 @@ pdb_to_silent_file_simple(){
 	    pose.apply_transform_Rx_plus_v( R, v );
 	}
 
-	BinaryRNASilentStruct s( pose, tag );
+	BinarySilentStruct s( pose, tag );
 
 	silent_file_data.write_silent_struct(s, silent_outfile, false);
 

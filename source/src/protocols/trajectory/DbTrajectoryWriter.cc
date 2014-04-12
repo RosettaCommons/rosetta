@@ -17,7 +17,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -144,7 +144,7 @@ void DbTrajectoryWriter::write_cache_to_db() const { // {{{1
 		stringstream string_stream;
 		SilentFileData silent_file;
 		SilentStructOP silent_data =
-			new BinaryProteinSilentStruct(frame.pose, "db");
+			new BinarySilentStruct(frame.pose, "db");
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
 		RowDataBaseOP iteration = new RowData<Size>(

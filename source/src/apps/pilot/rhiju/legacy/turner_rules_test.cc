@@ -46,7 +46,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -628,7 +628,7 @@ expand_chi_for_silent_structs( core::io::silent::SilentFileDataOP & sfd, core::s
 				(*scorefxn)( pose );
 				count++;
 				std::string tag = "S_" + ObjexxFCL::lead_zero_string_of( count, 5 );
-				BinaryRNASilentStruct s( pose, tag ); // will this copy in scores?
+				BinarySilentStruct s( pose, tag ); // will this copy in scores?
 				sfd_new->add_structure( s );
 
 			}
@@ -1061,7 +1061,7 @@ cluster_rigid_body_settings_test(){
 		rigid_body_sampler->apply_rigid_body_settings( pose, pose_start, rbs[1],rbs[2],rbs[3],rbs[4],rbs[5],rbs[6] );
 		(*scorefxn)(pose);
 		std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( sort_index[ cluster_index[ i ] ], 6 );
-		BinaryRNASilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
+		BinarySilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
 		sfd.write_silent_struct( s, silent_file, false );
 
 	}
@@ -1758,7 +1758,7 @@ do_the_match(
 
 				std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( i, 6 ) + "_" +
 					ObjexxFCL::lead_zero_string_of( closest_neighbor, 6 );
-				BinaryRNASilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
+				BinarySilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
 				Real const rmsd_to_ideal = all_atom_rmsd( pose, ideal_pose );
 				s.add_energy( "all_rms", rmsd_to_ideal );
 
@@ -2345,7 +2345,7 @@ minimize_poses( pose::Pose & pose,
 
 		minimizer.run( pose, mm, *(scorefxn), options );
 
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 		minimize_silent_file_data.add_structure( s );
 
 	}
@@ -2548,7 +2548,7 @@ base_pair_to_base_pair_test(){
 
 			//			if ( minimize_silent_file_data->size() == 0 ) { //need a garbage pose -- must output something.
 			//				(*minimize_scorefxn)( start_pose );
-			//				BinaryRNASilentStruct s( start_pose, "GARBAGE" );
+			//				BinarySilentStruct s( start_pose, "GARBAGE" );
 			//				minimize_silent_file_data->add_structure( s );
 			//			}
 
@@ -2569,7 +2569,7 @@ base_pair_to_base_pair_test(){
 			// this is just a 'garbage' pose.
 			std::cout << "GARBAGE POSE!!" << std::endl;
 			(*minimize_scorefxn)( pose );
-			SilentStructOP s = new BinaryRNASilentStruct( pose, tag );
+			SilentStructOP s = new BinarySilentStruct( pose, tag );
 			assign_stack_faces( s );
 			silent_file_data->write_silent_struct( *s, silent_file, false );
 		}
@@ -3079,7 +3079,7 @@ dinucleotide_test(){
 		if ( silent_file.size() > 0  ){
 
 			std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( count, 6 );
-			BinaryRNASilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
+			BinarySilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
 			Real const rmsd_to_ideal = all_atom_rmsd( pose, ideal_pose );
 			s.add_energy( "all_rms", rmsd_to_ideal );
 			s.add_energy( "log_vol", log( radians(bin_size) * radians(bin_size) * radians(bin_size) * radians(bin_size) * radians(bin_size) ) );
@@ -3226,7 +3226,7 @@ reverse_doublet_test(){
 			new_pose.dump_pdb( "REVERSE.pdb");
 		}
 
-		BinaryRNASilentStruct s( new_pose, tag ); // will this copy in scores?
+		BinarySilentStruct s( new_pose, tag ); // will this copy in scores?
 		s.silent_energies(  iter->get_silent_energies() );
 
 		silent_file_data.write_silent_struct( s, silent_file_out, false /*just score*/ );

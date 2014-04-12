@@ -34,8 +34,10 @@ namespace scoring {
 namespace func {
 
 GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc( Real const gaussian_variance,
+																												Real const loop_fixed_cost,
 																												Real const D2, Real const D3, Real const D4 ):
 	gaussian_variance_( gaussian_variance ),
+	loop_fixed_cost_( loop_fixed_cost ),
 	D2_( D2 ),
 	D3_( D3 ),
 	D4_( D4 )
@@ -46,13 +48,12 @@ GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc( Real const gaussian_vari
 FuncOP
 GaussianChainQuadrupleFunc::clone() const
 {
-	return new GaussianChainQuadrupleFunc( gaussian_variance_, D2_, D3_, D4_ );
+	return new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_, D4_ );
 }
 
 void
 GaussianChainQuadrupleFunc::initialize_parameters(){
 	kB_T_ = 1.0; // choice of energy units.
-	loop_fixed_cost_ = -0.29; // from fits to RNA data.
 	recompute_parameters();
 }
 

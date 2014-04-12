@@ -39,10 +39,10 @@ residue_types/nucleic/dna/GUA.params
 #residue_types/nucleic/dna/GNP.params
 #residue_types/nucleic/dna/GDP.params
 #residue_types/nucleic/dna/GTP.params
-residue_types/nucleic/rna/RAD.params
-residue_types/nucleic/rna/RCY.params
-residue_types/nucleic/rna/RGU.params
-residue_types/nucleic/rna/URA.params
+residue_types/nucleic/rna_phenix/RAD_n.params
+residue_types/nucleic/rna_phenix/RCY_n.params
+residue_types/nucleic/rna_phenix/RGU_n.params
+residue_types/nucleic/rna_phenix/URA_n.params
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params

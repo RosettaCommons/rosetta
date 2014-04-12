@@ -31,8 +31,8 @@
 #include <core/kinematics/Stub.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <utility/io/ozstream.hh>
 
 #include <protocols/idealize/idealize.hh>
@@ -175,7 +175,7 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
 	//scorefxn->set_weight( fa_elec, 1.0 );
 
 	(*scorefxn)( pose );

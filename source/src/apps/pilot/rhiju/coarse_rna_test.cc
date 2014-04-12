@@ -22,7 +22,7 @@
 #include <core/id/DOF_ID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -426,10 +426,10 @@ convert_to_coarse_test(){
 
 	SilentFileData silent_file_data;
 
-	BinaryRNASilentStruct s1( pose, "S_0" );
+	BinarySilentStruct s1( pose, "S_0" );
 	silent_file_data.write_silent_struct( s1, "fullatom.out", false );
 
-	BinaryRNASilentStruct s2( coarse_pose, "S_0" );
+	BinarySilentStruct s2( coarse_pose, "S_0" );
 	silent_file_data.write_silent_struct( s2, "coarse.out", false );
 
 }
@@ -1375,7 +1375,7 @@ sampling_map_test(){
 
 					count++;
 					std::string const tag = "S_" + lead_zero_string_of( count, 5);
-					BinaryRNASilentStruct s( *pose_list[n], tag );
+					BinarySilentStruct s( *pose_list[n], tag );
 					s.add_energy( "nsol", nsol );
 
 

@@ -21,6 +21,7 @@
 
 // Project headers
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -620,8 +621,10 @@ Residue::fill_missing_atoms(
 		for ( Size i=1; i<= natoms(); ++i ) {
 			if ( missing[i] ) {
 				chemical::AtomICoor const & ic( icoor(i) );
-				if ( (seqpos_ == 1                   && ic.depends_on_polymer_lower()) ||
-					(Size(seqpos_) == conformation.size() && ic.depends_on_polymer_upper()) ) {
+				if ( ( (seqpos_ == 1 || conformation.fold_tree().is_cutpoint(seqpos_-1))
+							 && ic.depends_on_polymer_lower()) ||
+						 ( ( Size(seqpos_) == conformation.size() || conformation.fold_tree().is_cutpoint(seqpos_) )
+							 && ic.depends_on_polymer_upper()) ) {
 					missing[i] = false;
 					TR.Warning << "[ WARNING ] missing an atom: " << seqpos_ << " " << atom_name(i) << " that depends on a nonexistent polymer connection! "
 						<< std::endl <<  " --> generating it using idealized coordinates." << std::endl;

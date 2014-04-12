@@ -517,25 +517,44 @@ void make_simple_fold_tree_from_jump_frame( Frame const& frame, Size total_resid
 
 void fragment_set_slice ( ConstantLengthFragSetOP & fragset, Size const & min_res, Size const & max_res ){
 
+	utility::vector1< Size > slice_res;
+	for ( Size n = min_res; n <= max_res; n++ ) slice_res.push_back( n );
+	fragment_set_slice( fragset, slice_res );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
+										utility::vector1< core::Size > const & slice_res ) {
+
+	using namespace core::fragment;
+
 	Size const len( fragset->max_frag_length() );
 
 	ConstantLengthFragSetOP fragset_new = new ConstantLengthFragSet;
 
-	assert( max_res >= min_res + len - 1);
+	for ( Size n = 1; n <= (slice_res.size() - len + 1); n++ ) {
 
-	for ( Size pos = min_res; pos <= max_res - len + 1 ; ++pos ) {
+		Size const & pos = slice_res[ n ];
 
 		FrameList frames;
+
+		if ( pos > (fragset->max_pos()-len+1) ) {
+			std::cout << "WARNING: NO FRAGS FOR POSITION " << pos << std::endl;
+			continue;
+		}
+
 		fragset->frames( pos, frames );
 
 		// CURRENTLY ONLY WORKS FOR CONST FRAG LENGTH SETS!!!! ASSUMES ONE FRAME!!!
 		assert( frames.size() == 1 );
 
 		FrameOP & frame( frames[1] );
-		FrameOP frame_new = new Frame( pos - min_res + 1, len );
+		FrameOP frame_new = new Frame( n, len );
 
-		for ( Size n = 1; n <= frame->nr_frags(); n++ ) {
-			frame_new->add_fragment( frame->fragment_ptr( n ) );
+		for ( Size k = 1; k <= frame->nr_frags(); k++ ) {
+			frame_new->add_fragment( frame->fragment_ptr( k ) );
 		}
 
 		fragset_new->add( frame_new );
@@ -545,6 +564,8 @@ void fragment_set_slice ( ConstantLengthFragSetOP & fragset, Size const & min_re
 	fragset = fragset_new;
 
 }
+
+
 /// @brief Finds the fold tree boundaries to the left and right of <pos>.
 void FindBoundaries(const core::kinematics::FoldTree& tree, core::Size pos, core::Size* left, core::Size* right) {
 	using core::Size;

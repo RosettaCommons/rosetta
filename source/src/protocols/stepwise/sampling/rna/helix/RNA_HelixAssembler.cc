@@ -96,7 +96,7 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
 	torsion_info_(),
 	perturb_amplitude_( 10.0 ),
-	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna/rna_helix" ) ),
+	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_helix" ) ),
 	model_and_remove_capping_residues_( true ),
 	capping_residues_( "gc" )
 {
@@ -309,6 +309,7 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 	using namespace core::pose::full_model_info;
 	FullModelInfoOP full_model_info = new FullModelInfo( pose );
 	set_full_model_info( pose, full_model_info );
+
 }
 
 

@@ -28,6 +28,15 @@ namespace pose {
 namespace rna{
 
 bool
+mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
+
+void
+figure_out_reasonable_rna_fold_tree( core::pose::Pose & pose );
+
+void
+virtualize_5prime_phosphates( core::pose::Pose & pose );
+
+bool
 is_cutpoint_open( Pose const & pose, Size const i );
 
 bool

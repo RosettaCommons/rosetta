@@ -25,7 +25,7 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -167,8 +167,8 @@ WorkUnit_LoopHash::run()
 		(*it)->add_energy( "state", 1 );
 
 	if( option[ OptionKeys::lh::bss]() ) {
-			const core::io::silent::BinaryProteinSilentStruct *pss2 = dynamic_cast< const core::io::silent::BinaryProteinSilentStruct* > ( ss2 );
-			core::io::silent::BinaryProteinSilentStruct *pss = dynamic_cast< core::io::silent::BinaryProteinSilentStruct* > ( ss );
+			const core::io::silent::BinarySilentStruct *pss2 = dynamic_cast< const core::io::silent::BinarySilentStruct* > ( ss2 );
+			core::io::silent::BinarySilentStruct *pss = dynamic_cast< core::io::silent::BinarySilentStruct* > ( ss );
 			if( (pss != NULL) && (pss2 != NULL) ){
 				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
 			}	else {

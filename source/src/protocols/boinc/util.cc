@@ -43,7 +43,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
@@ -86,7 +86,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	vector1<Real> scores;
 	//step1: read in poses and output them to temp file.
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	SilentStructOP localOutputSS(new core::io::silent::BinaryProteinSilentStruct);
+	SilentStructOP localOutputSS(new core::io::silent::BinarySilentStruct);
 	SilentFileData sfd;
 	string outputFileName = option[out::file::silent]();
 	if(option[out::silent_gz]()){

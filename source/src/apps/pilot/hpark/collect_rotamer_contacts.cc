@@ -18,7 +18,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 #include <core/pack/rotamer_set/RotamerSet.hh>

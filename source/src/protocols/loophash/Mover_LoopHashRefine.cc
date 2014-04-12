@@ -40,7 +40,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/BinaryProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/BinarySilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 

@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -29,6 +29,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
 
@@ -291,7 +292,7 @@ create_bp_jump_database_test( ){
 	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
 	make_phosphate_nomenclature_matches_mini( pose );
 
-	//	figure_out_reasonable_rna_fold_tree( pose );
+	//	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 	// Fill base pairing information... these are
 	// all functions used in scoring... see RNA_BaseBaseEnergy.cc
@@ -451,7 +452,7 @@ create_base_pair_step_database_test( ){
 
 		pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
-		figure_out_reasonable_rna_fold_tree( pose );
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 		std::string const sequence = pose.sequence();
 		std::cout << sequence.size() << " " << pose.total_residue() << std::endl;
 
@@ -476,7 +477,7 @@ create_base_pair_step_database_test( ){
 				std::cout << "Found base pair step! " << bps_seq << " " << bps_tag << std::endl;
 
 				std::string const silent_file = bps_seq + ".out";
-				BinaryRNASilentStruct s( bps_pose, bps_tag );
+				BinarySilentStruct s( bps_pose, bps_tag );
 				silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
 
 			}

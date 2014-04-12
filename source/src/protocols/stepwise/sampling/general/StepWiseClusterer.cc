@@ -15,6 +15,7 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/general/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinModelerOptions.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 
 //////////////////////////////////
@@ -53,35 +54,43 @@ static basic::Tracer TR( "protocols.stepwise.StepWiseClusterer" ) ;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
+//////////////////////////////////////////////////////////////////////////
+// This Clusterer will be deprecated soon in favor of an
+//  'on-the-fly' clusterer for stepwise monte carlo, based on what
+//  Parin piloted for RNA -- might be a little dependent on order
+//  of sampling, but should be very memory efficient, and fits well
+//  with new sample-and-screen framework which unifies RNA and protein.
+//
+//         -- rhiju, 2014
+//////////////////////////////////////////////////////////////////////////
+
 namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace general {
 
 
-  //////////////////////////////////////////////////////////////////////////
-  //constructor!
-  StepWiseClusterer::StepWiseClusterer( utility::vector1< std::string > const & silent_files_in )
-  {
-		initialize_parameters_and_input();
-		input_->set_record_source( true );
-		input_->filenames( silent_files_in ); //triggers read in of files, too.
-  }
-
-  StepWiseClusterer::StepWiseClusterer( std::string const & silent_file_in )
+  StepWiseClusterer::StepWiseClusterer( utility::vector1< PoseOP > const & pose_list ):
+		input_pose_list_( pose_list )
 	{
 		initialize_parameters_and_input();
-		input_->set_record_source( true );
-
-		utility::vector1< std::string > silent_files_;
-		silent_files_.push_back( silent_file_in );
-		input_->filenames( silent_files_ ); //triggers read in of files, too.
 	}
 
-  StepWiseClusterer::StepWiseClusterer( core::io::silent::SilentFileDataOP & sfd )
+	// convenience constructor, used in StepWiseProteinModeler. Maybe should go into a util.
+	StepWiseClusterer::StepWiseClusterer( utility::vector1< PoseOP > const & pose_list,
+																				utility::vector1< Size > const & moving_res_list,
+																				protein::StepWiseProteinModelerOptionsCOP options,
+																				bool const force_align ):
+		input_pose_list_( pose_list )
 	{
 		initialize_parameters_and_input();
-		input_->set_silent_file_data( sfd ); // triggers reordering by energy and all that.
+		set_max_decoys( options->max_decoys() );
+		set_cluster_by_all_atom_rmsd( options->cluster_by_all_atom_rmsd() ); // false by default
+		set_rename_tags( true );
+		set_force_align( force_align );
+		set_calc_rms_res( moving_res_list );
+		Real cluster_radius = options->rescore_only() ? 0.0 : options->cluster_radius();
+		set_cluster_radius( cluster_radius );
 	}
 
 
@@ -101,17 +110,14 @@ namespace general {
 		rename_tags_ = false;
 		force_align_ = false;
 
-		score_min_ =  0.0 ;
-		score_min_defined_ = false;
-
-		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
-		input_->set_order_by_energy( true );
+		runtime_assert(  input_pose_list_.size() > 0 );
+		sort( input_pose_list_.begin(), input_pose_list_.end(), sort_pose_by_score );
+		score_min_ = total_energy_from_pose( *input_pose_list_[1] );
+		input_pose_counter_ = 0;
+		hit_score_cutoff_ = false;
 
 		initialize_auto_tune_cluster_rmsds();
-		hit_score_cutoff_ = false;
 		initialized_atom_id_map_for_rmsd_ = false;
-
-		rsd_type_set_ = option[ in::file::residue_type_set ]();
 	}
 
 
@@ -126,8 +132,6 @@ namespace general {
 
 		clock_t const time_start( clock() );
 
-		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ );
-
 		// basic initialization
 		initialize_cluster_list();
 
@@ -137,7 +141,7 @@ namespace general {
 			do_some_clustering();
 		}
 
-		std::cout << "Total time in StepWiseClusterer: " <<
+		TR.Debug << "Total time in StepWiseClusterer: " <<
 			static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
 	}
@@ -164,53 +168,41 @@ namespace general {
 		using namespace core::pose;
 
 		hit_score_cutoff_ = false;
-
-		//for loop modeling, little moving_element of pose used to calculate rms -- and saved.
-		PoseOP pose_op( new Pose );
-		Pose & pose = *pose_op;
-
-		while ( input_->has_another_pose() ) {
-
-			core::io::silent::SilentStructOP silent_struct( input_->next_struct() );
-			silent_struct->fill_pose( pose );
-
-			Real score( 0.0 );
-			getPoseExtraScores( pose, "score", score );
-
-			if ( !score_min_defined_ ){
-				score_min_ = score;
-				score_min_defined_ = true;
-			}
-
+		while( input_pose_counter_ < input_pose_list_.size() ){
+			input_pose_counter_++;
+			PoseOP pose = input_pose_list_[ input_pose_counter_ ];
+			Real score = total_energy_from_pose( *pose );
 			if ( score > score_min_ + score_diff_cut_ ) {
 				hit_score_cutoff_ = true;
 				break;
 			}
 
-			std::string tag( silent_struct->decoy_tag() );
-			TR << "Checking: " << tag << " with score " << score << " against list of size " << pose_output_list_.size();
+			std::string tag = tag_from_pose( *pose );
+			TR.Debug << "Checking: " << tag << " with score " << score << " against list of size " << output_pose_list_.size();
 
 			// carve out subset of residues for rms calculation.
-			if ( calc_rms_res_.size() > 0 )	pdbslice( pose, calc_rms_res_ );
-
-			Size const found_close_cluster = check_for_closeness( pose_op );
+			PoseOP rms_pose = pose;
+			if ( calc_rms_res_.size() > 0 ) {
+				rms_pose = new Pose;
+				pdbslice( *rms_pose, *pose, calc_rms_res_ );
+			}
+			Size const found_close_cluster = check_for_closeness( rms_pose );
 
 			if ( found_close_cluster == 0 )  {
-				PoseOP pose_save( new Pose );
-				*pose_save = pose;
-				tag_output_list_.push_back(  tag );
-				pose_output_list_.push_back(  pose_save );
-				silent_struct_output_list_.push_back(  silent_struct  );
+				PoseOP pose_save = pose->clone();
+				rms_pose_list_.push_back( rms_pose );
+				output_pose_list_.push_back( pose );
 				num_pose_in_cluster_.push_back( 1 );
-				TR << " ... added. " << std::endl;
-				if ( pose_output_list_.size() >= max_decoys_ ) break;
-			} else{
+				TR.Debug << " ... added. " << std::endl;
+
+				if ( output_pose_list_.size() >= max_decoys_ ) break;
+			} else {
 				num_pose_in_cluster_[ found_close_cluster ]++;
-				TR << " ... not added. " << std::endl;
+				TR.Debug << " ... not added. " << std::endl;
 			}
 		}
 
-	  TR << "After clustering, number of decoys: " << pose_output_list_.size() << std::endl;
+	  TR.Debug << "After clustering, number of decoys: " << output_pose_list_.size() << std::endl;
 		return;
 
 	}
@@ -219,15 +211,10 @@ namespace general {
 	/////////////////////////////////////////////////////////////////////
 	void
 	StepWiseClusterer::initialize_cluster_list() {
-
-		pose_output_list_.clear();
-		tag_output_list_.clear();
-		silent_struct_output_list_.clear();
+		rms_pose_list_.clear();
+		output_pose_list_.clear();
 		num_pose_in_cluster_.clear();
-
-		score_min_ =  0.0 ;
-		score_min_defined_ = false;
-
+		input_pose_counter_ = 0;
 		hit_score_cutoff_ = false;
 	}
 
@@ -245,16 +232,16 @@ namespace general {
 			do_some_clustering();
 
 			if ( hit_score_cutoff_ ) {
-				std::cout << "Hit score cutoff: " << score_diff_cut_ << std::endl;
+				TR.Debug << "Hit score cutoff: " << score_diff_cut_ << std::endl;
 				break;
 			}
-			if ( !input_->has_another_pose() ) {
-				std::cout << "Done with pose list. " << std::endl;
+			if ( input_pose_counter_ == input_pose_list_.size() ){
+				TR.Debug << "Done with pose list. " << std::endl;
 				break;
 			}
 		}
 
-		std::cout << "Clustering radius after auto_tune: " << cluster_radius_ << std::endl;
+		TR.Debug << "Clustering radius after auto_tune: " << cluster_radius_ << std::endl;
 
 	}
 
@@ -263,24 +250,21 @@ namespace general {
 	void
 	StepWiseClusterer::recluster_current_pose_list() {
 
-		utility::vector1< core::pose::PoseOP > old_pose_output_list = pose_output_list_;
-		utility::vector1< std::string > old_tag_output_list = tag_output_list_;
-		utility::vector1< core::io::silent::SilentStructOP > old_silent_struct_output_list = silent_struct_output_list_;
+		utility::vector1< core::pose::PoseOP > old_rms_pose_list = rms_pose_list_;
+		utility::vector1< core::pose::PoseOP > old_output_pose_list = output_pose_list_;
 		utility::vector1< core::Size > old_num_pose_in_cluster = num_pose_in_cluster_;
 
-		pose_output_list_.clear();
-		tag_output_list_.clear();
-		silent_struct_output_list_.clear();
+		rms_pose_list_.clear();
+		output_pose_list_.clear();
 
-		for ( Size i = 1; i <= old_pose_output_list.size(); i++ ) {
+		for ( Size i = 1; i <= old_rms_pose_list.size(); i++ ) {
 
-			core::pose::PoseOP pose_op = old_pose_output_list[ i ];
+			core::pose::PoseOP rms_pose = old_rms_pose_list[ i ];
 
-			Size const found_close_cluster = check_for_closeness( pose_op );
+			Size const found_close_cluster = check_for_closeness( rms_pose );
 			if ( found_close_cluster == 0 )  {
-				tag_output_list_.push_back(  old_tag_output_list[ i ] );
-				pose_output_list_.push_back(  old_pose_output_list[ i ] );
-				silent_struct_output_list_.push_back(  old_silent_struct_output_list[ i ]  );
+				rms_pose_list_.push_back( rms_pose );
+				output_pose_list_.push_back(  old_output_pose_list[ i ]  );
 				num_pose_in_cluster_.push_back( old_num_pose_in_cluster[ i ] );
 			} else {
 				num_pose_in_cluster_[ found_close_cluster ] += old_num_pose_in_cluster[ i ];
@@ -288,105 +272,44 @@ namespace general {
 
 		}
 
-		TR <<  "After reclustering with rmsd " << cluster_radius_ << ", number of clusters reduced from " <<
-			old_pose_output_list.size() << " to " << pose_output_list_.size() << std::endl;
+		TR.Debug <<  "After reclustering with rmsd " << cluster_radius_ << ", number of clusters reduced from " <<
+			old_rms_pose_list.size() << " to " << rms_pose_list_.size() << std::endl;
 
 	}
 
 
 	///////////////////////////////////////////////////////////////
 	Size
-	StepWiseClusterer::check_for_closeness( core::pose::PoseOP const & pose_op )
+	StepWiseClusterer::check_for_closeness( core::pose::PoseOP rms_pose )
 	{
 		using namespace core::scoring;
 
-		if ( !initialized_atom_id_map_for_rmsd_ ) initialize_corresponding_atom_id_map( *pose_op );
+		if ( !initialized_atom_id_map_for_rmsd_ ) initialize_corresponding_atom_id_map( *rms_pose );
 
 		// go through the list backwards, because poses may be grouped by similarity --
 		// the newest pose is probably closer to poses at the end of the list.
-		for ( Size n = pose_output_list_.size(); n >= 1; n-- ) {
+		for ( Size n = rms_pose_list_.size(); n >= 1; n-- ) {
 
 			Real rmsd( 0.0 );
 
-
 			if ( calc_rms_res_.size() == 0 || force_align_ ) {
-				rmsd = rms_at_corresponding_atoms( *(pose_output_list_[ n ]), *pose_op, corresponding_atom_id_map_ );
+				rmsd = rms_at_corresponding_atoms( *(rms_pose_list_[ n ]), *rms_pose, corresponding_atom_id_map_ );
 			} else {
 				// assumes prealignment of poses!!!
-				rmsd = rms_at_corresponding_atoms_no_super( *(pose_output_list_[ n ]), *pose_op,
+				rmsd = rms_at_corresponding_atoms_no_super( *(rms_pose_list_[ n ]), *rms_pose,
 																										corresponding_atom_id_map_ );
 			}
 
-			if ( rmsd < cluster_radius_ )	{
-				return n;
-			}
+			if ( rmsd < cluster_radius_ ) return n;
+
 		}
 		return 0;
 	}
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseClusterer::output_silent_file( std::string const & silent_file ){
-
-		using namespace core::io::silent;
-
-		SilentFileData silent_file_data;
-
-		for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
-
-			SilentStructOP & s( silent_struct_output_list_[ n ] );
-			s->add_string_value( "nclust", ObjexxFCL::format::I(8,num_pose_in_cluster_[ n ]) );
-
-			if ( rename_tags_ ){
-				s->add_comment( "PARENT_TAG", s->decoy_tag() );
-				std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
-				s->set_decoy_tag( tag );
-			}
-
-			silent_file_data.write_silent_struct( *s, silent_file, false /*write score only*/ );
-
-		}
-
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////
-	core::io::silent::SilentFileDataOP
-	StepWiseClusterer::silent_file_data(){
-
-		using namespace core::io::silent;
-
-		SilentFileDataOP silent_file_data = new SilentFileData;
-		for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
-			silent_file_data->add_structure( silent_struct_output_list_[ n ] );
-		}
-		return silent_file_data;
-	}
-
-	//////////////////////////////////////////////
-	PoseList
-	StepWiseClusterer::clustered_pose_list(){
-
-		PoseList pose_list;
-
-		for ( Size n = 1 ; n <= pose_output_list_.size(); n++ ) {
-			pose_list[ tag_output_list_[n] ] = pose_output_list_[ n ];
-		}
-
-		return pose_list;
-	}
-
 
   //////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseClusterer::set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res ){
 		calc_rms_res_ = calc_rms_res;
-	}
-
-  //////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseClusterer::set_silent_file_data( core::io::silent::SilentFileDataOP & sfd ){
-		input_->set_silent_file_data( sfd );
 	}
 
   //////////////////////////////////////////////////////////////////////////

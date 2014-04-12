@@ -30,7 +30,7 @@
 #include <core/kinematics/Stub.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <utility/io/ozstream.hh>
 
 #include <core/pose/util.hh>
@@ -466,7 +466,7 @@ adenine_probe_score_test()
 	if ( option[ score::weights ].user() ){
 		scorefxn = scoring::getScoreFunction();
 	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
+		scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
 		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
 	}
 
@@ -592,7 +592,7 @@ quick_score_test(){
 	if ( option[ score::weights ].user() ){
 		scorefxn = scoring::getScoreFunction();
 	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
+		scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
 		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
 	}
 

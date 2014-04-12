@@ -29,7 +29,7 @@ namespace screener {
 	PhosphateScreener::PhosphateScreener( sampling::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler ):
 		SampleApplier( phosphate_sampler->pose() ),
 		phosphate_sampler_( phosphate_sampler ),
-		phosphate_sampler_for_restoration_( phosphate_sampler->clone() ) // will not change, and will allow restoration of phosphate.
+		phosphate_sampler_for_restoration_( phosphate_sampler->clone_sampler() ) // will not change, and will allow restoration of phosphate.
 	{}
 
 	//Destructor

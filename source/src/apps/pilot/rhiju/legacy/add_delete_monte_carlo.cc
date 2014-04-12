@@ -79,7 +79,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -302,7 +302,7 @@ swa_rna_sample()
 	// Scorefunction -- choose a default. Put into its own setup function?
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
-	else scorefxn = ScoreFunctionFactory::create_score_function( "rna/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
+	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/farna/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
 
 	if ( !scorefxn->has_nonzero_weight( unfolded ) ) { 	// must have unfolded term!
 		std::cout << "Putting 'unfolded' term into scorefunction! Use -unfolded_weight to reduce weight or turn off." << std::endl;

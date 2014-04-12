@@ -101,6 +101,7 @@ namespace loop_graph {
 
 		Real const rna_gaussian_variance_per_residue_;
 		Real const protein_gaussian_variance_per_residue_;
+		Real const loop_fixed_cost_;
 
 		Real total_energy_;
 

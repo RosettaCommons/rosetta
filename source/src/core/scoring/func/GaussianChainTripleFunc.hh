@@ -30,6 +30,7 @@ class GaussianChainTripleFunc : public Func {
 public:
 
 	GaussianChainTripleFunc( Real const gaussian_variance_,
+													 Real const loop_fixed_cost,
 													 Real const D2,
 													 Real const D3 );
 
@@ -51,12 +52,12 @@ private:
 private:
 
 	Real gaussian_variance_;
+	Real loop_fixed_cost_;
 	Real D2_;
 	Real D3_;
 
 	// following have nice default values
 	Real kB_T_;
-	Real loop_fixed_cost_;
 
 	// derived from above.
 	Real loop_fixed_cost_total_;

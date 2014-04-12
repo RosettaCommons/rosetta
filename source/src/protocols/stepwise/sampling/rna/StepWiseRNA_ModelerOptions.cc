@@ -63,7 +63,7 @@ namespace rna {
 	StepWiseRNA_ModelerOptions::initialize_variables(){
 		silent_file_ = "";
 		sampler_num_pose_kept_ = 108;
-		num_pose_minimize_ = 99999;
+		num_pose_minimize_ = 0; // signal to minimize all.
 		sampler_native_rmsd_screen_ = false;
 		sampler_native_screen_rmsd_cutoff_ = 2.0;
 		cluster_rmsd_ = 0.5;
@@ -195,8 +195,8 @@ namespace rna {
 		using namespace basic::options::OptionKeys::stepwise::rna;
 
 		sampler_num_pose_kept_ = option[ basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept ]();
-		if ( option[ basic::options::OptionKeys::stepwise::rna::choose_random ]() ) num_pose_minimize_ = 1;
-		if ( option[ basic::options::OptionKeys::stepwise::rna::num_pose_minimize ].user() ) num_pose_minimize_ = option[ basic::options::OptionKeys::stepwise::rna::num_pose_minimize ]();
+		if ( option[ basic::options::OptionKeys::stepwise::choose_random ]() ) num_pose_minimize_ = 1;
+		if ( option[ basic::options::OptionKeys::stepwise::num_pose_minimize ].user() ) num_pose_minimize_ = option[ basic::options::OptionKeys::stepwise::num_pose_minimize ]();
 
 		sampler_native_rmsd_screen_ = option[ OptionKeys::stepwise::rna::sampler_native_rmsd_screen ]();
 		sampler_native_screen_rmsd_cutoff_ = option[ OptionKeys::stepwise::rna::sampler_native_screen_rmsd_cutoff ]();
@@ -204,7 +204,7 @@ namespace rna {
 		native_edensity_score_cutoff_ = option[ OptionKeys::stepwise::rna::native_edensity_score_cutoff]();
 		sampler_perform_o2prime_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_o2prime_pack ]();
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
-		use_green_packer_ = option[ OptionKeys::stepwise::rna::sampler_use_green_packer ]();
+		use_green_packer_ = option[ OptionKeys::stepwise::use_green_packer ]();
 		verbose_ = option[ VERBOSE ]();
 		distinguish_pucker_ = option[ OptionKeys::stepwise::rna::distinguish_pucker]();
 		finer_sampling_at_chain_closure_ = option[ OptionKeys::stepwise::rna::finer_sampling_at_chain_closure]();
@@ -218,8 +218,8 @@ namespace rna {
 		kic_sampling_if_relevant_ = option[ OptionKeys::stepwise::rna::erraser ]();
 		VDW_atr_rep_screen_ = option[ OptionKeys::stepwise::rna::VDW_atr_rep_screen ]();
 		force_centroid_interaction_ = option[ OptionKeys::stepwise::rna::force_centroid_interaction ]();
-		choose_random_ = option[ basic::options::OptionKeys::stepwise::rna::choose_random ]() ;
-		num_random_samples_ = option[ basic::options::OptionKeys::stepwise::rna::num_random_samples ]();
+		choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
+		num_random_samples_ = option[ basic::options::OptionKeys::stepwise::num_random_samples ]();
 		skip_sampling_ = option[ OptionKeys::stepwise::rna::skip_sampling ]();
 		perform_minimize_ = option[ OptionKeys::stepwise::rna::minimizer_perform_minimize ]();
 		minimize_and_score_sugar_ = option[ basic::options::OptionKeys::stepwise::rna::minimize_and_score_sugar ]();

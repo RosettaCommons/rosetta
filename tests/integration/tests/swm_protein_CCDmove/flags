@@ -1,0 +1,9 @@
+-s shortloop_mini_1alc_H.pdb
+-fasta mini_1alc.fasta 
+-native mini_1alc.pdb 
+-score:weights stepwise/protein/protein_res_level_energy.wts
+-out:file:silent swm_rebuild.out
+-move ADD 12 BOND_TO_PREVIOUS 11
+-sample_res 12-14
+-choose_random
+-num_random_samples 20

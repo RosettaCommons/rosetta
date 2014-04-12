@@ -156,7 +156,7 @@ StepWiseRNA_RigidBodySampler::StepWiseRNA_RigidBodySampler( StepWiseRNA_JobParam
 	is_dinucleotide_( gap_size_to_anchor_ == 1 ),
 	close_chain_to_distal_( gap_size_ == 0 ),
 	close_chain_to_anchor_( gap_size_to_anchor_ == 0 ),
-	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
+	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
 	native_rmsd_screen_( false ), // updated below
 	num_pose_kept_to_use_( 0 ),   // updated below

@@ -42,8 +42,7 @@ sources = {
 	],
 	"core/io/silent": [
 		"BasicSilentStructCreators",
-		"BinaryProteinSilentStruct",
-		"BinaryRNASilentStruct",
+		"BinarySilentStruct",
 		"RNA_SilentStruct",
 		"ScoreFileSilentStruct",
 		"ScoreJumpFileSilentStruct",
@@ -113,7 +112,8 @@ sources = {
 	"core/pose/full_model_info": [
 		"FullModelInfo",
 		"FullModelInfoUtil",
-		"FullModelInfoSetupFromCommandLine",
+		"FullModelParameters",
+		"FullModelParameterType",
 	],
 	"core/pose/metrics": [
 		"CalculatorFactory",
@@ -513,7 +513,6 @@ sources = {
 		"SmoothEnvEnergy",
 		"CenRotEnvEnergy",
 		"SuckerEnergy",
-		"SWM_RMSD_Energy",
 		"SymmetricLigandEnergy",
 		"TwoBodyEnergy",
 		"UnfoldedStateEnergy",

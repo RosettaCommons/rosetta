@@ -44,7 +44,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
@@ -113,7 +113,7 @@ add_covalent_linkage(
 	Size const resB_pos,
 	Size const resA_At,
 	Size const resB_At,
-	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed? 
+	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed?
 )
 {
 	using namespace core::chemical;
@@ -294,7 +294,7 @@ add_covalent_linkage_helper(
 								break;
 							}
 							++virtnum;
-						} //Finding unique name 
+						} //Finding unique name
 
 						//Create a new virt atom, using the unique name found above:
 						core::chemical::AddAtom addvirt(virtname, "VIRT", "VIRT", 0.0);
@@ -614,7 +614,7 @@ auto_setup_all_metal_constraints (
 					AngleConstraintOP angleconst1 = new AngleConstraint( metalID, otherID, otherparentID, circfunc1 ); //Angle constraint holding the metal
 					pose.add_constraint(angleconst1);
 				}
-				
+
 			} //Loop through all of the metal's connections
 		} //If this is a metal
 	} //Loop through all residues
@@ -662,6 +662,6 @@ auto_setup_all_metal_constraints (
 
 	return;
 }
-	
+
 } // util
 } // core

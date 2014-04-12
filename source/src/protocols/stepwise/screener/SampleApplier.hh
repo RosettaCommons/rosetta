@@ -66,7 +66,7 @@ namespace screener {
 
 		void set_apply_residue_alternative_sampler_( bool const setting ){ apply_residue_alternative_sampler_ = setting; }
 
-	private:
+	protected:
 
 		pose::Pose & pose_;
 

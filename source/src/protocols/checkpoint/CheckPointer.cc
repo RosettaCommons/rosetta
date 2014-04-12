@@ -33,7 +33,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -106,7 +106,7 @@ void FileBuffer::dump(){
 bool pose_to_binary_silent_file( std::ostream &output, const std::string &tag, const pose::Pose &pose ){
 	using namespace io::silent;
 	SilentFileData outsfd;
-	SilentStructOP pss = new BinaryProteinSilentStruct;
+	SilentStructOP pss = new BinarySilentStruct;
 	pss->fill_struct( pose, tag );
 
 	pss->print_header( output );

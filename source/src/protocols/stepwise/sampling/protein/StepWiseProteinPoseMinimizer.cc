@@ -22,10 +22,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/types.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -41,6 +37,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <basic/Tracer.hh>
 
 #include <string>
 
@@ -50,6 +47,8 @@ using namespace core;
 using core::Real;
 using ObjexxFCL::format::F;
 
+static basic::Tracer TR( "protocols.stepwise.protein.StepWiseProteinPoseMinimizer" ) ;
+
 namespace protocols {
 namespace stepwise {
 namespace sampling {
@@ -57,21 +56,12 @@ namespace protein {
 
 
   //////////////////////////////////////////////////////////////////////////
-  //constructor!
-  StepWiseProteinPoseMinimizer::StepWiseProteinPoseMinimizer( core::io::silent::SilentFileDataOP const sfd, utility::vector1< Size > const & moving_residues ):
+  StepWiseProteinPoseMinimizer::StepWiseProteinPoseMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
+																															utility::vector1< Size > const & moving_residues ):
 		Mover(),
-    moving_residues_( moving_residues )
+    moving_residues_( moving_residues ),
+		pose_list_( pose_list )
   {
-		input_silent_file_data_ = sfd;
-		initialize_parameters();
-	}
-
-  //////////////////////////////////////////////////////////////////////////
-  StepWiseProteinPoseMinimizer::StepWiseProteinPoseMinimizer( PoseList & pose_list, utility::vector1< Size > const & moving_residues ):
-		Mover(),
-    moving_residues_( moving_residues )
-  {
-		initialize_protein_input_silent_file_data_from_pose_list( pose_list );
 		initialize_parameters();
   }
 
@@ -93,25 +83,12 @@ namespace protein {
 		move_takeoff_torsions_ = true;
 		rescore_only_ = false;
 		move_jumps_between_chains_ = false;
-		silent_file_ = "";
-    fa_scorefxn_ = core::scoring::getScoreFunction();
+    //fa_scorefxn_ = core::scoring::getScoreFunction();
 		min_type_ = "dfpmin_armijo_nonmonotone"; // used to be dfpmin
 		cartesian_ = true;
 		min_tolerance_ = 0.000025 ; // used to be 0.00000025
-	}
-
-
-  //////////////////////////////////////////////////////////////////////////
-	void StepWiseProteinPoseMinimizer::initialize_protein_input_silent_file_data_from_pose_list( PoseList & /*pose_list*/ ){
-    using namespace core::pose;
-    using namespace core::io::silent;
-
-		input_silent_file_data_->clear();
-    for ( PoseList::iterator iter = pose_list_.begin(); iter != pose_list_.end(); iter++ ) {
-			PoseOP & pose_op( iter->second );
-			BinaryProteinSilentStruct s( *pose_op, iter->first /*tag*/ );
-			input_silent_file_data_->add_structure( s );
-		}
+		use_coordinate_constraints_ = true;
+		num_pose_minimize_ = 0; // signal to minimize all
 	}
 
   //////////////////////////////////////////////////////////////////////////
@@ -122,21 +99,15 @@ namespace protein {
     using namespace core::scoring;
     using namespace core::scoring::constraints;
     using namespace core::pose;
-    using namespace core::io::silent;
 
 		clock_t const time_start( clock() );
 
-		ConstraintSetOP cst_set = pose.constraint_set()->clone();
+		ConstraintSetOP cst_set;
+		if ( use_coordinate_constraints_ ) cst_set = pose.constraint_set()->clone();
 
 		utility::vector1< std::pair<core::Size,core::Size> > disulfides;
 		core::conformation::disulfide_bonds(pose.conformation(), disulfides);
-
-		//if ( cartesian_ ){ // this is messy -- move to its own function if it works.
-		//			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		//				if ( pose.residue_type(i).has_variant_type( "CUTPOINT_UPPER" ) ) remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", i );
-		//				if ( pose.residue_type(i).has_variant_type( "CUTPOINT_LOWER" ) ) remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", i );
-		//			}
-		//		}
+		runtime_assert( fa_scorefxn_ );
 
 		CartesianMinimizer cart_minimizer;
 		AtomTreeMinimizer minimizer;
@@ -145,30 +116,19 @@ namespace protein {
     options.nblist_auto_update( true );
 
     kinematics::MoveMap mm_start, mm;
-		std::cout << "MOVE TAKEOFF TORSIONS: " << move_takeoff_torsions_ << std::endl;
 		protocols::stepwise::figure_out_moving_residues( mm_start, pose, fixed_res_, move_takeoff_torsions_, move_jumps_between_chains_ );
 		mm = mm_start;
-
-		//		using namespace core::id;
-		//		for ( Size i = 1; i <= pose.total_residue(); i++ ){
-		//			std::cout << " MM: " << i << ' ' << mm.get( TorsionID( i, BB, 1 ) ) << ' ' << mm.get( TorsionID( i, BB, 2 ) ) << ' ' << mm.get( TorsionID( i, BB, 3 ) ) << std::endl;
-		//		}
-
-    Size count( 1 );
 		Real const original_coordinate_cst_weight = fa_scorefxn_->get_weight( coordinate_constraint );
 
-		sfd_ = new SilentFileData;
-		core::import_pose::pose_stream::SilentFilePoseInputStream input;
-		input.set_silent_file_data( input_silent_file_data_ );
+		utility::vector1< PoseOP > output_pose_list;
+		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
 
-		while ( input.has_another_pose() ) {
+			if ( num_pose_minimize_ > 0 &&  n > num_pose_minimize_ ) break;
 
-      std::cout << "Minimizing decoy " << count++ << " out of " << input_silent_file_data_->size() << std::endl;
-
-			input.fill_pose( pose );
+			pose = *pose_list_[ n ];
 
 			// Following are necessary because poses from clustering went thorugh silent struct and lost their constraints & disulfide information.
-			pose.constraint_set( cst_set );
+			if ( cst_set ) pose.constraint_set( cst_set );
 			pose.conformation().fix_disulfides( disulfides );
 
 			Real const score_original = (*fa_scorefxn_)( pose );
@@ -181,14 +141,15 @@ namespace protein {
 
 			if ( !rescore_only_ ){
 
-				// One minimize with loose coordinate tethers to make sure the pose doesn't blow up.
-				core::scoring::constraints::add_coordinate_constraints( pose );
-				if ( fa_scorefxn_->has_zero_weight( coordinate_constraint) ) fa_scorefxn_->set_weight( coordinate_constraint, 1.0 );
-				minimizer.run( pose, mm, *fa_scorefxn_, options );
-
-				// Now a regular minimize.
-				pose.constraint_set( cst_set ); // return original constraints (no added coordinate constraints)
-				fa_scorefxn_->set_weight( coordinate_constraint, original_coordinate_cst_weight );
+				if ( use_coordinate_constraints_ ){
+					// One minimize with loose coordinate tethers to make sure the pose doesn't blow up.
+					core::scoring::constraints::add_coordinate_constraints( pose );
+					if ( fa_scorefxn_->has_zero_weight( coordinate_constraint) ) fa_scorefxn_->set_weight( coordinate_constraint, 1.0 );
+					minimizer.run( pose, mm, *fa_scorefxn_, options );
+					// Now a regular minimize.
+					pose.constraint_set( cst_set ); // return original constraints (no added coordinate constraints)
+					fa_scorefxn_->set_weight( coordinate_constraint, original_coordinate_cst_weight );
+				}
 
 				// for poses with chainbreaks, do an initial minimization with a weak linear_chainbreak term. (anneal it in.)
 				if ( pose_has_chainbreak( pose ) ){
@@ -203,7 +164,6 @@ namespace protein {
 					fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original );
 				}
 
-
 				if (cartesian_) {
 					cart_minimizer.run( pose, mm, *fa_scorefxn_, options );
 				} else {
@@ -212,22 +172,13 @@ namespace protein {
 
 			}
 
-			setPoseExtraScores( pose, "score_orig", score_original );
-      std::string const & tag( tag_from_pose( pose ) );
-      protocols::stepwise::sampling::protein::output_silent_struct( pose, get_native_pose(), silent_file_, tag, sfd_, calc_rms_res_ );
-
-			std::cout << "Score minimized from " <<F(8,3, score_original) << " to " << F(8,3,(*fa_scorefxn_)( pose )) << std::endl;
-
-			// Running into file locking issues
-			//			utility::sys_sleep( 0.5 );
-			//exit( 0 );
-
-      // Might was well replace pose in original list.
-      //*pose_op = pose;
-
+			output_pose_list.push_back( pose.clone() );
+			TR.Debug << "Score minimized from " << F(8,3, score_original) << " to " << F(8,3,(*fa_scorefxn_)( pose )) << std::endl;
     }
 
-		std::cout << "Total time in StepWiseProteinPoseMinimizer: " <<
+		pose_list_ = output_pose_list;
+
+		TR.Debug << "Total time in StepWiseProteinPoseMinimizer: " <<
 			static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
   }
@@ -242,6 +193,13 @@ namespace protein {
 
 		(*fa_scorefxn_)( pose );
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+
+		for ( Size n = 1; n <= moving_residues_.size(); n++ ) {
+		 	Size const i = moving_residues_[ n ];
+		 	if ( pose.residue(i).is_protein() ){ // these should be activated, but make sure . VIRTUAL_SIDE_CHAIN issue!
+				mm.set_chi( i, true );
+			}
+		}
 
 		for ( Size n = 1; n <= moving_residues_.size(); n++ ) {
 
@@ -281,12 +239,6 @@ namespace protein {
 
   //////////////////////////////////////////////////////////////////////////
   void
-  StepWiseProteinPoseMinimizer::set_silent_file( std::string const & silent_file ){
-    silent_file_ = silent_file;
-  }
-
-  //////////////////////////////////////////////////////////////////////////
-  void
   StepWiseProteinPoseMinimizer::set_min_type( std::string const & min_type ){
     min_type_ = min_type;
   }
@@ -321,17 +273,6 @@ namespace protein {
 		cartesian_ = setting;
 		if (cartesian_) min_type_ = "lbfgs_armijo_nonmonotone";
 	}
-
-  //////////////////////////////////////////////////////////////////////////
-	core::io::silent::SilentFileDataOP &
-	StepWiseProteinPoseMinimizer::silent_file_data(){
-		return sfd_;
-	}
-
-	//	void
-	//	StepWiseProteinPoseMinimizer::set_constraint_set( core::scoring::constraints::ConstraintSetOP const & cst_set ){
-	//		cst_set_ = cst_set;
-	//	}
 
 
 } //protein

@@ -48,7 +48,6 @@
 #include <core/scoring/methods/EnvSmoothEnergyCreator.hh>
 #include <core/scoring/methods/IntermolEnergyCreator.hh>
 #include <core/scoring/methods/MissingEnergyCreator.hh>
-#include <core/scoring/methods/SWM_RMSD_EnergyCreator.hh>
 #include <core/scoring/methods/FreeResidueBonusEnergyCreator.hh>
 #include <core/scoring/methods/NMerRefEnergyCreator.hh>
 #include <core/scoring/methods/NMerPSSMEnergyCreator.hh>
@@ -450,7 +449,6 @@ static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_Ener
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::StackElecEnergyCreator > StackElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::chemical_shift::RNA_ChemicalShiftEnergyCreator > NA_ChemicalShiftEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::SWM_RMSD_EnergyCreator > SWM_RMSD_EnergyCreator_registrator;
 //static EnergyMethodRegistrator< scoring::methods::FreeResidueBonusEnergyCreator > FreeResidueBonusEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
@@ -487,10 +485,9 @@ static SilentStructRegistrator< core::io::silent::ProteinSilentStructCreator > P
 static SilentStructRegistrator< core::io::silent::ProteinSilentStruct_SinglePrecCreator > ProteinSilentStruct_SinglePrecCreator_registrator;
 static SilentStructRegistrator< core::io::silent::RNA_SilentStructCreator > RNA_SilentStructCreator_registrator;
 static SilentStructRegistrator< core::import_pose::PDBSilentStructCreator > PDBSilentStructCreator_registrator;
-static SilentStructRegistrator< core::io::silent::BinaryProteinSilentStructCreator > BinaryProteinSilentStructCreator_registrator;
+static SilentStructRegistrator< core::io::silent::BinarySilentStructCreator > BinarySilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::ScoreFileSilentStructCreator > ScoreFileSilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::ScoreJumpFileSilentStructCreator > ScoreJumpFileSilentStructCreator_registrator;
-static SilentStructRegistrator< core::io::silent::BinaryRNASilentStructCreator > BinaryRNASilentStructCreator_registrator;
 
 // Sequence registrators
 using namespace core::sequence;

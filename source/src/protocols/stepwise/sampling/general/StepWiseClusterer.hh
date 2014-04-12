@@ -17,17 +17,18 @@
 #ifndef INCLUDED_protocols_stepwise_StepWiseClusterer_HH
 #define INCLUDED_protocols_stepwise_StepWiseClusterer_HH
 
-#include <core/pose/Pose.fwd.hh>
+#include <protocols/stepwise/sampling/general/StepWiseClusterer.fwd.hh>
+#include <protocols/stepwise/StepWiseUtil.hh> // For PoseList. This is a bit silly.
+#include <protocols/stepwise/sampling/protein/StepWiseProteinModelerOptions.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <core/types.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <protocols/stepwise/StepWiseUtil.hh> // For PoseList. This is a bit silly.
-#include <protocols/stepwise/sampling/general/StepWiseClusterer.fwd.hh>
 
 #include <map>
 #include <string>
@@ -43,11 +44,12 @@ namespace general {
   public:
 
     //constructor!
-		StepWiseClusterer( utility::vector1< std::string > const & silent_files_in );
+		StepWiseClusterer( utility::vector1< PoseOP > const & pose_list );
 
-		StepWiseClusterer( std::string const & silent_file_in );
-
-		StepWiseClusterer(  core::io::silent::SilentFileDataOP & sfd );
+		StepWiseClusterer( utility::vector1< PoseOP > const & pose_list,
+											 utility::vector1< Size > const & moving_res_list,
+											 protein::StepWiseProteinModelerOptionsCOP options,
+											 bool const force_align );
 
     //destructor -- necessary?
     virtual ~StepWiseClusterer();
@@ -70,22 +72,11 @@ namespace general {
 
     void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
 
-		void set_silent_file_data( core::io::silent::SilentFileDataOP & sfd );
-
-		void set_rsd_type_set( std::string const & setting ){ rsd_type_set_ = setting; }
-
 		void cluster();
 
-		core::io::silent::SilentFileDataOP silent_file_data();
+		utility::vector1< PoseOP > rms_pose_list() { return rms_pose_list_; }
 
-		void
-		output_silent_file( std::string const & silent_file );
-
-		PoseList
-		clustered_pose_list();
-
-		utility::vector1< core::io::silent::SilentStructOP > &
-		silent_struct_output_list(){ return silent_struct_output_list_; };
+		utility::vector1< PoseOP > get_pose_list() { return output_pose_list_; }
 
   private:
 
@@ -102,7 +93,7 @@ namespace general {
 		do_some_clustering();
 
 		Size
-		check_for_closeness( core::pose::PoseOP const & pose_op );
+		check_for_closeness( core::pose::PoseOP rms_pose );
 
 		void
 		cluster_with_auto_tune();
@@ -113,7 +104,11 @@ namespace general {
 		void
 		initialize_auto_tune_cluster_rmsds();
 
-		utility::vector1< std::string > silent_files_;
+		core::io::silent::SilentStructOP
+		setup_silent_struct( Size const n );
+
+	private:
+
 		Size max_decoys_;
 		core::Real cluster_radius_;
 		bool cluster_by_all_atom_rmsd_;
@@ -121,28 +116,23 @@ namespace general {
 		bool auto_tune_;
 		bool rename_tags_;
 		bool force_align_;
-		std::string rsd_type_set_;
 
 		core::Real score_min_;
-		bool score_min_defined_;
-		//		core::scoring::ScoreFunctionOP scorefxn_;
 
-		utility::vector1< core::pose::PoseOP > pose_output_list_;
-		utility::vector1< std::string > tag_output_list_;
-		utility::vector1< core::io::silent::SilentStructOP > silent_struct_output_list_;
+		utility::vector1< core::pose::PoseOP > input_pose_list_;
+
+		utility::vector1< core::pose::PoseOP > rms_pose_list_;
+		utility::vector1< core::pose::PoseOP > output_pose_list_;
 		utility::vector1< core::Size > num_pose_in_cluster_;
-
-		core::import_pose::pose_stream::SilentFilePoseInputStreamOP input_;
 
 		utility::vector1< core::Real > cluster_rmsds_to_try_with_auto_tune_;
 
+		Size input_pose_counter_;
 		bool hit_score_cutoff_;
 		bool initialized_atom_id_map_for_rmsd_;
     utility::vector1< core::Size > calc_rms_res_;
 
 		std::map< core::id::AtomID, core::id::AtomID > corresponding_atom_id_map_;
-
-		core::chemical::ResidueTypeSetCAP rsd_set_;
 
   };
 

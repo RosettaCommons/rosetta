@@ -19,7 +19,7 @@
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/chemical/util.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>

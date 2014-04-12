@@ -62,13 +62,14 @@ void PoseInputStream::preprocess_pose( core::pose::Pose & pose ) {
 	//}
 } // PoseInputStream::preprocess_pose
 
-utility::vector1< core::pose::Pose > PoseInputStream::get_all_poses(
+utility::vector1< core::pose::PoseOP > PoseInputStream::get_all_poses(
 	core::chemical::ResidueTypeSet const & residue_set
 ) {
-	utility::vector1< core::pose::Pose > pose_list;
-	while( has_another_pose() ) {
-		core::pose::Pose pose;
-		fill_pose( pose, residue_set );
+	utility::vector1< core::pose::PoseOP > pose_list;
+	reset();
+	while ( has_another_pose() ) {
+		core::pose::PoseOP pose = new core::pose::Pose;
+		fill_pose( *pose, residue_set );
 		pose_list.push_back( pose );
 	}
 	return pose_list;

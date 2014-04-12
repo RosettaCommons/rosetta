@@ -103,15 +103,15 @@ void PDBPoseInputStream::fill_pose(
 	preprocess_pose( pose );
 }
 
-utility::vector1< core::pose::Pose > PDBPoseInputStream::get_all_poses(
+utility::vector1< core::pose::PoseOP > PDBPoseInputStream::get_all_poses(
 	core::chemical::ResidueTypeSet const & residue_set
 ) {
-	utility::vector1< core::pose::Pose > pose_list;
+	utility::vector1< core::pose::PoseOP > pose_list;
 	pose_list.resize( filenames_.size() );
 
 	while( has_another_pose() ) {
-		core::pose::Pose pose;
-		fill_pose( pose, residue_set );
+		core::pose::PoseOP pose = new core::pose::Pose;
+		fill_pose( *pose, residue_set );
 		pose_list.push_back( pose );
 	}
 

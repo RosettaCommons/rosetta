@@ -86,7 +86,7 @@ namespace monte_carlo {
 		using namespace ObjexxFCL;
 		Size const num_strings = swa_move_string_vector.size();
 		if ( num_strings == 0 ) return; // blank.
-		runtime_assert( num_strings >= 4 );
+		//		runtime_assert( num_strings >= 4 );
 
 		Size n( 1 );
 		move_type_ = move_type_from_string( swa_move_string_vector[ n ] ); n++;
@@ -99,7 +99,7 @@ namespace monte_carlo {
 			n++;
 		}
 
-		runtime_assert( n != num_strings );
+		//		runtime_assert( n != num_strings );
 		while ( n <= num_strings ){
 			AttachmentType attachment_type = attachment_type_from_string( swa_move_string_vector[ n ] );
 			n++;

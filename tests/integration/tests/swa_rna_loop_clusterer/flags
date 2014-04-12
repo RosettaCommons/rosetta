@@ -4,7 +4,7 @@
 -clusterer_quick_alignment true 
 -clusterer_optimize_memory_usage true 
 -in:file:silent_struct_type binary_rna 
--score:weights rna/rna_loop_hires_04092010.wts 
+-score:weights stepwise/rna/rna_loop_hires_04092010.wts 
 -score:rna_torsion_potential ps_03242010/ 
 -fixed_res 1 2 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 
 -rmsd_res 3 4 5 6 7 8 

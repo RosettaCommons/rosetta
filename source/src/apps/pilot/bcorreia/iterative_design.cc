@@ -56,7 +56,7 @@
 #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/io/silent/PDBSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include "core/scoring/packstat/compute_sasa.hh"
@@ -299,8 +299,8 @@ main( int argc, char * argv [] )
 
 			setPoseExtraScores( init_pose, "loop_rms", 0 );
 
-			core::io::silent::BinaryProteinSilentStructOP pss_init (
-											new core::io::silent::BinaryProteinSilentStruct ( init_pose , filename_init ));
+			core::io::silent::BinarySilentStructOP pss_init (
+											new core::io::silent::BinarySilentStruct ( init_pose , filename_init ));
 
 			sfd.add_structure( pss_init );
 
@@ -439,8 +439,8 @@ main( int argc, char * argv [] )
 				setPoseExtraScores( init_pose, "loop_rms", protocols::loops::loop_rmsd(nat_pose, init_pose, loops ));
 
 
-				core::io::silent::BinaryProteinSilentStructOP pss_ref (
-									new core::io::silent::BinaryProteinSilentStruct ( init_pose , filename_ref ));
+				core::io::silent::BinarySilentStructOP pss_ref (
+									new core::io::silent::BinarySilentStruct ( init_pose , filename_ref ));
 
 				sfd.add_structure( pss_ref );
 
@@ -513,8 +513,8 @@ main( int argc, char * argv [] )
 			setPoseExtraScores( init_pose, "loop_rms", 0 );
 
 
-			core::io::silent::BinaryProteinSilentStructOP pss (
-					new core::io::silent::BinaryProteinSilentStruct ( init_pose , filename_ref_des ));
+			core::io::silent::BinarySilentStructOP pss (
+					new core::io::silent::BinarySilentStruct ( init_pose , filename_ref_des ));
 
 
 			sfd.add_structure( pss );

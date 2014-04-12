@@ -316,7 +316,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		for ( Size num_pass = 1; num_pass <= num_virtual_sugar_res; num_pass++ ){
 
 			Size found_reference_res( 0 );
-			Size virt_sugar_res;
+			Size virt_sugar_res( 0 );
 			for ( Size i = 1; i <= num_virtual_sugar_res; i++ ){
 				virt_sugar_res = virtual_sugar_res[i];
 				if ( reference_res_for_each_virtual_sugar[ virt_sugar_res ] == 0 &&

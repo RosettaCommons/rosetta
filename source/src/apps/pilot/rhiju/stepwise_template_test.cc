@@ -74,7 +74,7 @@
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -357,7 +357,7 @@ parse_pathway_test(){
 			(*minimize_scorefxn)( pose );
 
 			std::string const tag = "S_"+string_of(i)+"_"+string_of(j);
-			BinaryProteinSilentStruct s( pose, tag );
+			BinarySilentStruct s( pose, tag );
 			s.add_energy( "start", i );
 			s.add_energy( "end", j );
 

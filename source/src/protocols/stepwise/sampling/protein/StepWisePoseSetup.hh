@@ -23,7 +23,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseJobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.fwd.hh>
 #include <protocols/stepwise/sampling/protein/StepWisePoseSetup.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -71,10 +71,13 @@ namespace protein {
 
 
 
-		StepWiseJobParametersOP & job_parameters();
+		StepWiseProteinJobParametersOP & job_parameters();
 
 		void
 		set_fixed_res(utility::vector1 < core::Size > const & fixed_res );
+
+		void
+		set_extra_minimize_res( utility::vector1 < core::Size > const & setting ){  extra_minimize_res_ = setting; }
 
 		void
 		set_jump_res(utility::vector1 < core::Size > const & jump_res );
@@ -122,7 +125,7 @@ namespace protein {
 		set_remove_cterminus_variant( bool const & setting ){ remove_cterminus_variant_ = setting; }
 
 		void
-		align_pose( core::pose::Pose & pose );
+		align_pose( core::pose::Pose & pose ) const;
 
 		bool
 		ready_to_align() const;
@@ -273,6 +276,10 @@ namespace protein {
 
 		void
 		add_aa_virt_rsd_as_root( core::pose::Pose & pose);
+
+		void
+		setup_full_model_info( core::pose::Pose & pose ) const;
+
 private:
 
 		utility::vector1< core::Size > const & moving_res_list_;
@@ -294,13 +301,14 @@ private:
 		utility::vector1< Size > jump_res_;
 		utility::vector1< Size > bridge_res_;
 
-		StepWiseJobParametersOP job_parameters_;
+		StepWiseProteinJobParametersOP job_parameters_;
 
 		ObjexxFCL::FArray1D< core::Real > phi_offsets_;
 		ObjexxFCL::FArray1D< core::Real > psi_offsets_;
 
 		utility::vector1< std::pair< core::Size, core::Size > > jump_partners_;
 		utility::vector1< core::Size > cuts_;
+		utility::vector1< core::Size > extra_minimize_res_;
 
 
 		bool virtualize_5prime_phosphates_;

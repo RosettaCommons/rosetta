@@ -234,6 +234,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_bulge"] = rna_bulge;
 	name2score_type_[ "free_suite"] = free_suite;
 	name2score_type_[ "free_2HOprime"] = free_2HOprime;
+	name2score_type_[ "free_side_chain"] = free_side_chain;
 	name2score_type_[ "intermol"] = intermol;
 	name2score_type_[ "mg_ref"] = mg_ref;
 	// Variant type to flag rotamers for alternative scoring with varying weight

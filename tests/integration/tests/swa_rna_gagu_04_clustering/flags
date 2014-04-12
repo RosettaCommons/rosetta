@@ -17,6 +17,6 @@
 -global_sample_res_list  3 4 5 6 11 12 13 14 
 -native_alignment_res 2 3 4 5 6 7 10 11 12 13 14 15 
 -cutpoint_open 8 
--score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
+-score:weights stepwise/rna/rna_hires_07232011_with_intra_base_phosphate.wts 
 -integration_test true 
 -analytic_etable_evaluation 0

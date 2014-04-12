@@ -224,7 +224,7 @@ get_fixed_res( core::Size const nres ){
 	utility::vector1< Size > actual_fixed_res_list;
 	actual_fixed_res_list.clear();
 
-	utility::vector1< core::Size > const fixed_res_list    = option[ OptionKeys::stepwise::rna::fixed_res ]();
+	utility::vector1< core::Size > const fixed_res_list    = option[ OptionKeys::stepwise::fixed_res ]();
 	utility::vector1< core::Size > const minimize_res_list = option[ OptionKeys::stepwise::rna::minimize_res ]();
 
 	if ( fixed_res_list.size() != 0 && minimize_res_list.size() != 0 ){
@@ -530,10 +530,10 @@ setup_simple_full_length_rna_job_parameters(){
 	job_parameters->set_full_sequence( full_sequence ); //working_sequence is automatical init after BOTH is_working_res and full_sequence is initialized
 
 	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ){
-		job_parameters->set_rmsd_res_list( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
+		job_parameters->set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
 	} else {
 		TR << "Warning! rmsd_res not specified. Assuming sample_res is rmsd_res" << std::endl;
-		job_parameters->set_rmsd_res_list( option[ OptionKeys::stepwise::rna::sample_res ]() );
+		job_parameters->set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
 	}
  	job_parameters->set_gap_size( 0 );
 
@@ -728,11 +728,11 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 	std::string const full_sequence = fasta_sequence->sequence();
 	core::Size const nres = full_sequence.length();
 
-	if ( !option[ OptionKeys::stepwise::rna::sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
+	if ( !option[ OptionKeys::full_model::sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
 
 	/////////////////////////////////////////////////////
 	Size const cutpoint_closed_ = option[ OptionKeys::full_model::cutpoint_closed ].user() ? option[ OptionKeys::full_model::cutpoint_closed ]()[1] : 0;
-	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( option[ OptionKeys::stepwise::rna::sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( option[ OptionKeys::full_model::sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 																																		full_sequence,
 																																		get_input_res( nres, "1" ),
 																																		get_input_res( nres, "2" ),
@@ -744,10 +744,10 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 	stepwise_rna_job_parameters_setup.set_terminal_res( option[ OptionKeys::stepwise::rna::terminal_res ]() );
 
 	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ){
-		stepwise_rna_job_parameters_setup.set_rmsd_res_list( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
+		stepwise_rna_job_parameters_setup.set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
 	} else {
 		TR << "Warning! rmsd_res not specified. Assuming sample_res is rmsd_res" << std::endl;
-		stepwise_rna_job_parameters_setup.set_rmsd_res_list( option[ OptionKeys::stepwise::rna::sample_res ]() );
+		stepwise_rna_job_parameters_setup.set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
 	}
 
 	// jump_point_pairs is string of pairs  "1-16 8-9", assumed for now to be connected by dashes.  See note in StepWiseRNA_JobParametersSetup.cc
@@ -886,7 +886,7 @@ setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const
 		setup_copy_DOF_input( stepwise_rna_pose_setup );
 	}
 
-	stepwise_rna_pose_setup->set_virtual_res( option[ basic::options::OptionKeys::stepwise::rna::virtual_res ]() );
+	stepwise_rna_pose_setup->set_virtual_res( option[ basic::options::OptionKeys::full_model::virtual_res ]() );
 	stepwise_rna_pose_setup->set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 	stepwise_rna_pose_setup->set_native_pose( native_pose );
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ basic::options::OptionKeys::stepwise::rna::native_virtual_res]() );
@@ -939,7 +939,7 @@ get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
 	swa_silent_file = silent_file; // default
 
 	if ( multiple_shots ){
-		runtime_assert( option[ OptionKeys::stepwise::rna::choose_random ]() );
+		runtime_assert( option[ OptionKeys::stepwise::choose_random ]() );
 
 		out_tag = "S_"+lead_zero_string_of( n, 6 );
 		//		swa_silent_file = out_tag + "_" + swa_silent_file;

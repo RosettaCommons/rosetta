@@ -18,6 +18,7 @@
 
 #include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
 
@@ -28,6 +29,21 @@ using core::kinematics::FoldTree;
 namespace core {
 namespace pose {
 namespace full_model_info {
+
+	pose::PoseOP
+	get_pdb_and_cleanup( std::string const input_file,
+											 chemical::ResidueTypeSetCAP rsd_set );
+
+	void
+	get_other_poses( 	utility::vector1< pose::PoseOP > & other_poses,
+										utility::vector1< std::string > const & other_files,
+										chemical::ResidueTypeSetCAP rsd_set );
+
+	pose::PoseOP
+	initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set );
+
+	void
+	cleanup( pose::Pose & pose );
 
 	void
 	fill_full_model_info_from_command_line( pose::Pose & pose );
@@ -45,6 +61,7 @@ namespace full_model_info {
 	update_pose_fold_tree( pose::Pose & pose,
 												 vector1< Size > const & res_list,
 												 vector1< Size > const & extra_min_res,
+												 vector1< Size > const & sample_res,
 												 vector1< Size > const & jump_res,
 												 vector1< Size > const & root_res );
 

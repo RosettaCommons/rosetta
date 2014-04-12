@@ -149,7 +149,7 @@ pack_phosphates()
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
-	else  scorefxn = ScoreFunctionFactory::create_score_function( "rna/rna_res_level_energy.wts" );
+	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 
 	// actual pose to be sampled...
 	pose::Pose & pose = *input_poses[ 1 ];

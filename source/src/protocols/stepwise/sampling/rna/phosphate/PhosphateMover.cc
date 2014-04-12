@@ -163,6 +163,7 @@ namespace phosphate {
 			remove_variant_type_from_pose_residue( *pose_free_, "THREE_PRIME_PHOSPHATE", sample_res );
 		} else {
 			pose_free_ = pose.clone();
+			remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS",    sample_res );
 			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sample_res );
 			add_variant_type_to_pose_residue( pose, "THREE_PRIME_PHOSPHATE", sample_res );
 		}

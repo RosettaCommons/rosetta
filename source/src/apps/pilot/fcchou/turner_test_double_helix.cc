@@ -46,7 +46,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -1128,7 +1128,7 @@ main( int argc, char * argv [] )
 
 	NEW_OPT(out_scores_prefix, "", "");
 	NEW_OPT(save_torsions, "", "");
-	NEW_OPT(force_field, "score_file", "rna/rna_hires_fang");
+	NEW_OPT(force_field, "score_file", "stepwise/stepwise/rna/farna/rna_hires_fang");
 	NEW_OPT( seq, "sequence to model", "" );
 	NEW_OPT( out_pdb, "output pdb name", "test.pdb" );
 	NEW_OPT( out_unfold, "name of output for unfolded states", "unfold.out" );

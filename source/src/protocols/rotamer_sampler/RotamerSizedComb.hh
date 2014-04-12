@@ -25,8 +25,12 @@ namespace protocols {
 namespace rotamer_sampler {
 
 class RotamerSizedComb : public RotamerSized {
+
 public:
+
 	RotamerSizedComb();
+
+	RotamerSizedComb( RotamerSizedOP outer_loop_rotamer, RotamerSizedOP inner_loop_rotamer );
 
 	virtual ~RotamerSizedComb();
 

@@ -68,7 +68,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -839,7 +839,7 @@ rna_fullatom_minimize_test()
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 		//Don't check into general protocol?
-		//protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+		//core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose pose_init = pose;
 		//		setup_rna_chainbreak_constraints( pose );
@@ -875,7 +875,7 @@ rna_fullatom_minimize_test()
 
 		// Tag
 		std::string const tag = "S_" +string_of( i );
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 
 		if ( native_exists ){
 			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );
@@ -1449,7 +1449,7 @@ print_internal_coord_test()
 	/////////////////////////////////////////
 	if ( option[ rsd_type_set]() == "rna" ){
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
-		protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 	}
 
 	kinematics::FoldTree f( pose.total_residue() );
@@ -1662,7 +1662,7 @@ rna_assemble_test() {
 		// Set fold tree to include new cutpoint, etc.
 		// Setup chainbreak residues?
 		////////////////////////////////////////////////////////
-		protocols::farna::figure_out_reasonable_rna_fold_tree( input_pose );
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( input_pose );
 
 		kinematics::FoldTree f( pose.fold_tree() );
 		kinematics::FoldTree f_input( input_pose.fold_tree() );
@@ -1776,7 +1776,7 @@ rna_idealize_test() {
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
 
-		if (!close_chainbreaks) protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+		if (!close_chainbreaks) core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose const start_pose( pose );
 
@@ -2305,7 +2305,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	utility::io::ozstream params_out( param_file );
 
 	//Demarcate chainbreaks.
-	protocols::farna::figure_out_reasonable_rna_fold_tree( mini_pose );
+	core::pose::rna::figure_out_reasonable_rna_fold_tree( mini_pose );
 	if ( mini_pose.num_jump() > 0 ) {
 		params_out << "CUTPOINT_OPEN " ;
 		for (Size j = 1; j < mini_pose.total_residue(); j++ ) {
@@ -2486,7 +2486,7 @@ create_rna_benchmark_test(){
 
 		nres = pose.total_residue();
 
-		protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		// Need some stuff to figure out which residues are base paired. First score.
 		ScoreFunctionOP scorefxn( new ScoreFunction );
@@ -2634,7 +2634,7 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCAP & rs
 	using namespace core::id;
 
 	pose::Pose original_pose = pose;
-	protocols::farna::figure_out_reasonable_rna_fold_tree( original_pose );
+	core::pose::rna::figure_out_reasonable_rna_fold_tree( original_pose );
 
 	std::string rna_sequence = pose.sequence();
 	Size const nres_real( pose.total_residue() );
@@ -3001,7 +3001,7 @@ crazy_minimize_test()
 			} else if ( option[ crazy_fold_tree ] ) {
 				setup_crazy_fold_tree( pose, rsd_set );
 			} else {
-				protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+				core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 			}
 
 			protocols::farna::RNA_Minimizer rna_minimizer;
@@ -5000,7 +5000,7 @@ rna_denovo_test()
 	std::cout << std::endl;
 	std::cout << "RNA de novo structure prediction is now in       " << std::endl;
 	std::cout << " the rna_denovo application. " << std::endl;
-	std::cout << "  [code is in src/apps/public/rna/rna_denovo.cc] " << std::endl;
+	std::cout << "  [code is in src/apps/public/stepwise/rna/rna_denovo.cc] " << std::endl;
 	std::cout << std::endl;
 }
 
@@ -5011,7 +5011,7 @@ rna_design_test()
 	std::cout << std::endl;
 	std::cout << "RNA design is now in       " << std::endl;
 	std::cout << " the rna_design application. " << std::endl;
-	std::cout << "  [code is in src/apps/public/rna/rna_design.cc] " << std::endl;
+	std::cout << "  [code is in src/apps/public/stepwise/rna/rna_design.cc] " << std::endl;
 	std::cout << std::endl;
 }
 
@@ -5022,7 +5022,7 @@ create_rna_vall_torsions_test()
 	std::cout << std::endl;
 	std::cout << "RNA vall torsions code is now in       " << std::endl;
 	std::cout << " the rna_database application. " << std::endl;
-	std::cout << "  [code is in src/apps/public/rna/rna_database.cc] " << std::endl;
+	std::cout << "  [code is in src/apps/public/stepwise/rna/rna_database.cc] " << std::endl;
 	std::cout << std::endl;
 }
 
@@ -5033,7 +5033,7 @@ create_bp_jump_database_test()
 	std::cout << std::endl;
 	std::cout << "Jump Database code is now in       " << std::endl;
 	std::cout << " the rna_database application. " << std::endl;
-	std::cout << "  [code is in src/apps/public/rna/rna_database.cc] " << std::endl;
+	std::cout << "  [code is in src/apps/public/stepwise/rna/rna_database.cc] " << std::endl;
 	std::cout << std::endl;
 }
 
@@ -5045,7 +5045,7 @@ extract_pdbs_test()
 	std::cout << std::endl;
 	std::cout << "RNA silent extractions code is now in       " << std::endl;
 	std::cout << " the rna_database application. " << std::endl;
-	std::cout << "  [code is in src/apps/public/rna/rna_extract.cc] " << std::endl;
+	std::cout << "  [code is in src/apps/public/stepwise/rna/rna_extract.cc] " << std::endl;
 	std::cout << std::endl;
 }
 

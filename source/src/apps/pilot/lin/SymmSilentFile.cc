@@ -45,7 +45,7 @@
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/rms_util.hh>
 
 // packing
@@ -144,7 +144,7 @@ SymmSilentFileTest()
     core::io::silent::SilentFileData sfd;
     std::string silent_outfile = "Silent.out";
     utility::file::file_delete( silent_outfile );
-    core::io::silent::BinaryProteinSilentStruct pss,new_pss;
+    core::io::silent::BinarySilentStruct pss,new_pss;
     pss.fill_struct( start_pose, "start_pose" );
     sfd.write_silent_struct( pss, silent_outfile );
 

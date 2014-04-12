@@ -40,7 +40,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 
 #include <core/pack/pack_rotamers.hh>

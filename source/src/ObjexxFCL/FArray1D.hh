@@ -20,6 +20,7 @@
 #include <ObjexxFCL/ObserverMulti.hh>
 #include <ObjexxFCL/DynamicIndexRange.hh>
 #include <ObjexxFCL/FArrayInitializer.hh>
+#include <utility/exit.hh>
 
 
 namespace ObjexxFCL {
@@ -342,7 +343,7 @@ public: // Subscript
 	T const &
 	operator ()( int const i ) const
 	{
-		assert( I_.contains( i ) );
+		runtime_assert( I_.contains( i ) );
 		return sarray_[ i ];
 	}
 
@@ -352,7 +353,7 @@ public: // Subscript
 	T &
 	operator ()( int const i )
 	{
-		assert( I_.contains( i ) );
+		runtime_assert( I_.contains( i ) );
 		return sarray_[ i ];
 	}
 
@@ -362,7 +363,7 @@ public: // Subscript
 	Section const
 	a( int const i ) const
 	{
-		assert( I_.contains( i ) );
+		runtime_assert( I_.contains( i ) );
 		return Section( array_size_ - ( i - shift_ ), sarray_ + i );
 	}
 
@@ -372,7 +373,7 @@ public: // Subscript
 	size_type
 	index( int const i ) const
 	{
-		assert( I_.initialized() );
+		runtime_assert( I_.initialized() );
 		return ( i - shift_ );
 	}
 
@@ -382,7 +383,7 @@ public: // Subscript
 	T const &
 	operator []( size_type const i ) const
 	{
-		assert( i < size_ );
+		runtime_assert( i < size_ );
 		return array_[ i ];
 	}
 
@@ -392,7 +393,7 @@ public: // Subscript
 	T &
 	operator []( size_type const i )
 	{
-		assert( i < size_ );
+		runtime_assert( i < size_ );
 		return array_[ i ];
 	}
 
@@ -859,8 +860,8 @@ public: // Generator
 	FArray1D
 	cross_product( Super const & a, Super const & b )
 	{
-		assert( equal_dimensions( a, b ) );
-		assert( a.size() == 3 );
+		runtime_assert( equal_dimensions( a, b ) );
+		runtime_assert( a.size() == 3 );
 		FArray1D c( a.I() );
 		int const x( a.l() ), y( x + 1 ), z( y + 1 );
 		c( x ) = ( a( y ) * b( z ) ) - ( a( z ) * b( y ) );
@@ -876,8 +877,8 @@ public: // Generator
 	FArray1D
 	cross( Super const & a, Super const & b )
 	{
-		assert( equal_dimensions( a, b ) );
-		assert( a.size() == 3 );
+		runtime_assert( equal_dimensions( a, b ) );
+		runtime_assert( a.size() == 3 );
 		FArray1D c( a.I() );
 		int const x( a.l() ), y( x + 1 ), z( y + 1 );
 		c( x ) = ( a( y ) * b( z ) ) - ( a( z ) * b( y ) );

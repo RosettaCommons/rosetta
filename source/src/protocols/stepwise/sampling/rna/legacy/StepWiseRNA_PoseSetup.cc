@@ -48,7 +48,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh> //Feb 24, 2011, FARFAR start_silent_file.
+#include <core/io/silent/BinarySilentStruct.hh> //Feb 24, 2011, FARFAR start_silent_file.
 
 #include <utility/exit.hh>
 #include <time.h>
@@ -988,7 +988,7 @@ StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose &
 		full_sequence += 'X';
 	}
 
-	FullModelInfoOP full_model_info = new FullModelInfo( pose, full_sequence,  cutpoint_open_list, working_res );
+	FullModelInfoOP full_model_info = new FullModelInfo( full_sequence,  cutpoint_open_list, working_res );
 	set_full_model_info( pose, full_model_info );
 	update_pdb_info_from_full_model_info( pose );
 }

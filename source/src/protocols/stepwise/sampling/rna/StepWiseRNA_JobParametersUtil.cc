@@ -54,12 +54,12 @@ StepWiseRNA_JobParametersOP
 setup_job_parameters_for_swa( Size const rebuild_res,
 															pose::Pose const & pose,
 															pose::PoseCOP native_pose,
-															utility::vector1< Size > const & rmsd_res_list,
+															utility::vector1< Size > const & calc_rms_res,
 															utility::vector1< Size > const & terminal_res,
 															utility::vector1< Size > const & syn_chi_res_list,
 															utility::vector1< Size > const & extra_minimize_res,
-															utility::vector1< Size > & fixed_res,
-															utility::vector1< Size > & minimize_res,
+															utility::vector1< Size > & working_fixed_res,
+															utility::vector1< Size > & working_minimize_res,
 															toolbox::AllowInsertOP & allow_insert,
 															kinematics::MoveMapOP & minimize_move_map ) {
 	using namespace pose;
@@ -80,17 +80,17 @@ setup_job_parameters_for_swa( Size const rebuild_res,
 	Size nres = pose.total_residue();
 	utility::vector1< Size > not_rebuild_res;
 	for ( Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
-	utility::vector1< Size > fixed_res_guess = not_rebuild_res; // may be revised below.
+	utility::vector1< Size > working_fixed_res_guess = not_rebuild_res; // may be revised below.
 
 	if ( rebuild_res > 0 ){
 		// deprecate legacy at end of 2014 if not needed
-		//StepWiseRNA_JobParametersOP job_parameters_legacy = setup_job_parameters_legacy( rebuild_res, pose, native_pose, rmsd_res_list,
-		//		 																																								 terminal_res, syn_chi_res_list, fixed_res_guess,
+		//StepWiseRNA_JobParametersOP job_parameters_legacy = setup_job_parameters_legacy( rebuild_res, pose, native_pose, calc_rms_res,
+		//		 																																								 terminal_res, syn_chi_res_list, working_fixed_res_guess,
 		//		 																																								 suites_that_must_be_minimized );
 		//		print_JobParameters_info( job_parameters_legacy, "LEGACY", TR );
 
-		StepWiseRNA_JobParametersOP job_parameters_explicit = setup_job_parameters_explicit( rebuild_res, pose, native_pose, rmsd_res_list,
-																																												 terminal_res, syn_chi_res_list, fixed_res_guess,
+		StepWiseRNA_JobParametersOP job_parameters_explicit = setup_job_parameters_explicit( rebuild_res, pose, native_pose, calc_rms_res,
+																																												 terminal_res, syn_chi_res_list, working_fixed_res_guess,
 																																												 suites_that_must_be_minimized );
 		//		print_JobParameters_info( job_parameters_explicit, "EXPLICIT", TR );
 		job_parameters = job_parameters_explicit;
@@ -107,36 +107,36 @@ setup_job_parameters_for_swa( Size const rebuild_res,
 	allow_insert = new toolbox::AllowInsert(pose); // Default constructor that allows everything to move
 
 	// user input minimize_res...
-	if ( minimize_res.size() > 0 ) { // specifying more residues which could move during the minimize step -- standard for SWM.
-		fixed_res.clear();
+	if ( working_minimize_res.size() > 0 ) { // specifying more residues which could move during the minimize step -- standard for SWM.
+		working_fixed_res.clear();
 		for ( Size n = 1; n <= nres; n++ ) {
-			if ( !minimize_res.has_value( n ) )	{
-				fixed_res.push_back( n );
+			if ( !working_minimize_res.has_value( n ) )	{
+				working_fixed_res.push_back( n );
 				allow_insert->set( n, false );
 			}
 		}
-	} else if ( fixed_res.size() > 0 ){ // how 'standard' SWA specifies moving information.
-		runtime_assert( minimize_res.size() == 0 );
+	} else if ( working_fixed_res.size() > 0 ){ // how 'standard' SWA specifies moving information.
+		runtime_assert( working_minimize_res.size() == 0 );
 		for ( Size n = 1; n <= nres; n++ ) {
-			if ( !fixed_res.has_value( n ) )	{
-				minimize_res.push_back( n );
+			if ( !working_fixed_res.has_value( n ) )	{
+				working_minimize_res.push_back( n );
 			} else {
 				allow_insert->set( n, false );
 			}
 		}
 	} else { // 'reasonable' default behavior, inferred above.
 		for ( Size n = 1; n <= nres; n++ ) {
-			if ( !fixed_res_guess.has_value( n ) )	{
-				minimize_res.push_back( n );
+			if ( !working_fixed_res_guess.has_value( n ) )	{
+				working_minimize_res.push_back( n );
 			} else {
 				allow_insert->set( n, false );
 			}
 		}
-		fixed_res = fixed_res_guess;
+		working_fixed_res = working_fixed_res_guess;
 	}
 
-	if ( fixed_res.size() > 0 ) job_parameters->set_working_fixed_res( fixed_res ); // is this necessary if we just supply movemap?
-	job_parameters->set_working_native_alignment( fixed_res );
+	if ( working_fixed_res.size() > 0 ) job_parameters->set_working_fixed_res( working_fixed_res ); // is this necessary if we just supply movemap?
+	job_parameters->set_working_native_alignment( working_fixed_res );
 
 	//Now we perform the additional task of updating the AllowInsert object based on any optional additional residues that the user wants minimized, as specified in minimizer_extra_minimize_res. The intended mode of operation is that the user decides on extra_minimize_res at the high level for an entire SWM run, and then changes minimize_res to control a specific minimization event.
 	update_allow_insert_with_extra_minimize_res( pose, allow_insert, extra_minimize_res );
@@ -146,9 +146,9 @@ setup_job_parameters_for_swa( Size const rebuild_res,
 	figure_out_stepwise_rna_movemap( *minimize_move_map, pose, allow_insert );
 
 	// last, but not least, there might be some information in the domain map. Note
-	// that generally we could instead replace fixed_res with an inputted domain map.
-	// that is, get rid of fixed_res & minimize_res and instead have a local fixed_domain_map,
-	// which can instead be updated by set_fixed_res.
+	// that generally we could instead replace working_fixed_res with an inputted domain map.
+	// that is, get rid of working_fixed_res & minimize_res and instead have a local fixed_domain_map,
+	// which can instead be updated by set_working_fixed_res.
 	// how to tell Modeler to *not* minimize additional suites?
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
@@ -156,7 +156,7 @@ setup_job_parameters_for_swa( Size const rebuild_res,
 	for ( Size n = 1; n < pose.total_residue(); n++ ){
 		if ( !cutpoint_open_in_full_model.has_value( res_list[ n ] ) &&
 				( res_list[ n + 1 ]  == res_list[ n ] + 1 ) &&
-				 !minimize_res.has_value( n )  && !minimize_res.has_value( n+1 )  &&
+				 !working_minimize_res.has_value( n )  && !working_minimize_res.has_value( n+1 )  &&
 				 ( fixed_domain_map[ res_list[ n + 1 ] ] !=  fixed_domain_map[ res_list[ n ] ] ) &&
 				 !suites_that_must_be_minimized.has_value( n ) ){
 			TR.Debug << "ADDING NEW SUITE TO BE MINIMIZED BASED ON LOCATION AT DOMAIN BOUNDARY: " << n << std::endl;
@@ -227,10 +227,10 @@ StepWiseRNA_JobParametersOP
 setup_job_parameters_explicit( Size const rebuild_res, /* this must be in moving partition */
 															 pose::Pose const & pose,
 															 pose::PoseCOP native_pose,
-															 utility::vector1< Size > const & rmsd_res_list,
+															 utility::vector1< Size > const & calc_rms_res,
 															 utility::vector1< Size > const & terminal_res,
 															 utility::vector1< Size > const & syn_chi_res_list,
-															 utility::vector1< Size > & fixed_res_guess,
+															 utility::vector1< Size > & working_fixed_res_guess,
 															 utility::vector1< Size > & suites_that_must_be_minimized ){
 	using namespace chemical;
 	using namespace pose::full_model_info;
@@ -290,12 +290,12 @@ setup_job_parameters_explicit( Size const rebuild_res, /* this must be in moving
 
 	// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
 	// but if there's a whole chunk of stuff, its sugar & base are assumed fixed.
-	//note that fixed_res_guess, which is really a list of fixed nucleosides,
+	//note that working_fixed_res_guess, which is really a list of fixed nucleosides,
 	// should now include the 'moving res' [unless re-specified by user down below].
 
 	// check if this is an 'internal' move.
 	if ( moving_partition_res.size() > 1 ) {
-		if ( !fixed_res_guess.has_value( rebuild_res ) ) fixed_res_guess.push_back( rebuild_res );
+		if ( !working_fixed_res_guess.has_value( rebuild_res ) ) working_fixed_res_guess.push_back( rebuild_res );
 		if ( !floating_base ){
 			is_internal = true;
 			//moving_res = rebuild_suite; // parin-style old convention, where moving_res = moving_suite for internal suites. Sigh.
@@ -319,10 +319,10 @@ setup_job_parameters_explicit( Size const rebuild_res, /* this must be in moving
 	for ( Size n = 1; n <= nres; n++ ) is_working_res.push_back( full_model_info.res_list().has_value( n ) );
 	bool const is_prepend = rebuild_res < reference_res;
 	std::map< Size, bool > is_prepend_map; // used for rmsd calculations -- include phosphate. May not be necessary.
-	utility::vector1< Size > rmsd_res_list_ = rmsd_res_list;
-	if ( rmsd_res_list_.size() == 0 ) rmsd_res_list_.push_back( full_model_info.sub_to_full( rebuild_res ) );
-	for ( Size i = 1; i <= rmsd_res_list_.size(); i++ ) {
-		Size const & n = rmsd_res_list_[ i ];
+	utility::vector1< Size > calc_rms_res_ = calc_rms_res;
+	if ( calc_rms_res_.size() == 0 ) calc_rms_res_.push_back( full_model_info.sub_to_full( rebuild_res ) );
+	for ( Size i = 1; i <= calc_rms_res_.size(); i++ ) {
+		Size const & n = calc_rms_res_[ i ];
 		if ( is_working_res[ n ] ) {
 			is_prepend_map[ n ] = is_prepend; //pose.residue_type( full_model_info.full_to_sub( n ) ).has_variant_type( "VIRTUAL_PHOSPHATE" );
 		}
@@ -349,8 +349,8 @@ setup_job_parameters_explicit( Size const rebuild_res, /* this must be in moving
 	job_parameters->set_five_prime_chain_break_res( five_prime_chain_break_res );
 	job_parameters->set_gap_size( gap_size );
 	job_parameters->set_working_native_pose( native_pose );
-	job_parameters->set_working_fixed_res( fixed_res_guess ); // will get updated later, I think.
-	job_parameters->set_rmsd_res_list( rmsd_res_list_ );
+	job_parameters->set_working_fixed_res( working_fixed_res_guess ); // will get updated later, I think.
+	job_parameters->set_calc_rms_res( calc_rms_res_ );
 	job_parameters->set_terminal_res( terminal_res );
 	job_parameters->set_working_terminal_res( full_model_info.full_to_sub( terminal_res ) );
 	job_parameters->set_working_moving_partition_pos( moving_partition_res );
@@ -358,9 +358,9 @@ setup_job_parameters_explicit( Size const rebuild_res, /* this must be in moving
 																											 full_model_info.sub_to_full( input_res2 ) ) );
 	job_parameters->set_cutpoint_closed_list( full_model_info.sub_to_full( cutpoint_closed ) );
 	job_parameters->set_cutpoint_open_list( full_model_info.sub_to_full( cutpoint_open ) );
-	job_parameters->set_working_best_alignment( fixed_res_guess );
-	job_parameters->set_working_native_alignment( fixed_res_guess );
-	job_parameters->set_native_alignment( full_model_info.sub_to_full( fixed_res_guess ) ); // is this in use?
+	job_parameters->set_working_best_alignment( working_fixed_res_guess );
+	job_parameters->set_working_native_alignment( working_fixed_res_guess );
+	job_parameters->set_native_alignment( full_model_info.sub_to_full( working_fixed_res_guess ) ); // is this in use?
 	job_parameters->set_global_sample_res_list( full_model_info.sub_to_full( make_vector1( moving_res ) ) );
 	job_parameters->set_force_syn_chi_res_list( syn_chi_res_list ); // will get automatically converted to working numbering.
 	job_parameters->set_fold_tree( pose.fold_tree() );
@@ -377,10 +377,10 @@ StepWiseRNA_JobParametersOP
 setup_job_parameters_legacy( Size const rebuild_res,
 														 pose::Pose const & pose,
 														 pose::PoseCOP native_pose,
-														 utility::vector1< Size > const & rmsd_res_list,
+														 utility::vector1< Size > const & calc_rms_res,
 														 utility::vector1< Size > const & terminal_res,
 														 utility::vector1< Size > const & syn_chi_res_list,
-														 utility::vector1< Size > & fixed_res_guess,
+														 utility::vector1< Size > & working_fixed_res_guess,
 														 utility::vector1< Size > & suites_that_must_be_minimized ){
 	using namespace chemical;
 	using namespace pose::full_model_info;
@@ -393,7 +393,7 @@ setup_job_parameters_legacy( Size const rebuild_res,
 	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
 	utility::vector1< Size > moving_res_list = make_vector1( rebuild_res ); // legacy
 	Size cutpoint_closed_distal( 0 );
-	input_res1 = fixed_res_guess; // not_rebuild_res
+	input_res1 = working_fixed_res_guess; // not_rebuild_res
 
 	Size rebuild_suite( 0 );
 	bool floating_base( false ), is_internal( false );
@@ -460,12 +460,12 @@ setup_job_parameters_legacy( Size const rebuild_res,
 
 	// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
 	// but if there's a whole chunk of stuff, its sugar & base are assumed fixed.
-	//note that fixed_res_guess, which is really a list of fixed nucleosides,
+	//note that working_fixed_res_guess, which is really a list of fixed nucleosides,
 	// should now include the 'moving res' [unless re-specified by user down below].
 
 	// check if this is an 'internal' move.
 	if ( input_res1.size() > 1 && input_res2.size() > 1 ) {
-		fixed_res_guess.push_back( rebuild_res );
+		working_fixed_res_guess.push_back( rebuild_res );
 		is_internal = true;
 	}
 
@@ -493,15 +493,15 @@ setup_job_parameters_legacy( Size const rebuild_res,
 																																						full_model_info.sub_to_full( cutpoint_closed_distal ) );
 	// following still might be worth doing -- just didn't seem necessary at this point.
 	//		stepwise_rna_job_parameters_setup.set_cutpoint_closed_list( full_model_info.sub_to_full( cutpoint_closed ) );
-	stepwise_rna_job_parameters_setup.set_fixed_res( full_model_info.sub_to_full( fixed_res_guess ) );
+	stepwise_rna_job_parameters_setup.set_fixed_res( full_model_info.sub_to_full( working_fixed_res_guess ) );
 	stepwise_rna_job_parameters_setup.set_floating_base( floating_base );
 	if ( is_internal ) stepwise_rna_job_parameters_setup.set_force_internal( true );
 	if ( floating_base ){
 		stepwise_rna_job_parameters_setup.set_assert_jump_point_in_fixed_res( false );
 		stepwise_rna_job_parameters_setup.set_floating_base_anchor_res( full_model_info.sub_to_full( floating_base_anchor_res ) );
 	}
-	if ( rmsd_res_list.size() > 0 ) stepwise_rna_job_parameters_setup.set_rmsd_res_list( rmsd_res_list /*global numbering*/ );
-	else  stepwise_rna_job_parameters_setup.set_rmsd_res_list( full_model_info.sub_to_full( make_vector1( rebuild_res ) ) );
+	if ( calc_rms_res.size() > 0 ) stepwise_rna_job_parameters_setup.set_calc_rms_res( calc_rms_res /*global numbering*/ );
+	else  stepwise_rna_job_parameters_setup.set_calc_rms_res( full_model_info.sub_to_full( make_vector1( rebuild_res ) ) );
 
 	stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( figure_out_rebuild_bulge_mode( pose, rebuild_res ) );
 	stepwise_rna_job_parameters_setup.set_sample_both_sugar_base_rotamer( figure_out_sample_both_sugar_base_rotamer( pose, floating_base, rebuild_suite ) );
@@ -515,9 +515,9 @@ setup_job_parameters_legacy( Size const rebuild_res,
 	stepwise_rna_job_parameters_setup.set_jump_point_pair_list( jump_point_pair_list ); //Important!: Needs to be called after set_fixed_res
 
 	utility::vector1< std::string > alignment_res; //why is this a string vector?????
-	for ( Size n = 1; n <= fixed_res_guess.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( full_model_info.sub_to_full( fixed_res_guess[ n ] ) ) );
+	for ( Size n = 1; n <= working_fixed_res_guess.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( full_model_info.sub_to_full( working_fixed_res_guess[ n ] ) ) );
 	stepwise_rna_job_parameters_setup.set_alignment_res( alignment_res );
-	stepwise_rna_job_parameters_setup.set_native_alignment_res( full_model_info.sub_to_full( fixed_res_guess ) );
+	stepwise_rna_job_parameters_setup.set_native_alignment_res( full_model_info.sub_to_full( working_fixed_res_guess ) );
 	stepwise_rna_job_parameters_setup.set_terminal_res( terminal_res );
 
 	// could use this later to minimize more residues...

@@ -41,7 +41,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -414,7 +414,7 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
   }
 
 //  {
-//    core::io::silent::BinaryProteinSilentStruct pss;
+//    core::io::silent::BinarySilentStruct pss;
 //    pss.fill_struct(tgtpose, "lala" );
 //
 //    std::ostringstream ss;
@@ -439,7 +439,7 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
   }
 
   {
-    core::io::silent::BinaryProteinSilentStruct pss;
+    core::io::silent::BinarySilentStruct pss;
     pss.fill_struct(tgtpose, "lala" );
 
     std::ostringstream ss;

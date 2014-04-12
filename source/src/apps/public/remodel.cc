@@ -554,7 +554,8 @@ void* graphics_main( void* ) {
 	JobDistributor::get_instance()->go( rmdl );
 //#endif
 
-	return 0;
+	protocols::viewer::clear_conformation_viewers();
+  exit( 0 ); // ensures graceful exit of graphics.
 }
 
 

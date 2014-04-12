@@ -40,7 +40,7 @@
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
 #include <basic/database/open.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
@@ -113,7 +113,7 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 		rna_data_file_( "" ),
 		all_rna_fragments_file_( basic::database::full_name("1jj2_coarse_coords.txt") ),
 		jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
-		lores_scorefxn_( "coarse_rna.wts" ),
+		lores_scorefxn_( "farna/coarse_rna.wts" ),
 		rna_structure_parameters_( new protocols::farna::RNA_StructureParameters ),
 		rna_data_reader_( new protocols::farna::RNA_DataReader ),
 		rna_loop_closer_( new protocols::coarse_rna::CoarseRNA_LoopCloser ),
@@ -308,7 +308,7 @@ CoarseRNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::s
 	static SilentFileData silent_file_data;
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-	BinaryRNASilentStruct s( pose, out_file_tag );
+	BinarySilentStruct s( pose, out_file_tag );
 
 	if ( get_native_pose() ){
 

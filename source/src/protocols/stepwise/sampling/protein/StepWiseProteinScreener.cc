@@ -11,14 +11,14 @@
 /// @brief Makes a list of (phi, psi, omega) at moving_residues that
 ///              could be useful for full-atom packing
 /// @detailed
-/// @author Rhiju Dasﬁ
+/// @author Rhiju Das
 
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/protein/StepWiseProteinScreener.hh>
 #include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
 #include <protocols/stepwise/sampling/protein/MainChainTorsionSet.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseJobParameters.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -41,6 +41,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
@@ -81,12 +82,11 @@ namespace protein {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-  StepWiseProteinScreener::StepWiseProteinScreener(	 StepWiseJobParametersOP  & job_parameters ):
+  StepWiseProteinScreener::StepWiseProteinScreener(	 StepWiseProteinJobParametersCOP job_parameters ):
 		job_parameters_( job_parameters ),
-		moving_residues_( job_parameters_->working_moving_res_list() ),
+		moving_residues_input_( job_parameters_->working_moving_res_list() ),
 		n_sample_( 18 /* Corresponds to 20 degree bins */ ),
 		rmsd_cutoff_( -1.0 ),
-		centroid_scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "score3.wts"  )/* score3 */ ),
 		silent_file_( "" ),
 		filter_native_big_bins_( false ),
 		centroid_screen_( false ),
@@ -95,8 +95,10 @@ namespace protein {
 		apply_vdw_cut_( false ),
 		centroid_vdw_ref_( 9999999999999999.999 ),
 		nstruct_centroid_( 0 ),
+		ramachandran_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() ),
 		ghost_loops_( false ),
-		is_pre_proline_( job_parameters_->is_pre_proline() )
+		is_pre_proline_( job_parameters_->is_pre_proline() ),
+		expand_loop_takeoff_( false ) // may switch to true soon. connects all psi,omega,phi in CA-to-CA connections.
   {
 		initialize_is_fixed_res();
   }
@@ -105,11 +107,12 @@ namespace protein {
   //destructor
   StepWiseProteinScreener::~StepWiseProteinScreener()
   {}
-/////////////////////
-std::string
-StepWiseProteinScreener::get_name() const {
-return "StepWiseProteinScreener";
-}
+
+	/////////////////////
+	std::string
+	StepWiseProteinScreener::get_name() const {
+		return "StepWiseProteinScreener";
+	}
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -123,6 +126,7 @@ return "StepWiseProteinScreener";
 
 		clock_t const time_start( clock() );
 
+		define_moving_res( pose );
 		setup_torsion_sets();
 		centroid_scores_.clear();
 
@@ -133,7 +137,7 @@ return "StepWiseProteinScreener";
 
 		sample_residues_recursively( which_res, count, pose );
 
-		std::cout << "Total time in StepWiseProteinScreener: " <<
+		TR.Debug << "Total time in StepWiseProteinScreener: " <<
 			static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
 		pose = pose_save;
@@ -145,6 +149,36 @@ return "StepWiseProteinScreener";
 
 	///////////////////////////////////////////////////////////////////////////
 	void
+	StepWiseProteinScreener::define_moving_res( pose::Pose const & pose ) {
+
+		is_fixed_res_ = is_fixed_res_input_;
+		moving_residues_ = moving_residues_input_;
+		runtime_assert( is_fixed_res_.size() == pose.total_residue() );
+
+		if ( !expand_loop_takeoff_ )	return;
+
+		// expand_loop_takeoff makes protein sampling similar to RNA -- sample psi, omega, *and* phi
+		// at CA-to-CA connections going into and out of moving residues, just like in RNA,
+		// we sample epsilon, zeta, alpha, beta, and gamma in each sugar-to-sugar connection.
+		for ( Size n = 1; n <= moving_residues_input_.size(); n++ ){
+			Size const & moving_res = moving_residues_input_[ n ];
+			Size const takeoff_res = pose.fold_tree().get_parent_residue( moving_res );
+			if ( takeoff_res == 0 ) continue;
+			if ( pose.fold_tree().jump_nr( moving_res, takeoff_res ) > 0 ) continue; // jump
+			runtime_assert( (moving_res == takeoff_res + 1) || (moving_res == takeoff_res - 1 ) );
+			if ( !moving_residues_.has_value( takeoff_res ) ){
+				moving_residues_.push_back( takeoff_res );
+				is_fixed_res_[ takeoff_res ] = true;
+			}
+		}
+		std::sort( moving_residues_.begin(), moving_residues_.end() );
+
+		runtime_assert( is_fixed_res_.size() == pose.total_residue() );
+
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	void
 	StepWiseProteinScreener::setup_torsion_sets(){
 
 		main_chain_torsion_set_for_moving_residues_.clear();
@@ -153,66 +187,6 @@ return "StepWiseProteinScreener";
 		}
 
 		main_chain_torsion_sets_for_moving_residues_.clear();
-
-	}
-
-	///////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseProteinScreener::copy_coords( pose::Pose & pose, pose::Pose const & template_pose, ResMap const & ghost_map ) const
-	{
-		using namespace core::id;
-
-		template_pose.residue( 1 ); // force a refold.
-
-		for ( ResMap::const_iterator it=ghost_map.begin(); it != ghost_map.end(); it++ ) {
-			Size const & res( it->first );
-			Size const & template_res( it->second );
-
-			for( Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
-
-				if ( pose.residue_type( res ).atom_name( j ) !=
-						 template_pose.residue_type( template_res ).atom_name( j ) ) {
-					std::cout << "PROBLEM! " << res << " " << pose.residue( res ).atom_name( j ) <<  "  !=  " <<
-						template_res << " " << template_pose.residue( template_res ).atom_name( j ) <<  std::endl;
-					utility_exit_with_message( "mismatch in ghost pose" );
-				}
-
-				pose.set_xyz( AtomID( j, res ), template_pose.xyz( AtomID( j, template_res ) ) );
-
-			}
-
-		}
-
-		pose.residue( 1 ); // force a refold.
-	}
-
-	///////////////////////////////////////////////////////////////////////////
-	core::kinematics::FoldTree
-	StepWiseProteinScreener::figure_out_fold_tree( ResMap const & ghost_map ) const {
-
-		Size prev_res( 0 ), total_res( 0 );
-		utility::vector1< Size > cutpoints;
-
-		for ( ResMap::const_iterator it=ghost_map.begin(); it != ghost_map.end(); it++ ) {
-			Size const & res( it->first );
-			Size const & template_res( it->second );
-
-			std::cout << "MAPPING " << res << " --> " << template_res << std::endl;
-
-			if ( (template_res-1) != prev_res  ) cutpoints.push_back( res-1 );
-			prev_res = template_res;
-
-			total_res = res;
-		}
-
-		core::kinematics::FoldTree f( total_res );
-
-		for ( Size n = 1; n <= cutpoints.size(); n++ ) {
-			std::cout << "Adding jump across: " << cutpoints[ n ] << std::endl;
-			f.new_jump( cutpoints[ n ], cutpoints[ n ] +1, cutpoints[ n ] );
-		}
-
-		return f;
 
 	}
 
@@ -298,24 +272,29 @@ return "StepWiseProteinScreener";
 			 // basically slave the psi to the phi.
 			 get_main_chain_torsion_set_list_c_terminus( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
 
-		 } else if ( is_fixed_res_[ n ] && (n >= pose.total_residue() || is_fixed_res_[ n+1 ]) && (n > 1 && !is_fixed_res_[ n-1] )){
+		 } else if ( is_fixed_res_[ n ] &&
+								 (n == pose.total_residue() || is_fixed_res_[ n+1 ]) &&
+								 (n > 1 && !is_fixed_res_[ n-1] )){
 
 			 get_main_chain_torsion_set_list_sample_phi_only( n, pose,  best_energy_cutoff, main_chain_torsion_set_list );
-			 //std::cout << "SAMPLING PHI ONLY for: " << n << ' ' << main_chain_torsion_set_list.size() << std::endl;
+			 // TR << "Sampling phi only for: " << n << ' ' << main_chain_torsion_set_list.size() << std::endl;
 
-		 } else if ( is_fixed_res_[ n ] && (n <= 1 || is_fixed_res_[ n-1 ]) && (n < pose.total_residue() && !is_fixed_res_[n+1] ) ){
+		 } else if ( is_fixed_res_[ n ] &&
+								 (n == 1 || is_fixed_res_[ n-1 ]) &&
+								 (n < pose.total_residue() && !is_fixed_res_[n+1] ) ){
 
 			 get_main_chain_torsion_set_list_sample_psi_only( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
-			 //			 std::cout << "SAMPLING PSI ONLY for: " << n << ' ' << main_chain_torsion_set_list.size() << std::endl;
+			 //			 TR << "Sampling psi only for: " << n << ' ' << main_chain_torsion_set_list.size() << std::endl;
 
 		 } else if ( n > moving_residues_[ 1 ] &&
 								 n < moving_residues_[ moving_residues_.size() ] ) {
 
-			 // Trying coarse sample for internal residues -- otherwise number of conformations really blows up.
-
-			 get_main_chain_torsion_set_list_coarse( n, pose, main_chain_torsion_set_list );
-
-			 //get_main_chain_torsion_set_list_full( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
+			 if ( expand_loop_takeoff_ ){
+				 get_main_chain_torsion_set_list_full( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
+			 } else {
+				 // Trying coarse sample for internal residues -- otherwise number of conformations really blows up.
+				 get_main_chain_torsion_set_list_coarse( n, pose, main_chain_torsion_set_list );
+			 }
 
 		 } else {
 
@@ -334,9 +313,10 @@ return "StepWiseProteinScreener";
 		 }
 
 		 if ( is_pre_proline_[ n ] && ( n == pose.total_residue() || !is_fixed_res_[ n+1 ] ) ) {
-			 TR << "-----  SAMPLING CIS OMEGA --------" << std::endl;
+			 TR.Debug << "-----  SAMPLING CIS OMEGA --------" << std::endl;
 			 sample_cis_omega( main_chain_torsion_set_list );
 		 }
+
 	 }
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -452,11 +432,12 @@ return "StepWiseProteinScreener";
 																																						core::Real const energy_cutoff,
 																																						MainChainTorsionSetList & main_chain_torsion_set_list )
 	{
-		TR << "JUNCTION RESIDUE --> PREPEND " << n << std::endl;
+		//		TR << "JUNCTION RESIDUE --> PREPEND " << n << std::endl;
 
 		// we are prepending and this is the junction residue. sample phi only!
 		Real best_rama_energy( 99999.999 ), best_phi( 0.0 );
 		Real const psi = pose.psi( n );
+		Real const omega = pose.omega( n );
 		for (Size i = 1; i <= n_sample_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_ );
 			Real const rama_energy = ramachandran_.eval_rama_score_residue( pose.aa( n ), phi, psi  );
@@ -465,11 +446,11 @@ return "StepWiseProteinScreener";
 				best_phi = phi;
 			}
 			if ( rama_energy  > energy_cutoff ) 	continue;
-			main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, psi ) );
+			main_chain_torsion_set_list.push_back( MainChainTorsionSet( phi, psi, omega ) );
 		}
 
 		// Make sure to return something at least...
-		if ( main_chain_torsion_set_list.size() == 0 ) 	main_chain_torsion_set_list.push_back( MainChainTorsionSet( best_phi, psi ) );
+		if ( main_chain_torsion_set_list.size() == 0 ) 	main_chain_torsion_set_list.push_back( MainChainTorsionSet( best_phi, psi, omega ) );
 
 	}
 
@@ -480,7 +461,7 @@ return "StepWiseProteinScreener";
 																																						core::Real const energy_cutoff,
 																																						MainChainTorsionSetList & main_chain_torsion_set_list )
 	{
-		TR << "JUNCTION RESIDUE --> APPEND " << n << std::endl;
+		//		TR << "JUNCTION RESIDUE --> APPEND " << n << std::endl;
 
 		// we are appending and this is the junction residue. sample psi only!
 		Real best_rama_energy( 99999.999 ), best_psi( 0.0 );
@@ -540,6 +521,7 @@ return "StepWiseProteinScreener";
 		 Size const big_bin =	 get_big_bin( native_pose.phi(n), native_pose.psi(n) );
 		 if ( big_bin == 3 ) return; // If loop, no constraints.
 
+		 TR << "HEY! BIG_BIN " << n << "  "<< big_bin << std::endl;
 		 filter_big_bin( big_bin, main_chain_torsion_set_list );
 
 	 }
@@ -722,15 +704,7 @@ return "StepWiseProteinScreener";
   //////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinScreener::initialize_is_fixed_res(){
-
-		is_fixed_res_.clear();
-		for ( Size n = 1; n <= job_parameters_->working_sequence().size(); n++ ) is_fixed_res_.push_back( false );
-
-		utility::vector1< Size > const & working_fixed_res = job_parameters_->working_fixed_res();
-		for ( Size i = 1; i <= working_fixed_res.size(); i++ ){
-			is_fixed_res_[ working_fixed_res[i] ] = true;
-		}
-
+		set_fixed_residues( job_parameters_->working_fixed_res() );
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -742,21 +716,77 @@ return "StepWiseProteinScreener";
 	/////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinScreener::set_fixed_residues( utility::vector1< Size > const & fixed_res ){
-		is_fixed_res_.clear();
-		for ( Size n = 1; n <= job_parameters_->working_sequence().size(); n++ ) is_fixed_res_.push_back( false );
-
+		is_fixed_res_input_.clear();
+		for ( Size n = 1; n <= job_parameters_->working_sequence().size(); n++ ) is_fixed_res_input_.push_back( false );
 		for ( Size i = 1; i <= fixed_res.size(); i++ ){
-			is_fixed_res_[ fixed_res[i] ] = true;
+			is_fixed_res_input_[ fixed_res[i] ] = true;
 		}
-
 	}
-
-
 
 
 	/////////////////////////////////////////////////////////////
 	// This is basically deprecated... may not work anymore.
 	/////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseProteinScreener::copy_coords( pose::Pose & pose, pose::Pose const & template_pose, ResMap const & ghost_map ) const
+	{
+		using namespace core::id;
+
+		template_pose.residue( 1 ); // force a refold.
+
+		for ( ResMap::const_iterator it=ghost_map.begin(); it != ghost_map.end(); it++ ) {
+			Size const & res( it->first );
+			Size const & template_res( it->second );
+
+			for( Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
+
+				if ( pose.residue_type( res ).atom_name( j ) !=
+						 template_pose.residue_type( template_res ).atom_name( j ) ) {
+					TR << "PROBLEM! " << res << " " << pose.residue( res ).atom_name( j ) <<  "  !=  " <<
+						template_res << " " << template_pose.residue( template_res ).atom_name( j ) <<  std::endl;
+					utility_exit_with_message( "mismatch in ghost pose" );
+				}
+
+				pose.set_xyz( AtomID( j, res ), template_pose.xyz( AtomID( j, template_res ) ) );
+
+			}
+
+		}
+
+		pose.residue( 1 ); // force a refold.
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	core::kinematics::FoldTree
+	StepWiseProteinScreener::figure_out_fold_tree( ResMap const & ghost_map ) const {
+
+		Size prev_res( 0 ), total_res( 0 );
+		utility::vector1< Size > cutpoints;
+
+		for ( ResMap::const_iterator it=ghost_map.begin(); it != ghost_map.end(); it++ ) {
+			Size const & res( it->first );
+			Size const & template_res( it->second );
+
+			TR << "MAPPING " << res << " --> " << template_res << std::endl;
+
+			if ( (template_res-1) != prev_res  ) cutpoints.push_back( res-1 );
+			prev_res = template_res;
+
+			total_res = res;
+		}
+
+		core::kinematics::FoldTree f( total_res );
+
+		for ( Size n = 1; n <= cutpoints.size(); n++ ) {
+			TR << "Adding jump across: " << cutpoints[ n ] << std::endl;
+			f.new_jump( cutpoints[ n ], cutpoints[ n ] +1, cutpoints[ n ] );
+		}
+
+		return f;
+
+	}
+
 	void
 	StepWiseProteinScreener::setup_centroid_screen(
 												 Real const & centroid_score_diff_cut,
@@ -767,7 +797,6 @@ return "StepWiseProteinScreener";
 		using namespace core::scoring;
 
 		ScoreFunctionOP centroid_scorefxn = ScoreFunctionFactory::create_score_function( centroid_weights );
-
 		set_centroid_screen( true );
 		set_centroid_score_diff_cut( centroid_score_diff_cut );
 
@@ -836,11 +865,12 @@ return "StepWiseProteinScreener";
 			ghost_pose_blowup.set_jump( n, jump );
 		}
 		ghost_pose_blowup.dump_pdb( "GHOST_BLOWUP.pdb" );
+		runtime_assert( centroid_scorefxn_ != 0 );
 		centroid_score_ref_ = (*centroid_scorefxn_)( ghost_pose_blowup );
 		centroid_vdw_ref_ = ghost_pose_blowup.energies().total_energies()[ vdw ];
 
-		centroid_scorefxn_->show( std::cout, ghost_pose_blowup );
-		std::cout << " REFERENCE SCORES " << centroid_score_ref_ << " " << centroid_vdw_ref_ << std::endl;
+		centroid_scorefxn_->show( TR, ghost_pose_blowup );
+		TR << " REFERENCE SCORES " << centroid_score_ref_ << " " << centroid_vdw_ref_ << std::endl;
 
 	}
 
@@ -922,7 +952,7 @@ return "StepWiseProteinScreener";
 
 			 if (  centroid_score_diff >  centroid_score_diff_cut_ )  return;
 
-			 //std::cout << "COMPARING " << centroid_score << " " << centroid_score_ref_ << std::endl;
+			 //TR << "COMPARING " << centroid_score << " " << centroid_score_ref_ << std::endl;
 
 		 }
 

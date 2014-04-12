@@ -17,25 +17,22 @@
 #ifndef INCLUDED_protocols_stepwise_protein_StepWiseProteinPacker_HH
 #define INCLUDED_protocols_stepwise_protein_StepWiseProteinPacker_HH
 
-#include <protocols/stepwise/sampling/protein/sample_generators/StepWisePoseSampleGenerator.fwd.hh>
-#include <protocols/stepwise/sampling/protein/PoseFilter.fwd.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinPacker.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <string>
-#include <map>
+
+using namespace core;
 
 namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
-
-	//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,24 +40,21 @@ namespace protein {
   public:
 
     //constructor!
-		StepWiseProteinPacker(
-													 utility::vector1< Size > const & moving_residues,
-													 protocols::stepwise::sampling::protein::sample_generators::StepWisePoseSampleGeneratorOP sample_generator );
+		StepWiseProteinPacker( utility::vector1< Size > const & moving_residues );
 
     //destructor -- necessary?
     ~StepWiseProteinPacker();
 
     /// @brief Apply the minimizer to one pose
-    virtual void apply( core::pose::Pose & pose_to_visualize );
+    virtual void apply( pose::Pose & pose );
 
-	virtual std::string get_name() const;
-
-
-    void
-		set_silent_file( std::string const & setting );
+		virtual std::string get_name() const;
 
 		void
-		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+		initialize( pose::Pose & pose );
+
+		void
+		set_scorefxn( scoring::ScoreFunctionOP const & scorefxn );
 
     void
 		set_use_green_packer( bool const & setting );
@@ -71,64 +65,51 @@ namespace protein {
     void
 		set_rescore_only( bool const & setting ){ rescore_only_ = setting; }
 
-    void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
-
-		core::io::silent::SilentFileDataOP & silent_file_data();
+		void
+		do_prepack( pose::Pose & pose );
 
 		void
-		set_pose_filter( protocols::stepwise::sampling::protein::PoseFilterOP pose_filter );
+		set_moving_res_list( utility::vector1< Size > const & setting ){ moving_res_list_ = setting; }
+
+		void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
+		bool allow_virtual_side_chains() const{ return allow_virtual_side_chains_; }
 
   private:
-
-		void
-		sample_residues( core::pose::Pose & pose );
-
-
-		void
-		print_tag( std::string const & tag, Size const k );
 
 		void
 		initialize_moving_residues_including_junction( Size const & nres );
 
 		void
-		initialize_green_packer( core::Size const & nres );
+		initialize_green_packer( Size const & nres );
 
 		void
-		initialize_for_regular_packer( core::pose::Pose & pose );
+		initialize_for_regular_packer( pose::Pose const & pose );
 
 		void
-		figure_out_neighbors( core::pose::Pose & pose,
+		figure_out_neighbors( pose::Pose & pose,
 													utility::vector1< bool > & residues_allowed_to_be_packed );
 
 
 		void
-		reinstate_side_chain_angles( core::pose::Pose & pose, core::pose::Pose const & src_pose );
+		reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const & src_pose );
 
 		void
-		apply_regular_packer( core::pose::Pose & pose );
+		apply_regular_packer( pose::Pose & pose, bool const pack_at_neighbors_only );
 
 	private:
 
 		utility::vector1< Size > const moving_residues_;
-		//		PoseList pose_list_;
-		core::scoring::ScoreFunctionOP scorefxn_;
+		scoring::ScoreFunctionOP scorefxn_;
 		protocols::simple_moves::GreenPackerOP green_packer_;
 		bool use_green_packer_;
 		bool use_packer_instead_of_rotamer_trials_;
 		bool pack_at_neighbors_only_;
+		bool allow_virtual_side_chains_;
 		bool rescore_only_;
-		core::pack::task::PackerTaskOP pack_task_;
-		core::pose::PoseOP pose_init_;
+		pack::task::PackerTaskOP pack_task_;
+		pose::PoseOP pose_init_;
 
-		std::string silent_file_;
-
-		core::io::silent::SilentFileDataOP sfd_;
-
-		utility::vector1< core::Size > calc_rms_res_;
-
-		protocols::stepwise::sampling::protein::sample_generators::StepWisePoseSampleGeneratorOP sample_generator_;
-
-		protocols::stepwise::sampling::protein::PoseFilterOP pose_filter_;
+		utility::vector1< Size > moving_res_list_; // is this ever distinct from moving_residues_ [?]
 
   };
 

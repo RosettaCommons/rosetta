@@ -86,6 +86,7 @@ private:
 	core::Real const free_2HOprime_bonus_;
 	core::Real const free_sugar_bonus_;
 	core::Real const pack_phosphate_penalty_;
+	core::Real const free_side_chain_bonus_;
 
 };
 

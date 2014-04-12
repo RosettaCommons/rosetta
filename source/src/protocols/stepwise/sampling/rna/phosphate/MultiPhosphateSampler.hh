@@ -48,7 +48,12 @@ namespace phosphate {
 
 	public:
 
-		MultiPhosphateSamplerOP clone();
+		MultiPhosphateSamplerOP
+		clone_sampler() const;
+
+		virtual
+		moves::MoverOP
+		clone() const { return clone_sampler();}
 
 		void
 		apply( core::pose::Pose & pose ){ copy_phosphates( pose ); }

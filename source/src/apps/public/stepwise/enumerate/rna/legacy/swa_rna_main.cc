@@ -52,11 +52,12 @@
 #include <utility/file/file_sys_util.hh> //Add by Parin on May 04, 2011.
 
 //////////////////////////////////////////////////
+#include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
@@ -246,10 +247,10 @@ swa_rna_sample()
 		// turn this on to test StepWiseRNA_Modeler's "on-the-fly" determination of job based on pose fold_tree, cutpoints, etc.
 		//  in this case, need to tell stepwise_rna_modeler some additional arbitrary information that cannot be determined from
 		//  info sitting inside the pose -- fixed_res & rmsd_res (over which to calculate rmsds).
-		if ( !option[ basic::options::OptionKeys::stepwise::rna::test_encapsulation ]() )	stepwise_rna_modeler.set_job_parameters( job_parameters );
-		stepwise_rna_modeler.set_fixed_res ( job_parameters->working_fixed_res() /* local numbering */);
+		if ( !option[ basic::options::OptionKeys::stepwise::test_encapsulation ]() )	stepwise_rna_modeler.set_job_parameters( job_parameters );
+		stepwise_rna_modeler.set_working_fixed_res ( job_parameters->working_fixed_res() /* local numbering */);
 		stepwise_rna_modeler.set_terminal_res( job_parameters->terminal_res() /*global numbering*/ );
-		stepwise_rna_modeler.set_rmsd_res_list ( job_parameters->rmsd_res_list() /*global numbering*/ );
+		stepwise_rna_modeler.set_calc_rms_res ( job_parameters->calc_rms_res() /*global numbering*/ );
 
 		// in traditional swa, this creates silent file
 		stepwise_rna_modeler.apply( pose );
@@ -366,7 +367,7 @@ swa_rna_cluster(){
 	stepwise_rna_clusterer.set_verbose( option[ basic::options::OptionKeys::stepwise::rna::VERBOSE ]() );
 	stepwise_rna_clusterer.set_skip_clustering( option [skip_clustering]() );
 	stepwise_rna_clusterer.set_full_length_loop_rmsd_clustering( option[clusterer_full_length_loop_rmsd_clustering]() );
-	stepwise_rna_clusterer.set_filter_virtual_res_list( option[ basic::options::OptionKeys::stepwise::rna::virtual_res ]() );
+	stepwise_rna_clusterer.set_filter_virtual_res_list( option[ basic::options::OptionKeys::full_model::virtual_res ]() );
 	stepwise_rna_clusterer.set_perform_VDW_rep_screen( option[ clusterer_perform_VDW_rep_screen ]() );
 	stepwise_rna_clusterer.set_perform_filters( option[ clusterer_perform_filters ]() );
 	stepwise_rna_clusterer.set_min_num_south_sugar_filter( option[ clusterer_min_num_south_sugar_filter ]() );
@@ -458,7 +459,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	virtual_sugar_sampler_from_string_list.set_integration_test_mode( option[ basic::options::OptionKeys::stepwise::rna::integration_test ] );
 	virtual_sugar_sampler_from_string_list.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 	virtual_sugar_sampler_from_string_list.set_legacy_mode( option[ basic::options::OptionKeys::stepwise::rna::virtual_sugar_legacy_mode ] );
-	virtual_sugar_sampler_from_string_list.set_choose_random( option[ basic::options::OptionKeys::stepwise::rna::choose_random ] );
+	virtual_sugar_sampler_from_string_list.set_choose_random( option[ basic::options::OptionKeys::stepwise::choose_random ] );
 	virtual_sugar_sampler_from_string_list.apply( pose );
 
 	output_title_text( "Exit rna_sample_virtual_sugar()", TR );
@@ -814,30 +815,31 @@ main( int argc, char * argv [] )
 		NEW_OPT( Real_parameter_one, "free_variable for testing purposes ", 0.0 );
 
 
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::num_pose_minimize );
-		option.add_relevant( OptionKeys::stepwise::rna::fixed_res );
+		option.add_relevant( OptionKeys::rna::corrected_geo );
+		option.add_relevant( OptionKeys::stepwise::num_pose_minimize );
+		option.add_relevant( OptionKeys::stepwise::choose_random );
+		option.add_relevant( OptionKeys::stepwise::use_green_packer );
+		option.add_relevant( OptionKeys::stepwise::fixed_res );
+		option.add_relevant( OptionKeys::stepwise::num_random_samples );
+		option.add_relevant( OptionKeys::stepwise::rna::sampler_num_pose_kept );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_native_rmsd_screen );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_native_screen_rmsd_cutoff );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_cluster_rmsd );
 		option.add_relevant( OptionKeys::stepwise::rna::native_edensity_score_cutoff );
-		option.add_relevant( OptionKeys::stepwise::rna::sampler_use_green_packer );
 		option.add_relevant( OptionKeys::stepwise::rna::VERBOSE );
 		option.add_relevant( OptionKeys::stepwise::rna::distinguish_pucker );
 		option.add_relevant( OptionKeys::stepwise::rna::PBP_clustering_at_chain_closure );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_allow_syn_pyrimidine );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_extra_chi_rotamer );
-		option.add_relevant( basic::options::OptionKeys::rna::corrected_geo );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_legacy_mode );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::VDW_atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::choose_random );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::num_random_samples );
+		option.add_relevant( OptionKeys::stepwise::rna::centroid_screen );
 		option.add_relevant( OptionKeys::stepwise::rna::skip_sampling );
 		option.add_relevant( OptionKeys::stepwise::rna::minimizer_perform_minimize );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::minimize_and_score_sugar );
+		option.add_relevant( OptionKeys::stepwise::rna::minimize_and_score_sugar );
 		option.add_relevant( OptionKeys::stepwise::rna::minimize_and_score_native_pose );
 		option.add_relevant( OptionKeys::stepwise::rna::rm_virt_phosphate );
 		option.add_relevant( OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF );
@@ -851,7 +853,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_extra_beta_rotamer );
 		option.add_relevant( OptionKeys::stepwise::rna::sample_both_sugar_base_rotamer );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_include_torsion_value_in_tag );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::combine_long_loop_mode );
+		option.add_relevant( OptionKeys::stepwise::rna::combine_long_loop_mode );
 		option.add_relevant( OptionKeys::stepwise::rna::do_not_sample_multiple_virtual_sugar );
 		option.add_relevant( OptionKeys::stepwise::rna::sample_ONLY_multiple_virtual_sugar );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_assert_no_virt_sugar_sampling );

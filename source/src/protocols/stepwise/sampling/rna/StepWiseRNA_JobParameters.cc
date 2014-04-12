@@ -68,7 +68,7 @@ namespace rna {
 		chain_boundaries_.clear();
 		partition_definition_.clear();
 		working_fixed_res_.clear();
-		rmsd_res_list_.clear();
+		calc_rms_res_.clear();
 		working_terminal_res_.clear();
 		working_moving_partition_pos_.clear();
 		fold_tree_.clear();
@@ -253,9 +253,9 @@ namespace rna {
 		return working_fixed_res_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::rmsd_res_list() const{
-		if ( rmsd_res_list_.size() == 0 ) utility_exit_with_message( "rmsd_res_list_.size() == 0" );
-		return rmsd_res_list_;
+	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::calc_rms_res() const{
+		if ( calc_rms_res_.size() == 0 ) utility_exit_with_message( "calc_rms_res_.size() == 0" );
+		return calc_rms_res_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::terminal_res() const{
@@ -469,9 +469,9 @@ namespace rna {
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters::set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list ){
-		rmsd_res_list_ = rmsd_res_list;
-		sort_seq_num_list( rmsd_res_list_ );
+	StepWiseRNA_JobParameters::set_calc_rms_res(	utility::vector1< core::Size > const & calc_rms_res ){
+		calc_rms_res_ = calc_rms_res;
+		sort_seq_num_list( calc_rms_res_ );
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -595,22 +595,9 @@ namespace rna {
 		std::map< core::Size, core::Size > ::const_iterator it;
 		std::map< core::Size, core::Size > sub_to_full;
 		sub_to_full.clear();
-
 		for ( it = full_to_sub.begin(); it != full_to_sub.end(); it++ ){
 			sub_to_full[it->second] = it->first;
 		}
-
-		//output for debug
-		//		TR.Debug << "full_to_sub" << std::endl;
-		for ( it = full_to_sub.begin(); it != full_to_sub.end(); it++ ){
-			//			TR.Debug << it->first << " => " << it->second << std::endl;
-		}
-
-		//		TR.Debug << "sub_to_full" << std::endl;
-		for ( it = sub_to_full.begin(); it != sub_to_full.end(); it++ ){
-			//		TR.Debug << it->first << " => " << it->second << std::endl;
-		}
-
 		return sub_to_full;
 
 	}

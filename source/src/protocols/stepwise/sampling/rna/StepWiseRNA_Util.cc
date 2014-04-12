@@ -43,7 +43,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -1111,11 +1111,11 @@ namespace rna {
 	Real
 	rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, StepWiseRNA_JobParametersCOP job_parameters_, bool const ignore_virtual_atom ){
 
-		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
 		std::map< core::Size, bool > const & is_prepend_map = job_parameters_->is_prepend_map();
 
-		return rmsd_over_residue_list( pose1, pose2, rmsd_res_list, full_to_sub, is_prepend_map, false /*verbose*/, ignore_virtual_atom );
+		return rmsd_over_residue_list( pose1, pose2, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, ignore_virtual_atom );
 
 	}
 
@@ -2575,7 +2575,7 @@ namespace rna {
 
 
 		output_is_prepend_map( "is_prepend_map = ", JP->is_prepend_map(), JP->full_sequence().size(), outstream );
-		output_seq_num_list( "rmsd_res_list = ", 								JP->rmsd_res_list() 								, outstream );
+		output_seq_num_list( "calc_rms_res = ", 								JP->calc_rms_res() 								, outstream );
 
 		output_seq_num_list( "native_alignment = ",  							JP->native_alignment(), outstream );
 		output_seq_num_list( "cutpoint_closed_list = ", 					JP->cutpoint_closed_list(), outstream );
@@ -3125,7 +3125,7 @@ update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::A
 
 			char const nt_orig = pose.sequence()[ mutate_res - 1 ];
 			if ( nt != nt_orig ) {
-				protocols::farna::mutate_position( pose, mutate_res, nt );
+				pose::rna::mutate_position( pose, mutate_res, nt );
 				return true;
 			}
 		}

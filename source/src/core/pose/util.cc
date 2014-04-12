@@ -44,7 +44,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
@@ -654,7 +654,7 @@ void clearPoseExtraScore(
 			( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 	assert( data.get() != NULL );
 
-	data->map().erase( name );
+	if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 }
 
 bool get_comment(
@@ -1126,11 +1126,11 @@ compare_binary_protein_silent_struct(
 	Pose const & lhs,
 	Pose const & rhs
 ) {
-	core::io::silent::BinaryProteinSilentStruct lhs_silent_struct(lhs, "" );
+	core::io::silent::BinarySilentStruct lhs_silent_struct(lhs, "" );
 	std::stringstream lhs_str;
 	lhs_silent_struct.print_conformation(lhs_str);
 
-	core::io::silent::BinaryProteinSilentStruct rhs_silent_struct(rhs, "" );
+	core::io::silent::BinarySilentStruct rhs_silent_struct(rhs, "" );
 	std::stringstream rhs_str;
 	rhs_silent_struct.print_conformation(rhs_str);
 

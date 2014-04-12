@@ -18,7 +18,7 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 
 

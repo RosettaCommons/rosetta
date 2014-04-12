@@ -29,7 +29,8 @@ namespace func {
 class GaussianChainSingleFunc : public Func {
 public:
 
-	GaussianChainSingleFunc( Real const gaussian_variance_ );
+	GaussianChainSingleFunc( Real const gaussian_variance_,
+													 Real const loop_fixed_cost );
 
 	FuncOP
 	clone() const;
@@ -49,10 +50,10 @@ private:
 private:
 
 	Real gaussian_variance_;
+	Real loop_fixed_cost_;
 
 	// following have nice default values
 	Real kB_T_;
-	Real loop_fixed_cost_;
 
 	// derived from above.
 	Real loop_fixed_cost_total_;

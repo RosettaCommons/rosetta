@@ -35,7 +35,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/pose_stream/SilentFilePoseInputStream.hh>
 
@@ -222,7 +222,7 @@ rna_assemble_test()
 		std::string tag( "blah" );
 		std::string const silent_file = option[ out::file::silent  ]();
 		SilentFileData silent_file_data;
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 	}
 
@@ -277,7 +277,7 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 
 			rna_minimizer.apply( pose );
 
-			BinaryRNASilentStruct s( pose, tag );
+			BinarySilentStruct s( pose, tag );
 			Real const rmsd = all_atom_rmsd( native_pose, pose );
 			s.add_energy( "rms", rmsd );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
@@ -285,7 +285,7 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 			pose = pose_save;
 		}
 	} else {
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 		Real const rmsd = all_atom_rmsd( native_pose, pose );
 		s.add_energy( "rms", rmsd );
 		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
@@ -448,7 +448,7 @@ rna_build_helix_test_OLD(){
 
 		std::string const tag( "S_"+lead_zero_string_of(n, 3) );
 		if ( output_silent ) {
-			BinaryRNASilentStruct s( pose, tag );
+			BinarySilentStruct s( pose, tag );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
 		pose.dump_pdb( full_sequence+".pdb" );

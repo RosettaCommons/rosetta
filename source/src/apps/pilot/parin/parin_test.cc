@@ -115,7 +115,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -1179,7 +1179,7 @@ hermann_phase_two_minimize(){
 					act_silent_outfile+="_round_ID_" + string_of(round_ID);
 				}
 
-				BinaryRNASilentStruct s( full_pose, full_pose_tag_MOD );
+				BinarySilentStruct s( full_pose, full_pose_tag_MOD );
 
 				if(verbose){
 						protocols::stepwise::sampling::rna::output_seq_num_list("native_virtual_res_list=", native_virtual_res_list, TR );
@@ -2174,9 +2174,8 @@ test_function(){
 	apply_virtual_rna_residue_variant_type( pose, 19 , false /*apply_check*/) ;
 
 
-	BinaryRNASilentStruct s( pose, pose_name );
+	BinarySilentStruct s( pose, pose_name );
 	silent_file_data.write_silent_struct(s, silent_file, false);
-
 
 
 //~/src/mini/bin/parin_test.macosgccrelease -algorithm test_function -s start.pdb -database ~/minirosetta_database
@@ -3273,9 +3272,15 @@ cluster_rotamers(bool const second_stage,
 			(*scorefxn)(pose);
 
 
+<<<<<<< HEAD
+			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8);
+
+			BinarySilentStruct s( pose, tag ); //Does this take a long time to create?
+=======
 			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8);
 
 			BinaryRNASilentStruct s( pose, tag ); //Does this take a long time to create?
+>>>>>>> master
 			silent_file_data.write_silent_struct(s, silent_file, true);
 
 			dump_pdb( pose, tag+".pdb");

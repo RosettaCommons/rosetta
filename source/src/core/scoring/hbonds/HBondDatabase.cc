@@ -33,6 +33,7 @@
 
 
 // Utility Headers
+#include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -64,7 +65,9 @@ namespace hbonds {
 	using cppdb::result;
 	using cppdb::statement;
 	using basic::database::open;
+	using basic::database::full_name;
 	using basic::Tracer;
+	using utility::file::file_exists;
 	using utility::io::izstream;
 	using utility::string_split;
 	using utility::vector1;
@@ -618,14 +621,8 @@ HBondDatabase::initialize_don_strength() {
 		"scoring/score_functions/hbonds/" + params_database_tag_ + "/DonStrength.csv";
 	izstream s;
 
-	try{
-		open(s, don_strength_fname, false);
-	} catch (...){
-		// Currently these are experimental so don't complain if they
-		// aren't defined.
-		return;
-	}
-
+	if ( !file_exists( full_name( don_strength_fname ) ) ) return;
+	open(s, don_strength_fname, false);
 
 	Size line_number(0);
 	Size expected_n_tokens(2);
@@ -670,13 +667,8 @@ HBondDatabase::initialize_acc_strength() {
 	string acc_strength_fname =
 		"scoring/score_functions/hbonds/" + params_database_tag_ + "/AccStrength.csv";
 	izstream s;
-	try{
-		open(s, acc_strength_fname, false);
-	} catch (...){
-		// Currently these are experimental so don't complain if they
-		// aren't defined.
-		return;
-	}
+	if ( !file_exists( full_name( acc_strength_fname ) ) ) return;
+	open(s, acc_strength_fname, false);
 
 	Size line_number(0);
 	Size expected_n_tokens(2);

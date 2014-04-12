@@ -42,7 +42,7 @@ RotamerSized::~RotamerSized(){}
 void RotamerSized::init() {
 	id_ = 0;
 	set_init( true );
-	reset();
+	//	reset();
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSized::reset() {

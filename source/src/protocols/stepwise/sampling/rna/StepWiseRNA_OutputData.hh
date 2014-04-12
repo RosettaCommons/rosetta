@@ -22,7 +22,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh> //Sept 26, 2011 Parin S.
+#include <core/io/silent/BinarySilentStruct.hh> //Sept 26, 2011 Parin S.
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -52,10 +52,10 @@ namespace sampling {
 namespace rna {
 
 
-core::io::silent::BinaryRNASilentStruct
+core::io::silent::BinarySilentStruct
 get_binary_rna_silent_struct_safe( core::pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file );
 
-core::io::silent::BinaryRNASilentStruct
+core::io::silent::BinarySilentStruct
 get_binary_rna_silent_struct_safe_wrapper( core::pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file, bool const write_score_only );
 
 void

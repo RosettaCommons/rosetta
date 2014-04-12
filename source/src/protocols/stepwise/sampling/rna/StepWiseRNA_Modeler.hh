@@ -68,21 +68,17 @@ namespace rna {
 
 		void set_job_parameters( StepWiseRNA_JobParametersCOP job_parameters );
 
-		void set_native_pose( pose::PoseCOP );
-
-		pose::PoseCOP get_native_pose();
-
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 
 		Size get_num_sampled(){ return num_sampled_; }
 
-		void set_fixed_res( utility::vector1< Size > const & setting ){ fixed_res_ = setting; minimize_res_.clear(); }
+		void set_working_fixed_res( utility::vector1< Size > const & setting ){ working_fixed_res_ = setting; working_minimize_res_.clear(); }
 
-		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; fixed_res_.clear(); }
+		void set_working_minimize_res( utility::vector1< Size > const & setting ){ working_minimize_res_ = setting; working_fixed_res_.clear(); }
 
 		void set_terminal_res( utility::vector1< Size > const & setting ){ terminal_res_ = setting; }
 
-		void set_rmsd_res_list( utility::vector1< Size > const & setting ){ rmsd_res_list_ = setting; }
+		void set_calc_rms_res( utility::vector1< Size > const & setting ){ calc_rms_res_ = setting; }
 
 		void set_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ syn_chi_res_list_ = setting;}
 
@@ -120,9 +116,6 @@ namespace rna {
 		void
 		add_to_pose_list( utility::vector1< pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) const;
 
-		void
-		setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters );
-
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_;
@@ -133,9 +126,9 @@ namespace rna {
 
 		// maybe following should go into options?
 		Size moving_res_;
-		utility::vector1< Size > fixed_res_;
-		utility::vector1< Size > minimize_res_;
-		utility::vector1< Size > rmsd_res_list_;
+		utility::vector1< Size > working_fixed_res_;
+		utility::vector1< Size > working_minimize_res_;
+		utility::vector1< Size > calc_rms_res_;
 		utility::vector1< Size > terminal_res_;
 		utility::vector1< core::Size > minimizer_extra_minimize_res_;
 		utility::vector1< core::Size > syn_chi_res_list_;
@@ -147,7 +140,7 @@ namespace rna {
 		kinematics::MoveMapOP minimize_move_map_;
 		checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
 		checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker_;
-		toolbox::AllowInsertOP allow_insert_;
+		toolbox::AllowInsertOP allow_insert_; // deprecate?
 
 		utility::vector1< std::string > VDW_rep_screen_info_;
 	};

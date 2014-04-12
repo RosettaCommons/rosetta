@@ -495,7 +495,7 @@ namespace legacy {
 	StepWiseRNA_JobParametersSetup::figure_out_is_prepend_map(){
 		//
 		//6. What is this is_prepend_map used for?
-		//   Why is its setup connected to rmsd_res_list?
+		//   Why is its setup connected to calc_rms_res?
 		//                 -- rhiju
 		//
 		//  void
@@ -522,24 +522,24 @@ namespace legacy {
 
 		output_title_text( "Enter StepWiseRNA_JobParametersSetup::figure_out_is_residue_prepend_map", TR.Debug );
 
-		utility::vector1< core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
-		output_seq_num_list( "rmsd_res_list = ", rmsd_res_list, TR.Debug, 30 );
+		utility::vector1< core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
+		output_seq_num_list( "calc_rms_res = ", calc_rms_res, TR.Debug, 30 );
 		std::map< core::Size, bool > is_prepend_map;
 
 		if ( simple_append_map_ ){
 
 			TR.Debug << "WARNING using simple_append_map!" << std::endl;
 			//Only initial is_residue_prepend for rebuild residues;
-			for ( Size n = 1; n <= rmsd_res_list.size(); n++ ){
-				Size const seq_num = rmsd_res_list[n];
+			for ( Size n = 1; n <= calc_rms_res.size(); n++ ){
+				Size const seq_num = calc_rms_res[n];
 				is_prepend_map[seq_num] = false;
 			}
 
 		} else{
 
 			//Only initial is_residue_prepend for rebuild residues;
-			for ( Size n = 1; n <= rmsd_res_list.size(); n++ ){
-				Size const seq_num = rmsd_res_list[n];
+			for ( Size n = 1; n <= calc_rms_res.size(); n++ ){
+				Size const seq_num = calc_rms_res[n];
 				is_prepend_map[seq_num] = figure_out_is_residue_prepend( seq_num );
 			}
 		}
@@ -963,8 +963,8 @@ namespace legacy {
 		ObjexxFCL::FArray1D < int > cuts( num_cuts, 0 );
 
 		for ( Size i = 1; i <= num_cuts; i++ ) {
-			jump_point( 1, i ) = jump_partners_[i].first;
-			jump_point( 2, i ) = jump_partners_[i].second;
+			jump_point( 1, i ) = std::min( jump_partners_[i].first, jump_partners_[i].second );
+			jump_point( 2, i ) = std::max( jump_partners_[i].first, jump_partners_[i].second );
 			cuts( i ) = cuts_[ i ];
 			TR.Debug << " JUMP POINT: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
 		}
@@ -1606,18 +1606,18 @@ namespace legacy {
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParametersSetup::set_rmsd_res_list( utility::vector1< core::Size > const & input_rmsd_res_list ){
+	StepWiseRNA_JobParametersSetup::set_calc_rms_res( utility::vector1< core::Size > const & input_calc_rms_res ){
 
 		utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
-		utility::vector1< core::Size > actual_rmsd_res_list;
+		utility::vector1< core::Size > actual_calc_rms_res;
 
-		for ( Size n = 1; n <= input_rmsd_res_list.size(); n++ ){
-			Size seq_num = input_rmsd_res_list[n];
+		for ( Size n = 1; n <= input_calc_rms_res.size(); n++ ){
+			Size seq_num = input_calc_rms_res[n];
 			if ( !is_working_res[seq_num] ) continue;
-			actual_rmsd_res_list.push_back( seq_num );
+			actual_calc_rms_res.push_back( seq_num );
 		}
 
-		job_parameters_->set_rmsd_res_list( actual_rmsd_res_list );
+		job_parameters_->set_calc_rms_res( actual_calc_rms_res );
 
 	}
 

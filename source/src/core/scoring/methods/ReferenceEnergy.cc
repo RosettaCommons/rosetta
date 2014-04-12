@@ -71,50 +71,6 @@ ReferenceEnergy::clone() const
 	return new ReferenceEnergy( aa_weights_ );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-/// @brief Returns true if passed a core::chemical::AA corresponding to a
-/// D-amino acid, and false otherwise.
-bool
-ReferenceEnergy::is_d_aminoacid(
-	core::chemical::AA const res_aa
-) const {
-	using namespace core::chemical;
-	if(res_aa >= aa_dal && res_aa <= aa_dty) return true;
-	return false;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-/// @brief When passed a d-amino acid, returns the l-equivalent.  Returns
-/// aa_unk otherwise.
-core::chemical::AA
-ReferenceEnergy::get_l_equivalent(
-	core::chemical::AA const d_aa
-) const {
-	using namespace core::chemical;
-	if(d_aa==aa_dal) return aa_ala;
-	else if(d_aa==aa_dcs) return aa_cys;
-	else if(d_aa==aa_das) return aa_asp;
-	else if(d_aa==aa_dgu) return aa_glu;
-	else if(d_aa==aa_dph) return aa_phe;
-	else if(d_aa==aa_dhi) return aa_his;
-	else if(d_aa==aa_dil) return aa_ile;
-	else if(d_aa==aa_dly) return aa_lys;
-	else if(d_aa==aa_dle) return aa_leu;
-	else if(d_aa==aa_dme) return aa_met;
-	else if(d_aa==aa_dan) return aa_asn;
-	else if(d_aa==aa_dpr) return aa_pro;
-	else if(d_aa==aa_dgn) return aa_gln;
-	else if(d_aa==aa_dar) return aa_arg;
-	else if(d_aa==aa_dse) return aa_ser;
-	else if(d_aa==aa_dth) return aa_thr;
-	else if(d_aa==aa_dva) return aa_val;
-	else if(d_aa==aa_dtr) return aa_trp;
-	else if(d_aa==aa_dty) return aa_tyr;
-
-	return aa_unk;
-}
 
 /// This is a terrible terrible terrible hack that will do for now.
 void
@@ -215,6 +171,51 @@ ReferenceEnergy::residue_energy(
 	    	break;
 	  }
 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief Returns true if passed a core::chemical::AA corresponding to a
+/// D-amino acid, and false otherwise.
+bool
+ReferenceEnergy::is_d_aminoacid(
+	core::chemical::AA const res_aa
+) const {
+	using namespace core::chemical;
+	if(res_aa >= aa_dal && res_aa <= aa_dty) return true;
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief When passed a d-amino acid, returns the l-equivalent.  Returns
+/// aa_unk otherwise.
+core::chemical::AA
+ReferenceEnergy::get_l_equivalent(
+	core::chemical::AA const d_aa
+) const {
+	using namespace core::chemical;
+	if(d_aa==aa_dal) return aa_ala;
+	else if(d_aa==aa_dcs) return aa_cys;
+	else if(d_aa==aa_das) return aa_asp;
+	else if(d_aa==aa_dgu) return aa_glu;
+	else if(d_aa==aa_dph) return aa_phe;
+	else if(d_aa==aa_dhi) return aa_his;
+	else if(d_aa==aa_dil) return aa_ile;
+	else if(d_aa==aa_dly) return aa_lys;
+	else if(d_aa==aa_dle) return aa_leu;
+	else if(d_aa==aa_dme) return aa_met;
+	else if(d_aa==aa_dan) return aa_asn;
+	else if(d_aa==aa_dpr) return aa_pro;
+	else if(d_aa==aa_dgn) return aa_gln;
+	else if(d_aa==aa_dar) return aa_arg;
+	else if(d_aa==aa_dse) return aa_ser;
+	else if(d_aa==aa_dth) return aa_thr;
+	else if(d_aa==aa_dva) return aa_val;
+	else if(d_aa==aa_dtr) return aa_trp;
+	else if(d_aa==aa_dty) return aa_tyr;
+
+	return aa_unk;
 }
 
 

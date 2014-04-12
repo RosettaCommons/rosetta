@@ -98,7 +98,7 @@ namespace suite {
 		build_pose_from_scratch_( job_parameters_->working_sequence().length() == ( num_nucleotides_ + 1 ) ), // somewhat hacky, used for rna puzzle
 		kic_sampling_( false ), // will be updated below.
 		rebuild_bulge_mode_( job_parameters_->rebuild_bulge_mode() ),
-		scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
+		scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_hires.wts" ) ), // can be replaced from the outside
 		silent_file_( "silent_file.txt" ),
 		native_rmsd_screen_( false ), // will be updated below
 		bin_size_( 20 )

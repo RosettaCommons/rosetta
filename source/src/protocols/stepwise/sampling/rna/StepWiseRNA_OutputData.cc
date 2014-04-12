@@ -38,7 +38,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -88,7 +88,7 @@ namespace rna {
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	core::io::silent::BinaryRNASilentStruct
+	core::io::silent::BinarySilentStruct
 	get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file ){
 
 		// What's the deal with this creation of silent struct and deletion? -- rhiju
@@ -182,8 +182,8 @@ namespace rna {
 				}
 			}
 
-			BinaryRNASilentStruct DEBUG_silent_struct( pose, debug_tag );
-			BinaryRNASilentStruct const silent_struct( pose, tag );
+			BinarySilentStruct DEBUG_silent_struct( pose, debug_tag );
+			BinarySilentStruct const silent_struct( pose, tag );
 
 			if ( file_exists( debug_silent_file ) ) remove_file( debug_silent_file );
 
@@ -230,14 +230,14 @@ namespace rna {
 
 		first_trial_pose_from_silent_file.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + "_pose_from_silent_file.pdb" );
 		first_trial_pose.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".pdb" );
-		BinaryRNASilentStruct ERROR_silent_struct( first_trial_pose, debug_tag );
+		BinarySilentStruct ERROR_silent_struct( first_trial_pose, debug_tag );
 		std::string const ERROR_silent_file = "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".out";
 		silent_file_data.write_silent_struct( ERROR_silent_struct, ERROR_silent_file, false );
 
 		utility_exit_with_message( "Fail to write pose ( " + debug_tag + " ) to silent_file after " + ObjexxFCL::string_of( NUM_trials ) + " trials " );
 
 		////////////This is just to prevent compiler WARNING MESSAGES/////////
-		BinaryRNASilentStruct EMPTY_silent_struct;
+		BinarySilentStruct EMPTY_silent_struct;
 		return EMPTY_silent_struct;
 		//////////////////////////////////////////////////////////////////////
 
@@ -246,7 +246,7 @@ namespace rna {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	core::io::silent::BinaryRNASilentStruct
+	core::io::silent::BinarySilentStruct
 	get_binary_rna_silent_struct_safe_wrapper( pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file, bool const write_score_only ){
 
 		using namespace core::io::silent;
@@ -255,7 +255,7 @@ namespace rna {
 
 		if ( write_score_only ){
 
-			BinaryRNASilentStruct s( const_pose, tag ); //If write score only, don't have to safe about pose to silent_struct conversion!
+			BinarySilentStruct s( const_pose, tag ); //If write score only, don't have to safe about pose to silent_struct conversion!
 			return s;
 
 		} else{
@@ -265,7 +265,7 @@ namespace rna {
 		}
 
 		////////////This is just to prevent compiler WARNING MESSAGES/////////
-		BinaryRNASilentStruct EMPTY_silent_struct;
+		BinarySilentStruct EMPTY_silent_struct;
 		return EMPTY_silent_struct;
 		//////////////////////////////////////////////////////////////////////
 
@@ -288,13 +288,13 @@ namespace rna {
 		using namespace core::scoring;
 		using namespace core::pose;
 
-		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
+		utility::vector1 < core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
 		std::map< core::Size, bool > const & is_prepend_map = job_parameters_->is_prepend_map();
 		bool const is_prepend(  job_parameters_->is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
 		Size const moving_base_residue( job_parameters_->actually_moving_res() );
 
-		BinaryRNASilentStruct s = get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only );
+		BinarySilentStruct s = get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only );
 
 		bool const output_extra_RMSDs = job_parameters_->output_extra_RMSDs();
 
@@ -308,10 +308,10 @@ namespace rna {
 				// I added a function in Pose_Setup to make sure this happens. Parin Jan 28, 2010
 
 				s.add_energy( "rmsd", suite_rmsd( pose, *native_poseCOP, moving_base_residue, is_prepend, false ) );
-				s.add_energy( "loop_rmsd", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, false ) );
+				s.add_energy( "loop_rmsd", rmsd_over_residue_list( pose, *native_poseCOP, calc_rms_res, full_to_sub, is_prepend_map, false, false ) );
 
 				s.add_energy( "V_rms", suite_rmsd( pose, *native_poseCOP, moving_base_residue, is_prepend, true ) );
-				s.add_energy( "V_loop_rms", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, true ) );
+				s.add_energy( "V_loop_rms", rmsd_over_residue_list( pose, *native_poseCOP, calc_rms_res, full_to_sub, is_prepend_map, false, true ) );
 
 				if ( job_parameters_->gap_size() == 0 ){
 					s.add_energy( "PBP_rmsd", phosphate_base_phosphate_rmsd( pose, *native_poseCOP, moving_base_residue,  false ) );
@@ -336,10 +336,10 @@ namespace rna {
 						align_poses( current_pose, tag, *native_poseCOP, "native", working_best_alignment );
 					}
 					s.add_energy( "O_rmsd", suite_rmsd( current_pose, *native_poseCOP, moving_base_residue, is_prepend, false ) );
-					s.add_energy( "O_loop_rmsd", rmsd_over_residue_list( current_pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, false ) );
+					s.add_energy( "O_loop_rmsd", rmsd_over_residue_list( current_pose, *native_poseCOP, calc_rms_res, full_to_sub, is_prepend_map, false, false ) );
 
 					s.add_energy( "O_V_rms", suite_rmsd( current_pose, *native_poseCOP, moving_base_residue, is_prepend, true ) );
-					s.add_energy( "O_V_loop_rms", rmsd_over_residue_list( current_pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, true ) );
+					s.add_energy( "O_V_loop_rms", rmsd_over_residue_list( current_pose, *native_poseCOP, calc_rms_res, full_to_sub, is_prepend_map, false, true ) );
 
 					if ( job_parameters_->gap_size() == 0 ){
 						s.add_energy( "O_PBP_rmsd", phosphate_base_phosphate_rmsd( current_pose, *native_poseCOP, moving_base_residue,  false ) );
@@ -362,7 +362,7 @@ namespace rna {
 
 				s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants,
 																													*native_poseCOP,
-																													rmsd_res_list,
+																													calc_rms_res,
 																													full_to_sub,
 																													is_prepend_map,
 																													false /*verbose*/,

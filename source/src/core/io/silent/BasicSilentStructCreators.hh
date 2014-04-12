@@ -65,12 +65,12 @@ public:
 };
 
 
-/// @brief creator for the BinaryProteinSilentStruct class
-class BinaryProteinSilentStructCreator : public SilentStructCreator
+/// @brief creator for the BinarySilentStruct class
+class BinarySilentStructCreator : public SilentStructCreator
 {
 public:
-	BinaryProteinSilentStructCreator();
-	virtual ~BinaryProteinSilentStructCreator();
+	BinarySilentStructCreator();
+	virtual ~BinarySilentStructCreator();
 
 	virtual SilentStructOP create_silent_struct() const;
 	virtual std::string keyname() const;
@@ -98,17 +98,6 @@ public:
 
   virtual SilentStructOP create_silent_struct() const;
   virtual std::string keyname() const;
-};
-
-/// @brief creator for the BinaryRNASilentStruct class
-class BinaryRNASilentStructCreator : public SilentStructCreator
-{
-public:
-	BinaryRNASilentStructCreator();
-	virtual ~BinaryRNASilentStructCreator();
-
-	virtual SilentStructOP create_silent_struct() const;
-	virtual std::string keyname() const;
 };
 
 

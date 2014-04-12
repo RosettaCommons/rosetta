@@ -1157,7 +1157,6 @@ superimpose_pose(
 	double rms;
 	rmsfitca2(natoms,xx1,xx2,wt,nsup,rms);
 
-
 	if ( true ) { // debug:
 		double tmp1,tmp2,tmp3;
 		COMAS(xx1,wt,natoms,tmp1,tmp2,tmp3); // store xcen,ycen,zcen vals for later
@@ -1401,8 +1400,9 @@ rms_at_corresponding_atoms_no_super(
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
-		if( tr.Debug.visible() && ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
-						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
+		if( tr.Debug.visible() &&
+				( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
+					ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
 			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
 			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
 			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
@@ -1410,7 +1410,8 @@ rms_at_corresponding_atoms_no_super(
 		}
 
 		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
-
+		if ( mod_pose.residue( (iter->first).rsd() ).is_virtual( (iter->first).atomno() ) ) continue;
+		if ( ref_pose.residue( (iter->second).rsd() ).is_virtual( (iter->second).atomno() ) ) continue;
 		Vector const & p1(  mod_pose.xyz( iter->first ));
 		Vector const & p2(  ref_pose.xyz( iter->second ));
 

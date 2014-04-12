@@ -72,7 +72,7 @@ public:
 	);
 	virtual void fill_pose(	core::pose::Pose&	);
 
-	virtual utility::vector1< core::pose::Pose > get_all_poses(
+	virtual utility::vector1< core::pose::PoseOP > get_all_poses(
 		core::chemical::ResidueTypeSet const & residue_set
 	);
 

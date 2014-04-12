@@ -16,9 +16,10 @@
 #include <core/types.hh>
 
 // Package headers
+#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
@@ -57,6 +58,107 @@ namespace core {
 namespace pose {
 namespace rna {
 
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
+
+	using namespace core::conformation;
+	using namespace core::chemical;
+
+	if ( new_seq == pose.sequence()[i-1] ) return false;
+
+	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
+
+	ResidueSelector residue_selector;
+	residue_selector.set_name1( new_seq );
+	residue_selector.match_variants( pose.residue(i).type() );
+	if ( pose.residue( i ).is_RNA() ) residue_selector.set_property( "RNA" );
+	ResidueTypeCOP new_rsd_type( residue_selector.select( rsd_set )[1] );
+	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
+
+	Real const save_chi = pose.chi(i);
+	pose.replace_residue( i, *new_rsd, false );
+	pose.set_chi( i, save_chi );
+
+	return true;
+}
+
+//////////////////////////////////////////////////////
+void
+figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
+{
+	using namespace core::conformation;
+
+	//Look for chainbreaks in PDB.
+	Size const nres = pose.total_residue();
+	kinematics::FoldTree f( nres );
+
+	Size m( 0 );
+
+	for (Size i=1; i < nres; ++i) {
+
+		// if ( pose.residue( i ).is_protein() && pose.residue( i+1 ).is_protein() ){
+		// 	if ( pose.residue_type( i ).has_variant_type( "C_METHYLAMIDATION" ) ){
+		// 		f.new_jump( i, i+1, i );
+		// 		m++;
+		// 		continue;
+		// 	}
+		// }
+
+		if ( !pose.residue(i).is_RNA() && !pose.residue(i+1).is_RNA() )  continue;
+
+		if ( (  pose.residue(i).is_RNA() && !pose.residue(i+1).is_RNA() ) ||
+				 ( !pose.residue(i).is_RNA() &&  pose.residue(i+1).is_RNA() ) ) {
+			f.new_jump( i, i+1, i );
+			m++;
+			continue;
+		}
+
+		if ( pose::rna::is_rna_chainbreak( pose, i ) ){
+
+			//std::cout << "CHAINBREAK between " << i << " and " << i+1 << std::endl;
+
+			f.new_jump( i, i+1, i );
+			m++;
+
+			Residue const & current_rsd( pose.residue( i   ) ) ;
+			Residue const &    next_rsd( pose.residue( i+1 ) ) ;
+			//			Size dummy( 0 ), jump_atom1( 0 ), jump_atom2( 0 );
+			//rna_basepair_jump_atoms( current_rsd.aa(), jump_atom1, dummy, dummy );
+			//rna_basepair_jump_atoms( next_rsd.aa(), jump_atom2, dummy, dummy );
+			//f.set_jump_atoms( m, current_rsd.atom_name( jump_atom1 ), next_rsd.atom_name( jump_atom2 ) );
+
+			f.set_jump_atoms( m,
+												chemical::rna::chi1_torsion_atom( current_rsd ),
+												chemical::rna::chi1_torsion_atom( next_rsd )   );
+
+		}
+
+	}
+
+	pose.fold_tree( f );
+}
+
+////////////////////////////////////////////////////////
+void
+virtualize_5prime_phosphates( pose::Pose & pose ){
+
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+
+		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
+									 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+									 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ){
+			if ( pose.residue(i).is_RNA() ) {
+				pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
+			}
+		}
+
+	}
+
+}
+
+
+//////////////////////////////////////////////////////
 bool
 is_cutpoint_open( Pose const & pose, Size const i ) {
 
@@ -512,11 +614,13 @@ apply_pucker(
 		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
 
 		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
-		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
-
 		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_add );
+		remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", res_to_add );
+
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
 		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
 		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_add + 1 );
+		remove_variant_type_from_pose_residue( pose, "N_ACETYLATION", res_to_add + 1);
 
 		if ( pose.residue_type( res_to_add ).is_RNA() ){
 			// could also keep track of alpha, beta, etc.
@@ -525,6 +629,7 @@ apply_pucker(
 		}
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
+
 	}
 
 

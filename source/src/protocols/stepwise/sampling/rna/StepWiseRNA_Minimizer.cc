@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -186,7 +186,8 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 	for ( Size pose_ID = 1; pose_ID <= pose_list_.size(); pose_ID++ ){
 
-		if ( minimized_pose_list_.size() >= options_->num_pose_minimize() ){
+		if ( options_->num_pose_minimize() > 0 &&
+				 minimized_pose_list_.size() >= options_->num_pose_minimize() ){
 			TR.Debug << "WARNING MAX options_->num_pose_minimize()( " << options_->num_pose_minimize() << " ) EXCEEDED, EARLY BREAK." << std::endl;
 			break;
 		}

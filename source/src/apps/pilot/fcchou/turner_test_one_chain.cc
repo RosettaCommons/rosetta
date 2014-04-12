@@ -45,7 +45,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -1629,7 +1629,7 @@ main( int argc, char * argv [] ) {
 	utility::vector1< Real > blank_size_vector_real;
 
 	NEW_OPT(out_scores_prefix, "output the scores", "");
-	NEW_OPT(force_field, "score_file", "rna_hires_07232011_with_intra_base_phosphate");
+	NEW_OPT(force_field, "score_file", "farna/rna_hires_07232011_with_intra_base_phosphate");
 	NEW_OPT( seq, "sequence to model", "" );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "");
 	NEW_OPT( score_cutoff, "Cutoff in energy score", 99999.99 );

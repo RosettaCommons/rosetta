@@ -17,25 +17,26 @@ BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 ADD_ATOM  NR   Nbb  NH1  -0.47
 ADD_ATOM  HR   HNbb H    0.31
-ADD_ATOM  CS  CAbb CT1  0.07
-ADD_ATOM 1HS  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
-ADD_ATOM 2HS  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
-ADD_ATOM 3HS  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+ADD_ATOM  CS   VIRT CT1  0.00
+#ADD_ATOM  CS  CAbb CT1  0.07
+#ADD_ATOM 1HS  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 2HS  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 3HS  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
 ADD_BOND  C    NR
 ADD_BOND  NR   CS
 ADD_BOND  NR   HR
-ADD_BOND  CS  1HS
-ADD_BOND  CS  2HS
-ADD_BOND  CS  3HS
+#ADD_BOND  CS  1HS
+#ADD_BOND  CS  2HS
+#ADD_BOND  CS  3HS
 
 SET_ICOOR  NR  180.000031   63.799957    1.328686   C     CA    O  
 SET_ICOOR  CS  180.000000   58.299980    1.458001   NR    C     CA  
 SET_ICOOR  HR -179.999878   60.850006    1.010001   NR    CS    C
 ## The information for the added hydrogens was copied from the 3 hydrogens 
 ##   bonded to the delta carbon of Ile
-SET_ICOOR 1HS  -179.974518  70.500000  1.090290  CS  NR   C
-SET_ICOOR 2HS   119.989571  70.500000  1.090575  CS  NR  1HS 
-SET_ICOOR 3HS   120.044632  70.500000  1.089057  CS  NR  2HS 
+#SET_ICOOR 1HS  -179.974518  70.500000  1.090290  CS  NR   C
+#SET_ICOOR 2HS   119.989571  70.500000  1.090575  CS  NR  1HS 
+#SET_ICOOR 3HS   120.044632  70.500000  1.089057  CS  NR  2HS 
 
 SET_BACKBONE_HEAVYATOM NR
 SET_BACKBONE_HEAVYATOM CS

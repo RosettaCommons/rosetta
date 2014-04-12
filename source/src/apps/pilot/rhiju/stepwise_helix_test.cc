@@ -38,7 +38,7 @@
 #include <core/util/basic.hh>
 #include <core/io/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -524,7 +524,7 @@ search_translations( pose::Pose & pose,
 				if ( silent_file.size() > 0 ){
 					Real const rmsd = check_rmsd( translation, moving_pose_backbone_atoms, native_pose_backbone_atoms );
 					translate( pose, translation, pose_to_translate, moving_res );
-					BinaryProteinSilentStruct s( pose, tag );
+					BinarySilentStruct s( pose, tag );
 					s.add_energy( "rms", rmsd );
 					sfd.write_silent_struct( s, silent_file, false /*write score only*/ );
 				}

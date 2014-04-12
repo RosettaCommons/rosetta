@@ -113,7 +113,7 @@ numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not chang
 #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -378,7 +378,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			if(!write_silent_file){
 				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
 			}else{
-				core::io::silent::BinaryProteinSilentStruct bss(mc->lowest_score_pose(),"lowest."+curr.str());
+				core::io::silent::BinarySilentStruct bss(mc->lowest_score_pose(),"lowest."+curr.str());
 				out_sfd.write_silent_struct(bss,silent_file_name,false);
 			}
 
@@ -394,7 +394,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 					lowest_score_pose.dump_pdb(output_tag+"."+curr.str()+"_0001.pdb");
 				}else{
 					//std::cout << "C-alpha rmsd from start: " << core::scoring::CA_rmsd(lowest_score_pose,init_pose) << std::endl;
-					core::io::silent::BinaryProteinSilentStruct bss(lowest_score_pose,"min_cst.lowest."+curr.str()+"_0001");
+					core::io::silent::BinarySilentStruct bss(lowest_score_pose,"min_cst.lowest."+curr.str()+"_0001");
 					out_sfd_min.write_silent_struct(bss,"min."+silent_file_name,false);
 				}
 			}

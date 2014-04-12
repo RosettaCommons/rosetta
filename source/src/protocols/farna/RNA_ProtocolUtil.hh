@@ -41,10 +41,7 @@
 namespace protocols {
 namespace farna {
 
-typedef  numeric::xyzVector< core::Real >  Vector;
-
-void
-figure_out_reasonable_rna_fold_tree( core::pose::Pose & pose );
+typedef  numeric::xyzVector< core::Length >  Vector;
 
 void
 figure_out_secstruct( core::pose::Pose & pose );
@@ -131,9 +128,6 @@ remove_cutpoint_closed( core::pose::Pose & pose, core::Size const i );
 void
 remove_cutpoints_closed( core::pose::Pose & pose );
 
-void
-virtualize_5prime_phosphates( core::pose::Pose & pose );
-
 bool
 possible_root( core::kinematics::FoldTree const & f, core::Size const & n );
 
@@ -157,9 +151,6 @@ translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
 
 bool
 involved_in_phosphate_torsion( std::string atomname );
-
-bool
-mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
 
 void
 set_output_res_num( core::pose::Pose & extended_pose,

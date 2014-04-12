@@ -154,6 +154,9 @@ public:
 	virtual void or_fix_his_tautomer( bool setting ) = 0;
 	virtual bool fix_his_tautomer() const = 0;
 
+	virtual void or_include_virtual_side_chain( bool include_virtual_side_chain ) = 0;
+	virtual bool include_virtual_side_chain() const = 0;
+
 	virtual void and_extrachi_cutoff( Size num_neighbors_to_be_called_buried ) = 0;
 
 	virtual Size extrachi_cutoff() const = 0;

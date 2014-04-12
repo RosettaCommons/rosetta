@@ -890,7 +890,7 @@ SilentStruct::one_letter_sequence() const {
 ///@ detail
 //* removing dependendence from input flag -in:file:Fullatom which made no sense, since reading inconsistent
 //* will break anyhow... moreover the test was wrong before: GLY and ALA have 7 or 10 atoms respectively.
-// strategy to dectet fullatom-ness now:
+// strategy to detect fullatom-ness now:
 //   look only at unpatched residues -- check for protein...
 //      (no modification in annotated sequence )
 //
@@ -901,7 +901,13 @@ SilentStruct::one_letter_sequence() const {
 //
 void SilentStruct::detect_fullatom( core::Size pos, core::Size natoms, bool& fullatom, bool& well_defined ) {
 	if ( sequence().is_patched( pos ) ) return;
-	if ( sequence().aa( pos ) > core::chemical::num_canonical_aas ) return;
+	if ( sequence().aa( pos ) > core::chemical::num_canonical_aas ) {
+		if ( sequence().aa( pos ) >= core::chemical::aa_vrt  ) return;
+		well_defined = true;
+		fullatom = true;
+		tr.Debug << "found RNA or DNA " << sequence().one_letter( pos )  << std::endl;
+		return;
+	}
 	//	if ( well_defined ) return; // no more checks necessary
 	//okay an unpatched regular aminoacid
 	if ( natoms <= 6 ) {

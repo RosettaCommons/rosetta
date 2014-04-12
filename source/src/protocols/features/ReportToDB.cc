@@ -30,7 +30,7 @@
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

@@ -468,7 +468,7 @@ int universal_main(
 						 dynamic_cast< PlainSilentFileJobDistributor * > (jobdist());
 						core::io::silent::SilentStructOP pss;
 						//if (option[ out::file::binary_silentfile ].user()) {
-						//	pss = new core::io::silent::BinaryProteinSilentStruct;
+						//	pss = new core::io::silent::BinarySilentStruct;
 						//} else {
 						//	pss = new core::io::silent::ProteinSilentStruct;
 						//}
@@ -631,7 +631,7 @@ int universal_main(
 				 dynamic_cast< PlainSilentFileJobDistributor * > (jobdist());
 				core::io::silent::SilentStructOP pss;
 				//if (option[ out::file::binary_silentfile ].user()) {
-				//	pss = new core::io::silent::BinaryProteinSilentStruct;
+				//	pss = new core::io::silent::BinarySilentStruct;
 				//} else {
 				//	pss = new core::io::silent::ProteinSilentStruct;
 				//}

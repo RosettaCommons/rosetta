@@ -43,7 +43,7 @@ namespace rna {
 //////////////////////////////////////////////////////
 RNA_IdealCoord::RNA_IdealCoord():
 	utility::pointer::ReferenceCount(),
-	path_( basic::database::full_name("chemical/residue_type_sets/rna_phenix/ideal_geometry/") )
+	path_( basic::database::full_name("chemical/residue_type_sets/fa_standard/residue_types/nucleic/rna_phenix/ideal_geometry/") )
 {
 	init();
 }

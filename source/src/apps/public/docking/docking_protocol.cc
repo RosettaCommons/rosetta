@@ -68,6 +68,9 @@ my_main( void* )
 
 	JobDistributor::get_instance()->go(dp);
 
+	protocols::viewer::clear_conformation_viewers();
+	exit( 0 ); // graceful exit with take down of graphics viewers.
+
 	return NULL;
 }
 

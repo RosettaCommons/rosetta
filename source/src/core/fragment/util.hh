@@ -138,6 +138,10 @@ void
 fragment_set_slice ( ConstantLengthFragSetOP & fragset, Size const & min_res, Size const & max_res );
 
 void
+fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
+										utility::vector1< core::Size > const & slice_res );
+
+void
 make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vector1<FragDataCOP> frags, bool chains = false );
 
 } //fragment

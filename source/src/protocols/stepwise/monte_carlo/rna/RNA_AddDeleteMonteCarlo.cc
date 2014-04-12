@@ -13,7 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddDeleteMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
 
@@ -32,7 +32,7 @@
 #include <numeric/xyzVector.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>
@@ -45,11 +45,11 @@ using namespace core;
 using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
-// AddDeleteMonteCarlo (a prototype for SWA Monte Carlo) -- framework for
+// RNA_AddDeleteMonteCarlo (a prototype for SWA Monte Carlo) -- framework for
 //  sampling RNA through torsion moves,
 //  and moves that delete or add residues at chain termini.
 //  This probably should be deprecated soon -- could be captured by
-//  StepWiseRNA_MonteCarlo
+//  StepWiseMonteCarlo
 //////////////////////////////////////////////////////////////////////////
 
 static numeric::random::RandomGenerator RG(29111);  // <- Magic number, do not change it!
@@ -64,7 +64,7 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
+	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  AddOrDeleteMoverOP rna_add_or_delete_mover,
 																										 RNA_TorsionMoverOP     rna_torsion_mover,
 																										 RNA_O2PrimeMoverOP      rna_o2prime_mover,
 																										 core::scoring::ScoreFunctionOP scorefxn ):
@@ -176,7 +176,7 @@ namespace rna {
 		for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
 
 		std::string const tag = "S_"+lead_zero_string_of(count,6);
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 
 		Pose const & native_pose = *get_native_pose();
 

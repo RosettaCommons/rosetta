@@ -39,9 +39,10 @@ namespace rna {
 		//destructor
 		~StepWiseRNA_ModelerOptions();
 
+	public:
+
 		StepWiseRNA_ModelerOptionsOP clone() const;
 
-	public:
 
 		StepWiseRNA_ModelerOptions &
 		operator = ( StepWiseRNA_ModelerOptions const & src );
@@ -60,7 +61,7 @@ namespace rna {
 		/// This function allows for better error message delivery.
 		virtual
 		std::string
-		type() const{ return "StepWiseRNA_ModelOptions";}
+		type() const{ return "StepWiseRNA_ModelerOptions";}
 
 	public:
 

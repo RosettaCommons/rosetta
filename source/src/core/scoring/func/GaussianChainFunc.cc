@@ -58,6 +58,8 @@
 //  which I have worked out (and is basically implemented in the four-joint
 //  function GaussianChainQuadrupleFunc.cc)
 //
+// See core/scoring/loop_graph/LoopGraph.cc for use case.
+//
 // More notes at:
 //   https://docs.google.com/a/stanford.edu/file/d/0B6gpwdY_Bgd0OHdzVWJGTHBvTzg/edit
 //
@@ -71,16 +73,20 @@ namespace scoring {
 namespace func {
 
 GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance,
+																			Real const loop_fixed_cost,
 																			utility::vector1< Real > const & other_distances ):
 	gaussian_variance_( gaussian_variance ),
+	loop_fixed_cost_( loop_fixed_cost ),
 	other_distances_( other_distances )
 {
 	initialize_parameters();
 	initialize_func();
 }
 
-GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance ):
-	gaussian_variance_( gaussian_variance )
+GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance,
+																			Real const loop_fixed_cost ):
+	gaussian_variance_( gaussian_variance ),
+	loop_fixed_cost_( loop_fixed_cost )
 {
 	initialize_parameters();
 	initialize_func();
@@ -90,7 +96,6 @@ GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance ):
 void
 GaussianChainFunc::initialize_parameters(){
 	kB_T_ = 1.0; // choice of energy units.
-	loop_fixed_cost_ = -0.29; // from fits to RNA data -- could be set by option?
 	force_combined_gaussian_approximation_ = false;
 }
 
@@ -98,7 +103,7 @@ GaussianChainFunc::initialize_parameters(){
 FuncOP
 GaussianChainFunc::clone() const
 {
-	return new GaussianChainFunc( gaussian_variance_, other_distances_ );
+	return new GaussianChainFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ );
 }
 
 /////////////////////////////////////////////////////
@@ -109,13 +114,13 @@ GaussianChainFunc::initialize_func(){
 
 	if ( !force_combined_gaussian_approximation_ ){
 		if ( other_distances_.size() == 0 ) {
-			func_ = new GaussianChainSingleFunc( gaussian_variance_ );
+			func_ = new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ );
 		} else if ( other_distances_.size() == 1 ){
-			func_ = new GaussianChainDoubleFunc( gaussian_variance_, other_distances_[1] );
+			func_ = new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1] );
 		} else if ( other_distances_.size() == 2 ){
-			func_ = new GaussianChainTripleFunc( gaussian_variance_, other_distances_[1], other_distances_[2] );
+			func_ = new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] );
 		} else if ( other_distances_.size() == 3 ){
-			func_ = new GaussianChainQuadrupleFunc( gaussian_variance_, other_distances_[1], other_distances_[2], other_distances_[3] );
+			func_ = new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] );
 		}
 	}
 
@@ -127,7 +132,7 @@ GaussianChainFunc::initialize_func(){
 			// Note that the radius of gyration is sqrt( 3 ) * gaussian_variance.
 			gaussian_variance_total += (other_distances_[ n ] * other_distances_[ n ] / 3.0);
 		}
-		func_ = new GaussianChainSingleFunc( gaussian_variance_total );
+		func_ = new GaussianChainSingleFunc( gaussian_variance_total, 	loop_fixed_cost_ );
 	}
 
 	runtime_assert( func_.get() != NULL );

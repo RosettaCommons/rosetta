@@ -62,7 +62,7 @@ public:
 
 	virtual void fast_forward(){ id_ = size(); }
 
-	void set_id( Size const setting ){ id_ = setting; }
+	virtual void set_id( Size const setting ){ id_ = setting; }
 
 protected:
 

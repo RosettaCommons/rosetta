@@ -29,7 +29,8 @@ namespace func {
 class GaussianChainDoubleFunc : public Func {
 public:
 
-	GaussianChainDoubleFunc( Real const gaussian_variance_,
+	GaussianChainDoubleFunc( Real const gaussian_variance,
+													 Real const loop_fixed_cost,
 													 Real const D2 );
 
 	FuncOP
@@ -50,11 +51,11 @@ private:
 private:
 
 	Real gaussian_variance_;
+	Real loop_fixed_cost_;
 	Real D2_;
 
 	// following have nice default values
 	Real kB_T_;
-	Real loop_fixed_cost_;
 
 	// derived from above.
 	Real loop_fixed_cost_total_;

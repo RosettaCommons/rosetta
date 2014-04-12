@@ -30,8 +30,10 @@ namespace core {
 namespace scoring {
 namespace func {
 
-GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance ):
-	gaussian_variance_( gaussian_variance )
+GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance,
+																									Real const loop_fixed_cost ):
+	gaussian_variance_( gaussian_variance ),
+	loop_fixed_cost_( loop_fixed_cost )
 {
 	initialize_parameters();
 }
@@ -39,13 +41,12 @@ GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance )
 FuncOP
 GaussianChainSingleFunc::clone() const
 {
-	return new GaussianChainSingleFunc( gaussian_variance_ );
+	return new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ );
 }
 
 void
 GaussianChainSingleFunc::initialize_parameters(){
 	kB_T_ = 1.0; // choice of energy units.
-	loop_fixed_cost_ = -0.29; // from fits to RNA data.
 	recompute_parameters();
 }
 

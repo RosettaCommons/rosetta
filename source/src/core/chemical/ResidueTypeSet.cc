@@ -62,6 +62,7 @@
 
 #include <utility/vector1.hh>
 
+using namespace basic::options;
 
 namespace core {
 namespace chemical {
@@ -102,7 +103,7 @@ ResidueTypeSet::ResidueTypeSet(
 			// to make sure even applications that use ResidueTypeSet directly never run into problems
 			bool no_proton_states = false;
 			if ( line.size() > 20 ){
-				if ( ( !basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) &&
+				if ( ( !option[ OptionKeys::pH::pH_mode ].user() ) &&
 						( line.substr (14,6) == "proton" ) ) {
 					no_proton_states = true;
 				}
@@ -157,7 +158,7 @@ ResidueTypeSet::ResidueTypeSet(
 			ResidueTypeOP rsd_type( read_topology_file(
 					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
 
-			if (basic::options::option[ basic::options::OptionKeys::in::add_orbitals]) {
+			if (option[ OptionKeys::in::add_orbitals]) {
 				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
 				add_orbitals_to_residue.assign_orbitals();
 			}
@@ -180,9 +181,9 @@ ResidueTypeSet::ResidueTypeSet(
 		// skipped.  The flag allows the user to specify a patch by its name or by its file.
 		// E.g. "SpecialRotamer" or "SpecialRotamer.txt".  Directory names will be ignored if given.
 		std::set< std::string > patches_to_avoid;
-		if ( basic::options::option[ basic::options::OptionKeys::chemical::exclude_patches ].user() ) {
+		if ( option[ OptionKeys::chemical::exclude_patches ].user() ) {
 			utility::vector1< std::string > avoidlist =
-					basic::options::option[ basic::options::OptionKeys::chemical::exclude_patches ];
+					option[ OptionKeys::chemical::exclude_patches ];
 			for ( Size ii = 1; ii <= avoidlist.size(); ++ii ) {
 				utility::file::FileName fname( avoidlist[ ii ] );
 				patches_to_avoid.insert( fname.base() );
@@ -216,10 +217,10 @@ ResidueTypeSet::ResidueTypeSet(
 		// kdrew: include list allows patches to be included while being commented out in patches.txt,
 		// useful for testing non-canonical patches.
 		//tr << "include_patches activated? " <<
-		//		basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() << std::endl;
-		if ( basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() ) {
+		//		option[ OptionKeys::chemical::include_patches ].active() << std::endl;
+		if ( option[ OptionKeys::chemical::include_patches ].active() ) {
 			utility::vector1< std::string > includelist =
-					basic::options::option[ basic::options::OptionKeys::chemical::include_patches ];
+					option[ OptionKeys::chemical::include_patches ];
 			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
 				utility::file::FileName fname( includelist[ ii ] );
 				patch_filenames.push_back( directory + includelist[ ii ]);
@@ -229,8 +230,8 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 
 		//fpd  if missing density is to be read correctly, we will have to also load the terminal truncation variants
-		if ( basic::options::option[ basic::options::OptionKeys::in::missing_density_to_jump ]()
-				|| basic::options::option[ basic::options::OptionKeys::in::use_truncated_termini ]() ) {
+		if ( option[ OptionKeys::in::missing_density_to_jump ]()
+				|| option[ OptionKeys::in::use_truncated_termini ]() ) {
 			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/NtermTruncation.txt" )
 					== patch_filenames.end())
 				patch_filenames.push_back( directory + "patches/NtermTruncation.txt" );
@@ -245,7 +246,7 @@ ResidueTypeSet::ResidueTypeSet(
 	// Generate combinations of adducts as specified by the user
 	place_adducts();
 
-	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+	if(option[ OptionKeys::in::add_orbitals]){
 		for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
 			orbitals::AssignOrbitals add_orbitals_to_residue(residue_types_[ii]);
 			add_orbitals_to_residue.assign_orbitals();
@@ -660,7 +661,7 @@ ResidueTypeSet::place_adducts()
 {
 	// First parse the command line for requested adducts
 	utility::options::StringVectorOption & add_set
-		= basic::options::option[ basic::options::OptionKeys::packing::adducts ];
+		= option[ OptionKeys::packing::adducts ];
 
 	// No adducts, skip out
 	if( add_set.size() == 0 ) return;
@@ -705,7 +706,7 @@ ResidueTypeSet::place_adducts()
 void
 ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 {
-	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+	if(option[ OptionKeys::in::add_orbitals]){
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();
 	}

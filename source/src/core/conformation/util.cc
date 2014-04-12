@@ -903,6 +903,8 @@ get_root_atomno(
 		if ( rsd.mainchain_atoms().empty() ) {
 			// SHORT TERM HACK -- need to add some logic for root atomno
 			return 1;
+		} else if ( rsd.type().has_variant_type( "N_ACETYLATION" ) ) {
+			return 1; // awful hack! want N-CA-C triad to stay put when one of these residues is at root.
 		} else {
 			// PB 10/29/07 - changing to use an interior mainchain atom
 			//

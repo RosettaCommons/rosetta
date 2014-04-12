@@ -18,9 +18,12 @@
 -ex1  
 -ex2  
 -score:weights score12.wts  
--pack_weights pack_no_hb_env_dep.wts  
+-pack_weights stepwise/protein/pack_no_hb_env_dep.wts  
 -in:detect_disulf false  
 -add_peptide_plane  
 -native 2it7.pdb  
 -out:file:silent 2it7_rebuild.out 
 -disulfide_file 2it7.disulf
+-allow_virtual_side_chains false
+-protein_prepack false
+-protein_atr_rep_screen false

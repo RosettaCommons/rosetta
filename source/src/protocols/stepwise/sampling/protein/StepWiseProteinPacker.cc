@@ -16,20 +16,17 @@
 //////////////////////////////////
 #include <protocols/stepwise/sampling/protein/StepWiseProteinPacker.hh>
 #include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
-#include <protocols/stepwise/sampling/protein/sample_generators/StepWisePoseSampleGenerator.hh>
-#include <protocols/stepwise/sampling/protein/PoseFilter.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 
 //////////////////////////////////
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <core/types.hh>
-#include <core/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -43,10 +40,6 @@
 #include <protocols/simple_moves/GreenPacker.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 
-
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/FArray1D.hh>
-
 #include <utility/exit.hh>
 
 #include <string>
@@ -56,19 +49,18 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-//Auto using namespaces
-using namespace ObjexxFCL; // AUTO USING NS
-
-
 using namespace core;
-using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 // Core routine for stepwise sampling of proteins (and probably other
 // biopolymers soon). Take a starting pose and a list of residues to sample,
 //  and comprehensively sample all backbone torsion angles by recursion.
-//////////////////////////////////////////////////////////////////////////
+//
+// Probably should be folded into a sample-and-screen framework!
+// See StepWiseRNA_Modeler for example.
+//   -- Rhiju, 2014.
+//
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
@@ -81,19 +73,14 @@ namespace protein {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-  StepWiseProteinPacker::StepWiseProteinPacker(
-													 utility::vector1< Size > const & moving_residues,
-													 protocols::stepwise::sampling::protein::sample_generators::StepWisePoseSampleGeneratorOP sample_generator ):
+  StepWiseProteinPacker::StepWiseProteinPacker( utility::vector1< Size > const & moving_residues ):
 		moving_residues_( moving_residues ),
-		scorefxn_( core::scoring::getScoreFunction() ),
 		green_packer_( new protocols::simple_moves::GreenPacker ),
 		use_green_packer_( false ),
 		use_packer_instead_of_rotamer_trials_( false ),
 		pack_at_neighbors_only_( true ),
-		rescore_only_( false ),
-		silent_file_( "" ),
-		sfd_( new core::io::silent::SilentFileData),
-		sample_generator_( sample_generator )
+		allow_virtual_side_chains_( false ),
+		rescore_only_( false )
   {
   }
 
@@ -101,24 +88,16 @@ namespace protein {
   //destructor
   StepWiseProteinPacker::~StepWiseProteinPacker()
   {}
-/////////////////////
-std::string
-StepWiseProteinPacker::get_name() const {
-return "StepWiseProteinPacker";
-}
 
+	/////////////////////
+	std::string
+	StepWiseProteinPacker::get_name() const {
+		return "StepWiseProteinPacker";
+	}
 
-  //////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-  void
-  StepWiseProteinPacker::apply( core::pose::Pose & pose )
-	{
-
-		//Size which_res( 1 );
-		//		Size count( 1 );
-
-		clock_t const time_start( clock() );
-
+	////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseProteinPacker::initialize( pose::Pose & pose ) {
 		if ( pose.is_fullatom() ){
 			if ( use_green_packer_ ) {
 				initialize_green_packer( pose.total_residue() );
@@ -126,75 +105,19 @@ return "StepWiseProteinPacker";
 				initialize_for_regular_packer( pose );
 			}
 		}
-
-		sample_residues( pose );
-
-		std::cout << "Total time in StepWiseProteinPacker: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
-
-	}
-
-
-	////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseProteinPacker::sample_residues( core::pose::Pose & pose )
-	{
-
-		 using namespace core::chemical;
-		 using namespace core::scoring;
-		 using namespace core::pose;
-		 using namespace core::kinematics;
-		 using namespace protocols::stepwise;
-
-		 sample_generator_->reset();
-
-		 Size k( 0 );
-
-		 while( sample_generator_->has_another_sample() ){
-
-			 sample_generator_->get_next_sample( pose );
-			 k++;
-
-			 if ( pose_filter_ && !pose_filter_->passes_filter( pose ) ) continue;
-
-			 std::string const tag = "S_"+ lead_zero_string_of( k-1, 5 );
-
-			 if ( pose.is_fullatom() || ( k % 100 == 0 ) ) print_tag( tag, k );
-
-			 if ( pose.is_fullatom() && !rescore_only_ ){
-				 if ( use_green_packer_ ) {
-					 green_packer_->apply( pose );
-				 } else {
-					 apply_regular_packer( pose );
-				 }
-			 }
-
-			 (*scorefxn_)( pose );
-
-			 output_silent_struct( pose, get_native_pose(), silent_file_, tag, sfd_,
-														 calc_rms_res_ );
-
-		 }
-
-		 //Nothing found? At least produce one pose...
-		 if ( sfd_->size() == 0 ) {
-			 TR << "Warning -- nothing passed filter -- outputting a placeholder pose." << std::endl;;
-			 std::string const tag = "S_"+ lead_zero_string_of( k-1, 5 );
-			 output_silent_struct( pose, get_native_pose(), silent_file_, tag, sfd_,
-														 calc_rms_res_ );
-		 }
-
-
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinPacker::print_tag( std::string const & tag, Size const k ) {
-		std::cout << " Decoy " << tag << " : ";
-		std::string const pack_or_trials = use_packer_instead_of_rotamer_trials_ ? "PACK" : "ROT_TRIALS" ;
-		std::cout << pack_or_trials;
-		std::cout << "   Number " << k;
-		if ( sample_generator_->size() > 0 ) std::cout  << " out of " << sample_generator_->size();
-		std::cout << std::endl;
+	StepWiseProteinPacker::apply( pose::Pose & pose ) {
+		if ( pose.is_fullatom() && !rescore_only_ ){
+			if ( use_green_packer_ ) {
+				green_packer_->apply( pose );
+			} else {
+				apply_regular_packer( pose, pack_at_neighbors_only_ );
+			}
+		}
+		(*scorefxn_)( pose );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -250,10 +173,16 @@ return "StepWiseProteinPacker";
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinPacker::initialize_for_regular_packer( core::pose::Pose & pose ){
+	StepWiseProteinPacker::initialize_for_regular_packer( core::pose::Pose const & pose ){
 		using namespace core::id;
 
-		pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
+		// When setting up rotamers, currently RotamerSet_ assumes that concrete residues do *not*
+		// have virtual side chains.
+		// This hack is kind of silly, and should be fixed by TaskFactory handling virtual side-chains.
+		Pose pose_without_virtual_side_chains = pose;
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) remove_variant_type_from_pose_residue( pose_without_virtual_side_chains, "VIRTUAL_SIDE_CHAIN", i );
+
+		pack_task_ = pack::task::TaskFactory::create_packer_task( pose_without_virtual_side_chains );
 		pack_task_->restrict_to_repacking();
 		for (Size i = 1; i <= pose.total_residue(); i++) {
 
@@ -265,19 +194,16 @@ return "StepWiseProteinPacker";
 				pack_task_->nonconst_residue_task(i).or_ex2( true );
 				//			pack_task_->nonconst_residue_task(i).or_ex3( true );
 				//			pack_task_->nonconst_residue_task(i).or_ex4( true );
+				pack_task_->nonconst_residue_task(i).or_include_virtual_side_chain( allow_virtual_side_chains_ );
 			} else if ( pose.residue(i).is_RNA() ) {
-			// Following could be useful...
-				pack_task_->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
-				// new -- in case RNA backbone only is input?
-				//pack_task_->nonconst_residue_task(i).sample_rna_chi( true );
+				pack_task_->nonconst_residue_task(i).or_ex4( true );
 			}
 
 			if ( pose.residue(i).has_variant_type( "VIRTUAL_RESIDUE" ) ) pack_task_->nonconst_residue_task(i).prevent_repacking();
 		}
 
 		// save this pose for later.
-		pose_init_ = new Pose;
-		*pose_init_ = pose;
+		pose_init_ = pose.clone();
 
 	}
 
@@ -311,7 +237,9 @@ return "StepWiseProteinPacker";
   //////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinPacker::reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const & src_pose ){
+
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			make_variants_match( pose, src_pose, i, "VIRTUAL_SIDE_CHAIN" );
 			for ( Size n = 1; n <= pose.residue_type( i ).nchi(); n++ ) {
 				pose.set_chi( n, i, src_pose.chi( n, i ) );
 			}
@@ -320,9 +248,9 @@ return "StepWiseProteinPacker";
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinPacker::apply_regular_packer( core::pose::Pose & pose ){
+	StepWiseProteinPacker::apply_regular_packer( core::pose::Pose & pose, bool const pack_at_neighbors_only ){
 
-		if ( pack_at_neighbors_only_ ) {
+		if ( pack_at_neighbors_only ) {
 
 			// need to reinstate side-chain angles at all positions to "pre-packed values"
 			reinstate_side_chain_angles( pose, *pose_init_ );
@@ -334,7 +262,6 @@ return "StepWiseProteinPacker";
 			//set up new task
 			pack_task_->restrict_to_repacking();
 
-			//			std::cout << "PACKING ==> ";
 			for (Size i = 1; i <= pose.total_residue(); i++) {
 				if (  residues_allowed_to_be_packed[ i ] )  {
 					pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
@@ -343,24 +270,12 @@ return "StepWiseProteinPacker";
 						pack_task_->nonconst_residue_task(i).or_ex1( true );
 						pack_task_->nonconst_residue_task(i).or_ex2( true );
 					} else if ( pose.residue(i).is_RNA() ){
-						pack_task_->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
-						// new -- in case RNA backbone only is input?
-						//pack_task_->nonconst_residue_task(i).sample_rna_chi( true );
+						pack_task_->nonconst_residue_task(i).or_ex4( true );
 					}
 				} else {
 					pack_task_->nonconst_residue_task(i).prevent_repacking();
 				}
 			}
-
-			// NEW -- more rotamers at moving residues...
-			//			for ( Size n = 1; n <= moving_residues_.size(); n++ ) {
-			//				Size const i = moving_residues_[ n ];
-			//std::cout << "MORE ROTAMERS TO " << i << std::endl;
-			//				pack_task_->nonconst_residue_task(i).or_ex1_sample_level( core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
-			//				pack_task_->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
-			//			}
-
-			//			std::cout << std::endl;
 		}
 
 
@@ -374,10 +289,26 @@ return "StepWiseProteinPacker";
 	}
 
   //////////////////////////////////////////////////////////////////////////
-  void
-  StepWiseProteinPacker::set_silent_file( std::string const & silent_file ){
-    silent_file_ = silent_file;
-  }
+	// splits into far-apart partitions and packs. Packing can include
+	// virtual side chains (if -allow_virtual_side_chains) is on.
+	void
+	StepWiseProteinPacker::do_prepack( pose::Pose & pose ){
+
+		pose::Pose pose_to_split = pose;
+		pose_to_split.remove_constraints(); // floating point errors if coordinate constraints are in there.
+		split_pose( pose_to_split, moving_res_list_ );
+
+		initialize_for_regular_packer( pose_to_split );
+		apply_regular_packer( pose_to_split, false /*pack_at_neighbors_only*/ );
+
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			make_variants_match( pose, pose_to_split, n, "VIRTUAL_SIDE_CHAIN" );
+			std::map< Size, Size > res_map;
+			res_map[ n ] = n;
+			copy_dofs_match_atom_names( pose, pose_to_split, res_map, false /*backbone_only*/, false /*ignore_virtual*/ );
+		}
+
+	}
 
   //////////////////////////////////////////////////////////////////////////
 	void
@@ -397,23 +328,6 @@ return "StepWiseProteinPacker";
 		use_packer_instead_of_rotamer_trials_ = setting;
 	}
 
-  //////////////////////////////////////////////////////////////////////////
-	core::io::silent::SilentFileDataOP &
-	StepWiseProteinPacker::silent_file_data(){
-		return sfd_;
-	}
-
-  //////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseProteinPacker::set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res ){
-		calc_rms_res_ = calc_rms_res;
-	}
-
-  //////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseProteinPacker::set_pose_filter( protocols::stepwise::sampling::protein::PoseFilterOP pose_filter ){
-		pose_filter_ = pose_filter;
-	}
 
 } //protein
 } //sampling

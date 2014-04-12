@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
 		task->nonconst_residue_task(ii).allow_aa( na_rcy );
 		assert( task->design_residue(ii) );
 	}
-  // create a rna_lores scorefxn
+  // create a farna/rna_lores scorefxn
 	scoring::ScoreFunction scorefxn;
-	scorefxn = scoring::ScoreFunctionFactory::create_score_function( "rna_lores" );
+	scorefxn = scoring::ScoreFunctionFactory::create_score_function( "farna/rna_lores" );
 	Size const nloop = 3;
 	utility::vector1< Real > score_list;
 	utility::vector1< std::string > seq_list;

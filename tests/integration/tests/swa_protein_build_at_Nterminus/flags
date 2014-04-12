@@ -1,0 +1,27 @@
+# adapted from Das (2013). http://dx.doi.org/10.1371/journal.pone.0074830
+-rebuild 
+-fasta 1oyc.fasta 
+-score:weights score12.wts 
+-in:detect_disulf false 
+-add_peptide_plane 
+-native 1oyc_min.pdb 
+-superimpose_res 1-202 215-399 
+-fixed_res 1-202 215-399 
+-calc_rms_res 203-214 
+-jump_res 1 399 
+-disable_sampling_of_loop_takeoff 
+-mute all 
+-silent1 region_210_202_sample.cluster.out 
+-tags1 S_2 
+-input_res1 1-202 210-399 
+-sample_res 209 210 
+-out:file:silent region_209_202_sample.out
+
+# for speed in integration test
+-n_sample 6
+-num_pose_minimize 2
+
+# following flags turn off new defaults, set in stepwise monte carlo
+-allow_virtual_side_chains false
+-protein_prepack false
+-protein_atr_rep_screen false

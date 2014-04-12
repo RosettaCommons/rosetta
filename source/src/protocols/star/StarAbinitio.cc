@@ -354,7 +354,8 @@ StarAbinitio::StarAbinitio() {
   ScoreFunctionOP min_score = ScoreFunctionFactory::create_score_function("score4_smooth_cart");
   min_score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
 
-  MinimizerOptionsOP min_options = new MinimizerOptions("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
+  MinimizerOptionsOP min_options;
+	min_options = new MinimizerOptions("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
   min_options->max_iter(100);
 
   MoveMapOP mm = new MoveMap();

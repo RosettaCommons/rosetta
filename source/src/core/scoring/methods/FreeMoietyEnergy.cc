@@ -24,10 +24,13 @@
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
 
 using namespace core::pose::full_model_info;
+
+static basic::Tracer TR( "core.scoring.methods.FreeMoietyEnergy", basic::t_info );
 
 namespace core {
 namespace scoring {
@@ -48,6 +51,7 @@ FreeMoietyEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( free_suite );
 	sts.push_back( free_2HOprime );
+	sts.push_back( free_side_chain );
 	return sts;
 }
 
@@ -57,7 +61,8 @@ FreeMoietyEnergy::FreeMoietyEnergy() :
 	free_suite_bonus_( -1.0 ), // this is ad hoc for now.
 	free_2HOprime_bonus_( -1.0 ), // this is ad hoc for now.
 	free_sugar_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ] ), // this is -1.0 by default (also ad hoc)
-	pack_phosphate_penalty_( basic::options::option[ basic::options::OptionKeys::score::pack_phosphate_penalty ] )
+	pack_phosphate_penalty_( basic::options::option[ basic::options::OptionKeys::score::pack_phosphate_penalty ] ),
+	free_side_chain_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_side_chain_bonus ] )
 {}
 
 FreeMoietyEnergy::~FreeMoietyEnergy() {}
@@ -115,6 +120,8 @@ FreeMoietyEnergy::residue_energy(
 	if ( rsd.has_variant_type( "VIRTUAL_RIBOSE" ) )	emap[ free_suite ] += free_sugar_bonus_;
 
 	if ( rsd.has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) )	emap[ free_2HOprime ] += free_2HOprime_bonus_;
+
+	if ( rsd.has_variant_type( "VIRTUAL_SIDE_CHAIN" ) ) 	emap[ free_side_chain ] += free_side_chain_bonus_ * rsd.nchi() ;
 
 }
 

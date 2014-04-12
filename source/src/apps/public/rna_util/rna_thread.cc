@@ -25,10 +25,6 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <utility/string_util.hh>
-
-//Mmmm.. constraints.
-//#include <core/scoring/constraints/CoordinateConstraint.hh>
-
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID_Map.hh>
@@ -37,16 +33,12 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
-
 #include <core/pose/PDBInfo.hh>
-
 #include <protocols/farna/RNA_ProtocolUtil.hh>
-
 #include <protocols/viewer/viewers.hh>
-
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-
+#include <core/pose/rna/RNA_Util.hh>
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -285,7 +277,7 @@ prepare_threaded_model(
 	for (Size i = 1; i <= target_sequence.size(); i++ ){
 
 		char const new_seq = target_sequence[i-1];
-		if ( mutate_position( pose, i, new_seq ) ){
+		if ( pose::rna::mutate_position( pose, i, new_seq ) ){
 			changed_pos.push_back( i );
 			changed_pos_working.push_back( working_res[i] );
 		}
@@ -354,7 +346,7 @@ rna_thread_test(){
 	std::string template_file = option[ in::file::s ][1];
 	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	core::import_pose::pose_from_pdb( pose, *rsd_set, template_file );
-	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 	////////////////////////////////////////////////
 	//Read in fasta file or user-inputted sequence
@@ -388,7 +380,7 @@ rna_thread_test(){
 	prepare_threaded_model( pose, target_sequence_from_alignment,
 													template_sequence_from_alignment,
 													sequence_mask, option[ seq_offset ]() );
-	protocols::farna::virtualize_5prime_phosphates( pose );
+	core::pose::rna::virtualize_5prime_phosphates( pose );
 
 	std::string outfile( "threaded.pdb" );
 	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();

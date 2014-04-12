@@ -12,7 +12,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 
@@ -56,7 +56,7 @@ std::string
 pose_to_string(const core::pose::Pose& pose){
 	std::ostringstream ss;
 	core::io::silent::SilentFileData sfd;
-	core::io::silent::BinaryProteinSilentStruct sstruct;
+	core::io::silent::BinarySilentStruct sstruct;
 	sstruct.fill_struct(pose, pose.pdb_info()->name());
 	sstruct.print_header(ss);
 	sfd.write_silent_struct(sstruct, ss);

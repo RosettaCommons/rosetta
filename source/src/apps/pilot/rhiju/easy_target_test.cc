@@ -54,7 +54,7 @@
 
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/NonIdealProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 
@@ -1960,7 +1960,7 @@ cst_relax_test()
 	protocols::simple_filters::RmsdEvaluator rmsd_evaluator( native_pose_op );
 	rmsd_evaluator.report_gdt_components( true );
 	core::io::silent::SilentFileData silent_file_data;
-	BinaryProteinSilentStruct s;
+	BinarySilentStruct s;
 	Size const nstruct = option[ out::nstruct ]();
 	std::string const out_path = option[ out::path::path ]();
 	std::string const silent_file = out_path+'/'+option[ out::file::silent  ]();

@@ -113,7 +113,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -193,7 +193,7 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 
 
 	if ( num_score_weight_file == 0 ){
-		score_weight_file = "rna/rna_loop_hires_04092010.wts";
+		score_weight_file = "stepwise/rna/rna_loop_hires_04092010.wts";
 		std::cout << "Using default score_weight_file = " << score_weight_file << std::endl;
 	}
 
@@ -342,16 +342,16 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 		output_pair_size( rmsd_res_pair_list, "rmsd_res_pair_list = ", TR );
 	}
 
-	utility::vector1< Size > rmsd_res_list_one;
-	utility::vector1< Size > rmsd_res_list_two;
+	utility::vector1< Size > calc_rms_res_one;
+	utility::vector1< Size > calc_rms_res_two;
 
 	for ( Size i = 1; i <= rmsd_res_pair_list.size(); i++ ){
 
 		Size const seq_num_one = rmsd_res_pair_list[i].first;
 		Size const seq_num_two = rmsd_res_pair_list[i].second;
 
-		rmsd_res_list_one.push_back( seq_num_one );
-		rmsd_res_list_two.push_back( seq_num_two );
+		calc_rms_res_one.push_back( seq_num_one );
+		calc_rms_res_two.push_back( seq_num_two );
 
 	}
 
@@ -424,8 +424,8 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 			bool is_phosphate_edge_res_one = false;
 			bool is_phosphate_edge_res_two = false;
 
-			if ( rmsd_res_list_one.has_value( seq_num_one + 1 ) == false ) is_phosphate_edge_res_one = true;
-			if ( rmsd_res_list_two.has_value( seq_num_two + 1 ) == false ) is_phosphate_edge_res_two = true;
+			if ( calc_rms_res_one.has_value( seq_num_one + 1 ) == false ) is_phosphate_edge_res_one = true;
+			if ( calc_rms_res_two.has_value( seq_num_two + 1 ) == false ) is_phosphate_edge_res_two = true;
 
 			if ( is_phosphate_edge_res_one != is_phosphate_edge_res_two ){
 				std::cout << "seq_num_one + 1 = " << seq_num_one + 1 << " seq_num_two + 1 = " << seq_num_two + 1 << std::endl;
@@ -566,7 +566,7 @@ align_pdbs(){
 
 		Real const align_rmsd = check_alignment_RMSD_cutoff( static_pose, static_tag_name, moving_pose, get_tag_from_pdb_filename( moving_pdb_tag ), alignment_res_pair_list, align_base_only, alignment_RMSD_cutoff );
 
-		BinaryRNASilentStruct s( moving_pose, output_moving_pdb_tag );
+		BinarySilentStruct s( moving_pose, output_moving_pdb_tag );
 		if ( align_base_only ){
 			s.add_energy( "align_base_rmsd", align_rmsd );
 		} else{
@@ -669,7 +669,7 @@ calculate_pairwise_RMSD(){
 	}
 
 
-	std::cout << "native_rmsd_res_list to decoy_rmsd_res_list:" << std::endl;
+	std::cout << "native_calc_rms_res to decoy_calc_rms_res:" << std::endl;
 	for ( Size ii = 1; ii <= rmsd_res_pair_list.size(); ii++ ){
 		std::cout << rmsd_res_pair_list[ii].first << " ---> " << rmsd_res_pair_list[ii].second << std::endl;
 	}
@@ -1418,7 +1418,7 @@ pdb_to_silent_file(){
 
 		std::cout << "converting pdb_file: " << pdb_file << " to silent_struct " << tag << std::endl;
 
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 
 		if ( option[ list_of_energy ].user() ){
 			s.add_energy( "score", list_of_pose_energy[n] );
@@ -1527,7 +1527,7 @@ rna_fullatom_minimize_test()
 
 	SilentFileData silent_file_data;
 
-	BinaryRNASilentStruct s( pose, output_pose_name );
+	BinarySilentStruct s( pose, output_pose_name );
 
 	std::cout << "Outputting " << output_pose_name << " to silent file: " << silent_file << std::endl;
 	silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );

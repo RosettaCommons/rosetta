@@ -48,7 +48,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>

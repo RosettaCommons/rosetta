@@ -75,7 +75,7 @@ namespace legacy {
 		set_assert_jump_point_in_fixed_res( bool const setting ){ assert_jump_point_in_fixed_res_ = setting; }
 
 		void
-		set_rmsd_res_list( utility::vector1< core::Size > const & setting );
+		set_calc_rms_res( utility::vector1< core::Size > const & setting );
 
 		void
 		set_alignment_res( utility::vector1< std::string > const & setting ){ alignment_res_string_list_ = setting; }

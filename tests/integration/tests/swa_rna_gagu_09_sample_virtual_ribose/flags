@@ -15,6 +15,6 @@
 -global_sample_res_list  3 4 5 6 11 12 13 14 
 -cutpoint_open 8 
 -native rosetta_model.pdb 
--score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
+-score:weights stepwise/rna/rna_hires_07232011_with_intra_base_phosphate.wts 
 -analytic_etable_evaluation 0
 -integration_test true

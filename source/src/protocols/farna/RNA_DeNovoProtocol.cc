@@ -57,7 +57,7 @@
 #include <core/pose/util.hh>
 #include <basic/database/open.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/util.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -159,11 +159,11 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	vary_bond_geometry_( false ),
 	binary_rna_output_( false ),
 	jump_change_frequency_( 0.1 ),
-	lores_scorefxn_( "rna_lores.wts" ),
+	lores_scorefxn_( "farna/rna_lores.wts" ),
 	chunk_coverage_( 0.0 ),
 	staged_constraints_( false ),
-	chainbreak_weight_( -1.0 ), /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
-	linear_chainbreak_weight_( -1.0 ),  /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
+	chainbreak_weight_( -1.0 ), /* use farna/rna_lores.wts number unless user specified. -1.0 is never really used. */
+	linear_chainbreak_weight_( -1.0 ),  /* use farna/rna_lores.wts number unless user specified. -1.0 is never really used. */
 	titrate_stack_bonus_( true ),
 	move_first_rigid_body_( false ),
 	root_at_first_rigid_body_( false ),
@@ -717,7 +717,7 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
     if ( binary_rna_output_ ) {
-        BinaryRNASilentStruct s( pose, out_file_tag );
+        BinarySilentStruct s( pose, out_file_tag );
 
         if(use_chem_shift_data_) add_chem_shift_info( s, pose);
 

@@ -27,7 +27,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID_Map.hh>
@@ -502,7 +502,7 @@ output_mg_to_silent_file( utility::vector1< Vector > & mg_positions,
 		pose_mg.set_xyz( AtomID( 1, 1 ), mg_position );
 
 		std::string const out_file_tag = "S_" + ObjexxFCL::string_of( n );
-		BinaryRNASilentStruct s( pose_mg, out_file_tag );
+		BinarySilentStruct s( pose_mg, out_file_tag );
 
 		// this is that working pose with RNA. move the mg(2+) and rescore it
 		get_score( pose, mg_position, scorefxn );

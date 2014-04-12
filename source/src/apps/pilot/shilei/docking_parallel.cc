@@ -89,7 +89,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
@@ -325,11 +325,11 @@ void run_parallel_docking() {
 	//compute the energy
 	core::Real Isc=protocols::docking::calc_interaction_energy(pose,docking_scorefxn_high_,movable_jumps_);
 
-	core::io::silent::BinaryProteinSilentStruct ss(pose,(outtag+"rank_"+string_of( my_rank )+"_"+pdbnamei+"_"+string_of(curr_struct)+".pdb"));
+	core::io::silent::BinarySilentStruct ss(pose,(outtag+"rank_"+string_of( my_rank )+"_"+pdbnamei+"_"+string_of(curr_struct)+".pdb"));
 	Real rms = core::scoring::CA_rmsd(pose,native_pose);
 	ss.add_energy("Isc",Isc);
 	ss.add_energy("rms",rms);
-	//core::io::silent::BinaryProteinSilentStruct ss(pose,(my_rank+"_"+round+".pdb"));
+	//core::io::silent::BinarySilentStruct ss(pose,(my_rank+"_"+round+".pdb"));
       	sfd.write_silent_struct(ss,silentfilename,false);
 	//Write to silent files and compute rms, score etc
 

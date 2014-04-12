@@ -335,6 +335,7 @@ enum ScoreType {
   mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
 	free_suite, // bonus for virtualizing RNA suite
 	free_2HOprime, // bonus for virtualizing RNA 2'-OH
+	free_side_chain, // bonus for virtualizing protein side-chain
 	intermol, // cost of instantiating a chain form 1 M std state.
 	special_rot,
 

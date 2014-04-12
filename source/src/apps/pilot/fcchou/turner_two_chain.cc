@@ -48,7 +48,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -1115,7 +1115,7 @@ main( int argc, char * argv [] )
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< Real > blank_size_vector_real;
 
-	NEW_OPT( force_field, "score_file", "rna/rna_hires_fang");
+	NEW_OPT( force_field, "score_file", "stepwise/stepwise/rna/farna/rna_hires_fang");
 	NEW_OPT( seq1, "sequence 1 to model, 3' to 5' ", "" );
 	NEW_OPT( seq2, "sequence 2 to model, 3' to 5' ", "" );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "two_bp");

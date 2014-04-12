@@ -138,7 +138,7 @@ StepWiseRNA_RigidBodyConnectionSampler::StepWiseRNA_RigidBodyConnectionSampler( 
 	moving_res_( job_parameters_->working_moving_res() ),
 	reference_res_( 0 ), // updated below.
 
-	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
+	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "farna/rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
 	max_distance_squared_( 0.0 ), // updated below
 	try_sugar_instantiation_( false ),

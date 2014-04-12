@@ -154,6 +154,7 @@ Size chi1_torsion_atom_index( conformation::Residue const & rsd ) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// consider moving this to chemical/util.cc.
 std::string const	default_jump_atom( conformation::Residue const & rsd ) {
 	if ( rsd.is_RNA() ){
 		if ( !rsd.is_coarse() ){
@@ -161,6 +162,9 @@ std::string const	default_jump_atom( conformation::Residue const & rsd ) {
 		} else {
 			return " Y  ";
 		}
+	}
+	if ( rsd.is_protein() ){
+		return " CA "; // note that this does not match 'traditional' choice in FoldTree.cc
 	}
 	if ( rsd.name3() == " MG" )		return "MG  ";
 	if ( rsd.name3() == "XXX" )	return " Y  ";

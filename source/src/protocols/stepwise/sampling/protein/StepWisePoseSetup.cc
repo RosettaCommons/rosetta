@@ -18,8 +18,8 @@
 #include <protocols/stepwise/sampling/protein/StepWisePoseSetup.hh>
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseJobParameters.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseJobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.fwd.hh>
 #include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
 
 //////////////////////////////////
@@ -38,6 +38,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -54,12 +56,10 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-
-
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-
+#include <utility/stream_util.hh>
 #include <utility/exit.hh>
 
 #include <string>
@@ -104,7 +104,7 @@ namespace protein {
 		cutpoint_closed_( cutpoint_closed ),
 		is_cutpoint_( desired_sequence_.size(), false ),
 		secstruct_( "" ),
-		job_parameters_( new StepWiseJobParameters ),
+		job_parameters_( new StepWiseProteinJobParameters ),
 		virtualize_5prime_phosphates_( true ),
 		add_peptide_plane_variants_( false ),
 		remove_nterminus_variant_( false ),
@@ -138,11 +138,12 @@ namespace protein {
   //destructor
   StepWisePoseSetup::~StepWisePoseSetup()
   {}
-/////////////////////
-std::string
-StepWisePoseSetup::get_name() const {
-return "StepWisePoseSetup";
-}
+
+	/////////////////////
+	std::string
+	StepWisePoseSetup::get_name() const {
+		return "StepWisePoseSetup";
+	}
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -220,10 +221,12 @@ return "StepWisePoseSetup";
 
 		setup_secstruct( pose );
 
+		// new way to pass information about what is fixed & minimized - -necessary for StepWiseMonteCarlo.
+		setup_full_model_info( pose ); // fixed_domain [fixed_res], extra_minimize_res.
+
 		//		pose.dump_pdb( "start.pdb" );
 		//		std::cout << "FOLD_TREE " << pose.fold_tree() << std::endl;
 		//		if ( pose.fold_tree().num_jump() > 0 ) std::cout << "RT " << pose.jump( 1 ).rt() << std::endl;
-
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -1236,7 +1239,6 @@ return "StepWisePoseSetup";
 			}
 		}
 
-
 		////////////////////////////////////////////////////////////////////////////////////////////////
 		// Following is needed to help calculate rmsds to native... there are some runs,
 		// for example where we just model a little loop. We only want to calculate rmsd over that loop, with
@@ -1246,8 +1248,6 @@ return "StepWisePoseSetup";
 		if ( superimpose_res.size() == 0 ){
 			for ( Size i = 1; i <= pose.total_residue(); i++ ) superimpose_res.push_back( i );
 		}
-
-		//		std::cout << "WORKING_SUPERIMPOSE_RES SIZE " << superimpose_res.size() << std::endl;
 
 		alignment_atom_id_map_ = create_alignment_id_map( pose, *working_align_pose_, superimpose_res );
 		ready_to_align_ = true;
@@ -1268,7 +1268,7 @@ return "StepWisePoseSetup";
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWisePoseSetup::align_pose( core::pose::Pose & pose ){
+	StepWisePoseSetup::align_pose( core::pose::Pose & pose ) const {
 		if (!ready_to_align_ || !working_align_pose_ ){
 			utility_exit_with_message( "Called align pose, but PoseSetup wasn't ready to do it..." );
 		}
@@ -1282,7 +1282,7 @@ return "StepWisePoseSetup";
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseJobParametersOP & StepWisePoseSetup::job_parameters(){
+	StepWiseProteinJobParametersOP & StepWisePoseSetup::job_parameters(){
 		return job_parameters_;
 	}
 
@@ -1350,7 +1350,6 @@ return "StepWisePoseSetup";
 		// Watch out! is_internal gets replaced later based on "partition_definition" --
 		//  occurs in complex fold_trees.
 		job_parameters_->set_is_internal( moving_res_attached_at_end && moving_res_attached_at_start  );
-
 
 		job_parameters_->set_working_moving_suite_list( working_moving_suite_list );
 
@@ -1587,6 +1586,33 @@ return "StepWisePoseSetup";
 
 
 	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWisePoseSetup::setup_full_model_info( core::pose::Pose & pose ) const {
+		FullModelInfoOP full_model_info = new FullModelInfo( desired_sequence_, cutpoint_open_,
+																												 job_parameters_->working_res_list() );
+
+		FullModelParametersOP full_model_parameters = full_model_info->full_model_parameters()->clone();
+		ObjexxFCL::FArray1D< Size > const & is_working_res = job_parameters_->is_working_res();
+		utility::vector1< Size > fixed_domain; // convert from old convention to new one stored in full_model info.
+		for ( Size n = 1; n <= is_working_res.size(); n++ ){
+			if ( is_working_res(n) == MOVING_RES_ || is_working_res(n) == BRIDGE_RES_){
+				fixed_domain.push_back( 0 ); // moving and sample-able.
+			} else if ( fixed_res_.has_value( n ) ) {
+				fixed_domain.push_back( 1 ); // freeze this.
+			} else {
+				fixed_domain.push_back( is_working_res(n) ); // 1 or 2, for input domains 1 or 2.
+			}
+		}
+		full_model_parameters->set_parameter( FIXED_DOMAIN, fixed_domain );
+		full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res_ );
+		full_model_parameters->set_parameter_as_res_list( CALC_RMS, calc_rms_res_ );
+		full_model_info->set_full_model_parameters( full_model_parameters );
+		set_full_model_info( pose, full_model_info );
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//Adding Virtual res as root
 	void

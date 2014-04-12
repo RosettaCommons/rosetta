@@ -14,7 +14,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -179,19 +179,6 @@ rna_score_test()
 
 			my_model->set_res_list( resnum );
 			my_model->set_other_pose_list( other_poses );
-
-//			utility::vector1< Size > cutpoint_open_in_full_model;
-//			if( option[ full_model::cutpoint_open ].user() )	cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
-//
-//			for ( Size i = 1; i < pose.total_residue(); i++ ){
-//				if ( cutpoint_open_in_full_model.has_value( resnum[ i ]) ) continue;
-//				if ( (resnum[ i+1 ] == resnum[ i ] + 1) && pose.fold_tree().is_cutpoint( i ) ){
-//					cutpoint_open_in_full_model.push_back( resnum[ i ] );
-//				}
-//			}
-//
-//			my_model->set_cutpoint_open_in_full_model( cutpoint_open_in_full_model );
-
 			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, my_model );
 		}
 
@@ -205,7 +192,7 @@ rna_score_test()
 
 		// tag
 		std::string tag = tag_from_pose( pose );
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 
 		if ( native_exists ){
 			//Real const rmsd      = all_atom_rmsd( native_pose, pose );

@@ -157,7 +157,7 @@ main( int argc, char* argv [] ) {
 		std::string tag( tag_from_pose( pose ) );
 		std::string fn( out_prefix + tag + ".pdb" );
 
-		tr.Debug << "extracting Pose with tag " << tag << " into PDB file " << fn
+		tr << "extracting Pose with tag " << tag << " into PDB file " << fn
 			<< std::endl;
 
 		if ( option[ in::file::rescore ]() ) {

@@ -152,6 +152,9 @@ public:
 	virtual void or_fix_his_tautomer( bool setting );
 	virtual bool fix_his_tautomer() const;
 
+	virtual void or_include_virtual_side_chain( bool setting );
+	virtual bool include_virtual_side_chain() const;
+
 	///@brief sample proton chi.
 	virtual void sample_proton_chi( bool setting );
 
@@ -361,6 +364,7 @@ private: // private methods
 		ar & preserve_c_beta_;
 		ar & flip_HNQ_;
 		ar & fix_his_tautomer_;
+		ar & include_virtual_side_chain_;
 		ar & disabled_;
 		ar & design_disabled_;
 		ar & sample_proton_chi_;
@@ -430,6 +434,7 @@ private: // private methods
 		ar & preserve_c_beta_;
 		ar & flip_HNQ_;
 		ar & fix_his_tautomer_;
+		ar & include_virtual_side_chain_;
 		ar & disabled_;
 		ar & design_disabled_;
 		ar & sample_proton_chi_;
@@ -501,6 +506,8 @@ private:
 
 	///@details has this histidine tautomer been fixed?  This value is kept for bookkeeping; the tautomer's fixation is effected by removing the other tautomer from the ResidueTypeCOPList.
 	bool fix_his_tautomer_;
+
+	bool include_virtual_side_chain_;
 
 	///@details if this is true, this residue will be treated as part of the background.
 	///a disabling takes precedence over any ResidueType additions.

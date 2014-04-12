@@ -14,7 +14,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -215,7 +215,7 @@ rna_fullatom_minimize_test()
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}
 
-		BinaryRNASilentStruct s( pose, tag );
+		BinarySilentStruct s( pose, tag );
 
 		if ( native_exists ){
 			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );

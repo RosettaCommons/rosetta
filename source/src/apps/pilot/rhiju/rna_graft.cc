@@ -26,6 +26,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -86,9 +87,9 @@ get_pose_and_numbering( std::string const pdb_file, pose::Pose & pose, utility::
 
 	import_pose::pose_from_pdb( pose, *rsd_set,  pdb_file );
 
-	figure_out_reasonable_rna_fold_tree( pose );
+	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
-	virtualize_5prime_phosphates( pose );
+	core::pose::rna::virtualize_5prime_phosphates( pose );
 
 	resnum.clear();
 	PDBInfoOP pdb_info = pose.pdb_info();
@@ -329,8 +330,8 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	graft_in_positions( pose2, pose_target, resnum2, resnum_target, graft_resnum );
 
 	// kind of ad hoc. let's see if it works.
-	figure_out_reasonable_rna_fold_tree( pose_target );
-	virtualize_5prime_phosphates( pose_target );
+	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose_target );
+	core::pose::rna::virtualize_5prime_phosphates( pose_target );
 
 	// chain boundaries -- make sure they are virtualized [this could be semi-dangerous for group I ribozymes with
 	// discontinuous numbering -- so don't do it?

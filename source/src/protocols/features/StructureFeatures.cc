@@ -16,7 +16,7 @@
 
 // Project Headers
 #include <basic/database/sql_utils.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <utility/exit.hh>
@@ -67,7 +67,7 @@ using std::endl;
 using basic::database::safely_prepare_statement;
 using boost::hash_value;
 using core::Size;
-using core::io::silent::BinaryProteinSilentStruct;
+using core::io::silent::BinarySilentStruct;
 using core::pose::Pose;
 using core::pose::tag_from_pose;
 using core::pose::tag_into_pose;

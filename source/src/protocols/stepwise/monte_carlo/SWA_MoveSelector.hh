@@ -206,6 +206,7 @@ namespace monte_carlo {
 		Real intermolecular_frequency_;
 		bool only_dock_preexisting_chunks_;
 		bool allow_shared_chains_in_dock_poses_;
+		bool resampling_;
 	};
 
 } //monte_carlo

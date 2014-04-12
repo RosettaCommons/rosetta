@@ -1477,6 +1477,8 @@ ResidueType::add_property( std::string const & property )
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
 		is_methylated_cterminus_ = true;
+	} else if (property == "TAUTOMER") {
+		; // this is for HIS_D, following someone's suggestion in Patch applications. -- rhiju
 	} else if (property == "BRANCH_POINT") {
 		;  // Null statement for now.... ~ Labonte
 	} else if (carbohydrates::CarbohydrateInfo::sugar_properties().contains(property)) {

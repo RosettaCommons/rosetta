@@ -403,9 +403,11 @@ FoldTree::get_parent_residue( int const seqpos, bool & connected_by_jump ) const
 	if ( edge.start() < seqpos ){
 		runtime_assert( edge.start() < edge.stop() );
 		parent_res = seqpos - 1;
+		//		if ( parent_res < edge.start() ) return 0;
 	} else {
 		runtime_assert( edge.start() > edge.stop() );
 		parent_res = seqpos + 1;
+		//		if ( parent_res > edge.start() ) return 0;
 	}
 	return parent_res;
 }

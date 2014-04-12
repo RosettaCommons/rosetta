@@ -30,7 +30,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -188,7 +188,7 @@ benzene_pair_score_test()
 
 			n++;
 			std::string out_tag( "S_"+lead_zero_string_of(n,4) );
-			BinaryProteinSilentStruct s( pose,  out_tag);
+			BinarySilentStruct s( pose,  out_tag);
 			s.add_energy( "y", y );
 			s.add_energy( "z", z );
 			silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );

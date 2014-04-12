@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddDeleteMonteCarlo.fwd.hh>
-#include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -40,7 +40,7 @@ class RNA_AddDeleteMonteCarlo: public protocols::moves::Mover {
 public:
 
 
-RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
+RNA_AddDeleteMonteCarlo(  AddOrDeleteMoverOP rna_add_or_delete_mover,
 													RNA_TorsionMoverOP     rna_torsion_mover,
 													RNA_O2PrimeMoverOP      rna_o2prime_mover,
 													core::scoring::ScoreFunctionOP scorefxn );
@@ -78,7 +78,7 @@ private:
 
 private:
 
-	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover_;
+	AddOrDeleteMoverOP rna_add_or_delete_mover_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
 	RNA_O2PrimeMoverOP rna_o2prime_mover_;
 

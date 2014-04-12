@@ -368,13 +368,12 @@ Conformation::sequence_matches( Conformation const & other ) const
 {
 	if ( size() != other.size() ) return false;
 	for ( Size ii = 1, iiend = size(); ii <= iiend; ++ii ) {
-		if ( & residue(ii).type() != & other.residue(ii).type() ) {
-			return false;
-		}
+		if ( & residue(ii).type() != & other.residue(ii).type() )	  return false;
+		if ( residue(ii).chain() != other.residue(ii).chain() ) 	  return false;
+		if ( !residue(ii).connections_match( other.residue( ii ) ) ) return false;
 	}
 	return true;
 }
-
 
 // General Properties ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1471,8 +1470,10 @@ Conformation::update_polymeric_connection( Size const lower_seqpos )
 
 	bool const disconnected(
 		lower.chain() != upper.chain() || lower.is_upper_terminus() ||
-		upper.is_lower_terminus() || !lower.is_polymer() || !upper.is_polymer()
-	);
+		upper.is_lower_terminus() || !lower.is_polymer() || !upper.is_polymer() ||
+		lower.has_variant_type( "C_METHYLAMIDATION" ) ||
+		upper.has_variant_type( "N_ACETYLATION" ) );
+
 
 	if ( !disconnected ) set_polymeric_connection( lower_seqpos, lower_seqpos+1 );
 
@@ -3286,10 +3287,10 @@ Conformation::in_place_copy(
 
 	// Do not allocate new residue objects, just reuse the old ones
 	for ( Size ii = 1; ii <= size(); ++ii ) {
-		assert( & residues_[ ii ]->type() ==  & src.residues_[ ii ]->type() );
-		assert( residues_[ ii ]->seqpos() == src.residues_[ ii ]->seqpos() );
-		assert( residues_[ ii ]->chain() == src.residues_[ ii ]->chain() );
-		assert( residues_[ ii ]->connections_match( *src.residues_[ ii ] ));
+		runtime_assert( & residues_[ ii ]->type() ==  & src.residues_[ ii ]->type() );
+		runtime_assert( residues_[ ii ]->seqpos() == src.residues_[ ii ]->seqpos() );
+		runtime_assert( residues_[ ii ]->chain() == src.residues_[ ii ]->chain() );
+		runtime_assert( residues_[ ii ]->connections_match( *src.residues_[ ii ] ));
 		for ( Size jj = 1; jj <= residues_[ ii ]->natoms(); ++jj ) {
 			residues_[ ii ]->set_xyz( jj, src.residues_[ ii ]->xyz( jj ) );
 		}
