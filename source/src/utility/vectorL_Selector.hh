@@ -30,8 +30,8 @@ namespace utility {
 template< bool >
 struct vectorL_IndexSelector
 {
-	typedef  std::size_t  index_type;
-	typedef  std::size_t  Index;
+	typedef platform::Size index_type;
+	typedef platform::Size Index;
 };
 
 
@@ -39,8 +39,8 @@ struct vectorL_IndexSelector
 template<>
 struct vectorL_IndexSelector< false >
 {
-	typedef  ssize_t  index_type;
-	typedef  ssize_t  Index;
+	typedef platform::SSize index_type;
+	typedef platform::SSize Index;
 };
 
 
@@ -54,17 +54,17 @@ struct vectorL_ZeroSelector
 	inline
 	static
 	bool
-	ge( std::size_t const i, std::size_t const l )
+	ge( platform::Size const i, platform::Size const l )
 	{
 		return ( i >= l );
 	}
 
 
-	/// @brief ( i >= l ) and ( i - l ) is within ssize_t range
+	/// @brief ( i >= l ) and ( i - l ) is within platform::SSize range
 	inline
 	static
 	bool
-	ge( ssize_t const i, ssize_t const l )
+	ge( platform::SSize const i, platform::SSize const l )
 	{
 		return ( ( i >= l ) && ( i - l >= 0 ) ); // Second clause catches range errors for the difference
 	}

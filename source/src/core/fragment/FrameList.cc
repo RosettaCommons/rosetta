@@ -69,7 +69,7 @@ Size FrameList::flat_size() const {
   return frags;
 }
 
-utility::vector1<FrameOP> FrameList::frame_vector() 
+utility::vector1<FrameOP> FrameList::frame_vector()
 {
 	return utility::vector1<FrameOP>(*this);
 }

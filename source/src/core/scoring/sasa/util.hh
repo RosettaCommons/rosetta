@@ -85,7 +85,7 @@ get_sasa_radii_set_from_string(std::string radii_set);
 ///////////////////////////////////////////////////////////////////////////////////////////
 //// Functions used for molecular surface approximation
 //// LeGrand S, Merz KM. Rapid approximation to molecular surface area via the use of Boolean logic and look-up tables.
-////   J Comput Chem 1993;14:349 –352.
+////  J Comput Chem 1993;14:349-352.
 ////
 ////  Implementation: Jerry Tsai
 ////  C++ Translation: Jeff Gray

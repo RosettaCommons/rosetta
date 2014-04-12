@@ -40,7 +40,7 @@ namespace bin_width {
 /// @brief Lower array index of interpolation bin for an independent axis value
 template< typename X >
 inline
-ssize_t
+platform::SSize
 l(
 	X const & x, // Independent axis value
 	X const & w, // Bin width
@@ -49,7 +49,7 @@ l(
 {
 	assert( w > X( 0.0 ) );
 	X const r( x / w );
-	ssize_t const l( static_cast< ssize_t > ( std::floor( r )) );
+	platform::SSize const l( static_cast< platform::SSize > ( std::floor( r )) );
 	a = r - l;
 	assert( ( a >= X( 0.0 ) ) && ( a <= X( 1.0 ) ) );
 	return l;
@@ -67,7 +67,7 @@ interpolated(
 )
 {
 	X a; // Alpha fraction: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
-	ssize_t const el( l( x, w, a ) );
+	platform::SSize const el( l( x, w, a ) );
 	return numeric::interpolation::interpolated( a, f( el ), f( el + 1 ) );
 }
 
@@ -81,7 +81,7 @@ namespace bin_density {
 /// @brief Lower array index of interpolation bin for an independent axis value
 template< typename X >
 inline
-ssize_t
+platform::SSize
 l(
 	X const & x, // Independent axis value
 	X const & p, // Bins per x unit (inverse bin width)
@@ -90,7 +90,7 @@ l(
 {
 	assert( p > X( 0.0 ) );
 	X const r( x * p );
-	ssize_t const l( std::floor( r ) );
+	platform::SSize const l( std::floor( r ) );
 	a = r - l;
 	assert( ( a >= X( 0.0 ) ) && ( a <= X( 1.0 ) ) );
 	return l;
@@ -108,7 +108,7 @@ interpolated(
 )
 {
 	X a; // Alpha fraction: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
-	ssize_t const l( l( x, p, a ) );
+	platform::SSize const l( l( x, p, a ) );
 	return numeric::interpolation::interpolated( a, f( l ), f( l + 1 ) );
 }
 

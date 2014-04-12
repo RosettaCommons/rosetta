@@ -973,7 +973,7 @@ class OOO
 public:
 };
 
-#ifndef PYROSETTA_NO_NUMPY
+#ifdef PYROSETTA_NUMPY
 
 // Numpy API has strange import behavior
 // Must define PY_ARRAY_UNIQUE_SYMBOL for all cpp files within a module which include numpy/arrayobject.h
@@ -1134,7 +1134,7 @@ void expose_number_type(std::string name)
     typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
     typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
-#ifndef PYROSETTA_NO_NUMPY
+#ifdef PYROSETTA_NUMPY
     // conversion of array scalars
     //
 #ifdef DEBUG

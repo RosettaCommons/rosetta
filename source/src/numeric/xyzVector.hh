@@ -1984,7 +1984,7 @@ private: // Fields
 template< typename T >
 platform::Size hash_value(xyzVector< T >  const & v)
 {
-	platform::Size hash = 0;
+	std::size_t hash = 0;
 	boost::hash_combine(hash, v.x_);
 	boost::hash_combine(hash, v.y_);
 	boost::hash_combine(hash, v.z_);

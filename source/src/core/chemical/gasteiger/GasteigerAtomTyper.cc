@@ -259,7 +259,7 @@ bool PossibleAtomTypesForAtom::CouldHaveHybridization( const GasteigerAtomTypeDa
 	return m_NumberAtomTypesWithHybridization[ HYBRID ];
 }
 
-size_t PossibleAtomTypesForAtom::GetNumberPossibleTypes() const
+core::Size PossibleAtomTypesForAtom::GetNumberPossibleTypes() const
 {
 	return m_AtomTypesByDecreasingStability.size();
 }

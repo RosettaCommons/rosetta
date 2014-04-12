@@ -143,7 +143,7 @@ rotamer_from_chi_02(
 	rot.resize( chi.size() );
 
 	Size4 rot4; Real4 chi4;
-	Size nchi( std::min( chi.size(), DUNBRACK_MAX_SCTOR ) );
+	Size nchi( std::min<Size>( chi.size(), DUNBRACK_MAX_SCTOR ) );
 	for ( Size ii = 1; ii <= nchi; ++ii ) chi4[ ii ] = chi[ ii ];
 
 	rotamer_from_chi_02( chi4, res, nchi, rot4 );

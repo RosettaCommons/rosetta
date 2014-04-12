@@ -408,7 +408,7 @@ make_symmetric_pdb_info(
 			asymm_chains[chn_idx] = used_chainIDs[chn_idx] = true;
 		}
 
-		if (symm_info->bb_is_independent(res)) nclones = std::max( symm_info->bb_clones(res).size(), nclones );
+		if (symm_info->bb_is_independent(res)) nclones = std::max<Size>( symm_info->bb_clones(res).size(), nclones );
 	}
 
 	// second pass, map (base chain,clone#) => new chain
@@ -1094,13 +1094,13 @@ get_subpose(Pose const &pose, utility::vector1<std::string> subs) {
 	return sub_pose;
 }
 
-utility::vector1<Size> 
+utility::vector1<Size>
 get_resis(Pose const &pose, utility::vector1<std::string> subs) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	utility::vector1<Size> resis; 
+	utility::vector1<Size> resis;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
 	for(Size i=1; i<=symm_info->num_total_residues_without_pseudo(); i++) {
@@ -1151,7 +1151,7 @@ get_full_intracomponent_and_neighbor_subpose(Pose const &pose, std::string sym_d
 	return get_subpose(pose, get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
 
-utility::vector1<Size> 
+utility::vector1<Size>
 get_full_intracomponent_and_neighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
 	return get_resis(pose, get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
@@ -1161,7 +1161,7 @@ get_full_intracomponent_subpose(Pose const &pose, std::string sym_dof_name) {
 	return get_subpose(pose, get_full_intracomponent_subs(pose, sym_dof_name));
 }
 
-utility::vector1<Size> 
+utility::vector1<Size>
 get_full_intracomponent_resis(Pose const &pose, std::string sym_dof_name) {
 	return get_resis(pose, get_full_intracomponent_subs(pose, sym_dof_name));
 }
@@ -1291,7 +1291,7 @@ get_intracomponent_and_neighbor_subpose(Pose const &pose, std::string sym_dof_na
 	return get_subpose(pose, get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
 
-utility::vector1<Size> 
+utility::vector1<Size>
 get_intracomponent_and_neighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
 	return get_resis(pose, get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }

@@ -39,7 +39,7 @@ namespace utility {
 
 
 // Forward
-template< ssize_t, typename T, typename A = std::allocator< T > > class vectorL;
+template< platform::SSize, typename T, typename A = std::allocator< T > > class vectorL;
 
 
 } // namespace utility

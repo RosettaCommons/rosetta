@@ -37,7 +37,7 @@ namespace utility {
 ///  @li Can compare with std::vector: compares contents ignoring indexes
 ///  @li Can explicitly convert to std::vector
 ///  @li Private inheritance from std::vector is safe here
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 class vectorL< L, bool, A > :
 	private std::vector< bool, A >
 {
@@ -66,7 +66,7 @@ public: // Types
 	typedef  typename super::difference_type  difference_type;
 	typedef  typename super::allocator_type  allocator_type;
 	typedef  typename vectorL_IndexSelector< L >= 0 >::index_type  index_type;
-	typedef  ssize_t  ssize_type;
+	typedef  platform::SSize  ssize_type;
 
 	// Project style
 	typedef  typename super::value_type  Value;
@@ -585,7 +585,7 @@ private: // Static fields
 
 
 // Static field definitions
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 typename vectorL< L, bool, A >::index_type const vectorL< L, bool, A >::l_( L );
 
 
@@ -593,127 +593,127 @@ typename vectorL< L, bool, A >::index_type const vectorL< L, bool, A >::l_( L );
 
 
 /// @brief vectorL == vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator ==( vectorL< L, bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief vectorL != vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator !=( vectorL< L, bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief vectorL < vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator <( vectorL< L, bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief vectorL <= vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator <=( vectorL< L, bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief vectorL >= vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator >=( vectorL< L, bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief vectorL > vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator >( vectorL< L, bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief vectorL == std::vector
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator ==( vectorL< L, bool, A > const & a, std::vector< bool, A > const & b );
 
 
 /// @brief vectorL != std::vector
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator !=( vectorL< L, bool, A > const & a, std::vector< bool, A > const & b );
 
 
 /// @brief vectorL < std::vector
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator <( vectorL< L, bool, A > const & a, std::vector< bool, A > const & b );
 
 
 /// @brief vectorL <= std::vector
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator <=( vectorL< L, bool, A > const & a, std::vector< bool, A > const & b );
 
 
 /// @brief vectorL >= std::vector
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator >=( vectorL< L, bool, A > const & a, std::vector< bool, A > const & b );
 
 
 /// @brief vectorL > std::vector
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator >( vectorL< L, bool, A > const & a, std::vector< bool, A > const & b );
 
 
 /// @brief std::vector == vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator ==( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief std::vector != vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator !=( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief std::vector < vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator <( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief std::vector <= vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator <=( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief std::vector >= vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator >=( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief std::vector > vectorL
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 bool
 operator >( std::vector< bool, A > const & a, vectorL< L, bool, A > const & b );
 
 
 /// @brief swap( vectorL, vectorL )
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 void
 swap( vectorL< L, bool, A > & a, vectorL< L, bool, A > & b );
 
 
 /// @brief swap( vectorL, std::vector )
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 void
 swap( vectorL< L, bool, A > & a, std::vector< bool, A > & b );
 
 
 /// @brief swap( std::vector, vectorL )
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 void
 swap( std::vector< bool, A > & a, vectorL< L, bool, A > & b );
 
@@ -736,7 +736,7 @@ namespace std {
 
 
 /// @brief swap( vectorL, vectorL )
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 inline
 void
 swap( utility::vectorL< L, bool, A > & a, utility::vectorL< L, bool, A > & b )
@@ -746,7 +746,7 @@ swap( utility::vectorL< L, bool, A > & a, utility::vectorL< L, bool, A > & b )
 
 
 /// @brief swap( vectorL, std::vector )
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 inline
 void
 swap( utility::vectorL< L, bool, A > & a, std::vector< bool, A > & b )
@@ -756,7 +756,7 @@ swap( utility::vectorL< L, bool, A > & a, std::vector< bool, A > & b )
 
 
 /// @brief swap( std::vector, vectorL )
-template< ssize_t L, typename A >
+template< platform::SSize L, typename A >
 inline
 void
 swap( std::vector< bool, A > & a, utility::vectorL< L, bool, A > & b )

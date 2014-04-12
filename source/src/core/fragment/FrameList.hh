@@ -30,8 +30,9 @@
 // AUTO-REMOVED #include <map>
 
 #include <core/fragment/FragID.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <core/types.hh>
 
+#include <utility/vector1_bool.hh>
 
 namespace core {
 namespace fragment {
@@ -42,7 +43,7 @@ public:
 	// i.e., if the FrameList would be iterated with a FragID_Iterator
 	// this allows uniform sampling over all fragments in the FrameList.
 	FragID fragID ( Size flat_nr );
-	Size flat_size() const;
+	core::Size flat_size() const;
 
 	utility::vector1<FrameOP> frame_vector();
 };

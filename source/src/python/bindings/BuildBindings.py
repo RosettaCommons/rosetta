@@ -536,8 +536,7 @@ def getCompilerOptions():
     add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA'
     add_option += (' -DDEBUG -O0 -g -ggdb' if Options.debug else ' -O3 -DNDEBUG')
 
-    if not Options.numpy_support:
-        add_option += ' -DPYROSETTA_NO_NUMPY'
+    if Options.numpy_support: add_option += ' -DPYROSETTA_NUMPY'  # PYROSETTA_NO_NUMPY ← defines/variables with no negation in the name produce much more readable code
 
     if Options.compiler == 'clang':
         add_option += ' -w'
@@ -815,9 +814,12 @@ def getAllRosettaSourceFiles():
 
 
 def get_CL_Options():
+    #common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DBOOST_THREAD_DONT_USE_CHRONO /DBOOST_ERROR_CODE_HEADER_ONLY /DBOOST_SYSTEM_NO_DEPRECATED' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
+    common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA ' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK' /DUNUSUAL_ALLOCATOR_DECLARATION
+
     if Options.debug:
         # Windows MSVC compiler common options (no optimization, but it works)
-        return '/MD /GR /Gy /NDEBUG /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc /nologo'  # /DNDEBUG
+        return common + ' /MD /GR /Gy /NDEBUG /DWIN32  /EHsc /nologo'  # /DNDEBUG
     else:
         # MSVC release options: /O2 /Oi /GL /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Yu"stdafx.h" /Fp"Release\SimpleConsoleApp.pch" /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
         # /Zi is 'generate omplete debugging information' - removing it
@@ -825,7 +827,7 @@ def get_CL_Options():
         # old one, 'the originale': return '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
         # removing /GL
         # adding /bigobj
-        return '/bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
+        return common + ' /bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
 
 
 
@@ -842,48 +844,50 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     os.chdir( './../../' )
 
-    #if Options.BuildMiniLibs:
-    print 'Building Rosetta lib...'
-    # Generate svn_version
-    if (not os.path.isfile('core/svn_version.cc')): execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
-
-    for s in external:
-        try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
-        except OSError: pass
-
-        obj = os.path.join(build_dir,s) + '.obj'
-        s = '../external/' + s
-
-        if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS \
-                    /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
-                    /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
-                    /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
-                    /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0 \
-                    /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
-
-        '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
-           -DCPPDB_DISABLE_THREAD_SAFETY -DCPPDB_SOVERSION=\"0\" -DCPPDB_WITH_SQLITE3
-        '''
-
     latest = None
-    for s in sorted( sum(sources, []) ):
-        try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
-        except OSError: pass
+    if Options.BuildMiniLibs:
+        print 'Building Rosetta lib...'
+        # Generate svn_version
+        if (not os.path.isfile('core/svn_version.cc')): execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
 
-        obj = os.path.join(build_dir,s) + '.obj'
+        for s in external:
+            try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
+            except OSError: pass
 
-        if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
-                    return_= 'tuple' if Options.continue_ else False, print_output=True)
+            obj = os.path.join(build_dir,s) + '.obj'
+            s = '../external/' + s
 
-        if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
+            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
+                execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS \
+                        /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
+                        /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
+                        /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
+                        /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0 \
+                        /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
+
+                if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
+
+            '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
+               -DCPPDB_DISABLE_THREAD_SAFETY -DCPPDB_SOVERSION=\"0\" -DCPPDB_WITH_SQLITE3
+            '''
+
+        for s in sorted( sum(sources, []) ):
+            try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
+            except OSError: pass
+
+            obj = os.path.join(build_dir,s) + '.obj'
+
+            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
+                execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
+                        return_= 'tuple' if Options.continue_ else False, print_output=True)
+
+            if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
 
 
-    sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
-    #sources = [ sum(sources, []) ];  sources[0].sort()
-    objs_all = ' '.join( [f + '.obj' for f in sum(sources, [])] )
-    file(os.path.join(build_dir,'objs_all') , 'w').write( objs_all )
+        sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
+        #sources = [ sum(sources, []) ];  sources[0].sort()
+        objs_all = ' '.join( [f + '.obj' for f in sum(sources, [])] )
+        file(os.path.join(build_dir,'objs_all') , 'w').write( objs_all )
 
 
     # Now creating DLL
@@ -929,7 +933,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     symbols = []
     #latest = None  # keeping track of dates of local .def files
     for dir_name, _, files in os.walk(pre_generated_sources):
-        l = wn_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
+        l = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
         latest = max(l, latest)
 
         py_objs = os.path.join(build_dir,'py_objs' )
@@ -959,7 +963,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     # "public: virtual bool __thiscall ObjexxFCL::IndexRange::contains(class ObjexxFCL::IndexRange const &)const " (?contains@IndexRange@ObjexxFCL@@UBE_NABV12@@Z)
 
-def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False):
+def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False):
     files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
     sub_dir = dir_name[ len(base_dir)+1: ]
 
@@ -991,7 +995,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
                 execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_CL_Options(), source)  #  /D__PYROSETTA_ONE_LIB__
                    #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
                    + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
-                   + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=25'
+                   + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=32'
                    + ' /Fo%s ' % obj ) )
                 #  /Iplatform/windows/32/msvc
                 #  /I../external/boost_1_55_0
@@ -1000,7 +1004,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
                 # c:\\mingw\\bin\\
                 """execute('Compiling %s' % (dir_name+f), 'gcc -DPYROSETTA -c %s -I. \
                         -I../external/include -IC:/WPyRosetta/boost_1_47_0 -I../external/dbio -Iplatform/windows/PyRosetta \
-    -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=25 \
+    -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=32 \
         -o %s' % (source, obj) )"""
 
             latest = max(latest, os.path.getmtime(obj) )
@@ -1013,14 +1017,20 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
             #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
             res = execute('Getting list of missed symbols... Creating DLL %s...' % dummy,
                           #'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
-                          'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib.64 /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
+                          'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
+
             symbols = []
+            with file( os.path.join( obj_dir, '_dummy_.errors'), 'w' ) as f: f.write(res)
+
             for l in res.split('\n'):
                 if   l.find('error LNK2001: unresolved external symbol __DllMainCRTStartup') >=0 : continue  # error LNK2001: unresolved external symbol __DllMainCRTStartup@12
                 elif l.find('error LNK2019: unresolved external symbol') >=0 : symbols.append( l.partition('" (')[2].partition(') referenced in function')[0] )
                 elif l.find('error LNK2001: unresolved external symbol') >=0 : symbols.append( l.partition('" (')[2][:-2]) # + ' DATA')
             f = file(symbols_file, 'w');  f.write( '\n'.join(symbols) );  f.close()
             print '\nAdding %s symbols... Tottal now is:%s\n' % (len(symbols), len(set(all_symbols+symbols)))
+
+            if len(symbols) == 0: print 'Somehow len symbols is 0! Please check _dummy_.errors for unexpected failures...'; sys.exit(1)
+
 
         all_symbols.extend( file(symbols_file).read().split('\n') )
 

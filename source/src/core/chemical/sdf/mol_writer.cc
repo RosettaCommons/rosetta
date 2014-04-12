@@ -359,7 +359,7 @@ std::list<std::string> MolWriter::compose_properties(core::conformation::Residue
 	}
 	// V2000 CHG lines can only have 8 atoms max per line
 	for( core::Size b(1), e(9); b <= charged_atoms.size(); b += 8, e+=8 ) {
-		core::Size const end( std::min( e, charged_atoms.size()+1 ) );
+		core::Size const end( std::min<core::Size>( e, charged_atoms.size()+1 ) );
 		core::Size const nentries = end - b;
 		runtime_assert( nentries >=1 && nentries <= 8 );
 		std::string line( boost::str( boost::format("M  CHG%3d") % nentries ) );

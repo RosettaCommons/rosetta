@@ -40,7 +40,7 @@ namespace sasa {
 ///  Used by SasaCalc but can be used by itself.
 ///
 ///@details LeGrand S, Merz KM. Rapid approximation to molecular surface area via the use of Boolean logic and look-up tables.
-///   J Comput Chem 1993;14:349 –352.
+///   J Comput Chem 1993;14:349-352.
 ///
 ///  Fortran Implementation: Jerry Tsai
 ///  C++ Translation: Jeff Gray

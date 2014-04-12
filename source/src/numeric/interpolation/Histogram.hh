@@ -589,10 +589,10 @@ protected: // Interpolation methods
 	 *
 	 * @return The index of bin x_l
 	 */
-	inline ssize_t bin_number(X const& x, X & a) const{
+	inline platform::SSize bin_number(X const& x, X & a) const{
 		X const x_normalized(numeric::modulo( (x-first_bin())/step_, X(nbins()) )); //Real [0, nbins)
 
-		const ssize_t bin( static_cast<ssize_t>( std::floor(x_normalized) )); //int [0,nbins-1]
+		const platform::SSize bin( static_cast<platform::SSize>( std::floor(x_normalized) )); //int [0,nbins-1]
 		a = x_normalized - bin;
 		return bin+1;
 	}
@@ -615,7 +615,7 @@ protected: // Interpolation methods
 		}
 
 		X alpha; //ignored
-		ssize_t bin = bin_number(x, alpha);
+		platform::SSize bin = bin_number(x, alpha);
 		y = densities_[bin];
 		//check bounds
 		return true;

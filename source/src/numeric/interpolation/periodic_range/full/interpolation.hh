@@ -44,16 +44,16 @@ namespace full {
 /// @brief Periodic interpolation bin number of a value
 template< typename X >
 inline
-ssize_t
+platform::SSize
 bin(
 	X const & x, // Independent axis value
 	X const & w, // Bin width
-	ssize_t const n // Number of bins
+	platform::SSize const n // Number of bins
 )
 {
 	assert( w > X( 0.0 ) );
 	assert( n > 0 );
-	ssize_t const i( static_cast< ssize_t >( std::floor( x / w ) ) ); // Non-periodic bin number
+	platform::SSize const i( static_cast< platform::SSize >( std::floor( x / w ) ) ); // Non-periodic bin number
 	return numeric::modulo( i, n );
 }
 
@@ -61,18 +61,18 @@ bin(
 /// @brief Periodic interpolation bin number of a value
 template< typename X >
 inline
-ssize_t
+platform::SSize
 bin(
 	X const & x, // Independent axis value
 	X const & w, // Bin width
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	X & a // Alpha fraction: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
 )
 {
 	assert( w > X( 0.0 ) );
 	assert( n > 0 );
 	X const r( x / w );
-	ssize_t const i( static_cast< ssize_t >( std::floor( r ) ) ); // Non-periodic bin number
+	platform::SSize const i( static_cast< platform::SSize >( std::floor( r ) ) ); // Non-periodic bin number
 	a = r - i;
 	assert( ( a >= X( 0.0 ) ) && ( a <= X( 1.0 ) ) );
 	return numeric::modulo( i, n );
@@ -86,15 +86,15 @@ F
 interpolated(
 	X const & x, // Independent axis value
 	X const & w, // Bin width
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	A< F > const & f // Interpolation array
 )
 {
 	assert( n > 0 );
 	X a; // Alpha fraction: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
-	ssize_t const l( bin( x, w, n, a ) );
+	platform::SSize const l( bin( x, w, n, a ) );
 	assert( ( l >= 0 ) && ( l < n ) );
-	ssize_t const u( numeric::modulo( l + 1, n ) );
+	platform::SSize const u( numeric::modulo( l + 1, n ) );
 	return numeric::interpolation::interpolated( a, f( l ), f( u ) );
 }
 
@@ -104,16 +104,16 @@ template< typename X, typename F, template< typename > class A >
 inline
 F
 interpolated(
-	ssize_t const l, // Bin number (== lower index)
+	platform::SSize const l, // Bin number (== lower index)
 	X const & a, // Alpha fraction: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	A< F > const & f // Interpolation array
 )
 {
 	assert( ( l >= 0 ) && ( l < n ) );
 	assert( ( a >= X( 0.0 ) ) && ( a <= X( 1.0 ) ) );
 	assert( n > 0 );
-	ssize_t const u( numeric::modulo( l + 1, n ) );
+	platform::SSize const u( numeric::modulo( l + 1, n ) );
 	return numeric::interpolation::interpolated( a, f( l ), f( u ) );
 }
 
@@ -126,21 +126,21 @@ bilinearly_interpolated(
 	X const & x1, // Independent axis 1 value
 	X const & x2, // Independent axis 2 value
 	X const & w, // Bin width
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	A< F > const & f // Interpolation array
 )
 {
 	assert( w > X( 0.0 ) );
 	assert( n > 0 );
 	X a1, a2; // Alpha fractions: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
-	ssize_t const l1( bin( x1, w, n, a1 ) );
-	ssize_t const l2( bin( x2, w, n, a2 ) );
+	platform::SSize const l1( bin( x1, w, n, a1 ) );
+	platform::SSize const l2( bin( x2, w, n, a2 ) );
 	assert( ( l1 >= 0 ) && ( l1 < n ) );
 	assert( ( l2 >= 0 ) && ( l2 < n ) );
 	X const b1( X( 1.0 ) - a1 ); // 1 - a1
 	X const b2( X( 1.0 ) - a2 ); // 1 - a2
-	ssize_t const u1( numeric::modulo( l1 + 1, n ) );
-	ssize_t const u2( numeric::modulo( l2 + 1, n ) );
+	platform::SSize const u1( numeric::modulo( l1 + 1, n ) );
+	platform::SSize const u2( numeric::modulo( l2 + 1, n ) );
 	return
 	 ( b1 * b2 * f( l1, l2 ) ) +
 	 ( a1 * b2 * f( u1, l2 ) ) +
@@ -154,11 +154,11 @@ template< typename X, typename F, template< typename > class A >
 inline
 F
 bilinearly_interpolated(
-	ssize_t const l1, // Axis 1 bin number (== lower index)
-	ssize_t const l2, // Axis 2 bin number (== lower index)
+	platform::SSize const l1, // Axis 1 bin number (== lower index)
+	platform::SSize const l2, // Axis 2 bin number (== lower index)
 	X const & a1, // Axis 1 alpha fraction: ( x1 - x1_l ) / ( x1_u - x1_l ) for bin [ x1_l, x1_u ]
 	X const & a2, // Axis 2 alpha fraction: ( x2 - x2_l ) / ( x2_u - x2_l ) for bin [ x2_l, x2_u ]
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	A< F > const & f // Interpolation array
 )
 {
@@ -169,8 +169,8 @@ bilinearly_interpolated(
 	assert( n > 0 );
 	X const b1( X( 1.0 ) - a1 ); // 1 - a1
 	X const b2( X( 1.0 ) - a2 ); // 1 - a2
-	ssize_t const u1( numeric::modulo( l1 + 1, n ) );
-	ssize_t const u2( numeric::modulo( l2 + 1, n ) );
+	platform::SSize const u1( numeric::modulo( l1 + 1, n ) );
+	platform::SSize const u2( numeric::modulo( l2 + 1, n ) );
 	return
 	 ( b1 * b2 * f( l1, l2 ) ) +
 	 ( a1 * b2 * f( u1, l2 ) ) +
@@ -187,7 +187,7 @@ bilinearly_interpolated(
 	X const & x1, // Independent axis 1 value
 	X const & x2, // Independent axis 2 value
 	X const & w, // Bin width
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	A< F > const & f, // Interpolation array
 	F & df_dx1, // Derivate wrt axis 1
 	F & df_dx2 // Derivate wrt axis 2
@@ -196,14 +196,14 @@ bilinearly_interpolated(
 	assert( w > X( 0.0 ) );
 	assert( n > 0 );
 	X a1, a2; // Alpha fractions: ( x - x_l ) / ( x_u - x_l ) for bin [ x_l, x_u ]
-	ssize_t const l1( bin( x1, w, n, a1 ) );
-	ssize_t const l2( bin( x2, w, n, a2 ) );
+	platform::SSize const l1( bin( x1, w, n, a1 ) );
+	platform::SSize const l2( bin( x2, w, n, a2 ) );
 	assert( ( l1 >= 0 ) && ( l1 < n ) );
 	assert( ( l2 >= 0 ) && ( l2 < n ) );
 	X const b1( X( 1.0 ) - a1 ); // 1 - a1
 	X const b2( X( 1.0 ) - a2 ); // 1 - a2
-	ssize_t const u1( numeric::modulo( l1 + 1, n ) );
-	ssize_t const u2( numeric::modulo( l2 + 1, n ) );
+	platform::SSize const u1( numeric::modulo( l1 + 1, n ) );
+	platform::SSize const u2( numeric::modulo( l2 + 1, n ) );
 	F const fll( f( l1, l2 ) );
 	F const ful( f( u1, l2 ) );
 	F const flu( f( l1, u2 ) );
@@ -223,12 +223,12 @@ template< typename X, typename F, template< typename > class A >
 inline
 F
 bilinearly_interpolated(
-	ssize_t const l1, // Axis 1 bin number (== lower index)
-	ssize_t const l2, // Axis 2 bin number (== lower index)
+	platform::SSize const l1, // Axis 1 bin number (== lower index)
+	platform::SSize const l2, // Axis 2 bin number (== lower index)
 	X const & a1, // Axis 1 alpha fraction: ( x1 - x1_l ) / ( x1_u - x1_l ) for bin [ x1_l, x1_u ]
 	X const & a2, // Axis 2 alpha fraction: ( x2 - x2_l ) / ( x2_u - x2_l ) for bin [ x2_l, x2_u ]
 	X const & w, // Bin width
-	ssize_t const n, // Number of bins
+	platform::SSize const n, // Number of bins
 	A< F > const & f, // Interpolation array
 	F & df_dx1, // Derivate wrt axis 1
 	F & df_dx2 // Derivate wrt axis 2
@@ -242,8 +242,8 @@ bilinearly_interpolated(
 	assert( n > 0 );
 	X const b1( X( 1.0 ) - a1 ); // 1 - a1
 	X const b2( X( 1.0 ) - a2 ); // 1 - a2
-	ssize_t const u1( numeric::modulo( l1 + 1, n ) );
-	ssize_t const u2( numeric::modulo( l2 + 1, n ) );
+	platform::SSize const u1( numeric::modulo( l1 + 1, n ) );
+	platform::SSize const u2( numeric::modulo( l2 + 1, n ) );
 	F const fll( f( l1, l2 ) );
 	F const ful( f( u1, l2 ) );
 	F const flu( f( l1, u2 ) );

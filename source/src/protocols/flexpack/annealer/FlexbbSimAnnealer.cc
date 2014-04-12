@@ -446,7 +446,7 @@ FlexbbSimAnnealer::pick_a_rotamer(
 	Size num = 0;
 
 	if ( quench() ) {
-		num = numeric::mod( (outercycle - 1) * inner_loop_iteration_limit + innercycle - 1, accessible_state_list.size() ) + 1;
+		num = numeric::mod<Size>( (outercycle - 1) * inner_loop_iteration_limit + innercycle - 1, accessible_state_list.size() ) + 1;
 		if (num == 1 ) {
 			numeric::random::random_permutation( accessible_state_list, RG );
 		}
@@ -475,5 +475,3 @@ FlexbbSimAnnealer::pass_metropolis_multiple_nodes_changing(
 }
 }
 }
-
-

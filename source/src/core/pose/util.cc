@@ -2133,7 +2133,7 @@ mass(
 
 core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose)
 {
-	core::Size hash = 0;
+	std::size_t hash = 0;
 
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
 	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
@@ -2154,7 +2154,7 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 
 core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose)
 {
-	core::Size hash = 0;
+	std::size_t hash = 0;
 
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
 

@@ -41,7 +41,7 @@ namespace utility {
 ///  @li Can compare with std::vector: compares contents ignoring indexes
 ///  @li Can explicitly convert to std::vector
 ///  @li Private inheritance from std::vector is safe here
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 class vectorL :
 	private std::vector< T, A >
 {
@@ -76,7 +76,7 @@ public: // Types
 	typedef  typename super::difference_type  difference_type;
 	typedef  typename super::allocator_type  allocator_type;
 	typedef  typename vectorL_IndexSelector< L >= 0 >::index_type  index_type;
-	typedef  ssize_t  ssize_type;
+	typedef  platform::SSize  ssize_type;
 
 	// Project style
 	typedef  typename super::value_type  Value;
@@ -642,7 +642,7 @@ private: // Static fields
 
 
 // Static field definitions
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 typename vectorL< L, T, A >::index_type const vectorL< L, T, A >::l_( L );
 
 
@@ -650,127 +650,127 @@ typename vectorL< L, T, A >::index_type const vectorL< L, T, A >::l_( L );
 
 
 /// @brief vectorL == vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator ==( vectorL< L, T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief vectorL != vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator !=( vectorL< L, T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief vectorL < vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator <( vectorL< L, T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief vectorL <= vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator <=( vectorL< L, T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief vectorL >= vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator >=( vectorL< L, T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief vectorL > vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator >( vectorL< L, T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief vectorL == std::vector
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator ==( vectorL< L, T, A > const & a, std::vector< T, A > const & b );
 
 
 /// @brief vectorL != std::vector
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator !=( vectorL< L, T, A > const & a, std::vector< T, A > const & b );
 
 
 /// @brief vectorL < std::vector
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator <( vectorL< L, T, A > const & a, std::vector< T, A > const & b );
 
 
 /// @brief vectorL <= std::vector
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator <=( vectorL< L, T, A > const & a, std::vector< T, A > const & b );
 
 
 /// @brief vectorL >= std::vector
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator >=( vectorL< L, T, A > const & a, std::vector< T, A > const & b );
 
 
 /// @brief vectorL > std::vector
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator >( vectorL< L, T, A > const & a, std::vector< T, A > const & b );
 
 
 /// @brief std::vector == vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator ==( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief std::vector != vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator !=( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief std::vector < vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator <( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief std::vector <= vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator <=( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief std::vector >= vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator >=( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief std::vector > vectorL
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 bool
 operator >( std::vector< T, A > const & a, vectorL< L, T, A > const & b );
 
 
 /// @brief swap( vectorL, vectorL )
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 void
 swap( vectorL< L, T, A > & a, vectorL< L, T, A > & b );
 
 
 /// @brief swap( vectorL, std::vector )
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 void
 swap( vectorL< L, T, A > & a, std::vector< T, A > & b );
 
 
 /// @brief swap( std::vector, vectorL )
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 void
 swap( std::vector< T, A > & a, vectorL< L, T, A > & b );
 
@@ -793,7 +793,7 @@ namespace std {
 
 
 /// @brief swap( vectorL, vectorL )
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 inline
 void
 swap( utility::vectorL< L, T, A > & a, utility::vectorL< L, T, A > & b )
@@ -803,7 +803,7 @@ swap( utility::vectorL< L, T, A > & a, utility::vectorL< L, T, A > & b )
 
 
 /// @brief swap( vectorL, std::vector )
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 inline
 void
 swap( utility::vectorL< L, T, A > & a, std::vector< T, A > & b )
@@ -813,7 +813,7 @@ swap( utility::vectorL< L, T, A > & a, std::vector< T, A > & b )
 
 
 /// @brief swap( std::vector, vectorL )
-template< ssize_t L, typename T, typename A >
+template< platform::SSize L, typename T, typename A >
 inline
 void
 swap( std::vector< T, A > & a, utility::vectorL< L, T, A > & b )

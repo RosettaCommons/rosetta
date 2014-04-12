@@ -38,24 +38,41 @@
 // uintptr_t  Pointer-sized unsigned integer
 //typedef  long int  ssize_t; // Signed size
 
-#ifdef WIN_PYROSETTA
-	#ifndef HAVE_SSIZE_T
-		#define HAVE_SSIZE_T
-		typedef  int  ssize_t; // Signed size
-	#endif
-#endif
+// #ifdef WIN_PYROSETTA
+// 	#ifndef HAVE_SSIZE_T
+// 		#define HAVE_SSIZE_T
+// 		typedef  int  ssize_t; // Signed size
+// 	#endif
+// #endif
 
-#ifndef WIN_PYROSETTA
-typedef  int  ssize_t;
-#endif
+// #ifndef WIN_PYROSETTA
+// typedef  int  ssize_t;
+// #endif
 
+
+// Windows native version
+// #include <cstddef>
+// #if defined(_MSC_VER)
+// 	#include <basetsd.h>
+// 	typedef SSIZE_T ssize_t;
+// #endif
 
 namespace platform {
 
 #ifdef WIN_PYROSETTA
-	typedef size_t  Size;
-	typedef int     SSize;
-	typedef size_t  uint;
+	// conservative, cross-compile version, we can't really use size_t here because it definition is vary between host and target compilers
+	typedef unsigned int Size;
+	typedef int          SSize;
+	typedef unsigned int uint;
+
+
+
+    // alsmost size_t, we can't use this version because GCC.64Bit and MSVC.64Bit defines size_t differently
+	// typedef std::size_t  Size;
+	// typedef ssize_t      SSize;
+	// typedef std::size_t  uint;
+	//unsigned __int64
+
 #else
 	typedef unsigned int  Size;
 	typedef int           SSize;
