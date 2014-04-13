@@ -14,8 +14,11 @@ os.chdir( '..' )
 version.svn_version()
 os.chdir( starting_directory )
 
+# (re)generate options files
+os.system( 'cd ..; ./update_options.sh' )
+
 def project_callback(project, project_path, project_files):
-		
+
 	# get keys
 
 	group_key = xcode_util.PROJECT_KEYS[project][0]
@@ -37,10 +40,10 @@ def project_callback(project, project_path, project_files):
 
 	file_ref_begin_ln = xcode_util.find_line('/* Begin PBXFileReference section */', lines, build_file_end_ln)
 	file_ref_end_ln = xcode_util.find_line('/* End PBXFileReference section */', lines, file_ref_begin_ln)
-	
+
 	group_begin_ln = xcode_util.find_line('/* Begin PBXGroup section */', lines, file_ref_end_ln)
 	group_end_ln = xcode_util.find_line('/* End PBXGroup section */', lines, group_begin_ln)
-	
+
 	proj_sources_ln = xcode_util.find_line('\t\t' + sources_key + ' /* Sources */ = {', lines, group_end_ln)
 	source_files_begin_ln = xcode_util.find_line('\t\t\tfiles = (', lines, proj_sources_ln)
 	source_files_end_ln = xcode_util.find_line('\t\t\t);', lines, source_files_begin_ln)
