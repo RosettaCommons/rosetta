@@ -35,6 +35,8 @@
 // by our coding convention due to problems it create on modern compilers and because of the name clashing.
 // For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
 
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
