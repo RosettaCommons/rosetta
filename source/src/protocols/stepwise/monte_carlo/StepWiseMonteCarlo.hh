@@ -32,7 +32,14 @@
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 
+/*
 using namespace core;
+
+Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
+by our coding convention due to problems it create on modern compilers and because of the name clashing.
+For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
+*/
+
 
 namespace protocols {
 namespace stepwise {
@@ -126,9 +133,9 @@ namespace rna {
 		ResampleMoverOP resample_mover_;
 
 		bool minimize_single_res_;
-		Real const max_missing_weight_;
-		Real missing_weight_interval_;
-		Real missing_weight_;
+		core::Real const max_missing_weight_;
+		core::Real missing_weight_interval_;
+		core::Real missing_weight_;
 
 		// for movies
 		std::string model_tag_;

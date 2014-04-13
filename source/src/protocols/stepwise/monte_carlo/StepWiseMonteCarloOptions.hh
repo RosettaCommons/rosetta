@@ -143,8 +143,8 @@ namespace rna {
 		core::Real const & temperature() const { return temperature_; }
 		void set_temperature(  core::Real const & setting ){ temperature_ = setting; }
 
-		utility::vector1< Size > const & bulge_res() const { return bulge_res_; }
-		void set_bulge_res( utility::vector1< Size > const & setting ){ bulge_res_ = setting; }
+		utility::vector1< core::Size > const & bulge_res() const { return bulge_res_; }
+		void set_bulge_res( utility::vector1< core::Size > const & setting ){ bulge_res_ = setting; }
 
 		core::Real const & max_missing_weight() const { return max_missing_weight_; }
 		void set_max_missing_weight( core::Real const & setting ){ max_missing_weight_ = setting; }
@@ -212,8 +212,8 @@ namespace rna {
 		bool const & protein_atr_rep_screen() const { return protein_atr_rep_screen_; }
 		void set_protein_atr_rep_screen( bool const & setting ){ protein_atr_rep_screen_ = setting; }
 
-		Real const & rmsd_screen() const { return rmsd_screen_; }
-		void set_rmsd_screen( Real const & setting ){ rmsd_screen_ = setting; }
+		core::Real const & rmsd_screen() const { return rmsd_screen_; }
+		void set_rmsd_screen( core::Real const & setting ){ rmsd_screen_ = setting; }
 
 	private:
 
@@ -238,9 +238,9 @@ namespace rna {
 		core::Real switch_focus_frequency_;
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;
-		utility::vector1< Size > bulge_res_; // disallow addition of these.
-		Real max_missing_weight_;
-		Real chainbreak_weight_;
+		utility::vector1< core::Size > bulge_res_; // disallow addition of these.
+		core::Real max_missing_weight_;
+		core::Real chainbreak_weight_;
 		bool allow_skip_bulge_;
 		core::Real from_scratch_frequency_;
 		bool allow_split_off_;
@@ -258,7 +258,7 @@ namespace rna {
 		bool allow_virtual_side_chains_;
 		bool protein_prepack_;
 		bool protein_atr_rep_screen_;
-		Real rmsd_screen_;
+		core::Real rmsd_screen_;
 
 		utility::vector1< core::Size > extra_minimize_res_;
 		utility::vector1< core::Size > syn_chi_res_list_;

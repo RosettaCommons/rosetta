@@ -43,6 +43,8 @@
 
 #include <basic/Tracer.hh>
 
+using namespace core;
+
 static basic::Tracer TR( "protocols.stepwise.sampling.protein.StepWiseProteinResidueSampler" );
 
 namespace protocols {

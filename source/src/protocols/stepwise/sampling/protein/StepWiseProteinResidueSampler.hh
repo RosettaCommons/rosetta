@@ -29,7 +29,17 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#if defined(WIN32) || defined(PYROSETTA)
+	#include <core/scoring/ScoreFunction.hh>
+#endif
+
+/*
 using namespace core;
+
+Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
+by our coding convention due to problems it create on modern compilers and because of the name clashing.
+For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
+*/
 
 namespace protocols {
 namespace stepwise {
@@ -48,14 +58,14 @@ namespace protein {
 
 	public:
 
-		virtual void apply( pose::Pose & pose_to_visualize );
+		virtual void apply( core::pose::Pose & pose_to_visualize );
 
 		virtual std::string get_name() const { return "StepWiseProteinResidueSampler"; }
 
 		void
-		set_scorefxn( scoring::ScoreFunctionOP const & scorefxn ){ scorefxn_ = scorefxn; }
+		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ){ scorefxn_ = scorefxn; }
 
-		utility::vector1< pose::PoseOP > const & get_pose_list(){ return pose_list_; }
+		utility::vector1< core::pose::PoseOP > const & get_pose_list(){ return pose_list_; }
 
 		void
 		set_options( StepWiseProteinModelerOptionsCOP options ){ options_ = options; }
@@ -80,34 +90,33 @@ namespace protein {
 	private:
 
 		void
-		initialize_sampler( pose::Pose & pose );
+		initialize_sampler( core::pose::Pose & pose );
 
 		void
-		initialize_screeners( pose::Pose & pose );
+		initialize_screeners( core::pose::Pose & pose );
 
 		rotamer_sampler::RotamerSizedOP
-		get_basic_sampler( pose::Pose & pose );
+		get_basic_sampler( core::pose::Pose & pose );
 
 		rotamer_sampler::RotamerSizedOP
-		close_loops_in_samples( pose::Pose & pose,
-														rotamer_sampler::RotamerSizedOP sampler );
+		close_loops_in_samples( core::pose::Pose & pose, rotamer_sampler::RotamerSizedOP sampler );
 
 		StepWiseProteinPackerOP
-		get_packer( pose::Pose & pose );
+		get_packer( core::pose::Pose & pose );
 
 		void
-		enable_sampling_of_loop_takeoff( pose::Pose & pose,
+		enable_sampling_of_loop_takeoff( core::pose::Pose & pose,
 																		 rotamer_sampler::RotamerSizedOP sampler );
 
 	private:
 
 		StepWiseProteinJobParametersCOP job_parameters_;
-		utility::vector1< pose::PoseOP > pose_list_;
-		scoring::ScoreFunctionOP scorefxn_;
+		utility::vector1< core::pose::PoseOP > pose_list_;
+		core::scoring::ScoreFunctionOP scorefxn_;
 		StepWiseProteinModelerOptionsCOP options_;
 		utility::vector1< Size > moving_res_list_;
 
-		pose::PoseOP screening_pose_;
+		core::pose::PoseOP screening_pose_;
 
 		rotamer_sampler::RotamerSizedOP sampler_;
 		utility::vector1< screener::StepWiseScreenerOP > screeners_;
