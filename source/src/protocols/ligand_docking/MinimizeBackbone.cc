@@ -59,7 +59,7 @@ using basic::Warning;
 #include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 
-
+static numeric::random::RandomGenerator my_RG(4376910); // 4376910 is just a random seed
 namespace protocols {
 namespace ligand_docking {
 
@@ -238,7 +238,6 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 		ligand_options::Interface const & interface,
 		core::pose::Pose & pose
 ) {
-	static numeric::random::RandomGenerator my_RG(4376910); // 4376910 is just a random seed
 	if (edge.start() > edge.stop())
 		utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
 	utility::vector1< protocols::loops::Loop> loops;
