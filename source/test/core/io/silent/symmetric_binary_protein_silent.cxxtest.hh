@@ -25,7 +25,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
@@ -91,7 +91,7 @@ void test_save_and_restore()
   core::io::silent::SilentFileData sfd;
   std::string silent_outfile = "core/io/sym_bin_silentfile_test.out";
   utility::file::file_delete( silent_outfile );
-  core::io::silent::BinaryProteinSilentStruct pss,new_pss;
+  core::io::silent::BinarySilentStruct pss,new_pss;
   pss.fill_struct( ref_pose, "ref_pose" );
   sfd.write_silent_struct( pss, silent_outfile );
 

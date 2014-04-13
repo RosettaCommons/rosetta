@@ -17,7 +17,7 @@
 
 // Project headers
 #include <core/import_pose/import_pose.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 

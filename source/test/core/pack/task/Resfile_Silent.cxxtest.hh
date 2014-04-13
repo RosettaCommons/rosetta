@@ -64,6 +64,7 @@ public:
 	typedef core::pack::task::TaskFactory TaskFactory;
 	typedef core::pack::task::operation::ReadResfile ReadResfile;
 	typedef core::pose::Pose Pose;
+	typedef core::pose::PoseOP PoseOP;
 
 public:
 
@@ -113,12 +114,12 @@ public:
 		rrop->apply( pdb_pose, *task_pdb );
 
 		// set packer task from silent file
-		Pose silent_pose;
+		PoseOP silent_pose;
 		const std::string silent_file_name( "core/pack/task/test_in.silent" );
 		SilentFilePoseInputStreamOP silent_input = new SilentFilePoseInputStream( silent_file_name );
 		silent_pose =	silent_input->get_all_poses( *residue_set )[ 1 ];
-		PackerTaskOP task_silent( TaskFactory::create_packer_task( silent_pose ) );
-		rrop->apply( silent_pose, *task_silent );
+		PackerTaskOP task_silent( TaskFactory::create_packer_task( *silent_pose ) );
+		rrop->apply( *silent_pose, *task_silent );
 
 		if( compare_packertasks( *task_pdb, *task_silent ) ){
 			TR << "END_OF_TEST" << std::endl;

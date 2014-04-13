@@ -26,7 +26,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
@@ -46,10 +46,10 @@ static basic::Tracer TR("test.core.io.silent.protein_silent");
 
 using namespace core;
 
-class BinaryProteinSilentTests : public CxxTest::TestSuite {
+class BinarySilentTests : public CxxTest::TestSuite {
 
 public:
-	BinaryProteinSilentTests() {};
+	BinarySilentTests() {};
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -85,7 +85,7 @@ public:
 		core::io::silent::SilentFileData sfd;
 		std::string const silent_outfile( "core/io/bin_silentfile_centroid.out" ); // read file w/ non-ideal geometry
 		utility::file::file_delete( silent_outfile );
-		core::io::silent::BinaryProteinSilentStruct pss( ref_pose, "tag" );
+		core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
 		sfd.write_silent_struct( pss, silent_outfile );
 
 		sfd.read_file(silent_outfile);
@@ -121,7 +121,7 @@ public:
 	std::string const silent_outfile( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
 	utility::file::file_delete( silent_outfile );
 	core::io::silent::SilentFileData sfd;
-	core::io::silent::BinaryProteinSilentStruct pss( ref_pose, "tag" );
+	core::io::silent::BinarySilentStruct pss( ref_pose, "tag" );
 	sfd.write_silent_struct( pss, silent_outfile );
 	// Read the ProteinSilentStruct from the silent-file
 
