@@ -192,7 +192,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 	}
 
 	// how many moves to make
-	num_ = std::max( Size(1), std::min( nmoves_, pos_list_.size()/2 ) );
+	num_ = std::max<Size>( Size(1), std::min<Size>( nmoves_, pos_list_.size()/2 ) );
 
 	// now loop
 	for ( int k=1; k<= num_; ++k ) {

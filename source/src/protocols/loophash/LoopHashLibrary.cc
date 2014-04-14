@@ -499,7 +499,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 
 		std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 
-		for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
+		for( core::Size k=0;k< std::min<core::Size>(skim_size, lib_structs.size() ) ;k++){
 			select_lib_structs.push_back( lib_structs[k] );
 		}
 

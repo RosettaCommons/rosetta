@@ -992,11 +992,12 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
             objs.append(obj)
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
-                execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_CL_Options(), source)  #  /D__PYROSETTA_ONE_LIB__
-                   #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
-                   + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
-                   + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=32'
-                   + ' /Fo%s ' % obj ) )
+                res_and_output = execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_CL_Options(), source)  #  /D__PYROSETTA_ONE_LIB__
+                                                                              #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
+                                                                              + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
+                                                                              + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=32'
+                                                                              + ' /Fo%s ' % obj ), return_= 'tuple' if Options.continue_ else False )
+                if Options.continue_ and res_and_output[0]: print res_and_output[1];  return
                 #  /Iplatform/windows/32/msvc
                 #  /I../external/boost_1_55_0
                 #  /IBOOST_MSVC    /link rosetta_lib
@@ -1015,21 +1016,25 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
             dummy = os.path.join( obj_dir, '_dummy_') #_rosetta_.pyd' )
 
             #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
-            res = execute('Getting list of missed symbols... Creating DLL %s...' % dummy,
+            res, output = execute('Getting list of missed symbols... Creating DLL %s...' % dummy,
                           #'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
-                          'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
+                          'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 /out:%s' % (' '.join(objs), dummy), return_='tuple', print_output=False)
 
             symbols = []
-            with file( os.path.join( obj_dir, '_dummy_.errors'), 'w' ) as f: f.write(res)
+            with file( os.path.join( obj_dir, '_dummy_.errors'), 'w' ) as f: f.write(output)
 
-            for l in res.split('\n'):
+            for l in output.split('\n'):
                 if   l.find('error LNK2001: unresolved external symbol __DllMainCRTStartup') >=0 : continue  # error LNK2001: unresolved external symbol __DllMainCRTStartup@12
                 elif l.find('error LNK2019: unresolved external symbol') >=0 : symbols.append( l.partition('" (')[2].partition(') referenced in function')[0] )
                 elif l.find('error LNK2001: unresolved external symbol') >=0 : symbols.append( l.partition('" (')[2][:-2]) # + ' DATA')
             f = file(symbols_file, 'w');  f.write( '\n'.join(symbols) );  f.close()
             print '\nAdding %s symbols... Tottal now is:%s\n' % (len(symbols), len(set(all_symbols+symbols)))
 
-            if len(symbols) == 0: print 'Somehow len symbols is 0! Please check _dummy_.errors for unexpected failures...'; sys.exit(1)
+            if res  and  len(symbols) == 0:
+                print 'Somehow len symbols is 0! Please check _dummy_.errors for unexpected failures...'
+                if Options.continue_: return
+                else: sys.exit(1)
+
 
 
         all_symbols.extend( file(symbols_file).read().split('\n') )

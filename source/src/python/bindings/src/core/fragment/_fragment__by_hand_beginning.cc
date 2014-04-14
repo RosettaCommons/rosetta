@@ -11,6 +11,8 @@
 
 #include <core/fragment/FragID.hh>
 #include <core/fragment/FragData.hh>
+#include <core/types.hh>
+
 
 /* Wraputils */
 #include <numeric/xyzVector.hh>
@@ -47,16 +49,16 @@ std::string vector1_repr(utility::vector1<T> const & v)
     return os.str();
 }
 
-template< class TT > inline void vector1_set( vector1<TT> & v, size_t const & i, TT const & val ) { v[i] = val; }
-template< class TT > inline std::size_t vector1_len( vector1<TT> & v ) { return v.size(); }
+template< class TT > inline void vector1_set( vector1<TT> & v, core::Size const & i, TT const & val ) { v[i] = val; }
+template< class TT > inline core::Size vector1_len( vector1<TT> & v ) { return v.size(); }
 
 template< class TT > inline std::string vector1_str( vector1<TT> & v ) { std::ostringstream s; s<<v; return s.str(); }
 
 template< class TT > inline typename vector1<TT>::iterator vector1_begin( vector1<TT> & v ) { return v.begin(); }
 template< class TT > inline typename vector1<TT>::iterator vector1_end  ( vector1<TT> & v ) { return v.end(); }
 
-template< class TT > inline void vector1_reserve( vector1<TT> & v, std::size_t n) { v.reserve(n); }
-template< class TT > inline void vector1_resize( vector1<TT> & v, std::size_t n) { v.resize(n); }
+template< class TT > inline void vector1_reserve( vector1<TT> & v, core::Size n) { v.reserve(n); }
+template< class TT > inline void vector1_resize( vector1<TT> & v, core::Size n) { v.resize(n); }
 
 template< class Htype, class CP, class CP_const>
 void wrap_vector1(char * name) {
@@ -64,14 +66,14 @@ void wrap_vector1(char * name) {
   typedef vectorL<1,Htype,allocator<Htype> > Btype;
   typedef vector<Htype> Vtype;
   bp::class_<Ttype>(name)
-    .def( bp::init< size_t >() )
+    .def( bp::init< core::Size >() )
     .def( bp::init< vector1<Htype> const & >() )
     // .def( bp::init< size_t, TT >() )
     .def("__getitem__"
-        , (Htype const & (Ttype::*)(size_t const) const)( &Ttype::at )
+        , (Htype const & (Ttype::*)(core::Size const) const)( &Ttype::at )
         , CP_const()    )
     .def("__getitem__"
-        , (Htype & (Ttype::*)(size_t const))( &Ttype::at )
+        , (Htype & (Ttype::*)(core::Size const))( &Ttype::at )
         , CP()        )
     .def("__setitem__"
         , &vector1_set<Htype> )

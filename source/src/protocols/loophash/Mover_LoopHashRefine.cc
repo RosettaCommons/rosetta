@@ -202,7 +202,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
 
 			std::vector< core::io::silent::SilentStructOP > select_lib_structs;
-			for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
+			for( core::Size k=0;k< std::min<core::Size>(skim_size, lib_structs.size() ) ;k++){
 				select_lib_structs.push_back( lib_structs[k] );
 			}
 

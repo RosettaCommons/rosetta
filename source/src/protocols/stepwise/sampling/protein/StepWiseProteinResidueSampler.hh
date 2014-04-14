@@ -31,6 +31,7 @@
 
 #if defined(WIN32) || defined(PYROSETTA)
 	#include <core/scoring/ScoreFunction.hh>
+	#include <protocols/stepwise/screener/StepWiseScreener.hh>
 #endif
 
 /*

@@ -88,7 +88,10 @@ public: // Types
 	typedef  typename super::const_iterator  ConstIterator;
 	typedef  typename super::reverse_iterator  ReverseIterator;
 	typedef  typename super::const_reverse_iterator  ConstReverseIterator;
-	typedef  typename super::size_type  Size;
+
+	//typedef  typename super::size_type  Size;
+	typedef  platform::Size Size;
+
 	typedef  typename super::difference_type  Difference;
 	typedef  typename super::allocator_type  Allocator;
 	typedef  typename vectorL_IndexSelector< L >= 0 >::Index  Index;

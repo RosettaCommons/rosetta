@@ -21,6 +21,13 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
+#include <utility/tag/Tag.fwd.hh>
+
+#if defined(WIN32) || defined(PYROSETTA)
+	#include <utility/tag/Tag.hh>
+#endif
+
+
 using namespace core;
 
 namespace protocols {

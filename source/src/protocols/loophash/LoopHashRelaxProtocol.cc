@@ -112,24 +112,24 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     lsampler.set_max_bbrms( option[ lh::max_bbrms ]() );
     lsampler.set_min_rms( option[ lh::min_rms ]() );
     lsampler.set_max_rms( option[ lh::max_rms ]() );
-    lsampler.set_max_struct( skim_size );	
-    
+    lsampler.set_max_struct( skim_size );
+
     core::pose::Pose native_pose;
     if( option[ in::file::native ].user() ){
       core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
     } else {
-      native_pose = pose; // jsut make a copy of the current pose - rmses will be relative to starts 
+      native_pose = pose; // jsut make a copy of the current pose - rmses will be relative to starts
     }
 
     // Set up contraints
     ScoreFunctionOP fascorefxn = getScoreFunction();
-    
+
     // convert pose to centroid pose:
     if( !pose.is_fullatom() ){
       core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
     }
-    
-    
+
+
     // See if a loopfile was defined - if so restrict sampling to those loops
 //    protocols::loops::Loops loops(true);
 //    utility::vector1< core::Size > selection;
@@ -139,11 +139,11 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 //    TR << "Residues: ";
 //    for( core::Size i=1; i <= selection.size(); ++i) TR <<  selection[i] << " ";
 //    TR << std::endl;
-    
-    //read_coord_cst(); //include this function later !                 
+
+    //read_coord_cst(); //include this function later !
 
     //core::Size total_starttime = time(NULL);
-    
+
     static int casecount = 0;
     core::pose::Pose opose = pose;
     std::vector< core::io::silent::SilentStructOP > lib_structs;
@@ -165,34 +165,34 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     do {
       start_res = std::max( core::Size(2), core::Size(rand()%(pose.total_residue() - sampler_chunk_size - 2 )) );
       stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1 )  );
-      
+
       // If a loopfile was given choose your insertion site from there
   //    TR.Info << "Selection size: " << selection.size() << std::endl;
   //    if( selection.size() > 0 ){
   //      utility::vector1< core::Size > temp_selection = selection;
   //      std::random_shuffle( temp_selection.begin(), temp_selection.end());
-  //      start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) ); 
-  //      stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );      
+  //      start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) );
+  //      stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );
   //      TR.Info << "SubselectionSample: " << start_res << " - " << stop_res << std::endl;
   //    }
-    
-      lsampler.set_start_res( start_res ); 
+
+      lsampler.set_start_res( start_res );
       lsampler.set_stop_res(  stop_res );
       lsampler.build_structures( pose, lib_structs );
       core::Size endtime2 = time(NULL);
       //core::Size loophash_time = endtime2 - starttime2;
-      TR.Info << "FOUND (" << start_res << " to " << stop_res << "): " 
-              << lib_structs.size() << " states in time: " 
+      TR.Info << "FOUND (" << start_res << " to " << stop_res << "): "
+              << lib_structs.size() << " states in time: "
               << endtime2 - starttime2 << " s " << std::endl;
 
       // try again if we have failed to find structures << danger this is totally an infinte loop here
-    
+
     } while ( lib_structs.size() == 0 );
 
-    // choose up to "skim_size" of them 
+    // choose up to "skim_size" of them
     std::random_shuffle( lib_structs.begin(), lib_structs.end());
     std::vector< core::io::silent::SilentStructOP > select_lib_structs;
-    for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
+    for( core::Size k=0;k< std::min<core::Size>(skim_size, lib_structs.size() ) ;k++){
       select_lib_structs.push_back( lib_structs[k] );
     }
 
@@ -201,9 +201,9 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     for( core::Size h = 0; h < select_lib_structs.size(); h++){
       core::pose::Pose rpose;
       select_lib_structs[h]->fill_pose( rpose );
-      
+
       //rpose.dump_pdb("struct_" + string_of(h) + ".pdb" );
-      
+
       core::Real refrms = 0;
       core::Real rms_factor = 10.0;
       core::Real decoy_score = select_lib_structs[h]->get_energy("lh_censcore") + refrms * rms_factor;
@@ -251,7 +251,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
     std::cout << "SETTING Relax winner" << std::endl;
     pose = relax_winner;
-  
+
   }
 
 
@@ -271,7 +271,3 @@ protocols::moves::MoverOP	LoopHashRelaxProtocol::fresh_instance() const {
 
 } // namespace loops
 } // namespace protocols
-
-
-
-

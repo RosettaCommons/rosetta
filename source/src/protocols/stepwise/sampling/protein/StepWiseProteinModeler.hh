@@ -24,6 +24,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#if defined(WIN32) || defined(PYROSETTA)
+	#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#endif
+
+
 ////////////////////////////////////////////////////////////////////////
 // This copies code in StepWiseRNA_Modeler, which is not good.
 // The plan is eventually to unify the two into StepWiseModeler (which
