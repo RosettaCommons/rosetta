@@ -16,6 +16,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
@@ -61,7 +62,8 @@ void use_backrub(core::pose::PoseOP & pose,core::scoring::ScoreFunctionOP scoref
                 (*scorefxn)(p);
 
 		std::string move_type = backrubmover.type();
-                for ( int trial = 1, ntrials = 10; trial <= ntrials; ++trial ) {
+		core::Size n = option[ out::nstruct ];
+                for ( int trial = 1, ntrials = n; trial <= ntrials; ++trial ) {
                         backrubmover.apply(p);
                         mc.boltzmann(pose, move_type);
 	                std::ostringstream oss;
