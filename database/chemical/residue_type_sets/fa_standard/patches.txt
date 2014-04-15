@@ -104,6 +104,7 @@ patches/carbohydrates/6-branch.txt
 ### modifications
 patches/carbohydrates/2-amination.txt
 patches/carbohydrates/N-acetyl-2-amination.txt
+patches/carbohydrates/5-acetylation.txt
 
 
 ## alternative backbones
