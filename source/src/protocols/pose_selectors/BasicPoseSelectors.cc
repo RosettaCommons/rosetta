@@ -204,13 +204,15 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	TR.Debug << "Sorted poses:" << std::endl;
 	for(utility::vector1<Pose_Property>::iterator it=pose_properties.begin(); it!=pose_properties.end(); ++it) {
 		Pose_Property &p = *it;
-  	TR.Debug << p.first << " = " << p.second << std::endl;
-  }
+		TR.Debug << p.first << " = " << p.second << std::endl;
+	}
 
-  // Create selected poses vector
-  selected_poses.resize(poses.size(), false);
-	for(core::Size i = 1; i <= n_; ++i)
+	// Create selected poses vector
+	selected_poses.resize(poses.size(), false);
+	core::Size n = poses.size() < n_ ? poses.size() : n_;
+	for(core::Size i = 1; i <= n; ++i) {
 		selected_poses[ pose_properties[i].first ] = true;
+	}
 	
 	return selected_poses;	
 }

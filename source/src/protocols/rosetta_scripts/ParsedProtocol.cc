@@ -470,8 +470,10 @@ bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair cons
 	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"=======================\n{"<<std::endl;
 	mover_pair.first.first->apply( pose );
 	TR<<"\n}\n=======================END MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
-	
-	last_mover_ = mover_pair.first.first;
+
+	if(mover_pair.first.first && mover_pair.first.first->get_name()	!= "NullMover") {
+		last_mover_ = mover_pair.first.first;
+	}
 
 	// Split out filter application in seperate function to allow for reuse in resuming from additional output pose cases.
 	return apply_filter( pose, mover_pair);

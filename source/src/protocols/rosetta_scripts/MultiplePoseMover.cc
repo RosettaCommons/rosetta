@@ -93,6 +93,8 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 	using namespace core;
 	using namespace core::pose;
 
+	utility::vector1 < core::pose::PoseOP > selected_poses_for_processing;
+
 	selected_poses_.clear();
 	poses_.clear();
 
@@ -117,11 +119,11 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 
 	// Process selection criteria
 	if(selectors_.size() > 0) {
-		utility::vector1 < bool > selected_poses;
+		utility::vector1 < bool > selected_poses_by_selectors;
 
 		// Apply selectors
 		BOOST_FOREACH( PoseSelectorCOP const selector, selectors_ ) {
-			selected_poses = selector->select_poses(poses_);
+			selected_poses_by_selectors = selector->select_poses(poses_);
 			// TODO: How do we handle multiple selectors? AND? OR?
 			break;
 		}
@@ -133,20 +135,20 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 		// Make a new vector of PoseOP's for selected poses for easier handling
 		core::Size i = 1;
 		for(utility::vector1 < PoseOP >::iterator it = poses_.begin(); it != poses_.end(); ++it) {
-			if(selected_poses[i])
-				selected_poses_.push_back(*it);
+			if(selected_poses_by_selectors[i])
+				selected_poses_for_processing.push_back(*it);
 			++i;
 		}
 
 		// Apply movers to selected poses
-		TR << "Selected poses for processing: " << selected_poses_.size() << std::endl;
-		BOOST_FOREACH( PoseOP p, selected_poses_ ) {
+		TR << "Selected poses for processing: " << selected_poses_for_processing.size() << std::endl;
+		BOOST_FOREACH( PoseOP p, selected_poses_for_processing ) {
 			TR << "\t" << p->sequence() << std::endl;
 		}
 
 	} else {
 		// No selector specified -- select all poses
-		selected_poses_ = poses_;
+		selected_poses_for_processing = poses_;
 	}
 
 	{
@@ -155,9 +157,12 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 		utility::vector1 < PoseOP > additional_poses;
 
 		if(rosetta_scripts_tag_) {
-			BOOST_FOREACH( PoseOP p, selected_poses_ ) {
+			BOOST_FOREACH( PoseOP p, selected_poses_for_processing ) {
 				TR << "Applying mover to pose: " << p->sequence() << std::endl;
-				process_pose(*p, additional_poses);
+				if(process_pose(*p, additional_poses)) {
+					// Processing successful (from sub-protocol and its filters)
+					selected_poses_.push_back( p );
+				}
 			}
 		}
 
@@ -197,6 +202,9 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	}
 
 	mover->apply(pose);
+
+	if(mover->get_last_move_status() != protocols::moves::MS_SUCCESS)
+		return false;
 
 	// Get additional poses from protocol mover;
 	// these are selected for output by this mover
