@@ -515,9 +515,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	bool eval_deriv
 ) const
 {
-
 	//There's probably a better way to check this.
-	assert( rsd.aa() == aa() || ( core::chemical::is_canonical_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
+	assert( rsd.type().backbone_aa() == aa() || ( core::chemical::is_canonical_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
 
 	// Grab data from rsd
 	//Size const nbb ( rsd.mainchain_torsions().size() );

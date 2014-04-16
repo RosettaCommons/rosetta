@@ -186,6 +186,12 @@ add_covalent_linkage_helper(
 	std::string res_atom = pose.residue(res_pos).atom_name( Atpos /*(template_res->get_template_atoms_at_pos(pose, res_pos) )->atom1_[Atpos].atomno()*/ );
 	core::Size res_atom_parent_index = pose.residue(res_pos).atom_base(Atpos);
 	core::Size res_atom_parent_parent_index = pose.residue(res_pos).atom_base(res_atom_parent_index);
+	//Special cases: Atpos == 1 or Atpos == 2
+	if(Atpos==1) {
+		res_atom_parent_index=2; res_atom_parent_parent_index=3;
+	} else if (Atpos==2) {
+		res_atom_parent_index=1; res_atom_parent_parent_index=3;
+	}
 	std::string res_atom_parent1 = pose.residue(res_pos).atom_name( res_atom_parent_index );
 	std::string res_atom_parent2 = pose.residue(res_pos).atom_name( res_atom_parent_parent_index );
 
@@ -204,6 +210,16 @@ add_covalent_linkage_helper(
 	while( whitespace_pos != -1 ) {
 		res_atom.erase(whitespace_pos, 1 );
 		whitespace_pos = res_atom.find(" ");
+	}
+	whitespace_pos = res_atom_parent1.find(" ");
+	while( whitespace_pos != -1 ) {
+		res_atom_parent1.erase(whitespace_pos, 1 );
+		whitespace_pos = res_atom_parent1.find(" ");
+	}
+	whitespace_pos = res_atom_parent2.find(" ");
+	while( whitespace_pos != -1 ) {
+		res_atom_parent2.erase(whitespace_pos, 1 );
+		whitespace_pos = res_atom_parent2.find(" ");
 	}
 
 	std::string current_pose_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
@@ -258,13 +274,13 @@ add_covalent_linkage_helper(
 
 		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it) {
 			std::string const base_name( residue_type_base_name( *(*res_it) ) );
-			//std::cerr << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl;
+			//TR << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl; TR.flush(); //DELETE ME
 
 			if( current_pose_type_basename == base_name ){
 
 				ResidueTypeOP mod_res;
 				core::Size con_res(0);
-				//std::cerr << " MODIFYING" << std::endl;
+				//TR << " MODIFYING" << std::endl; TR.flush(); //DELETE ME
 				std::string patches_name( residue_type_all_patches_name( *(*res_it) ) );
 				std::string new_name( base_name + res_varname + patches_name );
 
@@ -301,6 +317,7 @@ add_covalent_linkage_helper(
 						addvirt.apply( (*mod_res) );
 						mod_res->add_bond(virtname, res_atom);
 						mod_res->set_atom_base(virtname, res_atom);
+						//TR << "Setting metal itorsion=" << itorsion << " iangle=" << iangle << " idis=" << idis << std::endl; TR.flush(); //DELETE ME
 						mod_res->set_icoor( virtname,  itorsion, iangle, idis, res_atom, res_atom_parent1, res_atom_parent2, true ); //Place the virt atop the bonding partner.
 						mod_res->finalize();
 					}
@@ -308,7 +325,7 @@ add_covalent_linkage_helper(
 
 				if(remove_hydrogens) { //If we're stripping off hydrogens, loop through all the hydrogens and remove ONLY the first bonded hydrogen that we encounter.  Adjust charges accordingly.
 					utility::vector1 < core::Size > bonded_indices = mod_res->bonded_neighbor( Atpos );
-
+					mod_res->finalize(); //Extra finalize needed prior to atom_is_hydrogen() call, below.
 					for(core::Size ia=1, iamax=bonded_indices.size(); ia<=iamax; ++ia) {
 						//printf("This atom is bonded to index %lu.\n", bonded_indices[ia]); fflush(stdout); //DELETE ME
 						if(mod_res->atom_is_hydrogen(bonded_indices[ia])) {

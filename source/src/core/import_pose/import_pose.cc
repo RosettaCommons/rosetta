@@ -658,8 +658,7 @@ void build_pose_as_is2(
 	if( options.set_up_metal_bonds() ) {	
 		core::util::auto_setup_all_metal_bonds(pose, options.metal_bond_LJ_multiplier(), true);
 		if( options.set_up_metal_constraints() ) {
-			core::util::auto_setup_all_metal_constraints( pose, options.metal_bond_dist_constraint_multiplier(),
-					options.metal_bond_dist_constraint_multiplier() );
+			core::util::auto_setup_all_metal_constraints( pose, options.metal_bond_dist_constraint_multiplier(), options.metal_bond_angle_constraint_multiplier() );
 		}
 	}
 
