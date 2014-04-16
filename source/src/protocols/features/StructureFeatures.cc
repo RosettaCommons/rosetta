@@ -106,7 +106,7 @@ StructureFeatures::write_schema_to_db(
 		// set to the database partition identifier.
 		//
 		// Set autoincrement base value to bit shifted partition id.
-		runtime_assert(db_session->get_db_partition() >= 0 && db_session->get_db_partition() < std::numeric_limits<uint32_t>::max());
+		runtime_assert(db_session->get_db_partition() >= 0 && db_session->get_db_partition() < (platform::SSize) std::numeric_limits<uint32_t>::max());
 
 		StructureID structure_prefix = db_session->get_db_partition();
 		structure_prefix = structure_prefix << 32;
