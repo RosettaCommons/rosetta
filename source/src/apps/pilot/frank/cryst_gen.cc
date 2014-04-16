@@ -275,7 +275,6 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 
 	// [1] point symm around (0,0,0)
 	int MAXS = 1;
-	if (fastmode) MAXS=0;
 	for (int x=-MAXS; x<=MAXS; ++x)
 	for (int y=-MAXS; y<=MAXS; ++y)
 	for (int z=-MAXS; z<=MAXS; ++z) {
@@ -343,9 +342,9 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 
 			if (hit_i.name != "C2" && hit_j.name != "C2") continue;
 
-			numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop2].get_rotation();
+			numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop1].get_rotation();
 			numeric::xyzMatrix<Real> const &Sj = rts[hit_j.symmop2].get_rotation();
-			numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop2].get_translation() + hit_i.ls2;
+			numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop1].get_translation() + hit_i.ls2;
 			numeric::xyzVector<Real> const &Tj = rts[hit_j.symmop2].get_translation() + hit_j.ls2;
 
 			numeric::xyzMatrix<Real> Sij = Si*Sj;
@@ -353,7 +352,6 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 			numeric::xyzMatrix<Real> Sji = Sj*Si;
 			numeric::xyzVector<Real> Tji = Sj*Ti + Tj;
 
-			//if (!transforms_equiv(Sij,Tij,Sji,Tji)) continue;
 			if (hit_i.origin != hit_j.origin) continue;
 
 			pointGroupHit hit_new;
@@ -369,21 +367,93 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 		}
 	}
 
+	// find T's and O's
+	for (int i=1; i<=nhits; ++i) {
+		for (int j=i+1; j<=nhits; ++j) {
+			pointGroupHit const &hit_i = hits[i];
+			pointGroupHit const &hit_j = hits[j];
+
+			if (hit_i.name != "C3" && hit_j.name != "C3") continue;
+
+			Real b = hit_i.axis.dot(hit_j.axis );
+			if ( std::fabs(b) > 0.99999) continue;
+
+			numeric::xyzVector<Real> w0=hit_i.origin-hit_j.origin;
+			Real d=dot(hit_j.axis,w0);
+			Real e=dot(hit_i.axis,w0);
+			numeric::xyzVector<Real> x = (hit_i.origin-hit_j.origin)+((b*e-d)*hit_i.axis-(e-b*d)*hit_j.axis)/(1-b*b);
+			Real offset = x.length();
+			Real sc=(b*e-d)/(1-b*b);
+			numeric::xyzVector<Real> new_origin=hit_i.origin+hit_i.axis*sc;
+
+			if (offset<1e-4) continue;
+
+			if (std::fabs( b - 1.0/3.0) <= 1e-4) {
+				numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop1].get_rotation();
+				numeric::xyzMatrix<Real> const &Sj = rts[hit_j.symmop2].get_rotation();
+				numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop1].get_translation() + hit_i.ls2;
+				numeric::xyzVector<Real> const &Tj = rts[hit_j.symmop2].get_translation() + hit_j.ls2;
+
+				numeric::xyzMatrix<Real> Sij = Si*numeric::inverse(Sj);
+				numeric::xyzVector<Real> Tij = Ti-Tj;
+				numeric::xyzMatrix<Real> ST = Sij*Sij;
+				numeric::xyzVector<Real> TT = Tij + Sij*Tij;
+				numeric::xyzVector<Real> TR = Ti + TT;
+				ST = Sij*ST;
+				TT = Tij+Sij*TT;
+				TR = TR+TT;
+				if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
+					hits.push_back( pointGroupHit("T", hit_i.axis, hit_j.axis, new_origin, 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2 ) );
+				}
+			} else if (std::fabs( b ) <= 1e-4) {
+				numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop1].get_rotation();
+				numeric::xyzMatrix<Real> const &Sj = rts[hit_j.symmop2].get_rotation();
+				numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop1].get_translation() + hit_i.ls2;
+				numeric::xyzVector<Real> const &Tj = rts[hit_j.symmop2].get_translation() + hit_j.ls2;
+
+				numeric::xyzMatrix<Real> Sij = Si*numeric::inverse(Sj);
+				numeric::xyzVector<Real> Tij = Ti-Tj;
+				numeric::xyzMatrix<Real> ST = Sij*Sij;
+				numeric::xyzVector<Real> TT = Tij + Sij*Tij;
+				numeric::xyzVector<Real> TR = Ti + TT;
+				ST = Sij*ST;
+				TT = Tij+Sij*TT;
+				TR = TR+TT;
+				ST = Sij*ST;
+				TT = Tij+Sij*TT;
+				TR = TR+TT;
+				if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
+					hits.push_back( pointGroupHit("O", hit_i.axis, hit_j.axis, new_origin, 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2 ) );
+				}
+			}
+		}
+	}
+
+
 	// remove duplicates
 	nhits = (int)hits.size();
-	if (fastmode) {
-		for (int i=1; i<=nhits; ++i) {
-			bool dup=false;
-			for (int j=1; j<=(int)hits_dedup.size() && !dup; ++j) {
-				if (hits[i].name == hits_dedup[j].name
-						&& (hits[i].axis == hits_dedup[j].axis /*|| hits[i].axis == -hits_dedup[j].axis*/)
-						&& hits[i].origin == hits_dedup[j].origin)
-					dup=true;
-			}
-			if (!dup) hits_dedup.push_back(hits[i]);
+	for (int i=1; i<=nhits; ++i) {
+		bool dup=false;
+		for (int j=1; j<=(int)hits_dedup.size() && !dup; ++j) {
+			Real delaxis = (hits[i].axis - hits_dedup[j].axis).length();
+			Real delorigin = (hits[i].origin - hits_dedup[j].origin).length();
+
+			if (hits[i].name == hits_dedup[j].name
+					&& delaxis <= 1e-4
+					&& delorigin <= 1e-4)
+				dup=true;
+
+			if (hits[i].name == "O" && hits_dedup[j].name == "O"
+					&& delorigin <=1e-4
+					&& std::fabs( hits[i].axis.dot(hits_dedup[j].axis ) - 1.0/3.0) <1e-4 )
+				dup=true;
+
+			if (hits[i].name == "T" && hits_dedup[j].name == "T"
+					&& delorigin <=1e-4
+					&& std::fabs( hits[i].axis.dot(hits_dedup[j].axis )) <1e-4 )
+				dup=true;
 		}
-	} else {
-		hits_dedup=hits;
+		if (!dup) hits_dedup.push_back(hits[i]);
 	}
 
 	return hits_dedup;
@@ -395,7 +465,7 @@ check_if_forms_lattice(
 		utility::vector1<core::kinematics::RT> const &rts,
 		utility::vector1<core::kinematics::RT> const &rts_all,
 		bool verbose=false ) {
-	int EXPAND_ROUNDS=12;  // ?????
+	int EXPAND_ROUNDS=12;
 	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 
 	// don't include duplicate symmops!
@@ -535,15 +605,15 @@ try {
 		get_symmops( spacegroups[sx], rts, cenops );
 		utility::vector1< pointGroupHit > pgs = get_point_groups( rts, skewM, fastmode );
 
-		//for (int i=1; i<=(int)pgs.size(); ++i) {
-		//	pointGroupHit hit_i = pgs[i];
-		//	std::cerr << "    " << hit_i.name << ": axis=[" << hit_i.axis[0] <<","<< hit_i.axis[1] <<","<< hit_i.axis[2]
-		//		<<"]  ori=["<< hit_i.origin[0] <<","<< hit_i.origin[1] <<","<< hit_i.origin[2] <<"] "
-		//		<<"  lattice_shift=[" << hit_i.ls2[0] <<","<< hit_i.ls2[1] <<","<< hit_i.ls2[2] <<"] "
-		//		<<" symmops:" << hit_i.symmop2;
-		//	if (hit_i.symmop3 != 0) std::cerr << " and " << hit_i.symmop3 << std::endl;
-		//	else std::cerr << std::endl;
-		//}
+//		for (int i=1; i<=(int)pgs.size(); ++i) {
+//			pointGroupHit hit_i = pgs[i];
+//			std::cerr << "    " << hit_i.name << ": axis=[" << hit_i.axis[0] <<","<< hit_i.axis[1] <<","<< hit_i.axis[2]
+//				<<"]  ori=["<< hit_i.origin[0] <<","<< hit_i.origin[1] <<","<< hit_i.origin[2] <<"] "
+//				<<"  lattice_shift=[" << hit_i.ls2[0] <<","<< hit_i.ls2[1] <<","<< hit_i.ls2[2] <<"] "
+//				<<" symmops:" << hit_i.symmop2;
+//			if (hit_i.symmop3 != 0) std::cerr << " and " << hit_i.symmop3 << std::endl;
+//			else std::cerr << std::endl;
+//		}
 
 		// sample all pairs of point groups
 		utility::vector1< latticeHit > finalHits;
