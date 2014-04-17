@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/pose/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh
+/// @file protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh
 /// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu

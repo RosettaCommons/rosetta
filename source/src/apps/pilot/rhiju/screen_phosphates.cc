@@ -31,7 +31,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
-#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_Minimizer.hh>

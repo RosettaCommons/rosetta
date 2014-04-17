@@ -91,6 +91,9 @@ sources = {
 	"StepWiseSampleAndScreen",
 	"StepWiseUtil",
     ],
+    "protocols/stepwise/full_model_info/": [
+	"FullModelInfoSetupFromCommandLine",
+    ],
     "protocols/stepwise/sampling/legacy/": [
 	"RigidBodySampler",
     ],

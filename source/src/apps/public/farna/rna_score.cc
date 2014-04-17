@@ -25,7 +25,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/util.hh>

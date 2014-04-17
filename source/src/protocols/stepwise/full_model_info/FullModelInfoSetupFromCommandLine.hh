@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh
+/// @file protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_HH
 #define INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_HH
 
-#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh>
+#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>

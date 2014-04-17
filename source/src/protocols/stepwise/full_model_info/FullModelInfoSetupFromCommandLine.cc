@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/pose/full_model_info/FullModelInfoSetupFromCommandLine.cc
+/// @file protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>

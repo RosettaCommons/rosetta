@@ -76,9 +76,6 @@ sources = {
 		"init",
 		"score_function_corrections",
 	],
-	"core/pose/full_model_info": [
-		"FullModelInfoSetupFromCommandLine", # needs import_pose
-	],
 }
 include_path = [
 ]

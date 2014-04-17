@@ -18,7 +18,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/init/init.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
