@@ -93,6 +93,7 @@ OPT_1GRP_KEY(Real, crystdock, beta)
 OPT_1GRP_KEY(Real, crystdock, gamma)
 OPT_1GRP_KEY(Real, crystdock, maxclash)
 OPT_1GRP_KEY(Real, crystdock, mininterface)
+OPT_1GRP_KEY(Real, crystdock, mininterfacesum)
 OPT_1GRP_KEY(Real, crystdock, trans_step)
 OPT_1GRP_KEY(Real, crystdock, rot_step)
 OPT_1GRP_KEY(Real, crystdock, cb_radius)
@@ -111,6 +112,8 @@ OPT_1GRP_KEY(Real, crystdock, cb_clashdist)
 OPT_1GRP_KEY(Real, crystdock, sigwidth)
 OPT_1GRP_KEY(Real, crystdock, interfacedist)
 OPT_1GRP_KEY(Real, crystdock, interface_sigwidth)
+OPT_1GRP_KEY(Real, crystdock, cluster_cutoff)
+
 
 ////////////////////////////////////////////////
 // helper functions
@@ -803,7 +806,11 @@ public:
 			numeric::xyzMatrix<Real> S,
 			FArray3D<Real> &Srho);
 
-
+	// get maximum radius from a pose
+	Real get_radius_of_pose( Pose & pose );
+	
+	//Calculate transformed distance
+	Real get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clustered , UniformRotationSampler const &urs, Real radius); 
 	// wrapper does a series of 2d ffts
 	//    this could be an option to the low-level fft code to possibly save time
 	void
@@ -828,7 +835,7 @@ public:
 			utility::vector1<core::kinematics::RT> const &rts_all );
 
 	// get the score per interface
-	void
+	Real
 	get_interfaces(
 			utility::vector1<core::kinematics::RT> const &rts,
 			numeric::xyzMatrix<Real> R,
@@ -1176,7 +1183,38 @@ CrystDock::resample_maps_and_get_self(
 	return ca_overlap;
 }
 
+Real 
+CrystDock::get_radius_of_pose( Pose & pose ) {
+	Real radius = pose.residue(1).atom(2).xyz().length();
+	for (int i=2; i<=(int)pose.total_residue(); ++i) {
+		Real r=pose.residue(i).atom(2).xyz().length();
+		if (radius < r) radius=r;
+	}
+	return radius;
+}
 
+Real
+CrystDock::get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clustered , UniformRotationSampler const &urs, Real radius){
+	Real x1=ih_vec.x, y1=ih_vec.y, z1=ih_vec.z, x2=ih_vec_clustered.x, y2=ih_vec_clustered.y, z2=ih_vec_clustered.z;
+	Size rot1=ih_vec.rot_index, rot2=ih_vec_clustered.rot_index;
+
+	numeric::xyzMatrix<Real> R1, R2;
+	urs.get(rot1,R1);
+	urs.get(rot2,R2);
+	numeric::xyzVector< core::Real > vec1;
+	numeric::xyzVector< core::Real > vec2;
+	vec1[0]=x1;vec1[1]=y1;vec1[2]=z1;
+	vec2[0]=x2;vec2[1]=y2;vec2[2]=z2;
+	Real dist=(vec1-vec2).length();
+	R2=numeric::inverse(R2);
+	Real angle=DEG2RAD*R2ang(R1*R2);
+	Real transform_dist=angle*radius+dist;
+	TR << "x1: " << x1 << "y1: " << y1 <<"z1: " << z1 << std::endl;
+	TR << "x2: " << x1 << "y2: " << y1 <<"z2: " << z1 << std::endl;
+	TR << "Angle: " << angle << std::endl;
+	TR << "Transform Distance: " << transform_dist << std::endl; 
+	return transform_dist;
+}
 // TO DO: align on principal axes
 numeric::xyzVector<Real>
 CrystDock::center_pose_at_origin( Pose & pose ) {
@@ -1595,7 +1633,7 @@ CrystDock::do_convolution( FArray3D<Real> const &rho, FArray3D<Real> const &Srho
 //    break down the contribution into individual interfaces
 //    find the weakest connection in fully connected lattice
 // work in the space of oversample_grid_
-void
+Real
 CrystDock::get_interfaces(
 		utility::vector1<core::kinematics::RT> const &rts,
 		numeric::xyzMatrix<Real> R,
@@ -1609,6 +1647,7 @@ CrystDock::get_interfaces(
 
 	// [STAGE 1] compute exact interface scores
 	Real best_int = 0;
+	Real cb_sum = 0;
 	for (int i=1; i<=(int)symmopList.size(); ++i) {
 		int s = symmopList[i];
 
@@ -1660,6 +1699,7 @@ CrystDock::get_interfaces(
 
 			// add interface if large enough
 			cb_overlap_abc *= voxel_volume;
+			cb_sum += cb_overlap_abc;
 			best_int = std::max( best_int, cb_overlap_abc );
 			if ( cb_overlap_abc > mininterface_ ) {
 				allInterfaces.push_back(
@@ -1667,6 +1707,7 @@ CrystDock::get_interfaces(
 			}
 		}
 	}
+	return cb_sum;
 }
 
 
@@ -1708,8 +1749,8 @@ CrystDock::get_interface_score(
 				numeric::xyzVector<Real> Tij = Sj*Ti + Tj;
 				Real overlap_ij = std::min( allInterfaces[i].cb_overlap_, allInterfaces[j].cb_overlap_ );
 
-				if ((Tij[0])>1 || (Tij[1])>1 || (Tij[2])>1) continue;
-				if ((Tij[0])<-1 || (Tij[1])<-1 || (Tij[2])<-1) continue;
+				if ((Tij[0])>2 || (Tij[1])>2 || (Tij[2])>2) continue;
+				if ((Tij[0])<-2 || (Tij[1])<-2 || (Tij[2])<-2) continue;
 
 				// check if it is in the set
 				// we could hash these for a small speed increase...
@@ -1755,6 +1796,7 @@ CrystDock::get_interface_score(
 				score = std::min( score, allInterfaces[j].cb_overlap_ );
 			}
 		}
+		TR << "Connection check  at " << i << "and " << contains_j <<std::endl;
 		connected &= contains_j;
 	}
 	if (!connected) return 0.0;
@@ -1778,7 +1820,7 @@ CrystDock::get_interface_score(
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(-1,0,0)))
 			score_m00 = allInterfaces[i].cb_overlap_;
 	}
-
+	TR << "Scores: score_00p " << score_00p << " score_00m: " << score_00m << " score_0m0: " << score_0m0 << " score_0p0: " << score_0p0 << " score_p00: " << score_p00 << " score_m00: " << score_m00 <<std::endl;
 	score = std::min( score, std::min(score_00p, score_00m));
 	score = std::min( score, std::min(score_0m0, score_0p0));
 	score = std::min( score, std::min(score_p00, score_m00));
@@ -1923,11 +1965,13 @@ CrystDock::apply( Pose & pose) {
 			ca_score += get_clash_score_exact( offset_grid_pt, rts[s].get_rotation(), rts[s].get_translation(), r_rho_ca );
 		}
 
-		get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
+		//change this function
+		core::Real cb_sum = get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
 		core::Real cb_score = get_interface_score( iinfo, rts );
 
 		TR << "OVERLAP_score = " << ca_score << std::endl;
 		TR << "INTERACTION_score = " << cb_score << std::endl;
+		TR << "cb_sum = " <<cb_sum << std::endl;
 
 		//numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
 		//std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
@@ -1968,7 +2012,7 @@ CrystDock::apply( Pose & pose) {
 		}
 
 		Real sum_interface_p1 = 0;
-		for (int i=1; i<=p1_interface_map.size(); ++i) {
+		 for (int i=1; i<=(int)p1_interface_map.size(); ++i) {
 			sum_interface_p1 += p1_interface_map[i].cb_overlap_;
 		}
 		sum_interface_area = sum_interface_p1;
@@ -2065,7 +2109,8 @@ CrystDock::apply( Pose & pose) {
 		for (int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z)
 		for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 		for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
-			if (collision_map(x,y,z) < maxclash && sum_interface_area(x,y,z) > sg_.min_interfaces_req()*mininterface_) {
+			if (collision_map(x,y,z) < maxclash && 
+				sum_interface_area(x,y,z) > std::max( sg_.min_interfaces_req()*mininterface_, option[crystdock::mininterfacesum]() )) {
 				nnonclashing++;
 
 				// get_interface_score populates iinfo
@@ -2090,9 +2135,52 @@ CrystDock::apply( Pose & pose) {
 		}
 
 	// DONE!  dump hits to stdout
+// 	int nhits = IDB.size();
+// 	for (int i=1; i<=nhits; ++i) {
+// 		InterfaceHit ih = IDB.pop();
+// 		TR << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " " << ih.rot_index  << " " << std::endl;
+// 
+// 		// Treat tags as file names so that we put the number before the extension.
+// 		std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+// 		utility::vector1< std::string > temp_out_names= utility::split( base_name );
+// 		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
+// 		base_name = out_name.base();
+// 		std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( i, 8, '0' )+".pdb";
+// 		dump_transformed_pdb( pose, ih, urs, outname );
+// 	}
+
+
+	utility::vector1< InterfaceHit > ih_vec;
 	int nhits = IDB.size();
 	for (int i=1; i<=nhits; ++i) {
 		InterfaceHit ih = IDB.pop();
+		ih_vec.push_back( ih );
+	}
+	std::reverse(ih_vec.begin(),ih_vec.end());
+
+
+	Real pose_radius = get_radius_of_pose( pose );
+	Real cluster_cutoff=option[crystdock::cluster_cutoff];
+	utility::vector1< InterfaceHit > ih_vec_clustered;
+	for (int i=1; i<=nhits; ++i) {
+		int nclust = ih_vec_clustered.size();
+		bool found_match=false;
+		for (int j=1; j<=nclust && !found_match; ++j) {
+			Real dist_ij = get_transform_distance( ih_vec[i], ih_vec_clustered[j] , urs, pose_radius);
+			found_match = (dist_ij <= cluster_cutoff);
+		}
+		if (!found_match) {
+			TR << "not found match" << std::endl;
+			ih_vec_clustered.push_back( ih_vec[i] );
+		} else {
+			TR << "found match" << std::endl;
+		}
+	}
+
+	int nhits_after_cluster = ih_vec_clustered.size();
+	TR << "Have " << nhits_after_cluster << " after clustering." << std::endl;
+	for (int i=1; i<=nhits_after_cluster; ++i) {
+		InterfaceHit ih = ih_vec_clustered[i];
 		TR << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " " << ih.rot_index  << " " << std::endl;
 
 		// Treat tags as file names so that we put the number before the extension.
@@ -2136,8 +2224,9 @@ try {
 	NEW_OPT(crystdock::alpha, "unit cell alpha", 90);
 	NEW_OPT(crystdock::beta, "unit cell beta", 90);
 	NEW_OPT(crystdock::gamma, "unit cell gamma", 90);
-	NEW_OPT(crystdock::maxclash, "max allowed clashscore", 5);
-	NEW_OPT(crystdock::mininterface, "min allowed interface area", 10);
+	NEW_OPT(crystdock::maxclash, "max allowed clashscore", 20);
+	NEW_OPT(crystdock::mininterface, "min allowed interface area", 250);
+	NEW_OPT(crystdock::mininterfacesum, "min interface area sum", 1500);
 	NEW_OPT(crystdock::trans_step, "translational stepsize (A)", 1);
 	NEW_OPT(crystdock::rot_step, "rotational stepsize (degrees) ([debug] 0 searches input rotation only)", 10);
 	NEW_OPT(crystdock::nmodels, "number of models to output", 1000);
@@ -2152,9 +2241,11 @@ try {
     NEW_OPT(crystdock::c_clashdist, "c_clashdist", 2.00);
     NEW_OPT(crystdock::o_clashdist, "o_clashdist", 1.30);
     NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.50);
-    NEW_OPT(crystdock::sigwidth, "sigwidth", 6.00);
-    NEW_OPT(crystdock::interfacedist, "interfacedistance", 4.00);
-    NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 6.00);
+    NEW_OPT(crystdock::sigwidth, "sigwidth", 18.00);
+    NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
+    NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
+    NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
+    
 
 
 	devel::init( argc, argv );
