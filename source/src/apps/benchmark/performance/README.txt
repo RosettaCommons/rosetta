@@ -27,13 +27,13 @@ See the performance benchmarks section on RosettaTests
 
 1) Compile the benchmark application in release mode 
     
-     cd rosetta_source
-     ./scons.py benchmark mode=release -j<n_cores>
+     cd source
+     ./scons.py performance_benchmark mode=release -j<n_cores>
 
 2) Run the benchark application from this directory
 
      cd rosetta_source/src/apps/benchmark
-     ../../../bin/benchmark.default.<platform/compiler>release \
+     ../../../bin/performance_benchmark.default.<platform/compiler>release \
        -database <path_to_database> \
        -benchmark_scale <multiple run length by this value> \
        [-run_one_benchmark <name of benchmark>]
