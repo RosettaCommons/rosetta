@@ -60,10 +60,9 @@ void use_backrub(core::pose::PoseOP & pose,core::scoring::ScoreFunctionOP scoref
                 backrubmover.set_input_pose( pose );
 
                 (*scorefxn)(p);
-
+                Size const nstruct( option[ out::nstruct] );
 		std::string move_type = backrubmover.type();
-		core::Size n = option[ out::nstruct ];
-                for ( int trial = 1, ntrials = n; trial <= ntrials; ++trial ) {
+                for ( core::Size trial = 1; trial <= nstruct; ++trial ) {
                         backrubmover.apply(p);
                         mc.boltzmann(pose, move_type);
 	                std::ostringstream oss;
