@@ -93,8 +93,8 @@ namespace full_model_info {
 		utility::vector1< Size > const &
 		get_parameter( FullModelParameterType const type ) const;
 
-		Size
-		get_value_at_res( Size const n, FullModelParameterType const type );
+		//		Size
+		//		get_value_at_res( Size const n, FullModelParameterType const type );
 
 		Size size() const { return full_sequence_.size(); }
 
