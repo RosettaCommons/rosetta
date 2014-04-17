@@ -78,9 +78,6 @@ namespace protein {
 		set_input_streams( utility::vector1< InputStreamWithResidueInfoOP > const & input_streams ){ input_streams_ = input_streams; }
 
 		void
-		set_job_parameters( StepWiseProteinJobParametersCOP job_parameters );
-
-		void
 		set_do_ccd( bool const setting ){ do_ccd_ = setting; }
 
 		void set_moving_res_list( utility::vector1< Size > const & setting ){ moving_res_list_ = setting; }

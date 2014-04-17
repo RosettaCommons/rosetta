@@ -74,10 +74,6 @@ namespace protein {
 																			core::Size const base_res2,
 																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
 
-	void
-	fragment_set_slice ( core::fragment::ConstantLengthFragSetOP & fragset, utility::vector1< core::Size > const & slice_res );
-
-
 } //protein
 } //sampling
 } //stepwise
