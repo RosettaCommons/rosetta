@@ -43,6 +43,7 @@ static basic::Tracer TR("protocols.simple_moves.RBOutMover");
 namespace devel {
 namespace splice {
 
+//
 using namespace::protocols;
 
 std::string

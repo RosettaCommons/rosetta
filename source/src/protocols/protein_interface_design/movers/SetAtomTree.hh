@@ -48,11 +48,15 @@ public :
 	void simple_ft( bool const s ){ simple_ft_ = s; }
 	void two_parts_chain1( bool const t ){ two_parts_chain1_ = t; }
 	bool two_parts_chain1() const{ return two_parts_chain1_; }
+
+	core::kinematics::FoldTreeOP fold_tree() const;
+	void fold_tree( core::kinematics::FoldTreeOP ft_ );
 private :
 	bool docking_ft_, simple_ft_, two_parts_chain1_; //dflt false; false; false; two-parts-chain1 is intended for cases where chain1 has a cut and we want to optimize the jump between part1 and part2 along with the jump between chain1 and chain2
 	core::Size jump_; //dflt true
 	std::string resnum_, connect_to_, anchor_res_, connect_from_; //as parsed
 	core::Size host_chain_; //dflt 2
+	core::kinematics::FoldTreeOP fold_tree_; // dflt NULL; if set just use it without any other options. Reading a foldtree from file parses the fold tree at parse time and then just applies it at apply.
 };
 
 } // movers

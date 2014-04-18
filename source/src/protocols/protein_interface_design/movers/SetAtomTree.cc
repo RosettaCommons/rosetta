@@ -16,6 +16,7 @@
 #include <protocols/protein_interface_design/movers/SetAtomTreeCreator.hh>
 #include <protocols/docking/types.hh>
 #include <protocols/docking/util.hh>
+#include <utility/io/izstream.hh>
 
 // Package headers
 #include <protocols/protein_interface_design/util.hh>
@@ -79,7 +80,8 @@ SetAtomTree::SetAtomTree() :
 	connect_to_( "" ),
 	anchor_res_( "" ),
 	connect_from_( "" ),
-	host_chain_( 2 )
+	host_chain_( 2 ),
+	fold_tree_( NULL )
 {}
 
 SetAtomTree::~SetAtomTree() {}
@@ -92,6 +94,16 @@ SetAtomTree::clone() const {
 void
 SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
+	std::string const ft_name( tag->getOption< std::string >( "fold_tree_file", "" ) );
+	if( ft_name != "" ){
+		utility::io::izstream data( ft_name );
+  	if ( !data )
+			utility_exit_with_message( "failed to open file " + ft_name );
+		fold_tree_ = new core::kinematics::FoldTree;
+		data >> *fold_tree_;
+		TR<<"Read fold tree from file: "<<*fold_tree_<<std::endl;
+		return;
+	}
 	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
 	simple_ft( tag->getOption< bool >( "simple_ft", 0 ) );
 	jump_ = tag->getOption< core::Size >( "jump", 1);
@@ -166,6 +178,11 @@ SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const h
 void
 SetAtomTree::apply( core::pose::Pose & pose )
 {
+	if( fold_tree_ ){
+		TR<<"Applying fold_tree: "<<*fold_tree_<<std::endl;
+		pose.fold_tree( *fold_tree_ );
+		return;
+	}
 	if( docking_ft_ ){
 		docking::DockJumps jumps;
 		jumps.clear();
@@ -268,8 +285,8 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		return;
 	}
 	}
-	
-		
+
+
 	core::Size const resnum( core::pose::parse_resnum( resnum_, pose ) );
 	core::conformation::Residue const res_central( pose.residue( resnum ) );;
 
@@ -305,6 +322,12 @@ std::string
 SetAtomTree::get_name() const {
 	return SetAtomTreeCreator::mover_name();
 }
+
+core::kinematics::FoldTreeOP
+SetAtomTree::fold_tree() const{ return fold_tree_; }
+
+void
+SetAtomTree::fold_tree( core::kinematics::FoldTreeOP ft ){ fold_tree_ = ft; }
 
 } //movers
 } //protein_interface_design
