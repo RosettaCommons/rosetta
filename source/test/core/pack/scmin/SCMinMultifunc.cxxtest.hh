@@ -100,7 +100,7 @@ public:
 		using namespace optimization;
 		using namespace graph;
 
-		typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
+		//typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
 		// read in pose

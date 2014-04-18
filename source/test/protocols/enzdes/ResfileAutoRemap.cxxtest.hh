@@ -91,7 +91,7 @@ public:
   void test_resfile_auto_remap()
   {
 	  using namespace core::scoring::constraints;
-	  typedef core::id::AtomID AtomID;
+	  //typedef core::id::AtomID AtomID;
 		bool optionsaveval = 	basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface ].value();
 		basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface ].value(true);
 

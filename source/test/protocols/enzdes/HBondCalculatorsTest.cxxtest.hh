@@ -110,7 +110,7 @@ public:
   void test_hb_calculators()
   {
     using namespace core::scoring::constraints;
-    typedef core::id::AtomID AtomID;
+    //typedef core::id::AtomID AtomID;
 
 		core::pose::Pose test_pose;
 		core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");

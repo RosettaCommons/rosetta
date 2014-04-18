@@ -113,7 +113,7 @@ public:
 		using namespace core;
 		ANN ann;
 		ann.init( 113,30,1,9,6,3,lib().TAB_DIR, "HN" );
-		typedef utility::vector0<float> WeightVector;
+		//typedef utility::vector0<float> WeightVector;
 		core::Real const TOLERATED_ERROR( 5e-3 );
 // 		Size ct = 0;
 // 		for ( WeightVector::const_iterator it = ann.BI_1.begin(); it != ann.BI_1.end(); ++it, ++ct ) {
@@ -146,7 +146,7 @@ public:
 	}
 	void test_ANN_INPUT() {
 		core::Real const TOLERATED_ERROR( 5e-3 );
-		typedef utility::vector0<float> Values;
+		//typedef utility::vector0<float> Values;
 
 		// for ( int resid = lib().r1+1; resid < lib().rN; resid++ ) {
 		// 			Values const& temp( lib().ANN_IN_MTX[resid] );

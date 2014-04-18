@@ -92,7 +92,7 @@ public:
 		using namespace pack::scmin;
 		using namespace pose;
 
-		typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
+		//typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
 
 		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();

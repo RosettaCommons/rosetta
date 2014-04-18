@@ -24,6 +24,7 @@ sources = {
 		"bond_support",
 		"ChemicalManager",
 		"Element",
+		"Elements",
 		"ElementSet",
 		"ElectronConfiguration",
 		"IdealBondLengthSet",

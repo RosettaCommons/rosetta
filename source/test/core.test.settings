@@ -15,6 +15,7 @@ sources = {
 		"AtomTypeSet",
 		"AtomTypeDatabaseIOTests",
 		"automorphism",
+		"Elements",
 		"MMAtomTypeSet",
 		"OrbitalTests",
 		"ResidueTypeBloatTests",

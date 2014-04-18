@@ -18,7 +18,6 @@
 #define INCLUDED_core_chemical_Element_hh
 
 #include <core/chemical/Element.fwd.hh>
-
 #include <core/chemical/ElectronConfiguration.hh>
 
 #include <core/types.hh>

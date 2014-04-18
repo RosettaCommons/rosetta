@@ -183,7 +183,7 @@ public:
 		using namespace scoring::methods;
 		using namespace optimization;
 		using namespace graph;
-		typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
+		//typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
