@@ -1007,8 +1007,11 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 				}//foreach segment_tag
 			}// fi Segments
 		}//foreach sub_tag
-		if (!check_segment){
+		if (!check_segment && !segment_names_ordered_.empty()){ //sanity check to make sure the current segment (what is being spliced) is also in the list of segemtns
 			utility_exit_with_message( "Segment "+segment_type_+" was not found in the list of segemnts. Check XML file\n");
+		}
+		if (segment_names_ordered_.empty()){ //If splicing in segment but not using sequence profile then turn off "use_seqeunce_profiles"
+			use_sequence_profiles_ = false;	
 		}
 	}//fi (sub_tags!=NULL)
 
