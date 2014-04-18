@@ -229,8 +229,8 @@ namespace stepwise {
 									 bool const connect_residues_by_bond,
 									 bool const fix_first_pose = true );
 
-	bool
-	residue_is_bulged( pose::Pose const & pose, Size const & resid );
+	//	bool
+	//	residue_is_bulged( pose::Pose const & pose, Size const & resid );
 
 	void
 	slice( pose::Pose & sliced_out_pose,
