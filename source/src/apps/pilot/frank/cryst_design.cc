@@ -115,6 +115,7 @@ OPT_1GRP_KEY(Real, crystdock, interface_sigwidth)
 OPT_1GRP_KEY(Real, crystdock, cluster_cutoff)
 
 
+
 ////////////////////////////////////////////////
 // helper functions
 inline int pos_mod(int x,int y) {
@@ -1700,6 +1701,7 @@ CrystDock::get_interfaces(
 			// add interface if large enough
 			cb_overlap_abc *= voxel_volume;
 			cb_sum += cb_overlap_abc;
+			TR << "voxel_volume "<< voxel_volume << " cb_overlap_abc " << cb_overlap_abc << " cb_sum " << cb_sum << std::endl;
 			best_int = std::max( best_int, cb_overlap_abc );
 			if ( cb_overlap_abc > mininterface_ ) {
 				allInterfaces.push_back(
@@ -1966,7 +1968,11 @@ CrystDock::apply( Pose & pose) {
 		}
 
 		//change this function
-		core::Real cb_sum = get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
+		core::Real cb_sum=0;
+		for (int i=1;i<=(int)iinfo.size(); ++i) {
+			cb_sum+= iinfo[i].cb_overlap_;
+		}
+		cb_sum += get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
 		core::Real cb_score = get_interface_score( iinfo, rts );
 
 		TR << "OVERLAP_score = " << ca_score << std::endl;
@@ -2106,11 +2112,11 @@ CrystDock::apply( Pose & pose) {
 		}
 
 		// finally add nonclashing interfaces to the DB
+		Real mininterfacesum_filter = std::max( sg_.min_interfaces_req()*mininterface_, option[crystdock::mininterfacesum]());
 		for (int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z)
 		for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 		for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
-			if (collision_map(x,y,z) < maxclash && 
-				sum_interface_area(x,y,z) > std::max( sg_.min_interfaces_req()*mininterface_, option[crystdock::mininterfacesum]() )) {
+			if (collision_map(x,y,z) < maxclash && sum_interface_area(x,y,z) > mininterfacesum_filter) {
 				nnonclashing++;
 
 				// get_interface_score populates iinfo
@@ -2226,7 +2232,7 @@ try {
 	NEW_OPT(crystdock::gamma, "unit cell gamma", 90);
 	NEW_OPT(crystdock::maxclash, "max allowed clashscore", 20);
 	NEW_OPT(crystdock::mininterface, "min allowed interface area", 250);
-	NEW_OPT(crystdock::mininterfacesum, "min interface area sum", 1500);
+	NEW_OPT(crystdock::mininterfacesum, "min interface area sum", 4000);
 	NEW_OPT(crystdock::trans_step, "translational stepsize (A)", 1);
 	NEW_OPT(crystdock::rot_step, "rotational stepsize (degrees) ([debug] 0 searches input rotation only)", 10);
 	NEW_OPT(crystdock::nmodels, "number of models to output", 1000);
@@ -2245,6 +2251,7 @@ try {
     NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
     NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
     NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
+    
     
 
 
