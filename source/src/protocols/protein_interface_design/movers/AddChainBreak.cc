@@ -64,7 +64,8 @@ AddChainBreak::AddChainBreak() :
 	resnum_( "" ),
 	change_foldtree_( true ),
 	find_automatically_( false ),
-	automatic_distance_cutoff_( 2.5 )
+	automatic_distance_cutoff_( 2.5 ),
+	remove_( false )
 {}
 
 AddChainBreak::~AddChainBreak() {}
@@ -87,8 +88,9 @@ AddChainBreak::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, prot
 		find_automatically( tag->getOption< bool >( "find_automatically" ) );
 		automatic_distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 2.5 ));
 	}
+	remove( tag->getOption< bool >( "remove", false ) );
 	change_foldtree( tag->getOption< bool >( "change_foldtree", true ) );
-	TR<<"resnum: "<<resnum_<<" change foldtree "<<change_foldtree()<<" find cutpoints automatically "<<find_automatically()<<std::endl;
+	TR<<"resnum: "<<resnum_<<" change foldtree "<<change_foldtree()<<" find cutpoints automatically "<<find_automatically()<<" remove: "<<remove()<<std::endl;
 }//end parse my tag
 
 void
@@ -106,8 +108,14 @@ AddChainBreak::apply( core::pose::Pose & pose )
 		}
 		if(pose.residue(resn  ).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,resn);
 		if(pose.residue(resn+1).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,resn+1);
-		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
-		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
+		if( remove() ){
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, resn );
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, resn +1);
+		}
+		else{
+			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
+			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
+		}
 	}
 	utility::vector1< core::Size > cuts;
 	cuts.clear();

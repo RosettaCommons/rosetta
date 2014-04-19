@@ -101,7 +101,9 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 			utility_exit_with_message( "failed to open file " + ft_name );
 		fold_tree_ = new core::kinematics::FoldTree;
 		data >> *fold_tree_;
+		fold_tree_->reorder( 1 );
 		TR<<"Read fold tree from file: "<<*fold_tree_<<std::endl;
+		runtime_assert( fold_tree_->check_fold_tree() );
 		return;
 	}
 	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
@@ -181,6 +183,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	if( fold_tree_ ){
 		TR<<"Applying fold_tree: "<<*fold_tree_<<std::endl;
 		pose.fold_tree( *fold_tree_ );
+
 		return;
 	}
 	if( docking_ft_ ){
