@@ -422,8 +422,8 @@ sources = {
 		"snugdock",
 	],
 	"pilot/jim" : [
-		"rotamerize",
-		"test_helix_scoring",
+		#"rotamerize",
+		#"test_helix_scoring",
 		#"optE_test", # /* Jim Havernek,Documentation Location,Demo Location */
 		#"use_asn_motifs",
 	],
