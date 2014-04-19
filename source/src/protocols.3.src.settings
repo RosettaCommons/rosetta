@@ -560,6 +560,7 @@ sources = {
 		"ReturnSidechainMover",
 		"ResTypeFragmentMover",
 		"RingConformationMover",
+		"RotamerizeMover",
 		"RotamerTrialsMinMover",
 		"RotamerTrialsMover",
 		"SaneMinMover",

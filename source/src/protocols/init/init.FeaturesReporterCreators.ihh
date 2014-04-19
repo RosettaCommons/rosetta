@@ -22,6 +22,7 @@
 #include <protocols/features/GeometricSolvationFeaturesCreator.hh>
 #include <protocols/features/HBondFeaturesCreator.hh>
 #include <protocols/features/HBondParameterFeaturesCreator.hh>
+#include <protocols/features/HelixCapFeaturesCreator.hh>
 #include <protocols/features/JobDataFeaturesCreator.hh>
 #include <protocols/features/LoopAnchorFeaturesCreator.hh>
 #include <protocols/features/OrbitalsFeaturesCreator.hh>

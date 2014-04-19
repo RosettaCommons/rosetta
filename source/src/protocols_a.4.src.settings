@@ -36,6 +36,9 @@ sources = {
 		"GraftMoverBase",
 		"util",
         ],
+	"protocols/helix_capper": [
+		"HelixNCapperMover",
+	],
 	"protocols/metal_interface": [
                 "AddZincSiteConstraints",
                 "FindClosestAtom",

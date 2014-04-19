@@ -35,6 +35,8 @@ sources = {
 		"HBondFeaturesCreator",
 		"HBondParameterFeatures",
 		"HBondParameterFeaturesCreator",
+		"HelixCapFeatures",
+		"HelixCapFeaturesCreator",
 		"InterfaceFeatures",
 		"InterfaceFeaturesCreator",
 		"JobDataFeatures",
