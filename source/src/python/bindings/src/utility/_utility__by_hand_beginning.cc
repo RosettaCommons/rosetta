@@ -35,6 +35,9 @@
 
 #include "utility/exit.hh"
 
+#include <platform/types.hh>
+
+
 #include <iostream>
 #include <ostream>
 #include <istream>
@@ -48,8 +51,6 @@
 
 
 namespace bp = boost::python;
-using namespace std;
-using namespace utility;
 
 
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
@@ -202,14 +203,14 @@ class streambuf : public std::basic_streambuf<char>
     /** They are respectively used to buffer data read from and data written to
         the Python file object. It can be modified from Python.
     */
-    static std::size_t default_buffer_size;
+    static platform::Size default_buffer_size;
 
     /// Construct from a Python file object
     /** if buffer_size is 0 the current default_buffer_size is used.
     */
     streambuf(
       bp::object& python_file_obj,
-      std::size_t buffer_size_=0)
+      platform::Size buffer_size_=0)
     :
       py_read (getattr(python_file_obj, "read",  bp::object())),
       py_write(getattr(python_file_obj, "write", bp::object())),
@@ -421,7 +422,7 @@ class streambuf : public std::basic_streambuf<char>
   private:
     bp::object py_read, py_write, py_seek, py_tell;
 
-    std::size_t buffer_size;
+    platform::Size buffer_size;
 
     /* This is actually a Python string and the actual read buffer is
        its internal data, i.e. an array of characters. We use a Boost.Python
@@ -514,7 +515,7 @@ class streambuf : public std::basic_streambuf<char>
     };
 };
 
-std::size_t streambuf::default_buffer_size = 1024;
+platform::Size streambuf::default_buffer_size = 1024;
 
 struct streambuf_capsule
 {
@@ -522,7 +523,7 @@ struct streambuf_capsule
 
   streambuf_capsule(
     bp::object& python_file_obj,
-    std::size_t buffer_size=0)
+    platform::Size buffer_size=0)
   :
     python_streambuf(python_file_obj, buffer_size)
   {}
@@ -532,7 +533,7 @@ struct ostream : private streambuf_capsule, streambuf::ostream
 {
   ostream(
     bp::object& python_file_obj,
-    std::size_t buffer_size = 0)
+    platform::Size buffer_size = 0)
   :
     streambuf_capsule(python_file_obj, buffer_size),
     streambuf::ostream(python_streambuf)
@@ -558,7 +559,7 @@ struct istream : private streambuf_capsule, streambuf::istream
 {
   istream(
     bp::object& python_file_obj,
-    std::size_t buffer_size = 0)
+    platform::Size buffer_size = 0)
   :
     streambuf_capsule(python_file_obj, buffer_size),
     streambuf::istream(python_streambuf)
@@ -591,7 +592,7 @@ struct python_ostream_wrapper
     class_<std::ostream, boost::noncopyable>("std_ostream", no_init);
     class_<wt, boost::noncopyable, bases<std::ostream> >("ostream", "Buffered ostream wrapper for file objects. Buffer is flushed on deletion of the wrapper object.", no_init)
       .def( init<object&>(args("file"), "Initialize an ostream wrapper with the default buffer size."))
-      .def( init<object&, std::size_t>(args("file", "buffer_size"), "Initialize an ostream wrapper with the given buffer size in bytes."));
+      .def( init<object&, platform::Size>(args("file", "buffer_size"), "Initialize an ostream wrapper with the given buffer size in bytes."));
   }
 };
 
@@ -606,7 +607,7 @@ struct python_istream_wrapper
     class_<std::istream, boost::noncopyable>("std_istream", no_init);
     class_<wt, boost::noncopyable, bases<std::istream> >("istream", "Buffered istream wrapper for file objects. Buffer is flushed on deletion of the wrapper object.", no_init)
       .def( init<object&>(args("file"), "Initialize an istream wrapper with the default buffer size."))
-      .def( init<object&, std::size_t>(args("file", "buffer_size"), "Initialize an istream wrapper with the given buffer size in bytes."));
+      .def( init<object&, platform::Size>(args("file", "buffer_size"), "Initialize an istream wrapper with the given buffer size in bytes."));
   }
 };
 
@@ -636,7 +637,7 @@ void Q_Test_EnergyMethodCreator(core::scoring::methods::EnergyMethodCreatorOP cr
 
 
 template< class T >
-T * getCAP( pointer::access_ptr<T> rs ) {
+T * getCAP( utility::pointer::access_ptr<T> rs ) {
   T & rs_ref( *rs );
   T * rs_ptr = &rs_ref;
   return rs_ptr;
@@ -700,31 +701,31 @@ std::string vector1_repr(utility::vector1<T> const & v)
     return os.str();
 }
 
-template< class TT > inline void vector1_set( vector1<TT> & v, size_t const & i, TT const & val ) { v[i] = val; }
-template< class TT > inline std::size_t vector1_len( vector1<TT> & v ) { return v.size(); }
+template< class TT > inline void vector1_set( utility::vector1<TT> & v, platform::Size const & i, TT const & val ) { v[i] = val; }
+template< class TT > inline platform::Size vector1_len( utility::vector1<TT> & v ) { return v.size(); }
 
-template< class TT > inline std::string vector1_str( vector1<TT> & v ) { std::ostringstream s; s<<v; return s.str(); }
+template< class TT > inline std::string vector1_str( utility::vector1<TT> & v ) { std::ostringstream s; s<<v; return s.str(); }
 
-template< class TT > inline typename vector1<TT>::iterator vector1_begin( vector1<TT> & v ) { return v.begin(); }
-template< class TT > inline typename vector1<TT>::iterator vector1_end  ( vector1<TT> & v ) { return v.end(); }
+template< class TT > inline typename utility::vector1<TT>::iterator vector1_begin( utility::vector1<TT> & v ) { return v.begin(); }
+template< class TT > inline typename utility::vector1<TT>::iterator vector1_end  ( utility::vector1<TT> & v ) { return v.end(); }
 
-template< class TT > inline void vector1_reserve( vector1<TT> & v, std::size_t n) { v.reserve(n); }
-template< class TT > inline void vector1_resize( vector1<TT> & v, std::size_t n) { v.resize(n); }
+template< class TT > inline void vector1_reserve( utility::vector1<TT> & v, platform::Size n) { v.reserve(n); }
+template< class TT > inline void vector1_resize( utility::vector1<TT> & v, platform::Size n) { v.resize(n); }
 
 template< class Htype, class CP, class CP_const>
 void wrap_vector1(std::string name) {
-  typedef vector1<Htype> Ttype;
-  typedef vectorL<1,Htype,allocator<Htype> > Btype;
-  typedef vector<Htype> Vtype;
+  typedef utility::vector1<Htype> Ttype;
+  typedef utility::vectorL<1,Htype, std::allocator<Htype> > Btype;
+  typedef std::vector<Htype> Vtype;
   bp::class_<Ttype>(name.c_str())
-    .def( bp::init< size_t >() )
-    .def( bp::init< vector1<Htype> const & >() )
-    // .def( bp::init< size_t, TT >() )
+    .def( bp::init< platform::Size >() )
+    .def( bp::init< utility::vector1<Htype> const & >() )
+    // .def( bp::init< platform::Size, TT >() )
     .def("__getitem__"
-        , (Htype const & (Ttype::*)(size_t const) const)( &Ttype::at )
+        , (Htype const & (Ttype::*)(platform::Size const) const)( &Ttype::at )
         , CP_const()    )
     .def("__getitem__"
-        , (Htype & (Ttype::*)(size_t const))( &Ttype::at )
+        , (Htype & (Ttype::*)(platform::Size const))( &Ttype::at )
         , CP()        )
     .def("__setitem__"
         , &vector1_set<Htype> )
@@ -746,15 +747,15 @@ void wrap_vector1(std::string name) {
 
 template< class Htype, class CP, class CP_const>
 void wrap_vector1_part(const char * name) {
-  typedef vector1<Htype> Ttype;
-  typedef vectorL<1,Htype,allocator<Htype> > Btype;
-  typedef vector<Htype> Vtype;
+  typedef utility::vector1<Htype> Ttype;
+  typedef utility::vectorL<1,Htype, std::allocator<Htype> > Btype;
+  typedef std::vector<Htype> Vtype;
   bp::class_<Ttype>(name)
     .def("__getitem__"
-        , (Htype const & (Ttype::*)(size_t const) const)( &Ttype::at )
+        , (Htype const & (Ttype::*)(platform::Size const) const)( &Ttype::at )
         , CP_const()    )
     .def("__getitem__"
-        , (Htype & (Ttype::*)(size_t const))( &Ttype::at )
+        , (Htype & (Ttype::*)(platform::Size const))( &Ttype::at )
         , CP()        )
     .def("__setitem__"
         , &vector1_set<Htype> )
@@ -869,9 +870,9 @@ void wrap_owning_pointer(char * name)
 }
 
 #ifndef _MSC_VER
-	template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
+	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> rs ) {  return rs.get(); }
 #else
-	template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> const & rs ) {  return rs.get(); }
+	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> const & rs ) {  return rs.get(); }
 #endif
 
 /*
@@ -893,8 +894,8 @@ void wrap_access_pointer(std::string class_name)
 
 // .def("__iter__", bp::range( &core::pose::Pose::res_begin, &core::pose::Pose::res_end));
 
-inline bool vector1_bool_get ( vector1<bool> & v, int i ) { if(v[i]) return true; else return false; }
-inline void vector1_bool_push( vector1<bool> & v, bool h ) { return v.push_back(h); }
+inline bool vector1_bool_get ( utility::vector1<bool> & v, int i ) { if(v[i]) return true; else return false; }
+inline void vector1_bool_push( utility::vector1<bool> & v, bool h ) { return v.push_back(h); }
 
 void pyexit_callback(void)
 {
@@ -903,7 +904,7 @@ void pyexit_callback(void)
 
 void set_pyexit_callback(void)
 {
-    set_main_exit_callback(pyexit_callback);
+	utility::set_main_exit_callback(pyexit_callback);
 }
 
 
@@ -1163,7 +1164,7 @@ void expose_basic_type(std::string name)
   typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
   wrap_vector1< T, CP_CNCR, CP_CCR >("vector1_" + name);
-  wrap_vector1< vector1<T>, CP_REF, CP_REF >("vec1_vec1_" + name);
+  wrap_vector1< utility::vector1<T>, CP_REF, CP_REF >("vec1_vec1_" + name);
   wrap_std_set< T, CP_CNCR, CP_CCR >("set_" + name);
 }
 
@@ -1219,7 +1220,7 @@ void __utility_by_hand_beginning__()
     bp::class_< std::iostream, boost::noncopyable >("IOStream", bp::no_init);
 
     typedef void ( std::ostringstream::*ostringstream_str_set_function_type )( std::string const & );
-    typedef string ( std::ostringstream::*ostringstream_str_get_function_type )( ) const;
+    typedef std::string ( std::ostringstream::*ostringstream_str_get_function_type )( ) const;
 
     bp::class_< std::ostringstream, bp::bases<std::ostream>, boost::noncopyable >("OStringStream")
         .def("str", ostringstream_str_set_function_type( &::std::ostringstream::str ) )
@@ -1227,20 +1228,20 @@ void __utility_by_hand_beginning__()
     ;
 
     typedef void ( std::stringstream::*stringstream_str_set_function_type )( std::string const & );
-    typedef string ( std::stringstream::*stringstream_str_get_function_type )( ) const;
+    typedef std::string ( std::stringstream::*stringstream_str_get_function_type )( ) const;
 
     bp::class_< std::stringstream, bp::bases<std::iostream>, boost::noncopyable >("StringStream")
         .def( bp::init<std::string>(bp::args("str"), "Initialize stringstream with the given string."))
         .def("str", stringstream_str_set_function_type( &::std::stringstream::str ) )
         .def("str", stringstream_str_get_function_type( &::std::stringstream::str ) );
 
-    using namespace pointer;
+    using namespace utility::pointer;
     typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
     typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
     typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
-    // bp::class_< vector1<vector1<size_t> > >("utility___vec1_vec1_size")
-    //   .def(bp::vector_indexing_suite< vector1<vector1<size_t> > >() );
+    // bp::class_< vector1<vector1<platform::Size> > >("utility___vec1_vec1_size")
+    //   .def(bp::vector_indexing_suite< vector1<vector1<platform::Size> > >() );
 
     // bp::class_< access_ptr< core::chemical::AtomTypeSet const   > >("core___chemical___AtomTypeSetCAP");
     // bp::class_< access_ptr< core::chemical::ResidueType const   > >("core___chemical___ResidueTypeCAP");
@@ -1289,12 +1290,12 @@ void __utility_by_hand_beginning__()
     wrap_access_pointer< core::id::DOF_ID >("core_id_DOF_ID_");
     wrap_access_pointer< core::id::TorsionID >("core_id_TorsionID_");
     */
-    wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool_");
+    utility::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool_");
 
 
 	// Some wrapping test funtions/demos -----------------------------------------
     typedef void ( * _test_char_string_args_int_)(int);
-    typedef void ( * _test_char_string_args_string_)(string);
+    typedef void ( * _test_char_string_args_string_)(std::string);
     bp::def("Q_test_char_string_args_", _test_char_string_args_int_( &_test_char_string_args_) );
     bp::def("Q_test_char_string_args_", _test_char_string_args_string_( &_test_char_string_args_) );
 

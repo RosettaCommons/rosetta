@@ -11,6 +11,8 @@
 
 #include <protocols/jobdist/Jobs.hh>
 
+#include <platform/types.hh>
+
 namespace bp = boost::python;
 using namespace std;
 using namespace utility;
@@ -42,8 +44,8 @@ std::string vector1_repr(utility::vector1<T> const & v)
 	return os.str();
 }
 
-template< class TT > inline void vector1_set( vector1<TT> & v, size_t const & i, TT const & val ) { v[i] = val; }
-template< class TT > inline std::size_t vector1_len( vector1<TT> & v ) { return v.size(); }
+template< class TT > inline void vector1_set( vector1<TT> & v, platform::Size const & i, TT const & val ) { v[i] = val; }
+template< class TT > inline platform::Size vector1_len( vector1<TT> & v ) { return v.size(); }
 
 template< class TT > inline std::string vector1_str( vector1<TT> & v ) { std::ostringstream s; s<<v; return s.str(); }
 
@@ -55,14 +57,14 @@ void wrap_vector1(char * name) {
   typedef vectorL<1,Htype,allocator<Htype> > Btype;
   typedef vector<Htype> Vtype;
   bp::class_<Ttype>(name)
-    .def( bp::init< size_t >() )
+    .def( bp::init< platform::Size >() )
     .def( bp::init< vector1<Htype> const & >() )
     // .def( bp::init< size_t, TT >() )
     .def("__getitem__"
-        , (Htype const & (Ttype::*)(size_t const) const)( &Ttype::at )
+        , (Htype const & (Ttype::*)(platform::Size const) const)( &Ttype::at )
         , CP_const()    )
     .def("__getitem__"
-        , (Htype & (Ttype::*)(size_t const))( &Ttype::at )
+        , (Htype & (Ttype::*)(platform::Size const))( &Ttype::at )
         , CP()        )
     .def("__setitem__"
         , &vector1_set<Htype> )
@@ -85,10 +87,10 @@ void wrap_vector1_part(char * name) {
   typedef vector<Htype> Vtype;
   bp::class_<Ttype>(name)
     .def("__getitem__"
-        , (Htype const & (Ttype::*)(size_t const) const)( &Ttype::at )
+        , (Htype const & (Ttype::*)(platform::Size const) const)( &Ttype::at )
         , CP_const()    )
     .def("__getitem__"
-        , (Htype & (Ttype::*)(size_t const))( &Ttype::at )
+        , (Htype & (Ttype::*)(platform::Size const))( &Ttype::at )
         , CP()        )
     .def("__setitem__"
         , &vector1_set<Htype> )

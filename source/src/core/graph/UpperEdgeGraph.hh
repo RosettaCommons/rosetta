@@ -432,8 +432,8 @@ public:
 	VertexClass const &
 	get_vertex( platform::Size index ) const { return *vertices_[ index ]; }
 
-	// add an edge and return a reference to it
-	EdgeClass & add_edge( platform::Size lower_vertex, platform::Size upper_vertex )
+	// add an edge
+	void add_edge( platform::Size lower_vertex, platform::Size upper_vertex )
 	{
 		//assert( lower_vertex < upper_vertex );
 		assert( ! edge_exists( lower_vertex, upper_vertex ));

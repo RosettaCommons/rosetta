@@ -32,6 +32,14 @@
 // C++ header
 #include <cassert>
 
+#if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
+	#undef min
+#endif
+
+#if (defined max) && (defined WIN32) // Workaround for MSVC and windows.h include which used #define max
+	#undef max
+#endif
+
 namespace core {
 namespace id {
 

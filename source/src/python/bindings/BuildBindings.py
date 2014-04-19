@@ -884,10 +884,21 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
             if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
 
 
-        sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
-        #sources = [ sum(sources, []) ];  sources[0].sort()
-        objs_all = ' '.join( [f + '.obj' for f in sum(sources, [])] )
-        file(os.path.join(build_dir,'objs_all') , 'w').write( objs_all )
+    sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
+    #sources = [ sum(sources, []) ];  sources[0].sort()
+
+    #objs_all = ' '.join( [f + '.obj' for f in sum(sources, [])] )
+    #file(os.path.join(build_dir,'objs_all') , 'w').write( objs_all )
+
+    sources = sum(sources, [])
+
+    # M$ Windows does not allow objs file list to be above 128k (WHO ON EARTH WROTE THAT?????) so we have to split in to multiple files
+    number_of_objs_in_file = 1024;  objs_files = ''
+    objs_list_all = [ sources[i:i+number_of_objs_in_file] for i in range(0, len(sources), number_of_objs_in_file)]
+    for i, objs in enumerate(objs_list_all):
+        fname = 'objs-{}'.format(i)
+        with file(os.path.join(build_dir, fname), 'w') as f: f.write( ' '.join( [o + '.obj' for o in objs] ) )
+        objs_files += ' @'+fname
 
 
     # Now creating DLL
@@ -949,7 +960,9 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     if (not os.path.isfile(dll))  or  os.path.getmtime(dll) < latest:
         print '\n\nWriting final export list... %s symbols...' % len(symbols)
         f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
-        execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
+        #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
+        execute('Creating DLL {}...'.format(dll), 'cd {build_dir} && link /OPT:NOREF /dll /libpath:p:/win_lib_64 {objs_files} zlibstat.lib Ws2_32.lib /DEF:{def_file} /out:{dll}'.format(build_dir=build_dir, objs_files=objs_files, def_file=def_file, dll=dll) )
+
 
     for dir_name, _, files in os.walk(pre_generated_sources):
         wn_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
@@ -1018,7 +1031,8 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
             #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
             res, output = execute('Getting list of missed symbols... Creating DLL %s...' % dummy,
                           #'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
-                          'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 /out:%s' % (' '.join(objs), dummy), return_='tuple', print_output=False)
+                          #'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 /out:%s' % (' '.join(objs), dummy), return_='tuple', print_output=False)
+                          'link %s zlibstat.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 /out:%s' % (' '.join(objs), dummy), return_='tuple', print_output=False)
 
             symbols = []
             with file( os.path.join( obj_dir, '_dummy_.errors'), 'w' ) as f: f.write(output)
@@ -1042,7 +1056,8 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
         if link:
             if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest  or  os.path.getmtime(pyd) < os.path.getmtime(rosetta_lib):
                 execute('Creating DLL %s...' % pyd,
-                        'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s ..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
+                        #'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 %s %s ..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
+                        'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64 %s %s zlibstat.lib /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
                 #map(os.remove, objs)
 
     return latest
