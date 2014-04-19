@@ -27,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <utility/Tag/Tag.fwd.hh>
+//#include <utility/Tag/Tag.fwd.hh>
 //#include <utility/vector0.hh>
 //#include <utility/vector1.hh>
 
