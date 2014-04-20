@@ -34,6 +34,7 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/id/AtomID.hh>
+#include <core/pose/selection.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -60,7 +61,8 @@ TaskAwareCstsCreator::mover_name()
 TaskAwareCsts::TaskAwareCsts() :
 	Mover( TaskAwareCstsCreator::mover_name() ),
 	task_factory_( NULL ),
-	cst_type_( "coordinate" )
+	cst_type_( "coordinate" ),
+	anchor_resnum_( "" )
 {
 }
 
@@ -77,7 +79,8 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	ConstraintCOPs cst;
 	utility::vector1< core::Size > const designable( residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 	runtime_assert( designable.size() );
-	AtomID const anchor_atom( AtomID( pose.residue( designable[ 1 ] ).atom_index( "CA" ), designable[ 1 ] ) ); // anchor to first designable CA
+	AtomID const anchor_atom( AtomID( pose.residue( designable[ 1 ] ).atom_index( "CA" ),
+					( anchor_resnum_ == "" ? designable[ 1 ] /*anchor to first designable residue*/ : core::pose::parse_resnum( anchor_resnum_, pose ) ) ) );
 	core::scoring::func::HarmonicFuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 1.0/*sd*/ ) ); // hardwired for now
 	TR<<"Adding constraints to pose at positions: ";
 	BOOST_FOREACH( core::Size const resid, designable ){
@@ -102,6 +105,9 @@ TaskAwareCsts::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, 
 	using namespace protocols::rosetta_scripts;
 	task_factory( parse_task_operations( tag, data ) );
 	cst_type( tag->getOption< std::string >( "cst_type", "coordinate" ) );
+	anchor_resnum( tag->getOption< std::string > ( "anchor_resnum", "" ) );
+
+	TR<<"cst_type: "<<cst_type()<<" anchor_resnum: "<<anchor_resnum()<<std::endl;
 }
 
 protocols::moves::MoverOP

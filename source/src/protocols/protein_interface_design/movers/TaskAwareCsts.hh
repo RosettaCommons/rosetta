@@ -41,9 +41,13 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	std::string cst_type() const{ return cst_type_; }
 	void cst_type( std::string const type ){ cst_type_ = type; }
+
+	std::string anchor_resnum() const{ return anchor_resnum_; }
+	void anchor_resnum( std::string const c ){ anchor_resnum_ = c; }
 private:
 	core::pack::task::TaskFactoryOP task_factory_; /// dflt NULL (design all); designable residues will have the constraints applied to them.
 	std::string cst_type_; //dflt coordinate;
+	std::string anchor_resnum_; // dflt ""; if "", use the first residue as the anchor point
 };
 
 
