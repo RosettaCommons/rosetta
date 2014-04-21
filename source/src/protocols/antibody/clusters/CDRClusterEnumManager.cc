@@ -21,6 +21,7 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <utility/PyAssert.hh>
+#include <utility/string_util.hh>
 
 namespace protocols {
 namespace antibody {
@@ -392,7 +393,7 @@ CDRClusterEnumManager::cdr_cluster_enum_to_string(CDRClusterEnum const cluster) 
 
 	//Help protect from bad memory access that will give the enum crazy values.
 	if (cluster > CDRClusterEnum_total || cluster < 0){
-		utility_exit_with_message("Bogus CDRClusterEnum passed to cdr_cluster_enum_to_string" + int(cluster));
+		utility_exit_with_message("Bogus CDRClusterEnum passed to cdr_cluster_enum_to_string" + utility::to_string(int(cluster)));
 	}
 	return enum_to_string_[cluster];
 }
