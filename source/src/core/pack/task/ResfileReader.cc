@@ -682,6 +682,8 @@ PIKAA::residue_action(
 		utility_exit_with_message( "PIKAA Resfile Command used uninitialized" );
 	}
 	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_canonical_aas_ );
+
+	// nucleic acids
 	for ( std::list< chemical::AA >::const_iterator
 			iter = na_allowed_.begin(), iter_end = na_allowed_.end();
 			iter != iter_end; ++iter ) {
@@ -863,6 +865,35 @@ EMPTY::residue_action(
 	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
 	std::string mode( "EMPTY" );
 	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
+	task.nonconst_residue_task(resid).disallow_noncanonical_aas();
+
+}
+
+///////////////////////////////////////////////////////////////////////
+///@brief RESET disallows noncanonical residues and enables all of the canonical
+///this is intended for use when both NC and PIKAA actions are used to allow for noncanonical and canonical residue at the same position
+void
+RESET::initialize_from_tokens(
+	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
+	Size & which_token,
+	Size /*resid*/
+)
+{
+	assert( get_token( which_token, tokens ) == name() );
+	++which_token;
+}
+
+void
+RESET::residue_action(
+	PackerTask & task,
+	Size resid
+) const
+{
+	//vector is expected format for PackerTask, but false at all positions
+	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, true );
+	std::string mode( "RESET" );
+	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
+	task.nonconst_residue_task(resid).disallow_noncanonical_aas();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1314,6 +1345,7 @@ create_command_map()
 	command_map[ PIKRNA::name() ]        = new PIKRNA;
 	command_map[ NOTAA::name() ]        = new NOTAA;
 	command_map[ EMPTY::name() ]        = new EMPTY;
+	command_map[ RESET::name() ]        = new RESET;
 	command_map[ POLAR::name() ]        = new POLAR;
 	command_map[ APOLAR::name() ]       = new APOLAR;
 	command_map[ APOLA::name() ]        = new APOLA;

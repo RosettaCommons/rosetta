@@ -203,6 +203,9 @@ public:
 	///@brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_
 	virtual void allow_noncanonical_aa( chemical::AA aa ) = 0;
 
+	///@brief explicitly disallow all NCAAs
+	virtual void disallow_noncanonical_aas() = 0;
+
 	// expand (or) the list of rsdtypes by including types with this aa and which variant-match the original rsd
 	virtual
 	void

@@ -3,14 +3,14 @@
 
 NAME pro_hydroxylated_case1
 ## "Case 1" = placing the hydroxyl group on the opposite side of the ring as the carbonyl O of the backbone (~95% of all cases)
-TYPES HYDROXYLATION
+TYPES HYDROXYLATION1
 
 ## general requirements for this patch
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN
 AA PRO
-NOT VARIANT_TYPE HYDROXYLATION
+NOT VARIANT_TYPE HYDROXYLATION2
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one

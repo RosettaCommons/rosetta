@@ -377,7 +377,7 @@ private:
 	utility::vector1< bool > keep_aas_;
 };
 
-///@brief EMPTY disallows all canonical residues but leaves packing and designing unchanged (for noncanonicals)
+///@brief EMPTY disallows all canonical and noncanonical residues
 class EMPTY : public ResfileCommand
 {
 public:
@@ -397,6 +397,28 @@ public:
 	) const;
 
 	static std::string name() {return "EMPTY";}
+};
+
+///@brief RESET restores the list of allowd residue types to the CAAs
+class RESET : public ResfileCommand
+{
+public:
+	virtual ResfileCommandOP clone() const { return new RESET; }
+
+	virtual
+	void initialize_from_tokens(
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		Size resid
+	);
+
+	virtual
+	void residue_action(
+		PackerTask &,
+		Size resid
+	) const;
+
+	static std::string name() {return "RESET";}
 };
 
 ///@brief POLAR allows polar residues and packing

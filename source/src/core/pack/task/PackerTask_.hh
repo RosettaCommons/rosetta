@@ -235,6 +235,9 @@ public:
 	///@brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_
 	virtual void allow_noncanonical_aa( chemical::AA aa );
 
+	///@brief expliciitly disallow all NCAAs
+	virtual void disallow_noncanonical_aas();
+
 	///@brief explicitly allow a canonical AA
 	virtual	void allow_aa( chemical::AA const & aa );
 

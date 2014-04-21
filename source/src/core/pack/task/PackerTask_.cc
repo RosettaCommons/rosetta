@@ -329,18 +329,18 @@ void ResidueLevelTask_::target_type( std::string name ) {
 	target_type( &original_residue_type_->residue_type_set().name_map( name ) );
 }
 
-void ResidueLevelTask_::or_adducts( bool setting ) {
+void ResidueLevelTask_::or_adducts( bool setting )
+{
 	if ( setting ) return;
-	for ( ResidueTypeCOPListIter type_itr( allowed_residue_types_.begin() ),
-		    next_itr( allowed_residue_types_.begin() ),
-		    end_itr( allowed_residue_types_.end() ); type_itr != end_itr;
-		    /* no increment: deletion + iterator incrementing = segfault! */ ) {
-		next_itr = type_itr; ++next_itr;
-		if ( (*type_itr)->has_variant_type( chemical::ADDUCT ) ) {
-			allowed_residue_types_.erase( type_itr );
+
+	for ( ResidueTypeCOPListIter type_iter( allowed_residue_types_.begin() ), type_end(  allowed_residue_types_.end() ); type_iter != type_end; ) {
+		if ( (*type_iter)->has_variant_type( chemical::ADDUCT ) ) {
+			type_iter = allowed_residue_types_.erase( type_iter );
+		} else {
+			++type_iter;
 		}
-		type_itr = next_itr;
 	}
+
 	adducts_ = false;
 	determine_if_designing();
 	determine_if_repacking();
@@ -738,47 +738,45 @@ void
 ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas )
 {
 	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
+
 	for ( ResidueTypeCOPListIter
-			allowed_iter = allowed_residue_types_.begin(),
-			iter_next = allowed_residue_types_.begin(),
-			allowed_end = allowed_residue_types_.end();
-			allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
-		iter_next = allowed_iter;
-		++iter_next;
-		if ( (*allowed_iter)->aa() <= chemical::num_canonical_aas ) {
-			if ( ! allowed_aas[ (*allowed_iter)->aa() ] ) {
-				allowed_residue_types_.erase( allowed_iter );
-			}
+					allowed_iter( allowed_residue_types_.begin() ),
+					allowed_end( allowed_residue_types_.end() );
+				allowed_iter != allowed_end; ) {
+
+		if ( ( (*allowed_iter)->aa() <= chemical::num_canonical_aas ) && ( ! allowed_aas[ (*allowed_iter)->aa() ] ) ) {
+			allowed_iter = allowed_residue_types_.erase( allowed_iter );
+		} else {
+			++allowed_iter;
 		}
-		allowed_iter = iter_next;
 	}
+
 	determine_if_designing();
 	determine_if_repacking();
 }
 
 //@details Same behavior as restrict_absent_canonical_aas except that it always allows the native aa at a position even if it is not included in the allowed residues
 void
-ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas){
+ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas)
+{
 	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
+
 	for ( ResidueTypeCOPListIter
 					allowed_iter = allowed_residue_types_.begin(),
-					iter_next = allowed_residue_types_.begin(),
 					allowed_end = allowed_residue_types_.end();
-				allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
-		iter_next = allowed_iter;
-		++iter_next;
-		if ( (*allowed_iter)->aa() <= chemical::num_canonical_aas ) {
-			//checks if not in the allowed list and not the original type
-			if ( ! allowed_aas[ (*allowed_iter)->aa() ] && ! is_original_type( *allowed_iter ) ) {
-				allowed_residue_types_.erase( allowed_iter );
-			}
+				allowed_iter != allowed_end; ) {
+
+		//checks if not in the allowed list and not the original type
+		if ( ( (*allowed_iter)->aa() <= chemical::num_canonical_aas ) && ( ! allowed_aas[ (*allowed_iter)->aa() ]) && ( ! is_original_type( *allowed_iter ) ) ) {
+			allowed_iter = allowed_residue_types_.erase( allowed_iter );
+		} else {
+			++allowed_iter;
 		}
-		allowed_iter = iter_next;
 	}
+
 	determine_if_designing();
 	determine_if_repacking();
-
-	}
+}
 
 
 ///@details contract (and) the list of available nas for canonical na's
@@ -826,14 +824,16 @@ ResidueLevelTask_::restrict_to_repacking()
 {
 	for ( ResidueTypeCOPListIter
 			allowed_iter = allowed_residue_types_.begin(),
-			iter_next = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
-				allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
-		iter_next = allowed_iter;
-		++iter_next;
-		if ( ! is_original_type( *allowed_iter ) ) allowed_residue_types_.erase( allowed_iter );
-		allowed_iter = iter_next;
+				allowed_iter != allowed_end; ) {
+
+		if ( ! is_original_type( *allowed_iter ) ) {
+			allowed_iter = allowed_residue_types_.erase( allowed_iter );
+		} else {
+			++allowed_iter;
+		}
 	}
+
 	design_disabled_ = true;
 	determine_if_designing();
 	determine_if_repacking();
@@ -905,6 +905,28 @@ void ResidueLevelTask_::allow_noncanonical_aa( chemical::AA aa )
 		return;
 	}
 	allow_noncanonical_aa( name_from_aa(aa) );
+}
+
+/// @details expand (or) the list of available aa's for non-cannonicals
+/// looking for ResidueTypes that share the input "interchangeability_group" id
+void ResidueLevelTask_::disallow_noncanonical_aas()
+{
+	for ( ResidueTypeCOPList::iterator
+					aas_iter( allowed_residue_types_.begin() ),
+					aas_end( allowed_residue_types_.end() );
+				aas_iter != aas_end; ) {
+
+		if ( (*aas_iter)->aa() > chemical::num_canonical_aas ) {
+			aas_iter = allowed_residue_types_.erase( aas_iter );
+		} else {
+			++aas_iter;
+		}
+	}
+
+	mode_tokens_.push_back("EMPTY");
+
+	determine_if_designing();
+	determine_if_repacking();
 }
 
 void
@@ -1033,7 +1055,7 @@ ResidueLevelTask_::determine_if_designing()
 			allowed_iter = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
 			allowed_iter != allowed_end;  ++allowed_iter ) {
-		if ( (*allowed_iter)->aa() != original_residue_type_->aa() ) {
+		if ( (*allowed_iter)->interchangeability_group() != original_residue_type_->interchangeability_group() ) {
 			designing_ = true;
 			found_aa_difference = true;
 			break;
