@@ -253,7 +253,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	Size num_cycles2(25 * trimmed_cdr_h3.size() );
 	bool H3_found_ever(false);
 	Size total_cycles(0);
-	Size buffer(   (is_camelid_ && (ab_info_->get_Predicted_H3BaseType()==Extended)   ) ? 2 : 0 );
+	Size buffer(   (is_camelid_ && (ab_info_->get_H3_kink_type()==Extended)   ) ? 2 : 0 );
 	bool loop_found(false);
 
 	while( !loop_found && ( total_cycles++ < num_cycles1_) ) {

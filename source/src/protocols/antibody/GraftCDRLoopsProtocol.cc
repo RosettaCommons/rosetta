@@ -425,7 +425,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 
 	Size hfr_46(0), h3_closest(0);
 	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-	if( ab_info_->get_Predicted_H3BaseType() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
+	if( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
 	if( h3_closest != 0 )
 		TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
 		   << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;

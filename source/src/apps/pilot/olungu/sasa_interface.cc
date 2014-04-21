@@ -57,18 +57,18 @@ main( int argc, char* argv[] ){
   core::import_pose::pose_from_pdb( pose, pdbname );
 	protocols::antibody::AntibodyInfo abinfo( pose );
 
-	paratope_sasa(pose, abinfo);
+	std::pair<ParatopeMetric< core::Real >, ParatopeMetric<core::Real> > sasa_result = paratope_sasa(pose, abinfo);
 	//std::cout << loop << " CDR_sasa " << loop_sasa << std::endl;
 	//std::cout << loop <<" CDR hydrophobic sasa " << hydrop_loop_sasa << std::endl;
-	//std::cout << "peritope_sasa " << peritope_sasa << std::endl;
+	//std::cout << "peritope_sasa " << sasa_result.first.paratope << std::endl;
 	//std::cout << "peritope hydrophobic sasa " << hydrophobic_sasa << std::endl;
 	//std::cout << "Total SASA is: " <<	Real mr.value() << std::endl;
 	//std::cout << "Total hydrophobic SASA is: " << hSASA << std::endl;
 
 	core::SSize total_charge = pose_charge( pose );
 	std::cout << "Total charge " << total_charge << std::endl;
-	core::SSize p_charge = paratope_charge( pose, abinfo );
-	std::cout << "peritope charge " << p_charge << std::endl;
+	ParatopeMetric< core::SSize>p_charge = paratope_charge( pose, abinfo );
+	std::cout << "peritope charge " << p_charge.paratope << std::endl;
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
         return -1;

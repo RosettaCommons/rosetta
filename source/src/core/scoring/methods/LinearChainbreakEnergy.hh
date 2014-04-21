@@ -50,6 +50,19 @@ namespace methods {
 /// @brief LinearChainbreakEnergy class iterates across all residues in finalize()
 /// and determines the penalty between residues i and i+1 by how much their
 /// psueduo atoms do not align.
+///
+/// @details Calculates both linear_chainbreak and overlap_chainbreak terms. 
+///  linear_chainbreak measures 3 distances (cutpoint variants must be added to pose):
+///   1) virt CA res1 -> CA      res2
+///   2) virt C    res1 -> C        res2
+///   3)         N   res1 -> virt N res2 
+///    score = 1 + 2+ 3 /3
+///
+///  For ideal poses, this score should be very close to 0.  Real PDBs, however have bond length and angle
+///   deviations that will cause this score to be fairly high.
+///
+///   See Also: protocols/forge/chainbreak_eval.hh
+///
 class LinearChainbreakEnergy : public WholeStructureEnergy {
 public:
 	typedef WholeStructureEnergy parent;

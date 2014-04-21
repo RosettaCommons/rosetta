@@ -50,7 +50,8 @@ namespace features {
 	using cppdb::statement;
 	using cppdb::result;
 	using std::string;
-
+	using namespace core::scoring;
+	
 InterfaceFeatures::InterfaceFeatures() :
 	FeaturesReporter()
 {
@@ -89,6 +90,12 @@ void
 InterfaceFeatures::set_dSASA_cutoff(core::Real dSASA_cutoff){
 	dSASA_cutoff_ = dSASA_cutoff;
 }
+
+void
+InterfaceFeatures::set_scorefxn(ScoreFunctionOP scorefxn){
+	scorefxn_ = scorefxn;
+}
+
 
 void
 InterfaceFeatures::set_compute_packstat(const bool compute_packstat) {
@@ -160,8 +167,12 @@ InterfaceFeatures::features_reporter_dependencies() const{
 }
 
 core::Size
-InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility::vector1<bool>& relevant_residues, StructureID struct_id, utility::sql_database::sessionOP db_session) {
-
+InterfaceFeatures::report_features(
+		core::pose::Pose const & pose,
+		const utility::vector1<bool>& relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session) {
+	
 	if (interfaces_.empty()){
 		make_interface_combos(pose, interfaces_);
 	}
@@ -169,18 +180,32 @@ InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility:
 	for (core::Size i = 1; i <= interfaces_.size(); ++i){
 
 		std::string interface = interfaces_[i];
+		report_all_interface_features(pose, relevant_residues, struct_id, db_session, interface, interface);
+	}
+	return 0;
+}
+
+void
+InterfaceFeatures::report_all_interface_features(
+		core::pose::Pose const & pose,
+		utility::vector1<bool> const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string const interface,
+		std::string const db_interface) 
+{
 		TR << "reporting features for: "<< interface << std::endl;
 		//Check to make sure interface/chain definition is solid.
-		if (! interface.find('_')){
-			utility_exit_with_message("Unrecognized interface: "+interfaces_[i]+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
+		if (! interface.find('_') || !db_interface.find('_')){
+			utility_exit_with_message("Unrecognized interface: "+interface+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
 		}
 
 		if (!chains_exist_in_pose(pose, interface)){
-			TR <<"All chains do not exist in the given pose: "<<interfaces_[i]<< " skipping..." << std::endl;
-			continue;
+			TR <<"All chains do not exist in the given pose: "<<interface<< " skipping..." << std::endl;
+			return;
 		}
-
-		vector1<std::string> interface_sides = utility::string_split(interface, '_');
+		
+		vector1<std::string> interface_sides = utility::string_split(db_interface, '_');
 		std::string interface_side1 = interface_sides[1];
 		std::string interface_side2 = interface_sides[2];
 		interface_analyzer_ = new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_);
@@ -189,7 +214,7 @@ InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility:
 
 		if (interface_analyzer_->get_interface_delta_sasa() < dSASA_cutoff_){
 			TR << "Interface dSASA lower than set cutoff value of "<< dSASA_cutoff_ << " : not including data in database..." << std::endl;
-			continue;
+			return;
 		}
 		report_interface_features(pose, struct_id, db_session, interface_side1, interface_side2);
 		report_interface_residue_features(pose, relevant_residues, struct_id, db_session, interface_side1, interface_side2);
@@ -197,9 +222,9 @@ InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility:
 		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, total, "total");
 		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side1, "side1");
 		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side2,  "side2");
-	}
-	return 0;
 }
+
+
 void
 InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< std::string > & interfaces) {
 
@@ -506,6 +531,14 @@ InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sess
 	Column complexed_interface_score("energy_int", new DbReal());
 	Column separated_interface_score("energy_sep", new DbReal());
 	Column dSASA("dSASA", new DbReal());
+	Column dSASA_bb("dSASA_bb", new DbReal());
+	Column dSASA_sc("dSASA_sc", new DbReal());
+	
+	Column dhSASA("dhSASA", new DbReal());
+	Column dhSASA_bb("dhSASA_bb", new DbReal());
+	Column dhSASA_sc("dhSASA_sc", new DbReal());
+	Column dhSASA_rel("dhSASA_rel_by_charge", new DbReal());
+	
 	Column dG("dG", new DbReal());
 	Column interface_nres("interface_nres", new DbInteger());
 
@@ -532,6 +565,10 @@ InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sess
 	table.add_column(chains_side2);
 	table.add_column(interface_nres);
 	table.add_column(dSASA);
+	table.add_column(dSASA_sc);
+	table.add_column(dhSASA);
+	table.add_column(dhSASA_sc);
+	table.add_column(dhSASA_rel);
 	table.add_column(dG);
 	table.add_column(complexed_interface_score);
 	table.add_column(separated_interface_score);
@@ -572,6 +609,10 @@ InterfaceFeatures::report_interface_side_features(
 			"chains_side2,"
 			"interface_nres,"
 			"dSASA,"
+			"dSASA_sc,"
+			"dhSASA,"
+			"dhSASA_sc,"
+			"dhSASA_rel_by_charge,"
 			"dG,"
 			"energy_int,"
 			"energy_sep,"
@@ -587,8 +628,8 @@ InterfaceFeatures::report_interface_side_features(
 			"interface_to_surface_fraction,"
 			"ss_sheet_fraction,"
 			"ss_helix_fraction,"
-			"ss_loop_fraction) VALUES "+get_question_mark_string(23);
-
+			"ss_loop_fraction) VALUES "+get_question_mark_string(27);
+	
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
 	protocols::analysis::InterfaceData data = interface_analyzer_->get_all_data();
@@ -602,6 +643,10 @@ InterfaceFeatures::report_interface_side_features(
 	stmt.bind(i+=1, chains_side2);
 	stmt.bind(i+=1, data.interface_nres[region]);
 	stmt.bind(i+=1, data.dSASA[region]);
+	stmt.bind(i+=1, data.dSASA_sc[region]);
+	stmt.bind(i+=1, data.dhSASA[region]);
+	stmt.bind(i+=1, data.dhSASA_sc[region]);
+	stmt.bind(i+=1, data.dhSASA_rel_by_charge[region]);
 	stmt.bind(i+=1, data.dG[region]);
 	stmt.bind(i+=1, data.complexed_interface_score[region]);
 	stmt.bind(i+=1, data.separated_interface_score[region]);
@@ -644,29 +689,44 @@ InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::
 	primary_keys.push_back(resnum);
 	PrimaryKey primary_key(primary_keys);
 
+	ForeignKey struct_foreign_key(struct_id, "structures", "struct_id", true);
+	
 	Columns foreign_keys;
 	foreign_keys.push_back(struct_id);
 	foreign_keys.push_back(resnum);
+	
 	vector1< std::string > reference_columns;
 	reference_columns.push_back("struct_id");
 	reference_columns.push_back("resNum");
-	ForeignKey foreign_key(foreign_keys, "residues", reference_columns, true);
+	ForeignKey res_foreign_key(foreign_keys, "residues", reference_columns, true);
 
 	Column side("side", new DbText(255));
 	Column SASA_sep("SASA_sep", new DbReal());
 	Column SASA_int("SASA_int", new DbReal());
 	Column dSASA("dSASA", new DbReal());
+	Column dSASA_bb("dSASA_bb", new DbReal());
+	Column dSASA_sc("dSASA_sc", new DbReal());
+	Column dhSASA("dhSASA", new DbReal());
+	Column dhSASA_bb("dhSASA_bb", new DbReal());
+	Column dhSASA_sc("dhSASA_sc", new DbReal());
+	Column dhSASA_rel("dhSASA_rel_by_charge", new DbReal());
+	
 	Column rel_dSASA_fraction("relative_dSASA_fraction", new DbReal());
 	Column energy_sep("energy_sep", new DbReal());
 	Column energy_int("energy_int", new DbReal());
 	Column dG("dG", new DbReal());
 
 	Schema table("interface_residues", primary_keys);
-	table.add_foreign_key(foreign_key);
+	table.add_foreign_key(res_foreign_key);
+	table.add_foreign_key(struct_foreign_key);
 	table.add_column(chains_side1);
 	table.add_column(chains_side2);
 	table.add_column(side);
 	table.add_column(dSASA);
+	table.add_column(dSASA_sc);
+	table.add_column(dhSASA);
+	table.add_column(dhSASA_sc);
+	table.add_column(dhSASA_rel);
 	table.add_column(SASA_int);
 	table.add_column(SASA_sep);
 	table.add_column(rel_dSASA_fraction);
@@ -696,13 +756,17 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 			"chains_side2,"
 			"side,"
 			"dSASA,"
+			"dSASA_sc,"
+			"dhSASA,"
+			"dhSASA_sc,"
+			"dhSASA_rel_by_charge,"
 			"SASA_int,"
 			"SASA_sep,"
 			"relative_dSASA_fraction,"
 			"dG,"
 			"energy_int,"
-			"energy_sep) VALUES "+get_question_mark_string(13);
-
+			"energy_sep) VALUES "+get_question_mark_string(17);
+	
 	statement stmnt(basic::database::safely_prepare_statement(stmnt_string, db_session));
 
 	core::Size i = 0;
@@ -713,6 +777,10 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 	stmnt.bind(i+=1, chains_side2);
 	stmnt.bind(i+=1, side);
 	stmnt.bind(i+=1, interface_data.dSASA[resnum]);
+	stmnt.bind(i+=1, interface_data.dSASA_sc[resnum]);
+	stmnt.bind(i+=1, interface_data.dhSASA[resnum]);
+	stmnt.bind(i+=1, interface_data.dhSASA_sc[resnum]);
+	stmnt.bind(i+=1, interface_data.dhSASA_rel_by_charge[resnum]);
 	stmnt.bind(i+=1, interface_data.complexed_sasa[resnum]);
 	stmnt.bind(i+=1, interface_data.separated_sasa[resnum]);
 	if (interface_data.separated_sasa[resnum]>0){

@@ -81,7 +81,7 @@ void ModelCDRH3::init( ) {
 
 	//TODO:
 	//JQX: need to deal with this
-	if( is_camelid_ && ab_info_->get_Predicted_H3BaseType()!=Kinked && ab_info_->get_Predicted_H3BaseType()!=Extended ) {
+	if( is_camelid_ && ab_info_->get_H3_kink_type()!=Kinked && ab_info_->get_H3_kink_type()!=Extended ) {
 		c_ter_stem_ = 0;
 	}
 

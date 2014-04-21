@@ -30,6 +30,7 @@ public:
 	PointGraphVertexData() : xyz_( 0.0, 0.0, 0.0 ) {}
 	PointGraphVertexData( numeric::xyzVector< core::Real > const & coors ) : xyz_( coors ) {}
 
+	///@brief Get a non-const reference to xyz data in order to set the data by reference.
 	numeric::xyzVector< core::Real > & xyz() { return xyz_; }
 	numeric::xyzVector< core::Real > const & xyz() const { return xyz_; }
 

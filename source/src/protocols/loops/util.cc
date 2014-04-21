@@ -63,6 +63,7 @@
 #include <basic/Tracer.hh>
 
 //numeric headers
+#include <numeric/conversions.hh>
 
 //// C++ headers
 #include <list>
@@ -711,6 +712,75 @@ protocols::loops::Loops extract_continuous_chunks(core::pose::Pose const & pose,
 	chunks = split_by_ca_ca_dist(pose, chunks, CA_CA_distance_cutoff);
 	chunks = remove_short_chunks(chunks, minimum_size);
 	return chunks;
+}
+
+std::pair<bool, core::Size>
+has_severe_pep_bond_geom_issues(
+	const core::pose::Pose & pose,
+	const Loop & loop,
+	bool check_bonds, /*true*/
+	bool check_angles, /*true*/
+	core::Real max_c_n_dis, /*2.0*/
+	core::Real allowed_ca_c_n_deviation, /* 25.0 */
+	core::Real allowed_c_n_ca_deviation /* 25.0*/ ) {
+	
+	//JAB - these values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
+	// out of this range.  This can also indicate verypoorly solved crystal structures.
+	// Berkholz DS, Shapovalov MV, Dunbrack RL Jr, Karplus PA (2009)
+	// Conformation dependence of backbone geometry in proteins. Structure 17: 1316–1325. 
+	//
+	
+	//25 degree dif default from  min/max in  CDL. 1.0 A crystal structures. This should cover NMR and MD structures as well
+	core::Real min_ca_c_n_ang = 114.5 - allowed_ca_c_n_deviation;
+	core::Real max_ca_c_n_ang = 119.5 + allowed_ca_c_n_deviation;
+	
+	core::Real min_c_n_ca_ang =  120.0 - allowed_c_n_ca_deviation;
+	core::Real max_c_n_ca_ang = 126.0 + allowed_c_n_ca_deviation;
+	
+	TR << "checking peptide bond geometry: " << std::endl;
+	for (core::Size i =  loop.start(); i <= loop.stop() - 1; ++i){
+			
+		//core::id::AtomID n_0 = core::id::AtomID(pose.residue(i).atom_index("N"), i);
+		core::id::AtomID ca_0 = core::id::AtomID(pose.residue(i).atom_index("CA"), i);
+		core::id::AtomID c_0 = core::id::AtomID(pose.residue(i).atom_index("C"), i);
+		
+			
+		core::id::AtomID n_1 = core::id::AtomID(pose.residue(i +1).atom_index("N"), i + 1);
+		core::id::AtomID ca_1 = core::id::AtomID(pose.residue(i +1).atom_index("CA"), i +1);
+		//core::id::AtomID c_1 = core::id::AtomID(pose.residue(i +1).atom_index("C"), i +1);
+		
+	
+		if ( check_bonds ) {
+			core::Real c_n_dis =pose.conformation().bond_length(c_0, n_1);
+			if (c_n_dis > max_c_n_dis){
+				TR<< pose.pdb_info()->pose2pdb(i)<<" C-N " << c_n_dis << " max: " << max_c_n_dis << std::endl;
+				return std::make_pair(true, i);
+			}
+		}
+		
+		if ( check_angles ){
+			core::Real ca_c_n_ang = numeric::conversions::degrees(pose.conformation().bond_angle(ca_0, c_0, n_1));
+			core::Real c_n_ca_ang = numeric::conversions::degrees(pose.conformation().bond_angle(c_0, n_1, ca_1));
+			
+			if (ca_c_n_ang < min_ca_c_n_ang || ca_c_n_ang > max_ca_c_n_ang ) {
+				TR<< pose.pdb_info()->pose2pdb(i) << " Ca-C-N " << min_ca_c_n_ang <<" : "<< ca_c_n_ang <<" : "<< max_ca_c_n_ang << std::endl;
+				return std::make_pair(true, i);
+
+			}
+			else if (c_n_ca_ang < min_c_n_ca_ang || c_n_ca_ang > max_c_n_ca_ang) {
+				TR << pose.pdb_info()->pose2pdb(i) << " C-N-Ca "<< min_c_n_ca_ang <<" : " << c_n_ca_ang << " : "<< max_c_n_ca_ang << std::endl;
+				return std::make_pair(true, i);
+				
+			}
+			else {
+				continue;
+			}
+			
+			
+		}
+				
+	}
+	return std::make_pair(false, 0);
 }
 
 } // loops

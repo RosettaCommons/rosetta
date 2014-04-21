@@ -171,7 +171,8 @@ initialize_packages <- function(opt, base_dir){
 		"plotrix",
 		"polynom",
 		"rjson",
-		"xtable")
+		"xtable",
+    "scales")
 
 
 	if(!is.null(opt$ncores)){
@@ -280,6 +281,7 @@ add_command_line_options_to_configuration <- function(
 ) {
 	configuration$build_dir <- opt$options$build_dir
 
+  
 	sample_sources <- alply(get_sample_sources(opt$args), 1, function(ss){
 		list(
 			database_path=as.character(ss$fname),
@@ -299,6 +301,17 @@ add_command_line_options_to_configuration <- function(
 	}
 
 	configuration
+}
+
+add_configuration_options_to_options <- function (
+  configuration,
+  opt
+) {
+  
+  if (! is.null(configuration$output_dir)){
+    opt$output_dir <- configuration$output_dir
+  }
+  opt
 }
 
 
@@ -537,6 +550,9 @@ configuration <- add_command_line_options_to_configuration(
 	configuration,
 	opt,
 	base_dir)
+
+opt <- add_configuration_options_to_options(configuration, opt)
+
 
 l_ply(
 	.data=configuration$sample_source_comparisons,

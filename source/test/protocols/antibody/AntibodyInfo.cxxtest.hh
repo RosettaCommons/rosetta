@@ -177,10 +177,10 @@ public:
 		TS_ASSERT_EQUALS("Chothia_Scheme", ab_info_aroop->get_current_AntibodyNumberingScheme());
 		TS_ASSERT_EQUALS("Aroop", ab_info_aroop->get_current_CDRDefinition());
 		
-		TS_ASSERT_EQUALS(false, ab_info_north_aho->get_pose_has_antigen());
+		TS_ASSERT_EQUALS(false, ab_info_north_aho->antigen_present());
 		TS_ASSERT_EQUALS(16, ab_info_north_aho->get_CDR_length(l1));
 		TS_ASSERT_EQUALS('H', ab_info_north_aho->get_CDR_chain(h3));
-		TS_ASSERT(! ab_info_north_aho->get_pose_has_antigen());
+		TS_ASSERT(! ab_info_north_aho->antigen_present());
 		TS_ASSERT_EQUALS(24, ab_info_north_aho->get_CDR_start_PDB_num(l1));
 		TS_ASSERT_EQUALS(CDRNameEnum_total, ab_info_north_aho->get_total_num_CDRs());
 		TS_ASSERT_EQUALS(0, ab_info_north_aho->get_antigen_chains().size());

@@ -201,3 +201,15 @@ add_footer_text <- function(text){
 #	upViewport(0)
 }
 
+#Utility function to add facet_grid, position legend, and save plots
+plot_field = function(p, plot_id, grid = NULL){
+    
+  if (! is.null(grid)){
+    p <- p+ facet_grid(facets=grid)
+  }
+  if(nrow(sample_sources) <= 3){
+    p <- p + theme(legend.position="bottom", legend.direction="horizontal")
+  }
+  save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+}
+

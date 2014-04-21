@@ -49,6 +49,7 @@ CDRClusterEnumManager::setup() {
 	enum_to_string_[H1_13_8] = "H1-13-8";
 	enum_to_string_[H1_13_9] = "H1-13-9";
 	enum_to_string_[H1_13_10]="H1-13-10";
+	enum_to_string_[H1_13_11]="H1-13-11";
 	enum_to_string_[H1_13_cis9_1] = "H1-13-cis9-1";
 	enum_to_string_[H1_14_1] = "H1-14-1";
 	enum_to_string_[H1_15_1] = "H1-15-1";
@@ -149,6 +150,7 @@ CDRClusterEnumManager::setup() {
 	enum_to_string_[L3_9_cis7_2] = "L3-9-cis7-2";
 	enum_to_string_[L3_9_cis7_3] = "L3-9-cis7-3";
 	enum_to_string_[L3_10_cis8_1] = "L3-10-cis8-1";
+	enum_to_string_[L3_10_cis7_8_1] = "L3-10-cis7-8-1";
 	enum_to_string_[L3_11_cis7_1] = "L3-11-cis7-1";
 	enum_to_string_[NA] = "NA";
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,6 +166,7 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H1-13-8"] = H1_13_8;
 	string_to_enum_["H1-13-9"] = H1_13_9;
 	string_to_enum_["H1-13-10"] = H1_13_10;
+	string_to_enum_["H1-13-11"] = H1_13_11;
 	string_to_enum_["H1-13-cis9-1"] = H1_13_cis9_1;
 	string_to_enum_["H1-14-1"] = H1_14_1;
 	string_to_enum_["H1-15-1"] = H1_15_1;
@@ -264,6 +267,7 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3-9-cis7-2"] = L3_9_cis7_2;
 	string_to_enum_["L3-9-cis7-3"] = L3_9_cis7_3;
 	string_to_enum_["L3-10-cis8-1"] = L3_10_cis8_1;
+	string_to_enum_["L3-10-cis7-8-1"] = L3_10_cis7_8_1;
 	string_to_enum_["L3-11-cis7-1"] = L3_11_cis7_1;
 	string_to_enum_["NA"] = NA;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +283,7 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H1_13_8"] = H1_13_8;
 	string_to_enum_["H1_13_9"] = H1_13_9;
 	string_to_enum_["H1_13_10"] = H1_13_10;
+	string_to_enum_["H1_13_11"] = H1_13_11;
 	string_to_enum_["H1_13_cis9_1"] = H1_13_cis9_1;
 	string_to_enum_["H1_14_1"] = H1_14_1;
 	string_to_enum_["H1_15_1"] = H1_15_1;
@@ -378,12 +383,17 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3_9_cis7_1"] = L3_9_cis7_1;
 	string_to_enum_["L3_9_cis7_2"] = L3_9_cis7_2;
 	string_to_enum_["L3_10_cis8_1"] = L3_10_cis8_1;
+	string_to_enum_["L3_10_cis7_8_1"] = L3_10_cis7_8_1;
 	string_to_enum_["L3_11_cis7_1"] = L3_11_cis7_1;
 }
 
 std::string
 CDRClusterEnumManager::cdr_cluster_enum_to_string(CDRClusterEnum const cluster) const {
 
+	//Help protect from bad memory access that will give the enum crazy values.
+	if (cluster > CDRClusterEnum_total || cluster < 0){
+		utility_exit_with_message("Bogus CDRClusterEnum passed to cdr_cluster_enum_to_string" + int(cluster));
+	}
 	return enum_to_string_[cluster];
 }
 
@@ -392,7 +402,9 @@ CDRClusterEnumManager::cdr_cluster_string_to_enum(std::string const & cluster) c
 
 	//This is here due to const correctness issues with [] operator
 	std::map< std::string, CDRClusterEnum >::const_iterator iter( string_to_enum_.find( cluster ) );
-	//utility::PyAssert((iter != string_to_enum_.end()), "Cluster not found");
+	if (iter == string_to_enum_.end()){
+		utility_exit_with_message("Cluster not found: " + cluster);
+	}
 	return iter->second;
 }
 

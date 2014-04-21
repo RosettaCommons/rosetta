@@ -53,6 +53,7 @@
 #include <numeric/xyzVector.io.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/conversions.hh>
 #include <numeric/PCA.hh>
 
 
@@ -447,12 +448,12 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 
 
 	if( (base_dihedral > kink_lower_bound ) && (base_dihedral < kink_upper_bound ) ) {
-		if(ab_info->get_Predicted_H3BaseType()==Kinked) {
+		if(ab_info->get_H3_kink_type()==Kinked) {
 			matched_kinked = true;
 		}
 	}
 	if( (base_dihedral > extended_lower_bound ) && (base_dihedral < extended_upper_bound ) ) {
-		if(ab_info->get_Predicted_H3BaseType()==Extended) {
+		if(ab_info->get_H3_kink_type()==Extended) {
 			matched_extended = true;
 		}
 	}
@@ -603,6 +604,7 @@ Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
 	return( cutpoint_separation );
 } // cutpoint_separation
 
+
 Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop ) {
 	if (pose_in.total_residue() != native_pose.total_residue() ) {
 		throw excn::EXCN_BadInput("The pose sequence length does not match that of native_pose");
@@ -722,6 +724,7 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 
 	using namespace core::scoring::constraints;
 	
+	if (cluster==NA) return false;
 	
 	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
 	if (fname=="NA"){return false;}
@@ -751,7 +754,7 @@ get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum
 	std::string cluster_type = ab_info->get_cluster_name(cluster);
 	if (cluster_type=="NA") {
 		TR<< "Cannot add constraint to cluster of type NA.  Skipping."<<std::endl;
-		fname = "NA";
+		return "NA";
 	}
 	std::string path = "sampling/antibodies/cluster_based_constraints/CircularHarmonic/";
 	std::string extension = ".txt";
@@ -759,7 +762,7 @@ get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum
 	fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
 	if( !utility::file::file_exists(fname)) {
 		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
-		fname =  "NA";
+		return "NA";
 	}
 	return fname;
 }

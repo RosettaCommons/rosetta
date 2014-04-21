@@ -103,7 +103,7 @@ public:
 	
 	AntibodyGraftDesigner(AntibodyInfoOP ab_info);
 	
-	AntibodyGraftDesigner(AntibodyInfoOP & ab_info, std::string instruction_path);
+	AntibodyGraftDesigner(AntibodyInfoOP ab_info, std::string instruction_path);
 			
 	virtual ~AntibodyGraftDesigner();
 	

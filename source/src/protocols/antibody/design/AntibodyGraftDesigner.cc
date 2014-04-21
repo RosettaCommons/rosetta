@@ -82,7 +82,7 @@ AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info):
 	set_defaults();
 }
 
-AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP & ab_info, std::string instruction_path) :
+AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info, std::string instruction_path) :
 	graft_mover_(NULL),
 	scorefxn_(NULL)
 {

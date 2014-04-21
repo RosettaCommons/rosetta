@@ -130,7 +130,7 @@ private:
 	///@brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
 	void output_ensemble( vector1< core::pose::PoseOP > ensemble, Size range_start, Size range_end, std::string prefix);
 	
-	///@brief add cluster info to the pose.  Will go in antibody/util soon.
+	///@brief add cluster info to the pose.  Needs to go into pose and not jd2 due to Ensemble generation.
 	void add_cluster_comments_to_pose(core::pose::Pose & pose);
 	
 	AntibodyGraftDesignerOP graft_designer_;

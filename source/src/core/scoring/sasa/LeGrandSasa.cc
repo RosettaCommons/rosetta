@@ -224,7 +224,7 @@ LeGrandSasa::calculate(
 				continue; // jk skip this atom if not part of the subset
 
 			Real iia_rad = radii[ rsd.atom(iia).type() ];
-			if ( include_probe_radius_ ) iia_rad += probe_radius_; // this is the default, not used for sasapack
+			if ( include_probe_radius_ ) iia_rad = iia_rad + probe_radius_; // this is the default, not used for sasapack
 
 			//j to get SASA:
 			//j - count the number of 1's
@@ -234,9 +234,9 @@ LeGrandSasa::calculate(
 			int ctr = 0;
 			utility::vector1< ObjexxFCL::ubyte > const & iia_masks( atom_masks[ id ] );
 			for ( int bb = 1; bb <= num_bytes_; ++bb ) {
-				ctr += bit_count[ iia_masks[bb] ]; // atm_masks(bb,iia,ii)
+				ctr = ctr + bit_count[ iia_masks[bb] ]; // atm_masks(bb,iia,ii)
 			}
-			num_ones += ctr;
+			num_ones = num_ones + ctr;
 
 			Real const fraction_ones = static_cast< Real >( ctr ) / maskbits_; //ronj this is equivalent to l(buried)/l(total)
 			Real const total_sa = four_pi * ( iia_rad * iia_rad ); //ronj total atom surface area
@@ -251,8 +251,8 @@ LeGrandSasa::calculate(
 			// jk Water SASA doesn't count toward the residue's SASA
 			if ( ! rsd.atom_type(iia).is_h2o() && 
 				 ! rsd.atom_type(iia).is_virtual()) {
-				total_sasa += area_exposed;
-				rsd_sasa[ ii ] += area_exposed;
+				total_sasa  = total_sasa + area_exposed;
+				rsd_sasa[ ii ] = rsd_sasa[ii] + area_exposed;
 			}
 
 		} // iia
@@ -382,7 +382,7 @@ LeGrandSasa::get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 	theta_index = static_cast< int >( theta );
 	++theta_index; // for fortran goes from 1 to n
 	if ( theta_index < 1 ) { // as in the case when atan2 returns a negative...
-		theta_index += num_theta_; // let t = -32; -32 + 64 = 32
+		theta_index  = theta_index + num_theta_; // let t = -32; -32 + 64 = 32
 	} else if ( theta_index > num_theta_ ) {
 		theta_index = 1; // reset back to index of 1?
 	}
@@ -439,7 +439,7 @@ LeGrandSasa::get_2way_orientation(
 	theta_a2b_index = static_cast< int >( theta_a2b );
 	++theta_a2b_index; // for fortran goes from 1 to n
 	if ( theta_a2b_index < 1 ) { // as in the case when atan2 returns a negative...
-		theta_a2b_index += num_theta_; // let t = -32; -32 + 64 = 32
+		theta_a2b_index = theta_a2b + num_theta_; // let t = -32; -32 + 64 = 32
 	} else if ( theta_a2b_index > num_theta_ ) {
 		theta_a2b_index = 1; // reset back to index of 1?
 	}
@@ -452,7 +452,7 @@ LeGrandSasa::get_2way_orientation(
 	theta_b2a_index = static_cast< int >( theta_b2a );
 	++theta_b2a_index; // for fortran goes from 1 to n
 	if ( theta_b2a_index < 1 ) {
-		theta_b2a_index += num_theta_;
+		theta_b2a_index = theta_b2a_index + num_theta_;
 	} else if ( theta_b2a_index > num_theta_ ) {
 		theta_b2a_index = 1;
 	}

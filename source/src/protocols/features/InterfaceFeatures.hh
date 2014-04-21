@@ -54,7 +54,6 @@ public:
 	type_name() const;
 
 	///@brief generate the table schemas and write them to the database
-
 	virtual void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -89,7 +88,7 @@ public:
 	///@details Example:  AB_C would analyze the interface between AB and C, keeping AB fixed while separating C.
 	/// Note that here, you can also give A_C   and a new pose would be created with only A and C so that this interface can be tested.
 	/// Note also that multiple pose interfaces can be set.
-	void
+	virtual void
 	set_interface_chains(vector1< std::string > interfaces);
 
 	///@brief Pack the interface before separation? Default is false.
@@ -110,7 +109,10 @@ public:
 	///@brief Set the reporter to only include interfaces >dSASA_cutoff.
 	void
 	set_dSASA_cutoff(core::Real dSASA_cutoff);
-
+	
+	void
+	set_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
+	
 	////////////////////////////////////////////////////////////////////////////
 	virtual void
 	write_interface_schema_to_db(utility::sql_database::sessionOP db_session) const;
@@ -120,8 +122,21 @@ public:
 
 	virtual void
 	write_interface_side_schema_to_db(utility::sql_database::sessionOP db_session) const;
-
-
+	
+	
+	///@brief Report all features.  Called by report_features.  Easy interface for subclassing specific interfaces.
+	///@details interface is the interface analyzed, db_interface is the name that is actually inserted into the database
+	/// Usually this is the same, but useful when dealing with different chain ids but same interface type. db_interface should have sides as well (L_H))
+	virtual void
+	report_all_interface_features(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string const interface,
+		std::string const db_interface);
+	
+	///@brief Add interfaces table data to table
 	virtual void
 	report_interface_features(
 		core::pose::Pose const & pose,
@@ -129,7 +144,8 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string const chains_side1,
 		std::string const chains_side2) const;
-
+	
+	///@brief Add interface_sides table data to table
 	virtual void
 	report_interface_side_features(
 		core::pose::Pose const & pose,
@@ -139,7 +155,8 @@ public:
 		std::string const chains_side2,
 		protocols::analysis::InterfaceRegion const region,
 		std::string const region_string) const;
-
+	
+	///@brief Add interface_residues data to table
 	virtual void
 	report_interface_residue_features(
 		core::pose::Pose const & pose,
@@ -154,15 +171,7 @@ public:
 	make_interface_combos(core::pose::Pose const & pose, vector1<std::string> & interfaces);
 
 private:
-
-	///@brief Writes interface data to the database from analyzer.  InterfaceAnalyzer's apply should be called already.
-	//void
-	//write_interface_data_row_to_db(
-		//StructureID struct_id,
-		//utility::sql_database::sessionOP db_session,
-		//std::string const chains_side1,
-		//std::string const chains_side2) const;
-
+	
 	void
 	write_interface_residue_data_row_to_db(
 		StructureID struct_id,
@@ -183,18 +192,18 @@ private:
 
 	void
 	get_length_combos(std::string current, vector1<std::string> & sizes) const;
-
+	
+	std::string
+	get_all_pose_chains(core::pose::Pose const & pose);
+	
+protected:
+	
 	bool
 	interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const;
 
 	bool
 	chains_exist_in_pose(core::pose::Pose const & pose, std::string const interface) const;
-
-	std::string
-	get_all_pose_chains(core::pose::Pose const & pose);
-
-private:
-
+	
 	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	vector1< std::string > interfaces_;

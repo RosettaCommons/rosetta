@@ -66,3 +66,4 @@
 #include <protocols/features/ResidueGridScoresFeaturesCreator.hh>
 #include <protocols/features/InterfaceFeaturesCreator.hh>
 #include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
+#include <protocols/antibody/AntibodyFeaturesCreator.hh>

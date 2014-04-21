@@ -23,6 +23,8 @@ sources = {
 		"Ab_TemplateInfo",
 		"AntibodyEnumManager",
 		"AntibodyInfo",
+		"AntibodyFeatures",
+		"AntibodyFeaturesCreator",
 		"AntibodyModelerProtocol",
 		"AntibodyNumberingParser",
 		"CDRsMinPackMin",

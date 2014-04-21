@@ -36,9 +36,11 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>  //really?
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/forge/methods/chainbreak_eval.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -117,9 +119,8 @@ void AntibodyInfo::set_default() {
 	InputPose_has_antigen_ = false;
 	predicted_H3_base_type_ = Kinked;
 	loopsop_having_allcdrs_=NULL;
-	
-	
-	
+
+
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
 	if (numbering_scheme == "Kabat_Scheme"){
 		TR <<"Kabat Numbering scheme is not fully supported due to H1 numbering.  Use with caution. http://www.bioinf.org.uk/abs/" <<std::endl;
@@ -155,6 +156,10 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 	setup_VL_VH_packing_angle( pose );
 
 	predict_H3_base_type( pose );
+	
+	
+	check_cdr_quality( pose );
+	
 	setup_CDR_clusters( pose );
 
 }
@@ -224,12 +229,34 @@ AntibodyInfo::get_numbering_scheme_landmarks(const AntibodyNumberingSchemeEnum n
 }
 
 core::Size
-AntibodyInfo::get_landmark_resnum(core::pose::Pose const & pose, const AntibodyNumberingSchemeEnum scheme, const char chain, const core::Size pdb_resnum,  const char insertion_code) const {
+AntibodyInfo::get_landmark_resnum(
+	core::pose::Pose const & pose,
+	const AntibodyNumberingSchemeEnum scheme,
+	const char chain, const core::Size pdb_resnum, 
+	const char insertion_code,
+	bool fail_on_missing_resnum) const {
 	
 	//No conversion is nessassary.
 	if (scheme == numbering_info_.numbering_scheme) {
-		return pose.pdb_info()->pdb2pose(chain, pdb_resnum, insertion_code);
-		TR << "scheme equals numbering scheme" << std::endl;
+		
+		core::Size resnum  = pose.pdb_info()->pdb2pose(chain, pdb_resnum, insertion_code);
+		
+		//Lets not propagate errors in the input
+		if (resnum == 0){
+			std::string msg = "(Landmark) residue not found in pose: " +
+				utility::to_string(pdb_resnum) + " " + chain + " "+insertion_code + "\n";
+			
+			if (fail_on_missing_resnum) {
+				throw utility::excn::EXCN_BadInput(msg +
+					"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+ 
+					"This could also mean missing density in pdb.  Loop modeling applications can be used to fill missing residues\n");
+			}
+			else {
+				TR << msg;
+			}
+		}
+		
+		return resnum;
 	}
 	
 	
@@ -253,7 +280,24 @@ AntibodyInfo::get_landmark_resnum(core::pose::Pose const & pose, const AntibodyN
 			PDBLandmarkOP new_landmark = get_numbering_scheme_landmarks(numbering_info_.numbering_scheme)[i];
 			//TR << "Matched "<< chain << " "<<pdb_resnum << " " << insertion_code << std::endl;
 			//TR << "To " << new_landmark->chain() << " " << new_landmark->resnum() << " " << new_landmark->insertion_code()<< std::endl; 
-			return pose.pdb_info()->pdb2pose(new_landmark->chain(), new_landmark->resnum(), new_landmark->insertion_code());
+			core::Size resnum = pose.pdb_info()->pdb2pose(new_landmark->chain(), new_landmark->resnum(), new_landmark->insertion_code());
+			//Lets not propagate errors in the input
+			if (resnum == 0){
+				std::string msg = "(Landmark) residue not found in pose: " +
+					utility::to_string(new_landmark->resnum()) + " " + new_landmark->chain() + " " + new_landmark->insertion_code() + "\n";
+
+				
+				if (fail_on_missing_resnum)  {
+					throw utility::excn::EXCN_BadInput(msg +
+						"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+ 
+						"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+				}
+				else {
+					TR << msg;
+				}
+			}
+		
+			return resnum;
 
 		}
 		else {
@@ -368,7 +412,7 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 		for (core::Size i=1; i <= pose.conformation().num_chains(); ++i){
 			char chain = core::pose::get_chain_from_chain_id(i, pose);
 			if (chain != 'L' && chain != 'H'){
-				Chain_IDs_for_antigen_.push_back(chain);
+				chains_for_antigen_.push_back(chain);
 			}
 		}
 	}
@@ -381,18 +425,41 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
 
 	for (Size i=1; i<=3; ++i) {
-		Chain_IDs_for_CDRs_.push_back('H');    // HEAVY chain first
+		chains_for_cdrs_.push_back('H');    // HEAVY chain first
 	}
 	for (Size i=1; i<=3; ++i) {
-		Chain_IDs_for_CDRs_.push_back('L');    // light
+		chains_for_cdrs_.push_back('L');    // light
 	}
 
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = new loops::Loops();
 
-	for (Size i=start_cdr_loop; i <= Size(total_cdr_loops_); ++i ) {
-		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_.cdr_numbering[i][cdr_start]->resnum());
-		loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_.cdr_numbering[i][cdr_end]->resnum());
+	for (Size i=start_cdr_loop; i<=total_cdr_loops_; ++i ) {
+		
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		loop_start_in_pose = pose.pdb_info()->pdb2pose( chains_for_cdrs_[i], numbering_info_.cdr_numbering[i][cdr_start]->resnum());
+		loop_stop_in_pose= pose.pdb_info()->pdb2pose( chains_for_cdrs_[i], numbering_info_.cdr_numbering[i][cdr_end]->resnum());
+		
+		//Exception Handling
+		if (loop_start_in_pose ==0 || loop_stop_in_pose == 0){
+			throw utility::excn::EXCN_BadInput(
+				"\nAntibody does not contain the start or end residue of cdr loop " + get_CDR_name(cdr) +
+				" start: " + utility::to_string(loop_start_in_pose) + 
+				" end:   " + utility::to_string(loop_stop_in_pose) + "\n" +
+				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+ 
+				"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+		}
+		
+		if (loop_start_in_pose > loop_stop_in_pose){
+			throw utility::excn::EXCN_BadInput(
+				"\nBad antibody input: " + get_CDR_name(cdr) +" cdr_start resnum > cdr_stop "+
+				" start: " + utility::to_string(loop_start_in_pose) + 
+				" end:   " + utility::to_string(loop_stop_in_pose) + "\n" +
+				"This usually indicates multiple pose light chains. \n" +
+				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+ 
+				"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+		}
+		
 		if(i != h3 ) {
 			cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
 		} else {
@@ -432,8 +499,13 @@ AntibodyInfo::get_AntibodyFrameworkInfo() const {
 }
 
 H3BaseTypeEnum
-AntibodyInfo::get_Predicted_H3BaseType() const {
+AntibodyInfo::get_H3_kink_type() const {
 	return predicted_H3_base_type_;
+}
+
+std::string
+AntibodyInfo::get_H3_kink_type_name() const {
+	return enum_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_);
 }
 
 void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
@@ -460,101 +532,101 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 		H_end_pos_num=pose.conformation().chain_end(H_chain_);;
 
 
-		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 23)   )  {
+		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 23, ' ', false)   )  {
 			throw excn::EXCN_Msg_Exception( "L chain 1st residue starting after L 23, framework definition failed!!! " );
 		}
-		if (  L_end_pos_num     <=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 97)   ) {
+		if (  L_end_pos_num     <=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 97, ' ', false)   ) {
 			throw excn::EXCN_Msg_Exception( "L chain last residue ending before L 97, framework definition failed!!! " );
 		}
 	}
 
 
-	if (    H_begin_pos_num    >=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 26 )      ) {
+	if (    H_begin_pos_num    >=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 26, ' ', false )      ) {
 		throw excn::EXCN_Msg_Exception( "H chain 1st residue starting after H 26, framework definition failed!!! " );
 	}
 
-	if (    H_end_pos_num      <=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 103)      ) {
+	if (    H_end_pos_num      <=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 103, ' ', false)      ) {
 		throw excn::EXCN_Msg_Exception( "H chain last residue ending before H 103, framework definition failed!!! " );
 	}
 
 
 	if(! is_camelid_) {
 		frmwk.chain_name='L';
-		if(   L_begin_pos_num <= get_landmark_resnum(pose, Chothia_Scheme, 'L',5)      ) { // <= 5
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',5);
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6);
+		if(   L_begin_pos_num <= get_landmark_resnum(pose, Chothia_Scheme, 'L',5, ' ', false)      ) { // <= 5
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',5, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6, ' ', false);
 			Lfr.push_back(frmwk);
-		} else if (     L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',6)        ) { // 5 <= x <= 6
+		} else if (     L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',6, ' ', false)        ) { // 5 <= x <= 6
 			frmwk.start=L_begin_pos_num;
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6, ' ', false);
 			Lfr.push_back(frmwk);
 		}
-		if(   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',10)      ) { // <= 10
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',10);
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23);
+		if(   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',10, ' ', false)      ) { // <= 10
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',10, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23, ' ', false);
 			Lfr.push_back(frmwk);
-		} else if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',23)           ) { //  10 <= x <=23
+		} else if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',23, ' ', false)           ) { //  10 <= x <=23
 			frmwk.start=L_begin_pos_num;
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23, ' ', false);
 			Lfr.push_back(frmwk);
 		}
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',35);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',38);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',35, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',38, ' ', false);
 		Lfr.push_back(frmwk);
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',45);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',49);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',45, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',49, ' ', false);
 		Lfr.push_back(frmwk);
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',57);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',66);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',57, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',66, ' ', false);
 		Lfr.push_back(frmwk);
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',71);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',88);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',71, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',88, ' ', false);
 		Lfr.push_back(frmwk);
-		if (   L_end_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L',105)      ) {
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98);
-			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',105);
+		if (   L_end_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L',105, ' ', false)      ) {
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98, ' ', false);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',105, ' ', false);
 			Lfr.push_back(frmwk);
 		} else {
-			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98);
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98, ' ', false);
 			frmwk.stop=L_end_pos_num;
 			Lfr.push_back(frmwk);
 		}
 	}
 
 	frmwk.chain_name='H';
-	if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',5)      ) { // <= 5
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',5);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6);
+	if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',5, ' ', false)      ) { // <= 5
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',5, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6, ' ', false);
 		Hfr.push_back(frmwk);
-	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',6)      ) { // 5 <= x <= 6
+	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',6, ' ', false)      ) { // 5 <= x <= 6
 		frmwk.start=H_begin_pos_num;
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6, ' ', false);
 		Hfr.push_back(frmwk);
 	}
-	if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',10)      ) { // <= 10
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',10);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25);
+	if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',10, ' ', false)      ) { // <= 10
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',10, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25, ' ', false);
 		Hfr.push_back(frmwk);
-	} else if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',25)      ) { //  10 <= x <=25
+	} else if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',25, ' ', false)      ) { //  10 <= x <=25
 		frmwk.start=H_begin_pos_num;
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25, ' ', false);
 		Hfr.push_back(frmwk);
 	}
-	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',36);
-	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',39);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',36, ' ', false);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',39, ' ', false);
 	Hfr.push_back(frmwk);
-	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',46);
-	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',49);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',46, ' ', false);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',49, ' ', false);
 	Hfr.push_back(frmwk);
-	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',66);
-	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',94);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',66, ' ', false);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',94, ' ', false);
 	Hfr.push_back(frmwk);
-	if(   H_end_pos_num >=  get_landmark_resnum(pose, Chothia_Scheme, 'H',110)         ) {
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103);
-		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',110);
+	if(   H_end_pos_num >=  get_landmark_resnum(pose, Chothia_Scheme, 'H',110, ' ', false)         ) {
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103, ' ', false);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',110, ' ', false);
 		Hfr.push_back(frmwk);
 	} else {
-		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103, ' ', false);
 		frmwk.stop=H_end_pos_num;
 		Hfr.push_back(frmwk);
 	}
@@ -596,7 +668,42 @@ void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
 }
 
 
+void
+AntibodyInfo::check_cdr_quality(const pose::Pose& pose) const {
+	
+	bool check_bonds =  option[ OptionKeys::antibody::check_cdr_chainbreaks]();
+	bool check_angles = option[ OptionKeys::antibody::check_cdr_pep_bond_geom]();
+	
+	if (!check_bonds && !check_angles) return;
+	
+	//Note - we use this function as the chainbreak scores do not work well for crystal structures due to deviations in bond angles and bond lengths from ideal values.
+	// It seems these ideal values are used create virtual atoms at the cutpoint.  A new chainbreak term should use bond lengths and bond angles stored in Rosetta.
+	//
+	
+	for (core::Size i = 1; i <= core::Size(get_total_num_CDRs()); ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		protocols::loops::Loop loo = get_CDR_loop(cdr, pose);
+		std::pair< bool, core::Size> cb_result = protocols::loops::has_severe_pep_bond_geom_issues(pose, loo, check_bonds, check_angles);
+		
+		if (cb_result.first){
+			std::string msg = get_CDR_name(cdr)+"peptide bond geometry issues at loop position "+pose.pdb_info()->pose2pdb(cb_result.second)+"\n";
+				
+			
+			if (check_bonds) {
+				msg = msg + "Please check pdb for large chainbreaks or missing density.  \n"+
+				"Loop modeling applications can be used to close loops or create residues in the loop from missing density. \n" +
+				"You can OVERRIDE this check by passing the flag -check_cdr_chainbreaks false \n";
+			}
+			
+			if (check_angles){
+				msg = msg + "Please check peptide bond angles for large deviations. \n"+
+				"Use refinement techniques such as FastRelax with angle minimization to correct wonky peptide bonds ";
+			}
+			throw utility::excn::EXCN_BadInput(msg);
 
+		}	
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
@@ -756,15 +863,16 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
 	std::string seq = "";
+	
 	//core::Size start = get_CDR_loop(h3, pose, Aroop).start() - 2;
 	
-	//TR << "Start: "<<start<<"End:"<<end<<std::endl;
+	//TR << "Start: "<<start<<"End:"<<get_CDR_loop(h3, pose, Aroop).stop() << std::endl;
 	for( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop() + 1; ++ii ){
 		//TR<< utility::to_string(pose.sequence()[ii-1])<< std::endl;
 		seq = seq+utility::to_string(pose.sequence()[ii-1]);
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 	}
-	//for (Size i=1; i<=cdr_h3_sequence.size();++i){    TR<<cdr_h3_sequence[i];} TR<<std::endl;
+	for (Size i=1; i<=cdr_h3_sequence.size();++i){    TR<<cdr_h3_sequence[i];} TR<<std::endl;
 
 	/// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
 	///
@@ -863,44 +971,85 @@ Size
 AntibodyInfo::get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
 	
 	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_start]);
-	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+	core::Size resnum = pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+	if (resnum == 0) {
+		throw utility::excn::EXCN_BadInput("\n" + get_CDR_name(cdr_name)+" start resnum not found in pose: " +
+				utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
+				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+ 
+				"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+	}
+	
+	return resnum;
 
 }
 
 Size
 AntibodyInfo::get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const &  pose, CDRDefinitionEnum const & transform) const {
 	
+	core::Size resnum;
 	if (transform == numbering_info_.cdr_definition){
-		return get_CDR_start(cdr_name, pose);
+		resnum =  get_CDR_start(cdr_name, pose);
 	}
 	else {
 		PDBLandmark landmark = *(get_cdr_definition_transform(transform)[cdr_name][cdr_start]);
-		return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+		resnum =  pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+		if (resnum == 0) {
+			throw utility::excn::EXCN_BadInput("\n"+get_CDR_name(cdr_name)+" start resnum for " +
+				enum_manager_->cdr_definition_enum_to_string(transform) + " definition not found in pose: " +
+				utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
+				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n"+ 
+				"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+		}
 	}
+	
+
+	
+	return resnum;
 }
 
 
 Size
 AntibodyInfo::get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
 	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_end]);
-	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+	core::Size resnum =  pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+	
+	if (resnum == 0) {
+		throw utility::excn::EXCN_BadInput("\n"+get_CDR_name(cdr_name)+" end resnum not found in pose: " +
+				utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
+				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n" + 
+				"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+	}
+	
+	return resnum;
 }
 
 Size
 AntibodyInfo::get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const {
 	
+	core::Size resnum;
+
 	if (transform == numbering_info_.cdr_definition){
-		return get_CDR_end(cdr_name, pose);
+		resnum =  get_CDR_end(cdr_name, pose);
 	}
 	else {
 		PDBLandmark landmark = *(get_cdr_definition_transform(transform)[cdr_name][cdr_end]);
-		return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+		resnum =  pose.pdb_info()->pdb2pose(chains_for_cdrs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+		if (resnum == 0) {
+			throw utility::excn::EXCN_BadInput("\n"+get_CDR_name(cdr_name)+" end resnum not found in pose: " +
+				enum_manager_->cdr_definition_enum_to_string(transform) + " definition not found in pose: " +
+				utility::to_string(landmark.resnum())+" "+chains_for_cdrs_[cdr_name]+" "+landmark.insertion_code() + "\n" +
+				"Please check pdb is renumbered properly and the passed -numbering_scheme option matches the PDB. \n" + 
+				"This could also mean missing density in the cdr loop.  Loop modeling applications can be used to fill missing residues \n");
+		}
+
 	}
+	return resnum;
+	
 }
 
 	/// @brief return the loop of a certain loop type
 loops::Loop
-AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name ) const {
+AntibodyInfo::get_CDR_loop( CDRNameEnum const cdr_name ) const {
 	
 	loops::Loop loop = (*vector1_loopsop_having_cdr_[cdr_name])[1];
 	return loop;
@@ -909,7 +1058,7 @@ AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name ) const {
 
 
 loops::Loop
-AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
+AntibodyInfo::get_CDR_loop( CDRNameEnum const cdr_name, pose::Pose const & pose) const {
 	
 	core::Size start = get_CDR_start(cdr_name, pose);
 	core::Size stop =  get_CDR_end(cdr_name, pose);
@@ -920,7 +1069,7 @@ AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pos
 }
 
 loops::Loop
-AntibodyInfo::get_CDR_loop(CDRNameEnum const & cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform) const{
+AntibodyInfo::get_CDR_loop(CDRNameEnum const cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const transform) const{
 	
 	if (transform == numbering_info_.cdr_definition){
 		return get_CDR_loop(cdr_name, pose);
@@ -949,7 +1098,7 @@ AntibodyInfo::get_CDR_loops(pose::Pose const & pose) const {
 
 /// @brief return the loop of a certain loop type
 loops::LoopsOP
-AntibodyInfo::get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const {
+AntibodyInfo::get_CDR_in_loopsop( CDRNameEnum const cdr_name ) const {
 	
 	return vector1_loopsop_having_cdr_[cdr_name];
 
@@ -1218,6 +1367,7 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
     
 	kinematics::FoldTree LH_A_foldtree;
     
+	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( Size i = 1; i <= nres; ++i ) {
 		if(pdb_info->chain(1) != 'L'){
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
@@ -1296,6 +1446,7 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 
 	kinematics::FoldTree L_HA_foldtree;
 
+	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( Size i = 1; i <= nres; ++i ) {
 		if(pdb_info->chain(1) != 'L') {
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
@@ -1366,6 +1517,7 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 
 	kinematics::FoldTree LA_H_foldtree ;
 
+	//TODO JAB - requiring PDB ordered LHA is not desired
 	for ( Size i = 1; i <= nres; ++i ) {
 		if(pdb_info->chain(1) != 'L') {
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
@@ -1988,18 +2140,26 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 	out << line_marker << space( 74 ) << std::endl;
 	for (CDRNameEnum i=start_cdr_loop; i<=ab_info.total_cdr_loops_; i=CDRNameEnum(i+1) ) {
 		out << line_marker << " "+ab_info.get_CDR_name(i)+" info: "<<std::endl;
-		out << line_marker << "           length:  "<< ab_info.get_CDR_loop(i).length() <<std::endl;
-		out << line_marker << "         sequence:  ";
-		//out<<  line_marker << "  north_cluster: "<< ab_info.cdr_cluster_manager_->cdr_cluster_enum_to_string(ab_info.get_CDR_cluster(i)->cluster()) <<std::endl;
+		out << line_marker << "            length:  "<< ab_info.get_CDR_loop(i).length() <<std::endl;
+		out << line_marker << "          sequence:  ";
 		out << ab_info.get_CDR_sequence_with_stem(i,0,0) ;
 		out <<std::endl;
-		out << line_marker << "        loop_info:  "<< ab_info.get_CDR_loop(i)<<std::endl;
+		out<<  line_marker << "     north_cluster:  "<< ab_info.cdr_cluster_manager_->cdr_cluster_enum_to_string(ab_info.get_CDR_cluster(i)->cluster()) <<std::endl;
+		out << line_marker << "         loop_info:  "<< ab_info.get_CDR_loop(i)<<std::endl;
 	}
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	return out;
 }
 
-
+vector1<core::Size>
+AntibodyInfo::get_antigen_chain_ids(const core::pose::Pose & pose) const {
+	vector1<core::Size> antigens;
+	
+	for (core::Size i = 1; i <= chains_for_antigen_.size(); ++i){
+		antigens.push_back(core::pose::get_chain_id_from_chain(chains_for_antigen_[i], pose));
+	}
+	return antigens;
+}
 
 } // namespace antibody
 } // namespace protocols

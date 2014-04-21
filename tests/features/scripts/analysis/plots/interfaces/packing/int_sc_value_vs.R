@@ -10,10 +10,10 @@
 check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "interface_overall_metrics",
+id = "int_packing-sc_value_vs",
 author = "Jared Adolf-Bryfogle",
 brief_description = "Graphs Interface metrics such as packstat and shape complementarity scores",
-feature_reporter_dependencies = c("InterfaceFeatures"),
+feature_reporter_dependencies = c("InterfaceFeatures/AntibodyFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
   
   sele <- "
@@ -29,11 +29,6 @@ run=function(self, sample_sources, output_dir, output_formats){
       interfaces
   "
   
-  plot_parts <- list(
-    geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
-    scale_y_continuous("Feature Density"),
-    theme_bw())
-  
   plot_field = function(p, plot_id, grid = NULL){
     
     if (! is.null(grid)){
@@ -45,28 +40,15 @@ run=function(self, sample_sources, output_dir, output_formats){
     save_plots(self, plot_id, sample_sources, output_dir, output_formats)
   }
   
+  plot_parts <- list(
+    geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
+    scale_y_continuous("Feature Density"),
+    theme_bw())
+  
+  
   data = query_sample_sources(sample_sources, sele)
   
-  #Basic densities of sc_value and packstat
-  fields = c("sc_value", "packstat")
-  for(field in fields){
-    parts = list(plot_parts, scale_x_continuous("value", limit = c(0, 1.0)))
-    
-    group = c("sample_source")
-    dens <- estimate_density_1d(data,  group, field)
-    p <- ggplot(data=dens, na.rm=T) + parts +
-      geom_line(aes(x, y, colour=sample_source), size=1.2) +
-      ggtitle(field)
-    plot_field(p, paste(field, "den", sep="_"))
-    
-    group = c("sample_source", "interface")
-    dens <- estimate_density_1d(data,  group, field)
-    p <- ggplot(data=dens, na.rm=T) + parts +
-      geom_line(aes(x, y, colour=sample_source), size=1.2) +
-      ggtitle(field)
-    plot_field(p, paste(field, "den_by_interface", sep="_"), grid=interface ~ .)
-  }
-  
+
   #Scatterplots
   #sc_value vs packstat
   parts = list(
@@ -82,7 +64,7 @@ run=function(self, sample_sources, output_dir, output_formats){
     ggtitle("sc_value vs packstat") +
     scale_x_continuous("sc_value", limit = c(0, 1.0)) +
     scale_y_continuous("packstat", limit = c(0, 1.0))
-  plot_field(p, "sc_value_vs_packstat", grid = sample_source ~ .)
+  plot_field(p, "sc_value_vs_packstat_by_all", grid = sample_source ~ .)
   plot_field(p, "sc_value_vs_packstat_by_interface", grid=interface ~ sample_source)
   
   #sc_value vs dSASA
@@ -90,23 +72,16 @@ run=function(self, sample_sources, output_dir, output_formats){
     ggtitle("sc_value vs dSASA") +
     scale_x_continuous("sc_value", limit = c(0, 1.0)) +
     scale_y_continuous("Buried SASA")
-  plot_field(p, "sc_value_vs dSASA", grid = sample_source ~ .)
+  plot_field(p, "sc_value_vs dSASA_all", grid = sample_source ~ .)
   plot_field(p, "sc_value_vs_dSASA_by_interface", grid=interface ~ sample_source)
   
-  #packstat vs dSASA
-  p <- ggplot(data = data, aes(x=packstat, y=dSASA)) + parts +
-    ggtitle("packstat vs dSASA") +
-    scale_x_continuous("packstat", limit=c(0,1.0)) +
-    scale_y_continuous("Buried SASA")
-  plot_field(p, "packstat_vs_dSASA", grid = sample_source ~.)
-  plot_field(p, "packstat_vs_dSASA_by_interface", grid = interface ~ sample_source)
   
   #sc_value vs dG
   p <- ggplot(data = data[data$dG<5000,], aes(x=sc_value, y=dG)) + parts +
     ggtitle("sc_value_vs_dG") +
     scale_x_continuous("sc_value", limit = c(0, 1.0)) +
     scale_y_continuous("REU")
-  plot_field(p, "sc_value_vs_dG", grid=sample_source ~ .)
+  plot_field(p, "sc_value_vs_dG_by_all", grid=sample_source ~ .)
   plot_field(p, "sc_value_vs_dG_by_interface", grid=interface ~ sample_source)
   
   #sc_value vs crossterm
@@ -114,24 +89,18 @@ run=function(self, sample_sources, output_dir, output_formats){
     ggtitle("sc_value vs dG_cross") +
     scale_x_continuous("sc_value", limit = c(0, 1.0)) +
     scale_y_continuous("REU")
-  plot_field(p, "sc_value_vs_dG_cross", grid=sample_source ~ .)
+  plot_field(p, "sc_value_vs_dG_cross_by_all", grid=sample_source ~ .)
   plot_field(p, "sc_value_vs_dG_cross_by_interface", grid=interface ~ sample_source)
   
   #deltaUnsatHbonds vs sc_value
-  p <- ggplot(data = data, aes(x=delta_unsatHbonds, y=sc_value)) + parts +
-    ggtitle("Unsatisfied Hbonds at the interface vs sc_value") +
-    scale_x_continuous("n") +
-    scale_y_continuous("sc_value", limit = c(0, 1.0))
-  plot_field(p, "dUnsatHbonds_vs_sc_value", grid=sample_source ~ .)
-  plot_field(p, "dUnsatHbonds_vs_sc_value_by_interface", grid=interface ~ sample_source)
+  p <- ggplot(data = data, aes(x=sc_value, y=delta_unsatHbonds)) + parts +
+    ggtitle("sc_value vs Interface unsatisfied polar atoms") +
+    scale_y_continuous("n") +
+    scale_x_continuous("sc_value", limit = c(0, 1.0))
+  plot_field(p, "sc_value_vs_delta_unsat_polars_by_all", grid=sample_source ~ .)
+  plot_field(p, "sc_value_vs_delta_unsat_polars_by_interface", grid=interface ~ sample_source)
   
-  #deltaUnsatHbonds vs packstat
-  p <- ggplot(data = data, aes(x = delta_unsatHbonds, y=packstat)) + parts +
-    ggtitle("Unsatisfied Hbonds at the interface vs packstat") +
-    scale_x_continuous("n") +
-    scale_y_continuous("packstat", limit = c(0, 1.0))
-  plot_field(p, "dUnsatHbonds_vs_packstat", grid=sample_source ~ .)
-  plot_field(p, "dUnsatHbonds_vs_packstat_by_interface", grid = interface ~ sample_source)
+
   #3D Plots
   
   #sc_value vs dG vs dSASA

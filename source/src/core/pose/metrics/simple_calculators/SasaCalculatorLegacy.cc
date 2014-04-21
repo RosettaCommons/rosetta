@@ -15,6 +15,8 @@
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
+//#include <core/conformation/Residue.hh>
+
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -50,7 +52,9 @@ void SasaCalculatorLegacy::lookup( std::string const & key, basic::MetricValueBa
 	} else if ( key == "residue_sasa" ) {
 		basic::check_cast( valptr, &residue_sasa_, "residue_sasa expects to return a utility::vector1< Real >" );
 		(static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_sasa_ );
-
+	//} else if ( key == "residue_hsasa") {
+	//	basic::check_cast( valptr, &residue_sasa_h_, "residue_sasa_h expects to return a utility::vector1< Real >");
+	//	(static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_sasa_h_);
 	} else {
 		basic::Error() << "This Calculator cannot compute metric " << key << std::endl;
 		utility_exit();
@@ -68,6 +72,8 @@ std::string SasaCalculatorLegacy::print( std::string const & key ) const {
 		utility_exit();
 	} else if ( key == "residue_sasa" ) {
 		return utility::to_string( residue_sasa_ );
+	//} else if ( key == "residue_hsasa") {
+	//	return utility::to_string( residue_hsasa_);
 	}
 
 	basic::Error() << "This Calculator cannot compute metric " << key << std::endl;

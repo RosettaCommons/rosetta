@@ -364,7 +364,14 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 				tags.push_back(pdbid_in);
 				TR.Debug << "PDBId: " << pdbid<<std::endl;
 			}
-			else{
+			else if (cdr== h3){
+				//Increased H3 sampling
+				clusters.push_back(NA);
+				tags.push_back(pdbid_in);
+				TR.Debug << "PDBId: " << pdbid<<std::endl;
+				
+			}
+			else {
 				TR<< cluster << " Not Present in enums! Skipping" << std::endl;
 			}
 

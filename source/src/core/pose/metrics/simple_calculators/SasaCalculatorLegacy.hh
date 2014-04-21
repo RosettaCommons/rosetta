@@ -54,6 +54,7 @@ private:
 	core::Real total_sasa_;
 	core::id::AtomID_Map< core::Real > atom_sasa_;
 	utility::vector1< core::Real > residue_sasa_;
+	//utility::vector1< core::Real > residue_hsasa_; //Hydrophobic
 	core::Real probe_radius_;
 
 };

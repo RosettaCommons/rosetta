@@ -138,6 +138,7 @@ enum CDRClusterEnum {
     L3_9_cis7_2,
     L3_9_cis7_3,
     L3_10_cis8_1,
+    L3_10_cis7_8_1,
     L3_11_cis7_1,
     NA,
     CDRClusterEnum_start = H1_10_1,

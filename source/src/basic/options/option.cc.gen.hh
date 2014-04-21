@@ -796,10 +796,10 @@ option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the over
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
+option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
-option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
@@ -1591,11 +1591,11 @@ option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " ma
 option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius, " the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator" ).def(1.4);
 option.add( basic::options::OptionKeys::pose_metrics::interface_cutoff, "distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, " minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator" ).def(6);
+option.add( basic::options::OptionKeys::pose_metrics::contact_cutoffE, " maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator" ).def(-1.0);
+option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::contact_cutoffE, " maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator" ).def(-1.0);
-option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
-option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff, "water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)" ).def(0.25);
 option.add( basic::options::OptionKeys::ddg::ddg, "ddg option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ddg::avg_rot_cst_enrg, "No description" ).def(false);
@@ -2386,12 +2386,12 @@ option.add( basic::options::OptionKeys::DomainAssembly::da_nruns, "number of run
 option.add( basic::options::OptionKeys::DomainAssembly::da_start_pdb_num, "starting number for output pdb files" ).def(1);
 option.add( basic::options::OptionKeys::DomainAssembly::da_linker_file_rna, "input file with moveable RNA definitions" ).def("--");
 option.add( basic::options::OptionKeys::DomainAssembly::residues_repack_only, "Residues not to be redesigned under any circumstances" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DomainAssembly::da_eval_pose_map, "input file that maps pose coordinates to structurally related positions of native pose" );
+option.add( basic::options::OptionKeys::DomainAssembly::da_eval_pose_map, "input file that maps pose coordinates to structurally related positions of native pose" );
 option.add( basic::options::OptionKeys::remodel::remodel, "remodel option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::help, "help menu." );
-option.add( basic::options::OptionKeys::remodel::autopilot, "autopilot" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::remodel::autopilot, "autopilot" );
 option.add( basic::options::OptionKeys::remodel::blueprint, "blueprint file name" );
 option.add( basic::options::OptionKeys::remodel::cstfile, "description" );
 option.add( basic::options::OptionKeys::remodel::cstfilter, "filter cst energy" ).def(10);
@@ -2614,6 +2614,8 @@ option.add( basic::options::OptionKeys::dc::useZ, "Use absolute zaxis for scorin
 option.add( basic::options::OptionKeys::antibody::antibody, "Antibody option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::antibody::numbering_scheme, "The numbering scheme of the PDB file. Options are: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, IMGT_Scheme. Kabat_Scheme is also accepted, but not fully supported due to H1 numbering conventions.  Use Kabat_Scheme with caution." ).def("Chothia_Scheme");
 option.add( basic::options::OptionKeys::antibody::cdr_definition, "The CDR definition to use.  Current Options are: Chothia, Aroop, North, Kabat, Martin" ).def("Aroop");
+option.add( basic::options::OptionKeys::antibody::check_cdr_chainbreaks, "Check CDRs of input antibody for chainbreaks upon initializing RosettaAntibody and RosettaAntibodyDesign.  Chainbreaks found will result in the model not proceeding. A peptide bond in the loop is considered broken if its C-N bond is > 2.0 A" ).def(true);
+option.add( basic::options::OptionKeys::antibody::check_cdr_pep_bond_geom, "Check CDRs of input antibody for bad peptide bond geometry.  This checks Ca-C-N and C-N-Ca bond angles for -large- deviations from the min max values found in a recent analysis of protein geometry  - Conformation dependence of backbone geometry in proteins. Structure -.  If found, the model will not proceed.  Use FastRelax with bond angle min to fix issues.  These issues usually arise from poorly resolved crystal loops or incorrectly solved structures.  Many older antibody structures have some of these issues." ).def(false);
 option.add( basic::options::OptionKeys::antibody::graft_l1, "Graft CDR L1 from template" ).def(false);
 option.add( basic::options::OptionKeys::antibody::l1_template, "Choose specified template for CDR L1 grafting" ).def("l1.pdb");
 option.add( basic::options::OptionKeys::antibody::graft_l2, "Graft CDR L2 from template" ).def(false);

@@ -96,7 +96,7 @@ public:
 	
 	char
 	get_CDR_chain(CDRNameEnum const & cdr_name) const {
-		return Chain_IDs_for_CDRs_[cdr_name];
+		return chains_for_cdrs_[cdr_name];
 	}
 
 	/// @brief return this antibody is camelid or not
@@ -107,10 +107,15 @@ public:
 
 	/// @brief return whether this pose has antigen or not
 	bool
-	get_pose_has_antigen() const {
+	antigen_present() const {
 		return InputPose_has_antigen_;
 	}
-
+	
+	///@brief return whether a cdr contacts antigen.  If no antigen is present, returns false.
+	///@details Considered 'in_contact' if > 5 atoms of antigen are within 5 A of any atom of the CDR. 
+	//bool
+	//contacts_antigen(pose::Pose const & pose, CDRNameEnum const & cdr_name) const;
+	
 	/// @brief return num of cdr loops, 3 (nanobody) or 6 (regular antibody)
 	CDRNameEnum
 	get_total_num_CDRs() const {
@@ -152,8 +157,11 @@ public:
 
 	/// @brief get H3 cterminal kink/extended conformation (predicted by constructor)
 	H3BaseTypeEnum
-	get_Predicted_H3BaseType() const ;
+	get_H3_kink_type() const ;
 
+	std::string
+	get_H3_kink_type_name() const ;
+	
 	/// @brief get residues used to calculate VL/VH packing angle
 	vector1< Size >
 	get_PackingAngleResidues() const {
@@ -163,9 +171,12 @@ public:
 	/// @brief gets all non-LH chains.  Empty vector if no antigen present.
 	vector1< char >
 	get_antigen_chains() const {
-		return Chain_IDs_for_antigen_;
+		return chains_for_antigen_;
 	}
 
+	vector1<core::Size>
+	get_antigen_chain_ids(const core::pose::Pose & pose ) const;
+	
 	/// @brief return pose residue number of the first residue of the H3 kink
 	Size
 	kink_begin(pose::Pose const & pose) const {
@@ -221,7 +232,8 @@ public:
 		AntibodyNumberingSchemeEnum const scheme,
 		char const chain,
 		Size const pdb_resnum,
-		char const insertion_code=' ') const;
+		char const insertion_code=' ',
+		bool fail_on_missing_resnum = true) const;
 	
 	
 public:
@@ -290,20 +302,20 @@ public:
 	
 	/// @brief return the loop of a certain loop type
 	loops::Loop
-	get_CDR_loop( CDRNameEnum const & cdr_name ) const;
+	get_CDR_loop( CDRNameEnum const cdr_name ) const;
 	
 	///@brief return the loop of a certain loop type on the fly
 	loops::Loop
-	get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const;
+	get_CDR_loop( CDRNameEnum const cdr_name, pose::Pose const & pose) const;
 	
 /// @brief return the loop of a certain loop type in definitions of the numbering scheme transform.
 	loops::Loop
-	get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
+	get_CDR_loop( CDRNameEnum const cdr_name, pose::Pose const & pose, CDRDefinitionEnum const transform) const;
 	
 	
 	/// @brief return the loop of a certain loop type
 	loops::LoopsOP
-	get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const;
+	get_CDR_in_loopsop( CDRNameEnum const cdr_name ) const;
 	
 	/// @brief return a LoopsOP object, initialized upon class construction.
 	loops::LoopsOP
@@ -456,6 +468,11 @@ private:
 
 	/// @brief identify CDRs on L or H sequence
 	void identify_CDR_from_a_sequence(std::string const & querychain);
+	
+	///@brief Make sure there are no large chainbreaks - aka missing residues - in the CDR loops or really bad peptide bonds
+	/// Controlled via cmd-line flags
+	void check_cdr_quality( pose::Pose const & pose) const ;
+	
 	///																					  ///
 	/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -487,8 +504,8 @@ private:
 	/// Antibody properties
 	H3BaseTypeEnum predicted_H3_base_type_;
 	CDRNameEnum total_cdr_loops_;
-	vector1<char> Chain_IDs_for_CDRs_;
-	vector1<char> Chain_IDs_for_antigen_;
+	vector1<char> chains_for_cdrs_;
+	vector1<char> chains_for_antigen_;
 	
 	Size L_chain_;
 	Size H_chain_;

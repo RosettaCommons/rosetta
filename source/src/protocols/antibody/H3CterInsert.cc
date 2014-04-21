@@ -198,8 +198,8 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 
 	bool is_kinked = false;
 	bool is_extended  = false;
-	if (ab_info_->get_Predicted_H3BaseType() == Kinked) is_kinked = true;
-	if (ab_info_->get_Predicted_H3BaseType() == Extended) is_extended = true;
+	if (ab_info_->get_H3_kink_type() == Kinked) is_kinked = true;
+	if (ab_info_->get_H3_kink_type() == Extended) is_extended = true;
 
 
 	// extract single letter aa codes for the chopped loop residues

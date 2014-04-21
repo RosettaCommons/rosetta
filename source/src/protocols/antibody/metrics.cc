@@ -13,6 +13,7 @@
 /// @author Jeffrey J. Gray
 /// @author Oana Lungu
 /// @author Nick Marze
+///@author Jared Adolf-Bryfogle
 
 // Project Headers
 #include <protocols/antibody/metrics.hh>
@@ -26,11 +27,18 @@
 #include <basic/Tracer.hh>
 
 // Core
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+//#include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
+#include <core/scoring/sasa/SasaCalc.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/Energies.hh>
+
 
 // Numeric Headers
 #include <numeric/PCA.hh>
@@ -214,42 +222,38 @@ kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibod
 //////////////////// SASA /////////////////
 
 
-std::pair<core::Real,core::Real>
-paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info ){
-
-	/////////////////// Register a "sasa calculator" ///////////////////////////
-	using namespace core::pose::metrics;
-	if ( CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-		CalculatorFactory::Instance().remove_calculator( "sasa" );
-	}
-	CalculatorFactory::Instance().register_calculator( "sasa", new simple_calculators::SasaCalculatorLegacy);
-
-	///////////////////////define//////////////////////////////////////////////////////////////////////////
-	core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
-	basic::MetricValue<Real> mr;
-	pose.metric("sasa","total_sasa",mr);
-
-	basic::MetricValue<utility::vector1< Real > > sasaresi;
-	pose.metric("sasa", "residue_sasa", sasaresi);
-
-	basic::MetricValue<id::AtomID_Map< Real > > sasaatom;
-	pose.metric("sasa","atom_sasa", sasaatom);
+std::pair<ParatopeMetric< core::Real >, ParatopeMetric< core::Real> >
+paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info){
+	using utility::vector1;
+	
+	ParatopeMetric< core::Real > sasa_results;
+	ParatopeMetric< core::Real > hsasa_results;
+	
+	sasa_results.cdr.resize(6, 0.0);
+	hsasa_results.cdr.resize(6, 0.0);
+	
+	///Create a basic new sasa calc, and get needed values.
+	scoring::sasa::SasaCalcOP sasa_calc = new scoring::sasa::SasaCalc();
+	
+	Real total_sasa = sasa_calc->calculate(pose);
+	Real total_hsasa = sasa_calc->get_total_hsasa();
+	
+	vector1< Real > res_sasa = sasa_calc->get_residue_sasa();
+	vector1< Real > res_hsasa = sasa_calc->get_residue_hsasa();
+	
 	Real paratope_sasa = 0;
 	Real hydrophobic_sasa = 0;
 	Real total_polar_sasa = 0;
 	Real paratope_polar_sasa = 0;
 
-	utility::vector1< core::Real > residue_hsasa( pose.total_residue(), 0.0 );
-	utility::vector1< core::Real > resi_sasa( pose.total_residue(), 0.0 );
-	Real hSASA = core::scoring::calc_per_res_hydrophobic_sasa( pose, resi_sasa, residue_hsasa, probe_radius, false );
 	/////////////////////////////////////total SASA////////////////////////////////////////
-	TR << "Total SASA is: " << mr.value() << std::endl;
-	TR << "Total hydrophobic SASA is: " << hSASA << std::endl;
-	total_polar_sasa = mr.value() - hSASA;
+	TR << "Total SASA is: " << total_sasa << std::endl;
+	TR << "Total hydrophobic SASA is: " << total_hsasa << std::endl;
+	total_polar_sasa = total_sasa - total_hsasa;
 	TR << "Total polar SASA is: " << total_polar_sasa << std::endl;
 
 	////////iterate to define antibody paratope/////////////////////////////////////////////
-	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
+	for (core::Size i=1; i<=ab_info.get_total_num_CDRs(); ++i){
 		CDRNameEnum loop = static_cast<CDRNameEnum>(i);
 		Size loop_start = ab_info.get_CDR_loop(loop).start();
 		Size loop_end = ab_info.get_CDR_loop(loop).stop();
@@ -262,17 +266,22 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 		Real polar_loop_sasa = 0;
 		for (Size ii=loop_start; ii<=loop_end; ++ii){
 			core::conformation::Residue const & irsd( pose.residue( ii ) );
-			loop_sasa += sasaresi.value()[ii];
-			paratope_sasa += sasaresi.value()[ii];
-			hydrop_loop_sasa += residue_hsasa[ii];
-			hydrophobic_sasa += residue_hsasa[ii];
+			loop_sasa += res_sasa[ii];
+			paratope_sasa += res_sasa[ii];
+			hydrop_loop_sasa += res_hsasa[ii];
+			hydrophobic_sasa += res_hsasa[ii];
 			TR.Debug << "residue " << irsd.name3() << ii << std::endl;
 		}
 		polar_loop_sasa = loop_sasa - hydrop_loop_sasa;
+		
+		sasa_results.cdr[i] = loop_sasa;
+		hsasa_results.cdr[i] = hydrop_loop_sasa;
+		
 		/////////////////////out CDR values//////////////////////////////////////////////
-		TR << "Loop " << ab_info.get_CDR_name(loop) << ": CDR_sasa " << loop_sasa
-			 << "\tCDR hydrophobic sasa " << hydrop_loop_sasa 
-		   << "\tCDR polar sasa " << polar_loop_sasa << std::endl;
+		TR << "Loop " << ab_info.get_CDR_name(loop) << ": CDR  sasa " << loop_sasa
+		
+			 << "\tCDR hydrophobic sasa: " << hydrop_loop_sasa 
+		   << "\tCDR polar sasa:  " << polar_loop_sasa << std::endl;
 		///////////////////////////////out paratope values////////////////////////////////////
 	}
 	TR << "Paratope_sasa " << paratope_sasa << std::endl;
@@ -280,7 +289,10 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 	paratope_polar_sasa = paratope_sasa - hydrophobic_sasa;
 	TR << "Paratope polar sasa " << paratope_polar_sasa << std::endl;
 	
-	std::pair<core::Real,core::Real> sasa_out(paratope_sasa,hydrophobic_sasa);
+	sasa_results.paratope = paratope_sasa;
+	hsasa_results.paratope = hydrophobic_sasa;
+	
+	std::pair<ParatopeMetric<core::Real>, ParatopeMetric<core::Real> > sasa_out(sasa_results , hsasa_results);
 	return sasa_out;
 }
 
@@ -290,23 +302,26 @@ pose_charge( core::pose::Pose const & pose ) {  // not really an antibody fn
 	for(Size i(1); i<=pose.total_residue(); ++i) {
 		std::string name3 = pose.residue(i).name3();
 		if(name3 == "ARG" || name3 == "LYS") {
-			TR << name3 << std::endl;
+			//TR << name3 << std::endl;
 			pose_net_charge++;
 		}
 		else if(name3 == "ASP" || name3 == "GLU") {
 			pose_net_charge--;
-			TR << name3 << std::endl;
+			//TR << name3 << std::endl;
 		}
 	}
 	return pose_net_charge;
 }
 
-core::SSize
+ParatopeMetric<core::SSize>
 paratope_charge( core::pose::Pose const & pose, const protocols::antibody::AntibodyInfo & ab_info ) {
 	using namespace core;
-	SSize paratope_charge(0);
-
-	for(core::Size ia=1; ia<=CDRNameEnum_total; ++ia){
+	
+	ParatopeMetric<core::SSize> charge_results;
+	charge_results.cdr.resize(6, 0);
+	core::SSize paratope_charge = 0;
+	
+	for(core::Size ia=1; ia<=ab_info.get_total_num_CDRs(); ++ia){
 		CDRNameEnum loop = static_cast<CDRNameEnum>(ia);
 		Size loop_start = ab_info.get_CDR_loop(loop).start();
 		Size loop_end = ab_info.get_CDR_loop(loop).stop();
@@ -326,14 +341,49 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 		}
 		loop_charge = plus_charge + minus_charge;
 		paratope_charge += loop_charge;
+		charge_results.cdr[ia] = loop_charge;
+		
 		TR << "Loop " << ab_info.get_CDR_name(loop) << ": "
 		   << std::setw(3) << minus_charge << " anions, "
 			 << std::setw(3) << plus_charge  << " cations = "
 		   << std::setw(3) << loop_charge  << " total charge" << std::endl;
 	}
-	return paratope_charge;
+	charge_results.paratope = paratope_charge;
+	return charge_results;
 }
 
+core::Real
+cdr_energy(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, core::scoring::ScoreFunctionCOP scorefxn, CDRNameEnum const & cdr){
+
+	core::pose::Pose new_pose = pose;
+	
+	//Allow Hbonding scores in pose
+	core::scoring::ScoreFunctionOP new_scorefxn = scorefxn->clone();
+	core::scoring::methods::EnergyMethodOptions options(new_scorefxn->energy_method_options());
+	options.hbond_options().decompose_bb_hb_into_pair_energies(true);
+	new_scorefxn->set_energy_method_options(options);
+	(*new_scorefxn)(new_pose);
+	
+	core::Size cdr_start = ab_info->get_CDR_start(cdr, pose);
+	core::Size cdr_end  = ab_info->get_CDR_end(cdr, pose);
+	core::Real energy = 0.0;
+	for( core::Size i = cdr_start; i <= cdr_end; ++i){
+		energy = energy + new_pose.energies().residue_total_energy(i);
+	}
+	
+	return energy;
+}
+
+core::Real
+cdr_CN_anchor_distance(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, CDRNameEnum const & cdr) {
+	core::Size n_term_res = ab_info->get_CDR_start(cdr, pose) - 1;
+	core::Size c_term_res = ab_info->get_CDR_end(cdr, pose) +1;
+	
+	numeric::xyzVector<core::Real> n_pos= pose.residue(n_term_res).xyz("C");
+	numeric::xyzVector<core::Real> c_pos = pose.residue(c_term_res).xyz("N");
+	
+	return n_pos.distance(c_pos);
+}
 
 }
 }

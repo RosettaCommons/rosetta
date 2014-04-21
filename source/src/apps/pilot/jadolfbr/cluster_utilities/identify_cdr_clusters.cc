@@ -69,9 +69,10 @@ public:
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			CDRClusterOP result = ab_info->get_CDR_cluster(cdr_name);
 			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->distance());
-			//std::cout << output;
+			std::cout << output << std::endl;
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
 		}
+		std::cout << "Info added to any echo PDB" << std::endl;
 		//std::string reference = "REF: North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.";
 		//protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(reference);
 	}
