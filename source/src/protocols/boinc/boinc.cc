@@ -424,7 +424,7 @@ void Boinc::set_wu_desc() {
 		// read description file if one exists and keep row format
 		std::string description_file;
 		if ( option[ OptionKeys::boinc::description_file ].user() ) {
-			std::string description_file = option[ OptionKeys::boinc::description_file ];
+			std::string description_file = option[ OptionKeys::boinc::description_file ]();
 			utility::io::izstream desc_stream( description_file );
 			if ( desc_stream ) {
 				std::vector<std::string> wu_desc_rows;
