@@ -46,10 +46,6 @@
 
 #ifndef _WIN32
 #include "pthread.h"
-
-// option key includes
-
-
 #endif
 
 namespace protocols {
@@ -59,8 +55,7 @@ namespace watchdog {
 // protocols can set this pose as the global bailout - if the watchdog kicks in it will write out *this*
 // pose and give it a special label to be identified as the Bailout ( W_xxx )
 
-#ifdef WIN32
-#else
+#ifndef _WIN32
 	pthread_mutex_t bailout_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
@@ -84,12 +79,8 @@ std::string bailout_silent_structure_header = "";
 	int const PCT_COMPLETE_UPDATE_TIME = 5; // resolution of pct complete status updates in seconds
 
 #ifdef _WIN32
-	HANDLE watchdogThread;
-#endif
+HANDLE watchdogThread;
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-#ifdef _WIN32
 UINT WINAPI main_watchdog_windows( void* lpParam )
 {
 	main_watchdog(NULL);
@@ -215,7 +206,7 @@ get_the_hell_out(std::string )
 	utility::io::ozstream pdb_out_checkstream( fullname,
 			std::ios_base::in|std::ios_base::out );
 	utility::io::ozstream pdb_out_stream;
-#ifdef BOINC
+#ifdef BOINC_GRAPHICS
 	if (!Boinc::trywait_semaphore()) {
 #else
 	pthread_mutex_lock(&bailout_mutex);
@@ -243,7 +234,7 @@ get_the_hell_out(std::string )
 		//pdb_out_stream << "REMARK  " <<  moreinfostring << std::endl;
 	}
 
-#ifdef _WIN32
+#ifdef BOINC_GRAPHICS
 		Boinc::unlock_semaphore();
 #else
 	pthread_mutex_unlock(&bailout_mutex);
@@ -307,7 +298,7 @@ main_watchdog( void* )
 	std::cerr << "Watchdog active." << std::endl;
 	Boinc boinc_wu = Boinc::instance();
 
-#ifdef _WIN32
+#ifdef BOINC_GRAPHICS
 	/* Open the Semaphore */
 	// for data sychronization
 	Boinc::get_semaphore();

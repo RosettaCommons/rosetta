@@ -154,9 +154,11 @@ main( int argc, char * argv [] )
 
 #ifdef BOINC // BOINC STUFF
 
+#ifdef BOINC_GRAPHICS
 	// read the work unit description file if one exists
 	std::cerr << "Setting WU description ..." << std::endl;std::cerr.flush();
 	Boinc::set_wu_desc();
+#endif
 
 	// unzip an archive?
 	if (option[ in::file::zip ].user()) {
