@@ -113,7 +113,7 @@ OPT_1GRP_KEY(Real, crystdock, sigwidth)
 OPT_1GRP_KEY(Real, crystdock, interfacedist)
 OPT_1GRP_KEY(Real, crystdock, interface_sigwidth)
 OPT_1GRP_KEY(Real, crystdock, cluster_cutoff)
-
+OPT_1GRP_KEY(Integer, crystdock, expand_rounds)
 
 
 ////////////////////////////////////////////////
@@ -832,6 +832,7 @@ public:
 	// get the score per interface
 	core::Real
 	get_interface_score(
+			Pose pose,
 			utility::vector1<SingleInterface> &allInterfaces,
 			utility::vector1<core::kinematics::RT> const &rts_all );
 
@@ -1720,6 +1721,7 @@ CrystDock::get_interfaces(
 			TR << "voxel_volume "<< voxel_volume << " cb_overlap_abc " << cb_overlap_abc << " cb_sum " << cb_sum << std::endl;
 			best_int = std::max( best_int, cb_overlap_abc );
 			if ( cb_overlap_abc > mininterface_ ) {
+			TR << "cb_overlap_abc > mininterface_" << std::endl;
 				allInterfaces.push_back(
 					SingleInterface( s_i, numeric::xyzVector<core::Real>(t_i[0]+a,t_i[1]+b,t_i[2]+c), cb_overlap_abc ) );
 			}
@@ -1731,25 +1733,39 @@ CrystDock::get_interfaces(
 
 core::Real
 CrystDock::get_interface_score(
+		Pose pose,
 		utility::vector1<SingleInterface> &allInterfaces,
 		utility::vector1<core::kinematics::RT> const &rts_all ) {
 	// [STAGE 2] see if we form a connected lattice
 	//    * idea: expand all contacting symmops
 	//    *       ensure we generate all symmops
 	//    *       ensure we generate (+/-1,0,0), (0,+/-1,0), and (0,0,+/-1)
-	int EXPAND_ROUNDS=12;  // no idea if this is sufficient
+	int EXPAND_ROUNDS=option[crystdock::expand_rounds];  // no idea if this is sufficient
+
 	int nxformsOrig = (int)allInterfaces.size();
 
 	// stopping conditions
 	if (debug_ || debug_exact_) {
 		TR << "[EXPAND] Round 0: have " << allInterfaces.size() << " subunits" << std::endl;
 		for (int i=1; i<=(int)allInterfaces.size(); ++i) {
+			TR << "model " << i<< std::endl;
 			TR << "[SCORE=" <<  allInterfaces[i].cb_overlap_ << "] R = ["
 				<< allInterfaces[i].R_.xx() << "," << allInterfaces[i].R_.xy() << "," << allInterfaces[i].R_.xz() << ";"
 				<< allInterfaces[i].R_.yx() << "," << allInterfaces[i].R_.yy() << "," << allInterfaces[i].R_.yz() << ";"
 				<< allInterfaces[i].R_.zx() << "," << allInterfaces[i].R_.zy() << "," << allInterfaces[i].R_.zz()
 				<< "]";
 			TR << " T = [" << allInterfaces[i].T_[0] << "," << allInterfaces[i].T_[1] << "," << allInterfaces[i].T_[2] << "]" << std::endl;
+//  			Pose poseCopy = pose;
+//  			numeric::xyzVector<Real> Tnew = i2c_*numeric::xyzVector<Real>(
+//  				(Real)grid_[0]*allInterfaces[i].T_[0],
+//  				(Real)grid_[1]*allInterfaces[i].T_[1],
+//  				(Real)grid_[2]*allInterfaces[i].T_[2]);
+// 
+//  			poseCopy.apply_transform_Rx_plus_v( i2c_*allInterfaces[i].R_*c2i_,Tnew);
+// 			poseCopy.append_pose_by_jump (pose, 1);
+// 			std::ostringstream oss;
+// 			oss << "model_" << i << ".pdb";
+// 			poseCopy.dump_pdb( oss.str() );
 		}
 	}
 
@@ -1778,6 +1794,7 @@ CrystDock::get_interface_score(
 						// check if min interface is better
 						allInterfaces[k].cb_overlap_ = std::max( allInterfaces[k].cb_overlap_, overlap_ij );
 						unique_xform = false;
+						//TR << "k= " << k << ", allInterfaces.size= " << (int)allInterfaces.size() << std::endl;
 					}
 				}
 				if (unique_xform) {
@@ -1787,14 +1804,28 @@ CrystDock::get_interface_score(
 		}
 
 		if (debug_ || debug_exact_) {
-			TR << "[EXPAND] Round " << rd << ": have " << allInterfaces.size() << " subunits" << std::endl;
-			for (int i=1; i<=(int)allInterfaces.size(); ++i) {
-				TR << "[SCORE=" <<  allInterfaces[i].cb_overlap_ << "] R = ["
-					<< allInterfaces[i].R_.xx() << "," << allInterfaces[i].R_.xy() << "," << allInterfaces[i].R_.xz() << ";"
-					<< allInterfaces[i].R_.yx() << "," << allInterfaces[i].R_.yy() << "," << allInterfaces[i].R_.yz() << ";"
-					<< allInterfaces[i].R_.zx() << "," << allInterfaces[i].R_.zy() << "," << allInterfaces[i].R_.zz()
-					<< "]";
-				TR << " T = [" << allInterfaces[i].T_[0] << "," << allInterfaces[i].T_[1] << "," << allInterfaces[i].T_[2] << "]" << std::endl;
+			if (rd==1) {
+				TR << "[EXPAND] Round " << rd << ": have " << allInterfaces.size() << " subunits" << std::endl;
+				for (int i=1; i<=(int)allInterfaces.size(); ++i) {
+					TR << "[SCORE=" <<  allInterfaces[i].cb_overlap_ << "] R = ["
+						<< allInterfaces[i].R_.xx() << "," << allInterfaces[i].R_.xy() << "," << allInterfaces[i].R_.xz() << ";"
+						<< allInterfaces[i].R_.yx() << "," << allInterfaces[i].R_.yy() << "," << allInterfaces[i].R_.yz() << ";"
+						<< allInterfaces[i].R_.zx() << "," << allInterfaces[i].R_.zy() << "," << allInterfaces[i].R_.zz()
+						<< "]";
+					TR << " T = [" << allInterfaces[i].T_[0] << "," << allInterfaces[i].T_[1] << "," << allInterfaces[i].T_[2] << "]" << std::endl;
+					
+					Pose poseCopy = pose;
+					numeric::xyzVector<Real> Tnew = i2c_*numeric::xyzVector<Real>(
+						(Real)grid_[0]*allInterfaces[i].T_[0],
+						(Real)grid_[1]*allInterfaces[i].T_[1],
+						(Real)grid_[2]*allInterfaces[i].T_[2]);
+
+					poseCopy.apply_transform_Rx_plus_v( i2c_*allInterfaces[i].R_*c2i_,Tnew);
+					poseCopy.append_pose_by_jump (pose, 1);
+					std::ostringstream oss;
+					oss << "model_" << i << ".pdb";
+					poseCopy.dump_pdb( oss.str() );
+				}
 			}
 		}
 	}
@@ -1944,7 +1975,7 @@ CrystDock::apply( Pose & pose) {
 	numeric::xyzMatrix<Real> r_local;
 
 	// the collection of hits
-	InterfaceHitDatabase IDB(nmodels_);
+	InterfaceHitDatabase IDB(10*nmodels_);
 	core::Size nnonclashing = 0, nconnected = 0;
 
 	// foreach rotation
@@ -1988,7 +2019,10 @@ CrystDock::apply( Pose & pose) {
 			cb_sum+= iinfo[i].cb_overlap_;
 		}
 		cb_sum += get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
-		core::Real cb_score = get_interface_score( iinfo, rts );
+		
+		// shift the pose back
+		pose.apply_transform_Rx_plus_v( identity, i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]) );
+		core::Real cb_score = get_interface_score(pose, iinfo, rts );
 
 		TR << "OVERLAP score = " << ca_score << std::endl;
 		TR << "INTERACTION score = " << cb_score << std::endl;
@@ -2138,7 +2172,7 @@ CrystDock::apply( Pose & pose) {
 				utility::vector1<SingleInterface> iinfo = p1_interface_map;
 				numeric::xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
 				get_interfaces( rts, r_local, xyz, ambiguous_interface_map(x,y,z), rho_cb, iinfo );
-				Real score_xyz = get_interface_score ( iinfo, rts );
+				Real score_xyz = get_interface_score (pose, iinfo, rts );
 
 				if (score_xyz > mininterface_) {
 					nconnected++;
@@ -2199,7 +2233,8 @@ CrystDock::apply( Pose & pose) {
 
 	int nhits_after_cluster = ih_vec_clustered.size();
 	TR << "Have " << nhits_after_cluster << " after clustering." << std::endl;
-	for (int i=1; i<=nhits_after_cluster; ++i) {
+	int n_output=std::min(nhits_after_cluster, (int)nmodels_);
+	for (int i=1; i<=n_output; ++i) {
 		InterfaceHit ih = ih_vec_clustered[i];
 		TR << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " " << ih.rot_index  << " " << std::endl;
 
@@ -2265,6 +2300,7 @@ try {
     NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
     NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
     NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
+    NEW_OPT(crystdock::expand_rounds, "expand_rounds", 8);
 
 
 	devel::init( argc, argv );
