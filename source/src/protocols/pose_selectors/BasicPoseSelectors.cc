@@ -23,6 +23,8 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/filters/FilterFactory.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -85,7 +87,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 	BOOST_FOREACH( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
 		utility::vector1<bool> selector_selected_poses( selector->select_poses( poses ) );
 
-		// Merge sets using AND		
+		// Merge sets using logical operator
 		for(
 			utility::vector1<bool>::iterator
 				i = selected_poses.begin(),
@@ -93,9 +95,22 @@ utility::vector1<bool> LogicalSelector::select_poses(
 			i != selected_poses.end() &&
 			j != selector_selected_poses.end();
 			++i, ++j) {
+
 			(*i) = selection_operation(*i, *j);
 		}
+
+		TR.Debug << "Pose selections for " << get_name() << " after " << selector->get_name() << ": ";
+		BOOST_FOREACH( bool selection, selected_poses ) {
+			TR.Debug << selection << " ";
+		}
+		TR.Debug << std::endl;	
 	}
+
+	TR.Debug << "Final pose selections for " << get_name() << ": ";
+	BOOST_FOREACH( bool selection, selected_poses ) {
+		TR.Debug << selection << " ";
+	}
+	TR.Debug << std::endl;
 	
 	return selected_poses;	
 }
@@ -215,6 +230,91 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	}
 	
 	return selected_poses;	
+}
+
+////////////////////////////////////////////////////////////////////////
+// Filter
+
+// Creator
+protocols::rosetta_scripts::PoseSelectorOP FilterCreator::create_selector() const {
+  return new Filter();
+}
+
+// Selector
+Filter::Filter() :
+	filter_(NULL)
+{
+}
+
+void Filter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose
+)
+{
+	using namespace utility::tag;
+	using namespace protocols::rosetta_scripts;
+
+	TagCOP filter_tag(NULL);
+
+	if(tag->hasOption("filter")) {
+		// Find a filter by name defined somewhere upstream in the script
+		std::string filter_name( tag->getOption<std::string>("filter") );
+		RosettaScriptsParser parser;
+		filter_tag = parser.find_rosettascript_tag(
+				tag,
+				"FILTERS",
+				"name",
+				filter_name
+		);
+
+		if(!filter_tag)
+			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find filter named \"" + filter_name + "\"");
+
+	} else {
+		// Filter is defined inline (first child tag)
+		utility::vector0< TagCOP > tags( tag->getTags() );
+		for(utility::vector0< TagCOP >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+			filter_tag = *it;
+			break;
+		}
+	}
+
+	if(filter_tag)
+		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
+
+	if(!filter_) {
+		std::ostringstream s;
+		s << "Cannot create filter from script tag: " << tag;
+		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
+	}
+}
+
+utility::vector1<bool> Filter::select_poses(
+	utility::vector1< core::pose::PoseOP > poses
+) const
+{
+	utility::vector1<bool> selected_poses(poses.size(), true);
+
+	if(!filter_) {
+		TR << "No filter instance!" << std::endl;
+		return selected_poses;
+	}
+
+	TR << "Applying selector " << get_name() << ": " << filter_->get_user_defined_name() << std::endl;
+
+	core::Size i = 1;
+	BOOST_FOREACH(core::pose::PoseOP pose, poses) {
+		TR.Debug << "Pose " << i << "..." << std::endl;
+		bool ok = filter_->apply( *pose );
+		TR.Debug << "Pose " << i << ": " << (ok ? "Pass" : "Fail") << std::endl;
+		selected_poses[i] = ok;
+		++i;
+	}
+
+	return selected_poses;
 }
 
 ////////////////////////////////////////////////////////////////////////

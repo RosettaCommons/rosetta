@@ -7,13 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/rosetta_scripts/MultipleOutputWrapper.hh
-/// @brief  This mover wraps another mover or a ROSETTASCRIPTS block to obtain additional,
-//    related poses. A new instance of the mover or protocol is created for each iteration.
+/// @file protocols/rosetta_scripts/AdditionalOutputWrapper.cc
+/// @brief	This mover accepts multiple poses from a previous mover,
+///   performs selection using a provided pose selector, 
+///   applies contained ROSETTASCRIPTS protocol (ParsedProtocol),
+///   and output multiple poses to the next mover of JD2.
 /// @author Luki Goldschmidt (lugo@uw.edu)
 
-#ifndef INCLUDED_protocols_rosetta_scripts_MultipleOutputWrapper_hh
-#define INCLUDED_protocols_rosetta_scripts_MultipleOutputWrapper_hh
+#ifndef INCLUDED_protocols_rosetta_scripts_AdditionalOutputWrapper_hh
+#define INCLUDED_protocols_rosetta_scripts_AdditionalOutputWrapper_hh
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -36,23 +38,23 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-class MultipleOutputWrapper;
+class AdditionalOutputWrapper;
 
-class MultipleOutputWrapper : public protocols::moves::Mover {
+class AdditionalOutputWrapper : public protocols::moves::Mover {
 
 public:
 	/// @brief No-argument constructor
-	MultipleOutputWrapper();
+	AdditionalOutputWrapper();
 
 	/// @brief Virtual destructor
-	virtual ~MultipleOutputWrapper() {};
+	virtual ~AdditionalOutputWrapper() {};
 
 	protocols::moves::MoverOP clone() const {
-		return new MultipleOutputWrapper(*this);
+		return new AdditionalOutputWrapper(*this);
 	}
 
 	protocols::moves::MoverOP fresh_instance() const {
-		return new MultipleOutputWrapper();
+		return new AdditionalOutputWrapper();
 	}
 
 	void apply(core::pose::Pose& pose);
@@ -67,11 +69,10 @@ private:
 	utility::tag::TagCOP rosetta_scripts_tag_;
 	core::pose::PoseOP reference_pose_;
 	core::Size max_poses_;
-	core::Size max_attempts_;
 	core::Size n_poses_;
 
 protected:
-	bool generate_pose(core::pose::Pose &);
+	void generate_pose(core::pose::Pose &);
 };
 
 } //rosetta_scripts

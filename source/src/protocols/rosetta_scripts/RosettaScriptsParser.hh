@@ -64,8 +64,9 @@ public:
 
 	void register_factory_prototypes();
 	
-	void instantiate_filter  (utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
-	void instantiate_mover   (utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
+	void instantiate_filter(utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
+	void instantiate_mover(utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
+	void instantiate_taskoperation(utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
 
 	utility::tag::TagCOP find_rosettascript_tag(utility::tag::TagCOP rootTag, const std::string & section_name, const std::string & option_name, const std::string & option_value);
 	

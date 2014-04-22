@@ -212,6 +212,9 @@ public:
 
 		std::string xmlfile =
 			"<ROSETTASCRIPTS>\n"
+			"  <TASKOPERATIONS>\n"
+			"    <InitializeFromCommandline name=init/>\n"
+			"  </TASKOPERATIONS>\n"
 			"  <FILTERS>\n"
 			"    <DummyFilter name=filter1/>\n"
 			"    <DummyFilter name=filter2/>\n"
@@ -221,7 +224,7 @@ public:
 			"    <DummyMultipleOutputMover name=mover2/>\n"
 			"    <MultiplePoseMover name=mpm>\n"
 			"      <ROSETTASCRIPTS>\n"
-			"        <IMPORT movers=mover2 filters=filter2,filter1/>\n"
+			"        <IMPORT movers=mover2 filters=filter2,filter1 taskoperations=init/>\n"
 			"        <MOVERS/>\n"
 			"        <PROTOCOLS>\n"
 			"          <Add mover_name=null/>\n"
@@ -255,6 +258,9 @@ public:
 
 		std::string xmlfile =
 			"<ROSETTASCRIPTS>\n"
+			"  <TASKOPERATIONS>\n"
+			"    <InitializeFromCommandline name=init/>\n"
+			"  </TASKOPERATIONS>\n"
 			"  <FILTERS>\n"
 			"    <DummyFilter name=filter1/>\n"
 			"    <DummyFilter name=filter2/>\n"
@@ -264,12 +270,12 @@ public:
 			"    <DummyMultipleOutputMover name=mover2/>\n"
 			"    <MultiplePoseMover name=mpm1>\n"
 			"      <ROSETTASCRIPTS>\n"
-			"        <IMPORT movers=mover2 filters=filter1/>\n"
+			"        <IMPORT movers=mover2 filters=filter1 taskoperations=init/>\n"
 			"        <MOVERS>\n"
 			"          <DummyMultipleOutputMover name=mover3/>\n"
 			"          <MultiplePoseMover name=mpm2>\n"
 			"            <ROSETTASCRIPTS>\n"
-			"              <IMPORT movers=mover2 filters=filter2/>\n"
+			"              <IMPORT movers=mover2 filters=filter2 taskoperations=init/>\n"
 			"              <PROTOCOLS>\n"
 			"                <Add mover_name=mover2 filter=filter2/>\n"
 			"              </PROTOCOLS>\n"

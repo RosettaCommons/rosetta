@@ -38,6 +38,12 @@ public:
 	virtual std::string keyname() const { return "TopNByProperty"; }
 };
 
+class FilterCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
+public:
+	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const;
+	virtual std::string keyname() const { return "Filter"; }
+};
+
 }
 }
 

@@ -21,6 +21,7 @@ using protocols::rosetta_scripts::PoseSelectorRegistrator;
 static PoseSelectorRegistrator< pose_selectors::AndSelectorCreator > reg_AndSelectorCreatorRegistrator;
 static PoseSelectorRegistrator< pose_selectors::OrSelectorCreator > reg_OrSelectorCreatorRegistrator;
 static PoseSelectorRegistrator< pose_selectors::TopNByPropertyCreator > reg_TopNByPropertyRegistrator;
+static PoseSelectorRegistrator< pose_selectors::FilterCreator > reg_FilterRegistrator;
 static PoseSelectorRegistrator< pose_selectors::ClusterPoseSelectorCreator > reg_ClusterPoseSelectorRegistrator;
 
 } //namespace protocols

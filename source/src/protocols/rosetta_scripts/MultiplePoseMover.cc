@@ -152,11 +152,13 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 	}
 
 	{
-		// Collect additional poses first rather than adding them to selected_poses_ right away
-		// as it may invalidate the iterator pointer when memory location changes
-		utility::vector1 < PoseOP > additional_poses;
-
 		if(rosetta_scripts_tag_) {
+			// Run sub-protocol:
+
+			// Collect additional poses first rather than adding them to selected_poses_ right away
+			// as it may invalidate the iterator pointer when memory location changes
+			utility::vector1 < PoseOP > additional_poses;
+
 			BOOST_FOREACH( PoseOP p, selected_poses_for_processing ) {
 				TR << "Applying mover to pose: " << p->sequence() << std::endl;
 				if(process_pose(*p, additional_poses)) {
@@ -164,13 +166,16 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 					selected_poses_.push_back( p );
 				}
 			}
-		}
 
-		if(additional_poses.size() > 0) {
-			BOOST_FOREACH( PoseOP p, additional_poses ) {
-				selected_poses_.push_back( p );
+			if(additional_poses.size() > 0) {
+				BOOST_FOREACH( PoseOP p, additional_poses ) {
+					selected_poses_.push_back( p );
+				}
+				TR << additional_poses.size() << " additional poses obtained; total output poses: " << selected_poses_.size() << std::endl;
 			}
-			TR << additional_poses.size() << " additional poses obtained; total output poses: " << selected_poses_.size() << std::endl;
+		} else {
+			// No sub-protocol provided, use all selected poses
+			selected_poses_ = selected_poses_for_processing;
 		}
 	}
 
@@ -180,6 +185,7 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 		pose = *selected_poses_[selected_poses_i_];
 		++selected_poses_i_;
 	} else {
+		TR << "No poses selected or processed succesfully by sub-mover. Setting status to FAIL_RETRY." << std::endl;
 		status = protocols::moves::FAIL_RETRY;
 	}
 
@@ -203,8 +209,10 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 
 	mover->apply(pose);
 
-	if(mover->get_last_move_status() != protocols::moves::MS_SUCCESS)
+	if(mover->get_last_move_status() != protocols::moves::MS_SUCCESS) {
+		TR << "Sub-mover reported failure; passing status on." << std::endl;
 		return false;
+	}
 
 	// Get additional poses from protocol mover;
 	// these are selected for output by this mover

@@ -28,6 +28,8 @@
 
 // Project headers
 #include <basic/options/option.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -253,6 +255,16 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 		if( curr_tag->getName() != "IMPORT" )
 			continue;
 
+		if(curr_tag->hasOption("taskoperations")) {
+			// Import task operations
+			std::string taskoperations_str( curr_tag->getOption<std::string>("taskoperations") );
+			std::istringstream taskoperation_ss(taskoperations_str);
+			std::string taskoperation_name;
+			while(std::getline(taskoperation_ss, taskoperation_name, ',')) {
+				import_tag_names.insert(std::make_pair("TASKOPERATIONS", taskoperation_name));
+			}
+		}//fi taskoperations
+
 		if(curr_tag->hasOption("filters")) {
 			// Import filters
 			std::string filters_str( curr_tag->getOption<std::string>("filters") );
@@ -356,7 +368,7 @@ void RosettaScriptsParser::instantiate_filter(
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	bool const name_exists( filters.find( user_defined_name ) != filters.end() );
 	if ( name_exists )
-		throw utility::excn::EXCN_RosettaScriptsOption("Filter of name \"" + user_defined_name + "\" (with type " + type + ") already exists.");
+		throw utility::excn::EXCN_RosettaScriptsOption("Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 
 	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
 	runtime_assert( new_filter );
@@ -379,12 +391,37 @@ void RosettaScriptsParser::instantiate_mover(
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	bool const name_exists( movers.find( user_defined_name ) != movers.end() );
 	if ( name_exists )
-		throw utility::excn::EXCN_RosettaScriptsOption("Mover of name \"" + user_defined_name + "\" (with type " + type	+ ") already exists.");
+		throw utility::excn::EXCN_RosettaScriptsOption("Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 
 	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
 	runtime_assert( new_mover );
 	movers.insert( std::make_pair( user_defined_name, new_mover ) );
 	TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;
+}
+
+
+///@brief Instantiate a new task operation (used in IMPORT tag)
+void RosettaScriptsParser::instantiate_taskoperation(
+	TagCOP const & tag_ptr, 
+	basic::datacache::DataMap & data, 
+	protocols::filters::Filters_map & filters, 
+	Movers_map & /*movers*/, 
+	core::pose::Pose & /*pose*/
+) {	
+	using namespace core::pack::task::operation;
+
+	std::string const type( tag_ptr->getName() );
+	if ( ! tag_ptr->hasOption("name") )
+		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed TaskOperation of type " + type);
+	
+	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
+	if ( data.has( "task_operations", user_defined_name ) )
+		throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation with name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+
+	TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag_ptr ) );
+	runtime_assert( new_t_o );
+	data.add("task_operations", user_defined_name, new_t_o );
+	TR << "Defined TaskOperation named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
 ///@brief Recursively find a specific tag by option name and valie in any ROSETTASCRIPTS tag that's a child of rootTag
@@ -448,6 +485,17 @@ void RosettaScriptsParser::import_tags(
 		// Check what we'd like to import from it
 		BOOST_FOREACH( TagCOP tag, curr_level_tag->getTags() ) {
 		
+			if(tag->getName() == "TASKOPERATIONS") {
+				BOOST_FOREACH( TagCOP taskoperation_tag, tag->getTags() ) {
+					std::string taskoperation_name( taskoperation_tag->getOption<std::string>("name") );
+					ImportTagName key( std::make_pair( tag->getName(), taskoperation_name ) );
+					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
+					if(need_import) {
+						instantiate_taskoperation(taskoperation_tag, data, filters, movers, pose);
+						import_tag_names.erase(key);
+					}
+				}
+			}
 			if(tag->getName() == "FILTERS") {
 				BOOST_FOREACH( TagCOP filter_tag, tag->getTags() ) {
 					std::string filter_name( filter_tag->getOption<std::string>("name") );

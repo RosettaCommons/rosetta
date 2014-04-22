@@ -111,6 +111,7 @@ private:
 	bool report_call_order_; //dflt false; At the end of the run, write to out the sequence of mover/filter calls (good for stochastic application
 	std::string call_order_; // saved call order, not writeable
 	protocols::moves::MoverOP last_mover_;
+	bool resume_support_;
 
 };
 

@@ -23,6 +23,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -60,8 +62,8 @@ public:
 	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
 
 protected:
-	virtual bool selection_operation( bool a, bool b ) const = 0;
-	virtual bool get_default() const = 0;
+	virtual inline bool selection_operation( bool a, bool b ) const = 0;
+	virtual inline bool get_default() const = 0;
 	
 private:
 	std::vector < protocols::rosetta_scripts::PoseSelectorOP > selectors_;
@@ -81,8 +83,8 @@ public:
 	std::string get_name() const { return name(); }
 
 protected:
-	bool selection_operation( bool a, bool b ) const { return a && b; }
-	bool get_default() const { return true; }
+	inline bool selection_operation( bool a, bool b ) const { return a && b; }
+	inline bool get_default() const { return true; }
 
 }; // AndSelector
 
@@ -99,8 +101,8 @@ public:
 	std::string get_name() const { return name(); }
 
 protected:
-	bool selection_operation( bool a, bool b ) const { return a || b; }
-	bool get_default() const { return false; }
+	inline bool selection_operation( bool a, bool b ) const { return a || b; }
+	inline bool get_default() const { return false; }
 
 }; // OrSelector
 
@@ -135,6 +137,36 @@ private:
 	int order_;
 
 }; // TopNByProperty
+
+
+/// @brief Use existing RosettaScripts filter as a post selector
+
+class Filter : public protocols::rosetta_scripts::PoseSelector {
+
+public:
+	Filter();
+	~Filter() {}
+
+	static std::string name() { return "Filter"; }
+	std::string get_name() const { return name(); }
+
+	virtual
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose
+	);
+
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
+
+protected:
+	
+private:
+	protocols::filters::FilterOP filter_;
+
+}; // Filter
 
 } // pose_selectors
 } // protocols

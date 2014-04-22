@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/rosetta_scripts/MultipleOutputWrapper.cc
-/// @brief  This mover wraps another mover or a ROSETTASCRIPTS block to obtain additional,
-//    related poses. A new instance of the mover or protocol is created for each iteration.
+/// @file   protocols/rosetta_scripts/AdditionalOutputWrapper.cc
+/// @brief	This mover wraps another mover to obtain additional output from it via regular call to
+///   apply(). A new instance is created for each call to get_additional_output() on this wrapper.
 /// @author Luki Goldschmidt (lugo@uw.edu)
 
 // Unit headers
-#include <protocols/rosetta_scripts/MultipleOutputWrapper.hh>
-#include <protocols/rosetta_scripts/MultipleOutputWrapperCreator.hh>
+#include <protocols/rosetta_scripts/AdditionalOutputWrapper.hh>
+#include <protocols/rosetta_scripts/AdditionalOutputWrapperCreator.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -47,54 +47,54 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static basic::Tracer TR( "protocols.rosetta_scripts.MultipleOutputWrapper" );
+static basic::Tracer TR( "protocols.rosetta_scripts.AdditionalOutputWrapper" );
 
 using namespace protocols::moves;
 
 ////////////////////////////////////////////////////////////////////////
 
-std::string MultipleOutputWrapperCreator::mover_name()
+std::string AdditionalOutputWrapperCreator::mover_name()
 {
-	return "MultipleOutputWrapper";
+	return "AdditionalOutputWrapper";
 }
 
-std::string MultipleOutputWrapperCreator::keyname() const
+std::string AdditionalOutputWrapperCreator::keyname() const
 {
 	return mover_name();
 }
 
-MoverOP MultipleOutputWrapperCreator::create_mover() const
+MoverOP AdditionalOutputWrapperCreator::create_mover() const
 {
-	return new MultipleOutputWrapper();
+	return new AdditionalOutputWrapper();
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-MultipleOutputWrapper::MultipleOutputWrapper() :
-	Mover( "MultipleOutputWrapper" ),
+AdditionalOutputWrapper::AdditionalOutputWrapper() :
+	Mover( "AdditionalOutputWrapper" ),
 	mover_tag_(NULL),
 	rosetta_scripts_tag_(NULL),
 	reference_pose_(NULL),
 	max_poses_(0),
-	max_attempts_(10),
 	n_poses_(0)
 {
 }
 
-std::string MultipleOutputWrapper::get_name() const
+std::string AdditionalOutputWrapper::get_name() const
 {
-	return MultipleOutputWrapperCreator::mover_name();
+	return AdditionalOutputWrapperCreator::mover_name();
 }
 
 ///@brief Process all input poses (provided pose and from previous mover)
-void MultipleOutputWrapper::apply(core::pose::Pose& pose)
+void AdditionalOutputWrapper::apply(core::pose::Pose& pose)
 {
 	reference_pose_ = new core::pose::Pose(pose);
 	generate_pose(pose);
+	++n_poses_;
 }
 
 ///@brief Hook for multiple pose putput to JD2 or another mover
-core::pose::PoseOP MultipleOutputWrapper::get_additional_output()
+core::pose::PoseOP AdditionalOutputWrapper::get_additional_output()
 {
 	if(!reference_pose_) {
 		return NULL;
@@ -104,13 +104,13 @@ core::pose::PoseOP MultipleOutputWrapper::get_additional_output()
 	}
 
 	core::pose::PoseOP new_pose( new core::pose::Pose(*reference_pose_) );
-	if(!generate_pose(*new_pose))
-		return NULL;
+	generate_pose(*new_pose);
+	++n_poses_;
 
 	return new_pose;
 }
 
-bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
+void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 {
 	// Empty objects... may not work...
 	basic::datacache::DataMap data;
@@ -128,43 +128,22 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 	}
 
 	runtime_assert( mover );
+	mover->apply(pose);
 
-	core::Size attempts;
-	for(attempts = 1; attempts <= max_attempts_; ++attempts) {
-
-		mover->apply(pose);
-
-		protocols::moves::MoverStatus status = mover->get_last_move_status();
-		set_last_move_status(status);
-		if(status != protocols::moves::MS_SUCCESS) {
-			TR << "Sub-mover or protocol reported failure on attempt " << attempts << " of " << max_attempts_ << std::endl;
-			if(reference_pose_)
-				pose = *reference_pose_;
-			continue;
-		}
-
-		if( ! pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
-			// Add new output tag
-			std::ostringstream tag;
-			tag << name_ << "_" << (n_poses_+1);
-			pose.data().set(
-				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-				new basic::datacache::CacheableString( tag.str() )
-			);
-		}
-
-		++n_poses_;
-		return true;
+	if( ! pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
+		// Add new output tag
+		std::ostringstream tag;
+		tag << name_ << "_" << (n_poses_+1);
+		pose.data().set(
+			core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
+			new basic::datacache::CacheableString( tag.str() )
+		);
 	}
 
-	if(!attempts)
-		set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
-
-	TR << "Could not generate a pose" << std::endl;
-	return false;
+	protocols::moves::Mover::set_last_move_status(mover->get_last_move_status());
 }
 
-void MultipleOutputWrapper::parse_my_tag(
+void AdditionalOutputWrapper::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
@@ -177,9 +156,6 @@ void MultipleOutputWrapper::parse_my_tag(
 
 	if(tag->hasOption("max_output_poses"))
 		max_poses_ = tag->getOption<int>("max_output_poses", 0);
-
-	if(tag->hasOption("max_attempts"))
-		max_attempts_ = tag->getOption<int>("max_attempts", 0);
 
 	try {
 
@@ -210,7 +186,7 @@ void MultipleOutputWrapper::parse_my_tag(
 
 	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
 		std::string my_name( tag->getOption<std::string>("name") );
-		throw utility::excn::EXCN_Msg_Exception("Exception in MultipleOutputWrapper with name \"" + my_name + "\": " + e.msg());
+		throw utility::excn::EXCN_Msg_Exception("Exception in AdditionalOutputWrapper with name \"" + my_name + "\": " + e.msg());
 	}
 }
 

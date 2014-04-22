@@ -97,7 +97,8 @@ ParsedProtocol::ParsedProtocol() :
 	mode_("sequence"),
 	last_attempted_mover_idx_( 0 ),
 	report_call_order_( false ),
-	last_mover_(NULL)
+	last_mover_(NULL),
+	resume_support_(false)
 {
 }
 
@@ -121,10 +122,7 @@ ParsedProtocol::apply( Pose & pose )
 	const utility::vector1< mover_filter_pair >::const_reverse_iterator movers_crend = movers_.rend();
 	utility::vector1< mover_filter_pair >::const_reverse_iterator rmover_it = movers_crend;
 
-	// TODO: RESUME support currently broken
-	// For now, just start at the beginning; better checkpointing support needed.
-	/*
-	if(mode_ == "sequence")
+	if(resume_support_ && mode_ == "sequence")
 	{
 		for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
 			core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
@@ -153,7 +151,6 @@ ParsedProtocol::apply( Pose & pose )
 			}
 		}
 	}
-	*/
 
 	if(mode_ == "sequence"){
 		sequence_protocol(pose, rmover_it.base());
@@ -380,6 +377,11 @@ ParsedProtocol::parse_my_tag(
 	if( mode_ == "single_random" )
 		apply_probability( a_probability );
 	report_call_order( tag->getOption< bool >( "report_call_order", false ) );
+
+	resume_support_ = tag->getOption<bool>("resume_support", false);
+	if(resume_support_)
+		TR << "Legacy protocol resume support enabled." << std::endl;
+
 	TR.flush();
 }
 
@@ -388,17 +390,24 @@ ParsedProtocol::parse_my_tag(
 core::pose::PoseOP
 ParsedProtocol::get_additional_output( )
 {
-	// TODO: RESUME support corrently broken because it would pull poses from any mover
-	// For now simply look if the LAST mover in the protocol has remaining poses
 	core::pose::PoseOP pose=NULL;
 	utility::vector1< mover_filter_pair >::const_reverse_iterator rmover_it = movers_.rbegin();
-	if((*rmover_it).first.first)
-		pose = (*rmover_it).first.first->get_additional_output();
+
+	if(!resume_support_) {
+		// Get output from last specified mover
+		const utility::vector1< mover_filter_pair >::const_reverse_iterator movers_crend = movers_.rend();
+		for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+			protocols::moves::MoverOP mover = (*rmover_it).first.first;
+			if(mover && mover->get_name() != "NullMover") {
+				return mover->get_additional_output();
+			}
+		}
+		return NULL;
+	}
 	
-	/*
+	// Legacy Protocol resume support:
+
 	//fpd search the mover-filter pairs backwards; look for movers that have remaining poses
-	core::pose::PoseOP pose=NULL;
-	utility::vector1< mover_filter_pair >::const_reverse_iterator rmover_it;
 	const utility::vector1< mover_filter_pair >::const_reverse_iterator movers_crend = movers_.rend();
 	for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
 		core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
@@ -438,7 +447,6 @@ ParsedProtocol::get_additional_output( )
 	// rescore the pose with default or a user-specified scorefunction. this ensures that all output files end up with scores.
 //	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 //	(*scorefxn)(*pose);
-	*/
 
 	return pose;
 }
