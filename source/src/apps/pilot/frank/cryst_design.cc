@@ -2300,7 +2300,7 @@ try {
     NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
     NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
     NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
-    NEW_OPT(crystdock::expand_rounds, "expand_rounds", 8);
+    NEW_OPT(crystdock::expand_rounds, "expand_rounds", 12);
 
 
 	devel::init( argc, argv );
