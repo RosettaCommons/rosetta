@@ -39,8 +39,6 @@ public:
 	AntibodyFeatures(AntibodyInfoOP ab_info, ScoreFunctionCOP scorefxn);
 
 	
-	AntibodyFeatures( InterfaceFeatures const & );
-	
 	///@breif return string with class name
 	virtual std::string
 	type_name() const;
