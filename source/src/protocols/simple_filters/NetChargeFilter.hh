@@ -27,6 +27,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <utility/exit.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -36,7 +37,7 @@ namespace simple_filters {
 class NetChargeFilter : public filters::Filter
 {
 public:
-	NetChargeFilter() : filters::Filter( "NetCharge" ) {}
+	NetChargeFilter();
 	//NetChargeFilter( core::Size const distance, core::Size const jump_num );
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -49,12 +50,16 @@ public:
 		return new NetChargeFilter();
 	}
 
+  core::pack::task::TaskFactoryOP task_factory() const;
+	void task_factory( core::pack::task::TaskFactoryOP tf );
+
 	virtual ~NetChargeFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size chain_;
 	signed int net_charge_max_;
 	signed int net_charge_min_;
+	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL ; if set, all designable residues are counted for this filter
 };
 
 }

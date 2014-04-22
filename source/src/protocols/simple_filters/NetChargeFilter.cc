@@ -41,12 +41,20 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <sstream>
+#include <boost/foreach.hpp>
 
 
 namespace protocols {
 namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.NetChargeFilter" );
+
+NetChargeFilter::NetChargeFilter() :
+	Filter( "NetCharge" ),
+	chain_( 0 ),
+	net_charge_max_( 100 ),
+	net_charge_min_( -100 ),
+	task_factory_( NULL ) {}
 
 protocols::filters::FilterOP
 NetChargeFilterCreator::create_filter() const { return new NetChargeFilter; }
@@ -57,11 +65,13 @@ NetChargeFilterCreator::keyname() const { return "NetCharge"; }
 NetChargeFilter::~NetChargeFilter(){}
 
 void
-NetChargeFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NetChargeFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	chain_ = tag->getOption<core::Size>( "chain", 0 );
 	net_charge_max_ = tag->getOption<signed int>( "max", 100 );
 	net_charge_min_ = tag->getOption<signed int>( "min", -100 );
+	if( tag->hasOption( "task_operations" ) )
+		task_factory( protocols::rosetta_scripts::parse_task_operations( tag->getOption< std::string >( "task_operations" ), data ) );
 
 	TR<<"Net charge will be caculated for chain " << chain_ << " with maximum cutoff " << net_charge_max_ << " and minimum cutoff " << net_charge_min_ << "." << std::endl;
 }
@@ -100,11 +110,21 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 
 	signed int net_charge = 0;
 
-	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
-	
+
+	utility::vector1< core::Size > target_res;
+	target_res.clear();
+
+	if( task_factory() == NULL ){
+		for( core::Size i = 1; i <= pose.total_residue(); ++i )
+			target_res.push_back( i );
+	}
+	else
+		target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ );
+
+	BOOST_FOREACH( core::Size const i, target_res ){
 		core::Size const chain = copy_pose.residue( i ).chain();
 
-		// Skip if current residue is not part of the chain specified. 
+		// Skip if current residue is not part of the chain specified.
 		// Otherwise, the default chain=0 means consider all chains.
 		if (chain_ != 0) {
 				if (chain != chain_) continue;
@@ -112,7 +132,7 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 
 		std::string arg_res ("ARG");
 		std::string lys_res ("LYS");
-			
+
 		std::string asp_res ("ASP");
 		std::string glu_res ("GLU");
 
@@ -145,6 +165,14 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 
 	return( net_charge );
 }
+
+
+core::pack::task::TaskFactoryOP
+NetChargeFilter::task_factory() const{ return task_factory_; }
+
+void
+NetChargeFilter::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
+
 
 
 }
