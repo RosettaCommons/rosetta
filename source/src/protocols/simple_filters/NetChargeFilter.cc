@@ -114,7 +114,7 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 	utility::vector1< core::Size > target_res;
 	target_res.clear();
 
-	if( task_factory() == NULL ){
+	if( !task_factory() ){
 		for( core::Size i = 1; i <= pose.total_residue(); ++i )
 			target_res.push_back( i );
 	}
