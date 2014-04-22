@@ -771,7 +771,7 @@ public:
 
 	// write density grids in MRC format for debugging
 	void
-	writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_oversampled=false);
+	writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_oversampled=false, bool fftshift=false);
 
 	// build occupancy and interaction masks from pose
 	// sample in bounding box around molecule (rather than unit cell)
@@ -809,9 +809,9 @@ public:
 
 	// get maximum radius from a pose
 	Real get_radius_of_pose( Pose & pose );
-	
+
 	//Calculate transformed distance
-	Real get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clustered , UniformRotationSampler const &urs, Real radius); 
+	Real get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clustered , UniformRotationSampler const &urs, Real radius);
 	// wrapper does a series of 2d ffts
 	//    this could be an option to the low-level fft code to possibly save time
 	void
@@ -858,7 +858,7 @@ public:
 
 // write density grids in MRC --  debugging only for now
 void
-CrystDock::writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_oversampled /*=false*/) {
+CrystDock::writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_oversampled /*=false*/, bool fftshift /*=false*/) {
 	const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
 	std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
 
@@ -936,16 +936,32 @@ CrystDock::writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_ove
 	}
 
 	// data
-	int coord[3];
-	for (coord[2] = 1; coord[2] <= density.u3(); coord[2]++) {
-		for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
-			for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
-				buff_f = (float) density(coord[0],coord[1],coord[2]);
-				outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
+	if (fftshift) {
+		int coord[3], rcoord[3];
+		for (coord[2] = 1; coord[2] <= density.u3(); coord[2]++) {
+			for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
+				for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
+					rcoord[0] = pos_mod( coord[0]-1+density.u1()/2, density.u1())+1;
+					rcoord[1] = pos_mod( coord[1]-1+density.u2()/2, density.u2())+1;
+					rcoord[2] = pos_mod( coord[2]-1+density.u3()/2, density.u3())+1;
+					buff_f = (float) density(rcoord[0],rcoord[1],rcoord[2]);
+					outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
+				}
+			}
+		}
+	} else {
+		int coord[3];
+		for (coord[2] = 1; coord[2] <= density.u3(); coord[2]++) {
+			for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
+				for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
+					buff_f = (float) density(coord[0],coord[1],coord[2]);
+					outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
+				}
 			}
 		}
 	}
 }
+
 
 // build occupancy and interaction masks from pose
 // since we will be sampling rotations from this map, we sample over a larger volume than the unit cell
@@ -1018,7 +1034,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 						core::Real d2 = (cart_del_ij).length_squared();
 						if (d2 <= (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) {
 							core::Real doff = sqrt(d2) - clashdist;
-							core::Real sig = 1 / ( 1 + exp ( -sigwidth*doff ) );   // '6' is sigmoid dropoff ... (grid spacing dependent?)
+							core::Real sig = 1 / ( 1 + exp ( -sigwidth*doff ) );   //
 							rho_ca(x,y,z) *= sig;
 						}
 					}
@@ -1184,7 +1200,7 @@ CrystDock::resample_maps_and_get_self(
 	return ca_overlap;
 }
 
-Real 
+Real
 CrystDock::get_radius_of_pose( Pose & pose ) {
 	Real radius = pose.residue(1).atom(2).xyz().length();
 	for (int i=2; i<=(int)pose.total_residue(); ++i) {
@@ -1213,7 +1229,7 @@ CrystDock::get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clus
 	TR << "x1: " << x1 << "y1: " << y1 <<"z1: " << z1 << std::endl;
 	TR << "x2: " << x1 << "y2: " << y1 <<"z2: " << z1 << std::endl;
 	TR << "Angle: " << angle << std::endl;
-	TR << "Transform Distance: " << transform_dist << std::endl; 
+	TR << "Transform Distance: " << transform_dist << std::endl;
 	return transform_dist;
 }
 // TO DO: align on principal axes
@@ -1721,7 +1737,7 @@ CrystDock::get_interface_score(
 	//    * idea: expand all contacting symmops
 	//    *       ensure we generate all symmops
 	//    *       ensure we generate (+/-1,0,0), (0,+/-1,0), and (0,0,+/-1)
-	int EXPAND_ROUNDS=8;  // no idea if this is sufficient
+	int EXPAND_ROUNDS=12;  // no idea if this is sufficient
 	int nxformsOrig = (int)allInterfaces.size();
 
 	// stopping conditions
@@ -1748,7 +1764,7 @@ CrystDock::get_interface_score(
 				numeric::xyzVector<Real> const &Tj=allInterfaces[j].T_;
 
 				numeric::xyzMatrix<Real> Sij = Si*Sj;
-				numeric::xyzVector<Real> Tij = Sj*Ti + Tj;
+				numeric::xyzVector<Real> Tij = Ti + Si*Tj;
 				Real overlap_ij = std::min( allInterfaces[i].cb_overlap_, allInterfaces[j].cb_overlap_ );
 
 				if ((Tij[0])>2 || (Tij[1])>2 || (Tij[2])>2) continue;
@@ -1854,7 +1870,6 @@ CrystDock::get_clash_score_exact(
 	Real retval = 0;
 	for (int i=0; i<(int)Npoints; ++i)
 		retval += shift_rho_ca[i] * s_shift_rho_ca[i];
-
 //  Use it to dump maps
 
 // 	static int dump_count=0;
@@ -1918,8 +1933,8 @@ CrystDock::apply( Pose & pose) {
 			ccIndexHigh[i]=ccIndexLow[i];
 
 	if (debug_||debug_exact_) {
-		writeMRC( rho_ca, "ca_mask.mrc", true );
-		writeMRC( rho_cb, "cb_mask.mrc", true );
+		writeMRC( rho_ca, "ca_mask.mrc", true, true );
+		writeMRC( rho_cb, "cb_mask.mrc", true, true );
 	}
 
 	// space for intermediate results
@@ -1975,9 +1990,9 @@ CrystDock::apply( Pose & pose) {
 		cb_sum += get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
 		core::Real cb_score = get_interface_score( iinfo, rts );
 
-		TR << "OVERLAP_score = " << ca_score << std::endl;
-		TR << "INTERACTION_score = " << cb_score << std::endl;
-		TR << "cb_sum = " <<cb_sum << std::endl;
+		TR << "OVERLAP score = " << ca_score << std::endl;
+		TR << "INTERACTION score = " << cb_score << std::endl;
+		TR << "INTERACTION_SUM score = " <<cb_sum << std::endl;
 
 		//numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
 		//std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
@@ -2006,7 +2021,7 @@ CrystDock::apply( Pose & pose) {
 
 		if (debug_||debug_exact_) {
 			std::ostringstream oss1; oss1 << "rot"<<ctr<<".mrc";
-			writeMRC( r_rho_ca, oss1.str() );
+			writeMRC( r_rho_ca, oss1.str(), false, true );
 			std::ostringstream oss2; oss2 << "rot"<<ctr<<".pdb";
 			dump_transformed_pdb( pose, InterfaceHit( 0.,0.,0.,0., ctr, utility::vector1<SingleInterface>() ), urs, oss2.str() );
 		}
@@ -2017,16 +2032,15 @@ CrystDock::apply( Pose & pose) {
 			continue; // next rotation
 		}
 
-		Real sum_interface_p1 = 0;
-		 for (int i=1; i<=(int)p1_interface_map.size(); ++i) {
-			sum_interface_p1 += p1_interface_map[i].cb_overlap_;
-		}
-		sum_interface_area = sum_interface_p1;
-
 		// P1 interactions are OK, now compute the rest
 		FArray3D<Real> collision_map, ex_collision_map;
 		collision_map.dimension( grid_[0] , grid_[1] , grid_[2] );
 		collision_map=self_ca;
+
+		Real sum_interface_p1 = 0;
+		for (int i=1; i<=(int)p1_interface_map.size(); ++i)
+			sum_interface_p1 += p1_interface_map[i].cb_overlap_;
+		sum_interface_area = sum_interface_p1;
 
 		if (debug_exact_) {
 			ex_collision_map.dimension( grid_[0] , grid_[1] , grid_[2] );
@@ -2145,7 +2159,7 @@ CrystDock::apply( Pose & pose) {
 // 	for (int i=1; i<=nhits; ++i) {
 // 		InterfaceHit ih = IDB.pop();
 // 		TR << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " " << ih.rot_index  << " " << std::endl;
-// 
+//
 // 		// Treat tags as file names so that we put the number before the extension.
 // 		std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
 // 		utility::vector1< std::string > temp_out_names= utility::split( base_name );
@@ -2251,8 +2265,6 @@ try {
     NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
     NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
     NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
-    
-    
 
 
 	devel::init( argc, argv );
