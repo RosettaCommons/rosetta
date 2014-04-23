@@ -895,8 +895,8 @@ CrystDock::writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_ove
 		Ceff *= ((Real)oversamplegrid_[2]) / ((Real)grid_[2]);
 	}
 
-	float cellDimensions[3] = {Aeff,Beff,Ceff};
-	float cellAngles[3] = {sg_.alpha(),sg_.beta(),sg_.gamma()};
+	float cellDimensions[3] = {(float)Aeff,(float)Beff,(float)Ceff};
+	float cellAngles[3] = {(float)sg_.alpha(),(float)sg_.beta(),(float)sg_.gamma()};
 	outx.write(reinterpret_cast <char*>(&cellDimensions), sizeof(float)*3);
 	outx.write(reinterpret_cast <char*>(&cellAngles), sizeof(float)*3);
 
