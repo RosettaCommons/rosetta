@@ -12,7 +12,7 @@
 /// @file protocols/features/strand_assembly/SandwichFeatures.cc
 /// @brief Extract and analyze beta-sandwich features
 /// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
-/// @overviewprotein_tools/scripts/clean_pdb_new.py
+/// @overview
 ///		@ task 0: Determine whether we deal with given pdb file
 ///		@ task 1: Identify all beta-strands
 ///		@ task 2: Identify all beta-sheets with these strands
