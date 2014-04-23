@@ -808,7 +808,7 @@ if ($secondShell == 1) {
 
 ## dofs
 if ($mirroredGroup == 1) {
-	print "set_dof JUMP0_1_1 angle_z(0:360) z\n";    # spin
+	print "set_dof JUMP0_1_1 angle_z(0:360) z[0;-5:5]\n";    # spin
 } else {
 	print "set_dof JUMP0_1_1 angle_z(0:360)\n";    # spin
 }

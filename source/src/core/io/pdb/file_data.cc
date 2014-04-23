@@ -1327,7 +1327,9 @@ build_pose_as_is1(
 				if ( bondlength > 3.0 ) {
 					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *new_rsd, old_nres );
-					core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC, old_nres );
+					if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS ) &&
+					    !pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC ) )
+						core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC, old_nres );
 					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC, old_nres+1 );
 				} else {
 					//TR.Debug << rsd_type.name() << " " << i << " is appended to chain" << chainID << std::endl;

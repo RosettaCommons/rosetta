@@ -64,6 +64,7 @@
 #include <fstream>
 #include <iostream>
 #include <math.h>
+#include <cmath>
 
 #include <sstream>
 #include <string>
@@ -103,6 +104,19 @@ inline double min_mod(double x,double y) {
 
 inline double sign(double x) {return (x >= 0.0) ? 1.0 : -1.0;}
 inline double norm4(double a, double b, double c, double d) {return sqrt(a * a + b * b + c * c + d * d);}
+
+inline numeric::xyzMatrix<Real>
+axis_angle( numeric::xyzVector<Real> u, Real theta) {
+	u.normalize();
+	Real ct = cos(theta);
+	Real st = sin(theta);
+
+	return numeric::xyzMatrix<Real>::rows(
+		ct+u[0]*u[0]*(1-ct)     , u[0]*u[1]*(1-ct)-u[2]*st, u[0]*u[2]*(1-ct)+u[1]*st ,
+    	u[0]*u[1]*(1-ct)+u[2]*st, ct+u[1]*u[1]*(1-ct)     , u[1]*u[2]*(1-ct)-u[0]*st ,
+    	u[0]*u[2]*(1-ct)-u[1]*st, u[1]*u[2]*(1-ct)+u[0]*st, ct+u[2]*u[2]*(1-ct)
+	);
+}
 
 inline bool transforms_equiv_mod1(
 		numeric::xyzMatrix<Real> const &S1, numeric::xyzVector<Real> const &T1,
@@ -211,49 +225,280 @@ struct Quat {
 	}
 };
 
-struct pointGroupHit {
-	pointGroupHit() {
-		symmop1=symmop2=symmop3=0;
-	}
+class pointGroupHit {
+public:
+	pointGroupHit() {}
 
 	pointGroupHit(
-			std::string name_in, numeric::xyzVector<Real> axis_in, numeric::xyzVector<Real> axis2_in,
+			std::string name_in,
 			numeric::xyzVector<Real> origin_in,
-			int symmop1_in,
-			int symmop2_in  , numeric::xyzVector<Real> ls2_in,
-			int symmop3_in=0, numeric::xyzVector<Real> ls3_in=numeric::xyzVector<Real>(0,0,0)
+			numeric::xyzVector<Real> axis_in
 	) {
-		name=name_in;
-		symmop1=symmop1_in;
-		symmop2=symmop2_in;
-		symmop3=symmop3_in;
-		axis=axis_in;
-		axis2=axis2_in;
-		ls2=ls2_in;
+		name_=name_in;
 		origin=origin_in;
-		ls3=ls3_in;
-	}
-	pointGroupHit(
-			std::string name_in, numeric::xyzVector<Real> axis_in, numeric::xyzVector<Real> origin_in,
-			int symmop1_in,
-			int symmop2_in  , numeric::xyzVector<Real> ls2_in
-	) {
-		name=name_in;
-		symmop1=symmop1_in;
-		symmop2=symmop2_in;
-		symmop3=0;
-		axis=axis_in;
-		axis2=numeric::xyzVector<Real>(0,0,0);
-		ls2=ls2_in;
-		origin=origin_in;
-		ls3=numeric::xyzVector<Real>(0,0,0);
+		axes.push_back(axis_in);
 	}
 
-	std::string name;
-	int symmop1, symmop2,symmop3;
-	numeric::xyzVector<Real> axis, axis2, origin, ls2, ls3;
-	Real radius;
+
+	pointGroupHit(
+			pointGroupHit pg1,
+			pointGroupHit pg2,
+			utility::vector1<core::kinematics::RT> const &rts
+	) {
+		numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
+		name_="";
+
+		pointGroupHit const &hit_i = (pg1.name() == "C2") ? pg1 : pg2;
+		pointGroupHit const &hit_j = (pg1.name() == "C2") ? pg2 : pg1;
+
+		numeric::xyzMatrix<Real> Si = rts[hit_i.symmops[1]].get_rotation();
+		numeric::xyzVector<Real> Ti = rts[hit_i.symmops[1]].get_translation()
+			+ numeric::xyzVector<Real>(hit_i.lattice_shifts[1][0],
+									   hit_i.lattice_shifts[1][1],
+									   hit_i.lattice_shifts[1][2]) ;
+		numeric::xyzMatrix<Real> Sj = rts[hit_j.symmops[1]].get_rotation();
+		numeric::xyzVector<Real> Tj = rts[hit_j.symmops[1]].get_translation()
+			+ numeric::xyzVector<Real>(hit_j.lattice_shifts[1][0],
+									   hit_j.lattice_shifts[1][1],
+									   hit_j.lattice_shifts[1][2]) ;
+
+		// Dn detection
+		if (hit_i.name() == "C2") {
+
+			// check if they are perpindicular
+			Real dotprod = hit_i.axes[1].dot(hit_j.axes[1] );
+			if ( std::fabs(dotprod) <=1e-4) {
+				// translation check 2
+				numeric::xyzMatrix<Real> ST = Sj*Si;
+				numeric::xyzVector<Real> TT = Tj + Sj*Ti;
+				numeric::xyzVector<Real> TR = TT;
+				int order = hit_j.order();
+				for (int i=2; i<=order; ++i) {
+					ST = Sj*ST;
+					TT = Tj+Sj*TT;
+					TR = TR+TT;
+				}
+				TR = TR/((Real)order);
+
+				numeric::xyzVector<Real> transaxis = hit_j.origin -  TR;
+				if (transaxis.length() > 1e-4)
+					transaxis.normalize();
+
+				if (transforms_equiv(Sj*Si, Tj + Sj*Ti, Si*numeric::inverse(Sj), Ti - Si*Tj)) {
+					origin = (TR+hit_j.origin)/2.0;
+					axes.push_back(hit_i.axes[1]);
+					axes.push_back(hit_j.axes[1]);
+					symmops.push_back(hit_i.symmops[1]);
+					symmops.push_back(hit_j.symmops[1]);
+					lattice_shifts.push_back(hit_i.lattice_shifts[1]);
+					lattice_shifts.push_back(hit_j.lattice_shifts[1]);
+
+					if (expand(rts))
+						name_ = "D"+hit_j.name_.substr(1,1);
+				}
+			}
+		}
+		if (hit_i.name() == "C2" && hit_j.name() == "C3") {
+
+			Real b = hit_i.axes[1].dot(hit_j.axes[1] );
+			if ( std::fabs(b) > 1-1e-4) return;
+			Real angle = RAD2DEG*acos( b );
+
+			numeric::xyzVector<Real> w0=hit_i.origin-hit_j.origin;
+			Real d=dot(hit_j.axes[1],w0);
+			Real e=dot(hit_i.axes[1],w0);
+			numeric::xyzVector<Real> x = (hit_i.origin-hit_j.origin)+((b*e-d)*hit_i.axes[1]-(e-b*d)*hit_j.axes[1])/(1-b*b);
+			Real offset = x.length();
+			Real sc=(b*e-d)/(1-b*b);
+
+			origin=hit_i.origin+hit_i.axes[1]*sc;
+
+			if (offset>1e-4) return;  // do symmaxes intersect?
+
+			numeric::xyzVector<Real> next3fold = axis_angle(hit_i.axes[1], 180*DEG2RAD )*hit_j.axes[1];
+			core::Size targetct=1;
+			if (std::fabs( angle - 109.47122/2.0) <= 1e-3) {
+				name_ = "T";targetct=12;
+
+				// rotate by 120 around axis 1
+				numeric::xyzMatrix<Real> axisgen = axis_angle( hit_j.axes[1], 120*DEG2RAD );
+				axes.push_back(hit_j.axes[1]);
+				axes.push_back(next3fold);
+				axes.push_back(axisgen*hit_j.axes[1]);
+				axes.push_back(axisgen*axisgen*next3fold);
+			} else if (std::fabs(angle - 70.528779/2.0) <= 1e-3) {
+				name_ = "O";targetct=24;
+
+				// rot 90 about axis 1
+				numeric::xyzMatrix<Real> axisgen = axis_angle( hit_j.axes[1], 120*DEG2RAD );
+				axes.push_back(hit_j.axes[1]);
+				axes.push_back(next3fold);
+				axes.push_back(-hit_j.axes[1]);
+				axes.push_back(-next3fold);
+				axes.push_back(axisgen*hit_j.axes[1]);
+				axes.push_back(-(axisgen*next3fold));
+				axes.push_back(axisgen*axisgen*hit_j.axes[1]);
+				axes.push_back(-(axisgen*axisgen*next3fold));
+			} else {
+				return;
+			}
+
+			symmops.push_back(hit_i.symmops[1]);
+			symmops.push_back(hit_j.symmops[1]);
+			lattice_shifts.push_back(hit_i.lattice_shifts[1]);
+			lattice_shifts.push_back(hit_j.lattice_shifts[1]);
+
+			if (!expand(rts)) return;
+			if (symmops.size()!=targetct) {
+				//std::cerr << "fail at " << name_ << " got " << symmops.size() << std::endl;
+				name_="";
+				return;
+			}
+		}
+	}
+
+	void
+	add_symmop( int symm, numeric::xyzVector<int> ls) {
+		symmops.push_back(symm);
+		lattice_shifts.push_back(ls);
+	}
+
+	bool
+	expand(utility::vector1<core::kinematics::RT> const &rts) {
+		bool done=false;
+		int rounds=0;
+		int nsymmops0=symmops.size();
+		while(!done && ++rounds<10) {
+			done=true;
+			int nsymmops=symmops.size();
+			for (int i=1; i<=nsymmops; ++i) {
+				for (int j=1; j<=nsymmops0; ++j) {
+					numeric::xyzMatrix<Real> const &Si=rts[symmops[i]].get_rotation();
+					numeric::xyzVector<Real> Ti = rts[symmops[i]].get_translation()
+						+ numeric::xyzVector<Real>(lattice_shifts[i][0],
+												   lattice_shifts[i][1],
+												   lattice_shifts[i][2]) ;
+					numeric::xyzMatrix<Real> const &Sj=rts[symmops[j]].get_rotation();
+					numeric::xyzVector<Real> Tj = rts[symmops[j]].get_translation()
+						+ numeric::xyzVector<Real>(lattice_shifts[j][0],
+												   lattice_shifts[j][1],
+												   lattice_shifts[j][2]) ;
+
+					numeric::xyzMatrix<Real> Sij = Sj*Si;
+					numeric::xyzVector<Real> Tij = Sj*Ti + Tj;
+
+					// check if unique
+					bool unique = true;
+					for (int k=1;k<=(int)symmops.size() && unique; ++k) {
+						if ( transforms_equiv(Sij, Tij, rts[symmops[k]].get_rotation(),
+								rts[symmops[k]].get_translation()
+								+ numeric::xyzVector<Real>(lattice_shifts[k][0],
+								                           lattice_shifts[k][1],
+												           lattice_shifts[k][2]) ) ) {
+							unique = false;
+						}
+					}
+
+					// look up spacegroup
+					if (unique) {
+						bool found = false;
+						for (int k=1;k<=(int)rts.size() && !found; ++k) {
+							if (transforms_equiv_mod1(Sij, Tij, rts[k].get_rotation(), rts[k].get_translation()) ) {
+								symmops.push_back(k);
+								numeric::xyzVector<int> ls(
+									(int)std::floor( Tij[0]-rts[k].get_translation()[0]+0.5 ),
+									(int)std::floor( Tij[1]-rts[k].get_translation()[1]+0.5 ),
+									(int)std::floor( Tij[2]-rts[k].get_translation()[2]+0.5 )
+								);
+								lattice_shifts.push_back(ls);
+								found = true;
+								done=false;
+							}
+						}
+
+						if (!found) {
+							std::cerr << "with " << name_ << std::endl;
+							utility_exit_with_message("error in expand (symmop not found)");
+						}
+					}
+				}
+			}
+		}
+		if (!done) {
+			return false;
+		}
+		return true;
+	}
+
+	void
+	show() const {
+		std::cerr << "  SYMMOP " << name_ << ": nsymm=" << symmops.size();
+		std::cerr << " origin=[" << origin[0] << "," << origin[1] << "," << origin[2] << "] ";
+		for (int i=1; i<=std::min((int)axes.size(),3); ++i) {
+			std::cerr << "axis_" << i << "=[" << axes[i][0] << "," << axes[i][1] << "," << axes[i][2] << "] ";
+		}
+		std::cerr << "symmops=" << symmops[1] ;
+		for (int i=2; i<=(int)symmops.size(); ++i) {
+			std::cerr << "," << symmops[i];
+		}
+		std::cerr << std::endl;
+	}
+
+	int intersects( pointGroupHit const & pg ) const {
+		int retval=0;
+		int nsymmops0=symmops.size();
+		int nsymmops1=pg.symmops.size();
+		for (int i=1; i<=nsymmops0; ++i) {
+			for (int j=1; j<=nsymmops1; ++j) {
+				if (symmops[i] == pg.symmops[j] && lattice_shifts[i] == pg.lattice_shifts[j])
+					retval++;
+			}
+		}
+		return retval;
+	}
+
+	bool is_subset_of( pointGroupHit const & pg ) const {
+		int nsymmops0=symmops.size();
+		int nsymmops1=pg.symmops.size();
+		for (int i=1; i<=nsymmops0; ++i) {
+			bool contained_in = false;
+			for (int j=1; j<=nsymmops1 && !contained_in; ++j) {
+				contained_in = (symmops[i] == pg.symmops[j] && lattice_shifts[i] == pg.lattice_shifts[j]);
+			}
+			if (!contained_in) return false;
+		}
+		return true;
+	}
+
+	bool equals( pointGroupHit const & pg ) const {
+		return (is_subset_of(pg) && pg.is_subset_of(*this));
+	}
+
+	bool isC() const { return (name_.substr(0,1)=="C"); }
+	bool isD() const { return (name_.substr(0,1)=="D"); }
+	bool isT() const { return (name_.substr(0,1)=="T"); }
+	bool isO() const { return (name_.substr(0,1)=="O"); }
+	int order() const { if (isC()||isD()) return (atoi( name_.substr(1,1).c_str() )); else return 0; }
+
+	std::string name() const { return name_; }
+
+	Real
+	score() {
+		Real score=0;
+		for (int i=1; i<=(int)lattice_shifts.size(); ++i) {
+			score += abs(lattice_shifts[i][0])+abs(lattice_shifts[i][1])+abs(lattice_shifts[i][2]);
+		}
+		score += std::fabs(origin[0]) + std::fabs(origin[1]) + std::fabs(origin[2]);
+		return score;
+	}
+
+	std::string name_;
+	utility::vector1<int> symmops;
+	utility::vector1< numeric::xyzVector<int> > lattice_shifts;
+	utility::vector1< numeric::xyzVector<Real> > axes;
+	numeric::xyzVector<Real> origin;
 };
+
 
 struct latticeHit {
 	latticeHit( pointGroupHit hit1_in, pointGroupHit hit2_in, Real angle_in, Real offset_in, Real shift_in ) {
@@ -266,9 +511,10 @@ struct latticeHit {
 	Real shift;
 };
 
-// get point symm from symmops
+
+// get point symmetries from symmops
 utility::vector1< pointGroupHit >
-get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyzMatrix<core::Real> skewM, bool fastmode ) {
+get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyzMatrix<core::Real> skewM ) {
 	utility::vector1< pointGroupHit > hits, hits_dedup;
 	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 	int nxforms = (int)rts.size();
@@ -295,7 +541,10 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 			numeric::xyzVector<Real> TT = Ti + Si*Ti;
 			numeric::xyzVector<Real> TR = Ti + TT;
 			if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
-				hits.push_back( pointGroupHit("C2", axis, TR/2, 1, i, lattice_shift) );
+				pointGroupHit pg("C2", TR/2.0, axis );
+				pg.add_symmop( i,lattice_shift );
+				pg.expand( rts );
+				hits.push_back( pg);
 				continue;
 			}
 
@@ -303,7 +552,10 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 			TT = Ti+Si*TT;
 			TR = TR+TT;
 			if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
-				hits.push_back( pointGroupHit("C3", axis, TR/3, 1, i, lattice_shift) );
+				pointGroupHit pg("C3", TR/3.0, axis);
+				pg.add_symmop( i,lattice_shift );
+				pg.expand( rts );
+				hits.push_back( pg);
 				continue;
 			}
 
@@ -311,7 +563,10 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 			TT = Ti+Si*TT;
 			TR = TR+TT;
 			if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
-				hits.push_back( pointGroupHit("C4", axis, TR/4, 1, i, lattice_shift) );
+				pointGroupHit pg("C4", TR/4.0, axis);
+				pg.add_symmop( i,lattice_shift );
+				pg.expand( rts );
+				hits.push_back( pg);
 				continue;
 			}
 
@@ -324,138 +579,89 @@ get_point_groups(utility::vector1<core::kinematics::RT> const &rts, numeric::xyz
 			TT = Ti+Si*TT;
 			TR = TR+TT;
 			if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
-				hits.push_back( pointGroupHit("C6", axis, TR/6, 1, i, lattice_shift) );
+				pointGroupHit pg("C6", TR/6.0, axis);
+				pg.add_symmop( i,lattice_shift );
+				pg.expand( rts );
+				hits.push_back( pg);
 				continue;
 			}
 		}
 	}
 
-	// expand C2 and Cn groups that are perpendicular
+	// detect higher order
 	int nhits = (int)hits.size();
 	for (int i=1; i<=nhits; ++i) {
 		for (int j=i+1; j<=nhits; ++j) {
 			pointGroupHit const &hit_i = hits[i];
 			pointGroupHit const &hit_j = hits[j];
 
-			Real dotprod = hit_i.axis.dot(hit_j.axis );
-			if ( std::fabs(dotprod) >1e-4) continue;
+			if (hit_i.intersects(hit_j) > 1) continue;
 
-			if (hit_i.name != "C2" && hit_j.name != "C2") continue;
-
-			numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop1].get_rotation();
-			numeric::xyzMatrix<Real> const &Sj = rts[hit_j.symmop2].get_rotation();
-			numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop1].get_translation() + hit_i.ls2;
-			numeric::xyzVector<Real> const &Tj = rts[hit_j.symmop2].get_translation() + hit_j.ls2;
-
-			numeric::xyzMatrix<Real> Sij = Si*Sj;
-			numeric::xyzVector<Real> Tij = Si*Tj + Ti;
-			numeric::xyzMatrix<Real> Sji = Sj*Si;
-			numeric::xyzVector<Real> Tji = Sj*Ti + Tj;
-
-			if (hit_i.origin != hit_j.origin) continue;
-
-			pointGroupHit hit_new;
-			if (hit_i.name == "C2" && hit_j.name == "C2") {
-				hits.push_back( pointGroupHit("D2", hit_i.axis, hit_j.axis, hit_i.origin , 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2 ) );
-			} else if (hit_i.name == "C2") {
-				std::string symmgp = "D"+hit_j.name.substr(1,1);
-				hits.push_back( pointGroupHit(symmgp, hit_j.axis, hit_i.axis,  hit_i.origin, 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2) );
-			} else if (hit_j.name == "C2") {
-				std::string symmgp = "D"+hit_i.name.substr(1,1);
-				hits.push_back( pointGroupHit(symmgp, hit_i.axis, hit_j.axis, hit_i.origin, 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2) );
-			}
-		}
-	}
-
-	// find T's and O's
-	for (int i=1; i<=nhits; ++i) {
-		for (int j=i+1; j<=nhits; ++j) {
-			pointGroupHit const &hit_i = hits[i];
-			pointGroupHit const &hit_j = hits[j];
-
-			if (hit_i.name != "C3" && hit_j.name != "C3") continue;
-
-			Real b = hit_i.axis.dot(hit_j.axis );
-			if ( std::fabs(b) > 0.99999) continue;
-
-			numeric::xyzVector<Real> w0=hit_i.origin-hit_j.origin;
-			Real d=dot(hit_j.axis,w0);
-			Real e=dot(hit_i.axis,w0);
-			numeric::xyzVector<Real> x = (hit_i.origin-hit_j.origin)+((b*e-d)*hit_i.axis-(e-b*d)*hit_j.axis)/(1-b*b);
-			Real offset = x.length();
-			Real sc=(b*e-d)/(1-b*b);
-			numeric::xyzVector<Real> new_origin=hit_i.origin+hit_i.axis*sc;
-
-			if (offset<1e-4) continue;
-
-			if (std::fabs( b - 1.0/3.0) <= 1e-4) {
-				numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop1].get_rotation();
-				numeric::xyzMatrix<Real> const &Sj = rts[hit_j.symmop2].get_rotation();
-				numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop1].get_translation() + hit_i.ls2;
-				numeric::xyzVector<Real> const &Tj = rts[hit_j.symmop2].get_translation() + hit_j.ls2;
-
-				numeric::xyzMatrix<Real> Sij = Si*numeric::inverse(Sj);
-				numeric::xyzVector<Real> Tij = Ti-Tj;
-				numeric::xyzMatrix<Real> ST = Sij*Sij;
-				numeric::xyzVector<Real> TT = Tij + Sij*Tij;
-				numeric::xyzVector<Real> TR = Ti + TT;
-				ST = Sij*ST;
-				TT = Tij+Sij*TT;
-				TR = TR+TT;
-				if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
-					hits.push_back( pointGroupHit("T", hit_i.axis, hit_j.axis, new_origin, 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2 ) );
-				}
-			} else if (std::fabs( b ) <= 1e-4) {
-				numeric::xyzMatrix<Real> const &Si = rts[hit_i.symmop1].get_rotation();
-				numeric::xyzMatrix<Real> const &Sj = rts[hit_j.symmop2].get_rotation();
-				numeric::xyzVector<Real> const &Ti = rts[hit_i.symmop1].get_translation() + hit_i.ls2;
-				numeric::xyzVector<Real> const &Tj = rts[hit_j.symmop2].get_translation() + hit_j.ls2;
-
-				numeric::xyzMatrix<Real> Sij = Si*numeric::inverse(Sj);
-				numeric::xyzVector<Real> Tij = Ti-Tj;
-				numeric::xyzMatrix<Real> ST = Sij*Sij;
-				numeric::xyzVector<Real> TT = Tij + Sij*Tij;
-				numeric::xyzVector<Real> TR = Ti + TT;
-				ST = Sij*ST;
-				TT = Tij+Sij*TT;
-				TR = TR+TT;
-				ST = Sij*ST;
-				TT = Tij+Sij*TT;
-				TR = TR+TT;
-				if (transforms_equiv(ST,TT,identity,numeric::xyzVector<core::Real>(0,0,0))) {
-					hits.push_back( pointGroupHit("O", hit_i.axis, hit_j.axis, new_origin, 1,hit_i.symmop2, hit_i.ls2, hit_j.symmop2, hit_j.ls2 ) );
-				}
+			pointGroupHit hit_ij(hit_i, hit_j, rts);
+			if (hit_ij.name() != "") {
+				hits.push_back( hit_ij );
 			}
 		}
 	}
 
 
 	// remove duplicates
-	nhits = (int)hits.size();
-	for (int i=1; i<=nhits; ++i) {
-		bool dup=false;
-		for (int j=1; j<=(int)hits_dedup.size() && !dup; ++j) {
-			Real delaxis = (hits[i].axis - hits_dedup[j].axis).length();
-			Real delorigin = (hits[i].origin - hits_dedup[j].origin).length();
+	//  [i] exacts
+ 	nhits = (int)hits.size();
+ 	for (int i=1; i<=nhits; ++i) {
+ 		bool dup=false;
+		int j;
+ 		for (j=1; j<=(int)hits_dedup.size() && !dup; ++j) {
+			// remove exact matches
+			if (hits[i].name_ != hits_dedup[j].name_) continue;
+ 			if ( (hits[i].origin - hits_dedup[j].origin).length() > 1e-4 ) continue;
 
-			if (hits[i].name == hits_dedup[j].name
-					&& delaxis <= 1e-4
-					&& delorigin <= 1e-4)
-				dup=true;
-
-			if (hits[i].name == "O" && hits_dedup[j].name == "O"
-					&& delorigin <=1e-4
-					&& std::fabs( hits[i].axis.dot(hits_dedup[j].axis ) - 1.0/3.0) <1e-4 )
-				dup=true;
-
-			if (hits[i].name == "T" && hits_dedup[j].name == "T"
-					&& delorigin <=1e-4
-					&& std::fabs( hits[i].axis.dot(hits_dedup[j].axis )) <1e-4 )
-				dup=true;
+			if (hits[i].isC() && std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e4) continue;
+			if (hits[i].name_ == "D2") {
+				bool off11 = (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e4);
+				bool off12 = (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[2] ) ) < 1-1e4);
+				bool off21 = (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[1] ) ) < 1-1e4);
+				bool off22 = (std::fabs (hits[i].axes[2].dot(hits_dedup[j].axes[2] ) ) < 1-1e4);
+				if ( (off11&&off22) || (off12&&off21) ) continue;
+			} else if (hits[i].isD()) {
+				// Dn, n>=3
+				if (std::fabs (hits[i].axes[1].dot(hits_dedup[j].axes[1] ) ) < 1-1e4) continue;
+				Real angle=RAD2DEG*acos(hits[i].axes[2].dot(hits_dedup[j].axes[2] ));
+				int order = hits[i].order();
+				if ( pos_mod( angle, 180.0/(order) )<1e-4 ) continue;
+			} else if (hits[i].isT() || hits[i].isO()) {
+				bool match=false;
+				for (int k=1; k<=(int)hits[i].axes.size() && !match; ++k) {
+					if (std::fabs (hits[i].axes[k].dot(hits_dedup[j].axes[1] ) ) < 1-1e4) match=true;
+				}
+				if (match) continue;
+			}
+			dup=true;
 		}
-		if (!dup) hits_dedup.push_back(hits[i]);
+
+		if (!dup) {
+			hits_dedup.push_back(hits[i]);
+		} else {
+			if (hits_dedup[j-1].score() > hits[i].score())
+				hits_dedup[j-1] = hits[i];
+		}
+
 	}
 
+	hits = hits_dedup;
+	hits_dedup.clear();
+
+ 	nhits = (int)hits.size();
+ 	for (int i=1; i<=nhits; ++i) {
+		bool uniq = true;
+	 	for (int j=1; j<=nhits && uniq; ++j) {
+			if (i==j) continue;
+			if (hits[i].isC() && hits[j].isC() && hits[i].order() < hits[j].order() && hits[i].is_subset_of( hits[j] )) uniq=false;
+			if (hits[i].isD() && hits[j].isD() && hits[i].order() < hits[j].order() && hits[i].is_subset_of( hits[j] )) uniq=false;
+			if (hits[i].isT() && hits[j].isO() && hits[i].is_subset_of( hits[j] )) uniq=false;
+		}
+		if (uniq) hits_dedup.push_back(hits[i]);
+	}
 	return hits_dedup;
 }
 
@@ -472,6 +678,14 @@ check_if_forms_lattice(
  	utility::vector1<core::kinematics::RT> rts_exp = rts;
  	int nxformsOrig = (int)rts_exp.size();
 
+	if (verbose) {
+		std::cerr << "-----" << std::endl;
+		for (int i=1; i<=(int)rts_exp.size(); ++i) {
+			numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
+			disp_symmop(rts_exp[i]);
+		}
+	}
+
 	for (int rd=1; rd<=EXPAND_ROUNDS; ++rd) {
 		int nxforms = (int)rts_exp.size();
 		for (int i=1; i<=nxforms; ++i) {
@@ -482,7 +696,7 @@ check_if_forms_lattice(
 				numeric::xyzVector<Real> const &Tj=rts_exp[j].get_translation();
 
 				numeric::xyzMatrix<Real> Sij = Sj*Si;
-				numeric::xyzVector<Real> Tij = Sj*Ti + Tj;
+				numeric::xyzVector<Real> Tij = Tj+Sj*Ti;
 
 				if (std::fabs(Tij[0])>2 || std::fabs(Tij[1])>2 || std::fabs(Tij[2])>2) continue;
 
@@ -499,12 +713,13 @@ check_if_forms_lattice(
 		}
 	}
 
-	//std::cerr << "-----" << std::endl;
-	//for (int i=1; i<=(int)rts_exp.size(); ++i) {
-	//	numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
-	//	if (Si == identity)
-	//		disp_symmop(rts_exp[i]);
-	//}
+	if (verbose) {
+		std::cerr << "-----" << std::endl;
+		for (int i=1; i<=(int)rts_exp.size(); ++i) {
+			numeric::xyzMatrix<Real> const &Si=rts_exp[i].get_rotation();
+			disp_symmop(rts_exp[i]);
+		}
+	}
 
 	// check if:
 	//    1 - all generated transformations are in the lattice group
@@ -519,7 +734,7 @@ check_if_forms_lattice(
 			contains_j |= i_equals_j;
 		}
 		connected &= contains_j;
-		//if (!contains_j) std::cerr << "fail to connect " << i << std::endl;
+		if (verbose && !contains_j) std::cerr << "fail to connect " << i << std::endl;
 	}
 	if(!connected) return false;
 
@@ -583,9 +798,7 @@ try {
 			spacegroups.push_back(std::string(argv[i]));
 	}
 
-	bool fastmode=false; // run faster for a couple SGs
-
-	for (int sx=1; sx<=(int) spacegroups.size(); ++sx) {
+ 	for (int sx=1; sx<=(int) spacegroups.size(); ++sx) {
 		std::string name=spacegroups[sx];
 
 		std::cerr << "**** " <<  spacegroups[sx] << " ****" << std::endl;
@@ -597,23 +810,15 @@ try {
 			(name=="P6122")||(name=="P6522")||(name=="P6222")||(name=="P6422")||(name=="P6322"))
 			skewM = numeric::xyzMatrix<core::Real>::rows( 1,-0.5,0, 0,0.866025403784439,0, 0,0,1);
 
-		if (name=="P432"||name=="F432"||name=="I432")
-			fastmode=true;
-
 		utility::vector1<core::kinematics::RT> rts;
 		utility::vector1<numeric::xyzVector<core::Real> > cenops;
 		get_symmops( spacegroups[sx], rts, cenops );
-		utility::vector1< pointGroupHit > pgs = get_point_groups( rts, skewM, fastmode );
+		utility::vector1< pointGroupHit > pgs = get_point_groups( rts, skewM );
 
-//		for (int i=1; i<=(int)pgs.size(); ++i) {
-//			pointGroupHit hit_i = pgs[i];
-//			std::cerr << "    " << hit_i.name << ": axis=[" << hit_i.axis[0] <<","<< hit_i.axis[1] <<","<< hit_i.axis[2]
-//				<<"]  ori=["<< hit_i.origin[0] <<","<< hit_i.origin[1] <<","<< hit_i.origin[2] <<"] "
-//				<<"  lattice_shift=[" << hit_i.ls2[0] <<","<< hit_i.ls2[1] <<","<< hit_i.ls2[2] <<"] "
-//				<<" symmops:" << hit_i.symmop2;
-//			if (hit_i.symmop3 != 0) std::cerr << " and " << hit_i.symmop3 << std::endl;
-//			else std::cerr << std::endl;
-//		}
+		for (int i=1; i<=(int)pgs.size(); ++i) {
+			pointGroupHit hit_i = pgs[i];
+			hit_i.show();
+		}
 
 		// sample all pairs of point groups
 		utility::vector1< latticeHit > finalHits;
@@ -624,25 +829,28 @@ try {
 
 				// add RTs
 				utility::vector1<core::kinematics::RT> rts_symm;
-				rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmop1].get_rotation(), rts[hit_i.symmop1].get_translation() ) );
-				rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmop2].get_rotation(), rts[hit_i.symmop2].get_translation() + hit_i.ls2) );
-				if (hit_i.symmop3 > 0)
-					rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmop3].get_rotation(), rts[hit_i.symmop3].get_translation() + hit_i.ls3 ) );
 
-				rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmop1].get_rotation(), rts[hit_j.symmop1].get_translation() ) );
-				rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmop2].get_rotation(), rts[hit_j.symmop2].get_translation() + hit_j.ls2 ) );
-				if (hit_j.symmop3 > 0)   // d symm only
-					rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmop3].get_rotation(), rts[hit_j.symmop3].get_translation() + hit_j.ls3 ) );
+				for (int k=1; k<=(int) hit_i.symmops.size(); ++k) {
+					rts_symm.push_back( core::kinematics::RT( rts[hit_i.symmops[k]].get_rotation(),
+							rts[hit_i.symmops[k]].get_translation() +
+							numeric::xyzVector<Real> ( hit_i.lattice_shifts[k][0],  hit_i.lattice_shifts[k][1],  hit_i.lattice_shifts[k][2] ) ));
+				}
+				for (int k=1; k<=(int) hit_j.symmops.size(); ++k) {
+					rts_symm.push_back( core::kinematics::RT( rts[hit_j.symmops[k]].get_rotation(),
+							rts[hit_j.symmops[k]].get_translation() +
+							numeric::xyzVector<Real> ( hit_j.lattice_shifts[k][0],  hit_j.lattice_shifts[k][1],  hit_j.lattice_shifts[k][2] ) ));
+				}
 
-				bool is_lattice = check_if_forms_lattice( rts_symm, rts, false );   // check if we are fully connected
+
+				bool is_lattice = check_if_forms_lattice( rts_symm, rts, (i==19 && j==60) );   // check if we are fully connected
 
 				if (is_lattice) {
-					numeric::xyzVector<core::Real> Iaxis=hit_i.axis, Jaxis=hit_j.axis;
+					numeric::xyzVector<core::Real> Iaxis=hit_i.axes[1], Jaxis=hit_j.axes[1];
 
-					if (hit_i.name == "D2")
-						Iaxis = hit_i.axis.cross( hit_i.axis2 );
-					if (hit_j.name == "D2")
-						Jaxis = hit_j.axis.cross( hit_j.axis2 );
+					if (hit_i.name() == "D2")
+						Iaxis = hit_i.axes[1].cross( hit_i.axes[2] );
+					if (hit_j.name() == "D2")
+						Jaxis = hit_j.axes[1].cross( hit_j.axes[2] );
 
 					Real angle = RAD2DEG * acos( std::max( std::min( Iaxis.dot( Jaxis ), 1.0 ), -1.0) );
 					angle = std::min( 180-angle, angle );
@@ -653,14 +861,14 @@ try {
 						shift = (hit_j.origin-hit_i.origin).dot( Iaxis );
 					} else {
 						offset = std::fabs (
-							(hit_j.origin-hit_i.origin).dot( hit_i.axis.cross( hit_j.axis ) ) / hit_i.axis.cross( hit_j.axis ).length() );
+							(hit_j.origin-hit_i.origin).dot( hit_i.axes[1].cross( hit_j.axes[1] ) ) / hit_i.axes[1].cross( hit_j.axes[1] ).length() );
 					}
 
 					bool dup = false;
 					for (int q = 1; q<= (int)finalHits.size() && !dup; ++q) {
 						if (
-							( (finalHits[q].hit1.name == hit_i.name && finalHits[q].hit2.name == hit_j.name) ||
-							  (finalHits[q].hit2.name == hit_i.name && finalHits[q].hit1.name == hit_j.name) ) &&
+							( (finalHits[q].hit1.name() == hit_i.name() && finalHits[q].hit2.name() == hit_j.name()) ||
+							  (finalHits[q].hit2.name() == hit_i.name() && finalHits[q].hit1.name() == hit_j.name()) ) &&
 							std::fabs( angle - finalHits[q].angle ) < 1e-6
 						) {
 							if ((offset==0 && finalHits[q].offset == 0)
@@ -680,19 +888,19 @@ try {
 
 		for (int i=1; i<=(int)finalHits.size(); ++i) {
 			latticeHit lh = finalHits[i];
-			std::cerr << lh.hit1.name << " and " << lh.hit2.name << " at angle = " << lh.angle << " offset = " << lh.offset;
+			std::cerr << lh.hit1.name() << " and " << lh.hit2.name() << " at angle = " << lh.angle << " offset = " << lh.offset;
 			if (lh.angle == 0) std::cerr << " shift = " << lh.shift;
 			std::cerr << std::endl;
-			std::cerr <<  "     " <<  lh.hit1.name << " axis=[" << lh.hit1.axis[0] <<","<< lh.hit1.axis[1] <<","<< lh.hit1.axis[2]
+			std::cerr <<  "     " <<  lh.hit1.name() << " axis=[" << lh.hit1.axes[1][0] <<","<< lh.hit1.axes[1][1] <<","<< lh.hit1.axes[1][2]
 				<< "] ";
-			if (lh.hit1.name.substr(0,1) == "D")
-				std::cerr << " axis2=[" << lh.hit1.axis2[0] <<","<< lh.hit1.axis2[1] <<","<< lh.hit1.axis2[2] << "] ";
+			if (lh.hit1.name().substr(0,1) == "D")
+				std::cerr << " axis2=[" << lh.hit1.axes[1][0] <<","<< lh.hit1.axes[2][1] <<","<< lh.hit1.axes[2][2] << "] ";
 			std::cerr << " origin=["<< lh.hit1.origin[0] <<","<< lh.hit1.origin[1] <<","<< lh.hit1.origin[2] <<"]" << std::endl;
 
-			std::cerr <<  "     " <<  lh.hit2.name << " axis=[" << lh.hit2.axis[0] <<","<< lh.hit2.axis[1] <<","<< lh.hit2.axis[2]
+			std::cerr <<  "     " <<  lh.hit2.name() << " axis=[" << lh.hit2.axes[1][0] <<","<< lh.hit2.axes[1][1] <<","<< lh.hit2.axes[2][2]
 				<< "] ";
-			if (lh.hit2.name.substr(0,1) == "D")
-				std::cerr << " axis2=[" << lh.hit2.axis2[0] <<","<< lh.hit2.axis2[1] <<","<< lh.hit2.axis2[2] << "] ";
+			if (lh.hit2.name().substr(0,1) == "D")
+				std::cerr << " axis2=[" << lh.hit2.axes[2][0] <<","<< lh.hit2.axes[2][1] <<","<< lh.hit2.axes[2][2] << "] ";
 			std::cerr << " origin=["<< lh.hit2.origin[0] <<","<< lh.hit2.origin[1] <<","<< lh.hit2.origin[2] <<"]" << std::endl;
 
 		}
