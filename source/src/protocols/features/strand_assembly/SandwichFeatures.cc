@@ -12,7 +12,7 @@
 /// @file protocols/features/strand_assembly/SandwichFeatures.cc
 /// @brief Extract and analyze beta-sandwich features
 /// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
-/// @overview
+/// @overviewprotein_tools/scripts/clean_pdb_new.py
 ///		@ task 0: Determine whether we deal with given pdb file
 ///		@ task 1: Identify all beta-strands
 ///		@ task 2: Identify all beta-sheets with these strands
@@ -450,8 +450,10 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column topology_candidate	("topology_candidate",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-		// either "fn3" or "not_fn3"
+		// "fn3" or "not_fn3" or "not_known_topology"
 
+	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -605,6 +607,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(multimer_is_suspected);
 	sw_by_components.add_column(avg_b_factor_CB_at_each_component);
 	sw_by_components.add_column(topology_candidate);
+	sw_by_components.add_column(min_dis_between_sheets_by_cen_res);
+	sw_by_components.add_column(avg_dis_between_sheets_by_cen_res);
 	sw_by_components.add_column(component_size);
 
 
@@ -2721,7 +2725,8 @@ Real
 SandwichFeatures::round_to_Real(
 					Real x)
 {
-	Real rounded = floor(x+.2);
+	//Real rounded = floor(x+.2);
+	Real rounded = floor((x * 10) +	0.5)	/	10;
 	return rounded;
 } //round_to_Real
 
@@ -3606,8 +3611,6 @@ SandwichFeatures::get_cen_residues_in_this_sheet(
 	sessionOP db_session,
 	Size sheet_id)
 {
-//		TR << "get_cen_residues_in_this_sheet" << endl;
-//	time_t start_time = time(NULL);
 	string select_string =
 	"SELECT\n"
 	"	residue_begin \n"
@@ -3668,8 +3671,6 @@ SandwichFeatures::get_cen_residues_in_this_sheet(
 
 		vector_of_cen_residues.push_back(cen_resnum_i);
 	}
-//	time_t end_time = time(NULL);
-//		TR.Info << "Finished in " << (end_time - start_time) << " seconds." << endl;
 	return vector_of_cen_residues;
 } //get_cen_residues_in_this_sheet
 
@@ -4513,7 +4514,7 @@ SandwichFeatures::report_topology_candidate	(
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(sheet_id = 1)	\n"
-	"	AND	strand_edge is not null	\n"
+	"	AND	(strand_edge is not null)	\n"
 	"	AND	(sw_can_by_sh_id = ?);";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,	db_session));
@@ -4532,16 +4533,22 @@ SandwichFeatures::report_topology_candidate	(
 	//// <end> retrieve sw_by_components_bs_id
 
 	string	topology_candidate;
-
-	if	(vector_of_sw_by_components_bs_id[1]	==	1 && vector_of_sw_by_components_bs_id[2]	==	3 &&	vector_of_sw_by_components_bs_id[3]	==	9)
+	std::cout << vector_of_sw_by_components_bs_id.size()	<<	std::endl;
+	if	(vector_of_sw_by_components_bs_id.size()	<	3)
 	{
-		topology_candidate	=	"fn3";
+		topology_candidate	=	"not_known_topology";
 	}
 	else
 	{
-		topology_candidate	=	"not_fn3";
+		if	(vector_of_sw_by_components_bs_id[1]	==	1 && vector_of_sw_by_components_bs_id[2]	==	3 &&	vector_of_sw_by_components_bs_id[3]	==	9)
+		{
+			topology_candidate	=	"fn3";
+		}
+		else
+		{
+			topology_candidate	=	"not_fn3";
+		}
 	}
-
 	// <begin> UPDATE sw_by_components table
 	string insert =
 	"UPDATE sw_by_components set \n"
@@ -4561,6 +4568,45 @@ SandwichFeatures::report_topology_candidate	(
 
 	return 0;
 } //	SandwichFeatures::report_topology_candidate
+
+
+
+Size
+SandwichFeatures::report_min_avg_dis_between_sheets_by_cen_res	(
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id,
+	Pose & dssp_pose,
+	utility::vector1<Size>	all_distinct_sheet_ids)
+{
+
+	//// <begin> calculate minimum distance between sheets
+	std::pair<Real, Real>	minimum_average_distance_between_sheets_by_cen_res	=	cal_min_avg_dis_between_sheets_by_cen_res(struct_id,	db_session,	dssp_pose,	all_distinct_sheet_ids);
+	Real minimum_distance_between_sheets_by_cen_res = minimum_average_distance_between_sheets_by_cen_res.first;
+	Real average_distance_between_sheets_by_cen_res = minimum_average_distance_between_sheets_by_cen_res.second;
+		// [caution] these values are only meaningful when pdb files has only	one beta-sandwich
+	//// <end> calculate minimum distance between sheets
+
+	// <begin> UPDATE sw_by_components table
+	string insert =
+	"UPDATE sw_by_components set \n"
+	"	min_dis_between_sheets_by_cen_res = ? ,"
+	"	avg_dis_between_sheets_by_cen_res = ? "
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(sw_can_by_sh_id = ?) ;";
+
+	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
+	insert_stmt.bind(1,	round_to_Real(minimum_distance_between_sheets_by_cen_res));
+	insert_stmt.bind(2,	round_to_Real(average_distance_between_sheets_by_cen_res));
+	insert_stmt.bind(3,	struct_id);
+	insert_stmt.bind(4,	sw_can_by_sh_id);
+
+	basic::database::safely_write_to_database(insert_stmt);
+	// <end> UPDATE sw_by_components table
+
+	return 0;
+} //	SandwichFeatures::report_min_avg_dis_between_sheets_by_cen_res
 
 
 
@@ -6161,15 +6207,13 @@ SandwichFeatures::check_whether_this_pdb_should_be_excluded (
 }
 
 Real
-SandwichFeatures::cal_min_dis_between_sheets_by_cen_res (
+SandwichFeatures::cal_min_dis_between_two_sheets_by_cen_res (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
 	Size sheet_id_1,
 	Size sheet_id_2)
 {
-//		TR << "cal_min_dis_between_sheets_by_cen_res" << endl;
-//	time_t start_time = time(NULL);
 	vector<Size>	vector_of_cen_residues_in_sheet_1;
 	vector_of_cen_residues_in_sheet_1.clear();	// Removes all elements from the vector (which are destroyed)
 	vector_of_cen_residues_in_sheet_1	=	get_cen_residues_in_this_sheet(struct_id, db_session,	sheet_id_1);
@@ -6190,10 +6234,107 @@ SandwichFeatures::cal_min_dis_between_sheets_by_cen_res (
 		}
 	}
 	//	TR << "min_dis between sheet: " << sheet_id_1 << " and sheet: " << sheet_id_2 << " is " << min_dis << endl;
-//	time_t end_time = time(NULL);
-//		TR.Info << "Finished in " << (end_time - start_time) << " seconds." << endl;
+
 	return min_dis;
-} //cal_min_dis_between_sheets_by_cen_res
+} //cal_min_dis_between_two_sheets_by_cen_res
+
+
+std::pair<float, float>
+SandwichFeatures::cal_min_avg_dis_between_two_sheets_by_cen_res (
+	StructureID struct_id,
+	sessionOP db_session,
+	Pose & dssp_pose,
+	Size sheet_id_1,
+	Size sheet_id_2)
+{
+	vector<Size>	vector_of_cen_residues_in_sheet_1;
+	vector_of_cen_residues_in_sheet_1.clear();	// Removes all elements from the vector (which are destroyed)
+	vector_of_cen_residues_in_sheet_1	=	get_cen_residues_in_this_sheet(struct_id, db_session,	sheet_id_1);
+
+	vector<Size>	vector_of_cen_residues_in_sheet_2;
+	vector_of_cen_residues_in_sheet_2.clear();	// Removes all elements from the vector (which are destroyed)
+	vector_of_cen_residues_in_sheet_2	=	get_cen_residues_in_this_sheet(struct_id, db_session,	sheet_id_2);
+
+	float min_dis = 9999;
+	float second_min_dis = 9999;
+	float sum_dis = 0.0;
+	float cal_num	=	0.0;
+
+	for (Size ii=0;	ii<vector_of_cen_residues_in_sheet_1.size();	ii++){
+		for (Size	jj=0;	jj<vector_of_cen_residues_in_sheet_2.size();	jj++){
+			Real distance = dssp_pose.residue(vector_of_cen_residues_in_sheet_1[ii]).atom("CA").xyz().distance(dssp_pose.residue(vector_of_cen_residues_in_sheet_2[jj]).atom("CA").xyz());
+			sum_dis	=	sum_dis	+	distance;
+			cal_num	=	cal_num	+	1.0;
+			if (distance < min_dis){
+				min_dis = distance;
+			}
+			if ((distance < second_min_dis)	&&	(distance	>	min_dis)){
+				second_min_dis = distance;
+			}
+		}
+	}
+	//	TR << "min_dis between sheet: " << sheet_id_1 << " and sheet: " << sheet_id_2 << " is " << min_dis << endl;
+
+	return std::make_pair(min_dis, ((min_dis	+	second_min_dis)/2));
+} //cal_min_avg_dis_between_two_sheets_by_cen_res
+
+
+std::pair<Real, Real>
+SandwichFeatures::cal_min_avg_dis_between_sheets_by_cen_res (
+	StructureID struct_id,
+	sessionOP db_session,
+	Pose & dssp_pose,
+	utility::vector1<Size>	all_distinct_sheet_ids)
+{
+	Real	min_dis_between_sheets_by_cen_res	=	0;
+	Real	avg_dis_between_sheets_by_cen_res	=	0;
+	int	appropriate_sheet_num	=	0;
+
+	for(Size i=1; (i <= all_distinct_sheet_ids.size())	&&	(appropriate_sheet_num	!=	2); i++)
+	{ // now I check all possible combinations
+		if (all_distinct_sheet_ids[i] == 99999) { //all_strands[i].get_size() < min_res_in_strand_
+			continue;
+		}
+		
+		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+			
+		if (num_strands_i < min_num_strands_in_sheet_)
+		{
+			continue;
+		}
+		appropriate_sheet_num++;
+		for(Size j=i+1; (j <= all_distinct_sheet_ids.size())	&&	(appropriate_sheet_num	!=	2); j++)
+		{
+			if (all_distinct_sheet_ids[j] == 99999) { //all_strands[j].get_size() < min_res_in_strand_
+				continue;
+			}
+			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
+			
+			if (num_strands_j < min_num_strands_in_sheet_)
+			{
+				continue;
+			}
+			appropriate_sheet_num++;
+
+			if	(appropriate_sheet_num	==	2)
+			{
+				std::pair<Real, Real>	min_dis_AND_avg_dis_between_sheets_by_cen_res	=	cal_min_avg_dis_between_two_sheets_by_cen_res	(struct_id,	db_session,	dssp_pose,	all_distinct_sheet_ids[i],	all_distinct_sheet_ids[j]);
+				min_dis_between_sheets_by_cen_res	=	min_dis_AND_avg_dis_between_sheets_by_cen_res.first;
+				avg_dis_between_sheets_by_cen_res	=	min_dis_AND_avg_dis_between_sheets_by_cen_res.second;
+					//	avg_dis_between_sheets_by_cen_res	is the average between	min_dis_between_sheets_by_cen_res	and 2nd	min_dis_between_sheets_by_cen_res
+			}
+		}
+	}
+
+	if	(appropriate_sheet_num	!=	2)
+		// if there are not two sheets,	both avg_dis_between_sheets_by_cen_res and	min_dis_between_sheets_by_cen_res are not meaningful, so don't calculate these
+	{
+		return std::make_pair(9999.0, 9999.0);
+	}
+
+	return std::make_pair(min_dis_between_sheets_by_cen_res, avg_dis_between_sheets_by_cen_res);
+	//return min_dis_between_sheets_by_cen_res;
+} //cal_min_avg_dis_between_sheets_by_cen_res
 
 
 Size
@@ -6204,8 +6345,6 @@ SandwichFeatures::cal_num_of_sheets_that_surround_this_sheet (
 	utility::vector1<Size>	all_distinct_sheet_ids,
 	Size sheet_id)
 {
-//		TR << "cal_num_of_sheets_that_surround_this_sheet" << endl;
-//	time_t start_time = time(NULL);
 	Size num_of_sheets_that_surround_sheet_id = 0;
 	for(Size i=1; i <= all_distinct_sheet_ids.size(); i++)
 	{ // now I check all possible combinations
@@ -6222,20 +6361,16 @@ SandwichFeatures::cal_num_of_sheets_that_surround_this_sheet (
 		{
 			continue;
 		}
-
-		Real min_dis_between_sheets	=	cal_min_dis_between_sheets_by_cen_res(struct_id,	db_session,	dssp_pose,	sheet_id,	all_distinct_sheet_ids[i]);
-		if (min_dis_between_sheets < inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_){
+		
+		Real min_dis_between_sheets_by_cen_res	=	cal_min_dis_between_two_sheets_by_cen_res(struct_id,	db_session,	dssp_pose,	sheet_id,	all_distinct_sheet_ids[i]);
+		if (min_dis_between_sheets_by_cen_res < inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_){
 			num_of_sheets_that_surround_sheet_id++;
 		}
 	}
-	TR << "num_of_sheets_that_surround sheet_id (" << sheet_id << ") within " << inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ << " Angstrom is " << num_of_sheets_that_surround_sheet_id << endl;
-//	time_t end_time = time(NULL);
-//		TR.Info << "Finished in " << (end_time - start_time) << " seconds." << endl;
-
+		TR << "num_of_sheets_that_surround sheet_id (" << sheet_id << ") within " << inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ << " Angstrom is " << num_of_sheets_that_surround_sheet_id << endl;
 	return num_of_sheets_that_surround_sheet_id;
-
-	// if (num_of_sheets_that_surround_sheet_id > 1) // this sheet is surrounded by more than 1 other sheets!
-	// if (num_of_sheets_that_surround_sheet_id == 1) // this sheet is NOT surrounded by more than 1 other sheets, so we can use these sheets to extract sandwich
+		// if (num_of_sheets_that_surround_sheet_id > 1) // this sheet is surrounded by more than 1 other sheets!
+		// if (num_of_sheets_that_surround_sheet_id == 1) // this sheet is NOT surrounded by more than 1 other sheets, so we can use these sheets to extract sandwich
 } //cal_num_of_sheets_that_surround_this_sheet
 
 
@@ -6976,7 +7111,7 @@ SandwichFeatures::report_turn_AA(
 	}
 	else if	(turn_type == "II_prime")
 	{
-			TR << "pose.residue_type(i).name3(): " << pose.residue_type(i).name3() << endl;
+		//	TR << "pose.residue_type(i).name3(): " << pose.residue_type(i).name3() << endl;
 		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "LEU"	||
 			pose.residue_type(i).name3() == "ALA"	||	pose.residue_type(i).name3() == "GLY"	||
 			pose.residue_type(i).name3() == "TYR"	||	pose.residue_type(i).name3() == "THR"	||
@@ -7184,8 +7319,14 @@ SandwichFeatures::parse_my_tag(
 	///////// strictness options ///////
 	exclude_desinated_pdbs_ = tag->getOption<bool>("exclude_desinated_pdbs", false);
 					//	definition: if true, exclude certain designated pdbs
-	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", true);
+
+	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", false);
 					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
+
+	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", false);
+					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
+					//	Rationale of default=true (1)
+						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
 
 	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
 					//	definition: maximum starting loop size to extract
@@ -7200,11 +7341,6 @@ SandwichFeatures::parse_my_tag(
 	max_H_in_extracted_sw_loop_ = tag->getOption<Size>("max_H_in_extracted_sw_loop", 10);
 					//	definition: maximum allowable number of helix residues in extracted sandwich loop
 					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
-
-	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", true);
-					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
-					//	Rationale of default=true (1)
-						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
 
 	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = tag->getOption<Real>("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets", 13.0);
 					//	definition: within this distance, sheets are considered to be too near each other
@@ -8290,6 +8426,12 @@ SandwichFeatures::report_features(
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
+			report_min_avg_dis_between_sheets_by_cen_res	(struct_id,	db_session,
+				vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
+				dssp_pose,
+				all_distinct_sheet_ids
+				);
+
 			if (write_AA_kind_files_)
 			{
 				// <begin> write AA_kind to a file
@@ -8629,9 +8771,9 @@ SandwichFeatures::report_features(
 
 	process_decoy( dssp_pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn);
 
-	TR.Info << "Current energy terms that we deal with:"	<< endl;
-	dssp_pose.energies().show_total_headers( std::cout );
-	std::cout << std::endl;
+		//TR.Info << "Current energy terms that we deal with:"	<< endl;
+	//dssp_pose.energies().show_total_headers( std::cout );
+	//std::cout << std::endl;
 
 	// <begin> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
 	if (write_p_aa_pp_files_ && canonical_sw_extracted_from_this_pdb_file)

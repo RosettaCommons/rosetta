@@ -651,6 +651,11 @@ public:
 		utility::sql_database::sessionOP	db_session,
 		core::Size	sw_can_by_sh_id);
 
+	bool
+	check_whether_this_pdb_should_be_excluded (
+		std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
+
+
 	core::Size
 	report_dihedral_angle_between_core_strands_across_facing_sheets (
 		StructureID struct_id,
@@ -671,11 +676,36 @@ public:
 		utility::sql_database::sessionOP	db_session,
 		core::Size	sw_can_by_sh_id);
 
+	core::Size
+	report_min_avg_dis_between_sheets_by_cen_res (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id,
+		core::pose::Pose & dssp_pose,
+		utility::vector1<core::Size>	all_distinct_sheet_ids);
 
+	core::Real
+	cal_min_dis_between_two_sheets_by_cen_res (
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size sheet_id_1,
+		core::Size sheet_id_2);
 
-	bool
-	check_whether_this_pdb_should_be_excluded (
-		std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
+	std::pair<float, float>
+	cal_min_avg_dis_between_two_sheets_by_cen_res (
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size sheet_id_1,
+		core::Size sheet_id_2);
+
+	std::pair<core::Real, core::Real>
+	cal_min_avg_dis_between_sheets_by_cen_res (
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		utility::vector1<core::Size>	all_distinct_sheet_ids);
 
 	core::Size
 	cal_num_of_sheets_that_surround_this_sheet (
@@ -685,13 +715,6 @@ public:
 		utility::vector1<core::Size>	all_distinct_sheet_ids,
 		core::Size sheet_id);
 
-	core::Real
-	cal_min_dis_between_sheets_by_cen_res (
-		StructureID	struct_id,
-		utility::sql_database::sessionOP	db_session,
-		core::pose::Pose & dssp_pose,
-		core::Size sheet_id_1,
-		core::Size sheet_id_2);
 
 	std::pair<core::Size, core::Size>
 	get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
