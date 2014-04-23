@@ -404,7 +404,7 @@ void RosettaScriptsParser::instantiate_mover(
 void RosettaScriptsParser::instantiate_taskoperation(
 	TagCOP const & tag_ptr, 
 	basic::datacache::DataMap & data, 
-	protocols::filters::Filters_map & filters, 
+	protocols::filters::Filters_map & /*filters*/,
 	Movers_map & /*movers*/, 
 	core::pose::Pose & /*pose*/
 ) {	

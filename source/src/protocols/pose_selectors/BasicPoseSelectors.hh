@@ -62,8 +62,10 @@ public:
 	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
 
 protected:
-	virtual inline bool selection_operation( bool a, bool b ) const { return false; }
-	virtual inline bool get_default() const { return false; };
+	// virtual inline bool selection_operation( bool a, bool b ) const = 0;
+	virtual inline bool selection_operation( bool, bool ) const { return false; }
+	// virtual inline bool get_default() const = 0;
+	virtual inline bool get_default() const { return false; }
 	
 private:
 	std::vector < protocols::rosetta_scripts::PoseSelectorOP > selectors_;
