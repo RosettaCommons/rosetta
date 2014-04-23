@@ -110,7 +110,7 @@ def main(args):
                     f = KeepSameFile(outfile, 'wb')
                     f.write( header_gen_hh )
 
-                    split_len = len( output[ file_prefix ] ) / 4 + 1  # for now we generate 4 functions instead of 1
+                    split_len = len( output[ file_prefix ] ) // 4 + 1  # for now we generate 4 functions instead of 1
                     groups = [ output[ file_prefix ][i: i+split_len] for i in range(0, len(output[ file_prefix ]), split_len) ]
                     for i,g in enumerate(groups):
                             lines = 'inline void add_rosetta_options_%s( utility::options::OptionCollection &option ) {' % i
@@ -120,7 +120,7 @@ def main(args):
                     f.write( footer_gen_hh )
                     num_changed_files += f.close()
                 elif file_prefix == 'keys/OptionKeys.cc.gen':
-                    split_len = len( output[ file_prefix ] ) / 4 + 1  # for now we split .cc just in four files
+                    split_len = len( output[ file_prefix ] ) // 4 + 1  # for now we split .cc just in four files
                     groups = [ output[ file_prefix ][i: i+split_len] for i in range(0, len(output[ file_prefix ]), split_len) ]
                     for i,g in enumerate(groups):
                         outfile = file_prefix + '%s.hh' % i

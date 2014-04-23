@@ -976,6 +976,13 @@ settings = {
                 "util"
             ],
         },
+        "removes" : {
+            "flags" : {
+                "warn" : [
+                    "Werror",
+                ],
+            },
+        },
     },
 
 
