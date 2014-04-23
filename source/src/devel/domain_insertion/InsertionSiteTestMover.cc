@@ -69,6 +69,7 @@ InsertionSiteTestMover::InsertionSiteTestMover()
 :
 	sfxn_(NULL), flex_window_(2),
 	test_insert_ss_("LLLLLLLL"), insert_allowed_score_increase_(10.0),
+	insert_attempt_sasa_cutoff_(30.0),
 	length_of_insert_(test_insert_ss_.size() ), num_repeats_(5), pdb_numbering_(true),
 	enz_flexbb_prot_( new protocols::enzdes::EnzdesFlexBBProtocol() ),
 	insert_seqmap_(NULL)
@@ -81,7 +82,8 @@ InsertionSiteTestMover::InsertionSiteTestMover( InsertionSiteTestMover const & o
 : parent( other ),
 	sfxn_(other.sfxn_), insert_test_pos_(other.insert_test_pos_),
 	flex_window_(other.flex_window_), test_insert_ss_(other.test_insert_ss_),
-	insert_allowed_score_increase_(other.insert_allowed_score_increase_), length_of_insert_(other.length_of_insert_),
+	insert_allowed_score_increase_(other.insert_allowed_score_increase_),
+	insert_attempt_sasa_cutoff_(other.insert_attempt_sasa_cutoff_), length_of_insert_(other.length_of_insert_),
 	num_repeats_(other.num_repeats_), pdb_numbering_(other.pdb_numbering_),
 	enz_flexbb_prot_( new protocols::enzdes::EnzdesFlexBBProtocol() ), insert_seqmap_(other.insert_seqmap_)
 {}
@@ -275,6 +277,15 @@ InsertionSiteTestMover::create_raw_insert_pose(
 	core::Size const insert_pos
 )
 {
+
+	//sanity check: only attempt at positions that are above a given sasa threshold
+	core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius ];
+	core::id::AtomID_Map< core::Real > atom_sasa_dummy;
+	utility::vector1< core::Real > full_pose_residue_sasa;
+	core::scoring::calc_per_atom_sasa( pose, atom_sasa_dummy, full_pose_residue_sasa, probe_radius);
+	core::Real insertpos_start_sasa( full_pose_residue_sasa[ insert_pos ] + full_pose_residue_sasa[ insert_pos + 1] );
+	if( insertpos_start_sasa < insert_attempt_sasa_cutoff_ ) return false;
+
 	insert_seqmap_ = NULL;
 	enz_flexbb_prot_->add_flexible_region( insert_pos - (flex_window_ - 1), insert_pos + flex_window_, pose, true );
 

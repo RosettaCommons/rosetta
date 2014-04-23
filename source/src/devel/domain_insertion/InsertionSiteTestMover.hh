@@ -141,7 +141,7 @@ private:
 	Size flex_window_; //how many res up- and downstream of the insert pos to move
 
 	std::string test_insert_ss_;
-	Real insert_allowed_score_increase_;
+	Real insert_allowed_score_increase_, insert_attempt_sasa_cutoff_;
 	Size length_of_insert_, num_repeats_;
 	bool pdb_numbering_;
 
