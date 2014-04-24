@@ -23,6 +23,8 @@
 // core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/signals/GeneralEvent.hh>
+#include <core/pose/signals/EnergyEvent.hh>
+#include <core/pose/signals/ConformationEvent.hh>
 
 #include <core/scoring/ScoreType.hh>
 
@@ -394,6 +396,14 @@ public:
 		pymol_.apply( *ev.pose );
 	};
 
+	virtual void energyEvent( core::pose::signals::EnergyEvent const & ev) {
+		pymol_.apply( *ev.pose );
+	}
+	
+	virtual void conformationEvent( core::pose::signals::ConformationEvent const & ev) {
+		pymol_.apply( *ev.pose);
+	}
+	
 	PyMolMover & pymol() { return pymol_; };
 
 	/// attach/detach observer from the pose object
@@ -411,7 +421,11 @@ private:
 ///        This is the most likely the only function that you need to call...
 PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history=false, core::Real update_interval=0);
 
+/// @brief Helper function that create PyMolObserver Object and add it to the give Pose energies object so pymol only updates on energy changes.
+PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose & p, bool keep_history=false, core::Real update_interval=0);
 
+/// @brief Helper function that create PyMolObserver Object and add it to the give Pose conformation object so pymol only updates on conformation changes.
+PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose & p, bool keep_history = false, core::Real update_interval = 0);
 
 } // moves
 } // protocols

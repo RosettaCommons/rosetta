@@ -325,14 +325,44 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		try
 		{
 			// Can we add the PyMOL mover here?
-			if (option[OptionKeys::run::show_simulation_in_pymol].user()
-					&& option[OptionKeys::run::show_simulation_in_pymol].value()
-							> 0.0)
+			if (option[OptionKeys::run::show_simulation_in_pymol].user())
 			{
-				moves::AddPyMolObserver(
+				//Control what the observer gets attached to
+				if (option[OptionKeys::run::update_pymol_on_energy_changes_only]() &&
+						option[OptionKeys::run::update_pymol_on_conformation_changes_only]())
+				{
+					tr.Warning << "PyMol updates for both only energy and only conformation set to true"
+							"Attaching observer as general pose observer instead" << std::endl;
+					moves::AddPyMolObserver(
 						pose,
 						option[OptionKeys::run::keep_pymol_simulation_history](),
 						option[OptionKeys::run::show_simulation_in_pymol].value());
+					
+				}
+				else if (option[OptionKeys::run::update_pymol_on_energy_changes_only]())
+				{
+					
+					moves::AddPyMolObserver_to_energies(
+						pose,
+						option[OptionKeys::run::keep_pymol_simulation_history](),
+						option[OptionKeys::run::show_simulation_in_pymol].value());
+				}
+				else if (option[OptionKeys::run::update_pymol_on_conformation_changes_only]())
+				{
+					
+					moves::AddPyMolObserver_to_conformation(
+						pose,
+						option[OptionKeys::run::keep_pymol_simulation_history](),
+						option[OptionKeys::run::show_simulation_in_pymol].value());
+				}
+				else 
+				{
+					moves::AddPyMolObserver(
+						pose,
+						option[OptionKeys::run::keep_pymol_simulation_history](),
+						option[OptionKeys::run::show_simulation_in_pymol].value());
+				}
+
 			}
 			job_inputter_->pose_from_job(pose, current_job_);
 

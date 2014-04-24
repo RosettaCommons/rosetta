@@ -476,6 +476,24 @@ PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::R
 	return o;
 }
 
+PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_history, core::Real update_interval)
+{
+    PyMolObserverOP o = new PyMolObserver;
+	o->pymol().keep_history(keep_history);
+	o->pymol().update_interval(update_interval);
+	p.attach_energy_obs(&PyMolObserver::energyEvent, o);
+	return o;
+}
+
+PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_history, core::Real update_interval)
+{
+    PyMolObserverOP o = new PyMolObserver;
+	o->pymol().keep_history(keep_history);
+	o->pymol().update_interval(update_interval);
+	p.attach_conformation_obs(&PyMolObserver::conformationEvent, o);
+	return o;
+}
+
 /// @brief PyMolMoverCreator interface, name of the mover
 std::string PyMolMoverCreator::mover_name() {
   return "PyMolMover";

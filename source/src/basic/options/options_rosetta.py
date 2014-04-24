@@ -1507,7 +1507,11 @@ Option_Group( 'PCSTS4',
 		Option( 'nproc',    'Integer',      desc='number of process... needed if proc_id is specified',     default='0' ),
 		Option( 'proc_id',  'Integer',      desc='give process number... Jobdistributor will only work on proc_id mod nproc part of work ',     default='0' ),
 		Option( 'exit_if_missing_heavy_atoms', 'Boolean', default='false', desc="quit if heavy atoms missing in pdb"),
-    		Option( 'show_simulation_in_pymol', 'Real', default='5.0', desc="Attach PyMOL observer to pose at the beginning of the simulation. Refreshes pose every [argument] seconds, default 5.  Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!"),
+	
+# PyMOL -----------------------
+	Option( 'show_simulation_in_pymol', 'Real', default='5.0', desc="Attach PyMOL observer to pose at the beginning of the simulation. Waits until at least every [argument] seconds before sending pose if something has changed, default 5. A value of 0 indicates to not skip any packets from sending! Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!"),
+	Option( 'update_pymol_on_energy_changes_only', 'Boolean', default = 'false', desc= 'Only Update the simulation in on energy change.  Useful if pymol observer is segfaulting on length changes.'),
+	Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'), 
 		Option( 'keep_pymol_simulation_history', 'Boolean', desc='Keep history when using show_simulation_in_pymol flag?', default='false' ),
 
 	), # run
