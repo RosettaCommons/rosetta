@@ -60,7 +60,7 @@ public:
 	);
 
 	/// @brief Select poses from provided vector by applying the selection criteria parsed from Tag
-	virtual utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const = 0;
+	virtual utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) = 0;
 
 protected:
 

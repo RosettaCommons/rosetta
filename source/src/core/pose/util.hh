@@ -128,6 +128,8 @@ set_ss_from_phipsi(
 utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 
 /// getters/setters for things in the Pose DataCache
+
+// ARBITRARY_FLOAT_DATA
 bool getPoseExtraScores(
 	core::pose::Pose const & pose,
 	std::string const name,
@@ -136,7 +138,7 @@ bool getPoseExtraScores(
 
 void setPoseExtraScores(
 	core::pose::Pose & pose,
-	std::string name,
+	std::string const name,
 	core::Real value
 );
 
@@ -147,6 +149,19 @@ void clearPoseExtraScore(
 
 void clearPoseExtraScores(
 	core::pose::Pose & pose
+);
+
+// ARBITRARY_STRING_DATA
+bool getPoseExtraScores(
+	core::pose::Pose const & pose,
+	std::string const name,
+	std::string & value
+);
+
+void setPoseExtraScores(
+	core::pose::Pose & pose,
+	std::string name,
+	std::string const value
 );
 
 /// @brief Adds a VRT res to the end of the pose at the center of mass.

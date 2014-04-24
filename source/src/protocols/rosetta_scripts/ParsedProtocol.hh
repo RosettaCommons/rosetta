@@ -65,10 +65,12 @@ public:
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
 	void report_all( Pose const & pose ) const; // cycles over all filter->report methods to output their values to a common stream.
+	void report_filters_to_pose( Pose & pose ); // as above but reports to pose DataCache
 	void report_filters_to_job( Pose const & pose ) const;  // as above but reports to job object
 	//as above but is called directly from JobOutputter via Observer pattern
 	virtual
 	void add_values_to_job( Pose const & pose, protocols::jd2::JobOP ) const;
+
 
 	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {

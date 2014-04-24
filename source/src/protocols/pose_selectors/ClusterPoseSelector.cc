@@ -112,7 +112,7 @@ void ClusterPoseSelector::parse_my_tag(
 
 utility::vector1<bool> ClusterPoseSelector::select_poses(
 	utility::vector1< core::pose::PoseOP > poses
-) const
+)
 {
 	using namespace protocols::cluster;
 

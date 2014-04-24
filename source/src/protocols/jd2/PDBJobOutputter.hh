@@ -83,6 +83,10 @@ protected:
 	virtual
 	void extract_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
 
+	///@brief this function extracts data from pose's data cache
+	virtual
+	void extract_extra_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
+
 	//THIS FUNCTION WILL MOVE HIGHER IN THE HIERARCHY AT SOME POINT
 	///@brief this function extracts the pose's scores for printing
 	virtual

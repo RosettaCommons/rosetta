@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/filters/FilterFactory.hh>
 
@@ -76,14 +77,14 @@ void LogicalSelector::parse_my_tag(
 
 utility::vector1<bool> LogicalSelector::select_poses(
 	utility::vector1< core::pose::PoseOP > poses
-) const
+)
 {
 	utility::vector1<bool> selected_poses;
-	
+
 	TR << "Applying selector " << get_name() << std::endl;
 
 	selected_poses.resize( poses.size(), get_default() );
-	
+
 	BOOST_FOREACH( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
 		utility::vector1<bool> selector_selected_poses( selector->select_poses( poses ) );
 
@@ -103,7 +104,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 		BOOST_FOREACH( bool selection, selected_poses ) {
 			TR.Debug << selection << " ";
 		}
-		TR.Debug << std::endl;	
+		TR.Debug << std::endl;
 	}
 
 	TR.Debug << "Final pose selections for " << get_name() << ": ";
@@ -111,8 +112,8 @@ utility::vector1<bool> LogicalSelector::select_poses(
 		TR.Debug << selection << " ";
 	}
 	TR.Debug << std::endl;
-	
-	return selected_poses;	
+
+	return selected_poses;
 }
 
 
@@ -157,7 +158,7 @@ void TopNByProperty::parse_my_tag(
 {
 	// n = selection limit
 	n_ = tag->getOption<core::Size>("n");
-	
+
 	if(tag->hasOption("order")) {
 		std::string order( tag->getOption<std::string>("order") );
 		if(order == "asc" || order == "ascending") {
@@ -168,7 +169,7 @@ void TopNByProperty::parse_my_tag(
 			throw utility::excn::EXCN_RosettaScriptsOption("Unknown order: " + order);
 		}
 	}
-	
+
 	// Children of tag are reporters
 	BOOST_FOREACH( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
@@ -185,15 +186,15 @@ void TopNByProperty::parse_my_tag(
 
 utility::vector1<bool> TopNByProperty::select_poses(
 	utility::vector1< core::pose::PoseOP > poses
-) const
+)
 {
 	utility::vector1<bool> selected_poses;
-	
+
 	typedef std::pair< core::Size, core::Real > Pose_Property;
 	utility::vector1 < Pose_Property > pose_properties;
-	
+
 	TR << "Applying selector " << get_name() << std::endl;
-	
+
 	// Obtain properties of all poses
 	{
 		core::Size i = 1;
@@ -214,7 +215,7 @@ utility::vector1<bool> TopNByProperty::select_poses(
 			std::reverse(pose_properties.begin(), pose_properties.end());
 		}
 	}
-	
+
 	// Debug
 	TR.Debug << "Sorted poses:" << std::endl;
 	for(utility::vector1<Pose_Property>::iterator it=pose_properties.begin(); it!=pose_properties.end(); ++it) {
@@ -228,8 +229,8 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	for(core::Size i = 1; i <= n; ++i) {
 		selected_poses[ pose_properties[i].first ] = true;
 	}
-	
-	return selected_poses;	
+
+	return selected_poses;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ void Filter::parse_my_tag(
 
 utility::vector1<bool> Filter::select_poses(
 	utility::vector1< core::pose::PoseOP > poses
-) const
+)
 {
 	utility::vector1<bool> selected_poses(poses.size(), true);
 
@@ -308,7 +309,11 @@ utility::vector1<bool> Filter::select_poses(
 	core::Size i = 1;
 	BOOST_FOREACH(core::pose::PoseOP pose, poses) {
 		TR.Debug << "Pose " << i << "..." << std::endl;
+
 		bool ok = filter_->apply( *pose );
+		core::Real const filter_value( filter_->report_sm( *pose ) );
+		setPoseExtraScores( *pose, filter_->get_user_defined_name(), (float)filter_value );
+
 		TR.Debug << "Pose " << i << ": " << (ok ? "Pass" : "Fail") << std::endl;
 		selected_poses[i] = ok;
 		++i;

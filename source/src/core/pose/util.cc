@@ -532,6 +532,33 @@ bool getPoseExtraScores(
 	return true;
 }
 
+bool getPoseExtraScores(
+	core::pose::Pose const & pose,
+	std::string const name,
+	std::string & value
+)
+{
+	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapCOP;
+
+	// make sure that the pose has one of these.
+	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ){
+		return false;
+	}
+
+	CacheableStringMapCOP data
+		= dynamic_cast< CacheableStringMap const * >
+			( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+	assert( data.get() != NULL );
+
+	std::map< std::string, std::string >::const_iterator it = data->map().find( name );
+	if ( it == data->map().end() ) {
+		return false;
+	}
+	value = it->second;
+	return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setPoseExtraScores(
 	core::pose::Pose & pose,
@@ -553,6 +580,31 @@ void setPoseExtraScores(
 	CacheableStringFloatMapOP data
 		=  dynamic_cast< CacheableStringFloatMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) );
+
+	runtime_assert( data.get() != NULL );
+	data->map()[name] = value;
+}
+
+void setPoseExtraScores(
+	core::pose::Pose & pose,
+	std::string const name,
+	std::string value
+)
+{
+	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapOP;
+
+	// make sure that the pose has one of these.
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		pose.data().set(
+			core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA,
+			new CacheableStringMap()
+		);
+	}
+
+	CacheableStringMapOP data
+		=  dynamic_cast< CacheableStringMap* >
+			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA) );
 
 	runtime_assert( data.get() != NULL );
 	data->map()[name] = value;
@@ -623,6 +675,14 @@ void clearPoseExtraScores(
 	{
 		using basic::datacache::CacheableStringMap;
 		pose.data().set(
+			core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA,
+			new CacheableStringMap()
+		);
+	}
+
+	{
+		using basic::datacache::CacheableStringMap;
+		pose.data().set(
 			core::pose::datacache::CacheableDataType::STRING_MAP,
 			new CacheableStringMap()
 		);
@@ -644,17 +704,26 @@ void clearPoseExtraScore(
 {
 	using basic::datacache::CacheableStringFloatMap;
 	using basic::datacache::CacheableStringFloatMapOP;
+	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapOP;
 
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
-		return;
+	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
+		CacheableStringFloatMapOP data
+			= dynamic_cast< CacheableStringFloatMap* >
+				( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		assert( data.get() != NULL );
+
+		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
 
-	CacheableStringFloatMapOP data
-		= dynamic_cast< CacheableStringFloatMap* >
-			( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	assert( data.get() != NULL );
+	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ){
+		CacheableStringMapOP data
+			= dynamic_cast< CacheableStringMap* >
+				( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		assert( data.get() != NULL );
 
-	if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
+		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
+	}
 }
 
 bool get_comment(

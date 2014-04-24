@@ -122,7 +122,7 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 		utility::vector1 < bool > selected_poses_by_selectors;
 
 		// Apply selectors
-		BOOST_FOREACH( PoseSelectorCOP const selector, selectors_ ) {
+		BOOST_FOREACH( PoseSelectorOP selector, selectors_ ) {
 			selected_poses_by_selectors = selector->select_poses(poses_);
 			// TODO: How do we handle multiple selectors? AND? OR?
 			break;

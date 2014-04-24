@@ -26,6 +26,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -105,12 +106,13 @@ FilterReporter::FilterReporter() :
 {
 }
 
-core::Real FilterReporter::report_property( core::pose::Pose & p ) const
+core::Real FilterReporter::report_property( core::pose::Pose & pose ) const
 {
 	core::Real r = 0;
 
 	if(filter_) {
-		r = filter_->report_sm(p);
+		r = filter_->report_sm(pose);
+		setPoseExtraScores(pose, filter_->get_user_defined_name(), (float)r);
 	} else
 		TR << "No filter instance; cannot score pose!" << std::endl;
 

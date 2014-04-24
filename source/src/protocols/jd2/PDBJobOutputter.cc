@@ -18,14 +18,11 @@
 
 ///Project headers
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-//#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
-
-//#include <basic/datacache/CacheableStringFloatMap.hh>
-//#include <basic/datacache/BasicDataCache.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -35,9 +32,15 @@
 #include <core/types.hh>
 #include <basic/options/option.hh>
 
+///Basic headers
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
+
 ///C++ headers
-//#include <string>
-//#include <map>
+#include <string>
+#include <map>
 #include <sstream>
 
 // option key includes
@@ -133,7 +136,7 @@ void protocols::jd2::PDBJobOutputter::dump_pose(
 {
 	core::io::pdb::FileData::dump_pdb( pose, out );
 	extract_scores(pose, out);
-	//extract_extra_scores(pose, out);
+	extract_extra_scores( pose, out );
 	extract_data_from_Job( job, out );
 }
 
@@ -166,7 +169,7 @@ void protocols::jd2::PDBJobOutputter::extract_scores(
 }
 
 //THIS FUNCTION WILL MOVE HIGHER IN THE HIERARCHY AT SOME POINT
-///@brief this function extracts the pose's scores for printing
+///@brief this function extracts the pose's scores and outputs them into the PDB
 void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility::io::ozstream & out ){
 	//TR << "protocols::jd2::PDBJobOutputter::extract_data_from_Job" << std::endl;
 
@@ -190,43 +193,47 @@ void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility
 		out << it->first << " " << it->second << std::endl;
 		//TR << it->first << " " << it->second << std::endl;
 	}
-
 }
 
 
-//This function is deprecated for now - might return in the future
-// ///@brief this function extracts the pose's extra data/scores for printing
-// ///@details YOU are responsible for putting things into the pose's ARBITRARY_FLOAT_DATA in the DataCache.  I suggest core::pose::util::setPoseExtraScores.
-// void protocols::jd2::PDBJobOutputter::extract_extra_scores(
-// 																												 core::pose::Pose const & pose,
-// 																												 utility::io::ozstream & out)
-// {
-//  using namespace core::pose::datacache;
-// 	//is there extra data?
-// 	if( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ){
-// 		//TR << "no ARBITRARY_FLOAT_DATA" << std::endl;
-// 		return;
-// 	}
+///@brief This function extracts the pose's extra data/scores and outputs them into the PDB
+///@details YOU are responsible for putting things into the pose's DataCache using core::pose::util::setPoseExtraScores().
+/// Both string_real and string_real pairs can be stored using setPoseExtraScores().
+void protocols::jd2::PDBJobOutputter::extract_extra_scores(
+	core::pose::Pose const & pose,
+	utility::io::ozstream & out
+)
+{
+	// ARBITRARY_STRING_DATA
+	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		basic::datacache::CacheableStringMapCOP data
+			= dynamic_cast< basic::datacache::CacheableStringMap const * >
+				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		assert( data.get() != NULL );
 
-// 	//get the data
-// 	//basic::CacheableStringFloatMapCOP data( dynamic_cast< basic::datacache::CacheableStringFloatMap const* > (pose.data().get_const_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA)() ) );
-// 	//runtime_assert( data != NULL );
-// 	typedef std::map< std::string, float > StringFloatMap;
-// 	StringFloatMap data( (dynamic_cast< basic::datacache::CacheableStringFloatMap const* > (pose.data().get_const_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA)() ) )->map() );
+		for(std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
+		  it != end;
+		  ++it) {
+			//TR << it->first << " " << it->second << std::endl;
+			out << it->first << " " << it->second << std::endl;
+		}
+	}
 
-// 	if (data.empty()) return;
+	// ARBITRARY_FLOAT_DATA
+	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+		basic::datacache::CacheableStringFloatMapCOP data
+			= dynamic_cast< basic::datacache::CacheableStringFloatMap const * >
+				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		assert( data.get() != NULL );
 
-// 	//TR << "POSE EXTRA SCORES:" << std::endl;
-// 	out << "POSE EXTRA SCORES:" << std::endl;
-
-// 	//iterate through the map
-// 	for(StringFloatMap::const_iterator it(data.begin()), end(data.end()); it != end; ++it){
-// 		//TR << it->first << " " << it->second << std::endl;
-// 		out << it->first << " " << it->second << std::endl;
-// 	}
-
-// 	return;
-// }
+		for(std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+		  it != end;
+		  ++it) {
+			//TR << it->first << " " << it->second << std::endl;
+			out << it->first << " " << it->second << std::endl;
+		}
+	}
+}
 
 //CREATOR SECTION
 std::string

@@ -19,6 +19,7 @@
 // Project Headers
 #include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
+#include <core/pose/util.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/moves/ResId.hh>
@@ -162,16 +163,16 @@ ParsedProtocol::apply( Pose & pose )
 	{
 		TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
 	}
-	
+
 	if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) {// no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
 		final_score(pose);
 	}
-	
+
 	if ( protocols::jd2::jd2_used() ) {
 		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
 		job_outputter->remove_output_observer( this );
 	}
-	
+
 	TR.Debug << "ParsedProtocol::apply   END 0x" << this << std::endl;
 }
 
@@ -244,6 +245,17 @@ ParsedProtocol::report_filters_to_job( Pose const & pose) const {
 	using protocols::jd2::JobDistributor;
 	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
 	add_values_to_job( pose, job_me );
+}
+
+void
+ParsedProtocol::report_filters_to_pose( Pose & pose ) {
+	for( utility::vector1< mover_filter_pair >::const_iterator mover_it = movers_.begin();
+			mover_it!=movers_.end(); ++mover_it ) {
+		core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
+		if( filter_value > -9999 ) {
+			setPoseExtraScores(pose, (*mover_it).second->get_user_defined_name(), (float)filter_value);
+		}
+	}
 }
 
 void
@@ -404,7 +416,7 @@ ParsedProtocol::get_additional_output( )
 		}
 		return NULL;
 	}
-	
+
 	// Legacy Protocol resume support:
 
 	//fpd search the mover-filter pairs backwards; look for movers that have remaining poses
@@ -441,7 +453,9 @@ ParsedProtocol::get_additional_output( )
 	TR<<"setting status to success"<<std::endl;
 
 	// report filter values to the job object as string_real_pair
-	report_filters_to_job( *pose );
+	//report_filters_to_job( *pose );
+	// report filter values to pose DataCache
+	report_filters_to_pose( *pose );
 	// report filter values to tracer output
 	report_all( *pose );
 	// rescore the pose with default or a user-specified scorefunction. this ensures that all output files end up with scores.
@@ -457,10 +471,10 @@ bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair cons
 	std::string const mover_user_name (mover_pair.first.second);
 
 	// If the mover about to be applied is a MultiplePoserMover,
-	// tell it about the previous mover where it should pull poses from 
+	// tell it about the previous mover where it should pull poses from
 	TR.Debug << "apply_mover_filter_pair: Last mover: " << ( last_mover_ ? last_mover_->get_name() : "(None)" ) << std::endl;
 	TR.Debug << "apply_mover_filter_pair: This mover: " << ( mover_pair.first.first ? mover_pair.first.first->get_name() : "(None)" ) << std::endl;
-	
+
 	if(last_mover_ &&
 		mover_pair.first.first &&
 		mover_pair.first.first->get_name() == "MultiplePoseMover"
@@ -473,7 +487,7 @@ bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair cons
 		else
 			throw utility::excn::EXCN_Msg_Exception("Dynamic cast of MultiplePoseMover failed; this should not happen");
 	}
-	
+
 	mover_pair.first.first->set_native_pose( get_native_pose() );
 	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"=======================\n{"<<std::endl;
 	mover_pair.first.first->apply( pose );
@@ -515,7 +529,9 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	TR<<"setting status to success"<<std::endl;
 
 	// report filter values to the job object as string_real_pair
-	report_filters_to_job( pose );
+	//report_filters_to_job( pose );
+	// report filter values to pose DataCache
+	report_filters_to_pose( pose );
 	// report filter values to tracer output
 	report_all( pose );
 

@@ -16,8 +16,8 @@
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
+#include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/io/raw_data/ScoreFileData.hh>
 #include <protocols/jd2/ScoreMap.hh>
 #include <core/scoring/Energies.hh>
@@ -26,14 +26,18 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/vector1.hh>
+
+///Basic headers
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
 
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
-
 
 
 
@@ -103,7 +107,7 @@ void protocols::jd2::FileJobOutputter::scorefile(
 	
 	core::io::raw_data::ScoreFileData sfd((scorefile.empty() ? scorefile_name_.name() : scorefile));
 	std::map < std::string, core::Real > score_map;
-    std::map < std::string, std::string > string_map;
+	std::map < std::string, std::string > string_map;
 	protocols::jd2::ScoreMap::score_map_from_scored_pose( score_map, pose );
 
 	// Adds StringReal job info into the score map for output in the scorefile.
@@ -112,16 +116,46 @@ void protocols::jd2::FileJobOutputter::scorefile(
 			 ++it) {
 		score_map[it->first] = it->second;
 	}
-    
-    // Adds StringString job info into a map for output in the scorefile.
+
+	// Adds StringString job info into a map for output in the scorefile.
 	for( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
-        it != end;
-        ++it) {
+			it != end;
+			++it) {
 		string_map[it->first] = it->second;
 	}
 
+	/// Extra Scores from Pose DataCache
+
+	// ARBITRARY_FLOAT_DATA
+	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+		basic::datacache::CacheableStringFloatMapCOP data
+			= dynamic_cast< basic::datacache::CacheableStringFloatMap const * >
+				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		assert( data.get() != NULL );
+
+		for(std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+		  it != end;
+		  ++it) {
+			score_map[it->first] = it->second;
+		}
+	}
+
+	// ARBITRARY_STRING_DATA
+	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		basic::datacache::CacheableStringMapCOP data
+			= dynamic_cast< basic::datacache::CacheableStringMap const * >
+				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		assert( data.get() != NULL );
+
+		for(std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
+		  it != end;
+		  ++it) {
+			string_map[it->first] = it->second;
+		}
+	}
+
 	/*
-	// Don't write score file entries that only contain a one column: total_score = 0
+	// Don't write score file entries that only contain one column: total_score = 0
 	// 20140504: Disabled by request
 
 	if(score_map.empty()) {
@@ -139,7 +173,7 @@ void protocols::jd2::FileJobOutputter::scorefile(
 	}
 	*/
 
-	sfd.write_pose( pose, score_map , (prefix_tag + output_name(job) + suffix_tag), string_map );
+	sfd.write_pose( pose, score_map, (prefix_tag + output_name(job) + suffix_tag), string_map );
 }
 
 

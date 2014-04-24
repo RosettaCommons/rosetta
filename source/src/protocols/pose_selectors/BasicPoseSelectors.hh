@@ -59,7 +59,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
 
 protected:
 	// virtual inline bool selection_operation( bool a, bool b ) const = 0;
@@ -129,7 +129,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
 
 protected:
 	
@@ -161,7 +161,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
 
 protected:
 	

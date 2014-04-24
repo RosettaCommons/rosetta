@@ -56,7 +56,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) const;
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
 	
 private:
 	protocols::rosetta_scripts::PosePropertyReporterOP reporter_;
