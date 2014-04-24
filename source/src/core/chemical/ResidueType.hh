@@ -64,6 +64,7 @@
 // C++ headers
 #include <map>
 #include <functional>
+#include <string>
 #include <core/chemical/VariantType.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -510,6 +511,13 @@ public:
 	/// @brief get atom index by name
 	Size
 	atom_index( std::string const & name ) const;
+
+#ifdef WIN32
+	// Fixes incorrect cast on WIN32 where atom_index("string") actually calls atom_index( VD )
+	inline
+	Size
+	atom_index( const char *name ) const { return atom_index( std::string(name) ); }
+#endif
 
 	Size
 	atom_index( VD const & vd) const;
