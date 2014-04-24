@@ -63,6 +63,13 @@ kink_dihedral( const core::pose::Pose & pose, const AntibodyInfo & abinfo, bool 
 /// CDRs not present default to 0.  Templates are used mainly to have Size/ Real or string values. 
 template <typename T>
 struct ParatopeMetric {
+
+    ParatopeMetric():
+        paratope(0),
+        paratope_heavy(0),
+        paratope_light(0)
+    {}
+
 	vector1< T > cdr;
 	T paratope;
 	T paratope_heavy;
