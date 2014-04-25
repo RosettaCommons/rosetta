@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @file
 /// @brief
 
@@ -1583,6 +1592,8 @@ CrystDock::do_convolution( FArray3D<Real> const &rho, FArray3D<Real> const &Srho
 		//   partially apply the elements in the column of the slice axis (only applied to symm-sampled map)
 		//        to compensate for point group sliding as we move up the symm axis in resampled groups
 		numeric::xyzMatrix<Real> QstarF, QstarG;
+		QstarF.clear(); //SML 04-25-14; my compiler warns Qstar* may be used uninitialized (because all inits below are in ifs)
+		QstarG.clear();
 		if (slice_axis == 1) {
 			QstarF = numeric::xyzMatrix<Real>::rows( 1,0,0,   Q.yx(),Q.yy()-1,Q.yz(),   Q.zx(),Q.zy(),Q.zz()-1 );
 			QstarG = numeric::xyzMatrix<Real>::rows( 1,0,0,        0,Q.yy()-1,Q.yz(),        0,Q.zy(),Q.zz()-1 );
