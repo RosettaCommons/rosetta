@@ -1180,23 +1180,13 @@ ResidueType::add_cut_bond(
 	VD const vd_source = atom_name_to_vd_.find( atom_name1 )->second; //source->second;
 	VD const vd_target = atom_name_to_vd_.find( atom_name2 )->second; //target->second;
 
-#ifdef WIN32
-	// WIN32 access violation fix
-	for(std::map<VD, utility::vector1<VD> >::const_iterator it(cut_bond_neighbor_.begin()), end(cut_bond_neighbor_.end()); it != end; ++it) {
-		if(it->first != vd_source)
-			continue;
-		utility::vector1<VD> const & i1_nbrs( it->second );
+	std::map<VD, utility::vector1<VD>>::const_iterator i1_nbrs_iter = cut_bond_neighbor_.find(vd_source);
+	if (i1_nbrs_iter != cut_bond_neighbor_.end()) {
+		utility::vector1<VD> const i1_nbrs(i1_nbrs_iter->second);
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
 			utility_exit_with_message( "don't add residue bonds more than once!" );
 		}
 	}
-#else
-	utility::vector1<VD> const i1_nbrs(cut_bond_neighbor_.find(vd_source)->second );
-	if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
-		utility_exit_with_message( "don't add residue bonds more than once!" );
-	}
-#endif
-
 	cut_bond_neighbor_[vd_source].push_back(vd_target);
 	cut_bond_neighbor_[vd_target].push_back(vd_source);
 }
@@ -1362,23 +1352,13 @@ ResidueType::set_atom_base(
 	}
 
 	//make sure that you do not set an atom base at a cut bond
-#ifdef WIN32
-	// WIN32 access violation fix
-	for(std::map<VD, utility::vector1<VD> >::const_iterator it(cut_bond_neighbor_.begin()), end(cut_bond_neighbor_.end()); it != end; ++it) {
-		if(it->first != vd_source)
-			continue;
-		utility::vector1<VD> const & i1_nbrs( it->second );
+	std::map<VD, utility::vector1<VD>>::const_iterator i1_nbrs_iter = cut_bond_neighbor_.find(vd_source);
+	if (i1_nbrs_iter != cut_bond_neighbor_.end()) {
+		utility::vector1<VD> const i1_nbrs(i1_nbrs_iter->second);
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
 			utility_exit_with_message( "Don't set atom bases to cut bonds!" );
 		}
 	}
-#else
-	utility::vector1<VD> const i1_nbrs(cut_bond_neighbor_.find(vd_source)->second );
-	if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
-		utility_exit_with_message( "Don't set atom bases to cut bonds!" );
-	}
-#endif
-
 	atom_base_[vd_source] = vd_target;
 
 }
