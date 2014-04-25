@@ -1180,7 +1180,7 @@ ResidueType::add_cut_bond(
 	VD const vd_source = atom_name_to_vd_.find( atom_name1 )->second; //source->second;
 	VD const vd_target = atom_name_to_vd_.find( atom_name2 )->second; //target->second;
 
-	std::map<VD, utility::vector1<VD>>::const_iterator i1_nbrs_iter = cut_bond_neighbor_.find(vd_source);
+	std::map<VD, utility::vector1<VD> >::const_iterator i1_nbrs_iter = cut_bond_neighbor_.find(vd_source);
 	if (i1_nbrs_iter != cut_bond_neighbor_.end()) {
 		utility::vector1<VD> const i1_nbrs(i1_nbrs_iter->second);
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
@@ -1352,7 +1352,7 @@ ResidueType::set_atom_base(
 	}
 
 	//make sure that you do not set an atom base at a cut bond
-	std::map<VD, utility::vector1<VD>>::const_iterator i1_nbrs_iter = cut_bond_neighbor_.find(vd_source);
+	std::map<VD, utility::vector1<VD> >::const_iterator i1_nbrs_iter = cut_bond_neighbor_.find(vd_source);
 	if (i1_nbrs_iter != cut_bond_neighbor_.end()) {
 		utility::vector1<VD> const i1_nbrs(i1_nbrs_iter->second);
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
