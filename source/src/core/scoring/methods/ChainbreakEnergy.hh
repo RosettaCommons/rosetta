@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/EtableEnergy.hh
-/// @brief  Etable energy method class declaration
+/// @file   src/core/scoring/methods/ChainbreakEnergy.hh
+/// @brief  Method declarations and typedefs for ChainbreakEnergy
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
 
 #ifndef INCLUDED_core_scoring_methods_ChainbreakEnergy_hh
 #define INCLUDED_core_scoring_methods_ChainbreakEnergy_hh
 
-// Unit headers
+// Unit header
 #include <core/scoring/methods/ChainbreakEnergy.fwd.hh>
 
 // Package headers
@@ -26,74 +26,51 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+// Utility header
 #include <utility/vector1.hh>
 
-
-
-//#include <ObjexxFCL/FArray3D.hh>
 
 namespace core {
 namespace scoring {
 namespace methods {
 
-/// @brief ChainbreakEnergy class iterates across all residues in finalize()
-/// and determines the penalty between residues i and i+1 by how much their
-/// psueduo atoms do not align.
+/// @brief ChainbreakEnergy class iterates across all residues in finalize() and determines a penalty between residues
+/// i and i+1 across a cutpoint by how much their virtual atoms do not align.
 class ChainbreakEnergy : public WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef WholeStructureEnergy parent;
 
 public:
-
 	ChainbreakEnergy();
 
-	/// clone
 	virtual
 	EnergyMethodOP
 	clone() const {
 		return new ChainbreakEnergy;
 	}
 
-	/// called at the end of energy evaluation
-	virtual
-	void
-	finalize_total_energy(
-		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+	/// @brief Called at the end of the energy evaluation.
+	virtual void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+
+
+	/// @brief Called during gradient-based minimization inside dfunc.
+	virtual void eval_atom_derivative(
+			id::AtomID const & id,
+			pose::Pose const & pose,
+			kinematics::DomainMap const & domain_map,
+			ScoreFunction const & sfxn,
+			EnergyMap const & weights,
+			Vector & F1,
+			Vector & F2
 	) const;
 
+	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
-	/// called during gradient-based minimization inside dfunc
-	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
-	**/
-	virtual
-	void
-	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;
-
-	virtual
-	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
-
-	virtual
-	core::Size version() const;
-
-
+	virtual core::Size version() const;
 };
 
 } // methods
 } // scoring
 } // core
-
 
 #endif

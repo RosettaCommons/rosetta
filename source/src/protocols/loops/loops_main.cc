@@ -352,8 +352,6 @@ void set_single_loop_fold_tree(
 }
 
 
-
-
 /// @details  Slide a loop cutpoint to a (potentially) new position
 /// @note  Updates the pose's foldtree, either moving or adding a loop cutpoint
 /// @note  Updates CUTPOINT_UPPER and CUTPOINT_LOWER variant status of residues in loop to match new cutpoint location
@@ -395,9 +393,8 @@ set_loop_cutpoint_in_pose_fold_tree(
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////
-/// @details  Remove cutpoint variants
+/// @details  Remove cutpoint variants.
 void remove_cutpoint_variants(
 	core::pose::Pose & pose,
 	bool force
@@ -457,60 +454,60 @@ void remove_cutpoint_variants(
 
 
 //////////////////////////////////////////////////////////////////////////////////
-/// @details  Remove cutpoint variants
-void add_cutpoint_variants(
-	core::pose::Pose & pose
-)
+// Add cutpoint variants.
+void
+add_cutpoint_variants( core::pose::Pose & pose )
 {
-	pose::Pose init_pose = pose;
+	for ( int i = 1; i <= pose.fold_tree().num_cutpoint() ; ++i ) {
+		core::uint cutpoint = pose.fold_tree().cutpoint( i );
+		add_single_cutpoint_variant( pose, cutpoint );
+	}
+}
+
+
+void
+add_single_cutpoint_variant( core::pose::Pose & pose, const Loop & loop )
+{
+	add_single_cutpoint_variant( pose, loop.cut() );
+}
+
+
+void
+add_single_cutpoint_variant( core::pose::Pose & pose, const core::uint cutpoint )
+{
+	using namespace std;
 	using namespace core::chemical;
+	using namespace core::pose;
+
+	Pose init_pose = pose;
 	bool pose_changed( false );
- 	for ( int i=1; i <= pose.fold_tree().num_cutpoint() ; ++i ) {
- 		int cutpoint = pose.fold_tree().cutpoint( i );
- 		bool added_cutpoint_variant = false;
 
-		//flo may 09: cutpoint and terminus variant types are currently incompatible, so check for presence
-		if ( pose.residue( cutpoint ).is_protein() && !( pose.residue( cutpoint ).is_upper_terminus() ) ) {
-			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint );
-			added_cutpoint_variant = true;
-		}
-		if ( pose.residue( cutpoint+1 ).is_protein() && !( pose.residue( cutpoint+1 ).is_lower_terminus() ) ) {
-			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint+1 );
-			added_cutpoint_variant = true;
-		}
-
-		if ( added_cutpoint_variant ) {
-			tt.Info << "Added cutpoint variants: RES: " << cutpoint << std::endl;
-		}
-		pose_changed = pose_changed || added_cutpoint_variant;
- 	}
-	if ( pose_changed ) pose.constraint_set( init_pose.constraint_set()->remapped_clone( init_pose, pose ) );
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////////
-/// @details  Add cutpoint variant around a sinlge cutpoint (defined by loop)
-void add_single_cutpoint_variant(
-	core::pose::Pose & pose,
-	const Loop &loop
-)
-{
-	using namespace core::chemical;
-	pose::Pose init_pose = pose;
-	bool changed( false );
-	if ( !pose.residue(loop.cut()).has_variant_type(CUTPOINT_LOWER) ) {
-		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, loop.cut() );
-		changed=true;
+	// Cutpoint and terminus variant types are currently incompatible, so check for presence.
+	// Also, the logic for the chainbreak energy method only works with peptides and carbohydrates.
+	if ( ( pose.residue( cutpoint ).is_protein() || pose.residue( cutpoint ).is_carbohydrate() ) &&
+			!( pose.residue( cutpoint ).is_upper_terminus() ) ) {
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint );
+		tt.Info << "Added cutpoint variant to residue " << cutpoint << endl;
+		pose_changed = true;
+	} else {
+		tt.Warning << "Residue " << cutpoint <<
+				" is not compatible with cutpoints; variant type not changed." << endl;
 	}
-	if ( !pose.residue(loop.cut()+1).has_variant_type(CUTPOINT_UPPER) ) {
-		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, loop.cut()+1 );
-		changed=true;
+
+	if ( ( pose.residue( cutpoint + 1 ).is_protein() || pose.residue( cutpoint + 1 ).is_carbohydrate() ) &&
+			!( pose.residue( cutpoint + 1 ).is_lower_terminus() ) ) {
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint + 1 );
+		tt.Info << "Added cutpoint variant to residue " << cutpoint + 1 << endl;
+		pose_changed = true;
+	} else {
+		tt.Warning << "Residue " << cutpoint + 1 <<
+				" is not compatible with cutpoints; variant type not changed." << endl;
 	}
-	if ( changed ) pose.constraint_set( init_pose.constraint_set()->remapped_clone( init_pose, pose ) );
+
+	if ( pose_changed ) {
+		pose.constraint_set( init_pose.constraint_set()->remapped_clone( init_pose, pose ) );
+	}
 }
-
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -987,8 +984,6 @@ extend_sequence_mapping(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// what can we assume about the starting fold_tree??
-///
-
 void
 apply_sequence_mapping(
 	pose::Pose & pose,
@@ -1376,7 +1371,6 @@ void idealize_loop(
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////
 /// @details  Set a loop to extended torsion angles.
 void set_extended_torsions(
@@ -1408,8 +1402,6 @@ void set_extended_torsions(
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////////////
 /// @details  Rebuild a loop via fragment insertion + ccd closure + minimization
 void remove_missing_density(
@@ -1422,9 +1414,6 @@ void remove_missing_density(
 	set_single_loop_fold_tree( pose, loop );
 	set_extended_torsions( pose, loop );
 }
-
-
-
 
 
 core::Real native_loop_core_CA_rmsd(
@@ -1463,9 +1452,6 @@ core::Real native_loop_core_CA_rmsd(
 	if ( corelength == 0 ) return 0.0;
 	else return core::scoring::CA_rmsd( native_pose, pose, residue_selection );
 } // native_CA_rmsd
-
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////

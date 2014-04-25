@@ -65,17 +65,14 @@ void remove_cutpoint_variants(
 );
 
 //////////////////////////////////////////////////////////////////////////////////
-/// @details  Add cutpoint variants to all the cutpoints
-void add_cutpoint_variants(
-  core::pose::Pose & pose
-);
+/// @brief  Add cutpoint variants to all the cutpoints in a Pose.
+void add_cutpoint_variants( core::pose::Pose & pose );
 
-//////////////////////////////////////////////////////////////////////////////////
-/// @details  Add cutpoint variant around a sinlge cutpoint (defined by loop)
-void add_single_cutpoint_variant(
-	core::pose::Pose & pose,
-	const Loop &loop
-);
+/// @brief  Add cutpoint variants around a single cutpoint (defined by a Loop).
+void add_single_cutpoint_variant( core::pose::Pose & pose, const Loop & loop );
+
+/// @brief  Add cutpoint variants around a single cutpoint (defined by residue number).
+void add_single_cutpoint_variant( core::pose::Pose & pose, const core::uint cutpoint );
 
 
 ///@brief create a MoveMap for use of minimization based on loop definition (wrapper)

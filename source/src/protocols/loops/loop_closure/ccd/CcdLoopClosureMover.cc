@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
