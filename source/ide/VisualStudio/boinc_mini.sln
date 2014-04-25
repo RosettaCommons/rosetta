@@ -1,73 +1,73 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjexxFCL", "ObjexxFCL\ObjexxFCL.vcproj", "{C118AB36-F5FA-4772-99D4-CAC005CBF383}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjexxFCL", "ObjexxFCL\ObjexxFCL.vcxproj", "{C118AB36-F5FA-4772-99D4-CAC005CBF383}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "numeric", "numeric\numeric.vcproj", "{E51F9150-77FD-4CD7-A316-70692505E2C6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "numeric", "numeric\numeric.vcxproj", "{E51F9150-77FD-4CD7-A316-70692505E2C6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.1", "core.1\core.1.vcproj", "{DCC27C01-8B68-43D3-9A87-BB0F25AF2DDE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.1", "core.1\core.1.vcxproj", "{DCC27C01-8B68-43D3-9A87-BB0F25AF2DDE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utility", "utility\utility.vcproj", "{381331FC-4F59-4988-8D6C-30ACFE567D17}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utility", "utility\utility.vcxproj", "{381331FC-4F59-4988-8D6C-30ACFE567D17}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minirosetta", "apps\minirosetta.vcproj", "{71FF633D-67F6-458C-AC4C-55552F1155D3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minirosetta", "apps\minirosetta.vcxproj", "{71FF633D-67F6-458C-AC4C-55552F1155D3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "boinc_zip", "external\boinc_zip\boinc_zip.vcproj", "{753E897D-9ECE-42B1-9F0D-CD566775C77E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "boinc_zip", "external\boinc_zip\boinc_zip.vcxproj", "{753E897D-9ECE-42B1-9F0D-CD566775C77E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minirosetta_graphics", "apps\minirosetta_graphics.vcproj", "{60C2D21F-2CB7-4D8A-A508-DA2553AEEEBA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minirosetta_graphics", "apps\minirosetta_graphics.vcxproj", "{60C2D21F-2CB7-4D8A-A508-DA2553AEEEBA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.2", "core.2\core.2.vcproj", "{11CB2EA1-1CBF-4994-9AA0-9D9EE9548A1E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.2", "core.2\core.2.vcxproj", "{11CB2EA1-1CBF-4994-9AA0-9D9EE9548A1E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.3", "core.3\core.3.vcproj", "{DB822B58-C006-4F82-9AFC-AC7F65B04FAF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.3", "core.3\core.3.vcxproj", "{DB822B58-C006-4F82-9AFC-AC7F65B04FAF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.4", "core.4\core.4.vcproj", "{58BB0BEF-C1CD-4BD9-BE13-71E2A6268AF4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.4", "core.4\core.4.vcxproj", "{58BB0BEF-C1CD-4BD9-BE13-71E2A6268AF4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.5", "core.5\core.5.vcproj", "{A3EFED30-A198-4D1C-A358-FD1BDBA15B84}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core.5", "core.5\core.5.vcxproj", "{A3EFED30-A198-4D1C-A358-FD1BDBA15B84}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basic", "basic\basic.vcproj", "{EAAF28E3-A241-4B1B-8571-3CD6D5940672}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basic", "basic\basic.vcxproj", "{EAAF28E3-A241-4B1B-8571-3CD6D5940672}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppdb", "cppdb\cppdb.vcproj", "{55B97FE9-115A-48F0-8DCD-2DE780F357B2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppdb", "cppdb\cppdb.vcxproj", "{55B97FE9-115A-48F0-8DCD-2DE780F357B2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "sqlite3\sqlite3.vcproj", "{23B47229-A66C-4042-B04D-D65F67FB3BC5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "sqlite3\sqlite3.vcxproj", "{23B47229-A66C-4042-B04D-D65F67FB3BC5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.1", "protocols.1\protocols.1.vcproj", "{4740A508-D81B-49C7-B9F1-551CC857279C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.1", "protocols.1\protocols.1.vcxproj", "{4740A508-D81B-49C7-B9F1-551CC857279C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_a.2", "protocols_a.2\protocols_a.2.vcproj", "{F062F268-8509-4F44-B4E1-030696731E60}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_a.2", "protocols_a.2\protocols_a.2.vcxproj", "{F062F268-8509-4F44-B4E1-030696731E60}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_b.2", "protocols_b.2\protocols_b.2.vcproj", "{445BF4E0-93BF-407C-9743-4E60DA9977BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_b.2", "protocols_b.2\protocols_b.2.vcxproj", "{445BF4E0-93BF-407C-9743-4E60DA9977BE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.3", "protocols.3\protocols.3.vcproj", "{91864D53-14B9-4142-A9F7-CB571DB9AC08}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.3", "protocols.3\protocols.3.vcxproj", "{91864D53-14B9-4142-A9F7-CB571DB9AC08}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_a.4", "protocols_a.4\protocols_a.4.vcproj", "{60CCC356-9906-4E6F-AB24-DFAAC4DDFA7F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_a.4", "protocols_a.4\protocols_a.4.vcxproj", "{60CCC356-9906-4E6F-AB24-DFAAC4DDFA7F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_b.4", "protocols_b.4\protocols_b.4.vcproj", "{440A0496-BC1A-4984-B46C-84AFBB635F1C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_b.4", "protocols_b.4\protocols_b.4.vcxproj", "{440A0496-BC1A-4984-B46C-84AFBB635F1C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_c.4", "protocols_c.4\protocols_c.4.vcproj", "{221C95E4-F8A5-4203-A593-00791FDB457B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_c.4", "protocols_c.4\protocols_c.4.vcxproj", "{221C95E4-F8A5-4203-A593-00791FDB457B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_d.4", "protocols_d.4\protocols_d.4.vcproj", "{ED05A226-10AD-4CDF-B792-643E5522B83F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_d.4", "protocols_d.4\protocols_d.4.vcxproj", "{ED05A226-10AD-4CDF-B792-643E5522B83F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_e.4", "protocols_e.4\protocols_e.4.vcproj", "{EA2940B8-F184-4506-B3C6-28F5C98F2214}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_e.4", "protocols_e.4\protocols_e.4.vcxproj", "{EA2940B8-F184-4506-B3C6-28F5C98F2214}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_f.4", "protocols_f.4\protocols_f.4.vcproj", "{1F2DFD3E-EF08-458B-A970-DEEA9D8F5A12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_f.4", "protocols_f.4\protocols_f.4.vcxproj", "{1F2DFD3E-EF08-458B-A970-DEEA9D8F5A12}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_g.4", "protocols_g.4\protocols_g.4.vcproj", "{EBA3B9D2-035F-4328-A219-80A692D818F0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_g.4", "protocols_g.4\protocols_g.4.vcxproj", "{EBA3B9D2-035F-4328-A219-80A692D818F0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_h.4", "protocols_h.4\protocols_h.4.vcproj", "{C2BF8510-7AB3-477D-B03D-DDD29CF3A655}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_h.4", "protocols_h.4\protocols_h.4.vcxproj", "{C2BF8510-7AB3-477D-B03D-DDD29CF3A655}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_a.5", "protocols_a.5\protocols_a.5.vcproj", "{21F7184F-D15C-4B2F-9720-0B32BDF9529A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_a.5", "protocols_a.5\protocols_a.5.vcxproj", "{21F7184F-D15C-4B2F-9720-0B32BDF9529A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_b.5", "protocols_b.5\protocols_b.5.vcproj", "{CC542E55-7586-410C-BCFA-231E45B940AD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_b.5", "protocols_b.5\protocols_b.5.vcxproj", "{CC542E55-7586-410C-BCFA-231E45B940AD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_c.5", "protocols_c.5\protocols_c.5.vcproj", "{82FE342C-CC0D-4D44-8A04-6C711644EF50}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_c.5", "protocols_c.5\protocols_c.5.vcxproj", "{82FE342C-CC0D-4D44-8A04-6C711644EF50}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_d.5", "protocols_d.5\protocols_d.5.vcproj", "{AE5475D2-9265-4B82-8CA9-37EC63F7DD31}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_d.5", "protocols_d.5\protocols_d.5.vcxproj", "{AE5475D2-9265-4B82-8CA9-37EC63F7DD31}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_e.5", "protocols_e.5\protocols_e.5.vcproj", "{3FD58214-833E-49A7-BE67-D182EA442D01}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_e.5", "protocols_e.5\protocols_e.5.vcxproj", "{3FD58214-833E-49A7-BE67-D182EA442D01}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_f.5", "protocols_f.5\protocols_f.5.vcproj", "{BB2C0063-62E9-4ACD-BD82-9129AF8F3131}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols_f.5", "protocols_f.5\protocols_f.5.vcxproj", "{BB2C0063-62E9-4ACD-BD82-9129AF8F3131}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.6", "protocols.6\protocols.6.vcproj", "{3529CB28-7571-405A-999B-B3B554F8F94E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.6", "protocols.6\protocols.6.vcxproj", "{3529CB28-7571-405A-999B-B3B554F8F94E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.7", "protocols.7\protocols.7.vcproj", "{B08DEC7A-C691-41DD-8A04-67CEA33526EF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protocols.7", "protocols.7\protocols.7.vcxproj", "{B08DEC7A-C691-41DD-8A04-67CEA33526EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

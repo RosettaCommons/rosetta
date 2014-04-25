@@ -146,7 +146,7 @@ private:
 	bool camelid_;
 	bool camelid_constraints_;
 	bool flank_residue_min_;
-	bool flank_residue_size_;
+	core::Real flank_residue_size_;
 	bool middle_pack_min_;
 	bool packonly_after_graft_;
 	std::string h3_perturb_type_;

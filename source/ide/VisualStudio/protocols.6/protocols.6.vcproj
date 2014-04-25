@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,154 +390,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\enzdes\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._AddLigandMotifRotamersOperationCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._AddOrRemoveMatchCstsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._AddRigidBodyLigandConfsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._AddorRemoveCsts.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._BackboneSampler.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._BackboneSamplerCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._DesignVsNativeComparison.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._DetectProteinLigandInterfaceOperationCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzFilterCreators.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzFilters.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzFilters.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzRepackMinimize.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzRepackMinimize.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzRepackMinimizeCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesBaseProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesBaseProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesFixBBProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesFlexBBProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesJobInputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesJobInputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesJobInputterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesJobOutputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesJobOutputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesJobOutputterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesMovers.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesMovers.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesMoversCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesTaskOperations.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._EnzdesTaskOperations.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._ModifyStoredLigandRBConfsMovers.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._ModifyStoredLigandRBConfsMovers.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._PackRotamersMoverPartGreedy.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._PackRotamersMoverPartGreedyCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._ProteinLigandInterfaceUpweighterOperationCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._SecondaryMatchProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._SetCatalyticResPackBehaviorCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\enzdes\._enzdes_util.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\enzdes\AddLigandMotifRotamersOperationCreator.hh"
 				>
@@ -1383,50 +1235,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\antibody\design\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDatabaseManager.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDatabaseManager.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDesignEnum.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDesignModeler.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDesignModeler.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDesignMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyDesignMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyGraftDesigner.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._AntibodyGraftDesigner.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._DesignInstructionsParser.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\design\._util.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\antibody\design\AntibodyCDRDesigner.cc"
 				>
 				<FileConfiguration
@@ -1864,78 +1672,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 		</Filter>
 		<Filter
-			Name="\protocols\sic_dock\"
+			Name="\protocols\antibody\clusters\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._RigidScore.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._RigidScore.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._Rose.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._Rose.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._SICFast.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._SICFast.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._designability_score.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._loophash_util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._read_biounit.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._types.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._xyzStripeHashPose.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._xyzStripeHashPose.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._xyzStripeHashPoseWithMeta.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\._xyzStripeHashPoseWithMeta.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\RigidScore.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRCluster.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1943,8 +1691,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1952,8 +1700,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1961,29 +1709,33 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRCluster.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\RigidScore.fwd.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRCluster.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\RigidScore.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRCluster.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\Rose.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterEnum.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterEnumManager.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1991,8 +1743,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2000,8 +1752,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2009,29 +1761,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterEnumManager.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\Rose.fwd.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterEnumManager.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\Rose.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterEnumManager.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\SICFast.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterFeatures.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2039,8 +1791,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2048,8 +1800,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2057,29 +1809,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeatures.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\SICFast.fwd.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterFeatures.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\SICFast.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterFeatures.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\designability_score.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterFeaturesCreator.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2087,8 +1839,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2096,8 +1848,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2105,25 +1857,25 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterFeaturesCreator.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\designability_score.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterFeaturesCreator.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\loophash_util.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterMatcher.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2131,8 +1883,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2140,8 +1892,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2149,25 +1901,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterMatcher.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\loophash_util.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterMatcher.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\read_biounit.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterMatcher.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterSet.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2175,8 +1931,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2184,8 +1940,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2193,29 +1949,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__CDRClusterSet.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\read_biounit.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterSet.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\types.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\CDRClusterSet.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\util.cc"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\util.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2223,8 +1979,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2232,8 +1988,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2241,235 +1997,19 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__clusters__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__clusters__util.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPose.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPose.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPose.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPoseWithMeta.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPoseWithMeta.hh"
+				RelativePath="..\..\..\src\protocols\antibody\clusters\util.hh"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="\protocols\match\output\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._DownstreamRMSEvaluator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._DownstreamRMSEvaluator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._LimitHitsPerRotamerFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._LimitHitsPerRotamerFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchConsolidator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchConsolidator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchEvaluator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchEvaluator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchGrouper.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchGrouper.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchOutputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchOutputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchProcessor.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._MatchProcessor.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._OutputWriter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._OutputWriter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._PDBWriter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._PDBWriter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._PoseInserter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._PoseInserter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._ProcessorFactory.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._ProcessorFactory.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._SameChiBinComboGrouper.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._SameChiBinComboGrouper.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._SameRotamerComboGrouper.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._SameRotamerComboGrouper.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._SameSequenceGrouper.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._SameSequenceGrouper.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._UpstreamCollisionFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._UpstreamCollisionFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._UpstreamDownstreamCollisionFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._UpstreamDownstreamCollisionFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._UpstreamHitCacher.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._UpstreamHitCacher.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._WriteKinemageOutputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._WriteKinemageOutputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._WriteUpstreamCoordinateKineamge.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\output\._WriteUpstreamCoordinateKineamge.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\match\output\DownstreamRMSEvaluator.cc"
 				>
@@ -2852,6 +2392,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\match\output\MatchProcessor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\match\output\MatchScoreWriter.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__match__output__MatchScoreWriter.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\match\output\MatchScoreWriter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\match\output\MatchScoreWriter.hh"
 				>
 			</File>
 			<File
@@ -3435,194 +3023,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\antibody\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\antibody\._Ab_TemplateInfo.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._Ab_TemplateInfo.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyEnum.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyEnumManager.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyEnumManager.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyInfo.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyInfo.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyModelerProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyModelerProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._AntibodyUtil.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CDRClusterEnum.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CDRClusterEnumManager.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CDRClusterEnumManager.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CDRsMinPackMin.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CDRsMinPackMin.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CloseOneCDRLoop.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._CloseOneCDRLoop.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._GraftCDRLoopsProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._GraftCDRLoopsProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._GraftOneCDRLoop.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._GraftOneCDRLoop.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._GraftedStemOptimizer.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._GraftedStemOptimizer.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._H3CterInsert.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._H3CterInsert.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._H3PerturbCCD.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._H3PerturbCCD.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._H3RefineCCD.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._H3RefineCCD.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._LHRepulsiveRamp.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._LHRepulsiveRamp.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._LHRepulsiveRampLegacy.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._LHRepulsiveRampLegacy.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._LHSnugFitLegacy.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._LHSnugFitLegacy.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._ModelCDRH3.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._ModelCDRH3.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._RefineBetaBarrel.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._RefineBetaBarrel.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._RefineOneCDRLoop.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._RefineOneCDRLoop.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._RefineOneCDRLoopCentroid.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._RefineOneCDRLoopCentroid.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._SnugDock.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._SnugDock.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._SnugDockProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\._SnugDockProtocol.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\antibody\Ab_TemplateInfo.cc"
 				>
 				<FileConfiguration
@@ -3723,6 +3123,98 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyFeatures.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeatures.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyFeatures.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyFeatures.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyFeaturesCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyFeaturesCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyFeaturesCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\antibody\AntibodyInfo.cc"
 				>
 				<FileConfiguration
@@ -3819,19 +3311,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\antibody\CDRClusterEnum.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody\CDRClusterEnumManager.cc"
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyNumberingParser.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3839,8 +3327,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3848,8 +3336,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3857,17 +3345,17 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__CDRClusterEnumManager.xdc"
+						ObjectFile="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__antibody__AntibodyNumberingParser.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\antibody\CDRClusterEnumManager.fwd.hh"
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyNumberingParser.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\antibody\CDRClusterEnumManager.hh"
+				RelativePath="..\..\..\src\protocols\antibody\AntibodyNumberingParser.hh"
 				>
 			</File>
 			<File
@@ -4584,100 +4072,392 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 		</Filter>
 		<Filter
-			Name="\protocols\seeded_abinitio\"
+			Name="\protocols\sic_dock\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._CAcstGenerator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\RigidScore.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__RigidScore.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\RigidScore.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._CAcstGeneratorCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\RigidScore.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._CloseFold.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\Rose.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__Rose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__Rose.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\Rose.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._CloseFoldCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\Rose.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._CoordinateCst.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\SICFast.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__SICFast.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\SICFast.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._CoordinateCstCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\SICFast.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._DefineMovableLoops.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\designability_score.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__designability_score.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\designability_score.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._DefineMovableLoopsCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\loophash_util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__loophash_util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\loophash_util.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._GrowPeptides.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\read_biounit.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__read_biounit.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\read_biounit.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._GrowPeptidesCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\types.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._PlaceFragments.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__util.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\util.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._PlaceFragmentsCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPose.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__sic_dock__xyzStripeHashPose.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPose.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SeedFoldTree.fwd.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPose.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SeedFoldTree.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPoseWithMeta.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SeedFoldTreeCreator.hh"
+				RelativePath="..\..\..\src\protocols\sic_dock\xyzStripeHashPoseWithMeta.hh"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SeedSetupMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SeedSetupMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SeededAbinitio_util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SegmentHybridizer.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SegmentHybridizerCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SwapSegment.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._SwapSegmentCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\seeded_abinitio\._util.hh"
-				>
-			</File>
+		</Filter>
+		<Filter
+			Name="\protocols\seeded_abinitio\"
+			>
 			<File
 				RelativePath="..\..\..\src\protocols\seeded_abinitio\CAcstGenerator.cc"
 				>
@@ -5215,22 +4995,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\sic_dock\scores\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\scores\._MotifHashRigidScore.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\scores\._MotifHashRigidScore.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\scores\._TrisBpyScore.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\sic_dock\scores\._TrisBpyScore.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\sic_dock\scores\MotifHashRigidScore.cc"
 				>
 				<FileConfiguration
@@ -5330,82 +5094,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\match\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._BumpGrid.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._BumpGrid.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._Hit.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._Hit.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatchPositionModifiers.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatchPositionModifiers.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatchSet.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatchSet.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._Matcher.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._Matcher.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatcherMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatcherMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatcherMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatcherTask.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._MatcherTask.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._OccupiedSpaceHash.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._OccupiedSpaceHash.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._VoxelSetIterator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\._VoxelSetIterator.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\match\BumpGrid.cc"
 				>
@@ -5847,226 +5535,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\protein_interface_design\filters\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._AtomicContactCountFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._AtomicContactCountFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._AtomicContactCountFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._AverageDegreeFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._AverageDegreeFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._AverageDegreeFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._BindingStrainFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._BindingStrainFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._BindingStrainFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._BoltzmannFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._BoltzmannFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._BoltzmannFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._DesignableResiduesFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._DesignableResiduesFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._DesignableResiduesFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._DisulfideFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._DisulfideFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._FNatFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._FNatFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._FilterScan.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._FilterScan.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._FilterScanCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._HbondsToAtomFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._HbondsToAtomFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._HbondsToAtomFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._HbondsToResidueFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._HbondsToResidueFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._HbondsToResidueFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._IRmsdFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._IRmsdFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._InterfaceHolesFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._InterfaceHolesFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._LRmsdFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._LRmsdFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._RelativeSegmentFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._RelativeSegmentFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._RelativeSegmentFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._RmsdFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._RmsdFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._SequenceRecoveryFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._SequenceRecoveryFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._SequenceRecoveryFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._SpecificResiduesNearInterfaceFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._SpecificResiduesNearInterfaceFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._SpecificResiduesNearInterfaceFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreFilterLoops.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreLoopsFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreLoopsFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._StubScoreLoopsFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._TorsionFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._TorsionFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\._TorsionFilterCreator.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\AtomicContactCountFilter.cc"
 				>
 				<FileConfiguration
@@ -6272,6 +5740,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\BoltzmannFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\ClashWithTargetFilter.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.6__protocols__protein_interface_design__filters__ClashWithTargetFilter.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\ClashWithTargetFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\protein_interface_design\filters\ClashWithTargetFilterCreator.hh"
 				>
 			</File>
 			<File
@@ -7091,54 +6607,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\hotspot_hashing\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._HotspotStub.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._HotspotStub.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._HotspotStubSet.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._HotspotStubSet.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._SICSearchPattern.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._SearchPattern.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._SearchPattern.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._SearchPatternRotSetOp.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._SearchPatternRotSetOp.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._StubGenerator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._StubGenerator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\._SurfaceSearchPattern.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\hotspot_hashing\HotspotStub.cc"
 				>
 				<FileConfiguration
@@ -7571,14 +7039,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\cryst\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\cryst\._cryst_movers.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\cryst\._cryst_movers_creator.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\cryst\cryst_movers.cc"
 				>
 				<FileConfiguration
@@ -7631,14 +7091,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\motif_hash\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\motif_hash\._motif_hash_stuff.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\motif_hash\._motif_hash_stuff.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\motif_hash\motif_hash_stuff.cc"
 				>
 				<FileConfiguration
@@ -7690,38 +7142,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\antibody_legacy\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._AntibodyClass.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._AntibodyClass.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._AntibodyModeler.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._AntibodyModeler.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._CDRH3Modeler.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._GraftMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._Ubiquitin_E2C_Modeler.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\antibody_legacy\._Ubiquitin_E2C_Modeler.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\antibody_legacy\AntibodyClass.cc"
 				>
@@ -8055,22 +7475,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\hotspot_hashing\movers\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\movers\._PlaceProbeMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\movers\._PlaceSurfaceProbe.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\movers\._PlaceSurfaceProbe.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\hotspot_hashing\movers\._PlaceSurfaceProbeCreator.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\hotspot_hashing\movers\PlaceProbeMover.cc"
 				>
 				<FileConfiguration
@@ -8170,410 +7574,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\protein_interface_design\movers\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._AddChainBreak.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._AddChainBreakCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._AddSidechainConstraintsToHotspots.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._AddSidechainConstraintsToHotspotsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BackrubDDMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BackrubDDMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BestHotspotCstMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BestHotspotCstMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BuildAlaPose.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BuildAlaPose.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._BuildAlaPoseCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DesignMinimizeHbonds.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DesignMinimizeHbondsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DisulfideMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DisulfideMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DockAndRetrieveSidechains.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DockAndRetrieveSidechainsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DockWithHotspotMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DockWithHotspotMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._DockWithHotspotMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._FavorNativeResiduePreCycle.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._FavorNativeResiduePreCycleCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._FavorNonNativeResiduePreCycle.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._FavorNonNativeResiduePreCycleCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._HotspotDisjointedFoldTreeMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._HotspotDisjointedFoldTreeMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._HotspotHasherMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._HotspotHasherMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._InterfaceRecapitulationMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._InterfaceRecapitulationMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopFinder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopFinderCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopLengthChange.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopLengthChange.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopLengthChangeCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopMoverFromCommandLine.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopMoverFromCommandLine.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopMoverFromCommandLineCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopOver.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopOverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopRemodel.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopRemodel.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._LoopRemodelCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._MapHotspot.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._MapHotspotCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._NullDesignMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PeptideStapleDesignMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PeptideStapleDesignMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceOnLoop.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceOnLoop.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceOnLoopCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceSimultaneouslyMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceSimultaneouslyMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceStubMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceStubMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceStubMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlaceUtils.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlacementAuctionMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlacementAuctionMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlacementAuctionMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlacementMinimizationMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlacementMinimizationMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PlacementMinimizationMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PrepackMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._PrepackMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._ProteinInterfaceMultiStateDesignMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._ProteinInterfaceMultiStateDesignMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._ProteinInterfaceMultiStateDesignMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._RandomMutation.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._RandomMutation.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._RandomMutationCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._RepackMinimize.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._RepackMinimizeCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SaveAndRetrieveSidechains.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SaveAndRetrieveSidechains.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SaveAndRetrieveSidechainsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetAtomTree.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetAtomTreeCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetTemperatureFactor.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetTemperatureFactor.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetTemperatureFactorCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetupHotspotConstraintsLoopsMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetupHotspotConstraintsLoopsMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetupHotspotConstraintsLoopsMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetupHotspotConstraintsMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetupHotspotConstraintsMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SetupHotspotConstraintsMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._ShoveResidueMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._ShoveResidueMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SpinMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SpinMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SubroutineMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SubroutineMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._SubroutineMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._TaskAwareCsts.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._TaskAwareCsts.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._TaskAwareCstsCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._TryRotamers.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._TryRotamersCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._VLB.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\._VLBCreator.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\protein_interface_design\movers\AddChainBreak.cc"
 				>
@@ -10767,46 +9767,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\protein_interface_design\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._DockDesignFilterFactory.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._DockDesignFilterFactory.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._ParserJobInputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._ParserJobInputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._ParserJobInputterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._ReportPSSMDifference.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._ReportPSSMDifference.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._design_utils.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._read_patchdock.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\protein_interface_design\._util.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\protein_interface_design\DockDesignFilterFactory.cc"
 				>
 				<FileConfiguration
@@ -11094,54 +10054,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\match\upstream\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._OriginalScaffoldBuildPoint.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._OriginalScaffoldBuildPoint.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._ProteinSCSampler.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._ProteinSCSampler.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._ProteinUpstreamBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._ProteinUpstreamBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._ScaffoldBuildPoint.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._ScaffoldBuildPoint.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._UpstreamBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._UpstreamBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._UpstreamResTypeGeometry.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\upstream\._UpstreamResTypeGeometry.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\match\upstream\OriginalScaffoldBuildPoint.cc"
 				>
@@ -11435,14 +10347,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\motif_grafting\movers\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\motif_grafting\movers\._MotifGraftCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\motif_grafting\movers\._MotifGraftMover.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\motif_grafting\movers\MotifGraftCreator.hh"
 				>
 			</File>
@@ -11494,98 +10398,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\match\downstream\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._ActiveSiteGrid.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._ActiveSiteGrid.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._ClassicMatchAlgorithm.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._ClassicMatchAlgorithm.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._DownstreamAlgorithm.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._DownstreamAlgorithm.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._DownstreamBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._DownstreamBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._GeometrySecMatchRPE.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._GeometrySecMatchRPE.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._LigandConformerBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._LigandConformerBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._RigidLigandBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._RigidLigandBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._ScoringSecMatchRPE.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._ScoringSecMatchRPE.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecMatchEvaluatorFactory.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecMatchResiduePairEvaluator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecMatchResiduePairEvaluator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecondaryMatcherToDownstreamResidue.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecondaryMatcherToDownstreamResidue.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecondaryMatcherToUpstreamResidue.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\match\downstream\._SecondaryMatcherToUpstreamResidue.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\match\downstream\ActiveSiteGrid.cc"
 				>

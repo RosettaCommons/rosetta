@@ -23,7 +23,9 @@
 
 #if defined(WIN32) || defined(WIN_PYROSETTA)
 #include <float.h>
+#if _MSC_VER > 1700
 #include <amp_math.h>
+#endif
 namespace std {
 	int isnan(double x) { return _isnan(x); }
     int isinf(double x) { return !_finite(x); }

@@ -205,9 +205,11 @@ public:
 	virtual ~MolecularSurfaceCalculator();
 	virtual int Init();
 	virtual void Reset();
-
+#ifdef WIN32
+	int AddAtomWIN32(int molecule, Atom &atom);
+#else
 	int AddAtom(int molecule, Atom &atom);
-
+#endif
 	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
 
   /// @begin MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size jump_id = 0)

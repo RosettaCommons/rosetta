@@ -313,7 +313,11 @@ add_covalent_linkage_helper(
 						} //Finding unique name
 
 						//Create a new virt atom, using the unique name found above:
+#ifdef WIN32
+						core::chemical::AddAtomWIN32 addvirt(virtname, "VIRT", "VIRT", 0.0);
+#else
 						core::chemical::AddAtom addvirt(virtname, "VIRT", "VIRT", 0.0);
+#endif
 						addvirt.apply( (*mod_res) );
 						mod_res->add_bond(virtname, res_atom);
 						mod_res->set_atom_base(virtname, res_atom);

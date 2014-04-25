@@ -60,6 +60,7 @@ using basic::Warning;
 #include <boost/foreach.hpp>
 
 static numeric::random::RandomGenerator my_RG(4376910); // 4376910 is just a random seed
+
 namespace protocols {
 namespace ligand_docking {
 

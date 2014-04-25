@@ -533,7 +533,7 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 
 platform::Size
 get_num_digits( platform::Size value){
-	return ceil( std::log10(value + 1) );
+	return ceil( std::log10(value + 1.) );
 }
 
 

@@ -82,8 +82,11 @@ AddHydrogen::apply( core::pose::Pose & pose )
 	core::chemical::ResidueTypeOP type_to_fix= res_to_fix.type().clone();
 	type_to_fix->name( generate_unique_name() );
 	core::Size res_conn_atom_index= type_to_fix->residue_connect_atom_index(connection_id_);
-
+#ifdef WIN32
+	core::chemical::AddAtomWIN32 aa(" HH ", "Hapo", "X", 0.09);
+#else
 	core::chemical::AddAtom aa(" HH ", "Hapo", "X", 0.09);
+#endif
 	aa.apply(*type_to_fix);
 	core::chemical::AddBond ab(" HH ", res_to_fix.atom_name(res_conn_atom_index));
 	ab.apply(*type_to_fix);

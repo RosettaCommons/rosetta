@@ -26,12 +26,13 @@
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
-#ifdef WIN32
+#if defined WIN32 || WIN_PYROSETTA
 #include <core/conformation/signals/ConnectionEvent.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
+#include <core/environment/DofPassport.hh>
 #endif
 
 // Project headers
@@ -44,10 +45,6 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/environment/DofPassport.fwd.hh>
-
-#ifdef WIN_PYROSETTA
-#include <core/environment/DofPassport.hh>
-#endif
 
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/AtomTree.fwd.hh>

@@ -270,11 +270,19 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief add an atom to ResidueType
+#ifdef WIN32
+class AddAtomWIN32 : public PatchOperation {
+#else
 class AddAtom : public PatchOperation {
+#endif
 public:
 
 	/// constructor
+#ifdef WIN32
+	AddAtomWIN32(
+#else
 	AddAtom(
+#endif
 		std::string const & atom_name_in,
 		std::string const & atom_type_name_in,
 		std::string const & mm_atom_type_name_in,

@@ -53,7 +53,7 @@ void VicinityPerturber::perturb_subset(Pose const &, IndexList const &, ClosureP
 
 void VicinityPerturber::perturb_subset_with_balance(Pose const &, IndexList const &, ClosureProblemOP problem)
 {
-	Real fwhm = 2 * sqrt(2 * log(2)) * spread_;
+	Real fwhm = 2. * sqrt(2. * log(2.)) * spread_;
 
 	BOOST_FOREACH(Size i, problem->nonpivot_residues()) {
 		Real phi = target_.phi(i) + fwhm * (uniform() - 0.5);

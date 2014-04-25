@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,38 +390,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\domain_assembly\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._AddAssemblyConstraints.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._AddAssemblyConstraints.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._AssembleLinkerMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._AssembleLinkerMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._CombineChainsMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._CombineChainsMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._PostDockAssemblyScorer.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\domain_assembly\._PostDockAssemblyScorer.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\domain_assembly\AddAssemblyConstraints.cc"
 				>
@@ -619,34 +587,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\comparative_modeling\features\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._ResidueFeature.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._ResidueFeature.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._ResidueFeatureFactory.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._SSFeature.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._SSFeature.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._TorsionFeature.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\features\._TorsionFeature.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\comparative_modeling\features\ResidueFeature.cc"
 				>
 				<FileConfiguration
@@ -838,158 +778,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\comparative_modeling\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._AlignRmsdTargetEvaluatorCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._Align_RmsdEvaluator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._Align_RmsdEvaluator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._Align_RotamerEvaluator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._Align_RotamerEvaluator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._AlignmentClustering.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._AlignmentClustering.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._AlignmentID.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._AlignmentSet.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._AlignmentSet.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ExtraThreadingMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._GenericJobInputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._GenericJobInputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._GenericJobInputterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._IgnoreSubsetConstraintSet.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._IgnoreSubsetConstraintSet.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._LoopRelaxMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._LoopRelaxMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._LoopRelaxMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._LoopRelaxThreadingMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._LoopRelaxThreadingMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._MultiThreadingMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._PartialThreadingMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._RecoverSideChainsMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._RecoverSideChainsMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._StealLigandMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._StealLigandMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._StealSideChainsMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._StealSideChainsMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ThreadingJob.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ThreadingJob.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ThreadingJobInputter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ThreadingJobInputter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ThreadingJobInputterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._ThreadingMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._cm_main.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._coord_util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\comparative_modeling\._util.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\comparative_modeling\AlignRmsdTargetEvaluatorCreator.cc"
 				>
@@ -1986,18 +1774,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\floppy_tail\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\floppy_tail\._FloppyTailMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\floppy_tail\._FloppyTailMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\floppy_tail\._FloppyTail_publication.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\floppy_tail\FloppyTailMover.cc"
 				>

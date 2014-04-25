@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,370 +390,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\ligand_docking\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AddHydrogen.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AddHydrogen.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AddHydrogens.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AddHydrogens.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AddHydrogensCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AtomCountFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._AtomCountFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ChainExistsFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ChainExistsFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._CompleteConnectionsFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._CompleteConnectionsFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._CompoundTranslate.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._CompoundTranslateCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._DistributionMap.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._FinalMinimizer.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._FinalMinimizer.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._FinalMinimizerCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._GrowLigand.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._GrowLigand.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._GrowLigandCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HBondAcceptorFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HBondAcceptorFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HBondDonorFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HBondDonorFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HeavyAtomFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HeavyAtomFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HighResDocker.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HighResDocker.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._HighResDockerCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._InterfaceBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._InterfaceBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._InterfaceScoreCalculator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._InterfaceScoreCalculator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._InterfaceScoreCalculatorCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandArea.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandArea.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandBaseProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDesign.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDesign.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDesignCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDockProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDockProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDockingLoaderCreators.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._LigandDockingLoaders.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MinimizeBackbone.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MinimizeBackbone.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MinimizeBackboneCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MinimizeLigand.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MinimizeLigand.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MolarMassFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MolarMassFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MolecularMassFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MolecularMassFilterCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MoveMapBuilder.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._MoveMapBuilder.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RandomConformerMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RandomConformerMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RandomConformers.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RandomConformersCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ResidueTorsionRestraints.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ResidueTorsionRestraints.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RigidSearchMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RigidSearchMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Rotate.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Rotate.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RotateCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Rotates.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Rotates.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._RotatesCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ScreeningDocker.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ScreeningDocker.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ScreeningDockerCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._SlideTogether.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._SlideTogetherCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._StartFrom.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._StartFrom.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._StartFromCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._TetherLigand.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._TetherLigand.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Transform.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Transform.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._TransformCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Translate.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._Translate.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._TranslateCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._UnconstrainedTorsionsMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._UnconstrainedTorsionsMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._grid_functions.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ligand_dock_impl.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ligand_functions.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\._ligand_scores.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\ligand_docking\AddHydrogen.cc"
 				>
@@ -2867,14 +2503,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\docking\stateless\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\docking\stateless\._SaneDockingProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\stateless\._SaneDockingProtocol.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\docking\stateless\SaneDockingProtocol.cc"
 				>
 				<FileConfiguration
@@ -2926,190 +2554,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\docking\"
 			>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._ConformerSwitchMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._ConformerSwitchMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._ConformerSwitchMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockFilters.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockFilters.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockMCMCycle.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockMCMCycle.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockMCMProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockMCMProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockMinMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockMinMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockSetupMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockSetupMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockSetupMoverCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockTaskFactory.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockTaskFactory.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingEnsemble.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingEnsemble.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingEnsemblePrepackProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingEnsemblePrepackProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingHighRes.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingHighRes.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingHighResLegacy.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingHighResLegacy.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingInitialPerturbation.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingInitialPerturbation.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingInitialPerturbationCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingLowRes.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingLowRes.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingLowResEnsemble.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingLowResEnsemble.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingPrepackProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingPrepackProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingProtocol.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingProtocol.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._DockingProtocolCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._RigidBodyInfo.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._RigidBodyInfo.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._SidechainMinMover.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._SidechainMinMover.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._TemperedDocking.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._TemperedDocking.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._TemperedDockingCreator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._metrics.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._types.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\docking\._util.hh"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\docking\ConformerSwitchMover.cc"
 				>
@@ -3895,6 +3339,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\docking\EllipsoidalRandomizationMover.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__docking__EllipsoidalRandomizationMover.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\docking\EllipsoidalRandomizationMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\docking\EllipsoidalRandomizationMover.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\docking\RigidBodyInfo.cc"
 				>
 				<FileConfiguration
@@ -4136,20 +3628,124 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 		</Filter>
 		<Filter
-			Name="\protocols\ligand_docking\ligand_options\"
+			Name="\protocols\ligand_docking\rdf\"
 			>
 			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\ligand_options\._Interface.fwd.hh"
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFBase.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\ligand_options\._Interface.hh"
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFBase.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\ligand_docking\ligand_options\._interface_distance_functions.hh"
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFFunctionCreator.fwd.hh"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFFunctionCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFFunctionFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__RDFFunctionFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFFunctionFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\RDFFunctionFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\StandardRDFFunctions.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_h.4__protocols__ligand_docking__rdf__StandardRDFFunctions.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\StandardRDFFunctions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ligand_docking\rdf\StandardRDFFunctions.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\protocols\ligand_docking\ligand_options\"
+			>
 			<File
 				RelativePath="..\..\..\src\protocols\ligand_docking\ligand_options\Interface.cc"
 				>

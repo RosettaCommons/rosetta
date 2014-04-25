@@ -214,7 +214,7 @@ public:
 	/// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
 	/// pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(
-		std::string interface,
+		std::string dock_chains,
 		bool const tracer = false,
 		scoring::ScoreFunctionCOP sf = NULL,
 		bool compute_packstat = false,

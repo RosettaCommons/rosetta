@@ -242,14 +242,14 @@ private:
 	/// @brief Unpacks the eigenvalues returned by RGG and repacks them into a 
 	/// format that better supports complex numbers.
 	void extract_eigenvalues(
-			ScratchVector eigenvalue_numerators_real,
-			ScratchVector eigenvalue_numerators_imaginary,
-			ScratchVector eigenvalue_denominators);
+			const ScratchVector & eigenvalue_numerators_real,
+			const ScratchVector & eigenvalue_numerators_imaginary,
+			const ScratchVector & eigenvalue_denominators);
 
 	/// @brief Unpacks the eigenvectors returned by RGG and repacks them into a 
 	/// format that better supports complex numbers.
 	void extract_eigenvectors(
-			ScratchMatrix eigenvectors);
+			const ScratchMatrix & eigenvectors);
 
 	/// @brief Determines which eigenvalues are real (i.e. those for which the 
 	/// imaginary component is zero).
@@ -478,9 +478,9 @@ GeneralizedEigenSolver<MatrixType>::real_eigenvectors() const {
 
 template<typename MatrixType>
 void GeneralizedEigenSolver<MatrixType>::extract_eigenvalues(
-		ScratchVector eigenvalue_numerators_real,
-		ScratchVector eigenvalue_numerators_imaginary,
-		ScratchVector eigenvalue_denominators) {
+		const ScratchVector & eigenvalue_numerators_real,
+		const ScratchVector & eigenvalue_numerators_imaginary,
+		const ScratchVector & eigenvalue_denominators) {
 
 	using Eigen::internal::isMuchSmallerThan;
 
@@ -521,7 +521,7 @@ void GeneralizedEigenSolver<MatrixType>::extract_eigenvalues(
 
 template<typename MatrixType>
 void GeneralizedEigenSolver<MatrixType>::extract_eigenvectors(
-		ScratchMatrix raw_eigenvectors) {
+		const ScratchMatrix & raw_eigenvectors) {
 
 	using Eigen::internal::isMuchSmallerThan;
 	Index columns = raw_eigenvectors.cols();
