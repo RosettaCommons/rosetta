@@ -18,6 +18,7 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -342,8 +343,7 @@ RingConformerSet::conformers_for_ring_size(core::Size ring_size)
 		stringstream filename(stringstream::out);
 		filename << "chemical/ring_conformer_sets/" << ring_size << "-membered_ring_conformers.data";
 		vector1<RingConformer> conformers = read_conformers_from_database_file_for_ring_size(
-				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
-				filename.str(), ring_size);
+				basic::database::full_name(filename.str()), ring_size);
 		CONFORMERS->insert(make_pair(ring_size, conformers));
 	}
 

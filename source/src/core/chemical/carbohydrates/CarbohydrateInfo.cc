@@ -25,6 +25,7 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -200,8 +201,7 @@ CarbohydrateInfo::sugar_properties()
 	// If statement ensures that the data is only created once, i.e., is constant.
 	if (!SUGAR_PROPERTIES) {
 		SUGAR_PROPERTIES = new vector1<string>(read_properties_from_database_file(
-				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
-				"chemical/carbohydrates/sugar_properties.list"));
+				basic::database::full_name("chemical/carbohydrates/sugar_properties.list")));
 	}
 
 	return *SUGAR_PROPERTIES;
@@ -216,8 +216,7 @@ CarbohydrateInfo::code_to_root_map() {
 	// If statement ensures that the data is only created once, i.e., is constant.
 	if (!CODE_TO_ROOT_MAP) {
 		CODE_TO_ROOT_MAP = new map<string, string>(read_codes_and_roots_from_database_file(
-				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
-				"chemical/carbohydrates/codes_to_roots.map"));
+				basic::database::full_name("chemical/carbohydrates/codes_to_roots.map")));
 	}
 
 	return *CODE_TO_ROOT_MAP;

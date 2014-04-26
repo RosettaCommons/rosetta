@@ -61,6 +61,7 @@
 #include <iostream>
 #include <fstream>
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/file/FileName.hh>
@@ -162,7 +163,7 @@ setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 	std::string dock_chains = "LH_"+antigen;
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
 	return dock_chains;
-	
+
 }
 
 std::string
@@ -689,7 +690,7 @@ add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose
 
 std::map< CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
-	
+
 	std::map< CDRNameEnum, bool> result;
 	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
@@ -703,14 +704,14 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 
 	using namespace core::scoring::constraints;
 
-	
+
 	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
 	if (fname=="NA"){return false;}
 	try {
 		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
 
 		pose.add_constraints(cst->get_all_constraints());
-		return true;	
+		return true;
 	}
 	catch(utility::excn::EXCN_Exception &excn){
 		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
@@ -723,12 +724,12 @@ bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
 
 	using namespace core::scoring::constraints;
-	
+
 	if (cluster==NA) return false;
-	
+
 	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
 	if (fname=="NA"){return false;}
-	
+
 	try {
 		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
 
@@ -741,15 +742,15 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
 		return false;
 	}
-	
+
 }
 
 
 std::string
 get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster ){
-	
+
 	using namespace basic::options;
-	
+
 	std::string fname;
 	std::string cluster_type = ab_info->get_cluster_name(cluster);
 	if (cluster_type=="NA") {
@@ -759,7 +760,7 @@ get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum
 	std::string path = "sampling/antibodies/cluster_based_constraints/CircularHarmonic/";
 	std::string extension = ".txt";
 	std::string specific_path = path + cluster_type + extension;
-	fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
+	fname = basic::database::full_name( specific_path );
 	if( !utility::file::file_exists(fname)) {
 		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
 		return "NA";
