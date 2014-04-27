@@ -70,7 +70,7 @@ public:
     utility::vector1<core::Size> leave_as_is() const {return leave_as_is_; };//getter
     void leave_as_is(utility::vector1<core::Size> const vector) {leave_as_is_=vector; };//setter
     void target_sequence( std::string const seq ) {target_sequence_ = seq; };//setter
-	std::string target_sequence() const {return target_sequence_; };//getter
+		std::string target_sequence() const {return target_sequence_; };//getter
 
 
 private:

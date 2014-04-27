@@ -158,27 +158,24 @@ void //mark residue positions on the pose (not positions in the sequence!) to le
 void
 DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 {
-    target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
-    template_file( tag->getOption< std::string >( "template_file") );
-   	template_pose_ = new core::pose::Pose;
+  target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
+  template_file( tag->getOption< std::string >( "template_file") );
+  template_pose_ = new core::pose::Pose;
 	core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
 	database_fname( tag->getOption< std::string >( "database","" ) );
-    if (target_sequence()==""){
-        if (database_fname()=="")
-            utility_exit_with_message("Please provide either a database file or target sequence! Aborting!");
-        else{
-            utility::io::izstream database( database_fname_ );
-            if( !database )
-                utility_exit_with_message("cannot open database " + database_fname_ +"\n");
-            std::string line;
+  if (target_sequence()==""){
+		if (database_fname()=="")
+			utility_exit_with_message("Please provide either a database file or target sequence! Aborting!");
+		else{
+			utility::io::izstream database( database_fname_ );
+      if( !database )
+      	utility_exit_with_message("cannot open database " + database_fname_ +"\n");
+      std::string line;
             while( getline( database, line ) ) { // if length of line is the same as segment length, incorporate into vector of strings.
                 full_database_.push_back( line );
             }
-
-        }
-            
-            
-    }
+		}
+	}
 	start_res( tag->getOption< core::Size >( "start_res" ) );
 	end_res( tag->getOption< core::Size >( "end_res" ) );
 	allow_design_around( tag->getOption< bool >( "allow_design_around", true ) );
