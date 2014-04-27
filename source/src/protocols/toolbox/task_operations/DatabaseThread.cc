@@ -51,12 +51,13 @@ using namespace core::pack::task::operation;
 using namespace std;
 
 DatabaseThread::DatabaseThread() : parent(),
-	template_file_(""),
-	database_fname_( "" ),
-	template_pose_(NULL),
-	start_res_(0),
-	end_res_(0 ),
-	allow_design_around_(true )
+    target_sequence_(""),
+    template_file_(""),
+    database_fname_( "" ),
+    template_pose_(NULL),
+    start_res_(0),
+    end_res_(0 ),
+    allow_design_around_(true )
 {
 	design_.clear(); revert_to_template_.clear(); full_database_.clear(); designable_.clear(); leave_as_is_.clear();
 }
@@ -78,19 +79,23 @@ core::pack::task::operation::TaskOperationOP DatabaseThread::clone() const
 void
 DatabaseThread::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-	protocols::toolbox::task_operations::ThreadSequenceOperation thread;
-	std::string sequence(pick_sequence_from_database(pose));
-	core::Size const nearest_to_start_on_pose( rosetta_scripts::find_nearest_res( pose, *template_pose_, start_res(), 1/*chain*/));
-	if (!designable_.empty()) //if user entered positions to mark for design, label those with 'X'
-		mark_designable(sequence,pose);
-	if (!leave_as_is_.empty()) //if user entered positions to avoid threading mark those with '_'
-		mark_leave_as_is(sequence, pose);
-	thread.start_res(nearest_to_start_on_pose);
-	thread.allow_design_around(allow_design_around_);
-	TR<<"Threading the following sequence:"<<std::endl;
-	TR<<sequence<<std::endl;
-	thread.target_sequence(sequence);
-	thread.apply(pose,task);
+    protocols::toolbox::task_operations::ThreadSequenceOperation thread;
+    std::string sequence;
+    if (target_sequence()=="")
+        sequence=pick_sequence_from_database(pose);
+    else
+        sequence=target_sequence();
+    core::Size const nearest_to_start_on_pose( rosetta_scripts::find_nearest_res( pose, *template_pose_, start_res(), 1/*chain*/));
+		if (!designable_.empty()) //if user entered positions to mark for design, label those with 'X'
+		    mark_designable(sequence,pose);
+        if (!leave_as_is_.empty()) //if user entered positions to avoid threading mark those with '_'
+        	mark_leave_as_is(sequence, pose);
+    thread.start_res(nearest_to_start_on_pose);
+    thread.allow_design_around(allow_design_around_);
+    TR<<"Threading the following sequence:"<<std::endl;
+    TR<<sequence<<std::endl;
+    thread.target_sequence(sequence);
+    thread.apply(pose,task);
 }
     
 core::Size
@@ -153,17 +158,27 @@ void //mark residue positions on the pose (not positions in the sequence!) to le
 void
 DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 {
-	template_file( tag->getOption< std::string >( "template_file") );
-	template_pose_ = new core::pose::Pose;
+    target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
+    template_file( tag->getOption< std::string >( "template_file") );
+   	template_pose_ = new core::pose::Pose;
 	core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
-	database_fname( tag->getOption< std::string >( "database" ) );
-	utility::io::izstream database( database_fname_ );
-	if( !database )
-		utility_exit_with_message("cannot open database " + database_fname_ +"\n");
-	std::string line;
-	while( getline( database, line ) ) { // if length of line is the same as segment length, incorporate into vector of strings.
-		full_database_.push_back( line );
-	}
+	database_fname( tag->getOption< std::string >( "database","" ) );
+    if (target_sequence()==""){
+        if (database_fname()=="")
+            utility_exit_with_message("Please provide either a database file or target sequence! Aborting!");
+        else{
+            utility::io::izstream database( database_fname_ );
+            if( !database )
+                utility_exit_with_message("cannot open database " + database_fname_ +"\n");
+            std::string line;
+            while( getline( database, line ) ) { // if length of line is the same as segment length, incorporate into vector of strings.
+                full_database_.push_back( line );
+            }
+
+        }
+            
+            
+    }
 	start_res( tag->getOption< core::Size >( "start_res" ) );
 	end_res( tag->getOption< core::Size >( "end_res" ) );
 	allow_design_around( tag->getOption< bool >( "allow_design_around", true ) );
