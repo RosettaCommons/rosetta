@@ -1406,7 +1406,6 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		if (comments.size()<3 ){
 			utility_exit_with_message("Please check comments field in the pdb file (header= ##Begin comments##), could not find any comments");
 		}
-		///This code will cut the source pdb file name and extract the four letter code
 		if (torsion_database_fname_!=""){
 			TR<<"Torsion data base filename is: "<<torsion_database_fname_<<std::endl;
 			Pdb4LetName_ = dofs_pdb_name;
@@ -1464,8 +1463,8 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 							std::ostringstream convert;
 							convert << aapos;      // insert the textual representation of 'Number' in the characters in the stream
 							seqpos = convert.str();
-							pose.dump_pdb("align_prob.pdb");
-							utility_exit_with_message(" PSSM and pose might be misaligned, position "+ s+seqpos+ " should be a CYS\n");
+							pose.dump_pdb("alignment_problem.pdb");
+							utility_exit_with_message(" PSSM and pose are misaligned, position "+ s+seqpos+ " should be a CYS\n");
 						} //fi
 					}//fi
 				}//end inner segment for
