@@ -213,12 +213,13 @@ public:
 	void protein_family( std::string const s) {protein_family_=s;}; //setter of the protein_family tag option
 	core::Size chain_num(){return chain_num_;};
 
-
+	bool skip_alignment() const{ return skip_alignment_; }
+	void skip_alignment( bool const b ){ skip_alignment_ = b; }
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
 	std::string	parse_pdb_code(std::string pdb_file_name);
-
+	void copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res );
 
 	// This vector will hold the segment names by order so when the segments are concatenated into a single profile it
 	// is done by user defined order
@@ -284,7 +285,7 @@ private:
 	bool dbase_iterate_; //dflt false;
 	bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
 	bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
-	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)    
+	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)
 	bool first_pass_; // dflt true;
 
 	// indices to the subset of the dbase library over which multiple calls iterate
@@ -351,6 +352,7 @@ private:
 	// (Ask Christoffer)
 	bool rb_sensitive_;
 	std::map < std::string, std::string> protein_family_to_database_;
+	bool skip_alignment_; // dflt false; use with care, ask Sarel. If you're not making any loop length changes and the alignment is perfect (you're simply splicing a same-length segment) drop the ambiguities of finding the alignment.
 };
 
 } //splice

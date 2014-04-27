@@ -198,7 +198,7 @@ Splice::Splice() :
 	order_segments_["antibodies"].push_back("L3");
 	order_segments_["antibodies"].push_back("H1_H2");
 	order_segments_["antibodies"].push_back("H3");
-
+	skip_alignment_ = false;
 }
 
 
@@ -210,33 +210,40 @@ Splice::~Splice() {}
 /// @brief copy a stretch of aligned phi-psi dofs from source to target. No repacking no nothing.
 /// The core function, copy_segment, copies residues from the source to the target without aligning the residues, thereby delivering all of their dofs
 void
-copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res ){
+Splice::copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res ){
 	using namespace core::pose;
 	using namespace protocols::rosetta_scripts;
 	using namespace core::chemical;
 
-	core::Size const host_chain( 1 ); /// in certain cases, when the partner protein sterically overlaps with the designed protein, there are amibguities about which chain to search. The use of host_chain removes these ambiguities. Here, ugly hardwired
-	core::Size const from_nearest_on_source( find_nearest_res( source, target, from_res, host_chain ) );
-	core::Size const to_nearest_on_source( find_nearest_res( source, target, to_res, host_chain ) );
-	TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
-	runtime_assert( from_nearest_on_source && to_nearest_on_source );
-	// change loop length:
-	TR << "to_nearest_on_source" << to_nearest_on_source << " from_nearest_on_source "<<from_nearest_on_source<<" to_res "<<to_res<<" from_res "<<from_res<<std::endl;
-	int const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res )); // SF&CN changed from core::Size to int, as residue_diff can be negative.
-	//	if( residue_diff == 0 ){
-	//		TR<<"skipping copy_stretch since loop lengths are identical"<<std::endl;
-	//		return;
-	//	}
-	core::kinematics::FoldTree const saved_ft( target.fold_tree() );
-	TR<<"copy_stretch foldtree: "<<saved_ft<<std::endl;
-	TR<<"from res: "<<from_res<<" to res: "<<to_res<<" residue_diff: "<<residue_diff<<std::endl;
-	protocols::protein_interface_design::movers::LoopLengthChange llc;
-	llc.loop_start( from_res );
-	llc.loop_end( to_res );
-	llc.delta( residue_diff );
-	//	target.dump_pdb( "before_copy_stretch_llc_test.pdb" );
-	llc.apply( target );
-	//	target.dump_pdb( "after_copy_stretch_llc_test.pdb" );
+	core::Size from_nearest_on_source( 0 ), to_nearest_on_source( 0 );
+	if( skip_alignment() ){ // use skip alignment if you know the segments are perfectly aligned by residue number and there are no loop length changes. Ask Sarel
+		from_nearest_on_source = from_res;
+		to_nearest_on_source = to_res;
+	}
+	else{
+		core::Size const host_chain( 1 ); /// in certain cases, when the partner protein sterically overlaps with the designed protein, there are amibguities about which chain to search. The use of host_chain removes these ambiguities. Here, ugly hardwired
+		from_nearest_on_source = find_nearest_res( source, target, from_res, host_chain );
+		to_nearest_on_source = find_nearest_res( source, target, to_res, host_chain );
+		TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
+		runtime_assert( from_nearest_on_source && to_nearest_on_source );
+		// change loop length:
+		TR << "to_nearest_on_source" << to_nearest_on_source << " from_nearest_on_source "<<from_nearest_on_source<<" to_res "<<to_res<<" from_res "<<from_res<<std::endl;
+		int const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res )); // SF&CN changed from core::Size to int, as residue_diff can be negative.
+		//	if( residue_diff == 0 ){
+		//		TR<<"skipping copy_stretch since loop lengths are identical"<<std::endl;
+		//		return;
+		//	}
+		core::kinematics::FoldTree const saved_ft( target.fold_tree() );
+		TR<<"copy_stretch foldtree: "<<saved_ft<<std::endl;
+		TR<<"from res: "<<from_res<<" to res: "<<to_res<<" residue_diff: "<<residue_diff<<std::endl;
+		protocols::protein_interface_design::movers::LoopLengthChange llc;
+		llc.loop_start( from_res );
+		llc.loop_end( to_res );
+		llc.delta( residue_diff );
+		//	target.dump_pdb( "before_copy_stretch_llc_test.pdb" );
+		llc.apply( target );
+		//	target.dump_pdb( "after_copy_stretch_llc_test.pdb" );
+	}
 
 	target.copy_segment( to_nearest_on_source - from_nearest_on_source + 1, source, from_res, from_nearest_on_source );
 	//target.dump_pdb( "after_copy_stretch_test.pdb" );
@@ -1011,7 +1018,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 			utility_exit_with_message( "Segment "+segment_type_+" was not found in the list of segemnts. Check XML file\n");
 		}
 		if (segment_names_ordered_.empty()){ //If splicing in segment but not using sequence profile then turn off "use_seqeunce_profiles"
-			use_sequence_profiles_ = false;	
+			use_sequence_profiles_ = false;
 		}
 	}//fi (sub_tags!=NULL)
 
@@ -1146,7 +1153,9 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 
 	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );
 
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<" rb_sensitive: "<<rb_sensitive()<<std::endl;
+	skip_alignment( tag->getOption< bool >( "skip_alignment", false ) );
+
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<" rb_sensitive: "<<rb_sensitive()<<" skip_alignment: "<<skip_alignment()<<std::endl;
 }
 
 protocols::moves::MoverOP
