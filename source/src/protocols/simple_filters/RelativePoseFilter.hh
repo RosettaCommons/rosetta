@@ -82,6 +82,9 @@ public:
 	void filter_name( std::string const s );
 	void rtmin( bool const b);
 	bool rtmin() const;
+
+	utility::vector1< std::string > copy_comments() const{ return copy_comments_; }
+	void copy_comments( utility::vector1< std::string > const s ){ copy_comments_ = s; }
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.
@@ -99,6 +102,7 @@ private:
 	core::conformation::symmetry::SymmDataOP symmdata_;
 	std::string filter_name_; //for tracer output to tell us which filter is reporting the current value in multi-filter optimizations.
 	bool rtmin_; //dflt false; after repacking the substituted residues, should we also rtmin?
+	utility::vector1< std::string > copy_comments_; //dflt false ; copy specified comments from source pose into the relative pose.
 };
 
 } // simple_filters

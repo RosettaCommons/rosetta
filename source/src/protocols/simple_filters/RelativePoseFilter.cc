@@ -43,7 +43,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <core/pose/util.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -68,6 +68,7 @@ RelativePoseFilter::RelativePoseFilter() :
 	rtmin_( false )
 {
 	alignment_.clear();
+	copy_comments_.clear();
 }
 
 void
@@ -144,6 +145,19 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 	  	rbtm.step_size( 10000.0 );
   		rbtm.apply( *copy_pose );
 	}
+	if( copy_comments().size() ){//copy relevant comments to copy_pose
+		BOOST_FOREACH( std::string const key, copy_comments() ){
+			std::string val;
+			bool const success = core::pose::get_comment( p, key, val );
+			if( success ){
+				core::pose::add_comment( *copy_pose, key, val );
+				TR<<"Added comment key/val: "<<key<<'/'<<val<<" to the relative pose"<<std::endl;
+			}
+			else
+				TR<<"Failed to find comment key/val: "<<key<<'/'<<val<<" in reference pose"<<std::endl;
+		}
+	}//fi copy_comments.size()
+
 	if( copy_stretch() ){ // just copy the aligned stretch, and then go straight to relax. No repacking
 		copy_pose->copy_segment( alignment_.size()/*how many residues*/, p/*src*/, alignment_.begin()->first/*start on target*/, alignment_.begin()->second/*start on src*/ );
 		copy_pose->conformation().detect_disulfides();
@@ -338,6 +352,8 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	thread( tag->getOption< bool >( "thread", thread() ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	copy_stretch( tag->getOption< bool >( "copy_stretch", false ) );
+	if( tag->hasOption( "copy_comments" ) )
+		copy_comments( utility::string_split( tag->getOption< std::string >( "copy_comments","" ), ',' ) );
 	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" rtmin "<<rtmin()<<" and packing_shell: "<<packing_shell();
 	if(symmetry_definition_!="") TR<<" symmetry: "<<symmetry_definition_<<std::endl;
 	TR<<std::endl;
