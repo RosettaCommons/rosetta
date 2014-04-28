@@ -117,7 +117,7 @@ public:
 		NumberOfAtomicOrbitalTypes
 	};
 
-	static const std::string AtomicOrbitalTypes_strings[];
+	static std::vector<std::string> const & AtomicOrbitalTypes_strings();
 
 	enum HybridOrbitalType  // Set of AtomicOrbitalTypes
 	{
@@ -501,4 +501,3 @@ operator<< (std::ostream & out, GasteigerAtomTypeData const & obj ){
 } // core
 
 #endif
-

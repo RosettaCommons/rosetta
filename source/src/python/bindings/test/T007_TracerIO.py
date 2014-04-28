@@ -13,7 +13,7 @@ import rosetta
 
 
 T = rosetta.basic.PyTracer()
-rosetta.basic.Tracer.set_ios_hook(T, rosetta.basic.Tracer.get_AllChannels_string(), False)
+rosetta.basic.Tracer.set_ios_hook(T, rosetta.basic.Tracer.get_all_channels_string(), False)
 
 rosetta.init()
 pose = rosetta.pose_from_pdb("test/data/test_in.pdb")
@@ -33,6 +33,6 @@ class MyPyTracer(rosetta.basic.PyTracer):
         print s
 
 M = MyPyTracer()
-rosetta.basic.Tracer.set_ios_hook(M, rosetta.basic.Tracer.get_AllChannels_string())
+rosetta.basic.Tracer.set_ios_hook(M, rosetta.basic.Tracer.get_all_channels_string())
 
 rosetta.init()

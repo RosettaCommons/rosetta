@@ -23,14 +23,16 @@ namespace chemical{
 namespace orbitals{
 
 
-OrbitalTypeMapper * OrbitalTypeMapper::instance_(0);
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
 
-std::mutex OrbitalTypeMapper::singleton_mutex_;
 
-std::mutex & OrbitalTypeMapper::singleton_mutex() { return singleton_mutex_; }
+std::mutex & OrbitalTypeMapper::singleton_mutex()
+{
+	static std::mutex singleton_mutex_;
+	return singleton_mutex_;
+}
 
 #endif
 #endif
@@ -38,6 +40,8 @@ std::mutex & OrbitalTypeMapper::singleton_mutex() { return singleton_mutex_; }
 /// @brief static function to get the instance of ( pointer to) this singleton class
 OrbitalTypeMapper * OrbitalTypeMapper::get_instance()
 {
+	static OrbitalTypeMapper * instance_(0);
+
 	boost::function< OrbitalTypeMapper * () > creator = boost::bind( &OrbitalTypeMapper::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
@@ -85,4 +89,3 @@ orbital_type_enum OrbitalTypeMapper::get_orbital_enum(std::string & orbital_type
 }
 }
 }
-

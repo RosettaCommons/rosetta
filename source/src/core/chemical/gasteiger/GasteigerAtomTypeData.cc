@@ -23,24 +23,31 @@
 
 #include <numeric/util.hh>
 #include <utility/exit.hh>
+#include <utility/tools/make_vector.hh>
 
 namespace core {
 namespace chemical {
 namespace gasteiger {
 
-const std::string GasteigerAtomTypeData::AtomicOrbitalTypes_strings[] =
-      {
-        "S",
-        "Px",
-        "Py",
-        "Pz",
-        "Dxy",
-        "Dxz",
-        "Dyz",
-        "Dz2",
-        "Dx2y2",
-        "AtomicOrbitalTypes"
-      };
+using utility::tools::make_vector;
+
+std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strings()
+{
+	static std::vector<std::string> AtomicOrbitalTypes_strings_ =
+		make_vector<std::string> (
+			"S",
+			"Px",
+			"Py",
+			"Pz",
+			"Dxy",
+			"Dxz",
+			"Dyz",
+			"Dz2",
+			"Dx2y2",
+			"AtomicOrbitalTypes");
+
+	return AtomicOrbitalTypes_strings_;
+}
 
 
 //#    // instantiate s_Instance

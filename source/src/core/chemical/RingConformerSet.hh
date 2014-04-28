@@ -146,9 +146,6 @@ private:
 	utility::vector1<RingConformer> degenerate_conformers_;  // includes multiple copies of degenerate conformers
 	utility::vector1<RingConformer> energy_minima_conformers_;
 	utility::vector1<RingConformer> energy_maxima_conformers_;
-
-	static RingConformer const DUMMY_CONFORMER;  // for silencing warnings when requested conformer is not found
-
 };  // class RingConformerSet
 
 

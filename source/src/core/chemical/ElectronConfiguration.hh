@@ -21,6 +21,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace core {
 namespace chemical {
@@ -37,8 +38,8 @@ namespace chemical {
     //!
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ElectronConfiguration {
-    public:
+class ElectronConfiguration {
+public:
 
       enum PrincipalQuantumNumber
       {
@@ -52,7 +53,7 @@ namespace chemical {
         MaxPrincipleQuantumNumber
       };
 
-      static const std::string PrincipalQuantumNumber_strings[];
+		static std::vector<std::string> const & PrincipalQuantumNumber_strings();
 
       enum AngularMomentumQuantumNumber
       {
@@ -63,7 +64,7 @@ namespace chemical {
         MaxAngularMomentumQuantumNumber
       };
 
-      static const std::string AngularMomentumQuantumNumber_strings[];
+		static std::vector<std::string> const & AngularMomentumQuantumNumber_strings();
 
       //! @brief PrincipalQuantumNumber as string
       //! @param NUM the PrincipalQuantumNumber desired
@@ -238,12 +239,13 @@ namespace chemical {
       core::Size electrons_[ MaxPrincipleQuantumNumber][ 4];      //!< ElectronConfiguration
       core::Size valence_quantum_number_;   //!< last quantum number with a non-zero number of electrons
 
-      static const core::Size s_MaxElectronsInOrbital[ 7][ 4]; //!< maximum electron for each orbital
 
+	// core::Size [ 7][ 4];
+	static std::vector< std::vector<core::Size> > const & s_MaxElectronsInOrbital(); //!< maximum electron for each orbital
 
 
     }; // ElectronConfiguration
-    
+
     inline std::ostream &
     operator<< (std::ostream & out, ElectronConfiguration const & obj ){
     	return obj.write( out );
@@ -258,4 +260,3 @@ namespace chemical {
 } // namespace chemical
 
 #endif
-

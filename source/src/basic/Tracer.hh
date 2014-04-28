@@ -38,11 +38,6 @@
 
 namespace basic {
 
-extern std::ostream *final_channel;
-void set_new_final_channel( std::ostream *new_final_channel );
-void set_default_final_channel();
-
-
 /// @brief
 /// Priority levels for T() and Tracer object, modeled on the log4j project and its offspring.
 /// Priorities in Tracer are still ints so users can pass other arbitrary integer values (for now).
@@ -172,15 +167,22 @@ public:
 	///        sub-channels ie: Fatal, Error, Warning, Info, Debug, Trace
 	void flush_all_channels();
 
+
+
+	typedef std::ostream * OstreamPointer;
+
+	/// @brief set ios hook for final tracer stream (deafult is std::cout).
+	static OstreamPointer &final_stream();
+	static void set_new_final_stream( std::ostream *new_final_stream );
+	static void set_default_final_stream();
+
+
 	/// @brief set ios hook for all tracer io operation.
 	/// @param monitoring_channels_list is space separated list of channels.
-	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list);
+	//static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list);
+	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true);
 
-	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw);
-
-	static std::string const AllChannels;
-
-	static std::string const get_AllChannels_string() { return AllChannels; } // PyRosetta helper function
+	static std::string const & get_all_channels_string();  // PyRosetta helper function
 
 	/// @brief Is this tracer currently visible?.
 	bool visible() const;
@@ -199,8 +201,8 @@ public:
 	static TracerOptions & tracer_options() { return tracer_options_; }
 
 	/// @brief global super mute flag that allow to mute all io no matter what.
-	static bool super_mute() { return super_mute_; }
-	static void super_mute(bool f) { super_mute_ = f; }
+	static bool super_mute() { return super_mute_(); }
+	static void super_mute(bool f) { super_mute_() = f; }
 
 	static void flush_all_tracers();
 
@@ -297,10 +299,10 @@ private: /// Data members
 
 	/// static data members
 	/// @brief link to Tracer like object where all output for selecting channels should go.
-	static otstreamOP ios_hook_;
+	static otstreamOP &ios_hook();
 
 	/// @brief should the ios_hook_ the raw output?
-	static bool ios_hook_raw_;
+	static bool & ios_hook_raw_();
 
 	/// @brief list of channels for which outout should be redirected.
 	static utility::vector1<std::string> monitoring_list_;
@@ -311,7 +313,7 @@ private: /// Data members
 
 
 	/// @brief global super mute flag that allow to mute all io no matter what.
-	static bool super_mute_;
+	static bool &super_mute_();
 
 	/// @which Mpi rank is this process
 	static int mpi_rank_;

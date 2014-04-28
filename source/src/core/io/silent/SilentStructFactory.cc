@@ -41,8 +41,6 @@ namespace silent {
 
 static basic::Tracer tr("core.io.silent");
 
-SilentStructFactory * SilentStructFactory::instance_( 0 );
-
 /// @details Private constructor insures correctness of singleton.
 SilentStructFactory::SilentStructFactory() {}
 
@@ -60,6 +58,8 @@ std::mutex & SilentStructFactory::singleton_mutex() { return singleton_mutex_; }
 /// @brief static function to get the instance of ( pointer to) this singleton class
 SilentStructFactory * SilentStructFactory::get_instance()
 {
+	static SilentStructFactory * instance_( 0 );
+
 	boost::function< SilentStructFactory * () > creator = boost::bind( &SilentStructFactory::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;

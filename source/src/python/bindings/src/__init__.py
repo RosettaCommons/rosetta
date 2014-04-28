@@ -14,10 +14,7 @@
 ###############################################################################
 # Imports.
 # Standard library.
-import os
-import sys
-import platform
-import os.path
+import os, sys, platform, os.path, json
 
 import logging
 logger = logging.getLogger("rosetta")
@@ -26,93 +23,105 @@ logger = logging.getLogger("rosetta")
 import warnings
 warnings.filterwarnings("ignore", "to-Python converter for .+ already registered; second conversion method ignored.", RuntimeWarning, "^rosetta\\.")
 
+# bindings config
+config = json.load( file( os.path.join( os.path.split(__file__)[0], 'config.json' ) ) )
+
 # Double-checked right order...
 import utility
 import utility.excn
-
-import numeric
-
-import basic
-import basic.datacache
-import basic.resource_manager
-
-import core
-import core.graph
-import core.chemical
-import core.chemical.orbitals
-import core.scoring
-import core.scoring.methods
-import core.scoring.constraints
-import core.scoring.etable
-import core.kinematics
-
-import core.io.silent
-import core.pose
-
-
-import protocols
-import protocols.moves
-import protocols.canonical_sampling
-import protocols.simple_moves
-import protocols.jumping
-import protocols.jd2
-import protocols.jd2.archive
-import protocols.abinitio
-
-import protocols.filters
-import protocols.docking
-import protocols.init
-
 import rosetta.utility.file
-import rosetta.core.graph
-import rosetta.core.conformation
-import rosetta.core.id
-import rosetta.core.io
-import rosetta.core.io.pdb
-import rosetta.core.fragment
-import rosetta.core.kinematics
-import rosetta.core.pack
-import rosetta.core.pack.task
-import rosetta.core.pose
-import rosetta.core.scoring.hbonds
-import rosetta.protocols.loops
-import rosetta.protocols.wum
-import rosetta.protocols.relax
-import rosetta.core.pose.signals
 
-import rosetta.protocols.simple_moves
 
-from rosetta.core.id import *
-from rosetta.core.conformation import *
-from rosetta.core.chemical import *
-from rosetta.core.pose import Pose
+if config['numeric']:
+    import numeric
 
-from rosetta.core.import_pose import pose_from_pdb
-from rosetta.core.io.pdb import dump_pdb
-from rosetta.core.pose import make_pose_from_sequence
 
-from rosetta.core.scoring import *
-from rosetta.core.kinematics import *
-from rosetta.core.fragment import *
-from rosetta.core.pack.task import *
-from rosetta.core.pack.task.operation import *
+if config['basic']:
+    import basic
+    import basic.datacache
+    import basic.resource_manager
 
-from rosetta.protocols.moves import *
-from rosetta.protocols.simple_moves import *
-from rosetta.protocols.abinitio import *
-from rosetta.protocols.docking import *
-from rosetta.protocols.loops import *
-from rosetta.protocols.relax import *
 
-#from rosetta.protocols.rigid import *
-from rosetta.protocols.simple_moves import *
+if config['core']:
+    import core
+    import core.graph
+    import core.chemical
+    import core.chemical.orbitals
+    import core.scoring
+    import core.scoring.methods
+    import core.scoring.constraints
+    import core.scoring.etable
+    import core.kinematics
+
+    import core.io.silent
+    import core.pose
+
+    import rosetta.core.graph
+    import rosetta.core.conformation
+    import rosetta.core.id
+    import rosetta.core.io
+    import rosetta.core.io.pdb
+    import rosetta.core.fragment
+    import rosetta.core.kinematics
+    import rosetta.core.pack
+    import rosetta.core.pack.task
+    import rosetta.core.scoring.hbonds
+
+    from rosetta.core.id import *
+    from rosetta.core.conformation import *
+    from rosetta.core.chemical import *
+    from rosetta.core.pose import Pose
+
+    from rosetta.core.import_pose import pose_from_pdb
+    from rosetta.core.io.pdb import dump_pdb
+    from rosetta.core.pose import make_pose_from_sequence
+
+    import rosetta.core.pose
+    from rosetta.core.scoring import *
+    from rosetta.core.kinematics import *
+    from rosetta.core.fragment import *
+    from rosetta.core.pack.task import *
+    from rosetta.core.pack.task.operation import *
+
+
+if config['protocols']:
+    import protocols
+    import protocols.moves
+    import protocols.canonical_sampling
+    import protocols.simple_moves
+    import protocols.jumping
+    import protocols.jd2
+    import protocols.jd2.archive
+    import protocols.abinitio
+
+    import protocols.filters
+    import protocols.docking
+    import protocols.init
+
+    import rosetta.protocols.loops
+    import rosetta.protocols.wum
+    import rosetta.protocols.relax
+    import rosetta.core.pose.signals
+
+    import rosetta.protocols.simple_moves
+
+
+    from rosetta.protocols.moves import *
+    from rosetta.protocols.simple_moves import *
+    from rosetta.protocols.abinitio import *
+    from rosetta.protocols.docking import *
+    from rosetta.protocols.loops import *
+    from rosetta.protocols.relax import *
+
+    #from rosetta.protocols.rigid import *
+    from rosetta.protocols.simple_moves import *
 
 # PyMOLMover and associated methods.
-from PyMolLink import *
+if config['protocols']: from PyMolLink import *
 
 import version
 
-import rosetta.logging_support as logging_support
+if config['basic']: import rosetta.logging_support as logging_support
 
 
 ###############################################################################
@@ -182,7 +191,7 @@ def rosetta_database_from_env():
         candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
 
         #Home directory database
-        candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
+        if 'HOME' in os.environ: candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
 
         #Cygwin root install
         if sys.platform == "cygwin":
@@ -218,7 +227,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
         init('-pH -database /home/me/pyrosetta/rosetta_database')  # overrides default flags - be sure to include the dB last
     """
 
-    logging_support.initialize_logging()
+    if config['basic']: logging_support.initialize_logging()
 
     global _python_py_exit_callback
     _python_py_exit_callback = PythonPyExitCallback()
@@ -238,7 +247,8 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
     v.extend(args)
 
     logger.info(version())
-    protocols.init.init(v)
+    if config['protocols']: protocols.init.init(v)
+    elif config['core']: import core.init; core.init.init(v)
 
 
 # MPI version of init function, use it instead of init(...)
@@ -300,27 +310,27 @@ def _Pose_residue_iterator(obj):
             yield obj.residue(i + 1)
     return __pose_iter()
 
-Pose.__iter__ = _Pose_residue_iterator
 
+if config['core']:
+    Pose.__iter__ = _Pose_residue_iterator
+    '''
+    # Add get() method to Pose (for compatibility with Rosetta Mover containers).
+    def _get(self):
+        """
+        Returns the Pose itself.
 
-'''
-# Add get() method to Pose (for compatibility with Rosetta Mover containers).
-def _get(self):
-    """
-    Returns the Pose itself.
-
-    The entire purpose of this method is so that custom Movers in PyRosetta do
-    not crash when apply(pose) is called from within Mover containers (such as
-    TrialMover, RepeatMover, etc.)  When these C++ Movers call the apply()
-    method of the custom PyRosetta Mover, they send a PoseAP, which Python can-
-    not handle without converting to a raw pointer with get().  The addition of
-    this get() method to Pose allows for one to always use get() in the apply()
-    method of the custom Mover without concern for whether the apply() was
-    called from within Python code or C++ code.
-    """
-    return self
-'''
-Pose.get = lambda x: x
+        The entire purpose of this method is so that custom Movers in PyRosetta do
+        not crash when apply(pose) is called from within Mover containers (such as
+        TrialMover, RepeatMover, etc.)  When these C++ Movers call the apply()
+        method of the custom PyRosetta Mover, they send a PoseAP, which Python can-
+        not handle without converting to a raw pointer with get().  The addition of
+        this get() method to Pose allows for one to always use get() in the apply()
+        method of the custom Mover without concern for whether the apply() was
+        called from within Python code or C++ code.
+        """
+        return self
+    '''
+    Pose.get = lambda x: x
 
 
 # Vector compatibility.
@@ -641,7 +651,7 @@ def defineEnergyMethodCreator(class_, scoreType):
             return e
 
         def score_types_for_method(self):
-            sts = rosetta.utility.vector1_ScoreType()
+            sts = rosetta.core.vector1_ScoreType()
             sts.append(self.scoreType)
             return sts
 

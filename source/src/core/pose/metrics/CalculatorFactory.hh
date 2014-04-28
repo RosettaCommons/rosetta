@@ -33,10 +33,7 @@ namespace metrics {
 class CalculatorFactory {
 public:
 
-  static CalculatorFactory& Instance() {
-    static CalculatorFactory singleton;
-    return singleton;
-  }
+	static CalculatorFactory& Instance();
 
 	void register_calculator( std::string const & calculator_name, PoseMetricCalculatorOP const new_calculator );
 

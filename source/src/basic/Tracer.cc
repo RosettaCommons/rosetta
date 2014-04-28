@@ -80,16 +80,53 @@ CSI_Sequence::CSI_Sequence(std::string sequence_)
 #endif
 }
 
-std::ostream *final_channel = &std::cout;
+Tracer::OstreamPointer &Tracer::final_stream()
+{
+	static std::ostream * final_stream_ = &std::cout;
+	return final_stream_;
+}
 
-otstreamOP Tracer::ios_hook_;
-bool Tracer::ios_hook_raw_;
+void Tracer::set_new_final_stream(std::ostream *new_final_stream)
+{
+	final_stream() = new_final_stream;
+}
+
+void Tracer::set_default_final_stream()
+{
+	final_stream() = &std::cout;
+}
+
+
+otstreamOP &Tracer::ios_hook()
+{
+	static otstreamOP hook;
+	return hook;
+}
+
+bool &Tracer::ios_hook_raw_()	// uninitilized, we will set correct output during set_ios_hook(...)
+{
+	static bool raw = true;
+	return raw;
+}
+
 utility::vector1<std::string> Tracer::monitoring_list_;
 
-std::string const Tracer::AllChannels("_Really_Unique_String_Object_To_Identify_All_Tracer_Channels__qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
+
+//std::string const Tracer::AllChannels("_Really_Unique_String_Object_To_Identify_All_Tracer_Channels__qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
+std::string const & Tracer::get_all_channels_string() {
+	static std::string const all_channels("_Really_Unique_String_Object_To_Identify_All_Tracer_Channels__qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
+	return all_channels;
+}
+
 
 TracerOptions Tracer::tracer_options_;
-bool Tracer::super_mute_(false);
+
+bool & Tracer::super_mute_()
+{
+	static bool mute = false;
+	return mute;
+}
+
 int Tracer::mpi_rank_( 0 );
 
 
@@ -370,10 +407,10 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 			if( spl2_lower == "trace" )   res = t_trace;
 			if( res == -1 ) {
 				std::string message( "WARNING:: The setting '" + spl[2] + "' is not recognized as a valid tracer level." );
-				if( ios_hook_ ) {
-					*ios_hook_ << message << std::endl;
-				} else if ( final_channel ) {
-					*final_channel << message << std::endl;
+				if( ios_hook() ) {
+					*ios_hook() << message << std::endl;
+				} else if ( final_stream() ) {
+					*final_stream() << message << std::endl;
 				}
 				res = t_info; // Set such that you get standard amount of output instead of none.
 			}
@@ -423,16 +460,16 @@ void Tracer::t_flush(std::string const &str)
 {
 	if( !visibility_calculated_ ) calculate_visibility();
 
-	if( ios_hook_ && ios_hook_.get()!=this &&
-			( in(monitoring_list_, channel_, false) || in(monitoring_list_, AllChannels, true ) ) ) {
-		if (ios_hook_raw_ || visible() ){
-			prepend_channel_name<otstream>( *ios_hook_, str );
-			ios_hook_->flush();
+	if( ios_hook() && ios_hook().get()!=this &&
+		( in(monitoring_list_, channel_, false) || in(monitoring_list_, get_all_channels_string(), true ) ) ) {
+		if (ios_hook_raw_() || visible() ){
+			prepend_channel_name<otstream>( *ios_hook(), str );
+			ios_hook()->flush();
 		}
 	}
 
-	if ( !super_mute_ && visible() ){
-		prepend_channel_name<std::ostream>( *final_channel, str );
+	if ( !super_mute_() && visible() ){
+		prepend_channel_name<std::ostream>( *final_stream(), str );
 	}
 }
 
@@ -455,25 +492,24 @@ Tracer & T(std::string const & channel, TracerPriority priority)
 /// listed in the monitoring_channels_list should be copied.  Note
 /// this copies the output of channels even if they are invisible or
 /// muted.
-void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list)
-{
-	ios_hook_ = tr;
-	monitoring_list_ = utility::split(monitoring_channels_list);
-	ios_hook_raw_ = true;
-}
-
-/// @details Same as above above but gives the option get only the
+// void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list)
+// {
+// 	ios_hook_ = tr;
+// 	monitoring_list_ = utility::split(monitoring_channels_list);
+// 	ios_hook_raw_ = true;
+// }
+/// When raw==false same as above above but gives the option get only the
 /// visible and unmuted tracers.  It can be useful to get the raw
 /// output for applications like the comparing tracers, where the
 /// output should not change with command line parameters.  It can be
 /// useful to get the non-raw output in applications like using the
 /// jd2 with MPI, where the output each job should match the output if
 /// it was run on a single processor.
-	void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw)
+void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw)
 {
-	ios_hook_ = tr;
+	ios_hook() = tr;
 	monitoring_list_ = utility::split(monitoring_channels_list);
-	ios_hook_raw_ = raw;
+	ios_hook_raw_() = raw;
 }
 
 void PyTracer::t_flush(std::string const &str)
@@ -482,15 +518,5 @@ void PyTracer::t_flush(std::string const &str)
 	output_callback(str);
 }
 
-
-void set_new_final_channel(std::ostream *new_final_channel)
-{
-	final_channel = new_final_channel;
-}
-
-void set_default_final_channel()
-{
-	final_channel = &std::cout;
-}
 
 } // namespace basic

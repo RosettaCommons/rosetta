@@ -20,28 +20,34 @@
 
 namespace utility {
 
-PyExitCallbackOP PyExitCallback::current_callback_object_(0);
+PyExitCallbackOP & PyExitCallback::current_callback_object()
+{
+	static PyExitCallbackOP callback;
+	return callback;
+}
+
+std::string       PyExitCallback::static_string_ = "Just static string...";
+std::string const PyExitCallback::static_string_const_ = "Just static string const...";
+int               PyExitCallback::static_int_ = 42;
 
 void PyExitCallback::exit_callback()
 {
-	//std::cout << "PyExitCallback::exit_callback() default handler!" << std::endl;
+ 	//std::cout << "PyExitCallback::exit_callback() default handler!" << std::endl;
 	throw "PyRosetta Exception!";
 }
 
 
 void PyExitCallback::set_PyExitCallBack(PyExitCallbackOP exit_callback_object)
 {
-	current_callback_object_ = exit_callback_object;
+	current_callback_object() = exit_callback_object;
 	set_main_exit_callback(global_exit_callback);
 }
 
 void PyExitCallback::global_exit_callback(void)
 {
 	//std::cout << "PyExitCallback::global_exit_callback" << std::endl;
-	current_callback_object_->exit_callback();
+	current_callback_object()->exit_callback();
 }
 
 
 } // namespace utility
-
-

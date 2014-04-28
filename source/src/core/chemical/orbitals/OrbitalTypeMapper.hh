@@ -53,7 +53,7 @@ public:
 	static std::mutex & singleton_mutex();
 
 private:
-	static std::mutex singleton_mutex_;
+
 #endif
 #endif
 
@@ -70,7 +70,6 @@ private:
 	void map_orbital_name_to_enum();
 
 private:
-	static OrbitalTypeMapper * instance_ ;
 	std::map<std::string, orbital_type_enum> orbital_type_2_enum_;
 
 };

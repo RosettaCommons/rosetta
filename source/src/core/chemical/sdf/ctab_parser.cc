@@ -188,7 +188,7 @@ void ctabV2000Parser::ParseAtom(std::string atom_line, core::Size atom_number)
 	atom_number_string = convert_stream.str();
 
 	//Set the atom type to a default based on the element.
-	std::string atom_type = element_to_default_type.get(element_name);
+	std::string atom_type = element_to_default_type().get(element_name);
 
 	current_atom_=atom_number;
 
@@ -422,7 +422,7 @@ void ctabV3000Parser::ParseAtom(const std::string atom_line)
 
 	index_to_names_map_.insert(std::pair<core::Size,std::string>(index,element_id));
 	//Set the atom type to a default based on the element.
-	std::string atom_type = element_to_default_type.get(element_name);
+	std::string atom_type = element_to_default_type().get(element_name);
 	molecule_container_->add_atom(element_id,atom_type,"X",charge);
 	molecule_container_->set_xyz(element_id,coordinates);
 

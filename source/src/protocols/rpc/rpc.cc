@@ -74,7 +74,7 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
         = core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
       std::string name = core::scoring::name_from_score_type( sc_type );
 
-      json_energies.push_back( utility::json_spirit::Pair( name, float(  (*emap_iter) * (*wts_iter) ) ) ); 
+      json_energies.push_back( utility::json_spirit::Pair( name, float(  (*emap_iter) * (*wts_iter) ) ) );
     } // if ( *wts_iter != 0.0 )
   } // for ( emap_iter ...)
 
@@ -92,7 +92,7 @@ static basic::Tracer TR("rpc");
 using namespace utility::json_spirit;
 
 
-bool 
+bool
 BasicCmdLineInit::do_init(){
  using namespace basic::options;
  using namespace basic::options::OptionKeys;
@@ -114,7 +114,7 @@ JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer, BasicInit *basic
     msg_ = msg;
     unpack( msg_ );
   }
-	  
+
 JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 	(*this) = json_rpc;
 }
@@ -137,7 +137,7 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 
   core::Real JSON_RPC::get_fa_score() {
     core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
-    return (*fascorefxn)(outputpose_); 
+    return (*fascorefxn)(outputpose_);
   }
 
   core::Real JSON_RPC::get_irms() const {
@@ -147,14 +147,14 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 
 
   void JSON_RPC::unpack( const std::string &msg ){
-     output_capture_start();  // Make sure we're catching all the messages and errors 
-    
+     output_capture_start();  // Make sure we're catching all the messages and errors
+
      try{
        std::cout << "Reading the message" << std::endl;
        parsed_json_ = read_mObject( msg );
 
        if ( !has_value(parsed_json_, "command") ){
-         throw utility::excn::EXCN_Msg_Exception("RPC calls must provide command field"); 
+         throw utility::excn::EXCN_Msg_Exception("RPC calls must provide command field");
        }
        command_ = get_string(parsed_json_, "command");
        std::cout << "Rosetta command: " << command_ << std::endl;
@@ -166,28 +166,28 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
        }
 
        if ( !has_value(parsed_json_, "pdbdata") ){
-         throw utility::excn::EXCN_Msg_Exception("RPC calls must provide pdbdata field"); 
+         throw utility::excn::EXCN_Msg_Exception("RPC calls must provide pdbdata field");
        }
        pdbdata_string_ = get_string(parsed_json_, "pdbdata");
-       
+
        // do a re-init if user has set a basic_init functor
        if( basic_init_ != NULL) basic_init_->do_init();
-       
+
        // Load any flags that were given as part of this job.
        std::cout << "Initializing options: " << command_ << std::endl;
-       
+
        if ( has_value(parsed_json_, "user_flags") ){
-         mObject parsed_user_flags = get_mObject(parsed_json_, "user_flags"); 
-         load_new_set_of_user_flags( parsed_user_flags ); 
+         mObject parsed_user_flags = get_mObject(parsed_json_, "user_flags");
+         load_new_set_of_user_flags( parsed_user_flags );
        }
-       
+
        std::cout << "Loading flags file: " << std::endl;
        if ( has_value(parsed_json_, "flags_file") ){
          std::string flags_file = get_string(parsed_json_, "flags_file");
-         std::cerr << "Flags file: " << flags_file << std::endl; 
+         std::cerr << "Flags file: " << flags_file << std::endl;
          //load_user_flag_file( flags_file );
        }
-       
+
        // Load any files that were given as part of this job.
        std::cout << "Loading user files: " << std::endl;
        if ( has_value(parsed_json_, "user_files") ) {
@@ -195,21 +195,21 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
        }
     }
     catch( utility::excn::EXCN_Msg_Exception &excn ){
-      output_capture_stop();  // Make sure we're catching the following message 
-      throw; 
+      output_capture_stop();  // Make sure we're catching the following message
+      throw;
     }
     catch( std::string &s ){
       // convert Exception into a rosetta exception
-      output_capture_stop(); 
-      throw utility::excn::EXCN_Msg_Exception( tracer() + s ); 
+      output_capture_stop();
+      throw utility::excn::EXCN_Msg_Exception( tracer() + s );
     }
-    catch( utility::json_spirit::Error_position &ep ){ 
+    catch( utility::json_spirit::Error_position &ep ){
       // convert Exception into a rosetta exception
-      output_capture_stop(); 
-      throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) ); 
+      output_capture_stop();
+      throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
     }
     catch( ... ){
-      output_capture_stop(); 
+      output_capture_stop();
       throw utility::excn::EXCN_Msg_Exception( tracer() + "Unknown Exception happened during unpacking of JSON data" );
     }
   }
@@ -217,7 +217,7 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
   void JSON_RPC::run(){
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
-   
+
     // start capturing Tracer outputs
     output_capture_start();
     starttime_ = time(NULL);
@@ -226,18 +226,18 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
     std::cout << "Loading PDB file: " << std::endl;
     try{
       core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string_ );
-      
-      outputpose_ = inputpose_; 
+
+      outputpose_ = inputpose_;
 
       // Leave some trace
       std::cout << "Executing: " << command_ << std::endl;
       TR << "Executing: " << command_ << std::endl;
-     
+
       // scoring happens automatically at the end so this is a NOP
       if( command_ == "score" ){
       }
-      
-      
+
+
       // this covers a huge variety of possible operations and move movers are plugged into this system by now.
       if( command_ == "xmlscript" ){
         if( xmlscript_ == "" ){
@@ -252,24 +252,24 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
         rsp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
         protocol->apply( outputpose_ );
       }
-      
+
       // do a fast core::pose action - this mostly for providing access to simple core::.. functionality via Native Client.
       if( command_ == "poseop" ){
 
         mArray poseops = get_mArray( parsed_json_, "poseop" );
-        
-        for( mArray::const_iterator it = poseops.begin(); 
+
+        for( mArray::const_iterator it = poseops.begin();
              it != poseops.end(); ++it ){
-      
+
           std::cout << it->type() << std::endl;
           if( it->type() != obj_type ){
             throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for poseop array member'");
-          }; 
-          
-          const mObject &poseop_params = it->get_obj();     
+          };
+
+          const mObject &poseop_params = it->get_obj();
 
           std::string poseop = get_string(poseop_params, "op");
-          
+
           if(false);
           else if( poseop == "set_phi" )      outputpose_.set_phi(        get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ));
           else if( poseop == "set_psi" )      outputpose_.set_psi(        get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ));
@@ -280,25 +280,25 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
           else if( poseop == "set_delta" )    outputpose_.set_delta(      get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ));
           else if( poseop == "set_epsilon" )  outputpose_.set_epsilon(    get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ));
           else if( poseop == "set_zeta" )     outputpose_.set_zeta(       get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ));
-          else if( poseop == "set_chi" )      outputpose_.set_chi(        get_int( poseop_params, "chino" ), get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ) ); 
-          else if( poseop == "set_chi_nucl" ) outputpose_.set_chi(        get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" )); 
+          else if( poseop == "set_chi" )      outputpose_.set_chi(        get_int( poseop_params, "chino" ), get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ) );
+          else if( poseop == "set_chi_nucl" ) outputpose_.set_chi(        get_int( poseop_params, "seqpos" ),  get_real( poseop_params, "value" ));
 
-        
+
 //            bool empty() const;
 //            bool is_fullatom() const;
 //            bool is_centroid() const;
-//            
+//
 //            Size total_residue() const;
 //            Size n_residue() const;
 //            Size num_jump() const;
-//            
+//
 //            chemical::AA aa( Size const seqpos) const;
 //            char secstruct( Size const seqpos ) const;
 //            std::string secstruct() const;
 //            std::string sequence() const;
 //            std::string annotated_sequence( bool show_all_variants = false ) const;
 //            std::string chain_sequence( core::Size const chain_in ) const;
-//            
+//
 //            Real phi( Size const seqpos ) const;
 //            Real psi( Size const seqpos ) const;
 //            Real omega( Size const seqpos ) const;
@@ -308,13 +308,13 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 //            Real delta( Size const pos ) const;
 //            Real epsilon( Size const seqpos ) const;
 //            Real zeta( Size const seqpos ) const;
-//            Real chi( int const chino, Size const seqpos) const; 
-//            Real chi( Size const seqpos ) const; 
-          
-        } 
-      
+//            Real chi( int const chino, Size const seqpos) const;
+//            Real chi( Size const seqpos ) const;
+
+        }
+
       }
-      
+
       // here largely as examples - use XML scripts for this.
 //        if( command_ == "relax" ){
 //          protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
@@ -324,32 +324,32 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 //          protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
 //          lh_protocol->manual_call( outputpose_ );
 //        }
-    } 
+    }
     catch( utility::excn::EXCN_Msg_Exception &excn ){
       std::cerr << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
       TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
       endtime_ = time(NULL);
-      output_capture_stop();  // Make sure we're catching the following message 
-      throw; 
+      output_capture_stop();  // Make sure we're catching the following message
+      throw;
     }
     catch( std::string &s ){
       // convert Exception into a rosetta exception
       endtime_ = time(NULL);
-      output_capture_stop(); 
-      throw utility::excn::EXCN_Msg_Exception( tracer() + s ); 
+      output_capture_stop();
+      throw utility::excn::EXCN_Msg_Exception( tracer() + s );
     }
-    catch( utility::json_spirit::Error_position &ep ){ 
+    catch( utility::json_spirit::Error_position &ep ){
       // convert Exception into a rosetta exception
       endtime_ = time(NULL);
-      output_capture_stop(); 
-      throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) ); 
+      output_capture_stop();
+      throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
     }
     catch( ... ){
       endtime_ = time(NULL);
-      output_capture_stop(); 
+      output_capture_stop();
       throw utility::excn::EXCN_Msg_Exception( tracer() + "Unknown Exception happened during execution of json RPC call " );
     }
-    
+
     endtime_ = time(NULL);
   }
 
@@ -358,11 +358,11 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 
 
   void JSON_RPC::output_capture_start(){
-      basic::set_new_final_channel( &tracer_output_stream_ );
+      basic::Tracer::set_new_final_stream( &tracer_output_stream_ );
   }
 
   void JSON_RPC::output_capture_stop(){
-      basic::set_default_final_channel();
+      basic::Tracer::set_default_final_stream();
   }
 
   void JSON_RPC::output_capture_clear(){
@@ -371,18 +371,18 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 
   void JSON_RPC::load_user_flag_file( const std::string &flags_file ){
     std::stringstream options_file;
-    options_file << flags_file << std::endl; // ensure the last line has a CR/lF at the end. 
+    options_file << flags_file << std::endl; // ensure the last line has a CR/lF at the end.
     basic::options::option.load_options_from_stream( options_file );
   }
 
   void JSON_RPC::load_new_set_of_user_flags( const mObject &json_user_flags ){
     std::vector < std::string > user_flags;
-    for( mObject::const_iterator it = json_user_flags.begin(); 
+    for( mObject::const_iterator it = json_user_flags.begin();
          it != json_user_flags.end(); ++it ){
       if( it->second.type() != obj_type ){
         throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_flag member:'" + it->first );
-      }; 
-      const mObject &flag = it->second.get_obj();      
+      };
+      const mObject &flag = it->second.get_obj();
       if( has_value( flag, "value" ) ){
         std::string flagname = it->first;
         std::string flagvalue = get_string( flag, "value" );
@@ -400,22 +400,22 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
     std::cerr << __FILE__ << __LINE__ << std::endl;
     if( clear_previous ) provider->clear_input_files();
     std::cerr << __FILE__ << __LINE__ << std::endl;
-    for( mArray::const_iterator it = json_user_files.begin(); 
+    for( mArray::const_iterator it = json_user_files.begin();
          it != json_user_files.end(); ++it ){
     std::cerr << __FILE__ << __LINE__ << std::endl;
       std::cout << it->type() << std::endl;
     std::cerr << __FILE__ << __LINE__ << std::endl;
       if( it->type() != obj_type ){
         throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_file member:'");
-      }; 
-      const mObject &flag = it->get_obj();      
+      };
+      const mObject &flag = it->get_obj();
       if( !has_value( flag, "filename" ) ) {
-        throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing "); 
+        throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing ");
       }
       if( !has_value( flag, "contents" ) ) {
-        TR.Error << "Warning: Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl; 
+        TR.Error << "Warning: Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl;
       }
-      
+
       std::string filename = get_string( flag, "filename" );
       std::string contents = get_string_or_empty( flag, "contents" );
       TR << "Loading virtual file: " << filename << " " << contents.size() << " bytes" << std::endl;
@@ -428,4 +428,3 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
 
 }
 }
-

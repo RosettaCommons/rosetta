@@ -112,7 +112,7 @@ void V3Parser::ParseAtom(std::string const atom_line, core::Size const )
 	this->add_index_name_pair(index,element_id);
 
 	core::chemical::ResidueTypeOP molecule_container = this->GetResidueType();
-	std::string atom_type(element_to_default_type.get(element_name));
+	std::string atom_type(element_to_default_type().get(element_name));
 	molecule_container->add_atom(element_id,atom_type,DEFAULT_MM_ATOM_TYPE_,charge);
 	molecule_container->set_ideal_xyz(element_id,coordinates);
 	//molecule_container->finalize();

@@ -90,9 +90,6 @@ private:
 #endif
 
 private:
-
-	static SilentStructFactory * instance_;
-
 	typedef std::map< std::string, io::silent::SilentStructCreatorCOP > SilentStructCreatorMap;
 	SilentStructCreatorMap ss_types_;
 };

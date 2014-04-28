@@ -31,6 +31,13 @@ namespace sdf {
 
 static basic::Tracer ctabParserTracer("core.io.sdf.ctab_parser");
 
+elementToType & element_to_default_type()
+{
+	static elementToType element_to_default_type_;
+	return element_to_default_type_;
+}
+
+
 elementToType::elementToType()
 {
 	e_to_t["C"]="CH3"; //Mult

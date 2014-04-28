@@ -49,7 +49,7 @@ private:
 	std::map<std::string, std::string> e_to_t;
 };
 
-static elementToType element_to_default_type;
+elementToType & element_to_default_type();
 
 class CtabBase {
 public:

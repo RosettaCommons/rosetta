@@ -90,15 +90,15 @@ static basic::Tracer TR("core.chemical.ChemicalManager");
 
 //
 
-/// @brief set initial value as no instance
-ChemicalManager* ChemicalManager::instance_( 0 );
-
 #ifdef MULTI_THREADED
 #ifdef CXX11
 
-std::mutex ChemicalManager::singleton_mutex_;
 
-std::mutex & ChemicalManager::singleton_mutex() { return singleton_mutex_; }
+std::mutex & ChemicalManager::singleton_mutex()
+{
+	static std::mutex singleton_mutex_;
+	return singleton_mutex_;
+}
 
 #endif
 #endif
@@ -106,6 +106,9 @@ std::mutex & ChemicalManager::singleton_mutex() { return singleton_mutex_; }
 /// @brief static function to get the instance of ( pointer to) this singleton class
 ChemicalManager * ChemicalManager::get_instance()
 {
+	/// @brief set initial value as no instance
+	static ChemicalManager* instance_( 0 );
+
 	boost::function< ChemicalManager * () > creator = boost::bind( &ChemicalManager::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
@@ -361,7 +364,7 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 	std::vector<core::chemical::ResidueTypeOP> extra_residues;
 
 	if(tag == FA_STANDARD) {
-        
+
         //this whole thing is desperately in need of some method extraction -- holy cow it does!
 		utility::options::FileVectorOption & fvec
 		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
@@ -369,7 +372,7 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
             utility::file::FileName fname = fvec[i];
 			extra_params_files.push_back(fname.name());
 		}
-        
+
         utility::options::PathVectorOption & pvec
 		= basic::options::option[basic::options::OptionKeys::in::file::extra_res_path];
 		// convert Pathname->string->char*, glob it, convert char*->string
@@ -414,10 +417,10 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 			}
 
 		}
-        
+
 		utility::options::FileVectorOption & mdlvec
 		= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mol];
-        
+
 		// this function itself does not (directly) modify any member data of class ChemicalManager,
 		// but it is allowed to (indirectly) modify the singleton instance (which, to be fair,
 		// is this instance) through singleton accessor functions.  In particular,
@@ -662,4 +665,3 @@ ChemicalManager::copy_atom_type_set(
 	atom_type_sets_.insert( std::make_pair( new_name, atom_type_sets_.find( old_name )->second->clone() ) );
 }
  **/
-

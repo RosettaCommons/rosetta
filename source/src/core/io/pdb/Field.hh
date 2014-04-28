@@ -63,8 +63,6 @@ public:
 
 private:
 
-	/// @brief static holder for collection.
-	static RecordRef PDB_Records_;
 };
 
 

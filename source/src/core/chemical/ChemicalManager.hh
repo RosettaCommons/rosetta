@@ -128,8 +128,6 @@ public:
 	static std::mutex & singleton_mutex();
 
 private:
-	static std::mutex singleton_mutex_;
-
 	utility::thread::ReadWriteMutex elem_mutex_;
 	utility::thread::ReadWriteMutex atomtype_mutex_;
 	utility::thread::ReadWriteMutex orbtype_mutex_;
@@ -175,10 +173,6 @@ private:
 	create_ideal_bond_length_set( std::string const & tag ) const;
 
 private: // data
-
-	/// @brief static data member holding pointer to the singleton class itself
-	static ChemicalManager * instance_;
-
 	/// @brief lookup map for querying atom_type_set by name tag
 	AtomTypeSets atom_type_sets_;
 	/// @brief lookup map for querying element_type_set by name tag
@@ -202,4 +196,3 @@ private: // data
 
 
 #endif
-

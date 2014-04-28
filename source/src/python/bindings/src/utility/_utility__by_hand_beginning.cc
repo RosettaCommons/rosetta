@@ -2,41 +2,13 @@
 #include "utility/vector1.hh"
 #include "utility/pointer/access_ptr.hh"
 
-#include "core/chemical/AtomType.hh"
-#include "core/chemical/AtomTypeSet.hh"
-#include "core/chemical/MMAtomType.hh"
-#include "core/chemical/MMAtomTypeSet.hh"
-#include "core/chemical/ResidueType.hh"
-#include "core/chemical/ResidueTypeSet.hh"
-
-#include "core/conformation/Atom.hh"
-
-#include "core/coarse/Translator.hh"
-#include "core/coarse/CoarseEtable.hh"
-
-// for AP wrapping
-#include <core/pose/Pose.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
-
-#include <core/pack/task/PackerTask.hh>
-
-#include <core/scoring/ScoreType.hh>
-
 #include <utility/stream_util.hh>
-
-
 #include "utility/exit.hh"
 
 #include <platform/types.hh>
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 #include <iostream>
 #include <ostream>
@@ -45,20 +17,9 @@
 #include <set>
 #include <map>
 
-#ifdef DEBUG
-#include <cstdio>
-#endif
-
 
 namespace bp = boost::python;
 
-
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
-
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 #ifndef BOOST_ADAPTBX_PYTHON_STREAMBUF_H
 #define BOOST_ADAPTBX_PYTHON_STREAMBUF_H
@@ -617,23 +578,6 @@ struct python_istream_wrapper
 
 #endif // GUARD
 
-// Some subclassing testing functions
-void Q_Test_CI1B(core::scoring::methods::ContextIndependentOneBodyEnergyOP )
-{
-    std::cout << "Q_Test_CI1B!" << std::endl;
-}
-
-// Some subclassing testing functions
-void Q_Test_EnergyMethodCreator(core::scoring::methods::EnergyMethodCreatorOP cr)
-{
-    std::cout << "Q_Test_EnergyMethodCreator..." << std::endl;
-
-    core::scoring::methods::EnergyMethodOptions options;
-    cr->create_energy_method( options );
-    std::cout << "Q_Test_EnergyMethodCreator... Done!" << std::endl;
-}
-
-
 
 
 template< class T >
@@ -869,11 +813,6 @@ void wrap_owning_pointer(char * name)
     ;
 }
 
-#ifndef _MSC_VER
-	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> rs ) {  return rs.get(); }
-#else
-	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> const & rs ) {  return rs.get(); }
-#endif
 
 /*
 template< class T >
@@ -897,265 +836,6 @@ void wrap_access_pointer(std::string class_name)
 inline bool vector1_bool_get ( utility::vector1<bool> & v, int i ) { if(v[i]) return true; else return false; }
 inline void vector1_bool_push( utility::vector1<bool> & v, bool h ) { return v.push_back(h); }
 
-void pyexit_callback(void)
-{
-    throw "RosettaException";
-}
-
-void set_pyexit_callback(void)
-{
-	utility::set_main_exit_callback(pyexit_callback);
-}
-
-
-// Python Char/String arguments overload demo ------------------------------------------------------
-void _test_char_string_args_(int c)
-{
-    std::cout << "_test_char_string_args_::char_version: c = " << c << std::endl;
-}
-
-void _test_char_string_args_(std::string s)
-{
-    std::cout << "_test_char_string_args_::string_version: s = " << s << std::endl;
-}
-
-
-// Python Derived class demo -----------------------------------------------------------------------
-// An abstract base class...
-class DemoBase //: public boost::noncopyable
-{
-public:
-
-    DemoBase() {};
-    ~DemoBase() {};
-
-    virtual std::string testMethod() { return "testMethod() of a C++ Base"; };
-};
-
-// A derived class...
-class DemoDerived : public DemoBase
-{
-public:
-
-    DemoDerived() {}
-    ~DemoDerived() {}
-
-    std::string testMethod()
-    {
-        return "testMethod() of a C++ Derived object called!";
-    }
-};
-
-std::string DemoTesterFunction(DemoBase* p) { return p->testMethod(); }
-
-// Boost.Python wrapper class for Base
-struct BaseWrap : public DemoBase
-{
-    BaseWrap(PyObject* self_) : self(self_) {}
-
-    std::string testMethod()
-    {
-        return boost::python::call_method<std::string>(self, "testMethod");
-    }
-
-    PyObject* self;
-};
-/* Python part of the demo
-class PythonDerived( Base ):
-    def testMethod( self ):
-        return "testMethod() of a PythonDerived object called!"
-
-p = PythonDerived()
-DemoTesterFunction(p)
-*/
-
-class OOO
-{
-public:
-};
-
-#ifdef PYROSETTA_NUMPY
-
-// Numpy API has strange import behavior
-// Must define PY_ARRAY_UNIQUE_SYMBOL for all cpp files within a module which include numpy/arrayobject.h
-// Must then call import_array to load the numpy module
-// import_array1 returns given value if the module fails to load, may be used to raise importerrors, or failfast as in this case
-#define PY_ARRAY_UNIQUE_SYMBOL PYROSETTA_ARRAY_API
-#include <numpy/arrayobject.h>
-
-namespace
-{
-  static struct pyrosetta_numpy_importer
-  {
-    static bool do_import_array()
-    {
-      // import_array1 is a macro defined in numpy/arrayobject.h which returns with its argument if import fails.
-#ifdef DEBUG
-      std::cerr << "Calling numpy import_array." << std::endl;
-#endif
-      import_array1(false);
-      // Will not return if import fails
-      return true;
-    }
-
-    pyrosetta_numpy_importer()
-    {
-      if (!do_import_array())
-      {
-        throw std::runtime_error("numpy failed to initialize.");
-      }
-    }
-  } _array_importer;
-}
-
-// Arrayobject typedefs the lowercase npy_* to c types
-// and defines the NPY_TYPES enum w/ corrosponding uppercase numpy
-// type ids.
-inline NPY_TYPES get_typenum(bool) { return NPY_BOOL; }
-// inline NPY_TYPES get_typenum(npy_bool) { return NPY_BOOL; }
-inline NPY_TYPES get_typenum(npy_byte) { return NPY_BYTE; }
-inline NPY_TYPES get_typenum(npy_ubyte) { return NPY_UBYTE; }
-inline NPY_TYPES get_typenum(npy_short) { return NPY_SHORT; }
-inline NPY_TYPES get_typenum(npy_ushort) { return NPY_USHORT; }
-inline NPY_TYPES get_typenum(npy_int) { return NPY_INT; }
-inline NPY_TYPES get_typenum(npy_uint) { return NPY_UINT; }
-inline NPY_TYPES get_typenum(npy_long) { return NPY_LONG; }
-inline NPY_TYPES get_typenum(npy_ulong) { return NPY_ULONG; }
-inline NPY_TYPES get_typenum(npy_longlong) { return NPY_LONGLONG; }
-inline NPY_TYPES get_typenum(npy_ulonglong) { return NPY_ULONGLONG; }
-inline NPY_TYPES get_typenum(npy_float) { return NPY_FLOAT; }
-inline NPY_TYPES get_typenum(npy_double) { return NPY_DOUBLE; }
-inline NPY_TYPES get_typenum(npy_cfloat) { return NPY_CFLOAT; }
-inline NPY_TYPES get_typenum(npy_cdouble) { return NPY_CDOUBLE; }
-inline NPY_TYPES get_typenum(std::complex<float>) { return NPY_CFLOAT; }
-inline NPY_TYPES get_typenum(std::complex<double>) { return NPY_CDOUBLE; }
-#if HAVE_LONG_DOUBLE && (NPY_SIZEOF_LONGDOUBLE > NPY_SIZEOF_DOUBLE)
-inline NPY_TYPES get_typenum(npy_longdouble) { return NPY_LONGDOUBLE; }
-inline NPY_TYPES get_typenum(npy_clongdouble) { return NPY_CLONGDOUBLE; }
-inline NPY_TYPES get_typenum(std::complex<long double>) { return NPY_CLONGDOUBLE; }
-#endif
-
-
-// array scalars ------------------------------------------------------------
-template <class T>
-struct array_scalar_converter
-{
-  static const PyTypeObject * get_array_scalar_typeobj()
-  {
-    return (PyTypeObject *) PyArray_TypeObjectFromType(get_typenum(T()));
-  }
-
-  static PyArray_Descr * get_descr()
-  {
-    return PyArray_DescrFromType(get_typenum(T()));
-  }
-
-  static void * check_array_scalar(PyObject *obj)
-  {
-    if (obj->ob_type == get_array_scalar_typeobj())
-    {
-      // Check if the object type is the array scalar type corrosponding to the
-      // input C type.
-      return obj;
-    }
-    else if(PyArray_CheckScalar(obj) && !PyArray_IsZeroDim(obj))
-    {
-      // Convert to array scalar to check casting to handle
-      // signed/unsigned conversion.
-      if(check_zero_dim_array(PyArray_FromScalar(obj, NULL)) != 0)
-      {
-        return obj;
-      }
-      else
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-  static void convert_array_scalar(
-    PyObject* obj,
-    bp::converter::rvalue_from_python_stage1_data* data)
-  {
-#ifdef DEBUG
-      std::cerr << "array_scalar_converter converting. typenum: " << get_typenum(T()) << "\n";
-#endif
-
-    void* storage = ((bp::converter::rvalue_from_python_storage<T>*)data)->storage.bytes;
-
-    // no constructor needed, only dealing with POD types
-    PyArray_CastScalarToCtype(obj, storage, get_descr());
-
-    // record successful construction
-    data->convertible = storage;
-  }
-
-  static void * check_zero_dim_array(PyObject *obj)
-  {
-    // Check if the object is an PyArray_Type of
-    // dimensionality 0
-    // See:
-    // http://docs.scipy.org/doc/numpy/reference/arrays.scalars.html
-    // and
-    // http://docs.scipy.org/doc/numpy/reference/c-api.array.html#general-check-of-python-type
-    //
-    // Convert to an array scalar to perform C-type conversion check.
-    //
-    // Check if object is an array and a scalar
-    // if so, the object must be a zero-length array.
-    if(PyArray_IsZeroDim(obj) &&
-       PyArray_CanCastArrayTo((PyArrayObject*) obj, get_descr(), NPY_SAME_KIND_CASTING))
-    {
-      return obj;
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-  static void convert_zero_dim_array(
-    PyObject* obj,
-    bp::converter::rvalue_from_python_stage1_data* data)
-  {
-    convert_array_scalar(PyArray_ToScalar(PyArray_DATA(obj), obj), data);
-  }
-};
-
-#endif
-
-template <class T>
-void expose_number_type(std::string name)
-{
-    typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
-    typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
-    typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
-
-#ifdef PYROSETTA_NUMPY
-    // conversion of array scalars
-    //
-#ifdef DEBUG
-    std::cerr << "Registering array scalar wrapper. name: " << name << " typenum: " << get_typenum(T()) << std::endl;
-#endif
-
-    bp::converter::registry::push_back(
-        array_scalar_converter<T>::check_array_scalar,
-        array_scalar_converter<T>::convert_array_scalar,
-        bp::type_id<T>());
-
-    bp::converter::registry::push_back(
-        array_scalar_converter<T>::check_zero_dim_array,
-        array_scalar_converter<T>::convert_zero_dim_array,
-        bp::type_id<T>());
-#endif
-
-    wrap_vector1<numeric::xyzVector<T>,    CP_CNCR, CP_CCR>("vector1_xyzVector_" + name);
-}
-
 template <class T>
 void expose_basic_type(std::string name)
 {
@@ -1168,45 +848,37 @@ void expose_basic_type(std::string name)
   wrap_std_set< T, CP_CNCR, CP_CCR >("set_" + name);
 }
 
-template <class T1, class T2>
-void expose_pair_types(std::string name_1, std::string name_2)
-{
-  typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
-  typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
-  typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
-  wrap_std_pair<T1, T2>("pair_" + name_1 + "_" + name_2);
-  wrap_vector1<std::pair<T1, T2>, CP_CNCR, CP_CCR>("vector1_pair_" + name_1 + "_" + name_2);
-  wrap_std_map< T1, T2 >("map_" + name_1 + "_" + name_2);
+
+
+void pyexit_callback(void)
+{
+    throw "RosettaException";
 }
 
+void set_pyexit_callback(void)
+{
+	utility::set_main_exit_callback(pyexit_callback);
+}
+
+
+// Static int test for Windows DLL's
+static int __static_int_ = 42;
+static std::string __static_string_("static string...");
+int __static_int_test() { 	return __static_int_; }
+std::string __static_string_test() { 	return __static_string_; }
 
 void __utility_by_hand_beginning__()
 {
 	// #ifdef DEBUG
 	// 	std::cerr << "__utility_by_hand_beginning__..." << std::endl;
 	// #endif
-
-    // Testing functions
-    bp::def("Q_Test_CI1B", Q_Test_CI1B);
-    bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
+    bp::def("__static_int_test", __static_int_test);
+    bp::def("__static_string_test", __static_string_test);
 
     bp::def("set_pyexit_callback", set_pyexit_callback);
     //bp::def("set_main_exit_callback", set_main_exit_callback);
     bp::def("pyexit_callback", pyexit_callback);
-
-    // Wraping for derived Demo
-    bp::class_< DemoBase >("DemoBase")
-    .def("testMethod", &DemoBase::testMethod)
-    ;
-
-    bp::class_< DemoDerived, bp::bases<DemoBase> >("DemoDerived")
-    .def("testMethod", &DemoDerived::testMethod)
-    ;
-
-    boost::python::class_<DemoBase, BaseWrap, boost::noncopyable>( "Base" );
-
-    bp::def("DemoTesterFunction", DemoTesterFunction);
 
     //wrap_owning_pointer<core::pack::task::PackerTaskOP>("PackerTaskOP");
 
@@ -1235,75 +907,6 @@ void __utility_by_hand_beginning__()
         .def("str", stringstream_str_set_function_type( &::std::stringstream::str ) )
         .def("str", stringstream_str_get_function_type( &::std::stringstream::str ) );
 
-    using namespace utility::pointer;
-    typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
-    typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
-    typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
-    // bp::class_< vector1<vector1<platform::Size> > >("utility___vec1_vec1_size")
-    //   .def(bp::vector_indexing_suite< vector1<vector1<platform::Size> > >() );
-
-    // bp::class_< access_ptr< core::chemical::AtomTypeSet const   > >("core___chemical___AtomTypeSetCAP");
-    // bp::class_< access_ptr< core::chemical::ResidueType const   > >("core___chemical___ResidueTypeCAP");
-    // bp::class_< access_ptr< core::chemical::ResidueTypeSet const> >("core___chemical___ResidueTypeSetCAP");
-    // bp::class_< access_ptr< core::chemical::MMAtomTypeSet const > >("core___chemical___MMAtomTypeSetCAP");
-    // bp::class_< access_ptr< core::coarse::Translator const      > >("core___coarse___TranslatorCAP");
-    // bp::class_< access_ptr< core::coarse::CoarseEtable const    > >("core___coarse___CoarseEtableCAP");
-
-    using namespace core::chemical;
-    using namespace core::coarse;
-
-    // old code - only for compatibility with previous verisons - deprecated, will be removed in the future...
-    bp::def("utility___getCAP"
-         , (  ResidueTypeSet const * (*)( access_ptr<ResidueTypeSet const> )  )( & getCAP<ResidueTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  AtomTypeSet const * (*)( access_ptr<AtomTypeSet const> )  )( & getCAP<AtomTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  ResidueType const * (*)( access_ptr<ResidueType const> )  )( & getCAP<ResidueType const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  MMAtomTypeSet const * (*)( access_ptr<MMAtomTypeSet const> )  )( & getCAP<MMAtomTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  Translator const * (*)( access_ptr<Translator const> )  )( & getCAP<Translator const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  CoarseEtable const * (*)( access_ptr<CoarseEtable const> )  )( & getCAP<CoarseEtable const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    /*
-    //wrap_access_pointer<  >("AP");
-    wrap_access_pointer< core::chemical::AtomTypeSet >("core_chemical_AtomTypeSet");
-    wrap_access_pointer< core::chemical::ResidueType >("core_chemical_ResidueType");
-    wrap_access_pointer< core::chemical::ResidueTypeSet >("core_chemical_ResidueTypeSet");
-    wrap_access_pointer< core::chemical::MMAtomTypeSet >("core_chemical_MMAtomTypeSet");
-    wrap_access_pointer< core::coarse::Translator >("core_coarse_Translator");
-    wrap_access_pointer< core::coarse::CoarseEtable >("core_coarse_CoarseEtable");
-
-    // Adding AP for subclassin in Python
-    wrap_access_pointer< core::pose::Pose >("core_pose_Pose");  // for PyMover
-
-    wrap_access_pointer< core::conformation::Residue >("core_conformation_Residue");  // Energy methods
-    wrap_access_pointer< core::scoring::EnergyMap >("core_scoring_EnergyMap");
-    wrap_access_pointer< core::scoring::ScoreFunction >("core_scoring_ScoreFunction");
-    wrap_access_pointer< core::id::DOF_ID >("core_id_DOF_ID_");
-    wrap_access_pointer< core::id::TorsionID >("core_id_TorsionID_");
-    */
-    utility::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool_");
-
-
-	// Some wrapping test funtions/demos -----------------------------------------
-    typedef void ( * _test_char_string_args_int_)(int);
-    typedef void ( * _test_char_string_args_string_)(std::string);
-    bp::def("Q_test_char_string_args_", _test_char_string_args_int_( &_test_char_string_args_) );
-    bp::def("Q_test_char_string_args_", _test_char_string_args_string_( &_test_char_string_args_) );
-
-
-    boost::python::class_<OOO> my_obj("OOO");
-    //boost::python::object my_obj;
-
-    boost::python::scope within(my_obj);
-    bp::def("Q_Test_CI1B", Q_Test_CI1B);
-    bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
+    utility::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool");
 }

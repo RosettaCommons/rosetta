@@ -67,7 +67,7 @@ class MyNewCI1B_Creator(rosetta.core.scoring.methods.EnergyMethodCreator):
         return e
 
     def score_types_for_method(self):
-        sts = rosetta.utility.vector1_ScoreType();  sts.append( rosetta.core.scoring.PyRosettaEnergy_last )
+        sts = rosetta.core.vector1_ScoreType();  sts.append( rosetta.core.scoring.PyRosettaEnergy_last )
         return sts
 
 

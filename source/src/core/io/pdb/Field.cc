@@ -65,16 +65,14 @@ operator <<(
   return os;
 }
 
-/// @details static holder for collection of Fields.
-RecordRef Field::PDB_Records_;
-
 /// @details check if records table was init, init table otherwise
 /// return reference to private static records collection
 /// @remarks See http://www.wwpdb.org/docs.html#format for details.
 RecordRef & Field::getRecordCollection()
 {
-	if( PDB_Records_.size() == 0 ) {
-		PDB_Records_ = utility::tools::make_map<string, Record>(
+	static RecordRef records;
+	if( records.size() == 0 ) {
+		records = utility::tools::make_map<string, Record>(
 			// Title Section
 			"HEADER", utility::tools::make_map<string, Field>(
 				"type",           Field( 1,  6),
@@ -227,7 +225,7 @@ RecordRef & Field::getRecordCollection()
 				"info", Field( 7, 80) )
 			);
 	}
-	return PDB_Records_;
+	return records;
 }
 
 

@@ -35,6 +35,12 @@ namespace core {
 namespace pose {
 namespace metrics {
 
+CalculatorFactory& CalculatorFactory::Instance() {
+	static CalculatorFactory singleton;
+	return singleton;
+}
+
+
 
 void CalculatorFactory::register_calculator( std::string const & calculator_name, PoseMetricCalculatorOP const new_calculator ) {
 	if ( check_calculator_exists( calculator_name ) ) {

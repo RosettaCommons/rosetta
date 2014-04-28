@@ -47,10 +47,6 @@ namespace chemical {
 
 using namespace core;
 
-// initialize static DUMMY_CONFORMER
-#ifdef WIN32
-RingConformer const RingConformerSet::DUMMY_CONFORMER;
-#endif
 
 // Public methods /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +137,11 @@ RingConformerSet::get_ideal_conformer_by_name(std::string const name) const
 	}
 
 	utility_exit_with_message("No conformer with given name found in this set; exiting.");
-	return DUMMY_CONFORMER;  // will never be reached
+
+	{
+		static RingConformer DUMMY_CONFORMER;
+		return DUMMY_CONFORMER;  // will never be reached
+	}
 }
 
 // Return the conformer that is the best fit for the provided Cremer-Pople parameters.
@@ -235,7 +235,10 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters(utility::vector1<core::Re
 	}
 
 	utility_exit_with_message("No conformer with given parameters found in this set; exiting.");
-	return DUMMY_CONFORMER;  // will never be reached
+	{
+		static RingConformer DUMMY_CONFORMER;
+		return DUMMY_CONFORMER;  // will never be reached
+	}
 }
 
 // Return the conformer that is the best fit for the provided list of nu angles.

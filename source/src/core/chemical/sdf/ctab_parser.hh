@@ -16,16 +16,17 @@
 #ifndef INCLUDED_CORE_chemical_sdf_ctab_parser_HH
 #define INCLUDED_CORE_chemical_sdf_ctab_parser_HH
 
-#include <string>
-#include <map>
-#include <vector>
 #include <core/chemical/sdf/ctab_parser.fwd.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <utility/vector1.hh>
 #include <core/chemical/sdf/ctab_typer.hh>
 #include <core/chemical/sdf/ctab_base.hh>
 #include <core/chemical/sdf/MolData.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <utility/vector1.hh>
+
+#include <string>
+#include <map>
+#include <vector>
 
 
 namespace core {
@@ -52,7 +53,7 @@ private:
 	std::map<std::string, std::string> e_to_t;
 };
 */
-static elementToType element_to_default_type;
+//static elementToType element_to_default_type;
 
 class ctabV2000Parser {
 

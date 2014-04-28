@@ -83,7 +83,7 @@ void V2Parser::ParseAtom(std::string const atom_line, core::Size const atom_numb
 	//atom_number_string = convert_stream.str();
 
 	//Set the atom type to a default based on the element.
-	std::string atom_type = element_to_default_type.get(element_name);
+	std::string atom_type = element_to_default_type().get(element_name);
 
 	std::string element_id = element_name+ atom_number_string;
 	utility::add_spaces_left_align(element_id,4);

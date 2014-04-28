@@ -20,40 +20,52 @@
 
 #include <numeric/util.hh>
 #include <utility/string_util.hh>
+#include <utility/tools/make_vector.hh>
 
 #include <string>
 
 namespace core {
 namespace chemical {
 
+using utility::tools::make_vector;
+using core::Size;
 
-const std::string ElectronConfiguration::PrincipalQuantumNumber_strings[] =
-{
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "PrincipalQuantumNumber" //GetStaticClassName< PrincipalQuantumNumber>()
-};
 
-const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] =
+std::vector<std::string> const & ElectronConfiguration::PrincipalQuantumNumber_strings()
 {
-  "s",
-  "p",
-  "d",
-  "f",
-  "AngularMomentumQuantumNumber" //GetStaticClassName< AngularMomentumQuantumNumber>()
-};
+	static std::vector<std::string> PrincipalQuantumNumber_strings_ =
+		make_vector<std::string> (
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"PrincipalQuantumNumber" //GetStaticClassName< PrincipalQuantumNumber>()
+											   );
+	return PrincipalQuantumNumber_strings_;
+}
+
+std::vector<std::string> const & ElectronConfiguration::AngularMomentumQuantumNumber_strings()
+{
+	static std::vector<std::string>	AngularMomentumQuantumNumber_strings_ =
+		make_vector<std::string> (
+			"s",
+			"p",
+			"d",
+			"f",
+			"AngularMomentumQuantumNumber" //GetStaticClassName< AngularMomentumQuantumNumber>()
+												  );
+	return AngularMomentumQuantumNumber_strings_;
+}
 
     //! @brief PrincipalQuantumNumber as string
     //! @param NUM the PrincipalQuantumNumber desired
     //! @return the PrincipalQuantumNumber as string
     const std::string &ElectronConfiguration::get_descriptor( const PrincipalQuantumNumber &NUM)
     {
-      return PrincipalQuantumNumber_strings[ NUM ];
+		return PrincipalQuantumNumber_strings()[ NUM ];
     }
 
     //! @brief PrincipalQuantumNumber from string
@@ -61,7 +73,7 @@ const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] 
     //! @param the PrincipalQuantumNumber as string
     ElectronConfiguration::PrincipalQuantumNumber ElectronConfiguration::get_principal_quantum_number( std::string const &STR ) {
     	for( int ii = 0; ii < MaxPrincipleQuantumNumber; ++ii) {
-    		if( PrincipalQuantumNumber_strings[ ii ] == STR ) return PrincipalQuantumNumber(ii);
+    		if( PrincipalQuantumNumber_strings()[ ii ] == STR ) return PrincipalQuantumNumber(ii);
     	}
     	return MaxPrincipleQuantumNumber;
     }
@@ -71,7 +83,7 @@ const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] 
     //! @return the AngularMomentumQuantumNumber as string
     const std::string &ElectronConfiguration::get_descriptor( const AngularMomentumQuantumNumber &NUM)
     {
-      return AngularMomentumQuantumNumber_strings[ NUM];
+		return AngularMomentumQuantumNumber_strings()[ NUM];
     }
 
     //! @brief AngularMomentumQuantumNumber as string
@@ -79,7 +91,7 @@ const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] 
     //! @param the AngularMomentumQuantumNumber as string
     ElectronConfiguration::AngularMomentumQuantumNumber ElectronConfiguration::get_angular_momentum_quantum_number( std::string const &STR ) {
     	for( int ii = 0; ii < MaxAngularMomentumQuantumNumber; ++ii) {
-    		if( AngularMomentumQuantumNumber_strings[ ii ] == STR ) return AngularMomentumQuantumNumber(ii);
+    		if( AngularMomentumQuantumNumber_strings()[ ii ] == STR ) return AngularMomentumQuantumNumber(ii);
     	}
     	return MaxAngularMomentumQuantumNumber;
     }
@@ -94,16 +106,22 @@ const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] 
 //#      GetObjectInstances().AddInstance( new ElectronConfiguration())
 //#    );
 
-    const core::Size ElectronConfiguration::s_MaxElectronsInOrbital[ 7][ 4] =
+    // core::Size [ 7][ 4];
+	std::vector< std::vector<Size> > const & ElectronConfiguration::s_MaxElectronsInOrbital()
     {
-      { 2, 0, 0, 0},
-      { 2, 6, 0, 0},
-      { 2, 6, 0, 0},
-      { 2, 6, 10, 0},
-      { 2, 6, 10, 0},
-      { 2, 6, 10, 14},
-      { 2, 6, 10, 14}
-    };
+		static std::vector< std::vector<Size> > s_MaxElectronsInOrbital_ =
+			make_vector< std::vector<Size> > (
+				make_vector< Size > ( 2, 0, 0, 0),
+				make_vector< Size > ( 2, 6, 0, 0),
+				make_vector< Size > ( 2, 6, 0, 0),
+				make_vector< Size > ( 2, 6, 10, 0),
+				make_vector< Size > ( 2, 6, 10, 0),
+				make_vector< Size > ( 2, 6, 10, 14),
+				make_vector< Size > ( 2, 6, 10, 14)
+				);
+
+		return s_MaxElectronsInOrbital_;
+	}
 
   //////////////////////////////////
   // construction and destruction //
@@ -239,12 +257,11 @@ const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] 
       return valence_electrons_spd_;
     }
 
-    //! @return the maximum number of electrons in SP orbitals for the noble gas in this period
-    core::Size ElectronConfiguration::max_valence_electrons_sp() const
-    {
-      return
-        s_MaxElectronsInOrbital[ valence_quantum_number_][ e_S] + s_MaxElectronsInOrbital[ valence_quantum_number_][ e_P];
-    }
+//! @return the maximum number of electrons in SP orbitals for the noble gas in this period
+core::Size ElectronConfiguration::max_valence_electrons_sp() const
+{
+	return s_MaxElectronsInOrbital()[ valence_quantum_number_][ e_S] + s_MaxElectronsInOrbital()[ valence_quantum_number_][ e_P];
+}
 
   //////////////////////
   // input and output //
@@ -379,4 +396,3 @@ const std::string ElectronConfiguration::AngularMomentumQuantumNumber_strings[] 
 
 } // namespace core
 } // namespace chemical
-

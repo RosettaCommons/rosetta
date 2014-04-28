@@ -1303,6 +1303,7 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
     '''
     #print 'by_hand_beginning=%s, by_hand_ending=%s' % (by_hand_beginning, by_hand_ending)
 
+    #print '------ name:', name
     #print '------ name_spaces:', name_spaces
     #print '------ context:', context
 
