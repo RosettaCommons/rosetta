@@ -47,7 +47,15 @@ static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianS
 static MoverRegistrator< hybridization::CartesianHybridizeCreator > reg_CartesianHybridizeCreator;
 static MoverRegistrator< hybridization::HybridizeSetupMoverCreator > reg_HybridizeSetupMoverCreator;
 static MoverRegistrator< hybridization::FoldTreeHybridizeCreator > reg_FoldTreeHybridizeCreator;
+static MoverRegistrator< hybridization::BackboneTorsionSamplerCreator > reg_BackboneTorsionSamplerCreator;
+static MoverRegistrator< hybridization::BackboneTorsionPerturbationCreator > reg_BackboneTorsionPerturbationCreator;
 
+static MoverRegistrator< cyclic_peptide::CreateAngleConstraintCreator > reg_CreateAngleConstraintCreator;
+static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_CreateDistanceConstraintCreator;
+static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;
+static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
+static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;
+    
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
@@ -63,6 +71,8 @@ static MoverRegistrator< docking::ConformerSwitchMoverCreator > reg_ConformerSwi
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
 static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
 static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_DockingInitialPerturbationCreator;
+
+static MoverRegistrator< generalized_kinematic_closure::GeneralizedKICCreator > reg_GeneralizedKICCreator;
 
 static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesignProtocolCreator;
 static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;

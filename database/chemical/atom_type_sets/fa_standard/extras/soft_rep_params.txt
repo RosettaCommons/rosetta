@@ -27,6 +27,7 @@ Hapo           1.2840
 Haro           1.2840
 HNbb           1.0700
 HOH            1.6585
+Bsp2           1.9800
 F              1.7100  # taken from MM3 forcefield
 Cl             2.0700  # taken from MM3 forcefield
 Br             2.2200  # taken from MM3 forcefield

@@ -37,6 +37,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <utility/vector1.hh>
 
+#include <core/id/NamedAtomID.hh>
+
 
 namespace core {
 namespace io {
@@ -181,6 +183,8 @@ private:
 
 	utility::vector1< char > secstruct_;
 
+    utility::vector1< std::pair <core::id::NamedAtomID, core::id::NamedAtomID> > noncanonical_residue_connections_;
+    
 	utility::vector1< kinematics::RT > jumps_;
 	bool bJumps_use_IntraResStub_;
 	kinematics::FoldTree fold_tree_;

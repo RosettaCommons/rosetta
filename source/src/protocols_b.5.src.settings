@@ -50,6 +50,8 @@ sources = {
 		"StagePreparer",
 	],
 	"protocols/hybridization" : [
+        "BackboneTorsionSampler",
+        "BackboneTorsionPerturbation",
 		"CartesianHybridize",
 		"CartesianSampler",
 		"ChunkTrialMover",

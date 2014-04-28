@@ -1,0 +1,10 @@
+TODO:
+--Does the first pivot have to be atom 5?  CHECK THIS.
+--Handle child geometry with a single attachment to the loop and no attachment to anything else.  (All other child geometry is allowed to break.)
+XXCopy geometry to old pose.
+XXPerturbers.
+XXFilters.
+XXSelection rules to pick a solution.
+XXRosettascripts interface.
+XXWork on the bump check filter --> currently toned down by a factor of 0.8.  Maybe abandon checks within same residue?
+--Generalize the rebuilding of atoms dependent on inter-residue bonds.

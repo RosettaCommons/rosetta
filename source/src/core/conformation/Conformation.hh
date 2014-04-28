@@ -42,7 +42,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/NamedAtomID.fwd.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/environment/DofPassport.fwd.hh>
 
@@ -545,25 +545,48 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 
 	/// @brief identify polymeric connections
+  ///
 	void
 	set_polymeric_connection(
 		Size res_id_lower,
 		Size res_id_upper
 	);
+  
+	/// @brief Create an arbitrary covalent connection between two residues.
+	///  
+  void
+  set_noncanonical_connection(
+          Size res_id_lower,
+          Size lr_conn_id,
+          Size res_id_upper,
+          Size ur_conn_id
+  );
 
-	/// @brief Update the polymer connection status between lower_seqpos and lower_seqpos+1 based on chainID's and termini
-	void
-	update_polymeric_connection( Size const lower_seqpos );
 
+  /// @brief Update the polymer connection status between lower_seqpos and lower_seqpos+1
+  /// based on chainID's and termini.  If update_connection_dep_atoms is true, positions of
+  /// atoms dependent on the polymer connection are updated.
+  void
+  update_polymeric_connection( Size const lower_seqpos, bool const update_connection_dep_atoms=false );
+
+	/// @brief Update the connection status between the lower_seqpos residue's lr_conn_id connection ID and
+	/// the upper_seqpos residue's ur_conn_id connection ID.
+  void
+  update_noncanonical_connection(Size const lower_seqpos,
+                                 Size const lr_conn_id,
+                                 Size const upper_seqpos,
+                                 Size const ur_conn_id);
 
 	/// @brief Detect existing disulfides from the protein structure.
+  ///
 	virtual
 	void
 	detect_disulfides();
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
-    void
-    fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
+  ///
+  void
+  fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
 
 
 public:  // Conformation Cutting/Pasting
@@ -1089,7 +1112,8 @@ private:
 
 	///
 	void
-	residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump = false );
+	residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump = false,
+        std::string const & root_atom = "", id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID);
 
 	///
 	void

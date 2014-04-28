@@ -17,6 +17,20 @@ sources = {
 		"FlexPepDockingPoseMetrics",
 		"FlexPepDockingProtocol",
 	],
+	"protocols/cyclic_peptide": [
+		"CreateAngleConstraint",
+		"CreateDistanceConstraint",
+		"CreateTorsionConstraint",
+        	"DeclareBond",
+        	"PeptideStubMover",
+	],
+	"protocols/generalized_kinematic_closure": [
+		"GeneralizedKIC",
+		"perturber/GeneralizedKICperturber",
+		"filter/GeneralizedKICfilter",
+		"selector/GeneralizedKICselector",
+		"util",
+	],
 }
 include_path = [
 ]

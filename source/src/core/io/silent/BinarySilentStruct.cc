@@ -158,6 +158,31 @@ BinarySilentStruct::fill_struct(
 		secstruct_[i_asymm] = pose.secstruct(i);
 	} // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
 
+    noncanonical_residue_connections_.clear();
+    for (Size ires=1; ires<=pose.total_residue(); ++ires) {
+        for (int icon=1; icon<=(int)pose.residue_type(ires).n_residue_connections(); ++icon) {
+            Size atom_num = pose.residue(ires).residue_connection( icon ).atomno();
+            core::id::NamedAtomID atom1(pose.residue_type(ires).atom_name(atom_num), ires);
+            if (pose.residue(ires).connected_residue_at_resconn(icon) != 0) {
+                Size anchor_rsd = pose.residue(ires).connected_residue_at_resconn(icon);
+                if (anchor_rsd > ires) continue;
+                int anchor_conid = (int) pose.residue(ires).connect_map(icon).connid();
+                Size anchor_atom_num = pose.residue(anchor_rsd).residue_connection( anchor_conid ).atomno();
+                core::id::NamedAtomID atom2(pose.residue_type(anchor_rsd).atom_name(anchor_atom_num), anchor_rsd);
+                
+                if (ires == anchor_rsd+1) {
+                    if (icon == (int) pose.residue_type(ires).lower_connect_id()) {
+                        if (anchor_conid == (int) pose.residue_type(anchor_rsd).upper_connect_id()) {
+                            // canonical polymer connection, skip
+                            continue;
+                        }
+                    }
+                }
+                noncanonical_residue_connections_.push_back(std::pair<core::id::NamedAtomID, core::id::NamedAtomID> (atom1, atom2) );
+            }
+        }
+    }
+    
 	fold_tree_ = pose.fold_tree();
 	jumps_.clear();
 	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
@@ -351,6 +376,15 @@ bool BinarySilentStruct::init_from_lines(
 				// modern style jumps, defined completely with the FoldTree
 				bJumps_use_IntraResStub_ = false;
 				continue;
+			} else if ( iter->substr(0,24) == "NONCANONICAL_CONNECTION:" ) {
+                line_stream >> tag;
+                int res1, res2;
+                std::string atom1, atom2;
+                line_stream >> res1 >> atom1 >> res2 >> atom2 ;
+                core::id::NamedAtomID atom_id1(atom1, res1);
+                core::id::NamedAtomID atom_id2(atom2, res2);
+                noncanonical_residue_connections_.push_back( std::pair< core::id::NamedAtomID, core::id::NamedAtomID > (atom_id1, atom_id2) ) ;
+				continue;
 			} else if ( iter->substr(0,9) == "SEQUENCE:" ) {
 				tr.Warning << "Skipping duplicate sequence declaration " << std::endl;
 				continue;
@@ -540,6 +574,15 @@ void BinarySilentStruct::fill_pose (
 		core::pose::make_pose_from_sequence( pose, sequence(), residue_set, false /*auto_termini*/ );
 	}
 
+    for (Size i_conn=1; i_conn <= noncanonical_residue_connections_.size(); ++i_conn) {
+        Size res1 = noncanonical_residue_connections_[i_conn].first.rsd();
+        std::string atom1 = noncanonical_residue_connections_[i_conn].first.atom();
+        Size res2 = noncanonical_residue_connections_[i_conn].second.rsd();
+        std::string atom2 = noncanonical_residue_connections_[i_conn].second.atom();
+
+		pose.conformation().declare_chemical_bond(res1, atom1, res2, atom2);
+    }
+    
 	//fpd ???
 	pose.energies().clear();
 
@@ -659,13 +702,17 @@ void BinarySilentStruct::print_conformation(
 
 	// sequence
 	output << "ANNOTATED_SEQUENCE: " << sequence() << " " << decoy_tag() << "\n"; //chu print annotated_sequence per decoy
-
+    
 	//lin print out the SYMMETRY_INFO line here
 	if( is_symmetric() ) {
 		output << *symmetry_info() << ' ' << decoy_tag() << "\n";
 	}
 
 	//tr.Debug << "FOLD_TREE Size: " << fold_tree().size() << " " << fold_tree() << std::endl;
+
+    for (Size i_conn=1; i_conn<=noncanonical_residue_connections_.size(); ++i_conn) {
+        output << "NONCANONICAL_CONNECTION: " << noncanonical_residue_connections_[i_conn].first.rsd() << " " << noncanonical_residue_connections_[i_conn].first.atom() << " " << noncanonical_residue_connections_[i_conn].second.rsd() << " " << noncanonical_residue_connections_[i_conn].second.atom() << std::endl;
+    }
 
 	// chain endings
 	if ( !chain_endings().empty() ) {

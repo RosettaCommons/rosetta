@@ -39,6 +39,7 @@
 #include <core/kinematics/constants.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -698,13 +699,22 @@ Conformation::append_residue_by_bond(
 
 	// Now call our internal append method
 	if ( build_ideal_geometry ) {
-		append_residue(
-			*ideal_geometry_rsd,
-			false /* not by a jump */,
-			root_atom,
-			atom_id_to_named_atom_id(anchor_id, anchor_rsd),
-			start_new_chain
-		);
+        if (polymer_connection) {
+            append_residue( *ideal_geometry_rsd,
+                           false,
+                           "",
+                           id::BOGUS_NAMED_ATOM_ID,
+                           start_new_chain );
+        }
+        else {
+            append_residue(
+                *ideal_geometry_rsd,
+                false /* not by a jump */,
+                root_atom,
+                atom_id_to_named_atom_id(anchor_id, anchor_rsd),
+                start_new_chain
+            );
+        }
 	}	else {
 		append_residue(
 			new_rsd,
@@ -1460,10 +1470,11 @@ Conformation::downstream_jump_stub( int const jump_number ) const
 	return atom_tree_->atom( jump_atom_id( jump_number ) ).get_stub();
 }
 
-
 void
-Conformation::update_polymeric_connection( Size const lower_seqpos )
-{
+Conformation::update_polymeric_connection(
+	Size const lower_seqpos,
+	bool const update_connection_dep_atoms
+) {
 	if ( lower_seqpos < 1 || lower_seqpos >= size() ) return;
 
 	Residue const & lower( *residues_[ lower_seqpos ] ), upper( *residues_[ lower_seqpos + 1 ] );
@@ -1476,7 +1487,26 @@ Conformation::update_polymeric_connection( Size const lower_seqpos )
 
 
 	if ( !disconnected ) set_polymeric_connection( lower_seqpos, lower_seqpos+1 );
+	if (update_connection_dep_atoms) { //Update connection-dependent atoms, EVEN if there's no connection between lower_seqpos and lower_seqpos+1
+		//TR << "Updating connection-dependent atoms." << std::endl; TR.flush();
+		rebuild_polymer_bond_dependent_atoms( lower_seqpos    ,  1 );
+		rebuild_polymer_bond_dependent_atoms( lower_seqpos + 1, -1 );
+	} //else {
+		//TR << "NOT updating connection-dependent atoms." << std::endl; TR.flush();
+	//}
+}
 
+void
+Conformation::update_noncanonical_connection(
+                                             Size const lower_seqpos,
+                                             Size const lr_conn_id,
+                                             Size const upper_seqpos,
+                                             Size const ur_conn_id)
+{
+    if ( lower_seqpos < 1 || lower_seqpos > size() ) return;
+    if ( upper_seqpos < 1 || upper_seqpos > size() ) return;
+    
+    set_noncanonical_connection( lower_seqpos, lr_conn_id, upper_seqpos, ur_conn_id );
 }
 
 // identify polymeric connections
@@ -1492,6 +1522,18 @@ Conformation::set_polymeric_connection(
 	Size const ur_conn_id( residue_( res_id_upper ).type().lower_connect_id());
 	residues_[ res_id_lower ]->residue_connection_partner( lr_conn_id, res_id_upper, ur_conn_id );
 	residues_[ res_id_upper ]->residue_connection_partner( ur_conn_id, res_id_lower, lr_conn_id );
+}
+
+void
+Conformation::set_noncanonical_connection(
+                                       Size res_id_lower,
+                                       Size lr_conn_id,
+                                       Size res_id_upper,
+                                       Size ur_conn_id
+                                       )
+{
+    residues_[ res_id_lower ]->residue_connection_partner( lr_conn_id, res_id_upper, ur_conn_id );
+    residues_[ res_id_upper ]->residue_connection_partner( ur_conn_id, res_id_lower, lr_conn_id );
 }
 
 
@@ -2622,7 +2664,7 @@ Conformation::append_residue(
 	bool const first_residue( seqpos == 1 );
 
 	// append to residues
-	residues_append( new_rsd_in, start_new_chain, attach_by_jump );
+	residues_append( new_rsd_in, start_new_chain, attach_by_jump, root_atom, anchor_id );
 
 	// get reference to new rsd
 	Residue const & new_rsd( *residues_[ seqpos ] );
@@ -2639,7 +2681,7 @@ Conformation::append_residue(
 		if ( root_atom.size() ) root_atomno = new_rsd.atom_index( root_atom );
 
 		// try to detect a non-polymer chemical bond:
-		if ( !attach_by_jump && ( new_rsd.is_ligand() || // needed because new_rsd.is_lower_terminus() asserts this is a polymer
+		if ( !attach_by_jump && root_atomno != 0 && ( new_rsd.is_ligand() || // needed because new_rsd.is_lower_terminus() asserts this is a polymer
 				new_rsd.is_lower_terminus() || anchor_id.rsd() != seqpos-1 ||
 					residues_[ seqpos-1 ]->is_upper_terminus() ||      // if we got here we're connect to seqpos-1...
 					root_atomno != int(new_rsd_in.lower_connect_atom()) ||  // ...by our lower-connect-atom
@@ -2647,6 +2689,7 @@ Conformation::append_residue(
 			// must be a chemical bond since the criteria for a polymer connection are not met
 			TR << "appending residue by a chemical bond in the foldtree: " << seqpos << ' ' <<
 				new_rsd.name() << " anchor: " << anchor_id << " root: " << root_atom <<  std::endl;
+            
 			fold_tree_->append_residue_by_chemical_bond( anchor_id.rsd(), anchor_id.atom(), root_atom );
 		} else {
 			fold_tree_->append_residue( attach_by_jump, anchor_id.rsd(), anchor_id.atom(), root_atom );
@@ -2821,7 +2864,7 @@ Conformation::residues_delete(
 ///  fire any signals to ensure that observer access to the residues container does not
 ///  trigger an atom tree refold prematurely.
 void
-Conformation::residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump )
+Conformation::residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump, std::string const & root_atom, id::NamedAtomID anchor_id)
 {
 	residues_.push_back( new_rsd.clone() );
 	// ensure that the residue number is set
@@ -2846,7 +2889,27 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 	residues_[ nres ]->clear_residue_connections();
 
 	// update polymeric connection status from chain id's and termini status (but only if it's possible they're chemically connected)
-	if ( nres > 1 && ! by_jump ) update_polymeric_connection( nres-1 );
+	if ( nres > 1 && ! by_jump ) {
+        if (anchor_id == id::BOGUS_NAMED_ATOM_ID) {
+            update_polymeric_connection(nres - 1);
+        }
+        else {
+            Size root_atomno = residues_[nres]->type().atom_index(root_atom);
+            Size lr_conn_id = residues_[nres]->type().residue_connection_id_for_atom(root_atomno);
+            Size anchor_atomno = residues_[anchor_id.rsd()]->atom_index( anchor_id.atom() );
+            Size ur_conn_id = residues_[anchor_id.rsd()]->type().residue_connection_id_for_atom(anchor_atomno);
+            if ( anchor_id.rsd() == nres - 1
+                && lr_conn_id == residues_[nres]->type().lower_connect_id()
+                && ur_conn_id == residues_[anchor_id.rsd()]->type().upper_connect_id()
+                )
+            {
+                update_polymeric_connection(nres - 1);
+            }
+            else {
+                update_noncanonical_connection(nres, lr_conn_id, anchor_id.rsd(), ur_conn_id);
+            }
+        }
+    }
 
 	// have to calculate scores with this guy
 	structure_moved_ = true;

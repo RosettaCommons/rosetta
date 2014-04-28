@@ -18,7 +18,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
+#include <core/id/NamedAtomID.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
@@ -56,23 +56,46 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const {
 		return protocols::moves::MoverOP( new SetTorsion );
 	}
+    
+    core::Size n_torsion_sets() const {
+        return residues_.size();
+    }
+    
+    utility::vector1<core::Size> residue_list(core::Size iset, core::pose::Pose const & pose);
+    core::Real angle(core::Size iset);
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-	core::Real angle() const { return angle_; }
-	core::Size resnum() const { return resnum_; }
-	std::string torsion_name() const { return torsion_name_; }
-	void angle( core::Real const a ){ angle_ = a; }
-	void resnum( core::Size const r ){ resnum_ = r; }
-  void torsion_name( std::string const s ){ torsion_name_ = s; }
+    
+	core::Real angle(core::Size const iset) const;
+    std::list <core::Size> residue(core::Size const iset) const;
+	std::string torsion_name(core::Size const iset) {
+        return torsion_name_[iset];
+    }
+
+	/// @brief Sets a residue index that will serve as the root of the FoldTree for the SetTorsion operation.
+	/// @details The FoldTree is reset afterwards (i.e. the mover does not permanently change the FoldTree).
+	void set_fold_tree_root(core::Size const root) { fold_tree_root_ = root; return; }
+
+	///
+	/// @brief Returns the residue index that will serve as the root of the FoldTree for the SetTorsion operation.
+	core::Size get_fold_tree_root() const { return fold_tree_root_; }
 
 private:
-	core::Real angle_;
-	core::Size resnum_;
-	std::string torsion_name_; // phi/psi etc.
+    bool random_set_;
+	utility::vector1<std::string> angle_;
+	utility::vector1<std::string> residues_;
+	utility::vector1<std::string> torsion_name_; // phi/psi etc.
+    utility::vector1<Size> extending_;
+    utility::vector1< utility::vector1< core::id::NamedAtomID > > torsion_atoms_;
+
+		///
+		/// @brief The root for the FoldTree during the operation.  If 0, the default FoldTree is used.  The FoldTree is reset to the input FoldTree after the operation.
+		core::Size fold_tree_root_;
+
 };
 
 } // moves

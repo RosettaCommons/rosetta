@@ -27,6 +27,7 @@ Hapo      1.3000          0.8500
 Haro      1.3000          0.8500
 HNbb      1.3000          0.8500
 HOH       1.5000          0.8500
+Bsp2      1.7537          0.7900  # modified from Nhis based on ratio of van der Waals radii
 F         1.4700          0.8000
 Cl        1.7350          0.8000
 Br        1.9000          0.8000

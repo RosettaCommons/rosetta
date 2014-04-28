@@ -1666,6 +1666,14 @@ add_variant_type_to_pose_residue(
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 
+    // update connections
+    for (Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con) {
+        if (pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0) {
+            Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+            Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+            pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1688,6 +1696,15 @@ remove_variant_type_from_pose_residue(
 	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
+    
+    // update connections
+    for (Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con) {
+        if (pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0) {
+            Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+            Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+            pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+        }
+    }
 }
 
 void

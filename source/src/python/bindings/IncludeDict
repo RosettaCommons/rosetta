@@ -844,6 +844,7 @@
 'protocols/forge/constraints' : (False, 999, []),
 'protocols/forge/methods' : (False, 999, []),
 'protocols/forge/remodel' : (False, 999, []),
+'protocols/generalized_kinematic_closure/GeneralizedKIC.hh' : (True, 999, []),
 'protocols/idealize/idealize.hh' : (True, 999, []),
 'protocols/jd2/JobOutputter.hh' : (True, 100, []),
 'protocols/jd2/JobInputter.hh' : (True, 200, []),

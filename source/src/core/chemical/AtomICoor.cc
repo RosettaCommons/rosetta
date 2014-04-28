@@ -109,23 +109,49 @@ ICoorAtomID::xyz(
 		//	rsd.atom( atomno_ ).xyz()(3) << std::endl;
 		return rsd.atom( atomno_ ).xyz();
 	} else if ( type_ == POLYMER_LOWER ) {
-		int const seqpos( rsd.seqpos() - 1 );
-		int const atomno( conformation.residue_type( seqpos ).upper_connect_atom() );
+		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_LOWER connection is the i-1 residue in sequence; nor
+		//do we assume that that residue is connected via its upper terminus.
+		assert(!rsd.is_lower_terminus());
+		core::Size const lowerID = rsd.type().lower_connect_id(); //The index of the lower connection of THIS residue.
+		//assert(!rsd.connection_incomplete( lowerID ));
+		core::Size const seqpos( rsd.connect_map( lowerID ).resid() ); //Get the index of the residue connected to this one at the lower connection.
+    if (seqpos == 0) {
+    	tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
+    	return NullVector;
+    }
+		core::Size const atomno( conformation.residue_type(seqpos).residue_connect_atom_index( rsd.connect_map( lowerID ).connid()  ) ); //Get the index of the atom on the other residue that forms a connection to the lower terminus of this residue.
+		//int const seqpos( rsd.seqpos() - 1 );
+		//int const atomno( conformation.residue_type( seqpos ).upper_connect_atom() );
 		return conformation.xyz( id::AtomID( atomno, seqpos ) );
 		// 		Residue const & rsd_lower( conformation.residue( rsd.seqpos() - 1 ) );
 		// 		return rsd_lower.atom( rsd_lower.upper_connect_atom() ).xyz();
 	} else if ( type_ == POLYMER_UPPER ) {
-		int const seqpos( rsd.seqpos() + 1 );
-		int const atomno( conformation.residue_type( seqpos ).lower_connect_atom() );
+		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_UPPER connection is the i+1 residue in sequence; nor
+		//do we assume that that residue is connected via its lower terminus.
+		assert(!rsd.is_upper_terminus());
+		core::Size const upperID = rsd.type().upper_connect_id(); //The index of the upper connection of THIS residue.
+		//assert(!rsd.connection_incomplete( upperID ));
+		core::Size const seqpos( rsd.connect_map( upperID ).resid() ); //Get the index of the residue connected to this one at the upper connection.
+		if (seqpos == 0 ) {
+			tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_UPPER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
+			return NullVector;
+		}
+		core::Size const atomno( conformation.residue_type(seqpos).residue_connect_atom_index( rsd.connect_map( upperID ).connid()  ) ); //Get the index of the atom on the other residue that forms a connection to the upper terminus of this residue.
+		//int const seqpos( rsd.seqpos() + 1 );
+		//int const atomno( conformation.residue_type( seqpos ).lower_connect_atom() );
 		return conformation.xyz( id::AtomID( atomno, seqpos ) );
 		// 		Residue const & rsd_upper( conformation.residue( rsd.seqpos() + 1 ) );
 		// 		return rsd_upper.atom( rsd_upper.lower_connect_atom() ).xyz();
 	} else if ( type_ == CONNECT ) {
 		// in this case atomno_ is the connection identifer (index)
-		Size const connid( atomno_ );
+		Size connid( atomno_ );
+		if(rsd.is_lower_terminus()) --connid;
+		if(rsd.is_upper_terminus()) --connid;
+		//tw << "conid=" << connid << std::endl; tw.flush(); //DELETE ME
+		//assert(!rsd.connection_incomplete( connid ) );
 		int const  partner_seqpos( rsd.residue_connection_partner( connid ) );
 		if ( partner_seqpos < 1 || partner_seqpos > int( conformation.size() ) ) {
-			tw << "ICoorAtomID xyz depends on invalid residue connection, returning BOGUS coords: this_rsd= " << rsd.name() <<
+			tw << "Warning from IcoorAtomID::xyz(): ICoorAtomID xyz depends on invalid residue connection, returning BOGUS coords (null vector): this_rsd= " << rsd.name() <<
 					' ' << rsd.seqpos() << " connid= " << connid << " partner_seqpos= " << partner_seqpos << '\n';
 			return NullVector;
 		}

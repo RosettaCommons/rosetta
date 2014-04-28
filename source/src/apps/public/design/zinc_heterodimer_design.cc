@@ -152,9 +152,9 @@ main( int argc, char* argv[] )
 		//strip termini and clean up residue connections
 		core::pose::remove_variant_type_from_pose_residue(partner1, core::chemical::LOWER_TERMINUS, partner1_resid);
 		core::pose::remove_variant_type_from_pose_residue(partner1, core::chemical::UPPER_TERMINUS, partner1_resid);
-		partner1.conformation().update_polymeric_connection(partner1_resid-1);
-		partner1.conformation().update_polymeric_connection(partner1_resid);
-		partner1.conformation().update_polymeric_connection(partner1_resid+1);
+		partner1.conformation().update_polymeric_connection(partner1_resid-1, true);
+		partner1.conformation().update_polymeric_connection(partner1_resid, true);
+		partner1.conformation().update_polymeric_connection(partner1_resid+1, true);
 		if(partner1.residue_type(partner1_resid).aa() == core::chemical::aa_cys){
 			core::pose::replace_pose_residue_copying_existing_coordinates(partner1, partner1_resid, CYZ);
 		}
@@ -211,6 +211,9 @@ main( int argc, char* argv[] )
 	partner2.replace_residue(p2_res, match.residue(/*MatchPosition*/p2), false);
 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::LOWER_TERMINUS, p2_res);
  	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS, p2_res);
+	partner2.conformation().update_polymeric_connection(p2_res-1, true);
+	partner2.conformation().update_polymeric_connection(p2_res, true);
+  partner2.conformation().update_polymeric_connection(p2_res+1, true);
 	if(partner2.residue_type(p2_res).aa() == core::chemical::aa_cys){
 		core::pose::replace_pose_residue_copying_existing_coordinates(partner2, p2_res, CYZ);
 	}
@@ -287,6 +290,10 @@ main( int argc, char* argv[] )
 			new_rsd->set_chi( 1, old_rsd.chi(1) );
 			new_rsd->set_chi( 2, old_rsd.chi(2) );
 			combined.replace_residue( metal_site[i], *new_rsd, true );
+			//Rebuild connection-dependent atoms:
+			combined.conformation().update_polymeric_connection(metal_site[i]-1, true);
+			combined.conformation().update_polymeric_connection(metal_site[i], true);
+			combined.conformation().update_polymeric_connection(metal_site[i]+1, true);
 		}
 	}
 

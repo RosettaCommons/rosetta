@@ -35,6 +35,7 @@ Hapo      1.0000
 Haro      1.0000
 HNbb      1.0000
 HOH       1.4000
+Bsp2      1.8669  # modified from Nhis based on ratio of van der Waals radii
 F         1.7100  # taken from MM3 forcefield
 Cl        2.0700  # taken from MM3 forcefield
 Br        2.2200  # taken from MM3 forcefield

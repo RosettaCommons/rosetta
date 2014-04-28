@@ -198,9 +198,9 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 		core::pose::remove_upper_terminus_type_from_pose_residue( pose, res_num );
 	if( res_num > chain_begin )
 		core::pose::remove_lower_terminus_type_from_pose_residue( pose, res_num );
-	pose.conformation().update_polymeric_connection( res_num ); // o/w residues connections mess up
+	pose.conformation().update_polymeric_connection( res_num , true); // o/w residues connections mess up
 	if( res_num > chain_begin )
-		pose.conformation().update_polymeric_connection( res_num - 1 );
+		pose.conformation().update_polymeric_connection( res_num - 1 , true);
 /// return to stub_based atom tree
 	if( place_scaffold_ ){
 	// currently only supports host being on chain2

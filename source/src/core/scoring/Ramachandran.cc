@@ -343,6 +343,11 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 	{
 		using numeric::random::uniform;
 
+		if (res_aa==core::chemical::aa_unk) {
+			//TR.Warning << "Warning: aa_unk residue type passed to Ramachandran::random_phipsi_from_rama.  Returning nothing."
+			return;
+		}
+
 		if ( rama_sampling_table_.size() == 0 ) {
 			/// Danger -- not threadsafe.
 			init_rama_sampling_table('X');

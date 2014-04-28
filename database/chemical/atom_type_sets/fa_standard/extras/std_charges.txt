@@ -28,6 +28,7 @@ Haro	0.115
 HNbb	0.310
 H2O	0.000
 HOH	0.000
+Bsp2  0.000 # Unknown
 F	-0.250
 Cl	-0.130
 Br	-0.100

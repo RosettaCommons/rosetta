@@ -1,0 +1,544 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/protocols/generalized_kinematic_closure/GeneralizedKIC.hh
+/// @brief  Headers for GeneralizedKIC mover class.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+
+#ifndef INCLUDED_protocols_generalized_kinematic_closure_GeneralizedKIC_hh
+#define INCLUDED_protocols_generalized_kinematic_closure_GeneralizedKIC_hh
+
+// Unit Headers
+#include <protocols/moves/Mover.hh>
+#include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
+#include <protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh>
+#include <protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh>
+#include <protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.hh>
+
+// Scripter Headers
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/filters/ContingentFilter.fwd.hh>
+#include <protocols/filters/ContingentFilter.hh>
+
+// Project Headers
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/grid/CartGrid.hh>
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
+#include <core/id/AtomID.hh>
+#include <core/conformation/Residue.hh>
+
+#include <set>
+
+#include <core/grid/CartGrid.fwd.hh>
+
+
+///////////////////////////////////////////////////////////////////////
+
+namespace protocols {
+namespace generalized_kinematic_closure {
+
+class GeneralizedKIC : public protocols::moves::Mover
+{
+public:
+	GeneralizedKIC();
+	virtual ~GeneralizedKIC();
+
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+
+	///
+	/// @brief Actually apply the mover to the pose.
+	virtual void apply(core::pose::Pose & pose);
+
+	virtual std::string get_name() const;
+
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const &
+	);
+
+	/// @brief Add a residue (by index in the pose) to the list of residues making up the loop to be closed.
+	/// This function checks that the index is within the range of indices in the pose, and that there is a
+	/// geometric connection between this residue and the previous one in the list.
+	void add_loop_residue( core::Size const residue_index /*, core::pose::Pose const &pose*/ );
+
+	/// @brief Function to set the effect of this mover on parts of the pose that are covalently attached to
+	/// the loop to be closed, but which aren't part of it.  Settings are:
+	/// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
+	///      an anchor point.
+	/// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
+  /// 		 connections to non-child geometry.
+	void set_mover_effect_on_bonded_geometry( core::Size const effect ); //TODO -- Make this do something.
+
+	/// @brief Function to get the effect of this mover on parts of the pose that are covalently attached to
+	/// the loop to be closed, but which aren't part of it.  Return values are:
+	/// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
+	///      an anchor point.
+	/// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
+  /// 		 connections to non-child geometry.
+	core::Size get_mover_effect_on_bonded_geometry() { return effect_on_bonded_geometry_; }	
+
+	/// @brief Set whether or not this mover builds ideal geometry for the loop, or uses the existing geometry,
+	/// imperfect bond lengths/angles and all.
+	void set_build_ideal_geometry( bool const buildideal ) { build_ideal_geometry_ = buildideal; return; }
+
+	///
+	/// @brief Function to set the pivot atoms for kinematic closure:
+	void set_pivot_atoms(
+		core::Size const rsd1,
+		std::string const &at1,
+		core::Size const rsd2,
+		std::string const &at2,
+		core::Size const rsd3,
+		std::string const &at3
+	);
+
+	/// @brief Get whether or not this mover builds ideal geometry for the loop, or uses the existing geometry,
+	/// imperfect bond lengths/angles and all.
+	bool get_build_ideal_geometry() { return build_ideal_geometry_; }
+
+	/// @brief Returns whether or not the last call to apply() sucessfully closed the loop.  Defaults to false if
+	/// apply() hasn't yet been called.
+	bool last_run_successful() { return last_run_successful_; }
+
+	/// @brief Tells GeneralizedKIC to close a bond, setting bond length, bond angle, and bond torsion values.  This
+	/// actually just adds appropriate set_dihedral, set_bondangle, and set_bondlength perturbers to the perturber
+	/// list.  Note that subsequent perturbers OR the closure itself can overwrite the bond length, bond angle, or
+	/// torsion angles set here.
+	/// @detailed
+	/// @param[in] rsd1 -- The index of the first atom's residue (indexed based on residue indices in the original pose).
+	/// @param[in] at1 -- The name of the first atom defining the bond to be closed.
+	/// @param[in] rsd2 -- The index of the second atom's residue (indexed based on residue indices in the original pose).
+	/// @param[in] at1 -- The name of the second atom defining the bond to be closed.
+	/// @param[in] bondlength -- The length of the bond between the two atoms.
+	/// @param[in] bondangle1 -- The bond angle defined by (atom preceding at1 in the chain to be closed), (atm1), (atm2).
+	/// @param[in] bondangle1 -- The bond angle defined by (atm1), (atm2), (atom following at2 in the chain to be closed).
+  /// @param[in] torsion -- The torsion angle defined by (atom preceding at1 in the chain to be closed), (atm1), (atm2), (atom following at2 in the chain to be closed).
+	void close_bond (
+		core::Size const rsd1,
+		std::string const &at1,
+		core::Size const rsd2,
+		std::string const &at2,
+		core::Size const rsd1_before,
+		std::string const &at1_before,
+		core::Size const rsd2_after,
+		std::string const &at2_after,
+		core::Real const &bondlength,
+		core::Real const &bondangle1,
+		core::Real const &bondangle2,
+		core::Real const &torsion,
+		bool const randomize_this_torsion,
+		bool const randomize_flanking_torsions
+	);
+
+	/// @brief Set the selector (the algorithm controlling how a solution will be chosen
+	/// from among the solutions passing filters).
+	void set_selector_type ( selector::selector_type const &stype);
+
+	/// @brief Set the selector (the algorithm controlling how a solution will be chosen
+	/// from among the solutions passing filters).  This sets the selector by name.
+	void set_selector_type ( std::string const &stypename);
+
+	/// @brief Set the selector's scorefunction.
+	///
+	void set_selector_scorefunction ( core::scoring::ScoreFunctionOP sfxn );
+
+	/// @brief Get the selector (the algorithm controlling how a solution will be chosen
+	/// from among the solutions passing filters).
+	selector::selector_type get_selector_type () const { return selector_->get_selector_type(); }
+
+	/// @brief Get the name of the selector (the algorithm controlling how a solution will be chosen
+	/// from among the solutions passing filters).
+	std::string get_selector_type_name () const { return selector_->get_selector_type_name( selector_->get_selector_type() ); }
+
+	///
+	/// @brief Add a new perturber to the list of perturbers.
+	void add_perturber ();
+
+	///
+	/// @brief Add a new perturber to the list of perturbers, setting the effect.
+	void add_perturber ( perturber::perturber_effect const &effect );
+
+	///
+	/// @brief Add a new perturber to the list of perturbers, setting the effect by effect name string.
+	void add_perturber ( std::string const &effectname );
+
+	/// @brief Set a perturber's effect.
+	/// @detailed
+	///
+	/// @param[in] perturber_index -- The index in the list of perturbers already added.
+	/// @param[in] effect -- The perturber effect type, based on the perturber::perturber_effect enum (e.g. set_dihedral, randomize_backbone, etc.).
+	void set_perturber_effect ( core::Size const perturber_index, perturber::perturber_effect const &effect );
+
+	///
+	/// @brief Add a value to the list of values that a perturber takes.
+	void add_value_to_perturber_value_list ( core::Size const perturber_index, core::Real const &val );
+
+	///
+	/// @brief Add a value to the list of values that a perturber takes.  This operates on the last perturber in the perturber list.
+	void add_value_to_perturber_value_list ( core::Real const &val );
+
+
+	/// @brief Add a residue to the list of residues that a perturber takes.  Note that residue_index is based on indices of the ORIGINAL POSE,
+	/// not the loop in isolation.
+	void add_residue_to_perturber_residue_list ( core::Size const perturber_index, core::Size const residue_index );
+
+	/// @brief Add a residue to the list of residues that a perturber takes.  Note that residue_index is based on indices of the ORIGINAL POSE,
+	/// not the loop in isolation.  This version acts on the last perturber added.
+	void add_residue_to_perturber_residue_list ( core::Size const residue_index );
+
+	///
+	/// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.
+	void add_atomset_to_perturber_atomset_list ( core::Size const perturber_index, utility::vector1 < core::id::NamedAtomID > const &atomset );	
+
+	///
+	/// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.  This operates on the last perturber in the perturber list.
+	void add_atomset_to_perturber_atomset_list ( utility::vector1 < core::id::NamedAtomID > const &atomset );	
+
+	///
+	/// @brief Add a new filter to the list of filters.
+	void add_filter ();
+
+	///
+	/// @brief Add a new filter to the list of filters, setting the filter type.
+	void add_filter ( filter::filter_type const &filtertype );
+
+	///
+	/// @brief Add a new filter to the list of filters, setting the filter type by name.
+	void add_filter ( std::string const &filtertypename );
+
+	///
+	/// @brief Set the number of closure attempts.
+	/// @details Perturbation, closure, and filtering is carried out for every closure
+	/// attempt.  Successful closures from ALL attempts are then selected from by
+	/// selectors.
+	void set_closure_attempts( core::Size const attempts);
+
+	///
+	/// @brief Returns the number of closure attempts.
+	/// @details Perturbation, closure, and filtering is carried out for every closure
+	/// attempt.  Successful closures from ALL attempts are then selected from by
+	/// selectors.
+	core::Size get_closure_attempts() const { return n_closure_attempts_; }
+
+	/// @brief Sets number of tries before giving up.
+	/// @details If this is set to 0, then no such check is made.
+	/// The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
+	/// ntries_before_giving_up_ attempts.
+	void set_ntries_before_giving_up ( core::Size const ntries );
+
+	/// @brief Gets number of tries before giving up.
+	/// @details The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
+	/// ntries_before_giving_up_ attempts.
+	core::Size get_ntries_before_giving_up () const { return ntries_before_giving_up_; }
+
+	///
+	/// @brief Returns whether the number of closure attempts is a maximum number of attempts.
+	/// @details If true, attempts are made until a solution is found OR n_closure_attempts_ is
+	/// reached.  If false, n_closure_attempts_ attempts are made, and then a solution is chosen
+	/// from among the successful solutions (if any).
+	bool n_closure_attempts_is_a_maximum() const { return n_closure_attempts_is_a_maximum_; }
+
+	///
+	/// @brief Sets whether the number of closure attempts is a maximum number of attempts.
+	/// @details If true, attempts are made until a solution is found OR n_closure_attempts_ is
+	/// reached.  If false, n_closure_attempts_ attempts are made, and then a solution is chosen
+	/// from among the successful solutions (if any).
+	void set_n_closure_attempts_is_a_maximum(bool const is_max) { n_closure_attempts_is_a_maximum_ = is_max; return; }
+
+private:
+
+	///
+	/// @brief The list of residues (as inidices of the original pose) making up the loop to be closed.
+	utility::vector1 < core::Size > loopresidues_;
+
+	/// @brief The effect of the GeneralizedKIC mover on geometry that is covalently bound to the loop
+	/// to be closed, but which is not part of that loop segment.  0 means that the mover will only
+	/// move the loop, possibly tearing apart covalent bonds to other parts of the pose.  1 means that
+  /// the mover will move the loop along with anything that is downstream in the FoldTree.
+	core::Size effect_on_bonded_geometry_;
+
+	/// @brief The lower end of the loop to be closed is presumably connected to geometry that is not
+	/// moved by this mover.  However, the connection could be through backbone or sidechain.  The
+	/// mover needs to know the connection ID on the lower end of the loop to the anchor geometry.
+	/// Note: This will be set to 0 if the only connection that this residue can form is to the loop. 
+	core::Size lower_anchor_connID_;
+
+	/// @brief The upper end of the loop to be closed is presumably connected to geometry that is not
+	/// moved by this mover.  However, the connection could be through backbone or sidechain.  The
+	/// mover needs to know the connection ID on the upper end of the loop to the anchor geometry.
+	/// Note: This will be set to 0 if the only connection that this residue can form is to the loop.
+	core::Size upper_anchor_connID_;
+
+	///
+	/// @brief Should the mover build ideal geometry for the loop to be closed?  Default true.
+	bool build_ideal_geometry_;
+
+	///
+	/// @brief Was the last apply() successful in generating a new kinematically-closed structure?
+  bool last_run_successful_;
+
+	/// @brief List of the atoms in the segment to be closed, and their x,y,z coordinates.  Note that
+	/// the atomIDs refer to residue indices that correspond to the temporary pose created by the
+	/// apply() function, not to the indices in the original pose.
+	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > atomlist_;
+
+
+	///
+	/// @brief Pivot residue 1 (index based on original pose).
+	core::Size pivot_1_rsd_;
+
+	///
+	/// @brief Pivot atom 1 name
+	std::string pivot_1_atmname_;
+
+	///
+	/// @brief Pivot residue 2 (index based on original pose).
+	core::Size pivot_2_rsd_;
+
+	///
+	/// @brief Pivot atom 2 name
+	std::string pivot_2_atmname_;
+
+	///
+	/// @brief Pivot residue 3 (index based on original pose).
+	core::Size pivot_3_rsd_;
+
+	///
+	/// @brief Pivot atom 3 name
+	std::string pivot_3_atmname_;
+
+	///
+	/// @brief List of GeneralizedKICperturbers to apply prior to kinematic closure.
+	perturber::GeneralizedKICperturberOPs perturberlist_;
+
+	///
+	/// @brief List of GeneralizedKICfilters to apply to eliminate bad solutions.
+	filter::GeneralizedKICfilterOPs filterlist_;
+
+	/// @brief The selection algorithm to use to pick a solution from the set of solutions passing
+	/// the filters.
+	selector::GeneralizedKICselectorOP selector_;
+
+	///
+	/// @brief The number of closure attempts to carry out.
+	/// @details Perturbation, closure, and filtering is carried out for every closure
+	/// attempt.  Successful closures from ALL attempts are then selected from by
+	/// selectors.  Zero means no limit.
+	core::Size n_closure_attempts_;
+
+	///
+	/// @brief Should n_closure_attempts_ be the number attempted, or a maximum
+	/// number of attempts?  If false, n_closure_attempts_ attempts are made, and
+	/// then a solution is chosen.  If true, attempts are made until a solution
+	/// is found OR n_closure_attempts_ is reached.
+	bool n_closure_attempts_is_a_maximum_;
+
+	///
+	/// @brief Owning pointer for the RosettaScripts ContingentFilter associated with this mover, if there is one.
+	protocols::filters::ContingentFilterOP rosettascripts_filter_;
+
+	///
+	/// @brief Bool determining whether there exists a RosettaScripts ContingentFilter associated with this mover.
+	bool rosettascripts_filter_exists_;
+
+	///
+	/// @brief The number of tries to make before giving up if no solution has been found yet.
+	/// @details If this is set to 0, then no such check is made.
+	/// The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
+	/// ntries_before_giving_up_ attempts.
+	core::Size ntries_before_giving_up_;
+
+////////////////////////////////////////////////////////////////////////////////
+//          PRIVATE FUNCTIONS                                                 //
+////////////////////////////////////////////////////////////////////////////////
+
+	/// @begin get_path
+	/// @brief Gets a path through atoms in the residue from one connection atom to another within a residue.
+	/// @details  This is not necessarily the shortest path, geometrically, but hopefully it will do for our purposes.  (I
+	/// didn't want to reimplement Dijkstra's algorithm, since that would tax my programming abilities and would result in
+	/// unnecessarily slow performance.)  This algorithm works by stepping back (child->parent) from the higher-index atom
+	/// until (a) it finds the lower-index atom, or (b) it reaches the root.  If it reaches the root, it then starts at the
+	/// lower-index atom and traces back until it reaches an atom already in the path.  The chosen path is therefore the path
+	/// from one atom, to the nearest common ancestor, to the other atom.
+	/// 
+	/// @param[in] first_atom -- The index of the first atom in the path.
+	/// @param[in] second_atom -- The index of the first atom in the path.
+	/// @param[in] rsd -- The residue object (const instance).
+	/// @param[out] path_indices -- The list of indices of the atoms found in the path.
+	///
+	/// @author Vikram K. Mulligan
+	void get_path (
+		core::Size const first_atom,
+		core::Size const second_atom,
+		core::conformation::Residue const &rsd,
+		utility::vector1 <core::Size> &path_indices
+	);
+
+	///
+	/// @brief Function to get the FIRST connection in res_with_connection that connects it to other_res:
+	core::Size get_connection(
+		core::Size const res_with_connection,
+		core::Size const other_res,
+		core::pose::Pose const &pose
+	);
+
+	/// @brief Function that returns true if two residues in a pose have a direct geometric connection,
+	/// and false otherwise.
+	bool has_geometric_connection (
+		core::Size const residue1,
+		core::Size const residue2,
+		core::pose::Pose const &pose
+	);
+
+	/// @brief As the list of residues in the loop to be closed is updated, we need to figure out how
+	/// that loop is connected to the geometry outside of the loop (i.e. what's considred the connection
+	/// to stationary geometry).  This function loops through all connIDs on the terminal residues of
+	/// the loop to be closed and picks the first one that links to geometry not in the loop as the
+  /// anchor connnection.  TODO: Add a manual override to specifiy that a different connection is the
+	/// anchor.
+	void infer_anchor_connIDs(core::pose::Pose const &pose);
+
+	///
+	/// @brief Find the residue that is the anchor of the lower end of the loop that we're about to close and add it to the loop pose by a jump.
+	void addloweranchor(
+		core::pose::Pose &perturbedloop_pose,
+		core::pose::Pose const &pose
+	);
+
+	/// @brief Add the loop geometry from the starting pose to the temporary pose used for kinematic closure.  This will also add the
+	/// downstream geometry if effect_on_bonded_geom==1.  Finally, this will build ideal geometry if build_ideal==true.
+	void addloopgeometry(
+		core::pose::Pose &perturbedloop_pose,
+		core::pose::Pose const &pose,
+		bool const build_ideal,
+		core::Size const effect_on_bonded_geom,
+		utility::vector1 < std::pair < core::Size, core::Size > > &residue_map
+	);
+
+	///
+	/// @brief Find the residue that is the anchor of the upper end of the loop that we're about to close and add it to the loop pose by a bond.
+	void addupperanchor(
+		core::pose::Pose &perturbedloop_pose,
+		core::pose::Pose const &pose
+	);
+
+	/// @brief Do the actual kinematic closure.
+	/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), and residue_map (the mapping
+	/// of residues from pose to original_pose).  Output is pose (the loop to be closed, in a new, closed conformation if successful) and a boolean
+	/// value indicating success or failure.
+	bool doKIC(
+		core::pose::Pose &pose,
+		core::pose::Pose const &original_pose,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map		
+	);
+
+	///
+	/// @brief Generate the list of atomIDs for the chain that will be closed by kinematic closure.
+	void generate_atomlist(
+		core::pose::Pose const &pose,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
+	);
+
+	///
+	/// @brief Generate the numeric::kinematic_closure::bridgeObjects data from the atomlist_ object.
+	void generate_bridgeobjects_data_from_atomlist(
+		utility::vector1< utility::vector1< core::Real > > &atoms, //atom xyz
+		utility::vector1< core::Real > &dt, //desired torsions for each atom
+		utility::vector1< core::Real > &da, //desired bond angle for each atom
+		utility::vector1< core::Real > &db, //desired bond length for each atom
+		utility::vector1< core::Size > &order //use 1, 2, 3
+	);
+
+	/// @brief Given a residue_map vector of pairs, where each pair is < residue_index_in_perturbedloop_pose, residue_index_in_original_pose >,
+	/// and a residue index in the original pose, return the corresponding residue index in the perturbed loop pose.
+	core::Size get_perturbedloop_rsd ( core::Size const original_pose_rsd, utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map );
+
+	///
+	///	@brief Pick the pivots for kinematic closure.
+	void pick_pivots(
+		core::pose::Pose const &original_pose,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < core::Size > &pivots
+	);
+
+	/// @brief Apply the list of perturbers (everything in perturberlist_) to alter the desired torsion, desired angle, and desired bond length lists prior to calling bridgeObjects.
+	/// @detailed
+	///
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] original_pose -- A pose consisting of the full, original structure.
+	/// @param[in] residue_map -- The mapping of (residue in loop_pose, residue in original_pose).
+	/// @param[in,out] torsions -- The desired torsion angles, potentially altered or overwritten by the perturbers.
+	/// @param[in,out] bondangles -- The desired bond angles, potentially altered or overwritten by the perturbers.
+	/// @param[in,out] bondlenghts -- The desired bond lengths, potentially altered or overwritten by the perturbers.
+	void apply_perturbations(
+		core::pose::Pose const &loop_pose,
+		core::pose::Pose const &original_pose,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+		utility::vector1 < core::Real > &torsions,
+		utility::vector1 < core::Real > &bondangles,
+		utility::vector1 < core::Real > &bondlengths
+	) const;
+
+	/// @brief Apply filters to the list of solutions, and proceed to eliminate any and all that fail to pass filters.
+	/// @details This removes entries from the torsions, bondangles, and bondlengths lists, and decrements nsol (the number of solutions) appropriately.
+	/// @param[in] original_pose -- A pose consisting of the full, original structure.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] residue_map -- The mapping of (residue in loop_pose, residue in original_pose).
+	/// @param[in] atomlist -- The list of atomIDs in the chain that was closed, plus their xyz coordinates from the original pose.
+	/// @param[in,out] torsions -- The torsion angles returned by bridgeObjects, as a matrix of [solution #][torsion index].  Columns can be deleted by filters.
+	/// @param[in,out] bondangles -- The bond angles returned by bridgeObjects, as a matrix of [solution #][bondangle index].  Columns can be deleted by filters.
+	/// @param[in,out] bondlenghts -- The bond lengths returned by bridgeObjects, as a matrix of [solution #][bondlength index].  Columns can be deleted by filters.
+	/// @param[in,out] nsol -- The number of solutions, which can be decremented as filters delete solutions.  Note that this must be an int, not a core::Size.
+	void filter_solutions(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+		utility::vector1 <utility::vector1<core::Real> > &torsions,
+		utility::vector1 <utility::vector1<core::Real> > &bondangles,
+		utility::vector1 <utility::vector1<core::Real> > &bondlengths,
+		int &nsol
+	) const;
+
+	/// @brief Applies the selector to choose a solution and set a loop pose.
+	/// @details
+	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
+	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
+	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
+	/// @param[in] atomlist -- The list of (AtomID, original XYZ coordinates of atoms) representing the chain that was closed.
+	/// @param[in] torsions -- Matrix of [closure attempt #][solution #][torsion #] with torsion values for each torsion angle in the chain.  A selector will pick one solution.
+	/// @param[in] bondangles -- Matrix of [closure attempt #][solution #][angle #] with bond angle values for each bond angle in the chain.  A selector will pick one solution.
+	/// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
+	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
+	/// @param[in] total_solutions -- Total number of solutions found.
+	void select_solution (
+		core::pose::Pose &pose,
+		core::pose::Pose const &original_pose, //The original pose
+		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
+		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
+		utility::vector1 <core::Size> const &nsol_for_attempt,
+		core::Size const total_solutions
+	) const;
+
+};
+
+} //namespace generalized_kinematic_closure
+} //namespace protocols
+
+#endif //INCLUDED_protocols_generalized_kinematic_closure_GeneralizedKIC_hh

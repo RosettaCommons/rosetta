@@ -87,9 +87,9 @@ MatchGrafter::graft( Pose & match,
 
 		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::LOWER_TERMINUS, partner_resid);
 		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::UPPER_TERMINUS, partner_resid);
-		partner_ungrafted.conformation().update_polymeric_connection(partner_resid-1);
-		partner_ungrafted.conformation().update_polymeric_connection(partner_resid);
-		partner_ungrafted.conformation().update_polymeric_connection(partner_resid+1);
+		partner_ungrafted.conformation().update_polymeric_connection(partner_resid-1, true);
+		partner_ungrafted.conformation().update_polymeric_connection(partner_resid, true);
+		partner_ungrafted.conformation().update_polymeric_connection(partner_resid+1, true);
 		if(partner_ungrafted.residue_type(partner_resid).aa() == core::chemical::aa_cys){
 			core::pose::replace_pose_residue_copying_existing_coordinates(partner_ungrafted, partner_resid, CYZ);
 		}

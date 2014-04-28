@@ -34,6 +34,14 @@
 #include <protocols/hybridization/HybridizeSetupMoverCreator.hh>
 #include <protocols/hybridization/FoldTreeHybridizeCreator.hh>
 #include <protocols/hybridization/CartesianHybridizeCreator.hh>
+#include <protocols/hybridization/BackboneTorsionSamplerCreator.hh>
+#include <protocols/hybridization/BackboneTorsionPerturbationCreator.hh>
+
+#include <protocols/cyclic_peptide/CreateAngleConstraintCreator.hh>
+#include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
+#include <protocols/cyclic_peptide/CreateTorsionConstraintCreator.hh>
+#include <protocols/cyclic_peptide/DeclareBondCreator.hh>
+#include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
 
 #include <protocols/contact_map/ContactMapCreator.hh>
 
@@ -91,6 +99,8 @@
 
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 #include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>
+
+#include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
 #include <protocols/idealize/IdealizeMoverCreator.hh>
 
