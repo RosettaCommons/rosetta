@@ -182,7 +182,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 DeclareBond::parse_my_tag(
-	TagCOP const tag,
+	TagCOP tag,
 	basic::datacache::DataMap &,
 	Filters_map const &,
 	moves::Movers_map const &,

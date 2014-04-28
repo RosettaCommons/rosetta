@@ -343,7 +343,7 @@ void BackboneTorsionPerturbation::task_factory( core::pack::task::TaskFactoryCOP
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 BackboneTorsionPerturbation::parse_my_tag(
-    TagCOP const tag,
+    TagCOP tag,
     basic::datacache::DataMap & datamap,
     Filters_map const & ,
     moves::Movers_map const & /*movers*/,
