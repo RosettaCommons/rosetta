@@ -8751,7 +8751,7 @@ SandwichFeatures::report_features(
 		{
 			Size tag_len = tag.length();
 			string pdb_file_name = tag.substr(0, tag_len-5);
-			string AA_dis_file_name = pdb_file_name + "_strand_AA_distribution_sorted_alphabetically.txt";
+			string AA_dis_file_name = pdb_file_name + "_AA_distribution_of_strands_sorted_alphabetically.txt";
 			ofstream AA_dis_file;
 
 			AA_dis_file.open(AA_dis_file_name.c_str());
@@ -8835,7 +8835,7 @@ SandwichFeatures::report_features(
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_loop_AA_distribution_sorted_alphabetically.txt";
+		string AA_dis_file_name = pdb_file_name + "_AA_distribution_of_loops_sorted_alphabetically.txt";
 		ofstream AA_dis_file;
 
 		AA_dis_file.open(AA_dis_file_name.c_str());
