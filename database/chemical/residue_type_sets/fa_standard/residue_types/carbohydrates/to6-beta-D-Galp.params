@@ -34,7 +34,7 @@ ATOM 2H6  Hapo  HA   0.06  # pro-R
 ATOM  HO6 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
 
 LOWER_CONNECT C1
-UPPER_CONNECT O4
+UPPER_CONNECT O6
 
 BOND  C1   VO5             # cyclic bond
 BOND  C1   C2
