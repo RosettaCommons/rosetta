@@ -244,7 +244,7 @@ SetTorsion::get_name() const {
 	return SetTorsionCreator::mover_name();
 }
 
-void SetTorsion::parse_my_tag( utility::tag::TagCOP const tag,
+void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
