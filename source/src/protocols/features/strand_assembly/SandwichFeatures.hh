@@ -778,18 +778,18 @@ public:
 		core::Size sw_can_by_sh_id);
 
 	utility::vector1<core::Size>
-	get_vector_AA_distribution_w_direction (
+	get_vector_loop_AA_distribution (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string loop_kind
+		);
+
+	utility::vector1<core::Size>
+	get_vector_strand_AA_distribution (
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		std::string heading_direction, // like core_heading, surface_heading
 		std::string strand_location // like edge_strand, core_strand
-		);
-
-	utility::vector1<core::Size>
-	get_vector_AA_distribution_wo_direction (
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		std::string loop_kind
 		);
 
 
@@ -845,6 +845,15 @@ public:
 	);
 
 	void
+	update_rkde(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size RKDE_PK_id_counter,
+		std::string tag,
+		core::Size residue_number,
+		std::string	residue_type);
+
+	void
 	update_rkde_in_strands(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
@@ -855,14 +864,7 @@ public:
 		std::string	residue_type,
 		std::string	heading_direction);
 
-	void
-	update_rkde(
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size RKDE_PK_id_counter,
-		std::string tag,
-		core::Size residue_number,
-		std::string	residue_type);
+
 
 
 private:
@@ -1047,10 +1049,11 @@ private:
 	write_AA_kind_files_;
 
 	bool
-	write_AA_distribution_files_w_direction_;
+	write_loop_AA_distribution_files_;
 
 	bool
-	write_AA_distribution_files_wo_direction_;
+	write_strand_AA_distribution_files_;
+
 
 	/// @brief create score-functions for centroid and fullatom level
 	core::scoring::ScoreFunctionOP generate_scorefxn( bool fullatom = false );

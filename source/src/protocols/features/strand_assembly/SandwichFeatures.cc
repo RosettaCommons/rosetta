@@ -6609,7 +6609,68 @@ SandwichFeatures::retrieve_residue_num_of_rkde(
 
 
 utility::vector1<Size>
-SandwichFeatures::get_vector_AA_distribution_w_direction (
+SandwichFeatures::get_vector_loop_AA_distribution (
+	StructureID struct_id,
+	sessionOP db_session,
+	string loop_kind // like 'hairpin' or 'inter-sheet-loop'
+	)
+{
+	string	sum_string =
+		"SELECT\n"
+		"	sum(A), sum(C), sum(D), sum(E), sum(F), \n"
+		"	sum(G), sum(H), sum(I), sum(K), sum(L), \n"
+		"	sum(M), sum(N), sum(P), sum(Q), sum(R), \n"
+		"	sum(S), sum(T), sum(V), sum(W), sum(Y) \n"
+		"FROM\n"
+		"	sw_by_components \n"
+		"WHERE\n"
+		"	loop_kind = ? \n"
+		"	AND struct_id = ? ;";
+
+	statement sum_statement(basic::database::safely_prepare_statement(sum_string, db_session));
+	sum_statement.bind(1,	loop_kind);
+	sum_statement.bind(2,	struct_id);
+	result res(basic::database::safely_read_from_database(sum_statement));
+
+	Size num_A, num_C,	num_D,	num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
+
+	utility::vector1<Size> vector_loop_AA_distribution;
+
+	while(res.next())
+	{
+		res >> num_A >>  num_C >> 	num_D >> 	num_E >>  num_F >>  num_G >>  num_H >>  num_I >>  num_K >>  num_L >>  num_M >>  num_N >>  num_P >>  num_Q >>  num_R >>  num_S >>  num_T >>  num_V >>  num_W >>  num_Y;
+		vector_loop_AA_distribution.push_back(num_A);
+		vector_loop_AA_distribution.push_back(num_C);
+		vector_loop_AA_distribution.push_back(num_D);
+		vector_loop_AA_distribution.push_back(num_E);
+		vector_loop_AA_distribution.push_back(num_F);
+
+		vector_loop_AA_distribution.push_back(num_G);
+		vector_loop_AA_distribution.push_back(num_H);
+		vector_loop_AA_distribution.push_back(num_I);
+		vector_loop_AA_distribution.push_back(num_K);
+		vector_loop_AA_distribution.push_back(num_L);
+
+		vector_loop_AA_distribution.push_back(num_M);
+		vector_loop_AA_distribution.push_back(num_N);
+		vector_loop_AA_distribution.push_back(num_P);
+		vector_loop_AA_distribution.push_back(num_Q);
+		vector_loop_AA_distribution.push_back(num_R);
+
+		vector_loop_AA_distribution.push_back(num_S);
+		vector_loop_AA_distribution.push_back(num_T);
+		vector_loop_AA_distribution.push_back(num_V);
+		vector_loop_AA_distribution.push_back(num_W);
+		vector_loop_AA_distribution.push_back(num_Y);
+	}
+
+	return vector_loop_AA_distribution;
+} // get_vector_loop_AA_distribution
+
+
+
+utility::vector1<Size>
+SandwichFeatures::get_vector_strand_AA_distribution (
 	StructureID struct_id,
 	sessionOP db_session,
 	string heading_direction, // like core_heading, surface_heading
@@ -6654,38 +6715,38 @@ SandwichFeatures::get_vector_AA_distribution_w_direction (
 
 	Size num_A, num_C,	num_D,	num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
 
-	utility::vector1<Size> vector_AA_distribution_w_direction;
+	utility::vector1<Size> vector_strand_AA_distribution;
 
 	while(res.next())
 	{
 		res >> num_A >>  num_C >> 	num_D >> 	num_E >>  num_F >>  num_G >>  num_H >>  num_I >>  num_K >>  num_L >>  num_M >>  num_N >>  num_P >>  num_Q >>  num_R >>  num_S >>  num_T >>  num_V >>  num_W >>  num_Y;
-		vector_AA_distribution_w_direction.push_back(num_A);
-		vector_AA_distribution_w_direction.push_back(num_C);
-		vector_AA_distribution_w_direction.push_back(num_D);
-		vector_AA_distribution_w_direction.push_back(num_E);
-		vector_AA_distribution_w_direction.push_back(num_F);
+		vector_strand_AA_distribution.push_back(num_A);
+		vector_strand_AA_distribution.push_back(num_C);
+		vector_strand_AA_distribution.push_back(num_D);
+		vector_strand_AA_distribution.push_back(num_E);
+		vector_strand_AA_distribution.push_back(num_F);
 
-		vector_AA_distribution_w_direction.push_back(num_G);
-		vector_AA_distribution_w_direction.push_back(num_H);
-		vector_AA_distribution_w_direction.push_back(num_I);
-		vector_AA_distribution_w_direction.push_back(num_K);
-		vector_AA_distribution_w_direction.push_back(num_L);
+		vector_strand_AA_distribution.push_back(num_G);
+		vector_strand_AA_distribution.push_back(num_H);
+		vector_strand_AA_distribution.push_back(num_I);
+		vector_strand_AA_distribution.push_back(num_K);
+		vector_strand_AA_distribution.push_back(num_L);
 
-		vector_AA_distribution_w_direction.push_back(num_M);
-		vector_AA_distribution_w_direction.push_back(num_N);
-		vector_AA_distribution_w_direction.push_back(num_P);
-		vector_AA_distribution_w_direction.push_back(num_Q);
-		vector_AA_distribution_w_direction.push_back(num_R);
+		vector_strand_AA_distribution.push_back(num_M);
+		vector_strand_AA_distribution.push_back(num_N);
+		vector_strand_AA_distribution.push_back(num_P);
+		vector_strand_AA_distribution.push_back(num_Q);
+		vector_strand_AA_distribution.push_back(num_R);
 
-		vector_AA_distribution_w_direction.push_back(num_S);
-		vector_AA_distribution_w_direction.push_back(num_T);
-		vector_AA_distribution_w_direction.push_back(num_V);
-		vector_AA_distribution_w_direction.push_back(num_W);
-		vector_AA_distribution_w_direction.push_back(num_Y);
+		vector_strand_AA_distribution.push_back(num_S);
+		vector_strand_AA_distribution.push_back(num_T);
+		vector_strand_AA_distribution.push_back(num_V);
+		vector_strand_AA_distribution.push_back(num_W);
+		vector_strand_AA_distribution.push_back(num_Y);
 	}
 
-	return vector_AA_distribution_w_direction;
-} // get_vector_AA_distribution_w_direction
+	return vector_strand_AA_distribution;
+} // get_vector_strand_AA_distribution
 
 
 
@@ -6733,65 +6794,6 @@ SandwichFeatures::see_edge_or_core (
 	return edge_or_core;
 }
 
-
-utility::vector1<Size>
-SandwichFeatures::get_vector_AA_distribution_wo_direction (
-	StructureID struct_id,
-	sessionOP db_session,
-	string loop_kind // like 'hairpin' or 'inter-sheet-loop'
-	)
-{
-	string	sum_string =
-		"SELECT\n"
-		"	sum(A), sum(C), sum(D), sum(E), sum(F), \n"
-		"	sum(G), sum(H), sum(I), sum(K), sum(L), \n"
-		"	sum(M), sum(N), sum(P), sum(Q), sum(R), \n"
-		"	sum(S), sum(T), sum(V), sum(W), sum(Y) \n"
-		"FROM\n"
-		"	sw_by_components \n"
-		"WHERE\n"
-		"	loop_kind = ? \n"
-		"	AND struct_id = ? ;";
-
-	statement sum_statement(basic::database::safely_prepare_statement(sum_string, db_session));
-	sum_statement.bind(1,	loop_kind);
-	sum_statement.bind(2,	struct_id);
-	result res(basic::database::safely_read_from_database(sum_statement));
-
-	Size num_A, num_C,	num_D,	num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
-
-	utility::vector1<Size> vector_AA_distribution_wo_direction;
-
-	while(res.next())
-	{
-		res >> num_A >>  num_C >> 	num_D >> 	num_E >>  num_F >>  num_G >>  num_H >>  num_I >>  num_K >>  num_L >>  num_M >>  num_N >>  num_P >>  num_Q >>  num_R >>  num_S >>  num_T >>  num_V >>  num_W >>  num_Y;
-		vector_AA_distribution_wo_direction.push_back(num_A);
-		vector_AA_distribution_wo_direction.push_back(num_C);
-		vector_AA_distribution_wo_direction.push_back(num_D);
-		vector_AA_distribution_wo_direction.push_back(num_E);
-		vector_AA_distribution_wo_direction.push_back(num_F);
-
-		vector_AA_distribution_wo_direction.push_back(num_G);
-		vector_AA_distribution_wo_direction.push_back(num_H);
-		vector_AA_distribution_wo_direction.push_back(num_I);
-		vector_AA_distribution_wo_direction.push_back(num_K);
-		vector_AA_distribution_wo_direction.push_back(num_L);
-
-		vector_AA_distribution_wo_direction.push_back(num_M);
-		vector_AA_distribution_wo_direction.push_back(num_N);
-		vector_AA_distribution_wo_direction.push_back(num_P);
-		vector_AA_distribution_wo_direction.push_back(num_Q);
-		vector_AA_distribution_wo_direction.push_back(num_R);
-
-		vector_AA_distribution_wo_direction.push_back(num_S);
-		vector_AA_distribution_wo_direction.push_back(num_T);
-		vector_AA_distribution_wo_direction.push_back(num_V);
-		vector_AA_distribution_wo_direction.push_back(num_W);
-		vector_AA_distribution_wo_direction.push_back(num_Y);
-	}
-
-	return vector_AA_distribution_wo_direction;
-} // get_vector_AA_distribution_wo_direction
 
 
 
@@ -7388,9 +7390,9 @@ SandwichFeatures::parse_my_tag(
 
 	write_AA_kind_files_ = tag->getOption<bool>("write_AA_kind_files", false);
 					//	definition: if true, write files that have amino acid kinds
-	write_AA_distribution_files_w_direction_ = tag->getOption<bool>("write_AA_distribution_files_w_direction", false);
+	write_strand_AA_distribution_files_ = tag->getOption<bool>("write_strand_AA_distribution_files", false);
 					//	definition: if true, write files that have amino acid distributions with directions
-	write_AA_distribution_files_wo_direction_ = tag->getOption<bool>("write_AA_distribution_files_wo_direction", false);
+	write_loop_AA_distribution_files_ = tag->getOption<bool>("write_loop_AA_distribution_files", false);
 					//	definition: if true, write files that have amino acid distributions without directions
 	write_chain_B_resnum_ = tag->getOption<bool>("write_chain_B_resnum", false);
 			// if true, write chain_B_resnum file for InterfaceAnalyzer
@@ -7466,8 +7468,8 @@ SandwichFeatures::report_features(
 	if (write_all_info_files_)
 	{
 		write_AA_kind_files_ = true;
-		write_AA_distribution_files_w_direction_ = true;
-		write_AA_distribution_files_wo_direction_ = true;
+		write_strand_AA_distribution_files_ = true;
+		write_loop_AA_distribution_files_ = true;
 		write_chain_B_resnum_ = true;
 		write_phi_psi_of_all_ = true;
 		write_phi_psi_of_E_	= true;
@@ -8739,28 +8741,35 @@ SandwichFeatures::report_features(
 
 
 	// <begin> write AA_dis to a file
-	if (write_AA_distribution_files_w_direction_ && canonical_sw_extracted_from_this_pdb_file)
+	if (write_strand_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
 	{
-		Size tag_len = tag.length();
-		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_AA_distribution_w_direction_sorted_alphabetically.txt";
-		ofstream AA_dis_file;
-
-		AA_dis_file.open(AA_dis_file_name.c_str());
-		utility::vector1<Size> vec_core_heading_at_core_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "core_heading", "core");
-																							// struct_id,	db_session, heading_direction, strand_location
-		utility::vector1<Size> vec_surface_heading_at_core_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "surface_heading", "core");
-																							// struct_id,	db_session, heading_direction, strand_location
-		utility::vector1<Size> vec_core_heading_at_edge_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "core_heading", "edge");
-																							// struct_id,	db_session, heading_direction, strand_location
-		utility::vector1<Size> vec_surface_heading_at_edge_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "surface_heading", "edge");
-																							// struct_id,	db_session, heading_direction, strand_location
-		AA_dis_file << "core_heading_at_core_strand	surface_heading_at_core_strand	core_heading_at_edge_strand	surface_heading_at_edge_strand" << endl;
-		for (Size i =1; i<=(vec_core_heading_at_core_strand.size()); i++)
+		if	(!count_AA_with_direction_)
 		{
-			AA_dis_file << vec_core_heading_at_core_strand[i] << "	" << vec_surface_heading_at_core_strand[i] << "	" << vec_core_heading_at_edge_strand[i] << "	" << vec_surface_heading_at_edge_strand[i] << endl;
+			TR	<<	"You did not turn on count_AA_with_direction for	write_strand_AA_distribution_files so SandwicheFeature will not write strand_AA_distribution_files"	<<	endl;
 		}
-		AA_dis_file.close();
+		else
+		{
+			Size tag_len = tag.length();
+			string pdb_file_name = tag.substr(0, tag_len-5);
+			string AA_dis_file_name = pdb_file_name + "_strand_AA_distribution_sorted_alphabetically.txt";
+			ofstream AA_dis_file;
+
+			AA_dis_file.open(AA_dis_file_name.c_str());
+			utility::vector1<Size> vec_core_heading_at_core_strand = get_vector_strand_AA_distribution (struct_id,	db_session, "core_heading", "core");
+																								// struct_id,	db_session, heading_direction, strand_location
+			utility::vector1<Size> vec_surface_heading_at_core_strand = get_vector_strand_AA_distribution (struct_id,	db_session, "surface_heading", "core");
+																								// struct_id,	db_session, heading_direction, strand_location
+			utility::vector1<Size> vec_core_heading_at_edge_strand = get_vector_strand_AA_distribution (struct_id,	db_session, "core_heading", "edge");
+																								// struct_id,	db_session, heading_direction, strand_location
+			utility::vector1<Size> vec_surface_heading_at_edge_strand = get_vector_strand_AA_distribution (struct_id,	db_session, "surface_heading", "edge");
+																								// struct_id,	db_session, heading_direction, strand_location
+			AA_dis_file << "core_heading_at_core_strand	surface_heading_at_core_strand	core_heading_at_edge_strand	surface_heading_at_edge_strand" << endl;
+			for (Size i =1; i<=(vec_core_heading_at_core_strand.size()); i++)
+			{
+				AA_dis_file << vec_core_heading_at_core_strand[i] << "	" << vec_surface_heading_at_core_strand[i] << "	" << vec_core_heading_at_edge_strand[i] << "	" << vec_surface_heading_at_edge_strand[i] << endl;
+			}
+			AA_dis_file.close();
+		}
 	}
 	// <end> write AA_dis to a file
 
@@ -8822,16 +8831,16 @@ SandwichFeatures::report_features(
 
 
 	// <begin> write AA_distribution_without_direction to a file
-	if (write_AA_distribution_files_wo_direction_ && canonical_sw_extracted_from_this_pdb_file)
+	if (write_loop_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_AA_distribution_wo_direction_sorted_alphabetically.txt";
+		string AA_dis_file_name = pdb_file_name + "_loop_AA_distribution_sorted_alphabetically.txt";
 		ofstream AA_dis_file;
 
 		AA_dis_file.open(AA_dis_file_name.c_str());
-		utility::vector1<Size> vector_of_hairpin_AA = get_vector_AA_distribution_wo_direction (struct_id,	db_session, "hairpin");
-		utility::vector1<Size> vector_of_inter_sheet_loop_AA = get_vector_AA_distribution_wo_direction (struct_id,	db_session, "loop_connecting_two_sheets");
+		utility::vector1<Size> vector_of_hairpin_AA = get_vector_loop_AA_distribution (struct_id,	db_session, "hairpin");
+		utility::vector1<Size> vector_of_inter_sheet_loop_AA = get_vector_loop_AA_distribution (struct_id,	db_session, "loop_connecting_two_sheets");
 
 		AA_dis_file << "hairpin_AA	inter_sheet_loop_AA" << endl;
 		for (Size i =1; i<=(vector_of_hairpin_AA.size()); i++)
@@ -8885,6 +8894,8 @@ SandwichFeatures::report_features(
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
+
+		// <begin> make a resfile to design all residues
 		string resfile_name = pdb_file_name + "_resfile.txt";
 		ofstream resfile_stream;
 
@@ -8948,11 +8959,69 @@ SandwichFeatures::report_features(
 			}
 		}
 
-
 		resfile_stream.close();
+		// <end> make a resfile to design all residues
+
+		// <begin> make a resfile to design surface heading or loop residues
+		string surface_loop_resfile_name = pdb_file_name + "_surface_loop_resfile.txt";
+		ofstream surface_loop_resfile_stream;
+
+		surface_loop_resfile_stream.open(surface_loop_resfile_name.c_str());
+
+		surface_loop_resfile_stream << "EX 1 NOTAA C" << endl;
+		surface_loop_resfile_stream << "USE_INPUT_SC" << endl;
+		surface_loop_resfile_stream << "start" << endl;
+
+		surface_loop_resfile_stream << "# final update: 04/29/2014" << endl;
+		surface_loop_resfile_stream << "# NOTAA	CFHMPWY for surface_heading residues at core strands" << endl;
+		surface_loop_resfile_stream << "# NOTAA	CFHMWY for surface_heading residuess at edge strands" << endl;
+
+		surface_loop_resfile_stream << "# NATAA	for core_heading residues " << endl;
+
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
+		{
+			Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
+			Size residue_end	=	bs_of_sw_can_by_sh[ii].get_end();
+			for (Size	residue_num	=	residue_begin;	residue_num	<=	residue_end; residue_num++)
+			{
+				{
+					string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(),	residue_begin,	residue_end,	residue_num);
+					if (heading == "surface")
+					{
+						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+						if (edge_or_core == "core")
+						{
+							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFHMPWY" << endl;
+						}
+						else	if (edge_or_core == "edge")
+						{
+							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFMPWY" << endl;
+						}
+					}
+					else if (heading == "core")
+					{
+						surface_loop_resfile_stream << residue_num << "	A	EX	1	NATAA" << endl;
+					}
+				}
+			}
+		}
+
+		surface_loop_resfile_stream << "# NOTAA	CFMWY for loop residues" << endl;
+		for (Size i =1; i<=(pose.total_residue()); i++)
+		{
+			string edge_or_core = see_edge_or_core (struct_id,	db_session,	i);
+			if (edge_or_core == "loop_or_short_edge")
+			{
+				surface_loop_resfile_stream << i << "	A	EX	1	NOTAA	CFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
+			}
+		}
+
+		surface_loop_resfile_stream.close();
+		// <end> make a resfile to design surface heading or loop residues
+
+
 	}
 	// <end> write resfile automatically
-	///////////// development
 
 
 		TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
