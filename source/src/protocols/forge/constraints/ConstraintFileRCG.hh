@@ -64,6 +64,9 @@ public:
 	virtual protocols::moves::MoverOP
 	fresh_instance() const;
 
+	virtual protocols::moves::MoverOP
+	clone() const;
+
 	virtual
 	void generate_remodel_constraints( Pose const & pose );
 

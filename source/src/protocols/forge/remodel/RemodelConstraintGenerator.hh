@@ -73,10 +73,6 @@ public: //constructors
 
 public:
 
-	//virtual
-	//RemodelConstraintGeneratorOP
-	//clone() const = 0;
-
 	void
 	add_remodel_constraints_to_pose(
 		core::pose::Pose & pose );

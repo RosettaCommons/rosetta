@@ -96,6 +96,12 @@ ConstraintFileRCG::fresh_instance() const
 	return new ConstraintFileRCG();
 }
 
+protocols::moves::MoverOP
+ConstraintFileRCG::clone() const
+{
+	return new ConstraintFileRCG( *this );
+}
+
 /// @brief
 void
 ConstraintFileRCG::set_cstfile( String const & filename )
