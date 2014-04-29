@@ -62,7 +62,7 @@ public:
     }
     
     utility::vector1<core::Size> residue_list(core::Size iset, core::pose::Pose const & pose);
-    core::Real angle(core::Size iset);
+    core::Real angle(core::Size iset) const;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
@@ -70,7 +70,7 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
     
-	core::Real angle(core::Size const iset) const;
+	//core::Real angle(core::Size const iset) const;
     std::list <core::Size> residue(core::Size const iset) const;
 	std::string torsion_name(core::Size const iset) {
         return torsion_name_[iset];

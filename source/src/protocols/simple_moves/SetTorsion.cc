@@ -97,7 +97,7 @@ SetTorsion::SetTorsion() :
 {}
 
 core::Real
-SetTorsion::angle(core::Size iset) {
+SetTorsion::angle(core::Size iset) const {
     if (angle_[iset] == "random") {
         return 360.*RG.uniform()-180.;
     }
