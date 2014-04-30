@@ -8896,7 +8896,7 @@ SandwichFeatures::report_features(
 		string pdb_file_name = tag.substr(0, tag_len-5);
 
 		// <begin> make a resfile to design all residues
-		string resfile_name = pdb_file_name + "_resfile.txt";
+		string resfile_name = pdb_file_name + "_resfile_to_design_all_residues.txt";
 		ofstream resfile_stream;
 
 		resfile_stream.open(resfile_name.c_str());
@@ -8905,12 +8905,12 @@ SandwichFeatures::report_features(
 		resfile_stream << "USE_INPUT_SC" << endl;
 		resfile_stream << "start" << endl;
 
-		resfile_stream << "# final update: 03/22/2014" << endl;
-		resfile_stream << "# NOTAA	CFHMPWY for surface_heading residues at core strands" << endl;
-		resfile_stream << "# NOTAA	CFHMWY for surface_heading residuess at edge strands" << endl;
+		resfile_stream << "# final update: 04/30/2014 based on 203 native sandwiches" << endl;
+		resfile_stream << "# NOTAA	CFPWY for surface_heading residues at core strands" << endl;
+		resfile_stream << "# NOTAA	CFWY for surface_heading residues at edge strands" << endl;
 
-		resfile_stream << "# NOTAA	CDEFGHKNPQRST for core_heading residues at core strands" << endl;
-		resfile_stream << "# NOTAA	CDHMNPQW for core_heading residues at edge strands" << endl;
+		resfile_stream << "# NOTAA	CDKNPR for core_heading residues at core strands" << endl;
+		resfile_stream << "# NOTAA	CDNP for core_heading residues at edge strands" << endl;
 
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
 		{
@@ -8925,11 +8925,11 @@ SandwichFeatures::report_features(
 						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
 						if (edge_or_core == "core")
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFHMPWY" << endl;
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
 						}
 						else	if (edge_or_core == "edge")
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFMPWY" << endl;
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
 						}
 					}
 					else if (heading == "core")
@@ -8937,11 +8937,11 @@ SandwichFeatures::report_features(
 						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
 						if (edge_or_core == "core")
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDEFGHKNPQRST" << endl;
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDKNPR" << endl;
 						}
 						else	if (edge_or_core == "edge")
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDHMNPQW" << endl;
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDNP" << endl;
 						}
 					}
 				}
@@ -8963,7 +8963,7 @@ SandwichFeatures::report_features(
 		// <end> make a resfile to design all residues
 
 		// <begin> make a resfile to design surface heading or loop residues
-		string surface_loop_resfile_name = pdb_file_name + "_surface_loop_resfile.txt";
+		string surface_loop_resfile_name = pdb_file_name + "_resfile_to_design_surface_heading_or_loop_residues.txt";
 		ofstream surface_loop_resfile_stream;
 
 		surface_loop_resfile_stream.open(surface_loop_resfile_name.c_str());
@@ -8972,9 +8972,9 @@ SandwichFeatures::report_features(
 		surface_loop_resfile_stream << "USE_INPUT_SC" << endl;
 		surface_loop_resfile_stream << "start" << endl;
 
-		surface_loop_resfile_stream << "# final update: 04/29/2014" << endl;
-		surface_loop_resfile_stream << "# NOTAA	CFHMPWY for surface_heading residues at core strands" << endl;
-		surface_loop_resfile_stream << "# NOTAA	CFHMWY for surface_heading residuess at edge strands" << endl;
+		surface_loop_resfile_stream << "# final update: 04/30/2014 based on 203 native sandwiches" << endl;
+		surface_loop_resfile_stream << "# NOTAA	CFPWY for surface_heading residues at core strands" << endl;
+		surface_loop_resfile_stream << "# NOTAA	CFWY for surface_heading residues at edge strands" << endl;
 
 		surface_loop_resfile_stream << "# NATAA	for core_heading residues " << endl;
 
@@ -8991,11 +8991,11 @@ SandwichFeatures::report_features(
 						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
 						if (edge_or_core == "core")
 						{
-							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFHMPWY" << endl;
+							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
 						}
 						else	if (edge_or_core == "edge")
 						{
-							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFMPWY" << endl;
+							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
 						}
 					}
 					else if (heading == "core")
