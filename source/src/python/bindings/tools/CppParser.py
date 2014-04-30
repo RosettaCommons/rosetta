@@ -1298,7 +1298,7 @@ def sortObjects(l):
                     if l[i].getChildrenContext()=='::core::chemical::Atom::' and l[j].getChildrenContext()=='::core::chemical::AtomICoor::': swap(i, j); f = True; break
 
 
-def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending=''):
+def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending='', monolith=False):
     ''' Template for creating one module, and wrapping each elelemnts... (each elements must have .wrap)
     '''
     #print 'by_hand_beginning=%s, by_hand_ending=%s' % (by_hand_beginning, by_hand_ending)
@@ -1347,11 +1347,15 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
 
 
     r += by_hand_beginning + by_hand_ending
-    r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ){\n' % (generateIncludes(includes), prefix_code, name)
+    #r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ) {\n' % (generateIncludes(includes), prefix_code, name)
+
+    module_prefix = '{includes}\n\n{prefix}\nvoid _python_module{name}() {{\n' if monolith else '{includes}\n\n{prefix}\nBOOST_PYTHON_MODULE( {name} ) {{\n'
+
+    r += module_prefix.format(includes=generateIncludes(includes), prefix=prefix_code, name=name)
 
     if by_hand_beginning:
         print '\033[33m\033[1mAdding by_hand_beginning code for %s::%s\033[0m' % (name_spaces, name)
-        r += '__%s_by_hand_beginning__();\n\n' % name_spaces[0].split('::')[-2]
+        r += '  __%s_by_hand_beginning__();\n\n' % name_spaces[0].split('::')[-2]
 
     if by_hand_ending:
         print '\033[33m\033[1mAdding by_hand_ending code for %s::%s\033[0m' % (name_spaces, name)
@@ -1364,7 +1368,8 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
     return code+[r]
 
 
-def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_files_list, ParserType=GccXML, max_funcion_size=1024*1024*1024, by_hand_beginning='', by_hand_ending=''):
+def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_files_list, ParserType=GccXML, max_funcion_size=1024*1024*1024,
+                       by_hand_beginning='', by_hand_ending='', monolith=False):
     print 'Wrapping %s... with file list as: %s...' % (namespaces_to_wrap, relevant_files_list)
     for f in relevant_files_list[:] :  relevant_files_list.append('./'+f)
 
@@ -1380,7 +1385,7 @@ def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_fil
     cxml = ParserType(dom)
     cxml.parse(relevantFilesList=relevant_files_list)
     #return wrapModule(module_name, cxml.Contexts[namespace_to_wrap], cxml.Contexts)
-    res = wrapModule(module_name, namespaces_to_wrap, cxml.Contexts, relevant_files_list, max_funcion_size, by_hand_beginning=by_hand_beginning, by_hand_ending=by_hand_ending)
+    res = wrapModule(module_name, namespaces_to_wrap, cxml.Contexts, relevant_files_list, max_funcion_size, by_hand_beginning=by_hand_beginning, by_hand_ending=by_hand_ending, monolith=monolith)
 
     del cxml  # trying to save memory...
     del dom

@@ -1,4 +1,4 @@
-from __pose_all_at_once_ import *
+from _core_pose_ import *
 
 from cStringIO import StringIO
 

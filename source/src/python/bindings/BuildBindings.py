@@ -97,6 +97,12 @@ def main(args):
       help="Debug only. Try to check time stamp of files before building them.",
       )
 
+    parser.add_option("--monolith",
+      default=False,
+      action="store_true",
+      help="Create bindings in monolith mode instead of one-lib-per-namespace (default).",
+      )
+
     parser.add_option("--debug",
       action="store_true", default=False,
       help="Perform a Debug build when possible.",
@@ -271,7 +277,7 @@ def main(args):
     #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
     for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
 
-    bindings_config = dict(utility=True, basic=False, numeric=False, core=False, protocols=False)
+    bindings_config = dict(utility=True, basic=False, numeric=False, core=False, protocols=False, low_mem=False)
     if not Options.utility_only:
         bindings_config['basic']   = True
         bindings_config['numeric'] = True
@@ -1223,7 +1229,8 @@ class ModuleBuilder:
         self.by_hand_beginning = file(self.by_hand_beginning_file).read() if os.path.isfile(self.by_hand_beginning_file) else ''
         self.by_hand_ending = file(self.by_hand_ending_file).read() if os.path.isfile(self.by_hand_ending_file) else ''
 
-        self.all_at_once_base = '__' + path.split('/')[-1] + '_all_at_once_'
+        #self.all_at_once_base = '__' + path.split('/')[-1] + '_all_at_once_'
+        self.all_at_once_base = '_' + path.replace('/', '_') + ('_monolith_' if Options.monolith else '_')
         self.all_at_once_source_cpp = self.fname_base + '/' + self.all_at_once_base + '.source.cc'
         self.all_at_once_cpp = self.fname_base + '/' + self.all_at_once_base + '.'
         self.all_at_once_obj = self.fname_base + '/' + self.all_at_once_base + '.'
@@ -1305,7 +1312,7 @@ class ModuleBuilder:
                 #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
 
                 code = tools.CppParser.parseAndWrapModule(self.all_at_once_base, namespaces_to_wrap, self.all_at_once_xml, self.all_at_once_relative_files, max_funcion_size=Options.max_function_size,
-                                                          by_hand_beginning=self.by_hand_beginning, by_hand_ending=self.by_hand_ending)
+                                                          by_hand_beginning=self.by_hand_beginning, by_hand_ending=self.by_hand_ending, monolith=Options.monolith)
 
                 print_('Getting include list...', color='black', bright=True)
                 includes = exclude.getIncludes(self.headers)
@@ -1391,7 +1398,7 @@ class ModuleBuilder:
     def linkBindings(self):
         ''' Build early generated bindings.
         '''
-        if not self.headers  or  Options.cross_compile: return
+        if not self.headers  or  Options.cross_compile  or  Options.monolith: return
         source_list = json.load( file(self.all_at_once_json) )
 
         relink = False

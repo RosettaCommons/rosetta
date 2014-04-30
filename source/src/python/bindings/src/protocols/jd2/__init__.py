@@ -1,4 +1,4 @@
-from __jd2_all_at_once_ import *
+from _protocols_jd2_ import *
 
 import rosetta.utility.tag
 

@@ -32,92 +32,102 @@ import utility.excn
 import rosetta.utility.file
 
 
-if config['numeric']:
-    import numeric
-
-
-if config['basic']:
-    import basic
-    import basic.datacache
-    import basic.resource_manager
-
-
-if config['core']:
-    import core
-    import core.graph
-    import core.chemical
-    import core.chemical.orbitals
-    import core.scoring
-    import core.scoring.methods
-    import core.scoring.constraints
-    import core.scoring.etable
-    import core.kinematics
-
-    import core.io.silent
+if config['low_mem']:
     import core.pose
-
-    import rosetta.core.graph
-    import rosetta.core.conformation
-    import rosetta.core.id
-    import rosetta.core.io
-    import rosetta.core.io.pdb
-    import rosetta.core.fragment
-    import rosetta.core.kinematics
-    import rosetta.core.pack
-    import rosetta.core.pack.task
-    import rosetta.core.scoring.hbonds
-
-    from rosetta.core.id import *
-    from rosetta.core.conformation import *
-    from rosetta.core.chemical import *
-    from rosetta.core.pose import Pose
-
-    from rosetta.core.import_pose import pose_from_pdb
-    from rosetta.core.io.pdb import dump_pdb
-    from rosetta.core.pose import make_pose_from_sequence
-
-    import rosetta.core.pose
-    from rosetta.core.scoring import *
-    from rosetta.core.kinematics import *
-    from rosetta.core.fragment import *
-    from rosetta.core.pack.task import *
-    from rosetta.core.pack.task.operation import *
-
-
-if config['protocols']:
-    import protocols
-    import protocols.moves
-    import protocols.canonical_sampling
-    import protocols.simple_moves
-    import protocols.jumping
-    import protocols.jd2
-    import protocols.jd2.archive
-    import protocols.abinitio
-
-    import protocols.filters
-    import protocols.docking
+    import core.graph
+    import core.scoring.methods
     import protocols.init
+    from rosetta.core.pose import Pose
+    from rosetta.core.scoring import *
 
-    import rosetta.protocols.loops
-    import rosetta.protocols.wum
-    import rosetta.protocols.relax
-    import rosetta.core.pose.signals
-
-    import rosetta.protocols.simple_moves
+else:
+    if config['numeric']:
+        import numeric
 
 
-    from rosetta.protocols.moves import *
-    from rosetta.protocols.simple_moves import *
-    from rosetta.protocols.abinitio import *
-    from rosetta.protocols.docking import *
-    from rosetta.protocols.loops import *
-    from rosetta.protocols.relax import *
+    if config['basic']:
+        import basic
+        import basic.datacache
+        import basic.resource_manager
 
-    #from rosetta.protocols.rigid import *
-    from rosetta.protocols.simple_moves import *
 
-# PyMOLMover and associated methods.
-if config['protocols']: from PyMolLink import *
+    if config['core']:
+        import core
+        import core.graph
+        import core.chemical
+        import core.chemical.orbitals
+        import core.scoring
+        import core.scoring.methods
+        import core.scoring.constraints
+        import core.scoring.etable
+        import core.kinematics
+
+        import core.io.silent
+        import core.pose
+
+        import rosetta.core.graph
+        import rosetta.core.conformation
+        import rosetta.core.id
+        import rosetta.core.io
+        import rosetta.core.io.pdb
+        import rosetta.core.fragment
+        import rosetta.core.kinematics
+        import rosetta.core.pack
+        import rosetta.core.pack.task
+        import rosetta.core.scoring.hbonds
+
+        from rosetta.core.id import *
+        from rosetta.core.conformation import *
+        from rosetta.core.chemical import *
+        from rosetta.core.pose import Pose
+
+        from rosetta.core.import_pose import pose_from_pdb
+        from rosetta.core.io.pdb import dump_pdb
+        from rosetta.core.pose import make_pose_from_sequence
+
+        import rosetta.core.pose
+        from rosetta.core.scoring import *
+        from rosetta.core.kinematics import *
+        from rosetta.core.fragment import *
+        from rosetta.core.pack.task import *
+        from rosetta.core.pack.task.operation import *
+
+
+    if config['protocols']:
+        import protocols
+        import protocols.moves
+        import protocols.canonical_sampling
+        import protocols.simple_moves
+        import protocols.jumping
+        import protocols.jd2
+        import protocols.jd2.archive
+        import protocols.abinitio
+
+        import protocols.filters
+        import protocols.docking
+        import protocols.init
+
+        import rosetta.protocols.loops
+        import rosetta.protocols.wum
+        import rosetta.protocols.relax
+        import rosetta.core.pose.signals
+
+        import rosetta.protocols.simple_moves
+
+
+        from rosetta.protocols.moves import *
+        from rosetta.protocols.simple_moves import *
+        from rosetta.protocols.abinitio import *
+        from rosetta.protocols.docking import *
+        from rosetta.protocols.loops import *
+        from rosetta.protocols.relax import *
+
+        #from rosetta.protocols.rigid import *
+        from rosetta.protocols.simple_moves import *
+
+    # PyMOLMover and associated methods.
+    if config['protocols']: from PyMolLink import *
+
 
 import version
 

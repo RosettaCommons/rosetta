@@ -155,6 +155,7 @@ sources = {
 		"WhileMover",
 	],
 	"protocols/rosetta_scripts": [
+		"AdditionalOutputWrapper",
 		"MultipleOutputWrapper",
 		"MultiplePoseMover",
 		"ParsedProtocol",

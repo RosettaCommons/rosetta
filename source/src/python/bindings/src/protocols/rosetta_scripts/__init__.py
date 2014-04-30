@@ -1,4 +1,4 @@
-from __rosetta_scripts_all_at_once_ import *
+from _protocols_rosetta_scripts_ import *
 
 from types import MethodType
 

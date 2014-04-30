@@ -1,4 +1,4 @@
-from __fragment_all_at_once_ import *
+from _core_fragment_ import *
 
 from cStringIO import StringIO
 
