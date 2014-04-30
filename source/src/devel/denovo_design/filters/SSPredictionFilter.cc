@@ -198,7 +198,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 		}
 	} else {
 		runtime_assert( psipred_interface_ );
-		PsiPredResult const & psipred_result = psipred_interface_->run_psipred( pose, wanted_ss );
+		PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, wanted_ss );
 		if ( use_probability_ ) {
 			TR << "Blueprint SS = " << wanted_ss << std::endl;
 			if ( use_confidence_ ) {
@@ -207,7 +207,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 			} else {
 				if (mismatch_probability_) {
 					runtime_assert( wanted_ss.size() == psipred_result.psipred2_confidence.size() );
-					return compute_mismatch_prob( generate_prob( psipred_result, wanted_ss ) );
+					return compute_mismatch_prob( psipred_result.psipred_prob );
 				} else {
 					runtime_assert( wanted_ss.size() == psipred_result.psipred_prob.size() );
 					return compute_boltz_sum( psipred_result.psipred_prob );
