@@ -32,7 +32,7 @@ import utility.excn
 import rosetta.utility.file
 
 
-if config['low_mem']:
+if config['low_memory_mode']:
     import core.pose
     import core.graph
     import core.scoring.methods

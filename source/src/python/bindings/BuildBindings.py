@@ -277,7 +277,7 @@ def main(args):
     #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
     for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
 
-    bindings_config = dict(utility=True, basic=False, numeric=False, core=False, protocols=False, low_mem=False)
+    bindings_config = dict(utility=True, basic=False, numeric=False, core=False, protocols=False, low_memory_mode=False)
     if not Options.utility_only:
         bindings_config['basic']   = True
         bindings_config['numeric'] = True
