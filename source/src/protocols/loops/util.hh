@@ -133,9 +133,9 @@ extract_continuous_chunks(core::pose::Pose const & pose,
 /// @details Values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
 ///  out of this range. -JAB
 ///  Berkholz DS, Shapovalov MV, Dunbrack RL Jr, Karplus PA (2009)
-///  Conformation dependence of backbone geometry in proteins. Structure 17: 1316–1325. 
+///  Conformation dependence of backbone geometry in proteins. Structure 17: 1316-1325.
 ///  deviation is +/- from the min/max values of the CDL.
-/// 
+///
 std::pair<bool, core::Size>
 has_severe_pep_bond_geom_issues(
 	core::pose::Pose const & pose,
