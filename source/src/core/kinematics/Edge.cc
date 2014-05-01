@@ -87,9 +87,9 @@ operator >>( std::istream & is, Edge & e )
 		return is;
 	}
 	is >> e.start_ >> e.stop_ >> e.label_;
-	if ( e.label() == Edge::CHEMICAL ) is >> e.start_atom_ >> e.stop_atom_;
 
 	e.start_atom_ = ""; e.stop_atom_ = "";
+	if ( e.label() == Edge::CHEMICAL ) is >> e.start_atom_ >> e.stop_atom_;
 	if ( e.is_jump() && tag == "JEDGE" ) {
 		is >> e.start_atom_;
 		is >> e.stop_atom_;
