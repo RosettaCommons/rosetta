@@ -114,15 +114,18 @@ ResidueTypeConstraintMover::parse_my_tag(
 	Pose const &
 )
 {
-	if ( tag->hasOption("AA_name3") && tag->hasOption("favor_bonus"))	//	since this mover does not necessarily favor native sequence only, I named it "favor_bonus" to make it more general
+	if ( tag->hasOption("AA_name3"))
 	{
 		AA_name3_ = tag->getOption<std::string>("AA_name3"); // for example: ASP,GLU
-		favor_bonus_ = tag->getOption<Real>("favor_bonus",	0.5); // positively higher bonus gives more favorable selection to specified residue
 	}
 	else
 	{
-		TR << "please specifiy AA_name3 and native_bonus" << std::endl;
+		TR << "please specifiy AA_name3 like SER,THR" << std::endl;
 	}
+	favor_bonus_ = tag->getOption<Real>("favor_bonus",	0.5);
+		//	since this mover does not necessarily favor native sequence only, I named it "favor_bonus" instead of "native_bonus"	to make it more general
+		//	positively higher bonus gives more favorable selection to (a) specified residue(s)
+
 }
 } // moves
 } // protocols

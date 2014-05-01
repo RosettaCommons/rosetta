@@ -7402,6 +7402,9 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, write phi_psi_file
 	write_resfile_ = tag->getOption<bool>("write_resfile", false);
 					//	definition: if true, write resfile automatically
+	write_resfile_to_minimize_too_much_hydrophobic_surface_ = tag->getOption<bool>("write_resfile_to_minimize_too_much_hydrophobic_surface", false);
+					//	definition: if true, write resfile to_minimize_too_much_hydrophobic_surface
+
 	write_p_aa_pp_files_ = tag->getOption<bool>("write_p_aa_pp_files", false);
 					//	definition: if true, write p_aa_pp_files
 	write_rama_at_AA_to_files_ = tag->getOption<bool>("write_rama_at_AA_to_files", false);
@@ -7474,6 +7477,7 @@ SandwichFeatures::report_features(
 		write_phi_psi_of_all_ = true;
 		write_phi_psi_of_E_	= true;
 		write_resfile_	= true;
+		write_resfile_to_minimize_too_much_hydrophobic_surface_	=	true;
 		write_p_aa_pp_files_	= true;
 		write_rama_at_AA_to_files_	=	true;
 		write_heading_directions_of_all_AA_in_a_strand_	=	true;
@@ -8912,6 +8916,13 @@ SandwichFeatures::report_features(
 		resfile_stream << "# NOTAA	CDKNPR for core_heading residues at core strands" << endl;
 		resfile_stream << "# NOTAA	CDNP for core_heading residues at edge strands" << endl;
 
+		if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
+		{
+			resfile_stream << "# PIKAA	DENQST	for every 3rd surface-heading	residues " << endl;
+		}
+
+		int	count_to_minimize_too_much_hydrophobic_surface	=	0;
+
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
 		{
 			Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
@@ -8922,15 +8933,40 @@ SandwichFeatures::report_features(
 					string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(),	residue_begin,	residue_end,	residue_num);
 					if (heading == "surface")
 					{
-						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
-						if (edge_or_core == "core")
+						if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+							count_to_minimize_too_much_hydrophobic_surface++;
+							if	(count_to_minimize_too_much_hydrophobic_surface	==	2)
+							{
+								resfile_stream << residue_num << "	A	EX	1	PIKAA	DENQST" << endl;
+								count_to_minimize_too_much_hydrophobic_surface	=	0;
+							}
+							else
+							{
+								string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+								if (edge_or_core == "core")
+								{
+									resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+								}
+								else	if (edge_or_core == "edge")
+								{
+									resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+								}
+							}
 						}
-						else	if (edge_or_core == "edge")
+						else	//(!write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+							string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+							if (edge_or_core == "core")
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+							}
+							else	if (edge_or_core == "edge")
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+							}
 						}
+
 					}
 					else if (heading == "core")
 					{
@@ -8962,6 +8998,7 @@ SandwichFeatures::report_features(
 		resfile_stream.close();
 		// <end> make a resfile to design all residues
 
+
 		// <begin> make a resfile to design surface heading or loop residues
 		string surface_loop_resfile_name = pdb_file_name + "_resfile_to_design_surface_heading_or_loop_residues.txt";
 		ofstream surface_loop_resfile_stream;
@@ -8978,6 +9015,12 @@ SandwichFeatures::report_features(
 
 		surface_loop_resfile_stream << "# NATAA	for core_heading residues " << endl;
 
+		if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
+		{
+			surface_loop_resfile_stream << "# PIKAA	DENQST	for every 3rd surface-heading	residues " << endl;
+		}
+
+		count_to_minimize_too_much_hydrophobic_surface	=	0;
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
 		{
 			Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
@@ -8988,14 +9031,39 @@ SandwichFeatures::report_features(
 					string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(),	residue_begin,	residue_end,	residue_num);
 					if (heading == "surface")
 					{
-						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
-						if (edge_or_core == "core")
+						if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+							//surface_loop_resfile_stream <<	"count_to_minimize_too_much_hydrophobic_surface:" << count_to_minimize_too_much_hydrophobic_surface	<<	endl;
+							count_to_minimize_too_much_hydrophobic_surface++;
+							if	(count_to_minimize_too_much_hydrophobic_surface	==	2)
+							{
+								surface_loop_resfile_stream << residue_num << "	A	EX	1	PIKAA	DENQST" << endl;
+								count_to_minimize_too_much_hydrophobic_surface	=	0;
+							}
+							else
+							{
+								string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+								if (edge_or_core == "core")
+								{
+									surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+								}
+								else	if (edge_or_core == "edge")
+								{
+									surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+								}
+							}
 						}
-						else	if (edge_or_core == "edge")
+						else	//(!write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+							string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+							if (edge_or_core == "core")
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+							}
+							else	if (edge_or_core == "edge")
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+							}
 						}
 					}
 					else if (heading == "core")

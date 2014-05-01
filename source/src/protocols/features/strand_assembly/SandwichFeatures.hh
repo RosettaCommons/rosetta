@@ -957,6 +957,9 @@ private:
 	write_resfile_;
 
 	bool
+	write_resfile_to_minimize_too_much_hydrophobic_surface_;
+
+	bool
 	write_p_aa_pp_files_;
 
 	bool

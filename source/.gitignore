@@ -49,3 +49,4 @@ get_commit_id.sh
 /compile*
 .unit_test_results.json
 _performance_
+*~
