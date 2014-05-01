@@ -867,8 +867,8 @@ public:
 		const int kmax=Lali;
 		std::vector <int> k_ali(kmax);
 		int ka, k;
-		numeric::xyzVector<core::Real> t;
-		numeric::xyzMatrix<core::Real> u;
+		numeric::xyzVector<core::Real> t(0.0, 0.0, 0.0);
+		numeric::xyzMatrix<core::Real> u(0.0);
 		double d;
 
 		//iterative parameters
