@@ -283,13 +283,15 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 				<< "Parser is present.  Input mover will be overwritten with whatever the parser creates."
 				<< std::endl;
 	}PROF_START( basic::JD2);
-	core::pose::Pose pose;
-#ifdef BOINC_GRAPHICS
-	// attach boinc graphics pose observer
-	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
-#endif
+
 	while (obtain_new_job())
 	{
+		core::pose::Pose pose;
+#ifdef BOINC_GRAPHICS
+		// attach boinc graphics pose observer
+		protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+#endif
+
 		++tried_jobs; //yes, we tried at least one job
 
 		//timing information
@@ -383,7 +385,6 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 					<< std::endl;
 			remove_bad_inputs_from_job_list();
 			job_failed(pose, false);
-			pose = core::pose::Pose();
 			continue;
 		}
 
