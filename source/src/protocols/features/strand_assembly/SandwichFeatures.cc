@@ -8749,7 +8749,7 @@ SandwichFeatures::report_features(
 	{
 		if	(!count_AA_with_direction_)
 		{
-			TR	<<	"You did not turn on count_AA_with_direction for	write_strand_AA_distribution_files so SandwicheFeature will not write strand_AA_distribution_files"	<<	endl;
+			TR	<<	"You did not turn on count_AA_with_direction for write_strand_AA_distribution_files so SandwicheFeature will not write strand_AA_distribution_files"	<<	endl;
 		}
 		else
 		{
