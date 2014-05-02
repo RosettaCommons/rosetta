@@ -960,6 +960,9 @@ private:
 	write_resfile_to_minimize_too_much_hydrophobic_surface_;
 
 	bool
+	write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_;
+
+	bool
 	write_p_aa_pp_files_;
 
 	bool

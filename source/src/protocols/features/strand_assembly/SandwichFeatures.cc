@@ -7404,6 +7404,8 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, write resfile automatically
 	write_resfile_to_minimize_too_much_hydrophobic_surface_ = tag->getOption<bool>("write_resfile_to_minimize_too_much_hydrophobic_surface", false);
 					//	definition: if true, write resfile to_minimize_too_much_hydrophobic_surface
+	write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_ = tag->getOption<bool>("write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands", false);
+					//	definition: if true, write resfile to_minimize_too_many_core_heading_FWY_on_edge_strands
 
 	write_p_aa_pp_files_ = tag->getOption<bool>("write_p_aa_pp_files", false);
 					//	definition: if true, write p_aa_pp_files
@@ -7478,6 +7480,7 @@ SandwichFeatures::report_features(
 		write_phi_psi_of_E_	= true;
 		write_resfile_	= true;
 		write_resfile_to_minimize_too_much_hydrophobic_surface_	=	true;
+		write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_	=	true;
 		write_p_aa_pp_files_	= true;
 		write_rama_at_AA_to_files_	=	true;
 		write_heading_directions_of_all_AA_in_a_strand_	=	true;
@@ -7919,7 +7922,7 @@ SandwichFeatures::report_features(
 			continue; // skip this sheet
 		}
 		else
-				TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
+				TR.Info << "writing into 'sandwich candidate by sheet'" << endl;
 			write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, all_distinct_sheet_ids[i], strands_from_sheet_i.size());
 			sw_can_by_sh_PK_id_counter++;
 
@@ -8909,19 +8912,26 @@ SandwichFeatures::report_features(
 		resfile_stream << "USE_INPUT_SC" << endl;
 		resfile_stream << "start" << endl;
 
-		resfile_stream << "# final update: 04/30/2014 based on 203 native sandwiches" << endl;
+		resfile_stream << "# final update: 05/02/2014 based on 203 native sandwiches" << endl;
 		resfile_stream << "# NOTAA	CFPWY for surface_heading residues at core strands" << endl;
 		resfile_stream << "# NOTAA	CFWY for surface_heading residues at edge strands" << endl;
+
+		if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
+		{
+			resfile_stream << "# PIKAA	DENQST	for every 2nd surface-heading	residues " << endl;
+		}
 
 		resfile_stream << "# NOTAA	CDKNPR for core_heading residues at core strands" << endl;
 		resfile_stream << "# NOTAA	CDNP for core_heading residues at edge strands" << endl;
 
-		if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
+		if	(write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_)
 		{
-			resfile_stream << "# PIKAA	DENQST	for every 3rd surface-heading	residues " << endl;
+			resfile_stream << "# NOTAA	CDFNPWY	for every 2nd core-heading	residues	on	edge	strands" << endl;
 		}
 
+
 		int	count_to_minimize_too_much_hydrophobic_surface	=	0;
+		int	count_to_minimize_too_many_core_heading_FWY_on_edge_strands	=	0;
 
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
 		{
@@ -8970,14 +8980,38 @@ SandwichFeatures::report_features(
 					}
 					else if (heading == "core")
 					{
-						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
-						if (edge_or_core == "core")
+						if	(write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_)
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDKNPR" << endl;
+							count_to_minimize_too_many_core_heading_FWY_on_edge_strands++;
+							if	(count_to_minimize_too_many_core_heading_FWY_on_edge_strands	==	2)
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDFNPWY" << endl;
+								count_to_minimize_too_many_core_heading_FWY_on_edge_strands	=	0;
+							}
+							else
+							{
+								string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+								if (edge_or_core == "core")
+								{
+									resfile_stream << residue_num << "	A	EX	1	NOTAA	CDKNPR" << endl;
+								}
+								else	if (edge_or_core == "edge")
+								{
+									resfile_stream << residue_num << "	A	EX	1	NOTAA	CDNP" << endl;
+								}
+							}
 						}
-						else	if (edge_or_core == "edge")
+						else	//(!write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_)
 						{
-							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDNP" << endl;
+							string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+							if (edge_or_core == "core")
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDKNPR" << endl;
+							}
+							else	if (edge_or_core == "edge")
+							{
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDNP" << endl;
+							}
 						}
 					}
 				}
@@ -9009,16 +9043,17 @@ SandwichFeatures::report_features(
 		surface_loop_resfile_stream << "USE_INPUT_SC" << endl;
 		surface_loop_resfile_stream << "start" << endl;
 
-		surface_loop_resfile_stream << "# final update: 04/30/2014 based on 203 native sandwiches" << endl;
+		surface_loop_resfile_stream << "# final update: 05/02/2014 based on 203 native sandwiches" << endl;
 		surface_loop_resfile_stream << "# NOTAA	CFPWY for surface_heading residues at core strands" << endl;
 		surface_loop_resfile_stream << "# NOTAA	CFWY for surface_heading residues at edge strands" << endl;
 
-		surface_loop_resfile_stream << "# NATAA	for core_heading residues " << endl;
-
 		if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
 		{
-			surface_loop_resfile_stream << "# PIKAA	DENQST	for every 3rd surface-heading	residues " << endl;
+			surface_loop_resfile_stream << "# PIKAA	DENQST	for every 2nd surface-heading	residues " << endl;
 		}
+
+		surface_loop_resfile_stream << "# NATAA	for core_heading residues " << endl;
+
 
 		count_to_minimize_too_much_hydrophobic_surface	=	0;
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
