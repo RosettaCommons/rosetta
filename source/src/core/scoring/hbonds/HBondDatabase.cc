@@ -440,7 +440,7 @@ HBondDatabase::initialize_HBEval()
 			initialized_hbe_types[hbe_type] = true;
 		}
 
-		if( hbe_type > static_cast<int>(HB_EVAL_TYPE_COUNT) ){
+		if( hbe_type > static_cast<HBEvalType>(HB_EVAL_TYPE_COUNT) ){
 			stringstream message;
 			message << "hb_eval_type created from" << endl;
 			message << "\tdon_chem_type:'"<< don_chem_type_name <<"'" << endl;
