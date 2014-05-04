@@ -325,12 +325,12 @@ void ddG::apply(Pose & pose)
 	}
 
 	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
-	job->add_string_real_pair("ddg",average_ddg);
+	setPoseExtraScores(pose, "ddg",average_ddg);
 	if (per_residue_ddg_)
 	{
 		for (core::Size i = 1; i <= pose.n_residue(); ++i) {
 			std::string residue_string(utility::to_string<core::Size>(i));
-			job->add_string_real_pair("residue_ddg_"+residue_string,average_per_residue_ddgs[i]);
+			setPoseExtraScores(pose,"residue_ddg_"+residue_string,average_per_residue_ddgs[i]);
 		}
 	}
 }

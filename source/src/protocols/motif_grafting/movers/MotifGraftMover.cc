@@ -1566,14 +1566,14 @@ namespace protocols
 				///End Debug
 				
 				//Put data in the score table
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("graft_RMSD: ", motif_match.get_RMSD());
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("graft_max_motif_fragment_RMSD: ", motif_match.get_motif_fragments_RMSD());
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("graft_clashScore: ", motif_match.get_clash_score());
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("graft_in_motif_ranges: ", motif_match.get_motif_ranges(0));
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("graft_in_scaffold_ranges: ", motif_match.get_scaffold_ranges(0));
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("graft_out_scaffold_ranges: ", motif_match.get_scaffold_ranges(contextStructure.total_residue()));
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("graft_scaffold_size_change: ", motif_match.get_scaffold2motif_size_change());
-				protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("graft_full_bb_mode: ", motif_match.get_full_motif_bb_alignment_mode());
+				setPoseExtraScores(target_pose, "graft_RMSD", motif_match.get_RMSD());
+				setPoseExtraScores(target_pose, "graft_max_motif_fragment_RMSD", motif_match.get_motif_fragments_RMSD());
+				setPoseExtraScores(target_pose, "graft_clashScore", motif_match.get_clash_score());
+				setPoseExtraScores(target_pose, "graft_in_motif_ranges", motif_match.get_motif_ranges(0));
+				setPoseExtraScores(target_pose, "graft_in_scaffold_ranges", motif_match.get_scaffold_ranges(0));
+				setPoseExtraScores(target_pose, "graft_out_scaffold_ranges", motif_match.get_scaffold_ranges(contextStructure.total_residue()));
+				setPoseExtraScores(target_pose, "graft_scaffold_size_change", motif_match.get_scaffold2motif_size_change());
+				setPoseExtraScores(target_pose, "graft_full_bb_mode", motif_match.get_full_motif_bb_alignment_mode());
 				return;
 			}
 			
