@@ -105,7 +105,7 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter(){}
 
 void
-AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose ){
+AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose, std::string const & /*tag*/ ){
 
 	call_output_observers( pose, job );
 

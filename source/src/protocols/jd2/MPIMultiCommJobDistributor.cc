@@ -137,9 +137,9 @@ MPIMultiCommJobDistributor::get_new_job_id() {
 
 ///@brief dummy for master/slave version
 void
-MPIMultiCommJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real run_time) {
+MPIMultiCommJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real run_time, std::string const & tag) {
 	if ( sub_rank() <= 0 ) {
-			Parent::job_succeeded( pose, run_time);
+			Parent::job_succeeded( pose, run_time, tag);
   }
 }
 

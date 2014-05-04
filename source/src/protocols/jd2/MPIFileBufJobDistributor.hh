@@ -109,7 +109,7 @@ public:
 	///@brief dummy for master/slave version
 	virtual
 	void
-	job_succeeded(core::pose::Pose & pose, core::Real runtime);
+	job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag);
 
 	virtual
 	void
@@ -156,10 +156,10 @@ protected:
   void slave_remove_bad_inputs_from_job_list();
 
 	///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
-	void master_job_succeeded(core::pose::Pose & pose);
+	void master_job_succeeded(core::pose::Pose & pose, std::string const & tag);
 
 	///@brief Sends a message to the head node upon successful job completion to avoid output interleaving
-	void slave_job_succeeded(core::pose::Pose & pose);
+	void slave_job_succeeded(core::pose::Pose & pose, std::string const & tag);
 
 	///@brief send a message to master
 	void slave_to_master( core::Size tag );

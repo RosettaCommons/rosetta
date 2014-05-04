@@ -20,6 +20,7 @@
 
 #include <core/io/raw_data/ScoreFileData.hh>
 #include <protocols/jd2/ScoreMap.hh>
+#include <core/scoring/Energies.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -92,12 +93,14 @@ protocols::jd2::FileJobOutputter::~FileJobOutputter(){}
 void protocols::jd2::FileJobOutputter::scorefile(
 	JobCOP job,
 	core::pose::Pose const & pose,
-	std::string tag,
+	std::string prefix_tag,
+	std::string suffix_tag,
 	std::string scorefile
 )
 {
 	TR.Debug << "FileJobOutputter scorefile" << std::endl;
 	if (!write_scorefile_) return;
+	
 	core::io::raw_data::ScoreFileData sfd((scorefile.empty() ? scorefile_name_.name() : scorefile));
 	std::map < std::string, core::Real > score_map;
     std::map < std::string, std::string > string_map;
@@ -117,7 +120,26 @@ void protocols::jd2::FileJobOutputter::scorefile(
 		string_map[it->first] = it->second;
 	}
 
-	sfd.write_pose( pose, score_map , (tag+output_name(job)), string_map );
+	/*
+	// Don't write score file entries that only contain a one column: total_score = 0
+	// 20140504: Disabled by request
+
+	if(score_map.empty()) {
+		// No scores at all
+		return;
+	}
+	if(score_map.size() == 1) {
+		std::map < std::string, core::Real >::iterator it( score_map.begin() );
+		if(it != score_map.end() && 
+		  it->first == name_from_score_type(core::scoring::total_score) && 
+		  it->second == 0) {
+			// Only one score term, and it's the total_score with value 0
+			return;
+		}
+	}
+	*/
+
+	sfd.write_pose( pose, score_map , (prefix_tag + output_name(job) + suffix_tag), string_map );
 }
 
 

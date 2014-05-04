@@ -54,7 +54,7 @@ public:
   //////////////////////////////creating output functions/////////////////////////////////////////
   ///@brief this function outputs the final result of a job.
   virtual
-  void final_pose( JobOP job, core::pose::Pose const & pose );
+  void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag );
 
 	/// @brief this function is intended for saving
 	/// mid-protocol poses; for example the final centroid
@@ -105,7 +105,8 @@ protected:
 		JobCOP job,
 		core::pose::Pose const & pose,
 		bool bWriteScoreOnly,
-		int copy_count = -1 /* if 0 or positive attach as postfix to job-tag ONLY used in other_pose output*/
+		int copy_count = -1, /* if 0 or positive attach as postfix to job-tag ONLY used in other_pose output*/
+		std::string const suffix = "" /* appended to tag */
 	);
 
 private: // methods

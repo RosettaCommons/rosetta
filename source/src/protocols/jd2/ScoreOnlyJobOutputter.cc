@@ -36,10 +36,10 @@ ScoreOnlyJobOutputter::ScoreOnlyJobOutputter(): FileJobOutputter()
 //void ScoreOnlyJobOutputter::file(JobCOP,std::string const &)
 //{}
 
-void ScoreOnlyJobOutputter::final_pose(JobOP job ,core::pose::Pose const& pose )
+void ScoreOnlyJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag )
 {
 	call_output_observers( pose, job );
-	scorefile(job,pose);
+	scorefile(job, pose, tag);
 }
 
 void ScoreOnlyJobOutputter::other_pose(
@@ -52,7 +52,7 @@ void ScoreOnlyJobOutputter::other_pose(
 	call_output_observers( pose, job );
 	if( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() )
 	{
-		scorefile(job, pose, tag, basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
+		scorefile(job, pose, tag, "", basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
 	}
 }
 

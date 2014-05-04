@@ -146,7 +146,8 @@ void DatabaseJobOutputter::flush() {
 
 void DatabaseJobOutputter::final_pose(
 	JobOP job,
-	Pose const & pose
+	Pose const & pose,
+	std::string const & /*tag*/
 ) {
 
 	call_output_observers( pose, job );

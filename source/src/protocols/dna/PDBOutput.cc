@@ -92,7 +92,7 @@ PDBOutput::~PDBOutput(){}
 /// @details pose is const here, so it must be scored already if score information is expected in output file
 /// @author ashworth
 void
-PDBOutput::final_pose( JobOP job, Pose const & pose )
+PDBOutput::final_pose( JobOP job, Pose const & pose, std::string const & /*tag*/ )
 {
 	if ( !enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
 	call_output_observers( pose, job );

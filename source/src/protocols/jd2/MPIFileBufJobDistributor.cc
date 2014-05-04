@@ -499,13 +499,13 @@ MPIFileBufJobDistributor::slave_remove_bad_inputs_from_job_list()
 
 ///@brief dummy for master/slave version
 void
-MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real runtime)
+MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag)
 {
   if ( rank_ == master_rank_ ) {
-    master_job_succeeded( pose );
+    master_job_succeeded( pose, tag );
   } else {
 		slave_current_runtime_ = runtime;
-    slave_job_succeeded( pose );
+    slave_job_succeeded( pose, tag );
   }
 }
 
@@ -525,7 +525,7 @@ MPIFileBufJobDistributor::job_failed(
 
 
 void
-MPIFileBufJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/)
+MPIFileBufJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/, std::string const & /*tag*/)
 {
 #ifdef USEMPI
 	runtime_assert( rank_ == master_rank_ );
@@ -535,10 +535,10 @@ MPIFileBufJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/)
 }
 
 void
-MPIFileBufJobDistributor::slave_job_succeeded(core::pose::Pose &pose )
+MPIFileBufJobDistributor::slave_job_succeeded(core::pose::Pose &pose, std::string const & tag )
 {
 	runtime_assert( !( rank_ == master_rank_ ) );
-	job_outputter()->final_pose( current_job(), pose );
+	job_outputter()->final_pose( current_job(), pose, tag );
 	slave_to_master( JOB_SUCCESS );
 }
 

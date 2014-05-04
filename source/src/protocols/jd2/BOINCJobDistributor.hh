@@ -48,7 +48,7 @@ protected:
 
 	virtual
 	void
-	job_succeeded( core::pose::Pose & pose, core::Real run_time );
+	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag );
 
 	virtual
 	void

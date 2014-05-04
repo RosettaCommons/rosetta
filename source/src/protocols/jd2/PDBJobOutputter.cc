@@ -83,7 +83,8 @@ protocols::jd2::PDBJobOutputter::~PDBJobOutputter(){}
 
 void protocols::jd2::PDBJobOutputter::final_pose(
 	JobOP job,
-	core::pose::Pose const & pose
+	core::pose::Pose const & pose,
+	std::string const & tag
 )
 {
 	using namespace basic::options::OptionKeys;
@@ -91,11 +92,12 @@ void protocols::jd2::PDBJobOutputter::final_pose(
 	TR.Debug << "PDBJobOutputter::final_pose" << std::endl;
 
 	call_output_observers( pose, job );
-	utility::io::ozstream out( path_ + extended_name(job) );
-	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + path_ + extended_name(job) + "\n" );
+	std::string const file(path_ + extended_name(job, tag));
+	utility::io::ozstream out( file );
+	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + file + "\n" );
 	dump_pose(job, pose, out);
 	out.close();
-	scorefile(job, pose);
+	scorefile(job, pose, "", (tag.empty() ? "" : std::string("_") + tag));
 }
 
 void protocols::jd2::PDBJobOutputter::other_pose(
@@ -109,16 +111,16 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	runtime_assert( !tag.empty() ); //else you'll overwrite your pdb when the job finishes
 
 	call_output_observers( pose, job );
-	std::string const file(path_ + extended_name(job, tag));
+	std::string const file(path_ + tag + "_" + extended_name(job));
 	utility::io::ozstream out( file );
-	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + path_ + file + "\n" );
+	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + file + "\n" );
 	dump_pose(job, pose, out);
 	out.close();
 
 	//these are separate options because leaving the default on other_pose_scorefile is totally valid, but you can't both specify it on the command line and leave it blank
 	//THIS FUNCTIONALITY IS GOING TO BE DEPRECATED SOON
 	if( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() ){
-		scorefile(job, pose, tag, basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
+		scorefile(job, pose, tag, "", basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
 	}
 }
 
@@ -144,12 +146,8 @@ std::string protocols::jd2::PDBJobOutputter::output_name( JobCOP job ){
 	return affixed_numbered_name( job );
 }
 
-std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job ){
-	return output_name(job) + extension_;
-}
-
-std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const & suffix ){
-	return output_name(job) + "_" + suffix + extension_;
+std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const suffix ){
+	return output_name(job) + std::string(suffix.empty() ? "" : "_") + suffix + extension_;
 }
 
 ////////////////////////////////////////score-related functions///////////////////////////////////

@@ -54,7 +54,7 @@ public:
 	PDBOutput();
 	virtual ~PDBOutput();
 	///@brief JobDistributor calls this method
-	virtual void final_pose( JobOP, Pose const & );
+	virtual void final_pose( JobOP, Pose const &, std::string const & );
 	///@brief functor for non-JobDistributor usage
 	void operator() ( Pose const &, std::string const & );
 

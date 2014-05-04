@@ -54,7 +54,7 @@ public:
 
 	///@brief this function outputs the final result of a job.
 	virtual
-	void final_pose( JobOP job, core::pose::Pose const & pose ) = 0;
+	void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag ) = 0;
 
 	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	virtual
@@ -82,7 +82,7 @@ public:
 protected:
 	///@brief this function will handle the scorefile.  If you need to make it virtual do so.  Latter two arguments are for redirecting the output to a different scorefile for "other_pose"s.  Also adds StringReal job info to the score file.
 	virtual
-	void scorefile( JobCOP job, core::pose::Pose const & pose, std::string tag = "", std::string scorefile = "" );
+	void scorefile( JobCOP job, core::pose::Pose const & pose, std::string prefix_tag = "", std::string suffix_tag = "", std::string scorefile = "" );
 
 	///@brief this function will handle the scorefile for arbitrary poses.
 	//void other_scorefile( std::string const & tag, core::pose::Pose const & pose, std::string const & o_scorefile );

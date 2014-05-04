@@ -167,12 +167,14 @@ void SilentFileJobOutputter::read_done_jobs() {
 }
 
 void SilentFileJobOutputter::final_pose(
-	JobOP job, core::pose::Pose const & pose
+	JobOP job,
+	core::pose::Pose const & pose,
+	std::string const & tag
 ) {
 	call_output_observers( pose, job );
 
 	core::io::silent::SilentStructOP ss =
-		dump_pose( silent_file_, job, pose,  bWriteNoStructures_ /*this is always false */ /* bWriteScoresOnly */);
+		dump_pose( silent_file_, job, pose,  bWriteNoStructures_, -1 /* copy_count */, tag);
 
 	// only write a scorefile if specified by the user
 	using namespace basic::options;
@@ -205,7 +207,7 @@ void SilentFileJobOutputter::other_pose(
 
 	core::io::silent::SilentStructOP ss;
 	if ( bWriteIntermediateFiles_ ) {
-		ss=dump_pose( filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count );
+		ss=dump_pose( filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count, tag );
 	}
 
 	if ( write_separate_scorefile_ && ss ) {
@@ -224,7 +226,8 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	JobCOP job,
 	core::pose::Pose const & pose_in,
 	bool bWriteScoreOnly,
-	int copy_count
+	int copy_count,
+	std::string const suffix
 ) {
 	PROF_START( basic::JD2_SILENT_OUTPUTTER );
 	core::io::silent::SilentFileData sfd;
@@ -246,6 +249,11 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 		}
 		tag << '_' << std::setfill('0') << std::setw(8) << copy_count;
 	}
+
+	if(!suffix.empty()) {
+		tag << "_" << suffix;
+	}
+
 	ss->fill_struct( pose_in, tag.str() );
 	add_job_data_to_ss( ss, job );
 

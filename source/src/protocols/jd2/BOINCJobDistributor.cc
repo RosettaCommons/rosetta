@@ -183,13 +183,13 @@ void BOINCJobDistributor::job_failed( core::pose::Pose& pose, bool /*will_retry*
 	using namespace basic::options;
 
 	current_job()->set_status_prefix("FAILURE");
-	job_succeeded( pose, 0 );	//i.e., job_outputter_->final_pose( current_job(), pose );
+	job_succeeded( pose, 0, "" );	//i.e., job_outputter_->final_pose( current_job(), pose );
 }
 
 void
-BOINCJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
+BOINCJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag)
 {
-	FileSystemJobDistributor::job_succeeded( pose, run_time );
+	FileSystemJobDistributor::job_succeeded( pose, run_time, tag );
 #ifdef BOINC
 	checkpoint_write();
 	total_completed_nstruct_++;

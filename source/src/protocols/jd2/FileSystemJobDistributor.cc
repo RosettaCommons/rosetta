@@ -233,9 +233,9 @@ FileSystemJobDistributor::temporary_file_name( JobCOP job ) const {
 
 
 void
-FileSystemJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
+FileSystemJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag)
 {
-	JobDistributor::job_succeeded( pose, run_time );
+	JobDistributor::job_succeeded( pose, run_time, tag );
  	retry_count_ = 0;
 	return;
 }
@@ -249,7 +249,7 @@ FileSystemJobDistributor::job_failed( core::pose::Pose & pose, bool will_retry )
 
 	if ( option[ OptionKeys::run::write_failures ]() ){
 		current_job()->set_status_prefix("C");
-		job_succeeded( pose, 0 );
+		job_succeeded( pose, 0, "" );
 	}
 
 	if( !will_retry ) retry_count_ = 0;

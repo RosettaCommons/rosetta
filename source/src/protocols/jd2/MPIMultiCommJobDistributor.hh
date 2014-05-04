@@ -60,7 +60,7 @@ public:
   virtual core::Size get_new_job_id();
 
 	///@brief overloaded to suppress message from higher-rank replicas
-	virtual	void job_succeeded(core::pose::Pose & pose, core::Real run_time);
+	virtual	void job_succeeded(core::pose::Pose & pose, core::Real run_timei, std::string const & tag);
 
 	///@brief overloaded to suppress message from higher-rank replicas
 	virtual	void job_failed( core::pose::Pose & pose, bool );

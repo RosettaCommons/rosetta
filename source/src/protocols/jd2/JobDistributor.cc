@@ -564,16 +564,29 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		if (status == protocols::moves::MS_SUCCESS)
 		{
 			last_completed_job_ = current_job_id_;
-			job_succeeded(pose, jobtime);
 			// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
-			// Collect additional poses from mover
-			core::pose::PoseOP additional_pose(NULL);
+
+			std::string tag;
 			core::Size i_additional_pose = 1;
-			while( (additional_pose = mover_copy->get_additional_output()) ) {
+			core::pose::PoseOP additional_pose( mover_copy->get_additional_output() );
+			if(additional_pose) {
+				// Attach tag to main pose as well for consistent numbering
+				std::ostringstream s;
+                                s << i_additional_pose;
+				tag = s.str();
+				++i_additional_pose;
+			}
+
+			// Output main pose
+			job_succeeded(pose, jobtime, tag);
+
+			// Collect additional poses from mover
+			while(additional_pose) {
 				std::ostringstream s;
 				s << i_additional_pose;
 				job_succeeded_additional_output(*additional_pose, s.str());
 				++i_additional_pose;
+	 			additional_pose = mover_copy->get_additional_output();
 			}
 		}
 		else if (status == protocols::moves::FAIL_RETRY)
@@ -694,9 +707,9 @@ bool JobDistributor::obtain_new_job(bool reconsider_current_job)
 	}
 }
 
-void JobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
+void JobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag)
 {
-	job_outputter_->final_pose(current_job_, pose);
+	job_outputter_->final_pose(current_job_, pose, tag);
 	//current_job_->set_completed();
 	mark_job_as_completed(current_job_id_, run_time);
 	return;
@@ -704,7 +717,7 @@ void JobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
 
 void JobDistributor::job_succeeded_additional_output(core::pose::Pose & pose, std::string const & tag)
 {
-	job_outputter_->other_pose(current_job_, pose, tag);
+	job_outputter_->final_pose(current_job_, pose, tag);
 }
 
 /// @details no-op implementation in the base class

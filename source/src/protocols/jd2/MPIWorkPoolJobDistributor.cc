@@ -429,12 +429,12 @@ MPIWorkPoolJobDistributor::slave_remove_bad_inputs_from_job_list()
 
 ///@brief dummy for master/slave version
 void
-MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real /*run_time*/)
+MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real /*run_time*/, std::string const & tag)
 {
 	if ( rank_ == 0 ) {
-	master_job_succeeded( pose );
+	master_job_succeeded( pose, tag );
 	} else {
-	slave_job_succeeded( pose );
+	slave_job_succeeded( pose, tag );
 	}
 }
 
@@ -444,7 +444,7 @@ void MPIWorkPoolJobDistributor::mpi_finalize(bool finalize)
 }
 
 void
-MPIWorkPoolJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/)
+MPIWorkPoolJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/, std::string const & /*tag*/)
 {
 #ifdef USEMPI
 	runtime_assert( rank_ == 0 );
@@ -454,13 +454,13 @@ MPIWorkPoolJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/)
 }
 
 void
-MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose ) )
+MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose ), std::string const & MPI_ONLY( tag ) )
 {
 #ifdef USEMPI
 	runtime_assert( !( rank_ == 0 ) );
 
 	if ( option[ OptionKeys::jd2::mpi_fast_nonblocking_output	].value() == true ) {
-		job_outputter()->final_pose( current_job(), pose );
+		job_outputter()->final_pose( current_job(), pose, tag );
 	} else {
 		int empty_data( 0 );
 		MPI_Status status;
@@ -474,7 +474,7 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 		MPI_Recv( &empty_data, 1, MPI_INT, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status );
 		// time and write output (pdb, silent file, score file etc.)
 		clock_t starttime = clock();
-		job_outputter()->final_pose( current_job(), pose );
+		job_outputter()->final_pose( current_job(), pose, tag );
 		clock_t stoptime = clock();
 
 		// send message to master that we are done outputing

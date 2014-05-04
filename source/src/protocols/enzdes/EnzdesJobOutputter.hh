@@ -44,7 +44,7 @@ public: //constructor / destructor
 
   ~EnzdesJobOutputter();
 
-	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose );
+	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const tag );
 
 	bool job_has_completed( protocols::jd2::JobOP job );
 

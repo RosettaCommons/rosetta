@@ -121,7 +121,7 @@ public:
 	///@brief dummy for master/slave version
 	virtual
 	void
-	job_succeeded(core::pose::Pose & pose, core::Real run_time);
+	job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag);
 
 	///@brief should the go() function call MPI_finalize()? It probably should, this is true by default.
 	virtual
@@ -177,12 +177,12 @@ protected:
 	///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
 	virtual
 	void
-	master_job_succeeded(core::pose::Pose & pose);
+	master_job_succeeded(core::pose::Pose & pose, std::string const & tag);
 
 	///@brief Sends a message to the head node upon successful job completion to avoid output interleaving
 	virtual
 	void
-	slave_job_succeeded(core::pose::Pose & pose);
+	slave_job_succeeded(core::pose::Pose & pose, std::string const & tag);
 
 protected:
 

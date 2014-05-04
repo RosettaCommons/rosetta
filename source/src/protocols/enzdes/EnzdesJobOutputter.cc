@@ -75,13 +75,13 @@ EnzdesJobOutputter::EnzdesJobOutputter()
 EnzdesJobOutputter::~EnzdesJobOutputter(){}
 
 void
-EnzdesJobOutputter::final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose )
+EnzdesJobOutputter::final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const tag )
 {
 	if( silent_output_ ){
-		silent_job_outputter_->final_pose(job, pose);
+		silent_job_outputter_->final_pose(job, pose, tag);
 		this->scorefile( job, pose );
 	}
-	else parent::final_pose(job, pose);
+	else parent::final_pose(job, pose, tag);
 }
 
 bool
