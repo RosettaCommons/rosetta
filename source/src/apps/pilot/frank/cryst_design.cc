@@ -35,6 +35,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/rigid/RB_geometry.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -106,6 +107,7 @@ OPT_1GRP_KEY(Real, crystdock, mininterfacesum)
 OPT_1GRP_KEY(Real, crystdock, trans_step)
 OPT_1GRP_KEY(Real, crystdock, rot_step)
 OPT_1GRP_KEY(Real, crystdock, cb_radius)
+OPT_1GRP_KEY(Real, crystdock, random_rotation)
 OPT_1GRP_KEY(Integer, crystdock, nmodels)
 OPT_1GRP_KEY(Integer, crystdock, rotnum)
 OPT_1GRP_KEY(Integer, crystdock, symnum)
@@ -113,6 +115,7 @@ OPT_1GRP_KEY(Boolean, crystdock, ssonly)
 OPT_1GRP_KEY(Boolean, crystdock, debug)
 OPT_1GRP_KEY(Boolean, crystdock, debug_exact)
 OPT_1GRP_KEY(Boolean, crystdock, eval_native)
+OPT_1GRP_KEY(Boolean, crystdock, randomize_orientation)
 OPT_1GRP_KEY(Real, crystdock, n_clashdist)
 OPT_1GRP_KEY(Real, crystdock, ca_clashdist)
 OPT_1GRP_KEY(Real, crystdock, c_clashdist)
@@ -1771,7 +1774,7 @@ CrystDock::get_interface_score(
 //  				(Real)grid_[0]*allInterfaces[i].T_[0],
 //  				(Real)grid_[1]*allInterfaces[i].T_[1],
 //  				(Real)grid_[2]*allInterfaces[i].T_[2]);
-// 
+//
 //  			poseCopy.apply_transform_Rx_plus_v( i2c_*allInterfaces[i].R_*c2i_,Tnew);
 // 			poseCopy.append_pose_by_jump (pose, 1);
 // 			std::ostringstream oss;
@@ -1824,7 +1827,7 @@ CrystDock::get_interface_score(
 						<< allInterfaces[i].R_.zx() << "," << allInterfaces[i].R_.zy() << "," << allInterfaces[i].R_.zz()
 						<< "]";
 					TR << " T = [" << allInterfaces[i].T_[0] << "," << allInterfaces[i].T_[1] << "," << allInterfaces[i].T_[2] << "]" << std::endl;
-					
+
 					Pose poseCopy = pose;
 					numeric::xyzVector<Real> Tnew = i2c_*numeric::xyzVector<Real>(
 						(Real)grid_[0]*allInterfaces[i].T_[0],
@@ -1940,6 +1943,12 @@ CrystDock::apply( Pose & pose) {
 	numeric::xyzVector<Real> native_shift = center_pose_at_origin( pose );
 	add_crystinfo_to_pose( pose );
 
+	// random reorient
+	if (option[ crystdock::randomize_orientation ]()) {
+		numeric::xyzMatrix<Real> Rrand = protocols::geometry::random_reorientation_matrix( 360.0, 360.0 );
+		pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
+	}
+
 	// get SS
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
@@ -2007,6 +2016,15 @@ CrystDock::apply( Pose & pose) {
 	if (eval_native_) {
 		mininterface_ = 0.0001;  // we want to evaluate all interfaces
 
+		// random reorient
+		if (option[ crystdock::random_rotation ]() > 0) {
+			const double psi( 2 * numeric::constants::d::pi * numeric::random::uniform() );
+			const double theta( std::acos(numeric::sin_cos_range( 1.0 - 2.0  *numeric::random::uniform() ) ) );
+			Vector axis( sin(theta)*cos(psi), sin(theta)*sin(psi), cos(theta) );
+			numeric::xyzMatrix<Real> Rrand = numeric::rotation_matrix( axis, DEG2RAD*option[ crystdock::random_rotation ]() );
+			pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
+		}
+
 		utility::vector1<Size> all_interfaces;
 		numeric::xyzVector<Real> offset_grid;
 		numeric::xyzVector<int> offset_grid_pt;
@@ -2030,7 +2048,7 @@ CrystDock::apply( Pose & pose) {
 			cb_sum+= iinfo[i].cb_overlap_;
 		}
 		cb_sum += get_interfaces( rts, identity, offset_grid_pt, all_interfaces, rho_cb, iinfo );
-		
+
 		// shift the pose back
 		pose.apply_transform_Rx_plus_v( identity, i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]) );
 		core::Real cb_score = get_interface_score(pose, iinfo, rts );
@@ -2302,16 +2320,18 @@ try {
 	NEW_OPT(crystdock::debug, "[debug] dump intermediate info", false);
 	NEW_OPT(crystdock::debug_exact, "[debug] debug mode with exact (non-FFT) calculations (slow!)", false);
 	NEW_OPT(crystdock::eval_native, "[debug] evaluate input structure without docking", false);
+	NEW_OPT(crystdock::randomize_orientation, "randomize orientation of input", false);
+	NEW_OPT(crystdock::random_rotation, "random fixed angle rotation (eval native only)", 0);
 	NEW_OPT(crystdock::n_clashdist, "n_clashdist", 1.40);
-    NEW_OPT(crystdock::ca_clashdist, "ca_clashdist", 2.00);
-    NEW_OPT(crystdock::c_clashdist, "c_clashdist", 2.00);
-    NEW_OPT(crystdock::o_clashdist, "o_clashdist", 1.30);
-    NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.50);
-    NEW_OPT(crystdock::sigwidth, "sigwidth", 18.00);
-    NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
-    NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
-    NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
-    NEW_OPT(crystdock::expand_rounds, "expand_rounds", 12);
+	NEW_OPT(crystdock::ca_clashdist, "ca_clashdist", 2.00);
+	NEW_OPT(crystdock::c_clashdist, "c_clashdist", 2.00);
+	NEW_OPT(crystdock::o_clashdist, "o_clashdist", 1.30);
+	NEW_OPT(crystdock::cb_clashdist, "cb_clashdist", 1.50);
+	NEW_OPT(crystdock::sigwidth, "sigwidth", 18.00);
+	NEW_OPT(crystdock::interfacedist, "interfacedistance", 5.50);
+	NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
+	NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
+	NEW_OPT(crystdock::expand_rounds, "expand_rounds", 12);
 
 
 	devel::init( argc, argv );
@@ -3259,6 +3279,12 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
 		cc = CheshireCell( numeric::xyzVector<Real>(0, 0, 0),numeric::xyzVector<Real>(0.5 ,0.5 ,0.5) );
+	}
+
+	// cenops can make translation outside of [0,1], correct this
+	for (int ii=1; ii<=rt_out.size(); ++ii) {
+		core::Vector T_i = rt_out[ii].get_translation();
+		rt_out[ii].set_translation( core::Vector(std::fmod(T_i[0],1), std::fmod(T_i[1],1), std::fmod(T_i[2],1) ) );
 	}
 }
 
