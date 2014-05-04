@@ -71,6 +71,11 @@ ScoreMap::score_map_from_scored_pose(
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
 
+	if(score_types.empty()) {
+		// Pose not scored... or all weights are zero
+		return;
+	}
+
 	core::Real total(0);
 
 	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {

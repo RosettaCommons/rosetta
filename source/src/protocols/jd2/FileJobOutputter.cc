@@ -100,8 +100,13 @@ void protocols::jd2::FileJobOutputter::scorefile(
 	if (!write_scorefile_) return;
 	core::io::raw_data::ScoreFileData sfd((scorefile.empty() ? scorefile_name_.name() : scorefile));
 	std::map < std::string, core::Real > score_map;
-    std::map < std::string, std::string > string_map;
+	std::map < std::string, std::string > string_map;
+
 	protocols::jd2::ScoreMap::score_map_from_scored_pose( score_map, pose );
+	if(score_map.empty()) {
+		TR.Warning << "Not writing a score file entry for an unscored pose" << std::endl;
+		return;
+	}
 
 	// Adds StringReal job info into the score map for output in the scorefile.
 	for( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
@@ -110,10 +115,10 @@ void protocols::jd2::FileJobOutputter::scorefile(
 		score_map[it->first] = it->second;
 	}
     
-    // Adds StringString job info into a map for output in the scorefile.
+	// Adds StringString job info into a map for output in the scorefile.
 	for( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
-        it != end;
-        ++it) {
+		it != end;
+		++it) {
 		string_map[it->first] = it->second;
 	}
 
