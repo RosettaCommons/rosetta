@@ -103,7 +103,7 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 
 	if(cached_) {
 		// Collect all remaining poses from previous mover
-		while(fill_input_cache());
+		while(fill_input_cache()) {}
 		
 		TR << "Collected input poses: " << pose_input_cache_.size() << std::endl;
 		BOOST_FOREACH( core::pose::PoseOP p, pose_input_cache_ ) {
