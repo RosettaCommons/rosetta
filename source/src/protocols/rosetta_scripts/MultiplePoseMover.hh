@@ -34,6 +34,7 @@
 
 // C/C++ headers
 #include <string>
+#include <deque>
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -69,21 +70,23 @@ public:
 	void set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
 
 private:
-	core::Size max_poses_;
+	bool fill_input_cache();
+	core::pose::PoseOP generate_pose();
+	bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
+	std::deque < core::pose::PoseOP > select_poses( std::deque < core::pose::PoseOP > & poses);
+	std::deque < core::pose::PoseOP > process_poses( std::deque < core::pose::PoseOP > & poses);
+
+private:
+	bool cached_;
+	core::Size max_input_poses_, max_output_poses_;
 	utility::tag::TagCOP rosetta_scripts_tag_;
 	utility::tag::TagCOP selector_tag_;
-
 	protocols::moves::MoverOP previous_mover_;
 	utility::vector1 < PoseSelectorOP > selectors_;
 
-	utility::vector1 < core::pose::PoseOP > poses_;
-	utility::vector1 < core::pose::PoseOP > selected_poses_;
-	core::Size selected_poses_i_;
-
-protected:
-	bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
-	void select_poses( utility::vector1 < core::pose::Pose > & );
-
+	// Pose caches and counters
+	std::deque < core::pose::PoseOP > pose_input_cache_, pose_output_cache_;
+	core::Size poses_input_, poses_output_;
 };
 
 } //rosetta_scripts

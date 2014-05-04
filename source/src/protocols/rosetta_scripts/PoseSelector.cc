@@ -28,7 +28,6 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>

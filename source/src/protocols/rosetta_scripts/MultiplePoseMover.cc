@@ -23,11 +23,12 @@
 
 // C/C++ headers
 #include <iostream>
-#include <string>
+#include <list>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/vector1.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -39,9 +40,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
-
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <boost/foreach.hpp>
 
@@ -72,11 +70,14 @@ protocols::moves::MoverOP MultiplePoseMoverCreator::create_mover() const
 
 MultiplePoseMover::MultiplePoseMover() :
 	protocols::moves::Mover( "MultiplePoseMover" ),
-	max_poses_(0),
+	cached_(false),
+	max_input_poses_(0),
+	max_output_poses_(0),
 	rosetta_scripts_tag_(NULL),
 	selector_tag_(NULL),
 	previous_mover_(NULL),
-	selected_poses_i_(0)
+	poses_input_(0),
+	poses_output_(0)
 {
 }
 
@@ -85,111 +86,191 @@ std::string MultiplePoseMover::get_name() const
 	return MultiplePoseMoverCreator::mover_name();
 }
 
-///@brief Process all input poses (provided pose and from previous mover)
+///@brief Process input pose
 void MultiplePoseMover::apply(core::pose::Pose& pose)
 {
-	moves::MoverStatus status(protocols::moves::MS_SUCCESS);
+	protocols::moves::Mover::set_last_move_status(protocols::moves::FAIL_RETRY);
 
-	using namespace core;
-	using namespace core::pose;
-
-	utility::vector1 < core::pose::PoseOP > selected_poses_for_processing;
-
-	selected_poses_.clear();
-	poses_.clear();
-
+	// Reset state
+	pose_input_cache_.clear();
+	pose_output_cache_.clear();
+	poses_input_ = 0;
+	poses_output_ = 0;
+	
 	// Clone provided pose since we may be returning a different based on Selector
-	poses_.push_back(pose.clone());
+	pose_input_cache_.push_back(pose.clone());
+	++poses_input_;
 
-	// Collect all remaining input poses from previous mover
-	if(previous_mover_) {
-		TR << "Obtaining additional poses from previous mover " << previous_mover_->get_name() << std::endl;
-		do {
-			PoseOP next_pose( previous_mover_->get_additional_output() );
-			if(!next_pose)
-				break;
-			poses_.push_back(next_pose);
-		} while(poses_.size() < max_poses_ || !max_poses_);
-	}
-
-	TR << "Collected input poses: " << poses_.size() << std::endl;
-	BOOST_FOREACH( PoseOP p, poses_ ) {
-		TR << "\t" << p->sequence() << std::endl;
-	}
-
-	// Process selection criteria
-	if(selectors_.size() > 0) {
-		utility::vector1 < bool > selected_poses_by_selectors;
-
-		// Apply selectors
-		BOOST_FOREACH( PoseSelectorOP selector, selectors_ ) {
-			selected_poses_by_selectors = selector->select_poses(poses_);
-			// TODO: How do we handle multiple selectors? AND? OR?
-			break;
-		}
-
-		if(selectors_.size() > 1) {
-			TR << selectors_.size() << " selectors defined; only the first selector is currently used!" << std::endl;
-		}
-
-		// Make a new vector of PoseOP's for selected poses for easier handling
-		core::Size i = 1;
-		for(utility::vector1 < PoseOP >::iterator it = poses_.begin(); it != poses_.end(); ++it) {
-			if(selected_poses_by_selectors[i])
-				selected_poses_for_processing.push_back(*it);
-			++i;
-		}
-
-		// Apply movers to selected poses
-		TR << "Selected poses for processing: " << selected_poses_for_processing.size() << std::endl;
-		BOOST_FOREACH( PoseOP p, selected_poses_for_processing ) {
+	if(cached_) {
+		// Collect all remaining poses from previous mover
+		while(fill_input_cache());
+		
+		TR << "Collected input poses: " << pose_input_cache_.size() << std::endl;
+		BOOST_FOREACH( core::pose::PoseOP p, pose_input_cache_ ) {
 			TR << "\t" << p->sequence() << std::endl;
 		}
-
+	}
+	
+	core::pose::PoseOP output_pose( generate_pose() );
+	if(output_pose) {
+		pose = *output_pose;
+		protocols::moves::Mover::set_last_move_status(protocols::moves::MS_SUCCESS);
 	} else {
-		// No selector specified -- select all poses
-		selected_poses_for_processing = poses_;
+		TR << "No poses selected or processed succesfully by sub-mover. Setting status to FAIL_RETRY." << std::endl;
+	}
+}
+
+///@brief 
+core::pose::PoseOP MultiplePoseMover::get_additional_output()
+{
+	return generate_pose();
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+bool MultiplePoseMover::fill_input_cache()
+{
+	if(!previous_mover_) {
+		// No previous mover (source)
+		return false;
 	}
 
-	{
-		if(rosetta_scripts_tag_) {
-			// Run sub-protocol:
+	if(max_input_poses_ && poses_input_ >= max_input_poses_) {
+		// Input limit reached
+		return false;
+	}
 
-			// Collect additional poses first rather than adding them to selected_poses_ right away
-			// as it may invalidate the iterator pointer when memory location changes
-			utility::vector1 < PoseOP > additional_poses;
+	TR << "Obtaining additional pose from previous mover: " << previous_mover_->get_name() << std::endl;
+	core::pose::PoseOP another_pose = previous_mover_->get_additional_output();
+	if(!another_pose) {
+		// Previous mover out of poses
+		return false;
+	}
 
-			BOOST_FOREACH( PoseOP p, selected_poses_for_processing ) {
-				TR << "Applying mover to pose: " << p->sequence() << std::endl;
-				if(process_pose(*p, additional_poses)) {
-					// Processing successful (from sub-protocol and its filters)
-					selected_poses_.push_back( p );
-				}
+	pose_input_cache_.push_back(another_pose);
+	++poses_input_;
+	return true;
+}
+
+core::pose::PoseOP MultiplePoseMover::generate_pose()
+{
+	while(!max_output_poses_ || poses_output_ < max_output_poses_) {
+
+		// Grab a pose that we already processed from the pose_output_cache_
+		if(!pose_output_cache_.empty()) {
+			core::pose::PoseOP pose = pose_output_cache_.front();
+			pose_output_cache_.pop_front();
+			++poses_output_;
+			if(pose)
+				return pose;
+		}
+		
+		// Get and process more poses, and put them into the pose_output_cache_
+
+		// 1. Obtain input pose
+		if(!cached_ && pose_input_cache_.empty()) {
+			// Pull another pose from previous mover when not running in cached mode
+			fill_input_cache(); // one iteration using get_additional_output()
+		}
+		
+		if(pose_input_cache_.empty()) {
+			// No more input poses
+			return NULL;
+		}
+
+		// 2. Select poses
+		std::deque < core::pose::PoseOP > selected_poses = select_poses( pose_input_cache_ );
+		
+		// 3. Process selected poses and put them into pose_output_cache_
+		if(!selected_poses.empty()) {
+			std::deque < core::pose::PoseOP > poses = process_poses(selected_poses);
+			BOOST_FOREACH( core::pose::PoseOP pose, poses ) {
+				pose_output_cache_.push_back(pose);
 			}
+		}
 
-			if(additional_poses.size() > 0) {
-				BOOST_FOREACH( PoseOP p, additional_poses ) {
-					selected_poses_.push_back( p );
-				}
-				TR << additional_poses.size() << " additional poses obtained; total output poses: " << selected_poses_.size() << std::endl;
-			}
-		} else {
-			// No sub-protocol provided, use all selected poses
-			selected_poses_ = selected_poses_for_processing;
+		// We've processed these input poses, so we're done with them
+		pose_input_cache_.clear();
+		
+	}
+	
+	return NULL;
+}
+
+///@brief Select poses from set using specified selectors
+std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < core::pose::PoseOP > & poses)
+{	
+	// Process selection criteria
+	if(selectors_.empty()) {
+		// No selector specified -- select all poses
+		return poses;
+	}
+	
+	utility::vector1 < bool > selected_poses_by_selectors;
+	std::deque < core::pose::PoseOP > selected_poses_for_processing;
+	
+	// Temp work around that shouldn't be a big performance hit
+	utility::vector1 < core::pose::PoseOP > pose_vector;
+	BOOST_FOREACH( core::pose::PoseOP p, poses ) {
+		pose_vector.push_back(p);
+	}
+
+	// Apply selectors
+	BOOST_FOREACH( PoseSelectorOP selector, selectors_ ) {
+		selected_poses_by_selectors = selector->select_poses(pose_vector);
+		// TODO: How do we handle multiple selectors? AND? OR?
+		break;
+	}
+
+	if(selectors_.size() > 1) {
+		TR << selectors_.size() << " selectors defined; only the first selector is currently used!" << std::endl;
+	}
+
+	// Make a new vector of PoseOP's for selected poses for easier handling
+	core::Size i = 1;
+	for(std::deque < core::pose::PoseOP >::iterator it = poses.begin(); it != poses.end(); ++it) {
+		if(selected_poses_by_selectors[i])
+			selected_poses_for_processing.push_back(*it);
+		++i;
+	}
+
+	// Apply movers to selected poses
+	TR << "Selected poses for processing: " << selected_poses_for_processing.size() << std::endl;
+	BOOST_FOREACH( core::pose::PoseOP p, selected_poses_for_processing ) {
+		TR << "\t" << p->sequence() << std::endl;
+	}
+		
+	return selected_poses_for_processing;
+}
+
+///@brief Rub sub-protocol on set of poses
+std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque < core::pose::PoseOP > & poses )
+{ 
+	if(!rosetta_scripts_tag_) {
+		return poses;
+	}
+
+	// Collect additional poses first rather than adding them to selected_poses_ right away
+	// as it may invalidate the iterator pointer when memory location changes
+	std::deque < core::pose::PoseOP > selected_poses;
+	utility::vector1 < core::pose::PoseOP > additional_poses;
+
+	BOOST_FOREACH( core::pose::PoseOP p, poses ) {
+		TR << "Applying mover to pose: " << p->sequence() << std::endl;
+		if(process_pose(*p, additional_poses)) {
+			// Processing successful (from sub-protocol and its filters)
+			selected_poses.push_back( p );
 		}
 	}
 
-	// Return first selected pose, additional can be obtained via get_additional_output()
-	selected_poses_i_ = 1;
-	if(selected_poses_.size() > 0) {
-		pose = *selected_poses_[selected_poses_i_];
-		++selected_poses_i_;
-	} else {
-		TR << "No poses selected or processed succesfully by sub-mover. Setting status to FAIL_RETRY." << std::endl;
-		status = protocols::moves::FAIL_RETRY;
+	if(!additional_poses.empty()) {
+		BOOST_FOREACH( core::pose::PoseOP p, additional_poses ) {
+			selected_poses.push_back( p );
+		}
+		TR << additional_poses.size() << " additional poses obtained; total output poses: " << selected_poses.size() << std::endl;
 	}
-
-	protocols::moves::Mover::set_last_move_status(status);
+	
+	return selected_poses;
 }
 
 ///@brief Process a single input pose by the RosettaScripts mover
@@ -224,15 +305,7 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	return true;
 }
 
-///@brief Hook for multiple pose putput to JD2 or another mover
-core::pose::PoseOP MultiplePoseMover::get_additional_output()
-{
-	TR.Debug << "get_additional_output, last index = " << selected_poses_i_ << std::endl;
-	if(selected_poses_i_ >= 1 && selected_poses_i_ <= selected_poses_.size())
-		return selected_poses_[selected_poses_i_++];
-	return NULL;
-}
-
+///@brief Parse settings in tag
 void MultiplePoseMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
@@ -242,7 +315,11 @@ void MultiplePoseMover::parse_my_tag(
 ) {
 
 	if(tag->hasOption("max_input_poses"))
-		max_poses_ = tag->getOption<int>("max_input_poses", 0);
+		max_input_poses_ = tag->getOption<int>("max_input_poses", 0);
+	if(tag->hasOption("max_output_poses"))
+		max_output_poses_ = tag->getOption<int>("max_output_poses", 0);
+	if(tag->hasOption("cached"))
+		cached_ = tag->getOption<bool>("cached");
 
 	try {
 
@@ -282,10 +359,26 @@ void MultiplePoseMover::parse_my_tag(
 		throw utility::excn::EXCN_Msg_Exception("Exception in MultiplePoseMover with name \"" + my_name + "\": " + e.msg());
 	}
 
-	TR << "MultiplePoseMover\n";
-	if(max_poses_ != 0)
-		TR << "\tMax input poses: " << max_poses_ << std::endl;
-	// TODO: other parsing summary
+	// Obtain flags from selector
+	PoseSelectorFlags flags = PSF_NONE;
+	BOOST_FOREACH( PoseSelectorOP selector, selectors_ ) {
+		// flags |= selector->get_flags();
+		flags = (PoseSelectorFlags)( flags | selector->get_flags() );
+	}
+	
+	if((flags & PSF_NEED_FULL_POSE_SET) && !cached_) {
+		cached_ = true;
+		if(tag->hasOption("cached")) {
+			TR.Warning << "Overriding \"cached\" option due to requirements in specified Selectors." << std::endl;
+		}
+	}
+
+	if(max_input_poses_)
+		TR << "Max input poses: " << max_input_poses_ << std::endl;
+	if(max_output_poses_)
+		TR << "Max output poses: " << max_output_poses_ << std::endl;
+	if(cached_)
+		TR << "Pose input caching enabled" << std::endl;
 }
 
 } //rosetta_scripts

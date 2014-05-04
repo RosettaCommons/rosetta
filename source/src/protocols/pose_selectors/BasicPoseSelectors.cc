@@ -55,6 +55,15 @@ LogicalSelector::~LogicalSelector()
 {
 }
 
+protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
+{
+	protocols::rosetta_scripts::PoseSelectorFlags flags(protocols::rosetta_scripts::PSF_NONE);
+	BOOST_FOREACH( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
+		flags = (protocols::rosetta_scripts::PoseSelectorFlags)( flags | selector->get_flags() );
+	}
+	return flags;
+}
+
 void LogicalSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,

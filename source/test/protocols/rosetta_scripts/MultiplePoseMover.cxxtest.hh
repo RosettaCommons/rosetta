@@ -76,8 +76,6 @@ public:
 	}
 
 	void generate_pose( core::pose::Pose & pose ) {
-		std::cout << "GEN ON " << pose.total_residue() << ": " << pose.sequence() << std::endl;
-
 		// Replace residue at position pos_ to one from set (in sequence)
 		const char *sequence = get_sequence();
 		int i = npose_ % strlen(sequence);
@@ -113,6 +111,26 @@ public:
 	std::string keyname() const { return "DummyFilter"; }
 };
 
+class DummyHalfFilter : public protocols::filters::Filter {
+	int mutable i_;
+public:
+	DummyHalfFilter() : Filter(), i_(0) { }
+	bool apply( core::pose::Pose const & ) const {
+		bool r = (bool)((++i_) % 2);
+		std::cout << "DummyHalfFilter at " << i_ << ", returing: " << r << std::endl;
+		return r;
+	}
+	protocols::filters::FilterOP clone() const { return new DummyHalfFilter; }
+	protocols::filters::FilterOP fresh_instance() const { return new DummyHalfFilter; }
+	protocols::filters::FilterOP create_filter() const { return new DummyHalfFilter; }
+};
+
+class DummyHalfFilterCreator : public protocols::filters::FilterCreator {
+public:
+	protocols::filters::FilterOP create_filter() const { return new DummyHalfFilter; }
+	std::string keyname() const { return "DummyHalfFilter"; }
+};
+
 //using namespace basic::resource_manager;
 using namespace protocols::moves;
 using namespace protocols::rosetta_scripts;
@@ -134,6 +152,7 @@ public:
 		if(first_run) {
 			protocols::moves::MoverFactory::get_instance()->factory_register( new DummyMultipleOutputMoverCreator );
 			protocols::filters::FilterFactory::get_instance()->factory_register( new DummyFilterCreator );
+			protocols::filters::FilterFactory::get_instance()->factory_register( new DummyHalfFilterCreator );
 			first_run = false;
 		}
 	}
@@ -309,6 +328,84 @@ public:
 
 	}
 
+	void test_input_limit() {
+
+		/// Test input limit
+
+		std::string xmlfile =
+			"<ROSETTASCRIPTS>\n"
+			"  <MOVERS>\n"
+			"    <DummyMultipleOutputMover name=mover1/>\n"
+			"    <MultiplePoseMover name=mover2 max_input_poses=5/>\n"
+			"  </MOVERS>\n"
+			"  <PROTOCOLS>\n"
+			"    <Add mover_name=mover1/>\n"
+			"    <Add mover_name=mover2/>\n"
+			"  </PROTOCOLS>\n"
+			"</ROSETTASCRIPTS>\n";
+
+		std::cout << "Testing max_input_poses limit using:\n" << xmlfile << std::endl;
+
+		std::istringstream script_stream( xmlfile );
+		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
+
+		try {
+			RosettaScriptsParser parser;
+			core::pose::Pose pose( create_trpcage_ideal_pose() );
+
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			mover->apply(pose);
+
+			// Expecting 5 poses (1 + 4 additional ones)
+			int i = 1;
+			while(mover->get_additional_output()) ++i;
+			TS_ASSERT( i == 5 );
+
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::cerr << "Raised exception: " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+	}
+
+	void test_output_limit() {
+
+		/// Test output limit
+
+		std::string xmlfile =
+			"<ROSETTASCRIPTS>\n"
+			"  <MOVERS>\n"
+			"    <DummyMultipleOutputMover name=mover1 max_poses=7/>\n"
+			"    <MultiplePoseMover name=mover2 max_output_poses=5/>\n"
+			"  </MOVERS>\n"
+			"  <PROTOCOLS>\n"
+			"    <Add mover_name=mover1/>\n"
+			"    <Add mover_name=mover2/>\n"
+			"  </PROTOCOLS>\n"
+			"</ROSETTASCRIPTS>\n";
+
+		std::cout << "Testing max_output_poses limit using:\n" << xmlfile << std::endl;
+
+		std::istringstream script_stream( xmlfile );
+		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
+
+		try {
+			RosettaScriptsParser parser;
+			core::pose::Pose pose( create_trpcage_ideal_pose() );
+
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			mover->apply(pose);
+
+			// Expecting 5 poses (1 + 4 additional ones)
+			int i = 1;
+			while(mover->get_additional_output()) ++i;
+			TS_ASSERT( i == 5 );
+
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::cerr << "Raised exception: " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+	}
+
 	void test_selector() {
 
 		/// Test selector
@@ -477,7 +574,7 @@ public:
 
 	}
 
-	void test_selector_filter() {
+	void test_selector_filter_reporter() {
 
 		/// Test selector
 
@@ -522,6 +619,60 @@ public:
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
 			int i = 1;
 			while(mover->get_additional_output()) ++i;
+			TS_ASSERT( i == 5 );
+
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::cerr << "Raised exception: " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+
+	}
+
+	void test_selector_filter() {
+
+		/// Test filter selector and max output
+		/// This also tests uncached / on demand / lazy pull mode
+
+		std::string xmlfile =
+			"<ROSETTASCRIPTS>\n"
+			"  <MOVERS>\n"
+			"    <DummyMultipleOutputMover name=mover1 max_poses=10/>\n"
+			"    <MultiplePoseMover name=mover2>\n"
+			"      <SELECT>\n"
+			"        <Filter>\n"
+			"          <DummyHalfFilter name=filter1/>\n"
+			"        </Filter>\n"
+			"      </SELECT>\n"
+			"      <ROSETTASCRIPTS>\n"
+			"        <PROTOCOLS>\n"
+			"          <Add mover_name=null/>\n"
+			"        </PROTOCOLS>\n"
+			"      </ROSETTASCRIPTS>\n"
+			"    </MultiplePoseMover>\n"
+			"  </MOVERS>\n"
+			"  <PROTOCOLS>\n"
+			"    <Add mover_name=mover1/>\n"
+			"    <Add mover_name=mover2/>\n"
+			"  </PROTOCOLS>\n"
+			"</ROSETTASCRIPTS>\n";
+
+		std::cout << "Testing Filter Selector using:\n" << xmlfile << std::endl;
+
+		std::istringstream script_stream( xmlfile );
+		utility::tag::TagCOP script_tags = utility::tag::Tag::create( script_stream );
+
+		try {
+			RosettaScriptsParser parser;
+			core::pose::Pose pose( create_trpcage_ideal_pose() );
+
+			MoverOP mover = parser.parse_protocol_tag( pose, script_tags );
+			mover->apply(pose);
+
+			// Expecting 5 poses (1 + 4 additional ones) due to max_poses=10
+			// and DummyHalfFilter, which drops every other pose
+			int i = 1;
+			while(mover->get_additional_output()) ++i;
+			std::cout << "i = " << i << std::endl;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {

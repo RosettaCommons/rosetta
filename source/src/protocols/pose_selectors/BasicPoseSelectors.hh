@@ -49,6 +49,7 @@ protected:
 public:
 	static std::string name() {	return "LogicalSelector"; }
 	virtual std::string get_name() const { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const;
 
 	virtual
 	void parse_my_tag(
@@ -119,6 +120,7 @@ public:
 
 	static std::string name() {	return "TopNByProperty"; }
 	std::string get_name() const { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 
 	virtual
 	void parse_my_tag(
@@ -151,6 +153,7 @@ public:
 
 	static std::string name() { return "Filter"; }
 	std::string get_name() const { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NONE; }
 
 	virtual
 	void parse_my_tag(

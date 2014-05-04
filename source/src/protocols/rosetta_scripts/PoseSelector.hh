@@ -34,6 +34,11 @@
 namespace protocols {
 namespace rosetta_scripts {
 
+enum PoseSelectorFlags {
+	PSF_NONE = 0,
+	PSF_NEED_FULL_POSE_SET = (1 << 0)
+};
+
 class PoseSelector : public utility::pointer::ReferenceCount {
 
 protected:
@@ -49,6 +54,9 @@ public:
 	// Why do we have get_name() and name() ?
 	virtual std::string get_name() const = 0;	
 
+	/// @brief Report selector flags
+	virtual PoseSelectorFlags get_flags() const = 0;
+
 	/// @brief Called by PoseSelectorFactory when constructing new PoseSelectors. Takes care of the specific selector's parsing.
 	virtual
 	void parse_my_tag(
@@ -61,8 +69,6 @@ public:
 
 	/// @brief Select poses from provided vector by applying the selection criteria parsed from Tag
 	virtual utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) = 0;
-
-protected:
 
 private:
 	PosePropertyReporterCOP reporter_;
