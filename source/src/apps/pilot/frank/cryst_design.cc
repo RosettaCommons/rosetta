@@ -1117,7 +1117,8 @@ CrystDock::resample_maps_and_get_self(
 	FArray3D<Real> r_rho_cb_base = r_rho_cb;
 
 	numeric::xyzMatrix<Real> Ri = numeric::inverse(R);
-	numeric::xyzMatrix<Real> Rgridspace = c2i_*Ri*i2c_;
+	numeric::xyzMatrix<Real> Rigridspace = c2i_*Ri*i2c_;
+	numeric::xyzMatrix<Real> Rgridspace = c2i_*R*i2c_;
 
 	// rotate "oversmaple grid and find the boundaries
 	Real xmax=0, ymax=0, zmax=0;
@@ -1152,7 +1153,7 @@ CrystDock::resample_maps_and_get_self(
 		if (cy>grid_[1]/2) cy -= grid_[1];
 		if (cz>grid_[2]/2) cz -= grid_[2];
 
-		numeric::xyzVector<Real> rx = Rgridspace*numeric::xyzVector<Real>(cx,cy,cz);
+		numeric::xyzVector<Real> rx = Rigridspace*numeric::xyzVector<Real>(cx,cy,cz);
 
 		r_rho_ca_base(x,y,z) = interp_linear( rho_ca, rx );
 		r_rho_cb_base(x,y,z) = interp_linear( rho_cb, rx );
@@ -1183,7 +1184,7 @@ CrystDock::resample_maps_and_get_self(
 
 			cx += a*grid_[0]; cy += b*grid_[1]; cz += c*grid_[2];
 
-			numeric::xyzVector<Real> rx = Rgridspace*numeric::xyzVector<Real>(cx,cy,cz);
+			numeric::xyzVector<Real> rx = Rigridspace*numeric::xyzVector<Real>(cx,cy,cz);
 
 			Real rho_ca_rx = interp_linear( rho_ca, rx );
 			Real rho_cb_rx = interp_linear( rho_cb, rx );
@@ -1212,6 +1213,7 @@ CrystDock::resample_maps_and_get_self(
 
 	return ca_overlap;
 }
+
 
 Real
 CrystDock::get_radius_of_pose( Pose & pose ) {
