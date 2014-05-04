@@ -4639,6 +4639,13 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
     Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles', lower = '2', default = '20' ),
   ), #closes option group FloppyTail
 
+ #################################TailSegment####################################################
+	Option_Group( 'TailSegment',
+    Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '100' ),
+    Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles',  default = '10' ),
+  ), #closes option group TailSegment
+  
+  
  Option_Group( 'DenovoProteinDesign',
                 Option( 'redesign_core', 'Boolean', desc='redesign core of pdb', default='false'),
 								Option( 'redesign_loops', 'Boolean', desc='redesign loops of pdb', default='false'),

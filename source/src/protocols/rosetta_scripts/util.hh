@@ -111,6 +111,10 @@ parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain = 0 );
 
+/// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
+core::Size
+find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
+
 /// @brief returns a vector containing all the residues with a given packer state according to the TF
 utility::vector1< core::Size >
 residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/ );

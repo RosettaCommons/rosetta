@@ -32,6 +32,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/id/types.hh>
+#include <core/chemical/VariantType.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -431,18 +432,19 @@ parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
 /// is greater than 2.0 returns 0 to indicate error
 core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
-  core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-  for( core::Size i = 1; i <= source.total_residue(); ++i ){
+	TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<<std::endl;
+	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
+	for( core::Size i = 1; i <= source.total_residue(); ++i ){
 		if( source.residue( i ).is_ligand() ) continue;
 		if( chain && source.residue( i ).chain() != chain ) continue;
-    core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
-    if( dist <= min_dist ){
-      min_dist = dist;
-      nearest_res = i;
-    }
-  }
-  if( min_dist <= 3.0 ) return nearest_res;
-  else return 0;
+		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
+		if( dist <= min_dist ){
+			min_dist = dist;
+			nearest_res = i;
+		}
+	}
+	if( min_dist <= 3.0 ) return nearest_res;
+	else return 0;
 }
 
 utility::vector1< core::Size >
@@ -464,6 +466,29 @@ residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFact
 	if( designable )
 		return designable_vec;
 	return packable_vec;
+}
+/// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
+core::Size
+find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
+{
+	core::Size disulfideN=0,disulfideC=0;
+	for( core::Size i = res; i <= pose.total_residue(); ++i ){
+		if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
+			disulfideC=i;
+			break;
+		}
+	}
+	TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
+	for( core::Size i = res ;i > 0; --i ){
+		if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
+			disulfideN=i;
+		break;
+		}
+	}
+	TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
+	if ((disulfideC-res)>(res-disulfideN))
+		return disulfideN;
+	return disulfideC;
 }
 } //RosettaScripts
 } //protocols

@@ -235,7 +235,8 @@ sources = {
 		"RBOutMover",
 		"RBInMover",
 		"DesignInterfacesOperation",
-		"FindEndpointsOperation"
+		"FindEndpointsOperation",
+		"TailSegmentMover"
         ],
 	#"devel/ssrbrelax": [
 	#	"SSRbClass",
