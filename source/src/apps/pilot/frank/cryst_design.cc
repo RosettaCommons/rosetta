@@ -126,7 +126,7 @@ OPT_1GRP_KEY(Real, crystdock, interfacedist)
 OPT_1GRP_KEY(Real, crystdock, interface_sigwidth)
 OPT_1GRP_KEY(Real, crystdock, cluster_cutoff)
 OPT_1GRP_KEY(Integer, crystdock, expand_rounds)
-
+OPT_1GRP_KEY(Real, crystdock, random_rotate)
 
 ////////////////////////////////////////////////
 // helper functions
@@ -1734,10 +1734,10 @@ CrystDock::get_interfaces(
 			// add interface if large enough
 			cb_overlap_abc *= voxel_volume;
 			cb_sum += cb_overlap_abc;
-			TR << "voxel_volume "<< voxel_volume << " cb_overlap_abc " << cb_overlap_abc << " cb_sum " << cb_sum << std::endl;
+			//TR << "voxel_volume "<< voxel_volume << " cb_overlap_abc " << cb_overlap_abc << " cb_sum " << cb_sum << std::endl;
 			best_int = std::max( best_int, cb_overlap_abc );
 			if ( cb_overlap_abc > mininterface_ ) {
-			TR << "cb_overlap_abc > mininterface_" << std::endl;
+			//TR << "cb_overlap_abc > mininterface_" << std::endl;
 				allInterfaces.push_back(
 					SingleInterface( s_i, numeric::xyzVector<core::Real>(t_i[0]+a,t_i[1]+b,t_i[2]+c), cb_overlap_abc ) );
 			}
@@ -1861,7 +1861,7 @@ CrystDock::get_interface_score(
 				score = std::min( score, allInterfaces[j].cb_overlap_ );
 			}
 		}
-		TR << "Connection check  at " << i << "and " << contains_j <<std::endl;
+		//TR << "Connection check  at " << i << "and " << contains_j <<std::endl;
 		connected &= contains_j;
 	}
 	if (!connected) return 0.0;
@@ -1885,7 +1885,7 @@ CrystDock::get_interface_score(
 		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(-1,0,0)))
 			score_m00 = allInterfaces[i].cb_overlap_;
 	}
-	TR << "Scores: score_00p " << score_00p << " score_00m: " << score_00m << " score_0m0: " << score_0m0 << " score_0p0: " << score_0p0 << " score_p00: " << score_p00 << " score_m00: " << score_m00 <<std::endl;
+	//TR << "Scores: score_00p " << score_00p << " score_00m: " << score_00m << " score_0m0: " << score_0m0 << " score_0p0: " << score_0p0 << " score_p00: " << score_p00 << " score_m00: " << score_m00 <<std::endl;
 	score = std::min( score, std::min(score_00p, score_00m));
 	score = std::min( score, std::min(score_0m0, score_0p0));
 	score = std::min( score, std::min(score_p00, score_m00));
@@ -1949,7 +1949,17 @@ CrystDock::apply( Pose & pose) {
 	if (option[ crystdock::randomize_orientation ]()) {
 		numeric::xyzMatrix<Real> Rrand = protocols::geometry::random_reorientation_matrix( 360.0, 360.0 );
 		pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
-	}
+
+	} else if (option[ crystdock::random_rotate ]() > 0) {
+        const double psi( 2 * numeric::constants::d::pi * numeric::random::uniform() );
+        const double theta( std::acos(numeric::sin_cos_range( 1.0 - 2.0  *numeric::random::uniform() ) ) );
+        Vector axis( sin(theta)*cos(psi), sin(theta)*sin(psi), cos(theta) );
+        numeric::xyzMatrix<Real> Rrand = numeric::rotation_matrix( axis, DEG2RAD*option[ crystdock::random_rotate ]() );
+        pose.dump_pdb("recenter.pdb");
+        pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
+        pose.dump_pdb("perturbed.pdb");
+    }
+
 
 	// get SS
 	core::scoring::dssp::Dssp dssp( pose );
@@ -1966,6 +1976,7 @@ CrystDock::apply( Pose & pose) {
 
 	// compute rho_ca, rho_cb
 	FArray3D<Real> rho_ca, rho_cb, r_rho_ca, r_rho_cb;
+
 
 	setup_maps( pose, rho_ca, rho_cb, trans_step_);
 
@@ -2018,6 +2029,7 @@ CrystDock::apply( Pose & pose) {
 	if (eval_native_) {
 		mininterface_ = 0.0001;  // we want to evaluate all interfaces
 
+
 		// random reorient
 		if (option[ crystdock::random_rotation ]() > 0) {
 			const double psi( 2 * numeric::constants::d::pi * numeric::random::uniform() );
@@ -2026,6 +2038,7 @@ CrystDock::apply( Pose & pose) {
 			numeric::xyzMatrix<Real> Rrand = numeric::rotation_matrix( axis, DEG2RAD*option[ crystdock::random_rotation ]() );
 			pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
 		}
+
 
 		utility::vector1<Size> all_interfaces;
 		numeric::xyzVector<Real> offset_grid;
