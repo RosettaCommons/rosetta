@@ -107,7 +107,6 @@ OPT_1GRP_KEY(Real, crystdock, mininterfacesum)
 OPT_1GRP_KEY(Real, crystdock, trans_step)
 OPT_1GRP_KEY(Real, crystdock, rot_step)
 OPT_1GRP_KEY(Real, crystdock, cb_radius)
-OPT_1GRP_KEY(Real, crystdock, random_rotation)
 OPT_1GRP_KEY(Integer, crystdock, nmodels)
 OPT_1GRP_KEY(Integer, crystdock, rotnum)
 OPT_1GRP_KEY(Integer, crystdock, symnum)
@@ -2031,11 +2030,11 @@ CrystDock::apply( Pose & pose) {
 
 
 		// random reorient
-		if (option[ crystdock::random_rotation ]() > 0) {
+		if (option[ crystdock::random_rotate ]() > 0) {
 			const double psi( 2 * numeric::constants::d::pi * numeric::random::uniform() );
 			const double theta( std::acos(numeric::sin_cos_range( 1.0 - 2.0  *numeric::random::uniform() ) ) );
 			Vector axis( sin(theta)*cos(psi), sin(theta)*sin(psi), cos(theta) );
-			numeric::xyzMatrix<Real> Rrand = numeric::rotation_matrix( axis, DEG2RAD*option[ crystdock::random_rotation ]() );
+			numeric::xyzMatrix<Real> Rrand = numeric::rotation_matrix( axis, DEG2RAD*option[ crystdock::random_rotate ]() );
 			pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
 		}
 
@@ -2072,11 +2071,11 @@ CrystDock::apply( Pose & pose) {
 		TR << "INTERACTION score = " << cb_score << std::endl;
 		TR << "INTERACTION_SUM score = " <<cb_sum << std::endl;
 
-		//numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
-		//std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
-		//InterfaceHit ih(cb_score, xyz[0], xyz[1], xyz[2], 0, utility::vector1<SingleInterface>() );
-		//std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( 1, 8, '0' )+".pdb";
-		//dump_transformed_pdb( pose, ih, urs, outname );
+		numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
+		std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+		InterfaceHit ih(cb_score, xyz[0], xyz[1], xyz[2], 0, utility::vector1<SingleInterface>() );
+		std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( 1, 8, '0' )+".pdb";
+		dump_transformed_pdb( pose, ih, urs, outname );
 
 		return;
 	}
@@ -2336,7 +2335,7 @@ try {
 	NEW_OPT(crystdock::debug_exact, "[debug] debug mode with exact (non-FFT) calculations (slow!)", false);
 	NEW_OPT(crystdock::eval_native, "[debug] evaluate input structure without docking", false);
 	NEW_OPT(crystdock::randomize_orientation, "randomize orientation of input", false);
-	NEW_OPT(crystdock::random_rotation, "random fixed angle rotation (eval native only)", 0);
+	NEW_OPT(crystdock::random_rotate, "random fixed angle rotation (eval native only)", 0);
 	NEW_OPT(crystdock::n_clashdist, "n_clashdist", 1.40);
 	NEW_OPT(crystdock::ca_clashdist, "ca_clashdist", 2.00);
 	NEW_OPT(crystdock::c_clashdist, "c_clashdist", 2.00);
