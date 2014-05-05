@@ -277,6 +277,24 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		runtime_assert_msg(max_jump == num_jumps,
 			"invalid anchor indexing in FlexPepDock parameter file (or in default FlexPepDock parameters)");
 
+		// multichain receptor
+        if (flags_.receptor_chain().size() > 1) {
+                core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
+                Size resi = 1;
+                Size chain = 0;
+                while (resi < pose.total_residue() && chain < flags_.receptor_chain().size()-1) {
+                        if (pdbinfo->chain(resi+1) != flags_.receptor_chain().at(chain) ) {
+                                int new_jump = ++max_jump;
+                                jumps(JUMP_FROM, new_jump) = resi;
+                                jumps(JUMP_TO, new_jump) = resi+1;
+                                cuts(num_jumps+1) = resi;
+                                num_jumps++;
+                                chain++;
+                        }
+                        resi++;
+                }
+        }
+
 		//hack to support multiple ligands besides the peptide
 		//assumes ligand(s) is last residue in the pdb.
 		if (flags_.is_ligand_present(pose)) { // TODO: verify code validity for peptide-folding only (= no receptor)
@@ -988,6 +1006,8 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 		TR.Warning << "WARNING: No native supplied by used - using starting structure as reference for statistics" << std::endl;
 	}
 
+	kinematics::FoldTree old_foldTree = pose.fold_tree(); // original fold tree should be restored in the end
+
 	//	protocols::moves::AddPyMolObserver(pose);
 	flags_.updateChains(pose); // validate chain boundaries and letters
 	if(!flags_.valid_anchors())
@@ -995,7 +1015,6 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	this->setup_foldtree( pose );
 	fpdock_metrics_.set_flags(flags_.clone()); // TODO: a somewhat ugly hack
 	// TODO: is it proper that an apply() method alters the fold-tree of a pose?
-	//should we restore the old fold tree after the run?
 	if ( view_ ) {
 		add_conformation_viewer
 			( pose.conformation(), "start_pose", 450, 450 , true);
@@ -1080,6 +1099,9 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	// output statistics:
 	storeJobStatistics(start_pose_4stats, pose_after_lowres, pose);
 	basic::prof_show();
+
+	pose.fold_tree(old_foldTree);
+	TR.Debug << "fold tree restored: " << pose.fold_tree() << std::endl;
 } // END: FlexPepDockingProtocol::apply
 
 
@@ -1407,7 +1429,7 @@ void FlexPepDockingProtocol::parse_my_tag(
  if ( tag->hasOption("receptor_chain") )
 	 {
 		 flags_.set_receptor_chain
-			 ( tag->getOption<std::string>( "receptor_chain" ).at(0) );
+			 ( tag->getOption<std::string>( "receptor_chain" ) );
 	 }
  if ( tag->hasOption( "peptide_chain" ) )
 	 {

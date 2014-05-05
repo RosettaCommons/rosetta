@@ -127,7 +127,7 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
   if ( option[ OptionKeys::flexPepDocking::receptor_chain ].user() )
 		{
 			this->set_receptor_chain
-				(option[ OptionKeys::flexPepDocking::receptor_chain ]().at(0) );
+				(option[ OptionKeys::flexPepDocking::receptor_chain ]() );
 			// TODO: validate string size!
 		}
 	if ( option[ OptionKeys::flexPepDocking::peptide_chain ].user() )
@@ -168,7 +168,7 @@ bool FlexPepDockingFlags::is_ligand_present( core::pose::Pose const& pose ) cons
 		 exit(-1);
  }
 
-char FlexPepDockingFlags::receptor_chain() const
+std::string FlexPepDockingFlags::receptor_chain() const
 	{
 		if(valid_chain_info() && !pep_fold_only) return receptor_chain_;
 		std::cout << "ERROR: receptor chain invalid" << std::endl;
@@ -271,12 +271,13 @@ FlexPepDockingFlags::updateChains
 	// get receptor chain if needed
 	if(!valid_receptor_chain_ && ! pep_fold_only)
 		{
-			receptor_chain_ = pdbinfo->chain(resi);
+			receptor_chain_ = " ";
+            receptor_chain_.at(0) = pdbinfo->chain(resi);
 			// make sure receptor is different from peptide
-			if(valid_peptide_chain_ && (receptor_chain_ == peptide_chain_)){
+            if(valid_peptide_chain_ && (receptor_chain_.at(0) == peptide_chain_)){
 				do{	resi++;	}
 				while(resi <= pose.total_residue() && pdbinfo->chain(resi) == peptide_chain_);
-				receptor_chain_ = pdbinfo->chain(resi);
+                receptor_chain_.at(0) = pdbinfo->chain(resi);
 			}
 			valid_receptor_chain_ = true;
 		}
@@ -290,8 +291,10 @@ FlexPepDockingFlags::updateChains
 			else // docking mode
 				{
 					// skip receptor chain
-					do{	resi++;	}
-					while(resi <= pose.total_residue() && pdbinfo->chain(resi) == receptor_chain_);
+                	while(resi <= pose.total_residue() &&
+                				  receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos ) {
+                		resi++;
+                	}
 					this->set_peptide_chain(pdbinfo->chain(resi));
 				}
 		}
@@ -300,10 +303,10 @@ FlexPepDockingFlags::updateChains
 	resi = 1;
 	if(! pep_fold_only)
 		{
-			while(resi <= pose.total_residue() && pdbinfo->chain(resi) != receptor_chain_) resi++;
+			while(resi <= pose.total_residue() && receptor_chain_.find(pdbinfo->chain(resi)) == std::string::npos) resi++;
 			receptor_first_res_ = resi;
 			do{ resi++; }
-			while(resi <= pose.total_residue() && pdbinfo->chain(resi) == receptor_chain_);
+			while(resi <= pose.total_residue() && receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos);
 			receptor_nres_ = resi - receptor_first_res_;
 		}
 	else
@@ -319,7 +322,9 @@ FlexPepDockingFlags::updateChains
 	do{ resi++; }
 	while(resi <= pose.total_residue() && pdbinfo->chain(resi) == peptide_chain_);
 	peptide_nres_ = resi - peptide_first_res_;
-
+	if (peptide_nres_ > 30) {
+		TR.Warning << "peptide chain is longer than 30 residues" << std::endl;
+	}
 	TR << "Receptor chain: " << receptor_chain_ << std::endl;
 	TR << "Receptor first res: " << receptor_first_res_ << std::endl;
 	TR << "Receptor nres: " << receptor_nres_ << std::endl;

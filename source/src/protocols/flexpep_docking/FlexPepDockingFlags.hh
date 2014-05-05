@@ -91,11 +91,11 @@ public:
 
 	bool is_ligand_present( core::pose::Pose const& pose ) const;
 
-	char receptor_chain() const;
+	std::string receptor_chain() const;
 
 	char peptide_chain() const;
 
-	void set_receptor_chain(char ch){
+	void set_receptor_chain(std::string ch){
 		receptor_chain_ = ch; valid_receptor_chain_ = true;
 	}
 	
@@ -123,7 +123,7 @@ public:
 private:
 	// TODO: change all ints to Size, and add access to basic::options::user() to check validity
 	// chain info fields
-	char receptor_chain_;
+	std::string receptor_chain_;
 	char peptide_chain_;
 	int receptor_first_res_;
 	int receptor_nres_;
