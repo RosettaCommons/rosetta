@@ -3284,9 +3284,9 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
 	}
 
 	// cenops can make translation outside of [0,1], correct this
-	for (int ii=1; ii<=rt_out.size(); ++ii) {
+	for (int ii=1; ii<=(int)rt_out.size(); ++ii) {
 		core::Vector T_i = rt_out[ii].get_translation();
-		rt_out[ii].set_translation( core::Vector(std::fmod(T_i[0],1), std::fmod(T_i[1],1), std::fmod(T_i[2],1) ) );
+		rt_out[ii].set_translation( core::Vector(std::fmod(T_i[0],1.0), std::fmod(T_i[1],1.0), std::fmod(T_i[2],1.0) ) );
 	}
 }
 
