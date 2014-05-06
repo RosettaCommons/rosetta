@@ -379,6 +379,14 @@ public:
 		utility::sql_database::sessionOP	db_session,
 		core::Size sheet_id);
 
+	std::vector<Size>
+	get_aro_residues_in_this_sheet(
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		//core::pose::Pose & dssp_pose,
+		core::pose::Pose const & pose,
+		core::Size sheet_id);
+
 	std::vector<core::Size>
 	count_AA(
 		core::pose::Pose const & pose,
@@ -398,7 +406,7 @@ public:
 
 
 	std::string
-	see_edge_or_core(
+	see_edge_or_core_or_loop_or_short_edge(
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size residue_num);
@@ -497,6 +505,12 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
+
+	core::Size
+	delete_this_struct_id(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
+
 
 	core::Size
 	get_segment_id(
@@ -684,6 +698,15 @@ public:
 		core::pose::Pose & dssp_pose,
 		utility::vector1<core::Size>	all_distinct_sheet_ids);
 
+	core::Size
+	report_shortest_dis_between_sheets_by_aro (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id,
+		core::pose::Pose const & pose,
+		utility::vector1<core::Size>	all_distinct_sheet_ids);
+
+
 	core::Real
 	cal_min_dis_between_two_sheets_by_cen_res (
 		StructureID	struct_id,
@@ -699,6 +722,14 @@ public:
 		core::pose::Pose & dssp_pose,
 		core::Size sheet_id_1,
 		core::Size sheet_id_2);
+
+	float
+	cal_shortest_dis_between_sheets_by_aro (
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose const & pose,
+		//		core::pose::Pose & dssp_pose,
+		utility::vector1<core::Size>	all_distinct_sheet_ids);
 
 	std::pair<core::Real, core::Real>
 	cal_min_avg_dis_between_sheets_by_cen_res (
@@ -941,6 +972,9 @@ private:
 	bool
 	exclude_sandwich_that_is_linked_w_same_direction_strand_;
 
+	bool
+	exclude_sandwich_that_has_non_canonical_LR_;
+
 	core::Real
 	max_inter_strand_angle_to_not_be_same_direction_strands_;
 
@@ -1015,6 +1049,9 @@ private:
 
 	bool
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_;
+
+	bool
+	do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_;
 
 	core::Real
 	min_N_O_dis_between_two_sheets_;

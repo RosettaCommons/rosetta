@@ -455,6 +455,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
+	Column shortest_dis_between_facing_aro	("shortest_dis_between_facing_aro",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+
 	// Schema
 	// PrimaryKey
 	utility::vector1<Column> primary_key_columns_sw_by_components;
@@ -609,6 +611,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(topology_candidate);
 	sw_by_components.add_column(min_dis_between_sheets_by_cen_res);
 	sw_by_components.add_column(avg_dis_between_sheets_by_cen_res);
+	sw_by_components.add_column(shortest_dis_between_facing_aro);
 	sw_by_components.add_column(component_size);
 
 
@@ -3674,6 +3677,85 @@ SandwichFeatures::get_cen_residues_in_this_sheet(
 	return vector_of_cen_residues;
 } //get_cen_residues_in_this_sheet
 
+
+
+//get_aro_residues_in_this_sheet
+vector<Size>
+SandwichFeatures::get_aro_residues_in_this_sheet(
+	StructureID struct_id,
+	sessionOP db_session,
+	Pose const & pose,
+		//Pose & dssp_pose,
+	Size sheet_id)
+{
+	string select_string =
+	"SELECT\n"
+	"	residue_begin \n"
+	"FROM\n"
+	"	sheet AS sh, \n"
+	"	secondary_structure_segments AS sss \n"
+	"WHERE\n"
+	"	(sh.struct_id = ?) \n"
+	"	AND (sh.struct_id	=	sss.struct_id) \n"
+	"	AND (sh.segment_id	=	sss.segment_id) \n"
+	"	AND (sh.sheet_id = ?) ;";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,struct_id);
+	select_statement.bind(2,sheet_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	vector<Size> vector_of_residue_begin;
+	vector_of_residue_begin.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
+	while(res.next())
+	{
+		Size residue_begin;
+		res >> residue_begin;
+		vector_of_residue_begin.push_back(residue_begin);
+	}
+
+	string select_string_2 =
+	"SELECT\n"
+	"	residue_end \n"
+	"FROM\n"
+	"	sheet AS sh, \n"
+	"	secondary_structure_segments AS sss \n"
+	"WHERE\n"
+	"	(sh.struct_id = ?) \n"
+	"	AND (sh.struct_id	=	sss.struct_id) \n"
+	"	AND (sh.segment_id	=	sss.segment_id) \n"
+	"	AND (sh.sheet_id = ?) ;";
+
+	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2,	db_session));
+	select_statement_2.bind(1,struct_id);
+	select_statement_2.bind(2,sheet_id);
+	result result_end(basic::database::safely_read_from_database(select_statement_2));
+
+	vector<Size> vector_of_residue_end;
+	vector_of_residue_end.clear();	//	Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
+	while(result_end.next())
+	{
+		Size residue_end;
+		result_end >> residue_end;
+		vector_of_residue_end.push_back(residue_end);
+	}
+
+	vector<Size> vector_of_aro_residues;
+	for(Size i=0; i<vector_of_residue_begin.size(); i++ )
+	{
+		for(Size res	=	vector_of_residue_begin[i]; res	<=	vector_of_residue_end[i]; res++ )
+		{
+			if	((pose.residue_type(res).name3() == "PHE") || (pose.residue_type(res).name3() == "TRP") || (pose.residue_type(res).name3() == "TYR"))
+			{
+					vector_of_aro_residues.push_back(res);
+			}
+		}
+	}
+	return vector_of_aro_residues;
+} //get_aro_residues_in_this_sheet
+
+
+
 //count_AA
 vector<Size>
 SandwichFeatures::count_AA(
@@ -4610,6 +4692,45 @@ SandwichFeatures::report_min_avg_dis_between_sheets_by_cen_res	(
 
 
 
+Size
+SandwichFeatures::report_shortest_dis_between_sheets_by_aro	(
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id,
+	Pose const & pose,
+//	Pose & dssp_pose,
+	utility::vector1<Size>	all_distinct_sheet_ids)
+{
+
+	//// <begin> calculate minimum distance between sheets
+	float	shortest_dis_between_sheets_by_aro	=	cal_shortest_dis_between_sheets_by_aro(struct_id,	db_session,	pose,	all_distinct_sheet_ids);
+	//// <end> calculate minimum distance between sheets
+
+	// <begin> UPDATE sw_by_components table
+	string insert =
+	"UPDATE sw_by_components set \n"
+	"	shortest_dis_between_facing_aro = ? "
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(sw_can_by_sh_id = ?) ;";
+
+	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
+	if ((shortest_dis_between_sheets_by_aro	==	999.0) ||	(shortest_dis_between_sheets_by_aro	==	9999.0))
+	{
+		TR	<<	"this sandwich either lacks aromatic residue in at least 1 sheet or has > 2 sheets, so don't report shortest_dis_between_sheets_by_aro"	<<	endl;
+		return 0;
+	}
+
+	insert_stmt.bind(1,	round_to_Real(shortest_dis_between_sheets_by_aro));
+	insert_stmt.bind(2,	struct_id);
+	insert_stmt.bind(3,	sw_can_by_sh_id);
+
+	basic::database::safely_write_to_database(insert_stmt);
+	// <end> UPDATE sw_by_components table
+
+	return 0;
+} //	SandwichFeatures::report_shortest_dis_between_sheets_by_aro
+
 
 
 
@@ -5075,6 +5196,26 @@ SandwichFeatures::delete_this_sw_can_by_sh_id_from_sw_by_comp(
 	basic::database::safely_write_to_database(select_statement);
 	return 0;
 } //delete_this_sw_can_by_sh_id_from_sw_by_comp
+
+
+//delete_this_struct_id
+Size
+SandwichFeatures::delete_this_struct_id(
+	StructureID struct_id,
+	sessionOP db_session)
+{
+		TR << "delete_this_struct_id with struct_id: " << struct_id << endl;
+	string select_string =
+	"DELETE	\n"
+	"FROM\n"
+	"	sw_by_components	\n"
+	"WHERE\n"
+	"	(struct_id = ?) ;";
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,struct_id);
+	basic::database::safely_write_to_database(select_statement);
+	return 0;
+} //delete_this_struct_id
 
 
 //get_segment_id
@@ -6279,6 +6420,135 @@ SandwichFeatures::cal_min_avg_dis_between_two_sheets_by_cen_res (
 } //cal_min_avg_dis_between_two_sheets_by_cen_res
 
 
+float
+SandwichFeatures::cal_shortest_dis_between_sheets_by_aro (
+	StructureID struct_id,
+	sessionOP db_session,
+	Pose const & pose,
+	//Pose & dssp_pose,
+	utility::vector1<Size>	all_distinct_sheet_ids)
+{
+	int	appropriate_sheet_num	=	0;
+	float min_distance_between_aro = 9999.0;
+
+	for(Size i=1; (i <= all_distinct_sheet_ids.size())	&&	(appropriate_sheet_num	!=	2); i++)
+	{ // now I check all possible combinations
+		if (all_distinct_sheet_ids[i] == 99999) { //all_strands[i].get_size() < min_res_in_strand_
+			continue;
+		}
+		
+		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+			
+		if (num_strands_i < min_num_strands_in_sheet_)
+		{
+			continue;
+		}
+		appropriate_sheet_num++;
+		for(Size j=i+1; (j <= all_distinct_sheet_ids.size())	&&	(appropriate_sheet_num	!=	2); j++)
+		{
+			if (all_distinct_sheet_ids[j] == 99999) { //all_strands[j].get_size() < min_res_in_strand_
+				continue;
+			}
+			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
+			
+			if (num_strands_j < min_num_strands_in_sheet_)
+			{
+				continue;
+			}
+			appropriate_sheet_num++;
+
+			if	(appropriate_sheet_num	==	2)
+			{
+				vector<Size>	vector_of_aro_residues_in_sheet_1;
+				vector_of_aro_residues_in_sheet_1.clear();	// Removes all elements from the vector (which are destroyed)
+				vector_of_aro_residues_in_sheet_1	=	get_aro_residues_in_this_sheet(struct_id, db_session,	pose,	all_distinct_sheet_ids[i]);
+
+				vector<Size>	vector_of_aro_residues_in_sheet_2;
+				vector_of_aro_residues_in_sheet_2.clear();	// Removes all elements from the vector (which are destroyed)
+				vector_of_aro_residues_in_sheet_2	=	get_aro_residues_in_this_sheet(struct_id, db_session,	pose,	all_distinct_sheet_ids[j]);
+
+				for (Size ii=0;	ii<vector_of_aro_residues_in_sheet_1.size();	ii++)
+				{
+					for (Size	jj=0;	jj<vector_of_aro_residues_in_sheet_2.size();	jj++)
+					{
+						numeric::xyzVector< core::Real > xyz_of_centroid_of_aro_sheet_1;
+						if	((pose.residue_type(vector_of_aro_residues_in_sheet_1[ii]).name3() == "PHE")	||	(pose.residue_type(vector_of_aro_residues_in_sheet_1[ii]).name3() == "TYR"))
+						{
+							xyz_of_centroid_of_aro_sheet_1.x()	=
+							(pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CG ").xyz().x()
+							+	pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CZ ").xyz().x())/2;
+
+							xyz_of_centroid_of_aro_sheet_1.y()	=
+							(pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CG ").xyz().y()
+							+	pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CZ ").xyz().y())/2;
+
+							xyz_of_centroid_of_aro_sheet_1.z()	=
+							(pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CG ").xyz().z()
+							+	pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CZ ").xyz().z())/2;
+						}
+						else	//(pose.residue_type(vector_of_aro_residues_in_sheet_1[ii]).name3() == "TRP")
+						{
+							xyz_of_centroid_of_aro_sheet_1.x()	=
+								pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CD2").xyz().x();
+
+							xyz_of_centroid_of_aro_sheet_1.y()	=
+								pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CD2").xyz().y();
+
+							xyz_of_centroid_of_aro_sheet_1.z()	=
+								pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CD2").xyz().z();
+						}
+
+						numeric::xyzVector< core::Real > xyz_of_centroid_of_aro_sheet_2;
+						if	((pose.residue_type(vector_of_aro_residues_in_sheet_2[jj]).name3() == "PHE")	||	(pose.residue_type(vector_of_aro_residues_in_sheet_2[jj]).name3() == "TYR"))
+						{
+							xyz_of_centroid_of_aro_sheet_2.x()	=
+							(pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CG ").xyz().x()
+							+	pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CZ ").xyz().x())/2;
+
+							xyz_of_centroid_of_aro_sheet_2.y()	=
+							(pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CG ").xyz().y()
+							+	pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CZ ").xyz().y())/2;
+
+							xyz_of_centroid_of_aro_sheet_2.z()	=
+							(pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CG ").xyz().z()
+							+	pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CZ ").xyz().z())/2;
+						}
+						else	//(pose.residue_type(vector_of_aro_residues_in_sheet_2[ii]).name3() == "TRP")
+						{
+							xyz_of_centroid_of_aro_sheet_2.x()	=
+								pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CD2").xyz().x();
+
+							xyz_of_centroid_of_aro_sheet_2.y()	=
+								pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CD2").xyz().y();
+
+							xyz_of_centroid_of_aro_sheet_2.z()	=
+								pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CD2").xyz().z();
+						}
+
+						Real distance_between_aro = xyz_of_centroid_of_aro_sheet_1.distance(xyz_of_centroid_of_aro_sheet_2);
+
+						if (distance_between_aro < min_distance_between_aro)
+						{
+							min_distance_between_aro = distance_between_aro;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if	(appropriate_sheet_num	!=	2)
+		// if there are not two sheets,	cal_shortest_dis_between_sheets_by_aro is not meaningful, so don't calculate here
+	{
+		return 999.0;
+	}
+
+	return min_distance_between_aro;
+} //cal_shortest_dis_between_sheets_by_aro
+
+
+
+
 std::pair<Real, Real>
 SandwichFeatures::cal_min_avg_dis_between_sheets_by_cen_res (
 	StructureID struct_id,
@@ -6751,7 +7021,7 @@ SandwichFeatures::get_vector_strand_AA_distribution (
 
 
 string
-SandwichFeatures::see_edge_or_core (
+SandwichFeatures::see_edge_or_core_or_loop_or_short_edge (
 	StructureID struct_id,
 	sessionOP db_session,
 	Size	residue_num
@@ -6792,7 +7062,7 @@ SandwichFeatures::see_edge_or_core (
 		edge_or_core = "loop_or_short_edge";
 	}
 	return edge_or_core;
-}
+}	//	see_edge_or_core_or_loop_or_short_edge
 
 
 
@@ -7325,10 +7595,17 @@ SandwichFeatures::parse_my_tag(
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", false);
 					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
 
+	do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("do_not_write_resfile_of_sandwich_that_has_non_canonical_LR", false);
+					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
+
 	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", false);
 					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
 					//	Rationale of default=true (1)
 						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
+
+	exclude_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_LR", false);
+					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
+
 
 	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
 					//	definition: maximum starting loop size to extract
@@ -7390,33 +7667,46 @@ SandwichFeatures::parse_my_tag(
 
 	write_AA_kind_files_ = tag->getOption<bool>("write_AA_kind_files", false);
 					//	definition: if true, write files that have amino acid kinds
-	write_strand_AA_distribution_files_ = tag->getOption<bool>("write_strand_AA_distribution_files", false);
-					//	definition: if true, write files that have amino acid distributions with directions
+
+			///////// AA distribution ///////
 	write_loop_AA_distribution_files_ = tag->getOption<bool>("write_loop_AA_distribution_files", false);
 					//	definition: if true, write files that have amino acid distributions without directions
+
+	write_strand_AA_distribution_files_ = tag->getOption<bool>("write_strand_AA_distribution_files", false);
+					//	definition: if true, write files that have amino acid distributions with directions
+
+
+	write_beta_sheet_capping_info_ = tag->getOption<bool>("write_beta_sheet_capping_info", false);
+		// reference: 2008_beta-Sheet capping- Signals that initiate and terminate beta-sheet formation, Journal of Structural Biology FarzadFard et al.,
+
 	write_chain_B_resnum_ = tag->getOption<bool>("write_chain_B_resnum", false);
 			// if true, write chain_B_resnum file for InterfaceAnalyzer
+
+	write_electrostatic_interactions_of_all_residues_ = tag->getOption<bool>("write_electrostatic_interactions_of_all_residues", false);
+	write_electrostatic_interactions_of_all_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_all_residues_in_a_strand", false);
+	write_electrostatic_interactions_of_surface_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_surface_residues_in_a_strand", false);
+
+	write_heading_directions_of_all_AA_in_a_strand_ = tag->getOption<bool>("write_heading_directions_of_all_AA_in_a_strand", false);
+
+
+	write_p_aa_pp_files_ = tag->getOption<bool>("write_p_aa_pp_files", false);
+					//	definition: if true, write p_aa_pp_files
 	write_phi_psi_of_all_ = tag->getOption<bool>("write_phi_psi_of_all", false);
 					//	definition: if true, write phi_psi_file
 	write_phi_psi_of_E_ = tag->getOption<bool>("write_phi_psi_of_E", false);
 					//	definition: if true, write phi_psi_file
+	write_rama_at_AA_to_files_ = tag->getOption<bool>("write_rama_at_AA_to_files", false);
+					//	definition: if true, write write_rama_at_AA_to_files
+
 	write_resfile_ = tag->getOption<bool>("write_resfile", false);
 					//	definition: if true, write resfile automatically
-	write_resfile_to_minimize_too_much_hydrophobic_surface_ = tag->getOption<bool>("write_resfile_to_minimize_too_much_hydrophobic_surface", false);
-					//	definition: if true, write resfile to_minimize_too_much_hydrophobic_surface
 	write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_ = tag->getOption<bool>("write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands", false);
 					//	definition: if true, write resfile to_minimize_too_many_core_heading_FWY_on_edge_strands
 
-	write_p_aa_pp_files_ = tag->getOption<bool>("write_p_aa_pp_files", false);
-					//	definition: if true, write p_aa_pp_files
-	write_rama_at_AA_to_files_ = tag->getOption<bool>("write_rama_at_AA_to_files", false);
-					//	definition: if true, write write_rama_at_AA_to_files
-	write_heading_directions_of_all_AA_in_a_strand_ = tag->getOption<bool>("write_heading_directions_of_all_AA_in_a_strand", false);
-	write_electrostatic_interactions_of_surface_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_surface_residues_in_a_strand", false);
-	write_electrostatic_interactions_of_all_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_all_residues_in_a_strand", false);
-	write_electrostatic_interactions_of_all_residues_ = tag->getOption<bool>("write_electrostatic_interactions_of_all_residues", false);
-	write_beta_sheet_capping_info_ = tag->getOption<bool>("write_beta_sheet_capping_info", false);
-		// reference: 2008_beta-Sheet capping- Signals that initiate and terminate beta-sheet formation, Journal of Structural Biology FarzadFard et al.,
+	write_resfile_to_minimize_too_much_hydrophobic_surface_ = tag->getOption<bool>("write_resfile_to_minimize_too_much_hydrophobic_surface", false);
+					//	definition: if true, write resfile to_minimize_too_much_hydrophobic_surface
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7945,7 +8235,7 @@ SandwichFeatures::report_features(
 
 	if (bs_of_sw_can_by_sh.size() == 0)
 	{
-			TR.Info << "no beta segment in sandwich_by_sheet (maybe these are too distant sheets or a beta barrel or \"non-canonical\" like 1MSP"") " << endl;
+			TR.Info << "no beta segment in sandwich_by_sheet (maybe there are only <3 number of strands in one sheet or these are too distant sheets or a beta barrel or \"non-canonical\" like 1MSP"") " << endl;
 			TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
 		return 0;
 	}
@@ -8203,6 +8493,33 @@ SandwichFeatures::report_features(
 				if (!loop_is_surrounded_by_same_direction_strands)
 				{
 					canonical_LR = check_canonicalness_of_LR(loop_size, true, LR); // loop_size, intra_sheet bool, LR
+
+					if	(do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_	&&	canonical_LR	==	"F_LR")
+					{
+							TR.Info << "This sandwich has non-canonical hairpin chirality " <<	endl;
+							TR.Info << "So don't write resfile for this sandwich for subsequent design" <<	endl;
+						write_resfile_	=	0;
+							TR.Info << "this pdb file fails to pass ChiralitySandwichFilter, this procedure is obviously risky when extracting multiple sandwiches from raw pdb files, so use this ChiralitySandwichFilter only when each pdb file has 1 sandwich" <<	endl;
+							//return	1;	// which means this sandwich fail to pass	ChiralitySandwichFilter
+//							TR.Info << "this sandwich has non-canonical hairpin chirality, so delete " << vec_sw_can_by_sh_id[ii] << " sw_can_by_sh_id" << endl;
+//						delete_this_sw_can_by_sh_id_from_sw_by_comp(
+//							struct_id,
+//							db_session,
+//							vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+//							);
+//						chance_of_being_canonical_sw = false;
+					}
+
+					if	(exclude_sandwich_that_has_non_canonical_LR_	&&	canonical_LR	==	"F_LR")
+					{
+						delete_this_struct_id(
+							struct_id,
+							db_session
+							);
+						return 1;
+						//						chance_of_being_canonical_sw = false;
+					}
+
 					cano_PA = check_canonicalness_of_PA(loop_size, true, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_); // loop_size, intra_sheet bool, 2 PAs
 					cano_parallel_EE = check_canonicalness_of_parallel_EE(loop_size, true, parallel_EE); // loop_size, intra_sheet bool, parallel_EE
 
@@ -8438,6 +8755,12 @@ SandwichFeatures::report_features(
 			report_min_avg_dis_between_sheets_by_cen_res	(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
 				dssp_pose,
+				all_distinct_sheet_ids
+				);
+
+			report_shortest_dis_between_sheets_by_aro	(struct_id,	db_session,
+				vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
+				pose,
 				all_distinct_sheet_ids
 				);
 
@@ -8912,7 +9235,8 @@ SandwichFeatures::report_features(
 		resfile_stream << "USE_INPUT_SC" << endl;
 		resfile_stream << "start" << endl;
 
-		resfile_stream << "# final update: 05/02/2014 based on 203 native sandwiches" << endl;
+		resfile_stream << "# final resfile rule update: 05/06/2014" << endl;
+		resfile_stream << "#	based on 203 native sandwiches and designed His at core-heading core-strands" << endl;
 		resfile_stream << "# NOTAA	CFPWY for surface_heading residues at core strands" << endl;
 		resfile_stream << "# NOTAA	CFWY for surface_heading residues at edge strands" << endl;
 
@@ -8921,7 +9245,7 @@ SandwichFeatures::report_features(
 			resfile_stream << "# PIKAA	DENQST	for every 2nd surface-heading	residues " << endl;
 		}
 
-		resfile_stream << "# NOTAA	CDKNPR for core_heading residues at core strands" << endl;
+		resfile_stream << "# NOTAA	CDEHKNPQR for core_heading residues at core strands" << endl;
 		resfile_stream << "# NOTAA	CDNP for core_heading residues at edge strands" << endl;
 
 		if	(write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_)
@@ -8945,6 +9269,12 @@ SandwichFeatures::report_features(
 					{
 						if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
+							string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
+							if (edge_or_core == "loop_or_short_edge")
+							{
+								continue;	//	I will write resfile for this residue later
+							}
+
 							count_to_minimize_too_much_hydrophobic_surface++;
 							if	(count_to_minimize_too_much_hydrophobic_surface	==	2)
 							{
@@ -8953,7 +9283,6 @@ SandwichFeatures::report_features(
 							}
 							else
 							{
-								string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
 								if (edge_or_core == "core")
 								{
 									resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
@@ -8966,7 +9295,7 @@ SandwichFeatures::report_features(
 						}
 						else	//(!write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+							string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
 							if (edge_or_core == "core")
 							{
 								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
@@ -8976,26 +9305,25 @@ SandwichFeatures::report_features(
 								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
 							}
 						}
-
 					}
 					else if (heading == "core")
 					{
 						if	(write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_)
 						{
-							count_to_minimize_too_many_core_heading_FWY_on_edge_strands++;
-							if	(count_to_minimize_too_many_core_heading_FWY_on_edge_strands	==	2)
+							string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
+							if (edge_or_core == "core")
 							{
-								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDFNPWY" << endl;
-								count_to_minimize_too_many_core_heading_FWY_on_edge_strands	=	0;
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDEHKNPQR" << endl;
 							}
-							else
+							else	if (edge_or_core == "edge")
 							{
-								string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
-								if (edge_or_core == "core")
+								count_to_minimize_too_many_core_heading_FWY_on_edge_strands++;
+								if	(count_to_minimize_too_many_core_heading_FWY_on_edge_strands	==	2)
 								{
-									resfile_stream << residue_num << "	A	EX	1	NOTAA	CDKNPR" << endl;
+									resfile_stream << residue_num << "	A	EX	1	NOTAA	CDFNPWY" << endl;
+									count_to_minimize_too_many_core_heading_FWY_on_edge_strands	=	0;
 								}
-								else	if (edge_or_core == "edge")
+								else
 								{
 									resfile_stream << residue_num << "	A	EX	1	NOTAA	CDNP" << endl;
 								}
@@ -9003,10 +9331,10 @@ SandwichFeatures::report_features(
 						}
 						else	//(!write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_)
 						{
-							string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+							string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
 							if (edge_or_core == "core")
 							{
-								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDKNPR" << endl;
+								resfile_stream << residue_num << "	A	EX	1	NOTAA	CDEHKNPQR" << endl;
 							}
 							else	if (edge_or_core == "edge")
 							{
@@ -9021,7 +9349,7 @@ SandwichFeatures::report_features(
 		resfile_stream << "# NOTAA	CFMWY for loop residues" << endl;
 		for (Size i =1; i<=(pose.total_residue()); i++)
 		{
-			string edge_or_core = see_edge_or_core (struct_id,	db_session,	i);
+			string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	i);
 			if (edge_or_core == "loop_or_short_edge")
 			{
 				resfile_stream << i << "	A	EX	1	NOTAA	CFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
@@ -9043,7 +9371,9 @@ SandwichFeatures::report_features(
 		surface_loop_resfile_stream << "USE_INPUT_SC" << endl;
 		surface_loop_resfile_stream << "start" << endl;
 
-		surface_loop_resfile_stream << "# final update: 05/02/2014 based on 203 native sandwiches" << endl;
+		surface_loop_resfile_stream << "# final resfile rule update: 05/06/2014" << endl;
+		surface_loop_resfile_stream << "#	based on 203 native sandwiches" << endl;
+
 		surface_loop_resfile_stream << "# NOTAA	CFPWY for surface_heading residues at core strands" << endl;
 		surface_loop_resfile_stream << "# NOTAA	CFWY for surface_heading residues at edge strands" << endl;
 
@@ -9068,7 +9398,11 @@ SandwichFeatures::report_features(
 					{
 						if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							//surface_loop_resfile_stream <<	"count_to_minimize_too_much_hydrophobic_surface:" << count_to_minimize_too_much_hydrophobic_surface	<<	endl;
+							string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
+							if (edge_or_core == "loop_or_short_edge")
+							{
+								continue;	//	I will write resfile for this residue later
+							}
 							count_to_minimize_too_much_hydrophobic_surface++;
 							if	(count_to_minimize_too_much_hydrophobic_surface	==	2)
 							{
@@ -9077,7 +9411,7 @@ SandwichFeatures::report_features(
 							}
 							else
 							{
-								string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+//								string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
 								if (edge_or_core == "core")
 								{
 									surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
@@ -9090,14 +9424,14 @@ SandwichFeatures::report_features(
 						}
 						else	//(!write_resfile_to_minimize_too_much_hydrophobic_surface_)
 						{
-							string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+							string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
 							if (edge_or_core == "core")
 							{
-								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
+								surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFPWY" << endl;
 							}
 							else	if (edge_or_core == "edge")
 							{
-								resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
+								surface_loop_resfile_stream << residue_num << "	A	EX	1	NOTAA	CFWY" << endl;
 							}
 						}
 					}
@@ -9112,7 +9446,7 @@ SandwichFeatures::report_features(
 		surface_loop_resfile_stream << "# NOTAA	CFMWY for loop residues" << endl;
 		for (Size i =1; i<=(pose.total_residue()); i++)
 		{
-			string edge_or_core = see_edge_or_core (struct_id,	db_session,	i);
+			string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	i);
 			if (edge_or_core == "loop_or_short_edge")
 			{
 				surface_loop_resfile_stream << i << "	A	EX	1	NOTAA	CFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
@@ -9128,7 +9462,6 @@ SandwichFeatures::report_features(
 
 
 		TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
-//	}
 	return 0;
 } //SandwichFeatures::report_features
 
