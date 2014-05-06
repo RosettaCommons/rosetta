@@ -271,6 +271,10 @@ residue_types/l-ncaa/NVL.params
 #residue_types/l-ncaa/1-methyl-histidine_prot.params
 #residue_types/l-ncaa/2.4-dimethyl-phenylalanine.params
 #residue_types/l-ncaa/2-allyl-glycine.params
+residue_types/l-ncaa/TES.params
+residue_types/l-ncaa/S56.params
+#residue_types/l-ncaa/2-allyl-glycine.params
+#residue_types/l-ncaa/2-allyl-glycine.params
 #residue_types/l-ncaa/2-amino-2-phenylbutyric_acid.params
 #residue_types/l-ncaa/2-amino-4-bromo-4-pentenoic_acid.params
 #residue_types/l-ncaa/2-amino-5-phenyl-pentanoic_acid.params
