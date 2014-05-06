@@ -637,7 +637,9 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			TR << "redefining default layer " << layer << std::endl;
 		} else if(layer == "CombinedTasks" ) {
 			std::string comb_name = layer_tag->getOption< std::string >("name");
+			layer = comb_name;
 			TR << "Making a combined task named "<< comb_name << std::endl;
+            layer = comb_name;
 			utility::vector1< TaskOperationOP > task_ops;
 			BOOST_FOREACH( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
 				std::string task_op_type = task_tag->getName();
