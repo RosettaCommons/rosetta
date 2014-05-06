@@ -1312,6 +1312,8 @@ CrystDock::dump_transformed_pdb( Pose pose, InterfaceHit ih, UniformRotationSamp
   matrix.close();
   }
   else{
+  TR<<"dumping output " << outname <<std::endl;
+  TR<<"base"<<basename<<std::endl;
 	pose.apply_transform_Rx_plus_v( R,T );
 	pose.dump_pdb( outname );
 	}
@@ -1972,9 +1974,9 @@ CrystDock::apply( Pose & pose) {
         const double theta( std::acos(numeric::sin_cos_range( 1.0 - 2.0  *numeric::random::uniform() ) ) );
         Vector axis( sin(theta)*cos(psi), sin(theta)*sin(psi), cos(theta) );
         numeric::xyzMatrix<Real> Rrand = numeric::rotation_matrix( axis, DEG2RAD*option[ crystdock::random_rotate ]() );
-        pose.dump_pdb("recenter.pdb");
-        pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
-        pose.dump_pdb("perturbed.pdb");
+        // pose.dump_pdb("recenter.pdb");
+//         pose.apply_transform_Rx_plus_v( Rrand, numeric::xyzVector<Real>(0,0,0) );
+//         pose.dump_pdb("perturbed.pdb");
     }
 
 
@@ -2089,8 +2091,14 @@ CrystDock::apply( Pose & pose) {
 		TR << "INTERACTION score = " << cb_score << std::endl;
 		TR << "INTERACTION_SUM score = " <<cb_sum << std::endl;
 
+
+
+		
 		numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
 		std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+		utility::vector1< std::string > temp_out_names= utility::split( base_name );
+		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
+		base_name = out_name.base();
 		InterfaceHit ih(cb_score, xyz[0], xyz[1], xyz[2], 0, utility::vector1<SingleInterface>() );
 		std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( 1, 8, '0' )+".pdb";
 		dump_transformed_pdb( pose, ih, urs, outname, base_name );
@@ -2261,7 +2269,7 @@ CrystDock::apply( Pose & pose) {
 // 		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 // 		base_name = out_name.base();
 // 		std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( i, 8, '0' )+".pdb";
-// 		dump_transformed_pdb( pose, ih, urs, outname, basename );
+// 		dump_transformed_pdb( pose, ih, urs, outname, base_name );
 // 	}
 
 
@@ -2364,7 +2372,7 @@ try {
 	NEW_OPT(crystdock::interface_sigwidth, "interface_sigwidth", 1.00);
 	NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
 	NEW_OPT(crystdock::expand_rounds, "expand_rounds", 12);
-  NEW_OPT(crystdock::compact, "output transformation/rotation matrix only", false);
+  NEW_OPT(crystdock::compact, "output transformation matrix only", false);
 
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
