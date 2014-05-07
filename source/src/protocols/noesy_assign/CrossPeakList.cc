@@ -25,19 +25,13 @@
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 
-// AUTO-REMOVED #include <protocols/noesy_assign/DistanceScoreMover.hh>
-
 // Project Headers
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 #include <core/id/Exceptions.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh> // REQUIRED FOR WINDOWS
 
 // for switching residue type set to centroid
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 // for error output
 #include <core/chemical/ResidueType.hh>
@@ -47,9 +41,6 @@
 #include <basic/prof.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <math.h> //for isnan
-
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
@@ -358,50 +349,6 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 		}
 	}
 }
-
-#if 0
-core::scoring::constraints::ConstraintSetOP CrossPeakList::generate_constraints( core::pose::Pose const& pose, bool centroid, core::Size min_seq_separation ) const {
-	using namespace core::scoring::constraints;
-	ConstraintSetOP cstset = new ConstraintSet;
-	core::pose::Pose centroid_pose;
-
-	if ( tr.Debug.visible() ) pose.dump_pdb("pose_in_generate_constraints.pdb");
-
-	if ( centroid ) {
-		centroid_pose = pose;
-		core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID );
-		if ( tr.Debug.visible() ) {
-			centroid_pose.dump_pdb( "centroid_pose.pdb" );
-		}
-	}
-	//count for normalization:
-	core::Size ct( 0 );
-	for ( CrossPeakList::const_iterator it = begin(); it != end(); ++it ) {
-		if ( (*it)->eliminated() ) continue;
-		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
-		//		if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
-		++ct;
-	}
-
-
-	for ( CrossPeakList::const_iterator it = begin(); it != end(); ++it ) {
-		if ( (*it)->eliminated() ) continue;
-		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
-		try {
-			if ( !centroid ) cstset->add_constraint( (*it)->create_constraint( pose, ct ) );
-			else cstset->add_constraint( (*it)->create_centroid_constraint( pose, centroid_pose, ct ) );
-		} catch ( core::id::EXCN_AtomNotFound& excn ) {
-			tr.Error << "failed to generate " << ( centroid ?  "centroid " : "full-atom " ) << "constraint for peak: " << (**it) << std::endl;
-			tr.Error  << excn << std::endl;
-			core::pose::Pose const & current_pose = ( centroid ? centroid_pose : pose );
-			tr.Info << " residue-type in pose: " << current_pose.residue_type( excn.atom().rsd() ).name3() << " " << excn.atom().rsd() << std::endl;
-			tr.Debug << " with these atoms ";
-			current_pose.residue_type( excn.atom().rsd() ).show_all_atom_names( tr.Debug );
-		}
-	}
-	return cstset;
-}
-#endif
 
 }
 }

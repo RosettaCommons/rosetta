@@ -57,7 +57,6 @@
 #include <cmath>
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
-static basic::Tracer tr_labels("protocols.noesy_assign.crosspeaks.labels");
 
 using core::Real;
 using namespace core;
@@ -66,8 +65,6 @@ using namespace basic;
 
 namespace protocols {
 namespace noesy_assign {
-
-std::set< core::id::NamedAtomID > CrossPeak::unknown_resonances_;
 
 CrossPeak::Spin::Spin( Real freq ) : freq_ ( freq ) {}
 CrossPeak::Spin::Spin() { }
@@ -226,10 +223,7 @@ CrossPeak::create_fa_and_cen_constraint(
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		if ( (*it)->normalized_peak_volume() <= min_vc ) continue; //not enough contribution
 		if ( !ct_ambiguous ) first_valid = it;
-		++ct_ambiguous;
-	}
-	if ( qc == HI_NEAR_UNAMBIG || qc == HI_UNAMBIG ) {
-		runtime_assert( ct_ambiguous < 2 );
+		ct_ambiguous += (*it)->float_ambiguity();
 	}
 
 	if ( ct_ambiguous > 1 ) {
@@ -240,28 +234,34 @@ CrossPeak::create_fa_and_cen_constraint(
 		AmbiguousNMRConstraintOP
 			my_cen_cst = new AmbiguousNMRConstraint( func );
 
-		core::Size n( n_assigned() );
+		//		core::Size n( n_assigned() );
 		//mjo commenting out 'sd' because it is unused and causes a warning
 		//core::Real sd( 1.0/params.cst_strength_ );
-		core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / n, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
+		core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / ct_ambiguous, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
 		core::Real cum_new_distance( 0 );
 		core::Size max_maps=0;
 		// add individual constraints --- their potential does not matter ... it is ignored in evaluation...
 		for ( PeakAssignments::const_iterator it = first_valid; it != end(); ++it ) {
 			if ( (*it)->normalized_peak_volume() <= min_vc ) continue; //not enough contribution
-			AmbiguousNMRDistanceConstraintOP new_cst( (*it)->create_constraint( pose ) );
-			my_fa_cst->add_individual_constraint( new_cst );
-			fa_cst = my_fa_cst;
-			if ( !fa_only ) {
-				Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
-				if ( map_to_CEN ) {
-					my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CEN" ) );
-					max_maps = std::max( number_of_maps, max_maps );
-				} else {
-					my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" ) );
-					cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( new_cst->multiplicity(), 1.0/6 ), -6 );
+			core::Size const float_ambiguity( (*it)->float_ambiguity() );
+			for ( core::Size ifloat = 1; ifloat <=  float_ambiguity; ++ifloat ) {
+				AmbiguousNMRDistanceConstraintOP new_cst( (*it)->create_constraint( pose, ifloat ) );
+				my_fa_cst->add_individual_constraint( new_cst );
+				fa_cst = my_fa_cst;
+				if ( !fa_only ) {
+					Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
+					if ( map_to_CEN ) {
+						my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CEN" ) );
+						max_maps = std::max( number_of_maps, max_maps );
+					} else {
+						my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" ) );
+						cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( new_cst->multiplicity(), 1.0/6 ), -6 );
+					}
 				}
 			}
+		}
+		if ( my_fa_cst->member_constraints().size()<=1 ) {
+			fa_cst = my_fa_cst->member_constraints()[ 1 ]->clone( my_fa_cst->get_func().clone() );
 		}
 		if ( !fa_only ) {
 			Real mapped_upl;
@@ -273,15 +273,21 @@ CrossPeak::create_fa_and_cen_constraint(
 				mapped_upl = pow( cum_new_distance, -1.0/6 );
 				mapped_inv_weight = inv_weight;
 			}
-			cen_cst = my_cen_cst->clone( new BoundFunc( 1.5,
+			core::scoring::func::FuncOP centroid_bound_func = new BoundFunc( 1.5,
 					round(mapped_upl,round_digits),
 					round(mapped_inv_weight,round_digits),
 					"CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
-				) );
+			);
+			if ( my_cen_cst->member_constraints().size()<=1 ) {
+				cen_cst = my_cen_cst->member_constraints()[ 1 ]->clone( centroid_bound_func );
+			} else {
+				cen_cst = my_cen_cst->clone( centroid_bound_func );
+			}
 		}
+
 	} else { // not ambiguous
 		if ( first_valid == end() ) return;
-		AmbiguousNMRDistanceConstraintOP my_fa_cst = (*first_valid)->create_constraint( pose, func ); //first one should be only one,
+		AmbiguousNMRDistanceConstraintOP my_fa_cst = (*first_valid)->create_constraint( pose, 1 /*ifloat*/, func ); //first one should be only one,
 		fa_cst = my_fa_cst;
 		if ( !fa_only ) {
 			Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
@@ -306,7 +312,8 @@ CrossPeak::create_fa_and_cen_constraint(
 		}
 		//	tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
 	}
-#endif
+
+#endif //WIN32
 }
 
 Real sigmoid( Real x, Real tau, Real m, int sign = 1 ) {
@@ -424,77 +431,6 @@ core::Real CrossPeak::max_volume_contribution() const {
 	return 0.;
 #endif
 }
-
-#if 0
-core::scoring::constraints::ConstraintOP
-CrossPeak::create_constraint( pose::Pose const& pose, core::Size normalization ) const {
-
-
-	basic::ProfileThis doit( basic::NOESY_ASSIGN_CP_GEN_CST );
-
-	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
-	core::Size const round_digits( 2 );
-	core::scoring::func::FuncOP func( new BoundFunc( 1.5, round(distance_bound(),round_digits), round(inv_weight,round_digits), "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename() ) );
-
-	Size ct_ambiguous( 0 );
-	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
-		if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
-		++ct_ambiguous;
-	}
-
-	if ( ct_ambiguous > 1 ) {
-		core::scoring::constraints::AmbiguousNMRConstraintOP
-			constraint = new core::scoring::constraints::AmbiguousNMRConstraint( func );
-
-		for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
-			if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
-			constraint->add_individual_constraint( (*it)->create_constraint( pose ) );
-		}
-		return constraint;
-	} else {
-		for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
-			if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
-			return (*it)->create_constraint( pose, func ); //first one should be only one,
-		}
-	}
-	return NULL; //never reached
-}
-
-core::scoring::constraints::ConstraintOP
-CrossPeak::create_centroid_constraint(
-	pose::Pose const& pose,
-	pose::Pose const& centroid_pose,
-	core::Size normalization
- ) const {
-	using namespace core::scoring::constraints;
-	core::Size const round_digits(2);
-
-	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	core::Real inv_weight( round( sqrt( 1.0*normalization )/params.cst_strength_, round_digits ) );
-
-	//	if ( ct_ambiguous>1 ) {
-		AmbiguousNMRConstraintOP constraint =
-			new AmbiguousNMRConstraint
-			( new BoundFunc( 1.5, round( distance_bound(), round_digits), inv_weight, "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() ) ) );
-		core::Size n( n_assigned() );
-		core::Real sd( 1.0/params.cst_strength_ );
-		core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / n, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
-		core::Real cum_new_distance( 0 );
-		for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
-			if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
-			AmbiguousNMRDistanceConstraintOP new_cst( (*it)->create_constraint( pose ) );
-			Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
-			constraint->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" ) );
-			cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( new_cst->multiplicity(), 1.0/6 ), -6 );
-			sd += params.centroid_mapping_distance_padding_*( pow( new_cst->multiplicity()-1, 1.0/6 ) );
-		}
-		return constraint->clone( new BoundFunc( 1.5, round( pow( cum_new_distance, -1.0/6 ), round_digits), inv_weight, "CB mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) ) );
-		/// 10/22/2010 replace sd*inv_weight with inv_weight... centroid csts were generally underinv_weighted compared to fullatom...
-// 	} else { //not ambiguous
-// 	}
-}
-#endif
 
 ///@brief do we have a inter residue assignment with at least volume_threshold contribution ?
 Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) const {
@@ -625,18 +561,31 @@ Size CrossPeak3D::assign_spin( Size iproton, Size res_id[] ) {
 }
 
 void CrossPeak3D::assign_spin( Size iproton ) {
+	tr.Trace << "assign_spin for Peak " << peak_id() << std::endl;
   if ( iproton == 2 ) CrossPeak::assign_spin( iproton ); //base-class: no label
   else assign_labelled_spin( iproton );
 }
 
 void CrossPeak3D::assign_labelled_spin( Size iproton ) {
   runtime_assert( has_label( iproton ));
-  Real const my_freq( proton( iproton ).freq() );
-  Real const my_label_freq( label( iproton ).freq() );
-  Real const my_tolerance( info( iproton ).proton_tolerance() );
-  Real const my_label_tolerance( info( iproton ).label_tolerance() );
+  Real const proton_freq( proton( iproton ).freq() );
+  Real const label_freq( label( iproton ).freq() );
+  Real const proton_tolerance( info( iproton ).proton_tolerance() );
+  Real const label_tolerance( info( iproton ).label_tolerance() );
 
-
+	for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it ) {
+		//		tr.Trace << "match2D for peak " << peak_id() << " with resonance " << it->second->atom() << std::endl;
+		Resonance::ResonancePairs matches;
+		if ( it->second->match2D( proton_freq, proton_tolerance, folder( iproton ), label_freq, label_tolerance, folder( iproton+2 ), matches ) ) {
+			tr.Debug << "successful 2D match for peak " << peak_id() << " with resonance " << it->second->atom() << std::endl;
+			for ( Resonance::ResonancePairs::const_iterator mit=matches.begin(); mit != matches.end(); ++mit ) {
+				proton( iproton ).add_assignment( mit->first );
+				label( iproton ).add_assignment( mit->second );
+			}
+		}
+	}
+	tr.Trace << "no more matches" << std::endl;
+	/*
 	/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
 	if ( my_tolerance > 99 ) {
 		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
@@ -667,18 +616,12 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 		}// all resonances
 	} else {
 		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-
-			/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
-			//			if ( my_tolerance > 99 && ( it->second->freq() > 13.0 && info( iproton ).main_atom() == "H" ) ) continue;
-
-			//	if ( std::abs( fold_resonance( it->second->freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second->tolerance() ) ) {
 			if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
 				Size resid( it->second->atom().rsd() );
 				//maybe also map resonance by resid?
 				try {
 					id::NamedAtomID atomID( info( iproton ).label_atom_name( it->second->atom().atom(), resonances().aa_from_resid( resid ) ), resid );
 					Resonance const& label_reso ( resonances()[ atomID ] );
-					//					if ( std::abs( fold_resonance( label_reso.freq(), iproton+2 ) - my_label_freq ) < my_label_tolerance ) {
 					//					if ( tr_labels.Trace.visible() ) {
 					//						tr_labels.Trace << "trying to match " << atomID << " as label to " << it->second->atom() << std::endl;
 					//					}
@@ -703,13 +646,8 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 			}
 		}
 	}
+	*/
 }
-// void CrossPeak::invalidate_assignment( Size iassignment ) {
-//   proton( 1 ).invalidate_assignment_by_nr( iassignment );
-//   proton( 2 ).invalidate_assignment_by_nr( iassignment );
-//   if ( has_label( 1 ) ) label( 1 ).invalidate_assignment_by_nr( iassignment );
-//   if ( has_label( 2 ) ) label( 2 ).invalidate_assignment_by_nr( iassignment );
-// }
 
 CrossPeak3D::CrossPeak3D( Spin const& sp1, Spin const& sp2, Spin const& label1, Real strength ) :
   CrossPeak( sp1, sp2, strength ),

@@ -24,6 +24,7 @@ namespace protocols {
 namespace jd2 {
 namespace archive {
 // Forward
+class BaseArchiveManager;
 class ArchiveManager;
 class Batch;
 
@@ -32,6 +33,7 @@ typedef  utility::pointer::owning_ptr< ArchiveManager >  ArchiveManagerOP;
 typedef  utility::pointer::owning_ptr< ArchiveManager const >  ArchiveManagerCOP;
 //typedef  utility::pointer::access_ptr< ArchiveManager >  ArchiveManagerAP;
 typedef ArchiveManager* ArchiveManagerAP; //I can't get it to work with the access_ptr()
+typedef BaseArchiveManager* BaseArchiveManagerAP; //
 typedef  utility::pointer::access_ptr< ArchiveManager const >  ArchiveManagerCAP;
 
 } // namespace archive

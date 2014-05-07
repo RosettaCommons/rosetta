@@ -55,7 +55,11 @@ public:
 
 	virtual bool ready_for_batch() const;
 
-	virtual void generate_batch();
+	void generate_batch() {
+		Parent::generate_batch();
+	}
+
+	core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
 
 protected:
 	void gen_resample_core( jd2::archive::Batch& batch, bool flex );

@@ -131,13 +131,17 @@ void NormalizedEvaluatedArchive::initialize() {
 }
 
 //completely overwrites the EvaluatedArchive  version. Doesn't call Parent function.
-bool NormalizedEvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, Batch const& batch ) {
-	bool added( Parent::add_evaluated_structure( evaluated_decoy, batch ) );
+bool NormalizedEvaluatedArchive::add_evaluated_structure(
+  core::io::silent::SilentStructOP evaluated_decoy,
+	core::io::silent::SilentStructOP alternative_decoy,
+	Batch const& batch
+ ) {
+	bool added( Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch ) );
 	bool added_variance( added );
 	if ( variance_archive_ ) {
 		added_variance = false;
 		if ( keep_adding_to_statistics_ || total_proposed() < nstruct_for_statistics_ ) {
-			added_variance = variance_archive_->add_evaluated_structure( evaluated_decoy,batch );
+			added_variance = variance_archive_->add_evaluated_structure( evaluated_decoy, alternative_decoy, batch );
 		}
 	}
 	tr.Info << "offered structure that was " << ( added ? "" : "not" ) << " relevant to the variances " << std::endl;

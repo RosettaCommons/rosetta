@@ -170,6 +170,7 @@ OPT_1GRP_KEY( String, iterative, super_quick_relax_patch )
 OPT_1GRP_KEY( Integer, iterative, skip_redundant_constraints )
 OPT_1GRP_KEY( String, iterative, initial_noe_auto_assign_csts )
 OPT_1GRP_KEY( Integer, iterative, delay_noesy_reassign )
+OPT_1GRP_KEY( Boolean, iterative, nolazy_noesy_reassign )
 OPT_1GRP_KEY( String, iterative, auto_assign_scheme )
 OPT_1GRP_KEY( Real, iterative, dcut )
 OPT_1GRP_KEY( String, iterative, initial_beta_topology )
@@ -240,6 +241,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::skip_redundant_constraints, "skip constranits that have similar constraints within 1=same residue 2=neighbours (0=inactive)", 0 );
 
 		NEW_OPT( iterative::delay_noesy_reassign, "start reassigning NOE restraints after X structures have been generated", 500 );
+		NEW_OPT( iterative::nolazy_noesy_reassign, "do not wait with re-assigning until batch has been generated but do it immediately", false );
 		NEW_OPT( iterative::initial_noe_auto_assign_csts, "initial nopool assignment of NOESY data.... ", "../initial_assignment/noe_auto_assign.cst" );
 		NEW_OPT( iterative::auto_assign_scheme,"select CONST, ADAPT1, ... ","CONST");
 		NEW_OPT( iterative::dcut,"in ADAPT1 what dcut should be chosen",7);
@@ -587,9 +589,13 @@ bool IterativeBase::still_interested( Batch const& batch ) const {
 }
 
 //after reading new structures we test for energy-saturation
-void IterativeBase::read_structures( core::io::silent::SilentFileData& sfd, Batch const& batch ) {
+void IterativeBase::read_structures(
+   core::io::silent::SilentFileData& sfd,
+	 core::io::silent::SilentFileData& alternative_decoys,
+	 Batch const& batch
+) {
 	basic::show_time( tr,  "read structures into "+name()+"..." );
-	Parent::read_structures( sfd, batch );
+	Parent::read_structures( sfd, alternative_decoys, batch );
 	test_for_stage_end();
 	basic::show_time( tr,  "done reading into "+name() );
 }
@@ -663,18 +669,23 @@ void  IterativeBase::rescore() {
 
 
 void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, Batch const& batch ) {
-	if ( !evaluate_local() ) return;
+	//	if ( !evaluate_local() ) return;
 	if ( !hedge_archive_ ) {
 		hedge_archive_ = new HedgeArchive( name()+"_hedge" );
 		hedge_archive_->initialize();
 		hedge_archive_->set_evaluators( evaluators(), weights() );
 	}
-	hedge_archive_->add_evaluated_structure( evaluated_decoy, batch );
+	hedge_archive_->add_evaluated_structure( evaluated_decoy, NULL, batch );
 }
 
 ///@brief overload to check for pool_convergence data in incoming decoys
-bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch, Batch const& batch ) {
-	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( from_batch );
+bool IterativeBase::add_structure(
+	core::io::silent::SilentStructOP new_decoy,
+	core::io::silent::SilentStructOP alternative_decoy,
+	Batch const& batch
+) {
+
+	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( new_decoy );
 	if ( decoys().size() == 0 ) {
 		first_batch_this_stage_ = batch.id();
 	}
@@ -684,18 +695,18 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch, 
 		collect_hedge_structures( evaluated_decoy, batch );
 	}
 	//comes without pool-convergence ? nothing to do
-	if ( !from_batch->has_energy( "pool_converged_tag" ) || min_diversity_list_[ stage() ] == 0 ) {
-		return Parent::add_evaluated_structure( evaluated_decoy, batch );
+	if ( !new_decoy->has_energy( "pool_converged_tag" ) || min_diversity_list_[ stage() ] == 0 ) {
+		return Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch );
 	}
 
 	//okay, let's look at the rmsd to closest structure
-	runtime_assert( from_batch->has_energy( "pool_converged_rmsd" ) );
-	Real const rmsd_to_pool( from_batch->get_energy( "pool_converged_rmsd" ) );
+	runtime_assert( new_decoy->has_energy( "pool_converged_rmsd" ) );
+	Real const rmsd_to_pool( new_decoy->get_energy( "pool_converged_rmsd" ) );
 
 	if ( rmsd_to_pool > min_diversity_list_[ stage() ] ) { //structure is sufficiently different -- add via score
-		return Parent::add_evaluated_structure( evaluated_decoy, batch );
+		return Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch );
 	} else { //structure is close in RMSD to one of archive
-		std::string const tag( from_batch->get_string_value( "pool_converged_tag" ) );
+		std::string const tag( new_decoy->get_string_value( "pool_converged_tag" ) );
 
 		//find the pool-structure that is redundant with new decoy
 		SilentStructs::iterator it;
@@ -706,7 +717,7 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch, 
 		if ( it == decoys().end() ) {
 			//can't find tag ... (might be that we are close to a centroid structure and now add to fullatom pool ).
 			//                    might be that we have swapped away the original structure
-			return Parent::add_evaluated_structure( evaluated_decoy, batch );
+			return Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch );
 		}
 
 		//improved score ?
@@ -725,8 +736,8 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch, 
 								 << " at spread of " << delta_max
 								 << " ratio " << delta_score/delta_max << std::endl;
 				if ( delta_score/delta_max < -0.05 ) {
-					decoys().erase( it );
-					return Parent::add_evaluated_structure( evaluated_decoy, batch );
+					erase_decoy( tag );
+					return Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch );
 				} else {
 					tr.Debug << "swap declined because score-improvement below 5% of total spread" << std::endl;
 					return false;
@@ -744,90 +755,84 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch, 
 	return false; //should never get here
 }
 
-
-
 ///@details generate new batch...
 /// type of batch depends on stage_. we switch to next stage based on some convergence criteria:
 /// right now it is how many decoys were accepted from last batch.. if this number drops sufficiently ---> next stage...
 ///    (maybe need to put a safeguard in here: ratio small but at least XXX decoys proposed since last batch... )
 ///
+core::Size IterativeBase::generate_batch( jd2::archive::Batch& batch, core::Size repeat_id ) {
+
+	if ( repeat_id == 0 ) return repeat_id;
+ 	mem_tr << "IterativeBase::generate_batch " << stage_ << " " << batch.batch() << std::endl;
+	tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << std::endl;
+
+	//want intermediate structures from abinitio runs
+	batch.set_intermediate_structs();
+
+	// --- run some of the gen_X methods to generate the type of run we want
+	gen_noe_assignments( batch );
+
+	// first 2 stages: enumerate pairings
+	if ( (int) stage_ < (int) PURE_TOPO_RESAMPLING ) gen_enumerate_pairings( batch );
+
+	// beta-sheet-topologies
+	if ( stage_ == TOPO_RESAMPLING || stage_ == PURE_TOPO_RESAMPLING || stage_ == NOESY_PHASEII_TOPO ) gen_resample_topologies( batch );
+
+	// reuse fragments and restart from stage2 structures
+	if ( stage_ == STAGE2_RESAMPLING || stage_ == NOESY_PHASEII_S2_RESAMPLING ) {
+		gen_resample_stage2( batch );
+	}
+
+	if ( stage_ >= STAGE2_RESAMPLING ) {
+		gen_resample_fragments( batch );
+	}
+
+	bool result_is_fullatom = false;
+	// close loops - fullatom relax
+	if ( stage_ == CEN2FULLATOM ) {
+		if ( repeat_id == 1  ) {
+			gen_cen2fullatom( batch );
+			if ( option[ iterative::safety_hatch_scorecut ].user() ) repeat_id = 3; //we subtract 1 from repeat_id at end of sub-routine and thus return 2.
+		} else if ( repeat_id == 2 ) {
+			gen_cen2fullatom_non_pool_decoys( batch );
+			--repeat_id;
+		}
+		//	gen_resample_fragments( batch );
+		batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
+		result_is_fullatom = true;
+	}
+	mem_tr.Debug << "before evaluation output" << std::endl;
+	//finalize batch
+	gen_evaluation_output( batch, result_is_fullatom );
+	gen_dynamic_patches( batch );
+	mem_tr.Debug << "evaluation output" << std::endl;
+
+	basic::show_time( tr,  "finalize batch..." );
+	test_broker_settings( batch );
+	return repeat_id-1;
+}
+
 void IterativeBase::generate_batch() {
 	//OBSOLET	cluster();
 	basic::show_time( tr,  "generate_batch" );
 	//initialize batch
 	mem_tr << "IterativeBase::start_new_batch " << std::endl;
-	{
+  Size repeat=1;
+	while (repeat) {
 		Batch& batch( manager().start_new_batch() );
-		mem_tr << "IterativeBase::generate_batch " << stage_ << " " << batch.batch() << std::endl;
-		tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << std::endl;
-
-		//want intermediate structures from abinitio runs
-		batch.set_intermediate_structs();
-
-		// --- run some of the gen_X methods to generate the type of run we want
-		gen_noe_assignments( batch );
-
-		// first 2 stages: enumerate pairings
-		if ( (int) stage_ < (int) PURE_TOPO_RESAMPLING ) gen_enumerate_pairings( batch );
-
-		// beta-sheet-topologies
-		if ( stage_ == TOPO_RESAMPLING || stage_ == PURE_TOPO_RESAMPLING || stage_ == NOESY_PHASEII_TOPO ) gen_resample_topologies( batch );
-
-		// reuse fragments and restart from stage2 structures
-		if ( stage_ == STAGE2_RESAMPLING || stage_ == NOESY_PHASEII_S2_RESAMPLING ) {
-			gen_resample_stage2( batch );
+		if ( basic::options::option[ basic::options::OptionKeys::iterative::nolazy_noesy_reassign ]() ) {
+			reassign_noesy_data( batch );
 		}
-
-		if ( stage_ >= STAGE2_RESAMPLING ) {
-			gen_resample_fragments( batch );
-		}
-
-		bool result_is_fullatom = false;
-		// close loops - fullatom relax
-		if ( stage_ == CEN2FULLATOM ) {
-			gen_cen2fullatom( batch );
-			//	gen_resample_fragments( batch );
-			batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
-			result_is_fullatom = true;
-		}
-		mem_tr.Debug << "before evaluation output" << std::endl;
-		//finalize batch
-		gen_evaluation_output( batch, result_is_fullatom );
-		gen_dynamic_patches( batch );
-		mem_tr.Debug << "evaluation output" << std::endl;
-
-		basic::show_time( tr,  "finalize batch..." );
-		test_broker_settings( batch );
+		repeat = generate_batch( batch, repeat );
 		manager().finalize_batch( batch );
 		basic::show_time( tr,  "finalized batch" );
-
 		tr.Info << std::endl;
 		// don't want to reset counters too often... if we run out of steam the QUEUE EMPTY pathway will make sure that we do more runs
-
 		mem_tr << "IterativeBase::generated_batch " << std::endl;
 		//now it is best time to do this... JobQueue is definitely filled up....
-		reassign_noesy_data( batch );
-	}
-	//add extra batch if we have "safety_hatch"
-	///SWITCHED THIS OFF TEMPORARILY !!!
-	//	std::cerr << "saftey hatch is switched off due to maintainence reasons" << std::endl;
-	if ( stage_ == CEN2FULLATOM && option [ iterative::safety_hatch_scorecut ].user() ) {
-		basic::show_time( tr,  "generate safety_hatch" );
-		mem_tr.Debug << "make safety hatch..." << std::endl;
-		Batch& harvest_batch( manager().start_new_batch() );
-		tr.Info << "starting harvest batch at same time as normal cen2fullatom batch" << std::endl;
-		gen_cen2fullatom_non_pool_decoys( harvest_batch );
-
-		// add NOESY autoassign constraints
-		gen_noe_assignments( harvest_batch );
-
-		harvest_batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
-		gen_evaluation_output( harvest_batch, true /*fullatom*/ );
-		gen_dynamic_patches( harvest_batch );
-		basic::show_time( tr,  "finalize safety_hatch... ");
-		test_broker_settings( harvest_batch );
-		manager().finalize_batch( harvest_batch );
-		basic::show_time( tr,  "finalized safety_hatch" );
+		if ( !basic::options::option[ basic::options::OptionKeys::iterative::nolazy_noesy_reassign ]() ) {
+			reassign_noesy_data( batch );
+		}
 	}
 }
 
@@ -1108,7 +1113,7 @@ void IterativeBase::gen_resample_topologies( Batch& batch) {
 
 ///@brief restart runs from stage2-structures that correspond to those in the pool
 void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
-	tr.Info << "resample_stage2 \n";
+	tr.Info << "resample_stage2 " << std::endl;
 	mem_tr << "IterativeBase::gen_resample_stage2 start" << std::endl;
 	SilentStructVector start_decoys;
 
@@ -1238,6 +1243,8 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 
 	mem_tr << "IterativeBase::gen_resample_fragments end" << std::endl;
 }
+
+
 
 void IterativeBase::update_noesy_filter_files(
 		std::string const& current,
@@ -1423,7 +1430,6 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 	}
 	basic::show_time( tr,  "generate safety_hatch: counted total decoys" );
 
-
 	for ( ArchiveManager::BatchList::const_iterator it = manager().batches().begin(); it != manager().batches().end(); ++it ) {
 		Real percentage_per_batch( 1.0*batch.nstruct() / (1.0*total) );
 		if ( it->id() >= first_fullatom_batch_ ) break;
@@ -1500,8 +1506,10 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 	SilentStructOPs start_decoys;
 	Real score_cut_per_batch( option[ OptionKeys::iterative::safety_hatch_scorecut ] );
 	if ( !hedge_archive_ ) {
+		tr.Info << "collect stage2 decoys from old batches ..." << std::endl;
 		collect_hedgeing_decoys_from_batches( batch, start_decoys, score_cut_per_batch );
 	} else {
+		tr.Info << "collect stage2 decoys from hedge_archive ..." << std::endl;
 		hedge_archive_->collect( batch, start_decoys );
 	}
 
@@ -1554,7 +1562,7 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 
 	//check if the low-energy decoy-tags have changed via their hash-string
 	size_t hash_val( hasher( hash_string.str() ) );
-	if ( hash_val == noesy_assign_hash_ ) {
+	if ( hash_val == noesy_assign_hash_ && !option[ iterative::nolazy_noesy_reassign ]() ) {
 		tr.Info << "do not create new noesy assignment since low-energy structures have not changed..." << std::endl;
 		return; // don't do anything
 	}
@@ -1982,10 +1990,8 @@ void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string co
 
 void IterativeBase::restore_status( std::istream& is ) {
 	Parent::restore_status( is );
-	if ( evaluate_local() ) {
-		hedge_archive_ = new HedgeArchive( name()+"_hedge" );
-		hedge_archive_->restore_from_file();
-	}
+	hedge_archive_ = new HedgeArchive( name()+"_hedge" );
+	hedge_archive_->restore_from_file();
 	int bla; std::string tag;
 	is >> tag >> bla;
 	runtime_assert( tag == "IterationStage:" );
@@ -2006,6 +2012,16 @@ void IterativeBase::restore_status( std::istream& is ) {
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, name()+"STATUS file", false /*no strict checking */ );
 		tr.Warning << "WARNING: found obsolete tag SCORE_CORE in status file" << std::endl;
 	}
+
+	if ( basic::options::option[ iterative::never_update_noesy_filter_cst ]() ) {
+		//bugfix because of new sequence of events the fullatom pool gets initialized with the wrong filter restraints
+		//should get rid of all these different options, as we have now worked out the optimal algorithm
+		//but for now, a hack at this point
+
+		//		this will update the fullatom_pool to have the initial sampling restraints rather than an n/a
+		update_noesy_filter_files( current_noesy_sampling_file_, true );
+	}
+
 	is >> tag;
 	if ( is.good() && tag == "NOESY_CYCLE:" ) {
 		is >> noesy_assign_float_cycle_;
@@ -2036,9 +2052,11 @@ void IterativeBase::restore_status( std::istream& is ) {
 	bCombineNoesyCst_ = stage() < STAGE2_RESAMPLING; //will be overwritten in next reassign NOESY... take guess until then...
 }
 
+
 void IterativeBase::save_status( std::ostream& os ) const {
 	Parent::save_status( os );
 	if ( hedge_archive_ ) hedge_archive_->save_to_file();
+
 	os << "IterationStage: " << stage_;
 	os << "   first_batch_this_stage: " << first_batch_this_stage_;
 	os << "   first_fullatom_batch: " << first_fullatom_batch_;
@@ -2047,6 +2065,7 @@ void IterativeBase::save_status( std::ostream& os ) const {
 	os << "NOESY_FIRST_CST: " << first_noesy_cst_file_ << std::endl;
 	os << "NOESY_FIRST_FA_CST: " << first_noesy_fa_cst_file_ << std::endl;
 	os << "NOESY_CURRENT_CST: " << current_noesy_sampling_file_ << std::endl;
+
 }
 
 
@@ -2125,64 +2144,6 @@ void IterativeBase::score( pose::Pose & pose ) const {
 
 /// Helper functions
 
-void IterativeBase::collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys ) {
-
-	tr.Info << "resample_stage2 \n";
-	typedef std::map< std::string, utility::vector1< std::string > > SourceFiles;
-	typedef std::map< std::string, utility::vector1< core::io::silent::SilentStructOP > > AlternativeDecoys;
-
-	SourceFiles sources;
-	AlternativeDecoys alternative_decoys;
-	Size ct_in( 0 );
-
-	//to find the stage2 structures collect first all tags for a specific file
-	for ( const_decoy_iterator it = primary_decoys.begin(); it != primary_decoys.end(); ++it ) {
-		runtime_assert( (*it)->has_comment( TAG_IN_FILE ) );
-		std::string tag( (*it)->get_comment( TAG_IN_FILE ) );
-		utility::file::FileName file( (*it)->get_comment( SOURCE_FILE ) );
-		std::string stage2_file( file.path()+"/"+alternative_decoy_file );
-
-		//creates map <filename> <list of tags>
-		sources[ stage2_file ].push_back( tag );
-		alternative_decoys[ stage2_file ].push_back( (*it) );
-		++ct_in;
-	}
-
-	//read selected structures from each file
-	Size ct_read( 0 );
-
-	for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
-		/// it->first is filename, it->second are all tags collected for this file
-		io::silent::SilentFileData sfd;
-		try { //read structures
-			sfd._read_file( it->first, it->second, true /*throw exceptions */ );
-			if ( sfd.size() > it->second.size() ) {
-				tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
-			}
-			//copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
-			for ( core::io::silent::SilentFileData::iterator sit = sfd.begin(); sit != sfd.end(); ++sit ) {
-				std::string batch_prefix( it->first );
-			  batch_prefix='f'+batch_prefix.substr(9,3);
-				sit->set_decoy_tag( batch_prefix+"_"+sit->decoy_tag() );
-				output_decoys.push_back( *sit );
-			}
-			ct_read += sfd.size();
-		} catch ( utility::excn::EXCN_IO& excn ) { //ERROR
-			tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
-			excn.show( tr.Warning );
-			tr.Warning << std::endl;
-			tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
-			copy( alternative_decoys[ it->first ].begin(), alternative_decoys[ it->first ].end(), std::back_inserter( output_decoys ) );
-			ct_read += alternative_decoys[ it->first ].size();
-		}
-	}
-
-	tr.Debug << "structures from pool" << ct_in << " structure retrieved from " << alternative_decoy_file << "-files "
-					 << ct_read << " start structs: " << output_decoys.size() << std::endl;
-	if ( output_decoys.size() != primary_decoys.size() ) {
-		tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
-	}
-}
 
 void
 IterativeBase::test_broker_settings( Batch const& batch ) {

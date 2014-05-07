@@ -75,7 +75,12 @@ public:
 
 	///@brief add decoy to Archive
 	///@detail evaluate decoy and call add_evaluated_structure
-	virtual bool add_structure( core::io::silent::SilentStructOP from_batch, Batch const& );
+	virtual bool add_structure(
+	  core::io::silent::SilentStructOP new_decoy,
+		core::io::silent::SilentStructOP alternative_decoy,
+		Batch const& batch
+	);
+
 
 	///@brief  compute score according to select_weights --- this can contain any evaluator columns
 	core::Real select_score( core::io::silent::SilentStructOP evaluated_decoy );
@@ -87,7 +92,11 @@ public:
 	virtual bool restore_from_file();
 
 	///@brief only overloaded this to add some verbosity each time we read structures
-	virtual void read_structures( core::io::silent::SilentFileData&, Batch const& batch );
+	virtual void read_structures(
+   core::io::silent::SilentFileData& sfd,
+	 core::io::silent::SilentFileData& alternative_decoys,
+	 Batch const& batch
+);
 
 	///@brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
@@ -102,7 +111,11 @@ public:
 	core::io::silent::SilentStructOP evaluate_silent_struct( core::io::silent::SilentStructOP from_batch ) const;
 
 	///@brief add an evaluated decoy to Archive (i.e, evaluated_decoy = evaluate( some_decoy ) );
-	virtual bool add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, Batch const& );
+	virtual bool add_evaluated_structure(
+    core::io::silent::SilentStructOP evaluated_decoy,
+		core::io::silent::SilentStructOP alternative_decoy,
+		Batch const&
+	);
 
 	///@brief specify if decoys are evaluated on the master or (non-local i.e., on the individual slave nodes)
 	bool evaluate_local() const {

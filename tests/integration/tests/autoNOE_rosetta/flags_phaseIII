@@ -1,0 +1,4 @@
+-noesy_weights:cycle 7
+-noesy:calibration:max_noe_dist 5.5
+#-noesy:out:padding 1
+

@@ -31,12 +31,12 @@ void
 BB_Pos::resize( Size const nres )
 {
 	if ( N_.size() == (Size) nres ) return;
-
-	N_.resize( nres );
-	CA_.resize( nres );
-	C_.resize( nres );
-	O_.resize( nres );
-	CB_.resize( nres );
+	Vector NullVector( 0.0 );
+	N_.resize( nres, NullVector );
+	CA_.resize( nres, NullVector );
+	C_.resize( nres, NullVector );
+	O_.resize( nres, NullVector );
+	CB_.resize( nres, NullVector );
 
 	residue_types_.resize( nres ); std::fill( residue_types_.begin(), residue_types_.end(), static_cast< core::chemical::ResidueType const * > (0) );
 	N_index_.resize( nres );       std::fill( N_index_.begin(), N_index_.end(), 0 );

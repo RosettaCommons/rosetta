@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-
+#include <utility/pointer/access_ptr.hh>
 //// C++ headers
 #include <deque>
 
@@ -41,23 +41,30 @@ Resonance combines resonanceID (label), chemical shift (freq), tolerance (error)
 */
 
 class Resonance : public utility::pointer::ReferenceCount {
+
 public:
+	typedef utility::vector1< core::Size > ResonanceIDs;
+	typedef std::pair< core::Size, core::Size > ResonancePair;
+	typedef utility::vector1< ResonancePair > ResonancePairs;
+  typedef utility::vector1< ResonanceAP > ResonanceAPs;
+
   Resonance();
   Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA, core::Real intensity = 1.0 );
   ~Resonance();
 
-	virtual ResonanceOP clone() {
-		return new Resonance( *this );
-	}
+	virtual ResonanceOP clone() = 0;
 
 	///@brief output
   virtual void write_to_stream( std::ostream& ) const;
 
 	virtual void write_to_stream( std::ostream&, core::chemical::AA aa ) const;
 
+	virtual core::Size ambiguity() const {
+		return 1;
+	}
 	///@brief ResonanceID
   core::Size label() const { return label_; }
-
+	virtual core::Size float_label( core::Size /*ifloat*/ ) const { return label_; }
 	///@brief Atom
   core::id::NamedAtomID const& atom() const { return atom_; }
   core::Size resid() const { return atom_.rsd(); }
@@ -72,6 +79,28 @@ public:
 	bool match( core::Real freq, core::Real error, FoldResonance const& folder ) const {
 		return pmatch( freq, error, folder ) <= 1.0;
 	}
+
+	///@brief match the proton and corresponding label atom at same time
+	virtual bool match2D(
+	  core::Real proton_freq,
+		core::Real proton_error,
+		FoldResonance const& proton_folder,
+		core::Real label_freq,
+		core::Real label_error,
+		FoldResonance const& label_folder,
+		ResonancePairs& matches
+	) const = 0;
+
+	void add_connected_resonance( ResonanceAP ptr );
+	void clear_connected_resonances();
+	bool has_connected_resonances() const {
+		return connected_resonance_ids_.size() > 0;
+	}
+	Resonance const& first_connected_resonance() const;
+	ResonanceIDs const& connected_resonance_ids() const {
+		return connected_resonance_ids_;
+	}
+	ResonanceAPs const& connected_resonances() const;
 
 	virtual core::Real pmatch(  core::Real freq, core::Real error, FoldResonance const& folder ) const;
 
@@ -100,6 +129,8 @@ private:
 	core::chemical::AA aa_;
 	core::Real intensity_;
 	CALIBRATION_ATOM_TYPE calibration_atom_type_;
+	ResonanceIDs connected_resonance_ids_;
+	ResonanceAPs connected_resonance_ptrs_;
 };
 
 }

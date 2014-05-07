@@ -21,10 +21,11 @@
 // Package Headers
 #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+#include <protocols/noesy_assign/PeakAssignment.hh>
 #include <core/id/Exceptions.hh>
 // Project Headers
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
+#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
@@ -69,12 +70,6 @@ DistanceScoreMover::DistanceScoreMover( CrossPeakList& cpl, pose::Pose const& po
 				constraints_.push_back( NULL );
 			}
     }
-		try {
-			//			peak_constraints_.push_back( (*it)->create_constraint( cpl.resonances(), pose ) );
-		} catch ( core::id::EXCN_AtomNotFound& excn ) {
-			tr.Error << "while setting up constraints in DistanceScoreMover: " << excn << std::endl;
-			//			peak_constraints_.push_back( NULL );
-		}
   }
 #endif
 }

@@ -1,0 +1,6 @@
+-noesy_weights:cycle 7
+-noesy:use_local_distviol
+-local_distviol:range 0.9
+
+-noesy:calibration:cycles 3
+-noesy:calibration:ignore_eliminated_peaks

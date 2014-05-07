@@ -1,0 +1,34 @@
+AmbiguousNMRConstraint BOUNDED     1.5    3.74 0.71 automatic NOE Peak 379 ali Volume: 608500
+AmbiguousNMRDistance QE 3 QG1 90 BOUNDED     1.5     5.5   1 VC 0.276
+AmbiguousNMRDistance HZ 3 QG1 90 BOUNDED     1.5     5.5   1 VC 0.724
+End_AmbiguousNMRConstraint
+AmbiguousNMRDistance 2HB 3 H 92 BOUNDED     1.5    4.17 0.71 automatic NOE Peak 2763 ali Volume: 127900
+AmbiguousNMRDistance 1HB 3 H 92 BOUNDED     1.5    4.13 0.71 automatic NOE Peak 2770 ali Volume: 135700
+AmbiguousNMRDistance QD 3 H 92 BOUNDED     1.5    5.15 0.71 automatic NOE Peak 446 n Volume: 73460
+AmbiguousNMRDistance 2HG 4 QB 31 BOUNDED     1.5    5.53 0.71 automatic NOE Peak 2774 ali Volume: 99180
+AmbiguousNMRDistance 1HG 4 HA 91 BOUNDED     1.5    4.31 0.71 automatic NOE Peak 1268 ali Volume: 128500
+AmbiguousNMRDistance 1HD 4 HA 91 BOUNDED     1.5     4.2 0.71 automatic NOE Peak 3318 ali Volume: 152500
+AmbiguousNMRDistance 2HD 4 HA 91 BOUNDED     1.5     3.8 0.71 automatic NOE Peak 3323 ali Volume: 275600
+AmbiguousNMRDistance 2HD 4 HA 91 BOUNDED     1.5    4.21 0.71 automatic NOE Peak 3442 ali Volume: 148200
+AmbiguousNMRDistance 1HD 4 HA 91 BOUNDED     1.5    4.63 0.71 automatic NOE Peak 3495 ali Volume: 84400
+AmbiguousNMRDistance 2HD 4 H 92 BOUNDED     1.5    4.49 0.71 automatic NOE Peak 408 n Volume: 84100
+AmbiguousNMRDistance HA 4 HA 93 BOUNDED     1.5    3.19 0.71 automatic NOE Peak 3380 ali Volume: 369300
+AmbiguousNMRDistance H 5 H 31 BOUNDED     1.5    3.64 0.71 automatic NOE Peak 280 n Volume: 244500
+AmbiguousNMRDistance H 5 1HA 32 BOUNDED     1.5       4 0.71 automatic NOE Peak 3018 ali Volume: 201300
+AmbiguousNMRDistance H 5 H 32 BOUNDED     1.5    3.16 0.71 automatic NOE Peak 42 n Volume: 566900
+AmbiguousNMRDistance H 5 H 32 BOUNDED     1.5    3.19 0.71 automatic NOE Peak 274 n Volume: 537100
+AmbiguousNMRDistance 2HB 5 HB 79 BOUNDED     1.5    4.64 0.71 automatic NOE Peak 2522 ali Volume: 115600
+AmbiguousNMRDistance HA 5 H 92 BOUNDED     1.5    3.81 0.71 automatic NOE Peak 3717 ali Volume: 128400
+AmbiguousNMRDistance QD2 6 2HB 30 BOUNDED     1.5    4.11 0.71 automatic NOE Peak 839 ali Volume: 240500
+AmbiguousNMRDistance HA 6 HA 30 BOUNDED     1.5    3.15 0.71 automatic NOE Peak 3312 ali Volume: 399700
+AmbiguousNMRDistance QD1 6 2HB 84 BOUNDED     1.5       4 0.71 automatic NOE Peak 2613 ali Volume: 284100
+AmbiguousNMRDistance QD1 6 1HB 84 BOUNDED     1.5    3.94 0.71 automatic NOE Peak 2616 ali Volume: 313500
+AmbiguousNMRDistance H 7 H 29 BOUNDED     1.5    3.26 0.71 automatic NOE Peak 1148 n Volume: 470100
+AmbiguousNMRDistance H 7 HA 30 BOUNDED     1.5     3.6 0.71 automatic NOE Peak 3316 ali Volume: 180600
+AmbiguousNMRDistance QG2 7 H 31 BOUNDED     1.5    4.21 0.71 automatic NOE Peak 204 ali Volume: 122700
+AmbiguousNMRDistance H 7 H 31 BOUNDED     1.5    4.36 0.71 automatic NOE Peak 923 n Volume: 81490
+AmbiguousNMRDistance H 7 QG1 83 BOUNDED     1.5    4.09 0.71 automatic NOE Peak 214 ali Volume: 145500
+AmbiguousNMRDistance HG1 7 1HB 96 BOUNDED     1.5    4.75 0.71 automatic NOE Peak 2341 ali Volume: 101800
+AmbiguousNMRDistance HB 8 QG1 26 BOUNDED     1.5    4.62 0.71 automatic NOE Peak 2191 ali Volume: 119500
+AmbiguousNMRDistance HA 8 H 27 BOUNDED     1.5    4.06 0.71 automatic NOE Peak 1333 n Volume: 124700
+AmbiguousNMRDistance HA 8 QQG 28 BOUNDED     1.5    4.36 0.71 automatic NOE Peak 506 ali Volume: 197200

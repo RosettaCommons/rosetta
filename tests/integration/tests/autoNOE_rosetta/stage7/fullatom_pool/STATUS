@@ -1,0 +1,12 @@
+total_accepts accepts_during_stage total_proposed proposed_during_stage
+          1443                      304           4003                          1142
+acceptance_history: 0.1
+AH: 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 1 0 0 
+AH: 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+AH: 0 0 
+END_AH
+IterationStage: 7   first_batch_this_stage: 45   first_fullatom_batch: 100000
+NOESY_CYCLE: 6
+NOESY_FIRST_CST: ../inputs/initial_assignment/noe_auto_assign.cst.filter
+NOESY_FIRST_FA_CST: ../inputs/initial_assignment/noe_auto_assign.cst.filter
+NOESY_CURRENT_CST: batch_000004//noe_auto_assign.cst

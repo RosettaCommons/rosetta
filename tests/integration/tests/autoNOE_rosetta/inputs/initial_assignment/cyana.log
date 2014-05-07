@@ -1,0 +1,296 @@
+protocols.noesy_assign.parameters: (0)  ============== cycle-dependent parameter selection for Noesy peak assignment =============== 
+protocols.noesy_assign.parameters: (0)    cycle: 1
+protocols.noesy_assign.parameters: (0) ----------------------------------------------------------------------------------------------
+protocols.noesy_assign.parameters: (0)         Vmin: 0.01
+protocols.noesy_assign.parameters: (0)         T:    10
+protocols.noesy_assign.parameters: (0)         V:    10
+protocols.noesy_assign.parameters: (0)         Smax: 20
+protocols.noesy_assign.parameters: (0)         dcut: -1
+protocols.noesy_assign.parameters: (0)    Nmin(res): 1
+protocols.noesy_assign.parameters: (0)   Nmin(atom): 0.25
+protocols.noesy_assign.parameters: (0)  Calibration Target: 3.8 (A) average distance 
+protocols.noesy_assign.parameters: (0)  Calibration distance: -1 A above upper bound is a violation
+protocols.noesy_assign.parameters: (0) ==============================================================================================
+protocols.noesy_assign.parameters: (0)  ============== cycle-independent parameter for Noesy peak assignment =============== 
+protocols.noesy_assign.parameters: (0)       chemical shift agreement-weight: 0.5
+protocols.noesy_assign.parameters: (0)       elimination of peak if distance-bound violates more than: 0.5
+protocols.noesy_assign.parameters: (0)       elimination MAXASSIGN if assignments count is above: 20
+protocols.noesy_assign.parameters: (0)       strength (curvature) of the constraint potential after upper distance is violated 50
+protocols.noesy_assign.parameters: (0)       padding for CB-mapped protons in centroid mode: 0.5
+protocols.noesy_assign.parameters: (0)       atom_dependent_calibration: yes
+protocols.noesy_assign.parameters: (0) ----------------------------------------------------------------------------------------------
+protocols.noesy_assign.parameters: (0)       network-anchoring options: 
+protocols.noesy_assign.parameters: (0)                 minimum contribution to peak-volume 0.1
+protocols.noesy_assign.parameters: (0)                 maximum contribution to peak-volume 1
+protocols.noesy_assign.parameters: (0)                 do not eliminate if network score per residue is above 4
+protocols.noesy_assign.parameters: (0)                 network_include_reverse_dir:           yes 
+protocols.noesy_assign.parameters: (0)                 network_allow_same_residue_connection: yes 
+protocols.noesy_assign.parameters: (0)                 network_use_all_covalent_atoms:        no
+protocols.noesy_assign.parameters: (0) ==============================================================================================
+protocols.noesy_assign.NoesyModule: (0) reading /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/ali.peaks... 
+protocols.noesy_assign.NoesyModule: (0) reading /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/aro.peaks... 
+protocols.noesy_assign.NoesyModule: (0) reading /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/n.peaks... 
+protocols.noesy_assign.crosspeaks: (0) determine initial assignments...
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  CD1   92 not found  as label for atom QD1 LEU
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  CD2   92 not found  as label for atom QD2 LEU
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CG    7 not found  as label for atom HG1 THR
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  CE2   73 not found  as label for atom HE22 GLN
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CD  101 not found  as label for atom QD PHE
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CE   42 not found  as label for atom HE ARG
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CE  101 not found  as label for atom QE PHE
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  NE1   69 not found  as label for atom HE1 TRP
+protocols.noesy_assign.crosspeaks: (0) remove diagonal peaks...
+protocols.noesy_assign.crosspeaks: (0) compute chemical shift score...
+protocols.noesy_assign.crosspeaks: (0) compute uppder distance (covalent) score 
+protocols.noesy_assign.crosspeaks: (0) set trivial 1/n decoy compatibility
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  symmetry score 
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  network analysis ... 
+protocols.noesy_assign.assignments: (0) start network analysis (type2)...
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  symmetry score 
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  network analysis ... 
+protocols.noesy_assign.assignments: (0) start network analysis (type2)...
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  symmetry score 
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  network analysis ... 
+protocols.noesy_assign.assignments: (0) start network analysis (type2)...
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0) structure independent calibration...
+protocols.noesy_assign.crosspeaks: (0) Calibrate ali...
+protocols.noesy_assign.crosspeaks: (0) Calibration .... for 3893 crosspeaks 
+protocols.noesy_assign.crosspeaks: (0) value   target  BACKBONE BETA_NON_METHYL METHYL SIDECHAIN
+protocols.noesy_assign.crosspeaks: (0) 3.8  5.88941 1e+10 5.67675 1e+10 5.56244 1e+10 5.73047 1e+10
+protocols.noesy_assign.crosspeaks: (0) 3.8  0.897006 100000 0.872576 100000 0.892715 300000 0.888107 150000
+protocols.noesy_assign.crosspeaks: (0) 3.8  2.34133 3.16228e+07 2.27756 3.16228e+07 2.33013 9.48683e+07 2.3181 4.74342e+07
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.78264 5.62341e+08 3.67962 5.62341e+08 3.76455 1.68702e+09 3.74512 8.43512e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  4.12074 5.62341e+08 4.31125 2.37137e+09 4.16286 1.68702e+09 4.34241 3.55706e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.38809 1.33352e+08 3.6757 1.15478e+09 3.44956 4.00056e+08 3.68439 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.73609 2.73842e+08 3.98042 1.65482e+09 3.78895 8.21526e+08 3.99937 2.48223e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.69524 2.73842e+08 3.90134 1.38237e+09 3.74024 8.21526e+08 3.92469 2.07356e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.81813 3.92419e+08 3.94058 1.26346e+09 3.84609 1.17726e+09 3.97653 1.89519e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.80781 3.92419e+08 3.92101 1.2079e+09 3.83387 1.17726e+09 3.95803 1.81185e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.80266 3.92419e+08 3.91127 1.18104e+09 3.82778 1.17726e+09 3.94882 1.77156e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.80009 3.92419e+08 3.90641 1.16784e+09 3.82474 1.17726e+09 3.94423 1.75176e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79881 3.92419e+08 3.90398 1.16129e+09 3.82323 1.17726e+09 3.94193 1.74194e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79817 3.92419e+08 3.90276 1.15803e+09 3.82247 1.17726e+09 3.94079 1.73705e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79785 3.92419e+08 3.90216 1.15641e+09 3.82209 1.17726e+09 3.94021 1.73461e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79769 3.92419e+08 3.90185 1.15559e+09 3.8219 1.17726e+09 3.93992 1.73339e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79761 3.92419e+08 3.9017 1.15519e+09 3.8218 1.17726e+09 3.93978 1.73278e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79757 3.92419e+08 3.90163 1.15498e+09 3.82176 1.17726e+09 3.93971 1.73248e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79755 3.92419e+08 3.90159 1.15488e+09 3.82173 1.17726e+09 3.93967 1.73233e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79754 3.92419e+08 3.90157 1.15483e+09 3.82172 1.17726e+09 3.93966 1.73225e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90156 1.15481e+09 3.82171 1.17726e+09 3.93965 1.73221e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90156 1.15479e+09 3.82171 1.17726e+09 3.93964 1.73219e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15479e+09 3.82171 1.17726e+09 3.93964 1.73218e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15479e+09 3.82171 1.17726e+09 3.93964 1.73218e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73218e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) Calibrate aro...
+protocols.noesy_assign.crosspeaks: (0) Calibration .... for 290 crosspeaks 
+protocols.noesy_assign.crosspeaks: (0) value   target  BACKBONE BETA_NON_METHYL METHYL SIDECHAIN
+protocols.noesy_assign.crosspeaks: (0) 3.8  6.8821 1e+10 6.69801 1e+10 6.61307 1e+10 6.70437 1e+10
+protocols.noesy_assign.crosspeaks: (0) 3.8  1.05459 100000 1.05114 100000 1.07638 300000 1.05224 150000
+protocols.noesy_assign.crosspeaks: (0) 3.8  2.75265 3.16228e+07 2.74364 3.16228e+07 2.80953 9.48683e+07 2.74652 4.74342e+07
+protocols.noesy_assign.crosspeaks: (0) 3.8  4.44717 5.62341e+08 4.43262 5.62341e+08 4.53908 1.68702e+09 4.43727 8.43512e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.49878 1.33352e+08 3.48733 1.33352e+08 3.57109 4.00056e+08 3.491 2.00028e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.94458 2.73842e+08 3.93167 2.73842e+08 4.0261 8.21526e+08 3.9358 4.10763e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.715 1.91095e+08 3.70284 1.91095e+08 3.79178 5.73286e+08 3.70673 2.86643e+08
+protocols.noesy_assign.crosspeaks: (0) Calibrate n...
+protocols.noesy_assign.crosspeaks: (0) Calibration .... for 1405 crosspeaks 
+protocols.noesy_assign.crosspeaks: (0) value   target  BACKBONE BETA_NON_METHYL METHYL SIDECHAIN
+protocols.noesy_assign.crosspeaks: (0) 3.8  5.84966 1e+10 5.8551 1e+10 5.7637 1e+10 5.8838 1e+10
+protocols.noesy_assign.crosspeaks: (0) 3.8  0.878611 100000 0.883189 100000 0.90341 300000 0.890322 150000
+protocols.noesy_assign.crosspeaks: (0) 3.8  2.29331 3.16228e+07 2.30526 3.16228e+07 2.35804 9.48683e+07 2.32388 4.74342e+07
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.70507 5.62341e+08 3.72438 5.62341e+08 3.80965 1.68702e+09 3.75446 8.43512e+08
+protocols.noesy_assign.NoesyModule: (0) generate constraints...
+protocols.noesy_assign.NoesyModule: (0) write constraints...
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  CG  on residue MET_p:NtermProteinFull 1
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  SD  on residue MET_p:NtermProteinFull 1
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  CE  on residue MET_p:NtermProteinFull 1
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  OG  on residue SER 68
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  OXT on residue GLU_p:CtermProteinFull 108
+Warning: (0) Unable to locate database file scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+protocols.noesy_assign.parameters: (0)  ============== cycle-dependent parameter selection for Noesy peak assignment =============== 
+protocols.noesy_assign.parameters: (0)    cycle: 1
+protocols.noesy_assign.parameters: (0) ----------------------------------------------------------------------------------------------
+protocols.noesy_assign.parameters: (0)         Vmin: 0.01
+protocols.noesy_assign.parameters: (0)         T:    10
+protocols.noesy_assign.parameters: (0)         V:    10
+protocols.noesy_assign.parameters: (0)         Smax: 20
+protocols.noesy_assign.parameters: (0)         dcut: -1
+protocols.noesy_assign.parameters: (0)    Nmin(res): 1
+protocols.noesy_assign.parameters: (0)   Nmin(atom): 0.25
+protocols.noesy_assign.parameters: (0)  Calibration Target: 3.8 (A) average distance 
+protocols.noesy_assign.parameters: (0)  Calibration distance: -1 A above upper bound is a violation
+protocols.noesy_assign.parameters: (0) ==============================================================================================
+protocols.noesy_assign.parameters: (0)  ============== cycle-independent parameter for Noesy peak assignment =============== 
+protocols.noesy_assign.parameters: (0)       chemical shift agreement-weight: 0.5
+protocols.noesy_assign.parameters: (0)       elimination of peak if distance-bound violates more than: 0.5
+protocols.noesy_assign.parameters: (0)       elimination MAXASSIGN if assignments count is above: 20
+protocols.noesy_assign.parameters: (0)       strength (curvature) of the constraint potential after upper distance is violated 50
+protocols.noesy_assign.parameters: (0)       padding for CB-mapped protons in centroid mode: 0.5
+protocols.noesy_assign.parameters: (0)       atom_dependent_calibration: yes
+protocols.noesy_assign.parameters: (0) ----------------------------------------------------------------------------------------------
+protocols.noesy_assign.parameters: (0)       network-anchoring options: 
+protocols.noesy_assign.parameters: (0)                 minimum contribution to peak-volume 0.1
+protocols.noesy_assign.parameters: (0)                 maximum contribution to peak-volume 1
+protocols.noesy_assign.parameters: (0)                 do not eliminate if network score per residue is above 4
+protocols.noesy_assign.parameters: (0)                 network_include_reverse_dir:           yes 
+protocols.noesy_assign.parameters: (0)                 network_allow_same_residue_connection: yes 
+protocols.noesy_assign.parameters: (0)                 network_use_all_covalent_atoms:        no
+protocols.noesy_assign.parameters: (0) ==============================================================================================
+protocols.noesy_assign.NoesyModule: (0) reading /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/ali.peaks... 
+protocols.noesy_assign.NoesyModule: (0) reading /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/aro.peaks... 
+protocols.noesy_assign.NoesyModule: (0) reading /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/n.peaks... 
+protocols.noesy_assign.crosspeaks: (0) determine initial assignments...
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  CD1   92 not found  as label for atom QD1 LEU
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  CD2   92 not found  as label for atom QD2 LEU
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CG    7 not found  as label for atom HG1 THR
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  CE2   73 not found  as label for atom HE22 GLN
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CD  101 not found  as label for atom QD PHE
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CE   42 not found  as label for atom HE ARG
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom   CE  101 not found  as label for atom QE PHE
+protocols.noesy_assign.crosspeaks: (0) can't find atom 
+protocols.noesy_assign.crosspeaks: (0) Resonance for atom  NE1   69 not found  as label for atom HE1 TRP
+protocols.noesy_assign.crosspeaks: (0) remove diagonal peaks...
+protocols.noesy_assign.crosspeaks: (0) compute chemical shift score...
+protocols.noesy_assign.crosspeaks: (0) compute uppder distance (covalent) score 
+protocols.noesy_assign.crosspeaks: (0) set trivial 1/n decoy compatibility
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  symmetry score 
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  network analysis ... 
+protocols.noesy_assign.assignments: (0) start network analysis (type2)...
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  symmetry score 
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  network analysis ... 
+protocols.noesy_assign.assignments: (0) start network analysis (type2)...
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  symmetry score 
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0)  network analysis ... 
+protocols.noesy_assign.assignments: (0) start network analysis (type2)...
+protocols.noesy_assign.crosspeaks: (0) update peak volumina...
+protocols.noesy_assign.crosspeaks: (0) structure independent calibration...
+protocols.noesy_assign.crosspeaks: (0) Calibrate ali...
+protocols.noesy_assign.crosspeaks: (0) Calibration .... for 3893 crosspeaks 
+protocols.noesy_assign.crosspeaks: (0) value   target  BACKBONE BETA_NON_METHYL METHYL SIDECHAIN
+protocols.noesy_assign.crosspeaks: (0) 3.8  5.88941 1e+10 5.67675 1e+10 5.56244 1e+10 5.73047 1e+10
+protocols.noesy_assign.crosspeaks: (0) 3.8  0.897006 100000 0.872576 100000 0.892715 300000 0.888107 150000
+protocols.noesy_assign.crosspeaks: (0) 3.8  2.34133 3.16228e+07 2.27756 3.16228e+07 2.33013 9.48683e+07 2.3181 4.74342e+07
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.78264 5.62341e+08 3.67962 5.62341e+08 3.76455 1.68702e+09 3.74512 8.43512e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  4.12074 5.62341e+08 4.31125 2.37137e+09 4.16286 1.68702e+09 4.34241 3.55706e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.38809 1.33352e+08 3.6757 1.15478e+09 3.44956 4.00056e+08 3.68439 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.73609 2.73842e+08 3.98042 1.65482e+09 3.78895 8.21526e+08 3.99937 2.48223e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.69524 2.73842e+08 3.90134 1.38237e+09 3.74024 8.21526e+08 3.92469 2.07356e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.81813 3.92419e+08 3.94058 1.26346e+09 3.84609 1.17726e+09 3.97653 1.89519e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.80781 3.92419e+08 3.92101 1.2079e+09 3.83387 1.17726e+09 3.95803 1.81185e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.80266 3.92419e+08 3.91127 1.18104e+09 3.82778 1.17726e+09 3.94882 1.77156e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.80009 3.92419e+08 3.90641 1.16784e+09 3.82474 1.17726e+09 3.94423 1.75176e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79881 3.92419e+08 3.90398 1.16129e+09 3.82323 1.17726e+09 3.94193 1.74194e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79817 3.92419e+08 3.90276 1.15803e+09 3.82247 1.17726e+09 3.94079 1.73705e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79785 3.92419e+08 3.90216 1.15641e+09 3.82209 1.17726e+09 3.94021 1.73461e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79769 3.92419e+08 3.90185 1.15559e+09 3.8219 1.17726e+09 3.93992 1.73339e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79761 3.92419e+08 3.9017 1.15519e+09 3.8218 1.17726e+09 3.93978 1.73278e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79757 3.92419e+08 3.90163 1.15498e+09 3.82176 1.17726e+09 3.93971 1.73248e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79755 3.92419e+08 3.90159 1.15488e+09 3.82173 1.17726e+09 3.93967 1.73233e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79754 3.92419e+08 3.90157 1.15483e+09 3.82172 1.17726e+09 3.93966 1.73225e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90156 1.15481e+09 3.82171 1.17726e+09 3.93965 1.73221e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90156 1.15479e+09 3.82171 1.17726e+09 3.93964 1.73219e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15479e+09 3.82171 1.17726e+09 3.93964 1.73218e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15479e+09 3.82171 1.17726e+09 3.93964 1.73218e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73218e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.79753 3.92419e+08 3.90155 1.15478e+09 3.82171 1.17726e+09 3.93964 1.73217e+09
+protocols.noesy_assign.crosspeaks: (0) Calibrate aro...
+protocols.noesy_assign.crosspeaks: (0) Calibration .... for 290 crosspeaks 
+protocols.noesy_assign.crosspeaks: (0) value   target  BACKBONE BETA_NON_METHYL METHYL SIDECHAIN
+protocols.noesy_assign.crosspeaks: (0) 3.8  6.8821 1e+10 6.69801 1e+10 6.61307 1e+10 6.70437 1e+10
+protocols.noesy_assign.crosspeaks: (0) 3.8  1.05459 100000 1.05114 100000 1.07638 300000 1.05224 150000
+protocols.noesy_assign.crosspeaks: (0) 3.8  2.75265 3.16228e+07 2.74364 3.16228e+07 2.80953 9.48683e+07 2.74652 4.74342e+07
+protocols.noesy_assign.crosspeaks: (0) 3.8  4.44717 5.62341e+08 4.43262 5.62341e+08 4.53908 1.68702e+09 4.43727 8.43512e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.49878 1.33352e+08 3.48733 1.33352e+08 3.57109 4.00056e+08 3.491 2.00028e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.94458 2.73842e+08 3.93167 2.73842e+08 4.0261 8.21526e+08 3.9358 4.10763e+08
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.715 1.91095e+08 3.70284 1.91095e+08 3.79178 5.73286e+08 3.70673 2.86643e+08
+protocols.noesy_assign.crosspeaks: (0) Calibrate n...
+protocols.noesy_assign.crosspeaks: (0) Calibration .... for 1405 crosspeaks 
+protocols.noesy_assign.crosspeaks: (0) value   target  BACKBONE BETA_NON_METHYL METHYL SIDECHAIN
+protocols.noesy_assign.crosspeaks: (0) 3.8  5.84966 1e+10 5.8551 1e+10 5.7637 1e+10 5.8838 1e+10
+protocols.noesy_assign.crosspeaks: (0) 3.8  0.878611 100000 0.883189 100000 0.90341 300000 0.890322 150000
+protocols.noesy_assign.crosspeaks: (0) 3.8  2.29331 3.16228e+07 2.30526 3.16228e+07 2.35804 9.48683e+07 2.32388 4.74342e+07
+protocols.noesy_assign.crosspeaks: (0) 3.8  3.70507 5.62341e+08 3.72438 5.62341e+08 3.80965 1.68702e+09 3.75446 8.43512e+08
+protocols.noesy_assign.NoesyModule: (0) generate constraints...
+protocols.noesy_assign.NoesyModule: (0) write constraints...
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  CG  on residue MET_p:NtermProteinFull 1
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  SD  on residue MET_p:NtermProteinFull 1
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  CE  on residue MET_p:NtermProteinFull 1
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  OG  on residue SER 68
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  OXT on residue GLU_p:CtermProteinFull 108
+Warning: (0) Unable to locate database file scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv

@@ -55,7 +55,9 @@ namespace protocols {
 namespace abinitio {
 
 class IterativeBase : public jd2::archive::NormalizedEvaluatedArchive {
+private:
 	typedef jd2::archive::NormalizedEvaluatedArchive Parent;
+protected:
 	typedef utility::vector1< core::io::silent::SilentStructOP > SilentStructVector;
 public:
 	enum IterationStage {
@@ -103,6 +105,7 @@ public:
 
 	///@brief generate a new batch, use different recipe according to current stage
   virtual void generate_batch();
+	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
 
 	///@brief while waiting for jobs to finish
   virtual void idle();
@@ -111,13 +114,23 @@ public:
 	virtual void restore_status( std::istream& );
 
 	///@brief overloaded to handel special convergence check 'pool_converged_rmsd'
-	virtual bool add_structure( core::io::silent::SilentStructOP, jd2::archive::Batch const& );
+		///@brief add structure to Archive.. return false if structure is rejected.
+	virtual bool add_structure (
+		core::io::silent::SilentStructOP new_decoy,
+		core::io::silent::SilentStructOP alternative_decoy,
+		jd2::archive::Batch const&
+	);
 
 	///@brief setup JumpNrEvaluator
 	void setup_default_evaluators();
 
 	///@brief overloaded so we can test for end of IterationStage after reading
-	virtual void read_structures( core::io::silent::SilentFileData& returned_decoys, jd2::archive::Batch const& batch );
+	virtual void read_structures(
+   core::io::silent::SilentFileData& sfd,
+	 core::io::silent::SilentFileData& alternative_decoys,
+	 jd2::archive::Batch const& batch
+	);
+
 
 	///@brief generate flags and stuff for the out-sourced evaluation ---> such that score_final column is returned for each decoy
 	/// note needs to be public, since IterativeCentroid calls this from IterativeFullatom to prepare evaluation for soon to be full-atom decoys
@@ -238,13 +251,17 @@ protected:
 	void test_broker_settings( jd2::archive::Batch const& batch );
 	void setup_filter_cst( core::Real weight );
 
+	virtual void collect_alternative_decoys(
+			 SilentStructs /*primary_decoys*/,
+			 std::string /*alternative_decoy_file*/,
+			 SilentStructVector& /*output_decoys*/
+	) {};
+
 private:
 
 	void collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, jd2::archive::Batch const& batch );
 	///@brief score a pose with Pool-Scoring function (adds necessary data to pose (RDC, constraints,  etc ) )
 	virtual void score( core::pose::Pose& pose ) const;
-
-	void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys );
 
 	///@brief what is the expected lowest acceptance ratio at the current stage ?
 	core::Real target_accept_ratio() const { return target_accept_ratio_[ stage_ ]; }
@@ -343,7 +360,6 @@ private:
 
 	///@brief even in centroid mode the end of abinitio will have a fast relax... enables cs-score and noe-assignment
 	bool super_quick_relax_of_centroids_;
-
 
 	///@brief use the score_variations from EvaluatedArchive to determine new sampling weights
 	bool use_dynamic_weights_for_sampling_;

@@ -27,27 +27,15 @@
 //#include <protocols/abinitio/IterativeCentroid.fwd.hh>
 
 // Package Headers
-//#include <protocols/jd2/archive/ArchiveBase.hh>
-//#include <protocols/jd2/archive/EvaluatedArchive.hh>
 #include <protocols/abinitio/IterativeBase.hh>
 #include <protocols/abinitio/IterativeFullatom.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <protocols/abinitio/PairingStatistics.hh>
-
-//#include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>  // Needed so PyRosetta can generate copy constructor
-
-//#include <protocols/loops/Loops.hh>
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 
 // ObjexxFCL Headers
-//#include <ObjexxFCL/FArray1D.hh>
-//#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-//#include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
 //#include <cstdlib>
@@ -56,7 +44,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-//#include <core/scoring/constraints/Constraint.hh>
 
 
 namespace protocols {
@@ -75,7 +62,31 @@ public:
 		 std::string const& current,
 		 bool fullatom
 	);
+
+	///@brief save and restore archive to file-system
+	virtual void save_to_file( std::string suffix = "" );
+	virtual bool restore_from_file();
+
+protected:
+
+
+	virtual void erase_decoy(
+ 	  std::string const& tag
+	);
+
+	///@brief call to insert structure at position given by iterator
+	virtual void add_structure_at_position (
+    SilentStructs::iterator iss,
+		core::io::silent::SilentStructOP new_decoy,
+		core::io::silent::SilentStructOP alternative_decoy
+	);
+
+	virtual void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys );
+
 private:
+	///@brief also have to keep the stage2 decoys for the stage2 resampling (stages IV and VI)
+	SilentStructs stage2_decoys_;
+
 	IterativeFullatom* fullatom_pool_ptr_;
 };
 

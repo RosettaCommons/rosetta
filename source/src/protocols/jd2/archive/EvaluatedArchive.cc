@@ -114,11 +114,15 @@ void EvaluatedArchive::start_evaluation_timer() const {
 	tr.Trace << "start evaluation" << std::endl;
 }
 
-bool EvaluatedArchive::add_structure( core::io::silent::SilentStructOP from_batch, Batch const& batch ) {
+bool EvaluatedArchive::add_structure(
+	core::io::silent::SilentStructOP new_decoy,
+	core::io::silent::SilentStructOP alternative_decoy,
+	Batch const& batch
+) {
 	using namespace basic::options;
 	tr.Info << "add structure" << std::endl;
-	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( from_batch );
-	bool added( add_evaluated_structure( evaluated_decoy, batch ) );
+	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( new_decoy );
+	bool added( add_evaluated_structure( evaluated_decoy, alternative_decoy, batch ) );
 	return added;
 }
 
@@ -127,7 +131,11 @@ void EvaluatedArchive::score( pose::Pose & pose ) const {
 	scorefxn()( pose );
 }
 
-bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, Batch const& ) {
+bool EvaluatedArchive::add_evaluated_structure(
+  core::io::silent::SilentStructOP evaluated_decoy,
+	core::io::silent::SilentStructOP alternative_decoy,
+	Batch const&
+) {
 	//get score
 	Real new_decoy_score ( select_score( evaluated_decoy ) );
 	if ( numeric::isnan( new_decoy_score ) ) return false;
@@ -142,7 +150,7 @@ bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP
 		int eval_time = now-start_eval_time_;
 		evaluated_decoy->add_energy( "eval_time", 1.0*eval_time, 1.0 );
 		tr.Trace << "add evaluated structure " << evaluated_decoy->decoy_tag() << "  after " << eval_time << " seconds of evaluation."<< std::endl;
-		add_structure_at_position( iss, evaluated_decoy );
+		add_structure_at_position( iss, evaluated_decoy, alternative_decoy );
 		return true;
 	}
 	// here if score was not good enough to be added
@@ -150,7 +158,11 @@ bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP
 }
 
 //overloaded to add some tracer output
-void EvaluatedArchive::read_structures( core::io::silent::SilentFileData& sfd, Batch const& batch ) {
+void EvaluatedArchive::read_structures(
+   core::io::silent::SilentFileData& sfd,
+	 core::io::silent::SilentFileData& alternative_decoys,
+	 Batch const& batch
+) {
 	tr.Info << "structures are scored with the following weights: " << std::endl;
 	WeightMap const& variations( score_variations() );
 	for ( WeightMap::const_iterator it=select_weights_.begin(); it != select_weights_.end(); ++it ) {
@@ -163,7 +175,7 @@ void EvaluatedArchive::read_structures( core::io::silent::SilentFileData& sfd, B
 		scorefxn().show_pretty( tr.Info );
 		tr.Info << std::endl;
 	}
-	Parent::read_structures( sfd, batch );
+	Parent::read_structures( sfd, alternative_decoys, batch );
 	tr.Info << "finished reading structures for batch: " << batch.batch() << std::endl;
 
 	basic::prof_show();

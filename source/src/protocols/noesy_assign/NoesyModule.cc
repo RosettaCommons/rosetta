@@ -25,6 +25,7 @@
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+#include <protocols/noesy_assign/PeakAssignment.hh>
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakFileFormat_Sparky.hh>
 #include <protocols/noesy_assign/CovalentCompliance.hh>
@@ -251,7 +252,7 @@ void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
 		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			core::scoring::func::FuncOP func( new BoundFunc(1.5,	(*it)->distance_bound(), 1, "NOE Peak " ) );
-			AmbiguousNMRDistanceConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
+			ConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
 			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );
 		}
 	}

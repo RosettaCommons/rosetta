@@ -1,0 +1,40 @@
+AmbiguousNMRConstraint BOUNDED     1.5    5.74 3.24 CEN mapped automatic NOE: Peak 379
+AtomPair  CEN    3  CEN   90 BOUNDED     1.5     5.5   1 VC 0.276
+AtomPair  CEN    3  CEN   90 BOUNDED     1.5     5.5   1 VC 0.724
+End_AmbiguousNMRConstraint
+AtomPair  CEN    3  H     92 BOUNDED     1.5    5.17 1.62 CEN mapped automatic NOE: Peak 2763
+AtomPair  CEN    3  H     92 BOUNDED     1.5    5.13 1.62 CEN mapped automatic NOE: Peak 2770
+AtomPair  CEN    3  H     92 BOUNDED     1.5    6.15 1.62 CEN mapped automatic NOE: Peak 446
+AtomPair  CEN    4  CEN   31 BOUNDED     1.5    7.53 3.24 CEN mapped automatic NOE: Peak 2774
+AtomPair  CEN    4  HA    91 BOUNDED     1.5    5.31 1.62 CEN mapped automatic NOE: Peak 1268
+AtomPair  CEN    4  HA    91 BOUNDED     1.5     5.2 1.62 CEN mapped automatic NOE: Peak 3318
+AtomPair  CEN    4  HA    91 BOUNDED     1.5     4.8 1.62 CEN mapped automatic NOE: Peak 3323
+AtomPair  CEN    4  HA    91 BOUNDED     1.5    5.21 1.62 CEN mapped automatic NOE: Peak 3442
+AtomPair  CEN    4  HA    91 BOUNDED     1.5    5.63 1.62 CEN mapped automatic NOE: Peak 3495
+AtomPair  CEN    4  H     92 BOUNDED     1.5    5.49 1.62 CEN mapped automatic NOE: Peak 408
+AtomPair  HA     4  HA    93 BOUNDED     1.5    3.19 0.81 CEN mapped automatic NOE: Peak 3380
+AtomPair  H      5  H     31 BOUNDED     1.5    3.64 0.81 CEN mapped automatic NOE: Peak 280
+AtomPair  H      5 1HA    32 BOUNDED     1.5       4 0.81 CEN mapped automatic NOE: Peak 3018
+AtomPair  H      5  H     32 BOUNDED     1.5    3.16 0.81 CEN mapped automatic NOE: Peak 42
+AtomPair  H      5  H     32 BOUNDED     1.5    3.19 0.81 CEN mapped automatic NOE: Peak 274
+AtomPair  CEN    5  CEN   79 BOUNDED     1.5    6.64 3.24 CEN mapped automatic NOE: Peak 2522
+AtomPair  HA     5  H     92 BOUNDED     1.5    3.81 0.81 CEN mapped automatic NOE: Peak 3717
+AtomPair  CEN    6  CEN   30 BOUNDED     1.5    6.11 3.24 CEN mapped automatic NOE: Peak 839
+AtomPair  HA     6  HA    30 BOUNDED     1.5    3.15 0.81 CEN mapped automatic NOE: Peak 3312
+AtomPair  CEN    6  CEN   84 BOUNDED     1.5       6 3.24 CEN mapped automatic NOE: Peak 2613
+AtomPair  CEN    6  CEN   84 BOUNDED     1.5    5.94 3.24 CEN mapped automatic NOE: Peak 2616
+AtomPair  H      7  H     29 BOUNDED     1.5    3.26 0.81 CEN mapped automatic NOE: Peak 1148
+AtomPair  H      7  HA    30 BOUNDED     1.5     3.6 0.81 CEN mapped automatic NOE: Peak 3316
+AtomPair  CEN    7  H     31 BOUNDED     1.5    5.21 1.62 CEN mapped automatic NOE: Peak 204
+AtomPair  H      7  H     31 BOUNDED     1.5    4.36 0.81 CEN mapped automatic NOE: Peak 923
+AtomPair  H      7  CEN   83 BOUNDED     1.5    5.09 1.62 CEN mapped automatic NOE: Peak 214
+AtomPair  CEN    7  CEN   96 BOUNDED     1.5    6.75 3.24 CEN mapped automatic NOE: Peak 2341
+AtomPair  CEN    8  CEN   26 BOUNDED     1.5    6.62 3.24 CEN mapped automatic NOE: Peak 2191
+AtomPair  HA     8  H     27 BOUNDED     1.5    4.06 0.81 CEN mapped automatic NOE: Peak 1333
+AtomPair  HA     8  CEN   28 BOUNDED     1.5    5.36 1.62 CEN mapped automatic NOE: Peak 506
+AtomPair  HA     8  HA    28 BOUNDED     1.5    3.03 0.81 CEN mapped automatic NOE: Peak 3954
+AtomPair  HA     8  H     29 BOUNDED     1.5    3.53 0.81 CEN mapped automatic NOE: Peak 1159
+AmbiguousNMRConstraint BOUNDED     1.5    5.46 1.62 CEN mapped automatic NOE: Peak 411
+AtomPair  CEN    8  H     81 BOUNDED     1.5     5.5   1 VC 0.215
+AtomPair  CEN    8  H     81 BOUNDED     1.5     5.5   1 VC 0.785
+End_AmbiguousNMRConstraint

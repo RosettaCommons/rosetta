@@ -2695,7 +2695,7 @@ Conformation::append_residue(
 			fold_tree_->append_residue( attach_by_jump, anchor_id.rsd(), anchor_id.atom(), root_atom );
 		}
 	}
-	TR.Debug << "CURRENT_" << *fold_tree_ << std::endl;
+	TR.Trace << "CURRENT_" << *fold_tree_ << std::endl;
 
 	// update the atom_tree.
 	// alternatively we could call setup_atom_tree, would be more expensive.

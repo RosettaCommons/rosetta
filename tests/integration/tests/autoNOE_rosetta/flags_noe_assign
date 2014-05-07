@@ -1,0 +1,34 @@
+# before starting the Rosetta production run initial assignments have to be generated.
+# do this by running initialize_assignments_phaseI.sh
+
+
+-residues:patch_selectors CENTROID_HA
+-out:levels protocols.noesy_assign:info
+-constraints:combine 2
+-iterative:centroid_before_quickrelax_weight 1.0
+-iterative:fullatom_after_quickrelax_weight 0.0
+-iterative:super_quick_relax_protocol noe_super_quick_relax.txt
+-noesy:map_to_cen_atom
+-noesy:atom_dependent_calibration
+-iterative:skip_redundant_constraints 1
+-noesy:network:mode clean
+
+
+#-noesy:calibration:ignore_eliminated_peaks
+#-noesy:calibration:convergence 0
+
+-iterative:initial_noe_auto_assign_csts ../inputs/initial_assignment/noe_auto_assign.cst
+-iterative:auto_assign_scheme CONST
+#-noesy:network:use_all_covalent_atoms false
+
+
+-noesy:calibration:max_nudging 1.1
+-noesy:calibration:stop_nudging 0
+
+-iterative:never_update_noesy_filter_cst
+
+
+
+-noesy_weights:cst_strength    50
+-noesy_weights:defaults:calibration_target  3.8 0.15 0.15 0.1 0.1 0.1 0.1
+-iterative:randomize_elimination_candidates 0.000000

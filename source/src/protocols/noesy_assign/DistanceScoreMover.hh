@@ -20,8 +20,8 @@
 // Package Headers
 // AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
-#include <protocols/noesy_assign/PeakAssignment.hh>
-
+//#include <protocols/noesy_assign/PeakAssignment.hh>
+#include <core/scoring/constraints/Constraint.hh>
 // Project Headers
 #include <protocols/moves/Mover.hh>
 #include <core/types.hh>
@@ -76,7 +76,7 @@ private:
   CrossPeakList& cross_peaks_;
   core::Size count_decoys_; //how many decoys for scoring
   core::Size nr_assignments_;
-  typedef utility::vector1< PeakAssignment::NmrConstraintOP > SingleConstraints;
+  typedef utility::vector1< core::scoring::constraints::ConstraintOP > SingleConstraints;
   SingleConstraints constraints_;
 
 

@@ -229,20 +229,6 @@ public:
        bool fa_only = false
   ) const;
 
-#if 0
-  core::scoring::constraints::ConstraintOP
-  create_constraint(
-    core::pose::Pose const& pose,
-    core::Size normalization = 1
-  ) const;
-
-  core::scoring::constraints::ConstraintOP
-  create_centroid_constraint(
-    core::pose::Pose const& pose,
-    core::pose::Pose const& centroid_pose,
-    core::Size normalization = 1
-  ) const;
-#endif
 //   ///@brief number of assigned protons
 //   core::Size n_assigned() const { runtime_assert( proton1_.n_assigned() == proton2_.n_assigned() ); return proton1_.n_assigned(); }
 
@@ -337,8 +323,6 @@ private:
   bool elimination_candidate_;
   std::string elimination_comment_;
 
-protected:
-  static std::set< core::id::NamedAtomID > unknown_resonances_;
 };
 
 inline std::ostream& operator<< ( std::ostream& os, CrossPeak const& peak ) {

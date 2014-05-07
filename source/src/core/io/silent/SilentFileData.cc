@@ -463,21 +463,21 @@ SilentFileData::_read_file(
 
 	if ( option[ in::file::silent_select_range_start ]() >= 0 ) {
 
-	// get start index and limit to size of silent file (all_tags.size() ) by wrapping around (rather then by throwing an error)
-	core::Size range_start = ( option[ in::file::silent_select_range_start ]() *
+		// get start index and limit to size of silent file (all_tags.size() ) by wrapping around (rather then by throwing an error)
+		core::Size range_start = ( option[ in::file::silent_select_range_start ]() *
 			option[ in::file::silent_select_range_mul ] ) % all_tags.size();
-	core::Size range_end   = range_start + option[ in::file::silent_select_range_len ]();
+		core::Size range_end   = range_start + option[ in::file::silent_select_range_len ]();
 
-	// setting in::file::silent_select_range_len to -1 means run to the end.
-	if( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();
+		// setting in::file::silent_select_range_len to -1 means run to the end.
+		if ( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();
 
-	// do a range check just in case.
-	range_end = std::min( (int)range_end, (int)all_tags.size() );
+		// do a range check just in case.
+		range_end = std::min( (int)range_end, (int)all_tags.size() );
 
-	tr << "Reading range: "  << range_start << " <= i < " << range_end << std::endl;
-	for( core::Size position = range_start; position < range_end; position++){
-		tags_wanted.push_back( all_tags[position+1] ); // the +1 converts to 1 based counting ov the utility::vector1
-	}
+		tr << "Reading range: "  << range_start << " <= i < " << range_end << std::endl;
+		for( core::Size position = range_start; position < range_end; position++){
+			tags_wanted.push_back( all_tags[position+1] ); // the +1 converts to 1 based counting ov the utility::vector1
+		}
 
   }
 

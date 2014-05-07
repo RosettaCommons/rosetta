@@ -1,0 +1,51 @@
+-iterative:enumerate:skip_half
+-iterative:pool_size 100
+-iterative:accept_ratio 0.1 0.1 0.1  0.1 0.1 0.1 0.1 0.1
+-jumps::max_strand_gap_allowed 10
+-jumps:contact_score 0.2
+-iterative:rmsf_nstruct 50
+
+-out:level 400
+-out:levels all:warning
+-out:levels protocols.jd2.MPIArchiveJobDistributor:info
+-out:levels protocols.jd2.Archive:debug
+-out:levels protocols.iterative:info
+-out:levels core.util.prof:info
+-iterative:evaluate_only_on_slaves
+-iterative:fa_score score12_full
+-iterative:cen_score score3
+
+#Stages:
+# (1)  SS-RANDOM
+# (2)  MIX
+# (3)  BETA-TOP
+# (4)  RESAM
+# (5)  NOE-BETA-TOP
+# (6)  NOE-RESAM
+# (7)  CEN2FULL
+# (8)  FULL-REFINE
+
+-iterative:max_nstruct 0 0 0 0 0 0 0 0
+-iterative:min_diversity 0 0 0 2.0 3.0 2.0 2.0 1.5
+-iterative:fullatom
+-iterative:safety_hatch_scorecut 0.1
+-iterative::super_quick_relax_patch super_quick_relax.patch
+
+#this is the relative weight the noesy-cst will have for filtering
+#the relative weight provided in the following is multiplied with the overall weight for atom_pair_constraint in the patches
+#given by -iterative:cen_score_patch and -iterative:fa_score_patch
+-iterative:cenpool_noesy_cst_weight 1
+-iterative:fapool_noesy_cst_weight 1
+
+#exit as soon as queue is drained
+-jd2:mpi_nowait_for_remaining_jobs
+-jd2:mpi_timeout_factor 0
+
+-iterative:flags_fullatom ../flags_fullatom
+
+#important to obtain intermediate structures for proto-fold resampling (aka stage2 resampling)
+-abinitio:debug
+-abinitio:debug_structures
+
+-archive:completion_notify_frequency 25
+-iterative::staged_auto_noe_flags NONE NONE NONE NONE ../flags_phaseII ../flags_phaseII ../flags_phaseIII ../flags_phaseIII

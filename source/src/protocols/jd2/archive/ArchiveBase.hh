@@ -60,7 +60,7 @@ class AbstractArchiveBase : public utility::pointer::ReferenceCount {
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~AbstractArchiveBase();
-	AbstractArchiveBase( ArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
+	AbstractArchiveBase( BaseArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
 	AbstractArchiveBase() : manager_( NULL ), name_( "archive" ) {};
 
 	///@brief is archive converged ?
@@ -77,12 +77,19 @@ public:
 	///@brief create a new batch with manager().start_new_batch() and manager().finalize_batch();
 	virtual void generate_batch() = 0;
 
+	///@brief create a batch for the current stage, return ct != 0 if more batches should be created at
+	///current stage. (e.g., harvest_batches)
+	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size /*repeat_id*/ ) { return 0; };
 	///@brief do some computations on archive that can be done while we are waiting
 	virtual void idle() = 0;
 
 
 	///@brief read 'returned_decoys' from 'batch' into archive.
-	virtual void read_structures( core::io::silent::SilentFileData& returned_decoys, Batch const& batch ) = 0;
+	virtual void read_structures(
+     core::io::silent::SilentFileData& returned_decoys,
+		 core::io::silent::SilentFileData& alternative_decoys,
+		 Batch const& batch
+	) = 0;
 
 	///@brief save archive to file .. you can put 'suffix' at end of dirname to save other snapshots than the 'current'
 	virtual void save_to_file( std::string suffix = "" ) = 0;
@@ -98,23 +105,23 @@ public:
 	std::string const& name() const { return name_; };
 
 	///@brief access to the ArchiveManager (control of batches)
-	ArchiveManager& manager() {
+	BaseArchiveManager& manager() {
 		runtime_assert( manager_ );
 		return *manager_;
 	}
 
 	virtual
-	void set_manager( ArchiveManagerAP manager ) {
+	void set_manager( BaseArchiveManagerAP manager ) {
 		manager_=manager;
 	}
 protected:
 
-	ArchiveManagerAP manager_ptr() {
+	BaseArchiveManagerAP manager_ptr() {
 		return manager_;
 	}
 
 private:
-	ArchiveManagerAP manager_;
+	BaseArchiveManagerAP manager_;
 	std::string name_;
 };
 
@@ -142,7 +149,11 @@ public:
 	virtual void generate_batch() = 0;
 
 	///@brief add structure to Archive.. return false if structure is rejected.
-	virtual bool add_structure( core::io::silent::SilentStructOP orig_from_batch, Batch const& );
+	virtual bool add_structure (
+		core::io::silent::SilentStructOP new_decoy,
+		core::io::silent::SilentStructOP alternative_decoy,
+		Batch const&
+	);
 
 	///@brief how many structures should be in archive .. varies from decoys().size() in startup phase.
 	core::Size nstruct() const { return nstruct_; };
@@ -152,6 +163,19 @@ public:
 
 	///@brief save and restore archive to file-system
 	virtual void save_to_file( std::string suffix = "" );
+
+	///@brief helper routine to save decoys properly
+	void save_decoys(
+			std::string const& dirname,
+			std::string const& name,
+			SilentStructs const& decoys
+	);
+
+	void load_decoys(
+		std::string const& filename,
+		SilentStructs& decoys
+	);
+
 	virtual bool restore_from_file();
 
 	///@brief save and restore status of archive to file-system
@@ -165,7 +189,11 @@ public:
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
 
 	///@brief SilentFileData contains the new structures belonging to this batch.
-	virtual void read_structures( core::io::silent::SilentFileData&, Batch const& batch );
+	virtual void read_structures(
+    core::io::silent::SilentFileData&,
+		core::io::silent::SilentFileData& alternative_decoys,
+		Batch const& batch
+	);
 
 	///
 	///---- methods to keep statistics of acceptance
@@ -202,8 +230,20 @@ protected:
 		max_nstruct_ = setting;
 	}
 
+	core::Size max_nstruct() {
+		return max_nstruct_;
+	}
+
 	///@brief call to insert structure at position given by iterator
-	void add_structure_at_position( SilentStructs::iterator iss, core::io::silent::SilentStructOP new_decoy );
+	virtual void add_structure_at_position (
+    SilentStructs::iterator iss,
+		core::io::silent::SilentStructOP new_decoy,
+		core::io::silent::SilentStructOP alternative_decoy
+	);
+
+	virtual void erase_decoy(
+ 	  std::string const& tag
+	);
 
 private:
 	core::Size max_nstruct_; //how many structures maximally maintained in archive
@@ -224,25 +264,6 @@ private:
 	core::Size min_structures_for_acceptance_statistics_;
 
 	static bool options_registered_;
-};
-
-class DebugArchive : public ArchiveBase {
-public:
-	DebugArchive( ArchiveManagerAP ptr );
-
-	virtual bool add_structure( core::io::silent::SilentStructOP, Batch const& );
-
-	virtual bool finished() const { return ct_batches_ > 4; };
-	//	virtual bool ready_for_batch() const { return !finished() && (ct_batches_ < 3 || decoys().size() > 200); };
-	virtual void generate_batch();
-	virtual void score( core::pose::Pose& pose ) const;
-
-	virtual void save_status(  std::ostream& ) const;
-	virtual void restore_status( std::istream& );
-private:
-	core::Size ct_batches_;
-	core::scoring::ScoreFunctionOP cen_score_;
-	bool make_mistake_;
 };
 
 }//archive

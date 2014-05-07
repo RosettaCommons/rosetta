@@ -128,6 +128,10 @@ std::string Batch::silent_out() const {
 	return batch() + "/decoys.out";
 }
 
+std::string Batch::alternative_decoys_out() const {
+	return batch() + "/decoys_stage2.out";
+}
+
 std::string Batch::silent_in() const {
 	//	if ( has_silent_in() )
 	return batch() + "/decoys.in";
@@ -156,6 +160,7 @@ void Batch::show( std::ostream& out, bool single_line ) const {
 	out << "ID " << id() << eol
 			<< "INPUT " << ( has_silent_in() ? "yes" : "no" ) << eol
 			<< "NSTRUCT " << nstruct() << eol
+			<< "INTERMEDIATES " << ( intermediate_structs() ? "yes" : "no" ) << eol
 			<< "RETURNED " << decoys_returned() << eol
 			<< "FINISHED " << ( has_finished() ? "yes" : "no" ) << eol
 			<< "CANCELLED " << ( is_cancelled() ? "yes" : "no" ) << eol
@@ -223,6 +228,16 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 	} else report_tag_error( batch, expected_tag, tag );;
 
 	in >> tag;
+	expected_tag = "INTERMEDIATES";
+	if ( tag == expected_tag ) {
+		std::string yesno;
+		in >> yesno;
+		if ( !in.good() ) report_value_error( batch, tag );
+		if ( yesno == "yes" ) batch.intermediate_structs_ = true;
+		else if ( yesno == "no" ) batch.intermediate_structs_ = false;
+	} else report_tag_error( batch, expected_tag, tag );;
+
+	in >> tag;
 	expected_tag = "RETURNED";
 	if ( tag == expected_tag ) {
 		in >> batch.decoys_returned_to_archive_;
@@ -254,6 +269,12 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 
 //#ifndef WIN32
 
+void BaseArchiveManager::set_archive( AbstractArchiveBaseOP anArchive ) {
+	theArchive_ = anArchive;
+	theArchive_->set_manager( this );
+	theArchive_->initialize();
+}
+
 ///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 ArchiveManager::ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank ) :
@@ -273,13 +294,12 @@ core::Size ArchiveManager::unfinished_batches() const {
 	return unfinished_batches;
 }
 
+
 void
 ArchiveManager::go( ArchiveBaseOP archive )
 {
+	set_archive( archive );
 	tr.Debug << "starting ArchiveManager ..." << archive_rank_ << " " << jd_master_rank_ << " " << file_buf_rank_ << std::endl;
-	theArchive_ = archive;
-	theArchive_->set_manager( this );
-	theArchive_->initialize();
 	mem_tr << "initialized IterativeAbrelax" << std::endl;
 	try {
 		if ( !restore_archive() ) {
@@ -288,7 +308,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				tr.Info << "reading decoys from " <<  decoys << " into archive " << std::endl;
 				core::io::silent::SilentFileData sfd( decoys, false, false,  option[ OptionKeys::iterative::input_pool_struct_type ]() );
 				sfd.read_file( decoys );
-				theArchive_->init_from_decoy_set( sfd );
+				the_archive().init_from_decoy_set( sfd );
 			}
 		}
 		save_archive();
@@ -311,7 +331,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			tr.Debug << "probing for message in ArchiveManager" << std::endl;
 			tr.Debug << "\nSTATUS: " << (stop ? "STOP send: " : "" ) << "  ------ unfinished_batches: " << unfinished_batches() << std::endl;
 			tr.Debug << "POOL_STATUS: " << std::endl;
-			theArchive_->save_status( tr.Debug );
+			the_archive().save_status( tr.Debug );
 			tr.Debug << "END_STATUS\n\n"<< std::endl;
 			basic::show_time( tr,  "manager main msg-loop: probe for message..." );
 			print_status = false;
@@ -389,18 +409,18 @@ ArchiveManager::go( ArchiveBaseOP archive )
 					jobs_completed(); //get thru these before making job decisions
 				}
 				PROF_STOP( basic::ARCHIVE_CRITICAL_JOBSCOMPLETE );
-				//		theArchive_->idle(); why was this in the job-completed loop ?
+				//		the_archive().idle(); why was this in the job-completed loop ?
 
 				PROF_START( basic::ARCHIVE_GEN_BATCH );
 				//this is a valid QUEUE_EMPTY request: do something about it
 				tr.Info << "ArchiveManager received QUEUE_EMPTY" << std::endl;
 				tr.Debug << "JD batch_id: " << batch_id << " max_working_batch_id: " << max_working_batch_id << std::endl;
 				basic::show_time( tr,  "manager main msg-loop: queue empty..." );
-				if ( !theArchive_->finished() ) {
+				if ( !the_archive().finished() ) {
 					//if !finished Archive should always generate a batch...
 					//but let's make sure by monitoring, since it would be bad if we hang in the communication...
 					Size ct( batches_.size() );//monitor number of batches
-					if ( !stop ) theArchive_->generate_batch();
+					if ( !stop ) the_archive().generate_batch();
 					if ( ct == batches_.size() ) { //if generate_batch didn't create anything --- we still owe Jobdistributor a signal
 						send_stop_to_jobdistributor(); //send stop
 						stop = true;
@@ -453,16 +473,89 @@ ArchiveManager::idle() {
 		return;
 	};
 
-	//	if ( !theArchive_->finished() && theArchive_->ready_for_batch() ) {
-		//		theArchive_->generate_batch();
+	//	if ( !the_archive().finished() && the_archive().ready_for_batch() ) {
+		//		the_archive().generate_batch();
 	//	} else {
 		time_t before( time(NULL) );
-		theArchive_->idle();
+		the_archive().idle();
 		time_t after( time( NULL ) );
 		if ( after-before > 1 ) tr.Debug << "spend " << after-before << " seconds in archives idle method... " << std::endl;
 		//sleep some more if idle didn't use much time
 		if ( after-before < 5 ) sleep( (5 - ( after - before )) );
 		//	}
+}
+
+void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
+	using namespace core::io::silent;
+	SilentFileData sfd;
+	utility::vector1< std::string > tags_in_file;
+
+	//this keeps order as in file... important since we skip already known tags by just keeping their number
+	sfd.read_tags_fast( batch.silent_out(), tags_in_file );
+
+	unlock_file( batch, final );
+
+	tr.Debug << "found " << tags_in_file.size() << " decoys in " << batch.silent_out() << std::endl;
+
+	utility::vector1< std::string >::iterator iter = tags_in_file.begin();
+	std::string unread_tag = "none";
+	for ( Size ct = 1;
+				iter != tags_in_file.end() && ct <= batch.decoys_returned();
+				++iter, ++ct )
+		{
+			unread_tag = *iter;
+		}; //just skipping...
+	utility::vector1< std::string > tags_to_read;
+
+	std::copy( iter, tags_in_file.end(), std::back_inserter( tags_to_read ) );
+	if ( tags_to_read.size() ) {
+		std::cerr << "last_skipped tag: " << unread_tag << " first tag to read: " << tags_to_read[1] << " last tag to read: " << tags_to_read.back() << std::endl;
+		try {
+			sfd.read_file( batch.silent_out(), tags_to_read );
+		} catch ( utility::excn::EXCN_Base& excn ) { //or should we be more specific ?
+			if ( final ) throw; //rethrow if it is the final version of the file...
+			tr.Error << "[ignored ERROR] " << excn.msg() << std::endl;
+			tr.Error << "this is not the final version of " << batch.silent_out() << "\n... maybe some data is still held in a cache of the filesystem..."
+							 << " let's see if it works better the next time we have to read" << std::endl;
+			//or sleep( 5 ) and retry as above ?
+			return;
+		}
+
+		{ //now update our batch information so that this is already known in read_structures
+			runtime_assert( batch.decoys_returned()+sfd.size() == tags_in_file.size() );
+			batch.set_decoys_returned( tags_in_file.size() );
+			if ( final ) {
+				batch.mark_as_finished();
+			}
+		}
+
+		PROF_STOP( basic::ARCHIVE_READ_DECOYS );
+		tr.Debug << "add " << tags_to_read.size() << " structures to archive " << std::endl;
+
+		PROF_START( basic::ARCHIVE_EVAL_DECOYS );
+
+		//if alternative decoys present read also these
+		SilentFileData alternative_decoys_sfd;
+		if ( batch.intermediate_structs() ) {
+			alternative_decoys_sfd.read_file( batch.alternative_decoys_out(), tags_to_read );
+		}
+
+		//read structures and add to archive
+		the_archive().read_structures( sfd, alternative_decoys_sfd, batch );
+
+		PROF_STOP( basic::ARCHIVE_EVAL_DECOYS );
+	} else {
+		tr.Info << "no more decoys to read from file " << batch.silent_out() << std::endl;
+		PROF_STOP( basic::ARCHIVE_READ_DECOYS );
+	}
+}
+
+void ArchiveManager::unlock_file( Batch const& batch, bool final ) {
+	if ( !final ) {
+		tr.Debug << "...and release file" << std::endl;
+		WriteOut_MpiFileBuffer file_buf( file_buf_rank_ );
+		file_buf.release_file( ".//"+batch.silent_out() );
+	}
 }
 
 void
@@ -474,7 +567,7 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 	bool final( msg.final );
 	Size bad( msg.bad );
 	Size good_decoys( msg.good );
-	Batch const& batch( batches_[ batch_id ] );
+	Batch& batch( batches_[ batch_id ] );
 
 	// here if in integration-test mode, jump out if not final
 	if ( option[ run::constant_seed ] && !final ) return;
@@ -503,7 +596,6 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 	PROF_STOP( basic::ARCHIVE_BLOCK_FILE );
 	//sleep( 5 );
 	PROF_START( basic::ARCHIVE_READ_DECOYS );
-	utility::vector1< std::string > tags_in_file;
 
 
 	if ( good_decoys ) {
@@ -517,57 +609,7 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 			return;
 		}
 
-		using namespace core::io::silent;
-		SilentFileData sfd;
-
-		//this keeps order as in file... important since we skip already known tags by just keeping their number
-		sfd.read_tags_fast( batch.silent_out(), tags_in_file );
-
-		if ( !final ) {
-			tr.Debug << "...and release file" << std::endl;
-			file_buf.release_file( ".//"+batch.silent_out() );
-		}
-
-		tr.Debug << "found " << tags_in_file.size() << " decoys in " << batch.silent_out() << std::endl;
-
-		utility::vector1< std::string >::iterator iter = tags_in_file.begin();
-		for ( Size ct = 1;
-					iter != tags_in_file.end() && ct <= batch.decoys_returned(); ++iter, ++ct ) { }; //just skipping...
-		utility::vector1< std::string > tags_to_read;
-
-		std::copy( iter, tags_in_file.end(), std::back_inserter( tags_to_read ) );
-		if ( tags_to_read.size() ) {
-			try {
-				sfd.read_file( batch.silent_out(), tags_to_read );
-			} catch ( utility::excn::EXCN_Base& excn ) { //or should we be more specific ?
-				if ( final ) throw; //rethrow if it is the final version of the file...
-				tr.Error << "[ignored ERROR] " << excn.msg() << std::endl;
-				tr.Error << "this is not the final version of " << batch.silent_out() << "\n... maybe some data is still held in a cache of the filesystem..."
-								 << " let's see if it works better the next time we have to read" << std::endl;
-				//or sleep( 5 ) and retry as above ?
-				return;
-			}
-
-			PROF_STOP( basic::ARCHIVE_READ_DECOYS );
-			tr.Debug << "add " << tags_to_read.size() << " structures to archive " << std::endl;
-
-			PROF_START( basic::ARCHIVE_EVAL_DECOYS );
-
-			{ //now update our batch information so that this is already known in read_structures
-				Batch& batch( batches_[ batch_id ] );
-				batch.set_decoys_returned( tags_in_file.size() );
-				if ( final ) {
-					batch.mark_as_finished();
-				}
-			}
-			//read structures and add to archive
-			theArchive_->read_structures( sfd, batch );
-			PROF_STOP( basic::ARCHIVE_EVAL_DECOYS );
-		} else {
-			tr.Info << "no more decoys to read from file " << batch.silent_out() << std::endl;
-			PROF_STOP( basic::ARCHIVE_READ_DECOYS );
-		}
-
+		read_returning_decoys( batch, final );
 
 		PROF_START( basic::SAVE_ARCHIVE );
 		if ( jobs_completed_.size() == 0 ) save_archive();
@@ -577,15 +619,10 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 		throw EXCN_Archive( "all decoys returned with FAIL_BAD_INPUT" );
 	}
 
-
-	{ //now update our batch information and save to disck
-		Batch& batch( batches_[ batch_id ] );
-		batch.set_decoys_returned( tags_in_file.size() );
-		if ( final ) {
-			batch.mark_as_finished();
-		}
-		batch.write_info_file();
+	if ( final ) {
+		batch.mark_as_finished();
 	}
+	batch.write_info_file();
 }
 
 void
@@ -614,7 +651,7 @@ ArchiveManager::queue_batch( Batch const& batch ) {
 
 }
 
-void ArchiveManager::cancel_batches_previous_to( core::Size batch_id, bool allow_reading_of_decoys ) {
+void BaseArchiveManager::cancel_batches_previous_to( core::Size batch_id, bool allow_reading_of_decoys ) {
 	for ( BatchList::iterator it = batches_.begin(); it!=batches_.end(); ++it) {
 		if ( it->id() == batch_id ) break;
 		cancel_batch( *it, allow_reading_of_decoys );
@@ -622,7 +659,14 @@ void ArchiveManager::cancel_batches_previous_to( core::Size batch_id, bool allow
 }
 
 void
+BaseArchiveManager::cancel_batch( Batch& batch, bool allow_reading_of_decoys ) {
+	batch.mark_as_cancelled( allow_reading_of_decoys );
+}
+
+void
 ArchiveManager::cancel_batch( Batch& batch, bool allow_reading_of_decoys ) {
+	Parent::cancel_batch( batch, allow_reading_of_decoys );
+
 	if ( option[ OptionKeys::run::constant_seed ]() ) {
 		tr.Warning << "asked to cancel batch, but ignore in constant_seed mode to enable integration test" << std::endl;
 		return;
@@ -648,7 +692,6 @@ ArchiveManager::cancel_batch( Batch& batch, bool allow_reading_of_decoys ) {
 #else
 	protocols::jd2::JobDistributor::get_instance()->add_batch( BatchJobInputter::BOGUS_BATCH_ID );
 #endif
-	batch.mark_as_cancelled( allow_reading_of_decoys );
 	batch.write_info_file();
 }
 
@@ -710,16 +753,10 @@ ArchiveManager::read_existing_batches() {
 }
 
 Batch&
-ArchiveManager::start_new_batch() {
-	core::io::silent::SilentStructOPs empty;
-	return start_new_batch( empty );
-}
-
-Batch&
-ArchiveManager::start_new_batch( core::io::silent::SilentStructOPs const& start_decoys ) {
+BaseArchiveManager::start_new_batch() {
 	using utility::file::file_exists;
 
-	core::Size batch_id( batches_.size() + 1 );
+	core::Size batch_id( last_batch_id() + 1 );
 	tr.Debug << "start new batch " << batch_id << std::endl;
 	batches_.push_back( Batch( batch_id ) );
 	Batch &new_batch( batches_.back() );
@@ -727,15 +764,6 @@ ArchiveManager::start_new_batch( core::io::silent::SilentStructOPs const& start_
 	new_batch.set_id( batch_id );
 	//make directory:
 	utility::file::create_directory( new_batch.dir() );
-	if ( start_decoys.size() ) {
-		new_batch.set_has_silent_in();
-		core::io::silent::SilentFileData sfd;
-		for ( core::io::silent::SilentStructOPs::const_iterator
-						it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
-			sfd.add_structure( **it );
-		}
-		sfd.write_all( new_batch.silent_in() );
-	}
 	new_batch.user_options().add_built_in_options();
 	add_all_rosetta_options( new_batch.user_options() );
 
@@ -755,7 +783,7 @@ void report_batch_inconsistency( Batch& new_batch, std::string const &tag ) {
 }
 
 void
-ArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
+BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 	using utility::file::file_exists;
 	using namespace basic::options::OptionKeys;
 	tr.Debug << "finalize_batch " << new_batch << std::endl;
@@ -821,7 +849,7 @@ ArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 		new_batch.user_options().load_options_from_stream( user_flags, "USER_FLAGS" );
 		if ( reread ) {
 			new_batch.read_info_file();
-			new_batch.set_intermediate_structs( intermeds ); //this is not read from BATCH_INFO
+			//new_batch.set_intermediate_structs( intermeds ); //this is not read from BATCH_INFO
 
 			// for all other values we just double-check consistency
 			if ( new_batch.nstruct() != nstruct ) report_batch_inconsistency( new_batch, "NSTRUCT" );
@@ -849,7 +877,7 @@ ArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 		new_batch.write_info_file();
 	}
 
-	if ( !new_batch.has_finished() && !new_batch.is_cancelled() && theArchive_->still_interested( new_batch ) ) {
+	if ( !new_batch.has_finished() && !new_batch.is_cancelled() && the_archive().still_interested( new_batch ) ) {
 		tr.Debug << "queue " << new_batch.batch() << " " << new_batch.flag_file() << std::endl;
 		queue_batch( new_batch );
 	} else {
@@ -863,13 +891,13 @@ ArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 
 void
 ArchiveManager::save_archive() {
-	theArchive_->save_to_file();
+	the_archive().save_to_file();
 }
 
 
 bool
 ArchiveManager::restore_archive() {
-	return theArchive_->restore_from_file();
+	return the_archive().restore_from_file();
 }
 
 //#endif //ndef WIN32

@@ -48,6 +48,8 @@ public:
 	EXCN_Archive( std::string const& msg ) : EXCN_Msg_Exception( msg ) {};
 };
 
+extern void report_batch_inconsistency( Batch& new_batch, std::string const &tag );
+
 ///@brief a Batch represents a directory "batch_000xxx" that contains flags, broker-setup input-files and output-files
 ///@detail the Batch-class helps to get the correct file- and directory names,
 ///          and has some knowledge about its status: finished, unfinished ... decoys already processed by Archive
@@ -95,6 +97,8 @@ class Batch {
 	}
 
 	std::string silent_out() const; // Output
+	std::string alternative_decoys_out() const;
+
 	std::string score_file() const;
 
 	// the options defined in this batch, that are not controlled directly by Batch, as, e.g., silent-in/out , or nstruct
@@ -185,45 +189,74 @@ private:
 };
 
 
-
 ///@brief ArchiveManager is responsible for communication with JobDistributor and organization of Batches and returning decoys
 ///@detail he owns an Archive (AbstractArchiveBase) that will be handed the decoys and is asked to generate_batch() if the QUEUE_EMPTY .
-class ArchiveManager {
+class BaseArchiveManager {
 public:
   ///@brief ctor is protected; singleton pattern
-  ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank );
-	virtual ~ArchiveManager() {}; //virtual destructor because we have virtual functions
+  BaseArchiveManager() : theArchive_( NULL ) {};
+	virtual ~BaseArchiveManager() {};  //virtual destructor because we have virtual functions
 
-	typedef utility::vector1< Batch > BatchList;
 public:
+	typedef utility::vector1< Batch > BatchList;
 	static void register_options();
 
-  void go( ArchiveBaseOP );
+	virtual Batch& start_new_batch();
+	virtual void finalize_batch( Batch&, bool reread = false );
+	virtual void cancel_batches_previous_to( core::Size batch_id, bool allow_reading_of_decoys = true );
 
-	Batch& start_new_batch( core::io::silent::SilentStructOPs const& start_decoys );
-	Batch& start_new_batch();
-	//now write flags to batch.flag_file()
-	//put claimers into batch.broker_file()
-	//put stuff into directory batch.dir()
-
-	void finalize_batch( Batch&, bool reread = false );
-	//this will read options to check
-	//it will read the broker_file and check
-	//register and queue the option...
+	virtual void save_archive() = 0;
+	BatchList const& batches() const {
+		return batches_;
+	}
+	virtual bool restore_archive() = 0;
 
 	core::Size last_batch_id() const {
 		return batches_.size();
 	}
 
-	BatchList const& batches() const {
-		return batches_;
-	}
+protected:
+	virtual void queue_batch( Batch const& batch ) = 0;
+	virtual void cancel_batch( Batch& batch, bool allow_reading_of_decoys = true );
+
+	void set_archive( AbstractArchiveBaseOP );
+	AbstractArchiveBase& the_archive() { return *theArchive_; }
+	virtual void unlock_file( Batch const&, bool ) {};
+	void read_returning_decoys( Batch& batch, bool final );
+
+	static bool options_registered_;
+
+	utility::vector1< Batch > batches_;
+
+private:
+	AbstractArchiveBaseOP theArchive_;
+};
+
+///@brief ArchiveManager is responsible for communication with JobDistributor and organization of Batches and returning decoys
+///@detail he owns an Archive (AbstractArchiveBase) that will be handed the decoys and is asked to generate_batch() if the QUEUE_EMPTY .
+class ArchiveManager : public BaseArchiveManager {
+	typedef BaseArchiveManager Parent;
+public:
+  ///@brief ctor is protected; singleton pattern
+  ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank );
+	virtual ~ArchiveManager() {}; //virtual destructor because we have virtual functions
+
+
+public:
+	static void register_options();
+
+  void go( ArchiveBaseOP );
+
+	//this will read options to check
+	//it will read the broker_file and check
+	//register and queue the option...
+
+
 
 	core::Size unfinished_batches() const;
 
-	void cancel_batch( Batch& batch, bool allow_reading_of_decoys = true );
-	void cancel_batches_previous_to( core::Size batch_id, bool allow_reading_of_decoys = true );
 	void save_archive();
+	virtual bool restore_archive();
 
 protected:
 	///@brief triggered in slave if new batch_ID comes in.
@@ -236,23 +269,23 @@ protected:
 
 	void jobs_completed();// core::Size batch_id, bool final, core::Size bad );
 	void queue_batch( Batch const& batch );
-	void cancel_batch( Batch const& batch );
+	void cancel_batch( Batch& batch, bool allow_reading_of_decoys = true );
 	void read_existing_batches();
 	void register_batch( Batch new_batch );
 	void send_stop_to_jobdistributor();
 
-	bool restore_archive();
+
 
   friend class JobDistributorFactory; //ctor access
+
+	virtual void unlock_file( Batch const& batch, bool final );
 private:
 
-	utility::vector1< Batch > batches_;
 
 	core::Size const archive_rank_;
 	core::Size const jd_master_rank_;
 	core::Size const file_buf_rank_;
 
-	AbstractArchiveBaseOP theArchive_;
 	typedef MPIArchiveJobDistributor::CompletionMessage CompletionMessage;
 	typedef	std::map< core::Size, CompletionMessage > CompletionMessages;
 	CompletionMessages jobs_completed_;

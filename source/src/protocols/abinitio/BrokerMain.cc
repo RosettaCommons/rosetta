@@ -14,6 +14,7 @@
 // keep these headers first for compilation with Visual Studio C++
 
 // Package Headers
+#include <core/io/silent/SilentStruct.hh>
 #include <protocols/abinitio/AbrelaxMover.hh>
 
 // Project Headers

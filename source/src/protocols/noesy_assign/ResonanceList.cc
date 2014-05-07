@@ -19,6 +19,8 @@
 #include <protocols/noesy_assign/Resonance.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/FloatingResonance.hh>
+#include <protocols/noesy_assign/ProtonResonance.hh>
+#include <protocols/noesy_assign/LabelResonance.hh>
 
 
 // Package Headers
@@ -54,6 +56,7 @@
 
 
 static basic::Tracer tr("protocols.noesy_assign.resonances");
+static basic::Tracer tr_labels("protocols.noesy_assign.resonances.labels");
 
 using core::Real;
 using namespace core;
@@ -92,51 +95,10 @@ core::chemical::AA ResonanceList::aa_from_resid( core::Size resi ) const {
 		CD  13.00
 */
 void process_last_resonances( std::deque< ResonanceOP >& last_resonances, bool drain=false ) {
-
-
   ResonanceOP first_res = last_resonances.front();
   last_resonances.pop_front();
 	first_res->combine( last_resonances, drain );
 	last_resonances.push_front( first_res );
-	/*
-	//is this a HB1, HG1 or a 1HG2 type of name ?
-  bool single_char ( first_res->name().size() == 3 );
-
-	//do we have enough protons for a QQX type of combined atom. (2 methyl groups... )
-  bool double_methyl( last_resonances.size() == 6 );
-
-	//
-  Size str_cmp_length( 1 );
-
-  std::string pseudo_letter( "Q" ); //default, single methyl group, proton
-  if ( first_res->name().substr(0,1)=="C" ) pseudo_letter = "C"; //not default, we don't have a proton
-	if ( first_res->name().substr(0,1)=="Q" ) pseudo_letter = "QQ"; //not default, this is a double-methyl...
-	//if the two protons stuffed into the ambiguity queue are, .e.g, QG1 + QG2 --> QQG
-
-	core::Real intensity_sum( first_res->intensity() );
-	// construct combined atom name, QX, QQX
-	if ( single_char ) { 	//things like HB1+HB2 or QG1+QG2
-    combine_name=pseudo_letter+first_res->name().substr(1,1);
-  } else if ( double_methyl ) { //-->QQX
-    combine_name=pseudo_letter+pseudo_letter+first_res->name().substr(1,1);
-  } else { // HG11+HG12+HG13 --> QG1
-    combine_name=pseudo_letter+first_res->name().substr(1,2);
-    str_cmp_length=2;
-  }
-
-	//now figure out, how many atoms can be combined...
-	Size limit( drain ? 0 : 1 ); //should we go to the very end, or leave last atom behind...
-  while( last_resonances.size() > limit ) {//check others
-    if ( first_res->name().substr( 1, str_cmp_length ) == last_resonances.front()->name().substr( 1, str_cmp_length ) ) {
-			intensity_sum+=last_resonances.front()->intensity();
-			last_resonances.pop_front();
-		} else { //could not combine...
-			combine_name = first_res->name();
-			break;
-		}
-  } //now replace front of deque with the combined atom
-  last_resonances.push_front( new Resonance( first_res->label(), first_res->freq(), first_res->error(), core::id::NamedAtomID( combine_name, first_res->resid() ), first_res->aa(), intensity_sum ) );
-	*/
 }
 
 void ResonanceList::read_from_stream( std::istream& is ) {
@@ -281,7 +243,14 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		if ( aa == aa_ile && name == "HG2" ) name = "QG2";
 		if ( aa == aa_ile && name == "HD1" ) name = "QD1";
 
-		ResonanceOP save_resonance( new Resonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa, intensity ) );
+		bool is_proton = ( name[ 0 ]=='Q' || ( name.find("H") != std::string::npos && name[ 0 ] != 'C' /*not CH2 on TRP*/ ) );
+		ResonanceOP save_resonance( NULL );
+		if ( is_proton ) {
+			save_resonance = new ProtonResonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa, intensity );
+		} else {
+			save_resonance = new LabelResonance( label, freq, error,  core::id::NamedAtomID( name, resn ), aa, intensity );
+		}
+
 		if ( floats.size() ) {
 			save_resonance = new FloatingResonance( *save_resonance, floats, this );
 		}
@@ -337,6 +306,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		}
 		tr.Debug << "";
 	}
+	update_bond_connections();
 }
 
 ///@brief write ResonanceList to stream
@@ -453,6 +423,98 @@ ResonanceList::Resonances const& ResonanceList::resonances_at_residue( core::Siz
 
 bool ResonanceList::has_residue( core::Size resid ) const {
 	return by_resid_.find( resid ) != by_resid_.end();
+}
+
+std::string label_atom_name( std::string const& proton_name, core::chemical::AA aa ) {
+  using namespace core::chemical; //for AA
+	std::string name;
+	if ( aa == aa_arg ) {
+		if ( proton_name == "HE" ) return "NE";
+		if ( proton_name.substr(0,2) == "HH" ) return "N"+proton_name.substr(1,2); //HH11 HH12 HH21 HH22
+	}
+	if ( aa == aa_lys ) {
+		if ( proton_name.substr(0,2) == "HZ" ) return "NZ";
+	}
+	if ( aa == aa_gln || aa == aa_his ) {
+		if ( proton_name.substr(0,3) == "HE2" ) return "NE2"; //HE21, HE22
+	}
+	if ( aa == aa_asn ) {
+		if ( proton_name.substr(0,3) == "HD2" ) return "ND2"; //HD21, HD22
+	}
+	if ( aa == aa_trp ) {
+		if ( proton_name == "HE1" ) return "NE1";
+	}
+	if ( aa == aa_his ) {
+		if ( proton_name == "HD1" ) return "ND1";
+	}
+	if ( proton_name == "H" ) return "N";
+	if ( proton_name[ 0 ] == 'Q' && proton_name[ 1 ] == 'Q' ) { //QQX
+		name = "C" + proton_name.substr(2,1);
+		return name;
+	}
+	if ( proton_name[ 0 ] == 'Q' ) { //Qxx
+		name = proton_name;
+		name[ 0 ] ='C';
+		return name;
+	} if ( proton_name.substr(1,2) == "HB" ) {
+		return "CB";
+	} if ( proton_name.substr(1,2) == "HA" ) {
+		return "CA";
+	}
+	if ( aa == aa_trp ) {
+		if ( proton_name == "HH2" ) return "CH2";
+		if ( proton_name == "HZ2" ) return "CZ2";
+		if ( proton_name == "HZ3" ) return "CZ3";
+		if ( proton_name == "HE3" ) return "CE3";
+		if ( proton_name == "HD1" ) return "CD1";
+	}
+	if ( aa == aa_phe || aa == aa_tyr || aa == aa_his ) {
+		if ( proton_name == "HZ" or proton_name == "HH" ) return "CZ";
+		if ( proton_name.substr(0,2) == "HD" || proton_name.substr(0,2) == "HE"  ) return "C"+proton_name.substr(1,2);
+	}
+
+	if ( proton_name.substr(0,2) == "HA" ) return "CA";
+	if ( proton_name.substr(0,2) == "HB" ) return "CB";
+	if ( aa != aa_asn ) { //don't make HD21 -> CD substition for ASN
+		Size len=proton_name.size()-2;
+		if ( proton_name.substr(0,2) == "HG" || proton_name.substr(0,2)=="HD" || proton_name.substr(0,2)=="HE" ) return "C"+proton_name.substr(1,len < 1 ? 1 : len );
+	}
+	if ( tr.Trace.visible() ) {
+		tr.Trace << "no label for proton_name " + proton_name + " on " + name_from_aa( aa ) << std::endl;
+	}
+  throw EXCN_UnknownAtomname("");
+  return "no_atom";
+}
+
+void ResonanceList::update_bond_connections() {
+	std::set< core::id::NamedAtomID > unknown_resonances_;
+	for ( const_iterator it = begin(); it != end(); ++it ) {
+		it->second->clear_connected_resonances();
+	}
+	for ( const_iterator it = begin(); it != end(); ++it ) {
+		if ( !it->second->is_proton() ) continue; //do this from the proton
+		ResonanceAP proton( *(it->second) );
+		Size resid( it->second->atom().rsd() );
+		try {
+			id::NamedAtomID atomID( label_atom_name( proton->atom().atom(), aa_from_resid( resid ) ), resid );
+			Resonance const& label_reso( (*this)[ atomID ] ); //use this operator to have full-checking
+			if ( tr_labels.Trace.visible() ) {
+				tr_labels.Trace << it->second->atom() << " has label " << atomID << std::endl;
+			}
+			ResonanceAP label_reso_ptr( map_[ label_reso.label() ].get() );
+			proton->add_connected_resonance( label_reso_ptr );
+			label_reso_ptr->add_connected_resonance( proton );
+		} catch ( EXCN_UnknownResonance& exception ) {
+			if ( !unknown_resonances_.count( exception.atom() ) ) {
+				unknown_resonances_.insert( exception.atom() );
+				exception.show( tr.Warning );
+				tr.Warning << " as label for atom " << it->second->atom().atom() << " " <<  aa_from_resid( resid ) << std::endl;
+			}
+			continue;
+		} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
+			utility_exit_with_message( "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) );
+		}
+	}
 }
 
 }

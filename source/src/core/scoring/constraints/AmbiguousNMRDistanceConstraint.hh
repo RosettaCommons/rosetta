@@ -175,7 +175,7 @@ public:
 
 	using Constraint::score;
 
-	Real score( pose::Pose const& pose ) const {
+	virtual Real score( pose::Pose const& pose ) const {
 		return func_->func( dist( pose ) );
 	}
 

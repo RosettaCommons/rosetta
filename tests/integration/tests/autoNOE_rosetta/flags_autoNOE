@@ -1,0 +1,8 @@
+#this flag-file is automatically generated
+-in:file:native ../inputs/native.pdb
+-evaluation:rmsd NATIVE _full ../inputs/full.rigid
+-noesy:in:resonances ../inputs/casd_pfr193.trim.prot
+-noesy:in:peaks ../inputs/ali.peaks
+-noesy:in:peaks ../inputs/aro.peaks
+-noesy:in:peaks ../inputs/n.peaks
+

@@ -1,0 +1,158 @@
+# before starting the Rosetta production run initial assignments have to be generated.
+# do this by running initialize_assignments_phaseI.sh
+
+
+-residues:patch_selectors CENTROID_HA
+-out:levels protocols.noesy_assign:info
+-constraints:combine 2
+-noesy:map_to_cen_atom
+-noesy:atom_dependent_calibration
+-noesy:network:mode clean
+
+
+#-noesy:calibration:ignore_eliminated_peaks
+#-noesy:calibration:convergence 0
+
+#-noesy:network:use_all_covalent_atoms false
+
+
+-noesy:calibration:max_nudging 1.1
+-noesy:calibration:stop_nudging 0
+
+
+
+
+-noesy_weights:cst_strength    50
+-noesy_weights:defaults:calibration_target  3.8 0.15 0.15 0.1 0.1 0.1 0.1
+
+#for abinitio stages
+-abinitio::stage2_patch nmr_patch
+-abinitio::stage3a_patch nmr_patch
+-abinitio::stage3b_patch nmr_patch
+-abinitio::stage4_patch nmr_patch
+
+#for fullatom-relax
+-score::patch nmr_relax_patch
+
+# for loop closing
+-fast_loops:patch_filter_scorefxn nmr_patch
+-patch_filter_scorefxn nmr_patch
+
+#this flag-file is automatically generated
+
+-in:file:native /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/native/native.pdb
+-evaluation:rmsd NATIVE _full /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/native/full.rigid
+-noesy:in:resonances /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/casd_pfr193.trim.prot
+-noesy:in:peaks /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/ali.peaks
+-noesy:in:peaks /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/aro.peaks
+-noesy:in:peaks /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/n.peaks
+
+## Keywords that are replace are listed in ~mtyka/homo_bench/help_keywords.txt
+
+#-relax:sequence
+-relax:fast
+-relax:ramady
+-abinitio:close_loops
+-loops:idealize_before_loop_close
+-loops:idealize_after_loop_close
+-abinitio::clear_pose_cache
+-short_frag_cycles 1
+-scored_frag_cycles 1
+-non_ideal_loop_closing
+-alternative_closure_protocol
+-fast_loops:window_accept_ratio .01
+-fast_loops:nr_scored_sampling_passes 4
+-fast_loops:min_breakout_good_loops 5
+-fast_loops:min_breakout_fast_loops 80
+-fast_loops:min_fast_loops 3
+-fast_loops:min_good_loops 0
+-fast_loops:nr_scored_fragments 20
+-fast_loops:vdw_delta 0.5
+-fast_loops:give_up 1000
+
+
+#due to the fullatom-relax chainbreak scores are not in scorefunction automatically... put them in with patch
+-evaluation:chemical_shifts /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/nmr_data/casd_pfr193.autotrim.tab chem_shifts
+
+-jumps::max_strand_gap_allowed 10
+-jumps:contact_score 0.2
+
+-out:level 400
+-out:levels all:warning
+-out:levels protocols.jd2.MPIArchiveJobDistributor:info
+-out:levels protocols.jd2.Archive:debug
+-out:levels core.util.prof:info
+
+#obsolete
+
+
+#Stages:
+# (1)  SS-RANDOM
+# (2)  MIX
+# (3)  BETA-TOP
+# (4)  RESAM
+# (5)  NOE-BETA-TOP
+# (6)  NOE-RESAM
+# (7)  CEN2FULL
+# (8)  FULL-REFINE
+
+
+
+#this is the relative weight the noesy-cst will have for filtering
+#the relative weight provided in the following is multiplied with the overall weight for atom_pair_constraint in the patches
+
+#exit as soon as queue is drained
+-jd2:mpi_nowait_for_remaining_jobs
+-jd2:mpi_timeout_factor 0
+
+
+#important to obtain intermediate structures for proto-fold resampling (aka stage2 resampling)
+-abinitio:debug
+-abinitio:debug_structures
+
+-archive:completion_notify_frequency 25
+-run:protocol broker
+
+-frag3 /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/fragments/casd_pfr193.frags3_nohom.dat.gz
+-frag9 /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/fragments/casd_pfr193.frags9_nohom.dat.gz
+-in:file:fasta /home/olange/autoNOE_benchmark/sandbox/autoNOE_targetlib/casd_pfr193/fragments/casd_pfr193.fasta
+
+-out:file:silent_print_all_score_headers
+
+
+#-out:file:silent_struct_type protein_float
+#-in:file:silent_struct_type protein_float
+
+#don't have prove that this actually helps.. maybe in the refinement stage..
+-increase_cycles 2.000000
+
+#jumping
+-templates::topology_rank_cutoff 0.8
+-jumps:ramp_chainbreaks
+-jumps:sep_switch_accelerate 0.8
+-abinitio:skip_convergence_check
+-jumps:overlap_chainbreak
+
+#magic energy fixes
+-rsd_wt_helix 0.5
+-rsd_wt_loop 0.5
+-rg_reweight 0.5
+
+# for loop closing
+-overwrite_filter_scorefxn score3
+-score:weights score12_full
+
+
+-detect_disulf false
+
+#loop-closing filter in SlidingWindow
+-fast_loops:overwrite_filter_scorefxn score3
+
+-abrelax:fail_unclosed
+
+#log-output
+-unmute memory_usage
+-out:levels core.chemical:error
+-out:levels core.io.pdb:error
+-out:levels protocols.jobdist:error
+

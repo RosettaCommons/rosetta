@@ -74,9 +74,9 @@ core::Real half_adjust( core::Real in ) {
 std::map< core::Real,core::Size > simple_histogram ( utility::vector1< core::Real > samples, core::Size bin_number=20 ) {
 	core::Real low( *( samples.begin() ) );
 	core::Real high( *( samples.begin() ) );
-	for ( utility::vector1< core::Real >::const_iterator i=samples.begin();i !=samples.end();i++ ) {
-		if ( *i < low ) { low= *i; }
-		if ( *i > high ) { high= *i; }
+	for ( utility::vector1< core::Real >::const_iterator it=samples.begin(); it!=samples.end(); it++ ) {
+		if ( *it < low ) { low= *it; }
+		if ( *it > high ) { high= *it; }
 	}
 	core::Real step( ( high-low )/bin_number );
 	std::map< core::Real,core::Size > hist;
@@ -140,12 +140,14 @@ typedef std::map< core::id::AtomID, InnerMap > DistanceMap;
 // 	return pop_dist;
 // }
 FragsToAtomDist::DistanceRecord FragsToAtomDist::NO_CONTACT( 100.0, 100.0, 100.0, 1 );
+
 std::ostream& operator<< ( std::ostream& os, FragsToAtomDist::DistanceRecord const& dr ) {
 	return os << " " << setw(10) << setprecision(4) << dr.average_dist6()
 						<< " " << setw(10) << setprecision(4) << dr.average_dist()
 						<< " " << setw(10) << setprecision(4) << dr.min_dist();
 		//						<< " " << setw(10) << setprecision(4) << dr.popular_bin();
 }
+
 std::istream& operator>> ( std::istream& is, FragsToAtomDist::DistanceRecord& dr ) {
 	core::Real t1, t2, t3;
 	is >> t1 >> t2 >> t3;
@@ -172,9 +174,8 @@ void FragsToAtomDist::DistanceRecord::record( core::Real dist ) {
 	cum_dist_ += dist;
  	min_dist_ = std::min( min_dist_, dist );
 	++count_;
+	dist_track_.push_back( dist );
 }
-
-
 
 
 void initialize_group_list(
@@ -202,7 +203,7 @@ void initialize_group_list(
 			//			tr.Info << "CONTROL: " << it->first << " " << new_grps.back().first << std::endl;
 			tr.Info << std::endl;
 		}
-		tr.Info << "generated " << new_grps.size() << " proton-groups for position " << pos << std::endl;
+		tr.Info << "generated " << new_grps.size() << " proton-groups for position " << pos << " " << rsd.name3()<< std::endl;
 		grp_list.push_back( new_grps );
 	}
 }
@@ -457,11 +458,12 @@ void store_distance_snapshot(
 void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dump_freq ) {
 	using namespace protocols::simple_moves;
 
+	if (dump_freq>cycles) dump_freq=cycles;
+
 	sidechain_moves::JumpRotamerSidechainMover jrmover;
 	core::scoring::ScoreFunctionOP scorefxn(  scoring::getScoreFunction() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0 ); //since we use the JumpRotamer Mover the dunbrack energy is already in the sampling bias
 	core::pose::Pose pose;
-
 	core::pose::make_pose_from_sequence(	pose, sequence_, "fa_standard", true	);
 
 	//SizeList natoms( pose.total_residue(), 0);
@@ -470,7 +472,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 	GroupList proton_groups;
 	initialize_group_list( proton_groups, pose );
 
-	DistanceMap countmap;
+	//	DistanceMap countmap;
 	DistanceMap distmap;
 	//initialize_maps( distmap, countmap, proton_groups );
 
@@ -536,6 +538,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 				}
 
 				if (cycle%dump_freq == 0 ) {
+					tr.Debug << "Store distances " << cycle << " " << dump_freq << std::endl;
 					store_distance_snapshot( distmap, short_pose, short_start, short_size, proton_groups );
 				}
 			}

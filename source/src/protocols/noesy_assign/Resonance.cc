@@ -72,7 +72,7 @@ Resonance::Resonance(  core::Size label, core::Real freq, core::Real error, core
 	aa_( aa ),
 	intensity_( intensity )
 {
-	is_proton_ = ( id.atom()[ 0 ]=='Q' || id.atom().find("H") != std::string::npos );
+	is_proton_ = ( id.atom()[ 0 ]=='Q' || ( id.atom().find("H") != std::string::npos && id.atom()[ 0 ] != 'C' /*not CH2 on TRP*/ ) );
 	calibration_atom_type_ = PeakCalibrator::atom_type( id, aa_ );
 }
 
@@ -142,6 +142,26 @@ void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=
   } //now replace front of deque with the combined atom
 	atom_ = core::id::NamedAtomID( combine_name, resid() );
 	intensity_ = intensity_sum;
+}
+
+void Resonance::add_connected_resonance( ResonanceAP ptr ) {
+	assert( ptr );
+	connected_resonance_ids_.push_back( ptr->label() );
+	connected_resonance_ptrs_.push_back( ptr );
+}
+
+void Resonance::clear_connected_resonances() {
+	connected_resonance_ids_.clear();
+	connected_resonance_ptrs_.clear();
+}
+
+Resonance const& Resonance::first_connected_resonance() const {
+	runtime_assert( connected_resonance_ptrs_.size() );
+	return *connected_resonance_ptrs_.front();
+}
+
+Resonance::ResonanceAPs const& Resonance::connected_resonances() const {
+	return connected_resonance_ptrs_;
 }
 
 

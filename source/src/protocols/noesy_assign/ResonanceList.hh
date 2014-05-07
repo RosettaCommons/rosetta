@@ -74,6 +74,7 @@ private:
 		utility::pointer::ReferenceCount(a) //make compiler happy
 	{};
 	ResonanceList& operator=( ResonanceList const& ) { return *this; };
+
 public:
 	///@brief Constructor
   ResonanceList( std::string const& sequence );
@@ -103,6 +104,7 @@ public:
 	typedef ResonanceIDs::const_iterator const_iterator;
 	//  typedef ResonanceIDs::iterator iterator;
   const_iterator begin() const { return map_.begin(); };
+
   const_iterator end() const { return map_.end(); };
 
 	///@brief have at least one resonance for residue "resi"
@@ -129,6 +131,9 @@ protected:
 
 	///@brief sort Resonances by residue number and store in by_resid_
 	void update_residue_map();
+
+	///@brief after this call the Proton- and LabelResonances have APs to point to their respectively connected resonance
+	void update_bond_connections();
 
 private:
 	///@brief master map...

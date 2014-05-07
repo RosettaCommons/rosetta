@@ -104,7 +104,7 @@ AtomPairConstraint::operator == ( Constraint const & other_cst ) const
 
 	if( atom1_ != other.atom1_ ) return false;
 	if( atom2_ != other.atom2_ ) return false;
-	if( func_ != other.func_ ) return false;
+	if( func_ != other.func_ ) return false; //this still compares the pointers !!!
 	if( this->score_type() != other.score_type() ) return false;
 
 	return true;

@@ -253,6 +253,14 @@ AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& po
 	return func_->show_violations( out, dist( pose ), verbose_level, threshold );
 }
 
+bool cst_eq( Constraint const& cst1, Constraint const& cst2 ) {
+	if ( cst1.natoms() != cst2.natoms() ) return false;
+	for ( Size i=1; i<=cst1.natoms(); ++i ) {
+		if ( cst1.atom( i ) != cst2.atom( i ) ) return false;
+	}
+	return true;
+}
+
 void
 AmbiguousNMRConstraint::add_individual_constraint( ConstraintCOP cst_in )
 {
@@ -263,6 +271,10 @@ AmbiguousNMRConstraint::add_individual_constraint( ConstraintCOP cst_in )
 	}
 	if ( !cst_in_casted ) {
 		throw utility::excn::EXCN_BadInput( "failed attempt to add " + cst_in->type() + " to AmbiguousNMRConstraint. Can only add AmbiguousNMRDistanceConstraint and AtomPairConstraint");
+	}
+	//is it unique ? -- otherwise reject constraint
+	for ( ConstraintCOPs::const_iterator it=member_constraints().begin(); it != member_constraints().end(); ++it ) {
+		if ( cst_eq( **it, *cst_in ) ) return; //we got it already...
 	}
 
 	MultiConstraint::add_individual_constraint( cst_in );

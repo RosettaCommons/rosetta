@@ -32,6 +32,9 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
 
+#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
+#include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
+
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -47,7 +50,7 @@
 #include <core/scoring/func/Func.hh>
 
 //Auto Headers
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
+
 namespace protocols {
 namespace noesy_assign {
 
@@ -81,6 +84,7 @@ public:
 		return  crosspeak_->has_proton( select );
 	}
 
+	core::Size float_ambiguity() const;
 
 	///@brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
   core::Size label_resonance_id( core::Size select ) const;
@@ -94,12 +98,26 @@ public:
     return resonances()[ label_resonance_id( iatom ) ].atom();
   }
 
+	Resonance const& resonance( core::Size iatom ) const {
+		return resonances()[ resonance_id( iatom ) ];
+	}
+
+	Resonance const& label_resonance( core::Size iatom ) const {
+		return resonances()[ label_resonance_id( iatom ) ];
+	}
+
 	CALIBRATION_ATOM_TYPE calibration_atom_type( core::Size iatom ) const{
     return resonances()[ resonance_id( iatom ) ].calibration_atom_type();
   }
 
+	core::scoring::constraints::ConstraintOP create_constraint(
+  	core::pose::Pose const& pose,
+		core::scoring::func::FuncOP = NULL  ) const;
+
+
 	NmrConstraintOP create_constraint(
   	core::pose::Pose const& pose,
+		core::Size ifloat, //if float ambiguity is present enumerate all possible constraints with 1<=ifloat <=float_ambiguity()
 		core::scoring::func::FuncOP = NULL  ) const;
 
   ///@brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
@@ -179,6 +197,10 @@ public:
 
 private:
 	void update_resonances_from_peak();
+
+	core::scoring::constraints::AmbiguousNMRConstraintOP create_float_constraint(
+  	core::pose::Pose const& pose,
+		core::scoring::func::FuncOP = NULL  ) const;
 
   CrossPeakAP crosspeak_;
   core::Size spin_assign_index1_; //points to assignment of spin1 and spin2

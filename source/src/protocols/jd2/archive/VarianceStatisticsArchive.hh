@@ -47,7 +47,11 @@ class VarianceStatisticsArchive : public EvaluatedArchive {
 public:
 	VarianceStatisticsArchive( std::string name );
 
-	virtual bool add_evaluated_structure( core::io::silent::SilentStructOP, Batch const& );
+	virtual bool add_evaluated_structure(
+		core::io::silent::SilentStructOP,
+		core::io::silent::SilentStructOP alternative_decoy,
+		Batch const&
+	);
 
   virtual void generate_batch() {};
 	///@brief overloaded to make input decoys appear the same as decoys coming from batches

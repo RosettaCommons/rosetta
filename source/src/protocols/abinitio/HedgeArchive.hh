@@ -48,24 +48,43 @@ class HedgeArchive : public jd2::archive::EvaluatedArchive {
 public:
   HedgeArchive( std::string name );
 
-  virtual bool add_evaluated_structure( core::io::silent::SilentStructOP, jd2::archive::Batch const& batch );
+	//called when new decoy is available
+  virtual bool add_evaluated_structure(
+		 core::io::silent::SilentStructOP,
+		 core::io::silent::SilentStructOP alternative_decoy,
+		 jd2::archive::Batch const& batch
+	);
 
   virtual void generate_batch() {};
+
 	virtual void rescore() {}; //do nothing since we don't care about scores
+
 	///@brief save and restore status of archive to file-system
+	// will also call save_pending_decoys and restore 'incoming_structures_' from the pending-decoy files
   virtual void save_status( std::ostream& ) const;
   virtual void restore_status( std::istream& );
+
+
   ///@brief overloaded to make input decoys appear the same as decoys coming from batches
   virtual void init_from_decoy_set( core::io::silent::SilentFileData const& ) {};
 	void collect( jd2::archive::Batch const& batch, core::io::silent::SilentStructOPs& ) const;
 protected:
+
+	//a batch is completed ---
 	void incorporate_batch( core::Size batch_id );
 private:
-  void save_decoys( SilentStructs const& decoys, core::Size batch_id  ) const;
-  void remove_decoys( core::Size batch_id  ) const;
+
+	//store pending decoys in the 'incoming_structures_' in files ( required for restarts )
+  void save_pending_decoys( SilentStructs const& decoys, core::Size batch_id  ) const;
+
+	//remove files with pending decoys
+  void remove_pending_decoys( core::Size batch_id  ) const;
   core::Real score_cut_per_batch_;
   core::Real add_fuzzy_; //0 for strictly score based, 1 for totally random
+
+	//pending decoys -- these are decoys from incomplete batches, when batch is completed we incorporate a random subset of them into archive
   BatchStructuresMap incoming_structures_;
+
   typedef   std::set< core::Size > BatchList;
 	BatchList old_batches_;
 };

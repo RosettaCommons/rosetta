@@ -40,7 +40,7 @@ class BB_Pos {
 
 
 	typedef core::Size Size;
-	typedef core::Vector Vector;
+	typedef core::Vector Vector; //basically a xyzVector
 	typedef core::pose::Pose Pose;
 
 

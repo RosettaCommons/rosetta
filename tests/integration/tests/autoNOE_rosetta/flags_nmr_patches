@@ -1,0 +1,16 @@
+
+#for abinitio stages
+-abinitio::stage2_patch ../inputs/nmr_patch
+-abinitio::stage3a_patch ../inputs/nmr_patch
+-abinitio::stage3b_patch ../inputs/nmr_patch
+-abinitio::stage4_patch ../inputs/nmr_patch
+
+#for fullatom-relax
+-score::patch ../inputs/nmr_relax_patch
+
+# for loop closing
+-fast_loops:patch_filter_scorefxn ../inputs/nmr_patch
+-patch_filter_scorefxn ../inputs/nmr_patch
+
+-iterative:fa_score_patch  ../inputs/nmr_pool_patch
+-iterative:cen_score_patch ../inputs/nmr_pool_patch

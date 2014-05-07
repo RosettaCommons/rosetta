@@ -79,7 +79,11 @@ IterativeAbrelax::IterativeAbrelax()
 	if ( !fullatom_ ) centroid_archive_.set_finish_stage( IterativeBase::LAST_CENTROID_START );
 }
 
-void IterativeAbrelax::read_structures( core::io::silent::SilentFileData& sfd, Batch const& batch ) {
+void IterativeAbrelax::read_structures(
+   core::io::silent::SilentFileData& sfd,
+	 core::io::silent::SilentFileData& alternative_decoys,
+	 Batch const& batch
+) {
 	if ( sfd.begin() != sfd.end() ) {
 		pose::Pose pose;
 		sfd.begin()->fill_pose( pose );
@@ -89,10 +93,10 @@ void IterativeAbrelax::read_structures( core::io::silent::SilentFileData& sfd, B
 		if ( pose.is_fullatom() && !isPseudoFullatom ) {
 			runtime_assert( fullatom_ );
 			tr.Debug << "reading full-atom structures into fullatom_pool" << std::endl;
-			fullatom_archive_.read_structures( sfd, batch );
+			fullatom_archive_.read_structures( sfd, alternative_decoys, batch );
 		} else {
 			tr.Debug << "reading " << (isPseudoFullatom ? " pseuod-fullatom " : "centroid" ) <<  " structures into centroid_pool" << std::endl;
-			centroid_archive_.read_structures( sfd, batch );
+			centroid_archive_.read_structures( sfd, alternative_decoys, batch );
 		}
 	}
 }
@@ -125,19 +129,27 @@ bool IterativeAbrelax::still_interested( Batch const& batch ) const {
 ///
 void IterativeAbrelax::generate_batch() {
 	if ( fullatom_ && fullatom_archive_.ready_for_batch() ) {
-		// fixed this already by using the noesy_cst_file from the very first batch that is read in...
-		// re-starting assign cycle from cmdline parameter..
-// 		if ( fullatom_archive_.first_noesy_fa_cst_file()=="n/a") {
-// 			fullatom_archive_.set_first_noesy_fa_cst_file( centroid_archive_.first_noesy_fa_cst_file() );
-// 			fullatom_archive_.set_noesy_assign_float_cycle( centroid_archive_.noesy_assign_float_cycle() );
-// 		}
 		fullatom_archive_.generate_batch();
 	} else {
 		centroid_archive_.generate_batch();
 	}
 }
 
-void IterativeAbrelax::set_manager( jd2::archive::ArchiveManagerAP manager ) {
+core::Size IterativeAbrelax::generate_batch( jd2::archive::Batch& batch, core::Size repeat_id ) {
+	if ( fullatom_ && fullatom_archive_.ready_for_batch() ) {
+		// fixed this already by using the noesy_cst_file from the very first batch that is read in...
+		// re-starting assign cycle from cmdline parameter..
+// 		if ( fullatom_archive_.first_noesy_fa_cst_file()=="n/a") {
+// 			fullatom_archive_.set_first_noesy_fa_cst_file( centroid_archive_.first_noesy_fa_cst_file() );
+// 			fullatom_archive_.set_noesy_assign_float_cycle( centroid_archive_.noesy_assign_float_cycle() );
+// 		}
+		return fullatom_archive_.generate_batch( batch, repeat_id );
+	} else {
+		return centroid_archive_.generate_batch( batch, repeat_id );
+	}
+}
+
+void IterativeAbrelax::set_manager( jd2::archive::BaseArchiveManagerAP manager ) {
 	Parent::set_manager( manager );
 	tr.Info << "IterativeAbrelax: set ArchiveManager also for sub-archives... " << std::endl;
 	fullatom_archive_.set_manager( manager );

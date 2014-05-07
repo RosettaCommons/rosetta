@@ -1,0 +1,24 @@
+## Keywords that are replace are listed in ~mtyka/homo_bench/help_keywords.txt
+
+#-relax:sequence
+-relax:fast
+-relax:ramady
+-abinitio:close_loops
+-loops:idealize_before_loop_close
+-loops:idealize_after_loop_close
+-abinitio::clear_pose_cache
+-short_frag_cycles 1
+-scored_frag_cycles 1
+-non_ideal_loop_closing
+-alternative_closure_protocol
+-fast_loops:window_accept_ratio .01
+-fast_loops:nr_scored_sampling_passes 4
+-fast_loops:min_breakout_good_loops 5
+-fast_loops:min_breakout_fast_loops 80
+-fast_loops:min_fast_loops 3
+-fast_loops:min_good_loops 0
+-fast_loops:nr_scored_fragments 20
+-fast_loops:vdw_delta 0.5
+-fast_loops:give_up 1000
+
+

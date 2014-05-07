@@ -61,16 +61,20 @@ void HedgeArchive::incorporate_batch( core::Size batch_id ) {
 		if ( RG.uniform() < (1-add_fuzzy_) ) {
 			set_max_nstruct( static_cast<Size>(1e6) );
 			tr.Debug << "add decoy from batch " << batch_id << std::endl;
-			add_structure_at_position( decoys().end(), sit->second );
+			add_structure_at_position( decoys().end(), sit->second, NULL );
 			--ind_max;
 		}
 	}
 	incoming_structures_.erase( batch_id );
-	remove_decoys( batch_id );
+	remove_pending_decoys( batch_id );
 	old_batches_.insert( batch_id );
 }
 
-bool HedgeArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, jd2::archive::Batch const& batch ) {
+bool HedgeArchive::add_evaluated_structure(
+   core::io::silent::SilentStructOP evaluated_decoy,
+	 core::io::silent::SilentStructOP /*alternative_decoy*/,
+	 jd2::archive::Batch const& batch
+) {
   core::io::silent::SilentStructOP incoming_decoy = evaluated_decoy->clone(); //clone because that makes it more consistent after restart...
   if ( old_batches_.find( batch.id() ) != old_batches_.end() ) return false;
   incoming_structures_[ batch.id() ].push_back( std::make_pair( select_score( incoming_decoy ), incoming_decoy ) );
@@ -85,7 +89,7 @@ std::string filename( core::Size batch_id ) {
   return std::string("pending_")+ObjexxFCL::lead_zero_string_of( batch_id , 4 );
 }
 
-void HedgeArchive::save_decoys( SilentStructs const& decoys, core::Size batch_id ) const {
+void HedgeArchive::save_pending_decoys( SilentStructs const& decoys, core::Size batch_id ) const {
   std::string const& dirname( name() );
   std::string const ffilename ( dirname + "/" + filename( batch_id ) );
   std::string const backup_filename ( ffilename+".backup" );
@@ -107,7 +111,7 @@ void HedgeArchive::save_decoys( SilentStructs const& decoys, core::Size batch_id
   rename( tmp_filename.c_str(), ffilename.c_str() );
 }
 
-void HedgeArchive::remove_decoys( core::Size batch_id ) const {
+void HedgeArchive::remove_pending_decoys( core::Size batch_id ) const {
   std::string const& dirname( name() );
   std::string const ffilename ( dirname + "/" + filename( batch_id ) );
   std::string const backup_filename ( ffilename+".backup" );
@@ -140,7 +144,7 @@ void HedgeArchive::save_status( std::ostream& os ) const {
   for ( BatchStructuresMap::const_iterator it=incoming_structures_.begin(); it!=incoming_structures_.end(); ++it ) {
     if ( !it->second.size() ) continue;
     os << it->first << std::endl;
-    save_decoys( it->second, it->first );
+		HedgeArchive::save_pending_decoys( it->second, it->first );
   }
   os << "END_BATCHES" << std::endl;
 }
@@ -162,7 +166,7 @@ void HedgeArchive::restore_status( std::istream& is ) {
       SilentFileData sfd;
       if ( !sfd.read_file( ffilename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+ffilename ) );
       for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
-	incoming_structures_[ batch_id ].push_back( std::make_pair( select_score( *it ), *it ) );
+				incoming_structures_[ batch_id ].push_back( std::make_pair( select_score( *it ), *it ) );
       }
     }
   }

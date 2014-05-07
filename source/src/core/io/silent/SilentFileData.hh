@@ -302,7 +302,7 @@ public:
 	/// @brief Return a SilentStruct referred to by the given tag. Assumes that
 	/// we have checked the tag!!
 	SilentStruct const &
-	get_structure(
+	get_structure (
 		const std::string & tag
 	) const {
 		return *( structure_map_.find(tag)->second );
@@ -480,6 +480,21 @@ public:
 
 	/// @brief Returns an iterator to the end of the members of this container.
 	const_iterator end() const { return ( const_iterator( structure_map_.end()   ) ); }
+
+
+	iterator
+	get_iterator_for_tag (
+		const std::string & tag
+	) {
+		return iterator( structure_map_.find(tag) );
+	}
+
+	const_iterator
+	get_iterator_for_tag (
+		const std::string & tag
+	) const {
+		return const_iterator( structure_map_.find(tag) );
+	}
 
 	//const_iterator begin_const() const { return ( const_iterator( structure_map_.begin() ) ); }
 	//	const_iterator end_const()   const { return ( const_iterator( structure_map_.end()   ) ); }

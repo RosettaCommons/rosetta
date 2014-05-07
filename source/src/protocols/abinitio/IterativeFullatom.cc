@@ -144,40 +144,16 @@ void IterativeFullatom::initialize() {
 /// right now it is how many decoys were accepted from last batch.. if this number drops sufficiently ---> next stage...
 ///    (maybe need to put a safeguard in here: ratio small but at least XXX decoys proposed since last batch... )
 ///
-void IterativeFullatom::generate_batch() {
-
-	//start new batch
-	Batch& batch( manager().start_new_batch() );
-	tr.Info << "\ngenerate batch from " << name() << " " << batch.batch() << "\n";
-	mem_tr << "IterativeFullatom::generate_batch " << stage() << " " << batch.batch() << std::endl;
+core::Size IterativeFullatom::generate_batch( jd2::archive::Batch& batch, core::Size /* repeat_id */ ) {
 	batch.set_intermediate_structs( false );
-
 	cluster();
-
 	gen_noe_assignments( batch );
 	gen_resample_fragments( batch );
 	gen_evaluation_output( batch, true /*fullatom*/ );
-// 	if ( stage() == FLEX_CORE_RESAMPLING ) {
-// 		gen_resample_core( batch, true /*flex*/ );
-// 	}
 	if ( stage() == RIGID_CORE_RESAMPLING ) {
 		gen_resample_core( batch, false /*flex*/ );
 	}
-
-
-	tr.Info << std::endl;
-	//finalize
-	manager().finalize_batch( batch );
-	// don't want to reset counters too often... if we run out of steam the QUEUE EMPTY pathway will make sure that we do more runs
-	//	if ( proposed_since_last_batch() > 500 ) {
-	//		reset_accept_counter();
-	//	}
-	mem_tr << "IterativeFullatom::generated_batch " << std::endl;
-	//now it is best time to do this... JobQueue is definitely filled up....
-	reassign_noesy_data( batch );
-
-
-
+	return 0;
 }
 
 

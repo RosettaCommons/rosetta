@@ -1,0 +1,6 @@
+chainbreak = 1
+linear_chainbreak = 1.33
+overlap_chainbreak = 1
+atom_pair_constraint = 10
+rdc    = 10
+

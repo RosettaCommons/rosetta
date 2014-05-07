@@ -580,6 +580,8 @@ sources = {
 
 	# O ######################################################################
 	"pilot/olli" : [
+		"cloud_app",
+                "FragsToAtomDist",
 		"r_play_with_etables",
 		#"r_build_hotspot_loops",
 		#"r_abrelax",

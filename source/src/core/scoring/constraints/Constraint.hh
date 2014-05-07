@@ -161,6 +161,11 @@ public:
 		return NULL;
 	}
 
+	virtual
+	Real score( pose::Pose const& ) const {
+		unimplemented_method_error( std::string( "score" ) );
+		return -1.0;
+	}
 
 	/// @brief return the "raw" distance before handed to the FUNC object
 	virtual

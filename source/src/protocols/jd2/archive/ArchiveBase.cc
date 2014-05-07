@@ -170,16 +170,29 @@ void ArchiveBase::init_from_decoy_set( core::io::silent::SilentFileData const& s
 		pss->fill_struct( pose, tag );
 		centroid_sfd.add_structure( pss );
 	}
-	read_structures( centroid_sfd, init_batch );
+	SilentFileData alternative_sfd;
+	read_structures( centroid_sfd, alternative_sfd, init_batch );
 }
 
+void ArchiveBase::erase_decoy( std::string const&  tag ) {
+	SilentStructs::iterator it;
+	for ( it = decoys_.begin(); it != decoys_.end(); ++it ) {
+		if ( (*it)->decoy_tag() == tag ) break;
+	}
+	decoys_.erase( it );
+}
 
-void ArchiveBase::read_structures( core::io::silent::SilentFileData& sfd, Batch const& batch ) {
+void ArchiveBase::read_structures(
+		core::io::silent::SilentFileData& sfd,
+		core::io::silent::SilentFileData& alternative_decoys,
+		Batch const& batch
+) {
 	using namespace core;
 	using namespace io::silent;
 
 	tr.Debug << "read structures returned for " << batch.batch() << std::endl;
-	Size ct( batch.decoys_returned() );
+	Size ct( batch.decoys_returned()-sfd.size() );
+	std::cerr << "first count for new decoys : " << ct << " in batch " << batch.id() << std::endl;
 	Size accepted_ct( 0 );
 	for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 		std::string tag = it->decoy_tag();
@@ -188,7 +201,20 @@ void ArchiveBase::read_structures( core::io::silent::SilentFileData& sfd, Batch 
 		(*it)->add_comment( TAG_IN_FILE, tag );
 		(*it)->add_comment( SOURCE_FILE, batch.silent_out() );
 
-		bool accept = add_structure( *it, batch );
+		core::io::silent::SilentStructOP alternative_decoy = NULL;
+		SilentFileData::iterator alternative_it = alternative_decoys.get_iterator_for_tag( tag );
+		if ( alternative_it != alternative_decoys.end() ) {
+			alternative_decoy = *alternative_it;
+			alternative_decoy->set_decoy_tag( (*it)->decoy_tag() );
+		}
+		if ( batch.intermediate_structs() ) {
+			if ( !alternative_decoy ) {
+				std::cerr << "no alternative decoy found for " << tag << " in batch " << batch.id() << std::endl;
+				//this might be for diversity pool bail-outs if they happen befor stage2 ...
+				alternative_decoy = (*it)->clone();
+			}
+		}
+		bool accept = add_structure( *it, alternative_decoy, batch );
 		count_structure( batch, accept );
 		accepted_ct += accept ? 1 : 0;
 	}
@@ -199,42 +225,41 @@ void ArchiveBase::read_structures( core::io::silent::SilentFileData& sfd, Batch 
 	tr.Trace << "now there are " << decoys().size() << " decoys in archive " << std::endl;
 }
 
-bool ArchiveBase::add_structure( core::io::silent::SilentStructOP new_decoy, Batch const& ) {
-	add_structure_at_position( decoys_.begin(), new_decoy );
+bool ArchiveBase::add_structure(
+	core::io::silent::SilentStructOP new_decoy,
+	core::io::silent::SilentStructOP alternative_decoy,
+	Batch const&
+) {
+	add_structure_at_position( decoys_.begin(), new_decoy, alternative_decoy );
 	return true;
 }
 
-void ArchiveBase::add_structure_at_position( SilentStructs::iterator iss, core::io::silent::SilentStructOP new_decoy ) {
+void ArchiveBase::add_structure_at_position (
+  SilentStructs::iterator iss,
+	core::io::silent::SilentStructOP new_decoy,
+	core::io::silent::SilentStructOP /*alternative_decoy*/
+) {
 	decoys_.insert( iss, new_decoy );
 	if ( decoys_.size() > max_nstruct_ ) { //take all decoys until full
 		decoys_.pop_back();
 	}
 }
 
-void ArchiveBase::save_to_file( std::string suffix ) {
-	std::string const dirname( name() + suffix );
-	std::string const filename ( dirname + "/decoys.out" );
-	std::string const backup_filename ( dirname + "/decoys.out.backup" );
-	std::string const tmp_filename ( dirname + "/tmp_decoys.out" );
-	using namespace core::io::silent;
-
-	//don't write empty file
-	if ( !decoys().size() ) return;
-
+void ArchiveBase::save_decoys( std::string const& dirname, std::string const& name, SilentStructs const& decoys ) {
 	utility::file::create_directory( dirname );
-
+	std::string const filename ( dirname + "/"+name+".out" );
+	std::string const backup_filename ( dirname + "/"+name+".out.backup" );
+	std::string const tmp_filename ( dirname + "/tmp_"+name+".out" );
+	using namespace core::io::silent;
 	SilentFileData sfd;
 
 	//handle output myself... so it keeps the order of decoys.
 	utility::io::ozstream output( tmp_filename );
-	if ( decoys_.begin() != decoys_.end() ) (*decoys_.begin())->print_header( output );
+	if ( decoys.begin() != decoys.end() ) (*decoys.begin())->print_header( output );
 
-	for ( SilentStructs::const_iterator it = decoys_.begin(); it != decoys_.end(); ++it ) {
-		//		sfd.add_structure( *it ); //only add OP to sfd
-		//	sfd.write_silent_struct( *it, tmp_filename );
+	for ( SilentStructs::const_iterator it = decoys.begin(); it != decoys.end(); ++it ) {
 		sfd.write_silent_struct( **it, output );
 	}
-	//	sfd.write_all( tmp_filename );
 
 	//rename to final
 	//delete old file
@@ -242,27 +267,27 @@ void ArchiveBase::save_to_file( std::string suffix ) {
 		rename( filename.c_str(), backup_filename.c_str() );
 	}
 	rename( tmp_filename.c_str(), filename.c_str() );
+}
 
+
+void ArchiveBase::save_to_file( std::string suffix ) {
+	//don't write empty file
+	if ( !decoys().size() ) return;
+
+	std::string const dirname( name() + suffix );
+	save_decoys( dirname, "decoys", decoys_ );
+
+	//save status
 	utility::io::ozstream status( dirname+"/STATUS" );
 	basic::show_time( tr,  "save "+name()+" status");
 	save_status( status );
 }
 
 bool ArchiveBase::restore_from_file() {
+	bool b_have_restored( false );
 	std::string const& dirname( name() );
 	std::string const filename ( dirname + "/decoys.out" );
-	bool b_have_restored( false );
-	using namespace core::io::silent;
-	mem_tr << "ArchiveBase::restore_from_file..." << std::endl;
-	decoys_.clear();
-	if ( utility::file::file_exists( filename ) ) {
-		SilentFileData sfd;
-		if ( !sfd.read_file( filename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+filename ) );
-		for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
-			decoys_.push_back( *it );
-		}
-	}
-	mem_tr << "ArchiveBase::restored " << decoys_.size() << " decoys" << std::endl;
+	load_decoys( filename, decoys_ );
 	utility::io::izstream status( dirname+"/STATUS" );
 	if ( status.good() ) {
 		restore_status( status );
@@ -270,9 +295,22 @@ bool ArchiveBase::restore_from_file() {
 	} else {
 		tr.Info << name() << ": no archive status found... " << std::endl;
 	}
-
 	mem_tr << "ArchiveBase::restored_from_file" << std::endl;
 	return b_have_restored;
+}
+
+void ArchiveBase::load_decoys( std::string const& filename, SilentStructs& decoys ) {
+	using namespace core::io::silent;
+	mem_tr << "ArchiveBase::restore_from_file..." << std::endl;
+	decoys.clear();
+	if ( utility::file::file_exists( filename ) ) {
+		SilentFileData sfd;
+		if ( !sfd.read_file( filename ) ) throw ( utility::excn::EXCN_BadInput( "problem reading silent file"+filename ) );
+		for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
+			decoys.push_back( *it );
+		}
+	}
+	mem_tr << "ArchiveBase::restored " << decoys.size() << " decoys" << std::endl;
 }
 
 void ArchiveBase::restore_status( std::istream& is ) {
@@ -310,81 +348,6 @@ void ArchiveBase::save_status( std::ostream& os ) const {
 	os << "\nEND_AH" << std::endl;
 }
 
-void DebugArchive::generate_batch() {
-	using namespace core::io::silent;
-	++ct_batches_;
-	tr.Debug << "generate batch number " << ct_batches_ << std::endl;
-	if ( ct_batches_ <= 3 || decoys().size()==0 ) {
-
-		//always call start_new_batch to generate a new batch
-		Batch& batch( manager().start_new_batch() );
-
-		utility::io::ozstream flags( batch.flag_file() );
-		if ( ct_batches_ == 1 && make_mistake_ )	flags << "-abinitio::sskip_stages 1 2" << std::endl;
-		flags << "-abinitio::skip_convergence_check" << std::endl;
-		flags.close();
-
-		//always finish your batch-generation with "finalize_batch"
-		try {
-			manager().finalize_batch( batch );
-		} catch ( EXCN_Archive& excn ) {
-			--ct_batches_;
-			make_mistake_ = false; //don't make this mistake again
-		}
-
-	} else {
-		SilentStructOPs start_decoys;
-		std::copy( decoys().begin(), decoys().end(), std::back_inserter( start_decoys ) );
-
-		Batch& batch( manager().start_new_batch( start_decoys ) );
-
-		utility::io::ozstream broker( batch.broker_file() );
-		broker << "USE_INPUT_POSE\n\nCLAIMER StartStructClaimer\nEND_CLAIMER\n" << std::endl;
-		broker.close();
-
-		manager().finalize_batch( batch );
-	}
-}
-
-void DebugArchive::score( core::pose::Pose& pose ) const {
-	runtime_assert( !pose.is_fullatom() );
-	runtime_assert( cen_score_ );
-	(*cen_score_)( pose );
-}
-
-DebugArchive::DebugArchive( ArchiveManagerAP ptr ) :
-	ArchiveBase( ptr ),
-	ct_batches_( 0 ),
-	cen_score_( NULL ),
-	make_mistake_( true )
-{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring;
-	if ( !cen_score_ ) cen_score_ = ScoreFunctionFactory::create_score_function( "score3", option[ OptionKeys::abinitio::stage4_patch ]() );
-}
-
-void DebugArchive::save_status( std::ostream& out ) const {
-	ArchiveBase::save_status( out );
-	out << "nr_batches_generated: "<< ct_batches_ << std::endl;
-}
-
-void DebugArchive::restore_status( std::istream& in ) {
-	ArchiveBase::restore_status( in );
-	if ( in.good() ) {
-		std::string tag;
-		in >> tag >> ct_batches_;
-	}
-}
-
-bool DebugArchive::add_structure( core::io::silent::SilentStructOP decoy, Batch const& ) {
-	if ( decoys().size() < 100 ) {
-		decoys().push_back( decoy ); //of course this can't remain as simple as this.
-	} else {
-		decoys().front() = decoy;
-	}
-	return true;
-}
 
 }//archive
 }//jd2

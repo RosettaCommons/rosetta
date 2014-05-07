@@ -27,6 +27,7 @@
 // Project Headers
 #include <protocols/noesy_assign/util.hh>
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
+#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 // Utility headers
@@ -127,18 +128,32 @@ void PeakAssignment::update_upperdistance_score(/*dmax*/ ) {
 	covalent_compliance_ = covalent_compliance( atom1, atom2 );
 }
 
+core::Size PeakAssignment::float_ambiguity() const {
+	Size float_ambiguity=1;
+	for ( Size iatom=1; iatom<=2; ++iatom ) {
+		if ( has_proton( iatom ) ) float_ambiguity *= resonance( iatom ).ambiguity();
+	}
+	return float_ambiguity;
+}
+
 PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 					pose::Pose const& pose,
+					core::Size ifloat,
 					core::scoring::func::FuncOP func
 ) const {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_PA_GEN_CST );
 
-	bool flip = atom( 1 ).rsd() > atom( 2 ).rsd();
-	core::id::NamedAtomID const& atom1( atom( flip ? 2 : 1 ) );
-	core::id::NamedAtomID const& atom2( atom( flip ? 1 : 2 ) );
+	core::Size ifloat_1( (ifloat-1)/resonance( 2 ).ambiguity() + 1 );
+	core::Size ifloat_2( (ifloat-1)%resonance( 2 ).ambiguity() + 1 );
+	core::Size resonance1 = resonances()[ resonance_id( 1 ) ].float_label( ifloat_1 );
+	core::Size resonance2 = resonances()[ resonance_id( 2 ) ].float_label( ifloat_2 );
+
+	bool flip = resonances()[ resonance1 ].resid() > resonances()[ resonance2 ].resid();
+	core::id::NamedAtomID const& atom1( resonances()[ flip ? resonance2 : resonance1 ].atom() );
+	core::id::NamedAtomID const& atom2( resonances()[ flip ? resonance1 : resonance2 ].atom() );
 
 	tr.Debug << "create constraint for atom: " << atom1 << " " << atom2 << " from resonances id: "
-					 << resonance_id( 1 ) << " " << resonance_id( 2 ) << std::endl;
+					 << resonance1 << " " << resonance2 << std::endl;
 
 	using namespace core::scoring::constraints;
 	if ( !func )
@@ -150,6 +165,32 @@ PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 	return new NmrConstraint( atom1, atom2, pose, func ); //later figure out what the func should be...
 }
 
+core::scoring::constraints::ConstraintOP PeakAssignment::create_constraint(
+					pose::Pose const& pose,
+					core::scoring::func::FuncOP func
+) const {
+	if ( float_ambiguity() > 1 ) {
+		return create_float_constraint( pose, func );
+	}
+	return create_constraint( pose, 1, func );
+}
+
+core::scoring::constraints::AmbiguousNMRConstraintOP PeakAssignment::create_float_constraint(
+					pose::Pose const& pose,
+					core::scoring::func::FuncOP func
+) const {
+/// create Ambiguous constraint with BoundFunc describing the whole thing...
+	using namespace core::scoring::constraints;
+	AmbiguousNMRConstraintOP full_cst = new AmbiguousNMRConstraint( func );
+	core::Size const n_float = float_ambiguity();
+
+	// add individual constraints --- their potential does not matter ... it is ignored in evaluation...
+	for ( core::Size ifloat = 1; ifloat <= n_float; ++ifloat ) {
+		AmbiguousNMRDistanceConstraintOP new_cst( create_constraint( pose, ifloat ) );
+		full_cst->add_individual_constraint( new_cst );
+	}
+	return full_cst;
+}
 
 	///@brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
 core::Size PeakAssignment::label_resonance_id( core::Size select ) const {

@@ -128,6 +128,9 @@ public:
 	}
 
 
+	virtual Real score( pose::Pose const& pose ) const {
+		return func_->func( dist( pose ) );
+	}
 
 
 // 	virtual
@@ -147,16 +150,6 @@ public:
 
 	virtual
 	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const;
-
-// 	ConstraintCOPs const &
-// 	member_constraints() const {
-// 		return member_constraints_;
-// 	}
-
-// 	virtual ConstraintOP remapped_clone(
-// 		pose::Pose const& /*src*/,
-// 		pose::Pose const& /*dest*/,
-// 		id::SequenceMappingCOP map=NULL ) const;
 
 private:
 	func::FuncOP func_;

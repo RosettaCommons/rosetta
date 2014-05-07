@@ -56,14 +56,40 @@ public:
   FloatingResonance( Resonance const& res, FloatList const&, ResonanceList* );
   ~FloatingResonance();
 
+	virtual ResonanceOP clone() {
+		return new FloatingResonance( *this );
+	}
+
 	virtual core::Real pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const;
 	virtual void write_to_stream( std::ostream& os ) const;
 	virtual void write_to_stream( std::ostream&, core::chemical::AA aa ) const;
+	virtual core::Size ambiguity() const {
+		return partner_ids_.size();
+	}
+	virtual core::Size float_label( core::Size ifloat ) const;
+
+  ///@brief match the proton and corresponding label atom at same time
+  virtual bool match2D(
+    core::Real proton_freq,
+    core::Real proton_error,
+    FoldResonance const& proton_folder,
+    core::Real label_freq,
+    core::Real label_error,
+    FoldResonance const& label_folder,
+		ResonancePairs& matches
+  ) const;
 
 private:
 	void _write_partner_ids( std::ostream& os ) const;
+
+	//only one resonance of the group should act as representative, we just take the one with smallest ID
+	bool is_representative_resonance() const {
+		return is_representative_resonance_;
+	}
+
 	FloatList partner_ids_;
 	ResonanceList const* res_list_;
+	bool is_representative_resonance_;
 };
 
 }
