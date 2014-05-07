@@ -11,6 +11,7 @@
 /// @brief Filter on the total number of residues in the structure
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 /// @author Tom Linsky (tlinsky@gmail.com) [residue type option]
+/// @author Doo	Nam	Kim (doonam.kim@gmail.com) [enables	count/filter by percentage, not by raw counted number]
 
 //Unit Headers
 #include <protocols/simple_filters/ResidueCountFilter.hh>
@@ -24,6 +25,8 @@
 #include <basic/Tracer.hh>
 //Utility Headers
 #include <utility/string_util.hh>
+
+
 namespace protocols{
 namespace simple_filters {
 
@@ -60,6 +63,7 @@ ResidueCountFilter::ResidueCountFilter(
 
 ResidueCountFilter::~ResidueCountFilter() {}
 
+
 filters::FilterOP
 ResidueCountFilter::clone() const {
 	return new ResidueCountFilter( *this );
@@ -70,6 +74,14 @@ ResidueCountFilter::fresh_instance() const {
 	return new ResidueCountFilter();
 }
 
+
+Real
+ResidueCountFilter::round_to_Real(
+	Real x)	const
+{
+	Real rounded = floor((x * 10) +	0.5)	/	10;
+	return rounded;
+} //round_to_Real
 
 void
 ResidueCountFilter::parse_my_tag(
@@ -88,6 +100,10 @@ ResidueCountFilter::parse_my_tag(
 		enable_min_residue_count(true);
 		min_residue_count(tag->getOption< core::Size >("min_residue_count"));
 	}
+
+	count_as_percentage_ = tag->getOption<bool>("count_as_percentage", false);
+		//	definition: if true, count residues as percentage (=100*raw_number_of_specified_residue/total_residue)	instead of counting raw number of it
+		//				max_residue_count/min_residue_count	are also	assumed to be entered as percentage
 
 	if(tag->hasOption("residue_types")){
 		std::string const res_type_str( tag->getOption< std::string >("residue_types", "") );
@@ -127,7 +143,14 @@ ResidueCountFilter::report(
 	std::ostream & out,
 	core::pose::Pose const & pose
 ) const {
-	out << "Residue Count: " << compute( pose ) <<std::endl;
+	if	(count_as_percentage_)
+	{
+		out << "Residue Count as percentage: " << compute( pose ) <<std::endl;
+	}
+	else //	(!count_as_percentage_)
+	{
+		out << "Residue Count as raw numer: " << compute( pose ) <<std::endl;
+	}
 }
 
 core::Real
@@ -150,7 +173,16 @@ ResidueCountFilter::compute(
 				} // if
 			} // for all res types specified
 		} // for all residues
-		return count;
+		if	(count_as_percentage_)
+		{
+			Real	count_as_percentage	=	round_to_Real((static_cast<Real>(count)*100)/static_cast<Real>(pose.total_residue()));
+				//without	static_cast<Real>,	division returns only Size (integer-like)
+			return count_as_percentage;
+		}
+		else
+		{
+			return count;
+		}
 	} else {
 		return pose.total_residue();
 	}
@@ -218,6 +250,7 @@ ResidueCountFilter::enable_min_residue_count(
 ) {
 	enable_min_residue_count_ = value;
 }
+
 
 
 ///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_

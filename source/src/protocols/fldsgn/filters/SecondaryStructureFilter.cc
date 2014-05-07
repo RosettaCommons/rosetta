@@ -11,6 +11,7 @@
 /// @brief filter structures by sheet topology
 /// @detailed
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
+/// @author Doo Nam Kim ( doonam.kim@gmail.com ) responsible for 'h' which is either 'E' or 'L'
 
 // Unit Headers
 #include <protocols/fldsgn/filters/SecondaryStructureFilter.hh>

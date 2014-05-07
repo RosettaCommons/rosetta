@@ -26,6 +26,9 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
+//C library
+#include <math.h> // for round, floor, ceil, trunc, sqrt
+
 namespace protocols {
 namespace simple_filters {
 
@@ -67,6 +70,10 @@ public:
 	compute(
 		core::pose::Pose const & pose
 	) const;
+
+	core::Real
+	round_to_Real(
+		core::Real x)	const;
 
 	void
 	parse_my_tag(
@@ -115,6 +122,7 @@ public:
 		bool value
 	);
 
+
 	///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
 	bool
 	add_residue_type_by_name(
@@ -128,6 +136,8 @@ private:
 	bool enable_max_residue_count_;
 	core::Size min_residue_count_;
 	bool enable_min_residue_count_;
+	bool	count_as_percentage_;
+
 	utility::vector1< std::string > res_types_;
 };
 

@@ -2722,13 +2722,12 @@ SandwichFeatures::round_to_float(
 					float x)
 {
 	return floor((x	*	10)	+	0.5)	/	10;
-} //round
+} //round_to_float
 
 Real
 SandwichFeatures::round_to_Real(
 					Real x)
 {
-	//Real rounded = floor(x+.2);
 	Real rounded = floor((x * 10) +	0.5)	/	10;
 	return rounded;
 } //round_to_Real
