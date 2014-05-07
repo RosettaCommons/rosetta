@@ -143,14 +143,17 @@ ResidueCountFilter::report(
 	std::ostream & out,
 	core::pose::Pose const & pose
 ) const {
-	if	(count_as_percentage_)
-	{
-		out << "Residue Count as percentage: " << compute( pose ) <<std::endl;
-	}
-	else //	(!count_as_percentage_)
-	{
-		out << "Residue Count as raw numer: " << compute( pose ) <<std::endl;
-	}
+	out << "Residue Count: " << compute( pose ) <<std::endl;
+
+	//commented out below since it breaks an existing unit test (Doonam Kim)
+//	if	(count_as_percentage_)
+//	{
+//		out << "Residue Count as percentage: " << compute( pose ) <<std::endl;
+//	}
+//	else //	(!count_as_percentage_)
+//	{
+//		out << "Residue Count as raw numer: " << compute( pose ) <<std::endl;
+//	}
 }
 
 core::Real
