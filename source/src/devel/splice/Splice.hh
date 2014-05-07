@@ -154,6 +154,7 @@ public:
 	bool equal_length() const{ return equal_length_; }
 	void fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const;
 	void tail_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) const ;
+	void set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) ;
 	bool design() const{ return design_; }
 	void design( bool const d ) { design_ = d; }
 	void delta_lengths( utility::vector1< int > const dl ){ delta_lengths_ = dl; }
@@ -214,12 +215,13 @@ public:
 	void protein_family( std::string const s) {protein_family_=s;}; //setter of the protein_family tag option
 	core::Size chain_num(){return chain_num_;};
 
-
+	bool skip_alignment() const{ return skip_alignment_; }
+	void skip_alignment( bool const b ){ skip_alignment_ = b; }
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
 	std::string	parse_pdb_code(std::string pdb_file_name);
-
+	void copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res );
 
 	// This vector will hold the segment names by order so when the segments are concatenated into a single profile it
 	// is done by user defined order
@@ -347,13 +349,17 @@ private:
 
 	// dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
 	bool add_sequence_constraints_only_;
+	// dflt false; if true, only set fold tree no design no nothing.
+	bool set_fold_tree_only_;
 
 	// dflt false; should we impose the RB dof of the current pose on the template before finding aligned residues.
 	// (Ask Christoffer)
 	bool rb_sensitive_;
 	std::map < std::string, std::string> protein_family_to_database_;
-	std::map < std::string, std::string> database_segment_map_;//map between antibody segment and database file, e.g. <L1_L2,"l1_l2.db">
+	bool skip_alignment_; // dflt false; use with care, ask Sarel. If you're not making any loop length changes and the alignment is perfect (you're simply splicing a same-length segment) drop the ambiguities of finding the alignment.
 
+	std::map < std::string, std::string> database_segment_map_;//map between antibody segment and database file, e.g. <L1_L2,"l1_l2.db">
+	core::Size vl_vh_cut;//keeps track of the residue number between the vl vh of the pose. this postion should change with loop length changes.
 	std::string tail_segment_; //dflt ""; User should insert either "C"/"N" designating that that the N-termini tail of
 								// the inserted segment should also be inserted and modeled. For Example if the user inserted
 								// The L1_L2 segment from a source antibody and used "N" option than the residues that
