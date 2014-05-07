@@ -563,6 +563,9 @@ sources = {
 		#"r_segment_rdc",
 		#"r_SymDock_viewer",
 	],
+	    "pilot/nir" : [
+             "PeptideDeriver",
+    ],
 	"pilot/nmarze" : [
 		#"packing_angle",
 	],
