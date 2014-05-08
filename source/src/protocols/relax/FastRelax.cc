@@ -354,7 +354,8 @@ FastRelax::parse_my_tag(
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
 
-	default_repeats_ = tag->getOption< int >( "repeats", 8 );
+	using namespace basic::options;
+	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
 
 	// Only support single file; is there a way to support multiple input files in rosetta scripts?
@@ -823,7 +824,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				set_constraint_weight( local_scorefxn, full_weights, cmd.param3 );
 			}
 
-			// The fourth paramter is the minimization 
+			// The fourth paramter is the minimization
 			if( cmd.nparams >= 4 ){
 				Size const iter_cmd = (Size)(cmd.param4);
 				max_iter( iter_cmd );
