@@ -92,6 +92,7 @@ class Batch {
 	// extra broker files that might have been supplied by cmd-line
 	std::string extra_broker_files() const; // borker files deliminiated by " "
 	// extra broker files that might have been supplied by cmd-line
+
 	std::string all_broker_files() const {
 		return broker_file() + " " + extra_broker_files(); // borker files deliminiated by " "
 	}
@@ -186,6 +187,7 @@ private:
 	bool invalid_;
 	utility::options::OptionCollection options_;
 	core::Size decoys_returned_to_archive_;
+	std::string rosetta_script_file_;
 };
 
 
@@ -199,7 +201,7 @@ public:
 
 public:
 	typedef utility::vector1< Batch > BatchList;
-	static void register_options();
+	//static void register_options();
 
 	virtual Batch& start_new_batch();
 	virtual void finalize_batch( Batch&, bool reread = false );
