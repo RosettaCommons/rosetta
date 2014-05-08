@@ -60,9 +60,7 @@ Environment::~Environment() {
 void Environment::register_mover( ClaimingMoverOP mover ){
   if( !is_registered( mover ) ){
     registered_movers_.insert( mover );
-    if( mover->is_loop_closer() ){
-      register_loop_closer( mover );
-    }
+
     std::set< ClaimingMoverOP > submovers;
     mover->yield_submovers( submovers );
     register_movers( submovers.begin(), submovers.end() );
@@ -84,7 +82,11 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
 
   tr.Debug << "Start environment: '" << name() << "'" << std::endl;
 
-  return this->broker( in_pose );
+  core::pose::Pose broker_result = this->broker( in_pose );
+
+  assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( broker_result.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
+
+  return broker_result;
 }
 
 core::pose::Pose Environment::end( core::pose::Pose const& pose ){
@@ -157,9 +159,6 @@ void Environment::cancel_passports(){
 
   /// ENV OPEN/CLOSING
 void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
-  if( loop_closer_ ){
-    loop_closer_->apply( pose );
-  }
 
   //reset chainbreak varaints
   tr.Trace << "Removing chainbreak variants from sequence "
@@ -173,7 +172,20 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
 
   //remove virtual residues
 
-  //Reset fold tree
+  //Strip out pose datacache elements
+//  using namespace basic::datacache;
+//  using namespace core::pose::datacache;
+//  typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
+//  WriteableCacheableMapOP map = dynamic_cast< WriteableCacheableMap* >( pose.data().get_raw_ptr( CacheableDataType::WRITEABLE_DATA ) );
+//
+//  for( DataMap::const_iterator it = broker()->result().cached_data->begin();
+//       it != broker()->result().cached_data->end(); ++it ){
+//    if( map->find( it->first ) != map->end() ){
+//      BOOST_FOREACH( WriteableCacheableDataOP d, it->second ){
+//        map->erase( d );
+//      }
+//    }
+//  }
 }
 
 core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
@@ -228,21 +240,6 @@ void Environment::remove_chainbreak_variants( core::pose::Pose& pose, core::Size
 
 bool Environment::is_registered( ClaimingMoverOP mover ) const {
   return ( std::find( registered_movers_.begin(), registered_movers_.end(), mover ) != registered_movers_.end() );
-}
-
-void Environment::register_loop_closer( ClaimingMoverOP closer ) {
-  if( !loop_closer_ ){
-    this->loop_closer_ = closer;
-    register_mover( closer );
-  } else {
-    tr.Error << "[ERROR] Multiple ClaimingMovers designated as LoopCloser ("
-    << closer->get_name() << " and " << loop_closer_->get_name()
-    << ") in Environment " << name() << std::endl;
-    throw utility::excn::EXCN_BadInput( "LoopCloser " + closer->get_name() +
-                                       " cannot be added because Environment " +
-                                       this->name() + " already has a LoopCloser " +
-                                       loop_closer_->get_name() );
-  }
 }
 
 EnvironmentCAP Environment::superenv() const{

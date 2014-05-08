@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/core/environment/EnvExcn.hh
-/// @brief A class that is used to express a mover-specific DoF-unlock on a ProtectedPose. Its destruction expresses a re-locking.
+/// @brief A special kind of exception for the bad stuff that can happen in exceptions.
 ///
 /// @author Justin Porter
 
@@ -33,11 +33,11 @@ namespace core {
 namespace environment {
 
 class EXCN_Env_Exception : public utility::excn::EXCN_Msg_Exception {
-	typedef utility::excn::EXCN_Msg_Exception Parent;
+  typedef utility::excn::EXCN_Msg_Exception Parent;
 public:
-	EXCN_Env_Exception( std::string const& msg, EnvCoreCAP env ) {
-		std::ostringstream elab_msg;
-    elab_msg << msg << " Logged by Environment: '";
+  EXCN_Env_Exception( EnvCoreCAP env ) {
+    std::ostringstream elab_msg;
+    elab_msg << "Environment exception in environment: '" << env->name();
 
     EnvCoreCAP superenv = env->superenv().get();
     while( superenv != 0 ){
@@ -45,8 +45,11 @@ public:
       superenv = superenv->superenv().get();
     }
 
-		Parent( elab_msg.str() );
-	}
+    elab_msg << "'";
+
+    add_msg( elab_msg.str() );
+  }
+
 protected:
   EXCN_Env_Exception() : Parent() {};
 };

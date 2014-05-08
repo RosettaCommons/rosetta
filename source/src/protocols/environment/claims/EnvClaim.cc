@@ -54,6 +54,14 @@ void EnvClaim::show( std::ostream& os ) const {
     os << "owned by, " << owner()->type() << ";";
 }
 
+DOFElement EnvClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
+  DOFElement e;
+  e.owner = owner();
+  e.id = id;
+
+  return e;
+}
+
 ClaimingMoverOP EnvClaim::owner() const {
   return claim_source_;
 }

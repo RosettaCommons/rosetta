@@ -19,9 +19,9 @@
 #include <protocols/abinitio/abscript/FragmentJumpCM.hh>
 #include <protocols/abinitio/abscript/AbscriptStageMover.hh>
 #include <protocols/abinitio/abscript/StagePreparer.hh>
-#include <protocols/abinitio/abscript/AbscriptLoopCloserCM.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/CutBiasClaim.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
@@ -35,6 +35,7 @@
 
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
+#include <core/fragment/SecondaryStructure.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -58,7 +59,10 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // Basic Headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
@@ -75,7 +79,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.environment.movers.AbscriptMover", basic::t_info);
+static basic::Tracer tr("protocols.abinitio.abscript.AbscriptMover", basic::t_info);
 
 namespace protocols {
 namespace abinitio {
@@ -298,18 +302,35 @@ void AbscriptMover::yield_submovers( MoverSet& movers_out ) const {
        it != stage_movers_.end(); ++it ) {
     it->second->yield_submovers( movers_out );
   }
-  movers_out.insert( closer_ );
 }
 
 void
 AbscriptMover::parse_my_tag(
   utility::tag::TagCOP const tag,
-  basic::datacache::DataMap & ,
+  basic::datacache::DataMap& datamap,
   protocols::filters::Filters_map const & ,
   protocols::moves::Movers_map const & movers,
   core::pose::Pose const & ) {
 
   using namespace basic::options;
+
+  //Add abscript-configured scorefunctions to DataMap?
+  utility::vector1< std::string > id_strs( (Size) IVb );
+  id_strs[ I ] = "I"; id_strs[ II ] = "II"; id_strs[ IIIa ] = "IIIa";
+  id_strs[ IIIb ] = "IIIb"; id_strs[IVa] = "IVa"; id_strs[ IVb ] = "IVb";
+
+  for( StageID id = I; id <= IVb; increment_stageid(id) ){
+    std::string const scorefxn_name = tag->getOption<std::string>( "name" )+"_stage"+id_strs[ id ];
+
+    if( datamap.has( "scorefxns", scorefxn_name ) ){
+      //This error condition would be pretty easy to remove by just changing the way
+      throw utility::excn::EXCN_BadInput( "Automatic score function " + scorefxn_name +
+                                          " was already registered." );
+    }
+
+    datamap.add( "scorefxns", scorefxn_name,
+                 stage_movers_[id]->scorefxn()->clone() );
+  }
 
   //cycles control
   core::Real cycles_prefactor = 1.0;
@@ -328,11 +349,54 @@ AbscriptMover::parse_my_tag(
     it->second->set_cycles_adjust( cycles_prefactor );
   }
 
+  utility::vector1< StageID > skipped_stages;
+  if( tag->hasOption("skip_stages") ) {
+    if( option[ OptionKeys::abinitio::skip_stages ].user() ){
+      throw utility::excn::EXCN_RosettaScriptsOption("Flag abinitio::skip_stages and AbscriptMover 'skip_stages' option are incompatible.");
+    } else {
+      utility::vector1< std::string > const skipped_str( utility::string_split( tag->getOption< std::string >( "skip_stages" ), ',' ) );
+      for( utility::vector1< std::string >::const_iterator stage_it = skipped_str.begin();
+          stage_it != skipped_str.end(); ++stage_it ){
+        if( id_map_.find( *stage_it ) != id_map_.end() ){
+          skipped_stages.push_back( id_map_[*stage_it] );
+        } else {
+          Size stage_int = 0;
+          try {
+            stage_int = utility::string2int( *stage_it );
+          } catch (...) {
+            throw utility::excn::EXCN_RosettaScriptsOption( "Stage '"+*stage_it+"' is not recognized." );
+          }
+          if( stage_int > 0 && stage_int <= 4 ){
+            skipped_stages.push_back( StageID( stage_int ) );
+          } else {
+            tr.Error << "Skipped stage " << stage_int << " must be between 1 and 4." << std::endl;
+            utility::excn::EXCN_RosettaScriptsOption( "Stage number "+*stage_it+" is invalid." );
+          }
+        }
+      }
+    }
+  } else if ( option[ OptionKeys::abinitio::skip_stages ].user() ){
+    for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::skip_stages ]().begin();
+         it != option[ OptionKeys::abinitio::skip_stages ]().end(); ++it ) {
+      if( *it < 1 || *it > 4 ){
+        throw utility::excn::EXCN_BadInput( "The option abinitio::skip_stages specified value "+
+                                           utility::to_string( *it )+", which is not a valid stage." );
+      }
+      skipped_stages.push_back( StageID(*it) );
+    }
+  }
+
+  for( utility::vector1< StageID >::const_iterator stage = skipped_stages.begin();
+      stage != skipped_stages.end(); ++stage ){
+    stage_movers_[ *stage ]->set_cycles_adjust( 0.0 );
+    tr.Info << "AbscriptMover found abintio:skip_stages for stage " << *stage
+            << ". This stage will not be run." << std::endl;
+  }
 
   //standard fragments load/don't load
   if( tag->getOption<bool>( "std_frags", true ) ){
     add_default_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ] ),
-                   tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ] ) );
+                       tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ] ) );
   }
 
   //Load submovers using subtags.
@@ -397,6 +461,10 @@ void AbscriptMover::add_default_frags( std::string const& small_fragfile, std::s
   FragmentCMOP claim_smooth = new FragmentCM( new SmoothFragmentMover( frags_small, new GunnCost() ),
                                               "BASE" );
 
+  //apply cut biases based on small fragments' secondary structure
+  core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *frags_small );
+  claims_.push_back( new environment::claims::CutBiasClaim( this, "BASE", *ss ) );
+
   //apply to appropriate stages
   for( StageID id = I; id <= IIIb; increment_stageid(id) ){
     stage_movers_[id]->add_submover( claim_large, 1.0 );
@@ -404,9 +472,6 @@ void AbscriptMover::add_default_frags( std::string const& small_fragfile, std::s
 
   stage_movers_[ IVa ]->add_submover( claim_small, 1.0 );
   stage_movers_[ IVb ]->add_submover( claim_smooth, 1.0 );
-
-  closer_ = new AbscriptLoopCloserCM( frags_small,
-                                      stage_movers_[IVa]->scorefxn()->clone() );
 }
 
 std::string AbscriptMover::get_name() const {
@@ -454,7 +519,6 @@ void AbscriptMover::register_submover( protocols::moves::MoverOP mover_in,
 }
 
 std::map< core::Size, core::Size > AbscriptMover::calculate_iterations( core::pose::Pose const& pose ){
-
   std::map< core::Size, core::Size > ITERATIONS;
 
   //Stage1 has FT-dependent seqsep ramping ---------------------------------------
@@ -483,8 +547,9 @@ std::map< core::Size, core::Size > AbscriptMover::calculate_iterations( core::po
   return ITERATIONS;
 }
 
-EnvClaims AbscriptMover::yield_claims( core::pose::Pose& ) {
-  EnvClaims claims; return claims;
+EnvClaims AbscriptMover::yield_claims( core::pose::Pose const&,
+                                       basic::datacache::WriteableCacheableMapOP ) {
+  return claims_;
 }
 
 void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs const& ids ){
@@ -501,8 +566,8 @@ void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs
 }
 
 AbscriptMover::StageTracker::StageTracker( moves::MonteCarloOP mc ):
-mc_( mc ),
-checkpointer_( "Abscript" )
+  mc_( mc ),
+  checkpointer_( "Abscript" )
 {}
 
 void AbscriptMover::StageTracker::begin_stage( std::string const& stagename,
@@ -558,10 +623,11 @@ void AbscriptMover::StageTracker::end_stage( core::pose::Pose& pose ){
   // PROF_STOP( stagename() );
   if ( basic::options::option[ basic::options::OptionKeys::run::profile ] ) basic::prof_show();
   if ( basic::options::option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-    tr.Info << "Timeperstep: " << ( double(endtime) - starttime_ )/( CLOCKS_PER_SEC ) << std::endl;
+    tr.Info << "Time/step: " << ( double(endtime) - starttime_ )/( CLOCKS_PER_SEC ) << std::endl;
   }
 
-  if ( basic::options::option[ basic::options::OptionKeys::run::intermediate_structures ]() ) {
+  if ( basic::options::option[ basic::options::OptionKeys::run::intermediate_structures ]() &&
+       iterations_ > 0 ) {
     jd2::output_intermediate_pose( pose, "stage"+stagename_ );
   }
 }

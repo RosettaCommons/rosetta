@@ -165,6 +165,8 @@ void SilentStruct::extract_writeable_cacheable_data( core::pose::Pose const& pos
       for( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin();
            set_it != dataset.end(); set_it++ ){
         std::stringstream ss;
+        
+        ss << "CACHEABLE_DATA ";
         (*set_it)->write( ss );
 
         add_comment( "CACHEABLE_DATA", ss.str() );

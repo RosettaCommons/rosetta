@@ -369,22 +369,26 @@ MPIFileBufJobDistributor::master_get_new_job_id()
   Jobs const & jobs( get_jobs() );
   JobOutputterOP outputter = job_outputter();
 
-	core::Size next_job_to_assign = current_job_id() + 1;
-	basic::show_time( tr,  "assign job "+ObjexxFCL::string_of(next_job_to_assign)+" batch: "+ObjexxFCL::lead_zero_string_of( current_batch_id(),5 ) );
 	//increase job-id until a new job is found
-	while( next_job_to_assign <= jobs.size()) {
+	for( core::Size next_job_to_assign = current_job_id() + 1;
+       next_job_to_assign <= jobs.size(); ++next_job_to_assign ) {
+
+    basic::show_time( tr,  "assign job "+ObjexxFCL::string_of(next_job_to_assign)+" batch: "+ObjexxFCL::lead_zero_string_of( current_batch_id(),5 ) );
+
 		if ( jobs[ next_job_to_assign ]->bad() ) { //don't start jobs with known bad input
+      tr.Debug << "Job " << ObjexxFCL::string_of(next_job_to_assign) << " being skipped due to known bad input." << std::endl;
 			continue;
 		} else if ( !outputter->job_has_completed( jobs[ next_job_to_assign ] ) ) { //don't start jobs with have been completed ( in previous runs )
 				tr.Debug << "Master Node: Getting next job to assign from list id " << next_job_to_assign << " of " << jobs.size() << std::endl;
 				return next_job_to_assign;
-		} else if ( outputter->job_has_completed( jobs[ next_job_to_assign ] ) && option[ out::overwrite ].value() ) {  //ignore what I just said -- we ignore previous data
+		} else if ( outputter->job_has_completed( jobs[ next_job_to_assign ] ) &&
+                option[ out::overwrite ].value() ) {  //ignore what I just said -- we ignore previous data
 			tr.Debug << "Master Node: Getting next job to assign from list, overwriting id " << next_job_to_assign << " of " << jobs.size() << std::endl;
 			return next_job_to_assign;
 		}
-		//arrives here only if job has already been completed on the file-system
-		mark_job_as_completed( next_job_to_assign, current_batch_id(), -1.0 ); //need this for the MPIArchiveJobDistributor
-		++next_job_to_assign;
+
+    //arrives here only if job has already been completed on the file-system
+    mark_job_as_completed( next_job_to_assign, current_batch_id(), -1.0 ); //need this for the MPIArchiveJobDistributor
 	}
 	tr.Debug << "Master Node: No more jobs to assign, setting next job id to zero" << std::endl;
 	return 0;

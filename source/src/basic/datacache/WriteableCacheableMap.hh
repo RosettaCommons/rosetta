@@ -71,6 +71,13 @@ public:
     return map_;
   }
 
+  virtual void erase( WriteableCacheableDataOP d ) {
+    DataMap::const_iterator it = map_.find( d->datatype() );
+    if( it != map_.end() ){
+      map_[ d->datatype() ].erase( d );
+    }
+  }
+
   virtual DataMap::const_iterator begin() const {
     return map_.begin();
   }
@@ -85,6 +92,13 @@ public:
 
   virtual DataMap::const_iterator find( std::string const& str ) const {
     return map_.find( str );
+  }
+
+  virtual bool has( WriteableCacheableDataOP data ){
+    if( map_.find( data->datatype() ) != map_.end() ){
+      return ( map_[ data->datatype() ].find( data ) != map_[ data->datatype() ].end() );
+    }
+    return false;
   }
 
   virtual void insert( WriteableCacheableDataOP data ){

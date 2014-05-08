@@ -18,6 +18,7 @@
 // Unit Headers
 #include <protocols/environment/claims/VirtResClaim.fwd.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/JumpClaim.hh>
 
 // Package Headers
 #include <core/environment/FoldTreeSketch.hh>
@@ -54,8 +55,6 @@ public:
   virtual void yield_elements( FoldTreeSketch const& fts, ResidueElements& elements ) const;
 
   virtual void yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const;
-  
-  virtual void yield_elements( FoldTreeSketch const& fts, RTElements& elements ) const;
 
   std::string const& jump_label() const;
 
@@ -71,6 +70,8 @@ private:
   std::string jump_label_;
   std::string vrt_label_;
   LocalPosition parent_;
+  JumpClaim j_claim;
+
 
 }; //VirtResClaim
 

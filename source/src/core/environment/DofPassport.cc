@@ -18,6 +18,10 @@
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
+
+#include <core/conformation/Conformation.hh>
+
 #include <utility/excn/Exceptions.hh>
 
 // tracer
@@ -43,57 +47,52 @@ DofPassport::DofPassport( std::string const& mover,
 DofPassport::~DofPassport() {}
 
 //Movemap Config
-MoveMapOP DofPassport::render_movemap() const{
+MoveMapOP DofPassport::render_movemap( core::conformation::Conformation const& conf ) const {
   MoveMapOP mm = new core::kinematics::MoveMap();
 
   for( std::set<core::id::DOF_ID>::iterator id_it = accessible_dofs_.begin();
        id_it != accessible_dofs_.end(); ++id_it ){
     mm->set( *id_it, true);
-    if( id_it->type() == core::id::RB1 ){
-      mm->set( core::id::DOF_ID( id_it->atom_id(), core::id::RB2 ), true );
-      mm->set( core::id::DOF_ID( id_it->atom_id(), core::id::RB3 ), true );
-      mm->set( core::id::DOF_ID( id_it->atom_id(), core::id::RB4 ), true );
-      mm->set( core::id::DOF_ID( id_it->atom_id(), core::id::RB5 ), true );
-      mm->set( core::id::DOF_ID( id_it->atom_id(), core::id::RB6 ), true );
+  }
+
+  for( core::Size seqpos = 1; seqpos <= conf.size(); ++seqpos ){
+    bool seqpos_access = true;
+    for( Size torsion_type = id::phi_torsion; torsion_type <= id::omega_torsion; ++torsion_type ){
+      id::TorsionID t_id = id::TorsionID( seqpos, id::BB, torsion_type );
+      id::DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
+
+      seqpos_access &= d_id.valid() && accessible_dofs_.find( d_id ) != accessible_dofs_.end();
     }
+    mm->set_bb( seqpos, seqpos_access );
+
+    seqpos_access = true;
+    for( core::Size chi_i = 1; chi_i <= conf.residue( seqpos ).nchi(); ++chi_i ){
+      id::TorsionID t_id = id::TorsionID( seqpos, id::CHI, chi_i );
+      id::DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
+
+      seqpos_access &= d_id.valid() && accessible_dofs_.find( d_id ) != accessible_dofs_.end();
+    }
+    mm->set_chi( seqpos, seqpos_access );
   }
 
-  for( std::set< id::TorsionID >::iterator id_it = accessible_torsions_.begin();
-       id_it != accessible_torsions_.end(); ++id_it ){
-    //assumption: if one torsion is accessible, all are accessible
-    mm->set_bb( id_it->rsd(), true );
-  }
+  for( int jump_i = 1; jump_i <= (int) conf.fold_tree().num_jump(); ++jump_i ){
+    id::AtomID a_id = conf.jump_atom_id( jump_i );
 
-  for( std::set<core::Size>::iterator id_it = accessible_jump_numbers_.begin();
-       id_it != accessible_jump_numbers_.end(); ++id_it ){
-    mm->set_jump( (int) *id_it, true );
-  }
-
-  for( std::set< id::JumpID >::const_iterator id_it = accessible_jump_ids_.begin();
-      id_it != accessible_jump_ids_.end(); ++id_it ){
-    mm->set_jump( *id_it, true );
+    bool allow = true;
+    for( core::Size rb_i = id::RB1; rb_i <= id::RB6; ++rb_i ){
+      allow &= accessible_dofs_.find( id::DOF_ID( a_id, id::DOF_Type(rb_i) ) ) != accessible_dofs_.end();
+    }
+    mm->set_jump( jump_i, allow );
+    mm->set_jump( conf.fold_tree().upstream_jump_residue( jump_i ),
+                  conf.fold_tree().downstream_jump_residue( jump_i ),
+                  allow );
   }
 
   return mm;
 }
 
-//Access right setup
-
-void DofPassport::add_jump_access( id::AtomID const& id, Size const& nr, id::JumpID const& jid ){
-  //Only RB1 is stored because I can't think of any reason RB2-6 don't follow RB1.
-  accessible_dofs_.insert( id::DOF_ID( id, id::RB1 ) );
-  accessible_jump_numbers_.insert( nr );
-  accessible_jump_ids_.insert( jid );
-}
-
-void DofPassport::add_dof_access( id::DOF_ID const& dof_id, core::id::TorsionID const& torsion_id ){
-  assert( dof_id.valid() && torsion_id.valid() );
-  if( dof_id.type() >= id::RB1 && dof_id.type() <= id::RB6 ){
-    throw utility::excn::EXCN_BadInput( "DofPassport being asked to add a jump through the add_dof_access function. Use add_jump_access instead." );
-  } else {
-    accessible_dofs_.insert( dof_id );
-    accessible_torsions_.insert( torsion_id );
-  }
+void DofPassport::add_dof_access( id::DOF_ID const& dof_id ){
+  accessible_dofs_.insert( dof_id );
 }
 
 void DofPassport::revoke_all_access(){
@@ -118,30 +117,13 @@ bool DofPassport::access_check( EnvCore const& env, bool type_specific_check ) c
     return false;
   }
 }
-
-bool DofPassport::jump_access( EnvCore const& env, id::AtomID const& atom_id ) const {
-  if( tr.Trace.visible() ) tr.Trace << "Verifying access to jump from atom " << atom_id << ": ";
-  id::DOF_ID id = id::DOF_ID( atom_id, id::RB1 );
-  bool grant = ( accessible_dofs_.find( id ) != accessible_dofs_.end() );
-  return access_check( env, grant );
-}
-
-bool DofPassport::jump_access( EnvCore const& env, Size const& nr ) const {
-  if( tr.Trace.visible() ) tr.Trace << "Verifying access to jump number " << nr << ": ";
-  bool grant = ( accessible_jump_numbers_.find( nr ) != accessible_jump_numbers_.end() );
-  return access_check( env, grant );
+bool DofPassport::dof_access( id::DOF_ID const& id ) const {
+  return ( accessible_dofs_.find( id ) != accessible_dofs_.end() );
 }
 
 bool DofPassport::dof_access( EnvCore const& env, id::DOF_ID const& id ) const {
   if( tr.Trace.visible() ) tr.Trace << "Verifying access to DOF_ID " << id << ": ";
-  bool grant = (accessible_dofs_.find( id ) != accessible_dofs_.end() );
-  return access_check( env, grant );
-}
-
-bool DofPassport::jump_access( EnvCore const& env, id::JumpID const& id ) const{
-  if( tr.Trace.visible() ) tr.Trace << "Verifying access to JumpID " << id << ": ";
-  bool grant = (accessible_jump_ids_.find( id ) != accessible_jump_ids_.end() );
-  return access_check( env, grant );
+  return access_check( env, dof_access( id ) );
 }
 
 std::string const& DofPassport::mover() const {

@@ -255,51 +255,44 @@ std::ostream& operator<< (std::ostream& out, FragSet const& cfrags ) {
 }
 
 void FragSet::shift_by( int offset ) {
-	if ( offset == 0 ) return;
-	min_pos_ += offset;
-	max_pos_ += offset;
-	for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
-		//this should read ( *it != NULL ) but for some-reason gcc throws a warning that NULL needs to get converted to an unsigned int
-		//somehow the returned FrameOP cannot be compared with NULL. calling .get() on the owning_pointer interface retrieves the naked pointer
-		if ( (*it).get() != NULL ) {
-			it->shift_by( offset );
-		}
-	}
+	if ( offset != 0 ) {
+    min_pos_ += offset;
+    max_pos_ += offset;
+    for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
+      //this should read ( *it != NULL ) but for some-reason gcc throws a warning that NULL needs to get converted to an unsigned int
+      //somehow the returned FrameOP cannot be compared with NULL. calling .get() on the owning_pointer interface retrieves the naked pointer
+      if ( (*it).get() != NULL ) {
+        it->shift_by( offset );
+      }
+    }
+  } else {
+    tr.Debug << "Attempt to shift offset by " << offset << " ignored because it's 0." << std::endl;
+  }
+}
+
+void FragSet::global_offset( int offset ){
+	if ( offset != global_offset_ ) {
+    shift_by( offset - global_offset_ );
+    global_offset_ = offset;
+    tr.Debug << "Shifted FragSet relative to fragment file position by " << offset << std::endl;
+  } else {
+    tr.Debug << "FragSets have not been shifted as they are already in place (offset: " << offset << ")." << std::endl;
+  }
 }
 
 
-void FragSet::shift_to( core::Size offset ) {
-	core::Size pos =  offset + 1; //offset = number of residues in front of desired position
-	for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
-		//this should read ( *it != NULL ) but for some-reason gcc throws a warning that NULL needs to get converted to an unsigned int
-		//somehow the returned FrameOP cannot be compared with NULL. calling .get() on the owning_pointer interface retrieves the naked pointer
-		if ( (*it).get() != NULL ) {
-			it->shift_to( pos );
-			pos++;
-		}
-	}
-}
-
-void FragSet::set_global_offset ( core::Size offset ){
-	if ( offset == global_offset_ ) {
-		tr.Debug << "FragSets have not been shifted as they are already in place (offset: " << offset << ")." << std::endl;
-		return;
-	}
-	global_offset_ = offset;
-	tr.Debug << "Shifted FragSet to position " << offset << std::endl;
-	shift_to( global_offset_ );
-}
-
-
-FragSetOP FragSet::clone_shifted( core::Size offset ) const {
+FragSetOP FragSet::clone_shifted( int offset ) const {
 	FragSetOP newFragSet = empty_clone();
-	core::Size pos = offset + 1;
+
 	for ( ConstFrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
 		FrameOP newFrame = (*it)->clone_with_frags();
-		newFrame->shift_to( pos );
-		pos += 1;
 		newFragSet->add( newFrame );
 	}
+
+  newFragSet->global_offset( offset );
+
+  assert( ( newFragSet->max_pos() - newFragSet->min_pos() ) == ( this->max_pos() - this->min_pos() ) );
+
 	return newFragSet;
 }
 

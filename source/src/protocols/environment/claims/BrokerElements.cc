@@ -33,8 +33,7 @@ std::string const ResidueElement::type = "ResidueElement";
 std::string const JumpElement::type    = "JumpElement";
 std::string const CutElement::type     = "CutElement";
 std::string const CutBiasElement::type = "CutBiasElement";
-std::string const RTElement::type      = "RTElement";
-std::string const TorsionElement::type = "TorsionElement";
+std::string const DOFElement::type     = "DOFElement";
 
 } //claims
 } //environment

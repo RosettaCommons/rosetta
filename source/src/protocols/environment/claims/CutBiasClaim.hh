@@ -41,6 +41,7 @@
 #include <string>
 #include <sstream>
 #include <utility>
+#include <map>
 
 namespace protocols {
 namespace environment {
@@ -49,12 +50,21 @@ namespace claims {
 class CutBiasClaim : public EnvClaim {
   typedef EnvClaim Parent;
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
+  typedef core::environment::LocalPosition LocalPosition;
 
 public:
-  // Initializer for a single backbone angle
   CutBiasClaim( ClaimingMoverOP owner,
                 std::string const& label,
                 core::fragment::SecondaryStructure const& ss );
+
+  CutBiasClaim( ClaimingMoverOP owner,
+                std::string const& label,
+                std::map< LocalPosition, core::Real > const& biases );
+
+  CutBiasClaim( ClaimingMoverOP owner,
+                std::string const& label,
+                std::pair< core::Size, core::Size > const& range,
+                core::Real bias );
 
   virtual void yield_elements( FoldTreeSketch const& fts, CutBiasElements& elements ) const;
 
@@ -66,8 +76,7 @@ public:
 
 private:
   std::string label_;
-  core::fragment::SecondaryStructure ss_;
-
+  std::map< LocalPosition, core::Real > biases_;
 
 }; //class CutBiasClaim
 

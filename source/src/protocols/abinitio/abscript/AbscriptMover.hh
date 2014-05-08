@@ -47,8 +47,8 @@ namespace abinitio {
 namespace abscript {
 
 class AbscriptMover : public protocols::environment::ClaimingMover {
-	typedef environment::claims::EnvClaims EnvClaims;
-	typedef environment::ClaimingMoverOP ClaimingMoverOP;
+  typedef environment::claims::EnvClaims EnvClaims;
+  typedef environment::ClaimingMoverOP ClaimingMoverOP;
   typedef std::set<ClaimingMoverOP> MoverSet;
   typedef std::map< StageID, MoverSet > IDMoverSetMap;
 
@@ -62,8 +62,8 @@ public:
 
   virtual std::string get_name() const;
 
-  // the Abscript mover does not make any claims itself.
-  virtual EnvClaims yield_claims( core::pose::Pose& );
+  virtual EnvClaims yield_claims( core::pose::Pose const&,
+                                  basic::datacache::WriteableCacheableMapOP );
 
   virtual void yield_submovers( std::set< ClaimingMoverOP >& ) const;
 
@@ -104,7 +104,8 @@ private:
   std::map< std::string, StageID > id_map_;
   std::map< StageID, AbscriptStageMoverOP > stage_movers_;
   moves::MonteCarloOP mc_;
-  ClaimingMoverOP closer_;
+
+  environment::claims::EnvClaims claims_; // list for dynamically made claims to be pushed onto during setup
 }; // end AbscriptMover base class
 
 } // abscript

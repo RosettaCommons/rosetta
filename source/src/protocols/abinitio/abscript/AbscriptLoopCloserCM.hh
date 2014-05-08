@@ -23,6 +23,8 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <core/conformation/Conformation.fwd.hh>
+
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -36,35 +38,57 @@ namespace abscript {
 
 class AbscriptLoopCloserCM : public protocols::environment::ClaimingMover {
   typedef ClaimingMover Parent;
-	typedef environment::claims::EnvClaims EnvClaims;
+  typedef environment::claims::EnvClaims EnvClaims;
 
 public:
+  AbscriptLoopCloserCM();
+
   AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
-												core::scoring::ScoreFunctionOP scorefxn );
+                        core::scoring::ScoreFunctionOP scorefxn );
 
   virtual ~AbscriptLoopCloserCM() {};
 
-  virtual EnvClaims yield_claims( core::pose::Pose& );
+  virtual EnvClaims yield_claims( core::pose::Pose const&,
+                                  basic::datacache::WriteableCacheableMapOP );
 
   virtual void broking_finished( environment::EnvClaimBroker::BrokerResult const& );
 
-  virtual void passport_updated();
+  std::string const& label() const { return label_; }
+
+  void set_label( std::string const& label ) { label_ = label; }
 
   virtual std::string get_name() const;
 
   virtual void apply( core::pose::Pose& );
 
-  virtual bool is_loop_closer() const { return true; }
+  virtual void
+  parse_my_tag( utility::tag::TagCOP const tag,
+               basic::datacache::DataMap & data,
+               protocols::filters::Filters_map const & filters,
+               protocols::moves::Movers_map const & movers,
+               core::pose::Pose const & pose );
+
+  virtual
+  moves::MoverOP clone() const;
+
+protected:
+  virtual void passport_updated();
 
 private:
   void attempt_idealize( core::pose::Pose& );
 
   bool attempt_ccd( core::pose::Pose& );
 
+  void update_movemap( Pose const& pose ) const;
+
   core::kinematics::FoldTreeOP final_ft_;
   core::fragment::FragSetCOP fragset_;
-  core::kinematics::MoveMapOP movemap_;
+  mutable core::kinematics::MoveMapOP movemap_;
   core::scoring::ScoreFunctionOP scorefxn_;
+
+  std::string label_;
+
+  mutable bool bUpdateMM_;
 
 }; // end AbscriptLoopCloserCM base class
 

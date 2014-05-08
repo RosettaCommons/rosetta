@@ -20,7 +20,10 @@
 
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/tree/BondedAtom.hh>
+
 #include <core/id/TorsionID.hh>
 
 #include <core/kinematics/AtomTree.hh>
@@ -123,15 +126,191 @@ void ProtectedConformation::set_secstruct( Size const seqpos, char const setting
   if( verify_backbone( seqpos ) ){
     return Parent::set_secstruct( seqpos, setting );
   }
-  fail_verification( "secondary structure assignment" );
+  fail_verification( "secondary structure assignment at position "+utility::to_string( seqpos ) );
+}
+
+void bond_lengths( std::map< core::id::DOF_ID, core::Real >& dofs,
+                   core::conformation::ConformationOP conf,
+                   core::Size seqpos ){
+  using namespace core::id;
+  using namespace core::kinematics::tree;
+
+  //Collect all internal (and one external upstream) bond length.
+  for( core::Size i = 1; i <= conf->residue( seqpos ).natoms(); ++i ){
+    AtomID a_id( i, seqpos );
+		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
+
+    if( !atom.is_jump() ){
+      AtomCOP parent = atom.parent();
+      if( parent && !parent->is_jump() ){
+          dofs[ DOF_ID( a_id, THETA ) ] = conf->bond_length( atom.id(),
+                                                             parent->id() );
+      }
+    }
+
+    //Collect the (probably one) dependent downstream bond length.
+    for( core::Size j = 1; j <= atom.n_children(); ++j ){
+      AtomCOP child = atom.child( j );
+      if( !child->is_jump() &&
+          child->id().rsd() != a_id.rsd() ){
+            dofs[ DOF_ID( child->id(), THETA ) ] = conf->bond_length( atom.id(),
+                                                                      child->id() );
+      }
+    }
+  }
+}
+
+void bond_angles( std::map< core::id::DOF_ID, core::Real >& dofs,
+                  core::conformation::ConformationOP conf,
+                  core::Size seqpos ){
+  using namespace core::id;
+  using namespace core::kinematics::tree;
+
+  //Collect all internal (and a couple upstream external) bond angles.
+  for( core::Size i = 1; i <= conf->residue( seqpos ).natoms(); ++i ){
+    AtomID a_id( i, seqpos );
+		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
+    if( !atom.is_jump() ){
+      AtomCOP parent = atom.parent();
+      if( parent && !parent->is_jump() ){
+        if( parent->parent() ){
+          dofs[ DOF_ID( a_id, THETA ) ] = conf->bond_angle( atom.id(),
+                                                                   parent->id(),
+                                                                   parent->parent()->id() );
+        }
+      }
+    }
+
+    //Collect dependent downstream bond angles.
+    for( core::Size j = 1; j <= atom.n_children(); ++j ){
+      AtomCOP child = atom.child( j );
+      if( !child->is_jump() && child->id().rsd() != a_id.rsd() ){
+        for( core::Size k = 1; k <= child->n_children(); ++k ){
+          if( !child->child(k)->is_jump() ){
+            AtomCOP subchild = child->child(k);
+            dofs[ DOF_ID( subchild->id(), THETA ) ] = conf->bond_angle( atom.id(),
+                                                                               child->id(),
+                                                                               subchild->id() );
+          }
+        }
+      }
+    }
+
+  }
+}
+
+void bond_torsions( std::map< core::id::DOF_ID, core::Real >& dofs,
+                    core::conformation::ConformationOP conf,
+                    core::Size seqpos ){
+  using namespace core::id;
+
+  dofs[ conf->dof_id_from_torsion_id( TorsionID( seqpos, BB, psi_torsion ) ) ] =
+    conf->torsion( TorsionID( seqpos, BB, psi_torsion ) );
+  dofs[ conf->dof_id_from_torsion_id( TorsionID( seqpos, BB, psi_torsion ) ) ] =
+    conf->torsion( TorsionID( seqpos, BB, psi_torsion ) );
+  dofs[ conf->dof_id_from_torsion_id( TorsionID( seqpos, BB, omega_torsion ) ) ] =
+    conf->torsion( TorsionID( seqpos, BB, omega_torsion ) );
+
+  if( conf->is_fullatom() ){
+    for( core::Size i = 1; i <= conf->residue( seqpos ).chi().size(); ++i ){
+      TorsionID id( seqpos, CHI, i );
+      dofs[ conf->dof_id_from_torsion_id( id ) ] = conf->torsion( id );
+    }
+  }
+}
+
+void jump_dofs( std::map< core::id::DOF_ID, core::Real >& dofs,
+                core::conformation::ConformationOP conf,
+                core::Size seqpos ){
+
+  using namespace core::id;
+  using namespace core::kinematics::tree;
+
+
+  for( core::Size i = 1; i <= conf->residue( seqpos ).natoms(); ++i ){
+		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( AtomID( i, seqpos ) );
+    if( atom.is_jump() ){
+      dofs[ DOF_ID( atom.id(), RB1 ) ] =  conf->dof( DOF_ID( atom.id(), RB1 ) );
+      dofs[ DOF_ID( atom.id(), RB2 ) ] =  conf->dof( DOF_ID( atom.id(), RB2 ) );
+      dofs[ DOF_ID( atom.id(), RB3 ) ] =  conf->dof( DOF_ID( atom.id(), RB3 ) );
+      dofs[ DOF_ID( atom.id(), RB4 ) ] =  conf->dof( DOF_ID( atom.id(), RB4 ) );
+      dofs[ DOF_ID( atom.id(), RB5 ) ] =  conf->dof( DOF_ID( atom.id(), RB5 ) );
+      dofs[ DOF_ID( atom.id(), RB6 ) ] =  conf->dof( DOF_ID( atom.id(), RB6 ) );
+    }
+
+    for( core::Size j = 1; j <= atom.n_children(); ++j ){
+      AtomCOP child = atom.child(j);
+      if( child->is_jump() ){
+        dofs[ DOF_ID( child->id(), RB1 ) ] =  conf->dof( DOF_ID( child->id(), RB1 ) );
+        dofs[ DOF_ID( child->id(), RB2 ) ] =  conf->dof( DOF_ID( child->id(), RB2 ) );
+        dofs[ DOF_ID( child->id(), RB3 ) ] =  conf->dof( DOF_ID( child->id(), RB3 ) );
+        dofs[ DOF_ID( child->id(), RB4 ) ] =  conf->dof( DOF_ID( child->id(), RB4 ) );
+        dofs[ DOF_ID( child->id(), RB5 ) ] =  conf->dof( DOF_ID( child->id(), RB5 ) );
+        dofs[ DOF_ID( child->id(), RB6 ) ] =  conf->dof( DOF_ID( child->id(), RB6 ) );
+      }
+    }
+  }
+
+}
+
+std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size seqpos, core::conformation::ConformationCOP conf ){
+  using namespace core::id;
+
+  typedef std::map< core::id::DOF_ID, core::Real > DofMap;
+
+  DofMap old_dofs;
+
+  for( core::Size i = seqpos-1; i <= seqpos+1; ++i ) {
+    for( core::Size i = 1; conf->residue(i).natoms(); ++i ){
+      AtomID a_id = AtomID( i, seqpos );
+      if( conf->atom_tree().atom( a_id ).is_jump() ) {
+        for( core::Size rbi = core::id::RB1; rbi <= core::id::RB6; ++rbi ){
+          old_dofs[ DOF_ID( a_id, core::id::DOF_Type( rbi ) ) ] =
+          conf->dof( DOF_ID( a_id, core::id::DOF_Type( rbi ) ) );
+        }
+      } else {
+        DOF_ID d( AtomID( i, seqpos ), core::id::D );
+        DOF_ID theta( AtomID( i, seqpos ), core::id::THETA );
+        DOF_ID phi( AtomID( i, seqpos ), core::id::PHI );
+
+        old_dofs[ d ] = conf->dof( d );
+        old_dofs[ theta ]  = conf->dof( theta );
+        old_dofs[ phi ] = conf->dof( phi );
+      }
+    }
+  }
+
+  return old_dofs;
 }
 
 void ProtectedConformation::replace_residue( Size const seqpos, core::conformation::Residue const& new_rsd,
                                              utility::vector1< std::pair< std::string, std::string > > const & atom_pairs ){
-  if( verify_backbone( seqpos ) ) {
-    return Parent::replace_residue( seqpos, new_rsd, atom_pairs );
+  typedef std::map< core::id::DOF_ID, core::Real > DofMap;
+
+  core::conformation::ResidueOP old_rsd = Parent::residue( seqpos ).clone();
+
+  DofMap old_dofs = collect_dofs( seqpos, this );
+
+  Parent::replace_residue( seqpos, new_rsd, atom_pairs );
+
+  DofMap new_dofs = collect_dofs( seqpos, this );;
+
+  if( old_dofs.size() != new_dofs.size() ){
+    fail_verification( "residue replacement of residue "+utility::to_string( seqpos )+
+                       ": dofs were created or destroyed during replacement." );
   }
-  fail_verification( "residue replacement of residue "+utility::to_string( seqpos ) );
+
+  for( DofMap::iterator it = old_dofs.begin();
+       it != old_dofs.end(); ++it ){
+
+    core::id::DOF_ID const& dof = it->first;
+
+    if( ( old_dofs[ dof ] - new_dofs[ dof ] ) > 0.00001 &&
+        !verify( dof ) ){
+      fail_verification( "residue replacement of residue "+utility::to_string( seqpos )+
+                         ": dof "+utility::to_string(dof)+" was moved illegaly." );
+    }
+  }
 }
 
 void ProtectedConformation::set_stub_transform( core::id::StubID const& stub_id1,
@@ -192,11 +371,11 @@ void ProtectedConformation::set_bond_length( AtomID const & atom1,
 }
 
 void ProtectedConformation::insert_fragment( core::id::StubID const & /* instub_id */,
-		FragRT const & /* outstub_transforms */,
-		FragXYZ const & /* frag_xyz */ )
+    FragRT const & /* outstub_transforms */,
+    FragXYZ const & /* frag_xyz */ )
 {
-	// TODO: implement
-	runtime_assert( false );
+  // TODO: implement
+  runtime_assert( false );
 }
 
 
@@ -250,20 +429,6 @@ bool ProtectedConformation::has_passport() const {
 
 // VERIFICATION CONVIENENCE METHODS
 
-bool ProtectedConformation::verify_residue( Size const& seqpos ){
-  if( verify_backbone( seqpos ) ){
-    bool pass = true;
-    for( Size i = 1; i <= residue( seqpos ).nchi(); ++i ){
-      if( !verify( core::id::TorsionID( seqpos, core::id::CHI, i ) ) ){
-        pass = false;
-        break;
-      }
-    }
-    return pass;
-  }
-  return false;
-}
-
 bool ProtectedConformation::verify_backbone( Size const& seqpos ){
   return ( verify( core::id::TorsionID( seqpos, core::id::BB, core::id::phi_torsion ) ) &&
            verify( core::id::TorsionID( seqpos, core::id::BB, core::id::psi_torsion ) ) &&
@@ -271,45 +436,29 @@ bool ProtectedConformation::verify_backbone( Size const& seqpos ){
 }
 
 bool ProtectedConformation::verify_jump( core::id::AtomID const& a_id ){
-  core::id::DOF_ID id = core::id::DOF_ID( a_id, core::id::RB1 );
-  return verify( id );
+  bool allow = true;
+
+  for( Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ){
+    allow &= verify( core::id::DOF_ID( a_id, core::id::DOF_Type(rb_i) ) );
+  }
+
+  return allow;
 }
 
-bool ProtectedConformation::verify( core::id::TorsionID const& t_id ){
-  core::id::DOF_ID id = Parent::dof_id_from_torsion_id( t_id );
-
-  // The omega and psi just before, and phi just after, a cut are undefined--
-  // this code checks for that and grants (meaningless) access.
-  if( t_id.torsion() == core::id::phi_torsion ){
-    if( Parent::fold_tree().is_cutpoint( (int) t_id.rsd() - 1 ) ||
-        t_id.rsd() == 1 ){
-      //allow free modification of undefined torisons
-      return true;
-    } else {
-      return verify( id );
-    }
-  } else if( t_id.torsion() == core::id::omega_torsion ||
-             t_id.torsion() == core::id::psi_torsion ) {
-    if( Parent::fold_tree().is_cutpoint( (int) t_id.rsd() ) ||
-        t_id.rsd() == Parent::size() ){
-      //allow free modification of undefined torisons
-      return true;
-    } else {
-      return verify( id );
-    }
-  } else {
-    return verify( id );
-  }
+bool ProtectedConformation::verify( TorsionID const& id ){
+  return verify( dof_id_from_torsion_id( id ) );
 }
 
 bool ProtectedConformation::verify( core::id::DOF_ID const& id ){
-  if( !id.valid() ){
-    throw utility::excn::EXCN_RangeError( "Invalid DOF_ID generated and used in ProtectedConformation." );
-  }
   return ( !unlocks_.empty() && unlocks_.top()->dof_access( *environment(), id ) );
 }
 
 void ProtectedConformation::fail_verification( std::string const& str ){
+#ifndef NDEBUG
+  tr.Error << "ProtectedConformation reported illegal access to '" << str
+           << "' by mover '" << get_mover_name( unlocks_ ) << "' in env "
+           << environment()->name() << std::endl;
+#endif
   throw EXCN_Env_Security_Exception( str, *this, get_mover_name( unlocks_ ), environment() );
 }
 
@@ -414,7 +563,7 @@ void ProtectedConformation::fix_disulfides( utility::vector1< std::pair<Size, Si
 
 void ProtectedConformation::set_xyz( AtomID const &, core::PointPosition const & )
 {
-	fail_verification( "set_xyz" );
+  fail_verification( "set_xyz" );
 }
 
 void ProtectedConformation::batch_set_xyz( utility::vector1<AtomID> const &,

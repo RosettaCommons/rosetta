@@ -52,10 +52,12 @@ public:
 
   virtual void yield_elements( core::environment::FoldTreeSketch const& fts, JumpElements& elements ) const;
 
-  virtual void yield_elements( core::environment::FoldTreeSketch const& fts, RTElements& elements ) const;
-
   virtual void yield_elements( core::environment::FoldTreeSketch const& fts, CutElements& elements ) const;
 
+  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
+
+  /// @brief set the two atom names to use as the start and beginning of the jump. If set to the empty string
+  ///        the broker will use the FoldTree::put_stubs_intra_residue to pick one.
   void set_atoms( std::string const& a1, std::string const& a2 );
 
   void ctrl_strength( ControlStrength const& str );

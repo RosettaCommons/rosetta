@@ -21,6 +21,7 @@
 #include <protocols/environment/claims/ClaimStrength.hh>
 
 #include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
 #include <core/id/TorsionID.hh>
@@ -48,7 +49,9 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPosition const& local_pos):
   EnvClaim( owner ),
   c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE )
+  i_str_( DOES_NOT_INITIALIZE ),
+  claim_sidechain_( false ),
+  claim_backbone_( true )
 {
   local_positions_ = LocalPositions();
   local_positions_.push_back( new LocalPosition( local_pos ) );
@@ -59,7 +62,9 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             std::pair< core::Size, core::Size > const& range ):
   EnvClaim( owner ),
   c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE )
+  i_str_( DOES_NOT_INITIALIZE ),
+  claim_sidechain_( false ),
+  claim_backbone_( true )
 {
   local_positions_ = LocalPositions();
   for( Size i = range.first; i <= range.second; ++i){
@@ -67,18 +72,54 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   }
 }
 
-void TorsionClaim::yield_elements( FoldTreeSketch const&, TorsionElements& elements ) const {
+TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+                           LocalPositions const& positions ):
+  EnvClaim( owner ),
+  local_positions_( positions ),
+  c_str_( MUST_CONTROL ),
+  i_str_( DOES_NOT_INITIALIZE ),
+  claim_sidechain_( false ),
+  claim_backbone_( true )
+ {}
+
+
+DOFElement TorsionClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
+  DOFElement e = Parent::wrap_dof_id( id );
+
+  e.c_str = ctrl_strength();
+  e.i_str = init_strength();
+
+  return e;
+}
+
+void TorsionClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
+
+  using namespace core::id;
 
   for( LocalPositions::const_iterator pos = positions().begin();
        pos != positions().end(); ++pos ){
-    TorsionElement e;
 
-    e.p = **pos;
-    e.c_str = ctrl_strength();
-    e.i_str = init_strength();
-    e.owner = owner();
+    Size seqpos = conf->annotations()->resolve_seq( **pos );
 
-    elements.push_back( e );
+    if( claim_backbone() ){
+      TorsionID phi  ( seqpos, BB, phi_torsion );
+      TorsionID psi  ( seqpos, BB, psi_torsion );
+      TorsionID omega( seqpos, BB, omega_torsion );
+
+      DOF_ID phi_dof = conf->dof_id_from_torsion_id( phi );
+      DOF_ID psi_dof = conf->dof_id_from_torsion_id( psi );
+      DOF_ID omega_dof = conf->dof_id_from_torsion_id( omega );
+
+      elements.push_back( wrap_dof_id( phi_dof ) );
+      elements.push_back( wrap_dof_id( psi_dof ) );
+      elements.push_back( wrap_dof_id( omega_dof ) );
+    }
+    if( claim_sidechain() ){
+      for( Size i = 1; i <= conf->residue( seqpos ).nchi(); ++i ){
+        TorsionID t_id( seqpos, CHI, i );
+        elements.push_back( wrap_dof_id( conf->dof_id_from_torsion_id( t_id ) ) );
+      }
+    }
   }
 }
 

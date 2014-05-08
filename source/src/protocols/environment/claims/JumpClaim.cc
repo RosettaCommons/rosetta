@@ -21,6 +21,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 
 #include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
 #include <core/id/TorsionID.hh>
@@ -74,15 +75,19 @@ void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, JumpEl
   elements.push_back( e );
 }
 
-void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, RTElements& elements ) const {
-  RTElement e;
+void JumpClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
+  for( core::Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ){
+    DOFElement e;
 
-  e.i_str = i_str_;
-  e.c_str = c_str_;
-  e.label = label();
-  e.owner.operator=( owner() );
+    e.id = core::id::DOF_ID( conf->jump_atom_id( (int) conf->annotations()->resolve_jump( label() ) ),
+                             core::id::DOF_Type( rb_i ) );
 
-  elements.push_back( e );
+    e.i_str = i_str_;
+    e.c_str = c_str_;
+    e.owner.operator=( owner() );
+
+    elements.push_back( e );
+  }
 }
 
 void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, CutElements& elements ) const {

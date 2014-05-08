@@ -7,26 +7,36 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file EnvBeginMover.fwd.hh
-/// @brief definition of the EnvBeginMover class
-/// @author
+/// @file
+/// @brief
+/// @author Oliver Lange
 
-#ifndef INCLUDED_protocols_environment_EnvBeginMover_fwd_hh
-#define INCLUDED_protocols_environment_EnvBeginMover_fwd_hh
 
+#ifndef INCLUDED_protocols_environment_claims_XYZClaim_fwd_hh
+#define INCLUDED_protocols_environment_claims_XYZClaim_fwd_hh
+
+
+// Utility headers
+#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
+#include <utility/vector1.fwd.hh>
 
-// Package headers
 
 namespace protocols {
 namespace environment {
+namespace claims {
 
-class EnvBeginMover;
-typedef utility::pointer::owning_ptr< EnvBeginMover > EnvBeginMoverOP;
-typedef utility::pointer::owning_ptr< EnvBeginMover const > EnvBeginMoverCOP;
+class XYZClaim;
 
-} // environment
-} // protocols
+// Types
+typedef  utility::pointer::owning_ptr< XYZClaim >  XYZClaimOP;
+typedef  utility::pointer::owning_ptr< XYZClaim const >  XYZClaimCOP;
 
-#endif //INCLUDED_protocols_moves_EnvBeginMover_fwd_HH
+typedef  utility::pointer::access_ptr< XYZClaim >  XYZClaimAP;
+typedef  utility::pointer::access_ptr< XYZClaim const >  XYZClaimCAP;
+
+}
+}
+}
+
+#endif

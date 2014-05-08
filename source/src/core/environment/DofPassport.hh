@@ -25,6 +25,8 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
+#include <core/conformation/Conformation.hh>
+
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/id/TorsionID.hh>
@@ -52,11 +54,29 @@ public:
 
   void show( std::ostream& ) const;
 
-  core::kinematics::MoveMapOP render_movemap() const;
+  core::kinematics::MoveMapOP render_movemap( conformation::Conformation const& ) const;
 
-  void add_dof_access( id::DOF_ID const& id, id::TorsionID const& );
+  ///@brief configure passport to allow access to a bond length or angle dof_id
+  ///@param id the DOF_ID to allow access to
+  ///@pre parameter id must have DOF_Type id::D or id::THETA.
+  ///@pre id must be valid
+  void add_dof_access( id::DOF_ID const& id );
 
-  void add_jump_access( core::id::AtomID const&, core::Size const&, core::id::JumpID const& );
+  ///@brief configure passport to allow access to a torsional dof
+  ///@param dof_id the DOF_ID representation of the torsional DOF
+  ///@param tor_id the TorsionID represenatation of the torsional DOF
+  ///@pre dof_id must have DOF_Type id::PHI.
+  ///@pre both dof_id and tor_id must be valid.
+  void add_dof_access( id::DOF_ID const& dof_id, id::TorsionID const& tor_id );
+
+  ///@brief configure passport to allow access to a jump dof
+  ///@param atom_id the AtomID of the atom building the jump
+  ///@param jump_num the FoldTree
+  ///@pre dof_id must have DOF_Type id::PHI.
+  ///@pre both dof_id and tor_id must be valid.
+  void add_jump_access( core::id::AtomID const& atom_id,
+                        core::Size const& jump_num,
+                        core::id::JumpID const& jump_id );
 
   void revoke_all_access();
 
@@ -66,6 +86,10 @@ public:
 
   bool jump_access( EnvCore const&, id::JumpID const& jid ) const;
 
+  //@brief Check access in this passport for an id
+  bool dof_access( core::id::DOF_ID const& id ) const;
+
+  //@brief Check access in this passport for both correct environment and correct id.
   bool dof_access( EnvCore const&, core::id::DOF_ID const& id ) const;
 
   std::string const& mover() const;

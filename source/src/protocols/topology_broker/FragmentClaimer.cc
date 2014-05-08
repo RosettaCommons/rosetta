@@ -31,6 +31,7 @@
 #include <utility/exit.hh>
 #include <core/kinematics/Exceptions.hh>
 #include <core/fragment/FragSet.hh>
+#include <core/fragment/FrameIterator.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/loops/Loop.hh>
@@ -150,7 +151,7 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	core::Size fragment_offset = broker().sequence_number_resolver().offset( label() );
 
 	core::Size seq_length = broker().resolve_sequence_label( label() ).length();
-	core::Size frag_seq_length = fragments()->nr_frames() + fragments()->max_frag_length() -1;
+	core::Size frag_seq_length = fragments()->max_pos() - fragments()->min_pos() + 1;
 
 	if ( seq_length != frag_seq_length ){
 		std::ostringstream msg;
@@ -158,11 +159,14 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 				<< ") and sequence length of corresponding FragmentClaimer (length: " << frag_seq_length << ") do not match." << std::endl;
 		throw utility::excn::EXCN_BadInput( msg.str() );
 	}
+  tr.Debug << "sequence length: " << seq_length << "; fragment sequence length: " << frag_seq_length << std::endl;
 
 	tr.Debug << "Adapt fragment positions of FragmentClaimer " << label() << "-" << mover_tag_
 			<< " to offset of " << fragment_offset <<std::endl;
 
 	core::fragment::FragSetOP shifted_fragments = fragments()->clone_shifted( fragment_offset );
+  assert( ( shifted_fragments->max_pos() - shifted_fragments->min_pos() ) ==
+          ( fragments()->max_pos() - fragments()->min_pos() ) );
 	set_fragments( shifted_fragments );
 
 	if ( region_.size() ) {

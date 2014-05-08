@@ -45,19 +45,44 @@ CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
                             std::string const& label,
                             core::fragment::SecondaryStructure const& ss_in ):
   Parent( owner ),
+  label_( label )
+{
+  ObjexxFCL::FArray1D_float const& loop_frac = ss_in.loop_fraction();
+
+  for( Size i = 1; i <= ss_in.total_residue(); ++i ){
+    biases_[ LocalPosition( label_, i ) ] = loop_frac( (int) i );
+  }
+
+}
+
+CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+                           std::string const& label,
+                           std::map< LocalPosition, core::Real > const& biases ):
+  Parent( owner ),
   label_( label ),
-  ss_( ss_in )
+  biases_( biases )
 {}
+
+CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+                            std::string const& label,
+                            std::pair< core::Size, core::Size > const& range,
+                            core::Real bias ):
+  Parent( owner ),
+  label_( label )
+{
+  for( Size i = range.first; i <= range.second; ++i ){
+    biases_[ LocalPosition( label_, i ) ] = bias;
+  }
+}
 
 void CutBiasClaim::yield_elements( FoldTreeSketch const&, CutBiasElements& elements ) const {
 
-  ObjexxFCL::FArray1D_float const& loop_frac = ss_.loop_fraction();
-
-  for( Size i = 1; i <= ss_.total_residue(); ++i ){
+  for( std::map< LocalPosition, core::Real >::const_iterator it = biases_.begin();
+       it != biases_.end(); ++it ){
     CutBiasElement e;
 
-    e.p = LocalPosition( label_, i );
-    e.bias = loop_frac( (int) i );
+    e.p = it->first;
+    e.bias = it->second;
 
     elements.push_back( e );
   }
@@ -73,7 +98,7 @@ std::string CutBiasClaim::str_type() const{
 }
 
 void CutBiasClaim::show( std::ostream& os ) const {
-  os << str_type() << " owned by a " << owner()->get_name() << " with ss " << ss_;
+  os << str_type() << " owned by a " << owner()->get_name();
 }
 
 } //claims

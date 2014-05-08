@@ -47,7 +47,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.environment.movers.AbscriptStageMover", basic::t_info);
+static basic::Tracer tr("protocols.abinitio.abscript.AbscriptStageMover", basic::t_info);
 
 namespace protocols {
 namespace abinitio {
@@ -118,6 +118,7 @@ void AbscriptStageMover::update_max_seq_sep( core::pose::Pose& pose, core::Real 
   core::Size max_ft_dist = constraints_->largest_possible_sequence_sep( pose );
   assert( max_ft_dist <= pose.total_residue() );
 
+  tr.Debug << "using factor " << new_seq_sep_factor << " with max ft dist " << max_ft_dist << std::endl;
   core::Size seqsep = new_seq_sep_factor * max_ft_dist;
   tr.Info << "maximum constraint/chainbreak 'seqsep' set to " << seqsep << "." << std::endl;
 

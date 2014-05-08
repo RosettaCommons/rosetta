@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file EnvEndMover.fwd.hh
-/// @brief definition of the EnvEndMover class
+/// @file StructPerturberCMCM.fwd.hh
+/// @brief definition of the StructPerturberCMCM class
 /// @author
 
-#ifndef INCLUDED_protocols_environment_EnvEndMover_fwd_hh
-#define INCLUDED_protocols_environment_EnvEndMover_fwd_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_StructPerturberCM_fwd_hh
+#define INCLUDED_protocols_abinitio_abscript_StructPerturberCM_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <boost/shared_ptr.hpp>
@@ -20,13 +20,15 @@
 // Package headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
-class EnvEndMover;
-typedef utility::pointer::owning_ptr< EnvEndMover > EnvEndMoverOP;
-typedef utility::pointer::owning_ptr< EnvEndMover const > EnvEndMoverCOP;
+class StructPerturberCM;
+typedef utility::pointer::owning_ptr< StructPerturberCM > StructPerturberCMOP;
+typedef utility::pointer::owning_ptr< StructPerturberCM const > StructPerturberCMCOP;
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_moves_EnvEndMover_fwd_HH
+#endif //INCLUDED_protocols_abinitio_abscript_StructPerturberCM_fwd_HH

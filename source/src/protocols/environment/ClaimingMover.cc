@@ -97,7 +97,6 @@ void ClaimingMover::pop_passport( EnvironmentCAP env ) {
   if( passports_.top().first != env->id() ){
     throw EXCN_Env_Passport( "Environment trying to pop a passport it did not issue.", get_name(), env );
   }
-
   passports_.pop();
   passport_updated();
 }

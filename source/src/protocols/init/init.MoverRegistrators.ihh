@@ -323,8 +323,12 @@ static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMin
 static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 
+static MoverRegistrator< environment::EnvMoverCreator > reg_EnvMoverCreator;
 static MoverRegistrator< abinitio::abscript::AbscriptMoverCreator > reg_AbscriptMoverCreator;
 static MoverRegistrator< abinitio::abscript::ConstraintPreparerCreator > reg_ConstraintPreparerCreator;
 static MoverRegistrator< abinitio::abscript::FragmentJumpCMCreator > reg_FragmentJumpCMCreator;
+static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_AbscriptLoopCloserCMCreator;
+static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
+static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
 
 } //namespace protocols

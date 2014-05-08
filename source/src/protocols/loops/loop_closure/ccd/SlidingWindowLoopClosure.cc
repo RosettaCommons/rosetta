@@ -59,6 +59,8 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/fast_loops.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
@@ -131,6 +133,8 @@ void SlidingWindowLoopClosure::movemap( core::kinematics::MoveMapCOP movemap ) {
 
 void
 SlidingWindowLoopClosure::set_defaults() {
+  using namespace basic::options;
+
   min_loop_size_ = 6;
   max_loop_size_ = 12;
   min_good_loops_ = 3;
@@ -139,8 +143,8 @@ SlidingWindowLoopClosure::set_defaults() {
 	score_delta_ = 0.5;
   vdw_score_type_ = scoring::vdw; //not used right now
   bKeepFragments_ = false;
-	scored_frag_cycle_ratio_ = 0.1;
-	short_frag_cycle_ratio_ = 0.2;
+	scored_frag_cycle_ratio_ = 1.0;
+	short_frag_cycle_ratio_ = 1.0;
 	bQuickTest_ = basic::options::option[ basic::options::OptionKeys::run::dry_run ]();
 	bIdealLoopClosing_ = true;
 	chainbreak_max_ = 0.2;

@@ -17,6 +17,7 @@
 
 // Unit Headers
 #include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/moves/Mover.hh>
 
 // Package headers
 #include <protocols/environment/Environment.hh>
@@ -31,8 +32,9 @@
 
 #include <core/kinematics/MoveMap.fwd.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 // C++ Headers
 #include <stack>
@@ -64,7 +66,8 @@ public:
   /// @details The pose passed as an argument is used for reference informational
   ///          purposes only (for example, you want to know the sequence) or access
   ///          the pose cache. Any changes to the conformation will get overwritten!
-  virtual claims::EnvClaims yield_claims( core::pose::Pose& ) = 0;
+  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
+                                          basic::datacache::WriteableCacheableMapOP ) = 0;
 
   /// @brief this method is called by the broking system in response to a
   ///        successful initialization claim by this mover. The passport
@@ -85,7 +88,7 @@ protected:
 
   /// @brief hook that is called each time the passport status is updated
   ///        (presumably because there's a new subenvironment, or the sub-
-  ///        environment has expired)
+  ///        environment has expired). A conformation is provided for reference.
   virtual void passport_updated() {}
 
   /// @brief hook that provides information about the final result of broking

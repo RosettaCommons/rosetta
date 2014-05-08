@@ -47,7 +47,9 @@ sources = {
 	        "FragmentCM",
 		"FragmentJumpCM",
 		"JumpSampleData",
+		"RigidChunkCM",
 		"StagePreparer",
+		"StructPerturberCM",
 	],
 	"protocols/hybridization" : [
         "BackboneTorsionSampler",

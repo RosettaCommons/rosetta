@@ -30,6 +30,10 @@
 
 #include <protocols/simple_moves/FragmentMover.hh>
 
+#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
+
 // tracer
 #include <basic/Tracer.hh>
 
@@ -49,7 +53,8 @@ using namespace environment;
 FragmentCM::FragmentCM():
   ClaimingMover(),
   mover_( NULL ),
-  label_( "BASE" )
+  label_( "BASE" ),
+  bUpdateMM_( true )
 {}
 
 FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
@@ -72,7 +77,8 @@ void FragmentCM::set_mover( simple_moves::FragmentMoverOP mover ){
 }
 
 
-claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose& ){
+claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const&,
+                                            basic::datacache::WriteableCacheableMapOP ){
   using namespace claims;
   claims::EnvClaims claim_list;
 
@@ -84,20 +90,19 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose& ){
   new_claim->ctrl_strength( CAN_CONTROL );
   claim_list.push_back( new_claim );
 
-
-  core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *mover()->fragments() );
-  CutBiasClaimOP cb_claim = new CutBiasClaim( this, label(), *ss );
-  claim_list.push_back( cb_claim );
-
   return claim_list;
 }
 
 void FragmentCM::initialize( Pose& pose ){
+  if( bUpdateMM_ ){ update_movemap( pose ); }
+
   DofUnlock activation( pose.conformation(), passport() );
   mover()->apply_at_all_positions( pose );
 }
 
 void FragmentCM::apply( Pose& pose ) {
+  if( bUpdateMM_ ){ update_movemap( pose ); }
+
   if( pose.conformation().is_protected() ) {
     DofUnlock activation( pose.conformation(), passport() );
     mover()->apply( pose );
@@ -106,13 +111,20 @@ void FragmentCM::apply( Pose& pose ) {
   }
 }
 
-void FragmentCM::passport_updated() {
-  //TODO: account for possible offset shifts.
+void FragmentCM::update_movemap( Pose const& pose ) const {
+  assert( mover() );
   if( has_passport() ){
-    mover()->set_movemap( passport()->render_movemap() );
+    mover()->set_movemap( passport()->render_movemap( pose.conformation() ) );
   } else {
-    mover()->set_movemap( new core::kinematics::MoveMap() );
+    core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
+    mm->set_bb( false );
+    mover()->set_movemap( mm );
   }
+  bUpdateMM_ = false;
+}
+
+void FragmentCM::passport_updated() {
+  bUpdateMM_ = true;
 }
 
 std::string FragmentCM::get_name() const {

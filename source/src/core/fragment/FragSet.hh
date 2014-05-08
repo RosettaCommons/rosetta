@@ -176,22 +176,15 @@ public:
 	///@brief shift all frames in FragSet by offset
 	virtual void shift_by( int offset );
 
-	///@brief shift all frames in FragSet to old position + offset
-	virtual void shift_to( core::Size offset );
-
-	core::Size global_offset() const{
+	int global_offset() const{
 		return global_offset_;
 	}
 
-	void global_offset( core::Size offset ) {
-		global_offset_ = offset;
-	}
-
 	///@brief resets global_offset of FragSet and shifts FragSet if necessary by calling shift_to
-	void set_global_offset (core::Size);
+	void global_offset ( int );
 
 
-	FragSetOP clone_shifted( core::Size ) const;
+	FragSetOP clone_shifted( int ) const;
 
 
 protected:
@@ -214,7 +207,7 @@ private:
 	Size max_frag_length_;
 
 	///@brief global offset of current Fragmentset. Default = 0
-	core::Size global_offset_;
+	int global_offset_;
 
 }; // class FragSet
 

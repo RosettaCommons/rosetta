@@ -4111,8 +4111,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		),
 		Option( 'extended',   'Boolean', desc='Force extended on loops, independent of loop input file',legal=['true','false'], default='false'),
 		Option( 'remove_extended_loops',   'Boolean', desc='Before building any loops, remove all loops marked as extended',legal=['true','false'], default='false'),
-		Option( 'idealize_after_loop_close',  'Boolean', desc='Run structure through idealizer after loop_closing',     default='false' ),
-		Option( 'idealize_before_loop_close',  'Boolean', desc='Run structure through idealizer before loop_closing',     default='false' ),
+		Option( 'idealize_after_loop_close',  'Boolean', desc='Run structure through idealizer after loop_closing',     default='true' ),
+		Option( 'idealize_before_loop_close',  'Boolean', desc='Run structure through idealizer before loop_closing',     default='true' ),
 		Option( 'select_best_loop_from',   'Integer', desc='Keep building loops until N and choose best (by score)',  default='1'),
 		Option( 'build_attempts',          'Integer', desc='Build attempts per growth attempt', default='3'),
 
@@ -4408,11 +4408,11 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		),
 		Option( 'scored_frag_cycles',              'Real',
 			desc='cycle-ratio for scored_frag_cycles ( loop_size<10 ) after jumping-abinitio',
-			default='0.1'
+			default='1.0'
 		),
 		Option( 'short_frag_cycles',               'Real',
 			desc='cycle-ratio for short_frag_cycles ( loop_size<10 ) after jumping-abinitio',
-			default='0.2'
+			default='1.0'
 		),
 		## Deprecated ==  Old "looprelax"
 		Option( 'rmsd_tol', 'Real', desc='rmsd tolerance to deviate from original pose', default='10000.0' ),
@@ -4505,15 +4505,15 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	), # assembly
 
 	Option_Group( 'fast_loops',
-			Option( 'window_accept_ratio',       'Real',   desc='windows with more than x percent of good loops in fast-loop sampling are used for scored-sampling',  default='0.0' ),
+			Option( 'window_accept_ratio',       'Real',   desc='windows with more than x percent of good loops in fast-loop sampling are used for scored-sampling',  default='0.01' ),
 			Option( 'nr_scored_sampling_passes', 'Integer',desc='good windows go into scored-sampling N times',  default='4'  ),
-			Option( 'nr_scored_fragments',       'Integer',desc='scored loops sampled per good window each pass',  default='10'  ),
+			Option( 'nr_scored_fragments',       'Integer',desc='scored loops sampled per good window each pass',  default='20'  ),
 			Option( 'min_breakout_good_loops',   'Integer',desc='stop doing scored sampling if N or more good loops have been found',  default='5'  ),
-			Option( 'min_breakout_fast_loops',   'Integer',desc='stop doing fast sampling if N or more good loops have been found',  default='40'  ),
+			Option( 'min_breakout_fast_loops',   'Integer',desc='stop doing fast sampling if N or more good loops have been found',  default='80'  ),
 			Option( 'min_good_loops',            'Integer',desc='treat as failure if less good-loops than',  default='0'  ),
 			Option( 'min_fast_loops',            'Integer',desc='treat as failure if less fast-loops than',  default='3'  ),
-			Option( 'vdw_delta',                 'Real',   desc='accept as good loop if vdw-score < vdw-score-start+vdw-delta',  default='0' ),
-			Option( 'give_up',                   'Integer',desc='if N scored_frag_attemps didnt give any good loop -- jump out',  default='50' ),
+			Option( 'vdw_delta',                 'Real',   desc='accept as good loop if vdw-score < vdw-score-start+vdw-delta',  default='0.5' ),
+			Option( 'give_up',                   'Integer',desc='if N scored_frag_attemps didnt give any good loop -- jump out',  default='1000' ),
 			Option( 'chainbreak_max',            'Real',   desc='accept only loops that have a maximum chainbreak score of... (sum of linear_chainbreak / chainbreak and overlap_chainbreak', default='0.2'),
 			Option( 'fragsample_score',          'File',   desc='Scorefunction used durgin scored-frag sampling', default='loop_fragsample.wts' ),
 			Option( 'fragsample_patch',          'File',   desc='Patch weights for scorefunction used during scored-frag sampling' ),

@@ -81,7 +81,7 @@ public:
 
   virtual void set_secstruct( Size const seqpos, char const setting );
 
-	virtual void replace_residue( Size const seqpos, core::conformation::Residue const & new_rsd,
+  virtual void replace_residue( Size const seqpos, core::conformation::Residue const & new_rsd,
                                 utility::vector1< std::pair< std::string, std::string > > const& atom_pairs
                   );
 
@@ -98,10 +98,10 @@ public:
                                   core::Real const setting,
 																	bool quiet=false);
 
-	virtual void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
+  virtual void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
                                core::Real const setting );
-  
-	virtual void set_bond_length( AtomID const & atom1, AtomID const & atom2, core::Real const setting );
+
+  virtual void set_bond_length( AtomID const & atom1, AtomID const & atom2, core::Real const setting );
 
   virtual void insert_fragment( core::id::StubID const& instub_id, FragRT const& outstub_transforms,
                                 FragXYZ const& frag_xyz );
@@ -116,7 +116,7 @@ public:
 
   virtual void insert_chain_ending( Size const );
 
-	virtual void delete_chain_ending( Size const );
+  virtual void delete_chain_ending( Size const );
 
   virtual void reset_chain_endings();
 
@@ -126,16 +126,16 @@ public:
                                        std::string const& = "", std::string const& = "",
                                        bool const = false );
 
-	virtual void append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size const,
+  virtual void append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size const,
                                                     bool const );
 
-	virtual void safely_append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size const,
+  virtual void safely_append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size const,
                                                            bool const );
 
-	virtual void prepend_polymer_residue_before_seqpos( core::conformation::Residue const&, Size const,
+  virtual void prepend_polymer_residue_before_seqpos( core::conformation::Residue const&, Size const,
                                                       bool const );
 
-	virtual void safely_prepend_polymer_residue_before_seqpos( core::conformation::Residue const&,
+  virtual void safely_prepend_polymer_residue_before_seqpos( core::conformation::Residue const&,
                                                              Size const, bool const );
 
   virtual void delete_polymer_residue( Size const );
@@ -144,16 +144,16 @@ public:
 
   virtual void delete_residue_range_slow( Size const range_begin, Size const range_end );
 
-	virtual void declare_chemical_bond( Size const, std::string const&, Size const, std::string const& );
+  virtual void declare_chemical_bond( Size const, std::string const&, Size const, std::string const& );
 
-	virtual void insert_conformation_by_jump( Conformation const&, Size const, Size const, Size const,
+  virtual void insert_conformation_by_jump( Conformation const&, Size const, Size const, Size const,
                                             Size const, std::string const& = "",  std::string const& = "" );
 
   virtual void rebuild_polymer_bond_dependent_atoms( Size const );
 
   virtual void insert_ideal_geometry_at_polymer_bond( Size const seqpos );
 
-	virtual void insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 );
+  virtual void insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 );
 
   virtual void set_polymeric_connection( Size, Size );
 
@@ -162,7 +162,7 @@ public:
 
   // TODO: decide what to do with direct xyz settings.
   virtual void set_xyz( AtomID const & id, core::PointPosition const & position );
-	virtual void batch_set_xyz( utility::vector1<AtomID> const & id,
+  virtual void batch_set_xyz( utility::vector1<AtomID> const & id,
                               utility::vector1< core::PointPosition > const & position );
 
 
@@ -176,11 +176,11 @@ public:
   // If that's wrong, uncomment, implement an always-fail (or something smarter!), and make them
   // virtual in Conformation.hh
 
-	// virtual void update_actcoords();
-	// virtual void update_actcoord( Size resid );
-	// virtual void update_orbital_coords( Size resid );
+  // virtual void update_actcoords();
+  // virtual void update_actcoord( Size resid );
+  // virtual void update_orbital_coords( Size resid );
 
-	// virtual void update_polymeric_connection( Size const );
+  // virtual void update_polymeric_connection( Size const );
   // virtual void detect_bonds();
   // virtual void detect_pseudobonds();
   // virtual void detect_disulfides();
@@ -199,8 +199,6 @@ private:
   inline bool verify_jump( core::id::AtomID const& );
 
   inline bool verify_backbone( Size const& seqpos );
-
-  inline bool verify_residue( Size const& seqpos );
 
   inline void fail_verification( std::string const& str );
 

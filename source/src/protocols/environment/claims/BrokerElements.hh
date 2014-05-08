@@ -22,6 +22,8 @@
 
 // Project Headers
 #include <core/environment/LocalPosition.hh>
+#include <core/id/DOF_ID.hh>
+#include <core/id/TorsionID.hh>
 
 // ObjexxFCL Headers
 
@@ -87,19 +89,10 @@ namespace claims {
     static std::string const type;
   };
 
-  struct RTElement {
+  struct DOFElement {
     // no initializer because then we'd have to include the whole ClaimingMover header.
     ClaimingMoverOP owner;
-    std::string label;
-    ControlStrength c_str;
-    InitializationStrength i_str;
-    static std::string const type;
-  };
-
-  struct TorsionElement {
-    // no initializer because then we'd have to include the whole ClaimingMover header.
-    ClaimingMoverOP owner;
-    core::environment::LocalPosition p;
+    core::id::DOF_ID id;
     ControlStrength c_str;
     InitializationStrength i_str;
     static std::string const type;
@@ -109,8 +102,7 @@ namespace claims {
   typedef utility::vector1< claims::JumpElement > JumpElements;
   typedef utility::vector1< claims::CutElement > CutElements;
   typedef utility::vector1< claims::CutBiasElement > CutBiasElements;
-  typedef utility::vector1< claims::RTElement > RTElements;
-  typedef utility::vector1< claims::TorsionElement > TorsionElements;
+  typedef utility::vector1< claims::DOFElement > DOFElements;
 
   typedef utility::vector1< claims::ControlStrength > ControlStrengths;
   typedef utility::vector1< claims::ControlStrength > InitializationStrengths;

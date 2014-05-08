@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/environment/EnvExcn.hh
-/// @brief A class that is used to express a mover-specific DoF-unlock on a ProtectedPose. Its destruction expresses a re-locking.
+/// @brief Subclasses of EXCN_Env_Exception that require inclusion of the stuff in protocols.
 ///
 /// @author Justin Porter
 
@@ -34,18 +34,20 @@ namespace protocols {
 namespace environment {
 
 class EXCN_Env_Security_Exception : public core::environment::EXCN_Env_Exception {
-	typedef core::environment::EXCN_Env_Exception Parent;
+  typedef core::environment::EXCN_Env_Exception Parent;
 public:
-	EXCN_Env_Security_Exception( std::string const& dofname,
+  EXCN_Env_Security_Exception( std::string const& dofname,
                                ProtectedConformation const&,
                                std::string const& mover_name,
-                               EnvironmentCAP env ) {
-		std::ostringstream msg;
-		msg << "ProtectedConformation reported illegal access to '" << dofname
+                               EnvironmentCAP env ):
+  Parent( env )
+  {
+    std::ostringstream msg;
+    msg << "ProtectedConformation reported illegal access to '" << dofname
         << "' by mover '" << mover_name << "'.";
 
-    Parent( msg.str(), env );
-	}
+    add_msg( msg.str() );
+  }
 };
 
 class EXCN_Env_Passport : public core::environment::EXCN_Env_Exception {
@@ -53,11 +55,12 @@ class EXCN_Env_Passport : public core::environment::EXCN_Env_Exception {
 public:
   EXCN_Env_Passport( std::string const& message,
                      std::string const& mover_name,
-                     EnvironmentCAP env ) {
+                    EnvironmentCAP env ) :
+  Parent( env ) {
     std::ostringstream msg;
     msg << message << " Mover: '" << mover_name << "'.";
 
-    Parent( msg.str(), env );
+    add_msg( msg.str() );
   }
 };
 

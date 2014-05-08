@@ -19,8 +19,7 @@ sources = {
 	        "ClaimingMover",
 		"DofUnlock",
 		"EnvClaimBroker",
-		"EnvBeginMover",
-		"EnvEndMover",
+		"EnvMover",
 		"Environment",
 		"ProtectedConformation",
 	],
@@ -32,6 +31,7 @@ sources = {
 		"JumpClaim",
 		"TorsionClaim",
 		"VirtResClaim",
+		"XYZClaim",
 	],
 	"protocols/evaluation": [
 		"AlignEvaluator",

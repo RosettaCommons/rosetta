@@ -135,6 +135,8 @@ core::fragment::FragSetCOP FragmentMover::fragments() const {
 void
 FragmentMover::set_fragments( core::fragment::FragSetCOP new_frags_ ) {
 	fragset_ = new_frags_;
+  Size size_of_frags = fragset_->max_pos() - fragset_->min_pos() + 1;
+  std::cout << " got new fragments with size " << size_of_frags << std::endl;
 	on_new_fragments();
 }
 

@@ -20,6 +20,8 @@
 #include <core/environment/EnvCore.hh>
 
 // Package headers
+#include <protocols/moves/Mover.fwd.hh>
+
 #include <core/environment/DofPassport.fwd.hh>
 
 #include <protocols/environment/ClaimingMover.fwd.hh>
@@ -66,8 +68,6 @@ public:
     }
   }
 
-  void register_loop_closer( ClaimingMoverOP );
-
   bool is_registered( ClaimingMoverOP ) const;
 
   core::pose::Pose start( core::pose::Pose const& );
@@ -102,7 +102,6 @@ private:
 
   EnvClaimBrokerOP broker_;
   core::kinematics::FoldTreeCOP input_ft_;
-  ClaimingMoverOP loop_closer_;
   std::set<ClaimingMoverOP> registered_movers_;
 
   mutable std::set< ProtectedConformationAP > pconfs_;

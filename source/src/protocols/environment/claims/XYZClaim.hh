@@ -12,25 +12,23 @@
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_environment_claims_TorsionClaim_hh
-#define INCLUDED_protocols_environment_claims_TorsionClaim_hh
+#ifndef INCLUDED_protocols_environment_claims_XYZClaim_hh
+#define INCLUDED_protocols_environment_claims_XYZClaim_hh
 
 
 // Unit Headers
-#include <protocols/environment/claims/TorsionClaim.fwd.hh>
+#include <protocols/environment/claims/XYZClaim.fwd.hh>
 
 // Package Headers
 #include <core/environment/LocalPosition.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
-#include <protocols/environment/ProtectedConformation.fwd.hh>
-
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
 
-
 // Project Headers
 #include <core/id/types.hh>
+#include <core/id/DOF_ID.hh>
 
 // ObjexxFCL Headers
 
@@ -48,7 +46,7 @@ namespace protocols {
 namespace environment {
 namespace claims {
 
-class TorsionClaim : public EnvClaim {
+class XYZClaim : public EnvClaim {
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
   typedef EnvClaim Parent;
 
@@ -56,31 +54,30 @@ public:
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
 
+  // Initializer for an empty XYZ claim
+  XYZClaim( ClaimingMoverOP owner );
+
   // Initializer for a single backbone angle
-  TorsionClaim( ClaimingMoverOP owner,
-                LocalPosition const& local_pos );
+  XYZClaim( ClaimingMoverOP owner,
+            LocalPosition const& local_pos );
 
-  // Initializer for a contiguous range of backbone angles.
-  TorsionClaim( ClaimingMoverOP owner,
-                std::string const& label,
-                std::pair< core::Size, core::Size > const& range );
+  // Initializer for a contiguous range of residues.
+  XYZClaim( ClaimingMoverOP owner,
+            std::string const& label,
+            std::pair< core::Size, core::Size > const& range );
 
-  TorsionClaim( ClaimingMoverOP owner,
-                LocalPositions const& positions );
+  virtual void yield_elements( ProtectedConformationCOP const&,
+                               DOFElements& elements ) const;
 
-  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
+  void add_position( LocalPosition const& p );
+
+  void claim_external( bool in ) { internal_only_ = !in ;}
+
+  bool claim_external() const { return !internal_only_; }
 
   LocalPositions const& positions() const;
 
   ControlStrength const& ctrl_strength() const;
-
-  void claim_sidechain( bool in ) { claim_sidechain_ = in; }
-
-  bool claim_sidechain() const { return claim_sidechain_; }
-
-  void claim_backbone( bool in ) { claim_backbone_ = in; }
-
-  bool claim_backbone() const { return claim_backbone_; }
 
   void ctrl_strength( ControlStrength const& );
 
@@ -98,15 +95,25 @@ protected:
   virtual
   DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
+  void build_bond_length_elements( core::Size seqpos,
+                                   ProtectedConformationCOP const&,
+                                   DOFElements& elements ) const;
+
+  void build_bond_angle_elements( core::Size seqpos,
+                                  ProtectedConformationCOP const&,
+                                  DOFElements& elements ) const;
+
+  void build_bond_torsion_elements( core::Size seqpos,
+                                    ProtectedConformationCOP const&,
+                                    DOFElements& elements ) const;
+
 private:
   LocalPositions local_positions_;
   ControlStrength c_str_;
   InitializationStrength i_str_;
+  bool internal_only_;
 
-  bool claim_sidechain_;
-  bool claim_backbone_;
-
-}; //class TorsionClaim
+}; //class XYZClaim
 
 
 }

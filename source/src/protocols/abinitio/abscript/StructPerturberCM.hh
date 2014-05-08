@@ -7,21 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/abinitio/abscript/FragmentCM.hh
+/// @file src/protocols/abinitio/abscript/StructPerturberCM.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_abscript_abinitio_FragmentCM_hh
-#define INCLUDED_protocols_abscript_abinitio_FragmentCM_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_StructPerturberCM_hh
+#define INCLUDED_protocols_abinitio_abscript_StructPerturberCM_hh
 
 // Unit Headers
-#include <protocols/abinitio/abscript/FragmentCM.fwd.hh>
+#include <protocols/abinitio/abscript/StructPerturberCM.fwd.hh>
 #include <protocols/environment/ClaimingMover.hh>
 
 // Package headers
-#include <protocols/simple_moves/FragmentMover.hh>
 
 // Project headers
-#include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 // C++ Headers
 
@@ -31,47 +29,48 @@ namespace protocols {
 namespace abinitio {
 namespace abscript {
 
-class FragmentCM : public protocols::environment::ClaimingMover {
+class StructPerturberCM : public protocols::environment::ClaimingMover {
+  typedef ClaimingMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:
-  FragmentCM();
+  StructPerturberCM();
 
-  FragmentCM( simple_moves::FragmentMoverOP, std::string const& );
-
-  virtual void set_label( std::string const& label );
-
-  virtual void set_mover( simple_moves::FragmentMoverOP mover );
-
-  virtual ~FragmentCM();
+  virtual ~StructPerturberCM() {};
 
   virtual EnvClaims yield_claims( core::pose::Pose const&,
                                   basic::datacache::WriteableCacheableMapOP );
 
-  virtual void initialize( Pose& pose );
-
-  virtual void apply( Pose& pose );
-
   virtual std::string get_name() const;
+
+  virtual void apply( core::pose::Pose& );
 
   std::string const& label() const { return label_; }
 
-protected:
-  void update_movemap( Pose const& pose ) const;
+  void label( std::string const& label ) { label_ = label; }
 
-  virtual void passport_updated();
+  core::Real const& magnitude() const { return magnitude_; }
 
-  simple_moves::FragmentMoverOP mover() const { return mover_; };
+  void magnitude( core::Real const& value ) { magnitude_ = value; }
+
+  virtual void
+  parse_my_tag( utility::tag::TagCOP const tag,
+               basic::datacache::DataMap & data,
+               protocols::filters::Filters_map const & filters,
+               protocols::moves::Movers_map const & movers,
+               core::pose::Pose const & pose );
+
+  virtual
+  moves::MoverOP clone() const;
 
 private:
-  simple_moves::FragmentMoverOP mover_;
+  core::Real magnitude_;
   std::string label_;
-  mutable bool bUpdateMM_;
 
-}; // end FragmentCM base class
+}; // end StructPerturberCM base class
 
 } // abscript
 } // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_abinitio_abscript_FragmentCM_hh
+#endif //INCLUDED_protocols_abinitio_abscript_StructPerturberCM_hh

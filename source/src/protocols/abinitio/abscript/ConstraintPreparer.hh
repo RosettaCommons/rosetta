@@ -34,8 +34,8 @@ namespace abinitio {
 namespace abscript{
 
 class ConstraintPreparer : public StagePreparer {
-	typedef StagePreparer Parent;
-	typedef environment::claims::EnvClaims EnvClaims;
+  typedef StagePreparer Parent;
+  typedef environment::claims::EnvClaims EnvClaims;
 
 public:
   ConstraintPreparer();
@@ -80,7 +80,8 @@ public:
   void apply( core::pose::Pose& ) { assert(false); };
 
   virtual
-  EnvClaims yield_claims( core::pose::Pose& );
+  EnvClaims yield_claims( core::pose::Pose const&,
+                          basic::datacache::WriteableCacheableMapOP );
 
 
 protected:
@@ -91,6 +92,7 @@ private:
   bool skip_redundant_;
   core::Size skip_redundant_width_;
   core::Real rand_drop_rate_;
+  bool reprepare_;
   utility::vector1< bool > combine_exclude_res_;
 
   std::string filename_;

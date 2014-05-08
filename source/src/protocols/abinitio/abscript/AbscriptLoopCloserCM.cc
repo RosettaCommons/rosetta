@@ -12,6 +12,7 @@
 
 // Unit Headers
 #include <protocols/abinitio/abscript/AbscriptLoopCloserCM.hh>
+#include <protocols/abinitio/abscript/AbscriptLoopCloserCMCreator.hh>
 
 // Package headers
 #include <protocols/environment/claims/TorsionClaim.hh>
@@ -22,6 +23,13 @@
 #include <core/environment/DofPassport.hh>
 
 // Project headers
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/FragSet.hh>
+
+#include <core/kinematics/MoveMap.hh>
+
+#include <core/scoring/ScoreFunctionFactory.hh>
+
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
 
@@ -29,12 +37,21 @@
 
 #include <protocols/jumping/util.hh>
 
-#include <core/kinematics/MoveMap.hh>
-
 #include <protocols/idealize/IdealizeMover.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
+
 //Utility Headers
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+#include <basic/options/keys/frags.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/jumps.OptionKeys.gen.hh>
+
 #include <utility/excn/Exceptions.hh>
+#include <utility/tag/Tag.hh>
 
 #include <boost/functional/hash.hpp>
 #include <boost/foreach.hpp>
@@ -46,7 +63,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.environment.movers.AbscriptLoopCloserCM", basic::t_info);
+static basic::Tracer tr("protocols.abinitio.abscript.AbscriptLoopCloserCM", basic::t_info);
 
 namespace protocols {
 namespace abinitio {
@@ -55,18 +72,44 @@ namespace abscript {
 using namespace core::environment;
 using namespace protocols::environment;
 
+// creator
+std::string
+AbscriptLoopCloserCMCreator::keyname() const {
+  return AbscriptLoopCloserCMCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+AbscriptLoopCloserCMCreator::create_mover() const {
+  return new AbscriptLoopCloserCM;
+}
+
+std::string
+AbscriptLoopCloserCMCreator::mover_name() {
+  return "AbscriptLoopCloserCM";
+}
+
+AbscriptLoopCloserCM::AbscriptLoopCloserCM():
+  Parent(),
+  fragset_(),
+  scorefxn_(),
+  label_( "BASE" )
+{}
+
 AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
                                             core::scoring::ScoreFunctionOP scorefxn ):
   Parent(),
   fragset_( fragset ),
-  scorefxn_( scorefxn )
+  scorefxn_( scorefxn ),
+  label_( "BASE" ),
+  bUpdateMM_( true )
 {}
 
-claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose& in_pose ){
+claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const& in_pose,
+                                                      basic::datacache::WriteableCacheableMapOP ){
   claims::EnvClaims claims;
 
   // We want to control everything that will be relevant to the output pose (which should be the same as the input.
-  claims::TorsionClaimOP claim = new claims::TorsionClaim( this, "BASE", std::make_pair( 1, in_pose.total_residue() ) );
+  claims::TorsionClaimOP claim = new claims::TorsionClaim( this, label(), std::make_pair( 1, in_pose.total_residue() ) );
   claim->ctrl_strength( claims::CAN_CONTROL );
   claim->init_strength( claims::DOES_NOT_INITIALIZE );
 
@@ -76,6 +119,14 @@ claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose& in_pose 
 }
 
 void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
+
+  assert( passport() );
+  assert( final_ft_ );
+
+  if( bUpdateMM_ ){
+    movemap_ = passport()->render_movemap( in_pose.conformation() );
+    bUpdateMM_ = false;
+  }
 
   //Produce unprotected pose
   core::pose::Pose pose( in_pose );
@@ -124,7 +175,7 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
   using namespace loops::loop_closure::ccd;
 
   try {
-    checkpoint::CheckPointer checkpointer( "EnvAbscriptLoopCloserCM" );
+    checkpoint::CheckPointer checkpointer( "AbscriptLoopCloserCM" );
     SlidingWindowLoopClosureOP closing_protocol;
     closing_protocol = new WidthFirstSlidingWindowLoopClosure( fragset_,
                                                                scorefxn_,
@@ -142,6 +193,44 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
   }
 
   return true;
+}
+
+void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP const tag,
+                                         basic::datacache::DataMap & data,
+                                         protocols::filters::Filters_map const&,
+                                         protocols::moves::Movers_map const&,
+                                         core::pose::Pose const& ) {
+
+  using namespace basic::options::OptionKeys;
+  using namespace basic::options;
+
+  set_label( tag->getOption< std::string >( "label", label() ) );
+
+  std::string const& fragfile = tag->getOption< std::string >( "fragments", option[ OptionKeys::in::file::frag3 ] );
+
+  core::fragment::FragmentIO frag_io( option[ OptionKeys::abinitio::number_3mer_frags ](), 1,
+                                      option[ OptionKeys::frags::annotate ]() );
+
+  fragset_ = frag_io.read_data( fragfile );
+
+  if( tag->hasOption( "scorefxn" ) ){
+    try {
+      scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+    } catch ( ... ) {
+      tr.Error << "AbscriptLoopCloserCM failed to find the score function '"
+               << tag->getOption< std::string >( "scorefxn" ) << std::endl;
+      throw;
+    }
+  } else {
+    tr.Warning << "Configuring AbscriptLoopCloserCM '" << tag->getName() << "' with default abinitio loop closure score function." << std::endl
+               << "THIS IS BAD UNLESS YOU KNOW WHAT THAT MEANS." << std::endl;
+
+    option[ OptionKeys::abinitio::stage4_patch ].activate();
+
+    scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score3", option[ OptionKeys::abinitio::stage4_patch ]() );
+    scorefxn_->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
+    scorefxn_->set_weight( core::scoring::atom_pair_constraint, option[ OptionKeys::constraints::cst_weight ] );
+  }
 }
 
 void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
@@ -165,23 +254,35 @@ void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
   //jd2::output_intermediate_pose( pose, "loops_closed_preprocessed" );
 }
 
-void AbscriptLoopCloserCM::passport_updated() {
+void AbscriptLoopCloserCM::update_movemap( Pose const& pose ) const {
   if( has_passport() ){
-    movemap_ = passport()->render_movemap();
+    movemap_ = passport()->render_movemap( pose.conformation() );
   } else {
     movemap_ = new core::kinematics::MoveMap();
     movemap_->set_bb( false );
   }
+
+  bUpdateMM_ = false;
+}
+
+void AbscriptLoopCloserCM::passport_updated() {
+  bUpdateMM_ = true;
 }
 
 
 void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const& broker ) {
   //set the target fold tree for the closer.
   final_ft_ = broker.closer_ft;
+
+  assert( final_ft_ );
 }
 
 std::string AbscriptLoopCloserCM::get_name() const {
   return "AbscriptLoopCloserCM";
+}
+
+moves::MoverOP AbscriptLoopCloserCM::clone() const {
+  return new AbscriptLoopCloserCM( *this );
 }
 
 } // abscript

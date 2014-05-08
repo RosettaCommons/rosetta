@@ -44,7 +44,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.environment.movers.ConstraintPreparer", basic::t_info);
+static basic::Tracer tr("protocols.abinitio.abscript.ConstraintPreparer", basic::t_info);
 
 namespace protocols {
 namespace abinitio {
@@ -75,19 +75,26 @@ ConstraintPreparer::ConstraintPreparer():
   skip_redundant_( false ),
   skip_redundant_width_( 1 ),
   rand_drop_rate_( 0.0 ),
+  reprepare_( false ),
   combine_exclude_res_(0), //initialize vector of zero size, will get resized later.
   filename_(""),
   constraints_( NULL )
 {}
 
-claims::EnvClaims ConstraintPreparer::yield_claims( core::pose::Pose& ) {
-	claims::EnvClaims e;
-	return e;
+claims::EnvClaims ConstraintPreparer::yield_claims( core::pose::Pose const&,
+                                                    basic::datacache::WriteableCacheableMapOP ) {
+  claims::EnvClaims e;
+  return e;
 }
-
 
 void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
   using namespace core::scoring::constraints;
+
+  if( constraints_ && !reprepare_ ){
+    // If constraints isn't null, we already have constraints and don't need to reprepare
+    // unless reprepare option is set.
+    return;
+  }
 
   try{
     // it's not great that this is re-loaded each time, but it's safe and doesn't get called that often.
@@ -128,6 +135,33 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP const tag,
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
+  skip_redundant_width( tag->getOption< core::Size >( "skip_redundant", 1 ) );
+  if( tag->hasOption( "skip_redundant" ) ){
+    skip_redundant( true );
+    if( option[ constraints::skip_redundant ].user() &&
+        option[ constraints::skip_redundant ] == false ){
+      tr.Error << "Command line option constraints::skip_redundant conflicts "
+               << "with RosettaScripts initialization of ConstraintPreparer "
+               << tag->getOption< std::string >( "name", "null" ) << std::endl;
+      throw utility::excn::EXCN_RosettaScriptsOption( "ConstraintPreparer " + this->get_name() +
+                                                     "skip_redundant conflict" );
+    } else if( option[ constraints::skip_redundant_width ].user() &&
+               (Size) option[ constraints::skip_redundant_width ] != skip_redundant_width() ){
+      tr.Error << "Command line option constraints::skip_redundant_width conflicts "
+               << "with RosettaScripts initialization of ConstraintPreparer "
+               << tag->getOption< std::string >( "name", "null" ) << std::endl;
+      throw utility::excn::EXCN_RosettaScriptsOption( "ConstraintPreparer " + this->get_name() +
+                                                     "skip_redundant_width conflict" );
+    }
+  } else {
+    skip_redundant( false );
+  }
+
+  tag->getOption< bool >( "reprepare", false );
+
+  tr.Debug << "Set skip_redundant to " << skip_redundant() << " with width "
+           << skip_redundant_width() << std::endl;
+
   if( tag->hasOption( "cst_file" ) ){
     cst_file( tag->getOption< std::string >( "cst_file", "null" ) );
   } else {
@@ -138,14 +172,8 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP const tag,
 
   combine_ratio( tag->getOption< core::Size >( "combine_ratio", 1 ) );
   if( option[ constraints::combine ].user() )
-    tr.Warning << "User-set option constraints::combine being ignored" << std::endl;
+    tr.Warning << "User-set option -constraints:combine being ignored" << std::endl;
 
-}
-
-void ConstraintPreparer::load_constraints( core::pose::Pose const& ){
-  using namespace core::scoring::constraints;
-
-	//TODO: Finish?
 }
 
 void ConstraintPreparer::cst_file( std::string const& filename ){

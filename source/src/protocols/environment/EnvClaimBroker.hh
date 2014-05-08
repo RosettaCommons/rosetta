@@ -77,6 +77,7 @@ public:
     SizeToStringMap new_vrts;
     core::kinematics::FoldTreeOP closer_ft;
     std::set< core::Size > inserted_cut_variants;
+    basic::datacache::WriteableCacheableMapCOP cached_data;
   };
 
   BrokerResult const& result() const;
@@ -90,8 +91,7 @@ private:
   core::kinematics::FoldTreeOP render_fold_tree( FoldTreeSketch& fts,
                                                  std::set< Size >& unphysical_cuts,
                                                  utility::vector1< core::Real > const& bias,
-                                                 basic::datacache::BasicDataCache&,
-                                                 core::Size const& hash );
+                                                 basic::datacache::BasicDataCache& );
 
   void annotate_fold_tree( core::kinematics::FoldTreeOP,
                            StringToSizePairMap const& jump_labels,
@@ -119,33 +119,21 @@ private:
 
   void process_elements( claims::CutBiasElements const& elems, BiasVector& bias );
 
-  core::Size resolve( claims::RTElement const& e ) const;
-
-  core::Size resolve( claims::TorsionElement const& e ) const;
-
-  void grant_access( claims::TorsionElement const& e,
-                     ProtectedConformationOP conf ) const;
-
-  void grant_access( claims::RTElement const& e,
-                     ProtectedConformationOP conf ) const;
+  void grant_access( claims::DOFElement const& e ) const;
 
   template < typename T >
-  void setup_control_passports( utility::vector1< T >& elements,
-                                ProtectedConformationOP conf,
-                                core::Size n_dofs );
+  void setup_control_passports( utility::vector1< T >& elements );
 
   template < typename T >
   void setup_initialization_passports( utility::vector1< T >& elems,
-                                       ProtectedConformationOP conf,
-                                       core::Size n_dofs,
                                        std::set< ClaimingMoverOP >& initializers );
 
-  template < typename T >
+  template < typename T, typename I >
   void collect_elements( utility::vector1< T >& elements,
-                         FoldTreeSketch const& fts ) const;
+                         I const& info ) const;
 
   claims::EnvClaims collect_claims( MoverPassMap const& movers_and_passes,
-                                    core::pose::Pose& pose ) const;
+                                    core::pose::Pose& pose );
 
   ///@brief broker new residues
   void build_new_residues( claims::EnvClaims const& claims, FoldTreeSketch& fts, SequenceAnnotationOP ann );

@@ -34,7 +34,7 @@ namespace abscript {
 
 class FragmentJumpCM : public FragmentCM {
   typedef FragmentCM Parent;
-	typedef environment::claims::EnvClaims EnvClaims;
+  typedef environment::claims::EnvClaims EnvClaims;
 
 public:
   FragmentJumpCM();
@@ -47,7 +47,8 @@ public:
   ~FragmentJumpCM() {};
 
   virtual
-  EnvClaims yield_claims( core::pose::Pose& );
+  EnvClaims yield_claims( core::pose::Pose const&,
+                          basic::datacache::WriteableCacheableMapOP );
 
   virtual std::string get_name() const;
 
@@ -77,11 +78,11 @@ public:
 
   virtual
   moves::MoverOP clone() const;
-
+  
 protected:
   jumping::JumpSample calculate_jump_sample() const;
 
-  jumping::JumpSample setup_fragments();
+  void setup_fragments( jumping::JumpSample const& );
 
   EnvClaims build_claims( jumping::JumpSample const& );
 

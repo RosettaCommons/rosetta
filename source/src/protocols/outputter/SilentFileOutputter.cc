@@ -13,9 +13,7 @@
 
 // Unit Headers
 #include <protocols/outputter/SilentFileOutputter.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 
 // tracer
 #include <basic/Tracer.hh>
@@ -52,13 +50,9 @@ void SilentFileOutputter::write( Pose & p ) {
 	std::string tag;
 	parse_format_string( filenameparts_, format_string_, outfilename );
 	parse_format_string( filenameparts_, tag_format_string_, tag);
-	core::io::silent::SilentStructOP tmp;
-	// who knew ternary requires 2nd and 3rd to be the same type
-	if( binary_ ) {
-		tmp = new core::io::silent::BinarySilentStruct();
-	} else {
-		tmp = new core::io::silent::ProteinSilentStruct();
-	}
+
+	core::io::silent::SilentStructOP tmp = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+
 	tmp->fill_struct( p, tag );
 	sfd_.write_silent_struct( *tmp, outfilename, score_only_ );
 }

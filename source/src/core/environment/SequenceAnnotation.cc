@@ -120,16 +120,22 @@ void SequenceAnnotation::append_seq( std::string const& label ) {
 }
 
 
-core::Size SequenceAnnotation::resolve_seq( std::string const& label, core::Size const& pos ) const{
+core::Size SequenceAnnotation::resolve_seq( std::string const& label, core::Size const& pos ) const {
   return resolve_seq( LocalPosition( label, pos ) );
 }
 
-core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const{
+core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const {
   SeqLabelMap::const_iterator it = label_to_pose_numbers_.find( local.label() );
 
   if( it == label_to_pose_numbers_.end() ){
     std::ostringstream msg;
     msg << "SequenceAnnotation could not find local position " << local << "." << std::endl;
+    throw utility::excn::EXCN_RangeError( msg.str() );
+  } if( local.position() < 1 ||
+        local.position() > it->second.size() ){
+    std::ostringstream msg;
+    msg << "SequenceAnnotation cannot resolve the local position " << local
+        << " because it is out of range." << std::endl;
     throw utility::excn::EXCN_RangeError( msg.str() );
   }
 

@@ -32,6 +32,9 @@
 
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/SecondaryStructure.hh>
+#include <core/fragment/OrderedFragSet.hh>
+#include <core/fragment/FrameList.hh>
+#include <core/fragment/Frame.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -63,7 +66,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.environment.movers.FragmentJumpCM", basic::t_info);
+static basic::Tracer tr("protocols.abinitio.abscript.FragmentJumpCM", basic::t_info);
 
 namespace protocols {
 namespace abinitio {
@@ -96,7 +99,7 @@ FragmentJumpCM::FragmentJumpCM():
 FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
                                 std::string const& label,
                                 std::string const& moverkey ) :
-	moverkey_( moverkey )
+  moverkey_( moverkey )
 {
   set_topology( topol_filename );
   Parent( mover(), label );
@@ -108,18 +111,21 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP const tag,
                                    protocols::moves::Movers_map const&,
                                    core::pose::Pose const& ) {
   if( tag->hasOption( "topol_file" ) ){
-    std::string const& topol_filename = tag->getOption< std::string >( "topol_file", "" );
+    std::string const& topol_filename = tag->getOption< std::string >( "topol_file",
+                                                                       "[VALUE_UNSET]" );
     set_topology( topol_filename );
   } else if ( tag->hasOption( "ss_info" ) &&
               tag->hasOption( "pairing_file" ) &&
               tag->hasOption( "n_sheets" ) ) {
-    std::string const& ss_info_file = tag->getOption< std::string >( "ss_info", "" );
-    std::string const& pairing_file = tag->getOption< std::string >( "pairing_file", "" );
+    std::string const& ss_info_file = tag->getOption< std::string >( "ss_info",
+                                                                     "[VALUE_UNSET]" );
+    std::string const& pairing_file = tag->getOption< std::string >( "pairing_file",
+                                                                     "[VALUE_UNSET]" );
     core::Size const& n_sheets = tag->getOption< core::Size >( "n_sheets", 0 );
     bool bRandomSheets = tag->getOption< bool >( "random_sheets", true );
 
     set_topology( ss_info_file, pairing_file, n_sheets, bRandomSheets );
-  } else {
+  } else if ( !tag->getOption< bool >( "restart_only", false ) ) {
     tr.Error << "[ERROR] Parsing problem in FragmentJumpCM: "
              << " option set not compatible. Valid sets are 'topol_file' "
              << " or 'ss_info', 'pairing_file', and 'n_sheets'." << std::endl;
@@ -134,53 +140,62 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP const tag,
 
 }
 
-claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose& in_pose ){
+claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const&,
+                                                basic::datacache::WriteableCacheableMapOP map ){
   using namespace core::pose::datacache;
   using namespace basic::datacache;
 
-  BasicDataCache& datacache = in_pose.data();
-  if( datacache.has( CacheableDataType::WRITEABLE_DATA ) ){
-    WriteableCacheableMap const& map = datacache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA );
-    if( map.find( "JumpSampleData") != map.end() ){
-      std::set< WriteableCacheableDataOP > const& data_set = map.find( "JumpSampleData" )->second;
+  if( map->find( "JumpSampleData") != map->end() ){
+    std::set< WriteableCacheableDataOP > const& data_set = map->find( "JumpSampleData" )->second;
 
-      BOOST_FOREACH( WriteableCacheableDataOP data_ptr, data_set ){
-        JumpSampleDataOP jumpdata_ptr = dynamic_cast< JumpSampleData* >( data_ptr.get() );
-        assert( jumpdata_ptr );
+    BOOST_FOREACH( WriteableCacheableDataOP data_ptr, data_set ){
+      JumpSampleDataOP jumpdata_ptr = dynamic_cast< JumpSampleData* >( data_ptr.get() );
+      assert( jumpdata_ptr );
 
-        if( jumpdata_ptr->moverkey() == moverkey() ){
-          tr.Debug << "Found JumpSampleOP in cache with hash " << moverkey() << std::endl;
-          return build_claims( jumpdata_ptr->jump_sample() );
-        } else if( tr.Debug.visible() ) {
-          tr.Debug << "Rejected JumpSampleDataOP with hash " << jumpdata_ptr->moverkey()
-                   << ", which conflicts with present hash " << moverkey() << std::endl;
+      if( jumpdata_ptr->moverkey() == moverkey() ){
+        tr.Debug << "Found JumpSampleOP in cache with key '" << moverkey() << "'" << std::endl;
+        if( jump_def_ ){
+          tr.Warning << "Found JumpSampleOP found in FragmentJumpCM's input pose. Overwriting input"
+                     << " topologies with input structure's information." << std::endl;
+          jump_def_ = NULL;
         }
+        return build_claims( jumpdata_ptr->jump_sample() );
+      } else if( tr.Debug.visible() ) {
+        tr.Debug << "Rejected JumpSampleDataOP with key " << jumpdata_ptr->moverkey()
+                 << ", which conflicts with present key " << moverkey() << std::endl;
       }
     }
+  } else {
+    tr.Debug << get_name() << " found no JumpSampleData objects in input pose cache." << std::endl;
   }
+
   //If we don't hit the return statement in the above block of code, we have to calculate a new jump set.
   tr.Debug << get_name() << " calculating new jumps based on input topology file" << std::endl;
 
-  if( !mover() ){
-    throw utility::excn::EXCN_BadInput( "A topology file is required for FragmentJumpCM claiming of a new file." );
+  jumping::JumpSample jump_sample;
+  try {
+    // called for each to fold tree get random jumps from top file.
+    jump_sample = calculate_jump_sample();
+  } catch ( ... ) {
+    tr.Error << "[ERROR] " << get_name() << " failed to generate a jump sample from fragments. "
+             << "Were you expecting JumpSampleData in the input file? No fitting data was found."
+             << std::endl;
+    throw;
   }
-
-  // called for each to fold tree get random jumps from top file.
-  jumping::JumpSample jump_sample = setup_fragments();
 
   // cache the result as a WriteableCacheable in the pose DataCache for later retrieval.
   // this is important for the restarting feature in Abinitio.
   JumpSampleDataOP data = new JumpSampleData( moverkey(), jump_sample );
-  if( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ){
-    datacache.set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
-  }
-  datacache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA )[ data->datatype() ].insert( data );
+  (*map)[ data->datatype() ].insert( data );
 
   return build_claims( jump_sample );
 }
 
 claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_sample ) {
   claims::EnvClaims claim_list;
+
+  //Now that we've committed to a particular sample, configure fragments in the mover.
+  setup_fragments( jump_sample );
 
   for( int i = 1; i <= (int) jump_sample.size(); i++ ){
     Size const up( jump_sample.jumps()( 1, i ) );
@@ -195,7 +210,7 @@ claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_
     jclaim->ctrl_strength( claims::EXCLUSIVE );
     jclaim->init_strength( claims::MUST_INITIALIZE );
 
-    jclaim->set_atoms( jump_sample.jump_atoms()(1, i ), jump_sample.jump_atoms()(1, i ) );
+    jclaim->set_atoms( "", "" ); //allow jump atoms to be determined by ft at broker-time.
     jclaim->physical( false ); //jumps are not physical, and should be scored as chainbreaks
 
     claim_list.push_back( jclaim );
@@ -219,7 +234,7 @@ claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_
 }
 
 std::string FragmentJumpCM::get_name() const {
-  return "FragmentJumpCM("+mover()->get_name()+")";
+  return "FragmentJumpCM";
 }
 
 void FragmentJumpCM::set_topology( std::string const& ss_info_file,
@@ -246,8 +261,9 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
   }
 
   // Fail faster with better information on bad topology files.
+  jumping::JumpSample jump_sample;
   try{
-    calculate_jump_sample();
+    jump_sample = calculate_jump_sample();
   } catch( utility::excn::EXCN_BadInput ){
     std::stringstream ss;
     ss << "Was not able to construct a valid jump sample in 10 attempts using ss_info file "
@@ -258,14 +274,13 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 
     throw utility::excn::EXCN_BadInput( ss.str() );
   }
-
-  setup_fragments();
 }
 
 void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 
   if( mover() ){
-    tr.Warning << "[WARNING] internal ClassicFragmentMover overwritten during FragmentJumpCM::process_topology_file call." << std::endl;
+    tr.Warning << "[WARNING] internal ClassicFragmentMover overwritten during FragmentJumpCM::process_topology_file call."
+               << std::endl;
   }
 
   utility::io::izstream is( topol_filename );
@@ -282,24 +297,31 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
   jump_def_ = new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings );
 
   // Fail faster with better information on bad topology files.
+  jumping::JumpSample jump_sample;
   try{
-    calculate_jump_sample();
+    jump_sample = calculate_jump_sample();
   } catch( utility::excn::EXCN_BadInput ){
-    throw utility::excn::EXCN_BadInput( "Was not able to construct a valid jump sample in 10 attempts using topology file " + topol_filename + "." );
+    throw utility::excn::EXCN_BadInput( "Was not able to construct a valid jump sample in 10 attempts using topology file "
+                                        + topol_filename + "." );
   }
-
-  setup_fragments();
 }
 
-jumping::JumpSample FragmentJumpCM::setup_fragments() {
-
-  jumping::JumpSample jump_sample = calculate_jump_sample();
+void FragmentJumpCM::setup_fragments( jumping::JumpSample const& jump_sample ) {
 
   core::kinematics::MoveMapOP dummy_mm = new core::kinematics::MoveMap;
   dummy_mm->set_bb( true );
   dummy_mm->set_jump( true );
 
-  core::fragment::FragSetOP jump_frags = jump_def_->generate_jump_frags( jump_sample, *dummy_mm );
+  core::fragment::FragSetOP jump_frags;
+  if( jump_def_ ){
+    jump_frags = jump_def_->generate_jump_frags( jump_sample, *dummy_mm );
+  } else {
+    jump_frags = new core::fragment::OrderedFragSet;
+    core::fragment::FrameList jump_frames;
+    jump_sample.generate_jump_frames( jump_frames, *dummy_mm );
+    jump_frags->add( jump_frames );
+  }
+
 
   if( !mover() ){
     simple_moves::ClassicFragmentMoverOP mover =
@@ -310,12 +332,17 @@ jumping::JumpSample FragmentJumpCM::setup_fragments() {
   } else {
     mover()->set_fragments( jump_frags );
   }
-
-  return jump_sample;
 }
 
 jumping::JumpSample FragmentJumpCM::calculate_jump_sample() const {
   jumping::JumpSample jump_sample;
+
+  if( !jump_def_ ){
+    tr.Error << "[ERROR]" << get_name() << " tried to make jumps but couldn't because no "
+    << "(appropriate) JumpSampleData was cached in the pose and no topology information was "
+    << "provided through parse_my_tag." << std::endl;
+    throw utility::excn::EXCN_BadInput( "FragmentJumpCM requires, but did not have, a JumpSample." );
+  }
 
   core::Size attempts = 10;
   while( !jump_sample.is_valid() ){

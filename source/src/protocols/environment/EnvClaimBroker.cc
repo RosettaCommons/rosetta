@@ -32,6 +32,7 @@
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/types.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -39,15 +40,18 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Exceptions.hh>
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/BondedAtom.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Atom.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/WriteableCacheableMap.hh>
-#include <basic/datacache/WriteableCacheableData.fwd.hh>
+#include <basic/datacache/WriteableCacheableData.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
 
@@ -130,31 +134,14 @@ EnvClaimBroker::EnvClaimBroker( Environment const& env,
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes ){
     pair.first->broking_finished( result() );
   }
+
+  assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 }
 
 EnvClaimBroker::~EnvClaimBroker() {}
 
 EnvClaimBroker::BrokerResult const& EnvClaimBroker::result() const {
   return result_;
-}
-
-core::Size construct_hash( ResidueElements const& r_elems,
-                           JumpElements const& j_elems,
-                           CutElements const& c_elems,
-                           CutBiasElements const& cb_elems ) {
-  std::stringstream ss;
-
-  BOOST_FOREACH( ResidueElement e, r_elems ){ ss << e.label; }
-
-  BOOST_FOREACH( JumpElement e, j_elems ){
-    ss << e.label << e.p1 << e.p2 << e.atom1 << e.atom2 << e.has_physical_cut;
-  }
-
-  BOOST_FOREACH( CutElement e, c_elems ){ ss << e.p << e.physical; }
-
-  BOOST_FOREACH( CutBiasElement e, cb_elems ){ ss << e.p << e.bias; }
-
-  return boost::hash< std::string >()( ss.str() );
 }
 
 void EnvClaimBroker::broker_fold_tree( Conformation& conf,
@@ -188,11 +175,8 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   utility::vector1< core::Real > bias( fts.nres(), 1.0 );
   process_elements( cb_elems, bias );
 
-  //Use ft claims to construct hash of this claiming context
-  core::Size const hash = construct_hash( r_elems, j_elems, c_elems, cb_elems );
-
   //Render FoldTree ----------------------------------------------------------------------------
-  core::kinematics::FoldTreeOP ft = render_fold_tree( fts, unphysical_cuts, bias, datacache, hash );
+  core::kinematics::FoldTreeOP ft = render_fold_tree( fts, unphysical_cuts, bias, datacache );
   core::kinematics::FoldTreeOP physical_ft; // used to tell the loop closer what to do later.
 
   try {
@@ -231,12 +215,26 @@ core::kinematics::FoldTreeOP
 EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
                                   std::set< Size >& unphysical_cuts,
                                   utility::vector1< core::Real > const& bias,
-                                  basic::datacache::BasicDataCache& datacache,
-                                  core::Size const& hash ) {
+                                  basic::datacache::BasicDataCache& datacache ) {
   using namespace basic::datacache;
   using namespace core::pose::datacache;
 
   std::set< Size > auto_cuts;
+
+  // Calculate jump_points in prep for hash.
+  utility::vector1< std::string > jump_points;
+  for( Size i = 1; i <= fts.nres(); ++i ){
+    for( Size j = i + 1; j <= fts.nres(); ++j ){
+      if( fts.has_jump( i, j ) ){
+        jump_points.push_back( utility::to_string( i ) );
+        jump_points.push_back( utility::to_string( j ) );
+      }
+    }
+  }
+
+  //utility::join can't handle empty lists...
+  core::Size const hash = ( jump_points.empty() ) ? boost::hash_value( "" ) :
+                                                    boost::hash_value( utility::join( jump_points, "," ) );
 
   if( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ){
     datacache.set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
@@ -245,7 +243,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
   WriteableCacheableMapOP datamap = dynamic_cast< WriteableCacheableMap* >( datacache.get_raw_ptr( CacheableDataType::WRITEABLE_DATA ) );
   bool found_data = false;
 
-  if( !datamap && datamap->find( "AutoCutData" ) != datamap->end() ){
+  if( datamap && datamap->find( "AutoCutData" ) != datamap->end() ){
     BOOST_FOREACH( basic::datacache::WriteableCacheableDataOP data,
                    datamap->find( "AutoCutData" )->second ) {
       AutoCutDataOP auto_cut_data = dynamic_cast< AutoCutData* >( data.get() );
@@ -265,6 +263,8 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
                  << " does not match EnvClaimBroker hash " << hash << std::endl;
       }
     }
+  } else {
+    tr.Debug << "No AutoCutData found, generating cuts automatically." << std::endl;
   }
 
   if( !found_data ){
@@ -277,6 +277,9 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
     AutoCutDataOP data = new AutoCutData( hash, auto_cuts );
     datamap->insert( data );
+  } else {
+    //If we repeated cut choices, there should be no cuts.
+    assert( fts.cycle().empty() );
   }
 
   std::copy( auto_cuts.begin(), auto_cuts.end(), std::inserter( unphysical_cuts, unphysical_cuts.begin() ) );
@@ -288,7 +291,6 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
              << "choices in EnvClaimBroker::render_fold_tree." << std::endl;
     throw;
   }
-
 }
 
 void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
@@ -307,10 +309,12 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
       if( ann ){ // Physical fold tree doesn't use the annotations.
         ann->add_jump_label( label, jump_id );
       }
-      ft->set_jump_atoms( (int) jump_id,
-                          jump_atoms.find( label )->second.first,
-                          jump_atoms.find( label )->second.second,
-                          true );
+
+      std::string const& a1 = jump_atoms.find( label )->second.first;
+      std::string const& a2 = jump_atoms.find( label )->second.second;
+
+      ft->set_jump_atoms( (int) jump_id, a1, a2,
+                          (a1 == "" && a2 == "") );
     }
   }
 }
@@ -338,17 +342,11 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
 void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
 
   std::set< ClaimingMoverOP > initializers;
-  FoldTreeSketch const fts( conf->core::conformation::Conformation::fold_tree() );
 
-  //Broker Torsions ---------------------------------------------------------------------------------
-  TorsionElements t_elems;
-  collect_elements( t_elems, fts );
-  setup_initialization_passports( t_elems, conf, fts.nres(), initializers );
-
-  //Broker RTs --------------------------------------------------------------------------------------
-  RTElements rt_elems;
-  collect_elements( rt_elems, fts );
-  setup_initialization_passports( rt_elems, conf, fts.num_jumps(), initializers );
+  //Broker Arbitrary DOFs ---------------------------------------------------------------------------
+  DOFElements d_elems;
+  collect_elements( d_elems, conf );
+  setup_initialization_passports( d_elems, initializers );
 
   // Once all initialization passports for both RTs and Torsions are configured, allow
   // movers to initialize
@@ -368,8 +366,7 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
   //Copy the changes from the initialized conformation into conf
   *conf = *( static_cast< ProtectedConformation const* >( &p.conformation() ) );
 
-  setup_control_passports( t_elems, conf, fts.nres() );
-  setup_control_passports( rt_elems, conf, fts.num_jumps() );
+  setup_control_passports( d_elems );
 
   //Notify movers that passes have been updated.
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes_ ){
@@ -382,37 +379,41 @@ bool compare_init_strength( T const& a, T const& b ){
   return a.i_str > b.i_str;
 }
 
+bool is_initialized( std::set< std::string > const& initalized,
+                     DOFElement e  ){
+  return initalized.find( utility::to_string( e.id ) ) != initalized.end();
+}
+
 ///@brief iterate through all dof elements, determine who gets initialization right, and modify
 ///       their DofPassport appropriately
 template < typename T >
 void EnvClaimBroker::setup_initialization_passports( utility::vector1< T >& elems,
-                                                     ProtectedConformationOP conf,
-                                                     core::Size n_dofs,
                                                      std::set< ClaimingMoverOP >& initializers ){
 
   // Sort elements in descending strength order to guarantee highest prio gets first dibs.
   std::sort( elems.begin(), elems.end(), compare_init_strength< T > );
-  utility::vector1< ClaimingMoverOP > initialized( n_dofs, 0 );
+  std::map< core::id::DOF_ID, ClaimingMoverOP > initialized;
 
   BOOST_FOREACH( T element, elems ){
-    Size pos = resolve( element );
-    if( initialized[ pos ] && //we already assigned an initializer (of equal or higher prio) to this position
+    std::map< core::id::DOF_ID, ClaimingMoverOP >::iterator prev_init = initialized.find( element.id );
+    if( prev_init != initialized.end() && //we already assigned an initializer (of equal or higher prio) to this position
         element.i_str == MUST_INITIALIZE && //this initializer demanded to initialize this position
-        initialized[ pos ] != element.owner ){ //initializers are different (i.e. actually conflict)
-      std::string msg = "Cannot initialize " + element.type + " position " + utility::to_string( pos )
+        initialized[ element.id ] != element.owner ){ //initializers are different (i.e. true conflict)
+      std::string msg = "Cannot initialize " + element.type + " with id " + utility::to_string( element.id )
                         + " due conflicting init strengths (e.g. >1 MUST_INITIALIZE claim)."
-                        + "  Conflicting initializers were: " + initialized[pos]->get_name() + " and "
+                        + "  Conflicting initializers were: " + initialized[ element.id ]->get_name() + " and "
                         + element.owner->get_name();
       throw utility::excn::EXCN_BadInput( msg );
-    } else if( !initialized[ pos ] && element.i_str > DOES_NOT_INITIALIZE ) {
-      grant_access( element, conf );
-      initialized[ pos ] = element.owner;
+    } else if( initialized.find( element.id ) == initialized.end() &&
+               element.i_str > DOES_NOT_INITIALIZE ) {
+      grant_access( element );
+      initialized[ element.id ] = element.owner;
       initializers.insert( element.owner );
     } else { /* do not grant access */ }
   }
 
-  tr.Info << "  setting " << ( n_dofs - std::count( initialized.begin(), initialized.end(), 0 ) )
-          << " of " << n_dofs << " " << T::type << "-type DOF initial states." << std::endl;
+  tr.Info << "  setting " << initialized.size() << " " << T::type
+          << "-type DOF initial states." << std::endl;
 }
 
 template < typename T >
@@ -421,108 +422,52 @@ bool compare_ctrl_strength( T const& a, T const& b ){
 }
 
 template < typename T >
-void EnvClaimBroker::setup_control_passports( utility::vector1< T >& elems,
-                                              ProtectedConformationOP conf,
-                                              core::Size n_dofs ) {
+void EnvClaimBroker::setup_control_passports( utility::vector1< T >& elems ) {
 
-  // Similarly to setup_initialization_passporst, sort by control strength
+  // Similarly to setup_initialization_passports, sort by control strength
   std::sort( elems.begin(), elems.end(), compare_ctrl_strength< T > );
-  utility::vector1< ControlStrength > max_strength( n_dofs, DOES_NOT_CONTROL );
+  std::map< core::id::DOF_ID, ControlStrength > max_strength;
 
   //Iterate through each element. If it's EXCLUSIVE, we know not to admit any further claims.
   BOOST_FOREACH( T element, elems ){
-    Size pos = resolve( element );
-    if( max_strength[ pos ] == EXCLUSIVE ){
+    ControlStrength prev_str = DOES_NOT_CONTROL;
+    if( max_strength.find( element.id ) != max_strength.end() ){
+      prev_str = max_strength[ element.id ];
+    }
+
+    if( prev_str == EXCLUSIVE ){
         if( element.c_str >= MUST_CONTROL ){
-          std::string msg = "Cannot broker " + element.type + " position " + utility::to_string( pos ) +
+          std::string msg = "Cannot broker " + element.type + " " + utility::to_string( element.id ) +
                             "due conflicting control strengths (e.g. >1 EXCLUSIVE claim).";
           throw utility::excn::EXCN_BadInput( msg );
         } else {
           // do not grant access
         }
     } else if( element.c_str > DOES_NOT_CONTROL ){
-      grant_access( element, conf );
+      grant_access( element );
+      max_strength[ element.id ] = std::max( element.c_str, prev_str );
     } else { /* do not grant access */ }
-
-    if( max_strength[ pos ] < element.c_str ){
-      max_strength[ pos ] = element.c_str;
-    }
-  }
-
-  core::Size n_uncontrolled = std::count( max_strength.begin(), max_strength.end(), DOES_NOT_CONTROL );
-  if( n_uncontrolled > 0 ){
-    tr.Warning << "[WARNING] " << n_uncontrolled << " " << T::type
-               << "s' position(s) are not controlled by any ClaimingMover." << std::endl;
   }
 }
 
-void EnvClaimBroker::grant_access( TorsionElement const& e, ProtectedConformationOP conf ) const {
-  // This function is so complicated because it needs to account for the non-
-  // existance of defined torsional angles at the termini. It is super lame
-  // that I have to worry about this myself...
-
+void EnvClaimBroker::grant_access( DOFElement const& e ) const {
   using namespace core::id;
+  using namespace core::kinematics::tree;
 
   core::environment::DofPassportOP pass = movers_and_passes_.find( e.owner )->second;
 
-  Size seqpos = resolve( e );
-  TorsionID phi  ( seqpos, BB, phi_torsion );
-  TorsionID psi  ( seqpos, BB, psi_torsion );
-  TorsionID omega( seqpos, BB, omega_torsion );
-
-  DOF_ID phi_dof = conf->dof_id_from_torsion_id( phi );
-  DOF_ID psi_dof = conf->dof_id_from_torsion_id( psi );
-  DOF_ID omega_dof = conf->dof_id_from_torsion_id( omega );
-
-  // If the first residue after a cut, phi is not defined.
-  if( !phi_dof.valid() ){
-    assert( seqpos == 1 ||
-            conf->core::conformation::Conformation::fold_tree().is_cutpoint( (int) seqpos - 1 ) );
-  } else {
-    pass->add_dof_access( phi_dof, phi );
-  }
-
-  // If the last residue before a cut, omega and psi are not defined.
-  if( !psi_dof.valid() && !omega_dof.valid() ){
-    assert( conf->core::conformation::Conformation::size() == seqpos ||
-            conf->core::conformation::Conformation::fold_tree().is_cutpoint( (int) seqpos ) );
-  } else {
-    pass->add_dof_access( psi_dof, psi );
-    pass->add_dof_access( omega_dof, omega );
-  }
+  pass->add_dof_access( e.id );
 }
 
-void EnvClaimBroker::grant_access( RTElement const& e, ProtectedConformationOP conf ) const {
-  using namespace core::id;
-
-  core::environment::DofPassportOP pass = movers_and_passes_.find( e.owner )->second;
-
-  int jump_nr = (int) resolve( e );
-  AtomID aid = conf->jump_atom_id( jump_nr );
-  core::kinematics::FoldTree const& ft = conf->core::conformation::Conformation::fold_tree();
-  JumpID jid( ft.upstream_jump_residue( jump_nr ), ft.downstream_jump_residue( jump_nr ) );
-
-  pass->add_jump_access( aid, jump_nr, jid );
-}
-
-core::Size EnvClaimBroker::resolve( claims::RTElement const& e ) const {
-  return ann_->resolve_jump( e.label );
-}
-
-core::Size EnvClaimBroker::resolve( claims::TorsionElement const& e ) const {
-  return ann_->resolve_seq( e.p );
-}
-
-
-template < typename T >
+template < typename T, typename I >
 void EnvClaimBroker::collect_elements( utility::vector1< T >& elements,
-                                       FoldTreeSketch const& fts ) const {
+                                       I const& info ) const {
   typedef utility::vector1< T > ElementList;
 
   ElementList tmp;
 
   BOOST_FOREACH( EnvClaimOP claim, claims_ ){
-    claim->yield_elements( fts , tmp );
+    claim->yield_elements( info , tmp );
     std::copy( tmp.begin(), tmp.end(), std::back_inserter( elements ) );
     tmp.clear();
   }
@@ -531,17 +476,60 @@ void EnvClaimBroker::collect_elements( utility::vector1< T >& elements,
 }
 
 EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
-                                         core::pose::Pose& pose ) const {
+                                          core::pose::Pose& pose ) {
+  using namespace basic::datacache;
+  using namespace core::pose::datacache;
+  typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
+  typedef std::set< WriteableCacheableDataOP > DataSet;
+
   EnvClaims claims;
 
+  WriteableCacheableMapOP bk_map;
+  if( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ){
+    pose.data().set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
+  }
+
+  // Create a sandboxed copy of the map
+  WriteableCacheableMapOP orig_map = dynamic_cast< WriteableCacheableMap* >( pose.data().get_ptr( CacheableDataType::WRITEABLE_DATA ).get() );
+
+  // Store the newly inserted cache objects here.
+  WriteableCacheableMapOP new_cached_data = new WriteableCacheableMap();
+
+  //Claiming
   for( MoverPassMap::const_iterator mp_it = movers_and_passes.begin();
       mp_it != movers_and_passes.end(); ++mp_it ){
-    claims::EnvClaims in_claims = mp_it->first->yield_claims( pose );
+
+    // a modifiable sandbox_map must be passed in separately, as pose is a const&.
+    WriteableCacheableMapOP sandbox_map = new WriteableCacheableMap( *orig_map );
+
+    claims::EnvClaims in_claims = mp_it->first->yield_claims( pose, sandbox_map );
     std::copy( in_claims.begin(), in_claims.end(), std::back_inserter( claims ) );
+
+    // Copy any new data from the sandbox map into the "new" map.
+    for( DataMap::const_iterator subset_it = sandbox_map->begin(); subset_it != sandbox_map->end(); ++subset_it ){
+      for( DataSet::const_iterator data_it = subset_it->second.begin();
+           data_it != subset_it->second.end(); ++data_it  ){
+        if( !orig_map->has( *data_it ) ){
+          new_cached_data->insert( *data_it );
+        }
+      }
+    }
   }
+
+  //Write the items from the new_cache into the old cache.
+  for( DataMap::const_iterator newmap_it = new_cached_data->begin();
+      newmap_it != new_cached_data->end(); ++newmap_it ){
+    for( DataSet::const_iterator data_it = newmap_it->second.begin();
+         data_it != newmap_it->second.end(); ++data_it ){
+      orig_map->insert( *data_it );
+    }
+  }
+
+  this->result_.cached_data = WriteableCacheableMapCOP( new_cached_data.get() );
 
   tr.Debug << "collected " << claims.size() << " DoFClaims from "
            << movers_and_passes.size() << " movers." << std::endl;
+
 
   return claims;
 }

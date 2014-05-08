@@ -50,9 +50,9 @@ VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
                             std::string const& jump_label,
                             std::string const& vrt_label ):
   EnvClaim( owner ),
-  jump_label_( jump_label ),
   vrt_label_( vrt_label ),
-  parent_( parent )
+  parent_( parent ),
+  j_claim( owner, jump_label, parent, LocalPosition( vrt_label, 1 ), LocalPosition( vrt_label, 0 ) )
 {}
 
 void VirtResClaim::yield_elements( FoldTreeSketch const&, ResidueElements& elements ) const{
@@ -63,23 +63,8 @@ void VirtResClaim::yield_elements( FoldTreeSketch const&, ResidueElements& eleme
   elements.push_back( e );
 }
 
-void VirtResClaim::yield_elements( FoldTreeSketch const&, JumpElements& elements ) const {
-  JumpElement e;
-
-  e.label = jump_label();
-  e.p1 = parent_;
-  e.p2 = LocalPosition( vrt_label(), 1 );
-
-  elements.push_back( e );
-}
-
-void VirtResClaim::yield_elements( FoldTreeSketch const&, RTElements& elements ) const {
-  RTElement e;
-
-  e.label = jump_label();
-  e.c_str = EXCLUSIVE;
-
-  elements.push_back( e );
+void VirtResClaim::yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const {
+  j_claim.yield_elements( fts, elements );
 }
 
 EnvClaimOP VirtResClaim::clone() const {
@@ -87,7 +72,7 @@ EnvClaimOP VirtResClaim::clone() const {
 }
 
 std::string const& VirtResClaim::jump_label() const {
-  return jump_label_;
+  return j_claim.label();
 }
 
 std::string const& VirtResClaim::vrt_label() const {

@@ -23,6 +23,7 @@
 
 #include <protocols/environment/claims/BrokerElements.hh>
 #include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/environment/ProtectedConformation.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -49,8 +50,10 @@ namespace claims {
 
 class EnvClaim : public utility::pointer::ReferenceCount {
 
+  typedef core::environment::FoldTreeSketch FoldTreeSketch;
+
 public:
-  ///@brief Virtual destructor for reasons mysteirous
+  ///@brief Virtual destructor
   virtual ~EnvClaim();
 
   EnvClaim( ClaimingMoverOP );
@@ -60,26 +63,27 @@ public:
   ClaimingMoverOP owner() const;
 
   ///@brief build ResidueElements that indicate the introduction of a new peptide edge into the fold tree.
-  virtual void yield_elements( core::environment::FoldTreeSketch const&, ResidueElements& ) const {};
+  virtual void yield_elements( FoldTreeSketch const&, ResidueElements& ) const {};
 
   ///@brief build the JumpElements that represent the inclusion of a jump in the nascent FoldTree
-  virtual void yield_elements( core::environment::FoldTreeSketch const&, JumpElements& ) const {};
+  virtual void yield_elements( FoldTreeSketch const&, JumpElements& ) const {};
 
   ///@brief build and export the CutElements that represent the inclusion of a cut in the tree.
-  virtual void yield_elements( core::environment::FoldTreeSketch const&, CutElements& ) const {};
+  virtual void yield_elements( FoldTreeSketch const&, CutElements& ) const {};
 
   ///@brief build and export the CutElements that represent the inclusion of a cut in the tree.
-  virtual void yield_elements( core::environment::FoldTreeSketch const&, CutBiasElements& ) const {};
+  virtual void yield_elements( FoldTreeSketch const&, CutBiasElements& ) const {};
 
-  ///@brief build and export RTElements, which represent control of a jump rigid body transform in the resulting conformation.
-  virtual void yield_elements( core::environment::FoldTreeSketch const&, RTElements& ) const {};
-
-  ///@brief build and export TorsionElements, which represent control over torsion angles in the final conformation.
-  virtual void yield_elements( core::environment::FoldTreeSketch const&, TorsionElements& ) const {};
+  ///@brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
+  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& ) const {};
 
   virtual std::string str_type() const = 0;
 
   virtual void show( std::ostream& os ) const;
+
+protected:
+  virtual
+  DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
 private:
 
