@@ -47,7 +47,8 @@ ResidueCountFilter::ResidueCountFilter() :
 	max_residue_count_(0),
 	enable_max_residue_count_(false),
 	min_residue_count_(0),
-	enable_min_residue_count_(false)
+	enable_min_residue_count_(false),
+	count_as_percentage_(false)	// for a user who does not use rosetta_scripts, count_as_percentage_ = false by default here
 {}
 
 ResidueCountFilter::ResidueCountFilter(
@@ -58,8 +59,10 @@ ResidueCountFilter::ResidueCountFilter(
 	enable_max_residue_count_(src.enable_max_residue_count_),
 	min_residue_count_(src.min_residue_count_),
 	enable_min_residue_count_(src.enable_min_residue_count_),
+	count_as_percentage_(src.count_as_percentage_),	
 	res_types_( src.res_types_ )
 {}
+
 
 ResidueCountFilter::~ResidueCountFilter() {}
 
