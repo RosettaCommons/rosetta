@@ -350,8 +350,8 @@ core::Size Splice::find_dbase_entry(core::pose::Pose const & pose) {
 	} // fi dbase_iterate
 	else if (dbase_entry == 0) {
 		if (database_pdb_entry_ == "") //randomize dbase entry
-			dbase_subset_[(core::Size) (RG.uniform() * dbase_subset_.size() + 1)];
-		//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
+			dbase_entry = dbase_subset_[(core::Size) (RG.uniform() * dbase_subset_.size() + 1)];
+	//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
 		else { // look for the pdb_entry name
 			for (core::Size count = 1; count <= dbase_subset_.size(); ++count) {
 				if (torsion_database_[dbase_subset_[count]].source_pdb()
@@ -499,7 +499,10 @@ void Splice::apply(core::pose::Pose & pose) {
 	else { /// read from dbase
 		core::Size const dbase_entry(find_dbase_entry(pose));
 		if (dbase_entry == 0) // failed to read entry
+		{
+			TR << "Should we fail loudly if this happens??" << std::endl;
 			return;
+		}
 		runtime_assert(dbase_entry <= torsion_database_.size());
 		dofs = torsion_database_[dbase_entry];
 		std::string const source_pdb_name(dofs.source_pdb());
