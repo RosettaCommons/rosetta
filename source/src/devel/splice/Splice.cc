@@ -610,7 +610,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	core::Size cut_vl_vh_after_llc(from_res()<vl_vh_cut ? vl_vh_cut+residue_diff : vl_vh_cut); //update cut site between vl and vh after loop insertion, only if the loop was inserted to the vl.
 	llc.apply(pose);
 	TR << "Foldtree after loop length change: " << pose.fold_tree()	<< std::endl;
-	pose.dump_pdb("after_2ndllc_test.pdb");
+	//pose.dump_pdb("after_2ndllc_test.pdb");
 	/// set torsions
 	core::Size const total_residue_new(dofs.size()); //how long is the introduced segment
 	TR << "Changing dofs\n";
@@ -624,7 +624,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		//TR<<"resi, phi/psi/omega: "<< pose_resi<<' '<<pose.phi( pose_resi )<<'/'<<pose.psi( pose_resi )<<'/'<<pose.omega( pose_resi )<<std::endl;
 		//		TR<<"requested phi/psi/omega: "<<dofs[ i + 1 ].phi()<<'/'<<dofs[i+1].psi()<<'/'<<dofs[i+1].omega()<<std::endl;
 	}
-	pose.dump_pdb("after_changedofs_test.pdb");
+	//pose.dump_pdb("after_changedofs_test.pdb");
 	TR << std::endl;
 	std::string threaded_seq("");/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
 	/// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
