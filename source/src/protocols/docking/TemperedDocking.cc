@@ -38,7 +38,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
-#include <protocols/canonical_sampling/MpiParallelTempering.hh>
+#include <protocols/canonical_sampling/ParallelTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
 
@@ -80,7 +80,7 @@ void protocols::docking::TemperedDocking::register_options() {
   if ( options_registered_ ) return;
   options_registered_ = true;
 	protocols::canonical_sampling::SimulatedTempering::register_options();
-	protocols::canonical_sampling::MpiParallelTempering::register_options();
+	protocols::canonical_sampling::ParallelTempering::register_options();
 	protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
 	OPT( docking::partners );
 	OPT( score::patch );
@@ -430,7 +430,7 @@ TemperedDocking::init_from_options()
 	rigid_trans_mag_ = option[ OptionKeys::rigid::translation ]();
 
 	if ( option[ OptionKeys::run::n_replica ]() > 1 ) {
-		tempering_ = new protocols::canonical_sampling::MpiParallelTempering();
+		tempering_ = new protocols::canonical_sampling::ParallelTempering();
 	} else {
 		tempering_ = new protocols::canonical_sampling::SimulatedTempering();
 	}

@@ -12,7 +12,8 @@
 /// @brief
 /// @author Oliver Lange
 
-// Unit header
+
+// Unit header or inline function header
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorderCreator.hh>
 
@@ -30,6 +31,8 @@
 #include <utility/string_util.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <protocols/jd2/SilentFileJobOutputter.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // just for tracer output
 #include <protocols/jd2/Job.hh>
@@ -43,18 +46,16 @@
 // C++ headers
 #include <iomanip>
 
+// Operating system headers
+
 // Forward declarations
 OPT_1GRP_KEY( Integer, trajectory, score_stride )
 
-namespace protocols {
-namespace canonical_sampling {
-using namespace core;
-
 static basic::Tracer tr( "protocols.canonical_sampling.SilentTrajectoryRecorder" );
 
-bool SilentTrajectoryRecorder::options_registered_( false );
+bool protocols::canonical_sampling::SilentTrajectoryRecorder::options_registered_( false );
 
-void SilentTrajectoryRecorder::register_options() {
+void protocols::canonical_sampling::SilentTrajectoryRecorder::register_options() {
   using namespace basic::options;
   using namespace OptionKeys;
   if ( options_registered_ ) return;
@@ -62,6 +63,12 @@ void SilentTrajectoryRecorder::register_options() {
 	Parent::register_options();
 	NEW_OPT( trajectory::score_stride, "write x-times score-only before a decoy is written", 1 );
 }
+
+
+
+namespace protocols {
+namespace canonical_sampling {
+using namespace core;
 
 std::string
 SilentTrajectoryRecorderCreator::keyname() const {
@@ -96,7 +103,7 @@ SilentTrajectoryRecorder::SilentTrajectoryRecorder(
 protocols::moves::MoverOP
 SilentTrajectoryRecorder::clone() const
 {
-	return new SilentTrajectoryRecorder( *this );
+	return new protocols::canonical_sampling::SilentTrajectoryRecorder( *this );
 }
 
 protocols::moves::MoverOP
@@ -121,24 +128,34 @@ SilentTrajectoryRecorder::parse_my_tag(
 ) {
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	score_stride_ = tag->getOption< core::Size >( "score_stride", 100 );
+	runtime_assert( jd2::jd2_used() );
+	job_outputter_ = jd2::JobDistributor::get_instance()->job_outputter();
+
+	std::string silent_struct_type = tag->getOption< std::string >( "silent_struct_type", "any" );
+	if ( silent_struct_type != "any" ) {
+		jd2::SilentFileJobOutputterOP silent_job_outputter = new jd2::SilentFileJobOutputter();
+		silent_job_outputter->set_forced_silent_struct_type( silent_struct_type );
+		silent_job_outputter->set_write_separate_scorefile( tag->getOption< bool >( "write_extra_scores", false ) );
+		job_outputter_ = silent_job_outputter;
+	}
 }
 
 void
 SilentTrajectoryRecorder::write_model(
 	core::pose::Pose const & pose,
-	MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 ) {
 	runtime_assert( jd2::jd2_used() );
 	std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) : file_name() );
 	core::Size mc = model_count();
 	tr.Debug << "write model " << filename << " count: " << mc << std::endl;
-	jd2::output_intermediate_pose( pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure
+	job_outputter_->other_pose( jd2::get_current_job(),  pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 );
 }
 
 bool
 SilentTrajectoryRecorder::restart_simulation(
 			 core::pose::Pose & pose,
-			 MetropolisHastingsMover& metropolis_hastings_mover,
+			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
 			 core::Size& cycle,
 			 core::Size& temp_level,
 			 core::Real& temperature
@@ -193,7 +210,7 @@ SilentTrajectoryRecorder::restart_simulation(
 void
 SilentTrajectoryRecorder::initialize_simulation(
   core::pose::Pose & pose,
-	MetropolisHastingsMover const & metropolis_hastings_mover,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
@@ -203,7 +220,7 @@ SilentTrajectoryRecorder::initialize_simulation(
 
 void
 SilentTrajectoryRecorder::observe_after_metropolis(
-	MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 { ///this is only for tracer output !
 	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );

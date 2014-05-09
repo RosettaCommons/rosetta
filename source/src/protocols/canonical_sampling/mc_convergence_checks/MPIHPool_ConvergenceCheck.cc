@@ -53,13 +53,13 @@ namespace protocols{
 namespace canonical_sampling{
 namespace mc_convergence_checks{
 
+  int const FINISHED = 1;
+  int const IN_PROGRESS = 0;
+  int const MPI_OUTPUT_RANK = 0;
+  int const OUTPUT_TAG = 1000;
 
 #ifdef USEMPI
-	int const FINISHED = 1;
-	int const IN_PROGRESS = 0;
-	int const MPI_OUTPUT_RANK = 0;
-	int const OUTPUT_TAG = 1000;
-	MPI_Comm   protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD::MPI_COMM_POOL;
+  MPI_Comm   protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD::MPI_COMM_POOL;
   using namespace basic;
   //
 
@@ -179,7 +179,7 @@ namespace mc_convergence_checks{
 	return -1; //no more nstruct, so simply return
       }
       update_comm( pool_npes_ - num_nodes_finished );
-      if( (int) current_trajectory_state_ == IN_PROGRESS ) {
+      if( current_trajectory_state_ == IN_PROGRESS ) {
 	MPI_Comm_rank( MPI_COMM_POOL, ( int* )( &pool_rank_ ) );
 	MPI_Comm_size( MPI_COMM_POOL, ( int* )( &pool_npes_ ) );
       }
@@ -187,7 +187,7 @@ namespace mc_convergence_checks{
 
     PROF_STOP( basic::MPIH_EVAL_CHECK_PROGRESS );
     core::Size best_index = -1;
-    if( (int) current_trajectory_state_ == IN_PROGRESS ) {
+    if( current_trajectory_state_ == IN_PROGRESS ) {
       //evaluate the structure
       best_index = hlevel_.evaluate( pose, best_decoy, current_best_rmsds_, best_address_ );
       if( tracer_visible_ ) {
@@ -197,7 +197,7 @@ namespace mc_convergence_checks{
 	}
 	tr.Debug << "done dumping out information about best-rmsd" << std::endl;
       }
-
+      
       hlevel_.debug_print_size_per_level();
       PROF_START( basic::MPIH_EVAL_COMMUNICATE_NEW );
       //store the highest-resolution rmsd
@@ -222,7 +222,7 @@ namespace mc_convergence_checks{
       if( tracer_visible_ ) {
 	tr.Debug << "address of all-nbrs: " << (nlevels_ * pool_npes_ )
 		 << " nlevel: " << nlevels_ << " npes " << pool_npes_ << std::endl;
-	for( int ii = 0; ii < ( (int) nlevels_ * (int) pool_npes_  ); ii++ ) {
+	for( core::Size ii = 0; ii < ( nlevels_ * pool_npes_  ); ii++ ) {
 	  tr.Debug << buf_.neighbor_addresses_[ ii ] << " ";
 	}
 	tr.Debug << std::endl;
@@ -440,8 +440,8 @@ namespace mc_convergence_checks{
 	  if( tr.visible() ) tr.Debug << "looking at position " << ii << " of " << pool_npes_ << std::endl;
 	  if( have_structure_to_print[ ii ] == 1 ) {
 	    bool same_unresolved_addr = true;
-	    for ( core::Size jj = 0; jj < hlevel_.nlevels(); jj++ ) {
-	      if ( (int) best_address_[ jj + 1 ] != (int) buf_.neighbor_addresses_[ (ii * hlevel_.nlevels()) + jj ] ) same_unresolved_addr = false;
+	    for( core::Size jj = 0; jj < hlevel_.nlevels(); jj++ ) {
+	      if( best_address_[ jj + 1 ] != buf_.neighbor_addresses_[ (ii * hlevel_.nlevels()) + jj ] ) same_unresolved_addr = false;
 	    }
 	    if( same_unresolved_addr ) {  //only winning ranks with same unresolved addresses care
 	      //DEBUG OUTPUT
@@ -470,7 +470,7 @@ namespace mc_convergence_checks{
 	  if( tr.visible() ) tr.Debug << "I am the min ranking proc: " << pool_rank_ << " and i am printing out these rank neighbors: ";
 	  for( core::Size ii = 0; ii < num_nbrs; ii++ ) {
 	    if( have_structure_to_print[ ii ] == 1 ) {
-	      if( tr.visible() ) {
+	      if( tr.visible() ) { 
 		tr.Debug << " nbr rank: " << ii << " ";
 		for( core::Size jj = 0; jj < hlevel_.nlevels(); jj++ ) {
 		  tr.Debug << buf_.neighbor_addresses_[ ( ii * hlevel_.nlevels() ) + jj ] << " ";
@@ -512,7 +512,7 @@ namespace mc_convergence_checks{
 	MPI_Reduce( &num_to_print, &num_structures_to_write, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_POOL );
       }
       PROF_STOP( basic::MPIH_PREPARE_WRITE_STRUCTURES );
-      if( (int) pool_rank_ == MPI_OUTPUT_RANK ) {
+      if( pool_rank_ == MPI_OUTPUT_RANK ) {
 	//if I am the output rank, receive and write out structures
 	if( tracer_visible_ ) { tr.Debug << "expecting to write out " << num_structures_to_write << " structures" << std::endl; }
 	core::io::silent::SilentFileData sfd;
@@ -670,7 +670,7 @@ namespace mc_convergence_checks{
     create_comm( buf_.int_buf1_, newsize );
     //~buf_();
     buf_.setup( newsize, nresidues_, nlevels_ );
-    if( (int) current_trajectory_state_ == IN_PROGRESS ) {
+    if( current_trajectory_state_ == IN_PROGRESS ) {
       MPI_Comm_rank( MPI_COMM_POOL, ( int* )( &pool_rank_ ) );
       MPI_Comm_size( MPI_COMM_POOL, ( int* )( &pool_npes_ ) );
       tr.Info << "remaining ranks has pool-size of " << pool_npes_ << " and rank: " << pool_rank_ << std::endl;
@@ -1220,13 +1220,13 @@ namespace mc_convergence_checks{
     PROF_START( basic::MPICOMMCREATION );
     MPI_Comm_dup( MPI_COMM_POOL, &dup_pool_comm );
     returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
-    runtime_assert(returnval == MPI_SUCCESS );
+    assert(returnval == MPI_SUCCESS );
 
     returnval = MPI_Group_incl( old_pool_group, new_size, ranks_to_include, &new_pool_group );
-    runtime_assert(returnval == MPI_SUCCESS );
+    assert(returnval == MPI_SUCCESS );
 
     returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
-    runtime_assert(returnval == MPI_SUCCESS );
+    assert(returnval == MPI_SUCCESS );
     PROF_STOP( basic::MPICOMMCREATION );
 
   }

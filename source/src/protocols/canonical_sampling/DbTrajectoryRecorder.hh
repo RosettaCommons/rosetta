@@ -59,9 +59,6 @@ public:
 	/// @brief Constructor with a @a job_id parameter to use as a foreign key.
 	DbTrajectoryRecorder( core::Size job_id );
 
-	/// @brief Constructor with @a job_id and @a temp_level parameters.
-	DbTrajectoryRecorder( core::Size job_id, core::Size temp_level );
-
 	/// @brief Copy constructor.
 	DbTrajectoryRecorder( DbTrajectoryRecorder const & );
 
@@ -78,15 +75,7 @@ public:
 
 	/// @brief Set the job id that will be used as a foreign key in the 
 	/// trajectory table that gets generated.
-	void set_job_id( core::Size id ) { job_id_ = id; }
-
-	/// @brief Return the temperature level that this observer is focusing on.
-	core::Size temp_level() const { return temp_level_; }
-
-	/// @brief Set the temperature level that this observer should focus on.
-	/// @details Temperature levels start counting from one.  If zero is given, 
-	/// it will be taken to mean that every level should be recorded.
-	void set_temp_level( core::Size level ) { temp_level_ = level; }
+	void job_id( core::Size id ) { job_id_ = id; }
 
 	void initialize_simulation(
 			core::pose::Pose & pose,
@@ -116,35 +105,19 @@ private:
 	/// @brief Write any cached poses into the database, then clear the cache.
 	void write_cache_to_db() const;
 
-	/// @brief Append the given model to the trajectory being written.
-	/// @details The pose may be cached and not immediately written to the 
-	/// database.  
+	/// @brief Append the given model to the silent file trajectory being 
+	/// written.
 	void 	write_model(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP mover=0
-	);
-
-	/// @brief Write the starting structure to the database.
-	/// @details This case is handled specially to guarantee that the frame 
-	/// labeled as "iteration 0" always represents the starting structure.  In 
-	/// the future, this method will make sure only the root node writes this 
-	/// frame.
-	void write_first_model(
-		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP mover
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP mover=0
 	);
 
 private:
 
 	core::Size job_id_;
-	core::Size temp_level_;
 
 	/// @brief Helper struct used store cached poses.
-	struct Frame {
-		core::Size temp_level;
-		core::Size iteration;
-		core::pose::Pose pose;
-	};
+	struct Frame { core::Size iteration; core::pose::Pose pose; };
 	mutable utility::vector1<Frame> frame_cache_;
 
 }; // DbTrajectoryRecorder

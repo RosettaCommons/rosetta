@@ -488,6 +488,7 @@ static SilentStructRegistrator< core::import_pose::PDBSilentStructCreator > PDBS
 static SilentStructRegistrator< core::io::silent::BinarySilentStructCreator > BinarySilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::ScoreFileSilentStructCreator > ScoreFileSilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::ScoreJumpFileSilentStructCreator > ScoreJumpFileSilentStructCreator_registrator;
+static SilentStructRegistrator< core::io::silent::RigidBodySilentStructCreator > RigidBodySilentStructCreator_registrator;
 
 // Sequence registrators
 using namespace core::sequence;

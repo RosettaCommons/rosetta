@@ -40,8 +40,8 @@ namespace canonical_sampling {
 /// report using add_torsion().  Methods are also provided for specifying an 
 /// output filename.  Most of the IO work is done by update_after_boltzmann().  
 
-class MetricRecorder : public ThermodynamicObserver {
-
+class MetricRecorder : public ThermodynamicObserver
+{
 public: // Creation
 
 	/// @brief Default constructor.
@@ -88,7 +88,7 @@ public: // Methods
 	/// @brief Return true.  This mover needs to be reinitialized for each job.
 	virtual
 	bool
-	reinitialize_for_each_job() const { return true; }
+	reinitialize_for_each_job() const { return true; };
 
 	/// @brief Return the name of the file being written to.
 	std::string const &
@@ -168,7 +168,7 @@ public: // Methods
 	void
 	reset(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	/// @brief Write information like temperature, score, and torsion angles to a 
@@ -176,7 +176,7 @@ public: // Methods
 	void
 	update_after_boltzmann(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	/// @brief Just invoke update_after_boltzmann() with a const pose.
@@ -190,21 +190,21 @@ public: // Methods
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	virtual
 	void
 	observe_after_metropolis(
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 private: // Fields

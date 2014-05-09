@@ -103,18 +103,14 @@ WeightedSampler::operator=(
 numeric::Size
 WeightedSampler::random_sample(
 	numeric::Real randnum
-)
-{
+) const {
 	assert(randnum >= 0);
 	assert(randnum <= 1);
 
-	if (!cumulative_distribution_valid_) update_cumulative_distribution();
+	if  ( !cumulative_distribution_valid_ ) update_cumulative_distribution();
 
-	// This needs to be changed to a binary search tree log(N) operation intead
-	// of the current implementation which runs in order N time.
-	for (numeric::Size i = 1; i <= cumulative_distribution_.size(); ++i) {
-
-		if (cumulative_distribution_[i] && cumulative_distribution_[i] >= randnum) return i;
+	for ( numeric::Size i = 1; i <= cumulative_distribution_.size(); ++i ) {
+		if ( cumulative_distribution_[i] && cumulative_distribution_[i] >= randnum ) return i;
 	}
 
 	return cumulative_distribution_.size();
@@ -123,14 +119,12 @@ WeightedSampler::random_sample(
 numeric::Size
 WeightedSampler::random_sample(
 	numeric::random::RandomGenerator & rg
-)
-{
+) const {
 	return random_sample(rg.uniform());
 }
 
 void
-WeightedSampler::update_cumulative_distribution()
-{
+WeightedSampler::update_cumulative_distribution() const {
 	runtime_assert(weights_.size());
 
 	cumulative_distribution_.resize(weights_.size());

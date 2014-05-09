@@ -27,11 +27,12 @@ static MoverRegistrator< backrub::BackrubSidechainMoverCreator > reg_BackrubSide
 
 static MoverRegistrator< canonical_sampling::MetricRecorderCreator > reg_MetricRecorderCreator;
 static MoverRegistrator< canonical_sampling::MetropolisHastingsMoverCreator > reg_MetropolisHastingsMoverCreator;
-static MoverRegistrator< canonical_sampling::MpiParallelTemperingCreator > reg_MpiParallelTemperingCreator;
-static MoverRegistrator< canonical_sampling::MpiHamiltonianExchangeCreator > reg_MpiHamiltonianExchangeCreator;
+static MoverRegistrator< canonical_sampling::ParallelTemperingCreator > reg_ParallelTemperingCreator;
+static MoverRegistrator< canonical_sampling::HamiltonianExchangeCreator > reg_HamiltonianExchangeCreator;
 static MoverRegistrator< canonical_sampling::PDBTrajectoryRecorderCreator > reg_PDBTrajectoryRecorderCreator;
 static MoverRegistrator< canonical_sampling::SilentTrajectoryRecorderCreator > reg_SilentTrajectoryRecorderCreator;
 static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
+static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_TrialCountObserverCreator;
 
 static MoverRegistrator< cryst::SetCrystWeightMoverCreator > reg_SetCrystWeightMoverCreator;
 static MoverRegistrator< cryst::RecomputeDensityMapMoverCreator > reg_RecomputeDensityMapMoverCreator;

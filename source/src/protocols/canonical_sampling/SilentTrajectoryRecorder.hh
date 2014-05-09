@@ -25,6 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/io/ozstream.hh>
+#include <protocols/jd2/JobOutputter.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -33,7 +34,7 @@ namespace protocols {
 namespace canonical_sampling {
 
 /// @brief Record a trajectory to the rosetta-specific silent file format.
-class SilentTrajectoryRecorder : public TrajectoryRecorder {
+class SilentTrajectoryRecorder : public protocols::canonical_sampling::TrajectoryRecorder {
 public:
 	typedef TrajectoryRecorder Parent;
 	/// @brief Default constructor.
@@ -62,19 +63,19 @@ public:
 
 	virtual void initialize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	virtual	void observe_after_metropolis(
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
 	bool
 	restart_simulation(
 			 core::pose::Pose & pose,
-			 MetropolisHastingsMover& metropolis_hastings_mover,
+			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
 			 core::Size& cycle,
 			 core::Size& temp_level,
 			 core::Real& temperature
@@ -86,12 +87,15 @@ protected:
 	/// written.
 	virtual void 	write_model(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	core::Size score_stride_;
 
 	static bool options_registered_;
+
+private:
+	protocols::jd2::JobOutputterOP job_outputter_;
 }; // SilentTrajectoryRecorder
 
 

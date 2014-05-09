@@ -11,13 +11,12 @@
 /// process of figuring out how the code works.  I mention all this to get to 
 /// my point, which is a disclaimer:
 /// 
-/// I didn't necessarily understand how everything worked when I was writing  
-/// this documentation.  As I went along, I certainly became more and more 
-/// comfortable with the code.  I even successfully refactored parts of it.  
-/// But some of the documentation is speculative, so take everything with a 
-/// grain of salt.  And please fix any errors you find!  With that said, and 
-/// without any further ado, here is the description of the 
-/// protocols::canonical_sampling namespace:
+/// All of the documentation in the module was written by someone who didn't 
+/// really understand how the code works.  I was more just taking notes on how 
+/// I felt particular pieces of code should work.  The idea was to draw 
+/// attention to pieces of code that didn't work like I expected.  Therefore, 
+/// even though the documentation is phrased in an authoritative way, it is 
+/// based primarily on my feelings and secondarily on the code.
 ///
 /// The central class in this namespace is MetropolisHastingsMover.  Its 
 /// responsibility is to run a Monte Carlo loop.  This class is a Mover, and 
@@ -31,27 +30,21 @@
 /// obey detailed balance.  Some classes which fulfill this interface include 
 /// BackrubMover, LoopClosureMover, ShearMover, SmallMover, SidechainMover, and 
 /// SidechainMCMover.  Note that both sidechain and backbone moves are
-/// available.  Related to ThermodynamicMover is ThermodynamicObserver.  
-/// Observer subclasses are meant to observe the progress of the simulation.  
-/// The most important of these derive from TrajectoryRecorder and are used to 
-/// keep track of the poses being sampled.  You can add a mover to your 
-/// simulation using MetropolisHastingsMover.add_mover() or any of the 
-/// similarly named convenience methods, and you can add an observer using 
-/// MetropolisHastingsMover.add_observer().
-///
-/// Subclasses of TemperatureController are responsible for setting the 
-/// temperature during the simulation.  The most basic controller is 
-/// FixedTemperatureControler, which simply maintains a constant temperature 
-/// and is used by default.  More sophisticated temperature protocols allow for 
-/// faster equilibration.  These include SimulatedTempering, ParallelTempering, 
-/// and HamiltonianExchange.  The former two algorithms can both be used to 
-/// sample a defined thermodynamic ensemble, which is a nice feature.
+/// available.  To add a particular move to your simulation, use 
+/// MetropolisHastingsMover.add_mover() or any of the similarly-named 
+/// convenience methods.
+/// 
+/// Related to the ThermodynamicMover class is the ThermodynamicObserver class.  
+/// Observer subclasses are meant to observe and change the parameters of this 
+/// simulation itself.  There are three major subclasses: TrialCounterObserver, 
+/// TrajectoryRecorder, and TemperatureController.  The trial counters keep 
+/// track of move statistics and the trajectory recorders keep track of the 
+/// poses being sampled.  TemperatureController is an especially important 
+/// class because it is setup to manage the temperature of the Metropolis 
+/// Hastings simulation.  Protocols like simulated annealing and parallel 
+/// tempering are implemented by children of this class.  You can add an 
+/// observer to your simulation using MetropolisHastingsMover.add_observer().
 ///
 /// The actual simulation itself is delegated to the standard MonteCarlo class.  
-/// The temperature and the score function used in the simulation are taken 
-/// from a MonteCarlo object provided via 
-/// MetropolisHastingsMover.set_monte_carlo().  To smartly keep track of 
-/// acceptance rates during simulations where the temperature changes, setup 
-/// your MonteCarlo object to use the MultiTempTrialCounter by calling 
-/// MonteCarlo.set_counter().  This custom counter separately keeps track of 
-/// moves for each temperature level, which is useful information.
+/// You can use a custom MonteCarlo object in a canonical simulation by calling 
+/// MetropolisHastingsMover.set_monte_carlo().

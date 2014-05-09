@@ -112,6 +112,7 @@ public:
 	void call_output_observers( core::pose::Pose const& pose, JobOP job ) const;
 	void add_output_observer( JobOutputterObserverAP an_observer );
 	void remove_output_observer( JobOutputterObserverAP old_observer );
+	void set_defaults();
 
 private:
 
@@ -135,6 +136,11 @@ private:
 
 	///@brief copy ctor defined for the sake of the remove-headers-in-headers initiative.  As of this writing, there is no reason to actually call this function, so it is declared but UNIMPLEMENTED to force compiler errors if you try to do this (instead of allowing the compiler to autogenerate the code).  If you have a valid need for this function, feel free to implement it properly and make it a public function.
 	JobOutputter(JobOutputter const & cpy);
+
+	//options
+	std::string prefix_;
+	std::string suffix_;
+	bool no_nstruct_label_;
 
 }; // JobOutputter
 

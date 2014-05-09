@@ -90,6 +90,9 @@ public: // accessors
 	set_silent_file_name( utility::file::FileName name );
 
 	void
+	set_forced_silent_struct_type( std::string const& );
+
+	void
 	set_write_separate_scorefile( bool write_separate_scorefile );
 
 	void set_write_no_structures( bool value = true ) {
@@ -154,6 +157,9 @@ private: // members
 
 	//utility::vector1< core::io::silent::SilentStructOP > saved_structs_;
 	utility::vector1< std::pair< core::io::silent::SilentStructOP, utility::file::FileName > > saved_structs_;
+
+	///@brief override choice of silent_struct_type
+	std::string forced_silent_struct_type_;
 }; // SilentFileJobOutputter
 
 // This is necessary because some protocols append prefixes

@@ -86,7 +86,7 @@ ModulatedMover::parse_my_tag(
 	core::pose::Pose const & pose
 ) {
   protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), movers );
-  tempering_ = dynamic_cast< protocols::canonical_sampling::MpiHamiltonianExchange* >( mover() );
+  tempering_ = dynamic_cast< protocols::canonical_sampling::HamiltonianExchange* >( mover() );
   if ( !tempering_ ) {
     throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires an tempering argument" );
   }
@@ -94,6 +94,7 @@ ModulatedMover::parse_my_tag(
   if ( tag->hasOption( "type" ) ) {
     // I don't know yet how to use this type option, I mean even i got the mover type, so what?
     mover_name_ = tag->getOption< std::string >( "type" );
+		set_type( mover_name_ ); //for proper reporting in trial_counters
   }
 
   utility::vector1< std::string > interpolated_options;

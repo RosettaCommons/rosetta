@@ -53,22 +53,28 @@ namespace jd2 {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-protocols::jd2::FileJobOutputter::FileJobOutputter() : parent(), write_scorefile_(false), scorefile_name_() {
+FileJobOutputter::FileJobOutputter() : parent() {
+	set_defaults();
+}
+
+void FileJobOutputter::set_defaults() {
+	write_scorefile_ = false;
+	scorefile_name_ = "";
 	TR.Debug << "FileJobOutputter ctor" << std::endl;
 	utility::file::FileName default_path( option[ out::path::all ]() );
-	if( option[ out::file::scorefile ].user() ){
+	if ( option[ out::file::scorefile ].user() ) {
 		write_scorefile_ = true;
 		scorefile_name_ = option[ out::file::scorefile ]();
 		if ( option[ out::path::score ].user() ) {
 			scorefile_name_.path( option[ out::path::score ]().path() );
-			}else if (! scorefile_name_.absolute() ) {
+			} else if (! scorefile_name_.absolute() ) {
 					scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
 			}
-	}else if(option [out::file::score_only].user()){
+	} else if ( option [out::file::score_only].user() ) {
 		write_scorefile_ = true;
 		scorefile_name_ = option[out::file::score_only]();
-		if (! scorefile_name_.absolute() ) scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
-	}else if ( !option[ run::no_scorefile ]() ) {
+		if ( !scorefile_name_.absolute() ) scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
+	} else if ( !option[ run::no_scorefile ]() ) {
 		write_scorefile_ = true;
 		// set up all the information for the scorefile
 		utility::file::FileName outfile("score");
@@ -92,9 +98,9 @@ protocols::jd2::FileJobOutputter::FileJobOutputter() : parent(), write_scorefile
 	}
 }
 
-protocols::jd2::FileJobOutputter::~FileJobOutputter(){}
+FileJobOutputter::~FileJobOutputter(){}
 
-void protocols::jd2::FileJobOutputter::scorefile(
+void FileJobOutputter::scorefile(
 	JobCOP job,
 	core::pose::Pose const & pose,
 	std::string prefix_tag,
@@ -104,11 +110,11 @@ void protocols::jd2::FileJobOutputter::scorefile(
 {
 	TR.Debug << "FileJobOutputter scorefile" << std::endl;
 	if (!write_scorefile_) return;
-	
+
 	core::io::raw_data::ScoreFileData sfd((scorefile.empty() ? scorefile_name_.name() : scorefile));
 	std::map < std::string, core::Real > score_map;
-	std::map < std::string, std::string > string_map;
-	protocols::jd2::ScoreMap::score_map_from_scored_pose( score_map, pose );
+  std::map < std::string, std::string > string_map;
+	ScoreMap::score_map_from_scored_pose( score_map, pose );
 
 	// Adds StringReal job info into the score map for output in the scorefile.
 	for( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
@@ -164,8 +170,8 @@ void protocols::jd2::FileJobOutputter::scorefile(
 	}
 	if(score_map.size() == 1) {
 		std::map < std::string, core::Real >::iterator it( score_map.begin() );
-		if(it != score_map.end() && 
-		  it->first == name_from_score_type(core::scoring::total_score) && 
+		if(it != score_map.end() &&
+		  it->first == name_from_score_type(core::scoring::total_score) &&
 		  it->second == 0) {
 			// Only one score term, and it's the total_score with value 0
 			return;

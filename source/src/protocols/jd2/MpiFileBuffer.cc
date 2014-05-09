@@ -79,10 +79,19 @@ MpiFileBuffer::~MpiFileBuffer() {
 	garbage_collection();
 }
 
+void MpiFileBuffer::show_status( std::ostream& os ) const {
+	os << "MpiFileBuffer Status Report...." << std::endl;
+	os << "known filenames: " << open_files_.size() << std::endl;
+	os << "open buffers:    " << open_buffers_.size() << std::endl;
+	os << "garbage_list:    " << garbage_collector_.size() << std::endl;
+	os << "blocked_files:   " << blocked_files_.size() << std::endl;
+}
+
 void MpiFileBuffer::garbage_collection() {
 	time_t const now( time(NULL) );
 	//tr.Debug << "last garbage collection " << now-last_garbage_collection_ << " seconds ago" << std::endl;
 	if ( now-last_garbage_collection_ < 30 ) return;
+	if ( tr.Debug.visible() ) show_status( tr.Debug );
 	tr.Debug << "garbage collection active..." << std::endl;
 	for ( GarbageList::iterator it=garbage_collector_.begin(); it!=garbage_collector_.end(); ) {
 		GarbageList::iterator to_erase( it );

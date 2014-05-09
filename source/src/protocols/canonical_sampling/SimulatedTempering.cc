@@ -15,7 +15,7 @@
 // Unit Headers
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
 #include <protocols/canonical_sampling/SimulatedTemperingCreator.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+
 
 // protocols headers
 #include <basic/datacache/DataMap.hh>
@@ -70,21 +70,22 @@ static basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
 static numeric::random::RandomGenerator RG(6127547);
 
 
-namespace protocols {
-namespace canonical_sampling {
-using namespace core;
+bool protocols::canonical_sampling::SimulatedTempering::options_registered_( false );
 
-bool SimulatedTempering::options_registered_( false );
-
-void SimulatedTempering::register_options() {
+//Mike: when you want to remove these Macros... leave them at least here as comment - since they provide documentation
+void protocols::canonical_sampling::SimulatedTempering::register_options() {
 	if ( !options_registered_ ) {
 		options_registered_ = true;
-		Parent::register_options();
+		TemperingBase::register_options();
 		NEW_OPT( tempering::temp::offset, "offset for score (effectively scales all weights)", 40 );
 		NEW_OPT( tempering::reweight::stride, "every X trials update the weights distribution - 0 for no reweighting", 0 );
 		NEW_OPT( tempering::temp::jump, "if true we can jump to any temperature instead of +/- 1 level", false );
 	}
 }
+
+namespace protocols {
+namespace canonical_sampling {
+using namespace core;
 
 std::string
 SimulatedTemperingCreator::keyname() const {
@@ -105,14 +106,15 @@ SimulatedTempering::SimulatedTempering() {
 	set_defaults();
 }
 
-SimulatedTempering::SimulatedTempering(
-		SimulatedTempering const & other) : TemperatureController(other) {
+SimulatedTempering::SimulatedTempering(	SimulatedTempering const & other ) :
+	protocols::canonical_sampling::TemperingBase(other)
+{
+	self_transition_ = other.self_transition_;
+	score_offset_ = other.score_offset_;
+	weights_ = other.weights_ ;
+	counts_ = other.counts_ ;
+	weighted_counts_ = other.weighted_counts_ ;
 
- self_transition_ = other.self_transition_;
- score_offset_ = other.score_offset_;
- weights_ = other.weights_ ;
- counts_ = other.counts_ ;
- weighted_counts_ = other.weighted_counts_ ;
 }
 
 /// @brief callback executed before any Monte Carlo trials
@@ -126,7 +128,7 @@ SimulatedTempering::reset_raw_counter() {
 void
 SimulatedTempering::initialize_simulation(
 	pose::Pose & pose,
-	MetropolisHastingsMover const & metropolis_hastings_mover,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
@@ -161,7 +163,7 @@ SimulatedTempering::reweight() {
 void
 SimulatedTempering::finalize_simulation(
 	pose::Pose& pose,
-	MetropolisHastingsMover const & mhm
+	protocols::canonical_sampling::MetropolisHastingsMover const & mhm
 ) {
 	finalize_simulation( mhm.output_name() );
 	Parent::finalize_simulation( pose, mhm );
@@ -176,9 +178,7 @@ SimulatedTempering::finalize_simulation( std::string const& output_name ) {
 }
 
 core::Real
-SimulatedTempering::temperature_move(
-		core::pose::Pose &, MetropolisHastingsMover &, core::Real score ) {
-
+SimulatedTempering::temperature_move( core::Real score ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 		//temperature increase, decrease or wait?
@@ -229,7 +229,7 @@ SimulatedTempering::get_name() const
 protocols::moves::MoverOP
 SimulatedTempering::clone() const
 {
-	return new SimulatedTempering(*this);
+	return new protocols::canonical_sampling::SimulatedTempering(*this);
 }
 
 protocols::moves::MoverOP
@@ -271,7 +271,7 @@ void SimulatedTempering::init_from_options() {
 	score_offset_ = option[ tempering::temp::offset ]();
 }
 
-bool SimulatedTempering::init_from_file( std::string const& filename ) {
+bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 	utility::vector1< core::Real > temperatures;
 	weights_.clear();
 

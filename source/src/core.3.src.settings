@@ -43,6 +43,7 @@ sources = {
 	"core/io/silent": [
 		"BasicSilentStructCreators",
 		"BinarySilentStruct",
+		"RigidBodySilentStruct",
 		"RNA_SilentStruct",
 		"ScoreFileSilentStruct",
 		"ScoreJumpFileSilentStruct",

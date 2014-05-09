@@ -43,12 +43,9 @@ OPT_1GRP_KEY( Integer, trajectory, cache_limit )
 OPT_1GRP_KEY( Boolean, trajectory, cumulate_jobs )
 OPT_1GRP_KEY( Boolean, trajectory, cumulate_replicas )
 
-namespace protocols {
-namespace canonical_sampling {
+bool protocols::canonical_sampling::TrajectoryRecorder::options_registered_( false );
 
-bool TrajectoryRecorder::options_registered_( false );
-
-void TrajectoryRecorder::register_options() {
+void protocols::canonical_sampling::TrajectoryRecorder::register_options() {
   using namespace basic::options;
   using namespace OptionKeys;
   if ( options_registered_ ) return;
@@ -58,6 +55,10 @@ void TrajectoryRecorder::register_options() {
 	NEW_OPT( trajectory::cumulate_jobs, "write structures from different jobs into the same trajectory file", false );
 	NEW_OPT( trajectory::cumulate_replicas, "write structures from different replicas the same trajectory file", false );
 }
+
+
+namespace protocols {
+namespace canonical_sampling {
 
 TrajectoryRecorder::TrajectoryRecorder() :
 	stride_(1),
@@ -84,7 +85,7 @@ TrajectoryRecorder::~TrajectoryRecorder()
 TrajectoryRecorder::TrajectoryRecorder(
 	TrajectoryRecorder const & other
 ) :
-	ThermodynamicObserver(other),
+	protocols::canonical_sampling::ThermodynamicObserver(other),
 	stride_(other.stride_),
 	model_count_(other.model_count_),
 	step_count_(other.step_count_),
@@ -127,7 +128,7 @@ TrajectoryRecorder::parse_my_tag(
 void
 TrajectoryRecorder::reset(
 	protocols::moves::MonteCarlo const &,
-	MetropolisHastingsMoverCAP //=0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP //=0
 ) {
 	model_count_ = 0;
 	step_count_ = 0;
@@ -136,7 +137,7 @@ TrajectoryRecorder::reset(
 void
 TrajectoryRecorder::update_after_boltzmann(
 	core::pose::Pose const & pose,
-	MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 	) {
 	++step_count_;
 
@@ -159,7 +160,7 @@ TrajectoryRecorder::apply( core::pose::Pose & pose ) {
 void
 TrajectoryRecorder::initialize_simulation(
   core::pose::Pose &,
-	MetropolisHastingsMover const & metropolis_hastings_mover,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	reset(
@@ -174,7 +175,7 @@ TrajectoryRecorder::initialize_simulation(
 
 void
 TrajectoryRecorder::observe_after_metropolis(
-	MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	update_after_boltzmann(

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /protocols/canonical_sampling/MpiHamiltonianExchange.fwd.hh
+/// @file   /protocols/canonical_sampling/BiasEnergy.fwd.hh
 /// @brief
 /// @author Oliver Lange  ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_fwd_hh
-#define INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_fwd_hh
+#ifndef INCLUDED_protocols_canonical_sampling_BiasEnergy_fwd_hh
+#define INCLUDED_protocols_canonical_sampling_BiasEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -20,14 +20,17 @@ namespace protocols {
 namespace canonical_sampling {
 
 // Forward
-class MpiHamiltonianExchange;
+class BiasEnergy;
 
-typedef utility::pointer::owning_ptr< MpiHamiltonianExchange > MpiHamiltonianExchangeOP;
-typedef utility::pointer::owning_ptr< MpiHamiltonianExchange const > MpiHamiltonianExchangeCOP;
+typedef utility::pointer::owning_ptr< BiasEnergy > BiasEnergyOP;
+typedef utility::pointer::owning_ptr< BiasEnergy const > BiasEnergyCOP;
+
+// Forward
+
 
 } // namespace canonical_sampling
 } // namespace protocols
 
 
-#endif // INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_FWD_HH
+#endif // INCLUDED_protocols_canonical_sampling_BiasEnergy_FWD_HH
 

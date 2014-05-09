@@ -102,7 +102,7 @@ void SilentFileJobOutputter::write_all_structs() {
 void SilentFileJobOutputter::set_defaults() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-
+	forced_silent_struct_type_ = "any";
 	silent_file_ = option[ out::file::silent ]();
 	if(silent_file_().compare("") == 0){
 		utility_exit_with_message("Please supply a file name with the -out:file:silent flag. If you specify a path the -out:path:all flag, the -out:file:silent file name will be relative to it.");
@@ -205,17 +205,22 @@ void SilentFileJobOutputter::other_pose(
 	utility::file::FileName filename( silent_file_ );
 	filename.base( silent_file_.base() +"_"+ tag );
 
-	core::io::silent::SilentStructOP ss;
+	utility::file::FileName tagged_score_filename( scorefile_name() );
+	tagged_score_filename.base( scorefile_name().base() +"_"+ tag );
+
+	core::io::silent::SilentStructOP ss( NULL );
 	if ( bWriteIntermediateFiles_ ) {
-		ss=dump_pose( filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count, tag );
+		if ( write_separate_scorefile_ && score_only ) {
+			dump_pose( tagged_score_filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count );
+		} else {
+			ss=dump_pose( filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count );
+		}
 	}
 
 	if ( write_separate_scorefile_ && ss ) {
 		//write here to avoid 2x evaluated for same structure
 		core::io::silent::SilentFileData sfd;
-		utility::file::FileName filename( scorefile_name() );
-		filename.base( scorefile_name().base() +"_"+ tag );
-		sfd.write_silent_struct( *ss, filename, true );
+		sfd.write_silent_struct( *ss, tagged_score_filename, true );
 	}
 
 
@@ -236,6 +241,8 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	core::io::silent::SilentStructOP ss;
 	if ( bWriteScoreOnly ) {
 		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score");
+	} else if ( forced_silent_struct_type_ != "any" ) {
+		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( forced_silent_struct_type_ );
 	} else {
 		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose_in );
 	}
@@ -335,6 +342,11 @@ void
 SilentFileJobOutputter::set_silent_file_name( utility::file::FileName name ){
 	silent_file_ = name;
 	read_done_jobs(); //safer to do this again
+}
+
+void
+SilentFileJobOutputter::set_forced_silent_struct_type( std::string const& setting ) {
+	forced_silent_struct_type_ = setting;
 }
 
 void

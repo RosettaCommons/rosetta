@@ -51,16 +51,16 @@ public:
 	/// the pose is the role of the ThermodynamicMover class.  The role of this 
 	/// class is to simply observe the poses being generated.
 	virtual
-	void apply(core::pose::Pose &) {};
+	void apply( core::pose::Pose& ) {};
 
 	/// @brief Callback executed before any Monte Carlo trials are attempted.
-	/// @details The @a cycle parameter gives the number of times that the 
-	/// simulation has been restarted.  Since the restart feature is currently 
-	/// commented out, @a cycle should always be 0.
 	virtual
 	void
 	initialize_simulation(
-		core::pose::Pose &, MetropolisHastingsMover const &, core::Size) {};
+		core::pose::Pose &,
+		MetropolisHastingsMover const &,
+		core::Size //non-zero if trajectory is restarted
+	) {};
 
 	/// @brief Callback executed after the Metropolis criterion is evaluated.
 	virtual
@@ -97,15 +97,18 @@ public:
 	virtual
 	bool
 	restart_simulation(
-			core::pose::Pose &,
-			MetropolisHastingsMover&,
-			core::Size &, core::Size &, core::Real & ) { return false; }
+		core::pose::Pose &,
+		MetropolisHastingsMover&,
+		core::Size&,
+		core::Size&,
+		core::Real& 
+	) { return false; }
 
 	/// @brief Return false if this observer does not require a valid pose.  
 	/// TrialCounterObserver is an example of such an observer.
 	virtual
 	bool
-	requires_pose() { return true; }
+	requires_pose() { return true; };
 
 private:
 

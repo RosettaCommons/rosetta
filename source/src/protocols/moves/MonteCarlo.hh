@@ -107,6 +107,10 @@ public:
 	/// @brief Empty destructor in C++ file to reduce number of necessary includes
 	virtual ~MonteCarlo();
 
+	virtual
+	MonteCarloOP clone() {
+		return new MonteCarlo( *this );
+	}
 
 	/// @brief Resets the ScoreFunction
 	void
@@ -114,7 +118,7 @@ public:
 		Pose const & init_pose,
 		ScoreFunction const & scorefxn
 	);
-	
+
 	/// @brief Change the weight on a score term in the object's scorefunction. Useful when we don't want to reset the whole scorefunction during an annealing step.
 	void
 	change_weight( core::scoring::ScoreType const & t, Real const & setting );
@@ -127,7 +131,7 @@ public:
 	///     MonteCarlo
 	///     MonteCarlo.temperature
 	///     MonteCarlo.show_state
-	void
+	virtual void
 	set_temperature( Real const temp );
 
 
@@ -187,9 +191,11 @@ public:
 	///     MonteCarlo
 	virtual bool
 	boltzmann(
-		core::Real score_delta,
+		core::Real score,
 		std::string const & move_type = "unk",
-		core::Real const proposal_density_ratio = 1
+		core::Real const proposal_density_ratio = 1,
+		core::Real const inner_score_temperature_delta = 0,
+		bool check_lowest_score = true
 	);
 
 
@@ -205,22 +211,21 @@ public:
 	///     MonteCarlo.last_accepted_score
 	///     MonteCarlo.lowest_score
 	///     MonteCarlo.lowest_scored_pose
+	virtual
 	void
 	reset( Pose const & pose );
 
-
-
 	/// @brief Sets the last accepted pose to the score of  <pose>
 	/// @note (does not reset counters)
-	///
-	/// example(s):
-	///     mc.reset_last_accepted( pose )
-	/// See also:
-	///     MonteCarlo
-	///     MonteCarlo.reset
 	void
-	reset_last_accepted( Pose const & pose );
+	set_last_accepted_pose(
+		Pose const & pose
+	);
 
+	void
+	set_lowest_score_pose(
+		core::pose::Pose const& pose
+	);
 
 	/// @brief Returns the last accepted pose
 	///
@@ -250,31 +255,6 @@ public:
 	{
 		return *lowest_score_pose_;
 	}
-
-
-	/// @brief Sets the last accepted pose to the score of  <pose>
-	/// @note (for recovering from a checkpoint)
-	///
-	/// example(s):
-	///     mc.set_last_accepted_pose( pose )
-	/// See also:
-	///     MonteCarlo
-	///     MonteCarlo.last_accept
-	///     MonteCarlo.last_accepted_pose
-	///     MonteCarlo.last_accepted_score
-	void set_last_accepted_pose( Pose const & pose );
-
-
-	/// @brief Sets the lowest score pose to the score of  <pose>
-	/// @note (for recovering from a checkpoint)
-	///
-	/// example(s):
-	///     mc.set_lowest_score_pose(_pose_)
-	/// See also:
-	///     MonteCarlo
-	///     MonteCarlo.lowest_score
-	///     MonteCarlo.lowest_score_pose
-	void set_lowest_score_pose( Pose const & pose );
 
 
 	/// @brief Compares score of <pose> to the lowest score found.
@@ -354,6 +334,7 @@ public:
 	///     MonteCarlo.temperature
 	///     ScoreFunction
 	///     create_score_function
+	virtual
 	void
 	score_function( ScoreFunction const & scorefxn ); // ScoreFunctionCOP scorefxn )
 
@@ -576,7 +557,7 @@ public:
 	void push_back( moves::MonteCarloExceptionConvergeOP );
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods
-private:
+protected:
 
 	/// @brief for managing the temperature, if we need to do so
 	void
@@ -598,6 +579,29 @@ private:
 	/// unimplemented -- do not use
 	MonteCarlo const & operator = ( MonteCarlo const & ); // assignment operator -- do not use.
 
+
+protected:
+	void set_last_accepted_pose(
+    core::pose::Pose const& pose,
+		core::Real score
+	);
+
+	void set_last_accepted_score(
+		core::Real score
+	) {
+		last_accepted_score_ = score;
+	};
+
+	void
+	set_lowest_score_pose(
+		core::pose::Pose const& pose,
+		core::Real score
+	);
+
+	void
+	set_mc_accepted( MCA value ) {
+		mc_accepted_ = value;
+	}
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 private:

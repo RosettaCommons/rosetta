@@ -30,125 +30,55 @@
 #include <utility/vector1.hh>
 
 
-// C++ headers
-
-
-// Operating system headers
-
-
-// Forward declarations
-
-
-
-
 namespace numeric {
 namespace random {
 
-
 	/// @brief
-class WeightedSampler
-{
-
-  // Friends
-
-
-public: // Types
-
-
-protected: // Types
-
-
-private: // Types
-
-
-
-
-public: // Constants
-
-
-protected: // Constants
-
-
-private: // Constants
-
-
-
+class WeightedSampler {
 
 public: // Creation
-
-
 	/// @brief Constructor
 	WeightedSampler();
-
 
 	/// @brief Constructor
 	WeightedSampler(
 		numeric::Size num_weights
 	);
 
-
 	/// @brief Constructor
 	WeightedSampler(
 		utility::vector1<numeric::Real> const & weights
 	);
 
-
 	/// @brief Destructor
 	virtual
 	~WeightedSampler();
 
-
-protected: // Creation
-
-
-public: // Creation
-
-
 	/// @brief Copy constructor
 	WeightedSampler( WeightedSampler const & );
-
-
-
-
-public: // Methods: assignment
-
 
 	/// @brief Copy operator
 	WeightedSampler &
 	operator=( WeightedSampler const & );
 
-
-public: // Methods: comparison
-
-
-
-
 public: // Methods
-	// Further subsections of methods allowed
 
 	// get weights
 	utility::vector1<numeric::Real> const &
-	weights() const
-	{
+	weights() const {
 		return weights_;
 	}
 
 	// set weights
 	void
-	weights(
-		utility::vector1<numeric::Real> const & weights
-	)
-	{
+	weights( utility::vector1<numeric::Real> const & weights	)	{
 		weights_ = weights;
 		cumulative_distribution_valid_ = false;
 	}
 
 	// add a single weight to the end
 	void
-	add_weight(
-		numeric::Real weight
-	)
-	{
+	add_weight(	numeric::Real weight )	{
 		weights_.push_back(weight);
 		cumulative_distribution_valid_ = false;
 	}
@@ -158,24 +88,21 @@ public: // Methods
 	set_weight(
 		numeric::Size weight_num,
 		numeric::Real weight
-	)
-	{
+	)	{
 		weights_[weight_num] = weight;
 		cumulative_distribution_valid_ = false;
 	}
 
 	// clear weights
 	void
-	clear()
-	{
+	clear() {
 		weights_.clear();
 		cumulative_distribution_valid_ = false;
 	}
 
 	// get number of weights
 	numeric::Size
-	size() const
-	{
+	size() const {
 		return weights_.size();
 	}
 
@@ -184,47 +111,26 @@ public: // Methods
 	resize(
 		numeric::Size num_weights,
 		numeric::Real default_weight = 0
-	)
-	{
+	)	{
 		weights_.resize(num_weights, default_weight);
 	}
 
 	// get a random sample by passing a random number from 0 to 1
 	numeric::Size
-	random_sample(
-		numeric::Real randnum
-	);
+	random_sample( numeric::Real randnum ) const;
 
 	// get a random sample by passing a random generator
 	numeric::Size
-	random_sample(
-		numeric::random::RandomGenerator & rg
-	);
-
-protected: // Methods
-	// Further subsections of methods allowed
-
-
-private: // Methods
-	// Further subsections of methods allowed
+	random_sample( numeric::random::RandomGenerator& ) const;
 
 	void
-	update_cumulative_distribution();
-
-
-public: // Properties
-
-
-protected: // Properties
-
-
-
+	update_cumulative_distribution() const;
 
 private: // Fields
 
 	utility::vector1<numeric::Real> weights_;
-	utility::vector1<numeric::Real> cumulative_distribution_;
-	bool cumulative_distribution_valid_;
+	mutable utility::vector1<numeric::Real> cumulative_distribution_;
+	mutable bool cumulative_distribution_valid_;
 
 }; // WeightedSampler
 

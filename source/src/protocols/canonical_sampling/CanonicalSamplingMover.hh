@@ -49,7 +49,7 @@ public:
 	CanonicalSamplingMover();
 
 	CanonicalSamplingMover(core::scoring::ScoreFunctionOP sfxn,
-												 mc_convergence_checks::Pool_RMSD_OP ptr,
+												 protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr,
 												 int ntrial);
 
   void add_mover(protocols::moves::MoverOP m,core::Real weight);
@@ -62,7 +62,7 @@ public:
 
 	void set_temp(core::Real temperature);
 
-	core::Real get_temp() {return temperature_;}
+	core::Real get_temp() {return temperature_;};
 
 	void set_interval_pose_dump(int p_interval);
 
@@ -71,22 +71,22 @@ public:
 	void set_scorefunction(core::scoring::ScoreFunctionOP sfxn);
 
 	void detailed_balance(bool truefalse);
-	bool detailed_balance() const { return detailed_balance_; }
+	bool detailed_balance() const { return detailed_balance_; };
 
-	core::Real transition_threshold() const {return transition_threshold_; }
+	core::Real transition_threshold() const {return transition_threshold_; };
 
 	void use_MPI_sync_pools(bool truefalse);
-	bool use_MPI_sync_pools() const {return MPI_synchronize_pools_; }
+	bool use_MPI_sync_pools() const {return MPI_synchronize_pools_; };
 
 	void use_MPI_bcast( bool truefalse );
-	bool use_MPI_bcast() const { return MPI_bcast_; }
+	bool use_MPI_bcast() const { return MPI_bcast_; };
 
 	void use_hierarchical_clustering( bool truefalse );
-	bool use_hierarchical_clustering() const { return use_hierarchical_clustering_; }
+	bool use_hierarchical_clustering() const { return use_hierarchical_clustering_; };
 
 	void output_only_cluster_transitions(bool truefalse);
 
-  void set_poolrmsd(mc_convergence_checks::Pool_RMSD_OP ptr);
+  void set_poolrmsd(protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr);
 
   virtual void apply(core::pose::Pose & pose);
 	virtual std::string get_name() const;
@@ -116,7 +116,7 @@ private:
   protocols::moves::MonteCarloOP mc_;
   core::scoring::ScoreFunctionOP sfxn_;
   moves::RandomMoverOP randmove_;
-  mc_convergence_checks::Pool_RMSD_OP pool_rms_;
+  protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP pool_rms_;
 
   core::Size interval_posedump_;
   core::Size interval_transitiondump_;

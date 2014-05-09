@@ -7,22 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/canonical_sampling/MpiHamiltonianExchangeMover.cc
-/// @brief MpiHamiltonianExchange methods implemented
+/// @file protocols/canonical_sampling/HamiltonianExchangeMover.cc
+/// @brief HamiltonianExchange methods implemented
 /// @author
 
 
 // Unit Headers
-#include <protocols/canonical_sampling/MpiHamiltonianExchange.hh>
-#include <protocols/canonical_sampling/MpiHamiltonianExchangeCreator.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/HamiltonianExchange.hh>
+#include <protocols/canonical_sampling/HamiltonianExchangeCreator.hh>
+
 
 // protocols headers
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/BiasedMonteCarlo.hh>
+#include <protocols/canonical_sampling/BiasEnergy.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -69,111 +72,99 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.MpiHamiltonianExchange" );
+static basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
 static numeric::random::RandomGenerator RG(2592747);
 
 
-namespace protocols {
-namespace canonical_sampling {
-using namespace core;
-
-bool MpiHamiltonianExchange::options_registered_( false );
+bool protocols::canonical_sampling::HamiltonianExchange::options_registered_( false );
 
 //Mike: when you want to remove these Macros... leave them at least here as comment - since they provide documentation
-void MpiHamiltonianExchange::register_options() {
+void protocols::canonical_sampling::HamiltonianExchange::register_options() {
 	if ( !options_registered_ ) {
 		options_registered_ = true;
 		Parent::register_options();
 	}
 }
 
+namespace protocols {
+namespace canonical_sampling {
+using namespace core;
+
 std::string
-MpiHamiltonianExchangeCreator::keyname() const {
-	return MpiHamiltonianExchangeCreator::mover_name();
+HamiltonianExchangeCreator::keyname() const {
+	return HamiltonianExchangeCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-MpiHamiltonianExchangeCreator::create_mover() const {
-	return new MpiHamiltonianExchange;
+HamiltonianExchangeCreator::create_mover() const {
+	return new HamiltonianExchange;
 }
 
 std::string
-MpiHamiltonianExchangeCreator::mover_name() {
-	return "MpiHamiltonianExchange";
+HamiltonianExchangeCreator::mover_name() {
+	return "HamiltonianExchange";
 }
 
-MpiHamiltonianExchange::MpiHamiltonianExchange() :
-	rank_( -1 )
+HamiltonianExchange::HamiltonianExchange() :
+	exchange_grid_dimension_( 1 ),
+	bias_energy_( NULL )
 {
-#ifndef USEMPI
-	utility_exit_with_message( "MpiHamiltonianExchange requires MPI build" );
-#endif
-#ifdef USEMPI
-	mpi_comm_ = MPI_COMM_NULL;
-#endif
 	set_defaults();
 }
 
-MpiHamiltonianExchange::MpiHamiltonianExchange(	MpiHamiltonianExchange const & other ) :
+HamiltonianExchange::HamiltonianExchange(	HamiltonianExchange const & other ) :
 	Parent( other ),
-	rank_( other.rank_ ),
 	hamiltonians_( other.hamiltonians_ ),
 	exchange_schedules_( other.exchange_schedules_ ),
 	current_exchange_schedule_( other.current_exchange_schedule_ ),
 	exchange_grid_( other.exchange_grid_ ),
 	exchange_grid_dimension_( other.exchange_grid_dimension_ ),
-	successfully_initialized_( false )
+	successfully_initialized_( other.successfully_initialized_ ),
+	bias_energy_( other.bias_energy_ )
 {
-#ifndef USEMPI
-	utility_exit_with_message( "MpiHamiltonianExchange requires MPI build" );
-#endif
-#ifdef USEMPI
-	set_mpi_comm( other.mpi_comm() );
-#endif
+	Size const nlevels( n_temp_levels() );
+	runtime_assert( nlevels == hamiltonians_.size() );
 }
 
-MpiHamiltonianExchange& MpiHamiltonianExchange::operator=( MpiHamiltonianExchange const& other ) {
+HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& other ) {
 	if ( &other == this ) return *this;
 	Parent::operator=( other );
-	rank_ = other.rank_;
 	hamiltonians_ = other.hamiltonians_;
 	exchange_schedules_ = other.exchange_schedules_;
 	current_exchange_schedule_ = other.current_exchange_schedule_;
 	exchange_grid_ = other.exchange_grid_;
 	exchange_grid_dimension_ = other.exchange_grid_dimension_;
 	successfully_initialized_ = other.successfully_initialized_;
-#ifdef USEMPI
-	set_mpi_comm( other.mpi_comm() );
-#endif
+	bias_energy_ = other.bias_energy_;
 	Size const nlevels( n_temp_levels() );
 	runtime_assert( nlevels == hamiltonians_.size() );
 	return *this;
 }
 
-MpiHamiltonianExchange::~MpiHamiltonianExchange() {
+HamiltonianExchange::~HamiltonianExchange() {
 }
 
 
 std::string
-MpiHamiltonianExchange::get_name() const
+HamiltonianExchange::get_name() const
 {
-	return "MpiHamiltonianExchange";
+	return "HamiltonianExchange";
 }
 
 protocols::moves::MoverOP
-MpiHamiltonianExchange::clone() const
+HamiltonianExchange::clone() const
 {
-	return new MpiHamiltonianExchange(*this);
+	return new protocols::canonical_sampling::HamiltonianExchange(*this);
 }
 
 protocols::moves::MoverOP
-MpiHamiltonianExchange::fresh_instance() const
+HamiltonianExchange::fresh_instance() const
 {
-	return new MpiHamiltonianExchange;
+	return new HamiltonianExchange;
 }
 
 void
-MpiHamiltonianExchange::parse_my_tag(
+HamiltonianExchange::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
@@ -182,17 +173,17 @@ MpiHamiltonianExchange::parse_my_tag(
 ) {
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	if ( !successfully_initialized_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Initialization of MpiHamiltonianExchange Module failed! " );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Initialization of HamiltonianExchange Module failed! " );
 	}
 }
 
 
 /// handling of options including command-line
-void MpiHamiltonianExchange::set_defaults() {
+void HamiltonianExchange::set_defaults() {
 }
 
 /// @brief Assigns user specified values to primitive members using command line options
-void MpiHamiltonianExchange::init_from_options() {
+void HamiltonianExchange::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
@@ -202,34 +193,49 @@ void MpiHamiltonianExchange::init_from_options() {
 	Parent::init_from_options();
 }
 
+void
+HamiltonianExchange::set_monte_carlo(
+  protocols::moves::MonteCarloOP monte_carlo
+) {
+	Parent::set_monte_carlo( monte_carlo );
+	BiasedMonteCarloOP biased_mc = dynamic_cast<BiasedMonteCarlo*>( monte_carlo.get() );
+	if ( biased_mc ) {
+		bias_energy_ = biased_mc->bias_energy();
+	}
+}
 
 void
-MpiHamiltonianExchange::initialize_simulation(
+HamiltonianExchange::initialize_simulation(
 	 core::pose::Pose& pose,
 		MetropolisHastingsMover const& metropolis_hastings_mover,
-	 core::Size cycle
+	 core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	show( tr.Info );
-	Parent::initialize_simulation( pose, metropolis_hastings_mover,cycle );
-#ifdef USEMPI
-	set_mpi_comm( jd2::current_mpi_comm() );
-#endif
+	Parent::initialize_simulation( pose, metropolis_hastings_mover, cycle );
 	//	Size const nlevels( n_temp_levels() );
-	current_exchange_schedule_ = 0;
 	set_current_temp( rank()+1 );
+	current_exchange_schedule_ = 0;
+	next_exchange_schedule();
 	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ rank()+1 ] );
 }
 
 void
-MpiHamiltonianExchange::finalize_simulation(
-	pose::Pose& pose,
-	MetropolisHastingsMover const & mhm
+HamiltonianExchange::initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
+		core::Size level,
+		core::Real temp_in,
+		core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
-	Parent::finalize_simulation( pose, mhm );
+	show( tr.Info );
+	Parent::initialize_simulation( pose, mhm, level, temp_in, cycle );
+	current_exchange_schedule_ = 0;
+	next_exchange_schedule();
+	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ level ] );
 }
 
 Size
-MpiHamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coord, Size exclude_dim ) {
+HamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coord, Size exclude_dim ) {
 	Size const n_dim( coord.size() );
 	Size key( 0 );
 	Size stride( 1 );
@@ -241,7 +247,7 @@ MpiHamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_
 	return key;
 }
 
-void MpiHamiltonianExchange::setup_exchange_schedule() {
+void HamiltonianExchange::setup_exchange_schedule() {
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
 
@@ -291,83 +297,41 @@ void MpiHamiltonianExchange::setup_exchange_schedule() {
 	} // per dimension
 }
 
-void
-MpiHamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
-#ifdef USEMPI
-	using namespace ObjexxFCL::format;
-
-	//	tr.Trace<< "find exchange partner... " << std::endl;
-	int sendbuf = current_temp();
-	int* recvbuf = new int[ n_temp_levels() ];
-	MPI_Allgather( &sendbuf, 1, MPI_INT,
-              		recvbuf, 1, MPI_INT, mpi_comm() );
-	//tr.Trace<< " received all current cell-indices: ";
-	//	for ( Size i = 0; i < n_temp_levels(); ++i ) {
-	//		tr.Trace<< I(2, recvbuf[ i ]) << " ";
-	//	}
-	//	tr.Trace<< std::endl;
-
+Size
+HamiltonianExchange::next_exchange_level() const {
 	ExchangeSchedule const& ex( exchange_schedules_[ current_exchange_schedule_ ] );
 	int self( current_temp() );
-	runtime_assert( recvbuf[ rank() ] == self );
-	int other( -1 );
-	for ( Size i=1; i<=ex.size() && other<0; i++ ) {
+	int other( 0 );
+	for ( Size i=1; i<=ex.size() && !other; i++ ) {
 		if ( ex[ i ].first == self ) other = ex[ i ].second;
 		if ( ex[ i ].second == self ) other = ex[ i ].first;
 	}
-	if ( other < 0 ) {
-		//		tr.Trace<< "no partner for cell " << self << " on rank " << rank() << std::endl;
-		partner = -1;
-		return;
-	}
-	Size r;
-	for ( r=0; r<n_temp_levels(); ++r ) {
-		if ( recvbuf[ r ]==other ) break;
-	}
-	runtime_assert( r<n_temp_levels() );
+	return other;
+}
 
-	delete [ ] recvbuf;
-#else
-	Size r( 0 );
-#endif
-	partner = r;
-	is_master = rank() < partner;
+
+core::Real
+HamiltonianExchange::temperature_move( core::Real ) {
+	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose \
+  to evaluate alternative energy function prior to switching..." );
+	return -1;
 }
 
 core::Real
-MpiHamiltonianExchange::temperature_move(
-		pose::Pose & MPI_ONLY(pose),
-		MetropolisHastingsMover&,
-		core::Real MPI_ONLY(score) ) {
-
+HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ) ) {
 	using namespace ObjexxFCL::format;
 	check_temp_consistency();
+	//	tr.Trace << "counter: "<< temp_trial_count_+1 << " " << temperature_stride_ << " " << temp_trial_count_ % temperature_stride_ << std::endl;
 	if ( !time_for_temp_move() ) return temperature();
-	next_exchange_schedule();
-	//later: look in emap if all necessary energies have been computed...
-	/// if this is the case: reweight only
-	//  if not :             evaluate with alternative energy function
-	// now: just evaluate alternative.
+	tr.Trace << "time for temp-move! " << std::endl;
 
-	// communication strategies:
-	// I master-slave:  (rank 0 gathers all information and decides for all )
-	//   requires GATHER of score, SCATTER of alternative levels, GATHER of alternative score, SCATTER of assigned levels
-	// II peer2peer: ( pairwise communication; the lower-rank of a pair makes the decision)
-	//   requires: Allgather --> everybody should know which level is where -- subsequently pairwise exchanges only
-	//   requires: SEND UP ( alternative level ), SEND DOWN ( score, alternative score, previous level ), decision, SEND UP ( new level )
-	// strategy II involves less communication and is thus preferred.
-
-	// strategy II: all processes must be in sync regarding the exchange schedule.
-	//              communication will be non-blocking since pairwise swaps...
-	//
 #ifdef USEMPI
 	//communication tags
 	int const mpi_LEVEL_INFORM = 1;
 	int const mpi_SCORE_INFORM = 2;
 	int const mpi_LEVEL_DECISION = 3;
 
-	//Unused variable commented out to silence warnings
-	//Size const nlevels( n_temp_levels() );
+	Size const nlevels( n_temp_levels() );
 	int exchange_partner;
 	bool is_master;
 	find_exchange_partner( exchange_partner, is_master );
@@ -378,19 +342,34 @@ MpiHamiltonianExchange::temperature_move(
 	MPI_Status stats[2];
 	//SEND UP ( alternative levels )
 	if ( exchange_partner < 0 ) return temperature();
-	//tr.Trace << "exchange partner: " << exchange_partner << std::endl;
+
+	Real new_bias_score( 0 );
+	Real bias_score( 0 );
+	if ( bias_energy_ ) {
+		bias_score = bias_energy_->evaluate( pose );
+		new_bias_score = bias_energy_->update_and_evaluate_replica( exchange_partner, mpi_comm(), pose );
+		tr.Trace << "bias scores: " << bias_score << " " << new_bias_score << std::endl;
+	}
+
+	tr.Trace << "exchange partner: " << exchange_partner << std::endl;
 	MPI_Isend( &my_level, 1, MPI_INT, exchange_partner, mpi_LEVEL_INFORM, mpi_comm(), &reqs[0]);
 	MPI_Irecv( &new_level, 1, MPI_INT, exchange_partner, mpi_LEVEL_INFORM, mpi_comm(), &reqs[1]);
 	MPI_Waitall(2, reqs, stats);
-	//tr.Trace<< "my_level: " << my_level << " other level: " << new_level << std::endl;
-	core::scoring::ScoreFunction& new_scorefxn( *hamiltonians_[ new_level ] );
-	Real new_score( new_scorefxn( pose ) );
+	tr.Trace<< "my_level: " << my_level << " other level: " << new_level << std::endl;
+
+	std::ostringstream trial_str;
+	trial_str << "HX_" << my_level << "_" << new_level;
+	trial_counter().count_trial( trial_str.str() );
+
+	Real const score( hamiltonians_[ my_level ]->score( pose ) );
+	Real const new_score( hamiltonians_[ new_level ]->score( pose ) );
+
 	float scores[ 2 ];
 	int swap( 0 );
 	if ( !is_master ) {
-		scores[ 0 ] = new_score; //the lower is other for the upper partner
-		scores[ 1 ] = score; //the higher is self for the upper partner
-		//tr.Trace << " send scores " << F( 8,5, scores[ 1 ]) << " " << F( 8,5, scores[ 0 ]) << std::endl;
+		scores[ 0 ] = new_score + new_bias_score; //the lower is other for the upper partner
+		scores[ 1 ] = score + bias_score; //the higher is self for the upper partner
+		tr.Trace << " send scores " << F( 8,5, scores[ 1 ]) << " " << F( 8,5, scores[ 0 ]) << std::endl;
 		MPI_Send( &scores, 2, MPI_FLOAT, exchange_partner, mpi_SCORE_INFORM, mpi_comm() );
 		MPI_Recv( &swap, 1, MPI_INT, exchange_partner, mpi_LEVEL_DECISION, mpi_comm(), &stats[0] );
 	} else {
@@ -405,8 +384,8 @@ MpiHamiltonianExchange::temperature_move(
 		//<< F( 8,5, scores[ 0 ]) << " " << F( 8,5, scores[ 1 ]) << std::endl;
 		Real const invT1( 1.0 / temperature() );
 		Real const invT2( 1.0 / temperature( new_level ) );
-		Real const deltaE1( scores[ 0 ] - score );
-		Real const deltaE2( scores[ 1 ] - new_score );
+		Real const deltaE1( scores[ 0 ] - score - bias_score );
+		Real const deltaE2( scores[ 1 ] - new_score - new_bias_score );
 		Real const delta( invT1*deltaE1 - invT2*deltaE2 );
 		Real const r( RG.uniform() );
 		swap = r < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ? 1 : 0;
@@ -416,20 +395,28 @@ MpiHamiltonianExchange::temperature_move(
 		//			 << F( 4,2, std::exp( std::max(-40.0, -delta ) ) ) <<  " " << F( 4,2, r ) << std::endl;
 
 	}
+	if ( is_master ) tr.Debug << "Exchange between level " << my_level << " and " << new_level
+														<< " at ranks " << rank() << ":" << exchange_partner
+														<< ( swap ? " swapped! " : " not swapped" ) << std::endl;
 	if ( swap ) {
-		//tr.Trace<< "swap! " << std::endl;
+		tr.Trace<< "swap! " << std::endl;
+		trial_counter().count_accepted( trial_str.str() );
+		if ( bias_energy_ ) bias_energy_->swap_replicas();
 		set_current_temp( new_level );
 		monte_carlo()->score_function( *hamiltonians_[ new_level ] );
 	}
 #endif
+	next_exchange_schedule();
 	return temperature();
 }
 
-void MpiHamiltonianExchange::next_exchange_schedule() {
-	current_exchange_schedule_ = ( current_exchange_schedule_ + 1 ) % exchange_schedules_.size();
+void HamiltonianExchange::next_exchange_schedule() {
+	do {
+		current_exchange_schedule_ = ( current_exchange_schedule_ + 1 ) % exchange_schedules_.size();
+	}	while( !next_exchange_level() );
 }
 
-void MpiHamiltonianExchange::clear() {
+void HamiltonianExchange::clear() {
 	exchange_schedules_.clear();
 	exchange_grid_.clear();
 	hamiltonians_.clear();
@@ -475,7 +462,7 @@ private:
 };
 
 
-bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
+bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 	typedef utility::vector1< PatchOperation > PatchOperationList;
 	PatchOperationList global_patch_operations;
 
@@ -484,7 +471,7 @@ bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 	utility::io::izstream in( filename );
 	if ( !in.good() ) {
 		tr.Error << "cannot open file " << filename << std::endl;
-		return false;
+		utility_exit_with_message( "cannot open file "+filename );
 	}
 
 	std::string line;
@@ -544,7 +531,7 @@ bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 
 		// first proper line ( not GRID_DIM or comment )
 		exchange_grid_dimension_ = n_dim;
-		std::istringstream line_stream( line ); //start over reading the same line
+		std::istringstream line_stream( line+" " ); //start over reading the same line
 		Real temp;
 		std::string score_name;
 		std::string patch_name;
@@ -555,12 +542,14 @@ bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 		if ( !line_stream.good() ) {
 			tr.Error << "format error in hamiltonian exchange file : " << filename << " at line " << line << std::endl;
 			tr.Error << "expected " << n_dim << " integer values for the grid-coordinate" << std::endl;
+			utility_exit_with_message( "format error in "+filename );
 			return false;
 		}
 		line_stream >> temp >> score_name;
 		if ( !line_stream.good() ) {
 			tr.Error << "format error in hamiltonian exchange file : " << filename << " at line " << line << std::endl;
-			tr.Error << "expected " << n_dim << " integer values for the grid-coordinate" << std::endl;
+			tr.Error << "expected real value for temperature and string for score-name" << std::endl;
+			utility_exit_with_message( "format error in "+filename );
 			return false;
 		}
 		line_stream >> patch_name;
@@ -581,6 +570,9 @@ bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 			std::string operation;
 			Real wt;
 			line_stream >> tag;
+			if ( line_stream.fail() ) {  //nothing else to read
+				break;
+			}
 			if ( tag == "ETABLE" ) {
 				line_stream >> tag;
 				score->set_etable( tag );
@@ -597,11 +589,19 @@ bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 			PatchOperation patch( score_type, operation, wt );
 			patch.apply( *score );
 		}
+
+		tr.Debug << "adding gridd cell with temperature: " << temp << " and score " << score << " at grid-coord: ";
+		for ( GridCoord::const_iterator it=coord.begin(); it!=coord.end(); ++it ) {
+			tr.Debug << *it << " ";
+		}
+		tr.Debug << std::endl;
+
 		temperatures.push_back( temp );
 		hamiltonians_.push_back( score );
 		exchange_grid_.push_back( coord );
 	}
 	set_temperatures( temperatures );
+	runtime_assert( temperatures.size() == n_temp_levels() );
 	runtime_assert( n_temp_levels() == hamiltonians_.size() );
 	runtime_assert( n_temp_levels() == exchange_grid_.size() );
 
@@ -611,32 +611,13 @@ bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 }
 
 
-#ifdef USEMPI
-void MpiHamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
-	if ( mpi_comm != MPI_COMM_NULL ) {
-		MPI_Comm_dup( mpi_comm, &mpi_comm_ );
-		MPI_Comm_rank( mpi_comm_, &rank_ );
-		int communicator_size;
-		MPI_Comm_size( mpi_comm_, &communicator_size );
-		if ( communicator_size != (int) n_temp_levels() ) {
-			std::ostringstream os;
-			os << "For MpiHamiltonianExchange the number of exchange cells " << n_temp_levels()
-				 << "\n has to be consistent with the option -run:n_replica "
-				 << communicator_size;
-			utility_exit_with_message( os.str() );
-		}
-	} else {
-		mpi_comm_ = MPI_COMM_NULL;
-	}
-}
-#endif
 
-void MpiHamiltonianExchange::show( std::ostream& os ) const {
+void HamiltonianExchange::show( std::ostream& os ) const {
 	using namespace ObjexxFCL::format;
 	// All osput will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	os << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-	os << line_marker << A( 47, "MpiHamiltonianExchange Module" ) << space( 27 ) << line_marker << std::endl;
+	os << line_marker << A( 47, "HamiltonianExchange Module" ) << space( 27 ) << line_marker << std::endl;
 	os << line_marker << space( 74 ) << line_marker << std::endl;
 	// Display the movable jumps that will be used in docking
 	os << line_marker << A( 20, "Hamiltonian Cells: " ) << I( 5, n_temp_levels() )
@@ -649,7 +630,7 @@ void MpiHamiltonianExchange::show( std::ostream& os ) const {
 		}
 		os << A( 15, " Temperature: " ) << F( 5, 3, temperature( level ) )
 			 << space( 74-20-20-3*exchange_grid_dimension_ ) << line_marker << std::endl;
-		hamiltonians_[ level ]->show( os );
+		if ( tr.Debug.visible() ) hamiltonians_[ level ]->show( os );
 		os << std::endl;
 		os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
 	}
@@ -678,7 +659,7 @@ void MpiHamiltonianExchange::show( std::ostream& os ) const {
 	os << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 }
 
-std::ostream& operator << ( std::ostream & os, MpiHamiltonianExchange const& obj ) {
+std::ostream& operator << ( std::ostream & os, HamiltonianExchange const& obj ) {
 	obj.show( os );
 	return os;
 }

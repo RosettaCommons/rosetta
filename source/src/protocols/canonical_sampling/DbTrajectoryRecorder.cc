@@ -13,9 +13,6 @@
 // Headers {{{1
 #include <protocols/canonical_sampling/DbTrajectoryRecorder.hh>
 #include <protocols/canonical_sampling/DbTrajectoryRecorderCreator.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -25,6 +22,10 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+
+// Protocol headers
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -86,13 +87,12 @@ string DbTrajectoryRecorderCreator::mover_name() { // {{{1
 // }}}1
 
 DbTrajectoryRecorder::DbTrajectoryRecorder() // {{{1
-	: TrajectoryRecorder(), job_id_(-1), temp_level_(0) {}
+	: TrajectoryRecorder(),
+	  job_id_(-1) {}
 
 DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id) // {{{1
-	: TrajectoryRecorder(), job_id_(job_id), temp_level_(0) {}
-
-DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id, Size temp_level) // {{{1
-	: TrajectoryRecorder(), job_id_(job_id), temp_level_(temp_level) {}
+	: TrajectoryRecorder(),
+	  job_id_(job_id) {}
 
 DbTrajectoryRecorder::DbTrajectoryRecorder( // {{{1
 	DbTrajectoryRecorder const & other)
@@ -101,7 +101,7 @@ DbTrajectoryRecorder::DbTrajectoryRecorder( // {{{1
 	  frame_cache_(other.frame_cache_) {}
 
 MoverOP DbTrajectoryRecorder::clone() const { // {{{1
-	return new DbTrajectoryRecorder( *this );
+	return new protocols::canonical_sampling::DbTrajectoryRecorder( *this );
 }
 
 MoverOP DbTrajectoryRecorder::fresh_instance() const { // {{{1
@@ -119,7 +119,7 @@ void DbTrajectoryRecorder::initialize_simulation( // {{{1
 
 	TrajectoryRecorder::initialize_simulation(pose, mover, cycle);
 	write_schema_to_db();
-	write_first_model(pose, &mover);
+	write_model(pose);
 }
 
 void DbTrajectoryRecorder::finalize_simulation( // {{{1
@@ -132,8 +132,10 @@ void DbTrajectoryRecorder::finalize_simulation( // {{{1
 
 bool DbTrajectoryRecorder::restart_simulation( // {{{1
 		core::pose::Pose &,
-		MetropolisHastingsMover &,
-		core::Size &, core::Size &, core::Real &) {
+		MetropolisHastingsMover&,
+		core::Size&,
+		core::Size&,
+		core::Real&) {
 
 	utility_exit_with_message("DbTrajectoryRecorder does not support restarting trajectories.");
 
@@ -157,12 +159,11 @@ void DbTrajectoryRecorder::write_schema_to_db() const { // {{{1
 	sessionOP db_session = basic::database::get_db_session();
 
 	Column job_id("job_id", new DbBigInt(), false);
-	Column temp_level("temp_level", new DbInteger(), false);
 	Column iteration("iteration", new DbBigInt(), false);
 	Column score("score", new DbReal(), false);
 	Column silent_pose("silent_pose", new DbText(), false);
 
-	PrimaryKey composite_key(make_vector1(job_id, temp_level, iteration));
+	PrimaryKey composite_key(make_vector1(job_id, iteration));
 	Schema trajectories("trajectories", composite_key);
 
 	trajectories.add_column(score);
@@ -179,7 +180,6 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 
 	InsertGenerator trajectory_insert("trajectories");
 	trajectory_insert.add_column("job_id");
-	trajectory_insert.add_column("temp_level");
 	trajectory_insert.add_column("iteration");
 	trajectory_insert.add_column("score");
 	trajectory_insert.add_column("silent_pose");
@@ -193,8 +193,6 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 			new BinarySilentStruct(frame.pose, "db");
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
-		RowDataBaseOP temp_level = new RowData<Size>(
-				"temp_level", frame.temp_level);
 		RowDataBaseOP iteration = new RowData<Size>(
 				"iteration", frame.iteration);
 		RowDataBaseOP score = new RowData<Real>(
@@ -202,8 +200,7 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 		RowDataBaseOP silent_pose = new RowData<string>(
 				"silent_pose", string_stream.str());
 
-		trajectory_insert.add_row(
-				make_vector(job, temp_level, iteration, score, silent_pose));
+		trajectory_insert.add_row(make_vector(job, iteration, score, silent_pose));
 	}
 
 	frame_cache_.clear();
@@ -212,22 +209,9 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 
 void DbTrajectoryRecorder::write_model( // {{{1
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP mover) {
-
-	Real temp_level = 0;
-
-	// The mover argument may not be provided.  If it is, use it to decide
-	// whether or not the current trajectory should be recorded.
-
-	if (mover) {
-		Real temp_level = mover->tempering()->temperature_level();
-		if (temp_level_ != 0 && temp_level != temp_level_) return;
-	}
-
-	// Add the current frame to the cache and flush the cache if necessary.
+		MetropolisHastingsMoverCAP) {
 
 	Frame frame;
-	frame.temp_level = temp_level;
 	frame.iteration = step_count();
 	frame.pose = pose;
 	frame_cache_.push_back(frame);
@@ -235,23 +219,6 @@ void DbTrajectoryRecorder::write_model( // {{{1
 	if (frame_cache_.size() >= cache_limit()) {
 		write_cache_to_db();
 	}
-}
-
-void DbTrajectoryRecorder::write_first_model( // {{{1
-		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP) {
-
-	// Only the root node should write the first model.
-#ifdef USEMPI
-	int rank; MPI_Comm_rank(protocols::jd2::current_mpi_comm(), &rank);
-	if (rank != 0) return;
-#endif
-
-	Frame frame;
-	frame.temp_level = 0;
-	frame.iteration = 0;
-	frame.pose = pose;
-	frame_cache_.push_back(frame);
 }
 // }}}1
 

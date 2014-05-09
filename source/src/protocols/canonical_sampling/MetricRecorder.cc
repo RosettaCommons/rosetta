@@ -8,42 +8,55 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/canonical_sampling/MetricRecorder.cc
+///
 /// @brief
 /// @author
 
-// Unit headers
+
+// Unit header or inline function header
 #include <protocols/canonical_sampling/MetricRecorder.hh>
 #include <protocols/canonical_sampling/MetricRecorderCreator.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
 
-// Core headers
+// Other project headers or inline function headers
+// AUTO-REMOVED #include <core/io/raw_data/ScoreStruct.hh>
+#include <core/pose/Pose.hh>
+//Gabe testing
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
+//#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
 #include <core/types.hh>
-
-// Protocol headers
+#include <core/id/AtomID.hh>
+//End gabe testing
+#include <core/scoring/Energies.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/TemperingBase.hh>
 #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/rosetta_scripts/util.hh>
-
-// Utility headers
+#include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+// External library headers
 
 // C++ headers
 #include <algorithm>
+// AUTO-REMOVED #include <iomanip>
 #include <sstream>
+
+#include <core/id/TorsionID.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
+// Operating system headers
+
+// Forward declarations
+
 
 namespace protocols {
 namespace canonical_sampling {
@@ -78,7 +91,7 @@ MetricRecorder::~MetricRecorder()
 MetricRecorder::MetricRecorder(
 	MetricRecorder const & other
 ) :
-	ThermodynamicObserver(other),
+	protocols::canonical_sampling::ThermodynamicObserver(other),
 	file_name_(other.file_name_),
 	stride_(other.stride_),
 	cumulate_jobs_(other.cumulate_jobs_),
@@ -100,7 +113,7 @@ MetricRecorder::operator=( MetricRecorder const & /* other */ )
 protocols::moves::MoverOP
 MetricRecorder::clone() const
 {
-	return new MetricRecorder( *this );
+	return new protocols::canonical_sampling::MetricRecorder( *this );
 }
 
 protocols::moves::MoverOP
@@ -293,7 +306,7 @@ MetricRecorder::add_torsion(
 void
 MetricRecorder::reset(
 	core::pose::Pose const & pose,
-	MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	step_count_ = 0;
@@ -304,7 +317,7 @@ MetricRecorder::reset(
 void
 MetricRecorder::update_after_boltzmann(
 	core::pose::Pose const & pose,
-	MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	if (recorder_stream_.filename() == "") {
@@ -322,9 +335,9 @@ MetricRecorder::update_after_boltzmann(
 
 	core::Size replica = protocols::jd2::current_replica();
 
-	TemperatureControllerCOP tempering = 0;
+	TemperingBaseCAP tempering = 0;
 	if (metropolis_hastings_mover) {
-		tempering = metropolis_hastings_mover->tempering();
+		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering()() );
 	}
 
 	if (step_count_ == 0) {
@@ -383,7 +396,7 @@ MetricRecorder::apply(
 void
 MetricRecorder::initialize_simulation(
 	core::pose::Pose &,
-	MetropolisHastingsMover const & metropolis_hastings_mover,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size //default=0; non-zero if trajectory is restarted
 )
 {
@@ -401,7 +414,7 @@ MetricRecorder::initialize_simulation(
 
 void
 MetricRecorder::observe_after_metropolis(
-	MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	update_after_boltzmann(
@@ -413,7 +426,7 @@ MetricRecorder::observe_after_metropolis(
 void
 MetricRecorder::finalize_simulation(
 	core::pose::Pose &,
-	MetropolisHastingsMover const &
+	protocols::canonical_sampling::MetropolisHastingsMover const &
 )
 {
 	recorder_stream_.close();

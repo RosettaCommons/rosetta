@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/canonical_sampling/MpiHamiltonianExchangeCreator.hh
-///@brief This class will create instances of Mover MpiHamiltonianExchange for the MoverFactory
+///@file protocols/canonical_sampling/HamiltonianExchangeCreator.hh
+///@brief This class will create instances of Mover HamiltonianExchange for the MoverFactory
 ///@author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchangeCreator_hh
-#define INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchangeCreator_hh
+#ifndef INCLUDED_protocols_canonical_sampling_HamiltonianExchangeCreator_hh
+#define INCLUDED_protocols_canonical_sampling_HamiltonianExchangeCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace canonical_sampling {
 
-/// @brief RosettaScripts factory for MpiHamiltonianExchange.
-class MpiHamiltonianExchangeCreator : public protocols::moves::MoverCreator {
+/// @brief RosettaScripts factory for HamiltonianExchange.
+class HamiltonianExchangeCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;

@@ -132,6 +132,10 @@ public:
 
 	std::string const & type() const { return type_; }
 
+	void set_type( std::string const& setting ) {
+		type_ = setting;
+	}
+
 	/// @brief A tag is a unique identifier used to identify structures produced
 	/// by this Mover. get_current_tag() returns the tag, and set_current_tag( std::string tag )
 	/// sets the tag.  This functionality is not intended for use with the 2008 job distributor.

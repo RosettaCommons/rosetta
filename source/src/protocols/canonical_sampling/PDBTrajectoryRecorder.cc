@@ -22,8 +22,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
+#include <protocols/canonical_sampling/TemperingBase.hh>
 #include <protocols/jd2/ScoreMap.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -66,7 +66,7 @@ PDBTrajectoryRecorder::~PDBTrajectoryRecorder() {}
 
 PDBTrajectoryRecorder::PDBTrajectoryRecorder(
 	PDBTrajectoryRecorder const & other
-) : TrajectoryRecorder( other ) {}
+) : protocols::canonical_sampling::TrajectoryRecorder( other ) {}
 
 PDBTrajectoryRecorder&
 PDBTrajectoryRecorder::operator=( PDBTrajectoryRecorder const & /* other */ )
@@ -79,7 +79,7 @@ PDBTrajectoryRecorder::operator=( PDBTrajectoryRecorder const & /* other */ )
 protocols::moves::MoverOP
 PDBTrajectoryRecorder::clone() const
 {
-	return new PDBTrajectoryRecorder( *this );
+	return new protocols::canonical_sampling::PDBTrajectoryRecorder( *this );
 }
 
 protocols::moves::MoverOP
@@ -109,7 +109,7 @@ PDBTrajectoryRecorder::parse_my_tag(
 void
 PDBTrajectoryRecorder::reset(
 	protocols::moves::MonteCarlo const & mc,
-	MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	Parent::reset(mc, metropolis_hastings_mover);
@@ -119,7 +119,7 @@ PDBTrajectoryRecorder::reset(
 void
 PDBTrajectoryRecorder::write_model(
 	core::pose::Pose const & pose,
-	MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	if (trajectory_stream_.filename() == "") {
@@ -132,9 +132,9 @@ PDBTrajectoryRecorder::write_model(
 	std::string job( metropolis_hastings_mover ? metropolis_hastings_mover->output_name() : "" );
 	core::Size replica = protocols::jd2::current_replica();
 
-	TemperatureControllerCOP tempering = 0;
+	TemperingBaseCAP tempering = 0;
 	if (metropolis_hastings_mover) {
-		tempering = metropolis_hastings_mover->tempering();
+		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering()() );
 	}
 
 	std::map < std::string, core::Real > score_map;
@@ -161,7 +161,7 @@ PDBTrajectoryRecorder::write_model(
 void
 PDBTrajectoryRecorder::finalize_simulation(
 	core::pose::Pose & pose,
-	MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	Parent::finalize_simulation( pose, metropolis_hastings_mover );

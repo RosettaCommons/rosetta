@@ -60,8 +60,8 @@ class MPIBPool_RMSD : public Pool_RMSD {
 
 public:
 
-static int master_node_;
-static int pool_master_node_;
+static core::Size master_node_;
+static core::Size pool_master_node_;
 
 
 
@@ -154,10 +154,10 @@ private:
   utility::vector1< bool > nodes_finished_;
   core::Size pool_size_;
   core::Size new_structures_;
-  int rank_;
-  int pool_rank_;
-  int npes_;
-  int pool_npes_;
+  core::Size rank_;
+  core::Size pool_rank_;
+  core::Size npes_;
+  core::Size pool_npes_;
   core::Real transition_threshold_;
   std::string new_decoys_out_;
   bool tracer_visible_;

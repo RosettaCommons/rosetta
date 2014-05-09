@@ -189,30 +189,6 @@ MonteCarlo::show_state() const
 	show_counters();
 }
 
-void
-MonteCarlo::set_counter(TrialCounterOP counter)
-{
-	counter_ = counter;
-}
-
-void
-MonteCarlo::count_trial(std::string const & tag)
-{
-	counter_->count_trial(tag);
-}
-
-void
-MonteCarlo::count_accepted(std::string const & tag)
-{
-	counter_->count_accepted(tag);
-}
-
-void
-MonteCarlo::count_energy_drop(std::string const & tag, Real drop)
-{
-	counter_->count_energy_drop(tag, drop);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 
 void
@@ -226,12 +202,6 @@ void
 MonteCarlo::reset_counters()
 {
 	counter_->reset();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-TrialCounterCOP
-MonteCarlo::counter() const {
-	return counter_;
 }
 
 ///@detail return number of trials since last reset
@@ -367,101 +337,38 @@ MonteCarlo::boltzmann(
 		boinc::Boinc::update_graphics_current( pose );
 #endif
 
-
 	// score the pose:
 	Real const score( (*score_function_)( pose ) );
-	total_score_of_last_considered_pose_ = score; // save this for the TrialMover so that it may keep statistics.
+	//now delegate deciscion making...
+	bool const accept( boltzmann( score, move_type, proposal_density_ratio, inner_score_temperature_delta ) );
 
-	if ( false ) { // DEBUG
-		pose::Pose copy_pose;
-		copy_pose = pose;
-		copy_pose.energies().clear();
-		TR << "score copy" << std::endl;
-		Real const copy_score = (*score_function_)( copy_pose );
-		if ( std::abs( copy_score - score ) > 1E-6) {
-			TR << "Score discrepancy.  score: " << score << " vs copy score: " << copy_score << std::endl;
-			TR << "pose score: ";
-			pose.energies().total_energies().show_if_nonzero_weight( TR, score_function_->weights() );
-			TR << std::endl;
-
-			TR << "copy score: ";
-			copy_pose.energies().total_energies().show_if_nonzero_weight( TR, score_function_->weights() );
-			TR << std::endl;
-
-			TR << "Difference: ";
-			core::scoring::EnergyMap emap = pose.energies().total_energies();
-			emap -= copy_pose.energies().total_energies();
-			emap.show_if_nonzero_weight( TR, score_function_->weights() );
-			TR << std::endl;
-		}
+	//rejected ?
+	if ( !accept ) {
+		evaluate_convergence_checks( pose, true /*reject*/, false /* not final*/ );
+		pose = ( *last_accepted_pose_ );
+		return false; // rejected
 	}
 
-	counter_->count_trial( move_type );
-
-
-#ifdef BOINC_GRAPHICS
-	if( update_boinc_ )
-		boinc::Boinc::update_mc_trial_info( counter_->trial( move_type ), move_type );
-#endif
-
-	Real const boltz_factor = ( last_accepted_score() - score ) / temperature_ + inner_score_temperature_delta;
-	Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) ) * proposal_density_ratio;
-	if ( probability < 1 ) {
-		if ( mc_RG.uniform() >= probability ) {
-			mc_accepted_ = MCA_rejected; // rejected
-			autotemp_reject();
-			evaluate_convergence_checks( pose, true /*reject*/, false /* not final*/ );
-			pose = ( *last_accepted_pose_ );
-
-			//TR << "Rejected with score = " << score
-			//	<< " ( prob = " << probability << " ) last_accepted scrore: " << last_accepted_score() << std::endl;
-			// score_function_->show( T("protocols.moves.MonteCarlo.boltzmann"), pose );
-
-			return false; // rejected
-
-
-		}
-		mc_accepted_ = MCA_accepted_thermally; // accepted thermally
-
-		//TR  << "thermally accepted with score = " << score
-		//	<< " ( prob = " << probability << " ) last_accepted scrore: " << last_accepted_score() << std::endl;
-		// score_function_->show( T("protocols.moves.MonteCarlo.boltzmann"), pose );
-	} else {
-
-		mc_accepted_ = MCA_accepted_score_beat_last; // energy is lower than last_accepted
-	}
-
-	// these are useful but cost a little time to get
-	/// Now handled automatically.  score_function_->accumulate_residue_total_energies( pose );
-
-	counter_->count_accepted( move_type );
-	counter_->count_energy_drop( move_type, score - last_accepted_score() );
+	//accepted !
 	PROF_START( basic::MC_ACCEPT );
 	*last_accepted_pose_ = pose;
-	last_accepted_score_ = score;
 
 #ifdef BOINC_GRAPHICS
 	if( update_boinc_ )
 		boinc::Boinc::update_graphics_last_accepted( pose, last_accepted_score() );
 #endif
 
-// 	last_accepted_pose_ = new Pose( *pose );
-
-	autotemp_accept();
-
-	if ( score < lowest_score() ) {
+	if ( mc_accepted_ == MCA_accepted_score_beat_low ) {
 		*lowest_score_pose_ = pose;
-		lowest_score_ = score;
 		evaluate_convergence_checks( pose, false /*not reject*/, false /*not final*/ );
 
 #ifdef BOINC_GRAPHICS
-	if( update_boinc_ )
-		boinc::Boinc::update_graphics_low_energy( pose, lowest_score() );
+		if( update_boinc_ )
+			boinc::Boinc::update_graphics_low_energy( pose, lowest_score() );
 #endif
 
-		//lowest_score_pose_ = new Pose ( pose );
-		mc_accepted_ = MCA_accepted_score_beat_low; //3;
-	}
+	} //MCA_accepted_score_beat_low
+
 	PROF_STOP( basic::MC_ACCEPT );
 	return true; // accept!
 }
@@ -469,52 +376,46 @@ MonteCarlo::boltzmann(
 
 bool
 MonteCarlo::boltzmann(
-	core::Real score_delta,
+	core::Real score,
 	std::string const & move_type, // = "unk"
-	core::Real const proposal_density_ratio // = 1
+	core::Real const proposal_density_ratio, // = 1
+	core::Real const inner_score_temperature_delta, // = 0
+	bool check_lowest_score //=true
 )
 {
-	// score the pose:
-	Real const score( last_accepted_score_ + score_delta );
+	// figure out the actual score
 	total_score_of_last_considered_pose_ = score; // save this for the TrialMover so that it may keep statistics.
-
 	counter_->count_trial( move_type );
 
-	Real const boltz_factor = ( last_accepted_score() - score ) / temperature_;
+#ifdef BOINC_GRAPHICS
+	if( update_boinc_ )
+		boinc::Boinc::update_mc_trial_info( counter_->trial( move_type ), move_type );
+#endif
+
+	Real const score_delta( score - last_accepted_score_ );
+	Real const boltz_factor =  -score_delta / temperature_ + inner_score_temperature_delta;
 	Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) ) * proposal_density_ratio;
 	if ( probability < 1 ) {
 		if ( mc_RG.uniform() >= probability ) {
 			mc_accepted_ = MCA_rejected; // rejected
 			autotemp_reject();
-
-			//TR << "Rejected with score = " << score
-			//	<< " ( prob = " << probability << " ) last_accepted scrore: " << last_accepted_score() << std::endl;
-			// score_function_->show( T("protocols.moves.MonteCarlo.boltzmann"), pose );
-
 			return false; // rejected
 		}
 		mc_accepted_ = MCA_accepted_thermally; // accepted thermally
-
-		//TR  << "thermally accepted with score = " << score
-		//	<< " ( prob = " << probability << " ) last_accepted scrore: " << last_accepted_score() << std::endl;
-		// score_function_->show( T("protocols.moves.MonteCarlo.boltzmann"), pose );
 	} else {
-
 		mc_accepted_ = MCA_accepted_score_beat_last; // energy is lower than last_accepted
 	}
 
 	counter_->count_accepted( move_type );
-	counter_->count_energy_drop( move_type, score - last_accepted_score() );
-	PROF_START( basic::MC_ACCEPT );
+	counter_->count_energy_drop( move_type, score_delta );
 	last_accepted_score_ = score;
 
 	autotemp_accept();
 
-	if ( score < lowest_score() ) {
+	if ( check_lowest_score && score < lowest_score() ) {
 		lowest_score_ = score;
 		mc_accepted_ = MCA_accepted_score_beat_low; //3;
 	}
-	PROF_STOP( basic::MC_ACCEPT );
 	return true; // accept!
 }
 
@@ -537,28 +438,6 @@ MonteCarlo::reset( Pose const & pose )
 	lowest_score_ = score;
 }
 
-
-void
-MonteCarlo::reset_last_accepted( Pose const & pose )
-{
-	PROF_START( basic::MC_ACCEPT );
-	*last_accepted_pose_ = pose;
-	PROF_STOP( basic::MC_ACCEPT );
-
-	Real const score( (*score_function_)( *last_accepted_pose_ ) );
-	/// Now handled automatically.  score_function_->accumulate_residue_total_energies( *last_accepted_pose_ );
-	last_accepted_score_ = score;
-
-	// if the last accepted pose has a lower energy that the lowest score pose, set that as well
-	if (last_accepted_pose_->energies().total_energy() < lowest_score_pose_->energies().total_energy()) {
-		PROF_START( basic::MC_ACCEPT );
-		*lowest_score_pose_ = *last_accepted_pose_;
-		PROF_STOP( basic::MC_ACCEPT );
-	}
-}
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 void
 MonteCarlo::set_autotemp(
@@ -571,8 +450,6 @@ MonteCarlo::set_autotemp(
 	last_accept_ = 0;
 }
 
-
-// for recovering from a checkpoint
 void
 MonteCarlo::set_last_accepted_pose( Pose const & pose )
 {
@@ -580,12 +457,19 @@ MonteCarlo::set_last_accepted_pose( Pose const & pose )
 	last_accepted_score_ = last_accepted_pose_->energies().total_energy();
 }
 
-// for recovering from a checkpoint
-void
-MonteCarlo::set_lowest_score_pose( Pose const & pose )
-{
+void MonteCarlo::set_last_accepted_pose( core::pose::Pose const& pose, core::Real score ) {
+	*last_accepted_pose_ = pose;
+	last_accepted_score_ = score;
+}
+
+void MonteCarlo::set_lowest_score_pose( core::pose::Pose const& pose ) {
 	*lowest_score_pose_ = pose;
-	lowest_score_ = lowest_score_pose_->energies().total_energy();
+	lowest_score_ = pose.energies().total_energy();
+}
+
+void MonteCarlo::set_lowest_score_pose( core::pose::Pose const& pose, core::Real score ) {
+	*lowest_score_pose_ = pose;
+	lowest_score_ = score;
 }
 
 bool
@@ -686,7 +570,7 @@ MonteCarlo::autotemp_reject()
 		//if ( temperature_ > max_temperature * 0.25 )
 		TR << "autotemp_reject -- heat: " << last_accept_<< ' ' << temperature_  << std::endl;
 		last_accept_ = -1;
-		temperature_ = std::min( temperature_ + heat_delta, max_temperature );
+		set_temperature( std::min( temperature_ + heat_delta, max_temperature ) );
 	}
 	++last_accept_;
 }
@@ -698,7 +582,7 @@ MonteCarlo::autotemp_accept()
 {
 	if ( !autotemp_ ) return;
 	if ( temperature_ != quench_temp_ ) {
-		temperature_ = quench_temp_;
+		set_temperature( quench_temp_ );
 		TR << "autotemp_accept: reset temperature_ = " << temperature_ << std::endl;
 	}
 

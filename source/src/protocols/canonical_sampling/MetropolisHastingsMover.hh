@@ -16,28 +16,28 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-#include <protocols/canonical_sampling/TemperatureController.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/canonical_sampling/TemperatureController.hh>
+
+// Project Headers
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/loops/Loop.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <numeric/random/WeightedSampler.hh>
+
+// Utility Headers
+#include <core/types.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+#include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.fwd.hh>
 
 #ifdef WIN32
 	#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
-// Core headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-
-// Project Headers
-#include <protocols/loops/Loop.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-
-// Utility Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <numeric/random/WeightedSampler.hh>
 
 namespace protocols {
 namespace canonical_sampling {
@@ -142,6 +142,10 @@ public:
 		core::Size ntrials
 	);
 
+	/// @brief Return the iteration currently being processed by the simulation.
+	core::Size
+	current_trial() const { return current_trial_; }
+
 	/// @brief Return the file name used by some of the observers to output data. 
 	std::string const &
 	output_name() const;
@@ -172,7 +176,7 @@ public:
 	/// @brief Return a randomly chosen mover to use in the next iteration.
 	virtual
 	ThermodynamicMoverOP
-	random_mover();
+	random_mover() const;
 
 	/// @brief Add the given mover to the simulation.
 	virtual
@@ -239,7 +243,9 @@ public:
 
 	/// @brief Add the given observer to this simulation.
 	void
-	add_observer( ThermodynamicObserverOP observer);
+	add_observer(
+		ThermodynamicObserverOP observer
+	);
 
 	/// @brief Return the most recently used ThermodynamicMover.
 	ThermodynamicMover const&
@@ -247,26 +253,22 @@ public:
 
 	/// @brief Return true if the last attempted move was accepted.
 	bool
-	last_accepted() const { return last_accepted_; }
-
-	/// @copydoc MultiTempTrialCounter::count_trial
-	void count_trial(std::string const & tag);
-
-	/// @copydoc MultiTempTrialCounter::count_accepted
-	void count_accepted(std::string const & tag);
-
-	/// @copydoc MultiTempTrialCounter::count_energy_drop
-	void count_energy_drop(std::string const & tag, core::Real drop);
+	last_accepted() const {
+		return last_accepted_;
+	}
 
 protected:
 
 	/// @brief Protected non-const access to the TemperatureController.
-	TemperatureControllerOP
-	nonconst_tempering();
+	TemperatureControllerOP const&
+	tempering() { return tempering_; }
 
 	/// @brief Return the mover that was added at the given index.
 	ThermodynamicMoverOP
-	mover_by_index(numeric::Size idx) const { return movers_[idx]; }
+	mover_by_index(numeric::Size idx) const
+	{
+		return movers_[idx];
+	}
 
 	/// @brief Finalize all the movers and observers used in this simulation, and 
 	/// write some debrief statistics to the tracer.
@@ -296,6 +298,7 @@ private:
 	// Configurable
 	protocols::moves::MonteCarloOP monte_carlo_;
 	core::Size ntrials_;
+	core::Size current_trial_;
 	std::string output_name_;
 	utility::vector1< ThermodynamicMoverOP > movers_;
 	utility::vector1< ThermodynamicObserverOP > observers_;
@@ -307,7 +310,6 @@ private:
 	// Some status is necessary for the observers
 	ThermodynamicMoverOP last_move_;
 	bool last_accepted_;
-	core::Size trial_;
 
 	// Internal book keeping
 	bool output_name_from_job_distributor_;

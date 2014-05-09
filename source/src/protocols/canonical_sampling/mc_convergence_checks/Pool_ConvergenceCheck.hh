@@ -61,9 +61,9 @@ class Pool_RMSD : public utility::pointer::ReferenceCount {
 public:
 	//c'stor supply file with structures and threshold (Angstroem RMSD)
 	Pool_RMSD( std::string silent_file )
-	{ fill_pool( silent_file); }
+	{ fill_pool( silent_file); };
 
-	Pool_RMSD() {}
+	Pool_RMSD() {};
 
 	virtual ~Pool_RMSD();
 
@@ -73,13 +73,13 @@ public:
 	core::Size evaluate( core::io::silent::SilentStruct const&, std::string& best_decoy, core::Real& best_rmsd ) const;
   virtual core::Size evaluate_and_add( core::pose::Pose const&  pose, std::string& cluster_center, core::Real& best_rmsd, core::Real transition_threshold );
 
-	core::Size size() const { return pool_.n_decoys(); }
+	core::Size size() const { return pool_.n_decoys(); };
 
 
 	void add( core::io::silent::SilentStruct const&, std::string new_tag = "keep_silent_tag" );
 	void add( core::pose::Pose const&, std::string new_tag );
 
-	virtual void finalize() { return; }
+	virtual void finalize() { return; };
 
 	void get(core::Size index, ObjexxFCL::FArray2D_double& result);
 	std::string& get_tag(core::Size index);
@@ -120,7 +120,7 @@ class Pool_ConvergenceCheck : public moves::MonteCarloExceptionConverge {
 public:
 	Pool_ConvergenceCheck( Pool_RMSD_OP rmsd_pool_in, core::Real threshold )
 		: threshold_( threshold ),
-			rmsd_pool_( rmsd_pool_in ) {}
+			rmsd_pool_( rmsd_pool_in ) {};
 
 	virtual ~Pool_ConvergenceCheck();
 	//throws EXCN_Pool_Converged if lowest_score pose is < threshold away from any pool structure
@@ -134,7 +134,7 @@ private:
 class Pool_Evaluator : public evaluation::PoseEvaluator {
 public:
 	virtual ~Pool_Evaluator();
-	Pool_Evaluator( Pool_RMSD_OP rmsd_pool_in ) : rmsd_pool_( rmsd_pool_in ) {}
+	Pool_Evaluator( Pool_RMSD_OP rmsd_pool_in ) : rmsd_pool_( rmsd_pool_in ) {};
 	/// from PoseEvaluator interface:
 
 	///@brief evaluate pose and store values in Silent_Struct
@@ -142,7 +142,7 @@ public:
 	virtual void apply( core::io::silent::SilentStruct &pss) const;
 
 	//	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
-	virtual core::Size size() const { return 2; }
+	virtual core::Size size() const { return 2; };
 	virtual std::string name( core::Size i ) const {
 		if ( i == 1 ) return "pool_converged_tag";
 		if ( i == 2 ) return "pool_converged_rmsd";

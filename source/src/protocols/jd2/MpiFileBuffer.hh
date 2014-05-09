@@ -56,7 +56,7 @@ private:
 	void open_channel( core::Size slave, std::string const& filename, bool append, core::Size& status ); //status to ret
 	bool is_open_channel( std::string const& filename );
 	void store_to_channel( core::Size slave, core::Size channel, std::string const& line );
-
+	void show_status( std::ostream& ) const;
 	void flush_channel( core::Size slave, core::Size channel_id );
 	void close_channel( core::Size slave, core::Size channel_id );
 	void block_file( core::Size slave, std::string const& filename ); //don't write to this file, and close-reopen_append streams

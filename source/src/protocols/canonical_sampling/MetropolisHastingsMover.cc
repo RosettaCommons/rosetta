@@ -11,15 +11,13 @@
 /// @brief MetropolisHastingsMover methods implemented
 /// @author
 
-// Unit headers
+
+// Unit Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
-#include <protocols/canonical_sampling/FixedTemperatureController.hh>
 
-// Protocol headers
+
+// protocols headers
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
@@ -31,37 +29,48 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/BiasEnergy.hh>
+#include <protocols/canonical_sampling/WTEBiasEnergy.hh>
+#include <protocols/canonical_sampling/BiasedMonteCarlo.hh>
+
 #include <protocols/rosetta_scripts/util.hh>
 
-// Core headers
-#include <core/chemical/ResidueType.hh>
+// core headers
 #include <core/kinematics/MoveMap.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-// Utility headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// numeric headers
 #include <numeric/random/random.hh>
-#include <utility/excn/Exceptions.hh>
+
+// utility headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
+
+#include <core/chemical/ResidueType.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-using namespace std;
-using namespace core;
+//Auto Headers
+#include <utility/excn/Exceptions.hh>
+#include <basic/options/option.hh>
+
+// C++ Headers
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.canonical_sampling.MetropolisHastingsMover" );
+static basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
 static numeric::random::RandomGenerator RG(638767547);
 
 namespace protocols {
@@ -83,33 +92,30 @@ MetropolisHastingsMoverCreator::mover_name() {
 }
 
 MetropolisHastingsMover::MetropolisHastingsMover() :
-	monte_carlo_(0), ntrials_(1000), trial_(0) {}
+	monte_carlo_(0),
+	ntrials_(1000)
+{}
 
-/// @details I'm pretty sure this is doing a shallow copy.  This is not what 
-/// you'd expect the copy constructor to do, so be careful and watch out for 
-/// the subtle kinds of bugs you would get if two simulations were sharing 
-/// their MonteCarlo and TemperatureController objects.  As it is, I don't 
-/// really think this method is being called anywhere.  I'm thinking about 
-/// replacing it with boost::noncopyable.
 MetropolisHastingsMover::MetropolisHastingsMover(
-	MetropolisHastingsMover const & other)
-	: Mover(other),
-	  monte_carlo_( new protocols::moves::MonteCarlo(*other.monte_carlo_) ),
-	  ntrials_(other.ntrials_),
-	  output_name_(other.output_name_),
-	  weighted_sampler_(other.weighted_sampler_),
-	  trial_(other.trial_)
+	MetropolisHastingsMover const & metropolis_hastings_mover
+) :
+	//utility::pointer::ReferenceCount(),
+	Mover(metropolis_hastings_mover),
+	monte_carlo_( metropolis_hastings_mover.monte_carlo_->clone() ),
+	ntrials_(metropolis_hastings_mover.ntrials_),
+	output_name_(metropolis_hastings_mover.output_name_),
+	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_)
 {
-	for (core::Size i = 1; i <= other.movers_.size(); ++i) {
-		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(other.movers_[i]()));
+	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
+		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]()));
 	}
 
-	for (core::Size i = 1; i <= other.observers_.size(); ++i) {
-		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(other.observers_[i]()));
+	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
+		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]()));
 	}
 
-	if (other.tempering_) {
-		tempering_ = reinterpret_cast<TemperatureController *>(other.tempering_());
+	if (metropolis_hastings_mover.tempering_) {
+		tempering_ = reinterpret_cast<TemperatureController *>(metropolis_hastings_mover.tempering_());
 		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
 	}
 }
@@ -125,48 +131,37 @@ core::Size
 MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if (output_name() == "") {
 		set_output_name(protocols::jd2::JobDistributor::get_instance()->current_output_name());
-		TR.Info  << " obtained output name from JobDistributor " << std::endl;
+		tr.Info  << " obtained output name from JobDistributor " << std::endl;
 		output_name_from_job_distributor_ = true;
 	} else {
-		TR.Info << " running with preset output name: " << output_name() << std::endl;
+		tr.Info << " running with preset output name: " << output_name() << std::endl;
 	}
 
 	if ( !tempering_ ) {
 		//get this done before "initialize_simulation" is called no movers and observers
-		TR.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
-		set_tempering(new FixedTemperatureController(monte_carlo_->temperature()));
+		tr.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
+		tempering_= new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() );
 	}
-
 	using namespace core;
-	core::Size cycle_number = 0;
-
-	// The restarting features is currently disabled.  The following line of code 
-	// is being used in its place, and should be removed if this feature is ever 
-	// enabled again.
-	TR << "Initializing " << tempering_->get_name() << std::endl;
-	tempering_->initialize_simulation(pose, *this, cycle_number);
-	/*
 	bool restart = false;
+	core::Size cycle_number = 0;
 	Size temp_level = 0;
 	Real temperature = -1.0;
-
-	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
-		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
-		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
-		if ( restart ) TR << "Restarted using " << observers_[i]->get_name() << std::endl;
-	}
+// 	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+// 		tr.Info<< "Attempting restart using " << observers_[i]->get_name() << std::endl;
+// 		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
+// 		if ( restart ) tr.Info<< "Restarted using " << observers_[i]->get_name() << std::endl;
+// 	}
 
 	if ( !restart ) {
 		cycle_number = 0; //make sure this is zero if we don't have a restart.
 		tempering_->initialize_simulation(pose, *this, cycle_number );
-	}
-	else {
+	} else {
 		tempering_->initialize_simulation(pose, *this, temp_level, temperature, cycle_number );
 	}
-	*/
 
 	for (core::Size i = 1; i <= movers_.size(); ++i) {
-		TR << "Initializing " << movers_[i]->get_name() << std::endl;
+		tr.Info << "Initializing " << movers_[i]->get_name() << std::endl;
 		movers_[i]->set_metropolis_hastings_mover(this);
 		movers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
@@ -176,14 +171,14 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	monte_carlo_->reset_counters();
 
 	for (core::Size i = 1; i <= observers_.size(); ++i) {
-		TR << "Initializing " << observers_[i]->get_name() << std::endl;
+		tr.Info << "Initializing " << observers_[i]->get_name() << std::endl;
 		observers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
 
-	TR << "Initial Score:\n";
-	monte_carlo_->score_function().show(TR, pose);
+	tr.Info << "Initial Score:\n";
+	monte_carlo_->score_function().show(tr, pose);
 
-	TR << "Running " << ntrials_-cycle_number << " trials..." << std::endl;
+	tr.Info << "Running " << ntrials_-cycle_number << " trials..." << std::endl;
 	return cycle_number;
 }
 
@@ -193,8 +188,7 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 
 	Size start_cycle = prepare_simulation( pose );
 
-	for (trial_ = start_cycle+1; trial_ <= ntrials_; ++trial_) {
-
+	for ( current_trial_ = start_cycle+1; !tempering_->finished_simulation( current_trial_, ntrials() ); ++current_trial_ ) {
 		ThermodynamicMoverOP mover(random_mover());
 		mover->apply(pose);
 		bool accepted = monte_carlo_->boltzmann(
@@ -205,40 +199,35 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 		);
 		set_last_move( mover );
 		set_last_accepted( accepted );
-		tempering_->temperature_move(pose, *this, monte_carlo_->last_accepted_score() );
+		tempering_->temperature_move( pose );
 		mover->observe_after_metropolis(*this);
-		TR.Debug << "current move accepted " << accepted <<std::endl;
+		tr.Trace << "current move accepted " << accepted <<std::endl;
 		for (core::Size i = 1; i <= observers_.size(); ++i) {
 			observers_[i]->observe_after_metropolis(*this);
 		}
-// 		core::scoring::constraints::ConstraintSetCOP cst_set = pose.constraint_set();
-// 		if ( !cst_set->has_constraints() )
-// 			utility_exit_with_message("cst_set is empty!");
-// 		if ( trial_ % 500 == 0 ) {
-// 			cst_set->show_violations(TR.Info, pose, 76, 1);
-// 		}
+		//currently used to write tempering stats every so often...
+		tempering_->observe_after_metropolis(*this);
 	}
-
 	wind_down_simulation( pose );
 }
 
 void
 MetropolisHastingsMover::wind_down_simulation( core::pose::Pose& pose) {
 	for (core::Size i = 1; i <= movers_.size(); ++i) {
-		TR << "Finalizing " << movers_[i]->get_name() << std::endl;
+		tr.Info << "Finalizing " << movers_[i]->get_name() << std::endl;
 		movers_[i]->finalize_simulation(pose, *this);
 	}
 
 	for (core::Size i = 1; i <= observers_.size(); ++i) {
-		TR << "Finalizing " << observers_[i]->get_name() << std::endl;
+		tr.Info << "Finalizing " << observers_[i]->get_name() << std::endl;
 		observers_[i]->finalize_simulation(pose, *this);
 	}
 
 	tempering_->finalize_simulation(pose, *this);
 
-	TR << "Final Score:" << std::endl;
-	monte_carlo_->score_function().show(TR, pose);
-	TR.flush();
+	tr.Debug << "Final Score:" << std::endl;
+	monte_carlo_->score_function().show(tr.Debug, pose);
+	tr.Debug << std::endl;
 
 	monte_carlo_->show_counters();
 
@@ -254,7 +243,7 @@ MetropolisHastingsMover::get_name() const
 protocols::moves::MoverOP
 MetropolisHastingsMover::clone() const
 {
-	return new MetropolisHastingsMover(*this);
+	return new protocols::canonical_sampling::MetropolisHastingsMover(*this);
 }
 
 protocols::moves::MoverOP
@@ -284,7 +273,16 @@ MetropolisHastingsMover::parse_my_tag(
 	//read tag scorefxn
 	core::scoring::ScoreFunctionOP score_fxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 	core::Real const temperature(tag->getOption< core::Real >( "temperature", 0.6 ) );
-	monte_carlo_ = new protocols::moves::MonteCarlo(*score_fxn, temperature);
+
+	bool wte_sampling( tag->getOption< bool >( "wte", false ) );
+	if ( wte_sampling ) {
+		BiasEnergyOP bias_energy = new WTEBiasEnergy(); // stride, omega, gamma );
+		bias_energy->parse_my_tag( tag, data, filters, movers, pose );
+		add_observer( bias_energy );
+		monte_carlo_ = new BiasedMonteCarlo( *score_fxn, temperature, bias_energy );
+	} else {
+		monte_carlo_ = new protocols::moves::MonteCarlo( *score_fxn, temperature );
+	}
 
 	//add movers and observers
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
@@ -295,7 +293,7 @@ MetropolisHastingsMover::parse_my_tag(
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
 			protocols::moves::Movers_map::const_iterator mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
-				TR << "Mover not found for XML tag:\n" << subtag << std::endl;
+				tr.Error<< "Mover not found for XML tag:\n" << subtag << std::endl;
 				throw utility::excn::EXCN_RosettaScriptsOption("");
 			}
 			mover = mover_iter->second;
@@ -311,15 +309,19 @@ MetropolisHastingsMover::parse_my_tag(
 		if ( th_mover ) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
 			add_mover( th_mover, weight, subtag );
+			// 			add_mover( th_mover, weight );
 		} else if ( th_observer ) { //its an observer
-			add_observer( th_observer );
-		} else if ( temp_controller ) { // it is a temperature controller
-			if ( tempering_ ) {
-				throw utility::excn::EXCN_RosettaScriptsOption( "cannot define two TemperatureControllers" );
+			//it might also be a tempering module...
+			if ( temp_controller ) { // it is a temperature controller
+				if ( tempering_ ) {
+					throw utility::excn::EXCN_RosettaScriptsOption( "cannot define two TemperatureControllers" );
+				}
+				set_tempering( temp_controller );
+			} else {  //no just an plain old observer
+				add_observer( th_observer );
 			}
-			set_tempering( temp_controller );
 		} else { //its something different
-			TR << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
+			tr.Error<< "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 	}
@@ -343,16 +345,6 @@ MetropolisHastingsMover::set_monte_carlo(
 	if ( tempering_ ) tempering_->set_monte_carlo( monte_carlo_ );
 }
 
-TemperatureControllerCOP
-MetropolisHastingsMover::tempering() const {
-	return tempering_;
-}
-
-TemperatureControllerOP
-MetropolisHastingsMover::nonconst_tempering() {
-	return tempering_;
-}
-
 void
 MetropolisHastingsMover::set_tempering(
 	TemperatureControllerOP tempering
@@ -361,16 +353,16 @@ MetropolisHastingsMover::set_tempering(
 	if ( monte_carlo_ ) tempering_->set_monte_carlo( monte_carlo_ );
 }
 
+TemperatureControllerCOP
+MetropolisHastingsMover::tempering() const {
+	return tempering_;
+}
+
 void
 MetropolisHastingsMover::set_ntrials(
 	core::Size ntrials
 ) {
 	ntrials_ = ntrials;
-}
-
-bool
-MetropolisHastingsMover::finished() const {
-	return trial_ > ntrials_;
 }
 
 std::string const &
@@ -427,23 +419,10 @@ MetropolisHastingsMover::last_move() const {
 	return *last_move_;
 }
 
-void MetropolisHastingsMover::count_trial(string const & tag) {
-	monte_carlo_->count_trial(tag);
-}
-
-void MetropolisHastingsMover::count_accepted(string const & tag) {
-	monte_carlo_->count_accepted(tag);
-}
-
-void MetropolisHastingsMover::count_energy_drop(string const & tag, Real drop) {
-	monte_carlo_->count_energy_drop(tag, drop);
-}
-
 /// @details You can control the probability of selecting a particular mover 
 /// via the weight argument to the @ref add_mover() method.
 ThermodynamicMoverOP
-MetropolisHastingsMover::random_mover()
-{
+MetropolisHastingsMover::random_mover() const {
 	return movers_[weighted_sampler_.random_sample(RG)];
 }
 
@@ -455,8 +434,7 @@ void
 MetropolisHastingsMover::add_mover(
 	ThermodynamicMoverOP mover,
 	core::Real weight
-)
-{
+) {
 	mover->set_preserve_detailed_balance(true);
 	movers_.push_back(mover);
 	weighted_sampler_.add_weight(weight);
@@ -470,8 +448,7 @@ MetropolisHastingsMover::add_mover(
         ThermodynamicMoverOP mover,
         core::Real weight,
         utility::tag::TagCOP const&
-        )
-{
+) {
 	add_mover( mover, weight );
 }
 

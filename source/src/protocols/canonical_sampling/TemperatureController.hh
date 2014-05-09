@@ -24,21 +24,19 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/TemperatureController.fwd.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
-
-// Core Headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-
-// Protocol Headers
-#include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
+
+// Project Headers
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <numeric/random/WeightedSampler.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 // Utility Headers
+#include <core/types.hh>
 #include <utility/vector1.hh>
-#include <numeric/random/WeightedSampler.hh>
-#include <boost/noncopyable.hpp>
 
 namespace protocols {
 namespace canonical_sampling {
@@ -59,249 +57,163 @@ interpolation_type_string_to_enum( std::string const & interp_string );
 /// class provides an interface for writing these algorithms.  The most 
 /// important method is temperature_move(), which is responsible for actually 
 /// changing the temperature of the MonteCarlo object used for the underlying 
-/// simulation.
+/// simulation.  Methods like temperature_level() are also provided for 
+/// managing a discrete number of different temperature levels, which is a 
+/// common feature of these algorithms.
 /// 
-/// Methods are also get and set generally useful parameters.  These methods 
-/// include get_high_temp(), get_low_temp(), get_temp_levels(), get_stride(), 
-/// and temperature_level().  Temperature levels are provided for managing a 
-/// number of discrete temperature levels.  Not all of these parameters are 
-/// respected by and/or make sense for all temperature controllers.  For 
-/// example, FixedTemperatureController ignores all of this information.
+/// The TemperingBase class serves a similar role to this one, but is geared 
+/// towards controllers that actually intend to change the temperature.  This 
+/// class also is parent to FixedTemperatureController, which is the default 
+/// controller used by MetropolisHastingsMover.
 
-class TemperatureController : public protocols::moves::Mover {
+class TemperatureController : public ThermodynamicObserver {
 
-// Public Interfaces
 public:
 
 	/// @brief Default constructor.
 	TemperatureController();
 
-	/// @brief Default constructor.
-	TemperatureController(TemperatureController const & other);
+	/// @brief Copy constructor.
+	TemperatureController( TemperatureController const& );
 
 	/// @brief No-op implemented only to satisfy the Mover interface.
 	virtual
-	void apply( core::pose::Pose& ) {}
+	void apply( core::pose::Pose& ) {};
+
+	/// @brief Return the name of this class.
+	virtual
+	std::string
+	get_name() const;
 
 	/// @brief Return false.  This class does not need to be reinitialized for 
 	/// each job.
 	virtual
 	bool
-	reinitialize_for_each_job() const { return false; }
+	reinitialize_for_each_job() const { return false; };
 
 	/// @brief Return false.  This class does not need to be reinitialized for 
 	/// new input.  
 	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
-
-	/// @brief Register the options used by this mover with the global options 
-	/// system.
-	static void register_options();
+	reinitialize_for_new_input() const { return false; };
 
 	virtual
 	void
-	parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose
+	observe_after_metropolis(
+		MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
-	/// @copydoc ThermodynamicObserver::initialize_simulation
-	virtual void
-	initialize_simulation(
-		core::pose::Pose & pose,
-		MetropolisHastingsMover const & mover,
-		core::Size cycle
-	);
-
-	/// @brief Execute a temperature move if necessary.
-	/// @details This method is expected to return the new temperature (in units 
-	/// of kT, although kT doesn't mean much in the context of rosetta).
+	/// @brief Execute the temperature move.
+	/// @details This method is called by observe_after_metropolis() and is 
+	/// expected to return the new temperature (in units of kT, to the extent 
+	/// that that is meaningful in the context of rosetta).
 	virtual
 	core::Real
-	temperature_move(
-		core::pose::Pose & pose,
-		MetropolisHastingsMover & mover,
-		core::Real score
-	)=0;
+	temperature_move( core::Real score ) = 0;
 
-	/// @copydoc ThermodynamicObserver::finalize_simulation
+	/// @brief Execute a temperature move which depends on the current pose.
+	/// @details The default implementation just calls the pose-independent 
+	/// temperature_pose() method with the energy of the given pose.  However, 
+	/// the HamiltonianExchange temperature controller needs to evaluate the 
+	/// alternative Hamiltonian.
 	virtual
-	void
-	finalize_simulation(
-		core::pose::Pose & pose,
-		MetropolisHastingsMover const & mover
-	);
+	core::Real
+	temperature_move( core::pose::Pose& pose );
 
-// Getters and Setters
-public:
+	/// @brief Return the current temperature.
+	virtual core::Real temperature() const = 0;
 
-	/// @brief Return the temperature of the underlying MonteCarlo object.
-	core::Real temperature() const;
-
-	/// @brief  Return the temperature of the given level.
-	core::Real temperature( core::Size level ) const;
+	/// @brief Set the current temperature to match given level.
+	virtual core::Real temperature( core::Size level ) const = 0 ;
 
 	/// @brief Return the current temperature level.
 	/// @details Tempering controllers often work with a handful of discrete 
 	/// temperature levels.  This method makes it possible to work with levels, 
-	/// which are discrete, rather than temperatures, which are continuous.  
-	/// Higher temperature levels correspond to higher temperatures, and as usual 
-	/// in rosetta, counting starts at one.  So the lowest temperature being 
-	/// simulated will always be level 1.
+	/// which are discrete, rather than temperatures, which are continuous.
 	/// @see n_temp_levels()
 	/// @see temperature()
-	core::Size temperature_level() const;
+	virtual core::Size temperature_level() const {
+		return 1;
+	}
+
+	virtual
+	void
+	initialize_simulation(
+		core::pose::Pose & pose,
+		MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size level,
+		core::Real temperature,
+		core::Size cycle
+	);
+
+	virtual
+	void
+	initialize_simulation(
+		core::pose::Pose &,
+		MetropolisHastingsMover const &,
+		core::Size
+	) {};
 
 	/// @brief Return the number of temperature levels used by this controller.
-	/// @details This parameter must be set from the command line using the 
-	/// <tt>-tempering:temp:levels</tt> flag.  The default value is 10.  In some 
-	/// cases (e.g. when using MpiParallelTempering), this parameter must also match 
-	/// the number of processes allocated to your app by @c mpirun.  For example:
-	/// @code{.sh}
-	/// mpirun -np 32 my_parallel_tempering_app -tempering:temp:levels 32
-	/// @endcode
-	/// I'm not sure why this requirement exists. It's simple enough to ask MPI 
-	/// how many threads are available; why not just set that many temperature 
-	/// levels?  Perhaps this would make things harder to reproduce, because the 
-	/// behavior of the program would depend on options passed to @c mpirun.
 	/// @see temperature_level()
-	/// @see temperature()
-	core::Size n_temp_levels() const;
+	virtual core::Size n_temp_levels() const { return 1; };
 
 	/// @brief Return const access to the MonteCarlo object being controlled.
 	protocols::moves::MonteCarloCOP
 	monte_carlo() const;
 
+	/// @brief Return true if the simulation has been completed.
+	virtual
+	bool finished_simulation( core::Size trials, core::Size ntrials) {
+		return trials > ntrials;
+	}
+
 	/// @brief Set the MonteCarlo object to be controlled.
-	void
-	set_monte_carlo(protocols::moves::MonteCarloOP monte_carlo);
+	virtual
+	void set_monte_carlo(
+		protocols::moves::MonteCarloOP monte_carlo
+	);
 
-// Protected Helpers
 protected:
-
 	/// @brief Return non-const access to the MonteCarlo object being controlled.
 	protocols::moves::MonteCarloOP
 	monte_carlo();
 
-	/// @brief Help the constructor initialize new objects.
-	void set_defaults();
-
-	/// @brief Assign user-specified command-line values to data members.
-	virtual
-	void init_from_options();
-
-	/// @brief Initialize temperatures and weights from a file.
-	/// @details Return false if an IO error occurs.
-	virtual
-	bool init_from_file( std::string const& filename );
-
-	/// @brief Save temperatures and weights to a file.
-	virtual
-	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );
-
-	/// @brief Explicitly set the temperature levels by interpolating the given 
-	/// parameters.
-	void generate_temp_range( core::Real temp_low, core::Real temp_high, core::Size n_levels, InterpolationType interpolation = linear );
-
-	/// @brief Explicitly set the temperature levels.
-	void set_temperatures( utility::vector1< core::Real > const& );
-
-	/// @brief Return the current temperature level.  Identical to 
-	/// temperature_level() as far as I can tell.
-	core::Size current_temp() { return current_temp_; }
-
-	/// @brief Set the temperature to the given level.
-	/// @details Note that the argument is a temperature level, not a raw 
-	/// temperature.
-	void set_current_temp( core::Size new_temp );
-
-	/// @brief Assert that the current temperature of the MonteCarlo object 
-	/// agrees with the current temperature level of this object.
-	bool check_temp_consistency();
-
-	/// @brief Forget all temperature levels and return to an uninitialized 
-	/// state.
-	void clear();
-
-	/// @brief Return true if a temperature move should be made on this 
-	/// iteration.
-	bool time_for_temp_move() {
-		return ++temp_trial_count_ % temperature_stride_ == 0;
-	}
-
-	/// @brief Return true if a statistics summary should be written.
-	/// @see stats_silent_output()
-	/// @see stats_file()
- 	bool stats_line_output() const {
-		return stats_line_output_;
-	}
-
-	/// @brief Return true if a statistics summary should be inserted into a 
-	/// silent file.
-	/// @see stats_line_output()
-	/// @see stats_file()
- 	bool stats_silent_output() const {
-		return stats_silent_output_;
-	}
-	
-	/// @brief Return the name of the silent file into which statistics should be 
-	/// recorded.
-	/// @see stats_line_output()
-	/// @see stats_silent_output()
-	std::string const& stats_file() const {
-		return stats_file_;
-	}
-
-// Data Members
 private:
-	
-	/// @brief The underlying monte carlo simulation.
 	protocols::moves::MonteCarloOP monte_carlo_;
+}; //end TemperatureController
 
-	/// @brief If false, the options used by this class have not yet been added 
-	/// to the global options system.
-	static bool options_registered_;
 
-	/// @brief Temperature levels.
-	utility::vector1< core::Real > temperatures_;
+/// @brief Maintain a constant temperature.
+/// @details This is the default temperature controller used by 
+/// MetropolisHastingsMover.
+class FixedTemperatureController : public TemperatureController {
+public:
 
-	/// @brief Frequency for attempting temperature moves.
-	core::Size temperature_stride_;
+	/// @brief Constructor with temperature parameter.
+	FixedTemperatureController( core::Real temp ) :
+		temperature_ ( temp ) {};
 
-	/// @brief If false, look for current temperature in monte_carlo_ before each 
-	/// move.  Set to true by default.
-	bool trust_current_temp_;
+	/// @brief Return a copy of this mover.
+	protocols::moves::MoverOP
+	clone() const { return new protocols::canonical_sampling::FixedTemperatureController( temperature_ ); };
 
-	/// @brief If true, a statistics summary will be written.
-	bool stats_line_output_;
+	virtual
+	std::string
+	get_name() const { return "FixedTemperatureContoller"; }
 
-	/// @brief If true, the statistics summary will be inserted in a silent file.
-	bool stats_silent_output_;
+	/// @brief Return the same constant temperature every time.
+	virtual core::Real temperature_move( core::Real ) { return temperature_; };
 
-	/// @brief Name of the silent file used for writing statistics.
-	std::string stats_file_;
+	virtual core::Real temperature() const { return temperature_; };
 
-	/// @brief Job object to report on temperatures.
-	protocols::jd2::JobOP job_;
+	virtual core::Real temperature( core::Size ) const { return temperature_; };
 
-	/// @brief If false, init_from_options() will be called before the simulation 
-	/// starts.
-	bool instance_initialized_;
+private:
+	core::Real temperature_;
+};
 
-	/// @brief Current temperature level.  Not the current temperature!
-	core::Size current_temp_;
+} //namespace canonical_sampling
+} //namespace protocols
 
-	/// @brief Number of times time_for_temp_move() has been called.  This method 
-	/// is meant to be called every time temperature_move() is called. 
-	core::Size temp_trial_count_;
-
-}; // TemperatureController
-
-} // canonical_sampling
-} // protocols
-
-#endif
+#endif //INCLUDED_protocols_canonical_sampling_TemperatureController_HH

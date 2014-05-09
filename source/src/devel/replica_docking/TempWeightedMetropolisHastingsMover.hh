@@ -72,7 +72,7 @@ public:
 
 	virtual
 	protocols::canonical_sampling::ThermodynamicMoverOP
-	random_mover() ;//const;
+	random_mover() const;
 
 	virtual
 	void

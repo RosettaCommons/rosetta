@@ -48,7 +48,7 @@ namespace canonical_sampling {
 /// via add_observer() can still be used to report on the state of the 
 /// simulation.  
 
-class SidechainMetropolisHastingsMover : public MetropolisHastingsMover {
+class SidechainMetropolisHastingsMover : public protocols::canonical_sampling::MetropolisHastingsMover {
 
 public:
 	typedef MetropolisHastingsMover Parent;

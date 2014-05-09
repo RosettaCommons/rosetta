@@ -33,12 +33,6 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-/// @brief Read poses from a DbTrajectoryRecorder trajectory.
-/// @details This class is meant to be used for analysis scripts that run after 
-/// the simulation has been completed.  For this reason, no effort was made to 
-/// make this class especially efficient.  Use get_poses() to return every pose 
-/// stored in the trajectory, or get_pose() to return the pose associated with 
-/// the given iteration.
 class DbTrajectoryReader 
 	: public utility::pointer::ReferenceCount, private boost::noncopyable {
 

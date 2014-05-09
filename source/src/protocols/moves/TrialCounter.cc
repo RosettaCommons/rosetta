@@ -66,15 +66,20 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 		int const ntrials( it->second );
 		if ( accept_counter_.count( tag )) {
 			int const accepts( accept_counter_.find( tag )->second );
-			core::Real const energy_drop( energy_drop_counter_.find( tag )->second );
 			os << line_header << A( 16, tag ) <<
 				" trials= " << I( 6, ntrials ) << "; " <<
-				" accepts= " << F( 6, 4, core::Real( accepts )/ntrials ) << "; " <<
-				" energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials );
+				" accepts= " << F( 6, 4, core::Real( accepts )/ntrials ) << "; ";
+			std::map< std::string, core::Real >::const_iterator edc_it = energy_drop_counter_.find( tag );
+			if ( edc_it != energy_drop_counter_.end() ) {
+				core::Real const energy_drop( edc_it->second );
+				os <<	" energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials );
+			}
 			if ( endline ) os << std::endl;
+			else os << " ";
 		} else { //no accepts
-			os << A( 16, tag ) << " trials= " << I( 6, ntrials ) <<	" NO ACCEPTS.";
+			os << line_header << A( 16, tag ) << " trials= " << I( 6, ntrials ) <<	" NO ACCEPTS.";
 			if ( endline ) os << std::endl;
+			else os << " ";
 		} // else
 	} // for
 }

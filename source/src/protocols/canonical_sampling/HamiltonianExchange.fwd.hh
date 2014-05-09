@@ -7,25 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /protocols/canonical_sampling/MpiParallelTempering.fwd.hh
+/// @file   /protocols/canonical_sampling/HamiltonianExchange.fwd.hh
 /// @brief
 /// @author Oliver Lange  ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_canonical_sampling_MpiParallelTempering_fwd_hh
-#define INCLUDED_protocols_canonical_sampling_MpiParallelTempering_fwd_hh
+#ifndef INCLUDED_protocols_canonical_sampling_HamiltonianExchange_fwd_hh
+#define INCLUDED_protocols_canonical_sampling_HamiltonianExchange_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace canonical_sampling {
 
-class MpiParallelTempering;
+// Forward
+class HamiltonianExchange;
 
-typedef utility::pointer::owning_ptr< MpiParallelTempering > MpiParallelTemperingOP;
-typedef utility::pointer::owning_ptr< MpiParallelTempering const > MpiParallelTemperingCOP;
+typedef utility::pointer::owning_ptr< HamiltonianExchange > HamiltonianExchangeOP;
+typedef utility::pointer::owning_ptr< HamiltonianExchange const > HamiltonianExchangeCOP;
 
 } // namespace canonical_sampling
 } // namespace protocols
 
-#endif
+
+#endif // INCLUDED_protocols_canonical_sampling_HamiltonianExchange_FWD_HH
 

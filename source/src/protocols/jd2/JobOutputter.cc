@@ -52,6 +52,7 @@ namespace jd2 {
 JobOutputter::JobOutputter() : evaluators_(new protocols::evaluation::PoseEvaluators()) {
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 	basic::mem_tr << "JobOutputter CSTOR" << std::endl;
+	set_defaults();
 }
 
 JobOutputter::~JobOutputter() {}
@@ -66,9 +67,6 @@ void JobOutputter::flush() {}
 /// input tags are usually file names).  Otherwise, it will keep the entire input
 /// tag as-is.
 std::string JobOutputter::affixed_numbered_name( JobCOP job ){
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-
 	// Use at least 4 digits in number to match Rosetta++
 	core::Size nstruct_width = 0;
 	core::Size const nstruct = job->nstruct_max();
@@ -113,12 +111,12 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 
 	// now construct the full name
 	std::ostringstream oss;
-	std::string prefix( option[ out::prefix ].value() );
+	std::string prefix( prefix_ );
 	if ( job->status_prefix().size() ) {
 		prefix = job->status_prefix()+"_";
 	}
-	oss << prefix << base_name << option[ out::suffix ].value();
-	if ( ! option[ out::no_nstruct_label ] || job->nstruct_index() != 1 ) {
+	oss << prefix << base_name << suffix_;
+	if ( ! no_nstruct_label_ || job->nstruct_index() != 1 ) {
 		oss << '_' << std::setfill('0') << std::setw(nstruct_width) << job->nstruct_index();
 	}
 	return oss.str();
@@ -156,6 +154,15 @@ void JobOutputter::set_evaluators( evaluation::PoseEvaluators const& ev_in ) {
 /// @brief clear the list of evaluators
 void JobOutputter::clear_evaluators() {
 	evaluators_->clear();
+}
+
+/// @brief clear the list of evaluators
+void JobOutputter::set_defaults() {
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	prefix_ = option[ out::prefix ]();
+	suffix_ = option[ out::suffix ]();
+	no_nstruct_label_ = option[ out::no_nstruct_label ]();
 }
 
 /// @details return the list of PoseEvaluators

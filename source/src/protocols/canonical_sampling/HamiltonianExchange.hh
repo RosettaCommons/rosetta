@@ -11,18 +11,16 @@
 /// @brief Implement replica exchange in the MetropolisHastingsMover Framework.
 /// @author Oliver Lange ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_hh
-#define INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_hh
-
-#ifdef USEMPI
-#include <mpi.h> //keep first
-#endif
+#ifndef INCLUDED_protocols_canonical_sampling_HamiltonianExchange_hh
+#define INCLUDED_protocols_canonical_sampling_HamiltonianExchange_hh
 
 // Unit Headers
-#include <protocols/canonical_sampling/MpiHamiltonianExchange.fwd.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
+#include <protocols/canonical_sampling/AsyncMPITemperingBase.hh>
 
-// Project Headers
+// Module Headers
+#include <protocols/canonical_sampling/BiasEnergy.fwd.hh>
+
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -34,21 +32,22 @@
 namespace protocols {
 namespace canonical_sampling {
 
-class MpiHamiltonianExchange : public TemperatureController {
-	typedef TemperatureController Parent;
+///@details
+class HamiltonianExchange : public protocols::canonical_sampling::AsyncMPITemperingBase {
+	typedef AsyncMPITemperingBase Parent;
 	typedef utility::vector1< core::Size > GridCoord;
 	typedef utility::vector1< GridCoord > Grid;
 
 public:
 
-	MpiHamiltonianExchange();
+	HamiltonianExchange();
 
 	//important d'tor to delete some C-style arrays
-	~MpiHamiltonianExchange();
+	~HamiltonianExchange();
 
-	MpiHamiltonianExchange( MpiHamiltonianExchange const& );
+	HamiltonianExchange( HamiltonianExchange const& );
 
-	MpiHamiltonianExchange& operator=( MpiHamiltonianExchange const& );
+	HamiltonianExchange& operator=( HamiltonianExchange const& );
 
 	virtual
 	void apply( core::pose::Pose& ) {};
@@ -74,32 +73,44 @@ public:
 		core::pose::Pose const & pose
 	);
 
+	/// @brief not possible for HamExchange -- exit with ERROR if called
+	core::Real
+	temperature_move( core::Real score );
+
+	void
+	update_bias_energies( int exchange_partner, bool is_master );
+
+	/// @brief execute the temperatur move ( called by observer_after_metropolis )
+	/// returns the current temperatur in kT.
+	core::Real
+	temperature_move( core::pose::Pose& pose );
+
 	/// @brief callback executed before any Monte Carlo trials
 	virtual void
 	initialize_simulation(
-  	core::pose::Pose & pose,
-		MetropolisHastingsMover const & mover,
-		core::Size cycle
+  	 core::pose::Pose& pose,
+		 MetropolisHastingsMover const& metropolis_hastings_mover,
+		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
-	core::Real
-	temperature_move(
-		core::pose::Pose & pose,
-		MetropolisHastingsMover & mover,
-		core::Real score
-	);
-
-	/// @brief callback executed after all Monte Carlo trials
 	virtual
 	void
-	finalize_simulation(
+	initialize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size level,
+		core::Real temperature,
+		core::Size cycle
 	);
 
 	void show( std::ostream& ) const;
 
 	void next_exchange_schedule();
+
+	virtual void
+	set_monte_carlo(
+	   protocols::moves::MonteCarloOP monte_carlo
+	);
 
 protected:
 	void set_defaults();
@@ -110,25 +121,13 @@ protected:
 	void clear();
 
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
-	virtual bool init_from_file( std::string const& filename );
+	virtual bool initialize_from_file( std::string const& filename );
 
-
-#ifdef USEMPI
-	MPI_Comm const& mpi_comm() const {
-		return mpi_comm_;
-	}
-
-	void set_mpi_comm( MPI_Comm const& );
-
-#endif
-
-	int rank() {
-		return rank_;
-	}
+	virtual
+	core::Size next_exchange_level() const;
 
 private:
 	void setup_exchange_schedule();
-	void find_exchange_partner( int& partner, bool& is_master );
 	///@brief small helper function; compute unique key out of (z1, z2, ... , zN) excluding zD
 	core::Size coord2key(
     GridCoord const& coord,
@@ -146,11 +145,6 @@ public:
 /// ---------------- member variables --------------------------
 
 private:
-#ifdef USEMPI
-	MPI_Comm mpi_comm_;
-#endif
-	// rank within mpi_comm_
-	int rank_;
 
 	/// the different score-funcitons
 	utility::vector1< core::scoring::ScoreFunctionOP > hamiltonians_;
@@ -165,12 +159,14 @@ private:
 	Grid exchange_grid_;
 	core::Size exchange_grid_dimension_;
 	bool successfully_initialized_;
-}; //end MpiHamiltonianExchange
+
+	BiasEnergyOP bias_energy_;
+}; //end HamiltonianExchange
 
 /// @brief Test IO operator for debug and Python bindings
-std::ostream& operator << ( std::ostream & os, MpiHamiltonianExchange const& );
+std::ostream& operator << ( std::ostream & os, HamiltonianExchange const& );
 
 } //namespace canonical_sampling
 } //namespace protocols
 
-#endif //INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_HH
+#endif //INCLUDED_protocols_canonical_sampling_HamiltonianExchange_HH

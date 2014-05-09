@@ -101,6 +101,18 @@ public:
 };
 
 
+/// @brief creator for the RigidBodySilentStruct class
+class RigidBodySilentStructCreator : public SilentStructCreator
+{
+public:
+	RigidBodySilentStructCreator();
+	virtual ~RigidBodySilentStructCreator();
+
+	virtual SilentStructOP create_silent_struct() const;
+	virtual std::string keyname() const;
+};
+
+
 } //namespace silent
 } //namespace io
 } //namespace core

@@ -38,7 +38,7 @@ namespace canonical_sampling {
 /// make it awkward to create the database trajectory subclass that I want.  
 /// But I'll get it to work one way or another.
 
-class TrajectoryRecorder : public ThermodynamicObserver {
+class TrajectoryRecorder : public protocols::canonical_sampling::ThermodynamicObserver {
 public:
 
 	/// @brief Associate relevant options with the TemperedDocking class.
@@ -139,29 +139,16 @@ public:
 	/// @brief Callback executed whenever the simulation is initialized or reset.
 	virtual void reset(
 		protocols::moves::MonteCarlo const& mc,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
-	/// @brief Save the given pose to the trajectory.
-	/// @details I suspect this method is provided so that the trajectory classes 
-	/// can be used outside the canonical_sampling namespace.  That explains why 
-	/// it's public, when it doesn't do anything but provide a simpler way for 
-	/// children to respond to observe_after_metropolis().  It also explains why 
-	/// it has so many different signatures and default arguments.  Note that 
-	/// this function expects a <tt>MetropolisHastingsMoverCAP</tt> instead of 
-	/// the more usual <tt>MetropolisHastingsMover const &</tt>.  This is because 
-	/// only pointers are compatible with null default arguments.
-	/// 
-	/// That said, it seems to me that the @a metropolis_hastings_mover argument 
-	/// is basically useless because you can't ever be sure it'll actually be 
-	/// provided.  It's also surprising that observe_after_metropolis() is still 
-	/// virtual, because I would think that this method should supersede it.
+	/// @copydoc ThermodynamicObserver::apply
 	void update_after_boltzmann(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
-	/// @copydoc update_after_boltzmann(core::pose::Pose const &, MetropolisHastingsMoverCAP)
+	/// @copydoc ThermodynamicObserver::apply
 	void update_after_boltzmann(
 		protocols::moves::MonteCarlo const& mc
 	);
@@ -172,13 +159,13 @@ public:
 	/// @copydoc ThermodynamicObserver::initialize_simulation
 	virtual void initialize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	/// @copydoc ThermodynamicObserver::observe_after_metropolis
 	virtual	void observe_after_metropolis(
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 protected:
@@ -186,7 +173,7 @@ protected:
 	/// @brief Pure virtual method called to write a model to the output file.
 	virtual void 	write_model(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	) = 0;
 
 private:

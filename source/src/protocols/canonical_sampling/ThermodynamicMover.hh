@@ -68,7 +68,7 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
@@ -76,7 +76,7 @@ public:
 	virtual
 	void
 	observe_after_metropolis(
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	/// @brief Return the proposal density ratio for last apply method.
@@ -89,7 +89,7 @@ public:
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	/// @brief Return true if detailed balance is being preserved (i.e. no branch 
@@ -126,7 +126,7 @@ public:
 	/// being used internally.
 	/// @see is_multi_trial()
 	virtual
-	MetropolisHastingsMoverAP
+	protocols::canonical_sampling::MetropolisHastingsMoverAP
 	metropolis_hastings_mover();
 
 	/// @brief If this is a multi-trial move, set the MetropolisHastingsMover to 
@@ -135,7 +135,7 @@ public:
 	virtual
 	void
 	set_metropolis_hastings_mover(
-		MetropolisHastingsMoverAP metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMoverAP metropolis_hastings_mover
 	);
 
 	/// @brief Return a list specifying which torsions may be perturbed by 

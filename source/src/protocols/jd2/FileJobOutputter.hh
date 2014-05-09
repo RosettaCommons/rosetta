@@ -46,6 +46,7 @@ public:
 
 	virtual ~FileJobOutputter();
 
+	void set_defaults();
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
 	///@brief this function takes a string and writes it to disk (separately from Tracer output).

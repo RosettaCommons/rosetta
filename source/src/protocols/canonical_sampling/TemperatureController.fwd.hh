@@ -15,20 +15,19 @@
 #define INCLUDED_protocols_canonical_sampling_TemperatureController_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace canonical_sampling {
 
+// Forward
 class TemperatureController;
+
 typedef utility::pointer::owning_ptr< TemperatureController > TemperatureControllerOP;
 typedef utility::pointer::owning_ptr< TemperatureController const > TemperatureControllerCOP;
-typedef utility::pointer::access_ptr< TemperatureController > TemperatureControllerAP;
-typedef utility::pointer::access_ptr< TemperatureController const > TemperatureControllerCAP;
 
 } // namespace canonical_sampling
 } // namespace protocols
 
 
-#endif
+#endif // INCLUDED_protocols_canonical_sampling_TemperatureController_FWD_HH
 

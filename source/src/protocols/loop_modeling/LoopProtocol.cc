@@ -146,7 +146,7 @@ void LoopProtocol::attempt_loop_move( // {{{1
 	if (movers_->was_successful()) {
 		monte_carlo_->boltzmann(pose);
 	} else {
-		monte_carlo_->reset_last_accepted(pose);
+		monte_carlo_->set_last_accepted_pose(pose);
 	}
 
 	BOOST_FOREACH(loggers::LoggerOP logger, loggers_) {

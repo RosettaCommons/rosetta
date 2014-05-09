@@ -31,7 +31,7 @@ namespace protocols {
 namespace canonical_sampling {
 
 /// @brief Record a trajectory to the PDB file format.
-class PDBTrajectoryRecorder : public TrajectoryRecorder {
+class PDBTrajectoryRecorder : public protocols::canonical_sampling::TrajectoryRecorder {
 	typedef TrajectoryRecorder Parent;
 public:
 	/// @brief Default constructor.
@@ -73,14 +73,14 @@ public:
 
 	virtual void reset(
 		protocols::moves::MonteCarlo const& mc,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	virtual
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 private:
@@ -89,7 +89,7 @@ private:
 	void
 	write_model(
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	utility::io::ozstream trajectory_stream_;

@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/RigidBodySilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/ScoreJumpFileSilentStruct.hh>
@@ -44,8 +44,6 @@ SilentStructOP ProteinSilentStruct_SinglePrecCreator::create_silent_struct() con
 std::string ProteinSilentStruct_SinglePrecCreator::keyname() const {
 	return "protein_float";
 }
-
-
 
 // class def for ProteinSilentStruct
 ProteinSilentStructCreator::ProteinSilentStructCreator() {}
@@ -101,6 +99,19 @@ SilentStructOP ScoreJumpFileSilentStructCreator::create_silent_struct() const {
 std::string ScoreJumpFileSilentStructCreator::keyname() const {
   return "score_jump";
 }
+
+
+// class def for ProteinSilentStruct
+RigidBodySilentStructCreator::RigidBodySilentStructCreator() {}
+RigidBodySilentStructCreator::~RigidBodySilentStructCreator() {}
+SilentStructOP RigidBodySilentStructCreator::create_silent_struct() const {
+	return new RigidBodySilentStruct;
+}
+
+std::string RigidBodySilentStructCreator::keyname() const {
+	return "rigid_body";
+}
+
 
 } //namespace silent
 } //namespace io
