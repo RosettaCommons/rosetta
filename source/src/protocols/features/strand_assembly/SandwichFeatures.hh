@@ -622,13 +622,27 @@ public:
 		core::Size sw_can_by_sh_id);
 
 	void
-	add_number_of_inward_pointing_W_in_sw(
+	add_number_of_core_heading_W_in_sw(
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sw_can_by_sh_id);
 
 	void
-	add_number_of_inward_pointing_LWY_in_core_strands_in_sw(
+	add_number_of_core_heading_FWY_in_sw(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id);
+
+	void
+	add_ratio_of_core_heading_FWY_in_sw(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id,
+		core::pose::Pose const & pose);
+
+
+	void
+	add_number_of_core_heading_LWY_in_core_strands_in_sw(
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sw_can_by_sh_id);
@@ -758,7 +772,7 @@ public:
 		core::Size residue_end);
 
 	core::Size
-	report_number_of_inward_pointing_charged_AAs_in_a_pair_of_edge_strands (
+	report_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands (
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id,
@@ -766,7 +780,7 @@ public:
 		core::Size closest_bs_id);
 
 	core::Size
-	report_number_of_inward_pointing_aro_AAs_in_a_pair_of_edge_strands (
+	report_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands (
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id,
@@ -992,6 +1006,9 @@ private:
 
 	bool
 	write_resfile_to_minimize_too_much_hydrophobic_surface_;
+
+	bool
+	write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands_;
 
 	bool
 	write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_;
