@@ -89,7 +89,8 @@ public:
     return "TorsionMover";
   }
 
-  virtual claims::EnvClaims yield_claims( core::pose::Pose& ){
+  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
+					  basic::datacache::WriteableCacheableMapOP ){
     using core::environment::LocalPosition;
     claims::EnvClaims claims;
 
@@ -143,7 +144,8 @@ public:
     return "JumpMover";
   }
 
-  virtual claims::EnvClaims yield_claims( core::pose::Pose& ){
+  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
+					  basic::datacache::WriteableCacheableMapOP ){
     using core::environment::LocalPosition;
     claims::EnvClaims claims;
 

@@ -437,7 +437,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 }
 
 
-void RigidChunkCM::apply( core::pose::Pose& pose ){
+void RigidChunkCM::apply( core::pose::Pose& ){
 }
 
 loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::Size random_grow_loops_by ) {
