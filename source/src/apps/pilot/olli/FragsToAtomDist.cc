@@ -35,21 +35,22 @@ OPT_KEY( File, distances )
 
 int main( int argc, char * argv [])
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
-	using namespace std;
-	using namespace protocols;
-	OPT( in::file::fasta );
-	OPT( score::weights );
-	OPT( score::patch );
-	NEW_OPT( cycles, "number of cycles", 1000 );
-	NEW_OPT( freq, "calculate distance every nth cycle", 10 );
-	NEW_OPT( fragments, "input fragment file", "frags.dat.gz" );
-//NEW_OPT( no_r6_averaging, "whether use r6 average or not", false );
-	NEW_OPT( distances, "distance database file", "dist.dat" );
-
 	try {
+
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace std;
+		using namespace protocols;
+		OPT( in::file::fasta );
+		OPT( score::weights );
+		OPT( score::patch );
+		NEW_OPT( cycles, "number of cycles", 1000 );
+		NEW_OPT( freq, "calculate distance every nth cycle", 10 );
+		NEW_OPT( fragments, "input fragment file", "frags.dat.gz" );
+		//NEW_OPT( no_r6_averaging, "whether use r6 average or not", false );
+		NEW_OPT( distances, "distance database file", "dist.dat" );
+
 		devel::init( argc, argv );
 		std::string const fasta_file = option[ in::file::fasta ]()[1];
 		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
@@ -59,13 +60,8 @@ int main( int argc, char * argv [])
 		Atomdist1.write_hist_to_file( option[ OptionKeys::distances ]() );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		excn.show( std::cerr );
+		std::exit( 1 );
 	}
-		//	} catch ( utility::excn::EXCN_Base const & e ) {
-		//		std::cout << "caught exception " << e.msg() << std::endl;
-		//	}
-	//	protocols::noesy_assign::FragsToAtomDist Atomdist2;
-	//	Atomdist2.read_from_file( option[ OptionKeys::distances ]() );
-	//	Atomdist2.write_to_file( "test.dat" );
 
 	return 0;
 }

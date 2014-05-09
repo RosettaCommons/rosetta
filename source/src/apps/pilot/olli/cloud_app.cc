@@ -134,12 +134,12 @@ void CloudArchiveManagerWrapper::generate_batch() {
 }
 
 int main( int argc, char** argv ) {
-	protocols::abinitio::IterativeAbrelax::register_options();
-	protocols::jd2::archive::ArchiveManager::register_options();
-	protocols::abinitio::register_options_broker();
-	NEW_OPT( new_batch, "generate new batch", false );
-	NEW_OPT( read_batch, "read decoys from batch", 0 );
 	try{
+		protocols::abinitio::IterativeAbrelax::register_options();
+		protocols::jd2::archive::ArchiveManager::register_options();
+		protocols::abinitio::register_options_broker();
+		NEW_OPT( new_batch, "generate new batch", false );
+		NEW_OPT( read_batch, "read decoys from batch", 0 );
 
 		devel::init( argc, argv );
 
@@ -162,6 +162,7 @@ int main( int argc, char** argv ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		std::exit( 1 );
 	}
 	// finish with 0 when there's no error
 	return 0;
