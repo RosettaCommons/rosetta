@@ -18,7 +18,7 @@
 
 // Package headers
 #include <protocols/environment/ClaimingMover.hh>
-#include <protocols/environment/claims/EnvClaim.fwd.hh>
+#include <protocols/environment/claims/EnvClaim.hh>
 
 #include <protocols/abinitio/abscript/StageID.hh>
 #include <protocols/abinitio/abscript/AbscriptStageMover.hh>
