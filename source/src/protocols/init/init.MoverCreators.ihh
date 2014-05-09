@@ -145,6 +145,11 @@
 #include <protocols/loops/loop_mover/refine/SmallMinCCDTrialCreator.hh>
 
 #include <protocols/match/MatcherMoverCreator.hh>
+
+#include <protocols/matdes/ExtractSubposeMoverCreator.hh>
+#include <protocols/matdes/MatDesGreedyOptMutationMoverCreator.hh>
+#include <protocols/matdes/SymDofMoverCreator.hh>
+
 #include <protocols/md/CartesianMDCreator.hh>
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>
 
@@ -301,6 +306,11 @@
 #include <protocols/simple_moves/symmetry/SymMinMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
+#include <protocols/simple_moves/symmetry/TaskAwareSymMinMoverCreator.hh>
+
+#include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
+#include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>
+#include <protocols/toolbox/task_operations/StoreTaskMoverCreator.hh>
 
 #include <protocols/environment/EnvMoverCreator.hh>
 

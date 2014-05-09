@@ -39,6 +39,7 @@ DeltaFilter::DeltaFilter() :
 	upper_( true ),
 	unbound_( false ),
 	relax_unbound_( false ),
+	changing_baseline_( false ),
 	jump_( 0 ),
 	reference_pose_(NULL),
 	ref_baseline_( 1234567890.0 ) // unlikely "uninitialized" sentinel value
@@ -64,6 +65,16 @@ DeltaFilter::relax_unbound( bool const u ){
 	relax_unbound_ = u;
 }
 
+bool
+DeltaFilter::changing_baseline() const{
+	return changing_baseline_;
+}
+
+void
+DeltaFilter::changing_baseline( bool const c ){
+	changing_baseline_ = c;
+}
+
 core::Size
 DeltaFilter::jump() const{
 	return jump_;
@@ -79,7 +90,7 @@ DeltaFilter::baseline() const{
 	if( reference_pose_ ){
 		//Hack to avoid keep re-applying (potentially computationally expensive) filter to reference pose
 		//This should probably be replaced by some pose observer magic instead
-		if ( ref_baseline_ == 1234567890.0 ) { // unlikely "uninitialized" sentinel value
+		if ( (ref_baseline_ == 1234567890.0) || (changing_baseline_) ) { // unlikely "uninitialized" sentinel value
 			core::pose::Pose p( *reference_pose_ );
 			if(p.total_residue() == 0) { // If reference pose wasn't properly initialized, fast fail with interpretable error message
 				utility_exit_with_message("Reference pose used with DeltaFilter wasn't initialized properly!");
@@ -203,6 +214,7 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	relax_unbound( tag->getOption< bool >( "relax_unbound", false ) );
+	changing_baseline( tag->getOption< bool >( "changing_baseline", false ) );
 	if( unbound() )
 		jump( tag->getOption< core::Size >( "jump", 1 ) );
 	// need to score the pose before packing...

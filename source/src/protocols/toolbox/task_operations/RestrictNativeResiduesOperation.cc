@@ -19,6 +19,7 @@
 // Project Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pack/task/PackerTask.hh>
@@ -153,7 +154,11 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 			else task.nonconst_residue_task(resi).restrict_to_repacking();
 		} else {
 			if ( verbose_ ) {
-				select_non_native_resis.append(ObjexxFCL::string_of(resi) + "+");
+				core::Size output_resi = resi;
+				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
+					output_resi = pose.pdb_info()->number( resi );
+				}
+				select_non_native_resis.append(ObjexxFCL::string_of(output_resi) + "+");
 			}
 			designable_resis++;
 		}

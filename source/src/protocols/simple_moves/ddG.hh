@@ -44,15 +44,6 @@ public:
 	typedef core::scoring::ScoreType ScoreType;
 	typedef core::pose::Pose Pose;
 
-	/// Distance in A to separate the molecules away from bound-state.
-	/// NOTES by Sachko Honda: This value used to be hard coded to 1000 for unbound poses,
-  /// whereas the default 100 was used for bounded.
-	/// The choice of value 1000 was arbitrary by the original author.
-	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
-	/// from blowing up, by default, but can be a user-defined value via RosettaScript option
-	/// or command-line option.
-	static const core::Real DEFAULT_TRANSLATION_DISTANCE;
-
 public :
 	ddG();
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1 );
@@ -125,7 +116,7 @@ private :
 	bool pb_enabled_;
 
 	/// distance in A to separate moledules
-	core::Real translate_by_;
+	core::Real translate_by_; //dflt set to 1000. Default resets to 100 for RosettaScripts with a scorefxn containing PB_elec.
 };
 
 } // movers

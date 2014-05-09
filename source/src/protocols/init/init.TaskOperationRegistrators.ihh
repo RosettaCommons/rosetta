@@ -30,8 +30,12 @@ static TaskOperationRegistrator< protocols::flxbb::LayerDesignOperationCreator >
 
 static TaskOperationRegistrator< protocols::forge::remodel::RemodelRotamerLinksCreator > RemodelRotamerLinksCreator_registrator;
 
+static TaskOperationRegistrator< protocols::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
+
+static TaskOperationRegistrator< protocols::toolbox::task_operations::CrystalContactsOperationCreator > CrystalContactsOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DesignAroundOperationCreator > DesignAroundOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::ImportUnboundRotamersOperationCreator > ImportUnboundRotamersOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::JointSequenceOperationCreator > JointSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LimitAromaChi2OperationCreator > LimitAromaChi2OperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LinkResiduesCreator > LinkResiduesCreator_registrator;
@@ -43,11 +47,13 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::ReadResfil
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictByCalculatorsOperationCreator > RestrictByCalculatorsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictChainToRepackingOperationCreator > RestrictChainToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictConservedLowDdgOperationCreator > RestrictConservedLowDdgOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNonSurfaceToRepackingOperationCreator > RestrictNonSurfaceToRepackingOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictResiduesToRepackingOperationCreator > RestrictResiduesToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictInterGroupVectorOperationCreator > RestrictInterGroupVectorOperationCreator_registrator;
-//static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsCreator_registrator; //moved into devel due to release embargo
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictIdentitiesAtAlignedPositionsOperationCreator > RestrictIdentitiesAtAlignedPositionsCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNativeResiduesOperationCreator > RestrictNativeResiduesOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNonSurfaceToRepackingOperationCreator > RestrictNonSurfaceToRepackingOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictResiduesToRepackingOperationCreator > RestrictResiduesToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToCDRH3LoopCreator > RestrictToCDRH3LoopCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceCreator > RestrictToInterfaceCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceOperationCreator > RestrictToInterfaceOperationCreator_registrator;
@@ -55,17 +61,14 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictTo
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsCreator > RestrictToLoopsAndNeighborsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToNeighborhoodOperationCreator > RestrictToNeighborhoodOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToTerminiOperationCreator > RestrictToTerminiOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SeqprofConsensusOperationCreator > SeqprofConsensusOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectByDeltaScoreOperationCreator > SelectByDeltaScoreOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectByDensityFitOperationCreator > SelectByDensityFitOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectResiduesWithinChainOperationCreator > SelectResiduesWithinChainCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SetIGTypeOperationCreator > SetIGTypeOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectByDensityFitOperationCreator > SelectByDensityFitOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNativeResiduesOperationCreator > RestrictNativeResiduesOperationCreator_registrator;
-
-static TaskOperationRegistrator< protocols::toolbox::task_operations::ImportUnboundRotamersOperationCreator > ImportUnboundRotamersOperationCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::CrystalContactsOperationCreator > CrystalContactsOperationCreator_registrator;
 
 
 using core::pack::task::operation::ResFilterRegistrator;

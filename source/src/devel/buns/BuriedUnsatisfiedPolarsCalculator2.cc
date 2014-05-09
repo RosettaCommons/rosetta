@@ -237,6 +237,7 @@ void
 BuriedUnsatisfiedPolarsCalculator2::generous_hbond()
 const
 {
+	TR << "Setting generous_hbonds." << std::endl;
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	scoring::methods::EnergyMethodOptionsOP emopts(
 			new scoring::methods::EnergyMethodOptions(
@@ -259,12 +260,12 @@ BuriedUnsatisfiedPolarsCalculator2::bunsats_thorough_check(
 		
 		for (Size atm = 1; atm <= bunsat_thorough_atomid_map.n_atom(res); ++atm) {
 
-			std::string res_debug = pose.pdb_info()->pose2pdb(res);
-			std::string atm_debug = pose.residue(res).atom_name(static_cast< int >(atm));
+			//std::string res_debug = pose.pdb_info()->pose2pdb(res);
+			//std::string atm_debug = pose.residue(res).atom_name(static_cast< int >(atm));
 			
 			// if unsat by weak bunsat calc, do extra checks
 			if (bunsat_thorough_atomid_map(res, atm)) {
-				//TR << "Considering candidate buried unsat, residue " << res_debug << ", atom " << atm_debug << "." << std::endl;
+				TR << "Considering candidate buried unsat, residue " << res << ", atom " << atm << "." << std::endl;
 				id::AtomID bunsat_candidate_atom_id(atm, res);
 				bunsat_thorough_atomid_map.set(bunsat_candidate_atom_id,
 						single_bunsat_thorough_check(pose, bunsat_candidate_atom_id));
@@ -272,7 +273,7 @@ BuriedUnsatisfiedPolarsCalculator2::bunsats_thorough_check(
 			}
 			// if still bunsat, add to counts
 			if (bunsat_thorough_atomid_map(res, atm)) {
-				TR << "Validated a buried unsat, rosetta resi " << res << ", pdb residue " << res_debug << ", atom " << atm_debug << "." << std::endl;
+				TR << "Validated a buried unsat, rosetta resi " << res << ", atom " << atm << "." << std::endl;
 				residue_bur_unsat_polars_[res]++;
 				if( special_region_.find( res ) != special_region_.end() )
 						special_region_bur_unsat_polars_++;
@@ -293,7 +294,7 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 {
 	Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
 	
-	//TR << "Calculating neighbors for resi " << bunsat_resi << std::endl;
+	TR << "Calculating neighbors for resi " << bunsat_resi << std::endl;
 	
 	NeighborsByDistanceCalculator nbr_calc(bunsat_resi);
 	basic::MetricValue< std::set< Size > > neighbors;
@@ -311,51 +312,58 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 	bool bunsat_is_acceptor(bunsat_rsd.atom_type(
 			static_cast< int >(bunsat_atom_num)).is_acceptor());
 	
-	bool pass_checks = true;
+	Size num_hbonds = 0;
 	
 	if (bunsat_is_donor) {
 		for(std::set<Size>::const_iterator test_res_it = neighbors.value().begin();
 				test_res_it != neighbors.value().end(); ++test_res_it) {
 			Size const test_resi = *test_res_it;
 			
-			std::string test_res_debug = pose.pdb_info()->pose2pdb(test_resi);
-			//TR << "checking if donates to " << test_res_debug << std::endl;
+			//std::string test_res_debug = pose.pdb_info()->pose2pdb(test_resi);
+			//TR << "checking if donates to " << test_resi << std::endl;
 			
-			if (!bunsat_donor_nbr_residue_check(
-					pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi)) {
-				pass_checks = false;
-				break;
-			}
+			bunsat_donor_nbr_residue_check(pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi, num_hbonds);
 		}
 	}
 	if (bunsat_is_acceptor) {
 		for(std::set<Size>::const_iterator test_res_it = neighbors.value().begin();
 				test_res_it != neighbors.value().end(); ++test_res_it) {
 			Size const test_resi = *test_res_it;
-			if (!bunsat_acc_nbr_residue_check(
-					pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi)) {
-				pass_checks = false;
-				break;
-			}
+			bunsat_acc_nbr_residue_check(pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi, num_hbonds);
 		}
 	}
 	
-	if (pass_checks) all_bur_unsat_polars_++;
-	return pass_checks;
-}
+	Size satisfac_cut = satisfaction_cutoff( bunsat_rsd.type().atom_type( bunsat_atom_num ).name() );
+	Size bonded_heavyatoms = bunsat_rsd.n_bonded_neighbor_all_res( bunsat_atom_num ) - bunsat_rsd.type().number_bonded_hydrogens( bunsat_atom_num );
+	//all_bur_unsat_hbonds_ += (satisfac_cut - ( bonded_heavyatoms + num_hbonds));
+	Size nbonds = bonded_heavyatoms + num_hbonds;
+	TR << "Residue " << bunsat_resi << ", atom " << bunsat_atom_num << " has " << nbonds << " bonded heavy atoms." << std::endl;
+	if( nbonds < satisfac_cut ) {
+		TR << "nbonds less than satisfac_cut of" << satisfac_cut << std::endl;
+		all_bur_unsat_polars_++;
+		return true;
+	} else {
+		return false;
+	}
+}	
 
 /*
  return false if a plausible hbond between bunsat_candidate_atom_id as a donor
  and test_resi as an acceptor is found, otherwise return true
+ Why don't we have it return the number of hbonds instead of just true.
+ Then we can add up the sum of hbonds detected and run the same satisfac_cut check as in 
+ the original BuriedUnsatisfiedHbondCalculator. Here we could be say the atom is fine if 
+ it only makes 1 hbond when it may need to make 2. 
  */
-bool
+void
 BuriedUnsatisfiedPolarsCalculator2::bunsat_donor_nbr_residue_check(
 	pose::Pose const & pose,
 	id::AtomID const & bunsat_candidate_atom_id,
 	Residue const & bunsat_rsd,
 	Vector const & bunsat_xyz,
-	Size const test_resi
-) const
+	Size const test_resi,
+	Size & num_hbonds
+)
 {
 	Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
 	Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
@@ -385,8 +393,8 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_donor_nbr_residue_check(
 		Vector test_xyz = test_rsd.atom(test_atom_num).xyz();
 		// check for sulfur-bonds
 		if (sulphur_bond_check(test_rsd, test_atom_num, bunsat_xyz, test_xyz)) {
-			//TR << "HBond donating to a sulphur atom detected" << std::endl;
-			return false;
+			TR << "HBond donating to a sulphur atom detected for resi " << test_resi << std::endl;
+			num_hbonds++;
 		}
 		
 		if (test_rsd.atom_type(static_cast< int >(test_atom_num)).is_acceptor()){
@@ -394,28 +402,27 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_donor_nbr_residue_check(
 			//if (check_AHD_angle(pose, bunsat_candidate_atom_id, id::AtomID( test_atom_num, test_resi)))
 			//TR << "Checking if candidate sites donates to acceptor" << std::endl;
 			if (don_geom_check(pose, bunsat_rsd, bunsat_atom_num, bunsat_xyz, test_xyz)) {
-				//TR << "HBond donating to a standard acceptor detected" << std::endl;
-				return false;
+				TR << "HBond donating to a standard acceptor detected for resi " << test_resi << std::endl;
+				num_hbonds++;
 			}
 		}
 		
 	}
-	
-	return true;
 }
 
 /*
  return false if a plausible hbond between bunsat_candidate_atom_id as an acceptor
  and test_resi as an donor is found, otherwise return true
  */
-bool
+void
 BuriedUnsatisfiedPolarsCalculator2::bunsat_acc_nbr_residue_check(
 	pose::Pose const & pose,
 	id::AtomID const & bunsat_candidate_atom_id,
 	Residue const & bunsat_rsd,
 	Vector const & bunsat_xyz,
-	Size const & test_resi
-) const
+	Size const & test_resi,
+	Size & num_hbonds
+)
 {
 	Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
 	Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
@@ -445,18 +452,16 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_acc_nbr_residue_check(
 		// check if coordinating metal
 		if (metal_check(test_rsd, bunsat_xyz, test_xyz)) {
 			//TR << "HBond accepting from a metal ion detected" << std::endl;
-			return false;
+			num_hbonds++;
 		}
 		if (test_rsd.atom_type(static_cast< int >(test_atom_num)).is_polar_hydrogen()) {
 			//if (check_AHD_angle(pose, bunsat_candidate_atom_id, id::AtomID( test_atom_num, test_resi)))
 			if (acc_geom_check(pose, bunsat_xyz, test_rsd, test_atom_num, test_xyz)) {
-				//TR << "HBond accepting from a standard donor detected" << std::endl;
-				return false;
+				TR << "HBond accepting from a standard donor detected for resi " << test_resi << std::endl;
+				num_hbonds++;
 			}
 		}
 	}
-	
-	return true;
 }
 
 /*
@@ -611,6 +616,24 @@ BuriedUnsatisfiedPolarsCalculator2::acc_geom_check(
 			return false;
 		}
 	}
+}
+
+core::Size
+BuriedUnsatisfiedPolarsCalculator2::satisfaction_cutoff( std::string atom_type )
+{
+
+	//according to jk, buried hydroxyls are often seen making only one hydrogen bond. also, ether oxygens often are bad h-bond acceptors
+	if( atom_type == "OH" ) return 2;
+
+	//backbone oxygens also only have one h-bbond in most secondary structure elements
+	else if (atom_type == "OCbb") return 2;
+
+	else if( atom_type ==  "S")	return 2;
+
+ //everything else we expect to have 3 bonded/h-bonded neighbours to count as satisfied
+	else return 3;
+
+
 }
 
 void

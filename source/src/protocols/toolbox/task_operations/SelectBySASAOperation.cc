@@ -19,12 +19,15 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -203,25 +206,29 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 			}
 			if (sasa_pose.residue( iaa ).is_protein()) {
 				res_count++;
+				core::Size output_resi = res_count;
+				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
+					output_resi = pose.pdb_info()->number( res_count );
+				}
 				TR.Debug << iaa << " res_count = " << res_count << " sasa = " << final_sasas[iaa] << std::endl;
 				if (final_sasas[ iaa ] <= core_asa_) {
 					if( core_ ){
-						selected_pos.append(ObjexxFCL::string_of(res_count) + "+");
+						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 						prevent_repacking = 0;
 					}
-					core_pos.append(ObjexxFCL::string_of(res_count) + "+");   
+					core_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
 				} else if (final_sasas[iaa] >= surface_asa_) {
 					if( surface_ ){
-						selected_pos.append(ObjexxFCL::string_of(res_count) + "+");   
+						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
 						prevent_repacking = 0;
 					}
 					surface_pos.append(ObjexxFCL::string_of(res_count) + "+");
 				} else if ((final_sasas[iaa] >= core_asa_) && (final_sasas[iaa] <= surface_asa_)) {
 					if( boundary_ ){
-						selected_pos.append(ObjexxFCL::string_of(res_count) + "+");   
+						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
 						prevent_repacking = 0;
 					}
-					boundary_pos.append(ObjexxFCL::string_of(res_count) + "+");
+					boundary_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 				}
 				if( prevent_repacking ){
 					task.nonconst_residue_task(res_count).prevent_repacking();

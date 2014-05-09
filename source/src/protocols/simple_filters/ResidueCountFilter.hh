@@ -25,6 +25,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 //C library
 #include <math.h> // for round, floor, ceil, trunc, sqrt
@@ -122,6 +123,20 @@ public:
 		bool value
 	);
 
+  core::pack::task::TaskFactoryOP 
+  task_factory() const;
+  
+  void 
+  task_factory( 
+  	core::pack::task::TaskFactoryOP task_factory 
+  );
+  
+  bool packable() const;
+  
+  void 
+  packable( 
+  	bool const pack 
+  );
 
 	///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
 	bool
@@ -137,8 +152,9 @@ private:
 	core::Size min_residue_count_;
 	bool enable_min_residue_count_;
 	bool	count_as_percentage_;
-
 	utility::vector1< std::string > res_types_;
+  bool packable_;
+	core::pack::task::TaskFactoryOP task_factory_;
 };
 
 }

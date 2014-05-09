@@ -16,6 +16,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <utility/string_util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/Tracer.hh>
@@ -65,24 +66,31 @@ AtomicContactCountFilter::AtomicContactCountFilter(core::Real distance_cutoff) :
 	initialize_all_atoms(NULL);
 }
 
-AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter const & src ) : Filter(src),
-		task_factory_(src.task_factory_),
-		distance_cutoff_(src.distance_cutoff_),
-		filter_mode_(src.filter_mode_),
-		normalize_by_sasa_(src.normalize_by_sasa_),
-		ss_only_(src.ss_only_),
-		jump_(src.jump_),
-		sym_dof_name_(src.sym_dof_name_)
-{}
+AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter const & src ) :
+	Filter(src),
+	task_factoryA_(src.task_factoryA_),
+	task_factoryB_(src.task_factoryB_),
+	distance_cutoff_(src.distance_cutoff_),
+	filter_mode_(src.filter_mode_),
+	normalize_by_sasa_(src.normalize_by_sasa_),
+	ss_only_(src.ss_only_),
+	normalize_by_carbon_count_(src.normalize_by_carbon_count_),
+	jump_(src.jump_),
+	sym_dof_name_(src.sym_dof_name_)
+{
+}
 
 AtomicContactCountFilter::~AtomicContactCountFilter() {}
 
 protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return new AtomicContactCountFilter( *this ); }
 protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return new AtomicContactCountFilter(); }
 
-void AtomicContactCountFilter::initialize_all_atoms(core::pack::task::TaskFactoryOP task_factory)
+void AtomicContactCountFilter::initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
 {
-	task_factory_ = task_factory;
+	task_factoryA_ = task_factoryA;
+	individual_tasks_ = individual_tasks;
+	task_factoryB_ = task_factoryB;
+	normalize_by_carbon_count_ = normalize_by_carbon_count;
 	jump_ = 0;
 	sym_dof_name_ = "";
 	normalize_by_sasa_ = false;
@@ -91,22 +99,27 @@ void AtomicContactCountFilter::initialize_all_atoms(core::pack::task::TaskFactor
 	filter_mode_ = ALL;
 }
 
-void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, std::string sym_dof_name, core::pack::task::TaskFactoryOP task_factory, bool normalize_by_sasa)
+void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, std::string sym_dof_name, core::pack::task::TaskFactoryOP task_factoryA, bool normalize_by_sasa, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
 {
-	task_factory_ = task_factory;
 	jump_ = jump;
 	sym_dof_name_ = sym_dof_name;
+	task_factoryA_ = task_factoryA;
 	normalize_by_sasa_ = normalize_by_sasa;
+	individual_tasks_ = individual_tasks;
+	task_factoryB_ = task_factoryB;
+	normalize_by_carbon_count_ = normalize_by_carbon_count;
 
 	filter_mode_ = CROSS_JUMP;
 }
-
-void AtomicContactCountFilter::initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory, bool normalize_by_sasa, bool detect_chains_for_interface)
+void AtomicContactCountFilter::initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA, bool normalize_by_sasa, bool detect_chains_for_interface, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
 {
-	task_factory_ = task_factory;
+	task_factoryA_ = task_factoryA;
+	normalize_by_sasa_ = normalize_by_sasa;
+	individual_tasks_ = individual_tasks;
+	task_factoryB_ = task_factoryB;
 	jump_ = 0;
 	sym_dof_name_ = "";
-	normalize_by_sasa_ = normalize_by_sasa;
+	normalize_by_carbon_count_ = normalize_by_carbon_count;
 
 	filter_mode_ = detect_chains_for_interface ? CROSS_CHAIN_DETECTED : CROSS_CHAIN_ALL;
 }
@@ -123,28 +136,70 @@ void AtomicContactCountFilter::parse_my_tag(
 
 	std::string specified_mode = tag->getOption< std::string >( "partition", "none" );
 	std::string specified_normalized_by_sasa = tag->getOption< std::string >( "normalize_by_sasa", "0" );
+	bool normalize_by_sasa = tag->getOption< bool >( "normalize_by_sasa", false );
+	bool normalize_by_carbon_count = tag->getOption< bool >( "normalize_by_carbon_count", false );
+	if( normalize_by_sasa && normalize_by_carbon_count ) {
+		utility_exit_with_message("Can specify normalize_by_sasa or normalize_by_carbon_count, but not both.");
+	}
 
 	ss_only_ = tag->getOption< bool >( "ss_only", false );
 
+	bool individual_tasks = false;
+  core::pack::task::TaskFactoryOP task_factoryA = new core::pack::task::TaskFactory;
+  core::pack::task::TaskFactoryOP task_factoryB = new core::pack::task::TaskFactory;
+	if( tag->hasOption( "taskA" ) ){
+		utility::vector1< std::string > taskA_names = utility::string_split( tag->getOption< std::string >( "taskA" ), ',' );
+		for(Size i = 1; i <= taskA_names.size(); i++) {
+			task_factoryA->push_back( data.get< core::pack::task::operation::TaskOperation * >( "task_operations", taskA_names[i] ) ); 
+		}
+		if( tag->hasOption( "taskB" ) ){
+			utility::vector1< std::string > taskB_names = utility::string_split( tag->getOption< std::string >( "taskB" ), ',' );
+			for(Size i = 1; i <= taskB_names.size(); i++) {
+				task_factoryB->push_back( data.get< core::pack::task::operation::TaskOperation * >( "task_operations", taskB_names[i] ) ); 
+			}
+		} else {
+			utility_exit_with_message("Must specify both TaskA and TaskB if using indivual tasks.");
+		}
+		if( tag->hasOption( "task_operations" )) {
+			utility_exit_with_message("Cannot specify task_operations together with individual tasks TaskA and TaskB.");
+		}
+		individual_tasks = true;
+	} else if ( tag->hasOption( "taskB" ) ){
+		utility_exit_with_message("Must specify both TaskA and TaskB if using individual tasks.");
+	} else if(tag->hasOption( "task_operations" )) {
+		task_factoryA = protocols::rosetta_scripts::parse_task_operations( tag, data );
+		task_factoryB = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	}
+
 	if (specified_mode == "none")
 	{
-		initialize_all_atoms(protocols::rosetta_scripts::parse_task_operations( tag, data ));
+		initialize_all_atoms(
+			task_factoryA,
+			individual_tasks,
+			task_factoryB,
+			normalize_by_carbon_count);
 	}
 	else if (specified_mode == "jump")
 	{
 		initialize_cross_jump(
-				tag->getOption< core::Size >( "jump", 1 ),
-				tag->getOption< std::string >( "sym_dof_name", "" ),
-				protocols::rosetta_scripts::parse_task_operations( tag, data ),
-				specified_normalized_by_sasa != "0");
+			tag->getOption< core::Size >( "jump", 1 ),
+			tag->getOption< std::string >( "sym_dof_name", "" ),
+			task_factoryA,
+			specified_normalized_by_sasa != "0",
+			individual_tasks,
+			task_factoryB,
+			normalize_by_carbon_count);
 	}
 	else if (specified_mode == "chain")
 	{
 
 		initialize_cross_chain(
-				protocols::rosetta_scripts::parse_task_operations( tag, data ),
-				specified_normalized_by_sasa != "0",
-				specified_normalized_by_sasa == "detect_by_task");
+			task_factoryA,
+			specified_normalized_by_sasa != "0",
+			specified_normalized_by_sasa == "detect_by_task",
+			individual_tasks,
+			task_factoryB,
+			normalize_by_carbon_count);
 	}
 
 	if (filter_mode_ == ALL && specified_normalized_by_sasa != "0")
@@ -162,40 +217,65 @@ void AtomicContactCountFilter::parse_my_tag(
 
 core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) const
 {
-	// Create map of target residues using taskoperation
-  core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+	// Create map of taskA and taskB using taskoperations
+  core::pack::task::PackerTaskOP taskA = core::pack::task::TaskFactory::create_packer_task( pose );
+  core::pack::task::PackerTaskOP taskB = core::pack::task::TaskFactory::create_packer_task( pose );
 
-  if ( task_factory_ != 0 )
+  if ( task_factoryA_ != 0 )
 	{
-    task = task_factory_->create_task_and_apply_taskoperations( pose );
-		TR.Debug << "Initializing from packer task." << std::endl;
+    taskA = task_factoryA_->create_task_and_apply_taskoperations( pose );
+		TR << "Initializing taskA from packer task." << std::endl;
+		//TR.Debug << "Initializing taskA from packer task." << std::endl;
   }
 	else
 	{
-		TR.Debug << "No packer task specified, using default task." << std::endl;
+		TR << "No packer taskA specified, using default task." << std::endl;
+		//TR.Debug << "No packer taskA specified, using default task." << std::endl;
+  }
+  if ( task_factoryB_ != 0 )
+	{
+    taskB = task_factoryB_->create_task_and_apply_taskoperations( pose );
+		TR << "Initializing taskB from packer task." << std::endl;
+		//TR.Debug << "Initializing taskB from packer task." << std::endl;
+  }
+	else
+	{
+		TR << "No packer taskB specified, using default task." << std::endl;
+		//TR.Debug << "No packer taskB specified, using default task." << std::endl;
   }
 
 	bool symmetric = core::pose::symmetry::is_symmetric( pose );
 
 	if ( symmetric )
 	{
-		task = core::pack::make_new_symmetric_PackerTask_by_requested_method(pose, task);
+		taskA = core::pack::make_new_symmetric_PackerTask_by_requested_method(pose, taskA);
+		taskB = core::pack::make_new_symmetric_PackerTask_by_requested_method(pose, taskB);
 	}
 
-	// Create lookup of target residues
-	utility::vector1<core::Size> target;
+	// Create lookup of setA and setB residues
+	utility::vector1<core::Size> setA, setB;
 	for (core::Size resi = 1; resi <= pose.n_residue(); resi++)
 	{
-		if( task->pack_residue(resi) )
+		if( taskA->pack_residue(resi) )
 		{
-			target.push_back(resi);
+			setA.push_back(resi);
 		}
+		if( taskB->pack_residue(resi) )
+		{
+			setB.push_back(resi);
+		}
+	}
+	if( !individual_tasks_ ) {
+		setB = setA;
 	}
 
 	if (TR.Debug.visible())
 	{
-		TR.Debug << "Targets from task: ";
-		std::copy(target.begin(), target.end(), std::ostream_iterator<core::Size>(TR.Debug, ","));
+		TR.Debug << "SetA residues from task: ";
+		std::copy(setA.begin(), setA.end(), std::ostream_iterator<core::Size>(TR.Debug, ","));
+		TR.Debug << std::endl;
+		TR.Debug << "SetB residues from task: ";
+		std::copy(setB.begin(), setB.end(), std::ostream_iterator<core::Size>(TR.Debug, ","));
 		TR.Debug << std::endl;
 	}
 
@@ -223,7 +303,8 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	}
 	else if (filter_mode_ == CROSS_JUMP)
 	{
-		TR.Debug << "Partitioning by jump." << std::endl;
+		TR << "Partitioning by jump." << std::endl;
+		//TR.Debug << "Partitioning by jump." << std::endl;
 
 		// Lookup symmetry-aware jump identifier
 		if ( sym_dof_name_ != "" ) {
@@ -264,6 +345,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	// Count all cross-partition contacts
 	core::Size contact_count = 0;
+	core::Size carbon_count = 0;
   utility::vector1<bool>  indy_resis;
 	if ( symmetric )
 	{
@@ -277,25 +359,38 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		core::scoring::dssp::Dssp dssp( pose );
 		pose_ss = dssp.get_dssp_reduced_IG_as_L_secstruct();
 	}
-
-	for (core::Size i = 1; i <= target.size(); i++)
+	TR << "Entering outer loop" << std::endl; // Remove
+	for (core::Size i = 1; i <= setA.size(); i++)
 	{
-		if ( symmetric && (filter_mode_ == CROSS_JUMP) )
-		{
-			// TODO: ALEX FORD: Fix so that can take multiple tasks.  One that specifies the residues for which counts are analyzed and the other task specifies all of the other residues with which to look for interactions.
-			// The residue_partition logic works in this case, but may not make sense for symmetric assemblies in cross_chain mode.
-			// For multicomponent systems we only want to count contacts from residues in the primary subunit corresponding to the user-specified symdof
-			if (!indy_resis[target[i]] || residue_partition[target[i]]) continue;
+		if ( symmetric && !indy_resis[setA[i]]) {
+			continue;
 		}
-		for (core::Size j = i+1; j <= target.size(); j++)
+		core::conformation::Residue const & residue_i = pose.residue(setA[i]);
+		if( normalize_by_carbon_count_ ) {
+			for (core::Size atom_i = residue_i.first_sidechain_atom(); atom_i <= residue_i.nheavyatoms(); atom_i++) {
+				if (residue_i.atom_type(atom_i).element() == "C")
+				{
+					carbon_count += 1;
+				}
+			}
+		}
+		core::Size start_index = 1;
+		if( !individual_tasks_ ) {
+			start_index = i+1;
+		}
+		TR << "Entering inner loop" << std::endl;
+		for (core::Size j = start_index; j <= setB.size(); j++)
 		{
 			//fpd ss filter
-			if (ss_only_ && (pose_ss[i-1] == 'L' || pose_ss[j-1] == 'L') ) continue;
+			//jbb shouldn't this be target[i]-1 and target[j]-1 not i-1 and j-1?
+			//if (ss_only_ && (pose_ss[i-1] == 'L' || pose_ss[j-1] == 'L') ) continue;
+			if (ss_only_ && (pose_ss[setA[i]-1] == 'L' || pose_ss[setB[j]-1] == 'L') ) continue;
 
-			if (residue_partition[target[i]] != residue_partition[target[j]])
+			//if (target[i] != j)
+			//if (residue_partition[target[i]] != residue_partition[target[j]])
+			if (residue_partition[setA[i]] != residue_partition[setB[j]])
 			{
-				core::conformation::Residue const & residue_i = pose.residue(target[i]);
-				core::conformation::Residue const & residue_j = pose.residue(target[j]);
+				core::conformation::Residue const & residue_j = pose.residue(setB[j]);
 
 				for (core::Size atom_i = residue_i.first_sidechain_atom(); atom_i <= residue_i.nheavyatoms(); atom_i++)
 				{
@@ -313,7 +408,8 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 						if (residue_i.xyz(atom_i).distance(residue_j.xyz(atom_j)) <= distance_cutoff_)
 						{
-							TR.Debug << "select (resi " << target[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << target[j] << "and name " << residue_j.atom_name(atom_j) << ")" << std::endl;
+							TR << "select (resi " << setA[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << setB[j] << " and name " << residue_j.atom_name(atom_j) << ")" << std::endl;
+							//TR.Debug << "select (resi " << target[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << target[j] << "and name " << residue_j.atom_name(atom_j) << ")" << std::endl;
 							contact_count += 1;
 						}
 					}
@@ -342,9 +438,9 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 			if (filter_mode_ == CROSS_CHAIN_DETECTED)
 			{
 				// Detect chains containing target residues.
-				for (core::Size i = 1; i <= target.size(); ++i)
+				for (core::Size i = 1; i <= setA.size(); ++i)
 				{
-					interface_chains.insert(pose.chain(target[i]));
+					interface_chains.insert(pose.chain(setA[i]));
 				}
 			}
 			else if (filter_mode_ == CROSS_CHAIN_ALL)
@@ -442,6 +538,8 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		{
 			return 0;
 		}
+	} else if (normalize_by_carbon_count_) {
+		return (core::Real)(contact_count) / (core::Real)(carbon_count);
 	}
 	else
 	{

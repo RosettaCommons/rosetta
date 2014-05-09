@@ -47,6 +47,12 @@
 #include <protocols/ligand_docking/MolecularMassFilterCreator.hh>
 #include <protocols/ligand_docking/MolarMassFilterCreator.hh>
 
+#include <protocols/matdes/ClashCheckFilterCreator.hh>
+#include <protocols/matdes/GetRBDOFValuesCreator.hh>
+#include <protocols/matdes/InterfacePackingFilterCreator.hh>
+#include <protocols/matdes/OligomericAverageDegreeFilterCreator.hh>
+#include <protocols/matdes/SymUnsatHbondFilterCreator.hh>
+
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
@@ -88,11 +94,13 @@
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
-#include <protocols/simple_filters/OperatorFilterCreator.hh>
+#include <protocols/simple_filters/MultipleSigmoidsFilterCreator.hh>
+#include <protocols/simple_filters/MutationsFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
 #include <protocols/simple_filters/NetChargeFilterCreator.hh>
 #include <protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh>
 #include <protocols/simple_filters/NMerSVMEnergyFilterCreator.hh>
+#include <protocols/simple_filters/OperatorFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/PoseCommentFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>
@@ -106,12 +114,15 @@
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
 #include <protocols/simple_filters/SavePoseConstraintToFileFilterCreator.hh>
+#include <protocols/simple_filters/SaveResfileToDiskFilterCreator.hh>
 #include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
 #include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/SigmoidFilterCreator.hh>
-#include <protocols/simple_filters/MultipleSigmoidsFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
 #include <protocols/simple_filters/SymmetricMotifFilterCreator.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
+#include <protocols/simple_filters/TaskAwareAlaScanCreator.hh>
+#include <protocols/simple_filters/TaskAwareSASAFilterCreator.hh>
+#include <protocols/simple_filters/TaskAwareScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>
 #include <protocols/simple_filters/TotalSasaFilterCreator.hh>

@@ -95,6 +95,7 @@ public:
 	virtual std::string keyname() const { return "IncludeCurrent"; }
 };
 
+
 class InitializeExtraRotsFromCommandlineCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;

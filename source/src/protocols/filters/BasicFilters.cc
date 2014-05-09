@@ -19,8 +19,6 @@
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/BasicFilterCreators.hh>
 
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
@@ -43,6 +41,7 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 //// C++ headers
 static basic::Tracer TR("protocols.filters.Filter");
@@ -109,14 +108,16 @@ StochasticFilter::parse_my_tag(
 // AND, OR and XOR
 CompoundFilter::CompoundFilter() :
 		Filter( "CompoundStatement" ),
-		invert_(false)
+		invert_(false),
+		reset_filters_(false)
  {}
 CompoundFilter::~CompoundFilter() {}
 
 CompoundFilter::CompoundFilter( CompoundStatement const & compound_statement ) :
 	Filter( "CompoundStatement" ),
 	compound_statement_( compound_statement ),
-	invert_(false)
+	invert_(false),
+	reset_filters_(false)
 {}
 
 bool
@@ -178,6 +179,7 @@ CompoundFilter::report_sm( Pose const & pose ) const
 bool
 CompoundFilter::compute( Pose const & pose ) const
 {
+
 	bool value( true );
 
 	for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
@@ -247,6 +249,38 @@ void
 CompoundFilter::invert( bool const inv )
 {
 	invert_ = inv;
+}
+
+void
+CompoundFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters ) 
+{
+	reset_filters_ = reset_filters;
+}
+
+void
+CompoundFilter::reset_filters()
+{
+	CompoundStatement new_compound_statement;
+	std::pair< FilterOP, boolean_operations > filter_pair;
+	for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+		filter_pair.first = it->first;
+		filter_pair.second = it->second;
+		BOOST_FOREACH( FilterOP filter, reset_filters_) { 
+			if( filter->get_user_defined_name() == it->first->get_user_defined_name() ) {
+				filter_pair.first = filter->clone();
+				break;
+			}
+		}
+		new_compound_statement.push_back( filter_pair );
+	}
+	compound_statement_.clear();
+	compound_statement_ = new_compound_statement;
+}
+
+void
+CompoundFilter::clear_reset_filters()
+{
+	reset_filters_.clear();
 }
 
 /// @details call the compound statement's constituent filters' set_resid
@@ -346,6 +380,38 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 		value += fw_pair.second * fw_pair.first->report_sm( pose );
 	}
 	return( value );
+}
+
+void
+CombinedFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters ) 
+{
+	reset_filters_ = reset_filters;
+}
+
+void
+CombinedFilter::reset_filters()
+{
+	FilterList new_filterlist;
+	FilterWeightPair filter_pair;
+	BOOST_FOREACH(FilterWeightPair fw_pair, filterlist_){
+		filter_pair.first = fw_pair.first;
+		filter_pair.second = fw_pair.second;
+		BOOST_FOREACH( FilterOP filter, reset_filters_) { 
+			if( filter->get_user_defined_name() == fw_pair.first->get_user_defined_name() ) {
+				filter_pair.first = filter->clone();
+				break;
+			}
+		}
+		new_filterlist.push_back( filter_pair );
+	}
+	filterlist_.clear();
+	filterlist_ = new_filterlist;
+}
+
+void
+CombinedFilter::clear_reset_filters()
+{
+	reset_filters_.clear();
 }
 
 void

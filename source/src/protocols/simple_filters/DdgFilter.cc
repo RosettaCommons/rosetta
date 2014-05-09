@@ -42,8 +42,6 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
-const core::Real DdgFilter::DEFAULT_TRANSLATION_DISTANCE = 100.0;
-
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const { return new DdgFilter; }
 
@@ -63,7 +61,7 @@ DdgFilter::DdgFilter() :
 	repack_( true ),
 	relax_mover_( NULL ),
 	pb_enabled_(false),
-	translate_by_(DEFAULT_TRANSLATION_DISTANCE)
+	translate_by_(1000)
 {
 	scorename_ = "ddg";
 }
@@ -84,7 +82,7 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	repack_( true ),
 	relax_mover_( NULL ),
 	pb_enabled_(false),
-	translate_by_(DEFAULT_TRANSLATION_DISTANCE)
+	translate_by_(1000)
 {
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
@@ -139,7 +137,7 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP const tag,
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	repack_bound( tag->getOption<bool>( "repack_bound", 1 ) );
 	relax_bound( tag->getOption<bool>( "relax_bound", 0 ) );
-	translate_by_ = tag->getOption<core::Real>( "translate_by", DEFAULT_TRANSLATION_DISTANCE );
+	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000 );
 
 	if( tag->hasOption( "relax_mover" ) )
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
@@ -166,13 +164,16 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP const tag,
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled.  Translation distance = " << translate_by_ << " A" << std::endl;
-		if( translate_by_ > DEFAULT_TRANSLATION_DISTANCE ) {
-			TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default) if you run out of memory: " << translate_by_ << std::endl;
-			TR.Warning.flush();
+		if( tag->hasOption("translate_by") && translate_by_ > 100) {
+		        TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
+		        TR.Warning.flush();
+		} else if( !tag->hasOption("translate_by") ){
+		        translate_by_ = 100;
+		        TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
+						TR.Warning.flush();
 		}
-	}
-	else{
-		pb_enabled_ = false;
+	} else {
+	pb_enabled_ = false;
 	}
 	TR.flush();
 }
@@ -194,7 +195,7 @@ void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 	repack( def["repack"] ? def["repack"].to<bool>() : true );
 	repack_bound_ = def["repack_bound"] ? def["repack_bound"].to<bool>() : true;
 	relax_bound_ = def["relax_bound"] ? def["relax_bound"].to<bool>() : false;
-	translate_by_ = def["translate_by"] ? def["translate_by"].to<core::Real>() : DEFAULT_TRANSLATION_DISTANCE;
+	translate_by_ = def["translate_by"] ? def["translate_by"].to<core::Real>() : 1000;
 	// ignoring relax_mover option
 	if( def["chain_num"] ) {
 		chain_ids_.clear();
@@ -295,6 +296,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		} else {
 			scoring_filter = new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ );
 		}
+		//JBB This is not handling symmetric poses properly. This needs to be fixed.
 		core::pose::Pose split_pose( pose );
 		if(chain_ids_.size() > 0)
 		{

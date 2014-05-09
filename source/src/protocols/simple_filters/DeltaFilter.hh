@@ -63,6 +63,8 @@ public:
 	void unbound( bool const u );
 	bool relax_unbound() const;
 	void relax_unbound( bool const u );
+	bool changing_baseline() const;
+	void changing_baseline( bool const c );
 	core::Size jump() const;
 	void jump( core::Size const j );
 	protocols::moves::MoverOP relax_mover() const;
@@ -75,6 +77,7 @@ private:
   bool lower_, upper_; // dflt false, true, respectively; use a lower/upper cutoff
 	bool unbound_; //dflt false; evaluate the filter in the unbound state? If so, activate jump, below
 	bool relax_unbound_; //dflt false; call relax mover on unbound pose?
+	bool changing_baseline_; //dflt false; Should the baseline be reset each time this delta filter is called? If so, then set changing baseline to true.
 	core::Size jump_; //dflt 0, but defaults to 1 if unbound is true
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value. Only called for computing the baseline at the start!
 	core::pose::PoseOP reference_pose_; //the reference pose that the baseline will be calculated on. note: this will only get set if a pose saved in the middle of an RS protocol and not the starting structure is the reference

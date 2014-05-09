@@ -137,24 +137,26 @@ private:
 		);
 	
 	virtual
-	bool
+	void
 	bunsat_donor_nbr_residue_check(
 		core::pose::Pose const & pose,
 		core::id::AtomID const & bunsat_candidate_atom_id,
 		core::conformation::Residue const & bunsat_rsd,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
-		Size const test_resi
-		) const;
+		Size const test_resi,
+		Size & num_hbonds
+		);
 	
 	virtual
-	bool
+	void
 	bunsat_acc_nbr_residue_check(
 		core::pose::Pose const & pose,
 		core::id::AtomID const & bunsat_candidate_atom_id,
 		core::conformation::Residue const & bunsat_rsd,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
-		Size const & test_resi
-		) const;
+		Size const & test_resi,
+		Size & num_hbonds
+		);
 	
 	bool
 	metal_check(
@@ -220,6 +222,8 @@ private:
 	utility::vector1< Size > residue_bur_unsat_polars_;
 	
 private:
+  static
+  core::Size satisfaction_cutoff( std::string atom_type );
 	std::string name_of_weak_bunsat_calc_;
 	std::set< Size > special_region_;
 	bool layered_sasa_;

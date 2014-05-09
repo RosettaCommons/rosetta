@@ -42,16 +42,10 @@
 #include <devel/loop_creation/CCDLoopCloserCreator.hh>
 #include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
-#include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
-#include <devel/matdes/StoreTaskMoverCreator.hh>
-#include <devel/matdes/SymDofMoverCreator.hh>
-#include <devel/matdes/ExtractSubpose.hh>
 #include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
 #include <devel/replica_docking/ThermodynamicRigidBodyMoverCreator.hh>
 #include <devel/replica_docking/TempWeightedMetropolisHastingsMoverCreator.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
-#include <devel/matdes/StoreCombinedStoredTasksMoverCreator.hh>
-#include <devel/matdes/StoreCompoundTaskMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 #include <devel/splice/SpliceCreator.hh>
 #include <devel/splice/DesignInterfacesOperationCreator.hh>
@@ -66,17 +60,7 @@
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
 #include <devel/denovo_design/filters/SSPredictionFilterCreator.hh>
 #include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
-#include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
-#include <devel/matdes/SymUnsatHbondFilterCreator.hh>
-#include <devel/matdes/AverageInterfaceEnergyFilterCreator.hh>
-#include <devel/matdes/TaskAwareAlaScanCreator.hh>
-#include <devel/matdes/SaveResfileToDiskFilterCreator.hh>
-#include <devel/matdes/TaskAwareSASAFilterCreator.hh>
-#include <devel/matdes/InterfacePackingFilterCreator.hh>
-#include <devel/matdes/ClashCheckFilterCreator.hh>
-#include <devel/matdes/GetRBDOFValuesCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
-#include <devel/matdes/MutationsFilterCreator.hh>
 #include <devel/matdes/GenericSymmetricSamplerCreator.hh>
 #include <devel/replica_docking/IrmsdFilterCreator.hh>
 #include <devel/replica_docking/CaIrmsdFilterCreator.hh>
@@ -98,9 +82,6 @@
 #include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
-#include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
-#include <devel/matdes/RestrictIdentitiesOperationCreator.hh>
-#include <devel/matdes/RetrieveStoredTaskOperationCreator.hh>
 
 #include <utility/vector1.hh>
 
@@ -126,17 +107,11 @@ static protocols::moves::MoverRegistrator< devel::loop_creation::CCDLoopCloserCr
 static protocols::moves::MoverRegistrator< devel::loop_creation::LoophashLoopInserterCreator > reg_LoophashLoopInserterCreator;
 static protocols::moves::MoverRegistrator< devel::loop_creation::IterativeLoophashLoopInserterCreator > reg_IterativeLoophashLoopInserterCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
-static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
-static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
-static protocols::moves::MoverRegistrator< devel::matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
-static protocols::moves::MoverRegistrator< devel::matdes::ExtractSubposeCreator > reg_ExtractSubposeCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSamplerCreator > reg_GenericSymmetricSamplerCreator;
 static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ThermodynamicRigidBodyPerturbNoCenterMoverCreator > reg_ThermodynamicRigidBodyPerturbNoCenterMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropolisHastingsMoverCreator > reg_TempWeightedMetropolisHastingsMoverCreator;
-static protocols::moves::MoverRegistrator< devel::matdes::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
-static protocols::moves::MoverRegistrator< devel::matdes::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator;
 static protocols::moves::MoverRegistrator< devel::splice::RBOutMoverCreator > reg_RBOutMoverCreator;
@@ -152,26 +127,13 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_desi
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByCavityProximityOperationCreator > reg_DesignByCavityProximityOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignRandomRegionOperationCreator > reg_DesignRandomRegionOperationCreator;
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
 
 // Filter creators
 static protocols::filters::FilterRegistrator< denovo_design::filters::CavityVolumeFilterCreator > reg_CavityVolumeFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::FoldabilityFilterCreator > reg_FoldabilityFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::SSShapeComplementarityFilterCreator > reg_SSShapeComplementarityFilterCreator;
-static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::AverageInterfaceEnergyFilterCreator > AverageInterfaceEnergyFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareAlaScanCreator > TaskAwareAlaScanCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::SaveResfileToDiskFilterCreator > SaveResfileToDiskFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareSASAFilterCreator > TaskAwareSASAFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::InterfacePackingFilterCreator > InterfacePackingFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::ClashCheckFilterCreator > ClashCheckFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::GetRBDOFValuesCreator > GetRBDOFValuesCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::MutationsFilterCreator > MutationsFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::IrmsdFilterCreator > IrmsdCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::FnatFilterCreator > FnatCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::LrmsdFilterCreator > LrmsdCreator_registrator;

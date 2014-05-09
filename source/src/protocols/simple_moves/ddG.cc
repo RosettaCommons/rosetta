@@ -104,8 +104,6 @@ using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
-const core::Real ddG::DEFAULT_TRANSLATION_DISTANCE = 100.0; // A
-
 ddG::ddG() :
 		moves::Mover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
@@ -119,7 +117,7 @@ ddG::ddG() :
 		repack_bound_(true),
 		relax_bound_(false),
 		pb_enabled_(false),
-		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
+		translate_by_(1000)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -141,7 +139,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		repack_bound_(true),
 		relax_bound_(false),
 		pb_enabled_(false),
-		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
+		translate_by_(1000)
 {
 	scorefxn_ = scorefxn_in->clone();
 
@@ -176,7 +174,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		repack_bound_(true),
 		relax_bound_(false),
 		pb_enabled_(false),
-		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
+		translate_by_(1000)
 {
 	scorefxn_ = scorefxn_in->clone();
 	chain_ids_ = chain_ids;
@@ -214,7 +212,7 @@ void ddG::parse_my_tag(
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",1);
 	relax_bound_ = tag->getOption<bool>("relax_bound",0);
-	translate_by_ = tag->getOption<core::Real>("translate_by", DEFAULT_TRANSLATION_DISTANCE);
+	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
 
 	if( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
@@ -261,9 +259,13 @@ void ddG::parse_my_tag(
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled.  Translation distance = " << translate_by_ << " A" << std::endl;
-		if( translate_by_ > DEFAULT_TRANSLATION_DISTANCE ) {
-			TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default) if you run out of memory: " << translate_by_ << std::endl;
-			TR.Warning.flush();
+		if( tag->hasOption("translate_by") && translate_by_ > 100) {
+		        TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
+		        TR.Warning.flush();
+		} else if( !tag->hasOption("translate_by") ){
+		        translate_by_ = 100;
+		        TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
+						TR.Warning.flush();
 		}
 	}
 	else{

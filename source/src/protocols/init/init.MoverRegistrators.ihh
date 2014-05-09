@@ -164,6 +164,10 @@ static MoverRegistrator< loops::loop_mover::refine::SmallMinCCDTrialCreator > re
 
 static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 
+static MoverRegistrator< matdes::ExtractSubposeMoverCreator > reg_ExtractSubposeMoverCreator;
+static MoverRegistrator< matdes::MatDesGreedyOptMutationMoverCreator > reg_MatDesGreedyOptMutationMoverCreator;
+static MoverRegistrator< matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
+
 static MoverRegistrator< membrane::CreateMembranePoseMoverCreator > reg_CreateMembranePoseMover;
 
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
@@ -323,6 +327,11 @@ static MoverRegistrator< simple_moves::symmetry::SetupNCSMoverCreator > reg_Setu
 static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
+static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
+
+static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
+static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
+static MoverRegistrator< toolbox::task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 
 static MoverRegistrator< environment::EnvMoverCreator > reg_EnvMoverCreator;
 static MoverRegistrator< abinitio::abscript::AbscriptMoverCreator > reg_AbscriptMoverCreator;

@@ -30,8 +30,12 @@
 
 #include <protocols/forge/remodel/RemodelRotamerLinksCreator.hh>
 
+#include <protocols/matdes/BuildingBlockInterfaceOperationCreator.hh>
+
+#include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/DatabaseThreadCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ImportUnboundRotamersOperationCreator.hh>
 #include <protocols/toolbox/task_operations/JointSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2OperationCreator.hh>
 #include <protocols/toolbox/task_operations/LinkResiduesCreator.hh>
@@ -44,10 +48,12 @@
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictNativeResiduesOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictNonSurfaceToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictInterGroupVectorOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictIdentitiesAtAlignedPositionsCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictIdentitiesOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToCDRH3LoopCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperationCreator.hh>
@@ -55,12 +61,11 @@
 #include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighborsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToTerminiOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RetrieveStoredTaskOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh> //also effectively RestrictConservedLowDdgOperationCreator.hh
 #include <protocols/toolbox/task_operations/SelectResiduesWithinChainCreator.hh>
 #include <protocols/toolbox/task_operations/SetIGTypeOperationCreator.hh>
-#include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SelectBySASAOperationCreator.hh>
+#include <protocols/toolbox/task_operations/SelectByDeltaScoreOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SelectByDensityFitOperationCreator.hh>
-#include <protocols/toolbox/task_operations/RestrictNativeResiduesOperationCreator.hh>
-#include <protocols/toolbox/task_operations/ImportUnboundRotamersOperationCreator.hh>
-#include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>

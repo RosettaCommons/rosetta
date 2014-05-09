@@ -103,6 +103,9 @@ public:
 	const_iterator end() const;
 	virtual void set_resid( core::Size const resid );
 	void invert( bool const inv );
+	void set_reset_filters( utility::vector1<FilterOP> const reset_filters );
+	void reset_filters();
+	void clear_reset_filters();
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
@@ -115,6 +118,7 @@ private:
 	core::Real threashold_;
 	CompoundStatement compound_statement_;
 	bool invert_;
+	utility::vector1<FilterOP> reset_filters_;
 };
 
 /// @brief Used to combine multiple seperate filters into a single filter value
@@ -132,6 +136,9 @@ public:
 	void report( std::ostream &, core::pose::Pose const & ) const;
 	core::Real report_sm( core::pose::Pose const & ) const;
 	core::Real compute( core::pose::Pose const & ) const;
+	void set_reset_filters( utility::vector1<FilterOP> const reset_filters );
+	void reset_filters();
+	void clear_reset_filters();
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
@@ -143,6 +150,7 @@ public:
 private:
 	core::Real threshold_;
 	FilterList filterlist_;
+	utility::vector1<FilterOP> reset_filters_;
 };
 
 

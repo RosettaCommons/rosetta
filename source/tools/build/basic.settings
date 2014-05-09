@@ -1748,7 +1748,7 @@ settings = {
                     "W",
                     "pedantic",
                     #"Weverything",
-                    "Werror",
+                    #"Werror",
                     "Wno-long-long",
                     #"Wno-documentation",
                     #"Wno-padded",

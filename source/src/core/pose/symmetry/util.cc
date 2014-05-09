@@ -1577,10 +1577,10 @@ get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname){
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		SymmetryInfo const & sym_info = *core::pose::symmetry::symmetry_info(pose);
 		int jnum = sym_dof_jump_num(pose,jname);
-		ObjexxFCL::FArray1D_bool partition;
-		pose.fold_tree().partition_by_jump(jnum,partition);
+		ObjexxFCL::FArray1D_bool is_upstream( pose.total_residue(), false );
+		pose.fold_tree().partition_by_jump( jnum, is_upstream );
 		for(Size i = 1; i <= sym_info.num_total_residues_without_pseudo(); i+=sym_info.get_nres_subunit()){
-			if(partition(i)){
+			if(is_upstream(i)){
 				subs.push_back( sym_info.subunit_index(i) );
 				std::cout << subs.back() << std::endl;
 			}

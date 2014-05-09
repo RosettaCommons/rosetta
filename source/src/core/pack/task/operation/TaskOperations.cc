@@ -22,6 +22,7 @@
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
+#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -29,6 +30,7 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
+#include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <boost/foreach.hpp>
@@ -38,16 +40,17 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // basic headers
 #include <basic/resource_manager/ResourceManager.hh>
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -397,7 +400,7 @@ InitializeFromCommandline::parse_tag( TagCOP, DataMap & )
 void
 InitializeFromCommandline::parse_def( utility::lua::LuaObject const &) {}
 
-/// BEGIN InitializeFromCommandline
+/// BEGIN InitializeExtraRotsFromCommandLine
 
 InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
 

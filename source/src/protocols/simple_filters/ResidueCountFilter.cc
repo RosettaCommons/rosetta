@@ -19,13 +19,15 @@
 #include <utility/tag/Tag.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.hh>
 //Project Headers
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 //Utility Headers
 #include <utility/string_util.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 
 namespace protocols{
 namespace simple_filters {
@@ -48,7 +50,9 @@ ResidueCountFilter::ResidueCountFilter() :
 	enable_max_residue_count_(false),
 	min_residue_count_(0),
 	enable_min_residue_count_(false),
-	count_as_percentage_(false)	// for a user who does not use rosetta_scripts, count_as_percentage_ = false by default here
+	count_as_percentage_(false),	// for a user who does not use rosetta_scripts, count_as_percentage_ = false by default here
+  packable_( 0 ),
+ 	task_factory_( NULL )
 {}
 
 ResidueCountFilter::ResidueCountFilter(
@@ -60,7 +64,9 @@ ResidueCountFilter::ResidueCountFilter(
 	min_residue_count_(src.min_residue_count_),
 	enable_min_residue_count_(src.enable_min_residue_count_),
 	count_as_percentage_(src.count_as_percentage_),	
-	res_types_( src.res_types_ )
+	res_types_( src.res_types_ ),
+  packable_( src.packable_ ),
+  task_factory_( src.task_factory_ )
 {}
 
 
@@ -89,7 +95,7 @@ ResidueCountFilter::round_to_Real(
 void
 ResidueCountFilter::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
 	core::pose::Pose const & pose
@@ -123,7 +129,8 @@ ResidueCountFilter::parse_my_tag(
 			}
 		} // for all res type specified
 	}
-
+  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+  packable( tag->getOption< bool >( "packable", 0 ) );
 }
 
 bool
@@ -170,27 +177,38 @@ core::Real
 ResidueCountFilter::compute(
 	core::pose::Pose const & pose
 ) const {
-	if ( res_types_.size() > 0 ) {
-		core::Size count( 0 );
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-			for ( core::Size j=1; j<=res_types_.size(); ++j ) {
-				if ( pose.residue( i ).name3() == res_types_[j] || pose.residue( i ).name() == res_types_[j] ) {
-					++count;
-				} // if
-			} // for all res types specified
-		} // for all residues
-		if	(count_as_percentage_)
-		{
-			Real	count_as_percentage	=	round_to_Real((static_cast<Real>(count)*100)/static_cast<Real>(pose.total_residue()));
-				//without	static_cast<Real>,	division returns only Size (integer-like)
-			return count_as_percentage;
-		}
-		else
-		{
-			return count;
-		}
+
+	utility::vector1< core::Size > target_res;
+	target_res.clear();
+	if( !task_factory() ){
+		for( core::Size i = 1; i <= pose.total_residue(); ++i )
+			target_res.push_back( i );
 	} else {
-		return pose.total_residue();
+		if( packable_ ) {
+			target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, true/*packable*/ );
+		} else {
+			target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ );
+		} 
+	}
+
+  core::Size count( 0 );
+  for ( core::Size i=1; i<=target_res.size(); ++i ) {
+  	if( res_types_.size() > 0 ) {
+  		for ( core::Size j=1; j<=res_types_.size(); ++j ) {
+  			if ( pose.residue( target_res[i] ).name3() == res_types_[j] || pose.residue( target_res[i] ).name() == res_types_[j] ) {
+  				++count;
+  			} // if
+  		} // for all res types specified
+  	} else {
+  		++count; // for all packable/designable residues if task specified or all residues if no task specified
+  	}
+	}
+	if	(count_as_percentage_) {
+		Real	count_as_percentage	=	round_to_Real((static_cast<Real>(count)*100)/static_cast<Real>(target_res.size()));
+			//without	static_cast<Real>,	division returns only Size (integer-like)
+		return count_as_percentage;
+	} else {
+		return count;
 	}
 }
 
@@ -257,6 +275,29 @@ ResidueCountFilter::enable_min_residue_count(
 	enable_min_residue_count_ = value;
 }
 
+core::pack::task::TaskFactoryOP
+ResidueCountFilter::task_factory() const
+{
+	return task_factory_;
+}
+
+void
+ResidueCountFilter::task_factory( core::pack::task::TaskFactoryOP task_factory )
+{
+	task_factory_ = task_factory;
+}
+
+bool
+ResidueCountFilter::packable() const
+{
+	return( packable_ );
+}
+
+void
+ResidueCountFilter::packable( bool const pack )
+{
+	packable_ = pack;
+}
 
 
 ///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
