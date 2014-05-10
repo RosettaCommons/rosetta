@@ -34,7 +34,7 @@ std::string SolvationMetaGridCreator::keyname() const
 	return SolvationMetaGridCreator::grid_name();
 }
 
-GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP solvation_meta_grid = new SolvationMetaGrid();
 	solvation_meta_grid->parse_my_tag(tag);

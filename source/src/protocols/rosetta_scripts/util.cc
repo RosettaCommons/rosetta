@@ -61,7 +61,7 @@ using utility::vector1;
 /// @details This is essentially a shameless copy of Justin's PackRotamersMover::parse_task_operations. In truth
 /// DesignRepackMover should disappear into Justin's better organized class, but this will wait... (SJF)
 core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data )
+parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
 {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -98,7 +98,7 @@ parse_task_operations( std::string const task_list, basic::datacache::DataMap co
 
 ///option to add or refer to a Taskfactory through the datamap, similar to how to add/refer to movemap OPs (EMS)
 core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory /*, bool const reset_taskfactory */)
+parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory /*, bool const reset_taskfactory */)
 {
   using namespace core::pack::task;
   using namespace core::pack::task::operation;
@@ -143,7 +143,7 @@ parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap
 }
 
 utility::vector1< core::pack::task::operation::TaskOperationOP >
-get_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data )
+get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
 {
 	using core::pack::task::operation::TaskOperationOP;
 	using core::pack::task::operation::TaskOperation;
@@ -171,7 +171,7 @@ get_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap c
 /// Justin's PackRotamersMover::parse_score_function.
 core::scoring::ScoreFunctionOP
 parse_score_function(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	std::string const & option_name,
 	basic::datacache::DataMap const & data,
 	std::string const dflt_key/*="score12"*/ )
@@ -217,7 +217,7 @@ parse_score_function(
 /// parser-provided data for the option 'scorefxn'.
 core::scoring::ScoreFunctionOP
 parse_score_function(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
 	std::string const dflt_key/*="score12"*/ )
 {
@@ -226,7 +226,7 @@ parse_score_function(
 
 std::string
 get_score_function_name(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	std::string const & option_name
 ) {
 	return tag->getOption<std::string>(option_name, "score12");
@@ -234,7 +234,7 @@ get_score_function_name(
 
 std::string
 get_score_function_name(
-	utility::tag::TagCOP const tag
+	utility::tag::TagCOP tag
 ) {
 	return get_score_function_name(tag, "scorefxn");
 }

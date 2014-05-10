@@ -31,7 +31,7 @@ std::string HbdGridCreator::keyname() const
 	return HbdGridCreator::grid_name();
 }
 
-GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP hbd_grid= new HbdGrid();
 

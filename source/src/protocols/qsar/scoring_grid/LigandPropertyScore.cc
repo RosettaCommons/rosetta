@@ -22,7 +22,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-GridBaseOP LigandPropertyScoreCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP LigandPropertyScoreCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP ligand_property_score = new LigandPropertyScore();
 	ligand_property_score->parse_my_tag(tag);
@@ -49,7 +49,7 @@ LigandPropertyScore::LigandPropertyScore()
 
 }
 
-void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP const tag)
+void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP tag)
 {
 	if(!tag->hasOption("parameter"))
 	{

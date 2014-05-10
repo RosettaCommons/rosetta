@@ -54,7 +54,7 @@ filter_val_( -9999.9 ),
 ReportFilter::~ReportFilter() {}
 
 void
-ReportFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
+ReportFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
 {
 	report_filter_name_ = tag->getOption< std::string >( "name" );
 	if( tag->hasOption( "report_string" ) )

@@ -129,7 +129,7 @@ void AtomicDistanceFilter::report( std::ostream & out, core::pose::Pose const & 
 	out<<"Minimal distance between residue "<<residue1_<<" atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and residue "<<residue2_<<" atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" is "<<dist<<std::endl;
 }
 
-void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP const tag,
+void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

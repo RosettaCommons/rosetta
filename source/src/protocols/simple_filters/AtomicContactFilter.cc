@@ -117,7 +117,7 @@ void AtomicContactFilter::report( std::ostream & out, core::pose::Pose const & p
 	out<<"Minimal distance between residues "<<residue1_<<" and "<<get_resid()<<" is "<<dist<<std::endl;
 }
 
-void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP const tag,
+void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

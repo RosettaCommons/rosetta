@@ -93,7 +93,7 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data,
+ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data,
 		filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	residue( tag->getOption< std::string >( "pdb_num", "" ) );

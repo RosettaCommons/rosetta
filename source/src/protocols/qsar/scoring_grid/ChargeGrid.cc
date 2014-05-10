@@ -57,7 +57,7 @@ std::string ChargeGridCreator::keyname() const
 	return ChargeGridCreator::grid_name();
 }
 
-GridBaseOP ChargeGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP ChargeGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP charge_grid = new ChargeGrid();
 	charge_grid->parse_my_tag(tag);

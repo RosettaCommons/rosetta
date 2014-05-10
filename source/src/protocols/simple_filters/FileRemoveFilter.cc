@@ -50,7 +50,7 @@ delete_content_only_( false )
 FileRemoveFilter::~FileRemoveFilter() {}
 
 void
-FileRemoveFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+FileRemoveFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	std::string s;
 	s = tag->getOption< std::string >( "filenames" );

@@ -50,7 +50,7 @@ std::string ShapeGridCreator::keyname() const
 	return ShapeGridCreator::grid_name();
 }
 
-GridBaseOP ShapeGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP ShapeGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP shape_grid= new ShapeGrid();
 

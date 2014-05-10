@@ -164,7 +164,7 @@ MutationsFilter::apply(core::pose::Pose const & pose ) const
 		} else {
 			TR<<"Failing."<<std::endl;
 			return false;
-		}		
+		}
 	} else {
 		core::Real const recovery_rate( compute( pose, false ) );
 		TR<<"Sequence recovery rate evaluates to "<<recovery_rate<<". ";
@@ -184,30 +184,30 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	runtime_assert( reference_pose() );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
-	if(core::pose::symmetry::is_symmetric( *reference_pose() )) { 
+	if(core::pose::symmetry::is_symmetric( *reference_pose() )) {
 		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
   	for (core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i) {
     	if (asym_ref_pose.residue_type(i).name() == "VRT") {
 				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
 			}
 		}
-		total_residue_ref = asym_ref_pose.total_residue(); 
+		total_residue_ref = asym_ref_pose.total_residue();
 	} else {
-		total_residue_ref = reference_pose()->total_residue(); 
+		total_residue_ref = reference_pose()->total_residue();
 		asym_ref_pose = *reference_pose();
-	} 
+	}
 	core::Size total_residue;
 	core::pose::Pose asym_pose;
-	if (core::pose::symmetry::is_symmetric( pose )) { 
+	if (core::pose::symmetry::is_symmetric( pose )) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
   	for (core::Size i = 1; i <= asym_pose.total_residue(); ++i) {
     	if (asym_pose.residue_type(i).name() == "VRT") {
 				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
 			}
 		}
-		total_residue = asym_pose.total_residue(); 
+		total_residue = asym_pose.total_residue();
 	} else {
-		total_residue = pose.total_residue(); 
+		total_residue = pose.total_residue();
 		asym_pose = pose;
 	}
 	if( total_residue_ref != total_residue )
@@ -215,7 +215,7 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	core::pack::task::PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
 	core::Size resi_count( 0 );
 	core::Size mutation_count( 0 );
-	core::Size output_resi;
+	//core::Size output_resi;
   std::map< core::Size, std::string > res_names1;
   std::map< core::Size, std::string > res_names2;
 	for( core::Size resi=1; resi<=total_residue; ++resi ) {
@@ -227,9 +227,9 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 				mutation_count++;
 				if ( verbose_ ) {
 					if ( basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-						TR << asym_ref_pose.residue(resi).name3() << resi << asym_pose.residue(resi).name3() << std::endl;  
+						TR << asym_ref_pose.residue(resi).name3() << resi << asym_pose.residue(resi).name3() << std::endl;
 					} else {
-						TR << asym_ref_pose.residue(resi).name3() << pose.pdb_info()->number( resi ) << asym_pose.residue(resi).name3() << std::endl;  
+						TR << asym_ref_pose.residue(resi).name3() << pose.pdb_info()->number( resi ) << asym_pose.residue(resi).name3() << std::endl;
 					}
 				}
 			}
@@ -283,7 +283,7 @@ MutationsFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 }
 
 void
-MutationsFilter::parse_my_tag( utility::tag::TagCOP const tag,
+MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

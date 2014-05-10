@@ -73,7 +73,7 @@ void SavePoseConstraintToFileFilter::report( std::ostream &, core::pose::Pose co
 	pose.constraint_set()->show_definition(outfile,pose);
 }
 
-void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP const tag,
+void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

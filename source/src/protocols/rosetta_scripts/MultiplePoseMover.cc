@@ -307,7 +307,7 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 
 ///@brief Parse settings in tag
 void MultiplePoseMover::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,

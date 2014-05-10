@@ -272,7 +272,7 @@ RelativePoseFilter::pdb_name( std::string const pdb_name ){
 /// alignment is expecting X1:Y1,X2:Y2,X3:Y3... where X is the protein on disk (target) and Y is the active structure (starting structure). When no alignment is given it is implied that the poses are trivially aligned 1..nres
 /// Feb2012 added option to align entire chains: A:B,D:C. Notice that no testing is made to ensure correct lengths etc., simply aligns from the start to end of the chains sequentially.
 void
-RelativePoseFilter::parse_my_tag( utility::tag::TagCOP const tag,
+RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,

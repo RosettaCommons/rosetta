@@ -77,7 +77,7 @@ MultipleSigmoids::relative_pose_filter() const{ return r_pose_; }
 
 
 void
-  MultipleSigmoids::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &data, filters::Filters_map const &filters, moves::Movers_map const &movers, core::pose::Pose const & pose )
+  MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &filters, moves::Movers_map const &movers, core::pose::Pose const & pose )
 	{
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names

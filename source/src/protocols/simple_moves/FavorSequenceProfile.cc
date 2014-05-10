@@ -160,7 +160,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 }
 
 void
-FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose)
+FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose)
 {
 	weight_ = tag->getOption<core::Real>( "weight", 1 );
 

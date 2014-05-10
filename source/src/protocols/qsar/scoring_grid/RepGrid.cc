@@ -34,7 +34,7 @@ std::string RepGridCreator::keyname() const
 	return RepGridCreator::grid_name();
 }
 
-GridBaseOP RepGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP RepGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP rep_grid= new RepGrid();
 
@@ -84,7 +84,7 @@ void RepGrid::deserialize(utility::json_spirit::mObject data)
 }
 
 void
-RepGrid::parse_my_tag(utility::tag::TagCOP const tag){
+RepGrid::parse_my_tag(utility::tag::TagCOP tag) {
 
 	if (tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ){
 		// the user MUST provide all 3 if he/she is providing any of these 3 options

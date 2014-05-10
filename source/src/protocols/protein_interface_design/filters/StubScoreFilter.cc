@@ -102,7 +102,7 @@ StubScoreFilter::stub_sets( utility::vector1<  std::pair< protocols::hotspot_has
 }
 
 void
-StubScoreFilter::parse_my_tag( utility::tag::TagCOP const tag,
+StubScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

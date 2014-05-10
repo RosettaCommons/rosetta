@@ -124,7 +124,7 @@ ForceDisulfidesMover::get_name() const {
 }
 
 void
-ForceDisulfidesMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+ForceDisulfidesMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
   scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "disulfides" ), ',' ) );

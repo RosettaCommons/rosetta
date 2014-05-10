@@ -71,7 +71,7 @@ TerminusDistanceFilterCreator::keyname() const { return "TerminusDistance"; }
 TerminusDistanceFilter::~TerminusDistanceFilter(){}
 
 void
-TerminusDistanceFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+TerminusDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	distance_ = tag->getOption<core::Size>( "distance", 5 );

@@ -73,7 +73,7 @@ MembraneTopology::get_name() const {
 	return MembraneTopologyCreator::mover_name();
 }
 
-void MembraneTopology::parse_my_tag( utility::tag::TagCOP const tag,
+void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

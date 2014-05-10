@@ -311,7 +311,7 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
  *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
  *  - target_pdb_nums or target_res_nums. A list of possible target residues
  */
-void DisulfideMover::parse_my_tag( utility::tag::TagCOP const tag,
+void DisulfideMover::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,

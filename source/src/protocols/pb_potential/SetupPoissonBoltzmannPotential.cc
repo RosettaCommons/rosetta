@@ -119,7 +119,7 @@ SetupPB::clone() const {
 }
 
 void
-SetupPB::parse_my_tag( utility::tag::TagCOP const tag,
+SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 			    basic::datacache::DataMap & data_map,
 			    protocols::filters::Filters_map const & filters_map,
 			    protocols::moves::Movers_map const & movers_map,

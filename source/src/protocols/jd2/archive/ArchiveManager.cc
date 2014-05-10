@@ -833,7 +833,7 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 
 		bool has_silent( batch_opts[ in::file::silent ].user() );
 		core::Size nstruct( batch_opts[ out::nstruct ]() );
-		bool intermeds( batch_opts[ run::intermediate_structures ]() );
+		//bool intermeds( batch_opts[ run::intermediate_structures ]() );
 		std::string silent_out( batch_opts[ out::file::silent ]() );
 		utility::vector1< std::string > broker( batch_opts[ broker::setup ]() );
 		std::ostringstream broker_files;
@@ -905,6 +905,3 @@ ArchiveManager::restore_archive() {
 }//archive
 }//jd2
 }//protoco
-
-
-

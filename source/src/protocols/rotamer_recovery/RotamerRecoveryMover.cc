@@ -225,7 +225,7 @@ RotamerRecoveryMover::clone() const {
 
 void
 RotamerRecoveryMover::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & movers,

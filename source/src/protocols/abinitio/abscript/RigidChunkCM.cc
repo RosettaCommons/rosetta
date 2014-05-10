@@ -105,7 +105,7 @@ loops::Loops read_rigid_core( std::string const& file){
   return loops::Loops( reader.read_pose_numbered_loops_file( infile, file, false ) );
 }
 
-void RigidChunkCM::parse_my_tag( utility::tag::TagCOP const tag,
+void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
                                  basic::datacache::DataMap&,
                                  protocols::filters::Filters_map const&,
                                  protocols::moves::Movers_map const&,

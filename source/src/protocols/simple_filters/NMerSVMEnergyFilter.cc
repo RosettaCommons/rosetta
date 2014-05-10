@@ -76,7 +76,7 @@ protocols::filters::Filter( "NMerSVMEnergy" )
 NMerSVMEnergyFilter::~NMerSVMEnergyFilter() {}
 
 void
-NMerSVMEnergyFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NMerSVMEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for NMerSVMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );

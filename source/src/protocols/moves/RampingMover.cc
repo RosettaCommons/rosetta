@@ -445,7 +445,7 @@ RampingMover::set_weights( core::scoring::EnergyMap const & emap )
 RampingFuncOP
 RampingMover::instantiate_rampfunc(
 	std::string const & func_name,
-	utility::tag::TagCOP const tag_ptr
+	utility::tag::TagCOP tag_ptr
 ) const
 {
 

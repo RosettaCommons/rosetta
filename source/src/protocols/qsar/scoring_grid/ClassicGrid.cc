@@ -29,7 +29,7 @@ std::string ClassicGridCreator::keyname() const
 	return ClassicGridCreator::grid_name();
 }
 
-GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP classic_grid = new ClassicGrid();
 	classic_grid->parse_my_tag(tag);

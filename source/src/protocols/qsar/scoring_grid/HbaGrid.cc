@@ -40,7 +40,7 @@ std::string HbaGridCreator::keyname() const
 	return HbaGridCreator::grid_name();
 }
 
-GridBaseOP HbaGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP HbaGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP hba_grid= new HbaGrid();
 

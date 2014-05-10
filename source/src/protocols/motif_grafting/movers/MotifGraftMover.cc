@@ -1810,7 +1810,7 @@ a fragment of any size in the scaffold " << std::endl;
 			
 			/**@brief Fuction to parse RosettaScripts XML options**/
 			void MotifGraftMover::parse_my_tag(
-				utility::tag::TagCOP const tag,
+				utility::tag::TagCOP tag,
 				basic::datacache::DataMap &,
 				protocols::filters::Filters_map const &,
 				protocols::moves::Movers_map const &,

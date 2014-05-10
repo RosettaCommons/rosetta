@@ -103,7 +103,7 @@ core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) c
 }
 
 void
-ResiduesInInterfaceFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ResiduesInInterfaceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	residues_in_interface_threshold_ = tag->getOption<core::Size>( "residues", 20 );
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );

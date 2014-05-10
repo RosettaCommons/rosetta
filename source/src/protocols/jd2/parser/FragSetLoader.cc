@@ -47,7 +47,7 @@ FragSetLoader::~FragSetLoader() {}
 
 void FragSetLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const
 {

@@ -99,7 +99,7 @@ IRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-IRmsdFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
 {
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms

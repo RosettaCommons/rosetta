@@ -81,7 +81,7 @@ claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_po
   return claims;
 }
 
-void StructPerturberCM::parse_my_tag( utility::tag::TagCOP const tag,
+void StructPerturberCM::parse_my_tag( utility::tag::TagCOP tag,
                                       basic::datacache::DataMap&,
                                       protocols::filters::Filters_map const&,
                                       protocols::moves::Movers_map const&,

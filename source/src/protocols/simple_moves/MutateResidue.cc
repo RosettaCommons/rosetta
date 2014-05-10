@@ -146,7 +146,7 @@ MutateResidue::get_name() const {
  *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
  *  - target_pdb_nums or target_res_nums. A list of possible target residues
  */
-void MutateResidue::parse_my_tag( utility::tag::TagCOP const tag,
+void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

@@ -143,7 +143,7 @@ public:
       get_db_session(database_filename));
 
 		RRReporterSQLite rs;
-    rs.set_output_level( RRReporterSQLite::OutputLevel::full );
+    rs.set_output_level( RRReporterSQLite::OL_full );
     rs.write_schema_to_db( db_session );
     rs.db_session( db_session );
 
@@ -246,7 +246,7 @@ public:
       get_db_session(results_db_fname));
 
 		RRReporterSQLite rs;
-    rs.set_output_level( RRReporterSQLite::OutputLevel::features );
+    rs.set_output_level( RRReporterSQLite::OL_features );
     rs.set_predicted_report_to_db(rr_features);
     rs.write_schema_to_db(results_db_session);
     rs.db_session(results_db_session);

@@ -75,7 +75,7 @@ GeometryFilterCreator::keyname() const { return "Geometry"; }
 GeometryFilter::~GeometryFilter(){}
 
 void
-GeometryFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+GeometryFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	omega_cutoff_ = tag->getOption<core::Real>( "omega", 165 );
 	cart_bonded_cutoff_ = tag->getOption<core::Real>( "cart_bonded", 20 );

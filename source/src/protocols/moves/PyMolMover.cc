@@ -512,7 +512,7 @@ protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
 void
 PyMolMover::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,

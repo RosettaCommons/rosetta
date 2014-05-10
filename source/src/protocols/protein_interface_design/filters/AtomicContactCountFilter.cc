@@ -125,7 +125,7 @@ void AtomicContactCountFilter::initialize_cross_chain( core::pack::task::TaskFac
 }
 
 void AtomicContactCountFilter::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,

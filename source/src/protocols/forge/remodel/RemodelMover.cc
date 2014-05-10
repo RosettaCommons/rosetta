@@ -2285,7 +2285,7 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 /// @brief parse xml
 void
 RemodelMover::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,

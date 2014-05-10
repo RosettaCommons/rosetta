@@ -100,7 +100,7 @@ ConservedPosMutationFilter::apply( core::pose::Pose const & pose ) const {
 
 
 void
-ConservedPosMutationFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
+ConservedPosMutationFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
 {
 	conserved_pos_taskop_->parse_tag( tag, datamap );
 

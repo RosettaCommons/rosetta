@@ -40,7 +40,7 @@ ResidueDistanceFilterCreator::keyname() const { return "ResidueDistance"; }
 ResidueDistanceFilter::~ResidueDistanceFilter(){}
 
 void
-ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
 	res2_ = core::pose::get_resnum( tag, pose, "res2_" );

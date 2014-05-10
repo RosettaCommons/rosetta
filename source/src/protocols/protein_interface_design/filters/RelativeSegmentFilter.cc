@@ -56,7 +56,7 @@ RelativeSegmentFilter::apply( Pose const & pose ) const {
 }
 
 void
-RelativeSegmentFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+RelativeSegmentFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	source_pose( tag->getOption< std::string >( "source_pose" ) );
 	start_res( tag->getOption< core::Size >( "start_res" ) );

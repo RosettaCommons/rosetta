@@ -293,7 +293,7 @@ add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const
 /// @details common function to both grafting protocols for parsing out the movers that need to be task aware. Returns an empty task factory. If the tag is labeled TaskAware, all of the DesignRepackMovers within it will be assigned
 /// this task factory.
 void
-generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP const tag, Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory ){
+generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory ){
 	using namespace utility::tag;
 	using namespace core::pack::task;
 	if( !data.has( "TaskFactory", "placement" ) ){
@@ -334,7 +334,7 @@ make_stub_scorefxn(){
 }
 
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >
-parse_stub_sets( utility::tag::TagCOP const tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data ){
+parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data ){
 	using namespace utility::tag;
 	using namespace protocols::hotspot_hashing;
 	utility::vector1< PlaceSimultaneouslyMover::StubSetStubPos > stub_sets;

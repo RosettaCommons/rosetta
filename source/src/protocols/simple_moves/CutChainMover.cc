@@ -129,7 +129,7 @@ CutChainMover::chain_id(core::Size const ID){
 	chain_id_ = ID;
 }
 void
-CutChainMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+CutChainMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
   bond_length( tag->getOption< core::Real >( "bond_length", 4.0 ) );
   chain_id( tag->getOption< core::Size >( "chain_id", 1 ) );

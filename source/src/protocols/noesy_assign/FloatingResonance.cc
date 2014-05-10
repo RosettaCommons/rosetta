@@ -125,7 +125,7 @@ bool FloatingResonance::match2D(
 		} else { //label-matching
 			Resonance const& float_label( (*res_list_)[ *it ] );
 			//			tr.Trace << "try label float-match with reso: " <<  label.atom() << std::endl;
-			bool has_any_match = false;
+			//bool has_any_match = false;
 			bool label_match = float_label._pmatch( label_freq, label_error, label_folder ) <= 1.0;
 			if ( label_match ) {
 				ResonanceAPs const& protons( connected_resonances() );

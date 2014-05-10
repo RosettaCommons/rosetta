@@ -233,7 +233,7 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 }
 
 void
-PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP const tag,
+PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP tag,
                                 basic::datacache::DataMap & data,
                                 protocols::filters::Filters_map const &,
                                 protocols::moves::Movers_map const &,

@@ -54,7 +54,7 @@ SidechainRmsdFilter::SidechainRmsdFilter( core::Size const res1, core::Size cons
 SidechainRmsdFilter::~SidechainRmsdFilter(){}
 
 void
-SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
 	res2_ = core::pose::get_resnum( tag, pose, "res2_" );

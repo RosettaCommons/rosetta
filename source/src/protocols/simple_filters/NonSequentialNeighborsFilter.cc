@@ -47,7 +47,7 @@ jump_( 1 )
 NonSequentialNeighborsFilter::~NonSequentialNeighborsFilter() {}
 
 void
-NonSequentialNeighborsFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NonSequentialNeighborsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	distance_threshold( tag->getOption< core::Real >( "distance_threshold", 8.0 ) );
 	neighbor_cutoff( tag->getOption< core::Size >( "neighbor_cutoff", 10 ));

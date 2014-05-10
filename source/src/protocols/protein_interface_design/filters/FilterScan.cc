@@ -398,7 +398,7 @@ FilterScanFilter::report( std::ostream &, core::pose::Pose const & ) const
 }
 
 void
-FilterScanFilter::parse_my_tag( utility::tag::TagCOP const tag,
+FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const & movers,

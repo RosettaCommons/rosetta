@@ -33,7 +33,7 @@ std::string AtrGridCreator::keyname()const
 	return AtrGridCreator::grid_name();
 }
 
-GridBaseOP AtrGridCreator::create_grid(utility::tag::TagCOP const tag) const
+GridBaseOP AtrGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
 	GridBaseOP atr_grid= new AtrGrid();
 
@@ -67,7 +67,7 @@ AtrGrid::AtrGrid() :
 }
 
 void
-AtrGrid::parse_my_tag(utility::tag::TagCOP const tag){
+AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 
 	if (tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ){
 		// the user MUST provide all 3 if he/she is providing any of these 3 options
