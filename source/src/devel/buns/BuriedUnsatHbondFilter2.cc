@@ -55,7 +55,7 @@ BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2() : protocols::filters::Filter(
 BuriedUnsatHbondFilter2::~BuriedUnsatHbondFilter2(){}
 
 void
-BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );

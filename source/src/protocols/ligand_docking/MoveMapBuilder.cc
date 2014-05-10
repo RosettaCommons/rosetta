@@ -99,7 +99,7 @@ MoveMapBuilder::~MoveMapBuilder() {}
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 MoveMapBuilder::parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
 ){
 	if ( tag->hasOption("sc_interface") ){

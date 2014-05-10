@@ -11,6 +11,10 @@
 /// @brief BiasEnergy methods implemented
 /// @author
 
+#ifndef INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
+#define INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
+
+
 #include <protocols/canonical_sampling/BiasEnergy.hh>
 
 #include <utility/exit.hh>
@@ -158,3 +162,5 @@ void BiasEnergy::Histogram<T>::write_to_stream( std::ostream& os ) const {
 
 }
 }
+
+#endif // INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh

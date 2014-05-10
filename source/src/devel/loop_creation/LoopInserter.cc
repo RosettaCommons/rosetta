@@ -56,7 +56,7 @@ LoopInserter::loop_anchor(
 
 void
 LoopInserter::parse_loop_anchor(
-	utility::tag::TagCOP const tag
+	utility::tag::TagCOP tag
 ){
 	if(tag->hasOption("loop_anchor")){
 		loop_anchor_ =

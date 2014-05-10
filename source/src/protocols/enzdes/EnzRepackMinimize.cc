@@ -228,7 +228,7 @@ EnzRepackMinimize::ensure_scofx_cstfication(core::pose::Pose const & pose )
 }
 
 void
-EnzRepackMinimize::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
+EnzRepackMinimize::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
 
 	if( tag->hasOption("task_operations") ) task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	else task_factory_ = NULL;

@@ -326,7 +326,7 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 }
 
 void SetCrystWeightMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap &data,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
@@ -400,7 +400,7 @@ void RecomputeDensityMapMover::apply( core::pose::Pose & pose )
 }
 
 void RecomputeDensityMapMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
@@ -421,7 +421,7 @@ void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
 }
 
 void LoadDensityMapMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
@@ -447,7 +447,7 @@ void FitBfactorsMover::apply( core::pose::Pose & pose ) {
 }
 
 void FitBfactorsMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
@@ -507,7 +507,7 @@ void UpdateSolventMover::apply( core::pose::Pose & pose ) {
 }
 
 void UpdateSolventMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
@@ -573,7 +573,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 
 
 void TagPoseWithRefinementStatsMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
@@ -626,7 +626,7 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 
 
 void SetRefinementOptionsMover::parse_my_tag(
-			utility::tag::TagCOP const tag,
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,

@@ -59,7 +59,7 @@ public:
 	
 	void
 	parse_loop_anchor(
-		utility::tag::TagCOP const tag
+		utility::tag::TagCOP tag
 	);
 	
 protected:

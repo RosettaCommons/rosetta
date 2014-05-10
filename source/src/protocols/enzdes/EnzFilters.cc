@@ -846,7 +846,7 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 
 /// @details not implemented yet
 void
-EnzdesScorefileFilter::parse_my_tag( utility::tag::TagCOP const tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+EnzdesScorefileFilter::parse_my_tag( utility::tag::TagCOP tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( tag->hasOption("requirements") ) reqfile_name_ =  tag->getOption<std::string>( "requirements","" );
 	else throw utility::excn::EXCN_RosettaScriptsOption("For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");
@@ -1369,7 +1369,7 @@ ResidueConformerFilter::report_sm( core::pose::Pose const & pose ) const
 }
 
 void
-ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP const tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	relevant_atom_indices_.clear();
 

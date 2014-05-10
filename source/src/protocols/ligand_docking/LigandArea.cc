@@ -48,7 +48,7 @@ LigandArea::LigandArea():
 LigandArea::~LigandArea() {}
 
 void LigandArea::parse_my_tag(
-	utility::tag::TagCOP const tag
+	utility::tag::TagCOP tag
 ){
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'LigandArea' requires 'chain' tag");
 	chain_= tag->getOption<char>("chain");

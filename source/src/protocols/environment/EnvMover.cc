@@ -72,7 +72,7 @@ void EnvMover::apply( Pose& pose ) {
   pose = env_->end( pose );
 }
 
-void EnvMover::parse_my_tag( utility::tag::TagCOP const tag,
+void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
                              basic::datacache::DataMap & data,
                              Filters_map const & filters,
                              moves::Movers_map const & movers,
@@ -109,7 +109,7 @@ ClaimingMoverOP find_mover( utility::tag::TagCOP tag,
 
 }
 
-void EnvMover::parse_subtag( utility::tag::TagCOP const tag,
+void EnvMover::parse_subtag( utility::tag::TagCOP tag,
                              basic::datacache::DataMap &,
                              filters::Filters_map const &,
                              moves::Movers_map const & movers,

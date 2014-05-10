@@ -828,7 +828,7 @@ std::string make_compound_statement(
 ///constructing a database connection are consistent across different tags.
 utility::sql_database::sessionOP
 parse_database_connection(
-	utility::tag::TagCOP const tag
+	utility::tag::TagCOP tag
 ){
 	using std::endl;
 	using namespace basic::options;

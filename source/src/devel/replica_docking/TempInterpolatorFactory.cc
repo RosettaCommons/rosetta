@@ -72,7 +72,7 @@ TempInterpolatorFactory::create_singleton_instance()
 
 ///@brief return new TempInterpolator by key lookup in mover_prototype_map_ (new TempInterpolator parses Tag if provided)
 TempInterpolatorBaseOP
-TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP const tag, core::Size n_levels )
+TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::Size n_levels )
 {
 	if ( !tag->hasOption( "curve" ) ){
 		throw utility::excn::EXCN_RosettaScriptsOption("Error: interpolation curve type required !" );

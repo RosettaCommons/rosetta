@@ -44,7 +44,7 @@ class TempInterpolator : public TempInterpolatorBase {
 public:
   TempInterpolator( core::Size n_levels, core::Real start, core::Real end, std::string curve="exponential" );
 
-  TempInterpolator( utility::tag::TagCOP const tag, core::Size n_levels );
+  TempInterpolator( utility::tag::TagCOP tag, core::Size n_levels );
 
   TempInterpolator( TempInterpolator const & temp_interpolator );
 

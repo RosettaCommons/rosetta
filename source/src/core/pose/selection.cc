@@ -48,7 +48,7 @@ using utility::vector1;
 
 /// @brief a convenience function to test whether the user has specified pdb numbering rather than rosetta numbering.
 core::Size
-get_resnum( utility::tag::TagCOP const tag_ptr, core::pose::Pose const & pose, std::string const & prefix/*=""*/ ) {
+get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::string const & prefix/*=""*/ ) {
 	core::Size resnum( 0 );
 	bool const pdb_num_used( tag_ptr->hasOption( prefix + "pdb_num" ) );
 	if( pose.pdb_info().get() == NULL ){//no pdbinfo for this pose (e.g., silent file), resort to using just the residue number
@@ -164,7 +164,7 @@ parse_selection_block(
 ///   pdb or rosetta format (@see parse_resnum for details)
 vector1<Size>
 get_resnum_list(
-	utility::tag::TagCOP const tag_ptr,
+	utility::tag::TagCOP tag_ptr,
 	string const& tag,
 	pose::Pose const& pose
 ){

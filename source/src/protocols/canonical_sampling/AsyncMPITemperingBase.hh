@@ -11,8 +11,8 @@
 /// @brief
 /// @author  Oliver Lange ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
-#define INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
+#ifndef INCLUDED_protocols_canonical_sampling_BiasEnergy_tmpl_hh
+#define INCLUDED_protocols_canonical_sampling_BiasEnergy_tmpl_hh
 
 #ifdef USEMPI
 #include <mpi.h> //keep first

@@ -917,7 +917,7 @@ CartesianSampler::apply( Pose & pose ) {
 // parse_my_tag
 void
 CartesianSampler::parse_my_tag(
-	utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & pose )
+	utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
 

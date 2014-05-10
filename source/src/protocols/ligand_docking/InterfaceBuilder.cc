@@ -68,7 +68,7 @@ InterfaceBuilder::~InterfaceBuilder() {}
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceBuilder::parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
 ){
 	if ( tag->hasOption("extension_window") ){

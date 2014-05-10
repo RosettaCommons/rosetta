@@ -1790,7 +1790,7 @@ protocols::moves::MoverOP FoldTreeHybridize::fresh_instance() const { return new
 
 void
 FoldTreeHybridize::parse_my_tag(
-								utility::tag::TagCOP const tag,
+								utility::tag::TagCOP tag,
 								basic::datacache::DataMap & data,
 								filters::Filters_map const &,
 								moves::Movers_map const &,

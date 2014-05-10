@@ -119,7 +119,7 @@ std::string Transform::get_name() const
 
 void Transform::parse_my_tag
 (
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data_map*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,

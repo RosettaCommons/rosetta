@@ -55,7 +55,7 @@ public:
 	static
 	TempInterpolatorFactory * get_instance();
 
-	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagCOP const tag, core::Size n_level );
+	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagCOP tag, core::Size n_level );
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

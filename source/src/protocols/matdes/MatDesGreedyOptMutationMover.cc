@@ -932,7 +932,7 @@ MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & p
 
 //parse rosetta scripts tags
 void
-MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP const tag,
+MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const & movers,

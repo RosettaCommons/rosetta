@@ -44,7 +44,7 @@ InterfaceBuilderLoader::~InterfaceBuilderLoader() {}
 
 void InterfaceBuilderLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const
 {
@@ -77,7 +77,7 @@ MoveMapBuilderLoader::~MoveMapBuilderLoader() {}
 
 void MoveMapBuilderLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const
 {
@@ -110,7 +110,7 @@ LigandAreaLoader::~LigandAreaLoader() {}
 
 void LigandAreaLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const
 {

@@ -96,7 +96,7 @@ PDBTrajectoryRecorder::get_name() const
 
 void
 PDBTrajectoryRecorder::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& data /* data */,
 	protocols::filters::Filters_map const& filter /* filters */,
 	protocols::moves::Movers_map const& mover /* movers */,

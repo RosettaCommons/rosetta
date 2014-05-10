@@ -109,7 +109,7 @@ ReplicateFilter::compute(core::pose::Pose const & pose) const {
 }
 
 void
-ReplicateFilter::parse_my_tag( utility::tag::TagCOP const tag_ptr,
+ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const &,
