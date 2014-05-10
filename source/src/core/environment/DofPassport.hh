@@ -67,24 +67,24 @@ public:
   ///@param tor_id the TorsionID represenatation of the torsional DOF
   ///@pre dof_id must have DOF_Type id::PHI.
   ///@pre both dof_id and tor_id must be valid.
-  void add_dof_access( id::DOF_ID const& dof_id, id::TorsionID const& tor_id );
+  // Undefined, commenting out to fix PyRosetta build  void add_dof_access( id::DOF_ID const& dof_id, id::TorsionID const& tor_id );
 
   ///@brief configure passport to allow access to a jump dof
   ///@param atom_id the AtomID of the atom building the jump
   ///@param jump_num the FoldTree
   ///@pre dof_id must have DOF_Type id::PHI.
   ///@pre both dof_id and tor_id must be valid.
-  void add_jump_access( core::id::AtomID const& atom_id,
-                        core::Size const& jump_num,
-                        core::id::JumpID const& jump_id );
+  // Undefined, commenting out to fix PyRosetta build
+  // void add_jump_access( core::id::AtomID const& atom_id,
+  //                       core::Size const& jump_num,
+  //                       core::id::JumpID const& jump_id );
 
   void revoke_all_access();
 
-  bool jump_access( EnvCore const&, core::id::AtomID const& ) const;
-
-  bool jump_access( EnvCore const&, core::Size const& jump_nr ) const;
-
-  bool jump_access( EnvCore const&, id::JumpID const& jid ) const;
+  // Undefined, commenting out to fix PyRosetta build
+  // bool jump_access( EnvCore const&, core::id::AtomID const& ) const;
+  // bool jump_access( EnvCore const&, core::Size const& jump_nr ) const;
+  // bool jump_access( EnvCore const&, id::JumpID const& jid ) const;
 
   //@brief Check access in this passport for an id
   bool dof_access( core::id::DOF_ID const& id ) const;

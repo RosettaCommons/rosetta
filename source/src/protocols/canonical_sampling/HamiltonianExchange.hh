@@ -77,8 +77,7 @@ public:
 	core::Real
 	temperature_move( core::Real score );
 
-	void
-	update_bias_energies( int exchange_partner, bool is_master );
+	// Undefined, commenting out to fix PyRosetta build  void update_bias_energies( int exchange_partner, bool is_master );
 
 	/// @brief execute the temperatur move ( called by observer_after_metropolis )
 	/// returns the current temperatur in kT.

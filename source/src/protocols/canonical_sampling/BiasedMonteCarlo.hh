@@ -93,7 +93,7 @@ public:
 	virtual void
 	set_temperature( Real const temp );
 
-	void set_bias_energy( BiasEnergyOP );
+	// Undefined, commenting out to fix PyRosetta build  void set_bias_energy( BiasEnergyOP );
 
 	BiasEnergyOP bias_energy() { return bias_energy_; };
 
