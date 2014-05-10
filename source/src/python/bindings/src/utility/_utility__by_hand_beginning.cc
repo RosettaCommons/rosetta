@@ -908,5 +908,10 @@ void __utility_by_hand_beginning__()
         .def("str", stringstream_str_get_function_type( &::std::stringstream::str ) );
 
 
+	// some holders, todo: maybe add some values/functions later
+	// bp::class_< std::ios_base::openmode, boost::noncopyable >("std_ios_base_openmode");
+	// bp::class_< std::_Ios_Openmode, boost::noncopyable >("std__Ios_Openmode");
+
+
     utility::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool");
 }

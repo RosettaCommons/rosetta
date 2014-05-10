@@ -26,23 +26,11 @@
 
 #include <utility/vector1.hh>
 
-
+#include <protocols/forge/build/SegmentInsertConnectionScheme/SegmentInsertConnectionScheme_Enum.hh>
 
 namespace protocols {
 namespace forge {
 namespace build {
-
-
-// description namespace to hold enum
-namespace SegmentInsertConnectionScheme {
-	/// @brief connect insertion on its N-side, C-side, or decide randomly
-	///  between the two
-	enum Enum {
-		RANDOM_SIDE,
-		N,
-		C
-	};
-}
 
 
 /// @brief insert an external segment flanked by new regions
@@ -100,7 +88,7 @@ public: // construct/destruct
 		String const & ss,
 		Pose const & insert,
 		bool const keep_known_bb_torsions_at_junctions = false,
-		SegmentInsertConnectionScheme::Enum connection_scheme = SegmentInsertConnectionScheme::RANDOM_SIDE
+		SegmentInsertConnectionScheme::Enum connection_scheme = protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE
 	);
 
 
@@ -130,7 +118,7 @@ public: // construct/destruct
 		String const & aa,
 		Pose const & insert,
 		bool const keep_known_bb_torsions_at_junctions = false,
-		SegmentInsertConnectionScheme::Enum connection_scheme = SegmentInsertConnectionScheme::RANDOM_SIDE
+		SegmentInsertConnectionScheme::Enum connection_scheme = protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE
 	);
 
 

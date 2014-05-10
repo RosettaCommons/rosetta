@@ -1,6 +1,18 @@
-import sys
+import os, sys, json
 import logging
+
+
+# config = {"low_memory_mode": False, "protocols": True, "core": True, "basic": True, "numeric": True, "utility": True, 'monolith': True}
+# if '__file__' in vars():
+#     config_file_name = os.path.join( os.path.split(__file__)[0], 'config.json' )
+#     if os.path.isfile(config_file_name): config = json.load( file( config_file_name ) )
+
+
+# if config['monolith']:
+#     import _rosetta_ as rosetta
+# else:
 import rosetta.basic
+
 
 _logger = logging.getLogger("rosetta")
 

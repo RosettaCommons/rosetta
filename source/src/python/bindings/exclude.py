@@ -1050,9 +1050,11 @@ def getIncludes(files):
         for i in lines.split('\n'):
             if i:
                 #print 'i=', i
-                iname = i[i.index('<')+1 : i.index('>')]
-                if os.path.isfile( iname.replace('.fwd', '') ): i = i.replace('.fwd', '')
-                output.add(i)
+                try:
+                    iname = i[i.index('<')+1 : i.index('>')]
+                    if os.path.isfile( iname.replace('.fwd', '') ): i = i.replace('.fwd', '')
+                    output.add(i)
+                except ValueError: pass
 
     output = '\n'.join(output)
 

@@ -80,7 +80,7 @@ using protocols::features::StructureID;
 static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
 RRReporterSQLite::RRReporterSQLite() :
-	output_level_( OutputLevel::full ),
+	output_level_( OL_full ),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -95,7 +95,7 @@ RRReporterSQLite::RRReporterSQLite() :
 RRReporterSQLite::RRReporterSQLite(
 	string const & database_name,
 	string const & database_pq_schema /* = "" */,
-	OutputLevel::e output_level /* = OutputLevel::full */
+	OutputLevel output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
 	protocol_name_(),
@@ -111,7 +111,7 @@ RRReporterSQLite::RRReporterSQLite(
 
 RRReporterSQLite::RRReporterSQLite(
 	sessionOP db_session,
-	OutputLevel::e const output_level /* = OutputLevel::full */
+	OutputLevel const output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
 	protocol_name_(),
@@ -150,17 +150,17 @@ RRReporterSQLite::write_schema_to_db(
 	sessionOP db_session
 ) const {
 	switch(output_level_){
-	case OutputLevel::full:
+	case OL_full:
 		write_nchi_table_schema(db_session);
 		write_rotamer_recovery_full_table_schema(db_session);
 		break;
-	case OutputLevel::features:
+	case OL_features:
 		write_rotamer_recovery_features_table_schema(db_session);
 		if(report_to_db_){
 			write_predicted_features_table_schema(db_session);
 		}
 		break;
-	case OutputLevel::none:
+	case OL_none:
 		break;
 	default:
 		utility_exit_with_message("Unrecognized Output Level.");
@@ -328,12 +328,12 @@ RRReporterSQLite::write_predicted_features_table_schema(
 
 void
 RRReporterSQLite::set_output_level(
-	OutputLevel::e const output_level
+	OutputLevel const output_level
 ){
 	output_level_ = output_level;
 }
 
-RRReporterSQLite::OutputLevel::e
+OutputLevel
 RRReporterSQLite::get_output_level(
 ) const {
 	return output_level_;
@@ -413,15 +413,15 @@ RRReporterSQLite::report_rotamer_recovery(
 	bool recovered
 ){
 	switch (output_level_) {
-	case OutputLevel::full:
+	case OL_full:
 		report_rotamer_recovery_full(
 			pose1, pose2, res1, res2, score, recovered );
 		break;
-	case OutputLevel::features:
+	case OL_features:
 		report_rotamer_recovery_features(struct_id1_, res1, score, recovered);
 		report_predicted_features(struct_id1_, res1, pose2, res2);
 		break;
-	case OutputLevel::none:
+	case OL_none:
 		break;
 	default:
 		utility_exit_with_message( "Unknown RRReporterSQLite output level." );

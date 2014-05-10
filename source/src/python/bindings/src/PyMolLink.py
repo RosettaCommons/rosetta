@@ -10,11 +10,8 @@
 (c) TechTransfer, email: license@u.washington.edu.
 
 Brief:   The PyMOLMover class and associated methods.
-
 Remarks: Use in conjunction with PyMOLPyRosettaServer.py.
-
 Authors: Sergey Lyskov & Evan Baugh
-
 Edits:   Labonte
 """
 
@@ -24,6 +21,17 @@ import socket
 import bz2
 from array import array
 
+import os, json
+
+# config = {"low_memory_mode": False, "protocols": True, "core": True, "basic": True, "numeric": True, "utility": True, 'monolith': True}
+# if '__file__' in vars():
+#     config_file_name = os.path.join( os.path.split(__file__)[0], 'config.json' )
+#     if os.path.isfile(config_file_name): config = json.load( file( config_file_name ) )
+
+
+# if config['monolith']:
+#     import _rosetta_ as rosetta
+# else:
 import rosetta
 import rosetta.core.pose
 import rosetta.core.scoring.hbonds
@@ -219,7 +227,7 @@ class PySocketClient:
         """
         # udp_ip provided as keyword argument is previous version,
         # maintaining name although a hostname may be provided.
-        
+
         (hostname, aliaslist, ipaddrlist) = socket.gethostbyaddr(udp_ip)
 
         if udp_ip in ipaddrlist:
@@ -368,7 +376,7 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
                          'Energy is not updated; please score the pose first!')
 
         # Get the proper score type.
-        if energy_type == rosetta.end_of_score_type_enumeration:
+        if energy_type == rosetta.core.scoring.end_of_score_type_enumeration:
             # WORKAROUND: If one sets self.energy_type(total_score),
             # self.energy_type() returns instead end_of_score_type_enumeration.
             score_type = rosetta.core.scoring.total_score
@@ -455,7 +463,7 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
         self.link.send_message(message)
 
     # Energy output.
-    def send_energy(self, input_pose, energy_type=rosetta.total_score,
+    def send_energy(self, input_pose, energy_type=rosetta.core.scoring.total_score,
                     label=False, sigs=6):
         """
         Sends cummulative energy score to PyMOL.

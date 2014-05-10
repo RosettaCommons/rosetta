@@ -48,7 +48,7 @@ def main(args):
 	if not os.path.exists(dir_): return []
 	return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')]
 
-    tests = sorted( get_py_files('test') + get_py_files('demos') )
+    tests = sorted( get_py_files('test') + get_py_files('demo') )
 
     print 'Preparingn to run:\n%s\n' % '\n'.join(tests)
 

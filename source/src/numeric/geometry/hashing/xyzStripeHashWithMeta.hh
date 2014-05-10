@@ -364,6 +364,12 @@ private:
 };
 
 
+// PyRosetta concreate classes
+class xyzStripeHashWithMeta_Real    : public xyzStripeHashWithMeta< platform::Real > {};
+class xyzStripeHashWithMeta_float   : public xyzStripeHashWithMeta< float > {};
+class xyzStripeHashWithMeta_double  : public xyzStripeHashWithMeta< double > {};
+
+
 } // namespace hashing
 } // namespace geometry
 } // namespace numeric
@@ -393,29 +399,29 @@ private:
 	// 		// return count;
 	// 		++(*this);
 	// 	}
-	// 	neighbor_iterator & operator++() { 
+	// 	neighbor_iterator & operator++() {
 	// 		using ObjexxFCL::format::I;
 	// 		while(iy < iyu){
 	// 			if(iz >= izu){
 	// 				++iy;
 	// 				iz = izl-1;
 	// 				i=9999999,igu=0;
-	// 			} else { 
+	// 			} else {
 	// 				if( i >= igu ){
 	// 					++iz;
 	// 					ig = ix+h_.xdim_*iy+h_.xdim_*h_.ydim_*iz;
 	// 					igl = h_.grid_stripe_[ig].x;
 	// 					igu = h_.grid_stripe_[ig].y;
 	// 					i = igl-1;
-	// 				} else {			
+	// 				} else {
 	// 					++i;
 	// 					float4 const & a2 = h_.grid_atoms_[i];
 	// 					float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 	// 					if( d2 <= h_.grid_size2_ ){
-	// 						std::cout << "iter " 
+	// 						std::cout << "iter "
 	// 						          << I(3,iyl) << " " << I(3,iy) << " " << I(3,iyu) << "   "
 	// 						          << I(3,izl) << " " << I(3,iz) << " " << I(3,izu) << "   "
-	// 						          << I(5,igl) << " " << I(5,i-1) << " " << I(5,igu) << "   "					          
+	// 						          << I(5,igl) << " " << I(5,i-1) << " " << I(5,igu) << "   "
 	// 						          << std::endl;
 	// 						return *this;
 	// 					}
@@ -424,7 +430,7 @@ private:
 	// 		}
 	// 		end();
 	// 		return *this;
-	// 	} 
+	// 	}
 	// 	const VecandVal & operator*() { return *((VecandVal const *)(grid_atoms_+i)); }
 	// 	// neighbor_iterator & operator=(const neighbor_iterator& r) { p_ = r.p_; return *this; }
 	// 	bool operator!=(neighbor_iterator const & r) const { return (i != r.i); }

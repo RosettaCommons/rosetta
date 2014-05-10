@@ -24,46 +24,110 @@ import warnings
 warnings.filterwarnings("ignore", "to-Python converter for .+ already registered; second conversion method ignored.", RuntimeWarning, "^rosetta\\.")
 
 # bindings config
-config = json.load( file( os.path.join( os.path.split(__file__)[0], 'config.json' ) ) )
+# print __name__
+# print sys.modules[__name__].__file__
+#config = json.load( file( os.path.join( os.path.split(__file__)[0], 'config.json' ) ) )
+#config = json.load( file( os.path.join( os.path.split(__file__)[0], 'config.json' ) ) )
+#config = {"low_memory_mode": False, "protocols": False, "core": False, "basic": False, "numeric": False, "utility": True, 'monolith': True}
+config = {"low_memory_mode": False, "protocols": True, "core": True, "basic": True, "numeric": True, "utility": True, 'monolith': True}
+if '__file__' in vars():
+    config_file_name = os.path.join( os.path.split(__file__)[0], 'config.json' )
+    if os.path.isfile(config_file_name): config = json.load( file( config_file_name ) )
+
+# import rosetta
+# print dir(rosetta)
+# print version
+# import version
+# import rosetta.version
+
+# from version import *
+# from rosetta.version import *
+
+# print 'version.url', version.url
+# print 'rosetta.version.url', rosetta.version.url
+
+# if config['monolith']:
+#     import _rosetta_ as rosetta
+#     from _rosetta_ import *
+#     #for m in ['utility', 'numeric', 'basic', 'core', 'protocols']:
+
+#     def add_modules(module, parent_name):
+#         for a in dir(module):
+#             if hasattr( getattr(module, a), '__package__'):
+#                 name = parent_name + '.' + a
+#                 #print 'adding:', name
+#                 sys.modules[name] = getattr(module, a)
+#                 add_modules(getattr(module, a), name)
+
+#     add_modules(_rosetta_, __name__) #if config[m]: sys.modules[__name__+'.' + m] = eval(m)  # emulate imports
+
+#     # from rosetta.core.pose import Pose
+#     # from rosetta.core.import_pose import pose_from_pdb
+#     # from rosetta.core.io.pdb import dump_pdb
+#     # from rosetta.core.pose import make_pose_from_sequence
+
+#     # from rosetta.core.id import *
+#     # from rosetta.core.conformation import *
+#     # from rosetta.core.chemical import *
+#     # from rosetta.core.scoring import *
+#     # from rosetta.core.kinematics import *
+#     # from rosetta.core.fragment import *
+#     # from rosetta.core.pack.task import *
+#     # from rosetta.core.pack.task.operation import *
+
+#     # from rosetta.protocols.moves import *
+#     # from rosetta.protocols.simple_moves import *
+#     # from rosetta.protocols.abinitio import *
+#     # from rosetta.protocols.docking import *
+#     # from rosetta.protocols.loops import *
+#     # from rosetta.protocols.relax import *
+
+#     # from rosetta.protocols.simple_moves import *
+
+#     # from rosetta.PyMolLink import *
 
 # Double-checked right order...
-import utility
-import utility.excn
+import rosetta.utility
+import rosetta.utility.excn
 import rosetta.utility.file
 
+if config['monolith']:
+   import rosetta.basic.resource_manager
+   import rosetta.basic.datacache
+   import rosetta.core.scoring.func
 
 if config['low_memory_mode']:
-    import core.pose
-    import core.graph
-    import core.scoring.methods
-    import protocols.init
+    import rosetta.core.pose
+    import rosetta.core.graph
+    import rosetta.core.scoring.methods
+    import rosetta.protocols.init
     from rosetta.core.pose import Pose
     from rosetta.core.scoring import *
 
 else:
     if config['numeric']:
-        import numeric
+        import rosetta.numeric
 
 
     if config['basic']:
-        import basic
-        import basic.datacache
-        import basic.resource_manager
+        import rosetta.basic
+        import rosetta.basic.datacache
+        import rosetta.basic.resource_manager
 
 
     if config['core']:
-        import core
-        import core.graph
-        import core.chemical
-        import core.chemical.orbitals
-        import core.scoring
-        import core.scoring.methods
-        import core.scoring.constraints
-        import core.scoring.etable
-        import core.kinematics
+        import rosetta.core
+        import rosetta.core.graph
+        import rosetta.core.chemical
+        import rosetta.core.chemical.orbitals
+        import rosetta.core.scoring
+        import rosetta.core.scoring.methods
+        import rosetta.core.scoring.constraints
+        import rosetta.core.scoring.etable
+        import rosetta.core.kinematics
 
-        import core.io.silent
-        import core.pose
+        import rosetta.core.io.silent
+        import rosetta.core.pose
 
         import rosetta.core.graph
         import rosetta.core.conformation
@@ -94,18 +158,18 @@ else:
 
 
     if config['protocols']:
-        import protocols
-        import protocols.moves
-        import protocols.canonical_sampling
-        import protocols.simple_moves
-        import protocols.jumping
-        import protocols.jd2
-        import protocols.jd2.archive
-        import protocols.abinitio
+        import rosetta.protocols
+        import rosetta.protocols.moves
+        import rosetta.protocols.canonical_sampling
+        import rosetta.protocols.simple_moves
+        import rosetta.protocols.jumping
+        import rosetta.protocols.jd2
+        import rosetta.protocols.jd2.archive
+        import rosetta.protocols.abinitio
 
-        import protocols.filters
-        import protocols.docking
-        import protocols.init
+        import rosetta.protocols.filters
+        import rosetta.protocols.docking
+        import rosetta.protocols.init
 
         import rosetta.protocols.loops
         import rosetta.protocols.wum
@@ -113,7 +177,6 @@ else:
         import rosetta.core.pose.signals
 
         import rosetta.protocols.simple_moves
-
 
         from rosetta.protocols.moves import *
         from rosetta.protocols.simple_moves import *
@@ -126,7 +189,7 @@ else:
         from rosetta.protocols.simple_moves import *
 
     # PyMOLMover and associated methods.
-    if config['protocols']: from PyMolLink import *
+    if config['protocols']: from rosetta.PyMolLink import *
 
 
 import version
@@ -165,12 +228,12 @@ class PyRosettaException(Exception):
         return 'PyRosettaException'
 
 
-class PythonPyExitCallback(utility.PyExitCallback):
+class PythonPyExitCallback(rosetta.utility.PyExitCallback):
     def exit_callback(self):
         raise PyRosettaException()
 
     def __init__(self):
-        utility.PyExitCallback.__init__(self)
+        rosetta.utility.PyExitCallback.__init__(self)
 
 
 ###############################################################################
@@ -198,7 +261,7 @@ def rosetta_database_from_env():
         candidate_paths.append(database_name)
 
         #Package directory database
-        candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
+        if '__file__' in vars(): candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
 
         #Home directory database
         if 'HOME' in os.environ: candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
@@ -221,6 +284,8 @@ def rosetta_database_from_env():
 
 # rosetta.init()
 def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
+    import rosetta
+
     """Initialize Rosetta.  Includes core data and global options.
 
     options string with default Rosetta command-line options args.
@@ -241,7 +306,8 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
 
     global _python_py_exit_callback
     _python_py_exit_callback = PythonPyExitCallback()
-    utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
+
+    rosetta.utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
 
     if set_logging_handler: logging_support.set_logging_handler()
 
@@ -253,12 +319,12 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
         database = rosetta_database_from_env()
         if database is not None: args.extend(["-database", database])
 
-    v = utility.vector1_string()
+    v = rosetta.utility.vector1_string()
     v.extend(args)
 
     logger.info(version())
-    if config['protocols']: protocols.init.init(v)
-    elif config['core']: import core.init; core.init.init(v)
+    if config['protocols']: rosetta.protocols.init.init(v)
+    elif config['core']: import rosetta.core.init; rosetta.core.init.init(v)
 
 
 # MPI version of init function, use it instead of init(...)
@@ -344,16 +410,16 @@ if config['core']:
 
 
 # Vector compatibility.
-def _extendfunc(vec, othervec):
+def _extend_func(vec, othervec):
     for i in othervec:
         vec.append(i)
 
 
 def _add_extend(vectype):
-    vectype.extend = _extendfunc
+    vectype.extend = _extend_func
 
 
-for k, v in utility.__dict__.items():
+for k, v in rosetta.utility.__dict__.items():
     if k.startswith("vector1_"):
       _add_extend(v)
 
@@ -376,15 +442,15 @@ def Vector1(list_in):
     """Creates a Vector1 object, deducing type from the given list."""
 
     if all([isinstance(x, bool) for x in list_in]):
-        t = utility.vector1_bool
+        t = rosetta.utility.vector1_bool
     elif all([isinstance(x, int) for x in list_in]):
-        t = utility.vector1_int
+        t = rosetta.utility.vector1_int
     elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
-        t = utility.vector1_double
+        t = rosetta.utility.vector1_double
     elif all([isinstance(x, str) for x in list_in]):
-        t = utility.vector1_string
-    elif all([isinstance(x, core.id.AtomID) for x in list_in]):
-        t = utility.vector1_AtomID
+        t = rosetta.utility.vector1_string
+    elif all([isinstance(x, rosetta.core.id.AtomID) for x in list_in]):
+        t = rosetta.utility.vector1_AtomID
     else:
         raise Exception('Vector1: attemting to create vector of unknow type ' +
                         'or mixed type vector init_list = ' + str(list_in))
@@ -398,11 +464,11 @@ def Vector1(list_in):
 def Set(list_in):
     """Creates a Vector1 object, deducing type from the given list."""
     if all([isinstance(x, int) for x in list_in]):
-        t = utility.set_int
+        t = rosetta.utility.set_int
     elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
-        t = utility.set_double
+        t = rosetta.utility.set_double
     elif all([isinstance(x, str) for x in list_in]):
-        t = utility.set_string
+        t = rosetta.utility.set_string
     else:
         raise Exception('Set: attemting to create vector of unknow type ' +
                         'or mixed type vector init_list = ' + str(list_in))
@@ -444,17 +510,17 @@ def generate_nonstandard_residue_set(params_list):
 
 
 def standard_task_factory():
-	tf = TaskFactory()
-	tf.push_back(InitializeFromCommandline())
-	#tf.push_back(IncludeCurrent())
-	tf.push_back(NoRepackDisulfides())
-	return tf
+        tf = TaskFactory()
+        tf.push_back(InitializeFromCommandline())
+        #tf.push_back(IncludeCurrent())
+        tf.push_back(NoRepackDisulfides())
+        return tf
 
 
 def standard_packer_task(pose):
-	tf = standard_task_factory()
-	task = tf.create_task_and_apply_taskoperations(pose)
-	return task
+        tf = standard_task_factory()
+        task = tf.create_task_and_apply_taskoperations(pose)
+        return task
 
 
 def add_extra_options():
@@ -500,31 +566,31 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
 def etable_atom_pair_energies(atom1, atom2, sfxn):
     """
     Usage: lj_atr, lj_rep, solv=etable_atom_pair_energies(atom1, atom2, sfxn)
-	Description: given a pair of atoms and scorefunction, use the precomputed
-	'etable' to return LJ attractive, LJ repulsive, and LK solvation energies
+        Description: given a pair of atoms and scorefunction, use the precomputed
+        'etable' to return LJ attractive, LJ repulsive, and LK solvation energies
     """
-    score_manager = core.scoring.ScoringManager.get_instance()
+    score_manager = rosetta.core.scoring.ScoringManager.get_instance()
     etable_ptr = score_manager.etable(
                                     sfxn.energy_method_options().etable_type())
     etable=etable_ptr.get()
-    etable_energy = core.scoring.etable.AnalyticEtableEnergy(etable,
+    etable_energy = rosetta.core.scoring.etable.AnalyticEtableEnergy(etable,
                                                   sfxn.energy_method_options())
 
-	# Construct AtomPairEnergy container to hold computed energies.
-    ape = core.scoring.etable.AtomPairEnergy()
+        # Construct AtomPairEnergy container to hold computed energies.
+    ape = rosetta.core.scoring.etable.AtomPairEnergy()
 
-	# Set all energies in the AtomPairEnergy to zero prior to calculation.
+        # Set all energies in the AtomPairEnergy to zero prior to calculation.
     ape.attractive, ape.bead_bead_interaction, ape.repulsive, ape.solvation = \
                                                              0.0, 0.0, 0.0, 0.0
 
-	# Calculate the distance squared and set it in the AtomPairEnergy.
+        # Calculate the distance squared and set it in the AtomPairEnergy.
     ape.distance_squared = atom1.xyz().distance_squared(atom2.xyz())
 
-	# Evaluate energies from pre-calculated etable, using a weight of 1.0
-	# in order to match the raw energies from eval_ci_2b.
+        # Evaluate energies from pre-calculated etable, using a weight of 1.0
+        # in order to match the raw energies from eval_ci_2b.
     etable_energy.atom_pair_energy(atom1, atom2, 1.0, ape)
 
-	# Calculate atom-atom scores.
+        # Calculate atom-atom scores.
     lj_atr = ape.attractive
     lj_rep = ape.repulsive
     solv = ape.solvation
@@ -631,20 +697,21 @@ class CD:
         return r[:-2] + '|'
 
 
-_ScoreTypesRegistryByType_ = [
-    CD(base=core.scoring.methods.ContextIndependentTwoBodyEnergy,
-       first=PyRosettaTwoBodyContextIndepenedentEnergy_first,
-       last=PyRosettaTwoBodyContextIndepenedentEnergy_last,
-       methods={}),
-    CD(base=core.scoring.methods.ContextDependentTwoBodyEnergy,
-       first=PyRosettaTwoBodyContextDependentEnergy_first,
-       last=PyRosettaTwoBodyContextDependentEnergy_last,
-       methods={}),
-    CD(base=None,
-       first=PyRosettaEnergy_first,
-       last=PyRosettaEnergy_last,
-       methods={}),
-]
+if config['core']:
+    _ScoreTypesRegistryByType_ = [
+        CD(base=rosetta.core.scoring.methods.ContextIndependentTwoBodyEnergy,
+           first=rosetta.core.scoring.PyRosettaTwoBodyContextIndepenedentEnergy_first,
+           last=rosetta.core.scoring.PyRosettaTwoBodyContextIndepenedentEnergy_last,
+           methods={}),
+        CD(base=rosetta.core.scoring.methods.ContextDependentTwoBodyEnergy,
+           first=rosetta.core.scoring.PyRosettaTwoBodyContextDependentEnergy_first,
+           last=rosetta.core.scoring.PyRosettaTwoBodyContextDependentEnergy_last,
+           methods={}),
+        CD(base=None,
+           first=rosetta.core.scoring.PyRosettaEnergy_first,
+           last=rosetta.core.scoring.PyRosettaEnergy_last,
+           methods={}),
+    ]
 
 ScoreTypesRegistry = {}
 

@@ -14,6 +14,7 @@ void __utility_by_hand_ending__()
     expose_basic_type<unsigned int>("uint");
     expose_basic_type<char>("char");
     expose_basic_type<float>("float");
+    expose_basic_type<double>("double");
     // conflict with Real expose_basic_type<double>("double");
     //expose_basic_type<unsigned>("unsigned");
     expose_basic_type<core::Size>("Size");

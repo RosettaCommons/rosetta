@@ -36,29 +36,28 @@
 namespace protocols {
 namespace rotamer_recovery {
 
+enum OutputLevel {
+	OL_full = 1,
+	OL_features,
+	OL_none
+};
+
+
 class RRReporterSQLite : public RRReporter {
 
 public: // constructors destructors
-
-	struct OutputLevel{
-		enum e {
-			full = 1,
-			features,
-			none
-		};
-	};
 
 	RRReporterSQLite();
 
 	RRReporterSQLite(
 		std::string const & database_name,
 		std::string const & database_pq_schema = "",
-		OutputLevel::e const output_level = OutputLevel::full
+		OutputLevel output_level = protocols::rotamer_recovery::OL_full
 	);
 
 	RRReporterSQLite(
 		utility::sql_database::sessionOP db_session,
-		OutputLevel::e const output_level = OutputLevel::full
+		OutputLevel output_level = protocols::rotamer_recovery::OL_full
 	);
 
 	~RRReporterSQLite();
@@ -112,11 +111,9 @@ public:
 	db_session();
 
 	void
-	set_output_level(
-		OutputLevel::e const output_level );
+	set_output_level(OutputLevel output_level );
 
-	OutputLevel::e
-	get_output_level() const;
+	OutputLevel	get_output_level() const;
 
 	void
 	set_struct_id1(
@@ -188,7 +185,7 @@ public:
 
 private: // data members
 
-	OutputLevel::e output_level_;
+	OutputLevel output_level_;
 
 	protocols::features::StructureID struct_id1_;
 

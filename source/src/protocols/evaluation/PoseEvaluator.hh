@@ -153,6 +153,12 @@ void SingleValuePoseEvaluator< T >::apply( core::pose::Pose &pose, std::string, 
 	if ( applicable( pose ) )	pss.add_energy ( name_, apply( pose ) );
 }
 
+
+// PyRosetta concreate classes
+class SingleValuePoseEvaluator_Size : public SingleValuePoseEvaluator<core::Size> {};
+class SingleValuePoseEvaluator_SSize: public SingleValuePoseEvaluator<core::SSize> {};
+
+
 }
 }
 #endif

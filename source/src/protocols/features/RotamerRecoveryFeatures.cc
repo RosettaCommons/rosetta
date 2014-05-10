@@ -104,7 +104,7 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 	comparer_(),
 	task_factory_()
 {
-	reporter_->set_output_level(RRReporterSQLite::OutputLevel::features);
+	reporter_->set_output_level(rotamer_recovery::OL_features);
 }
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
@@ -115,7 +115,7 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	comparer_(),
 	task_factory_()
 {
-	reporter_->set_output_level(RRReporterSQLite::OutputLevel::features);
+	reporter_->set_output_level(rotamer_recovery::OL_features);
 }
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(

@@ -75,7 +75,7 @@ struct motif2scaffold_data
 };
 
 //Function used to sort the motif2scaffold_indexes by > of the scaffold indexes
-bool compare_motif2scaffold_data_by_scaffold_low2high(motif2scaffold_indexes const & a, motif2scaffold_indexes const & b)
+inline bool compare_motif2scaffold_data_by_scaffold_low2high(motif2scaffold_indexes const & a, motif2scaffold_indexes const & b)
 {
 	//Means that best RMSD (lower) goes first
 	return (a.scaffoldHigh < b.scaffoldHigh);

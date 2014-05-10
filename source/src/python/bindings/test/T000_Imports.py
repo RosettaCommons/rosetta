@@ -7,7 +7,7 @@
 
 ## @author Sergey Lyskov
 
-
+import rosetta
 from rosetta import *
 
 print Vector1([1, 2, 3, 4])

@@ -24,11 +24,17 @@
 #include <core/io/pdb/pose_io.hh>
 #include "core/import_pose/import_pose.hh"
 
+#include <core/pose/datacache/CacheableObserver.hh>
+#include <basic/datacache/DataCache.hh>
+
+
 
 //#include <core/io/pdb/pose_io.hh>
 //#include <core/scoring/ScoreFunctionInfo.hh>
 
 namespace bp = boost::python;
+
+//class Py_basic_datacache_DataCache_CacheableObserver : public basic::datacache::DataCache< core::pose::datacache::CacheableObserver > {};
 
 
 class PosePyObserver : public utility::pointer::ReferenceCount
@@ -162,5 +168,9 @@ void __pose_by_hand_beginning__()
     ;
 
     bp::def("QQQ_PosePyObserverTesterFunction", PosePyObserverTesterFunction);
+
+	boost::python::class_< basic::datacache::DataCache< core::pose::datacache::CacheableObserver >, utility::pointer::owning_ptr< basic::datacache::DataCache< core::pose::datacache::CacheableObserver > > >( "Py_basic_datacache_DataCache_CacheableObserver" );
+
+	//boost::python::class_<Py_basic_datacache_DataCache_CacheableObserver, utility::pointer::owning_ptr<> >( "Py_basic_datacache_DataCache_CacheableObserver" );
 
 }

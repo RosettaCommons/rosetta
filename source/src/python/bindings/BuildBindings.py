@@ -38,6 +38,9 @@ import tools.CppParser
 from optparse import OptionParser
 
 
+monolith_rosetta_library_name = 'rosetta'
+
+
 class NT:  # named tuple
     def __init__(self, **entries): self.__dict__.update(entries)
     def __repr__(self):
@@ -89,6 +92,12 @@ def main(args):
     parser.add_option("-d",
       action="store_false", dest="BuildMiniLibs",
       help="Disable building of mini libs.",
+    )
+
+    parser.add_option("--skip-scons-run",
+      default=False,
+      action="store_true",
+      help="Disabling execution of scons command to build rosetta libs.",
     )
 
     parser.add_option("-u", "--update",
@@ -264,7 +273,12 @@ def main(args):
     # assuming that we in rosetta/rosetta_source/src/python/bindings directory at that point
     mini_path = os.path.abspath('./../../../')
 
-    bindings_path = os.path.abspath('debug/rosetta') if Options.debug  and Platform != "windows" else os.path.abspath('rosetta')
+    #bindings_path = os.path.abspath('debug/rosetta') if Options.debug  and Platform != "windows" else os.path.abspath('rosetta')
+
+    bindings_path = os.path.join(mini_path, 'build/PyRosetta/'+Platform)
+    bindings_path = os.path.join(bindings_path, 'monolith' if Options.monolith else 'namespace' )
+    bindings_path = os.path.join(bindings_path, 'debug' if Options.debug  else 'release')
+    bindings_path = os.path.abspath( os.path.join(bindings_path, 'rosetta') )
 
     if Options.cross_compile:
         bindings_path = os.path.abspath('rosetta.windows')
@@ -272,10 +286,21 @@ def main(args):
         execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
+    print 'Bindings path: {0}'.format(bindings_path)
+
 
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
     for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
+
+    # Copy dirs and files
+    for d in 'test demo app toolbox'.split():
+        dest = os.path.join(bindings_path, '../'+d)
+        if os.path.isdir(dest): shutil.rmtree(dest)
+        shutil.copytree(d, dest)
+
+    # Copy files
+    for f in 'TestBindings.py SetPyRosettaEnvironment.sh'.split(): shutil.copy(f, os.path.join(bindings_path, '../'+f) )
 
     bindings_config = dict(utility=True, basic=False, numeric=False, core=False, protocols=False, low_memory_mode=False)
     if not Options.utility_only:
@@ -283,6 +308,9 @@ def main(args):
         bindings_config['numeric'] = True
         bindings_config['core']    = True
         if not Options.core_only: bindings_config['protocols'] = True
+
+    bindings_config['debug'] = True if Options.debug else False
+    bindings_config['monolith'] = True if Options.monolith else False
 
     with file(bindings_path + '/config.json', 'w') as f: json.dump(bindings_config, f)
 
@@ -297,9 +325,10 @@ def main(args):
     #os.symlink(bindings_path, 'rosetta')
 
     #bindings_path = os.path.abspath(bindings_path)
+    binding_source_path = os.path.abspath('.')
 
     if options.BuildMiniLibs:
-        prepareMiniLibs(mini_path, bindings_path)
+        prepareMiniLibs(mini_path, bindings_path, binding_source_path=binding_source_path)
 
     os.chdir( './../../' )
 
@@ -314,14 +343,14 @@ def main(args):
         print 'Building just following namespaces:', options.one
         for n in options.one:
             #print 'namespace =', n
-            buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+            buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml, binding_source_path=binding_source_path)
 
     else:
         libs = ['utility']
         if not Options.utility_only:
             libs += ['numeric', 'basic', 'core']
             if not Options.core_only: libs.append('protocols')
-        buildModules(libs,   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules(libs,   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml, binding_source_path=binding_source_path)
         '''
         # we want to start with lib that is longest to build - that way we can do multi-core build more efficiently
         buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
@@ -572,19 +601,19 @@ def getCompilerOptions():
     return add_option
 
 
-def getLinkerOptions():
+def getLinkerOptions(dynamic=True):
     ''' Return appropriate linking options based on platform info
     '''
     add_loption = ''
     #if Platform == 'linux':
     if Platform != 'macos':  # Linux and cygwin...
-        add_loption += '-shared'
+        add_loption += '-shared' if dynamic else ''
         #if PlatformBits == '32' and Platform != 'cygwin': add_loption += ' -malign-double'
         if PlatformBits == '32' : add_loption += ' -malign-double'
     else:
         #add_loption = '-dynamiclib -Xlinker -headerpad_max_install_names'  # <-- old one
         #add_loption = '-dynamiclib -m64'  # <-- used on Mac
-        add_loption = '-dynamiclib'
+        add_loption = '-dynamiclib' if dynamic else ''
 
         #if platform.release()[:2] == '13': add_loption += ' -stdlib=libstdc++'
 
@@ -641,7 +670,7 @@ def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gcc
     os.path.walk(path, visit, None)
 
 
-def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path):
     ''' recursive build buinding for given dir name, and store them in dest.
     '''
     #os.path.walk(path, visit, None)
@@ -666,22 +695,28 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 
             dir_list.append( (dir_name, files) )
 
-    dir_list.sort(key=lambda x: -len(x[1]))  # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
+    #dir_list.sort(key=lambda x: -len(x[1]))  # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
     #for d, fs in dir_list: print len(fs), d
 
     if Options.one_lib_file and Options.build_all:
         mb = []
         for dir_name, _ in dir_list:
             #print "buildModules(...): '%s', " % dir_name
-            dname = dest+'/' + dir_name
-            if not os.path.isdir(dname): os.makedirs(dname)
+            #dname = dest+'/' + dir_name
+            #if not os.path.isdir(dname): os.makedirs(dname)
 
-            mb.append( ModuleBuilder(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
+            mb.append( ModuleBuilder(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path) )
             mb[-1].generateBindings()
             gc.collect()
 
 
         mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
+
+        if Options.monolith:
+            monolith = ModuleBuilder(monolith_rosetta_library_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path)
+            #print dir(monolith)
+            monolith.generate_monolith_main(mb, embed_python=True)
+            mb.append(monolith)
 
         for b in mb:
             b.compileBindings()
@@ -690,9 +725,11 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 
         mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
-        for b in mb:
-            b.linkBindings()
-            gc.collect()
+        if Options.monolith: monolith.link_monolith_main(mb)
+        else:
+            for b in mb:
+                b.linkBindings()
+                gc.collect()
 
     else:
         for dir_name, _ in dir_list:
@@ -707,14 +744,8 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 
 
 
-
-def prepareMiniLibs(mini_path, bindings_path):
+def get_all_rosetta_objs(mini_path):
     mode = 'pyrosetta_debug' if Options.debug else 'pyrosetta'
-
-    if Platform == "macos" and PlatformBits=='32': execute("Building Rosetta libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
-    elif Platform == "macos" and PlatformBits=='64': execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
-    elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
-    else: execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
 
     version_add_on = execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/default/'
 
@@ -735,19 +766,13 @@ def prepareMiniLibs(mini_path, bindings_path):
     # now lets add version to lib_path...
     lib_path += version_add_on
 
-        #if Platform == "macos" and PlatformBits=='64'  and  platform.release().startswith('11.'): lib_path = 'build/src/pyrosetta/macos/11/64/x86/gcc/'
-        #else: lib_path = 'build/src/pyrosetta/macos/10.6/64/x86/gcc/'
-
-    #lib_path += 'static/'
     obj_suffix = '.os'
-    #if Platform == "linux"  and  PlatformBits == '64': obj_suffix = '.os'
 
-    # Now the funny part - we rebuild all libs to produce just one lib file...
     all_sources = []
-    all_scons_files = [f for f in commands.getoutput('cd ../../ && ls *.src.settings').split() if f not in ['apps.src.settings', 'devel.src.settings', 'pilot_apps.src.settings']]
+    all_scons_files = [f for f in commands.getoutput('cd {mini_path}/src && ls *.src.settings'.format(mini_path=mini_path) ).split() if f not in ['apps.src.settings', 'devel.src.settings', 'pilot_apps.src.settings']]
     for scons_file in all_scons_files:
     #for scons_file in ['ObjexxFCL', 'numeric', 'utility',]:
-        f = file('./../../'+scons_file).read();  exec(f)
+        exec( file(mini_path+'/src/'+scons_file).read() )
         for k in sources:
             for f in sources[k]:
                 #all_sources.append( scons_file + '/' + k + '/' + f + obj_suffix)
@@ -761,14 +786,43 @@ def prepareMiniLibs(mini_path, bindings_path):
         "dbio/cppdb/utils", 'dbio/sqlite3/sqlite3', ]
 
     all_sources += [ mini_path + '/' + lib_path.replace('/src/', '/external/') + x + obj_suffix for x in extra_objs ]
+    return all_sources, lib_path
 
-    objs = ' '.join(all_sources)
+
+def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
+    mode = 'pyrosetta_debug' if Options.debug else 'pyrosetta'
+
+    if not Options.skip_scons_run:
+        if Platform == "macos" and PlatformBits=='32': execute("Building Rosetta libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
+        elif Platform == "macos" and PlatformBits=='64': execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
+        elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
+        else: execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
+
+
+    #all_sources += [ mini_path + '/' + lib_path.replace('/src/', '/external/') + x + obj_suffix for x in extra_objs ]
+    #objs = ' '.join(all_sources)
+    objs, lib_path = get_all_rosetta_objs(mini_path)
+    #print len(objs); sys.exit(1)
+
+    objs = ' '.join(objs)
+    all_objs_file = bindings_build_path + '/all_objs_files_for_mini_lib'
+    with file(all_objs_file, 'w') as f: f.write(objs)
+
+    # number_of_objs_in_file = 1024;  objs_files = ''
+    # objs_list_all = [ objs[i:i+number_of_objs_in_file] for i in range(0, len(objs), number_of_objs_in_file)]
+    # for i, objs in enumerate(objs_list_all):
+    #     fname = 'objs-{}'.format(i)
+    #     with file(os.path.join(bindings_build_path, fname), 'w') as f: f.write( ' '.join(objs) )
+    #     objs_files += ' @'+os.path.join(bindings_build_path, fname)
 
     suffix = 'so'
-    if Platform == 'cygwin' : suffix = 'dll'
-    if Platform == 'macos' : suffix = 'dylib'
+    if Options.monolith: suffix = 'a'
+    else:
+        if Platform == 'cygwin' : suffix = 'dll'
+        if Platform == 'macos' : suffix = 'dylib'
 
-    mini = mini_path + '/src/python/bindings/{0}rosetta/libmini.'.format('debug/' if Options.debug else '') + suffix
+    #mini = mini_path + '/src/python/bindings/{0}rosetta/libmini.'.format('debug/' if Options.debug else '') + suffix
+    mini = os.path.join(bindings_build_path, 'libmini' + ('_static' if Options.monolith else '') + '.' + suffix )
 
     add_loption = getLinkerOptions()
 
@@ -780,26 +834,38 @@ def prepareMiniLibs(mini_path, bindings_path):
                 if not f.startswith('/'): f = mini_path+'/'+lib_path+f
                 if os.path.getmtime(f) > os.path.getmtime(mini): rebuild=True;  break
 
-    if rebuild: execute("Linking mini lib...",
-                        "cd %(mini_path)s && cd %(lib_path)s && gcc %(add_loption)s \
-                        %(objs)s -lz -lstdc++ -o %(mini)s" % dict(mini_path=mini_path, lib_path=lib_path, add_loption=add_loption, mini=mini, objs=objs, compiler=Options.compiler)
-                    )
+    # if rebuild: execute("Linking mini lib...",
+    #                     "cd %(mini_path)s && cd %(lib_path)s && gcc %(add_loption)s \
+    #                     %(objs)s -lz -lstdc++ -o %(mini)s" % dict(mini_path=mini_path, lib_path=lib_path, add_loption=add_loption, mini=mini, objs=objs, compiler=Options.compiler)
+    #                 )
+
+    if Options.monolith:
+        if rebuild: execute("Linking static mini lib...",
+                            "cd {mini_path} && cd {lib_path} && ar rcs {mini} {objs}" \
+                            .format(mini_path=mini_path, mini=mini, lib_path=lib_path, objs=objs) )
+    else:
+        if rebuild: execute("Linking mini lib...",
+                            "cd %(mini_path)s && cd %(lib_path)s && %(compiler)s %(add_loption)s \
+                            @%(all_objs_file)s -lz -lstdc++ -o %(mini)s" % dict(compiler=Options.compiler, mini_path=mini_path, add_loption=add_loption,
+                                                                                mini=mini, all_objs_file=all_objs_file, lib_path=lib_path)
+                        )
+
 
     #if Platform == 'cygwin':
-    #        execute("cp libs...", "cd %s && cp %s/*.dll %s" % (mini_path, lib_path, bindings_path) )
+    #        execute("cp libs...", "cd %s && cp %s/*.dll %s" % (mini_path, lib_path, bindings_build_path) )
     #else:
-    #        execute("cp libs...", "cd %s && cp %s/lib* %s" % (mini_path, lib_path, bindings_path) )
+    #        execute("cp libs...", "cd %s && cp %s/lib* %s" % (mini_path, lib_path, bindings_build_path) )
 
-    if Platform == 'macos':
+    if Platform == 'macos'  and  not Options.monolith:
         #libs = ['libObjexxFCL.dylib', 'libnumeric.dylib', 'libprotocols.dylib', 'libdevel.dylib', 'libutility.dylib', 'libcore.dylib']
         libs = ['libmini.dylib']
         for l in libs:
-            execute('Adjustin lib self path in %s' % l, 'install_name_tool -id rosetta/%s %s' % (l, bindings_path+'/'+l) )
+            execute('Adjustin lib self path in %s' % l, 'install_name_tool -id rosetta/%s %s' % (l, bindings_build_path+'/'+l) )
             for k in libs:
-                execute('Adjustin lib path in %s' % l, 'install_name_tool -change %s rosetta/%s %s' % (os.path.abspath(mini_path+'/'+lib_path+k), k, bindings_path+'/'+l) )
+                execute('Adjustin lib path in %s' % l, 'install_name_tool -change %s rosetta/%s %s' % (os.path.abspath(mini_path+'/'+lib_path+k), k, bindings_build_path+'/'+l) )
 
-    binding_source_path = os.path.abspath( bindings_path+'/../..' if Options.debug else bindings_path+'/..' )
-    shutil.copyfile(binding_source_path+'/src/__init__.py' , bindings_path+'/__init__.py')
+    #binding_source_path = os.path.abspath( bindings_build_path+'/../..' if Options.debug else bindings_build_path+'/..' )
+    shutil.copyfile(binding_source_path+'/src/__init__.py' , bindings_build_path+'/__init__.py')
 
     if Options.debug:  # creating some symlinks for debug version
         for l in 'TestBindings.py test demos toolbox'.split():
@@ -809,6 +875,8 @@ def prepareMiniLibs(mini_path, bindings_path):
         l = 'libboost_python.'+suffix  # linking libboost_python to rosetta/ dir instead of root
         if os.path.islink('./debug/rosetta/'+l): os.remove('./debug/rosetta/'+l)
         os.symlink('./../../rosetta/'+l, './debug/rosetta/'+l)
+
+
 
 
 def getAllRosettaSourceFiles():
@@ -844,8 +912,8 @@ def getAllRosettaSourceFiles():
 
 def get_vc_compile_options():
     #common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DBOOST_THREAD_DONT_USE_CHRONO /DBOOST_ERROR_CODE_HEADER_ONLY /DBOOST_SYSTEM_NO_DEPRECATED' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
-    #/env x64
-    common = '/D "_WINDLL" /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA ' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK' /DUNUSUAL_ALLOCATOR_DECLARATION
+    #/env x64 /D "_WINDLL"
+    common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA ' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK' /DUNUSUAL_ALLOCATOR_DECLARATION
 
     if Options.debug:
         # Windows MSVC compiler common options (no optimization, but it works)
@@ -858,13 +926,13 @@ def get_vc_compile_options():
         # removing /GL
         # adding /bigobj
         # Win32: return common + ' /bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
-
-        # Win64: removing /Oi, ---- Adding /GL
-        return common + ' /bigobj /GL /O2 /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
+        # Win64: removing /Oi, ---- Adding /GL  <-- scratch that
+        return common + ' /bigobj /Oi /O2 /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
 
 def get_vc_link_options():
     #return 'zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'
-    return '''/SUBSYSTEM:WINDOWS /OPT:ICF /ERRORREPORT:PROMPT /NOLOGO /TLBID:1 /MANIFEST /LTCG /NXCOMPAT /DYNAMICBASE  /OPT:REF /SUBSYSTEM:CONSOLE /MANIFESTUAC:"level='asInvoker' uiAccess='false'" zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
+    # /SUBSYSTEM:WINDOWS /OPT:ICF /ERRORREPORT:PROMPT /NOLOGO /TLBID:1 /MANIFEST /LTCG /NXCOMPAT /DYNAMICBASE  /OPT:REF /SUBSYSTEM:CONSOLE /MANIFESTUAC:"level='asInvoker' uiAccess='false'"
+    return '''/LTCG zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
 
 
 def BuildRosettaOnWindows(build_dir, bindings_path):
@@ -1128,7 +1196,7 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
 
 _TestInludes_ = ''
 
-def buildModule(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+def buildModule(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path):
     ''' Build one namespace and return dict of newly found heades.
     '''
     '''
@@ -1143,16 +1211,16 @@ def buildModule(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_pa
         #if path == 'core':
         #    buildModule_All(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
         #else: buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
-        return buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
+        return buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path)
 
     else:
         #print 'Using Clang...'
-        return buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
+        return buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path)
 
 
 
 class ModuleBuilder:
-    def __init__(self, path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+    def __init__(self, path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path):
         ''' Non recursive build buinding for given dir name, and store them in dest.
             path - relative path to namespace
             dest - path to root file destination, actual dest will be dest + path
@@ -1164,9 +1232,11 @@ class ModuleBuilder:
         global Options
         if Options.verbose: print 'CppXML route: ModuleBuilder.init...', path, dest
 
+        self.name = path.split('/')[-1]
+        if self.name == monolith_rosetta_library_name: path = ''
         self.path = path
         self.dest = dest
-
+        self.binding_source_path = binding_source_path
 
         # Creating list of headers
         self.headers = [os.path.join(path, d)
@@ -1174,7 +1244,9 @@ class ModuleBuilder:
                                 if os.path.isfile( os.path.join(path, d) )
                                     and d.endswith('.hh')
                                     and not d.endswith('.fwd.hh')
-                                    ]
+                    ] if os.path.isdir(path) else []
+
+        #if path == 'rosetta': self.headers.append('_main_.hpp')  # special case for monolith main
 
         self.headers.sort()
 
@@ -1185,17 +1257,24 @@ class ModuleBuilder:
 
         if Options.verbose: print_(self.headers, color='black', bright=True)
 
-        self.fname_base = dest + '/' + path
+        self.fname_base = dest + ('/_build_/' if Options.monolith and self.name != monolith_rosetta_library_name else '/') + path # we 'hide' intermediate files to avoid confusion during Python import
 
         if not os.path.isdir(self.fname_base): os.makedirs(self.fname_base)
 
         #print 'Creating __init__.py file...'
-        f = file( dest + '/' + path + '/__init__.py', 'w');  f.close()
-        if not self.headers:  return   # if source files is empty then __init__.py should be empty too
+        f = file( self.fname_base + '/__init__.py', 'w');  f.close()
+
+        # if not self.headers:
+        #     print '______________', self.path
+        #else: print self.headers
+
+        #if not self.headers:  return   # if source files is empty then __init__.py should be empty too (only if not Monolith build)
+        #if not self.headers  and  not Options.monolith:  return   # if source files is empty then __init__.py should be empty too (only if not Monolith build)
+        #if not self.headers: self.headers.append('platform/types.hh')  # dummy inlclude to triger compilation even if list is empty
 
         def finalize_init(current_fname):
                 #print 'Finalizing Creating __init__.py file...'
-                f = file( dest + '/' + path + '/__init__.py', 'a');
+                f = file( self.fname_base + '/__init__.py', 'a');
                 f.write('from %s import *\n' % os.path.basename(current_fname)[:-3]);
                 f.close()
 
@@ -1223,14 +1302,17 @@ class ModuleBuilder:
         self.add_option  = getCompilerOptions()
         self.add_loption = getLinkerOptions()
 
-        self.by_hand_beginning_file = dest+ ('/..'if Options.debug else '') + '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
-        self.by_hand_ending_file = dest+ ('/..'if Options.debug else '') + '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
+        self.by_hand_beginning_file = binding_source_path + '/src/'+ path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
+        self.by_hand_ending_file = binding_source_path + '/src/'+  path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
 
         self.by_hand_beginning = file(self.by_hand_beginning_file).read() if os.path.isfile(self.by_hand_beginning_file) else ''
         self.by_hand_ending = file(self.by_hand_ending_file).read() if os.path.isfile(self.by_hand_ending_file) else ''
 
         #self.all_at_once_base = '__' + path.split('/')[-1] + '_all_at_once_'
         self.all_at_once_base = '_' + path.replace('/', '_') + ('_monolith_' if Options.monolith else '_')
+
+        if self.name == monolith_rosetta_library_name: self.all_at_once_base = monolith_rosetta_library_name #path
+
         self.all_at_once_source_cpp = self.fname_base + '/' + self.all_at_once_base + '.source.cc'
         self.all_at_once_cpp = self.fname_base + '/' + self.all_at_once_base + '.'
         self.all_at_once_obj = self.fname_base + '/' + self.all_at_once_base + '.'
@@ -1243,9 +1325,17 @@ class ModuleBuilder:
     def generateBindings(self):
         ''' This function only generate XML file, parse it and generate list of sources that saved in sources.json. We assume that one_lib_file and build_all option is on here.
         '''
-        if not self.headers: return
+        #if not self.headers: return
+        #if not self.headers  and  not Options.monolith: return
 
-        xml_recompile = False
+        #xml_recompile = False if os.path.isfile(self.all_at_once_xml) else True
+
+        if os.path.isfile(self.all_at_once_xml):
+            xml_recompile = False
+            if os.path.isfile(self.by_hand_beginning_file) and os.path.getmtime(self.by_hand_beginning_file) > os.path.getmtime(self.all_at_once_xml): xml_recompile = True
+            if os.path.isfile(self.by_hand_ending_file) and os.path.getmtime(self.by_hand_ending_file) > os.path.getmtime(self.all_at_once_xml):  xml_recompile = True
+        else: xml_recompile = True
+
         for fl in self.headers:
             #print 'Binding:', files
             hbase = fl.split('/')[-1][:-3]
@@ -1294,10 +1384,10 @@ class ModuleBuilder:
 
         #print 'Finalizing Creating __init__.py file...'
         namespace = os.path.basename(self.path)
-        py_init_file = self.dest + ('/..' if Options.debug else '')+'/../src/' + self.path + '/__init__.py'
+        py_init_file = self.binding_source_path +'/../src/' + self.path + '/__init__.py'
         if os.path.isfile(py_init_file): t = file(py_init_file).read()
         else: t = ''
-        f = file( self.dest + '/' + self.path + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % self.all_at_once_base);  f.close()
+        f = file( self.fname_base + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % self.all_at_once_base);  f.close()
 
         if xml_recompile or (not Options.update):
             start_time = time.time()
@@ -1322,7 +1412,7 @@ class ModuleBuilder:
                 for i in range( len(code) ):
                     all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
                     all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
-                    source_list.append((all_at_once_N_cpp, all_at_once_N_obj))
+                    source_list.append( dict( cpp = os.path.basename(all_at_once_N_cpp), obj = os.path.basename(all_at_once_N_obj) ) )
 
                     if os.path.isfile(all_at_once_N_obj): os.remove(all_at_once_N_obj)
 
@@ -1334,7 +1424,7 @@ class ModuleBuilder:
                     print_('.', color='black', bright=True, endline=False); sys.stdout.flush()
                 print_(' Done!', color='black', bright=True);
 
-                json.dump(source_list, file(self.all_at_once_json, 'w') )
+                json.dump( dict(sources=source_list), file(self.all_at_once_json, 'w'), sort_keys=True, indent=2)
 
             if Options.jobs > 1:
                 pid = mFork()
@@ -1347,20 +1437,29 @@ class ModuleBuilder:
                 SleepPrecise( (time.time() - start_time) * Options.sleep, 'Sleeping %(time)s seconds so CPU could cool-off...\r')
 
 
+
+    def abs_source(self, source_, key):  # return one of the key from source files list normalized to to building paths
+        return self.fname_base + '/' +source_[key]
+
+
     def compileBindings(self):
         ''' Build early generated bindings.
         '''
-        if not self.headers: return
-        source_list = json.load( file(self.all_at_once_json) )
+        #if not self.headers: return
+        source_list = json.load( file(self.all_at_once_json) )['sources']
+
+        self.sources = source_list  # to use for monolith build
 
         recompile = False
 
         if Options.update:
-            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
+            for source in source_list:
+                all_at_once_N_cpp, all_at_once_N_obj = self.abs_source(source, 'cpp'), self.abs_source(source, 'obj')
                 if not os.path.isfile(all_at_once_N_obj)  or  os.path.getmtime(all_at_once_N_cpp) > os.path.getmtime(all_at_once_N_obj): recompile = True; break
 
         if recompile or (not Options.update):
-            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list: #range( len(code) ):
+            for source in source_list: #range( len(code) ):
+                all_at_once_N_cpp, all_at_once_N_obj = self.abs_source(source, 'cpp'), self.abs_source(source, 'obj')
                 start_time = time.time()
 
                 #all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
@@ -1398,13 +1497,15 @@ class ModuleBuilder:
     def linkBindings(self):
         ''' Build early generated bindings.
         '''
-        if not self.headers  or  Options.cross_compile  or  Options.monolith: return
-        source_list = json.load( file(self.all_at_once_json) )
+        #if not self.headers  or  Options.cross_compile: return  #  or  Options.monolith
+        if Options.cross_compile: return  #  or  Options.monolith
+        source_list = json.load( file(self.all_at_once_json) )['sources']
 
         relink = False
 
         if Options.update:
-            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
+            for source in source_list:
+                all_at_once_N_cpp, all_at_once_N_obj = self.abs_source(source, 'cpp'), self.abs_source(source, 'obj')
                 if not os.path.isfile(self.all_at_once_lib)  or  os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib): relink = True; break
         else: relink = True
 
@@ -1413,7 +1514,7 @@ class ModuleBuilder:
             if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
                 start_time = time.time()
 
-                objs_list = map(lambda x:x[1], source_list)
+                objs_list = map(lambda x: self.abs_source(x, 'obj'), source_list)
                 linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
                               -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
                 linker_dict = dict(add_option=self.add_loption, obj=' '.join(objs_list), dst=self.all_at_once_lib, libpaths=self.libpaths, runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib,
@@ -1439,6 +1540,34 @@ class ModuleBuilder:
 
         #print 'Done!'
 
+
+    def generate_monolith_main(self, modules, embed_python):
+        all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % 0
+        all_at_once_N_obj = self.all_at_once_obj+'%s.o' % 0
+        json.dump( dict(sources=[dict(cpp = os.path.basename(all_at_once_N_cpp), obj = os.path.basename(all_at_once_N_obj) )]), file(self.all_at_once_json, 'w'), sort_keys=True, indent=2)
+
+        with file(all_at_once_N_cpp, 'w') as f: f.write( tools.CppParser.generate_monolith_main(self, modules, monolith_rosetta_library_name, embed_python) )
+
+    def link_monolith_main(self, modules):
+        #rosetta_objs, lib_path =  get_all_rosetta_objs('./..')
+        #lib_path = os.path.abspath( '../' + lib_path)
+
+        rosetta_objs_list = self.dest + '/rosetta_objs_list'
+
+        objs_list = []
+        for m in modules:
+            objs_list += map(lambda x: m.abs_source(x, 'obj'), m.sources)
+
+        with file(rosetta_objs_list, 'w') as f: f.write( ' '.join(objs_list) )  # + [ lib_path + '/'+ o for o in rosetta_objs]
+
+        #print objs_list
+        linker_cmd = "cd %(dest)s/../ && %(compiler)s @%(rosetta_objs_list)s %(add_option)s -lmini_static -lstdc++ -lz -l%(python_lib)s \
+                      -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
+        linker_dict = dict(add_option=self.add_loption, dst=self.all_at_once_lib, libpaths=self.libpaths,
+                           runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib, rosetta_objs_list=rosetta_objs_list,
+                           python_lib=Options.python_lib, compiler=Options.compiler)
+
+        execute("Linking...", linker_cmd % linker_dict)
 
 
 def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):

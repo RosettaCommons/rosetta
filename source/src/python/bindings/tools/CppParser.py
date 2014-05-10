@@ -14,7 +14,7 @@
 ## @author Sergey Lyskov
 
 
-import os, sys, gc
+import os, sys, gc, glob
 
 import xml.dom.minidom
 
@@ -356,12 +356,15 @@ class CppFunction:
             # in future we can just locate enums in all parsed code but for now lets not guess...
             known_bad_defaults = ['(((utility::tag::Tag*)operator new(', 'utility::vector0<int, std::allocator<int>', 'MATCH_YR', 'std::cout', 'typename ', 'std::make_pair [with ',
                 'core::chemical::ChemicalManager::residue_type_set(const std::string&)(((const std::string&)(& core::chemical::FA_STANDARD',
-                'core::scoring::hbonds::DUMMY_DERIVS', 'core::fragment::BBTorsionSRFD',
+                'core::scoring::hbonds::DUMMY_DERIVS', 'core::fragment::BBTorsionSRFD', 'std::ios_base::in', 'protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE',
+              'protocols::stepwise::sampling::rna::local_count_data',
             ]
             for bd in known_bad_defaults:
                 if x.default.startswith(bd): return _r
 
             if len( x.default ) > 64: return _r  # Golden rule: if default arg description more then 64 - gcc got it wrong!
+
+            #print '______', x.default, x.type_.getKind()
 
             if x.type_.getKind() == 'Enumeration':
                 if x.default.startswith(x.type_.getContext())  or x.default.startswith(x.type_.getContext()[2:]) :  # starts with '::namespace' or just 'namespace'
@@ -756,6 +759,9 @@ class CppClass:
         for b in self.bases:  # lests check if all bases are copyable too...
             if b.type_.T() in self.reference.Objects and  (not self.reference.Objects[ b.type_.T() ].isCopyable(asBase=True)): return False
 
+        for b in self.bases:
+           if b.type_.T() == '::boost::noncopyable_::noncopyable': return False
+
         #for f in self.functions:  # check if assign opperator is private...
         #    if (not f.public)  and  f.name == '=': return False  # not exactly exact mucth, but good enought for now
         return True
@@ -798,8 +804,8 @@ class CppClass:
         '''
         if self.context+self.name == '::utility::pointer::ReferenceCount': return False
         if self.incomplete: return False
-        for b in self.bases:
-            if b.type_.T() == '::boost::noncopyable_::noncopyable': return False
+        #for b in self.bases:
+        #    if b.type_.T() == '::boost::noncopyable_::noncopyable': return False
 
         # Some exceptions...
         if self.context+self.name == '::protocols::neighbor::Neighborhood': return False  # temporary disabling wrapping of protocols::neighbor::Neighborhood because we could not compile it on Linux GCC-4.1 due to function pointer in constructor
@@ -812,6 +818,7 @@ class CppClass:
             '::utility::vector1<double,std::allocator<double> >',
             '::utility::vector1<std::basic_string<char, std::char_traits<char>, std::allocator<char> >,std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >',
             '::numeric::xyzMatrix<double>',
+            '::boost::noncopyable_::noncopyable'
                      ]
 
         for a in skip_list:
@@ -855,6 +862,7 @@ class CppClass:
             if b.type_.T() == self.isSelfInherit(): continue
 
             if b.type_.T() == '::utility::pointer::ReferenceCount': continue
+            if b.type_.T() == '::boost::noncopyable_::noncopyable': continue
             if b.type_.T().startswith('::utility::vector'): continue
             if b.type_.T().startswith('::std::iterator'): continue
             if b.type_.T().startswith('::std::'): continue
@@ -1349,7 +1357,7 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
     r += by_hand_beginning + by_hand_ending
     #r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ) {\n' % (generateIncludes(includes), prefix_code, name)
 
-    module_prefix = '{includes}\n\n{prefix}\nvoid _python_module{name}() {{\n' if monolith else '{includes}\n\n{prefix}\nBOOST_PYTHON_MODULE( {name} ) {{\n'
+    module_prefix = '{includes}\n\n{prefix}\nvoid _import_namespace{name}() {{\n' if monolith else '{includes}\n\n{prefix}\nBOOST_PYTHON_MODULE( {name} ) {{\n'
 
     r += module_prefix.format(includes=generateIncludes(includes), prefix=prefix_code, name=name)
 
@@ -1392,6 +1400,232 @@ def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_fil
     gc.collect()
 
     return res
+
+
+# --------------------------------------- Monolith related funtions ---------------------------------------
+_import_order_ = {
+    '' : ['utility', 'numeric', 'basic', 'core', 'protocols'],
+
+    'basic': ['datacache', 'resource_manager'],
+
+    'core': ['graph', 'conformation', 'id', 'io', 'scoring'],
+    'core/scoring': ['trie', 'methods', 'func'],
+
+    'protocols': ['moves', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
+                  'simple_moves', 'ligand_docking', 'rigid', 'toolbox', 'forge', 'loop_modeling', 'loops', 'wum', 'rosetta_scripts',
+                  'simple_filters'],
+    'protocols/forge' : ['remodel'],
+    'protocols/match' : ['upstream'],
+    #'protocols/loop_modeling' : ['LoopMover'],
+}
+
+_import_after_sub_namespaces_ = ['protocols/forge/build', ] #'protocols/kinematic_closure']  #, 'protocols/loop_modeling'] 'protocols/rotamer_recovery' 'protocols/stepwise/sampling/rna'
+
+def get_direct_childrens(path, modules):
+    ''' Find direct childrens of given module and sort it if possible by propper import order '''
+    childrens =  [m for m in modules if path == os.path.split(m.path)[0] ]
+    childrens.sort(key=lambda x: x.name )  # we always sort to avoid error because of FS files order
+
+    first = []
+    for m in childrens[:]:
+        if path in _import_order_  and  m.name in _import_order_[path]:
+            first.append(m); childrens.remove(m)
+
+
+    first.sort(key=lambda x: _import_order_[path].index(x.name) )
+    if first: print 'Adjusting import order: {} --> {}'.format(path, [m.name for m in first]) #, [m.name for m in childrens])
+    return first + childrens
+
+
+def generate_monolith_module(module, modules, indent='', use_python_code='', python_module_name=''):
+    #submodule_cpp_name = '_pyrosetta_{}_submodule_'.format(name)
+
+    name = python_module_name if python_module_name else module.name
+    r  = ''
+    r += '{{ // {}\n'.format( python_module_name if python_module_name else module.all_at_once_base )
+    r += '  boost::python::scope current;\n'
+    r += '  std::string submodule_name( boost::python::extract<const char*>(current.attr("__name__")));\n'
+    r += '  submodule_name.append(".{name}");\n'.format(name=name)
+    #r += '  std::cout << submodule_name << std::endl;\n'
+
+    r += '  boost::python::object submodule( boost::python::borrowed( PyImport_AddModule(submodule_name.c_str()) ) );\n'
+
+    #r += '  boost::python::object submodule( boost::python::handle<>( boost::python::borrowed( PyImport_AddModule(submodule_name.c_str()) ) ) );\n'
+
+    r += '  current.attr("{name}") = submodule;\n'.format(name=name)
+    r += '  submodule.attr("__package__") = "{name}";\n'.format(name=name)
+    r += '  boost::python::extract<boost::python::dict>(boost::python::getattr(boost::python::import("sys"),"modules"))()[submodule_name]=submodule;\n'
+    #r += '  boost::python::extract<boost::python::dict>(boost::python::getattr(boost::python::import("sys"),"modules"))()["{}"]=submodule;\n'.format(module.path.replace('/','.')) # also append path without root as imported. This should enable realative imports
+
+    #r += '  submodule.attr("__file__") = "<synthetic>";\n'
+    #r += '  boost::python::extract<boost::python::dict>(boost::python::getattr(boost::python::import("sys"),"modules"))()[submodule_name]="{name}";'.format(name=name)
+    r += '  \n'
+
+    r += '  {\n'  # this inner scope is absolutely nessesary here because we want to make swtiching to submodule context temporary. DO NOT REMOVE!!!!!
+    r += '    boost::python::scope submodule_scope(submodule);\n'
+
+    if use_python_code:
+        r += '    // Embedding: {}\n'.format(python_module_name)
+        r += '    std::cout << "{}" << std::endl;\n'.format(use_python_code)
+        r += '    boost::python::exec("{}");\n'.format(use_python_code)
+    else:
+        self_import = '    _import_namespace{base_name}();\n'.format(base_name=module.all_at_once_base)
+        if module.path not in _import_after_sub_namespaces_: r+= self_import
+        for m in get_direct_childrens(module.path, modules): r+= generate_monolith_module(m, modules, indent=indent+'  ')
+        if module.path in _import_after_sub_namespaces_: r+= self_import; print '↓{}'.format(module.all_at_once_base)
+
+    r += '  }\n'
+    r += '}\n'
+    return '\n'.join( [ indent+line if line else line for line in r.split('\n')] )
+
+def generate_monolith_main(root_module, modules, rosetta_library_name, embed_python):
+    ''' Geneate main file for monolith build. This function have nothing to do with rest CppParse but its here to keep all generate* funtion together
+    '''
+    r  = '// Monolith main\n'
+    #r += '\n#include <boost/python.hpp>\n'
+    r += '\n#include <boost/python.hpp>\n#include <iostream>\n'
+    if embed_python:
+        r += '#include <boost/python/stl_iterator.hpp>\n'
+        r += 'boost::python::object boost_python_dir(boost::python::object object)\n'
+        r += '{\n'
+        r += '  boost::python::handle<> handle(PyObject_Dir(object.ptr()));\n'
+        r += '  return boost::python::object(handle);\n'
+        r += '}\n'
+
+
+    # generate all prototypes
+    for m in modules: r += 'void _import_namespace{base_name}();\n'.format(base_name=m.all_at_once_base)
+
+    #r += 'int test_function() { return 42; }\n'
+    r += '\n'
+    r += 'BOOST_PYTHON_MODULE( {} )\n{{\n'.format(rosetta_library_name)
+
+    # Disabling Python duplicate warnings
+    #r += '  std::string disable_warning("{}");\n'.format("""import warnings\\nwarnings.filterwarnings(\\"ignore\\", \\"to-Python converter for .+ already registered; second conversion method ignored.\\", RuntimeWarning, \\"^rosetta\\\\\\\\.\\")""")
+    r += '  std::string disable_warning("{}");\n'.format("""import warnings\\nwarnings.filterwarnings(\\"ignore\\", \\"to-Python converter for .+ already registered; second conversion method ignored.\\", RuntimeWarning, \\"\\")""")
+    #r += '  std::cout << disable_warning << std::endl;\n'
+    r += '  boost::python::exec( disable_warning.c_str() );\n'
+
+    #r += 'boost::python::def("test_function", test_function);\n'
+    for m in get_direct_childrens('', modules): r+= generate_monolith_module(m, modules, indent='  ')
+
+    # r += '  boost::python::object module = boost::python::import("__main__");\n'
+    # r += '  boost::python::object name_space = module.attr("__dict__");\n'
+    # r += '  boost::python::exec("print 123\\nimport rosetta3.utility\\nimport utility", name_space, name_space);\n'
+
+
+    if embed_python:
+        def escape_to_python(s): return s.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')  # we can't use re.escape beacuse it C++ don't like some of it esacpes...
+
+        # embed some python files inside our lib
+        for fn in sorted(glob.glob(root_module.binding_source_path + '/src/*.py'), key = lambda n: 'z'+n if n.find('__init__')>0 else n ):  # making init last module
+            python_module_name = os.path.split(fn)[1][:-3] # removing path and '.py' suffix
+
+            #if python_module_name == '__init__': python_module_name = 'init_module' # we put default python module in to special namespace rosetta.init
+
+            if python_module_name != '__init__':  # skipping because we will embed it without namespace below
+                #if python_module_name in ['version', '#__init__']:
+                    print 'Embedding:', python_module_name
+                    #r+= generate_monolith_module(root_module, modules, indent='  ', use_python_code=escape_to_python(file(fn).read()), python_module_name=python_module_name)
+                    python_string = "import sys,imp\n" \
+                                    "{python_module_name} = imp.new_module('{python_module_name}')\n" \
+                                    "exec \"{code}\" in {python_module_name}.__dict__\n" \
+                                    "sys.modules['{python_module_name}']={python_module_name}\n" \
+                                    .format(python_module_name=python_module_name, code=escape_to_python( file(fn).read() ) )
+                                    # "print \"{python_module_name}\"\n" \
+                                    # "setattr(sys.modules[__name__], '{python_module_name}', {python_module_name} )\n" \
+                                    #"__name__['{python_module_name}'] = {python_module_name}\n" \
+
+                    # r += '  boost::python::exec("{}");\n'.format( escape_to_python(python_string) )
+                    r += '{{ // Embedding: {}\n'.format(python_module_name)
+                    r += '  boost::python::scope current;\n'
+
+                    r += '  std::string submodule_name( boost::python::extract<const char*>(current.attr("__name__")));\n'
+                    r += '  submodule_name.append(".{name}");\n'.format(name=python_module_name)
+                    #r += '  std::cout << submodule_name << std::endl;\n'
+
+                    r += '  boost::python::object main = boost::python::import("__main__");\n'
+                    r += '  boost::python::object main_namespace = main.attr("__dict__");\n'
+                    r += '  boost::python::exec("{}", main_namespace);\n'.format( escape_to_python(python_string) )
+                    #r += '  boost::python::object submodule = boost::python::extract<boost::python::object>( main_namespace.attr("{python_module_name}") );\n'.format(python_module_name=python_module_name)
+                    #r += '  current.attr("{name}") = submodule;\n'.format(name=python_module_name)
+                    r += '  current.attr("{name}") = main.attr("{name}");\n'.format(name=python_module_name)
+                    r += '  boost::python::extract<boost::python::dict>(boost::python::getattr(boost::python::import("sys"),"modules"))()[submodule_name]=main.attr("{name}");\n'.format(name=python_module_name)
+                    r += '}\n'
+
+        init_file = file(root_module.binding_source_path + '/src/__init__.py').read()
+        init_file = init_file.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')
+
+        r += '{ // Embedding: __init__\n' # in short: we create dummy 'init' submodule, execute __init__ in it and the copy all object in to root namespace
+        r += '  boost::python::scope current;\n'
+
+        # # Approach when we copy some of the build-ins in to scope namespace...
+        # r += '  boost::python::object main_namespace = current.attr("__dict__");\n'
+        # # Now copy some Python build-in defaults in to current scope
+        # r += '  boost::python::object submodule = boost::python::import("__main__");\n'
+        # r += '  boost::python::object submodule_namespace = submodule.attr("__dict__");\n'
+        # #r += '  boost::python::exec("import __builtin__\\n", submodule_namespace, submodule_namespace);\n'
+        # #r += "  boost::python::object __builtin__ = boost::python::extract<boost::python::object>( boost::python::eval(\"__builtin__\", submodule_namespace) );\n"
+        # #r += '  main_namespace["__builtin__"] = __builtin__;\n'
+        # r += '  typedef boost::python::stl_input_iterator<boost::python::str> iterator_type;\n'
+        # r += '  for (iterator_type name( submodule_namespace ), end; // for name in dir(object): \n'
+        # #r += '  for (iterator_type name(boost_python_dir(__builtin__)), end; // for name in dir(object): \n'
+        # r += '    name != end; ++name) {\n'
+        # r += '    if( !name->startswith("__") || name->startswith("__import__") || true ) {\n'
+        # r += '      std::cout << "Adding:" << boost::python::extract<const char*>(*name) << std::endl;\n'
+        # #r += '      current.attr( *name ) = __builtin__.attr( *name );\n'
+        # r += '      current.attr( *name ) = submodule_namespace[*name];\n'
+        # r += '    } else {\n'
+        # r += '      std::cout << "Skipping:" << boost::python::extract<const char*>(*name) << std::endl;\n'
+        # r += '    }\n'
+        # r += '  }\n'
+        # r += '  boost::python::exec("{}", main_namespace, main_namespace);\n'.format(init_file)
+        # #r += '  boost::python::exec("{}", main_namespace, main_namespace);\n'.format("import sys\\naaa = 'ABC'\\nprint aaa\\n", init_file)
+        # # r += '  boost::python::exec("import __builtin__\\n", submodule_namespace, submodule_namespace);\n'
+        # # r += '  boost::python::object __builtin__ = boost::python::extract<boost::python::object>( boost::python::eval("__builtin__", submodule_namespace) );\n'
+        # # r += '  main_namespace["__builtin__"] = __builtin__;\n'
+        # # r += '  boost::python::object __import__ = boost::python::extract<boost::python::object>( boost::python::eval("__import__", submodule_namespace) );\n'
+        # # r += '  main_namespace["__import__"] = __import__;\n'
+
+
+
+        # r += '  std::string submodule_name( boost::python::extract<const char*>(current.attr("__name__")));\n'
+        # r += '  submodule_name.append(".pyrosetta");\n'
+
+        # r += '  boost::python::exec("{}", init_module);\n'.format("aaa = 'ABC'\\nprint aaa\\n")
+
+        #r += '  Py_Initialize();\n'
+        #r += '  boost::python::object main_module = boost::python::import("__main__");\n'
+        #r += '  boost::python::object main_namespace = main_module.attr("__dict__");\n'
+
+        #r += '  boost::python::exec("{}", main_namespace, main_namespace);\n'.format("aaa = 'ABC'\\nprint aaa\\n", init_file)
+
+        # r += '  boost::python::exec("{}", main_namespace, main_namespace);\n'.format(init_file)
+
+
+
+        r += '  boost::python::object main = boost::python::import("__main__");\n'
+        r += '  boost::python::object init_module = main.attr("__dict__");\n'
+        r += '  boost::python::exec("{}", init_module);\n'.format(init_file)
+        #r += '  boost::python::exec("from rosetta.init_module import *\\n", init_module);\n'
+        r += '  typedef boost::python::stl_input_iterator<boost::python::str> iterator_type;\n'
+        r += '  for (iterator_type name(init_module), end; // for name in dir(object): \n'
+        #r += '  for (iterator_type name(boost_python_dir(main_namespace)), end; // for name in dir(object): \n'
+        r += '    name != end; ++name) {\n'
+        #r += '      std::cout << boost::python::extract<const char*>(*name) << std::endl;\n'
+        r += '    if( !name->startswith("__") ) {\n'
+        #r += '      std::cout << boost::python::extract<const char*>(*name) << std::endl;\n'
+        r += '      current.attr( *name ) = init_module[ *name ];\n'
+        r += '    }\n'
+        r += '  }\n'
+        #r += '  boost::python::extract<boost::python::dict>(boost::python::getattr(boost::python::import("sys"),"modules"))()["rosetta"]=init_module["rosetta"];\n'
+        #r += '  current.attr("pyrosetta") = init_module;\n'
+        #r += '  boost::python::import(pyrosetta);\n'
+        r += '}\n'
+
+    r += '}\n'
+
+    return r
 
 
 def parseTranslationUnit(TU):

@@ -3290,11 +3290,13 @@ void __numeric_by_hand_ending__()
 	// instantiate template classes at the end of numeric bindings so they act as default classes for Python for temaplte bindings (some of them might get binded automatically due to temaplate specifications)
 	// Conflic with Real instantiate_numeric_containers<double>("double");
 	instantiate_numeric_containers<float>("float");
+	instantiate_numeric_containers<double>("double");
 	instantiate_numeric_containers<numeric::Real>("Real");
 	instantiate_numeric_containers<numeric::Size>("Size");
 	instantiate_numeric_containers<numeric::SSize>("SSize");
 
 	// Conflic with Real instantiate_numeric_functions<double>("double");
 	instantiate_numeric_functions<float>("float");
+	instantiate_numeric_functions<double>("double");
 	instantiate_numeric_functions<numeric::Real>("Real");
 }
