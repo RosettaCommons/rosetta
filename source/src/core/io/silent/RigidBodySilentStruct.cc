@@ -153,7 +153,7 @@ bool RigidBodySilentStruct::init_from_lines(
 		} //conformation lines
 	} // for ( iter ... )
 
-	if ( fold_tree_ and fold_tree_->num_jump() != jumps_.size() ) {
+	if ( fold_tree_ && fold_tree_->num_jump() != jumps_.size() ) {
 		tr.Warning << "parse error:  found only " << jumps_.size()
 			<< " RT-lines for a fold-tree with " << fold_tree_->num_jump()
 			<< " for decoy tag " << decoy_tag() << std::endl;
@@ -255,5 +255,3 @@ ObjexxFCL::FArray2D< Real > RigidBodySilentStruct::get_CA_xyz() const {
 } // namespace silent
 } // namespace io
 } // namespace core
-
-

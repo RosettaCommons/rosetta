@@ -117,6 +117,13 @@ def main(args):
       help="Perform a Debug build when possible.",
       )
 
+    parser.add_option("--print-build-path",
+      default=False,
+      action="store_true",
+      help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.",
+      )
+
+
     parser.add_option("--numpy-support",
       action="store_true", default=False,
       help="Build bindings numpy type conversion support.",
@@ -195,11 +202,11 @@ def main(args):
       help="Maximum size of function in binding files in bytes."
     )
 
-    parser.add_option("--use-pre-generated-sources",
-      default=None,
-      action="store",
-      help="Mostly for Windows native build: Path to pre-generated PyRosetta C++ source files.",
-    )
+    # parser.add_option("--use-pre-generated-sources",
+    #   default=None,
+    #   action="store",
+    #   help="Mostly for Windows native build: Path to pre-generated PyRosetta C++ source files.",
+    # )
 
     parser.add_option("--cross-compile",
       action="store_true", dest='cross_compile', default=False,
@@ -248,17 +255,18 @@ def main(args):
     (options, args) = parser.parse_args(args=args[1:])
     global Options;  Options = options
 
-    print "-I", options.I
-    print "-L", options.L
-    print "-1", options.one
-    print "--BuildMiniLibs", options.BuildMiniLibs
-    print "--gccxml", options.gccxml
-    print "--all", options.build_all
-    print "--one-lib-file", options.one_lib_file
-    print "--boost-lib", options.boost_lib
-    print '--update', options.update
-    print '--debug', options.debug
-    print '--compiler', options.compiler
+    if not Options.print_build_path:
+        print "-I", options.I
+        print "-L", options.L
+        print "-1", options.one
+        print "--BuildMiniLibs", options.BuildMiniLibs
+        print "--gccxml", options.gccxml
+        print "--all", options.build_all
+        print "--one-lib-file", options.one_lib_file
+        print "--boost-lib", options.boost_lib
+        print '--update', options.update
+        print '--debug', options.debug
+        print '--compiler', options.compiler
 
     #print '--numpy-support', options.numpy_support
 
@@ -275,23 +283,29 @@ def main(args):
 
     #bindings_path = os.path.abspath('debug/rosetta') if Options.debug  and Platform != "windows" else os.path.abspath('rosetta')
 
-    bindings_path = os.path.join(mini_path, 'build/PyRosetta/'+Platform)
-    bindings_path = os.path.join(bindings_path, 'monolith' if Options.monolith else 'namespace' )
-    bindings_path = os.path.join(bindings_path, 'debug' if Options.debug  else 'release')
-    bindings_path = os.path.abspath( os.path.join(bindings_path, 'rosetta') )
+    bindings_path = os.path.join(mini_path, 'build/PyRosetta')
 
-    if Options.cross_compile:
-        bindings_path = os.path.abspath('rosetta.windows')
-        if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
-        execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
-        shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
+    bindings_path = os.path.join(bindings_path, 'cross_compile' if Options.cross_compile else Platform)
+
+    bindings_path = os.path.join(bindings_path, 'monolith' if Options.monolith else 'namespace' )
+
+    bindings_path = os.path.join(bindings_path, 'debug' if Options.debug  else 'release')
+    bindings_path = os.path.abspath( os.path.join(bindings_path, '_build_' if Options.monolith else 'rosetta') )
+
+    if Options.print_build_path: print os.path.split(bindings_path)[0]; sys.exit(0)
 
     print 'Bindings path: {0}'.format(bindings_path)
-
 
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
     for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
+
+    if Options.cross_compile:
+        #bindings_path = os.path.abspath('rosetta.windows')
+        #if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
+        execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
+        shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
+
 
     # Copy dirs and files
     for d in 'test demo app toolbox'.split():
@@ -314,18 +328,20 @@ def main(args):
 
     with file(bindings_path + '/config.json', 'w') as f: json.dump(bindings_config, f)
 
+
+    #bindings_path = os.path.abspath(bindings_path)
+    binding_source_path = os.path.abspath('.')
+
     if Platform == "windows":  # we dealing with windows native build
         #bindings_path = os.path.abspath('python/bindings/rosetta')
         build_path = os.path.abspath( os.path.join(mini_path, 'build/windows') )
         build_path += '/debug' if Options.debug else '/release'
-        BuildRosettaOnWindows(build_path, bindings_path)
+        BuildRosettaOnWindows(build_path, bindings_path, binding_source_path)
         sys.exit(0)
 
     #if os.path.islink('rosetta') or os.path.isdir('rosetta'): os.remove('rosetta')
     #os.symlink(bindings_path, 'rosetta')
 
-    #bindings_path = os.path.abspath(bindings_path)
-    binding_source_path = os.path.abspath('.')
 
     if options.BuildMiniLibs:
         prepareMiniLibs(mini_path, bindings_path, binding_source_path=binding_source_path)
@@ -725,7 +741,7 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 
         mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
-        if Options.monolith: monolith.link_monolith_main(mb)
+        if Options.monolith and not Options.cross_compile: monolith.link_monolith_main(mb)
         else:
             for b in mb:
                 b.linkBindings()
@@ -935,18 +951,23 @@ def get_vc_link_options():
     return '''/LTCG zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
 
 
-def BuildRosettaOnWindows(build_dir, bindings_path):
+def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     ''' bypassing scones and build rosetta on windows native
     '''
     #print '______________', build_dir
+    pre_generated_sources = os.path.abspath(bindings_path + '/../../../../cross_compile' )  # bindings_path
+    pre_generated_sources = os.path.join(pre_generated_sources, 'monolith' if Options.monolith else 'namespace')
+    pre_generated_sources = os.path.join(pre_generated_sources, 'debug' if Options.debug else 'release')
+    pre_generated_sources = os.path.abspath( os.path.join(pre_generated_sources, '_build_' if Options.monolith else 'rosetta') )
+
+    print 'Using pre_generated_sources:', pre_generated_sources
 
     # copy svn_version file from pre-generated sources
-    shutil.copy2(Options.use_pre_generated_sources + '/svn_version.cc', './../../core/svn_version.cc')
+    shutil.copy2(pre_generated_sources + '/svn_version.cc', './../../core/svn_version.cc')
 
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
 
-    pre_generated_sources = os.path.abspath(Options.use_pre_generated_sources)
 
     os.chdir( './../../' )
 
@@ -964,12 +985,12 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
             s = '../external/' + s
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS \
-                        /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
-                        /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
-                        /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
-                        /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0 \
-                        /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
+                execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS'
+                        ' /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\"'
+                        ' /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY'
+                        ' /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"'
+                        ' /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0'
+                        ' /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
 
                 if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
 
@@ -1257,7 +1278,8 @@ class ModuleBuilder:
 
         if Options.verbose: print_(self.headers, color='black', bright=True)
 
-        self.fname_base = dest + ('/_build_/' if Options.monolith and self.name != monolith_rosetta_library_name else '/') + path # we 'hide' intermediate files to avoid confusion during Python import
+        #self.fname_base = dest + ('/_build_/' if Options.monolith and self.name != monolith_rosetta_library_name else '/') + path # we 'hide' intermediate files to avoid confusion during Python import
+        self.fname_base = dest + '/' + path
 
         if not os.path.isdir(self.fname_base): os.makedirs(self.fname_base)
 
@@ -1560,9 +1582,9 @@ class ModuleBuilder:
 
         with file(rosetta_objs_list, 'w') as f: f.write( ' '.join(objs_list) )  # + [ lib_path + '/'+ o for o in rosetta_objs]
 
-        #print objs_list
-        linker_cmd = "cd %(dest)s/../ && %(compiler)s @%(rosetta_objs_list)s %(add_option)s -lmini_static -lstdc++ -lz -l%(python_lib)s \
-                      -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
+        #print objs_list  -Wl,-B,static
+        linker_cmd = "cd %(dest)s/../ && %(compiler)s @%(rosetta_objs_list)s %(add_option)s -lstdc++ -lz" \
+                     " -lmini_static -l%(python_lib)s -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
         linker_dict = dict(add_option=self.add_loption, dst=self.all_at_once_lib, libpaths=self.libpaths,
                            runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib, rosetta_objs_list=rosetta_objs_list,
                            python_lib=Options.python_lib, compiler=Options.compiler)
