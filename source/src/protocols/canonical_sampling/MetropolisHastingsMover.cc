@@ -141,6 +141,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 		//get this done before "initialize_simulation" is called no movers and observers
 		tr.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
 		tempering_= new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() );
+		tempering_->set_monte_carlo( monte_carlo_ ); // MonteCarlo required for tempering_->observe_after_metropolis();
 	}
 	using namespace core;
 	bool restart = false;
