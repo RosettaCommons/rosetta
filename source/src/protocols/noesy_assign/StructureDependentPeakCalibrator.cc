@@ -15,13 +15,6 @@
 ///
 /// @author Oliver Lange
 
-// Define a suitable replacement for lrint() on Windows
-#if (defined WIN32)
-	#include <boost/math/special_functions/round.hpp>
-	int lrint(double x) {
-	return boost::math::iround(x); }
-#endif
-
 // Unit Headers
 #include <protocols/noesy_assign/StructureDependentPeakCalibrator.hh>
 

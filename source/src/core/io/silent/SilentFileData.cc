@@ -596,7 +596,8 @@ SilentFileData::read_stream(
 			tr.Info << "Read a comment line from " << filename << std::endl;
 			tr.Info << line << std::endl;
 			comment_lines_.push_back( line );
-			line_ok = getline(data,line);
+			getline(data,line);
+			line_ok = data.good();
 			continue;
 		}
 		//is the next decoy coming up ? then stop collecting lines and initialize the silent-struct from the read lines
@@ -655,7 +656,8 @@ SilentFileData::read_stream(
 
 		mylines.push_back( line );
 
-		line_ok = getline(data,line);
+		getline(data,line);
+		line_ok = data.good();
 		/// in no case interrupt loop here, because then mylines will have incomplete silent-struct causing
 		/// seqfault in the "init_from_lines" for last decoy
 		/* CAUSES SEGFAULT  OL 12/10/11

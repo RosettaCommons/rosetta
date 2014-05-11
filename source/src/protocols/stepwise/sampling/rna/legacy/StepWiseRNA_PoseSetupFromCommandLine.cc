@@ -268,7 +268,8 @@ is_nonempty_input_silent_file( std::string const input_silent_file, std::string 
 
 	std::string line;
 
-	bool found_line = getline( infile, line );
+	getline( infile, line );
+	bool found_line = infile.good();
 	runtime_assert( found_line );
 
 	size_t found_substring = line.find( exit_key_string );
@@ -279,7 +280,8 @@ is_nonempty_input_silent_file( std::string const input_silent_file, std::string 
 
 		//consistency check:////////////////////////////////////////////////////////////////////////////////////////////////////
 		std::string next_line;
-		bool found_next_line = getline( infile, next_line );
+		getline( infile, next_line );
+		bool found_next_line = infile.good();
 		if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line = " << next_line << std::endl;
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return false;

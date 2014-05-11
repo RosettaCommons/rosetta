@@ -270,7 +270,7 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
        << ss_info_file << ", pairing file " << pairing_file << " and " << n_sheets
        << "( sheets are random = " << bRandomSheets << ".";
 
-    tr.Error << ss << std::endl;
+    tr.Error << ss.str() << std::endl;
 
     throw utility::excn::EXCN_BadInput( ss.str() );
   }

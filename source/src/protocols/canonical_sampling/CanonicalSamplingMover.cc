@@ -574,7 +574,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 
       if( existing_tags.size() > 1 ) {
 	existing_ss = existing_output[ existing_tags[ existing_tags.size() - 1 ] ];
-	tr << "existing output: " << traj_file << " exists, filling pose with last-structure found: " << existing_tags[ existing_tags.size()-1 ]  << std::endl;
+	tr << "existing output: " << traj_filename << " exists, filling pose with last-structure found: " << existing_tags[ existing_tags.size()-1 ]  << std::endl;
 	if( existing_ss->has_energy("itrial") ) {
 	  i_trial = (core::Size)existing_ss->get_energy("itrial");
 	  tr << "last trial recorded: " << i_trial << std::endl;

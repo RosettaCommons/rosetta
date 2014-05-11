@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 namespace core {
 namespace chemical {

@@ -76,7 +76,7 @@ public: // Types
 	typedef  typename super::difference_type  difference_type;
 	typedef  typename super::allocator_type  allocator_type;
 	typedef  typename vectorL_IndexSelector< L >= 0 >::index_type  index_type;
-	typedef  platform::SSize  ssize_type;
+	typedef  ::platform::SSize  ssize_type;
 
 	// Project style
 	typedef  typename super::value_type  Value;
@@ -90,12 +90,12 @@ public: // Types
 	typedef  typename super::const_reverse_iterator  ConstReverseIterator;
 
 	//typedef  typename super::size_type  Size;
-	typedef  platform::Size Size;
+	typedef  ::platform::Size Size;
 
 	typedef  typename super::difference_type  Difference;
 	typedef  typename super::allocator_type  Allocator;
 	typedef  typename vectorL_IndexSelector< L >= 0 >::Index  Index;
-	typedef  platform::SSize  SSize;
+	typedef  ::platform::SSize  SSize;
 
 
 public: // Methods: imports

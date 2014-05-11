@@ -30,8 +30,8 @@ namespace utility {
 template< bool >
 struct vectorL_IndexSelector
 {
-	typedef platform::Size index_type;
-	typedef platform::Size Index;
+	typedef ::platform::Size index_type;
+	typedef ::platform::Size Index;
 };
 
 

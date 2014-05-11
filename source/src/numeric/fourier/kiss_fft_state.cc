@@ -20,6 +20,8 @@
 #endif
 #include <numeric/fourier/kiss_fft.hh>
 #include <cstdlib> //g++ 4.3.2 requires for exit()
+#include <algorithm> //VS2013 requires for std::max
+
 // tracer
 
 namespace numeric {
