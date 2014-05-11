@@ -46,7 +46,7 @@
 #include "boinc_api.h"
 #include "graphics2.h"
 #include "graphics_data.h"
-#include "txf_util.h"
+#include "ttfont.h"
 
 #include <core/io/serialization/serialize_pose.hh>
 #include <core/pose/Pose.hh>
@@ -553,19 +553,17 @@ void app_graphics_init() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-	// Expects a .txf file to exist in run directory
+	// Expects a .ttf file to exist in run directory
 	// TEXT WILL NOT DISPLAY IF .txf FILE IS MISSING!!
-	txf_load_fonts(".");
+	TTFont::ttf_load_fonts(".");
 }
 
 void
 writeStrokeString( const std::string & text_string, GLfloat *col, float xpos, float ypos, int scalefactor=350 ) {
 	// USE NICE FONTS
-	// Requires .txf file in run directory
-	char buf[256];
-	sprintf(buf, "%s", text_string.c_str());
+	// Requires .ttf file in run directory
 	// FROM BOINC API fscale bigger is smaller
-	txf_render_string(.1, xpos, ypos, 0, scalefactor, col, 0, buf);
+	TTFont::ttf_render_string(.1, xpos, ypos, 0, scalefactor, col, 0, text_string.c_str());
 }
 
 void display_text() {
