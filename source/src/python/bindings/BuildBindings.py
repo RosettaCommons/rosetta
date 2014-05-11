@@ -292,7 +292,7 @@ def main(args):
     bindings_path = os.path.join(bindings_path, 'debug' if Options.debug  else 'release')
     bindings_path = os.path.abspath( os.path.join(bindings_path, '_build_' if Options.monolith else 'rosetta') )
 
-    if Options.print_build_path: print os.path.split(bindings_path)[0]; sys.exit(0)
+    if Options.print_build_path: print os.path.split(bindings_path)[0],; sys.exit(0)
 
     print 'Bindings path: {0}'.format(bindings_path)
 
@@ -1305,7 +1305,7 @@ class ModuleBuilder:
         self.include_paths = ' -I'.join( [''] + include_paths + ['../src/platform/linux' , '../src'] )
 
         self.libpaths = ' -L'.join( ['', dest] + libpaths )
-        self.runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ['rosetta'] )
+        self.runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ([] if Options.monolith else ['rosetta']) )
 
         self.cpp_defines = '-DPYROSETTA -DBOOST_NO_MT -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'  # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK  -DBOOST_LCAST_NO_COMPILE_TIME_PRECISION
         if Options.cross_compile: self.cpp_defines += ' -I../src/platform/windows/PyRosetta'
@@ -1339,7 +1339,10 @@ class ModuleBuilder:
         self.all_at_once_cpp = self.fname_base + '/' + self.all_at_once_base + '.'
         self.all_at_once_obj = self.fname_base + '/' + self.all_at_once_base + '.'
         self.all_at_once_xml = self.fname_base + '/' + self.all_at_once_base + '.xml'
-        self.all_at_once_lib = self.fname_base + '/' + self.all_at_once_base + '.so'
+
+        if self.name == monolith_rosetta_library_name: self.all_at_once_lib = self.fname_base + '../' + self.all_at_once_base + '.so'
+        else: self.all_at_once_lib = self.fname_base + '/' + self.all_at_once_base + '.so'
+
         self.all_at_once_json = self.fname_base + '/' + self.all_at_once_base + '.json'
         self.all_at_once_relative_files = []
 
@@ -1406,7 +1409,8 @@ class ModuleBuilder:
 
         #print 'Finalizing Creating __init__.py file...'
         namespace = os.path.basename(self.path)
-        py_init_file = self.binding_source_path +'/../src/' + self.path + '/__init__.py'
+        py_init_file = self.binding_source_path +'/src/' + self.path + '/__init__.py'
+
         if os.path.isfile(py_init_file): t = file(py_init_file).read()
         else: t = ''
         f = file( self.fname_base + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % self.all_at_once_base);  f.close()
@@ -1583,7 +1587,7 @@ class ModuleBuilder:
         with file(rosetta_objs_list, 'w') as f: f.write( ' '.join(objs_list) )  # + [ lib_path + '/'+ o for o in rosetta_objs]
 
         #print objs_list  -Wl,-B,static
-        linker_cmd = "cd %(dest)s/../ && %(compiler)s @%(rosetta_objs_list)s %(add_option)s -lstdc++ -lz" \
+        linker_cmd = "cd %(dest)s && %(compiler)s @%(rosetta_objs_list)s %(add_option)s -lstdc++ -lz" \
                      " -lmini_static -l%(python_lib)s -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
         linker_dict = dict(add_option=self.add_loption, dst=self.all_at_once_lib, libpaths=self.libpaths,
                            runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib, rosetta_objs_list=rosetta_objs_list,

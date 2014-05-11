@@ -145,11 +145,11 @@ class CppType_Complex(CppType):  # 'Class', 'Struct', 'Union', 'Typedef', 'Enume
     def __init__(self, name, context, kind):
         context = normalize_context(context)
 
-        assert context.startswith('::'), 'CppType_Complex type must have context that starts with "::"!, got: {}'.format(context)
-        assert context.endswith('::'), 'CppType_Complex type must have context that ends with "::"!, got: {}'.format(context)
+        assert context.startswith('::'), 'CppType_Complex type must have context that starts with "::"!, got: {0}'.format(context)
+        assert context.endswith('::'), 'CppType_Complex type must have context that ends with "::"!, got: {0}'.format(context)
 
-        assert not context.startswith('::::'), 'CppType_Complex type must have context that starts with "::"!, got: {}'.format(context)
-        assert not context.endswith('::::'), 'CppType_Complex type must have context that ends with "::"!, got: {}'.format(context)
+        assert not context.startswith('::::'), 'CppType_Complex type must have context that starts with "::"!, got: {0}'.format(context)
+        assert not context.endswith('::::'), 'CppType_Complex type must have context that ends with "::"!, got: {0}'.format(context)
 
         self.name = name;  self.context = context;  self.kind = kind;
 
@@ -1433,7 +1433,7 @@ def get_direct_childrens(path, modules):
 
 
     first.sort(key=lambda x: _import_order_[path].index(x.name) )
-    if first: print 'Adjusting import order: {} --> {}'.format(path, [m.name for m in first]) #, [m.name for m in childrens])
+    if first: print 'Adjusting import order: {0} --> {1}'.format(path, [m.name for m in first]) #, [m.name for m in childrens])
     return first + childrens
 
 
@@ -1442,7 +1442,7 @@ def generate_monolith_module(module, modules, indent='', use_python_code='', pyt
 
     name = python_module_name if python_module_name else module.name
     r  = ''
-    r += '{{ // {}\n'.format( python_module_name if python_module_name else module.all_at_once_base )
+    r += '{{ // {0}\n'.format( python_module_name if python_module_name else module.all_at_once_base )
     r += '  boost::python::scope current;\n'
     r += '  std::string submodule_name( boost::python::extract<const char*>(current.attr("__name__")));\n'
     r += '  submodule_name.append(".{name}");\n'.format(name=name)
@@ -1465,14 +1465,14 @@ def generate_monolith_module(module, modules, indent='', use_python_code='', pyt
     r += '    boost::python::scope submodule_scope(submodule);\n'
 
     if use_python_code:
-        r += '    // Embedding: {}\n'.format(python_module_name)
-        r += '    std::cout << "{}" << std::endl;\n'.format(use_python_code)
-        r += '    boost::python::exec("{}");\n'.format(use_python_code)
+        r += '    // Embedding: {0}\n'.format(python_module_name)
+        #r += '    std::cout << "{}" << std::endl;\n'.format(use_python_code)
+        r += '    boost::python::exec("{0}");\n'.format(use_python_code)
     else:
         self_import = '    _import_namespace{base_name}();\n'.format(base_name=module.all_at_once_base)
         if module.path not in _import_after_sub_namespaces_: r+= self_import
         for m in get_direct_childrens(module.path, modules): r+= generate_monolith_module(m, modules, indent=indent+'  ')
-        if module.path in _import_after_sub_namespaces_: r+= self_import; print '↓{}'.format(module.all_at_once_base)
+        if module.path in _import_after_sub_namespaces_: r+= self_import; print '↓{0}'.format(module.all_at_once_base)
 
     r += '  }\n'
     r += '}\n'
@@ -1498,11 +1498,11 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
 
     #r += 'int test_function() { return 42; }\n'
     r += '\n'
-    r += 'BOOST_PYTHON_MODULE( {} )\n{{\n'.format(rosetta_library_name)
+    r += 'BOOST_PYTHON_MODULE( {0} )\n{{\n'.format(rosetta_library_name)
 
     # Disabling Python duplicate warnings
     #r += '  std::string disable_warning("{}");\n'.format("""import warnings\\nwarnings.filterwarnings(\\"ignore\\", \\"to-Python converter for .+ already registered; second conversion method ignored.\\", RuntimeWarning, \\"^rosetta\\\\\\\\.\\")""")
-    r += '  std::string disable_warning("{}");\n'.format("""import warnings\\nwarnings.filterwarnings(\\"ignore\\", \\"to-Python converter for .+ already registered; second conversion method ignored.\\", RuntimeWarning, \\"\\")""")
+    r += '  std::string disable_warning("{0}");\n'.format("""import warnings\\nwarnings.filterwarnings(\\"ignore\\", \\"to-Python converter for .+ already registered; second conversion method ignored.\\", RuntimeWarning, \\"\\")""")
     #r += '  std::cout << disable_warning << std::endl;\n'
     r += '  boost::python::exec( disable_warning.c_str() );\n'
 
@@ -1537,7 +1537,7 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
                                     #"__name__['{python_module_name}'] = {python_module_name}\n" \
 
                     # r += '  boost::python::exec("{}");\n'.format( escape_to_python(python_string) )
-                    r += '{{ // Embedding: {}\n'.format(python_module_name)
+                    r += '{{ // Embedding: {0}\n'.format(python_module_name)
                     r += '  boost::python::scope current;\n'
 
                     r += '  std::string submodule_name( boost::python::extract<const char*>(current.attr("__name__")));\n'
@@ -1546,7 +1546,7 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
 
                     r += '  boost::python::object main = boost::python::import("__main__");\n'
                     r += '  boost::python::object main_namespace = main.attr("__dict__");\n'
-                    r += '  boost::python::exec("{}", main_namespace);\n'.format( escape_to_python(python_string) )
+                    r += '  boost::python::exec("{0}", main_namespace);\n'.format( escape_to_python(python_string) )
                     #r += '  boost::python::object submodule = boost::python::extract<boost::python::object>( main_namespace.attr("{python_module_name}") );\n'.format(python_module_name=python_module_name)
                     #r += '  current.attr("{name}") = submodule;\n'.format(name=python_module_name)
                     r += '  current.attr("{name}") = main.attr("{name}");\n'.format(name=python_module_name)
@@ -1606,7 +1606,7 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
 
         r += '  boost::python::object main = boost::python::import("__main__");\n'
         r += '  boost::python::object init_module = main.attr("__dict__");\n'
-        r += '  boost::python::exec("{}", init_module);\n'.format(init_file)
+        r += '  boost::python::exec("{0}", init_module);\n'.format(init_file)
         #r += '  boost::python::exec("from rosetta.init_module import *\\n", init_module);\n'
         r += '  typedef boost::python::stl_input_iterator<boost::python::str> iterator_type;\n'
         r += '  for (iterator_type name(init_module), end; // for name in dir(object): \n'
