@@ -192,7 +192,7 @@ void ArchiveBase::read_structures(
 
 	tr.Debug << "read structures returned for " << batch.batch() << std::endl;
 	Size ct( batch.decoys_returned()-sfd.size() );
-	std::cerr << "first count for new decoys : " << ct << " in batch " << batch.id() << std::endl;
+	tr.Debug << "first count for new decoys : " << ct << " in batch " << batch.id() << std::endl;
 	Size accepted_ct( 0 );
 	for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 		std::string tag = it->decoy_tag();

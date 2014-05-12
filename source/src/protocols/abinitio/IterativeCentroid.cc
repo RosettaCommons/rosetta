@@ -200,7 +200,7 @@ void IterativeCentroid::add_structure_at_position (
 		//if we are at the end this decoy has a worse score than all others
 		//		if ( alt_iss != stage2_decoys_.end() || stage2_decoys_.size() < nstruct() ) {
 		std::cerr << "equivalent decoy tag has been found in stage2_decoys, inserting now" << std::endl;
-		if ( alt_iss == stage2_decoys_.end() ) std::cerr << "inserting at end..." << std::endl;
+		if ( alt_iss == stage2_decoys_.end() ) tr.Debug << "inserting at end..." << std::endl;
 		stage2_decoys_.insert( alt_iss, alternative_decoy );
 		if ( stage2_decoys_.size() > max_nstruct() ) { //take all decoys until full
 			stage2_decoys_.pop_back();
