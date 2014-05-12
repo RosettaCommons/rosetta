@@ -76,7 +76,7 @@
 #endif
 
 
-static basic::Tracer tr("protocols.evalution");
+static basic::Tracer tr("protocols.evaluation");
 
 namespace protocols {
 namespace evaluation {

@@ -68,7 +68,7 @@ void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::
 
     // Creates an extended, idealized pose from the first sequence in the first
     // file in -in:file:fasta. Preserves current behavior for the TopologyBroker
-		if (option[OptionKeys::in::file::fasta].user() && option[OptionKeys::run::protocol]() != "broker") {
+		if (option[OptionKeys::in::file::fasta].user()) {
       string fasta = option[in::file::fasta]()[1];
       string sequence = core::sequence::read_fasta_file_str(fasta)[1];
       ExtendedPoseMover m(sequence);

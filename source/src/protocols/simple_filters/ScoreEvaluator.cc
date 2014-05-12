@@ -36,7 +36,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
-static basic::Tracer tr("protocols.evalution.Score");
+static basic::Tracer tr("protocols.evaluation.Score");
 
 
 // option key includes
@@ -74,6 +74,7 @@ ScoreEvaluator::ScoreEvaluator( std::string tag, core::scoring::ScoreFunctionOP 
 	}
 	tr.Info << "ScoreEvaluator: " << "score" << tag << " " << std::endl;
 	scorefxn->show( tr.Info );
+	tr.Info << std::endl;
 }
 
 ScoreEvaluator::~ScoreEvaluator() {}
@@ -123,6 +124,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 		}
 		tr.Trace << std::endl;
 		scorefxn->show( tr.Trace );
+		tr.Trace << std::endl;
 	}
 	if ( !rdcs_ && scorefxn->get_weight( scoring::rdc ) > 0.0 && basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
 		rdcs_ = new SelectRDC_Evaluator( selection_, "none");
