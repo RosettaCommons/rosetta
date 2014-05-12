@@ -3,7 +3,6 @@ patches/NtermProtein.txt
 patches/protein_cutpoint_upper.txt
 patches/protein_cutpoint_lower.txt
 patches/VirtualBB.txt
-patches/ShoveBB.txt
 patches/protein_centroid_with_HA.txt
 patches/VirtualNterm.txt
 patches/N_acetylated.txt
@@ -11,6 +10,9 @@ patches/C_methylamidated.txt
 patches/RepulsiveOnly_centroid.txt
 patches/ser_phosphorylated.txt
 patches/thr_phosphorylated.txt
+
+# Command-line selected.
+patches/ShoveBB.txt
 
 ## DNA
 patches/nucleic/dna/LowerDNA.txt

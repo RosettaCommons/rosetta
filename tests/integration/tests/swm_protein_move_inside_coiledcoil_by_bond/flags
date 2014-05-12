@@ -1,0 +1,10 @@
+-s outside_2zta.pdb inside_2zta.pdb
+-native 2zta.pdb
+-fasta 2zta.fasta
+-move ADD 5 BOND_TO_PREVIOUS 4
+-silent swm_rebuild.out
+-out:overwrite
+-integration_test
+-n_sample 360
+-enumerate
+-score:weights stepwise/stepwise_res_level_energy.wts

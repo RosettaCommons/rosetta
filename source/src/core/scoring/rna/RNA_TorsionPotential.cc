@@ -17,8 +17,8 @@
 // Package Headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
-#include <core/chemical/rna/RNA_Util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
+#include <core/pose/rna/util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>

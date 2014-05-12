@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-//Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
+//Headers are alignly organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
 
 // Project Headers

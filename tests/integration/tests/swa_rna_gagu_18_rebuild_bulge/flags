@@ -17,7 +17,7 @@
 -cutpoint_open 8 
 -score:weights stepwise/rna/rna_hires_07232011_with_intra_base_phosphate.wts 
 -analytic_etable_evaluation 0
--sampler_native_rmsd_screen true
+#-rmsd_cutoff 2.0
 -integration_test true
 -rebuild_bulge_mode
 -output_virtual

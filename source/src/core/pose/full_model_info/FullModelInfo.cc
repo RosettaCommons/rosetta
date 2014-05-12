@@ -16,7 +16,7 @@
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 
 // Package headers
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/FullModelParameterType.hh>
 
@@ -37,10 +37,43 @@
 #include <string>
 #include <map>
 
-///////////////////////////////////////////////////////
-// Keep track of some base geometry that is
-// useful for RNA scoring.
-///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// This object holds information on the 'full model' during stepwise modeling.
+//
+//  It must be held in the pose, because it is needed in scoring, e.g. to figure out
+//   what loops haven't been created yet (necessary to estimate loop_close costs), where there
+//   are free groups (like virtualized phosphates) that should be given bonuses,
+//   and whether there are other 'sister' poses that need scoring.
+//
+//  It is also used in stepwise monte carlo to determine what moves are allowed next for the pose.
+//
+//  -- Rhiju, 2014
+//
+// A little more detail:
+//
+//  There is a FullModelParameters object that includes the full sequence that will be modeled,
+//   conventional chain/numbering that goes with that full sequence, cutpoints, and any residues
+//   that are supposed to have properties like syn chi torsions (for RNA). FullModelParameters is not
+//   supposed to change during the run and may be shared between sister poses; that's why its a
+//   constant owning pointer and its not explicitly cloned.
+//
+//  There are also two variables that *do* change during stepwise monte carlo runs:
+//
+//    res_list
+//       which gives the numbering of the pose residues in the context of the full
+//       sequence. Note that this numbering is such that the full_sequence has numbering 1,2,...
+//       [If you want to specify that the final PDBs uses a different convention, set conventional_numbering_]
+//
+//    other_pose_list
+//       which is a list of pointers to sister poses. Note that the sister poses should not carry lists back to
+//       this pose -- I originally had things tha way and started to have major issues
+//       in cloning during monte carlo. (So they're formally not really sisters, they're daughters.)
+//       In principle, the current framework could also allow the easy setup of 'pose trees' where each model
+//       is subdivided into modules that are independent aside from connecting uninstantiated loops, an appealing
+//       idea for some RNA structure applications, but I haven't followed this up.
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace core;
 using namespace core::pose::datacache;
@@ -71,8 +104,7 @@ FullModelInfo::FullModelInfo( FullModelParametersCOP full_model_parameters ):
 
 //Constructor
 FullModelInfo::FullModelInfo( pose::Pose & pose ) :
-	CacheableData(),
-	res_list_( get_res_num_from_pdb_info( pose ) )
+	CacheableData()
 {
 	full_model_parameters_ = new FullModelParameters( pose, res_list_ );
 }
@@ -128,6 +160,18 @@ FullModelInfo::extra_minimize_res() const {
 utility::vector1< Size > const &
 FullModelInfo::sample_res() const {
 	return full_model_parameters_->get_res_list( SAMPLE );
+}
+utility::vector1< Size > const &
+FullModelInfo::calc_rms_res() const {
+	return full_model_parameters_->get_res_list( CALC_RMS );
+}
+utility::vector1< Size > const &
+FullModelInfo::rna_terminal_res() const {
+	return full_model_parameters_->get_res_list( RNA_TERMINAL );
+}
+utility::vector1< Size > const &
+FullModelInfo::rna_syn_chi_res() const {
+	return full_model_parameters_->get_res_list( RNA_SYN_CHI );
 }
 Size
 FullModelInfo::size() const {
@@ -296,8 +340,6 @@ const_full_model_info( pose::Pose const & pose )
 	return *( static_cast< FullModelInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO)() ) );
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Either returns a non-const reference to the FullModelInfo object already stored
 /// in the pose, or creates a new FullModelInfo object, places it in the pose, and returns
@@ -316,6 +358,12 @@ nonconst_full_model_info( pose::Pose & pose )
 
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 	return *full_model_info;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+full_model_info_defined( pose::Pose const & pose ){
+	return pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO );
 }
 
 //////////////////////////////////////////////////////////////////////////////

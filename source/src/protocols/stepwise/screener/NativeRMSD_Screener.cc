@@ -14,14 +14,14 @@
 
 
 #include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-
+#include <protocols/stepwise/sampling/align/StepWisePoseAligner.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility/exit.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.NativeRMSD_Screener" );
-
-using namespace protocols::stepwise::sampling::rna;
+using namespace core;
 
 namespace protocols {
 namespace stepwise {
@@ -29,17 +29,24 @@ namespace screener {
 
 	//Constructor
 	NativeRMSD_Screener::NativeRMSD_Screener( pose::Pose const & native_pose,
-																						pose::Pose & screening_pose,
-																						StepWiseRNA_JobParametersCOP job_parameters,
-																						Real const native_screen_rmsd_cutoff,
+																						pose::Pose const & screening_pose,
+																						utility::vector1< core::Size > const & moving_res_list,
+																						core::Real const rmsd_cutoff,
 																						bool const do_screen /* = true */ ):
 		native_pose_( native_pose ),
 		screening_pose_( screening_pose ),
-		job_parameters_( job_parameters ),
-		native_screen_rmsd_cutoff_( native_screen_rmsd_cutoff ),
+		moving_res_list_( moving_res_list ),
+		rmsd_cutoff_( rmsd_cutoff ),
 		do_screen_( do_screen ),
 		pass_count_( 0 ) // only incremented if do_screen true, and screen passes.
-	{}
+	{
+		runtime_assert( moving_res_list_.size() > 0 );
+		pose_aligner_ = new sampling::align::StepWisePoseAligner( native_pose_ );
+		pose_aligner_->set_user_defined_calc_rms_res( moving_res_list_ );
+		// this is extra -- I was originally doings checks of alignment based on RMSD screens.
+		//		pose_aligner_->set_root_partition_res( sampling::figure_out_root_partition_res( screening_pose_, moving_res_list ) );
+		pose_aligner_->initialize( screening_pose );
+	}
 
 	//Destructor
 	NativeRMSD_Screener::~NativeRMSD_Screener()
@@ -48,14 +55,14 @@ namespace screener {
 	bool
 	NativeRMSD_Screener::check_screen(){
 		if ( !do_screen_ ) return true;
-		if ( suite_rmsd( native_pose_, screening_pose_,
-										 job_parameters_->actually_moving_res(), job_parameters_->is_prepend(), true ) > native_screen_rmsd_cutoff_ ) return false;
-		if ( rmsd_over_residue_list( native_pose_, screening_pose_, job_parameters_, true ) > native_screen_rmsd_cutoff_ ) return false; //Oct 14, 2010
+
+		core::Real const rmsd = pose_aligner_->get_rmsd_no_superimpose( screening_pose_,
+																																		false /* check alignment */ );
+		if ( rmsd > rmsd_cutoff_ ) return false;
 
 		pass_count_++;
 		return true;
 	}
-
 
 } //screener
 } //stepwise

@@ -13,7 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 
@@ -25,7 +25,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 

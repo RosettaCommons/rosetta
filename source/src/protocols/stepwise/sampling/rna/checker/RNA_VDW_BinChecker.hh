@@ -20,7 +20,7 @@
 
 
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -100,10 +100,10 @@ namespace checker {
 
 
 		void
-		setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters );
+		setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters );
 
 		void
-		setup_using_working_pose( core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters );
+		setup_using_working_pose( core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters );
 
 
 		void
@@ -179,6 +179,9 @@ namespace checker {
 
 		bool
 	 	check_atom_bin_in_range( Atom_Bin const & atom_pos_bin );
+
+		core::Vector
+		get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res, bool const verbose = false );
 
 		void
 		set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz );

@@ -15,7 +15,7 @@
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/copydofs/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
@@ -58,6 +58,8 @@ bool RNA_IdealCoord::is_torsion_exists(
 	using namespace id;
 	Size res_index = torsion_id.rsd();
 	if ( res_index < 1 || res_index > pose.total_residue() ) return false;
+	if ( torsion_id.type() == id::BB &&
+			 ( torsion_id.torsion() > pose.residue(res_index).mainchain_atoms().size() ) ) return false;
 
 	AtomID id1,id2,id3,id4;
 	bool fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
@@ -89,90 +91,6 @@ void RNA_IdealCoord::init() {
 	}
 }
 
-/////////////////////////////////////////////////////
-//Apply ideal coords to a residue in pose.
-//pucker_conformations: 0 for maintaining current, 1 for North, 2 for South
-//std::map < id::DOF_ID , Real > RNA_IdealCoord::apply_and_return(
-//	Pose & pose,
-//	Size const seqpos,
-//	Size pucker,
-//	bool const keep_backbone_torsion
-//) const {
-//	using namespace id;
-//	using namespace chemical;
-//	using namespace conformation;
-//
-//	std::map < id::DOF_ID , Real > result;
-//	assert( pucker <= 2 );
-//
-//	Residue const & res = pose.residue( seqpos );
-//	if ( !res.is_RNA() ) return result;
-//
-//	if ( pucker == WHATEVER ) {
-//		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
-//		if ( delta > delta_cutoff_ ) {
-//			pucker = SOUTH;
-//		} else {
-//			pucker = NORTH;
-//		}
-//	}
-//
-//	//Figure out the residue_type.
-//	Size res_class = 0;
-//	switch ( res.aa() ) {
-//		case na_rad:
-//			res_class = 1; break;
-//		case na_rgu:
-//			res_class = 3; break;
-//		case na_rcy:
-//			res_class = 5; break;
-//		case na_ura:
-//			res_class = 7; break;
-//		default:
-//			utility_exit_with_message( "Invalid res.aa()!" );
-//	}
-//
-//	if ( pucker == SOUTH ) ++res_class;
-//
-//	//Record the torsions in starting pose
-//	utility::vector1 < TorsionID > saved_torsion_id;
-//	utility::vector1 < Real > saved_torsions;
-//	if ( keep_backbone_torsion ) {
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 1       ) ); //CHI
-//		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 4       ) ); //O2H
-//		saved_torsion_id.push_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
-//		saved_torsion_id.push_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
-//		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
-//			bool const is_exists = is_torsion_exists( pose, saved_torsion_id[i] );
-//			if (is_exists) {
-//				saved_torsions.push_back( pose.torsion( saved_torsion_id[i] ) );
-//			} else {
-//				saved_torsions.push_back( -9999 );
-//			}
-//		}
-//	}
-//
-//	//Apply ideal dofs
-//	std::map <Size, Size> res_map;
-//	res_map.insert( std::pair <Size, Size> (seqpos, 2) ); //Only the center res (#2) matters in ref_pose
-//	MiniPoseOP const ref_mini_pose = ref_mini_pose_list_[res_class];
-//	result = copy_dofs_match_atom_names_and_return( pose, *ref_mini_pose, res_map );
-//
-//	//Copy back the original torsions
-//	if ( keep_backbone_torsion ) {
-//		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
-//			if ( saved_torsions[i] > -1000 ) pose.set_torsion( saved_torsion_id[i], saved_torsions[i] );
-//		}
-//	}
-//
-//	return result;
-//}
-//
 //////////////////////////
 void RNA_IdealCoord::apply_coords(
 		Pose & pose,
@@ -184,6 +102,7 @@ void RNA_IdealCoord::apply_coords(
 	using namespace id;
 	using namespace chemical;
 	using namespace conformation;
+	using namespace pose::copydofs;
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;

@@ -11,3 +11,4 @@ geom_sol_fast        		     0.25
 hbond_intra					 2.4
 fa_intra_RNA_base_phos_atr   0.23
 fa_intra_RNA_base_phos_rep   0.12
+free_2HOprime   1.0 # should be 1.0 to maintain kT scale

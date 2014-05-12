@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -62,13 +62,13 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/protein/StepWiseProteinFilterer.hh>
 #include <protocols/stepwise/protein/StepWiseProteinPoseMinimizer.hh>
 #include <protocols/stepwise/protein/StepWiseProteinPoseSetup.hh>
 #include <protocols/stepwise/protein/StepWiseProteinScreener.hh>
-#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
-#include <protocols/stepwise/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/stepwise/protein/util.hh>
+#include <protocols/stepwise/protein/StepWiseProteinConnectionSampler.hh>
 #include <protocols/stepwise/protein/MainChainTorsionSet.hh>
 
 //clustering
@@ -346,7 +346,7 @@ sample_rama_test()
 // 		= stepwise_screener.main_chain_torsion_set_lists();
 
 // 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 	StepWiseProteinResidueSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
+// 	StepWiseProteinConnectionSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
 // 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
 // 	stepwise_residue_sampler.set_native_pose( native_pose );
 // 	stepwise_residue_sampler.set_scorefxn( pack_scorefxn );
@@ -560,11 +560,11 @@ sample_trp_test()
 	initial_task_factory->push_back( prevent_repacking );
 	green_packer->set_reference_round_task_factory( initial_task_factory );
 
-	TaskFactoryOP general_task_factory( new TaskFactory );
-	general_task_factory->push_back( new InitializeFromCommandline );
-	general_task_factory->push_back( new RestrictToRepacking );
-	general_task_factory->push_back( prevent_repacking );
-	green_packer->set_task_factory( general_task_factory );
+	TaskFactoryOP align_task_factory( new TaskFactory );
+	align_task_factory->push_back( new InitializeFromCommandline );
+	align_task_factory->push_back( new RestrictToRepacking );
+	align_task_factory->push_back( prevent_repacking );
+	green_packer->set_task_factory( align_task_factory );
 
 	std::string const silent_file = option[ out::file::silent  ]();
 
@@ -947,13 +947,13 @@ rebuild_test(){
 
 // 	//////////////////////////////////////////////////////////////////////////
 // 	//////////////////////////////////////////////////////////////////////////
-// 	// StepWiseProteinResidueSampler -- iterative and enumerative sampling
+// 	// StepWiseProteinConnectionSampler -- iterative and enumerative sampling
 // 	//   of backbone degrees of freedom.
 // 	//////////////////////////////////////////////////////////////////////////
 // 	//////////////////////////////////////////////////////////////////////////
 // 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
 // 	if (pose.constraint_set()->has_constraints() )	pack_scorefxn->set_weight( atom_pair_constraint, 1.0 );
-// 	StepWiseProteinResidueSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
+// 	StepWiseProteinConnectionSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
 // 	if (native_exists) stepwise_residue_sampler.set_native_pose( native_pose );
 // 	stepwise_residue_sampler.set_scorefxn( pack_scorefxn );
 // 	stepwise_residue_sampler.set_silent_file( silent_file_sample /*useful for checkpointing*/ );
@@ -965,7 +965,7 @@ rebuild_test(){
 // 	/////////////////////////////
 // 	// Have an option to read structure back in from disk?  may be useful for checkpointing.
 // 	// For now just take in silent structs prepared by the stepwise_residue_sampler.
-// 	protocols::stepwise::StepWiseClusterer stepwise_clusterer(  stepwise_residue_sampler.silent_file_data() );
+// 	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer(  stepwise_residue_sampler.silent_file_data() );
 // 	Size max_decoys( 400 );
 // 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 // 	stepwise_clusterer.set_max_decoys( max_decoys );
@@ -1301,7 +1301,7 @@ cluster_outfile_test(){
 	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::stepwise::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];

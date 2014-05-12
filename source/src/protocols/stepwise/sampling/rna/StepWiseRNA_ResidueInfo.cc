@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
 //////////////////////////////////
 #include <ObjexxFCL/format.hh>

@@ -41,7 +41,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 
 // C++ headers

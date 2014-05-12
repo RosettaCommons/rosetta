@@ -26,7 +26,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/ResidueNeighborList.hh>
@@ -64,7 +64,12 @@ LK_PolarNonPolarEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	return new LK_PolarNonPolarEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )),
-																options.analytic_etable_evaluation() );
+																		 options.analytic_etable_evaluation() );
+	// for some reason I don't yet understand, cannot switch to 'modern' version which would prevent
+	// a redundant etable setup. -- rhiju
+	//	return new LK_PolarNonPolarEnergy( *( ScoringManager::get_instance()->etable( options )),
+	//																			 options.analytic_etable_evaluation() );
+
 }
 
 ScoreTypes

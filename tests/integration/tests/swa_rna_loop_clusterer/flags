@@ -17,4 +17,4 @@
 -in:file:silent region_0_1_sample.out 
 -out:file:silent region_0_1_sample.cluster.out 
 -clusterer_num_pose_kept 1000
--mute all
+#-mute all

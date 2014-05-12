@@ -2435,6 +2435,18 @@ Conformation::get_torsion_angle_atom_ids(
 }
 
 
+///@brief get two atoms connect by jump
+bool
+Conformation::get_jump_atom_ids(
+  core::Size const jump_number,
+	AtomID & upstream_id,
+	AtomID & downstream_id ) const {
+	downstream_id = jump_atom_id( jump_number );
+	upstream_id   = atom_tree_->atom( downstream_id ).input_stub_atom1()->id();
+	return false;
+}
+
+
 // for tracking changes to the structure /////////////////////////////////////////////////////////////////////////////
 
 void

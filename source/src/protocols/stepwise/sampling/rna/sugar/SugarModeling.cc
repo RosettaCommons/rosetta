@@ -15,11 +15,12 @@
 
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/output_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/types.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -99,22 +100,22 @@ namespace sugar {
 	}
 
 	void
-	SugarModeling::set_base_and_pucker_state( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP ){
+	SugarModeling::set_base_and_pucker_state( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP const & WP ){
 
 			////////////////////////June 02, 2011 Add core::Size and core::Size information///
 			moving_res_pucker_state = ANY_PUCKER;
-			if (  ( JP->working_force_north_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
-			if (  ( JP->working_force_south_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
+			if (  ( WP->working_force_north_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
+			if (  ( WP->working_force_south_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
 
 			moving_res_base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? ANY_CHI: ANTI;
-			if (  ( JP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
+			if (  ( WP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
 
 			bulge_res_pucker_state = ANY_PUCKER;
-			if (  ( JP->working_force_north_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
-			if (  ( JP->working_force_south_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
+			if (  ( WP->working_force_north_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
+			if (  ( WP->working_force_south_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
 
 			bulge_res_base_state = ( core::chemical::rna::is_purine( pose.residue( bulge_res ) ) ) ? ANY_CHI: ANTI;
-			if (  ( JP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
+			if (  ( WP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
 
 			////////////////////////Print data!////////////////////////////////////////
 			TR.Debug << "SugarModeling: " << std::endl;

@@ -15,19 +15,18 @@
 
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
-#include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/rna/sugar/util.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/chemical/rna/RNA_Util.hh> // for SYN
+#include <core/chemical/rna/util.hh> // for SYN
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
@@ -95,13 +94,12 @@ namespace rna {
 namespace sugar {
 
 //Constructor
-StepWiseRNA_VirtualSugarJustInTimeInstantiator::StepWiseRNA_VirtualSugarJustInTimeInstantiator( StepWiseRNA_JobParametersCOP & job_parameters ):
-	job_parameters_( job_parameters ),
-	moving_res_(  job_parameters_->working_moving_res() ),
-	rebuild_bulge_mode_( job_parameters_->rebuild_bulge_mode() ),
+StepWiseRNA_VirtualSugarJustInTimeInstantiator::StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters::StepWiseWorkingParametersCOP & working_parameters ):
+	working_parameters_( working_parameters ),
+	moving_res_(  working_parameters_->working_moving_res() ),
+	rebuild_bulge_mode_( working_parameters_->rebuild_bulge_mode() ),
 	keep_base_fixed_( false ),
-	moving_res_legacy_( false ),
-	include_current_( true )
+	moving_res_legacy_( false )
 {}
 
 //Destructor
@@ -126,16 +124,16 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::do_the_sampling( core::pose::Pos
 	// special: moving_res and its anchor res are treated specially. They might be involved in a closed cutpoint,
 	// but even if not, we find possible sugar conformations which will be screened for stereochemistry in ConnectionSampler.
 	utility::vector1< Size > check_res = utility::tools::make_vector1( moving_res_ );
-	check_res.push_back( job_parameters_->working_reference_res() );
+	if ( working_parameters_->working_reference_res() > 0 ) check_res.push_back( working_parameters_->working_reference_res() );
 
 	// definitely need to instantiate & sample sugars if they are about to get involved in chain closure...
-	utility::vector1< Size > cutpoints_closed =	figure_out_moving_cutpoints_closed( pose, job_parameters_->working_moving_partition_pos() );
+	utility::vector1< Size > cutpoints_closed =	figure_out_moving_cutpoints_closed( pose, working_parameters_->working_moving_partition_res() );
 	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
 		check_res.push_back( cutpoints_closed[ n ]     );
 		check_res.push_back( cutpoints_closed[ n ] + 1 );
 	}
 
-	if ( rebuild_bulge_mode_ ) {
+	if ( rebuild_bulge_mode_ ) { // this was used in old SWA RNA workflow -- probably can be deprecated, along with VirtualResidueRNA variant types.
 		TR << TR.Red << "In: REBUILD_BULGE_MODE " << TR.Reset << std::endl;
 		apply_virtual_rna_residue_variant_type( pose,  moving_res_ );
 	}
@@ -166,7 +164,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Po
 	if ( sampled_sugar_index( i ) > 0 ) return true;
 
 	SugarModelingOP sugar_modeling = new SugarModeling();
-	if ( moving_res_legacy_ && i == moving_res_ && job_parameters_->floating_base() ) return true; // will be handled inside sampler. [unify this soon!]
+	if ( moving_res_legacy_ && i == moving_res_ && working_parameters_->floating_base() ) return true;
 
 	bool did_setup = setup_sugar_modeling( viewer_pose, i, *sugar_modeling);
 	if ( !did_setup ) return true;
@@ -185,7 +183,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Po
 bool
 StepWiseRNA_VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const name ){
 
-	StepWiseRNA_VirtualSugarSampler virtual_sugar_sampler( job_parameters_, sugar_modeling );
+	StepWiseRNA_VirtualSugarSampler virtual_sugar_sampler( working_parameters_, sugar_modeling );
 	virtual_sugar_sampler.set_tag( name );
 	virtual_sugar_sampler.set_scorefxn( scorefxn_ );
 	virtual_sugar_sampler.set_integration_test_mode( options_->integration_test_mode() );
@@ -221,7 +219,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose
 
 	Size const reference_res = reference_res_for_each_virtual_sugar_[ moving_res ];
 	sugar_modeling = SugarModeling( moving_res, reference_res );
-	if ( job_parameters_->working_force_syn_chi_res_list().has_value( moving_res ) ) sugar_modeling.moving_res_base_state = SYN;
+	if ( working_parameters_->working_force_syn_chi_res_list().has_value( moving_res ) ) sugar_modeling.moving_res_base_state = SYN;
 
 	// model bulge?
 	// this is assumed to be the residue immediately adjacent to the moving_residue,
@@ -230,7 +228,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose
 	// filler base, in which case there's no bulge to rebuild. -- rhiju
 	Size const bulge_res_ = sugar_modeling.bulge_res;
 	// also no point in doing chain closure if split across partitions...
-	utility::vector1< Size > const & moving_partition_res = job_parameters_->working_moving_partition_pos();
+	utility::vector1< Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
 	if ( bulge_res_ == sugar_modeling.reference_res ||
 			 bulge_res_ == 0 ||
 			 !pose.residue_type( bulge_res_ ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ||
@@ -279,16 +277,22 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar
 		if ( options_->virtual_sugar_legacy_mode() ) minimize_sugar_sets_legacy( pose, pose_data_list  );
 	} else {
 		PoseOP start_pose = pose.clone();
-		for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ){
-			Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
-			if ( pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_UPPER ) ||
-					 pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-					 ( sugar_res < pose.total_residue() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
-					 ( sugar_res > 1 && !pose.fold_tree().is_cutpoint( sugar_res - 1 ) ) ){
-				instantiate_sugar( *start_pose, *sugar_modeling_sets_[ n ], 1 );
-			}
-		}
+		instantiate_sugars_at_cutpoint_closed( *start_pose );
 		pose_data_list.push_back( start_pose );
+	}
+}
+
+//////////////////////////////////////////////////
+void
+StepWiseRNA_VirtualSugarJustInTimeInstantiator::instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const {
+	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ){
+		Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
+		if ( pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_UPPER ) ||
+				 pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
+				 ( sugar_res < pose.total_residue() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
+				 ( sugar_res > 1 && !pose.fold_tree().is_cutpoint( sugar_res - 1 ) ) ){
+			instantiate_sugar( pose, *sugar_modeling_sets_[ n ], 1 );
+		}
 	}
 }
 
@@ -302,7 +306,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::minimize_sugar_sets_legacy( pose
 	utility::vector1< SugarModeling > sugar_modeling_sets;
 	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) sugar_modeling_sets.push_back( *sugar_modeling_sets_[n] );
 	minimize_all_sampled_floating_bases( pose_copy, sugar_modeling_sets, pose_data_list,
-																			 scorefxn_, job_parameters_, true /*virtual_sugar_is_from_prior_step*/ );
+																			 scorefxn_, working_parameters_, true /*virtual_sugar_is_from_prior_step*/ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -324,8 +328,8 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::get_sugar_modeling_sets_for_chai
 	utility::vector1< SugarModelingOP > sets;
 	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ){
 		Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
-		if ( sugar_res == job_parameters_->working_moving_res()    ) continue;
-		if ( sugar_res == job_parameters_->working_reference_res() ) continue;
+		if ( sugar_res == working_parameters_->working_moving_res()    ) continue;
+		if ( sugar_res == working_parameters_->working_reference_res() ) continue;
 		sets.push_back( sugar_modeling_sets_[ n ] );
 	}
 	return sets;
@@ -347,13 +351,13 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::instantiate_sugar( pose::Pose & 
 /////////////////////
 SugarModeling const &
 StepWiseRNA_VirtualSugarJustInTimeInstantiator::anchor_sugar_modeling(){
-	Size const anchor_set_idx = sampled_sugar_index( job_parameters_->working_reference_res() );
+	Size const anchor_set_idx = sampled_sugar_index( working_parameters_->working_reference_res() );
 	// kind of a hack, for backwards compatibility.
 	if ( anchor_set_idx == 0 ){
 		SugarModelingOP blank_sugar_modeling = new SugarModeling();
 		return *blank_sugar_modeling;
 	}
-	return *sugar_modeling_sets_[ sampled_sugar_index( job_parameters_->working_reference_res() ) ];
+	return *sugar_modeling_sets_[ sampled_sugar_index( working_parameters_->working_reference_res() ) ];
 }
 
 /////////////////////
@@ -378,7 +382,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::sampling_sugar_at_chain_break() 
 
 /////////////////////
 void
-StepWiseRNA_VirtualSugarJustInTimeInstantiator::set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ){ scorefxn_ = scorefxn; }
+StepWiseRNA_VirtualSugarJustInTimeInstantiator::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 
 /////////////////////
 std::string
@@ -388,7 +392,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::get_name() const {
 
 //////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_VirtualSugarJustInTimeInstantiator::set_options( StepWiseRNA_ModelerOptionsCOP options ){
+StepWiseRNA_VirtualSugarJustInTimeInstantiator::set_options( StepWiseModelerOptionsCOP options ){
 	options_ = options;
 }
 

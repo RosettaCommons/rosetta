@@ -23,7 +23,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
 
 using namespace core;

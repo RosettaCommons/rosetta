@@ -22,7 +22,7 @@
 
 // Project headers
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <basic/Tracer.hh>
 
 using namespace core;

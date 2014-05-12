@@ -2,7 +2,7 @@
 # do this by running initialize_assignments_phaseI.sh
 
 
--residues:patch_selectors CENTROID_HA
+-chemical:patch_selectors CENTROID_HA
 -out:levels protocols.noesy_assign:info
 -constraints:combine 2
 -iterative:centroid_before_quickrelax_weight 1.0

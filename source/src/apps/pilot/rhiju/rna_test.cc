@@ -31,7 +31,7 @@
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
 #include <core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
@@ -92,7 +92,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
@@ -122,7 +122,7 @@
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_DataReader.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_BasePairClassifier.hh>
 #include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
 
@@ -679,7 +679,7 @@ setup_rna_chainbreak_constraints(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Probably belongs in RNA_Util.hh
+// Probably belongs in util.hh
 void
 get_basepair_atoms( pose::Pose & pose,
 										Size const & i, Size const & j,
@@ -838,7 +838,7 @@ rna_fullatom_minimize_test()
 
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
-		//Don't check into general protocol?
+		//Don't check into align protocol?
 		//core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose pose_init = pose;

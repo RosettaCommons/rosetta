@@ -17,7 +17,7 @@
 #include <core/scoring/etable/Etable.hh>
 
 // Package Headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/types.hh>

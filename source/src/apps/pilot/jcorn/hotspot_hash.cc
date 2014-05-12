@@ -63,6 +63,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
+#include <utility/tools/make_vector1.hh>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <core/types.hh>
@@ -84,6 +85,7 @@ using basic::Warning;
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
@@ -243,6 +245,7 @@ main( int argc, char * argv [] )
 	option[ docking::randomize1 ].value( true );
 	option[ docking::randomize2 ].value( true );
 	option[ in::file::sucker_params ].value( "scoring/sucker/pusher.params" );
+	option[ OptionKeys::chemical::patch_selectors ].push_back( "SHOVE_BB" ); // CMDLINE_SELECTOR in ShoveBB.txt
 
 	// necessary to make sure NANs in hbonding don't cause an exit
 	option[ in::file::fail_on_bad_hbond ].value( false );

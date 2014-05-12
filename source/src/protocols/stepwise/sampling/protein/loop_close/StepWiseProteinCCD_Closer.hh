@@ -17,12 +17,13 @@
 #ifndef INCLUDED_protocols_stepwise_protein_StepWiseProteinCCD_Closer_HH
 #define INCLUDED_protocols_stepwise_protein_StepWiseProteinCCD_Closer_HH
 
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
+#include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <utility/vector1.hh>
 
@@ -33,24 +34,28 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
+namespace loop_close {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   class StepWiseProteinCCD_Closer: public protocols::moves::Mover {
   public:
 
     //constructor!
-		StepWiseProteinCCD_Closer(rotamer_sampler::RotamerSizedOP sampler,
-															protocols::stepwise::sampling::protein::StepWiseProteinJobParametersCOP job_parameters );
+		StepWiseProteinCCD_Closer( protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
     //destructor -- necessary?
     ~StepWiseProteinCCD_Closer();
 
+		void
+		init( core::pose::Pose & pose );
+
     /// @brief Apply the minimizer to one pose
     virtual void apply( pose::Pose & pose_to_visualize );
 
+		void get_closure_solution( pose::Pose & pose_to_visualize );
+
 		virtual std::string get_name() const;
 
-		utility::vector1< utility::vector1< Real > > const & main_chain_torsion_set_lists() const;
 		utility::vector1< id::TorsionID > const & which_torsions() const;
 
 		void
@@ -59,11 +64,18 @@ namespace protein {
 		void
 		set_working_moving_res_list( utility::vector1< Size > const & setting ){ moving_residues_ = setting; }
 
-		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
-		bool choose_random() const{ return choose_random_; }
+		utility::vector1< core::Real >
+		grab_main_chain_torsion_set_list( pose::Pose const & pose );
 
-		void set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
-		Size num_random_samples() const{ return num_random_samples_; }
+		utility::vector1< core::Real > const &
+		main_chain_torsion_set() const;
+
+		utility::vector1< core::Real > const &
+		main_chain_torsion_set_save() const;
+
+		Size ntries() const { return ntries_; }
+
+		bool closed_loop() const { return closed_loop_; }
 
 	private:
 
@@ -74,13 +86,13 @@ namespace protein {
 		CCD_loop_close_sample_omega_recursively( pose::Pose & pose, int const offset );
 
 		void
-		setup_torsions( pose::Pose const & pose );
+		setup_torsions();
 
 		void
 		figure_out_loop( pose::Pose const & pose );
 
 		void
-		grab_main_chain_torsion_set_list( pose::Pose const & pose );
+		figure_out_movemap();
 
 		void
 		save_phi_psi_omega_over_loop_residues( pose::Pose const & pose );
@@ -93,6 +105,12 @@ namespace protein {
 
 		void
 		fix_jump_atoms_at_loop_boundaries( pose::Pose & pose );
+
+		Size
+		check_for_unique_cutpoint_flanked_by_bridge_res( pose::Pose const & pose );
+
+		Size
+		check_for_unique_cutpoint( pose::Pose const & pose );
 
 	private:
 
@@ -107,20 +125,15 @@ namespace protein {
 		kinematics::MoveMap mm_;
 
 		utility::vector1< id::TorsionID >  which_torsions_;
-		utility::vector1< utility::vector1< Real > > main_chain_torsion_sets_for_moving_residues_;
 
-		utility::vector1< Real > main_chain_torsion_set_for_moving_residues_save_;
+		utility::vector1< Real > main_chain_torsion_set_;
+		utility::vector1< Real > main_chain_torsion_set_save_;
 
-		bool const verbose_;
-
-		Size pose_count_;
-
-		bool choose_random_;
-		Size num_random_samples_;
-		Size max_ntries_;
-
+		bool closed_loop_;
+		Size ntries_;
   };
 
+} //loop_close
 } //protein
 } //sampling
 } //stepwise

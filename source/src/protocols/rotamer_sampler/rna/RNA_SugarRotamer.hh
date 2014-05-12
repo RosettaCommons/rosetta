@@ -19,7 +19,7 @@
 
 // Package headers
 #include <protocols/rotamer_sampler/RotamerSized.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/id/DOF_ID_Map.hh>
 
 using namespace core::chemical::rna;

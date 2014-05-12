@@ -17,6 +17,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -64,6 +65,9 @@ public:
 public:
 
 	bool
+	has_domain( core::id::AtomID const & atom_id  ) const;
+
+	bool
 	get( Size const & i ) const;
 
 	bool
@@ -72,20 +76,26 @@ public:
 	bool
 	get( core::id::TorsionID const & torsion_id, core::conformation::Conformation const & conformation ) const;
 
+	bool
+	get_jump( Size const & jump_number, core::conformation::Conformation const & conformation ) const;
+
 	Size
 	get_domain( Size const & i ) const;
 
-	bool
-	has_domain( core::id::AtomID const & atom_id  ) const;
-
 	Size
 	get_domain( core::id::AtomID const & atom_id  ) const;
+
+	Size
+	get_domain( core::id::NamedAtomID const & named_atom_id, core::pose::Pose const & pose  ) const;
 
 	void
 	set_domain( Size const & i, Size const & setting  );
 
 	void
 	set_domain( core::id::AtomID const & atom_id, Size const & setting  );
+
+	void
+	set_domain( core::id::NamedAtomID const & atom_id, core::pose::Pose const & pose,  Size const & setting  );
 
 	void
 	set_domain( Size const & setting  );
@@ -106,6 +116,9 @@ public:
 
 	void
 	set( Size const & i, bool const & setting  );
+
+	void
+	set( core::id::NamedAtomID const & named_atom_id, core::pose::Pose const & pose, bool const & setting  );
 
 	void
 	set( core::id::AtomID const & atom_id, bool const & setting  );
@@ -139,6 +152,10 @@ public:
 	append_residue( core::pose::Pose const & pose,
 									Size const & i,
 									bool const & setting );
+
+	void
+	setup_movemap( core::kinematics::MoveMap & mm,
+								 core::pose::Pose const & pose );
 
 private:
 	void

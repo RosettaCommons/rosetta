@@ -107,7 +107,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 				std::string name;
 				in >> name;
 				if ( residue_type_set->name_map(name).is_protein() )
-					name = name + "_p:CtermProteinFull_p:NtermProteinFull";
+					name = name + ":CtermProteinFull:NtermProteinFull";
 				core::chemical::ResidueType const & res_type( residue_type_set->name_map(name) );
 				residue_pair_jump->add_residue_single( res_type );
 			}

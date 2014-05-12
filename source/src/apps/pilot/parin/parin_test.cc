@@ -96,12 +96,12 @@
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_BasePairClassifier.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.hh>
@@ -543,7 +543,7 @@ copy_virtual_variant_type(pose::Pose & full_pose, pose::Pose const & start_pose_
 	}
 }
 
-/*Commented out on Jan 16, 2012 after implemented a more general version of this function in StepWiseRNA_Util.cc.
+/*Commented out on Jan 16, 2012 after implemented a more align version of this function in StepWiseRNA_Util.cc.
 void
 remove_all_variant_types(pose::Pose & pose){
 
@@ -578,7 +578,7 @@ copy_DOFS_local(pose::Pose & pose, pose::Pose const start_pose, utility::vector1
 
 	//Does this work for the "overlap residue" case?? If there is a overlap residue, then order of input_res will manner...Parin Jan 2, 2010.
 	//copy_dofs( pose, start_pose, res_map, true /*copy_dofs_for_junction_residues*/ );
-	copy_dofs_match_atom_names( pose, start_pose, res_map, false /*backbone_only*/, false /*ignore_virtual*/); //Dec 28, 2011
+	copy_dofs_match_atom_names( pose, start_pose, res_map, false /*backbone_only*/, false /*side_chain_only*/ false /*ignore_virtual*/); //Dec 28, 2011
 
 }
 

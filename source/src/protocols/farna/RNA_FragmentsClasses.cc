@@ -15,7 +15,7 @@
 #include <protocols/farna/RNA_FragmentsClasses.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 
 #include <ObjexxFCL/FArray1D.hh>

@@ -15,7 +15,7 @@
 
 #include <protocols/rotamer_sampler/input_streams/InputStreamRotamer.hh>
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/sampling/protein/StepWisePoseSetup.hh>
+#include <protocols/stepwise/sampling/protein/legacy/StepWiseProteinPoseSetup.hh>
 
 #include <basic/Tracer.hh>
 
@@ -36,7 +36,7 @@ namespace input_streams {
 
 	//Constructor
 	InputStreamRotamer::InputStreamRotamer( stepwise::sampling::protein::InputStreamWithResidueInfoOP input_stream,
-																					stepwise::sampling::protein::StepWisePoseSetupCOP stepwise_pose_setup ):
+																					stepwise::sampling::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup ):
 		input_stream_( input_stream ),
 		stepwise_pose_setup_( stepwise_pose_setup ),
 		size_( input_stream->compute_size() ) // slow...

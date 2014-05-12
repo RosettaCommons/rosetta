@@ -15,8 +15,8 @@
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
@@ -26,7 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
@@ -38,6 +38,7 @@
 using namespace core;
 using core::Real;
 using utility::make_tag_with_dashes;
+using namespace protocols::stepwise::sampling;
 
 //////////////////////////////////////////////////////////////////////////
 // Adds one residue to a 5' or 3' chain terminus, and appropriately
@@ -187,7 +188,6 @@ namespace rna {
 		} else { // single residue addition -- can this just be combine with above?
 			append_residue( pose, offset );
 		}
-
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -390,8 +390,8 @@ namespace rna {
 		runtime_assert( stepwise_modeler_ != 0 );
 		stepwise_modeler_->set_moving_res_and_reset( res_to_add );
 		if ( !minimize_single_res_ ) stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
-		stepwise_modeler_->apply( pose );
 
+		stepwise_modeler_->apply( pose );
 	}
 
 

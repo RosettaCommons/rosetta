@@ -55,6 +55,7 @@ namespace simple_moves {
 		pose::MiniPose const template_mini_pose_;
 		std::map< Size, Size > res_map_;
 		bool backbone_only_;
+		bool side_chain_only_;
 		bool ignore_virtual_;
 
 		bool use_hash_;

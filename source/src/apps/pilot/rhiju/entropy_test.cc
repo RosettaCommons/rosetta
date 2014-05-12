@@ -48,16 +48,16 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/stepwise/StepWiseClusterer.hh>
-#include <protocols/stepwise/StepWisePoseSetup.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
+#include <protocols/stepwise/StepWiseProteinPoseSetup.hh>
 #include <protocols/stepwise/StepWisePoseSampleGenerator.hh>
 #include <protocols/stepwise/StepWiseDoNothingSampleGenerator.hh>
 #include <protocols/stepwise/InputStreamWithResidueInfo.hh>
 #include <protocols/stepwise/protein/StepWiseProteinMainChainSampleGenerator.hh>
 #include <protocols/stepwise/protein/StepWiseProteinPoseSetup.hh>
 #include <protocols/stepwise/protein/StepWiseProteinScreener.hh>
-#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
-#include <protocols/stepwise/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/stepwise/protein/util.hh>
+#include <protocols/stepwise/protein/StepWiseProteinConnectionSampler.hh>
 #include <protocols/stepwise/protein/StepWiseProteinPacker.hh>
 #include <protocols/stepwise/protein/MainChainTorsionSet.hh>
 
@@ -383,7 +383,7 @@ each_aa_test(){
 		// new style
 		utility::vector1< InputStreamWithResidueInfoOP > input_streams; // empty
 		utility::vector1< core::Size > const moving_res_list = utility::tools::make_vector1( 1 );
-		StepWisePoseSetupOP stepwise_pose_setup = new StepWisePoseSetup( moving_res_list, seq,
+		StepWiseProteinPoseSetupOP stepwise_pose_setup = new StepWiseProteinPoseSetup( moving_res_list, seq,
 																																		 input_streams,
 																																		 blank_size_vector, blank_size_vector /*cutpoint_closed*/ );
 		stepwise_pose_setup->set_add_peptide_plane_variants( true );
@@ -395,8 +395,8 @@ each_aa_test(){
 
 		/////////////////////////////////////////////
 		//get ready to sample backbone residues.
-		StepWiseJobParametersOP & job_parameters = stepwise_pose_setup->job_parameters();
-		StepWiseProteinScreener stepwise_screener( job_parameters );
+		working_parameters::StepWiseWorkingParametersOP & working_parameters = stepwise_pose_setup->working_parameters();
+		StepWiseProteinScreener stepwise_screener( working_parameters );
 		stepwise_screener.apply( pose );
 		StepWisePoseSampleGeneratorOP sample_generator;
 		sample_generator = new StepWiseProteinMainChainSampleGenerator( stepwise_screener.which_torsions(),

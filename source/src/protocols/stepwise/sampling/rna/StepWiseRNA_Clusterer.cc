@@ -15,10 +15,11 @@
 //////////////////////////////////
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/output_util.hh>
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -27,7 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -71,7 +72,7 @@ namespace sampling {
 namespace rna {
 
 // @brief Auto-generated virtual destructor
-SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
+SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -121,7 +122,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		loop_cluster_radius_ = 999.99;
 
 		rename_tags_ = false;
-		job_parameters_exist_ = false;
+		working_parameters_exist_ = false;
 		distinguish_pucker_ = true;
 		add_lead_zero_to_tag_ = false; //For easier pdb selection in pymol
 		quick_alignment_ = false; //new option May 29, 2010...speed up clustering code...however only work if alignment residues are fixed res
@@ -190,7 +191,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		TR << "suite_cluster_radius_ = " << suite_cluster_radius_ << std::endl;
 		TR << "loop_cluster_radius_ = " << loop_cluster_radius_ << std::endl;
-		output_boolean( "job_parameters_exist_ = ", job_parameters_exist_, TR ); TR << std::endl;
+		output_boolean( "working_parameters_exist_ = ", working_parameters_exist_, TR ); TR << std::endl;
 		output_boolean( "quick_alignment_ = ", quick_alignment_, TR ); TR << std::endl;
 		output_boolean( "align_only_over_base_atoms_ = ", align_only_over_base_atoms_, TR ); TR << std::endl;
 		output_boolean( "two_stage_clustering_ = ", two_stage_clustering_, TR ); TR << std::endl;
@@ -216,8 +217,8 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		/////////////////////////////////////////////
 
 		if ( optimize_memory_usage_ ){
-			if ( !job_parameters_exist_ ) utility_exit_with_message( "optimize_memory_usage = True but job_parameters_exist_ = False!" );
-			sliced_pose_job_params_.setup( job_parameters_ );
+			if ( !working_parameters_exist_ ) utility_exit_with_message( "optimize_memory_usage = True but working_parameters_exist_ = False!" );
+			sliced_pose_job_params_.setup( working_parameters_ );
 		}
 
 		if ( ignore_FARFAR_no_auto_bulge_tag_ || ignore_FARFAR_no_auto_bulge_parent_tag_ ){
@@ -351,11 +352,11 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		if ( !job_parameters_exist_ ) utility_exit_with_message( "perform_VDW_rep_screen_ = True but job_parameters_exist_ = False!" );
+		if ( !working_parameters_exist_ ) utility_exit_with_message( "perform_VDW_rep_screen_ = True but working_parameters_exist_ = False!" );
 
 		if ( optimize_memory_usage_ ) utility_exit_with_message( "perform_VDW_rep_screen_ = True and optimize_memory_usage_ = True!" );
 
-		if ( job_parameters_->is_simple_full_length_job_params() == true ) utility_exit_with_message( "job_parameters_->is_simple_full_length_job_params() == true!" );
+		if ( working_parameters_->is_simple_full_length_job_params() == true ) utility_exit_with_message( "working_parameters_->is_simple_full_length_job_params() == true!" );
 
 		input_->reset(); //reset the silentfile stream to the beginning..
 
@@ -374,7 +375,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			//OK found a valid (non-messed) pose. Will use this pose as the "global" quick alignment pose_
 
-			user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, (*pose_op), StepWiseRNA_JobParametersCOP( job_parameters_ ) );
+			user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, (*pose_op), working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ) );
 
 			break;
 
@@ -392,13 +393,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		if ( !job_parameters_exist_ ) utility_exit_with_message( "quick_alignment_ = True but job_parameters_exist_ = False!" );
+		if ( !working_parameters_exist_ ) utility_exit_with_message( "quick_alignment_ = True but working_parameters_exist_ = False!" );
 
 
-		//OK first check that it valid to use the quick_alignment_pose mode... in this mode, all alignment must be fixed res..However, this check itself is not enough to gaurantee that quicj_alignemnt_mode will work. Another requirement is that all the residue in working_best_alignment must be fixed in space with respect to each other. I try to ensure that this is always the case by making sure that every residues in the working_best_alignment is in the root_partition. (See StepWiseRNA_JobParametersSetup.cc)
+		//OK first check that it valid to use the quick_alignment_pose mode... in this mode, all alignment must be fixed res..However, this check itself is not enough to gaurantee that quicj_alignemnt_mode will work. Another requirement is that all the residue in working_best_alignment must be fixed in space with respect to each other. I try to ensure that this is always the case by making sure that every residues in the working_best_alignment is in the root_partition. (See StepWiseWorkingParametersSetup.cc)
 
-		utility::vector1< core::Size > const working_best_alignment = job_parameters_->working_best_alignment();
-		utility::vector1< core::Size > const working_fixed_res = job_parameters_->working_fixed_res();
+		utility::vector1< core::Size > const working_best_alignment = working_parameters_->working_best_alignment();
+		utility::vector1< core::Size > const working_fixed_res = working_parameters_->working_fixed_res();
 
 		for ( Size n = 1; n <= working_best_alignment.size(); n++ ){
 			Size const seq_num = working_best_alignment[n];
@@ -627,10 +628,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		if ( perform_VDW_rep_screen_ || perform_filters_ ){
 
-			if ( job_parameters_exist_ == false ) utility_exit_with_message( "( perform_VDW_rep_screen_ || perform_filters_ ) but job_parameters_exist_ == false!" );
+			if ( working_parameters_exist_ == false ) utility_exit_with_message( "( perform_VDW_rep_screen_ || perform_filters_ ) but working_parameters_exist_ == false!" );
 
-			working_global_sample_res_list = job_parameters_->working_global_sample_res_list();
-			working_filter_virtual_res_list = apply_full_to_sub_mapping( filter_virtual_res_list_, job_parameters_ );
+			working_global_sample_res_list = working_parameters_->working_global_sample_res_list();
+			working_filter_virtual_res_list = apply_full_to_sub_mapping( filter_virtual_res_list_, working_parameters_ );
 
 			output_seq_num_list( "filter_virtual_res_list_ = ", filter_virtual_res_list_, TR, 50 );
 			output_seq_num_list( "working_filter_virtual_res_list = ", working_filter_virtual_res_list, TR, 50 );
@@ -658,9 +659,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				if ( protocols::stepwise::sampling::rna::check_for_messed_up_structure( (*pose_op), tag ) == true ) continue;
 
 				///Jan 12, 2012:Consistency check://///
-				if ( job_parameters_exist_ ){
-					if ( (*pose_op).total_residue() != job_parameters_->working_sequence().size() ){
-						utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( job_parameters_->working_sequence().size() ) + " ) = job_parameters_working_sequence().size()" );
+				if ( working_parameters_exist_ ){
+					if ( (*pose_op).total_residue() != working_parameters_->working_sequence().size() ){
+						utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( working_parameters_->working_sequence().size() ) + " ) = working_parameters_working_sequence().size()" );
 					}
 				}
 				////////////////////////////////////////
@@ -681,9 +682,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				if ( perform_filters_ ){
 					bool pass_filter = true;
 
-					utility::vector1< core::Size > const & force_north_sugar_list = job_parameters_->working_force_north_sugar_list();
-					utility::vector1< core::Size > const & force_south_sugar_list = job_parameters_->working_force_south_sugar_list();
-					utility::vector1< core::Size > const & force_syn_chi_res_list = job_parameters_->working_force_syn_chi_res_list();
+					utility::vector1< core::Size > const & force_north_sugar_list = working_parameters_->working_force_north_sugar_list();
+					utility::vector1< core::Size > const & force_south_sugar_list = working_parameters_->working_force_south_sugar_list();
+					utility::vector1< core::Size > const & force_syn_chi_res_list = working_parameters_->working_force_syn_chi_res_list();
 
 					for ( Size n = 1; n <= force_north_sugar_list.size(); n++ ){
 						Size const seq_num = force_north_sugar_list[n];
@@ -823,14 +824,14 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if ( protocols::stepwise::sampling::rna::check_for_messed_up_structure( (*pose_op), tag ) == true ) continue;
 
 			///Jan 12, 2012:Consistency check://///
-			if ( job_parameters_exist_ ){
-				if ( job_parameters_ -> add_virt_res_as_root() ) {
-					if ( (*pose_op).total_residue() - 1 != job_parameters_->working_sequence().size() ){
-						utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( job_parameters_->working_sequence().size() ) + " ) = job_parameters_working_sequence().size()" );
+			if ( working_parameters_exist_ ){
+				if ( working_parameters_ -> add_virt_res_as_root() ) {
+					if ( (*pose_op).total_residue() - 1 != working_parameters_->working_sequence().size() ){
+						utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( working_parameters_->working_sequence().size() ) + " ) = working_parameters_working_sequence().size()" );
 					}
 				} else {
-					if ( (*pose_op).total_residue() != job_parameters_->working_sequence().size() ){
-						utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( job_parameters_->working_sequence().size() ) + " ) = job_parameters_working_sequence().size()" );
+					if ( (*pose_op).total_residue() != working_parameters_->working_sequence().size() ){
+						utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( working_parameters_->working_sequence().size() ) + " ) = working_parameters_working_sequence().size()" );
 					}
 				}
 			}
@@ -938,7 +939,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			}
 
 
-			if ( PBP_clustering_at_chain_closure_ && job_parameters_->gap_size() == 0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
+			if ( PBP_clustering_at_chain_closure_ && working_parameters_->gap_size() == 0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
 				rmsd_list[i] =	 phosphate_base_phosphate_rmsd( current_pose, cluster_center_pose, seq_num, false /*ignore_virtual_atom*/ );
 			} else{
 				rmsd_list[i] =  suite_rmsd( current_pose, cluster_center_pose, seq_num, is_prepend, false /*ignore_virtaul_atom*/ );
@@ -1119,7 +1120,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 	//////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_Clusterer::is_new_cluster_center_with_job_parameters( core::pose::PoseOP const & pose_op, std::string const & tag ){
+	StepWiseRNA_Clusterer::is_new_cluster_center_with_working_parameters( core::pose::PoseOP const & pose_op, std::string const & tag ){
 
 		using namespace core::scoring;
 		using namespace ObjexxFCL;
@@ -1159,7 +1160,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			if ( full_length_loop_rmsd_clustering_ ){
 				if ( optimize_memory_usage_ ) utility_exit_with_message( "Both full_length_loop_rmsd_clustering_ and optimize_memory_usage_ equal true" );
-				std::string const & full_sequence = job_parameters_->full_sequence();
+				std::string const & full_sequence = working_parameters_->full_sequence();
 				loop_rmsd = full_length_rmsd_over_residue_list( current_pose, cluster_center_pose, calc_rms_res, full_sequence, false /*verbose*/, false /*ignore_virtual_atom*/ );
 			} else{
 				loop_rmsd = rmsd_over_residue_list( current_pose, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/ );
@@ -1185,7 +1186,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	//////////////////////////////////////////////////////////////////
 
 	bool
-	StepWiseRNA_Clusterer::check_for_closeness_without_job_parameters( core::pose::PoseOP const & pose_op )
+	StepWiseRNA_Clusterer::check_for_closeness_without_working_parameters( core::pose::PoseOP const & pose_op )
 	{
 		using namespace core::scoring;
 
@@ -1209,10 +1210,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			utility_exit_with_message( "skip_clustering == true but StepWiseRNA_Clusterer::check_for_closeness() is called! " );
 		}
 
-		if ( job_parameters_exist_ ){
-			return is_new_cluster_center_with_job_parameters( pose_op, tag );
+		if ( working_parameters_exist_ ){
+			return is_new_cluster_center_with_working_parameters( pose_op, tag );
 		} else{
-			return check_for_closeness_without_job_parameters( pose_op );
+			return check_for_closeness_without_working_parameters( pose_op );
 		}
 
 	}
@@ -1264,16 +1265,16 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		output_title_text( "ENTER StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file()", TR );
 
-		if ( job_parameters_exist_ == false ) utility_exit_with_message( "job_parameters_exist_ == false!" );
+		if ( working_parameters_exist_ == false ) utility_exit_with_message( "working_parameters_exist_ == false!" );
 
 		///This could actually work...but it is just yet tested!
-		if ( job_parameters_->is_simple_full_length_job_params() == true ) utility_exit_with_message( "job_parameters_->is_simple_full_length_job_params() == true!" );
+		if ( working_parameters_->is_simple_full_length_job_params() == true ) utility_exit_with_message( "working_parameters_->is_simple_full_length_job_params() == true!" );
 
 		output_boolean( "write_score_only = ", write_score_only, TR ); TR << std::endl;
 
-		utility::vector1< core::Size > const & working_best_alignment = job_parameters_->working_best_alignment();
-		utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();
-		std::string const & full_sequence = job_parameters_->full_sequence();
+		utility::vector1< core::Size > const & working_best_alignment = working_parameters_->working_best_alignment();
+		utility::vector1< core::Size > const & working_native_alignment = working_parameters_->working_native_alignment();
+		std::string const & full_sequence = working_parameters_->full_sequence();
 
 
 		stepwise_rna_pose_setup->set_verbose( true ); //New OPTION, Mar 22
@@ -1282,8 +1283,8 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		SilentFileData silent_file_data;
 
-		utility::vector1 < core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
-		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
+		utility::vector1 < core::Size > const & calc_rms_res = working_parameters_->calc_rms_res();
+		std::map< core::Size, core::Size > const & full_to_sub = working_parameters_->const_full_to_sub();
 
 		//bool const ignore_min_decoys=true; //Over the keep min_decoy mode...Comment out on Dec 11, 2011.
 
@@ -1293,7 +1294,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		std::map< core::Size, bool > is_prepend_map;
 		is_prepend_map.clear();
 
-		is_prepend_map = job_parameters_->is_prepend_map();
+		is_prepend_map = working_parameters_->is_prepend_map();
 
 		bool is_full_length_pose = true; //Will be init first time the loop is tranversed.
 
@@ -1315,7 +1316,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			Real score( 0.0 );
 			getPoseExtraScores( pose, "score", score );
 
-			//This kinda weird in that setup_native_pose actually set the working_native_pose in the job_parameters...this interdependency is not good!
+			//This kinda weird in that setup_native_pose actually set the working_native_pose in the working_parameters...this interdependency is not good!
 			if ( is_valid_first_struct ){
 				//best_score = score;
 				stepwise_rna_pose_setup->setup_native_pose( pose ); //Setup native_pose;
@@ -1328,7 +1329,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			//if(score > best_score + score_diff_cut_) break; //Comment out on Dec 11, 2011.
 
 			PoseOP native = new Pose;
-			( *native ) = ( *job_parameters_->working_native_pose() ); //Hard copy...
+			( *native ) = ( *working_parameters_->working_native_pose() ); //Hard copy...
 
 			align_poses( ( *native ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ );
 
@@ -1362,7 +1363,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			s->add_energy( "NEW_NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native, calc_rms_res, full_to_sub, is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
 
 			////March 7, 2011....Output BASE-PAIRS STATISTIC///////////////////////////////
-			//utility::vector1< core::Size > const working_calc_rms_res=apply_full_to_sub_mapping(calc_rms_res, job_parameters_);
+			//utility::vector1< core::Size > const working_calc_rms_res=apply_full_to_sub_mapping(calc_rms_res, working_parameters_);
 
 			//Nov 01, 2011 WARNING THIS currently does not work if there is protonated Adenosine!
 			//add_base_pair_stats( s, pose, *native, working_calc_rms_res);
@@ -1399,22 +1400,22 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		output_title_text( "ENTER StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file()", TR );
 
-		if ( job_parameters_exist_ == false ) utility_exit_with_message( "job_parameters_exist_ == false!" );
+		if ( working_parameters_exist_ == false ) utility_exit_with_message( "working_parameters_exist_ == false!" );
 
 		///This could actually work...but it is just yet tested!
-		if ( job_parameters_->is_simple_full_length_job_params() == true ) utility_exit_with_message( "job_parameters_->is_simple_full_length_job_params() == true!" );
+		if ( working_parameters_->is_simple_full_length_job_params() == true ) utility_exit_with_message( "working_parameters_->is_simple_full_length_job_params() == true!" );
 
-		utility::vector1< core::Size > const & working_best_alignment = job_parameters_->working_best_alignment();
+		utility::vector1< core::Size > const & working_best_alignment = working_parameters_->working_best_alignment();
 
-		utility::vector1 < core::Size > const & calc_rms_res = job_parameters_->calc_rms_res();
-		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
+		utility::vector1 < core::Size > const & calc_rms_res = working_parameters_->calc_rms_res();
+		std::map< core::Size, core::Size > const & full_to_sub = working_parameters_->const_full_to_sub();
 
 		std::map< core::Size, bool > is_prepend_map;
 		is_prepend_map.clear();
 
-		is_prepend_map = job_parameters_->is_prepend_map();
+		is_prepend_map = working_parameters_->is_prepend_map();
 
-		std::string const & full_sequence = job_parameters_->full_sequence();
+		std::string const & full_sequence = working_parameters_->full_sequence();
 
 		SilentFileData silent_file_data;
 
@@ -1658,41 +1659,41 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 	//////////////////////////////////////////////
 	void
-	StepWiseRNA_Clusterer::set_job_parameters( protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersCOP & job_parameters ){
+	StepWiseRNA_Clusterer::set_working_parameters( protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP & working_parameters ){
 
-		job_parameters_ = job_parameters;
+		working_parameters_ = working_parameters;
 
 	}
 	//////////////////////////////////////////////
 	void
-	StepWiseRNA_Clusterer::set_job_parameters_exist( bool const job_parameters_exist ){
+	StepWiseRNA_Clusterer::set_working_parameters_exist( bool const working_parameters_exist ){
 
-		job_parameters_exist_ = job_parameters_exist;
+		working_parameters_exist_ = working_parameters_exist;
 
 	}
 
 	//////////////////////////////////////////////
 	utility::vector1< core::Size > const &
 	StepWiseRNA_Clusterer::get_act_alignment_res()  const {
-		utility::vector1< core::Size > const & alignment_res =   ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_best_alignment: job_parameters_->working_best_alignment() ;
+		utility::vector1< core::Size > const & alignment_res =   ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_best_alignment: working_parameters_->working_best_alignment() ;
 		return alignment_res;
 	}
 
 	utility::vector1 < core::Size > const &
 	StepWiseRNA_Clusterer::get_act_calc_rms_res()	 const {
-		utility::vector1 < core::Size > const & calc_rms_res = ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_calc_rms_res : job_parameters_->calc_rms_res();
+		utility::vector1 < core::Size > const & calc_rms_res = ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_calc_rms_res : working_parameters_->calc_rms_res();
 		return calc_rms_res;
 	}
 
 	std::map< core::Size, core::Size > const &
 	StepWiseRNA_Clusterer::get_act_full_to_sub()	 const {
-		std::map< core::Size, core::Size > const & full_to_sub = ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_full_to_sub   : job_parameters_->const_full_to_sub();
+		std::map< core::Size, core::Size > const & full_to_sub = ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_full_to_sub   : working_parameters_->const_full_to_sub();
 		return full_to_sub;
 	}
 
 	std::map< core::Size, bool > const &
 	StepWiseRNA_Clusterer::get_act_is_prepend_map() const 	{
-		std::map< core::Size, bool > const & is_prepend_map =   ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_is_prepend_map: job_parameters_->is_prepend_map();
+		std::map< core::Size, bool > const & is_prepend_map =   ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_is_prepend_map: working_parameters_->is_prepend_map();
 		return is_prepend_map ;
 	}
 
@@ -1700,20 +1701,20 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 	//////////////////////////////////////////////
 	void
-	SlicedPoseJobParameters::setup( protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersCOP & job_parameters ){
+	SlicedPoseWorkingParameters::setup( protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP & working_parameters ){
 
-		output_title_text( "Enter SlicedPoseJobParameters::setup()", TR );
+		output_title_text( "Enter SlicedPoseWorkingParameters::setup()", TR );
 
 		is_setup_ = true;
 
-		Size const nres = ( job_parameters->working_sequence() ).size();
-		utility::vector1< core::Size > const & working_best_alignment( job_parameters->working_best_alignment() );
-		utility::vector1 < core::Size > const & calc_rms_res = job_parameters->calc_rms_res();
-		std::map< core::Size, bool > const & is_prepend_map = job_parameters->is_prepend_map();
-		std::map< core::Size, core::Size > const & sub_to_full( job_parameters->const_sub_to_full() );
+		Size const nres = ( working_parameters->working_sequence() ).size();
+		utility::vector1< core::Size > const & working_best_alignment( working_parameters->working_best_alignment() );
+		utility::vector1 < core::Size > const & calc_rms_res = working_parameters->calc_rms_res();
+		std::map< core::Size, bool > const & is_prepend_map = working_parameters->is_prepend_map();
+		std::map< core::Size, core::Size > const & sub_to_full( working_parameters->const_sub_to_full() );
 
 
-		utility::vector1< core::Size > working_calc_rms_res = apply_full_to_sub_mapping( calc_rms_res, job_parameters );
+		utility::vector1< core::Size > working_calc_rms_res = apply_full_to_sub_mapping( calc_rms_res, working_parameters );
 
 		Size sliced_seq_num = 1;
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
@@ -1813,13 +1814,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		output_is_prepend_map( "sliced_pose_is_prepend_map = ", sliced_pose_is_prepend_map, working_to_sliced_res_map_.size(), TR, 50 );
 		output_pair_size( delete_res_range_list_, "delete_res_range_list = ", TR, 50 );
 
-		output_title_text( "Exit SlicedPoseJobParameters::setup()", TR );
+		output_title_text( "Exit SlicedPoseWorkingParameters::setup()", TR );
 
 	}
 
 	//////////////////////////////////////////////
 	core::pose::Pose
-	SlicedPoseJobParameters::create_sliced_pose( core::pose::Pose const & working_pose ){
+	SlicedPoseWorkingParameters::create_sliced_pose( core::pose::Pose const & working_pose ){
 
 		using namespace core::conformation;
 		using namespace core::pose;

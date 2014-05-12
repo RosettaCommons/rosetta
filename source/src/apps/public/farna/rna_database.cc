@@ -21,15 +21,15 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
 
@@ -45,7 +45,7 @@
 #include <ObjexxFCL/format.hh>
 
 //RNA stuff.
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 
 // C++ headers
@@ -469,7 +469,7 @@ create_base_pair_step_database_test( ){
 				utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
 
 				pose::Pose bps_pose;
-				protocols::stepwise::pdbslice( bps_pose, pose, base_pair_res );
+				protocols::stepwise::sampling::pdbslice( bps_pose, pose, base_pair_res );
 
 				std::string bps_seq = get_bps_seq( base_pair_res, sequence );
 				std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );

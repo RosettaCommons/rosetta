@@ -13,9 +13,10 @@
 /// @file
 /// @brief
 
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/output_util.hh>
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -50,12 +51,14 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/pose/rna/RNA_Util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -539,6 +542,10 @@ add_virtual_res ( core::pose::Pose & pose ) {
 	kinematics::FoldTree newF ( pose.fold_tree() );
 	newF.reorder ( nres + 1 );
 	pose.fold_tree ( newF );
+
+	core::pose::full_model_info::FullModelInfoOP full_model_info = new core::pose::full_model_info::FullModelInfo( pose );
+	set_full_model_info( pose, full_model_info );
+
 	return ( nres + 1 );
 }
 ///////////////////////////////////////////////////////////
@@ -861,7 +868,7 @@ pdb_minimizer() {
 		vary_bond_geometry ( mm, pose, pose_reference, allow_insert );
 	}
 
-	output_movemap ( mm, pose );
+	protocols::stepwise::sampling::output_movemap ( mm, pose );
 	scorefxn->show ( std::cout, pose );
 	Real const score_before = ( (*scorefxn) (pose) );
 	Real const edens_score_before = ( (*edens_scorefxn) (pose) );
@@ -932,6 +939,7 @@ try {
 	// setup
 	////////////////////////////////////////////////////////////////////////////
 	core::init::init ( argc, argv );
+
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////

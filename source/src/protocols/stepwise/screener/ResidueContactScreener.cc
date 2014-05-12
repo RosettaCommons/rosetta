@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/ResidueContactScreener.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 
 #include <basic/Tracer.hh>
 

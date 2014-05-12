@@ -15,8 +15,10 @@
 
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/chemical/ResidueType.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -56,7 +58,7 @@ namespace full_model_info {
 
 	//Constructor
 	FullModelParameters::FullModelParameters( pose::Pose const & pose,
-																						utility::vector1< Size > const & res_list ) {
+																						utility::vector1< Size > & res_list ) {
 
 		initialize_parameters( *this );
 		get_sequence_with_gaps_filled_with_n( pose, full_sequence_, conventional_numbering_, res_list );
@@ -66,8 +68,7 @@ namespace full_model_info {
 		utility::vector1< Size > fixed_domain_map_( full_sequence_.size(), 0 );
 		for ( Size n = 1; n <= res_list.size(); n++ ) {
 			Size const & res_num = res_list[ n ];
-			runtime_assert( conventional_numbering_.has_value( static_cast<int>( res_num ) ) );
-			fixed_domain_map_[ conventional_numbering_.index( static_cast<int>( res_num ) ) ] = 1;
+			fixed_domain_map_[ res_num ] = 1;
 		}
 		set_parameter( FIXED_DOMAIN, fixed_domain_map_ );
 
@@ -142,23 +143,31 @@ namespace full_model_info {
 	void
 	FullModelParameters::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
 																														 std::string & sequence,
-																														 utility::vector1< int > & full_numbering,
-																														 utility::vector1< Size > const & res_list ) const {
+																														 utility::vector1< int > & conventional_numbering,
+																														 utility::vector1< Size > & res_list
+																														 ) const {
 		// should also be smart about not filling in n's between chains.
 		// anyway. this is a quick hack for now.
 		sequence = "";
-		full_numbering.clear();
+		conventional_numbering.clear();
 
+		utility::vector1< int > const pdb_res_list = get_res_num_from_pdb_info( pose );
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			Size const prev_res_num    = (n > 1 ) ? res_list[ n-1 ] : res_list[ n ];
-			Size const current_res_num = res_list[ n ];
-			for ( Size i = prev_res_num+1; i < current_res_num; i++ ) {
+			int const prev_res_num    = ( n > 1 && pose.chain( n-1 ) == pose.chain( n ) ) ? pdb_res_list[ n-1 ] : pdb_res_list[ n ];
+			int const current_res_num = pdb_res_list[ n ];
+			for ( int i = prev_res_num+1; i < current_res_num; i++ ) {
 				sequence.push_back( 'n' );
-				full_numbering.push_back( static_cast<int>( i ) );
+				conventional_numbering.push_back( i );
 			}
 			sequence.push_back( pose.sequence()[ n-1 ] );
-			full_numbering.push_back( static_cast<int>( current_res_num ) );
+			conventional_numbering.push_back( current_res_num );
 		}
+
+		res_list.clear();
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			res_list.push_back( conventional_numbering.index( pdb_res_list[n] ) );
+		}
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +183,14 @@ namespace full_model_info {
 				cutpoint_open.push_back( n );
 				continue;
 			}
-
+			if ( pose.residue_type( n ).is_protein() != pose.residue_type( n+1 ).is_protein() ) {
+				cutpoint_open.push_back( n );
+				continue;
+			}
+			if ( pose.residue_type( n ).is_RNA() != pose.residue_type( n+1 ).is_RNA() ) {
+				cutpoint_open.push_back( n );
+				continue;
+			}
 		}
 
 		return cutpoint_open;

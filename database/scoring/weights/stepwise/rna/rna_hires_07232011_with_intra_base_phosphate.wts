@@ -22,3 +22,4 @@ fa_intra_RNA_base_phos_atr   0.23
 fa_intra_RNA_base_phos_rep   0.12
 geom_sol_fast_intra_RNA        0.62
 lk_nonpolar_intra_RNA        0.32
+free_2HOprime 1.0

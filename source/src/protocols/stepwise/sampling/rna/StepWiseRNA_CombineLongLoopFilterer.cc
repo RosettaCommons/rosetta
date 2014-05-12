@@ -16,12 +16,12 @@
 //////////////////////////////////
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/sampling/rna/checker/ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/sampling/output_util.hh>
 
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 //////////////////////////////////
 
 #include <core/types.hh>
@@ -84,9 +84,9 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( StepWiseRNA_JobParametersCOP const & job_parameters, bool const combine_helical_silent_file ):
+	StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file ):
 		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
-		job_parameters_( job_parameters ),
+		working_parameters_( working_parameters ),
 		verbose_( true ), //Parin Mar 22, 2010
 		filter_for_previous_contact_( false ),
 		filter_for_previous_clash_( false ),
@@ -121,7 +121,7 @@ namespace rna {
 
 		if ( combine_helical_silent_file_ == false ){
 
-			utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
+			utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 			if ( input_res_vectors.size() != 2 ) utility_exit_with_message( "input_res_vectors.size() != 2" );
 
@@ -163,7 +163,7 @@ namespace rna {
 
 		//OK first find that residues that are common between two pose...there are user inputted residues
 
-		utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
+		utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 
 		utility::vector1< core::Size > common_res_list;
@@ -219,7 +219,7 @@ namespace rna {
 	void
 	StepWiseRNA_CombineLongLoopFilterer::figure_out_last_appended_and_last_prepended_res(){
 
-		utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
+		utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 		//////////////////////////////////////////////////////////////////
 
@@ -263,12 +263,12 @@ namespace rna {
 /*
 		using namespace ObjexxFCL;
 
-		bool const is_prepend(  job_parameters_->is_prepend() );
+		bool const is_prepend(  working_parameters_->is_prepend() );
 
-		std::map< core::Size, core::Size > const & sub_to_full = job_parameters_->const_sub_to_full(); //make these const
+		std::map< core::Size, core::Size > const & sub_to_full = working_parameters_->const_sub_to_full(); //make these const
 
-		Size const moving_res(  job_parameters_->working_moving_res() ); // Might not corresponds to user input.
-		Size const reference_res( job_parameters_->working_reference_res() ); //the last static_residues that this attach to the moving residues
+		Size const moving_res(  working_parameters_->working_moving_res() ); // Might not corresponds to user input.
+		Size const reference_res( working_parameters_->working_reference_res() ); //the last static_residues that this attach to the moving residues
 
 
 
@@ -505,7 +505,7 @@ namespace rna {
 	StepWiseRNA_CombineLongLoopFilterer::moving_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data ){
 
 
-		bool const is_prepend(  job_parameters_->is_prepend() );
+		bool const is_prepend(  working_parameters_->is_prepend() );
 
 
 		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
@@ -550,8 +550,8 @@ namespace rna {
 
 		//Would this slow down the code?
 
-		Size const num_nucleotides(  job_parameters_->working_moving_res_list().size() );
-		Size const previous_step_gap_size = ( job_parameters_->gap_size() ) + num_nucleotides;
+		Size const num_nucleotides(  working_parameters_->working_moving_res_list().size() );
+		Size const previous_step_gap_size = ( working_parameters_->gap_size() ) + num_nucleotides;
 
 		if ( previous_step_gap_size == 0 ) utility_exit_with_message( "previous_step_gap_size == 0!!" );
 		///////////////////////////////////////////////////////////////////////////
@@ -573,7 +573,7 @@ namespace rna {
 
 			//OK STILL HAVE TO WRITE CODE FOR THE DINUCLEOTIDE case....
 			//July 19th, 2011..This assumes that the 5' and 3' sugar is already built (not virtual!) but this might not be the case!
-			checker::ChainClosableGeometryChecker chain_closable_geometry_checker( input_pose_ONE_last_appended_res_  /* last from 5', provides O3' atom*/,
+			checker::RNA_ChainClosableGeometryChecker chain_closable_geometry_checker( input_pose_ONE_last_appended_res_  /* last from 5', provides O3' atom*/,
 																															 input_pose_TWO_last_prepended_res_ /* last from 3', provides C5' atom*/,
 																															 previous_step_gap_size );
 			if ( !chain_closable_geometry_checker.check_screen( side_ONE_pose, side_TWO_pose, true /*is_prepend*/ ) ) return false;
@@ -601,7 +601,7 @@ namespace rna {
 		//DON'T include this screen to determine best_combine_score since it can lead to an artificially bad best_combine_score (still need to verify this!)
 		if ( ( previous_step_gap_size != 1 ) && ( filter_for_moving_res_contact_ == true ) ){
 
-			//INCLUDE the dinucleotide Chainbreak code since if dinucleotide...moving_res (the floating base) cannot be bulge and need to make contact.
+			//INCLUDE the dinucleotide RNA_Chainbreak code since if dinucleotide...moving_res (the floating base) cannot be bulge and need to make contact.
 			if ( moving_res_contact_filter( side_ONE_pose_data, side_TWO_pose_data ) == false ) return false;
 
 			filterer_count_.filter_for_moving_res_contact++;

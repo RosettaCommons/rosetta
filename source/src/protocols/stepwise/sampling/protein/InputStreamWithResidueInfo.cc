@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWisePoseSetup
+/// @file StepWiseProteinPoseSetup
 /// @brief Sets up pose and job parameters for protein or RNA stepwise building.
 /// @detailed
 /// @author Rhiju Das
@@ -22,13 +22,14 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/copydofs/util.hh>
 #include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <protocols/stepwise/sampling/protein/StepWisePoseSetup.hh>
+#include <protocols/stepwise/sampling/protein/legacy/StepWiseProteinPoseSetup.hh>
 #include <core/scoring/rms_util.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -36,7 +37,7 @@
 #include <basic/Tracer.hh>
 
 // RNA stuff
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <utility/exit.hh>
 #include <string>
@@ -307,9 +308,8 @@ namespace protein {
 		//std::cout << "IMPORT_POSE DURING COPY_NEXT_SEGMENT: " <<  import_pose.annotated_sequence( true ) << std::endl;
 		//		std::cout << "FOLD TREE OF POSE: " << pose.fold_tree() << std::endl;
 
-		//copy_dofs_match_atom_names( pose, import_pose, res_map, backbone_only_, false /*ignore_virtual*/ );
 		// Dec 2010 -- why do we copy_dofs for virtual?
-		copy_dofs_match_atom_names( pose, import_pose, res_map, backbone_only_, true /*ignore_virtual*/ );
+		core::pose::copydofs::copy_dofs_match_atom_names( pose, import_pose, res_map, backbone_only_, false /*ignore_sidechain*/, true /*ignore_virtual*/ );
 
 		//can do an alignment too. Note that this does *not* happen by default. Need to set align_pose_to_import_pose = true.
 		if ( align_pose_to_import_pose ) {

@@ -10,7 +10,6 @@
 /// @file
 /// @brief
 
-
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -46,18 +45,17 @@
 #include <protocols/viewer/viewers.hh>
 
 //StepWiseProtein!
-#include <protocols/stepwise/sampling/general/StepWiseClustererSilentBased.hh>
-#include <protocols/stepwise/sampling/protein/StepWisePoseSetup.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModeler.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModelerOptions.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinPacker.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinBackboneSampler.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/sampling/align/StepWiseLegacyClustererSilentBased.hh>
+#include <protocols/stepwise/sampling/protein/legacy/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/protein/util.hh>
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/rotamer_sampler/NoOpRotamer.hh>
-#include <protocols/rotamer_sampler/protein/StepWiseBetaAntiParallelUtil.hh>
+#include <protocols/rotamer_sampler/protein/util.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -118,6 +116,7 @@ static basic::Tracer TR( "swa_protein_main" );
 // option key includes
 
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
@@ -176,8 +175,12 @@ OPT_KEY( IntegerVector, working_loop_bounds )
 OPT_KEY( Boolean, auto_tune )
 OPT_KEY( Boolean, centroid )
 
+using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::sampling::protein;
+
 void
 initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::ResidueTypeSetCAP & rsd_set );
+
 
 ///////////////////////////////////////////////////////////////////////
 void
@@ -193,9 +196,8 @@ rebuild_test(){
 	using namespace core::io::silent;
 	using namespace core::pose;
 	using namespace core::pack;
-	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::sampling::general;
-	using namespace protocols::stepwise::sampling::protein;
+	using namespace protocols::stepwise::sampling;
+	using namespace align;
 
 	// A lot of the following might be better handled by a JobDistributor!?
 
@@ -223,17 +225,17 @@ rebuild_test(){
 
 	////////////////////////////////////////////////////////////////////
 	utility::vector1< InputStreamWithResidueInfoOP > input_streams;
-	protocols::stepwise::sampling::protein::initialize_input_streams( input_streams );
+	initialize_input_streams( input_streams );
 
   utility::vector1< core::Size > const moving_res_list = option[ sample_res ]();
 
 	// move following to its own function?
-	StepWisePoseSetupOP stepwise_pose_setup =
-		new StepWisePoseSetup( moving_res_list, /*the first element of moving_res_list is the sampling_res*/
-													 desired_sequence,
-													 input_streams,
-													 option[ OptionKeys::full_model::cutpoint_open ](),
-													 option[ OptionKeys::full_model::cutpoint_closed ]() );
+	StepWiseProteinPoseSetupOP stepwise_pose_setup =
+		new StepWiseProteinPoseSetup( moving_res_list, /*the first element of moving_res_list is the sampling_res*/
+																	desired_sequence,
+																	input_streams,
+																	option[ OptionKeys::full_model::cutpoint_open ](),
+																	option[ OptionKeys::full_model::cutpoint_closed ]() );
 	stepwise_pose_setup->set_native_pose( native_pose );
 	// it would be better to have reasonable defaults for the following...
 	stepwise_pose_setup->set_fixed_res( option[ OptionKeys::stepwise::fixed_res ]() );
@@ -245,7 +247,7 @@ rebuild_test(){
 	stepwise_pose_setup->set_bridge_res( option[ OptionKeys::stepwise::protein::bridge_res ]() );
 	stepwise_pose_setup->set_add_peptide_plane_variants( option[ add_peptide_plane ]() );
 	stepwise_pose_setup->set_align_file( option[ OptionKeys::stepwise::align_pdb ] );
-	stepwise_pose_setup->set_dump( option[ OptionKeys::stepwise::protein::dump ] );
+	stepwise_pose_setup->set_dump( option[ OptionKeys::stepwise::dump ] );
 	stepwise_pose_setup->set_rsd_set( rsd_set );
 	stepwise_pose_setup->set_secstruct( option[ secstruct ] );
 	stepwise_pose_setup->set_cst_file( option[ cst_file ]() );
@@ -257,34 +259,39 @@ rebuild_test(){
 	// NOTE: These are new options that have been explored in StepWise MonteCarlo and are set to true...
 	//  when we go back to stepwise enumeration, let's make sure user is forced to recognize this.
 	runtime_assert( option[ OptionKeys::stepwise::protein::protein_prepack ].user() );
-	runtime_assert( option[ OptionKeys::stepwise::protein::protein_atr_rep_screen ].user() );
+	runtime_assert( option[ OptionKeys::stepwise::atr_rep_screen ].user() );
 	runtime_assert( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ].user() );
 
-	StepWiseProteinJobParametersOP & job_parameters = stepwise_pose_setup->job_parameters();
+	working_parameters::StepWiseWorkingParametersOP & working_parameters = stepwise_pose_setup->working_parameters();
 
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, center_vector );
 
-	StepWiseProteinModelerOptionsOP stepwise_protein_modeler_options = new StepWiseProteinModelerOptions;
-	stepwise_protein_modeler_options->initialize_from_command_line();
-	stepwise_protein_modeler_options->set_output_minimized_pose_list( true );
-	if ( stepwise_protein_modeler_options->dump()	) pose.dump_pdb( "after_setup.pdb" );
+	StepWiseModelerOptionsOP stepwise_modeler_options = new StepWiseModelerOptions;
+	stepwise_modeler_options->initialize_from_command_line();
+	stepwise_modeler_options->set_output_minimized_pose_list( true );
+	stepwise_modeler_options->set_silent_file( option[ out::file::silent ]() );
+	stepwise_modeler_options->set_disallow_realign( true );
+	if ( stepwise_modeler_options->pack_weights().size() == 0 ) stepwise_modeler_options->set_pack_weights( "stepwise/protein/pack_no_hb_env_dep.wts" );
+	if ( stepwise_modeler_options->dump()	) pose.dump_pdb( "after_setup.pdb" );
+	remove_silent_file_if_it_exists( option[ out::file::silent] );
 
 	ScoreFunctionOP scorefxn;
-	if ( ! option[ score::weights ].user() ) scorefxn =ScoreFunctionFactory::create_score_function( "score12_no_hb_env_dep.wts"  );
+	if ( ! option[ score::weights ].user() ) scorefxn = ScoreFunctionFactory::create_score_function( "score12_no_hb_env_dep.wts"  );
 	else scorefxn = core::scoring::getScoreFunction();
 
-	StepWiseProteinModeler stepwise_protein_modeler( scorefxn );
-	stepwise_protein_modeler.set_native_pose( native_pose );
-	stepwise_protein_modeler.set_options( stepwise_protein_modeler_options );
-	stepwise_protein_modeler.set_frag_files( option[ in::file::frag_files ]() );
-	stepwise_protein_modeler.set_input_streams( input_streams );
-	stepwise_protein_modeler.set_bridge_res( option[ OptionKeys::stepwise::protein::bridge_res ]() );
-	stepwise_protein_modeler.set_moving_res_list( job_parameters->working_moving_res_list() );
-	if ( !option[ OptionKeys::stepwise::test_encapsulation ]() ) stepwise_protein_modeler.set_job_parameters( job_parameters );
+	StepWiseModeler stepwise_modeler( scorefxn );
+	stepwise_modeler.set_native_pose( native_pose );
+	stepwise_modeler.set_moving_res_list( working_parameters->working_moving_res_list() );
+	stepwise_modeler.set_input_streams( input_streams );
+	stepwise_modeler.set_modeler_options( stepwise_modeler_options );
+	if ( working_parameters->working_moving_res_list().size() == 0 ) stepwise_modeler.set_working_prepack_res( get_all_residues( pose ) );
+	if ( !option[ OptionKeys::stepwise::test_encapsulation ]() ) stepwise_modeler.set_working_parameters( working_parameters );
 
-	stepwise_protein_modeler.apply( pose );
+	stepwise_modeler.apply( pose );
 
 }
+
 
 ////////////////////////////////////////////////////////////////
 void
@@ -304,14 +311,14 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 	native_pose->conformation().detect_disulfides();
 	if (!option[ disulfide_file ].user() ){
 		for (Size n = 1; n <= native_pose->total_residue(); n++){
-			if ( native_pose->residue_type( n ).has_variant_type( chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
+			if ( native_pose->residue_type( n ).has_variant_type( core::chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
 		}
 	}
 
 	// this is weird, but I'm trying to reduce memory footprint by not saving the big 2-body energy arrays that get allocated
 	// when native_poses with missing atoms are 'packed' during pose_from_pdb().
 	//	native_pose->set_new_energies_object( 0 );
-	if ( option[ basic::options::OptionKeys::stepwise::protein::dump ]() ) native_pose->dump_pdb("full_native.pdb");
+	if ( option[ basic::options::OptionKeys::stepwise::dump ]() ) native_pose->dump_pdb("full_native.pdb");
 
 }
 
@@ -321,12 +328,12 @@ cluster_outfile_test(){
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::sampling::general;
-	using namespace protocols::stepwise::sampling::protein;
+	using namespace protocols::stepwise::sampling;
+	using namespace align;
+	using namespace protein;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	StepWiseClustererSilentBased stepwise_clusterer( silent_files_in );
+	StepWiseLegacyClustererSilentBased stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
@@ -368,8 +375,8 @@ calc_rms_test(){
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
-	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::sampling::protein;
+	using namespace protocols::stepwise::sampling;
+	using namespace protein;
 	using namespace core::chemical;
 
 	PoseOP pose_op,native_pose;
@@ -391,17 +398,13 @@ calc_rms_test(){
 		calc_rms_res_ = convert_to_working_res( calc_rms_res_, option[  basic::options::OptionKeys::stepwise::working_res ]() );
 	}
 
-
 	while ( input->has_another_pose() ) {
-
 		PoseOP pose_op( new Pose );
 		core::io::silent::SilentStructOP silent_struct( input->next_struct() );
 		silent_struct->fill_pose( *pose_op );
 		output_silent_struct( *pose_op, native_pose, silent_file_out, silent_struct->decoy_tag(),
 													sfd_dummy, calc_rms_res_	);
-
 	}
-
 
 }
 
@@ -452,27 +455,25 @@ main( int argc, char * argv [] )
 	option.add_relevant( OptionKeys::stepwise::protein::score_diff_cut );
 	option.add_relevant( OptionKeys::stepwise::protein::filter_native_big_bins );
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_screen );
-	option.add_relevant( OptionKeys::stepwise::protein::skip_minimize );
+	option.add_relevant( OptionKeys::stepwise::skip_minimize );
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_weights );
 	option.add_relevant( OptionKeys::stepwise::protein::min_type );
 	option.add_relevant( OptionKeys::stepwise::protein::min_tolerance );
-	option.add_relevant( OptionKeys::stepwise::protein::rescore_only );
 	option.add_relevant( OptionKeys::stepwise::protein::ghost_loops );
-	option.add_relevant( OptionKeys::stepwise::protein::dump );
+	option.add_relevant( OptionKeys::stepwise::dump );
 	option.add_relevant( OptionKeys::stepwise::protein::sample_beta );
 	option.add_relevant( OptionKeys::stepwise::protein::nstruct_centroid );
 	option.add_relevant( OptionKeys::stepwise::protein::global_optimize );
-	option.add_relevant( OptionKeys::stepwise::protein::disallow_backbone_sampling );
 	option.add_relevant( OptionKeys::stepwise::protein::disable_sampling_of_loop_takeoff );
 	option.add_relevant( OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials );
 	option.add_relevant( OptionKeys::stepwise::protein::ccd_close );
 	option.add_relevant( OptionKeys::stepwise::protein::move_jumps_between_chains );
 	option.add_relevant( OptionKeys::stepwise::protein::bridge_res );
-	option.add_relevant( OptionKeys::stepwise::protein::rmsd_screen );
+	option.add_relevant( OptionKeys::stepwise::rmsd_screen );
 	option.add_relevant( OptionKeys::stepwise::protein::cart_min );
 	option.add_relevant( OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd );
 	option.add_relevant( OptionKeys::stepwise::protein::protein_prepack );
-	option.add_relevant( OptionKeys::stepwise::protein::protein_atr_rep_screen );
+	option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 	option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 	option.add_relevant( OptionKeys::stepwise::use_green_packer );
 	option.add_relevant( OptionKeys::stepwise::fixed_res );
@@ -506,6 +507,8 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	devel::init(argc, argv);
 
+	option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
+	option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup

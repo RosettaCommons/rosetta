@@ -17,20 +17,22 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/init/init.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
+#include <core/pose/util.hh>
+#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloUtil.hh>
+#include <protocols/stepwise/monte_carlo/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -69,11 +71,12 @@ stepwise_monte_carlo()
   using namespace core::chemical;
   using namespace core::pose::full_model_info;
   using namespace protocols::stepwise;
+  using namespace protocols::stepwise::sampling;
   using namespace protocols::stepwise::monte_carlo;
   using namespace protocols::stepwise::monte_carlo::rna;
   using namespace utility::file;
 
-	// Following could be generalized to fa_standard, after recent unification, but
+	// Following could be alignized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
@@ -97,26 +100,27 @@ stepwise_monte_carlo()
 
 	// actual pose to be sampled...
 	if ( pose.total_residue() > 0 ) ( *scorefxn )( pose );
-	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500 );
+	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
+	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, center_vector );
 
 	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
 	StepWiseMonteCarloOptionsOP options = new StepWiseMonteCarloOptions;
-	bool const test_move = option[ OptionKeys::stepwise::move ].user();
-	bool const preminimize_ = option[ OptionKeys::stepwise::preminimize ]();
-	if ( test_move || preminimize_ ) options->set_output_minimized_pose_list( true );
+	bool const just_preminimize = option[ OptionKeys::stepwise::preminimize ]();
+	bool const test_move = option[ OptionKeys::stepwise::move ].user() || just_preminimize;
+	if ( test_move ) options->set_output_minimized_pose_list( true );
 	options->initialize_from_command_line();
 	stepwise_monte_carlo.set_options( options );
 	stepwise_monte_carlo.set_native_pose( align_pose ); //allows for alignment to be to non-native
 	stepwise_monte_carlo.set_move( SWA_Move( option[ OptionKeys::stepwise::move ]() ) );
 	stepwise_monte_carlo.set_enumerate( option[ OptionKeys::stepwise::enumerate ]());
-	stepwise_monte_carlo.set_preminimize( preminimize_ );
+	stepwise_monte_carlo.set_just_preminimize( just_preminimize );
 
 	std::string const silent_file = option[ out::file::silent ]();
+	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
 	stepwise_monte_carlo.set_out_path( FileName( silent_file ).path() );
 
 	std::string out_tag;
 	Pose start_pose = pose;
-
 
 	// main loop
 	for ( Size n = 1; n <= Size( option[ out::nstruct ]() ); n++ ) {
@@ -125,9 +129,10 @@ stepwise_monte_carlo()
 		pose = start_pose;
 		stepwise_monte_carlo.set_model_tag( out_tag );
  		stepwise_monte_carlo.apply( pose );
-		if ( !test_move && !preminimize_ ) output_to_silent_file( out_tag, silent_file, pose, native_pose ); //rmsd is to native, which may not be align_pose.
+		if (!options->output_minimized_pose_list()) output_to_silent_file( out_tag, silent_file, pose, native_pose );
 	}
-	if ( preminimize_ ) pose.dump_pdb( "PREPACK.pdb" );
+
+	if ( just_preminimize ) pose.dump_pdb( "PREPACK.pdb" );
 }
 
 
@@ -155,6 +160,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( in::file::input_res );
 		option.add_relevant( in::file::native );
 		option.add_relevant( out::file::silent );
+		option.add_relevant( out::overwrite );
 		option.add_relevant( out::nstruct );
 		option.add_relevant( score::weights );
 		option.add_relevant( OptionKeys::full_model::other_poses );
@@ -184,20 +190,27 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::enumerate );
 		option.add_relevant( OptionKeys::stepwise::preminimize );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
-		option.add_relevant( OptionKeys::stepwise::rna::force_syn_chi_res_list );
+		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
 		option.add_relevant( OptionKeys::stepwise::rna::bulge_res );
-		option.add_relevant( OptionKeys::stepwise::rna::terminal_res );
+		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::stepwise::protein::skip_coord_constraints );
 		option.add_relevant( OptionKeys::stepwise::protein::filter_native_big_bins );
 		option.add_relevant( OptionKeys::stepwise::protein::protein_prepack );
-		option.add_relevant( OptionKeys::stepwise::protein::protein_atr_rep_screen );
+		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 
 		core::init::init(argc, argv);
+
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
+
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

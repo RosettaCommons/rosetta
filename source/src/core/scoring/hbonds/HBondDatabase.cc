@@ -621,7 +621,7 @@ HBondDatabase::initialize_don_strength() {
 		"scoring/score_functions/hbonds/" + params_database_tag_ + "/DonStrength.csv";
 	izstream s;
 
-	if ( !file_exists( full_name( don_strength_fname ) ) ) return;
+	if ( !file_exists( full_name( don_strength_fname, false /*warn*/ ) ) ) return;
 	open(s, don_strength_fname, false);
 
 	Size line_number(0);
@@ -667,7 +667,7 @@ HBondDatabase::initialize_acc_strength() {
 	string acc_strength_fname =
 		"scoring/score_functions/hbonds/" + params_database_tag_ + "/AccStrength.csv";
 	izstream s;
-	if ( !file_exists( full_name( acc_strength_fname ) ) ) return;
+	if ( !file_exists( full_name( acc_strength_fname, false /*warn*/ ) ) ) return;
 	open(s, acc_strength_fname, false);
 
 	Size line_number(0);

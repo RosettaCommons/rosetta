@@ -17,14 +17,10 @@
 #define INCLUDED_protocols_stepwise_screener_PoseSelectionScreener_HH
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
-#include <protocols/stepwise/screener/TagDefinition.fwd.hh>
-#include <protocols/stepwise/screener/PoseSelectionScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSelection.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/align/StepWiseClusterer.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
-using namespace protocols::stepwise::sampling::rna;
-using namespace core::pose;
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/types.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -35,13 +31,9 @@ namespace screener {
 	public:
 
 		//constructor
-		PoseSelectionScreener(  StepWiseRNA_PoseSelectionOP pose_selection,
-														Pose const & pose,
-														TagDefinitionOP tag_definition,
-														bool const output_to_silent_file,
-														std::string const silent_file,
-														PoseCOP native_pose,
-														StepWiseRNA_JobParametersCOP job_parameters );
+		PoseSelectionScreener( core::pose::Pose & pose,
+													 core::scoring::ScoreFunctionCOP scorefxn,
+													 sampling::align::StepWiseClustererOP stepwise_clusterer );
 
 		//destructor
 		~PoseSelectionScreener();
@@ -59,13 +51,9 @@ namespace screener {
 
 	private:
 
-		StepWiseRNA_PoseSelectionOP pose_selection_;
-		Pose const & pose_;
-		TagDefinitionOP tag_definition_;
-		bool const output_to_silent_file_;
-		std::string const silent_file_;
-		PoseCOP native_pose_;
-		StepWiseRNA_JobParametersCOP job_parameters_;
+		core::pose::Pose & pose_;
+		core::scoring::ScoreFunctionCOP scorefxn_;
+		sampling::align::StepWiseClustererOP stepwise_clusterer_;
 
 	};
 

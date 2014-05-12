@@ -47,10 +47,10 @@ public:
 	using protocols::moves::Mover::apply;
 
   void
-	apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering ) const;
+	apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering );
 
   void
-  apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering ) const;
+  apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
@@ -81,6 +81,7 @@ private:
 	protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler_;
 	StepWiseMonteCarloOptionsCOP options_;
 	bool minimize_after_delete_;
+	utility::vector1< Size > interface_res_;
 
 };
 

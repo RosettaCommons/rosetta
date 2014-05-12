@@ -20,7 +20,7 @@
 
 // Project headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 

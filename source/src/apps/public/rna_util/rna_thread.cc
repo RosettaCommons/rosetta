@@ -34,11 +34,11 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/PDBInfo.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -219,7 +219,7 @@ prepare_threaded_model(
 	using namespace utility;
 
 	// following creates pose from scratch! Assumes that we need to add/delete, and it changes the
-	// fold-tree -- both are probably bad ideas for a general threading routine.
+	// fold-tree -- both are probably bad ideas for a align threading routine.
 	// Would be better to add or delete residues as needed, trying to be smart about fold_tree [how?].
 	// And better to skip this part if add/delete not necessary -- i.e., just isolate the "mutate sequence" part.
 	Pose const template_pose = pose;

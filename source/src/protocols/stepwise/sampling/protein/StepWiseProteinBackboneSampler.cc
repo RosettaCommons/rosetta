@@ -16,9 +16,9 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/protein/StepWiseProteinBackboneSampler.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/sampling/protein/util.hh>
 #include <protocols/stepwise/sampling/protein/MainChainTorsionSet.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -28,15 +28,12 @@
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-
-#include <core/util/SwitchResidueTypeSet.hh>
-
-
 #include <core/pose/annotated_sequence.hh>
-
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
-
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -44,19 +41,12 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoreType.hh>
-#include <basic/Tracer.hh>
-#include <core/kinematics/Jump.hh>
-
-#include <core/scoring/dssp/Dssp.hh>
-
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
+#include <basic/Tracer.hh>
 
 #include <utility/exit.hh>
-
-#include <string>
-
-//Auto Headers
 #include <utility/vector1.hh>
 
 using namespace core;
@@ -78,13 +68,11 @@ namespace stepwise {
 namespace sampling {
 namespace protein {
 
-
-
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-  StepWiseProteinBackboneSampler::StepWiseProteinBackboneSampler(	 StepWiseProteinJobParametersCOP job_parameters ):
-		job_parameters_( job_parameters ),
-		moving_residues_input_( job_parameters_->working_moving_res_list() ),
+  StepWiseProteinBackboneSampler::StepWiseProteinBackboneSampler(	 working_parameters::StepWiseWorkingParametersCOP working_parameters ):
+		working_parameters_( working_parameters ),
+		moving_residues_input_( working_parameters_->working_moving_res_list() ),
 		n_sample_( 18 /* Corresponds to 20 degree bins */ ),
 		rmsd_cutoff_( -1.0 ),
 		silent_file_( "" ),
@@ -97,7 +85,7 @@ namespace protein {
 		nstruct_centroid_( 0 ),
 		ramachandran_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() ),
 		ghost_loops_( false ),
-		is_pre_proline_( job_parameters_->is_pre_proline() ),
+		is_pre_proline_( working_parameters_->is_pre_proline() ),
 		expand_loop_takeoff_( false ) // may switch to true soon. connects all psi,omega,phi in CA-to-CA connections.
   {
 		initialize_is_fixed_res();
@@ -243,15 +231,12 @@ namespace protein {
 					 MainChainTorsionSetList & main_chain_torsion_set_list )
 	 {
 		 using namespace core::chemical;
-
+		 utility::vector1< Size > const fixed_domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
 		 main_chain_torsion_set_list.clear();
 
 		 // following is totally hacky... would be much better to
 		 // figure out which bins would sum to give probability > 99%, or something like that.
 		 Real best_energy_cutoff = 0.8;
-		 // Not really necessary...
-		 //		 if ( pose.aa( n ) == aa_gly ) best_energy_cutoff = 0.8;
-		 //		if ( pose.aa( n ) == aa_pro ) best_energy_cutoff = 0.0;
 
 		 // A few special cases first.
 		 if ( n == 1
@@ -274,14 +259,16 @@ namespace protein {
 
 		 } else if ( is_fixed_res_[ n ] &&
 								 (n == pose.total_residue() || is_fixed_res_[ n+1 ]) &&
-								 (n > 1 && !is_fixed_res_[ n-1] )){
+								 (n > 1 && ( !is_fixed_res_[ n-1] ||
+														 ( fixed_domain_map[n-1] != fixed_domain_map[n] ) ) ) ){
 
 			 get_main_chain_torsion_set_list_sample_phi_only( n, pose,  best_energy_cutoff, main_chain_torsion_set_list );
 			 // TR << "Sampling phi only for: " << n << ' ' << main_chain_torsion_set_list.size() << std::endl;
 
 		 } else if ( is_fixed_res_[ n ] &&
 								 (n == 1 || is_fixed_res_[ n-1 ]) &&
-								 (n < pose.total_residue() && !is_fixed_res_[n+1] ) ){
+								 (n < pose.total_residue() && ( !is_fixed_res_[n+1] ||
+																								( fixed_domain_map[n] != fixed_domain_map[n+1] ) ) ) ){
 
 			 get_main_chain_torsion_set_list_sample_psi_only( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
 			 //			 TR << "Sampling psi only for: " << n << ' ' << main_chain_torsion_set_list.size() << std::endl;
@@ -432,8 +419,6 @@ namespace protein {
 																																						core::Real const energy_cutoff,
 																																						MainChainTorsionSetList & main_chain_torsion_set_list )
 	{
-		//		TR << "JUNCTION RESIDUE --> PREPEND " << n << std::endl;
-
 		// we are prepending and this is the junction residue. sample phi only!
 		Real best_rama_energy( 99999.999 ), best_phi( 0.0 );
 		Real const psi = pose.psi( n );
@@ -703,7 +688,7 @@ namespace protein {
   //////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinBackboneSampler::initialize_is_fixed_res(){
-		set_fixed_residues( job_parameters_->working_fixed_res() );
+		set_fixed_residues( working_parameters_->working_fixed_res() );
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -716,17 +701,15 @@ namespace protein {
 	void
 	StepWiseProteinBackboneSampler::set_fixed_residues( utility::vector1< Size > const & fixed_res ){
 		is_fixed_res_input_.clear();
-		for ( Size n = 1; n <= job_parameters_->working_sequence().size(); n++ ) is_fixed_res_input_.push_back( false );
+		for ( Size n = 1; n <= working_parameters_->working_sequence().size(); n++ ) is_fixed_res_input_.push_back( false );
 		for ( Size i = 1; i <= fixed_res.size(); i++ ){
 			is_fixed_res_input_[ fixed_res[i] ] = true;
 		}
 	}
 
-
 	/////////////////////////////////////////////////////////////
 	// This is basically deprecated... may not work anymore.
 	/////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const & template_pose, ResMap const & ghost_map ) const
 	{

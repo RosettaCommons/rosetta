@@ -79,6 +79,9 @@ public:
 	utility::vector1< Size > const & fixed_domain_map() const;
 	utility::vector1< Size > const & extra_minimize_res() const;
 	utility::vector1< Size > const & sample_res() const;
+	utility::vector1< Size > const & calc_rms_res() const;
+	utility::vector1< Size > const & rna_syn_chi_res() const;
+	utility::vector1< Size > const & rna_terminal_res() const;
 
 	void clear_res_list();
 
@@ -155,6 +158,9 @@ nonconst_full_model_info( core::pose::Pose & pose );
 // basically an alias to nonconst_full_model_info.
 FullModelInfo const &
 make_sure_full_model_info_is_setup( pose::Pose & pose );
+
+bool
+full_model_info_defined( pose::Pose const & pose );
 
 void
 set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info );

@@ -265,7 +265,7 @@ calc_nonlocal_segment_bb_rmsd(
 }
 
 //for a given set of residues in src_pose, find all residue sets that match in aln_pose
-//generalized to use segments greater than length 1 in the future
+//alignized to use segments greater than length 1 in the future
 void
 find_nonlocal_segment_alignments_in_pose(
 	Pose & pose,

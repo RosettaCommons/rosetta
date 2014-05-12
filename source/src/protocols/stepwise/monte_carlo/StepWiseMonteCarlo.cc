@@ -14,22 +14,21 @@
 
 
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloUtil.hh>
+#include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModeler.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModelerOptions.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -43,6 +42,7 @@
 #include <utility/file/file_sys_util.hh>
 
 using namespace core;
+using namespace protocols::stepwise::sampling;
 
 static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarlo" );
@@ -172,7 +172,7 @@ StepWiseMonteCarlo::initialize_movers(){
 
 	using namespace protocols::stepwise::sampling::rna;
 
-	stepwise_modeler_ = setup_stepwise_modeler();
+	stepwise_modeler_ = setup_unified_stepwise_modeler();
 	stepwise_modeler_->set_native_pose( get_native_pose() );
 
 	// maybe AddMover could just hold a copy of ResampleMover...
@@ -205,30 +205,23 @@ StepWiseMonteCarlo::initialize_movers(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // used in all movers.
 sampling::StepWiseModelerOP
-StepWiseMonteCarlo::setup_stepwise_modeler(){
-	using namespace sampling;
+StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
+ 	using namespace sampling;
 	using namespace sampling::rna;
-	using namespace sampling::protein;
-	// rna modeling.
-	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( scorefxn_ );
-	StepWiseRNA_ModelerOptionsOP rna_modeler_options = options_->setup_rna_modeler_options();
-	stepwise_rna_modeler->set_options( rna_modeler_options );
-	stepwise_rna_modeler->set_syn_chi_res_list( options_->syn_chi_res_list() );
-	stepwise_rna_modeler->set_terminal_res( options_->terminal_res() );
-	if ( enumerate_ ) rna_modeler_options->set_choose_random( false );
-	// to really match SWA:
-	// if ( enumerate_ && !options_->integration_test_mode() ) modeler_options->set_num_pose_minimize( 108 );
+ 	using namespace sampling::protein;
 
-	// protein modeling -- for now, keep separate in order to be able to rapidly reuse previous modules;
-	//  but later unify fully with RNA code..
-	StepWiseProteinModelerOP stepwise_protein_modeler = new StepWiseProteinModeler( scorefxn_ );
-	StepWiseProteinModelerOptionsOP protein_modeler_options = options_->setup_protein_modeler_options();
-	if ( enumerate_ ) protein_modeler_options->set_choose_random( false );
-	if ( just_preminimize_ ) protein_modeler_options->set_use_packer_instead_of_rotamer_trials( true );
-	stepwise_protein_modeler->set_options( protein_modeler_options );
+ 	StepWiseModelerOP stepwise_modeler = new StepWiseModeler( scorefxn_ );
+	StepWiseModelerOptionsOP modeler_options = options_->setup_modeler_options();
+	if ( enumerate_ ) {
+		modeler_options->set_choose_random( false );
+		if ( options_->num_pose_minimize() == 0 ) modeler_options->set_num_pose_minimize( 0 );
+	}
+	if ( just_preminimize_ ) modeler_options->set_use_packer_instead_of_rotamer_trials( true ); // for proteins.
+	stepwise_modeler->set_modeler_options( modeler_options );
 
-	return new StepWiseModeler( stepwise_rna_modeler, stepwise_protein_modeler );
-}
+ 	return stepwise_modeler;
+ }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -348,11 +341,13 @@ StepWiseMonteCarlo::do_test_move( pose::Pose & pose ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMonteCarlo::preminimize_pose( pose::Pose & pose ) {
-	stepwise_modeler_->set_skip_sampling( true );
-	stepwise_modeler_->set_moving_res_and_reset( 0 );
-	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	fix_up_residue_type_variants( pose );
+
+	stepwise_modeler_->set_moving_res_and_reset( 0 );
+	stepwise_modeler_->set_working_prepack_res( get_all_residues( pose ) );
+	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	stepwise_modeler_->apply( pose );
+
 	utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
 		preminimize_pose( *( other_pose_list[ n ] ) );

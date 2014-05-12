@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< NativeRMSD_Screener > NativeRMSD_ScreenerOP;
 	typedef utility::pointer::owning_ptr< NativeRMSD_Screener const > NativeRMSD_ScreenerCOP;
 	
-} //screener
-} //stepwise
-} //protocols
+} //screener 
+} //stepwise 
+} //protocols 
 
 #endif

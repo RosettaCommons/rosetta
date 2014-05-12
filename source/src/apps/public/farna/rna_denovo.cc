@@ -35,7 +35,7 @@
 //RNA stuff.
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 //#include <protocols/moves/PyMolMover.hh>
 
 // C++ headers

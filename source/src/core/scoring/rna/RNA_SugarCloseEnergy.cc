@@ -16,7 +16,7 @@
 #include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
 
 // Package Headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/func/HarmonicFunc.hh>

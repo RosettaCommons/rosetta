@@ -18,14 +18,18 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/chemical/rna/RNA_Util.hh> // for information on phosphate atoms.
+#include <core/chemical/rna/util.hh> // for information on phosphate atoms.
 
 #include <utility/exit.hh>
 
@@ -36,12 +40,34 @@ using ObjexxFCL::format::I;
 // C++ headers
 #include <map>
 
-#include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+static basic::Tracer TR( "protocols.toolbox.AllowInsert" );
 
 using namespace core;
 using core::id::AtomID;
 using core::id::NamedAtomID;
+
+///////////////////////////////////////////////////////////////////////////
+//
+// This object stores at the atom level information on domains in the pose,
+//  with a code for parts that are definitely moving and parts that are
+//  definitely fixed.
+//
+// Very useful for defining move-maps [including variable bond geometry.]
+//
+// Currently tied to a specific pose and atom numbering -- there's a mapping function for
+//  when pose variants change, based on NamedAtomID, but could bear some improvement.
+//
+// Note on domain code:
+//
+//     0      = moving
+//    1,2,... = part of input pose 1, 2, ...
+//   999      = FIXED
+//
+//    -- Rhiju Das, 2014
+//
+///////////////////////////////////////////////////////////////////////////
 
 namespace protocols{
 namespace toolbox{
@@ -100,6 +126,13 @@ namespace toolbox{
 	void
 	AllowInsert::initialize( core::pose::Pose const & pose )
 	{
+
+		using namespace core::pose::full_model_info;
+		utility::vector1< Size > fixed_domain( pose.total_residue(), 0 );
+
+		// pose can store some information on separate domains... check inside.
+		if ( full_model_info_defined( pose ) ) fixed_domain = get_fixed_domain_from_full_model_info_const( pose );
+
 		allow_insert_.clear();
 		for (Size i = 1; i <= pose.total_residue(); i++ ) {
 
@@ -109,7 +142,7 @@ namespace toolbox{
 
 				AtomID const atom_id( j, i );
 
-				allow_insert_[ atom_id ] = 0;
+				allow_insert_[ atom_id ] = fixed_domain[ i ];
 
 				// Needed in case of changes in atom names/indices
 				// The main allow_insert map is keyed on number but not names for speed.
@@ -150,12 +183,28 @@ namespace toolbox{
 		id::AtomID id1,id2,id3,id4;
 
 		bool const fail = conformation.get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
+
 		if (fail) return false;
 
+		//		TR << torsion_id << ": " << id1 << " " << get_domain( id1 ) << " -- " << id4 << " " << get_domain( id4 ) << std::endl;
 		if  ( !get( id1 ) && !get( id4 ) && ( get_domain( id1 ) == get_domain( id4 ) ) ) return false;
 
 		return true;
 
+	}
+
+	//////////////////////////////////////////////////////////////////
+	bool
+	AllowInsert::get_jump( Size const & jump_number, core::conformation::Conformation const & conformation ) const {
+
+		id::AtomID id1, id2;
+		bool const fail = conformation.get_jump_atom_ids( jump_number, id1, id2 );
+		if ( fail ) return false;
+
+		//		TR << jump_number << ": " << id1 << " " << get_domain( id1 ) << " -- " << id2 << " " << get_domain( id2 ) << std::endl;
+		if ( !get( id1 ) && !get( id2 ) && ( get_domain( id1 ) == get_domain( id2 ) ) ) return false;
+
+		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -195,6 +244,13 @@ namespace toolbox{
 	}
 
 	//////////////////////////////////////////////////////////////////
+	Size
+	AllowInsert::get_domain( core::id::NamedAtomID const & named_atom_id, pose::Pose const & pose  ) const{
+		AtomID atom_id = named_atom_id_to_atom_id( named_atom_id, pose );
+		return get_domain( atom_id );
+	}
+
+	//////////////////////////////////////////////////////////////////
 	void
 	AllowInsert::set_domain( Size const & i, Size const & setting  ){
 		for ( Size j = 1; j <= atom_ids_in_res_[ i ].size(); j++ ) {
@@ -219,6 +275,13 @@ namespace toolbox{
 		allow_insert_[ original_atom_id ] = setting;
 	}
 
+
+	//////////////////////////////////////////////////////////////////
+	void
+	AllowInsert::set_domain( core::id::NamedAtomID const & named_atom_id, pose::Pose const & pose, Size const & setting  ){
+		AtomID atom_id = named_atom_id_to_atom_id( named_atom_id, pose );
+		set_domain( atom_id, setting );
+	}
 
 	//////////////////////////////////////////////////////////////////
 	void
@@ -266,6 +329,12 @@ namespace toolbox{
 		set_domain( atom_id, ( setting ) ? 0 : FIXED_DOMAIN  );
 	}
 
+	//////////////////////////////////////////////////////////////////
+	void
+	AllowInsert::set( NamedAtomID const & named_atom_id, core::pose::Pose const & pose, bool const & setting  ){
+		AtomID atom_id = named_atom_id_to_atom_id( named_atom_id, pose );
+		set_domain( atom_id, ( setting ) ? 0 : FIXED_DOMAIN  );
+	}
 
 	//////////////////////////////////////////////////////////////////
 	void
@@ -465,8 +534,6 @@ namespace toolbox{
 		// }
 
 		calculate_atom_id_domain_map( pose );
-
-
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -498,6 +565,9 @@ namespace toolbox{
 															 Size const & i,
 															 bool const & setting ){
 
+		using namespace core::id;
+		using namespace core::chemical;
+
 		Size const domain = setting ? 0 : FIXED_DOMAIN;
 
 		utility::vector1< AtomID > atom_ids;
@@ -513,6 +583,43 @@ namespace toolbox{
 
 	}
 
+	////////////////////////////////////////////////////////////////////////////
+	// whoa, this is easy now!
+	////////////////////////////////////////////////////////////////////////////
+	void
+	AllowInsert::setup_movemap( core::kinematics::MoveMap & mm,
+															core::pose::Pose const & pose ){
+
+		using namespace core::id;
+
+		runtime_assert( pose.total_residue() == nres() );
+
+		mm.set_bb( false );
+		mm.set_chi( false );
+		mm.set_jump( false );
+
+		for ( Size i = 1; i <= nres(); i++ ){
+
+			utility::vector1< TorsionID > torsion_ids;
+			for ( Size torsion_number = 1; torsion_number <= pose.residue( i ).mainchain_torsions().size(); torsion_number++ ) {
+				torsion_ids.push_back( TorsionID( i, id::BB, torsion_number ) );
+			}
+			for ( Size torsion_number = 1; torsion_number <= pose.residue_type( i ).nchi(); torsion_number++ ) {
+				torsion_ids.push_back( TorsionID( i, id::CHI, torsion_number ) );
+			}
+
+			for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
+				TorsionID const & torsion_id  = torsion_ids[ n ];
+				if ( get( torsion_id, pose.conformation() ) ) mm.set( torsion_id, true );
+			}
+		}
+
+		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+			if ( get_jump( n, pose.conformation() ) ) {
+				mm.set_jump( n, true );
+			}
+		}
+	}
 
 }
 }

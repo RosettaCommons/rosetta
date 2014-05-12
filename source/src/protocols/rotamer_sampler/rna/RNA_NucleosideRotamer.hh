@@ -22,7 +22,7 @@
 
 // Project headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 using namespace core::chemical::rna;
 

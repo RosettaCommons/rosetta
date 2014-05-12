@@ -592,8 +592,8 @@ struct PoseWrap : public ReferenceCount {
 		}
 		nres = pose.n_residue();
 		// Size lt = 1, ut = pose.n_residue();
-		// while( lt <= attach_as_sc_in.size() && attach_as_sc_in[lt] ) lt += poses[lt].n_residue(); // TODO: make more general
-		// if( attach_as_sc_in[poses.size()] ) ut -=  poses[poses.size()].n_residue(); // TODO: make more general
+		// while( lt <= attach_as_sc_in.size() && attach_as_sc_in[lt] ) lt += poses[lt].n_residue(); // TODO: make more align
+		// if( attach_as_sc_in[poses.size()] ) ut -=  poses[poses.size()].n_residue(); // TODO: make more align
 		// add_lower_terminus_type_to_pose_residue(pose,lt);
 		// add_upper_terminus_type_to_pose_residue(pose,ut);
 

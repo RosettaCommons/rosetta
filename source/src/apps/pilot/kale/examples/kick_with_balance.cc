@@ -60,7 +60,7 @@ int main(int argc, char* argv []) {
 	// Apply a kinematic closure move to the pose.  Because the move seems to be 
 	// random (i.e. I can't fix the random seed), I can't compare future results 
 	// against a single fixed structure.  However, I do know that this structure 
-	// with these pivots should generally give good results.  Hopefully this will 
+	// with these pivots should alignly give good results.  Hopefully this will 
 	// change if I accidentally break the closure algorithm.
 
 	mover->apply(pose);

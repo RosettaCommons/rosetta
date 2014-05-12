@@ -10,7 +10,7 @@
 
 
 
-//#include <core/chemical/rna/RNA_Util.hh>
+//#include <core/chemical/rna/util.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/Bicubic_spline.hh>

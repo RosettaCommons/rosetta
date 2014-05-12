@@ -17,9 +17,9 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>

@@ -33,6 +33,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/adduct_util.hh>
+#include <core/chemical/util.hh>
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -54,6 +55,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/orbitals/AssignOrbitals.hh>
 
@@ -61,6 +63,7 @@
 #include <boost/foreach.hpp>
 
 #include <utility/vector1.hh>
+#include <utility/file/file_sys_util.hh>
 
 using namespace basic::options;
 
@@ -197,6 +200,10 @@ ResidueTypeSet::ResidueTypeSet(
 		while ( getline( data,line) ) {
 			if ( line.size() < 1 || line[0] == '#' ) continue;
 
+			// get rid of any comment lines.
+			line = utility::string_split( line, '#' )[1];
+			line = utility::string_split( line, ' ' )[1];
+
 			// Skip carbohydrate patches unless included with include_sugars flag.
 			if ((!option[OptionKeys::in::include_sugars]) &&
 					(line.substr(0, 21) == "patches/carbohydrates")) {
@@ -223,6 +230,10 @@ ResidueTypeSet::ResidueTypeSet(
 					option[ OptionKeys::chemical::include_patches ];
 			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
 				utility::file::FileName fname( includelist[ ii ] );
+				if ( !utility::file::file_exists( directory + includelist[ ii ] ) ) {
+					tr.Warning << "Could not find: " << directory+includelist[ii]  << std::endl;
+					continue;
+				}
 				patch_filenames.push_back( directory + includelist[ ii ]);
 				tr << "While generating ResidueTypeSet " << name <<
 						": Including patch " << fname << " as requested" << std::endl;
@@ -255,6 +266,14 @@ ResidueTypeSet::ResidueTypeSet(
 
 	tr << "Finished initializing " << name << " residue type set.  ";
 	tr << "Created " << residue_types_.size() << " residue types" << std::endl;
+
+	// Sanity check. Might be good to tighten this limit -- fa_standard appears under 1500 residue types in most use cases.
+	Size const MAX_RESIDUE_TYPES = 3000;
+	if ( residue_types_.size() > MAX_RESIDUE_TYPES && !option[ OptionKeys::chemical::override_rsd_type_limit ]() ){
+		std::string const error_message = "Number of residue types is greater than MAX_RESIDUE_TYPES. Rerun with -override_rsd_type_limit. Or if you have introduced a bunch of patches, consider declaring only the ones you want to use at the top of your app (with the options) with the command option[ chemical::include_patches ].push_back( ... ). ";
+		std::cerr << error_message << std::endl;
+		if ( !option[ OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() ) utility_exit_with_message( error_message );
+	}
 }
 
 
@@ -356,9 +375,13 @@ ResidueTypeSet::name3_map( std::string const & name ) const
 /// @details since residue id is unique, it only returns
 /// one residue type or exit without match.
 ResidueType const &
-ResidueTypeSet::name_map( std::string const & name ) const
+ResidueTypeSet::name_map( std::string const & name_in ) const
 {
+	std::string const name = fixup_patches( name_in );
 	if ( name_map_.find( name ) == name_map_.end() ) {
+		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
+					it != name_map_.end(); it++ ) tr << it->first << std::endl;
+
 		utility_exit_with_message( "unrecognized residue name '"+name+"'" );
 	}
 	return *( name_map_.find( name )->second );

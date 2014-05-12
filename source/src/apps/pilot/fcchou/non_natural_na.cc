@@ -19,7 +19,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/annotated_sequence.hh>
 
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 #include <utility/io/ozstream.hh>
 #include <core/pose/Pose.hh>

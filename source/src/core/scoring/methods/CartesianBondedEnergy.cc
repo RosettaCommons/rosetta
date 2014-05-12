@@ -29,6 +29,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/Patch.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
@@ -184,7 +185,7 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 
 	if(core::chemical::is_canonical_D_aa(restype.aa())) {
 		std::string rsdname = restype.name();
-		if(rsdname.substr(0, rsdname.find("_p:")) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
+		if(rsdname.substr(0, rsdname.find(chemical::patch_linker)) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
 		return rsdname;
 	}
@@ -192,7 +193,7 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 		return restype.name3();
 	else {
 		std::string rsdname = restype.name();
-		rsdname = rsdname.substr( 0, rsdname.find("_p:") );
+		rsdname = rsdname.substr( 0, rsdname.find(chemical::patch_linker) );
 		return rsdname;
 	}
 }
@@ -1197,14 +1198,14 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 	std::string rsdname = rsd_type.name();
  	if (core::chemical::is_canonical_D_aa( rsd_type.aa() ) ) { 	//Get the L-equivalent name if this is a D-amnio acid:
-		if(rsdname.substr(0, rsdname.find("_p:")) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
+		if(rsdname.substr(0, rsdname.find(chemical::patch_linker)) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname = core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) );
 	}
-	else { //Otherwise just get the name, up to "_p:".
-		rsdname = rsdname.substr( 0, rsdname.find("_p:") );
+	else { //Otherwise just get the name, up to chemical::patch_linker (":").
+		rsdname = rsdname.substr( 0, rsdname.find(chemical::patch_linker) );
 	}
 	// Skip if residue type is neither wildcard nor given residue type
-	// Is there better way of taking care of patched residues like "Gly_p:XXXX" ?
+	// Is there better way of taking care of patched residues like "Gly:XXXX" ?
 	//if( rsdname.compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
 
 	// Iter over parameters - this would be fast enough as far as parameter size is small enough

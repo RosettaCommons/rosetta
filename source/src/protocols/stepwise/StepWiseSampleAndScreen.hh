@@ -67,6 +67,9 @@ namespace stepwise {
 		void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
 		core::Size num_random_samples() const{ return num_random_samples_; }
 
+		void set_verbose( bool const & setting ){ verbose_ = setting; }
+		bool verbose() const{ return max_ntries_; }
+
 	private:
 
 		void set_ok_to_increment();
@@ -79,6 +82,7 @@ namespace stepwise {
 		utility::vector1< screener::StepWiseScreenerOP > screeners_;
 		core::Size max_ntries_;
 		core::Size num_random_samples_;
+		bool verbose_;
 
 	};
 

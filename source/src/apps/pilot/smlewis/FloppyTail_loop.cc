@@ -181,7 +181,7 @@ public:
 		centroid_scorefunction_->set_weight( env,         1.0 );
 		centroid_scorefunction_->set_weight( cbeta,       1.0 );
 		centroid_scorefunction_->set_weight( vdw,         1.0 );
-		centroid_scorefunction_->set_weight( pair, (pair_off ? 0.0 : 1.0) ); //no pair term experiment - not for general use
+		centroid_scorefunction_->set_weight( pair, (pair_off ? 0.0 : 1.0) ); //no pair term experiment - not for align use
 		centroid_scorefunction_->set_weight( cenpack,     1.0 );
 		centroid_scorefunction_->set_weight( rama,        1.0 );
 		centroid_scorefunction_->set_weight( hbond_lr_bb, 1.0 );
@@ -192,7 +192,7 @@ public:
 		//set up fullatom scorefunction
 		fullatom_scorefunction_ = getScoreFunction();
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
-		if( pair_off ) fullatom_scorefunction_->set_weight( fa_pair, 0.0 ); //not for general use
+		if( pair_off ) fullatom_scorefunction_->set_weight( fa_pair, 0.0 ); //not for align use
 		TR << "Using fullatom scorefunction (TALARIS_2013), pair may be modified\n"
 			 << *fullatom_scorefunction_;
 

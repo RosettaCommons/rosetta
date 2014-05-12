@@ -14,89 +14,262 @@
 
 
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModeler.hh>
-#include <core/chemical/ResidueType.hh>
+#include <protocols/stepwise/sampling/StepWiseConnectionSampler.hh>
+#include <protocols/stepwise/sampling/StepWiseMinimizer.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/sampling/packer/StepWiseMasterPacker.hh>
+#include <protocols/stepwise/sampling/packer/StepWisePacker.hh>
+#include <protocols/stepwise/sampling/packer/util.hh>
+#include <protocols/stepwise/sampling/protein/util.hh>
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/working_parameters/util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/align/StepWiseLegacyClusterer.hh>
+#include <protocols/stepwise/sampling/align/StepWisePoseAligner.hh>
+#include <protocols/stepwise/monte_carlo/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/full_model_info/util.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <utility/stream_util.hh>
+#include <utility/tools/make_vector1.hh>
+
+#include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.sampling.StepWiseModeler" );
 
 using namespace core;
+using namespace core::pose;
+using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::sampling::protein;
+using utility::tools::make_vector1;
 
 namespace protocols {
 namespace stepwise {
 namespace sampling {
 
 	//Constructor
-	StepWiseModeler::StepWiseModeler( rna::StepWiseRNA_ModelerOP stepwise_rna_modeler,
-									 protein::StepWiseProteinModelerOP stepwise_protein_modeler ):
-		stepwise_rna_modeler_( stepwise_rna_modeler ),
-		stepwise_protein_modeler_( stepwise_protein_modeler ),
-		moving_res_( 0 )
+  StepWiseModeler::StepWiseModeler( Size const moving_res, core::scoring::ScoreFunctionCOP scorefxn ):
+		scorefxn_( scorefxn ),
+		figure_out_prepack_res_( false ),
+		prepack_res_was_inputted_( false )
 	{
+		set_moving_res_and_reset( moving_res );
 	}
+
+	//Constructor
+	StepWiseModeler::StepWiseModeler( core::scoring::ScoreFunctionCOP scorefxn ):
+		moving_res_( 0 ),
+		scorefxn_( scorefxn ),
+		figure_out_prepack_res_( false ),
+		prepack_res_was_inputted_( false )
+	{}
 
 	//Destructor
 	StepWiseModeler::~StepWiseModeler()
 	{}
 
+	//////////////////////////////////////////////////////////////////////////////
 	StepWiseModeler::StepWiseModeler( StepWiseModeler const & src ):
 		Mover( src )
 	{
 		*this = src;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	StepWiseModelerOP
 	StepWiseModeler::clone_modeler() const {
 		return new StepWiseModeler( *this );
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	StepWiseModeler &
 	StepWiseModeler::operator=( StepWiseModeler const & src ){
-		stepwise_rna_modeler_ = src.stepwise_rna_modeler_->clone_modeler();
-		stepwise_protein_modeler_ = src.stepwise_protein_modeler_->clone_modeler();
+
+		moving_res_ = src.moving_res_;
+		moving_res_list_ = src.moving_res_list_;
+
+		modeler_options_ = src.modeler_options_;
+		scorefxn_ = src.scorefxn_;
+		working_prepack_res_ = src.working_prepack_res_;
+		working_minimize_res_ = src.working_minimize_res_;
+		input_streams_ = src.input_streams_;
+		figure_out_prepack_res_ = src.figure_out_prepack_res_;
+		prepack_res_was_inputted_ = src.prepack_res_was_inputted_;
+
 		return *this;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseModeler::apply( pose::Pose & pose ){
-		Size const example_res = ( moving_res_ > 0 ) ? moving_res_ : 1;
-		if ( pose.residue_type( example_res ).is_RNA() ){
-			stepwise_rna_modeler_->apply( pose );
-		} else {
-			runtime_assert( pose.residue_type( example_res ).is_protein() );
-			stepwise_protein_modeler_->apply( pose );
+
+		initialize( pose );
+
+		do_prepacking( pose );
+		do_sampling( pose );
+		if ( sampling_successful() ) do_minimizing( pose );
+
+		reinitialize( pose );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::initialize( pose::Pose & pose ){
+		initialize_working_parameters_and_root( pose );
+		runtime_assert( moving_res_list_.size() > 0 || prepack_res_was_inputted_ || figure_out_prepack_res_ ); // otherwise this is a no op.
+		initialize_scorefunctions( pose );
+		pose_list_.clear();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::do_prepacking( core::pose::Pose & pose ) {
+
+		master_packer_ = new packer::StepWiseMasterPacker( working_parameters_, modeler_options_->get_sampler_options() );
+		master_packer_->set_scorefxn( pack_scorefxn_ );
+		master_packer_->initialize( pose );
+
+		if ( working_prepack_res_.size() == 0 ) return;
+
+		master_packer_->set_working_pack_res( working_prepack_res_ );
+		master_packer_->do_prepack( pose ); // will split at moving_res_list
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::do_sampling( core::pose::Pose & pose ) {
+
+		StepWiseConnectionSampler stepwise_sampler( working_parameters_ );
+		stepwise_sampler.set_options( modeler_options_->get_sampler_options() ); // careful!
+		stepwise_sampler.set_scorefxn( sample_scorefxn_ );
+		stepwise_sampler.set_input_streams( input_streams_ );
+		stepwise_sampler.set_master_packer( master_packer_ );
+
+		stepwise_sampler.apply( pose );
+		pose_list_                 = stepwise_sampler.get_pose_list();
+
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::do_minimizing( core::pose::Pose & pose ) {
+		StepWiseMinimizer stepwise_minimizer( pose_list_,
+																					working_parameters_,
+																					modeler_options_,
+																					scorefxn_ );
+		if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
+			stepwise_minimizer.set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
 		}
+		stepwise_minimizer.apply( pose ); // will save work in pose_list_
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::reinitialize( pose::Pose & pose ){
+
+		pose.remove_constraints(); // modeler can stick in additional constraints
+
+		// Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
+		working_parameters_ = 0;
+		moving_res_list_.clear();
+		working_prepack_res_.clear();
+		working_minimize_res_.clear();
+		figure_out_prepack_res_ = false;
+		prepack_res_was_inputted_ = false;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseModeler::set_moving_res_and_reset( Size const moving_res ){
 		moving_res_ = moving_res;
-		stepwise_rna_modeler_->set_moving_res_and_reset( moving_res );
-		stepwise_protein_modeler_->set_moving_res_and_reset( moving_res );
+		working_parameters_ = 0;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseModeler::set_native_pose( pose::PoseCOP native_pose ){
-		stepwise_rna_modeler_->set_native_pose( native_pose );
-		stepwise_protein_modeler_->set_native_pose( native_pose );
+	StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
+		pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+		figure_out_moving_res_list( pose );
+
+		if ( working_parameters_ != 0 ) return;
+
+		revise_root_and_moving_res_list( pose, moving_res_list_ ); // specify reference_res_? [i.e. anchor_res?]
+
+		Real const rmsd_screen = modeler_options_->rmsd_screen();
+		if ( !modeler_options_->disallow_realign() ) align_pose_and_add_rmsd_constraints( pose, get_native_pose(), moving_res_list_, rmsd_screen );
+		working_parameters_ = working_parameters::setup_working_parameters_for_swa( moving_res_list_, pose,	get_native_pose(),
+																																								modeler_options_->bridge_res(), working_minimize_res_  );
+
+		if ( figure_out_prepack_res_ ) {
+			( *scorefxn_ )( pose ); // ideally would just be able to assemble a nbr list without going through scoring...
+			working_prepack_res_ = packer::figure_out_working_interface_res( pose, get_all_working_moving_res( working_parameters_ ) );
+		}
 	}
 
+	////////////////////////////////////////////////////////////////////
 	void
-	StepWiseModeler::set_working_minimize_res( utility::vector1< Size > const & working_minimize_res ){
-		stepwise_rna_modeler_->set_working_minimize_res( working_minimize_res );
-		stepwise_protein_modeler_->set_working_minimize_res( working_minimize_res );
+	StepWiseModeler::figure_out_moving_res_list( pose::Pose const & pose ){
+		if ( moving_res_list_.size() > 0 ) return; // in principle, SWA can explicitly give moving_res_list
+
+		// otherwise, figure it out from moving_res_ (single residue!)
+		figure_out_moving_res_list_from_most_distal_res( pose, moving_res_ );
 	}
 
+
+	////////////////////////////////////////////////////////////////////
 	void
-	StepWiseModeler::set_skip_sampling( bool const & skip_sampling ){
-		stepwise_rna_modeler_->set_skip_sampling( skip_sampling );
-		stepwise_protein_modeler_->set_skip_sampling( skip_sampling );
+	StepWiseModeler::figure_out_moving_res_list_from_most_distal_res( pose::Pose const & pose, Size const moving_res ) {
+
+		moving_res_list_.clear();
+		if ( moving_res == 0 ) return;
+
+		moving_res_list_.push_back( moving_res );
+
+		// this goes back one residue (default behavior in protein case -- two amino acids)
+		figure_out_protein_modeling_info( pose, moving_res, moving_res_list_ );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseModeler::sampling_successful() {
+		Size const num_sampled = pose_list_.size();
+		if ( num_sampled == 0 ){
+			TR << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << std::endl;
+			if ( modeler_options_ && !modeler_options_->output_minimized_pose_list() ) return false; // don't do a minimize...
+		}
+		return true;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::initialize_scorefunctions( pose::Pose const & pose ){
+		sample_scorefxn_ = initialize_sample_scorefxn( scorefxn_, pose,	modeler_options_ );
+		pack_scorefxn_   = initialize_pack_scorefxn( sample_scorefxn_, pose );
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::set_working_parameters( working_parameters::StepWiseWorkingParametersCOP working_parameters ){
+		working_parameters_ = working_parameters;
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	working_parameters::StepWiseWorkingParametersCOP
+	StepWiseModeler::working_parameters() { return working_parameters_; }
+
+	/////////////////////////////////////////////////////////////////////
+	void
+	StepWiseModeler::set_input_streams( utility::vector1< protein::InputStreamWithResidueInfoOP > const & input_streams ){
+		input_streams_ = input_streams;
 	}
 
 } //sampling

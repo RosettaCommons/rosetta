@@ -79,7 +79,7 @@ namespace rna {
 
 		void set_enumerate( bool const setting ){ enumerate_ = setting; }
 
-		void set_preminimize( bool const setting ){ just_preminimize_ = setting; }
+		void set_just_preminimize( bool const setting ){	just_preminimize_ = setting; }
 
 	private:
 
@@ -114,7 +114,7 @@ namespace rna {
 		do_test_move( pose::Pose & pose );
 
 		sampling::StepWiseModelerOP
-		setup_stepwise_modeler();
+		setup_unified_stepwise_modeler();
 
 		void
 		preminimize_pose( pose::Pose & pose );

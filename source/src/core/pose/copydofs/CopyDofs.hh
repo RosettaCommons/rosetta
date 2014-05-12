@@ -81,14 +81,7 @@ namespace copydofs {
 		std::map< id::AtomID, Size > atom_id_domain_map_;
 		bool const atom_id_domain_map_inputted_;
 		CopyDofsInfo copy_dofs_info_;
-
 	};
-
-	void
-	apply_dofs( pose::Pose & pose, CopyDofsInfo const & copy_dofs_info );
-
-	std::map< id::AtomID, Size >
-	blank_atom_id_domain_map( pose::Pose const & pose );
 
 
 } //copy_dofs

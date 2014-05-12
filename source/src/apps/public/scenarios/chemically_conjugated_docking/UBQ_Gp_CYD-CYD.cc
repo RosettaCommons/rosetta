@@ -180,7 +180,7 @@ public:
 		//replace with CYD on ubiquitin too
 		//TR << UBQ.residue_type(UBQ_term).name() << std::endl;
 		//core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD"));
-		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD_p:CtermProteinFull"));
+		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD:CtermProteinFull"));
 		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyd_rsd_term_type, true), true);
 
 		// check safety of connections (from phil)

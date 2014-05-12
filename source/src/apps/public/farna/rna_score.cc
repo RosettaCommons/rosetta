@@ -37,7 +37,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -74,7 +74,7 @@ rna_score_test()
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
-	using namespace protocols::stepwise;
+	using namespace protocols::stepwise::sampling;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );

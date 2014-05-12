@@ -16,7 +16,7 @@
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 
 // Package headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>

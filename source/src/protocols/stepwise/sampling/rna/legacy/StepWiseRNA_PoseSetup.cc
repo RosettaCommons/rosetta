@@ -15,18 +15,18 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/rna/sugar/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/farna/util.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -35,10 +35,12 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/copydofs/util.hh>
+#include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/TorsionID.hh>
@@ -64,7 +66,7 @@ using core::Real;
 // Setup pose for StepWiseRNA Assembly, by Parin Sripakdeevong.
 // Some code cleanup by Rhiju (2013).
 //
-// To do: clean up & generalize protonated A variant.
+// To do: clean up & alignize protonated A variant.
 //        unification with new FullModelInfo?
 //
 //////////////////////////////////////////////////////////////////////////
@@ -80,9 +82,9 @@ namespace legacy {
 
 //////////////////////////////////////////////////////////////////////////
 //constructor!
-StepWiseRNA_PoseSetup::StepWiseRNA_PoseSetup( StepWiseRNA_JobParametersOP & job_parameters ):
+StepWiseRNA_PoseSetup::StepWiseRNA_PoseSetup( working_parameters::StepWiseWorkingParametersOP & working_parameters ):
 	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
-	job_parameters_( job_parameters ),
+	working_parameters_( working_parameters ),
 	copy_DOF_( false ),
 	verbose_( true ),
 	output_pdb_( false ), //Sept 24, 2011
@@ -109,7 +111,7 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 
 	output_title_text( "Enter StepWiseRNA_PoseSetup::apply", TR.Debug );
 	create_starting_pose( pose );
-	if ( use_phenix_geo_ ) pose::rna::apply_pucker( pose, job_parameters_->working_moving_res() );
+	if ( use_phenix_geo_ ) pose::rna::apply_pucker( pose, working_parameters_->working_moving_res() );
 	apply_cutpoint_variants( pose );
 	apply_virtual_phosphate_variants( pose );
 	add_protonated_H1_adenosine_variants( pose );
@@ -121,9 +123,9 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 	instantiate_residue_if_rebuilding_bulge( pose );
 	update_fold_tree_at_virtual_sugars( pose );
 
-	if ( job_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root( pose ); //Fang's electron density code.
+	if ( working_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root( pose ); //Fang's electron density code.
 
-	setup_pdb_info_with_working_residue_numbers( pose );
+	setup_full_model_info( pose );
 
 	if ( output_pdb_ ) pose.dump_pdb( "start.pdb" );
 
@@ -141,14 +143,14 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 
 	if ( verbose_ ) output_title_text( "Enter StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
 
-	utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
-	std::string const & working_sequence( job_parameters_->working_sequence() );
-	utility::vector1< core::Size > const & working_best_alignment( job_parameters_->working_best_alignment() );
-	utility::vector1< core::Size > const & working_moving_res_list( job_parameters_->working_moving_res_list() );
+	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
+	std::string const & working_sequence( working_parameters_->working_sequence() );
+	utility::vector1< core::Size > const & working_best_alignment( working_parameters_->working_best_alignment() );
+	utility::vector1< core::Size > const & working_moving_res_list( working_parameters_->working_moving_res_list() );
 
-	utility::vector1< core::Size > const working_native_virtual_res_list_ = apply_full_to_sub_mapping( native_virtual_res_list_, StepWiseRNA_JobParametersCOP( job_parameters_ ) );
+	utility::vector1< core::Size > const working_native_virtual_res_list_ = apply_full_to_sub_mapping( native_virtual_res_list_, working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ) );
 
-	utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos(); //Sept 14, 2011.
+	utility::vector1 < core::Size > const & working_moving_partition_res = working_parameters_->working_moving_partition_res(); //Sept 14, 2011.
 
 	if ( !get_native_pose() ) return;
 	// Need a simple fold tree for following to work...
@@ -158,7 +160,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	PoseOP working_native_pose = new Pose;
 
 	//First option is to pass in the full length native
-	if ( native_pose_copy.sequence() ==  job_parameters_->full_sequence() ){
+	if ( native_pose_copy.sequence() ==  working_parameters_->full_sequence() ){
 		TR.Debug << "User passed in full length native pose" << std::endl;
 
 		( *working_native_pose ) = native_pose_copy;
@@ -174,7 +176,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		( *working_native_pose ) = native_pose_copy;
 	} else{
 		TR.Debug <<  std::setw( 50 ) << "  native_pose_copy.sequence() = " << native_pose_copy.sequence()  << std::endl;
-		TR.Debug <<  std::setw( 50 ) << "  job_parameters_->full_sequence() = " << job_parameters_->full_sequence() << std::endl;
+		TR.Debug <<  std::setw( 50 ) << "  working_parameters_->full_sequence() = " << working_parameters_->full_sequence() << std::endl;
 		TR.Debug <<  std::setw( 50 ) << "  working_sequence = " << working_sequence << std::endl;
 		utility_exit_with_message( "The native pose passed in by the User does not match both the full_sequence and the working sequence of the inputted fasta_file" );
 	}
@@ -185,14 +187,12 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		utility_exit_with_message( "working_native_pose->sequence() !=  working_sequence" );
 	}
 
-
 	protocols::farna::make_phosphate_nomenclature_matches_mini( ( *working_native_pose ) );
-
 
 	utility::vector1< core::Size > act_working_alignment;
 	act_working_alignment.clear();
 
-	utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();
+	utility::vector1< core::Size > const & working_native_alignment = working_parameters_->working_native_alignment();
 
 	if ( working_native_alignment.size() != 0 ){ //User specified the native alignment res.
 		TR.Debug << "working_native_alignment.size() != 0!, align native_pose with working_native_alignment!" << std::endl;
@@ -200,7 +200,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		for ( Size n = 1; n <= working_native_alignment.size(); n++ ){
 			Size const seq_num = working_native_alignment[n];
 			if ( working_moving_res_list.has_value( seq_num ) ) continue;
-			if ( working_moving_partition_pos.has_value( seq_num ) ) continue; //Sept 14, 2011.
+			if ( working_moving_partition_res.has_value( seq_num ) ) continue; //Sept 14, 2011.
 			act_working_alignment.push_back( seq_num );
 		}
 
@@ -211,7 +211,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		for ( Size n = 1; n <= working_best_alignment.size(); n++ ){
 			Size const seq_num = working_best_alignment[n];
 			if ( working_moving_res_list.has_value( seq_num ) ) continue;
-			if ( working_moving_partition_pos.has_value( seq_num ) ) continue; //Sept 14, 2011.
+			if ( working_moving_partition_res.has_value( seq_num ) ) continue; //Sept 14, 2011.
 			act_working_alignment.push_back( seq_num );
 		}
 	}
@@ -219,14 +219,13 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 
 	output_seq_num_list( "act_working_alignment = ", act_working_alignment, TR.Debug );
 	output_seq_num_list( "working_moving_res_list = ", working_moving_res_list, TR.Debug );
-	output_seq_num_list( "working_moving_partition_pos = ", working_moving_partition_pos, TR.Debug );
+	output_seq_num_list( "working_moving_partition_res = ", working_moving_partition_res, TR.Debug );
 	output_seq_num_list( "working_native_alignment = ", working_native_alignment, TR.Debug );
 	output_seq_num_list( "working_best_alignment = ", working_best_alignment, TR.Debug );
 
 	if ( act_working_alignment.size() == 0 ) utility_exit_with_message( "act_working_alignment.size() == 0" );
 
-
-	if ( job_parameters_ -> add_virt_res_as_root() ) { //Fang's electron density code
+	if ( working_parameters_ -> add_virt_res_as_root() ) { //Fang's electron density code
 
 		//Fang why do you need this?////
 		pose::Pose dummy_pose = *working_native_pose;
@@ -247,7 +246,8 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		align_poses( ( *working_native_pose ), "working_native_pose", pose, "working_pose", act_working_alignment );
 
 	}
-	job_parameters_->set_working_native_pose( working_native_pose );
+	setup_full_model_info( *working_native_pose );
+	working_parameters_->set_working_native_pose( working_native_pose );
 
 	//Setup cutpoints, chain_breaks, variant types here!
 
@@ -289,8 +289,8 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 
 	///////////////////////////////
 	// Check for sequence match.
-	utility::vector1< Size > const & input_res = job_parameters_->input_res_vectors()[i];
-	std::string const & full_sequence = job_parameters_->full_sequence();
+	utility::vector1< Size > const & input_res = working_parameters_->input_res_vectors()[i];
+	std::string const & full_sequence = working_parameters_->full_sequence();
 	runtime_assert ( import_pose.total_residue() == input_res.size() );
 	bool match( true );
 	for ( Size n = 1; n <= import_pose.total_residue(); n++ ) {
@@ -308,7 +308,7 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 ////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_PoseSetup::make_extended_pose( pose::Pose & pose ){
-	make_pose_from_sequence( pose, job_parameters_->working_sequence(),
+	make_pose_from_sequence( pose, working_parameters_->working_sequence(),
 													 *rsd_set_, false /*auto_termini*/ );
 	if ( output_pdb_ ){
 		TR.Debug << "outputting extended_chain.pdb" << std::endl;
@@ -323,7 +323,7 @@ StepWiseRNA_PoseSetup::create_starting_pose( pose::Pose & pose ){
 	if ( copy_DOF_ ) {
 		create_pose_from_input_poses( pose );
 	}	else {
-		pose.fold_tree( job_parameters_->fold_tree() );
+		pose.fold_tree( working_parameters_->fold_tree() );
 	}
 }
 
@@ -332,7 +332,7 @@ void
 StepWiseRNA_PoseSetup::create_pose_from_input_poses( pose::Pose & pose )
 {
 	make_extended_pose( pose );
-	pose.fold_tree( job_parameters_->fold_tree() );
+	pose.fold_tree( working_parameters_->fold_tree() );
 	TR.Debug << "read_input_pose_and_copy_dofs( pose )" << std::endl;
 	read_input_pose_and_copy_dofs( pose );
 }
@@ -347,9 +347,9 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 	runtime_assert( input_tags_.size() >= 1 );
 	runtime_assert( copy_DOF_ );
 
-	std::string const working_sequence = job_parameters_->working_sequence();
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
-	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
+	std::string const working_sequence = working_parameters_->working_sequence();
+	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< pose::Pose > start_pose_list;
 
 	Pose start_pose;
@@ -367,7 +367,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		start_pose_with_variant = start_pose;
 		start_pose_list.push_back( start_pose );
 
-		utility::vector1< Size > const & input_res = job_parameters_->input_res_vectors()[i]; //This is from input_pose numbering to full_pose numbering
+		utility::vector1< Size > const & input_res = working_parameters_->input_res_vectors()[i]; //This is from input_pose numbering to full_pose numbering
 
 		// Remove all variant types
 		// TO DO LIST: Need to remove atom constraint and remove angle constaint as well
@@ -404,13 +404,13 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		for ( Size n = 1; n <= input_res.size(); n++ ) 	res_map[ full_to_sub[ input_res[n] ] ] = n;
 
 		//Does this work for the "overlap residue" case?? If there is a overlap residue, then order of input_res will manner...Parin Jan 2, 2010.
-		copy_dofs_match_atom_names( pose, start_pose, res_map, false /*backbone_only*/, false /*ignore_virtual*/ );
+		core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose, res_map, false /*backbone_only*/, false /*side_chain_only*/, false /*ignore_virtual*/ );
 
 		//////////////////////Add virtual_rna_residue, virtual_rna_residue variant_upper and VIRTUAL_RIBOSE variant type back//////////////////////
 		//////////////////////For standard dinucleotide move, there should be virtual_rna_residue and virtual_rna_residue variant_upper //////////
 		//////////////////////And if floating base sampling, will contain the virtual_sugar as well...
-		utility::vector1< Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
-		utility::vector1< Size > const & working_cutpoint_closed_list = apply_full_to_sub_mapping( cutpoint_closed_list, StepWiseRNA_JobParametersCOP( job_parameters_ ) );
+		utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
+		utility::vector1< Size > const & working_cutpoint_closed_list = apply_full_to_sub_mapping( cutpoint_closed_list, working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ) );
 
 		for ( Size n = 1; n <= start_pose_with_variant.total_residue(); n++  ) {
 			if ( has_virtual_rna_residue_variant_type( start_pose_with_variant, n ) ){
@@ -453,11 +453,11 @@ StepWiseRNA_PoseSetup::do_checks_and_apply_protonated_H1_adenosine_variant( pose
 	} else{ // from silent file -- may have information on variants.
 		if ( start_pose_with_variant.residue( n ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ) { //May 03, 2011
 			runtime_assert( start_pose_with_variant.residue( n ).aa() == core::chemical::na_rad );
-			runtime_assert( job_parameters_->protonated_H1_adenosine_list().has_value( input_res[n] ) );
+			runtime_assert( working_parameters_->protonated_H1_adenosine_list().has_value( input_res[n] ) );
 		}
 	}
 
-	if ( ( job_parameters_->protonated_H1_adenosine_list() ).has_value( input_res[n] ) ){
+	if ( ( working_parameters_->protonated_H1_adenosine_list() ).has_value( input_res[n] ) ){
 		apply_protonated_H1_adenosine_variant_type( pose, full_to_sub[ input_res[n] ] );
 	}
 }
@@ -477,13 +477,13 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2prime_positions( pose::Pose & working_p
 	if ( verbose_ ) output_title_text( "Enter StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_BEFORE_correctly_copy_HO2prime_positions.pdb" );
 
-	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
+	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 
 	//Problem aside in the long_loop mode, where we combine two silent_file pose. The two pose both contain the fixed background residues
 	//In current implementation of COPY_DOFS, the positioning of the background residues in SECOND silent file is used.
 	//However, some background HO2prime interacts with the first pose and hence need to correctly copys these HO2prime position.
 	//When we implemenet protien/RNA interactions, will extend this to include all "packed" side chains.
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
+	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 	std::map< core::Size, core::Size > full_to_input_res_map_ONE = create_full_to_input_res_map( input_res_vectors[1] );
 	std::map< core::Size, core::Size > full_to_input_res_map_TWO = create_full_to_input_res_map( input_res_vectors[2] );
 	if ( input_res_vectors.size() != 2 ) return; //This problem occurs only when copying two input pose.
@@ -576,8 +576,8 @@ void
 StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose ){
 
 	using namespace core::id;
-	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
-	utility::vector1< Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
+	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
+	utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
 
 	// this copy contains original torsions across chainbreak [zeta, alpha, beta].
 	Pose pose_without_cutpoints = pose;
@@ -594,7 +594,7 @@ StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose ){
 
 			TR.Debug << "Applying cutpoint variants to " << cutpoint_closed << std::endl;
 			Size const cutpos = full_to_sub[ cutpoint_closed];
-			core::pose::rna::correctly_add_cutpoint_variants( pose, cutpos, false /*check fold tree*/);
+			core::pose::correctly_add_cutpoint_variants( pose, cutpos, false /*check fold tree*/);
 
 			TR.Debug << "pose ( before copy ): " << std::endl;
 			print_backbone_torsions( pose, cutpos );
@@ -633,9 +633,9 @@ StepWiseRNA_PoseSetup::apply_virtual_phosphate_variants( pose::Pose & pose ) con
 
 	using namespace ObjexxFCL;
 
-	utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries(	 job_parameters_->chain_boundaries() );
-	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
-	utility::vector1< Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
+	utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries(	 working_parameters_->chain_boundaries() );
+	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
+	utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
 
 	Size const num_chains = chain_boundaries.size();
 
@@ -675,18 +675,17 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 	ConstraintSetOP cst_set( pose.constraint_set()->clone() );
 	assert( cst_set );
 
-	utility::vector1< core::Size > const & working_terminal_res = job_parameters_->working_terminal_res();
+	utility::vector1< core::Size > const & working_terminal_res = working_parameters_->working_terminal_res();
 
 	if ( working_terminal_res.size() == 0 ) return;
 
 
 	/////////////////////////////////////////////////
 	Size const nres( pose.total_residue() );
-
 	ObjexxFCL::FArray1D < bool > is_moving_res( nres, false );
 	ObjexxFCL::FArray1D < bool > is_fixed_res( nres, false );
 
-	ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
+	ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
 	bool const root_partition = partition_definition( pose.fold_tree().root() );
 
 	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
@@ -744,17 +743,17 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 void
 StepWiseRNA_PoseSetup::additional_setup_for_floating_base( pose::Pose & pose ) const {
 
-	Size const num_nucleotides = job_parameters_->working_moving_res_list().size();
+	Size const num_nucleotides = working_parameters_->working_moving_res_list().size();
 	bool const is_dinucleotide = ( num_nucleotides == 2 );
 
-	if ( !job_parameters_->floating_base() ) return;
+	if ( !working_parameters_->floating_base() ) return;
 
 	virtualize_sugar_and_backbone_at_moving_res( pose );
 
 	if ( !is_dinucleotide ) return;
 
-	Size const moving_res_ =  job_parameters_->working_moving_res(); // Might not correspond to user input.
-	Size const reference_res_ =  job_parameters_->working_reference_res(); //the last static_residues that this attach to the moving residues
+	Size const moving_res_ =  working_parameters_->working_moving_res(); // Might not correspond to user input.
+	Size const reference_res_ =  working_parameters_->working_reference_res(); //the last static_residues that this attach to the moving residues
 	if ( num_nucleotides == 1 ) {
 		setup_chain_break_jump_point( pose, moving_res_, reference_res_ );
 	}
@@ -763,28 +762,27 @@ StepWiseRNA_PoseSetup::additional_setup_for_floating_base( pose::Pose & pose ) c
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_PoseSetup::instantiate_residue_if_rebuilding_bulge( pose::Pose & pose ){
-	if ( job_parameters_->rebuild_bulge_mode() ) remove_virtual_rna_residue_variant_type( pose, job_parameters_->working_moving_res() );
+	if ( working_parameters_->rebuild_bulge_mode() ) remove_virtual_rna_residue_variant_type( pose, working_parameters_->working_moving_res() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_PoseSetup::virtualize_sugar_and_backbone_at_moving_res( pose::Pose & pose ) const {
-
-	////////Only base is instantiated in 'floating base' at moving res (This will be moved to PoseSetup later)/////////////////////////////
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", job_parameters_->working_moving_res() ); //This is unique to floating_base_mode
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", job_parameters_->working_moving_res() ); //This is unique to floating_base_mode
-
+	////////Only base is instantiated in 'floating base' at moving res /////////////////////////////
+	Size const moving_res = working_parameters_->working_moving_res();
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res ); //This is unique to floating_base_mode
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res); //This is unique to floating_base_mode
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_PoseSetup::add_protonated_H1_adenosine_variants( pose::Pose & pose ) const {
 
-	utility::vector1< core::Size > const & working_protonated_H1_adenosine_list = job_parameters_->working_protonated_H1_adenosine_list();
-	Size const working_moving_res =  job_parameters_->working_moving_res(); // corresponds to user input.
+	utility::vector1< core::Size > const & working_protonated_H1_adenosine_list = working_parameters_->working_protonated_H1_adenosine_list();
+	Size const working_moving_res =  working_parameters_->working_moving_res(); // corresponds to user input.
 
 	bool apply_check = true;
-	if ( job_parameters_->rebuild_bulge_mode() ){
+	if ( working_parameters_->rebuild_bulge_mode() ){
 		//OK as long as we will definitely remove the virtual variant type from this res before sampling and minimizing!
 		apply_check = false;
 		TR.Debug << "rebuild_bulge_mode_ = true, setting apply_check for apply_protonated_H1_adenosine_variant_type to false" << std::endl;
@@ -804,7 +802,7 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 	using namespace ObjexxFCL;
 
 
-	utility::vector1< core::Size > const & working_protonated_H1_adenosine_list = job_parameters_->working_protonated_H1_adenosine_list();
+	utility::vector1< core::Size > const & working_protonated_H1_adenosine_list = working_parameters_->working_protonated_H1_adenosine_list();
 
 //Check that all protonated_H1_adenosine exist in the pose!
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
@@ -812,18 +810,18 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 		if ( working_protonated_H1_adenosine_list.has_value( seq_num ) ){
 
 			if ( pose.residue( seq_num ).aa() != core::chemical::na_rad ){
-				print_JobParameters_info( StepWiseRNA_JobParametersCOP( job_parameters_ ), "DEBUG job_parameters", TR.Debug );
+				print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but pose.residue( seq_num ).aa() != core::chemical::na_rad, seq_num = " + string_of( seq_num ) );
 			}
 
 			if ( pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) == false && pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ){
-				print_JobParameters_info( StepWiseRNA_JobParametersCOP( job_parameters_ ), "DEBUG job_parameters", TR.Debug );
+				print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
 			}
 		} else{
 			if ( pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ){
 
-				print_JobParameters_info( StepWiseRNA_JobParametersCOP( job_parameters_ ), "DEBUG job_parameters", TR.Debug );
+				print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				TR.Debug << "ERROR: seq_num = " << seq_num << std::endl;
 				TR.Debug << "ERROR: start_pose.residue( n ).aa() = " << name_from_aa( pose.residue( seq_num ).aa() ) << std::endl;
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == false but pose.residue( seq_num ).has_variant_type( \"PROTONATED_H1_ADENOSINE\" ) ) == false" );
@@ -844,7 +842,7 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 void
 StepWiseRNA_PoseSetup::update_fold_tree_at_virtual_sugars( pose::Pose & pose ){
 
-	std::map< Size, Size > const reference_res_for_each_virtual_sugar = sugar::get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  job_parameters_->working_moving_suite() );
+	std::map< Size, Size > const reference_res_for_each_virtual_sugar = sugar::get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  working_parameters_->working_moving_suite() );
 
 	TR.Debug << "BEFORE VIRTUAL SUGAR UPDATE " << pose.fold_tree() << std::endl;
 	for ( std::map< Size, Size >::const_iterator it = reference_res_for_each_virtual_sugar.begin();
@@ -869,9 +867,9 @@ StepWiseRNA_PoseSetup::apply_bulge_variants( pose::Pose & pose ) const {
 	using namespace ObjexxFCL;
 
 
-	std::map< core::Size, core::Size > const & full_to_sub( job_parameters_->full_to_sub() );
-	utility::vector1< Size > const & working_terminal_res = job_parameters_->working_terminal_res();
-	utility::vector1< Size > terminal_res = apply_sub_to_full_mapping( working_terminal_res, job_parameters_ );
+	std::map< core::Size, core::Size > const & full_to_sub( working_parameters_->full_to_sub() );
+	utility::vector1< Size > const & working_terminal_res = working_parameters_->working_terminal_res();
+	utility::vector1< Size > terminal_res = apply_sub_to_full_mapping( working_terminal_res, working_parameters_ );
 
 	for ( Size i = 1; i <= bulge_res_.size(); i++ ) {
 		Size const seq_num = bulge_res_[i];
@@ -892,23 +890,23 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 	using namespace ObjexxFCL;
 
 
-	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
-	utility::vector1< Size > const & working_terminal_res = job_parameters_->working_terminal_res();
+	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
+	utility::vector1< Size > const & working_terminal_res = working_parameters_->working_terminal_res();
 
-	utility::vector1< Size > terminal_res = apply_sub_to_full_mapping( working_terminal_res, job_parameters_ );
+	utility::vector1< Size > terminal_res = apply_sub_to_full_mapping( working_terminal_res, working_parameters_ );
 
 	///////////////////////////////////////////////////////////////////////////////////////
-	Size const working_moving_res(  job_parameters_->working_moving_res() ); // corresponds to user input.
-	bool const is_prepend(  job_parameters_->is_prepend() );
+	Size const working_moving_res(  working_parameters_->working_moving_res() ); // corresponds to user input.
+	bool const is_prepend(  working_parameters_->is_prepend() );
 	Size const working_bulge_moving_res = ( is_prepend ) ? working_moving_res + 1 : working_moving_res - 1;
 
-	bool const is_dinucleotide = ( job_parameters_->working_moving_res_list().size() == 2 );
+	bool const is_dinucleotide = ( working_parameters_->working_moving_res_list().size() == 2 );
 
 	if ( apply_virtual_res_variant_at_dinucleotide_ &&  is_dinucleotide ){
-		if ( working_bulge_moving_res != job_parameters_->working_moving_res_list()[2] ){
-			output_boolean( "is_prepend = ", job_parameters_->is_prepend(), TR.Debug );
+		if ( working_bulge_moving_res != working_parameters_->working_moving_res_list()[2] ){
+			output_boolean( "is_prepend = ", working_parameters_->is_prepend(), TR.Debug );
 			TR.Debug << " working_moving_res = " << working_moving_res << std::endl;
-			TR.Debug << "working_bulge_moving_res = " << working_bulge_moving_res << " working_moving_res_list()[2] = " << job_parameters_->working_moving_res_list()[2] << std::endl;
+			TR.Debug << "working_bulge_moving_res = " << working_bulge_moving_res << " working_moving_res_list()[2] = " << working_parameters_->working_moving_res_list()[2] << std::endl;
 			utility_exit_with_message( "working_bulge_moving_res != working_moving_res_list[2]" );
 		}
 
@@ -941,7 +939,7 @@ void
 StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ){  //Fang's electron density code
 
 	Size const nres = pose.total_residue();
-	Size const working_moving_res(  job_parameters_->working_moving_res() );
+	Size const working_moving_res(  working_parameters_->working_moving_res() );
 	//if already rooted on virtual residue, return
 	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
@@ -967,14 +965,15 @@ StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ){  //Fa
 ////////////////////////////////////////////////////////////////////////////////////////
 // how about just setting full_model_info here?
 void
-StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose & pose ) const {
+StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
-	utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
-	utility::vector1< core::Size > const & cutpoint_open_list( job_parameters_->cutpoint_open_list() );
-	std::string full_sequence = job_parameters_->full_sequence();
+	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
+	utility::vector1< core::Size > const & cutpoint_open_list( working_parameters_->cutpoint_open_list() );
+	utility::vector1< core::Size > const & fixed_res( working_parameters_->fixed_res() );
+	std::string full_sequence = working_parameters_->full_sequence();
 
 	utility::vector1< Size > working_res;
 	for ( Size i = 1; i <= full_sequence.size(); i++ ){
@@ -982,15 +981,38 @@ StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose &
 			working_res.push_back( i );
 		}
 	}
-
-	if ( job_parameters_->add_virt_res_as_root() ){
+	if ( working_parameters_->add_virt_res_as_root() ){
 		working_res.push_back( full_sequence.size() + 1  );
 		full_sequence += 'X';
 	}
 
 	FullModelInfoOP full_model_info = new FullModelInfo( full_sequence,  cutpoint_open_list, working_res );
+	FullModelParametersOP full_model_parameters = full_model_info->full_model_parameters()->clone();
+	utility::vector1< core::Size > extra_minimize_res;
+	utility::vector1< Size > fixed_domain; // convert from old convention to new one stored in full_model info.
+	for ( Size n = 1; n <= is_working_res.size(); n++ ){
+		if ( is_working_res[n] == MOVING_RES ) {
+			fixed_domain.push_back( 0 ); // moving and sample-able.
+		} else if ( fixed_res.has_value( n ) ) {
+			fixed_domain.push_back( 1 ); // freeze this.
+		} else {
+			fixed_domain.push_back( is_working_res[n] ); // 1 or 2, for input domains 1 or 2.
+			if ( is_working_res[n] > 0 ) extra_minimize_res.push_back( n );
+		}
+	}
+	if ( working_parameters_->add_virt_res_as_root() ) fixed_domain.push_back( 1 );
+	full_model_parameters->set_parameter( FIXED_DOMAIN, fixed_domain );
+
+	// extra_minimize_res was never in use in RNA modeling -- everything was set via -fixed_res or -minimize_res flags, which
+	// get loaded in StepWiseRNA_PoseSetupFromCommandLine.
+	full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
+	full_model_parameters->set_parameter_as_res_list( CALC_RMS,     working_parameters_->calc_rms_res() );
+	full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, working_parameters_->terminal_res() );
+	full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  working_parameters_->force_syn_chi_res_list() );
+	full_model_parameters->set_parameter_as_res_list( RNA_NORTH_SUGAR, working_parameters_->force_north_sugar_list() );
+	full_model_parameters->set_parameter_as_res_list( RNA_SOUTH_SUGAR, working_parameters_->force_south_sugar_list() );
+	full_model_info->set_full_model_parameters( full_model_parameters );
 	set_full_model_info( pose, full_model_info );
-	update_pdb_info_from_full_model_info( pose );
 }
 
 

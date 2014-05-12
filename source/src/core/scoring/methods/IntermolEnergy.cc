@@ -19,7 +19,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Utility headers

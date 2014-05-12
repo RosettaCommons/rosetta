@@ -41,9 +41,13 @@ namespace screener {
 	{}
 
 	//////////////////////////////////////////////////////////////////////////
+	// If you see an issue with changes to integration tests, take
+	// a close look at modeler_options -- note that it should 'spawn' get_sampler_options()
+	// which is fixed for integration tests.
 	bool
 	IntegrationTestBreaker::check_screen() {
-		if ( screener_whose_counts_to_check_->count() >= 100 ) return false;
+		if ( screener_whose_counts_to_check_ && screener_whose_counts_to_check_->count() >= 100 ) 	return false;
+
 		if ( native_rmsd_screener_ != 0 ){
 			if ( final_screener_->count() >= 10 ) native_rmsd_screener_->set_do_screen( true );
 			if ( native_rmsd_screener_->pass_count() >= 10 ) return false;

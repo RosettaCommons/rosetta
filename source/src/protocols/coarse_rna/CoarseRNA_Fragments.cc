@@ -15,19 +15,18 @@
 
 #include <protocols/coarse_rna/CoarseRNA_Fragments.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/copydofs/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -167,7 +166,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 
 		std::map< AtomID, AtomID > atom_id_map;
 		allow_insert->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree(), atom_id_map );
-		copy_dofs(  pose, *frag_source_pose_, atom_id_map, allow_insert->calculate_atom_id_domain_map( pose ) );
+		core::pose::copydofs::copy_dofs(  pose, *frag_source_pose_, atom_id_map, allow_insert->calculate_atom_id_domain_map( pose ) );
 
 	}
 

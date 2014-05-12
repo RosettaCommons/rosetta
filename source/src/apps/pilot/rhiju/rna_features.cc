@@ -26,11 +26,11 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/sasa.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_BasePairClassifier.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>

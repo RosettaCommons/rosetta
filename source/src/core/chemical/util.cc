@@ -20,6 +20,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/Patch.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -28,6 +29,7 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
 namespace core {
@@ -138,6 +140,13 @@ modify_atom_properties_from_command_line(
 			atom_type_set[ atom_index ].set_parameter( param, setting );
 		}
 	}
+}
+
+/////////////////////////////////////////////////////////
+std::string
+fixup_patches( std::string string_in ){
+	std::string const string_out = utility::replace_in( string_in, "_p:", patch_linker );
+	return string_out;
 }
 
 } // namespace chemical

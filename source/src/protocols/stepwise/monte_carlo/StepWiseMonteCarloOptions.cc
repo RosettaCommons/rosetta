@@ -14,8 +14,7 @@
 
 
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModelerOptions.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -27,8 +26,7 @@
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace protocols::stepwise::sampling::rna;
-using namespace protocols::stepwise::sampling::protein;
+using namespace protocols::stepwise::sampling;
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.StepWiseMonteCarloOptions" );
 
@@ -68,15 +66,16 @@ namespace rna {
 		make_movie_( false ),
 		sampler_perform_phosphate_pack_( true ),
 		rebuild_bulge_mode_( false ),
-		unified_framework_( true ),
 		tether_jump_( true ),
 		local_redock_only_( true ),
 		skip_coord_constraints_( false ),
 		output_minimized_pose_list_( false ),
 		filter_native_big_bins_( false ),
 		allow_virtual_side_chains_( false ),
+		n_sample_( 18 ),
 		protein_prepack_( false ),
-		protein_atr_rep_screen_( false ),
+		o2prime_legacy_mode_( false ),
+		atr_rep_screen_( false ),
 		rmsd_screen_( 0.0 )
 	{}
 
@@ -107,8 +106,6 @@ namespace rna {
 		set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
 		set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 		set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
-		set_syn_chi_res_list( option[ OptionKeys::stepwise::rna::force_syn_chi_res_list]() );
-		set_terminal_res( option[ OptionKeys::stepwise::rna::terminal_res]() );
 		set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 		set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
 		set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
@@ -120,63 +117,59 @@ namespace rna {
 		set_make_movie(	option[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
 		rebuild_bulge_mode_ = option[ OptionKeys::stepwise::rna::rebuild_bulge_mode ]();
-		unified_framework_ = option[ OptionKeys::stepwise::rna::unified_framework ]();
 		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
+		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
 		local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
 		skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
 		filter_native_big_bins_ = option[ OptionKeys::stepwise::protein::filter_native_big_bins ]();
 		allow_virtual_side_chains_ = option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]();
+		n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 		protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
-		protein_atr_rep_screen_ = option[ OptionKeys::stepwise::protein::protein_atr_rep_screen ]();
-		rmsd_screen_ = option[ basic::options::OptionKeys::stepwise::protein::rmsd_screen ]();
+		atr_rep_screen_ = option[ OptionKeys::stepwise::atr_rep_screen ]();
+		rmsd_screen_ = option[ basic::options::OptionKeys::stepwise::rmsd_screen ]();
 	}
 
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_ModelerOptionsOP
-	StepWiseMonteCarloOptions::setup_rna_modeler_options() const{
+	StepWiseModelerOptionsOP
+	StepWiseMonteCarloOptions::setup_modeler_options() const{
 
-		StepWiseRNA_ModelerOptionsOP modeler_options = new StepWiseRNA_ModelerOptions;
+		StepWiseModelerOptionsOP modeler_options = new StepWiseModelerOptions;
 		modeler_options->set_silent_file( silent_file_ );
 		modeler_options->set_choose_random( true );
 		modeler_options->set_num_pose_minimize( 1 );
+		modeler_options->set_num_random_samples( num_random_samples() );
 		if ( num_pose_minimize() > 0 ) modeler_options->set_num_pose_minimize( num_pose_minimize() );
+		modeler_options->set_rmsd_screen( rmsd_screen() );
+		modeler_options->set_output_minimized_pose_list( output_minimized_pose_list() );
+		modeler_options->set_atr_rep_screen( atr_rep_screen() );
+
+		// protein-specific
+		modeler_options->set_skip_coord_constraints( skip_coord_constraints() );
+		modeler_options->set_filter_native_big_bins( filter_native_big_bins() );
+		modeler_options->set_allow_virtual_side_chains( allow_virtual_side_chains() );
+		modeler_options->set_n_sample( n_sample() );
+		modeler_options->set_prepack( protein_prepack() );
+		modeler_options->set_expand_loop_takeoff( true );
+
+		// rna-specific
 		modeler_options->set_integration_test_mode( integration_test_mode() );
 		modeler_options->set_force_centroid_interaction( force_centroid_interaction() );
 		modeler_options->set_sampler_max_centroid_distance( sampler_max_centroid_distance() );
 		modeler_options->set_use_phenix_geo( use_phenix_geo() );
 		modeler_options->set_kic_sampling_if_relevant( erraser() );
-		modeler_options->set_num_random_samples( num_random_samples() );
 		modeler_options->set_minimizer_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry() );
 		modeler_options->set_minimizer_vary_bond_geometry_frequency( minimizer_vary_bond_geometry_frequency() );
 		modeler_options->set_virtual_sugar_keep_base_fixed( virtual_sugar_keep_base_fixed() );
 		modeler_options->set_virtual_sugar_do_minimize( virtual_sugar_do_minimize() );
 		if ( rebuild_bulge_mode_ )	modeler_options->set_force_centroid_interaction( false );
-		modeler_options->set_unified_framework( unified_framework() );
 		modeler_options->set_tether_jump( tether_jump() );
+		modeler_options->set_o2prime_legacy_mode( o2prime_legacy_mode() );
 
 		return modeler_options;
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////////////////
-	StepWiseProteinModelerOptionsOP
-	StepWiseMonteCarloOptions::setup_protein_modeler_options() const{
-		StepWiseProteinModelerOptionsOP modeler_options = new StepWiseProteinModelerOptions;
-		modeler_options->set_silent_file( silent_file_ );
-		modeler_options->set_choose_random( true );
-		modeler_options->set_num_random_samples( num_random_samples() );
-		modeler_options->set_num_pose_minimize( num_pose_minimize() );
-		modeler_options->set_skip_coord_constraints( skip_coord_constraints() );
-		modeler_options->set_output_minimized_pose_list( output_minimized_pose_list() );
-		modeler_options->set_filter_native_big_bins( filter_native_big_bins() );
-		modeler_options->set_allow_virtual_side_chains( allow_virtual_side_chains() );
-		modeler_options->set_prepack( protein_prepack() );
-		modeler_options->set_atr_rep_screen( protein_atr_rep_screen() );
-		modeler_options->set_rmsd_screen( rmsd_screen() );
-		modeler_options->set_expand_loop_takeoff( true );
-		return modeler_options;
-	}
 
 
 } //rna

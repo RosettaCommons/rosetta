@@ -18,7 +18,7 @@
 #include <protocols/rotamer_sampler/rna/RNA_McSugar.fwd.hh>
 
 // Package headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <protocols/rotamer_sampler/McRotamer.hh>
 #include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.fwd.hh>
 

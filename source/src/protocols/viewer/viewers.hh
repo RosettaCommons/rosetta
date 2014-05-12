@@ -82,7 +82,8 @@ add_conformation_viewer(
 	std::string const = empty_string,
 	int const = 900,
 	int const = 900,
-	bool = false
+	bool = false,
+	core::Vector = core::Vector( 0.0 )
 )
 {
 }
@@ -113,7 +114,8 @@ add_conformation_viewer(
 	std::string const name_in = empty_string,
 	int const length = 900,
 	int const width  = 900,
-	bool debug_pause=false
+	bool debug_pause=false,
+	core::Vector center_vector = core::Vector( 0.0 )
 );
 
 void

@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.SampleApplier" );
 
@@ -31,16 +32,9 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	static pose::Pose * blank_pose() {
-		static pose::Pose * blank_pose_ = 0;
-		if (!blank_pose_) blank_pose_ = new pose::Pose();
-		return blank_pose_;
-	}
-
-	//constructor
+	//constructor -- this is not in use, but has to be filled in.
 	SampleApplier::SampleApplier():
-		//pose_( blank_pose )
-		pose_( *blank_pose() )
+		pose_( *( new pose::Pose ) )
 	{
 	}
 

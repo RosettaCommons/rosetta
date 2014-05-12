@@ -15,9 +15,10 @@
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/sampling/packer/util.hh>
 #include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/sampling/util.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -29,7 +30,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/tools/make_vector1.hh>
@@ -41,6 +42,7 @@
 
 using namespace core;
 using namespace core::pose::full_model_info;
+using namespace protocols::stepwise::sampling;
 using core::Real;
 using utility::make_tag_with_dashes;
 
@@ -84,7 +86,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering ) const
+  DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering )
 	{
 		apply( pose, utility::tools::make_vector1( res_to_delete_in_full_model_numbering ) );
 	}
@@ -92,7 +94,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering ) const
+  DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering )
 	{
 		using namespace core::pose;
 
@@ -103,6 +105,7 @@ namespace rna {
 		// have at it!
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
+		interface_res_ = full_model_info.sub_to_full( packer::figure_out_working_interface_res( pose, get_unique_connection_res( pose, residues_to_delete ) ) );
 
 		// do the slice.
 		PoseOP sliced_out_pose_op = new Pose;
@@ -202,8 +205,8 @@ namespace rna {
 			phosphate_sampler.copy_phosphates( pose );
 		}
 
-		stepwise_modeler_->set_skip_sampling( true );
 		stepwise_modeler_->set_moving_res_and_reset( 0 );
+		stepwise_modeler_->set_working_prepack_res( full_to_sub( interface_res_, pose ) );
 		stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 		stepwise_modeler_->apply( pose );
 

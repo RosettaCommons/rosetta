@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/import_pose/import_pose.hh>

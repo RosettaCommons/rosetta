@@ -41,7 +41,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -67,10 +67,10 @@
 
 //StepWise!
 #include <protocols/stepwise/StepWiseFilterer.hh>
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/StepWisePoseMinimizer.hh>
-#include <protocols/stepwise/StepWisePoseSetup.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/stepwise/StepWiseResidueSampler.hh>
 
 //clustering
@@ -625,7 +625,7 @@ rebuild_centroid_test()
 	std::cout << "NUM DECOYS ======> " << sfd->size() << std::endl;
 
 
-	protocols::stepwise::StepWiseClusterer stepwise_clusterer( sfd );
+	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( sfd );
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
@@ -646,7 +646,7 @@ cluster_outfile_test(){
 	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::stepwise::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 2500 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];

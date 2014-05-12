@@ -102,6 +102,7 @@ sources = {
 	],
 	"core/pose/copydofs": [
 	        "CopyDofs",
+	        "util",
 	],
 	"core/pose/datacache": [
 		"cacheable_observers",
@@ -112,9 +113,9 @@ sources = {
 	],
 	"core/pose/full_model_info": [
 		"FullModelInfo",
-		"FullModelInfoUtil",
 		"FullModelParameters",
 		"FullModelParameterType",
+		"util",
 	],
 	"core/pose/metrics": [
 		"CalculatorFactory",
@@ -132,9 +133,9 @@ sources = {
 		"util",
 	],
     "core/pose/rna": [
-        "RNA_Util",
         "RNA_IdealCoord",
         "RNA_SuiteName",
+        "util",
     ],
     "core/pose/symmetry": [
 		"util",

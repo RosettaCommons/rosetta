@@ -29,7 +29,7 @@ namespace stepwise {
 namespace screener {
 
 //Constructor
-SugarInstantiator::SugarInstantiator( pose::Pose & screening_pose,
+	SugarInstantiator::SugarInstantiator( pose::Pose & screening_pose,
 																				Size const moving_res,
 																				Distance const o2prime_instantiation_distance_cutoff ):
 		screening_pose_( screening_pose ),

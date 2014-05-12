@@ -14,7 +14,7 @@
 #don't have prove that this actually helps.. maybe in the refinement stage..
 -increase_cycles 0.1
 -cst_file inputs/fullatom.cst
--residues:patch_selectors CENTROID_HA
+-chemical:patch_selectors CENTROID_HA
 -cst_weight 0.05
 -fold_cst:no_minimize
 -jumps:topology_file inputs/native.top

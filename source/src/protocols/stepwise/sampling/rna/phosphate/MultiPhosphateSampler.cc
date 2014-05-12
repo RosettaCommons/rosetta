@@ -15,9 +15,9 @@
 
 #include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/stepwise/sampling/rna/phosphate/PhosphateMover.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/PhosphateUtil.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/phosphate/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -25,10 +25,12 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.sampling.rna.phosphate.MultiPhosphateSampler" );
+using utility::tools::make_vector1;
 
 namespace protocols {
 namespace stepwise {
@@ -36,23 +38,21 @@ namespace sampling {
 namespace rna {
 namespace phosphate {
 
+	MultiPhosphateSampler::MultiPhosphateSampler( pose::Pose const & reference_pose	):
+		prepacked_( false )
+	{
+		reset( reference_pose );
+		initialize_parameters();
+	}
+
 	//Constructor
 	MultiPhosphateSampler::MultiPhosphateSampler( pose::Pose & pose_to_prepack,
 																								Size const moving_res /*sets partition*/ )
 	{
 		initialize_parameters();
-		initialize_by_prepack( pose_to_prepack, moving_res );
-		prepacked_ = true;
+		initialize_by_prepack( pose_to_prepack, moving_res ); // prepacked --> true.
 	}
 
-	//Constructor
-	MultiPhosphateSampler::MultiPhosphateSampler( pose::Pose const & reference_pose ):
-		pose_with_original_phosphates_( reference_pose.clone() ),
-		phosphate_sample_pose_( reference_pose.clone() ) // the one we will do work on -- update its torsions, CCD, 2'-OH, etc.
-	{
-		initialize_parameters();
-		prepacked_ = false;
-	}
 
 	//Destructor
 	MultiPhosphateSampler::~MultiPhosphateSampler()
@@ -72,19 +72,12 @@ namespace phosphate {
 	MultiPhosphateSampler::initialize_parameters(){
 		screen_all_ = true ;
 		phosphate_takeoff_donor_distance_cutoff2_ = 8.0 * 8.0;
-		scorefxn_ = new scoring::ScoreFunction;
-		scorefxn_->set_weight( scoring::fa_atr, 0.1);
-		scorefxn_->set_weight( scoring::fa_rep, 0.1);
-		scorefxn_->set_weight( scoring::free_suite, 1.0 );
-		scorefxn_->set_weight( scoring::rna_torsion, 0.5 ); // trying to increase accepts
-		scorefxn_->set_weight( scoring::hbond_lr_bb_sc, 3.0 ); // trying to increase accepts
-		scorefxn_->set_weight( scoring::hbond_sr_bb_sc, 3.0 ); // trying to increase accepts
+		scorefxn_ = get_phosphate_scorefxn();
 	}
 
 	////////////////////////////////////////////////////////////////////
 	void
 	MultiPhosphateSampler::sample_phosphates(){
-
 		phosphate_move_list_ = initialize_phosphate_move_list( *phosphate_sample_pose_ );
 		copy_over_phosphate_variants( *phosphate_sample_pose_, *pose_with_original_phosphates_, phosphate_move_list_ );
 
@@ -186,9 +179,9 @@ namespace phosphate {
 
 		// check phosphates that make cross-partition contacts.
 		find_phosphate_contacts_other_partition( partition_res1, partition_res2, pose,
-																						phosphate_move_list, actual_phosphate_move_list );
+																						 phosphate_move_list, actual_phosphate_move_list );
 		find_phosphate_contacts_other_partition( partition_res2, partition_res1, pose,
-																						phosphate_move_list, actual_phosphate_move_list );
+																						 phosphate_move_list, actual_phosphate_move_list );
 
 		if ( !prepacked_ ){
 			// need to also add in any phosphates that made cross-contact partitions in *original* pose.
@@ -245,21 +238,44 @@ namespace phosphate {
 		return false;
 	}
 
+
 	////////////////////////////////////////////////////////////////////////
 	void
-	MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose, Size const moving_res ) {
+	MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose,
+																								Size const moving_res ){
+		initialize_by_prepack( pose, make_vector1( moving_res ) );
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose,
+																								utility::vector1< Size > const & moving_res_list ){
+		moving_partition_res_ = figure_out_moving_partition_res( pose, moving_res_list );
+		do_prepack( pose, moving_res_list );
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	MultiPhosphateSampler::do_prepack( pose::Pose & pose,
+																		 utility::vector1< Size > const & moving_res_list ) {
+		// sanity check:
+		runtime_assert( moving_partition_res_ == figure_out_moving_partition_res( pose, moving_res_list ) );
+
 		PoseOP pose_to_split = pose.clone();
 		pose_to_split->remove_constraints(); // floating point errors if coordinate constraints are in there.
-		Size const jump_nr = split_pose( *pose_to_split, moving_res, pose.fold_tree().get_parent_residue( moving_res )  );
+		split_pose( *pose_to_split, moving_res_list );
 
-		moving_partition_res_.clear(); // ensures that all phosphates will be packed!
+		utility::vector1< Size > moving_partition_res_save = moving_partition_res_;
+		moving_partition_res_.clear(); // ensures that all phosphates will be packed -- could replace with inputted obligate_pack_res.
+
 		pose_with_original_phosphates_ = pose_to_split->clone(); // dummy, will be replaced...
 		sample_phosphates( pose_to_split );
-		moving_partition_res_ = figure_out_moving_partition_res_for_jump( *pose_to_split, jump_nr );
 
+		moving_partition_res_ = moving_partition_res_save;
 		copy_over_phosphate_variants( pose, *pose_to_split, phosphate_move_list_ );
-		pose_with_original_phosphates_ = pose.clone();
-		phosphate_sample_pose_ = pose.clone();
+
+		reset( pose );
+		prepacked_ = true;
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -268,7 +284,14 @@ namespace phosphate {
 
 	////////////////////////////////////////////////////////////////////////
 	void
-	MultiPhosphateSampler::set_scorefxn( scoring::ScoreFunctionOP scorefxn ){
+	MultiPhosphateSampler::reset( pose::Pose const & pose ){
+		pose_with_original_phosphates_ = pose.clone();
+		phosphate_sample_pose_ = pose.clone();
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	MultiPhosphateSampler::set_scorefxn( scoring::ScoreFunctionCOP scorefxn ){
 		scorefxn_ = scorefxn;
 	}
 

@@ -74,6 +74,7 @@
 #include <numeric/random/random.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/Patch.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -359,7 +360,7 @@ void reset_sfxn (
 	core::scoring::ScoreFunctionOP sfxn_constrained
 ) {
 	using namespace core::scoring;
-	using namespace core::scoring::constraints; 
+	using namespace core::scoring::constraints;
 	sfxn_constrained->set_weight(atom_pair_constraint, 0.0);
 	sfxn_constrained->set_weight(dihedral_constraint, 0.0);
 	sfxn_constrained->set_weight(angle_constraint, 0.0);
@@ -384,7 +385,7 @@ void constrain_loop_ends (
 
 	//Make the linkage between the N- and C-termini:
 	mypose.conformation().declare_chemical_bond(resC, "C", resN, "N"); //Declare a chemical bond between the N and C termini.
-	{ 
+	{
 		//Peptide bond length constraint:
 		mypose.add_constraint (
 			new AtomPairConstraint (
@@ -450,7 +451,7 @@ void constrain_loop_ends (
 		);
 
 	}
-	
+
 }
 
 //Function to append a pose to another by a jump.
@@ -508,7 +509,7 @@ void create_loop (
 	core::Size chaincount = 0;
 	const core::Size startres = option[newloopstart]();
 	const core::Size endres = option[newloopend]();
-	const bool is_cyclic = option[cyclic](); 
+	const bool is_cyclic = option[cyclic]();
 	bool first_residue_appended = false;
 
 	for(core::Size ir=1, nres=masterpose.n_residue(); ir<=nres; ir++) {
@@ -542,7 +543,7 @@ void create_loop (
 				}
 			}
 		}
-		
+
 	}
 
 	if(is_cyclic) append_alanines(outpose, option[looplength](), d_only);
@@ -762,8 +763,8 @@ bool noclash (
 
 				core::Real dist_squared = (mypose.residue(position).xyz( atlist[ia2] ) - mypose.residue(ir).xyz( atlist[ia1] )).length_squared();
 				if(dist_squared<dist_cutoff_squared) return false;
-				
-			} 
+
+			}
 		}
 	}
 
@@ -798,7 +799,7 @@ bool good_geometry (
 
 //Function to generate new loop geometry by kinematic closure
 void kinclose(
-	core::pose::Pose &mypose, 
+	core::pose::Pose &mypose,
 	const core::Size startres, //The stub residue that starts the new loop
 	const core::Size endres, //The stub residue than ends the new loop
 	const core::Size loop_length,
@@ -855,7 +856,7 @@ void kinclose(
 			end=RG.random_range(mid+1, startres+loop_length);
 			beforestart=start-1;
 
-			//The residue after the last residue OF THE LOOP is endres, which might come earlier in sequence (cyclic case). 
+			//The residue after the last residue OF THE LOOP is endres, which might come earlier in sequence (cyclic case).
 			//In all other cases, the residue after the last residue of the segment that we're closing is just the i+1 residue:
 			afterend=((end==startres+loop_length) ? endres : end+1);
 		}
@@ -889,7 +890,7 @@ void kinclose(
 			dipeptide1.append_residue_by_jump(mypose_copy.residue(end), 1, "", "", true);
 			dipeptide1.append_residue_by_bond(mypose_copy.residue(afterend), true); //Append the end residue of the loop, building ideal geometry.
 			dipeptide1.append_residue_by_bond(mypose_copy.residue(afterend), true); //Append the end residue of the loop again, building building ideal geometry, just to have another residue.
-			
+
 			//Set psi, omega, phi:
 			core::Size numattempts = 1;
 			while(true) {
@@ -898,7 +899,7 @@ void kinclose(
 				dipeptide1.set_phi(2, RG.uniform()*360.0-180.0);
 				dipeptide1.set_psi(2, mypose_copy.psi(afterend));
 				dipeptide1.set_omega(2, mypose_copy.omega(afterend));
-	
+
 				superimposebb(dipeptide1, mypose, afterend, afterend, 2, 2, true); //Superimpose the afterend residue
 
 				copy_residue_position(dipeptide1, 2, mypose_copy, afterend); //Copy the position of the afterend residue
@@ -956,7 +957,7 @@ void kinclose(
 			for(core::Size ir=beforestart; ir<=end; ir++) {
 				//Mutate the mypose sequence to match mypose_copy:
 				std::string rsdname = mypose_copy.residue(ir).name();
-				protocols::simple_moves::MutateResidue mutres(ir+( (is_cyclic && afterend == endres) ? 1 : 0 ), rsdname.substr(0, rsdname.find("_p:")));
+				protocols::simple_moves::MutateResidue mutres(ir+( (is_cyclic && afterend == endres) ? 1 : 0 ), rsdname.substr(0, rsdname.find(chemical::patch_linker)));
 				mutres.apply(mypose);
 				copy_residue_position(mypose_copy, ir, mypose, ir+( (is_cyclic && afterend == endres) ? 1 : 0 ));
 			}
@@ -969,7 +970,7 @@ void kinclose(
 			printf("Closure failed.  Randomizing and trying again.\n");
 		}
 	}
-	
+
 	return;
 }
 
@@ -998,9 +999,9 @@ bool near_chain (
 
 //Function to design the new loop
 void designloop(
-	core::pose::Pose &mypose, 
+	core::pose::Pose &mypose,
 	const core::Size startres,
-	const core::Size endres, 
+	const core::Size endres,
 	const core::Size loop_length,
 	const bool is_cyclic,
 	core::scoring::ScoreFunctionOP sfxn,
@@ -1016,11 +1017,11 @@ void designloop(
 	core::Real faatr_default = sfxn->get_weight(core::scoring::fa_atr);
 
 	if(option[design_farep_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design:
-		sfxn->set_weight(core::scoring::fa_rep, farep_default*option[design_farep_mult]()); 
+		sfxn->set_weight(core::scoring::fa_rep, farep_default*option[design_farep_mult]());
 	}
 
 	if(option[design_faatr_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design:
-		sfxn->set_weight(core::scoring::fa_rep, faatr_default*option[design_faatr_mult]()); 
+		sfxn->set_weight(core::scoring::fa_rep, faatr_default*option[design_faatr_mult]());
 	}
 
 
@@ -1073,7 +1074,7 @@ void designloop(
 						aas[ core::chemical::aa_from_name( allowed_L_aas[i] ) ] = true;
 					}
 				}
-				
+
 				task->nonconst_residue_task(ir).restrict_absent_canonical_aas(aas);
 			}
 		} else { //If this is NOT the design chain (or is the design chain, but outside of the loop to be designed)
@@ -1093,7 +1094,7 @@ void designloop(
 			}
 		}
 	}
-	
+
 	//Repack, using the PackerTask declared above:
 	protocols::simple_moves::PackRotamersMover repack( sfxn, task );
 	repack.apply(mypose);
@@ -1112,11 +1113,11 @@ void designloop(
 	printf("\n"); fflush(stdout);
 
 	if(option[design_farep_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design, reset it now.
-		sfxn->set_weight(core::scoring::fa_rep, farep_default); 
+		sfxn->set_weight(core::scoring::fa_rep, farep_default);
 	}
 
 	if(option[design_faatr_mult].user()) { //If the user has specified a factor by which to reduce fa_rep during design, reset it now.
-		sfxn->set_weight(core::scoring::fa_rep, faatr_default); 
+		sfxn->set_weight(core::scoring::fa_rep, faatr_default);
 	}
 
 
@@ -1125,9 +1126,9 @@ void designloop(
 
 //Function to relax the new loop
 void relaxloop(
-	core::pose::Pose &mypose, 
+	core::pose::Pose &mypose,
 	const core::Size startres,
-	const core::Size endres, 
+	const core::Size endres,
 	const core::Size loop_length,
 	protocols::relax::FastRelaxOP frlx,
 	protocols::simple_moves::MinMoverOP minmove,
@@ -1387,7 +1388,7 @@ int main( int argc, char * argv [] ) {
 		//trialpose.conformation().detect_disulfides();
 		//TODO: to make this work with loops that are mixtures of L- and D-amino acids, mutate the loop SEQUENCE to the best found so far, right here.
 		//set_loop_conformation(trialpose, bestpose, startres, endres, loop_length); //Set the loop conformation to the best one found so far (though the rest of the protein will be in the starting conformation).
-	
+
 		kinclose(trialpose, startres, endres, loop_length, is_cyclic, ((option[enumerate_only_mode]() || iter==1)?false:true), RG, sfxn, allowL, allowD, allowGLY); //Kinematic loop closure.
 		(*sfxn)(trialpose);
 

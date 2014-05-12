@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -62,9 +62,9 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWise!
-#include <protocols/stepwise/StepWiseClusterer.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/protein/util.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -592,7 +592,7 @@ cluster_outfile_test(){
 	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::stepwise::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];

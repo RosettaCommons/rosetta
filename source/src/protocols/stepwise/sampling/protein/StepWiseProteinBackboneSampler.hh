@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/protein/MainChainTorsionSet.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -43,7 +43,7 @@ namespace protein {
   public:
 
     //constructor!
-		StepWiseProteinBackboneSampler( protocols::stepwise::sampling::protein::StepWiseProteinJobParametersCOP job_parameters );
+		StepWiseProteinBackboneSampler( protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
     //destructor -- necessary?
     ~StepWiseProteinBackboneSampler();
@@ -217,7 +217,7 @@ namespace protein {
 
 	private:
 
-		protocols::stepwise::sampling::protein::StepWiseProteinJobParametersCOP job_parameters_;
+		protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 
 		utility::vector1< Size > const moving_residues_input_;
 		utility::vector1< Size > moving_residues_;

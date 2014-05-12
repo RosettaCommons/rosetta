@@ -19,12 +19,12 @@
 #include <protocols/farna/FullAtomRNA_Fragments.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh> // for compare_RNA_char, compare_RNA_secstruct
+#include <protocols/farna/util.hh> // for compare_RNA_char, compare_RNA_secstruct
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_Util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>

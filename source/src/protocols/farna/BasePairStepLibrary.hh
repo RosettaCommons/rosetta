@@ -19,7 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/farna/BasePairStep.hh>
 #include <protocols/farna/BasePairStepLibrary.fwd.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>

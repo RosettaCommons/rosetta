@@ -46,7 +46,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
 #include <protocols/farna/RNA_DeNovoProtocol.hh>

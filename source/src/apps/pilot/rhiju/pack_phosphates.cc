@@ -24,19 +24,19 @@
 #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/rotamer_trials.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloUtil.hh>
+#include <protocols/stepwise/monte_carlo/rna/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -129,7 +129,7 @@ pack_phosphates()
   using namespace protocols::stepwise::monte_carlo::rna;
   using namespace utility::file;
 
-	// Following could be generalized to fa_standard, after recent unification, but
+	// Following could be alignized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
@@ -359,11 +359,11 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::num_random_samples );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::sample_res );
-		option.add_relevant( OptionKeys::stepwise::rna::force_syn_chi_res_list );
+		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::terminal_res );
+		option.add_relevant( basic::options::OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 
 		core::init::init(argc, argv);

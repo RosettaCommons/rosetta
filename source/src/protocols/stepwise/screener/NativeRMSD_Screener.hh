@@ -18,12 +18,11 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/NativeRMSD_Screener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/align/StepWisePoseAligner.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-using namespace core;
-using namespace protocols::stepwise::sampling::rna;
 
 namespace protocols {
 namespace stepwise {
@@ -34,10 +33,10 @@ namespace screener {
 	public:
 
 		//constructor
-		NativeRMSD_Screener( pose::Pose const & native_pose,
-												 pose::Pose & screening_pose,
-												 sampling::rna::StepWiseRNA_JobParametersCOP job_parameters,
-												 Real const native_screen_rmsd_cutoff,
+		NativeRMSD_Screener( core::pose::Pose const & native_pose,
+												 core::pose::Pose const & screening_pose,
+												 utility::vector1< core::Size > const & moving_res_list_,
+												 core::Real const rmsd_cutoff,
 												 bool const do_screen = true );
 
 		//destructor
@@ -57,16 +56,18 @@ namespace screener {
 		StepWiseScreenerType
 		type() const { return NATIVE_RMSD; }
 
-		Size pass_count() const { return pass_count_; }
+		core::Size pass_count() const { return pass_count_; }
 
 	private:
 
-		pose::Pose const & native_pose_;
-		pose::Pose & screening_pose_;
-		sampling::rna::StepWiseRNA_JobParametersCOP job_parameters_;
-		Real const native_screen_rmsd_cutoff_;
+		core::pose::Pose const & native_pose_;
+		core::pose::Pose const & screening_pose_;
+		utility::vector1< core::Size > const & moving_res_list_;
+		core::Real const rmsd_cutoff_;
 		bool do_screen_;
-		Size pass_count_;
+		core::Size pass_count_;
+
+		sampling::align::StepWisePoseAlignerOP pose_aligner_;
 
 	};
 

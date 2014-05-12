@@ -62,6 +62,8 @@ namespace full_model_info {
 
 		// next-section: RNA-specific. Eventually expand.
 		RNA_SYN_CHI,
+		RNA_NORTH_SUGAR,
+		RNA_SOUTH_SUGAR,
 		RNA_TERMINAL, // base pairs on which new bases cannot stack/pair.
 
 		// next-section: anything protein-specific

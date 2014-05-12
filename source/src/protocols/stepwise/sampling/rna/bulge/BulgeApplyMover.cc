@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/sampling/rna/bulge/BulgeApplyMover.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>

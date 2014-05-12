@@ -1070,7 +1070,7 @@ Options = Option_Group( '',
 		Option( 'align_rmsd_fns', 'FileVector', desc='[vector] of sequence alignments used for align_rmsd files'),
 		Option( 'align_rmsd_format', 'String',
 			desc='format for sequence alignment between structures used in evaluation',
-			legal = ['grishin','general'], default='grishin'
+			legal = ['grishin','align'], default='grishin'
 		),
 		Option( 'pool', 'File', desc='find closest matching structure in this pool and report tag and rmsd' ),
 		Option( 'rmsd', 'FileVector', desc='[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)'),
@@ -1545,7 +1545,7 @@ Options = Option_Group( '',
 	Option_Group( 'loopfcst',
 		Option( 'coord_cst_weight',             'Real',    desc='use coord constraints for template',     default='0.0' ),
 		Option( 'coord_cst_all_atom',           'Boolean', desc='use coord constraints on all atoms and not just CA',     default='false' ),
-		Option( 'use_general_protocol',         'Boolean', desc='use the new machinery around classes KinematicXXX',     default='false' ),
+		Option( 'use_align_protocol',         'Boolean', desc='use the new machinery around classes KinematicXXX',     default='false' ),
 		Option( 'coord_cst_weight_array',       'File',    desc='use these weights (per seqpos) for coord cst in rigid regions',     default='' ),
 		Option( 'dump_coord_cst_weight_array',  'File',    desc='dump these weights (per seqpos) for coord cst in rigid regions',     default='' ),
 	),
@@ -1660,7 +1660,7 @@ Options = Option_Group( '',
 		Option( 'NV_ubound', 'Real', desc="Upper Bound for neighbor Vector scoring", default='11.1'),
 		Option( 'NV_table', 'String', desc="Location of path to potential lookup table", default='scoring/score_functions/NV/neighbor_vector_score.histogram'),
 		Option( 'disable_orientation_dependent_rna_ch_o_bonds',   'Boolean', desc="Do not use orientation-dependent potential for RNA carbon hydrogen bonds" , default="false"),
-		Option( 'find_neighbors_3dgrid', 'Boolean', desc="Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)", default='false' ),
+		Option( 'find_neighbors_3dgrid', 'Boolean', desc="Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of align O(NlgN)", default='false' ),
 		Option( 'seqdep_refene_fname', 'String', desc="Filename for table containing sequence-dependent reference energies" ),
 		Option( 'secondary_seqdep_refene_fname', 'String', desc="Additional filename for table containing sequence-dependent reference energies" ),
 		Option( 'exact_occ_pairwise', 'Boolean', desc="When using occ_sol_exact, compute energies subject to pairwise additivity (not recommended - intended for parameterization / evaluation purposes)", default='false' ),
@@ -2629,7 +2629,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	Option_Group( 'wum',
 		Option( 'n_slaves_per_master', 'Integer', default='64' , desc = 'A value between 32 and 128 is usually recommended' ),
-		Option( 'n_masters', 'Integer', default='1' , desc = 'Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload' ),
+		Option( 'n_masters', 'Integer', default='1' , desc = 'Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. alignl 1 for eery 256-512 cores is recommended depending on master workload' ),
 		Option( 'memory_limit', 'Integer', default = '0', desc = 'Memory limit for queues (in kB) ' ),
 
 		Option( 'extra_scorefxn', 'String', desc='Extra score function for post-batchrelax-rescoring' ),
@@ -3048,8 +3048,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'cm', # comparative modeling
 		Option( 'start_models_only',   'Boolean',    desc='Make starting models only!', default='false' ),
 		Option(
-			'aln_format', 'String', legal = ['grishin','general'],
-			default='general'
+			'aln_format', 'String', legal = ['grishin','align'],
+			default='align'
 		),
 		Option(
 			'recover_side_chains', 'Boolean', desc='recover side-chains',

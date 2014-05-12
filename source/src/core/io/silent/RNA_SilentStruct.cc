@@ -44,8 +44,8 @@
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/pose/rna/RNA_Util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
+#include <core/chemical/rna/util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 

@@ -453,6 +453,16 @@ public: // Methods
 		return *this;
 	}
 
+	/// @brief Add to values. Note that this just calls value() which has push_back functionality but confusing name.
+	inline
+	virtual
+	VectorOption_T_ &
+	push_back( Value const & value_a )
+	{
+		value( value_a );
+		return *this;
+	}
+
 
 	/// @brief Value assignment
 	inline

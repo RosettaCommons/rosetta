@@ -40,11 +40,11 @@ namespace phosphate {
 		//constructor
 		PhosphateMover( Size const sample_res,
 										PhosphateTerminus which_terminus_,
-										scoring::ScoreFunctionOP scorefxn );
+										scoring::ScoreFunctionCOP scorefxn );
 
 		//constructor
 		PhosphateMover( PhosphateMove const phosphate_move,
-										scoring::ScoreFunctionOP scorefxn );
+										scoring::ScoreFunctionCOP scorefxn );
 
 		//destructor
 		~PhosphateMover();
@@ -94,7 +94,7 @@ namespace phosphate {
 	private:
 
 		PhosphateMove const phosphate_move_;
-		scoring::ScoreFunctionOP scorefxn_;
+		scoring::ScoreFunctionCOP scorefxn_;
 
 		bool do_screening_;
 		bool screen_for_donor_contact_;

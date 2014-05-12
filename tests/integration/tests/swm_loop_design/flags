@@ -1,9 +1,0 @@
--fasta j44a_2R8SR_DESIGN.fasta
--s no_loop5_j44a_2R8SR.pdb
--input_res  1-2 6-11 14-15
--allow_internal_local_moves
--cutpoint_open 8
--nstruct 1
--cycles 6
--native j44a_2R8SR.pdb
--out:file:silent swm_TEST.out

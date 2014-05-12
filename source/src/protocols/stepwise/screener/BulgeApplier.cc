@@ -16,7 +16,7 @@
 #include <protocols/stepwise/screener/BulgeApplier.hh>
 #include <protocols/stepwise/sampling/rna/bulge/BulgeApplyMover.hh>
 #include <protocols/stepwise/sampling/rna/bulge/BulgeUnApplyMover.hh>
-#include <protocols/stepwise/sampling/rna/checker/AtrRepChecker.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <basic/Tracer.hh>
@@ -30,7 +30,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	BulgeApplier::BulgeApplier( AtrRepCheckerOP atr_rep_checker,
+	BulgeApplier::BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker,
 															RNA_BaseCentroidCheckerOP base_centroid_checker,
 															Size const moving_res ):
 		atr_rep_checker_( atr_rep_checker ),

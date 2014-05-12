@@ -26,7 +26,7 @@
 	#include <core/pose/MiniPose.fwd.hh>
 #endif
 // Project headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>

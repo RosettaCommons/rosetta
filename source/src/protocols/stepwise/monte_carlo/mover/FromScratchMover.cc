@@ -15,17 +15,18 @@
 
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.FromScratchMover" );
+using namespace protocols::stepwise::sampling;
 
 namespace protocols {
 namespace stepwise {

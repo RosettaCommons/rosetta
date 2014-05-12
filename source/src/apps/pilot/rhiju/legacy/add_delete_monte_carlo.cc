@@ -85,16 +85,16 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersUtil.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseWorkingParametersUtil.hh>
 
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
@@ -312,8 +312,8 @@ swa_rna_sample()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  Pose setup -- shared with SWA stuff, for now. Gets native_pose, sample_res, etc. -- put into its own little function?
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters(); // note -- hacked this to include option skip_complicated_stuff
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(job_parameters);
+	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters(); // note -- hacked this to include option skip_complicated_stuff
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(working_parameters);
 	stepwise_rna_pose_setup->set_align_to_native( true );
 
   Pose pose;
@@ -328,8 +328,8 @@ swa_rna_sample()
 	// Monte Carlo machinery
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// put this into its own little function?
-	std::string const & full_sequence = job_parameters->full_sequence();
-	utility::vector1< Size > const start_moving_res_list = job_parameters->working_moving_res_list();
+	std::string const & full_sequence = working_parameters->full_sequence();
+	utility::vector1< Size > const start_moving_res_list = working_parameters->working_moving_res_list();
 
 	FullModelInfoOP full_model_info_op =	new FullModelInfo( pose, full_sequence, option[ cutpoint_open](), option[ input_res ]()  );
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_op );

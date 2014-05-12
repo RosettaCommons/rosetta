@@ -41,7 +41,7 @@
 #include <core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.hh>
 #include <math.h>
 #include <numeric/xyzVector.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 

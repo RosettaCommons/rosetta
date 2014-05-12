@@ -18,10 +18,10 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
 #include <core/types.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 
@@ -47,7 +47,7 @@ namespace sugar {
 		check_compatibility( core::Size const nres ) const;
 
 		void
-		set_base_and_pucker_state( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP );
+		set_base_and_pucker_state( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP const & WP );
 
 		SugarModeling &
 		operator = ( SugarModeling const & src );

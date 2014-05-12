@@ -102,6 +102,7 @@ StackElecEnergy::StackElecEnergy( methods::EnergyMethodOptions const & options )
 	coulomb_( options ),
 	base_base_only_( false ), //true will be faster computation but appears less accurate (and less physically consistent)
 	verbose_( false ),
+	might_be_designing_( false ),
 	using_extended_method_( false )
 {
 	coulomb_.initialize();
@@ -113,6 +114,7 @@ StackElecEnergy::StackElecEnergy( StackElecEnergy const & src ):
 	coulomb_( src.coulomb() ),
 	base_base_only_( src.base_base_only_ ),
 	verbose_( src.verbose_ ),
+	might_be_designing_( src.might_be_designing_ ),
 	using_extended_method_( src.using_extended_method_ )
 {
 	coulomb_.initialize();

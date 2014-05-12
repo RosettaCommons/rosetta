@@ -25,7 +25,7 @@
 #include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 using namespace core::chemical::rna;
 

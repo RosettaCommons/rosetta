@@ -1,0 +1,10 @@
+-s outside_full_helix.pdb inside_full_helix.pdb
+-native full_helix.pdb
+-fasta full_helix.fasta
+-cutpoint_open 4
+-move ADD 2 BOND_TO_PREVIOUS 1
+-silent swm_rebuild.out
+-out:overwrite
+-integration_test
+-enumerate
+

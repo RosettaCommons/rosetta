@@ -19,10 +19,10 @@
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSetup_hh
 
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
@@ -48,7 +48,7 @@ class StepWiseRNA_PoseSetup: public protocols::moves::Mover {
 public:
 
 	//constructor!
-	StepWiseRNA_PoseSetup( StepWiseRNA_JobParametersOP & job_parameters );
+	StepWiseRNA_PoseSetup( working_parameters::StepWiseWorkingParametersOP & working_parameters );
 
 	//destructor -- necessary?
 	~StepWiseRNA_PoseSetup();
@@ -164,7 +164,7 @@ private:
 	add_aa_virt_rsd_as_root( pose::Pose & pose );
 
 	void
-	setup_pdb_info_with_working_residue_numbers( pose::Pose & pose ) const;
+	setup_full_model_info( pose::Pose & pose ) const;
 
 private:
 
@@ -173,7 +173,7 @@ private:
 	chemical::ResidueTypeSetCAP rsd_set_;
 	utility::vector1< std::string > input_tags_;
 	utility::vector1< std::string > silent_files_in_;
-	StepWiseRNA_JobParametersOP job_parameters_;
+	working_parameters::StepWiseWorkingParametersOP working_parameters_;
 	bool copy_DOF_;
 	bool verbose_;
 

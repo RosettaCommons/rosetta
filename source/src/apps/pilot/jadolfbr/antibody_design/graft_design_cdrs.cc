@@ -36,7 +36,7 @@ using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 
 //Documentation:  This app designs antibodies using North cluster graft design.
-// Not recommended for general use.  Though it is being tested for designs in the wet lab.
+// Not recommended for align use.  Though it is being tested for designs in the wet lab.
 // If you would like to use this app, please email me for help.  It requires a separate AntibodyDatabase, which is not yet downloadable.
 
 class GraftDesignCDRs : public protocols::moves::Mover{

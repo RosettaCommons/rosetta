@@ -34,6 +34,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 
 #include <core/util/metalloproteins_util.hh>
 
@@ -655,7 +656,7 @@ void build_pose_as_is2(
 
 	// If the user has set appropriate flags, check whether the pose contains metal ions,
 	// and automatically set up covalent bonds and constraints to them.
-	if( options.set_up_metal_bonds() ) {	
+	if( options.set_up_metal_bonds() ) {
 		core::util::auto_setup_all_metal_bonds(pose, options.metal_bond_LJ_multiplier(), true);
 		if( options.set_up_metal_constraints() ) {
 			core::util::auto_setup_all_metal_constraints( pose, options.metal_bond_dist_constraint_multiplier(), options.metal_bond_angle_constraint_multiplier() );
@@ -663,6 +664,7 @@ void build_pose_as_is2(
 	}
 
 	pose.pdb_info( pdb_info );
+	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
 }
 
 /// @details

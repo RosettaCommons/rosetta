@@ -56,6 +56,7 @@ LigandConformer::LigandConformer( LigandConformer const & other ) :
 	d23_( other.d23_ ),
 	ang123_( other.ang123_ ),
 	points_in_D3_frame_( other.points_in_D3_frame_ ),
+	ignore_h_collisions_( other.ignore_h_collisions_ ),
 	collision_check_id_2_restype_id_( other.collision_check_id_2_restype_id_ ),
 	restype_id_2_collision_check_id_( other.restype_id_2_collision_check_id_ )
 {}

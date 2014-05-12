@@ -15,15 +15,15 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/StepWiseUtil.hh> //Dec 23, 2011
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/util.hh> //Dec 23, 2011
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/sampling/rna/rigid_body/StepWiseRNA_FloatingBaseSamplerUtil.hh>
-#include <protocols/rotamer_sampler/rigid_body/FloatingBaseUtil.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/rigid_body/util.hh>
+#include <protocols/rotamer_sampler/rigid_body/util.hh>
+#include <core/chemical/rna/util.hh>
 
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 //////////////////////////////////
 
 #include <core/types.hh>
@@ -133,18 +133,19 @@ namespace checker {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void
-	RNA_VDW_BinChecker::setup_using_working_pose( core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters ){
+	RNA_VDW_BinChecker::setup_using_working_pose( core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
 
 		output_title_text( "Enter RNA_VDW_BinChecker::setup_using_working_pose", TR.Debug );
 
-		Size const reference_res( job_parameters->working_reference_res() ); //the last static_residues that this attached to the moving residues
+		Size const reference_res( working_parameters->working_reference_res() ); //the last static_residues that this attached to the moving residues
 
-		numeric::xyzVector< core::Real > const reference_xyz = core::chemical::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), false /*verbose*/ );
+		numeric::xyzVector< core::Real > const reference_xyz = get_reference_xyz( const_working_pose, reference_res );
 
 		pose::Pose working_pose = const_working_pose; //Feb 20, 2011..just to make sure that the o2prime hydrogens are virtualized. Since this hydrogen can vary during sampling.
-		add_virtual_O2Prime_hydrogen( working_pose );
 
-		create_VDW_screen_bin( working_pose, job_parameters->working_moving_res_list(), job_parameters->is_prepend(), reference_xyz, false /*verbose*/ );
+		virtualize_side_chains( working_pose ); // includes virtualization of 2'-OH for RNA
+
+		create_VDW_screen_bin( working_pose, working_parameters->working_moving_res_list(), working_parameters->is_prepend(), reference_xyz, false /*verbose*/ );
 
 		output_title_text( "Exit RNA_VDW_BinChecker::setup_using_working_pose", TR.Debug );
 
@@ -170,7 +171,7 @@ namespace checker {
 		//2. If not 1), then will perform the matching deletion. To ensure that code is working probably, user need to pass in exact the list of
 		// residues segments then matching DO NOT OCCUR. This is basically the residues being rebuilt.
 		// Example Format: [5-12, 17-21] means that matching will not occur exactly between res 5 to 12 and res 17 to 21.
-		// For SWA, the input residues should be in terms of full_length pose. Will use job_parameters->full_to_sub to convert to working_pose res.
+		// For SWA, the input residues should be in terms of full_length pose. Will use working_parameters->full_to_sub to convert to working_pose res.
 		//3. If VDW_rep_delete_match_res_ is empty, then the check in 2. is not made.
 
 		TR.Debug << "VDW_rep_ignore_matching_res_.size() = " << VDW_rep_ignore_matching_res_.size() << std::endl;
@@ -433,7 +434,7 @@ namespace checker {
 
 		}
 
-		id::AtomID_Map < id::AtomID > alignment_atom_id_map = protocols::stepwise::create_alignment_id_map(	VDW_rep_screen_pose, working_pose, res_map );
+		id::AtomID_Map < id::AtomID > alignment_atom_id_map = protocols::stepwise::sampling::create_alignment_id_map(	VDW_rep_screen_pose, working_pose, res_map );
 
 
 		if ( verbose ) TR << "before superimpose_pose" << std::endl;
@@ -622,7 +623,7 @@ namespace checker {
 	void
 	RNA_VDW_BinChecker::setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info,
                                                                 core::pose::Pose const & const_working_pose,
-                                                                StepWiseRNA_JobParametersCOP const & job_parameters ){
+                                                                working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
 
 		using namespace core::pose;
 		using namespace ObjexxFCL;
@@ -677,7 +678,7 @@ namespace checker {
 				utility_exit_with_message( "Size of VDW_align_res ( " + string_of( VDW_rep_screen_info.VDW_align_res.size() ) + " ) != working_align_res ( " + string_of( VDW_rep_screen_info.working_align_res.size() ) + " )" );
 			}
 
-			VDW_rep_screen_info.working_align_res = apply_full_to_sub_mapping( VDW_rep_screen_info.full_align_res, job_parameters );
+			VDW_rep_screen_info.working_align_res = apply_full_to_sub_mapping( VDW_rep_screen_info.full_align_res, working_parameters );
 
 			if ( VDW_rep_screen_info.full_align_res.size() != VDW_rep_screen_info.working_align_res.size() ){
 				TR.Debug << "Ignoring VDW_screen_rep_pose_info #" << VDW_rep_screen_info.import_ID << " since full_align_res.size()!=working_align_res.size()!";
@@ -687,7 +688,7 @@ namespace checker {
 				continue;
 			}
 
-			utility::vector1< core::Size > const working_fixed_res( job_parameters->working_fixed_res() );
+			utility::vector1< core::Size > const working_fixed_res( working_parameters->working_fixed_res() );
 			//Ok check that the working_align_res are working_fixed_res...
 			//This is important for VDW_screening in the minimizer!
 			for ( Size ii = 1; ii <= VDW_rep_screen_info.working_align_res.size(); ii++ ){
@@ -703,7 +704,7 @@ namespace checker {
 			//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
 			//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
 
-			std::map< core::Size, core::Size > const const_full_to_sub = job_parameters->const_full_to_sub();
+			std::map< core::Size, core::Size > const const_full_to_sub = working_parameters->const_full_to_sub();
 			std::map< core::Size, core::Size > full_to_sub = const_full_to_sub;
 
 			use_VDW_rep_pose_for_screening_ = true;	 ///Allow use of full pose for VDW rep screen instead of the bin.
@@ -717,7 +718,7 @@ namespace checker {
 		////////////////Find the VDW_rep_screen_pose_infos that are in the root partition!/////////////////////////////////////////////
 		TR.Debug << "--------------------------------------------------------" << std::endl;
 
-		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters->partition_definition();
+		ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters->partition_definition();
 		bool const root_partition = partition_definition( const_working_pose.fold_tree().root() );
 		Size num_rep_screen_pose_info_in_root_partition = 0;
 
@@ -751,7 +752,7 @@ namespace checker {
 		if ( num_rep_screen_pose_info_in_root_partition == 0 ){
 
 			//consistency check!//////////////////////////////////////////////
-			utility::vector1< core::Size > const working_fixed_res = job_parameters->working_fixed_res();
+			utility::vector1< core::Size > const working_fixed_res = working_parameters->working_fixed_res();
 			utility::vector1< core::Size > working_fixed_res_in_root_partition;
 
 			for ( Size n = 1; n <= working_fixed_res.size(); n++ ){
@@ -773,12 +774,12 @@ namespace checker {
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		Size const reference_res = job_parameters->working_reference_res();
+		Size const reference_res = working_parameters->working_reference_res();
 		TR.Debug << "--------------------------------------------------------" << std::endl;
 		TR.Debug << "Get reference xyz: " << std::endl;
 		TR.Debug << "working_reference_res = " << reference_res << std::endl;
 
-		numeric::xyzVector< core::Real > const reference_xyz = core::chemical::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), true );
+		numeric::xyzVector< core::Real > const reference_xyz = get_reference_xyz( const_working_pose, reference_res, true );
 		TR.Debug << "--------------------------------------------------------" << std::endl;
 
 		create_VDW_screen_bin( VDW_rep_screen_info_list_, reference_xyz, false /*verbose*/ );
@@ -793,9 +794,9 @@ namespace checker {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
-																											utility::vector1< core::Size > const & ignore_res_list,
-																											bool const is_prepend,  //associated with ignore_res_list
-																											std::ofstream & outfile_act ){
+																						 utility::vector1< core::Size > const & ignore_res_list,
+																						 bool const is_prepend,  //associated with ignore_res_list
+																						 std::ofstream & outfile_act ){
 
 		bool output_once = false;
 
@@ -1228,7 +1229,15 @@ namespace checker {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	core::Vector
+	RNA_VDW_BinChecker::get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res, bool const verbose /* = false */ ){
+		if ( pose.residue_type( reference_res ).is_RNA() ){
+			return core::chemical::rna::get_rna_base_centroid( pose.residue( reference_res ), verbose );
+		}
+		return pose.residue( reference_res ).xyz( 1 );
+	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RNA_VDW_BinChecker::set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz ){
 

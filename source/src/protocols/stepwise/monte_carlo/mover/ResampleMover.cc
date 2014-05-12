@@ -19,18 +19,21 @@
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <protocols/stepwise/sampling/packer/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
+
+using namespace protocols::stepwise::sampling;
 
 static numeric::random::RandomGenerator RG(239145021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.ResampleMover" );
@@ -151,10 +154,13 @@ namespace rna {
 		if ( move_element_size == 1 ) did_mutation = mutate_res_if_allowed( pose, full_to_sub( swa_move.moving_res(), pose ) );
 		bool just_min_after_mutation = ( did_mutation && ( RG.uniform() < options_->just_min_after_mutation_frequency() ) );
 
-		stepwise_modeler_->set_moving_res_and_reset( remodel_res );
-		stepwise_modeler_->set_skip_sampling( just_min_after_mutation );
-
-		// LATER SHOULD REPLACE THIS WITH FIXED DOMAIN MAP -- NEED TO UPDATE STEPWISE MODELER -- rhiju.
+		if ( just_min_after_mutation ) {
+			stepwise_modeler_->set_moving_res_and_reset( 0 );
+			stepwise_modeler_->set_working_prepack_res( packer::figure_out_working_interface_res( pose, remodel_res ) );
+		} else {
+			stepwise_modeler_->set_moving_res_and_reset( remodel_res );
+			stepwise_modeler_->set_figure_out_prepack_res( true );
+		}
 		utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
 		if ( ! minimize_single_res_ ) stepwise_modeler_->set_working_minimize_res( moving_res );
 

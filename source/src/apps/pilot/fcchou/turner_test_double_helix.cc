@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
@@ -61,7 +61,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>

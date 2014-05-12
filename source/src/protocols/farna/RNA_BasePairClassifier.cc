@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 

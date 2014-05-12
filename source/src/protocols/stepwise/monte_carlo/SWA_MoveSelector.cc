@@ -15,16 +15,16 @@
 
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> // probably do not need RNA in here.
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh> // probably do not need RNA in here.
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/rna/RNA_Util.hh> // Probably could get rid of RNA-specialized stuff here.
+#include <core/chemical/rna/util.hh> // Probably could get rid of RNA-specialized stuff here.
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
@@ -39,6 +39,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.SWA_MoveSelector" );
 
 using namespace core;
 using namespace core::pose::full_model_info;
+using namespace protocols::stepwise::sampling;
 
 namespace protocols {
 namespace stepwise {

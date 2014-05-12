@@ -279,7 +279,7 @@ def write_common_flags(outfile, options, docking_cases): #{{{
  ## PDB files.  Their rotamer ("Dunbrack") energies are also adjusted to be
  ## equal to the best rotamer at that position, thereby favoring the native.
  ## Since most sidechains do not change position much upon ligand binding,
- ## including this knowledge generally improves docking results:
+ ## including this knowledge alignly improves docking results:
  #-unboundrot ...
  ## Controls the number of (protein) rotamers used.
  -ex1

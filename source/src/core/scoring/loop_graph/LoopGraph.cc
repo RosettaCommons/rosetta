@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/GaussianChainFunc.hh>
@@ -318,10 +318,6 @@ namespace loop_graph {
 
 		Size takeoff_pos( 0 ), takeoff_domain( 0 ), landing_pos( 0 ), landing_domain( 0 );
 		Size nres = pose_domain_map.size();
-
-		//		TR.Debug << "DOMAIN_MAP";
-		//		for ( Size k = 1; k <= pose_domain_map.size(); k++ ) TR.Debug << " " << pose_domain_map[ k ];
-		//		TR.Debug << std::endl;
 
 		for ( Size n = 1; n <= nres; n++ ){
 

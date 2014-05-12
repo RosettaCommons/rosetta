@@ -30,7 +30,7 @@ namespace screener {
 		//constructor
 		SugarInstantiator( pose::Pose & screening_pose,
 											 Size const moving_res,
-											 Distance const o2prime_instantiation_distance_cutoff );
+											 Distance const o2prime_instantiation_distance_cutoff = 6.0 );
 
 		//destructor
 		~SugarInstantiator();

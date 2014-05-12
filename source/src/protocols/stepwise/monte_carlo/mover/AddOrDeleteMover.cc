@@ -23,7 +23,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>

@@ -14,4 +14,4 @@
 -sample_res 3 
 -input_res 1 2 9 10 11 12 13 14 15 16 17 
 -integration_test true
--mute all
+#-mute all

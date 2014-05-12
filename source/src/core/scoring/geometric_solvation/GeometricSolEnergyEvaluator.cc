@@ -29,7 +29,7 @@
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 // Project headers
 #include <core/chemical/types.hh>

@@ -18,8 +18,8 @@
 
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.fwd.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinModelerOptions.fwd.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
@@ -71,16 +71,14 @@ namespace rna {
 		/// This function allows for better error message delivery.
 		virtual
 		std::string
-		type() const{ return "StepWiseRNA_ModelerOptions";}
+		type() const{ return "StepWiseModelerOptions";}
 
 	public:
 
 		void
 		initialize_from_command_line();
 
-		protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOptionsOP setup_rna_modeler_options() const;
-
-		protocols::stepwise::sampling::protein::StepWiseProteinModelerOptionsOP setup_protein_modeler_options() const;
+		protocols::stepwise::sampling::StepWiseModelerOptionsOP setup_modeler_options() const;
 
 		std::string const & silent_file() const { return silent_file_; }
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; };
@@ -172,23 +170,11 @@ namespace rna {
 		bool const & make_movie() const { return make_movie_; }
 		void set_make_movie( bool const & setting ){ make_movie_ = setting; }
 
-		utility::vector1< core::Size > const & extra_minimize_res() const { return extra_minimize_res_; }
-		void set_extra_minimize_res(  utility::vector1< core::Size > const & setting ){ extra_minimize_res_ = setting; }
-
-		utility::vector1< core::Size > const & syn_chi_res_list() const { return syn_chi_res_list_; }
-		void set_syn_chi_res_list(  utility::vector1< core::Size > const & setting ){  syn_chi_res_list_ = setting; }
-
-		utility::vector1< core::Size > const & terminal_res() const { return terminal_res_; }
-		void set_terminal_res(  utility::vector1< core::Size > const & setting ){  terminal_res_ = setting; }
-
 		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
 		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
 
 		bool const & rebuild_bulge_mode() const { return rebuild_bulge_mode_; }
 		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
-
-		bool const & unified_framework() const { return unified_framework_; }
-		void set_unified_framework( bool const & setting ){ unified_framework_ = setting; }
 
 		bool const & tether_jump() const { return tether_jump_; }
 		void set_tether_jump( bool const & setting ){ tether_jump_ = setting; }
@@ -208,11 +194,17 @@ namespace rna {
 		bool const & allow_virtual_side_chains() const { return allow_virtual_side_chains_; }
 		void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
 
+		Size const & n_sample() const { return n_sample_; }
+		void set_n_sample( Size const & setting ){ n_sample_ = setting; }
+
 		bool const & protein_prepack() const { return protein_prepack_; }
 		void set_protein_prepack( bool const & setting ){ protein_prepack_ = setting; }
 
-		bool const & protein_atr_rep_screen() const { return protein_atr_rep_screen_; }
-		void set_protein_atr_rep_screen( bool const & setting ){ protein_atr_rep_screen_ = setting; }
+		bool const & o2prime_legacy_mode() const { return o2prime_legacy_mode_; }
+		void set_o2prime_legacy_mode( bool const & setting ){ o2prime_legacy_mode_ = setting; }
+
+		bool const & atr_rep_screen() const { return atr_rep_screen_; }
+		void set_atr_rep_screen( bool const & setting ){ atr_rep_screen_ = setting; }
 
 		core::Real const & rmsd_screen() const { return rmsd_screen_; }
 		void set_rmsd_screen( core::Real const & setting ){ rmsd_screen_ = setting; }
@@ -251,21 +243,17 @@ namespace rna {
 		bool make_movie_;
 		bool sampler_perform_phosphate_pack_;
 		bool rebuild_bulge_mode_;
-		bool unified_framework_;
 		bool tether_jump_;
 		bool local_redock_only_;
 		bool skip_coord_constraints_;
 		bool output_minimized_pose_list_;
 		bool filter_native_big_bins_;
 		bool allow_virtual_side_chains_;
+		Size n_sample_;
 		bool protein_prepack_;
-		bool protein_atr_rep_screen_;
+		bool o2prime_legacy_mode_;
+		bool atr_rep_screen_;
 		core::Real rmsd_screen_;
-
-		utility::vector1< core::Size > extra_minimize_res_;
-		utility::vector1< core::Size > syn_chi_res_list_;
-		utility::vector1< core::Size > terminal_res_;
-
 	};
 
 } //rna

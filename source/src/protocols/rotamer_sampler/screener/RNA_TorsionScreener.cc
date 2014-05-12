@@ -18,7 +18,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 
 // Numeric Headers

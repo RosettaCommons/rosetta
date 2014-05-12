@@ -20,4 +20,4 @@ atom_pair_constraint       1.0
 rna_bulge                  1.0
 chainbreak      		   40.00
 linear_chainbreak      	   40.00
-
+free_2HOprime 1.0

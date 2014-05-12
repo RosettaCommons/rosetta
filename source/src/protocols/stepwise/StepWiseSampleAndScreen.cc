@@ -60,7 +60,8 @@ namespace stepwise {
 		sampler_( sampler ),
 		screeners_( screeners ),
 		max_ntries_( 0 ),
-		num_random_samples_( 0 )
+		num_random_samples_( 0 ),
+		verbose_( false )
 	{
 		runtime_assert( num_screeners() > 0 );
 		reset();
@@ -77,10 +78,11 @@ namespace stepwise {
 		using namespace protocols::moves;
 		using namespace protocols::stepwise::screener;
 
+		if ( verbose_ ) TR << "Running SampleAndScreen... " << std::endl;
+
 		Size n( 0 );
 		CompositionMoverOP update_movers( new CompositionMover ), restore_movers( new CompositionMover );
 		reset();
-
 		for ( sampler_->reset(); sampler_->not_end(); ++( *sampler_ ) ) {
 
 			if ( sampler_->random() && ( num_tries() >= max_ntries_ || num_successes() >= num_random_samples_ ) ) break;
@@ -89,6 +91,7 @@ namespace stepwise {
 			set_ok_to_increment();
 
 			for ( n = 1; n <= num_screeners(); n++ ){
+
 				StepWiseScreenerOP screener = screeners_[ n ];
 				screener->get_update( sampler_ );
 				if ( n > 1 ) screener->apply_mover( update_movers, 1, n - 1 ); //info from previous screeners.
@@ -107,14 +110,15 @@ namespace stepwise {
 
 		} // sampler
 
+		if ( verbose_ ) output_counts();
+		if ( sampler_->random() ) output_info_on_random_trials();
+
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	void
 	StepWiseSampleAndScreen::reset(){
-		for ( Size n = 1; n <= num_screeners(); n++ ) {
-			screeners_[ n ]->reset();
-		}
+		for ( Size n = 1; n <= num_screeners(); n++ ) screeners_[ n ]->reset();
 	}
 
 	//////////////////////////////////////////////////////////////////////

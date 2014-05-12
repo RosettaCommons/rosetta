@@ -30,7 +30,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -92,19 +92,17 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Minimizer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
@@ -483,15 +481,15 @@ create_scorefxn(){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///Oct 28, 2011:This function is an alternative way to setup the job_parameters////////////////////////////////////////////////////
-///The original job_parameters was designed primarily for use during the SWA building step/////////////////////////////////////////
+///Oct 28, 2011:This function is an alternative way to setup the working_parameters////////////////////////////////////////////////////
+///The original working_parameters was designed primarily for use during the SWA building step/////////////////////////////////////////
 ///However since then, many other other SWA and FARFAR class make use of it especially the full pose length version////////////////
-///Hence the original job_parameters setup has become clumbersome for most usage (containing many options and independencies)//////
+///Hence the original working_parameters setup has become clumbersome for most usage (containing many options and independencies)//////
 ///The new job_parameter setup function is a work in progress and will be updated as needed.///////////////////////////////////////
 ///For example right now (Oct 28, 2011), it only contains parameters needed by output_data()///////////////////////////////////////
 
-StepWiseRNA_JobParametersOP
-setup_simple_full_length_rna_job_parameters(){
+working_parameters::StepWiseWorkingParametersOP
+setup_simple_full_length_rna_working_parameters(){
 
 	using namespace protocols::stepwise::sampling::rna;
 	using namespace ObjexxFCL;
@@ -516,38 +514,38 @@ setup_simple_full_length_rna_job_parameters(){
 
 	/////////////////////////////////////////////////////
 
-	StepWiseRNA_JobParametersOP job_parameters = new StepWiseRNA_JobParameters;
+	working_parameters::StepWiseWorkingParametersOP working_parameters = new working_parameters::StepWiseWorkingParameters;
 
-	job_parameters->set_is_simple_full_length_job_params( true ); //FORGOT THIS! ONLY INCLUDED ON MARCH 03, 2012!
+	working_parameters->set_is_simple_full_length_job_params( true ); //FORGOT THIS! ONLY INCLUDED ON MARCH 03, 2012!
 	//LUCKILY, BEFORE MARCH 03, 2012, only called is_simple_full_length_job_params() for utility_exit_with_message() check in the following three functions of StepWiseRNA_Clusterer.cc:
 	//i. initialize_VDW_rep_checker(),
 	//ii. recalculate_rmsd_and_output_silent_file()
 	//iii. get_best_neighboring_shift_RMSD_and_output_silent_file()
 	/////////////////////////////////////////////////////
 
-	job_parameters->set_output_extra_RMSDs( option[ OptionKeys::stepwise::rna::output_extra_RMSDs ]() );
+	working_parameters->set_output_extra_RMSDs( option[ OptionKeys::stepwise::rna::output_extra_RMSDs ]() );
 
 	utility::vector1< core::Size > is_working_res( nres, 1 ); //All res belong to 'mock pose' 1
-	job_parameters->set_is_working_res( is_working_res );
-	job_parameters->set_full_sequence( full_sequence ); //working_sequence is automatical init after BOTH is_working_res and full_sequence is initialized
+	working_parameters->set_is_working_res( is_working_res );
+	working_parameters->set_full_sequence( full_sequence ); //working_sequence is automatical init after BOTH is_working_res and full_sequence is initialized
 
 	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ){
-		job_parameters->set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
+		working_parameters->set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
 	} else {
 		TR << "Warning! rmsd_res not specified. Assuming sample_res is rmsd_res" << std::endl;
-		job_parameters->set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
+		working_parameters->set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
 	}
- 	job_parameters->set_gap_size( 0 );
+ 	working_parameters->set_gap_size( 0 );
 
 	if ( option[ OptionKeys::stepwise::rna::native_alignment_res ].user() ){
 		//If working_native_align_res is not specified that most function will internally default to using working_best_alignment_list in its place
-		job_parameters->set_native_alignment( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
-		job_parameters->set_working_native_alignment( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
+		working_parameters->set_native_alignment( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
+		working_parameters->set_working_native_alignment( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
 	}
 	/////////////////////////////////////////////////////
 	//Oct 31, 2011: Better to let code raise error if the there is a statement asking for the partition_definition from the job_params later in the run!
 	//ObjexxFCL::FArray1D_bool partition_definition( nres, false ); //All res belong in partition 0!
-	//job_parameters->set_partition_definition( partition_definition ); //this is a useful decomposition.
+	//working_parameters->set_partition_definition( partition_definition ); //this is a useful decomposition.
 	/////////////////////////////////////////////////////
 
 	std::map< core::Size, core::Size > full_to_sub;
@@ -562,20 +560,20 @@ setup_simple_full_length_rna_job_parameters(){
 		is_prepend_map[seq_num] = false; //all append..arbitrary choice
 	}
 
-	job_parameters->set_full_to_sub( full_to_sub );  //res_map
-	job_parameters->set_is_prepend_map( is_prepend_map );
-	job_parameters->set_is_prepend( is_prepend_map[job_parameters->actually_moving_res()] );
+	working_parameters->set_full_to_sub( full_to_sub );  //res_map
+	working_parameters->set_is_prepend_map( is_prepend_map );
+	working_parameters->set_is_prepend( is_prepend_map[working_parameters->actually_moving_res()] );
 
 	utility::vector1< utility::vector1< Size > > input_res_vectors;
 	input_res_vectors.push_back( input_res );
 	input_res_vectors.push_back( input_res2 );
-	job_parameters->set_input_res_vectors( input_res_vectors );
+	working_parameters->set_input_res_vectors( input_res_vectors );
 
 	/////////////////////////////////////////////////////
 	utility::vector1< Size > working_moving_res_list;
 	working_moving_res_list.push_back( full_sequence.size() ); //arbitrary choice, choose residue of pose
 
-	job_parameters->set_working_moving_res_list( working_moving_res_list ); //This sets actually_moving_res()
+	working_parameters->set_working_moving_res_list( working_moving_res_list ); //This sets actually_moving_res()
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	utility::vector1< std::string > alignment_res_string_list = option[ OptionKeys::stepwise::rna::alignment_res ]();
@@ -593,16 +591,15 @@ setup_simple_full_length_rna_job_parameters(){
 		if ( alignment_list.size() > best_alignment_list.size() ) best_alignment_list = alignment_list;
 	}
 
-	job_parameters->set_working_best_alignment( best_alignment_list );
+	working_parameters->set_working_best_alignment( best_alignment_list );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	job_parameters->set_working_fixed_res(  get_fixed_res( nres ) );
-	job_parameters->set_global_sample_res_list(  option[ OptionKeys::stepwise::rna::global_sample_res_list ]() );
-	job_parameters->set_force_syn_chi_res_list(  option[ OptionKeys::stepwise::rna::force_syn_chi_res_list]() );
-	job_parameters->set_force_north_sugar_list(  option[ OptionKeys::stepwise::rna::force_north_sugar_list ]() );
-	job_parameters->set_force_south_sugar_list(  option[ OptionKeys::stepwise::rna::force_south_sugar_list ]() );
-	job_parameters->set_protonated_H1_adenosine_list( option[ OptionKeys::stepwise::rna::protonated_H1_adenosine_list ]() );
-
+	working_parameters->set_working_fixed_res(  get_fixed_res( nres ) );
+	working_parameters->set_global_sample_res_list(  option[ OptionKeys::stepwise::rna::global_sample_res_list ]() );
+	working_parameters->set_force_syn_chi_res_list(  option[ OptionKeys::full_model::rna::force_syn_chi_res_list]() );
+	working_parameters->set_force_north_sugar_list(  option[ OptionKeys::full_model::rna::force_north_sugar_list ]() );
+	working_parameters->set_force_south_sugar_list(  option[ OptionKeys::full_model::rna::force_south_sugar_list ]() );
+	working_parameters->set_protonated_H1_adenosine_list( option[ OptionKeys::stepwise::rna::protonated_H1_adenosine_list ]() );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	PoseOP native_pose_OP;
@@ -617,21 +614,21 @@ setup_simple_full_length_rna_job_parameters(){
 			apply_virtual_rna_residue_variant_type( ( *native_pose_OP ), native_virtual_res_list[n], false /*apply_check*/ );
 		}
 
-		job_parameters->set_working_native_pose( native_pose_OP );
+		working_parameters->set_working_native_pose( native_pose_OP );
 
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	print_JobParameters_info( job_parameters, "simple_full_length_job_parameters", TR, true /*is_simple_full_length_JP*/ );
+	print_WorkingParameters_info( working_parameters, "simple_full_length_working_parameters", TR, true /*is_simple_full_length_WP*/ );
 
-	return job_parameters;
+	return working_parameters;
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-StepWiseRNA_JobParametersOP
-setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_pose /* = false */ ){
+working_parameters::StepWiseWorkingParametersOP
+setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_input_pose /* = false */ ){
 	// Describe use_case of flag check_for_previously_closed_cutpoint_with_input_pose? -- rhiju
 	//
 	//   i. Consider tetraloop-receptor motif:
@@ -670,11 +667,11 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 	//           C1-G8   C09-C20
 	//
 	//       Rhiju: Why is this so important that it is required as input for
-	//              setup_rna_job_parameters?
+	//              setup_rna_working_parameters?
 	//
-	//       The setup_rna_job_parameters class is responsible for figuring out
+	//       The setup_rna_working_parameters class is responsible for figuring out
 	//       the fold_tree. For simple motifs, such as a single hairpin or a
-	//       single double-stranded motif, setup_rna_job_parameters can figure
+	//       single double-stranded motif, setup_rna_working_parameters can figure
 	//       what the fold_tree is using just information specified from command-line
 	//       (jump_point_pairs, cutpoint_open, cutpoint_closed and etcs).
 	//
@@ -686,10 +683,10 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 	//       Setting check_for_previously_closed_cutpoint_with_input_pose to true
 	//       tells the class to look inside the input_pose to figure out where this
 	//       closed_cutpoint is located (see get_previously_closed_cutpoint_from_
-	//       imported_silent_file() function insetup_rna_job_parameters class for
+	//       imported_silent_file() function insetup_rna_working_parameters class for
 	//       futher details).
 	//
-	//       Lastly, note that the setup_rna_job_parameters class will still be able
+	//       Lastly, note that the setup_rna_working_parameters class will still be able
 	//       to come up with a fold_tree even when
 	//       check_for_previously_closed_cutpoint_with_input_pose is false (default)
 	//       In this case, however, the fold_tree might not have the correct
@@ -734,50 +731,50 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 
 	/////////////////////////////////////////////////////
 	Size const cutpoint_closed_ = option[ OptionKeys::full_model::cutpoint_closed ].user() ? option[ OptionKeys::full_model::cutpoint_closed ]()[1] : 0;
-	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( option[ OptionKeys::full_model::sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseWorkingParametersSetup stepwise_rna_working_parameters_setup( option[ OptionKeys::full_model::sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 																																		full_sequence,
 																																		get_input_res( nres, "1" ),
 																																		get_input_res( nres, "2" ),
 																																		option[ OptionKeys::full_model::cutpoint_open ](),
 																																		cutpoint_closed_ );
-	stepwise_rna_job_parameters_setup.set_simple_append_map( option[ OptionKeys::stepwise::rna::simple_append_map]() );
-	stepwise_rna_job_parameters_setup.set_allow_fixed_res_at_moving_res( option[ OptionKeys::stepwise::rna::allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
-	stepwise_rna_job_parameters_setup.set_fixed_res( get_fixed_res( nres ) );
-	stepwise_rna_job_parameters_setup.set_terminal_res( option[ OptionKeys::stepwise::rna::terminal_res ]() );
+	stepwise_rna_working_parameters_setup.set_simple_append_map( option[ OptionKeys::stepwise::rna::simple_append_map]() );
+	stepwise_rna_working_parameters_setup.set_add_virt_res_as_root( option[ OptionKeys::stepwise::rna::add_virt_root]() );
+	stepwise_rna_working_parameters_setup.set_allow_fixed_res_at_moving_res( option[ OptionKeys::stepwise::rna::allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
+	stepwise_rna_working_parameters_setup.set_fixed_res( get_fixed_res( nres ) );
+	stepwise_rna_working_parameters_setup.set_terminal_res( option[ OptionKeys::full_model::rna::terminal_res ]() );
 
 	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ){
-		stepwise_rna_job_parameters_setup.set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
+		stepwise_rna_working_parameters_setup.set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
 	} else {
 		TR << "Warning! rmsd_res not specified. Assuming sample_res is rmsd_res" << std::endl;
-		stepwise_rna_job_parameters_setup.set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
+		stepwise_rna_working_parameters_setup.set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
 	}
 
-	// jump_point_pairs is string of pairs  "1-16 8-9", assumed for now to be connected by dashes.  See note in StepWiseRNA_JobParametersSetup.cc
-	stepwise_rna_job_parameters_setup.set_jump_point_pair_list( option[ OptionKeys::stepwise::rna::jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
-	stepwise_rna_job_parameters_setup.set_force_user_defined_jumps( option[ OptionKeys::stepwise::rna::force_user_defined_jumps ]() );
+	// jump_point_pairs is string of pairs  "1-16 8-9", assumed for now to be connected by dashes.  See note in StepWiseWorkingParametersSetup.cc
+	stepwise_rna_working_parameters_setup.set_jump_point_pair_list( option[ OptionKeys::stepwise::rna::jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
+	stepwise_rna_working_parameters_setup.set_force_user_defined_jumps( option[ OptionKeys::stepwise::rna::force_user_defined_jumps ]() );
 
-	//  Alignment_res is a string vector to allow user to specify multiple possible alignments. Note that 1-6 7-12 is different from 1-6-7-12. See note in StepWiseRNA_JobParametersSetup.cc
-	stepwise_rna_job_parameters_setup.set_alignment_res( option[ OptionKeys::stepwise::rna::alignment_res ]() );
-	stepwise_rna_job_parameters_setup.set_filter_user_alignment_res( option[ OptionKeys::stepwise::rna::filter_user_alignment_res ]() );
-	stepwise_rna_job_parameters_setup.set_native_alignment_res( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
+	//  Alignment_res is a string vector to allow user to specify multiple possible alignments. Note that 1-6 7-12 is different from 1-6-7-12. See note in StepWiseWorkingParametersSetup.cc
+	stepwise_rna_working_parameters_setup.set_alignment_res( option[ OptionKeys::stepwise::rna::alignment_res ]() );
+	stepwise_rna_working_parameters_setup.set_filter_user_alignment_res( option[ OptionKeys::stepwise::rna::filter_user_alignment_res ]() );
+	stepwise_rna_working_parameters_setup.set_native_alignment_res( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
 
-	stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ OptionKeys::stepwise::rna::global_sample_res_list ]() ); //March 20, 2011
+	stepwise_rna_working_parameters_setup.set_global_sample_res_list( option[ OptionKeys::stepwise::rna::global_sample_res_list ]() ); //March 20, 2011
 
-	stepwise_rna_job_parameters_setup.set_force_syn_chi_res_list( option[ OptionKeys::stepwise::rna::force_syn_chi_res_list]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_force_north_sugar_list( option[ OptionKeys::stepwise::rna::force_north_sugar_list ]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_force_south_sugar_list( option[ OptionKeys::stepwise::rna::force_south_sugar_list ]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_protonated_H1_adenosine_list( option[ OptionKeys::stepwise::rna::protonated_H1_adenosine_list ]() ); //May 02, 2011
+	stepwise_rna_working_parameters_setup.set_force_syn_chi_res_list( option[ OptionKeys::full_model::rna::force_syn_chi_res_list]() ); //April 29, 2011
+	stepwise_rna_working_parameters_setup.set_force_north_sugar_list( option[ OptionKeys::full_model::rna::force_north_sugar_list ]() ); //April 29, 2011
+	stepwise_rna_working_parameters_setup.set_force_south_sugar_list( option[ OptionKeys::full_model::rna::force_south_sugar_list ]() ); //April 29, 2011
+	stepwise_rna_working_parameters_setup.set_protonated_H1_adenosine_list( option[ OptionKeys::stepwise::rna::protonated_H1_adenosine_list ]() ); //May 02, 2011
 
-	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP( option[ OptionKeys::stepwise::rna::allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
+	stepwise_rna_working_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP( option[ OptionKeys::stepwise::rna::allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
 
-	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ OptionKeys::stepwise::rna::output_extra_RMSDs ]() );
-	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ OptionKeys::stepwise::rna::add_virt_root]() );
-	stepwise_rna_job_parameters_setup.set_floating_base( option[ OptionKeys::stepwise::rna::floating_base ]() ||
+	stepwise_rna_working_parameters_setup.set_output_extra_RMSDs( option[ OptionKeys::stepwise::rna::output_extra_RMSDs ]() );
+	stepwise_rna_working_parameters_setup.set_floating_base( option[ OptionKeys::stepwise::rna::floating_base ]() ||
 																											 option[ OptionKeys::stepwise::rna::floating_base_anchor_res ].user() );
-	stepwise_rna_job_parameters_setup.set_floating_base_anchor_res( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() );
+	stepwise_rna_working_parameters_setup.set_floating_base_anchor_res( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() );
 	if ( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() ) runtime_assert( option[ OptionKeys::stepwise::rna::force_user_defined_jumps ]() );
-	stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( option[ basic::options::OptionKeys::stepwise::rna::rebuild_bulge_mode]() );
-	stepwise_rna_job_parameters_setup.set_sample_both_sugar_base_rotamer( option[ basic::options::OptionKeys::stepwise::rna::sample_both_sugar_base_rotamer]() );
+	stepwise_rna_working_parameters_setup.set_rebuild_bulge_mode( option[ basic::options::OptionKeys::stepwise::rna::rebuild_bulge_mode]() );
+	stepwise_rna_working_parameters_setup.set_sample_both_sugar_base_rotamer( option[ basic::options::OptionKeys::stepwise::rna::sample_both_sugar_base_rotamer]() );
 
 	/////////////////////////////Sept 1, 2010////////////
 	if ( check_for_previously_closed_cutpoint_with_input_pose ){
@@ -794,14 +791,14 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 			 	utility_exit_with_message( "silent_files_in.size( " + string_of( silent_files_in.size() ) + " ) != input_tags.size( " + string_of( input_tags.size() ) + " )" );
 			}
 		}
-		stepwise_rna_job_parameters_setup.set_input_tags( input_tags );
-		stepwise_rna_job_parameters_setup.set_silent_files_in( silent_files_in );
+		stepwise_rna_working_parameters_setup.set_input_tags( input_tags );
+		stepwise_rna_working_parameters_setup.set_silent_files_in( silent_files_in );
 	}
 	///////////////////////////////////////////////////////
 
-	stepwise_rna_job_parameters_setup.apply();
+	stepwise_rna_working_parameters_setup.apply();
 
-	return stepwise_rna_job_parameters_setup.job_parameters();
+	return stepwise_rna_working_parameters_setup.working_parameters();
 
 }
 
@@ -811,8 +808,8 @@ void
 setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-	// StepWisePoseSetup should create the starting pose.
-	// This class might eventually be united with the protein StepWisePoseSetup.
+	// StepWiseProteinPoseSetup should create the starting pose.
+	// This class might eventually be united with the protein StepWiseProteinPoseSetup.
 	utility::vector1< std::string > input_tags;
 	utility::vector1< std::string > silent_files_in;
 
@@ -857,7 +854,7 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 
 //////////////////////////////////////////////////////////////////////////////////////////
 StepWiseRNA_PoseSetupOP
-setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF /*= true*/ ){
+setup_pose_setup_class( working_parameters::StepWiseWorkingParametersOP & working_parameters, bool const copy_DOF /*= true*/ ){
 
   using namespace core::pose;
   using namespace core::chemical;
@@ -879,9 +876,9 @@ setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const
 	}
 
 
-//	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, job_parameters);
+//	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
 
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( job_parameters );
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( working_parameters );
 	stepwise_rna_pose_setup->set_copy_DOF( copy_DOF );
 
 	if ( copy_DOF == true ){
@@ -892,36 +889,13 @@ setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const
 	stepwise_rna_pose_setup->set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 	stepwise_rna_pose_setup->set_native_pose( native_pose );
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ basic::options::OptionKeys::stepwise::rna::native_virtual_res]() );
-	stepwise_rna_pose_setup->set_output_pdb( option[ OptionKeys::stepwise::rna::output_pdb ]() );
+	stepwise_rna_pose_setup->set_output_pdb( option[ OptionKeys::stepwise::dump ]() );
 	stepwise_rna_pose_setup->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
 	return stepwise_rna_pose_setup;
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void check_if_silent_file_exists(){
-
-	////////////////////////////////////////////////////////////////////////////////
-	//May 04, 2011. Make sure that the "FINAL" output silent_file doesn't exist at the beginning of the run.
-	//Mainly need this becuase the BIOX2-cluster (Stanford) is not robust...The node containing a slave_job can suddenly become unaviable and slave_job will need to be resubmitted to a new node.
-	//For example:
-	//		Your job <90107> has been killed because the execution host <node-9-30> is no longer available.
-	//		The job will be re-queued and re-run with the same jobId.
-
-	std::string const silent_file = option[ out::file::silent ]();
-
-	TR << "Does following file exist? " <<  silent_file << " " << utility::file::file_exists( silent_file )  << std::endl;
-
-	if ( utility::file::file_exists( silent_file ) ) {
-
-		TR << "WARNING: silent_file " << silent_file << " already exists! removing..." << std::endl;
-
-		int remove_file_return_value = std::remove( silent_file.c_str() );
-		TR << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << silent_file << " )" << std::endl;
-		if ( !remove_file_return_value )	utility_exit_with_message( "remove_file_return_value = " + ObjexxFCL::string_of( remove_file_return_value ) + " != 0 for std::remove( " + silent_file + " )" );
-	}
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Conventionally, SWA only outputted structures from a full enumeration, and

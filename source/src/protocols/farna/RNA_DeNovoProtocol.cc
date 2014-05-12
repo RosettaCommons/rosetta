@@ -32,9 +32,9 @@
 #include <protocols/farna/RNA_ChunkLibrary.hh>
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/stepwise/StepWiseUtil.hh> //move this to toolbox/
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/sampling/util.hh> //move this to toolbox/
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/farna/util.hh>
 
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -47,7 +47,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
@@ -55,6 +55,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/copydofs/util.hh>
 #include <basic/database/open.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -252,7 +253,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			initialize_constraints( pose );
 			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
 
-			if ( refine_pose_ ) copy_dofs_match_atom_names( pose, start_pose );
+			if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
 
 			if ( close_loops_after_each_move_ ) {
 				rna_loop_closer_->apply( pose );
@@ -777,7 +778,7 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 		}
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			protocols::stepwise::sampling::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 
 		TR << "Aligning pose to native." << std::endl;
 

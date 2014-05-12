@@ -23,7 +23,7 @@
 #include <protocols/rotamer_sampler/rna/RNA_McSugar.fwd.hh>
 
 // Project headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/id/TorsionID.hh>
 
 

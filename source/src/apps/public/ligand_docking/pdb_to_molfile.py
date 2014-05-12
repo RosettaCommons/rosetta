@@ -83,7 +83,7 @@ def main(argv):
         parser.print_help()
         err("Unknown input format '%s'" % options.input_format)
         return 2
-    # SDF files don't (generally) have unique atom names.
+    # SDF files don't (alignly) have unique atom names.
     # Using the same algorithm as molfile_to_params should ensure that names match up.
     uniquify_atom_names(template.atoms)
 
@@ -118,7 +118,7 @@ def main(argv):
             err("Missing %i HETATM records in %s" % (-diff, model_file))
         elif diff > 0:
             err("%i duplicate HETATM records in %s" % (diff, model_file))
-            # This generally occurs because we have multiple HET residues in the PDB,
+            # This alignly occurs because we have multiple HET residues in the PDB,
             # and some of their atoms have the same names.
             # Nonetheless, this function should Do The Right Thing,
             # because later records overwrite earlier ones, and

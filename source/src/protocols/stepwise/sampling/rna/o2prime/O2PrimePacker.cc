@@ -14,8 +14,9 @@
 
 
 #include <protocols/stepwise/sampling/rna/o2prime/O2PrimePacker.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/simple_moves/GreenPacker.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -35,10 +36,12 @@ namespace o2prime {
 	//Constructor
 	O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
 																core::scoring::ScoreFunctionCOP const & scorefxn,
-																utility::vector1< core::Size > moving_res ):
+																utility::vector1< core::Size > moving_res,
+																bool const pack_virtual_o2prime_hydrogen /* = false */ ):
 		pose_with_original_HO2prime_torsion_( pose ),
 		moving_res_( moving_res ),
 		o2prime_pack_pose_( pose ),
+		pack_virtual_o2prime_hydrogen_( pack_virtual_o2prime_hydrogen ),
 		use_green_packer_( false )
 	{
 		if ( use_green_packer_ ){
@@ -46,37 +49,18 @@ namespace o2prime {
 		} else {
 			initialize_o2prime_packer_task();
 		}
-		initialize_o2prime_pack_scorefxn( scorefxn );
+		o2prime_pack_scorefxn_ = initialize_o2prime_pack_scorefxn( scorefxn );
 	}
 
 	//Destructor
 	O2PrimePacker::~O2PrimePacker()
 	{}
 
-
-	////////////////////////////////////////////////////////////////////////
-	void
-	O2PrimePacker::initialize_o2prime_pack_scorefxn( core::scoring::ScoreFunctionCOP const & scorefxn ){
-
-		using namespace core::scoring;
-
-		o2prime_pack_scorefxn_ = new ScoreFunction;
-		// Each of the following terms have been pretty optimized for the packer (trie, etc.)
-		o2prime_pack_scorefxn_->set_weight( fa_atr, scorefxn->get_weight( fa_atr ) );
-		o2prime_pack_scorefxn_->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
-		o2prime_pack_scorefxn_->set_weight( hbond_lr_bb_sc, scorefxn->get_weight( hbond_lr_bb_sc ) );
-		o2prime_pack_scorefxn_->set_weight( hbond_sr_bb_sc, scorefxn->get_weight( hbond_sr_bb_sc ) );
-		o2prime_pack_scorefxn_->set_weight( hbond_sc, scorefxn->get_weight( hbond_sc ) );
-		///Warning, don't include hbond_intra, since hbond_intra HAS NOT been been optimized for packing!
-		o2prime_pack_scorefxn_->set_weight( fa_sol, scorefxn->get_weight( lk_nonpolar ) ); //// note that geom_sol is not optimized well --> replace with lk_sol for now. //IS THIS A MISTAKE???
-		o2prime_pack_scorefxn_->set_energy_method_options( scorefxn->energy_method_options() ); //This set NO_HB_ENV_DEP, INCLUDE_INTRA_RES_RNA_HB and etcs.
-	}
-
 	////////////////////////////////////////////////////////////////////////
 	void
 	O2PrimePacker::initialize_o2prime_packer_task(){
-		utility::vector1< core::Size > const O2prime_pack_seq_num = get_surrounding_O2prime_hydrogen( o2prime_pack_pose_, moving_res_, false /*verbose*/ );
-		o2prime_pack_task_ = create_standard_o2prime_pack_task( o2prime_pack_pose_, O2prime_pack_seq_num );
+		utility::vector1< core::Size > const o2prime_pack_seq_num = get_surrounding_O2prime_hydrogen( o2prime_pack_pose_, moving_res_, false /*verbose*/ );
+		o2prime_pack_task_ = create_standard_o2prime_pack_task( o2prime_pack_pose_, o2prime_pack_seq_num, pack_virtual_o2prime_hydrogen_ );
 	}
 
 ////////////////////////////////////////////////////////////////////////////////

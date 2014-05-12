@@ -115,7 +115,7 @@ Size get_sequence_len( std::string const & sequence_in ) {
 /// now, that is, for each residue variant or ligand which cannot be deduced
 /// from one letter code directly, a [] is added directly following the one
 /// letter code containing the residue's fullname, for example
-/// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
+/// K[lys:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu:CtermProteinFull]Z[ZN].
 /// This allows a pose to be constructed with full features from a silent output
 /// file, such as with distinguished HIS tautomers, various chain termini and
 /// cutpoint variants etc. Currently not working with disulfide variant CYD, but
@@ -423,7 +423,7 @@ void make_pose_from_sequence(
 /// fully annotated sequence now, that is, for each residue variant or ligand
 /// which cannot be deduced from one letter code directly, a [] is added
 /// directly following the one letter code containing the residue's fullname, e.g.
-/// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
+/// K[lys:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu:CtermProteinFull]Z[ZN].
 /// This allows a pose to be constructed with full features from a silent output
 /// file, such as with distinguished HIS tautomers, various chain termini and
 /// cutpoint variants etc. Currently not working with disulfide variant CYD, but

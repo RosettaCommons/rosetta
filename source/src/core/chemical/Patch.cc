@@ -131,12 +131,12 @@
 ///
 /// Woah there!  Now that you know how to use patches, you don't need to go all gun-ho crazy and create a ton of
 /// patches. This is because all patches are read when ResidueTypeSet is created and applied.  This creates overhead if
-/// you have a ton of patch files.  To circumvent this, someone wrote an option called -residues:patch_selectors.  I
+/// you have a ton of patch files.  To circumvent this, someone wrote an option called -chemical:patch_selectors.  I
 /// don't know who wrote it, or where it's located, sorry.  This option allows you to create patches that are only
-/// loaded when you use the option -residues:patch_selectors.  To get this to work, you create a patch like normal.
+/// loaded when you use the option -chemical:patch_selectors.  To get this to work, you create a patch like normal.
 /// Then, in the BEGIN_SELECTOR / END_SELECTOR line, you add a line CMDLINE_SELECTOR <name of command line>.  This
 /// means, if you use the CMDLINE_SELECTOR sc_orbitals, your patch will only be loaded if you use the option
-/// -residues:patch_selectors sc_orbitals.  Cool, huh?
+/// -chemical:patch_selectors sc_orbitals.  Cool, huh?
 ///
 ///
 /// Trouble Shooting!!!
@@ -182,7 +182,9 @@ PatchCase::~PatchCase() {}
 static basic::Tracer tr("core.chemical");
 
 /// @brief the string used to generate new residue names
-std::string const patch_linker( "_p:" );
+std::string const patch_linker( ":" );
+// Changed from '_p:' to ':' for conciseness. Backward compatibility fixes throughout code.
+// std::string const patch_linker( "_p:" );
 
 std::string
 residue_type_base_name( ResidueType const & rsd_type )
@@ -383,6 +385,7 @@ Patch::apply( ResidueType const & rsd_type ) const
 	}
 	return 0;
 }
+
 
 } // chemical
 } // core

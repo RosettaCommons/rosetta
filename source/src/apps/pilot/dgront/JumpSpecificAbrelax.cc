@@ -244,7 +244,7 @@ OPT_1GRP_KEY( File,          loops, extended_loops )
 
 OPT_1GRP_KEY( Real,       loopfcst, coord_cst_weight )
 OPT_1GRP_KEY( Boolean,    loopfcst, coord_cst_all_atom )
-OPT_1GRP_KEY( Boolean,    loopfcst, use_general_protocol )
+OPT_1GRP_KEY( Boolean,    loopfcst, use_align_protocol )
 OPT_1GRP_KEY( File,       loopfcst, coord_cst_weight_array )
 OPT_1GRP_KEY( File,       loopfcst, dump_coord_cst_weight_array )
 
@@ -320,7 +320,7 @@ void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 	NEW_OPT( abinitio::return_full_atom, "return a full-atom structure even if no relax is done", false );
 // new options that haven't been defined in global option file
 
-	NEW_OPT( loopfcst::use_general_protocol, "use the new machinery around classes KinematicXXX", false );
+	NEW_OPT( loopfcst::use_align_protocol, "use the new machinery around classes KinematicXXX", false );
 	NEW_OPT( loopfcst::coord_cst_weight, "use coord constraints for template", 0.0 );
 	NEW_OPT( loopfcst::coord_cst_all_atom, "use coord constraints on all atoms and not just CA", false );
 	NEW_OPT( loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions", "");
@@ -362,7 +362,7 @@ void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 	NEW_OPT( loop::scored_frag_cycles, "cycle-ratio for scored_frag_cycles ( loop_size<10 ) after jumping-abinitio",0.1 );
 	NEW_OPT( loop::debug_loop_closure, "dump structures before and after loop closing", false );
 
-	NEW_OPT( loops::extended_loops, "for general protocol: extend structure within these loop-definitions", "" );
+	NEW_OPT( loops::extended_loops, "for align protocol: extend structure within these loop-definitions", "" );
 	// constraints
 	OPT( constraints::cst_file );
 	NEW_OPT( constraints::forest_file, "file with constraintforest", "" );
@@ -402,7 +402,7 @@ void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 	NEW_OPT( frags::annotate, "read the annotation from the rosetta++ fragment file", false );
 
 
-	// generalized protocol:
+	// alignized protocol:
 	OPT( loops::loop_file );
 
 
@@ -1530,7 +1530,7 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 		}
 	}
 
-	if ( option[ OptionKeys::loopfcst::use_general_protocol ] ) {
+	if ( option[ OptionKeys::loopfcst::use_align_protocol ] ) {
 		// parse loops file Loops
 		//utility::vector1< protocols::Loop > loops_in, loops;
 		if ( option[  OptionKeys::loops::loop_file ].user() ) {
@@ -1787,7 +1787,7 @@ void JumpSpecificAbrelax::fold() {
 
 		// close loops if wished so
 		bool loop_closure_failed( false ); //!fold_pose.fold_tree().num_cutpoint() );
-		if ( success && !option[ OptionKeys::loopfcst::use_general_protocol ] &&  option[ loop::close_loops ]() ) {
+		if ( success && !option[ OptionKeys::loopfcst::use_align_protocol ] &&  option[ loop::close_loops ]() ) {
 			loop_closure_failed = !close_loops( fold_pose, centroid_scorefxn, jobdist.get_current_output_tag() );
 		}
 
@@ -1806,8 +1806,8 @@ void JumpSpecificAbrelax::fold() {
 		// don't relax if we failed filters or loop_closing, or if option[ relax_with_jumps ] is true
 		bool bCanRelax = success && passes_filters && ( !loop_closure_failed || option[ OptionKeys::abinitio::relax_with_jumps ]() );
 		if ( bRelax_ ) {
-				if ( !option[ OptionKeys::loopfcst::use_general_protocol ] ) {
-					//					utility_exit_with_message("Cannot proceed (about to crash), because pose is fullatom and loopcose expects centroid. Use -use_general_protocol if you want to postrelax foldcst models.");
+				if ( !option[ OptionKeys::loopfcst::use_align_protocol ] ) {
+					//					utility_exit_with_message("Cannot proceed (about to crash), because pose is fullatom and loopcose expects centroid. Use -use_align_protocol if you want to postrelax foldcst models.");
 				//This part of code i think is obsolete and will soon disappear.");
 					if ( !fold_pose.is_fullatom() ) core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD );
 				}

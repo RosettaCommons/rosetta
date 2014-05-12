@@ -22,7 +22,7 @@
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -90,7 +90,7 @@ private:
 
 	// Make this a Mover?
 	void
-	o2prime_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn ) const;
+	o2prime_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP const & scorefxn ) const;
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm, core::pose::Pose & pose );

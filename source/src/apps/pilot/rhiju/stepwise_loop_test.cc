@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -62,7 +62,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWise!
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>

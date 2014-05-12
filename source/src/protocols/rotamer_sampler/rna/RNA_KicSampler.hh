@@ -30,7 +30,7 @@
 #include <protocols/rotamer_sampler/rna/RNA_KinematicCloser.fwd.hh>
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.fwd.hh>
 #include <protocols/rotamer_sampler/screener/RNA_TorsionScreener.fwd.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 using namespace core::chemical::rna;
 

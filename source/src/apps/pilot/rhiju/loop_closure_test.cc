@@ -34,7 +34,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -47,7 +47,7 @@
 #include <core/kinematics/Jump.hh>
 
 //StepWise!
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>
@@ -610,7 +610,7 @@ sampling_closure_test(){
 		}
 	}
 
-	StepWiseClusterer stepwise_clusterer( silent_file_data );
+	StepWiseLegacyClusterer stepwise_clusterer( silent_file_data );
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );

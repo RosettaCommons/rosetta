@@ -1,4 +1,4 @@
  -in:file:fasta pgr122.fasta 
  -noesy:in:peaks cn5.peaks n.peaks ali.peaks aro.peaks 
  -noesy:in:resonances resonances.prot 
- -residues:patch_selectors CENTROID_HA
+ -chemical:patch_selectors CENTROID_HA

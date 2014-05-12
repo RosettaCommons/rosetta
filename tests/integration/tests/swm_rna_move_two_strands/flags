@@ -1,0 +1,8 @@
+-s strandA_full_helix.pdb strandB_full_helix.pdb
+-native full_helix.pdb
+-fasta full_helix.fasta
+-cutpoint_open 4
+-move ADD 6 JUMP_INTERCHAIN 3
+-out:file:silent swm_rebuild.out
+-out:overwrite
+#-enumerate

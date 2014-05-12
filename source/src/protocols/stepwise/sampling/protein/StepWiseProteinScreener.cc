@@ -16,9 +16,9 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/protein/StepWiseProteinScreener.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/sampling/protein/util.hh>
 #include <protocols/stepwise/sampling/protein/MainChainTorsionSet.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -82,9 +82,9 @@ namespace protein {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-  StepWiseProteinScreener::StepWiseProteinScreener(	 StepWiseProteinJobParametersCOP job_parameters ):
-		job_parameters_( job_parameters ),
-		moving_residues_input_( job_parameters_->working_moving_res_list() ),
+  StepWiseProteinScreener::StepWiseProteinScreener(	 working_parameters::StepWiseWorkingParametersCOP working_parameters ):
+		working_parameters_( working_parameters ),
+		moving_residues_input_( working_parameters_->working_moving_res_list() ),
 		n_sample_( 18 /* Corresponds to 20 degree bins */ ),
 		rmsd_cutoff_( -1.0 ),
 		silent_file_( "" ),
@@ -97,7 +97,7 @@ namespace protein {
 		nstruct_centroid_( 0 ),
 		ramachandran_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() ),
 		ghost_loops_( false ),
-		is_pre_proline_( job_parameters_->is_pre_proline() ),
+		is_pre_proline_( working_parameters_->is_pre_proline() ),
 		expand_loop_takeoff_( false ) // may switch to true soon. connects all psi,omega,phi in CA-to-CA connections.
   {
 		initialize_is_fixed_res();
@@ -704,7 +704,7 @@ namespace protein {
   //////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinScreener::initialize_is_fixed_res(){
-		set_fixed_residues( job_parameters_->working_fixed_res() );
+		set_fixed_residues( working_parameters_->working_fixed_res() );
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -717,7 +717,7 @@ namespace protein {
 	void
 	StepWiseProteinScreener::set_fixed_residues( utility::vector1< Size > const & fixed_res ){
 		is_fixed_res_input_.clear();
-		for ( Size n = 1; n <= job_parameters_->working_sequence().size(); n++ ) is_fixed_res_input_.push_back( false );
+		for ( Size n = 1; n <= working_parameters_->working_sequence().size(); n++ ) is_fixed_res_input_.push_back( false );
 		for ( Size i = 1; i <= fixed_res.size(); i++ ){
 			is_fixed_res_input_[ fixed_res[i] ] = true;
 		}

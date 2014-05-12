@@ -109,7 +109,7 @@ using namespace OptionKeys;
 /// fully annotated sequence now, that is, for each residue variant or ligand
 /// which cannot be deduced from one letter code directly, a [] is added
 /// directly following the one letter code containig the residue's fullname, e.g.
-/// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
+/// K[lys:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu:CtermProteinFull]Z[ZN].
 /// This allows a pose to be constructed with full features from a silent output
 /// file, such as with distiguished HIS tautomers, various chain termini and
 /// cutpoint variants etc. Currently not working with disulfide variant CYD, but

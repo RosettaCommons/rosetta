@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -61,7 +61,7 @@
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_ChunkLibrary.hh>
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/stepwise/sampling/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_Minimizer.hh>

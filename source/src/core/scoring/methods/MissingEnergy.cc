@@ -21,7 +21,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

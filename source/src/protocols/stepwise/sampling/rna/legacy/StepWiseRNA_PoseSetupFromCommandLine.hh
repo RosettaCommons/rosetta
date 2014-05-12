@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSetupFromCommandLine_HH
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSetupFromCommandLine_HH
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
@@ -42,13 +42,13 @@ namespace legacy {
 
 	core::scoring::ScoreFunctionOP create_scorefxn();
 
-	StepWiseRNA_JobParametersOP setup_simple_full_length_rna_job_parameters();
+	working_parameters::StepWiseWorkingParametersOP setup_simple_full_length_rna_working_parameters();
 
-	StepWiseRNA_JobParametersOP setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_pose = false );
+	working_parameters::StepWiseWorkingParametersOP setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_input_pose = false );
 
 	void setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup );
 
-	StepWiseRNA_PoseSetupOP setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF = true );
+	StepWiseRNA_PoseSetupOP setup_pose_setup_class( working_parameters::StepWiseWorkingParametersOP & working_parameters, bool const copy_DOF = true );
 
 	void check_if_silent_file_exists();
 

@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -64,22 +64,22 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/stepwise/StepWiseClusterer.hh>
-#include <protocols/stepwise/StepWisePoseSetup.hh>
-#include <protocols/stepwise/StepWiseJobParameters.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
+#include <protocols/stepwise/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/stepwise/StepWiseDoNothingSampleGenerator.hh>
 #include <protocols/stepwise/StepWiseCombineSampleGenerator.hh>
 #include <protocols/stepwise/StepWiseIdentitySampleGenerator.hh>
 #include <protocols/stepwise/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/stepwise/protein/StepWiseBetaAntiParallelJumpSampleGenerator.hh>
-#include <protocols/stepwise/protein/StepWiseBetaAntiParallelUtil.hh>
+#include <protocols/stepwise/protein/util.hh>
 #include <protocols/stepwise/protein/StepWiseProteinFilterer.hh>
 #include <protocols/stepwise/protein/StepWiseProteinLoopBridger.hh>
 #include <protocols/stepwise/protein/StepWiseProteinPoseMinimizer.hh>
 #include <protocols/stepwise/protein/StepWiseProteinScreener.hh>
-#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
-//#include <protocols/stepwise/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/stepwise/protein/util.hh>
+//#include <protocols/stepwise/protein/StepWiseProteinConnectionSampler.hh>
 #include <protocols/stepwise/protein/StepWiseProteinPacker.hh>
 #include <protocols/stepwise/protein/StepWiseProteinFragmentSampleGenerator.hh>
 #include <protocols/stepwise/protein/StepWiseProteinJumpSampleGenerator.hh>

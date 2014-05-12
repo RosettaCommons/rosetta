@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -48,7 +48,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-#include <protocols/stepwise/StepWiseUtil.hh> //has euler angle stuff.
+#include <protocols/stepwise/sampling/util.hh> //has euler angle stuff.
 
 #include <protocols/viewer/viewers.hh>
 

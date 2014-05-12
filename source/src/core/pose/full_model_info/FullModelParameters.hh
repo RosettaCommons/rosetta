@@ -57,7 +57,7 @@ namespace full_model_info {
 												 utility::vector1< Size > const & res_numbers_in_pose	);
 
 		FullModelParameters( pose::Pose const & pose,
-												 utility::vector1< Size > const & res_list );
+												 utility::vector1< Size > & res_list /*will be updated*/ );
 
 		FullModelParameters( FullModelParameters const & src );
 
@@ -109,8 +109,8 @@ namespace full_model_info {
 		void
 		get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
 																					std::string & sequence,
-																					utility::vector1< int > & full_numbering,
-																					utility::vector1< Size > const & res_list ) const;
+																					utility::vector1< int > & conventional_numbering,
+																					utility::vector1< Size > & res_list ) const;
 
 		utility::vector1< Size >
 		get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const;

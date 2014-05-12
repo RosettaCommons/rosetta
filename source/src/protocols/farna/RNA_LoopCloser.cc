@@ -14,7 +14,7 @@
 
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -559,8 +559,7 @@ RNA_LoopCloser::setup_variants_at_extra_cutpoints( pose::Pose & pose, utility::v
 		Size cutpos( extra_cutpoints[ n ] );
 		//std::cout << "ADDING CUTPOINT VARIANTS " << cutpos << std::endl;
 
-		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
-		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
+		core::pose::correctly_add_cutpoint_variants( pose, cutpos );
 
 		for (Size i = cutpos; i <= cutpos + 1; i++ ){
 			for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {

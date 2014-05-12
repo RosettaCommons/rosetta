@@ -18,8 +18,9 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSelection.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/sampling/output_util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -38,7 +39,7 @@ namespace rna {
 	public:
 
 		//Constructor
-		StepWiseRNA_PoseSelection( StepWiseRNA_JobParametersCOP & job_parameters,
+		StepWiseRNA_PoseSelection( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 															 core::scoring::ScoreFunctionCOP scorefxn,
 															 StepWiseRNA_CountStruct & count_data = local_count_data );
 
@@ -85,7 +86,7 @@ namespace rna {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_;
+		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 		core::scoring::ScoreFunctionOP sampling_scorefxn_;
 
 		Size num_pose_kept_;

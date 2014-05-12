@@ -18,7 +18,7 @@
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.CentroidDistanceScreener" );

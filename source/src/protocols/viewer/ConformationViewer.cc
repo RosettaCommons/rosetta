@@ -19,7 +19,7 @@
 // Package headers
 #include <protocols/viewer/viewers.hh>
 
-#include <core/chemical/rna/RNA_Util.hh> // for silly centering of RNA.
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/signals/ConnectionEvent.hh>
@@ -50,9 +50,7 @@
 
 #include <pthread.h>
 
-using namespace core; ////////////////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!! DANGER
-
-
+using namespace core;
 
 namespace protocols {
 namespace viewer {
@@ -66,6 +64,7 @@ ConformationViewer::ConformationViewer() :
 	Super(),
 	new_conformation_( true ),
 	use_debug_pause_( false ),
+	center_vector_defined_( false ),
 	conf_( NULL )
 {}
 
@@ -118,10 +117,8 @@ ConformationViewer::display_func()
 	// lock the residues vector
 	pthread_mutex_lock( &residues_mut_ );
 
-	Vector center_vector = residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() );
-	//	if ( true ) center_vector = get_center( residues_ );
+	Vector const center_vector = center_vector_defined_ ? center_vector_ : residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() );
 
-	//display_residues( residues_, anchor_id_ ); // in viewer.cc
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() && false) {
 
 		const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();

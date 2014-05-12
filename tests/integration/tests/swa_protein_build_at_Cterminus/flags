@@ -10,7 +10,7 @@
 -calc_rms_res 203-214
 -jump_res 1 399
 -disable_sampling_of_loop_takeoff
--mute all
+#-mute all
 -silent1 region_215_205_sample.cluster.out
 -tags1 S_0
 -input_res1 1-205 215-399
@@ -24,4 +24,4 @@
 # following flags turn off new defaults, set in stepwise monte carlo
 -allow_virtual_side_chains false
 -protein_prepack false
--protein_atr_rep_screen false
+-atr_rep_screen false

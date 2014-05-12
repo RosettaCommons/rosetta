@@ -31,7 +31,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/IdealBondLengthSet.hh>
-#include <core/chemical/rna/RNA_Util.hh> // for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
+#include <core/chemical/rna/util.hh> // for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.hh>
@@ -915,7 +915,6 @@ get_root_atomno(
 			Size const nbb( rsd.n_mainchain_atoms() ); //       1  2  3  4  5  6  -- nbb
 			Size const mainchain_index( ( nbb-1 )/2 + 1 ); //   1  1  2  2  3  3  -- mainchain_index
 			return rsd.mainchain_atoms()[ mainchain_index ];
-			//return rsd.mainchain_atoms()[1];
 		}
 	}
 }

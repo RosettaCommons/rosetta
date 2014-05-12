@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_Util.hh
+/// @file util.hh
 /// @brief
 /// @detailed
 ///
@@ -19,7 +19,7 @@
 
 #include <protocols/moves/MoverForPoseList.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -51,7 +51,7 @@ namespace sugar {
 	public:
 
 		//constructor
-		StepWiseRNA_VirtualSugarSampler( StepWiseRNA_JobParametersCOP & job_parameters, SugarModeling & sugar_modeling	);
+		StepWiseRNA_VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters, SugarModeling & sugar_modeling	);
 
 		//destructor
 		~StepWiseRNA_VirtualSugarSampler();
@@ -79,7 +79,7 @@ namespace sugar {
 
 		void set_virtual_sugar_is_from_prior_step( bool const & setting ) { virtual_sugar_is_from_prior_step_ = setting;	}
 
-		void set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+		void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
 	private:
 
@@ -96,12 +96,6 @@ namespace sugar {
 		do_chain_closure_sampling( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		void
-		initialize_pose_variants_for_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
-
-		void
-		restore_pose_variants_after_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
-
-		void
 		bulge_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
 		void
@@ -112,6 +106,16 @@ namespace sugar {
 
 		void
 		bulge_chain_minimize_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
+
+		void
+		reinstantiate_backbone_at_moving_res( core::pose::Pose & pose, core::Size const rebuild_res,
+																					core::Size const five_prime_chain_break_res );
+
+		void
+		initialize_pose_variants_for_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
+
+		void
+		restore_pose_variants_after_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
 
 		bool
 		fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const is_prepend );
@@ -133,7 +137,7 @@ namespace sugar {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_;
+		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 		SugarModeling & sugar_modeling_; // trick -- inputs some modeling info, and holds poses_list as output.
 		std::string tag_;
 		bool use_phenix_geo_;
@@ -145,13 +149,12 @@ namespace sugar {
 		bool legacy_mode_;
 		bool const do_chain_closure_;
 		bool const first_minimize_with_fixed_base_;
-		Size const max_tries_for_random_overall_;
 		Size const max_tries_for_random_sugar_setup_;
 		bool sugar_setup_success_;
-		core::scoring::ScoreFunctionOP scorefxn_;
+		core::scoring::ScoreFunctionCOP scorefxn_;
 		checker::RNA_VDW_BinCheckerOP VDW_bin_checker_;
 
-		utility::vector1 < core::Size > distal_partition_pos_;
+		utility::vector1 < core::Size > distal_partition_res_;
 		utility::vector1 < core::Size > already_virtualized_res_list_;
 		bool moving_phosphate_virtualized_;
 		core::pose::PoseOP pose_with_original_terminal_phosphates_;

@@ -14,9 +14,9 @@
 
 
 #include <protocols/stepwise/sampling/rna/phosphate/PhosphateMover.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/PhosphateUtil.hh>
+#include <protocols/stepwise/sampling/rna/phosphate/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -43,7 +43,7 @@ namespace phosphate {
 	//Constructor
 	PhosphateMover::PhosphateMover( Size const sample_res,
 																	PhosphateTerminus const which_terminus,
-																	scoring::ScoreFunctionOP scorefxn ):
+																	scoring::ScoreFunctionCOP scorefxn ):
 		phosphate_move_( PhosphateMove( sample_res, which_terminus ) ),
 		scorefxn_( scorefxn )
 	{
@@ -52,7 +52,7 @@ namespace phosphate {
 
 	//Constructor
 	PhosphateMover::PhosphateMover( PhosphateMove const phosphate_move,
-																	scoring::ScoreFunctionOP scorefxn ):
+																	scoring::ScoreFunctionCOP scorefxn ):
 		phosphate_move_( phosphate_move ),
 		scorefxn_( scorefxn )
 	{

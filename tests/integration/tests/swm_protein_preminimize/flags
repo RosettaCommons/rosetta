@@ -3,10 +3,11 @@
 -native mini_1alc.pdb 
 -score:weights stepwise/protein/protein_res_level_energy.wts
 -silent swm_prepack.out
+-out:overwrite
 -preminimize
 -enumerate
 -num_random_samples 20
 -allow_virtual_side_chains
 -protein_prepack
--protein_atr_rep_screen
+-atr_rep_screen
 -rmsd_screen 1.0

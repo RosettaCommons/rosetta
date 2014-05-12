@@ -14,12 +14,12 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_stepwise_protein_StepWiseProteinLoopBridger_HH
-#define INCLUDED_protocols_stepwise_protein_StepWiseProteinLoopBridger_HH
+#ifndef INCLUDED_protocols_stepwise_protein_StepWiseProteinKIC_LoopBridger_HH
+#define INCLUDED_protocols_stepwise_protein_StepWiseProteinKIC_LoopBridger_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
@@ -33,15 +33,15 @@ namespace sampling {
 namespace protein {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseProteinLoopBridger: public protocols::moves::Mover {
+  class StepWiseProteinKIC_LoopBridger: public protocols::moves::Mover {
   public:
 
     //constructor!
-		StepWiseProteinLoopBridger( rotamer_sampler::RotamerSizedOP sampler,
-																protocols::stepwise::sampling::protein::StepWiseProteinJobParametersCOP job_parameters );
+		StepWiseProteinKIC_LoopBridger( rotamer_sampler::RotamerSizedOP sampler,
+																protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
     //destructor -- necessary?
-    ~StepWiseProteinLoopBridger();
+    ~StepWiseProteinKIC_LoopBridger();
 
     /// @brief Apply the minimizer to one pose
     virtual void apply( core::pose::Pose & pose_to_visualize );

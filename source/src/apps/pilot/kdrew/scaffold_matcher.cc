@@ -9,10 +9,10 @@
 
 
 //kdrew: this app attempts to find the orientation of a scaffold that best satisifies the positions of hotspot residues (provided as inverse rotamer libraries).
-//scaffold in this case is generally meant as a small noncanonical backbone with a handful of designable positions.
+//scaffold in this case is alignly meant as a small noncanonical backbone with a handful of designable positions.
 //
 
-//Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
+//Headers are alignly organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
 
 // Project Headers

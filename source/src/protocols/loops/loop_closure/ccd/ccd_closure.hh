@@ -37,7 +37,7 @@ fast_ccd_loop_closure(
 	int const cutpoint,
 	int const ii_cycles,
 	core::Real const tolerance,
-	bool const rama_check,
+	bool const rama_check_boltzmann,
 	core::Real const max_rama_score_increase,
 	core::Real const max_total_delta_helix,
 	core::Real const max_total_delta_strand,
@@ -63,7 +63,7 @@ get_deviation(
 	core::pose::Pose const & pose,
 	int const cutpoint
 );
-	
+
 } // namespace ccd
 } // namespace loop_closure
 } // namespace loops

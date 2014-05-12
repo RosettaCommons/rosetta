@@ -19,14 +19,14 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/farna/util.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -59,7 +59,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Quick superimposer for RNA puzzle stuff. Assumes that poses have one chain each!
-// Could easily generalize in the future. Could also add grafting functionality [which I
+// Could easily alignize in the future. Could also add grafting functionality [which I
 //  current do with a python script].
 //   -- Rhiju, Oct 2012
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ get_pdbs_and_superimpose( pose::Pose & pose1 /* the 'parent pose'*/,
 
 		// now superimpose based on this subset. Copied from RNA_DeNovoProtocol.cc
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
+			protocols::stepwise::sampling::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
 		core::scoring::superimpose_pose( pose2, pose1, alignment_atom_id_map_native );
 	} else {
 		std::cout << "WARNING: no overlap residues found or specified (by -superimpose_res)!!!! " << std::endl;

@@ -18,6 +18,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID.hh>
@@ -501,6 +502,7 @@ bool pose_from_atom_tree_diff(
 				core::Size resnum;
 				std::string resname;
 				is >> resnum >> resname;
+				resname = chemical::fixup_patches( resname );
 				if( is.fail() ) {
 					TR << "error reading sequence mutation data" << std::endl;
 				} else if( resnum < 1 || resnum > pose.total_residue() ) {

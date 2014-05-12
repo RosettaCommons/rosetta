@@ -15,8 +15,8 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/legacy/RigidBodySampler.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 
 //////////////////////////////////
 #include <core/types.hh>

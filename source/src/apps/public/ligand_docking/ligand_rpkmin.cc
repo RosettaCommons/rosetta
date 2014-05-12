@@ -77,7 +77,7 @@ public:
 /// @details Some Movers (e.g. repack) require knowledge of the Pose to create,
 ///  and are only valid for that Pose and other conformations of it
 ///  (i.e. poses with the same number of residues, jumps, etc).
-///  In general, we expect each Pose coming in here to be from a different PDB file.
+///  In align, we expect each Pose coming in here to be from a different PDB file.
 ///  The cost of creating these objects anew should be minimal compared
 ///  to the processing work they do.
 void

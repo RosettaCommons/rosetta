@@ -18,7 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -36,7 +36,7 @@ namespace sugar {
 	public:
 
 		//constructor
-		StepWiseRNA_VirtualSugarSamplerFromStringList( StepWiseRNA_JobParametersCOP & job_parameters,
+		StepWiseRNA_VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 																									 utility::vector1< std::string > const sample_virtual_sugar_string_list);
 
 		//destructor
@@ -78,7 +78,7 @@ namespace sugar {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
+		working_parameters::StepWiseWorkingParametersCOP working_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
 		utility::vector1< std::string > const sample_virtual_sugar_string_list_;
 
 		std::string silent_file_out_;

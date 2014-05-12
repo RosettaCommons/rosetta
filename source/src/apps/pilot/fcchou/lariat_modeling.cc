@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/farna/RNA_SuiteAssign.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/TorsionID.hh>
@@ -39,8 +39,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <protocols/farna/RNA_IdealCoord.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/farna/util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <numeric/random/random.hh>

@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_screener_BulgeApplier_HH
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/AtrRepChecker.fwd.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.fwd.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <protocols/stepwise/screener/BulgeApplier.fwd.hh>
 #include <protocols/stepwise/sampling/rna/bulge/BulgeApplyMover.fwd.hh>
@@ -34,7 +34,7 @@ namespace screener {
 	public:
 
 		//constructor
-		BulgeApplier( AtrRepCheckerOP atr_rep_checker, RNA_BaseCentroidCheckerOP base_centroid_checker,
+		BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker, RNA_BaseCentroidCheckerOP base_centroid_checker,
 									Size const moving_res );
 
 		//destructor
@@ -58,7 +58,7 @@ namespace screener {
 
 	private:
 
-		AtrRepCheckerOP atr_rep_checker_;
+		RNA_AtrRepCheckerOP atr_rep_checker_;
 		RNA_BaseCentroidCheckerOP base_centroid_checker_;
 		sampling::rna::bulge::BulgeApplyMoverOP   bulge_apply_mover_;
 		sampling::rna::bulge::BulgeUnApplyMoverOP bulge_unapply_mover_;

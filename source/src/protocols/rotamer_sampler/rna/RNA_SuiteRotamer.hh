@@ -21,7 +21,7 @@
 #include <protocols/rotamer_sampler/RotamerSizedAny.hh>
 
 // Project headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
 using namespace core::chemical::rna;

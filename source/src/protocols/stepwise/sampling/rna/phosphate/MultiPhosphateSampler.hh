@@ -35,13 +35,14 @@ namespace phosphate {
 
 	public:
 
-		//constructor -- prepacks pose (after temporary splitting into partitions)
-		MultiPhosphateSampler( pose::Pose & pose_to_prepack,
-													 Size const moving_res /*sets partition*/ );
-
 		//constructor
 		MultiPhosphateSampler( pose::Pose const & reference_pose );
 
+
+		//constructor
+		// deprecated: prepacks pose (after temporary splitting into partitions)
+		MultiPhosphateSampler( pose::Pose & pose_to_prepack,
+													 Size const moving_res /*sets partition*/ );
 
 		//destructor
 		~MultiPhosphateSampler();
@@ -82,19 +83,30 @@ namespace phosphate {
 
 		pose::Pose & pose();
 
-		void set_scorefxn( scoring::ScoreFunctionOP scorefxn );
+		void set_scorefxn( scoring::ScoreFunctionCOP scorefxn );
 
 		utility::vector1< PhosphateMove> phosphate_move_list() const { return phosphate_move_list_; }
 		void set_phosphate_move_list( utility::vector1< PhosphateMove> const & setting ) { phosphate_move_list_ = setting; }
 
 		utility::vector1< Size > const & moving_partition_res(){ return moving_partition_res_; }
 
-	private:
-
-		void initialize_parameters();
+		void
+		reset( pose::Pose const & pose );
 
 		void
 		initialize_by_prepack( pose::Pose & pose, Size const moving_res );
+
+		void
+		initialize_by_prepack( pose::Pose & pose,
+													 utility::vector1< Size > const & moving_res_list );
+
+		void
+		do_prepack( pose::Pose & pose,
+								utility::vector1< Size > const & moving_res_list );
+
+	private:
+
+		void initialize_parameters();
 
 		utility::vector1< PhosphateMove >
 		initialize_phosphate_move_list( pose::Pose & pose );
@@ -115,12 +127,11 @@ namespace phosphate {
 																			 utility::vector1< Size > const & other_partition_res,
 																			 Vector const & takeoff_xyz ) const;
 
-
 	private:
 
 		pose::PoseCOP pose_with_original_phosphates_;
 		pose::PoseOP phosphate_sample_pose_;
-		scoring::ScoreFunctionOP scorefxn_;
+		scoring::ScoreFunctionCOP scorefxn_;
 		Real phosphate_takeoff_donor_distance_cutoff2_;
 		bool screen_all_;
 

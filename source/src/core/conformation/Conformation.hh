@@ -177,11 +177,11 @@ public:  // General Properties
 
 	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
 	bool is_centroid() const;
-	
+
 	/// @brief convenience test for if the conformation contains information for a membrane protein
 	bool is_membrane() const {
-		if ( membrane_info_ == 0 ) return false; 
-		return true; 
+		if ( membrane_info_ == 0 ) return false;
+		return true;
 	}
 
 	/// @brief Return true if this conformation contains any carbohydrate residues.
@@ -273,14 +273,14 @@ public:  // Secondary Structure
 	}
 
 public: // membrane
-	
+
 	/// @brief Setup a Membrane Info Object inside the conformation
 	/// @details MembraneInfo contains information regarding membrane residues,
 	/// foldtree modifications, fullatom vs. centroid embedding parameters for
 	/// scoring and the spanning topology/lipids accessibility data
 	void
 	setup_membrane( utility::vector1< std::pair< int, int > > embres_map, int membrane );
- 
+
 	/// @brief Returns a Membrane Info Object in the conformation
 	/// @details Membrane Info contains information regarding membrane residues,
 	/// foldtree modifications, fullatom vs. centroid embedding parameters for
@@ -775,6 +775,14 @@ public:  // ID access and conversions
 		AtomID & id2,
 		AtomID & id3,
 		AtomID & id4
+	) const;
+
+	///@brief get two atoms connect by jump
+	bool
+	get_jump_atom_ids(
+		core::Size const jump_number,
+		AtomID & upstream_id,
+		AtomID & downstream_id
 	) const;
 
 

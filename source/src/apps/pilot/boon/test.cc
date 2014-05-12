@@ -63,7 +63,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 int main(int argc, char *argv[])
 {

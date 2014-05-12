@@ -47,7 +47,7 @@
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
 
 // C++ headers
 //#include <cstdlib>

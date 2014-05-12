@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSelection.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
@@ -34,10 +34,10 @@ namespace rna {
 	StepWiseRNA_CountStruct local_count_data;
 
 	//Constructor
-	StepWiseRNA_PoseSelection::StepWiseRNA_PoseSelection( StepWiseRNA_JobParametersCOP & job_parameters,
+	StepWiseRNA_PoseSelection::StepWiseRNA_PoseSelection( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 																												core::scoring::ScoreFunctionCOP scorefxn,
 																												StepWiseRNA_CountStruct & count_data ):
-		job_parameters_( job_parameters ),
+		working_parameters_( working_parameters ),
 		num_pose_kept_( 108 ),
 		multiplier_( 2 ), //Sort and cluster poses when the number of pose is pose_list exceed multiplier*num_pose_kept,
 		cluster_rmsd_( 0.5001 ),
@@ -56,7 +56,7 @@ namespace rna {
 	////////////////////Setup sampling scoring//////////////////////////////////////////////////////////////////////////////
 	//1. Want to increase fa_rep during the minimization phase but want to keep it at 0.12 during the sample phase
 	//2. Sugar scoring is always turned off during sampling stage since it screw up pose selection. (TURN IT BACK ON: RD 01/31/2010)
-	//3. Harmonic and Linear Chain_break scoring is always turned off during sampling stage
+	//3. Harmonic and Linear RNA_Chain_break scoring is always turned off during sampling stage
 	void
 	StepWiseRNA_PoseSelection::initialize_sampling_scorefxn( core::scoring::ScoreFunctionCOP & scorefxn ){
 		using namespace core::scoring;
@@ -76,7 +76,7 @@ namespace rna {
 
 		update_pose_list( tag, current_pose, current_score );
 
-		if ( ( pose_list_.size() == num_pose_kept_*multiplier_ ) ){
+		if ( ( pose_list_.size() == ( num_pose_kept_ * multiplier_ ) ) ){
 			std::sort( pose_list_.begin(), pose_list_.end(), sort_pose_by_score );
 			cluster_pose_list();
 			if ( pose_list_.size() > num_pose_kept_ ){
@@ -95,8 +95,8 @@ namespace rna {
 	void
 	StepWiseRNA_PoseSelection::cluster_pose_list(){
 
-		bool const is_prepend(  job_parameters_->is_prepend() );
-		Size const actually_moving_res = job_parameters_->actually_moving_res();
+		bool const is_prepend(  working_parameters_->is_prepend() );
+		Size const actually_moving_res = working_parameters_->actually_moving_res();
 
 		utility::vector1< bool > pose_state_list( pose_list_.size(), true );
 
@@ -109,9 +109,9 @@ namespace rna {
 				for ( Size j = i + 1; j <= pose_list_.size(); j++ ){
 
 					Real rmsd;
-					if ( PBP_clustering_at_chain_closure_ && job_parameters_->gap_size() == 0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
-						rmsd =	 phosphate_base_phosphate_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
-					} else{
+					if ( PBP_clustering_at_chain_closure_ && working_parameters_->gap_size() == 0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
+						rmsd = phosphate_base_phosphate_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
+					} else {
 						rmsd = suite_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res, is_prepend, false /*ignore_virtual_atom*/ );
 					}
 

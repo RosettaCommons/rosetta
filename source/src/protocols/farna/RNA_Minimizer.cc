@@ -16,9 +16,9 @@
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> //Parin Sripakdeevong
-#include <protocols/stepwise/StepWiseUtil.hh> // for figuring out moving chainbreaks
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/sampling/rna/util.hh> //Parin Sripakdeevong
+#include <protocols/stepwise/sampling/util.hh> // for figuring out moving chainbreaks
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -32,7 +32,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -144,7 +144,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	if (use_coordinate_constraints_) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
 	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
 
-	utility::vector1< Size > moving_chainbreaks = stepwise::figure_out_moving_chain_break_res( pose, mm );
+	utility::vector1< Size > moving_chainbreaks = stepwise::sampling::figure_out_moving_chain_break_res( pose, mm );
 	RNA_LoopCloser rna_loop_closer;
 
 	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );
@@ -220,7 +220,7 @@ RNA_Minimizer::show(std::ostream & output) const
 void
 RNA_Minimizer::o2prime_trials(
   core::pose::Pose & pose,
-	core::scoring::ScoreFunctionOP const & packer_scorefxn_ ) const
+	core::scoring::ScoreFunctionCOP const & packer_scorefxn_ ) const
 {
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
@@ -241,6 +241,7 @@ RNA_Minimizer::o2prime_trials(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+// should unify with StepWiseMinimizer -- nice function to get movemap is available inside allow_insert now.
 void
 RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 

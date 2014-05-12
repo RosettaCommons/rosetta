@@ -16,10 +16,10 @@
 #include <protocols/stepwise/screener/AnchorSugarScreener.hh>
 #include <protocols/stepwise/screener/AnchorSugarScreener.fwd.hh>
 #include <protocols/stepwise/screener/TagDefinition.hh>
-#include <protocols/stepwise/sampling/rna/checker/ChainClosableGeometryChecker.hh>
-#include <protocols/stepwise/sampling/rna/checker/AtrRepChecker.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
-#include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
+#include <protocols/stepwise/sampling/rna/sugar/util.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <protocols/simple_moves/CopyDofMover.hh>
 #include <core/pose/Pose.hh>
@@ -38,11 +38,11 @@ namespace screener {
 
 	//Constructor
 	AnchorSugarScreener::AnchorSugarScreener( SugarModeling const & anchor_sugar_modeling,
-																						ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
+																						RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
 																						pose::Pose & sugar_screening_pose,
 																						bool const is_prepend,
-																						AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
-																						utility::vector1< AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
+																						RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
+																						utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
 																						TagDefinitionOP tag_definition ):
 		anchor_sugar_modeling_( anchor_sugar_modeling ),
 		chain_closable_geometry_to_anchor_checker_( chain_closable_geometry_to_anchor_checker ),

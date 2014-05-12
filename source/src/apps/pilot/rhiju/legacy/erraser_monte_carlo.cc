@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/types.hh>
 #include <core/optimization/CartesianMinimizer.hh>
@@ -43,10 +43,10 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -199,7 +199,7 @@ erraser_monte_carlo()
 		cutpoint_handler.put_in_cutpoints( pose );
 
 		StepWiseRNA_Modeler erraser_modeler( erraser_res, scorefxn );
-		StepWiseRNA_ModelerOptionsOP modeler_options = new StepWiseRNA_ModelerOptions;
+		StepWiseModelerOptionsOP modeler_options = new StepWiseModelerOptions;
 		modeler_options->set_choose_random( true );
 		modeler_options->set_force_centroid_interaction( true );
 		modeler_options->set_kic_sampling_if_relevant( true );

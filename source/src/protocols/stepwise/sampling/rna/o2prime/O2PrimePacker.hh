@@ -39,7 +39,8 @@ namespace o2prime {
 		//constructor
 		O2PrimePacker( pose::Pose const & pose,
 									 core::scoring::ScoreFunctionCOP const & scorefxn,
-									 utility::vector1< core::Size > moving_res );
+									 utility::vector1< core::Size > moving_res ,
+									 bool const pack_virtual_o2prime_hydrogen = false );
 
 		//destructor
 		~O2PrimePacker();
@@ -65,9 +66,6 @@ namespace o2prime {
 	private:
 
 		void
-		initialize_o2prime_pack_scorefxn( core::scoring::ScoreFunctionCOP const & scorefxn );
-
-		void
 		initialize_o2prime_packer_task();
 
 		void
@@ -78,12 +76,13 @@ namespace o2prime {
 		Pose const pose_with_original_HO2prime_torsion_;
 		utility::vector1< Size > const moving_res_;
 		Pose o2prime_pack_pose_;
+		bool const pack_virtual_o2prime_hydrogen_;
 		bool use_green_packer_;
 
 		core::pack::task::PackerTaskOP o2prime_pack_task_;
 		protocols::simple_moves::GreenPackerOP o2prime_green_packer_;
 
-		core::scoring::ScoreFunctionOP o2prime_pack_scorefxn_;
+		core::scoring::ScoreFunctionCOP o2prime_pack_scorefxn_;
 
 		ObjexxFCL::FArray1D < bool > partition_definition_; // needed by green packer
 

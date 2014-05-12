@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/sampling/protein/checker/ProteinAtrRepChecker.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>

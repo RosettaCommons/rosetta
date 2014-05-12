@@ -15,7 +15,7 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <basic/Tracer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
@@ -48,9 +48,9 @@ namespace checker {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 	RNA_BaseCentroidChecker::RNA_BaseCentroidChecker( core::pose::Pose const & pose,
-																										StepWiseRNA_JobParametersCOP & job_parameters,
+																										working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 																										bool const tether_jump /* = false */ ):
-		job_parameters_( job_parameters ),
+		working_parameters_( working_parameters ),
 		rna_centroid_info_( new core::scoring::rna::RNA_CentroidInfo ),
 		base_stack_dist_cutoff_( 6.364 ),
 		base_stack_z_offset_max_( 4.5 ),
@@ -103,12 +103,12 @@ namespace checker {
 	void
 	RNA_BaseCentroidChecker::Initialize_base_stub_list( pose::Pose const & pose, bool const  ){
 
-		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
+		ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
+		utility::vector1 < core::Size > const & working_moving_partition_res = working_parameters_->working_moving_partition_res();
 
-		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
-		runtime_assert( working_moving_partition_pos.size() > 0 );
-
-		bool const moving_partition = partition_definition( working_moving_partition_pos[1] );
+		//		runtime_assert( working_moving_partition_res.size() > 0 );
+		if ( working_moving_partition_res.size() == 0 ) return;
+		bool const moving_partition = partition_definition( working_moving_partition_res[1] );
 		// this had to be disabled for stepwise monte carlo stuff -- root of fold tree sometimes is on same partition
 		// as moving residue.
 		// bool const moving_partition_based_on_res = partition_definition( working_moving_res );
@@ -127,9 +127,9 @@ namespace checker {
 			if ( residue_object.aa() == core::chemical::aa_vrt ) continue;
 			core::kinematics::Stub base_stub;
 
-			if ( is_virtual_base_( seq_num ) ){
-				base_stub = core::kinematics::Stub();	//"default" stub, this will never be called
-			} else{
+			base_stub = core::kinematics::Stub();	//"default" stub, this will never be called
+			if ( !is_virtual_base_( seq_num ) &&
+					 residue_object.is_RNA() ){
 				Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 				base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
 			}
@@ -138,13 +138,13 @@ namespace checker {
 			if ( is_virtual_base_( seq_num ) ) continue;
 
 			if ( partition_definition( seq_num ) != moving_partition ) {
-				if ( tether_jump_ && seq_num != job_parameters_->working_reference_res() ) continue;
+				if ( tether_jump_ && seq_num != working_parameters_->working_reference_res() ) continue;
 				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
 				is_fixed_res_( seq_num ) = true;
 				//if ( verbose ) TR << "Fixed partition " << seq_num << std::endl;
 			} else {
-				if ( tether_jump_ && seq_num != job_parameters_->working_moving_res() ) continue;
+				if ( tether_jump_ && seq_num != working_parameters_->working_moving_res() ) continue;
 				moving_residues_.push_back( seq_num );
 				is_moving_res_( seq_num ) = true;
 				//				if ( verbose ) TR << "Moving partition " << seq_num << std::endl;
@@ -160,7 +160,7 @@ namespace checker {
 
 		using namespace ObjexxFCL;
 
-		terminal_res_ = job_parameters_->working_terminal_res();
+		terminal_res_ = working_parameters_->working_terminal_res();
 
 		Size const & nres = pose.total_residue();
 		is_terminal_res_.dimension( nres, false );
@@ -342,6 +342,7 @@ namespace checker {
 
 		for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
 			Size const moving_res( moving_residues_[ m ] );
+			if ( !pose.residue( moving_res ).is_RNA() ) continue;
 			core::conformation::Residue const & residue_object( pose.residue( moving_res ) );
 			Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 			core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );

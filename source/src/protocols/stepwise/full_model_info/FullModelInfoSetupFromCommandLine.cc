@@ -14,16 +14,16 @@
 
 
 #include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -34,6 +34,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
@@ -58,6 +59,7 @@ namespace full_model_info {
 		PoseOP input_pose = new Pose;
 		import_pose::pose_from_pdb( *input_pose, *rsd_set, input_file );
 		cleanup( *input_pose );
+		make_sure_full_model_info_is_setup( *input_pose );
 		return input_pose;
 	}
 
@@ -173,6 +175,9 @@ namespace full_model_info {
 		vector1< Size > input_res_list = option[ in::file::input_res ]();
 		bool const get_res_list_from_pdb = !option[ in::file::input_res ].user();
 		vector1< Size > sample_res = option[ full_model::sample_res ](); //stuff that can be resampled.
+		//		if ( option[ stepwise::rna::global_sample_res_list ].user() )	sample_res = option[ stepwise::rna::global_sample_res_list ](); // legacy.
+		//		vector1< Size > fixed_res = option[ stepwise::fixed_res ](); //legacy -- stuff that cannot be resampled.
+
 		vector1< vector1< Size > > pose_res_lists;
 		vector1< Size > domain_map( desired_sequence.size(), 0 );
 		Size input_res_count( 0 );
@@ -192,6 +197,7 @@ namespace full_model_info {
 				runtime_assert( input_res_count <= input_res_list.size() );
 				Size const & number_in_full_model = input_res_list[ input_res_count ];
 				input_res_for_pose.push_back( number_in_full_model );
+				//				if ( fixed_res.size() > 0 && !fixed_res.has_value( number_in_full_model ) && !sample_res.has_value( number_in_full_model ) )  sample_res.push_back( number_in_full_model ); // legacy -- if fixed_res is specified, as opposed to sample_res.
 				if ( !sample_res.has_value( number_in_full_model ) ) domain_map[ number_in_full_model ] = n;
 			}
 			pose_res_lists.push_back( input_res_for_pose );
@@ -213,7 +219,13 @@ namespace full_model_info {
 				if ( (res_list[ i+1 ] == res_list[ i ] + 1) &&
 						 pose.fold_tree().is_cutpoint( i ) ){
 					TR << "There appears to be a strand boundary at " << res_list[ i ] << " so adding to cutpoint_in_full_model." << std::endl;
-					cutpoint_open_in_full_model.push_back( res_list[ i ] );
+					cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
+				}
+				if ( pose.residue_type( i ).is_RNA() != pose.residue_type( i+1 ).is_RNA() ) {
+					cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
+				}
+				if ( pose.residue_type( i ).is_protein() != pose.residue_type( i+1 ).is_protein() ) {
+					cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
 				}
 			}
 			add_cutpoint_closed( pose, res_list, option[ full_model::cutpoint_closed ]()  );
@@ -229,6 +241,8 @@ namespace full_model_info {
 		full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
 		full_model_parameters->set_parameter_as_res_list( SAMPLE, sample_res );
 		full_model_parameters->set_parameter_as_res_list( CALC_RMS, option[ full_model::calc_rms_res ]() );
+		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  option[ full_model::rna::force_syn_chi_res_list ]() );
+		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, option[ full_model::rna::terminal_res ]() );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
@@ -438,7 +452,7 @@ namespace full_model_info {
 			if ( !res_list.has_value( cutpoint_closed[ n ] ) ) continue;
 			Size const i = res_list.index( cutpoint_closed[ n ] );
 			put_in_cutpoint( pose, i );
-			rna::correctly_add_cutpoint_variants( pose, i );
+			correctly_add_cutpoint_variants( pose, i );
 		}
 	}
 

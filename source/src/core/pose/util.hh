@@ -172,6 +172,10 @@ void addVirtualResAsRoot(core::pose::Pose & pose);
 /// Roots the structure on this residue.
 void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::Pose& pose);
 
+/// @brief Get center of mass of a pose.
+numeric::xyzVector< core::Real >
+get_center_of_mass( core::pose::Pose const & pose );
+
 /// @brief Adds a key-value pair to the STRING_MAP in the Pose DataCache. If
 /// there is no STRING_MAP in the DataCache, one is created.
 void add_comment(
@@ -319,104 +323,6 @@ void dump_comment_pdb(
 	std::string const &file_name,
 	core::pose::Pose const& pose
 );
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
-///@author rhiju, 2009.
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					core::pose::ResMap const & res_map );
-
-void
-copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
-					pose::Pose & pose,
-					MiniPose const & chunk_pose,
-					core::pose::ResMap const & res_map );
-
-void
-copy_dofs_match_atom_names(
-					pose::Pose & pose,
-					Pose const & scratch_pose);
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					pose::Pose const & scratch_pose );
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					pose::Pose const & scratch_pose,
-					core::pose::ResMap const & res_map );
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs_match_atom_names(
-					pose::Pose & pose,
-					Pose const & scratch_pose,
-					core::pose::ResMap const & res_map,
-					bool const backbone_only = false,
-					bool const ignore_virtual = true );
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					Pose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map);
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map);
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map );
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map,
-					std::map< id::AtomID, Size > const & atom_id_domain_map  );
-
-///////////////////////////////////////////////////////////////////
-void
-setup_atom_id_map(
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									core::pose::ResMap const & res_map,
-									core::pose::Pose const & pose );
-
-///////////////////////////////////////////////////////////////////
-void
-setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose,
-									MiniPose const & chunk_pose );
-
-///////////////////////////////////////////////////////////////////
-void
-setup_atom_id_map_match_atom_names(
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose,
-									core::pose::Pose const & reference_pose,
-									bool const backbone_only = false,
-									bool const ignore_virtual = true);
 
 id::NamedAtomID
 atom_id_to_named_atom_id(
@@ -676,7 +582,6 @@ template< typename T >
 void
 initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation );
 
-
 /// @brief Initialize an AtomID_Map for a given Conformation using a specified fill value
 template< typename T >
 void
@@ -702,7 +607,6 @@ template< typename T >
 void
 initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value );
 
-
 /// @brief detect and fix disulfide bonds
 void
 initialize_disulfide_bonds(
@@ -717,7 +621,6 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 #ifdef USELUA
 void lregister_util( lua_State * lstate );
 #endif
-
 
 /// @brief count the number of canonical residues in the pose
 core::Size canonical_residue_count(core::pose::Pose const & pose);
@@ -736,6 +639,11 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose);
 
 id::AtomID_Map< id::AtomID >
 convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map, core::pose::Pose const & pose );
+
+void
+correctly_add_cutpoint_variants( core::pose::Pose & pose,
+																 Size const cutpoint_res,
+																 bool const check_fold_tree = true );
 
 } // pose
 } // core

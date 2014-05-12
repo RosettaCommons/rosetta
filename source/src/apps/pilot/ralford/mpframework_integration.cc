@@ -19,7 +19,7 @@
 /// @note       Last Modified (1/17/14)
 
 /// Note - this test is not meant to be a specific unit test. It is meant to check the
-/// general form and setup of membrane proteins in Rosetta. For unit tests - look in test/core/membrane
+/// align form and setup of membrane proteins in Rosetta. For unit tests - look in test/core/membrane
 
 // App Headers
 #include <devel/init.hh>

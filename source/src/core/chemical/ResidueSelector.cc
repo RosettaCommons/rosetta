@@ -19,7 +19,7 @@
 
 // Basic headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/residues.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -125,9 +125,9 @@ Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const resu
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	b_flag_is_present_ = false;
-	if ( !option[ OptionKeys::residues::patch_selectors ].user() ) return;
-	for ( StringVectorOption::const_iterator it = option[ OptionKeys::residues::patch_selectors ]().begin(),
-				eit = option[ OptionKeys::residues::patch_selectors ]().end(); it != eit ; ++ it ) {
+	if ( !option[ OptionKeys::chemical::patch_selectors ].user() ) return;
+	for ( StringVectorOption::const_iterator it = option[ OptionKeys::chemical::patch_selectors ]().begin(),
+				eit = option[ OptionKeys::chemical::patch_selectors ]().end(); it != eit ; ++ it ) {
 		if ( *it == flag_in ) {
 			b_flag_is_present_ = true;
 			break;

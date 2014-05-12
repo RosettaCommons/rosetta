@@ -976,7 +976,7 @@ public:
 		bool debug_derivs = option[ OptionKeys::min::debug ]();
 
 		////////////////////////
-		//general setup
+		//align setup
 		////////////////////////
 
 		//movemap

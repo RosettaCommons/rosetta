@@ -151,7 +151,7 @@ public:
 		bool bWriteScoreOnly = false
 	) const;
 
-	/// @brief Write the given silent-struct, including the header, to the given 
+	/// @brief Write the given silent-struct, including the header, to the given
 	/// ostream.
 	bool _write_silent_struct(
 		SilentStruct & s,
@@ -159,7 +159,7 @@ public:
 		bool bWriteScoreOnly = false
 	) const;
 
-	/// @brief Write the given silent-struct, minus the header, to the given 
+	/// @brief Write the given silent-struct, minus the header, to the given
 	/// ostream.
 	bool write_silent_struct(
 		SilentStruct & s,
@@ -202,6 +202,13 @@ public:
 	utility::vector1< std::string > read_tags_fast(
 		std::string const & filename
 	) const;
+
+	bool setup_include_patches(
+	 std::string const & filename
+	) const;
+
+	void
+	setup_extra_patches( utility::vector1< std::string > & all_patches ) const;
 
 	/// @brief quickly read a list of tags from a silent-input file. Only checks
 	/// lines beginning with SCORE: strings.

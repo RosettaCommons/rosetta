@@ -18,10 +18,10 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_CombineLongLoopFilterer_hh
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_CombineLongLoopFilterer_hh
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
@@ -95,7 +95,7 @@ namespace rna {
   public:
 
     //constructor!
-		StepWiseRNA_CombineLongLoopFilterer( StepWiseRNA_JobParametersCOP const & job_parameters, bool const combine_helical_silent_file );
+		StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file );
 
     //destructor -- necessary?
     virtual ~StepWiseRNA_CombineLongLoopFilterer();
@@ -204,7 +204,7 @@ namespace rna {
 		utility::vector1< std::string > silent_files_in_;
 		core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream_ONE_;
 		core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream_TWO_;
-		StepWiseRNA_JobParametersCOP const job_parameters_;
+		working_parameters::StepWiseWorkingParametersCOP const working_parameters_;
 		bool verbose_;
 		bool parin_favorite_output_;
 		bool filter_for_previous_contact_;

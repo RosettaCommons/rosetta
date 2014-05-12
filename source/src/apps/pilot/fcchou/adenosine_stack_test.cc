@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>

@@ -22,7 +22,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/ScoreFunction.hh>

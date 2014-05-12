@@ -14,6 +14,7 @@
 
 
 #include <core/pose/copydofs/CopyDofs.hh>
+#include <core/pose/copydofs/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -102,11 +103,7 @@ namespace copydofs {
 			Size const i = (it->first).rsd(); //Residue index in big pose.
 			Size const j = (it->first).atomno(); //Atom-number index in big pose.
 
-			//		if ( i == 34 || i == 35 ) {
-			//			verbose = true;
-			//		}
-
-			core::kinematics::tree::AtomCOP current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+ 			core::kinematics::tree::AtomCOP current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
 
 			if ( !get_scratch_atom_id( current_atom_scratch_atom_id, atom_id_map_, current_atom ) ) {
 				if ( verbose ){ std::cout << "No current atom id? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;}
@@ -502,26 +499,6 @@ namespace copydofs {
 			}
 		}
 		return true;
-	}
-
-	/////////////////////////////////////////////////////////////////////
-	void
-	apply_dofs( pose::Pose & pose, CopyDofsInfo const & copy_dofs_info ){
-		for ( Size n = 1; n <= copy_dofs_info.size(); n++ ){
-			pose.set_dof( copy_dofs_info[n].first, copy_dofs_info[n].second );
-		}
-	}
-
-	/////////////////////////////////////////////////////////////////////
-	std::map< id::AtomID, Size >
-	blank_atom_id_domain_map( pose::Pose const & pose ) {
-		std::map< id::AtomID, Size > atom_id_domain_map;
-		for ( Size i = 1; i <= pose.total_residue(); i++ ){
-			for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ){
-				atom_id_domain_map[ id::AtomID( j, i ) ] = 0;
-			}
-		}
-		return atom_id_domain_map;
 	}
 
 } //copy_dofs

@@ -17,7 +17,7 @@
 #include <core/scoring/rna/RG_Energy_RNACreator.hh>
 
 // Package headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 

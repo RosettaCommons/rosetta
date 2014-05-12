@@ -13,7 +13,7 @@
 
 // Rosetta Headers
 #include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/BasePairStep.hh>
 #include <protocols/farna/BasePairStepLibrary.hh>
 #include <protocols/toolbox/AllowInsert.hh>
@@ -24,6 +24,7 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/util.hh>
+#include <core/pose/copydofs/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
@@ -121,7 +122,7 @@ namespace farna {
 
 		std::map< AtomID, AtomID > atom_id_map = get_atom_id_map( pose, allow_insert );
 
-		copy_dofs( pose, scratch_pose, atom_id_map  );
+		core::pose::copydofs::copy_dofs( pose, scratch_pose, atom_id_map  );
 
 	}
 

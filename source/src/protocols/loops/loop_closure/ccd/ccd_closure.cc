@@ -511,7 +511,7 @@ fast_ccd_loop_closure(
 	int const cutpoint,
 	int const ii_cycles,
 	Real const tolerance,
-	bool const rama_check,
+	bool const rama_check_boltzmann,
 	Real const max_rama_score_increase,
 	Real const max_total_delta_helix,
 	Real const max_total_delta_strand,
@@ -543,9 +543,15 @@ fast_ccd_loop_closure(
 	Real const ccd_temperature = { 0.25 };
 	Size const nres( pose.total_residue() );
 
+	forward_deviation  = 0.0;
+	backward_deviation = 0.0;
+	torsion_delta      = 0.0;
+	rama_delta         = 0.0;
+
 	Real const bond_angle1( pose.residue( cutpoint ).upper_connect().icoor().theta() );// CA-C=N bond angle
 	Real const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
 	Real const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
+
 
 	// pack mainchain coordinates, torsions into local arrays
 	Size const nbb( pose.residue( loop_begin ).mainchain_atoms().size() );
@@ -555,11 +561,11 @@ fast_ccd_loop_closure(
 	load_coords_and_torsions( pose, coords, torsions );
 	assert( coords[loop_begin].size() == nbb && torsions[loop_begin].size() == nbb );
 
-	// save the starting torsions for comparison, starting rama score if rama_check == true
+	// save the starting torsions for comparison, starting rama score if rama_check_boltzmann == true
 	vector1< vector1< Real > > start_torsions( torsions );
 	vector1< Real > start_rama_score( nres, 0.0 );
 	scoring::RamachandranCOP rama(0);
-	if ( rama_check ) {
+	if ( rama_check_boltzmann ) {
 		rama = &(scoring::ScoringManager::get_instance()->get_Ramachandran());
 		for ( int i=loop_begin; i<= loop_end; ++i ) {
 			start_rama_score[i] = rama->eval_rama_score_residue( pose.aa(i), torsions[i][1], torsions[i][2] );
@@ -746,7 +752,7 @@ fast_ccd_loop_closure(
 				} // torsion = 1,nbb
 
 
-				if ( rama_check ) {
+				if ( rama_check_boltzmann ) {
 					assert( nbb == 3 );
 					//////////////////////////////////////
 					// evaluate the rama score difference:
@@ -754,7 +760,7 @@ fast_ccd_loop_closure(
 					Real const new_rama_score( rama->eval_rama_score_residue( pose.aa(pos), save_torsions[1], save_torsions[2]));
 
 					if (local_verbose)
-						tccd.Warning  << "rama_check: " << pos << ' ' << old_rama_score << ' ' << new_rama_score << std::endl;
+						tccd.Warning  << "rama_check_boltzmann: " << pos << ' ' << old_rama_score << ' ' << new_rama_score << std::endl;
 
 					if ( new_rama_score > old_rama_score ) {
 						Real const boltz_factor ( (old_rama_score-new_rama_score)/ccd_temperature );
@@ -776,7 +782,7 @@ fast_ccd_loop_closure(
 
 						} // rama reject
 					} // rama-score got worse
-				} // if ( rama_check )
+				} // if ( rama_check_boltzmann )
 			} // pos = start_pos,stop_pos
 		} // repeat = 1,2   1=n2c; 2=c2n
 
@@ -839,7 +845,7 @@ fast_ccd_loop_closure(
 		for ( Size j=1; j<= nbb; ++j ) {
 			torsion_delta += std::abs( basic::subtract_degree_angles( start_torsions[i][j], torsions[i][j] ) );
 		}
-		if ( rama_check ) {
+		if ( rama_check_boltzmann ) {
 			Real const final_rama_score( rama->eval_rama_score_residue( pose.aa(i), torsions[i][1], torsions[i][2] ) );
 			rama_delta += ( final_rama_score - start_rama_score[i] );
 		}
@@ -871,7 +877,7 @@ ccd_moves(
 	/////////
 	bool const local_debug = { false }; //true };
 	bool const local_verbose = { false }; //true };
-	bool const rama_check = { true };
+	bool const rama_check_boltzmann = { true };
 
 	int const n2c = { 1 }; // must be 1 and -1 (below) for proper incrementing in loops
 	int const c2n = { -1 };
@@ -1024,7 +1030,7 @@ ccd_moves(
 
 
 			scoring::RamachandranCOP rama(0);
-			if ( rama_check ) {
+			if ( rama_check_boltzmann ) {
 				rama = &(scoring::ScoringManager::get_instance()->get_Ramachandran());
 				assert( nbb == 3 );
 				//////////////////////////////////////
@@ -1033,7 +1039,7 @@ ccd_moves(
 				Real const new_rama_score( rama->eval_rama_score_residue( pose.aa(pos), save_torsions[1], save_torsions[2]));
 
 				if (local_verbose)
-					tccd.Debug << "rama_check: " << pos << ' ' << old_rama_score << ' ' << new_rama_score << std::endl;
+					tccd.Debug << "rama_check_boltzmann: " << pos << ' ' << old_rama_score << ' ' << new_rama_score << std::endl;
 
 				if ( new_rama_score > old_rama_score ) {
 					Real const boltz_factor ( (old_rama_score-new_rama_score)/ccd_temperature );
@@ -1054,7 +1060,7 @@ ccd_moves(
 
 					} // rama reject
 				} // rama-score got worse
-			} // if ( rama_check )
+			} // if ( rama_check_boltzmann )
 
 
 			++nmoves;

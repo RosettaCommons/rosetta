@@ -43,8 +43,8 @@
 //RNA stuff.
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
-#include <protocols/stepwise/StepWiseUtil.hh> // for other_pose.
+#include <protocols/farna/util.hh>
+#include <protocols/stepwise/sampling/util.hh> // for other_pose.
 #include <protocols/toolbox/AllowInsert.hh>
 
 // C++ headers
@@ -182,13 +182,15 @@ rna_fullatom_minimize_test()
 			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
 		}
 
+		AllowInsertOP allow_insert = new AllowInsert( pose );
 		if ( option[ in::file::minimize_res ].user() ){
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
-			AllowInsertOP allow_insert = new AllowInsert( pose );
 			allow_insert->set( false );
-			rna_minimizer.set_allow_insert( allow_insert );
 			rna_minimizer.set_extra_minimize_res( option[ in::file::minimize_res ]() );
+		} else {
+			allow_insert->set( true );
 		}
+		rna_minimizer.set_allow_insert( allow_insert );
 
 
 		// graphics viewer.
@@ -210,7 +212,7 @@ rna_fullatom_minimize_test()
 			utility::vector1< Size > superimpose_res;
 			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
 			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+				protocols::stepwise::sampling::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}

@@ -18,8 +18,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.fwd.hh>
 #include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -39,7 +39,7 @@ namespace sugar {
 	public:
 
 		//constructor
-		StepWiseRNA_VirtualSugarJustInTimeInstantiator( StepWiseRNA_JobParametersCOP & job_parameters_ );
+		StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters::StepWiseWorkingParametersCOP & working_parameters_ );
 
 		//destructor
 		~StepWiseRNA_VirtualSugarJustInTimeInstantiator();
@@ -68,7 +68,7 @@ namespace sugar {
 																													 utility::vector1< pose::PoseOP > & starting_pose_data_list ) const;
 
 		void
-		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+		set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
 		void
 		set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
@@ -76,7 +76,7 @@ namespace sugar {
 		bool const & success() const{ return success_; }
 
 		void
-		set_options( StepWiseRNA_ModelerOptionsCOP options );
+		set_options( StepWiseModelerOptionsCOP options );
 
 		Size
 		num_sets() const { return sugar_modeling_sets_.size(); }
@@ -87,6 +87,9 @@ namespace sugar {
 		//legacy:
 		SugarModeling const &
 		anchor_sugar_modeling();
+
+		void
+		instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const;
 
 	private:
 
@@ -120,7 +123,7 @@ namespace sugar {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_;
+		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 		Size const moving_res_;
 		bool const rebuild_bulge_mode_;
 
@@ -128,10 +131,9 @@ namespace sugar {
 		utility::vector1< rotamer_sampler::copy_dofs::ResidueAlternativeSetOP> residue_alternative_sets_;
 		bool keep_base_fixed_;
 		bool const moving_res_legacy_;
-		bool const include_current_;
 
-		StepWiseRNA_ModelerOptionsCOP options_;
-		core::scoring::ScoreFunctionOP scorefxn_;
+		StepWiseModelerOptionsCOP options_;
+		core::scoring::ScoreFunctionCOP scorefxn_;
 
 		std::map< Size, Size > reference_res_for_each_virtual_sugar_;
 

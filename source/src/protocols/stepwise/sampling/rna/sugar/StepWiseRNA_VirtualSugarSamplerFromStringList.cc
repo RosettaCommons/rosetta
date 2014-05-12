@@ -14,11 +14,12 @@
 
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
-#include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/sugar/util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
+#include <protocols/stepwise/sampling/output_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -37,9 +38,9 @@ namespace rna {
 namespace sugar {
 
 	//Constructor
-	StepWiseRNA_VirtualSugarSamplerFromStringList::StepWiseRNA_VirtualSugarSamplerFromStringList( StepWiseRNA_JobParametersCOP & job_parameters,
+	StepWiseRNA_VirtualSugarSamplerFromStringList::StepWiseRNA_VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 																																																utility::vector1< std::string > const sample_virtual_sugar_string_list):
-		job_parameters_( job_parameters ),
+		working_parameters_( working_parameters ),
 		sample_virtual_sugar_string_list_( sample_virtual_sugar_string_list ),
 		silent_file_out_( "default.out" ),
 		use_phenix_geo_( false ),
@@ -90,9 +91,9 @@ namespace sugar {
 
 			TR << TR.Blue << "Sampling sugar " << n <<  " out of " << sugar_modeling_list.size() << TR.Reset << std::endl;
 			SugarModeling & curr_modeling = sugar_modeling_list[n];
-			curr_modeling.set_base_and_pucker_state( pose, job_parameters_ );
+			curr_modeling.set_base_and_pucker_state( pose, working_parameters_ );
 
-			StepWiseRNA_VirtualSugarSampler virtual_sugar_sampler( job_parameters_, curr_modeling );
+			StepWiseRNA_VirtualSugarSampler virtual_sugar_sampler( working_parameters_, curr_modeling );
 			virtual_sugar_sampler.set_tag( "VIRT_RIBOSE_NUM_" + string_of( n ) );
 			virtual_sugar_sampler.set_scorefxn( scorefxn_ );
 			virtual_sugar_sampler.set_integration_test_mode( integration_test_mode_ );
@@ -110,7 +111,7 @@ namespace sugar {
 		///////////////////////////////////////////////////////////////////////////////////
 		utility::vector1< PoseOP > pose_data_list;
 		sampling_starting_pose_data_list( pose_data_list, sugar_modeling_list, pose );
-		minimize_all_sampled_floating_bases( pose, sugar_modeling_list, pose_data_list, scorefxn_, job_parameters_, false /*virtualize_other_partition*/ );
+		minimize_all_sampled_floating_bases( pose, sugar_modeling_list, pose_data_list, scorefxn_, working_parameters_, false /*virtualize_other_partition*/ );
 
 		output_pose_data_list( pose_data_list );
 
@@ -124,7 +125,7 @@ namespace sugar {
 
 		utility::vector1< SugarModeling > sugar_modeling_list;
 
-		std::string const & working_sequence = job_parameters_->working_sequence();
+		std::string const & working_sequence = working_parameters_->working_sequence();
 
 		for ( Size n = 1; n <= sample_virtual_sugar_string_list_.size(); n++ ){
 
@@ -146,9 +147,9 @@ namespace sugar {
 
 			runtime_assert ( pose.total_residue() == working_sequence.size() );
 
-			if ( check_is_working_res( full_sugar_res, job_parameters_ ) ){
+			if ( check_is_working_res( full_sugar_res, working_parameters_ ) ){
 
-				Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, job_parameters_ );
+				Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, working_parameters_ );
 				bool const sugar_is_virtual = pose.residue( working_sugar_res ).has_variant_type( "VIRTUAL_RIBOSE" );
 
 				TR.Debug << " | working_sugar_res = " << working_sugar_res;
@@ -156,8 +157,8 @@ namespace sugar {
 
 				if ( sugar_is_virtual ){
 
-					Size const working_bulge_res = check_validity_and_get_working_res( full_bulge_res, job_parameters_ );
-					Size const working_ref_res   = check_validity_and_get_working_res( full_ref_res, job_parameters_ );
+					Size const working_bulge_res = check_validity_and_get_working_res( full_bulge_res, working_parameters_ );
+					Size const working_ref_res   = check_validity_and_get_working_res( full_ref_res, working_parameters_ );
 
 					TR.Debug << " | working_bulge_res = " << working_bulge_res << " working_ref_res = " << working_ref_res;
 
@@ -229,10 +230,10 @@ namespace sugar {
 		for ( Size n = 1; n <= pose_data_list.size(); n++ ){
 			Pose & pose = ( *pose_data_list[n] ); //set viewer_pose;
 			std::string pose_tag = tag_ + "_sample_sugar" + tag_from_pose( *pose_data_list[n]);
-			if ( job_parameters_->gap_size() == 0 ) utility_exit_with_message( "job_parameters_->gap_size() == 0" );
+			if ( working_parameters_->gap_size() == 0 ) utility_exit_with_message( "working_parameters_->gap_size() == 0" );
 			( *scorefxn_ )( pose );
 
-			output_data( silent_file_out_, pose_tag, false, pose, job_parameters_->working_native_pose(), job_parameters_ );
+			output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
 		}
 	}
 

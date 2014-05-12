@@ -15,8 +15,12 @@
 
 #include <protocols/simple_moves/CopyDofMover.hh>
 #include <core/id/AtomID.hh>
-#include <core/pose/util.hh>
 #include <core/pose/copydofs/CopyDofs.hh>
+#include <core/pose/copydofs/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
@@ -41,6 +45,7 @@ namespace simple_moves {
 		template_mini_pose_( template_pose ),
 		res_map_( res_map ),
 		backbone_only_( false ),
+		side_chain_only_( false ),
 		ignore_virtual_( false ),
 		use_hash_( true ),
 		pose_string_( "" )
@@ -53,17 +58,16 @@ namespace simple_moves {
 	////////////////////////////////////////////////////////////
 	void
 	CopyDofMover::apply( core::pose::Pose & pose ){
-
-		//		copy_dofs_match_atom_names( pose, template_pose_, res_map_, backbone_only_, ignore_virtual_ );
+		using namespace core::pose::copydofs;
 
 		if ( use_hash_ && check_for_precomputed_copy_dofs_info( pose ) ) {
 		 	// use precomputed copy dofs info
 		 	core::pose::copydofs::apply_dofs( pose, copy_dofs_info_[ pose_string_ ] );
 		} else {
 			std::map < core::id::AtomID , core::id::AtomID > atom_id_map;
-			setup_atom_id_map_match_atom_names( atom_id_map, res_map_, pose, template_pose_, backbone_only_, ignore_virtual_ );
-			std::map< id::AtomID, Size > atom_id_domain_map = core::pose::copydofs::blank_atom_id_domain_map( pose );
-			core::pose::copydofs::CopyDofs copy_dofs( template_mini_pose_, atom_id_map, atom_id_domain_map );
+			setup_atom_id_map_match_atom_names( atom_id_map, res_map_, pose, template_pose_, backbone_only_, side_chain_only_, ignore_virtual_ );
+			std::map< id::AtomID, Size > atom_id_domain_map = blank_atom_id_domain_map( pose );
+			CopyDofs copy_dofs( template_mini_pose_, atom_id_map, atom_id_domain_map );
 			copy_dofs.apply( pose );
 			if ( use_hash_ ) copy_dofs_info_[ pose_string_ ] = copy_dofs.copy_dofs_info();
 		}

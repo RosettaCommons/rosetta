@@ -39,8 +39,6 @@
 #define O3I_C5I_MIN_DIST 2.000
 #define O3I_C5I_MAX_DIST 4.627
 
-#define GAP_SIZE_DUMMY 999 //encodes for an 'infinite' gap between residues, e.g., if on different chains.
-
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {

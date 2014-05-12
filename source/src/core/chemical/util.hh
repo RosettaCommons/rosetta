@@ -40,6 +40,8 @@ modify_atom_properties_from_command_line(
 		AtomTypeSet & atom_type_set
 		);
 
+std::string
+fixup_patches( std::string string_in );
 
 } // namespace chemical
 } // namespace core

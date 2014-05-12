@@ -23,13 +23,14 @@
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/scoring/rna/RNA_TorsionPotential.hh>
 
 // Project Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 
 #include <core/conformation/Atom.hh>
@@ -248,18 +249,23 @@ build_rna_chi_rotamers(
 
 /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
-//Expand proton chi? For RNA, this covers the 2'-OH torsion -- critical!.
-// This is a pretty generic operation
-// Should be its own method?
+// Expand proton chi? For RNA, this covers the 2'-OH torsion -- critical!.
+//  This is a pretty generic operation  Should be its own method?
+// Might be worth re-integrating with main-stream proton chi code --
+// would just need to be smart about 2'-OH virtualization below.
+//
 void
 build_proton_chi_rotamers(
 		Size const,
-		pose::Pose const &,
+		pose::Pose const & pose,
 		chemical::ResidueTypeCOP concrete_residue,
 		pack::task::ResidueLevelTask const & residue_task,
 		utility::vector1< conformation::ResidueOP > & rotamers )
 {
+
 	Size const n_proton_chi = concrete_residue->n_proton_chi();
+	bool const & include_virtual_side_chain = residue_task.include_virtual_side_chain(); /* this means 2'-OH for RNA*/
+
 	if ( n_proton_chi > 0 ) {
 		// This seems a little silly -- suck out the chi's, then put them back into rotamers.
 		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
@@ -274,17 +280,32 @@ build_proton_chi_rotamers(
 		Size const number_of_starting_rotamers = rotamers.size();
 		for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {
 
+			Size n_min( 0 ); Real rna_torsion_min( 0.0 );
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
 
 				rotamers.push_back( rotamers[n]->clone() );
 				Size const new_rotamer_number = rotamers.size();
 
 				for ( Size jj = 1; jj <= n_proton_chi; ++jj ) {
-
 					Size const jj_protchi( concrete_residue->proton_chi_2_chi( jj ) );
-					rotamers[ new_rotamer_number ]->set_chi( jj_protchi,
-							proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
+					ResidueOP rot = rotamers[ new_rotamer_number ];
+					rot->set_chi( jj_protchi,
+												proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
+
+					if ( include_virtual_side_chain ) {
+						runtime_assert( !rot->has_variant_type( "VIRTUAL_SIDE_CHAIN" ) );
+						static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential; // I think this is OK.
+						Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
+						if ( n_min == 0 || rna_torsion < rna_torsion_min ){
+							n_min = new_rotamer_number; rna_torsion_min = rna_torsion;
+						}
+					}
 				}
+
+			}
+			if ( include_virtual_side_chain ){
+				ResidueOP rot = core::pose::add_variant_type_to_residue( *rotamers[ n_min ], "VIRTUAL_O2PRIME_HYDROGEN", pose);
+				rotamers.push_back( rot );
 			}
 		}
 	}
@@ -399,13 +420,11 @@ build_rna_rotamers(
 	//////////////////////////////////////////////////////////////////////////
 	// include current... this doesn't use ideal bond lengths/angles.
 	Residue const & existing_residue( pose.residue( resid ));
-	if ( task.include_current( resid ) && existing_residue.name() == concrete_residue->name() ) {
+	if ( task.include_current( resid ) && existing_residue.aa() == concrete_residue->aa() ) {
 		ResidueOP rot = existing_residue.create_rotamer();
 		new_rotamers.push_back( rot );
 		id_for_current_rotamer = new_rotamers.size();
 	}
-
-
 
 	///////////////////////////////////////////////////////////
 	core::pack::task::rna::RNA_ResidueLevelTask const & rna_task = task.residue_task( resid ).rna_task();

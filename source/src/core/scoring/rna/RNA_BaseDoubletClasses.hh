@@ -14,7 +14,7 @@
 #define INCLUDED_core_scoring_rna_RNA_BaseDoubletClasses_hh
 
 #include <core/types.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 
 // C++ Headers
 #include <iomanip>

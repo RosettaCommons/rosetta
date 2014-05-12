@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
-#include <protocols/stepwise/screener/StepWiseScreenerUtil.hh>
+#include <protocols/stepwise/screener/util.hh>
 #include <protocols/rotamer_sampler/RotamerBase.hh>
 #include <basic/Tracer.hh>
 

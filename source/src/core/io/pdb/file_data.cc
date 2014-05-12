@@ -1124,8 +1124,8 @@ build_pose_as_is1(
 			}
 			if (rsd_type.is_carbohydrate() && rsd_type.has_variant_type(BRANCH_POINT)) {
 				// The below assumes that ResidueTypes with fewer patches are selected 1st, that is, that an
-				// _p:->2-branch ResidueType will be checked as a possible match before an _p:->2-branch_p:->6-branch
-				// ResidueType.  If this were not the case, Rosetta could misassign an _p:->2-branch_p:->6-branch
+				// :->2-branch ResidueType will be checked as a possible match before an :->2-branch:->6-branch
+				// ResidueType.  If this were not the case, Rosetta could misassign an :->2-branch:->6-branch
 				// ResidueType to a residue that actually only has a single branch at the 2 or 6 position.
 				char branch_point;
 				bool branch_point_is_missing = false;

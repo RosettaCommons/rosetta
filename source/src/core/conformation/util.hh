@@ -236,6 +236,12 @@ get_root_atomno(
 	int const dir // +1, -1, or "dir_jump"
 	);
 
+Size
+get_root_residue_root_atomno(
+	conformation::Residue const & rsd,
+	kinematics::FoldTree const & fold_tree
+	);
+
 /// @brief  Get the atom-index of the atom to which the residue at position seqpos should be anchored.
 int
 get_anchor_atomno(
@@ -352,7 +358,7 @@ named_stub_id_to_named_stub_id(
 char get_torsion_bin (core::Real phi, core::Real psi, core::Real omega = 180);
 
 
-	
+
 } // conformation
 } // core
 

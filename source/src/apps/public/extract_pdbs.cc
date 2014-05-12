@@ -26,18 +26,14 @@
 #include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableString.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // C++ headers
 #include <string>
@@ -49,8 +45,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <utility/io/util.hh>
-// AUTO-REMOVED #include <iterator>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>

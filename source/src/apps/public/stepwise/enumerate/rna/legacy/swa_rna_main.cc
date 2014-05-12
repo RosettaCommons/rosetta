@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/StepWiseModeler.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -27,7 +27,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -53,6 +53,8 @@
 
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
+#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -81,6 +83,7 @@
 
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/copydofs/util.hh>
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -91,21 +94,21 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Minimizer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_WorkingParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -139,6 +142,7 @@ using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
 using namespace protocols::stepwise::sampling::rna::legacy;
+using namespace protocols::stepwise::sampling;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -150,7 +154,6 @@ OPT_KEY( Boolean, filter_for_previous_clash )
 OPT_KEY( Boolean, filterer_undercount_sugar_rotamers )
 OPT_KEY( Boolean, clusterer_two_stage_clustering )
 OPT_KEY( Boolean, clusterer_keep_pose_in_memory )
-OPT_KEY( StringVector, 	VDW_rep_screen_info )
 OPT_KEY( Boolean, graphic )
 OPT_KEY( Real, Real_parameter_one )
 OPT_KEY( Boolean, clusterer_quick_alignment )
@@ -192,41 +195,41 @@ swa_rna_sample()
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
+	using namespace protocols::stepwise::sampling;
 	using namespace protocols::stepwise::sampling::rna;
 
 	output_title_text( "Enter swa_rna_sample()", TR );
 
   Pose pose;
 
-	StepWiseRNA_ModelerOptionsOP stepwise_rna_modeler_options = new StepWiseRNA_ModelerOptions;
-	stepwise_rna_modeler_options->initialize_from_command_line();
-
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
-	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( job_parameters );
+	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP( working_parameters );
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( working_parameters );
 	stepwise_rna_pose_setup->apply( pose );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
-	PoseCOP native_pose = job_parameters_COP->working_native_pose();
+	PoseCOP native_pose = working_parameters_COP->working_native_pose();
 
-	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400 );
+	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
+	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400, false, center_vector );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
-	// put following in pose setup?
-	if ( option[ constraint_chi ]() )  apply_chi_cst( pose, *job_parameters_COP->working_native_pose() ); // should be in stepwise_rna_pose_setup.
+	// put following in pose setup? IS THIS STILL WORKING?
+	if ( option[ constraint_chi ]() )  apply_chi_cst( pose, *working_parameters_COP->working_native_pose() ); // should be in stepwise_rna_pose_setup.
 
 	// Fang: The score term elec_dens_atomwise uses the first pose it scored to decide the normalization factor.
 	// Can't this go inside ResidueSampler? -- rhiju
-	if ( option[ in::file::native ].user() ) {
-		( *scorefxn )( *(native_pose->clone()) );
-	} else {
-		( *scorefxn )( pose );
-	}
+	if ( option[ in::file::native ].user() ) 		( *scorefxn )( *(native_pose->clone()) );
+	else ( *scorefxn )( pose );
 
 	Size num_struct =  option[ out::nstruct ]();
 	bool const multiple_shots = option[ out::nstruct ].user();
-	stepwise_rna_modeler_options->set_output_minimized_pose_list( !multiple_shots );
 	std::string const silent_file = option[ out::file::silent ]();
 	std::string swa_silent_file, out_tag;
+
+	StepWiseModelerOptionsOP stepwise_modeler_options = new StepWiseModelerOptions;
+	stepwise_modeler_options->initialize_from_command_line();
+	stepwise_modeler_options->set_output_minimized_pose_list( !multiple_shots );
+	stepwise_modeler_options->set_disallow_realign( true );
 	Pose start_pose = pose;
 
 	for ( Size n = 1; n <= num_struct; n++ ){
@@ -236,29 +239,25 @@ swa_rna_sample()
 		pose = start_pose;
 
 		if ( !get_tag_and_silent_file_for_struct( swa_silent_file, out_tag, n, multiple_shots, silent_file ) ) continue;
+		stepwise_modeler_options->set_silent_file( swa_silent_file );
 
-		Size const working_moving_res = job_parameters_COP->working_moving_res();
+		Size const working_moving_res = working_parameters_COP->working_moving_res();
 
-		StepWiseRNA_Modeler stepwise_rna_modeler( working_moving_res, scorefxn );
-		stepwise_rna_modeler.set_native_pose( native_pose );
-		stepwise_rna_modeler.set_silent_file( swa_silent_file );
-		stepwise_rna_modeler.set_options( stepwise_rna_modeler_options );
+		StepWiseModeler stepwise_modeler( working_moving_res, scorefxn );
+		stepwise_modeler.set_native_pose( native_pose );
+		stepwise_modeler.set_modeler_options( stepwise_modeler_options );
+		stepwise_modeler.set_working_prepack_res( get_all_residues( pose ) ); // this is new -- to allow virtual 2'-OH packing from input PDB.
 
 		// turn this on to test StepWiseRNA_Modeler's "on-the-fly" determination of job based on pose fold_tree, cutpoints, etc.
-		//  in this case, need to tell stepwise_rna_modeler some additional arbitrary information that cannot be determined from
+		//  in this case, need to tell stepwise_modeler some additional arbitrary information that cannot be determined from
 		//  info sitting inside the pose -- fixed_res & rmsd_res (over which to calculate rmsds).
-		if ( !option[ basic::options::OptionKeys::stepwise::test_encapsulation ]() )	stepwise_rna_modeler.set_job_parameters( job_parameters );
-		stepwise_rna_modeler.set_working_fixed_res ( job_parameters->working_fixed_res() /* local numbering */);
-		stepwise_rna_modeler.set_terminal_res( job_parameters->terminal_res() /*global numbering*/ );
-		stepwise_rna_modeler.set_calc_rms_res ( job_parameters->calc_rms_res() /*global numbering*/ );
+		//print_WorkingParameters_info( working_parameters, "working_parameters_COP", TR );
+		if ( !option[ basic::options::OptionKeys::stepwise::test_encapsulation ]() ) 	stepwise_modeler.set_working_parameters( working_parameters );
 
 		// in traditional swa, this creates silent file
-		stepwise_rna_modeler.apply( pose );
+		stepwise_modeler.apply( pose );
 
-		// instead we should be able to output those silent structs if we want them.
-		// Here outputting best scoring pose, not whatever comes out randomly.
-		if ( multiple_shots ) stepwise_rna_modeler.output_pose( pose, out_tag, silent_file );
-
+		if ( multiple_shots ) output_data( silent_file, tag_from_pose( pose ), false /*write_score_only*/, pose, native_pose, working_parameters );
 	}
 
 }
@@ -270,24 +269,24 @@ swa_rna_cluster(){
 
 	using namespace protocols::stepwise::sampling::rna;
 
-	StepWiseRNA_JobParametersOP job_parameters;
+	working_parameters::StepWiseWorkingParametersOP working_parameters;
 
-	bool job_parameters_exist = false;
+	bool working_parameters_exist = false;
 	if ( option[ simple_full_length_job_params ]() ){ //Oct 31, 2011.
 		std::cout << "USING simple_full_length_job_params!" << std::endl;
-		job_parameters_exist = true;
-		job_parameters = setup_simple_full_length_rna_job_parameters();
+		working_parameters_exist = true;
+		working_parameters = setup_simple_full_length_rna_working_parameters();
 
 	} else if ( option[ basic::options::OptionKeys::stepwise::rna::rmsd_res ].user() ){
-		job_parameters_exist = true;
-		job_parameters = setup_rna_job_parameters();
-		print_JobParameters_info( job_parameters, "standard_clusterer_job_params", TR, false /*is_simple_full_length_JP*/ );
+		working_parameters_exist = true;
+		working_parameters = setup_rna_working_parameters();
+		print_WorkingParameters_info( working_parameters, "standard_clusterer_job_params", TR, false /*is_simple_full_length_JP*/ );
 	}
 
-	StepWiseRNA_JobParametersCOP job_parameters_COP = job_parameters;
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP = working_parameters;
 	//////////////////////////////////////////////////////////////
 	checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker = new checker::RNA_VDW_BinChecker();
-	if ( option[ VDW_rep_screen_info].user() ){ //This is used for post_processing only. Main VDW_rep_checker should be in the sampler.
+	if ( option[ OptionKeys::stepwise::rna::VDW_rep_screen_info].user() ){ //This is used for post_processing only. Main VDW_rep_checker should be in the sampler.
 		user_input_VDW_bin_checker->set_VDW_rep_alignment_RMSD_CUTOFF( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF]() );
 		user_input_VDW_bin_checker->set_VDW_rep_delete_matching_res( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_delete_matching_res ]() );
 		user_input_VDW_bin_checker->set_physical_pose_clash_dist_cutoff( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
@@ -352,8 +351,8 @@ swa_rna_cluster(){
 	stepwise_rna_clusterer.set_perform_score_diff_cut( option[ clusterer_perform_score_diff_cut ] );
 	stepwise_rna_clusterer.set_cluster_radius(	option[ whole_struct_cluster_radius ]()	);
 	stepwise_rna_clusterer.set_rename_tags( option[ clusterer_rename_tags ]() );
-	stepwise_rna_clusterer.set_job_parameters( job_parameters_COP );
-	stepwise_rna_clusterer.set_job_parameters_exist( job_parameters_exist );
+	stepwise_rna_clusterer.set_working_parameters( working_parameters_COP );
+	stepwise_rna_clusterer.set_working_parameters_exist( working_parameters_exist );
 	stepwise_rna_clusterer.set_suite_cluster_radius( option[ suite_cluster_radius]() );
 	stepwise_rna_clusterer.set_loop_cluster_radius( option[ loop_cluster_radius]() );
 	stepwise_rna_clusterer.set_distinguish_pucker( option[ basic::options::OptionKeys::stepwise::rna::distinguish_pucker]() );
@@ -364,19 +363,19 @@ swa_rna_cluster(){
 	stepwise_rna_clusterer.set_keep_pose_in_memory( option [clusterer_keep_pose_in_memory]() );
 	stepwise_rna_clusterer.set_two_stage_clustering( option [clusterer_two_stage_clustering]() );
 	stepwise_rna_clusterer.set_PBP_clustering_at_chain_closure( option[ basic::options::OptionKeys::stepwise::rna::PBP_clustering_at_chain_closure]() );
-	stepwise_rna_clusterer.set_verbose( option[ basic::options::OptionKeys::stepwise::rna::VERBOSE ]() );
+	stepwise_rna_clusterer.set_verbose( option[ basic::options::OptionKeys::stepwise::VERBOSE ]() );
 	stepwise_rna_clusterer.set_skip_clustering( option [skip_clustering]() );
 	stepwise_rna_clusterer.set_full_length_loop_rmsd_clustering( option[clusterer_full_length_loop_rmsd_clustering]() );
 	stepwise_rna_clusterer.set_filter_virtual_res_list( option[ basic::options::OptionKeys::full_model::virtual_res ]() );
 	stepwise_rna_clusterer.set_perform_VDW_rep_screen( option[ clusterer_perform_VDW_rep_screen ]() );
 	stepwise_rna_clusterer.set_perform_filters( option[ clusterer_perform_filters ]() );
 	stepwise_rna_clusterer.set_min_num_south_sugar_filter( option[ clusterer_min_num_south_sugar_filter ]() );
-	stepwise_rna_clusterer.set_VDW_rep_screen_info( option[ VDW_rep_screen_info]() );
+	stepwise_rna_clusterer.set_VDW_rep_screen_info( option[ OptionKeys::stepwise::rna::VDW_rep_screen_info]() );
 	stepwise_rna_clusterer.set_user_input_VDW_bin_checker( user_input_VDW_bin_checker );
 	stepwise_rna_clusterer.set_ignore_FARFAR_no_auto_bulge_tag( option[ clusterer_ignore_FARFAR_no_auto_bulge_tag ]() );
 	stepwise_rna_clusterer.set_ignore_FARFAR_no_auto_bulge_parent_tag( option[ clusterer_ignore_FARFAR_no_auto_bulge_parent_tag ]() );
 	stepwise_rna_clusterer.set_ignore_unmatched_virtual_res( option[ clusterer_ignore_unmatched_virtual_res ]() );
-	stepwise_rna_clusterer.set_output_pdb( option[ basic::options::OptionKeys::stepwise::rna::output_pdb ]() );
+	stepwise_rna_clusterer.set_output_pdb( option[ basic::options::OptionKeys::stepwise::dump ]() );
 
 	stepwise_rna_clusterer.cluster();
 
@@ -391,10 +390,10 @@ swa_rna_cluster(){
 
 	if ( recreate_silent_struct_for_output ){
 		//For analysis purposes....for example rescore with a different force-field...change native_pose and etc..
-		runtime_assert( job_parameters_exist );
+		runtime_assert( working_parameters_exist );
 
 		//core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
-		StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( job_parameters, false /*COPY DOF*/ ); //This contains the native_pose
+		StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( working_parameters, false /*COPY DOF*/ ); //This contains the native_pose
 
 		stepwise_rna_clusterer.recalculate_rmsd_and_output_silent_file( silent_file_out,
 																														stepwise_rna_pose_setup,
@@ -402,7 +401,7 @@ swa_rna_cluster(){
 
 	} else if ( use_best_neighboring_shift_RMSD_for_output ){
 
-		runtime_assert ( job_parameters_exist );
+		runtime_assert ( working_parameters_exist );
 		stepwise_rna_clusterer.get_best_neighboring_shift_RMSD_and_output_silent_file( silent_file_out );
 
 	} else{ //default, just output existing silent_struct
@@ -429,9 +428,9 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 
 	core::scoring::ScoreFunctionOP const scorefxn = create_scorefxn();
 
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters( false );
-	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( job_parameters, false /*COPY DOF*/ );
+	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters( false );
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP( working_parameters );
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( working_parameters, false /*COPY DOF*/ );
 
 	utility::vector1< std::string > const sample_virtual_sugar_string_list = option[ sample_virtual_sugar_list ]();
 	utility::vector1< std::string > input_tags;
@@ -452,7 +451,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer( pose.conformation(), get_working_directory(), 400, 400 );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
-	sugar::StepWiseRNA_VirtualSugarSamplerFromStringList virtual_sugar_sampler_from_string_list( job_parameters_COP, sample_virtual_sugar_string_list );
+	sugar::StepWiseRNA_VirtualSugarSamplerFromStringList virtual_sugar_sampler_from_string_list( working_parameters_COP, sample_virtual_sugar_string_list );
 	virtual_sugar_sampler_from_string_list.set_scorefxn( scorefxn );
 	virtual_sugar_sampler_from_string_list.set_silent_file_out( silent_file_out );
 	virtual_sugar_sampler_from_string_list.set_tag( input_tags[1] );
@@ -480,8 +479,8 @@ filter_combine_long_loop()
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	///////////////////////////////
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters( false );
-	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
+	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters( false );
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP( working_parameters );
 
 	runtime_assert ( option[ in::file::silent ].user() );
 
@@ -518,7 +517,7 @@ filter_combine_long_loop()
 		return; //Early return;
 	}
 
-	StepWiseRNA_CombineLongLoopFilterer stepwise_combine_long_loop_filterer( job_parameters_COP, option[basic::options::OptionKeys::stepwise::rna::combine_helical_silent_file] );
+	StepWiseRNA_CombineLongLoopFilterer stepwise_combine_long_loop_filterer( working_parameters_COP, option[basic::options::OptionKeys::stepwise::rna::combine_helical_silent_file] );
 	stepwise_combine_long_loop_filterer.set_max_decoys( option[clusterer_num_pose_kept]() ); //Updated on Jan 12, 2012
 	stepwise_combine_long_loop_filterer.set_silent_files_in( silent_files_in );
 	stepwise_combine_long_loop_filterer.set_output_filename( output_filename );
@@ -567,7 +566,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	if ( option[ in::file::tags ].user() == false ) utility_exit_with_message( "User need to pass in in::file::tags!" );
 	if ( option[ out::file::silent ].user() == false ) utility_exit_with_message( "User need to pass in out::file::silent!" );
 
-	bool const OUTPUT_PDB = option[ basic::options::OptionKeys::stepwise::rna::output_pdb ]();
+	bool const OUTPUT_PDB = option[ basic::options::OptionKeys::stepwise::dump ]();
 
 	std::string const start_silent_file = option[start_silent ]();
 	std::string const start_tag_name   =  option[start_tag ]();
@@ -583,10 +582,10 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	std::string const out_tag_name = start_tag_name;
 	//std::string const out_tag_name= "R_" + start_tag_name.substr(2, start_tag_name.size()-2)
 
-	///////////////////Create a 'mock' job_parameters only with the parameters called by output_data()////////////////////////
-	StepWiseRNA_JobParametersOP	job_parameters = setup_simple_full_length_rna_job_parameters();
-	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
-	Size const total_res = ( job_parameters->full_sequence() ).size();
+	///////////////////Create a 'mock' working_parameters only with the parameters called by output_data()////////////////////////
+	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_simple_full_length_rna_working_parameters();
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP( working_parameters );
+	Size const total_res = ( working_parameters->full_sequence() ).size();
 
   Pose start_pose;
   Pose rebuild_pose;
@@ -602,7 +601,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	if ( OUTPUT_PDB ) dump_pdb( rebuild_pose, "rebuild_pose_" + rebuild_tag_name + ".pdb" );
 
 	/////////Dec 18, 2011: Deal with protonated adenosine. Actually code works fine without this..but still a good consistency test!/////////
-	utility::vector1< core::Size > const protonated_H1_adenosine_list = job_parameters->protonated_H1_adenosine_list();
+	utility::vector1< core::Size > const protonated_H1_adenosine_list = working_parameters->protonated_H1_adenosine_list();
 
 	for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ){
 
@@ -670,7 +669,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//NEW_copy_dofs( output_pose, mini_rebuild_pose, res_map );
-	copy_dofs_match_atom_names( output_pose, mini_rebuild_pose, res_map ); //Dec 28, 2011..STILL NEED TO VERIFY THAT THIS WORKS PROPERLY!
+	core::pose::copydofs::copy_dofs_match_atom_names( output_pose, mini_rebuild_pose, res_map ); //Dec 28, 2011..STILL NEED TO VERIFY THAT THIS WORKS PROPERLY!
 	//OK THE copy_dofs seem to correctly position every atom except for the OVU1, OVL1 and OVL2 at the chainbreak(s). This is becuase the rebuild_pose does not necessaringly have the same cutpoint position as the start_pose
 	protocols::farna::assert_phosphate_nomenclature_matches_mini( output_pose ); //Just to be safe
 
@@ -752,7 +751,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	}
 
 	( *scorefxn )( output_pose );
-	output_data( out_silent_file, out_tag_name, false /*write_score_only*/, output_pose, job_parameters->working_native_pose(),  job_parameters );
+	output_data( out_silent_file, out_tag_name, false /*write_score_only*/, output_pose, working_parameters->working_native_pose(),  working_parameters );
 }
 
 
@@ -814,19 +813,18 @@ main( int argc, char * argv [] )
 		NEW_OPT( graphic, "Turn graphic on/off", true );
 		NEW_OPT( Real_parameter_one, "free_variable for testing purposes ", 0.0 );
 
-
+		option.add_relevant( OptionKeys::cluster::radius );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 		option.add_relevant( OptionKeys::stepwise::num_pose_minimize );
 		option.add_relevant( OptionKeys::stepwise::choose_random );
 		option.add_relevant( OptionKeys::stepwise::use_green_packer );
 		option.add_relevant( OptionKeys::stepwise::fixed_res );
 		option.add_relevant( OptionKeys::stepwise::num_random_samples );
+		option.add_relevant( OptionKeys::stepwise::skip_minimize );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_num_pose_kept );
-		option.add_relevant( OptionKeys::stepwise::rna::sampler_native_rmsd_screen );
-		option.add_relevant( OptionKeys::stepwise::rna::sampler_native_screen_rmsd_cutoff );
-		option.add_relevant( OptionKeys::stepwise::rna::sampler_cluster_rmsd );
 		option.add_relevant( OptionKeys::stepwise::rna::native_edensity_score_cutoff );
-		option.add_relevant( OptionKeys::stepwise::rna::VERBOSE );
+		option.add_relevant( OptionKeys::stepwise::VERBOSE );
+		option.add_relevant( OptionKeys::stepwise::rna::o2prime_legacy_mode );
 		option.add_relevant( OptionKeys::stepwise::rna::distinguish_pucker );
 		option.add_relevant( OptionKeys::stepwise::rna::PBP_clustering_at_chain_closure );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_allow_syn_pyrimidine );
@@ -837,11 +835,10 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::VDW_atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::centroid_screen );
-		option.add_relevant( OptionKeys::stepwise::rna::skip_sampling );
-		option.add_relevant( OptionKeys::stepwise::rna::minimizer_perform_minimize );
 		option.add_relevant( OptionKeys::stepwise::rna::minimize_and_score_sugar );
 		option.add_relevant( OptionKeys::stepwise::rna::minimize_and_score_native_pose );
 		option.add_relevant( OptionKeys::stepwise::rna::rm_virt_phosphate );
+		option.add_relevant( OptionKeys::stepwise::rna::VDW_rep_screen_info );
 		option.add_relevant( OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF );
 		option.add_relevant( OptionKeys::stepwise::rna::VDW_rep_screen_physical_pose_clash_dist_cutoff );
 		option.add_relevant( OptionKeys::stepwise::rna::VDW_rep_delete_matching_res );
@@ -859,8 +856,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_assert_no_virt_sugar_sampling );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_try_sugar_instantiation );
 		option.add_relevant( OptionKeys::stepwise::rna::allow_base_pair_only_centroid_screen );
-		option.add_relevant( OptionKeys::stepwise::rna::minimizer_perform_o2prime_pack );
-		option.add_relevant( OptionKeys::stepwise::rna::minimizer_output_before_o2prime_pack );
 		option.add_relevant( OptionKeys::stepwise::rna::minimizer_rename_tag );
 
 		//////////////Job_Parameters///////////
@@ -873,9 +868,6 @@ main( int argc, char * argv [] )
 		NEW_OPT( suite_cluster_radius, " individual_suite_cluster_radius ", 999.99 ); 							//IMPORTANT, DO NOT CHANGE DEFAULT VALUE!
 		NEW_OPT( loop_cluster_radius, " loop_cluster_radius ", 999.99 ); 													//IMPORTANT, DO NOT CHANGE DEFAULT VALUE!
 		NEW_OPT( clusterer_full_length_loop_rmsd_clustering, "use the full_length_rmsd function to calculate loop_rmsd", false ); //April 06, 2011: Should switch to true for all length_full clustering steps.
-
-		//////////VDW_bin_checker//////////
-		NEW_OPT( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin ( useful when building loop from large poses )", blank_string_vector ); //Jun 9, 2010
 
 		//////////////CombineLongLoopFilterer/////////////
 		NEW_OPT( filter_for_previous_contact, "CombineLongLoopFilterer: filter_for_previous_contact", false ); //Sept 12, 2010
@@ -926,6 +918,11 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		core::init::init( argc, argv );
 
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
+		option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Protonated_H1_Adenosine.txt" );
+		option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt" );
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

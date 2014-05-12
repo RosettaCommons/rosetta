@@ -293,6 +293,7 @@ bool BinarySilentStruct::init_from_lines(
 			return false;
 		}
 		sequence( temp_seq );
+		resize( temp_seq.size() );
 
 		// second line is a list of score names
 		++iter;

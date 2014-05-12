@@ -23,4 +23,3 @@
 -score:weights stepwise/rna/rna_hires_07232011_with_intra_base_phosphate.wts
 -integration_test true
 -analytic_etable_evaluation 0
--unified_framework false

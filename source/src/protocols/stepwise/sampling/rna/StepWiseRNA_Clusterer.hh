@@ -21,7 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -40,19 +40,19 @@ namespace stepwise {
 namespace sampling {
 namespace rna {
 
-	class SlicedPoseJobParameters: public utility::pointer::ReferenceCount{
+	class SlicedPoseWorkingParameters: public utility::pointer::ReferenceCount{
 
 		public:
 
-			 SlicedPoseJobParameters():
+			 SlicedPoseWorkingParameters():
 				is_setup_( false )
 			{
 			}
 
-			virtual ~SlicedPoseJobParameters(); // auto-removing definition from header{};
+			virtual ~SlicedPoseWorkingParameters(); // auto-removing definition from header{};
 
 			void
-			setup( protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersCOP & job_parameters );
+			setup( protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP & working_parameters );
 
 			core::pose::Pose
 			create_sliced_pose( core::pose::Pose const & working_pose );
@@ -132,9 +132,9 @@ namespace rna {
 
 		void set_add_lead_zero_to_tag( core::Real const & setting ){ add_lead_zero_to_tag_ = setting; }
 
-		void set_job_parameters( protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersCOP & job_parameters );
+		void set_working_parameters( protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP & working_parameters );
 
-		void set_job_parameters_exist( bool const job_parameters_exist );
+		void set_working_parameters_exist( bool const working_parameters_exist );
 
 		void set_quick_alignment( bool const & setting ){ quick_alignment_ = setting; }
 
@@ -236,10 +236,10 @@ namespace rna {
 
 
 		bool
-		is_new_cluster_center_with_job_parameters( core::pose::PoseOP const & pose_op, std::string const & tag );
+		is_new_cluster_center_with_working_parameters( core::pose::PoseOP const & pose_op, std::string const & tag );
 
 		bool
-		check_for_closeness_without_job_parameters( core::pose::PoseOP const & pose_op );
+		check_for_closeness_without_working_parameters( core::pose::PoseOP const & pose_op );
 
 
 		bool
@@ -294,14 +294,14 @@ namespace rna {
 		core::Real loop_cluster_radius_;
 
 		bool rename_tags_;
-		protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersCOP job_parameters_;
-		bool job_parameters_exist_;
+		protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
+		bool working_parameters_exist_;
 		bool distinguish_pucker_;
 		bool add_lead_zero_to_tag_;
 		bool quick_alignment_;
 		bool align_only_over_base_atoms_;
 		bool optimize_memory_usage_;
-		SlicedPoseJobParameters sliced_pose_job_params_;
+		SlicedPoseWorkingParameters sliced_pose_job_params_;
 
 		bool verbose_;
 		bool keep_pose_in_memory_;

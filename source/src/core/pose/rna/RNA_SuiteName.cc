@@ -15,10 +15,10 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 
 // Project headers
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 
 // Utility headers

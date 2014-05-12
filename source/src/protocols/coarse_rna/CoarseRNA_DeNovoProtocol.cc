@@ -27,7 +27,7 @@
 #include <protocols/farna/RNA_ChunkLibrary.hh>
 #include <protocols/farna/RNA_FragmentMover.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_DataReader.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>

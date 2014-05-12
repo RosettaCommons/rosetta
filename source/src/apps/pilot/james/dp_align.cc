@@ -93,7 +93,7 @@ main( int argc, char* argv [] )
 
 	typedef utility::vector1< SequenceAlignment > alignlist;
 	alignlist aligns
-		= read_general_aln_file( option[ in::file::alignment ]()[1] );
+		= read_align_aln_file( option[ in::file::alignment ]()[1] );
 
 	core::pose::Pose template_pose;
 

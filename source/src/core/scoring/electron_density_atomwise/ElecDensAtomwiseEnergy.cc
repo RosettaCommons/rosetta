@@ -126,7 +126,7 @@ ElecDensAtomwiseEnergy::setup_for_scoring (
 	}
 
 	if ( create_new_lre_container ) {
-		TR << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
+		TR.Debug << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
 		LREnergyContainerOP new_dec = new OneToAllEnergyContainer (
 		  virt_res_idx, pose.total_residue(),  elec_dens_atomwise );
 		energies.set_long_range_container ( lr_type, new_dec );

@@ -1,0 +1,14 @@
+-native mini_3d2v_RNA.pdb
+-s  noloop_mini_3d2v_RNA.pdb
+-out:file:silent swm_TEST.out
+-out:overwrite
+-input_res 1-9 15-26
+-fasta mini_3d2v.fasta
+-nstruct 1
+-cycles 3
+-score:rna_torsion_potential RNA11_based_new
+-geom_sol_correct_acceptor_base
+-num_random_samples 100
+-chemical::enlarge_H_lj
+
+

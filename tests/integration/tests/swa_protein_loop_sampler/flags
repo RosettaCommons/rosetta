@@ -12,7 +12,7 @@
 -out:file:silent_struct_type binary  
 -fasta 2it7.fasta  
 -n_sample 12
--nstruct 400  
+-sampler_num_pose_kept 400  
 -cluster:radius 0.100  
 -extrachi_cutoff 0  
 -ex1  
@@ -26,4 +26,4 @@
 -disulfide_file 2it7.disulf
 -allow_virtual_side_chains false
 -protein_prepack false
--protein_atr_rep_screen false
+-atr_rep_screen false

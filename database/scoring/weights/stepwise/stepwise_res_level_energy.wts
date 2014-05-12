@@ -1,0 +1,35 @@
+NO_HB_ENV_DEP
+# DNA not defined yet. 
+METHOD_WEIGHTS ref   1.16  2.70  0.33  0.19  1.63  0.83  1.56  1.24  0.35  0.90  0.66  0.11  1.02  0.03  0.02  0.63  0.73  1.29  1.91  1.51  0 0 0 0   4.14  3.58  2.82  3.76
+fa_atr 0.8
+fa_rep 0.44
+fa_intra_rep 0.004
+
+# solvation (RNA-style)
+geom_sol_fast 0.17
+lk_nonpolar   0.25
+hbond_lr_bb 1.17
+hbond_sr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc    1.1
+
+# protein specific
+dslf_fa13   1.0
+rama        0.2
+omega       0.5
+p_aa_pp     0.32
+fa_dun      0.56
+pro_close   1.0
+
+# rna specific
+fa_stack      0.13
+fa_elec_rna_phos_phos 1.7
+stack_elec        0.76
+
+ref 1.0
+loop_close        1.0
+other_pose        1.0
+free_suite        2.0 # should be less than each ref
+free_side_chain   1.0
+linear_chainbreak 5.0
+intermol          1.0

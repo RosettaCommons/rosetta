@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -44,7 +44,7 @@ namespace checker {
 	public:
 
 	// Constructor
-		RNA_BaseCentroidChecker( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters,
+		RNA_BaseCentroidChecker( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 														 bool const tether_jump = false );
 
 		virtual ~RNA_BaseCentroidChecker();
@@ -133,7 +133,7 @@ namespace checker {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_;
+		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 		core::scoring::rna::RNA_CentroidInfoOP rna_centroid_info_;
 
 		core::Real const base_stack_dist_cutoff_;

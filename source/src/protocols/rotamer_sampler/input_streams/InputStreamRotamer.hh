@@ -19,7 +19,7 @@
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 #include <protocols/rotamer_sampler/input_streams/InputStreamRotamer.fwd.hh>
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/sampling/protein/StepWisePoseSetup.hh>
+#include <protocols/stepwise/sampling/protein/legacy/StepWiseProteinPoseSetup.hh>
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -33,7 +33,7 @@ namespace input_streams {
 		InputStreamRotamer( stepwise::sampling::protein::InputStreamWithResidueInfoOP input_stream );
 
 		InputStreamRotamer( stepwise::sampling::protein::InputStreamWithResidueInfoOP input_stream,
-												stepwise::sampling::protein::StepWisePoseSetupCOP stepwise_pose_setup );
+												stepwise::sampling::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup );
 
 		//destructor
 		~InputStreamRotamer();
@@ -64,7 +64,7 @@ namespace input_streams {
 	private:
 
 		stepwise::sampling::protein::InputStreamWithResidueInfoOP input_stream_;
-		stepwise::sampling::protein::StepWisePoseSetupCOP stepwise_pose_setup_; // this is really a legacy of SWA protein code.
+		stepwise::sampling::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup_; // this is really a legacy of SWA protein code.
 		Size size_;
 
 	};

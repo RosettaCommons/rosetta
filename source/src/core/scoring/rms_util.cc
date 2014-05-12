@@ -1439,7 +1439,7 @@ setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose con
 	using namespace core::conformation;
 
 	atom_id_map.clear();
-	assert( pose1.sequence() == pose2.sequence() );
+	runtime_assert( pose1.sequence() == pose2.sequence() );
 
 	for (Size i = 1; i <= pose1.total_residue(); i++ ) {
 		Residue const & rsd1 = pose1.residue( i );

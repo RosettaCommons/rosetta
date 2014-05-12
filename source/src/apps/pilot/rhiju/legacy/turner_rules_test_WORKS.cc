@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/Energies.hh>
@@ -55,8 +55,8 @@
 #include <core/options/util.hh>
 #include <core/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -409,7 +409,7 @@ define_states_test(){
 
 
 	// Cluster lowest energy states and output.
-	protocols::stepwise::StepWiseClusterer stepwise_clusterer(  sfd );
+	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer(  sfd );
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );

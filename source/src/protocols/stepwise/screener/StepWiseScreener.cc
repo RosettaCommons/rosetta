@@ -40,8 +40,6 @@ namespace screener {
 		restore_mover->add_mover( 0 );
 	}
 
-
-
 	void
 	StepWiseScreener::increment_count(){
 		if ( ok_to_increment_ ) count_++;

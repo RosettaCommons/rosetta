@@ -87,17 +87,17 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Minimizer.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_AnalyticalLoopCloseSampler.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseWorkingParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -454,8 +454,8 @@ create_scorefxn() {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersOP
-setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_pose = false ) {
+protocols::stepwise::sampling::rna::working_parameters::StepWiseWorkingParametersOP
+setup_rna_working_parameters ( bool check_for_previously_closed_cutpoint_with_input_pose = false ) {
 	using namespace protocols::stepwise::sampling::rna;
 	using namespace ObjexxFCL;
 	///////////////////////////////
@@ -468,22 +468,22 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 	if ( !option[ sample_res ].user() ) utility_exit_with_message ( "Must supply sample_res!" );
 
 	/////////////////////////////////////////////////////
-	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup ( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseWorkingParametersSetup stepwise_rna_working_parameters_setup ( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 	    full_sequence,
 	    get_input_res ( nres, "1" ),
 	    get_input_res ( nres, "2" ),
 	    option[ cutpoint_open ](),
 	    option[ cutpoint_closed ]() );
-	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root ( option[ add_virt_root]() );
-	stepwise_rna_job_parameters_setup.set_allow_fixed_res_at_moving_res ( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
-	stepwise_rna_job_parameters_setup.set_fixed_res ( get_fixed_res ( nres ) );
-	stepwise_rna_job_parameters_setup.set_terminal_res ( option[ terminal_res ]() );
-	stepwise_rna_job_parameters_setup.set_rmsd_res_list ( option[ rmsd_res ]() );
-	stepwise_rna_job_parameters_setup.set_jump_point_pair_list ( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
-	stepwise_rna_job_parameters_setup.set_alignment_res ( option[ alignment_res ]() ); //Important!: Need to be called after set_fixed_res
-	stepwise_rna_job_parameters_setup.set_native_alignment_res ( option[ native_alignment_res ]() );
-	stepwise_rna_job_parameters_setup.set_FARFAR_start_pdb ( option[ FARFAR_start_pdb ]() );
-	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
+	stepwise_rna_working_parameters_setup.set_add_virt_res_as_root ( option[ add_virt_root]() );
+	stepwise_rna_working_parameters_setup.set_allow_fixed_res_at_moving_res ( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
+	stepwise_rna_working_parameters_setup.set_fixed_res ( get_fixed_res ( nres ) );
+	stepwise_rna_working_parameters_setup.set_terminal_res ( option[ terminal_res ]() );
+	stepwise_rna_working_parameters_setup.set_rmsd_res_list ( option[ rmsd_res ]() );
+	stepwise_rna_working_parameters_setup.set_jump_point_pair_list ( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
+	stepwise_rna_working_parameters_setup.set_alignment_res ( option[ alignment_res ]() ); //Important!: Need to be called after set_fixed_res
+	stepwise_rna_working_parameters_setup.set_native_alignment_res ( option[ native_alignment_res ]() );
+	stepwise_rna_working_parameters_setup.set_FARFAR_start_pdb ( option[ FARFAR_start_pdb ]() );
+	stepwise_rna_working_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
 	/////////////////////////////Sept 1, 2010////////////
 	if ( check_for_previously_closed_cutpoint_with_input_pose ) {
 		utility::vector1< std::string > input_tags;
@@ -500,13 +500,13 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 			}
 		}
 
-		stepwise_rna_job_parameters_setup.set_input_tags ( input_tags );
-		stepwise_rna_job_parameters_setup.set_silent_files_in ( silent_files_in );
+		stepwise_rna_working_parameters_setup.set_input_tags ( input_tags );
+		stepwise_rna_working_parameters_setup.set_silent_files_in ( silent_files_in );
 	}
 
 	///////////////////////////////////////////////////////
-	stepwise_rna_job_parameters_setup.apply();
-	return stepwise_rna_job_parameters_setup.job_parameters();
+	stepwise_rna_working_parameters_setup.apply();
+	return stepwise_rna_working_parameters_setup.working_parameters();
 }
 
 
@@ -514,8 +514,8 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 void
 setup_copy_DOF_input ( protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ) {
 	/////////////////////////////////////////////////////////////////////////////////////////
-	// StepWisePoseSetup should create the starting pose.
-	// This class might eventually be united with the protein StepWisePoseSetup.
+	// StepWiseProteinPoseSetup should create the starting pose.
+	// This class might eventually be united with the protein StepWiseProteinPoseSetup.
 	utility::vector1< std::string > input_tags;
 	utility::vector1< std::string > silent_files_in;
 
@@ -559,7 +559,7 @@ setup_copy_DOF_input ( protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetup
 }
 
 protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetupOP
-setup_pose_setup_class(protocols::stepwise::sampling::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF=true){
+setup_pose_setup_class(protocols::stepwise::sampling::rna::working_parameters::StepWiseWorkingParametersOP & working_parameters, bool const copy_DOF=true){
 
   using namespace core::pose;
   using namespace core::chemical;
@@ -581,9 +581,9 @@ setup_pose_setup_class(protocols::stepwise::sampling::rna::StepWiseRNA_JobParame
 	}
 
 
-//	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, job_parameters);
+//	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
 
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( job_parameters);
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( working_parameters);
 	stepwise_rna_pose_setup->set_copy_DOF(copy_DOF);
 
 	if(copy_DOF==true){
@@ -616,10 +616,10 @@ rna_resample_test() {
 	}
 
 	///////////////////////////////
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters ( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
-	StepWiseRNA_JobParametersCOP job_parameters_COP ( job_parameters );
+	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters ( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP ( working_parameters );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class ( job_parameters );
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class ( working_parameters );
 	Pose pose;
 	stepwise_rna_pose_setup->apply ( pose );
 	stepwise_rna_pose_setup->setup_native_pose ( pose ); //NEED pose to align native_pose to pose.
@@ -627,12 +627,12 @@ rna_resample_test() {
 
 	if ( option[ VDW_rep_screen_info].user() ) {
 		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF]() );
-		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose ( option[ VDW_rep_screen_info](), pose, job_parameters_COP );
+		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose ( option[ VDW_rep_screen_info](), pose, working_parameters_COP );
 		user_input_VDW_bin_screener->set_output_pdb( option[ output_pdb ]() );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_COP );
+	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, working_parameters_COP );
 	//////////////////////////////////////////////////////////////////
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 
@@ -641,7 +641,7 @@ rna_resample_test() {
 		protocols::viewer::add_conformation_viewer ( pose.conformation(), current_directory_string, 400, 400 );
 	}
 
-	StepWiseRNA_AnalyticalLoopCloseSampler stepwise_rna_residue_sampler ( job_parameters_COP );
+	StepWiseRNA_AnalyticalLoopCloseSampler stepwise_rna_residue_sampler ( working_parameters_COP );
 	std::string const silent_file = option[ out::file::silent  ]();
 	stepwise_rna_residue_sampler.set_silent_file ( silent_file + "_sampling" );
 	stepwise_rna_residue_sampler.set_scorefxn ( scorefxn );
@@ -668,7 +668,7 @@ rna_resample_test() {
 	utility::vector1< pose_data_struct2 > & pose_data_list = stepwise_rna_residue_sampler.get_pose_data_list();
 
 	if ( option[minimize_and_score_native_pose]() == true ) {
-		pose::Pose native_pose = ( *job_parameters_COP->working_native_pose() );
+		pose::Pose native_pose = ( *working_parameters_COP->working_native_pose() );
 		pose_data_struct2 native_data_struct;
 		native_data_struct.pose_OP = new pose::Pose;
 		( *native_data_struct.pose_OP ) = native_pose;
@@ -683,7 +683,7 @@ rna_resample_test() {
 	}
 
 	////////////////////////////////////////////////////////////////
-	StepWiseRNA_Minimizer stepwise_rna_minimizer ( stepwise_rna_residue_sampler.get_pose_data_list() , job_parameters_COP );
+	StepWiseRNA_Minimizer stepwise_rna_minimizer ( stepwise_rna_residue_sampler.get_pose_data_list() , working_parameters_COP );
 	stepwise_rna_minimizer.set_silent_file ( silent_file );
 	stepwise_rna_minimizer.set_verbose ( option[ VERBOSE ]() );
 	stepwise_rna_minimizer.set_scorefxn ( scorefxn );

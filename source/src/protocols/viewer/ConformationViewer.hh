@@ -160,6 +160,9 @@ public: // observer interface
 	void
 	on_xyz_change( core::conformation::signals::XYZEvent const & event );
 
+	void
+	set_center_vector( core::Vector const & setting ){ center_vector_defined_ = true; center_vector_ = setting; }
+
 private:
 	ResidueCOPs residues_;
 	utility::vector1< char > secstruct_;
@@ -179,6 +182,9 @@ private:
 	int width_;
 
 	bool use_debug_pause_;
+
+	bool center_vector_defined_;
+	core::Vector center_vector_;
 
 	utility::signals::Link connection_event_link_;
 	utility::signals::Link xyz_event_link_;

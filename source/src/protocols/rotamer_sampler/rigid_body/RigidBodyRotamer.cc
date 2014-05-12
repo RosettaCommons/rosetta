@@ -14,10 +14,10 @@
 
 
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
-#include <protocols/rotamer_sampler/rigid_body/FloatingBaseUtil.hh>
+#include <protocols/rotamer_sampler/rigid_body/util.hh>
 #include <protocols/rotamer_sampler/rigid_body/EulerAngles.hh>
 #include <protocols/rotamer_sampler/RotamerOneValue.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/sampling/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/Stub.hh>
@@ -226,7 +226,7 @@ namespace rigid_body {
 	void
 	RigidBodyRotamer::apply_by_jump( pose::Pose & pose, Size const & seq_num,
 																	 core::kinematics::Stub const & ){
-		// [NEW] option 2 -- new, generalizable to full moving partition, but using Jump setter.
+		// [NEW] option 2 -- new, alignizable to full moving partition, but using Jump setter.
 		//  requires that any changes to conformation of Residue occur /*outside*/.
 		calculate_jump( pose, seq_num, moving_res_stub_ );
 		pose.set_jump( jump_atom_id_, jump_ );
@@ -240,7 +240,7 @@ namespace rigid_body {
 		using namespace core::id;
 		using namespace core::pose;
 
-		Size const jump_no = stepwise::look_for_unique_jump_to_moving_res( pose.fold_tree(), seq_num );
+		Size const jump_no = stepwise::sampling::look_for_unique_jump_to_moving_res( pose.fold_tree(), seq_num );
 		std::string downstream_atom_name = pose.fold_tree().downstream_atom( jump_no );
 		Size const i = seq_num;
 		Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );

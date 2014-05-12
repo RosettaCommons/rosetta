@@ -432,7 +432,8 @@ add_conformation_viewer(
 	std::string const name_in, // = ""
 	int length,
 	int width,
-	bool debug_pause
+	bool debug_pause /* = false */,
+	Vector center_vector /* = empty_vector*/
 )
 {
 
@@ -444,6 +445,7 @@ add_conformation_viewer(
 			name_in );
 
 	ConformationViewerOP viewer( new ConformationViewer( window_name, length, width, debug_pause ) );
+	if ( center_vector != 0.0 ) viewer->set_center_vector( center_vector );
 
 	viewer->attach_to( conformation );
 
@@ -1879,7 +1881,7 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 		conformation::ResidueCOP rsd = residues[ n ];
 		if ( rsd->is_protein() ) {
 			residues_protein.push_back( rsd );
-		} else if ( rsd->name3() == " MG" ) { // could use for other ions too!
+		} else if ( rsd->is_metal() ) {
 			residues_sphere.push_back( rsd );
 		} else {
 			other_residues.push_back( rsd );
@@ -1925,7 +1927,6 @@ get_center( utility::vector1< conformation::ResidueCOP > const & residues ){
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Is this in use anymore?
 void draw_pose(
 					const core::pose::Pose & pose,
 					GraphicsState & gs,
@@ -1943,8 +1944,6 @@ void draw_pose(
 
 	draw_conformation( residues, ss, gs, center_of_mass );
 }
-
-
 
 #endif
 

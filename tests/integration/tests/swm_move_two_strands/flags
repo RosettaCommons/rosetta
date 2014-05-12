@@ -1,7 +1,0 @@
--s strandA_full_helix.pdb strandB_full_helix.pdb
--native full_helix.pdb
--fasta full_helix.fasta
--cutpoint_open 4
--move ADD 6 JUMP_INTERCHAIN 3
--silent swm_rebuild.out
-#-enumerate

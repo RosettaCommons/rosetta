@@ -4,3 +4,4 @@
 -relax:quick
 -relax:default_repeats 2
 -run:test_cycles
+-override_rsd_type_limit

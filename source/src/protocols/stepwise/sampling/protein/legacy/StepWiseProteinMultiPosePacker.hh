@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_sampling_protein_StepWiseProteinMultiPosePacker_HH
 
 #include <protocols/stepwise/sampling/protein/StepWiseProteinMultiPosePacker.fwd.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinPacker.fwd.hh>
+#include <protocols/stepwise/sampling/protein/StepWisePacker.fwd.hh>
 #include <protocols/stepwise/sampling/protein/checker/ProteinAtrRepChecker.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
@@ -38,7 +38,7 @@ namespace protein {
 	public:
 
 		//constructor
-		StepWiseProteinMultiPosePacker( StepWiseProteinPackerOP packer,
+		StepWiseProteinMultiPosePacker( StepWisePackerOP packer,
 																		rotamer_sampler::RotamerSizedOP sampler );
 
 		//destructor
@@ -79,7 +79,7 @@ namespace protein {
 
 		utility::vector1< pose::PoseOP >  pose_list_;
 
-		StepWiseProteinPackerOP packer_;
+		StepWisePackerOP packer_;
 		rotamer_sampler::RotamerSizedOP sampler_;
 
 		screener::StepWiseScreenerOP pose_screener_;

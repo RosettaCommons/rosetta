@@ -49,6 +49,7 @@
 // option key includes
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rescore.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -172,6 +173,7 @@ main( int argc, char * argv [] )
 	// initialize core
 	devel::init(argc, argv);
 
+	option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 
 	//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 	if( option[ broker::setup ].user() ){

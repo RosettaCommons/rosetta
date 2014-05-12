@@ -18,7 +18,7 @@
 
 // Project headers
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <basic/Tracer.hh>
 

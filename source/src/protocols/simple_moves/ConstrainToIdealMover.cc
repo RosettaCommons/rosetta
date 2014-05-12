@@ -21,8 +21,8 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/RNA_Util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
+#include <core/pose/rna/util.hh>
 #include <protocols/toolbox/AllowInsert.hh> //need to move AllowInsert to toolbox XRW2
 
 #include <core/conformation/Residue.hh>

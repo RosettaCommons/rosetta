@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseProteinLoopBridger
+/// @file StepWiseProteinKIC_LoopBridger
 /// @brief Makes a list of (phi, psi, omega) at moving_residues that
 ///              could be useful for full-atom packing
 /// @detailed
@@ -16,8 +16,8 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinKIC_LoopBridger.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
-#include <protocols/stepwise/sampling/protein/StepWiseProteinJobParameters.hh>
+#include <protocols/stepwise/sampling/protein/util.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 
 //////////////////////////////////
@@ -63,7 +63,7 @@ using core::Real;
 // files.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.protein.StepWiseProteinLoopBridger" ) ;
+static basic::Tracer TR( "protocols.stepwise.protein.StepWiseProteinKIC_LoopBridger" ) ;
 
 namespace protocols {
 namespace stepwise {
@@ -74,11 +74,11 @@ namespace protein {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-  StepWiseProteinLoopBridger::StepWiseProteinLoopBridger( rotamer_sampler::RotamerSizedOP sampler,
-																												  StepWiseProteinJobParametersCOP job_parameters ):
+  StepWiseProteinKIC_LoopBridger::StepWiseProteinKIC_LoopBridger( rotamer_sampler::RotamerSizedOP sampler,
+																												  working_parameters::StepWiseWorkingParametersCOP working_parameters ):
 		sampler_( sampler ),
-		working_bridge_res_( job_parameters->working_bridge_res() ),
-		is_pre_proline_( job_parameters->is_pre_proline() ),
+		working_bridge_res_( working_parameters->working_bridge_res() ),
+		is_pre_proline_( working_parameters->is_pre_proline() ),
 		num_perturb_steps_( 0 ), // perturbations of 'takeoff' psi and phi -- currently disabled.
 		perturb_torsion_( 20.0 ),
 		idl_CA_C_N_(116.2), // taken from hard-coded numbers in KIC code.
@@ -90,25 +90,25 @@ namespace protein {
   {
 
 		if ( working_bridge_res_.size() != 3 ) utility_exit_with_message( "Must supply three bridge residues that are covered by -sample_res, -input_res1, and -input_res2!");
-		initialize_is_fixed_res( job_parameters->working_fixed_res(), job_parameters->working_sequence() );
+		initialize_is_fixed_res( working_parameters->working_fixed_res(), working_parameters->working_sequence() );
 
   }
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
-  StepWiseProteinLoopBridger::~StepWiseProteinLoopBridger()
+  StepWiseProteinKIC_LoopBridger::~StepWiseProteinKIC_LoopBridger()
   {}
 /////////////////////
 std::string
-StepWiseProteinLoopBridger::get_name() const {
-return "StepWiseProteinLoopBridger";
+StepWiseProteinKIC_LoopBridger::get_name() const {
+return "StepWiseProteinKIC_LoopBridger";
 }
 
 
   //////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
   void
-  StepWiseProteinLoopBridger::apply( core::pose::Pose & pose )
+  StepWiseProteinKIC_LoopBridger::apply( core::pose::Pose & pose )
 	{
 
 		clock_t const time_start( clock() );
@@ -128,7 +128,7 @@ return "StepWiseProteinLoopBridger";
 		// Kind of silly -- should have at least one output.
 		if ( main_chain_torsion_sets_for_moving_residues_.size() == 0  ) grab_main_chain_torsion_set_list( pose );
 
-		std::cout << "Total time in StepWiseProteinLoopBridger: " <<
+		std::cout << "Total time in StepWiseProteinKIC_LoopBridger: " <<
 			static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
 		pose = pose_save;
@@ -141,7 +141,7 @@ return "StepWiseProteinLoopBridger";
 	// the takeoff psi (at the N-terminal end of the loop) and landing phi (at the
 	// the C-terminal end of the loop ).
   void
-  StepWiseProteinLoopBridger::KIC_loop_close_with_perturbations( core::pose::Pose & pose ) {
+  StepWiseProteinKIC_LoopBridger::KIC_loop_close_with_perturbations( core::pose::Pose & pose ) {
 
 		if ( num_perturb_steps_ == 0 ){
 				std::cout << "Loop combination " << pose_count_++ << ". " ;
@@ -182,7 +182,7 @@ return "StepWiseProteinLoopBridger";
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::figure_out_loop( core::pose::Pose const & pose ){
+	StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose ){
 
 		using namespace protocols::loops;
 		using namespace core::chemical;
@@ -223,7 +223,7 @@ return "StepWiseProteinLoopBridger";
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::setup_torsions( pose::Pose const & pose ){
+	StepWiseProteinKIC_LoopBridger::setup_torsions( pose::Pose const & pose ){
 
 		// Need to fill torsions for moving and bridge residues.
 
@@ -257,7 +257,7 @@ return "StepWiseProteinLoopBridger";
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::grab_main_chain_torsion_set_list( pose::Pose const & pose ){
+	StepWiseProteinKIC_LoopBridger::grab_main_chain_torsion_set_list( pose::Pose const & pose ){
 
 		utility::vector1< Real > main_chain_torsion_set_for_moving_residues;
 		for ( Size n = 1; n <= which_torsions_.size(); n++ ) 	{
@@ -272,14 +272,14 @@ return "StepWiseProteinLoopBridger";
 
   //////////////////////////////////////////////////////////////////////////
 	utility::vector1< utility::vector1< core::Real > > const &
-	StepWiseProteinLoopBridger::main_chain_torsion_set_lists() const
+	StepWiseProteinKIC_LoopBridger::main_chain_torsion_set_lists() const
 	{
 		return main_chain_torsion_sets_for_moving_residues_;
 	}
 
   //////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::id::TorsionID > const &
-	StepWiseProteinLoopBridger::which_torsions() const
+	StepWiseProteinKIC_LoopBridger::which_torsions() const
 	{
 		return which_torsions_;
 	}
@@ -287,7 +287,7 @@ return "StepWiseProteinLoopBridger";
 
 	///////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::output_chainTORS( utility::vector1< core::Real > const & dt_ang,
+	StepWiseProteinKIC_LoopBridger::output_chainTORS( utility::vector1< core::Real > const & dt_ang,
 																								utility::vector1< core::Real > const & db_ang,
 																								utility::vector1< core::Real > const & db_len ) const {
 
@@ -312,7 +312,7 @@ return "StepWiseProteinLoopBridger";
 
 /////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::fill_chainTORS_info( pose::Pose const & pose,
+	StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
 					 utility::vector1<utility::vector1<Real> > & atoms,
 					 utility::vector1<Real> & dt_ang,
 					 utility::vector1<Real> & db_ang,
@@ -347,7 +347,7 @@ return "StepWiseProteinLoopBridger";
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::KIC_loop_close( pose::Pose & pose ){
+	StepWiseProteinKIC_LoopBridger::KIC_loop_close( pose::Pose & pose ){
 
 		using namespace core::kinematics;
 		using namespace protocols::loops;
@@ -421,7 +421,7 @@ return "StepWiseProteinLoopBridger";
 
 	/////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::sample_omega_recursively(
+	StepWiseProteinKIC_LoopBridger::sample_omega_recursively(
 																											 pose::Pose & pose,
 																											 int const offset,
 																											 utility::vector1<utility::vector1<Real> > & atoms,
@@ -466,7 +466,7 @@ return "StepWiseProteinLoopBridger";
 			dt_ang[ 3 + 3*offset + 3 ] = OMEGA_MEAN_;
 			sample_omega_recursively( pose, offset + 1, atoms, dt_ang, db_ang, db_len, pivots, order );
 
-			//			std::cout << "RES " << pose.sequence()[ start_res_ + offset - 1 ] << " " << pose.sequence()[ start_res_ + offset ] << " " << job_parameters_->is_pre_proline( start_res_+ offset ) << std::endl;
+			//			std::cout << "RES " << pose.sequence()[ start_res_ + offset - 1 ] << " " << pose.sequence()[ start_res_ + offset ] << " " << working_parameters_->is_pre_proline( start_res_+ offset ) << std::endl;
 
 			if ( is_pre_proline_[ start_res_ + offset ] ) {
 				//				std::cout << " sample cis omega: " << start_res_ + offset;
@@ -478,7 +478,7 @@ return "StepWiseProteinLoopBridger";
 
 	//////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseProteinLoopBridger::initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence ){
+	StepWiseProteinKIC_LoopBridger::initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence ){
 
 		is_fixed_res_.clear();
 		for ( Size n = 1; n <= working_sequence.size(); n++ ) is_fixed_res_.push_back( false );

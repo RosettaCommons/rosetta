@@ -16,7 +16,7 @@
 // Unit Headers
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_JumpLibrary.hh>
-#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -25,15 +25,15 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/pose/rna/RNA_Util.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -990,9 +990,7 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 		// Don't assign a chainbreak penalty if user said this was an "open" cutpoint.
 		if ( std::find( cutpoints_open_.begin(), cutpoints_open_.end(), cutpos) != cutpoints_open_.end() ) continue;
 
-		core::pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpos );
-		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
-		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
+		core::pose::correctly_add_cutpoint_variants( pose, cutpos );
 
 		for (Size i = cutpos; i <= cutpos + 1; i++ ){
 			for (Size j = 1; j <= pose.residue( i ).mainchain_torsions().size(); j++ ) {
@@ -1000,9 +998,6 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j
 		} // i
-		//	} else {
-		//		setup_coarse_chainbreak_constraints( pose, cutpos );
-		//	}
 	}
 
 	allow_insert_->renumber_after_variant_changes( pose );

@@ -25,7 +25,7 @@
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
-#include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>

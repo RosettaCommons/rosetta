@@ -17,13 +17,13 @@
 #include <core/pose/util.hh>
 
 // Package headers
-#include <core/pose/copydofs/CopyDofs.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/pose/rna/util.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -431,20 +431,13 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	pose.fold_tree( newF );
 }
 
-/// @detail Find residue closest to center-of-mass
-void addVirtualResAsRoot( core::pose::Pose & pose ) {
-	int nres = pose.total_residue();
-	int nAtms=0;
-
-	// return if the pose is empty (otherwise will segfault)
-	if (nres == 0) {
-		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
-		return;
-	}
-
-	numeric::xyzVector< core::Real > massSum(0.0,0.0,0.0);
-
-	for ( int i=1; i<= nres; ++i ) {
+/// @detail Get center of mass of a pose.
+numeric::xyzVector< core::Real >
+get_center_of_mass( core::pose::Pose const & pose ){
+	numeric::xyzVector< core::Real > massSum( 0.0 );
+	Size const & nres = pose.total_residue();
+	Size nAtms=0;
+	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if (rsd.aa() == core::chemical::aa_vrt) continue;
 		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -453,8 +446,19 @@ void addVirtualResAsRoot( core::pose::Pose & pose ) {
 			nAtms++;
 		}
 	}
-
 	massSum /= nAtms;
+	return massSum;
+}
+
+/// @detail Find residue closest to center-of-mass
+void addVirtualResAsRoot( core::pose::Pose & pose ) {
+	int nres = pose.total_residue();
+	// return if the pose is empty (otherwise will segfault)
+	if (nres == 0) {
+		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
+		return;
+	}
+	numeric::xyzVector< core::Real > massSum = get_center_of_mass( pose );
 	return addVirtualResAsRoot(massSum, pose);
 }
 
@@ -1206,263 +1210,6 @@ compare_binary_protein_silent_struct(
 	return lhs_str.str() == rhs_str.str();
 }
 
-///////////////////////////////////////////////
-///////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief A very useful function that copies degrees of freedom from one pose to another.
-/// @details res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
-/// @author rhiju, 2009.
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					core::pose::ResMap const & res_map )
-{
-
-	std::map < id::AtomID , id::AtomID > atom_id_map;
-	setup_atom_id_map( atom_id_map, res_map, pose ); // note that this is *not* careful about atom names, etc.
-	copy_dofs( pose, scratch_pose, atom_id_map );
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs_match_atom_names(
-					pose::Pose & pose,
-					Pose const & scratch_pose )
-{
-
-	// Assumes the poses have the same number of residues
-	runtime_assert( pose.total_residue() == scratch_pose.total_residue() );
-	std::map< Size, Size > res_map;
-	for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
-	copy_dofs_match_atom_names( pose, scratch_pose, res_map );
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
-					pose::Pose & pose,
-					MiniPose const & chunk_pose,
-					core::pose::ResMap const & res_map )
-{
-
-	std::map < id::AtomID , id::AtomID > atom_id_map;
-	setup_atom_id_map_match_atom_names( atom_id_map, res_map, pose, chunk_pose ); // note that this is CAREFUL about atom names, etc.
-	copy_dofs( pose, chunk_pose, atom_id_map );
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					Pose const & scratch_pose )
-{
-	// Assumes the poses have the same number of residues
-	runtime_assert( pose.total_residue() == scratch_pose.total_residue() );
-	std::map< Size, Size > res_map;
-	for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
-	copy_dofs( pose, scratch_pose, res_map );
-}
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					Pose const & scratch_pose,
-					core::pose::ResMap const & res_map )
-{
-	// Need to map atom numbers from big pose to scratch pose -- following assumes that
-	// variant types are exactly the same.
-	std::map < id::AtomID , id::AtomID > atom_id_map;
-	setup_atom_id_map( atom_id_map, res_map, pose ); // note that this is *not* careful about atom names, etc.
-	copy_dofs( pose, scratch_pose, atom_id_map );
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// slower!!!
-void
-copy_dofs_match_atom_names(
-													 pose::Pose & pose,
-													 Pose const & scratch_pose,
-													 core::pose::ResMap const & res_map,
-													 bool const backbone_only /* = false */,
-													 bool const ignore_virtual /* = true */ )
-{
-	// Need to map atom numbers from big pose to scratch pose --
-	std::map < id::AtomID , id::AtomID > atom_id_map;
-	setup_atom_id_map_match_atom_names( atom_id_map, res_map, pose, scratch_pose, backbone_only, ignore_virtual );
-	copy_dofs( pose, scratch_pose, atom_id_map );
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					Pose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map )
-{
-	copy_dofs( pose, MiniPose( scratch_pose ), atom_id_map );
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map ){
-
-	std::map< id::AtomID, Size > atom_id_domain_map = copydofs::blank_atom_id_domain_map( pose );
-	copy_dofs( pose, scratch_pose, atom_id_map, atom_id_domain_map );
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-void
-copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map,
-					std::map< id::AtomID, Size > const & atom_id_domain_map )
-{
-
-	copydofs::CopyDofs copy_dofs( scratch_pose, atom_id_map, atom_id_domain_map );
-	copy_dofs.apply( pose );
-
-}
-
-
-///////////////////////////////////////////////////////////////////
-void
-setup_atom_id_map(
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose )
-{
-	using namespace core::id;
-
-	for ( ResMap::const_iterator
-					it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
-
-		Size const i = it->first; //Index in big pose.
-		Size const i_scratch_pose = it->second; // Index in the little "chunk" or "scratch" pose
-
-		//		std::cout << "setting up atom_id map " << i << " " << i_scratch_pose << std::endl;
-		chemical::ResidueType const & rsd_type( pose.residue_type( i ) );
-		Size count( 0 );
-
-		/////////////////////////////////////////////////////////////////////////
-		// Might be better to figure out correspondence based on atom name!
-		//   Current code assumes numbering is similar -- not as robust but fast.
-		/////////////////////////////////////////////////////////////////////////
-		for ( Size j = 1; j <= rsd_type.natoms(); j++ ) {
-			// HEY NEED TO FIX THIS LATER. DO WE NEED TO BE CAREFUL ABOUT VIRT?
-			// MUCH BETTER TO MAKE VARIANTS MATCH *BEFORE* CALLING COPY_DOFS();
-			//			if ( rsd_type.is_virtual( j ) ) continue;
-			count++;
-			atom_id_map[  AtomID( j, i ) ] = AtomID( count, i_scratch_pose );
-		}
-
-	}
-}
-
-
-
-///////////////////////////////////////////////////////////////////
-void
-setup_atom_id_map_match_atom_names(
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose,
-									core::pose::Pose const & reference_pose,
-									bool const backbone_only /* = false */,
-									bool const ignore_virtual /* = true */ )
-{
-	using namespace core::id;
-
-	for ( ResMap::const_iterator
-					it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
-
-		Size const i1 = it->first; //Index in big pose.
-		Size const i2 = it->second; // Index in the little "chunk" or "scratch" pose
-
-		chemical::ResidueType const & rsd_type1( pose.residue_type( i1 ) );
-		chemical::ResidueType const & rsd_type2( reference_pose.residue_type( i2 ) );
-
-		for ( Size j1 = 1; j1 <= rsd_type1.natoms(); j1++ ) {
-
-			// Hey do we need this?
-			if ( ignore_virtual && rsd_type1.is_virtual( j1 ) ) continue;
-
-			std::string const & atom_name1 = rsd_type1.atom_name( j1 );
-
-			if ( ! rsd_type2.has( atom_name1 ) ) continue;
-
-			// protein backbone atoms -- for homology modeling. Good to copy H, O, CB (just off of the mainchain) since they encode information on phi, psi, omega.
-			//			if ( backbone_only &&
-			//					 !( atom_name1 == " N  " || atom_name1 == " CA " || atom_name1 == " C  " || atom_name1 == " H  " ||  atom_name1 == " O  " || atom_name1 == " CB " )  &&
-			//					 !( atom_name1 == " P  " || atom_name1 == " OP2" || atom_name1 == " OP1" || atom_name1 == " O5'" || atom_name1 == " C5'" || atom_name1 == " C4'" || atom_name1 == " O4'" || atom_name1 == " C3'" || atom_name1 == " O3'" || atom_name1 == " C1'" || atom_name1 == " C2'" || atom_name1 == " O2'" || atom_name1 == " H5'" || atom_name1 == "H5''" || atom_name1 == " H4'" || atom_name1 == " H3'" || atom_name1 == " H2'" || atom_name1 == "HO2'" ) ) continue;
-
-			// Following is generic...
-			if ( backbone_only &&
-					 !( j1 <= rsd_type1.last_backbone_atom() ) &&
-					 !( j1 > rsd_type1.nheavyatoms()   && j1 < rsd_type1.first_sidechain_hydrogen() )	 ) continue;
-
-
-			Size const j2 = rsd_type2.atom_index( atom_name1 );
-
-			// Hey do we need this?
-			if ( ignore_virtual && rsd_type2.is_virtual( j2 ) ) continue;
-
-			// this is new (Dec. 2010) -- be careful!
-			//			if ( rsd_type1.is_virtual( j1 ) && ! rsd_type2.is_virtual( j2 ) ) continue;
-			//			if ( ! rsd_type1.is_virtual( j1 ) && rsd_type2.is_virtual( j2 ) ) continue;
-
-			atom_id_map[  AtomID( j1, i1 ) ] = AtomID( j2, i2 );
-		}
-
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-void
-setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose,
-									MiniPose const & chunk_pose ){
-	using namespace core::id;
-
-	for ( ResMap::const_iterator it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
-
-		Size const full_seq_num = it->first; //Index in full pose.
-		Size const chunk_seq_num = it->second; // Index in the little "chunk" or "scratch" pose
-
-		chemical::ResidueType const & rsd_type1( pose.residue_type( full_seq_num ) );
-
-		utility::vector1< utility::vector1< std::string > > const & chunk_atom_names_list = chunk_pose.atom_names_list();
-
-		for(Size j1 = 1; j1 <= rsd_type1.natoms(); j1++ ) {
-			for(Size j2=1; j2<=chunk_atom_names_list[chunk_seq_num].size(); j2++){
-
-				std::string const & atom_name1 = rsd_type1.atom_name( j1 );
-				std::string const & atom_name2 = chunk_atom_names_list[chunk_seq_num][j2];
-
-				if(atom_name1==atom_name2){ //found matching atom_name!
-					atom_id_map[  AtomID( j1, full_seq_num ) ] = AtomID( j2, chunk_seq_num );
-					break;
-				}
-			}
-		}
-
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 id::NamedAtomID
@@ -1588,7 +1335,7 @@ core::Real energy_from_pose(
 
 core::Real total_energy_from_pose( core::pose::Pose const & pose ) {
 	Real total_energy = pose.energies().total_energy();
-	// when initiatied form a silent struct, total energy lives in "extra data".
+	// when initiated from a silent struct, total energy lives in "extra data".
 	if ( total_energy == Real( 0.0 ) ) getPoseExtraScores( pose, "score", total_energy );
 	return total_energy;
 }
@@ -2441,6 +2188,44 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	}
 	return atom_ID_map;
 }
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// try to unify all cutpoint addition into this function.
+	void
+	correctly_add_cutpoint_variants( core::pose::Pose & pose,
+																	 Size const cutpoint_res,
+																	 bool const check_fold_tree /* = true*/){
+
+		using namespace core::chemical;
+
+		runtime_assert( cutpoint_res < pose.total_residue() );
+		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
+
+		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, cutpoint_res );
+		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", cutpoint_res );
+		remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", cutpoint_res );
+
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, cutpoint_res + 1 );
+		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, cutpoint_res + 1 );
+		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", cutpoint_res + 1 );
+		remove_variant_type_from_pose_residue( pose, "N_ACETYLATION", cutpoint_res + 1);
+
+		if ( pose.residue_type( cutpoint_res ).is_RNA() )	 rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res );
+
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res + 1 );
+
+		// important -- to prevent artificial penalty from steric clash.
+		if ( pose.residue_type( cutpoint_res ).is_NA() ) {
+			runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_NA() );
+			pose.conformation().declare_chemical_bond( cutpoint_res, " O3'", cutpoint_res+1, " P  " );
+		}	else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
+			runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
+			pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
+		}
+	}
+
 
 } // pose
 } // core

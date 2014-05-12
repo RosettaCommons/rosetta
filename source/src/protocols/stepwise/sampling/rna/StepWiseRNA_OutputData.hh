@@ -20,7 +20,7 @@
 
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh> //Sept 26, 2011 Parin S.
 
@@ -59,10 +59,10 @@ core::io::silent::BinarySilentStruct
 get_binary_rna_silent_struct_safe_wrapper( core::pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file, bool const write_score_only );
 
 void
-output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ );
+output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ );
 
 void
-output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ );
+output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ );
 
 
 } //rna

@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
@@ -58,8 +58,8 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <protocols/stepwise/sample_generators/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/stepwise/RigidBodySampler.hh>
@@ -67,7 +67,7 @@
 //#include <protocols/stepwise/sampling/rna/rigid_body_settings.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/stepwise/sampling/rna/RNA_AnalyticLoopCloser.hh>
@@ -548,7 +548,7 @@ cluster_silent_file_data( io::silent::SilentFileDataOP & sfd ){
 	std::string const silent_file = option[ out::file::silent ]();
 	std::cout << "About to cluster..." << std::endl;
 	// Cluster lowest energy states and output.
-	protocols::stepwise::StepWiseClusterer stepwise_clusterer( sfd );
+	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( sfd );
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
@@ -2525,7 +2525,7 @@ base_pair_to_base_pair_test(){
 			//			}
 
 			//cluster
-			protocols::stepwise::StepWiseClusterer stepwise_clusterer( silent_file_data );
+			protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_file_data );
 			Size max_decoys( 1000 );
 			if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 			stepwise_clusterer.set_max_decoys( max_decoys );

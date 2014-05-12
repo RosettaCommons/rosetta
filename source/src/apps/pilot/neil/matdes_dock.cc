@@ -240,7 +240,7 @@ main (int argc, char *argv[])
       int_cb_count = 0;
       move_pose(pose, sym_jump, Vec(dt,0.0,0.0));
       radial_disp = radial_disp + dt;
-      for (Size j=(nsub_bb+1); j<=(nsub_total); j++) { // This is architecture-dependent. Need to generalize.
+      for (Size j=(nsub_bb+1); j<=(nsub_total); j++) { // This is architecture-dependent. Need to alignize.
         tmp_int_cb_count = count_int_CBs_clashes(pose, 1, j, 10.0, 3.0);
         if (tmp_int_cb_count == -1) {
           int_cb_count = tmp_int_cb_count;
