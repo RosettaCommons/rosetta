@@ -85,7 +85,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -120,7 +120,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 

@@ -84,7 +84,7 @@ void test_annotated_sequence() {
 	using core::Size;
 	using namespace core::sequence;
 
-	AnnotatedSequence seq1( "L[LEU_p:NtermProteinFull]KHSISKSGFKQ[GLN_p:CtermProteinFull]M[MET_p:NtermProteinFull]ESKRNKNIRVTTPKRHIDIH[HIS_p:CtermProteinFull]");
+	AnnotatedSequence seq1( "L[LEU:NtermProteinFull]KHSISKSGFKQ[GLN:CtermProteinFull]M[MET:NtermProteinFull]ESKRNKNIRVTTPKRHIDIH[HIS:CtermProteinFull]");
 	std::string control_sequence( "LKHSISKSGFKQMESKRNKNIRVTTPKRHIDIH" );
 
 	TR.Info << seq1 << std::endl;
@@ -96,8 +96,8 @@ void test_annotated_sequence() {
 	TS_ASSERT( seq1.is_patched( 12 ) );
 	TS_ASSERT( seq1.is_patched( 13 ) );
 	TS_ASSERT( !seq1.is_patched( 14 ) );
-	TS_ASSERT_EQUALS( seq1.patch_str( 12 ), "GLN_p:CtermProteinFull" );
-	TS_ASSERT_EQUALS( seq1.patch_str( 1 ), "LEU_p:NtermProteinFull" );
+	TS_ASSERT_EQUALS( seq1.patch_str( 12 ), "GLN:CtermProteinFull" );
+	TS_ASSERT_EQUALS( seq1.patch_str( 1 ), "LEU:NtermProteinFull" );
 	TS_ASSERT_EQUALS( seq1.one_letter( 12 ), 'Q' );
 }
 

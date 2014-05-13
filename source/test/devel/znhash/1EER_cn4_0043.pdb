@@ -4604,7 +4604,7 @@ TER
 label interchain_pair interchain_vdw interchain_env interchain_contact total
 weights 1 1 1 2 NA
 pose 7.76605 0 -54.4985 -22 -68.7325
-ALA_p:NtermProteinFull_1 0 0 0.7812 0 0.7812
+ALA:NtermProteinFull_1 0 0 0.7812 0 0.7812
 PRO_2 0 0 -0.69196 0 -0.69196
 PRO_3 0 0 0.95732 0 0.95732
 ARG_4 0 0 -1.17576 0 -1.17576
@@ -4769,8 +4769,8 @@ ARG_162 0 0 -1.17576 0 -1.17576
 THR_163 0 0 -0.45704 0 -0.45704
 GLY_164 0 0 0.1058 0 0.1058
 ASP_165 0 0 -1.52024 0 -1.52024
-ARG_p:CtermProteinFull_166 0 0 -1.17576 0 -1.17576
-ALA_p:NtermProteinFull_167 0 0 0 0 0
+ARG:CtermProteinFull_166 0 0 -1.17576 0 -1.17576
+ALA:NtermProteinFull_167 0 0 0 0 0
 PRO_168 0 0 0 0 0
 PRO_169 0 0 0 0 0
 ARG_170 0 0 0 0 0
@@ -4935,8 +4935,8 @@ ARG_328 0 0 0 0 0
 THR_329 0 0 0 0 0
 GLY_330 0 0 0 0 0
 ASP_331 0 0 0 0 0
-ARG_p:CtermProteinFull_332 0 0 0 0 0
-ALA_p:NtermProteinFull_333 0 0 0 0 0
+ARG:CtermProteinFull_332 0 0 0 0 0
+ALA:NtermProteinFull_333 0 0 0 0 0
 PRO_334 0 0 0 0 0
 PRO_335 0 0 0 0 0
 ARG_336 0 0 0 0 0
@@ -5101,8 +5101,8 @@ ARG_494 0 0 0 0 0
 THR_495 0 0 0 0 0
 GLY_496 0 0 0 0 0
 ASP_497 0 0 0 0 0
-ARG_p:CtermProteinFull_498 0 0 0 0 0
-ALA_p:NtermProteinFull_499 0 0 0 0 0
+ARG:CtermProteinFull_498 0 0 0 0 0
+ALA:NtermProteinFull_499 0 0 0 0 0
 PRO_500 0 0 0 0 0
 PRO_501 0 0 0 0 0
 ARG_502 0 0 0 0 0
@@ -5267,7 +5267,7 @@ ARG_660 0 0 0 0 0
 THR_661 0 0 0 0 0
 GLY_662 0 0 0 0 0
 ASP_663 0 0 0 0 0
-ARG_p:CtermProteinFull_664 0 0 0 0 0
+ARG:CtermProteinFull_664 0 0 0 0 0
 VRT_665 0 0 0 0 0
 VRT_666 0 0 0 0 0
 VRT_667 0 0 0 0 0

@@ -1942,7 +1942,7 @@ TER
 label pro_close dslf_ss_dst coordinate_constraint total
 weights 0.5 0.5 0.01 NA
 pose 0 0 0 0
-ASP_p:NtermProteinFull_1 0 0 0 0
+ASP:NtermProteinFull_1 0 0 0 0
 ALA_2 0 0 0 0
 ILE_3 0 0 0 0
 THR_4 0 0 0 0
@@ -2057,6 +2057,6 @@ PHE_112 0 0 0 0
 LEU_113 0 0 0 0
 HIS_114 0 0 0 0
 PRO_115 0 0 0 0
-LEU_p:CtermProteinFull_116 0 0 0 0
+LEU:CtermProteinFull_116 0 0 0 0
 VRT_117 0 0 0 0
 #END_POSE_ENERGIES_TABLE test_in_0001

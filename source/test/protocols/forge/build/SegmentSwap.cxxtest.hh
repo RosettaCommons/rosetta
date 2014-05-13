@@ -75,7 +75,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"G[GLY_p:NtermProteinFull]FFFFFFFFFFFFFFFFFFG[GLY_p:CtermProteinFull]",
+			"G[GLY:NtermProteinFull]FFFFFFFFFFFFFFFFFFG[GLY:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -92,7 +92,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"K[LYS_p:NtermProteinFull]EEEEEEEEK[LYS_p:CtermProteinFull]",
+			"K[LYS:NtermProteinFull]EEEEEEEEK[LYS:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -109,7 +109,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHVVVVVPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHVVVVVPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -144,7 +144,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]WWWFGHIKLMNWWWSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]WWWFGHIKLMNWWWSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -203,7 +203,7 @@ public: // tests
 		TS_ASSERT( swap.original_interval_valid() );
 		TS_ASSERT_EQUALS( c20.n_residue(), 22 );
 		TS_ASSERT_EQUALS( c20.fold_tree().num_cutpoint(), 2 );
-		TS_ASSERT_EQUALS( c20.annotated_sequence(), "G[GLY_p:NtermProteinFull]FFKEEEEEEEEKFFFFFFFFG[GLY_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( c20.annotated_sequence(), "G[GLY:NtermProteinFull]FFKEEEEEEEEKFFFFFFFFG[GLY:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c20.secstruct(), "LLLEEEEEEEEEELLLLLLLLL" );
 		TS_ASSERT_EQUALS( c20.residue( 4 ).xyz( "CA" ), first_CA );
 		TS_ASSERT_EQUALS( c20.residue( 8 ).xyz( "CA" ), middle_CA );
@@ -239,7 +239,7 @@ public: // tests
 		TS_ASSERT( swap.original_interval_valid() );
 		TS_ASSERT_EQUALS( cut.n_residue(), 35 );
 		TS_ASSERT_EQUALS( cut.fold_tree().num_cutpoint(), 5 );
-		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHVVVVVAWWWFGHIKLMNWWWSTVWYVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHVVVVVAWWWFGHIKLMNWWWSTVWYVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( cut.secstruct(), "HHHHHHHHHHHHLLLLLLLLLLLLLLLLLLLLHHH" );
 		TS_ASSERT_EQUALS( cut.residue( 13 ).xyz( "CA" ), first_CA );
 		TS_ASSERT_EQUALS( cut.residue( 22 ).xyz( "CA" ), middle_CA );
@@ -278,7 +278,7 @@ public: // tests
 		TS_ASSERT( swap.original_interval_valid() );
 		TS_ASSERT_EQUALS( cut.n_residue(), 35 );
 		TS_ASSERT_EQUALS( cut.fold_tree().num_cutpoint(), 5 );
-		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHVVVVVAWWWFGHIKLMNWWWSTVWYVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHVVVVVAWWWFGHIKLMNWWWSTVWYVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( cut.secstruct(), "HHHHHHHHHHHHLLLLLLLLLLLLLLLLLLLLHHH" );
 		TS_ASSERT_EQUALS( cut.residue( 13 ).xyz( "CA" ), first_CA );
 		TS_ASSERT_EQUALS( cut.residue( 22 ).xyz( "CA" ), middle_CA );

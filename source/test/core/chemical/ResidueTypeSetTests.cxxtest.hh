@@ -111,10 +111,10 @@ public:
 
 		TS_ASSERT( rtset.has_name3("QC1") );
 		TS_ASSERT( rtset.has_name("QC1") );
-		TS_ASSERT( rtset.has_name("QC1_p:1pqcTestPatch") );
+		TS_ASSERT( rtset.has_name("QC1:1pqcTestPatch") );
 
 		ResidueType const & plain( rtset.name_map("QC1") );
-		ResidueType const & decorated( rtset.name_map("QC1_p:1pqcTestPatch") );
+		ResidueType const & decorated( rtset.name_map("QC1:1pqcTestPatch") );
 
 		// This is here mainly to make sure it doesn't crash.
 		ResidueType const & dec_gen( rtset.get_residue_type_with_variant_added( plain, "TESTPATCH" ) );

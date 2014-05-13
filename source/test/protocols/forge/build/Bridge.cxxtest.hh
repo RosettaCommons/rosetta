@@ -68,7 +68,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -92,7 +92,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIK[LYS_p:CtermProteinFull]L[LEU_p:NtermProteinFull]MNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIK[LYS:CtermProteinFull]L[LEU:NtermProteinFull]MNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -127,7 +127,7 @@ public: // tests
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 5 ) );
 		TS_ASSERT( pose.fold_tree().is_cutpoint( 14 ) );
-		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose.secstruct(), String( 20, 'L' ) );
 	}
 
@@ -153,7 +153,7 @@ public: // tests
 		TS_ASSERT( pose.fold_tree().is_cutpoint( 5 ) );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 14 ) );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 17 ) ); // if cutpoint was kept, it would be shifted up 3
-		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQYYYRSTVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKLMNPQYYYRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose.secstruct(), "LLLLLLLLLLLLLLHHHLLLLLL" );
 	}
 
@@ -179,7 +179,7 @@ public: // tests
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 0 );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 9 ) );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 14 ) ); // if cutpoint was kept, it would be shifted up 5
-		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHIKWWWWWLMNPQRSTVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKWWWWWLMNPQRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose.secstruct(), "LLLLLLLLLHHHHHLLLLLLLLLLL" );
 	}
 

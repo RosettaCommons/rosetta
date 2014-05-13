@@ -82,7 +82,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"K[LYS_p:NtermProteinFull]EEEEEEEEK[LYS_p:CtermProteinFull]",
+			"K[LYS:NtermProteinFull]EEEEEEEEK[LYS:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
 		);
 

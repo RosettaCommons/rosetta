@@ -1,7 +1,7 @@
 SEQUENCE: DAITIHSILDWIEDNLESPLSLEKVSERSGYSKWHLQRMFKKETGHSLGQYIRSRKMTEIAQKLKESNEPILYLAERYGFESQQTLTRTFKNYFDVPPHKYRMTNMQGESRFLHPL
 SCORE:     score     fa_atr     fa_rep     fa_sol    fa_intra_rep    pro_close    fa_pair    hbond_sr_bb    hbond_lr_bb    hbond_bb_sc    hbond_sc    dslf_ss_dst    dslf_cs_ang    dslf_ss_dih    dslf_ca_dih       rama      omega     fa_dun    p_aa_pp        ref       time  description
 SCORE:   542.955   -484.056    361.440    250.604           2.126       16.311    -10.404        -37.398         -1.490         -7.204      -2.149          0.000          0.000          0.000          0.000     25.441      5.337    464.560     -9.804    -30.360      0.000 test2_in
-ANNOTATED_SEQUENCE: D[ASP_p:NtermProteinFull]AITIHSILDWIEDNLESPLSLEKVSERSGYSKWHLQRMFKKETGHSLGQYIRSRKMTEIAQKLKESNEPILYLAERYGFESQQTLTRTFKNYFDVPPHKYRMTNMQGESRFLHPL[LEU_p:CtermProteinFull] test2_in
+ANNOTATED_SEQUENCE: D[ASP:NtermProteinFull]AITIHSILDWIEDNLESPLSLEKVSERSGYSKWHLQRMFKKETGHSLGQYIRSRKMTEIAQKLKESNEPILYLAERYGFESQQTLTRTFKNYFDVPPHKYRMTNMQGESRFLHPL[LEU:CtermProteinFull] test2_in
    1 L     0.000  -42.905 -178.403    0.041   35.606   75.594  -13.782  -63.409    0.000    0.000 test2_in
    2 L   -39.252  -47.098 -179.439    0.778   39.078   77.028    0.000    0.000    0.000    0.000 test2_in
    3 L   -66.932  -41.175 -178.065   -2.894   39.862   76.581  170.896  -94.737    0.000    0.000 test2_in

@@ -311,7 +311,7 @@ public:
 
 		ResidueTypeSetCAP residue_set
 			( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		ResidueOP nt_ala_rsd = ResidueFactory::create_residue( residue_set->name_map( "ALA_p:NtermProteinFull" ) );
+		ResidueOP nt_ala_rsd = ResidueFactory::create_residue( residue_set->name_map( "ALA:NtermProteinFull" ) );
 
 		Conformation conf = pose.conformation();
 		conf.fold_tree( core::kinematics::FoldTree( 4 ) );

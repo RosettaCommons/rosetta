@@ -301,6 +301,6 @@ resid	pack?	design?	allowed_aas
 298	TRUE	TRUE	ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
 299	TRUE	TRUE	ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
 300	TRUE	TRUE	ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
-301	TRUE	TRUE	ALA_p:CtermProteinFull,CYS_p:CtermProteinFull,ASP_p:CtermProteinFull,GLU_p:CtermProteinFull,PHE_p:CtermProteinFull,GLY_p:CtermProteinFull,HIS_p:CtermProteinFull,HIS_D_p:CtermProteinFull,ILE_p:CtermProteinFull,LYS_p:CtermProteinFull,LEU_p:CtermProteinFull,MET_p:CtermProteinFull,ASN_p:CtermProteinFull,PRO_p:CtermProteinFull,GLN_p:CtermProteinFull,ARG_p:CtermProteinFull,SER_p:CtermProteinFull,THR_p:CtermProteinFull,VAL_p:CtermProteinFull,TRP_p:CtermProteinFull,TYR_p:CtermProteinFull
+301	TRUE	TRUE	ALA:CtermProteinFull,CYS:CtermProteinFull,ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,GLY:CtermProteinFull,HIS:CtermProteinFull,HIS_D:CtermProteinFull,ILE:CtermProteinFull,LYS:CtermProteinFull,LEU:CtermProteinFull,MET:CtermProteinFull,ASN:CtermProteinFull,PRO:CtermProteinFull,GLN:CtermProteinFull,ARG:CtermProteinFull,SER:CtermProteinFull,THR:CtermProteinFull,VAL:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 
 

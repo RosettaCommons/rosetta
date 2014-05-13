@@ -1,7 +1,7 @@
 #Packer_Task
 
 resid	pack?	design?	allowed_aas
-1	TRUE	TRUE	CYS_p:NtermProteinFull,ASP_p:NtermProteinFull,GLU_p:NtermProteinFull,PHE_p:NtermProteinFull,HIS_p:NtermProteinFull,HIS_D_p:NtermProteinFull,ILE_p:NtermProteinFull,LYS_p:NtermProteinFull,LEU_p:NtermProteinFull,MET_p:NtermProteinFull,ASN_p:NtermProteinFull,GLN_p:NtermProteinFull,ARG_p:NtermProteinFull,SER_p:NtermProteinFull,THR_p:NtermProteinFull,VAL_p:NtermProteinFull,TRP_p:NtermProteinFull,TYR_p:NtermProteinFull
+1	TRUE	TRUE	CYS:NtermProteinFull,ASP:NtermProteinFull,GLU:NtermProteinFull,PHE:NtermProteinFull,HIS:NtermProteinFull,HIS_D:NtermProteinFull,ILE:NtermProteinFull,LYS:NtermProteinFull,LEU:NtermProteinFull,MET:NtermProteinFull,ASN:NtermProteinFull,GLN:NtermProteinFull,ARG:NtermProteinFull,SER:NtermProteinFull,THR:NtermProteinFull,VAL:NtermProteinFull,TRP:NtermProteinFull,TYR:NtermProteinFull
 2	TRUE	TRUE	ALA,CYS,ASP,GLU,PHE,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,GLN,ARG,SER,THR,VAL,TRP,TYR
 3	TRUE	TRUE	CYS,ASP,GLU,PHE,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,GLN,ARG,SER,THR,VAL,TRP,TYR
 4	TRUE	TRUE	CYS,ASP,GLU,PHE,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,GLN,ARG,SER,THR,VAL,TRP,TYR
@@ -31,6 +31,6 @@ resid	pack?	design?	allowed_aas
 28	TRUE	TRUE	CYS,ASP,GLU,PHE,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,GLN,ARG,SER,THR,VAL,TRP,TYR
 29	TRUE	TRUE	CYS,ASP,GLU,PHE,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,GLN,ARG,SER,THR,VAL,TRP,TYR
 30	TRUE	TRUE	CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,GLN,ARG,SER,THR,VAL,TRP,TYR
-31	TRUE	TRUE	CYS_p:CtermProteinFull,ASP_p:CtermProteinFull,GLU_p:CtermProteinFull,PHE_p:CtermProteinFull,HIS_p:CtermProteinFull,HIS_D_p:CtermProteinFull,ILE_p:CtermProteinFull,LYS_p:CtermProteinFull,LEU_p:CtermProteinFull,MET_p:CtermProteinFull,ASN_p:CtermProteinFull,GLN_p:CtermProteinFull,ARG_p:CtermProteinFull,SER_p:CtermProteinFull,THR_p:CtermProteinFull,VAL_p:CtermProteinFull,TRP_p:CtermProteinFull,TYR_p:CtermProteinFull
+31	TRUE	TRUE	CYS:CtermProteinFull,ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,HIS:CtermProteinFull,HIS_D:CtermProteinFull,ILE:CtermProteinFull,LYS:CtermProteinFull,LEU:CtermProteinFull,MET:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,ARG:CtermProteinFull,SER:CtermProteinFull,THR:CtermProteinFull,VAL:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 
 

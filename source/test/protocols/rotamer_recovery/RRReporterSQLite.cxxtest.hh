@@ -175,7 +175,7 @@ public:
     TS_ASSERT(struct2_name == "EMPTY_JOB_use_jd2");
     TS_ASSERT(name1 == "L");
     TS_ASSERT(name3 == "LEU");
-    TS_ASSERT(residue_type == "LEU_p:NtermProteinFull");
+    TS_ASSERT(residue_type == "LEU:NtermProteinFull");
     TS_ASSERT(chain1 == 1);
     TS_ASSERT(res1 == 1);
     TS_ASSERT(chain2 == 1);

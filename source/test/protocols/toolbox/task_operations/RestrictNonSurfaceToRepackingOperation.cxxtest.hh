@@ -119,7 +119,7 @@ public:
 		//
 		// So a "correct" packertask would look as follows:
 		// resid   pack?   design? allowed_aas
-		// 1       1       0       ASP_p:NtermProteinFull,
+		// 1       1       0       ASP:NtermProteinFull,
 		// 2       1       1       ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR,
 		// 3       1       1       ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR,
 		// 4       1       1       ALA,CYS,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR,

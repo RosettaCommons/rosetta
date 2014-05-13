@@ -76,7 +76,7 @@ public: // re-used methods
 		PoseOP pose = new Pose();
 		core::pose::make_pose_from_sequence(
 			*pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIK[LYS_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIK[LYS:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
 		);
 
@@ -93,7 +93,7 @@ public: // re-used methods
 		PoseOP pose = new Pose();
 		core::pose::make_pose_from_sequence(
 			*pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIK[LYS_p:CtermProteinFull]L[LEU_p:NtermProteinFull]MNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIK[LYS:CtermProteinFull]L[LEU:NtermProteinFull]MNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
 		);
 

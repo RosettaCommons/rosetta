@@ -70,7 +70,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -105,7 +105,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -160,7 +160,7 @@ public: // tests
 		TS_ASSERT( !connect.original_interval_valid() );
 		TS_ASSERT_EQUALS( cut.n_residue(), 40 );
 		TS_ASSERT_EQUALS( cut.fold_tree().num_cutpoint(), 4 );
-		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]A[ALA_p:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]A[ALA:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( cut.secstruct(), "HHHHHHHHHHHHHHHHHHHHLLLLLLLLLLLLLLLLLLLL" );
 		TS_ASSERT_EQUALS( cut.residue( 21 ).xyz( "CA" ), first_CA );
 		TS_ASSERT_EQUALS( cut.residue( 30 ).xyz( "CA" ), middle_CA );

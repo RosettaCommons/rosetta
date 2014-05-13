@@ -58,7 +58,7 @@ public: // setup
 		// create dummy pose
 		core::pose::make_pose_from_sequence(
 			pose_,
-			"A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -90,7 +90,7 @@ public: // tests
 		TS_ASSERT_EQUALS( pose_.n_residue(), 27 );
 		TS_ASSERT_EQUALS( pose_.fold_tree().num_cutpoint(), 0 );
 		TS_ASSERT( pose_.residue( pose_.n_residue() ).is_upper_terminus() );
-		TS_ASSERT_EQUALS( pose_.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWYAAAAAAG[GLY_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( pose_.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWYAAAAAAG[GLY:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose_.secstruct(), "LLLLLLLLLLLLLLLLLLLLHHHHHHH" );
 	}
 
@@ -106,7 +106,7 @@ public: // tests
 		TS_ASSERT( !grow.original_interval_valid() );
 		TS_ASSERT_EQUALS( pose_.n_residue(), 27 );
 		TS_ASSERT_EQUALS( pose_.fold_tree().num_cutpoint(), 0 );
-		TS_ASSERT_EQUALS( pose_.annotated_sequence(), "A[ALA_p:NtermProteinFull]CDEFGHIKAAAAAAGLMNPQRSTVWY[TYR_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( pose_.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKAAAAAAGLMNPQRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose_.secstruct(), "LLLLLLLLLHHHHHHHLLLLLLLLLLL" );
 	}
 

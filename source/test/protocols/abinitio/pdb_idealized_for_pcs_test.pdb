@@ -1243,7 +1243,7 @@ TER
 label pro_close dslf_ss_dst coordinate_constraint total
 weights 0.5 0.5 0.01 NA
 pose 0 0 0 0
-MET_p:NtermProteinFull_1 0 0 0 0
+MET:NtermProteinFull_1 0 0 0 0
 ARG_2 0 0 0 0
 SER_3 0 0 0 0
 SER_4 0 0 0 0
@@ -1320,6 +1320,6 @@ GLY_74 0 0 0 0
 VAL_75 0 0 0 0
 PRO_76 0 0 0 0
 THR_77 0 0 0 0
-THR_p:CtermProteinFull_78 0 0 0 0
+THR:CtermProteinFull_78 0 0 0 0
 VRT_79 0 0 0 0
 #END_POSE_ENERGIES_TABLE 1AOY_Model_1_clean_0001

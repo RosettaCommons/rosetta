@@ -72,7 +72,7 @@ public: // re-used methods
 		Pose pose;
 		core::pose::make_pose_from_sequence(
 			pose,
-			"A[ALA_p:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR_p:CtermProteinFull]",
+			"A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
@@ -142,7 +142,7 @@ public: // tests
 		manager.modify( pose );
 		TS_ASSERT_EQUALS( pose.n_residue(), 26 );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 2 );
-		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA_p:NtermProteinFull]AACDEAAALMAAAAAAATVWYAAAA[ALA_p:CtermProteinFull]" );
+		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA:NtermProteinFull]AACDEAAALMAAAAAAATVWYAAAA[ALA:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose.secstruct(), "HHLLLLHHHLLHHHHHHHLLLLHHHH" );
 
 		// test position mapping exists post modify()
