@@ -32,6 +32,9 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
+//Req'd on WIN32
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+
 
 using namespace protocols::stepwise::sampling;
 

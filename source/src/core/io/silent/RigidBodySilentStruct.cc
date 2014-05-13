@@ -250,6 +250,8 @@ RigidBodySilentStruct & RigidBodySilentStruct::operator= (
 
 ObjexxFCL::FArray2D< Real > RigidBodySilentStruct::get_CA_xyz() const {
 	utility_exit_with_message( "RigidBody SilentStruct has no CA-coords" );
+	ObjexxFCL::FArray2D< Real > r; // Make VS2013 happy
+	return r;
 }
 
 } // namespace silent

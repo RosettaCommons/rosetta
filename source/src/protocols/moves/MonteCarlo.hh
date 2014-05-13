@@ -523,6 +523,7 @@ public:
 
 	/// no brief for now
 	void set_update_boinc( bool setting ){ update_boinc_ = setting; }
+	bool get_update_boinc() const { return update_boinc_; }
 
 
 	Real total_score_of_last_considered_pose() const { return total_score_of_last_considered_pose_; }

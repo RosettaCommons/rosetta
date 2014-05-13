@@ -24,6 +24,10 @@
 
 #include <basic/Tracer.hh>
 
+#ifdef BOINC_GRAPHICS
+#include <protocols/boinc/boinc.hh>
+#endif
+
 static basic::Tracer tr( "protocols.canonical_sampling.BiasedMonteCarlo" );
 //static numeric::random::RandomGenerator RG(2592747);
 
@@ -95,7 +99,7 @@ BiasedMonteCarlo::boltzmann(
 
 // Work around a current bug in the pose observer classes..
 #ifdef BOINC_GRAPHICS
-	if( update_boinc_ )
+	if( get_update_boinc() )
 		boinc::Boinc::update_graphics_current( pose );
 #endif
 
@@ -127,7 +131,7 @@ BiasedMonteCarlo::boltzmann(
 		set_lowest_score_pose( pose, score );
 		set_mc_accepted( protocols::moves::MCA_accepted_score_beat_low ); //3;
 #ifdef BOINC_GRAPHICS
-		if( update_boinc_ )
+		if (get_update_boinc())
 			boinc::Boinc::update_graphics_low_energy( pose, lowest_score() );
 #endif
 	} //MCA_accepted_score_beat_low
@@ -153,7 +157,7 @@ BiasedMonteCarlo::boltzmann(
 	}
 
 #ifdef BOINC_GRAPHICS
-	if( update_boinc_ )
+	if (get_update_boinc())
 		boinc::Boinc::update_graphics_last_accepted( pose, score );
 #endif
 

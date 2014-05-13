@@ -35,6 +35,9 @@
 
 #include <map>
 
+//Req'd on WIN32
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+
 using namespace core;
 using core::Real;
 using utility::make_tag_with_dashes;

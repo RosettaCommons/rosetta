@@ -32,6 +32,9 @@
 
 // ObjexxFCL Headers
 
+//Req'd on WIN32
+#include <basic/datacache/WriteableCacheableMap.hh>
+
 namespace protocols {
 namespace abinitio {
 namespace abscript {

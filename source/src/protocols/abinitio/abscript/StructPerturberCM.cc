@@ -22,6 +22,7 @@
 #include <protocols/environment/claims/TorsionClaim.hh>
 
 #include <core/kinematics/MoveMap.hh>
+
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/id/DOF_ID.hh>
@@ -37,6 +38,9 @@
 // C++ Headers
 
 // ObjexxFCL Headers
+
+//Req'd on WIN32
+#include <basic/datacache/WriteableCacheableMap.hh>
 
 static numeric::random::RandomGenerator RG(249845846);
 static basic::Tracer tr("protocols.abinitio.abscript.StructPerturberCM", basic::t_info);

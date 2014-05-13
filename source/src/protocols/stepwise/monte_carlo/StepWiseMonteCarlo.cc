@@ -41,6 +41,9 @@
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
+//Req'd on WIN32
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+
 using namespace core;
 using namespace protocols::stepwise::sampling;
 

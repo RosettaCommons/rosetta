@@ -26,6 +26,9 @@
 
 #include <basic/Tracer.hh>
 
+//Req'd on WIN32
+#include <utility/tag/Tag.hh>
+
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

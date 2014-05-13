@@ -79,6 +79,9 @@
 
 // ObjexxFCL Headers
 
+//Req'd on WIN32
+#include <basic/datacache/WriteableCacheableMap.hh>
+
 static basic::Tracer tr("protocols.abinitio.abscript.AbscriptMover", basic::t_info);
 
 namespace protocols {

@@ -43,6 +43,12 @@
 
 #include <basic/Tracer.hh>
 
+//Req'd on WIN32
+#include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_Closer.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosureChecker.hh>
+#include <protocols/stepwise/screener/StepWiseScreener.hh>
+
 static basic::Tracer TR( "protocols.stepwise.sampling.StepWiseModeler" );
 
 using namespace core;

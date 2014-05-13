@@ -469,7 +469,7 @@ std::string label_atom_name( std::string const& proton_name, core::chemical::AA 
 		if ( proton_name == "HD1" ) return "CD1";
 	}
 	if ( aa == aa_phe || aa == aa_tyr || aa == aa_his ) {
-		if ( proton_name == "HZ" or proton_name == "HH" ) return "CZ";
+		if ( proton_name == "HZ" || proton_name == "HH" ) return "CZ";
 		if ( proton_name.substr(0,2) == "HD" || proton_name.substr(0,2) == "HE"  ) return "C"+proton_name.substr(1,2);
 	}
 

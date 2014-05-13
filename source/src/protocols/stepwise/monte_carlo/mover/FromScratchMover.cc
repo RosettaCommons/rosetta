@@ -25,6 +25,9 @@
 #include <core/pose/full_model_info/util.hh>
 #include <basic/Tracer.hh>
 
+//Req'd on WIN32
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.FromScratchMover" );
 using namespace protocols::stepwise::sampling;
 

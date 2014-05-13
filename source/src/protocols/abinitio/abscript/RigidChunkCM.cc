@@ -51,6 +51,9 @@
 
 // ObjexxFCL Headers
 
+//Req'd on WN32
+#include <basic/datacache/WriteableCacheableMap.hh>
+
 static numeric::random::RandomGenerator RG(1892476846);
 static basic::Tracer tr("protocols.abinitio.abscript.RigidChunkCM", basic::t_info);
 

@@ -59,6 +59,9 @@
 
 #include <basic/Tracer.hh>
 
+//Req'd on WIN32
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+
 using namespace core;
 using namespace core::pose;
 using utility::tools::make_vector1;
