@@ -125,7 +125,7 @@ namespace screener {
 		sampling::figure_out_root_and_moving_partition_res( pose_, moving_res, root_partition_res, moving_partition_res );
 
 		EnergyMap emap;
-		Distance const contact_dist( 4.0 );
+		//Distance const contact_dist( 4.0 );
 		for ( Size m = 1; m <= root_partition_res.size(); m++ ){
 
 			Size const & i = root_partition_res[ m ];

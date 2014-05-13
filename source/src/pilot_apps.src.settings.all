@@ -238,7 +238,7 @@ sources = {
 		"density_tools", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"rr_opt", # /* Frank Dimaio,Documentation Location,Demo Location */
+		"pdb_gen_cryst", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_hybridize", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */

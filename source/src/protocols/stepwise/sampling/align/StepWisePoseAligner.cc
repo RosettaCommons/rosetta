@@ -500,7 +500,7 @@ namespace align {
 										root_atom->stub_atom3() );
 
 		std::map< id::AtomID, id::AtomID > root_triad_atom_id_map;
-		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		//utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 		for ( Size i = 1; i <= 3; i++ ){
 			Size const n = stub_atoms[i]->id().rsd();

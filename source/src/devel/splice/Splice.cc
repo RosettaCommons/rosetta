@@ -860,7 +860,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		 'n-ter'--------C--------C---------'c-ter'//'n-ter'--------C--------C---------'c-ter'
 
 		 */
-		core::Real tail_rms=0;// will store the rms diff between the tail segment and the source pdb
+		//core::Real tail_rms=0;// will store the rms diff between the tail segment and the source pdb
 		core::Size tail_size=0; //how many residues are in the tail segment;
 		std::string tailDBn="",tailDBc="";//will mark if the tail is n-terminal or c-terminal
 		core::Size tail_end=0;//save the position of the last tail residue
@@ -1505,7 +1505,7 @@ void Splice::set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) 
 	core::kinematics::FoldTree ft;
 	ft.clear();
 	protocols::simple_moves::CutChainMover ccm;
-	core::Size template_pdb_cut_vl_vh=ccm.chain_cut(*template_pose_);
+	//core::Size template_pdb_cut_vl_vh=ccm.chain_cut(*template_pose_);
 	utility::vector1<core::Size> cys_pos;//store all cysteine positions in the AB chain
 	std::map<std::string, core::Size> pose_cut_pts;//store all cut points of pose
 	std::map<std::string, core::Size> pose_start_pts;
@@ -1528,9 +1528,9 @@ void Splice::set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) 
 		std::string pdb_source_name=comments["segment_"+segment_type]; //segments in the pose comments have a prefix
 		TR<<"pdb_source:" <<pdb_source_name<<std::endl;
 		Splice::read_torsion_database();
-		bool found_source_name_in_db=false;// in the unlikely event that the source pdb is not db file, exit with error message
+		//bool found_source_name_in_db=false;// in the unlikely event that the source pdb is not db file, exit with error message
 		core::Size dbase_entry=0;
-		core::Size residue_diff=0;
+		//core::Size residue_diff=0;
 		core::Size template_cut_site=0;
 		core::Size template_start=0;
 		core::Size template_end=0;
