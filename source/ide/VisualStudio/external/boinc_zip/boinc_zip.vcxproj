@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="BoincDebug|Win32">
+      <Configuration>BoincDebug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="BoincRelease|Win32">
+      <Configuration>BoincRelease</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{753E897D-9ECE-42B1-9F0D-CD566775C77E}</ProjectGuid>
+    <RootNamespace>boinc_zip</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\external\boinc;..\..\..\..\external\boinc\lib;..\..\..\..\external\boinc\zip;..\..\..\..\external\boinc\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;_LIB;DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader />
+      <BrowseInformation />
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost_1_55_0;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio\sqlite3;..\..\..\external\boinc\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;_LIB;DLL;NO_SHOBJIDL_SORTDIRECTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader />
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\..\external\boinc;..\..\..\..\external\boinc\lib;..\..\..\..\external\boinc\zip;..\..\..\..\external\boinc\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\boinc_zip.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\api.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\apihelp.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\crc32.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\crctab.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\envargs.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\explode.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\extract.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\fileio.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\globals.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\inflate.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\list.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\match.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\process.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\ttyio.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\unreduce.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\unshrink.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\unzip.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\win32\win32.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\unzip\zipinfo.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\deflate.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\trees.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\util.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\win32\win32zip.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\z_fileio.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\z_globals.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\win32\z_win32.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\zip.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\zipfile.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\external\boinc\zip\zip\zipup.c">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">Disabled</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">CompileAsC</CompileAs>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\external\boinc\zip\boinc_zip.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\consts.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\ebcdic.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\globals.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\inflate.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\tables.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\ttyio.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\unzip.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\unzpriv.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\unzvers.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\unzip\win32\w32cfg.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\zip\win32\osdep.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\zip\revision.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\zip\tailor.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\zip\z_ttyio.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\zip\zip.h" />
+    <ClInclude Include="..\..\..\..\external\boinc\zip\zip\ziperr.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

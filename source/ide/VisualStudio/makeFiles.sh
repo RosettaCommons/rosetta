@@ -7,24 +7,4 @@ do
 	python makeFiles.py $project
 done
 
-# Remove all references to Visual Studio 2010+ project files from the solution.
-# Unfortunately, this also removes project dependencies required to set build order.
-echo "Removing references to vcxproj..."
-sed -i 's/vcxproj/vcproj/g' boinc_mini.sln
-
-# Rename executables and program databases
-echo "Renaming executables..."
-sed -i 's/minirosetta_beta_3.25_windows_intelx86.exe/minirosetta.exe/g' apps/minirosetta.vcproj
-sed -i 's/minirosetta_graphics_3.25_windows_intelx86.exe/minirosetta_graphics.exe/g' apps/minirosetta_graphics.vcproj
-sed -i 's/minirosetta_beta_3.25_windows_intelx86.pdb/minirosetta.pdb/g' apps/minirosetta.vcproj
-sed -i 's/minirosetta_graphics_3.25_windows_intelx86.pdb/minirosetta_graphics.pdb/g' apps/minirosetta_graphics.vcproj
-
-# Include additional libraries
-echo "Including libraries..."
-sed -i 's/basic.lib/basic.lib sqlite3.lib cppdb.lib/g' apps/minirosetta.vcproj
-sed -i 's/basic.lib/basic.lib sqlite3.lib cppdb.lib/g' apps/minirosetta_graphics.vcproj
-
-echo "Removing upgrade logs..."
-rm -rf _UpgradeReport_Files UpgradeLog*.XML
-
 echo "Done!"
