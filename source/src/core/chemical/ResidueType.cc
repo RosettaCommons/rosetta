@@ -139,6 +139,7 @@ ResidueType::ResidueType(
 		is_methylated_cterminus_( false ),
 		is_coarse_( false ), //currently for coarse_RNA only
 		is_adduct_( false ),
+		is_virtual_residue_( false ),
 		aa_( aa_unk ),
 		rotamer_aa_( aa_unk ),
 		backbone_aa_( aa_unk ),
@@ -264,6 +265,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
 		is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
 		is_adduct_( residue_type.is_adduct_ ),
+		is_virtual_residue_( residue_type.is_virtual_residue_ ),
 		variant_types_( residue_type.variant_types_ ),
 		numeric_properties_(residue_type.numeric_properties_),
 		string_properties_(residue_type.string_properties_),
@@ -1481,6 +1483,8 @@ ResidueType::add_property( std::string const & property )
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
 		is_methylated_cterminus_ = true;
+	} else if ( property == "VIRTUAL_RESIDUE" ) {
+		is_virtual_residue_ = true;
 	} else if (property == "TAUTOMER") {
 		; // this is for HIS_D, following someone's suggestion in Patch applications. -- rhiju
 	} else if (property == "BRANCH_POINT") {
@@ -1575,6 +1579,8 @@ ResidueType::delete_property( std::string const & property )
 		is_acetylated_nterminus_ = false;
 	} else if ( property == "METHYLATED_CTERMINUS" ) {
 		is_methylated_cterminus_ = false;
+	} else if ( property == "VIRTUAL_RESIDUE" ) {
+		is_virtual_residue_ = false;
 	} else {
 		tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
 	}
@@ -3421,11 +3427,6 @@ ResidueType::is_virtual( Size const & atomno ) const
 	return ( atom_type( atomno ).is_virtual() );
 }
 
-/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
-bool
-ResidueType::is_virtual_residue() const{
-	return ( has_variant_type( "VIRTUAL_RESIDUE" ) );
-}
 
 ///////////////////////////////////////////////////////////////
 core::chemical::rna::RNA_ResidueType const &

@@ -1361,7 +1361,7 @@ public:
 	bool is_virtual( Size const & atomno ) const;
 
 	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
-	bool is_virtual_residue() const;
+	bool is_virtual_residue() const { return is_virtual_residue_; }
 
 	/// @brief is an adduct-modified residue?
 	bool is_adduct() const { return is_adduct_; }
@@ -2134,6 +2134,7 @@ private:
 	bool is_methylated_cterminus_;
 	bool is_coarse_; //currently for coarse_RNA only
 	bool is_adduct_;
+	bool is_virtual_residue_;
 	// etc., etc.
 
 	// here we store the patch operations/variant types that describe this residue
