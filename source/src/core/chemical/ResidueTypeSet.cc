@@ -249,6 +249,9 @@ ResidueTypeSet::ResidueTypeSet(
 			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/CtermTruncation.txt" )
 					== patch_filenames.end())
 				patch_filenames.push_back( directory + "patches/CtermTruncation.txt" );
+
+				// we'll assume user wants this
+				option[ OptionKeys::chemical::override_rsd_type_limit ].value(true);
 		}
 
 		apply_patches( patch_filenames );
