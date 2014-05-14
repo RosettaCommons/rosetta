@@ -1504,11 +1504,11 @@ Option_Group( 'PCSTS4',
 		Option( 'nproc',    'Integer',      desc='number of process... needed if proc_id is specified',     default='0' ),
 		Option( 'proc_id',  'Integer',      desc='give process number... Jobdistributor will only work on proc_id mod nproc part of work ',     default='0' ),
 		Option( 'exit_if_missing_heavy_atoms', 'Boolean', default='false', desc="quit if heavy atoms missing in pdb"),
-	
+
 # PyMOL -----------------------
 	Option( 'show_simulation_in_pymol', 'Real', default='5.0', desc="Attach PyMOL observer to pose at the beginning of the simulation. Waits until at least every [argument] seconds before sending pose if something has changed, default 5. A value of 0 indicates to not skip any packets from sending! Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!"),
 	Option( 'update_pymol_on_energy_changes_only', 'Boolean', default = 'false', desc= 'Only Update the simulation in on energy change.  Useful if pymol observer is segfaulting on length changes.'),
-	Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'), 
+	Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'),
 		Option( 'keep_pymol_simulation_history', 'Boolean', desc='Keep history when using show_simulation_in_pymol flag?', default='false' ),
 
 	), # run
@@ -2184,6 +2184,7 @@ Option_Group( 'PCSTS4',
 		Option( 'optH_weights', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'optH_patch', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='sp2_elec_params'),
+                Option( 'hbond_bb_per_residue_energy', 'Boolean', desc="In score tables, separate out backbone hydrogens bond energies per residue. By default, bb hbonds are included in the total energy, but not per residue energies",default='false'),
 		Option( 'hbond_disable_bbsc_exclusion_rule', 'Boolean', desc="Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded", default='false' ),
 		Option( 'symE_units', 'Integer', desc="Number of symmetric Units in design for use with symE scoring",default='-1'),
 		Option( 'symE_bonus', 'Real', desc="Energy bonus per match for use with symE scoring",default='0.0'),
@@ -4645,8 +4646,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
     Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '100' ),
     Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles',  default = '10' ),
   ), #closes option group TailSegment
-  
-  
+
+
  Option_Group( 'DenovoProteinDesign',
                 Option( 'redesign_core', 'Boolean', desc='redesign core of pdb', default='false'),
 								Option( 'redesign_loops', 'Boolean', desc='redesign loops of pdb', default='false'),

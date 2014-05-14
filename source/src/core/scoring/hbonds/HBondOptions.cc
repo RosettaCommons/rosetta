@@ -75,6 +75,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
 	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
 	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
