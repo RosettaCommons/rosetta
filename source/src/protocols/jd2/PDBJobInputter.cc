@@ -26,7 +26,10 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
+
+#include <core/util/metalloproteins_util.hh>
 
 ///C++ headers
 #include <string>
@@ -49,6 +52,9 @@ protocols::jd2::PDBJobInputter::~PDBJobInputter(){}
 
 ///@details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
 void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	TR << "PDBJobInputter::pose_from_job" << std::endl;
 
 	if( !job->inner_job()->get_pose() ){
@@ -58,6 +64,12 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 	} else {
 		TR << "filling pose from saved copy " << job->input_tag() << std::endl;
 		pose = *(job->inner_job()->get_pose());
+		if(option[in::auto_setup_metals].user()	
+					&& (option[in::metals_distance_constraint_multiplier]() > 1.0e-10 || option[in::metals_angle_constraint_multiplier]() > 1.0e-10)
+		) { //If the user has specified the auto_setup_metals option, we need to add back the metal constraints.
+			TR << "setting up metal constraints for saved pose copy " << job->input_tag() << std::endl;
+			core::util::auto_setup_all_metal_constraints( pose, option[in::metals_distance_constraint_multiplier](), option[in::metals_angle_constraint_multiplier]() );
+		}
 	}
 }
 
