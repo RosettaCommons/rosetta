@@ -105,6 +105,8 @@ class ProbUtil : public CxxTest::TestSuite {
     utility::vector1<double> observed;
     numeric::read_probabilities_or_die("numeric/sampling.prob", &observed);
 
+		TS_ASSERT_EQUALS( observed.size(), expected.size() );
+
     for (unsigned i = 1; i <= observed.size(); ++i)
       TS_ASSERT_DELTA(expected[i], observed[i], MARGIN);
   }

@@ -33,12 +33,13 @@ void read_probabilities_or_die(const std::string& filename, utility::vector1<dou
   if (!in.is_open())
     utility_exit_with_message("Error reading probabilities from " + filename);
 
-  while (in.good()) {
-    double p;
-    in >> p;
-    probs->push_back(p);
-  }
-  in.close();
+	double p;
+	in >> p;
+	while (in.good()) {
+		probs->push_back(p);
+		in >> p;
+	}
+	in.close();
 }
 
 void print_probabilities(const utility::vector1<double>& probs, std::ostream& out) {

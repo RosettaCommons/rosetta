@@ -206,6 +206,11 @@ main( int argc, char * argv [] ) {
 
 		Vector com(0,0,0);
 		Size nres = CAs.size();
+
+		if( nres == 0 ) {
+			std::cerr << "Error reading PDB information from " << pdbfile << std::endl;
+			exit(1);
+		}
 		for ( Size i=1; i<= nres; ++i ) com += CAs[i];
 		com /= nres;
 
@@ -293,6 +298,7 @@ main( int argc, char * argv [] ) {
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 	return 0;
 }
