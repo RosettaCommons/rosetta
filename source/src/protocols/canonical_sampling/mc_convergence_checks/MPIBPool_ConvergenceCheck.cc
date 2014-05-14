@@ -610,7 +610,7 @@ void MPIBPool_RMSD::finalize(){
 
 //
   void MPIBPool_RMSD::create_comm( int ranks_to_include[], int new_size ){
-    int returnval;
+    //int returnval;
     MPI_Group new_pool_group, old_pool_group;
     MPI_Comm dup_pool_comm;
     //tr.Debug << "creating a duplicate communicator from ranks: " << std::endl;
