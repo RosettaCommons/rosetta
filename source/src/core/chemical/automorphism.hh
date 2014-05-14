@@ -66,11 +66,25 @@ class AutomorphismIterator : public utility::pointer::ReferenceCount
 public:
 
 	/// @brief Including H will lead to many, many more automorphisms!
-	AutomorphismIterator(ResidueTypeCOP restype, bool includeH = false):
+	AutomorphismIterator(ResidueType const & restype, bool includeH = false):
 		restype_(restype),
+		restype2_(restype),
 		empty_list_()
 	{
-		natoms_ = (includeH ? restype_->natoms() : restype_->nheavyatoms());
+		natoms_ = (includeH ? restype_.natoms() : restype_.nheavyatoms());
+		curr_.assign(natoms_, 1); // = [1, 1, 1, ..., 1]
+	}
+
+	/// @brief The mapping returned will be from restype to restype2
+	/// Including H will lead to many, many more automorphisms!
+	AutomorphismIterator(ResidueType const & restype, ResidueType const & restype2, bool includeH = false):
+		restype_(restype),
+		restype2_(restype2),
+		empty_list_()
+	{
+		natoms_ = (includeH ? restype_.natoms() : restype_.nheavyatoms());
+		core::Size natoms2 = 	(includeH ? restype2_.natoms() : restype2_.nheavyatoms());
+		runtime_assert( natoms_ == natoms2 );
 		curr_.assign(natoms_, 1); // = [1, 1, 1, ..., 1]
 	}
 	virtual ~AutomorphismIterator() {}
@@ -99,25 +113,33 @@ private:
 	inline
 	bool
 	edges_match(Size i) {
-		AtomIndices const & nbrs = restype_->nbrs(i);
+		AtomIndices const & nbrs = restype_.nbrs(i);
 		for( Size idx = 1, end = nbrs.size(); idx <= end; ++idx ) {
 			Size const j = nbrs[idx];
 			if( j > i ) continue;
-			if( !bonded( curr_[i], curr_[j] ) ) return false;
+			if( !bonded2( curr_[i], curr_[j] ) ) return false;
 		}
 		return true;
 	}
 
-	/// @brief Are atoms i and j bonded to each other?
+	/// @brief Are atoms i and j bonded to each other on Restype1?
 	inline
 	bool
 	bonded(Size i, Size j) {
-		return restype_->path_distance(i,j) == 1;
+		return restype_.path_distance(i,j) == 1;
+	}
+
+	/// @brief Are atoms i and j bonded to each other on Restype2?
+	inline
+	bool
+	bonded2(Size i, Size j) {
+		return restype2_.path_distance(i,j) == 1;
 	}
 
 
 private:
-	ResidueTypeCOP restype_;
+	ResidueType const & restype_;
+	ResidueType const & restype2_;
 	Size natoms_;
 	/// curr_[i] = current partner for atom i
 	utility::vector1<Size> curr_;

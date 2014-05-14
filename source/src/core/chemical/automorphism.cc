@@ -85,8 +85,19 @@ AutomorphismIterator::next()
 inline
 bool
 AutomorphismIterator::can_pair(Size i, Size j) {
-	return restype_->atom(i).atom_type_index() == restype_->atom(j).atom_type_index()
-		&& restype_->nbrs(i).size() == restype_->nbrs(j).size();
+	// RM: We special case HIS here, because historically HIS and HIS_D can be paired
+	// but because the nitrogens don't have the same atom type the new two-restype
+	// version doesn't work properly. So for HIS we special case Nhis and Ntrp so that
+	// they can match. I'm not sure if this is really what we want, but it makes things work
+	// like they did under the old single residue type version.
+	if( restype_.name3() == "HIS" && restype2_.name3() == "HIS" ) {
+		if( restype_.atom(i).element_type()->get_atomic_number() == 7 &&
+				restype2_.atom(j).element_type()->get_atomic_number() == 7 ) {
+			return true; // For HIS, nitrogens always match other nitrogens, regardless of type or connection.
+		}
+	}
+	return restype_.atom(i).atom_type_index() == restype2_.atom(j).atom_type_index()
+		&& restype_.nbrs(i).size() == restype2_.nbrs(j).size();
 }
 
 } // namespace chemical

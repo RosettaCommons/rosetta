@@ -51,7 +51,7 @@ public:
 
 	core::Size count_automorphisms(core::chemical::ResidueTypeCOP rsdtype)
 	{
-		core::chemical::AutomorphismIterator itr(rsdtype, false /*exclude H*/);
+		core::chemical::AutomorphismIterator itr(*rsdtype, false /*exclude H*/);
 		core::Size cnt = 0;
 		while( !itr.next().empty() ) cnt++;
 		return cnt;

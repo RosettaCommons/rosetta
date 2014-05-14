@@ -291,12 +291,6 @@ automorphic_rmsd(
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::conformation;
-	// name() and total number of atoms may actually be different, if we're comparing e.g. tautomers
-	if( rsd1.type().name3() != rsd2.type().name3() ) {
-		tr.Error << "Residue type name3 mismatch: " << rsd1.type().name3() << " (" << rsd1.type().name() << " at position " << rsd1.seqpos() << " ) versus "
-				<< rsd2.type().name3() << " (" << rsd2.type().name() << " at position " << rsd2.seqpos() << ")" << std::endl;
-		utility_exit_with_message("Residue type name3 mismatch");
-	}
 	if( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) {
 		tr.Error << "Residue number-of-heavy-atoms mismatch: " << rsd1.nheavyatoms() << " (for " << rsd1.type().name() << " at position " << rsd1.seqpos() << " ) versus "
 				<< rsd2.nheavyatoms() << " (for " << rsd2.type().name() << " at position " << rsd2.seqpos() << ")" << std::endl;
@@ -305,8 +299,7 @@ automorphic_rmsd(
 	core::Real best_rms = 1e99;
 	int counter = 0;
 	// Make atom-number translation table
-	ResidueTypeCOP rsd1_type( rsd1.type().clone() );
-	AutomorphismIterator ai( rsd1_type );
+	AutomorphismIterator ai( rsd1.type(), rsd2.type() );
 	AtomIndices old2new( ai.next() );
 	// For each permutation of automorphisms...
 	while( old2new.size() > 0 ) {
@@ -368,6 +361,11 @@ automorphic_rmsd(
 		}
 		old2new = ai.next();
 	} // done checking all automorphisms
+	if( counter == 0 ) {
+		tr.Error << "No automorphisms found for mapping of '" << rsd1.type().name() << "' at position " << rsd1.seqpos() << " to '"
+				<< rsd2.type().name() << "' at position " << rsd2.seqpos() << " - incompatible residue types " << std::endl;
+		utility_exit_with_message("Incompatible ResidueTypes for automorphic rmsd.");
+	}
 	tr.Debug << counter << " automorphisms from iterator; best rms is " << best_rms << std::endl;
 	return best_rms;
 }

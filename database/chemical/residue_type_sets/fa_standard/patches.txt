@@ -25,6 +25,7 @@ patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
 # Protein
 patches/RepulsiveOnly_fa.txt        # replonly
 patches/ShoveBB.txt                 # SHOVE_BB
+patches/VirtualBB.txt               # VIRTUAL_BB
 patches/VirtualProteinSideChain.txt # VIRTUAL_SIDE_CHAIN
 patches/N_acetylated.txt            # PEPTIDE_CAP
 patches/C_methylamidated.txt        # PEPTIDE_CAP
@@ -52,7 +53,6 @@ patches/SpecialRotamer.txt
 
 ## protein
 #patches/Cterm_amidation.txt
-#patches/VirtualBB.txt
 #patches/VirtualProteinResidue.txt
 #patches/VirtualNterm.txt
 

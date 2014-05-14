@@ -135,7 +135,7 @@ public:
 		using core::pack::task::TaskFactory;
 		using core::pack::task::operation::RestrictToRepacking;
 
-		core_init();
+		core_init_with_additional_options( "-patch_selectors VIRTUAL_BB" );
 		pose_1ten_ = fullatom_pose_from_string( pdb_string_1ten() );
 		score_function_ = getScoreFunction();
 

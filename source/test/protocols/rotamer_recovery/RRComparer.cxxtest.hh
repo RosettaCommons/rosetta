@@ -67,7 +67,7 @@ public:
 
 	void
 	setUp() {
-		core_init();
+		core_init_with_additional_options( "-patch_selectors VIRTUAL_BB" );
 	}
 
 	void test_RRComparerRotBins_main() {

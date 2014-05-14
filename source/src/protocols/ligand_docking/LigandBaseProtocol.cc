@@ -285,8 +285,7 @@ void frac_atoms_within(
 	fractions_out.resize(cutoffs.size(), 0);
 	int counter = 0;
 	// Make atom-number translation table
-	ResidueTypeCOP rsd1_type( &(rsd1.type()) );
-	AutomorphismIterator ai( rsd1_type );
+	AutomorphismIterator ai( rsd1.type() );
 	AtomIndices old2new( ai.next() );
 	// For each permutation of automorphisms...
 	while( old2new.size() > 0 ) {
