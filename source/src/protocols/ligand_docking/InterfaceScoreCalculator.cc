@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/ligand_docking/InterfaceScoreCalculator.cc
-/// @brief  
+/// @brief
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
 // Unit Headers
@@ -157,10 +157,10 @@ InterfaceScoreCalculator::parse_my_tag(
 		normalization_function_ = protocols::qsar::scoring_grid::get_score_normalization_function(normalization_mode);
 	}
 	compute_grid_scores_ = tag->getOption<bool>("compute_grid_scores", true);
-	
+
 	prefix_ = tag->getOption<std::string>("prefix","");
-	
-	
+
+
 }
 
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
@@ -213,7 +213,7 @@ void InterfaceScoreCalculator::add_scores_to_job(
 	{
 		job->add_string_real_pair(prefix_+"_"+name_from_score_type(core::scoring::total_score), tot_score);
 	}
-	
+
 }
 
 
@@ -256,9 +256,15 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 	core::pose::Pose const & after,
 	protocols::jd2::JobOP job
 ) const {
+	if( jump_id == 0 || jump_id > after.num_jump() ) {
+				utility_exit_with_message("The pose does not have jump number " + utility::to_string( jump_id ) );
+	}
 
 	if(native_)
 	{
+		if( jump_id > native_->num_jump() ) {
+					utility_exit_with_message("The native pose does not have jump number " + utility::to_string( jump_id ) );
+		}
 
 		append_ligand_travel(jump_id, job, *native_, after,prefix_);
 		append_radius_of_gyration(jump_id, job, *native_,prefix_);
