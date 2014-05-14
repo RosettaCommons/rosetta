@@ -246,9 +246,6 @@ sources = {
 	"SugarVirtualizeMover",
 	"util",
     ],
-    "protocols/stepwise/sampling/rna/sugar/legacy/": [
-	#"StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD",
-    ],
     "protocols/stepwise/monte_carlo": [
 	"SWA_Move",
 	"SWA_MoveSelector",
