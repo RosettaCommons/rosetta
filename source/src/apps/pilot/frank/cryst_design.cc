@@ -1633,13 +1633,6 @@ CrystDock::get_interfaces_allatom(
 	//// recenter
 	////
 	//////////////////////
-	Size rootpos=0;
-	// bogus usage by Doonam Kim since on 05/14/14, gcc 4.6.3 fails to compile with a message "variable 'rootpos' set but not used"
-	std::cout<< rootpos <<std::endl;
-	//rootpos=1; 
-	//rootpos=0;
-	// this bogus usage may be erased once this compilation issue is resolved
-
 	Size nres = pose.total_residue();
 
 	Vector com(0,0,0);
@@ -1651,7 +1644,6 @@ CrystDock::get_interfaces_allatom(
 		Real const dis2( com.distance_squared(  pose.residue(i).xyz(2) ) );
 		if ( dis2 < mindis2 ) {
 			mindis2 = dis2;
-			rootpos = i;
 		}
 	}
 	Size nsymm = sg_.nsymmops();
