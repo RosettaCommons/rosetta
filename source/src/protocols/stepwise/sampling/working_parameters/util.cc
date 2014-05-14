@@ -199,6 +199,13 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 
 	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
 	Size cutpoint_closed_distal( 0 );
+
+		// bogus usage by Doonam Kim since on 05/14/14, gcc 4.6.3 fails to compile with a message "variable 'cutpoint_closed_distal' set but not used"
+		std::cout	<<	cutpoint_closed_distal	<<	std::endl;
+		//cutpoint_closed_distal	=	1;
+		//cutpoint_closed_distal	=	0;
+		// this bogus usage may be erased once this compilation issue is resolved
+
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
 		if ( !partition_definition[ n ] ) input_res1.push_back( n );
 		else input_res2.push_back( n );
