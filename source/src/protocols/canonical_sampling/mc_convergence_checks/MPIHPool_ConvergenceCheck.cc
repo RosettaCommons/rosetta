@@ -179,7 +179,7 @@ namespace mc_convergence_checks{
 	return -1; //no more nstruct, so simply return
       }
       update_comm( pool_npes_ - num_nodes_finished );
-      if( current_trajectory_state_ == IN_PROGRESS ) {
+      if( static_cast<int>(current_trajectory_state_) == IN_PROGRESS ) {
 	MPI_Comm_rank( MPI_COMM_POOL, ( int* )( &pool_rank_ ) );
 	MPI_Comm_size( MPI_COMM_POOL, ( int* )( &pool_npes_ ) );
       }
@@ -187,7 +187,7 @@ namespace mc_convergence_checks{
 
     PROF_STOP( basic::MPIH_EVAL_CHECK_PROGRESS );
     core::Size best_index = -1;
-    if( current_trajectory_state_ == IN_PROGRESS ) {
+    if( static_cast<int>(current_trajectory_state_) == IN_PROGRESS ) {
       //evaluate the structure
       best_index = hlevel_.evaluate( pose, best_decoy, current_best_rmsds_, best_address_ );
       if( tracer_visible_ ) {
@@ -441,7 +441,7 @@ namespace mc_convergence_checks{
 	  if( have_structure_to_print[ ii ] == 1 ) {
 	    bool same_unresolved_addr = true;
 	    for( core::Size jj = 0; jj < hlevel_.nlevels(); jj++ ) {
-	      if( best_address_[ jj + 1 ] != buf_.neighbor_addresses_[ (ii * hlevel_.nlevels()) + jj ] ) same_unresolved_addr = false;
+	      if( static_cast<int>(best_address_[ jj + 1 ]) != buf_.neighbor_addresses_[ (ii * hlevel_.nlevels()) + jj ] ) same_unresolved_addr = false;
 	    }
 	    if( same_unresolved_addr ) {  //only winning ranks with same unresolved addresses care
 	      //DEBUG OUTPUT
@@ -512,7 +512,7 @@ namespace mc_convergence_checks{
 	MPI_Reduce( &num_to_print, &num_structures_to_write, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_POOL );
       }
       PROF_STOP( basic::MPIH_PREPARE_WRITE_STRUCTURES );
-      if( pool_rank_ == MPI_OUTPUT_RANK ) {
+      if( static_cast<int>(pool_rank_) == MPI_OUTPUT_RANK ) {
 	//if I am the output rank, receive and write out structures
 	if( tracer_visible_ ) { tr.Debug << "expecting to write out " << num_structures_to_write << " structures" << std::endl; }
 	core::io::silent::SilentFileData sfd;
@@ -670,7 +670,7 @@ namespace mc_convergence_checks{
     create_comm( buf_.int_buf1_, newsize );
     //~buf_();
     buf_.setup( newsize, nresidues_, nlevels_ );
-    if( current_trajectory_state_ == IN_PROGRESS ) {
+    if( static_cast<int>(current_trajectory_state_) == IN_PROGRESS ) {
       MPI_Comm_rank( MPI_COMM_POOL, ( int* )( &pool_rank_ ) );
       MPI_Comm_size( MPI_COMM_POOL, ( int* )( &pool_npes_ ) );
       tr.Info << "remaining ranks has pool-size of " << pool_npes_ << " and rank: " << pool_rank_ << std::endl;

@@ -143,7 +143,7 @@ void MPIBPool_RMSD::initialize(){
   //create new MPI_COMM_WORLD based on sub-set of nodes
   PROF_START( basic::MPICOMMCREATION );
   int index = 0;
-  for(int ii = master_node_; ii < npes_; ii++){
+  for(int ii = master_node_; ii < static_cast<int>(npes_); ii++){
     (transfer_buf_.int_buf1_)[ index++ ] = ii;
   }
 
@@ -224,7 +224,7 @@ void MPIBPool_RMSD::broadcast_newest_coords( int num_to_send ){
     core::Size current_size = new_structures_;
     if( tracer_visible_ ) {
       tr.Debug << "broadcasting " << num_to_send << " structures " << std::endl;
-      for( core::Size ii = 0; ii < num_to_send; ii++) {
+      for( core::Size ii = 0; static_cast<int>(ii) < num_to_send; ii++) {
 	tr.Debug << " sending coordinates starting at index " << transfer_buf_.int_buf1_[ ii ] << std::endl;
       }
     }
@@ -236,7 +236,7 @@ void MPIBPool_RMSD::broadcast_newest_coords( int num_to_send ){
     PROF_START( basic::COPY_COORDS );
     int shifted_index = 0;
     //int_buf1_ contains starting indices of structures you wish to send
-    for( core::Size ii = 0; ii < num_to_send; ii++ ) {
+    for( core::Size ii = 0; static_cast<int>(ii) < num_to_send; ii++ ) {
       // delete coordinates that are not being saved by shifting coordinates over to the left
       for( core::Size jj = 0; jj < (3 * transfer_buf_.nresidues_ ); jj++ ) {
 	transfer_buf_.farray_coord_ptr_[ shifted_index++ ] = transfer_buf_.farray_coord_ptr_[ jj + transfer_buf_.int_buf1_[ ii ] ];
@@ -562,7 +562,7 @@ void MPIBPool_RMSD::finalize(){
     MPI_Bcast( &new_size, 1, MPI_INT, pool_master_node_, MPI_COMM_POOL );
     PROF_STOP( basic::MPI_MASTER_BCAST_NEW_COMM_SIZE );
 
-    assert( new_size < pool_npes_ );
+    assert( new_size < static_cast<int>(pool_npes_) );
     if( tracer_visible_ ){
       tr.Debug << "new size is " << new_size << " current size: " << pool_npes_ << std::endl;
     }
@@ -978,7 +978,7 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
   PROF_STOP( basic::MPI_MASTER_BCAST_WINNING_RANKS );
   if( tracer_visible_ ){
     tr.Debug << "received "<< num_structures_to_add << " from the master node! " << std::endl;
-    for ( core::Size ii = 0; ii < num_structures_to_add; ii++ ) {
+    for ( core::Size ii = 0; static_cast<int>(ii) < num_structures_to_add; ii++ ) {
       tr.Debug << "winning rank: " << transfer_buf_.winning_ranks_[ ii ] << "\n";
     }
     tr.Debug << std::endl;
@@ -1013,7 +1013,7 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
   if( tracer_visible_ ){
     tr.Debug << "new size of pool " << new_size << " current_size of pool_npes_ " << pool_npes_ << std::endl;
   }
-  if( new_size != pool_npes_ ){
+  if( new_size != static_cast<int>(pool_npes_) ){
 
     PROF_START( basic::MPI_MASTER_BCAST_NEW_POOL_RANKS );
     MPI_Bcast( transfer_buf_.int_buf1_, new_size, MPI_INT, (pool_master_node_), MPI_COMM_POOL );

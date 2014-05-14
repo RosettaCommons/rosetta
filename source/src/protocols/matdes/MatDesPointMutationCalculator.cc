@@ -722,7 +722,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 			TR << "Detected jd2::MPIWorkPoolJobDistributor... excluding proc 0 from calculations" << std::endl;
 			mpi_rank_low = 1;
 			//We must have one job( nstruct ) for each worker in pool or we'll freeze later because nodes w/ no job will get killed by jd2
-			if( get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
+			if( static_cast<int>(get_nstruct()) < (mpi_nprocs - mpi_rank_low) ) utility_exit_with_message(
 					"You must specify nstruct >= " + utility::to_string( mpi_nprocs - mpi_rank_low ) +
 					" when using " + utility::to_string( mpi_nprocs ) + " processors for MPI MatDesPointMutationCalculator" +
 					" when called from rosetta_scripts or any other app using jd2::MPIWorkPoolJobDistributor!" );
@@ -733,7 +733,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 			mpi_rank_low = jd2->min_client_rank();
 			TR << "Detected jd2::MPIFileBufJobDistributor... excluding procs 0-" << ( mpi_rank_low - 1 ) << " from calculations" << std::endl;
 			//We must have one job( nstruct ) for each worker in pool or we'll freeze later because nodes w/ no job will get killed by jd2
-			if( get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
+			if( static_cast<int>(get_nstruct()) < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
 					"You must specify nstruct >= " + utility::to_string( mpi_nprocs - mpi_rank_low ) +
 					" when using " + utility::to_string( mpi_nprocs ) + " processors for MPI MatDesPointMutationCalculator" +
 					" when called from rosetta_scripts or any other app using jd2::MPIFileBufJobDistributor!" );
@@ -792,7 +792,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		for( Size imut = 1; imut <= all_muts.size(); ++imut ){
 			//e.g. for 4 procs, hand out muts like 1,2,3,1,2,3,etc (nothing given to proc 0)
 			Size this_mpi_rank( ( imut - 1 ) % ( mpi_nprocs - mpi_rank_low ) + mpi_rank_low );
-			if( this_mpi_rank == mpi_rank ){
+			if( static_cast<int>(this_mpi_rank) == mpi_rank ){
 				my_muts.push_back( all_muts[ imut ] );
 			}
 		}
@@ -851,7 +851,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		}
 		//pool leader receives ptmut data from workers and combines with its own
 		else if( mpi_rank == mpi_rank_low ){
-			for( Size iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
+			for( Size iproc = mpi_rank_low + 1; static_cast<int>(iproc) < mpi_nprocs; ++iproc ){
 				//get data for one mut (seqpos, AA, and filter vals )
 				//need to know how many seqpos
 				Size n_seqpos( utility::receive_integer_from_node( iproc ) ); //rec int
@@ -876,7 +876,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		//MPI_Barrier( MPI_COMM_POOL );
 		//then pool leader sends combined ptmut data back to workers
 		if( mpi_rank == mpi_rank_low ){
-			for( Size iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
+			for( Size iproc = mpi_rank_low + 1; static_cast<int>(iproc) < mpi_nprocs; ++iproc ){
 				utility::send_integer_to_node( iproc, seqpos_aa_vals_vec.size() );	//send int
 				for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
 					utility::send_integer_to_node( iproc, seqpos_aa_vals_vec[ iseq ].first );	//send int
