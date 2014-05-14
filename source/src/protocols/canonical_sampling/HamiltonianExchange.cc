@@ -331,7 +331,7 @@ HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ) ) {
 	int const mpi_SCORE_INFORM = 2;
 	int const mpi_LEVEL_DECISION = 3;
 
-	Size const nlevels( n_temp_levels() );
+	//Size const nlevels( n_temp_levels() );
 	int exchange_partner;
 	bool is_master;
 	find_exchange_partner( exchange_partner, is_master );

@@ -963,7 +963,7 @@ CrystDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_
 core::Real
 CrystDock::resample_maps_and_get_self(
 		FArray3D<Real> const &rho_ca, FArray3D<Real> const &rho_cb,
-		numeric::xyzMatrix<Real> R, Spacegroup const &sg,
+		numeric::xyzMatrix<Real> R, Spacegroup const &/*sg*/, //Commented out by V. Mulligan to fix the debug-mode build.  Sorry to twiddle with your pilot apps, Frank.
 		FArray3D<Real> &r_rho_ca, FArray3D<Real> &r_rho_cb,
 		utility::vector1<SingleInterface> &p1_interface_map ) {
 	r_rho_ca.dimension( grid_[0], grid_[1], grid_[2] ); r_rho_ca=0;
@@ -1019,7 +1019,7 @@ CrystDock::resample_maps_and_get_self(
 	r_rho_cb = r_rho_cb_base;
 
 	Real ca_overlap = 0;
-	Real Npoints = grid_[0] * grid_[1] * grid_[2];
+	//Real Npoints = grid_[0] * grid_[1] * grid_[2]; //Commented out by V. Mulligan to fix the debug-mode build.  Sorry to twiddle with your pilot apps, Frank.
 
 	// offset transformations
 	for (int a=-AMAX; a<=AMAX; ++a)
@@ -1577,7 +1577,7 @@ CrystDock::get_interfaces(
 			}
 		}
 
-		Real Npoints = grid_[0]*grid_[1]*grid_[2];
+		//Real Npoints = grid_[0]*grid_[1]*grid_[2]; //Commented out by V. Mulligan to fix the debug-mode build.  Sorry to twiddle with your pilot apps, Frank.
 
 		// now look +/-1 copy in each direction
 		for (int a=A0-1; a<=A0+1; ++a)
@@ -1686,7 +1686,7 @@ CrystDock::get_interfaces_allatom(
 	}
 	radius = sqrt(radius);
 
-	int nint=1;
+	//int nint=1; //Commented out by V. Mulligan to fix the debug-mode build.  Sorry to twiddle with your pilot apps, Frank.
 	for (int s=1; s<=(int)sg_.nsymmops(); ++s) {
 		numeric::xyzMatrix<Real> R_i = sg_.symmop(s).get_rotation();
 
