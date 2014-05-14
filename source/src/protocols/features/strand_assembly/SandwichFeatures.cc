@@ -458,7 +458,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column shortest_dis_between_facing_aro	("shortest_dis_between_facing_aro",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column shortest_dis_between_facing_aro_in_sw	("shortest_dis_between_facing_aro_in_sw",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -616,7 +616,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(topology_candidate);
 	sw_by_components.add_column(min_dis_between_sheets_by_cen_res);
 	sw_by_components.add_column(avg_dis_between_sheets_by_cen_res);
-	sw_by_components.add_column(shortest_dis_between_facing_aro);
+	sw_by_components.add_column(shortest_dis_between_facing_aro_in_sw);
 	sw_by_components.add_column(component_size);
 
 
@@ -978,7 +978,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 //					TR	<< "other_residue_num:	"	<<	other_residue_num	<<	endl;
 
 				if (core::Size(std::abs(other_residue_num - residue_num)) <
-						primary_seq_distance_cutoff_for_electrostatic_interactions_) {
+						min_primary_seq_distance_diff_for_electrostatic_interactions_) {
 					continue;
 				}
 
@@ -4696,8 +4696,8 @@ SandwichFeatures::report_min_avg_dis_between_sheets_by_cen_res	(
 
 
 
-Size
-SandwichFeatures::report_shortest_dis_between_sheets_by_aro	(
+Real
+SandwichFeatures::report_shortest_dis_between_facing_aro_in_sw	(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
@@ -4707,33 +4707,34 @@ SandwichFeatures::report_shortest_dis_between_sheets_by_aro	(
 {
 
 	//// <begin> calculate minimum distance between sheets
-	float	shortest_dis_between_sheets_by_aro	=	cal_shortest_dis_between_sheets_by_aro(struct_id,	db_session,	pose,	all_distinct_sheet_ids);
+	float	shortest_dis_between_facing_aro_in_sw	=	cal_shortest_dis_between_facing_aro_in_sw(struct_id,	db_session,	pose,	all_distinct_sheet_ids);
 	//// <end> calculate minimum distance between sheets
 
 	// <begin> UPDATE sw_by_components table
 	string insert =
 	"UPDATE sw_by_components set \n"
-	"	shortest_dis_between_facing_aro = ? "
+	"	shortest_dis_between_facing_aro_in_sw = ? "
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(sw_can_by_sh_id = ?) ;";
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
-	if ((shortest_dis_between_sheets_by_aro	==	999.0) ||	(shortest_dis_between_sheets_by_aro	==	9999.0))
+	if ((shortest_dis_between_facing_aro_in_sw	==	999.0) ||	(shortest_dis_between_facing_aro_in_sw	==	9999.0))
 	{
-		TR	<<	"this sandwich either lacks aromatic residue in at least 1 sheet or has > 2 sheets, so don't report shortest_dis_between_sheets_by_aro"	<<	endl;
+		TR	<<	"this sandwich either lacks aromatic residue in at least 1 sheet or has > 2 sheets, so don't report shortest_dis_between_facing_aro_in_sw"	<<	endl;
 		return 0;
 	}
 
-	insert_stmt.bind(1,	round_to_Real(shortest_dis_between_sheets_by_aro));
+	insert_stmt.bind(1,	round_to_Real(shortest_dis_between_facing_aro_in_sw));
 	insert_stmt.bind(2,	struct_id);
 	insert_stmt.bind(3,	sw_can_by_sh_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
 	// <end> UPDATE sw_by_components table
 
-	return 0;
-} //	SandwichFeatures::report_shortest_dis_between_sheets_by_aro
+	return	round_to_Real(shortest_dis_between_facing_aro_in_sw);
+	//return 0;
+} //	SandwichFeatures::report_shortest_dis_between_facing_aro_in_sw
 
 
 
@@ -6513,7 +6514,7 @@ SandwichFeatures::cal_min_avg_dis_between_two_sheets_by_cen_res (
 
 
 float
-SandwichFeatures::cal_shortest_dis_between_sheets_by_aro (
+SandwichFeatures::cal_shortest_dis_between_facing_aro_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
@@ -6630,13 +6631,13 @@ SandwichFeatures::cal_shortest_dis_between_sheets_by_aro (
 	}
 
 	if	(appropriate_sheet_num	!=	2)
-		// if there are not two sheets,	cal_shortest_dis_between_sheets_by_aro is not meaningful, so don't calculate here
+		// if there are not two sheets,	cal_shortest_dis_between_facing_aro_in_sw is not meaningful, so don't calculate here
 	{
 		return 999.0;
 	}
 
 	return min_distance_between_aro;
-} //cal_shortest_dis_between_sheets_by_aro
+} //cal_shortest_dis_between_facing_aro_in_sw
 
 
 
@@ -7695,8 +7696,13 @@ SandwichFeatures::parse_my_tag(
 					//	Rationale of default=true (1)
 						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
 
+	exclude_sandwich_that_has_non_canonical_properties_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_properties", false);
+
 	exclude_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_LR", false);
 					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
+
+	exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw", false);
+					//	definition: if true, exclude sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_
 
 
 	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
@@ -7742,7 +7748,7 @@ SandwichFeatures::parse_my_tag(
 			//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
-	primary_seq_distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Size>("primary_seq_distance_cutoff_for_electrostatic_interactions", 4);
+	min_primary_seq_distance_diff_for_electrostatic_interactions_ = tag->getOption<Size>("min_primary_seq_distance_diff_for_electrostatic_interactions", 4);
 		// rationale for default value: I hypothesize that electrostatic interaction between 38E and 41K of Tencon do not stabilize that much
 
 
@@ -7879,6 +7885,11 @@ SandwichFeatures::report_features(
 			write_beta_sheet_capping_info_	=	true;
 		}
 
+		if (exclude_sandwich_that_has_non_canonical_properties_)
+		{
+			//exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_ = true;
+			exclude_sandwich_that_has_non_canonical_LR_ = true;
+		}
 
 		pose::Pose pose_w_center_000 = pose;
 		if (count_AA_with_direction_ ||	write_resfile_)
@@ -8611,6 +8622,8 @@ SandwichFeatures::report_features(
 
 						if	(exclude_sandwich_that_has_non_canonical_LR_	&&	canonical_LR	==	"F_LR")
 						{
+								TR.Info << "This sandwich has non-canonical hairpin chirality " <<	endl;
+								TR.Info << "So exclude this sandwich " <<	endl;
 							delete_this_struct_id(
 								struct_id,
 								db_session
@@ -8866,11 +8879,23 @@ SandwichFeatures::report_features(
 					all_distinct_sheet_ids
 					);
 
-				report_shortest_dis_between_sheets_by_aro	(struct_id,	db_session,
+				Real	shortest_dis_between_facing_aro_in_sw	=	report_shortest_dis_between_facing_aro_in_sw	(struct_id,	db_session,
 					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
 					pose,
 					all_distinct_sheet_ids
 					);
+
+				if	(exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_	&&	(shortest_dis_between_facing_aro_in_sw	<	4.0))
+						{
+								TR.Info << "This sandwich has an non_canonical_shortest_dis_between_facing_aro_in_sw " <<	endl;
+								TR.Info << "So exclude this sandwich " <<	endl;
+							delete_this_struct_id(
+								struct_id,
+								db_session
+								);
+							return 1;
+							//						chance_of_being_canonical_sw = false;
+						}
 
 				if (write_AA_kind_files_)
 				{
@@ -9426,7 +9451,7 @@ SandwichFeatures::report_features(
 								if (edge_or_core == "core")
 								{
 									count_to_minimize_too_many_core_heading_FWY_on_core_strands++;
-									if	(count_to_minimize_too_many_core_heading_FWY_on_core_strands	==	3)
+									if	(count_to_minimize_too_many_core_heading_FWY_on_core_strands	==	2)
 									{
 										resfile_stream << residue_num << "	A	EX	1	NOTAA	CDEFHKNPQRWY" << endl;
 										count_to_minimize_too_many_core_heading_FWY_on_core_strands	=	0;

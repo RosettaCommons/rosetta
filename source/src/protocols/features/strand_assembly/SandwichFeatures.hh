@@ -712,8 +712,8 @@ public:
 		core::pose::Pose & dssp_pose,
 		utility::vector1<core::Size>	all_distinct_sheet_ids);
 
-	core::Size
-	report_shortest_dis_between_sheets_by_aro (
+	core::Real
+	report_shortest_dis_between_facing_aro_in_sw (
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size	sw_can_by_sh_id,
@@ -738,7 +738,7 @@ public:
 		core::Size sheet_id_2);
 
 	float
-	cal_shortest_dis_between_sheets_by_aro (
+	cal_shortest_dis_between_facing_aro_in_sw (
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose const & pose,
@@ -989,6 +989,12 @@ private:
 	bool
 	exclude_sandwich_that_has_non_canonical_LR_;
 
+	bool
+	exclude_sandwich_that_has_non_canonical_properties_;
+
+	bool
+	exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_;
+
 	core::Real
 	max_inter_strand_angle_to_not_be_same_direction_strands_;
 
@@ -1099,7 +1105,7 @@ private:
 	CB_b_factor_cutoff_for_electrostatic_interactions_;
 
 	core::Size
-	primary_seq_distance_cutoff_for_electrostatic_interactions_;
+	min_primary_seq_distance_diff_for_electrostatic_interactions_;
 
 
 	bool
