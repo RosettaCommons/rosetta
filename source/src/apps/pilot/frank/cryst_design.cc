@@ -1055,6 +1055,8 @@ CrystDock::resample_maps_and_get_self(
 
 		// add interface if large enough
 		cb_overlap_abc *= voxel_volume_;
+		//ca_overlap *= voxel_volume;
+		
 		if ( cb_overlap_abc > mininterface_ ) {
 			p1_interface_map.push_back(
 				SingleInterface(
@@ -1712,10 +1714,10 @@ CrystDock::get_interfaces_allatom(
 			if (contact>mininterface_) {
 				// make minipose & score
 				core::pose::Pose poseCopy = pose;
-				Real motif_score = -(Real)contact;
+				Real motif_score = (Real)contact;
 				allInterfaces.push_back(
-					SingleInterface( R_i, T_i, -motif_score ) );
-
+					SingleInterface( R_i, T_i, motif_score ) );
+        TR << "s:" << s << " i:" <<i<<" k:"<< k <<" motif_score:"<< motif_score << std::endl;
 			}
 		}
 	}
@@ -1913,6 +1915,7 @@ CrystDock::apply( Pose & pose) {
 	}
 
 
+
 	// get SS
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
@@ -1980,6 +1983,7 @@ CrystDock::apply( Pose & pose) {
 		mininterface_ = 0.0001;  // we want to evaluate all interfaces
 
 		utility::vector1<Size> symmoplist;
+
 		numeric::xyzVector<Real> offset_grid;
 		numeric::xyzVector<int> offset_grid_pt;
 		utility::vector1<SingleInterface> iinfo;
@@ -2009,7 +2013,7 @@ CrystDock::apply( Pose & pose) {
 
 		// exact cb contact count
 		iinfo.clear();
-		get_interfaces_allatom( pose, rts, identity, offset_grid_pt, iinfo );
+		get_interfaces_allatom( pose, rts, identity, native_shift, iinfo );
 		core::Real cb_score = get_interface_score( pose, iinfo, rts );
 
 		TR << "OVERLAP score = " << ca_score << std::endl;
@@ -2020,11 +2024,12 @@ CrystDock::apply( Pose & pose) {
 		pose.apply_transform_Rx_plus_v( identity, i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]) );
 
 		numeric::xyzVector<Real> xyz = i2c_*numeric::xyzVector<Real>(offset_grid_pt[0],offset_grid_pt[1],offset_grid_pt[2]);
+
 		std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
 		utility::vector1< std::string > temp_out_names= utility::split( base_name );
 		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 		base_name = out_name.base();
-		InterfaceHit ih(cb_score, xyz[0], xyz[1], xyz[2], 0, utility::vector1<SingleInterface>() );
+		InterfaceHit ih(cb_score, 0.0,0.0,0.0, 0, utility::vector1<SingleInterface>() );
 		std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( 1, 8, '0' )+".pdb";
 		dump_transformed_pdb( pose, ih, urs, outname, base_name );
 
