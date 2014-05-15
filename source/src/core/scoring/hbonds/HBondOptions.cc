@@ -106,7 +106,7 @@ HBondOptions::HBondOptions():
 	initialize_from_options();
 }
 
-void HbondOptions::initialize_from_options() {
+void HBondOptions::initialize_from_options() {
 	using namespace basic::options;
 	if (option.has(OptionKeys::membrane::Mhbond_depth) &&
 		option[OptionKeys::membrane::Mhbond_depth].user()){
