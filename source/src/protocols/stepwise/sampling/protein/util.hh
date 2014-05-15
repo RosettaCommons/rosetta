@@ -79,8 +79,8 @@ namespace protein {
 																			core::Size const base_res,
 																			core::Size const base_res2,
 																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
-	void
-	fragment_set_slice ( core::fragment::ConstantLengthFragSetOP & fragset, utility::vector1< core::Size > const & slice_res );
+
+	// Undefined, commenting out to fix PyRosetta build  void fragment_set_slice ( core::fragment::ConstantLengthFragSetOP & fragset, utility::vector1< core::Size > const & slice_res );
 
 	void
 	figure_out_protein_modeling_info( core::pose::Pose const & pose,

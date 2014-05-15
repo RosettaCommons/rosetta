@@ -68,7 +68,7 @@ namespace packer {
 		void	set_working_pack_res( utility::vector1< core::Size > const & setting );
 		utility::vector1< core::Size > const & working_pack_res() const { return working_pack_res_; }
 
-		bool working_pack_res_was_inputted() const;
+		// Undefined, commenting out to fix PyRosetta build  bool working_pack_res_was_inputted() const;
 
 		void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 

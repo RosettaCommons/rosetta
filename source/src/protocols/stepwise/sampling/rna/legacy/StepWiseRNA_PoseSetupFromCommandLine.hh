@@ -50,7 +50,7 @@ namespace legacy {
 
 	StepWiseRNA_PoseSetupOP setup_pose_setup_class( working_parameters::StepWiseWorkingParametersOP & working_parameters, bool const copy_DOF = true );
 
-	void check_if_silent_file_exists();
+	// Undefined, commenting out to fix PyRosetta build  void check_if_silent_file_exists();
 
 	bool
 	get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
