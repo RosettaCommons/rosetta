@@ -50,6 +50,8 @@ public:
 
 	HBondOptions( std::string params_db_tag );
 
+	void initialize_from_options();
+
 	virtual ~HBondOptions();
 
 	/// copy constructor

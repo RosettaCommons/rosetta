@@ -69,39 +69,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	ldsrbb_minlength_( 4 ),
 	ldsrbb_maxlength_( 17 )
 {
-	using namespace basic::options;
-	if (option.has(OptionKeys::membrane::Mhbond_depth) &&
-		option[OptionKeys::membrane::Mhbond_depth].user()){
-		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
-	}
-	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
-	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
-	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
-	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
-	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
-	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
-
-	if (option[ OptionKeys::score::length_dep_srbb ].user())
-		length_dependent_srbb_ = option[ OptionKeys::score::length_dep_srbb ];
-	if (option[ OptionKeys::score::ldsrbb_low_scale ].user())
-		ldsrbb_low_scale_ = option[ OptionKeys::score::ldsrbb_low_scale ];
-	if (option[ OptionKeys::score::ldsrbb_high_scale ].user())
-		ldsrbb_high_scale_ = option[ OptionKeys::score::ldsrbb_high_scale ];
-	if (option[ OptionKeys::score::ldsrbb_minlength ].user())
-		ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
-	if (option[ OptionKeys::score::ldsrbb_maxlength ].user())
-		ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
-
-	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
-		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
-	}
-
-	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
-	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
-
-	if ( option.has( OptionKeys::corrections::score::hbond_energy_shift)) {
-		hbond_energy_shift_ = option[ OptionKeys::corrections::score::hbond_energy_shift ];
-	}
+	initialize_from_options();
 }
 
 
@@ -135,11 +103,17 @@ HBondOptions::HBondOptions():
 			option[OptionKeys::score::hbond_params]() != params_database_tag_ ){
 		params_database_tag_ = option[OptionKeys::score::hbond_params];
 	}
+	initialize_from_options();
+}
+
+void HbondOptions::initialize_from_options() {
+	using namespace basic::options;
 	if (option.has(OptionKeys::membrane::Mhbond_depth) &&
 		option[OptionKeys::membrane::Mhbond_depth].user()){
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
 	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
 	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
