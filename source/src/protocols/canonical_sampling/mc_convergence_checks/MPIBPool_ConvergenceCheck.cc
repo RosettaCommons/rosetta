@@ -610,7 +610,7 @@ void MPIBPool_RMSD::finalize(){
 
 //
   void MPIBPool_RMSD::create_comm( int ranks_to_include[], int new_size ){
-    //int returnval;
+    int returnval;
     MPI_Group new_pool_group, old_pool_group;
     MPI_Comm dup_pool_comm;
     //tr.Debug << "creating a duplicate communicator from ranks: " << std::endl;
@@ -627,13 +627,13 @@ void MPIBPool_RMSD::finalize(){
     //tr.Debug << std::endl;
     PROF_START( basic::MPICOMMCREATION );
     MPI_Comm_dup( MPI_COMM_POOL, &dup_pool_comm );
-    //returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
+    returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
     assert(returnval == MPI_SUCCESS );
     //tr.Debug << "created comm-group based on old pool" << std::endl;
-    //returnval = MPI_Group_incl( old_pool_group, (new_size), ranks_to_include, &new_pool_group );
+    returnval = MPI_Group_incl( old_pool_group, (new_size), ranks_to_include, &new_pool_group );
     assert(returnval == MPI_SUCCESS );
     //tr.Debug << " created new group based on trajs that are still active " << std::endl;
-    //returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
+    returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
     assert(returnval == MPI_SUCCESS );
     //tr.Debug << "created new comm based on this new group " << std::endl;
     if( is_active_node ){

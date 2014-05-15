@@ -1214,18 +1214,18 @@ namespace mc_convergence_checks{
 
 
   void  MPIHPool_RMSD::create_comm( int* ranks_to_include, int new_size ){
-   // int returnval;
+    int returnval;
     MPI_Group new_pool_group, old_pool_group;
     MPI_Comm dup_pool_comm;
     PROF_START( basic::MPICOMMCREATION );
     MPI_Comm_dup( MPI_COMM_POOL, &dup_pool_comm );
-    //returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
+    returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
     assert(returnval == MPI_SUCCESS );
 
-    //returnval = MPI_Group_incl( old_pool_group, new_size, ranks_to_include, &new_pool_group );
+    returnval = MPI_Group_incl( old_pool_group, new_size, ranks_to_include, &new_pool_group );
     assert(returnval == MPI_SUCCESS );
 
-    //returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
+    returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
     assert(returnval == MPI_SUCCESS );
     PROF_STOP( basic::MPICOMMCREATION );
 
