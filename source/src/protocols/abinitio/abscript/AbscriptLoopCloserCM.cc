@@ -41,6 +41,10 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 
+#ifdef WIN32
+  #include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
 //Utility Headers
 
 #include <basic/options/option.hh>

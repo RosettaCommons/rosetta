@@ -330,7 +330,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 	// Pass 2: Add all atoms for the residue
 	int n =0;
 	for(std::vector<Atom>::iterator it = scatoms.begin(); it != scatoms.end(); ++it) {
-#ifdef WIN32 // windows WINAPI has an AddAtom function
+#if defined(WIN32) && !defined(WIN_PYROSETTA) // windows WINAPI has an AddAtom function
 		if(AddAtomWIN32(molecule, *it)) ++n;
 #else
 		if(AddAtom(molecule, *it)) ++n;
@@ -348,7 +348,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 /// of atoms via this function is rarely needed.
 /// This function also looks-up the atom radius and density.
 /// Returns true on success.
-#ifdef WIN32  // windows WINAPI has an AddAtom function
+#if defined(WIN32) && !defined(WIN_PYROSETTA)  // windows WINAPI has an AddAtom function
 int MolecularSurfaceCalculator::AddAtomWIN32(int molecule, Atom &atom)
 #else
 int MolecularSurfaceCalculator::AddAtom(int molecule, Atom &atom)

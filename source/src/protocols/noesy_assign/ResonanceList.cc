@@ -200,7 +200,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 			if ( fl_tag!="None" ) {
 				if ( fl_tag[0]!='#' && fl_tag[0]!='[' ) {
 					throw utility::excn::EXCN_BadInput( "did not recognize item " +fl_tag + " in line " + line );
-				} else { //that means fl_tag[0]=='[' or fl_tag[0]=='#'
+				} else { //that means fl_tag[0]=='[' || fl_tag[0]=='#'
 					std::stringstream float_info;
 					fl_tag[0]=' ';
 					bool closed( false );

@@ -32,6 +32,10 @@
 
 #include <core/pose/Pose.hh>
 
+#ifdef WIN32
+  #include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
 // Utility Headers
 #include <utility/vector0.fwd.hh>
 #include <utility/tag/Tag.hh>

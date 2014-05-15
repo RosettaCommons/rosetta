@@ -270,7 +270,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief add an atom to ResidueType
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 class AddAtomWIN32 : public PatchOperation {
 #else
 class AddAtom : public PatchOperation {
@@ -278,7 +278,7 @@ class AddAtom : public PatchOperation {
 public:
 
 	/// constructor
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 	AddAtomWIN32(
 #else
 	AddAtom(

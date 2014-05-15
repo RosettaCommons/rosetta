@@ -1513,10 +1513,26 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
     # r += '  boost::python::object name_space = module.attr("__dict__");\n'
     # r += '  boost::python::exec("print 123\\nimport rosetta3.utility\\nimport utility", name_space, name_space);\n'
 
+    def escape_to_python(s): return s.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')  # we can't use re.escape beacuse it C++ don't like some of it esacpes...
+
+
+    # it maybe hard to believe but apparatnly M$ compilers have *hard* limit on length of string literals (WHO ON EARTH WROTE THAT?????)... so we have to construct resulted string on the fly...
+    def generate_exec_code(python_code, namespace):
+        # in GCC this would be: boost::python::exec("{0}", namespace);\n'.format( escape_to_python(python_code) )
+        r = '{\n' \
+             '  std::string python_code;\n'
+
+        python_code = python_code.split(' ')
+        number_of_lines_to_add = 2048;
+        cpp_lines = [ ' '.join(python_code[i:i+number_of_lines_to_add]) for i in range(0, len(python_code), number_of_lines_to_add)]
+        for i, line in enumerate(cpp_lines): r += '  python_code += "{0}{1}";\n'.format(' ' if i else '', escape_to_python(line))
+        r += '  boost::python::exec(python_code.c_str(), {namespace});\n'.format(namespace=namespace)
+        r += '}\n'
+
+        return r
+
 
     if embed_python:
-        def escape_to_python(s): return s.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')  # we can't use re.escape beacuse it C++ don't like some of it esacpes...
-
         # embed some python files inside our lib
         for fn in sorted(glob.glob(root_module.binding_source_path + '/src/*.py'), key = lambda n: 'z'+n if n.find('__init__')>0 else n ):  # making init last module
             python_module_name = os.path.split(fn)[1][:-3] # removing path and '.py' suffix
@@ -1524,7 +1540,7 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
             #if python_module_name == '__init__': python_module_name = 'init_module' # we put default python module in to special namespace rosetta.init
 
             if python_module_name != '__init__':  # skipping because we will embed it without namespace below
-                #if python_module_name in ['version', '#__init__']:
+                #if python_module_name in ['version']:
                     print 'Embedding:', python_module_name
                     #r+= generate_monolith_module(root_module, modules, indent='  ', use_python_code=escape_to_python(file(fn).read()), python_module_name=python_module_name)
                     python_string = "import sys,imp\n" \
@@ -1546,7 +1562,11 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
 
                     r += '  boost::python::object main = boost::python::import("__main__");\n'
                     r += '  boost::python::object main_namespace = main.attr("__dict__");\n'
-                    r += '  boost::python::exec("{0}", main_namespace);\n'.format( escape_to_python(python_string) )
+
+
+                    #r += '  boost::python::exec("{0}", main_namespace);\n'.format( escape_to_python(python_string) )
+                    r += generate_exec_code(python_string, 'main_namespace')
+
                     #r += '  boost::python::object submodule = boost::python::extract<boost::python::object>( main_namespace.attr("{python_module_name}") );\n'.format(python_module_name=python_module_name)
                     #r += '  current.attr("{name}") = submodule;\n'.format(name=python_module_name)
                     r += '  current.attr("{name}") = main.attr("{name}");\n'.format(name=python_module_name)
@@ -1554,7 +1574,7 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
                     r += '}\n'
 
         init_file = file(root_module.binding_source_path + '/src/__init__.py').read()
-        init_file = init_file.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')
+        #init_file = init_file.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')
 
         r += '{ // Embedding: __init__\n' # in short: we create dummy 'init' submodule, execute __init__ in it and the copy all object in to root namespace
         r += '  boost::python::scope current;\n'
@@ -1606,7 +1626,10 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
 
         r += '  boost::python::object main = boost::python::import("__main__");\n'
         r += '  boost::python::object init_module = main.attr("__dict__");\n'
-        r += '  boost::python::exec("{0}", init_module);\n'.format(init_file)
+
+        #r += '  boost::python::exec("{0}", init_module);\n'.format( escape_to_python(init_file) )
+        r += generate_exec_code(init_file, 'init_module')
+
         #r += '  boost::python::exec("from rosetta.init_module import *\\n", init_module);\n'
         r += '  typedef boost::python::stl_input_iterator<boost::python::str> iterator_type;\n'
         r += '  for (iterator_type name(init_module), end; // for name in dir(object): \n'

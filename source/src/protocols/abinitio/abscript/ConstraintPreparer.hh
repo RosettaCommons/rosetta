@@ -25,6 +25,11 @@
 
 #include <core/pose/Pose.hh>
 
+#ifdef WIN32
+  #include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
+
 // C++ Headers
 
 // ObjexxFCL Headers

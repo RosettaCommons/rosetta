@@ -48,6 +48,12 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/stepwise/sampling/StepWiseConnectionSampler.fwd.hh>
 
+#ifdef PYROSETTA
+	#include <core/scoring/ScoreFunction.hh>
+	#include <protocols/stepwise/sampling/packer/StepWiseMasterPacker.hh>
+	#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#endif
+
 namespace protocols {
 namespace stepwise {
 namespace sampling {

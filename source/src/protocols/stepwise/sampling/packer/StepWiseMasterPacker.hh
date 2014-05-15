@@ -28,6 +28,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
+#ifdef PYROSETTA
+	#include <core/scoring/ScoreFunction.hh>
+#endif
+
+
 namespace protocols {
 namespace stepwise {
 namespace sampling {

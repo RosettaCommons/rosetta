@@ -205,7 +205,7 @@ public:
 	virtual ~MolecularSurfaceCalculator();
 	virtual int Init();
 	virtual void Reset();
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 	int AddAtomWIN32(int molecule, Atom &atom);
 #else
 	int AddAtom(int molecule, Atom &atom);

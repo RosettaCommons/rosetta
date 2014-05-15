@@ -473,10 +473,14 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
             #sys.stderr.flush()
 
         elif Platform == 'windows':
-            res = 0
-            try: output = subprocess.check_output(command_line, shell=True)
-            except subprocess.CalledProcessError as e: res, output = e.returncode, e.output
-            if print_output: print output
+            # res = 0
+            # try: output = subprocess.check_output(command_line, shell=True)
+            # except subprocess.CalledProcessError as e: res, output = e.returncode, e.output
+            # if print_output: print output
+
+            po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            while po.returncode is None: po.wait()
+            res = po.returncode
 
         else:
             po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -591,6 +595,49 @@ def mWait(tag=None, all_=False):
 
         else: return
 
+
+import multiprocessing
+
+def _sub_execute_(function, *args, **kwargs):  # have to be global because of how multiprocessing is implemented
+    res = function(*args, **kwargs)
+    #pipe.send(res)
+    #pipe.close()
+
+class SubCall:
+    ''' Implemention to replace mFork/mWait under Windows. For simplicity we just emulate 'execute' semantics
+    '''
+    def __init__(self): self.jobs = []
+
+    def call(self, function, *args, **kwargs):
+
+        self.wait(all=False)
+
+        #parent_pipe, child_pipe = multiprocessing.Pipe()
+
+        p = multiprocessing.Process(target=_sub_execute_, args=(function, )+args, kwargs=kwargs)
+        p.start()
+        self.jobs.append( NT(process=p) )
+        #print 'p exit code:', p.exitcode
+        #p.join()
+        #print 'p exit code:', p.exitcode
+        #if parent_pipe.poll(): print '_____________ parent_pipe:', parent_pipe.recv()
+
+
+    def wait(self, all=True):  # wait until number of process running is below Options.jobs or until all have terminated if all=True
+        while self.jobs:
+            for j in self.jobs:
+                if not j.process.is_alive():
+                    if j.process.exitcode is None: print 'Something not righ, I got None exit code for terminates subprocess, exiting...'; sys.exit(1)
+                    if j.process.exitcode != 0: sys.exit(1)  # must not be None because process should already terminated...
+                    self.jobs.remove(j)
+
+            if not all and len(self.jobs) < Options.jobs: return
+
+    def execute(self, message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
+        if Options.jobs == 1: execute(message, command_line, return_=return_, untilSuccesses=untilSuccesses, print_output=print_output, verbose=verbose)
+        else: self.call(execute, message, command_line, return_=return_, untilSuccesses=untilSuccesses, print_output=print_output, verbose=verbose)
+
+_SC_ = SubCall()
 
 
 def getCompilerOptions():
@@ -942,18 +989,22 @@ def get_vc_compile_options():
         # removing /GL
         # adding /bigobj
         # Win32: return common + ' /bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
-        # Win64: removing /Oi, ---- Adding /GL  <-- scratch that
-        return common + ' /bigobj /Oi /O2 /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
+        # Win64: removing /Oi, ---- Adding /GL  <-- scratch that  /GL seems to enable gloabal optimization which make linking super slow...
+        return common + ' /bigobj /Oi /O2 /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
 
 def get_vc_link_options():
     #return 'zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'
     # /SUBSYSTEM:WINDOWS /OPT:ICF /ERRORREPORT:PROMPT /NOLOGO /TLBID:1 /MANIFEST /LTCG /NXCOMPAT /DYNAMICBASE  /OPT:REF /SUBSYSTEM:CONSOLE /MANIFESTUAC:"level='asInvoker' uiAccess='false'"
-    return '''/LTCG zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
+    # /LTCG
+    # To speed up linking adding: /INCREMENTAL ... and /VERBOSE to show all progress and /LTCG:STATUS to debug why it slow
+    # This works with decent speed!!! '''/INCREMENTAL:NO /OPT:NOREF /OPT:NOICF /VERBOSE:LIB /VERBOSE:REF /VERBOSE:INCR zlibstat.lib /MACHINE:X64 /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
+    return '''/INCREMENTAL:NO /OPT:NOREF /OPT:NOICF /VERBOSE:REF /VERBOSE:INCR zlibstat.lib /MACHINE:X64 /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
 
 
 def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     ''' bypassing scones and build rosetta on windows native
     '''
+
     #print '______________', build_dir
     pre_generated_sources = os.path.abspath(bindings_path + '/../../../../cross_compile' )  # bindings_path
     pre_generated_sources = os.path.join(pre_generated_sources, 'monolith' if Options.monolith else 'namespace')
@@ -963,7 +1014,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     print 'Using pre_generated_sources:', pre_generated_sources
 
     # copy svn_version file from pre-generated sources
-    shutil.copy2(pre_generated_sources + '/svn_version.cc', './../../core/svn_version.cc')
+    shutil.copy2(pre_generated_sources + '/svn_version.cc', binding_source_path+'./../../core/svn_version.cc')
 
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
@@ -1003,12 +1054,19 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             except OSError: pass
 
             obj = os.path.join(build_dir,s) + '.obj'
+            hh =  s[:-2] + 'hh'  # (generate .hh file from cc
+            fwd =  s[:-2] + 'fwd.hh'  # (generate .fwd.hh file from cc
 
-            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_vc_compile_options(), s, obj),
+            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s) or \
+               os.path.isfile(hh)  and os.path.getmtime(obj) < os.path.getmtime(hh)  or  \
+               os.path.isfile(fwd) and os.path.getmtime(obj) < os.path.getmtime(fwd):
+                _SC_.execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_vc_compile_options(), s, obj),
                         return_= 'tuple' if Options.continue_ else False, print_output=True)
 
-            if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
+            #if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
+
+        _SC_.wait()
+
 
 
     sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
@@ -1069,40 +1127,98 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     #
     #os.path.walk(Options.use_pre_generated_sources, visit, Options.use_pre_generated_sources)
 
-    objs = []
+    bindings_objs = []
     symbols = []
     #latest = None  # keeping track of dates of local .def files
     for dir_name, _, files in os.walk(pre_generated_sources):
         #print dir_name, dir_name.startswith(pre_generated_sources+'\\utility')
-        if Options.utility_only and not dir_name.startswith(pre_generated_sources+'\\utility'): continue
+        if Options.utility_only and not (dir_name == pre_generated_sources  or dir_name.startswith(pre_generated_sources+'\\utility')): continue
         if Options.core_only and dir_name.startswith(pre_generated_sources+'\\protocols'): continue
 
-        l = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
+        l, objs = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
         latest = max(l, latest)
 
-        py_objs = os.path.join(build_dir,'py_objs' )
-        f = file(py_objs, 'w');  f.write( ' '.join(objs) );  f.close()
+        bindings_objs += objs #[ o[:-len('.obj')] for o in objs]
 
-                #print '____ Adding %s <-- %s' % (symbols[-1], l)
+        #py_objs = os.path.join(build_dir,'py_objs' )
+        #f = file(py_objs, 'w');  f.write( ' '.join(objs) );  f.close()
 
-    symbols = list( set(symbols) )
-    #file('._all_needed_symbols_', 'w').write(res)
+        #print '____ Adding %s <-- %s' % (symbols[-1], l)
 
-    def_file = os.path.join(build_dir, 'rosetta_symbols.def')
+    _SC_.wait()
 
-    if (not os.path.isfile(dll))  or  os.path.getmtime(dll) < latest:
-        print '\n\nWriting final export list... %s symbols...' % len(symbols)
-        f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
-        #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
-        # /MACHINE:X64 Ws2_32.lib was: /MACHINE:X64 /OPT:NOREF /dll /libpath:p:/win_lib_64 {objs_files} zlibstat.lib
-        execute('Creating DLL {}...'.format(dll), 'cd {build_dir} && link {options} {objs_files} /DEF:{def_file} /out:{dll}'.format(options=get_vc_link_options(), build_dir=build_dir, objs_files=objs_files, def_file=def_file, dll=dll) )
+    print 'Linking bindings...'
 
 
-    for dir_name, _, files in os.walk(pre_generated_sources):
-        if Options.utility_only and not dir_name.startswith(pre_generated_sources+'\\utility'): continue
-        if Options.core_only and dir_name.startswith(pre_generated_sources+'\\protocols'): continue
+    if Options.monolith:
+        # libs = []
+        # objs_list_all += [ bindings_objs[i:i+number_of_objs_in_file] for i in range(0, len(bindings_objs), number_of_objs_in_file)]
+        # for i, objs in enumerate(objs_list_all):
+        #     temp_path = 'C:\\Users\\sergey\\PyRosetta\\build'
 
-        windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
+        #     obj_list = os.path.join(temp_path, 'bindings-objs-list-{:02d}'.format(i) )
+        #     lib = os.path.join(temp_path, 'bindings-static-{:02d}.lib'.format(i) )
+        #     with file(obj_list, 'w') as f: f.write( ' '.join( [o + '.obj' for o in objs] ) )
+        #     execute('Creating static lib {}...'.format(lib), 'cd {build_dir} && lib @{obj_list} /out:{lib}'.format(build_dir=build_dir, obj_list=obj_list, lib=lib) )
+        #     libs.append(lib)
+
+        # monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
+        # execute('Creating DLL %s...' % monolith_pyd,
+        #         'cd {build_dir} && link {options} {libs} /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
+        #                                                                              libs=' '.join(libs), monolith_pyd=monolith_pyd) )
+
+
+        # bindings_objs_list = os.path.join(bindings_path, 'bindings_objs_list' )
+        # with file(bindings_objs_list, 'w') as f:  f.write( ' '.join(bindings_objs) )
+        # print 'bindings_objs_list', bindings_objs_list
+
+        # monolith_static = os.path.join(bindings_path, 'rosetta_and_pyrosetta.lib')
+        # monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
+
+        # #         execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs-%02d ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /out:%s' % (build_dir, i, rosetta_lib))
+
+        # # we create static lib first and then lib DLL because otherwise it way too slow to link...
+        # execute('Creating static lib %s...' % monolith_static,
+        #         'cd {build_dir} && lib {objs_files} @{bindings_objs_list} /out:{monolith_static}'.format(build_dir=build_dir, options=get_vc_link_options(),
+        #                                                                                                      objs_files=objs_files, bindings_objs_list=bindings_objs_list,
+        #                                                                                                      monolith_static=monolith_static) )
+
+        # execute('Creating DLL %s...' % monolith_pyd,
+        #         'cd {build_dir} && link {options} {monolith_static} /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
+        #                                                                                                          objs_files=objs_files, bindings_objs_list=bindings_objs_list,
+        #                                                                                                          monolith_static=monolith_static, monolith_pyd=monolith_pyd) )
+
+
+        bindings_objs_list = os.path.join(bindings_path, 'bindings_objs_list' )
+        with file(bindings_objs_list, 'w') as f:  f.write( ' '.join(bindings_objs) )
+        print 'bindings_objs_list', bindings_objs_list
+
+        monolith_static = os.path.join(bindings_path, 'rosetta_and_pyrosetta.lib')
+        monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
+
+        execute('Creating DLL %s...' % monolith_pyd, # Ws2_32 is needed because of PyMolMover socket code
+                'cd {build_dir} && link {options} {objs_files} @{bindings_objs_list} Ws2_32.lib /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
+                                                                                                                 objs_files=objs_files, bindings_objs_list=bindings_objs_list,
+                                                                                                                 monolith_pyd=monolith_pyd) )
+    else:
+        symbols = list( set(symbols) )
+        #file('._all_needed_symbols_', 'w').write(res)
+
+        def_file = os.path.join(build_dir, 'rosetta_symbols.def')
+
+        if (not os.path.isfile(dll))  or  os.path.getmtime(dll) < latest:
+            print '\n\nWriting final export list... %s symbols...' % len(symbols)
+            f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
+            #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
+            # /MACHINE:X64 Ws2_32.lib was: /MACHINE:X64 /OPT:NOREF /dll /libpath:p:/win_lib_64 {objs_files} zlibstat.lib
+            execute('Creating DLL {}...'.format(dll), 'cd {build_dir} && link {options} {objs_files} /DEF:{def_file} /out:{dll}'.format(options=get_vc_link_options(), build_dir=build_dir, objs_files=objs_files, def_file=def_file, dll=dll) )
+
+
+        for dir_name, _, files in os.walk(pre_generated_sources):
+            if Options.utility_only and not dir_name.startswith(pre_generated_sources+'\\utility'): continue
+            if Options.core_only and dir_name.startswith(pre_generated_sources+'\\protocols'): continue
+
+            windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
 
     print 'Done building PyRosetta bindings for Windows!'
 
@@ -1142,12 +1258,12 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
             objs.append(obj)
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
-                res_and_output = execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_vc_compile_options(), source)  #  /D__PYROSETTA_ONE_LIB__
+                res_and_output = _SC_.execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_vc_compile_options(), source)  #  /D__PYROSETTA_ONE_LIB__
                                                                               #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
                                                                               + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
                                                                               + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=32'
                                                                               + ' /Fo%s ' % obj ), return_= 'tuple' if Options.continue_ else False )
-                if Options.continue_ and res_and_output[0]: print res_and_output[1];  return
+                if (not Options.monolith) and (Options.continue_ and res_and_output[0]): print res_and_output[1];  return latest, objs
                 #  /Iplatform/windows/32/msvc
                 #  /I../external/boost_1_55_0
                 #  /IBOOST_MSVC    /link rosetta_lib
@@ -1158,10 +1274,10 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
     -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=32 \
         -o %s' % (source, obj) )"""
 
-            latest = max(latest, os.path.getmtime(obj) )
+            if Options.jobs==1: latest = max(latest, os.path.getmtime(obj) )
 
         #
-        if (not os.path.isfile(symbols_file))   or  os.path.getmtime(symbols_file) < latest:
+        if (not Options.monolith) and ( (not os.path.isfile(symbols_file))   or  os.path.getmtime(symbols_file) < latest ):
 
             dummy = os.path.join( obj_dir, '_dummy_') #_rosetta_.pyd' )
 
@@ -1184,12 +1300,12 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
 
             if res  and  len(symbols) == 0:
                 print 'Somehow len symbols is 0! Please check _dummy_.errors for unexpected failures...'
-                if Options.continue_: return
+                if Options.continue_: return latest, objs
                 else: sys.exit(1)
 
 
 
-        all_symbols.extend( file(symbols_file).read().split('\n') )
+        if not Options.monolith: all_symbols.extend( file(symbols_file).read().split('\n') )
 
         if link:
             if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest  or  os.path.getmtime(pyd) < os.path.getmtime(rosetta_lib):
@@ -1199,7 +1315,7 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
                         'link %s %s %s /out:%s' % (get_vc_link_options(), ' '.join(objs), rosetta_lib, pyd) )
                 #map(os.remove, objs)
 
-    return latest
+    return latest, objs
 
 
 

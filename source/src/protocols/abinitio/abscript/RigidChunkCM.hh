@@ -21,6 +21,11 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.tmpl.hh>
 
+
+#ifdef WIN32
+  #include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
 // Project headers
 
 // C++ Headers

@@ -17,6 +17,10 @@
 #include <protocols/abinitio/abscript/StructPerturberCM.fwd.hh>
 #include <protocols/environment/ClaimingMover.hh>
 
+#ifdef WIN32
+  #include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
 // Package headers
 
 // Project headers

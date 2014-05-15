@@ -292,7 +292,7 @@ AddChiRotamer::apply( ResidueType & rsd ) const
 
 
 // AddAtom ///////////////////////////////////////////////////////////////////
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 AddAtomWIN32::AddAtomWIN32(
 #else
 AddAtom::AddAtom(
@@ -309,7 +309,7 @@ AddAtom::AddAtom(
 {}
 
 bool
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 AddAtomWIN32::apply( ResidueType & rsd ) const
 #else
 AddAtom::apply( ResidueType & rsd ) const
@@ -619,7 +619,7 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> mm_atom_type_name; // = line.substr( 19,4);
 		l >> charge;
 		if ( l.fail() ) return 0;
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 		return new AddAtomWIN32( atom_name, atom_type_name, mm_atom_type_name, charge );
 #else
 		return new AddAtom( atom_name, atom_type_name, mm_atom_type_name, charge );

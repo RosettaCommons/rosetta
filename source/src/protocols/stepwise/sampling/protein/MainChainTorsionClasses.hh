@@ -28,7 +28,8 @@ namespace sampling {
 namespace protein {
 
 //////////////////////////////////
-class MainChainTorsionSet: public utility::pointer::ReferenceCount {
+/*
+	class MainChainTorsionSet: public utility::pointer::ReferenceCount {
 
 
 public:
@@ -52,8 +53,8 @@ private:
 	core::Real omega_;
 };
 
-	typedef utility::vector1< MainChainTorsionSet > MainChainTorsionSetList ;
-
+typedef utility::vector1< MainChainTorsionSet > MainChainTorsionSetList ;
+*/
 
 } //protein
 } //sampling

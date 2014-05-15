@@ -94,15 +94,12 @@ namespace geometric_solvation {
     pose::Pose const & pose ) const;
 
   Real
-  geometric_sol_one_way_sc(
-                              conformation::Residue const & polar_rsd,
-                              conformation::Residue const & occ_rsd,
-                              pose::Pose const & pose ) const;
+  geometric_sol_one_way_sc(conformation::Residue const & polar_rsd,
+						   conformation::Residue const & occ_rsd,
+						   pose::Pose const & pose ) const;
 
-  inline
   Real
-  res_res_geometric_sol_one_way(
-                                conformation::Residue const & polar_rsd,
+  res_res_geometric_sol_one_way(conformation::Residue const & polar_rsd,
                                 conformation::Residue const & occ_rsd,
                                 pose::Pose const & pose ) const;
 

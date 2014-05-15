@@ -313,7 +313,7 @@ add_covalent_linkage_helper(
 						} //Finding unique name
 
 						//Create a new virt atom, using the unique name found above:
-#ifdef WIN32
+#if defined(WIN32) && !defined(WIN_PYROSETTA)
 						core::chemical::AddAtomWIN32 addvirt(virtname, "VIRT", "VIRT", 0.0);
 #else
 						core::chemical::AddAtom addvirt(virtname, "VIRT", "VIRT", 0.0);

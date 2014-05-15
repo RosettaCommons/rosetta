@@ -29,6 +29,7 @@ warnings.filterwarnings("ignore", "to-Python converter for .+ already registered
 #config = json.load( file( os.path.join( os.path.split(__file__)[0], 'config.json' ) ) )
 #config = json.load( file( os.path.join( os.path.split(__file__)[0], 'config.json' ) ) )
 #config = {"low_memory_mode": False, "protocols": False, "core": False, "basic": False, "numeric": False, "utility": True, 'monolith': True}
+#config = {"low_memory_mode": False, "protocols": False, "core": True, "basic": True, "numeric": True, "utility": True, 'monolith': True}
 config = {"low_memory_mode": False, "protocols": True, "core": True, "basic": True, "numeric": True, "utility": True, 'monolith': True}
 if '__file__' in vars():
     config_file_name = os.path.join( os.path.split(__file__)[0], 'config.json' )
@@ -92,9 +93,11 @@ import rosetta.utility.excn
 import rosetta.utility.file
 
 if config['monolith']:
-   import rosetta.basic.resource_manager
-   import rosetta.basic.datacache
-   import rosetta.core.scoring.func
+    if config['basic']:
+        import rosetta.basic.resource_manager
+        import rosetta.basic.datacache
+    if config['core']:
+        import rosetta.core.scoring.func
 
 if config['low_memory_mode']:
     import rosetta.core.pose
