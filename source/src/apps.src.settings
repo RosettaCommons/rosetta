@@ -177,6 +177,7 @@ sources = {
 	],
 	"public/pocket": [
 		"pocket_measure",
+		"make_exemplar",
 	],
     "public/rna_util": [
 	    "rna_thread",

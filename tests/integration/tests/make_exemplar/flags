@@ -1,0 +1,7 @@
+-s input/1r2d_closed.pdb
+-central_relax_pdb_num 97,143
+-pocket_grid_size 12
+-pocket_filter_by_exemplar
+-pocket_static_grid
+-out:levels core.grid.Pockets.PocketGrid:debug 
+

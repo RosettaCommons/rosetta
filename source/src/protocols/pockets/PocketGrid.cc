@@ -62,7 +62,7 @@
 namespace protocols {
 namespace pockets {
 
-static basic::Tracer TR("core.grid.Pockets.PocketGrid");
+	static basic::Tracer TR("core.grid.Pockets.PocketGrid", basic::t_debug);
 
 // Visual Studio is more particular about implicit upconversion than gcc
 #ifdef _WIN32
@@ -967,7 +967,7 @@ void PocketGrid::findSPS(core::Size thr, core::Real max){
 }
 
 bool PocketGrid::fill(core::Size x, core::Size y,core::Size z){
-	if (grid_[x][y][z]!=TP_POCKET && grid_[x][y][z]!=POCKET	){
+	if (grid_[x][y][z]!=TP_POCKET && grid_[x][y][z]!=POCKET){
 		return false;
 	}
 	if (pockets_[x][y][z]!=EMPTY) return false;
@@ -1351,14 +1351,14 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 	int counter=1;
 	int counter2=9;
 
-outPDB_stream<<"ATOM			1	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			2	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			3	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			4	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			5	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			6	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			7	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
-outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      1  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      2  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      3  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      4  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      5  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      6  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      7  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+outPDB_stream<<"ATOM      8  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
 
 
 	core::Size x,y,z;
@@ -1366,24 +1366,24 @@ outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecisio
 		for (y=0;y<(ydim_); y++){
 			for (z=0;z<(zdim_); z++){
 				std::string concatenated_pdb_info;
-				concatenated_pdb_info += "ATOM	";
-				std::stringstream	tmp;
+				concatenated_pdb_info += "ATOM  ";
+				std::stringstream tmp;
 				tmp<<counter2;
-			if (counter2<10) concatenated_pdb_info += "		";
-				else if (counter2<100) concatenated_pdb_info += "	 ";
-				else if (counter2<1000) concatenated_pdb_info += "	";
+			if (counter2<10) concatenated_pdb_info += "    ";
+				else if (counter2<100) concatenated_pdb_info += "   ";
+				else if (counter2<1000) concatenated_pdb_info += "  ";
 				else if (counter2<10000) concatenated_pdb_info += " ";
-				concatenated_pdb_info += tmp.str()+"	";
+				concatenated_pdb_info += tmp.str()+"  ";
 				if (grid_[x][y][z]==EMPTY) {
 					continue;
 				}
-				if (grid_[x][y][z]==POCKET)	{
+				if (grid_[x][y][z]==POCKET) {
 					continue;
 				}
 				if (grid_[x][y][z]==PO_SURF){
 					continue;
 				}
-				if (grid_[x][y][z]==PO_BURIED)	{
+				if (grid_[x][y][z]==PO_BURIED) {
 					continue;
 				}
 				if (grid_[x][y][z]==HSURFACE) {
@@ -1392,35 +1392,35 @@ outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecisio
 				if (grid_[x][y][z]==PSURFACE) {
 					continue;
 				}
-				if (grid_[x][y][z]==TP_POCKET)	{
+				if (grid_[x][y][z]==TP_POCKET) {
 					continue;
 				}
-				if (grid_[x][y][z]==TP_SURF)	{
+				if (grid_[x][y][z]==TP_SURF) {
 					concatenated_pdb_info += "TPS TPS";
 				}
-				if (grid_[x][y][z]==TP_BURIED)	{
+				if (grid_[x][y][z]==TP_BURIED) {
 					continue;
 				}
-				if (grid_[x][y][z]==PO_EDGE)	{
+				if (grid_[x][y][z]==PO_EDGE) {
 					continue;
 				}
-				if (grid_[x][y][z]==TP_EDGE)	{
+				if (grid_[x][y][z]==TP_EDGE) {
 					concatenated_pdb_info += "TPE TPE";
 				}
-				if (grid_[x][y][z]==T_SURFACE)	{
-					concatenated_pdb_info += "TS	TS ";
+				if (grid_[x][y][z]==T_SURFACE) {
+					concatenated_pdb_info += "TS  TS ";
 				}
-				if (grid_[x][y][z]==ST_SURFACE)	{
+				if (grid_[x][y][z]==ST_SURFACE) {
 					concatenated_pdb_info += "STS STS";
 				}
-				if (grid_[x][y][z]==TARGET)	{
+				if (grid_[x][y][z]==TARGET) {
 					continue;
 				}
-				if (grid_[x][y][z]==SUBTARGET)	{
+				if (grid_[x][y][z]==SUBTARGET) {
 					continue;
-				}
+			 }
 				if (grid_[x][y][z]==PROTEIN) {
-			concatenated_pdb_info += "PR	PR ";
+			concatenated_pdb_info += "PR  PR ";
 					//continue;
 				}
 				if (grid_[x][y][z]==PSP) {
@@ -1428,7 +1428,7 @@ outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecisio
 				}
 
 				tmp.str(std::string());
-				tmp<<"					"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x*stepSize_+xcorn_<<std::setw(8)<<y*stepSize_+ycorn_<<std::setw(8)<<z*stepSize_+zcorn_<<std::endl;
+				tmp<<"          "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x*stepSize_+xcorn_<<std::setw(8)<<y*stepSize_+ycorn_<<std::setw(8)<<z*stepSize_+zcorn_<<std::endl;
 				concatenated_pdb_info += tmp.str();
 				counter++;
 				outPDB_stream<<concatenated_pdb_info;
@@ -1441,39 +1441,39 @@ outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecisio
 		else smallPocket=false;
 		for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 			std::string concatenated_pdb_info;
-			concatenated_pdb_info += "ATOM	";
-			std::stringstream	tmp;
+			concatenated_pdb_info += "ATOM  ";
+			std::stringstream tmp;
 			tmp<<counter2;
-			if (counter2<10) concatenated_pdb_info += "		";
-			else if (counter2<100) concatenated_pdb_info += "	 ";
-			else if (counter2<1000) concatenated_pdb_info += "	";
+			if (counter2<10) concatenated_pdb_info += "   ";
+			else if (counter2<100) concatenated_pdb_info += "   ";
+			else if (counter2<1000) concatenated_pdb_info += "  ";
 			else if (counter2<10000) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			if (smallPocket){
-				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "STP STP	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "STS STS	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "STB STB	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "STE STE	";
+				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "STP STP  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "STS STS  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "STB STB  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "STE STE  ";
 			}else{
-				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP	TP	 ";
-				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE	";
+				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP  TP   ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE  ";
 			}
-			if (grid_[pit->x][pit->y][pit->z]==POCKET) concatenated_pdb_info += "PC	PC	 ";
-			if (grid_[pit->x][pit->y][pit->z]==PO_SURF) concatenated_pdb_info += "PCS PCS	";
-			if (grid_[pit->x][pit->y][pit->z]==PO_BURIED) concatenated_pdb_info += "PCB PCB	";
-			if (grid_[pit->x][pit->y][pit->z]==PO_EDGE) concatenated_pdb_info += "PCE PCE	";
+			if (grid_[pit->x][pit->y][pit->z]==POCKET) concatenated_pdb_info += "PC  PC   ";
+			if (grid_[pit->x][pit->y][pit->z]==PO_SURF) concatenated_pdb_info += "PCS PCS  ";
+			if (grid_[pit->x][pit->y][pit->z]==PO_BURIED) concatenated_pdb_info += "PCB PCB  ";
+			if (grid_[pit->x][pit->y][pit->z]==PO_EDGE) concatenated_pdb_info += "PCE PCE  ";
 
 			tmp.str(std::string());
 			tmp<<clustNo;
-			if (clustNo<10) concatenated_pdb_info += "	 ";
-			else if (clustNo<100) concatenated_pdb_info += "	";
+			if (clustNo<10) concatenated_pdb_info += "   ";
+			else if (clustNo<100) concatenated_pdb_info += "  ";
 			else if (clustNo<1000) concatenated_pdb_info += " ";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 			concatenated_pdb_info += tmp.str();
 			counter2++;
 			outPDB_stream<<concatenated_pdb_info;
@@ -1511,29 +1511,29 @@ outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecisio
 			for (std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 				std::string concatenated_pdb_info;
 				concatenated_pdb_info += "HETATM";
-				std::stringstream	tmp;
+				std::stringstream tmp;
 				tmp<<counter2;
-				if (counter2<10) concatenated_pdb_info += "		";
-				else if (counter2<100) concatenated_pdb_info += "	 ";
-				else if (counter2<1000) concatenated_pdb_info += "	";
+				if (counter2<10) concatenated_pdb_info += "    ";
+				else if (counter2<100) concatenated_pdb_info += "   ";
+				else if (counter2<1000) concatenated_pdb_info += "  ";
 				else if (counter2<10000) concatenated_pdb_info += " ";
 				else concatenated_pdb_info += "";
-				tmp << "	 "<<pit->atom_type;
+				tmp << "   "<<pit->atom_type;
 				concatenated_pdb_info += tmp.str()+" ";
 				if (pit->atom_type.length() ==1) concatenated_pdb_info += " ";
 				concatenated_pdb_info += "TMP A";
 
 				tmp.str(std::string());
 				tmp<<clustNo;
-				if (clustNo<10) concatenated_pdb_info += "	 ";
-				else if (clustNo<100) concatenated_pdb_info += "	";
+				if (clustNo<10) concatenated_pdb_info += "   ";
+				else if (clustNo<100) concatenated_pdb_info += "  ";
 				else if (clustNo<1000) concatenated_pdb_info += " ";
-				concatenated_pdb_info += tmp.str()+"	";
+				concatenated_pdb_info += tmp.str()+"  ";
 				tmp.str(std::string());
 				if (pit->atom_type.compare("C") == 0)
-					tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<"	1.00	2.03					 "<<pit->atom_type<<std::endl;
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<"  1.00  2.03           "<<pit->atom_type<<std::endl;
 				else
-					tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"	1.00	2.03					"<<pit->atom_type<<std::endl;
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          "<<pit->atom_type<<std::endl;
 
 				concatenated_pdb_info += tmp.str();
 				counter2++;
@@ -1617,32 +1617,32 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 			if (minipock)
 			concatenated_pdb_info += "HETATM";
 		else
-			concatenated_pdb_info += "ATOM	";
-			std::stringstream	tmp;
+			concatenated_pdb_info += "ATOM  ";
+			std::stringstream tmp;
 			tmp<<counter2;
-			if (counter2<10) concatenated_pdb_info += "		";
-			else if (counter2<100) concatenated_pdb_info += "	 ";
-			else if (counter2<1000) concatenated_pdb_info += "	";
+			if (counter2<10) concatenated_pdb_info += "    ";
+			else if (counter2<100) concatenated_pdb_info += "   ";
+			else if (counter2<1000) concatenated_pdb_info += "  ";
 			else if (counter2<10000) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			if (minipock){
-				concatenated_pdb_info += " C	TMP A";
+				concatenated_pdb_info += " C  TMP A";
 			}else{
-				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP	TP	 ";
-				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE	";
+				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP  TP   ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE  ";
 			}
 			tmp.str(std::string());
 			tmp<<clustNo;
-			if (clustNo<10) concatenated_pdb_info += "	 ";
-			else if (clustNo<100) concatenated_pdb_info += "	";
+			if (clustNo<10) concatenated_pdb_info += "   ";
+			else if (clustNo<100) concatenated_pdb_info += "  ";
 			else if (clustNo<1000) concatenated_pdb_info += " ";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_;
-			if (minipock) tmp << "	1.00	2.03					 C";
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_;
+			if (minipock) tmp << "  1.00  2.03          C";
 			tmp << std::endl;
 			concatenated_pdb_info += tmp.str();
 			counter2++;
@@ -1684,24 +1684,24 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 					}else continue;
 		std::string concatenated_pdb_info;
 		concatenated_pdb_info += "HETATM";
-		std::stringstream	tmp;
+		std::stringstream tmp;
 		tmp<<counter2;
-		if (counter2<10) concatenated_pdb_info += "		";
-		else if (counter2<100) concatenated_pdb_info += "	 ";
-		else if (counter2<1000) concatenated_pdb_info += "	";
+		if (counter2<10) concatenated_pdb_info += "    ";
+		else if (counter2<100) concatenated_pdb_info += "   ";
+		else if (counter2<1000) concatenated_pdb_info += "  ";
 		else if (counter2<10000) concatenated_pdb_info += " ";
 		else concatenated_pdb_info += "";
-		concatenated_pdb_info += tmp.str()+"	";
-		concatenated_pdb_info += " C	TMP A";
+		concatenated_pdb_info += tmp.str()+"  ";
+		concatenated_pdb_info += " C  TMP A";
 		tmp.str(std::string());
 		tmp<<clustNo;
-		if (clustNo<10) concatenated_pdb_info += "	 ";
-		else if (clustNo<100) concatenated_pdb_info += "	";
+		if (clustNo<10) concatenated_pdb_info += "   ";
+		else if (clustNo<100) concatenated_pdb_info += "  ";
 		else if (clustNo<1000) concatenated_pdb_info += " ";
-		concatenated_pdb_info += tmp.str()+"	";
+		concatenated_pdb_info += tmp.str()+"  ";
 		tmp.str(std::string());
-		tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<tx*stepSize_+xcorn_<<std::setw(8)<<ty*stepSize_+ycorn_<<std::setw(8)<<tz*stepSize_+zcorn_;
-		if (minipock) tmp << "	1.00	2.03					 C";
+		tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<tx*stepSize_+xcorn_<<std::setw(8)<<ty*stepSize_+ycorn_<<std::setw(8)<<tz*stepSize_+zcorn_;
+		if (minipock) tmp << "  1.00  2.03           C";
 		tmp << std::endl;
 		concatenated_pdb_info += tmp.str();
 		counter2++;
@@ -1756,33 +1756,33 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 		 if (!cit->isTarget(numTargets_)) continue;
 		for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 			std::string concatenated_pdb_info;
-			concatenated_pdb_info += "ATOM	";
+			concatenated_pdb_info += "ATOM  ";
 			std::stringstream	tmp;
 			tmp<<counter2;
-			if (counter2<10) concatenated_pdb_info += "		";
-			else if (counter2<100) concatenated_pdb_info += "	 ";
-			else if (counter2<1000) concatenated_pdb_info += "	";
+			if (counter2<10) concatenated_pdb_info += "    ";
+			else if (counter2<100) concatenated_pdb_info += "   ";
+			else if (counter2<1000) concatenated_pdb_info += "  ";
 			else if (counter2<10000) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			concatenated_pdb_info += tmp.str()+"	";
-			if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP	TP	 ";
-			if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS	";
-			if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB	";
-			if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE	";
+			concatenated_pdb_info += tmp.str()+"  ";
+			if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP  TP   ";
+			if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS  ";
+			if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB  ";
+			if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE  ";
 
 			tmp.str(std::string());
 			tmp<<clustNo;
-			if (clustNo<10) concatenated_pdb_info += "	 ";
-			else if (clustNo<100) concatenated_pdb_info += "	";
+			if (clustNo<10) concatenated_pdb_info += "   ";
+			else if (clustNo<100) concatenated_pdb_info += "  ";
 			else if (clustNo<1000) concatenated_pdb_info += " ";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
 			numeric::xyzVector<core::Real> coord(pit->x*stepSize_+xcorn_,pit->y*stepSize_+ycorn_,pit->z*stepSize_+zcorn_);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
 			coord = rot3 * coord;
 
-			tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<coord(2)<<std::setw(8)<<coord(3)<<std::endl;
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<coord(2)<<std::setw(8)<<coord(3)<<std::endl;
 			concatenated_pdb_info += tmp.str();
 			counter2++;
 			outPDB_stream<<concatenated_pdb_info;
@@ -2550,13 +2550,13 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 					if (x<2 || x>xdim_ -3 || y<2 || y>ydim_ -3 || z<2 || z>zdim_ -3) continue;
 
 					if (!isTargetPocketPoint(x,y,z) && !isTargetPocketPoint(x+2,y,z) && !isTargetPocketPoint(x-2,y,z) && !isTargetPocketPoint(x,y+2,z) && !isTargetPocketPoint(x,y-2,z) &&
-						!isTargetPocketPoint(x,y,z+2) &&	!isTargetPocketPoint(x,y,z-2))	continue;
+						!isTargetPocketPoint(x,y,z+2) && !isTargetPocketPoint(x,y,z-2)) continue;
 
 					if (!isProteinPoint(x,y,z) && !isProteinPoint(x+2,y,z) && !isProteinPoint(x-2,y,z) && !isProteinPoint(x,y+2,z) && !isProteinPoint(x,y-2,z) && !isProteinPoint(x,y,z+2) &&
 						!isProteinPoint(x,y,z-2)){
 						//TR<<x<<" "<<y<<" "<<z<<std::endl;
 						bool pockpt=true;
-						//bool tpt=false	;
+						//bool tpt=false;
 						bool tpt=true;
 						int buriedness=0;
 						for (int i = -1; i <2; i++){
@@ -2590,7 +2590,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
 			//fill in points that are ideal for a hydrogen donor with an N
 			for ( core::chemical::AtomIndices::const_iterator
-				 anum	= rsd.accpt_pos().begin(),
+				 anum = rsd.accpt_pos().begin(),
 				 anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 				Size const aatm( *anum );
 				// Skip buried residues
@@ -2614,7 +2614,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 				switch( hybrid ) {
 					case SP2_HYBRID:
 						theta = 180.0 - 120.0;
-						phi_list.push_back(	 0.0 );
+						phi_list.push_back( 0.0 );
 						phi_list.push_back( 180.0 );
 						break;
 					case SP3_HYBRID:
@@ -2739,7 +2739,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		for (std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit){
 			for (std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 				if (pit->atom_type.compare("C") == 0)
-					TR<<pit->atom_type<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+					TR<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 				else
 					TR<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
 				for (int c = -1; c <2; c++){
@@ -2800,7 +2800,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		for (std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit){
 			for (std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 				if (pit->atom_type.compare("C") == 0)
-					TR<<pit->atom_type<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+					TR<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 				else
 					TR<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
 			}
@@ -2813,7 +2813,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		for (std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit){
 			for (std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 				if (pit->atom_type.compare("C") == 0)
-					TR<<pit->atom_type<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+					TR<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 				else
 					TR<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
 			}
@@ -2854,7 +2854,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		for (std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit){
 			for (std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 				if (pit->atom_type.compare("C") == 0)
-					TR<<pit->atom_type<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+					TR<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 				else
 					TR<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
 			}
@@ -3080,7 +3080,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 				if (( grid_[0][y][z] == TP_POCKET) || ( grid_[0][y][z] == TP_BURIED) || ( grid_[0][y][z] == TP_EDGE) || ( grid_[xdim_-1][y][z] == TP_POCKET) || ( grid_[xdim_-1][y][z] == TP_SURF) || ( grid_[xdim_-1][y][z] == TP_BURIED) || ( grid_[xdim_-1][y][z] == TP_EDGE)){
 					dims(1)=1;
 				}
-				if (( grid_[x][0][z] == TP_POCKET) || ( grid_[x][0][z] == TP_SURF) || ( grid_[x][0][z] == TP_BURIED) || ( grid_[x][0][z] == TP_EDGE) || ( grid_[x][ydim_-1][z] == TP_POCKET) || ( grid_[x][ydim_-1][z] == TP_SURF) ||	( grid_[x][ydim_-1][z] == TP_BURIED) || ( grid_[x][ydim_-1][z] == TP_EDGE)) {
+				if (( grid_[x][0][z] == TP_POCKET) || ( grid_[x][0][z] == TP_SURF) || ( grid_[x][0][z] == TP_BURIED) || ( grid_[x][0][z] == TP_EDGE) || ( grid_[x][ydim_-1][z] == TP_POCKET) || ( grid_[x][ydim_-1][z] == TP_SURF) || ( grid_[x][ydim_-1][z] == TP_BURIED) || ( grid_[x][ydim_-1][z] == TP_EDGE)) {
 					dims(2)=1;
 				}
 				if (( grid_[x][y][0] == TP_POCKET) || ( grid_[x][y][0] == TP_SURF) || ( grid_[x][y][0] == TP_BURIED) || ( grid_[x][y][0] == TP_EDGE) || ( grid_[x][y][zdim_-1] == TP_POCKET) || ( grid_[x][y][zdim_-1] == TP_SURF) || ( grid_[x][y][zdim_-1] == TP_BURIED) || ( grid_[x][y][zdim_-1] == TP_EDGE)){
@@ -3157,7 +3157,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		}
 
 
-	bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::pose::Pose const & inPose, bool center_target, core::Real x, core::Real y, core::Real z	) {
+	bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::pose::Pose const & inPose, bool center_target, core::Real x, core::Real y, core::Real z ) {
 
 
 		using namespace core::chemical;
@@ -3473,18 +3473,18 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 						match_score += curr_weight;
 
 						// KK output_res_num needed
-						if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 MPO A	 "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
-					} else {
-						match_score += mismatch_weight;
-						// KK output_res_num needed
-						if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 NPO A	 "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
-					}
-				} else {
-					//Score as mismatch if it's out of comparison's grid
-					match_score += mismatch_weight;
-					// KK output_res_num needed
-					if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 NPO A	 "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
-				}
+            if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MPO A   "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
+          } else {
+            match_score += mismatch_weight;
+            // KK output_res_num needed
+            if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   NPO A   "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
+          }
+        } else {
+          //Score as mismatch if it's out of comparison's grid
+          match_score += mismatch_weight;
+          // KK output_res_num needed
+          if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   NPO A   "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
+        }
 				output_res_num++;
 			}
 
@@ -3646,31 +3646,31 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 			}
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "HETATM";
-			std::stringstream	tmp;
+			std::stringstream tmp;
 			tmp<<counter2;
-			if (counter2<10) concatenated_pdb_info += "		";
-			else if (counter2<100) concatenated_pdb_info += "	 ";
-			else if (counter2<1000) concatenated_pdb_info += "	";
+			if (counter2<10) concatenated_pdb_info += "    ";
+			else if (counter2<100) concatenated_pdb_info += "   ";
+			else if (counter2<1000) concatenated_pdb_info += "  ";
 			else if (counter2<10000) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			if (minipock){
-				concatenated_pdb_info += " C	TMP A";
+				concatenated_pdb_info += " C  TMP A";
 			}else{
-				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP	TP	 ";
-				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB	";
-				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE	";
+				if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP  TP   ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB  ";
+				if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE  ";
 			}
 			tmp.str(std::string());
 			tmp<<clustNo;
-			if (clustNo<10) concatenated_pdb_info += "	 ";
-			else if (clustNo<100) concatenated_pdb_info += "	";
+			if (clustNo<10) concatenated_pdb_info += "   ";
+			else if (clustNo<100) concatenated_pdb_info += "  ";
 			else if (clustNo<1000) concatenated_pdb_info += " ";
-			concatenated_pdb_info += tmp.str()+"	";
+			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"	"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_;
-			if (minipock) tmp << "	1.00	2.03					 C";
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_;
+			if (minipock) tmp << "  1.00  2.03           C";
 			tmp << std::endl;
 			concatenated_pdb_info += tmp.str();
 			counter2++;
@@ -3839,7 +3839,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& gr ) :
 	}
 
 	//set eggshell CoM from eggshell_coord_list
-	eggshell_CoM_ =	calculate_center_xyz(eggshell_coord_list_);
+	eggshell_CoM_ = calculate_center_xyz(eggshell_coord_list_);
 
 	//Print grid points into a PDB file
 	using namespace basic::options;
@@ -3928,7 +3928,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& grd, core::pose::Pose const & liga
 	}
 
 	//set eggshell CoM from eggshell_coord_list
-	eggshell_CoM_ =	calculate_center_xyz(eggshell_coord_list_);
+	eggshell_CoM_ = calculate_center_xyz(eggshell_coord_list_);
 	//Print grid points into a PDB file
 	using namespace basic::options;
 	if (option[ OptionKeys::pocket_grid::print_grid ]()){
@@ -4076,10 +4076,10 @@ void EggshellGrid::write_eggshell_to_pdb( std::string const & output_pdbname ) c
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
 	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_coord_list_.begin(); pd != eggshell_coord_list_.end(); ++pd) {
-		outPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 EGG A	 1		"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+		outPDB_stream<<"HETATM    "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
 	}
 	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extra_coord_list_.begin(); pd != extra_coord_list_.end(); ++pd) {
-		outPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	O	 EXT B	 1		"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+		outPDB_stream<<"HETATM    "<<std::setw(2)<<1<<"  O   EXT B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
 	}
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -4095,14 +4095,14 @@ void EggshellGrid::write_eggshell_to_pdb( std::string const & output_pdbname, nu
 		coord = rot1 * coord;
 		coord = rot2 * coord;
 		coord = rot3 * coord;
-		outPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 EGG A	 1		"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(2)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(3)<<std::endl;
+		outPDB_stream<<"HETATM    "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(2)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(3)<<std::endl;
 	}
 	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extra_coord_list_.begin(); pd != extra_coord_list_.end(); ++pd) {
 		numeric::xyzVector<core::Real> coord(pd->x(),pd->y(),pd->z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
 		coord = rot3 * coord;
-		outPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	O	 EGG B	 1		"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(2)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(3)<<std::endl;
+		outPDB_stream<<"HETATM    "<<std::setw(2)<<1<<"  O   EGG B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(2)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(3)<<std::endl;
 	}
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -4117,7 +4117,7 @@ void EggshellGrid::write_grid_to_pdb( const PocketGrid& gr, std::string const & 
 	for (core::Size x=0;x<(gr.xdim_); x++){
 		for (core::Size y=0;y<(gr.ydim_); y++){
 			for (core::Size z=0;z<(gr.zdim_); z++){
-				outPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 GRD A	 1		"<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x*gr.stepSize_+gr.xcorn_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y*gr.stepSize_+gr.ycorn_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z*gr.stepSize_+gr.zcorn_<<std::endl;
+				outPDB_stream<<"HETATM    "<<std::setw(2)<<1<<"  C    GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x*gr.stepSize_+gr.xcorn_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y*gr.stepSize_+gr.ycorn_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z*gr.stepSize_+gr.zcorn_<<std::endl;
 			}
 		}
 	}
@@ -4142,8 +4142,8 @@ numeric::xyzVector<core::Real> EggshellGrid::calculate_center_xyz(std::list< num
 
 core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eggshell, std::string const & comparison_pdbname ) const {
 
-	TR << "My CoM is " << eggshell_CoM_.x() << " "	<< eggshell_CoM_.y() << " "	<< eggshell_CoM_.z() << std::endl;
-	TR << "Template CoM is " << template_eggshell.eggshell_CoM_.x() << " "	<< template_eggshell.eggshell_CoM_.y() << " "	<< template_eggshell.eggshell_CoM_.z() << std::endl;
+	TR << "My CoM is " << eggshell_CoM_.x() << " " << eggshell_CoM_.y() << " " << eggshell_CoM_.z() << std::endl;
+	TR << "Template CoM is " << template_eggshell.eggshell_CoM_.x() << " " << template_eggshell.eggshell_CoM_.y() << " " << template_eggshell.eggshell_CoM_.z() << std::endl;
 
 	bool write_comparison_pdb = false;
 	// note: string comparison will return non-zero if the strings are NOT equal
@@ -4180,18 +4180,18 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 				++common_points;
 				match_score += match_weight;
 				// KK output_res_num needed
-				if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 MEG A	 "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
+				if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MEG A   "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
 
 			} else {
 				match_score += mismatch_weight;
 				// KK output_res_num needed
-				if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 NEG A	 "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
+				if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   NEG A   "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
 			}
 		} else {
 			//Score as mismatch if it's out of comparison's grid
 			match_score += mismatch_weight;
 			// KK output_res_num needed
-			if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM	 "<<std::setw(2)<<1<<"	C	 NEG A	 "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
+			if ( write_comparison_pdb ) comparisonPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   NEG A   "<<std::setw(8)<<output_res_num<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_x<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_y<<std::setw(8)<<std::fixed<<std::setprecision(3)<<template_z<<std::endl;
 		}
 		output_res_num++;
 	}
