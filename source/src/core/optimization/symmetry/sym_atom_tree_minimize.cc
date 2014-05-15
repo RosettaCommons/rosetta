@@ -27,6 +27,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreType.hh>
@@ -67,7 +68,7 @@ namespace core {
 namespace optimization {
 namespace symmetry {
 
-static basic::Tracer TR("core.optimization.symmetry");
+static basic::Tracer TR("core.optimization.symmetry.sym_atom_tree_minimize");
 
 typedef id::DOF_ID DOF_ID;
 
@@ -139,7 +140,8 @@ atom_tree_dfunc(
 
 	//Real const deg2rad( numeric::conversions::radians(1.0) );
 
-	dE_dvars.resize( symm_min_map.nangles() );
+	dE_dvars.clear();
+	dE_dvars.resize( symm_min_map.nangles(), 0.0 ); // zero them out
 
 	// clear all the F1's and F2's
 	symm_min_map.zero_torsion_vectors();
@@ -173,6 +175,21 @@ atom_tree_dfunc(
 	symm_min_map.link_torsion_vectors();
 
 
+	/// now setup an index from dof ids to the integer index used in the minimization variables
+	id::DOF_ID_Map< int > independent_dof_node_index; // this can't be Size, it has to be int, compiler error otherwise
+	if ( symm_min_map.new_sym_min() ) { // only need this if we've got dependent dofs in the dof nodes list
+		pose::initialize_dof_id_map( independent_dof_node_index, pose, int(0) );
+		Size imap(0);
+		for ( SymMinimizerMap::const_iterator it = symm_min_map.begin(); it!= symm_min_map.end(); ++it ) {
+			if ( (*it)->dependent() ) continue;
+			++imap;
+			independent_dof_node_index[ (*it)->dof_id() ] = imap;
+		}
+		runtime_assert( imap == symm_min_map.nangles() ); // sanity check
+	}
+
+
+
 	/////////////////////////////////////////////////////////////////////////////
 	// now loop over the torsions in the map
 	int imap( 1 ); // for indexing into de_dvars( imap )
@@ -185,12 +202,31 @@ atom_tree_dfunc(
 		// derivatives of this particular degree of freedom
 		//
 		// eg rama,Paa,dunbrack,and torsional constraints
-		Real sfxn_dof_deriv = scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
-		Real scale = symm_min_map.torsion_scale_factor( dof_node ) / symm_info->score_multiply_factor();
 
-		dE_dvars[ imap ] = torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale );
+		if ( symm_min_map.new_sym_min() ) { // new way
+			Real sfxn_dof_deriv(0.0);
+			if ( !dof_node.dependent() ) {
+				sfxn_dof_deriv = symm_info()->score_multiply_factor() *
+					scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
+			}
+			Real const scale = symm_min_map.torsion_scale_factor( dof_node ); // dont divide by score_multiply_factor
+			Real const deriv( torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale ) );
+			if ( dof_node.dependent() ) {
+				// sum in the deriv into the independent deriv that this guy follows...
+				dE_dvars[ independent_dof_node_index[ symm_min_map.asymmetric_dof( dof_node.dof_id() ) ] ] += deriv;
+				--imap;
+			} else {
+				dE_dvars[ imap ] += deriv;
+				runtime_assert( imap == independent_dof_node_index[ dof_node.dof_id() ] );
+			}
+		} else { // old way
+			Real sfxn_dof_deriv = scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
+			Real scale = symm_min_map.torsion_scale_factor( dof_node ) / symm_info->score_multiply_factor();
 
+			dE_dvars[ imap ] = torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale );
+		}
 	} // loop over map
+	runtime_assert( imap == int( symm_min_map.nangles()+1 ) );
 
 
 	scorefxn.finalize_after_derivatives( pose );
@@ -229,7 +265,17 @@ atom_tree_get_atompairE_deriv(
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		MinimizationNode const & minnode =  * mingraph->get_minimization_node( ii );
 		/// 1. eval intra-residue derivatives
-		eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, scorefxn.weights(), symm_min_map.atom_derivatives( ii ) );
+		if ( symm_min_map.new_sym_min() ) {
+			if ( symm_info->chi_is_independent(ii) ) { // only do this at independent positions
+				EnergyMap weights( scorefxn.weights());
+				weights *= symm_info->score_multiply_factor();
+				eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, weights,
+																					 symm_min_map.atom_derivatives( ii ) );
+			}
+		} else {
+			eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, scorefxn.weights(),
+																				 symm_min_map.atom_derivatives( ii ) );
+		}
 	}
 
 	/// 2a. eval inter-residue derivatives from the regular minimization graph
@@ -249,23 +295,24 @@ atom_tree_get_atompairE_deriv(
 			symm_min_map.atom_derivatives( rsd1ind ), symm_min_map.atom_derivatives( rsd2ind ));
 	}
 
-	/// 2b. eval inter-residue derivatives from derivative minimization graph
-	for ( graph::Node::EdgeListConstIter
-			edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
-			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
-		Size const rsd1ind = minedge.get_first_node_ind();
-		Size const rsd2ind = minedge.get_second_node_ind();
-		conformation::Residue const & rsd1( pose.residue( rsd1ind ));
-		conformation::Residue const & rsd2( pose.residue( rsd2ind ));
-		ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
-		ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
+	if ( !symm_min_map.new_sym_min() ) {
+		/// 2b. eval inter-residue derivatives from derivative minimization graph
+		for ( graph::Node::EdgeListConstIter
+						edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
+					edgeit != edgeit_end; ++edgeit ) {
+			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+			Size const rsd1ind = minedge.get_first_node_ind();
+			Size const rsd2ind = minedge.get_second_node_ind();
+			conformation::Residue const & rsd1( pose.residue( rsd1ind ));
+			conformation::Residue const & rsd2( pose.residue( rsd2ind ));
+			ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
+			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
 
-		eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
-			r1_min_data, r2_min_data, pose, scorefxn.weights(),
-			symm_min_map.atom_derivatives( rsd1ind ), symm_min_map.atom_derivatives( rsd2ind ));
+			eval_weighted_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
+				r1_min_data, r2_min_data, pose, scorefxn.weights(),
+				symm_min_map.atom_derivatives( rsd1ind ), symm_min_map.atom_derivatives( rsd2ind ));
+		}
 	}
-
 
 	//std::cerr << pose.fold_tree();
 
@@ -296,12 +343,13 @@ atom_tree_get_atompairE_deriv(
 
 		//std::cout << "   ... summing " << dof_node.atom_id() << " with weight " << dof_wt_i << std::endl;
 		//std::cout << "   " << f1.x() << " " << f1.y() << " " << f1.z() << " " << f2.x() << " " << f2.y() << " " << f2.z() << std::endl;
-
+		// note that f1 and f2 here are exactly 0,0,0 vectors
 		dof_node.F1() += dof_wt_i * f1;
 		dof_node.F2() += dof_wt_i * f2;
 	}
 	for ( MinimizerMap::const_iterator iter = symm_min_map.dependent_begin(), iter_e = symm_min_map.dependent_end();
 			iter != iter_e; ++iter ) {
+		runtime_assert( !symm_min_map.new_sym_min() ); // we dont have these guys in new_sym_min approach
 		DOF_Node & dof_node( **iter );
 
 		core::Real dof_wt_i =  symm_info->get_dof_derivative_weight( dof_node.dof_id(), symm_conf );
@@ -414,6 +462,7 @@ numerical_derivative_check(
 	for ( MinimizerMap::const_iterator iter= min_map.begin(),
 					iter_end= min_map.end(); iter != iter_end; ++iter, ++ii ) {
 		DOF_Node const & dof_node( **iter );
+		if ( min_map.new_sym_min() && dof_node.dependent() ) {--ii; continue; }
 
 		Real deriv_dev = 10000.0;
 		for ( Size j = 1,factor=1; j <= n_increment; ++j ) {

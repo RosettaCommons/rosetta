@@ -179,6 +179,12 @@ public:
 		parent_ = setting;
 	}
 
+	bool
+	dependent() const { return dependent_; }
+
+	void
+	dependent( bool const setting ) { dependent_ = setting; }
+
 private:
 	Vector F1_;
 	Vector F2_;
@@ -187,7 +193,7 @@ private:
 	AtomIDs atoms_;
 	DOF_NodeOP parent_;
 	TorsionID torsion_id_;
-
+	bool dependent_; // only used/set/checked in symmetric minimization
 
 	friend
 	inline

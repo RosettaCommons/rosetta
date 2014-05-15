@@ -5666,6 +5666,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'scmin_nonideal','Boolean', desc='Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)', default='false'),
 		Option( 'scmin_cartesian', 'Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)', default='false'),
 		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
+		Option( 'new_sym_min', 'Boolean', desc='New approach to sym-min where all dofs, dep+indep, go into the map', default='false'),
 	),
 
 	################################

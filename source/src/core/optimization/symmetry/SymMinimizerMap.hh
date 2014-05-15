@@ -63,7 +63,8 @@ public: // Creation
 	SymMinimizerMap(
 		pose::Pose const & pose, // must have been scored before this setup; energy map must be up-to-date
 		kinematics::MoveMap const & mm, // does not have to be "symmetric" -- it will be symmetrized
-		SymmetryInfoCOP symm_info
+		SymmetryInfoCOP symm_info,
+		bool const new_sym_min = false
 	);
 
 	/// @brief Destructor
@@ -179,6 +180,13 @@ public:
 		return atom_derivatives_[ resid ];
 	}
 
+
+	bool
+	new_sym_min() const { return new_sym_min_; }
+
+	/// @brief Convert a cloned dof into its equivalent in the asymmetric unit
+	id::DOF_ID asymmetric_dof( DOF_ID const & cloned_dof ) const;
+
 private:
 
 	/// @brief Non-virtual method -- not invoked directly by the atom tree.
@@ -188,9 +196,6 @@ private:
 		DOF_ID const & parent,
 		bool dependent
 	);
-
-	/// @brief Convert a cloned dof into its equivalent in the asymmetric unit
-	id::DOF_ID asymmetric_dof( DOF_ID const & cloned_dof ) const;
 
 	void assign_rosetta_torsions();
 
@@ -202,7 +207,7 @@ private:
 
 	DOF_Nodes dof_nodes_;
 	DOF_Nodes dependent_dof_nodes_;
-	Size n_dof_nodes_;
+	//Size n_dof_nodes_; // this was not used
 	Size n_independent_dof_nodes_;
 
 	/// pointer from DOF_ID to the corresponding DOF_NodeOP
@@ -214,6 +219,9 @@ private:
 
 	/// adding this guy so we can tell more accurately which dof's are dependent/independent
 	id::DOF_ID_Map< id::TorsionID > dof_id2torsion_id_;
+
+	///
+	bool new_sym_min_;
 
 };
 

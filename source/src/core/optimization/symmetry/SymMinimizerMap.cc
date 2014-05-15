@@ -61,14 +61,16 @@ DOF_Node_sorter( DOF_NodeCOP a, DOF_NodeCOP b )
 SymMinimizerMap::SymMinimizerMap(
 	pose::Pose const & pose,
 	kinematics::MoveMap const & asymm_movemap,
-	SymmetryInfoCOP symm_info
+	SymmetryInfoCOP symm_info,
+	bool const new_sym_min // =false
 ) :
 	pose_( pose ),
 	symm_info_( symm_info ),
 	res_interacts_with_asymmetric_unit_( pose.total_residue(), false ),
-	n_dof_nodes_( 0 ),
+	// n_dof_nodes_( 0 ),
 	n_independent_dof_nodes_( 0 ),
-	atom_derivatives_( pose.total_residue() )
+	atom_derivatives_( pose.total_residue() ),
+	new_sym_min_( new_sym_min )
 {
 
 	//std::cout << "SymMinimizerMap ctor: " << std::endl;
@@ -154,22 +156,26 @@ SymMinimizerMap::add_torsion(
 	// 	' ' << tor_id <<
 	// 	" ind: " << independent << " parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
 
-	if ( independent ) {
-		//std::cout << " ind"  << std::endl;
-		add_new_dof_node( new_torsion, parent, false );
-		//last_cloned_jump_ = DOF_ID( id::BOGUS_DOF_ID ); // set invalid
+	if ( new_sym_min_ ) {
+		// add everything in the new approach
+		add_new_dof_node( new_torsion, parent, !independent );
 	} else {
+		if ( independent ) {
+			//std::cout << " ind"  << std::endl;
+			add_new_dof_node( new_torsion, parent, false );
+			//last_cloned_jump_ = DOF_ID( id::BOGUS_DOF_ID ); // set invalid
+		} else {
 
-		if ( new_torsion.type() >= id::RB1 ) { // We have a jump
-			conformation::symmetry::SymmetricConformation const & symm_conf (
-				dynamic_cast< conformation::symmetry::SymmetricConformation const & > ( pose_.conformation()) );
-			assert( conformation::symmetry::is_symmetric( symm_conf ) );
-			if ( symm_info_->get_dof_derivative_weight( new_torsion, symm_conf ) != 0.0 ) {
-				DOF_ID parent_dof( id::BOGUS_DOF_ID );
-				add_new_dof_node( new_torsion, parent_dof, true );
+			if ( new_torsion.type() >= id::RB1 ) { // We have a jump
+				conformation::symmetry::SymmetricConformation const & symm_conf (
+					dynamic_cast< conformation::symmetry::SymmetricConformation const & > ( pose_.conformation()) );
+				assert( conformation::symmetry::is_symmetric( symm_conf ) );
+				if ( symm_info_->get_dof_derivative_weight( new_torsion, symm_conf ) != 0.0 ) {
+					DOF_ID parent_dof( id::BOGUS_DOF_ID );
+					add_new_dof_node( new_torsion, parent_dof, true );
+				}
 			}
 		}
-
 	}
 }
 
@@ -215,6 +221,7 @@ SymMinimizerMap::copy_dofs_from_pose(
 	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 				it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
+		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
 		dofs[ imap ] = torsion_scale_factor( dof_node ) *
 			pose.dof( dof_node.dof_id() );
 	}
@@ -230,6 +237,7 @@ SymMinimizerMap::copy_dofs_to_pose(
 	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
+		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
 		pose.set_dof( dof_node.dof_id(),
 			dofs[ imap ] / torsion_scale_factor( dof_node ));
 	}
@@ -326,6 +334,7 @@ SymMinimizerMap::reset_jump_rb_deltas(
 	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
+		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
 		if ( DOF_type_is_rb( dof_node.type() ) ) {
 			// will do this multiple times for each jump, but should be OK
 			AtomID const & id( dof_node.atom_id() );
@@ -346,7 +355,7 @@ SymMinimizerMap::add_new_dof_node(
 	bool dependent
 )
 {
-	id::TorsionID const & parent_tor_id( parent.valid() ? dof_id2torsion_id_[ parent ] : id::BOGUS_TORSION_ID );
+	//id::TorsionID const & parent_tor_id( parent.valid() ? dof_id2torsion_id_[ parent ] : id::BOGUS_TORSION_ID );
 	// std::cout << "add new dof node: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() <<
 	// 	' ' << new_tor_id << ' ' <<new_tor_id.valid() << ' ' << symm_info_->bb_follows( new_torsion.rsd() ) << ' ' <<
 	// 	(  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) << ' ' <<
@@ -355,14 +364,17 @@ SymMinimizerMap::add_new_dof_node(
 	// std::cout << "add new dof node parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << ' ' <<
 	// 	parent_tor_id << std::endl;
 
-	runtime_assert( ! parent.valid() ||
-									(  parent_tor_id.valid() && symm_info_->torsion_is_independent( parent_tor_id ) ) ||
-									( !parent_tor_id.valid() && symm_info_->bb_follows( parent.rsd() ) == 0 ) );
+	// this will not necessarily be true when we have cloned jumps put in the map due to a non-zero jump_clone_wt
+	// or at any rate I don't think it will be OK with -new_sym_min. But email me (pbradley@fhcrc.org) to chat about it.
+	// runtime_assert( ! parent.valid() ||
+	// 								(  parent_tor_id.valid() && symm_info_->torsion_is_independent( parent_tor_id ) ) ||
+	// 								( !parent_tor_id.valid() && symm_info_->bb_follows( parent.rsd() ) == 0 ) );
 
 	// runtime_assert( (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) ||
 	// 								( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) );
 
 	DOF_NodeOP dof_node = new DOF_Node( new_torsion, DOF_NodeOP( 0 ) );
+	dof_node->dependent( false ); // only used if new_sym_min_
 
 	if ( parent.valid() ) {
 		DOF_NodeOP parent_ptr = dof_node_pointer_[ parent ];
@@ -372,10 +384,16 @@ SymMinimizerMap::add_new_dof_node(
 	}
 
 	dof_node_pointer_[ new_torsion ] = dof_node;
-	if ( dependent ) {
-		dependent_dof_nodes_.push_back( dof_node ); ++n_dof_nodes_;
-	} else {
-		dof_nodes_.push_back( dof_node ); ++n_dof_nodes_; ++n_independent_dof_nodes_;
+	if ( new_sym_min_ ) { // new way
+		dof_node->dependent( dependent );
+		dof_nodes_.push_back( dof_node );
+		if ( !dependent ) ++n_independent_dof_nodes_;
+	} else { // old way
+		if ( dependent ) {
+			dependent_dof_nodes_.push_back( dof_node );// ++n_dof_nodes_;
+		} else {
+			dof_nodes_.push_back( dof_node ); ++n_independent_dof_nodes_;// ++n_dof_nodes_;
+		}
 	}
 }
 

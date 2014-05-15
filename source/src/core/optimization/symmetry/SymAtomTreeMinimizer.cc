@@ -36,6 +36,8 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -72,15 +74,20 @@ SymAtomTreeMinimizer::run(
 	// it's important that the structure be scored prior to nblist setup
 	Real const start_score( scorefxn( pose ) );
 
+	// optionally try out a new approach to symmetric minimization
+	bool const new_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::new_sym_min ] );
+
 	kinematics::MoveMap semisym_move_map;
-	make_semisymmetric_movemap( pose, move_map, semisym_move_map );
+	// I worry about this routine (make_assymetric_movemap) since it does not see dofs that were set individually (FIX!)
+	if ( new_sym_min ) make_assymetric_movemap( pose, move_map, semisym_move_map ); // this is not quite right...
+	else make_semisymmetric_movemap( pose, move_map, semisym_move_map );
 
 	SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// setup the minimizer map using the semi-symetric min map
-	SymMinimizerMap sym_min_map( pose, semisym_move_map, symm_info );
+	SymMinimizerMap sym_min_map( pose, semisym_move_map, symm_info, new_sym_min );
 	//kinematics::DomainMap const & dm( sym_min_map.domain_map() );
 	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 	//	std::cout << "(" << ii << ", " << dm(ii) << "), ";
@@ -199,6 +206,7 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 }
 
 
+/// this routine will miss dofs that are set individually as opposed to the set_bb set_jump, etc,  instructions
 void
 SymAtomTreeMinimizer::make_assymetric_movemap(
 	pose::Pose & pose,
