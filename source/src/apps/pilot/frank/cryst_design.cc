@@ -1056,7 +1056,7 @@ CrystDock::resample_maps_and_get_self(
 		// add interface if large enough
 		cb_overlap_abc *= voxel_volume_;
 		//ca_overlap *= voxel_volume;
-		
+
 		if ( cb_overlap_abc > mininterface_ ) {
 			p1_interface_map.push_back(
 				SingleInterface(
@@ -1676,14 +1676,16 @@ CrystDock::get_interfaces_allatom(
 	//////////////////////
 	Real contact_dist=12;
 	Real radius = 0;
-	Size nres_monomer = pose.total_residue();
-	utility::vector1<Vector> monomer_cbs(nres_monomer);
-	for ( Size i=1; i<= nres_monomer; ++i ) {
+	utility::vector1<Vector> monomer_cbs;
+
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		if (!pose.residue(i).is_protein()) continue;
 		Size atm=(pose.residue(i).aa() == core::chemical::aa_gly)?2:5;
 		Vector cb_i = pose.residue(i).xyz(atm);
-		monomer_cbs[i] = cb_i;
+		monomer_cbs.push_back(cb_i);
 		radius = std::max( (cb_i).length_squared() , radius );
 	}
+	Size nres_monomer = monomer_cbs.size();
 	radius = sqrt(radius);
 
 	//int nint=1; //Commented out by V. Mulligan to fix the debug-mode build.  Sorry to twiddle with your pilot apps, Frank.
@@ -1704,10 +1706,10 @@ CrystDock::get_interfaces_allatom(
 			// pass 2 check ca-ca dists
 			numeric::xyzMatrix<core::Real> R_i_realspace =  sg_.f2c()*R_i*sg_.c2f();
 			Size contact=0;
-			for ( Size j=1; j<= nres_monomer; ++j ) {
-				Vector Xi = R_i_realspace*monomer_cbs[j] + sg_.f2c()*T_i;
-				for ( Size k=1; k<= nres_monomer; ++k ) {
-					if ((Xi-monomer_cbs[k]).length_squared() < contact_dist*contact_dist) contact++;
+			for ( Size jj=1; jj<= nres_monomer; ++jj ) {
+				Vector Xi = R_i_realspace*monomer_cbs[jj] + sg_.f2c()*T_i;
+				for ( Size kk=1; kk<= nres_monomer; ++kk ) {
+					if ((Xi-monomer_cbs[kk]).length_squared() < contact_dist*contact_dist) contact++;
 				}
 			}
 
@@ -1717,7 +1719,7 @@ CrystDock::get_interfaces_allatom(
 				Real motif_score = (Real)contact;
 				allInterfaces.push_back(
 					SingleInterface( R_i, T_i, motif_score ) );
-        TR << "s:" << s << " i:" <<i<<" k:"<< k <<" motif_score:"<< motif_score << std::endl;
+        TR << "s:" << s << " i:" << i << " j:" << j << " k:" << k << " motif_score:" << motif_score << std::endl;
 			}
 		}
 	}

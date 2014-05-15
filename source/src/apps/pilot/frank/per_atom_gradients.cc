@@ -83,7 +83,7 @@ public:
 			core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 			// symmetrize scorefunct & movemap
-			rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
+			rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
 			core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 		}
 
@@ -93,21 +93,25 @@ public:
 		Multivec vars( min_map.ndofs() ), dExtal_dvars;
 		min_map.copy_dofs_from_pose( pose, vars );
 
-		utility::vector1< Multivec > dEros_dvars(14);
-		for (int ii=0; ii<14; ++ii) {
+		utility::vector1< Multivec > dEros_dvars(16);
+		for (int ii=0; ii<16; ++ii) {
 			rosetta_scorefxn->set_weight( core::scoring::fa_atr      , (ii==0 || ii==1)? score_function_ref->get_weight(core::scoring::fa_atr) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::fa_rep      , (ii==0 || ii==2)? score_function_ref->get_weight(core::scoring::fa_rep) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::fa_sol      , (ii==0 || ii==3)? score_function_ref->get_weight(core::scoring::fa_sol) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::fa_dun      , (ii==0 || ii==4)? score_function_ref->get_weight(core::scoring::fa_dun) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::fa_intra_rep      , (ii==0 || ii==2)? score_function_ref->get_weight(core::scoring::fa_intra_rep) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::fa_sol      , (ii==0 || ii==3)? score_function_ref->get_weight(core::scoring::fa_sol) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::fa_elec      , (ii==0 || ii==4)? score_function_ref->get_weight(core::scoring::fa_elec) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::hbond_lr_bb , (ii==0 || ii==5)? score_function_ref->get_weight(core::scoring::hbond_lr_bb) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::hbond_sr_bb , (ii==0 || ii==6)? score_function_ref->get_weight(core::scoring::hbond_sr_bb) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::hbond_bb_sc , (ii==0 || ii==7)? score_function_ref->get_weight(core::scoring::hbond_bb_sc) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::hbond_sc    , (ii==0 || ii==8)? score_function_ref->get_weight(core::scoring::hbond_sc) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::p_aa_pp     , (ii==0 || ii==9)? score_function_ref->get_weight(core::scoring::p_aa_pp) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::pro_close   , (ii==0 || ii==10)? score_function_ref->get_weight(core::scoring::pro_close) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_angle, (ii==0 || ii==11)? score_function_ref->get_weight(core::scoring::cart_bonded_angle) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_length , (ii==0 || ii==12)? score_function_ref->get_weight(core::scoring::cart_bonded_length) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_torsion , (ii==0 || ii==13)? score_function_ref->get_weight(core::scoring::cart_bonded_torsion) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::rama     , (ii==0 || ii==11)? score_function_ref->get_weight(core::scoring::rama) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::omega   , (ii==0 || ii==12)? score_function_ref->get_weight(core::scoring::omega) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_angle, (ii==0 || ii==13)? score_function_ref->get_weight(core::scoring::cart_bonded) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_length , (ii==0 || ii==14)? score_function_ref->get_weight(core::scoring::cart_bonded) : 0.0 );
+			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_torsion , (ii==0 || ii==15)? score_function_ref->get_weight(core::scoring::cart_bonded) : 0.0 );
 
 			(*rosetta_scorefxn)(pose);  // score pose first
 			rosetta_scorefxn->setup_for_minimizing( pose, min_map );
@@ -121,7 +125,7 @@ public:
 			core::conformation::Residue const & rsd_i = pose.residue( id.rsd() );
 			if (id.atomno() <= rsd_i.nheavyatoms()) {
 				std::cerr << "GRAD   " << rsd_i.name3() << " " << id.rsd() << " " << rsd_i.atom_name( id.atomno() );
-				for (int ii=0; ii<14; ++ii) {
+				for (int ii=0; ii<16; ++ii) {
 					core::Real grad_k = std::sqrt (
 						dEros_dvars[ii+1][3*counter+1]*dEros_dvars[ii+1][3*counter+1] +
 						dEros_dvars[ii+1][3*counter+2]*dEros_dvars[ii+1][3*counter+2] +
@@ -146,7 +150,7 @@ my_main( void* ) {
 	using namespace protocols::simple_moves::symmetry;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( new SetupForSymmetryMover() );
+	//seq->add_mover( new SetupForSymmetryMover() );
 	seq->add_mover( new CustomMover() );
 
 	try{
