@@ -93,6 +93,10 @@ public:
 	void
 	read_file( std::string const & filename );
 
+	void
+	read_bond_file( std::string const & filename );
+
+
 	// data
 private:
 

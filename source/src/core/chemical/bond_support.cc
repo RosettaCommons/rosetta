@@ -18,9 +18,29 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
 #include <utility/graph/RingDetection.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 
 namespace core {
 namespace chemical {
+//! @brief convert bond order or aromatic into the corresponding radius
+//! @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic
+gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core::Size &BOND_ORDER_OR_AROMATIC)
+{
+  static gasteiger::GasteigerAtomTypeData::Properties properties[ 5] =
+  {
+    gasteiger::GasteigerAtomTypeData::VdWaalsRadiusCSD,
+    gasteiger::GasteigerAtomTypeData::CovalentRadiusSingleBond,
+    gasteiger::GasteigerAtomTypeData::CovalentRadiusDoubleBond,
+    gasteiger::GasteigerAtomTypeData::CovalentRadiusTripleBond,
+    gasteiger::GasteigerAtomTypeData::CovalentRadiusAromaticBond
+  };
+  if(BOND_ORDER_OR_AROMATIC > 5 ){
+	  utility_exit_with_message("Bond order must be between 1 and 4 (4 = aromatic)");
+  }
+  return properties[ BOND_ORDER_OR_AROMATIC];
+}
+
+
 void find_bonds_in_rings(ResidueType & res){
 	//first, we assign all the bonds in the residue to having no rings
 	EIter edge_begin, edge_end;
@@ -81,6 +101,14 @@ ED get_bond(ResidueType const & res, VD const & source, VD const & target){
 	boost::tie(edge,bond_there) = boost::edge(source, target, res.graph() );
 	assert(bond_there);
 	return edge;
+}
+
+Real create_bond_length(
+		gasteiger::GasteigerAtomTypeData const & atom1,
+		gasteiger::GasteigerAtomTypeData const & atom2,
+		BondName bond_type)
+{
+	return atom1.get_atom_type_property( bond_order_to_property(bond_type) ) + atom2.get_atom_type_property( bond_order_to_property(bond_type));
 }
 
 }

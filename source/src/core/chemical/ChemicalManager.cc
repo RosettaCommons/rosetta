@@ -283,11 +283,13 @@ ChemicalManager::gasteiger_atom_type_set( std::string const & tag /* = "default"
 	GasteigerAtomTypeSets::const_iterator iter( gasteiger_atom_type_sets_.find( tag ) );
 	if ( iter == gasteiger_atom_type_sets_.end() ) {
 		// read from file
-		std::string const filename( basic::database::full_name( "chemical/gasteiger/"+tag+"/atom_type_data.txt" ));
+		std::string filename( basic::database::full_name( "chemical/gasteiger/"+tag+"/atom_type_data.txt" ));
 		ElementSetCAP elements( element_set(tag) );
 		gasteiger::GasteigerAtomTypeSetOP new_set( new gasteiger::GasteigerAtomTypeSet( elements ) );
 		new_set->read_file( filename );
 		iter = gasteiger_atom_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
+		filename =  basic::database::full_name( "chemical/gasteiger/"+tag+"/bond_lengths.txt" );
+		new_set->read_bond_file(filename);
 	}
 	return iter->second();
 }

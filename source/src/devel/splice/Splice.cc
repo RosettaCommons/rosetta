@@ -134,18 +134,18 @@ std::string SpliceCreator::mover_name() {
 }
 
 Splice::Splice() :
-				Mover(SpliceCreator::mover_name()), from_res_(0), to_res_(0), saved_from_res_(
-						0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
-								NULL), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(
-										false), task_factory_( NULL), design_task_factory_( NULL), torsion_database_fname_(
-												""), database_entry_(0), database_pdb_entry_(""), template_file_(
-														""), poly_ala_(true), equal_length_(false), template_pose_(
-																NULL), start_pose_( NULL), saved_fold_tree_( NULL), design_(
-																		false), dbase_iterate_(false), allow_all_aa_(false), allow_threading_(
-																				true), rtmin_(true), first_pass_(true), locked_res_( NULL), locked_res_id_(
-																						' '), checkpointing_file_(""), loop_dbase_file_name_(""), loop_pdb_source_(
-																								""), mover_tag_( NULL), splice_filter_( NULL), Pdb4LetName_(""), use_sequence_profiles_(
-																										false), segment_type_("") {
+						Mover(SpliceCreator::mover_name()), from_res_(0), to_res_(0), saved_from_res_(
+								0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
+										NULL), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(
+												false), task_factory_( NULL), design_task_factory_( NULL), torsion_database_fname_(
+														""), database_entry_(0), database_pdb_entry_(""), template_file_(
+																""), poly_ala_(true), equal_length_(false), template_pose_(
+																		NULL), start_pose_( NULL), saved_fold_tree_( NULL), design_(
+																				false), dbase_iterate_(false), allow_all_aa_(false), allow_threading_(
+																						true), rtmin_(true), first_pass_(true), locked_res_( NULL), locked_res_id_(
+																								' '), checkpointing_file_(""), loop_dbase_file_name_(""), loop_pdb_source_(
+																										""), mover_tag_( NULL), splice_filter_( NULL), Pdb4LetName_(""), use_sequence_profiles_(
+																												false), segment_type_("") {
 	profile_weight_away_from_interface_ = 1.0;
 	restrict_to_repacking_chain2_ = true;
 	design_shell_ = 6.0;
@@ -324,8 +324,8 @@ core::Size Splice::find_dbase_entry(core::pose::Pose const & pose) {
 			return 0;
 		}
 		TR << "Found " << dbase_subset_.size()
-						<< " entries in the torsion dbase that match the length criteria"
-						<< std::endl;
+								<< " entries in the torsion dbase that match the length criteria"
+								<< std::endl;
 		numeric::random::random_permutation(dbase_subset_.begin(),
 				dbase_subset_.end(), RG);
 		current_dbase_entry_ = dbase_subset_.begin();
@@ -351,7 +351,7 @@ core::Size Splice::find_dbase_entry(core::pose::Pose const & pose) {
 	else if (dbase_entry == 0) {
 		if (database_pdb_entry_ == "") //randomize dbase entry
 			dbase_entry = dbase_subset_[(core::Size) (RG.uniform() * dbase_subset_.size() + 1)];
-	//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
+		//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
 		else { // look for the pdb_entry name
 			for (core::Size count = 1; count <= dbase_subset_.size(); ++count) {
 				if (torsion_database_[dbase_subset_[count]].source_pdb()
@@ -519,7 +519,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			using namespace core::chemical;
 			if (resdofs.resn() == "CYD") { // at one point it would be a good idea to use disfulfides rather than bail out on them...; I think disulfided cysteins wouldn't be written as CYD. This requires something more clever...
 				TR << "Residue " << resdofs.resid()
-								<< " is a disulfide. Failing" << std::endl;
+										<< " is a disulfide. Failing" << std::endl;
 				set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 				retrieve_values();
 				return;
@@ -594,7 +594,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		TR << std::endl;
 		cut_site = loop_positions_in_source[(core::Size) (RG.uniform()
 				* loop_positions_in_source.size())] - nearest_to_from
-						+ from_res();
+				+ from_res();
 		TR << "Cut placed at: " << cut_site << std::endl;
 	} // fi randomize_cut
 	//	pose.dump_pdb( "before_ft_test.pdb" ); //this is the strucutre before changing the loop
@@ -602,7 +602,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	//	pose.dump_pdb( "after_ft_test.pdb" );
 	/// change the loop length
 	TR << "Foldtree before loop length change: " << pose.fold_tree()
-					<< std::endl;
+							<< std::endl;
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start(from_res());
 	llc.loop_end(cut_site + residue_diff < from_res() ? to_res() : cut_site);
@@ -1400,7 +1400,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data,
 						pose));
 		locked_res_id(pose.residue(locked_res()).name1());
 		TR << "locking residue " << locked_res() << " of identity " << locked_res_id()
-				<< std::endl;
+						<< std::endl;
 	}
 	checkpointing_file(tag->getOption<std::string>("checkpointing_file", ""));
 	loop_dbase_file_name(tag->getOption<std::string>("loop_dbase_file_name", ""));
@@ -1418,16 +1418,16 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data,
 			tag->getOption<bool>("restrict_to_repacking_chain2", true));
 
 	TR << "from_res: " << from_res() << " to_res: " << to_res()
-			<< " dbase_iterate: " << dbase_iterate() << " randomize_cut: "
-			<< randomize_cut() << " cut_secondarystruc: " << cut_secondarystruc()
-			<< " source_pdb: " << source_pdb() << " ccd: " << ccd() << " rms_cutoff: "
-			<< rms_cutoff() << " res_move: " << res_move() << " template_file: "
-			<< template_file() << " checkpointing_file: " << checkpointing_file_
-			<< " loop_dbase_file_name: " << loop_dbase_file_name_
-			<< " loop_pdb_source: " << loop_pdb_source() << " mover_tag: " << mover_tag_
-			<< " torsion_database: " << torsion_database_fname_
-			<< " restrict_to_repacking_chain2: " << restrict_to_repacking_chain2()
-			<< " rb_sensitive: " << rb_sensitive() << std::endl;
+					<< " dbase_iterate: " << dbase_iterate() << " randomize_cut: "
+					<< randomize_cut() << " cut_secondarystruc: " << cut_secondarystruc()
+					<< " source_pdb: " << source_pdb() << " ccd: " << ccd() << " rms_cutoff: "
+					<< rms_cutoff() << " res_move: " << res_move() << " template_file: "
+					<< template_file() << " checkpointing_file: " << checkpointing_file_
+					<< " loop_dbase_file_name: " << loop_dbase_file_name_
+					<< " loop_pdb_source: " << loop_pdb_source() << " mover_tag: " << mover_tag_
+					<< " torsion_database: " << torsion_database_fname_
+					<< " restrict_to_repacking_chain2: " << restrict_to_repacking_chain2()
+					<< " rb_sensitive: " << rb_sensitive() << std::endl;
 }
 
 protocols::moves::MoverOP Splice::clone() const {
@@ -1496,7 +1496,7 @@ void Splice::read_torsion_database() {
 		torsion_database_.push_back(bbdof_entry);
 	}
 	TR << "Finished reading torsion database with " << torsion_database_.size()
-			<< " entries" << std::endl;
+					<< " entries" << std::endl;
 }
 
 ///@Set a genral fold ltree to use for all antibodies, gdl, Apr2014
@@ -1632,7 +1632,6 @@ void Splice::tail_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut)
 	ft.reorder(cys_pos[4]);
 	ft.check_fold_tree();
 	//TR<<"Is the tree foldable: "<<tree_foldable<<std::endl;
-	pose.fold_tree(ft);
 	TR << "single chain ft for termini segment: " << ft << std::endl;
 	TR<<"testing"<<std::endl;
 	return;
@@ -1670,7 +1669,7 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start,core::Siz
 	ft.add_edge(s2, conf.chain_end(1), -1);
 	if (locked_res() > 0 && (locked_res() <= s2 && locked_res() >= s1)) {
 		TR << "s1,s2,locked_res: " << s1 << ',' << s2 << ',' << locked_res()
-				<< std::endl;
+						<< std::endl;
 		if (locked_res() < cut) {
 			ft.add_edge(s1, locked_res(), -1);
 			ft.add_edge(locked_res(), cut, -1);
@@ -1868,7 +1867,7 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(
 			profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 		} // <- End of PDB segment iterator
 		TR << "The size of the profile vector is: " << profile_vector.size()
-				<< std::endl;
+						<< std::endl;
 
 		///Before upwweighting constraint we check that the PSSMs are properly aligned by making sure
 		///that the PSSM score of the falnking segments of the current designed segment agree with the identity of the aa (i.e if
@@ -1986,7 +1985,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 		TR << "Removing existing sequence profile constraints from pose" << std::endl;
 		ConstraintCOPs constraints(pose.constraint_set()->get_all_constraints());
 		TR << "Total number of constraints at start: " << constraints.size()
-				<< std::endl;
+						<< std::endl;
 		core::Size cst_num(0);
 		BOOST_FOREACH( ConstraintCOP const c, constraints ) {
 			if( c->type() == "SequenceProfile" ) { //only remove profile sequence constraints
@@ -2043,7 +2042,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 				spc->weight(profile_weight_away_from_interface());
 			}
 			TR << "Now adding constraint to aa: " << seqpos << pose.aa(seqpos)
-					<< std::endl;
+							<< std::endl;
 			//TR<<"The sequence profile row for this residue is: "<<seqprof->prof_row(seqpos-)<<std::endl;
 			pose.add_constraint(spc);
 			cst_num++;

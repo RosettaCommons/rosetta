@@ -198,7 +198,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	}
 
 	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
-	Size cutpoint_closed_distal( 0 );
+	//Size cutpoint_closed_distal( 0 );
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
 		if ( !partition_definition[ n ] ) input_res1.push_back( n );
 		else input_res2.push_back( n );
@@ -222,7 +222,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 		}
 		five_prime_chain_break_res = n;
 		gap_size = chain_break_gap_sizes[ i ];
-		if ( cutpoint_closed.has_value( n ) ) cutpoint_closed_distal = n; // same as five_prime_chain_break_res
+		//if ( cutpoint_closed.has_value( n ) ) cutpoint_closed_distal = n; // same as five_prime_chain_break_res
 		break;
 	}
 

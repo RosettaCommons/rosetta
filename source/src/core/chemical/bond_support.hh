@@ -18,6 +18,7 @@
 
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 namespace core {
 namespace chemical {
 
@@ -25,6 +26,9 @@ namespace chemical {
 	utility::vector1<VD> get_connecting_atoms(ResidueType const & res, ED const & edge);
 	utility::vector1<VD> get_connecting_atoms(ResidueGraph const & res, ED const & edge);
 	ED get_bond(ResidueType const & res, VD const & source, VD const & target);
+	//this will create a bond length based on gasteiger atom type definitions of bonds
+	Real create_bond_length(gasteiger::GasteigerAtomTypeData const & atom1,
+			gasteiger::GasteigerAtomTypeData const & atom2, BondName bond_type);
 
 }
 }
