@@ -54,7 +54,6 @@ using core::pose::tag_from_pose;
 using core::pose::tag_into_pose;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using protocols::features::ProteinSilentReport;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
 using basic::database::get_db_session;

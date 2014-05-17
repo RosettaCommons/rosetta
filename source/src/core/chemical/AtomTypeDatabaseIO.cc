@@ -43,7 +43,6 @@ using std::string;
 using core::Real;
 
 using utility::vector1;
-using core::chemical::AtomType;
 using utility::sql_database::sessionOP;
 using basic::database::write_schema_to_database;
 using basic::database::safely_prepare_statement;

@@ -29,9 +29,6 @@ namespace core {
 namespace fragment {
 
 
-// internal 'using' for this file
-using core::fragment::IndependentBBTorsionSRFD;
-
 
 /// @brief default constructor
 IndependentBBTorsionSRFD::IndependentBBTorsionSRFD() :

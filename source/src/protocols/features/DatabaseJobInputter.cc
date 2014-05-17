@@ -66,7 +66,6 @@ using core::pose::symmetry::is_symmetric;
 using core::pose::symmetry::make_asymmetric_pose;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using protocols::features::ProteinSilentReport;
 using utility::file::FileName;
 using utility::vector1;
 using utility::sql_database::DatabaseSessionManager;
