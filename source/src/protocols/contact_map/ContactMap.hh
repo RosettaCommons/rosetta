@@ -86,24 +86,7 @@ public:
 
 	/// @brief	Output function that writes the ContactMap to the specified file
 	void write_to_file(std::string filename="");
-
-private:
-	/// @brief	Container for all AtomPairs included in the ContactMap
-	utility::vector1<Contact> contacts_;
-	/// @brief	Vector that maps the matrix position to the index of the contact in contacts_
-	/// @detail Vector of size columns*rows with field(row, column) stored at (row-1)*[#columns] + column
-	utility::vector1<core::Size> output_matrix_;
-	utility::vector1<std::string> column_names_;
-	utility::vector1<std::string> row_names_;
-	std::string output_prefix_;
-	core::Size n_poses_;
-	core::Real distance_cutoff_;
-	/// @brief	int value after how many models an output file will be generated
-	core::Size models_per_file_;
-	/// @brief	bool value indicating whether the reset function will be called after file output
-	bool reset_count_;
-	bool row_format_;
-	bool distance_matrix_;
+	void write_to_stream(std::ostream & output_stream);
 
 	/// @brief	Initializes ContactMap within a single region
 	void fill_contacts(
@@ -126,6 +109,35 @@ private:
         core::Size region2_end,
         Pose const & pose);
 
+	/// @brief Get the contact for a particular row and column
+	/// The identity contact (the contact of a residue with itself)
+	/// is shared between all identity contacts. (The last identity contact in region.)
+	Contact const & get_contact( core::Size row, core::Size col);
+
+//	utility::vector1<Contact> const & contacts() { return contacts_; }
+//	utility::vector1<core::Size> const & output_matrix() { return output_matrix_; }
+//	utility::vector1<std::string> const & column_names() { return column_names_; }
+//	utility::vector1<std::string> const & row_names() { return row_names_; }
+
+private:
+	/// @brief	Container for all AtomPairs included in the ContactMap
+	utility::vector1<Contact> contacts_;
+	/// @brief	Vector that maps the matrix position to the index of the contact in contacts_
+	/// @detail Vector of size columns*rows with field(row, column) stored at (row-1)*[#columns] + column
+	utility::vector1<core::Size> output_matrix_;
+	utility::vector1<std::string> column_names_;
+	utility::vector1<std::string> row_names_;
+	std::string output_prefix_;
+	core::Size n_poses_;
+	core::Real distance_cutoff_;
+	/// @brief	int value after how many models an output file will be generated
+	core::Size models_per_file_;
+	/// @brief	bool value indicating whether the reset function will be called after file output
+	bool reset_count_;
+	bool row_format_;
+	bool distance_matrix_;
+
+
 }; //class ContactMap
 
 
@@ -141,12 +153,12 @@ public:
         atomname_(aname){}
 
 	/// @brief Returns string representation of the ContactPartner
-	std::string string_rep();
+	std::string string_rep() const;
 
 	/// @brief Accessor functions for private class variables
-	core::Size seqpos(){return seqpos_;}
-	std::string resname(){return resname_;}
-	std::string atomname(){return atomname_;}
+	core::Size seqpos() const {return seqpos_;}
+	std::string resname() const {return resname_;}
+	std::string atomname() const {return atomname_;}
 
 private:
 	core::Size seqpos_;
@@ -177,13 +189,13 @@ public:
 	void reset_count();
 
 	/// @brief	Returns string representation of the Contact
-	std::string string_rep();
+	std::string string_rep() const;
 
 	/// @brief	Returns string representation of the Contact as percentage value
-	std::string string_rep(core::Size n_poses);
+	std::string string_rep(core::Size n_poses) const;
 
 	/// @brief	Returns string representation of the Contact including partner names
-	std::string long_string_rep(core::Size n_poses=0);
+	std::string long_string_rep(core::Size n_poses=0) const;
 
 	/// @brief	Accessor functions for private class variables
 	ContactPartnerAP partner1() {return utility::pointer::access_ptr<ContactPartner>(partner1_);}

@@ -136,35 +136,16 @@ void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	set_output_prefix(tag->getOption<std::string>("prefix", output_prefix_));
 
 	// 'reset_count' flag
-	std::string reset_count_tag = tag->getOption<std::string>("reset_count", "true");
-	if(reset_count_tag == "false") {
-      reset_count_ = false;  
-    }
-	else {
-		if (reset_count_tag != "true") throw utility::excn::EXCN_RosettaScriptsOption("'reset_count' option must be true or false");
-		reset_count_ =true;
-	}
+	reset_count_ = tag->getOption<bool>("reset_count", 1);
 
 	// 'models_per_file' option
 	models_per_file_ = tag->getOption<core::Size>("models_per_file", models_per_file_);
 
 	// 'row_format_' flag
-	std::string row_format_tag = tag->getOption<std::string>("row_format", "false");
-	if(row_format_tag == "true") row_format_ = true ;
-	else {
-		if (row_format_tag != "false") throw utility::excn::EXCN_RosettaScriptsOption("'row_format' option must be true or false");
-		row_format_ =false;
-	}
+	row_format_ = tag->getOption<bool>("row_format", 0);
 
 	// 'distance_matrix_' flag
-	std::string distance_matrix_tag = tag->getOption<std::string>("distance_matrix", "false");
-	if(distance_matrix_tag == "true") {
-		distance_matrix_ = true;
-	}
-	else {
-		if (distance_matrix_tag != "false") throw utility::excn::EXCN_RosettaScriptsOption("'distance_matrix' option must be true or false");
-		distance_matrix_ =false;
-	}
+	distance_matrix_ = tag->getOption<bool>("distance_matrix", 0);
 
 	// 'region1', 'region2' and 'ligand' options
 	// Initialize 'region1' with complete pose in case no option is specified
@@ -432,6 +413,14 @@ void ContactMap::write_to_file(std::string filename) {
 	// Initialize output stream and write Header
 	utility::io::ozstream output_stream;
 	output_stream.open(filename, std::ios_base::out);
+	write_to_stream( output_stream );
+
+	// Finish up
+	output_stream.close();
+}
+
+void
+ContactMap::write_to_stream(std::ostream & output_stream) {
 	output_stream << "# Number of Models:	" << n_poses_ <<"	Distance Cutoff:	"<< distance_cutoff_<< std::endl
 			<< std::endl;
 	if (row_format_) {
@@ -451,22 +440,23 @@ void ContactMap::write_to_file(std::string filename) {
 			output_stream << row_names_[row];
 			// Loop over columns and print corresponding fields
 			for (core::Size col = 1; col <= column_names_.size(); col++) {
-				core::Size pos_in_contacts = output_matrix_[(row - 1)
-						* column_names_.size() + col];
-				output_stream << "\t"
-						<< contacts_.at(pos_in_contacts).string_rep();
+				output_stream << "\t" << get_contact( row, col ).string_rep();
 			}
 			output_stream << std::endl;
 		}
 	}
-	// Finish up
-	output_stream.close();
 }
 
+Contact const &
+ContactMap::get_contact( core::Size row, core::Size col) {
+	core::Size pos_in_contacts = output_matrix_[(row - 1)
+			* column_names_.size() + col];
+	return contacts_.at(pos_in_contacts);
+}
 
 ///////////////////////////////  ContactPartner  ///////////////////////////////
 
-std::string ContactPartner::string_rep(){
+std::string ContactPartner::string_rep() const {
 	std::ostringstream oss;
 	oss << resname_ << seqpos_;
 	std::string test;
@@ -495,7 +485,7 @@ void Contact::reset_count(){
 }
 
 /// @brief	Returns string representation of the Contact
-std::string Contact::string_rep(){
+std::string Contact::string_rep() const {
 	std::ostringstream oss;
 //	oss << partner1_.string_rep() <<"|"<<partner2_.string_rep();
 	if (distance_ == 0.0) {oss << count_;}
@@ -508,8 +498,10 @@ std::string Contact::string_rep(){
 }
 
 /// @brief	Returns string representation of the Contact as percentage value
-std::string Contact::string_rep(core::Size n_poses){
+std::string Contact::string_rep(core::Size n_poses) const {
 	std::ostringstream oss;
+	oss.precision(3);
+	oss.setf( std::ios::fixed , std::ios::floatfield);
 	core::Real percentage = core::Real(count_) / core::Real(n_poses);
 	if (distance_ == 0.0) oss << percentage;
 	else oss << distance_;
@@ -518,7 +510,7 @@ std::string Contact::string_rep(core::Size n_poses){
 
 
 /// @brief	Returns string representation of the Contact including partner names
-std::string Contact::long_string_rep(core::Size n_poses){
+std::string Contact::long_string_rep(core::Size n_poses) const {
 	std::string stringrep;
 	stringrep = partner1_.string_rep() + "\t"+ partner2_.string_rep() + "\t";
 	stringrep = stringrep + ( (n_poses==0) ? string_rep() :string_rep(n_poses));
