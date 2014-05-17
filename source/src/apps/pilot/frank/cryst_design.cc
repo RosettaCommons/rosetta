@@ -1055,7 +1055,6 @@ CrystDock::resample_maps_and_get_self(
 
 		// add interface if large enough
 		cb_overlap_abc *= voxel_volume_;
-		//ca_overlap *= voxel_volume;
 
 		if ( cb_overlap_abc > mininterface_ ) {
 			p1_interface_map.push_back(
@@ -1688,7 +1687,6 @@ CrystDock::get_interfaces_allatom(
 	Size nres_monomer = monomer_cbs.size();
 	radius = sqrt(radius);
 
-	//int nint=1; //Commented out by V. Mulligan to fix the debug-mode build.  Sorry to twiddle with your pilot apps, Frank.
 	for (int s=1; s<=(int)sg_.nsymmops(); ++s) {
 		numeric::xyzMatrix<Real> R_i = sg_.symmop(s).get_rotation();
 
@@ -1716,10 +1714,8 @@ CrystDock::get_interfaces_allatom(
 			if (contact>mininterface_) {
 				// make minipose & score
 				core::pose::Pose poseCopy = pose;
-				Real motif_score = (Real)contact;
 				allInterfaces.push_back(
-					SingleInterface( R_i, T_i, motif_score ) );
-        TR << "s:" << s << " i:" << i << " j:" << j << " k:" << k << " motif_score:" << motif_score << std::endl;
+					SingleInterface( R_i, T_i, (Real)contact ) );
 			}
 		}
 	}
@@ -2117,10 +2113,7 @@ CrystDock::apply( Pose & pose) {
 			for (int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z)
 			for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 			for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
-				if (conv_out(x,y,z)*voxel_volume_ > mininterface_) {
-					sum_interface_area(x,y,z) += conv_out(x,y,z)*voxel_volume_;
-					//ambiguous_interface_map(x,y,z).push_back( s );
-				}
+				sum_interface_area(x,y,z) += conv_out(x,y,z)*voxel_volume_;
 			}
 		}
 
@@ -2161,7 +2154,7 @@ CrystDock::apply( Pose & pose) {
 		}
 
 		// finally add nonclashing interfaces to the DB
-		Real mininterfacesum_filter = std::max( 3*mininterface_, option[crystdock::mininterfacesum]());
+		Real mininterfacesum_filter = option[crystdock::mininterfacesum]();
 		for (int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z)
 		for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 		for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
@@ -2170,14 +2163,13 @@ CrystDock::apply( Pose & pose) {
 
 				// get_interface_score populates iinfo
 				//    then computes the weakest connection necessary to construct the lattice
-				utility::vector1<SingleInterface> iinfo = p1_interface_map;
+				utility::vector1<SingleInterface> iinfo; // = p1_interface_map;
 				numeric::xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
 				get_interfaces_allatom( pose, rts, r_local, xyz, iinfo );
 				Real score_xyz = get_interface_score (pose, iinfo, rts );
 
 				if (score_xyz > mininterface_) {
 					nconnected++;
-					xyz = i2c_*xyz;
 					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], ctr, iinfo ) );
 				}
 			}
