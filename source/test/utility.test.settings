@@ -36,6 +36,7 @@ sources = {
 	"file" : [
 		"file_sys_util",
 		"PathName",
+		"FileName",
 	],
 	"graph" : [
 		"ring_detection",
