@@ -65,13 +65,25 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 
 	numeric::model_quality::findUU(coords_,target_coords,weights,target_coords.size(),rot_matrix,sigma3);
 
+	//Coords are shifted to be centered at origin after findUU
+
+	//original code
+	//numeric::xyzTransform<core::Real> transformer(rot_matrix,center_);
+
+	//transform to other residue center
+
+	numeric::xyzTransform<core::Real> transformer(rot_matrix,other_residue.center());
+
+	center_ = numeric::center_of_mass(coords_);
+
 	//coords_ and target_coords get recentered to 0,0,0.  rot_matrix gets set to the correct rotation matrix. sigma3 is set but nobody cares
 	//setup the transform, use the last move center to recenter away from zero
-	numeric::xyzTransform<core::Real> transformer(rot_matrix,center_);
 	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
 	{
 		*it = transformer*(*it);
 	}
+
+	center_ = numeric::center_of_mass(coords_);
 
 }
 
