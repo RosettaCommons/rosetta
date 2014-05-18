@@ -76,6 +76,7 @@ class Batch {
 													 has_silent_in_( false ),
 													 has_finished_( false ),
 													 is_cancelled_( false ),
+													 allow_reading_cancelled_decoys_( true ),
 													 invalid_( false ),
 													 decoys_returned_to_archive_( 0 )
 
