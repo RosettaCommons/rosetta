@@ -54,7 +54,10 @@ extern void report_batch_inconsistency( Batch& new_batch, std::string const &tag
 ///@detail the Batch-class helps to get the correct file- and directory names,
 ///          and has some knowledge about its status: finished, unfinished ... decoys already processed by Archive
 class Batch {
-	public:
+private:
+	//do not use the default constructor
+	Batch() {};
+public:
 
 	//c'stor
 	Batch( utility::options::OptionCollection const& options, bool intermediate_structs, bool has_silent_in, core::Size nstruct )
