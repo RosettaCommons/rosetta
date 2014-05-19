@@ -63,7 +63,7 @@ ResidueCountFilter::ResidueCountFilter(
 	enable_max_residue_count_(src.enable_max_residue_count_),
 	min_residue_count_(src.min_residue_count_),
 	enable_min_residue_count_(src.enable_min_residue_count_),
-	count_as_percentage_(src.count_as_percentage_),	
+	count_as_percentage_(src.count_as_percentage_),
 	res_types_( src.res_types_ ),
   packable_( src.packable_ ),
   task_factory_( src.task_factory_ )
@@ -129,7 +129,9 @@ ResidueCountFilter::parse_my_tag(
 			}
 		} // for all res type specified
 	}
-  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+  if(tag->hasOption("task_operations")){
+		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	}
   packable( tag->getOption< bool >( "packable", 0 ) );
 }
 
@@ -137,6 +139,9 @@ bool
 ResidueCountFilter::apply(
 	core::pose::Pose const & pose
 ) const {
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		TR.Debug << "Residue " << i << " name3=" << pose.residue(i).name3() << "; name=" << pose.residue(i).name() << ";" << std::endl;
+	}
 	if(enable_max_residue_count() && compute(pose) > max_residue_count()){
 		return false;
 	}
@@ -181,14 +186,15 @@ ResidueCountFilter::compute(
 	utility::vector1< core::Size > target_res;
 	target_res.clear();
 	if( !task_factory() ){
-		for( core::Size i = 1; i <= pose.total_residue(); ++i )
+		for( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			target_res.push_back( i );
+		}
 	} else {
 		if( packable_ ) {
 			target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, true/*packable*/ );
 		} else {
 			target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ );
-		} 
+		}
 	}
 
   core::Size count( 0 );
@@ -197,6 +203,7 @@ ResidueCountFilter::compute(
   		for ( core::Size j=1; j<=res_types_.size(); ++j ) {
   			if ( pose.residue( target_res[i] ).name3() == res_types_[j] || pose.residue( target_res[i] ).name() == res_types_[j] ) {
   				++count;
+					break; // TL: don't want to count a residue more than once in case name() != name3() but name() and name3() are both specified as res_types -- this was a problem with CYS/CYD
   			} // if
   		} // for all res types specified
   	} else {
@@ -205,7 +212,7 @@ ResidueCountFilter::compute(
 	}
 	if	(count_as_percentage_) {
 		Real	count_as_percentage	=	round_to_Real((static_cast<Real>(count)*100)/static_cast<Real>(target_res.size()));
-			//without	static_cast<Real>,	division returns only Size (integer-like)
+		//without	static_cast<Real>,	division returns only Size (integer-like)
 		return count_as_percentage;
 	} else {
 		return count;

@@ -93,6 +93,8 @@ private:   // options
 	core::Size end_res_;
 	/// @brief if true, abego values in the input pose will be ignored for the segment we are rebuilding
 	bool ignore_pose_abego_;
+	/// @brief if true, poses will be outputted for each foldability step (default=false)
+	bool output_poses_;
 
 private:   // other data
 	/// @brief the vlb object for testing foldability

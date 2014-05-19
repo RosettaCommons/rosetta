@@ -115,6 +115,7 @@ FoldabilityFilter::FoldabilityFilter() :
 	start_res_( 1 ),
 	end_res_( 1 ),
 	ignore_pose_abego_( false ),
+	output_poses_( false ),
 	vlb_(	new protocols::forge::components::VarLengthBuild() ),
 	cached_aa_( "" ),
 	cached_ss_( "" ),
@@ -155,6 +156,7 @@ FoldabilityFilter::parse_my_tag(
 	end_res_ = tag->getOption< core::Size >( "end_res", end_res_ );
 	motif_ = tag->getOption< std::string >( "motif", motif_ );
 	ignore_pose_abego_ = tag->getOption< bool >( "ignore_pose_abego", ignore_pose_abego_ );
+	output_poses_ = tag->getOption< bool >( "output_poses", output_poses_ );
 	if ( ignore_pose_abego_ && ( motif_ == "" ) ) {
 		utility_exit_with_message( "You need to specify a motif if you are ignoring pose abego values." );
 	}
@@ -268,7 +270,9 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 	TR << "ss to build starting with residue " << start_res_ << " is " << ss << " with aa " << aa << std::endl;
 	for ( core::Size i=1; i<=tries_; ++i ) {
 		vlb_->apply( posecopy );
-		posecopy.dump_pdb( "foldability" + boost::lexical_cast< std::string >( i ) + ".pdb" );
+		if ( output_poses_ ) {
+			posecopy.dump_pdb( "foldability" + boost::lexical_cast< std::string >( i ) + ".pdb" );
+		}
 		core::Real const distance = end_res.xyz( "N" ).distance( posecopy.residue( end ).xyz( "N" ) );
 		TR << "DIstance is " << distance << std::endl;
 		if ( distance < 4.0 ) {
