@@ -2165,10 +2165,12 @@ CrystDock::apply( Pose & pose) {
 				//    then computes the weakest connection necessary to construct the lattice
 				utility::vector1<SingleInterface> iinfo; // = p1_interface_map;
 				numeric::xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
+				xyz = i2c_*xyz;
+
 				get_interfaces_allatom( pose, rts, r_local, xyz, iinfo );
 				Real score_xyz = get_interface_score (pose, iinfo, rts );
 
-				if (score_xyz > mininterface_) {
+				if (score_xyz >= mininterface_) {
 					nconnected++;
 					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], ctr, iinfo ) );
 				}
