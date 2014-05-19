@@ -637,6 +637,28 @@ core::Size noncanonical_atom_count(core::pose::Pose const & pose);
 /// @brief count the number of non-canonical chi angles in the pose
 core::Size noncanonical_chi_count(core::pose::Pose const & pose);
 
+numeric::xyzVector< core::Real>
+center_of_mass(
+	core::pose::Pose const & pose,
+	int const start,
+	int const stop
+);
+
+int
+residue_center_of_mass(
+	core::pose::Pose const & pose,
+	int const start,
+	int const stop
+);
+
+int
+return_nearest_residue(
+	core::pose::Pose const & pose,
+	int const begin,
+	int const end,
+	core::Vector center
+);
+	
 id::AtomID_Map< id::AtomID >
 convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map, core::pose::Pose const & pose );
 

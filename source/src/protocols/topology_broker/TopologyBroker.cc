@@ -53,6 +53,9 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
@@ -68,6 +71,7 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
+#include <numeric/xyzTriple.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -101,6 +105,7 @@ TopologyBroker::TopologyBroker() :
 	final_fold_tree_( NULL ),
 	repack_scorefxn_( NULL ),
 	bUseJobPose_( false ),
+	use_fold_tree_from_claimer_(false),
 	current_pose_( NULL )
 {
 	sequence_number_resolver_ = new SequenceNumberResolver();
@@ -119,6 +124,7 @@ TopologyBroker::TopologyBroker( const TopologyBroker& tp ) :
 	repack_scorefxn_ = tp.repack_scorefxn_;
 	to_be_closed_cuts_ = tp.to_be_closed_cuts_;
 	start_pose_cuts_ = tp.start_pose_cuts_;
+	use_fold_tree_from_claimer_ = tp.use_fold_tree_from_claimer_;
 	current_pose_ = tp.current_pose_;
 	sequence_number_resolver_ = new SequenceNumberResolver( *tp.sequence_number_resolver_ );
 }
@@ -133,6 +139,7 @@ TopologyBroker const& TopologyBroker::operator = ( TopologyBroker const& src ) {
 		repack_scorefxn_ = src.repack_scorefxn_;
 		to_be_closed_cuts_ = src.to_be_closed_cuts_;
 		start_pose_cuts_ = src.start_pose_cuts_;
+		use_fold_tree_from_claimer_ = src.use_fold_tree_from_claimer_;
 		current_pose_ = src.current_pose_;
 	}
 	return *this;
@@ -231,6 +238,7 @@ moves::MoverOP TopologyBroker::mover(core::pose::Pose const& pose,
 									 core::scoring::ScoreFunction const& scorefxn,
 									 core::Real progress ) const {
 
+	//tr.Debug << "stage:  " << stage_id << " Progress:  " << progress << std::endl;
 	moves::RandomMoverOP random_mover = new moves::RandomMover;
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 					top != claimers_.end(); ++top ) {
@@ -244,6 +252,20 @@ moves::MoverOP TopologyBroker::mover(core::pose::Pose const& pose,
 	}
 
 	runtime_assert( random_mover->size() ); //seg-fault down the line otherwise
+
+//	tr.Debug << "number of movers in random_mover:  " << random_mover->nr_moves() << std::endl;
+//	if(tr.Debug.visible())
+//	{
+//		for ( Size ii = 0; ii < random_mover->size(); ++ii )
+//		{
+//			tr.Debug << "the " << ii <<"th mover in random_mover is:  " << random_mover->get_mover(ii) << std::endl;
+//		}
+//		for ( Size i=0; i<random_mover->weights().size(); ++i ) {
+//			tr.Debug << "weight at " << i << " is " << random_mover->weights().at(i) << std::endl;
+//		}
+//	}
+
+
 	return random_mover;
 }
 
@@ -266,6 +288,12 @@ void TopologyBroker::apply_filter( core::pose::Pose const& pose,
 
 void TopologyBroker::accept_claims( claims::DofClaims& claims ) {
 	for ( claims::DofClaims::iterator claim=claims.begin();	claim != claims.end(); ++claim ) {
+		//tr.Debug << "accept_claims: " << (*claim)->owner()->type() << std::endl;
+		//if(tr.Trace.visible())
+		//{
+		//	(*claim)->show(tr.Trace);
+		//	tr.Trace << std::endl;
+		//}
 		(*claim)->owner()->claim_accepted( *claim );
 	}
 }
@@ -319,6 +347,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 	Size root( 0 );
 	bool excl_root_set( false );
 
+	//building the fold tree from DofClaims and jumps
 	tr.Debug << "build fold tree ... " << std::endl;
 	for ( claims::DofClaims::iterator claim=claims.begin();	claim != claims.end(); ++claim ) {
 		claims::JumpClaimOP jump_ptr( dynamic_cast< claims::JumpClaim* >( claim->get() ) );
@@ -477,6 +506,34 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 																			after_loops_jumps( 2, i ), after_loops_jump_atoms( 2, i ) );
 	}
 	final_fold_tree_->put_jump_stubs_intra_residue();
+	//tr.Debug << "final_fold_tree_ at end of build_fold_tree():";
+	//tr.Debug << *final_fold_tree_ << std::endl;
+}
+
+//build the fold tree if the claimer builds its on fold tree
+void TopologyBroker::build_fold_tree_from_claimer(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree)
+{
+	//if(tr.Debug.visible())
+	//{
+	//	for(core::Size i = 1; i <= num_claimers(); i++)
+	//	{
+	//		tr.Debug << claimer(i)->type() << std::endl;
+	//	}
+	//}
+
+	//Loop through all TopologyClaimers and get the final fold tree from it
+	for( TopologyClaimers::iterator top = claimers_.begin();top != claimers_.end(); ++top )
+	{
+		if((*top)->claimer_builds_own_fold_tree())
+		{
+			tr << "WARNING!!!!  the order of your claimers matter if you build a fold tree in the claimer.  "
+					"In the case of the TMHTopologySamplerClaimer, it should come AFTER the MembraneTopologyClaimer" << std::endl;
+			(*top)->set_pose_from_broker(pose);
+			(*top)->build_fold_tree(pose, fold_tree);
+			fold_tree_ = (*top)->get_fold_tree(pose);
+			if(tr.Debug.visible()){tr.Debug << *fold_tree_ << std::endl;}
+		}
+	}
 }
 
 //@brief This function is here to enable the std::sort call in initialize_sequence()
@@ -607,7 +664,6 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 	Size pos( 1 );
 	for ( claims::DofClaims::const_iterator it = bb_claims.begin(); it != bb_claims.end(); ++it, ++pos ) {
 		if ( !*it ) {
-			//throw exception later, but first accumulate all errors in dof_msg
 			bad = true;
 			dof_msg << "BBTorsion at pos " << pos << "unitialized...unclaimed" << std::endl;
 		}
@@ -627,10 +683,20 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 	claims::DofClaims cumulated;
 	std::copy( bb_claims.begin(), bb_claims.end(), back_inserter( cumulated ) );
 	std::copy( jumps.begin(), jumps.end(), back_inserter( cumulated ) );
+	//if(tr.Trace.visible())
+	//{
+	//	tr.Trace << "cumulated Dof Claims: " << std::endl;
+	//	for(claims::DofClaims::iterator claim = cumulated.begin(); claim != cumulated.end(); ++claim)
+	//	{
+	//		(*claim)->show(tr.Trace);
+	//		tr.Trace << std::endl;
+	//	}
+	//}
 
 	claims::DofClaims failures;
 	for ( TopologyClaimers::iterator top = claimers_.begin();
 				top != claimers_.end(); ++top ) {
+	//	if(tr.Debug.visible()) {tr.Debug << "current claimer:  " << (*top)->type() << std::endl;}
 		(*top)->initialize_dofs( pose, cumulated, failures );
 	}
 
@@ -639,7 +705,8 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 		dof_msg << "failed to initialize dofs for these claims: .... " << failures << std::endl;
 		throw EXCN_Unknown( dof_msg.str() );
 	}
-	runtime_assert( failures.size() == 0 ); //should have thrown exception before -- Exception
+	runtime_assert( failures.size() == 0 ); //should have thrown exception before -- up
+
 }
 
 void TopologyBroker::initialize_cuts( claims::DofClaims& claims, core::pose::Pose& pose ) {
@@ -665,20 +732,32 @@ void TopologyBroker::initialize_cuts( claims::DofClaims& claims, core::pose::Pos
 	to_be_closed_cuts_.clear();
 	for ( Size cut_nr = 1; cut_nr<=cuts.size(); ++cut_nr ) {
 		if ( !cuts[ cut_nr ] ) { //automatic cut-point
-			to_be_closed_cuts_.push_back( pose.fold_tree().cutpoint( cut_nr ) );
-			tr.Debug << "close this cut: " << to_be_closed_cuts_.back() << std::endl;
-			// for now we assume that these always should get closed --- add cutpoint variants
-			// one could also have Jumpers issue floating CUT claims (without position number)
-			// then their pos will be assigned actual cutpoints at this stage
+			if(pose.residue(pose.fold_tree().cutpoint(cut_nr)).type().name() == "VRT" || pose.residue(pose.fold_tree().cutpoint(cut_nr)).name3() == "XXX" ||
+				pose.residue((pose.fold_tree().cutpoint(cut_nr))-1).type().name() == "VRT" || pose.residue((pose.fold_tree().cutpoint(cut_nr))-1).name3() == "XXX"
+				|| pose.residue((pose.fold_tree().cutpoint(cut_nr))+1).type().name() == "VRT" || pose.residue((pose.fold_tree().cutpoint(cut_nr))+1).name3() == "XXX" )
+			{
+				continue;
+			}else{
+				to_be_closed_cuts_.push_back( pose.fold_tree().cutpoint( cut_nr ) );
+				tr.Debug << "close this cut: " << to_be_closed_cuts_.back() << std::endl;
+				// for now we assume that these always should get closed --- add cutpoint variants
+				// one could also have Jumpers issue floating CUT claims (without position number)
+				// then their pos will be assigned actual cutpoints at this stage
 
-			// could also make a new TopologyClaimer --- CutCloser which will handle these extra cutpoints.
-			// but difficult to remove the CutCloser from the list of TopologyClaimers before the next decoy
+				// could also make a new TopologyClaimer --- CutCloser which will handle these extra cutpoints.
+				// but difficult to remove the CutCloser from the list of TopologyClaimers before the next decoy
 
-			//in principle we want to maintain a list of chainbreaks that are to be closed
-			//Question: are CUT claims always coding for Cutpoints that shall not be closed ?
-			// so far I see it that way...
+				//in principle we want to maintain a list of chainbreaks that are to be closed
+				//Question: are CUT claims always coding for Cutpoints that shall not be closed ?
+				// so far I see it that way...
+			}
 		}
 	}
+
+	//for ( utility::vector1< Size >::const_iterator it = to_be_closed_cuts_.begin();
+	//			it != to_be_closed_cuts_.end(); ++it ) {
+	//	tr.Debug << "consider cut between res " << *it << " and " << *it+1 << std::endl;
+	//}
 }
 
 void TopologyBroker::apply( core::pose::Pose& pose ) {
@@ -687,6 +766,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 
 	for ( TopologyClaimers::iterator top = claimers_.begin();
 				top != claimers_.end(); ++top ) {
+		(*top)->type();
 		if ( bUseJobPose_ ) {
 			(*top)->new_decoy( pose );
 		} else {
@@ -694,6 +774,17 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 		}
 	}
 
+	//If we are using a tmh topology sampler the fold tree must be constructed differently, and preprocesing needs to occur
+	bool tmh_mode = false;
+	for ( TopologyClaimers::iterator top = claimers_.begin();top != claimers_.end(); ++top )
+	{
+		if((*top)->type()  == "TMHTopologySamplerClaimer")
+		{
+			tmh_mode = true;
+			break;
+		}
+	}
+	
 	start_pose_cuts_.clear();
 	if ( bUseJobPose_ ) {
 		for ( Size i(1), cutpoints(pose.fold_tree().num_cutpoint()); i<=cutpoints; i++ ) {
@@ -725,6 +816,23 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
     if( symm_claimer ) symm_claimer->symmetry_duplicate( pre_accepted, pose );
 	current_pose_ = new core::pose::Pose( pose );
 
+	if(!pose.empty() && basic::options::option[basic::options::OptionKeys::abinitio::explicit_pdb_debug] &&
+			basic::options::option[basic::options::OptionKeys::run::protocol].value_string()=="broker")
+	{
+		pose.dump_pdb("pose_broker_apply_begin.pdb");
+	}
+
+	//Loop through all claimers and do pre_processing.  Kind of hacky because need to do this after broker::build_fold_tree() but before TMHTopologySampler finalizes fold tree
+	if(tmh_mode)
+	{
+		for ( TopologyClaimers::iterator top = claimers_.begin();top != claimers_.end(); ++top )
+		{
+			(*top)->pre_process(pose);
+		}
+	}
+
+	//if(tr.Trace.visible()){tr.Trace << "pose.fold_tree() before generate_round1:  " << pose.fold_tree() << std::endl;}
+	current_pose_ = new core::pose::Pose( pose );
 
 	tr.Debug << "Start Round1-Broking..." << std::endl;
 	claims::DofClaims round1_claims;
@@ -739,20 +847,61 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 
 	tr.Debug << "Broking finished" << std::endl;
 	//	--> now we know nres
-	//	if ( tr.Debug.visible() )	pose.dump_pdb( "init_seq.pdb" );
 	current_pose_ = new core::pose::Pose( pose );
 
-	tr.Debug << "build fold-tree..." << std::endl;
-	build_fold_tree( pre_accepted, pose.total_residue() );
-	accept_claims( pre_accepted );
+	core::kinematics::FoldTree fold_tree = pose.fold_tree();
+	//if(tr.Debug.visible())
+	//{
+	//	tr.Debug << "pre_accepted.size():  " << pre_accepted.size() << std::endl;
+	//}
+
+	//Loop through all claimers and see if the claimer builds its own fold tree.
+	//Also check to see if any
+	for ( TopologyClaimers::iterator top = claimers_.begin();top != claimers_.end(); ++top )
+	{
+		if((*top)->claimer_builds_own_fold_tree())
+		{
+			use_fold_tree_from_claimer_=true;
+			break;
+		}
+	}
+
+	
+	if(use_fold_tree_from_claimer_==true && tmh_mode)
+	{
+		build_fold_tree_from_claimer(pose, fold_tree);
+	}else{
+		//if(tr.Debug.visible()){tr.Debug << "build default Broker FoldTree..." << std::endl;}
+		tr.Debug << "build fold-tree..." << std::endl;
+		build_fold_tree( pre_accepted, pose.total_residue() );
+	}
+	accept_claims( pre_accepted);
 	tr.Debug << *fold_tree_ << std::endl;
+
+	//if(tr.Debug.visible()){tr.Debug << "pose.fold_tree() after build_fold_tree():  " << fold_tree << std::endl;}
+
+	//commented out because this doesn't seem to do anything anymore after refactor - sld
+	//loop through atoms of root
+	//core::Size root(0);
+	//if(pose.fold_tree().root() == fold_tree_->root())
+	//{
+	//	root = fold_tree_->root();
+	//}
+
 	pose.fold_tree( *fold_tree_ );
 
+	//if(tr.Debug.visible())
+	//{
+	//	tr.Debug << "TopologyBroker Final FoldTree:  " << pose.fold_tree() << std::endl;
+	//	tr.Debug << fold_tree_;
+	//}
 	tr.Debug << "set cuts..." << std::endl;
 	initialize_cuts( pre_accepted, pose );
-
 	tr.Debug << "initialize dofs..." << std::endl;
 	initialize_dofs( pre_accepted, pose );
+
+	assert(fold_tree_);
+
 	//	if ( tr.Debug.visible() )	pose.dump_pdb( "init_dofs.pdb" );
 	current_pose_ = new core::pose::Pose( pose );
 
@@ -775,6 +924,12 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 
 	//add constraints
 	add_constraints( pose );
+
+	if(!pose.empty() && basic::options::option[basic::options::OptionKeys::abinitio::explicit_pdb_debug] &&
+			basic::options::option[basic::options::OptionKeys::run::protocol].value_string()=="broker")
+	{
+		pose.dump_pdb("pose_broker_apply_end.pdb");
+	}
 }
 
 bool TopologyBroker::has_chainbreaks_to_close() const {
@@ -789,6 +944,7 @@ void TopologyBroker::add_chainbreak_variants(
 	pose::Pose init_pose = pose;
 	for ( utility::vector1< Size >::const_iterator it = to_be_closed_cuts_.begin();
 				it != to_be_closed_cuts_.end(); ++it ) {
+		//tr.Debug << (*it) << " " << pose.residue((*it)).name3() << std::endl;
 		tr.Debug << "consider cut between res " << *it << " and " << *it+1;
 		if ( sp ) tr.Debug << " distance is " << sp->dist( *it, *it+1 ) << " of max " << sp->max_dist();
 		tr.Debug << " (" << max_dist << ")"<< std::endl;
@@ -886,7 +1042,6 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose& pose ) {
 
 	add_constraints( pose );
 
-	//	if ( tr.Debug.visible() ) pose.dump_pdb( "before_repack.pdb");
 	if ( tr.Debug.visible() ) pose.constraint_set()->show_numbers( tr.Debug );
 
 	protocols::simple_moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );

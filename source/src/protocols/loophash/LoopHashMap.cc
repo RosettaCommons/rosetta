@@ -363,6 +363,24 @@ LoopHashMap::LoopHashMap( core::Size loop_size){
 	setup(loop_size);
 }
 
+LoopHashMap::LoopHashMap(LoopHashMap const & other ) :
+	hash_(*other.hash_),
+	backbone_index_map_(other.backbone_index_map_),
+	loopdb_(other.loopdb_),
+	loop_size_(other.loop_size_)
+
+{ }
+
+LoopHashMap LoopHashMap::operator=(LoopHashMap const & other)
+{
+	hash_ = *other.hash_;
+	backbone_index_map_ = other.backbone_index_map_;
+	loopdb_ = other.loopdb_;
+	loop_size_ = other.loop_size_;
+	return *this;
+
+}
+
 void LoopHashMap::mem_foot_print(){
 	TR << "loopdb_: " << loopdb_.size() << " Size: " << loopdb_.size() * sizeof( LeapIndex ) << std::endl;
 	TR << "BackboneIndexMap: " << backbone_index_map_.size() << " Size: " << backbone_index_map_.size() * (sizeof(boost::uint64_t) + sizeof(core::Size) ) << std::endl;
@@ -506,14 +524,17 @@ LoopHashMap::lookup(  numeric::geometry::hashing::Real6 transform, std::vector <
 
 	// now get an iterator over that map entry
 
+	TR.Info << "backbone bucket size:  " << backbone_index_map_.bucket_count() << std::endl;
+	TR.Info << "backbone_index_map_.find(bin_index):  " << backbone_index_map_.count(bin_index) << std::endl;
 	std::pair<  BackboneIndexMap::iterator,
 		BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( bin_index );
-
 
 	for( BackboneIndexMap::iterator it = range.first;
 			it != range.second;
 			++it)
 	{
+		TR.Info << it->second << std::endl;
+		TR.Info << "bucket_size:  " << result.size() << std::endl;
 		result.push_back( it->second );
 	}
 }
@@ -523,16 +544,16 @@ void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing:
 
 	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
 	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
+	//TR.Info << "center:  " << center[4] << " " << center[5] << std::endl;
 	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
 
 	for( core::Size i = 0; i < bin_index_vec.size(); ++i ) {
+		//TR.Info << "bin_index_vec[i]:  " << bin_index_vec[i] << std::endl;
 		// now get an iterator over that map entry
-		std::pair<  BackboneIndexMap::iterator,
-			BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( bin_index_vec[i] );
-		for( BackboneIndexMap::iterator it = range.first;
-				it != range.second;
-				++it)
+		std::pair< BackboneIndexMap::iterator,BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( bin_index_vec[i] );
+		for( BackboneIndexMap::iterator it = range.first; it != range.second; ++it)
 		{
+			//TR.Info << "result:  " << result << std::endl;
 			result.push_back( it->second );
 		}
 	}

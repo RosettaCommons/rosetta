@@ -29,6 +29,14 @@ class RigidBodyPerturbMover;
 typedef utility::pointer::owning_ptr< RigidBodyPerturbMover > RigidBodyPerturbMoverOP;
 typedef utility::pointer::owning_ptr< RigidBodyPerturbMover const > RigidBodyPerturbMoverCOP;
 
+class RigidBodyRandomTMHMover;
+typedef utility::pointer::owning_ptr<RigidBodyRandomTMHMover> RigidBodyRandomTMHMoverOP;
+typedef utility::pointer::owning_ptr<RigidBodyRandomTMHMover const> RigidBodyRandomTMHMoverCOP;
+
+class RigidBodyPerturbRandomJumpMover;
+typedef utility::pointer::owning_ptr< RigidBodyPerturbRandomJumpMover > RigidBodyPerturbRandomJumpMoverOP;
+typedef utility::pointer::owning_ptr< RigidBodyPerturbRandomJumpMover const > RigidBodyPerturbRandomJumpMoverCOP;
+
 class RigidBodyPerturbNoCenterMover;
 typedef utility::pointer::owning_ptr< RigidBodyPerturbNoCenterMover > RigidBodyPerturbNoCenterMoverOP;
 typedef utility::pointer::owning_ptr< RigidBodyPerturbNoCenterMover const > RigidBodyPerturbNoCenterMoverCOP;

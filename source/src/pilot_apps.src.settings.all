@@ -917,6 +917,10 @@ sources = {
 	"pilot/zhezhang" : [
 		"extract_CA_coords",
 	],
+	"pilot/shirst" : [
+		"TestTopologySampler",
+		"LoophashFilter"
+		]
 }
 
 

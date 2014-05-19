@@ -15,6 +15,7 @@
 #include <protocols/topology_broker/TopologyClaimerFactory.hh>
 
 // Package Headers
+#include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 #include <protocols/topology_broker/ConstraintClaimer.hh>
@@ -39,6 +40,10 @@
 #include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts4.hh>
 #include <protocols/topology_broker/PcsEnergyController.hh>
 #include <protocols/topology_broker/FibrilModelingClaimer.hh>
+#include <protocols/topology_broker/TMHTopologySamplerClaimer.hh>
+
+// Utility headers
+#include <basic/Tracer.hh>
 #include <protocols/topology_broker/BasicJumpClaimer.hh>
 
 // C/C++ headers
@@ -110,6 +115,7 @@ TopologyClaimerFactory::TopologyClaimerFactory() {
 	add_type(new FoldandDockClaimer());
 	add_type(new FibrilModelingClaimer());
 	add_type(new AsymFoldandDockClaimer());
+	add_type(new TMHTopologySamplerClaimer());
 	add_type(new SymmetryClaimer());
 	add_type(new BasicJumpClaimer());
 }

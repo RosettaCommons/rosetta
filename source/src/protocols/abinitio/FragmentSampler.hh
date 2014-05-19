@@ -40,6 +40,9 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
+//#include <core/scoring/MembraneTopology.fwd.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
 
 // AUTO-REMOVED #include <protocols/abinitio/Protocol.hh>
@@ -159,6 +162,8 @@ public:
 	//@brief currently used score function ( depends on stage ) -- publich
 	core::scoring::ScoreFunction const& current_scorefxn() const;
 
+//	///@brief get membrane topology information
+//	core::scoring::MembraneTopologyCOP get_membrane_topology_from_pose(core::pose::Pose const& pose);
 
 protected:
 	topology_broker::TopologyBroker const& topology_broker();
@@ -288,6 +293,9 @@ public:
 	bool bQuickTest() const {
 		return bQuickTest_;
 	}
+
+	//@brief loophash filter
+	bool check_loops(core::pose::Pose& pose);
 
 private:
 

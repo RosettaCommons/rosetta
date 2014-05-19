@@ -25,6 +25,9 @@
 // Package Headers
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/broker.OptionKeys.gen.hh>
+
 // Project Headers
 #include <core/types.hh>
 
@@ -36,11 +39,19 @@ namespace protocols {
 namespace topology_broker {
 namespace weights {
 
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 class LargeFragWeight : public AbinitioMoverWeight {
 public:
 	LargeFragWeight( core::Real weight = 1.0 ) : weight_( weight ) {};
-	virtual core::Real weight( core::Size stageID, core::Real /*progress*/ /* progress within stage */ ) const {
+	virtual core::Real weight( core::Size stageID, core::Real /*progress*/ /* progress within stage */ ) const
+	{
+		if(option[basic::options::OptionKeys::broker::large_frag_mover_stage1_weight].user() && stageID == 1)
+		{
+			return option[basic::options::OptionKeys::broker::large_frag_mover_stage1_weight].value();
+		}
+
 		if ( stageID < abinitio::STAGE_4 ) return weight_;
 		return 0.0;
 	};

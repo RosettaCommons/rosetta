@@ -17,6 +17,7 @@
 #include <protocols/rigid/RB_geometry.hh> // geometry
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID.hh>
@@ -140,8 +141,8 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
   tr.Debug << " pos1_end got using partition_by_jump: " << pos1_end << std::endl;
   tr.Debug << " cutpoint_by_jump: " << f.cutpoint_by_jump( interface_jump_ ) << std::endl;
 
-  Size center_pos1 (geometry::residue_center_of_mass( pose, 1, pos1_end ) );  //mass center of partner 1
-  Size center_pos2 (geometry::residue_center_of_mass( pose, pos1_end + 1, pose.total_residue() ) ); // mass center of partner 2
+  Size center_pos1 (core::pose::residue_center_of_mass( pose, 1, pos1_end ) );  //mass center of partner 1
+  Size center_pos2 (core::pose::residue_center_of_mass( pose, pos1_end + 1, pose.total_residue() ) ); // mass center of partner 2
   tr.Debug << "center_pos1: " << center_pos1 << "; center_pos2: " << center_pos2 << std::endl;
 
   Real dist_pos1 = 0.0;

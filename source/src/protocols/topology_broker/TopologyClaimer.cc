@@ -81,6 +81,7 @@ void TopologyClaimer::add_mover(
 ) {
 	moves::MoverOP mover = get_mover( pose );
 	if ( mover ) {
+		//if(tr.Debug.visible()){tr.Debug << "current mover is:  " << mover->type() << std::endl;}
 		random_mover.add_mover( mover, abinitio_mover_weight_->weight( stageID, progress ) );
 	}
 }
@@ -132,6 +133,7 @@ bool TopologyClaimer::read_tag( std::string tag, std::istream& is ) {
     tr.Error << "[ERROR]: The tag '" << tag << "' with argument '" << arg << "' was not recognized." << std::endl;
     return false;
 }
+
 
 void TopologyClaimer::set_defaults() {
 	label_ = "DEFAULT";

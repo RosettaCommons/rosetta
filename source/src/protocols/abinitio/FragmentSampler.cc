@@ -24,35 +24,51 @@
 
 // Project Headers
 #include <protocols/topology_broker/TopologyBroker.hh>
+#include <protocols/topology_broker/TopologyClaimer.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <core/scoring/MembraneTopology.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/kinematics/Jump.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.hh>
+#include <protocols/moves/MoverStatus.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
+#include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/loophash/LoopHashMap.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 #include <numeric/numeric.functions.hh>
+#include <numeric/random/random.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/membrane.OptionKeys.gen.hh>
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 // C++ headers
 #include <cstdlib>
 #include <string>
+#include <utility>
+#include <iostream>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/MonteCarloExceptionConverge.hh>
-#include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.abinitio");
 
@@ -180,13 +196,26 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 
 	total_trials_ = 0;
 	current_scorefxn()(pose);
-  if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-	jd2::output_intermediate_pose( pose, "stage0" );
+	if(option[OptionKeys::abinitio::explicit_pdb_debug] || option[ basic::options::OptionKeys::abinitio::debug ]() )
+	{
+		jd2::output_intermediate_pose( pose, "stage0" );
 	}
-
+	
 	if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
 		prepare_stage1( pose );
 		checkpointed_cycle_block( pose, STAGE_1, &FragmentSampler::do_stage1_cycles );
+
+		//loophashing things
+		if(option[OptionKeys::abinitio::use_loophash_filter].user())
+		{
+			tr.Info << "calling check_loops(pose)!" << std::endl;
+				if(!check_loops(pose))
+			{
+				tr.Info << "loophash didn't find hits so returning!" << std::endl;
+				this->set_last_move_status(protocols::moves::FAIL_RETRY);
+				return;
+			}
+		}
 	} //skipStage1
 
 	if ( !contains_stageid( skip_stages_, STAGE_2 ) ) {
@@ -259,6 +288,27 @@ topology_broker::TopologyBroker const& FragmentSampler::topology_broker() {
 	runtime_assert( topology_broker_ );
 	return *topology_broker_;
 }
+
+/////@brief get membrane topology information
+//core::scoring::MembraneTopologyCOP
+//FragmentSampler::get_membrane_topology_from_pose(core::pose::Pose const& pose)
+//{
+//	core::scoring::MembraneTopologyCOP membrane_topology;
+//	if(option[ basic::options::OptionKeys::abinitio::TMH_topology].user() && option[basic::options::OptionKeys::abinitio::membrane].user())
+//	{
+//		//get the membrane_topology
+//		if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
+//		{
+//			membrane_topology = static_cast< core::scoring::MembraneTopology * >
+//			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY) () );
+//		}else{
+//			utility_exit_with_message("Must have MembraneTopology!");
+//		}
+//	}else{
+//		utility_exit_with_message("Must have MembraneTopology!");
+//	}
+//	return membrane_topology;
+//}
 
 void FragmentSampler::set_default_scores() {
 	using namespace scoring;
@@ -391,6 +441,11 @@ FragmentSampler::mover( pose::Pose const& pose, StageID stage_id, core::scoring:
 void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ), stage1_cycles() ).apply( pose );
 	mc().reset( pose ); // make sure that we keep the final structure
+	if(option[OptionKeys::abinitio::explicit_pdb_debug])
+	{
+		jd2::output_intermediate_pose( pose, "stage1_cycles" );
+	}
+	//jd2::output_intermediate_pose( pose, "stage1_cycles" );
   if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 	jd2::output_intermediate_pose( pose, "stage1_cycles" );
 	}
@@ -398,6 +453,10 @@ void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 
 void FragmentSampler::do_stage2_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( new moves::TrialMover( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ), stage2_cycles() ).apply( pose );
+	if(option[OptionKeys::abinitio::explicit_pdb_debug])
+	{
+		jd2::output_intermediate_pose( pose, "stage2_cycles" );
+	}
 }
 
 /*! @detail stage3 cycles:
@@ -450,6 +509,10 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 			get_checkpoints().debug( get_current_tag(), "stage_3_iter"+string_of( lct1)+"_"+string_of(lct2), current_scorefxn()( pose ) );
 		} // loop 2
 	} // loop 1
+	if(option[OptionKeys::abinitio::explicit_pdb_debug])
+	{
+		jd2::output_intermediate_pose( pose, "stage3_cycles" );
+	}
 }
 
 void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
@@ -470,6 +533,10 @@ void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
 
 		//don't store last structure since it will be exactly the same as the final structure delivered back via apply
 	}  // loop kk
+	if(option[OptionKeys::abinitio::explicit_pdb_debug])
+	{
+		jd2::output_intermediate_pose( pose, "stage4_cycles" );
+	}
 }
 
 void FragmentSampler::recover_low( core::pose::Pose& pose, StageID stage ){
@@ -531,6 +598,171 @@ void FragmentSampler::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, Si
 
 void FragmentSampler::prepare_loop_in_stage4( core::pose::Pose &pose, Size iteration, Size total ){
 	replace_scorefxn( pose, STAGE_4, 1.0* iteration/total );
+}
+
+//@brief loophash filter. Used for making sure SSEs (namely TMHs) not too far away from each other
+bool FragmentSampler::check_loops(core::pose::Pose& pose)
+{
+	//Set up default values
+	using namespace basic::options::OptionKeys;
+	using basic::options::option;
+	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+	core::Real filter_acceptance_rate(0.0);
+	if(option[OptionKeys::abinitio::loophash_filter_acceptance_rate].user())
+	{
+		filter_acceptance_rate = option[OptionKeys::abinitio::loophash_filter_acceptance_rate].value();
+	}else{
+		filter_acceptance_rate = 0.5;
+	}
+	core::Size radius_size(0);
+	if(option[lh::radius_size].user())
+	{
+		radius_size = option[lh::radius_size].value();
+	}else{
+		radius_size = 2.0;
+	}
+
+	//set up membrane topology
+	std::string spanfile = option[in::file::spanfile];
+	runtime_assert (option[in::file::spanfile].user());
+
+	//get the membrane_topology
+	core::scoring::MembraneTopologyOP topology;
+	if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
+	{
+		topology = static_cast< core::scoring::MembraneTopology * >
+		( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY) () );
+	}else{
+		utility_exit_with_message("Must have MembraneTopology!");
+	}
+
+//	core::scoring::MembraneTopologyOP topology = pose.data().get(core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY);
+//	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topology );
+	topology->initialize(spanfile);
+
+	//read in loophash database (DB made in a separate step before running Abinitio)
+	protocols::loophash::LoopHashLibraryOP library = new protocols::loophash::LoopHashLibrary( loop_sizes );
+	numeric::geometry::hashing::Real6 loop_transform; //this is the RT for the loop in question (how far apart are the residues)
+	library->load_db();
+
+	// initialize some variables for figuring out where the loops of interest are
+	core::Size const nres = pose.total_residue();
+	core::Size const nspan = topology->tmhelix();
+	core::Size const num_cut_loops = nspan-1;
+	ObjexxFCL::FArray1D_int previous_span_begin((nspan-1),0);
+	ObjexxFCL::FArray1D_int previous_span_end((nspan-1),0);
+	ObjexxFCL::FArray1D_int span_begin((nspan-1),0);
+	ObjexxFCL::FArray1D_int span_end((nspan-1),0);
+	ObjexxFCL::FArray1D_int loop_begin(num_cut_loops,0);
+	ObjexxFCL::FArray1D_int loop_end(num_cut_loops,0);
+	core::Size span_index = 1;
+	//loophash loop start and stop
+	core::Size start = 0;
+	core::Size stop = 0;
+
+	//Loop through spans to figure out loop defs. For each loop, figure out loop hashing
+	for(span_index = 1; span_index <= nspan-1;++span_index)
+	{
+		//need to know the beginning and end of the TMs to determine where the loops are
+		previous_span_begin(span_index) = topology->span_begin(span_index);
+		previous_span_end(span_index) = topology->span_end(span_index);
+		span_begin(span_index) = topology->span_begin(span_index+1);
+		span_end(span_index) = topology->span_end(span_index+1);
+
+		loop_begin(span_index) = previous_span_end(span_index);
+		loop_end(span_index) = span_begin(span_index);
+
+		//if the predicted loop (that is, not span) is shorter than 3 res
+		if(loop_end(span_index) - loop_begin(span_index) < 2)
+		{
+			loop_begin(span_index) -= 1;
+			loop_end(span_index) += 1;
+		}
+
+		//Print loop begin and end
+		tr.Debug << "span_index:  " << span_index << " loop_begin:  " << loop_begin(span_index) << " loop_end: "
+				<< loop_end(span_index) << std::endl;
+
+		assert(loop_begin(span_index) != 0);
+		assert(loop_end(span_index) != 0);
+
+		//loophash stuff
+		start = loop_begin(span_index);
+		stop = loop_end(span_index);
+
+		if ( start > nres || start < 1 || stop > nres || stop < 1) {
+		    tr.Info << "ERROR!" << "residue range " << start << "," << stop << "unknown!" << std::endl;
+		}
+	}
+
+	tr.Info << "fold_tree before loophash:  ";
+	pose.fold_tree().show(tr.Info);
+
+	bool rt_exists(false); // does the RT for this loop exist in the pose?
+	rt_exists = protocols::loophash::get_rt_over_leap_fast( pose, start, stop, loop_transform );
+	tr.Info << "rt_exists:  " << rt_exists << std::endl;
+
+	//variables for figuring out, for a loop size in pose, are the hits in the loophash DB?
+	core::Size radial_counts(0);
+	core::Size num_loop_sizes(0);
+	utility::vector1< std::pair< core::Size,core::Size> > loop_size_hits;
+	std::pair <core::Size,core::Size> loop_and_counts(0,0);
+
+	//Loop through loop library (hashes) and figure out, for the RT, does it return any hashes? (i.e., is there a loop in the DB that has this RT)
+	for( std::vector< core::Size >::const_iterator jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ){
+		core::Size loop_size = *jt;
+		num_loop_sizes = library->hash_sizes().size();
+		tr.Info << "num_loop_sizes:  " << num_loop_sizes << "\tloop_size:  " << loop_size << std::endl;
+		if(rt_exists==true)
+		{
+			// Get the fragment bucket
+			// leap_index_bucket contains loophash hits (see pilot app to extract the backbone)
+			protocols::loophash::LoopHashMap &hashmap = library->gethash( loop_size );
+			radial_counts = hashmap.radial_count(radius_size,loop_transform);
+			tr.Info << "radius_size:  " << radius_size << "\tloop_size:  " << loop_size << "\tnumber of hits:  " << radial_counts << std::endl;
+			loop_and_counts = std::make_pair(loop_size, radial_counts);
+			tr.Info << "loop_and_counts:  " << loop_and_counts.first << " " << loop_and_counts.second << std::endl;
+			loop_size_hits.push_back(loop_and_counts);
+		}
+	}
+
+	tr.Info << "fold_tree after loophash:  ";
+	pose.fold_tree().show(tr.Info);
+
+	//To maintain conformational sampling, implement tunable fuzzy filter.  If not all loop sizes have loophash DB hits (radial counts), want to use fuzzy filter
+	bool use_fuzzy_filter(false);
+	for(utility::vector1<std::pair<core::Size,core::Size> >::iterator it = loop_size_hits.begin(); it!=loop_size_hits.end(); it++ )
+	{
+		tr.Info << "loop_size:  " << it->first << "  radial_counts:  " << it->second << std::endl;
+		//as long as, for this loop radial counts >= 0 (found hits in loophash DB), don't need the fuzzy filter
+		if(it->second > 0)
+		{
+			use_fuzzy_filter = false;
+		}else{ //however, if you run into a loop size where no hits are found, use fuzzy filter, default acceptance rate is 0.5
+			use_fuzzy_filter = true;
+		}
+		tr.Info << "using fuzzy filter?  " << use_fuzzy_filter << "\tfilter_acceptance_rate?  " << filter_acceptance_rate << std::endl;
+	}
+
+	//not all loops had hits in loophash DB
+	if(use_fuzzy_filter == true)
+	{
+		static numeric::random::RandomGenerator RG(483915);
+		core::Real rg_value = RG.uniform();
+		//return filter=true (continue folding) at rate set by user or default rate of 0.5
+		if(rg_value <= filter_acceptance_rate)
+		{
+			tr.Info << "rg_value:  " << rg_value << "\tfilter_acceptance_rate:  " << filter_acceptance_rate << "\treturning true!" << std::endl;
+			return true;
+		}else
+		{
+			tr.Info << "rg_value:  " << rg_value << "\tfilter_acceptance_rate:  " << filter_acceptance_rate << "\treturning false!" << std::endl;
+			return false;
+		}
+	}else{
+		tr.Info << "loophash_filter returning true!" << std::endl;
+		return true;
+	}
 }
 
 std::string const FragmentSampler::id2string_[] = { "all_stages", "stage1", "stage2", "stage3", "stage3", "stage3", "stage4"};

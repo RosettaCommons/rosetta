@@ -28,6 +28,10 @@
 
 // Package Headers
 #include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
+#include <protocols/topology_broker/claims/CutClaim.hh>
+#include <protocols/topology_broker/claims/JumpClaim.hh>
+#include <protocols/topology_broker/claims/LegacyRootClaim.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/moves/MoverContainer.hh>
 
@@ -38,6 +42,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/conformation/Residue.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
@@ -55,11 +60,54 @@ namespace topology_broker {
 using namespace core;
 
 
-MembraneTopologyClaimer::MembraneTopologyClaimer() {}
+MembraneTopologyClaimer::MembraneTopologyClaimer(){}
 
 MembraneTopologyClaimer::MembraneTopologyClaimer( pose::Pose const& input_pose ) :
 	input_pose_(input_pose)
 {}
+
+bool
+MembraneTopologyClaimer::claimer_builds_own_fold_tree()
+{
+	return true;
+}
+
+void
+MembraneTopologyClaimer::set_pose_from_broker(core::pose::Pose& pose)
+{
+	input_pose_ = pose;
+}
+
+core::kinematics::FoldTreeOP
+MembraneTopologyClaimer::get_fold_tree(core::pose::Pose& pose)
+{
+	return new core::kinematics::FoldTree(pose.fold_tree());
+}
+
+
+//@brief reads in spanfile, sets up membrane topology, adds virtual residue to pose as the root residue
+void
+MembraneTopologyClaimer::pre_process(core::pose::Pose& pose)
+{
+	using basic::options::option;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
+	runtime_assert ( option[in::file::spanfile].user() );
+
+	std::string const spanfile = option[ in::file::spanfile ]();
+	core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
+	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
+	core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	topology.initialize(spanfile);
+
+	if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {
+		if ( !core::pose::symmetry::is_symmetric( pose ) ) {
+			addVirtualResAsRootMembrane(pose);
+		}
+	}
+}
 
 void
 MembraneTopologyClaimer::add_mover(
@@ -89,18 +137,37 @@ MembraneTopologyClaimer::add_mover(
 	}
 }
 
-/*
-void MembraneTopologyClaimer::new_decoy( core::pose::Pose const& pose ) {
-	//get rigid-body orientation of jump and safe for later use in initialize_dofs();
+void
+MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
+{
+	core::pose::Pose pose = broker().current_pose();
+	ObjexxFCL::FArray2D_int jump_array(2,pose.fold_tree().num_jump());
 
+	for(core::Size jump_array_index = 1;jump_array_index <= pose.fold_tree().num_jump(); ++jump_array_index)
+	{
+		jump_array(1,jump_array_index) = pose.fold_tree().jump_edge(jump_array_index).start();
+		jump_array(2,jump_array_index) = pose.fold_tree().jump_edge(jump_array_index).stop();
+	}
+
+	if(TR.Trace.visible()){pose.fold_tree().show(TR.Trace);}
+	for(core::Size i=1;i<=pose.fold_tree().nres();++i)
+	{
+		if(static_cast<int>(i) == pose.fold_tree().root())
+		{
+			dof_claims.push_back(new claims::LegacyRootClaim(this,i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(new claims::BBClaim(this,i,claims::DofClaim::CAN_INIT));
+		}else if(pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT")
+		{
+			dof_claims.push_back(new claims::BBClaim(this,i,claims::DofClaim::CAN_INIT));
+		}
+	}
+	for(Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num)
+	{
+		dof_claims.push_back(new claims::JumpClaim(this,jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT));
+	}
 }
-*/
 
-void MembraneTopologyClaimer::initialize_dofs(
-	core::pose::Pose& pose,
-	claims::DofClaims const& /*init_dofs*/,
-	claims::DofClaims& /*failed_to_init*/
-) {
+void MembraneTopologyClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& /*init_dofs*/, claims::DofClaims& /*failed_to_init*/) {
 	using basic::options::option;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -111,7 +178,7 @@ void MembraneTopologyClaimer::initialize_dofs(
 	std::string const spanfile = option[ in::file::spanfile ]();
 	core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-	core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( 		pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
 	topology.initialize(spanfile);
 
 	if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {
@@ -121,16 +188,11 @@ void MembraneTopologyClaimer::initialize_dofs(
 	}
 }
 
-// void MembraneTopologyClaimer::generate_sequence_claims( DofClaims& /* new_claims */) {
-// 	new_claims.push_back( new SequenceClaim( this, 1, 1, label(), DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
-// }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Adds a virtual residue to a pose as the root.
 /// Jump is to a residue in the middle of a transmembrane segment.
 void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & pose ) {
 	int nres = pose.total_residue();
-
 	core::scoring::MembraneTopology const & topology( core::scoring::MembraneTopology_from_pose(pose) );
 
 	// return if the pose is empty (otherwise will segfault)
@@ -138,11 +200,17 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		TR.Warning << "addVirtualResAsRootMembrane() called with empty pose!" << std::endl;
 		return;
 	}
+	
+	//only add the virtual residue as the root once
+	if(pose.residue(pose.fold_tree().root()).name3() == "XXX")
+	{
+		return;
+	}
 
 	// find residue in the middle of transmembrane region
 	// pick a random transmembrane segment
 	Size ihelix = int(RG.uniform() * topology.tmhelix() + 1.);
-	Size jump_res (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
+	core::Size jump_res = (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
 
 	// create a virtual residue, fullatom or centroid
 	bool fullatom = pose.is_fullatom();
@@ -151,7 +219,8 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
 	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+	//core::conformation::ResidueOP new_virt_res_ = core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) ;
+	core::conformation::ResidueOP new_virt_res = core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) ;
 
 	// move to membrane_center if it's defined
 	if ( basic::options::option[basic::options::OptionKeys::membrane::membrane_center].user() ) {
@@ -160,16 +229,27 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		mem_center.y() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[2];
 		mem_center.z() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[3];
 
-		for ( Size j=1; j<= new_res->natoms(); ++j ) {
-			new_res->atom(j).xyz( new_res->atom(j).xyz() + mem_center );
+		for ( Size j=1; j<= new_virt_res->natoms(); ++j ) {
+			new_virt_res->atom(j).xyz( new_virt_res->atom(j).xyz() + mem_center );
 		}
 	}
 
 	core::pose::Pose closed_loops_pose( pose );
-	closed_loops_pose.fold_tree( broker().final_fold_tree() );
+	//TR << "closed_loops_pose FoldTree is:  ";
+	//closed_loops_pose.fold_tree().show(TR);
+	if(broker().does_final_fold_tree_exist())
+	{
+		closed_loops_pose.fold_tree( broker().final_fold_tree() );
+	}
+	pose.append_residue_by_jump( *new_virt_res , jump_res );
+	closed_loops_pose.append_residue_by_jump( *new_virt_res, jump_res );
 
-	pose.append_residue_by_jump( *new_res , jump_res );
-	closed_loops_pose.append_residue_by_jump( *new_res, jump_res );
+	if(TR.Trace.visible())
+	{
+		TR.Trace << "before fold tree...jump_res:  " << jump_res << " virt res:  " << new_virt_res->seqpos() << " " << new_virt_res->name() << std::endl;
+		TR.Trace << "before reordering...beginning of fold tree: " << pose.fold_tree().begin()->start() << std::endl;
+	}
+
 
 	// make the virt atom the root
 	kinematics::FoldTree newF( pose.fold_tree() );
@@ -180,8 +260,34 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 
 	kinematics::FoldTree finalF( closed_loops_pose.fold_tree() );
 	finalF.reorder( nres+1 );
-	broker().final_fold_tree() = finalF;
+	if(broker().does_final_fold_tree_exist()==true)
+	{
+		broker().final_fold_tree() = finalF;
+	}else{
+		TR << "Broker says final fold tree does not exist!" << std::endl;
+	}
 
+	if(TR.Debug.visible())
+	{
+		TR.Debug << "after reordering...beginning of fold tree: " << pose.fold_tree().begin()->start() << std::endl;
+		TR.Debug << "position of virtual res:  " << new_virt_res->seqpos() << std::endl;
+
+		TR.Debug << "root of fold tree:  " << pose.fold_tree().root() << " is virtual? " <<
+			pose.residue(pose.fold_tree().root()).is_virtual_residue() << " is residue type:  " <<
+			pose.residue(pose.fold_tree().root()).name() << std::endl;
+		core::Size root(pose.fold_tree().root());
+		for(core::Size i = 1; i <= pose.residue(root).natoms(); i++)
+		{
+			std::string atom_name = pose.residue(root).atom_name(i);
+			TR.Debug << pose.residue(root).name() << " " << atom_name << " " << pose.residue(root).atom(atom_name) << std::endl;
+		}
+	}
+}
+
+void
+MembraneTopologyClaimer::build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree_in)
+{
+	pose.fold_tree(fold_tree_in);
 }
 
 } //topology_broker

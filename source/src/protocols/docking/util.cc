@@ -28,6 +28,7 @@
 #include <basic/database/sql_utils.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/types.hh>
 #include <core/pose/PDBInfo.hh>
@@ -302,8 +303,8 @@ setup_foldtree(
 	if( movable_jumps.size() == 1 ) {
 
 		//identify center of masses for jump points
-		Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
+		Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+		Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
 		TR.Debug << "cutpoint: " << cutpoint << std::endl;
 		TR.Debug << "jump1: " << jump_pos1 << std::endl;
 		TR.Debug << "jump2: " << jump_pos2 << std::endl;
@@ -347,7 +348,7 @@ setup_foldtree(
 		std::sort( movable_jumps.begin(), movable_jumps.end() );
 
 		Size const base_cutpoint = cutpoint;
-		Size const base_jump_pos( geometry::residue_center_of_mass( pose, 1, base_cutpoint ) );
+		Size const base_jump_pos( core::pose::residue_center_of_mass( pose, 1, base_cutpoint ) );
 		for(DockJumps::const_iterator
 					curr_jump = movable_jumps.begin(),
 					last_movable_jump = movable_jumps.end();
@@ -355,7 +356,7 @@ setup_foldtree(
 			Size const curr_cutpoint = f.cutpoint_by_jump( *curr_jump ); // used to get the index of a residue in the moving chain (curr_cutpoint+1)
 			Size const chain_begin = conformation.chain_begin( pose.chain(curr_cutpoint+1) );
 			Size const chain_end = conformation.chain_end( pose.chain(curr_cutpoint+1) );
-			Size const moving_jump_pos( geometry::residue_center_of_mass( pose, chain_begin, chain_end ) );
+			Size const moving_jump_pos( core::pose::residue_center_of_mass( pose, chain_begin, chain_end ) );
 			TR.Debug
 				<< "Adjusting Jump (cut) for #" << *curr_jump
 				<< "(" << curr_cutpoint << "): "

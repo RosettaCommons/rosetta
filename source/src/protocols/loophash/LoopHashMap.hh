@@ -91,6 +91,10 @@ class LoopHashMap{
     /// @brief Constructor - must give loop_size
 		LoopHashMap( core::Size loop_size = 10);
 
+		LoopHashMap(LoopHashMap const & other);
+
+		LoopHashMap operator=(LoopHashMap const & other);
+
 	private:
     /// @brief Setup this class give a loop_size
 		void setup( core::Size loop_size);

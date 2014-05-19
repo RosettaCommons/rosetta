@@ -130,6 +130,8 @@ centroids_by_jump(
 	}
 
 	upstream_ctrd /= upstream_atoms;
+	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
+	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
 	downstream_ctrd /= downstream_atoms;
 	//TR << "Upstream:   " << upstream_atoms << " atoms, " << upstream_ctrd << std::endl;
 	//TR << "Downstream: " << downstream_atoms << " atoms, " << downstream_ctrd << std::endl;
@@ -225,105 +227,8 @@ centroids_by_jump_int(
 	//TR << "Upstream:   " << upstream_atoms << " atoms, " << upstream_ctrd << std::endl;
 	//TR << "Downstream: " << downstream_atoms << " atoms, " << downstream_ctrd << std::endl;
 }
-////////////////////////////////////////////////////////////////////////////////////
-/// @begin center_of_mass
-///
-/// @brief calculates the center of mass of a pose
-/// @detailed
-///				the start and stop positions (or residues) within the pose are used to
-///				find the starting and finishing locations
-///
-/// @authors Monica Berrondo June 14 2007
-///
-/// @last_modified Javier Castellanos June 4 2012
-/////////////////////////////////////////////////////////////////////////////////
-numeric::xyzVector< core::Real>
-center_of_mass(
-	pose::Pose const & pose,
-	int const start,
-	int const stop
-)
-{
-	Vector center( 0.0 );
-	for ( int i=start; i<=stop; ++i ) {
-		if( !pose.residue( i ).is_protein()) {
-			Vector ca_pos( pose.residue( i ).nbr_atom_xyz() );
-			center += ca_pos;
-	 	} else {
-			Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
-			center += ca_pos;
-			}
-	}
-	center /= (stop-start+1);
 
-	return center;
-}
 
-////////////////////////////////////////////////////////////////////////////////////
-/// @begin residue_center_of_mass
-///
-/// @brief calculates the center of mass of a pose
-/// @detailed
-///				the start and stop positions (or residues) within the pose are used to
-///				find the starting and finishing locations
-///
-/// @authors Monica Berrondo June 14 2007
-///
-/// @last_modified Javier Castellanos June 4 2012
-/////////////////////////////////////////////////////////////////////////////////
-int
-residue_center_of_mass(
-	pose::Pose const & pose,
-	int const start,
-	int const stop
-)
-{
-	Vector center = center_of_mass(pose, start, stop );
-	return return_nearest_residue( pose, start, stop, center );
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-/// @begin return_nearest_residue
-///
-/// @brief finds the residue nearest some position passed in (normally a
-///		center of mass)
-/// @detailed
-///				the start and stop positions (or residues) within the pose are used to
-///				find the starting and finishing locations
-///
-/// @authors Monica Berrondo June 14 2007
-///
-/// @last_modified June 29 2007
-/////////////////////////////////////////////////////////////////////////////////
-int
-return_nearest_residue(
-	pose::Pose const & pose,
-	int const begin,
-	int const end,
-	Vector center
-)
-{
-	Real min_dist = 9999.9;
-	int res = 0;
-	for ( int i=begin; i<=end; ++i )
-	{
-		Vector ca_pos;
-		if( !pose.residue( i ).is_protein() ){
-			ca_pos = pose.residue( i ).nbr_atom_xyz();
-			} else {
-		//Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
-			ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
-			}
-
-		ca_pos -= center;
-		Real tmp_dist( ca_pos.length_squared() );
-		if ( tmp_dist < min_dist ) {
-			res = i;
-			min_dist = tmp_dist;
-		}
-	}
-	return res;
-}
 
 } // namespace geometry
 } // namespace core

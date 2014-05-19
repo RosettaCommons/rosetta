@@ -21,10 +21,22 @@
 
 // Package headers
 #include <protocols/rigid/RB_geometry.hh>
-
+#include <core/pose/PDBInfo.hh>
+#include <protocols/topology_broker/TopologyClaimer.hh>
+#include <protocols/abinitio/AbrelaxMover.fwd.hh>
 // Rosetta Headers
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <utility/tag/Tag.hh>
+
+// Random number generator
+#include <numeric/xyzVector.hh>
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -37,20 +49,21 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <string>
+#include <core/id/TorsionID_Range.hh>
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
 #include <utility/tag/Tag.hh>
 
-// C++ headers
-#include <string>
-
 
 using basic::T;
 using basic::Error;
 using basic::Warning;
-
 
 namespace protocols {
 namespace rigid {
@@ -137,9 +150,9 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 		interface_(interface_in)
 {
 	movable_jumps_.push_back( rb_jump_in );
-	TRBM.Debug << "rb_jump " << rb_jump_in << std::endl;
-	TRBM.Debug << "rot_mag " << rot_mag_ << std::endl;
-	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
+	TRBM.Trace << "rb_jump " << rb_jump_in << std::endl;
+	TRBM.Trace << "rot_mag " << rot_mag_ << std::endl;
+	TRBM.Trace << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
 }
 
@@ -166,9 +179,9 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 		ok_for_centroid_calculation_( ok_for_centroid_calculation )
 {
 	movable_jumps_.push_back( rb_jump_in );
-	TRBM.Debug << "rb_jump " << rb_jump_in << std::endl;
-	TRBM.Debug << "rot_mag " << rot_mag_ << std::endl;
-	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
+	TRBM.Trace << "rb_jump " << rb_jump_in << std::endl;
+	TRBM.Trace << "rot_mag " << rot_mag_ << std::endl;
+	TRBM.Trace << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
 }
 
@@ -186,8 +199,8 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 		partner_( partner_in ),
 		interface_(interface_in)
 {
-	TRBM.Debug << "rot_mag " << rot_mag_ << std::endl;
-	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
+	TRBM.Trace << "rot_mag " << rot_mag_ << std::endl;
+	TRBM.Trace << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
 	for ( Size i=1, i_end = pose_in.num_jump(); i<= i_end; ++i ) {
 		if ( mm.get_jump(i) ) {
@@ -213,9 +226,9 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	partner_( partner_in ),
 	interface_(interface_in)
 {
-	TRBM.Debug << "rb_jump " << rb_jump_ << std::endl;
-	TRBM.Debug << "rot_mag " << rot_mag_ << std::endl;
-	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
+	TRBM.Trace << "rb_jump " << rb_jump_ << std::endl;
+	TRBM.Trace << "rot_mag " << rot_mag_ << std::endl;
+	TRBM.Trace << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
 }
 
@@ -241,7 +254,7 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 		RG.random_element( movable_jumps_ )
 		: movable_jumps_[1];
 
-	TR.Debug << "Set movable jump #" << rb_jump_ << std::endl;
+	TR.Trace << "Set movable jump #" << rb_jump_ << std::endl;
 
 	// Set center of rotation unless we are frozen.
 	if(!freeze_){
@@ -308,6 +321,127 @@ std::ostream
 	return os;
 }
 
+//Implementation of RigidBodyPerturbRandomJumpMover, which takes a random jump and calls RigidBodyPerturbMover
+RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover() : rot_mag_in_(3.0), trans_mag_in_(8.0), num_jump_(0){}
+RigidBodyPerturbRandomJumpMover::~RigidBodyPerturbRandomJumpMover(){}
+
+RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover(
+		core::Real const& rot_mag_in,
+		core::Real const& trans_mag_in,
+		core::Size const& num_jump_in) :
+		rot_mag_in_(rot_mag_in),
+		trans_mag_in_(trans_mag_in),
+		num_jump_(num_jump_in)
+{}
+
+void
+RigidBodyPerturbRandomJumpMover::apply(core::pose::Pose& pose)
+{
+	core::Size random_jump_num = static_cast<core::Size>(numeric::random::RG.random_range(1,num_jump_));
+	RigidBodyPerturbMover RBMover(random_jump_num,rot_mag_in_,trans_mag_in_);
+	RBMover.apply(pose);
+}
+
+std::string
+RigidBodyPerturbRandomJumpMover::get_name(){
+	return "RigidBodyPerturbRandomJumpMover";
+}
+
+RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(){}
+RigidBodyRandomTMHMover::~RigidBodyRandomTMHMover(){}
+RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(core::Real max_trans, core::Real rotation_mag, core::Real translation_mag, core::Size tmhelix,
+		protocols::topology_broker::TopologyClaimerOP claimer)
+ :    max_trans_(max_trans),
+
+		trans_mag_in_(translation_mag),
+		rot_mag_in_(rotation_mag),
+		num_jump_(tmhelix),
+		claimer_(claimer)
+{
+	if(TR.Trace.visible()){
+		TR.Trace << "max_trans:  " << max_trans_ << std::endl;
+		TR.Trace << "rot_mag_in:  " << rot_mag_in_ << std::endl;
+		TR.Trace << "trans_mag_in:  " << trans_mag_in_ << std::endl;
+		TR.Trace << "num_jump:  " << num_jump_ << std::endl;
+	}
+}
+
+void
+RigidBodyRandomTMHMover::apply(core::pose::Pose& pose)
+{
+	//Choose a random jump
+	core::Size random_jump_num = static_cast<core::Size>(numeric::random::RG.random_range(1,num_jump_));
+	if(TR.Trace.visible()){TR.Trace << "random_jump chosen:  " << random_jump_num << " " << pose.fold_tree().jump_edge(random_jump_num).start() << " " <<
+			pose.fold_tree().jump_edge(random_jump_num).stop() << std::endl;}
+
+	//Get the vector for this helix CoM (it is the second residue of the jump, the first is the virt res)
+	core::Size current_span_CoM(pose.fold_tree().jump_edge(random_jump_num).stop());
+	core::Vector current_rb_centroid(pose.residue(current_span_CoM).xyz("CA"));
+	core::Vector original_centroid(0.0,0.0,0.0);
+	core::pose::PoseOP claimer_pose;
+
+	//If the claimer does have a PoseOP, get it
+	if(TR.Trace.visible()){
+		TR.Trace << "Claimer is:  " << claimer_->type() << std::endl;
+	}
+	//get_pose_from_claimer() returns a PoseOP; NULL pointer in base class
+	if(claimer_->get_pose_from_claimer())
+	{
+		claimer_pose = claimer_->get_pose_from_claimer();
+	}else{
+		utility_exit_with_message("At least one TopologyClaimer needs to have get_pose_from_claimer() implemented for this mover to work");
+	}
+
+	//assert if claimer_pose doesn't point to anything at this point
+	assert(claimer_pose);
+
+	//Get the claimer_pose's CoM for this helix.  This is the position to which we want to move to if we need to
+	core::Size claimer_pose_current_span_CoM = claimer_pose->fold_tree().jump_edge(random_jump_num).stop();
+
+	//The current pose and the claimer pose CoM for this helix should be the same!
+	assert(claimer_pose_current_span_CoM == current_span_CoM);
+
+	//How far away are we now from the original starting position?
+	original_centroid = claimer_pose->residue(claimer_pose_current_span_CoM).xyz("CA");
+	if(TR.Trace.visible()){
+		TR.Trace << "original_centroid_xyz:  " << original_centroid.x() << " " << original_centroid.y() << " " << original_centroid.z() << std::endl;
+	}
+
+	core::Vector trans_vec = original_centroid - current_rb_centroid;
+	core::Real trans_len = trans_vec.length();
+	if(TR.Trace.visible()){
+		TR.Trace << "distance between current helix CoM and original position:  " << trans_len << std::endl;
+	}
+
+	//if we're too far away, just move back to original position from this claimer pose
+	if(trans_len>=max_trans_)
+	{
+		if(TR.Trace.visible()){
+			TR.Trace << "trans_len > max_trans.  Calling RigidBodyTransMover to move back to original position" << std::endl;
+		}
+		protocols::rigid::RigidBodyTransMover mover(pose, random_jump_num);
+		mover.step_size(trans_len);
+		mover.trans_axis(trans_vec);
+		mover.apply(pose);
+		current_rb_centroid = pose.residue(current_span_CoM).xyz("CA");
+		if(TR.Trace.visible()){
+			TR.Trace << "current_rb_centroid position is now:  " << current_rb_centroid.x() << " " << current_rb_centroid.y() << " " << current_rb_centroid.z() << std::endl;
+		}
+	//if not too far away, just do RB perturbations as usual
+	}else{
+		if(TR.Trace.visible()){
+			TR.Trace << "trans_len <= max_trans.  Calling RigidBodyPerturbMover as usual" << std::endl;
+		}
+		RigidBodyPerturbMover mover(random_jump_num,rot_mag_in_,trans_mag_in_);
+		mover.apply(pose);
+	}
+}
+
+std::string
+RigidBodyRandomTMHMover::get_name()
+{
+	return "RigidBodyRandomTMHMover";
+}
 
 void
 RigidBodyPerturbNoCenterMover::parse_my_tag(
@@ -739,10 +873,14 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 		axis = centroid_axis(pose);
 	}
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
-		TRBM << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
+	TRBM << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
+	//TRBM << "Translate: " << "Jump (before): " << flexible_jump << " step_size:  " << step_size_ <<
+	//			" trans_axis_x:  " << trans_axis_.x() << " trans_axis_y:  " << trans_axis_.y() << " trans_axis_z:  " << trans_axis_.z() << std::endl;
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
 	flexible_jump.translation_along_axis( upstream_stub, axis, step_size_ );
-		TRBM << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
+	TRBM << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
+	//TRBM << "Translate: " << "Jump (after):  " << flexible_jump << " step_size:  " << step_size_ <<
+	//			" trans_axis_x:  " << trans_axis_.x() << " trans_axis_y:  " << trans_axis_.y() << " trans_axis_z:  " << trans_axis_.z() << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
 }
 

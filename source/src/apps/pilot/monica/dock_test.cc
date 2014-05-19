@@ -33,6 +33,7 @@
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 // AUTO-REMOVED #include <basic/options/option.hh>
 
@@ -161,8 +162,8 @@ rb_test ()
 	// the tree using tree_from_jumps_and_cuts
 	{ // set up the foldtree
 		FoldTree f( nres );
-		int const jump_pos1 ( residue_center_of_mass( pose, 1, cutpoint ) );
-		int const jump_pos2 ( residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
+		int const jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+		int const jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
 		dock_jump = f.new_jump( jump_pos1, jump_pos2, cutpoint );
 		// set this jump as the docking jump
 		f.reorder( jump_pos1 );

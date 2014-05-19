@@ -41,7 +41,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/forge/methods/chainbreak_eval.hh>
-
+#include <protocols/rigid/RB_geometry.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
@@ -1284,8 +1284,8 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 	// the second chain is the heavy chain and any other chains are
 	// the antigen.
 	Size end_of_light_chain = pose.conformation().chain_end(1);
-	Size light_chain_COM = geometry::residue_center_of_mass(pose, 1, end_of_light_chain);
-	Size heavy_chain_COM = geometry::residue_center_of_mass(pose, end_of_light_chain + 1, pose.total_residue());
+	Size light_chain_COM = core::pose::residue_center_of_mass(pose, 1, end_of_light_chain);
+	Size heavy_chain_COM = core::pose::residue_center_of_mass(pose, end_of_light_chain + 1, pose.total_residue());
 
 	// Adjust the FoldTree that is produced by fold_tree_from_loops to have no edges that span the light and heavy chains..
 	// Specifically, this will:
@@ -1338,7 +1338,6 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	f->reorder(1);
 	return f;
-
 }
 
 
@@ -1385,8 +1384,8 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 		}
 	}
     
-	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
+	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
     
 	//setup fold tree based on cutpoints and jump points
 	LH_A_foldtree.clear();
@@ -1464,8 +1463,8 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 		}
 	}
 
-	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
+	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
 
 	//setup fold tree based on cutpoints and jump points
 	L_HA_foldtree.clear();
@@ -1535,8 +1534,8 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 		}
 	}
 
-	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
+	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
 
 	//setup fold tree based on cutpoints and jump points
 	LA_H_foldtree.clear();

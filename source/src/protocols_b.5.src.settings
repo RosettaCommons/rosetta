@@ -37,6 +37,7 @@ sources = {
 		"Template",
 		"TemplateJumpSetup",
 		"Templates",
+		#"TMHTopologySampler",
 		"vs_test",
 	],
 	"protocols/abinitio/abscript": [
@@ -165,6 +166,7 @@ sources = {
 		"FragmentJumpClaimer",
 		"LoopFragmentClaimer",
 		"MembraneTopologyClaimer",
+		"TMHTopologySamplerClaimer",
 		"MetalloClaimer",
 		"PcsEnergyController",
 		"PseudocontactShiftEnergyController",

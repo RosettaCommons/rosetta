@@ -17,6 +17,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
@@ -299,7 +300,7 @@ HotspotPlacementMover::apply(
 				//kdrew: setup fold tree centered around resnum
 				Size pro_start( pose.conformation().chain_begin( 1 ) );
 				Size pro_end( pose.conformation().chain_end( 1 ) );
-				Size dock_jump_pos_pro( geometry::residue_center_of_mass( pose, pro_start, pro_end ) );
+				Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
 				setup_pert_foldtree_byres(pose, dock_jump_pos_pro, resnum);
 
 				hs_index++;
@@ -477,8 +478,8 @@ HotspotPlacementMover::setup_pert_foldtree(
 	Size pep_end( pose.conformation().chain_end( 2 ) );
 
 	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( geometry::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( geometry::residue_center_of_mass( pose, pep_start, pep_end ) );
+	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
+	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
 
 	setup_pert_foldtree_byres(pose, dock_jump_pos_pro, dock_jump_pos_pep);
 

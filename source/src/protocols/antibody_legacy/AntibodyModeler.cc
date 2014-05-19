@@ -16,6 +16,7 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragData.hh>
+#include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/fragment/FragID.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
@@ -594,9 +595,9 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 		}
 	}
 
-	Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1,
+	Size jump_pos1 ( core::pose::residue_center_of_mass( pose_in, 1,
 	                 rb_cutpoint ) );
-	Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1,
+	Size jump_pos2 ( core::pose::residue_center_of_mass( pose_in,rb_cutpoint+1,
 	                 nres ) );
 
 	// make sure rb jumps do not reside in the loop region

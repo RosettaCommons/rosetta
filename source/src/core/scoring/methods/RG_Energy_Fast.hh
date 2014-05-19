@@ -109,7 +109,11 @@ public:
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
 	) const {}
-
+    
+    ///@brief function to get membrane protein TMH centers of mass
+    utility::vector1<core::Size>
+    get_tmh_CoMs(pose::Pose const& pose) const;
+    
 private:
 	RG_MinData const & mindata_from_pose( pose::Pose const & ) const;
 	RG_MinData & nonconst_mindata_from_pose( pose::Pose & ) const;

@@ -58,6 +58,7 @@
 #include <basic/basic.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/broker.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/assert.hh>
@@ -3003,6 +3004,8 @@ Conformation::backbone_torsion_angle_atoms(
 	AtomID & id4
 ) const
 {
+
+	//std::cout << "here" << std::endl;
 	using chemical::AtomIndices;
 
 	bool fail( true ); // return value
@@ -3189,6 +3192,9 @@ Conformation::backbone_torsion_angle_atoms(
 
 	}
 
+//	std::cout << "2. checking backbone torsion angle atoms for torsionID " << torsion << " in residue " <<
+//			 seqpos << " and atoms " << rsd.atom_name(id1.atomno()) << " " << rsd.atom_name(id2.atomno())
+//			 << " " << rsd.atom_name(id3.atomno()) << " " << rsd.atom_name(id4.atomno()) << std::endl;
 	fail = false;
 
 	return fail;

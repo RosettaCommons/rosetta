@@ -18,6 +18,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <core/chemical/ResidueType.hh>
 
@@ -127,8 +128,8 @@ void ubq_ras_rotation_angle(
 	// core::Size const ubq_begin(167);
 	// core::Size const ubq_end(260);//262 or 263, depending on length
 
-	// core::Size const ubq_calculated_center(protocols::geometry::residue_center_of_mass(pose, ubq_begin, ubq_end));
-	// core::Size const ras_calculated_center(protocols::geometry::residue_center_of_mass(pose, ras_begin, ras_end));
+	// core::Size const ubq_calculated_center(protocols::geometry::core::pose::residue_center_of_mass(pose, ubq_begin, ubq_end));
+	// core::Size const ras_calculated_center(core::pose::residue_center_of_mass(pose, ras_begin, ras_end));
 
 	// TR << "Calculated centers of mass: ubq/pdz: " << ubq_calculated_center << " ras: " << ras_calculated_center << std::endl;
 

@@ -53,6 +53,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -695,8 +696,8 @@ DougsDockDesignMinimizeMagicMover::setup_pert_foldtree(
 	Size pep_end( pose.conformation().chain_end( 2 ) );
 
 	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( geometry::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( geometry::residue_center_of_mass( pose, pep_start, pep_end ) );
+	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
+	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
 
 	// build fold tree
 	Size jump_index( f.num_jump() + 1 );

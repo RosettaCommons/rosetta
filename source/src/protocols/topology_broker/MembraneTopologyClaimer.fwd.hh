@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author Oliver Lange
+/// @file   protocols/topology_broker/MembraneTopologyClaimer.fwd.hh
+/// @brief  protocols::topology_broker::MembraneTopologyClaimer forward declarations header
+/// @author Stephanie H. DeLuca stephanie.h.deluca@vanderbilt.edu and  Oliver Lange
 
 
 #ifndef INCLUDED_protocols_topology_broker_MembraneTopologyClaimer_fwd_hh
@@ -34,8 +34,7 @@ typedef  utility::pointer::owning_ptr< MembraneTopologyClaimer const >  Membrane
 typedef  utility::pointer::access_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerAP;
 typedef  utility::pointer::access_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCAP;
 
-
-} // namespace kinematics
-} // namespace core
+} // namespace protocols
+} // namespace topology_broker
 
 #endif

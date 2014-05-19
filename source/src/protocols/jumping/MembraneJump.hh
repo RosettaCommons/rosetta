@@ -85,17 +85,19 @@ pairings_size() const {
 	return pairings_size_;
 }
 
+
 void
-setup_fold_tree(core::pose::Pose & pose, core::Size njumps) const;
+setup_fold_tree(core::pose::Pose & pose, core::Size njumps);
 
-
+void
+rt_templates(core::pose::Pose & pose);
 
 private:
 	PairingLibrary templates_;
 	core::scoring::dssp::PairingList pairings_;
 	core::Size template_size_;
 	core::Size pairings_size_;
-
+	core::scoring::dssp::PairingList selected_pairings_;
 };
 
 

@@ -35,6 +35,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 
@@ -181,8 +182,19 @@ public:
 	///@brief switch to fullatom --- some Claimers might help by providing template based side-chain information
 	void switch_to_fullatom( core::pose::Pose& );
 
+	bool does_final_fold_tree_exist() const
+	{
+		if(final_fold_tree_)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	///@brief access for hacky claimers
 	core::kinematics::FoldTree& final_fold_tree() const {
+		//std::cout << "Broker FinalFoldTree is:  ";
+		//final_fold_tree_->show(std::cout);
 		runtime_assert( final_fold_tree_ );
 		return *final_fold_tree_;
 	};
@@ -237,6 +249,8 @@ private:
 	/// throws EXCN_InvalidFoldTree at failure
 	void build_fold_tree( claims::DofClaims& claims, Size nres );
 
+	void build_fold_tree_from_claimer(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree);
+
 	///@brief create new pose from SeqClaims
 	void initialize_sequence( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
@@ -284,7 +298,13 @@ private:
 	///@brief we restart from the input pose... call steal( pose ) for all claimers
 	bool bUseJobPose_;
 
+	bool use_fold_tree_from_claimer_;
+
+	//bool have_fold_tree_;
+
 	core::pose::PoseOP current_pose_;
+
+	//DofClaims pre_accepted_;
 }; //class TopologyBroker
 
 }

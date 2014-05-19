@@ -54,6 +54,18 @@ namespace protocols {
 				return _static_type_name();
 			}
 
+			virtual bool claimer_builds_own_fold_tree();
+			
+			virtual void set_pose_from_broker(core::pose::Pose& pose);
+			
+			virtual void pre_process(core::pose::Pose& pose);
+			
+			virtual void generate_claims( claims::DofClaims& dof_claims);
+			
+			virtual void build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree_in);
+			
+			virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose& pose);
+
 			static std::string _static_type_name() {
 				return "MembraneTopologyClaimer";
 			}

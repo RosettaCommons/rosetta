@@ -16,6 +16,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
+#include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/fragment/FragSet.hh>
 // AUTO-REMOVED #include <core/fragment/FragData.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -709,6 +710,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 
 				// check highres docking filter
 				( *dockfa_cst_scorefxn_ )( pose_in );
+
 				passed_fullatom_filter_ = fullatom_filter( pose_in );
 			} // if fullatom mode
 			// pose_in.dump_pdb( "fullatom.pdb" );
@@ -791,12 +793,12 @@ ubi_e2c_modeler::setup_key_residues(
 		old_chain = chain;
 	}// for i <= d77_end_
 
-	e2_ctr_of_mass_ = geometry::residue_center_of_mass( pose_in, 1,
+	e2_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in, 1,
 	                  e2_end_ );
-	k48r_ctr_of_mass_ = geometry::residue_center_of_mass( pose_in,
+	k48r_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in,
 	                    e2_end_ + 1,
 	                    k48r_end_ );
-	d77_ctr_of_mass_ = geometry::residue_center_of_mass( pose_in,
+	d77_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in,
 	                   k48r_end_ + 1,
 	                   d77_end_ );
 
@@ -1161,7 +1163,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 	pose_in.copy_segment( ub_trim_size, e2_k48r, e2_end_ + 1, e2_end_ + 1 );
 	to_centroid.apply( pose_in );
 
-	Size e2_k48r_ctr_of_mass = geometry::residue_center_of_mass( pose_in,
+	Size e2_k48r_ctr_of_mass = core::pose::residue_center_of_mass( pose_in,
 	                           1, k48r_trim_end_ );
 	// pose_in.dump_pdb( "mid.pdb" );
 
@@ -1788,7 +1790,7 @@ ubi_e2c_modeler::set_e2g2_diubi_fold_tree(
 	f.clear();
 	Size nres = d77_end_;
 	Size jumppoint1 = e2_ctr_of_mass_;
-	Size diubi_center_of_mass = geometry::residue_center_of_mass( pose_in,
+	Size diubi_center_of_mass = core::pose::residue_center_of_mass( pose_in,
 	                            e2_end_ + 1, nres );
 	Size jumppoint2 = diubi_center_of_mass;
 	Size cutpoint = e2_end_;
@@ -2477,6 +2479,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 			monoub_fullatom_mode_perturbation( pose_in );
 
 			// add scores to map for output
+
 			protocols::jd2::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
 
 			// check highres docking filter
@@ -2533,9 +2536,9 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 		old_chain = chain;
 	}// for i <= monoub_end_
 
-	e2_ctr_of_mass_ = geometry::residue_center_of_mass( pose_in, 1,
+	e2_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in, 1,
 	                  e2_end_ );
-	monoub_ctr_of_mass_ = geometry::residue_center_of_mass( pose_in,
+	monoub_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in,
 	                      e2_end_ + 1,
 	                      monoub_end_ );
 

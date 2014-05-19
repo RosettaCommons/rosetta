@@ -16,6 +16,7 @@
 #include <protocols/simple_moves/symmetry/DetectSymmetryMoverCreator.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <numeric/xyzMatrix.hh>
@@ -92,28 +93,28 @@ DetectSymmetry::apply(Pose & pose) {
 
 	// Translate the center of the mass of the pose to the origin
     xyzMatrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
-    xyzVector cm_pose = protocols::geometry::center_of_mass(pose, 1, pose.total_residue());
+    xyzVector cm_pose = core::pose::center_of_mass(pose, 1, pose.total_residue());
     pose.apply_transform_Rx_plus_v(id_rot_mat, -1*cm_pose);
 
 	//-- Align the center of mass of chain A in the Y axis --
 	//  first step: rotate around x to align the center of mass of chain A to the xy-plane
-    xyzVector cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
+    xyzVector cm_chain_A = core::pose::center_of_mass(pose, 1, seq1.size());
 	core::Real angle_y1 = angle_with_y_axis_proj_x( cm_chain_A );
 	xyzMatrix x_rot = numeric::x_rotation_matrix_degrees( -1 * angle_y1 );
     pose.apply_transform_Rx_plus_v(x_rot, xyzVector(0,0,0));
-	cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
+	cm_chain_A = core::pose::center_of_mass(pose, 1, seq1.size());
     assert( cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
     // second step: rotate around z to align the center of mass of chain A to the y-axis
     core::Real angle_y2 = angle_with_y_axis_proj_z( cm_chain_A );
     xyzMatrix z_rot = numeric::z_rotation_matrix_degrees( -1 * angle_y2 );
     pose.apply_transform_Rx_plus_v(z_rot, xyzVector(0,0,0));
-	cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
+	cm_chain_A = core::pose::center_of_mass(pose, 1, seq1.size());
     assert( cm_chain_A[0] > -1*plane_tolerance_ && cm_chain_A[0] < plane_tolerance_ && cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
 
     //check that the com of all subunits is in the xy-plane
       for( Size i = 0; i < symmetric_type; i++)
     {
-        xyzVector cm_chain = protocols::geometry::center_of_mass(pose, i*seq1.size()+1, i * seq1.size() + seq1.size());
+        xyzVector cm_chain = core::pose::center_of_mass(pose, i*seq1.size()+1, i * seq1.size() + seq1.size());
         runtime_assert_msg(cm_chain[2] > -1*plane_tolerance_ && cm_chain[2] < plane_tolerance_, "com of chain " + boost::lexical_cast< std::string >( i ) +  " is not properly aligned to the x-y plane");
     }
 

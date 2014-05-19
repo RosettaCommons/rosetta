@@ -15,6 +15,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -1122,7 +1123,7 @@ void HotspotStubSet::setup_hotspot_foldtree_( core::pose::Pose & pose ) {
 	if( target_resnum_ && target_distance_ ) {
 		jump_pos1 = target_resnum_;
 	}
-	else jump_pos1 = geometry::residue_center_of_mass( pose, 1, cutpoint );
+	else jump_pos1 = core::pose::residue_center_of_mass( pose, 1, cutpoint );
 	TR.Debug << "jump1: " << jump_pos1 << std::endl;
 	// hotspot created stub_offset from the end of the pose
 	jump_pos2 = pose.total_residue() - stub_offset();
@@ -1763,7 +1764,7 @@ core::Real stub_tgt_angle( core::pose::Pose const & pose, core::conformation::Re
 	runtime_assert( target_res <= pose.total_residue() );
 	core::Size angle_res = target_res;
 	if( angle_res == 0 ) {
-		angle_res = geometry::residue_center_of_mass( pose, 1, int(pose.total_residue() ) );
+		angle_res = core::pose::residue_center_of_mass( pose, 1, int(pose.total_residue() ) );
 	}
 
 	core::Size const CA_stub_index = stub->atom_index("CA");
@@ -1782,7 +1783,7 @@ core::Real stub_tgt_angle( core::pose::Pose const & pose, core::conformation::Re
 
 /*
 core::scoring::constraints::AngleConstraintOP make_angle_cst( core::pose::Pose const & pose, core::conformation::ResidueCOP stub ) {
-	core::Size const CoM = geometry::residue_center_of_mass( pose, 1, int(pose.total_residue()) );
+	core::Size const CoM = core::pose::residue_center_of_mass( pose, 1, int(pose.total_residue()) );
 	core::Size const CA_stub_index = stub->atom_index("CA");
 	core::Size const CB_stub_index = stub->atom_index("CB");
 	core::Size const CA_CoM_index = pose.residue( CoM ).atom_index("CA");

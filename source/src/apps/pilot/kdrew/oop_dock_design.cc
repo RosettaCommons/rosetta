@@ -16,6 +16,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -290,4 +291,3 @@ main( int argc, char* argv[] )
     }
     return 0;
 }//main
-

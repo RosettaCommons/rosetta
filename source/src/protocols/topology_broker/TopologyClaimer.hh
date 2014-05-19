@@ -27,10 +27,11 @@
 
 // Project Headers
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/fragment/FragSet.hh>
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
@@ -86,8 +87,26 @@ public:
 	///@brief name of Claimer
 	virtual std::string type() const = 0;
 
+	virtual bool claimer_builds_own_fold_tree()
+	{
+		return false;
+	}
+
+//	virtual void set_pose_from_broker(core::pose::Pose& pose) {};
+
+	///@brief in case a claimer has its own fold_tree.  get_fold_tree() is called by the broker
+	virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose&) {return NULL;}
+
+	//virtual core::pose::PoseOP get_pose() {return NULL;}
+
+	virtual void build_fold_tree(core::pose::Pose&, core::kinematics::FoldTree&) {};
+
+	virtual void set_pose_from_broker(core::pose::Pose&){};
+
 	///@brief read definition of Claimer from setup file, i.e., a CLAIMER <type> ... END_CLAIMER block
 	virtual void read( std::istream & );
+
+	virtual void pre_process(core::pose::Pose&) {};
 
 	///@brief generate claims that affect the sequence of the pose
 	virtual void generate_sequence_claims( claims::DofClaims& ){}; //add to list ( never call clear() on list )
@@ -200,6 +219,9 @@ public:
 
 	virtual void receive_message( ClaimerMessage& ) {};
 
+	//getter function to retrieve this claimer's current_pose (to get after moving spans)
+	virtual core::pose::PoseOP get_pose_from_claimer() {return NULL;};
+
 protected:
 
 	///@brief what is your mover ... called by add_mover --- overload this or add_mover if you have movers too supply
@@ -226,6 +248,12 @@ private:
 
 	///@brief a user defined string, can be used to send messages from claimer to claimer
 	std::string label_;
+
+	///@brief in case a claimer has its own fold_tree.  get_fold_tree() is called by the broker
+	//core::kinematics::FoldTreeOP fold_tree_;
+
+	//core::pose::Pose pose_;
+
 }; //class TopologyClaimer
 
 inline std::istream& operator >> ( std::istream& is, TopologyClaimer& tc ) {

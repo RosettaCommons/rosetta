@@ -22,6 +22,8 @@
 
 // Package headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/topology_broker/TopologyClaimer.fwd.hh>
+
 
 // Project headers
 #include <core/types.hh>
@@ -39,7 +41,6 @@
 
 // C++ Headers
 #include <map>
-
 
 namespace protocols {
 namespace rigid {
@@ -132,6 +133,7 @@ public:
 	typedef RigidBodyMover parent;
 
 public:
+
 	// default constructor
 	RigidBodyPerturbMover();
 
@@ -202,6 +204,44 @@ private:
 
 std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover );
 
+
+class RigidBodyRandomTMHMover : public RigidBodyMover{
+public:
+	RigidBodyRandomTMHMover();
+	RigidBodyRandomTMHMover(core::Real max_trans, core::Real rotation_mag, core::Real translation_mag, core::Size tmhelix,
+			protocols::topology_broker::TopologyClaimerOP claimer);
+	void apply(core::pose::Pose& pose);
+	virtual std::string get_name();
+	virtual ~RigidBodyRandomTMHMover();
+
+private:
+
+	core::Real max_trans_;
+	core::Real trans_mag_in_;
+	core::Real rot_mag_in_;
+	core::Size num_jump_;
+	topology_broker::TopologyClaimerOP claimer_;
+	
+};
+
+class RigidBodyPerturbRandomJumpMover : public RigidBodyMover{
+public:
+	RigidBodyPerturbRandomJumpMover();
+
+	RigidBodyPerturbRandomJumpMover(
+			core::Real const& rot_mag_in,
+			core::Real const& trans_mag_in,
+			core::Size const& num_jump_in);
+	void apply(core::pose::Pose& pose);
+	virtual std::string get_name();
+
+	virtual ~RigidBodyPerturbRandomJumpMover();
+
+private:
+	core::Real rot_mag_in_;
+	core::Real trans_mag_in_;
+	core::Size num_jump_;
+};
 
 ///@brief does a perturbation defined by the rotational and translational magnitudes
 /// 	without setting up the center

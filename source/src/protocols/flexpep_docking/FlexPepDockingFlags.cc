@@ -22,11 +22,12 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/flexPepDocking.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <utility/exit.hh>
-
+#include <core/pose/util.hh>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -353,7 +354,7 @@ FlexPepDockingFlags::setDefaultAnchors
 			this->peptide_anchors[1] = option[ OptionKeys::flexPepDocking::peptide_anchor ];
 		}
 	else {
-	this->peptide_anchors[1] = residue_center_of_mass
+	this->peptide_anchors[1] = core::pose::residue_center_of_mass
 		( pose,
 			peptide_first_res(),
 			peptide_last_res() );
@@ -370,7 +371,7 @@ FlexPepDockingFlags::setDefaultAnchors
 		pep_anchor_ca( pose.residue( peptide_anchors[1] ).atom( "CA" ).xyz() );
 	if(valid_receptor_chain_)
 		{
-			this->receptor_anchor_pos =	return_nearest_residue
+			this->receptor_anchor_pos =	core::pose::return_nearest_residue
 				( pose,
 					receptor_first_res(),
 					receptor_last_res() ,

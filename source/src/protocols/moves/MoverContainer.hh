@@ -194,6 +194,8 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
+	std::string get_name_individual_mover(core::Size index);
+
 	core::Real last_proposal_density_ratio();
 
 	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent

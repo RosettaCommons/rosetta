@@ -28,6 +28,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/abinitio/FragmentSampler.hh>
 #include <protocols/abinitio/ConstraintFragmentSampler.hh>
+//#include <protocols/abinitio/TMHTopologySampler.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/Job.hh>
@@ -64,6 +65,7 @@
 
 #include <utility/vector1.hh>
 
+#include <protocols/moves/PyMolMover.hh>
 
 static basic::Tracer tr("protocols.general_abinitio", basic::t_info);
 
@@ -110,9 +112,23 @@ void AbrelaxMover::set_defaults() {
 	topology_broker_ = new topology_broker::TopologyBroker();
 	topology_broker::add_cmdline_claims( *topology_broker_ );
 
-	// add basic abinitio sampler
-	FragmentSamplerOP sampler = new ConstraintFragmentSampler( topology_broker_ );
-	sampling_protocol( sampler );
+
+//	FragmentSamplerOP sampler;
+	// use the TMHTopologySampler or default ConstraintFragmentSampler
+//	if(option[OptionKeys::abinitio::TMH_topology].user())
+//	{
+//		tr << "setting TMYTopologySampler" << std::endl;
+//		FragmentSamplerOP sampler = new TMHTopologySampler(topology_broker_);
+//		tr << "sampler:  " << sampler->get_name() << std::endl;
+//		sampling_protocol( sampler );
+//	}
+//	else{
+		//tr << "setting ConstraintfragmentSampler" << std::endl;
+		FragmentSamplerOP sampler = new ConstraintFragmentSampler( topology_broker_ );
+		//tr << "sampler:  " << sampler->get_name() << std::endl;
+		sampling_protocol( sampler );
+//	}
+
 
 	//  Idealize the structure before relax
 	bool bIdeal( true );
@@ -210,6 +226,19 @@ topology_broker::TopologyBrokerOP AbrelaxMover::topology_broker() {
 
 //@brief basic apply for the generalized protocol:
 void AbrelaxMover::apply( pose::Pose &pose ) {
+	// Can we add the PyMOL mover here?
+	{
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		if (option[OptionKeys::run::show_simulation_in_pymol].user()
+				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0)
+			{
+				protocols::moves::AddPyMolObserver(pose,
+						option[OptionKeys::run::keep_pymol_simulation_history](),
+						option[OptionKeys::run::show_simulation_in_pymol].value());
+			}
+	}
+
 	using namespace basic::options;
 
 	runtime_assert( sampling_protocol() );
@@ -258,6 +287,11 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 #endif
 
 	sampling_protocol()->apply( pose );
+	if(sampling_protocol()->get_last_move_status() == protocols::moves::FAIL_RETRY)
+	{
+		this->set_last_move_status(protocols::moves::FAIL_RETRY);
+		return;
+	}
 
 	//make sure all chainbreak variants are activated:
 	if ( !topology_broker()->check_chainbreak_variants( pose ) ) {

@@ -182,6 +182,7 @@ public:
 		for ( Size ii = 1; ii <= 6; ++ii ) {
 			bin[ ii ] = index / dimprods_[ ii ];
 			index = index % dimprods_[ ii ];
+			std::cout << "bin:  " << bin[ii] << std::endl;
 		}
 		return bin;
 	}

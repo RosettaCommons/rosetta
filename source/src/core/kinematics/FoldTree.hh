@@ -106,6 +106,11 @@ public:
 		return *this;
 	}
 
+	FoldTree clone()
+	{
+		return *this;
+	}
+
 	// non-modifying access /////////////////////////////////////////////////////
 
 	/// @brief Returns the starting residue of the kinematic chunk to which res belongs

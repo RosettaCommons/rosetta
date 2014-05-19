@@ -333,7 +333,7 @@ namespace membrane {
         for ( int i = 1; i <= nchains; i++ ) {
 
             // Calculate jump anchor residue from chain center of mass
-            core::Size jump = residue_center_of_mass( *pose, pose->conformation().chain_begin(i), pose->conformation().chain_end(i));
+            core::Size jump = core::pose::residue_center_of_mass( *pose, pose->conformation().chain_begin(i), pose->conformation().chain_end(i));
 
             // Grab Resources for the given chain
             SpanningTopologyOP topology = topologies_[i];

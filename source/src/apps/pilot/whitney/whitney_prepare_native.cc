@@ -22,6 +22,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -121,10 +122,10 @@ main( int argc, char * argv [] )
 		//		TR << "cuts are after residues " << cuts(1) << " and " << cuts(2) << std::endl;
 
 		FArray2D_int jump_points(2,2);
-		jump_points(1,1) = protocols::geometry::residue_center_of_mass( native_pose, 1, cuts(1) );
-		jump_points(2,1) = protocols::geometry::residue_center_of_mass( native_pose, cuts(1)+1, cuts(2) );
+		jump_points(1,1) = core::pose::residue_center_of_mass( native_pose, 1, cuts(1) );
+		jump_points(2,1) = core::pose::residue_center_of_mass( native_pose, cuts(1)+1, cuts(2) );
 		jump_points(1,2) = jump_points(1,1);
-		jump_points(2,2) = protocols::geometry::residue_center_of_mass( native_pose, cuts(2)+1, native_pose.total_residue() );
+		jump_points(2,2) = core::pose::residue_center_of_mass( native_pose, cuts(2)+1, native_pose.total_residue() );
 		//		TR << "jump1 is " << jump_points(1,1) << " and " << jump_points(2,1) << std::endl;
 		//		TR << "jump2 is " << jump_points(1,2) << " and " << jump_points(2,2) << std::endl;
 

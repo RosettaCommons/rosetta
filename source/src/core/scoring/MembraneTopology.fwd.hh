@@ -33,7 +33,7 @@ namespace scoring {
 
 class MembraneTopology;
 typedef utility::pointer::owning_ptr< MembraneTopology > MembraneTopologyOP;
-
+typedef utility::pointer::owning_ptr< MembraneTopology const > MembraneTopologyCOP;
 
 } // ns scoring
 } // ns core

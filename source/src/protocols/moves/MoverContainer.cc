@@ -197,6 +197,12 @@ void RandomMover::apply( core::pose::Pose & pose )
 
 }
 
+std::string RandomMover::get_name_individual_mover(core::Size index)
+{
+	std::string name = movers_[index]->get_name();
+	return name;
+}
+
 RandomMover::RandomMover( RandomMover const & source ) :
 	MoverContainer( source ),
 	nmoves_( source.nmoves_ ),

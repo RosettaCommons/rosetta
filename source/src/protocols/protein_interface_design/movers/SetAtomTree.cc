@@ -24,6 +24,7 @@
 // Project headers
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
+#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -221,10 +222,10 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		ccm.bond_length( 15.0 );
 		ccm.chain_id( 1 );
 		core::Size const cut( ccm.chain_cut( pose ) );
-		core::Size const CoM1 = (core::Size ) residue_center_of_mass( pose, 1, cut );
-		core::Size const CoM2 = (core::Size ) residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
-		core::Size const CoM3 = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 2 ), pose.conformation().chain_end( 2 ) );
-		core::Size const CoM1_full_length = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
+		core::Size const CoM1 = (core::Size ) core::pose::residue_center_of_mass( pose, 1, cut );
+		core::Size const CoM2 = (core::Size ) core::pose::residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
+		core::Size const CoM3 = (core::Size ) core::pose::residue_center_of_mass( pose, pose.conformation().chain_begin( 2 ), pose.conformation().chain_end( 2 ) );
+		core::Size const CoM1_full_length = (core::Size ) core::pose::residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
 		TR<<"CoM1/CoM2/CoM3/CoM1_full_length/cut: "<<CoM1<<'/'<<CoM2<<'/'<<CoM3<<'/'<<'/'<<CoM1_full_length<<'/'<<cut<<std::endl;
 		core::kinematics::FoldTree new_ft;
 		new_ft.clear();

@@ -53,6 +53,8 @@ public:
 	{
 		return new MembraneTopology( *this );
 	}
+	std::string
+	read_in_spanfile();
 
 //pba
   bool
@@ -221,6 +223,7 @@ public:
 		return allow_scoring_[pos];
 	}
 	 */
+
  protected:
 
 
@@ -236,6 +239,7 @@ private:
 
 private: // data
 
+	std::string spanfile_;
 	ObjexxFCL::FArray1D< Size > helix_id_;
 	ObjexxFCL::FArray2D< Size > span_;
 	ObjexxFCL::FArray2D< Size > full_span_;

@@ -60,6 +60,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/pose/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -228,10 +229,10 @@ public:
 		FrameList frames = pick_fragments(ss, sequence, abego, interval, frag_length_, nfrags_);
 		// make a pose with two copies of the input pose conected through a virutal atom
 		Pose working_pose(pose);
-		Vector com_A = protocols::geometry::center_of_mass(pose,1, junction_start_);
-		Size resi_nearest_to_com_A = protocols::geometry::return_nearest_residue( pose, 1, junction_start_, com_A);
-		Vector com_B = protocols::geometry::center_of_mass(pose,junction_end_ , pose.total_residue());
-		Size resi_nearest_to_com_B = protocols::geometry::return_nearest_residue( pose, junction_end_, pose.total_residue(), com_B);
+		Vector com_A = core::pose::center_of_mass(pose,1, junction_start_);
+		Size resi_nearest_to_com_A = protocols::geometry::core::pose::return_nearest_residue( pose, 1, junction_start_, com_A);
+		Vector com_B = core::pose::center_of_mass(pose,junction_end_ , pose.total_residue());
+		Size resi_nearest_to_com_B = protocols::geometry::core::pose::return_nearest_residue( pose, junction_end_, pose.total_residue(), com_B);
 
 		// create the new residue and locate it between the moving elements
 		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
@@ -448,10 +449,10 @@ public:
 		FrameList frames = pick_fragments(ss, sequence, abego, interval, frag_length_, nfrags_);
 		// make a copy of the pose
 		Pose working_pose(pose);
-		Vector com_A = protocols::geometry::center_of_mass(pose,1, junction_start_);
-		Size resi_nearest_to_com_A = protocols::geometry::return_nearest_residue( pose, 1, junction_start_, com_A);
-		Vector com_B = protocols::geometry::center_of_mass(pose,junction_end_ , pose.total_residue());
-		Size resi_nearest_to_com_B = protocols::geometry::return_nearest_residue( pose, junction_end_, pose.total_residue(), com_B);
+		Vector com_A = core::pose::center_of_mass(pose,1, junction_start_);
+		Size resi_nearest_to_com_A = protocols::geometry::core::pose::return_nearest_residue( pose, 1, junction_start_, com_A);
+		Vector com_B = core::pose::center_of_mass(pose,junction_end_ , pose.total_residue());
+		Size resi_nearest_to_com_B = protocols::geometry::core::pose::return_nearest_residue( pose, junction_end_, pose.total_residue(), com_B);
 
 		// create the new residue and locate it between the moving elements
 		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
@@ -597,15 +598,15 @@ public:
 				movemap->set_chi(i,true);
 			}
 			/*
-			Vector com_A_chA = protocols::geometry::center_of_mass(symm_pose,1, junction_start_);
-			Size resi_nearest_to_com_A_chA = protocols::geometry::return_nearest_residue( symm_pose, 1, junction_start_, com_A_chA);
-			Vector com_B_chA = protocols::geometry::center_of_mass(symm_pose,junction_new_end, mono_size);
-			Size resi_nearest_to_com_B_chA = protocols::geometry::return_nearest_residue( symm_pose, 1, junction_start_, com_B_chA);
+			Vector com_A_chA = core::pose::center_of_mass(symm_pose,1, junction_start_);
+			Size resi_nearest_to_com_A_chA = protocols::geometry::core::pose::return_nearest_residue( symm_pose, 1, junction_start_, com_A_chA);
+			Vector com_B_chA = core::pose::center_of_mass(symm_pose,junction_new_end, mono_size);
+			Size resi_nearest_to_com_B_chA = protocols::geometry::core::pose::return_nearest_residue( symm_pose, 1, junction_start_, com_B_chA);
 
-			Vector com_A_chB = protocols::geometry::center_of_mass(symm_pose, mono_size + 1, mono_size + junction_start_);
-			Size resi_nearest_to_com_A_chB = protocols::geometry::return_nearest_residue( symm_pose, mono_size + 1, mono_size + junction_start_, com_A_chB);
-			Vector com_B_chB = protocols::geometry::center_of_mass(symm_pose,mono_size + junction_new_end, 2*mono_size );
-			Size resi_nearest_to_com_B_chB = protocols::geometry::return_nearest_residue( symm_pose, mono_size + junction_new_end, 2*mono_size, com_B_chA);
+			Vector com_A_chB = core::pose::center_of_mass(symm_pose, mono_size + 1, mono_size + junction_start_);
+			Size resi_nearest_to_com_A_chB = protocols::geometry::core::pose::return_nearest_residue( symm_pose, mono_size + 1, mono_size + junction_start_, com_A_chB);
+			Vector com_B_chB = core::pose::center_of_mass(symm_pose,mono_size + junction_new_end, 2*mono_size );
+			Size resi_nearest_to_com_B_chB = protocols::geometry::core::pose::return_nearest_residue( symm_pose, mono_size + junction_new_end, 2*mono_size, com_B_chA);
 			 //add guides and constraints between them
 			core::conformation::ResidueOP vrt_A_chA( core::conformation::ResidueFactory::create_residue( vrt ) );
 			core::conformation::ResidueOP vrt_A_chB( core::conformation::ResidueFactory::create_residue( vrt ) );

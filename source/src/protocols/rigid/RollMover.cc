@@ -20,6 +20,7 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyz.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -178,7 +179,7 @@ RollMover::parse_my_tag(
 	if ( !translate_option_parsed ) {
 		//throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires translate option");
 		TR << "No translation given, using the pose's center of mass" << std::endl;
-		translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
+		translate_ = core::pose::center_of_mass(pose, start_res_, stop_res_);
 	}
 	
 }

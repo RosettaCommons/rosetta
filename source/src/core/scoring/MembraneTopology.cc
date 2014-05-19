@@ -63,6 +63,25 @@ MembraneTopology::MembraneTopology( MembraneTopology const & src ) :
 	tmh_inserted_=src.tmh_inserted_;
 	init_=src.init_;
   initialized_=src.initialized_;
+  	  spanfile_=src.spanfile_;
+}
+
+std::string
+MembraneTopology::read_in_spanfile()
+{
+    using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if(option[in::file::spanfile].user())
+	{
+		//At this point, assert if don't have a spanfile
+		spanfile_ = option[in::file::spanfile].value();
+		TR.Debug << "spanfile used by TMHTopologySamplerClaimer:  " << spanfile_ << std::endl;
+		TR.Debug << "spanfile used by TMHTopologySamplerClaimer:  " << option[in::file::spanfile].value() << std::endl;
+	}else{
+		utility_exit_with_message( "[ERROR] Error opening spanfile '" + spanfile_ + "'" );
+	}
+	return spanfile_;
 }
 
 void
@@ -289,7 +308,7 @@ MembraneTopology_from_pose( pose::Pose const & pose )
 }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
-/// in the pose, or creates a new cenist object, places it in the pose, and returns
+/// in the pose, or creates a new cenlist object, places it in the pose, and returns
 /// a non-const reference to it.
 MembraneTopology &
 nonconst_MembraneTopology_from_pose( pose::Pose & pose )
