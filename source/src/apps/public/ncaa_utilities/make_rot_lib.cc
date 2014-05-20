@@ -139,8 +139,8 @@ main( int argc, char * argv [] )
 	while ( num_iter <= 500 ) {
 		++num_iter;
 		calc_all_dist( rotamers, centroids  );
-		//rot_change = calc_rotamer_clusters( rotamers );  // unused ~Labonte
-		//cen_change = calc_centroids( rotamers, centroids );  // unused ~Labonte
+		/*rot_change =*/ calc_rotamer_clusters( rotamers );  // unused ~Labonte
+		/*cen_change =*/ calc_centroids( rotamers, centroids );  // unused ~Labonte
 		std::cout << "ITER:" << num_iter << std::endl;
 	}
 
