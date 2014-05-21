@@ -1,0 +1,87 @@
+# -*- mode:python;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# These are settings for the UNC contador workstation at rosettadesign.unc.edu
+
+'''
+as of 5-21-14 (Doonam)
+at master branch 
+at
+commit 1b957506adc1a6bfa8d54301ef7248abbf9f41c7
+Merge: fd2f1cc f9847eb
+Author: Tom Linsky <tlinsky@uw.edu>
+Date:   Mon May 19 09:08:43 2014 -0700
+
+    Fix recently introduced bug in ResidueCountFilter. Support for task_factory was added, but improperly initialized such that the task factory was always used, even if it wasn't specified. Also fixed a bug in ResidueCountFilter where disulfide cysteines ("CYD") would be counted ...
+
+which is compiled well at benchmark 2 rosetta
+
+failed to compile by contador which uses gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+
+with various errors like
+
+src/protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.cc: In member function 'void protocols::canonical_sampling::mc_convergence_checks::MPIBPool_RMSD::create_comm(int*, int)':
+src/protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.cc:613:9: error: variable 'returnval' set but not used [-Werror=unused-but-set-variable]
+cc1plus: all warnings being treated as errors
+scons: *** [build/src/release/linux/3.2/64/x86/gcc/4.6/mpi-postgres/protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.os] Error 1
+
+
+scons: *** [build/src/release/linux/3.2/64/x86/gcc/4.6/mpi-postgres/david_find_pocket_exemplar.mpipostgres.linuxgccrelease] Error 1
+build/src/release/linux/3.2/64/x86/gcc/4.6/mpi-postgres/apps/pilot/habib/david_open_pocket.o: In function `__static_initialization_and_destruction_0(int, int)':
+david_open_pocket.cc:(.text+0x24f4): undefined reference to
+`boost::system::generic_category()'
+
+
+But below site.settings makes compilation successful (both mode=release & mode=release extras=mpi,postgres)
+Feel free to edit this site.settings further in the future with possibly new basic.settings and different compiler
+
+It seems that I may need to add
+        "appends" : {
+            "defines" : ["EXIT_THROWS_EXCEPTION"],
+        },
+in the near future, so that rosetta application will spit some good outputs instead of just terminating everyjobs
+'''
+
+# To use this file, symlink tools/build/site.settings to this file (or copy this file to that location)
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+
+import os
+settings = {
+    "site" : {
+				"prepends" : {
+						},
+
+				"appends" : {
+            "flags" : {
+                  "warn" : [
+                    "Wno-unused-parameter",
+                    "Wno-unused-variable",
+										],
+									},
+						},
+
+				"overrides" : {
+            "flags" : {
+                  "warn" : [
+                    "Wno-unused-parameter",
+                    "Wno-unused-variable",
+										],
+									},
+						},
+
+				"removes" : {
+						},
+
+				},
+}
