@@ -1468,11 +1468,11 @@ ElectronDensity::smooth_intensities(utility::vector1< core::Real > &Is) const {
 
 	Is[1] = 0.65*Is_in[1]+0.23*Is_in[2]+0.12*Is_in[3];
 	Is[2] = 0.3*Is_in[2]+0.35*Is_in[1]+0.23*Is_in[3]+0.12*Is_in[4];
-	for (uint i = 2; i <= Is.size() - 2; ++i) {
+	for (uint i = 3; i <= Is.size() - 2; ++i) {
 		Is[i] = 0.3*Is_in[i]+0.23*Is_in[i-1]+0.23*Is_in[i+1]+0.12*Is_in[i-2]+0.12*Is_in[i+2];
 	}
-	Is[Is.size()-1] = 0.3*Is_in[Is.size()-1]+0.23*Is_in[Is.size()]+0.23*Is_in[Is.size()-2]+0.12*Is_in[Is.size()-3];
-	Is[Is.size()] = 0.3*Is_in[Is.size()]+0.23*Is_in[Is.size()-1]+0.12*Is_in[Is.size()-2];
+	Is[Is.size()-1] = 0.3*Is_in[Is.size()-1]+0.35*Is_in[Is.size()]+0.23*Is_in[Is.size()-2]+0.12*Is_in[Is.size()-3];
+	Is[Is.size()] = 0.65*Is_in[Is.size()]+0.23*Is_in[Is.size()-1]+0.12*Is_in[Is.size()-2];
 }
 
 
@@ -1521,7 +1521,7 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 				} else if ( bucket_i == (int)nbuckets ) {
 					// linear decay in last bin
 					Fdensity(x,y,z) *= bucket_offset1*scale_i[nbuckets];
-				} else if ( bucket_i < 0 ) {
+				} else if ( bucket_i <= 0 ) {
 					Fdensity(x,y,z) *= scale_i[1];
 				} else {
 					Fdensity(x,y,z) *= bucket_offset1*scale_i[bucket_i] + bucket_offset0*scale_i[bucket_i+1];

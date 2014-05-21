@@ -208,22 +208,22 @@ void CartesianHybridize::setup_for_parser()
 	template_wts_ = hybridize_setup_->template_wts();
 	template_contigs_ = hybridize_setup_->template_contigs();
 	fragments9_ = hybridize_setup_->fragments_big()[numeric::random::random_range(1,hybridize_setup_->fragments_big().size())];
-	
+
 	// make sure all data is there
 	runtime_assert( templates_.size() == template_wts_.size() );
 	runtime_assert( templates_.size() == template_contigs_.size() );
-	
+
 	// normalize weights
 	core::Real weight_sum = 0.0;
 	for (int i=1; i<=(int)templates_.size(); ++i) weight_sum += template_wts_[i];
 	for (int i=1; i<=(int)templates_.size(); ++i) template_wts_[i] /= weight_sum;
-	
+
 	// map resids to frames
 	for (core::fragment::ConstFrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 		core::Size position = (*i)->start();
 		library_[position] = **i;
 	}
-	
+
 	// use chunks to subdivide contigs
 	core::Size ntempls = templates_.size();
 	utility::vector1 < protocols::loops::Loops > template_chunks_in (hybridize_setup_->template_chunks());
@@ -232,15 +232,15 @@ void CartesianHybridize::setup_for_parser()
 		for (int i=1; i<=(int)ncontigs; ++i) {
 			core::Size cstart = template_contigs_[tmpl][i].start(), cstop = template_contigs_[tmpl][i].stop();
 			bool spilt_chunk=false;
-			
+
 			// assumes sorted
 			for (int j=2; j<=(int)template_chunks_in[tmpl].size(); ++j) {
 				core::Size j0start = template_chunks_in[tmpl][j-1].start(), j0stop = template_chunks_in[tmpl][j-1].stop();
 				core::Size j1start = template_chunks_in[tmpl][j].start(), j1stop = template_chunks_in[tmpl][j].stop();
-				
+
 				bool j0incontig = ((j0start>=cstart) && (j0stop<=cstop));
 				bool j1incontig = ((j1start>=cstart) && (j1stop<=cstop));
-				
+
 				if (j0incontig && j1incontig) {
 					spilt_chunk=true;
 					core::Size cutpoint = (j0stop+j1start)/2;
@@ -261,7 +261,7 @@ void CartesianHybridize::setup_for_parser()
 		TR.Debug << "templ. " << i << std::endl << template_contigs_[i] << std::endl;
 	}
 }
-	
+
 void
 CartesianHybridize::init() {
 	using namespace basic::options;
@@ -274,7 +274,7 @@ CartesianHybridize::init() {
 	// only adjustable via methods (for now)
 	cartfrag_overlap_ = 2;
 	align_templates_to_pose_ = false;
-	
+
 	seqfrags_only_ = false;
 	nofragbias_ = false;
 	skip_long_min_ = false;
@@ -502,7 +502,7 @@ CartesianHybridize::apply( Pose & pose ) {
 			core::pose::PoseOP pose_copy = new core::pose::Pose( pose );
 			hybridize_setup_->realign_templates(pose_copy);
 		}
-		
+
 		setup_for_parser();
 	}
     else {
@@ -512,7 +512,7 @@ CartesianHybridize::apply( Pose & pose ) {
     }
 
 	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
-	
+
 	///////////////////////////////
 	// added by yuan 06-28-2013
 	// packer
@@ -523,7 +523,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	main_task_factory->push_back( new operation::RestrictToRepacking );
 	pack_rotamers->task_factory(main_task_factory);
 	pack_rotamers->score_function(lowres_scorefxn_);
-	
+
 	if (option[corrections::score::cenrot]) {
 		protocols::moves::MoverOP tocenrot =
 			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT );
@@ -636,7 +636,7 @@ sampler:
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
 		(*lowres_scorefxn_)(pose);
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 
+		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_,
 			option[cm::hybridize::stage2_temperature]() ); //cenrot may use higher temp
 
 		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
@@ -672,7 +672,7 @@ sampler:
 				core::Size max_templates_trial=templates_.size()*5;
 				bool movable_loop=false;
 				protocols::loops::LoopOP frag;
-                
+
 				core::Size templ_id=1;
 				for (core::Size i=1; i<=max_templates_trial; ++i) {
                     templ_id = numeric::random::random_range( 1, templates_.size() );
@@ -682,7 +682,7 @@ sampler:
                            (int)n_prot_res) {
                         --nfrags;
                     }
-                    
+
                     core::Size frag_id;
                     core::Size max_frag_trial=nfrags*3;
                     for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
@@ -700,17 +700,17 @@ sampler:
 				    if ( movable_loop==true)
                         break;
                 } //end of trial different templates
-                
+
 				if (frag->size() > 14)
 					action_string = action_string+"_15+";
 				else if (frag->size() <= 4)
 					action_string = action_string+"_0-4";
 				else
 					action_string = action_string+"_5-14";
-                
+
 				if ( frag->size() > 0 )
 					apply_frag( pose, *templates_[templ_id], *frag, (action==2) );
-                
+
 				if (action == 1) {
 					//fpd assume this was initialized elsewhere
 					runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
@@ -740,7 +740,7 @@ sampler:
 							c0 = pose.residue(i).atom(" C  ").xyz();
 							n1 = pose.residue(i+1).atom(" N  ").xyz();
 							core::Real d2 = c0.distance( n1 );
-							residuals[i] = (d2-1.328685)*(d2-1.328685);
+							residuals[i] = (d2-1.328685)*(d2-1.328685);  // 1.328685 = ideal C-N distance
 							if ( residuals[i] > max_residuals[1]) {
 								max_residuals[3] = max_residuals[2]; max_residuals[2] = max_residuals[1]; max_residuals[1] = residuals[i];
 								max_poses[3] = max_poses[2]; max_poses[2] = max_poses[1]; max_poses[1] = i;
@@ -759,14 +759,14 @@ sampler:
 
 				// 25% chance of random position
 				int random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
-                int ntrials=500;
+				int ntrials=500;
 				while (!residue_sample_abinitio_[random_residue_move] && --ntrials>0) {
-                    random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
+					random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
 				}
-                if (ntrials<=0) {
-                    TR << "Warning! Fail to find a free residue for sampling." << std::endl;
-                    continue;
-                }
+				if (ntrials<=0) {
+					TR << "Warning! Fail to find a free residue for sampling." << std::endl;
+					continue;
+				}
 				max_poses[ 4 ] = random_residue_move;
 				int select_position = numeric::random::random_range(1,4);
 
@@ -869,7 +869,7 @@ CartesianHybridize::parse_my_tag(
 	if( tag->hasOption( "increase_cycles" ) ) {
 		set_increase_cycles( tag->getOption< core::Real >( "increase_cycles" ) );
 	}
-	
+
 	if( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
 		set_scorefunction( (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );
@@ -890,7 +890,7 @@ CartesianHybridize::parse_my_tag(
 		}
 	}
 	*/
-    
+
 	if( tag->hasOption( "no_global_frame" ) )
 		set_no_global_frame( tag->getOption< bool >( "no_global_frame" ) );
 	if( tag->hasOption( "linmin_only" ) )
@@ -900,10 +900,10 @@ CartesianHybridize::parse_my_tag(
 	if( tag->hasOption( "align_templates_to_pose" ) ) {
 		align_templates_to_pose_ = tag->getOption< bool >( "align_templates_to_pose" );
 	}
-    
+
     residue_sample_template_.resize(hybridize_setup_->nres_tgt_asu(), true);
     residue_sample_abinitio_.resize(hybridize_setup_->nres_tgt_asu(), true);
-    
+
     utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
@@ -912,9 +912,9 @@ CartesianHybridize::parse_my_tag(
             if( (*tag_it)->hasOption( "task_operations" ) ){
                 core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
                 core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-                
+
                 for( core::Size ires = 1; ires <= hybridize_setup_->nres_tgt_asu(); ++ires ){
-                    
+
                     if( task->residue_task( ires ).being_designed() && task->residue_task( ires ).being_packed() ) {
                         // residue_cst_cross_chain_[ires] = true;
                     }
@@ -941,10 +941,10 @@ CartesianHybridize::parse_my_tag(
                 }
             }
         }
-        
+
     }
 }
-	
+
 /////////////
 // creator
 std::string

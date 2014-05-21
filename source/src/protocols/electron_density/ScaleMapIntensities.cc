@@ -78,28 +78,30 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
-		if (asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
-		core::conformation::Residue const & rsd_i ( pose.residue(i) );
-		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
-		core::Size natoms = rsd_i.nheavyatoms();
-		for (core::Size j = 1; j <= natoms; ++j) {
-			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+	if (b_sharpen_ == 0) {
+		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+			if (asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
+			core::conformation::Residue const & rsd_i ( pose.residue(i) );
+			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
-			poseCoord coord_j;
-			coord_j.x_ = rsd_i.xyz( j );
-			if (ignore_bs_) {
-				coord_j.B_ = 0.0;
-			} else {
-				coord_j.B_ = pose.pdb_info()->temperature( i, j );
+			core::Size natoms = rsd_i.nheavyatoms();
+			for (core::Size j = 1; j <= natoms; ++j) {
+				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+
+				poseCoord coord_j;
+				coord_j.x_ = rsd_i.xyz( j );
+				if (ignore_bs_) {
+					coord_j.B_ = 0.0;
+				} else {
+					coord_j.B_ = pose.pdb_info()->temperature( i, j );
+				}
+				coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+
+				litePose.push_back( coord_j );
 			}
-			coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
-
-			litePose.push_back( coord_j );
 		}
 	}
-
 
 	utility::vector1< core::Real > resobins;
 	utility::vector1< core::Size > counts;

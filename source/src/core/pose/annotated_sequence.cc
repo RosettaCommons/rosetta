@@ -574,6 +574,7 @@ std::string annotated_to_oneletter_sequence(
 	bool add( true );
 	std::string oneletter_seq;
 	for ( Size i = 0; i < annotated_seq.length(); ++i ) {
+		if ( annotated_seq.at(i) == '/' ) continue;
 		if ( annotated_seq.at(i) == '[' ) add = false;
 		if ( add ) oneletter_seq += annotated_seq.at(i);
 		if ( annotated_seq.at(i) == ']' ) add = true;
