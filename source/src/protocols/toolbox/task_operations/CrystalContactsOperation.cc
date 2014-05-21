@@ -45,11 +45,14 @@ CrystalContactsOperationCreator::create_task_operation() const
 }
 
 
-	CrystalContactsOperation::CrystalContactsOperation( core::Real all_gap, core::Real polar_gap, core::Real max_buried_sasa, bool invert ):
+	CrystalContactsOperation::CrystalContactsOperation( core::Real all_gap, core::Real polar_gap, core::Real max_buried_sasa, bool invert, bool nbr_radius_to_nbr_radius, bool nbr_radius_to_atoms, bool atoms_to_atoms ):
 	all_gap_(all_gap),					// add this to all calculated distances
 	polar_gap_(polar_gap),				// if either residue is polar - add this to calculated distances
 	max_buried_sasa_(max_buried_sasa),  // ignore buried residues as defined by maximum allowed sasa
-	invert_(invert)						// design residues in contact
+	invert_(invert),						// design residues in contact
+	nbr_radius_to_nbr_radius_(nbr_radius_to_nbr_radius),	// contact determined by nbr radius overlap (CBeta to CBeta)
+  nbr_radius_to_atoms_(nbr_radius_to_atoms),						// contact determined by nbr radius to atom distance (CBeta to any atom on symmetric partner)
+  atoms_to_atoms_(atoms_to_atoms)											// contact determined by atom to atom distances (any atom to any atom)
 {}
 
 CrystalContactsOperation::~CrystalContactsOperation() {}
@@ -81,20 +84,16 @@ CrystalContactsOperation::apply( core::pose::Pose const & pose, core::pack::task
 	// find crystal contacts - iterate through all residue pairs between subunit 1 and the other subunits
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	std::set<Size> contacts;
-	for(Size ir=1; ir<=sym_info->num_independent_residues(); ir++) {
+	for (Size ir=1; ir<=sym_info->num_independent_residues(); ir++) {
 		TR.Debug << "sasa: " << ir << " " << rsd_sasa[ir] << std::endl;
 		if (rsd_sasa[ir] < max_buried_sasa_) continue;						// if residue has no sc SASA, ignore
-		if(!pose.residue(ir).is_protein()) continue;
-		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
+		if (!pose.residue(ir).is_protein()) continue;
 		
 		for(Size jr=sym_info->num_independent_residues()+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-			if(!pose.residue(jr).is_protein()) continue;
-			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
-			// decide if residue pair are contacts
-			Real contact_distance = pose.residue(ir).nbr_radius() + pose.residue(jr).nbr_radius() + all_gap_ + polar_gap_;
-			if(pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_distance*contact_distance) {
+			if (!pose.residue(jr).is_protein()) continue;
+		
+			if (is_crystal_contact( pose.residue(ir), pose.residue(jr) )) {
 				contacts.insert(ir);
-				TR.Debug << "contact: " << ir << " " << jr << " " << contact_distance << std::endl;   
 				break;
 			}
 		}
@@ -114,21 +113,87 @@ CrystalContactsOperation::apply( core::pose::Pose const & pose, core::pack::task
 	TR << "sele resi " << design_select << std::endl;
 }
 
+bool
+CrystalContactsOperation::is_crystal_contact( core::conformation::Residue const & asymm_residue, core::conformation::Residue const & symm_residue ) const {
+	bool is_contact = false;
+	std::string atom_asymm = (asymm_residue.name3() == "GLY") ? "CA" : "CB";
+	std::string atom_symm = (symm_residue.name3() == "GLY") ? "CA" : "CB";	
+	core::Real contact_distance;
+
+	// is CBeta to CBeta distance less than sum of nbr_radii plus gaps?
+	if (nbr_radius_to_nbr_radius_) {	
+					contact_distance = asymm_residue.nbr_radius() + symm_residue.nbr_radius() + all_gap_;
+					if (asymm_residue.is_polar() && asymm_residue.is_polar()) 
+						contact_distance += polar_gap_;
+					if (asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) <= contact_distance*contact_distance) {
+						is_contact = true;
+						TR.Debug << "contact: " << asymm_residue.seqpos() << " " << symm_residue.seqpos() << " " << contact_distance << std::endl;   
+					}
+	}
+	// is CBeta to atom distance less than asymm nbr_radius plus gaps?
+	else if (nbr_radius_to_atoms_) {
+		for ( Size atom_symm = symm_residue.natoms(); atom_symm > 0; --atom_symm ) {
+			contact_distance = asymm_residue.nbr_radius() + all_gap_;
+			if (asymm_residue.is_polar() && (symm_residue.atom_type(atom_symm).is_acceptor() || symm_residue.atom_type(atom_symm).is_polar_hydrogen() || symm_residue.atom_type(atom_symm).is_donor() ) )
+				contact_distance += polar_gap_;
+			if (asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) <= contact_distance*contact_distance) {
+				is_contact = true;
+				TR.Debug << "contact: " << asymm_residue.seqpos() << " " << symm_residue.seqpos() << " " << contact_distance << std::endl;   
+				TR.Debug << "contact: " << asymm_residue.name3() << " " << symm_residue.name3() << " " << contact_distance << std::endl;   
+				TR.Debug << "contact: " << atom_asymm << " " << symm_residue.atom_name(atom_symm) << " " << contact_distance << std::endl;   
+				TR.Debug << "actual distance squared: " << asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) << " contact squared: " << contact_distance*contact_distance << std::endl;
+				//TR.Debug << "contact: " << asymm_residue.xyz(atom_asymm)[0] << " " << asymm_residue.xyz(atom_asymm)[1] << " " << asymm_residue.xyz(atom_asymm)[2] << " " << symm_residue.xyz(atom_symm)[0] << " " << symm_residue.xyz(atom_symm)[1] << " " << symm_residue.xyz(atom_symm)[2] << " " << contact_distance << std::endl;   
+				break;
+			}
+		}
+	}
+	// are atom to atom distances less than gaps?
+	else if (atoms_to_atoms_) {
+		for ( Size atom_asymm = asymm_residue.natoms(); atom_asymm > 0; --atom_asymm ) {
+			for ( Size atom_symm = symm_residue.natoms(); atom_symm > 0; --atom_symm ) {
+				contact_distance = all_gap_;
+				if ( (asymm_residue.atom_type(atom_symm).is_acceptor() && symm_residue.atom_type(atom_symm).is_polar_hydrogen()) ||
+						 (asymm_residue.atom_type(atom_symm).is_polar_hydrogen() && symm_residue.atom_type(atom_symm).is_acceptor()) )
+					contact_distance += polar_gap_; 
+				if (asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) <= contact_distance*contact_distance) {
+					is_contact = true;
+					TR.Debug << "contact: " << asymm_residue.seqpos() << " " << symm_residue.seqpos() << " " << contact_distance << std::endl;   
+					break;
+				}
+			}
+			if (is_contact)
+				break;
+		}
+	}
+
+	return is_contact;
+}
+	
+
+
 void
 CrystalContactsOperation::parse_tag( TagCOP tag, DataMap & )
 {
-	all_gap_ = tag->getOption<core::Real>("all_gap", 2);
-	polar_gap_ = tag->getOption<core::Real>("polar_gap", 1);
+	all_gap_ = tag->getOption<core::Real>("all_gap", 0.5);
+	polar_gap_ = tag->getOption<core::Real>("polar_gap", 2.5);
 	max_buried_sasa_ = tag->getOption<core::Real>("max_buried_sasa", 0.01);
 	invert_ = tag->getOption< bool >("invert",0);
+
+	nbr_radius_to_nbr_radius_ = tag->getOption<bool>("nbr_radius_to_nbr_radius", 0);
+	nbr_radius_to_atoms_ = tag->getOption<bool>("nbr_radius_to_atoms", 1);
+	atoms_to_atoms_ = tag->getOption<bool>("atoms_to_atoms", 0);
 }
 
 void
 CrystalContactsOperation::parse_def( utility::lua::LuaObject const & def)
 {
-	all_gap_ = def["all_gap"] ? def["all_gap"].to<core::Real>() : 2;
-	polar_gap_ = def["polar_gap"] ? def["polar_gap"].to<core::Real>() : 1;
+	all_gap_ = def["all_gap"] ? def["all_gap"].to<core::Real>() : 0.5;
+	polar_gap_ = def["polar_gap"] ? def["polar_gap"].to<core::Real>() : 2.5;
 	max_buried_sasa_ = def["max_buried_sasa"] ? def["max_buried_sasa"].to<core::Real>() : 0.01;
+
+	nbr_radius_to_nbr_radius_ = def["nbr_radius_to_nbr_radius"] ? def["nbr_radius_to_nbr_radius"].to<bool>() : false;
+	nbr_radius_to_atoms_ = def["nbr_radius_to_atoms"] ? def["nbr_radius_to_atoms"].to<bool>() : true;
+	atoms_to_atoms_ = def["atoms_to_atoms"] ? def["atoms_to_atoms"].to<bool>() : false;
 }
 
 } //namespace task_operations

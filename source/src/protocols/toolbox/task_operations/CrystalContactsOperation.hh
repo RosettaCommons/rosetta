@@ -20,6 +20,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
@@ -37,10 +38,13 @@ namespace task_operations {
 class CrystalContactsOperation : public core::pack::task::operation::TaskOperation {
 public:
 	CrystalContactsOperation(
-		core::Real all_gap = 2,
-		core::Real polar_gap = 0,
+		core::Real all_gap = 0.5,
+		core::Real polar_gap = 2.5,
 		core::Real max_buried_sasa_ = 0.01,
-		bool invert = false );
+		bool invert = false,
+		bool nbr_radius_to_nbr_radius = false,
+  	bool nbr_radius_to_atoms = true,
+  	bool atoms_to_atoms = false);
 
 	virtual ~CrystalContactsOperation();
 
@@ -54,10 +58,16 @@ public:
 	void parse_def( utility::lua::LuaObject const & def );
 
 private:
+	bool is_crystal_contact( core::conformation::Residue const & asymm_residue, core::conformation::Residue const & symm_residue ) const;
+
 	core::Real all_gap_;
 	core::Real polar_gap_;
 	core::Real max_buried_sasa_;
 	bool invert_;
+
+	bool nbr_radius_to_nbr_radius_;
+  bool nbr_radius_to_atoms_;
+  bool atoms_to_atoms_;
 };
 
 } //namespace task_operations
