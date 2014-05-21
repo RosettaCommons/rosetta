@@ -19,7 +19,6 @@
 // AUTO-REMOVED #include <core/grid/CartGrid.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 //#include <protocols/qsar/qsarTypeManager.fwd.hh>
-#include <core/chemical/sdf/MolData.fwd.hh>
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -73,8 +72,9 @@ public:
 	///@brief initialize grid so that every point has a constant value for every atom and every qsarType. mostly for debugging
 	void fill_with_value(core::Size value,utility::vector1<std::string> grids_to_use);
 
-	///@brief initialize grid using data from the mol_data object attached to a residue (if availible)
-	bool fill_from_mol_data(core::chemical::sdf::MolData mol_data);
+	// MolData no longer exists - if you need this, look into the string properties of the restype
+	// brief initialize grid using data from the mol_data object attached to a residue (if availible)
+	// bool fill_from_mol_data(core::chemical::sdf::MolData mol_data);
 
 	///@brief add a new qsar point to the map
 	void add_point(std::string point_name, qsarPointOP new_point);

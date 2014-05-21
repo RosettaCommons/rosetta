@@ -15,8 +15,6 @@
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/ResidueType.hh>
 
-// ObjexxFCL headers
-#include <core/chemical/ResidueSupport.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 

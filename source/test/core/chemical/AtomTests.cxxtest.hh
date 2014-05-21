@@ -59,14 +59,13 @@ public:
 
 		Vector xyz(1,2,3);
 		core::chemical::ElementOP element;
-		Atom atom ("test", "mm_test", 1, 2, element, 1, xyz);
+		Atom atom ("test", "mm_test", 2, element, 1, xyz);
 
- 		TS_ASSERT_EQUALS("test", atom.name());
- 		TS_ASSERT_EQUALS("mm_test", atom.mm_name());
- 		TS_ASSERT_EQUALS(1, (int) atom.atom_type_index());
- 		TS_ASSERT_EQUALS(2, (int) atom.mm_atom_type_index());
- 		TS_ASSERT_EQUALS(1, atom.charge());
- 		TS_ASSERT_EQUALS(xyz, atom.ideal_xyz());
+		TS_ASSERT_EQUALS("test", atom.name());
+		TS_ASSERT_EQUALS("mm_test", atom.mm_name());
+		TS_ASSERT_EQUALS(2, (int) atom.mm_atom_type_index());
+		TS_ASSERT_EQUALS(1, atom.charge());
+		TS_ASSERT_EQUALS(xyz, atom.ideal_xyz());
 
 	}
 
@@ -80,12 +79,12 @@ public:
 		atom.charge(1);
 		atom.ideal_xyz(Vector(1,2,3));
 
- 		TS_ASSERT_EQUALS("test", atom.name());
- 		TS_ASSERT_EQUALS("mm_test", atom.mm_name());
- 		TS_ASSERT_EQUALS(1, (int) atom.atom_type_index());
- 		TS_ASSERT_EQUALS(2, (int) atom.mm_atom_type_index());
- 		TS_ASSERT_EQUALS(1, atom.charge());
- 		TS_ASSERT_EQUALS(Vector(1,2,3), atom.ideal_xyz());
+		TS_ASSERT_EQUALS("test", atom.name());
+		TS_ASSERT_EQUALS("mm_test", atom.mm_name());
+		TS_ASSERT_EQUALS(1, (int) atom.atom_type_index());
+		TS_ASSERT_EQUALS(2, (int) atom.mm_atom_type_index());
+		TS_ASSERT_EQUALS(1, atom.charge());
+		TS_ASSERT_EQUALS(Vector(1,2,3), atom.ideal_xyz());
 	}
 
 };

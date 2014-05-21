@@ -28,16 +28,14 @@ typedef boost::graph_traits<Graph>::edge_descriptor ED;
 
 namespace {
 
-class RingDetectionTest : public CxxTest::TestSuite {
+class RingDetectionTests : public CxxTest::TestSuite {
 public:
 
-	void setUp() {
-	}
+	void setUp() {}
 
-	void tearDown() {
-	}
+	void tearDown() {}
 
-	void test_benzene() {
+	void test_benzene_sizes() {
 		Graph g(12);
 		boost::add_edge(0, 1, g);
 		boost::add_edge(1, 2, g);
@@ -59,9 +57,9 @@ public:
 		for( core::Size ii(6); ii < 12; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 999999);
 		}
-	} 
+	}
 
-	void test_cubane() {
+	void test_cubane_sizes() {
 		Graph g(8);
 		//face 1
 		boost::add_edge(0, 1, g);
@@ -84,7 +82,7 @@ public:
 		}
 	}
 
-	void test_indole() {
+	void test_indole_sizes() {
 		Graph g(9);
 		//ring1
 		boost::add_edge(0, 1, g);
@@ -112,8 +110,8 @@ public:
 		//Now test the ring limit
 		TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( 1, g, 5), 999999);
 	}
-	void test_early_out() {
-		//This tries to test against a possible "early out" bug. 
+	void test_early_out_sizes() {
+		//This tries to test against a possible "early out" bug.
 		//You can get n+1 rings before you get n rings, even with BFS
 		Graph g(9);
 		// Welcome ... windowpane!
@@ -137,6 +135,70 @@ public:
 		TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( 6, g ), 3);
 		TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( 5, g ), 4);
 
+	}
+
+	void test_benzene_annotation() {
+		std::cout << "Test benzene2" << std::endl;
+		Graph g(12);
+		ED e1, e2, e3, e4, e5, e6, h1, h2, h3, h4, h5, h6;
+		bool flag;
+		boost::tie(e1,flag) = boost::add_edge(0, 1, g);
+		boost::tie(e2,flag) = boost::add_edge(1, 2, g);
+		boost::tie(e3,flag) = boost::add_edge(2, 3, g);
+		boost::tie(e4,flag) = boost::add_edge(3, 4, g);
+		boost::tie(e5,flag) = boost::add_edge(4, 5, g);
+		boost::tie(e6,flag) = boost::add_edge(5, 0, g);
+		//hydrogens
+		boost::tie(h1,flag) = boost::add_edge(0, 6, g);
+		boost::tie(h2,flag) = boost::add_edge(1, 7, g);
+		boost::tie(h3,flag) = boost::add_edge(2, 8, g);
+		boost::tie(h4,flag) = boost::add_edge(3, 9, g);
+		boost::tie(h5,flag) = boost::add_edge(4, 10,g);
+		boost::tie(h6,flag) = boost::add_edge(5, 11,g);
+
+		std::map< VD, std::map<VD, bool > > ring_edges( utility::graph::annotate_ring_edges(g) );
+		TS_ASSERT( ring_edges[0][1] );
+		TS_ASSERT( ring_edges[1][2] );
+		TS_ASSERT( ring_edges[2][3] );
+		TS_ASSERT( ring_edges[3][4] );
+		TS_ASSERT( ring_edges[4][5] );
+		TS_ASSERT( ring_edges[5][0] );
+		TS_ASSERT( ring_edges[0][5] );
+		TS_ASSERT( ! ring_edges[0][6] );
+		TS_ASSERT( ! ring_edges[1][7] );
+		TS_ASSERT( ! ring_edges[2][8] );
+		TS_ASSERT( ! ring_edges[3][9] );
+		TS_ASSERT( ! ring_edges[4][10] );
+		TS_ASSERT( ! ring_edges[5][11] );
+	}
+
+	void test_stem_annotation() {
+		//Attempt to test not labeling stem as a ring. DFS should start with vertex 0
+		std::cout << "Test stem2" << std::endl;
+		Graph g(8);
+		ED e1, e2, e3, e4, e5, e6, e7, e8;
+		bool flag;
+		// common stem
+		boost::tie(e1,flag) = boost::add_edge(0, 1, g);
+		boost::tie(e2,flag) = boost::add_edge(1, 2, g);
+		boost::tie(e3,flag) = boost::add_edge(2, 3, g);
+		boost::tie(e4,flag) = boost::add_edge(3, 4, g);
+		// loop
+		boost::tie(e5,flag) = boost::add_edge(4, 5, g);
+		boost::tie(e6,flag) = boost::add_edge(5, 6, g);
+		boost::tie(e7,flag) = boost::add_edge(6, 7, g);
+		boost::tie(e8,flag) = boost::add_edge(7, 4, g);
+
+		std::map< VD, std::map<VD, bool > >  ring_edges( utility::graph::annotate_ring_edges(g) );
+		TS_ASSERT( ! ring_edges[0][1] );
+		TS_ASSERT( ! ring_edges[1][2] );
+		TS_ASSERT( ! ring_edges[2][3] );
+		TS_ASSERT( ! ring_edges[3][4] );
+		TS_ASSERT( ring_edges[4][5] );
+		TS_ASSERT( ring_edges[5][6] );
+		TS_ASSERT( ring_edges[6][7] );
+		TS_ASSERT( ring_edges[7][4] );
+		TS_ASSERT( ring_edges[4][7] );
 	}
 };
 

@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		Make cart_bonded really high, so we know it minimizes well
+		<cart_bonded weights=talaris2013_cart >
+			<Reweight scoretype=cart_bonded weight=50/>
+		</cart_bonded>
+	</SCOREFXNS>
+	<MOVERS>
+		Test mover - use a very weak tolerance
+		<MinMover name=min scorefxn=cart_bonded chi=1 bb=1 jump=0 cartesian=1 type=lbfgs_armijo_nonmonotone tolerance=0.1 />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=min/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

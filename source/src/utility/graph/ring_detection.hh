@@ -16,19 +16,21 @@
 
 #include <utility/graph/BFS_prune.hh>
 #include <utility/vector0.hh>
+#include <utility/exit.hh>
+
 #include <platform/types.hh>
+#include <basic/Tracer.hh>
+
+#include <boost/graph/undirected_dfs.hpp>
 
 #include <map>
+#include <set>
 
 
 
 namespace utility {
 namespace graph {
 
-
-
-// As a header, we reall shouldn't have tracers here ...
-// static basic::Tracer TR("utility.graph.ring_detection");
 /// @brief A class to implement the behavior of the smallest ring size finding algorithm, accessible through the smallest_ring_size() function below.
 /// @details Based on BCL's smallest ring size detection algorithm.
 
@@ -145,6 +147,84 @@ smallest_ring_size( typename boost::graph_traits< Graph>::vertex_descriptor cons
 	return smallest_size;
 }
 
+
+template< class Graph, class EdgeMap, class PathMap >
+class RingEdgeAnnotationVisitor: public boost::default_dfs_visitor {
+	typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
+	typedef typename boost::graph_traits<Graph>::vertex_descriptor VD;
+
+private:
+	// References to avoid copying when the visitor is passed by value.
+	// EdgeMap is a map of VD:(map of VD:bools), where EdgeMap[vd1][vd2] is true if the vd1-vd2 edge is in a cycle.
+	EdgeMap & edgemap_;
+	// PathMap is a map of VertexDescriptors:set<edge_descriptors>, representing the initial path to the vertex
+	PathMap & pathmap_;
+public:
+	RingEdgeAnnotationVisitor(EdgeMap & edgemap, PathMap & pathmap):
+		edgemap_( edgemap ),
+		pathmap_( pathmap )
+	{}
+
+	void examine_edge(Edge, const Graph&) {
+		//edgemap_[u] = false; // Initialize edge as non-cycle.
+		// // Maps default to zero initialized if not found.
+	}
+	void tree_edge(Edge u, const Graph& g) {
+		//std::cout << "Tree: " << boost::source(u,g) << "---" << boost::target(u,g) << std::endl;
+		typename PathMap::mapped_type path( pathmap_[boost::source(u,g)] ); // make a copy.
+		path.insert( u );
+		pathmap_[ boost::target(u,g) ] = path;
+	}
+	void back_edge(Edge u, const Graph& g) {
+		//std::cout << "Back: " << boost::source(u,g) << "---" << boost::target(u,g) << std::endl;
+		typename PathMap::mapped_type const & path( pathmap_[boost::source(u,g)] );
+		typename PathMap::mapped_type const & path2( pathmap_[boost::target(u,g)] );
+		// We've found a cycle
+		edgemap_[boost::source(u,g)][boost::target(u,g)] = true; //The back edge is always part of the cycle.
+		edgemap_[boost::target(u,g)][boost::source(u,g)] = true;
+		typename PathMap::mapped_type::const_iterator iter, iter_end;
+		for( iter = path.begin(), iter_end = path.end(); iter != iter_end; ++iter ) {
+			if( path2.count( *iter ) == 0 ) {
+				// If we have an edge in the longer path, but it isn't on the "stem"
+				// to the node we're going back to, it's part of a cycle.
+				//std::cout << "Marking Ring " << boost::source(*iter,g) << "---" << boost::target(*iter,g) << std::endl;
+				edgemap_[boost::source(*iter,g)][boost::target(*iter,g)] = true;
+				edgemap_[boost::target(*iter,g)][boost::source(*iter,g)] = true;
+			}
+		}
+	}
+	void forward_or_cross_edge(Edge, const Graph&) {
+		// Have to use generic tracer - can't initialize static tracer in header file.
+		//std::cout << "Cross: " << boost::source(u,g) << "---" << boost::target(u,g) << std::endl;
+		utility_exit_with_message( "Found forward or cross edge when detecting cycles - should not happen with an undirected graph." );
+	}
+};
+
+template < class Graph >
+std::map< typename boost::graph_traits<Graph>::vertex_descriptor, std::map< typename boost::graph_traits<Graph>::vertex_descriptor, bool > >
+annotate_ring_edges( Graph & graph) {
+	typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
+	typedef typename boost::graph_traits<Graph>::vertex_descriptor VD;
+	typedef typename std::map< typename boost::graph_traits<Graph>::vertex_descriptor, std::map< typename boost::graph_traits<Graph>::vertex_descriptor, bool > > EdgeMap;
+	typedef typename std::map< VD, std::set< Edge > >  PathMap;
+	typedef typename std::map< VD, boost::default_color_type> VertexColorMap;
+	typedef typename std::map< Edge, boost::default_color_type> EdgeColorMap;
+
+	EdgeMap edgemap;
+	PathMap pathmap;
+
+	VertexColorMap vertexcolormap;
+	EdgeColorMap edgecolormap;
+	boost::associative_property_map<VertexColorMap> vertexcolorproperty(vertexcolormap);
+	boost::associative_property_map<EdgeColorMap> edgecolorproperty(edgecolormap);
+
+	RingEdgeAnnotationVisitor<Graph, EdgeMap, PathMap > vis( edgemap, pathmap );
+	//Use DFS here so that we only have to keep track of one active path
+	//Use undirected_dfs() because the regular DFS has a back edge for each forward edge.
+	boost::undirected_dfs(graph, vis, vertexcolorproperty, edgecolorproperty);
+
+	return edgemap;
+}
 
 } // namespace graph
 } // namespace utility

@@ -162,10 +162,10 @@ PossibleAtomTypesForAtom::CreateAtomicEnvironmentToTypesMap ( const bool IN_AROM
 ////////////////////////////////////
 
 PossibleAtomTypesForAtom::PossibleAtomTypesForAtom() :
-		  m_NumberAtomTypesWithHybridization( GasteigerAtomTypeData::NumberHybridOrbitalType, 0 ),
-		  m_AtomTypesByDecreasingStability(),
-		  m_NumberConjugatedTypes( 0),
-		  m_FinalizeFunction( 0 )
+		m_NumberAtomTypesWithHybridization( GasteigerAtomTypeData::NumberHybridOrbitalType, 0 ),
+		m_AtomTypesByDecreasingStability(),
+		m_NumberConjugatedTypes( 0),
+		m_FinalizeFunction( 0 )
 {
 }
 
@@ -613,6 +613,8 @@ void PossibleAtomTypesForAtom::AddAromaticAtomType( GasteigerAtomTypeDataCOP ATO
 //! @details the link above contains the statistics and models used to select the current set of rules
 void PossibleAtomTypesForAtom::Finalize()
 {
+	using namespace core::chemical;
+
 	if( m_AtomTypesByDecreasingStability.size() <= 1)
 	{
 		return;
@@ -692,14 +694,14 @@ void PossibleAtomTypesForAtom::Finalize()
 		preferred_hybridization = GasteigerAtomTypeData::SP2;
 	}
 	// down to B, C, N, O, with either 2 single bonds, 1 single & 1 double bond, or 3 single bonds
-	else if( element_type->get_chemical_symbol() == "B" || element_type->get_chemical_symbol() == "C")
+	else if( element_type->element() == element::B || element_type->element() == element::C)
 	{
 		// O, and N atom types depend heavily on their environment
 		// boron and carbon with 2 - 3 bonds are always trigonal
 		preferred_hybridization = GasteigerAtomTypeData::SP2;
 	}
 	// down to N and O, with either 2 single bonds, 1 single & 1 double bond, or 3 single bonds
-	else if( element_type->get_chemical_symbol() == "N")
+	else if( element_type->element() == core::chemical::element::N)
 	{
 		if( n_bonds == 3 && n_e_in_bonds == 3)
 		{
@@ -714,7 +716,7 @@ void PossibleAtomTypesForAtom::Finalize()
 			m_FinalizeFunction = &PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle;
 		}
 	}
-	else if( element_type->get_chemical_symbol() == "O")
+	else if( element_type->element() == element::O)
 	{
 		if( n_bonds == 3 && n_e_in_bonds == 3)
 		{
@@ -882,6 +884,8 @@ void PossibleAtomTypesForAtom::FinalizeAromatic( const int DESIRED_CHARGE)
 
 //! @brief choose the final atom type for Nitrogen with two single bonds
 void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
+	using namespace core::chemical;
+
 	// in ring of size 3 - 5 -> Tetrahedral (51 cases)
 	// Bound to N or S -> Tetrahedral (90 cases)
 	// Else -> Trigonal (53 cases)
@@ -896,8 +900,8 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::
 		RealResidueAdjacentIter iter, iter_end;
 		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
 			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-			if( atomic_num == 16 /*"S"*/ || atomic_num == 7 /*"N"*/) {
+			assert( element_data );
+			if( element_data->element() == element::S || element_data->element() == element::N) {
 				SetToType( gasteiger_atom_type_set_->atom_type("N_Te2Te2TeTe"));
 				return;
 			}
@@ -944,8 +948,7 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 	RealResidueAdjacentIter iter, iter_end;
 	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
 		const ElementCOP & element_data = graph[ *iter ].element_type();
-		core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-		if (atomic_num != 6 /*"C"*/) {
+		if ( element_data->element() != element::C ) {
 			all_C = false;
 		}
 		// Node 5 Connected to any element period > 2 except those in group 6 Trigonal (Accuracy: 98.1%, 327 cases)
@@ -976,10 +979,8 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 		RealResidueAdjacentIter iter, iter_end;
 		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
 			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-
 			// Node 7: In a 6 membered ring (Accuracy: 70.4%, 252 cases)
-			if( atomic_num == 8 /*"O"*/ )
+			if( element_data->element() == element::O )
 			{
 				// Node 7a at least 1 O Trigonal (181 cases)
 				SetToType( gasteiger_atom_type_set_->atom_type("N_TrTrTrPi2"));
@@ -996,8 +997,7 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 		RealResidueAdjacentIter iter, iter_end;
 		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
 			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-			if( atomic_num != 6 /*"C"*/ ) // TODO: Do we need a Hydrogen check here, too?
+			if( element_data->element() != element::C ) // TODO: Do we need a Hydrogen check here, too?
 			{
 				++heteroatom_count;
 			}
@@ -1075,20 +1075,20 @@ void PossibleAtomTypesForAtom::FinalizeOxygenTwoSingle( const core::chemical::Re
 		RealResidueAdjacentIter iter, iter_end;
 		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
 			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-			if( atomic_num == 1 /*"H"*/ || atomic_num == 7 /*"N"*/ ||
-					atomic_num == 8 /*"O"*/ || element_data->get_main_group() == 7 /*halogen */) {
+			element::Elements elem( element_data->element() );
+			if( elem == element::H || elem == element::N ||
+					elem == element::O || element_data->get_main_group() == 7 /*halogen */) {
 				SetToType( gasteiger_atom_type_set_->atom_type("O_Te2Te2TeTe"));
 				return;
 			}
 			// special case for sulfur, which needs to be checked for saturation
-			if( atomic_num == 16 /*"S"*/ && !IsUnsaturated( graph, *iter ) ) {
+			if( elem == element::S && !IsUnsaturated( graph, *iter ) ) {
 				has_saturated_sulfur = true;
 			}
-			if( atomic_num != 6 /*"C"*/ ) {
+			if( elem != element::C ) {
 				only_carbon = false;
 			}
-			if( atomic_num != 14 /*"Si"*/) {
+			if( elem != element::Si ) {
 				only_silicon = false;
 			}
 		}

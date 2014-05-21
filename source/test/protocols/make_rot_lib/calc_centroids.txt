@@ -1,0 +1,46 @@
+# Calc centroids centroid 1
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 300 297.186 1 0
+chi 2 300 287.548 1 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 2
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 300 300.469 1 0
+chi 2 180 166.816 2 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 3
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 300 282.259 1 0
+chi 2 60 82.09 3 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 4
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 180 203.503 2 0
+chi 2 300 275.691 1 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 5
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 180 194.773 2 0
+chi 2 180 184.727 2 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 6
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 180 194.28 2 0
+chi 2 60 83.1851 3 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 7
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 60 44.3782 3 0
+chi 2 300 269.624 1 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 8
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 60 33.9132 3 0
+chi 2 180 177.485 2 0
+cen_dist 0 0 0 0 0 0 0 0 0
+# Calc centroids centroid 9
+RotData: 0 0 0 0 0 0 2 9 0 0 0
+chi 1 60 44.1126 3 0
+chi 2 60 103.262 3 0
+cen_dist 0 0 0 0 0 0 0 0 0
+

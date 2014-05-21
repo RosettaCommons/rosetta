@@ -68,11 +68,11 @@ public:
 	Atom();
 
 
-	/// @brief Construct a new atom with the type it is, the mm type, and the name.
+	/// @brief Construct a new atom with the name, mm type, element, charge and position.
+	/// Rosetta atom type should be set through the ResidueType to ensure data consistency.
 	Atom(
 			std::string const & name_in,
 			std::string const mm_name,
-			Size const atom_type_index,
 			Size const mm_atom_type_index,
 			ElementCOP element,
 			Real const charge,
@@ -140,12 +140,17 @@ public:
 	// Setters
 	void name( std::string const & name ) { name_ = name; };
 	void mm_name( std::string const & name ) { mm_name_ = name; };
+
+	/// @details - you probably don't want to use this directly.
+	/// Use ResidueType::set_atom_type() which correctly updates the internal state of the residuetype/atom
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
+
 	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
+	void element_type(ElementCOP element) {element_ = element;}
 	void gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type );
 	void formal_charge( int charge ) { formal_charge_ = charge; }
 	void charge( Real const & charge ) { charge_ = charge; };
-	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
+	void ideal_xyz( Vector const & ideal_xyz ) { ideal_xyz_= ideal_xyz; };
 	void heavyatom_has_polar_hydrogens( bool heavyatom_has_polar_hydrogens){ heavyatom_has_polar_hydrogens_ = heavyatom_has_polar_hydrogens;}
 	void is_polar_hydrogen(bool polar){is_polar_hydrogen_ = polar;}
 	void is_hydrogen(bool hydrogen){is_hydrogen_= hydrogen;}
@@ -173,15 +178,28 @@ private:
 	int formal_charge_;
 	Real charge_;
 	Vector ideal_xyz_;
-	bool heavyatom_has_polar_hydrogens_; // is an atom both a heavy atom and chemically bonded to a polar hydrogen?
-	bool is_acceptor_; // is an atom both a heavy atom and capable of accepting hydrogen bonds?
-	bool is_polar_hydrogen_; // is an atom a polar hydrogen?
+	/// @brief is an atom both a heavy atom and chemically bonded to a polar hydrogen?
+	/// Derived data, reset in ResidueType.finalize()
+	bool heavyatom_has_polar_hydrogens_;
+	/// @brief is an atom both a heavy atom and capable of accepting hydrogen bonds?
+	/// Derived from Rosetta Atom type, set in add_atom()
+	bool is_acceptor_;
+	/// @brief is an atom a polar hydrogen?
+	/// Derived from Rosetta Atom type, set in add_atom()
+	bool is_polar_hydrogen_; //
+	/// @brief is an atom a hydrogen?
+	/// Derived from Rosetta Atom type, set in add_atom()
 	bool is_hydrogen_;
+	/// @brief is an atom an aromatic hydrogen?
+	/// Derived from Rosetta Atom type, set in add_atom()
 	bool is_haro_;
+	/// @brief is an atom a virtual atom?
+	/// Derived from Rosetta Atom type, set in add_atom()
 	bool is_virtual_;
+	/// @brief doe an atom have orbitals?
+	/// Derived from Rosetta Atom type, set in add_atom()
 	bool has_orbitals_;
 	utility::vector1<Size> bonded_orbitals_;
-
 
 };
 

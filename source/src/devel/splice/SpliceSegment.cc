@@ -148,7 +148,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
 			current_profile_size++;
 			//TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
-		
+
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
 			if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
 				//this option is by default false

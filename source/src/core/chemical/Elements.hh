@@ -20,11 +20,14 @@
 #include <map>
 #include <string>
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
+
 namespace core {
 namespace chemical {
 namespace element {
 
 enum Elements {
+	UnknownElement=0,
 	H=1,
 	He,
 	Li,
@@ -146,7 +149,7 @@ enum Elements {
 	total_number_elements = 119
 };
 
-utility::vector1< std::string > & element2name();
+utility::vector0< std::string > & element2name();
 std::string
 name_from_elements(Elements element);
 Elements
@@ -160,7 +163,7 @@ std::map< std::string, Elements > setup_name2element();
 
 
 /// @brief setup the vector that maps AA enum to string name
-utility::vector1< std::string > setup_element2name();
+utility::vector0< std::string > setup_element2name();
 
 }
 }

@@ -249,7 +249,7 @@ Element: Hs Hassium 108 7 0 3 265 0 1.7
     ElectronConfiguration: nan 22 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 6 0 2 0 0 0 
 Element: Mt Meitnerium 109 7 0 3 266 0 1.7 
     ElectronConfiguration: nan 23 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 7 0 2 0 0 0 
-Element: Rp Repl 0 0 0 3 0 0 0
+Element: Z  Repl 0 0 0 3 0 0 0
     ElectronConfiguration: nan 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 Element: X Virt 0 0 0 3 0 0 0
     ElectronConfiguration: nan 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0

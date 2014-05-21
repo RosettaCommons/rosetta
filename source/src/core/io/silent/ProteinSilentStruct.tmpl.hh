@@ -86,8 +86,6 @@
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/chemical/sdf/MolData.fwd.hh>
-#include <core/chemical/sdf/MolData.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.fwd.hh>
@@ -413,7 +411,7 @@ ProteinSilentStruct_Template<T>::fill_struct(
 			//			utility_exit();
 	}
 
-  SilentStruct::fill_struct( pose, tag );
+	SilentStruct::fill_struct( pose, tag );
 
 	using namespace core::chemical;
 	fullatom( pose.is_fullatom() );

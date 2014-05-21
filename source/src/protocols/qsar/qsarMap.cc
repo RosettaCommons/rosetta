@@ -12,7 +12,6 @@
 
 #include <protocols/qsar/qsarMap.hh>
 //#include <protocols/qsar/qsarTypeManager.hh>
-#include <core/chemical/sdf/MolData.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
@@ -92,38 +91,39 @@ void qsarMap::fill_with_value(core::Size value,utility::vector1<std::string> gri
 	//std::cout << "filled with value"<<std::endl;
 }
 
-bool qsarMap::fill_from_mol_data(core::chemical::sdf::MolData mol_data)
-{
-	//the mol data line has type qsar_map.  it is a collection of lines like this:
-	//atomno\tqsar_type\tqsar_weight
-	//atomno is a Size, qsar_type is a string, qsar_weight is a float
-	this->clear();
-	utility::vector1<std::string> data_lines(mol_data.get_mol_data_string_vector("qsar_map", '\n'));
-	if(data_lines.size() == 0)
-	{
-		return false;
-	}
-
-	for(core::Size index = 1; index <= data_lines.size(); ++index)
-	{
-		std::string line(data_lines[index]);
-
-		utility::vector1<std::string> line_fields(utility::string_split(line, '\t'));
-		if(line_fields.size() != 3)
-		{
-			utility_exit_with_message("a qsar_map data line doesn't have 3 fields. something is wrong. Aborting.");
-		}
-
-		std::string atom_name(residue_->atom_name(utility::string2int(line_fields[1])));
-		std::string qsar_type(line_fields[2]);
-		//qsarType qsar_type(qsarTypeManager::qsar_type_from_name(line_fields[2]));
-		core::Real qsar_weight(utility::string2float(line_fields[3]));
-		qsarPointOP current_point(new qsarPoint(qsar_type,qsar_weight,atom_name,residue_));
-		std::string point_name(line_fields[3]+"_"+atom_name);
-		this->add_point(point_name,current_point);
-	}
-	return true;
-}
+// MolData no longer exists - if you need this, look into the string properties of the restype
+//bool qsarMap::fill_from_mol_data(core::chemical::sdf::MolData mol_data)
+//{
+//	//the mol data line has type qsar_map.  it is a collection of lines like this:
+//	//atomno\tqsar_type\tqsar_weight
+//	//atomno is a Size, qsar_type is a string, qsar_weight is a float
+//	this->clear();
+//	utility::vector1<std::string> data_lines(mol_data.get_mol_data_string_vector("qsar_map", '\n'));
+//	if(data_lines.size() == 0)
+//	{
+//		return false;
+//	}
+//
+//	for(core::Size index = 1; index <= data_lines.size(); ++index)
+//	{
+//		std::string line(data_lines[index]);
+//
+//		utility::vector1<std::string> line_fields(utility::string_split(line, '\t'));
+//		if(line_fields.size() != 3)
+//		{
+//			utility_exit_with_message("a qsar_map data line doesn't have 3 fields. something is wrong. Aborting.");
+//		}
+//
+//		std::string atom_name(residue_->atom_name(utility::string2int(line_fields[1])));
+//		std::string qsar_type(line_fields[2]);
+//		//qsarType qsar_type(qsarTypeManager::qsar_type_from_name(line_fields[2]));
+//		core::Real qsar_weight(utility::string2float(line_fields[3]));
+//		qsarPointOP current_point(new qsarPoint(qsar_type,qsar_weight,atom_name,residue_));
+//		std::string point_name(line_fields[3]+"_"+atom_name);
+//		this->add_point(point_name,current_point);
+//	}
+//	return true;
+//}
 
 void qsarMap::add_point(std::string point_name, qsarPointOP new_point)
 {

@@ -436,7 +436,7 @@ bool
 is_ideal_position(
 	Size const seqpos,
 	Conformation const & conf,
- 	Real theta_epsilon,
+	Real theta_epsilon,
 	Real D_epsilon
 )
 {
@@ -480,7 +480,7 @@ is_ideal_position(
 	}
 
 
- 	// II. Compare angle and length of all residue bonded atoms in the new mini-conformations
+	// II. Compare angle and length of all residue bonded atoms in the new mini-conformations
 	for ( Size atom = 1, atom_end = miniconf.residue( seqpos_miniconf ).natoms();
 				atom <= atom_end;
 				++atom )
@@ -511,7 +511,7 @@ is_ideal_position(
 			}
 		}
 
- 	return true;
+	return true;
 }
 
 
@@ -712,7 +712,7 @@ build_tree(
 
 	// traverse tree, build edges
 	for ( kinematics::FoldTree::const_iterator it = fold_tree.begin(),
-		 it_end = fold_tree.end(); it != it_end; ++it ) {
+			it_end = fold_tree.end(); it != it_end; ++it ) {
 		if ( it->is_jump() ) {
 			build_jump_edge( *it, residues, atom_pointer );
 
@@ -732,7 +732,7 @@ build_tree(
 
 	// now guarantee that jump stubs are residue-internal if desired
 	for ( kinematics::FoldTree::const_iterator it = fold_tree.begin(),
-		 it_end = fold_tree.end(); it != it_end; ++it ) {
+			it_end = fold_tree.end(); it != it_end; ++it ) {
 		if ( it->is_jump() && it->keep_stub_in_residue() ) {
 			promote_sameresidue_child_of_jump_atom( *it, residues, atom_pointer );
 		}
@@ -901,8 +901,9 @@ get_root_atomno(
 		assert( dir == kinematics::dir_jump );
 		// default for jumps, use the N-terminal attachment?
 		if ( rsd.mainchain_atoms().empty() ) {
-			// SHORT TERM HACK -- need to add some logic for root atomno
-			return 1;
+			// For non-polymeric ligands, match the ICOOR root.
+			// (This should minimize issues with matching trees.)
+			return rsd.type().atom_index( rsd.type().root_atom() );
 		} else if ( rsd.type().has_variant_type( "N_ACETYLATION" ) ) {
 			return 1; // awful hack! want N-CA-C triad to stay put when one of these residues is at root.
 		} else {
@@ -1603,14 +1604,14 @@ get_anchor_and_root_atoms(
 // this code assumed we were also being passed old_rsd:
 // optionally debug some things before making atom_tree call
 /**if ( debug ) {
- BondID old_rsd_in;
- vector1< BondID > old_rsd_out;
- get_residue_connections( old_rsd, fold_tree, residues, old_rsd_in, old_rsd_out );
- assert( new_rsd_in.atom1 == old_rsd_in.atom1 && new_rsd_out.size() == old_rsd_out.size() );
- for ( Size i=1; i<= new_rsd_out.size(); ++i ) {
- assert( new_rsd_out[i].atom2 == old_rsd_out[i].atom2 );
- }
- }**/
+	BondID old_rsd_in;
+	vector1< BondID > old_rsd_out;
+	get_residue_connections( old_rsd, fold_tree, residues, old_rsd_in, old_rsd_out );
+	assert( new_rsd_in.atom1 == old_rsd_in.atom1 && new_rsd_out.size() == old_rsd_out.size() );
+	for ( Size i=1; i<= new_rsd_out.size(); ++i ) {
+		assert( new_rsd_out[i].atom2 == old_rsd_out[i].atom2 );
+	}
+}**/
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1722,13 +1723,13 @@ setup_corresponding_atoms(
 	} else {
 		for ( Size i=1, i_end = mainchain1.size(); i<= i_end; ++i ) {
 			atom_map.set( id::AtomID( mainchain1[i], seqpos1 ),
-						 id::AtomID( mainchain2[i], seqpos2 ) );
+						id::AtomID( mainchain2[i], seqpos2 ) );
 		}
 		if ( rsd1.is_DNA() && rsd2.is_DNA() ) {
 			// special case for dna-dna jumps anchored at sidechain atoms
 			for ( Size i=1; i<= 4; ++i ) {
 				atom_map.set( id::AtomID( rsd1.chi_atoms(1)[i], seqpos1 ),
-							 id::AtomID( rsd2.chi_atoms(1)[i], seqpos2 ) );
+							id::AtomID( rsd2.chi_atoms(1)[i], seqpos2 ) );
 			}
 		}
 
@@ -1739,7 +1740,7 @@ setup_corresponding_atoms(
 			if ( rsd1.name1() == rsd2.name1() ) {
 				for ( Size i=1; i<= rsd1.natoms(); ++i ) {
 					atom_map.set( id::AtomID( i, seqpos1 ),
-								 id::AtomID( i, seqpos2 ) );
+								id::AtomID( i, seqpos2 ) );
 				}
 			}
 		}

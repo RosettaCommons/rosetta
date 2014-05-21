@@ -1,0 +1,4 @@
+-s inputs/CP1.pdb
+-extra_res_mol inputs/7cpa.mol 
+-out:prefix molscore_ 
+-out:pdb 

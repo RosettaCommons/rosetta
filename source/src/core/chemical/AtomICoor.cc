@@ -21,17 +21,17 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 
+#include <basic/datacache/DataMapObj.hh> // To wrap std::set for prettyprinter
+
 // Numeric headers
-// Commented by inclean daemon #include <numeric/xyz.functions.hh>
 
 // Utility headers
-// Commented by inclean daemon #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/NumericTraits.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
@@ -47,20 +47,26 @@ namespace chemical {
 
 static basic::Tracer tw( "core.chemical.AtomICoor", basic::t_warning );
 
+ICoorAtomID::ICoorAtomID():
+	type_( INTERNAL ),
+	atomno_( 0 ),
+	vd_(ResidueType::null_vertex)
+{}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /**
-	 After atom name is read in from residue param file, ICoorAtomID type_ and atomno_ is defined as:
+	After atom name is read in from residue param file, ICoorAtomID type_ and atomno_ is defined as:
 
-	 - Anything less than four character is considered as INTERNAL atom name and its atom index
-	 number is assigned as atomno_;
+	- Anything less than four character is considered as INTERNAL atom name and its atom index
+	number is assigned as atomno_;
 
-	 - "LOWER" and "UPPER" for polymer lower and upper connections. Since they are unique, no atomno_
-	 is given ( e.g., 0)
+	- "LOWER" and "UPPER" for polymer lower and upper connections. Since they are unique, no atomno_
+	is given ( e.g., 0)
 
-	 - Non-polymer connections are flagged by "CONN*" in which * represents the index number of
-	 this connection in the ResidueType ( from 1 to ResidueType.n_connection() ). This number is assigned
-	 as atomno_.
- */
+	- Non-polymer connections are flagged by "CONN*" in which * represents the index number of
+	this connection in the ResidueType ( from 1 to ResidueType.n_connection() ). This number is assigned
+	as atomno_.
+*/
 ICoorAtomID::ICoorAtomID(
 		std::string name,
 		ResidueType const & rsd_type
@@ -69,12 +75,12 @@ ICoorAtomID::ICoorAtomID(
 	if ( name.size() <= 4 ) {
 		type_ = INTERNAL;
 		atomno_ = rsd_type.atom_index( name );
-		vd_ = rsd_type.get_vertex(atomno_);
+		vd_ = rsd_type.atom_vertex(atomno_);
 	} else if ( name.substr(0,4) == "CONN" ) {
 		type_ = CONNECT;
 		assert( is_int( name.substr(4) ) );
 		atomno_ = int_of( name.substr(4) );
-		vd_ = rsd_type.get_vertex(atomno_);
+		vd_ = ResidueType::null_vertex;
 		assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
 		if ( atomno_ != rsd_type.n_residue_connections() ) {
 			tw.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
@@ -82,13 +88,32 @@ ICoorAtomID::ICoorAtomID(
 		}
 	} else if ( name == "LOWER" ) {
 		type_ = POLYMER_LOWER; atomno_ = 0;
+		atomno_ = 0; // atomno is unused
+		vd_ = ResidueType::null_vertex;
 		// atomno is unused
 	} else if ( name == "UPPER" ) {
 		type_ = POLYMER_UPPER;
 		atomno_ = 0; // atomno is unused
+		vd_ = ResidueType::null_vertex;
 	} else {
 		utility_exit_with_message( "ICoorAtomID: unable to parse atom_name: "+name );
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+	A Icoord to an atom given via a vertex descriptor is by definition INTERNAL.
+*/
+
+ICoorAtomID::ICoorAtomID(
+		VD vd,
+		ResidueType const & rsd_type
+)
+{
+	assert( rsd_type.has(vd) );
+	type_ = INTERNAL;
+	atomno_ = rsd_type.atom_index( vd );
+	vd_ = vd;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,10 +140,10 @@ ICoorAtomID::xyz(
 		core::Size const lowerID = rsd.type().lower_connect_id(); //The index of the lower connection of THIS residue.
 		//assert(!rsd.connection_incomplete( lowerID ));
 		core::Size const seqpos( rsd.connect_map( lowerID ).resid() ); //Get the index of the residue connected to this one at the lower connection.
-    if (seqpos == 0) {
-    	tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
-    	return NullVector;
-    }
+		if (seqpos == 0) {
+			tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
+			return NullVector;
+		}
 		core::Size const atomno( conformation.residue_type(seqpos).residue_connect_atom_index( rsd.connect_map( lowerID ).connid()  ) ); //Get the index of the atom on the other residue that forms a connection to the lower terminus of this residue.
 		//int const seqpos( rsd.seqpos() - 1 );
 		//int const atomno( conformation.residue_type( seqpos ).upper_connect_atom() );
@@ -174,7 +199,7 @@ ICoorAtomID::xyz(
 ) const
 {
 	if ( type_ == INTERNAL ) {
-		return rsd_type.atom( atomno_ ).ideal_xyz();
+		return rsd_type.atom( vd_ ).ideal_xyz();
 	} else if ( type_ == POLYMER_LOWER ) {
 		return rsd_type.lower_connect().icoor().build( rsd_type );
 	} else if ( type_ == POLYMER_UPPER ) {
@@ -234,6 +259,63 @@ ICoorAtomID::atom_id( Size const seqpos, Conformation const & conformation ) con
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+AtomICoor::AtomICoor():
+	//index_(0),
+	phi_(0.0),
+	theta_(0.0),
+	d_(0.0),
+	stub_atom1_(),
+	stub_atom2_(),
+	stub_atom3_()
+{}
+
+/// @brief constructor
+AtomICoor::AtomICoor(
+	std::string const & built_atom_name,
+	Real const phi_in,
+	Real const theta_in,
+	Real const d_in,
+	std::string const & stub_atom1_name,
+	std::string const & stub_atom2_name,
+	std::string const & stub_atom3_name,
+	ResidueType const & rsd_type
+):
+	phi_( phi_in ),
+	theta_( theta_in ),
+	d_( d_in ),
+	stub_atom1_( stub_atom1_name, rsd_type ),
+	stub_atom2_( stub_atom2_name, rsd_type ),
+	stub_atom3_( stub_atom3_name, rsd_type )
+{
+	if(built_atom_name.size() <= 4) {
+		built_vd_ = rsd_type.atom_vertex(built_atom_name);
+	} else {
+		built_vd_ = ResidueType::null_vertex;
+	}
+}
+
+/// @brief Vertex descriptor version
+AtomICoor::AtomICoor(
+	VD const & built_atom_vd,
+	Real const phi_in,
+	Real const theta_in,
+	Real const d_in,
+	VD const & stub_atom1_vd,
+	VD const & stub_atom2_vd,
+	VD const & stub_atom3_vd,
+	ResidueType const & rsd_type
+):
+	//index_(0),
+	built_vd_( built_atom_vd ),
+	phi_( phi_in ),
+	theta_( theta_in ),
+	d_( d_in ),
+	stub_atom1_( stub_atom1_vd, rsd_type ),
+	stub_atom2_( stub_atom2_vd, rsd_type ),
+	stub_atom3_( stub_atom3_vd, rsd_type )
+{}
+
 Vector
 AtomICoor::build(
 		conformation::Residue const & rsd,
@@ -281,6 +363,78 @@ AtomICoor::build(
 
 	return built_stub.spherical( phi_, theta_, d_ );
 }
+
+
+
+typedef basic::datacache::DataMapObj< std::set< std::string > > AtomMemo;
+typedef utility::pointer::owning_ptr< AtomMemo > AtomMemoOP;
+
+//Memoized version, implementation of the general interface found below.
+
+void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent, AtomMemoOP memo ) {
+	if( ! memo ) {
+		memo = new AtomMemo;
+	}
+	for( core::Size ii(1); ii <= indent; ++ii ) {
+		out << "   ";
+	}
+	if( indent > 0 ) {
+		out << "* ";
+	}
+	VD built_vert(start.built_atom_vertex());
+	if( built_vert == ResidueType::null_vertex || built_vert == 0 ) {
+		out << " -- UNNAMED POINT" << std::endl;
+		return;
+	}
+	if( ! rsd_type.has(built_vert) ) {
+		out << " -- !!!! VERTEX NOT IN RESIUDE !!! " << built_vert << " for " << rsd_type.name() << std::endl;
+		return;
+	}
+	std::string const & name( rsd_type.atom_name( built_vert ) );
+	if( memo->obj.count(name) ) {
+		out << name << " -- SEEN BEFORE " << std::endl;
+		return;
+	}
+	memo->obj.insert( name );
+	out << name
+			<< '\t' << start.phi() * numeric::NumericTraits< double >::rad2deg()
+			<< '\t' << start.theta() * numeric::NumericTraits< double >::rad2deg()
+			<< '\t' << start.d() << '\t';
+	for( core::Size ii(1); ii <= 3; ++ii ) {
+		ICoorAtomID icoorid( start.stub_atom(ii) );
+		switch( icoorid.type() ) {
+			case ICoorAtomID::INTERNAL:
+				out << rsd_type.atom_name( icoorid.vertex() ) << "  ";
+				break;
+			case ICoorAtomID::CONNECT:
+				out << "CONNECT" << "  ";
+				break;
+			case ICoorAtomID::POLYMER_LOWER:
+				out << "LOWER" << "  ";
+				break;
+			case ICoorAtomID::POLYMER_UPPER:
+				out << "UPPER" << "  ";
+				break;
+			default:
+				out << "UNKNOWN" << "  ";
+				break;
+		}
+	}
+	out << std::endl;
+	for( core::Size n(1); n <= rsd_type.natoms(); ++n) {
+		if( rsd_type.icoor(n).stub_atom1().vertex() == built_vert ) {
+			if( rsd_type.icoor(n).built_atom_vertex() == built_vert ) {
+				continue; // The root lists itself as it's stub_atom1
+			}
+			pretty_print_atomicoor(out, rsd_type.icoor(n), rsd_type, indent+1, memo );
+		}
+	}
+}
+
+void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent) {
+	pretty_print_atomicoor(out, start, rsd_type, indent, 0);
+}
+
 
 } // chemical
 } // core

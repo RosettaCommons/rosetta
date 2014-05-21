@@ -1,4 +1,5 @@
-// :noTabs=false:tabSize=4:indentSize=4:
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -55,8 +56,6 @@
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/chemical/sdf/MolData.fwd.hh>
-#include <core/chemical/sdf/MolData.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.fwd.hh>
@@ -457,11 +456,11 @@ rmsd_with_super(
 	T* predicate
 )
 {
-  std::list< core::Size > all_residues;
-  for (core::Size n = 1; n <= pose1.total_residue(); n++ ){
-    all_residues.push_back( n );
-  }
-  return rmsd_with_super( pose1, pose2, all_residues, predicate );
+	std::list< core::Size > all_residues;
+	for (core::Size n = 1; n <= pose1.total_residue(); n++ ){
+		all_residues.push_back( n );
+	}
+	return rmsd_with_super( pose1, pose2, all_residues, predicate );
 }
 
 
@@ -694,9 +693,9 @@ rmsd_no_super_subset(
       }
       for ( core::Size j = 1; j <= num_atoms; ++j ) {
 	if ( predicate( pose1, pose2, i, j ) ) {
-	  core::Vector diff = pose1.residue(i).xyz(j) - pose2.residue(res2).xyz(j);
-	  sum2 += diff.length_squared();
-	  natoms += 1;
+		core::Vector diff = pose1.residue(i).xyz(j) - pose2.residue(res2).xyz(j);
+		sum2 += diff.length_squared();
+		natoms += 1;
 	}
       }
     }
@@ -884,11 +883,11 @@ sym_rmsd_with_super_subset(
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose2.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-    int const N ( symm_info->subunits() );
-    int const nres ( symm_info->num_total_residues_without_pseudo() );
-    ObjexxFCL::FArray2D< core::Real > p1a_shuffle( 3, nres );
+	int const N ( symm_info->subunits() );
+	int const nres ( symm_info->num_total_residues_without_pseudo() );
+	ObjexxFCL::FArray2D< core::Real > p1a_shuffle( 3, nres );
 
-  core::Real rms = 1e3; //Since fast_rms has not been evaluated yet
+	core::Real rms = 1e3; //Since fast_rms has not been evaluated yet
 	int const num_atoms_subunit (natoms);
 	std::vector< std::vector<int> > shuffle_map;
 	create_shuffle_map_recursive_rms(std::vector<int>(), N,shuffle_map);

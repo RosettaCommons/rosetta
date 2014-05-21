@@ -133,11 +133,11 @@ append_interface_deltas(
 			{
 				job->add_string_real_pair(prefix + "_" + if_score.str(), component_score);
 			}
-			
+
 		}
 	}
 }
-	
+
 void
 append_interface_deltas(
 	core::Size jump_id,
@@ -149,11 +149,11 @@ append_interface_deltas(
 	)
 {
 	core::pose::PoseOP after_copy = new core::pose::Pose( after );
-	
+
 	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
 	core::Size chain_id = core::pose::get_chain_id_from_jump_id(jump_id, after);
 	core::conformation::ResidueCOPs residues(core::pose::get_chain_residues(after, chain_id));
-	
+
 	// A very hacky way of guessing whether the components are touching:
 	// if pushed together by 1A, does fa_rep change at all?
 	// (The docking rb_* score terms aren't implemented as of this writing.)
@@ -167,7 +167,7 @@ append_interface_deltas(
 	(*scorefxn)( *after_copy );
 	core::Real const push_together_fa_rep = (*normalization_function)(after_copy->energies().total_energies()[ core::scoring::fa_rep ],residues);
 	bool const are_touching = (std::abs(initial_fa_rep - push_together_fa_rep) > 1e-4);
-	
+
 	{
 		std::ostringstream touching;
 		touching << "ligand_is_touching_"<< ligand_chain;
@@ -179,14 +179,14 @@ append_interface_deltas(
 			job->add_string_real_pair(prefix + "_" + touching.str(), are_touching);
 		}
 	}
-	
+
 	// Now pull apart by 500 A to determine the reference E for calculating interface E.
 	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move apart
 	trans_mover.step_size(500); // make sure they're fully separated!
 	trans_mover.apply( *after_copy );
 	core::Real const separated_score = (*normalization_function)((*scorefxn)( *after_copy ),residues);
 	core::scoring::EnergyMap const separated_energies = after_copy->energies().total_energies();
-	
+
 	{
 		std::ostringstream delta;
 		delta<< "interface_delta_"<< ligand_chain;
@@ -197,13 +197,13 @@ append_interface_deltas(
 		{
 			job->add_string_real_pair(prefix + "_" + delta.str(), together_score - separated_score);
 		}
-		
+
 	}
-	
+
 	// Interface delta, broken down by component
 	for(int i = 1; i <= core::scoring::n_score_types; ++i) {
 		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
-		
+
 		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
 
 		core::Real component_score= (*normalization_function)(scorefxn->get_weight(ii) * (together_energies[ii] - separated_energies[ii]),residues);
@@ -258,7 +258,7 @@ void append_ligand_grid_scores(
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 
 	if (grid_manager->size()==0){
-		ligand_scores_tracer << "skipping 'append ligand grid scores'. No grids used.";
+		ligand_scores_tracer << "skipping 'append ligand grid scores'. No grids used." << std::endl;
 		return;
 	}
 
@@ -280,7 +280,7 @@ void append_ligand_grid_scores(
 		{
 			job->add_string_real_pair(prefix + "_" + score_label.str(),grid_score.second);
 		}
-		
+
 	}
 
 	std::ostringstream score_label;
@@ -339,7 +339,7 @@ void append_ligand_grid_scores(
 	{
 		job->add_string_real_pair(prefix + "_" + score_label.str(),total_score);
 	}
-	
+
 }
 
 ///@brief Calculate radius of gyration for downstream non-H atoms

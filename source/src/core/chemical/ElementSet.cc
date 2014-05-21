@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/chemical/bcl/ElementSet.cc
+/// @file core/chemical/ElementSet.cc
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
 // Unit headers
@@ -29,7 +29,7 @@ namespace core {
 namespace chemical {
 
 
-static basic::Tracer tr("core.chemical.bcl.ElementSet");
+static basic::Tracer tr("core.chemical.ElementSet");
 
 ElementSet::ElementSet() {}
 
@@ -37,14 +37,14 @@ ElementSet::~ElementSet() {}
 
 /// @details Initialize an ElementSet from an external file "filename",
 /// and set parameters and properties for each Element.
-/// Refer to rosetta_database/chemical/bcl/elements/element_properties.txt
+/// Refer to rosetta_database/chemical/elements/element_properties.txt
 /// for file format
 void
 ElementSet::read_file( std::string const & filename )
 {
 	utility::io::izstream data( filename.c_str() );
 
-	if ( !data.good() ) utility_exit_with_message( "Unable to open bcl element file: "+filename );
+	if ( !data.good() ) utility_exit_with_message( "Unable to open element file: "+filename );
 
 	// now parse the rest of the file
 	{
@@ -65,15 +65,19 @@ ElementSet::read_file( std::string const & filename )
 					elements_.push_back( element );
 					std::string symbol( element->get_chemical_symbol() );
 					if ( element_index_.count( symbol ) ) {
-						utility_exit_with_message("ElementSet:: duplicate element symbol "+symbol);
+						if( symbol != "Z" && symbol != "X" ) {
+							// Z and X are used as dummy element symbols -- ignore
+							utility_exit_with_message("ElementSet:: duplicate element symbol "+symbol);
+						}
+					} else {
+						element_index_[ symbol ] = elements_.size();
 					}
-					element_index_[ symbol ] = elements_.size();
-					tr.Debug << "New Bcl element: " << symbol << std::endl;
+					tr.Debug << "New element: " << symbol << std::endl;
 				}
 			} else {
 				getline( data, line );
 				if ( data.good() ) {
-					utility_exit_with_message("Problem with Bcl Elements file. Expecting 'Element:' tag, found:'" + line + "'");
+					utility_exit_with_message("Problem with Elements file. Expecting 'Element:' tag, found:'" + line + "'");
 				}
 			}
 		}
@@ -88,7 +92,7 @@ ElementSet::contains_element_type( std::string const & element_symbol ) const
 	std::map< std::string, core::Size >::const_iterator
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
-	// (BCL elements are title cased: Cl versus CL)
+	// (Cl versus CL)
 	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
 		std::string title( 1, std::toupper(element_symbol[0], loc) );
 		if( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
@@ -106,7 +110,7 @@ ElementSet::element_index( std::string const & element_symbol ) const
 	std::map< std::string, core::Size >::const_iterator
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
-	// (BCL elements are title cased: Cl versus CL)
+	// (Cl versus CL)
 	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
 		std::string title( 1, std::toupper(element_symbol[0], loc) );
 		if( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }

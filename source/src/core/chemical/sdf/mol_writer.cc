@@ -29,6 +29,9 @@
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 namespace core {
@@ -60,14 +63,22 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conf
 	std::list<std::string> prepared_lines;
 	std::list<std::string> metadata = this->compose_metadata(residue);
 	std::list<std::string> ctab = this->compose_ctab(residue);
-	std::list<std::string> typeinfo = this->compose_typeinfo(residue);
-	std::list<std::string> nbr_atom = this->compose_nbr_atom(residue);
 	std::list<std::string> job_data = this->compose_job_info();
 
 	prepared_lines.insert(prepared_lines.end(),metadata.begin(),metadata.end());
 	prepared_lines.insert(prepared_lines.end(),ctab.begin(),ctab.end());
-	prepared_lines.insert(prepared_lines.end(),typeinfo.begin(),typeinfo.end());
-	prepared_lines.insert(prepared_lines.end(),nbr_atom.begin(),nbr_atom.end());
+	if( ! basic::options::option[ basic::options::OptionKeys::out::file::no_extra_sdf_data ]) {
+		// These entries should be kept up-to-date with those processed in for MolFileIOData.cc
+		std::list<std::string> naming = this->compose_naming(residue);
+		std::list<std::string> typeinfo = this->compose_typeinfo(residue);
+		std::list<std::string> nbr_atom = this->compose_nbr_atom(residue);
+		std::list<std::string> properties = this->compose_rosetta_properties(residue);
+
+		prepared_lines.insert(prepared_lines.end(),naming.begin(),naming.end());
+		prepared_lines.insert(prepared_lines.end(),typeinfo.begin(),typeinfo.end());
+		prepared_lines.insert(prepared_lines.end(),nbr_atom.begin(),nbr_atom.end());
+		prepared_lines.insert(prepared_lines.end(),properties.begin(),properties.end());
+	}
 	prepared_lines.insert(prepared_lines.end(),job_data.begin(),job_data.end());
 	if(ctab_mode_ == V2000)
 	{
@@ -410,6 +421,75 @@ std::list<std::string> MolWriter::compose_nbr_atom(core::conformation::ResidueCO
 	lines.push_back(header);
 	lines.push_back(nbr_atom);
 	lines.push_back("\n");
+
+	std::string header2 = "> <Rosetta nbr_radius>\n";
+	std::string nbr_radius = utility::to_string<core::Real>(residue->nbr_radius()) + "\n";
+
+	lines.push_back(header2);
+	lines.push_back(nbr_radius);
+	lines.push_back("\n");
+
+	return lines;
+}
+
+std::list<std::string> MolWriter::compose_naming(core::conformation::ResidueCOP residue)
+{
+	core::chemical::ResidueType const & restype( residue->type() );
+	std::list<std::string>	lines;
+
+	std::string header = "> <Rosetta Name>\n";
+	std::string name = residue->name() + "\n";
+
+	lines.push_back(header);
+	lines.push_back(name);
+	lines.push_back("\n");
+
+	if( residue->name3() != residue->name().substr(0,3) || residue->name1() != 'Z' ) {
+		std::string header2 = "> <Rosetta IO_string>\n";
+		std::string io_string = residue->name3() + ' ' + residue->name1() + "\n";
+
+		lines.push_back(header2);
+		lines.push_back(io_string);
+		lines.push_back("\n");
+	}
+	if( restype.interchangeability_group() != restype.name3() ) {
+		std::string header3 = "> <Rosetta Interchangeability Group>\n";
+		std::string group = restype.interchangeability_group() + "\n";
+
+		lines.push_back(header3);
+		lines.push_back(group);
+		lines.push_back("\n");
+	}
+	if( restype.aa() != core::chemical::aa_unk ) {
+		std::string header4 = "> <Rosetta AA>\n";
+		std::string aa = utility::to_string<core::chemical::AA>( restype.aa() ) + "\n";
+
+		lines.push_back(header4);
+		lines.push_back(aa);
+		lines.push_back("\n");
+	}
+
+	return lines;
+}
+
+std::list<std::string> MolWriter::compose_rosetta_properties(core::conformation::ResidueCOP residue)
+{
+	core::chemical::ResidueType const & restype( residue->type() );
+	std::list<std::string>	lines;
+
+	utility::vector1< std::string > const & properties( restype.properties() );
+
+	if( properties.size() ) {
+		std::string header = "> <Rosetta Properties>\n";
+		lines.push_back(header);
+
+		for( core::Size ii(1); ii <= properties.size(); ++ii ) {
+			std::string property_line = properties[ ii ] + "\n";
+			lines.push_back( property_line );
+		}
+
+		lines.push_back( "\n" );
+	}
 
 	return lines;
 }

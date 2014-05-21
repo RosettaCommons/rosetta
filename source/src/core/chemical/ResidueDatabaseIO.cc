@@ -19,6 +19,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/AtomICoor.hh>
+#include <core/chemical/icoor_support.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
@@ -1157,7 +1158,9 @@ ResidueDatabaseIO::report_residue_type_icoor(
 		stmt.bind(1,residue_type_set_name);
 		stmt.bind(2,res_type.name());
 		stmt.bind(3,res_type.atom_name(i));
-		stmt.bind(4,atom_icoor.index());
+		// This was atom_icoor.index(), but that no longer exists.
+		// Retain position for backward compatability.
+		stmt.bind(4,i);
 		stmt.bind(5,atom_icoor.phi());
 		stmt.bind(6,atom_icoor.theta());
 		stmt.bind(7,atom_icoor.d());
@@ -1236,8 +1239,6 @@ ResidueDatabaseIO::read_residue_type_icoor(
 	stmt.bind(1,residue_type_set_name);
 	stmt.bind(2,residue_type_name);
 
-	std::map< std::string, Vector > rsd_xyz;
-
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 	while(res.next())
 	{
@@ -1245,60 +1246,15 @@ ResidueDatabaseIO::read_residue_type_icoor(
 		core::Real phi, theta, distance;
 		res >> child_atom_name >> phi >> theta >> distance >> parent_atom_name >>angle_atom_name >>torsion_atom_name;
 
-		//This code mostly came from core/chemical/residue_io.  It should probably be extracted to a util function
-		if(child_atom_name == parent_atom_name)
-		{
-			assert( rsd_xyz.empty() ); // first atom
-			rsd_xyz[child_atom_name] = Vector(0.0);
-		}else if( child_atom_name == angle_atom_name)
-		{
-			assert( rsd_xyz.size() == 1 && rsd_xyz.count( parent_atom_name ) ); // second atom
-			rsd_xyz[ child_atom_name ] = Vector( distance, 0.0, 0.0 );
-		}else
-		{
-			Vector torsion_xyz;
-			if ( child_atom_name == torsion_atom_name ) {
-				assert( rsd_xyz.size() == 2 );
-				assert( rsd_xyz.count( parent_atom_name ) );
-				assert( rsd_xyz.count( angle_atom_name ) ); // third atom
-				torsion_xyz = Vector( 1.0, 1.0, 0.0 );
-			} else {
-				assert( rsd_xyz.count( parent_atom_name ) && rsd_xyz.count( angle_atom_name ) && rsd_xyz.count( torsion_atom_name ) );
-				torsion_xyz = rsd_xyz[ torsion_atom_name ];
-			}
-			kinematics::Stub const stub( rsd_xyz[ parent_atom_name ], rsd_xyz[ angle_atom_name ], torsion_xyz );
-			rsd_xyz[ child_atom_name ] = stub.spherical( phi, theta, distance );
-		}
-
-		// set atom_base
-		if ( child_atom_name != "UPPER" && child_atom_name != "LOWER" && child_atom_name.substr(0,4) != "CONN" ) {
-			// atom base only valid for genuine atoms of this residue
-			if ( child_atom_name == parent_atom_name ) {
-				// root of the tree
-				if ( res_type.natoms() == 1 ) {
-					res_type.set_atom_base( child_atom_name, child_atom_name ); // 1st child of root atom
-				} else {
-					res_type.set_atom_base( child_atom_name, angle_atom_name ); // 1st child of root atom
-				}
-			} else {
-				res_type.set_atom_base( child_atom_name, parent_atom_name );
-			}
-		}
-
 		// set icoor
+		// (Atom base gets set in set_icoor)
 		res_type.set_icoor( child_atom_name, phi, theta, distance, parent_atom_name, angle_atom_name, torsion_atom_name );
 	}
 
-	for ( Size i=1; i<= res_type.natoms(); ++i ) {
-		std::string name( res_type.atom_name(i) );
-		assert( rsd_xyz.count( name ) );
-		res_type.set_ideal_xyz( name, rsd_xyz[ name ] );
-	}
-
+	// We do this at the end of the loop to make sure all the dependant icoors are present.
+	core::chemical::fill_ideal_xyz_from_icoor( res_type, res_type.graph() );
 
 }
-
-
 
 
 }

@@ -19,6 +19,7 @@
 
 #include <core/chemical/Element.fwd.hh>
 #include <core/chemical/ElectronConfiguration.hh>
+#include <core/chemical/Elements.hh>
 
 #include <core/types.hh>
 
@@ -107,6 +108,11 @@ public:
 	/////////////////
 	// data access //
 	/////////////////
+
+	//! @brief The element enumeration
+	core::chemical::element::Elements element() const {
+		return element_;
+	}
 
 	//! @brief atomic number
 	//! @return atomic number
@@ -200,9 +206,10 @@ private:
 // data //
 //////////
 
-core::Size                 atomic_number_;                            //!< atomic number
-core::Size                 period_;                                  //!< Period
-core::Size                 main_group_;                               //!< Group # in the main group (1-8) such as transistion metals
+core::chemical::element::Elements element_;                       //!< Element enum
+core::Size             atomic_number_;                            //!< atomic number
+core::Size             period_;                                   //!< Period
+core::Size             main_group_;                               //!< Group # in the main group (1-8) such as transistion metals
 std::string            chemical_symbol_;                          //!< ChemicalSymbol
 std::string            chemical_name_;                            //!< ChemicalName
 ElectronConfiguration  electron_configuration_;                   //!< electron configuration

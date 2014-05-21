@@ -56,7 +56,11 @@ read_topology_file(
 );
 
 /// @brief writes a .params file from a given ResidueType object
-void write_topology_file( ResidueType const & rsd );
+void
+write_topology_file(
+	ResidueType const & rsd,
+	std::string filename = ""
+);
 
 } // chemical
 } // core

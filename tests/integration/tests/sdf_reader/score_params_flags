@@ -1,0 +1,4 @@
+-s inputs/CP1.pdb
+-extra_res_fa inputs/7cpa.params
+-out:prefix paramscore_ 
+-out:pdb 

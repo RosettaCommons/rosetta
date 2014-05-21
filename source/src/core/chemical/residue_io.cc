@@ -19,7 +19,7 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSupport.hh>
+#include <core/chemical/residue_support.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
 #include <core/chemical/AtomType.hh>
@@ -474,7 +474,7 @@ read_topology_file(
 	std::string filename = data.filename();
 
 	// read the file
-    std::string line;
+	std::string line;
 	utility::vector1< std::string > lines;
 
 	while ( getline( data, line ) ) {
@@ -907,7 +907,7 @@ read_topology_file(
 			}
 
 			// set icoor
-			rsd->set_icoor( i, child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
+			rsd->set_icoor(child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
 
 		} // loop over file lines looking for ICOOR_INTERNAL lines
 
@@ -968,7 +968,7 @@ read_topology_file(
 		rsd->set_RotamerLibrary( pdb_rotamers );*/
 	}
 
-    return rsd;
+	return rsd;
 }
 
 
@@ -976,12 +976,17 @@ read_topology_file(
 /// debug on the fly generated residue types. Note: not perfect yet, the enums for
 /// the connection types are given in numbers instead of names
 void
-write_topology_file( ResidueType const & rsd )
+write_topology_file(
+	ResidueType const & rsd,
+	std::string filename /*= ""*/
+)
 {
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
 
-	std::string filename = rsd.name() + ".params";
+	if( ! filename.size() ) {
+		filename = rsd.name() + ".params";
+	}
 
 	std::ofstream out( filename.c_str() );
 

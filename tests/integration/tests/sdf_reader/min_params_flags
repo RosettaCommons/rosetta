@@ -1,0 +1,18 @@
+-in
+ -ignore_unrecognized_res
+ -file
+  -s inputs/7cpa_ligand.pdb
+  -extra_res_fa inputs/7cpa.params
+-out
+ -prefix "min_params_"
+ -file
+ -overwrite	
+-packing
+ -no_optH
+ -ex1
+ -ex1aro
+ -ex2
+-parser
+  -protocol cart_min.xml
+-mute core.util.prof ## dont show timing info
+-mute core.io.database

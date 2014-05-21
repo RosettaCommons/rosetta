@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 #include <core/chemical/Elements.hh>
 #include <ostream>
 #include <map>
@@ -9,9 +18,9 @@ namespace chemical {
 namespace element {
 
 
-utility::vector1< std::string > & element2name() {
+utility::vector0< std::string > & element2name() {
 	// static initialization only happens once
-	static utility::vector1< std::string > * element2name_ = new utility::vector1< std::string >( setup_element2name() );
+	static utility::vector0< std::string > * element2name_ = new utility::vector0< std::string >( setup_element2name() );
 	return *element2name_;
 }
 
@@ -25,6 +34,9 @@ Elements
 elements_from_name(std::string name) {
 	std::map< std::string, Elements >::const_iterator iter = name2element().find( name );
 	if ( iter == name2element().end() ) {
+		if( name == "X" or name == "Z" ) { // Special case for special Rosetta atoms.
+			return UnknownElement;
+		}
 		utility_exit_with_message( "unrecognized element  " + name );
 	}
 	return iter->second;
@@ -43,7 +55,7 @@ std::map< std::string, Elements > setup_name2element() {
 
 	std::map< std::string, Elements > n2element;
 
-    // L-amino acid types
+	// Elements
 	n2element["H" ] = H;
 	n2element["He" ] = He;
 	n2element["Li" ] = Li;
@@ -163,14 +175,15 @@ std::map< std::string, Elements > setup_name2element() {
 	n2element["Uus" ] = Uus;
 	n2element["Uuo" ] = Uuo;
 
+	n2element["Unknown"] = UnknownElement;
 	return n2element;
 }
 
 
-/// @brief setup the vector that maps AA enum to string name
-utility::vector1< std::string > setup_element2name() {
+/// @brief setup the vector that maps Element enum to string name
+utility::vector0< std::string > setup_element2name() {
 
-	utility::vector1< std::string > element2n( total_number_elements );
+	utility::vector0< std::string > element2n( total_number_elements );
 
 	for ( std::map< std::string, Elements >::const_iterator iter = name2element().begin(),
 		iter_end = name2element().end(); iter != iter_end; ++iter ) {

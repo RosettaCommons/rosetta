@@ -13,6 +13,8 @@
 /// @brief  Some std::string helper functions.
 /// @author Sergey Lyskov
 #include <platform/types.hh>
+
+#include <numeric/util.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
@@ -43,7 +45,7 @@ void ReadFromFileOrDie(const std::string& filename, std::string* contents) {
 	if (!in) {
 		stringstream ss;
 		ss << "The specified file " << filename
-		   << "does not exist or lacks sufficient permissions";
+				<< "does not exist or lacks sufficient permissions";
 		utility_exit_with_message(ss.str());
 	}
 
@@ -204,13 +206,35 @@ int string2int( std::string st ){
 	return i;
 }
 
+/// @brief convert a string to a Size, returns numeric::get_undefined_size() on failure
+platform::Size string2Size( std::string st ){
+	platform::Size i;
+	std::stringstream ss( st );
+	ss >> i;
+	if(!ss){
+		return numeric::get_undefined_size();
+	}
+	return i;
+}
+
+/// @brief convert a string to a Real, returns numeric::get_undefined_real() on failure
+platform::Real string2Real( std::string st ){
+	platform::Real i;
+	std::stringstream ss( st );
+	ss >> i;
+	if(!ss){
+		return numeric::get_undefined_real();
+	}
+	return i;
+}
+
 // @brief Reads an unsigned int from string <x>, writing the result
 // to output parameter <y>, which must be non-NULL. The result is
 // undefined if the input string is malformed.
 void string2uint(const std::string& x, unsigned int* y) {
-  assert(y != NULL);
-  std::stringstream ss(x);
-  ss >> *y;
+	assert(y != NULL);
+	std::stringstream ss(x);
+	ss >> *y;
 }
 
 /// @details compares two strings ignoring leading and trailing spaces
@@ -454,8 +478,8 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
     if ( n > 1 ) tag += " ";
     std::pair< int, int > const & segment = res_vector_segments[n];
     if ( chains_for_segments[n] != '\0' &&
-	 chains_for_segments[n] != ' '  &&
-	 chains_for_segments[n] != '_' ) tag += std::string(1,chains_for_segments[n]) + ":";
+				chains_for_segments[n] != ' '  &&
+				chains_for_segments[n] != '_' ) tag += std::string(1,chains_for_segments[n]) + ":";
     if ( segment.first == segment.second ){
       tag += string_of( segment.first );
     } else{
@@ -507,8 +531,8 @@ get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
-				   std::vector< int > & resnum,
-				   std::vector< char > & chains ){
+			std::vector< int > & resnum,
+			std::vector< char > & chains ){
   bool string_is_ok( false );
   std::vector< int > resnum_from_tag;
   std::vector< char > chains_from_tag;

@@ -66,8 +66,6 @@
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/chemical/sdf/MolData.fwd.hh>
-#include <core/chemical/sdf/MolData.hh>
 #include <core/conformation/AbstractRotamerTrie.fwd.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Atom.hh>
@@ -234,7 +232,7 @@ public:
 			EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*iter);
 			EnergyMap emap = eedge->fill_energy_map();
 			//emap.show_weighted( std::cout, sfxn->weights() );
-			
+
 			std::cout << sfxn->weights().dot( emap ) << std::endl;
 		}
 		std::cout << "Initial one-body energy: " << static_cast< SimpleNode const * > (simple_ig->get_node( 12 ))->current_one_body_energy() << std::endl;
@@ -261,7 +259,7 @@ public:
 			EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*iter);
 			EnergyMap emap = eedge->fill_energy_map();
 			//emap.show_weighted( std::cout, sfxn->weights() );
-			
+
 			std::cout << sfxn->weights().dot( emap ) << std::endl;
 		}
 		std::cout << "Alternate one-body energy: " << static_cast< SimpleNode const * > (simple_ig->get_node( 12 ))->proposed_one_body_energy() << std::endl;

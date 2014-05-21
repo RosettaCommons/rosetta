@@ -653,6 +653,9 @@ Options = Option_Group( '',
 
 			# Fragment file options -------------------------------------------
 			Option( 'frag_prefix', 'String', desc='Prefix for fragment output', default='default.frags' ),
+
+                        # SDF file options
+			Option( 'no_extra_sdf_data', 'Boolean', desc='Do not add extra round-tripping data to SDF file output', default='false' ),
 		), # file
 
 		# Path options -------------------------------------------------------

@@ -244,8 +244,10 @@ public: // Properties
 	{
 		if ( stub_defined() ) {
 			return get_nonjump_atom(0);
-		} else {
+		} else if ( parent() ){
 			return parent()->stub_atom2();
+		} else {
+			return 0;
 		}
 	}
 	/////////////////////////////////////////////////////////////////////////////
@@ -265,8 +267,10 @@ public: // Properties
 			} else {
 				return get_nonjump_atom(1);
 			}
-		} else {
+		} else if( parent() ) {
 			return parent()->stub_atom3();
+		} else {
+			return 0;
 		}
 	}
 
@@ -289,7 +293,7 @@ private: // Fields
 		 is defined from B-A-C or A-B-C (A is the jump atom, B and C are its offspring).
 		 If less than 3 atoms on the jump atom's side, i.e., stub_defined() == False,
 		 this atom will just use its parent stub.
-	 */
+	*/
 	Jump jump_;
 
 

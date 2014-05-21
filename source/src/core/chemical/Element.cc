@@ -51,14 +51,15 @@ const std::string &Element::get_property_name( const Element::Properties &PROPER
 
 //! @brief construct undefined element
 Element::Element() :
-    		  atomic_number_( numeric::get_undefined_size() ),
-    		  period_( numeric::get_undefined_size() ),
-    		  main_group_( numeric::get_undefined_size() ),
-    		  chemical_symbol_( "X"),
-    		  chemical_name_( "UNDEFINED_ELEMENT"),
-    		  electron_configuration_(),
-    		  properties_(NumberOfProperties, numeric::get_undefined_real() ) // set all properties to undefined
-    		  {}
+		element_( core::chemical::element::UnknownElement ),
+		atomic_number_( numeric::get_undefined_size() ),
+		period_( numeric::get_undefined_size() ),
+		main_group_( numeric::get_undefined_size() ),
+		chemical_symbol_( "X"),
+		chemical_name_( "UNDEFINED_ELEMENT"),
+		electron_configuration_(),
+		properties_(NumberOfProperties, numeric::get_undefined_real() ) // set all properties to undefined
+{}
 
 //! @brief construct element from all its data
 //! @param ATOMIC_NUMBER           - number in the PSE
@@ -90,6 +91,7 @@ chemical_name_( CHEMICAL_NAME),
 electron_configuration_( ELECTRON_CONFIGURATION),
 properties_(NumberOfProperties, numeric::get_undefined_real() )
 {
+		element_ = core::chemical::element::elements_from_name(chemical_symbol_);
 		properties_[ Mass] = MASS;
 		properties_[ CovalentRadius]      = COVALENT_RADIUS;
 		properties_[ VDWaalsRadius]       = VDW_RADIUS;
@@ -119,6 +121,7 @@ std::istream &Element::read( std::istream &ISTREAM)
 		utility_exit_with_message( "Malformated elements file. 'Element:' tag expected. '" + tag + "' found.");
 	}
 	ISTREAM >> chemical_symbol_; //io::Serialize::Read( chemical_symbol_, ISTREAM);
+	element_ = core::chemical::element::elements_from_name(chemical_symbol_);
 	ISTREAM >> chemical_name_; //io::Serialize::Read( chemical_name_, ISTREAM);
 	ISTREAM >> atomic_number_; //io::Serialize::Read( atomic_number_, ISTREAM);
 	gasteiger::safe_read( ISTREAM, period_); //io::Serialize::Read( period_, ISTREAM);

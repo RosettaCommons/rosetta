@@ -10,11 +10,13 @@
 /// @file core/chemical/ResidueTypeTests.cxxtest.hh
 /// @brief unit tests for ResidueType
 /// @author Matthew O'Meara
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
+#include <test/util/pose_funcs.hh>
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
@@ -26,15 +28,24 @@
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
+#include <core/chemical/util.hh>
+
+#include <core/chemical/sdf/mol_writer.hh>
+#include <core/conformation/Residue.hh>
+
+#include <core/pose/Pose.hh>
+
+#include <core/kinematics/Stub.hh>
+
 #include <utility/graph/RingDetection.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/bond_support.hh>
 #include <utility/graph/BFS_prune.hh>
 
-
 // Platform Headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+#include <numeric/xyzVector.io.hh>
 #include <basic/Tracer.hh>
 
 
@@ -105,20 +116,6 @@ void add_bond(ResidueType & rsd, std::string const& a1, std::string const& a2){
 	rsd.add_bond(a1,a2);
 }
 
-void do_retyping(ResidueType const & ref, bool build_emap = true) {
-	core::chemical::ElementMap emap;
-	if( build_emap ) {
-		for( core::Size ii(1); ii <= ref.natoms(); ++ii ) {
-			emap[ ref.vd_from_index( ii ) ] = ref.atom_type(ii).element();
-		}
-	}
-	ResidueType rsd( ref );
-	rsd.retype_atoms(emap);
-	for( core::Size ii(1); ii <= ref.natoms(); ++ii ) {
-		TS_ASSERT_EQUALS( rsd.atom_type(ii).name(), ref.atom_type(ii).name());
-	}
-}
-
 class ResidueTypeTests : public CxxTest::TestSuite {
 
 public:
@@ -181,18 +178,18 @@ public:
 		add_bond( rsd, "CB", "3HB");
 
 
-		rsd.set_icoor("N", 0.000000, 0.000000, 0.000000, "N", "CA", "C");
-		rsd.set_icoor("CA", 0.000000, 180.000000, 1.458001, "N", "CA", "C");
-		rsd.set_icoor("C", 0.000000, 68.800003, 1.523258, "CA", "N", "C");
-		rsd.set_icoor("UPPER", 149.999985, 63.800007, 1.328685, "C", "CA", "N");
-		rsd.set_icoor("O", -180.000000, 59.200005, 1.231015, "C", "CA", "UPPER");
-		rsd.set_icoor("CB", -123.028732, 69.625412, 1.521736, "CA", "N", "C");
-		rsd.set_icoor("1HB",-179.994110, 70.562309, 1.090040, "CB", "CA", "N");
-		rsd.set_icoor("2HB", 119.960403, 70.475021, 1.090069, "CB", "CA", "1HB");
-		rsd.set_icoor("3HB", 120.089012, 70.493805, 1.088803, "CB", "CA", "2HB");
-		rsd.set_icoor("HA", -119.013138, 71.295197, 1.090078, "CA", "N", "CB");
-		rsd.set_icoor("LOWER", -150.000000, 58.300003, 1.328685, "N", "CA", "C");
-		rsd.set_icoor("H", -180.000000, 60.849998, 1.010000, "N", "CA", "LOWER");
+		rsd.set_icoor("N", 0.000000, 0.000000, 0.000000, "N",  "CA", "C");
+		rsd.set_icoor("CA", 0.000000, 180.000000, 1.458001, "N",  "CA", "C");
+		rsd.set_icoor("C", 0.000000, 68.800003, 1.523258, "CA",  "N", "C");
+		rsd.set_icoor("UPPER",  149.999985,  63.800007, 1.328685, "C",  "CA", "N");
+		rsd.set_icoor("O", -180.000000, 59.200005, 1.231015, "C",  "CA", "UPPER");
+		rsd.set_icoor("CB", -123.028732, 69.625412, 1.521736, "CA",  "N", "C");
+		rsd.set_icoor("1HB",-179.994110, 70.562309, 1.090040, "CB",  "CA", "N");
+		rsd.set_icoor("2HB", 119.960403, 70.475021, 1.090069, "CB",  "CA", "1HB");
+		rsd.set_icoor("3HB", 120.089012, 70.493805, 1.088803, "CB",  "CA", "2HB");
+		rsd.set_icoor("HA", -119.013138, 71.295197, 1.090078, "CA",  "N", "CB");
+		rsd.set_icoor("LOWER", -150.000000,  58.300003, 1.328685, "N",  "CA", "C");
+		rsd.set_icoor("H", -180.000000,  60.849998,   1.010000, "N",  "CA", "LOWER");
 
 		rsd.nbr_atom("CB");
 		rsd.nbr_radius(3.4473);
@@ -311,8 +308,84 @@ public:
 		//rsd.finalize(); // residue type doesn't support removing the backbone...
 	}
 
-	void test_retyping() {
+	void test_vd_has() {
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::chemical::ResidueType rsd(pose.residue_type(1));
+
+		for( core::Size ii(1); ii <= rsd.natoms(); ++ii ) {
+			core::chemical::VD vd( rsd.atom_vertex( ii ) );
+			TR << "Atom: " << rsd.atom_name(ii) << " VD: " << vd << std::endl;
+			TS_ASSERT( rsd.has( vd ) );
+		}
+
+		//To make sure we are not testing the same residue type.
+		TS_ASSERT( pose.residue_type(1).name() != pose.residue_type(2).name() );
+		TS_ASSERT( ! rsd.has( pose.residue_type(2).atom_vertex( 1 ) ) );
+	}
+
+	void test_chi_assignment() {
 		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		string const tag(FA_STANDARD);
+		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		ElementSetCAP element_types = cm->element_set("default");
+		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSet rsd_types;
+
+		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
+		std::string filename("params/type_test1.params");
+		paramslist >> filename;
+		while( paramslist ) {
+			TR << "------- Redoing chis for " << filename << std::endl;
+			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
+					atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+			rsd->finalize();
+			if( TR.Debug.visible() ) {
+				print_chis(TR.Debug, *rsd);
+			}
+			core::chemical::ResidueTypeOP copy(new core::chemical::ResidueType( *rsd) );
+			core::chemical::find_bonds_in_rings( *copy ); //Ring bond annotations needed
+			copy->autodetermine_chi_bonds();
+			copy->finalize();
+			if( TR.Debug.visible() ) {
+				TR.Debug << " Post chi redo: " << std::endl;
+				print_chis(TR.Debug, *copy);
+			}
+			TS_ASSERT_EQUALS(rsd->nchi(), copy->nchi());
+			// All the chis should be present, but they need not be in the same order.
+			for( core::Size ii(1); ii <= rsd->nchi(); ++ii ) {
+				AtomIndices const & rsd_chi( rsd->chi_atoms(ii) );
+				bool chi_found=false;
+				for( core::Size jj(1); jj <= copy->nchi(); ++jj ) {
+					AtomIndices const & copy_chi( copy->chi_atoms(jj) );
+					// Atom indicies should match
+					if( rsd_chi[1] == copy_chi[1] && rsd_chi[2] == copy_chi[2] &&
+							rsd_chi[3] == copy_chi[3] && rsd_chi[4] == copy_chi[4]) {
+						TS_ASSERT_EQUALS(rsd->is_proton_chi(ii), copy->is_proton_chi(jj));
+						chi_found=true;
+						break;
+					}
+				}
+				TS_ASSERT(chi_found);
+				if( ! chi_found ) {
+					TR << "---- Chis before" << std::endl;
+					print_chis(TR, *rsd);
+					TR << "---- Chis after" << std::endl;
+					print_chis(TR, *copy);
+				}
+			}
+			paramslist >> filename;
+		} // while( paramslist )
+		paramslist.close();
+	} //  test_chi_assignment
+
+	void test_icoor_reassignment() {
+		// As matching up the icoor tree exactly is not necessarily required,
+		// we instead check to make sure that the produced icoor table will produce
+		// the same xyz coordinates that were fed in to produce it.
+		using namespace core::chemical;
+		core::Real delta2 = 0.0005*0.0005; // Half the resolution of the PDB format, squared
 
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
@@ -326,20 +399,73 @@ public:
 		std::string filename;
 		paramslist >> filename;
 		while( paramslist ) {
-			TR << "Retyping " << filename << std::endl;
-			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
+			TR << "Rebuilding Icoord from xyz " << filename << std::endl;
+			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename,
 					atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
-			do_retyping(*rsd);
+			core::chemical::ResidueTypeCOP restype_ref( new core::chemical::ResidueType(*restype) );
+			restype->name( restype_ref->name() + "_IcoorRedo"); // For debugging purposes.
+
+			restype->assign_internal_coordinates();
+
+
+			restype->fill_ideal_xyz_from_icoor();
+
+			//As we may not have picked the identical root (or atom tree ordering)
+			//make sure we're oriented in the same reference frame.
+			//Code based on Residue::orient_onto_residue()
+			core::Size center, nbr1, nbr2;
+			restype->select_orient_atoms( center, nbr1, nbr2 );
+
+			core::Size  src_center = restype_ref->atom_index( restype_ref->atom_name( center ));
+			core::Size  src_nbr1 = restype_ref->atom_index( restype_ref->atom_name( nbr1 ));
+			core::Size  src_nbr2 = restype_ref->atom_index( restype_ref->atom_name( nbr2 ));
+			using core::kinematics::Stub;
+			core::Vector const
+			rot_midpoint ( 0.5 * (     restype->atom(     nbr1 ).ideal_xyz() +     restype->atom(     nbr2 ).ideal_xyz() ) ),
+			src_midpoint ( 0.5 * ( restype_ref->atom( src_nbr1 ).ideal_xyz() + restype_ref->atom( src_nbr2 ).ideal_xyz() ) );
+
+			core::kinematics::Stub rot_stub( restype->atom( center ).ideal_xyz(),
+					rot_midpoint,
+					restype->atom( nbr1 ).ideal_xyz() );
+
+			core::kinematics::Stub src_stub( restype_ref->atom( src_center ).ideal_xyz(),
+					src_midpoint,
+					restype_ref->atom( src_nbr1 ).ideal_xyz() );
+			bool mistake=false;
+			TS_ASSERT_EQUALS( restype_ref->natoms(), restype->natoms() );
+			for ( core::Size i=1; i<= restype->natoms(); ++i ) {
+				std::string atom_name(restype->atom_name(i));
+				TS_ASSERT( restype_ref->has( atom_name ) );
+				core::Vector const old_xyz( restype->atom(i).ideal_xyz() );
+				core::Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );
+				core::Vector const original_xyz( restype_ref->atom(atom_name).ideal_xyz() );
+				TS_ASSERT_DELTA( original_xyz.distance_squared( new_xyz ), 0, delta2 );
+				if( original_xyz.distance_squared( new_xyz ) > delta2 ) {
+					TR << "Atom " << atom_name << " inappropriately placed " << new_xyz << std::endl;
+					TR << "     " << "    "    << "              should be " << original_xyz << std::endl;
+					TR << "     " << "    "    << "  (without translation) " << old_xyz << std::endl;
+					TR << "Distance shift of " << original_xyz.distance( new_xyz ) << std::endl;
+					mistake=true;
+				}
+				//restype2->atom(i).ideal_xyz( new_xyz );
+			}
+			if( mistake ) {
+				core::chemical::sdf::MolWriter writer;
+				writer.output_residue("core/chemical/"+ filename + "_orig.mol", new core::conformation::Residue( *restype_ref, true) );
+				writer.output_residue("core/chemical/"+ filename + "_after.mol", restype );
+
+				TR << "### For Restype Before " << std::endl;
+				TR << "\n";
+				// Here we assume that the neighbor atom is the ICOOR root.
+				core::chemical::pretty_print_atomicoor(TR, restype_ref->icoor( 1 ), *restype_ref);
+				TR << std::endl;
+				TR << "### For Restype After" << std::endl;
+				TR << "\n";
+				core::chemical::pretty_print_atomicoor(TR, restype->icoor( restype->nbr_atom() ), *restype);
+				TR << std::endl;
+			}
 			paramslist >> filename;
 		}
-
-		// Now test autodiscovery of elements.
-		filename = "params/1aq1.mol2.params";
-		ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
-				atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
-		do_retyping(*rsd,false);
-
-		// TODO: Test partial reassignment.
 	}
 
 	//test functions in bond support and ring detection. If this fails, those functions were altered
@@ -380,11 +506,11 @@ public:
 		core::chemical::ResidueGraph const full_residue_graph = rsd.graph();
 
 
-		core::chemical::VD  source = rsd.get_vertex( rsd.atom_index(" CA ") );
-		core::chemical::VD  target = rsd.get_vertex( rsd.atom_index("C") );
+		core::chemical::VD  source = rsd.atom_vertex( rsd.atom_index(" CA ") );
+		core::chemical::VD  target = rsd.atom_vertex( rsd.atom_index("C") );
 
 		core::chemical::ED edge_ca_c = core::chemical::get_bond(rsd, source, target);
-		core::chemical::VD target_cb = rsd.get_vertex( rsd.atom_index(" CB ") );
+		core::chemical::VD target_cb = rsd.atom_vertex( rsd.atom_index(" CB ") );
 
 		core::chemical::ED edge_ca_cb = core::chemical::get_bond(rsd, source, target_cb);
 

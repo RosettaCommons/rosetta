@@ -58,8 +58,6 @@
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/chemical/sdf/MolData.fwd.hh>
-#include <core/chemical/sdf/MolData.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.fwd.hh>
@@ -97,7 +95,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh> 
+#include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>

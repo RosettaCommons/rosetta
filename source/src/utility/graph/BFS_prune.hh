@@ -7,10 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+// This file contains code derived from the Boost graph library.
+// See Rosetta/main/source/external/boost_1_55_0/LICENSE_1_0.txt
+// for the Boost library license.
+
 /// @file   utility/graph/BFS_prune.hh
 /// @brief  A breadth first search with pruning for boost graphs
 /// @author Rocco Moretti (rmorettiase@gmail.com)
-
 
 #ifndef INCLUDED_utility_graph_BFS_prune_HH
 #define INCLUDED_utility_graph_BFS_prune_HH
@@ -58,29 +61,29 @@ void breadth_first_visit_prune
   typename GTraits::out_edge_iterator ei, ei_end;
 
 	try {
-	  boost::put(color, s, Color::gray());
-	  if( vis.discover_vertex(s, g) ) return;
-	  Q.push(s);
-	  while (! Q.empty()) {
-	    Vertex u = Q.top(); Q.pop();
-	    if( vis.examine_vertex(u, g) ) continue;
-	    for (boost::tie(ei, ei_end) = boost::out_edges(u, g); ei != ei_end; ++ei) {
-	      Vertex v = boost::target(*ei, g);
-	      if( vis.examine_edge(*ei, g)) continue;
-	      ColorValue v_color = get(color, v);
-	      if (v_color == Color::white()) {
-	    	if( vis.tree_edge(*ei, g) ) continue;
-	        boost::put(color, v, Color::gray());
-	        if( vis.discover_vertex(v, g) ) continue;
-	        Q.push(v);
-	      } else {
-	    	if( vis.non_tree_edge(*ei, g) ) continue;
-	        if (v_color == Color::gray())       vis.gray_target(*ei, g);
-	        else                                vis.black_target(*ei, g);
-	      }
-	    } // end for
-	    boost::put(color, u, Color::black());          vis.finish_vertex(u, g);
-	  } // end while
+		boost::put(color, s, Color::gray());
+		if( vis.discover_vertex(s, g) ) return;
+		Q.push(s);
+		while (! Q.empty()) {
+			Vertex u = Q.top(); Q.pop();
+			if( vis.examine_vertex(u, g) ) continue;
+			for (boost::tie(ei, ei_end) = boost::out_edges(u, g); ei != ei_end; ++ei) {
+				Vertex v = boost::target(*ei, g);
+				if( vis.examine_edge(*ei, g)) continue;
+				ColorValue v_color = get(color, v);
+				if (v_color == Color::white()) {
+				if( vis.tree_edge(*ei, g) ) continue;
+					boost::put(color, v, Color::gray());
+					if( vis.discover_vertex(v, g) ) continue;
+					Q.push(v);
+				} else {
+				if( vis.non_tree_edge(*ei, g) ) continue;
+					if (v_color == Color::gray())       vis.gray_target(*ei, g);
+					else                                vis.black_target(*ei, g);
+				}
+			} // end for
+			boost::put(color, u, Color::black());          vis.finish_vertex(u, g);
+		} // end while
 	} catch ( EXCN_Stop_BFS e ) {
 		; // Do nothing. The exception was just there to cut through the remaining portions.
 	}
@@ -132,11 +135,11 @@ void breadth_first_search_prune
   typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
 
 	try {
-	  for (boost::tie(i, i_end) = boost::vertices(g); i != i_end; ++i) {
-	    vis.initialize_vertex(*i, g);
-	    boost::put(color, *i, Color::white());
-	  }
-	  breadth_first_visit_prune(g, s, vis, color, Q);
+		for (boost::tie(i, i_end) = boost::vertices(g); i != i_end; ++i) {
+			vis.initialize_vertex(*i, g);
+			boost::put(color, *i, Color::white());
+		}
+		breadth_first_visit_prune(g, s, vis, color, Q);
 	} catch ( EXCN_Stop_BFS e ) {
 		; // Do nothing. Exception already halted.
 	}

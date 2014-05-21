@@ -20,6 +20,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/Patch.hh>
 
 // Project Headers
@@ -56,9 +57,9 @@ rsd_set_from_cmd_line() {
 
 void
 add_atom_type_set_parameters_from_command_line(
-																							 std::string const & atom_type_set_tag,
-																							 AtomTypeSet & atom_type_set
-																							 )
+																							std::string const & atom_type_set_tag,
+																							AtomTypeSet & atom_type_set
+																							)
 {
 	if ( !( basic::options::option[ basic::options::OptionKeys::chemical::add_atom_type_set_parameters ].user() ) ) {
 		/// do nothing if flag not present
@@ -139,6 +140,86 @@ modify_atom_properties_from_command_line(
 			// } else {
 			atom_type_set[ atom_index ].set_parameter( param, setting );
 		}
+	}
+}
+
+std::string
+formatted_icoord_tree(core::chemical::ResidueType const & restype) {
+	// General scheme - pick an atom, then move up the icoord tree until you hit the root
+	// Then proceed down the tree depth first, outputting atom names as you go,
+	// keeping a stack of atoms to go back to.
+	// The complicated bit is keeping track of where the different attachment points are
+	// such that you can accurately place the parenthesis for the tree.
+	std::string output("Icoord tree: ");
+
+	utility::vector1< bool > placed( restype.natoms(), false );
+	utility::vector1< AtomICoor > icoords;
+	utility::vector1< core::Size > deferred;
+	for( core::Size ii(1); ii <= restype.natoms(); ++ii ) {
+		icoords.push_back( restype.icoor(ii) );
+	}
+
+	core::Size curres(1); // The first atom is arbitrary (although it probably is the root.
+	// The root atom has itself listed as the stub_atom1.
+	while( icoords[curres].stub_atom1().atomno() != curres ) {
+		curres = icoords[curres].stub_atom1().atomno();
+	}
+
+	do {
+		output += restype.atom_name( curres );
+		placed[curres] = true;
+
+		utility::vector1< core::Size > possibles;
+		for( core::Size ii(1); ii <= icoords.size(); ++ii ) {
+			if( icoords[ii].stub_atom1().atomno() == curres && ! placed[ii] ) {
+				possibles.push_back( ii );
+			}
+		}
+
+		if( possibles.size() == 1 ) {
+			curres = possibles[1];
+		} else if ( possibles.size() ) {
+			output += " (";
+			curres = possibles.back();
+			possibles.pop_back();
+			if( deferred.size() ) {
+				deferred.push_back( 0 ); // Sentinel, but not needed for first
+			}
+			deferred.insert( deferred.end() , possibles.begin(), possibles.end() );
+		} else if( deferred.size() ) {
+			output += ") ";
+			while( deferred.size() && deferred.back() == 0 ) {
+				output += ") ";
+				deferred.pop_back();
+			}
+			if( ! deferred.size() ) {
+				curres = 0;
+				break;
+			}
+			output += " (";
+			curres = deferred.back();
+			deferred.pop_back();
+		} else {
+			output += ") ";
+			curres = 0;
+			break;
+		}
+	} while( curres != 0 );
+
+	return output;
+}
+
+
+void print_chis(std::ostream & out, ResidueType const & res) {
+	using namespace core::chemical;
+	out << "Residue: " << res.name() << std::endl;
+	out << formatted_icoord_tree(res) << std::endl;
+	for( core::Size ii(1); ii <= res.nchi(); ++ii ) {
+		AtomIndices const & indexes( res.chi_atoms(ii) );
+		out << "Chi " << ii << ": " << res.atom_name( indexes[1] ) << " " << res.atom_name( indexes[2] ) << " "
+				<< res.atom_name( indexes[3] ) << " " << res.atom_name( indexes[4] ) << " ";
+		if( res.is_proton_chi( ii) ) { out << " PROTON";}
+		out << std::endl;
 	}
 }
 

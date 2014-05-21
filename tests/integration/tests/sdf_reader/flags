@@ -1,0 +1,17 @@
+-in
+ -ignore_unrecognized_res
+ -file
+  -s inputs/7cpa_input.pdb.gz
+  -extra_res_mol inputs/7cpa.mol
+-out
+ -file
+ -overwrite	
+-packing
+ -no_optH
+ -ex1
+ -ex1aro
+ -ex2
+-parser
+  -protocol ligand_dock.xml
+-mute core.util.prof ## dont show timing info
+-mute core.io.database

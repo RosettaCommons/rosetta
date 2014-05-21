@@ -49,13 +49,13 @@ public:
 public:
 	/// ICoordAtomID type
 	/**
-		 - INTERNAL: atoms which inherently belong to this ResidueType
-		 - POLYMER_LOWER: atom at the polymer lower connection, such as backbone C in
-		 the previous residue (N-term side)
-		 - POLYMER_UPPER: atom at the polymer upper connection, such as backbone N in
-		 the next residue (C-term side)
-		 - CONNECT: atoms from a non-adjacent residue which connect to this residue
-		 by non-polymer connection, such as disulfide
+		- INTERNAL: atoms which inherently belong to this ResidueType
+		- POLYMER_LOWER: atom at the polymer lower connection, such as backbone C in
+		the previous residue (N-term side)
+		- POLYMER_UPPER: atom at the polymer upper connection, such as backbone N in
+		the next residue (C-term side)
+		- CONNECT: atoms from a non-adjacent residue which connect to this residue
+		by non-polymer connection, such as disulfide
 	*/
 	enum Type {
 		INTERNAL = 1,
@@ -67,15 +67,17 @@ public:
 
 public:
 	/// @brief default constructor
-	ICoorAtomID():
-		type_( INTERNAL ),
-		atomno_( 0 ),
-		vd_(0)
-	{}
+	ICoorAtomID();
 
 	/// @brief construct ICoorAtomID by atom name and its ResidueType
 	ICoorAtomID(
 		std::string name,
+		ResidueType const & rsd_type
+	);
+
+	/// @brief construct ICoorAtomID by VD and its ResidueType
+	ICoorAtomID(
+		VD vd,
 		ResidueType const & rsd_type
 	);
 
@@ -104,7 +106,7 @@ public:
 	}
 
 	VD
-	vertex(){
+	vertex() const {
 		return vd_;
 	}
 
@@ -164,7 +166,7 @@ public:
 	///    retrieved from connected residues via a conformation.
 	Vector
 	xyz( conformation::Residue const & rsd ) const;
-	
+
 	///
 	id::AtomID
 	atom_id( Size const seqpos, Conformation const & conformation ) const;
@@ -180,7 +182,7 @@ private:
 			ar & type_;
 			ar & atomno_;
 	}
-	
+
 #endif
 
 	/// atom's "connection" type
@@ -193,29 +195,21 @@ private:
 
 /// @brief A basic class containing info of internal coordinates needed for building an atom within a ResidueType
 /**
-	 In atom tree, each atom is defined by its internal coordinates, which include a bond distance,
-	 a bond angle and a torsion angle. Of course, all these internal coordinates are only meaningful
-	 in the context of three reference (stub) atoms. AtomICoor information is stored in the residue param
-	 files and some terms are defined as following:\n
-	 - bond distance d_ is that between the atom to be built (child) and stub_atom1 (parent)
-	 - bond angle theta_ is that defined by child-parent-stub2(angle)
-	 - torsion angle phi_ is that defined by child-parent-stub2-stub3(torsion)
+	In atom tree, each atom is defined by its internal coordinates, which include a bond distance,
+	a bond angle and a torsion angle. Of course, all these internal coordinates are only meaningful
+	in the context of three reference (stub) atoms. AtomICoor information is stored in the residue param
+	files and some terms are defined as following:\n
+	- bond distance d_ is that between the atom to be built (child) and stub_atom1 (parent)
+	- bond angle theta_ is that defined by child-parent-stub2(angle)
+	- torsion angle phi_ is that defined by child-parent-stub2-stub3(torsion)
 */
 class AtomICoor {
 public:
 	/// @brief default constructor
-	AtomICoor():
-		index_(0),
-		phi_(0.0),
-		theta_(0.0),
-		d_(0.0),
-		stub_atom1_(),
-		stub_atom2_(),
-		stub_atom3_()
-	{}
-
+	AtomICoor();
 	/// @brief constructor
 	AtomICoor(
+		std::string const & built_atom_name,
 		Real const phi_in,
 		Real const theta_in,
 		Real const d_in,
@@ -223,34 +217,19 @@ public:
 		std::string const & stub_atom2_name,
 		std::string const & stub_atom3_name,
 		ResidueType const & rsd_type
-	):
-		index_(0),
-		phi_( phi_in ),
-		theta_( theta_in ),
-		d_( d_in ),
-		stub_atom1_( stub_atom1_name, rsd_type ),
-		stub_atom2_( stub_atom2_name, rsd_type ),
-		stub_atom3_( stub_atom3_name, rsd_type )
-	{}
+	);
 
+	/// @brief Vertex descriptor version
 	AtomICoor(
-		Size const index,
+		VD const & built_atom_vd,
 		Real const phi_in,
 		Real const theta_in,
 		Real const d_in,
-		std::string const & stub_atom1_name,
-		std::string const & stub_atom2_name,
-		std::string const & stub_atom3_name,
+		VD const & stub_atom1_vd,
+		VD const & stub_atom2_vd,
+		VD const & stub_atom3_vd,
 		ResidueType const & rsd_type
-	):
-		index_(index),
-		phi_( phi_in ),
-		theta_( theta_in ),
-		d_( d_in ),
-		stub_atom1_( stub_atom1_name, rsd_type ),
-		stub_atom2_( stub_atom2_name, rsd_type ),
-		stub_atom3_( stub_atom3_name, rsd_type )
-	{}
+	);
 
 public:
 	/// @brief accessor to stub_atom1 ICoorAtomID
@@ -351,15 +330,19 @@ public:
 		return stub_atom1_;
 	}
 
-	void index(core::Size index)
+	void built_atom_vertex(core::chemical::VD vd)
 	{
-		index_ = index;
+		built_vd_ = vd;
 	}
 
-	Size index()
+	///@brief The vertex descriptor of the atom being built by this icoor
+	/// Can be null_vertex if this AtomICoor doesn't build a physical atom.
+	/// (e.g. CONNECT, UPPER, LOWER)
+	core::chemical::VD built_atom_vertex() const
 	{
-		return index_;
+		return built_vd_;
 	}
+
 
 public:
 
@@ -382,8 +365,8 @@ public:
 	build( conformation::Residue const & rsd ) const;
 
 private:
-	
-	
+
+
 #ifdef USEBOOSTSERIALIZE
 	friend class boost::serialization::access;
 
@@ -399,8 +382,7 @@ private:
 	}
 #endif
 
-
-	Size index_;
+	VD built_vd_;
 	Real phi_;
 	Real theta_;
 	Real d_;
@@ -408,6 +390,8 @@ private:
 	ICoorAtomID stub_atom2_;
 	ICoorAtomID stub_atom3_;
 };
+
+void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent=0);
 
 } // chemical
 } // core

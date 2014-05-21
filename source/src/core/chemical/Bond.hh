@@ -129,6 +129,7 @@ public:
 private:
 
 	Real distance_;
+	/// @brief Is the bond allowed to be in the atom tree?
 	bool cut_bond_;
 	// The following enums are defined in Bond.fwd.hh
 	BondName bond_name_;
@@ -136,7 +137,7 @@ private:
 	BondOrder order_;
 	/// @brief Can the bond participate in a conjugated system
 	BondConjugability conjug_;
-	/// @brief Is the bond in an aromatic ring? (Distinct from being conjgatable and in a ring.)
+	/// @brief Is the bond in an aromatic ring? (Distinct from being conjugatable and in a ring.)
 	BondAromaticity aroma_;
 	/// @brief Is the bond in a ring?
 	BondRingness ring_;

@@ -87,8 +87,23 @@ typedef std::map< std::string, VD > NameVDMap;
 typedef std::pair<std::string, VD> NameVDPair;
 typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
 
+////////////////////////////////////////////////
+/////////// Convenience Functions //////////////
 
+// These are here because they depend somewhat on the particular implementation choice of ResidueGraph
 
+///@brief Does a ResidueGraph have a given vertex descriptor?
+inline bool
+has( ResidueGraph const & graph, VD vd ) {
+	VIterPair iters( boost::vertices(graph) );
+	return std::find( iters.first, iters.second, vd ) != iters.second;
+}
+///@brief Does a ResidueGraph have a given edge descriptor?
+inline bool
+has( ResidueGraph const & graph, ED ed ) {
+	EIterPair iters( boost::edges(graph) );
+	return std::find( iters.first, iters.second, ed ) != iters.second;
+}
 
 ///Light weight graph typedefs
 ///The light weight graph is a graph that holds a pointer to the edge descriptor
@@ -106,7 +121,6 @@ typedef boost::graph_traits<LightWeightResidueGraph>::edge_iterator lwrg_edge_it
 typedef boost::graph_traits<LightWeightResidueGraph>::out_edge_iterator lwrg_out_edge_iter;
 typedef std::pair<lwrg_out_edge_iter, lwrg_out_edge_iter> lwrg_out_edge_iter_pair;
 
-
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 ////////// PREDICATES for FILTERED GRAPHS ///////////////////
@@ -117,12 +131,12 @@ typedef std::pair<lwrg_out_edge_iter, lwrg_out_edge_iter> lwrg_out_edge_iter_pai
 
 class RealFilter{
 public:
-  RealFilter(){};
-  RealFilter(ResidueGraph const & graph):graph_(&graph) {};
-  bool operator()(VD const vd) const;
-  bool operator()(ED const ed) const;
+	RealFilter(){};
+	RealFilter(ResidueGraph const & graph):graph_(&graph) {};
+	bool operator()(VD const vd) const;
+	bool operator()(ED const ed) const;
 private:
-  ResidueGraph const * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	ResidueGraph const * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
 };
 typedef boost::filtered_graph<ResidueGraph, RealFilter, RealFilter> RealResidueGraph;
 typedef RealResidueGraph::vertex_descriptor RealResidueVD;
@@ -153,8 +167,6 @@ typedef boost::graph_traits<HeavyAtomGraph>::edge_iterator HeavyAtomEIter;
 typedef boost::graph_traits<HeavyAtomGraph>::out_edge_iterator HeavyAtomOutEdgeIter;
 typedef std::pair<HeavyAtomOutEdgeIter, HeavyAtomOutEdgeIter> HeavyAtomOutEdgeIterPair;
 typedef std::pair<HeavyAtomVIter, HeavyAtomVIter> HeavyAtomVIterPair;
-
-
 
 
 ////////////////////////////////////////////////////////////////
@@ -287,6 +299,44 @@ typedef boost::filtered_graph<ResidueGraph, boost::keep_all, APolarHydrogenFilte
 typedef boost::graph_traits<APolarHydrogenGraph>::vertex_iterator APolarHydrogenVIter;
 typedef boost::graph_traits<APolarHydrogenGraph>::edge_iterator APolarHydrogenEIter;
 typedef std::pair<APolarHydrogenVIter, APolarHydrogenVIter> APolarHydrogenVIterPair;
+
+
+template< class Graph1, class Graph2 >
+class CopyVertex {
+public:
+	CopyVertex(const Graph1& g1, Graph2& g2):
+	g1_( g1 ),
+	g2_(g2 )
+	{ }
+
+	void operator()(const typename Graph1::vertex_descriptor& v1, typename Graph2::vertex_descriptor& v2) const {
+		g2_[v2] = g1_[v1];
+	}
+
+private:
+	Graph1 const & g1_;
+	Graph2 & g2_;
+
+};
+
+
+template< class Graph1, class Graph2 >
+class CopyEdge {
+public:
+	CopyEdge(const Graph1& g1, Graph2& g2):
+	g1_( g1 ),
+	g2_(g2 )
+	{ }
+
+	void operator()(const typename Graph1::edge_descriptor& e1, typename Graph2::edge_descriptor& e2) const {
+		g2_[e2] = g1_[e1];
+	}
+private:
+
+	Graph1 const & g1_;
+	Graph2 & g2_;
+
+};
 
 }
 }

@@ -80,11 +80,17 @@ string_split( std::string const & in, char splitchar = ' ' );
 utility::vector1< std::string >
 string_split_multi_delim( std::string const & in, std::string splitchars = " \t" );
 
-/// @brief convert a string to a float
+/// @brief convert a string to a float, returns -1 on failure
 float string2float( std::string st );
 
-/// @brief convert a string to an int
+/// @brief convert a string to an int, returns -1 on failure
 int string2int( std::string st );
+
+/// @brief convert a string to a Size, returns numeric::get_undefined_size() on failure
+platform::Size string2Size( std::string st );
+
+/// @brief convert a string to a Real, returns numeric::get_undefined_real() on failure
+platform::Real string2Real( std::string st );
 
 // @brief Reads an unsigned int from string <x>, writing the result
 // to output parameter <y>, which must be non-NULL. If the read was not
@@ -201,9 +207,9 @@ template <class T>
 inline utility::vector1<T> const string_split (std::string const &in,char splitchar,T)
 {
 	utility::vector1<T> parts;
-  if (in.size()==0) {
-			return parts;
-  }
+	if (in.size()==0) {
+		return parts;
+	}
 
 	size_t i(0), j(0);
 	while ( j != std::string::npos ) {

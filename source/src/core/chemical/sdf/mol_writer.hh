@@ -56,6 +56,8 @@ private:
 	std::list<std::string> compose_properties(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_typeinfo(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_nbr_atom(core::conformation::ResidueCOP residue);
+	std::list<std::string> compose_naming(core::conformation::ResidueCOP residue);
+	std::list<std::string> compose_rosetta_properties(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_job_info();
 
 	//utility::io::ozstream output_stream_;

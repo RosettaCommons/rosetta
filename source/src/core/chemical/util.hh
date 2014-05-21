@@ -20,6 +20,7 @@
 // Unit headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 #include <string>
 
@@ -39,6 +40,15 @@ modify_atom_properties_from_command_line(
 		std::string const & atom_type_set_tag,
 		AtomTypeSet & atom_type_set
 		);
+
+/// @brief Return a string representing the Icoord tree of the Restype
+/// @details Mainly intended for debugging purposes.
+std::string
+formatted_icoord_tree(core::chemical::ResidueType const & restype);
+
+/// @brief Utility to examine chi output.
+void
+print_chis(std::ostream & out, ResidueType const & res);
 
 std::string
 fixup_patches( std::string string_in );

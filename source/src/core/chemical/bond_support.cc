@@ -7,21 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/core/chemical/ResidueSupport.hh
+/// @file src/core/chemical/bond_support.hh
 /// @brief support functions for class Bond; functions that
 /// should not be included as part of the class.
 /// @author Steven Combs
+/// @author Rocco Moretti (rmorettiase@gmail.com)
+
 #include <core/chemical/bond_support.hh>
-#include <core/chemical/ResidueSupport.hh>
+#include <core/chemical/residue_support.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
-#include <utility/graph/RingDetection.hh>
+
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+
+#include <utility/graph/RingDetection.hh>
+#include <basic/Tracer.hh>
 
 namespace core {
 namespace chemical {
+
+static basic::Tracer TR("core.chemical.bond_support");
+
 //! @brief convert bond order or aromatic into the corresponding radius
 //! @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic
 gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core::Size &BOND_ORDER_OR_AROMATIC)
@@ -39,7 +47,6 @@ gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core:
   }
   return properties[ BOND_ORDER_OR_AROMATIC];
 }
-
 
 void find_bonds_in_rings(ResidueType & res){
 	//first, we assign all the bonds in the residue to having no rings
@@ -78,6 +85,8 @@ void find_bonds_in_rings(ResidueType & res){
 				just_the_edges.push_back(edge); //get the edge
 				Bond & bond = res.bond(edge);
 				bond.ringness(BondInRing);
+			} else {
+				utility_exit_with_message("In ring detection, cannot find bond for " + res.atom_name( source ) + " to " + res.atom_name( target ) );
 			}
 		}
 	}
@@ -109,6 +118,126 @@ Real create_bond_length(
 		BondName bond_type)
 {
 	return atom1.get_atom_type_property( bond_order_to_property(bond_type) ) + atom2.get_atom_type_property( bond_order_to_property(bond_type));
+}
+
+/// @brief Find which bonds are rotatatable (chi) bonds
+/// Returns a list of four vds representing the chi
+/// @details Assumes:
+///
+/// * Complete Atom/bond graph
+/// * All element types have been set
+/// * All bond_names have been set.
+/// * Ringness has been set for all bonds in rings
+/// * The Icoor graph has been set.
+
+utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
+	using namespace core::chemical;
+	utility::vector1<VDs> found_chis;
+
+	//std::cerr << "Starting autodetermine" << std::endl;
+	//std::cerr << formatted_icoord_tree( restype ) << std::endl;
+	core::chemical::EIter eiter, eiter_end;
+	for( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
+		// Check to make sure this edge is rotatable, and orient it along the established atom tree.
+		Bond const & bond( restype.bond( *eiter ) );
+		VD source(boost::source(*eiter,restype.graph()));
+		VD target(boost::target(*eiter,restype.graph()));
+		if( bond.bond_name() != SingleBond || // Should this be bond order instead?
+				bond.ringness() == BondInRing ||
+				restype.atom(source).element_type()->element() == element::H  ||
+				restype.atom(target).element_type()->element() == element::H ||
+				boost::out_degree(source,restype.graph()) == 1 || boost::out_degree(target,restype.graph()) == 1) {
+			continue; // Skip non-single bonds, ring bonds, bonds to hydrogen, and bonds to terminal atoms
+		}
+		if( restype.atom_base(source) == target &&
+				restype.icoor(source).stub_atom1().vertex() != source ) { //Root atom has atom_base as it's child atom - don't swap there.
+			// Swap target and source such that source is nearer root.
+			VD temp(target);
+			target = source;
+			source = temp;
+		} else if ( restype.atom_base(target) != source ){
+			TR << "Found non-tree bond " << restype.atom_name(source) << " --- " << restype.atom_name(target) << std::endl;
+			TR << "       Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
+			utility_exit_with_message("Error: Non-ring bond not found in ResidueType atom tree.");
+		}
+
+		// Validity of rotatable bonds also depends on what's attached to them
+		core::Size targ_heavy(0), targ_hydro(0);
+		VD first_targ_heavy( boost::graph_traits<ResidueGraph>::null_vertex() );
+		VD last_targ_hydro( boost::graph_traits<ResidueGraph>::null_vertex() );
+		ResidueGraph::adjacency_iterator aiter, aiter_end;
+		for( boost::tie(aiter, aiter_end) = boost::adjacent_vertices(target, restype.graph()); aiter != aiter_end; ++aiter) {
+			if( restype.atom(*aiter).element_type()->element() == element::H ) {
+				++targ_hydro;
+				last_targ_hydro = *aiter;
+			} else {
+				++targ_heavy;
+				if( (first_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex()) && *aiter != source ) {
+					first_targ_heavy = *aiter;
+				}
+			}
+		}
+		// For rotatable bonds, we want at least one other heavy atom on the target, or we want a single, non carbon hydrogen
+		element::Elements const & target_element( restype.atom(target).element_type()->element() );
+		if( targ_heavy < 2 && (targ_hydro != 1 || target_element == element::C) ) {
+			continue;
+		}
+
+		// Pick the other two atoms which will make up the chi
+		VD d, c(source), b(target), a;
+		if( targ_heavy >= 2 ) {
+			// Should be regular all-heavy atom chi
+			assert( first_targ_heavy != boost::graph_traits<ResidueGraph>::null_vertex() );
+			a = first_targ_heavy;
+		} else {
+			// Proton chi
+			assert( targ_hydro == 1 && target_element != element::C );
+			assert( last_targ_hydro != boost::graph_traits<ResidueGraph>::null_vertex() );
+			a = last_targ_hydro;
+		}
+		if( restype.icoor(source).stub_atom1().vertex() != source ) {
+			// Not a root atom.
+			d = restype.atom_base(source);
+		} else {
+			// Source is root atom: Find first connected heavy atom which isn't in the current bond.
+			d = boost::graph_traits<ResidueGraph>::null_vertex();
+			ResidueGraph::adjacency_iterator aiter2, aiter2_end;
+			for( boost::tie(aiter2, aiter2_end) = boost::adjacent_vertices(source, restype.graph()); aiter2 != aiter2_end; ++aiter2) {
+				if( *aiter2 != target && restype.atom(*aiter2).element_type()->element() != element::H ) {
+					d = *aiter2;
+					break;
+				}
+			}
+			if( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+				continue;
+			}
+		}
+		VDs chi;
+		chi.push_back(d);
+		chi.push_back(c);
+		chi.push_back(b);
+		chi.push_back(a);
+		TR.Debug << "Found chi: " << restype.atom_name(d) << " --- " << restype.atom_name(c) << " --- " <<  restype.atom_name(b) << " --- " << restype.atom_name(a) << std::endl;
+		found_chis.push_back( chi );
+	} // For all edges
+	return found_chis;
+}
+
+/// @brief Is the given chi a proton chi with the proton attached to an atom attached to an non-sp3 atom?
+/// @details The use case is to see if the proton chi should flat or staggered with rotamers
+bool is_sp2_proton_chi( core::Size chi, ResidueType const & restype ) {
+	VDs atoms( restype.chi_atom_vds(chi) );
+	assert( atoms.size() == 4 );
+	// Note this is used in setting up proton chis, so we can't assume is_proton_chi() and associated are valid yet.
+	VD gp( atoms[2] );
+	OutEdgeIter iter, iter_end;
+	for( boost::tie(iter, iter_end) = restype.bond_iterators(gp); iter != iter_end; ++iter ) {
+		core::chemical::BondName bt( restype.bond(*iter).bond_name() );
+		if( bt == DoubleBond || bt == SingleBond || bt == AromaticBond ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 }

@@ -69,16 +69,14 @@ Atom::Atom():
 Atom::Atom(
 		std::string const & name_in,
 		std::string const mm_name,
-		Size const atom_type_index,
 		Size const mm_atom_type_index,
 		ElementCOP element,
 		Real const charge,
 		Vector const ideal_xyz
-
 ):
 	name_( name_in ),
 	mm_name_(mm_name),
-	atom_type_index_(atom_type_index),
+	atom_type_index_(0),
 	mm_atom_type_index_(mm_atom_type_index),
 	element_(element),
 	gasteiger_atom_type_(0),
@@ -145,7 +143,6 @@ Atom::is_fake() const {
 		return true; // Can't be real if it doesn't have an element.
 	}
 }
-
 
 void
 Atom::print(

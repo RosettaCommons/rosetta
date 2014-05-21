@@ -23,6 +23,9 @@
 // numeric headers
 #include <numeric/angle.functions.hh>
 
+// C++ headers
+#include <iostream>
+
 namespace protocols {
 namespace MakeRotLib {
 
@@ -217,6 +220,8 @@ public:
 		return arg_min( cen_dst_ );  //gets index of closest centroid
 	}
 
+	void show( std::ostream & out ) const;
+	bool load( std::istream & in );
 };
 
 } // namespace MakeRotLib

@@ -104,8 +104,8 @@ public:
 	//! @return list of rings (all closed paths)
 	const utility::vector1<utility::vector1<VD> > GetRings() const{
 		utility::vector1<utility::vector1<VD> > rings;
-		utility::vector1<VD> vertices;
 		for(std::list<std::vector<size_t> >::const_iterator it = rings_.begin(); it != rings_.end(); ++it){
+			utility::vector1<VD> vertices;
 			std::vector<size_t> list_ring = *it;
 			for(size_t j=0; j < list_ring.size(); ++j){
 				size_t number = list_ring[j];

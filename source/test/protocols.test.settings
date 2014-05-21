@@ -155,6 +155,10 @@ sources = {
 		"LoopsUtil",
 	],
 
+	"make_rot_lib" : [
+		"MakeRotLib",
+	],
+
 	"match" : [
 		"BumpGrid",
 		"ExternalGeomSampler",
@@ -403,6 +407,13 @@ testinputfiles = [
 	"ligand_docking/ZNx.params",
 	"loops/2GB3.pdb",
 	"loops/4DZM.pdb",
+	"make_rot_lib/all_dist_rotamers.txt",
+	"make_rot_lib/calc_centroids.txt",
+	"make_rot_lib/cluster_rotamers.txt",
+	"make_rot_lib/init_centroids.txt",
+	"make_rot_lib/init_rotamers.txt",
+	"make_rot_lib/min_rotamers.txt",
+	"make_rot_lib/NVL_rot_lib_options_-60_-40.in",
 	"match/carbaryl_LG1.params",
 	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
 	"match/MBH_LG.params",

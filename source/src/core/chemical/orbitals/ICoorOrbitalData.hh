@@ -107,28 +107,28 @@ public:
 		stub3_=atom3;
 	}
 
-	core::Size get_stub1()
+	core::Size get_stub1() const
 	{
 		return stub1_;
 	}
-	core::Size get_stub2()
+	core::Size get_stub2() const
 	{
 		return stub2_;
 	}
-	core::Size get_stub3()
+	core::Size get_stub3() const
 	{
 		return stub3_;
 	}
 
-	VD vertex1()
+	VD vertex1() const
 	{
 		return vertex1_;
 	}
-	VD vertex2()
+	VD vertex2() const
 	{
 		return vertex2_;
 	}
-	VD vertex3()
+	VD vertex3() const
 	{
 		return vertex3_;
 	}
