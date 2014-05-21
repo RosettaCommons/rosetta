@@ -153,11 +153,4 @@ class NumericUtilTests : public CxxTest::TestSuite {
 
 	}
 
-	void test_undefined() {
-		TS_ASSERT( numeric::is_undefined( numeric::get_undefined_size() ) );
-		TS_ASSERT( numeric::is_undefined( numeric::get_undefined_real() ) );
-		TS_ASSERT( ! numeric::is_undefined( numeric::Size(0) ) );
-		TS_ASSERT( ! numeric::is_undefined( 0.0 ) );
-	}
-
 }; // NumericUtilTests

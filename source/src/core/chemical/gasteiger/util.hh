@@ -18,7 +18,7 @@
 #ifndef INCLUDED_core_chemical_gasteiger_util_hh
 #define INCLUDED_core_chemical_gasteiger_util_hh
 
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -33,7 +33,7 @@ namespace gasteiger {
 
 inline
 void safe_write( std::ostream & out, core::Size const &val, bool sep = true ) {
-	if ( numeric::is_undefined(val) ) {
+	if ( utility::is_undefined(val) ) {
 		out << "nan";
 	} else {
 		out << val;
@@ -45,7 +45,7 @@ void safe_write( std::ostream & out, core::Size const &val, bool sep = true ) {
 
 inline
 void safe_write( std::ostream & out, core::Real const &val, bool sep = true ) {
-	if ( numeric::is_undefined(val) ) {
+	if ( utility::is_undefined(val) ) {
 		out << "nan";
 	} else {
 		out << val;
@@ -63,7 +63,7 @@ void safe_read( std::istream & in, core::Size & val ) {
 		std::string tag;
 		in >> tag;
 		if ( tag == "nan" ) {
-			val = numeric::get_undefined_size();
+			val = utility::get_undefined_size();
 		} else {
 			utility_exit_with_message( "Malformatted file - got alphabetic when expecting numeric.");
 		}
@@ -78,7 +78,7 @@ void safe_read( std::istream & in, core::Real & val ) {
 		std::string tag;
 		in >> tag;
 		if ( tag == "nan" ) {
-			val = numeric::get_undefined_real();
+			val = utility::get_undefined_real();
 		} else {
 			utility_exit_with_message( "Malformatted file - got alphabetic when expecting numeric.");
 		}

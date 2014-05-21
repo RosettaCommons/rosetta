@@ -164,31 +164,6 @@ namespace numeric {
 
 	}
 
-	/// @brief Get a numeric value for Size that represents an "undefined" value
-	inline
-	Size get_undefined_size() {
-		return std::numeric_limits< Size >::max(); // Choice of value same as the BCL (Meiler Lab)
-	}
-
-	/// @brief Check if a Size is undefined (i.e has the same value as numeric::get_undefined_size() )
-	inline
-	bool is_undefined( Size const & val) {
-		return val == get_undefined_size();
-	}
-
-	/// @brief Get a numeric value for Real that represents an "undefined" value
-	inline
-	Real get_undefined_real() {
-		return std::numeric_limits< Real >::quiet_NaN(); // Choice of value same as the BCL (Meiler Lab)
-	}
-
-	/// @brief Check if a Real is undefined (i.e has the same value as numeric::get_undefined_real() )
-	inline
-	bool is_undefined( Real const & val) {
-		return isnan( val ) || isinf( val );
-	}
-
-
 } // numeric
 
 #endif

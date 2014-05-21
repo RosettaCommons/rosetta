@@ -18,7 +18,7 @@
 
 #include <core/chemical/gasteiger/util.hh>
 
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector.hh>
 
@@ -129,9 +129,9 @@ std::vector<std::string> const & ElectronConfiguration::AngularMomentumQuantumNu
 
     //! default constructor
     ElectronConfiguration::ElectronConfiguration() :
-      valence_electrons_sp_( numeric::get_undefined_size() ),
-      valence_electrons_spd_( numeric::get_undefined_size() ),
-      valence_quantum_number_( numeric::get_undefined_size() )
+      valence_electrons_sp_( utility::get_undefined_size() ),
+      valence_electrons_spd_( utility::get_undefined_size() ),
+      valence_quantum_number_( utility::get_undefined_size() )
     {
       for
       (
@@ -147,7 +147,7 @@ std::vector<std::string> const & ElectronConfiguration::AngularMomentumQuantumNu
           ++orbital_type
         )
         {
-          electrons_[ shell_type][ orbital_type] = numeric::get_undefined_size();
+          electrons_[ shell_type][ orbital_type] = utility::get_undefined_size();
         }
       }
     }

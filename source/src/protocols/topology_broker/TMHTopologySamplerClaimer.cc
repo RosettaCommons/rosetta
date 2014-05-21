@@ -82,7 +82,7 @@ TMHTopologySamplerClaimer::TMHTopologySamplerClaimer()
 	set_defaults();
 }
 
-TMHTopologySamplerClaimer::TMHTopologySamplerClaimer(TopologyBrokerOP broker)
+TMHTopologySamplerClaimer::TMHTopologySamplerClaimer(TopologyBrokerOP /*broker*/)
 	: rotation_mag_(0),
 	  translation_mag_(0),
 	  rb_mover_stage1_weight_(0),
@@ -347,7 +347,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		}
 	}//for span_index
 
-	assert(nres_==pose.total_residue());
+	assert(core::Size(nres_)==pose.total_residue());
 	assert(pose.fold_tree().root()==nres_);
 
 	//make the last cut the last residue before the root residue
@@ -431,7 +431,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 
 ///@brief make move_map and add the DoF claims from generate_claims() to the movemap.  Now we can move certain parts with certain DOFs.
 void
-TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init)
+TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& /*failed_to_init */)
 {
 	core::kinematics::MoveMapOP init_map = new core::kinematics::MoveMap;
 	init_map->set_jump( false );
@@ -687,10 +687,10 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 void
 TMHTopologySamplerClaimer::add_mover(
 	moves::RandomMover& random_mover,
-	core::pose::Pose const& pose,
+	core::pose::Pose const& /*pose*/,
 	abinitio::StageID stageID,
-	core::scoring::ScoreFunction const& scorefxn,
-	core::Real progress
+	core::scoring::ScoreFunction const& /*scorefxn*/,
+	core::Real /*progress*/
 )
 {
 	core::Real weight(0.0);

@@ -25,7 +25,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 
 #include <map>
 
@@ -63,8 +63,8 @@ void dump_graph(MolFileIOGraph const & graph) {
 }
 
 MolFileIOAtom::MolFileIOAtom() :
-		index_( numeric::get_undefined_size() ),
-		position_( numeric::get_undefined_real(), numeric::get_undefined_real(), numeric::get_undefined_real() ),
+		index_( utility::get_undefined_size() ),
+		position_( utility::get_undefined_real(), utility::get_undefined_real(), utility::get_undefined_real() ),
 		element_(""),
 		formal_charge_(0),
 		partial_charge_(0)
@@ -76,9 +76,9 @@ MolFileIOAtom::~MolFileIOAtom()
 {}
 
 MolFileIOBond::MolFileIOBond() :
-			index_( numeric::get_undefined_size() ),
-			sdf_type_( numeric::get_undefined_size() )
-			//order_( numeric::get_undefined_size() ),
+			index_( utility::get_undefined_size() ),
+			sdf_type_( utility::get_undefined_size() )
+			//order_( utility::get_undefined_size() ),
 			//bond_string_data_(),
 			//bond_real_data_()
 {}
@@ -90,8 +90,8 @@ MolFileIOMolecule::MolFileIOMolecule() :
 			name_(""),
 			//name3_(""),
 			//name1_(""),
-			//nbr_( numeric::get_undefined_size() ),
-			//nbr_radius_( numeric::get_undefined_real() ),
+			//nbr_( utility::get_undefined_size() ),
+			//nbr_radius_( utility::get_undefined_real() ),
 			molecule_string_data_()
 			//molecule_real_data_()
 {}

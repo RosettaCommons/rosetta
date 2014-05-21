@@ -18,7 +18,7 @@
 
 #include <core/chemical/gasteiger/util.hh>
 
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 
 #include <utility/exit.hh>
 
@@ -52,13 +52,13 @@ const std::string &Element::get_property_name( const Element::Properties &PROPER
 //! @brief construct undefined element
 Element::Element() :
 		element_( core::chemical::element::UnknownElement ),
-		atomic_number_( numeric::get_undefined_size() ),
-		period_( numeric::get_undefined_size() ),
-		main_group_( numeric::get_undefined_size() ),
+		atomic_number_( utility::get_undefined_size() ),
+		period_( utility::get_undefined_size() ),
+		main_group_( utility::get_undefined_size() ),
 		chemical_symbol_( "X"),
 		chemical_name_( "UNDEFINED_ELEMENT"),
 		electron_configuration_(),
-		properties_(NumberOfProperties, numeric::get_undefined_real() ) // set all properties to undefined
+		properties_(NumberOfProperties, utility::get_undefined_real() ) // set all properties to undefined
 {}
 
 //! @brief construct element from all its data
@@ -89,7 +89,7 @@ main_group_( MAIN_GROUP),
 chemical_symbol_( CHEMICAL_SYMBOL),
 chemical_name_( CHEMICAL_NAME),
 electron_configuration_( ELECTRON_CONFIGURATION),
-properties_(NumberOfProperties, numeric::get_undefined_real() )
+properties_(NumberOfProperties, utility::get_undefined_real() )
 {
 		element_ = core::chemical::element::elements_from_name(chemical_symbol_);
 		properties_[ Mass] = MASS;

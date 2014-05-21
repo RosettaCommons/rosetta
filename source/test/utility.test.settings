@@ -19,6 +19,7 @@ sources = {
                 "iter_util",
                 "LexicographicalIterator",
                 "minmax",
+		"numbers",
                 "OrderedTuple",
 		"recent_history_queue",
 		"simulate_mpi",

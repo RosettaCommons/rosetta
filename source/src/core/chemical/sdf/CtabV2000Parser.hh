@@ -28,7 +28,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-class CtabV2000Parser: CtabParserBase {
+class CtabV2000Parser: public CtabParserBase {
 
 public:
 

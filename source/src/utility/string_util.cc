@@ -14,7 +14,7 @@
 /// @author Sergey Lyskov
 #include <platform/types.hh>
 
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
@@ -212,7 +212,7 @@ platform::Size string2Size( std::string st ){
 	std::stringstream ss( st );
 	ss >> i;
 	if(!ss){
-		return numeric::get_undefined_size();
+		return get_undefined_size();
 	}
 	return i;
 }
@@ -223,7 +223,7 @@ platform::Real string2Real( std::string st ){
 	std::stringstream ss( st );
 	ss >> i;
 	if(!ss){
-		return numeric::get_undefined_real();
+		return get_undefined_real();
 	}
 	return i;
 }

@@ -18,7 +18,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 
 #include <string>
 #include <sstream>
@@ -104,7 +104,7 @@ bool CtabV3000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 		splitkv(kvpair,key,value);
 		if( key == "CHG") {
 			core::Real charge( utility::string2Real(value));
-			if( numeric::is_undefined(charge) ) {
+			if( utility::is_undefined(charge) ) {
 				TR.Warning << "Problem parsing formal charge in sdf/mol file, skipping." << std::endl;
 				continue;
 			}
@@ -135,7 +135,7 @@ bool CtabV3000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 //		splitkv(kvpair,key,value);
 //		if( key == "CFG") {
 //			core::Size config( utility::string2Real(value));
-//			if( numeric::is_undefined(config) ) {
+//			if( utility::is_undefined(config) ) {
 //				TR.Warning << "Problem parsing bod configuration in sdf/mol file, skipping." << std::endl;
 //				continue;
 //			}

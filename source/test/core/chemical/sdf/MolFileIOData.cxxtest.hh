@@ -84,7 +84,7 @@ class IsomorphismCallback {
 			//TR << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Found isomorphism" << std::endl;
 			typename Graph1::vertex_iterator iter, iter_end;
 			for( boost::tie( iter, iter_end) = boost::vertices(rsd1_); iter != iter_end; ++iter) {
-				if( map_1_to_2[ *iter ] != Graph2::null_vertex ) {
+				if( map_1_to_2[ *iter ] != Graph2::null_vertex() ) {
 					newmap[ *iter ] = map_1_to_2[ *iter ]; // Because of random type conflicts
 					//TR << rsd1_[ *iter].name() << "  " << rsd2_[ map_1_to_2[ *iter ] ].name()  << std::endl;
 				}
@@ -214,7 +214,7 @@ public:
 			rsd2_( rsd2 )
 	{}
 
-	bool operator() ( typename Graph1::edge_descriptor ed1, typename Graph2::edge_descriptor ed2 ) {
+	bool operator() ( typename Graph1::edge_descriptor /*ed1*/, typename Graph2::edge_descriptor /*ed2*/ ) {
 		return true;
 		//core::chemical::Bond const & bond1( rsd1_[ed1] );
 		//core::chemical::Bond const & bond2( rsd2_[ed2] );
@@ -596,7 +596,7 @@ bool match_restype( ResidueType const & rsd1, ResidueType const & rsd2 ) {
 	//boost::copy_graph( ha1, ha_only, boost::vertex_copy( copy_atom ).edge_copy( copy_edge ) );
 
 	utility::vector1< core::chemical::VD > small_order;
-	typename core::chemical::VIter iter, iter_end;
+	core::chemical::VIter iter, iter_end;
 	for( boost::tie( iter, iter_end) = boost::vertices(rsd1.graph()); iter != iter_end; ++iter) {
 			small_order.push_back( *iter );
 	}
@@ -702,7 +702,7 @@ public:
 		if( data.size() < 1 ) return;
 		sdf::MolFileIOMoleculeOP molecule( data[1] );
 
-		sdf:StrStrMap const & extras( molecule->get_str_str_data() );
+		sdf::StrStrMap const & extras( molecule->get_str_str_data() );
 		TS_ASSERT_EQUALS( extras.size(), 8 );
 		TS_ASSERT( extras.count( "Atom_EffectivePolarizability" ) );
 		TS_ASSERT( extras.count( "Atom_LonePairEN" ) );

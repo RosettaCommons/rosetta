@@ -21,7 +21,7 @@
 
 #include <core/chemical/gasteiger/util.hh>
 
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 #include <utility/exit.hh>
 #include <utility/tools/make_vector.hh>
 
@@ -115,7 +115,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
       // make all the properties undefined
       for( int property_number( 0); property_number < NumberOfProperties; ++property_number)
       {
-        properties_[ property_number] = numeric::get_undefined_real();
+        properties_[ property_number] = utility::get_undefined_real();
       }
     }
 
@@ -208,8 +208,8 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     ) :
       name_( NAME ),
       element_type_( ELEMENT_TYPE),
-      number_hybrid_orbitals_sigma_binding_( numeric::get_undefined_size()),
-      number_hybrid_orbitals_nonbinding_( numeric::get_undefined_size()),
+      number_hybrid_orbitals_sigma_binding_( utility::get_undefined_size()),
+      number_hybrid_orbitals_nonbinding_( utility::get_undefined_size()),
       number_electrons_in_bonds_( 0),
       number_bonds_( 0),
       max_e_contribution_to_pi_system_( 0),
@@ -226,7 +226,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
       // make all the properties undefined
       for( int property_number( 0); property_number < NumberOfProperties; ++property_number)
       {
-        properties_[ property_number] = numeric::get_undefined_real();
+        properties_[ property_number] = utility::get_undefined_real();
       }
     }
 
@@ -244,7 +244,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     	// make all remaining properties undefined
     	for( int property_number( VdWaalsRadiusCSD); property_number < NumberOfProperties; ++property_number)
     	{
-    		properties_[ property_number] = numeric::get_undefined_real();
+    		properties_[ property_number] = utility::get_undefined_real();
     	}
 
     	// calculate and store the mulliken electronegativities, (ElectronAffinity+IonizationPotential)/2
@@ -574,19 +574,19 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
       core::Real pi_ip( properties_[ GasteigerAtomTypeData::PiValenceStateIonizationPotential]);
 
       core::Real reciprocal_time_constant( 0.0);
-      if( sigma_ea > 0.0 && !numeric::is_undefined(sigma_ea)) // add data on the energy released by adding 1 sigma-electron
+      if( sigma_ea > 0.0 && !utility::is_undefined(sigma_ea)) // add data on the energy released by adding 1 sigma-electron
       {
         reciprocal_time_constant += 1.0 / sigma_ea;
       }
-      if( sigma_ip > 0.0 && !numeric::is_undefined(sigma_ip)) // add data on the energy required to remove a sigma-electron
+      if( sigma_ip > 0.0 && !utility::is_undefined(sigma_ip)) // add data on the energy required to remove a sigma-electron
       {
         reciprocal_time_constant += 1.0 / sigma_ip;
       }
-      if( pi_ea > 0.0 && !numeric::is_undefined(pi_ea)) // add data on the energy released by adding 1 pi-electron
+      if( pi_ea > 0.0 && !utility::is_undefined(pi_ea)) // add data on the energy released by adding 1 pi-electron
       {
         reciprocal_time_constant += 1.0 / pi_ea;
       }
-      if( pi_ip > 0.0 && !numeric::is_undefined(pi_ip)) // add data on the energy required to remove a pi-electron
+      if( pi_ip > 0.0 && !utility::is_undefined(pi_ip)) // add data on the energy required to remove a pi-electron
       {
         reciprocal_time_constant += 1.0 / pi_ip;
       }
@@ -599,7 +599,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for neutral atoms vs. anions
     core::Real GasteigerAtomTypeData::get_average_neutral_sigma_ip_to_anion_ip_ratio()
     {
-      static core::Real s_Data( numeric::get_undefined_real() );
+      static core::Real s_Data( utility::get_undefined_real() );
       return s_Data;
     }
 
@@ -607,7 +607,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for neutral atoms vs. anions
     core::Real GasteigerAtomTypeData::get_average_neutral_pi_ip_to_anion_ip_ratio()
     {
-      static core::Real s_Data( numeric::get_undefined_real() );
+      static core::Real s_Data( utility::get_undefined_real() );
       return s_Data;
     }
 
@@ -615,7 +615,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @return reference to a core::Real, which returns the ratio of Average(SigmaValenceStateIonizationPotential) for cations vs. neutral atoms
     core::Real GasteigerAtomTypeData::get_average_cation_sigma_ip_to_neutral_ip_ratio()
     {
-      static core::Real s_Data( numeric::get_undefined_real() );
+      static core::Real s_Data( utility::get_undefined_real() );
       return s_Data;
     }
 
@@ -623,7 +623,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @return reference to a core::Real, which returns the ratio of Average(PiValenceStateIonizationPotential) for cations vs. neutral atoms
     core::Real GasteigerAtomTypeData::get_average_cation_pi_ip_to_neutral_ip_ratio()
     {
-      static core::Real s_Data( numeric::get_undefined_real() );
+      static core::Real s_Data( utility::get_undefined_real() );
       return s_Data;
     }
     //! @brief type difference as string
@@ -655,9 +655,9 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
         case NumberBondingSOrbitals: return properties_[ SigmaOrbitalElectronegativityMulliken];
         case NumberLonePairOrbitals: return properties_[ LonePairElectronegativityMulliken];
         default:
-          return numeric::get_undefined_real();
+          return utility::get_undefined_real();
       }
-      return numeric::get_undefined_real();
+      return utility::get_undefined_real();
     }
 
     //! @brief set a particular data
@@ -680,9 +680,9 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
         case NumberLonePairOrbitals:
           return 0.5 * ( get_average_cation_pi_ip_to_neutral_ip_ratio() + get_average_cation_sigma_ip_to_neutral_ip_ratio());
         default:
-          return numeric::get_undefined_real();
+          return utility::get_undefined_real();
       }
-      return numeric::get_undefined_real();
+      return utility::get_undefined_real();
     }
 
     //! @brief get the average ionization potential ratio between neutral and cation atom type that differ by TYPE_DIFFERENCE
@@ -697,9 +697,9 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
         case NumberLonePairOrbitals:
           return 0.5 * ( get_average_neutral_pi_ip_to_anion_ip_ratio() + get_average_neutral_sigma_ip_to_anion_ip_ratio());
         default:
-          return numeric::get_undefined_real();
+          return utility::get_undefined_real();
       }
-      return numeric::get_undefined_real();
+      return utility::get_undefined_real();
     }
 
     //! @brief get the ionization potential type corresponding to TypeDifference
@@ -713,9 +713,9 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
         case NumberBondingSOrbitals: return properties_[ SigmaValenceStateIonizationPotential];
         case NumberLonePairOrbitals: return properties_[ LonePairIonizationPotential];
         default:
-          return numeric::get_undefined_real();
+          return utility::get_undefined_real();
       }
-      return numeric::get_undefined_real();
+      return utility::get_undefined_real();
     }
 
     //! @brief get the electron affinity type corresponding to TypeDifference
@@ -729,9 +729,9 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
         case NumberBondingSOrbitals: return properties_[ SigmaValenceStateElectronAffinity];
         case NumberLonePairOrbitals: return properties_[ LonePairElectronAffinity];
         default:
-          return numeric::get_undefined_real();
+          return utility::get_undefined_real();
       }
-      return numeric::get_undefined_real();
+      return utility::get_undefined_real();
     }
 
 //#    //! @brief get the electronegativity from charge corresponding to a TypeDifference

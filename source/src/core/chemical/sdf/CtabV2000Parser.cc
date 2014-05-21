@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 
 #include <string>
 #include <istream>
@@ -55,7 +55,7 @@ bool CtabV2000Parser::parse(std::istream & tablein, std::string const & headerli
 	//Sometimes V2000 don't have appropriate version numbers.
 	//assert( std::string(line,33,6) == "V2000");
 
-	if( numeric::is_undefined(natoms) || numeric::is_undefined(nbonds) ) {
+	if( utility::is_undefined(natoms) || utility::is_undefined(nbonds) ) {
 		TR.Error << "Could not read the number of atoms and bonds from header of mol/sdf Ctab." << std::endl;
 		return false;
 	}
@@ -115,7 +115,7 @@ bool CtabV2000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 	//std::string const inversion_flag(line,63,3);
 	//std::string const inversion_flag(line,66,3);
 
-	if( numeric::is_undefined(x) || numeric::is_undefined(y) || numeric::is_undefined(z) ) {
+	if( utility::is_undefined(x) || utility::is_undefined(y) || utility::is_undefined(z) ) {
 		TR.Error << "Cannot read coordinates for atom in mol/sdf Ctab" << std::endl;
 		return false;
 	}
@@ -140,7 +140,7 @@ bool CtabV2000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 	//std::string const stereo(line,9,3);
 	//std::string const topology(line,15,3);
 	//std::string const reacting_center(line,18,3);
-	if( numeric::is_undefined(a1) || numeric::is_undefined(a2) || numeric::is_undefined(type) ) {
+	if( utility::is_undefined(a1) || utility::is_undefined(a2) || utility::is_undefined(type) ) {
 		TR.Error << "Cannot read bond in mol/sdf Ctab" << std::endl;
 		return false;
 	}
@@ -158,14 +158,14 @@ bool CtabV2000Parser::parse_property_line( std::string line, MolFileIOMolecule &
 		//	0123456789012345678901234567890123456789
 		//	0         1         2         3
 		core::Size nrecords( utility::string2Size( line.substr(6,3) ) );
-		if( numeric::is_undefined(nrecords) ) { // We could check if this is greater than 8, but we don't need to.
+		if( utility::is_undefined(nrecords) ) { // We could check if this is greater than 8, but we don't need to.
 			TR.Error << "Malformed CHG record in mol/sdf file" << std::endl;
 			return false;
 		}
 		for( core::Size ii(1); ii <= nrecords; ++ii ) {
 			core::Size const atomi( utility::string2Size( line.substr(8*ii+2,3) ) );
 			core::Real const charge( utility::string2Real( line.substr(8*ii+6,3) ) );
-			if( numeric::is_undefined(atomi) || numeric::is_undefined(charge) ) {
+			if( utility::is_undefined(atomi) || utility::is_undefined(charge) ) {
 				TR.Error << "Malformed CHG record in mol/sdf file" << std::endl;
 				return false;
 			}

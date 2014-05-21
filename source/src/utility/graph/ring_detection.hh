@@ -19,14 +19,11 @@
 #include <utility/exit.hh>
 
 #include <platform/types.hh>
-#include <basic/Tracer.hh>
 
 #include <boost/graph/undirected_dfs.hpp>
 
 #include <map>
 #include <set>
-
-
 
 namespace utility {
 namespace graph {

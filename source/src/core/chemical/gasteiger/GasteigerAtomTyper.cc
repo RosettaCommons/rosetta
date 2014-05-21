@@ -36,7 +36,7 @@
 #include <utility/exit.hh>
 #include <utility/graph/ring_detection.hh>
 
-#include <numeric/util.hh>
+#include <utility/numbers.hh>
 
 #include <basic/Tracer.hh>
 
@@ -834,7 +834,7 @@ void PossibleAtomTypesForAtom::FinalizeAromatic( const int DESIRED_CHARGE)
 		core::Size best_hybrid_orbital_rank( 10);
 		int best_charge_diff( 10);
 		GasteigerAtomTypeDataCOP best_type( 0 );
-		core::Size index( 0), best_index( numeric::get_undefined_size() );
+		core::Size index( 0), best_index( utility::get_undefined_size() );
 		std::list< GasteigerAtomTypeDataCOP > equivalent_choices;
 		for ( std::list< GasteigerAtomTypeDataCOP >::const_iterator
 				itr( m_AtomTypesByDecreasingStability.begin()), itr_end( m_AtomTypesByDecreasingStability.end());
@@ -1352,7 +1352,7 @@ PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 	//Things like transition metals have undefined sp valence electrons.
 	// We'll just assume that they don't have implict hydrogens.
 	// (For Rosetta any hydrogens should be explicit anyway.)
-	if( ! numeric::is_undefined( e_config.valence_electrons_sp() ) ) {
+	if( ! utility::is_undefined( e_config.valence_electrons_sp() ) ) {
 		const size_t valence_e( e_config.valence_electrons_sp() - formal_charge);
 
 		// Find the total number of unpaired valence electrons of *itr_atom
