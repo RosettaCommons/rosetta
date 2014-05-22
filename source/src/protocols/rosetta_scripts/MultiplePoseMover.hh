@@ -87,6 +87,10 @@ private:
 	// Pose caches and counters
 	std::deque < core::pose::PoseOP > pose_input_cache_, pose_output_cache_;
 	core::Size poses_input_, poses_output_;
+
+	// Private filters maps for SELECTors
+	protocols::filters::Filters_map selector_filters_;
+
 };
 
 } //rosetta_scripts

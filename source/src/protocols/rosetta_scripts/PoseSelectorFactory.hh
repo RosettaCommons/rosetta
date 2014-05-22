@@ -84,7 +84,7 @@ public:
 	newPoseSelector(
 		TagCOP,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
+		protocols::filters::Filters_map &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
 	);

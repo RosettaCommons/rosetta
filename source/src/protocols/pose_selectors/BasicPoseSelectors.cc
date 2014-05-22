@@ -67,7 +67,7 @@ protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 void LogicalSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
+	protocols::filters::Filters_map & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
@@ -160,7 +160,7 @@ TopNByProperty::TopNByProperty() :
 void TopNByProperty::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
+	protocols::filters::Filters_map & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
@@ -259,7 +259,7 @@ Filter::Filter() :
 void Filter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
+	protocols::filters::Filters_map & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
@@ -268,11 +268,12 @@ void Filter::parse_my_tag(
 	using namespace protocols::rosetta_scripts;
 
 	TagCOP filter_tag(NULL);
+	std::string filter_name;
 
 	if(tag->hasOption("filter")) {
 		// Find a filter by name defined somewhere upstream in the script
-		std::string filter_name( tag->getOption<std::string>("filter") );
 		RosettaScriptsParser parser;
+		filter_name = tag->getOption<std::string>("filter");
 		filter_tag = parser.find_rosettascript_tag(
 				tag,
 				"FILTERS",
@@ -292,13 +293,23 @@ void Filter::parse_my_tag(
 		}
 	}
 
-	if(filter_tag)
+	if(filter_tag) {
+		if(filter_name.empty() && filter_tag->hasOption("name"))
+			filter_name = filter_tag->getOption<std::string>("name");
 		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
+	}
 
 	if(!filter_) {
 		std::ostringstream s;
 		s << "Cannot create filter from script tag: " << tag;
 		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
+	}
+
+	if(filters.find(filter_name) != filters.end()) {
+		TR.Warning << "Filter named \"" << filter_name << "\" already defined. Not adding this filter instance to the map." << std::endl;
+	} else {
+		filters.insert( std::make_pair( filter_name, filter_ ) );
+		TR << "Defined filter named \"" << filter_name << "\" of type " << filter_tag->getName() << std::endl;
 	}
 }
 

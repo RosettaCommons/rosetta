@@ -52,7 +52,7 @@ core::Real PosePropertyReporter::report_property( core::pose::Pose & , core::pos
 void PosePropertyReporter::parse_my_tag(
 	utility::tag::TagCOP,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
+	protocols::filters::Filters_map &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {

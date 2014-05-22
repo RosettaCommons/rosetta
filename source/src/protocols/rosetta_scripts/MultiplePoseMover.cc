@@ -338,7 +338,7 @@ void MultiplePoseMover::parse_my_tag(
 			BOOST_FOREACH( TagCOP const curr_tag, select_tag->getTags() ) {
 				PoseSelectorOP new_selector(
 					PoseSelectorFactory::get_instance()->
-						newPoseSelector( curr_tag, data, filters, movers, pose )
+						newPoseSelector( curr_tag, data, selector_filters_, movers, pose )
 				);
 				runtime_assert( new_selector );
 				selectors_.push_back( new_selector );

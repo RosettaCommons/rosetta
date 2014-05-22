@@ -48,7 +48,7 @@ PoseSelector::~PoseSelector()
 void PoseSelector::parse_my_tag(
 	utility::tag::TagCOP,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
+	protocols::filters::Filters_map &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 )
