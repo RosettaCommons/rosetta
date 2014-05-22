@@ -43,7 +43,7 @@ namespace utility {
 	/// @brief Check if a Real is undefined (i.e has the same value as utility::get_undefined_real() )
 	inline
 	bool is_undefined( platform::Real const & val) {
-		return isnan( val ) || isinf( val );
+		return std::isnan( val ) || std::isinf( val );
 	}
 
 
