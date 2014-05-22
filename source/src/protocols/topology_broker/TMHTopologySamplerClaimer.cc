@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/topology_broker/TMHTopologySamplerClaimer.hh>
+#include <protocols/topology_broker/RigidBodyRandomTMHMover.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/FragmentClaimer.hh>
@@ -710,7 +711,7 @@ TMHTopologySamplerClaimer::add_mover(
 		//Use the RigidBodyRandomTMHMover to move TMHs.  The mover chooses a random jump from the pose and does a RB perturb on it given the rotation and translation
 		//If the helix moves too far away from starting position, moves it back to initial position so it doesnt escape out into space
 		core::Real max_trans = (6*tmhelix_)+10;
-		rigid::RigidBodyRandomTMHMoverOP RBMover = new rigid::RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,this);
+		RigidBodyRandomTMHMoverOP RBMover = new RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,this);
 		//Add RBMover to the random_mover, which is then passed on to TopologyBroker::mover(pose, stageID, scorefxn, progress)
 		random_mover.add_mover(RBMover,weight);
 	}else{

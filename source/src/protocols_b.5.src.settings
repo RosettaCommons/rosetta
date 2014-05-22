@@ -167,6 +167,7 @@ sources = {
 		"LoopFragmentClaimer",
 		"MembraneTopologyClaimer",
 		"TMHTopologySamplerClaimer",
+		"RigidBodyRandomTMHMover",
 		"MetalloClaimer",
 		"PcsEnergyController",
 		"PseudocontactShiftEnergyController",
