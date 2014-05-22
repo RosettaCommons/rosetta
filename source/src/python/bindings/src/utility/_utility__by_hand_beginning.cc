@@ -711,6 +711,72 @@ void wrap_vector1_part(const char * name) {
   ;
 }
 
+// std::vector -----------------------------------------------------------------------------------------------------------------
+template <class T>
+std::string std_vector_repr(std::vector<T> const & v)
+{
+    std::ostringstream os;
+
+    os << "[";
+    for(unsigned int i=1; i<=v.size(); i++) {
+        os << v[i] << ", ";
+    }
+    os << "]";
+    return os.str();
+}
+
+template< class TT > inline void std_vector_set( std::vector<TT> & v, platform::Size const & i, TT const & val ) { v[i] = val; }
+template< class TT > inline platform::Size std_vector_len( std::vector<TT> & v ) { return v.size(); }
+template< class TT > inline TT& std_vector_at(std::vector<TT> & v, platform::Size i ) { return v.at(i); }
+
+template< class TT > inline std::string std_vector_str( std::vector<TT> & v ) { std::ostringstream s; s<<v; return s.str(); }
+
+template< class TT > inline typename std::vector<TT>::iterator std_vector_begin( std::vector<TT> & v ) { return v.begin(); }
+template< class TT > inline typename std::vector<TT>::iterator std_vector_end  ( std::vector<TT> & v ) { return v.end(); }
+
+template< class TT > inline void std_vector_reserve( std::vector<TT> & v, platform::Size n) { v.reserve(n); }
+template< class TT > inline void std_vector_resize( std::vector<TT> & v, platform::Size n) { v.resize(n); }
+
+template< class Htype, class CP, class CP_const>
+void wrap_std_vector(std::string name) {
+  typedef std::vector<Htype> Ttype;
+  typedef utility::vectorL<1,Htype, std::allocator<Htype> > Btype;
+  bp::class_<Ttype>(name.c_str())
+    .def( bp::init< platform::Size >() )
+	  .def( bp::init< std::vector<Htype> const & >() )
+    // .def( bp::init< platform::Size, TT >() )
+
+
+    // .def("__getitem__"
+    //     , (Htype const & (Ttype::*)(platform::Size const) const)( &Ttype::at )
+    //     , CP_const()    )
+    // .def("__getitem__"
+    //     ,  &std_vector_at<Htype>
+    //     , CP_const()        )
+    .def("__getitem__"
+        ,  &std_vector_at<Htype>
+        , CP()        )
+    .def("__setitem__"
+        , &std_vector_set<Htype> )
+    .def("append"
+        , (Btype & (Btype::*)(Htype const &))( &Btype::add_back )
+        , bp::return_value_policy< bp::reference_existing_object >()        )
+
+
+    .def("__len__", & std_vector_len<Htype> )
+    .def("__iter__", bp::range(&std_vector_begin<Htype>,&std_vector_end<Htype>) )
+
+    //.def("__str__", & vector1_str<Htype> )
+    .def("__str__", & std_vector_repr<Htype> )
+    //.def( bp::self_ns::str( bp::self ) )
+
+    .def("reserve", &std_vector_reserve<Htype> )
+    .def("resize", &std_vector_resize<Htype> )
+
+  ;
+}
+
+
 // std::map --------------------------------------------------------------------------------------------------------------------
 
 template< class Key, class Val >
@@ -842,6 +908,8 @@ void expose_basic_type(std::string name)
   typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
   typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
   typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
+
+  wrap_std_vector< T, CP_CNCR, CP_CCR >("std_vector_" + name);
 
   wrap_vector1< T, CP_CNCR, CP_CCR >("vector1_" + name);
   wrap_vector1< utility::vector1<T>, CP_REF, CP_REF >("vec1_vec1_" + name);

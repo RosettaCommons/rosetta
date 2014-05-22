@@ -91,7 +91,7 @@ public:
 	// friend inline    X operator /( XCR n, XCR d ){ return (~d)*n; }
 	friend inline    X operator -( XCR a, XCR b ){ return X( b.R.transposed()*a.R, b.R.transposed() * (a.t-b.t) ); }
 	static inline    X rot       ( MCR rot,VCR o_cen,VCR cen){ return X( rot, rot*-o_cen + cen);} //Correct Version, Translates to Origin based on original centroid
-	static inline    X rot       ( MCR rot,          VCR cen){ return X( rot, rot*-cen + cen );} //INCORRECT VERSION 
+	static inline    X rot       ( MCR rot,          VCR cen){ return X( rot, rot*-cen + cen );} //INCORRECT VERSION
 	static inline    X rot       ( VCR axs, TCR ang, VCR cen){ return rot(rotation_matrix        (axs,ang),cen); }
 	static inline    X rot_deg   ( VCR axs, TCR ang, VCR cen){ return rot(rotation_matrix_degrees(axs,ang),cen); }
 
@@ -233,6 +233,8 @@ expand_xforms(
 }
 
 
+// PyRosetta concreate version
+class Py_xyzTransform_double : public xyzTransform<double> {};
 
 } // namespace numeric
 

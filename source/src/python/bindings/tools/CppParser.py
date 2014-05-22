@@ -679,12 +679,39 @@ class CppClass:
         return False
 
 
-    def isDepend(self, other):
+    #def _isDepend(self, other): # is SELF depend on OTHER ← too confusing, renaming...
+    def isNeeded(self, other): # return True if other needed to construct self, and False otherwise
+        if self.context+self.name == other.context+other.name: return True
+
+        # check if other is part of our name as template specilisation, for example: Xforms... [ ::utility::vector1<numeric::xyzTransform<double>,std::allocator<numeric::xyzTransform<double> > > ]
+        left, _, right = (self.context+self.name).partition( (other.context+other.name)[2:] )
+        if left and right:
+            if left[-1] in ' ,<'  and  right[0] in ' ,>': return True
+
         for b in self.bases:
-            if b.type_.T().find( (other.context+other.name)[2:] ) >= 0 : return True
-            if b.type_.T() in self.reference.Objects and  (self.reference.Objects[ b.type_.T() ].isDepend(other)): return True
+            if b.type_.T() == (other.context+other.name)[2:] : return True
+            #if b.type_.T().find( (other.context+other.name)[2:] ) >= 0 :
+            #    left, _, right = b.type_.T().partition( (other.context+other.name)[2:] )
+            #    if left and right: return True
+            if b.type_.T() in self.reference.Objects:
+                o = self.reference.Objects[ b.type_.T() ]
+                if o.context+o.name == other.context+other.name: return True
+            if b.type_.T() in self.reference.Objects and  (self.reference.Objects[ b.type_.T() ].isNeeded(other)): return True
         return False
 
+    # def isNeeded(self, other):
+    #     res = self._isNeeded(other)
+    #     check_listA, check_listB = ['RotamerSets', 'FixbbRotamerSets', 'Xforms', 'xyzTransform<double>'], ['FixbbRotamerSets', 'RotamerSets']
+    #     if self.name in check_listA  and  other.name in check_listB:
+    #         print '____', self.name, other.name, res, other._isNeeded(self)
+    #         for b in self.bases:
+    #             # if b.type_.T().find( (other.context+other.name)[2:] ) >= 0 :
+    #             #     left, _, right = b.type_.T().partition( (other.context+other.name)[2:] )
+    #             #     if left and right: print 'b.type_.T():', b.type_.T(), '   other.context+other.name:', other.context+other.name
+    #             #     #print 'left:{0}, _:{1}, right:{2}'.format(left, _, right)
+    #             if b.type_.T() in self.reference.Objects and  (self.reference.Objects[ b.type_.T() ].isNeeded(other)):
+    #                 print '__REF: {0}-{1}'.format(self.reference.Objects[ b.type_.T() ].name, other.name)
+    #     return res
 
 
     def getChildrenContext(self):  return self.context + self.name + '::'
@@ -1295,7 +1322,7 @@ def sortObjects(l):
         for i in range( len(l) ):
             for j in range( i, len(l) ):
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppClass):
-                    if l[i].isDepend(l[j]) and not l[j].isDepend(l[i]):  swap(i, j); f = True; break
+                    if l[i].isNeeded(l[j]) and not l[j].isNeeded(l[i]):  swap(i, j); f = True; break
 
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppEnum): swap(i, j); f = True; break
 
@@ -1514,7 +1541,6 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
     # r += '  boost::python::exec("print 123\\nimport rosetta3.utility\\nimport utility", name_space, name_space);\n'
 
     def escape_to_python(s): return s.replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')  # we can't use re.escape beacuse it C++ don't like some of it esacpes...
-
 
     # it maybe hard to believe but apparatnly M$ compilers have *hard* limit on length of string literals (WHO ON EARTH WROTE THAT?????)... so we have to construct resulted string on the fly...
     def generate_exec_code(python_code, namespace):

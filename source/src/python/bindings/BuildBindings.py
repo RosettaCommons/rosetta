@@ -65,11 +65,13 @@ Jobs = []  # Global list of NameTuples  (pid, tag)
 def main(args):
     ''' Script to build Rosetta Python buidings.
     '''
+    global Platform
+
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
 
     parser.add_option('-I',
-      default=[],
+      default=['c:\Python27\include'] if Platform=='windows' else [],
       action="append",
       help="Additiona path to include (boost, python etc). Specify it only if this libs installed in non standard locations. May specify multiple times.",
     )
@@ -152,7 +154,7 @@ def main(args):
       )
 
     parser.add_option("--compiler",
-      default='gcc',
+      default='cl' if Platform == "windows" else 'gcc',
       action="store",
       help="Default compiler that will be used to build PyRosetta. Default is 'gcc'.",
       )
@@ -180,11 +182,6 @@ def main(args):
       help="Name of python dynamic library.",
     )
 
-    parser.add_option("--update-IncludeDict",
-      action="store_true", dest='sort_IncludeDict', default=False,
-      help="Developers only. Save sorter IncludeDict back to file.",
-    )
-
     parser.add_option("--one-lib-file", action="store_true", dest="one_lib_file", default=True,
       help="Generate only one lib file for name spaces [experimental]."
     )
@@ -201,6 +198,13 @@ def main(args):
     parser.add_option("--max-function-size", default=1024*128, type='int',
       help="Maximum size of function in binding files in bytes."
     )
+
+    parser.add_option("--platform",
+      default=Platform,
+      action="store",
+      help="Overwrite detected Platform with given value. Use this for cross-compilation.",
+      )
+
 
     # parser.add_option("--use-pre-generated-sources",
     #   default=None,
@@ -267,14 +271,12 @@ def main(args):
         print '--update', options.update
         print '--debug', options.debug
         print '--compiler', options.compiler
+        print '--platform', options.platform
+
+    Platform = options.platform
 
     #print '--numpy-support', options.numpy_support
-
     #print '--cross-compile', options.cross_compile
-
-    if (Options.jobs > 1) and Options.sort_IncludeDict:
-        print 'Option --update-IncludeDict could be used only with -j1... exiting...'
-        return 1
 
     if Options.parsing_jobs > Options.jobs: Options.parsing_jobs = Options.jobs  # Seriously now...
 
@@ -401,32 +403,6 @@ def main(args):
 
     #buildModule('core/conformation', bindings_path, include_paths=options.I,
     #            libpaths=options.L, runtime_libpaths=options.L)
-
-
-    updateList = [ (IncludeDictNew,'IncludeDict.new') ]
-
-    if options.sort_IncludeDict:
-        updateList.append( (IncludeDict,'IncludeDict') )
-
-    for dc, fl in updateList:
-        if Options.verbose: print 'Updating include dictionary file %s...' % fl
-
-        def f_cmp(a, b):
-            a_, b_ = a.split('/'), b.split('/')
-            if cmp( a_[:-1], b_[:-1] ) : return cmp( a_[:-1], b_[:-1] )
-            elif dc[a][1] == dc[b][1]: return cmp( a_[-1], b_[-1] )
-            else: return cmp(dc[a][1], dc[b][1])
-
-
-        K = dc.keys();  K.sort(cmp=f_cmp)
-        f = file('python/bindings/' + fl + '.tmp', 'w');  f.write('#(True/False - include/exclude file/dir, priority, dependency)\n{\n')
-        for k in K:
-            #f.write( '%s : %s,\n' % (repr(k), repr({True:'+', False:'-'}[ dc[k] ]) ) )
-            #if dc[k][2] == []: dc[k] = (dc[k][0], dc[k][1], None)
-            f.write( '%s : %s,\n' % (repr(k), repr(dc[k]) ) )
-
-        f.write('}\n');  f.close()
-        os.rename('python/bindings/' + fl + '.tmp', 'python/bindings/' + fl)
 
 
     print "Done!"
@@ -904,7 +880,7 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
 
     if Options.monolith:
         if rebuild: execute("Linking static mini lib...",
-                            "cd {mini_path} && cd {lib_path} && ar rcs {mini} {objs}" \
+                            "cd {mini_path} && cd {lib_path} && rm {mini} ; ar rcs {mini} {objs}" \
                             .format(mini_path=mini_path, mini=mini, lib_path=lib_path, objs=objs) )
     else:
         if rebuild: execute("Linking mini lib...",
@@ -998,7 +974,24 @@ def get_vc_link_options():
     # /LTCG
     # To speed up linking adding: /INCREMENTAL ... and /VERBOSE to show all progress and /LTCG:STATUS to debug why it slow
     # This works with decent speed!!! '''/INCREMENTAL:NO /OPT:NOREF /OPT:NOICF /VERBOSE:LIB /VERBOSE:REF /VERBOSE:INCR zlibstat.lib /MACHINE:X64 /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
-    return '''/INCREMENTAL:NO /OPT:NOREF /OPT:NOICF /VERBOSE:REF /VERBOSE:INCR zlibstat.lib /MACHINE:X64 /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'''
+    return '''/INCREMENTAL:NO /OPT:NOREF /OPT:NOICF /VERBOSE:REF /VERBOSE:INCR zlibstat.lib /MACHINE:X64 /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64.static'''
+
+
+def get_windows_compile_command_line(source, output, include='', define=''):
+    option_symbol = '/' if Options.compiler=='cl' else '-'
+
+    if Options.compiler=='cl': res, out = 'cl ' + get_vc_compile_options(), '/Fo{0} /EHsc'.format(output)
+    else: res, out = Options.compiler + ' -O3 -DNDEBUG -DBOOST_NO_MT -DPYROSETTA -DWIN_PYROSETTA', '-o {0}'.format(output)  # note: try -finline-functions  if you got error about too-many-sections
+
+    res += ' ' + option_symbol + 'c ' +  source
+    res += ' ' + ' '.join( [option_symbol + 'D'+d for d in define.split()] + [option_symbol + 'I'+d for d in include.split()] )
+
+    return res + ' ' + out
+
+
+def get_windows_link_command_line(source, output):
+    if Options.compiler=='cl': return 'link ' + get_vc_link_options() + ' ' + source + ' Ws2_32.lib /out:' + output
+    else: return Options.compiler + ' ' + ' '.join( [ ' -L' + o for o in Options.L]) + source + ' -lzlibstat -lboost_python-mgw48-mt-1_55 -lboost_system-mgw48-mt-1_55 -lpython27 -lstdc++ -o ' + output
 
 
 def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
@@ -1014,7 +1007,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     print 'Using pre_generated_sources:', pre_generated_sources
 
     # copy svn_version file from pre-generated sources
-    shutil.copy2(pre_generated_sources + '/svn_version.cc', binding_source_path+'./../../core/svn_version.cc')
+    shutil.copy2(pre_generated_sources + '/svn_version.cc', binding_source_path+'/../../core/svn_version.cc')
 
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
@@ -1036,18 +1029,34 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             s = '../external/' + s
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS'
-                        ' /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\"'
-                        ' /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY'
-                        ' /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"'
-                        ' /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0'
-                        ' /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
+                command_line = get_windows_compile_command_line(source=s, output=obj,
+                                                                include='. ../external/include ../external/boost_1_55_0 ../external/dbio '
+                                                                        '../external/dbio/sqlite3 platform/windows/PyRosetta',
+                                                                define='WIN32 SQLITE_DISABLE_LFS SQLITE_OMIT_LOAD_EXTENSION SQLITE_THREADSAFE=0 CPPDB_EXPORTS'
+                                                                       ' CPPDB_DISABLE_SHARED_OBJECT_LOADING CPPDB_DISABLE_THREAD_SAFETY CPPDB_WITH_SQLITE3'
+                                                                       ' CPPDB_LIBRARY_PREFIX=\\"lib\\" CPPDB_LIBRARY_SUFFIX=\\".dylib\\" CPPDB_SOVERSION=\\"0\\" '
+                                                                       ' NDEBUG',
+                                                                )
+                # not yet ported, do we need this? " /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /D /D
+                # ' /D /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"'
+                # DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA  '  '
+
+                _SC_.execute('Compiling {0}'.format(s), command_line, return_= 'tuple' if Options.continue_ else False)
+
+
+                # _SC_.execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS'
+                #         ' /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\"'
+                #         ' /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY'
+                #         ' /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"'
+                #         ' /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0'
+                #         ' /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj), return_= 'tuple' if Options.continue_ else False)
 
                 if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
 
             '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
                -DCPPDB_DISABLE_THREAD_SAFETY -DCPPDB_SOVERSION=\"0\" -DCPPDB_WITH_SQLITE3
             '''
+        _SC_.wait()
 
         for s in sorted( sum(sources, []) ):
             try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
@@ -1060,8 +1069,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s) or \
                os.path.isfile(hh)  and os.path.getmtime(obj) < os.path.getmtime(hh)  or  \
                os.path.isfile(fwd) and os.path.getmtime(obj) < os.path.getmtime(fwd):
-                _SC_.execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_vc_compile_options(), s, obj),
-                        return_= 'tuple' if Options.continue_ else False, print_output=True)
+
+                command_line = get_windows_compile_command_line(source=s, output=obj, include='. ../external/include ../external/boost_1_55_0 ../external/dbio platform/windows/PyRosetta')
+
+                _SC_.execute('Compiling {0}'.format(s), command_line, return_= 'tuple' if Options.continue_ else False, print_output=True)
+
+
+                # _SC_.execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_vc_compile_options(), s, obj),
+                #         return_= 'tuple' if Options.continue_ else False, print_output=True)
 
             #if os.path.isfile(obj): latest = max(latest, os.path.getmtime(obj) )
 
@@ -1081,7 +1096,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     number_of_objs_in_file = 1024;  objs_files = ''
     objs_list_all = [ sources[i:i+number_of_objs_in_file] for i in range(0, len(sources), number_of_objs_in_file)]
     for i, objs in enumerate(objs_list_all):
-        fname = 'objs-{}'.format(i)
+        fname = 'objs-{0}'.format(i)
         with file(os.path.join(build_dir, fname), 'w') as f: f.write( ' '.join( [o + '.obj' for o in objs] ) )
         objs_files += ' @'+fname
 
@@ -1132,8 +1147,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     #latest = None  # keeping track of dates of local .def files
     for dir_name, _, files in os.walk(pre_generated_sources):
         #print dir_name, dir_name.startswith(pre_generated_sources+'\\utility')
-        if Options.utility_only and not (dir_name == pre_generated_sources  or dir_name.startswith(pre_generated_sources+'\\utility')): continue
-        if Options.core_only and dir_name.startswith(pre_generated_sources+'\\protocols'): continue
+        if Options.utility_only and not (dir_name == pre_generated_sources  or dir_name.startswith( os.path.join(pre_generated_sources, 'utility'))): continue
+        if Options.core_only and dir_name.startswith( os.path.join(pre_generated_sources, 'protocols') ): continue
 
         l, objs = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
         latest = max(l, latest)
@@ -1151,55 +1166,23 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
 
 
     if Options.monolith:
-        # libs = []
-        # objs_list_all += [ bindings_objs[i:i+number_of_objs_in_file] for i in range(0, len(bindings_objs), number_of_objs_in_file)]
-        # for i, objs in enumerate(objs_list_all):
-        #     temp_path = 'C:\\Users\\sergey\\PyRosetta\\build'
-
-        #     obj_list = os.path.join(temp_path, 'bindings-objs-list-{:02d}'.format(i) )
-        #     lib = os.path.join(temp_path, 'bindings-static-{:02d}.lib'.format(i) )
-        #     with file(obj_list, 'w') as f: f.write( ' '.join( [o + '.obj' for o in objs] ) )
-        #     execute('Creating static lib {}...'.format(lib), 'cd {build_dir} && lib @{obj_list} /out:{lib}'.format(build_dir=build_dir, obj_list=obj_list, lib=lib) )
-        #     libs.append(lib)
-
-        # monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
-        # execute('Creating DLL %s...' % monolith_pyd,
-        #         'cd {build_dir} && link {options} {libs} /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
-        #                                                                              libs=' '.join(libs), monolith_pyd=monolith_pyd) )
-
-
-        # bindings_objs_list = os.path.join(bindings_path, 'bindings_objs_list' )
-        # with file(bindings_objs_list, 'w') as f:  f.write( ' '.join(bindings_objs) )
-        # print 'bindings_objs_list', bindings_objs_list
-
-        # monolith_static = os.path.join(bindings_path, 'rosetta_and_pyrosetta.lib')
-        # monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
-
-        # #         execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs-%02d ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /out:%s' % (build_dir, i, rosetta_lib))
-
-        # # we create static lib first and then lib DLL because otherwise it way too slow to link...
-        # execute('Creating static lib %s...' % monolith_static,
-        #         'cd {build_dir} && lib {objs_files} @{bindings_objs_list} /out:{monolith_static}'.format(build_dir=build_dir, options=get_vc_link_options(),
-        #                                                                                                      objs_files=objs_files, bindings_objs_list=bindings_objs_list,
-        #                                                                                                      monolith_static=monolith_static) )
-
-        # execute('Creating DLL %s...' % monolith_pyd,
-        #         'cd {build_dir} && link {options} {monolith_static} /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
-        #                                                                                                          objs_files=objs_files, bindings_objs_list=bindings_objs_list,
-        #                                                                                                          monolith_static=monolith_static, monolith_pyd=monolith_pyd) )
-
-
         bindings_objs_list = os.path.join(bindings_path, 'bindings_objs_list' )
         with file(bindings_objs_list, 'w') as f:  f.write( ' '.join(bindings_objs) )
         print 'bindings_objs_list', bindings_objs_list
 
         monolith_static = os.path.join(bindings_path, 'rosetta_and_pyrosetta.lib')
         monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
+        command_line = get_windows_link_command_line(source='{objs_files} @{bindings_objs_list}'.format(objs_files=objs_files, bindings_objs_list=bindings_objs_list),
+                                                     output=monolith_pyd)
+        # Ws2_32 is needed because of PyMolMover socket code
 
-        execute('Creating DLL %s...' % monolith_pyd, # Ws2_32 is needed because of PyMolMover socket code
-                'cd {build_dir} && link {options} {objs_files} @{bindings_objs_list} Ws2_32.lib /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
-                                                                                                                 objs_files=objs_files, bindings_objs_list=bindings_objs_list,
-                                                                                                                 monolith_pyd=monolith_pyd) )
+        execute('Creating DLL {0}...'.format(monolith_pyd), 'cd {build_dir} && '.format(build_dir=build_dir) + command_line)
+
+        # execute('Creating DLL %s...' % monolith_pyd, # Ws2_32 is needed because of PyMolMover socket code
+        #         'cd {build_dir} && link {options} {objs_files} @{bindings_objs_list} Ws2_32.lib /out:{monolith_pyd}'.format(build_dir=build_dir, options=get_vc_link_options(),
+        #                                                                                                          objs_files=objs_files, bindings_objs_list=bindings_objs_list,
+        #                                                                                                          monolith_pyd=monolith_pyd) )
+
     else:
         symbols = list( set(symbols) )
         #file('._all_needed_symbols_', 'w').write(res)
@@ -1244,6 +1227,7 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
 
     latest = None
 
+    objs = []
     if files:
         rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')  # this is actually link to DLL, don't get confused it with rosettta_lib-%d.lib
         #rosetta_dll = os.path.join(bindings_path, '..\\rosetta.dll')
@@ -1251,28 +1235,36 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
 
         #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < max( [os.path.getmtime( os.path.join(dir_name, f) ) for f in files] ):
 
-        objs = []
         for f in files:
             source = os.path.join(dir_name, f)
             obj = os.path.join( obj_dir, f[:-3]+'obj')
             objs.append(obj)
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
-                res_and_output = _SC_.execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_vc_compile_options(), source)  #  /D__PYROSETTA_ONE_LIB__
-                                                                              #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
-                                                                              + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
-                                                                              + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=32'
-                                                                              + ' /Fo%s ' % obj ), return_= 'tuple' if Options.continue_ else False )
+                command_line = get_windows_compile_command_line(source=source, output=obj,
+                                                                include='. ../external/include ../external/boost_1_55_0/ ../external/dbio platform/windows/PyRosetta ' \
+                                                                + ' '.join(Options.I),
+                                                                define='WIN_PYROSETTA_PASS_2 BOOST_PYTHON_MAX_ARITY=32')
+
+                #' /Ic:\Python27\include /D'
+
+                res_and_output = _SC_.execute('Compiling {0}/{1}'.format(dir_name, f), command_line, return_= 'tuple' if Options.continue_ else False )
+
+
+
+                # res_and_output = _SC_.execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_vc_compile_options(), source)  #  /D__PYROSETTA_ONE_LIB__
+                #                                                               #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
+                #                                                               + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
+                #                                                               + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=32'
+                #                                                               + ' /Fo%s ' % obj ), return_= 'tuple' if Options.continue_ else False )
+
+
                 if (not Options.monolith) and (Options.continue_ and res_and_output[0]): print res_and_output[1];  return latest, objs
                 #  /Iplatform/windows/32/msvc
                 #  /I../external/boost_1_55_0
                 #  /IBOOST_MSVC    /link rosetta_lib
 
                 # c:\\mingw\\bin\\
-                """execute('Compiling %s' % (dir_name+f), 'gcc -DPYROSETTA -c %s -I. \
-                        -I../external/include -IC:/WPyRosetta/boost_1_47_0 -I../external/dbio -Iplatform/windows/PyRosetta \
-    -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=32 \
-        -o %s' % (source, obj) )"""
 
             if Options.jobs==1: latest = max(latest, os.path.getmtime(obj) )
 

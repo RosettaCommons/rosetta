@@ -10,14 +10,22 @@
 ## @author Sergey Lyskov
 
 
-import os, sys, commands, datetime
+import os, sys, commands, datetime, subprocess
 
 
 def execute(message, commandline, return_=False, untilSuccesses=False):
     print message, commandline
+
+
     while True:
-        (res, output) = commands.getstatusoutput(commandline)
-        print output
+        if sys.platform == "win32":
+            po = subprocess.Popen(commandline, bufsize=0, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            while po.returncode is None: po.wait()
+            res = po.returncode
+
+        else:
+            (res, output) = commands.getstatusoutput(commandline)
+            print output
 
         if res and untilSuccesses: pass  # Thats right - redability COUNT!
         else: break
@@ -58,7 +66,11 @@ def main(args):
         #__import__( t[:-3] )
 
         started = datetime.datetime.today()
-        execute('\n\nExecuting %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && %s %s' % (sys.executable, t) )
+
+        command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH'
+        command_line += ' && {0} {1} '.format(sys.executable, t)
+
+        execute('\n\nExecuting %s...' % t, command_line )
         print '\nFinished {0} in {1}'.format(t, datetime.datetime.today() - started)
 
         #__import__( 'test.' + t[:-3] )
