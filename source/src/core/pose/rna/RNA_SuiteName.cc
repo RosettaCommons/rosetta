@@ -59,8 +59,10 @@ RNA_SuiteName::RNA_SuiteName():
 	betamax( 290 ),
 	zetamin( 25 ),
 	zetamax( 335 ),
-	outlier( "!!", 0 ),
-	suite_undefined( "__", 0 ),
+	delta_cutoff( 115 ),
+	gamma_cutoff1( 120 ),
+	gamma_cutoff2( 240 ),
+	suite_undefined( "__", -1, -1 ),
 	dist_pow( 3 )
 {
 	init();
@@ -265,11 +267,13 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in )	const {
 		if ( torsions[i] < 0 ) torsions[i] += 360;
 	}
 
+	bool is_outlier( false );
+
 	//Fast check for outlier torsions
-	if ( torsions[2] < epsilonmin || torsions[2] > epsilonmax ) return outlier;
-	if ( torsions[3] < zetamin || torsions[3] > zetamax ) return outlier;
-	if ( torsions[4] < alphamin || torsions[4] > alphamax ) return outlier;
-	if ( torsions[5] < betamin || torsions[5] > betamax ) return outlier;
+	if ( torsions[2] < epsilonmin || torsions[2] > epsilonmax ) is_outlier = true;
+	if ( torsions[3] < zetamin || torsions[3] > zetamax ) is_outlier = true;
+	if ( torsions[4] < alphamin || torsions[4] > alphamax ) is_outlier = true;
+	if ( torsions[5] < betamin || torsions[5] > betamax ) is_outlier = true;
 
 	//Classify the torsion using delta and gamma
 	Size classifier = 0;
@@ -279,7 +283,12 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in )	const {
 	} else if ( torsions[1] >= delta2min && torsions[1] <= delta2max ) {
 		classifier += 200;
 	} else {
-		return outlier;
+		is_outlier = true;
+		if ( torsions[1] <= delta_cutoff ) {
+			classifier += 300;
+		} else {
+			classifier += 200;
+		}
 	}
 	//Delta2
 	if ( torsions[7] >= delta3min && torsions[7] <= delta3max ) {
@@ -287,44 +296,59 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in )	const {
 	} else if ( torsions[7] >= delta2min && torsions[7] <= delta2max ) {
 		classifier += 20;
 	} else {
-		return outlier;
+		is_outlier = true;
+		if ( torsions[7] <= delta_cutoff ) {
+			classifier += 30;
+		} else {
+			classifier += 20;
+		}
 	}
 	//Gamma
 	if ( torsions[6] >= gammapmin && torsions[6] <= gammapmax ) {
-		classifier += 0;
+		;
 	} else if ( torsions[6] >= gammatmin && torsions[6] <= gammatmax ) {
 		classifier += 1;
 	} else if ( torsions[6] >= gammammin && torsions[6] <= gammammax ) {
 		classifier += 2;
 	} else {
+		is_outlier = true;
+		if ( torsions[7] <= gamma_cutoff1 ) {
+			;
+		} else if ( torsions[7] > gamma_cutoff2 ){
+			classifier += 2;
+		} else {
+			classifier += 1;
+		}
+	}
+
+	// Special case: 332 has no valid suite
+	if ( classifier == 332 ) {
+		RNA_SuiteAssignment const outlier( "!!", 0, 5 );
 		return outlier;
 	}
 
 	Size best_index( 0 ), dom_index( 0 );
-	Real best_dist( 999 ), dom_dist( 999 );
+	Real best_dist( -1 ), dom_dist( 999 );
 
 	for ( Size i = 1; i <= all_suites.size(); ++i ) {
 		if ( all_suites[i].classifier != classifier ) continue;
 		Real const dist = distance_4d( torsions, all_suites[i].torsion,
 				regular_half_width );
-		if (dist > 1) continue;
+		//if (dist > 1) continue;
 		//std::cout << dist <<std::endl;
-		if ( dominant_suites.has_value( all_suites[i].name ) ) {
+		if ( dist <= 1 && dominant_suites.has_value( all_suites[i].name ) ) {
 			dom_index = i;
 			dom_dist = dist;
-		} else if ( dist < best_dist ) {
+		} else if ( dist < best_dist || best_dist < 0 ) {
 			best_dist = dist;
 			best_index = i;
 		}
 	}
 
-	//std::cout << best_index << ' ' << dom_index << std::endl;
-	if ( best_index == 0 ) {
-		if ( dom_index == 0 ) {
-			return outlier;
-		} else {
-			best_index = dom_index;
-		}
+
+	//std::cout << best_index << ' ' << dom_index << ' ' << classifier <<std::endl;
+	if ( best_dist > 1 && dom_dist <= 1 ) {
+		best_index = dom_index;
 	} else {
 		if ( dom_index != 0 ) {
 			Size const find_index = satellite_suites.index(
@@ -347,13 +371,15 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in )	const {
 
 	Real const dist_7d = distance_7d( torsions, all_suites[best_index].torsion, regular_half_width );
 	//std::cout << dist_7d <<std::endl;
-	if ( dist_7d > 1 ) return outlier;
-
+	if ( dist_7d > 1 || is_outlier) {
+		RNA_SuiteAssignment const outlier( "!!", 0, dist_7d );
+		return outlier;
+	}
 
 	Real const suiteness = ( cos( numeric::constants::r::pi
 			* dist_7d ) + 1.0 ) * 0.5;
 	std::string const suitename = all_suites[best_index].name;
-	RNA_SuiteAssignment const best_suite ( suitename, suiteness );
+	RNA_SuiteAssignment const best_suite ( suitename, suiteness, dist_7d );
 	return best_suite;
 }
 

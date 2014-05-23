@@ -43,15 +43,22 @@ class RNA_SuiteAssignment {
 public:
 	std::string name;
 	Real suiteness;
+	Real dist;
 
-	RNA_SuiteAssignment ( std::string const name_in, Real const suiteness_in):
+	RNA_SuiteAssignment(
+		std::string const name_in,
+		Real const suiteness_in,
+		Real const dist_in
+	):
 		name( name_in ),
-		suiteness( suiteness_in )
+		suiteness( suiteness_in ),
+		dist( dist_in )
 	{}
 
 	RNA_SuiteAssignment():
 		name( "" ),
-		suiteness( 0 )
+		suiteness( -1 ),
+		dist( -1 )
 	{}
 };
 /////////////////////////////////////////
@@ -61,7 +68,11 @@ public:
 	Size classifier;
 	utility::vector1<Real> torsion;
 
-	RNA_SuiteInfo ( std::string const name_in, Size const classifier_in, utility::vector1<Real> const & torsion_in ):
+	RNA_SuiteInfo(
+		std::string const name_in,
+		Size const classifier_in,
+		utility::vector1<Real> const & torsion_in
+	):
 		name( name_in ),
 		classifier( classifier_in ),
 		torsion( torsion_in )
@@ -86,7 +97,7 @@ public:
 
 	RNA_SuiteAssignment assign(Pose const & pose, Size const res) const;
 
-	Size const
+	Real const
 		epsilonmin, epsilonmax,
 		delta3min , delta3max,
 		delta2min , delta2max,
@@ -96,6 +107,8 @@ public:
 		alphamin  , alphamax,
 		betamin   , betamax,
 		zetamin   , zetamax;
+
+	Real const delta_cutoff, gamma_cutoff1, gamma_cutoff2;
 
 private:
 	//Disable copy constructor and assignment
@@ -115,7 +128,7 @@ private:
 			utility::vector1<Real> const & satellite ) const;
 
 	//////////////////////////////////
-	RNA_SuiteAssignment const outlier, suite_undefined;
+	RNA_SuiteAssignment const suite_undefined;
 	Real const dist_pow;
 	utility::vector1<RNA_SuiteInfo> all_suites;
 	utility::vector1<Size> regular_half_width;

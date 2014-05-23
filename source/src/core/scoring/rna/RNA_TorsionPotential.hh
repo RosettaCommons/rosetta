@@ -94,23 +94,8 @@ private:
 	init_fade_functions();
 
 	bool
-	should_score_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
-
-	bool
 	get_f1_f2( core::id::TorsionID const & torsion_id,
 					 core::pose::Pose const & pose, core::id::AtomID const & id, Vector & f1, Vector & f2 ) const;
-
-	void
-	Output_boolean( std::string const & tag, bool boolean ) const;
-
-	bool
-	is_cutpoint_closed_atom( core::conformation::Residue const & rsd, core::id::AtomID const & id ) const;
-
-	void
-	print_torsion_info( core::pose::Pose const & pose, id::TorsionID const & torsion_id ) const;
-
-	bool
-	is_cutpoint_closed_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
 
 	std::string path_to_torsion_files_;
 

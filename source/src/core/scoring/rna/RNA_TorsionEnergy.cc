@@ -75,7 +75,6 @@ RNA_TorsionEnergy::residue_pair_energy(
 		ScoreFunction const &,
 		EnergyMap & emap ) const {
 
-	EnergyMap emap_temp;
 	emap[ rna_torsion ] += rna_torsion_potential_.residue_pair_energy( rsd1, rsd2, pose );
 
 }

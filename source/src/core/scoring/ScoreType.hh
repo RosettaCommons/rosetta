@@ -167,6 +167,8 @@ enum ScoreType {
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
+	rna_suite,			 // RNA Suite Score
+	rna_jr_suite,			 // RNA Suite Score, Jane Richardson style
 	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
 	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
 	fa_stack_aro,

@@ -352,6 +352,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "num_stacks"] = num_stacks;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
+	name2score_type_[ "rna_suite"] = rna_suite;
+	name2score_type_[ "rna_jr_suite"] = rna_jr_suite;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
 	name2score_type_[ "rna_bond_geometry"] = rna_bond_geometry;
 	name2score_type_[ "rna_fa_atr_base"] = rna_fa_atr_base;

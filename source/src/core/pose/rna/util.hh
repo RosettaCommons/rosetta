@@ -18,6 +18,8 @@
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/id/types.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -105,6 +107,16 @@ apply_ideal_c2endo_sugar_coords(
 void
 correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak );
 
+bool is_cutpoint_closed_torsion( pose::Pose const & pose,	id::TorsionID const & torsion_id );
+
+bool is_cutpoint_closed_atom(	core::conformation::Residue const & rsd, id::AtomID const & id );
+
+void output_boolean( std::string const & tag, bool boolean );
+
+void print_torsion_info( pose::Pose const & pose,	id::TorsionID const & torsion_id );
+
+bool is_torsion_valid( pose::Pose const & pose, id::TorsionID const & torsion_id,
+		bool verbose = false, bool skip_chainbreak_torsions = false );
 } //ns rna
 } //ns pose
 } //ns core

@@ -16,6 +16,7 @@
 #ifndef INCLUDED_numeric_deriv_dihedral_deriv_hh
 #define INCLUDED_numeric_deriv_dihedral_deriv_hh
 
+#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/conversions.hh>
