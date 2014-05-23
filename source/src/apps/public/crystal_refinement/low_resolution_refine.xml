@@ -22,7 +22,7 @@
 		</dens>
 	</SCOREFXNS>
 	<MOVERS>
-		<SetRefinementOptions name=setup_opts prime_and_switch=1/>
+    <SetRefinementOptions name=setup_opts map_type="%%map_type%%"/>
 
 		<SetupForSymmetry name=setup_symm definition="%%symmdef%%"/>
 		<ExtractAsymmetricUnit name=extract_asu/>

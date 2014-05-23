@@ -94,7 +94,7 @@ PhenixInterface::PhenixInterface() {
 	adp_strategy_ = "individual";
 	target_function_ = "ml";
 	twin_law_ = "";
-	dm_ = prime_and_switch_ = false;
+	map_type_ = "";
 	res_low_ = res_high_ = 0;  // data from mtz file
 
 	// set up python environment
@@ -806,37 +806,15 @@ PhenixInterface::setAlgorithm(
 }
 
 void
-PhenixInterface::set_dm (
+PhenixInterface::set_map_type(
 #ifdef WITH_PYTHON
-		bool dm)
+		std::string map_type)
 #else
-		bool /*dm*/)
+		std::string /*map_type*/)
 #endif
 {
 #ifdef WITH_PYTHON
-	dm_ = dm;
-
-	// nuke the target evaluator
-	if (target_evaluator_) {
-		Py_XDECREF(target_evaluator_);
-		target_evaluator_ = NULL;
-	}
-#else
-	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
-#endif
-}
-
-
-void
-PhenixInterface::set_prime_and_switch(
-#ifdef WITH_PYTHON
-		bool prime_and_switch)
-#else
-		bool /*prime_and_switch*/)
-#endif
-{
-#ifdef WITH_PYTHON
-	prime_and_switch_ = prime_and_switch;
+	map_type_ = map_type;
 
 	// nuke the target evaluator
 	if (target_evaluator_) {
@@ -1023,15 +1001,12 @@ void PhenixInterface::initialize_target_evaluator(
 	std::string arg8 = oss.str();
 	std::vector< char > arg8_char(arg8.c_str(), arg8.c_str()+arg8.length()+1);
 
-	// (9) density modification
+	// (9) map type
 	oss.clear(); oss.str("");
-	if (prime_and_switch_) {
-		oss << "resolve.prime_and_switch=True";
-	} else if (dm_) {
-		oss << "resolve.density_modify=True";
-	} else {
-		oss << "resolve.density_modify=False";
-	}
+  if (( map_type_.length() == 0 ) && (map_type_ != "Auto"))
+		oss << "map_type=" << map_type_;
+	else
+		oss << "prime_and_switch";
 	std::string arg9 = oss.str();
 	std::vector< char > arg9_char(arg9.c_str(), arg9.c_str()+arg9.length()+1);
 
@@ -1052,11 +1027,32 @@ void PhenixInterface::initialize_target_evaluator(
 		char s10_str[] = "([ssssssssss])";
 
  		if (eff_file.length() == 0)
- 			target_evaluator_ = PyObject_CallMethod(pModule, run_str, s9_str,
- 			     &arg1_char[0], &arg2_char[0], &arg3_char[0], &arg4_char[0], &arg5_char[0], &arg6_char[0], &arg7_char[0], &arg8_char[0], &arg9_char[0]);
+ 			target_evaluator_ = PyObject_CallMethod(pModule,
+				run_str,
+				s9_str,
+				&arg1_char[0],  // pdb file
+				&arg2_char[0],  // mtz  file
+				&arg3_char[0],  // high resolution
+				&arg4_char[0],  // low resolution
+				&arg5_char[0],  // target function
+				&arg6_char[0],  // bss target
+				&arg7_char[0],  // sf calc method
+				&arg8_char[0],  // twin law
+				&arg9_char[0]); // map type
  		else
- 			target_evaluator_ = PyObject_CallMethod(pModule, run_str, s10_str,
- 			     &arg1_char[0], &arg2_char[0], &arg_opt[0], &arg3_char[0], &arg4_char[0], &arg5_char[0], &arg6_char[0], &arg7_char[0], &arg8_char[0], &arg9_char[0]);
+ 			target_evaluator_ = PyObject_CallMethod(pModule,
+				run_str,
+				s10_str,
+ 			  &arg1_char[0],  // pdb file
+				&arg2_char[0],  // mtz file
+				&arg_opt[0],    // eff file
+        &arg3_char[0],  // high resolution
+        &arg4_char[0],  // low resolution
+        &arg5_char[0],  // target function
+        &arg6_char[0],  // bss target
+        &arg7_char[0],  // sf calc method
+        &arg8_char[0],  // twin law
+        &arg9_char[0]); // map_type
 
 		HANDLE_PYTHON_ERROR("initialization of target evaluator failed");
 		//

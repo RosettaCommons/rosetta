@@ -86,10 +86,7 @@ public:
 	void setAlgorithm(std::string twin_law);
 
 	///@brief set target function
-	void set_dm ( bool dm );
-
-	///@brief set target function
-	void set_prime_and_switch ( bool prime_and_switch );
+	void set_map_type ( std::string map_type );
 
 	///@brief set strategy for adp refinement
 	void set_adp_strategy ( std::string adp_strat ) { adp_strategy_ = adp_strat; }
@@ -129,8 +126,8 @@ private:
 	std::string target_function_;
 	std::string twin_law_;
 	std::string algo_;
+	std::string map_type_;
 	utility::vector1<std::string> cif_files_;
-	bool dm_, prime_and_switch_;
 
 #ifdef WITH_PYTHON
 	PyObject *target_evaluator_;

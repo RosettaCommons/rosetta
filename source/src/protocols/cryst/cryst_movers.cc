@@ -605,14 +605,9 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 		core::scoring::cryst::getPhenixInterface().set_target_function(target_);
 	}
 
-	if (setdm_) {
-		TR << "  density_modify:" << dm_ << std::endl;
-		core::scoring::cryst::getPhenixInterface().set_dm ( dm_ );
-	}
-
-	if (setprime_and_switch_) {
-		TR << "  prime_and_switch:" << prime_and_switch_ << std::endl;
-		core::scoring::cryst::getPhenixInterface().set_prime_and_switch ( prime_and_switch_ );
+	if (setmap_type_) {
+		TR << "  map_type:" << map_type_ << std::endl;
+		core::scoring::cryst::getPhenixInterface().set_map_type ( map_type_ );
 	}
 
 	if (cif_files_.size() > 0) {
@@ -637,10 +632,8 @@ void SetRefinementOptionsMover::parse_my_tag(
 	twin_law_ = tag->getOption<std::string>("twin_law", "");
 	algo_ = tag->getOption<std::string>("algorithm", "");
 	target_ = tag->getOption<std::string>("target", "");
-	setdm_ = tag->hasOption("density_modify");
-	dm_ = tag->getOption<bool>("density_modify", false);
-	setprime_and_switch_ = tag->hasOption("prime_and_switch");
-	prime_and_switch_ = tag->getOption<bool>("prime_and_switch", false);
+	setmap_type_ = tag->hasOption("map_type");
+	map_type_ = tag->getOption<std::string>("map_type", "");
 
 	std::string allcifs = tag->getOption<std::string>("cifs", "");
 	if (allcifs != "")
