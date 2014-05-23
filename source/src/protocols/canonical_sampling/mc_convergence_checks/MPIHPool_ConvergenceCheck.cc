@@ -1220,13 +1220,13 @@ namespace mc_convergence_checks{
     PROF_START( basic::MPICOMMCREATION );
     MPI_Comm_dup( MPI_COMM_POOL, &dup_pool_comm );
     returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
-    assert(returnval == MPI_SUCCESS );
+    runtime_assert_string_msg(returnval == MPI_SUCCESS, "MPI_SUCCESS not achieved!" );
 
     returnval = MPI_Group_incl( old_pool_group, new_size, ranks_to_include, &new_pool_group );
-    assert(returnval == MPI_SUCCESS );
+    runtime_assert_string_msg(returnval == MPI_SUCCESS, "MPI_SUCCESS not achieved!" );
 
     returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
-    assert(returnval == MPI_SUCCESS );
+    runtime_assert_string_msg(returnval == MPI_SUCCESS, "MPI_SUCCESS not achieved!" );
     PROF_STOP( basic::MPICOMMCREATION );
 
   }
