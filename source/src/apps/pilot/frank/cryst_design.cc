@@ -505,41 +505,23 @@ struct SingleInterface {
 // fpd this class is used for storing hits over all rotations
 //    same top-N priority_queue but much larger store
 struct InterfaceHit {
-	InterfaceHit( Real score_in, Real x_in, Real y_in, Real z_in, Size rot_index_in, utility::vector1<SingleInterface> iinfo_in ) {
+	InterfaceHit( Real score_in, Real x_in, Real y_in, Real z_in, Size rot_index_in ) {
 		score=score_in;
 		x=x_in; y=y_in; z=z_in;
 		rot_index=rot_index_in;
-		iinfo = iinfo_in;
 	}
 	Real score;
 	Real x,y,z;
 	Size rot_index;
-	utility::vector1<SingleInterface> iinfo;
+	//utility::vector1<SingleInterface> iinfo;
 
 	utility::vector1< std::string >
 	to_string() {
 		utility::vector1< std::string > retval;
-		for (int i=1; i<=(int)iinfo.size(); ++i) {
-			{
-				std::ostringstream oss;
-				oss << "[rot " << rot_index << "] score = "<< iinfo[i].cb_overlap_;
-				retval.push_back( oss.str() );
-			}
-			{
-				std::ostringstream oss;
-				oss << "       R = ["
-				<< iinfo[i].R_.xx() << "," << iinfo[i].R_.xy() << "," << iinfo[i].R_.xz() << ";"
-				<< iinfo[i].R_.yx() << "," << iinfo[i].R_.yy() << "," << iinfo[i].R_.yz() << ";"
-				<< iinfo[i].R_.zx() << "," << iinfo[i].R_.zy() << "," << iinfo[i].R_.zz()
-				<< "]";
-				retval.push_back( oss.str() );
-			}
-			{
-				std::ostringstream oss;
-				oss << "       T = [" << iinfo[i].T_[0] << "," << iinfo[i].T_[1] << "," << iinfo[i].T_[2] << "]";
-				retval.push_back( oss.str() );
-			}
-		}
+		std::ostringstream oss;
+		oss << "[rot " << rot_index << "] score = "<< score;
+		retval.push_back( oss.str() );
+
 		return retval;
 	}
 };
@@ -1090,21 +1072,22 @@ CrystDock::get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clus
 	numeric::xyzMatrix<Real> R1, R2;
 	urs.get(rot1,R1);
 	urs.get(rot2,R2);
+
 	numeric::xyzVector< core::Real > vec1;
 	numeric::xyzVector< core::Real > vec2;
+
 	vec1[0]=x1;vec1[1]=y1;vec1[2]=z1;
 	vec2[0]=x2;vec2[1]=y2;vec2[2]=z2;
 	Real dist=(vec1-vec2).length();
 	R2=numeric::inverse(R2);
 	Real angle=DEG2RAD*R2ang(R1*R2);
 	Real transform_dist=angle*radius+dist;
-	TR << "x1: " << x1 << "y1: " << y1 <<"z1: " << z1 << std::endl;
-	TR << "x2: " << x1 << "y2: " << y1 <<"z2: " << z1 << std::endl;
-	TR << "Angle: " << angle << std::endl;
-	TR << "Transform Distance: " << transform_dist << std::endl;
+
 	return transform_dist;
 }
-// TO DO: align on principal axes
+
+
+// TO DO: also align on principal axes to make bounding box as small as possible
 numeric::xyzVector<Real>
 CrystDock::center_pose_at_origin( Pose & pose ) {
 	numeric::xyzVector<Real> com(0,0,0);
@@ -1154,42 +1137,24 @@ CrystDock::dump_transformed_pdb( Pose pose, InterfaceHit ih, UniformRotationSamp
 	}
 
 	if (compact_){
-  std::ofstream matrix;
-  std::string matrixname = basename + std::string(".matrix");
-  matrix.open(matrixname.c_str(), std::ios::out | std::ios::app);
-  matrix << outname<<"\n";
-  matrix << "  score = " << ih.score << "\n";
-  matrix << "Rotation matrix: \n";
-  matrix << R.xx() << " " << R.xy() << " " << R.xz() << "\n";
-  matrix << R.yx() << " " << R.yy() << " " << R.yz() << "\n";
-  matrix << R.zx() << " " << R.zy() << " " << R.zz() << "\n";
-  matrix << "Transformation Matrix: \n";
-  matrix << T[0] << " "<< T[1]<<" "<<T[2]<<std::endl;
-  matrix.close();
+		std::ofstream matrix;
+		std::string matrixname = basename + std::string(".matrix");
+		matrix.open(matrixname.c_str(), std::ios::out | std::ios::app);
+		matrix << outname<<"\n";
+		matrix << "  score = " << ih.score << "\n";
+		matrix << "Rotation matrix: \n";
+		matrix << R.xx() << " " << R.xy() << " " << R.xz() << "\n";
+		matrix << R.yx() << " " << R.yy() << " " << R.yz() << "\n";
+		matrix << R.zx() << " " << R.zy() << " " << R.zz() << "\n";
+		matrix << "Transformation Matrix: \n";
+		matrix << T[0] << " "<< T[1]<<" "<<T[2]<<std::endl;
+		matrix.close();
   }
   else{
-  TR<<"dumping output " << outname <<std::endl;
-  TR<<"base"<<basename<<std::endl;
-	pose.apply_transform_Rx_plus_v( R,T );
-	pose.dump_pdb( outname );
+		pose.apply_transform_Rx_plus_v( R,T );
+		pose.dump_pdb( outname );
 	}
 
-
-	// debug transforms
-	// if (debug_ || debug_exact_) {
-	// 	for (int i=1; i<=(int)ih.iinfo.size(); ++i) {
-	// 		std::ostringstream oss2;
-	// 		oss2 << outname << "__" << i << ".pdb";
-	// 		R = c2i_*ih.iinfo[i].R_*i2c_;
-	// 		T = i2c_*numeric::xyzVector<Real>(
-	// 				(Real)grid_[0]*ih.iinfo[i].T_[0],
-	// 				(Real)grid_[1]*ih.iinfo[i].T_[1],
-	// 				(Real)grid_[2]*ih.iinfo[i].T_[2]);
-	// 		Pose poseCopy = pose;
-	// 		poseCopy.apply_transform_Rx_plus_v( R,T );
-	// 		poseCopy.dump_pdb( oss2.str() );
-	// 	}
-	// }
 }
 
 // nearest-neighbor interpolation subject to grid-space transform
@@ -2027,7 +1992,7 @@ CrystDock::apply( Pose & pose) {
 		utility::vector1< std::string > temp_out_names= utility::split( base_name );
 		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 		base_name = out_name.base();
-		InterfaceHit ih(cb_score, 0.0,0.0,0.0, 0, utility::vector1<SingleInterface>() );
+		InterfaceHit ih(cb_score, 0.0,0.0,0.0, 0 );
 		std::string outname = base_name+option[ out::suffix ]()+"_"+right_string_of( 1, 8, '0' )+".pdb";
 		dump_transformed_pdb( pose, ih, urs, outname, base_name );
 
@@ -2054,7 +2019,7 @@ CrystDock::apply( Pose & pose) {
 			std::ostringstream oss1; oss1 << "rot"<<ctr<<".mrc";
 			writeMRC( r_rho_ca, oss1.str(), false, true );
 			std::ostringstream oss2; oss2 << "rot"<<ctr<<".pdb";
-			dump_transformed_pdb( pose, InterfaceHit( 0.,0.,0.,0., ctr, utility::vector1<SingleInterface>() ), urs, oss2.str(),"null_base_name" );
+			dump_transformed_pdb( pose, InterfaceHit( 0.,0.,0.,0., ctr ), urs, oss2.str(),"null_base_name" );
 		}
 
 		if (self_ca >= maxclash) {
@@ -2163,7 +2128,7 @@ CrystDock::apply( Pose & pose) {
 
 				// get_interface_score populates iinfo
 				//    then computes the weakest connection necessary to construct the lattice
-				utility::vector1<SingleInterface> iinfo; // = p1_interface_map;
+				utility::vector1<SingleInterface> iinfo;
 				numeric::xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
 				xyz = i2c_*xyz;
 
@@ -2172,7 +2137,7 @@ CrystDock::apply( Pose & pose) {
 
 				if (score_xyz >= mininterface_) {
 					nconnected++;
-					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], ctr, iinfo ) );
+					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], ctr ) );
 				}
 			}
 		}
