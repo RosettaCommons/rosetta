@@ -106,7 +106,7 @@ public:
 	}
 
 	// This should get cut down -- right now I'm doing this to test issues with the integration test.
-	// As might be expected from minimization, this shows sensitivity to platform, \
+	// As might be expected from minimization, this shows sensitivity to platform,
 	// having different results on the test server Mac clang build.
 	void DISABLED_min_rotamers() {
 		using namespace protocols::MakeRotLib;
