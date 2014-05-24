@@ -343,7 +343,7 @@ SymmetricConformation::set_bond_length(
 }
 
 
-	/// JUMPS
+/// JUMPS
 void
 SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const & new_jump )
 {
@@ -370,7 +370,6 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 	}
 }
 
-// This doesn't work with
 void
 SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const & new_jump )
 {
@@ -554,6 +553,8 @@ SymmetricConformation::set_xyz(
 	// this is potentially dangerous but may be useful
 	if ( id.rsd() > symm_info_->num_total_residues_without_pseudo() ) {
 		Conformation::set_xyz( id, position );
+		TR<< "***WARN*** XYZ set vrt!" << std::endl;
+		Tsymm_.clear();
 		return;
 	}
 
@@ -595,8 +596,10 @@ SymmetricConformation::batch_set_xyz(
 		PointPosition position=positions[i], parent_pos;
 
 		if ( id.rsd() > symm_info_->num_total_residues_without_pseudo() ) {
+			TR<< "***WARN*** XYZ batch set vrt!" << std::endl;
 			ids_with_symm.push_back( id );
 			positions_with_symm.push_back( position );
+			Tsymm_.clear();
 		} else {
 			if ( !symm_info_->bb_is_independent( id.rsd() ) ) {
 				TR.Debug << "SymmetricConformation::set_xyz setting a dependent XYZ; remapping to its parent" << std::endl;

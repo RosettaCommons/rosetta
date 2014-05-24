@@ -259,8 +259,6 @@ HybridizeProtocol::init() {
 	  option[ corrections::score::hb_fade_energy ].value( false );
 	  option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( false );
 	  option[ corrections::score::hb_sp2_outer_width ].value( 0.33333 );
-	  // option[ corrections::score::lj_hbond_hdis ].value( 1.95 );
-	  // option[ corrections::score::lj_hbond_OH_donor_dis ].value( 3.0 );
 	  option[ score::hbond_params ].value( "score12_params" );
 	}
 
@@ -280,8 +278,6 @@ HybridizeProtocol::init() {
 	  option[ corrections::score::hb_fade_energy ].value( true );
 	  option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( true );
 	  option[ corrections::score::hb_sp2_outer_width ].value( 0.357 );
-	  // option[ corrections::score::lj_hbond_hdis ].value( 1.75 );
-	  // option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
 	  option[ score::hbond_params ].value( "sp2_elec_params" );
 	}
 
@@ -1072,7 +1068,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_nofragbias( nofragbias_ );
 			cart_hybridize->set_seqfrags_only( seqfrags_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
-			//cart_hybridize->set_movable_region( allowed_to_move_ );
 			cart_hybridize->set_skip_long_min( skip_long_min_ );
 
 			// finally run stage 2
@@ -1115,7 +1110,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// STAGE 3: RELAX
 		if (batch_relax_ > 0) {
-
 			// set disulfides before going to FA
 			if (disulf_file_.length() > 0) {
 				// manual disulfide
@@ -1180,14 +1174,12 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					relax_prot.min_type("lbfgs_armijo_nonmonotone");
 					relax_prot.set_force_nonideal(true);
 					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
-				  //relax_prot.set_movemap(mm);
 
 					// need to use a packer task factory to handle poses with different disulfide patterning
 					core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
 					tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 					tf->push_back( new core::pack::task::operation::IncludeCurrent );
 					tf->push_back( new core::pack::task::operation::RestrictToRepacking );
-					//tf->push_back( new core::pack::task::operation::NoRepackDisulfides );
 					relax_prot.set_task_factory( tf );
 
 					// notice! this assumes all poses in a set have the same constraints!

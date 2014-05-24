@@ -169,7 +169,7 @@ BinarySilentStruct::fill_struct(
                 int anchor_conid = (int) pose.residue(ires).connect_map(icon).connid();
                 Size anchor_atom_num = pose.residue(anchor_rsd).residue_connection( anchor_conid ).atomno();
                 core::id::NamedAtomID atom2(pose.residue_type(anchor_rsd).atom_name(anchor_atom_num), anchor_rsd);
-                
+
                 if (ires == anchor_rsd+1) {
                     if (icon == (int) pose.residue_type(ires).lower_connect_id()) {
                         if (anchor_conid == (int) pose.residue_type(anchor_rsd).upper_connect_id()) {
@@ -182,7 +182,7 @@ BinarySilentStruct::fill_struct(
             }
         }
     }
-    
+
 	fold_tree_ = pose.fold_tree();
 	jumps_.clear();
 	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
@@ -583,7 +583,7 @@ void BinarySilentStruct::fill_pose (
 
 		pose.conformation().declare_chemical_bond(res1, atom1, res2, atom2);
     }
-    
+
 	//fpd ???
 	pose.energies().clear();
 
@@ -703,7 +703,7 @@ void BinarySilentStruct::print_conformation(
 
 	// sequence
 	output << "ANNOTATED_SEQUENCE: " << sequence() << " " << decoy_tag() << "\n"; //chu print annotated_sequence per decoy
-    
+
 	//lin print out the SYMMETRY_INFO line here
 	if( is_symmetric() ) {
 		output << *symmetry_info() << ' ' << decoy_tag() << "\n";

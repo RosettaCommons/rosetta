@@ -223,16 +223,6 @@ CartesianMinimizerMap::setup(
 		} // if ( chi_move )
 	} // i=1,n_res
 
-	// temporarily hack, control single atom to be minimized
-	for (kinematics::MoveMap::DOF_ID_Map::const_iterator i_dof=mm.dof_id_begin(), i_end=mm.dof_id_end(); i_dof!=i_end; ++i_dof) {
-		// go through all the DOF-ID in the Movemap
-		if (i_dof->first.type() >= id::RB1 && (i_dof->second) && atom_indices_[i_dof->first.atom_id()]==0 ) {
-			// if the DOF has rigid body type and has not been included yet
-			moving_atoms_.push_back( i_dof->first.atom_id() );
-			atom_indices_[ i_dof->first.atom_id() ] = moving_atoms_.size();
-		}
-	}
-
 	/////////////////////
 	// get a list of torsional DOFs which are implicitly moved by these xyzs
 	//TODO: be smarted about setting input movemap so we dont have to check every torsion later

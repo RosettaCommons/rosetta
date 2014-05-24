@@ -367,12 +367,17 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 	}
 
 	// xyz copy fragment to pose
+  utility::vector1< core::id::AtomID > ids;
+	utility::vector1< numeric::xyzVector<core::Real> > coords;
+
 	for (int i=(int)frag.start(); i<=(int)frag.stop(); ++i) {
 		for (int j=1; j<=(int)templ.residue(i).natoms(); ++j) {
 			core::id::AtomID src(j,i), tgt(j, templ.pdb_info()->number(i));
-			pose.set_xyz( tgt, postT + (R*(templ.xyz( src )-preT)) );
+			ids.push_back(tgt);
+			coords.push_back( postT + (R*(templ.xyz( src )-preT)) );
 		}
 	}
+	pose.batch_set_xyz(ids, coords);
 }
 
 
@@ -481,12 +486,17 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 
 	// apply rotation to ALL atoms
 	// x_i' <- = R*x_i + com1;
+  utility::vector1< core::id::AtomID > ids;
+	utility::vector1< numeric::xyzVector<core::Real> > coords;
+
 	for ( Size i = 0; i < len; ++i ) {
 		for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
 			core::id::AtomID id( j, start+i );
-			pose.set_xyz( id, R * ( pose_copy.xyz(id) - com2) + com1 );
+			ids.push_back(id);
+			coords.push_back( R * ( pose_copy.xyz(id) - com2) + com1 );
 		}
 	}
+	pose.batch_set_xyz(ids, coords);
 }
 
 
@@ -813,7 +823,6 @@ sampler:
 				mc->show_scores();
 				mc->show_counters();
 			}
-
 		}
 		mc->recover_low(pose);
 	}
@@ -875,22 +884,6 @@ CartesianHybridize::parse_my_tag(
 		set_scorefunction( (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );
 	}
 
-	//task operations
-    /*
-    allowed_to_move_.clear();
-	allowed_to_move_.resize(pose.total_residue(),true);
-	if( tag->hasOption( "task_operations" ) ){
-		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
-		core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-		for( core::Size resi = 1; resi <= get_num_residues_prot(pose); ++resi ){
-			if( task->residue_task( resi ).being_designed() || task->residue_task( resi ).being_packed())
-				allowed_to_move_[resi]=true;
-    		else
-				allowed_to_move_[resi]=false;
-		}
-	}
-	*/
-
 	if( tag->hasOption( "no_global_frame" ) )
 		set_no_global_frame( tag->getOption< bool >( "no_global_frame" ) );
 	if( tag->hasOption( "linmin_only" ) )
@@ -905,8 +898,8 @@ CartesianHybridize::parse_my_tag(
     residue_sample_abinitio_.resize(hybridize_setup_->nres_tgt_asu(), true);
 
     utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
-	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+		utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
+		for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
         // per-residue control
         if ( (*tag_it)->getName() == "DetailedControls" ) {
             if( (*tag_it)->hasOption( "task_operations" ) ){

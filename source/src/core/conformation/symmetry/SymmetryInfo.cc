@@ -911,6 +911,8 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 				symminfo.last_indep_residue_ = i;
 	}
 
+	symminfo.update_score_multiply_factor();
+
 	return s;
 }
 
