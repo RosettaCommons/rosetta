@@ -964,7 +964,7 @@ SymmetricConformation::detect_disulfides()
 				continue;
 			}
 
-			Distance dist = ii_res.atom( ii_sg_atomno ).xyz().distance(
+			Distance dist = ii_res.atom( ii_res.atom_index( distance_atom ) ).xyz().distance(
 				jj_res.atom( jj_res.atom_index( distance_atom )).xyz() );
 			if ( best_neighbor == 0 || dist < best_match ) {
 				best_neighbor = jj_resid;
