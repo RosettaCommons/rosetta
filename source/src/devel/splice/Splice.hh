@@ -213,7 +213,8 @@ public:
 
 	void rb_adjust_template( core::pose::Pose const & pose ) const; // adjust the template_pose_ according the rb state of the current pose (if rb_sensitive is on)
 	void protein_family( std::string const s) {protein_family_=s;}; //setter of the protein_family tag option
-	core::Size chain_num(){return chain_num_;};
+	core::Size chain_num()const {return chain_num_;};
+	void chain_num( core::Size const c ) {chain_num_ = c;};
 
 	bool skip_alignment() const{ return skip_alignment_; }
 	void skip_alignment( bool const b ){ skip_alignment_ = b; }
@@ -287,7 +288,7 @@ private:
 	bool dbase_iterate_; //dflt false;
 	bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
 	bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
-	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)    
+	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)
 	bool first_pass_; // dflt true;
 
 	// indices to the subset of the dbase library over which multiple calls iterate
