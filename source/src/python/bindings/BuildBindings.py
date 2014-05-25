@@ -316,7 +316,7 @@ def main(args):
         shutil.copytree(d, dest)
 
     # Copy files
-    for f in 'TestBindings.py SetPyRosettaEnvironment.sh'.split(): shutil.copy(f, os.path.join(bindings_path, '../'+f) )
+    for f in 'TestBindings.py SetPyRosettaEnvironment.sh PyMOLPyRosettaServer.py'.split(): shutil.copy(f, os.path.join(bindings_path, '../'+f) )
 
     bindings_config = dict(utility=True, basic=False, numeric=False, core=False, protocols=False, low_memory_mode=False)
     if not Options.utility_only:
