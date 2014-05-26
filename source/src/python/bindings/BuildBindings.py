@@ -1007,7 +1007,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     print 'Using pre_generated_sources:', pre_generated_sources
 
     # copy svn_version file from pre-generated sources
-    shutil.copy2(pre_generated_sources + '/svn_version.cc', binding_source_path+'/../../core/svn_version.cc')
+
+    shutil.copy2( os.path.join(pre_generated_sources, 'svn_version.cc'), os.path.join(binding_source_path, '../../core/svn_version.cc') )
 
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
@@ -1704,7 +1705,8 @@ class ModuleBuilder:
         execute("Linking...", linker_cmd % linker_dict)
 
 
-def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+
+def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path):
     ''' Non recursive build buinding for given dir name, and store them in dest.
         path - relative path to namespace
         dest - path to root file destination, actual dest will be dest + path
@@ -1742,16 +1744,16 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
             continue  # do not exclude anything...
 
-        if h in IncludeDict:
-            #print 'IncludeDict[%s] --> %s' % (h, IncludeDict[h])
-            if not IncludeDict[h][0]:
-                print "Excluding header:", h
-                headers.remove(h)
+        # if h in IncludeDict:
+        #     #print 'IncludeDict[%s] --> %s' % (h, IncludeDict[h])
+        #     if not IncludeDict[h][0]:
+        #         print "Excluding header:", h
+        #         headers.remove(h)
 
-        else:
-            print "Excluding new header:", h
-            headers.remove(h)
-            new_headers[h] = (False, 999, [])
+        # else:
+        #     print "Excluding new header:", h
+        #     headers.remove(h)
+        #     new_headers[h] = (False, 999, [])
 
     # Temporary injecting Mover in to protocols level
     #if path == 'protocols': headers.insert(0, 'protocols/moves/Mover.hh')
