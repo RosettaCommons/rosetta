@@ -966,7 +966,7 @@ def get_vc_compile_options():
         # adding /bigobj
         # Win32: return common + ' /bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
         # Win64: removing /Oi, ---- Adding /GL  <-- scratch that  /GL seems to enable gloabal optimization which make linking super slow...
-        return common + ' /bigobj /Oi /O2 /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
+        return common + ' /bigobj /Oi /O2 /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo'
 
 def get_vc_link_options():
     #return 'zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'
@@ -980,7 +980,7 @@ def get_vc_link_options():
 def get_windows_compile_command_line(source, output, include='', define=''):
     option_symbol = '/' if Options.compiler=='cl' else '-'
 
-    if Options.compiler=='cl': res, out = 'cl ' + get_vc_compile_options(), '/Fo{0} /EHsc'.format(output)
+    if Options.compiler=='cl': res, out = 'cl ' + get_vc_compile_options(), '/Fo{0} /EHsc'.format(output) + ('' if source.endswith('.c') else ' /TP')
     else: res, out = Options.compiler + ' -O3 -DNDEBUG -DBOOST_NO_MT -DPYROSETTA -DWIN_PYROSETTA', '-o {0}'.format(output)  # note: try -finline-functions  if you got error about too-many-sections
 
     res += ' ' + option_symbol + 'c ' +  source
@@ -1036,10 +1036,11 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
                                                                 define='WIN32 SQLITE_DISABLE_LFS SQLITE_OMIT_LOAD_EXTENSION SQLITE_THREADSAFE=0 CPPDB_EXPORTS'
                                                                        ' CPPDB_DISABLE_SHARED_OBJECT_LOADING CPPDB_DISABLE_THREAD_SAFETY CPPDB_WITH_SQLITE3'
                                                                        ' CPPDB_LIBRARY_PREFIX=\\"lib\\" CPPDB_LIBRARY_SUFFIX=\\".dylib\\" CPPDB_SOVERSION=\\"0\\" '
-                                                                       ' NDEBUG',
+                                                                       ' CPPDB_MAJOR=0 CPPDB_MINOR=3 CPPDB_PATCH=0 CPPDB_VERSION=\\"0.3.0\\"'
+                                                                       ' _CONSOLE _UNICODE UNICODE NDEBUG',
                                                                 )
-                # not yet ported, do we need this? " /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /D /D
-                # ' /D /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"'
+                # not yet ported, do we need this? " /D "" /D "" /D "" /D /D
+                # ' /D /D'
                 # DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA  '  '
 
                 _SC_.execute('Compiling {0}'.format(s), command_line, return_= 'tuple' if Options.continue_ else False)
