@@ -17,6 +17,8 @@
 
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
+#include <string>
+
 namespace core {
 namespace chemical {
 namespace sdf {

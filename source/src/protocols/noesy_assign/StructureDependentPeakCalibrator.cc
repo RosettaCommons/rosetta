@@ -43,6 +43,13 @@ using namespace basic;
 //using namespace basic::options;
 //using namespace basic::options::OptionKeys;
 
+
+
+#ifdef WIN32
+double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
+#endif
+
+
 namespace protocols {
 namespace noesy_assign {
 
@@ -154,7 +161,7 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			(*it)->set_eliminated_due_to_dist_violations( violated > ( params.nr_conformers_violatable_*structures_.size() ) );
 			std::ostringstream elim_msg;
 			std::sort( distance_deltas.begin(), distance_deltas.end() );
-			core::Size median_position( lrint( 0.5*distance_deltas.size()+0.5 ) );
+			core::Size median_position( round( 0.5*distance_deltas.size()+0.5 ) );
 			elim_msg << violated << " ("<<distance_deltas.size()<<") violated by >" << distance_deltas[median_position] << "A (" << params.dcut_ << "A) ";
 			(*it)->set_elimination_comment( elim_msg.str() );
 		} else {  //local dist viol
@@ -164,8 +171,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 			//find smallest interval that fits 99% of the deltas
 			//with default setting of 99% this is basically the length difference between shortest and longest distance
-			Size const num_element_cluster( lrint( 1.0*distance_deltas.size() * params.local_distviol_range_  ) );
-			Size const low_quartil_pos( lrint( 1.0*distance_deltas.size()*0.25 ) );
+			Size const num_element_cluster( round( 1.0*distance_deltas.size() * params.local_distviol_range_  ) );
+			Size const low_quartil_pos( round( 1.0*distance_deltas.size()*0.25 ) );
 			Real const low_quartil_dist( distance_deltas[ low_quartil_pos ]+(*it)->distance_bound() );
 			tr.Debug << "peak: " << (*it)->peak_id() << " " << (*it)->filename() << " check " << num_element_cluster << " of a total " << distance_deltas.size() << " distances for max-extension " << std::endl;
 			Real max_extension( 1000 );
@@ -183,8 +190,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 				tr.Debug << num_element_cluster << " distances are in an interval of only " << max_extension << " with a Q1 dist of " << low_quartil_dist << std::endl;
 				//get extension between high and low.
-				//			Size const ind_low_5( 1+lrint( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
-				//			Size const ind_high_5( lrint( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
+				//			Size const ind_low_5( 1+round( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
+				//			Size const ind_high_5( round( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
 				//			Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
 
 				//			tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: "

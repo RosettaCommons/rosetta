@@ -20,6 +20,14 @@
 #include <limits>
 #include <cmath>
 
+
+#ifdef WIN32
+namespace std {
+	int isnan(double x) { return _isnan(x); }
+    int isinf(double x) { return !_finite(x); }
+}
+#endif
+
 namespace utility {
 
 	/// @brief Get a numeric value for Size that represents an "undefined" value
@@ -43,7 +51,7 @@ namespace utility {
 	/// @brief Check if a Real is undefined (i.e has the same value as utility::get_undefined_real() )
 	inline
 	bool is_undefined( platform::Real const & val) {
-		return std::isnan( val ) || std::isinf( val );
+return std::isnan( val ) || std::isinf( val );
 	}
 
 

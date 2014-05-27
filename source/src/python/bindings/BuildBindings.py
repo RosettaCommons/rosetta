@@ -997,8 +997,6 @@ def get_windows_link_command_line(source, output):
 def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     ''' bypassing scones and build rosetta on windows native
     '''
-
-    #print '______________', build_dir
     pre_generated_sources = os.path.abspath(bindings_path + '/../../../../cross_compile' )  # bindings_path
     pre_generated_sources = os.path.join(pre_generated_sources, 'monolith' if Options.monolith else 'namespace')
     pre_generated_sources = os.path.join(pre_generated_sources, 'debug' if Options.debug else 'release')

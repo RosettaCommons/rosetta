@@ -34,7 +34,7 @@ Elements
 elements_from_name(std::string name) {
 	std::map< std::string, Elements >::const_iterator iter = name2element().find( name );
 	if ( iter == name2element().end() ) {
-		if( name == "X" or name == "Z" ) { // Special case for special Rosetta atoms.
+		if( name == "X" || name == "Z" ) { // Special case for special Rosetta atoms.
 			return UnknownElement;
 		}
 		utility_exit_with_message( "unrecognized element  " + name );
@@ -196,5 +196,3 @@ utility::vector0< std::string > setup_element2name() {
 }
 }
 }
-
-
