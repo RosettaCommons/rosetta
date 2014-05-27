@@ -580,9 +580,10 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 
 	if( tag->hasOption( "use_sidechain_neighbors" ) ) {
 		srbl_->use_sidechain_neighbors( tag->getOption< bool >( "use_sidechain_neighbors" ) );
-
-		srbl_->sasa_core( 5.2);
-		srbl_->sasa_surface( 2.0 );
+		if (srbl_->use_sidechain_neighbors()) {
+			srbl_->sasa_core( 5.2);
+			srbl_->sasa_surface( 2.0 );
+		}
 
 	}
 
