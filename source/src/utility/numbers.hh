@@ -68,7 +68,7 @@ namespace utility {
 
 	inline
 	platform::Real round( platform::Real const & val) {
-		return round(val);
+		return ::round(val);
 	}
 } // utility
 

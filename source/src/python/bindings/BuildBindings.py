@@ -299,14 +299,12 @@ def main(args):
     print 'Bindings path: {0}'.format(bindings_path)
 
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
-    #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
-    for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
 
     if Options.cross_compile:
         #bindings_path = os.path.abspath('rosetta.windows')
         #if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
         execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
-        shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
+        #shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
 
     # Copy dirs and files
@@ -347,6 +345,9 @@ def main(args):
 
     if options.BuildMiniLibs:
         prepareMiniLibs(mini_path, bindings_path, binding_source_path=binding_source_path)
+
+    #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
+    for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
 
     os.chdir( './../../' )
 
@@ -1006,7 +1007,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
 
     # copy svn_version file from pre-generated sources
 
-    shutil.copy2( os.path.join(pre_generated_sources, 'svn_version.cc'), os.path.join(binding_source_path, '../../core/svn_version.cc') )
+    #shutil.copy2( os.path.join(pre_generated_sources, 'svn_version.cc'), os.path.join(binding_source_path, '../../core/svn_version.cc') )
 
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
