@@ -46,6 +46,9 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
+
+#include <utility/numbers.hh>
+
 using core::Real;
 using core::Size;
 using core::pose::Pose;
@@ -125,9 +128,9 @@ namespace protein {
 				all_rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose_op, heavy_map, calc_rms_res );
 			}
 
-			if ( !std::isnan( rmsd ) ) s.add_energy( "rms", rmsd );
+			if ( !utility::is_nan( rmsd ) ) s.add_energy( "rms", rmsd );
 			s.add_energy( "all_rms", all_rmsd );
-			if ( !std::isnan( backbone_rmsd ) ) s.add_energy( "backbone_rms", backbone_rmsd );
+			if ( !utility::is_nan( backbone_rmsd ) ) s.add_energy( "backbone_rms", backbone_rmsd );
 		}
 
     static const SilentFileData silent_file_data;

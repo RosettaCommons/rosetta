@@ -23,9 +23,11 @@
 
 #ifdef WIN32
 namespace std {
-	int isnan(double x) { return _isnan(x); }
-    int isinf(double x) { return !_finite(x); }
+	inline int isnan(double x) { return _isnan(x); }
+    inline int isinf(double x) { return !_finite(x); }
+
 }
+	inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
 #endif
 
 namespace utility {
@@ -51,10 +53,23 @@ namespace utility {
 	/// @brief Check if a Real is undefined (i.e has the same value as utility::get_undefined_real() )
 	inline
 	bool is_undefined( platform::Real const & val) {
-return std::isnan( val ) || std::isinf( val );
+		return std::isnan( val ) || std::isinf( val );
 	}
 
+	inline
+	bool is_nan( platform::Real const & val) {
+		return std::isnan( val );
+	}
 
-} // numeric
+	inline
+	bool is_inf( platform::Real const & val) {
+		return std::isinf( val );
+	}
+
+	inline
+	platform::Real round( platform::Real const & val) {
+		return round(val);
+	}
+} // utility
 
 #endif
