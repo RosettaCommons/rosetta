@@ -173,6 +173,14 @@ public:
 	PointPosition
 	apply_transformation( PointPosition Xin, core::Size residfrom, core::Size residto );
 
+	/// @brief Remap coordinate X from resid i's frame to resid j's frame
+	PointPosition
+	apply_transformation_norecompute( PointPosition Xin, core::Size residfrom, core::Size residto ) const;
+
+	// @brief force recomputation of Tsymm_'s from the current conformation
+	void
+	recalculate_transforms( );
+
 	/// @brief Symmetric set_xyz
 	virtual void
 	set_xyz( AtomID const & id, PointPosition const & position );
@@ -228,10 +236,6 @@ private:
 	// utility function gets the nearest upstream virtual
 	core::Size
 	get_upstream_vrt( core::Size seqpos ) const;
-
-	// force recomputation of Tsymm_'s from the current conformation
-	void
-	recalculate_transforms( );
 
 #ifdef USEBOOSTSERIALIZE
 	friend class boost::serialization::access;

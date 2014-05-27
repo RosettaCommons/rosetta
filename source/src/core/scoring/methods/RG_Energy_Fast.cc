@@ -33,6 +33,11 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pose/symmetry/util.hh>
+
 
 
 // C++
@@ -219,6 +224,14 @@ RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 		mindata.rg += v.distance_squared( mindata.com );
 	}
 	mindata.rg = sqrt( mindata.rg / (mindata.nres_scored - 1) );
+
+	// symmetry-specific code
+	// since it is a whole-structure energy, special treatment is needed to make sure this is computed correctly
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		core::conformation::symmetry::SymmetricConformation &symmconf =
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
+		symmconf.recalculate_transforms(); // this is needed by deriv calcs
+	}
 }
 
 
@@ -239,15 +252,32 @@ RG_Energy_Fast::eval_atom_derivative(
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
 
-	if (atmid != rsd_i.nbr_atom())
-		return;
+	if (atmid != rsd_i.nbr_atom()) return;
 
 	numeric::xyzVector<core::Real> drg_dx = (X-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
 
+	//fpd symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	core::Size nsubunits = 1;
+	Vector f1(0,0,0), f2(0,0,0);
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		core::conformation::symmetry::SymmetricConformation const &symmconf =
+			dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
+		symminfo = symmconf.Symmetry_Info();
+		if (symminfo->bb_is_independent( resid ) ) {
+			utility::vector1< core::Size > bbclones = symminfo->bb_clones( resid );
+			for (int i=1; i<=(int)bbclones.size(); ++i) {
+				numeric::xyzVector<core::Real> Xsymm = pose.xyz(id::AtomID(atmid, bbclones[i]));
+				numeric::xyzVector<core::Real> drg_dxsymm = (Xsymm-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
+				drg_dx += symmconf.apply_transformation_norecompute( drg_dxsymm, bbclones[i], i );
+			}
+		}
+		drg_dx /= symminfo->score_multiply_factor();
+	}
+	f2 = ( drg_dx );
 	numeric::xyzVector<core::Real> atom_x = X;
-	numeric::xyzVector<core::Real> const f2( drg_dx );
 	numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
-	Vector const f1( atom_x.cross( atom_y ) );
+	f1 = ( atom_x.cross( atom_y ) );
 
 	F1 += weights[ rg ] * f1;
 	F2 += weights[ rg ] * f2;

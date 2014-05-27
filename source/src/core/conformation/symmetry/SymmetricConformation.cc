@@ -539,6 +539,25 @@ SymmetricConformation::apply_transformation(
 	return Xout;
 }
 
+//  Remap coordinate X from resid i to j
+PointPosition
+SymmetricConformation::apply_transformation_norecompute(
+		PointPosition Xin,
+		core::Size residfrom,
+		core::Size residto ) const {
+	runtime_assert(Tsymm_.size() == symm_info_->subunits());
+
+	numeric::HomogeneousTransform< core::Real > const &Tsymm_from
+		= Tsymm_[ symm_info_->subunit_index( residfrom ) ];
+	numeric::HomogeneousTransform< core::Real > const &Tsymm_to
+		= Tsymm_[ symm_info_->subunit_index( residto ) ];
+
+	PointPosition Xout;
+	Xout = (Tsymm_from.inverse() * Xin);
+	Xout = (Tsymm_to * Xout);
+	return Xout;
+}
+
 //  Symmetric set_xyz
 void
 SymmetricConformation::set_xyz(
