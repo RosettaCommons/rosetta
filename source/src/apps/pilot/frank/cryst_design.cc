@@ -128,6 +128,8 @@ OPT_1GRP_KEY(Real, crystdock, cluster_cutoff)
 OPT_1GRP_KEY(Integer, crystdock, expand_rounds)
 OPT_1GRP_KEY(Real, crystdock, random_rotate)
 OPT_1GRP_KEY(Boolean, crystdock, compact)
+OPT_KEY(Integer,  run_i)
+OPT_KEY(Integer,  run_j)
 
 ////////////////////////////////////////////////
 // helper functions
@@ -1082,6 +1084,7 @@ CrystDock::get_transform_distance (InterfaceHit ih_vec, InterfaceHit ih_vec_clus
 	R2=numeric::inverse(R2);
 	Real angle=DEG2RAD*R2ang(R1*R2);
 	Real transform_dist=angle*radius+dist;
+
 	return transform_dist;
 }
 
@@ -1701,15 +1704,15 @@ CrystDock::get_interface_score(
 
 	// stopping conditions
 	if (debug_ || debug_exact_) {
-		//TR << "[EXPAND] Round 0: have " << allInterfaces.size() << " subunits" << std::endl;
+		TR << "[EXPAND] Round 0: have " << allInterfaces.size() << " subunits" << std::endl;
 		for (int i=1; i<=(int)allInterfaces.size(); ++i) {
-			//TR << "model " << i<< std::endl;
-			//TR << "[SCORE=" <<  allInterfaces[i].cb_overlap_ << "] R = ["
-				//<< allInterfaces[i].R_.xx() << "," << allInterfaces[i].R_.xy() << "," << allInterfaces[i].R_.xz() << ";"
-				//<< allInterfaces[i].R_.yx() << "," << allInterfaces[i].R_.yy() << "," << allInterfaces[i].R_.yz() << ";"
-				//<< allInterfaces[i].R_.zx() << "," << allInterfaces[i].R_.zy() << "," << allInterfaces[i].R_.zz()
-				//<< "]";
-			//TR << " T = [" << allInterfaces[i].T_[0] << "," << allInterfaces[i].T_[1] << "," << allInterfaces[i].T_[2] << "]" << std::endl;
+			TR << "model " << i<< std::endl;
+			TR << "[SCORE=" <<  allInterfaces[i].cb_overlap_ << "] R = ["
+				<< allInterfaces[i].R_.xx() << "," << allInterfaces[i].R_.xy() << "," << allInterfaces[i].R_.xz() << ";"
+				<< allInterfaces[i].R_.yx() << "," << allInterfaces[i].R_.yy() << "," << allInterfaces[i].R_.yz() << ";"
+				<< allInterfaces[i].R_.zx() << "," << allInterfaces[i].R_.zy() << "," << allInterfaces[i].R_.zz()
+				<< "]";
+			TR << " T = [" << allInterfaces[i].T_[0] << "," << allInterfaces[i].T_[1] << "," << allInterfaces[i].T_[2] << "]" << std::endl;
 		}
 	}
 
@@ -1998,9 +2001,12 @@ CrystDock::apply( Pose & pose) {
 		return;
 	}
 
-
+	int parallel_i = option[ run_i ]();
+	int parallel_j = option[ run_j ]();
 	for (int ctr=(int)rot_lb; ctr<=(int)rot_ub ; ++ctr) {
-		//TR << "Rotation " << ctr << " of " << urs.nrots() << std::endl;
+		if (ctr%parallel_j != parallel_i%parallel_j) continue;
+
+		TR << "Rotation " << ctr << " of " << urs.nrots() << std::endl;
 		urs.get(ctr, r_local);
 
 		// interface_map:           stores the exact transformation and area of all interfaces > minintarea
@@ -2244,6 +2250,8 @@ try {
 	NEW_OPT(crystdock::cluster_cutoff, "cluster_cutoff", 2.00);
 	NEW_OPT(crystdock::expand_rounds, "expand_rounds", 12);
   NEW_OPT(crystdock::compact, "output transformation matrix only", false);
+  NEW_OPT(run_i, "parallelize i of j", 0);
+  NEW_OPT(run_j, "parallelize i of j", 1);
 
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
