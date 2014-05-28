@@ -579,6 +579,8 @@ def _sub_execute_(function, *args, **kwargs):  # have to be global because of ho
     res = function(*args, **kwargs)
     #pipe.send(res)
     #pipe.close()
+    sys.exit(0)
+
 
 class SubCall:
     ''' Implemention to replace mFork/mWait under Windows. For simplicity we just emulate 'execute' semantics
@@ -604,7 +606,7 @@ class SubCall:
         while self.jobs:
             for j in self.jobs:
                 if not j.process.is_alive():
-                    if j.process.exitcode is None: print 'Something not righ, I got None exit code for terminates subprocess, exiting...'; sys.exit(1)
+                    if j.process.exitcode is None: print 'Something not righ, I got None exit code for terminated subprocess, exiting...'; sys.exit(1)
                     if j.process.exitcode != 0: sys.exit(1)  # must not be None because process should already terminated...
                     self.jobs.remove(j)
 
@@ -995,6 +997,26 @@ def get_windows_link_command_line(source, output):
     else: return Options.compiler + ' ' + ' '.join( [ ' -L' + o for o in Options.L]) + source + ' -lzlibstat -lboost_python-mgw48-mt-1_55 -lboost_system-mgw48-mt-1_55 -lpython27 -lstdc++ -o ' + output
 
 
+def split_obj_file_in_to_chunks(base_file_name, objs):
+    ''' M$ Windows does not allow objs file list to be above 128k (WHO ON EARTH WROTE THAT?????) so we have to split out obj list in to multiple files
+        Write list of objs in to files base_file_name-n while keepinng each file below 128k and return string conaining all written file names prefixed with @
+    '''
+    res = ''
+    line, i = '', 0
+
+    for o in objs:
+        line += o + ' '
+        if len(line) > 65536  or  o == objs[-1]:
+            fname = '{}-{}'.format(base_file_name, i)
+            with file(fname, 'w') as f: f.write(line)
+            line = ''
+            i += 1
+            res += '@' + fname + ' '
+
+    return res
+
+
+
 def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     ''' bypassing scones and build rosetta on windows native
     '''
@@ -1094,12 +1116,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     sources = sum(sources, [])
 
     # M$ Windows does not allow objs file list to be above 128k (WHO ON EARTH WROTE THAT?????) so we have to split out obj list in to multiple files
-    number_of_objs_in_file = 1024;  objs_files = ''
-    objs_list_all = [ sources[i:i+number_of_objs_in_file] for i in range(0, len(sources), number_of_objs_in_file)]
-    for i, objs in enumerate(objs_list_all):
-        fname = 'objs-{0}'.format(i)
-        with file(os.path.join(build_dir, fname), 'w') as f: f.write( ' '.join( [o + '.obj' for o in objs] ) )
-        objs_files += ' @'+fname
+    # number_of_objs_in_file = 1024;  objs_files = ''
+    # objs_list_all = [ sources[i:i+number_of_objs_in_file] for i in range(0, len(sources), number_of_objs_in_file)]
+    # for i, objs in enumerate(objs_list_all):
+    #     fname = 'objs-{0}'.format(i)
+    #     with file(os.path.join(build_dir, fname), 'w') as f: f.write( ' '.join( [o + '.obj' for o in objs] ) )
+    #     objs_files += ' @'+fname
+
+    objs_files = split_obj_file_in_to_chunks( os.path.join(build_dir, 'objs') , [o + '.obj' for o in sources])
 
 
     # Now creating DLL
@@ -1167,13 +1191,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
 
 
     if Options.monolith:
-        bindings_objs_list = os.path.join(bindings_path, 'bindings_objs_list' )
-        with file(bindings_objs_list, 'w') as f:  f.write( ' '.join(bindings_objs) )
-        print 'bindings_objs_list', bindings_objs_list
+        #bindings_objs_list = os.path.join(bindings_path, 'bindings_objs_list' )
+        #with file(bindings_objs_list, 'w') as f:  f.write( ' '.join(bindings_objs) )
+        #print 'bindings_objs_list', bindings_objs_list
+        bindings_objs_list=split_obj_file_in_to_chunks( os.path.join(bindings_path, 'bindings_objs_list'), bindings_objs)
 
         monolith_static = os.path.join(bindings_path, 'rosetta_and_pyrosetta.lib')
         monolith_pyd = os.path.join(bindings_path, '../rosetta.pyd')
-        command_line = get_windows_link_command_line(source='{objs_files} @{bindings_objs_list}'.format(objs_files=objs_files, bindings_objs_list=bindings_objs_list),
+        command_line = get_windows_link_command_line(source='{objs_files} {bindings_objs_list}'.format(objs_files=objs_files, bindings_objs_list=bindings_objs_list),
                                                      output=monolith_pyd)
         # Ws2_32 is needed because of PyMolMover socket code
 

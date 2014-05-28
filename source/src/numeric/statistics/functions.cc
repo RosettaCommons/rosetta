@@ -16,22 +16,11 @@
 #include <numeric/statistics/functions.hh>
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
+#include <utility/numbers.hh>
 
 #include <cmath>
 #include <cfloat>
 #include <limits>
-
-#if defined(WIN32) || defined(WIN_PYROSETTA)
-#include <float.h>
-#if _MSC_VER > 1700
-#include <amp_math.h>
-#endif
-namespace std {
-	int isnan(double x) { return _isnan(x); }
-    int isinf(double x) { return !_finite(x); }
-}
-double copysign(double x, double y) { return _copysign(x, y); }
-#endif
 
 
 // defines for error functions
@@ -200,7 +189,7 @@ cmplx errf(cmplx z, double relerr)
       else if (fabs(mIm_z2) < 5e-3 && x > -5e-3)
         goto taylor_erfi;
     }
-    else if (std::isnan(x))
+    else if (utility::is_nan(x))
       return C(NaN, y == 0 ? 0 : NaN);
     // don't use complex exp function, since that will produce spurious NaN
     // values when multiplying w in an overflow situation. */
@@ -342,7 +331,7 @@ cmplx Dawson(cmplx z, double relerr) {
       else if (fabs(mIm_z2) < 5e-3)
         goto taylor_realaxis;
     }
-    else if (std::isnan(y))
+    else if (utility::is_nan(y))
       return C(x == 0 ? 0 : NaN, NaN);
     cmplx res = w(-z, relerr) - cexp(mz2);
     return spi2 * C(-cimag(res), creal(res));
@@ -509,8 +498,8 @@ cmplx w(cmplx z, double relerr) {
           double yax = ya / xs;
           double denom = ispi / (xs + yax*ya);
           ret = C(denom*yax, denom);
-        } else if (std::isinf(ya))
-          return ((std::isnan(x) || y < 0) ? C(NaN,NaN) : C(0,0));
+        } else if (utility::is_inf(ya))
+          return ((utility::is_nan(x) || y < 0) ? C(NaN,NaN) : C(0,0));
         else {
           double xya = xs / ya;
           double denom = ispi / (xya*xs + ya);
@@ -563,7 +552,7 @@ cmplx w(cmplx z, double relerr) {
     double prod2ax = 1, prodm2ax = 1;
     double expx2;
 
-    if (std::isnan(y))
+    if (utility::is_nan(y))
       return C(y,y);
 
     // Somewhat ugly copy-and-paste duplication here, but I see significant
@@ -663,9 +652,9 @@ cmplx w(cmplx z, double relerr) {
     }
   }
   else { // x large: only sum3 & sum5 contribute (see above note)
-    if (std::isnan(x))
+    if (utility::is_nan(x))
       return C(x,x);
-    if (std::isnan(y))
+    if (utility::is_nan(y))
       return C(y,y);
 
     ret = exp(-x*x); // |y| < 1e-10, so we only need exp(-x*x) term
@@ -697,7 +686,7 @@ cmplx w(cmplx z, double relerr) {
   }
 finish:
   return ret + C((0.5*c)*y*(sum2+sum3),
-                 (0.5*c)*copysign(sum5-sum4, creal(z)));
+                 (0.5*c)*utility::copysign(sum5-sum4, creal(z)));
 }
 
 /////////////////////////////////////////////////////////////////////////

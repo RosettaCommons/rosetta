@@ -22,12 +22,14 @@
 
 
 #ifdef WIN32
+#include <float.h>
 namespace std {
 	inline int isnan(double x) { return _isnan(x); }
     inline int isinf(double x) { return !_finite(x); }
 
 }
 	inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
+    inline double copysign(double x, double y) { return _copysign(x, y); }
 #endif
 
 namespace utility {
@@ -70,6 +72,12 @@ namespace utility {
 	platform::Real round( platform::Real const & val) {
 		return ::round(val);
 	}
+
+	inline
+	platform::Real copysign(platform::Real const & x, platform::Real const & y) {
+		return ::copysign(x, y);
+	}
+
 } // utility
 
 #endif

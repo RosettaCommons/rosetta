@@ -82,6 +82,8 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
 
+#include <utility/numbers.hh>
+
 // basic c++
 #include <algorithm>	// for avg,min,max
 #include <fstream>
@@ -110,15 +112,11 @@ template <typename T, size_t N> const T* myend  (const T (&a)[N]) { return a+N; 
 // for parse_my_tag
 #include <basic/datacache/DataMap.hh>
 
+#include <utility/numbers.hh>
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
-
-double round(double x)
-{
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5);
-}
-
 #endif
 
 
@@ -4568,7 +4566,7 @@ SandwichFeatures::report_avg_b_factor_CB_at_each_component	(
 
 			statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 
-			Real	rounded_avg_b_factor = round(avg_b_factor_CB_at_each_component);
+			Real	rounded_avg_b_factor = utility::round(avg_b_factor_CB_at_each_component);
 			insert_stmt.bind(1,	rounded_avg_b_factor);
 			insert_stmt.bind(2,	struct_id);
 			insert_stmt.bind(3,	sw_can_by_sh_id);
@@ -6530,9 +6528,9 @@ SandwichFeatures::cal_shortest_dis_between_facing_aro_in_sw (
 		if (all_distinct_sheet_ids[i] == 99999) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
 		}
-		
+
 		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
-			
+
 		if (num_strands_i < min_num_strands_in_sheet_)
 		{
 			continue;
@@ -6544,7 +6542,7 @@ SandwichFeatures::cal_shortest_dis_between_facing_aro_in_sw (
 				continue;
 			}
 			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
-			
+
 			if (num_strands_j < min_num_strands_in_sheet_)
 			{
 				continue;
@@ -6659,9 +6657,9 @@ SandwichFeatures::cal_min_avg_dis_between_sheets_by_cen_res (
 		if (all_distinct_sheet_ids[i] == 99999) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
 		}
-		
+
 		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
-			
+
 		if (num_strands_i < min_num_strands_in_sheet_)
 		{
 			continue;
@@ -6673,7 +6671,7 @@ SandwichFeatures::cal_min_avg_dis_between_sheets_by_cen_res (
 				continue;
 			}
 			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
-			
+
 			if (num_strands_j < min_num_strands_in_sheet_)
 			{
 				continue;
@@ -6725,7 +6723,7 @@ SandwichFeatures::cal_num_of_sheets_that_surround_this_sheet (
 		{
 			continue;
 		}
-		
+
 		Real min_dis_between_sheets_by_cen_res	=	cal_min_dis_between_two_sheets_by_cen_res(struct_id,	db_session,	dssp_pose,	sheet_id,	all_distinct_sheet_ids[i]);
 		if (min_dis_between_sheets_by_cen_res < inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_){
 			num_of_sheets_that_surround_sheet_id++;
@@ -9677,7 +9675,7 @@ SandwichFeatures::report_features(
 		// <end> write resfile automatically
 
 			TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
-			
+
 	}	//	try
 
 	catch ( utility::excn::EXCN_Base const & e )
