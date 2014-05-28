@@ -163,6 +163,7 @@ SandwichFeatures::features_reporter_dependencies() const
 	dependencies.push_back("ResidueFeatures");
 	dependencies.push_back("ProteinResidueConformationFeatures");
 	dependencies.push_back("ResidueSecondaryStructureFeatures");
+	dependencies.push_back("ResidueScoresFeatures");
 	return dependencies;
 } //features_reporter_dependencies()
 
@@ -7236,6 +7237,34 @@ SandwichFeatures::check_whether_sw_by_sh_id_still_alive(
 
 
 
+// see_whether_this_sw_has_SS_bond
+bool
+SandwichFeatures::see_whether_this_sw_has_SS_bond(
+	StructureID struct_id,
+	sessionOP db_session)
+{
+	string select_string =
+	"SELECT\n"
+	"	resNum1 \n"
+	"FROM\n"
+	"	residue_scores_lr_2b\n"
+	"WHERE\n"
+	"	(struct_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	struct_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	bool sw_has_SS_bond = false;
+	while(res.next())
+	{
+		sw_has_SS_bond = true;
+	}
+	return sw_has_SS_bond;
+} //see_whether_this_sw_has_SS_bond
+
+
+
 // identify_sheet_id_by_residue_end
 Size
 SandwichFeatures::identify_sheet_id_by_residue_end(
@@ -7703,6 +7732,8 @@ SandwichFeatures::parse_my_tag(
 
 	exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw", false);
 					//	definition: if true, exclude sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_
+
+	exclude_sandwich_with_SS_bond_ = tag->getOption<bool>("exclude_sandwich_with_SS_bond", false);
 
 
 	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
@@ -8886,16 +8917,35 @@ SandwichFeatures::report_features(
 					);
 
 				if	(exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_	&&	(shortest_dis_between_facing_aro_in_sw	<	4.0))
-						{
-								TR.Info << "This sandwich has an non_canonical_shortest_dis_between_facing_aro_in_sw " <<	endl;
-								TR.Info << "So exclude this sandwich " <<	endl;
-							delete_this_struct_id(
-								struct_id,
-								db_session
-								);
-							return 1;
-							//						chance_of_being_canonical_sw = false;
-						}
+				{
+						TR.Info << "This sandwich has an non_canonical_shortest_dis_between_facing_aro_in_sw " <<	endl;
+						TR.Info << "So exclude this sandwich " <<	endl;
+					delete_this_struct_id(
+						struct_id,
+						db_session
+						);
+					return 1;
+					//						chance_of_being_canonical_sw = false;
+				}
+
+				if	(exclude_sandwich_with_SS_bond_)
+				{
+					bool	this_sw_has_SS_bond	=	see_whether_this_sw_has_SS_bond(
+														struct_id,
+														db_session);
+					if	(this_sw_has_SS_bond)
+					{
+							TR.Info << "This sandwich has S-S bond(s) " <<	endl;
+							TR.Info << "So exclude this sandwich " <<	endl;
+							//since those sandwiches having S-S bond in core tend to have big holes (bad packing score)
+						delete_this_struct_id(
+							struct_id,
+							db_session
+							);
+						return 1;
+					}
+					//						chance_of_being_canonical_sw = false;
+				}
 
 				if (write_AA_kind_files_)
 				{

@@ -851,6 +851,11 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
 
+	bool
+	see_whether_this_sw_has_SS_bond(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
+
 
 	std::string
 	report_turn_type(
@@ -994,6 +999,10 @@ private:
 
 	bool
 	exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_;
+
+	bool
+	exclude_sandwich_with_SS_bond_;
+
 
 	core::Real
 	max_inter_strand_angle_to_not_be_same_direction_strands_;
