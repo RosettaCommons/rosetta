@@ -19,7 +19,6 @@
 
 // Other project headers or inline function headers
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>

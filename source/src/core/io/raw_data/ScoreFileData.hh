@@ -19,7 +19,7 @@
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-
+#include <core/io/raw_data/Raw.fwd.hh>
 #include <core/io/raw_data/RawFileData.hh>
 
 // C++ Headers
@@ -39,7 +39,7 @@ namespace raw_data {
 			ScoreFileData(std::string filename) : filename_(filename) {}
 
 			bool write_struct(
-				const ScoreStruct s,
+				const RawStructOP s,
 				std::map < std::string, core::Real > const & score_map,
                 std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
 			);

@@ -18,7 +18,6 @@
 #include <protocols/canonical_sampling/MetricRecorderCreator.hh>
 
 // Other project headers or inline function headers
-// AUTO-REMOVED #include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
 //Gabe testing
 #include <core/chemical/AA.hh>

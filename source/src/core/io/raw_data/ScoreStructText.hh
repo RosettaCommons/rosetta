@@ -8,13 +8,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/raw_data/ScoreStruct.hh
+/// @file core/io/raw_data/ScoreStructText.hh
 ///
 /// @brief Write out only the scores (equivalent to a scorefile)
 /// @author James Thompson, Monica Berrondo
 
-#ifndef INCLUDED_core_io_raw_data_ScoreStruct_hh
-#define INCLUDED_core_io_raw_data_ScoreStruct_hh
+#ifndef INCLUDED_core_io_raw_data_ScoreStructText_hh
+#define INCLUDED_core_io_raw_data_ScoreStructText_hh
 
 // mini headers
 #include <core/types.hh>
@@ -36,21 +36,21 @@ namespace raw_data {
 
 	/////////////////////////////////////////////////////////////////////////////
 	// holds all the data for a single entry in a silent file
-	class ScoreStruct : public RawStruct {
+	class ScoreStructText : public RawStruct {
 
 	public:
 		// constructor
-		ScoreStruct();
+		ScoreStructText();
 
-		ScoreStruct(
+		ScoreStructText(
 			core::pose::Pose, // pose,
 			std::string tag = "empty_tag"
 		);
 
 		// destructor
-		~ScoreStruct() {}
+		~ScoreStructText() {}
 
-		//ScoreStruct & operator= (ScoreStruct const & src);
+		//ScoreStructText & operator= (ScoreStructText const & src);
 
 
 		/// @brief Fill a Pose with the conformation information in this RawStruct and the FA_STANDARD
@@ -69,7 +69,7 @@ namespace raw_data {
 		virtual Real get_debug_rmsd();
 		virtual void print_conformation( std::ostream& out ) const;
 
-}; // class ScoreStruct
+}; // class ScoreStructText
 
 } // namespace silent
 } // namespace io

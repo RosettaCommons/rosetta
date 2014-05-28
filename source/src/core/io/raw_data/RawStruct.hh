@@ -67,12 +67,13 @@ namespace raw_data {
 
 		/// @brief print out a header line to the given ozstream. In a rosetta++ silent-file, this contained the lines
 		/// SEQUENCE: <protein sequence>\nSCORE: <list of score-types>.
-		void print_header      ( std::ostream& out, std::map < std::string, core::Real > const & score_map, 
+		virtual void print_header( std::ostream& out, std::map < std::string, core::Real > const & score_map, 
                                  std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () ),
                                  bool print_sequence = true ) const;
 		/// @brief print out a SCORE line to the given ozstream.
-		void print_scores      ( std::ostream& out, std::map < std::string, core::Real > const & score_map,
+		virtual void print_scores( std::ostream& out, std::map < std::string, core::Real > const & score_map,
                                  std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () ) ) const;
+
 		virtual void print_conformation( std::ostream& out ) const;
 
 		/// @brief data access methods.

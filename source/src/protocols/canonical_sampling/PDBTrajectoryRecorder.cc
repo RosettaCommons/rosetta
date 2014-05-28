@@ -18,7 +18,7 @@
 #include <protocols/canonical_sampling/PDBTrajectoryRecorderCreator.hh>
 
 // Other project headers or inline function headers
-#include <core/io/raw_data/ScoreStruct.hh>
+#include <core/io/raw_data/ScoreStructText.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
@@ -140,7 +140,7 @@ PDBTrajectoryRecorder::write_model(
 	std::map < std::string, core::Real > score_map;
 	std::map < std::string, std::string > string_map;
 	protocols::jd2::ScoreMap::score_map_from_scored_pose(score_map, pose);
-	core::io::raw_data::ScoreStruct score_struct;
+	core::io::raw_data::ScoreStructText score_struct;
 
 	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count() << std::endl;
 	trajectory_stream_ << "REMARK  99 Trial: " << step_count() << std::endl;

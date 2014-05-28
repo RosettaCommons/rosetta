@@ -590,6 +590,7 @@ Options = Option_Group( '',
 			Option('score_only', 'String', desc="Only output scores, no silent files or pdb files",
 					default="default.sc"),
 			Option( 'scorefile', 'String', desc="Write a scorefile to the provided filename", default="default.sc" ),
+			Option( 'scorefile_format', 'String', desc="Scorefile format: text, json", default="text" ),
 
 			# Silent file options ----------------------------------------------
 			Option( 'silent', 'String',

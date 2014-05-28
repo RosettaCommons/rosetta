@@ -30,7 +30,8 @@ sources = {
 		"RawFileData",
 		"RawStruct",
 		"ScoreFileData",
-		"ScoreStruct",
+		"ScoreStructJSON",
+		"ScoreStructText",
 	],
 	"core/io/sequence_comparation": [
 		"DesignContrast",

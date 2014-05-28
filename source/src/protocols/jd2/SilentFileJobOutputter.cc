@@ -177,18 +177,9 @@ void SilentFileJobOutputter::final_pose(
 		dump_pose( silent_file_, job, pose,  bWriteNoStructures_, -1 /* copy_count */, tag);
 
 	// only write a scorefile if specified by the user
-	using namespace basic::options;
-
 	if ( write_separate_scorefile_ ) {
-		//write here to avoid 2x evaluated for same structure
-		core::io::silent::SilentFileData sfd;
-		sfd.write_silent_struct( *ss, scorefile_name(), true );
+		scorefile(job, pose, "", (tag.empty() ? "" : std::string("_") + tag));
 	}
-
-	//calling dump_pose twice means calling evaluator twice which can be expensive!!
-
-	//	if ( !bWriteNoStructures_ ) dump_pose( scorefile_name(), job, pose, true );
-	//  if (bWriteNoStructures_)  we have already  score-only output ... don't have it redundant
 }
 
 /// @brief this function is intended for saving mid-protocol poses; for example
@@ -219,8 +210,9 @@ void SilentFileJobOutputter::other_pose(
 
 	if ( write_separate_scorefile_ && ss ) {
 		//write here to avoid 2x evaluated for same structure
-		core::io::silent::SilentFileData sfd;
-		sfd.write_silent_struct( *ss, tagged_score_filename, true );
+		//core::io::silent::SilentFileData sfd;
+		//sfd.write_silent_struct( *ss, tagged_score_filename, true );
+		scorefile(job, pose, tag, "", basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
 	}
 
 

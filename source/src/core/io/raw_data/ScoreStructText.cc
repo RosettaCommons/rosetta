@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/raw_data/ScoreStruct.cc
+/// @file core/io/raw_data/ScoreStructText.cc
 ///
 /// @brief Write out only score information
 /// @author Monica Berrondo
@@ -19,7 +19,7 @@
 
 // mini headers
 #include <core/pose/Pose.hh>
-#include <core/io/raw_data/ScoreStruct.hh>
+#include <core/io/raw_data/ScoreStructText.hh>
 
 #include <utility/vector1.hh>
 
@@ -28,38 +28,38 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	ScoreStruct::ScoreStruct() {
+	ScoreStructText::ScoreStructText() {
 		decoy_tag_   = "empty";
 	}
 
-	ScoreStruct::ScoreStruct(
+	ScoreStructText::ScoreStructText(
 		core::pose::Pose, // pose,
 		std::string tag
 	) {
 		// tag information
 		decoy_tag_ = tag;
 	}
-	// @brief Fill a Pose with the data in this ScoreStruct.
-	void ScoreStruct::fill_pose(
+	// @brief Fill a Pose with the data in this ScoreStructText.
+	void ScoreStructText::fill_pose(
 		core::pose::Pose &
 	) {
-//		basic::T("core.io.silent.ScoreStruct") << "Error: don't have a conformation! (called fill_pose())";
+//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation! (called fill_pose())";
 	} // fill_pose
 
-	void ScoreStruct::fill_pose(
+	void ScoreStructText::fill_pose(
 		core::pose::Pose &,
 		core::chemical::ResidueTypeSet const&
 	) {
-//		basic::T("core.io.silent.ScoreStruct") << "Error: don't have a conformation! (called fill_pose())";
+//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation! (called fill_pose())";
 	} // fill_pose
 
 	/// @brief Print the conformation information contained in this object to the given ozstream.
-	void ScoreStruct::print_conformation( std::ostream& ) const {
-//		basic::T("core.io.silent.ScoreStruct") << "Error: don't have a conformation (called print_conformation())!";
+	void ScoreStructText::print_conformation( std::ostream& ) const {
+//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation (called print_conformation())!";
 	} // print_conformation
 
-	Real ScoreStruct::get_debug_rmsd() {
-//		basic::T("core.io.silent.ScoreStruct") << "Error: don't have a conformation (called get_debug_rmsd())!";
+	Real ScoreStructText::get_debug_rmsd() {
+//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation (called get_debug_rmsd())!";
 		return 0;
 	}
 

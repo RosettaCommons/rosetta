@@ -113,7 +113,7 @@ void FileJobOutputter::scorefile(
 
 	core::io::raw_data::ScoreFileData sfd((scorefile.empty() ? scorefile_name_.name() : scorefile));
 	std::map < std::string, core::Real > score_map;
-  std::map < std::string, std::string > string_map;
+	std::map < std::string, std::string > string_map;
 	ScoreMap::score_map_from_scored_pose( score_map, pose );
 
 	// Adds StringReal job info into the score map for output in the scorefile.
