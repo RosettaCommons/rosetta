@@ -89,6 +89,10 @@
 
 #if defined MULTI_THREADED && defined CXX11
 #include <thread>
+#elif defined USE_BOOST_THREAD
+// Boost headers
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
 #endif
 
 namespace protocols {
@@ -653,22 +657,40 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		if (qPosi_to_run[thread].size() >= qPosi_per_thread && thread < max_threads_) ++thread;
 	}
 	utility::vector1<utility::vector1<nonlocal::NonlocalPairOP> > thread_pairs(max_threads_);
+
+#if (defined MULTI_THREADED && defined CXX11) || defined USE_BOOST_THREAD
+
 #if defined MULTI_THREADED && defined CXX11
-	tr.super_mute(true); // lets suppress tracer output when running multi threads
 	utility::vector1<std::thread> threads;
+#elif defined USE_BOOST_THREAD
+	boost::thread_group threads;
+#endif
+	tr.super_mute(true); // lets suppress tracer output when running multi threads
 	for (Size j = 1; j <= max_threads_; ++j) {
 		if (qPosi_to_run[j].size() > 0) {
 			std::cout << "thread: " << j << " - " << qPosi_to_run[j].size() << " positions -";
 			for (Size pos = 1; pos <= qPosi_to_run[j].size(); ++pos) std::cout << " " << qPosi_to_run[j][pos];
 			std::cout << std::endl;
+#if defined MULTI_THREADED && defined CXX11
 			threads.push_back(std::thread(&FragmentPicker::nonlocal_pairs_at_positions, this, qPosi_to_run[j], fragment_size, skip_position, fragment_set, thread_pairs[j]));
+#elif defined USE_BOOST_THREAD
+			threads.create_thread(boost::bind(&FragmentPicker::nonlocal_pairs_at_positions, this, boost::ref(qPosi_to_run[j]), fragment_size, boost::ref(skip_position),
+				boost::ref(fragment_set), boost::ref(thread_pairs[j])));
+#endif
 		}
 	}
+#if defined MULTI_THREADED && defined CXX11
 	for (auto& th : threads) th.join();
+#elif defined USE_BOOST_THREAD
+	threads.join_all();
+#endif
 	tr.super_mute(false);
-#else
+
+#else // (defined MULTI_THREADED && defined CXX11) || defined USE_BOOST_THREAD
+
 	// single thread
 	nonlocal_pairs_at_positions( qPosi_to_run[1], fragment_size, skip_position, fragment_set, thread_pairs[1] );
+
 #endif
 
 	// silent output
@@ -1009,7 +1031,8 @@ void FragmentPicker::pick_candidates() {
 
 	time_t time_start = time(NULL);
 
-#if defined MULTI_THREADED && defined CXX11
+#if (defined MULTI_THREADED && defined CXX11) || defined USE_BOOST_THREAD
+
 	if (max_threads_ > 1) {
 		utility::vector1<utility::vector1<VallChunkOP> > chunks_to_run( max_threads_ );
 		Size valid_chunks_cnt = 0;
@@ -1026,17 +1049,27 @@ void FragmentPicker::pick_candidates() {
 			chunks_to_run[thread].push_back( chunk );
 			if (chunks_to_run[thread].size() >= chunks_per_thread && thread < max_threads_) ++thread;
 		}
-
+#if defined MULTI_THREADED && defined CXX11
 		utility::vector1<std::thread> threads;
+#elif defined USE_BOOST_THREAD
+		boost::thread_group threads;
+#endif
 		tr.super_mute(true); // lets suppress tracer output when running multi threads
 		for (Size j = 1; j <= max_threads_; ++j) {
 			if (chunks_to_run[j].size() > 0) {
 				std::cout << "thread: " << j << " - " << chunks_to_run[j].size() << " chunks" << std::endl;
+#if defined MULTI_THREADED && defined CXX11
 				threads.push_back(std::thread(&FragmentPicker::pick_chunk_candidates,this,chunks_to_run[j],j));
+#elif defined USE_BOOST_THREAD
+				threads.create_thread(boost::bind(&FragmentPicker::pick_chunk_candidates, this, boost::ref(chunks_to_run[j]), j));
+#endif
 			}
 		}
+#if defined MULTI_THREADED && defined CXX11
 		for (auto& th : threads) th.join();
-
+#elif defined USE_BOOST_THREAD
+		threads.join_all();
+#endif
 		tr.super_mute(false);
 
 		time_t time_end = time(NULL);
@@ -1048,7 +1081,8 @@ void FragmentPicker::pick_candidates() {
 
 		return;
 	}
-#endif // USE_BOOST_THREAD
+
+#endif  // (defined MULTI_THREADED && defined CXX11) || defined USE_BOOST_THREAD
 
 	scores::FragmentScoreMapOP empty_map = scores_[1]->create_empty_map();
 
@@ -1367,7 +1401,7 @@ void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
 // called in main
 void FragmentPicker::parse_command_line() {
 
-#ifdef USE_BOOST_THREAD
+#if (defined MULTI_THREADED && defined CXX11) || defined USE_BOOST_THREAD
 	//## multi-threaded?
 	if (option[ frags::j ].user()) max_threads_ = option[ frags::j ]();
 #endif
