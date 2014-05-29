@@ -31,10 +31,10 @@ namespace raw_data {
 class ScoreStructJSON : public RawStruct {
 
 public:
-	ScoreStructJSON();
+	// Undefined, commenting out to fix PyRosetta build  ScoreStructJSON();
 	ScoreStructJSON( core::pose::Pose, std::string tag );
 
-	// Not implemented for this format  
+	// Not implemented for this format
 	void fill_pose( core::pose::Pose & ) {}
 	void fill_pose( core::pose::Pose &, core::chemical::ResidueTypeSet const & ) {}
 	void print_conformation( std::ostream & ) const {}
@@ -48,7 +48,7 @@ public:
 	{
 		// No header in JSON
 	}
-		
+
 	void print_scores(
 		std::ostream& out,
 		std::map < std::string, core::Real > const & score_map,
