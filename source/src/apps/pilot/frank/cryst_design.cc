@@ -1866,7 +1866,7 @@ CrystDock::apply( Pose & pose) {
 	// center pose at origin
 	numeric::xyzVector<Real> native_shift = center_pose_at_origin( pose );
 	add_crystinfo_to_pose( pose );
-
+  int translation_count=1;
 	// random reorient
 	if (option[ crystdock::randomize_orientation ]()) {
 		numeric::xyzMatrix<Real> Rrand = protocols::geometry::random_reorientation_matrix( 360.0, 360.0 );
@@ -2076,7 +2076,7 @@ CrystDock::apply( Pose & pose) {
 				}
 			}
 
-
+      //int translation_count=1;
 			// do CB fft
 			transform_map( r_rho_cb, s_inv, t_inv, working_s);
 			do_convolution( r_rho_cb, working_s, s_i, conv_out);
@@ -2084,8 +2084,12 @@ CrystDock::apply( Pose & pose) {
 			for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 			for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
 				sum_interface_area(x,y,z) += conv_out(x,y,z)*voxel_volume_;
+				translation_count=translation_count+1;
 			}
 		}
+		
+		  int total_possible=translation_count*urs.nrots();
+		  TR<< "Size of search space: " << total_possible<<std::endl;
 
 		if (debug_ || debug_exact_) {
 			std::ostringstream oss; oss << "collisionmap_"<<ctr<<".mrc";
