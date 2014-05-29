@@ -25,6 +25,7 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace working_parameters {
 
 	//Constructor
 	StepWiseBasicWorkingParameters::StepWiseBasicWorkingParameters():
@@ -169,6 +170,7 @@ namespace sampling {
 
 
 
+} //working_parameters
 } //sampling
 } //stepwise
 } //protocols

@@ -42,6 +42,7 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace working_parameters {
 
 	class StepWiseBasicWorkingParameters: public utility::pointer::ReferenceCount {
 
@@ -105,7 +106,7 @@ namespace sampling {
 		utility::vector1< std::pair< core::Size, core::Size > > const & chain_boundaries() const { return chain_boundaries_; }
 		void set_chain_boundaries( utility::vector1< std::pair< core::Size, core::Size > > const & setting ) { chain_boundaries_ = setting; }
 
-		Size const & first_chain_break_res() const;
+		// Undefined, commenting out to fix PyRosetta build  Size const & first_chain_break_res() const;
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition() const { return partition_definition_; }
 		void set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting ) { partition_definition_ = setting; }
@@ -186,6 +187,7 @@ namespace sampling {
 
 	};
 
+} //working_parameters
 } //sampling
 } //stepwise
 } //protocols

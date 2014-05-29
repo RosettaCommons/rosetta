@@ -1446,7 +1446,7 @@ _import_order_ = {
     #'protocols/loop_modeling' : ['LoopMover'],
 }
 
-_import_after_sub_namespaces_ = ['protocols/forge/build', ] #'protocols/kinematic_closure']  #, 'protocols/loop_modeling'] 'protocols/rotamer_recovery' 'protocols/stepwise/sampling/rna'
+_import_after_sub_namespaces_ = ['protocols/forge/build'] #'protocols/kinematic_closure']  #, 'protocols/loop_modeling'] 'protocols/rotamer_recovery' 'protocols/stepwise/sampling/rna'
 
 def get_direct_childrens(path, modules):
     ''' Find direct childrens of given module and sort it if possible by propper import order '''
