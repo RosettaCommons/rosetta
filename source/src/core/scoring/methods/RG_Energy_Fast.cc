@@ -258,7 +258,6 @@ RG_Energy_Fast::eval_atom_derivative(
 
 	//fpd symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
-	core::Size nsubunits = 1;
 	Vector f1(0,0,0), f2(0,0,0);
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		core::conformation::symmetry::SymmetricConformation const &symmconf =
