@@ -65,7 +65,7 @@ for dir, srcfiles in sources.iteritems():
 
 	allfiles = sorted(hdrfiles + srcfiles)
 
-	for allfile in allfiles:
+	for allfile in set(allfiles):
 		allfile_path = dir + allfile
 		allfile = vsprefixdir + '/' + dir + allfile
 		allfile = allfile.replace('/', '\\')
