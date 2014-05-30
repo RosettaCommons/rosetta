@@ -13,8 +13,8 @@
 /// @author Zhe Zhang
 
 
-#include <devel/replica_docking/ThermodynamicRigidBodyMover.hh>
-#include <devel/replica_docking/ThermodynamicRigidBodyMoverCreator.hh>
+#include <devel/replica_docking/UnbiasedRigidBodyMover.hh>
+#include <devel/replica_docking/UnbiasedRigidBodyMoverCreator.hh>
 
 #include <protocols/docking/RigidBodyInfo.hh>
 #include <basic/datacache/DataMap.hh>
@@ -38,59 +38,59 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer tr( "devel.replica_docking.ThermodynamicRigidBodyMover" );
+static basic::Tracer tr( "devel.replica_docking.UnbiasedRigidBodyMover" );
 static numeric::random::RandomGenerator rigid_RG(24205385);
 
 namespace devel {
 namespace replica_docking {
 
 std::string
-ThermodynamicRigidBodyPerturbNoCenterMoverCreator::keyname() const {
-  return ThermodynamicRigidBodyPerturbNoCenterMoverCreator::mover_name();
+UnbiasedRigidBodyPerturbNoCenterMoverCreator::keyname() const {
+  return UnbiasedRigidBodyPerturbNoCenterMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-ThermodynamicRigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-  return new ThermodynamicRigidBodyPerturbNoCenterMover;
+UnbiasedRigidBodyPerturbNoCenterMoverCreator::create_mover() const {
+  return new UnbiasedRigidBodyPerturbNoCenterMover;
 }
 
 std::string
-ThermodynamicRigidBodyPerturbNoCenterMoverCreator::mover_name() {
-  return "ThermodynamicRigidBodyPerturbNoCenter";
+UnbiasedRigidBodyPerturbNoCenterMoverCreator::mover_name() {
+  return "UnbiasedRigidBodyPerturbNoCenter";
 }
 
-ThermodynamicRigidBodyPerturbNoCenterMover::ThermodynamicRigidBodyPerturbNoCenterMover() :
+UnbiasedRigidBodyPerturbNoCenterMover::UnbiasedRigidBodyPerturbNoCenterMover() :
   rigid_body_info_( NULL )
 {}
 
-ThermodynamicRigidBodyPerturbNoCenterMover::ThermodynamicRigidBodyPerturbNoCenterMover( ThermodynamicRigidBodyPerturbNoCenterMover const& other ) : RigidBodyPerturbNoCenterMover( other ) {
+UnbiasedRigidBodyPerturbNoCenterMover::UnbiasedRigidBodyPerturbNoCenterMover( UnbiasedRigidBodyPerturbNoCenterMover const& other ) : RigidBodyPerturbNoCenterMover( other ) {
   ///copy value of every private variables
   rigid_body_info_ = other.rigid_body_info_;
   movable_jumps_ = other.movable_jumps_;
 }
 
-ThermodynamicRigidBodyPerturbNoCenterMover::~ThermodynamicRigidBodyPerturbNoCenterMover() {}
+UnbiasedRigidBodyPerturbNoCenterMover::~UnbiasedRigidBodyPerturbNoCenterMover() {}
 
 std::string
-ThermodynamicRigidBodyPerturbNoCenterMover::get_name() const
+UnbiasedRigidBodyPerturbNoCenterMover::get_name() const
 {
-  return "ThermodynamicRigidBodyPerturbNoCenter";
+  return "UnbiasedRigidBodyPerturbNoCenter";
 }
 
 protocols::moves::MoverOP
-ThermodynamicRigidBodyPerturbNoCenterMover::clone() const
+UnbiasedRigidBodyPerturbNoCenterMover::clone() const
 {
-  return new ThermodynamicRigidBodyPerturbNoCenterMover(*this);
+  return new UnbiasedRigidBodyPerturbNoCenterMover(*this);
 }
 
 protocols::moves::MoverOP
-ThermodynamicRigidBodyPerturbNoCenterMover::fresh_instance() const
+UnbiasedRigidBodyPerturbNoCenterMover::fresh_instance() const
 {
-  return new ThermodynamicRigidBodyPerturbNoCenterMover;
+  return new UnbiasedRigidBodyPerturbNoCenterMover;
 }
 
 void
-ThermodynamicRigidBodyPerturbNoCenterMover::parse_my_tag(
+UnbiasedRigidBodyPerturbNoCenterMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
@@ -113,7 +113,7 @@ ThermodynamicRigidBodyPerturbNoCenterMover::parse_my_tag(
 }
 
 
-void ThermodynamicRigidBodyPerturbNoCenterMover::initialize_simulation(
+void UnbiasedRigidBodyPerturbNoCenterMover::initialize_simulation(
   core::pose::Pose & pose,
   protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
   core::Size cycle
@@ -135,7 +135,7 @@ void ThermodynamicRigidBodyPerturbNoCenterMover::initialize_simulation(
   Parent::initialize_simulation( pose, mhm, cycle );
 }
 
-void ThermodynamicRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
+void UnbiasedRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
   // Parent::apply( pose );
   // overload to use random unit quaternion to generate uniformly distributed rotation.
 
@@ -181,7 +181,7 @@ void ThermodynamicRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose )
 /// @brief gamma-distribution-like random angle generation, rot_mag makes exactly the same sense as in gaussian_move
 
 core::Real  // angle (radians)
-ThermodynamicRigidBodyPerturbNoCenterMover::generate_rotation_angle( core::Real rot_mag ){
+UnbiasedRigidBodyPerturbNoCenterMover::generate_rotation_angle( core::Real rot_mag ){
   using namespace numeric;
   xyzMatrix< core::Real > const mat( z_rotation_matrix_degrees( rot_mag*rigid_RG.gaussian() ) * (
 		       y_rotation_matrix_degrees( rot_mag*rigid_RG.gaussian() ) *
@@ -194,7 +194,7 @@ ThermodynamicRigidBodyPerturbNoCenterMover::generate_rotation_angle( core::Real 
 
 /// @detail generate uniformly distributed vector on the unit sphere as the rotation axis
 numeric::xyzVector< core::Real >
-ThermodynamicRigidBodyPerturbNoCenterMover::generate_uniform_rotation_axis(){
+UnbiasedRigidBodyPerturbNoCenterMover::generate_uniform_rotation_axis(){
   using namespace numeric;
   core::Real alpha = rigid_RG.uniform() * NumericTraits< core::Real >::pi_2();
   core::Real beta = std::acos( sin_cos_range( 1-2*rigid_RG.uniform() ) );

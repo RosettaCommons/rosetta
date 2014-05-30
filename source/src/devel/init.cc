@@ -43,7 +43,7 @@
 #include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
-#include <devel/replica_docking/ThermodynamicRigidBodyMoverCreator.hh>
+#include <devel/replica_docking/UnbiasedRigidBodyMoverCreator.hh>
 #include <devel/replica_docking/TempWeightedMetropolisHastingsMoverCreator.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
@@ -110,7 +110,7 @@ static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreato
 static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSamplerCreator > reg_GenericSymmetricSamplerCreator;
 static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
-static protocols::moves::MoverRegistrator< replica_docking::ThermodynamicRigidBodyPerturbNoCenterMoverCreator > reg_ThermodynamicRigidBodyPerturbNoCenterMoverCreator;
+static protocols::moves::MoverRegistrator< replica_docking::UnbiasedRigidBodyPerturbNoCenterMoverCreator > reg_UnbiasedRigidBodyPerturbNoCenterMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropolisHastingsMoverCreator > reg_TempWeightedMetropolisHastingsMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator;

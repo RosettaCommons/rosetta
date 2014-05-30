@@ -391,7 +391,7 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 			for ( Size j=1; j<=partner2.size();j++){
 				ResidueOP rsd2 = new Residue(native_docking_pose.residue(partner2[j]));
 				if ( calc_res_contact(rsd1, rsd2, cutoff) ) {
-					std::pair< core::Size, core::Size > elem( i,j );
+					std::pair< core::Size, core::Size > elem( partner1[i],partner2[j] );
 					contact_list.push_back(elem);
 				}
 			}

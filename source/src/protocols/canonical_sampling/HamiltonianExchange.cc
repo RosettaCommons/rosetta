@@ -120,6 +120,7 @@ HamiltonianExchange::HamiltonianExchange(	HamiltonianExchange const & other ) :
 	exchange_grid_( other.exchange_grid_ ),
 	exchange_grid_dimension_( other.exchange_grid_dimension_ ),
 	successfully_initialized_( other.successfully_initialized_ ),
+	max_coord_( other.max_coord_ ),
 	bias_energy_( other.bias_energy_ )
 {
 	Size const nlevels( n_temp_levels() );
@@ -135,6 +136,7 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 	exchange_grid_ = other.exchange_grid_;
 	exchange_grid_dimension_ = other.exchange_grid_dimension_;
 	successfully_initialized_ = other.successfully_initialized_;
+	max_coord_ = other.max_coord_;
 	bias_energy_ = other.bias_energy_;
 	Size const nlevels( n_temp_levels() );
 	runtime_assert( nlevels == hamiltonians_.size() );
@@ -247,6 +249,15 @@ HamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coo
 	return key;
 }
 
+Size
+HamiltonianExchange::nlevels_per_dim( core::Size dim ) const {
+	if ( dim > exchange_grid_dimension_ ) {
+		return 1;
+	} else {
+		return max_coord_[dim];
+	}
+}
+
 void HamiltonianExchange::setup_exchange_schedule() {
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
@@ -260,6 +271,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 			if ( coord[ dim ] > max_coord[ dim ] ) max_coord[ dim ] = coord[ dim ];
 		}
 	}
+	max_coord_ = max_coord;
 
 	for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
 		//make list of uniqe groups: if dim==2 (1,1,1), (1,2,1), (1,3,1), ... (1, N, 1) should be one group

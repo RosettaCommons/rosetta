@@ -51,25 +51,25 @@ interpolation_type_string_to_enum( std::string const & interp_string );
 
 /// @brief Base class for controlling the temperature of a simulation.
 ///
-/// @details Many schemes to improve the performance of condensed phase Monte 
-/// Carlo simulations depends on changing the temperature of the system.  
-/// Common examples include simulated annealing and parallel tempering.  This 
-/// class provides an interface for writing these algorithms.  The most 
-/// important method is temperature_move(), which is responsible for actually 
-/// changing the temperature of the MonteCarlo object used for the underlying 
-/// simulation.  Methods like temperature_level() are also provided for 
-/// managing a discrete number of different temperature levels, which is a 
+/// @details Many schemes to improve the performance of condensed phase Monte
+/// Carlo simulations depends on changing the temperature of the system.
+/// Common examples include simulated annealing and parallel tempering.  This
+/// class provides an interface for writing these algorithms.  The most
+/// important method is temperature_move(), which is responsible for actually
+/// changing the temperature of the MonteCarlo object used for the underlying
+/// simulation.  Methods like temperature_level() are also provided for
+/// managing a discrete number of different temperature levels, which is a
 /// common feature of these algorithms.
-/// 
-/// The TemperingBase class serves a similar role to this one, but is geared 
-/// towards controllers that actually intend to change the temperature.  This 
-/// class also is parent to FixedTemperatureController, which is the default 
+///
+/// The TemperingBase class serves a similar role to this one, but is geared
+/// towards controllers that actually intend to change the temperature.  This
+/// class also is parent to FixedTemperatureController, which is the default
 /// controller used by MetropolisHastingsMover.
 
 class TemperatureController : public ThermodynamicObserver {
 
 public:
-
+	typedef utility::vector1< core::Size > GridCoord;
 	/// @brief Default constructor.
 	TemperatureController();
 
@@ -85,14 +85,14 @@ public:
 	std::string
 	get_name() const;
 
-	/// @brief Return false.  This class does not need to be reinitialized for 
+	/// @brief Return false.  This class does not need to be reinitialized for
 	/// each job.
 	virtual
 	bool
 	reinitialize_for_each_job() const { return false; };
 
-	/// @brief Return false.  This class does not need to be reinitialized for 
-	/// new input.  
+	/// @brief Return false.  This class does not need to be reinitialized for
+	/// new input.
 	virtual
 	bool
 	reinitialize_for_new_input() const { return false; };
@@ -104,17 +104,17 @@ public:
 	);
 
 	/// @brief Execute the temperature move.
-	/// @details This method is called by observe_after_metropolis() and is 
-	/// expected to return the new temperature (in units of kT, to the extent 
+	/// @details This method is called by observe_after_metropolis() and is
+	/// expected to return the new temperature (in units of kT, to the extent
 	/// that that is meaningful in the context of rosetta).
 	virtual
 	core::Real
 	temperature_move( core::Real score ) = 0;
 
 	/// @brief Execute a temperature move which depends on the current pose.
-	/// @details The default implementation just calls the pose-independent 
-	/// temperature_pose() method with the energy of the given pose.  However, 
-	/// the HamiltonianExchange temperature controller needs to evaluate the 
+	/// @details The default implementation just calls the pose-independent
+	/// temperature_pose() method with the energy of the given pose.  However,
+	/// the HamiltonianExchange temperature controller needs to evaluate the
 	/// alternative Hamiltonian.
 	virtual
 	core::Real
@@ -127,13 +127,26 @@ public:
 	virtual core::Real temperature( core::Size level ) const = 0 ;
 
 	/// @brief Return the current temperature level.
-	/// @details Tempering controllers often work with a handful of discrete 
-	/// temperature levels.  This method makes it possible to work with levels, 
+	/// @details Tempering controllers often work with a handful of discrete
+	/// temperature levels.  This method makes it possible to work with levels,
 	/// which are discrete, rather than temperatures, which are continuous.
 	/// @see n_temp_levels()
 	/// @see temperature()
 	virtual core::Size temperature_level() const {
 		return 1;
+	}
+
+ 	virtual GridCoord level_2_grid_coord( core::Size level ) const {
+		GridCoord simple_coord( 1, level );
+		return simple_coord;
+	}
+
+	virtual core::Size exchange_grid_dim() const {
+		return 1;
+	}
+
+	virtual core::Size nlevels_per_dim( core::Size ) const {
+		return n_temp_levels();
 	}
 
 	virtual
@@ -185,7 +198,7 @@ private:
 
 
 /// @brief Maintain a constant temperature.
-/// @details This is the default temperature controller used by 
+/// @details This is the default temperature controller used by
 /// MetropolisHastingsMover.
 class FixedTemperatureController : public TemperatureController {
 public:

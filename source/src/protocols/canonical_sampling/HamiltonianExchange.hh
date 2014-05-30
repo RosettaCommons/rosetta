@@ -35,7 +35,7 @@ namespace canonical_sampling {
 ///@details
 class HamiltonianExchange : public protocols::canonical_sampling::AsyncMPITemperingBase {
 	typedef AsyncMPITemperingBase Parent;
-	typedef utility::vector1< core::Size > GridCoord;
+	//	typedef utility::vector1< core::Size > GridCoord; // moving to base class TemperatureController
 	typedef utility::vector1< GridCoord > Grid;
 
 public:
@@ -111,6 +111,19 @@ public:
 	   protocols::moves::MonteCarloOP monte_carlo
 	);
 
+	virtual GridCoord
+	level_2_grid_coord( core::Size level ) const { // for higher dimension grids
+		return exchange_grid_[level];
+	}
+
+	virtual core::Size
+	exchange_grid_dim() const {
+		return exchange_grid_dimension_;
+	}
+
+	virtual core::Size
+	nlevels_per_dim( core::Size ) const;
+
 protected:
 	void set_defaults();
 	/// @brief Assigns user specified values to primitive members using command line options
@@ -158,6 +171,7 @@ private:
 	Grid exchange_grid_;
 	core::Size exchange_grid_dimension_;
 	bool successfully_initialized_;
+	GridCoord max_coord_;
 
 	BiasEnergyOP bias_energy_;
 }; //end HamiltonianExchange

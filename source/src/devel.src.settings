@@ -182,9 +182,10 @@ sources = {
 	       "WrapFilterAsEvaluatorCreator",
                "ModulatedMover",
                "TempInterpolator",
-               "ThermodynamicRigidBodyMover",
+               #"ThermodynamicRigidBodyMover", # renamed to UnbiasedRigidBodyMover
                "TempInterpolatorFactory",
                "TempWeightedMetropolisHastingsMover",
+	       "UnbiasedRigidBodyMover",
         ],
 	"devel/residual_dipolar_coupling": [
 		"RDC_energies",

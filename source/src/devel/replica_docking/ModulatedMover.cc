@@ -54,7 +54,9 @@ ModulatedMover::ModulatedMover( ModulatedMover const& other ) : ThermodynamicMov
   ///copy value of every private variables
   tempering_ = other.tempering_;
   movers_ = other.movers_;
-  interpolators_ = other.interpolators_;
+	//  interpolators_ = other.interpolators_;
+	interps_1_ = other.interps_1_;
+	interps_2_ = other.interps_2_;
 }
 
 ModulatedMover::~ModulatedMover() {}
@@ -90,36 +92,64 @@ ModulatedMover::parse_my_tag(
   if ( !tempering_ ) {
     throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires an tempering argument" );
   }
-  n_temp_levels_ = tempering_->n_temp_levels();
+	//  n_temp_levels_ = tempering_->n_temp_levels();
   if ( tag->hasOption( "type" ) ) {
-    // I don't know yet how to use this type option, I mean even i got the mover type, so what?
     mover_name_ = tag->getOption< std::string >( "type" );
 		set_type( mover_name_ ); //for proper reporting in trial_counters
   }
 
-  utility::vector1< std::string > interpolated_options;
+	//  utility::vector1< std::string > interpolated_options;
   utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
+	utility::vector1< std::string > keys;
 
 
   for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
     utility::tag::TagCOP const subtag = *subtag_it;
+		Interpolators interpolators;
     tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
     if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) {
+			core::Size dim = subtag->getOption< core::Size >( "dim", 1);
+			tr.Debug << "dim "<< dim << " nlevels_per_dim " << tempering_->nlevels_per_dim( dim ) << std::endl;
+			if (tempering_->exchange_grid_dim()==1 || dim==1 ) {
+				interps_1_[ subtag->getOption< std::string >( "key" ) ] = TempInterpolatorFactory::get_instance()->new_tempInterpolator( subtag, tempering_->nlevels_per_dim( 1 ) );
+			} else if ( tempering_->nlevels_per_dim( dim )>1 && dim==2 ) {
+				interps_2_[ subtag->getOption< std::string >( "key" ) ] = TempInterpolatorFactory::get_instance()->new_tempInterpolator( subtag, tempering_->nlevels_per_dim( 2 ) );
+			}
+
+			keys.push_back( subtag->getOption< std::string >( "key" ) );
 //       //      interpolator_[ ]=InterpolatorFactory->new_interpolator( subtag );
 //       if ( tag->hasOption( "const" ) ) {
 // 	//	interpolators_[ subtag->getOption< std::string >( "key" ) ] = new TempFixValue( subtag->getOption<core::Real>("const") );
 //       } else {
 // 	interpolators_[ subtag->getOption< std::string >( "key" ) ] = new TempInterpolator( subtag, tempering_ );
 //       }
-      interpolators_[ subtag->getOption< std::string >( "key" ) ] = TempInterpolatorFactory::get_instance()->new_tempInterpolator( subtag, tempering_->n_temp_levels() );
+//      interpolators_[ subtag->getOption< std::string >( "key" ) ] = TempInterpolatorFactory::get_instance()->new_tempInterpolator( subtag, tempering_->n_temp_levels() );
     } else {
       tr.Warning << "Cannot interpret subtag "<<subtag->getName() << std::endl;
     }
   }
+
+	for ( utility::vector1< std::string >::iterator key_it = keys.begin(); key_it != keys.end(); ++key_it ) {
+		tr.Debug << "check if key " << *key_it << " is provided" << std::endl;
+
+		if ( interps_1_.find( *key_it ) == interps_1_.end() ) {
+			interps_1_[ *key_it ] = new devel::replica_docking::TempFixValue( 1 );
+			tr.Debug << "parameter for " << *key_it << " not provided for 1st dim, will use fix value 1" << std::endl;
+		}
+		if ( interps_2_.find( *key_it ) == interps_2_.end() ) {
+			interps_2_[ *key_it ] = new devel::replica_docking::TempFixValue( 1 );
+			tr.Debug << "parameter for " << *key_it << " not provided for 2nd dim, will use fix value 1" << std::endl;
+		}
+	}
+
+	tr.Debug << "interps.size " << interps_1_.size() << " , " << interps_2_.size() << std::endl;
+	runtime_assert( interps_1_.size() == interps_2_.size() );
+
   std::string our_name = tag->getOption< std::string >("name");
   //now crete mover list (maybe put this in extra method? )
 
-  for ( core::Size temp_level = 1; temp_level <= n_temp_levels_; ++temp_level ) {
+  for ( core::Size temp_level = 1; temp_level <= tempering_->n_temp_levels(); ++temp_level ) {
+		tr.Debug << "generating mover tag for level " << temp_level << std::endl;
     //have a method that creates a tag for a certain temperature level
     utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name );
     using namespace protocols::moves;
@@ -141,20 +171,30 @@ ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& pr
   using namespace utility::tag;
   TagOP tag = new Tag;
   tag->setName(mover_name_);
+
+	GridCoord grid_coord( tempering_->level_2_grid_coord( temp_level ) );
+	if ( grid_coord.size()==1 ) grid_coord.push_back(1);
+
   tag->setOption< std::string >("name",prefix+"_"+ ObjexxFCL::string_of(temp_level));
-  for ( Interpolators::const_iterator it=interpolators_.begin(); it!=interpolators_.end(); ++it ) {
+  for ( Interpolators::const_iterator it=interps_1_.begin(); it!=interps_1_.end(); ++it ) {
     //	string key=it->first
     //      InterpolatorOP interpolator_ptr=it->second
-    tag->setOption< core::Real >( it->first, it->second->get_value(temp_level) );
-    tr.Debug << "modulated " << it->first << " is " << tag->getOption< core::Real >( it->first ) << std::endl;
+		std::string key( it->first );
+		if ( interps_2_.find( key ) != interps_2_.end() ) {
+			tag->setOption< core::Real >( it->first, (it->second->get_value(grid_coord[1]) )*interps_2_.find(key)->second->get_value( grid_coord[2]));
+			tr.Debug << "level " << temp_level << " modulated " << it->first << " is " << tag->getOption< core::Real >( it->first ) << std::endl;
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption( "key value is not provided for the 2nd dim" );
+		}
   }
+	tr.Debug << "tag generated for temp_level " << temp_level << std::endl;
   return tag;
 }
 
 void ModulatedMover::apply( core::pose::Pose& pose ) {
   core::Size temp_level( tempering_->temperature_level() );
-  tr.Debug << "in ModulatedMover::apply current temp_level " << temp_level <<" n_temp_leves " << n_temp_levels_<< std::endl;
-  if ( temp_level > n_temp_levels_ ) {
+  tr.Debug << "in ModulatedMover::apply current temp_level " << temp_level <<" n_temp_leves " << tempering_->n_temp_levels()<< std::endl;
+  if ( temp_level > tempering_->n_temp_levels() ) {
     utility_exit_with_message( "ERROR: temp_level should never be larger than n_temp_levels, something is wrong ");
   }
   movers_[ temp_level ]->apply( pose );

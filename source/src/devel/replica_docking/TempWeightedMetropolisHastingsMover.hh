@@ -50,6 +50,7 @@ namespace replica_docking {
 class TempWeightedMetropolisHastingsMover : public protocols::canonical_sampling::MetropolisHastingsMover {
 	typedef utility::vector1< devel::replica_docking::TempInterpolatorBaseOP > Interpolators;
 	typedef utility::vector1< core::Real > Weights;
+	typedef utility::vector1< core::Size > GridCoord;
 	typedef protocols::canonical_sampling::MetropolisHastingsMover Parent;
 public:
 
@@ -87,7 +88,8 @@ protected:
 private:
 
 	//helper
-	Interpolators weight_controllers_;
+	Interpolators weight_contro_1_;
+	Interpolators weight_contro_2_;
 	Weights overall_weights_;
 
 	mutable core::Size last_temp_level_in_random_mover_;

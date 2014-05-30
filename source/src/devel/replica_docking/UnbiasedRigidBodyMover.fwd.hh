@@ -9,17 +9,17 @@
 
 
 /// @author Zhe Zhang
-#ifndef INCLUDED_devel_replica_docking_ThermodynamicRigidBodyMover_fwd_hh
-#define INCLUDED_devel_replica_docking_ThermodynamicRigidBodyMover_fwd_hh
+#ifndef INCLUDED_devel_replica_docking_UnbiasedRigidBodyMover_fwd_hh
+#define INCLUDED_devel_replica_docking_UnbiasedRigidBodyMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace devel{
 namespace replica_docking{
 
-class ThermodynamicRigidBodyPerturbNoCenterMover;
-typedef utility::pointer::owning_ptr< ThermodynamicRigidBodyPerturbNoCenterMover > ThermodynamicRigidBodyPerturbNoCenterMoverOP;
-typedef utility::pointer::owning_ptr< ThermodynamicRigidBodyPerturbNoCenterMover const > ThermodynamicRigidBodyPerturbNoCenterMoverCOP;
+class UnbiasedRigidBodyPerturbNoCenterMover;
+typedef utility::pointer::owning_ptr< UnbiasedRigidBodyPerturbNoCenterMover > UnbiasedRigidBodyPerturbNoCenterMoverOP;
+typedef utility::pointer::owning_ptr< UnbiasedRigidBodyPerturbNoCenterMover const > UnbiasedRigidBodyPerturbNoCenterMoverCOP;
 
 }
 }

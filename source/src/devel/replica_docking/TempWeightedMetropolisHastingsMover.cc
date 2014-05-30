@@ -29,7 +29,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
+static basic::Tracer tr( "devel.replica_docking.TempWeightedMetropolisHastingsMover" );
 static numeric::random::RandomGenerator RG(29783409);
 using namespace protocols::canonical_sampling;
 
@@ -61,7 +61,9 @@ TempWeightedMetropolisHastingsMover::TempWeightedMetropolisHastingsMover(
 ) :	Parent(other)
 {
 	std::copy( other.overall_weights_.begin(), other.overall_weights_.end(), std::back_inserter( overall_weights_ ) );
-	std::copy( other.weight_controllers_.begin(), other.weight_controllers_.end(), std::back_inserter( weight_controllers_ ) );
+	//	std::copy( other.weight_controllers_.begin(), other.weight_controllers_.end(), std::back_inserter( weight_controllers_ ) );
+ 	std::copy( other.weight_contro_1_.begin(), other.weight_contro_1_.end(), std::back_inserter( weight_contro_1_ ) );
+ 	std::copy( other.weight_contro_2_.begin(), other.weight_contro_2_.end(), std::back_inserter( weight_contro_2_ ) );
 }
 
 std::string
@@ -85,50 +87,79 @@ TempWeightedMetropolisHastingsMover::add_mover(
 	core::Real weight,
 	utility::tag::TagCOP const& subtag
 ) {
-	tr.Debug << "add_mover( mover, weight, tag) in TempWeightedMetropolisHastings " << std::endl;
+	tr.Debug << "add mover " << th_mover->get_name() << " in TempWeightedMetropolisHastings " << std::endl;
+	Parent::add_mover( th_mover, weight );
+	overall_weights_.push_back( weight );
 	utility::vector0< utility::tag::TagCOP > const wc_tags( subtag->getTags() );
-	TempInterpolatorBaseOP weight_controller=NULL;
+	tr.Debug << "wc_tags.size() " << wc_tags.size() << std::endl;
 
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = wc_tags.begin(); subtag_it != wc_tags.end(); ++subtag_it) {
+	bool added_1 = false;
+	bool added_2 = false;
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = wc_tags.begin(); subtag_it != wc_tags.end(); ++subtag_it ) {
 		utility::tag::TagCOP const wc_tag = *subtag_it;
-		if ( wc_tag->getName() == "Interp" && wc_tag->getOption< std::string >( "key" )=="weight" ) {
-			weight_controller = TempInterpolatorFactory::get_instance()->new_tempInterpolator( wc_tag , tempering()->temperature_level() );
-			tr.Debug <<"Interpolate weight_constroller" << std::endl;
-			continue;
+		TempInterpolatorBaseOP wc=NULL;
+		if ( wc_tag->getName() == "Interp" && wc_tag->getOption< std::string >("key") == "weight" ) {
+			core::Size dim=wc_tag->getOption< core::Size >( "dim",1 );
+			tr.Debug << "dim" << dim << " nlevels_per_dim" << tempering()->nlevels_per_dim(dim) << std::endl;
+
+			if ( tempering()->nlevels_per_dim(dim) > 1 ) {
+				wc=TempInterpolatorFactory::get_instance()->new_tempInterpolator( wc_tag, tempering()->nlevels_per_dim(dim) );
+				tr.Debug << "weight controller for " << dim << "th dimension is generated with " << tempering()->nlevels_per_dim(dim) << " levels" << std::endl;
+			} else {
+				wc=new devel::replica_docking::TempFixValue(1);
+				tr.Debug << "Fix value weight controller used for " << dim << "th dimension" << std::endl;
+			}
+
+			if ( dim==1 ) {
+				weight_contro_1_.push_back( wc );
+				added_1 = true;
+			} else {
+				weight_contro_2_.push_back( wc );
+				added_2 = true;
+			}
+			tr.Debug << "added tempInterpolator to " << dim << "th dimension weight controllers" << std::endl;
 		}
 	}
-
-	if ( !weight_controller ) {
-		weight_controller = new devel::replica_docking::TempFixValue(1);
-		tr.Debug << "Fix Value weight_controller " << std::endl;
+	tr.Debug << "added_1 " << added_1 << " added_2 " << added_2 << std::endl;
+	if ( !added_1 ) {
+		weight_contro_1_.push_back( new devel::replica_docking::TempFixValue( 1 ) );
+		tr.Debug << "added fix value interpolator to 1st dimension " << std::endl;
+	}
+	if ( !added_2 ) {
+		weight_contro_2_.push_back( new devel::replica_docking::TempFixValue( 1 ) );
+		tr.Debug << "added fix value interpolator to 2nd dimension " << std::endl;
 	}
 
-	Parent::add_mover( th_mover, weight );
-	weight_controllers_.push_back(weight_controller);
-	overall_weights_.push_back( weight );
+	tr.Debug << "done adding mover " << th_mover->get_name() << std::endl;
 }
+
 
 ThermodynamicMoverOP
 TempWeightedMetropolisHastingsMover::random_mover() const {
 	tr.Trace << "random_mover" << std::endl;
 	core::Size temp_level( tempering()->temperature_level() );
+	GridCoord grid_coord( tempering()->level_2_grid_coord( temp_level ) );
+	if ( grid_coord.size()==1 ) grid_coord.push_back( 1 ); // because of the weight_contro_2_
 	bool has_changed( temp_level != last_temp_level_in_random_mover_ );
 	tr.Trace << "current temp_level " << temp_level << " last temp_level " << last_temp_level_in_random_mover_ << " has_changed " << has_changed << std::endl;
 	if ( has_changed ) {
 		current_weighted_sampler_.clear();
 		Weights::const_iterator weight_it=overall_weights_.begin();
-		Interpolators::const_iterator interp_it=weight_controllers_.begin(); // interp_it is a pointer point to InterpolatorOP, so by *interp_it you get the real OP
-		runtime_assert( overall_weights_.size() == weight_controllers_.size() );
+		Interpolators::const_iterator interp_it1=weight_contro_1_.begin(); // interp_it is a pointer point to InterpolatorOP, so by *interp_it you get the real OP
+		Interpolators::const_iterator interp_it2=weight_contro_2_.begin();
+		runtime_assert( overall_weights_.size() == weight_contro_1_.size() );
+		runtime_assert( overall_weights_.size() == weight_contro_2_.size() );
+
 		tr.Debug << "For temp_level " << temp_level <<" the temp_weighted weights and overall weights are: " << std::endl;
-		for ( ; interp_it != weight_controllers_.end(); ++weight_it, ++interp_it ) {
-			current_weighted_sampler_.add_weight( (*interp_it)->get_value( temp_level )*(*weight_it) );
-			tr.Debug << (*interp_it)->get_value( temp_level ) << " , " << *weight_it << std::endl;
+		for ( ; interp_it1 != weight_contro_1_.end(); ++weight_it, ++interp_it1, ++interp_it2 ) {
+			current_weighted_sampler_.add_weight( (*weight_it) * (*interp_it1)->get_value( grid_coord[1] ) * (*interp_it2)->get_value( grid_coord[2] ) );
+			tr.Debug << (*interp_it1)->get_value( grid_coord[1] ) << " , " << (*interp_it2)->get_value( grid_coord[2] ) << " , "  << *weight_it << std::endl;
 		}
 		last_temp_level_in_random_mover_ = temp_level ;
 		runtime_assert( current_weighted_sampler_.size() == overall_weights_.size() );
 		runtime_assert( current_weighted_sampler_.size() > 0 );
 	}
-	return mover_by_index( current_weighted_sampler_.random_sample(RG) );
+	return mover_by_index( current_weighted_sampler_.random_sample(RG) ); // instead of using weighted_sampler_, we use current_weighted_sampler, which is a combination of overall_weights and tempweighted-weights.
 }
 
 } //moves

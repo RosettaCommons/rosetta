@@ -39,6 +39,7 @@ class ModulatedMover : public protocols::canonical_sampling::ThermodynamicMover 
   //  typedef std::map< std::string, devel::replica_docking::TempInterpolatorOP > Interpolators;
   typedef std::map< std::string, devel::replica_docking::TempInterpolatorBaseOP > Interpolators;
   typedef utility::vector1< protocols::canonical_sampling::ThermodynamicMoverOP > MoverOPs;
+	typedef utility::vector1< core::Size > GridCoord;
 
 public:
   ModulatedMover();
@@ -94,9 +95,11 @@ private:
   //  protocols::canonical_sampling::ThermodynamicMoverOP mover_;
   //  protocols::canonical_sampling::TemperatureControllerOP tempering_; // inteprete tempering as TemperatureController does not work for n_temp_levels, current_temp and so on, so here I directly interprete it as HamiltonianExchange
   protocols::canonical_sampling::HamiltonianExchangeOP tempering_;
-  core::Size n_temp_levels_ ;
+	//  core::Size n_temp_levels_ ;
   MoverOPs movers_;
-  Interpolators interpolators_; // OP or like this?
+	//  Interpolators interpolators_; // OP or like this?
+	Interpolators interps_1_;
+	Interpolators interps_2_; // for the 2nd dimension
   std::string mover_name_; //mover_creator, mover_type_name, mover_creator_key
 };
 

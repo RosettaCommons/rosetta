@@ -2,8 +2,8 @@
 
 /// @author Zhe Zhang
 
-#ifndef INCLUDED_devel_replica_docking_ThermodynamicRigidBodyMover_hh
-#define INCLUDED_devel_replica_docking_ThermodynamicRigidBodyMover_hh
+#ifndef INCLUDED_devel_replica_docking_UnbiasedRigidBodyMover_hh
+#define INCLUDED_devel_replica_docking_UnbiasedRigidBodyMover_hh
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
@@ -33,16 +33,16 @@
 namespace devel {
 namespace replica_docking {
 
-class ThermodynamicRigidBodyPerturbNoCenterMover : public protocols::rigid::RigidBodyPerturbNoCenterMover {
+class UnbiasedRigidBodyPerturbNoCenterMover : public protocols::rigid::RigidBodyPerturbNoCenterMover {
   typedef RigidBodyPerturbNoCenterMover Parent;
   //  typedef std::map< std::string, devel::replica_docking::TempInterpolatorOP > Interpolators;
-  //  typedef utility::vector1< protocols::canonical_sampling::ThermodynamicMoverOP > MoverOPs;
+  //  typedef utility::vector1< protocols::canonical_sampling::UnbiasedMoverOP > MoverOPs;
 
 public:
-  ThermodynamicRigidBodyPerturbNoCenterMover();
-  ThermodynamicRigidBodyPerturbNoCenterMover( ThermodynamicRigidBodyPerturbNoCenterMover const & );
+  UnbiasedRigidBodyPerturbNoCenterMover();
+  UnbiasedRigidBodyPerturbNoCenterMover( UnbiasedRigidBodyPerturbNoCenterMover const & );
 
-  virtual ~ThermodynamicRigidBodyPerturbNoCenterMover();
+  virtual ~UnbiasedRigidBodyPerturbNoCenterMover();
 
   ///@brief overload it to use random unit quaternion to unbiasedly sample rotation instead of Jump::gaussian_move
   virtual void apply( core::pose::Pose & pose );
