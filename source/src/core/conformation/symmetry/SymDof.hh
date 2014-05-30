@@ -69,6 +69,10 @@ class SymDof {
 	bool
 	allow_dof( int df ) const;
 
+	// @details is df allowed to move?
+	void
+	set_allow_dof( int df, bool newval );
+
 	bool has_dof();
 
 	// @details the lower boundary of range1

@@ -449,7 +449,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 				}
 			}
 
-			if(option[ OptionKeys::docking::kick_relax ].user()) {
+			if(passed_highres_filter_ && option[ OptionKeys::docking::kick_relax ].user()) {
 				protocols::relax::relax_pose( pose, core::scoring::getScoreFunction(), "s" );
 			}
 		}
@@ -562,7 +562,7 @@ SymDockProtocol::docking_highres_filter( core::pose::Pose & pose){
 	if (pose.energies().total_energy() >= score_cutoff) passed_filter = false;
 	if (score_map_["I_sc"] >= 0.0) passed_filter = false;
 
-	if (!passed_filter) TR << "STRUCTURE FAILED HIGH-RES FILTER" << std::endl;
+	if (!passed_filter) TR << "STRUCTURE FAILED HIGH-RES FILTER " << pose.energies().total_energy() << " " << score_map_["I_sc"] << std::endl;
 
 	return passed_filter;
 }
@@ -646,7 +646,6 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 	translate_away->apply( complex_pose );
 
 	Real unbound_energy = (*docking_scorefxn)( complex_pose );
-
 	return bound_energy - unbound_energy;
 
 }

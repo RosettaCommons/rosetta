@@ -92,6 +92,15 @@ SymDof::allow_dof( int df ) const
 
 }
 
+// @details is df allowed to move?
+void
+SymDof::set_allow_dof( int df, bool newval )
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	assert( allowed_dof_jumps_.size() == 6 );
+	allowed_dof_jumps_[df] = newval;
+}
+
 bool
 SymDof::has_dof()
 {

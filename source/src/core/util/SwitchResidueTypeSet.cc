@@ -18,12 +18,14 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -81,11 +83,20 @@ switch_to_residue_type_set(
 	//So, we'll eject the Energies to be safe!
 	pose.energies().clear();
 
+	//fpd only do this over the asymmetric unit if the pose is symmetric
+	symmetry::SymmetryInfoCOP symm_info=NULL;
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		symmetry::SymmetricConformation const & symm_conf ( dynamic_cast< symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+		symm_info = symm_conf.Symmetry_Info();
+	}
+
 	if (type_set_name==chemical::CENTROID_ROT) {
 		ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID_ROT );
 
 		//loop for each residue
 		for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+			if (symm_info && !symm_info->bb_is_independent(i)) continue;
+
 			//get the residue
 			Residue const & rsd( pose.residue(i) );
 			if( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ) continue; //skip invalid residue
@@ -93,7 +104,7 @@ switch_to_residue_type_set(
 			//check current restype
 			std::string const & current_type_set_name ( rsd.type().residue_type_set().name() );
 			if ( current_type_set_name == chemical::CENTROID_ROT ) {
-				TR.Warning << "core::util::switch_to_residue_type_set: residue " << i 
+				TR.Warning << "core::util::switch_to_residue_type_set: residue " << i
 				<< " already in centroid_rot residue_type_set" << std::endl;
 				continue;
 			}
@@ -154,7 +165,7 @@ switch_to_residue_type_set(
 			if ( ! new_rsd ) {
 				TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
 				<< " at position " << i << ". Trying to find acceptable match. " << std::endl;
-				
+
 				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
 				for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
@@ -192,7 +203,7 @@ switch_to_residue_type_set(
 				}
 				else {
 					//std::cout<<rsd.name()<<std::endl;
-					for (	Size na=rsd.type().first_sidechain_atom(); 
+					for (	Size na=rsd.type().first_sidechain_atom();
 							na<=rsd.type().nheavyatoms();
 							na++) {
 						if (rsd.atom_name(na)==" CB ") continue;
@@ -241,7 +252,7 @@ switch_to_residue_type_set(
 
 				pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CEN"), i), cenrotxyz);
 			}
-			
+
 			//set temperature
 			if (pose.pdb_info()) pose.pdb_info()->temperature(i, pose.residue(i).nbr_atom(), maxB);
 		}
@@ -254,6 +265,8 @@ switch_to_residue_type_set(
 	core::chemical::ResidueTypeSetCAP target_residue_type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
 	// loop each position and find new type that matches from the new type set
 	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+		if (symm_info && !symm_info->bb_is_independent(i)) continue;
+
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		// in future we may have a conformation using mixed type set, so check this by residue
 		std::string const & current_type_set_name ( rsd.type().residue_type_set().name() ); // database_directory() );

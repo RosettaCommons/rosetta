@@ -1172,8 +1172,8 @@ void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
 	for (int ii=1; ii<=3; ++ii) {
 		if (dof_.allow_dof(ii) && dof_.range2_is_bound(ii) && dof_.has_range2_lower(ii)) {
 			if ( x_i[ii] < dof_.range2_lower(ii) || x_i[ii] > dof_.range2_upper(ii) ) {
+				x_i[ii] = trans_start[ii];
 				last_slide_good_ = false;
-				return;
 			}
 		}
 	}
@@ -1255,7 +1255,7 @@ void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
   for ( it = start; it != end; ++it ) {
     jump_iterator = dofs_.find( *it );
     if ( jump_iterator == dofs_.end() ) {
-    T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+	    T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
     } else {
       core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
       RigidBodyDofTransMover dofmover( dof, *it, step_size_ );
