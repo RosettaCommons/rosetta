@@ -36,6 +36,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
+#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace simple_filters {
@@ -61,7 +62,8 @@ DdgFilter::DdgFilter() :
 	repack_( true ),
 	relax_mover_( NULL ),
 	pb_enabled_(false),
-	translate_by_(1000)
+	translate_by_(1000),
+	extreme_value_removal_( false )
 {
 	scorename_ = "ddg";
 }
@@ -148,6 +150,9 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	{
 		chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
 	}
+	extreme_value_removal( tag->getOption< bool >( "extreme_value_removal", false ) );
+	if( extreme_value_removal() )
+		runtime_assert( repeats() >= 3 ); // otherwise makes no sense...
 
 	if( repeats() > 1 && !repack() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
@@ -157,6 +162,7 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 		<< " repeats=" << repeats()
 		<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag)
 		<< " over jump " << rb_jump_
+		<< "extreme_value_removal: " << extreme_value_removal()
 		<< " and repack " << repack() << std::endl;
 
 	// Determine if this PB enabled.
@@ -279,12 +285,36 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		ddg.relax_mover( relax_mover() );
 		ddg.filter( filter() );
 		core::Real average( 0.0 );
+		utility::vector1< core::Real > repeat_values;
+		repeat_values.clear();
 		for( core::Size i = 1; i<=repeats_; ++i ){
 			ddg.calculate( pose );
-			average += ddg.sum_ddG();
+			repeat_values.push_back( ddg.sum_ddG() );
 			ddg.report_ddG( TR );
 		}
-		return average / (core::Real)repeats_;
+		if( extreme_value_removal() ){
+			runtime_assert( repeat_values.size() >= 3 );
+			utility::vector1< core::Real > non_extreme_vals( repeat_values.size() - 2 );
+			TR<<"removing extreme values. Considering values: ";
+			std::sort( repeat_values.begin(), repeat_values.end() );
+			std::copy( repeat_values.begin() + 1, repeat_values.end() - 1, non_extreme_vals.begin() );
+			BOOST_FOREACH( core::Real const val, non_extreme_vals ){
+				average += val;
+				TR<<val<<", ";
+			}
+			average /= (core::Real) non_extreme_vals.size();
+			TR<<'\n'<<" average value: "<<average<<std::endl;
+		}// fi extreme_value_removal
+		else{
+			BOOST_FOREACH( core::Real const val, repeat_values ){
+				average += val;
+				TR<<val<<", ";
+			}
+			average /= (core::Real) repeat_values.size();
+			TR<<'\n'<< " average value: "<< average<<std::endl;
+		}
+
+		return average;
 	} else {
 		if( repeats() > 1 && !repack() )
 			utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );

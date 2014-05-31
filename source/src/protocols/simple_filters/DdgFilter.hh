@@ -66,6 +66,9 @@ public:
 	protocols::moves::MoverOP relax_mover() const;
 	void filter( protocols::filters::FilterOP m );
 	protocols::filters::FilterOP filter() const;
+
+	void extreme_value_removal( bool const b ) { extreme_value_removal_ = b; }
+	bool extreme_value_removal() const{ return extreme_value_removal_; }
 private:
 
 	// initialize PB related features
@@ -89,6 +92,7 @@ private:
 
 	/// translation distance in A
 	core::Real translate_by_; //dflt set to 1000. Default resets to 100 for RosettaScripts with a scorefxn containing PB_elec.
+	bool extreme_value_removal_; //dflt false; if true, and repeats >= 3 removes the lowest and highest value computed during repeats. This should lower noise levels
 };
 
 
