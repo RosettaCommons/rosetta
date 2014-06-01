@@ -379,8 +379,8 @@ residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 #residue_types/l-ncaa/trifluoro-alanine.params
 #residue_types/l-ncaa/trifluoro-leucine_ent2.params
 #residue_types/l-ncaa/trifluoro-leucine.params
-residue_types/l-ncaa/TES.params
-residue_types/l-ncaa/S56.params
+#residue_types/l-ncaa/TES.params
+#residue_types/l-ncaa/S56.params
 
 
 ## Metal-binding NCAA types
