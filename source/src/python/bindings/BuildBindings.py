@@ -303,6 +303,7 @@ def main(args):
     if Options.cross_compile:
         #bindings_path = os.path.abspath('rosetta.windows')
         #if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
+        execute('Updating Rosetta options...', 'cd ./../../../ && ./update_options.sh')
         execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         #shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
@@ -952,6 +953,20 @@ def getAllRosettaSourceFiles():
     return extra_objs, all_sources
 
 
+def calculate_source_modification_date(source, binding_source_path, depth):
+    ''' calculate source modification date (including .hh files) and return it as date object
+    '''
+    latest = None
+    if os.path.isfile(source): latest = max(latest, os.path.getmtime(source))
+    if depth and os.path.isfile(source):
+        for line in file(source):
+            if line.startswith('#include'):
+                include = line.partition('<')[2].partition('>')[0]
+                include = os.path.join(binding_source_path, './../../' + include)
+                if os.path.isfile(include): latest = max(latest, calculate_source_modification_date(include, binding_source_path, depth-1) )
+    return latest
+
+
 def get_vc_compile_options():
     #common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DBOOST_THREAD_DONT_USE_CHRONO /DBOOST_ERROR_CODE_HEADER_ONLY /DBOOST_SYSTEM_NO_DEPRECATED' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
     #/env x64 /D "_WINDLL"
@@ -1089,9 +1104,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             hh =  s[:-2] + 'hh'  # (generate .hh file from cc
             fwd =  s[:-2] + 'fwd.hh'  # (generate .fwd.hh file from cc
 
-            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s) or \
-               os.path.isfile(hh)  and os.path.getmtime(obj) < os.path.getmtime(hh)  or  \
-               os.path.isfile(fwd) and os.path.getmtime(obj) < os.path.getmtime(fwd):
+            source_modification_date = calculate_source_modification_date(s, binding_source_path, depth=1)
+            #source_modification_date = calculate_source_modification_date('core/pose/Pose.cc', binding_source_path, depth=1)
+            #sys.exit(0)
+
+            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < source_modification_date:
+                #os.path.getmtime(s) or \
+               #os.path.isfile(hh)  and os.path.getmtime(obj) < os.path.getmtime(hh)  or  \
+               #os.path.isfile(fwd) and os.path.getmtime(obj) < os.path.getmtime(fwd):
 
                 command_line = get_windows_compile_command_line(source=s, output=obj, include='. ../external/include ../external/boost_1_55_0 ../external/dbio platform/windows/PyRosetta')
 
@@ -1175,7 +1195,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
         if Options.utility_only and not (dir_name == pre_generated_sources  or dir_name.startswith( os.path.join(pre_generated_sources, 'utility'))): continue
         if Options.core_only and dir_name.startswith( os.path.join(pre_generated_sources, 'protocols') ): continue
 
-        l, objs = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
+        l, objs = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, binding_source_path, symbols)
         latest = max(l, latest)
 
         bindings_objs += objs #[ o[:-len('.obj')] for o in objs]
@@ -1227,7 +1247,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             if Options.utility_only and not dir_name.startswith(pre_generated_sources+'\\utility'): continue
             if Options.core_only and dir_name.startswith(pre_generated_sources+'\\protocols'): continue
 
-            windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
+            windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, binding_source_path, link=True)
 
     print 'Done building PyRosetta bindings for Windows!'
 
@@ -1238,7 +1258,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
 
     # "public: virtual bool __thiscall ObjexxFCL::IndexRange::contains(class ObjexxFCL::IndexRange const &)const " (?contains@IndexRange@ObjexxFCL@@UBE_NABV12@@Z)
 
-def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False):
+def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, binding_source_path, all_symbols=[], link=False):
     files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
     sub_dir = dir_name[ len(base_dir)+1: ]
 
@@ -1266,7 +1286,9 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
             obj = os.path.join( obj_dir, f[:-3]+'obj')
             objs.append(obj)
 
-            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
+            source_modification_date = calculate_source_modification_date(source, binding_source_path, depth=0)
+
+            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < source_modification_date:
                 command_line = get_windows_compile_command_line(source=source, output=obj,
                                                                 include='. ../external/include ../external/boost_1_55_0/ ../external/dbio platform/windows/PyRosetta ' \
                                                                 + ' '.join(Options.I),

@@ -498,6 +498,13 @@ public:
 		return atom_name_to_vd_.find(atom_name) != atom_name_to_vd_.end();
 	}
 
+	#ifdef WIN32  // Fixes incorrect cast on WIN32 where has("string") actually calls has( VD )
+	inline bool has( const char *name ) const
+	{
+		return has( std::string(name) );
+	}
+	#endif
+
 	/// @brief is this vertex descriptor present in this residue?
 	bool
 	has( VD const vd ) const
