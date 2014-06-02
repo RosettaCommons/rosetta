@@ -200,10 +200,27 @@ void ConnectJumps::apply( core::pose::Pose & pose )
 		constraint_set.push_back( create_coordinate_cst( pose, i ) );
 	}
 	for ( core::Size i=1; i<=motifs.size(); ++i ) {
-		std::string const ss_type( motifs[i].substr( motifs[i].size()-2, 1 ) );
-		std::string const abego_type( motifs[i].substr( motifs[i].size()-1, 1 ) );
-		core::Size const len( (core::Size)utility::string2int( motifs[i].substr( 0, motifs[i].size()-2 ) ) );
-		TR << "motif" << i << " = " << motifs[i] << " " << ss_type << " " << abego_type << " " << len << std::endl;
+		// here, we can accept "3LX" or "3:LX"
+		std::string motif( "" );
+		for ( core::Size j=0; j<motifs[i].size(); ++j ) {
+			if ( motifs[i][j] != ':' ) {
+				motif += motifs[i][j];
+			}
+		}
+		std::string const ss_type( motif.substr( motif.size()-2, 1 ) );
+		std::string const abego_type( motif.substr( motif.size()-1, 1 ) );
+		assert( ss_type.size() );
+		assert( abego_type.size() );
+		if ( ss_type[0] != 'E' && ss_type[0] != 'H' && ss_type[0] != 'L' ) {
+			TR.Error << "Invalid SS type in motif " << motif << std::endl;
+			utility_exit();
+		}
+		if ( abego_type[0] >= 'Z' || abego_type[0] <= 'A' ) {
+			TR.Error << "Invalid abego type in motif " << motif << std::endl;
+			utility_exit();
+		}
+		core::Size const len( (core::Size)utility::string2int( motif.substr( 0, motif.size()-2 ) ) );
+		TR << "motif" << i << " = " << motif << " " << ss_type << " " << abego_type << " " << len << std::endl;
 		insert_length += len;
 		for ( core::Size j=1; j<=len; ++j ) {
 			ss += ss_type;
