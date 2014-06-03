@@ -215,7 +215,7 @@ void ConnectJumps::apply( core::pose::Pose & pose )
 			TR.Error << "Invalid SS type in motif " << motif << std::endl;
 			utility_exit();
 		}
-		if ( abego_type[0] >= 'Z' || abego_type[0] <= 'A' ) {
+		if ( abego_type[0] > 'Z' || abego_type[0] < 'A' ) {
 			TR.Error << "Invalid abego type in motif " << motif << std::endl;
 			utility_exit();
 		}
