@@ -58,13 +58,13 @@ namespace checker {
 		copy_CCD_torsions( pose::Pose & pose ) const;
 
 		void
-		copy_CCD_torsions_align( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const;
+		copy_CCD_torsions_general( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const;
 
 		bool
 		check_loop_closed( pose::Pose const & pose );
 
 		bool
-		chain_break_screening_align( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, Size const five_ );
+		chain_break_screening_general( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, Size const five_ );
 
 		//bool
 		//chain_break_screening( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );

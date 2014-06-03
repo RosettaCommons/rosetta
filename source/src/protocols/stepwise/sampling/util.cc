@@ -1010,12 +1010,12 @@ rotate( pose::Pose & pose, Matrix const M,
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	// Note that following is really align, and potentially very valuable, for all stepwise approaches
+	// Note that following is really general, and potentially very valuable, for all stepwise approaches
 	//  and even in pose setup for fragment assembly of RNA or proteins.
 	// Consider including in a GeneralPoseSetup class.
 	//
 	// Trying to get correct fold-tree handling, and variants.
-	// Also trying to properly handle sequence reorderings (which can get pretty complicated in align )
+	// Also trying to properly handle sequence reorderings (which can get pretty complicated in general )
 	//
 	utility::vector1< Size >
 	merge_two_poses( pose::Pose & pose,
@@ -2124,7 +2124,7 @@ rotate( pose::Pose & pose, Matrix const M,
 	utility::vector1< Size > root_partition_res = figure_out_root_partition_res( pose, moving_res_list );
 	if ( root_partition_res.size() == 0 ) root_partition_res.push_back( pose.fold_tree().root() );
 
-	// can later alignize to use 'reference_pose', not necessarily native_pose.
+	// can later generalize to use 'reference_pose', not necessarily native_pose.
 	sampling::align::StepWisePoseAligner pose_aligner( *native_pose );
 	pose_aligner.set_root_partition_res( root_partition_res );
 	Pose pose_save = pose;

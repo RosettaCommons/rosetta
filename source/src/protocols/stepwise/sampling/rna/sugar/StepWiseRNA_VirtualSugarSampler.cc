@@ -371,7 +371,7 @@ StepWiseRNA_VirtualSugarSampler::get_sugar_setup_scorefxns( scoring::ScoreFuncti
 	//Note that this error doesn't seem to occur if virtual_sugar is sampled in same step as SAMPLER/ (no Hbond_tripped!)
 	//The non-rescale scorefxn does however causes the floating base from moving far away from the starting
 	//point even in the same step as SAMPLER case
-	//Also alignly the minimizer same and separate step virtual sampler doesn't give the same results!
+	//Also generally the minimizer same and separate step virtual sampler doesn't give the same results!
 	TR.Debug << "--------------START Creating rescaled one_tenth_sugar_score_fxn_without_ch_bond--------------" << std::endl;
 	rescaled_sugar_score_fxn_without_ch_bond = rescale_scorefxn( sugar_scorefxn_without_ch_bond, 0.1 );
 	TR.Debug << "--------------FINISH Creating rescaled one_tenth_sugar_score_fxn_without_ch_bond--------------" << std::endl;

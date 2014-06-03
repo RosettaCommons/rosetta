@@ -154,7 +154,7 @@ main( int argc, char * argv [] )
 void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP scorefxn, std::string id )
 {
 	// create trace based on filename
-	basic::Tracer GEN( "rpb." + id + pdb_filename ); // align output
+	basic::Tracer GEN( "rpb." + id + pdb_filename ); // general output
 	basic::Tracer RES( "rpb.result." + id +pdb_filename ); // results output
 
 	// create 2 poses from the same pdb file

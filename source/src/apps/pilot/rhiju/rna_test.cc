@@ -838,7 +838,7 @@ rna_fullatom_minimize_test()
 
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
-		//Don't check into align protocol?
+		//Don't check into general protocol?
 		//core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose pose_init = pose;

@@ -396,9 +396,9 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	if ( rigid_body_sampling_ ) {
 		// As long as we're not instantiating any sugars in the final pose, break once we find any valid sugar rotamer [really?]
 		if ( rna_chain_closure_checkers_.size() == 0 && !options_->sampler_try_sugar_instantiation() ) {
-			screeners_.push_back( new FastForwardToNextRigidBody ); // alignize to non-rigid-body rotamer case.
+			screeners_.push_back( new FastForwardToNextRigidBody ); // generalize to non-rigid-body rotamer case.
 		} else {
-			screeners_.push_back( new FastForwardToNextResidueAlternative( moving_res_ ) ); // alignize -- should fast forward past all virtual residue alternatives.
+			screeners_.push_back( new FastForwardToNextResidueAlternative( moving_res_ ) ); // generalize -- should fast forward past all virtual residue alternatives.
 		}
 	}
 
@@ -428,7 +428,7 @@ StepWiseConnectionSampler::initialize_pose( pose::Pose & pose  ){
 void
 StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 
-	// RNA Base Centroid stuff -- could soon alignize to find protein partners too. That would be cool.
+	// RNA Base Centroid stuff -- could soon generalize to find protein partners too. That would be cool.
 	if ( working_parameters_->working_moving_partition_res().size() > 0 ){
 		base_centroid_checker_ = new RNA_BaseCentroidChecker ( pose, working_parameters_,
 																													 options_->tether_jump());

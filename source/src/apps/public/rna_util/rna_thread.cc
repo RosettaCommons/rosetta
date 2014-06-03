@@ -219,7 +219,7 @@ prepare_threaded_model(
 	using namespace utility;
 
 	// following creates pose from scratch! Assumes that we need to add/delete, and it changes the
-	// fold-tree -- both are probably bad ideas for a align threading routine.
+	// fold-tree -- both are probably bad ideas for a general threading routine.
 	// Would be better to add or delete residues as needed, trying to be smart about fold_tree [how?].
 	// And better to skip this part if add/delete not necessary -- i.e., just isolate the "mutate sequence" part.
 	Pose const template_pose = pose;

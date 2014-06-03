@@ -21,7 +21,7 @@ static basic::Tracer TR( "protocols.rotamer_sampler.JumpRotamer" );
 
 ///////////////////////////////////////////////////////////////////
 //
-//  Bare bones JumpRotamer -- a more versatile version for align
+//  Bare bones JumpRotamer -- a more versatile version for general
 //    rotation/translation searches, which
 //    is also less sensitive to jump atoms, allows access to the 'Stub',
 //    etc. is in rigid_body/RigidBodyRotamer.

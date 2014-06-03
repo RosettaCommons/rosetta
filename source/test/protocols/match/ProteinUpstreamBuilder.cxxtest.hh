@@ -77,7 +77,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior" ); // kinemages below made with dun02 library
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit" ); // kinemages below made with dun02 library
 	}
 
 	// Shared finalization goes here.

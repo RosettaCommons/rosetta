@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file RNA_AddDeleteMonteCarlo
-/// @brief SWA Monte Carlo -- alignization of Monte Carlo to permit addition/deletion of RNA residues
+/// @brief SWA Monte Carlo -- generalization of Monte Carlo to permit addition/deletion of RNA residues
 /// @detailed
 /// @author Rhiju Das
 

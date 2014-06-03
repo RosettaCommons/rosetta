@@ -67,14 +67,14 @@ namespace checker {
 
 		Size const three_prime_res = five_prime_res_ + 1;
 		//Even through there is the chain_break, alpha of 3' and epl and gamma of 5' should be defined due to the existence of the upper and lower variant type atoms.
- 		copy_CCD_torsions_align( pose, five_prime_res_, three_prime_res );
+ 		copy_CCD_torsions_general( pose, five_prime_res_, three_prime_res );
 
 	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_ChainClosureChecker::copy_CCD_torsions_align( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const {
+	RNA_ChainClosureChecker::copy_CCD_torsions_general( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const {
 
 		using namespace core::chemical;
 		using namespace core::conformation;
@@ -103,7 +103,7 @@ namespace checker {
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	RNA_ChainClosureChecker::chain_break_screening_align( pose::Pose & chain_break_screening_pose,
+	RNA_ChainClosureChecker::chain_break_screening_general( pose::Pose & chain_break_screening_pose,
 																										 core::scoring::ScoreFunctionOP const & chain_break_scorefxn,
 																										 Size const five_prime_res ){
 
@@ -146,13 +146,13 @@ namespace checker {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	RNA_ChainClosureChecker::check_screen(){
-		return chain_break_screening_align( chain_break_screening_pose_, chain_break_scorefxn_, five_prime_res_ );
+		return chain_break_screening_general( chain_break_screening_pose_, chain_break_scorefxn_, five_prime_res_ );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	RNA_ChainClosureChecker::check_screen( pose::Pose & pose ){
-		return chain_break_screening_align( pose, chain_break_scorefxn_, five_prime_res_ );
+		return chain_break_screening_general( pose, chain_break_scorefxn_, five_prime_res_ );
 	}
 
 

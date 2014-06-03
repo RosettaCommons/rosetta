@@ -76,7 +76,7 @@ stepwise_monte_carlo()
   using namespace protocols::stepwise::monte_carlo::rna;
   using namespace utility::file;
 
-	// Following could be alignized to fa_standard, after recent unification, but
+	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 

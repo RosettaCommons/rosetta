@@ -415,7 +415,7 @@ void KinematicMover::apply( core::pose::Pose & pose ) // {{{1
 	// from the stored backbone atom coordinates, and is completely agnostic to the
 	// relationship between this list of atoms and any polymer.  This is probably the best
 	// (or, at least, safest) way to do this if we want kinematic closure to be
-	// alignly applicable (i.e. useful for non-protein backbones, too).
+	// generally applicable (i.e. useful for non-protein backbones, too).
 	chainTORS(atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0);
 
 	// save the previous torsions, lengths and angles to restore if no solution is found

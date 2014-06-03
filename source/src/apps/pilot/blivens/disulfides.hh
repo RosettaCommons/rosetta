@@ -73,7 +73,7 @@ Real CB_distance(pose::Pose const& pose, Size posA, Size posB)
  *  1. Distance between CA-CA
  * possible enhancements:
  *  - CB distance
- *  - align orientation (pointing towards one another)
+ *  - general orientation (pointing towards one another)
  *  - ramachandra plot orientation
  *  - other sidechains which need to be repacked/mutated
  */
@@ -108,7 +108,7 @@ possible_disulfide(pose::Pose const& pose, Size residueA_pos, Size residueB_pos)
 
 /*! @brief Detect 'actual' disulfide bonds.
  *
- * @details Since disulfide bonds are alignly not annotated, we define a
+ * @details Since disulfide bonds are generally not annotated, we define a
  * disulfide to exist between a pair of residues if
  *   1) They are both cysteines
  *   2) They are bonded (which is marked by conformer.detect_disulfides)

@@ -11,7 +11,7 @@
 //kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc
 //			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
 
-//Headers are alignly organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
+//Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
 
 // Project Headers

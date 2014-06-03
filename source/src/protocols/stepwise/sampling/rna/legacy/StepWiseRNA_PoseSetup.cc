@@ -66,7 +66,7 @@ using core::Real;
 // Setup pose for StepWiseRNA Assembly, by Parin Sripakdeevong.
 // Some code cleanup by Rhiju (2013).
 //
-// To do: clean up & alignize protonated A variant.
+// To do: clean up & generalize protonated A variant.
 //        unification with new FullModelInfo?
 //
 //////////////////////////////////////////////////////////////////////////

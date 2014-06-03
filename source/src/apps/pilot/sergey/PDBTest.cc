@@ -135,17 +135,17 @@ public:
 
 
 	void link(core::pose::Pose &p) {
-		p.attach_align_obs(&PosePyObserver::alignEvent, this);
+		p.attach_general_obs(&PosePyObserver::generalEvent, this);
 		//pose_ = p;
 	}
 
 	void unlink(core::pose::PoseOP &p) {
-		p->detach_align_obs(&PosePyObserver::alignEvent, this);
+		p->detach_general_obs(&PosePyObserver::generalEvent, this);
 		//pose_ = 0;
 	}
 
-	virtual void alignEvent( core::pose::signals::GeneralEvent const & ) {
-		std::cout << "PosePyObserver::alignEvent... C++ version" << std::endl;
+	virtual void generalEvent( core::pose::signals::GeneralEvent const & ) {
+		std::cout << "PosePyObserver::generalEvent... C++ version" << std::endl;
 	};
 
 private:

@@ -38,7 +38,7 @@ static basic::Tracer TR( "protocols.stepwise.sampling.movemap/util" );
 // All movemap setting for stepwise assembly/monte carlo is now tucked into here.
 //  Might consider making this a class.
 //  Also might move "core" figure_out_stepwise_movemap() routine that goes from
-//    AllowInsert to MoveMap into AllowInsert. Its pretty align and good.
+//    AllowInsert to MoveMap into AllowInsert. Its pretty general and good.
 //
 //   -- rhiju, 2014
 //
@@ -147,7 +147,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// used in protein SWA -- should deprecate soon in favor of align movemap setup.
+// used in protein SWA -- should deprecate soon in favor of general movemap setup.
 ////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose,
@@ -247,7 +247,7 @@ check_move_map_against_working_parameters( core::pose::Pose const & pose ,
 	for ( Size i = 1; i <= cutpoint_closed.size(); i++ ) suites_that_must_be_minimized.push_back( cutpoint_closed[i] );
 
 	// last, but not least, there might be some information in the domain map. Note
-	// that alignly we could instead replace working_fixed_res with an inputted domain map.
+	// that generally we could instead replace working_fixed_res with an inputted domain map.
 	// that is, get rid of working_fixed_res & minimize_res and instead have a local fixed_domain_map,
 	// which can instead be updated by set_working_fixed_res.
 	// how to tell Modeler to *not* minimize additional suites?

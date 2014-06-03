@@ -29,6 +29,7 @@ patches/VirtualBB.txt               # VIRTUAL_BB
 patches/VirtualProteinSideChain.txt # VIRTUAL_SIDE_CHAIN
 patches/N_acetylated.txt            # PEPTIDE_CAP
 patches/C_methylamidated.txt        # PEPTIDE_CAP
+patches/VirtualBB.txt               # VIRTUAL_BB
 
 # RNA
 patches/nucleic/rna/5prime_phosphate.txt # TERMINAL_PHOSPHATE

@@ -364,9 +364,9 @@ StepWiseRNA_ConnectionSampler::initialize_pose_level_screeners( pose::Pose & pos
 		screeners_.push_back( new BaseBinMapUpdater( base_bin_map_ ) );
 		// As long as we're not instantiating any sugars in the final pose, break once we find any valid sugar rotamer [really?]
 		if ( chain_closure_checkers_.size() == 0 && !try_sugar_instantiation_ ) {
-			screeners_.push_back( new FastForwardToNextRigidBody ); // alignize to non-rigid-body rotamer case.
+			screeners_.push_back( new FastForwardToNextRigidBody ); // generalize to non-rigid-body rotamer case.
 		} else {
-			screeners_.push_back( new FastForwardToNextResidueAlternative( moving_res_ ) ); // alignize -- should fast forward past all virtual residue alternatives.
+			screeners_.push_back( new FastForwardToNextResidueAlternative( moving_res_ ) ); // generalize -- should fast forward past all virtual residue alternatives.
 		}
 	}
 
@@ -401,7 +401,7 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// RNA Base Centroid stuff -- could soon alignize to find protein partners too. That would be cool.
+	// RNA Base Centroid stuff -- could soon generalize to find protein partners too. That would be cool.
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	base_centroid_checker_ = new RNA_BaseCentroidChecker ( pose, working_parameters_,
 																												 options_->tether_jump());
@@ -529,7 +529,7 @@ StepWiseRNA_ConnectionSampler::which_residue_alternative_set_is_moving_residue()
 
 /////////////////////////////////////////////////////////////////////////////////////
 // sets up a 'bare-bones' sugar modeling object with moving_residue information.
-// in the (near) future change SugarModeling object to something more align with
+// in the (near) future change SugarModeling object to something more general with
 // a pose_list, res_map, and representative residue -- ResidueAlternativeSet [?]
 void
 StepWiseRNA_ConnectionSampler::initialize_moving_residue_pose_list( pose::Pose const & pose ){

@@ -360,7 +360,7 @@ HbsCreatorMover::apply(
 		using namespace core::scoring::constraints;
 
 		//kdrew: add constraints to omega angle, (this problem might have been fixed and these constraints are unnecessary)
-		//iwatkins: this is align stuff, not hbs or oop specific
+		//iwatkins: this is general stuff, not hbs or oop specific
 		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i )
 		{
 			id::AtomID id1,id2,id3,id4;

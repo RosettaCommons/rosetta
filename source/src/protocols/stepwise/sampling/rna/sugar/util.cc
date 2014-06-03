@@ -277,7 +277,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 	// For now, we are  also assuming that each residue can only act as an anchor for one other residue. This is the case for
 	//  SWA of RNA motifs, but may no longer hold when we allow multiple strands and/or ligands.
 	//
-	// In the more align case, the pattern of anchors should still be a directed acyclic graph, and, I think, will
+	// In the more general case, the pattern of anchors should still be a directed acyclic graph, and, I think, will
 	// be parseable if the pose already has jump information. Following is written though as if the pose doesn't have
 	// jumps already defined -- a separate set of functions that take advantage of that jump information are below.
 	//

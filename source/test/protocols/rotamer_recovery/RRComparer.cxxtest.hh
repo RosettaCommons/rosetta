@@ -67,7 +67,7 @@ public:
 
 	void
 	setUp() {
-		core_init_with_additional_options( "-patch_selectors VIRTUAL_BB" );
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -patch_selectors VIRTUAL_BB -override_rsd_type_limit" ); // kinemages below made with dun02 library
 	}
 
 	void test_RRComparerRotBins_main() {

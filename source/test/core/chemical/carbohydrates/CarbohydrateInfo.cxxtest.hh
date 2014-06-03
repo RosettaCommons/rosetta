@@ -38,6 +38,7 @@ public:
 		using namespace basic::options;
 
 		core_init_with_additional_options("-override_rsd_type_limit");
+
 		option[OptionKeys::in::include_sugars](true);
 		option[OptionKeys::in::file::read_pdb_link_records](true);
 		option[OptionKeys::in::enable_branching](true);

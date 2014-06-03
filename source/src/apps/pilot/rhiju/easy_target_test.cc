@@ -406,7 +406,7 @@ apply_mask(
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-// This could easily be alignized...
+// This could easily be generalized...
 void
 setup_t469_zn_tether( pose::Pose & pose ){
 	using namespace id;

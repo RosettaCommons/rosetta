@@ -42,7 +42,7 @@ using namespace core;
 */
 
 // functionality in original floating_base sampling, setup for sample-and-screen framework.
-// This will likely be deprecated in favor of more align ResidueAlternative sampling
+// This will likely be deprecated in favor of more general ResidueAlternative sampling
 
 namespace protocols {
 namespace stepwise {

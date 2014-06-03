@@ -105,7 +105,7 @@ void AssignClusterToolMover::apply( core::pose::Pose &pose ) {
   } else { // okay no idea how to get the silent-struct directly use conventional path-way
     jd->job_inputter()->pose_from_job( pose, jd->current_job() );
     SilentStructOP current_struct = SilentStructFactory::get_instance()->get_silent_struct_out(); //new ProteinSilentStruct;
-    //unfortunately in align it might be difficult to find out what is appropriate
+    //unfortunately in general it might be difficult to find out what is appropriate
     // should one use get_silent_struct_out ?
     current_struct->fill_struct( pose );
     apply( *current_struct );

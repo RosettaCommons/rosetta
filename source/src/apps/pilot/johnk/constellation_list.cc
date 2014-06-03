@@ -86,7 +86,7 @@ utility::vector1<char> list_allowable_mutations( char const starting_aa ) {
 
 	if ( starting_aa == 'G' ) return allowed_list;
 
-	// align cases
+	// general cases
 	// anything other than Gly can become Gly, anything other than Gly/Ala can become Ala
 	allowed_list.push_back('G');
 	if ( starting_aa != 'A' ) {

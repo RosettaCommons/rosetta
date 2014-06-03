@@ -560,11 +560,11 @@ sample_trp_test()
 	initial_task_factory->push_back( prevent_repacking );
 	green_packer->set_reference_round_task_factory( initial_task_factory );
 
-	TaskFactoryOP align_task_factory( new TaskFactory );
-	align_task_factory->push_back( new InitializeFromCommandline );
-	align_task_factory->push_back( new RestrictToRepacking );
-	align_task_factory->push_back( prevent_repacking );
-	green_packer->set_task_factory( align_task_factory );
+	TaskFactoryOP general_task_factory( new TaskFactory );
+	general_task_factory->push_back( new InitializeFromCommandline );
+	general_task_factory->push_back( new RestrictToRepacking );
+	general_task_factory->push_back( prevent_repacking );
+	green_packer->set_task_factory( general_task_factory );
 
 	std::string const silent_file = option[ out::file::silent  ]();
 

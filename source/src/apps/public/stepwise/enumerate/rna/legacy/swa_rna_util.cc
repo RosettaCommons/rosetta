@@ -218,7 +218,7 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/sampling/rna/util.hh
 void
-align_pose_align( core::pose::Pose const & static_pose, std::string const static_tag, core::pose::Pose & moving_pose, std::string const moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only ){
+align_pose_general( core::pose::Pose const & static_pose, std::string const static_tag, core::pose::Pose & moving_pose, std::string const moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only ){
 
 
 	bool found_non_virtual_base = false;
@@ -335,12 +335,12 @@ check_alignment_RMSD_cutoff( core::pose::Pose const & static_pose, std::string c
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/sampling/rna/util.hh
 Real
-full_length_rmsd_over_reside_list_align( pose::Pose const & pose_one, pose::Pose const & pose_two, utility::vector1 < std::pair< Size, Size > > const & rmsd_res_pair_list, bool const verbose, bool const ignore_virtual_atom ){
+full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Pose const & pose_two, utility::vector1 < std::pair< Size, Size > > const & rmsd_res_pair_list, bool const verbose, bool const ignore_virtual_atom ){
 
 	using namespace ObjexxFCL;
 
 	if ( verbose ){
-		output_title_text( "Enter full_length_rmsd_over_residue_list_align function", TR );
+		output_title_text( "Enter full_length_rmsd_over_residue_list_general function", TR );
 		output_boolean( "ignore_virtual_atom = ", ignore_virtual_atom, TR ); std::cout << std::endl;
 		output_pair_size( rmsd_res_pair_list, "rmsd_res_pair_list = ", TR );
 	}
@@ -455,7 +455,7 @@ full_length_rmsd_over_reside_list_align( pose::Pose const & pose_one, pose::Pose
 
 	if ( verbose ){
 		std::cout << "sum_sd = " << sum_sd << " atom_count = " << atom_count << " rmsd = " << rmsd << std::endl;
-		output_title_text( "Exit In full_length_rmsd_over_residue_list function_align", TR );
+		output_title_text( "Exit In full_length_rmsd_over_residue_list function_general", TR );
 	}
 
 	return ( std::max( 0.01, rmsd ) );
@@ -534,7 +534,7 @@ align_pdbs(){
 	import_pose::pose_from_pdb( static_pose, *rsd_set, static_pdb_tag );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///By applying the virtual_res, align_pose_align()/setup_suite_atom_id_map() will skip over the virtual_atoms///
+	///By applying the virtual_res, align_pose_general()/setup_suite_atom_id_map() will skip over the virtual_atoms///
 	///Only need to apply to static/native pdb pose since only need virtual atoms in one of the two structures being aligned.
 	for ( Size virtual_res_ID = 1; virtual_res_ID <= native_virtual_res_list.size(); virtual_res_ID++ ){
 		apply_virtual_rna_residue_variant_type( static_pose, native_virtual_res_list[virtual_res_ID], true /*apply_check*/ );
@@ -550,7 +550,7 @@ align_pdbs(){
 		pose::Pose moving_pose;
 		import_pose::pose_from_pdb( moving_pose, *rsd_set, moving_pdb_tag );
 
-		align_pose_align( static_pose, static_tag_name, moving_pose, get_tag_from_pdb_filename( moving_pdb_tag ), alignment_res_pair_list, align_base_only );
+		align_pose_general( static_pose, static_tag_name, moving_pose, get_tag_from_pdb_filename( moving_pdb_tag ), alignment_res_pair_list, align_base_only );
 
 		std::string output_moving_pdb_tag = "";
 
@@ -687,11 +687,11 @@ calculate_pairwise_RMSD(){
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	align_pose_align( native_pose, native_tag, decoy_pose, decoy_tag, alignment_res_pair_list, align_base_only );
+	align_pose_general( native_pose, native_tag, decoy_pose, decoy_tag, alignment_res_pair_list, align_base_only );
 
 	check_alignment_RMSD_cutoff( native_pose, native_tag, decoy_pose, decoy_tag, alignment_res_pair_list, align_base_only, alignment_RMSD_cutoff );
 
-	Real const full_rmsd = full_length_rmsd_over_reside_list_align( native_pose, decoy_pose, rmsd_res_pair_list, true /*verbose*/,  false /*ignore_virtual_atom*/ );
+	Real const full_rmsd = full_length_rmsd_over_reside_list_general( native_pose, decoy_pose, rmsd_res_pair_list, true /*verbose*/,  false /*ignore_virtual_atom*/ );
 
 
 

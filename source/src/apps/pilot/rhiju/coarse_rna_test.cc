@@ -584,7 +584,7 @@ create_bp_jump_database_test( ){
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-align_initialize( 	pose::Pose & pose,
+general_initialize( 	pose::Pose & pose,
 											pose::PoseOP & native_pose,
 											protocols::farna::RNA_StructureParametersOP & rna_structure_parameters_,
 											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
@@ -686,7 +686,7 @@ coarse_rb_test(){
 	RNA_ChunkLibraryOP rna_chunk_library_;
 	AllowInsertOP allow_insert_;
 
-	align_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, allow_insert_ );
+	general_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, allow_insert_ );
 
 	MultipleDomainMoverOP multiple_domain_mover = new MultipleDomainMover( pose, rna_loop_closer_ );
 	Size const num_domains = multiple_domain_mover->num_domains();
@@ -1270,7 +1270,7 @@ sampling_map_test(){
 	CoarseRNA_LoopCloserOP rna_loop_closer_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
 	AllowInsertOP allow_insert_;
-	align_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, allow_insert_ );
+	general_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, allow_insert_ );
 
 	output_angles( pose );
 

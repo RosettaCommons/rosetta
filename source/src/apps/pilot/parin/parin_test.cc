@@ -543,7 +543,7 @@ copy_virtual_variant_type(pose::Pose & full_pose, pose::Pose const & start_pose_
 	}
 }
 
-/*Commented out on Jan 16, 2012 after implemented a more align version of this function in StepWiseRNA_Util.cc.
+/*Commented out on Jan 16, 2012 after implemented a more general version of this function in StepWiseRNA_Util.cc.
 void
 remove_all_variant_types(pose::Pose & pose){
 
