@@ -91,7 +91,7 @@ class Tester:
                 self.platform = platform
                 self.testpath = "build/test/" + platform
                 return
-        sys.exit("run.py is about to crash because it could not use SCons to detect your platform.  The most likely reason for this is that you are running it from the wrong directory - it must be run from the rosetta_source directory, not the rosetta_source/test directory, even though it lives in the latter.")
+        sys.exit("run.py is about to crash because it could not use SCons to detect your platform.  The most likely reason for this is that you are running it from the wrong directory - it must be run from the rosetta_source directory, not the rosetta_source/test directory, even though it lives in the latter.\nScons output for command line {0} is:\n{1}\n".format(cmd_str, pl))
         return "PlatformWasNotFound!!!"  # <-- That should not really happend.
 
 
