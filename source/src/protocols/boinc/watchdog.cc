@@ -239,7 +239,10 @@ get_the_hell_out(std::string )
 #else
 	pthread_mutex_unlock(&bailout_mutex);
 #endif
+
+#ifdef BOINC_GRAPHICS
 	}
+#endif
 
 	pdb_out_stream.close();
 	pdb_out_stream.clear();

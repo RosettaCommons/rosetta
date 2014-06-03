@@ -6,8 +6,8 @@
 #include <cstring>
 
 #if defined(__GNUC__)
-#if defined(__linux) \
- || (defined(__APPLE_CC__) && __APPLE_CC__ >= 5465)
+#if (defined(__linux) \
+ || (defined(__APPLE_CC__) && __APPLE_CC__ >= 5465)) && !defined(ANDROID)
 #include <execinfo.h>
 #define TBXX_LIBC_BACKTRACE_HAVE_EXECINFO_H
 #if ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1))) \

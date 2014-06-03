@@ -810,7 +810,6 @@ settings = {
         },
     },
 
-
     # This target is somewhat sketchy in its implementation.
     # It ought to be done as a separate executable.
     # Deprecated.  If it isn't used within a certain time frame it will go away.
@@ -1150,6 +1149,51 @@ settings = {
         },
     },
 
+    "gcc, android_arm" : {
+        "appends" : {
+            "include_path" : [ os.environ["TOOLCHAIN"] + "arm-linux-androideabi/include", ],
+            "library_path"    : [ os.environ["TOOLCHAIN"] + "arm-linux-androideabi/lib",
+                                os.environ["SYSROOT"] + "usr/lib", ],
+            "flags" : {
+                "cc"        : [
+                                "Wall", "O3",
+                                "-sysroot=" + os.environ["SYSROOT"],
+                                "DANDROID",
+                                 "mthumb", "frtti", "fno-strict-aliasing",
+                              ],
+                "cxx"        : [
+                                  "Wall","O3",
+                                  "-sysroot=" + os.environ["SYSROOT"],
+                                  "DANDROID",
+                                  "mthumb", "frtti", "fno-strict-aliasing",
+                               ],
+                "link" : [
+                    "Wl,-Bdynamic -lz -Wl,-Bstatic",
+                ],
+
+            },
+            "libraries"  : [ "stdc++", "supc++" ],
+        },
+        "overrides" : {
+            "cc"            : os.environ["TOOLCHAIN"] + "bin/arm-linux-androideabi-gcc",
+            "cxx"           : os.environ["TOOLCHAIN"] + "bin/arm-linux-androideabi-g++",
+            "link"            : os.environ["TOOLCHAIN"] + "bin/arm-linux-androideabi-ld",
+        },
+        "removes" : {
+           "flags" : {
+                "warn" : [ "pedantic" ],
+                "compile" : [
+                    "malign-double",
+                    "march=pentium4",
+                    "march=athlon",
+                    "mtune=itanium2"
+                ],
+           },
+           "defines"  : [ "BOINC_GRAPHICS", ],
+           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "#external/include" ],
+           "library_path"  : [ "/lib", "/usr/lib", "/usr/local/lib","#external/lib", "#external", ],
+        },
+    },
 
     ###########################################################################
     # ICC #####################################################################
@@ -1932,5 +1976,6 @@ settings = {
             "defines" : [ "USEBOOSTMPI" ],
         },
     },
+
 
 }  # end settings
