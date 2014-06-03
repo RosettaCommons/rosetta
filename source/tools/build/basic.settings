@@ -1151,19 +1151,19 @@ settings = {
 
     "gcc, android_arm" : {
         "appends" : {
-            "include_path" : [ os.environ["TOOLCHAIN"] + "arm-linux-androideabi/include", ],
-            "library_path"    : [ os.environ["TOOLCHAIN"] + "arm-linux-androideabi/lib",
-                                os.environ["SYSROOT"] + "usr/lib", ],
+            "include_path" : [ "#external/androidarm-tc/arm-linux-androideabi/include", ],
+            "library_path"    : [ "#external/androidarm-tc/arm-linux-androideabi/lib",
+                                "#external/androidarm-tc/sysroot/usr/lib", ],
             "flags" : {
                 "cc"        : [
                                 "Wall", "O3",
-                                "-sysroot=" + os.environ["SYSROOT"],
+                                "-sysroot=#external/androidarm-tc/sysroot",
                                 "DANDROID",
                                  "mthumb", "frtti", "fno-strict-aliasing",
                               ],
                 "cxx"        : [
                                   "Wall","O3",
-                                  "-sysroot=" + os.environ["SYSROOT"],
+                                  "-sysroot=#external/androidarm-tc/sysroot",
                                   "DANDROID",
                                   "mthumb", "frtti", "fno-strict-aliasing",
                                ],
@@ -1175,9 +1175,9 @@ settings = {
             "libraries"  : [ "stdc++", "supc++" ],
         },
         "overrides" : {
-            "cc"            : os.environ["TOOLCHAIN"] + "bin/arm-linux-androideabi-gcc",
-            "cxx"           : os.environ["TOOLCHAIN"] + "bin/arm-linux-androideabi-g++",
-            "link"            : os.environ["TOOLCHAIN"] + "bin/arm-linux-androideabi-ld",
+            "cc"            : "#external/androidarm-tc/bin/arm-linux-androideabi-gcc",
+            "cxx"           : "#external/androidarm-tc/bin/arm-linux-androideabi-g++",
+            "link"            : "#external/androidarm-tc/bin/arm-linux-androideabi-ld",
         },
         "removes" : {
            "flags" : {
