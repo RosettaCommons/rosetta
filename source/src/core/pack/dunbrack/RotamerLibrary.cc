@@ -767,7 +767,7 @@ RotamerLibrary::decide_write_binary() const
 	return false;
 #endif
 
-#ifdef WIN32 // binary file handling doesnt appear to work properly on windows 64 bit machines.
+#if (defined WIN32) && (!defined PYROSETTA)	// binary file handling doesnt appear to work properly on windows 64 bit machines.
 	return false;
 #endif
 

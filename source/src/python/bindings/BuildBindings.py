@@ -1104,7 +1104,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             hh =  s[:-2] + 'hh'  # (generate .hh file from cc
             fwd =  s[:-2] + 'fwd.hh'  # (generate .fwd.hh file from cc
 
-            source_modification_date = calculate_source_modification_date(s, binding_source_path, depth=1)
+            source_modification_date = calculate_source_modification_date(s, binding_source_path, depth=0)
             #source_modification_date = calculate_source_modification_date('core/pose/Pose.cc', binding_source_path, depth=1)
             #sys.exit(0)
 
@@ -1116,7 +1116,6 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
                 command_line = get_windows_compile_command_line(source=s, output=obj, include='. ../external/include ../external/boost_1_55_0 ../external/dbio platform/windows/PyRosetta')
 
                 _SC_.execute('Compiling {0}'.format(s), command_line, return_= 'tuple' if Options.continue_ else False, print_output=True)
-
 
                 # _SC_.execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_vc_compile_options(), s, obj),
                 #         return_= 'tuple' if Options.continue_ else False, print_output=True)

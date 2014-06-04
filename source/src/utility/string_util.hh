@@ -168,17 +168,8 @@ void replace_in( std::string & s, const char from, const char *to )
 }
 
 /// @brief find/replace strings within input string.
-inline
 std::string
-replace_in( std::string const name_in, std::string const find_string, std::string const replace_string ){
-	std::string name = name_in;
-	platform::Size pos = name.find( find_string );
-	while ( pos != std::string::npos ){
-		name = name.replace( pos, find_string.size(), replace_string );
-		pos = name.find( find_string );
-	}
-	return name;
-}
+replace_in( std::string const name_in, std::string const find_string, std::string const replace_string );
 
 
 template <class T>

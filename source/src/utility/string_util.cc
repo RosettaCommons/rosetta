@@ -560,5 +560,19 @@ get_num_digits( platform::Size value){
 	return ceil( std::log10(value + 1.) );
 }
 
+std::string
+replace_in( std::string const name_in, std::string const find_string, std::string const replace_string ){
+	std::string name = name_in;
+	// WARNING WARNING WARNING: Do not change pos back to platform::Size. In general platform::Size type
+	//                          is not the same as size_t and algorithm below is sensitive to this
+	// platform::Size pos = name.find( find_string );
+	size_t pos = name.find( find_string );
+	while ( pos != std::string::npos ){
+		name = name.replace( pos, find_string.size(), replace_string );
+		pos = name.find( find_string );
+	}
+	return name;
+}
+
 
 } // namespace utility
