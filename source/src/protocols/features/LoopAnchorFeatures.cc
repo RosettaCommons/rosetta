@@ -23,7 +23,8 @@
 
 // Utility Headers
 #include <numeric/HomogeneousTransform.hh>
- #include <utility/exit.hh>
+#include <numeric/xyz.functions.hh>
+#include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
@@ -89,7 +90,6 @@ LoopAnchorFeatures::write_schema_to_db(
 ) const {
 	write_loop_anchors_table_schema(db_session);
 	write_loop_anchor_transforms_table_schema(db_session);
-	write_loop_anchor_transforms_three_res_table_schema(db_session);
 }
 
 void
@@ -146,8 +146,8 @@ LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
 	Column phi("phi", new DbReal());
 	Column psi("psi", new DbReal());
 	Column theta("theta", new DbReal());
-	Column alpha("alpha", new DbReal());
-	Column omega("omega", new DbReal());
+	Column alpha101("alpha101", new DbReal());
+	Column tau101("tau101", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -173,56 +173,8 @@ LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
 	table.add_column(phi);
 	table.add_column(psi);
 	table.add_column(theta);
-	table.add_column(alpha);
-	table.add_column(omega);
-
-	table.write(db_session);
-}
-
-void
-LoopAnchorFeatures::write_loop_anchor_transforms_three_res_table_schema(
-	sessionOP db_session
-) const {
-	using namespace basic::database::schema_generator;
-
-	Column struct_id("struct_id", new DbBigInt());
-	Column residue_begin("residue_begin", new DbInteger());
-	Column residue_end("residue_end", new DbInteger());
-	Column x("x", new DbReal());
-	Column y("y", new DbReal());
-	Column z("z", new DbReal());
-	Column phi("phi", new DbReal());
-	Column psi("psi", new DbReal());
-	Column theta("theta", new DbReal());
-	Column alpha("alpha", new DbReal());
-	Column omega("omega", new DbReal());
-
-	Columns primary_key_columns;
-	primary_key_columns.push_back(struct_id);
-	primary_key_columns.push_back(residue_begin);
-	primary_key_columns.push_back(residue_end);
-	PrimaryKey primary_key(primary_key_columns);
-
-	Columns foreign_key_columns;
-	foreign_key_columns.push_back(struct_id);
-	foreign_key_columns.push_back(residue_begin);
-	foreign_key_columns.push_back(residue_end);
-	vector1< std::string > reference_columns;
-	reference_columns.push_back("struct_id");
-	reference_columns.push_back("residue_begin");
-	reference_columns.push_back("residue_end");
-	ForeignKey foreign_key(foreign_key_columns, "loop_anchors", reference_columns, true);
-
-	Schema table("loop_anchor_transforms_three_res", primary_key);
-	table.add_foreign_key(foreign_key);
-	table.add_column(x);
-	table.add_column(y);
-	table.add_column(z);
-	table.add_column(phi);
-	table.add_column(psi);
-	table.add_column(theta);
-	table.add_column(alpha);
-	table.add_column(omega);
+	table.add_column(alpha101);
+	table.add_column(tau101);
 
 	table.write(db_session);
 }
@@ -271,14 +223,9 @@ LoopAnchorFeatures::report_features(
 		safely_prepare_statement(loop_anchors_stmt_string, db_session));
 
 	string loop_anchor_transforms_stmt_string =
-		"INSERT INTO loop_anchor_transforms (struct_id, residue_begin, residue_end, x, y, z, phi, psi, theta, alpha, omega) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+		"INSERT INTO loop_anchor_transforms (struct_id, residue_begin, residue_end, x, y, z, phi, psi, theta, alpha101, tau101) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement loop_anchor_transforms_stmt(
 		safely_prepare_statement(loop_anchor_transforms_stmt_string, db_session));
-
-	string loop_anchor_transforms_three_res_stmt_string =
-		"INSERT INTO loop_anchor_transforms_three_res (struct_id, residue_begin, residue_end, x, y, z, phi, psi, theta, alpha, omega) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
-	statement loop_anchor_transforms_three_res_stmt(
-		safely_prepare_statement(loop_anchor_transforms_three_res_stmt_string, db_session));
 	
 	vector1<Size>::const_iterator chain_ending(pose.conformation().chain_endings().begin());
 	vector1<Size>::const_iterator chain_ending_end(pose.conformation().chain_endings().end());
@@ -287,16 +234,16 @@ LoopAnchorFeatures::report_features(
 	Size local_max_loop_length = max_loop_length( relevant_residues );
 	
 	for(SSize begin=1; begin <= SSize( pose.total_residue() - local_min_loop_length ); ++begin){
-
+		// check if end+1 is a chain ending or the last residue because we will use end+1 to calculate a pseudodihedral
 		for(Size end=begin;
-				(end <= begin + local_max_loop_length && end <= pose.total_residue());
+				(end <= begin + local_max_loop_length && end + 1 <= pose.total_residue());
 				++end){
 
 			bool bail_out = !relevant_residues[end];
 
-			// Note chain_endings does not have the last residue in the pose
-			// in the chain endings vector. So handle this separately
-			if((chain_ending != chain_ending_end) && (end == *chain_ending))
+			// Note: chain_endings does not have the last residue in the pose
+			// in the chain endings vector, so we handle this separately.
+			if((chain_ending != chain_ending_end) && (end + 1 == *chain_ending))
 			{
 				++chain_ending;
 				bail_out = true;
@@ -310,17 +257,13 @@ LoopAnchorFeatures::report_features(
 			}
 
 			if( (end - begin + 1) >= local_min_loop_length){
-				loop_anchors_stmt.bind(1,struct_id);
-				loop_anchors_stmt.bind(2,begin);
-				loop_anchors_stmt.bind(3,end);
+				loop_anchors_stmt.bind(1, struct_id);
+				loop_anchors_stmt.bind(2, begin);
+				loop_anchors_stmt.bind(3, end);
 				basic::database::safely_write_to_database(loop_anchors_stmt);
 
 				set_use_single_residue_to_define_anchor_transfrom(true);
 				compute_transform_and_write_to_db(struct_id, begin, end, pose, loop_anchor_transforms_stmt);
-
-				set_use_single_residue_to_define_anchor_transfrom(false);
-				compute_transform_and_write_to_db(struct_id, begin, end, pose, loop_anchor_transforms_three_res_stmt);
-				
 			}
 		}
 	}
@@ -337,17 +280,17 @@ void LoopAnchorFeatures::set_use_single_residue_to_define_anchor_transfrom( bool
     use_single_residue_to_define_anchor_transfrom_ = use_single_residue_to_define_anchor_transfrom;
 }
 
-Size LoopAnchorFeatures::min_loop_length( vector1< bool > const & relevant_residues )
+Size LoopAnchorFeatures::min_loop_length( vector1< bool > const & relevant_residues ) const
 {
 	return determine_correct_length( relevant_residues, min_loop_length_ );
 }
 
-Size LoopAnchorFeatures::max_loop_length( vector1< bool > const & relevant_residues )
+Size LoopAnchorFeatures::max_loop_length( vector1< bool > const & relevant_residues ) const
 {
 	return determine_correct_length( relevant_residues, max_loop_length_ );
 }
 
-Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relevant_residue, Size default_length )
+Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relevant_residue, Size default_length ) const
 {
 	if ( use_relevant_residues_as_loop_length_ )
 	{
@@ -361,73 +304,20 @@ Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relev
 	return default_length;
 }
 
-vector1<Size>
-LoopAnchorFeatures::start_residue(Size resNo){
-	vector1<Size> residue_vector;
-	if (use_single_residue_to_define_anchor_transfrom_){
-		residue_vector.push_back(resNo);
-		residue_vector.push_back(resNo);
-		residue_vector.push_back(resNo);
-	} else{
-		residue_vector.push_back(resNo);
-		residue_vector.push_back(resNo + 1);
-		residue_vector.push_back(resNo + 2);
-	}
-	return residue_vector;
+HomogeneousTransform<Real> const
+LoopAnchorFeatures::frame_for_residue(core::conformation::Residue const & residue) const
+{
+	return HomogeneousTransform<Real>(residue.xyz("N"), residue.xyz("CA"), residue.xyz("C"));
 }
 
-vector1<Size>
-LoopAnchorFeatures::end_residue(Size resNo){
-	vector1<Size> residue_vector;
-	if (use_single_residue_to_define_anchor_transfrom_){
-		residue_vector.push_back(resNo);
-		residue_vector.push_back(resNo);
-		residue_vector.push_back(resNo);
-	} else{
-		residue_vector.push_back(resNo);
-		residue_vector.push_back(resNo - 1);
-		residue_vector.push_back(resNo - 2);
-	}
-	return residue_vector;
-}
-
-vector1<Size>
-LoopAnchorFeatures::atoms(){
-	vector1<Size> atom_vector;
-	// 1, 2, 3 corresponds to N, CA, C, respectively
-	if (use_single_residue_to_define_anchor_transfrom_) {
-		atom_vector.push_back(1);
-		atom_vector.push_back(2);
-		atom_vector.push_back(3);
-	} else{
-		// Multiple residues being used to define transform - only use CA coordinates
-		atom_vector.push_back(2);
-		atom_vector.push_back(2);
-		atom_vector.push_back(2);
-	}
-	return atom_vector;
-}
-
-
-HomogeneousTransform<Real>
+HomogeneousTransform<Real> const
 LoopAnchorFeatures::compute_anchor_transform(
 	Pose const & pose,
-	vector1<Size> const & residue_begin,
-	vector1<Size> const & residue_end,
-	vector1<Size> const & atoms){
-	
-	runtime_assert_string_msg( (residue_begin.size() == atoms.size()) && (residue_begin.size() == residue_end.size()) && 
-		(residue_begin.size() == 3), "The length of the residues and atoms vectors must be exactly 3.");
-	
-	HomogeneousTransform<Real> take_off_frame(
-		pose.residue(residue_begin[1]).xyz(atoms[1]),
-		pose.residue(residue_begin[2]).xyz(atoms[2]),
-		pose.residue(residue_begin[3]).xyz(atoms[3]));
-
-	HomogeneousTransform<Real> landing_frame(
-		pose.residue(residue_end[1]).xyz(atoms[1]),
-		pose.residue(residue_end[2]).xyz(atoms[2]),
-		pose.residue(residue_end[3]).xyz(atoms[3]));
+	Size const residue_begin,
+	Size const residue_end) const
+{	
+	HomogeneousTransform<Real> take_off_frame = frame_for_residue(pose.residue(residue_begin));
+	HomogeneousTransform<Real> landing_frame = frame_for_residue(pose.residue(residue_end));
 
 	HomogeneousTransform<Real> anchor_transform(
 		take_off_frame.inverse() * landing_frame);
@@ -441,20 +331,28 @@ LoopAnchorFeatures::compute_transform_and_write_to_db(
 	Size begin,
 	Size end,
 	Pose const & pose,
-	statement & stmt){
-
-	vector1<Size> start_res = start_residue(begin);
-	vector1<Size> end_res = end_residue(end);
-	vector1<Size> atom_set = atoms();
+	statement & stmt) const {
 
 	HomogeneousTransform<Real> anchor_transform(
-		compute_anchor_transform(pose, start_res, end_res, atom_set));
+		compute_anchor_transform(pose, begin, end));
 
 	xyzVector<Real> t(anchor_transform.point());
 	xyzVector<Real> r(anchor_transform.euler_angles_rad());
 
-	Real alpha = compute_atom_angles(pose, start_res, atom_set);
-	Real omega = compute_atom_angles(pose, end_res, atom_set);
+	// tau and alpha definitions from phipsi program (http://bioserv.rpbs.jussieu.fr/Yakusa/download/README_phipsi)
+	
+	// compute tau101 -- tauN defined as CA(N-1)--CA(N)--CA(N+1) pseudo-bond angle
+	Real tau101 = numeric::angle_degrees(
+		pose.residue(end - 2).xyz("CA"),
+		pose.residue(end - 1).xyz("CA"),
+		pose.residue(end).xyz("CA"));
+
+	// compute alpha101 -- alphaN defined as CA(N-1)--CA(N)--CA(N+1)--CA(N+2) pseudo-dihedral angle
+	Real alpha101 = numeric::dihedral_degrees(
+		pose.residue(end - 2).xyz("CA"),
+		pose.residue(end - 1).xyz("CA"),
+		pose.residue(end).xyz("CA"),
+		pose.residue(end + 1).xyz("CA"));
 
 	stmt.bind(1, struct_id);
 	stmt.bind(2, begin);
@@ -465,26 +363,9 @@ LoopAnchorFeatures::compute_transform_and_write_to_db(
 	stmt.bind(7, r.x());
 	stmt.bind(8, r.y());
 	stmt.bind(9, r.z());
-	stmt.bind(10, alpha);
-	stmt.bind(11, omega);
+	stmt.bind(10, alpha101);
+	stmt.bind(11, tau101);
 	basic::database::safely_write_to_database(stmt);
-}
-
-Real
-LoopAnchorFeatures::compute_atom_angles(
-	Pose const & pose,
-	vector1<Size> const & residues,
-	vector1<Size> const & atoms){
-	
-	runtime_assert_string_msg( residues.size() == atoms.size() && residues.size() == 3, 
-		"The length of the residues and atoms vectors must be exactly 3.");
-	
-	xyzVector<Real> first_vector(
-		pose.residue(residues[1]).xyz(atoms[1]) - pose.residue(residues[2]).xyz(atoms[2]));
-	xyzVector<Real> second_vector(
-		pose.residue(residues[3]).xyz(atoms[3])  - pose.residue(residues[2]).xyz(atoms[2]));
-	
-	return numeric::arccos(first_vector.dot(second_vector)/(first_vector.norm() * second_vector.norm()));
 }
 
 } //namesapce

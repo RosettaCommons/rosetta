@@ -20,8 +20,11 @@ in a three-dimensional transformation at each segment length.
 
 feature_reporter_dependencies = c("loop_anchor_features"),
 run=function(self, sample_sources, output_dir, output_formats){
+
+library(grid)
+  
 # maximum number of rows to select 
-limit <- 10^7
+limit <- 10^7 / 2
 
 # minimum number of hits to make it worthwhile to plot
 min_number_of_examples <- 10
@@ -42,12 +45,27 @@ plotmatrix <- function (input_data, mapping = aes(),
   # plot the densities across 3 columns
   p <- ggplot(densities, mapping) + facet_wrap(~ dof, ncol=3, scales="free") + 
     stat_density(aes(x=x, y = ..scaled..,  fill=sample_source), 
-                 position = "identity", alpha=0.7) +
-    scale_x_continuous(expand = c(0, 0)) + 
-    scale_y_continuous(expand = c(0.05, -0.04)) +
+                 position = "identity", alpha=0.2) +
+    scale_x_continuous("Degree of Freddom", expand = c(0, 0)) + 
+    scale_y_continuous("", expand = c(0.05, -0.04)) +
+    scale_color_manual(values=c("darkgrey", "black")) +
+    scale_fill_manual(values=c("darkgrey", "black")) +
     ggtitle(paste("Density estimates for each loop anchor transform", 
                   "degree of freedom for", input_data$length, 
-                  "residue loops.", sep = " "))
+                  "residue loops.", sep = " ")) +
+    theme_classic() +
+    theme(strip.background=element_blank(), 
+          axis.text.x=element_text(size=6, family="serif"),
+          axis.text.y=element_text(size=6, family="serif"),
+          plot.title=element_text(size=10, family="serif"),
+          axis.title.x=element_text(size=9, family="serif"),
+          axis.title.y=element_text(size=9, family="serif"),
+          legend.title=element_blank(),
+          legend.key.size=unit(0.025, units="npc"),
+          legend.text=element_text(size=9, family="serif"),
+          axis.line = element_line(size=0.1,),
+          axis.ticks = element_line(size=0.1))
+          
   
   if(nrow(sample_sources) <= 3){
     p <- p + theme(legend.position="bottom", legend.direction="horizontal")
@@ -82,9 +100,18 @@ d_ply(f, .(length), function(df){
     p <- plotmatrix(df, aes(colour=sample_source), subset(names(df), 
                                                           data_columns))
     
+    # use cairo to preserve transparency in EPS format
     save_plots(self, paste("anchor_transform_dof_density_estimates_for", 
                            df$length[1], "residue_loops", sep = "_"), 
-               sample_sources, output_dir, output_formats)
+               sample_sources, output_dir, 
+               output_formats[output_formats$extension == ".eps",], 
+               device=cairo_ps)
+    
+    # don't use cairo for non-EPS
+    save_plots(self, paste("anchor_transform_dof_density_estimates_for", 
+                           df$length[1], "residue_loops", sep = "_"), 
+               sample_sources, output_dir, 
+               output_formats[output_formats$extension != ".eps",])
   }
 })
 

@@ -33,8 +33,8 @@ for documentation.
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
-      help="Directory where rosetta_source is found (default: ../../rosetta_source/)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'source'),
+      help="Directory where rosetta_source is found (default: ../../source/)",
 
     )
 
@@ -134,17 +134,23 @@ for documentation.
         p.wait()
         svn_info = p.communicate()[0]'''
 
+        '''
         svn_info = commands.getoutput('svn info %s' % minidir)  # ../../../rosetta_source')
         svn_url = re.search("URL: (\S*)", svn_info).group(1)
         svn_revision = int(re.search("Revision: (\d*)", svn_info).group(1))
+        '''
+
+        url = commands.getoutput("git remote show origin -n | grep Fetch | awk \'{print $NF}\'")
+        revision = commands.getoutput("git rev-parse --short HEAD")
+
     except:
-        print "WARNING: Unable to get svn info for path: %s" % minidir
-        svn_url="UNKNOWN"
-        svn_revision=0
+        print "WARNING: Unable to get revision info for path: %s" % minidir
+        url="UNKNOWN"
+        revision=0
 
     cmd = file(path.join(workdir, action)).read().strip()
     # cmd = cmd % vars() # variable substitution using Python printf style
-    mvars = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext, svn_url=svn_url, svn_revision=svn_revision, lsf_queue_name=lsf_queue_name, num_cores=num_cores, output_dir=output_dir, run_type=run_type)
+    mvars = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext, svn_url=url, svn_revision=revision, lsf_queue_name=lsf_queue_name, num_cores=num_cores, output_dir=output_dir, run_type=run_type)
     cmd = cmd % mvars
 
     # Writing result to .sh file for future reference.
@@ -164,23 +170,23 @@ for documentation.
 # cleaner and more straight forwared, this is the first steps of
 # refactoring it to just call the python code directly from here.
 def parse_benchmark_list(benchmark_list_fname):
-    
+
     sample_sources = []
     benchmark_list = open(benchmark_list_fname)
     for line in benchmark_list:
         if len(line) == 0: continue
-        if line[0] == '#': continue  
+        if line[0] == '#': continue
 
         sample_sources.append(line)
 
     benchmark_list.close()
 
     return sample_sources
-        
+
 
 def submit_action(mvars):
     open("%(workdir)s/condor_job_ids" % mvars, 'w').close()
-    
+
     #TODO allow the benchmark.list path be passed in from the command line
     sample_sources = parse_benchmark_list(
         "%(workdir)s/sample_sources/benchmark.list" % mvars)

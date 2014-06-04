@@ -20,11 +20,22 @@ coordinate frame transformation pairwise
 
 feature_reporter_dependencies = c("loop_anchor_features"),
 run=function(self, sample_sources, output_dir, output_formats){
+
+library(grid)
+  
 # maximum number of rows to select 
-limit <- 10^7
+limit <- 10^7 / 2
 
 # minimum number of hits to make it worthwhile to plot
 min_number_of_examples <- 10
+
+number_ticks <- function(n) {function(limits){
+  x <- diff(range(limits)) / 20
+  seq(limits[1] + x, limits[2] - x, length=n)}}
+
+label_ticks <- function(n) {function(limits){
+  x <- diff(range(limits)) / 20
+  signif(seq(from=(limits[1] + x), to=(limits[2] - x), length=n), digits=2)}}
 
 plotmatrix <- function (input_data, mapping = aes(), 
                         columns = names(input_data), colour = "black") 
@@ -59,18 +70,37 @@ plotmatrix <- function (input_data, mapping = aes(),
   
   mapping <- plyr::defaults(mapping, aes_string(x = "x", y = "y"))
   class(mapping) <- "uneval"
-  
+
   p <- ggplot(all, mapping) + facet_grid(xvar ~ yvar, scales="free", 
-                                         labeller=label_parsed) + 
-    stat_bin2d(aes(alpha=..density.. * 50, fill=sample_source), 
-               show_guide = FALSE) + 
+                                         labeller=label_parsed) +
+    scale_color_manual(values=c("darkgrey", "black")) +
+    scale_fill_manual(values=c("darkgrey", "black")) +
+    stat_bin2d(aes(alpha=..density.., fill=sample_source), show_guide = FALSE) + 
     faceted_density +
-    scale_y_continuous("Degree of freedom") +
-    scale_x_continuous("Degree of freedom") +
-    #coord_equal(ratio=1) +
+    scale_y_continuous("Degree of freedom", breaks=number_ticks(4), 
+                       labels=label_ticks(4), expand=c(0.1,0)) +
+    scale_x_continuous("Degree of freedom", breaks=number_ticks(4), 
+                       labels=label_ticks(4), expand=c(0.1,0)) +
+    coord_equal(ratio=1) +
     ggtitle(paste("Scatterplot matrix for loop anchor transform", 
                   "degrees of freedom for", input_data$length, 
-                  "residue loops.", sep = " "))
+                  "residue loops.", sep = " ")) +
+    theme_bw() +
+    theme(strip.background=element_blank(), 
+          strip.text.y=element_text(angle=0),
+          axis.text.x=element_text(size=6, family="serif"),
+          axis.text.y=element_text(size=6, family="serif"),
+          plot.title=element_text(size=10, family="serif"),
+          axis.title.x=element_text(size=9, family="serif"),
+          axis.title.y=element_text(size=9, family="serif"),
+          legend.title=element_blank(),
+          legend.text=element_text(size=9, family="serif"),
+          legend.key.size=unit(0.025, units="npc"),
+          panel.grid.minor=element_blank(), 
+          panel.grid.major=element_blank(),
+          panel.border = element_rect(colour = "black"),
+          panel.margin = unit(0, units="npc"))
+    
     
   if(nrow(sample_sources) <= 3){
     p <- p + theme(legend.position="bottom", legend.direction="horizontal")
@@ -105,9 +135,20 @@ d_ply(f, .(length), function(df){
                                        "sample_source"))
     p <- plotmatrix(df, aes(colour=sample_source), subset(names(df), 
                                                           data_columns))
+    
+    # use cairo to preserve transparency in EPS format
     save_plots(self, paste("anchor_transform_scatterplot_matrix_for", 
-                          df$length[1], "residue_loops", sep = "_"), 
-               sample_sources, output_dir, output_formats)
+                           df$length[1], "residue_loops", sep = "_"), 
+               sample_sources, output_dir, 
+               output_formats[output_formats$extension == ".eps",], 
+               device=cairo_ps)
+    
+    # don't use cairo for non-EPS
+    save_plots(self, paste("anchor_transform_scatterplot_matrix_for", 
+                           df$length[1], "residue_loops", sep = "_"), 
+               sample_sources, output_dir, 
+               output_formats[output_formats$extension != ".eps",])
+    
   }
 })
 

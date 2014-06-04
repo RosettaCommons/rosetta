@@ -40,7 +40,7 @@ qq_params <- function(df, data_col) {
 }
 
 plot_and_save <- function(df, title, filename, limit, ratio=0, 
-                          data_col="omega") {
+                          data_col="tau101") {
   abline_params <- qq_params(df, data_col)
   
   mapping <- aes_string(sample=data_col)
@@ -58,12 +58,20 @@ plot_and_save <- function(df, title, filename, limit, ratio=0,
     p <- p + theme(legend.position="bottom", legend.direction="horizontal")
   }
   
+  # use cairo to preserve transparency in EPS format
   save_plots(self, paste(filename, sep = "_"), 
-             sample_sources, output_dir, output_formats)  
+             sample_sources, output_dir, 
+             output_formats[output_formats$extension == ".eps",], 
+             device=cairo_ps)
+  
+  # don't use cairo for non-EPS
+  save_plots(self, paste(filename, sep = "_"), 
+             sample_sources, output_dir, 
+             output_formats[output_formats$extension != ".eps",])
 }
-
-sele <- paste("SELECT residue_begin, residue_end, omega",
-              "FROM loop_anchor_transforms_three_res LIMIT", limit)
+  
+sele <- paste("SELECT residue_begin, residue_end, tau101",
+              "FROM loop_anchor_transforms LIMIT", limit)
 
 f <- query_sample_sources(sample_sources, sele)
 
@@ -75,16 +83,16 @@ for (sample_source in sample_sources$sample_source) {
 }
   
 if (plot_and_save_to_disk) {
-  ratio <- 1 / qq_params(f, "omega")[1]
+  ratio <- 1 / qq_params(f, "tau101")[1]
   plot_and_save(f, expression(paste("All values of ", tau)), "tau_qq_plot",
-                range(f$omega))
+                range(f$tau101))
   
-  tau.cutoff = f$omega[order(f$omega)[round(length(f$omega) * 0.8)]]
+  tau.cutoff = f$tau101[order(f$tau101)[round(length(f$tau101) * 0.8)]]
   # only plot the lower 80% of tau values, but use range of the unmodified 
   # data.frame to put both plots on the same plot area.
-  plot_and_save(subset(f, omega <= tau.cutoff),
+  plot_and_save(subset(f, tau101 <= tau.cutoff),
                 expression(paste("Lower 80% of ", tau)), "lower_tau_qq_plot",
-                range(f$omega), ratio)
+                range(f$tau101), ratio)
 }
 
 })) # end FeaturesAnalysis

@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/LoopAnchorFeatures.fwd.hh>
 
+// Project Headers
+#include <core/conformation/Residue.fwd.hh>
+
 //External
 #include <cppdb/frontend.h>
 
@@ -89,35 +92,27 @@ public:
     set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom );
 
 private:
+	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue ) const;
+	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue ) const;
+	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, Size default_length ) const;
 
-	utility::vector1<Size> start_residue(Size resNo);
-	utility::vector1<Size> end_residue(Size resNo);
-	utility::vector1<Size> atoms();
+	numeric::HomogeneousTransform<core::Real> const
+	frame_for_residue(core::conformation::Residue const & residue) const;
 
-	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue );
-	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue );
-	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, Size default_length );
-
-	numeric::HomogeneousTransform<core::Real>
+	numeric::HomogeneousTransform<core::Real> const
 	compute_anchor_transform(
 		core::pose::Pose const & pose,
-		utility::vector1<core::Size> const & residue_begin,
-		utility::vector1<core::Size> const & residue_end,
-		utility::vector1<core::Size> const & atoms);
-
+		core::Size const residue_begin,
+		core::Size const residue_end) const;
+	
 	void
 	compute_transform_and_write_to_db(
 		StructureID struct_id,
 		core::Size begin,
 		core::Size end,
 		core::pose::Pose const & pose,
-		cppdb::statement & stmt);
-
-	core::Real
-	compute_atom_angles(
-		core::pose::Pose const & pose,
-		utility::vector1<core::Size> const & residues,
-		utility::vector1<core::Size> const & atoms);
+		cppdb::statement & stmt) const;
+	
 private:
 
 	bool use_relevant_residues_as_loop_length_;
