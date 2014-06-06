@@ -56,6 +56,8 @@ enum selector_type {
 	no_selector = 1,
 	random_selector,
 	lowest_energy_selector, //Uses whatever scorefunction is passed to the selector
+	boltzmann_energy_selector, //Randomly picks weighted by exp(-E/kbt).
+	lowest_rmsd_selector, //Picks the loop conformation closest to the original
 
 	unknown_selector, //Keep this second-to-last.
 	end_of_selector_list = unknown_selector //Keep this last.
@@ -101,6 +103,14 @@ public:
 	/// @brief Set the scorefunction used by this selector.
 	void set_scorefunction( core::scoring::ScoreFunctionOP sfxn ) { selector_sfxn_=sfxn; return; }
 
+	///
+	/// @brief Set the Boltzmann temperature used by this selector.
+	void set_boltzmann_temp( core::Real const &temp) { boltzmann_kbt_=temp; return; }
+
+	///
+	/// @brief Returns the Boltzmann temperature used by this selector.
+	core::Real get_boltzmann_temp() const { return boltzmann_kbt_; }
+
 	/// @brief Applies a selector type to choose a solution and set a loop pose.
 	/// @details
 	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
@@ -139,6 +149,10 @@ private:
 	/// @details This must be set explicitly; otherwise, it's set to NULL by default.
 	core::scoring::ScoreFunctionOP selector_sfxn_;
 
+	///
+	/// @brief A Boltzmann temperature (kbt, in Rosetta energy units) that some selectors can use.
+	core::Real boltzmann_kbt_;
+
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,9 +186,25 @@ private:
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
 		core::pose::Pose const &ref_loop_pose,
-		core::pose::Pose const &ref_pose
+		core::pose::Pose const &ref_pose,
+		core::Real const &boltzmann_kbt,
+		bool const use_boltzmann
 	) const;
 
+	/// @brief Applies a lowest_rmsd_selector selector.
+	/// @details This picks the solution with the lowest RMSD from the starting pose.
+	void apply_lowest_rmsd_selector( 
+			utility::vector1<core::Size> const &nsol_for_attempt,
+			core::Size const total_solutions,
+			core::Size &chosen_attempt_number,
+			core::Size &chosen_solution,
+			utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
+			utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+			utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
+			utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
+			utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
+			core::pose::Pose const &ref_loop_pose
+	) const;
 
 }; //GeneralizedKICselector class
 

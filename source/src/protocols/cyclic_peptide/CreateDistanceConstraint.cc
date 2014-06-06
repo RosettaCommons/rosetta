@@ -10,6 +10,7 @@
 /// @file   protocols/cyclic_peptide/CreateDistanceConstraint.cc
 /// @brief  Add distance constraints to the current pose conformation.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Yifan Song
 
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
@@ -23,16 +24,24 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <core/id/AtomID.hh>
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+
+#include <istream>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.CreateDistanceConstraint" );
 
@@ -43,24 +52,59 @@ CreateDistanceConstraint::CreateDistanceConstraint() //:
 {}
 CreateDistanceConstraint::~CreateDistanceConstraint(){}
 
-void CreateDistanceConstraint::apply( core::pose::Pose & /*pose*/ )
+void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 {
-	//TODO
+    for (Size i_cst=1; i_cst<=cst_func_.size(); ++i_cst) {
+        if (cst_func_[i_cst] == "") {
+            ///TODO: use ideal bond length as default parameter
+            
+            //Real length, deviation;
+            //new core::scoring::func::HarmonicFunc(length, deviation);
+            /*
+        pose.add_constraint(
+        new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
+        new core::scoring::func::ScalarWeightedFunc( cst_weight_, new core::scoring::func::Ha( dist, coord_dev_ ) ) ) );
+             */
+            
+        }
+        else {
+            std::istringstream data(cst_func_[i_cst]);
+            std::string func_type;
+            data >> func_type;
+            core::scoring::func::FuncFactory func_factory;
+            core::scoring::func::FuncOP func = func_factory.new_func( func_type );
+            func->read_data( data );
+            Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
+            Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
+            pose.add_constraint(
+                new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(atomno1,res1_[i_cst]), core::id::AtomID(atomno2,res2_[i_cst]), func )
+                );
+        }
+    }
 	return;
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 CreateDistanceConstraint::parse_my_tag(
-	TagCOP /*tag*/,
+	TagCOP tag,
 	basic::datacache::DataMap &,
 	Filters_map const &,
 	moves::Movers_map const &,
 	Pose const &
 )
 {
-
-	//TODO
+    utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
+	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+        if ( (*tag_it)->getName() == "Add" ) {
+            res1_.push_back( (*tag_it)->getOption< Size >( "res1" ) );
+            atom1_.push_back( (*tag_it)->getOption< std::string >( "atom1" ) );
+            res2_.push_back( (*tag_it)->getOption< Size >( "res2" ) );
+            atom2_.push_back( (*tag_it)->getOption< std::string >( "atom2" ) );
+            cst_func_.push_back( (*tag_it)->getOption< std::string >( "cst_func", "" ) );
+        }
+    }
 	return;
 }
 	

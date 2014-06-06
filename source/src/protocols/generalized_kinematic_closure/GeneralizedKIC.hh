@@ -155,6 +155,10 @@ public:
 	///
 	void set_selector_scorefunction ( core::scoring::ScoreFunctionOP sfxn );
 
+	/// @brief Set the selector's Boltzmann temperature value.
+	///
+	void set_selector_kbt ( core::Real const &kbt );
+
 	/// @brief Get the selector (the algorithm controlling how a solution will be chosen
 	/// from among the solutions passing filters).
 	selector::selector_type get_selector_type () const { return selector_->get_selector_type(); }
@@ -218,6 +222,38 @@ public:
 	///
 	/// @brief Add a new filter to the list of filters, setting the filter type by name.
 	void add_filter ( std::string const &filtertypename );
+
+	///
+	/// @brief Add a real-valued parameter to a filter's parameter list.
+	void add_filter_parameter (core::Size const filter_index, std::string const &param_name, core::Real const &value);
+
+	///
+	/// @brief Add an integer-valued parameter to a filter's parameter list.
+	void add_filter_parameter (core::Size const filter_index, std::string const &param_name, core::Size const value);
+
+	///
+	/// @brief Add a Boolean-valued parameter to a filter's parameter list.
+	void add_filter_parameter (core::Size const filter_index, std::string const &param_name, bool const value);
+
+	///
+	/// @brief Add a string-valued parameter to a filter's parameter list.
+	void add_filter_parameter (core::Size const filter_index, std::string const &param_name, std::string const &value);
+
+	///
+	/// @brief Add a real-valued parameter to the last filter's parameter list.
+	void add_filter_parameter (std::string const &param_name, core::Real const &value);
+
+	///
+	/// @brief Add an integer-valued parameter to the last filter's parameter list.
+	void add_filter_parameter (std::string const &param_name, core::Size const value);
+
+	///
+	/// @brief Add a Boolean-valued parameter to the last filter's parameter list.
+	void add_filter_parameter (std::string const &param_name, bool const value);
+
+	///
+	/// @brief Add a string-valued parameter to the last filter's parameter list.
+	void add_filter_parameter (std::string const &param_name, std::string const &value);
 
 	///
 	/// @brief Set the number of closure attempts.
@@ -535,6 +571,10 @@ private:
 		utility::vector1 <core::Size> const &nsol_for_attempt,
 		core::Size const total_solutions
 	) const;
+
+	/// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
+  ///
+	void prune_extra_atoms( utility::vector1 <core::Size> &pivots );
 
 };
 

@@ -37,6 +37,8 @@
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/model_quality/rms.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 #include <boost/foreach.hpp>
 
@@ -58,7 +60,8 @@ static numeric::random::RandomGenerator RG(9980002);  // <- Magic number, do not
 ///@brief Creator for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():
 		selectortype_(no_selector),
-		selector_sfxn_(NULL)
+		selector_sfxn_(NULL),
+		boltzmann_kbt_(1.0)
 		//utility::pointer::ReferenceCount(),
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
@@ -84,6 +87,12 @@ std::string GeneralizedKICselector::get_selector_type_name( core::Size const sel
 			break;
 		case lowest_energy_selector:
 			returnstring = "lowest_energy_selector";
+			break;
+		case boltzmann_energy_selector:
+			returnstring = "boltzmann_energy_selector";
+			break;
+		case lowest_rmsd_selector:
+			returnstring = "lowest_rmsd_selector";
 			break;
 		default:
 			returnstring = "unknown_selector";
@@ -160,19 +169,20 @@ void GeneralizedKICselector::apply (
 		apply_random_selector( nsol_for_attempt, total_solutions, chosen_attempt_number, chosen_solution );
 		break;
 	case lowest_energy_selector:
-		apply_lowest_energy_selector(
-			nsol_for_attempt,
-			total_solutions,
-			chosen_attempt_number,
-			chosen_solution,
-			selector_sfxn_,
-			residue_map,
-			atomlist,
-			torsions,
-			bondangles,
-			bondlengths,
-			pose,
-			original_pose
+		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
+			chosen_solution, selector_sfxn_, residue_map, atomlist, torsions,	bondangles,
+			bondlengths, pose, original_pose, boltzmann_kbt_, false
+		);
+		break;
+	case boltzmann_energy_selector:
+		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
+			chosen_solution, selector_sfxn_, residue_map, atomlist, torsions,	bondangles,
+			bondlengths, pose, original_pose, boltzmann_kbt_, true
+		); //Recycle this function from lowest_energy_selector to avoid code duplication
+		break;
+	case lowest_rmsd_selector:
+		apply_lowest_rmsd_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
+			chosen_solution, residue_map, atomlist, torsions,	bondangles, bondlengths, pose
 		);
 		break;
 	default:
@@ -233,7 +243,8 @@ void GeneralizedKICselector::apply_random_selector(
 /// @brief Applies a lowest_energy_selector selector.
 /// @details This picks the lowest-energy solution, as scored with sfxn.  It's a good idea to use a modified
 /// scorefunction for this (something that just has the backbone conformation and H-bonding terms, for
-/// example, since side-chains will not be repacked by default prior to invoking this selector).
+/// example, since side-chains will not be repacked by default prior to invoking this selector).  If the
+/// use_boltzmann parameter is set to true, the function randomly selects a solution weighted by exp(-E/kbt).
 void GeneralizedKICselector::apply_lowest_energy_selector(
 	utility::vector1<core::Size> const &nsol_for_attempt,
 	core::Size const /*total_solutions*/,
@@ -246,16 +257,23 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
 	core::pose::Pose const &ref_loop_pose,
-	core::pose::Pose const &ref_pose
+	core::pose::Pose const &ref_pose,
+	core::Real const &boltzmann_kbt,
+	bool const use_boltzmann
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 
 	core::scoring::ScoreFunctionOP my_sfxn=sfxn;
 	if(!my_sfxn) my_sfxn=core::scoring::getScoreFunction(); //Get the default scorefunction if one has not been supplied.
 	
+	//Variables for finding the lowest energy:
 	core::Real lowest_energy = 0.0;
 	core::Size lowest_energy_attempt = 0;
 	core::Size lowest_energy_solution = 0;
+
+	//Variables for randomly selecting weighted by exp(-E/kbt):
+	utility::vector1 < core::Real > boltzmann_factors;
+	core::Real boltzmann_factor_accumulator = 0.0;
 
 	//Copies of the loop pose and the full pose:
 	core::pose::Pose fullpose = ref_pose;
@@ -267,19 +285,130 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 			set_loop_pose( looppose, atomlist, torsions[i][j], bondangles[i][j], bondlengths[i][j]);
 			copy_loop_pose_to_original( fullpose, looppose, residue_map);
 			(*my_sfxn)(fullpose);
-			TR << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << std::endl;
-			if(lowest_energy_attempt==0 || fullpose.energies().total_energy() < lowest_energy) {
-				lowest_energy=fullpose.energies().total_energy();
-				lowest_energy_attempt=i;
-				lowest_energy_solution=j;
+			if(!use_boltzmann) { //If we're just finding the lowest-energy solution:
+				TR << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << std::endl;
+				if(lowest_energy_attempt==0 || fullpose.energies().total_energy() < lowest_energy) {
+					lowest_energy=fullpose.energies().total_energy();
+					lowest_energy_attempt=i;
+					lowest_energy_solution=j;
+				}
+			} else { //If we're randomly picking weighted by Boltzmann factors:
+				boltzmann_factors.push_back( exp(-fullpose.energies().total_energy() / boltzmann_kbt) );
+				boltzmann_factor_accumulator += boltzmann_factors[boltzmann_factors.size()]; //For normalization
+				TR << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
 			}
 		}
 	}
 
-	TR << "Lowest energy found = " << lowest_energy << std::endl;
+	if(!use_boltzmann) { //If we're picking the lowest-energy solution:
+		TR << "Lowest energy found = " << lowest_energy << std::endl;
+		chosen_attempt_number = lowest_energy_attempt;
+		chosen_solution = lowest_energy_solution;
+	} else { //If we're choosing randomly
+		bool breaknow=false;
+		while(!breaknow) {
+			//Pick a random number from 0 to 1:
+			core::Real const randnum = RG.uniform();
+			core::Size counter=0;
+			core::Real accumulator = 0.0;
+			//Loop through all solutions, accumulate the normalized Boltzmann factors, and break when we reach the bin
+			//that contains the random number chosen above.  (Since the bin widths correspond to the normalized Boltzmann
+			//factors, the probability of picking a given bin is proportional to the Boltzmann factors).
+			for(core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i) {
+				for(core::Size j=1; j<=nsol_for_attempt[i]; ++j) {
+					++counter;
+					accumulator+=boltzmann_factors[counter]/boltzmann_factor_accumulator;
+					if(accumulator > randnum) { //We've found the appropriate bin
+						chosen_attempt_number=i;
+						chosen_solution=j;
+						breaknow=true;
+						break;
+					}
+				}
+				if(breaknow) break;
+			}
+			if(!breaknow) TR << "Boltzmann energy selector did not converge.  Trying again.  Final accumulator= " << accumulator << " randnum=" << randnum << std::endl; //DELETE
+		}
+	}
 
-	chosen_attempt_number = lowest_energy_attempt;
-	chosen_solution = lowest_energy_solution;
+	TR.flush();
+
+	return;
+}
+
+/// @brief Applies a lowest_rmsd_selector selector.
+/// @details This picks the solution with the lowest RMSD from the starting pose.
+void GeneralizedKICselector::apply_lowest_rmsd_selector( 
+		utility::vector1<core::Size> const &nsol_for_attempt,
+		core::Size const /*total_solutions*/,
+		core::Size &chosen_attempt_number,
+		core::Size &chosen_solution,
+		utility::vector1 <std::pair <core::Size, core::Size> > const &/*residue_map*/,
+		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
+		core::pose::Pose const &ref_loop_pose
+) const {
+	using namespace protocols::generalized_kinematic_closure;
+	using namespace ObjexxFCL;
+	using namespace numeric::model_quality;
+
+	//Copies of the loop pose and the full pose:
+	core::pose::Pose looppose = ref_loop_pose;
+
+	//Vars for finding lowest RMSD:
+	core::Real rmsd_current = 0.0;
+	core::Real rmsd_lowest = 0.0;
+	core::Size attempt_lowest = 0;
+	core::Size solution_lowest = 0;
+
+	//FArray2D of chain atoms in the reference pose (for RMSD calculation):
+	FArray2D<core::Real> ref_chain;
+	ref_chain.redimension( 3, atomlist.size()-6 );
+	for(core::Size i=4, imax=atomlist.size()-3; i<=imax; ++i) {
+		ref_chain(1,i-3)=atomlist[i].second[0];
+		ref_chain(2,i-3)=atomlist[i].second[1];
+		ref_chain(3,i-3)=atomlist[i].second[2];
+	}
+
+	//FArray2D of chain atoms for the current pose (for RMSD calculation):
+	FArray2D<core::Real> cur_chain;
+	cur_chain.redimension( 3, atomlist.size()-6 );
+	for(core::Size i=4, imax=atomlist.size()-3; i<=imax; ++i) { //Initialize to zero, just to be safe.
+		cur_chain(1,i-3)=0.0;
+		cur_chain(2,i-3)=0.0;
+		cur_chain(3,i-3)=0.0;
+	}
+
+	for(core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i) { //Loop through all attempts
+		for(core::Size j=1; j<=nsol_for_attempt[i]; ++j) { //Loop through all solutions to this attempt
+			//Set the loop pose to the current solution:
+			set_loop_pose( looppose, atomlist, torsions[i][j], bondangles[i][j], bondlengths[i][j] );
+
+			//Populate the cur_chain FArray2D
+			for(core::Size ii=4, iimax=atomlist.size()-3; ii<=iimax; ++ii) {
+				core::Size const rsd = atomlist[ii].first.rsd();
+				core::Size const atomno = atomlist[ii].first.atomno();
+				cur_chain(1,ii-3)=looppose.residue(rsd).xyz(atomno)[0] ;
+				cur_chain(2,ii-3)=looppose.residue(rsd).xyz(atomno)[1] ;
+				cur_chain(3,ii-3)=looppose.residue(rsd).xyz(atomno)[2] ;
+			}
+
+			//Calculate RMSD here for all atoms in the chain of atoms to be closed:
+			rmsd_current = rms_wrapper(atomlist.size()-6, ref_chain, cur_chain);
+			TR << "Attempt " << i << " solution " << j << " rmsd=" << rmsd_current << std::endl;
+
+			if(attempt_lowest==0 || rmsd_current < rmsd_lowest) {
+				rmsd_lowest=rmsd_current;
+				attempt_lowest=i;
+				solution_lowest=j;
+			}
+		}
+	}
+
+	chosen_attempt_number=attempt_lowest;
+	chosen_solution=solution_lowest;
 
 	TR.flush();
 

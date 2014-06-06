@@ -175,198 +175,198 @@ void get_resmap( pose::Pose const &pose, pose::Pose const &ref_pose, std::map< S
 
 using namespace protocols::simple_moves;
 
-class BBG8T3A_Jump_Mover : public BBGaussianMover
-{
-public:
+// class BBG8T3A_Jump_Mover : public BBGaussianMover
+// {
+// public:
 
-public:
-	BBG8T3A_Jump_Mover():BBGaussianMover(3,8,4),
-	    dphi(utility::vector1<Real>(n_dof_angle_))
-	{
-	    protocols::moves::Mover::type("BBG8T3A_Jump_Mover");
-	    //build end atom list
-	    end_atom_list_.push_back("CA");
-	    end_atom_list_.push_back("C");
-	    end_atom_list_.push_back("O");
+// public:
+// 	BBG8T3A_Jump_Mover():BBGaussianMover(3,8,4),
+// 	    dphi(utility::vector1<Real>(n_dof_angle_))
+// 	{
+// 	    protocols::moves::Mover::type("BBG8T3A_Jump_Mover");
+// 	    //build end atom list
+// 	    end_atom_list_.push_back("CA");
+// 	    end_atom_list_.push_back("C");
+// 	    end_atom_list_.push_back("O");
 
-	    //init the A/C factor
-	    factorA_ = 0.6;
-	    factorB_ = 10;
-	}
+// 	    //init the A/C factor
+// 	    factorA_ = 0.6;
+// 	    factorB_ = 10;
+// 	}
 
-	~BBG8T3A_Jump_Mover(){}
+// 	~BBG8T3A_Jump_Mover(){}
 
-	void apply(Pose &pose)
-	{
-	    //if(available_seg_list_.size()==0)setup_list(pose);
-	    //if(available_seg_list_.size()==0)return;
+// 	void apply(Pose &pose)
+// 	{
+// 	    //if(available_seg_list_.size()==0)setup_list(pose);
+// 	    //if(available_seg_list_.size()==0)return;
 
-	    //select four hinge
-	    //for lysozyme, 104-117
-	    Real rA, rB, rC, rD;
-	    if (RG.uniform()<0.5) {
-	    	Size Ns(RG.uniform()*2+1);
-		    Real randn = RG.uniform();
-		    rA = Size(randn*(15.0-3.0*Ns))+104;
-		    rB = rA+Ns;
-		    rC = rB+Ns;
-		    rD = rC+Ns;
-	    }
-	    else {
-	    	rA = 105;
-	    	rB = 106;
-	    	rC = 116;
-	    	rD = 117;
-	    }
+// 	    //select four hinge
+// 	    //for lysozyme, 104-117
+// 	    Real rA, rB, rC, rD;
+// 	    if (RG.uniform()<0.5) {
+// 	    	Size Ns(RG.uniform()*2+1);
+// 		    Real randn = RG.uniform();
+// 		    rA = Size(randn*(15.0-3.0*Ns))+104;
+// 		    rB = rA+Ns;
+// 		    rC = rB+Ns;
+// 		    rD = rC+Ns;
+// 	    }
+// 	    else {
+// 	    	rA = 105;
+// 	    	rB = 106;
+// 	    	rC = 116;
+// 	    	rD = 117;
+// 	    }
 
-	    std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
+// 	    std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
 
-	    get_VdRdPhi(pose, rA, rB, rC, rD);
-	    get_G();
-	    get_A();
-	    Real W_old = get_L_move(pose, rA, rB, rC, rD);
+// 	    get_VdRdPhi(pose, rA, rB, rC, rD);
+// 	    get_G();
+// 	    get_A();
+// 	    Real W_old = get_L_move(pose, rA, rB, rC, rD);
 
-	    get_VdRdPhi(pose, rA, rB, rC, rD);
-	    get_G();
-	    get_A();
-	    Real W_new = get_L_prime();
+// 	    get_VdRdPhi(pose, rA, rB, rC, rD);
+// 	    get_G();
+// 	    get_A();
+// 	    Real W_new = get_L_prime();
 
-	    last_proposal_density_ratio_ = W_new / W_old;
-	}
+// 	    last_proposal_density_ratio_ = W_new / W_old;
+// 	}
 
-	virtual std::string get_name() const
-	{
-		return "BBG8T3A_Jump_Mover";
-	}
+// 	virtual std::string get_name() const
+// 	{
+// 		return "BBG8T3A_Jump_Mover";
+// 	}
 
-protected:
-	void get_VdRdPhi(Pose const &pose, Size rA, Size rB, Size rC, Size rD)
-	{
-	    conformation::Residue const & rsd4( pose.residue( rD ) );
-	    conformation::Residue const & rsd3( pose.residue( rC ) );
-	    conformation::Residue const & rsd2( pose.residue( rB ) );
-	    conformation::Residue const & rsd1( pose.residue( rA ) );
+// protected:
+// 	void get_VdRdPhi(Pose const &pose, Size rA, Size rB, Size rC, Size rD)
+// 	{
+// 	    conformation::Residue const & rsd4( pose.residue( rD ) );
+// 	    conformation::Residue const & rsd3( pose.residue( rC ) );
+// 	    conformation::Residue const & rsd2( pose.residue( rB ) );
+// 	    conformation::Residue const & rsd1( pose.residue( rA ) );
 
-	    for (Size i=1;i<=end_atom_list_.size();i++)
-	    {
-	        //for each end atom
-	        Vector end_xyz = rsd4.atom(end_atom_list_[i]).xyz();
-	        //TR << "Phi: 8" << endl;
-	        matrix_dRdPhi[i][8] = get_dRdPhi(rsd4.atom("CA").xyz(),
-	                                         rsd4.atom("C").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 7" << endl;
-	        matrix_dRdPhi[i][7] = get_dRdPhi(rsd4.atom("N").xyz(),
-	                                         rsd4.atom("CA").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 6" << endl;
-	        matrix_dRdPhi[i][6] = get_dRdPhi(rsd3.atom("CA").xyz(),
-	                                         rsd3.atom("C").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 5" << endl;
-	        matrix_dRdPhi[i][5] = get_dRdPhi(rsd3.atom("N").xyz(),
-	                                         rsd3.atom("CA").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 4" << endl;
-	        matrix_dRdPhi[i][4] = get_dRdPhi(rsd2.atom("CA").xyz(),
-	                                         rsd2.atom("C").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 3" << endl;
-	        matrix_dRdPhi[i][3] = get_dRdPhi(rsd2.atom("N").xyz(),
-	                                         rsd2.atom("CA").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 2" << endl;
-	        matrix_dRdPhi[i][2] = get_dRdPhi(rsd1.atom("CA").xyz(),
-	                                         rsd1.atom("C").xyz(),
-	                                         end_xyz);
-	        //TR << "Phi: 1" << endl;
-	        matrix_dRdPhi[i][1] = get_dRdPhi(rsd1.atom("N").xyz(),
-	                                         rsd1.atom("CA").xyz(),
-	                                         end_xyz);
-	    }
-	}
+// 	    for (Size i=1;i<=end_atom_list_.size();i++)
+// 	    {
+// 	        //for each end atom
+// 	        xyzVector end_xyz = rsd4.atom(end_atom_list_[i]).xyz();
+// 	        //TR << "Phi: 8" << endl;
+// 	        matrix_dRdPhi[i][8] = get_dRdPhi(rsd4.atom("CA").xyz(),
+// 	                                         rsd4.atom("C").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 7" << endl;
+// 	        matrix_dRdPhi[i][7] = get_dRdPhi(rsd4.atom("N").xyz(),
+// 	                                         rsd4.atom("CA").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 6" << endl;
+// 	        matrix_dRdPhi[i][6] = get_dRdPhi(rsd3.atom("CA").xyz(),
+// 	                                         rsd3.atom("C").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 5" << endl;
+// 	        matrix_dRdPhi[i][5] = get_dRdPhi(rsd3.atom("N").xyz(),
+// 	                                         rsd3.atom("CA").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 4" << endl;
+// 	        matrix_dRdPhi[i][4] = get_dRdPhi(rsd2.atom("CA").xyz(),
+// 	                                         rsd2.atom("C").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 3" << endl;
+// 	        matrix_dRdPhi[i][3] = get_dRdPhi(rsd2.atom("N").xyz(),
+// 	                                         rsd2.atom("CA").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 2" << endl;
+// 	        matrix_dRdPhi[i][2] = get_dRdPhi(rsd1.atom("CA").xyz(),
+// 	                                         rsd1.atom("C").xyz(),
+// 	                                         end_xyz);
+// 	        //TR << "Phi: 1" << endl;
+// 	        matrix_dRdPhi[i][1] = get_dRdPhi(rsd1.atom("N").xyz(),
+// 	                                         rsd1.atom("CA").xyz(),
+// 	                                         end_xyz);
+// 	    }
+// 	}
 
-	void get_G()
-	{
-		for (Size i=1; i<=n_dof_angle_; i++)
-	    {
-	        for (Size j=i; j<=n_dof_angle_; j++)
-	        {
-	            matrix_G[i][j] = 0.0;
-	            for (Size n=1; n<=end_atom_list_.size();n++)
-	            {
-	                matrix_G[i][j] += matrix_dRdPhi[n][i].dot(matrix_dRdPhi[n][j]);
-	            }
-	            //if (matrix_G[i][j]>-ZERO && matrix_G[i][j]<ZERO) matrix_G[i][j] = 0.0;
-	            if (i<j) matrix_G[j][i]=matrix_G[i][j];
+// 	void get_G()
+// 	{
+// 		for (Size i=1; i<=n_dof_angle_; i++)
+// 	    {
+// 	        for (Size j=i; j<=n_dof_angle_; j++)
+// 	        {
+// 	            matrix_G[i][j] = 0.0;
+// 	            for (Size n=1; n<=end_atom_list_.size();n++)
+// 	            {
+// 	                matrix_G[i][j] += matrix_dRdPhi[n][i].dot(matrix_dRdPhi[n][j]);
+// 	            }
+// 	            //if (matrix_G[i][j]>-ZERO && matrix_G[i][j]<ZERO) matrix_G[i][j] = 0.0;
+// 	            if (i<j) matrix_G[j][i]=matrix_G[i][j];
 
-	        }
-	    }
-	}
+// 	        }
+// 	    }
+// 	}
 
-	void get_A()
-	{
-	    for (Size i=1; i<=n_dof_angle_; i++)
-	    {
-	        for (Size j=i; j<=n_dof_angle_; j++)
-	        {
-	            matrix_A[i][j] = factorB_ * matrix_G[i][j];
-	            if (i==j) matrix_A[i][j] += 1.0;
-	            matrix_A[i][j] *= factorA_ / 2.0;
-	            if (i<j) matrix_A[j][i] = matrix_A[i][j];
-	        }
-	    }
-	}
+// 	void get_A()
+// 	{
+// 	    for (Size i=1; i<=n_dof_angle_; i++)
+// 	    {
+// 	        for (Size j=i; j<=n_dof_angle_; j++)
+// 	        {
+// 	            matrix_A[i][j] = factorB_ * matrix_G[i][j];
+// 	            if (i==j) matrix_A[i][j] += 1.0;
+// 	            matrix_A[i][j] *= factorA_ / 2.0;
+// 	            if (i<j) matrix_A[j][i] = matrix_A[i][j];
+// 	        }
+// 	    }
+// 	}
 
-	void get_VdRdPhi(Pose const &){}
-	//Real get_L_move(Pose &){}
+// 	void get_VdRdPhi(Pose const &){}
+// 	//Real get_L_move(Pose &){}
 
-	Real get_L_move(Pose &pose, Size rA, Size rB, Size rC, Size rD)
-	{
-	    //gerate a Gaussian dx vector
-	    utility::vector1<Real> delta(n_dof_angle_);
-	    for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
-	    //calculate d^2 = delta^2
-	    Real d2=0.0;
-	    for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
-	    //cholesky, get L^t, L^-1
-	    Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
+// 	Real get_L_move(Pose &pose, Size rA, Size rB, Size rC, Size rD)
+// 	{
+// 	    //gerate a Gaussian dx vector
+// 	    utility::vector1<Real> delta(n_dof_angle_);
+// 	    for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
+// 	    //calculate d^2 = delta^2
+// 	    Real d2=0.0;
+// 	    for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
+// 	    //cholesky, get L^t, L^-1
+// 	    Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
 
-	    //W_old *= exp(-d^2)
-	    Real W_old = detL*exp(-d2/2.0);
-	    //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
-	    pose.set_psi(rD, basic::periodic_range( pose.psi(rD)+dphi[8], 360.0 ) );
-	    pose.set_phi(rD, basic::periodic_range( pose.phi(rD)+dphi[7], 360.0 ) );
-	    pose.set_psi(rC, basic::periodic_range( pose.psi(rC)+dphi[6], 360.0 ) ) ;
-	    pose.set_phi(rC, basic::periodic_range( pose.phi(rC)+dphi[5], 360.0 ) );
-	    pose.set_psi(rB, basic::periodic_range( pose.psi(rB)+dphi[4], 360.0 ) );
-	    pose.set_phi(rB, basic::periodic_range( pose.phi(rB)+dphi[3], 360.0 ) );
-	    pose.set_psi(rA, basic::periodic_range( pose.psi(rA)+dphi[2], 360.0 ) );
-	    pose.set_phi(rA, basic::periodic_range( pose.phi(rA)+dphi[1], 360.0 ) );
+// 	    //W_old *= exp(-d^2)
+// 	    Real W_old = detL*exp(-d2/2.0);
+// 	    //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
+// 	    pose.set_psi(rD, basic::periodic_range( pose.psi(rD)+dphi[8], 360.0 ) );
+// 	    pose.set_phi(rD, basic::periodic_range( pose.phi(rD)+dphi[7], 360.0 ) );
+// 	    pose.set_psi(rC, basic::periodic_range( pose.psi(rC)+dphi[6], 360.0 ) ) ;
+// 	    pose.set_phi(rC, basic::periodic_range( pose.phi(rC)+dphi[5], 360.0 ) );
+// 	    pose.set_psi(rB, basic::periodic_range( pose.psi(rB)+dphi[4], 360.0 ) );
+// 	    pose.set_phi(rB, basic::periodic_range( pose.phi(rB)+dphi[3], 360.0 ) );
+// 	    pose.set_psi(rA, basic::periodic_range( pose.psi(rA)+dphi[2], 360.0 ) );
+// 	    pose.set_phi(rA, basic::periodic_range( pose.phi(rA)+dphi[1], 360.0 ) );
 
-	    return W_old;
-	}
+// 	    return W_old;
+// 	}
 
-	Real get_L_prime()
-	{
-		utility::vector1<Real> delta(n_dof_angle_);
-	    //get L
-	    Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
-	    //delta = L^t * dphi
-	    //calculate d^2 = delta^2
-	    Real d2=0.0;
-	    for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
-	    Real W_new = detL*exp(-d2/2.0);
-	    return W_new;
-	}
+// 	Real get_L_prime()
+// 	{
+// 		utility::vector1<Real> delta(n_dof_angle_);
+// 	    //get L
+// 	    Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
+// 	    //delta = L^t * dphi
+// 	    //calculate d^2 = delta^2
+// 	    Real d2=0.0;
+// 	    for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
+// 	    Real W_new = detL*exp(-d2/2.0);
+// 	    return W_new;
+// 	}
 
-private:
-	utility::vector1< std::string > end_atom_list_;
-	utility::vector1< Real > dphi;
-	Real factorA_;
-	Real factorB_;
-	Real last_delta_square_;
-};
+// private:
+// 	utility::vector1< std::string > end_atom_list_;
+// 	utility::vector1< Real > dphi;
+// 	Real factorA_;
+// 	Real factorB_;
+// 	Real last_delta_square_;
+// };
 
 //////////////////////////////
 //////////////////////////////

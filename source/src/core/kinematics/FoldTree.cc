@@ -547,6 +547,48 @@ FoldTree::insert_polymer_residue(
 
 
 /////////////////////////////////////////////////////////////////////////////
+//
+// the residue at position seqpos moves to position seqpos+1
+//
+// vertices remapped, only question is cutpoint at seqpos-1, should it move to seqpos?
+//
+/// @details (ie between current rsds seqpos-1 and seqpos, so that the sequence position of the new residue is seqpos)
+/// if seqpos-1 is a cutpoint in the current fold_tree -- we have a choice about how to connect the new
+/// residue: it could be joined to the preceding peptide segment (join to seqpos-1) or to the following
+/// segment (joined to the residue currently at seqpos). join_upper and join_lower control the behavior in
+/// this case.
+///
+/// @note  seqpos may be greater than current nres, ie we may be "inserting" at end
+void
+FoldTree::insert_residue_by_chemical_bond(
+                                int const seqpos,
+                                int const anchor_residue,
+                                std::string const& anchor_atom,
+                                std::string const& root_atom
+                                 )
+{
+    assert( is_cutpoint( seqpos - 1 ) );
+	int const old_size( nres() );
+	//int const new_jump_number( num_jump() + 1 );
+    
+	utility::vector1< int > old2new( old_size, 0 );
+	for ( int i=1; i<= old_size; ++i ) {
+		if ( i<seqpos ) old2new[i] = i;
+		else old2new[i] = i+1;
+	}
+	int anchor_pos = old2new[ anchor_residue ];
+    
+	for ( iterator it = edge_list_.begin(), ite = edge_list_.end(); it != ite; ++it ) {
+		it->start() = old2new[ it->start() ];
+		it->stop () = old2new[ it->stop () ];
+	}
+    
+	add_edge( Edge( anchor_pos, seqpos, anchor_atom, root_atom ) ); // different from add_edge call in insert_residue_by_jump, here Edge constructor assumes it's a chemical edge
+	assert( check_fold_tree() );
+	new_topology = true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 /// @details  Insert a new residue into the tree at position seqpos, anchoring it
 /// to the rest of the tree by a jump
 ///

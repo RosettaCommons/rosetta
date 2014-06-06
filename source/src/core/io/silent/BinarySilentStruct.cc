@@ -450,10 +450,16 @@ bool BinarySilentStruct::init_from_lines(
 			utility::vector1< numeric::xyzVector <float> > atm_buff( natoms+1 );
 			utility::decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1) );
 
+			// option to force bit flip:
+			if( force_bitflip() ) {
+				tr.Warning << "Forcing binary silent file big-endian/little-endian flipping!  Tag: " << decoy_tag() << std::endl;
+				bitflip=true;
+			}
+
 			// endianness check ...
 			//   check the dist between atoms 1 and 2 as well as atoms 2 and 3 if
 			//   EITHER is unreasonable .. and flipping fixes BOTH then turn bitflip on
-			if (currpos == 1) {
+			if (currpos == 1 && !bitflip) {
 				core::Real len_check12 = (atm_buff[1]-atm_buff[2]).length();
 				core::Real len_check23 = (atm_buff[3]-atm_buff[2]).length();
 				if ( len_check12 < 0.5 || len_check12 > 2.0 || len_check23 < 0.5 ||
@@ -466,7 +472,7 @@ bool BinarySilentStruct::init_from_lines(
 					if ( len_check12 < 0.5 || len_check12 > 2.0 || len_check23 < 0.5 || len_check23 > 2.0 ) {
 						utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 					} else {
-						tr.Warning << "reading big-endian binary silent file! " << decoy_tag() << std::endl;
+						tr.Warning << "Reading binary silent file with inverted endian-ness!  Will attempt to flip automatically. Tag: " << decoy_tag() << std::endl;
 						bitflip = true;
 					}
 				}

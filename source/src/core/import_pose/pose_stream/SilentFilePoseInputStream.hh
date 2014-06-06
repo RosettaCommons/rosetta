@@ -112,6 +112,10 @@ public:
 	void
 	set_silent_file_data( core::io::silent::SilentFileDataOP & sfd );
 
+	/// @brief Access the SilentFileData owning pointer directly.
+	///
+	core::io::silent::SilentFileDataOP silent_file_data() { return sfd_; }
+
 	void
 	set_record_source( bool const & setting );
 

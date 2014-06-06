@@ -22,20 +22,25 @@ namespace cyclic_peptide {
 
 class CreateDistanceConstraint : public moves::Mover
 {
-	public:
-		CreateDistanceConstraint();
-		virtual ~CreateDistanceConstraint();
+public:
+    CreateDistanceConstraint();
+    virtual ~CreateDistanceConstraint();
 
-		virtual void apply( core::pose::Pose &pose );
-		virtual std::string get_name() const;
+    virtual void apply( core::pose::Pose &pose );
+    virtual std::string get_name() const;
 
-		virtual moves::MoverOP clone() const;
-		virtual moves::MoverOP fresh_instance() const;
+    virtual moves::MoverOP clone() const;
+    virtual moves::MoverOP fresh_instance() const;
 
-		virtual void
-		parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & );
+    virtual void
+    parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & );
 
-	private:
+private:
+    utility::vector1<Size> res1_;
+    utility::vector1<std::string> atom1_;
+    utility::vector1<Size> res2_;
+    utility::vector1<std::string> atom2_;
+    utility::vector1<std::string> cst_func_;
 };
 
 } // moves

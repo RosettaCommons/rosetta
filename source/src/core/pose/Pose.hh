@@ -449,6 +449,21 @@ public:
 		std::string const& root_atomno = ""
 	);
 
+    ///
+	/// This code sorely belongs in Pose.cc
+	/// @brief Adds  <new_rsd_in>  to pose at  <seqpos>
+	void
+	insert_residue_by_bond(
+                           Residue const & new_rsd_in,
+                           Size const seqpos, // desired seqpos of new_rsd
+                           Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
+                           bool const build_ideal_geometry = false,
+                           std::string const& anchor_atom = "",
+                           std::string const& root_atom = "",
+                           bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
+                           bool const lookup_bond_length = false
+   );
+
 	/// @brief Replaces the residue at  <seqpos>  with  <new_rsd_in>
 	void
 	replace_residue(

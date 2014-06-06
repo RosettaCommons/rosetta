@@ -44,12 +44,17 @@ public:
     
 private:
     bool reset_;
+
+		///
+		/// @brief As residues are added, should the PDB numbering be updated?  Default true.
+		bool update_pdb_numbering_;
     
     utility::vector1<StubMode> stub_mode_;
     utility::vector1<std::string> stub_rsd_names_;
     utility::vector1<bool> stub_rsd_jumping_;
     utility::vector1<std::string> stub_rsd_connecting_atom_;
     utility::vector1<core::Size> stub_rsd_repeat_;
+    utility::vector1<core::Size> stub_insert_pos_;
     utility::vector1<core::Size> stub_anchor_rsd_;
     utility::vector1<std::string> stub_anchor_rsd_connecting_atom_;
 
@@ -58,6 +63,10 @@ private:
 	///
 	/// @brief Rebuilds all atoms that are dependent on bonds between residue_index and any other residues (including atoms on the other residues).
 	virtual void rebuild_atoms( core::pose::Pose &pose, core::Size const residue_index) const;
+
+	///
+	/// @brief Updates the PDB numbering (PDB number/chain ID) as residues are added.
+	virtual void update_pdb_numbering ( core::pose::Pose &pose ) const;
 
 };
 

@@ -86,7 +86,7 @@ bool ProteinSilentStruct_Template< core::Real >::is_single_precision() { return 
 
 
 SilentStruct::SilentStruct()
-	: strict_column_mode_(false), nres_(0), decoy_tag_(""), sequence_(""), precision_(3), scoreline_prefix_("SCORE: ")
+	: force_bitflip_(false), strict_column_mode_(false), nres_(0), decoy_tag_(""), sequence_(""), precision_(3), scoreline_prefix_("SCORE: ")
 {}
 
 SilentStruct::~SilentStruct() {}
@@ -98,6 +98,7 @@ SilentStruct::SilentStruct( SilentStruct const& src ) :
 }
 
 SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
+	force_bitflip_ = src.force_bitflip_;
 	strict_column_mode_ = src.strict_column_mode_;
 	nres_ = src.nres_;
 	decoy_tag_ = src.decoy_tag_;

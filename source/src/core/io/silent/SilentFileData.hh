@@ -46,8 +46,14 @@ namespace silent {
 class SilentFileData : public utility::pointer::ReferenceCount {
 
 private:
-	// mapping from tags to structure data pointers
+	///
+	/// @brief mapping from tags to structure data pointers
 	Structure_Map structure_map_;
+
+	///
+	/// @brief mapping from index in a silent file to data pointers, for situations in which the ordering in the file matters.
+	utility::vector1< SilentStructOP > structure_list_;
+
 	utility::vector1< std::string > comment_lines_;
 
 	mutable std::map< SharedSilentDataType, SharedSilentDataOP > shared_silent_data_;
@@ -207,6 +213,10 @@ public:
 	 std::string const & filename
 	) const;
 
+	/// @brief Function to access the vector of silent structure owning pointers
+	/// ordered as they were in the input file.
+	utility::vector1 <SilentStructOP> structure_list() { return structure_list_; }
+
 	void
 	setup_extra_patches( utility::vector1< std::string > & all_patches ) const;
 
@@ -318,6 +328,7 @@ public:
 	/// @brief Remove all of the SilentStruct objects from this object.
 	void clear_structure_map() {
 		structure_map_.clear();
+		structure_list_.clear();
 	}
 
 	/// @brief Clears all of the data associated with this object.
@@ -477,17 +488,20 @@ public:
 	//  void open_for_writing( utility::io::ozstream&, std::string const& filename, std::stringstream& ) const; //open silent-file and write header if first
 
 	/// @brief Returns an iterator to the start of the members of this container.
+	///
 	iterator begin() { return ( iterator( structure_map_.begin() ) ); }
 
 	/// @brief Returns an iterator to the start of the members of this container.
+	///
 	const_iterator begin() const { return ( const_iterator( structure_map_.begin() ) ); }
 
 	/// @brief Returns an iterator to the end of the members of this container.
+	///
 	iterator end()   { return ( iterator( structure_map_.end()   ) ); }
 
 	/// @brief Returns an iterator to the end of the members of this container.
+	///
 	const_iterator end() const { return ( const_iterator( structure_map_.end()   ) ); }
-
 
 	iterator
 	get_iterator_for_tag (

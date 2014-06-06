@@ -596,6 +596,85 @@ Conformation::insert_residue_by_jump(
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
 
+/// @details insert a residue by bond
+///  Fires a LengthEvent::RESIDUE_PREPEND signal.
+void
+Conformation::insert_residue_by_bond(
+                                     Residue const & new_rsd_in,
+                                     Size const seqpos, // desired seqpos of new_rsd
+                                     Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
+                                     bool const build_ideal_geometry, // = false,
+                                     std::string const& anchor_atom, // could be ""
+                                     std::string const& root_atom, // ditto
+                                     bool new_chain,
+                                     bool const lookup_bond_length // default false
+                                     )
+{
+    pre_nresidue_change();
+    Size const old_size( size() );
+    assert( old_size );
+    runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
+
+    //Size const new_size( old_size+1 );
+    
+	// first renumber things
+	utility::vector1< Size > old2new( old_size, 0 );
+	for ( Size i=1; i<= old_size; ++i ) {
+		if ( i< seqpos ) old2new[i] = i;
+		else old2new[i] = i+1;
+	}
+
+    
+    Residue const & anchor_rsd( residue_( anchor_pos ) ); // no call to residue(anchor_pos)
+
+    ResidueOP ideal_geometry_rsd;
+	if ( build_ideal_geometry ) {
+		// get the geometries of the new bond
+		chemical::ResidueConnection new_rsd_connection;
+		chemical::ResidueConnection anchor_rsd_connection;
+        
+        core::Size anchor_atomid(anchor_rsd.type().atom_index(anchor_atom));
+        core::Size anchor_connecting_id = anchor_rsd.type().residue_connection_id_for_atom(anchor_atomid);
+
+        core::Size root_atomid(new_rsd_in.type().atom_index(root_atom));
+        core::Size root_connecting_id = new_rsd_in.type().residue_connection_id_for_atom(root_atomid);
+
+        // using a non-polymer residue-residue connection
+        new_rsd_connection    = new_rsd_in.residue_connection(   root_connecting_id );
+        anchor_rsd_connection = anchor_rsd.residue_connection( anchor_connecting_id );
+        
+		// this is a little wasteful, creating a new copy, but we need non-const access
+		ideal_geometry_rsd = new_rsd_in.clone();
+        
+		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( anchor_pos ); // safety
+		orient_residue_for_ideal_bond( *ideal_geometry_rsd, new_rsd_connection, anchor_rsd, anchor_rsd_connection, *this, lookup_bond_length );
+
+        // this handles all renumbering internal to the Residues, *_moved arrays
+        residues_insert( seqpos, *ideal_geometry_rsd, false );
+
+	    residues_[ seqpos ]->residue_connection_partner(        root_connecting_id, old2new[anchor_pos], anchor_connecting_id );
+        residues_[ old2new[anchor_pos] ]->residue_connection_partner( anchor_connecting_id, seqpos,      root_connecting_id );
+    }
+    else {
+        // this handles all renumbering internal to the Residues, *_moved arrays
+        residues_insert( seqpos, new_rsd_in, false, new_chain );
+    }
+
+    Residue const & new_rsd( residue_( seqpos ) );
+    assert( new_rsd.seqpos() == seqpos );
+
+
+    fold_tree_->insert_residue_by_chemical_bond( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
+    
+    insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
+    
+    residue_torsions_need_updating_ = true;
+    
+    assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+
+    notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
+}
+
 /// @details The default behavior is to append by a polymeric connection to the preceding residue
 /// If we want to connect via a non-polymer connection, we give the connection number, anchor residue
 /// and the connection number for the anchor residue. These connection numbers are wrt the connections_

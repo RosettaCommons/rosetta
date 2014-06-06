@@ -201,6 +201,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		icoor_(residue_type.icoor_),
 		dihedral_atom_sets_(residue_type.dihedral_atom_sets_),
 		dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
+		improper_dihedral_atom_sets_(residue_type.improper_dihedral_atom_sets_),
+		improper_dihedrals_for_atom_(residue_type.improper_dihedrals_for_atom_),
 		bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
 		bondangles_for_atom_(residue_type.bondangles_for_atom_),
 		atom_shadowed_(residue_type.atom_shadowed_),
@@ -2396,6 +2398,66 @@ ResidueType::update_derived_data()
 					}
 				}
 
+			}
+		}
+	}
+
+	// get dihedral angles
+	improper_dihedral_atom_sets_.clear();
+	improper_dihedrals_for_atom_.resize( natoms() );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) improper_dihedrals_for_atom_[ ii ].clear();
+    
+	// get for all pairs of atoms separated by 1 bond
+	for ( Size central_atom1 = 1; central_atom1 < natoms(); ++central_atom1 ) {
+		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms(); ++central_atom2 ) {
+			if ( path_distance_[ central_atom1 ][ central_atom2 ] == 1 ) {
+                
+				// get all atoms separated from central_atom1/2 by one bond that are not central_atom2/1
+				utility::vector1< Size > ca1d1;
+				utility::vector1< Size > ca2d1;
+                
+				// ca1
+				for ( Size i = 1; i <= natoms(); ++i ) {
+					if ( ( path_distance_[ central_atom1 ][ i ] == 1 ) && ( i != central_atom2 ) ) {
+						ca1d1.push_back( i );
+					}
+				}
+				// ca2
+				for ( Size i = 1; i <= natoms(); ++i ) {
+					if ( ( path_distance_[ central_atom2 ][ i ] == 1 ) && ( i != central_atom1 ) ) {
+						ca2d1.push_back( i );
+					}
+				}
+                
+				// for each pair of dihedral angle start or end atoms create a dihedral angle using central atom
+				for ( utility::vector1< Size >::iterator terminal_atom1 = ca1d1.begin();
+                     terminal_atom1 != ca1d1.end(); ++terminal_atom1 ) {
+                    for ( utility::vector1< Size >::iterator terminal_atom2 = terminal_atom1+1;
+                         terminal_atom2 != ca1d1.end(); ++terminal_atom2 ) {
+						dihedral_atom_set temp( *terminal_atom1, central_atom1, central_atom2, *terminal_atom2 );
+						improper_dihedral_atom_sets_.push_back( temp );
+						Size const which_dihedral = improper_dihedral_atom_sets_.size();
+						improper_dihedrals_for_atom_[ *terminal_atom1 ].push_back( which_dihedral );
+						improper_dihedrals_for_atom_[   central_atom1 ].push_back( which_dihedral );
+						improper_dihedrals_for_atom_[   central_atom2 ].push_back( which_dihedral );
+						improper_dihedrals_for_atom_[ *terminal_atom2 ].push_back( which_dihedral );
+                    
+                    }
+                }
+                for ( utility::vector1< Size >::iterator terminal_atom1 = ca2d1.begin();
+                     terminal_atom1 != ca2d1.end(); ++terminal_atom1 ) {
+                    for ( utility::vector1< Size >::iterator terminal_atom2 = terminal_atom1+1;
+                         terminal_atom2 != ca2d1.end(); ++terminal_atom2 ) {
+						dihedral_atom_set temp( *terminal_atom1, central_atom1, central_atom2, *terminal_atom2 );
+						improper_dihedral_atom_sets_.push_back( temp );
+						Size const which_dihedral = improper_dihedral_atom_sets_.size();
+						improper_dihedrals_for_atom_[ *terminal_atom1 ].push_back( which_dihedral );
+						improper_dihedrals_for_atom_[   central_atom1 ].push_back( which_dihedral );
+						improper_dihedrals_for_atom_[   central_atom2 ].push_back( which_dihedral );
+						improper_dihedrals_for_atom_[ *terminal_atom2 ].push_back( which_dihedral );
+                        
+                    }
+                }
 			}
 		}
 	}

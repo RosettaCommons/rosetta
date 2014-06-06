@@ -76,6 +76,9 @@ std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_
 		case loop_bump_check:
 			returnstring = "loop_bump_check";
 			break;
+		case atom_pair_distance:
+			returnstring = "atom_pair_distance";
+			break;
 		default:
 			returnstring = "unknown_filter";
 			break;
@@ -97,6 +100,9 @@ filter_type GeneralizedKICfilter::get_filter_type_by_name( std::string const &fi
 void GeneralizedKICfilter::set_filter_type( filter_type const &ftype) {
 	runtime_assert_string_msg(ftype > 0 && ftype < end_of_filter_list, "Filter type not recognized.  Error in GeneralizedKICfilter::set_filter_type().");
 	filtertype_ = ftype;
+	filter_params_real_.clear();
+	filter_params_size_.clear();
+	filter_params_bool_.clear();
 	return;
 }
 
@@ -106,6 +112,9 @@ void GeneralizedKICfilter::set_filter_type( std::string const &ftypename) {
 	filter_type ftype = get_filter_type_by_name(ftypename);
 	runtime_assert_string_msg( ftype < end_of_filter_list, "Filter type " + ftypename + " not recognized.  Error in GeneralizedKICfilter::set_filter_type()." );
 	filtertype_ = ftype;
+	filter_params_real_.clear();
+	filter_params_size_.clear();
+	filter_params_bool_.clear();
 	return;
 }
 
@@ -113,6 +122,102 @@ void GeneralizedKICfilter::set_filter_type( std::string const &ftypename) {
 /// @brief Gets the filter type name for THIS filter.
 std::string GeneralizedKICfilter::get_this_filter_type_name () const {
 	return get_filter_type_name( filtertype_ );
+}
+
+///
+/// @brief Add a real-valued filter parameter.
+void GeneralizedKICfilter::add_filter_param( std::string const &param_name, core::Real const &value )
+{
+	filter_params_real_.push_back( std::pair< std::string, core::Real >( param_name, value ) );
+	return;
+}
+
+///
+/// @brief Add a integer-valued filter parameter.
+void GeneralizedKICfilter::add_filter_param( std::string const &param_name, core::Size const value )
+{
+	filter_params_size_.push_back( std::pair< std::string, core::Size >( param_name, value ) );
+	return;
+}
+
+///
+/// @brief Add a Boolean-valued filter parameter.
+void GeneralizedKICfilter::add_filter_param( std::string const &param_name, bool const value )
+{
+	filter_params_bool_.push_back( std::pair< std::string, bool >( param_name, value ) );
+	return;
+}
+
+///
+/// @brief Add a string-valued filter parameter.
+void GeneralizedKICfilter::add_filter_param( std::string const &param_name, std::string const &value )
+{
+	filter_params_string_.push_back( std::pair< std::string, std::string >( param_name, value ) );
+	return;
+}
+
+/// @brief Get a real-valued filter parameter.
+/// @details Returns false if the parameter couldn't be found.
+bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core::Real &outvalue ) const
+{
+	core::Size const listsize = filter_params_real_.size();
+	if(!listsize) return false;
+	for(core::Size i=1; i<=listsize; ++i) {
+		if(filter_params_real_[i].first==param_name) {
+			outvalue=filter_params_real_[i].second;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/// @brief Get a integer-valued filter parameter.
+/// @details Returns false if the parameter couldn't be found.
+bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core::Size &outvalue ) const
+{
+	core::Size const listsize = filter_params_size_.size();
+	if(!listsize) return false;
+	for(core::Size i=1; i<=listsize; ++i) {
+		if(filter_params_size_[i].first==param_name) {
+			outvalue=filter_params_size_[i].second;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/// @brief Get a Boolean-valued filter parameter.
+/// @details Returns false if the parameter couldn't be found.
+bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, bool &outvalue ) const
+{
+	core::Size const listsize = filter_params_bool_.size();
+	if(!listsize) return false;
+	for(core::Size i=1; i<=listsize; ++i) {
+		if(filter_params_bool_[i].first==param_name) {
+			outvalue=filter_params_bool_[i].second;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/// @brief Get a string-valued filter parameter.
+/// @details Returns false if the parameter couldn't be found.
+bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, std::string &outvalue ) const
+{
+	core::Size const listsize = filter_params_string_.size();
+	if(!listsize) return false;
+	for(core::Size i=1; i<=listsize; ++i) {
+		if(filter_params_string_[i].first==param_name) {
+			outvalue=filter_params_string_[i].second;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /// @brief Apply this filter to ONE of the kinematic closure solutions produced by the bridgeObjects function,
@@ -142,6 +247,9 @@ bool GeneralizedKICfilter::apply(
 	switch(filtertype_) {
 		case loop_bump_check:
 			return apply_loop_bump_check( original_pose, loop_pose, residue_map, atomlist, torsions, bondangles, bondlengths);
+			break;
+		case atom_pair_distance:
+			return apply_atom_pair_distance( original_pose, loop_pose, residue_map, atomlist, torsions, bondangles, bondlengths);
 			break;
 		default:
 			break;
@@ -277,7 +385,70 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 		}
 	}
 
-	TR << "GeneralizedKICfilter::apply_loop_bump_check filter passed." << std::endl; TR.flush();
+	TR << "GeneralizedKICfilter::apply_loop_bump_check() filter passed." << std::endl; TR.flush();
+	return true;
+}
+
+/// @brief Applies the atom_pair_distance filter, checking that the distance between two atoms is less than
+/// a given threshhold (or greater than a given threshhold if the user so specifies with the "greater_than"
+/// option).
+/// @details Returns "true" for pass and "false" for fail.  The user can set the following options:
+/// "distance" (real-valued, mandatory)
+/// "atom1" (string-valued, mandatory)
+/// "atom2" (string-valued, mandatory)
+/// "res1" (integer-valued, mandatory, based on original pose numbering)
+/// "res2" (integer-valued, mandatory, based on original pose numbering)
+/// "greater_than" (boolean, optional, false by default)
+/// @param[in] original_pose -- The full, initial pose.
+/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+bool GeneralizedKICfilter::apply_atom_pair_distance(
+	core::pose::Pose const & original_pose,
+	core::pose::Pose const & loop_pose,
+	utility::vector1 < std::pair <core::Size, core::Size> > const & residue_map,
+	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const & atomlist,
+	utility::vector1 < core::Real > const & torsions,
+	utility::vector1 < core::Real > const & bondangles,
+	utility::vector1 < core::Real > const & bondlengths
+) const {
+
+	//First, check that all necessary params have been set and store necessary information in local vars:
+	std::string at1, at2;
+	core::Size res1, res2;
+	core::Real dist_cutoff, dist_cutoff_sq;
+	bool greaterthan = false;
+	runtime_assert_string_msg(get_filter_param("atom1", at1), "In GeneralizedKICfilter::apply_atom_pair_distance(): the atom_pair_distance filter cannot be used without specifying atom1.");
+	runtime_assert_string_msg(get_filter_param("atom2", at2), "In GeneralizedKICfilter::apply_atom_pair_distance(): the atom_pair_distance filter cannot be used without specifying atom2.");
+	runtime_assert_string_msg(get_filter_param("res1", res1), "In GeneralizedKICfilter::apply_atom_pair_distance(): the atom_pair_distance filter cannot be used without specifying res1.");
+	runtime_assert_string_msg(get_filter_param("res2", res2), "In GeneralizedKICfilter::apply_atom_pair_distance(): the atom_pair_distance filter cannot be used without specifying res2.");
+	runtime_assert_string_msg(get_filter_param("distance", dist_cutoff), "In GeneralizedKICfilter::apply_atom_pair_distance(): the atom_pair_distance filter cannot be used without specifying a distance cutoff (\"distance\" parameter).");
+	get_filter_param("greater_than", greaterthan);
+	dist_cutoff_sq = dist_cutoff*dist_cutoff;
+
+	runtime_assert_string_msg(original_pose_residue_is_in_residue_map(res1, residue_map) || original_pose_residue_is_in_residue_map(res2, residue_map),
+		"In GeneralizedKICfilter::apply_atom_pair_distance(): at least one of the residues passed to the atom_pair_distance filter must be in the loop to be closed." );
+
+	runtime_assert_string_msg(original_pose.residue(res1).has(at1),
+		"In GeneralizedKICfilter::apply_atom_pair_distance(): the residue specified with \"res1\" does not contain the atom specified with \"atom1\"." );
+	runtime_assert_string_msg(original_pose.residue(res2).has(at2),
+		"In GeneralizedKICfilter::apply_atom_pair_distance(): the residue specified with \"res2\" does not contain the atom specified with \"atom2\"." );
+
+
+	core::pose::Pose looppose(loop_pose); //Make a copy of the loop pose
+	core::pose::Pose fullpose(original_pose); //Make a copy of the full pose
+	set_loop_pose (looppose, atomlist, torsions, bondangles, bondlengths); //Set the loop conformation using the torsions, bondangles, and bondlengths vectors.
+	copy_loop_pose_to_original( fullpose, looppose, residue_map); //Copy the loop conformation to the full pose.
+
+	if(fullpose.residue(res1).xyz(at1).distance_squared( fullpose.residue(res2).xyz(at2) ) > dist_cutoff_sq) {
+		TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.flush();
+		return false;
+	}
+
+	TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() passed." << std::endl; TR.flush();
 	return true;
 }
 

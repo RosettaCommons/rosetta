@@ -109,6 +109,9 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 		case randomize_alpha_backbone_by_rama:
 			returnstring = "randomize_alpha_backbone_by_rama";
 			break;
+		case perturb_dihedral:
+			returnstring = "perturb_dihedral";
+			break;
 		case sample_cis_peptide_bond:
 			returnstring = "sample_cis_peptide_bond";
 			break;
@@ -166,7 +169,7 @@ void GeneralizedKICperturber::apply (
 	switch(effect_) {
 		case set_dihedral:
 			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_dihedral(AtomIDs_loopindexed, atomlist, torsions, false);
+			apply_set_dihedral(AtomIDs_loopindexed, atomlist, torsions, 0);
 			break;
 		case set_bondangle:
 			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
@@ -178,10 +181,14 @@ void GeneralizedKICperturber::apply (
 			break;
 		case randomize_dihedral:
 			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_dihedral(AtomIDs_loopindexed, atomlist, torsions, true); //We recycle the apply_set_dihedral() function to avoid code duplication
+			apply_set_dihedral(AtomIDs_loopindexed, atomlist, torsions, 1); //We recycle the apply_set_dihedral() function to avoid code duplication
 			break;
 		case randomize_alpha_backbone_by_rama:
 			apply_randomize_alpha_backbone_by_rama(original_pose, loop_pose, residues_, atomlist, residue_map, torsions);
+			break;
+		case perturb_dihedral:
+			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+			apply_set_dihedral(AtomIDs_loopindexed, atomlist, torsions, 2); //We recycle the apply_set_dihedral() function to avoid code duplication
 			break;
 		case sample_cis_peptide_bond:
 			apply_sample_cis_peptide_bond(loop_pose, atomlist, residues_, residue_map, torsions);
@@ -250,28 +257,37 @@ void GeneralizedKICperturber::reindex_AtomIDs (
 /// @param[in] dihedrallist - List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 /// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
 /// @param[in,out] torsions - Desired torsions for each atom; set by this function.
-/// @param[in] randomize - Should the specified torsions be randomized?
+/// @param[in] effect - Should the specified torsions be set (0), randomized (1), or perturbed (2)?
 void GeneralizedKICperturber::apply_set_dihedral (
 	utility::vector1 < utility::vector1 < core::id::AtomID > > const &dihedrallist, //List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
-	bool const randomize
+	core::Size const effect //0=set, 1=randomize, 2=perturb
 ) const {
 	//TR << "Applying set_dihedral perturbation effect." << std::endl;
 
 	runtime_assert_string_msg( dihedrallist.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_dihedral, since no atoms were provided as input." );
-	if(!randomize) runtime_assert_string_msg( inputvalues_real_.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle was provided as input." );
+	if(effect==0) runtime_assert_string_msg( inputvalues_real_.size() > 0, "Could not set dihedral value with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle was provided as input." );
+	if(effect==2) runtime_assert_string_msg( inputvalues_real_.size() > 0, "Could not perturb dihedrals with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle perturbation magnitude provided as input." );
+
 
 	bool separate_values = false; //Have separate dihedral values been provided for each dihedral in the list, or are we setting everything to one value?
-	if(!randomize) {
+	if(effect==0 || effect==2) {
+		std::string str1=" set";
+		std::string str2=" to";
+		std::string str3="Setting ";
+		std::string str4=" to ";
+		if(effect==2) {
+			str1=" perturbed"; str2=" by"; str3="Perturbing "; str4=" by ";
+		}
 		if(inputvalues_real_.size()>=dihedrallist.size()) {
 			separate_values = true;
-			if(inputvalues_real_.size()>dihedrallist.size()) TR.Warning << "Warning! Number of input values for set_dihedral pertruber effect exceeds the number of torsions to be set.  Using only the first " << dihedrallist.size() << " values." << std::endl;
+			if(inputvalues_real_.size()>dihedrallist.size()) TR.Warning << "Warning! Number of input values for set_dihedral pertruber effect exceeds the number of torsions to be" << str1 << ".  Using only the first " << dihedrallist.size() << " values." << std::endl;
 		} else if (inputvalues_real_.size()!=1) {
 			separate_values = false;
-			TR.Warning << "Warning! Number of input values does not match the number of dihedral angles specified.  All angles will be set to the first value." << std::endl;
+			TR.Warning << "Warning! Number of input values does not match the number of dihedral angles specified.  All angles will be" << str1 << str2 << " the first value." << std::endl;
 		} else { //inputvalues_real_.size()==1 and dihedrallist.size() > 1
-			TR << "Setting all specified dihedral angles to " << inputvalues_real_[1] << "." << std::endl;
+			TR << str3 << "all specified dihedral angles" << str4 << inputvalues_real_[1] << "." << std::endl;
 		}
 	}
 
@@ -313,9 +329,11 @@ void GeneralizedKICperturber::apply_set_dihedral (
 			if(torsion_index > 0) break;
 		}
 		runtime_assert_string_msg(torsion_index > 0, "Error in GeneralizedKICperturber::apply_set_dihedral.  The dihedral angle specified was not found in the chain of atoms to be closed.");
-		if(randomize) {
+		if (effect==2) {
+			torsions[torsion_index] += RG.gaussian() * (separate_values ? inputvalues_real_[i] : inputvalues_real_[1]); //Add a randomly chosen value from a gaussian distribution of specified bredth.
+		} else if(effect==1) { //randomizing torsions
 			torsions[torsion_index] = RG.uniform()*360.0; //Set the desired torsion to the user-specified value.
-		} else {
+		} else if (effect==0) { //setting torsions
 			torsions[torsion_index] = (separate_values ? inputvalues_real_[i] : inputvalues_real_[1]); //Set the desired torsion to the user-specified value.
 		}
 	}

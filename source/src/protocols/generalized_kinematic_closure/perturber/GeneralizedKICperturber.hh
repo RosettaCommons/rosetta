@@ -70,6 +70,8 @@ enum perturber_effect {
 	//randomize_chi,
 	//randomize_rotamer
 
+	perturb_dihedral,
+
 	sample_cis_peptide_bond,
 
 	unknown_effect, //Keep this second-to-last.
@@ -212,12 +214,12 @@ private:
 	/// @param[in] dihedrallist - List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
 	/// @param[in,out] torsions - Desired torsions for each atom; set by this function.
-	/// @param[in] randomize - Should the specified torsions be randomized?
+	/// @param[in] effect - Should the specified torsions be set (0), randomized (1), or perturbed (2)?
 	void apply_set_dihedral (
 		utility::vector1 < utility::vector1 < core::id::AtomID > > const &dihedrallist, //List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
-		bool const randomize
+		core::Size const effect //0=set, 1=randomize, 2=perturb
 	) const;
 
 	/// @brief Applies a set_bondangle perturbation to a list of bond angles.

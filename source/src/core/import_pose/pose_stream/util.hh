@@ -24,6 +24,12 @@ namespace core {
 namespace import_pose {
 namespace pose_stream {
 
+/// @brief Get all input streams based on command-line input.
+/// @details If renumber_decoys is true, silent file decoys are sorted in alphabetical order of tags.
+MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys);
+
+/// @brief Get all input streams based on command-line input, sorting silent file decoys in alphabetical order of tags.
+/// 
 MetaPoseInputStream streams_from_cmd_line();
 
 } // pose_stream

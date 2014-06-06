@@ -54,6 +54,7 @@ enum filter_type {
 
 	no_filter = 1,
 	loop_bump_check,
+	atom_pair_distance,
 
 	unknown_filter, //Keep this second-to-last.
 	end_of_filter_list = unknown_filter //Keep this last.
@@ -95,6 +96,39 @@ public:
 	/// @brief Gets the filter type name for THIS filter.
 	std::string get_this_filter_type_name () const;
 
+	///
+	/// @brief Add a real-valued filter parameter.
+	void add_filter_param( std::string const &param_name, core::Real const &value );
+
+	///
+	/// @brief Add a integer-valued filter parameter.
+	void add_filter_param( std::string const &param_name, core::Size const value );
+
+	///
+	/// @brief Add a Boolean-valued filter parameter.
+	void add_filter_param( std::string const &param_name, bool const value );
+
+	///
+	/// @brief Add a string-valued filter parameter.
+	void add_filter_param( std::string const &param_name, std::string const &value );
+
+	/// @brief Get a real-valued filter parameter.
+	/// @details Returns false if the parameter couldn't be found.
+	bool get_filter_param( std::string const &param_name, core::Real &outvalue ) const;
+
+	/// @brief Get a integer-valued filter parameter.
+	/// @details Returns false if the parameter couldn't be found.
+	bool get_filter_param( std::string const &param_name, core::Size &outvalue ) const;
+
+	/// @brief Get a Boolean-valued filter parameter.
+	/// @details Returns false if the parameter couldn't be found.
+	bool get_filter_param( std::string const &param_name, bool &outvalue ) const;
+
+	/// @brief Get a string-valued filter parameter.
+	/// @details Returns false if the parameter couldn't be found.
+	bool get_filter_param( std::string const &param_name, std::string &outvalue ) const;
+
+
 	/// @brief Apply this filter to ONE of the kinematic closure solutions produced by the bridgeObjects function,
 	/// and return pass or fail.
 	/// @details
@@ -125,7 +159,22 @@ private:
 	/// @brief The filter type for this filter (see the filter_type enum for all types).
 	filter_type filtertype_;
 
+	///
+	/// @brief Real-valued filter parameters
 	utility::vector1 < std::pair<std::string, core::Real > > filter_params_real_;
+
+	///
+	/// @brief Integer-valued filter parameters
+	utility::vector1 < std::pair<std::string, core::Size > > filter_params_size_;
+
+	///
+	/// @brief Boolean-valued filter parameters
+	utility::vector1 < std::pair<std::string, bool > > filter_params_bool_;
+
+	///
+	/// @brief String-valued filter parameters
+	utility::vector1 < std::pair<std::string, std::string > > filter_params_string_;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
@@ -146,6 +195,33 @@ private:
   /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
   /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_loop_bump_check(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+		utility::vector1 < core::Real > const &torsions,
+		utility::vector1 < core::Real > const &bondangles,
+		utility::vector1 < core::Real > const &bondlengths
+	) const;
+
+	/// @brief Applies the atom_pair_distance filter, checking that the distance between two atoms is less than
+	/// a given threshhold (or greater than a given threshhold if the user so specifies with the "greater_than"
+	/// option).
+	/// @details Returns "true" for pass and "false" for fail.  The user can set the following options:
+	/// "distance" (real-valued, mandatory)
+	/// "atom1" (string-valued, mandatory)
+	/// "atom2" (string-valued, mandatory)
+	/// "res1" (integer-valued, mandatory, based on original pose numbering)
+	/// "res2" (integer-valued, mandatory, based on original pose numbering)
+	/// "greater_than" (boolean, optional, false by default)
+	/// @param[in] original_pose -- The full, initial pose.
+  /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+  /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+  /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+  /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	bool apply_atom_pair_distance(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,

@@ -81,8 +81,8 @@ void BBConRotMover::factorC( core::Real const fC )
 
 BBConRotMover::BBConRotMover()
 :BBGaussianMover(1,15,5),
-dphi(utility::vector1<Real>(n_dof_angle_)),
-oldphi(utility::vector1<Real>(n_dof_angle_))
+dphi(Vector(n_dof_angle_)),
+oldphi(Vector(n_dof_angle_))
 {
 	//using numeric::constants::d::pi;
 
@@ -139,19 +139,19 @@ bool BBConRotMover::make_move(Pose &pose)
     assert(resnum_-left == n_pert_res_-1);
 
     Size nres(pose.n_residue());
-    Vector oldv(pose.residue(nres).atom("CA").xyz());
+    xyzVector oldv(pose.residue(nres).atom("CA").xyz());
 
     //using whole pose
-    Vector r0(pose.residue(resnum_).atom("C").xyz());
-    Vector r1(pose.residue(resnum_).atom("CA").xyz());
-    Vector r2(pose.residue(resnum_).atom("N").xyz());
-    Vector r3(pose.residue(resnum_-1).atom("C").xyz());
-    Vector r4(pose.residue(resnum_-1).atom("CA").xyz());
-    Vector r5(pose.residue(resnum_-1).atom("N").xyz());
-    Vector r6(pose.residue(resnum_-2).atom("C").xyz());
-    Vector p1((r2-r1).length(),0.0,0.0);
-    Vector p2((r3-r2).length(),0.0,0.0);
-    Vector p3((r4-r3).length(),0.0,0.0);
+    xyzVector r0(pose.residue(resnum_).atom("C").xyz());
+    xyzVector r1(pose.residue(resnum_).atom("CA").xyz());
+    xyzVector r2(pose.residue(resnum_).atom("N").xyz());
+    xyzVector r3(pose.residue(resnum_-1).atom("C").xyz());
+    xyzVector r4(pose.residue(resnum_-1).atom("CA").xyz());
+    xyzVector r5(pose.residue(resnum_-1).atom("N").xyz());
+    xyzVector r6(pose.residue(resnum_-2).atom("C").xyz());
+    xyzVector p1((r2-r1).length(),0.0,0.0);
+    xyzVector p2((r3-r2).length(),0.0,0.0);
+    xyzVector p3((r4-r3).length(),0.0,0.0);
 
     Real jac_new0 = calc_jacobian_cartesians(r5, r4, r3, r2, r1);
     TR.Debug << "Jac_new0=" << jac_new0 << std::endl;
@@ -236,7 +236,7 @@ bool BBConRotMover::make_move(Pose &pose)
             pose.set_dof(ang9, pi-alpha3); //ang_9
 
             //make sure the downstream didn't flip
-            core::Vector dd(pose.residue(nres).atom("CA").xyz()-oldv);
+            xyzVector dd(pose.residue(nres).atom("CA").xyz()-oldv);
             if (dd.length_squared()<1.0e-6)
             {
                 failed=false;
@@ -300,7 +300,7 @@ void BBConRotMover::get_VdRdPhi(Pose const &segment)
     conformation::Residue const & rsd3(segment.residue(nres-1));
 
     //the only end
-    Vector end_xyz = rsd3.atom("CA").xyz();
+    xyzVector end_xyz = rsd3.atom("CA").xyz();
 
     ///////////////////
     //dihedral x 6
@@ -434,7 +434,7 @@ core::Real BBConRotMover::get_L_move(Pose &segment)
     //Size nres=6; //using copy segment
 
     //gerate a Gaussian dx vector
-    utility::vector1<Real> delta(n_dof_angle_);
+    Vector delta(n_dof_angle_);
     for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
     //Debug: no angle changes
     //for (Size i=7; i<=n_dof_angle_; i++) delta[i]=0;
@@ -503,7 +503,7 @@ core::Real BBConRotMover::get_L_move(Pose &segment)
 
 core::Real BBConRotMover::get_L_prime()
 {
-    utility::vector1<Real> delta(n_dof_angle_);
+    Vector delta(n_dof_angle_);
     Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta, 7, 15, factorC_);
     Real d2=0.0;
     for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
@@ -511,10 +511,10 @@ core::Real BBConRotMover::get_L_prime()
 }
 
 void BBConRotMover::get_xyz(
-    Vector const &a,
-    Vector const &b,
-    Vector const &c,
-    Vector &d,
+    xyzVector const &a,
+    xyzVector const &b,
+    xyzVector const &c,
+    xyzVector &d,
     Real distance,
     Real theta,
     Real phi
@@ -533,36 +533,36 @@ void BBConRotMover::get_xyz(
 }
 
 core::Real BBConRotMover::calc_jacobian_cartesians(
-    Vector const &v6,
-    Vector const &v7,
-    Vector const &v8,
-    Vector const &v9,
-    Vector const &v10
+    xyzVector const &v6,
+    xyzVector const &v7,
+    xyzVector const &v8,
+    xyzVector const &v9,
+    xyzVector const &v10
 )
 {
     double A[5][5];
 
-    Vector u1(v7-v6);
+    xyzVector u1(v7-v6);
     u1.normalize();
-    Vector u2(v8-v7);
+    xyzVector u2(v8-v7);
     u2.normalize();
-    Vector u3(v9-v8);
+    xyzVector u3(v9-v8);
     u3.normalize();
-    Vector u4(v10-v9);
+    xyzVector u4(v10-v9);
     u4.normalize();
 
-    Vector s1(u2.cross(u1));
+    xyzVector s1(u2.cross(u1));
     s1.normalize();
-    Vector s2(u3.cross(u2));
+    xyzVector s2(u3.cross(u2));
     s2.normalize();
-    Vector s3(u4.cross(u3));
+    xyzVector s3(u4.cross(u3));
     s3.normalize();
 
-    Vector r42(v9-v7);
-    Vector r43(v9-v8);
+    xyzVector r42(v9-v7);
+    xyzVector r43(v9-v8);
 
     //build matrix
-    Vector b;
+    xyzVector b;
 
     b = (u1.cross(r42));
     A[0][0] = b.x();
@@ -617,17 +617,17 @@ core::Real BBConRotMover::calc_jacobian_cartesians(
 
 bool BBConRotMover::closure(
     //before closure
-    Vector &r0,
-    Vector &r1,
-    Vector &r2,
-    Vector &r3,
-    Vector &r4,
-    Vector &r5,
-    Vector &r6,
+    xyzVector &r0,
+    xyzVector &r1,
+    xyzVector &r2,
+    xyzVector &r3,
+    xyzVector &r4,
+    xyzVector &r5,
+    xyzVector &r6,
     //after closure
-    Vector &p1,
-    Vector &p2,
-    Vector &p3,
+    xyzVector &p1,
+    xyzVector &p2,
+    xyzVector &p3,
     //old angle/dih
     Real const theta1_old,
     Real const theta2_old,
@@ -657,7 +657,7 @@ bool BBConRotMover::closure(
     Real sinA1, cosA1, sinA2, cosA2;
     Real sinO1, cosO1, /*sinO2,*/ cosO2;
     //Real a[3],b[3],c[3],d[3],k[3],j[3],n[3],v[3];
-    Vector a, b, c, d, k, j, n, v;
+    xyzVector a, b, c, d, k, j, n, v;
     Real k_2, j_2, v_2, va;
     Real w, w_2, h, h_2, g, p1_2, p2_2, p3_2;
     //Real R2[3][3], R2t[3][3];

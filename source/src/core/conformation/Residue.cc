@@ -1083,7 +1083,8 @@ Residue::apply_transform_downstream(
 			if ( my_atom_base != nbr ) {
 				apply_transform_downstream( nbr, R, v );
 			} else {
-				TR.Warning << "DANGER: almost got stuck in infinite loop!" << std::endl;
+				if(atomno!=1 && atomno!=2) TR.Warning << "DANGER: almost got stuck in infinite loop!  Atom " << atomno << " is apparently a parent AND child of atom " << nbr << "." << std::endl;
+				//Note: atom 1 and atom 2 have a weird relationship, and that leads to bogus warning messages here.
 			}
 		}
 	}

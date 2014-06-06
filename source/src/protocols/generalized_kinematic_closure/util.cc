@@ -100,14 +100,15 @@ void set_loop_pose (
 
 	TR << "Setting loop conformation based on solution from generalized kinematic closure." << std::endl; TR.flush(); //DELETE ME
 
-	for(core::Size ii=3, iimax=(t_ang.size()-3); ii<=iimax; ++ii){ //Set torsion angles
-		pose.conformation().set_torsion_angle(atomlist[ii-1].first, atomlist[ii].first, atomlist[ii+1].first, atomlist[ii+2].first, radians(t_ang[ii]));
-	}
-	for(core::Size ii=3, iimax=(b_ang.size()-2); ii<=iimax; ++ii) { //Set bond angles
-		pose.conformation().set_bond_angle( atomlist[ii-1].first, atomlist[ii].first, atomlist[ii+1].first, radians(b_ang[ii]) );
-	}
 	for(core::Size ii=3, iimax=(b_len.size()-3); ii<=iimax; ++ii) { //Set bond lengths
 		pose.conformation().set_bond_length( atomlist[ii].first, atomlist[ii+1].first, b_len[ii] );
+	}
+	for(core::Size ii=3, iimax=(b_ang.size()-3); ii<=iimax; ++ii) { //Set bond angles
+		pose.conformation().set_bond_angle( atomlist[ii-1].first, atomlist[ii].first, atomlist[ii+1].first, radians(b_ang[ii]) );
+	}
+	for(core::Size ii=2, iimax=(t_ang.size()-2); ii<=iimax; ++ii){ //Set torsion angles
+		//TR << "Setting at1=" << atomlist[ii-1].first.atomno() << " rsd1=" << atomlist[ii-1].first.rsd() << " at2=" << atomlist[ii].first.atomno() << " rsd2=" << atomlist[ii].first.rsd() << " at3=" << atomlist[ii+1].first.atomno() << " rsd3=" << atomlist[ii+1].first.rsd() << " at4=" << atomlist[ii+2].first.atomno() << " rsd4=" << atomlist[ii+2].first.rsd() << " angle=" << t_ang[ii] << std::endl ; //DELETE ME
+		pose.conformation().set_torsion_angle(atomlist[ii-1].first, atomlist[ii].first, atomlist[ii+1].first, atomlist[ii+2].first, radians(t_ang[ii]));
 	}
 
 	pose.update_residue_neighbors();
@@ -136,6 +137,8 @@ void set_loop_pose (
 	}
 
 	pose.update_residue_neighbors();
+
+	TR.flush();
 
 	return;
 }
@@ -223,18 +226,18 @@ void general_set_psi (
 	core::Size C_connection_index = 2;
 
 	if(!pose.residue(residue_index).type().is_alpha_aa()) {
-		TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this isn't an alpha-amino acid.  Skipping." << std::endl;  TR.Warning.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this isn't an alpha-amino acid.  Skipping." << std::endl;  TR.Warning.flush();
 		return;
 	}
 	if(pose.residue(residue_index).is_lower_terminus()) {
 		--C_connection_index;
 	}
 	if(pose.residue(residue_index).is_upper_terminus()) {
-		TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this is an upper terminus.  Skipping." << std::endl;  TR.Warning.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this is an upper terminus.  Skipping." << std::endl;  TR.Warning.flush();
 		return;
 	}
 	if(pose.residue(residue_index).connection_incomplete(C_connection_index)) {
-		TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Warning.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Warning.flush();
 		return; //If nothing is attached here, we can't set this phi.
 	}
 

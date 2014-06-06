@@ -31,6 +31,7 @@
 #include <core/chemical/util.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/EnergyNames.hh>
@@ -307,6 +308,7 @@ void SilentFileData::add_structure(
 
 	if ( !has_tag( new_tag ) ) {
 		structure_map_[ new_tag ] = new_struct;
+		structure_list_.push_back(new_struct);
 		tr.Debug << "added structure with tag " << new_tag << std::endl;
 		tr.Debug << "now have " << structure_map_.size() << " structures."
 						 << std::endl;
@@ -314,6 +316,7 @@ void SilentFileData::add_structure(
 	} else {
 		SilentStructOP new_struct_clone = new_struct->clone();
 		add_structure_replace_tag_if_necessary( new_struct_clone );
+		structure_list_.push_back(new_struct_clone);
 	}
 
 } // add_structure
@@ -341,6 +344,7 @@ void SilentFileData::renumber_all_decoys() {
 		std::string new_tag = (*ss_iter)->decoy_tag().substr(0,2) + string_of( count );
 		(*ss_iter)->decoy_tag( new_tag );
 		structure_map_[ new_tag ] = *ss_iter;
+		structure_list_.push_back( *ss_iter );
 		++count;
 	}
 } // renumber_all_decoys
@@ -616,8 +620,11 @@ SilentFileData::read_stream(
 														std::istream & data,
 														utility::vector1< std::string > const & tags,
 														bool throw_exception_on_bad_structs, /*default false*/
-														std::string filename /** for error reporting **/
+														std::string filename /** for error reporting and suppressing bitflip**/
 ){
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// put the tags on a set to avoid repetition and fast search
   std::set<std::string> tagset(tags.begin(), tags.end());
@@ -659,6 +666,9 @@ SilentFileData::read_stream(
 
 	read_silent_struct_type_from_remark( line, true );
 	SilentStructOP tmp_struct = create_SilentStructOP();
+	if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
+		tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
+	}
 
 	utility::vector1< std::string > mylines; // used for initialization of particular Silent-Structs
 	mylines.push_back( sequence_line );
@@ -727,13 +737,21 @@ SilentFileData::read_stream(
 				}
 
 				tmp_struct = create_SilentStructOP();
+				if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
+					tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
+				}
 			}
 
 			mylines.clear();
 			mylines.reserve( tmp_struct->sequence().size() + 10 ); //+10 since there are at least the SCORE lines extra, maybe some REMARK lines
 		}
 
-		if ( read_silent_struct_type_from_remark( line ) ) tmp_struct = create_SilentStructOP();
+		if ( read_silent_struct_type_from_remark( line ) ) {
+			tmp_struct = create_SilentStructOP();
+			if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
+				tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
+			}
+		}
 
 		mylines.push_back( line );
 
@@ -889,6 +907,7 @@ SilentFileData::reverse_score_filter(
 	tr.Debug << "filtering for decoys with score worse than " << boundary << std::endl;
 
 	Structure_Map new_structure_map_;
+	utility::vector1 < SilentStructOP > new_structure_list_; 
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		if ( !iter->has_energy( "score" ) ) {
 			std::string msg(
@@ -909,10 +928,12 @@ SilentFileData::reverse_score_filter(
 
 		if ( iter->get_energy( "score" ) > boundary ) {
 			new_structure_map_[ iter->decoy_tag() ] = *iter;
+			new_structure_list_.push_back(*iter);
 		}
 	}
 
 	structure_map_ = new_structure_map_;
+	structure_list_ = new_structure_list_;
 } // score_filter
 
 void
@@ -939,6 +960,7 @@ SilentFileData::score_filter(
 	tr.Debug << "filtering for decoys with score worse than " << boundary << std::endl;
 
 	Structure_Map new_structure_map_;
+	utility::vector1 < SilentStructOP > new_structure_list_; 
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		if ( !iter->has_energy( "score" ) ) {
 			std::string msg(
@@ -959,10 +981,12 @@ SilentFileData::score_filter(
 
 		if ( iter->get_energy( "score" ) < boundary ) {
 			new_structure_map_[ iter->decoy_tag() ] = *iter;
+			new_structure_list_.push_back(*iter);
 		}
 	}
 
 	structure_map_ = new_structure_map_;
+	structure_list_ = new_structure_list_;
 } // score_filter
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -987,6 +1011,7 @@ SilentFileData::order_by_energy()
 	score_tag_list.sort();
 
 	Structure_Map new_structure_map_;
+	utility::vector1 < SilentStructOP > new_structure_list_; 
 	Size count( 0 );
 	for ( ScoreTagList::const_iterator iter = score_tag_list.begin();
 				iter != score_tag_list.end(); ++iter ) {
@@ -1002,9 +1027,11 @@ SilentFileData::order_by_energy()
 			silent_struct_op->decoy_tag();
 
 		new_structure_map_[ new_tag ] = silent_struct_op;
+		new_structure_list_.push_back( silent_struct_op );
 	}
 
 	structure_map_ = new_structure_map_;
+	structure_list_ = new_structure_list_;
 
 } // score_filter
 

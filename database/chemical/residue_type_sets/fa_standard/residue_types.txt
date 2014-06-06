@@ -95,6 +95,12 @@ residue_types/rosetta_specific/VRT1.params
 residue_types/staple/08A.params
 residue_types/staple/08B.params
 
+## Artificial Crosslinker Types
+#residue_types/crosslinker/1.2_bisbromomethylbenzene.params
+#residue_types/crosslinker/1.3_bisbromomethylbenzene.params
+#residue_types/crosslinker/1.4_bisbromomethylbenzene.params
+#residue_types/crosslinker/BoronateLDopa.params
+
 ## Sidechain Conjugation Types
 #residue_types/sidechain_conjugation/CYX.params
 #residue_types/sidechain_conjugation/LYX.params

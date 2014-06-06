@@ -303,6 +303,14 @@ namespace silent {
 		void
 		figure_out_residue_numbers_from_line( std::istream & line_stream );
 
+		/// @brief Sets whether conversion from big-endian to little-endian (or the converse) should be forced
+		/// when a binary silent structure is initialized from lines.
+		virtual void set_force_bitflip( bool const setting) { force_bitflip_ = setting; return; }
+
+		/// @brief Gets whether conversion from big-endian to little-endian (or the converse) should be forced
+		/// when a binary silent structure is initialized from lines.
+		virtual bool force_bitflip() const { return force_bitflip_; }
+
 	protected:
 
 		///@ brief helper to detect fullatom input
@@ -320,6 +328,12 @@ namespace silent {
     void extract_writeable_cacheable_data( core::pose::Pose const& pose );
 
 	private:
+
+		/// @brief If true, this forces conversion from big-endian to little-endian (or the converse) when a binary silent structure
+		/// is initialized from lines (init_from_lines() function).
+		bool force_bitflip_;
+
+
 		bool strict_column_mode_;
 		Size nres_;
 		std::string decoy_tag_;

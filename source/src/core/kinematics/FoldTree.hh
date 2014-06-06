@@ -299,6 +299,15 @@ public:
 			bool const join_upper
 	);
 
+	/// @brief Inserts a bonded residue at position  <seqpos>
+    void
+    insert_residue_by_chemical_bond(
+          int const seqpos,
+          int const anchor_residue,
+          std::string const& anchor_atom,
+          std::string const& root_atom
+      );
+
 	/// @brief Inserts a residue attached only by a jump. precondition is that seqpos-1 is a cutpoint
 	/// @note that anchor_pos is wrt the current numbering system (ie before insertion)
 	void

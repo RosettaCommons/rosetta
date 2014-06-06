@@ -1681,6 +1681,14 @@ public:
 		return dihedral_atom_sets_[ dihe ];
 	}
 
+    /// @brief Return the indices for the set of atoms that define a particular
+	/// intraresidue improper dihedral
+	dihedral_atom_set const &
+	improper_dihedral( Size const dihe ) const
+	{
+		return improper_dihedral_atom_sets_[ dihe ];
+	}
+
 	/// @brief Returns the list of all of the indices of all the intraresidue
 	/// dihedrals a particular atom is involved in.
 	/// Useful for calculating the derivatives for an atom.
@@ -1688,6 +1696,15 @@ public:
 	dihedrals_for_atom( Size atomno ) const
 	{
 		return dihedrals_for_atom_[ atomno ];
+	}
+
+    /// @brief Returns the list of all of the indices of all the intraresidue
+	/// dihedrals a particular atom is involved in.
+	/// Useful for calculating the derivatives for an atom.
+	utility::vector1< Size > const &
+	improper_dihedrals_for_atom( Size atomno ) const
+	{
+		return improper_dihedrals_for_atom_[ atomno ];
 	}
 
 	/// @brief Return the number of intraresidue dihedrals.  This covers all pairs
@@ -2096,6 +2113,9 @@ private:
 
 	/// @brief all intra-residue dihedral angles that each atom "participates" in -- Derived
 	utility::vector1< utility::vector1< Size > > dihedrals_for_atom_;
+
+	utility::vector1< dihedral_atom_set > improper_dihedral_atom_sets_;
+	utility::vector1< utility::vector1< Size > > improper_dihedrals_for_atom_;
 
 	/// @brief vector of sets of atoms that make up bond angles in the residue -- Derived
 	utility::vector1< bondangle_atom_set > bondangle_atom_sets_;

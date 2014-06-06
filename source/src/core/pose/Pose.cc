@@ -441,6 +441,24 @@ Pose::insert_residue_by_jump(
 }
 
 void
+Pose::insert_residue_by_bond(
+                             Residue const & new_rsd_in,
+                             Size const seqpos, // desired seqpos of new_rsd
+                             Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
+                             bool const build_ideal_geometry, // = false,
+                             std::string const& anchor_atom, // could be ""
+                             std::string const& root_atom, // ditto
+                             bool new_chain,
+                             bool const lookup_bond_length // default false
+)
+{
+    //PyAssert( (seqpos>0), "Pose::insert_residue_by_jump( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
+    PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
+    energies_->clear(); // TEMPORARY
+    conformation_->insert_residue_by_bond( new_rsd_in, seqpos, anchor_pos, build_ideal_geometry, anchor_atom, root_atom, new_chain, lookup_bond_length );
+}
+
+void
 Pose::replace_residue(
 	Size const seqpos,
 	Residue const & new_rsd_in,

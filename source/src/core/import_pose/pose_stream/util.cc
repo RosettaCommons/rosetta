@@ -71,7 +71,9 @@ utility::vector1< utility::file::FileName > filenames_from_list_file(
 	return fns_to_return;
 }
 
-MetaPoseInputStream streams_from_cmd_line() {
+/// @brief Get all input streams based on command-line input.
+/// @details If do_renumber_decoys is true, silent file decoys are sorted in alphabetical order of tags.
+MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -118,7 +120,7 @@ MetaPoseInputStream streams_from_cmd_line() {
 					option[ in::file::silent ](), option[ in::file::silent_energy_cut ]()
 				);
 			}
-			silent_input->renumber_decoys( option[ in::file::silent_renumber ]() );
+			silent_input->renumber_decoys( do_renumber_decoys && option[ in::file::silent_renumber ]() );
 			input.add_pose_input_stream( silent_input );
 		}
 	}
@@ -146,6 +148,13 @@ MetaPoseInputStream streams_from_cmd_line() {
 
 	return input;
 } // streams_from_cmd_line
+
+/// @brief Get all input streams based on command-line input, sorting silent file decoys in alphabetical order of tags.
+/// 
+MetaPoseInputStream streams_from_cmd_line () {
+	return streams_from_cmd_line(true);
+}
+
 
 } // pose_stream
 } // import_pose

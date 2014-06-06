@@ -39,17 +39,6 @@ namespace simple_moves {
 class BBConRotMover : public BBGaussianMover
 {
 public:
-    //typedef core::Vector Vector;
-    //typedef core::Real Real;
-    //typedef core::Size Size;
-    //typedef core::pose::Pose Pose;
-    //typedef core::pose::PoseOP PoseOP;
-    //typedef core::pose::PoseCOP PoseCOP;
-    //typedef core::conformation::Residue Residue;
-    //typedef utility::vector1< Vector > VdRdPhi;
-    //typedef utility::vector1< VdRdPhi > VMatrix;
-    //typedef utility::vector1< utility::vector1<Real> > Matrix;
-    //typedef numeric::xyzMatrix<Real> xyzMatrix;
     typedef  numeric::xyzMatrix< core::Real > xyzMatrix;
 
 public:
@@ -76,28 +65,28 @@ private:
     /// distance of c-d
     /// bond angle theta of d-c-b
     /// dihedral angle phi of d-c-b-a
-    void get_xyz(Vector const &a, Vector const &b, Vector const &c, Vector &d,
+    void get_xyz(xyzVector const &a, xyzVector const &b, xyzVector const &c, xyzVector &d,
                     Real distance, Real theta, Real phi);
 
     //key function, from Jakob
-    Real calc_jacobian_cartesians(Vector const &, Vector const &,
-        Vector const &, Vector const &, Vector const &);
+    Real calc_jacobian_cartesians(xyzVector const &, xyzVector const &,
+        xyzVector const &, xyzVector const &, xyzVector const &);
 
     bool get_determinant(double a[5][5], int n, double &det);
 
     bool closure(
         //before closure
-        Vector &r0,
-        Vector &r1,
-        Vector &r2,
-        Vector &r3,
-        Vector &r4,
-        Vector &r5,
-        Vector &r6,
+        xyzVector &r0,
+        xyzVector &r1,
+        xyzVector &r2,
+        xyzVector &r3,
+        xyzVector &r4,
+        xyzVector &r5,
+        xyzVector &r6,
         //after closure
-        Vector &p1,
-        Vector &p2,
-        Vector &p3,
+        xyzVector &p1,
+        xyzVector &p2,
+        xyzVector &p3,
         //old angle/dih
         Real const theta1_old,
         Real const theta2_old,
@@ -117,8 +106,8 @@ private:
     );
 
 private:
-    utility::vector1< Real > dphi;
-    utility::vector1< Real > oldphi;
+    Vector dphi;
+    Vector oldphi;
     Real factorA_;
     Real factorB_;
     Real factorC_;

@@ -36,6 +36,13 @@ class CreateAngleConstraint : public moves::Mover
 		parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & );
 
 	private:
+    utility::vector1<Size> res_center_;
+    utility::vector1<std::string> atom_center_;
+    utility::vector1<Size> res1_;
+    utility::vector1<std::string> atom1_;
+    utility::vector1<Size> res2_;
+    utility::vector1<std::string> atom2_;
+    utility::vector1<std::string> cst_func_;
 };
 
 } // moves

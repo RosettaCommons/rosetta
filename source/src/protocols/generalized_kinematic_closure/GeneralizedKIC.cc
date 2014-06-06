@@ -184,6 +184,9 @@ GeneralizedKIC::parse_my_tag(
 	if(tag->hasOption("selector_scorefunction")){
 		set_selector_scorefunction( protocols::rosetta_scripts::parse_score_function( tag, "selector_scorefunction", data_map )->clone() );
 	}
+	if(tag->hasOption("selector_kbt")) {
+		set_selector_kbt( tag->getOption<core::Real>("selector_kbt", 1.0) );
+	}
 	set_ntries_before_giving_up(tag->getOption<core::Size>("stop_if_no_solution", 0)); //Number of tries to make before stopping if no solution has been found yet.
 	if( tag->hasOption("closure_attempts") ) set_closure_attempts( tag->getOption<core::Size>("closure_attempts", 2000) );
 	if( tag->hasOption("stop_when_solution_found") ) set_n_closure_attempts_is_a_maximum( tag->getOption<bool>("stop_when_solution_found", false) );
@@ -292,10 +295,45 @@ GeneralizedKIC::parse_my_tag(
 				}
 			}
 			
-		} else if ( (*tag_it)->getName() == "AddFilter" ) { //If we're adding a perturber, need to loop through sub-tags.
+		} else if ( (*tag_it)->getName() == "AddFilter" ) { //If we're adding a filter, need to loop through sub-tags.
 			runtime_assert_string_msg( (*tag_it)->hasOption("type"), "RosettaScript parsing error: the <AddFilter> group within a <GeneralizedKIC> block must include a \"type=<filter_type>\" statement." );
+			add_filter( (*tag_it)->getOption<std::string>("type", "") );
 
-			add_filter( (*tag_it)->getOption<std::string>("type", "") );			
+			//Loop through the sub-tags to find out what information we're adding to this filter, if any:
+			utility::vector1< utility::tag::TagCOP > const subbranch_tags( (*tag_it)->getTags() );
+			for(utility::vector1< utility::tag::TagCOP>::const_iterator subbranch_it=subbranch_tags.begin(); subbranch_it!=subbranch_tags.end(); ++subbranch_it) {
+				if( (*subbranch_it)->getName() == "AddFilterParameterReal" ) { //Adding a real-valued filter parameter.
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<real value>\" statement.");
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<core::Real>("value") );
+				} else if( (*subbranch_it)->getName() == "AddFilterParameterInteger" ) { //Adding an integer-valued filter parameter.
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterInteger> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<integer value>\" statement.");
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterInteger> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<core::Size>("value") );
+				} else if( (*subbranch_it)->getName() == "AddFilterParameterBoolean" ) { //Adding a Boolean-valued filter parameter.
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterBoolean> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<Boolean value>\" statement.");
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterBoolean> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<bool>("value") );
+				} else if( (*subbranch_it)->getName() == "AddFilterParameterString" ) { //Adding a string-valued filter parameter.
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterString> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<string>\" statement.");
+					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterString> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<std::string>("value") );
+				}
+			}
+
+		} else if ((*tag_it)->getName() == "AddAtomPairDistanceFilter" ) { //Shorthand for adding an atom_pair_distance filter
+			runtime_assert_string_msg((*tag_it)->hasOption("atom1"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"atom1=<string>\" statement." );
+			runtime_assert_string_msg((*tag_it)->hasOption("atom2"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"atom2=<string>\" statement." );
+			runtime_assert_string_msg((*tag_it)->hasOption("res1"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"res1=<integer value>\" statement." );
+			runtime_assert_string_msg((*tag_it)->hasOption("res2"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"res2=<integer value>\" statement." );
+			runtime_assert_string_msg((*tag_it)->hasOption("distance"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"distance=<real value>\" statement." );
+			add_filter( "atom_pair_distance" );
+			add_filter_parameter( "atom1", (*tag_it)->getOption<std::string>("atom1") );
+			add_filter_parameter( "atom2", (*tag_it)->getOption<std::string>("atom2") );
+			add_filter_parameter( "res1", (*tag_it)->getOption<core::Size>("res1") );
+			add_filter_parameter( "res2", (*tag_it)->getOption<core::Size>("res2") );
+			add_filter_parameter( "distance", (*tag_it)->getOption<core::Real>("distance") );
+			if((*tag_it)->hasOption("greater_than")) add_filter_parameter( "greater_than", (*tag_it)->getOption<bool>("greater_than") );
 		}
 
   }
@@ -439,6 +477,12 @@ void GeneralizedKIC::set_selector_scorefunction ( core::scoring::ScoreFunctionOP
 	return;
 }
 
+/// @brief Set the selector's Boltzmann temperature value.
+///
+void GeneralizedKIC::set_selector_kbt ( core::Real const &kbt ) {
+	selector_->set_boltzmann_temp( kbt );
+	return;
+}
 
 ///
 /// @brief Add a new perturber to the list of perturbers.
@@ -555,6 +599,69 @@ void GeneralizedKIC::add_filter ( std::string const &filtertypename ) {
 	return;
 }
 
+///
+/// @brief Add a real-valued parameter to a filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, core::Real const &value)
+{
+	filterlist_[filter_index]->add_filter_param(param_name, value);
+	return;
+}
+
+///
+/// @brief Add an integer-valued parameter to a filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, core::Size const value)
+{
+	filterlist_[filter_index]->add_filter_param(param_name, value);
+	return;
+}
+
+///
+/// @brief Add a Boolean-valued parameter to a filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, bool const value)
+{
+	filterlist_[filter_index]->add_filter_param(param_name, value);
+	return;
+}
+
+///
+/// @brief Add a string-valued parameter to a filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, std::string const &value)
+{
+	filterlist_[filter_index]->add_filter_param(param_name, value);
+	return;
+}
+
+///
+/// @brief Add a real-valued parameter to the last filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (std::string const &param_name, core::Real const &value)
+{
+	add_filter_parameter(filterlist_.size(), param_name, value);
+	return;
+}
+
+///
+/// @brief Add an integer-valued parameter to the last filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (std::string const &param_name, core::Size const value)
+{
+	add_filter_parameter(filterlist_.size(), param_name, value);
+	return;
+}
+
+///
+/// @brief Add a Boolean-valued parameter to the last filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (std::string const &param_name, bool const value)
+{
+	add_filter_parameter(filterlist_.size(), param_name, value);
+	return;
+}
+
+///
+/// @brief Add a string-valued parameter to the last filter's parameter list.
+void GeneralizedKIC::add_filter_parameter (std::string const &param_name, std::string const &value)
+{
+	add_filter_parameter(filterlist_.size(), param_name, value);
+	return;
+}
 
 /// @brief Set the number of closure attempts.
 /// @details Perturbation, closure, and filtering is carried out for every closure
@@ -611,6 +718,8 @@ void GeneralizedKIC::get_path (
 	core::Size const smalleratom = (first_atom > second_atom ? second_atom : first_atom);
 	core::Size curatom = biggeratom;
 
+	//TR << "GeneralizedKIC::get_path():  Starting with atom " << rsd.atom_name(curatom) << " (atom " << curatom << ")." << std::endl; //DELETE ME
+
 	bool found=false;
 
 	//Search back from the higher-numbered atom
@@ -622,12 +731,17 @@ void GeneralizedKIC::get_path (
 		}
 		if(curatom == 1) break;
 		curatom = rsd.type().atom_base(curatom); //Move to this atom's parent if we're still searching.
+		//TR << "GeneralizedKIC::get_path():  Moving to atom " << rsd.atom_name(curatom) << " (atom " << curatom << ")." << std::endl; //DELETE ME
 	}
 
 	//If we didn't find the lower-numbered atom, search back from the lower-numbered atom until we find a common ancestor:
 	if(!found) {
+		//TR << "GeneralizedKIC::get_path():  Path not yet found.  Now tracing back from smaller-numbered atom." << std::endl; //DELETE ME
+
 		curatom = smalleratom;
 		utility::vector1 < core::Size > temppath2;
+
+		//TR << "GeneralizedKIC::get_path():  Starting with atom " << rsd.atom_name(curatom) << " (atom " << curatom << ")." << std::endl; //DELETE ME
 
 		while(true) {
 			temppath2.push_back(curatom);
@@ -643,6 +757,8 @@ void GeneralizedKIC::get_path (
 			}
 			if(found) break;
 			curatom = rsd.type().atom_base(curatom); //Move to this atom's parent if we're still searching.
+
+			//TR << "GeneralizedKIC::get_path():  Path not yet found.  Now tracing back from smaller-numbered atom." << std::endl; //DELETE ME
 		}
 	}
 
@@ -970,8 +1086,8 @@ void GeneralizedKIC::generate_atomlist(
 		core::Size nres = pose.n_residue();
 		core::Size lastconindex = get_connection( nres, residue_map[residue_map.size()].first, pose );
 		core::Size lastconatomindex = pose.residue(nres).residue_connect_atom_index(lastconindex);
-		core::Size lastconatomindex_parent = (lastconatomindex==1 ? 2 : pose.residue(1).atom_base(lastconatomindex) );
-		core::Size lastconatomindex_grandparent = (lastconatomindex==1 ? 3 : pose.residue(1).atom_base(lastconatomindex_parent) );
+		core::Size lastconatomindex_parent = (lastconatomindex==1 ? 2 : pose.residue(nres).atom_base(lastconatomindex) );
+		core::Size lastconatomindex_grandparent = (lastconatomindex==1 ? 3 : pose.residue(nres).atom_base(lastconatomindex_parent) );
 
 		atomlist_.push_back( std::pair<AtomID, numeric::xyzVector<core::Real> >(AtomID(lastconatomindex, nres), pose.residue(nres).xyz(lastconatomindex) ) );
 		atomlist_.push_back( std::pair<AtomID, numeric::xyzVector<core::Real> >(AtomID(lastconatomindex_parent, nres), pose.residue(nres).xyz(lastconatomindex_parent) ) );
@@ -1063,7 +1179,7 @@ void GeneralizedKIC::pick_pivots(
 
 	core::Size totalatoms = atomlist_.size(); //Total number of atoms in the chain to be closed
 
-	for(core::Size ia=4; ia<=totalatoms-4; ia++) { //Loop through the atom list, ignoring the atoms from the anchor residues
+	for(core::Size ia=5; ia<=totalatoms-4; ia++) { //Loop through the atom list, ignoring the atoms from the anchor residues
 		core::Size curres = get_original_pose_rsd(atomlist_[ia].first.rsd(), residue_map);
 		core::Size curat = atomlist_[ia].first.atomno();
 		//TR << "curres=" << curres << " curat=" << curat << " original_pose.residue(curres).atom_name(curat)=" << original_pose.residue(curres).atom_name(curat) << std::endl; //DELETE ME
@@ -1072,14 +1188,16 @@ void GeneralizedKIC::pick_pivots(
 		if( (curres==pivot_3_rsd_) && (curat==pivot_3_atmindex) ) pivots[3]=ia;
 	}
 
-	runtime_assert_string_msg( pivots[1] > 0, "The first pivot atom was not found in the loop to be closed!" );
-	runtime_assert_string_msg( pivots[2] > 0, "The second pivot atom was not found in the loop to be closed!" );
-	runtime_assert_string_msg( pivots[3] > 0, "The third pivot atom was not found in the loop to be closed!" );
+	runtime_assert_string_msg( pivots[1] > 4 && pivots[1] < totalatoms-3, "The first pivot atom was not found in the loop to be closed!" );
+	runtime_assert_string_msg( pivots[2] > 4 && pivots[2] < totalatoms-3, "The second pivot atom was not found in the loop to be closed!" );
+	runtime_assert_string_msg( pivots[3] > 4 && pivots[3] < totalatoms-3, "The third pivot atom was not found in the loop to be closed!" );
 
 	runtime_assert_string_msg( pivots[2] > pivots[1], "The second pivot cannot be before the first pivot." );
 	runtime_assert_string_msg( pivots[2] - pivots[1] > 1, "The second pivot atom cannot be bonded to the first pivot atom." );
 	runtime_assert_string_msg( pivots[3] > pivots[2], "The third pivot cannot be before the second pivot." );
 	runtime_assert_string_msg( pivots[3] - pivots[2] > 1, "The third pivot atom cannot be bonded to the second pivot atom." );
+
+	prune_extra_atoms(pivots);
 
 	//TR << "pivots[1]=" << pivots[1] << " pivots[2]=" << pivots[2] << " pivots[3]=" << pivots[3] << std::endl; //DELETE ME
 
@@ -1194,6 +1312,36 @@ void GeneralizedKIC::select_solution (
 	core::Size const total_solutions
 ) const {
 	selector_->apply(pose, original_pose, residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions);
+	return;
+}
+
+/// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
+///
+void GeneralizedKIC::prune_extra_atoms( utility::vector1 <core::Size> &pivots )
+{
+	core::Size const totalatoms = atomlist_.size();
+	runtime_assert_string_msg(pivots.size()==3 && pivots[1]>4 && pivots[3]<(totalatoms-3), "Internal error in GeneralizedKIC::prune_extra_atoms().  Consult a programmer or an exorcist.  This shouldn't happen.");
+
+	core::Size extra_at_start = pivots[1]-5;
+	core::Size extra_at_end = totalatoms-4-pivots[3];
+
+	if(extra_at_start > 0 ) {
+		//TR << "Removing first " << extra_at_start << " atoms from the atom list." << std::endl ; //DELETE ME
+		atomlist_.erase( atomlist_.begin(), atomlist_.begin()+extra_at_start); //Erase the first extra_at_start atoms
+		for(core::Size i=1; i<4; ++i) pivots[i] -= extra_at_start; //Update the pivot indices
+	}
+
+	if(extra_at_end > 0) {	
+		//TR << "Removing last " << extra_at_end << " atoms from the atom list." << std::endl ; //DELETE ME
+		atomlist_.erase(atomlist_.end()-extra_at_end, atomlist_.end()); //Erase the last extra_at_end atoms
+	}
+
+	//DEBUGGING OUTPUT ONLY -- DELETE ME:
+	//for(core::Size i=1; i<=atomlist_.size(); ++i) {
+	//	TR << i << " atom=" << atomlist_[i].first.atomno() << " res=" << atomlist_[i].first.rsd() << std::endl;
+	//}
+	//TR.flush();
+
 	return;
 }
 

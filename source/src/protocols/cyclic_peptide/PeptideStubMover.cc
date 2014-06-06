@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
 #include <core/chemical/VariantType.hh>
@@ -45,6 +46,7 @@ PeptideStubMover::~PeptideStubMover(){}
 
 void PeptideStubMover::init() {
     reset_ = false;
+		update_pdb_numbering_ = true;
 }
     
 void PeptideStubMover::apply( core::pose::Pose & pose )
@@ -132,8 +134,13 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 										rebuild_atoms(pose, anchor_rsd);
                 }
                 else if (stub_mode_[istub] == insert) {
-                    pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd, true);
-										rebuild_atoms(pose, anchor_rsd);
+                    if ( stub_insert_pos_[istub] != 0 ) {
+                        pose.insert_residue_by_bond(*new_rsd, stub_insert_pos_[istub], anchor_rsd, true, stub_anchor_rsd_connecting_atom_[istub], stub_rsd_connecting_atom_[istub], false, true);
+                        pose.dump_pdb("test.pdb");
+                    } else {
+                        pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd, true);
+                    }
+                    rebuild_atoms(pose, anchor_rsd);
                 }
                 
                 for (Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat) {
@@ -142,7 +149,9 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
                             pose.append_residue_by_bond(*new_rsd, true);
                         }
                         else if (stub_mode_[istub] == insert) {
+                            if ( stub_insert_pos_[istub] == 0 ) {
                             pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd + i_repeat - 1, true);
+                            }
                         }
                     }
                     else {
@@ -189,6 +198,8 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
             TR.Debug << "connection: Residue " << ires << " Atom " << pose.residue_type(ires).residue_connection(icon).atomno() << " to residue " << pose.residue(ires).connected_residue_at_resconn(icon) << ", connect id:" << pose.residue(ires).connect_map(icon).connid() << std::endl;
         }
     }
+
+		if(update_pdb_numbering_) update_pdb_numbering(pose); //If residues have been added, they need PDB chain IDs and numbers to be updated.
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -203,6 +214,7 @@ PeptideStubMover::parse_my_tag(
 {
     using namespace core;
     if( tag->hasOption( "reset" ) ) reset_ = tag->getOption< bool >( "reset" );
+    if( tag->hasOption( "update_pdb_numbering" ) ) reset_ = tag->getOption< bool >( "update_pdb_numbering" );
     
     stub_rsd_names_.clear();
     stub_rsd_jumping_.clear();
@@ -215,31 +227,20 @@ PeptideStubMover::parse_my_tag(
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
         if ( (*tag_it)->getName() == "Append" ) {
             stub_mode_.push_back(append);
-            stub_rsd_names_.push_back( (*tag_it)->getOption<std::string>( "resname", "" ) );
-            stub_rsd_jumping_.push_back( (*tag_it)->getOption<bool>( "jump", false ) );
-            stub_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "connecting_atom", "" ) );
-            stub_rsd_repeat_.push_back( (*tag_it)->getOption<Size>( "repeat", 1 ) );
-            stub_anchor_rsd_.push_back( (*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ) );
-            stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) );
         }
         else if ( (*tag_it)->getName() == "Prepend" ) {
             stub_mode_.push_back(prepend);
-            stub_rsd_names_.push_back( (*tag_it)->getOption<std::string>( "resname", "" ) );
-            stub_rsd_jumping_.push_back( (*tag_it)->getOption<bool>( "jump", false ) );
-            stub_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "connecting_atom", "" ) );
-            stub_rsd_repeat_.push_back( (*tag_it)->getOption<Size>( "repeat", 1 ) );
-            stub_anchor_rsd_.push_back( (*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ) );
-            stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) );
         }
         else if ( (*tag_it)->getName() == "Insert" ) {
             stub_mode_.push_back(insert);
-            stub_rsd_names_.push_back( (*tag_it)->getOption<std::string>( "resname", "" ) );
-            stub_rsd_jumping_.push_back( (*tag_it)->getOption<bool>( "jump", false ) );
-            stub_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "connecting_atom", "" ) );
-            stub_rsd_repeat_.push_back( (*tag_it)->getOption<Size>( "repeat", 1 ) );
-            stub_anchor_rsd_.push_back( (*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ) );
-            stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) );
         }
+        stub_rsd_names_.push_back( (*tag_it)->getOption<std::string>( "resname", "" ) );
+        stub_insert_pos_.push_back( (*tag_it)->getOption<Size>( "position", 0 ) );
+        stub_rsd_jumping_.push_back( (*tag_it)->getOption<bool>( "jump", false ) );
+        stub_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "connecting_atom", "" ) );
+        stub_rsd_repeat_.push_back( (*tag_it)->getOption<Size>( "repeat", 1 ) );
+        stub_anchor_rsd_.push_back( (*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ) );
+        stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) );
     }
 }
 	
@@ -300,6 +301,24 @@ void PeptideStubMover::rebuild_atoms(
 			}
 		}
 	}
+
+	return;
+}
+
+///
+/// @brief Updates the PDB numbering (PDB number/chain ID) as residues are added.
+void PeptideStubMover::update_pdb_numbering (
+	core::pose::Pose &pose
+) const {
+
+	char const chainids []="0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
+	core::pose::PDBInfoOP pdbinfo = pose.pdb_info();
+    if (pdbinfo.get() != NULL) {
+	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
+		pdbinfo->set_resinfo(ir, (pose.chain(ir) <=62 ? chainids[ pose.chain(ir) ] : '0'), static_cast<int>(ir));
+	}
+    }
 
 	return;
 }
