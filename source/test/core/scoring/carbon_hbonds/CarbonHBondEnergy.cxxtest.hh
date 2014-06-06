@@ -54,7 +54,7 @@ class CarbonHBondEnergyTests : public CxxTest::TestSuite {
 
 public:
   void setUp() {
-		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior");
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit");
 	}
 
 	void tearDown(){}

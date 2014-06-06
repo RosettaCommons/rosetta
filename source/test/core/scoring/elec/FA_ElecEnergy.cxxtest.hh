@@ -57,7 +57,7 @@ public:
 		using namespace core::pose;
 		using namespace core::scoring;
 
-		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior" );
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
 
 		core::pose::Pose pose = create_twores_1ubq_pose();
 
