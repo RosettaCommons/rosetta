@@ -69,7 +69,7 @@ void EnvMover::apply( Pose& pose ) {
 
   core::pose::Pose ppose = env_->start( pose );
   movers_.apply( ppose );
-  pose = env_->end( pose );
+  pose = env_->end( ppose );
 }
 
 void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -79,7 +79,10 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
                              core::pose::Pose const& pose ) {
   typedef utility::vector0< TagCOP > TagCOPs;
 
-  env_ = new Environment( tag->getOption<std::string>( "name", "env" ) );
+  env_ = new Environment( tag->getOption<std::string>( "name" ) );
+
+  env_->auto_cut( tag->getOption< bool >( "auto_cut", env_->auto_cut() ) );
+  env_->inherit_cuts( tag->getOption< bool >( "inherit_cuts", env_->inherit_cuts() ) );
 
   TagCOPs const& subtags = tag->getTags();
   for( TagCOPs::const_iterator it = subtags.begin(); it != subtags.end(); ++it ){
@@ -90,7 +93,15 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 ClaimingMoverOP find_mover( utility::tag::TagCOP tag,
                             moves::Movers_map movers ){
 
-  std::string const& mover_name = tag->getOption< std::string >("name", "[NOT_SET]" );
+  std::string mover_name("[NOT_SET]");
+  if ( tag->hasOption( "name" ) ){
+    mover_name = tag->getOption< std::string >( "name" );
+  } else if ( tag->hasOption( "mover" ) ) {
+    mover_name = tag->getOption< std::string >( "mover" );
+  } else {
+    std::string err = "An environment was provided a subtag without the appropriate options. Either 'name' or 'mover' must be specified.";
+    throw utility::excn::EXCN_RosettaScriptsOption( err );
+  }
   moves::Movers_map::const_iterator mv_it = movers.find( mover_name );
 
   if( mv_it != movers.end() ){

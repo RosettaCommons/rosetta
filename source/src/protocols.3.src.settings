@@ -342,6 +342,8 @@ sources = {
 		"RigidBodyMover",
 		"RollMover",
 		"RotateJumpAxisMover",
+		"UniformRigidBodyCM",
+		"UniformRigidBodyMover",
 	],
 	"protocols/scoring": [
 		"ImplicitFastClashCheck",

@@ -114,14 +114,10 @@ void SequenceAnnotation::append_seq( std::string const& label ) {
   if( label_to_pose_numbers_.find( label ) != label_to_pose_numbers_.end() ){
     throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' already exists in the SequenceAnnotation object" );
   }
-
+  // TODO: Allow more than one residue to be appended as part of a label
   length_ += 1;
-  label_to_pose_numbers_[label] = vector1_size( length() );
-}
-
-
-core::Size SequenceAnnotation::resolve_seq( std::string const& label, core::Size const& pos ) const {
-  return resolve_seq( LocalPosition( label, pos ) );
+  label_to_pose_numbers_[ label ] = vector1_size( 1, length() );
+  label_to_pose_numbers_[ "BASE" ].push_back( length() );
 }
 
 core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const {
@@ -154,6 +150,18 @@ core::Size SequenceAnnotation::resolve_jump( std::string const& label ) const {
   }
 
   return l->second;
+}
+
+bool SequenceAnnotation::has_seq_label( std::string const& label ) const {
+  return label_to_pose_numbers_.find( label ) != label_to_pose_numbers_.end();
+}
+
+utility::vector1< core::Size > const& SequenceAnnotation::resolve_seq( std::string const& label ) const {
+  if( label_to_pose_numbers_.find( label ) == label_to_pose_numbers_.end() ){
+    throw utility::excn::EXCN_KeyError( "The jump key '"+label+
+      "' already exists in the SequenceAnnotation object." );
+  }
+  return label_to_pose_numbers_.find( label )->second;
 }
 
 core::Size const& SequenceAnnotation::length() const {

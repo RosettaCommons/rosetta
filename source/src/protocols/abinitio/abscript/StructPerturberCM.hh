@@ -38,7 +38,11 @@ class StructPerturberCM : public protocols::environment::ClaimingMover {
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:
+
   StructPerturberCM();
+
+  StructPerturberCM( std::string const& label,
+                     core::Real magnitude );
 
   virtual ~StructPerturberCM() {};
 

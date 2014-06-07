@@ -22,6 +22,7 @@
 #include <utility/vector1.hh>
 #endif // INCLUDED_utility_vector1_HH
 
+#include <numeric/types.hh>
 
 namespace utility {
 
@@ -235,6 +236,18 @@ public: // Assignment
 		return *this;
 	}
 
+	/// @brief Inversion operator
+	inline
+	vector1< bool >
+	operator !() const
+	{
+		vector1< bool > opposite(*this);
+		for (numeric::Size i = 1; i <= opposite.size(); ++i) {
+			opposite[i] = !opposite[i];
+		}
+		return opposite;
+	}
+
 #ifdef USEBOOSTSERIALIZE
 	friend class boost::serialization::access;
 
@@ -244,6 +257,21 @@ public: // Assignment
 	}
 #endif
 
+/// @brief Find the index of an element. If not found then return 0;
+ 	inline
+ 	int
+ 	index( bool const & t ) const {
+		Size idx = 1 + std::distance( begin(), std::find(begin(), end(), t) );
+		if ( idx > size() ) return 0;
+		return idx;
+ 	}
+
+	/// @brief useful function -- was commented out previously due, I think, to a conflict with has() in OptionKeys! Now renamed to has_value().
+ 	inline
+ 	bool
+ 	has_value( bool const & t ) const {
+ 		return ( std::find(begin(), end(), t ) != end() );
+ 	}
 
 }; // vector1
 

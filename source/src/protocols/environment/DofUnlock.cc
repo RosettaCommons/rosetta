@@ -15,6 +15,7 @@
 
 // Package headers
 #include <protocols/environment/ProtectedConformation.hh>
+#include <protocols/environment/EnvExcn.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -34,15 +35,32 @@ namespace environment {
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 
-  DofUnlock::DofUnlock( core::conformation::Conformation& conf, DofPassportCOP pass ) :
-  conformation_( conf )
+DofUnlock::DofUnlock( core::conformation::Conformation& conf,
+                      DofPassportCOP pass ) :
+  conformation_( conf ),
+  pass_( pass )
 {
-  conformation_.push_passport( pass );
+  if( pass ){
+    conformation_.push_passport( pass );
+  }
 }
 
 DofUnlock::~DofUnlock(){
-  conformation_.pop_passport();
+  if( pass_ && conformation_.is_protected() ){
+    // should always be valid since pass_ exists.
+    DofPassportCOP pass_out( conformation_.pop_passport() );
+    if( pass_out->mover() != pass_->mover() ||
+        pass_out->env_id() != pass_out->env_id() ){
+      std::ostringstream ss;
+      ss << "DofUnlock popped a passport belonging to mover " << pass_out->mover()
+         << " and environment id " << pass_out->env_id() << " when it expected a passport from "
+         << pass_->mover() << " and environment id " << pass_->env_id() << "."
+         << "Something has gone horribly wrong, probably a result of strange pose- or conformation-copying behavior." << std::endl;
+      tr.Error << "[ERROR]" << ss.str() << std::endl;
+      throw utility::excn::EXCN_Msg_Exception( ss.str() );
+    }
+  }
 }
 
-} // environment
+} // environment
 } // protocols

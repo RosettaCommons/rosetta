@@ -32,7 +32,6 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/environment/DofPassport.hh>
 #endif
 
 // Project headers
@@ -44,7 +43,7 @@
 #include <core/id/DOF_ID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/environment/DofPassport.fwd.hh>
+#include <core/environment/DofPassport.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
@@ -827,8 +826,8 @@ public:  // for tracking changes to the structure
 
 public: //passport managment methods
 
-	virtual void push_passport( core::environment::DofPassportCOP ) {};
-	virtual void pop_passport() {};
+	virtual void push_passport( core::environment::DofPassportCOP ) {}
+	virtual core::environment::DofPassportCOP pop_passport() { return 0; }
 	virtual bool has_passport() const { return false; }
   virtual bool is_protected() const { return false; }
 

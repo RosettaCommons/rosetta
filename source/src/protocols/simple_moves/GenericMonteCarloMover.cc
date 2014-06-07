@@ -838,7 +838,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	if( adaptive_movers() ){
 		bool is_single_random( mover_pp->mode() == "single_random" );
 		if( mover_pp && !is_single_random ){ // dig in one level (at most) to find the correct ParsedProtocol; if this becomes more generally useful then it would make sense to generatlize this to look for all parsedprotocols of type single_random that are being called by the MC mover. A simple recursion could do it, but I'm not sure how useful this would be
-			BOOST_FOREACH( ParsedProtocol::mover_filter_pair const mfp, *mover_pp ){
+			BOOST_FOREACH( ParsedProtocol::MoverFilterPair const mfp, *mover_pp ){
 				ParsedProtocolOP tmp( dynamic_cast< ParsedProtocol * >( mfp.first.first() ) );
 				if( tmp && tmp->mode() == "single_random" ){/// the parsedprotocol mover must be run in mode single_random for the apply_probabilities to be modified
 					mover_pp = tmp;

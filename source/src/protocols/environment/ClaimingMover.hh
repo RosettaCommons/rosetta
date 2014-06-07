@@ -51,9 +51,8 @@ class ClaimingMover : public protocols::moves::Mover {
   friend class EnvClaimBroker;
 
   typedef core::environment::DofPassportCOP DofPassportCOP;
-  typedef core::environment::DofPassport DofPassport;
 
-  typedef std::stack< std::pair< core::Size, DofPassportCOP > > PassportStack;
+  typedef std::stack< std::pair< EnvironmentCAP, DofPassportCOP > > PassportStack;
 
 public:
   ClaimingMover();
@@ -94,6 +93,9 @@ protected:
   /// @brief hook that provides information about the final result of broking
   ///        at the very end, though this BrokerResult construct.
   virtual void broking_finished( EnvClaimBroker::BrokerResult const& ) {}
+
+  /// @brief return a pointer the active environment
+  EnvironmentCAP active_environment() const;
 
   /// @brief read-only access to the top passport in the passport stack.
   core::environment::DofPassportCOP passport() const;

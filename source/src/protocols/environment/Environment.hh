@@ -24,6 +24,8 @@
 
 #include <core/environment/DofPassport.fwd.hh>
 
+#include <core/environment/SequenceAnnotation.hh>
+
 #include <protocols/environment/ClaimingMover.fwd.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 #include <protocols/environment/EnvClaimBroker.hh>
@@ -46,6 +48,9 @@ namespace environment {
 
 class Environment : public core::environment::EnvCore {
   typedef core::environment::EnvCore Parent;
+  typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
+  typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;
+  typedef core::environment::SequenceAnnotation SequenceAnnotation;
 
   typedef core::conformation::Conformation Conformation;
   typedef core::conformation::ConformationOP ConformationOP;
@@ -78,6 +83,14 @@ public:
 
   EnvClaimBrokerCOP broker() const { return broker_; }
 
+  SequenceAnnotationCOP annotations() const { return ann_; }
+
+  bool auto_cut() const { return bAutoCut_; }
+  bool inherit_cuts() const { return bInheritCuts_; }
+
+  void auto_cut( bool );
+  void inherit_cuts( bool );
+
   void pconf_destruction( ProtectedConformationAP ptr ) const {
     pconfs_.erase( ptr );
   }
@@ -103,6 +116,11 @@ private:
   EnvClaimBrokerOP broker_;
   core::kinematics::FoldTreeCOP input_ft_;
   std::set<ClaimingMoverOP> registered_movers_;
+
+  SequenceAnnotationOP ann_;
+
+  bool bAutoCut_;
+  bool bInheritCuts_;
 
   mutable std::set< ProtectedConformationAP > pconfs_;
 

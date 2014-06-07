@@ -52,15 +52,15 @@ using core::environment::LocalPositions;
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner ):
   EnvClaim( owner ),
-  c_str_( MUST_CONTROL),
-  i_str_( DOES_NOT_INITIALIZE )
+  c_str_( DOES_NOT_CONTROL),
+  i_str_( DOES_NOT_CONTROL )
 {}
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
                     LocalPosition const& local_pos):
   EnvClaim( owner ),
-  c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE )
+  c_str_( DOES_NOT_CONTROL ),
+  i_str_( DOES_NOT_CONTROL )
 {
   local_positions_ = LocalPositions();
   local_positions_.push_back( new LocalPosition( local_pos ) );
@@ -70,8 +70,8 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
                             std::string const& label,
                             std::pair< core::Size, core::Size > const& range ):
   EnvClaim( owner ),
-  c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE )
+  c_str_( DOES_NOT_CONTROL ),
+  i_str_( DOES_NOT_CONTROL )
 {
   local_positions_ = LocalPositions();
   for( Size i = range.first; i <= range.second; ++i){
@@ -93,151 +93,32 @@ DOFElement XYZClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   return e;
 }
 
-void XYZClaim::build_bond_length_elements( core::Size seqpos,
-                                           ProtectedConformationCOP const& conf,
-                                           DOFElements& elements ) const {
-  using namespace core::id;
-  using namespace core::kinematics::tree;
-
-  for( core::Size i = 1; i <= conf->residue( seqpos ).atoms().size(); ++i ){
-    AtomID const a_id( i, seqpos );
-
-    // This atom's not a BondedAtom, then this atom isn't
-    // built by a bond (rather a jump) and doesn't have a well-defined bond length.
-		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
-
-    if( !atom.is_jump() ){
-      bool const is_external = ( atom.id().rsd() != atom.parent()->id().rsd() );
-
-      if( claim_external() || !is_external ){
-        DOF_ID id( a_id, core::id::D );
-        elements.push_back( wrap_dof_id( id ) );
-      }
-
-      // If we're doing external bond lengths, one is length is "owned" by
-      // the first atom in the next residue as well.
-      if( claim_external() ){
-        for( Size j = 0; j < atom.n_children(); ++j ){
-          AtomCOP child = atom.child( j );
-          if( child->id().rsd() != atom.id().rsd() ){
-            elements.push_back( wrap_dof_id( DOF_ID( child->id(), core::id::D ) ) );
-          }
-        }
-      }
-    }
-  }
-}
-
-void XYZClaim::build_bond_angle_elements( core::Size seqpos,
-                                          ProtectedConformationCOP const& conf,
-                                          DOFElements& elements ) const {
-  using namespace core::id;
-  using namespace core::kinematics::tree;
-
-  for( Size i = 1; i <= conf->residue( seqpos ).atoms().size(); ++i ){
-    AtomID const a_id( i, seqpos );
-		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
-
-    if( !atom.is_jump() ){
-      AtomCOP parent = atom.parent();
-      if( parent && !parent->is_jump() && parent->parent() ){
-        bool const angle_is_external = ( a_id.rsd()         != parent->id().rsd()           ) ||
-                                       ( parent->id().rsd() != parent->parent()->id().rsd() );
-
-        if( claim_external() || !angle_is_external ){
-          // If we're doing external angles, always add. If we're not, add only if
-          // the defined angle is fully internal.
-
-          elements.push_back( wrap_dof_id( DOF_ID( a_id, core::id::THETA ) ) );
-        }
-      }
-    }
-
-    if( claim_external() ){
-      // The position of the "last" atom in residue i helps determine the angles defined by
-      // it's children and it's children's children. If we're doing external angles, do those too.
-      for( Size j = 0; j < atom.n_children(); ++j ){
-        AtomCOP child = atom.child( j );
-
-        if( child->atom_id().rsd() != a_id.rsd() &&
-            !child->is_jump() ){
-
-          elements.push_back( wrap_dof_id(  DOF_ID( child->id(), core::id::THETA ) ) );
-
-          for( Size k = 0; k < child->n_children(); ++k ){
-            AtomCOP subchild = child->child(k);
-            if( !subchild->is_jump() ){
-              elements.push_back( wrap_dof_id( DOF_ID( subchild->id(), core::id::THETA ) ) );
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-void XYZClaim::build_bond_torsion_elements( core::Size seqpos,
-                                            ProtectedConformationCOP const& conf,
-                                            DOFElements& elements ) const {
-  using namespace core::id;
-  using namespace core::kinematics::tree;
-
-  for( Size i = 1; i <= conf->residue( seqpos ).atoms().size(); ++i ){
-    AtomID const a_id( i, seqpos );
-		core::kinematics::tree::Atom const& a1 = conf->atom_tree().atom( a_id );
-    std::cout << a_id << ":" << conf->residue( seqpos ).atom_name( i ) << " p@" << a1.parent() << std::endl;
-
-    if( a1.parent() && !a1.parent()->is_jump() ){
-      AtomCOP a2 = a1.parent();
-      std::cout << "  " << a2->id() << ":" << conf->residue( seqpos ).atom_name( a2->id().atomno() ) << std::endl;
-
-      if( a2->parent() && !a2->parent()->is_jump() ){
-        AtomCOP a3 = a2->parent();
-        std::cout << "  " << a3->id() << ":" << conf->residue( seqpos ).atom_name( a3->id().atomno() ) << std::endl;
-
-        if( a3->parent() && !a3->parent()->is_jump() ){
-
-          bool const angle_is_external = ( a1.id().rsd() != a2->id().rsd() ||
-                                           a1.id().rsd() != a3->id().rsd() );
-          if( claim_external() || !angle_is_external ){
-            elements.push_back( wrap_dof_id( DOF_ID( a_id, core::id::PHI ) ) );
-          }
-        }
-      }
-    }
-
-    if( claim_external() ){
-
-      for( Size j = 0; j < a1.n_children(); ++j ){
-        AtomCOP a2 = a1.child( j );
-        if( a2->is_jump() ) continue;
-
-        for( Size k = 0; k < a2->n_children(); ++k ){
-          AtomCOP a3 = a2->child( k );
-          if( a3->is_jump() ) continue;
-
-          for( Size l = 0; l < a3->n_children(); ++l ){
-            AtomCOP a4 = a3->child( l );
-            if( a4->is_jump() ) continue;
-
-            elements.push_back( wrap_dof_id( DOF_ID( a4->id(), core::id::PHI ) ) );
-          }
-        }
-      }
-    }
-  }
-}
-
 void XYZClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
+
+  if( ctrl_strength() == DOES_NOT_CONTROL &&
+      init_strength() == DOES_NOT_CONTROL ){
+    tr.Warning << "XYZClaim owned by " << owner()->get_name()
+               << " has both initializaiton and sampling strength set to DOES_NOT_CONTROL."
+               << "  Did you forget to set these values?" << std::endl;
+  }
 
   for( LocalPositions::const_iterator pos = positions().begin();
       pos != positions().end(); ++pos ){
 
     Size seqpos = conf->annotations()->resolve_seq( **pos );
     for( Size i = 1; i <= conf->residue( seqpos ).atoms().size(); ++i ){
-      elements.push_back( wrap_dof_id( core::id::DOF_ID( core::id::AtomID( i, seqpos ), core::id::D ) ) );
-      elements.push_back( wrap_dof_id( core::id::DOF_ID( core::id::AtomID( i, seqpos ), core::id::THETA ) ) );
-      elements.push_back( wrap_dof_id( core::id::DOF_ID( core::id::AtomID( i, seqpos ), core::id::PHI ) ) );
+      core::id::AtomID atom_id( i, seqpos );
+      if( conf->atom_tree().atom( atom_id ).is_jump() ){
+        for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
+          elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
+                                                             core::id::DOF_Type( j ) ) ) );
+        }
+      } else {
+        for( int j = core::id::D; j <= core::id::PHI; ++j ){
+          elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
+                                                             core::id::DOF_Type( j ) ) ) );
+        }
+      }
     }
   }
 }
@@ -250,21 +131,19 @@ ControlStrength const& XYZClaim::ctrl_strength() const {
   return c_str_;
 }
 
-void XYZClaim::ctrl_strength( ControlStrength const& c_str ){
-  if( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ){
-    throw utility::excn::EXCN_RangeError( "ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
-  } else {
-    c_str_ = c_str;
-  }
-}
-
-InitializationStrength const& XYZClaim::init_strength() const {
+ControlStrength const& XYZClaim::init_strength() const {
   return i_str_;
 }
 
-void XYZClaim::init_strength( InitializationStrength const& i_str ){
-  if( i_str > MUST_INITIALIZE || i_str < DOES_NOT_INITIALIZE ){
-    throw utility::excn::EXCN_RangeError( "InitializationStrengths are limited to values between DOES_NOT_INITIALIZE and MUST_INITIALIZE" );
+void XYZClaim::strength( ControlStrength const& c_str, ControlStrength const& i_str ){
+  if( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ){
+    throw utility::excn::EXCN_RangeError( "Sampling ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
+  } else {
+    c_str_ = c_str;
+  }
+
+  if( i_str > EXCLUSIVE || i_str < DOES_NOT_CONTROL ){
+    throw utility::excn::EXCN_RangeError( "Initialization ControlStrengths are limited to values between DOES_NOT_INITIALIZE and EXCLUSIVE" );
   } else {
     i_str_ = i_str;
   }

@@ -70,6 +70,11 @@ public:
 
   FoldTreeSketch( core::kinematics::FoldTree const& );
 
+  /// @brief copy the FoldTreeSketch
+  /// @warning This is not a full deep copy. It doesn't copy the Node pointers deeply, which means
+  //           you can accidentally modify the parent FTS through this one.
+  FoldTreeSketch( FoldTreeSketch const& );
+
   /// @brief insert a jump between positions p1 and p2 in the graph
   void insert_jump( Size const p1,
                     Size const p2 );
@@ -100,6 +105,11 @@ public:
 
   Size num_jumps() const;
 
+  Size num_cuts() const;
+
+  /// @brief randomly insert a cut using the bias passed in.
+  core::Size insert_cut( utility::vector1< Real > const& bias );
+
 private:
 
   bool cuttable( utility::vector1< Size > const& cycle ) const;
@@ -111,6 +121,7 @@ private:
   utility::vector1< NodeOP > nodes_;
 
   core::Size n_jumps_;
+  core::Size n_cuts_;
 
   class Node : public ReferenceCount {
   public:

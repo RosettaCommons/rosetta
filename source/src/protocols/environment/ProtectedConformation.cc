@@ -138,7 +138,7 @@ void bond_lengths( std::map< core::id::DOF_ID, core::Real >& dofs,
   //Collect all internal (and one external upstream) bond length.
   for( core::Size i = 1; i <= conf->residue( seqpos ).natoms(); ++i ){
     AtomID a_id( i, seqpos );
-		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
+    core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
 
     if( !atom.is_jump() ){
       AtomCOP parent = atom.parent();
@@ -169,7 +169,7 @@ void bond_angles( std::map< core::id::DOF_ID, core::Real >& dofs,
   //Collect all internal (and a couple upstream external) bond angles.
   for( core::Size i = 1; i <= conf->residue( seqpos ).natoms(); ++i ){
     AtomID a_id( i, seqpos );
-		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
+    core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( a_id );
     if( !atom.is_jump() ){
       AtomCOP parent = atom.parent();
       if( parent && !parent->is_jump() ){
@@ -228,7 +228,7 @@ void jump_dofs( std::map< core::id::DOF_ID, core::Real >& dofs,
 
 
   for( core::Size i = 1; i <= conf->residue( seqpos ).natoms(); ++i ){
-		core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( AtomID( i, seqpos ) );
+    core::kinematics::tree::Atom const& atom = conf->atom_tree().atom( AtomID( i, seqpos ) );
     if( atom.is_jump() ){
       dofs[ DOF_ID( atom.id(), RB1 ) ] =  conf->dof( DOF_ID( atom.id(), RB1 ) );
       dofs[ DOF_ID( atom.id(), RB2 ) ] =  conf->dof( DOF_ID( atom.id(), RB2 ) );
@@ -337,7 +337,7 @@ void ProtectedConformation::set_torsion_angle( AtomID const & atom1,
                                                AtomID const & atom3,
                                                AtomID const & atom4,
                                                core::Real const setting,
-																							 bool quiet){
+                                               bool quiet){
   DOF_ID id = atom_tree().torsion_angle_dof_id( atom1, atom2, atom3, atom4, quiet );
   if( verify( id ) ){
     return Parent::set_torsion_angle(atom1, atom2, atom3, atom4, setting, quiet);
@@ -419,8 +419,10 @@ void ProtectedConformation::push_passport( DofPassportCOP passport ){
   unlocks_.push( passport );
 }
 
-void ProtectedConformation::pop_passport(){
+DofPassportCOP ProtectedConformation::pop_passport(){
+  DofPassportCOP popped = unlocks_.top();
   unlocks_.pop();
+  return popped;
 }
 
 bool ProtectedConformation::has_passport() const {
@@ -454,11 +456,6 @@ bool ProtectedConformation::verify( core::id::DOF_ID const& id ){
 }
 
 void ProtectedConformation::fail_verification( std::string const& str ){
-#ifndef NDEBUG
-  tr.Error << "ProtectedConformation reported illegal access to '" << str
-           << "' by mover '" << get_mover_name( unlocks_ ) << "' in env "
-           << environment()->name() << std::endl;
-#endif
   throw EXCN_Env_Security_Exception( str, *this, get_mover_name( unlocks_ ), environment() );
 }
 

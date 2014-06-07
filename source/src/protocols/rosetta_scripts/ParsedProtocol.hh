@@ -46,8 +46,27 @@ class ParsedProtocol :
 public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
-	typedef std::pair< std::pair< protocols::moves::MoverOP, std::string >, protocols::filters::FilterOP > mover_filter_pair;
-	typedef utility::vector1< mover_filter_pair > MoverFilterVector;
+
+  class MoverFilterPair {
+    // OFL want to have more state in the MoverFilterPair -- transform from std:pair into a class, but keep first and second members intact
+    // JRP it would sure be nice if this operated like a real class. Calls to first.first suck to read.
+  public:
+    MoverFilterPair( protocols::moves::MoverOP mover,
+                     std::string const& mover_name,
+                     protocols::filters::FilterOP filter,
+                     bool report_filter_at_end = false ) :
+    first( std::make_pair( mover, mover_name ) ),
+    second( filter ),
+    report_filter_at_end_( report_filter_at_end )
+    {}
+    protocols::filters::Filter const& filter() const { return *second; }
+
+    std::pair< protocols::moves::MoverOP, std::string > first;
+    protocols::filters::FilterOP second;
+    bool report_filter_at_end_;
+  };
+
+  typedef utility::vector1< MoverFilterPair > MoverFilterVector;
 	typedef MoverFilterVector::iterator iterator;
 	typedef MoverFilterVector::const_iterator const_iterator;
 public:
@@ -56,11 +75,6 @@ public:
 	virtual void apply( Pose & pose );
 	virtual core::pose::PoseOP get_additional_output( );
 	virtual std::string get_name() const;
-	/// Tricky! movers are cloned into the protocol b/c their apply functions (which are nonconst) could accumulate
-	/// state information. Filters are safe and are therefore merely registered.
-	/// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
-	/// guaranteed to have no state accumulation.
-	void add_mover( protocols::moves::MoverCOP mover, std::string const mover_name, protocols::filters::FilterOP filter );
 	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
@@ -72,7 +86,7 @@ public:
 	void add_values_to_job( Pose const & pose, protocols::jd2::JobOP ) const;
 
 
-	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
+//	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
 		return( movers_[ mover_number ].first.first );
@@ -97,10 +111,13 @@ public:
 	std::string call_order() const{ return call_order_; }
 private:
 	void finish_protocol(Pose & pose);
-	bool apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair);
-	bool apply_filter(Pose & pose, mover_filter_pair const & mover_pair);
+  ///@brief apply the mover of the pair
+  void apply_mover(Pose & pose, MoverFilterPair const & mover_pair);
 
-	void sequence_protocol(Pose & pose, utility::vector1< mover_filter_pair >::const_iterator mover_it_in);
+  ///@brief apply the filter of the pair
+  bool apply_filter(Pose & pose, MoverFilterPair const & mover_pair);
+  void sequence_protocol(Pose & pose, MoverFilterVector::const_iterator mover_it_in);
+
 	void random_order_protocol(Pose & pose);
 	void random_single_protocol(Pose & pose);
 private:

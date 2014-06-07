@@ -86,23 +86,18 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const&,
                                                std::make_pair( mover()->fragments()->min_pos(),
                                                                mover()->fragments()->max_pos() ) );
 
-  new_claim->init_strength( DOES_NOT_INITIALIZE );
-  new_claim->ctrl_strength( CAN_CONTROL );
+  new_claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
   claim_list.push_back( new_claim );
 
   return claim_list;
 }
 
 void FragmentCM::initialize( Pose& pose ){
-  if( bUpdateMM_ ){ update_movemap( pose ); }
-
   DofUnlock activation( pose.conformation(), passport() );
   mover()->apply_at_all_positions( pose );
 }
 
 void FragmentCM::apply( Pose& pose ) {
-  if( bUpdateMM_ ){ update_movemap( pose ); }
-
   if( pose.conformation().is_protected() ) {
     DofUnlock activation( pose.conformation(), passport() );
     mover()->apply( pose );
@@ -111,20 +106,15 @@ void FragmentCM::apply( Pose& pose ) {
   }
 }
 
-void FragmentCM::update_movemap( Pose const& pose ) const {
+void FragmentCM::passport_updated() {
   assert( mover() );
   if( has_passport() ){
-    mover()->set_movemap( passport()->render_movemap( pose.conformation() ) );
+    mover()->set_movemap( passport()->render_movemap() );
   } else {
     core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
-    mm->set_bb( false );
+    mm->set_bb( true );
     mover()->set_movemap( mm );
   }
-  bUpdateMM_ = false;
-}
-
-void FragmentCM::passport_updated() {
-  bUpdateMM_ = true;
 }
 
 std::string FragmentCM::get_name() const {

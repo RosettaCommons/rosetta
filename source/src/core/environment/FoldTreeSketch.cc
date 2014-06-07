@@ -27,8 +27,10 @@
 
 // C++ Headers
 #include <algorithm>
-#include <stack>
+#include <iterator>
 #include <list>
+#include <stack>
+#include <numeric>
 
 #include <boost/foreach.hpp>
 
@@ -58,13 +60,15 @@ EXCN_FTSketchGraph::EXCN_FTSketchGraph( std::string const& message ):
 FoldTreeSketch::FoldTreeSketch():
   ReferenceCount(),
   nodes_(),
-  n_jumps_( 0 )
+  n_jumps_( 0 ),
+  n_cuts_( 0 )
 {}
 
 FoldTreeSketch::FoldTreeSketch( Size const length ):
   ReferenceCount(),
   nodes_(),
-  n_jumps_( 0 )
+  n_jumps_( 0 ),
+  n_cuts_( -1 )
 {
   append_peptide( length );
 }
@@ -72,7 +76,8 @@ FoldTreeSketch::FoldTreeSketch( Size const length ):
 FoldTreeSketch::FoldTreeSketch( core::kinematics::FoldTree const& ft ):
   ReferenceCount(),
   nodes_(),
-  n_jumps_( 0 )
+  n_jumps_( 0 ),
+  n_cuts_( -1 )
 {
   append_peptide( ft.nres() );
 
@@ -84,6 +89,19 @@ FoldTreeSketch::FoldTreeSketch( core::kinematics::FoldTree const& ft ):
     insert_jump( (Size) ft.upstream_jump_residue(i),
                  (Size) ft.downstream_jump_residue(i) );
   }
+}
+
+FoldTreeSketch::FoldTreeSketch( FoldTreeSketch const& rhs ):
+  ReferenceCount(),
+  nodes_(utility::vector1< NodeOP >()),
+  n_jumps_( 0 ),
+  n_cuts_( rhs.n_cuts_ )
+{
+
+  for ( core::Size i = 1; i <= rhs.nodes_.size(); ++i ) {
+    nodes_.push_back( new Node( *rhs.nodes_[ i ] ) );
+  }
+  n_jumps_ = rhs.n_jumps_;
 }
 
 bool FoldTreeSketch::has_cut( Size const p ) const {
@@ -114,7 +132,7 @@ void FoldTreeSketch::insert_cut( Size const seqid ) {
   }
 
   nodes_[seqid]->rm_peptide_neighbor( nodes_[ seqid+1 ].get() );
-
+  n_cuts_ += 1;
 }
 
 void FoldTreeSketch::insert_jump( Size const p1, Size const p2 ) {
@@ -144,11 +162,13 @@ void FoldTreeSketch::append_peptide( Size length ){
 
   nodes_.push_back( new Node( 1 + old_size ) );
 
-  for( Size i = 2; i <= length; ++i ){
-    Size seqid = i+old_size;
-    nodes_.push_back( new Node(seqid) );
-    nodes_[seqid]->add_peptide_neighbor( nodes_[seqid-1].get() );
+  // If a peptide with more than one residue is being appended, connect them with a single peptide edge
+  for( Size i = old_size + 2; i <= old_size + length; ++i ){
+    nodes_.push_back( new Node( i ) );
+    nodes_[ i ]->add_peptide_neighbor( nodes_[ i - 1 ].get() );
   }
+
+  n_cuts_ += 1;
 }
 
 void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
@@ -208,6 +228,10 @@ Size FoldTreeSketch::num_jumps() const {
   return n_jumps_;
 }
 
+Size FoldTreeSketch::num_cuts() const {
+  return n_cuts_;
+}
+
 void FoldTreeSketch::range_check( Size const seqpos ) const {
   if( seqpos > nres() || seqpos < 1 ){
     throw EXCN_FTSketchGraph( "Sequence position "+utility::to_string(seqpos)+
@@ -247,6 +271,33 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
   }
 
   return out_vect;
+}
+
+core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > const& bias ){
+  if( bias.size() != this->nres() ){
+    throw EXCN_FTSketchGraph( "Cut bias array does not match FoldTreeSize." );
+  }
+
+  core::Real const sum = std::accumulate( bias.begin(), bias.end(), 0 );
+
+  if( sum <= 0.0 ){
+    throw EXCN_FTSketchGraph( "Cut bias array sum <= 0.0" );
+  }
+
+  core::Real rand = RG.uniform() * sum;
+
+  for( Size seqpos = 1; seqpos <= nres(); ++seqpos ){
+    rand -= bias[seqpos];
+    if( rand <= 0 ){
+      tr.Debug << "FoldTreeSketch inserting random cut at " << seqpos << std::endl;
+      insert_cut( seqpos );
+      return seqpos;
+    }
+  }
+
+  std::ostringstream ss;
+  ss << "Random cut insertion failed. Check your bias array for bad values. Cut bias array: " << bias;
+  throw EXCN_FTSketchGraph( ss.str() );
 }
 
 std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > const& bias ){

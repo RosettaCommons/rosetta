@@ -21,6 +21,8 @@
 #include <core/environment/LocalPosition.fwd.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
+#include <core/pose/Pose.fwd.hh>
+
 #include <protocols/environment/claims/BrokerElements.hh>
 #include <protocols/environment/ClaimingMover.fwd.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
@@ -37,16 +39,12 @@
 #include <string>
 #include <utility/vector1.hh>
 
-
 // option key includes
 
 
 namespace protocols {
 namespace environment {
 namespace claims {
-/// A better EnvClaims class would provide some extracting functions:
-/// by owner
-/// by type
 
 class EnvClaim : public utility::pointer::ReferenceCount {
 
@@ -62,19 +60,22 @@ public:
 
   ClaimingMoverOP owner() const;
 
-  ///@brief build ResidueElements that indicate the introduction of a new peptide edge into the fold tree.
+  /// @brief notify the Claim of the input pose. Used, for example, to resolve a ResidueSelector into a residue number
+  virtual void input_pose( core::pose::Pose const& ) {}
+
+  /// @brief build ResidueElements that indicate the introduction of a new peptide edge into the fold tree.
   virtual void yield_elements( FoldTreeSketch const&, ResidueElements& ) const {};
 
-  ///@brief build the JumpElements that represent the inclusion of a jump in the nascent FoldTree
+  /// @brief build the JumpElements that represent the inclusion of a jump in the nascent FoldTree
   virtual void yield_elements( FoldTreeSketch const&, JumpElements& ) const {};
 
-  ///@brief build and export the CutElements that represent the inclusion of a cut in the tree.
+  /// @brief build and export the CutElements that represent the inclusion of a cut in the tree.
   virtual void yield_elements( FoldTreeSketch const&, CutElements& ) const {};
 
-  ///@brief build and export the CutElements that represent the inclusion of a cut in the tree.
+  /// @brief build and export the CutElements that represent the inclusion of a cut in the tree.
   virtual void yield_elements( FoldTreeSketch const&, CutBiasElements& ) const {};
 
-  ///@brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
+  /// @brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
   virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& ) const {};
 
   virtual std::string str_type() const = 0;

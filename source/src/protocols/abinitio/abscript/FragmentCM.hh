@@ -57,8 +57,6 @@ public:
   std::string const& label() const { return label_; }
 
 protected:
-  void update_movemap( Pose const& pose ) const;
-
   virtual void passport_updated();
 
   simple_moves::FragmentMoverOP mover() const { return mover_; };

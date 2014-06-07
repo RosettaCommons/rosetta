@@ -67,13 +67,18 @@ public:
 
   // Undefined, commenting out to fix PyRosetta build  void shift_notify( core::Size const seqpos, core::Size const shift_size );
 
-  core::Size resolve_seq( std::string const&, core::Size const& ) const;
-
   core::Size resolve_seq( LocalPosition const& ) const;
+
+  utility::vector1< core::Size > const&
+  resolve_seq( std::string const& label ) const;
 
   core::Size resolve_jump( std::string const& label ) const;
 
   core::Size const& length() const;
+
+  core::Size length( std::string const& label ) const;
+
+  bool has_seq_label( std::string const& ) const;
 
 private:
   void _add_seq_label( std::string const&, utility::vector1< core::Size > );

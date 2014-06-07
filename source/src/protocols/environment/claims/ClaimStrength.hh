@@ -36,7 +36,7 @@ namespace environment {
 namespace claims {
 
 class ClaimStrength : public utility::pointer::ReferenceCount {
-	typedef utility::pointer::ReferenceCount Parent;
+  typedef utility::pointer::ReferenceCount Parent;
 
 public:
   // PrioSubtypes indicate the level of control over the dof desired by the mover.
@@ -48,36 +48,36 @@ public:
   // MUST_CONTROL asserts a need to sample the degree of freedom (e.g. jumps in docking).
   //   This level allows the mover, however, to share the dof with other movers.
   // EXCLUSIVE is as MUST_CONTROL, except that no other mover can be granted access to the dof.
-	enum PrioSubtype  {
+  enum PrioSubtype  {
     DOES_NOT_CONTROL = 0,
-		CAN_CONTROL = 1,
-		MUST_CONTROL,
-		EXCLUSIVE
-	};
+    CAN_CONTROL = 1,
+    MUST_CONTROL,
+    EXCLUSIVE
+  };
 
-	ClaimStrength( PrioSubtype type, Size subprio = 0 );
+  ClaimStrength( PrioSubtype type, Size subprio = 0 );
 
-	ClaimStrength( ClaimStrength const& );
+  ClaimStrength( ClaimStrength const& );
 
-	bool operator<( ClaimStrength const& ) const;
+  bool operator<( ClaimStrength const& ) const;
 
-	bool operator==( ClaimStrength const& ) const;
+  bool operator==( ClaimStrength const& ) const;
 
-	bool operator!=( ClaimStrength const& ) const;
+  bool operator!=( ClaimStrength const& ) const;
 
-	bool operator>( ClaimStrength const& ) const;
+  bool operator>( ClaimStrength const& ) const;
 
-	bool operator>= (ClaimStrength const& ) const;
+  bool operator>= (ClaimStrength const& ) const;
 
-	bool operator<= ( ClaimStrength const& ) const;
+  bool operator<= ( ClaimStrength const& ) const;
 
-	PrioSubtype subtype() const;
+  PrioSubtype subtype() const;
 
   Size subprio() const;
 
 private:
 
-	PrioSubtype subtype_;
+  PrioSubtype subtype_;
   Size subprio_;
 
 };

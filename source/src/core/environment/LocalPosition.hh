@@ -37,6 +37,8 @@ class LocalPosition : public utility::pointer::ReferenceCount {
 public:
   LocalPosition();
 
+  LocalPosition( std::string const& comma_deliniated );
+
   LocalPosition( std::string const&, core::Size const& );
 
   std::string const& label() const;
@@ -54,6 +56,11 @@ public:
 //  bool operator>=( LocalPosition const& ) const;
 //
 //  bool operator<=( LocalPosition const& ) const;
+
+protected:
+  void label( std::string const& );
+
+  void position( core::Size );
 
 private:
   std::string label_;

@@ -68,8 +68,6 @@ public:
      core::Size cycle
   );
 
-  core::Real generate_rotation_angle( core::Real );
-  numeric::xyzVector< core::Real > generate_uniform_rotation_axis();
 private:
 
   protocols::docking::RigidBodyInfoOP rigid_body_info_;

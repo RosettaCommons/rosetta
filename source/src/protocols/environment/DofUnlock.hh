@@ -40,6 +40,7 @@ public:
 
 private:
   core::conformation::Conformation& conformation_;
+  core::environment::DofPassportCOP pass_;
 
 }; // end DofUnlock base class
 

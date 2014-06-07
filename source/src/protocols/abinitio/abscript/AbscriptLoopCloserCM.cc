@@ -114,8 +114,7 @@ claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const& in
 
   // We want to control everything that will be relevant to the output pose (which should be the same as the input.
   claims::TorsionClaimOP claim = new claims::TorsionClaim( this, label(), std::make_pair( 1, in_pose.total_residue() ) );
-  claim->ctrl_strength( claims::CAN_CONTROL );
-  claim->init_strength( claims::DOES_NOT_INITIALIZE );
+  claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
 
@@ -126,11 +125,6 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
   assert( passport() );
   assert( final_ft_ );
-
-  if( bUpdateMM_ ){
-    movemap_ = passport()->render_movemap( in_pose.conformation() );
-    bUpdateMM_ = false;
-  }
 
   //Produce unprotected pose
   core::pose::Pose pose( in_pose );
@@ -258,19 +252,13 @@ void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
   //jd2::output_intermediate_pose( pose, "loops_closed_preprocessed" );
 }
 
-void AbscriptLoopCloserCM::update_movemap( Pose const& pose ) const {
+void AbscriptLoopCloserCM::passport_updated() {
   if( has_passport() ){
-    movemap_ = passport()->render_movemap( pose.conformation() );
+    movemap_ = passport()->render_movemap();
   } else {
     movemap_ = new core::kinematics::MoveMap();
-    movemap_->set_bb( false );
+    movemap_->set_bb( true );
   }
-
-  bUpdateMM_ = false;
-}
-
-void AbscriptLoopCloserCM::passport_updated() {
-  bUpdateMM_ = true;
 }
 
 

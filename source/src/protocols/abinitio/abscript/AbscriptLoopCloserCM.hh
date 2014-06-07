@@ -82,8 +82,6 @@ private:
 
   bool attempt_ccd( core::pose::Pose& );
 
-  void update_movemap( Pose const& pose ) const;
-
   core::kinematics::FoldTreeOP final_ft_;
   core::fragment::FragSetCOP fragset_;
   mutable core::kinematics::MoveMapOP movemap_;

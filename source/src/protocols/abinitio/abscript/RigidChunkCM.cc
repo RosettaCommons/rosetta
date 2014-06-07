@@ -175,8 +175,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
                                          label(),
                                          std::make_pair( loop_it->start(),
                                                          loop_it->stop() ) );
-    xyz_claim->init_strength( MUST_INITIALIZE );
-    xyz_claim->ctrl_strength( EXCLUSIVE );
+    xyz_claim->strength( EXCLUSIVE, EXCLUSIVE );
     claims.push_back( xyz_claim );
 
 
@@ -186,8 +185,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
     } if( loop_it->stop() < template_->total_residue() ){
       support_claim->add_position( LocalPosition( label(), loop_it->stop()+1 ) );
     }
-    support_claim->init_strength( MUST_INITIALIZE );
-    support_claim->ctrl_strength( DOES_NOT_CONTROL );
+    support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
     claims.push_back( support_claim );
 
     claims.push_back( new CutBiasClaim( this, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) );
@@ -201,8 +199,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
                                            "RigidChunkJump"+utility::to_string( claims.size()/4 ),
                                            LocalPosition( label(), jump_start ),
                                            LocalPosition( label(), jump_end ) );
-      j_claim->init_strength( MUST_INITIALIZE );
-      j_claim->ctrl_strength( EXCLUSIVE );
+      j_claim->strength( EXCLUSIVE, EXCLUSIVE );
       j_claim->physical( false );
 
       claims.push_back( j_claim );

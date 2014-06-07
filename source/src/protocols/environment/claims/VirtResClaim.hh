@@ -19,6 +19,7 @@
 #include <protocols/environment/claims/VirtResClaim.fwd.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
+#include <protocols/environment/claims/XYZClaim.hh>
 
 // Package Headers
 #include <core/environment/FoldTreeSketch.hh>
@@ -42,6 +43,7 @@ namespace environment {
 namespace claims {
 
 class VirtResClaim : public EnvClaim {
+  typedef EnvClaim Parent;
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
 
@@ -56,7 +58,13 @@ public:
 
   virtual void yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const;
 
-  std::string const& jump_label() const;
+  virtual void yield_elements( FoldTreeSketch const& fts, CutElements& elements ) const;
+
+  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
+
+  JumpClaim& jump() { return j_claim_; }
+
+  void strength( ControlStrength const& cstr, ControlStrength const& istr );
 
   std::string const& vrt_label() const;
 
@@ -67,11 +75,9 @@ public:
   virtual void show( std::ostream& os ) const;
 
 private:
-  std::string jump_label_;
   std::string vrt_label_;
-  LocalPosition parent_;
-  JumpClaim j_claim;
-
+  JumpClaim j_claim_;
+  XYZClaim xyz_claim_;
 
 }; //VirtResClaim
 

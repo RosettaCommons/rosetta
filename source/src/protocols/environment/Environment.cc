@@ -48,7 +48,9 @@ namespace environment {
 
 Environment::Environment( std::string name ):
   Parent( name ),
-  broker_( NULL )
+  broker_( NULL ),
+  bAutoCut_( false ),
+  bInheritCuts_( true )
 {}
 
 Environment::~Environment() {
@@ -72,12 +74,18 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
   // This cast of reference to OP is ok because we know that Conformations are stored as pointers anyway.
   ConformationCOP in_conf = &in_pose.conformation();
 
-  //figure out if we've got a superenvironment
+  //figure out if we've got a superenvironment... also initialize Annotations object
   ProtectedConformation const* conf_ptr = dynamic_cast<ProtectedConformation const*>( in_conf.get() );
   if( conf_ptr ) {
     set_superenv( conf_ptr->environment().get() );
+
+    // Keep old annotations by copy-constructing a new annotations object.
+    ann_ = new SequenceAnnotation( *( conf_ptr->annotations() ) );
   } else {
     set_superenv( NULL );
+
+    // Unprotected Conformation objects don't have annotations (yet?). We then build the annotation object.
+    ann_ = new SequenceAnnotation( in_conf->size() );
   }
 
   tr.Debug << "Start environment: '" << name() << "'" << std::endl;
@@ -128,17 +136,26 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
 
   core::pose::Pose pose;
 
-  ProtectedConformationOP outer_conf = new ProtectedConformation( *conf );
-  pose.set_new_conformation( outer_conf );
+  ConformationOP ret_conf = new Conformation( *conf );
+  pose.set_new_conformation( ret_conf );
 
   remove_nonpermenant_features( pose );
 
-  core::conformation::ConformationOP ret_conf = new Conformation( pose.conformation() );
-  ret_conf->fold_tree( *input_ft_ );
+  try {
+    tr.Debug << "Applying original fold tree " << *input_ft_ << std::endl;
+    pose.fold_tree( *input_ft_ );
+  } catch ( ... ){
+    tr.Error << "Environment " << name() << " failed to apply the input fold tree at env closing." << std::endl
+             << "Brokered fold tree was: " << conf->core::conformation::Conformation::fold_tree()
+             << "Attempted closed fold tree was: " << *input_ft_;
+    throw;
+  }
 
   // Reprotect Conformation if there's a superenvironment.
   if( superenv() ){
-    ret_conf = new ProtectedConformation( superenv(), *ret_conf );
+    ret_conf = new ProtectedConformation( superenv(), pose.conformation() );
+  } else {
+    ret_conf = new Conformation( pose.conformation() );
   }
 
   cancel_passports();
@@ -164,13 +181,24 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
   tr.Trace << "Removing chainbreak variants from sequence "
            << pose.annotated_sequence() << std::endl;
   BOOST_FOREACH( std::set< core::Size >::key_type cut_res,
-                 broker()->result().inserted_cut_variants ) {
+                 broker()->result().auto_cuts ) {
     remove_chainbreak_variants( pose, cut_res, cut_res+1 );
     tr.Trace << "Chainbreak variants @ " << cut_res << "/" << cut_res+1 << " removed:"
              << pose.annotated_sequence() << std::endl;
   }
 
-  //remove virtual residues
+  // remove virtual residues added in this environment.
+  // jump edges must have atom names removed because the jump
+  // gets reapplied to whichever residue is convenient.
+  if( broker()->result().new_vrts.size() > 0 ){
+    core::kinematics::FoldTree ft_clean( pose.fold_tree() );
+    for( core::Size i = 1; i <= ft_clean.num_jump(); ++i ){
+      ft_clean.set_jump_atoms( (int) i, "", "" );
+    }
+    pose.fold_tree( ft_clean );
+    pose.conformation().delete_residue_range_slow( input_ft_->nres()+1,
+                                                   pose.total_residue() );
+  }
 
   //Strip out pose datacache elements
 //  using namespace basic::datacache;
@@ -188,6 +216,26 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
 //  }
 }
 
+void Environment::auto_cut( bool setting ){
+  if( broker() ){
+    std::ostringstream ss;
+    ss << "The Environment '" << name() << "' was asked to set auto_cut to "
+       << setting << ", but broking was already completed." << std::endl;
+    throw utility::excn::EXCN_Msg_Exception( ss.str() );
+  }
+  bAutoCut_ = setting;
+}
+
+void Environment::inherit_cuts( bool setting ) {
+  if( broker() ){
+    std::ostringstream ss;
+    ss << "The Environment '" << name() << "' was asked to set inherit_cuts to "
+    << setting << ", but broking was already completed." << std::endl;
+    throw utility::excn::EXCN_Msg_Exception( ss.str() );
+  }
+  bInheritCuts_ = setting;
+}
+
 core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
   tr.Debug << "Beginning Broking for environment " << this->name() << " with "
            << registered_movers_.size() << " registered movers." << std::endl;
@@ -203,7 +251,7 @@ core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
 
   core::pose::Pose out_pose;
   try{
-    broker_ = new EnvClaimBroker( *this, mover_passports, in_pose );
+    broker_ = new EnvClaimBroker( *this, mover_passports, in_pose, ann_ );
     out_pose = broker_->result().pose;
   } catch ( ... ){
     cancel_passports();

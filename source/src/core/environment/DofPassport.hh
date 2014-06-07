@@ -25,7 +25,7 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -33,6 +33,8 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/JumpID.hh>
+
+#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <ostream>
@@ -43,48 +45,35 @@
 namespace core {
 namespace environment {
 
+
 class DofPassport : public utility::pointer::ReferenceCount {
 
   //make EnvCore a friend so that we can call the constructor of DofPassport
   friend class core::environment::EnvCore;
 
 public:
-
   virtual ~DofPassport();
 
   void show( std::ostream& ) const;
 
-  core::kinematics::MoveMapOP render_movemap( conformation::Conformation const& ) const;
+  core::kinematics::MoveMapOP render_movemap() const;
+
+  // typedef to make iteration through availiable dofs easy for client movers
+  typedef std::set< core::id::DOF_ID >::const_iterator const_iterator;
+
+  std::set< core::id::DOF_ID >::const_iterator begin() const;
+
+  std::set< core::id::DOF_ID >::const_iterator end() const { return accessible_dofs_.end(); }
 
   ///@brief configure passport to allow access to a bond length or angle dof_id
   ///@param id the DOF_ID to allow access to
-  ///@pre parameter id must have DOF_Type id::D or id::THETA.
-  ///@pre id must be valid
   void add_dof_access( id::DOF_ID const& id );
-
-  ///@brief configure passport to allow access to a torsional dof
-  ///@param dof_id the DOF_ID representation of the torsional DOF
-  ///@param tor_id the TorsionID represenatation of the torsional DOF
-  ///@pre dof_id must have DOF_Type id::PHI.
-  ///@pre both dof_id and tor_id must be valid.
-  // Undefined, commenting out to fix PyRosetta build  void add_dof_access( id::DOF_ID const& dof_id, id::TorsionID const& tor_id );
-
-  ///@brief configure passport to allow access to a jump dof
-  ///@param atom_id the AtomID of the atom building the jump
-  ///@param jump_num the FoldTree
-  ///@pre dof_id must have DOF_Type id::PHI.
-  ///@pre both dof_id and tor_id must be valid.
-  // Undefined, commenting out to fix PyRosetta build
-  // void add_jump_access( core::id::AtomID const& atom_id,
-  //                       core::Size const& jump_num,
-  //                       core::id::JumpID const& jump_id );
 
   void revoke_all_access();
 
-  // Undefined, commenting out to fix PyRosetta build
-  // bool jump_access( EnvCore const&, core::id::AtomID const& ) const;
-  // bool jump_access( EnvCore const&, core::Size const& jump_nr ) const;
-  // bool jump_access( EnvCore const&, id::JumpID const& jid ) const;
+  bool has_jump_access( int jump_num ) const;
+
+  utility::vector1< int > active_jumps() const;
 
   //@brief Check access in this passport for an id
   bool dof_access( core::id::DOF_ID const& id ) const;
@@ -93,6 +82,12 @@ public:
   bool dof_access( EnvCore const&, core::id::DOF_ID const& id ) const;
 
   std::string const& mover() const;
+
+  core::Size const& env_id() const { return env_id_; }
+
+  conformation::ConformationCOP reference_conformation() const;
+
+  void reference_conformation( conformation::ConformationCOP conf );
 
 private:
 
@@ -108,9 +103,8 @@ private:
 
   // Capable of storing all movable dofs.
   std::set< core::id::DOF_ID > accessible_dofs_;
-  std::set< core::Size > accessible_jump_numbers_;
-  std::set< core::id::TorsionID > accessible_torsions_;
-  std::set< core::id::JumpID > accessible_jump_ids_;
+
+  conformation::ConformationCOP conf_;
 
 }; // end DofPassport base class
 

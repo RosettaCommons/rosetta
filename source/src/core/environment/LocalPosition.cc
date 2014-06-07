@@ -16,11 +16,14 @@
 // Package headers
 
 // Project headers
+#include <utility/string_util.hh>
+
 
 // tracer
 #include <basic/Tracer.hh>
 
 // C++ Headers
+#include <boost/lexical_cast.hpp>
 
 // ObjexxFCL Headers
 
@@ -41,6 +44,27 @@ LocalPosition::LocalPosition( std::string const& label, core::Size const& positi
   position_( position )
 {}
 
+LocalPosition::LocalPosition( std::string const& comma_deliniated ):
+  ReferenceCount()
+{
+  using core::Size;
+
+  utility::vector1< std::string > str_split = utility::string_split( comma_deliniated, ',' );
+  if( str_split.size() == 1 ){
+    try {
+      core::Size global_seqpos = boost::lexical_cast< core::Size >( str_split[1] );
+      label( "BASE" );
+      position( global_seqpos );
+    } catch ( boost::bad_lexical_cast & ) {
+      label( str_split[1] );
+      position( 1 );
+    }
+  } else if( str_split.size() == 2 ){
+    label( str_split[1] );
+    position( boost::lexical_cast< core::Size >( str_split[2] ) );
+  }
+}
+
 std::string const& LocalPosition::label() const {
   return label_;
 }
@@ -48,6 +72,15 @@ std::string const& LocalPosition::label() const {
 core::Size const& LocalPosition::position() const {
   return position_;
 }
+
+void LocalPosition::label( std::string const& label ) {
+  label_ = label;
+}
+
+void LocalPosition::position( core::Size position ){
+  position_ = position;
+}
+
 
 bool LocalPosition::operator< ( LocalPosition const& other ) const {
   Size cmp = label_.compare( other.label_ );

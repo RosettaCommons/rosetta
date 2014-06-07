@@ -17,11 +17,13 @@ sources = {
 	"protocols/environment": [
 	        "AutoCutData",
 	        "ClaimingMover",
+		"CoMTrackerCM",
 		"DofUnlock",
 		"EnvClaimBroker",
 		"EnvMover",
 		"Environment",
 		"ProtectedConformation",
+		"ScriptCM",
 	],
 	"protocols/environment/claims": [
 	        "BrokerElements",

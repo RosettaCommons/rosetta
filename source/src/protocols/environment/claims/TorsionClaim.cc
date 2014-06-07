@@ -49,7 +49,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPosition const& local_pos):
   EnvClaim( owner ),
   c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE ),
+  i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
   claim_backbone_( true )
 {
@@ -62,7 +62,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             std::pair< core::Size, core::Size > const& range ):
   EnvClaim( owner ),
   c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE ),
+  i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
   claim_backbone_( true )
 {
@@ -77,7 +77,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   EnvClaim( owner ),
   local_positions_( positions ),
   c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_INITIALIZE ),
+  i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
   claim_backbone_( true )
  {}
@@ -101,24 +101,35 @@ void TorsionClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElem
 
     Size seqpos = conf->annotations()->resolve_seq( **pos );
 
-    if( claim_backbone() ){
-      TorsionID phi  ( seqpos, BB, phi_torsion );
-      TorsionID psi  ( seqpos, BB, psi_torsion );
-      TorsionID omega( seqpos, BB, omega_torsion );
+    if( conf->residue( seqpos ).type().is_protein() ) {
+      if( claim_backbone() ){
+        TorsionID phi  ( seqpos, BB, phi_torsion );
+        TorsionID psi  ( seqpos, BB, psi_torsion );
+        TorsionID omega( seqpos, BB, omega_torsion );
 
-      DOF_ID phi_dof = conf->dof_id_from_torsion_id( phi );
-      DOF_ID psi_dof = conf->dof_id_from_torsion_id( psi );
-      DOF_ID omega_dof = conf->dof_id_from_torsion_id( omega );
+        DOF_ID phi_dof = conf->dof_id_from_torsion_id( phi );
+        DOF_ID psi_dof = conf->dof_id_from_torsion_id( psi );
+        DOF_ID omega_dof = conf->dof_id_from_torsion_id( omega );
 
-      elements.push_back( wrap_dof_id( phi_dof ) );
-      elements.push_back( wrap_dof_id( psi_dof ) );
-      elements.push_back( wrap_dof_id( omega_dof ) );
-    }
-    if( claim_sidechain() ){
-      for( Size i = 1; i <= conf->residue( seqpos ).nchi(); ++i ){
-        TorsionID t_id( seqpos, CHI, i );
-        elements.push_back( wrap_dof_id( conf->dof_id_from_torsion_id( t_id ) ) );
+        elements.push_back( wrap_dof_id( phi_dof ) );
+        elements.push_back( wrap_dof_id( psi_dof ) );
+        elements.push_back( wrap_dof_id( omega_dof ) );
       }
+      if( claim_sidechain() ){
+        for( Size i = 1; i <= conf->residue( seqpos ).nchi(); ++i ){
+          TorsionID t_id( seqpos, CHI, i );
+          elements.push_back( wrap_dof_id( conf->dof_id_from_torsion_id( t_id ) ) );
+        }
+      }
+    } else {
+      // Hey there! If you got here because you're using sugars or RNA or something,
+      // all you have to do is put an else if for your case, and correctly
+      // generate the DOF_IDs for your case and then use wrap_dof_id to build
+      // a DOFElement out of it. JRP
+      tr.Debug << "TorsionClaim owned by " << owner()->get_name()
+               << " is ignoring residue " << seqpos
+               << " with name3 " << conf->residue( seqpos ).name3()
+               << " because it is not protein." << std::endl;
     }
   }
 }
@@ -127,29 +138,27 @@ void TorsionClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElem
 LocalPositions const& TorsionClaim::positions() const {
   return local_positions_;
 }
+void TorsionClaim::strength( ControlStrength const& c_str, ControlStrength const& i_str ){
+  if( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ){
+    throw utility::excn::EXCN_RangeError( "Sampling ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
+  } else {
+    c_str_ = c_str;
+  }
+
+  if( i_str > EXCLUSIVE || i_str < DOES_NOT_CONTROL ){
+    throw utility::excn::EXCN_RangeError( "Initialization ControlStrengths are limited to values between DOES_NOT_INITIALIZE and EXCLUSIVE" );
+  } else {
+    i_str_ = i_str;
+  }
+}
 
 ControlStrength const& TorsionClaim::ctrl_strength() const {
   return c_str_;
 }
 
-void TorsionClaim::ctrl_strength( ControlStrength const& c_str ){
-  if( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ){
-    throw utility::excn::EXCN_RangeError( "ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
-  } else {
-    c_str_ = c_str;
-  }
-}
 
-InitializationStrength const& TorsionClaim::init_strength() const {
+ControlStrength const& TorsionClaim::init_strength() const {
   return i_str_;
-}
-
-void TorsionClaim::init_strength( InitializationStrength const& i_str ){
-  if( i_str > MUST_INITIALIZE || i_str < DOES_NOT_INITIALIZE ){
-    throw utility::excn::EXCN_RangeError( "InitializationStrengths are limited to values between DOES_NOT_INITIALIZE and MUST_INITIALIZE" );
-  } else {
-    i_str_ = i_str;
-  }
 }
 
 EnvClaimOP TorsionClaim::clone() const {

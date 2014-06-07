@@ -68,7 +68,8 @@ class EnvClaimBroker : public utility::pointer::ReferenceCount {
 public:
   EnvClaimBroker( Environment const& env,
                   MoverPassMap const& movers_and_passes,
-                  core::pose::Pose const& in_pose );
+                  core::pose::Pose const& in_pose,
+                  SequenceAnnotationOP ann );
 
   virtual ~EnvClaimBroker();
 
@@ -76,26 +77,45 @@ public:
     core::pose::Pose pose;
     SizeToStringMap new_vrts;
     core::kinematics::FoldTreeOP closer_ft;
-    std::set< core::Size > inserted_cut_variants;
+    std::set< core::Size > auto_cuts;
     basic::datacache::WriteableCacheableMapCOP cached_data;
+    SequenceAnnotationCOP ann;
   };
 
   BrokerResult const& result() const;
 
 private:
 
+  /// @brief an inner class for tracking the properties of jumps that've been brokered.
+  class BrokeredJumpData : public utility::pointer::ReferenceCount {
+  public:
+    BrokeredJumpData( std::pair< core::Size, core::Size > const& positions,
+                      std::pair< std::string, std::string > const& atoms,
+                      bool put_jump_stub_intra_residue  );
+    bool operator==( BrokeredJumpData const& ) const;
+    bool operator!=( BrokeredJumpData const& other ) const { return !this->operator==( other ); }
+    std::ostream& operator<<( std::ostream& ) const;
+
+    std::pair< core::Size, core::Size > const pos;
+    std::pair< std::string, std::string > const atoms;
+    bool const put_jump_stub_intra_residue;
+  };
+
+  typedef utility::pointer::owning_ptr< BrokeredJumpData > BrokeredJumpDataOP;
+  typedef utility::pointer::owning_ptr< BrokeredJumpData const > BrokeredJumpDataCOP;
+  typedef std::map< std::string, BrokeredJumpDataCOP > JumpDataMap;
+
   void broker_fold_tree( Conformation&, basic::datacache::BasicDataCache& );
 
   void broker_dofs( ProtectedConformationOP );
 
   core::kinematics::FoldTreeOP render_fold_tree( FoldTreeSketch& fts,
-                                                 std::set< Size >& unphysical_cuts,
                                                  utility::vector1< core::Real > const& bias,
-                                                 basic::datacache::BasicDataCache& );
+                                                 basic::datacache::BasicDataCache&,
+                                                 core::kinematics::FoldTree const& input_ft );
 
   void annotate_fold_tree( core::kinematics::FoldTreeOP,
-                           StringToSizePairMap const& jump_labels,
-                           StringToStringPairMap const& jump_atoms,
+                           JumpDataMap const& new_jumps,
                            SequenceAnnotationOP = NULL );
 
   void add_virtual_residues( Conformation&,
@@ -108,25 +128,17 @@ private:
 
   void process_elements( claims::JumpElements const& elems,
                          FoldTreeSketch& fts,
-                         FoldTreeSketch& physical_fts,
-                         StringToSizePairMap& new_jumps,
-                         StringToStringPairMap& jump_atoms );
+                         JumpDataMap& new_jumps );
 
   void process_elements( claims::CutElements const& elems,
-                         FoldTreeSketch& fts,
-                         FoldTreeSketch& physical_fts,
-                         std::set< core::Size >& unphysical_cuts );
+                         FoldTreeSketch& fts );
 
   void process_elements( claims::CutBiasElements const& elems, BiasVector& bias );
 
   void grant_access( claims::DOFElement const& e ) const;
 
-  template < typename T >
-  void setup_control_passports( utility::vector1< T >& elements );
-
-  template < typename T >
-  void setup_initialization_passports( utility::vector1< T >& elems,
-                                       std::set< ClaimingMoverOP >& initializers );
+  void setup_passports( claims::DOFElements& elements,
+                        claims::ControlStrength const& (*str_access)( claims::DOFElement const& ) );
 
   template < typename T, typename I >
   void collect_elements( utility::vector1< T >& elements,
@@ -147,6 +159,7 @@ private:
   SequenceAnnotationOP ann_;
   claims::EnvClaims claims_;
   BrokerResult result_;
+  Environment const& env_;
 
 }; // EnvClaimBroker
 

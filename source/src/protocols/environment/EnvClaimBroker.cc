@@ -81,42 +81,38 @@ namespace environment {
 using namespace protocols::environment::claims;
 
 using core::environment::LocalPosition;
-
 using core::environment::SequenceAnnotation;
 using core::environment::SequenceAnnotationOP;
 using core::environment::SequenceAnnotationCOP;
-
 using core::environment::FoldTreeSketch;
 
 using core::conformation::Conformation;
 
 EnvClaimBroker::EnvClaimBroker( Environment const& env,
                                 MoverPassMap const& movers_and_passes,
-                                core::pose::Pose const& in_pose ):
-  movers_and_passes_( movers_and_passes )
+                                core::pose::Pose const& in_pose,
+                                SequenceAnnotationOP ann ):
+  movers_and_passes_( movers_and_passes ),
+  ann_( ann ),
+  env_( env )
 {
   core::conformation::ConformationCOP in_conf = &in_pose.conformation();
   core::pose::Pose pose( in_pose );
   claims_ = collect_claims( movers_and_passes, pose );
-
-  // Initialize Annotations object:
-  ProtectedConformationCOP prot_conf( dynamic_cast< ProtectedConformation const* >( in_conf.get() ) );
-  if( prot_conf ){
-    // Keep old annotations by copy-constructing a new annotations object.
-    ann_ = new SequenceAnnotation( *( prot_conf->annotations() ) );
-  } else {
-    // Unprotected Conformation objects don't have annotations (yet?). We then build the annotation object.
-    ann_ = new SequenceAnnotation( in_conf->size() );
-  }
 
   // Build a temporary conformation for which we manipulate the fold tree. After the fold tree is set,
   // we "seal it" as a ProtectedConformation for initializing DoFs.
   Conformation tmp_conf( *in_conf );
 
   broker_fold_tree( tmp_conf, pose.data() );
+  result_.ann = ann_;
 
   ProtectedConformationOP conf = new ProtectedConformation( &env, tmp_conf );
   conf->attach_annotation( ann_ );
+
+  BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes ){
+    pair.second->reference_conformation( conf );
+  }
 
   broker_dofs( conf );
 
@@ -147,7 +143,7 @@ EnvClaimBroker::BrokerResult const& EnvClaimBroker::result() const {
 void EnvClaimBroker::broker_fold_tree( Conformation& conf,
                                        basic::datacache::BasicDataCache& datacache ){
   core::environment::FoldTreeSketch fts( conf.size() );
-  core::environment::FoldTreeSketch physical_fts( conf.size() );
+  result_.closer_ft = new core::kinematics::FoldTree( conf.fold_tree() );
 
   //FTElements: virtual residues ---------------------------------------------------------------
   ResidueElements r_elems;
@@ -159,15 +155,13 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   //FTElements: jumps --------------------------------------------------------------------------
   JumpElements j_elems;
   collect_elements( j_elems, fts );
-  StringToSizePairMap new_jumps;
-  StringToStringPairMap jump_atoms;
-  process_elements( j_elems, fts, physical_fts, new_jumps, jump_atoms );
+  JumpDataMap new_jumps;
+  process_elements( j_elems, fts, new_jumps );
 
   //FTElements cut -----------------------------------------------------------------------------
   CutElements c_elems;
   collect_elements( c_elems, fts );
-  std::set< core::Size > unphysical_cuts; //stores residue number of unphysical cuts
-  process_elements( c_elems, fts, physical_fts, unphysical_cuts );
+  process_elements( c_elems, fts );
 
   //FTElements CutBias -------------------------------------------------------------------------
   CutBiasElements cb_elems;
@@ -176,50 +170,29 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
   process_elements( cb_elems, bias );
 
   //Render FoldTree ----------------------------------------------------------------------------
-  core::kinematics::FoldTreeOP ft = render_fold_tree( fts, unphysical_cuts, bias, datacache );
-  core::kinematics::FoldTreeOP physical_ft; // used to tell the loop closer what to do later.
+  tr.Info << "Broking complete. Constructing consensus FoldTree." << std::endl;
+  core::kinematics::FoldTreeOP ft = render_fold_tree( fts, bias, datacache, conf.fold_tree() );
 
-  try {
-    physical_ft = physical_fts.render();
-  } catch( core::environment::EXCN_FTSketchGraph e ){
-    tr.Error << "[ERROR] The physical fold tree construction failed. This happens when the EnvClaimBroker "
-             << "can't figure out which cuts are physical (scored and removed at Environment close) and "
-             << "aren't. Check your jump claims." << std::endl;
-    throw;
-  }
-
-  annotate_fold_tree( ft, new_jumps, jump_atoms, ann_ );
-  annotate_fold_tree( physical_ft, new_jumps, jump_atoms );
-
-  ft->put_jump_stubs_intra_residue();
-  physical_ft->put_jump_stubs_intra_residue();
-
-  result_.closer_ft = physical_ft;
+  annotate_fold_tree( ft, new_jumps, ann_ );
 
   add_virtual_residues( conf, new_vrts, ann_ );
 
+  tr.Debug << "EnvClaimBroker setting consensus fold tree " << *ft << std::endl;
   conf.fold_tree( *ft );
 
-  if( tr.Debug.visible() ){
-    tr.Debug << "EnvClaimBroker finished fold tree construction:" << *ft << std::endl;
-  }
-
   //Swap out unphysical cut residues for chainbreak variants
-  BOOST_FOREACH( Size cut , unphysical_cuts ){
+  BOOST_FOREACH( Size cut , result().auto_cuts ){
     add_chainbreak_variants( cut, conf );
-    result_.inserted_cut_variants.insert( cut );
   }
 }
 
 core::kinematics::FoldTreeOP
 EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
-                                  std::set< Size >& unphysical_cuts,
                                   utility::vector1< core::Real > const& bias,
-                                  basic::datacache::BasicDataCache& datacache ) {
+                                  basic::datacache::BasicDataCache& datacache,
+                                  core::kinematics::FoldTree const& input_ft ) {
   using namespace basic::datacache;
   using namespace core::pose::datacache;
-
-  std::set< Size > auto_cuts;
 
   // Calculate jump_points in prep for hash.
   utility::vector1< std::string > jump_points;
@@ -250,39 +223,67 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
       assert( auto_cut_data );
 
       if( auto_cut_data->hash() == hash ){
-        tr.Debug << "Found appropriate hash-valued AutoCutData. Repeating cut choices." << std::endl;
+        tr.Debug << "  Found appropriate hash-valued AutoCutData. Repeating cut choices." << std::endl;
         found_data = true;
 
         BOOST_FOREACH( core::Size cut, auto_cut_data->cuts() ){
-          auto_cuts.insert( cut );
           fts.insert_cut( cut );
+          result_.auto_cuts.insert( cut );
         }
 
       } else {
-        tr.Debug << "Rejecting AutoCutData because its hash " << auto_cut_data->hash()
+        tr.Debug << "  Rejecting AutoCutData because its hash " << auto_cut_data->hash()
                  << " does not match EnvClaimBroker hash " << hash << std::endl;
       }
     }
   } else {
-    tr.Debug << "No AutoCutData found, generating cuts automatically." << std::endl;
+    tr.Debug << "  No AutoCutData found. Cuts will not be generated from pose-cached values." << std::endl;
   }
 
-  if( !found_data ){
-    // If we get here, the DataCache didn't include an appropriate AutoCutData instance.
-    // Automatically generate cut choices. (This is the usually the case.)
+  utility::vector1< Size > cycle = fts.cycle();
+  while( !cycle.empty() ){
+    bool made_cut = false;
+    if( env_.inherit_cuts() ){
+      for( int i = 1; i <= input_ft.num_cutpoint(); ++i ){
+        if( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ){
+          tr.Debug << "  Inheriting cut at " << input_ft.cutpoint( i ) << " to close ft cycle." << std::endl;
+          fts.insert_cut( input_ft.cutpoint( i ) );
+          made_cut = true;
+          break;
+        } else {
+          tr.Trace << "  Inherited cut " << input_ft.cutpoint( i ) << " doesn't fit in cycle: "
+                   << cycle << std::endl;
+        }
+      }
+    }
 
-    auto_cuts = fts.remove_cycles( bias ); //auto_cuts stores residue numbers
-                                           // automatic cuts are assumed to be unphysical => add to list of unphysical cuts
-    tr.Debug << "automatically inserted " << auto_cuts.size() << " cuts into fold tree." << std::endl;
+    if( !made_cut ) tr.Debug << "  Cut inheritance failed for the cycle '" << cycle << "'." << std::endl;
 
-    AutoCutDataOP data = new AutoCutData( hash, auto_cuts );
-    datamap->insert( data );
-  } else {
-    //If we repeated cut choices, there should be no cuts.
-    assert( fts.cycle().empty() );
+    if( !made_cut && !found_data && env_.auto_cut() ){
+        utility::vector1< core::Real > masked_bias( bias.size(), 0 );
+      // k must be strictly less than cycle.size() so that the automatic
+      // cut doesn't get placed at the end of the cycle.
+      for( Size k = 1; k < cycle.size(); ++k ){
+        masked_bias[cycle[k]] = bias[cycle[k]];
+      }
+      Size cut = fts.insert_cut( masked_bias );
+      tr.Debug << "Inserted automatic cut at " << cut << std::endl;
+      result_.auto_cuts.insert( cut );
+    } else if( !made_cut ) {
+      std::ostringstream ss;
+      ss << "Brokering failed (" << __FILE__ << ":" << __LINE__ << ") because the broker couldn't construct a fold tree. "
+         << "It could not find a way to resolve the fold tree cycle: "  << cycle <<". Inherited cuts were "
+         << ( env_.inherit_cuts() ? "on" : "off" ) << " and automatic cuts were " << ( env_.auto_cut() ? "on" : "off" )
+         << ". At the point of failure were " << fts.num_jumps() << " jumps and "<< fts.num_cuts() << " cuts in the FoldTreeSketch.";
+      if( env_.inherit_cuts() ){
+        ss << " Availiable inherited cuts are: " << input_ft.cutpoints() << ".";
+      } if( env_.auto_cut() ){
+        ss << " Cut bias was " << bias << "." << std::endl;
+      }
+      throw utility::excn::EXCN_BadInput( ss.str() );
+    }
+    cycle = fts.cycle();
   }
-
-  std::copy( auto_cuts.begin(), auto_cuts.end(), std::inserter( unphysical_cuts, unphysical_cuts.begin() ) );
 
   try {
     return fts.render();
@@ -294,49 +295,60 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 }
 
 void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
-                                         StringToSizePairMap const& jump_labels,
-                                         StringToStringPairMap const& jump_atoms,
+                                         JumpDataMap const& new_jumps,
                                          SequenceAnnotationOP ann ) {
 
   //Bind jump numbers to labels in annotations
-  BOOST_FOREACH( StringToSizePairMap::value_type pair, jump_labels ){
+  BOOST_FOREACH( JumpDataMap::value_type pair, new_jumps ){
     std::string const& label = pair.first;
-    std::pair< Size, Size > const& jump_resids = pair.second;
+    BrokeredJumpDataCOP jump_data = pair.second;
 
-    Size jump_id = ft->jump_nr( jump_resids.first, jump_resids.second );
+    Size jump_id = ft->jump_nr( jump_data->pos.first, jump_data->pos.second );
 
     if( jump_id != 0 ){ // The physical fold tree won't have some jumps, so we don't want to fail.
       if( ann ){ // Physical fold tree doesn't use the annotations.
         ann->add_jump_label( label, jump_id );
       }
 
-      std::string const& a1 = jump_atoms.find( label )->second.first;
-      std::string const& a2 = jump_atoms.find( label )->second.second;
+      std::string const& a1 = jump_data->atoms.first;
+      std::string const& a2 = jump_data->atoms.second;
 
       ft->set_jump_atoms( (int) jump_id, a1, a2,
-                          (a1 == "" && a2 == "") );
+                          jump_data->put_jump_stub_intra_residue );
     }
   }
+
+  // like FoldTree::put_jump_stubs_intra_residue, except that it doesn't blindly
+  // set all jumps without atom info.
+  ft->reassign_atoms_for_intra_residue_stubs();
 }
 
 void EnvClaimBroker::add_virtual_residues( Conformation& conf,
-		SizeToStringMap const& new_vrts,
-		SequenceAnnotationOP ann )
+    SizeToStringMap const& new_vrts,
+    SequenceAnnotationOP ann )
 {
-	// Add new virtual residues into conformation.
-	BOOST_FOREACH( SizeToStringMap::value_type pair, new_vrts ) {
-	// Steal the residue type set of the first residue. Will obviously break if the conformation
-	// has no residues. Is this a case I need to worry about?
-	core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
-	core::conformation::ResidueOP rsd(
-		core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+  // Add new virtual residues into conformation.
+  BOOST_FOREACH( SizeToStringMap::value_type pair, new_vrts ) {
+  // Steal the residue type set of the first residue. Will obviously break if the conformation
+  // has no residues. Is this a case I need to worry about?
+  core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
+  core::conformation::ResidueOP rsd(
+    core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
 
-	// where the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
-	conf.append_residue_by_jump( *rsd, conf.size() );
+  // where the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
+  conf.append_residue_by_jump( *rsd, conf.size() );
 
-	// This residue label should resolve to the VRT just added.
-	assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
-	}
+  // This residue label should resolve to the VRT just added.
+  assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
+  }
+}
+
+ControlStrength const& init_str_selector( claims::DOFElement const& d ){
+  return d.i_str;
+}
+
+ControlStrength const& ctrl_str_selector( claims::DOFElement const& d ){
+  return d.c_str;
 }
 
 void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
@@ -346,7 +358,7 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
   //Broker Arbitrary DOFs ---------------------------------------------------------------------------
   DOFElements d_elems;
   collect_elements( d_elems, conf );
-  setup_initialization_passports( d_elems, initializers );
+  setup_passports( d_elems, init_str_selector );
 
   // Once all initialization passports for both RTs and Torsions are configured, allow
   // movers to initialize
@@ -357,16 +369,18 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
   // Now that passports are properly configured, allow each mover to initialize.
   // As soon as each mover initializes, access is revoked, so it can be built again
   // for the sampling phase.
-  BOOST_FOREACH( ClaimingMoverOP mover, initializers ){
-    mover->passport_updated();
-    mover->initialize( p );
-    movers_and_passes_.find( mover )->second->revoke_all_access();
+  BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes_ ){
+    if( pair.second->begin() != pair.second->end() ){
+      pair.first->passport_updated();
+      pair.first->initialize( p );
+      pair.second->revoke_all_access();
+    }
   }
 
   //Copy the changes from the initialized conformation into conf
   *conf = *( static_cast< ProtectedConformation const* >( &p.conformation() ) );
 
-  setup_control_passports( d_elems );
+  setup_passports( d_elems, ctrl_str_selector );
 
   //Notify movers that passes have been updated.
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes_ ){
@@ -374,79 +388,47 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
   }
 }
 
-template < typename T >
-bool compare_init_strength( T const& a, T const& b ){
-  return a.i_str > b.i_str;
-}
-
-bool is_initialized( std::set< std::string > const& initalized,
-                     DOFElement e  ){
-  return initalized.find( utility::to_string( e.id ) ) != initalized.end();
-}
-
-///@brief iterate through all dof elements, determine who gets initialization right, and modify
-///       their DofPassport appropriately
-template < typename T >
-void EnvClaimBroker::setup_initialization_passports( utility::vector1< T >& elems,
-                                                     std::set< ClaimingMoverOP >& initializers ){
-
-  // Sort elements in descending strength order to guarantee highest prio gets first dibs.
-  std::sort( elems.begin(), elems.end(), compare_init_strength< T > );
-  std::map< core::id::DOF_ID, ClaimingMoverOP > initialized;
-
-  BOOST_FOREACH( T element, elems ){
-    std::map< core::id::DOF_ID, ClaimingMoverOP >::iterator prev_init = initialized.find( element.id );
-    if( prev_init != initialized.end() && //we already assigned an initializer (of equal or higher prio) to this position
-        element.i_str == MUST_INITIALIZE && //this initializer demanded to initialize this position
-        initialized[ element.id ] != element.owner ){ //initializers are different (i.e. true conflict)
-      std::string msg = "Cannot initialize " + element.type + " with id " + utility::to_string( element.id )
-                        + " due conflicting init strengths (e.g. >1 MUST_INITIALIZE claim)."
-                        + "  Conflicting initializers were: " + initialized[ element.id ]->get_name() + " and "
-                        + element.owner->get_name();
-      throw utility::excn::EXCN_BadInput( msg );
-    } else if( initialized.find( element.id ) == initialized.end() &&
-               element.i_str > DOES_NOT_INITIALIZE ) {
-      grant_access( element );
-      initialized[ element.id ] = element.owner;
-      initializers.insert( element.owner );
-    } else { /* do not grant access */ }
+/// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports
+class Comparator {
+public:
+  Comparator( claims::ControlStrength const& (*str_access)( DOFElement const& ) ):
+    str_access_( str_access ) {}
+  bool operator() ( DOFElement const& a, DOFElement const& b ){
+    return str_access_( a ) > str_access_( b );
   }
+private:
+  claims::ControlStrength const& (*str_access_)( DOFElement const& );
+};
 
-  tr.Info << "  setting " << initialized.size() << " " << T::type
-          << "-type DOF initial states." << std::endl;
-}
-
-template < typename T >
-bool compare_ctrl_strength( T const& a, T const& b ){
-  return a.c_str > b.c_str;
-}
-
-template < typename T >
-void EnvClaimBroker::setup_control_passports( utility::vector1< T >& elems ) {
+void EnvClaimBroker::setup_passports( DOFElements& elems,
+                                      claims::ControlStrength const& (*str_access)( DOFElement const& ) ) {
 
   // Similarly to setup_initialization_passports, sort by control strength
-  std::sort( elems.begin(), elems.end(), compare_ctrl_strength< T > );
+  std::sort( elems.begin(), elems.end(), Comparator( str_access ) );
   std::map< core::id::DOF_ID, ControlStrength > max_strength;
 
   //Iterate through each element. If it's EXCLUSIVE, we know not to admit any further claims.
-  BOOST_FOREACH( T element, elems ){
+  BOOST_FOREACH( DOFElement element, elems ){
+    tr.Trace << "    considering: " << element.id << " from " << element.owner->get_name();
+
     ControlStrength prev_str = DOES_NOT_CONTROL;
     if( max_strength.find( element.id ) != max_strength.end() ){
       prev_str = max_strength[ element.id ];
     }
 
     if( prev_str == EXCLUSIVE ){
-        if( element.c_str >= MUST_CONTROL ){
+        if( str_access( element ) >= MUST_CONTROL ){
           std::string msg = "Cannot broker " + element.type + " " + utility::to_string( element.id ) +
                             "due conflicting control strengths (e.g. >1 EXCLUSIVE claim).";
           throw utility::excn::EXCN_BadInput( msg );
         } else {
-          // do not grant access
+          tr.Trace << " : not assigned" << std::endl;
         }
-    } else if( element.c_str > DOES_NOT_CONTROL ){
+    } else if( str_access( element ) > DOES_NOT_CONTROL ){
       grant_access( element );
-      max_strength[ element.id ] = std::max( element.c_str, prev_str );
-    } else { /* do not grant access */ }
+      max_strength[ element.id ] = std::max( str_access( element ), prev_str );
+      tr.Trace << " : assigned " << std::endl;
+    } else { tr.Trace << " : not assigned" << std::endl; }
   }
 }
 
@@ -538,32 +520,68 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
 
 void EnvClaimBroker::process_elements( ResidueElements const& elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
   for( ResidueElements::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
-    fts.append_residue();
+
+    if( ann_->has_seq_label( e_it->label ) &&
+        e_it->allow_duplicates ){
+      // If we're allowing duplicates and we've already added this element
+      // it's cool, don't throw an exception and don't add it again.
+      continue;
+    }
+
     ann_->append_seq( e_it->label );
+    fts.append_residue();
     new_vrts[ fts.nres() ] = e_it->label;
   }
 }
 
 void EnvClaimBroker::process_elements( JumpElements const& elems,
                                        FoldTreeSketch& fts,
-                                       FoldTreeSketch& physical_fts,
-                                       StringToSizePairMap& new_jumps,
-                                       StringToStringPairMap& jump_atoms ){
+                                       JumpDataMap& new_jumps ){
+  typedef std::map< std::pair< core::Size, core::Size >, BrokeredJumpDataCOP > PositionDataMap;
+  PositionDataMap brokered_jumps;
+
   BOOST_FOREACH( JumpElement element, elems ){
     Size abs_p1 = ann_->resolve_seq( element.p1 );
     Size abs_p2 = ann_->resolve_seq( element.p2 );
+    std::pair< Size, Size > const pos_pair = std::make_pair( abs_p1, abs_p2 );
+
+    // Build the JumpData -- we use this for jump overlap checks.
+    BrokeredJumpDataOP new_jump = new BrokeredJumpData( pos_pair,
+                                                        std::make_pair( element.atom1, element.atom2 ),
+                                                        element.force_stub_intra_residue );
 
     if( !fts.has_jump( abs_p1, abs_p2 ) ){
       fts.insert_jump( abs_p1, abs_p2 );
-      if( element.has_physical_cut ){
-        physical_fts.insert_jump( abs_p1, abs_p2 );
-      }
-
-      new_jumps[  element.label ] = std::make_pair( abs_p1, abs_p2 );
-      jump_atoms[ element.label ] = std::make_pair( element.atom1, element.atom2 );
+      brokered_jumps[ pos_pair ] = new_jump;
+      new_jumps[ element.label ] = new_jump;
     } else {
       tr.Debug << "Ignoring jump element for jump at " << element.p1 << "->"
                << element.p2 << " because it already exists " << std::endl;
+
+      if( brokered_jumps.find( pos_pair ) != brokered_jumps.end() &&
+          !brokered_jumps[ pos_pair ]->operator==( *new_jump ) ){
+        std::ostringstream ss;
+
+        new_jump->operator<<( ss );
+
+        ss << "The broker element claiming a jump between " << element.p1 << " and " << element.p2
+           << " overlaps with an existing jump between absolute positions " << pos_pair.first
+           << " and " << pos_pair.second << ". Normally, this would be ok (the jumps would be "
+           << "the same jump and access would be offered to both ClaimingMovers), but the jump data "
+           << "differs. This jump was: " << std::endl;
+
+        new_jump->operator<<( ss );
+
+        ss << std::endl << " whereas the existing was :" << std::endl;
+        brokered_jumps[ pos_pair ]->operator<<( ss );
+        ss << std::endl;
+
+        throw utility::excn::EXCN_BadInput( ss.str() );
+      }
+
+      // if we make it through the above check, it's safe to double-label this jump with both.
+      BrokeredJumpDataCOP old_jump_data = brokered_jumps.find( pos_pair )->second;
+      new_jumps[ element.label ] = old_jump_data;
     }
 
     tr.Debug << "  processed jump element for jump " << abs_p1 << "->" << abs_p2 << std::endl;
@@ -571,16 +589,17 @@ void EnvClaimBroker::process_elements( JumpElements const& elems,
 }
 
 void EnvClaimBroker::process_elements( CutElements const& elems,
-                                       FoldTreeSketch& fts,
-                                       FoldTreeSketch& physical_fts,
-                                       std::set< core::Size >& unphysical_cuts ){
+                                       FoldTreeSketch& fts ){
   BOOST_FOREACH( CutElement element, elems ){
     Size abs_p = ann_->resolve_seq( element.p );
-    fts.insert_cut( abs_p );
-    if( element.physical ){
-      physical_fts.insert_cut( abs_p );
-    } else {
-      unphysical_cuts.insert( abs_p );
+    try {
+      fts.insert_cut( abs_p );
+    } catch ( core::environment::EXCN_FTSketchGraph& excn ){
+      std::ostringstream ss;
+      ss << "The Environment '" << env_.name() << "' had more than one"
+         << " cut placed at absolute position " << abs_p << "." << std::endl;
+      excn.add_msg( ss.str() );
+      throw excn;
     }
   }
 }
@@ -623,6 +642,39 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
   conf.replace_residue( rsd_upper.seqpos(), *new_upper, true );
 
 }
+
+EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size > const& positions,
+                                                    std::pair< std::string, std::string > const& atoms,
+                                                    bool put_jump_stub_intra_residue  ) :
+  pos( positions ),
+  atoms( atoms ),
+  put_jump_stub_intra_residue( put_jump_stub_intra_residue )
+{
+  std::pair< std::string, std::string > null_atoms = std::make_pair( "", "" );
+  if( put_jump_stub_intra_residue &&
+      atoms != null_atoms ){
+    tr.Warning << "Jump at aboslute position (" << pos.first << "," << pos.second
+               << ") made explicit atom choices " << atoms.first << " and "
+               << atoms.second << ". These choices may be overwritten by "
+               << "FoldTree::put_jump_stubs_intra_residue." << std::endl;
+  }
+}
+
+bool EnvClaimBroker::BrokeredJumpData::operator==( BrokeredJumpData const& other ) const {
+  if( this == &other ) return true;
+
+  return ( other.atoms == this->atoms ) &&
+         ( other.pos == this->pos ) &&
+         ( this->put_jump_stub_intra_residue == other.put_jump_stub_intra_residue );
+}
+
+std::ostream& EnvClaimBroker::BrokeredJumpData::operator<<( std::ostream& os ) const {
+  os << "BrokeredJumpData: position = {" << pos.first << "," << pos.second << "}, atoms = {"
+     << atoms.first << "," << atoms.second << "}, put_stubs_intra_residue = "
+     << ( put_jump_stub_intra_residue ? "true" : "false" );
+  return os;
+}
+
 
 } // environment
 } // protocols

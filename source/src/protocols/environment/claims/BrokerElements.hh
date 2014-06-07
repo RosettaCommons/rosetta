@@ -52,33 +52,32 @@ namespace claims {
     EXCLUSIVE
   };
 
-  enum InitializationStrength {
-    DOES_NOT_INITIALIZE = 0,
-    CAN_INITIALIZE = 1,
-    MUST_INITIALIZE
-  };
-
+/// @note at the moment, this only makes virtual residues, but could be modified to hold on to the name of
+///       the residue that should be created so that you could (for example) add a carbohydrate or ligand with
+///       this system.
   struct ResidueElement {
-    ResidueElement() : label() {}
+    ResidueElement() : label(), allow_duplicates( false ) {}
     std::string label;
+    bool allow_duplicates; //if this label already exists, simply ignore this Element rather than throwing.
     static std::string const type;
   };
 
   struct JumpElement {
-    JumpElement() : label(), p1(), p2(), atom1(), atom2(), has_physical_cut(false) {}
+    JumpElement() : label(), p1(), p2(), atom1(), atom2(),
+                    force_stub_intra_residue( false ), has_physical_cut(false) {}
     std::string label;
     core::environment::LocalPosition p1;
     core::environment::LocalPosition p2;
     std::string atom1;
     std::string atom2;
+    bool force_stub_intra_residue; //see FoldTree::put_jump_stubs_intra_residue
     bool has_physical_cut;
     static std::string const type;
   };
 
   struct CutElement {
-    CutElement() : p(), physical( true ) {}
+    CutElement() : p() {}
     core::environment::LocalPosition p;
-    bool physical; //indicates if this cut will be closed later/should be scored as a chainbreak
     static std::string const type;
   };
 
@@ -94,7 +93,7 @@ namespace claims {
     ClaimingMoverOP owner;
     core::id::DOF_ID id;
     ControlStrength c_str;
-    InitializationStrength i_str;
+    ControlStrength i_str;
     static std::string const type;
   };
 
@@ -105,8 +104,6 @@ namespace claims {
   typedef utility::vector1< claims::DOFElement > DOFElements;
 
   typedef utility::vector1< claims::ControlStrength > ControlStrengths;
-  typedef utility::vector1< claims::ControlStrength > InitializationStrengths;
-
 }
 }
 }

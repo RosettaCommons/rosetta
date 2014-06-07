@@ -55,12 +55,32 @@ JumpClaim::JumpClaim( ClaimingMoverOP owner,
   pos1_( jpos1 ),
   pos2_( jpos2 ),
   cut_( cutp ),
-  atom1_( "CA" ),
-  atom2_( "CA" ),
+  atoms_( std::make_pair( "", "" ) ),
   physical_cut_( false ),
+  create_vrt_p1_( false ),
+  create_vrt_p2_( false ),
+  stubs_intra_residue_( false ),
   c_str_( EXCLUSIVE ),
-  i_str_( DOES_NOT_INITIALIZE )
+  i_str_( DOES_NOT_CONTROL )
 {}
+
+void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, ResidueElements& elements ) const {
+  // this will create virtual residues to target with the jump if those labels don't exist.
+  // that could be because there's actual sequence with that name, or it's already a vrt.
+  if( create_vrt_p1_ ){
+    ResidueElement e1;
+    e1.label = pos1().label();
+    e1.allow_duplicates = true;
+    elements.push_back( e1 );
+  }
+
+  if( create_vrt_p2_ ){
+    ResidueElement e2;
+    e2.label = pos2().label();
+    e2.allow_duplicates = true;
+    elements.push_back( e2 );
+  }
+}
 
 void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, JumpElements& elements ) const {
   JumpElement e;
@@ -68,8 +88,9 @@ void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, JumpEl
   e.p1 = pos1();
   e.p2 = pos2();
   e.label = label();
-  e.atom1 = atom1();
-  e.atom2 = atom2();
+  e.atom1 = atoms().first;
+  e.atom2 = atoms().second;
+  e.force_stub_intra_residue = stubs_intra_residue();
   e.has_physical_cut = physical();
 
   elements.push_back( e );
@@ -94,24 +115,17 @@ void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, CutEle
   if( cut_position() != LocalPosition( "", 0 ) ){
     CutElement e;
     e.p = cut_position();
-    e.physical = physical();
     elements.push_back( e );
-  } else if( physical() == true ){
-    utility_exit_with_message("[FATAL] Physical (i.e. non-chainbreak-scored) jump claims are only avaliable explicitly specified cut positions.");
   }
 }
 
 void JumpClaim::set_atoms( std::string const& a1, std::string const& a2 ) {
-  atom1_ = a1;
-  atom2_ = a2;
+  atoms_ = std::make_pair( a1, a2 );
 }
 
-void JumpClaim::ctrl_strength( ControlStrength const& str ){
-  c_str_ = str;
-}
-
-void JumpClaim::init_strength( InitializationStrength const& str ){
-  i_str_ = str;
+void JumpClaim::strength( ControlStrength const& c_str, ControlStrength const& i_str ){
+  c_str_ = c_str;
+  i_str_ = i_str;
 }
 
 std::string const& JumpClaim::label() const {
@@ -126,16 +140,21 @@ LocalPosition const& JumpClaim::pos2() const {
   return pos2_;
 }
 
+void JumpClaim::create_vrt_if_necessary( bool setting ) {
+  create_vrt_if_necessary( setting, setting );
+}
+
+void JumpClaim::create_vrt_if_necessary( bool setting_p1, bool setting_p2 ){
+  create_vrt_p1_ = setting_p1;
+  create_vrt_p2_ = setting_p2;
+}
+
+void JumpClaim::cut( claims::LocalPosition const& p ) {
+  cut_ = p;
+}
+
 LocalPosition const& JumpClaim::cut_position() const {
   return cut_;
-}
-
-std::string const& JumpClaim::atom1() const {
-  return atom1_;
-}
-
-std::string const& JumpClaim::atom2() const {
-  return atom2_;
 }
 
 EnvClaimOP JumpClaim::clone() const {
@@ -147,8 +166,8 @@ std::string JumpClaim::str_type() const{
 }
 
 void JumpClaim::show( std::ostream& os ) const {
-  os << str_type() << "(" << pos1() << "," << atom1() << "->" << pos2()
-     << "," << atom2() << ") owned by a " << owner()->get_name();
+  os << str_type() << "(" << pos1() << "," << atoms().first << "->" << pos2()
+     << "," << atoms().second << ") owned by a " << owner()->get_name();
 }
 
 } //claims

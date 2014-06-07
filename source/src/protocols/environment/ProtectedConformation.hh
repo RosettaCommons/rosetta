@@ -96,7 +96,7 @@ public:
                                   AtomID const & atom3,
                                   AtomID const & atom4,
                                   core::Real const setting,
-																	bool quiet=false);
+                                  bool quiet=false);
 
   virtual void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
                                core::Real const setting );
@@ -208,7 +208,7 @@ private:
 
   void push_passport( core::environment::DofPassportCOP );
 
-  void pop_passport();
+  core::environment::DofPassportCOP pop_passport();
 
   bool has_passport() const;
 

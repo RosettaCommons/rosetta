@@ -175,14 +175,7 @@ public:
 		if ( i == 1 ) jump_atom1( str );
 		else jump_atom2( str );
 	}
-
-//    virtual std::string to_string() const {
-//        std::ostringstream str_stream;
-//        str_stream << "(JumpClaim; owner, " << owner()->type() << "; start, " << pos1_ << atom1_
-//                << "; end, " << pos2_ << atom2_ << "; permanent, " << permanent_ << ")";
-//        return str_stream.str();
-//    }
-
+  
 private:
 	bool permanent_; //true if this jump should still be present after loop-closing
 // 	Size pos1_;

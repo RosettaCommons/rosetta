@@ -32,6 +32,8 @@
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 
+#include <boost/foreach.hpp>
+
 // tracer
 #include <basic/Tracer.hh>
 
@@ -72,13 +74,18 @@ StructPerturberCM::StructPerturberCM():
   Parent()
 {}
 
+StructPerturberCM::StructPerturberCM( std::string const& label,
+                                      core::Real magnitude ):
+  magnitude_( magnitude ),
+  label_( label )
+{}
+
 claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_pose,
                                                    basic::datacache::WriteableCacheableMapOP ){
   claims::EnvClaims claims;
 
   claims::TorsionClaimOP claim = new claims::TorsionClaim( this, label(), std::make_pair( 1, in_pose.total_residue() ) );
-  claim->ctrl_strength( claims::CAN_CONTROL );
-  claim->init_strength( claims::DOES_NOT_INITIALIZE );
+  claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
 
@@ -97,23 +104,13 @@ void StructPerturberCM::parse_my_tag( utility::tag::TagCOP tag,
 void StructPerturberCM::apply( core::pose::Pose& pose ){
   if( passport() ){
     DofUnlock unlock( pose.conformation(), passport() );
-    core::kinematics::MoveMapOP mm = passport()->render_movemap( pose.conformation() );
+    core::kinematics::MoveMapOP mm = passport()->render_movemap();
 
     for( Size i = 1; i <= pose.total_residue(); ++i ){
-      core::id::DOF_ID phi = pose.conformation().dof_id_from_torsion_id( core::id::TorsionID( i, core::id::BB, core::id::phi_torsion ) );
-      core::id::DOF_ID psi = pose.conformation().dof_id_from_torsion_id( core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) );
-
-      tr.Trace << std::endl << "Purturbing resid " << i << ": ";
-      if( passport()->dof_access( phi ) ){
-        tr.Trace << "phi ( " << pose.phi( i ) << " -> ";
-        pose.set_phi( i, pose.phi( i ) + RG.gaussian() * magnitude_ );
-        tr.Trace << pose.phi( i ) << ", ";
-      } if( passport()->dof_access( psi ) ) {
-        tr.Trace << "psi ( " << pose.psi( i ) << " -> ";
-        pose.set_psi( i, pose.psi( i ) + RG.gaussian() * magnitude_ );
-        tr.Trace << pose.psi( i );
+      for( DofPassport::const_iterator it = passport()->begin();
+           it != passport()->end(); ++it ){
+        pose.set_dof( *it, pose.dof( *it) + ( RG.gaussian() * magnitude_ ) );
       }
-      tr.Trace << std::endl;
     }
   } else {
     for( Size i = 1; i <= pose.total_residue(); ++i ){

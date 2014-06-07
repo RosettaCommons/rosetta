@@ -82,11 +82,9 @@ public:
 
   bool claim_backbone() const { return claim_backbone_; }
 
-  void ctrl_strength( ControlStrength const& );
+  void strength( ControlStrength const&, ControlStrength const& );
 
-  InitializationStrength const& init_strength() const;
-
-  void init_strength( InitializationStrength const& );
+  ControlStrength const& init_strength() const;
 
   virtual EnvClaimOP clone() const;
 
@@ -101,7 +99,7 @@ protected:
 private:
   LocalPositions local_positions_;
   ControlStrength c_str_;
-  InitializationStrength i_str_;
+  ControlStrength i_str_;
 
   bool claim_sidechain_;
   bool claim_backbone_;

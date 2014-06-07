@@ -34,7 +34,7 @@ ClaimStrength::ClaimStrength( PrioSubtype subtype, Size subprio ):
 
 
 ClaimStrength::ClaimStrength( ClaimStrength const& src ) :
-	Parent(),
+  Parent(),
   subtype_( src.subtype_ ),
   subprio_( src.subprio_ )
 {}
@@ -89,21 +89,21 @@ core::Size ClaimStrength::subprio() const {
 }
 
 extern std::ostream& operator<<( std::ostream& os, ClaimStrength const& ir) {
-	os << "(" << ir.subtype() << "," << ir.subprio() << ")";
-	return os;
+  os << "(" << ir.subtype() << "," << ir.subprio() << ")";
+  return os;
 }
 
 extern std::ostream& operator<<( std::ostream& os, ClaimStrength::PrioSubtype const& ir) {
-	if( ir == ClaimStrength::CAN_CONTROL ){
-		os << "CAN_INIT";
-	} else if ( ir == ClaimStrength::MUST_CONTROL ){
-		os << "MUST_INIT";
-	} else if ( ir == ClaimStrength::EXCLUSIVE ){
-		os << "EXCLUSIVE";
-	} else {
-		assert( false );
-	}
-	return os;
+  if( ir == ClaimStrength::CAN_CONTROL ){
+    os << "CAN_INIT";
+  } else if ( ir == ClaimStrength::MUST_CONTROL ){
+    os << "MUST_INIT";
+  } else if ( ir == ClaimStrength::EXCLUSIVE ){
+    os << "EXCLUSIVE";
+  } else {
+    assert( false );
+  }
+  return os;
 }
 
 } // protocols

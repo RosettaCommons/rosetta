@@ -1,3 +1,6 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+
 // Test headers
 #include <cxxtest/TestSuite.h>
 
@@ -61,7 +64,7 @@ class TorsionMover : public ToyMover {
 public:
   TorsionMover( bool claim, bool move,
     claims::ControlStrength c_str = claims::MUST_CONTROL,
-    claims::InitializationStrength i_str = claims::DOES_NOT_INITIALIZE):
+    claims::ControlStrength i_str = claims::DOES_NOT_CONTROL ):
     ToyMover( claim, move ),
     resnum_( CLAIMED_RESID ),
     control_str_( c_str ),
@@ -90,14 +93,13 @@ public:
   }
 
   virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
-					  basic::datacache::WriteableCacheableMapOP ){
+            basic::datacache::WriteableCacheableMapOP ){
     using core::environment::LocalPosition;
     claims::EnvClaims claims;
 
     if( claim_ ){
       claims::TorsionClaimOP new_claim = new claims::TorsionClaim( this, LocalPosition( "BASE", resnum_ ) );
-      new_claim->ctrl_strength( control_str_ );
-      new_claim->init_strength( init_str_ );
+      new_claim->strength( control_str_, init_str_ );
       claims.push_back( new_claim );
     }
 
@@ -118,60 +120,17 @@ public:
 private:
   Size resnum_;
   claims::ControlStrength control_str_;
-  claims::InitializationStrength init_str_;
+  claims::ControlStrength init_str_;
 };
-
-class JumpMover : public ToyMover {
-public:
-  JumpMover( bool claim, bool move ):
-    ToyMover( claim, move )
-  {}
-
-  virtual void apply( Pose& pose ){
-    apply( pose, 1 );
-  }
-
-  virtual void apply( Pose& pose, Size jumpnum ){
-    DofUnlock activation( pose.conformation(), passport() );
-    core::kinematics::Jump j;
-    j.set_translation( numeric::xyzVector< core::Real >( 5, 10, 15 ) );
-    if( move_ ){
-      pose.set_jump( jumpnum, j );
-    }
-  }
-
-  virtual std::string get_name() const{
-    return "JumpMover";
-  }
-
-  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
-					  basic::datacache::WriteableCacheableMapOP ){
-    using core::environment::LocalPosition;
-    claims::EnvClaims claims;
-
-    if( claim_ ){
-      claims::JumpClaimOP c = new claims::JumpClaim( this,
-                 "claimed_jump",
-                 LocalPosition( "BASE", 3 ),
-                 LocalPosition( "BASE", 7 ) );
-      c->ctrl_strength( claims::MUST_CONTROL );
-      claims.push_back( c );
-    }
-
-    return claims;
-  }
-};
-
 
 typedef utility::pointer::owning_ptr< TorsionMover > TorsionMoverOP;
-typedef utility::pointer::owning_ptr< JumpMover > JumpMoverOP;
 
 } //environment
 } //protocols
 
 // --------------- Test Class --------------- //
 
-class Environment : public CxxTest::TestSuite {
+class EnvironmentTorsion : public CxxTest::TestSuite {
 public:
 
   // Shared data elements go here.
@@ -241,13 +200,13 @@ public:
       TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::EXCN_NullPointer );
       TS_ASSERT_EQUALS( protected1.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ] );
       {
-	core::pose::Pose protected2;
-	TS_ASSERT_THROWS_NOTHING( protected2 = env2.start( protected1 ) );
-	TS_ASSERT_THROWS( tier1_mover->apply( protected2 ), EXCN_Env_Security_Exception );
-	TS_ASSERT_DELTA( protected2.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 0.001 );
-	TS_ASSERT_THROWS_NOTHING( tier2_mover->apply( protected2 ) );
-	TS_ASSERT_DELTA( protected2.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
-	TS_ASSERT_THROWS_NOTHING( protected1 = env2.end( protected2 ) );
+  core::pose::Pose protected2;
+  TS_ASSERT_THROWS_NOTHING( protected2 = env2.start( protected1 ) );
+  TS_ASSERT_THROWS( tier1_mover->apply( protected2 ), EXCN_Env_Security_Exception );
+  TS_ASSERT_DELTA( protected2.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 0.001 );
+  TS_ASSERT_THROWS_NOTHING( tier2_mover->apply( protected2 ) );
+  TS_ASSERT_DELTA( protected2.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
+  TS_ASSERT_THROWS_NOTHING( protected1 = env2.end( protected2 ) );
       }
       TS_ASSERT_DELTA( protected1.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
       TS_ASSERT_THROWS_NOTHING( tier1_mover->apply( protected1) );
@@ -257,9 +216,9 @@ public:
 
     for( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
       if( seqpos == CLAIMED_RESID ){
-	TS_ASSERT_DELTA( final_pose.phi( seqpos ), NEW_PHI, 0.000001 );
+  TS_ASSERT_DELTA( final_pose.phi( seqpos ), NEW_PHI, 0.000001 );
       } else {
-	TS_ASSERT_DELTA( final_pose.phi( seqpos ), init_phis[ seqpos ], 0.000001 );
+  TS_ASSERT_DELTA( final_pose.phi( seqpos ), init_phis[ seqpos ], 0.000001 );
       }
     }
 
@@ -320,7 +279,7 @@ public:
 
       //Verify angles 1-9 are untouched in protected_pose
       for( core::Size i = 1; i <= pose.total_residue()-1; ++i ){
-	TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 0.000001 );
+  TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 0.000001 );
       }
 
       TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
@@ -329,8 +288,8 @@ public:
     //Verify angles 1-9 are untouched in pose and final_pose
     for( core::Size i = 1; i <= pose.total_residue(); ++i ){
       if( i != CLAIMED_RESID ){
-	TS_ASSERT_DELTA( pose.phi( i ), final_pose.phi( i ), 0.000001 );
-	TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 0.000001 );
+  TS_ASSERT_DELTA( pose.phi( i ), final_pose.phi( i ), 0.000001 );
+  TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 0.000001 );
       }
     }
 
@@ -422,17 +381,17 @@ public:
     using namespace core::environment;
 
     TorsionMoverOP must_init_mover = new TorsionMover( true, true,
-                   claims::DOES_NOT_CONTROL,
-                   claims::MUST_INITIALIZE );
+																											 claims::DOES_NOT_CONTROL,
+																											 claims::EXCLUSIVE );
     TorsionMoverOP must_init_mover2 = new TorsionMover( true, true,
-              claims::DOES_NOT_CONTROL,
-              claims::MUST_INITIALIZE );
+																												claims::DOES_NOT_CONTROL,
+																												claims::EXCLUSIVE );
     TorsionMoverOP active_can_init_mover = new TorsionMover( true, true,
-                   claims::DOES_NOT_CONTROL,
-                   claims::CAN_INITIALIZE);
+																														 claims::DOES_NOT_CONTROL,
+																														 claims::CAN_CONTROL );
     TorsionMoverOP inactive_can_init_mover = new TorsionMover( true, false,
-                   claims::DOES_NOT_CONTROL,
-                   claims::CAN_INITIALIZE);
+																															 claims::DOES_NOT_CONTROL,
+																															 claims::CAN_CONTROL );
 
     core::pose::Pose protected_pose;
 
@@ -456,93 +415,4 @@ public:
     TS_TRACE( "End: test_torsion_init" );
   }
 
-  void test_jump_moves() {
-    TS_TRACE( "Beginning: test_jump_moves" );
-
-    using namespace protocols::environment;
-    using namespace core::environment;
-
-    //Tests that
-    JumpMoverOP allowed_mover = new JumpMover( true, true );
-    JumpMoverOP duplicate_claim_mover = new JumpMover( true, true );
-    JumpMoverOP no_claim_mover = new JumpMover( false, true );
-    JumpMoverOP unreg_mover = new JumpMover( true, true );
-
-    protocols::environment::Environment env( "env" );
-
-    env.register_mover( allowed_mover );
-    env.register_mover( duplicate_claim_mover );
-    env.register_mover( no_claim_mover );
-    // do not register unreg_mover
-
-    core::pose::Pose final_pose;
-
-    {
-      core::pose::Pose protected_pose;
-      TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
-      core::kinematics::FoldTree prot_ft ( protected_pose.fold_tree() );
-
-      TS_ASSERT_EQUALS( protected_pose.sequence(), pose.sequence() );
-      TS_ASSERT_DIFFERS( protected_pose.annotated_sequence(), pose.annotated_sequence() );
-
-      // Verify jump now exists
-      core::kinematics::Jump init_jump;
-      TS_ASSERT_EQUALS( protected_pose.num_jump(), core::Size( 1 ) );
-      TS_ASSERT_THROWS_NOTHING( init_jump = protected_pose.jump( 1 ) );
-
-      //Verify invalid movers cannot move the jump, and do not change the conformation.
-      TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
-      TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::EXCN_NullPointer );
-      TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
-      TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
-
-      //Verify allowed movers are allowed
-      TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
-      TS_ASSERT_DIFFERS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
-      TS_ASSERT_DIFFERS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
-
-      TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
-
-      // Verify fold tree reset.
-      TS_ASSERT_EQUALS( final_pose.fold_tree().num_cutpoint(), 0 );
-
-      //Verify jump RT changes are passed through
-      core::pose::Pose re_ft_app( final_pose );
-      re_ft_app.fold_tree( prot_ft );
-      final_pose.dump_pdb( "finalpose.pdb" );
-      protected_pose.dump_pdb( "protectedpose.pdb" );
-
-      TS_ASSERT_LESS_THAN( ( (protected_pose.jump( 1 ).get_translation() - re_ft_app.jump( 1 ).get_translation() ).length() ), 0.000001 );
-
-      core::Real rotation_delta = ( ( protected_pose.jump( 1 ).get_rotation() - re_ft_app.jump( 1 ).get_rotation() ).row_x().length() ) +
-	( ( protected_pose.jump( 1 ).get_rotation() - re_ft_app.jump( 1 ).get_rotation() ).row_y().length() ) +
-	( ( protected_pose.jump( 1 ).get_rotation() - re_ft_app.jump( 1 ).get_rotation() ).row_z().length() );
-
-      TS_ASSERT_LESS_THAN( rotation_delta, 0.000001 );
-    }
-
-    TS_TRACE( "End: test_jump_moves" );
-  }
-
-  void test_cache_persistence() {
-    TS_TRACE( "Beginning: test_cache_persistence" );
-
-    using namespace core::pose::datacache;
-    using namespace basic::datacache;
-
-    pose.data().set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
-    core::pose::Pose protected_pose;
-    core::pose::Pose final_pose;
-
-    protocols::environment::Environment env( "env" );
-
-    TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
-    TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
-
-    final_pose.data().has( CacheableDataType::WRITEABLE_DATA );
-
-    TS_ASSERT( final_pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
-
-    TS_TRACE( "End: test_jump_moves" );
-  }
 };

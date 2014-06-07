@@ -207,11 +207,12 @@ claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_
                                                         jump_name,
                                                         LocalPosition( label(), up ),
                                                         LocalPosition( label(), dn ) );
-    jclaim->ctrl_strength( claims::MUST_CONTROL );
-    jclaim->init_strength( claims::CAN_INITIALIZE );
+    jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
 
     jclaim->set_atoms( "", "" ); //allow jump atoms to be determined by ft at broker-time.
     jclaim->physical( false ); //jumps are not physical, and should be scored as chainbreaks
+
+    jclaim->stubs_intra_residue( true );
 
     claim_list.push_back( jclaim );
 
@@ -220,11 +221,8 @@ claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_
     claims::TorsionClaimOP tclaim_up = new claims::TorsionClaim( this, LocalPosition( label(), up ) );
     claims::TorsionClaimOP tclaim_dn = new claims::TorsionClaim( this, LocalPosition( label(), dn ) );
 
-    tclaim_up->ctrl_strength( claims::CAN_CONTROL );
-    tclaim_dn->ctrl_strength( claims::CAN_CONTROL );
-
-    tclaim_up->init_strength( claims::CAN_INITIALIZE );
-    tclaim_dn->init_strength( claims::CAN_INITIALIZE );
+    tclaim_up->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );
+    tclaim_dn->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );
 
     claim_list.push_back( tclaim_up );
     claim_list.push_back( tclaim_dn );
