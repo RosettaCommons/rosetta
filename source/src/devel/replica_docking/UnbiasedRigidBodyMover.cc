@@ -32,6 +32,7 @@
 //#include <numeric/rotation.functions.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random.functions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/trig.functions.hh>
 
@@ -158,8 +159,8 @@ void UnbiasedRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
   numeric::xyzVector< core::Real> const trans=flexible_jump.get_translation();
 
   numeric::xyzVector<core::Real> delta_trans/*(0.0245597,-0.181304,-0.276021);*/( trans_mag_*rigid_RG.gaussian(), trans_mag_*rigid_RG.gaussian(), trans_mag_*rigid_RG.gaussian() );
-  core::Real theta /*= 0.0532087;//*/= /*numeric::*/generate_rotation_angle( rot_mag_ );
-  numeric::xyzVector<core::Real> axis/*( -0.482497, 0.835615, 0.262571); //*/ = /*numeric:: */ generate_uniform_rotation_axis();
+  core::Real theta = numeric::random::random_rotation_angle( rot_mag_, rigid_RG );
+  numeric::xyzVector<core::Real> axis = numeric::random::random_point_on_unit_sphere< core::Real >( rigid_RG );
 	tr.Info << "axis=["<<axis.x() <<" "<<axis.y()<<" "<<axis.z()<<"]"<<std::endl;
   numeric::xyzMatrix<core::Real> delta_rot = numeric::rotation_matrix_radians( axis, theta );
   flexible_jump.set_translation( delta_trans + trans );
@@ -169,44 +170,6 @@ void UnbiasedRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
 
 
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @detail generate axis and angle for axis-angle rotation for random rotation move in R/RT degrees of
-/// freedom. rotation axis: uniformly distributed on unit sphere, rotation angle: chosen to mimic the
-/// distribution of rotation angles obtained from gaussian distrbuted Euler angles (core/kinematics/Jump.cc),
-/// which is a gamma-distribution-like distribution
-/// Note: gaussian distributed Euler angles do not give unbiased sampling in rotational space
-/// by applying this angle to a uniformly chosen rotation axis unbiased rotational sampling is achieved
-
-/// @brief gamma-distribution-like random angle generation, rot_mag makes exactly the same sense as in gaussian_move
-
-core::Real  // angle (radians)
-UnbiasedRigidBodyPerturbNoCenterMover::generate_rotation_angle( core::Real rot_mag ){
-  using namespace numeric;
-  xyzMatrix< core::Real > const mat( z_rotation_matrix_degrees( rot_mag*rigid_RG.gaussian() ) * (
-		       y_rotation_matrix_degrees( rot_mag*rigid_RG.gaussian() ) *
-		       x_rotation_matrix_degrees( rot_mag*rigid_RG.gaussian() ) )
-  );
-  core::Real theta;
-  rotation_axis( mat, theta );
-  return theta;
-}
-
-/// @detail generate uniformly distributed vector on the unit sphere as the rotation axis
-numeric::xyzVector< core::Real >
-UnbiasedRigidBodyPerturbNoCenterMover::generate_uniform_rotation_axis(){
-  using namespace numeric;
-  core::Real alpha = rigid_RG.uniform() * NumericTraits< core::Real >::pi_2();
-  core::Real beta = std::acos( sin_cos_range( 1-2*rigid_RG.uniform() ) );
-  core::Real sin_beta = std::sin( beta );
-  core::Real cos_beta = std::cos( beta );
-  core::Real sin_alpha = std::sin( alpha );
-  core::Real cos_alpha = std::cos( alpha );
-  xyzVector< core::Real > axis( sin_beta * sin_alpha, sin_beta * cos_alpha, cos_beta);
-  return axis;
-}
-
-
 
 }
 }
