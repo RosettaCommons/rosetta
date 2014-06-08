@@ -239,11 +239,11 @@ void CoMTrackerCM::apply( core::pose::Pose& pose ){
   update_com( pose );
 }
 
-void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP const tag,
-                                       basic::datacache::DataMap& datamap,
-                                       protocols::filters::Filters_map const&,
-                                       protocols::moves::Movers_map const&,
-                                       core::pose::Pose const& ) {
+void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
+																 basic::datacache::DataMap& datamap,
+																 protocols::filters::Filters_map const&,
+																 protocols::moves::Movers_map const&,
+																 core::pose::Pose const& ) {
 
   //  mobile_label_ = tag->getOption< std::string >( "mobile_label" );
   stationary_label_ = tag->getOption< std::string >( "stationary_label", GENERATE_STATIONARY_ATTACHMENT_POINT );

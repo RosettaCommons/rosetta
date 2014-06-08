@@ -14,6 +14,7 @@
 #ifndef INCLUDED_numeric_random_random_functions_hh
 #define INCLUDED_numeric_random_random_functions_hh
 
+#include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 
 namespace numeric {
