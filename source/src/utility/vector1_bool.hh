@@ -22,8 +22,6 @@
 #include <utility/vector1.hh>
 #endif // INCLUDED_utility_vector1_HH
 
-#include <numeric/types.hh>
-
 namespace utility {
 
 
@@ -242,7 +240,7 @@ public: // Assignment
 	operator !() const
 	{
 		vector1< bool > opposite(*this);
-		for (numeric::Size i = 1; i <= opposite.size(); ++i) {
+		for ( Size i = 1; i <= opposite.size(); ++i) {
 			opposite[i] = !opposite[i];
 		}
 		return opposite;

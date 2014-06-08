@@ -92,7 +92,7 @@ void ScriptCM::apply( core::pose::Pose& pose ){
   client_->apply( pose );
 }
 
-void ScriptCM::parse_my_tag( utility::tag::TagCOP const tag,
+void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
                              basic::datacache::DataMap&,
                              protocols::filters::Filters_map const&,
                              protocols::moves::Movers_map const& mover_map,
