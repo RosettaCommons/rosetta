@@ -491,7 +491,6 @@ ParsedProtocol::get_additional_output( )
 
 void
 ParsedProtocol::apply_mover( Pose & pose, MoverFilterPair const & mover_pair ) {
-  std::cout << mover_pair.first.first << std::endl;
 	std::string const mover_name( mover_pair.first.first->get_name() );
 	std::string const mover_user_name( mover_pair.first.second);
 
