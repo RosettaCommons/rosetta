@@ -25,15 +25,14 @@
 #include <utility/exit.hh>
 
 
-class UtilityTests : public CxxTest::TestSuite {
-public:
+// class UtilityTests : public CxxTest::TestSuite {
+// public:
 
+// void test_utility_exit() {
+// 	utility_exit_with_message("Testing utility exit... this test should fail...");
+// }
 
-void test_utility_exit() {
-	utility_exit_with_message("Testing utility exit... this test should fail...");
-}
-
-};
+// };
 
 
 #endif INCLUDED_utility_cxxtest_HH
