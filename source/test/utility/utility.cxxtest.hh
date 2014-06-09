@@ -9,7 +9,7 @@
 
 /// @file   utility/utility.cxxtest.hh
 /// @brief  utility.cxxtest: placeholder for main() function when creating unit test executable
-/// @author Ron Jacak (ron.jacak@gmail.com)
+/// @author Sergey Lyskov
 
 
 #ifndef INCLUDED_utility_utility_cxxtest_HH
@@ -21,7 +21,19 @@
 // in it. This file will get processed with the --root switch which adds a main() method to the
 // generated .cpp file.  This is that file for the utility project.
 
+#include <cxxtest/TestSuite.h>
+#include <utility/exit.hh>
+
+
+class UtilityTests : public CxxTest::TestSuite {
+public:
+
+
+void test_utility_exit() {
+	utility_exit_with_message("Testing utility exit... this test should fail...");
+}
+
+};
+
 
 #endif INCLUDED_utility_cxxtest_HH
-
-
