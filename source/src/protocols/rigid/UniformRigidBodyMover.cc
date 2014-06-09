@@ -104,11 +104,11 @@ UniformRigidBodyMover::JumpNumber UniformRigidBodyMover::jump_number() const {
   return target_jump_;
 }
 
-void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP const tag,
-                                       basic::datacache::DataMap&,
-                                       protocols::filters::Filters_map const&,
-                                       protocols::moves::Movers_map const&,
-                                       core::pose::Pose const& ) {
+void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP tag,
+																					basic::datacache::DataMap&,
+																					protocols::filters::Filters_map const&,
+																					protocols::moves::Movers_map const&,
+																					core::pose::Pose const& ) {
   rotation_mag_ = tag->getOption< core::Real >( "rotation_magnitude", 3.0 );
   translation_mag_ = tag->getOption< core::Real >( "translation_magnitude", 8.0 );
   target_jump_ = tag->getOption< JumpNumber >("target_jump");
