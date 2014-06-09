@@ -164,8 +164,8 @@ utility::vector1< core::Size > const& SequenceAnnotation::resolve_seq( std::stri
   return label_to_pose_numbers_.find( label )->second;
 }
 
-core::Size const& SequenceAnnotation::length() const {
-  return length_;
+core::Size SequenceAnnotation::length( std::string const& label ) const {
+	return label_to_pose_numbers_.find( label )->second.size();
 }
 
 } // environment

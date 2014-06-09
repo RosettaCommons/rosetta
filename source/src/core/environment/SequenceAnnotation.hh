@@ -74,7 +74,7 @@ public:
 
   core::Size resolve_jump( std::string const& label ) const;
 
-  core::Size const& length() const;
+  core::Size const& length() const { return length_; }
 
   core::Size length( std::string const& label ) const;
 
