@@ -1139,7 +1139,8 @@ void mutate_to_sequence (
 	const std::string &sequence,
 	core::pose::Pose &mypose,
 	const utility::vector1 <bool> &dpositions,
-	const utility::vector1 <bool> &betapositions
+	const utility::vector1 <bool> &betapositions,
+	bool const force_mutation
 	//const utility::vector1 < std::pair < core::Size, core::Size > > &disulf_positions
 ) {
 	using namespace basic::options;
@@ -1153,13 +1154,20 @@ void mutate_to_sequence (
 	if(option[v_cyclic]()) mypose.remove_constraints(); //Remove all constraints
 
 	for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
-		if(option[v_ignoreresidue]().size()>0) { //Don't change residues in the ignore list.
-			bool continue_on = false;
+		bool continue_on = false;
+		if(!force_mutation && option[v_ignoreresidue]().size()>0) { //Don't change residues in the ignore list.
 			for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) {
-				if((core::Size)option[v_ignoreresidue][i]==ir) continue_on=true;
+				if((core::Size)option[v_ignoreresidue][i]==ir) {
+					continue_on=true;
+					break; //out of the for loop
+				}
 			}
-			if(continue_on) continue;
+		} else if (force_mutation) {
+			if(!mypose.residue(ir).type().is_polymer()) continue_on=true; //Don't mutate non-polymer positions.
+			if(!mypose.residue(ir).type().is_alpha_aa() && !mypose.residue(ir).type().is_beta_aa()) continue_on=true; //Don't mutate positions that aren't alpha or beta amino acids, for now.
+			if(mypose.residue(ir).name3()=="CYX" || mypose.residue(ir).name3()=="ASX" || mypose.residue(ir).name3()=="LYX") continue_on=true; //Ugly hack.  Fix this with something more general!
 		}
+		if(continue_on) continue;
 
 		if(option[v_preserve_chirality]() && dpositions[ir]) {
 			std::string aaname;
@@ -1362,6 +1370,7 @@ void scoreall (
 	if(procnum==0) strcpy (charbuffer, sequence.c_str());
 	MPI_Bcast(&charbuffer, sequence.length()+1, MPI_CHAR, 0, MPI_COMM_WORLD);
 	sequence=charbuffer;
+	//if(procnum!=0) { printf("\tProc %i received sequence %s.\n", procnum, sequence.c_str()); fflush(stdout); } //DELETE ME.
 
 	//Variables needed to split replicates over multiple processess:
 	const core::Size numstates = option[v_split_replicates_over_processes]() ? option[v_MCminimize_replicates]() * totalstatecount : totalstatecount; //Number of states is multiplied by number of replicates iff the split over procs option is used.
@@ -1516,7 +1525,7 @@ void scoreall (
 				curPCAmatrix = &thisstate_PCAmatrix;
 			}
 
-			mutate_to_sequence(sequence, temppose, dpositions, betapositions /*, disulf_positions*/); //Mutate the copy of the state in this proc to the current sequence
+			mutate_to_sequence(sequence, temppose, dpositions, betapositions, false); //Mutate the copy of the state in this proc to the current sequence
 
 			//Set the conformation:
 			//set_to_state(temppose, (*curphipsivector) /*, disulf_positions*/);
@@ -2018,11 +2027,11 @@ int main(int argc, char *argv[]) {
 	core::pose::Pose positive_master; //A pose to store the positive backbone configuration.
 	core::io::silent::SilentStructOP positive_master_silentstruct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
+	char curstructtag_positive[256];
 	if(procnum == 0 ) {
-		char curstructtag[256];
 		if(posfile!="") {
 			printf("Importing POSITIVE backbone configuration from %s.\n", posfile.c_str()); fflush(stdout);
-			sprintf(curstructtag, "POSITIVE_%s", posfile.c_str());
+			sprintf(curstructtag_positive, "POSITIVE_%s", posfile.c_str());
 			//Only the master proc imports the positive state, then transmits it to all others.
 			core::import_pose::pose_from_pdb(positive_master, posfile);
 			//Store the file name:
@@ -2030,6 +2039,7 @@ int main(int argc, char *argv[]) {
 		} else if (posstruct_tag!="") { //If the index of the positive state in the silent files has been specified.
 			//core::Size curstruct_index = 1;
 			bool foundit = false;
+			sprintf(curstructtag_positive, "POSITIVE_%s", posstruct_tag.c_str());
 			core::import_pose::pose_stream::MetaPoseInputStream input_stream = core::import_pose::pose_stream::streams_from_cmd_line( false ); //Get all inputs, NOT renumbering decoys.
 			utility::vector1 < core::import_pose::pose_stream::PoseInputStreamOP > posestreams = input_stream.get_input_streams(); //Split the list of input streams.
 			for(core::Size i=1, imax=posestreams.size(); i<=imax; ++i) {
@@ -2063,7 +2073,7 @@ int main(int argc, char *argv[]) {
 			//Store the tag name:
 			allfiles.push_back(posstruct_tag);
 		}
-		positive_master_silentstruct->fill_struct(positive_master, curstructtag);
+		positive_master_silentstruct->fill_struct(positive_master, curstructtag_positive);
 		//printf("Master proc transmitting positive state.\n"); fflush(stdout); //DELETE ME
 		transmit_silent_struct (0, 0, 0, positive_master_silentstruct, true); //BROADCAST the silent struct
 	} else { //All other procs receive the positive state from the master proc
@@ -2105,7 +2115,7 @@ int main(int argc, char *argv[]) {
 
 	if (procnum==0 || !option[v_savememory]()) {
 		//Store backbone conformation:
-		allstates_master.push_back(positive_master_silentstruct);
+		//allstates_master.push_back(positive_master_silentstruct);
 
 		//Read PCA matrix for native state, if specified:
 		if(option[v_PCAfile_native].user()) {
@@ -2211,9 +2221,19 @@ int main(int argc, char *argv[]) {
 			for(core::Size ir = 1; ir<=positive_master.n_residue(); ir++){
 				currentseq[ir-1]=fastaseq[ir-1];
 			}
+			mutate_to_sequence(currentseq, positive_master, dpositions, betapositions, true); //Mutate the positive master pose in proc 0 to the starting sequence
 		}		
 	}
 	if (procnum==0) {printf("Starting sequence is %s (%lu residues).\n", currentseq, (core::Size)strlen(currentseq)); fflush(stdout);}
+
+	if (procnum==0 || !option[v_savememory]()) {
+		//Store backbone conformation:
+		//We need to re-generate the silent structure because the sequence might have changed due to a FASTA file.
+		core::io::silent::SilentStructOP temp_master_silentstruct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+		temp_master_silentstruct->fill_struct(positive_master, curstructtag_positive);
+		allstates_master.push_back(temp_master_silentstruct);
+	}
+
 
 	MPI_Barrier(MPI_COMM_WORLD); //To be on the safe side
 
@@ -2338,6 +2358,10 @@ int main(int argc, char *argv[]) {
 					if(!option[v_savememory]()) MPI_Barrier(MPI_COMM_WORLD); //For testing only -- probably not needed.
 					if (procnum==0) {printf("--END negative state %lu--\n", ifile); fflush(stdout);}
 					continue; //Don't add this state to the set of negative states.
+				}
+
+				if(procnum==0 && option[in::file::fasta].user()) {
+					mutate_to_sequence(currentseq, importpose, dpositions, betapositions, true); //Mutate the negative state pose in proc 0 to the starting sequence
 				}
 
 				//Store the state descriptor:

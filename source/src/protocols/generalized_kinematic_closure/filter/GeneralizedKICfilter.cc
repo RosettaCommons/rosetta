@@ -444,8 +444,15 @@ bool GeneralizedKICfilter::apply_atom_pair_distance(
 	copy_loop_pose_to_original( fullpose, looppose, residue_map); //Copy the loop conformation to the full pose.
 
 	if(fullpose.residue(res1).xyz(at1).distance_squared( fullpose.residue(res2).xyz(at2) ) > dist_cutoff_sq) {
-		TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.flush();
-		return false;
+		if(!greaterthan) {
+			TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.flush();
+			return false;
+		}
+	} else {
+		if(greaterthan) {
+			TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.flush();
+			return false;
+		}
 	}
 
 	TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() passed." << std::endl; TR.flush();
