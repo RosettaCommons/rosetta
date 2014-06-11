@@ -16,7 +16,7 @@
 -chemically_conjugated_docking:E2_residue 85
 
 #in production runs, set GOOD values.  Here, it is set to bad values, because it won't find a good conformation in a reasonable amount of time for the integration test.
--chemically_conjugated_docking:scorefilter 2000
+#-chemically_conjugated_docking:scorefilter 2000
 -chemically_conjugated_docking:SASAfilter 0
 
 #plausible good values.  Ideally run a test of 100 structures and set these equal to the best of those 100
