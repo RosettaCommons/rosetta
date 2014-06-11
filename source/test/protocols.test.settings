@@ -505,6 +505,7 @@ testinputfiles = [
 	"toolbox/task_operations/ProteinInterfaceDesignOperation.u",
 	"toolbox/task_operations/ProteinInterfaceDesignOperation_all.u",
 	"toolbox/task_operations/RestrictInterGroupVector.u",
+        "toolbox/task_operations/RestrictToMoveMapChiWNeighbors.u",
 	"util/aHo_antibody.pdb",
 	"util/demo_loopfile.loops",
 	"util/test_in.pdb",

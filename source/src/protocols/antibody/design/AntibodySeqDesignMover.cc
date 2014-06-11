@@ -8,11 +8,11 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody_design/AntibodyCDRDesigner.cc
+/// @file protocols/antibody_design/AntibodySeqDesignMover.cc
 /// @brief 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.hh>
 #include <protocols/antibody/design/ConservativeDesignOperation.hh>
 #include <protocols/antibody/design/ResidueProbDesignOperation.hh>
 #include <protocols/antibody/design/DesignInstructionsParser.hh>
@@ -45,7 +45,7 @@
 //#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("protocols.antibody.design.AntibodyCDRDesigner");
+static basic::Tracer TR("protocols.antibody.design.AntibodySeqDesignMover");
 
 namespace protocols {
 namespace antibody {
@@ -55,8 +55,9 @@ namespace design {
 	
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
-
-AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info){
+	using namespace core::kinematics;
+	
+AntibodySeqDesignMover::AntibodySeqDesignMover(AntibodyInfoOP ab_info){
 	ab_info_ = ab_info;
 	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
@@ -71,7 +72,7 @@ AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info){
 	
 }
 
-AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info, std::string instruction_path){
+AntibodySeqDesignMover::AntibodySeqDesignMover(AntibodyInfoOP ab_info, std::string instruction_path){
 	ab_info_ = ab_info;
 	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
@@ -86,10 +87,10 @@ AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info, std::string ins
 	read_instructions(instruction_path_);//Any settings found in this file override cmdline defaults
 }
 
-AntibodyCDRDesigner::~AntibodyCDRDesigner(){}
+AntibodySeqDesignMover::~AntibodySeqDesignMover(){}
 
 void
-AntibodyCDRDesigner::read_command_line_options(){
+AntibodySeqDesignMover::read_command_line_options(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	
@@ -107,23 +108,23 @@ AntibodyCDRDesigner::read_command_line_options(){
 }
 
 void
-AntibodyCDRDesigner::read_instructions(std::string instruction_path){
+AntibodySeqDesignMover::read_instructions(std::string instruction_path){
 	DesignInstructionsParser parser = DesignInstructionsParser(ab_info_, instruction_path);
 	parser.read_cdr_design_instructions(instructions_);
 }
 
 std::string
-AntibodyCDRDesigner::get_name() const {
-	return "AntibodyCDRDesigner";
+AntibodySeqDesignMover::get_name() const {
+	return "AntibodySeqDesignMover";
 }
 
 void
-AntibodyCDRDesigner::set_cdr(const CDRNameEnum cdr, bool const setting){
+AntibodySeqDesignMover::set_cdr(const CDRNameEnum cdr, bool const setting){
 	instructions_[cdr].design = setting;
 }
 
 void
-AntibodyCDRDesigner::set_cdr_only(const CDRNameEnum cdr, bool const setting){
+AntibodySeqDesignMover::set_cdr_only(const CDRNameEnum cdr, bool const setting){
 	if (setting==true){
 		set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, false);
 		set_cdr(cdr, true);
@@ -135,7 +136,7 @@ AntibodyCDRDesigner::set_cdr_only(const CDRNameEnum cdr, bool const setting){
 }
 
 void
-AntibodyCDRDesigner::set_cdr_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, bool const setting){
+AntibodySeqDesignMover::set_cdr_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, bool const setting){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr(cdr, setting);
@@ -143,12 +144,12 @@ AntibodyCDRDesigner::set_cdr_range(const CDRNameEnum cdr_start, const CDRNameEnu
 }
 
 void
-AntibodyCDRDesigner::set_use_conservative_design(CDRNameEnum const cdr, bool const setting){
+AntibodySeqDesignMover::set_use_conservative_design(CDRNameEnum const cdr, bool const setting){
 	instructions_[cdr].conservative_design = setting;
 }
 
 void
-AntibodyCDRDesigner::set_use_conservative_design_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, const bool setting){
+AntibodySeqDesignMover::set_use_conservative_design_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, const bool setting){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_use_conservative_design(cdr, setting);
@@ -156,57 +157,57 @@ AntibodyCDRDesigner::set_use_conservative_design_range(const CDRNameEnum cdr_sta
 }
 
 void
-AntibodyCDRDesigner::set_use_turn_conservation(const bool setting){
+AntibodySeqDesignMover::set_use_turn_conservation(const bool setting){
 	turn_conservation_ = setting;
 }
 
 void
-AntibodyCDRDesigner::set_basic_design(const bool setting){
+AntibodySeqDesignMover::set_basic_design(const bool setting){
 	basic_design_ = setting;
 }
 
 void
-AntibodyCDRDesigner::set_neighbor_detection_dis(core::Real const neighbor_distance){
+AntibodySeqDesignMover::set_neighbor_detection_dis(core::Real const neighbor_distance){
 	neighbor_dis_ = neighbor_distance;
 }
 
 void
-AntibodyCDRDesigner::set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn) {
+AntibodySeqDesignMover::set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn) {
 	scorefxn_ = scorefxn->clone();
 }
 
 void
-AntibodyCDRDesigner::set_rounds(const core::Size rounds){
+AntibodySeqDesignMover::set_rounds(const core::Size rounds){
 	rounds_ = rounds;
 }
 
 void
-AntibodyCDRDesigner::set_probability_data_cutoff(core::Size const cutoff){
+AntibodySeqDesignMover::set_probability_data_cutoff(core::Size const cutoff){
 	prob_cutoff_ = cutoff;
 }
 
 void
-AntibodyCDRDesigner::set_zero_prob_weight_at(const core::Real weight){
+AntibodySeqDesignMover::set_zero_prob_weight_at(const core::Real weight){
 	zero_prob_weight_ = weight;
 }
 
 void
-AntibodyCDRDesigner::no_design_proline(const bool setting) {
+AntibodySeqDesignMover::no_design_proline(const bool setting) {
 	no_design_proline_ = setting;
 }
 
 void
-AntibodyCDRDesigner::set_design_method(DesignTypeEnum const design_method){
+AntibodySeqDesignMover::set_design_method(DesignTypeEnum const design_method){
 	design_method_ = design_method;
 }
 
 void
-AntibodyCDRDesigner::set_use_cluster_constraints(const bool setting) {
+AntibodySeqDesignMover::set_use_cluster_constraints(const bool setting) {
 	use_cluster_constraints_ = setting;
 }
 
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
-AntibodyCDRDesigner::setup_probability_data(core::pose::Pose& pose){
+AntibodySeqDesignMover::setup_probability_data(core::pose::Pose& pose){
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager();
 	std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set;
 	vector1<CDRNameEnum> no_data_cdrs= manager.load_cdr_design_data(ab_info_, pose, prob_set, prob_cutoff_, instructions_);
@@ -219,7 +220,7 @@ AntibodyCDRDesigner::setup_probability_data(core::pose::Pose& pose){
 }
 
 void
-AntibodyCDRDesigner::remove_conservative_design_residues_from_prob_set(vector1<core::Size> const & positions, std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set){
+AntibodySeqDesignMover::remove_conservative_design_residues_from_prob_set(vector1<core::Size> const & positions, std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set){
 	for (core::Size i = 1; i<= positions.size(); ++i){
 		std::map< core::Size, std::map<core::chemical::AA, core::Real > >::iterator it = prob_set.find(positions[i]);
 		if ( it != prob_set.end()){
@@ -230,7 +231,7 @@ AntibodyCDRDesigner::remove_conservative_design_residues_from_prob_set(vector1<c
 }
 
 vector1<core::Size>
-AntibodyCDRDesigner::get_conservative_design_residues(core::pose::Pose& pose){
+AntibodySeqDesignMover::get_conservative_design_residues(core::pose::Pose& pose){
 	
 	vector1<core::Size> conservative_positions;
 	
@@ -250,7 +251,7 @@ AntibodyCDRDesigner::get_conservative_design_residues(core::pose::Pose& pose){
 }
 
 void
-AntibodyCDRDesigner::disable_design_cdrs(core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose ) {
+AntibodySeqDesignMover::disable_design_cdrs(core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose ) {
 	for (core::Size i = 1; i <= CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		if (! instructions_[cdr].design){
@@ -260,7 +261,7 @@ AntibodyCDRDesigner::disable_design_cdrs(core::pack::task::TaskFactoryOP tf, cor
 }
 
 void
-AntibodyCDRDesigner::disable_design_cdr(CDRNameEnum cdr, core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose) {
+AntibodySeqDesignMover::disable_design_cdr(CDRNameEnum cdr, core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose) {
 	
 	//One restrict op per CDR.  That way we can pop them off the TF  individually if we need to.
 	core::pack::task::operation::RestrictResidueToRepackingOP restrict = new core::pack::task::operation::RestrictResidueToRepacking();
@@ -273,7 +274,7 @@ AntibodyCDRDesigner::disable_design_cdr(CDRNameEnum cdr, core::pack::task::TaskF
 }
 
 core::pack::task::TaskFactoryOP
-AntibodyCDRDesigner::setup_task_factory(core::pose::Pose & pose){
+AntibodySeqDesignMover::setup_task_factory(core::pose::Pose & pose){
 	
 
 	protocols::loops::LoopsOP cdr_loops = new protocols::loops::Loops();
@@ -337,7 +338,7 @@ AntibodyCDRDesigner::setup_task_factory(core::pose::Pose & pose){
 }
 
 bool
-AntibodyCDRDesigner::cdr_has_constraints(core::pose::Pose const & pose, CDRNameEnum const cdr, std::string const constraint_type){
+AntibodySeqDesignMover::cdr_has_constraints(core::pose::Pose const & pose, CDRNameEnum const cdr, std::string const constraint_type){
 	using namespace core::scoring::constraints;
 	
 	core::Size start_res = ab_info_->get_CDR_start(cdr, pose);
@@ -368,7 +369,7 @@ AntibodyCDRDesigner::cdr_has_constraints(core::pose::Pose const & pose, CDRNameE
 }
 
 void
-AntibodyCDRDesigner::setup_constraints(core::pose::Pose & pose){
+AntibodySeqDesignMover::setup_constraints(core::pose::Pose & pose){
 	
 	//We only add dihedral or coordinate constraints if they are not present for the pose at hand in each CDR.
 	for (core::SSize i = 1; i<= CDRNameEnum_total; ++i){
@@ -390,7 +391,7 @@ AntibodyCDRDesigner::setup_constraints(core::pose::Pose & pose){
 
 
 void
-AntibodyCDRDesigner::apply(core::pose::Pose& pose){
+AntibodySeqDesignMover::apply(core::pose::Pose& pose){
 
 		using namespace protocols::antibody;
 		using namespace protocols::antibody::design;
@@ -489,7 +490,7 @@ AntibodyCDRDesigner::apply(core::pose::Pose& pose){
 		
 		
 		mc->recover_low(pose);
-		TR << "AntibodyCDRDesigner complete." << std::endl;
+		TR << "AntibodySeqDesignMover complete." << std::endl;
 }
 
 

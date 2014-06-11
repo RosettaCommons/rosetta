@@ -677,7 +677,7 @@ public:  // DoFs/xyzs
 	);
 
 
-	/// @brief Returns the bond angle defined by  <atom[1-3]>
+	/// @brief Returns the bond angle defined by  <atom[1-3]> through the AtomTree
 	Real
 	bond_angle(
 		AtomID const & atom1,
@@ -696,7 +696,7 @@ public:  // DoFs/xyzs
 	);
 
 
-	/// @brief Returns the bond length between  <atom1>  and  <atom2>
+	/// @brief Returns the bond length between  <atom1>  and  <atom2> through the AtomTree
 	Real
 	bond_length(
 		AtomID const & atom1,

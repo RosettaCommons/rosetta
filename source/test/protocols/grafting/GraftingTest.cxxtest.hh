@@ -18,6 +18,7 @@
 
 // Project Headers
 #include <protocols/grafting/AnchoredGraftMover.hh>
+#include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/util.hh>
 
 // Core Headers
@@ -33,6 +34,7 @@ class GraftingTest : public CxxTest::TestSuite {
 	core::pose::Pose scaffold_pose; //Full PDB
 	core::pose::Pose framework_pose; //PDB Missing a cdr.
 	core::pose::Pose piece; //CDR to graft.
+	
 	core::Size start;
 	core::Size end;
 	core::Size flex;
@@ -40,9 +42,7 @@ class GraftingTest : public CxxTest::TestSuite {
 	core::Size cter_overhang;
 	core::Size starting_residues;
 	core::Size insert_size;
-	protocols::grafting::AnchoredGraftMoverOP anchored_grafter;
 
-    
     
 public:
 	
@@ -56,13 +56,12 @@ public:
 		starting_residues = scaffold_pose.total_residue();
 		nter_overhang=3;
 		cter_overhang=3;
-		flex=0;
+		flex=2;
 		start = 23;
 		end = 35;
 		insert_size = piece.total_residue()-nter_overhang-cter_overhang;
-		anchored_grafter = new protocols::grafting::AnchoredGraftMover(start, end);
 		TR <<"Setup"<<std::endl;
-    }
+	}
 	
 	void tearDown(){
 		scaffold_pose.clear();
@@ -70,8 +69,8 @@ public:
 		piece.clear();
 	}
     
-    void test_utility_functions(){
-		
+	void test_utility_functions(){
+		using namespace core::kinematics;
 		TR<<"Return region"<<std::endl;
 		core::pose::Pose new_region = protocols::grafting::return_region(piece, 1+nter_overhang, piece.total_residue()-cter_overhang);
 		TS_ASSERT_EQUALS(insert_size, new_region.total_residue());
@@ -89,27 +88,97 @@ public:
 		TR<<"Insert Region"<<std::endl;
 		core::pose::Pose new_pose = protocols::grafting::insert_pose_into_pose(scaffold_copy, new_region, start, start+1);
 		TS_ASSERT_EQUALS(new_pose.total_residue(), starting_residues);
+		
+		TR << "Combine MoveMaps" << std::endl;
+		
+		MoveMapOP scaffold_mm = new MoveMap();
+		MoveMapOP insert_mm = new MoveMap();
+		
+		scaffold_mm->set_bb(23, true);
+		scaffold_mm->set_bb(22, true);
+		scaffold_mm->set_bb(35, true);
+		scaffold_mm->set_bb(36, true);
+		
+		insert_mm->set_bb(nter_overhang+1, true);
+		insert_mm->set_bb(nter_overhang+2, true);
+		insert_mm->set_bb(piece.total_residue()-cter_overhang, true);
+		insert_mm->set_bb(piece.total_residue()-cter_overhang - 1, true);
+		
+		MoveMapOP combined_mm = protocols::grafting::combine_movemaps_post_insertion(
+			scaffold_mm, insert_mm, 23, 35, piece.total_residue() - nter_overhang - cter_overhang, cter_overhang);
+		
+		TS_ASSERT(combined_mm->get_bb(21) == false);
+		TS_ASSERT(combined_mm->get_bb(23) == true);
+		TS_ASSERT(combined_mm->get_bb(22) == true);
+		TS_ASSERT(combined_mm->get_bb(35) == true);
+		TS_ASSERT(combined_mm->get_bb(36) == true);
+		TS_ASSERT(combined_mm->get_bb(37) == false);
+		TS_ASSERT(combined_mm->get_bb(24) == true);
+		TS_ASSERT(combined_mm->get_bb(25) == true);
+		TS_ASSERT(combined_mm->get_bb(34) == true);
+		TS_ASSERT(combined_mm->get_bb(33) == true);
+		
 	}
     
-    void test_anchoredgraft(){
+	
+	void test_graft_classes(){
+		using namespace protocols::grafting;
+		AnchoredGraftMoverOP anchored_grafter = new protocols::grafting::AnchoredGraftMover(start, end);
+		CCDEndsGraftMoverOP cdr_grafter = new protocols::grafting::CCDEndsGraftMover(start, end, piece, nter_overhang, cter_overhang);
+		////////////Anchored Graft /////////////////////////////////////
 		
-		//test::UTracer UT("protocols/grafting/GraftingAnchoredGraftFunctions.u");
+		
+		
+
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
 		
-		TR<<"Testing AnchoredGraft"<<std::endl;
+		
+		//core::Real rms = core::scoring::CA_rmsd(scaffold_copy, scaffold_pose);
+		//core::Real rms_assert = 0.0;
+		//TS_ASSERT_EQUALS(rms, rms_assert);
+		
+		//////////////CCD Ends Graft ///////////////////////////////////
+		scaffold_copy = core::pose::Pose(scaffold_pose);
+		TR<<"Testing CCDEndsGraftMover Mover"<<std::endl;
+		cdr_grafter->set_scaffold_flexibility(flex, flex);
+		cdr_grafter->set_skip_sampling(false);
+		
+		cdr_grafter->final_repack(true);
+		cdr_grafter->stop_at_closure(true);
+		
+		cdr_grafter->set_insert_flexibility(0, 0);
+		cdr_grafter->set_cycles(5);
+		cdr_grafter->apply(scaffold_copy);
+		scaffold_copy.dump_pdb("test.pdb");
+		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues);
+		//core::Real rms = core::scoring::CA_rmsd(scaffold_copy, scaffold_pose);
+		//core::Real rms_assert = 0.0;
+		
+		
+		TR<< "Testing AnchoredGraft Mover" << std::endl;
+		
 		anchored_grafter->set_piece(piece, nter_overhang, cter_overhang);
-		anchored_grafter->superimpose_overhangs_heavy(scaffold_pose, true, true);
+		
 		anchored_grafter->set_scaffold_flexibility(flex, flex);
 		anchored_grafter->set_insert_flexibility(0, 0);
-		anchored_grafter->set_cycles(1);
-		anchored_grafter->set_use_double_loop_double_CCD_arms(true);
-		anchored_grafter->apply(scaffold_pose);
-        
+		anchored_grafter->final_repack(false);
+		anchored_grafter->stop_at_closure(false);
+		anchored_grafter->set_cycles(2);
+		anchored_grafter->apply(scaffold_copy);
+		scaffold_copy.dump_pdb("test2.pdb");
+		
 		TS_ASSERT_EQUALS(scaffold_pose.total_residue(), starting_residues);
-		core::Real rms = core::scoring::CA_rmsd(scaffold_copy, scaffold_pose);
-		core::Real rms_assert = 0.0;
-		TS_ASSERT_EQUALS(rms, rms_assert);
-    }
+		
+	}
+	
+	void ref_test(core::pose::Pose & pose){
+		TR <<"Testing PoseOP from pose ref" << std::endl;
+		core::pose::PoseOP new_pose = new core::pose::Pose(pose);
+		if (! new_pose){
+			TR <<"New pose is empty!!" << std::endl;
+		}
+		TR<< "N: "<<new_pose->total_residue() << std::endl;
+	}
     
 };
 

@@ -128,13 +128,16 @@ extract_continuous_chunks(core::pose::Pose const & pose,
 		core::Real const CA_CA_distance_cutoff = 4);
 
 
-///@brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop  if outside cutoff.
-///  Returns boolean and the position of found chainbreak (0 if none found).
+///@brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residues if outside cutoff.
+///  Returns boolean and the position of found wonky peptide bond (0 if none found).
+///  Does not use AtomTree to get angles/lengths, assumes resnum is connected to resnum +1
 /// @details Values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
 ///  out of this range. -JAB
 ///  Berkholz DS, Shapovalov MV, Dunbrack RL Jr, Karplus PA (2009)
 ///  Conformation dependence of backbone geometry in proteins. Structure 17: 1316-1325.
 ///  deviation is +/- from the min/max values of the CDL.
+///
+/// @param Stringent cutoffs are: 1.5, 15, 15
 ///
 std::pair<bool, core::Size>
 has_severe_pep_bond_geom_issues(
@@ -146,7 +149,34 @@ has_severe_pep_bond_geom_issues(
 	core::Real allowed_ca_c_n_deviation = 25.0,
 	core::Real allowed_c_n_ca_deviation = 25.0);
 
+///@brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residue outside cutoff.
+///  Returns boolean and the position of found wonky peptide bond (0 if none found).
+///  Does not use AtomTree to get angles/lengths, assumes resnum is connected to resnum +1
+/// @details Values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
+///  out of this range. -JAB
+///  Berkholz DS, Shapovalov MV, Dunbrack RL Jr, Karplus PA (2009)
+///  Conformation dependence of backbone geometry in proteins. Structure 17: 1316-1325.
+///  deviation is +/- from the min/max values of the CDL.
+///
+/// @param Stringent cutoffs are: 1.5, 15, 15
+///
+std::pair<bool, core::Size>
+has_severe_pep_bond_geom_issues(
+	core::pose::Pose const & pose,
+	core::Size resnum,
+	bool check_bonds = true,
+	bool check_angles = true,
+	core::Real max_c_n_dis = 2.0,
+	core::Real allowed_ca_c_n_deviation = 25.0,
+	core::Real allowed_c_n_ca_deviation = 25.0);
+	
+	
 } //loops
 } //protocols
 
 #endif
+
+
+
+
+

@@ -18,8 +18,8 @@
 #include <protocols/antibody/design/AntibodyDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
-#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -60,10 +60,10 @@ public:
 	//
 	
 	void
-	set_graft_designer(AntibodyGraftDesignerOP graft_designer);
+	set_graft_designer(AntibodyGraftDesignMoverOP graft_designer);
 	
 	void
-	set_sequence_designer(AntibodyCDRDesignerOP seq_designer);
+	set_sequence_designer(AntibodySeqDesignMoverOP seq_designer);
 	
 	void
 	set_modeler(AntibodyDesignModelerOP modeler);
@@ -133,8 +133,8 @@ private:
 	///@brief add cluster info to the pose.  Needs to go into pose and not jd2 due to Ensemble generation.
 	void add_cluster_comments_to_pose(core::pose::Pose & pose);
 	
-	AntibodyGraftDesignerOP graft_designer_;
-	AntibodyCDRDesignerOP seq_designer_;
+	AntibodyGraftDesignMoverOP graft_designer_;
+	AntibodySeqDesignMoverOP seq_designer_;
 	AntibodyDesignModelerOP modeler_;
 	
 	ScoreFunctionOP scorefxn_;

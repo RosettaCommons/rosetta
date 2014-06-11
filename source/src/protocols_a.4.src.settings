@@ -33,6 +33,7 @@ sources = {
 	],
 	"protocols/grafting":[
 		"AnchoredGraftMover",
+		"CCDEndsGraftMover",
 		"GraftMoverBase",
 		"util",
         ],

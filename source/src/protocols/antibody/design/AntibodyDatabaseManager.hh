@@ -19,8 +19,8 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/design/AntibodyDatabaseManager.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
-#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 
 //Core Headers

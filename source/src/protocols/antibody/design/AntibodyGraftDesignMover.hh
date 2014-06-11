@@ -8,16 +8,16 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody/design/AntibodyGraftDesigner.hh
+/// @file protocols/antibody/design/AntibodyGraftDesignMover.hh
 /// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + North_AHO numbering scheme
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody_design_AntibodyGraftDesigner_hh
-#define INCLUDED_protocols_antibody_design_AntibodyGraftDesigner_hh
+#ifndef INCLUDED_protocols_antibody_design_AntibodyGraftDesignMover_hh
+#define INCLUDED_protocols_antibody_design_AntibodyGraftDesignMover_hh
 
 // Project Includes
-#include <protocols/antibody/design/AntibodyGraftDesigner.fwd.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -25,7 +25,7 @@
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 // Protocol Includes
-#include <protocols/grafting/AnchoredGraftMover.hh>
+#include <protocols/grafting/CCDEndsGraftMover.fwd.hh>
 
 // Core Includes
 #include <core/pose/Pose.hh>
@@ -97,15 +97,15 @@ namespace design{
 ///			2) Use class interface settings to control sampling.  Loads CDRs from AntibodyDatabase.
 ///			3) Use set_cdr_sets to set your own CDRs to graft.
 ///  
-class AntibodyGraftDesigner: public protocols::moves::Mover {
+class AntibodyGraftDesignMover: public protocols::moves::Mover {
 
 public:
 	
-	AntibodyGraftDesigner(AntibodyInfoOP ab_info);
+	AntibodyGraftDesignMover(AntibodyInfoOP ab_info);
 	
-	AntibodyGraftDesigner(AntibodyInfoOP ab_info, std::string instruction_path);
+	AntibodyGraftDesignMover(AntibodyInfoOP ab_info, std::string instruction_path);
 			
-	virtual ~AntibodyGraftDesigner();
+	virtual ~AntibodyGraftDesignMover();
 	
 	///@brief Reads default CDRGraftInstruction file and creates structs.  
 	void
@@ -387,7 +387,7 @@ private:
 	PDBMap pdbmap_; //Maps CDRSet to PDB tags
 	
 	AntibodyInfoOP ab_info_;
-	AnchoredGraftMoverOP graft_mover_; 
+	CCDEndsGraftMoverOP graft_mover_; 
 	ScoreFunctionOP scorefxn_;
 	AntibodyDesignModelerOP modeler_;
 	protocols::moves::MonteCarloOP mc_;
@@ -421,4 +421,4 @@ private:
 
 
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyGraftDesigner.hh
+#endif	//INCLUDED_protocols_antibody_design_AntibodyGraftDesignMover.hh

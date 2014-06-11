@@ -14,7 +14,7 @@
 
 // Antibody Headers
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
 
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>

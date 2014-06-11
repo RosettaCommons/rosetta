@@ -12,7 +12,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.hh>
 #include <protocols/antibody/clusters/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -26,7 +26,7 @@
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 
-///@brief Wrapper to AntibodyCDRDesigner due to needed ab_info object.  Designs CDRs based on cluster using probability and conservative strategies.
+///@brief Wrapper to AntibodySeqDesignMover due to needed ab_info object.  Designs CDRs based on cluster using probability and conservative strategies.
 ///
 class Designer : public protocols::moves::Mover {
 
@@ -36,7 +36,7 @@ class Designer : public protocols::moves::Mover {
 
 	virtual std::string
 	get_name() const{
-		return "AntibodyCDRDesignerWrapper";
+		return "AntibodySeqDesignMoverWrapper";
 	}
 
 	void
@@ -47,7 +47,7 @@ class Designer : public protocols::moves::Mover {
 		AntibodyInfoOP ab_info = new AntibodyInfo(pose, North_AHO);
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);
-		AntibodyCDRDesigner des = new AntibodyCDRDesigner(ab_info);
+		AntibodySeqDesignMover des = new AntibodySeqDesignMover(ab_info);
 		des->apply(pose);
 	}
 

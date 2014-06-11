@@ -8,15 +8,15 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody_design/AntibodyCDRDesigner.hh
+/// @file protocols/antibody_design/AntibodySeqDesignMover.hh
 /// @brief  Mover class that designs cdrs using a number of different strategies.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody_design_AntibodyCDRDesigner_hh
-#define INCLUDED_protocols_antibody_design_AntibodyCDRDesigner_hh
+#ifndef INCLUDED_protocols_antibody_design_AntibodySeqDesignMover_hh
+#define INCLUDED_protocols_antibody_design_AntibodySeqDesignMover_hh
 
-#include <protocols/antibody/design/AntibodyCDRDesigner.fwd.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -40,18 +40,18 @@ namespace design {
 ///@brief Designs antibody CDR structures using a variety of different methods.  Main methods involve using cluster-based sequence probability statistics and conservative design strategies 
 /// to limit unknown structural effects caused by aggressive design.  Uses North_AHO numbering and cluster-based design.  Part of Rosetta Antibody Designer.
 ///
-class AntibodyCDRDesigner : public protocols::moves::Mover {
+class AntibodySeqDesignMover : public protocols::moves::Mover {
 
 public:
 	
 	//Default constructor for RS?
-	//AntibodyCDRDesigner();
+	//AntibodySeqDesignMover();
 	
-	AntibodyCDRDesigner(AntibodyInfoOP ab_info);
+	AntibodySeqDesignMover(AntibodyInfoOP ab_info);
 	
-	AntibodyCDRDesigner(AntibodyInfoOP ab_info, std::string instruction_path);
+	AntibodySeqDesignMover(AntibodyInfoOP ab_info, std::string instruction_path);
 	
-	virtual ~AntibodyCDRDesigner();
+	virtual ~AntibodySeqDesignMover();
 	
 	virtual
 	std::string
@@ -226,5 +226,5 @@ private:
 } //antibody
 } //protocols
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyCDRDesigner.hh
+#endif	//INCLUDED_protocols_antibody_design_AntibodySeqDesignMover.hh
 

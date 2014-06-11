@@ -137,10 +137,14 @@ public:
 
 		//(jadolfbr) Set AnchoredGraftMover options.
 		grafter.set_scaffold_flexibility(Nter_flexibility, Cter_flexibility);
-        grafter.set_cycles(cycles);
-        core::pose::Pose piece(anchor);
+		grafter.set_cycles(cycles);
+		core::pose::Pose piece(anchor);
 		grafter.set_piece(piece, 0, 0);
-		grafter.set_mintype("dfpmin_armijo");//mintype from pose_into_pose
+		grafter.set_mintype("dfpmin_armijo_nonmonotone");//mintype from pose_into_pose
+		
+		grafter.final_repack(false);
+		grafter.stop_at_closure(false);
+		
 		Pose combined(scaffold);//Copy the scaffold into combined before passing to Mover.
 		grafter.apply(combined);
 

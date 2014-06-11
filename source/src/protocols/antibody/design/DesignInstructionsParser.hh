@@ -15,8 +15,8 @@
 #ifndef INCLUDED_protocols_antibody_design_DESIGNINSTRUCTIONSPARSER_HH
 #define INCLUDED_protocols_antibody_design_DESIGNINSTRUCTIONSPARSER_HH
 
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
-#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <utility/vector1.hh>

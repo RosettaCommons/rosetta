@@ -53,11 +53,11 @@ sources = {
 		"util",
 	],
 	"protocols/antibody/design":[
-		"AntibodyCDRDesigner",
+		"AntibodySeqDesignMover",
 		"AntibodyDatabaseManager",
 		"AntibodyDesignModeler",
 		"AntibodyDesignMover",
-		"AntibodyGraftDesigner",
+		"AntibodyGraftDesignMover",
 		"ConservativeDesignOperation",
 		"DesignInstructionsParser",
 		"ResidueProbDesignOperation",

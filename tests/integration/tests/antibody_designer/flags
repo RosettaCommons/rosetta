@@ -16,7 +16,7 @@
 -antibody:design:do_post_design_modeling false
 -antibody:design:do_post_graft_design_modeling false
 #-antibody:design:randomize_graft_cdrs true
--antibody:design:dock_post_graft true
+-antibody:design:dock_post_graft false
 -antibody:design:top_graft_designs 2
 
 -antibody:design:graft_rounds 1

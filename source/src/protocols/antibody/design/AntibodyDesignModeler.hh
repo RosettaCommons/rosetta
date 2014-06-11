@@ -71,6 +71,12 @@ public:
 	void
 	set_neighbor_detection_dis(core::Real neighbor_distance);
 	
+	core::Real
+	get_interface_detection_dis(){ return interface_dis_;}
+	
+	core::Real
+	get_neighbor_detection_dis(){ return neighbor_dis_; }
+	
 	
 	///@brief Override the command line default of LH to L or H or something strange.  Used primarily for bivalent antibody design, or if you are designing an antibody
 	/// to primarily bind light or heavy chain.  This is only used by docking and rigid-body jump minimization functions.

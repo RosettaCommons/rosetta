@@ -392,6 +392,21 @@ public:
 	void
 	set_weight( ScoreType const & t, Real const & setting );
 
+	/// @brief Sets the weight for ScoreType  <t>  to  <setting> if weight is originally zero
+	///
+	/// example(s):
+	///     scorefxn.set_weight(fa_sol,.5)
+	/// See also:
+	///     ScoreFunction
+	///     ScoreFunction.get_weight
+	///     ScoreFunction.weights
+	///     ScoreType
+	///     create_score_function
+	///     name_from_score_type
+	///     score_type_from_name
+	void
+	set_weight_if_zero( ScoreType const & t, Real const & setting);
+	
 	/// @brief Returns the weight for ScoreType  <t>
 	///
 	/// examples(s):

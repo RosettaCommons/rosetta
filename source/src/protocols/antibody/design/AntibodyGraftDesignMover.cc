@@ -8,12 +8,12 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody/design/AntibodyGraftDesigner.cc
+/// @file protocols/antibody/design/AntibodyGraftDesignMover.cc
 /// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + North_AHO numbering scheme
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Project Includes
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -34,7 +34,7 @@
 
 // Protocol Includes
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/grafting/AnchoredGraftMover.hh>
+#include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/util.hh>
 #include <protocols/forge/methods/chainbreak_eval.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
@@ -67,13 +67,13 @@ namespace design{
 	using namespace core;
 	using core::Size;
 	
-AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info):
+AntibodyGraftDesignMover::AntibodyGraftDesignMover(AntibodyInfoOP ab_info):
 	graft_mover_(NULL),
 	scorefxn_(NULL)
 {
 	overhang_ = 3;
 	ab_info_=ab_info;
-	max_linear_chainbreak_ = .35;
+	max_linear_chainbreak_ = .6;
 	modeler_ = new AntibodyDesignModeler(ab_info_);
 	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
@@ -82,7 +82,7 @@ AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info):
 	set_defaults();
 }
 
-AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info, std::string instruction_path) :
+AntibodyGraftDesignMover::AntibodyGraftDesignMover(AntibodyInfoOP ab_info, std::string instruction_path) :
 	graft_mover_(NULL),
 	scorefxn_(NULL)
 {
@@ -98,10 +98,10 @@ AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info, std::string
 	set_defaults();
 }
 
-AntibodyGraftDesigner::~AntibodyGraftDesigner(){}
+AntibodyGraftDesignMover::~AntibodyGraftDesignMover(){}
 
 void
-AntibodyGraftDesigner::set_defaults(){
+AntibodyGraftDesignMover::set_defaults(){
 	///Conservative defaults.  Defaults here are also read and set from a database file.  To allow run-time manipulations and testing.
 	
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
@@ -117,7 +117,7 @@ AntibodyGraftDesigner::set_defaults(){
 }
 
 void
-AntibodyGraftDesigner::read_command_line_options(){
+AntibodyGraftDesignMover::read_command_line_options(){
 	set_graft_rounds(basic::options::option [basic::options::OptionKeys::antibody::design::graft_rounds]());
 	instruction_path_ = basic::options::option [basic::options::OptionKeys::antibody::design::instructions]();
 	set_keep_top_designs(basic::options::option [basic::options::OptionKeys::antibody::design::top_graft_designs]());
@@ -132,7 +132,7 @@ AntibodyGraftDesigner::read_command_line_options(){
 }
 
 void
-AntibodyGraftDesigner::set_scorefunction(ScoreFunctionOP scorefxn){
+AntibodyGraftDesignMover::set_scorefunction(ScoreFunctionOP scorefxn){
 	scorefxn_=scorefxn->clone();
 	if (scorefxn_->get_weight(core::scoring::dihedral_constraint)==0){
 		scorefxn_->set_weight(core::scoring::dihedral_constraint, 1.0);
@@ -140,36 +140,36 @@ AntibodyGraftDesigner::set_scorefunction(ScoreFunctionOP scorefxn){
 }
 
 void
-AntibodyGraftDesigner::set_keep_top_designs(core::Size top_designs){
+AntibodyGraftDesignMover::set_keep_top_designs(core::Size top_designs){
 	num_top_designs_ = top_designs;
 }
 
 void
-AntibodyGraftDesigner::set_dock_post_graft(bool dock_post_graft){
+AntibodyGraftDesignMover::set_dock_post_graft(bool dock_post_graft){
 	dock_post_graft_ = dock_post_graft;
 }
 
 void
-AntibodyGraftDesigner::set_dock_rounds(core::Size dock_rounds){
+AntibodyGraftDesignMover::set_dock_rounds(core::Size dock_rounds){
 	dock_rounds_ = dock_rounds;
 }
 
 void
-AntibodyGraftDesigner::set_pack_post_graft(bool pack_post_graft){
+AntibodyGraftDesignMover::set_pack_post_graft(bool pack_post_graft){
 	pack_post_graft_ = pack_post_graft;
 }
 
 void
-AntibodyGraftDesigner::set_rb_min_post_graft(bool rb_min_post_graft){
+AntibodyGraftDesignMover::set_rb_min_post_graft(bool rb_min_post_graft){
 	rb_min_post_graft_ = rb_min_post_graft;
 }
 void
-AntibodyGraftDesigner::set_graft_rounds(core::Size graft_rounds){
+AntibodyGraftDesignMover::set_graft_rounds(core::Size graft_rounds){
 	graft_rounds_=graft_rounds;
 }
 
 void
-AntibodyGraftDesigner::set_cluster(const CDRNameEnum cdr, const CDRClusterEnum cluster, const bool setting){
+AntibodyGraftDesignMover::set_cluster(const CDRNameEnum cdr, const CDRClusterEnum cluster, const bool setting){
 	if (setting==true){
 		cdr_instructions_[cdr].leave_out_clusters.push_back(cluster);
 	}
@@ -179,14 +179,14 @@ AntibodyGraftDesigner::set_cluster(const CDRNameEnum cdr, const CDRClusterEnum c
 }
 
 void
-AntibodyGraftDesigner::set_cdr_set(CDRSet& cdr_set, CDRClusterMap & cdr_cluster_map, core::Size overhang){
+AntibodyGraftDesignMover::set_cdr_set(CDRSet& cdr_set, CDRClusterMap & cdr_cluster_map, core::Size overhang){
 	cdr_set_ = cdr_set;
 	cdr_cluster_map_ = cdr_cluster_map;
 	overhang_ = overhang;
 }
 
 void
-AntibodyGraftDesigner::set_cluster_range(
+AntibodyGraftDesignMover::set_cluster_range(
 		const CDRNameEnum cdr,
 		const CDRClusterEnum cluster_start,
 		const CDRClusterEnum cluster_end,
@@ -205,12 +205,12 @@ AntibodyGraftDesigner::set_cluster_range(
 }
 
 void
-AntibodyGraftDesigner::set_mintype(const CDRNameEnum cdr_name, MinTypeEnum mintype){
+AntibodyGraftDesignMover::set_mintype(const CDRNameEnum cdr_name, MinTypeEnum mintype){
 	cdr_instructions_[cdr_name].mintype = mintype;
 }
 
 void
-AntibodyGraftDesigner::set_mintype_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, MinTypeEnum mintype){
+AntibodyGraftDesignMover::set_mintype_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, MinTypeEnum mintype){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_mintype(cdr, mintype);
@@ -218,24 +218,24 @@ AntibodyGraftDesigner::set_mintype_range(const CDRNameEnum cdr_start, const CDRN
 }
 
 void
-AntibodyGraftDesigner::set_min_rb(const CDRNameEnum cdr_name, const bool setting){
+AntibodyGraftDesignMover::set_min_rb(const CDRNameEnum cdr_name, const bool setting){
 	cdr_instructions_[cdr_name].min_rb = setting;
 }
 
 void
-AntibodyGraftDesigner::set_min_rb_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, bool const setting){
+AntibodyGraftDesignMover::set_min_rb_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, bool const setting){
 	for (core::SSize i = cdr_start; i <= cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_min_rb(cdr, setting);
 	}
 }
 void
-AntibodyGraftDesigner::set_min_neighbor_sc(const CDRNameEnum cdr_name, bool const setting){
+AntibodyGraftDesignMover::set_min_neighbor_sc(const CDRNameEnum cdr_name, bool const setting){
 	cdr_instructions_[cdr_name].min_neighbor_sc = setting;
 }
 
 void
-AntibodyGraftDesigner::set_min_neighbor_sc_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, bool const setting){
+AntibodyGraftDesignMover::set_min_neighbor_sc_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, bool const setting){
 	for (core::SSize i = cdr_start; i <= cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_min_neighbor_sc(cdr, setting);
@@ -243,13 +243,13 @@ AntibodyGraftDesigner::set_min_neighbor_sc_range(const CDRNameEnum cdr_start, co
 }
 
 void
-AntibodyGraftDesigner::set_cdr(const CDRNameEnum cdr, const bool setting){
+AntibodyGraftDesignMover::set_cdr(const CDRNameEnum cdr, const bool setting){
 	//cdrs_to_use_[cdr]=setting;
 	cdr_instructions_[cdr].graft= setting;
 }
 
 void
-AntibodyGraftDesigner::set_cdr_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, const bool setting){
+AntibodyGraftDesignMover::set_cdr_range(const CDRNameEnum cdr_start, const CDRNameEnum cdr_end, const bool setting){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		cdr_instructions_[cdr].graft = setting;
@@ -257,12 +257,12 @@ AntibodyGraftDesigner::set_cdr_range(const CDRNameEnum cdr_start, const CDRNameE
 }
 
 void
-AntibodyGraftDesigner::set_cdr_stay_in_native_cluster(const CDRNameEnum cdr, const bool setting){
+AntibodyGraftDesignMover::set_cdr_stay_in_native_cluster(const CDRNameEnum cdr, const bool setting){
 	cdr_instructions_[cdr].stay_native_cluster = setting;
 }
 
 void
-AntibodyGraftDesigner::set_cdr_range_stay_in_native_cluster(
+AntibodyGraftDesignMover::set_cdr_range_stay_in_native_cluster(
 
 				const CDRNameEnum cdr_start, 
 				const CDRNameEnum cdr_end,
@@ -276,12 +276,12 @@ AntibodyGraftDesigner::set_cdr_range_stay_in_native_cluster(
 }
 
 void
-AntibodyGraftDesigner::set_cdr_stay_in_type(const CDRNameEnum cdr, const core::Size type, const bool setting){
+AntibodyGraftDesignMover::set_cdr_stay_in_type(const CDRNameEnum cdr, const core::Size type, const bool setting){
 	cdr_instructions_[cdr].cluster_types[type] = setting;
 }
 
 void
-AntibodyGraftDesigner::set_cdr_range_stay_in_type(
+AntibodyGraftDesignMover::set_cdr_range_stay_in_type(
 
 				const CDRNameEnum cdr_start,
 				const CDRNameEnum cdr_end,
@@ -295,12 +295,12 @@ AntibodyGraftDesigner::set_cdr_range_stay_in_type(
 }
 
 void
-AntibodyGraftDesigner::set_cdr_min_length(CDRNameEnum const cdr, core::Size length){
+AntibodyGraftDesignMover::set_cdr_min_length(CDRNameEnum const cdr, core::Size length){
 	cdr_instructions_[cdr].min_length = length;
 }
 
 void
-AntibodyGraftDesigner::set_cdr_min_length_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, core::Size length){
+AntibodyGraftDesignMover::set_cdr_min_length_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, core::Size length){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr_min_length(cdr, length);
@@ -308,12 +308,12 @@ AntibodyGraftDesigner::set_cdr_min_length_range(const CDRNameEnum cdr_start, CDR
 }
 
 void
-AntibodyGraftDesigner::set_cdr_max_length(CDRNameEnum const cdr, core::Size length){
+AntibodyGraftDesignMover::set_cdr_max_length(CDRNameEnum const cdr, core::Size length){
 	cdr_instructions_[cdr].max_length = length;
 }
 
 void
-AntibodyGraftDesigner::set_cdr_max_length_range(const CDRNameEnum cdr_start,const CDRNameEnum cdr_end, core::Size length){
+AntibodyGraftDesignMover::set_cdr_max_length_range(const CDRNameEnum cdr_start,const CDRNameEnum cdr_end, core::Size length){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr_max_length(cdr, length);
@@ -321,12 +321,12 @@ AntibodyGraftDesigner::set_cdr_max_length_range(const CDRNameEnum cdr_start,cons
 }
 
 void
-AntibodyGraftDesigner::set_cdr_cluster_centers_only(const CDRNameEnum cdr, bool setting){
+AntibodyGraftDesignMover::set_cdr_cluster_centers_only(const CDRNameEnum cdr, bool setting){
 	cdr_instructions_[cdr].cluster_centers_only = setting; 
 }
 
 void
-AntibodyGraftDesigner::set_cdr_cluster_centers_only_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, bool setting){
+AntibodyGraftDesignMover::set_cdr_cluster_centers_only_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, bool setting){
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr_cluster_centers_only(cdr, setting);
@@ -334,7 +334,7 @@ AntibodyGraftDesigner::set_cdr_cluster_centers_only_range(const CDRNameEnum cdr_
 }
 
 void
-AntibodyGraftDesigner::setup_native_clusters(pose::Pose & pose){
+AntibodyGraftDesignMover::setup_native_clusters(pose::Pose & pose){
 
 	ab_info_->setup_CDR_clusters(pose);
 	
@@ -345,7 +345,7 @@ AntibodyGraftDesigner::setup_native_clusters(pose::Pose & pose){
 }
 
 void
-AntibodyGraftDesigner::initialize_cdr_set(){
+AntibodyGraftDesignMover::initialize_cdr_set(){
 	AntibodyDatabaseManagerOP manager = new AntibodyDatabaseManager();
 	std::pair< CDRSet,  CDRClusterMap > result_pair = manager->load_cdrs_for_grafting(ab_info_, cdr_instructions_, pdbmap_);
 	cdr_set_ = result_pair.first; cdr_cluster_map_ = result_pair.second;
@@ -353,13 +353,13 @@ AntibodyGraftDesigner::initialize_cdr_set(){
 }
 
 void
-AntibodyGraftDesigner::read_instructions(std::string instruction_path){
+AntibodyGraftDesignMover::read_instructions(std::string instruction_path){
 	DesignInstructionsParser parser = DesignInstructionsParser(ab_info_, instruction_path);
 	parser.read_cdr_graft_instructions(cdr_instructions_);
 }
 
 void
-AntibodyGraftDesigner::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end) {
+AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end) {
   
 	//using core::pose::PDBInfo;
   
@@ -391,17 +391,18 @@ AntibodyGraftDesigner::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClust
 }
  
 void
-AntibodyGraftDesigner::set_default_graft_settings(){
+AntibodyGraftDesignMover::set_default_graft_settings(){
 	graft_mover_->set_cycles(20);
-	graft_mover_->set_use_smooth_centroid_settings(true);
 	graft_mover_->set_scaffold_flexibility(2, 2);
 	graft_mover_->set_insert_flexibility(0, 0);
-	graft_mover_->set_use_double_loop_double_CCD_arms(true);
+	graft_mover_->final_repack(true);
+	graft_mover_->stop_at_closure(true);
+	graft_mover_->neighbor_dis(modeler_->get_neighbor_detection_dis());
 	//graft_mover_->set_skip_sampling(true);
 }
 
 void
-AntibodyGraftDesigner::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameEnum>& cdrs_to_design) {
+AntibodyGraftDesignMover::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameEnum>& cdrs_to_design) {
 	
 	for (core::Size i = 1; i <= cdrs_to_design.size(); ++i){
 		TR << "Randomizing native CDR structure: "<< ab_info_->get_CDR_name(cdrs_to_design[i]) << std::endl;
@@ -411,7 +412,7 @@ AntibodyGraftDesigner::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameEnum
 }
 
 bool
-AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size index){
+AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size index){
 	
 	//Get CDR start/end in PDBInfo is now dynamic.  As long as pdb_info is not obsolete
 	//This should go into a log, we should figure out how to have this info written to the resulting file.
@@ -437,7 +438,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 	for (core::Size i = 1; i <= max_attempts; ++i){
 		pose::Pose piece = pose::Pose(*(cdr_set_[cdr][index]));
 		graft_mover_->set_piece(piece, overhang_, overhang_);
-		graft_mover_->superimpose_overhangs_heavy(temp_pose, ca_only , true); //Superimposes first heavy atoms of overhang
+		//graft_mover_->superimpose_overhangs_heavy(temp_pose, ca_only , true); //Superimposes first heavy atoms of overhang
 		graft_mover_->apply(temp_pose);
 		
 		
@@ -553,16 +554,9 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 	else if (cdr_instructions_[cdr].mintype == centroid_relax){
 		modeler_->relax_cdrs(pose, true /*centroid_mode*/ , false, rb_min, dock_chains);//Change this if need be.
 	}
-	else if (cdr_instructions_[cdr].mintype == repack && pack_post_graft_ == false){
-		if (cdr_instructions_[cdr].min_neighbor_sc){
-			modeler_->repack_CDRs_and_neighbors(pose);
-		}
-		else{
-			graft_mover_->repack_connection_and_residues_in_movemap_and_piece(pose, scorefxn_);
-		}
-	}
+	//Side chains are already repacked by default after graft mover
 	else if (cdr_instructions_[cdr].mintype == minimize){
-		graft_mover_->repack_connection_and_residues_in_movemap_and_piece(pose, scorefxn_);
+		//graft_mover_->repack_connection_and_residues_in_movemap_and_piece(pose, scorefxn_);
 		if (cdr_instructions_[cdr].min_neighbor_sc){
 			modeler_->minimize_cdrs_and_neighbor_sc(pose, rb_min, dock_chains);
 		}
@@ -571,7 +565,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 		}
 	}
 	else {
-		graft_mover_->repack_connection_and_residues_in_movemap(pose, scorefxn_);
+		//graft_mover_->repack_connection_and_residues_in_movemap(pose, scorefxn_);
 	}
 	
 	if (rb_min_post_graft_){
@@ -582,7 +576,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 }
 
 void
-AntibodyGraftDesigner::check_for_top_designs(pose::Pose & pose){
+AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 	
 	//Can be refactored to use utility::TopScoreSelector
 	//From mc algorithm, you can have multiple poses that are equivalent...
@@ -625,7 +619,7 @@ AntibodyGraftDesigner::check_for_top_designs(pose::Pose & pose){
 
 ///@brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
 vector1< vector1 < Size > >
-AntibodyGraftDesigner::get_cdr_set_index_list(){
+AntibodyGraftDesignMover::get_cdr_set_index_list(){
 	vector1< vector1< Size > > index_list; 
 	vector1<core::Size> cdr_set_totals(6, 0);
 	
@@ -641,7 +635,7 @@ AntibodyGraftDesigner::get_cdr_set_index_list(){
 }
 
 void
-AntibodyGraftDesigner::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNameEnum>& cdrs_to_design){
+AntibodyGraftDesignMover::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNameEnum>& cdrs_to_design){
 	TR << "Running basic monte carlo algorithm " << std::endl;
 
 	top_scores_.push_back((*scorefxn_)(pose));
@@ -670,7 +664,7 @@ AntibodyGraftDesigner::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNameE
 }
 
 void
-AntibodyGraftDesigner::run_deterministic_graft_algorithm(pose::Pose & pose,vector1<CDRNameEnum>& cdrs_to_design){
+AntibodyGraftDesignMover::run_deterministic_graft_algorithm(pose::Pose & pose,vector1<CDRNameEnum>& cdrs_to_design){
 	//Note:  Not feasible with >= 4 CDRs to try at each position. Should not be used with docking on.
 	
 	/*
@@ -722,7 +716,7 @@ AntibodyGraftDesigner::run_deterministic_graft_algorithm(pose::Pose & pose,vecto
 }
 
 void
-AntibodyGraftDesigner::apply(pose::Pose & pose){
+AntibodyGraftDesignMover::apply(pose::Pose & pose){
 
 	if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 		utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
@@ -798,7 +792,7 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 	if (extend_native_cdrs_){
 		extend_native_cdrs(pose, cdrs_to_design);
 	}
-	graft_mover_ = new AnchoredGraftMover(ab_info_->get_CDR_start(cdrs_to_design[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design[1], pose)+1);
+	graft_mover_ = new CCDEndsGraftMover(ab_info_->get_CDR_start(cdrs_to_design[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design[1], pose)+1);
 	
 	//TR << "Superimposing ALL CDRs to graft onto target."<<std::endl;
 	//for (core::Size i=1; i<=cdrs_to_design.size(); ++i){
@@ -862,8 +856,8 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 ////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::string
-AntibodyGraftDesigner::get_name() const{
-	return "AntibodyGraftDesigner";
+AntibodyGraftDesignMover::get_name() const{
+	return "AntibodyGraftDesignMover";
 }
 
 

@@ -8,13 +8,13 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody_design/AntibodyCDRDesigner.fwd.hh
+/// @file protocols/antibody/design/AntibodyGraftDesignMover.fwd.hh
 /// @brief 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody_design_AntibodyCDRDesigner_fwd_hh
-#define INCLUDED_protocols_antibody_design_AntibodyCDRDesigner_fwd_hh
+#ifndef INCLUDED_protocols_antibody_design_AntibodySeqDesignMover_fwd_hh
+#define INCLUDED_protocols_antibody_design_AntibodySeqDesignMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -26,15 +26,16 @@ namespace antibody{
 namespace design{
 
 // Forward
-class AntibodyCDRDesigner;
+class AntibodySeqDesignMover;
 
-typedef utility::pointer::owning_ptr< AntibodyCDRDesigner > AntibodyCDRDesignerOP;
-typedef utility::pointer::owning_ptr< AntibodyCDRDesigner const > AntibodyCDRDesignerCOP;
+typedef utility::pointer::owning_ptr< AntibodySeqDesignMover > AntibodySeqDesignMoverOP;
+typedef utility::pointer::owning_ptr< AntibodySeqDesignMover const > AntibodySeqDesignMoverCOP;
 
 
 } //namespace design
 } //namespace antibody
 } //namespace protocols
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyCDRDesigner.fwd.hh
+
+#endif	//INCLUDED_protocols_antibody_design_AntibodyGraftDesignMover.fwd.hh
 

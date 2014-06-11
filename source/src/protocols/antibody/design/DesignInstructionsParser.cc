@@ -14,7 +14,7 @@
 
 #include <protocols/antibody/design/DesignInstructionsParser.hh>
 
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>

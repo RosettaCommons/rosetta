@@ -9,8 +9,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/RestrictToInterfaceOperation.cxxtest.hh
-/// @brief  test for RestrictToInterfaceOperation
+/// @brief  test for RestrictToOperations
 /// @author Steven Lewis
+/// @author Jared Adolf-Bryfogle
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -23,7 +24,7 @@
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictInterGroupVectorOperation.hh>
-
+#include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
 
 // project headers
 #include <core/types.hh>
@@ -34,6 +35,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/kinematics/MoveMap.hh>
 
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
@@ -60,7 +62,7 @@ public:
 	RestrictOperationsTests(){
 		core_init();
 		//reuse for comparison with Interface class
-		core::import_pose::centroid_pose_from_pdb( pose, "core/conformation/dock_in.pdb" );
+		core::import_pose::centroid_pose_from_pdb( pose, "core/conformation/dock_in.pdb" ); //JAB - centroid for speed?
 	}
 
 	virtual ~RestrictOperationsTests() {}
@@ -200,5 +202,51 @@ public:
 
 
 	}//end RestrictInterGroupVectorOperation
-
+	
+	void test_RestrictToMoveMapChiOperation() {
+		using namespace core::pack::task;
+		using namespace core::kinematics;
+		using namespace protocols::toolbox::task_operations;
+		using utility::vector1;
+		
+		MoveMapOP mm = new MoveMap();
+		for (core::Size i = 1; i <=10; ++i){
+			mm->set_chi(i, true);
+		}
+		mm->show(std::cout);
+		
+		TaskFactory tf;
+		
+		RestrictToMoveMapChiOperationOP mm_op = new RestrictToMoveMapChiOperation(mm);
+		tf.push_back(mm_op);
+		PackerTaskOP task = tf.create_task_and_apply_taskoperations(pose);
+		task->show(std::cout);
+		
+		vector1<bool> repacking_residues(pose.total_residue(), false);
+		for (core::Size i = 1; i <=10; ++i){
+			repacking_residues[i] = true;
+		}
+		TS_ASSERT(repacking_residues == task->repacking_residues());
+		
+		//Testing neighbor detection.
+		
+		tf.clear();
+		mm_op->set_include_neighbors(true);
+		mm_op->set_cutoff_distance(10.0);
+		tf.push_back(mm_op);
+		task = tf.create_task_and_apply_taskoperations(pose);
+		test::UTracer UT_MMNEI("protocols/toolbox/task_operations/RestrictToMoveMapChiWNeighbors.u");
+		
+		UT_MMNEI << *task << std::endl;
+		
+		//Testing design.
+		tf.clear();
+		mm_op->set_include_neighbors(false);
+		mm_op->set_design(true);
+		tf.push_back(mm_op);
+		task = tf.create_task_and_apply_taskoperations(pose);
+		TS_ASSERT(repacking_residues == task->designing_residues());
+		
+	}
+	
 };//end class

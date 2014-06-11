@@ -11,7 +11,7 @@
 /// @brief Designs an antibody using GraftDesign.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/clusters/util.hh>
@@ -68,7 +68,7 @@ public:
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);
 
-		AntibodyGraftDesignerOP ab_designer = new AntibodyGraftDesigner(ab_info);
+		AntibodyGraftDesignMoverOP ab_designer = new AntibodyGraftDesignMover(ab_info);
 		ab_designer->apply(pose);
 		utility::vector1< core::pose::PoseOP > result_poses;
 		result_poses = ab_designer->get_top_designs();

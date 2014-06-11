@@ -15,8 +15,8 @@
 #include <protocols/antibody/design/AntibodyDesignMover.hh>
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
-#include <protocols/antibody/design/AntibodyGraftDesigner.hh>
-#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
+#include <protocols/antibody/design/AntibodySeqDesignMover.hh>
 #include <protocols/antibody/clusters/util.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -138,13 +138,13 @@ AntibodyDesignMover::set_do_post_design_modeling(bool setting){
 }
 
 void
-AntibodyDesignMover::set_graft_designer(AntibodyGraftDesignerOP graft_designer){
+AntibodyDesignMover::set_graft_designer(AntibodyGraftDesignMoverOP graft_designer){
 	graft_designer_ = graft_designer;
 }
 
 
 void
-AntibodyDesignMover::set_sequence_designer(AntibodyCDRDesignerOP seq_designer){
+AntibodyDesignMover::set_sequence_designer(AntibodySeqDesignMoverOP seq_designer){
 	seq_designer_ = seq_designer;
 }
 
@@ -278,12 +278,12 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	}
 	
 	if (! graft_designer_ ){
-		graft_designer_ = new AntibodyGraftDesigner(ab_info_);
+		graft_designer_ = new AntibodyGraftDesignMover(ab_info_);
 		graft_designer_->set_scorefunction(scorefxn_);
 	}
 	
 	if (! seq_designer_ ){
-		seq_designer_ = new AntibodyCDRDesigner(ab_info_);
+		seq_designer_ = new AntibodySeqDesignMover(ab_info_);
 		seq_designer_->set_scorefxn(design_scorefxn_);
 	}
     
