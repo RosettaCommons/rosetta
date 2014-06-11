@@ -161,15 +161,15 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 					tr.Warning << "Intracontacts detected between multiple components.  Calculating sc based off of the last component with intracontacts.  Separate sc calculations are recommended for each component with intracontacts." << std::endl;
 				}
 			}
-					
+
 			utility::vector1<Size> full_intracomp_resis = core::pose::symmetry::get_full_intracomponent_resis(pose, sym_dof_name_list[sym_dof_index]);
 			utility::vector1<Size> full_intracomp_neighbor_resis = core::pose::symmetry::get_full_intracomponent_neighbor_resis(pose, sym_dof_name_list[sym_dof_index], 12.0 );
-			
+
 			//core::pose::Pose full_intracomp_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, sym_dof_name_list[sym_dof_index]);
 			//core::pose::Pose full_intracomp_neighbor_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, sym_dof_name_list[sym_dof_index], 12.0);
 			//full_intracomp_subpose.dump_pdb("full_intracomp_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
 			//full_intracomp_neighbor_subpose.dump_pdb("full_intracomp_neighbor_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-			
+
  			for (core::Size i=1; i<=full_intracomp_resis.size(); i++) {
 				scc_.AddResidue(0,pose.residue(full_intracomp_resis[i]));
 			}
@@ -301,6 +301,13 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 		}
 		return scc_.GetResults().sc;
 	}
+	TR.Error << "Issue computing shape complementarity value - returning -1 instead." << std::endl;
+	if( write_int_area_ ) {
+		// Need to add placeholder so that all structures in a run have the same number of scorefile headers
+		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+		std::string column_header = this->get_user_defined_name() + "_int_area";
+		job->add_string_real_pair(column_header, -1 );
+	}
 	return -1;
 }
 
@@ -312,6 +319,7 @@ bool ShapeComplementarityFilter::apply( Pose const & pose ) const
 	scc_.Reset();
 
 	if(!compute( pose ))
+		TR.Error << "Issue computing shape complementarity value - failing filter." << std::endl;
 		return false;
 
 	Real sc = scc_.GetResults().sc;
