@@ -301,7 +301,7 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 		}
 		return scc_.GetResults().sc;
 	}
-	TR.Error << "Issue computing shape complementarity value - returning -1 instead." << std::endl;
+	tr.Error << "Issue computing shape complementarity value - returning -1 instead." << std::endl;
 	if( write_int_area_ ) {
 		// Need to add placeholder so that all structures in a run have the same number of scorefile headers
 		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -319,7 +319,7 @@ bool ShapeComplementarityFilter::apply( Pose const & pose ) const
 	scc_.Reset();
 
 	if(!compute( pose ))
-		TR.Error << "Issue computing shape complementarity value - failing filter." << std::endl;
+		tr.Error << "Issue computing shape complementarity value - failing filter." << std::endl;
 		return false;
 
 	Real sc = scc_.GetResults().sc;

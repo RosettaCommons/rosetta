@@ -321,7 +321,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 		strncpy(scatom.atom, residue.atom_name(i).c_str()+1, sizeof(scatom.atom)-1);
 
 		if(!AssignAtomRadius(scatom)) {
-			TR.Error << "Failed to add residue " << residue.name3() << " to surface - cannot find radius for " << residue.atom(i).name() << std::endl;
+			TR.Error << "Failed to add residue " << residue.name3() << " to surface - cannot find radius for " << residue.atom_name(i) << std::endl;
 			return 0;
 		}
 		scatoms.push_back(scatom);
