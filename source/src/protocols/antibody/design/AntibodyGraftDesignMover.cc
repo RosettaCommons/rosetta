@@ -433,7 +433,6 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 	//If the superposition is really wacky for some reason, we can get chainbreaks.  To overcome this,:
 	//Next - need to min on a jump or multiple jumps as this adaptation does not always work - but it will take too many cycles to use normal graft algorithm.
 	core::Size max_attempts = 1;
-	bool ca_only = false;
 	pose::Pose temp_pose = pose;
 	for (core::Size i = 1; i <= max_attempts; ++i){
 		pose::Pose piece = pose::Pose(*(cdr_set_[cdr][index]));
