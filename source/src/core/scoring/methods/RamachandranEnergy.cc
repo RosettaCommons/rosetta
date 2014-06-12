@@ -96,7 +96,7 @@ RamachandranEnergy::residue_energy(
 		) {
 			Real rama_score, drama_dphi, drama_dpsi;
 			if(potential_.is_normally_connected(rsd)) {
-			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
 			} else {
 				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
 			}

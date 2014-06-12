@@ -1,0 +1,11 @@
+TO DO:
+--Get omega working with NCAAs --> use is_alpha() and is_beta().
+--Add ALPHA_AA, L_AA, D_AA properties to appropriate noncanonicals.
+--Generalize D-amino acid scoring --> add MIRROR_BACKBONE_AA and MIRROR_ROTAMER_AA options.
+--Add a PROLINE_LIKE property (first check what the CYCLIC property does!)
+
+TO DOCUMENT:
+--PROPERTIES (ALPHA_AA, L_AA, D_AA, BETA_AA)
+--BACKBONE_AA
+--ROTAMER_AA + PROTON_CHI
+--METAL_BINDING (and metal binding atoms)

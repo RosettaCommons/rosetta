@@ -1164,6 +1164,11 @@ public:
 		return connect_map_[ resconn_index ];
 	}
 
+	/// @brief Returns the size (number of elements) in the connect_map_ object.
+	///
+	core::Size
+	connect_map_size() const { return connect_map_.size(); }
+
 	void
 	clear_residue_connections();
 

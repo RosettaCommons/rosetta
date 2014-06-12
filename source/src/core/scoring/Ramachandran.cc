@@ -546,7 +546,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	Real & drama_dpsi
 ) const {
 
-	if(!basic::options::option[basic::options::OptionKeys::score::rama_score_nonstandard_connections] || res.connection_incomplete(1) || res.connection_incomplete(2)) { //If the rama_score_nonstandard_connections flag is not set, OR this is an open terminus, don't score this residue.
+	if(res.connection_incomplete(1) || res.connection_incomplete(2)) { //If this is an open terminus, don't score this residue.
 		rama=0.0;
 		drama_dphi=0.0;
 		drama_dpsi=0.0;
@@ -795,9 +795,14 @@ bool
 Ramachandran::is_normally_connected (
 	conformation::Residue const & res
 ) const {
-	if(!basic::options::option[basic::options::OptionKeys::score::rama_score_nonstandard_connections]) return true;
-	if (res.connection_incomplete(1) || res.connection_incomplete(2)) return true;
-	return ( (res.residue_connection_partner(1) == res.seqpos()-1) && (res.residue_connection_partner(2) == res.seqpos()+1) );
+	if(res.is_upper_terminus() || res.is_lower_terminus() || res.connect_map_size()<2 ) return true; //Termini register as normally connected since they're not to be scored by rama.
+
+	bool firstconn = true, secondconn=true;
+
+	if(!res.connection_incomplete(1)) firstconn= (res.residue_connection_partner(1) == res.seqpos()-1);
+	if(!res.connection_incomplete(2)) secondconn= (res.residue_connection_partner(2) == res.seqpos()+1);
+
+	return (firstconn && secondconn);
 }
 
 void
