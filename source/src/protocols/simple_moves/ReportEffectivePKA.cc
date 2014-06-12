@@ -56,6 +56,11 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+
 static basic::Tracer TR( "protocols.simple_moves.ReportEffectivePKA" );
 
 namespace protocols {
@@ -67,7 +72,7 @@ ReportEffectivePKA::ReportEffectivePKA() : moves::Mover() {
 }
 
 void ReportEffectivePKA::init() {
-    IonizableResidue his = IonizableResidue( "HIS", 6.3, 1.0 );
+    IonizableResidue his = IonizableResidue( "HIS", 6.1, 1.0 );
     his.add_neutral_restype("HIS");
     his.add_neutral_restype("HIS_D");
     his.add_ionized_restype("HIS_P");
@@ -189,17 +194,25 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
                 
                 using namespace ObjexxFCL::format;
                 //TR.Debug << "Effective pKa of " << rsd_i.type().name3() << I(4,i) << " is: " << F(8,3, score_ionized) << F(8,3, score_neutral) << F(8,3, score_ionized_ref) << F(8,3, score_neutral_ref) << std::endl;
-                TR << "Effective pKa of " << rsd_i.type().name3() << I(4,i) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << std::endl;
+                
+                core::Size output_resi = i;
+                if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
+                    output_resi = pose.pdb_info()->number( i );
+                }
+
+                
+                TR << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << std::endl;
 
 
                 // tag
                 core::pose::RemarkInfo remark;
-                std::ostringstream oss;
+                std::stringstream oss;
                 
-                oss << "Effective pKa of " << rsd_i.type().name3() << I(4,i) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << std::endl;
-                
-                remark.num = 1;	remark.value = oss.str();
-                pose.pdb_info()->remarks().push_back( remark );
+                protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+
+                oss << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36);
+                job->add_string(oss.str());
+
             }
         }
 	}
@@ -218,7 +231,7 @@ ReportEffectivePKA::parse_my_tag(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-    scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", datamap, "tala" )->clone();
+    scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", datamap, "talaris2013" )->clone();
 	if( tag->hasOption( "task_operations" ) ) {
 		TR << "WARNING: task_operations only active for proteins" << std::endl;
         task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
