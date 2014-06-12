@@ -296,6 +296,7 @@ static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueC
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
 static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > ResidueTypeConstraintMoverCreator;
+static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
 static MoverRegistrator< simple_moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;

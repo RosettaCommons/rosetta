@@ -572,6 +572,7 @@ sources = {
 		"ReturnSidechainMover",
 		"ResTypeFragmentMover",
 		"RingConformationMover",
+        "ReportEffectivePKA",
 		"RotamerizeMover",
 		"RotamerTrialsMinMover",
 		"RotamerTrialsMover",
