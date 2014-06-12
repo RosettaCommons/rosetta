@@ -318,9 +318,10 @@ bool ShapeComplementarityFilter::apply( Pose const & pose ) const
 {
 	scc_.Reset();
 
-	if(!compute( pose ))
+	if(!compute( pose )) {
 		tr.Error << "Issue computing shape complementarity value - failing filter." << std::endl;
 		return false;
+	}
 
 	Real sc = scc_.GetResults().sc;
 	Real area = scc_.GetResults().area;
