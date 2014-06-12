@@ -31,6 +31,7 @@ core.pack.dunbrack: Total memory on Dunbrack Libraries: [0-9]+ bytes.
 current_directory=
 reating tricubic splines
 core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created [0-9]+ residue types
+core.chemical.ResidueTypeSet: Finished initializing centroid residue type set.  Created [0-9]+ residue types
 core.mm.MMTorsionLibrary: MM torsion sets added fully assigned: [0-9]+; wildcard: [0-9]+ and [0-9]+ virtual parameter
 core.scoring.mm.MMLJEnergyTable: Initializing MM LJ Energy Tables with [0-9]+ atom types
 core.mm.MMLJLibrary: MM lj sets added: [0-9]+
