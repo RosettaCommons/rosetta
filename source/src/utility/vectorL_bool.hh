@@ -349,6 +349,24 @@ public: // Indexers
 	}
 
 
+	/// @brief Inversion operator
+	inline
+	vectorL< L, bool, A > invert() const
+	{
+		vectorL< L, bool, A > opposite(*this);
+		for ( Size i = 1; i <= opposite.size(); ++i) {
+			opposite[i] = !opposite[i];
+		}
+		return opposite;
+	}
+
+	/// @brief useful function -- was commented out previously due, I think, to a conflict with has() in OptionKeys! Now renamed to has_value().
+ 	inline
+ 	bool
+ 	has_value( bool const & t ) const {
+ 		return ( std::find(begin(), end(), t ) != end() );
+ 	}
+
 public: // Comparison
 
 

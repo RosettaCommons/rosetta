@@ -56,6 +56,7 @@
 // tracer
 #include <basic/Tracer.hh>
 
+
 // C++ Headers
 
 // ObjexxFCL Headers
@@ -283,8 +284,8 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 
   LocalPosition stationary_attchmnt_pt;
   if( stationary_label_ == GENERATE_STATIONARY_ATTACHMENT_POINT ) {
-    ResidueSubset stationary_residues = !mobile_residues_;
-    stationary_attchmnt_pt = LocalPosition( "BASE", stationary_residues.index( true ) );
+	  ResidueSubset stationary_residues = mobile_residues_.invert();
+	  stationary_attchmnt_pt = LocalPosition( "BASE", stationary_residues.index( true ) );
   } else {
     stationary_attchmnt_pt = LocalPosition( stationary_label_, 1 );
   }
