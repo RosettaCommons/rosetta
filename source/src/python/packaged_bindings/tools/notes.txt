@@ -1,0 +1,15 @@
+
+
+List of C++ Classes that we plan to make subclassable in Python
+
+C++ class                      Python subclassable class
+
+Mover                          PyMover
+Filter
+TaskOperation
+
+MoverCreator,
+FilterCreator,
+TaskOperationCreator,
+ResLvlTaskOperation,
+ResLvlTaskOperationCreator,
