@@ -239,6 +239,10 @@ def main(args):
       help="Generate bidings only for utility, numeric, basic and core libraries excluding protocols. Use this for debug purposes (default is False)",
     )
 
+    parser.add_option("--ignore-dependency",
+      action="store_true", default=False,
+      help="Skip source dependency calculation. This is mostly debug option, use with care! (default is False)",
+    )
 
     parser.add_option("-s", "--sleep",
       default=0,
@@ -953,18 +957,27 @@ def getAllRosettaSourceFiles():
     return extra_objs, all_sources
 
 
-def calculate_source_modification_date(source, binding_source_path, depth):
-    ''' calculate source modification date (including .hh files) and return it as date object
+_source_modification_date_cache_ = {}
+def calculate_source_modification_date(source, binding_source_path, ignore=set()):
+    ''' Calculate source modification date (including .hh files) and return it as date object. We also cache results to mitigate IO delays...
     '''
-    latest = None
-    if os.path.isfile(source): latest = max(latest, os.path.getmtime(source))
-    if depth and os.path.isfile(source):
-        for line in file(source):
-            if line.startswith('#include'):
-                include = line.partition('<')[2].partition('>')[0]
-                include = os.path.join(binding_source_path, './../../' + include)
-                if os.path.isfile(include): latest = max(latest, calculate_source_modification_date(include, binding_source_path, depth-1) )
-    return latest
+    source = os.path.abspath(source)
+    if source not in _source_modification_date_cache_:
+        latest = -12600000  # 1969:08:08 花事了!
+        if source in ignore: return latest
+        if  os.path.isfile(source):
+            latest = max(latest, os.path.getmtime(source))
+            if Options.ignore_dependency: return latest
+            for line in file(source):
+                if line.startswith('#include'):
+                    include = line.partition('<')[2].partition('>')[0]
+                    include = os.path.abspath( os.path.join(binding_source_path, './../../' + include) )
+                    if os.path.isfile(include): latest = max(latest, calculate_source_modification_date(include, binding_source_path, ignore.union([source]) ) )
+
+        _source_modification_date_cache_[source] = latest
+
+    return _source_modification_date_cache_[source]
+
 
 
 def get_vc_compile_options():
@@ -1104,7 +1117,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             hh =  s[:-2] + 'hh'  # (generate .hh file from cc
             fwd =  s[:-2] + 'fwd.hh'  # (generate .fwd.hh file from cc
 
-            source_modification_date = calculate_source_modification_date(s, binding_source_path, depth=1)
+            source_modification_date = calculate_source_modification_date(s, binding_source_path)
             #source_modification_date = calculate_source_modification_date('core/pose/Pose.cc', binding_source_path, depth=1)
             #sys.exit(0)
 
@@ -1285,7 +1298,7 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
             obj = os.path.join( obj_dir, f[:-3]+'obj')
             objs.append(obj)
 
-            source_modification_date = calculate_source_modification_date(source, binding_source_path, depth=0)
+            source_modification_date = calculate_source_modification_date(source, binding_source_path)
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < source_modification_date:
                 command_line = get_windows_compile_command_line(source=source, output=obj,
@@ -1541,8 +1554,8 @@ class ModuleBuilder:
                         if os.path.isfile(self.by_hand_beginning_file) and os.path.getmtime(self.by_hand_beginning_file) > os.path.getmtime(self.all_at_once_json): raise os.error
                         if os.path.isfile(self.by_hand_ending_file) and os.path.getmtime(self.by_hand_ending_file) > os.path.getmtime(self.all_at_once_json): raise os.error
 
-                    if os.path.getmtime(fl) > os.path.getmtime(self.all_at_once_json):
-                        xml_recompile = True
+                    if os.path.getmtime(fl) > os.path.getmtime(self.all_at_once_json): xml_recompile = True
+                    elif (not Options.ignore_dependency) and calculate_source_modification_date(fl, self.binding_source_path) > os.path.getmtime(self.all_at_once_json): xml_recompile = True
                     else:
                         if Options.verbose: print 'File: %s is up to date - skipping' % fl
 

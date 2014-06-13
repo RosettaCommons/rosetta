@@ -118,7 +118,8 @@ class CppType_Composite(CppType):  #, 'FunctionType', 'ArrayType' - have some ad
 
 def resolve_context_and_name(context, name):  # see if we can map self.context and self.name to more general type
     d = { ('::std::', '_Ios_Openmode') : ('::std::ios_base::', 'openmode'),
-          ('::std::', '_Rb_tree_const_iterator<unsigned int>') : ('::std::', 'set<unsigned int>::const_iterator'),
+          ('::std::', '_Rb_tree_const_iterator<unsigned int>')     : ('::std::', 'set<unsigned int>::const_iterator'),
+          ('::std::', '_Rb_tree_const_iterator<core::id::DOF_ID>') : ('::std::', 'set<core::id::DOF_ID>::const_iterator'),
           ('::std::', '_Rb_tree_const_iterator<std::pair<const double, std::pair<unsigned int, std::pair<utility::pointer::owning_ptr<protocols::hotspot_hashing::HotspotStubSet>, utility::pointer::owning_ptr<protocols::hotspot_hashing::HotspotStub> > > > >') : ('::std::', 'multimap< double, std::pair<unsigned int, std::pair<utility::pointer::owning_ptr<protocols::hotspot_hashing::HotspotStubSet>, utility::pointer::owning_ptr<protocols::hotspot_hashing::HotspotStub> > > >::const_iterator '),
           ('::utility::', 'vector1<std::_Rb_tree_const_iterator<protocols::match::downstream_hit>,std::allocator<std::_Rb_tree_const_iterator<protocols::match::downstream_hit> > >') : ('::utility::', 'vector1< std::set< protocols::match::downstream_hit >::const_iterator >'),
           ('::core::fragment::picking_old::concepts::', 'Extent<__gnu_cxx::__normal_iterator<const core::fragment::picking_old::vall::VallResidue*, std::vector<core::fragment::picking_old::vall::VallResidue, std::allocator<core::fragment::picking_old::vall::VallResidue> > > >') : ('::core::fragment::picking_old::concepts::', 'Extent< core::fragment::picking_old::vall::VallSection::PageConstIterator >'),
