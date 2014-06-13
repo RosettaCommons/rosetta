@@ -1,0 +1,49 @@
+# -*- mode:python;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# These are settings for the UNC wiggins at wiggins.med.unc.edu.
+
+# 06-13-14
+# after installing 
+# postgresql-client-9.3 - client libraries and client binaries
+# postgresql-9.3 - core database server
+# postgresql-contrib-9.3 - additional supplied modules
+# libpq-dev - libraries and headers for C language frontend development
+# postgresql-server-dev-9.3 - libraries and headers for C language backend development
+# pgadmin3 - pgAdmin III graphical administration utility
+# as in http://www.postgresql.org/download/linux/ubuntu/
+
+# /usr/bin/ld: cannot find -lpq
+# collect2: error: ld returned 1 exit status
+# scons: *** [build/external/release/linux/3.13/64/x86/gcc/4.8/mpi-postgres/libcppdb.so] Error 1
+# scons: building terminated because of errors.
+# no longer appears
+
+# To use this file, symlink tools/build/site.settings to this file (or copy this file to that location)
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+
+import os
+settings = {
+    "site" : {
+		"prepends" : {
+        },
+        "appends" : {
+            "defines" : ["EXIT_THROWS_EXCEPTION"],
+        },
+        "overrides" : {
+        },
+        "removes" : {
+        },
+    },
+}
