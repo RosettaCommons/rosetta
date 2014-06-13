@@ -42,6 +42,11 @@
 // tracer
 #include <basic/Tracer.hh>
 
+#ifdef WIN32
+	#include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
+
 // C++ Headers
 
 // ObjexxFCL Headers

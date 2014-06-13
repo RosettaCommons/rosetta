@@ -1104,7 +1104,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
             hh =  s[:-2] + 'hh'  # (generate .hh file from cc
             fwd =  s[:-2] + 'fwd.hh'  # (generate .fwd.hh file from cc
 
-            source_modification_date = calculate_source_modification_date(s, binding_source_path, depth=0)
+            source_modification_date = calculate_source_modification_date(s, binding_source_path, depth=1)
             #source_modification_date = calculate_source_modification_date('core/pose/Pose.cc', binding_source_path, depth=1)
             #sys.exit(0)
 
