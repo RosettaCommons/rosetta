@@ -706,7 +706,7 @@ pdb_minimizer() {
 	}
 
 	//Setup score function.
-	std::string score_weight_file = "stepwise/rna/farna/rna_hires_elec_dens";
+	std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
