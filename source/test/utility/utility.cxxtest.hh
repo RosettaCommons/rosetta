@@ -25,14 +25,19 @@
 #include <utility/exit.hh>
 
 
-// class UtilityTests : public CxxTest::TestSuite {
-// public:
+class UtilityTests : public CxxTest::TestSuite {
+public:
 
 // void test_utility_exit() {
 // 	utility_exit_with_message("Testing utility exit... this test should fail...");
 // }
 
-// };
+	void test_assert_exit() {
+		// Test to see if a failed assert is registered as a fail on the test server
+		assert( 0 );
+	}
+
+};
 
 
-#endif INCLUDED_utility_cxxtest_HH
+#endif //INCLUDED_utility_cxxtest_HH
