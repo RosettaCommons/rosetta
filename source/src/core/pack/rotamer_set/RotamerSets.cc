@@ -288,22 +288,23 @@ RotamerSets::build_rotamers(
 		std::cout << "expected rotamer count is " << expected_rot_count << std::endl;
 
 	}
+
 	update_offset_data();
 
-/*
-	// Dump rotamers to the screen.
-	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
-		RotamerSetOP rotset( set_of_rotamer_sets_[ ii ] );
-		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
-			conformation::ResidueCOP jjres( rotset->rotamer( jj ) );
-			std::cout << "ROT: " << ii << " " << jj << " " << jjres->name();
-			for ( Size kk = 1; kk <= jjres->nchi(); ++kk ) {
-				std::cout << " " << jjres->chi( kk );
-			}
-			std::cout << std::endl;
-		}
-	}
-*/
+//	// DOUG DOUG DOUG
+//	// Dump rotamers to the screen.
+//	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
+//		RotamerSetOP rotset( set_of_rotamer_sets_[ ii ] );
+//		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
+//			conformation::ResidueCOP jjres( rotset->rotamer( jj ) );
+//			std::cout << "ROT: " << ii << " " << jj << " " << jjres->name();
+//			for ( Size kk = 1; kk <= jjres->nchi(); ++kk ) {
+//				std::cout << " " << jjres->chi( kk );
+//			}
+//			std::cout << std::endl;
+//		}
+//	}
+
 }
 
 void

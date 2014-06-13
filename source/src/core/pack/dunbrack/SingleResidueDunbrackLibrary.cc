@@ -591,8 +591,9 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	SemiRotamericSingleResidueDunbrackLibrary< TWO >   srsrdl_2( chemical::aa_ala, true, true ); // e.g. glu
 	// three and four do not exist... they could in the future if needed.
 
-	chemical::ResidueType blah( 0, 0, 0, 0 ); ///TODO shouldnt this variable be named something else?
-	conformation::Residue rsd( blah, true );
+	chemical::ResidueType rt( 0, 0, 0, 0 );
+	conformation::Residue rsd( rt, true );
+
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;
 	Size i(0);
@@ -615,7 +616,6 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	rsrdl_4.n_rotamer_bins();
 	srsrdl_1.n_rotamer_bins();
 	srsrdl_2.n_rotamer_bins();
-
 
 	rsrdl_1.rotamer_energy( rsd, scratch );
 	rsrdl_2.rotamer_energy( rsd, scratch );
@@ -729,12 +729,12 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	numeric::random::RandomGenerator RG(1);
 	ChiVector chiv;
 
-	rsrdl_1.assign_random_rotamer_with_bias( rsd, scratch, RG, chiv, true );
-	rsrdl_2.assign_random_rotamer_with_bias( rsd, scratch, RG, chiv, true );
-	rsrdl_3.assign_random_rotamer_with_bias( rsd, scratch, RG, chiv, true );
-	rsrdl_4.assign_random_rotamer_with_bias( rsd, scratch, RG, chiv, true );
-	srsrdl_1.assign_random_rotamer_with_bias( rsd, scratch, RG, chiv, true );
-	srsrdl_2.assign_random_rotamer_with_bias( rsd, scratch, RG, chiv, true );
+	rsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	rsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	rsrdl_3.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	rsrdl_4.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	srsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	srsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
 
 	rsrdl_1.get_probability_for_rotamer( 0.0, 0.0, 1 );
 	rsrdl_2.get_probability_for_rotamer( 0.0, 0.0, 1 );

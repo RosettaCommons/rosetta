@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/MPIWorkPartitionJobDistributor.fwd.hh
 /// @brief  forward header for MPIWorkPartitonJobDistributor
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_fwd_hh
 #define INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_fwd_hh

@@ -9,7 +9,7 @@
 
 /// @file   core/chemical/MMAtomType.cc
 /// @brief  Molecular mechanics atom type class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Project headers
 #include <core/chemical/MMAtomType.hh>

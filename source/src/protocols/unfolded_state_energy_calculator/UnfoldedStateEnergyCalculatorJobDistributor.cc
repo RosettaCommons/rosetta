@@ -9,7 +9,7 @@
 
 /// @file   protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorJobDistributor.cc
 /// @brief  Job distributor for UnfoldedStateEnergyCalculator
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 

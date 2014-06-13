@@ -7,21 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh
+/// @brief SingleResidueDunbrackLibrary forward declarations and typedefs
 /// @author
-
 
 #ifndef INCLUDED_core_pack_dunbrack_SingleResidueDunbrackLibrary_fwd_hh
 #define INCLUDED_core_pack_dunbrack_SingleResidueDunbrackLibrary_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace pack {
 namespace dunbrack {
 
 class SingleResidueDunbrackLibrary;
-
+typedef utility::pointer::owning_ptr< SingleResidueDunbrackLibrary > SingleResidueDunbrackLibraryOP;
+typedef utility::pointer::access_ptr< SingleResidueDunbrackLibrary > SingleResidueDunbrackLibraryAP;
+typedef utility::pointer::owning_ptr< SingleResidueDunbrackLibrary const > SingleResidueDunbrackLibraryCOP;
+typedef utility::pointer::access_ptr< SingleResidueDunbrackLibrary const > SingleResidueDunbrackLibraryCAP;
 
 template < class T >
 class SingleResidueDunbrackLibraryConcrete;

@@ -16,7 +16,8 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
+#include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
+#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
 #include <core/scoring/PairEPotential.hh>
@@ -698,8 +699,14 @@ ScoringManager::get_MMBondLengthLibrary() const
 UnfoldedStatePotential const &
 ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 {
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
 	if ( unf_state_ == 0 ) {
-		if ( type == UNFOLDED_SCORE12 ) {
+		if ( option[ unfolded_state::unfolded_energies_file ].user() ) {
+			unf_state_ = new UnfoldedStatePotential( option[ unfolded_state::unfolded_energies_file ].value() );
+			std::cout << "Creating unfolded state potential using file: " <<  option[ unfolded_state::unfolded_energies_file ].value() << std::endl;
+		} else if ( type == UNFOLDED_SCORE12 ) {
 			unf_state_ = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) );
 		} else if ( type == UNFOLDED_MM_STD ) {
 			unf_state_ = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_mm_std" ) );

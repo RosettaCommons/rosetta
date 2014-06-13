@@ -7,10 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author
-
+/// @file   core/pack/dunbrack/SingleResidueDunbrackLibrary.hh
+/// @brief  SingleResidueDunbrackLibrary class
+/// @author Andrew Leaver-Fay
 
 #ifndef INCLUDED_core_pack_dunbrack_SingleResidueDunbrackLibrary_hh
 #define INCLUDED_core_pack_dunbrack_SingleResidueDunbrackLibrary_hh
@@ -19,13 +18,9 @@
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 
 // Package Headers
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 // Utility Headers
 #include <utility/assert.hh>

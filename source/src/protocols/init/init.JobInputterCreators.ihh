@@ -24,4 +24,5 @@
 #include <protocols/jd2/SilentFileJobInputterCreator.hh>
 #include <protocols/comparative_modeling/ThreadingJobInputterCreator.hh>
 #include <protocols/jd2/AtomTreeDiffJobInputterCreator.hh>
+#include <protocols/make_rot_lib/MakeRotLibJobInputterCreator.hh>
 #include <protocols/jd2/ScreeningJobInputterCreator.hh>

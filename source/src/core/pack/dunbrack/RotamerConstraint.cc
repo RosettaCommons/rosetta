@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreType.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <basic/Tracer.hh>
 
 
@@ -168,6 +169,7 @@ RotamerConstraint::score(
 	if( weights[ this->score_type() ] == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
+
 	if( rsd.type().name() != rsd_type_name_ ) return; // residue types must match
 
 	pack::dunbrack::RotVector rot;

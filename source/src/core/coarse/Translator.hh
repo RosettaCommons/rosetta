@@ -34,6 +34,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #endif
 #include <core/pack/dunbrack/CoarseRotamer.fwd.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>

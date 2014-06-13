@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/MMTorsionScore.cxxtest.hh
 /// @brief  test suite for core:scoring::methods::MMTorsionEnergy
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 // Test headers

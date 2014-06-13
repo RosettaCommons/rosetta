@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/chemical/MMAtomTypeSet.hh
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 #ifndef INCLUDED_core_chemical_MMAtomTypeSet_hh

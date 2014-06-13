@@ -695,7 +695,7 @@ Pose::residue_type(
 // backbone torsions
 // peptides and saccharides
 
-/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).\n
+/// @details  For proteins and peptoids, phi is defined as C(n-1)-N(n)-CA(n)-C(n).\n
 /// For aldopyranoses, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
 /// where X is the position of the glycosidic linkage.\n
 /// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).\n
@@ -707,12 +707,12 @@ Pose::phi( Size const seqpos ) const
 {
 	using namespace id;
 
-	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()),
-			"Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
-			"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein or carbohydrate!" );
-	if (residue_type(seqpos).is_protein()) {
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+		"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
+
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		return residue(seqpos).mainchain_torsion(phi_torsion);
 	} else /*is carbohydrate*/ {
 		return carbohydrates::get_glycosidic_torsion(phi_torsion, *this, seqpos);
@@ -731,12 +731,12 @@ Pose::set_phi( Size const seqpos, Real const setting )
 {
 	using namespace id;
 
-	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()),
-			"Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
-			"Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein or carbohydrate!" );
-	if (residue_type(seqpos).is_protein()) {
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()), "Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
+		"Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
+
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(phi_torsion, *this, seqpos, setting);
@@ -751,12 +751,12 @@ Pose::psi( Size const seqpos ) const
 {
 	using namespace id;
 
-	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()),
-			"Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
-			"Pose::psi( Size const seqpos ): residue seqpos is not part of a protein or carbohydrate!" );
-	if (residue_type(seqpos).is_protein()) {
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()), "Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
+		"Pose::psi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
+
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		return residue(seqpos).mainchain_torsion(psi_torsion);
 	} else /*is carbohydrate*/ {
 		return carbohydrates::get_glycosidic_torsion(psi_torsion, *this, seqpos);
@@ -769,14 +769,15 @@ Pose::psi( Size const seqpos ) const
 void
 Pose::set_psi( Size const seqpos, Real const setting )
 {
+
 	using namespace id;
 
-	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()),
-			"Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
-			"Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein or carbohydrate!" );
-	if (residue_type(seqpos).is_protein()) {
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()), "Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
+		"Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
+
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting);
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(psi_torsion, *this, seqpos, setting);
@@ -792,12 +793,12 @@ Real Pose::omega( Size const seqpos ) const
 {
 	using namespace id;
 
-	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()),
-			"Pose::omega( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
-			"Pose::omega( Size const seqpos ): residue seqpos is not part of a protein or carbohydrate!" );
-	if (residue_type(seqpos).is_protein()) {
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()), "Pose::omega( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+		"Pose::omega( Size const seqpos ): residue seqpos is not part of a protein,peptoid, or carbohydrate!" );
+
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
 		return residue(seqpos).mainchain_torsion(omega_torsion);
 	} else /*is carbohydrate*/ {
 		return carbohydrates::get_glycosidic_torsion(omega_torsion, *this, seqpos);
@@ -814,14 +815,13 @@ Pose::set_omega( Size const seqpos, Real const setting )
 {
 	using namespace id;
 
-	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()),
-			"Pose::set_omega( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
-			"Pose::set_omega( Size const seqpos , Real const setting ): "
-			"residue seqpos is not part of a protein or carbohydrate!" );
-	if (residue_type(seqpos).is_protein()) {
-		conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ), setting);
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()), "Pose::set_omega( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+		"Pose::set_omega( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
+
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
+		conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting);
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(omega_torsion, *this, seqpos, setting);
 	}
@@ -940,13 +940,12 @@ Pose::chi(
 	Size const seqpos
 ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::chi( int const chino , Size const seqpos ): "
-			"variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
-			"Pose::chi( int const chino , Size const seqpos ): "
-			"residue seqpos is not part of a protein or carbohydrate!" );
-	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())), "Pose::chi( int const chino , Size const seqpos ): "
-			"variable chino innappropriate for this residue!" );
+	PyAssert( (seqpos<=total_residue()), "Pose::chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+		"Pose::chi( int const chino , Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
+	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
+		"Pose::chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
+
 	return residue( seqpos ).chi( chino );
 }
 
@@ -957,14 +956,12 @@ Pose::set_chi(
 	Real const setting
 )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): "
-			"variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_ligand()),
-			"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): "
-			"residue seqpos is not part of a protein,ligand or carbohydrate!" );
+	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein()  || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_ligand() ),
+			"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, ligand or carbohydrate!" );
 	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
-			"Pose::set_chi( int const chino , Size const seqpos ): "
-			"variable chino innappropriate for this residue!" );
+		"Pose::set_chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
+
 	conformation_->set_torsion( TorsionID(seqpos, id::CHI, chino), setting);
 }
 
@@ -1089,7 +1086,6 @@ Pose::jump( AtomID const & id ) const
 {
 	return conformation_->jump( id );
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 // access atomtree dof's

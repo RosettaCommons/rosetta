@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMLJLibary.cc
 /// @brief  Molecular mechanics lj library
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <core/scoring/mm/MMLJLibrary.hh>

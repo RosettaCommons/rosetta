@@ -181,7 +181,7 @@ Mover::~Mover()
 			if ( ! dun_rotlib ) return; // Is this right? maybe we would want random rotamers for ligands?
 
 			dun_rotlib->assign_random_rotamer_with_bias(
-				pose->residue( seqpos ), *scratch_, RG,
+				pose->residue( seqpos ), *pose, *scratch_, RG,
 				chivector, true );
 
 			for( size_t k = 1; k <= res_type.nchi(); ++k ) {

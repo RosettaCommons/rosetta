@@ -29,7 +29,6 @@ namespace pack {
 namespace dunbrack {
 
 class ChiSet;
-
 typedef utility::pointer::owning_ptr< ChiSet > ChiSetOP;
 typedef utility::pointer::owning_ptr< ChiSet const > ChiSetCOP;
 

@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMTorsionScore.fwd.hh
 /// @brief  core::scoring::mm::MMTorsionScore forward declarations
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 #ifndef INCLUDED_core_scoring_mm_MMTorsionScore_fwd_hh

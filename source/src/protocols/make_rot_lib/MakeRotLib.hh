@@ -18,7 +18,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // unit headers
-#include <protocols/make_rot_lib/RotData.hh>
+#include <protocols/make_rot_lib/RotData.fwd.hh>
 
 // c++ headers
 // AUTO-REMOVED #include <string>
@@ -27,10 +27,7 @@
 
 
 namespace protocols {
-namespace MakeRotLib {
-
-// typedefs
-typedef utility::vector1<RotData> RotVec;
+namespace make_rot_lib {
 
 // hack hack hack
 void
@@ -41,12 +38,6 @@ glu_corrections( RotVec & );
 
 void
 phe_tyr_corrections( RotVec & );
-
-void
-peptoid_trans_hack( RotVec & );
-
-void
-peptoid_cis_hack( RotVec & );
 
 // minimize side chain dihedral angles of each rotamer
 void
@@ -96,7 +87,7 @@ pretty_print_rd( RotData & );
 void
 dunbrack_print( RotVec &, RotVec &, std::string );
 
-} // namespace MakeRotLib
+} // namespace make_rot_lib
 } // namespace protocols
 
 #endif // INCLUDED_protocols_makerotlib_makerotlib_HH

@@ -20,6 +20,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/vector1.hh>

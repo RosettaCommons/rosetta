@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/MPIWorkPartitionJobDistributor.hh
 /// @brief  header for MPIWorkPartitionJobDistributor - intended for MPI jobs on small numbers of nodes where the load can be balanced equally by the user
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_hh
 #define INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_hh

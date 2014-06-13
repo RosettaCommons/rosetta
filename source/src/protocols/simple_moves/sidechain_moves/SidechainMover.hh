@@ -26,6 +26,7 @@
 // Core Headers
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>

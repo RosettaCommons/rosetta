@@ -9,7 +9,7 @@
 
 /// @file   protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorJobDistributor.fwd.hh
 /// @brief  Job distributor for UnfoldedStateEnergyCalculator
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorJobDistributor_fwd_hh
 #define INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorJobDistributor_fwd_hh

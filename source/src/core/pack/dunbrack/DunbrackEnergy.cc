@@ -17,6 +17,8 @@
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
+
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 

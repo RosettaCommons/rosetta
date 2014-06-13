@@ -450,6 +450,7 @@ Real SingleResidueCenrotLibrary::best_rotamer_energy(
 /// -- currently no perturbation allowed
 void SingleResidueCenrotLibrary::assign_random_rotamer_with_bias(
 	conformation::Residue const &, //rsd,
+	pose::Pose const &, //pose,
 	RotamerLibraryScratchSpace &, //scratch,
 	numeric::random::RandomGenerator &, //RG,
 	ChiVector &, //new_chi_angles,

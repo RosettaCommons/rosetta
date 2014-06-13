@@ -214,9 +214,6 @@ public:
 	disulfides::DisulfideMatchingPotential &
 	get_DisulfideMatchingPotential() const;
 
-	//pack::dunbrack::SingleResidueRotamerLibraryCAP
-	//get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type );
-
 	///
 	bool
 	has_energy_method( ScoreType t ) const;

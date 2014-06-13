@@ -76,7 +76,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	adducts_( true ),
 	original_residue_type_( original_residue.type() ), // fix this CAP construction from const &
 	target_residue_type_(0),
-	designing_( original_residue.is_protein() ), // default -- design at all protein residues
+	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
 	repacking_( true ),
 	optimize_H_mode_( false ),
 	preserve_c_beta_( false ),
@@ -112,7 +112,8 @@ ResidueLevelTask_::ResidueLevelTask_(
 	using namespace chemical;
 	// pb -- get the residue_set from the current residue
 	ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
-	if ( original_residue.is_protein() ) {
+
+	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently

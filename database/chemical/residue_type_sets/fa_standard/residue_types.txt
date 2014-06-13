@@ -393,10 +393,128 @@ residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 #residue_types/metal_binding_ncaa/BPY.params
 
 ## Peptoid Types
-#residue_types/peptoids/00C.params
-#residue_types/peptoids/01C.params
-#residue_types/peptoids/02C.params
-#residue_types/peptoids/03C.params
+##residue_types/peptoids/sar.params
+#
+residue_types/peptoids/001.params
+##residue_types/peptoids/002.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+#residue_types/peptoids/003.params
+#residue_types/peptoids/004.params
+#residue_types/peptoids/005.params
+#residue_types/peptoids/006.params
+#residue_types/peptoids/007.params
+##residue_types/peptoids/008.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+#residue_types/peptoids/009.params
+##residue_types/peptoids/010.params	# ???: Problems calculating unfolded stat energies
+##residue_types/peptoids/011.params	# ERROR: ResidueType::add_chi: atoms dont exist!, missing MM atom types, CE1
+##residue_types/peptoids/012.params	# MAJOR: Missing MM atom types for nitro group
+#residue_types/peptoids/013.params
+##residue_types/peptoids/014.params	# MAJOR: don't think this exists, MAJOR: Missing MM atom types for nitro group, MINOR: not an N-arly
+##residue_types/peptoids/015.params	# MINOR: chi2 is not really a proton chi
+##residue_types/peptoids/016.params	# MAJOR: Missing MM atom types for ring nitrogen, MINOR: chi2 is not really a proton chi
+#residue_types/peptoids/020.params
+#
+#residue_types/peptoids/101.params
+#residue_types/peptoids/102.params
+#residue_types/peptoids/103.params
+#residue_types/peptoids/104.params
+##residue_types/peptoids/105.params	# MAJOR: Missing MM atom types for nitro group, chi3 is not a proton chi, and something ales is up with chi3
+##residue_types/peptoids/106.params	# symmetrically identical to 102
+##residue_types/peptoids/107.params	# MAJOR: Missing MM atom types for nitro group, where is chi for nitro
+##residue_types/peptoids/108.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring, MINOR: chi3/4 are not a proton chi
+##residue_types/peptoids/109.params	# MAJOR: Missing MM atom types for nitro group
+##residue_types/peptoids/110.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring, MINOR: chi3/4 are not a proton chi
+#residue_types/peptoids/111.params
+##residue_types/peptoids/112.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+##residue_types/peptoids/113.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
+#residue_types/peptoids/114.params
+#residue_types/peptoids/115.params
+#residue_types/peptoids/116.params
+#residue_types/peptoids/117.params
+#residue_types/peptoids/118.params
+##residue_types/peptoids/119.params	# symmetrically identical to 117
+#residue_types/peptoids/120.params
+##residue_types/peptoids/121.params	# symmetrically identical to 104
+##residue_types/peptoids/122.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/123.params	# symmetrically identical 102
+##residue_types/peptoids/124.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/125.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/126.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+#residue_types/peptoids/127.params
+#residue_types/peptoids/128.params
+#residue_types/peptoids/129.params
+#residue_types/peptoids/130.params
+##residue_types/peptoids/131.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+#
+#residue_types/peptoids/201.params
+#residue_types/peptoids/202.params
+#residue_types/peptoids/203.params
+#residue_types/peptoids/204.params
+#residue_types/peptoids/205.params
+#residue_types/peptoids/206.params
+##residue_types/peptoids/207.params	# Identical to 24.params
+#residue_types/peptoids/208.params
+#residue_types/peptoids/209.params
+#residue_types/peptoids/210.params
+#residue_types/peptoids/211.params
+#
+##residue_types/peptoids/302.params	# MAJOR: No MM atom type for tertiary amine (but try toppar_amines.str)
+#residue_types/peptoids/303.params
+##residue_types/peptoids/304.params	# MAJOR: No MM atom type for tertiary amine (but try toppar_amines.str)
+#residue_types/peptoids/305.params
+#residue_types/peptoids/306.params
+#residue_types/peptoids/307.params
+##residue_types/peptoids/308.params	# ERROR: dont add residue bonds more than once! Totally broken
+##residue_types/peptoids/309.params	# ERROR: dont add residue bonds more than once! Totally broken
+#residue_types/peptoids/313.params
+#residue_types/peptoids/314.params
+#
+#residue_types/peptoids/401.params
+#residue_types/peptoids/402.params
+##residue_types/peptoids/403.params	# ERROR: dont add residue bonds more than once!
+##residue_types/peptoids/404.params	# MINOR: chi3/4 are not a proton chi
+##residue_types/peptoids/405.params	# ???: problems calculating unfolded state energies
+#residue_types/peptoids/406.params
+##residue_types/peptoids/407.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring, MINOR: chi4 are not a proton chi
+##residue_types/peptoids/408.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
+##residue_types/peptoids/409.params	# MAJOR: Missing MM atom types for nitro group
+#residue_types/peptoids/410.params
+#residue_types/peptoids/411.params
+#residue_types/peptoids/412.params
+#
+##residue_types/peptoids/501.params	# MAJOR: No MM Atom type for furan
+##residue_types/peptoids/502.params	# MAJOR: No MM Atom type for furan
+##residue_types/peptoids/503.params	# MAJOR: is this possible, is it suposed to be an indol like trp? DBCHK: MM atom type for ring nitrogen
+##residue_types/peptoids/504.params 	# MAJOR: No MM Atom type for furan
+##residue_types/peptoids/505.params	# MAJOR: is this possible, is it suposed to be an indol like trp? DBCHK: MM atom type for ring nitrogen
+##residue_types/peptoids/506.params	# ERROR: dont add residue bonds more than once!
+##residue_types/peptoids/507.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str)
+##residue_types/peptoids/508.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str)
+##residue_types/peptoids/509.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str), DBCHK: rosetta atom types to use histidine types
+#
+residue_types/peptoids/601.params
+#residue_types/peptoids/602.params
+#residue_types/peptoids/621.params
+#residue_types/peptoids/622.params
+#residue_types/peptoids/623.params
+#residue_types/peptoids/624.params
+#
+#residue_types/peptoids/701.params
+#residue_types/peptoids/702.params
+#residue_types/peptoids/703.params
+#residue_types/peptoids/704.params
+#
+#residue_types/peptoids/017.params
+#residue_types/peptoids/018.params
+#residue_types/peptoids/019.params
+#residue_types/peptoids/021.params
+#residue_types/peptoids/132.params
+#residue_types/peptoids/315.params
+#residue_types/peptoids/316.params
+#residue_types/peptoids/317.params
+#residue_types/peptoids/318.params
+#residue_types/peptoids/320.params
+#residue_types/peptoids/413.params
+
 
 ## Beta-peptide Types
 #residue_types/beta-peptide/B3A.params

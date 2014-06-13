@@ -9,35 +9,34 @@
 
 /// @file src/protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorMover.hh
 /// @brief UnfoldedStateEnergyCalculatorMover class decalartion
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMover_hh
 #define INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMover_hh
 
-// Unit Headers
+// Unit headers
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
-#ifdef USEMPI
-#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
-#endif
 
 // Package headers
+#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.fwd.hh>
+#ifdef USEMPI
+#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.fwd.hh>
+#endif
+
+// Protocol headers
 #include <protocols/moves/Mover.hh>
 
-// Project headers
+// Core headers
 #include <core/types.hh>
+
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.fwd.hh>
+#include <core/conformation/Residue.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
-
-
-// Utility Headers
-
-// C++ Headers
-
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {
@@ -60,7 +59,10 @@ public:
 		core::Size frag_length,
 		std::string mut_aa,
 		bool repack_fragments,
-		bool native_sequence
+		bool native_sequence,
+		std::string seq_match_seq,
+		Size seq_match_pos,
+		bool seq_match_frags
 	);
 
   ///@brief dtor
@@ -88,7 +90,13 @@ public:
 	virtual	bool reinitialize_for_new_input() const;
 
 // class specific functions
-public:
+private:
+
+	bool fragment_check( Pose & pose, Size frag_start_pos );
+
+	void create_random_fragments( Pose & pose,utility::vector1< Pose > & fragments );
+
+	void create_sequence_match_fragments( Pose & pose, utility::vector1< Pose > & fragments );
 
 // data
 private:
@@ -117,6 +125,15 @@ private:
 
 	// will the central residue be mutated before being scored
 	bool native_sequence_;
+
+	//
+	std::string sequence_match_sequence_;
+
+	//
+	Size sequence_match_position_;
+
+	//
+	bool sequence_matched_fragments_;
 
 };
 

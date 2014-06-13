@@ -28,6 +28,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
+#include <core/pack/dunbrack/ChiSet.fwd.hh>
 #ifdef WIN32
 #include <core/scoring/trie/RotamerTrieBase.hh>
 #endif

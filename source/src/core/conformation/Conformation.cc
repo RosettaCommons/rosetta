@@ -3073,6 +3073,19 @@ Conformation::setup_atom_tree()
 // I am currently working on a more elegent method to handle residue types that
 // have a a non-standard number of backbone torsions (ie. beta-peptides, beta-peptoids,
 // and the dipeptides ACE-X-NME I use for making rotamers) --Doug
+//
+// Dear 2010 Doug,
+// Sorry, I have completely forgoton what we were talking about in your comment. Very Fermat
+// of you. I have a few vauge ideas about what this miraculous solution could possibly be
+// but we probably had more brain cells then so who knows. Basically defining the atoms
+// that comprise the backbone torsions in the params files themselves and storing that in
+// the ResidueType, like is currently done for the chi angles. I guess it is just the cacheing
+// idea in the comments before mineThat way, pathces could modify which atoms make up backbone
+// torsions and we would not need special if checks to look at varient types if we want to
+// have 4 backbone torsions. Until then however I am just going to make this function more
+// hacky, sorry.
+// Love, 2012 Doug
+//
 /// @note returns TRUE for FAILURE
 bool
 Conformation::backbone_torsion_angle_atoms(
@@ -3100,6 +3113,7 @@ Conformation::backbone_torsion_angle_atoms(
 	assert( torsion >= 1 && torsion <= ntorsions );
 
 	// this is hacky
+	// the ACETYLATED_NTERMINUS and METHYLATED_CTERMINUS prepend and append additional backbone atoms which is why the numbers may seem off
 	if( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) && rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
@@ -3133,8 +3147,46 @@ Conformation::backbone_torsion_angle_atoms(
 			id4.atomno() = rsd.atom_index( "CN" );
 		}
 
-	} else {
-
+		// the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one
+	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
+		// torsion 1; phi
+		if( torsion == 1 ) {
+			//TR << "HI MOM, ACET_NTERM 1" << std::endl;
+			id1.rsd() = seqpos; id1.atomno() = mainchain[1];
+			id2.rsd() = seqpos; id2.atomno() = mainchain[2];
+			id3.rsd() = seqpos; id3.atomno() = mainchain[3];
+			id4.rsd() = seqpos; id4.atomno() = mainchain[4];
+		}
+		// torsion 2; psi
+		else if( torsion == 2 ) {
+			if ( seqpos+1 <= residues_.size() ) { // should this be the chain end?
+				AtomIndices const & next_mainchain( residue_( seqpos+1 ).mainchain_atoms() );
+				id1.rsd() = seqpos;   id1.atomno() = mainchain[2];
+				id2.rsd() = seqpos;   id2.atomno() = mainchain[3];
+				id3.rsd() = seqpos;   id3.atomno() = mainchain[4];
+				id4.rsd() = seqpos+1; id4.atomno() = next_mainchain[1];
+			} else {
+				return true; // torsion not well defined
+			}
+		}
+		// torsion 3; omg
+		else if( torsion == 3 ) {
+			if ( seqpos+1 <= residues_.size() ) { // should this be the chain end?
+				AtomIndices const & next_mainchain( residue_( seqpos+1 ).mainchain_atoms() );
+				id1.rsd() = seqpos;   id1.atomno() = mainchain[3];
+				id2.rsd() = seqpos;   id2.atomno() = mainchain[4];
+				id3.rsd() = seqpos+1; id3.atomno() = next_mainchain[1];
+				id4.rsd() = seqpos+1; id4.atomno() = next_mainchain[2];
+			} else {
+				return true; // torsion not well defined
+			}
+		}
+		// catch other stuff
+		else {
+			return true; // torsion not well defined
+		}
+	}
+	else {
 
 	///////////////////////////////////////////
 	// first atom -- may be in seqpos-1
@@ -3142,14 +3194,17 @@ Conformation::backbone_torsion_angle_atoms(
 		id1.rsd()    = seqpos;
 		id1.atomno() = mainchain[ torsion-1 ];
 	} else {
-		if ( fold_tree_->is_cutpoint( seqpos-1 ) ) { // seems like this should be a bug if seqpos==1
+		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && residues_[ chain_end( rsd.chain() ) ]->has_variant_type( chemical::CTERM_CONNECT ) ) {
+			// assume that they are connected as a cyclic polymer. phi is defined even though it is first residue, only used for torsion 1
+			//TR << "HI MOM, NTERM_CONN 1" << std::endl;
+			AtomIndices const & cyclic_partner_mainchain( residue_( chain_end( rsd.chain() ) ).mainchain_atoms() );
+			id1.rsd() = chain_end( rsd.chain() ); // last residue in chain
+			id1.atomno() = cyclic_partner_mainchain[ cyclic_partner_mainchain.size() ]; // last mainchain atom in last residue in chain
+		} else if ( fold_tree_->is_cutpoint( seqpos-1 ) ) { // seems like this should be a bug if seqpos==1
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "OVU1" );
-			} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
-				id1.rsd() = seqpos;
-				id1.atomno() = rsd.atom_index( "CO" );
-			}	else if ( rsd.has_variant_type( "N_ACETYLATION" ) ) {
+			} else if ( rsd.has_variant_type( "N_ACETYLATION" ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( " CP " );
 			} else if ( rsd.has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
@@ -3181,7 +3236,20 @@ Conformation::backbone_torsion_angle_atoms(
 		id4.atomno() = mainchain[ torsion+2 ];
 
 	} else {
-		if ( fold_tree_->is_cutpoint( seqpos ) ) {
+		if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) ) {
+			// assume that they are connected as a cyclic polymer. psi and omg are defined eventhough it is last residue
+			AtomIndices const & cyclic_partner_mainchain( residue_( chain_begin( rsd.chain() ) ).mainchain_atoms() );
+			if ( torsion == 2 ) {
+				//TR << "HI MOM, CTERM, 2" << std::endl;
+				id3.rsd() = seqpos;                     id3.atomno() = mainchain[3];
+				id4.rsd() = chain_begin( rsd.chain() ); id4.atomno() = cyclic_partner_mainchain[1];
+			} else if ( torsion == 3 ) {
+				//TR << "HI MOM, CTERM, 3" << std::endl;
+				id3.rsd() = chain_begin( rsd.chain() ); id3.atomno() = cyclic_partner_mainchain[1];
+				id4.rsd() = chain_begin( rsd.chain() ); id4.atomno() = cyclic_partner_mainchain[2];
+			}
+		} else if ( fold_tree_->is_cutpoint( seqpos ) ) {
+			//TR << "HI MOM, SEQUENCE IS A CUTPOINT "<< id << std::endl;
 			if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 				if ( torsion+1 == ntorsions ) {
 					id3.rsd()    = seqpos;
@@ -3194,19 +3262,6 @@ Conformation::backbone_torsion_angle_atoms(
 					id3.atomno() = rsd.atom_index( "OVL1" );
 					id4.rsd()    = seqpos;
 					id4.atomno() = rsd.atom_index( "OVL2" );
-				}
-			} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
-				if ( torsion+1 == ntorsions ) {
-					id3.rsd() = seqpos;
-					id3.atomno() = mainchain[ torsion+1 ];
-					id4.rsd() = seqpos;
-					id4.atomno() = rsd.atom_index( "NM" );
-				} else {
-					assert( torsion == ntorsions );
-					id3.rsd()    = seqpos;
-					id3.atomno() = rsd.atom_index( "NM" );
-					id4.rsd()    = seqpos;
-					id4.atomno() = rsd.atom_index( "CN" );
 				}
 			} else if ( rsd.has_variant_type( "C_METHYLAMIDATION" ) ) {
 				//ugly.
@@ -3236,7 +3291,20 @@ Conformation::backbone_torsion_angle_atoms(
 				// last two bb-torsions not well-defined
 				return true; // FAILURE
 			}
-		} else	{
+		} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
+			if ( torsion+1 == ntorsions ) {
+				id3.rsd() = seqpos;
+				id3.atomno() = mainchain[ torsion+1 ];
+				id4.rsd() = seqpos;
+				id4.atomno() = rsd.atom_index( "NM" );
+			} else {
+				assert( torsion == ntorsions );
+				id3.rsd()    = seqpos;
+				id3.atomno() = rsd.atom_index( "NM" );
+				id4.rsd()    = seqpos;
+				id4.atomno() = rsd.atom_index( "CN" );
+			}
+		} else {
 			AtomIndices const & next_mainchain
 				( residue_( seqpos+1 ).mainchain_atoms() );
 			if ( torsion+1 == ntorsions ) {
@@ -3387,7 +3455,40 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 
 	// mainchain
 	for ( Size j=1, j_end = rsd.mainchain_torsions().size(); j<= j_end; ++j ) {
-		rsd.mainchain_torsions()[ j ] = atom_tree_torsion( TorsionID(seqpos,BB,j) );
+		// these hacks are for cyclization
+		// phi of first residue in cycle
+		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && residues_[ chain_end( rsd.chain() ) ]->has_variant_type( chemical::CTERM_CONNECT ) && j == 1 ) {
+			// calc torsion from xyz since those DOFs are not in atom tree
+			// not sure how well this will work since the xyz might not be up to date
+
+			TorsionID tid(seqpos,BB,j);
+			AtomID id1, id2, id3, id4;
+			get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
+
+			rsd.mainchain_torsions()[ j ] = numeric::dihedral_degrees(
+				residues_[ id1.rsd() ]->xyz( id1.atomno() ),
+				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
+				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
+				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
+		}
+		// psi and omg of last residue in cycle
+		else if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) && ( j == 2 || j == 3 ) ) {
+			// calc torsion from xyz since those DOFs are not in atom tree
+			// not sure how well this will work since the xyz might not be up to date
+			TorsionID tid(seqpos,BB,j);
+			AtomID id1, id2, id3, id4;
+			get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
+
+			rsd.mainchain_torsions()[ j ] = numeric::dihedral_degrees(
+				residues_[ id1.rsd() ]->xyz( id1.atomno() ),
+				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
+				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
+				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
+		}
+		// normal residue
+		else {
+			rsd.mainchain_torsions()[ j ] = atom_tree_torsion( TorsionID(seqpos,BB,j) );
+		}
 	}
 
 	// chi

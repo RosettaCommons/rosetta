@@ -18,6 +18,7 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2A.hh>
+#include <ObjexxFCL/FArray3A.hh>
 #include <ObjexxFCL/Fmath.hh>
 
 #include <ObjexxFCL/Dimension.fwd.hh>
@@ -108,6 +109,50 @@ interpolate_bilinear_by_value(
 	double & val,
 	double & dval_dx,
 	double & dval_dy
+);
+
+void
+interpolate_trilinear(
+	int const xbin,
+	int const xbin_next,
+	double const xd,
+	int const ybin,
+	int const ybin_next,
+	double const yd,
+	int const zbin,
+	int const zbin_next,
+	double const zd,
+	ObjexxFCL::FArray3A< double > xyz_func,
+	int const xbin_count,
+	int const ybin_count,
+	int const zbin_count,
+	double const binrange, // assumes that have the same bin size in each dimention
+	bool const angles,
+	double & val,
+	double & dval_dx,
+	double & dval_dy,
+	double & dval_dz
+);
+
+void
+interpolate_trilinear_by_value(
+	double const x0y0z0,
+	double const x1y0z0,
+	double const x0y1z0,
+	double const x1y1z0,
+	double const x0y0z1,
+	double const x1y0z1,
+	double const x0y1z1,
+	double const x1y1z1,
+	double const xd,
+	double const yd,
+	double const zd,
+	double const binrange, // assumes that have the same bin size in each dimention
+	bool const angles,
+	double & val,
+	double & dval_dx,
+	double & dval_dy,
+	double & dval_dz
 );
 
 
@@ -286,6 +331,47 @@ interpolate_bilinear(
 	 dval_dx,dval_dy);
 }
 
+inline
+void
+interpolate_trilinear(
+	int const xbin,
+	int const xbin_next,
+	double const xd,
+	int const ybin,
+	int const ybin_next,
+	double const yd,
+	int const zbin,
+	int const zbin_next,
+	double const zd,
+	ObjexxFCL::FArray3A< double > xyz_func,
+	int const xbin_count,
+	int const ybin_count,
+	int const zbin_count,
+	double const binrange, // assumes that have the same bin size in each dimention
+	bool const angles,
+	double & val,
+	double & dval_dx,
+	double & dval_dy,
+	double & dval_dz
+)
+{
+	xyz_func.dimension( xbin_count, ybin_count, zbin_count );
+
+	double const x0y0z0 = xyz_func( xbin, ybin, zbin );
+	double const x1y0z0 = xyz_func( xbin_next, ybin, zbin );
+	double const x0y1z0 = xyz_func( xbin, ybin_next, zbin );
+	double const x1y1z0 = xyz_func( xbin_next,ybin_next, zbin );
+	double const x0y0z1 = xyz_func( xbin, ybin, zbin_next );
+	double const x1y0z1 = xyz_func( xbin_next, ybin, zbin_next );
+	double const x0y1z1 = xyz_func( xbin, ybin_next, zbin_next );
+	double const x1y1z1 = xyz_func( xbin_next, ybin_next, zbin_next );
+
+	interpolate_trilinear_by_value(
+		x0y0z0, x1y0z0, x0y1z0, x1y1z0,
+		x0y0z1, x1y0z1, x0y1z1, x1y1z1,
+		xd, yd, zd, binrange, angles,
+		val, dval_dx, dval_dy, dval_dz );
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin interpolate_2d_func_of_angles
@@ -354,6 +440,6 @@ interpolate_2d_func_of_angles(
 }
 
 
-}
+} // basic
 
 #endif

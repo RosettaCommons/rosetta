@@ -9,7 +9,7 @@
 
 /// @file demo/doug/rotamer_prediction_benchmark.cc
 /// @brief this demo in conjuntion with a external script determins the percent of rotamers correctly predictied during a repack
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // core headers
 #include <core/types.hh>

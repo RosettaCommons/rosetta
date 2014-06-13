@@ -22,8 +22,13 @@ sources = {
 		"FunGroupTK",
 	],
 	"protocols/make_rot_lib": [
-		"MakeRotLib",
+                "MakeRotLibJob",
+                "MakeRotLibJobInputter",
+                #"MakeRotLibJobOutputter",
+                "MakeRotLibMover",
+                "MakeRotLibOptionsData",
 		"RotData",
+		"MakeRotLib",
 	],
 	"protocols/optimize_weights": [
 		"DDGBindOptEData",

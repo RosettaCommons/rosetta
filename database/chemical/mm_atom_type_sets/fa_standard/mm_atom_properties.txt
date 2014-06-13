@@ -3,7 +3,7 @@ C	-0.110000	2.000000	-0.110000	2.000000
 CA	-0.070000	1.992400	-0.070000	1.992400
 CAP	-0.070000	1.992400	-0.070000	1.992400 # from toppar_all22_prot_pyridines.str
 CC	-0.070000	2.000000	-0.070000	2.000000
-#CD	-0.070000	2.000000	-0.070000	2.000000
+CD	-0.070000	2.000000	-0.070000	2.000000
 CE1	-0.068000	2.090000	-0.068000	2.090000
 CE2	-0.064000	2.080000	-0.064000	2.080000
 CF1	-0.060000	1.900000	-0.060000	1.900000
@@ -81,9 +81,11 @@ NP	-0.200000	1.850000	-0.200000	1.850000
 NR1	-0.200000	1.850000	-0.200000	1.850000
 NR2	-0.200000	1.850000	-0.200000	1.850000
 NR3	-0.200000	1.850000	-0.200000	1.850000
+NZ1	-0.200000	1.850000	-0.200000	1.850000 # not part of any MM package, added for azide-alkyne Huisgen cycloaddition five membered ring
+NZ2	-0.200000	1.850000	-0.200000	1.850000 # not part of any MM package, added for azide-alkyne Huisgen cycloaddition five membered ring
 NY	-0.200000	1.850000	-0.200000	1.850000
 O	-0.120000	1.700000	-0.120000	1.400000 # defines 3 bond
-#OB	-0.120000	1.700000	-0.120000	1.400000 # defines 3 bond
+OB	-0.120000	1.700000	-0.120000	1.400000 # defines 3 bond
 OC	-0.120000	1.700000	-0.120000	1.700000
 #OCA	-0.120000	1.700000	-0.120000	1.400000 # defines 3 bond #from toppar_all22_prot_pyridines.str
 OE	-0.100000	1.650000	-0.100000	1.650000 # from par_all35_ethers.prm and top_all35_ethers.rtf (OC30A converted to OE)
@@ -108,17 +110,19 @@ B2	-0.200000	1.980000	-0.200000	1.980000 # Copied from NR1 with modification to 
 F1	-0.135000	1.630000	-0.135000	1.630000
 #F2	-0.105000	1.630000	-0.105000	1.630000
 F3	-0.097000	1.600000	-0.097000	1.600000
+Fe2p	-0.0000		0.7800		-0.0000		0.7800 # from atom_prorerties.txt
+Fe3p	-0.0000		0.6500		-0.0000		0.6500 # from atom_prorerties.txt
+Mg2p	-0.0150		1.1850		-0.0150		1.1850 # from atom_prorerties.txt
+Ca2p	-0.1200		1.3670		-0.1200		1.3670 # from atom_prorerties.txt
+Na1p	-0.0469		1.3638		-0.0469		1.3638 # from atom_prorerties.txt
+K1p 	-0.0870		1.7638		-0.0870		1.7638 # from atom_prorerties.txt
+Zn2p	-0.2500		1.0900		-0.2500		1.0900 # from atom_prorerties.txt
+Co2p	-0.250000	1.568000	-0.250000	1.568000 # cobalt, modified from zinc
+Cu2p	-0.250000	1.097800	-0.250000	1.097800 # copper, modified from zinc
 CL	-0.240000	2.070000	-0.240000	2.070000 # radius/wdepth: taken from MM3 forcefield
 BR	-0.320000	2.220000	-0.320000	2.220000 # radius/wdepth: taken from MM3 forcefield
 I	-0.424000	2.360000	-0.424000	2.360000 # radius/wdepth: taken from MM3 forcefield
-ZN	-0.250000	1.090000	-0.250000	1.090000 # zinc
-CO	-0.250000	1.568000	-0.250000	1.568000 # cobalt, modified from zinc
-CU	-0.250000	1.097800	-0.250000	1.097800 # copper, modified from zinc
-FE	-0.000000	0.650000	-0.000000	0.650000 # iron
-SOD	-0.046900	1.363750	-0.046900	1.363750 # sodium
-POT	-0.087000	1.763750	-0.087000	1.763750 # potassium
-CAL	-0.120000	1.367000	-0.120000	1.367000 # calcium
-MG	-0.015000	1.185000	-0.015000	1.185000 # magnesium
-#CLA	-0.150000	2.270000	-0.150000	2.270000 # chloride
+#NXX	-0.200000	3.296300	-0.200000	2.761800  # from Glenn Butterfoss, peptoid nitrogen
+NXX	-0.200000	1.850000	-0.200000	1.850000  # peptoid nitrogen, trying much smaller radius
 X	 0.000000	0.000000	 0.000000	0.000000
 VIRT	 0.000000	0.000000	 0.000000	0.000000

@@ -21,6 +21,7 @@
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 
 // Utility Headers
 #include <utility/assert.hh>
@@ -196,6 +197,7 @@ Real best_rotamer_energy(
 virtual void
 assign_random_rotamer_with_bias(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,

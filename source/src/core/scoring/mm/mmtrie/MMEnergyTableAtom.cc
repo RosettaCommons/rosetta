@@ -12,7 +12,7 @@
 
 /// @file   core/scoring/mm/mmtrie/MMEnergyTableAtom.cc
 /// @brief  Implimentation for the MMEnergyTableAtom. Heavily coppied from the EtableAtom.cc
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit Headers
 #include <core/scoring/mm/mmtrie/MMEnergyTableAtom.hh>

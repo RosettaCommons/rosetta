@@ -82,7 +82,7 @@ ICoorAtomID::ICoorAtomID(
 		atomno_ = int_of( name.substr(4) );
 		vd_ = ResidueType::null_vertex;
 		assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
-		if ( atomno_ != rsd_type.n_residue_connections() ) {
+		if ( atomno_ > rsd_type.n_residue_connections() ) { // using > is not a great check but it is better than !=
 			tw.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
 					" either has an incorrect index or is listed out of order in the file." << std::endl;
 		}
@@ -177,7 +177,7 @@ ICoorAtomID::xyz(
 		int const  partner_seqpos( rsd.residue_connection_partner( connid ) );
 		if ( partner_seqpos < 1 || partner_seqpos > int( conformation.size() ) ) {
 			tw << "Warning from IcoorAtomID::xyz(): ICoorAtomID xyz depends on invalid residue connection, returning BOGUS coords (null vector): this_rsd= " << rsd.name() <<
-					' ' << rsd.seqpos() << " connid= " << connid << " partner_seqpos= " << partner_seqpos << '\n';
+				' ' << rsd.seqpos() << " connid= " << connid << " partner_seqpos= " << partner_seqpos << std::endl;
 			return NullVector;
 		}
 		Size const partner_connid( rsd.residue_connection_conn_id( connid ) );

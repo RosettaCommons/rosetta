@@ -17,6 +17,7 @@
 
 // Unit Headers
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
@@ -265,6 +266,7 @@ public:
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,

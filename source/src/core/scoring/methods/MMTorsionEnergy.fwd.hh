@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/MMTorsionEnergy.fwd.hh
 /// @brief  molecular mechanics torsion energy forward declaration
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_core_scoring_methods_MMTorsionEnergy_fwd_hh
 #define INCLUDED_core_scoring_methods_MMTorsionEnergy_fwd_hh

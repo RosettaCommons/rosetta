@@ -24,6 +24,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pack/interaction_graph/SurfacePotential.hh>
 
 // Project Headers
@@ -52,7 +53,6 @@
 // C++ headers
 #include <string>
 #include <iostream>
-
 
 namespace core {
 namespace pack {
@@ -314,6 +314,18 @@ RotamerSet_::build_rotamers_for_concrete(
 		utility::vector1< ResidueOP > suggested_rotamers;
 		dunbrack::SingleResidueRotamerLibraryCAP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 		if (rotlib) {
+			/// DOUG DOUG DOUG DEBUG OUTPUT
+			//std::cout << "EXTRA_CHI_STEPS::build_rotamers_for_concrete\t" << extra_chi_steps.size() << std::endl;
+			//for ( Size i(1); i <= extra_chi_steps.size(); ++i ) std::cout << extra_chi_steps[i].size() << std::endl;
+
+			//for ( Size i(1); i <= extra_chi_steps.size(); ++i ) {
+			//	for ( Size j(1); j <= extra_chi_steps[i].size(); ++j ) {
+			//		std::cout << i << "/" << j << ":\t" << extra_chi_steps[i][j] << "\t" << std::flush;
+			//	}
+			//	std::cout << std::endl;
+			//}
+			//std::cout << std::endl;
+
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
 			if(core::chemical::is_canonical_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
 				for(core::Size i=1; i<=suggested_rotamers.size(); i++) {

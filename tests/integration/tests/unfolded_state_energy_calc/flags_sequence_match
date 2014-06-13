@@ -1,0 +1,15 @@
+-s 4FMH_A.pdb.gz
+-residue_name 601
+-frag_size 5
+-repack_fragments true
+-sequence_match_sequence GP
+-sequence_match_position 2
+
+-ignore_unrecognized_res
+-no_optH true
+-detect_disulf false
+
+-overwrite
+
+-mute all
+-unmute protocols.UnfoldedStateEnergyCalculator

@@ -390,10 +390,10 @@ O	CC	CP1	HB	0.6000	2	0.00
 O	CC	CP1	N	-0.3000	4	0.00
 O	CC	CT2	HA	0.0000	3	180.00
 O	CC	NH2	H	1.4000	2	180.00
-#OB	CD	OS	CT2	0.9650	1	180.00
-#OB	CD	OS	CT2	3.8500	2	180.00
-#OB	CD	OS	CT3	0.9650	1	180.00
-#OB	CD	OS	CT3	3.8500	2	180.00
+OB	CD	OS	CT2	0.9650	1	180.00
+OB	CD	OS	CT2	3.8500	2	180.00
+OB	CD	OS	CT3	0.9650	1	180.00
+OB	CD	OS	CT3	3.8500	2	180.00
 OC	CA	CA	CA	3.1000	2	180.00
 OC	CA	CA	HP	4.2000	2	180.00
 OC	CC	CP1	CP2	0.1600	3	0.00
@@ -414,7 +414,7 @@ SM	SM	CT3	HA	0.1580	3	0.00
 X	C	C	X	4.0000	2	180.00
 X	C	NC2	X	2.2500	2	180.00
 #X	CD	OH1	X	2.0500	2	180.00
-#X	CD	OS	X	2.0500	2	180.00
+X	CD	OS	X	2.0500	2	180.00
 X	CE1	CE1	X	0.1500	1	0.00
 X	CE1	CE1	X	8.5000	2	180.00
 X	CE2	CE2	X	4.9000	2	180.00
@@ -456,7 +456,7 @@ X	CT3	NC2	X	0.0000	6	180.00
 X	CT3	NH2	X	0.1100	3	0.00
 X	CT3	NH3	X	0.0900	3	0.00
 X	CT3	OH1	X	0.1400	3	0.00
-#X	CT3	OS	X	-0.1000	3	0.00
+X	CT3	OS	X	-0.1000	3	0.00
 #X	NPH	CPA	X	0.0000	2	0.00
 
 # ADDED FROM toppar_all22_prot_fluoro_alkanes.str ("new" carbon name converted to old carbon names)
@@ -841,13 +841,85 @@ CPH2	NR3	CT3	HA	0.2500	2	180.00	#from: HA	CT2	CY	CA
 CT2	CPH1	NR1	CT3	3.0000	2	180.00	#from: CT2	CPH1	NR1	CPH2
 CT2	CPH1	NR3	CT3	2.5000	2	180.00	#from: CT2	CPH1	NR3	CPH2
 
-# FOR PEPTOIDS
-#N	CT2	C	N	0.4000	1	0.00 #from NH1	CT2	C	N
-#CT2	C	N	CT2	1.6000	1	0.00 #from CT2	C	NH1	CT2
-#CT2	C	N	CT2	2.5000	2	180.00	#from CT2	C	NH1	CT2
-C	CT2	NH1	CT3	0.2000	1	180.00	#from C	CT2	NH1	C
-HB	CT2	NH1	CT3	0.0000	1	0.00 #from HB	CT1	NH1	H
-HA	CT3	NH1	CT2	0.0000	3	0.00 #from HA	CT3	NH1	C
+### PEPTOID PARAMS ###
+# Added by Doug
+NXX	X	X	X	0.00	1	180.00 # from Glenn Butterfoss
+X	NXX	X	X	0.00	1	180.00 # from Glenn Butterfoss
+X	X	NXX	X	0.00	1	180.00 # from Glenn Butterfoss
+X	X	X	NXX	0.00	1	180.00 # from Glenn Butterfoss
+#HA	X	X	CT2	0.00	1	180.00 # from Glenn Butterfoss # might be required for peptoids but currently breaking unit tests inf enabled --Doug
+#HA	X	X	CT3	0.00	1	180.00 # from Glenn Butterfoss # might be required for peptoids but currently breaking unit tests inf enabled --Doug
+CT3	C	NXX	CT3	3.42	2	180.0  # from Glenn Butterfoss
+CT2	C	NXX	CT3	3.42	2	180.0  # from Glenn Butterfoss
+CT3	C	NXX	CT2	3.42	2	180.0  # from Glenn Butterfoss
+CT2	C	NXX	CT2	3.42	2	180.0  # from Glenn Butterfoss
+O	C	NXX	CT3	3.42	2	180.0  # from Glenn Butterfoss
+O	C	NXX	CT2	3.42	2	180.0  # from Glenn Butterfoss
+CT1	C	NXX	CA	5.70	1	180.0  # from Glenn Butterfoss
+CT2	C	NXX	CA	5.70	1	180.0  # from Glenn Butterfoss
+CT3	C	NXX	CA	5.70	1	180.0  # from Glenn Butterfoss
+NXX	CA	CA	CA	3.10	2	180.00 # from Glenn Butterfoss
+C	CT2	NXX	C	0.20	1	180.00 # from Glenn Butterfoss
+NXX	C	CT2	NXX	0.60	1	0.0000 # from Glenn Butterfoss
+CT2	CT2	CY	CA	0.23	2	180.00 # careful maybe in bigger list -Doug
+CT2	CT2	CY	CPT	0.23	2	180.00 # careful maybe in bigger list -Doug
+CT3	CT1	CA	CA	0.23	2	180.00 # careful maybe in bigger list -Doug
+CT1	CA	CA	CA	3.10	2	180.00 # careful maybe in bigger list -Doug
+
+CT3	CT1	CA	CPT	0.23	2	180.00 # careful maybe in bigger list -Doug
+HA	CT1	CA	CPT	0.00	6	0.0000 # careful maybe in bigger list -Doug
+CT1	CA	CPT	CA	3.10	2	180.00 # careful maybe in bigger list -Doug
+CT1	CA	CPT	CPT	3.10	2	180.00 # careful maybe in bigger list -Doug
+CA	CA	CPT	CA	3.10	2	180.00 # careful maybe in bigger list -Doug
+
+I	CA	CA	CA	4.20	2	180.00 # careful maybe in bigger list -Doug	#from: HP	CA	CA	CA
+I	CA	CA	HP	2.40	2	180.00 # careful maybe in bigger list -Doug	#from: HP	CA	CA	HP
+
+CA	CA	CA	CD	4.20	2	180.00 # careful maybe in bigger list -Doug	#from: HP	CA	CA	CA
+HP	CA	CA	CD	2.40	2	180.00 # careful maybe in bigger list -Doug	#from: HP	CA	CA	HP
+
+CA	CA	CD	OS	22.5	2	180.00 # zero
+CA	CA	CD	OB	22.5	2	180.00 # zero
+
+N	C	CT2	HA	0.0000	1	0.00 # from N	C	CT2	HB, for peptoid, peptide hybrid, # careful maybe in bigger list -Doug
+
+# For homoserine-like peptoid (P28)
+HS	S	CT2	CT2	0.2400	1	0.00 # from HS	S	CT2	CT1
+HS	S	CT2	CT2	0.1500	2	0.00 # from HS	S	CT2	CT1
+HS	S	CT2	CT2	0.2700	3	0.00 # from HS	S	CT2	CT1
+
+# For 2-chloro-phe like peptoid sidechain (treating CL like HP)
+CL	CA	CA	CT2	4.2000	2	180.00 # HP	CA	CA	CT2
+
+# For 2,5-fluoro-phe like peptoid sidechain(treating F1 like HP
+F1	CA	CA	CT2	4.2000	2	180.00 # HP	CA	CA	CT2
+
+CT3	CA	CA	CT3	3.1000	2	180.00 # from CT3	CA	CA	CA	for peptoid P39
+CT3	CA	CA	OH1	3.1000	2	180.00 # from CT3	CA	CA	CA	for peptoid P41
+
+CA	CT2	NH1	CT2	0.1950	3	0.00 # from X	CT2	CT2	X for peptoid 129, treat NH1 like CT2
+
+# Histidine like params for for azide-alkyne Huisgen cycloaddition five membered ring NZ1 and NZ2 atoms, treat the azide and alkyne "sides/attachment points" the same, like a histidine
+CT2	CPH1	NR2	NZ2	3.0000	2	180.00 # from CT2	CPH1	NR2	CPH2	3.0000	2	180.00
+CT2	NZ1	NZ2	NR2	3.0000	2	180.00 # from CT2	CPH1	NR2	CPH2	3.0000	2	180.00
+NZ1	CPH1	CPH1	CT2	3.0000	2	180.00 # from NR1	CPH1	CPH1	CT2	3.0000	2	180.00
+CPH1	CPH1	NZ1	CT2	3.0000	2	180.00 # from NR1	CPH1	CPH1	CT2	3.0000	2	180.00
+CT1	CT2	NZ1	CPH1	0.2000	1	0.00 # from CT1	CT2	CPH1	CPH1	0.2000	1	0.00
+CT1	CT2	NZ1	CPH1	0.2700	2	0.00 # from CT1	CT2	CPH1	CPH1	0.2700	2	0.00
+CT1	CT2	NZ1	CPH1	0.0000	3	0.00 # from CT1	CT2	CPH1	CPH1	0.0000	3	0.00
+CT2	CT2	NZ1	CPH1	0.2000	1	0.00 # from CT1	CT2	CPH1	CPH1	0.2000	1	0.00
+CT2	CT2	NZ1	CPH1	0.2700	2	0.00 # from CT1	CT2	CPH1	CPH1	0.2700	2	0.00
+CT2	CT2	NZ1	CPH1	0.0000	3	0.00 # from CT1	CT2	CPH1	CPH1	0.0000	3	0.00
+NZ2	NZ1	CT2	CT1	0.1900	3	0.00 # from NR2	CPH1	CT2	CT1	0.1900	3	0.00
+NZ2	NZ1	CT2	CT2	0.1900	3	0.00 # from NR2	CPH1	CT2	CT1	0.1900	3	0.00
+NZ1	NZ2	NR2	CPH1	14.0000	2	180.00 # from NR1	CPH2	NR2	CPH1	14.0000	2	180.00
+NZ2	NR2	CPH1	CPH1	14.0000	2	180.00 # from CPH2	NR2	CPH1	CPH1	14.0000	2	180.00
+NZ2	NZ1	CPH1	CPH1	14.0000	2	180.00 # from CPH2	NR2	CPH1	CPH1	14.0000	2	180.00
+NZ1	CPH1	CPH1	NR2 	14.0000	2	180.00 # from NR2	CPH1	CPH1	NR1	14.0000	2	180.00
+HA	CT2	NZ1	CPH1	0.0000	3	0.00 # from HA	CT2	CPH1	CPH1	0.0000	3	0.00
+NZ2	NZ1	CT2	HA	0.1900	3	0.00 # from NR2	CPH1	CT2	HA	0.1900	3	0.00
+HR3	CPH1	NZ1	CT2	2.0000	2	180.00 # from HR3	CPH1	CPH1	CT2	2.0000	2	180.00
+HR3	CPH1	NZ1	NZ2	3.0000	2	180.00 # from HR3	CPH1	NR1	CPH2	3.0000	2	180.00
 
 #For BETA-3-Amino acids
 NH1	C	CT2	CT1	0.0000	1	0.00    #from   O	C	CT2	NH1

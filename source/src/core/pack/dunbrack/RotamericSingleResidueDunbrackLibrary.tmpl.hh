@@ -690,6 +690,7 @@ template < Size T >
 void
 RotamericSingleResidueDunbrackLibrary< T >::assign_random_rotamer_with_bias(
 	conformation::Residue const & rsd,
+	pose::Pose const & /*pose*/,
 	RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,
@@ -1100,7 +1101,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_phi_from_rsd(
 	conformation::Residue const & rsd
 ) const
 {
-	assert( rsd.is_protein() );
+	assert( rsd.is_protein() || rsd.is_peptoid() );
 	static Size const RSD_PHI_INDEX = 1; // this shouldn't be here
 	if ( rsd.is_lower_terminus() ) {
 		if(core::chemical::is_canonical_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PHI;
@@ -1116,7 +1117,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_psi_from_rsd(
 	conformation::Residue const & rsd
 ) const
 {
-	assert( rsd.is_protein() );
+	assert( rsd.is_protein() || rsd.is_peptoid() );
 	static Size const RSD_PSI_INDEX = 2; // this shouldn't be here
 	if ( rsd.is_upper_terminus() ) {
 		if(core::chemical::is_canonical_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PSI;

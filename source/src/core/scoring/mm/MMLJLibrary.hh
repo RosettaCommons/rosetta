@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMLJLibrary.hh
 /// @brief  Molecular mechanics lj library class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 #ifndef INCLUDED_core_scoring_mm_MMLJLibrary_hh

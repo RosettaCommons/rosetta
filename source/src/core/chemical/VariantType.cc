@@ -105,6 +105,10 @@ VariantType const C_METHYLAMIDATION( "C_METHYLAMIDATION" );
 ///@ brief only the repulsive energy will be considered during structure calculations
 VariantType const REPLONLY("REPLONLY");
 
+// @breif N-terminal connect and C-terminal connect
+VariantType const NTERM_CONNECT( "NTERM_CONNECT" );
+VariantType const CTERM_CONNECT( "CTERM_CONNECT" );
+
 ///@ brief oop_pre patch, used for oligooxopiperazines (OOPs)
 VariantType const OOP_PRE("OOP_PRE");
 ///@ brief oop_post patch, used for oligooxopiperazines (OOPs)

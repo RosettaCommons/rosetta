@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/MPIWorkPoolJobDistributor.cc
 /// @brief  implementation of MPIWorkPoolJobDistributor
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // MPI headers
 #ifdef USEMPI

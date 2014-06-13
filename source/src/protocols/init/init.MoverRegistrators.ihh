@@ -178,17 +178,14 @@ static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreat
 static MoverRegistrator< motif_grafting::movers::MotifGraftCreator> reg_MotifGraftCreator;
 
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
-static MoverRegistrator< simple_moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
-static MoverRegistrator< simple_moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
-static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
-static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
-static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< moves::PyMolMoverCreator > reg_PyMolMoverCreator;
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 
+static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
+static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 
@@ -285,6 +282,7 @@ static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
+static MoverRegistrator< simple_moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCreator;
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;
 static MoverRegistrator< simple_moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
@@ -292,6 +290,8 @@ static MoverRegistrator< simple_moves::MembraneTopologyCreator > reg_MembraneTop
 static MoverRegistrator< simple_moves::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< simple_moves::ModifyVariantTypeMoverCreator > reg_ModifyVariantTypeMoverCreator;
+static MoverRegistrator< simple_moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
+static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
@@ -299,6 +299,8 @@ static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > Resid
 static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
+static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;
+static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomOmegaFlipMoverCreator;
 static MoverRegistrator< simple_moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;

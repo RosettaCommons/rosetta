@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/MPIWorkPoolJobDistributor.hh
 /// @brief  header for MPIWorkPoolJobDistributor - intended for MPI jobs on large numbers of nodes where the head node is dedicated to handing out new job ids
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_jd2_MPIWorkPoolJobDistributor_hh
 #define INCLUDED_protocols_jd2_MPIWorkPoolJobDistributor_hh

@@ -1,3 +1,4 @@
--s 1l2y.pdb
--resfile 1l2y.resfile
+-s 1l2y_hybrid.pdb
+-resfile 1l2y_hybrid.resfile
 -score:weights mm_std
+-overwrite

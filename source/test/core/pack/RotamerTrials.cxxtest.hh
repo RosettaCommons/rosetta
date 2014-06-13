@@ -12,7 +12,7 @@
 /// @brief  test suite for rotamer_trials
 /// @author Phil Bradley
 /// @author Sergey Lyskov
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Test headers
 #include <cxxtest/TestSuite.h>

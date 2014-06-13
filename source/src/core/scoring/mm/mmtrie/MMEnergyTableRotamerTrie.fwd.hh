@@ -12,7 +12,7 @@
 
 /// @file   core/scoring/mm/mmtrie/MMEnergyTableTrie.fwd.hh
 /// @brief  Trie class for MMLJEnergy
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_core_scoring_mm_mmtrie_MMEnergyTableRotamerTrie_fwd_hh
 #define INCLUDED_core_scoring_mm_mmtrie_MMEnergyTableRotamerTrie_fwd_hh

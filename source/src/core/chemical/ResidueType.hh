@@ -1386,13 +1386,17 @@ public:
 	/// @brief is Nucleic Acid?
 	bool is_NA() const{ return is_NA_; }
 
+	///@brief is peptoid?
+	bool is_peptoid() const {	return is_peptoid_; }
+
 	/// @brief is carbohydrate?
 	bool is_carbohydrate() const { return is_carbohydrate_; }
 
+	/// @brief is ligand?
+	bool is_ligand() const { return is_ligand_; }
+
 	/// @brief is lipid?
 	bool is_lipid() const { return is_lipid_; }
-
-	bool is_ligand() const { return is_ligand_; }
 
 	/// @brief Returns true if this residue type is a metal ion, false otherwise.  The METAL property is specified in the params file under PROPERTIES.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -1820,6 +1824,67 @@ public:
 		return ncaa_rotlib_n_bins_per_rot_;
 	}
 
+	/// DOUG DOUG DOUG
+	/// @brief Sets the path for the peptoid rotlib for the ResidueType
+	void
+	set_peptoid_rotlib_path( std::string const & path )
+	{
+		peptoid_rotlib_path_ = path;
+	}
+
+	/// @brief Returns the path to the peptoid rotlib for the residue type
+	std::string const &
+	get_peptoid_rotlib_path() const
+	{
+		return peptoid_rotlib_path_;
+	}
+
+	/// @brief Sets whether we are using a peptoid rotlib for the residue type
+	void
+	set_use_peptoid_rotlib( bool flag )
+	{
+		use_peptoid_rotlib_ = flag;
+	}
+
+	/// @brief Returns whether we are using a peptoid rotlib for the residue type
+	bool
+	get_use_peptoid_rotlib() const
+	{
+		return use_peptoid_rotlib_;
+	}
+
+	/// @brief Sets the number of rotatable bonds described by the peptoid rotlib (not nesesarily equal to nchi)
+	void
+	set_peptoid_rotlib_n_rotameric_bins( Size n_rots )
+	{
+		peptoid_rotlib_n_rots_ = n_rots;
+	}
+
+	/// @brief Returns the number of rotatable bonds described by the peptoid rotlib  (not nesesarily equal to nchi)
+	Size
+	set_peptoid_rotlib_n_rotameric_bins() const
+	{
+		return peptoid_rotlib_n_rots_;
+	}
+
+	/// @brief Sets the number of rotamers for each rotatable bond described by the peptoid rotlib
+	void
+	set_peptoid_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot );
+
+	/// @brief Returns the number of rotamers for each rotatable bond described by the peptoid rotlib for a single bond
+	Size
+	get_peptoid_rotlib_n_bin_per_rot( Size n_rot )
+	{
+		return peptoid_rotlib_n_bins_per_rot_[ n_rot ];
+	}
+
+	/// @brief Returns the number of rotamers for each rotatable bond described by the peptoid rotlib for all bonds
+	utility::vector1<Size> const &
+	get_peptoid_rotlib_n_bin_per_rot() const
+	{
+		return peptoid_rotlib_n_bins_per_rot_;
+	}
+
 	/// @brief Returns a list of those atoms within one bond of a residue connection.  For residue connection i,
 	/// its position in this array is a list of pairs of atom-id's, the first of which is always the id
 	/// for the atom forming residue connection i.
@@ -2229,6 +2294,7 @@ private:
 	/// @brief The filename of the PDBRotamersLibrary -- Primary.
 	std::string rotamer_library_name_;
 
+
 	////////
 	/// NCAA rotlib stuff some of this is hardcoded elsewhere for the CAAs
 
@@ -2243,6 +2309,23 @@ private:
 
 	/// @brief the number of rotamer bins for each chi angle in the NCAA rotlib -- Primary
 	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;
+
+
+	/////////////////////////////////////
+	// peptoid rotlib stuff: some of this is hardcoded elsewhere for the CAAs
+
+	/// @brief whether or not we should use the peptoid rotlib if it exists -- Primary
+	bool use_peptoid_rotlib_;
+
+	/// @brief path to the peptoid rotlib -- Primary
+	std::string peptoid_rotlib_path_;
+
+	/// @brief the number of non-hydrogen chi angles in the peptoid rotlib -- Primary
+	Size peptoid_rotlib_n_rots_;
+
+	/// @brief the number of rotamer bins for each chi angle in the peptoid rotlib -- Primary
+	utility::vector1< Size > peptoid_rotlib_n_bins_per_rot_;
+
 
 	/////////////////////////////////////
 	// properties -- some of these may be deducible from AA?
@@ -2269,6 +2352,7 @@ private:
 	bool is_DNA_;
 	bool is_RNA_;
 	bool is_NA_;
+	bool is_peptoid_;
 	bool is_carbohydrate_;
 	bool is_lipid_;
 	bool is_ligand_;

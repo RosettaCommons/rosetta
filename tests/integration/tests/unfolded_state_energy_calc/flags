@@ -1,7 +1,0 @@
--s 1UBQ.pdb.gz
--ignore_unrecognized_res
--residue_name NVL
--mute all
--unmute protocols.UnfoldedStateEnergyCalculator
--no_optH true
--detect_disulf false

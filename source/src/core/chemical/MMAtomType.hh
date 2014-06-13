@@ -9,7 +9,7 @@
 
 /// @file   core/chemical/MMAtomType.hh
 /// @brief  Molecular mechanics atom type class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 #ifndef INCLUDED_core_chemical_MMAtomType_hh

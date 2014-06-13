@@ -10,7 +10,7 @@
 /// @file sequence_recovery.cc
 /// @brief A protocol which outputs sequence recovery statistics ala the table in the "Native sequences are close to optimal" paper.
 /// @author Ron Jacak
-/// @author P. Douglas Renfrew (renfrew@unc.edu) ( added rotamer recovery, cleanup )
+/// @author P. Douglas Renfrew (renfrew@nyu.edu) ( added rotamer recovery, cleanup )
 
 // Unit headers
 #include <devel/init.hh>

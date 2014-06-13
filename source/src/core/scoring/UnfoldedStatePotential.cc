@@ -10,7 +10,7 @@
 /// @file   core/scoring/UnfoldedStatePotential.cc
 /// @brief  Unfolded state energies based on energies of residues in fragments, definition file
 /// @author Ron Jacak (ronj@email.unc.edu)
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <core/scoring/UnfoldedStatePotential.hh>

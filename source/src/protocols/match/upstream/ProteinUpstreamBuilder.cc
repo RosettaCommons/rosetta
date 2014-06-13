@@ -31,6 +31,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <basic/Tracer.hh>

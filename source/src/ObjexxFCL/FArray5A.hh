@@ -1244,12 +1244,12 @@ private: // Functions
 		s3_ = I3_.size();
 		s4_ = I4_.size();
 		if ( I5_.bounded_value() ) { // Bounded
-			size_set( size_of( s1_, s2_, s3_, s4_, I5_.size() ) );
+			size_set( this->size_of( s1_, s2_, s3_, s4_, I5_.size() ) );
 		} else if ( array_size_ != npos ) { // Unbounded with bounded data array
-			size_type const slice_size( size_of( s1_, s2_, s3_, s4_ ) );
+			size_type const slice_size( this->size_of( s1_, s2_, s3_, s4_ ) );
 			if ( slice_size > 0 ) { // Infer upper index and size
 				I5_.u( I5_.lz() + ( array_size_ / slice_size ) - 1 );
-				size_set( size_of( slice_size, I5_.size() ) );
+				size_set( this->size_of( slice_size, I5_.size() ) );
 			} else {
 				size_set( array_size_ );
 			}

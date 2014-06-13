@@ -14,23 +14,8 @@
 #ifndef INCLUDED_core_chemical_PatchOperation_fwd_hh
 #define INCLUDED_core_chemical_PatchOperation_fwd_hh
 
-
-// // Unit headers
-
-// // Package headers
-
-// // Project headers
-
-// // Utility headers
-// #include <utility/vector1.hh>
-// #include <utility/pointer/access_ptr.hh>
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
-//#include <utility/pointer/ReferenceCount.hh>
-// #include <numeric/xyzVector.hh>
-// #include <numeric/xyzMatrix.fwd.hh>
-
-// C++ headers
 
 namespace core {
 namespace chemical {
@@ -38,10 +23,7 @@ namespace chemical {
 class PatchOperation;
 typedef utility::pointer::owning_ptr< PatchOperation > PatchOperationOP;
 
-
 } // chemical
 } // core
-
-
 
 #endif

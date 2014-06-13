@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/ScoreFunction.hh
 /// @brief  molecular mechanics torsion energy
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <core/scoring/methods/MMTorsionEnergy.hh>

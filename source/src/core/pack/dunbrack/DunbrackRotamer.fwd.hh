@@ -61,8 +61,12 @@ class RotamerBuildingData;
 
 class DunbrackRotamerSampleData;
 
-}
-}
-}
+/// DOUG DOUG DOUG
+template < Size T >
+class RotamericData;
+
+} // dunbrack
+} // pack
+} // core
 
 #endif

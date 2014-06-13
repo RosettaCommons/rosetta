@@ -9,7 +9,7 @@
 
 /// @file   core/chemical/MMAtomTypeSet.cxxtest.hh
 /// @brief  test suite for core::chemical::MMAtomTypeSet
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 // Test headers

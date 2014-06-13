@@ -27,7 +27,6 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
@@ -38,26 +37,27 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-template < Size T >
-class RotamericData : public RotamerBuildingData
-{
-public:
-	RotamericData( DunbrackRotamer< T, Real > const & rotamer_in )
-	:
-		rotamer_( rotamer_in )
-	{}
+/// DOUG DOUG DOUG
+// template < Size T >
+// class RotamericData : public RotamerBuildingData
+// {
+// public:
+// 	RotamericData( DunbrackRotamer< T, Real > const & rotamer_in )
+// 	:
+// 		rotamer_( rotamer_in )
+// 	{}
 
-	virtual ~RotamericData() {}
+// 	virtual ~RotamericData() {}
 
-	DunbrackRotamer< T, Real > const &
-	rotamer() const {
-		return rotamer_;
-	}
+// 	DunbrackRotamer< T, Real > const &
+// 	rotamer() const {
+// 		return rotamer_;
+// 	}
 
 
-private:
-	DunbrackRotamer< T, Real > rotamer_;
-};
+// private:
+// 	DunbrackRotamer< T, Real > rotamer_;
+// };
 
 template < Size T >
 class RotamericSingleResidueDunbrackLibrary : public SingleResidueDunbrackLibrary
@@ -112,6 +112,7 @@ public:
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,

@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMLJEnergyTable.cc
 /// @brief  Molecular mechanics lj energy table class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <core/scoring/mm/MMLJEnergyTable.hh>

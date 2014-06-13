@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/MMLJEnergyIntra.hh
 /// @brief  molecular mechanics lj energy
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_core_scoring_methods_MMLJEnergyIntra_hh
 #define INCLUDED_core_scoring_methods_MMLJEnergyIntra_hh

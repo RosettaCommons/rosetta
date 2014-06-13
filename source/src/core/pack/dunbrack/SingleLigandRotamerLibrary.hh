@@ -8,15 +8,20 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/dunbrack/SingleLigandRotamerLibrary.hh
-///
-/// @brief
+/// @brief  SingleLigandRotamerLibrary class
 /// @author Ian W. Davis
-
 
 #ifndef INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_hh
 #define INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_hh
 
+// Unit Headers
+#include <core/pack/dunbrack/SingleLigandRotamerLibrary.fwd.hh>
+
+// Package Headers
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+
+// Project Headers
 #include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
@@ -25,13 +30,6 @@
 namespace core {
 namespace pack {
 namespace dunbrack {
-
-
-class SingleLigandRotamerLibrary; // fwd declaration
-typedef utility::pointer::owning_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryOP;
-typedef utility::pointer::owning_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCOP;
-typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryAP;
-typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
 
 ///@brief A fixed library of conformations for some residue type (doesn't have to be a ligand).
 ///@details Reads residue conformations in PDB format separated by mandatory TER records.
@@ -90,6 +88,7 @@ public:
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const &,// rsd,
+		pose::Pose const & /*pose*/,
 		RotamerLibraryScratchSpace &,// scratch,
 		numeric::random::RandomGenerator &,// RG,
 		ChiVector &,// new_chi_angles,
@@ -199,4 +198,4 @@ private:
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_HH
+#endif // INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_hh

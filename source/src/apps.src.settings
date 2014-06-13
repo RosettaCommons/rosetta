@@ -161,7 +161,7 @@ sources = {
 		"incorporate_motifs",
 	],
 	"public/ncaa_utilities": [
-		"make_rot_lib",
+                "MakeRotLib",
 		"UnfoldedStateEnergyCalculator",
 	],
 	"public/nmr": [
@@ -170,6 +170,7 @@ sources = {
 	"public/noncanonical_backbones": [
 		"hbs_design",
 		"oop_design",
+                "peptoid_design",
 	],
 	"public/pepspec": [
 		"pepspec",

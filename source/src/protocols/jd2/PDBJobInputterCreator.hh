@@ -30,4 +30,3 @@ public:
 } //protocols
 
 #endif //INCLUDED_protocols_jd2_PDBJobInputterCreator_hh
-

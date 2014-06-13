@@ -75,7 +75,6 @@ public:
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 private:
-	core::Size rb_jump_;
 	core::Size target_;
 	std::string res_name_;
 };

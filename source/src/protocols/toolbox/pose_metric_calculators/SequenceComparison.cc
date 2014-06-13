@@ -27,7 +27,7 @@
 ///
 /// @authors
 /// Ron Jacak,
-/// Douglas Renfrew (renfrew@unc.edu) ( added rotamer recovery, cleanup )
+/// Douglas Renfrew (renfrew@nyu.edu) ( added rotamer recovery, cleanup )
 /// Steven Combs (moved it into a general use class)
 ///
 /// @last_modified October 20 2010

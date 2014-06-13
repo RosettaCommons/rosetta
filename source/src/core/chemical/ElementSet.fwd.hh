@@ -10,7 +10,6 @@
 /// @file src/core/chemical/gasteiger/ElementTypeSet.fwd.hh
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
-
 #ifndef INCLUDED_core_chemical_ElementSet_fwd_hh
 #define INCLUDED_core_chemical_ElementSet_fwd_hh
 

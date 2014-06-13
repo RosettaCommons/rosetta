@@ -1,0 +1,96 @@
+<ROSETTASCRIPTS>
+
+  <SCOREFXNS>
+    <mm_std_rep_10 weights=mm_std >
+      <Reweight scoretype=fa_rep weight=0.0634/>
+      <Reweight scoretype=atom_pair_constraint weight=1.0/>
+    </mm_std_rep_10>
+    <mm_std_rep_33 weights=mm_std >
+      <Reweight scoretype=fa_rep weight=0.2094/>
+      <Reweight scoretype=atom_pair_constraint weight=1.0/>
+    </mm_std_rep_33>
+    <mm_std_rep_66 weights=mm_std >
+      <Reweight scoretype=fa_rep weight=0.4187/>
+      <Reweight scoretype=atom_pair_constraint weight=1.0/>
+    </mm_std_rep_66>
+    <mm_std_rep_100 weights=mm_std >
+      <Reweight scoretype=fa_rep weight=0.6344/>
+      <Reweight scoretype=atom_pair_constraint weight=1.0/>
+    </mm_std_rep_100>
+  </SCOREFXNS>
+
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name=ifc/>
+    <RestrictToRepacking name=rtr/>
+    <IncludeCurrent name=ic/>
+    <ReadResfile name=rrf/>
+  </TASKOPERATIONS>
+
+  <FILTERS>
+  </FILTERS>
+
+  <MOVERS>
+    <PyMolMover name=pmm keep_history=1/>
+
+    <MinMover name=mm_init scorefxn=mm_std_rep_100 type=dfpmin tolerance=0.0001 bb=1 chi=1 jump=ALL/>
+
+    <PackRotamersMover name=design_10  scorefxn=mm_std_rep_10  task_operations=ifc,rrf/>
+
+    <AddConstraintsToCurrentConformationMover name=ca_csts use_distance_cst=1 coord_dev=0.5 min_seq_sep=1 max_distance=9.0 cst_weight=1.0 CA_only=1 bb_only=0 />
+
+    <PackRotamersMover name=prm_10  scorefxn=mm_std_rep_10  task_operations=ifc,rtr,ic/>
+    <PackRotamersMover name=prm_33  scorefxn=mm_std_rep_33  task_operations=ifc,rtr,ic/>
+    <PackRotamersMover name=prm_66  scorefxn=mm_std_rep_66  task_operations=ifc,rtr,ic/>
+    <PackRotamersMover name=prm_100 scorefxn=mm_std_rep_100 task_operations=ifc,rtr,ic/>
+
+    <MinMover name=mm_10  scorefxn=mm_std_rep_10  type=dfpmin tolerance=0.01   bb=1 chi=1 jump=ALL/>
+    <MinMover name=mm_33  scorefxn=mm_std_rep_33  type=dfpmin tolerance=0.01   bb=1 chi=1 jump=ALL/>
+    <MinMover name=mm_66  scorefxn=mm_std_rep_66  type=dfpmin tolerance=0.01   bb=1 chi=1 jump=ALL/>
+    <MinMover name=mm_100 scorefxn=mm_std_rep_100 type=dfpmin tolerance=0.0001 bb=1 chi=1 jump=ALL/>
+
+    <ParsedProtocol name=repack_min_ramp_rep>
+      <Add mover=prm_10/>
+      <Add mover=mm_10/>
+      <Add mover=prm_33/>
+      <Add mover=mm_33/>
+      <Add mover=prm_66/>
+      <Add mover=mm_66/>
+      <Add mover=prm_100/>
+      <Add mover=mm_100/>
+    </ParsedProtocol>
+
+    <ClearConstraintsMover name=ccm />
+
+    <ddG name=ddgm per_residue_ddg=0 repack=0 scorefxn=mm_std_rep_100 chain_name=C/>
+
+  </MOVERS>
+
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+
+  <PROTOCOLS>
+    <Add mover=pmm/>
+
+    <!-- Initial minimization -->
+    <Add mover=mm_init/>
+    <Add mover=pmm/>
+
+    <!-- Mutate position based on resfile-->
+    <Add mover=design_10/>
+
+    <!-- Add C-alpha constraints -->
+    <Add mover=ca_csts/>
+
+    <!-- Repack/minmization cycle, ramping fa_rep from 10/33/66/100 percent -->
+    <Add mover=repack_min_ramp_rep/>
+    <Add mover=pmm/>
+
+    <!-- Clear the constraints before we calc ddg -->
+    <Add mover=ccm/>
+
+    <!-- Delta delta G of binding upon mutation -->
+    <Add mover=ddgm/>
+
+  </PROTOCOLS>
+
+</ROSETTASCRIPTS>

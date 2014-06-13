@@ -443,7 +443,7 @@ void PyMolMover::show(std::ostream & output) const
 	output << "Update energy:         " << ( ( update_energy_ ) ? ("True") : ("False") ) << std::endl;
 	output << "Last packet sent time: " << last_packet_sent_time_ << std::endl;
 	output << "Update interval:       " << update_interval_ << std::endl;
-	output << "link: " << link_ << std::endl;
+	output << "Link:                  " << link_ << std::endl;
 }
 
 std::ostream &

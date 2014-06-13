@@ -5,7 +5,7 @@ IO_STRING  MN Z
 TYPE LIGAND
 AA UNK
 # We don't have a Mn type right now, but Mg should be close enough.
-ATOM MN   Mg2p  MG   2.00
+ATOM MN   Mg2p  Mg2p 2.00
 ATOM  V1  VIRT  VIRT 0.00
 ATOM  V2  VIRT  VIRT 0.00
 BOND MN    V1 

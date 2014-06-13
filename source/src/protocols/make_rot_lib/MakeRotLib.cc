@@ -54,7 +54,7 @@
 
 
 namespace protocols {
-namespace MakeRotLib {
+namespace make_rot_lib {
 
 using namespace core;
 using namespace utility;
@@ -109,36 +109,6 @@ phe_tyr_corrections( RotVec & rotamers )
 	}
 }
 
-void
-peptoid_trans_hack( RotVec & rotamers )
-{
-	int count(0);
-	for ( vector1<RotData>::iterator start( rotamers.begin() ), iter( rotamers.end() - 1 ); iter >= start; iter-- ) {
-		Real temp_omg( iter->get_min_omega() );
-		if ( temp_omg >=0 && temp_omg < 90 ) {
-			rotamers.erase( iter );
-			count++;
-		} else if ( temp_omg >= 270 && temp_omg < 360 ) {
-			rotamers.erase( iter );
-			count++;
-		}
-	}
-	std::cout << "Erased " << count << "CIS PEPTOID rotamers" << std::endl;
-}
-
-void
-peptoid_cis_hack( RotVec & rotamers )
-{
-	int count(0);
-	for ( vector1<RotData>::iterator start( rotamers.begin() ), iter( rotamers.end() - 1 ); iter >= start; iter-- ) {
-		Real temp_omg( iter->get_min_omega() );
-		if ( temp_omg >= 90 && temp_omg < 270 ) {
-			rotamers.erase( iter );
-			count++;
-		}
-	}
-	std::cout << "Erased " << count << "TRANS PEPTOID rotamers" << std::endl;
-}
 
 void
 min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::string aa_name )
@@ -160,23 +130,6 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		// get number of chi
 		Size const nchi( rotamers[i].get_num_chi() );
 
-		// create filenames
-		std::stringstream start_name;
-		start_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
-		for(Size j = 1; j <= nchi; ++j ) {
-			start_name << rotamers[i].get_inp_chi( j ) << "_";
-		}
-		start_name << "start.pdb";
-		std::string start_filename( start_name.str() );
-
-		std::stringstream end_name;
-		end_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
-		for(Size j = 1; j <= nchi; ++j ) {
-			end_name << rotamers[i].get_inp_chi( j ) << "_";
-		}
-		end_name << "end.pdb";
-		std::string end_filename( end_name.str() );
-
 		// make a pose, residue, and append residue to pose
 		Pose pose;
 		ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
@@ -184,20 +137,47 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		Residue R( RT, true );
 		pose.append_residue_by_jump( R, 1 );
 
+		bool is_peptoid( RT.is_peptoid() );
+
+		// create filenames
+		std::stringstream start_name;
+		if( is_peptoid ) {
+			start_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		} else {
+			start_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		}
+		for(Size j = 1; j <= nchi; ++j ) {
+			start_name << rotamers[i].get_inp_chi( j ) << "_";
+		}
+		start_name << "start.pdb";
+		std::string start_filename( start_name.str() );
+
+		std::stringstream end_name;
+		if( is_peptoid ) {
+			end_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		} else {
+			end_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		}
+		for(Size j = 1; j <= nchi; ++j ) {
+			end_name << rotamers[i].get_inp_chi( j ) << "_";
+		}
+		end_name << "end.pdb";
+		std::string end_filename( end_name.str() );
+
 		// score the pose
 		//Real debug_ener( (*scrfxn)( pose ) );
 		//std::cout << "DEBUG ENER: " << debug_ener << std::endl;
 
-		// set phi, psi, omega, epsilon and chi(s)
+		// set phi, psi, omg, eps and chi(s)
 		id::TorsionID bb1( 1, id::BB, 1 );
 		id::TorsionID bb2( 1, id::BB, 2 );
 		id::TorsionID bb3( 1, id::BB, 3 );
 		id::TorsionID bb4( 1, id::BB, 4 );
 
-		pose.set_torsion( bb1, rotamers[i].get_omega() );
+		pose.set_torsion( bb1, rotamers[i].get_omg() );
 		pose.set_torsion( bb2, rotamers[i].get_phi() );
 		pose.set_torsion( bb3, rotamers[i].get_psi() );
-		pose.set_torsion( bb4, rotamers[i].get_epsilon() );
+		pose.set_torsion( bb4, rotamers[i].get_eps() );
 
 		for(Size j = 1; j <= nchi; ++j ) {
 			pose.set_chi( j, 1, rotamers[i].get_inp_chi( j ) );
@@ -214,8 +194,12 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		// minimize the pose
 		kinematics::MoveMapOP mvmp( new kinematics::MoveMap );
 		mvmp->set_chi( 1, true );
-		mvmp->set( bb1, true );
 		mvmp->set( bb4, true );
+		// keep omg fixed if we are a peptoid
+		if ( !is_peptoid ) {
+			mvmp->set( bb1, true );
+		}
+
 		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 
 
@@ -250,8 +234,8 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 			rotamers[i].set_min_chi( pose.chi( j, 1 ), j );
 		}
 		rotamers[i].set_energy( min_ener );
-		rotamers[i].set_min_omega( numeric::nonnegative_principal_angle_degrees( pose.torsion( bb1 ) ) );
-		rotamers[i].set_min_epsilon( numeric::nonnegative_principal_angle_degrees( pose.torsion( bb4 ) ) );
+		rotamers[i].set_min_omg( numeric::nonnegative_principal_angle_degrees( pose.torsion( bb1 ) ) );
+		rotamers[i].set_min_eps( numeric::nonnegative_principal_angle_degrees( pose.torsion( bb4 ) ) );
 
 	}
 
@@ -265,8 +249,8 @@ init_rotamers_centroids
 	std::string options_filename,
 	std::string & aa_name,
 	bool is_peptoid,
-	Real omega_start_val,
-	Real epsilon_start_val
+	Real omg_start_val,
+	Real eps_start_val
 )
 {
 	//init stuff to hold lines
@@ -319,6 +303,7 @@ init_rotamers_centroids
 		else if ( tag == "AA_NAME" ) {
 			l >> base_aa_name;
 		}
+
 	}
 
 	// create full_aa_name
@@ -337,6 +322,7 @@ init_rotamers_centroids
 	// parse the rest of the file
 	int phi_lower(0), phi_upper(0), phi_increment(0);
 	int psi_lower(0), psi_upper(0), psi_increment(0);
+	int omg_lower(0), omg_upper(0), omg_increment(0);
 	utility::vector1<int> chi_lower, chi_upper, chi_increment;
 	chi_lower.resize(nchi, 0); chi_upper.resize(nchi, 0); chi_increment.resize(nchi, 0);
 
@@ -355,6 +341,11 @@ init_rotamers_centroids
 		// get psi range
 		else if ( tag == "PSI_RANGE" ) {
 			l >> psi_lower >> psi_upper >> psi_increment;
+		}
+
+		// get omg range
+		else if ( tag == "OMG_RANGE" ) {
+			l >> omg_lower >> omg_upper >> omg_increment;
 		}
 
 		// get chi range(s)
@@ -447,8 +438,12 @@ init_rotamers_centroids
 	for( Size i = 1; i <= nrotamers; ++i ) {
 		rotamers[i].set_phi( phi_lower );
 		rotamers[i].set_psi( psi_lower );
-		rotamers[i].set_omega( omega_start_val );
-		rotamers[i].set_epsilon( epsilon_start_val );
+		if ( is_peptoid ) {
+			rotamers[i].set_omg( omg_lower );
+		} else {
+			rotamers[i].set_omg( omg_start_val );
+		}
+		rotamers[i].set_eps( eps_start_val );
 	}
 }
 
@@ -652,6 +647,8 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 	Residue R( RT, true );
 	pose.append_residue_by_jump( R, 1 );
 
+	bool is_peptoid( RT.is_peptoid() );
+
 	// itterate over final rotamers
 	for (Size i = 1; i<= final_rotamers.size(); ++i){
 		Size const nchi (final_rotamers[i].get_num_chi() );
@@ -661,10 +658,10 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		id::TorsionID bb2( 1, id::BB, 2 );
 		id::TorsionID bb3( 1, id::BB, 3 );
 		id::TorsionID bb4( 1, id::BB, 4 );
-		pose.set_torsion( bb1, final_rotamers[i].get_omega() );
+		pose.set_torsion( bb1, final_rotamers[i].get_omg() );
 		pose.set_torsion( bb2, final_rotamers[i].get_phi() );
 		pose.set_torsion( bb3, final_rotamers[i].get_psi() );
-		pose.set_torsion( bb4, final_rotamers[i].get_epsilon() );
+		pose.set_torsion( bb4, final_rotamers[i].get_eps() );
 
 		for(Size l = 1; l <= nchi; ++l ) {
 			pose.set_chi( l, 1, final_rotamers[i].get_inp_chi( l ) );
@@ -673,8 +670,10 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		// minimize the pose
 		kinematics::MoveMapOP mvmp( new kinematics::MoveMap );
 		mvmp->set_chi( 1, true );
-		mvmp->set( bb1, true );
 		mvmp->set( bb4, true );
+		if ( !is_peptoid ) {
+			mvmp->set( bb1, true );
+		}
 		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 		for ( Size j=1; j<= 25; ++j ) {
 			//std::cout << " ----- " << j << " ----- " << std::flush << std::endl;
@@ -683,7 +682,11 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 
 		// dump coords to a file
 		std::stringstream final_name;
-		final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
+		if( is_peptoid ) {
+			final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_omg() << "_" << final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
+		} else {
+			final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
+		}
 		final_name << "INP_CHI_";
 		for(Size j = 1; j <= nchi; ++j ) {
 			final_name << final_rotamers[i].get_inp_chi( j ) << "_";
@@ -696,7 +699,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		std::string final_filename( final_name.str() );
 
 		// Dump a pdb
-		core::io::pdb::dump_pdb( pose, final_filename );
+		//core::io::pdb::dump_pdb( pose, final_filename );
 
 		//set energy barrier to stop at
 		Real cut_off_ener (final_rotamers[i].get_energy() + 0.5);
@@ -720,11 +723,9 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 			//std::cout <<"pre-while loop" <<std::endl;
 			while(new_ener < cut_off_ener && (k * chi_step) <= 30 ){
 				k=k+1;
-				pose.set_chi( j, 1,
-					numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) + k * chi_step ));
+				pose.set_chi( j, 1,	numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) + k * chi_step ));
 				Real plus_ener( (*scrfxn)( pose ) );
-				pose.set_chi( j, 1,
-					numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) - k * chi_step ));
+				pose.set_chi( j, 1,	numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) - k * chi_step ));
 				Real neg_ener( (*scrfxn)( pose ) );
 				// set new_ener to highest energy in either direction
 				new_ener = (plus_ener >= neg_ener ? plus_ener : neg_ener);
@@ -748,8 +749,8 @@ pretty_print_rd( RotData & rot )
 
 	cout << "PHI: " << setw(4) << setprecision(2) << fixed << rot.get_phi() << " "
 			 << "PSI: " << setw(4) << setprecision(2) << fixed << rot.get_psi() << " "
-			 << "OMG: " << setw(8) << setprecision(4) << fixed << rot.get_min_omega() << " "
-			 << "ESL: " << setw(8) << setprecision(4) << fixed << rot.get_min_epsilon() << " "
+			 << "OMG: " << setw(8) << setprecision(4) << fixed << rot.get_min_omg() << " "
+			 << "ESL: " << setw(8) << setprecision(4) << fixed << rot.get_min_eps() << " "
 			 << "PRB: " << setw(4) << setprecision(4) << fixed << rot.get_probability() << " "
 			 << "ENR: " << setw(8) << setprecision(4) << fixed << rot.get_energy() << " "
 			 << "TWS: " << setw(8) << setprecision(4) << fixed << rot.get_twist() << " "
@@ -808,6 +809,7 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 	Size nrot( final_rotamers.size() );
 	Real phi( final_rotamers[1].get_phi() );
 	Real psi( final_rotamers[1].get_psi() );
+	Real omg( final_rotamers[1].get_omg() );
 
 	// get aa name
 	std::string aa_name3( aa_name_full.substr( 0, 3 ) );
@@ -861,7 +863,7 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 
 	// create filename with string stream
 	std::stringstream lib_name;
-	lib_name << aa_name3 << "_" << phi << "_" << psi << "_bbdep.rotlib";
+	lib_name << aa_name3 << "_" << omg << "_" << phi << "_" << psi << "_bbdep.rotlib";
 
 	// open file for writing
 	std::ofstream rotlib;
@@ -874,6 +876,8 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 					 << setw(4) << setprecision(0) << fixed << phi
 					 << " "
 					 << setw(4) << setprecision(0) << fixed << psi
+					 << "  "
+					 << setw(4) << setprecision(0) << fixed << omg
 					 << "  "
 					 << setw(4) << count
 					 << "    "
@@ -906,5 +910,5 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 
 
 
-} // namespace MakeRotLib
+} // namespace make_rot_lib
 } // namespace protocols

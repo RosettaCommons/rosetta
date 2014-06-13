@@ -71,6 +71,7 @@ JobInputter::job_inputter_input_source_to_string(
 	case JobInputterInputSource::PDB_FILE: return "PdbFile";
 	case JobInputterInputSource::ATOM_TREE_FILE: return "AtomTreeFile";
 	case JobInputterInputSource::DATABASE: return "Database";
+	case JobInputterInputSource::MAKE_ROT_LIB: return "MakeRotLib";
 	case JobInputterInputSource::RESOURCE_MANAGED_JOB: return "ResourceManagerJob";
 	case JobInputterInputSource::SCREENING_FILE: return "ScreeningJobInputter";
 	default:

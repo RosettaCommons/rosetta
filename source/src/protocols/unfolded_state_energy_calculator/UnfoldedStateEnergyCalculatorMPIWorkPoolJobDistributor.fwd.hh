@@ -9,7 +9,7 @@
 
 /// @file   protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.fwd.hh
 /// @brief  MPI Work Pool Job distributor for UnfoldedStateEnergyCalculator
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor_fwd_hh
 #define INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor_fwd_hh

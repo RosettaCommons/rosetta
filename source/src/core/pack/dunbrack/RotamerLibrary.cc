@@ -18,12 +18,14 @@
 // Package headers
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
+#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.hh>
+#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 
@@ -71,9 +73,7 @@
 // Boost Headers
 #include <boost/cstdint.hpp>
 
-
 using basic::T;
-
 
 using basic::Error;
 using basic::Warning;
@@ -320,11 +320,6 @@ rotamer_from_chi_02(
 // removed pser and rna
 //
 
-
-SingleResidueRotamerLibrary::~SingleResidueRotamerLibrary()
-{}
-
-
 //// RotamerLibrary
 RotamerLibrary * RotamerLibrary::rotamer_library_( 0 );
 
@@ -486,6 +481,10 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 		return true;
 	}
 
+	if ( peptoid_rotlibs_.find( rsd_type.name3() ) != peptoid_rotlibs_.end() ) {
+		return true;
+	}
+
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
 			rsd_type.rotamer_aa() <= chemical::num_canonical_aas ) {
 		return aa_libraries_[ rsd_type.rotamer_aa() ] != 0;
@@ -511,9 +510,14 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 SingleResidueRotamerLibraryCAP
 RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 {
-	/// intercept, in case the residue type would prefer using the NCAARotamerLibrary
+	/// intercept, in case the residue type would prefer using the NCAA rotamer library
 	if ( rsd_type.get_use_ncaa_rotlib() ) {
-		return get_NCAARotamerLibrary( rsd_type );
+		return get_NCAA_rotamer_library( rsd_type );
+	}
+
+	/// intercept, in case the residue type would prefer using the peptoid rotamer library
+	if ( rsd_type.get_use_peptoid_rotlib() ) {
+		return get_peptoid_rotamer_library( rsd_type );
 	}
 
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
@@ -1959,8 +1963,12 @@ RotamerLibrary::read_from_binary( utility::io::izstream & in )
 }
 
 SingleResidueRotamerLibraryCAP
-RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type ) const
+RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type ) const
 {
+	using namespace utility::options;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	// get some info about amino acid type
 	std::string aa_name3( rsd_type.name3() );
 	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() );
@@ -1972,8 +1980,19 @@ RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 		// create izstream from path
 		std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
 		std::string file_name = rsd_type.get_ncaa_rotlib_path();
-		utility::io::izstream rotlib_in( dir_name + file_name );
-		std::cout << "Reading in rot lib " << dir_name + file_name << "...";
+		std::string full_path = dir_name + file_name;
+		utility::io::izstream rotlib_in( full_path );
+
+		// if we cannot open in regular path, try alternate paths
+		utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
+		Size pveci(1);
+		while ( !rotlib_in && pveci <= pvec.size() ) {
+			full_path = pvec[ pveci ].name() + file_name;
+			rotlib_in.open( full_path );
+			pveci++;
+		}
+
+		TR << "Reading in rot lib " << full_path << "...";
 
 		// get an instance of RotamericSingleResidueDunbrackLibrary, but need a RotamerLibrary to do it
 		// this means that when ever you read in the NCAA libraries you will also read in the Dunbrack libraries
@@ -1982,32 +2001,40 @@ RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 
 		// this comes almost directally from RotmerLibrary.cc::create_rotameric_dunlib()
 		SingleResidueRotamerLibraryOP ncaa_rotlib;
-		RotamericSingleResidueDunbrackLibrary< ONE > * r1;
- 		RotamericSingleResidueDunbrackLibrary< TWO > * r2;
- 		RotamericSingleResidueDunbrackLibrary< THREE > * r3;
- 		RotamericSingleResidueDunbrackLibrary< FOUR > * r4;
 
 		switch ( n_rotlib_chi ) {
-		case 1:
-			r1 = new RotamericSingleResidueDunbrackLibrary< ONE >( aan, dun02 );
+		case 1: {
+			RotamericSingleResidueDunbrackLibrary< ONE > * r1 =
+				new RotamericSingleResidueDunbrackLibrary< ONE >( aan, dun02 );
 			r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r1->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r1; break;
-		case 2:
-			r2 = new RotamericSingleResidueDunbrackLibrary< TWO >( aan, dun02 );
+			ncaa_rotlib = r1;
+			break;
+		}
+		case 2: {
+			RotamericSingleResidueDunbrackLibrary< TWO > * r2 =
+				new RotamericSingleResidueDunbrackLibrary< TWO >( aan, dun02 );
 			r2->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r2->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r2; break;
-		case 3:
-			r3 = new RotamericSingleResidueDunbrackLibrary< THREE >( aan, dun02 );
+			ncaa_rotlib = r2;
+			break;
+		}
+		case 3: {
+			RotamericSingleResidueDunbrackLibrary< THREE > * r3 =
+				new RotamericSingleResidueDunbrackLibrary< THREE >( aan, dun02 );
 			r3->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r3->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r3; break;
-		case 4:
-			r4 = new RotamericSingleResidueDunbrackLibrary< FOUR >( aan, dun02 );
+			ncaa_rotlib = r3;
+			break;
+		}
+		case 4: {
+			RotamericSingleResidueDunbrackLibrary< FOUR > * r4 =
+				new RotamericSingleResidueDunbrackLibrary< FOUR >( aan, dun02 );
 			r4->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r4->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r4; break;
+			ncaa_rotlib = r4;
+			break;
+		}
 		default:
 			utility_exit_with_message( "ERROR: too many chi angles desired for NCAA library: " +
 					boost::lexical_cast<std::string>(n_rotlib_chi) );
@@ -2016,9 +2043,92 @@ RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 
 		// add new rotamer library to map
 		ncaa_rotlibs_[ aa_name3 ] = ncaa_rotlib;
-		std::cout << "done!" << std::endl;
+		TR << "done!" << std::endl;
 	}
 	return ( ncaa_rotlibs_.find( aa_name3 )->second)();
+}
+
+/// DOUG DOUG DOUG a good bit of this will need to change for the new RT based system
+SingleResidueRotamerLibraryCAP
+RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_type ) const
+{
+	using namespace utility::options;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	// get some info about amino acid type
+	std::string aa_name3( rsd_type.name3() );
+	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() );
+
+	if ( peptoid_rotlibs_.find( aa_name3 ) == peptoid_rotlibs_.end() ) {
+
+		// create izstream from path
+		std::string dir_name = basic::database::full_name( "/rotamer/peptoid_rotlibs/" );
+		std::string file_name = rsd_type.get_peptoid_rotlib_path();
+		std::string full_path = dir_name + file_name;
+		utility::io::izstream rotlib_in( full_path );
+
+		// if we cannot open in regular path, try alternate paths
+		utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
+		Size pveci(1);
+		while ( !rotlib_in && pveci <= pvec.size() ) {
+			full_path = pvec[ pveci ].name() + file_name;
+			rotlib_in.open( full_path );
+			pveci++;
+		}
+
+		TR << "Reading in rot lib " << full_path << "...";
+
+		// get an instance of RotamericSingleResiduePeptoidLibrary, but need a RotamerLibrary to do it
+		// this means that when ever you read in the PEPTOID libraries you will also read in the Dunbrack libraries
+		// this may need to be a pointer to the full type and not just a SRRLOP
+
+		// this comes almost directally from RotmerLibrary.cc::create_rotameric_dunlib()
+		SingleResidueRotamerLibraryOP peptoid_rotlib;
+
+		switch ( n_rotlib_chi ) {
+		case 1: {
+			RotamericSingleResiduePeptoidLibrary< ONE > * r1 =
+				new RotamericSingleResiduePeptoidLibrary< ONE >();
+			r1->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
+			r1->read_from_file( rotlib_in );
+			peptoid_rotlib = r1;
+			break;
+		}
+		case 2: {
+			RotamericSingleResiduePeptoidLibrary< TWO > * r2 =
+				new RotamericSingleResiduePeptoidLibrary< TWO >();
+			r2->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
+			r2->read_from_file( rotlib_in );
+			peptoid_rotlib = r2;
+			break;
+		}
+		case 3: {
+			RotamericSingleResiduePeptoidLibrary< THREE > * r3 =
+				new RotamericSingleResiduePeptoidLibrary< THREE >();
+			r3->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
+			r3->read_from_file( rotlib_in );
+			peptoid_rotlib = r3;
+			break;
+		}
+		case 4: {
+			RotamericSingleResiduePeptoidLibrary< FOUR > * r4 =
+				new RotamericSingleResiduePeptoidLibrary< FOUR >();
+			r4->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
+			r4->read_from_file( rotlib_in );
+			peptoid_rotlib = r4;
+			break;
+		}
+		default:
+			utility_exit_with_message( "ERROR: too many chi angles desired for peptoid library: " + n_rotlib_chi );
+			break;
+		}
+
+		// add new rotamer library to map
+		peptoid_rotlibs_[ aa_name3 ] = peptoid_rotlib;
+		TR << "done!" << std::endl;
+	}
+	return ( peptoid_rotlibs_.find( aa_name3 )->second)();
 }
 
 

@@ -68,6 +68,8 @@ sources = {
 		"SemiRotamericSingleResidueDunbrackLibrary",
 		"SingleLigandRotamerLibrary",
 		"SingleResidueDunbrackLibrary",
+                "SingleResiduePeptoidLibrary",
+		"SingleResidueRotamerLibrary",
 	],
 	"core/pack/dunbrack/cenrot": [
 		"SingleResidueCenrotLibrary",

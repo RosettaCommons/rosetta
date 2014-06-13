@@ -76,7 +76,6 @@ MutateResidueCreator::mover_name()
 ///@brief default ctor
 MutateResidue::MutateResidue() :
 	parent(),
-	rb_jump_(1),
 	target_(0)
 {}
 
@@ -84,7 +83,6 @@ MutateResidue::MutateResidue() :
 MutateResidue::MutateResidue(MutateResidue const& dm) :
 	//utility::pointer::ReferenceCount(),
 	parent( dm ),
-	rb_jump_(dm.rb_jump_),
 	target_(dm.target_),
 	res_name_(dm.res_name_)
 {}
@@ -94,14 +92,12 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 ///@param new_res The name of the replacement residue
 MutateResidue::MutateResidue( Size const target, string const new_res ) :
 	parent(),
-	rb_jump_(1),
 	target_(target),
 	res_name_(new_res)
 {}
 
 MutateResidue::MutateResidue( Size const target, int const new_res ) :
 	parent(),
-	rb_jump_(1),
 	target_(target),
 	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) )
 {}

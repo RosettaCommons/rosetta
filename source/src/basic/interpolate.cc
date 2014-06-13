@@ -168,10 +168,8 @@ interpolate_bilinear_by_value(
 		val = w12 * a12 + w34 * ( subtract_degree_angles(a34,a12) + a12 );
 		angle_in_range(val);
 
-		dval_dx = ( ( 1.0f - yd ) * subtract_degree_angles(x1y0,x0y0) +
-		 yd * subtract_degree_angles(x1y1,x0y1) ) / binrange;
-		dval_dy = ( ( 1.0f - xd ) * subtract_degree_angles(x0y1,x0y0) +
-		 xd * subtract_degree_angles(x1y1,x1y0) ) / binrange;
+		dval_dx = ( ( 1.0f - yd ) * subtract_degree_angles(x1y0,x0y0) + yd * subtract_degree_angles(x1y1,x0y1) ) / binrange;
+		dval_dy = ( ( 1.0f - xd ) * subtract_degree_angles(x0y1,x0y0) + xd * subtract_degree_angles(x1y1,x1y0) ) / binrange;
 	} else {
 		val = x0y0 * w1 + x1y0 * w2 + x0y1 * w3 + x1y1 * w4;
 
@@ -180,5 +178,64 @@ interpolate_bilinear_by_value(
 	}
 }
 
+/// @brief paraphazed from above for three dimentions
+/// Without additional scaling this will only work if
+/// the bin sizes in each dimention are equal I think.
+/// Otherwise it could be computed as the product of
+/// three linear interpolations
+///
+/// Perform linear interpolation between x0y0z0 and x1y0z0 to find y0z0
+/// Preform linear interpolation between x0y0z1 and x1y0z1 to find y0z1
+/// Preform linear interpolation between x0y1z1 and x1y1z1 to find y1z1
+/// Preform linear interpolation between x0y1z0 and x1y1z0 to find y1z0
+/// Preform linear interpolation between y0z0 and y1z0 to find z0
+/// Preform linear interpolation between y0z1 and y1z1 to find z1
+/// Preform linear interpolation between z0 and z1 to find val
+
+void
+interpolate_trilinear_by_value(
+	double const x0y0z0,
+	double const x1y0z0,
+	double const x0y1z0,
+	double const x1y1z0,
+	double const x0y0z1,
+	double const x1y0z1,
+	double const x0y1z1,
+	double const x1y1z1,
+	double const xd,
+	double const yd,
+	double const zd,
+	double const binrange,
+	bool const angles,
+	double & val,
+	double & dval_dx,
+	double & dval_dy,
+	double & dval_dz
+)
+{
+	double const w1 = ( 1.0f - xd ) * ( 1.0f - yd ) * ( 1.0f -zd );
+	double const w2 = xd * ( 1.0f - yd ) * ( 1.0f -zd );
+	double const w3 = ( 1.0f - xd ) * yd * ( 1.0f -zd );
+	double const w4 = ( 1.0f - xd ) * ( 1.0f - yd ) * zd;
+	double const w5 = xd * yd * ( 1.0f -zd );
+	double const w6 = xd * ( 1.0f - yd ) * zd;
+	double const w7 = ( 1.0f - xd ) * yd * zd;
+	double const w8 = xd * yd * zd;
+
+	if ( angles ) {
+		// not sure why angles need to be treated differently
+		val = x0y0z0 * w1 + x1y0z0 * w2 + x0y1z0 * w3 + x0y0z1 * w4 + x1y1z0 * w5 + x1y0z1 * w6 + x0y1z1 * w7 + x1y1z1 * w8;
+		dval_dx = ( -1.0f * x0y0z0 * ( 1.0f - yd ) * ( 1.0f - zd ) + x1y0z0 * ( 1.0f - yd ) * ( 1.0f - zd ) - x0y1z0 * yd * ( 1.0f - zd ) + x1y0z1 * yd * ( 1.0f - zd ) - x1y0z1 * ( 1.0f - yd ) * zd + x1y0z0 * ( 1.0f - yd ) * zd - x1y0z0 * yd * zd + x1y1z1 * yd * zd  ) / binrange;
+		dval_dy = ( -1.0f * x0y0z0 * ( 1.0f - xd ) * ( 1.0f - zd ) + x0y1z0 * ( 1.0f - xd ) * ( 1.0f - zd ) - x1y0z0 * xd * ( 1.0f - zd ) + x1y0z1 * xd * ( 1.0f - zd ) - x1y0z1 * ( 1.0f - xd ) * zd + x1y0z0 * ( 1.0f - xd ) * zd - x1y0z0 * xd * zd + x1y1z1 * xd * zd  ) / binrange;
+		dval_dz = ( -1.0f * x0y0z0 * ( 1.0f - xd ) * ( 1.0f - yd ) + x1y0z1 * ( 1.0f - xd ) * ( 1.0f - yd ) - x1y0z0 * xd * ( 1.0f - yd ) + x1y0z0 * xd * ( 1.0f - yd ) - x0y1z0 * ( 1.0f - xd ) * yd + x1y0z0 * ( 1.0f - xd ) * yd - x1y0z1 * xd * yd + x1y1z1 * xd * yd  ) / binrange;
+
+	} else {
+		val = x0y0z0 * w1 + x1y0z0 * w2 + x0y1z0 * w3 + x0y0z1 * w4 + x1y0z1 * w5 + x0y1z1 * w6 + x1y1z0 * w7 + x1y1z1 * w8;
+		dval_dx = ( -1.0f * x0y0z0 * ( 1.0f - yd ) * ( 1.0f - zd ) + x1y0z0 * ( 1.0f - yd ) * ( 1.0f - zd ) - x0y1z0 * yd * ( 1.0f - zd ) + x1y0z1 * yd * ( 1.0f - zd ) - x1y0z1 * ( 1.0f - yd ) * zd + x1y0z0 * ( 1.0f - yd ) * zd - x1y0z0 * yd * zd + x1y1z1 * yd * zd  ) / binrange;
+		dval_dy = ( -1.0f * x0y0z0 * ( 1.0f - xd ) * ( 1.0f - zd ) + x0y1z0 * ( 1.0f - xd ) * ( 1.0f - zd ) - x1y0z0 * xd * ( 1.0f - zd ) + x1y0z1 * xd * ( 1.0f - zd ) - x1y0z1 * ( 1.0f - xd ) * zd + x1y0z0 * ( 1.0f - xd ) * zd - x1y0z0 * xd * zd + x1y1z1 * xd * zd  ) / binrange;
+		dval_dz = ( -1.0f * x0y0z0 * ( 1.0f - xd ) * ( 1.0f - yd ) + x1y0z1 * ( 1.0f - xd ) * ( 1.0f - yd ) - x1y0z0 * xd * ( 1.0f - yd ) + x1y0z0 * xd * ( 1.0f - yd ) - x0y1z0 * ( 1.0f - xd ) * yd + x1y0z0 * ( 1.0f - xd ) * yd - x1y0z1 * xd * yd + x1y1z1 * xd * yd  ) / binrange;
+
+	}
+}
 
 } // namespace basic

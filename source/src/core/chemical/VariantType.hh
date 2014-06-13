@@ -62,6 +62,9 @@ extern VariantType const SC_ORBITALS;
 
 extern VariantType const REPLONLY;
 
+extern VariantType const NTERM_CONNECT;
+extern VariantType const CTERM_CONNECT;
+
 extern VariantType const OOP_PRE;
 extern VariantType const OOP_POST;
 

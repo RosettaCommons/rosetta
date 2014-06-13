@@ -542,11 +542,7 @@ NATAA::residue_action(
 ///@brief ALLAA is deprecated; allows repacking and designing to any canonical residue (default state of PackerTask)
 void
 ALLAA::initialize_from_tokens(
-#ifdef NDEBUG
-							  utility::vector1< std::string > const & ,
-#else
-							  utility::vector1< std::string > const & tokens,
-#endif
+	utility::vector1< std::string > const & ASSERT_ONLY( tokens ),
 	Size & which_token,
 	Size /*resid*/
 )

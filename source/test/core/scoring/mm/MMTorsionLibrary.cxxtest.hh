@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMTorsionLibrary.cxxtest.hh
 /// @brief  test suite for core::scoring::mm::MMTorsionLibrary
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 // Test headers

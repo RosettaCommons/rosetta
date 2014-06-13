@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMTorsionScore.hh
 /// @brief  Molecular mechanics torsion score class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 #ifndef INCLUDED_core_scoring_mm_MMTorsionScore_hh

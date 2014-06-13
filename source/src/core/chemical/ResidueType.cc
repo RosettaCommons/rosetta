@@ -111,8 +111,10 @@ ResidueType::ResidueType(
 		n_backbone_heavyatoms_(0),
 		first_sidechain_hydrogen_( 0 ),
 		rotamer_library_name_( "" ),
-		use_ncaa_rotlib_( false ),
-		ncaa_rotlib_n_rots_( 0 ),
+	  use_ncaa_rotlib_( false ),
+	  ncaa_rotlib_n_rots_( 0 ),
+  	use_peptoid_rotlib_( false ),
+	  peptoid_rotlib_n_rots_( 0 ),
 		is_polymer_( false ),
 		is_protein_( false ),
 		is_alpha_aa_(false),
@@ -127,6 +129,7 @@ ResidueType::ResidueType(
 		is_DNA_( false ),
 		is_RNA_( false ),
 		is_NA_( false ),
+  	is_peptoid_( false ),
 		is_carbohydrate_( false ),
 		is_lipid_( false ),
 		is_ligand_( false ),
@@ -237,6 +240,10 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		ncaa_rotlib_path_( residue_type.ncaa_rotlib_path_),
 		ncaa_rotlib_n_rots_( residue_type.ncaa_rotlib_n_rots_ ),
 		ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
+		use_peptoid_rotlib_( residue_type.use_peptoid_rotlib_ ),
+		peptoid_rotlib_path_( residue_type.peptoid_rotlib_path_),
+	  peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
+	  peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
 		properties_(residue_type.properties_),
 		is_polymer_( residue_type.is_polymer_ ),
 		is_protein_( residue_type.is_protein_ ),
@@ -252,6 +259,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		is_DNA_( residue_type.is_DNA_ ),
 		is_RNA_( residue_type.is_RNA_ ),
 		is_NA_( residue_type.is_NA_ ),
+		is_peptoid_( residue_type.is_peptoid_ ),
 		is_carbohydrate_( residue_type.is_carbohydrate_ ),
 		is_lipid_( residue_type.is_lipid_ ),
 		is_ligand_( residue_type.is_ligand_ ),
@@ -1701,6 +1709,9 @@ ResidueType::add_property( std::string const & property )
 		is_RNA_ = true;
 		is_NA_ = true;
 		is_polymer_ = true;
+	}	else if ( property == "PEPTOID" ) {
+		is_peptoid_ = true;
+		is_polymer_ = true;
 	} else if ( property == "CARBOHYDRATE") {
 		is_carbohydrate_ = true;
 	} else if ( property == "LIPID" ) {
@@ -1812,6 +1823,8 @@ ResidueType::delete_property( std::string const & property )
 		is_DNA_ = false;
 	} else if ( property == "RNA" ) {
 		is_RNA_ = false;
+	} else if ( property == "PEPTOID" ) {
+		is_peptoid_ = false;
 	} else if ( property == "CARBOHYDRATE") {
 		is_carbohydrate_ = false;
 	} else if ( property == "LIPID") {
@@ -3460,6 +3473,16 @@ ResidueType::set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_ro
 	ncaa_rotlib_n_bins_per_rot_.resize( ncaa_rotlib_n_rots_ );
 	for( Size i = 1; i <= ncaa_rotlib_n_rots_; ++i ) {
 		ncaa_rotlib_n_bins_per_rot_[i] = n_bins_per_rot[i];
+	}
+}
+
+void
+ResidueType::set_peptoid_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot )
+{
+	assert( peptoid_rotlib_n_rots_ == n_bins_per_rot.size() );
+	peptoid_rotlib_n_bins_per_rot_.resize( peptoid_rotlib_n_rots_ );
+	for( Size i = 1; i <= peptoid_rotlib_n_rots_; ++i ) {
+		peptoid_rotlib_n_bins_per_rot_[i] = n_bins_per_rot[i];
 	}
 }
 

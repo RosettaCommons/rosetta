@@ -1,24 +1,28 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// This file is made available under the Rosetta Commons license.
-// See http://www.rosettacommons.org/license
-// (C) 199x-2008 University of Washington
-// (C) 199x-2008 University of California Santa Cruz
-// (C) 199x-2008 University of California San Francisco
-// (C) 199x-2008 Johns Hopkins University
-// (C) 199x-2008 University of North Carolina, Chapel Hill
-// (C) 199x-2008 Vanderbilt University
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_make_rot_lib_rotdata_HH
-#define INCLUDED_protocols_make_rot_lib_rotdata_HH
+/// @file protocols/make_rot_lib/MakeRotLibMover.hh
+/// @brief Header file for RotData
+/// @author P. Douglas Renfrew ( renfrew@nyu.edu )
+
+#ifndef INCLUDED_protocols_make_rot_lib_rotdata_hh
+#define INCLUDED_protocols_make_rot_lib_rotdata_hh
+
+// unit headers
+#include <protocols/make_rot_lib/RotData.fwd.hh>
 
 // core headers
 #include <core/types.hh>
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh> //for arg_min(vector1<>)
+#include <utility/vector1.functions.hh>
 
 // numeric headers
 #include <numeric/angle.functions.hh>
@@ -27,196 +31,194 @@
 #include <iostream>
 
 namespace protocols {
-namespace MakeRotLib {
-
-using namespace core;
-using namespace utility;
+namespace make_rot_lib {
 
 // Define Rotamer Data class and variable
-class RotData {
+class RotData
+{
  private:
-  Real phi_, psi_, omega_, min_omega_, epsilon_, min_epsilon_;
-  Real energy_;
-  Real probability_;
-  Size num_chi_;            // number of chi angles in AA
-	Size num_clusters_;       // number of clusters
-  Size cluster_num_;        // cluster id
-  vector1<Real> inp_chi_;  // starting chi angles
-  vector1<Real> min_chi_;  // minimized chi angles
-	vector1<int> lib_chi_val_; // rotamer number for dunbrack format
-  vector1<Real> std_dev_;  // standard deviation of chi angles
-  vector1<Real> cen_dst_;  // distance from each centroid
+  core::Real phi_, psi_, omega_, min_omega_, epsilon_, min_epsilon_;
+  core::Real energy_;
+  core::Real probability_;
+  core::Size num_chi_;            // number of chi angles in AA
+	core::Size num_clusters_;       // number of clusters
+  core::Size cluster_num_;        // cluster id
+  utility::vector1<core::Real> inp_chi_;  // starting chi angles
+  utility::vector1<core::Real> min_chi_;  // minimized chi angles
+	utility::vector1<core::Size> lib_chi_val_; // rotamer number for dunbrack format
+  utility::vector1<core::Real> std_dev_;  // standard deviation of chi angles
+  utility::vector1<core::Real> cen_dst_;  // distance from each centroid
 
 	// for debuging
-	Real twist_;
-	Real inter_rep_;
-	Real inter_atr_;
-	Real intra_rep_;
-	Real intra_atr_;
-	Real solvation_;
+	core::Real twist_;
+	core::Real inter_rep_;
+	core::Real inter_atr_;
+	core::Real intra_rep_;
+	core::Real intra_atr_;
+	core::Real solvation_;
 
 public:
-	void set_twist( Real twist ) {
+	void set_twist( core::Real twist ) {
 		twist_ = twist;
 	}
-	void set_inter_rep( Real inter_rep ) {
+	void set_inter_rep( core::Real inter_rep ) {
 		inter_rep_ = inter_rep;
 	}
-	void set_inter_atr( Real inter_atr ) {
+	void set_inter_atr( core::Real inter_atr ) {
 		inter_atr_ = inter_atr;
 	}
-	void set_intra_rep( Real intra_rep ) {
+	void set_intra_rep( core::Real intra_rep ) {
 		intra_rep_ = intra_rep;
 	}
-	void set_intra_atr( Real intra_atr ) {
+	void set_intra_atr( core::Real intra_atr ) {
 		intra_atr_ = intra_atr;
 	}
-	void set_solvation( Real solvation ) {
+	void set_solvation( core::Real solvation ) {
 		solvation_ = solvation;
 	}
 
-	Real get_twist() {
+	core::Real get_twist() {
 		return twist_;
 	}
-	Real get_inter_rep() {
+	core::Real get_inter_rep() {
 		return inter_rep_;
 	}
-	Real get_inter_atr() {
+	core::Real get_inter_atr() {
 		return inter_atr_;
 	}
-	Real get_intra_rep() {
+	core::Real get_intra_rep() {
 		return intra_rep_;
 	}
-	Real get_intra_atr() {
+	core::Real get_intra_atr() {
 		return intra_atr_;
 	}
-	Real get_solvation() {
+	core::Real get_solvation() {
 		return solvation_;
 	}
 
  public:
   // ctor
-  RotData( Size NumChi, Size NumCluster );
+  RotData( core::Size NumChi, core::Size NumCluster );
 
   // setters and getters
-  void set_phi (Real Phi) {
+  void set_phi (core::Real Phi) {
     phi_ = Phi;
   }
-  void set_psi (Real Psi) {
+  void set_psi (core::Real Psi) {
     psi_ = Psi;
   }
-  void set_omega (Real Omega) {
+  void set_omg (core::Real Omega) {
     omega_ = Omega;
   }
-	void set_min_omega (Real MinOmega) {
+	void set_min_omg (core::Real MinOmega) {
     min_omega_ = MinOmega;
   }
-  void set_epsilon (Real Epsilon) {
+  void set_eps (core::Real Epsilon) {
     epsilon_ = Epsilon;
   }
-  void set_min_epsilon (Real MinEpsilon) {
+  void set_min_eps (core::Real MinEpsilon) {
     min_epsilon_ = MinEpsilon;
   }
-  Real get_phi() {
+  core::Real get_phi() {
     return phi_;
   }
-  Real get_psi() {
+  core::Real get_psi() {
     return psi_;
   }
-	Real get_omega() {
+	core::Real get_omg() {
 		return omega_;
 	}
-	Real get_min_omega() {
+	core::Real get_min_omg() {
 		return min_omega_;
 	}
-	Real get_epsilon() {
+	core::Real get_eps() {
 		return epsilon_;
 	}
-	Real get_min_epsilon() {
+	core::Real get_min_eps() {
 		return min_epsilon_;
 	}
 
-  void set_energy (Real Energy) {
+  void set_energy (core::Real Energy) {
     energy_ = Energy;
   }
 
-  Real get_energy () {
+  core::Real get_energy () {
     return energy_;
   }
 
-  void set_probability (Real Probability) {
+  void set_probability (core::Real Probability) {
     probability_ = Probability;
   }
 
-  Real get_probability () {
+  core::Real get_probability () {
     return probability_;
   }
 
-  void set_num_chi(Size Num_Chi) {
+  void set_num_chi(core::Size Num_Chi) {
     num_chi_ = Num_Chi;
   }
 
-  Size get_num_chi() {
+  core::Size get_num_chi() {
     return num_chi_;
   }
 
-	void set_num_clusters( Size num ) {
+	void set_num_clusters( core::Size num ) {
 		num_clusters_ = num;
 	}
 
-	Size get_num_clusters() {
+	core::Size get_num_clusters() {
 		return num_clusters_;
 	}
 
-  void set_cluster_num (Size Cluster_Num) {
+  void set_cluster_num (core::Size Cluster_Num) {
     cluster_num_ = Cluster_Num;
   }
 
-  Size get_cluster_num () {
+  core::Size get_cluster_num () {
     return cluster_num_;
   }
 
-  void set_inp_chi( Real angle, Size num ) {
+  void set_inp_chi( core::Real angle, core::Size num ) {
     inp_chi_[ num ] =  numeric::nonnegative_principal_angle_degrees( angle );
   }
 
-  Real get_inp_chi( Size num ) {
+  core::Real get_inp_chi( core::Size num ) {
     return inp_chi_[ num ];
   }
 
-  void set_min_chi ( Real angle, Size num) {
+  void set_min_chi ( core::Real angle, core::Size num) {
     min_chi_[ num ] =  numeric::nonnegative_principal_angle_degrees( angle );
   }
 
-  Real get_min_chi( Size num ) {
+  core::Real get_min_chi( core::Size num ) {
     return min_chi_[ num ];
   }
 
-  void set_lib_chi_val ( int val, Size num) {
+  void set_lib_chi_val ( int val, core::Size num) {
     lib_chi_val_[ num ] =  val;
   }
 
-  Real get_lib_chi_val( Size num ) {
+  core::Real get_lib_chi_val( core::Size num ) {
     return lib_chi_val_[ num ];
   }
 
-  void set_std_dev (Real STD, Size num) {
+  void set_std_dev (core::Real STD, core::Size num) {
     std_dev_[ num ] = STD;
   }
 
-  Real get_std_dev( Size num ) {
+  core::Real get_std_dev( core::Size num ) {
     return std_dev_[ num ];
   }
 
-  void set_cen_dist(Real dist , Size num) {
+  void set_cen_dist(core::Real dist , core::Size num) {
     cen_dst_[ num ]= dist;
   }
 
-  Real get_cen_dist( Size num ) {
+  core::Real get_cen_dist( core::Size num ) {
     return cen_dst_[ num ];
   }
 
-	Size get_min_cent_dist(){
+	core::Size get_min_cent_dist(){
 		return arg_min( cen_dst_ );  //gets index of closest centroid
 	}
 
@@ -224,7 +226,7 @@ public:
 	bool load( std::istream & in );
 };
 
-} // namespace MakeRotLib
+} // namespace make_rot_lib
 } // namespace protocols
 
 #endif // INCLUDED_protocols_makerotlib_rotdata_HH

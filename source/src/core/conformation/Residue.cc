@@ -23,6 +23,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
@@ -518,9 +519,165 @@ void Residue::orient_onto_residue(
 }
 
 
-// Place/orient "this" Residue onto "src" Residue by backbone superimposition
-///	@details Since a rotamer is represented by a Residue in Rosetta now, this function is mainly used to place a rotamer
-///	onto the backbone of "src" residue.  Meanwhile, it can also be used to add side chains to one pose/conformation
+/// @details oritent onto residue for peptoids
+/// Not to proud of this as I think there is probably a more general way but at the moment it is alluding me
+/// To align a peptoid the N is the center and the nbrs are the lower connect and the CA. The lower connect is
+/// not stored in the atom index so we need to get the xyz coord a different way.
+void
+Residue::orient_onto_residue_peptoid (
+	Residue const & src,
+	Conformation const & conformation
+)
+{
+	using kinematics::Stub;
+	using namespace core;
+	using namespace conformation;
+	using namespace chemical;
+
+//	// DEBUG DEBUG DEBUG
+//  using namespace pose;
+// 	Pose before_pose;
+// 	before_pose.append_residue_by_jump( *this, 1 );
+// 	std::string before_filename("before.pdb");
+// 	before_pose.dump_pdb( before_filename );
+
+	// static strings to cut down on object creation penelty
+	static std::string const bb_ca( " CA " );
+	static std::string const bb_co( " C  " );
+	static std::string const bb_nx( " N  " );
+	static std::string const bb_ac( " CO " );
+	static std::string const sc_ca( " CA1" );
+
+	// xyz Vectors
+	Vector cent_xyz, nbr1_xyz, nbr2_xyz, src_cent_xyz, src_nbr1_xyz, src_nbr2_xyz;
+
+	// The position of the first sidechain atom in the first residue of a chain of a peptoid is not defined as it is for peptides
+	// unless it is part of a macrocycle or it is acetylated as both of those (just like residues in the middle and upper terminus
+	// of chains) provide a preceding atom to determin the position of the first sidechain atom.
+
+	// the order that these are called in is important
+
+	//std::cout << "DEBUG DEBUG DEBUG " << src.type().name() << " " << src.seqpos() << " " << src.type().is_lower_terminus() << " "
+	//          << ( src.has_variant_type( chemical::NTERM_CONNECT ) && conformation.residue( conformation.chain_end( src.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) )
+	//          << std::endl;
+
+	// first residue of chain
+	if ( src.type().is_lower_terminus() ) {
+		//std::cout << "DEBUG LT" << std::endl;
+		// NtermConnect (cyclic)
+		if ( src.has_variant_type( chemical::NTERM_CONNECT ) && conformation.residue( conformation.chain_end( src.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
+			//std::cout << "DEBUG LT CYCLIC" << std::endl;
+			// cent: peptoid N, src N
+			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
+			src_cent_xyz = src.atom( src.atom_index( bb_nx ) ).xyz();
+
+			// nbr2; peptoid CA, src CA
+			nbr2_xyz = atom( atom_index( bb_ca ) ).xyz();
+			src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
+
+			// nbr1: peptoid lower connect, C of the cyclic paterner of src
+			Residue const cyclic_src( conformation.residue( conformation.chain_end( src.chain() ) ) );
+			src_nbr1_xyz = cyclic_src.atom( cyclic_src.atom_index( bb_co ) ).xyz();
+
+			Stub stub( atom( atom_index( bb_nx ) ).xyz(), atom( atom_index( bb_ca ) ).xyz(), atom( atom_index( bb_co ) ).xyz() );
+			AtomICoor icoor ( (*this).type().lower_connect().icoor() );
+			nbr1_xyz = stub.spherical(icoor.phi(), icoor.theta(), icoor.d() );
+
+			// AcetylatedPeptoidNterm
+		} else if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
+			//std::cout << "DEBUG LT ACE" << std::endl;
+			// cent: peptoid N, src N
+			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
+			src_cent_xyz = src.atom( src.atom_index( bb_nx ) ).xyz();
+
+			// nbr2; peptoid CA, src CA
+			nbr2_xyz = atom( atom_index( bb_ca ) ).xyz();
+			src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
+
+			// nbr1: peptoid CO, src CO ( CO is the atom that prepends the N in the acetylated varient type)
+			nbr1_xyz = atom( atom_index( bb_ac ) ).xyz();
+			src_nbr1_xyz = src.atom( src.atom_index( bb_ac ) ).xyz();
+
+			// NtermPeptoidFull ( peptoid on peptoid ). All peptoids have at least one sidechain atom called CA1
+		} else if( src.type().is_peptoid() ) {
+			// std::cout << "DEBUG LT PEPTOID" << std::endl;
+			// cent: peptoid N, src N
+			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
+			src_cent_xyz = src.atom( src.atom_index( bb_nx ) ).xyz();
+
+			// nbr2; peptoid CA, src CA
+			nbr2_xyz = atom( atom_index( bb_ca ) ).xyz();
+			src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
+
+			// nbr1: peptoid CO, src CO ( CO is the atom that prepends the N in the acetylated varient type)
+			nbr1_xyz = atom( atom_index( sc_ca ) ).xyz();
+			src_nbr1_xyz = src.atom( src.atom_index( sc_ca ) ).xyz();
+
+			// NtermPeptoidFull ( peptoid on to peptide ). Nothing to base peptoid sidechain off of so just use ideal internal coords from params
+		} else {
+			// std::cout << "DEBUG LT ELSE" << std::endl;
+			// cent: peptoid CA, src CA
+			cent_xyz = atom( atom_index( bb_ca ) ).xyz();
+			src_cent_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
+
+			// nbr1: peptoid N, src N
+			nbr1_xyz = atom( atom_index( bb_nx ) ).xyz();
+			src_nbr1_xyz = src.atom( src.atom_index( bb_nx ) ).xyz();
+
+			// nbr2; peptoid C, src C
+			nbr2_xyz = atom( atom_index( bb_co ) ).xyz();
+			src_nbr2_xyz = src.atom( src.atom_index( bb_co ) ).xyz();
+		}
+	} else { // not first reisdue of chain
+		//std::cout << "DEBUG ELSE" << std::endl;
+		// cent: peptoid N, src N
+		cent_xyz = atom( atom_index( bb_nx ) ).xyz();
+		src_cent_xyz = src.atom( src.atom_index( bb_nx ) ).xyz();
+
+		// nbr2; peptoid CA, src CA
+		nbr2_xyz = atom( atom_index( bb_ca ) ).xyz();
+		src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
+
+		// nbr1: peptoid lower connect, C of the residue before src
+		Residue const prev_src( conformation.residue( src.seqpos() - 1 ) );
+		src_nbr1_xyz = prev_src.atom( prev_src.atom_index( bb_co ) ).xyz();
+
+		Stub stub( atom( atom_index( bb_nx ) ).xyz(), atom( atom_index( bb_ca ) ).xyz(), atom( atom_index( bb_co ) ).xyz() );
+		AtomICoor icoor ( (*this).type().lower_connect().icoor() );
+		nbr1_xyz = stub.spherical(icoor.phi(), icoor.theta(), icoor.d() );
+	}
+
+// 	std::cout
+//		<< "rot_cent_xyz " << cent_xyz[1] << " " << cent_xyz[2] << " " << cent_xyz[3] << std::endl
+//		<< "rot_nbr1_xyz " << nbr1_xyz[1] << " " << nbr1_xyz[2] << " " << nbr1_xyz[3] << std::endl
+//		<< "rot_nbr2_xyz " << nbr2_xyz[1] << " " << nbr2_xyz[1] << " " << nbr2_xyz[1] << std::endl
+//		<< "src_cent_xyz " << src_cent_xyz[1] << " " << src_cent_xyz[2] << " " << src_cent_xyz[3] << std::endl
+//		<< "src_nbr1_xyz " << src_nbr1_xyz[1] << " " << src_nbr1_xyz[2] << " " << src_nbr1_xyz[3] << std::endl
+//		<< "src_nbr2_xyz " << src_nbr2_xyz[1] << " " << src_nbr2_xyz[2] << " " << src_nbr2_xyz[3] << std::endl;
+
+	// get midpoint
+	Vector rot_midpoint( 0.5 * ( nbr1_xyz + nbr2_xyz ) );
+	Vector src_midpoint( 0.5 * ( src_nbr1_xyz + src_nbr2_xyz ) );
+
+	// get stubs
+	Stub rot_stub( cent_xyz, rot_midpoint, nbr1_xyz );
+	Stub src_stub( src_cent_xyz, src_midpoint, src_nbr1_xyz);
+
+	// orient
+	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
+		Vector const old_xyz( atoms()[i].xyz() );
+		Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );
+		atoms()[i].xyz( new_xyz );
+		// DEBUG DEBUG DEBUG
+		//std::cout << "old " << i << " " << old_xyz[1] << " " << old_xyz[2] << " " << old_xyz[3] << std::endl;
+		//std::cout << "new " << i << " " << new_xyz[1] << " " << new_xyz[2] << " " << new_xyz[3] << std::endl;
+	}
+
+}
+
+/// @details Place/orient "this" Residue onto "src" Residue by backbone superimposition
+///	Since rotamer is represented by Residue in mini now, this function is mainly used to place a rotamer
+///	onto the backbone of "src" residue. Meanwhile, it can also be used to add sidechains to one pose/conformation
 ///	from another pose/conformation.\n
 ///	current logic: find backbone atom with bonded neighbors in sidechain,
 ///	and which is the base_atom of those neighbors. Take that backbone atom
@@ -540,7 +697,11 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	Size first_scatom( rsd_type_.first_sidechain_atom() );
 	if ( first_scatom >= 1 && first_scatom <= rsd_type_.nheavyatoms() ) {
 		// not all backbone -- need to do some orienting
-		orient_onto_residue( src );
+		if ( (*this).type().is_peptoid() ){
+			orient_onto_residue_peptoid( src, conformation );
+		} else {
+			orient_onto_residue( src );
+		}
 	} // does the residue have any sidechain atoms?
 
 	// now copy the backbone atoms

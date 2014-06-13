@@ -9,7 +9,7 @@
 
 /// @file   protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorUtil.hh
 /// @brief  Utility functions common to both UnfoldedStateEnergyCalculatorjob distributors
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorUtil_hh
 #define INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorUtil_hh
@@ -17,12 +17,12 @@
 // Project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
-#include <core/scoring/EnergyMap.fwd.hh>
+
 
 
 namespace protocols {

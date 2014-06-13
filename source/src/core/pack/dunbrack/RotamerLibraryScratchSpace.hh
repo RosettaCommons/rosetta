@@ -36,7 +36,8 @@ namespace dunbrack {
 class RotamerLibraryScratchSpace : public utility::pointer::ReferenceCount
 {
 public:
-
+	/// DOUG DOUG DOUG might be problems here might need PeptoidRotamerLibraryScratchSpace
+	static Size const AA_OMG_INDEX = 3;
 	static Size const AA_PHI_INDEX = 1;
 	static Size const AA_PSI_INDEX = 2;
 
@@ -158,6 +159,17 @@ private:
 	// Entropic correction
 	Real entropy_;
 	Real3 dentropy_dbb_;
+
+	// DOUG DOUG DOUG May need to make a sub class, for peptoid rotlibs
+public:
+	Real4 const & dchimean_domg() const { return dchimean_domg_; }
+	Real4 const & dchisd_domg() const { return dchisd_domg_; }
+	Real4  & dchimean_domg() { return dchimean_domg_; }
+	Real4  & dchisd_domg()   { return dchisd_domg_; }
+
+private:
+	Real4 dchimean_domg_;
+	Real4 dchisd_domg_;
 
 };
 

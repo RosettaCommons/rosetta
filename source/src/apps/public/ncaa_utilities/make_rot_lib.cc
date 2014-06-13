@@ -17,6 +17,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+// devel headers
+#include <devel/init.hh>
+
 // unit headers
 #include <protocols/make_rot_lib/RotData.hh>
 #include <protocols/make_rot_lib/MakeRotLib.hh>
@@ -43,8 +46,6 @@ using namespace basic::options::OptionKeys;
 namespace mrlo {
 FileOptionKey const rot_lib_options_file( "mrlo::rot_lib_options_file" );
 BooleanOptionKey const peptoid( "mrlo::peptoid" );
-BooleanOptionKey const peptoid_cis_hack( "mrlo:peptoid_cis_hack" );
-BooleanOptionKey const peptoid_trans_hack( "mrlo:peptoid_trans_hack" );
 RealOptionKey const omega_start_val( "mrlo::omega_start_val" );
 RealOptionKey const epsilon_start_val( "mrlo::epsilon_start_val" );
 BooleanOptionKey const asp_hack( "mrlo::asp_hack" );
@@ -61,8 +62,6 @@ main( int argc, char * argv [] )
 	// add application specific options to core options system
 	option.add( mrlo::rot_lib_options_file, "Input file for make_rot_lib protocol" );
 	option.add( mrlo::peptoid, "Patch NCAA with the patches to make the dipeptoid" ).def( 0 );
-	option.add( mrlo::peptoid_cis_hack, "" ).def( 0 );
-	option.add( mrlo::peptoid_trans_hack, "").def( 0 );
 	option.add( mrlo::omega_start_val, "Starting value for preceding omega angle in patched dipeptide/dipeptoid" ).def ( 180 );
 	option.add( mrlo::epsilon_start_val, "Starting value for epsilon angle in patched dipeptide/dipeptoid" ).def ( 180 );
 	option.add( mrlo::asp_hack, "" ).def( false );
@@ -113,17 +112,6 @@ main( int argc, char * argv [] )
 
 	if ( option[ mrlo::phe_tyr_hack ]() == true ) {
 		phe_tyr_corrections( rotamers );
-	}
-
-	if ( option[ mrlo::peptoid ]() == true ) {
-		if ( option[ mrlo::peptoid_trans_hack ]() == true ) {
-			peptoid_trans_hack( rotamers );
-		} else if ( option[ mrlo::peptoid_cis_hack ]() == true ) {
-			peptoid_cis_hack( rotamers );
-		} else {
-			std::cout << "NEED TO SPECIFY CIS OR TRANS" << std::endl;
-			exit(0);
-		}
 	}
 
 	// seed main loop

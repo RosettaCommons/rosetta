@@ -9,7 +9,7 @@
 
 /// @file protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorMover.fwd.hh
 /// @brief forward declaration of UnfoldedStateEnergyCalculatorMover
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMover_fwd_hh
 #define INCLUDED_protocols_unfolded_state_energy_calculator_UnfoldedStateEnergyCalculatorMover_fwd_hh

@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <numeric/random/random.hh>
 
 // option key includes

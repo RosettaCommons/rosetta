@@ -10,24 +10,11 @@
 /// @file
 /// @author Phil Bradley
 
-
 #ifndef INCLUDED_core_chemical_ResidueSelector_fwd_hh
 #define INCLUDED_core_chemical_ResidueSelector_fwd_hh
 
-
-// // Unit headers
-
-// // Package headers
-
-// Project headers
-
 // Utility headers
-//#include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-//#include <utility/pointer/ReferenceCount.hh>
-
-// C++ headers
 
 namespace core {
 namespace chemical {
@@ -40,7 +27,5 @@ typedef utility::pointer::owning_ptr< ResidueSelector > ResidueSelectorOP;
 
 } // chemical
 } // core
-
-
 
 #endif

@@ -1,0 +1,5 @@
+-cyclization::chains_to_cyclize 1
+-cyclization::num_min_rebuild 2
+-s 1e68.pdb.gz
+-include_patches patches/NtermConnect.txt
+-include_patches patches/CtermConnect.txt

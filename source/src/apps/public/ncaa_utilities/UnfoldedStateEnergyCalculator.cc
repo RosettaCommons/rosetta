@@ -9,7 +9,7 @@
 
 /// @file src/apps/pilot/doug/UnfoldedStateEnergyCalculator.cc
 /// @brief UnfoldedStateEnergyCalculator application
-/// @author P. douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 /* WARNING WARNING WARNING
  * This code in intended to run over a large set of pdb files. Not all PDBs are well behaved with mini.
@@ -30,6 +30,12 @@
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMover.hh>
 
 // Package headers
+#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
+#ifdef USEMPI
+#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
+#endif
+
+#include <devel/init.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -38,10 +44,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <devel/init.hh>
-#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
-// AUTO-REMOVED #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
 
+// Basic Headers
 #include <basic/options/option.hh>
 
 // Utility Headers
@@ -70,18 +74,24 @@ namespace usec {
 	StringOptionKey const residue_name( "usec::residue_name" );
 	BooleanOptionKey const repack_fragments( "usec::repack_fragments" );
 	BooleanOptionKey const native_sequence( "usec::native_sequence" );
+  StringOptionKey const sequence_match_sequence( "usec::sequence_match_sequence" );
+  IntegerOptionKey const sequence_match_position( "usec::sequence_match_position" );
 }
 
-int main( int argc, char* argv[] )
+int
+main( int argc, char* argv[] )
 {
 	try {
- 	// add application specific options to options system
-	option.add( usec::frag_size, "Sets the number of residues in each fragment, should be an odd number" ).def( 5 );
-	option.add( usec::residue_name, "Sets the three letter code of the residue typpe which the central residue will be mutated to" ).def( "LEU" );
-	option.add( usec::repack_fragments, "Controls if the fragments will be repacked before scoring" ).def( true );
-	option.add( usec::native_sequence, "Controls if the central residue will be mutated before scoring" ).def( false );
 
-	// init
+		// add application specific options to options system
+		option.add( usec::frag_size, "Sets the number of residues in each fragment, should be an odd number" ).def( 5 );
+		option.add( usec::residue_name, "Sets the three letter code of the residue type which the central residue will be mutated to" ).def( "LEU" );
+		option.add( usec::repack_fragments, "Controls if the fragments will be repacked before scoring" ).def( true );
+		option.add( usec::native_sequence, "Controls if the central residue will be mutated before scoring" ).def( false );
+		option.add( usec::sequence_match_sequence, "").def( "GP" );
+		option.add( usec::sequence_match_position, "").def( 2 );
+
+		// init
 	devel::init(argc, argv);
 
   // setup score function for packing fragments
@@ -112,7 +122,14 @@ int main( int argc, char* argv[] )
 	std::string mut_aa( option[ usec::residue_name ].value() );
 	bool repack_fragments( option[ usec::repack_fragments ].value() );
 	bool native_sequence( option[ usec::native_sequence ].value() );
-  UnfoldedStateEnergyCalculatorMoverOP usecm( new UnfoldedStateEnergyCalculatorMover( jd, packing_scrfxn, scoring_scrfxn, frag_length, mut_aa, repack_fragments, native_sequence ) );
+	std::string seq_match_seq( option[ usec::sequence_match_sequence ].value() );
+	Size seq_match_pos( option[ usec::sequence_match_position ].value() );
+
+	bool seq_match_frags( false );
+	if ( option[ usec::sequence_match_position ].user() || option[ usec::sequence_match_sequence ].user() ) seq_match_frags = true;
+
+
+  UnfoldedStateEnergyCalculatorMoverOP usecm( new UnfoldedStateEnergyCalculatorMover( jd, packing_scrfxn, scoring_scrfxn, frag_length, mut_aa, repack_fragments, native_sequence, seq_match_seq, seq_match_pos, seq_match_frags ) );
 
 	// call job distributor with mover
 	jd.go( usecm );
@@ -120,9 +137,11 @@ int main( int argc, char* argv[] )
   T("UnfoldedStateEnergyCalculator") << "\n+-----------------------------------------------------------------+\n"
 																		 <<   "|                              DONE                               |\n"
 																		 <<   "+-----------------------------------------------------------------+" << std::endl;
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
+
   return 0;
 }

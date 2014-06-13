@@ -9,7 +9,7 @@
 
 /// @file core/chemical/MMAtomTypeSet.cc
 /// @brief
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <core/chemical/MMAtomTypeSet.hh>

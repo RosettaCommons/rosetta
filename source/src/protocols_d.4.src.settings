@@ -27,6 +27,7 @@ library_path = [
 libraries = [
 ]
 subprojects = [
+	"protocols.3",
 	"protocols.1",
 	"core.5",
 	"core.4",

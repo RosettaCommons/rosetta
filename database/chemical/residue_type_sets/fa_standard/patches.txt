@@ -56,8 +56,9 @@ patches/SpecialRotamer.txt
 #patches/VirtualProteinResidue.txt
 #patches/VirtualNterm.txt
 
-## uncomment this Brian
+## terminal connection patches
 #patches/CtermConnect.txt
+#patches/NtermConnect.txt
 
 ##fpd
 #patches/CtermTruncation.txt
@@ -112,6 +113,12 @@ patches/tyr_diiodinated.txt
 patches/MethylatedProteinCterm.txt
 patches/AcetylatedProteinNterm.txt
 
+## peptoid patches
+patches/NtermPeptoidFull.txt
+patches/CtermPeptoidFull.txt
+patches/NtermCtermDipeptoid.txt
+patches/AcetylatedPeptoidNterm.txt
+
 ## carbohydrate patches
 ### termini
 patches/carbohydrates/lower_terminus.txt
@@ -130,7 +137,6 @@ patches/carbohydrates/6-branch.txt
 patches/carbohydrates/2-amination.txt
 patches/carbohydrates/N-acetyl-2-amination.txt
 patches/carbohydrates/5-acetylation.txt
-
 
 ## alternative backbones
 #patches/hbs_pre.txt

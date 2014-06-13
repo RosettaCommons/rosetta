@@ -30,13 +30,14 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
 
 #include <basic/options/option.hh>
 //#include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -51,13 +52,11 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 //#include <ObjexxFCL/FArray1.io.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
 #include <algorithm>

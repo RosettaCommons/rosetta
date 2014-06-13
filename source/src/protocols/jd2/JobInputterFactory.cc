@@ -20,6 +20,7 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/make_rot_lib.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
@@ -108,8 +109,9 @@ JobInputterFactory::get_JobInputter_from_string( std::string const & job_inputte
 JobInputterOP
 JobInputterFactory::get_new_JobInputter()
 {
-	//initial copy of this code copied at XRW2 by SML+BDW from about SVN:46190 from JobDistributorFactory.cc
+	using namespace basic::options;
 
+	//initial copy of this code copied at XRW2 by SML+BDW from about SVN:46190 from JobDistributorFactory.cc
 
 	if ( basic::options::option[ basic::options::OptionKeys::jd2::pose_input_stream ]() ) {
 		return get_JobInputter_from_string( "PoseInputStreamJobInputter" );
@@ -128,26 +130,28 @@ JobInputterFactory::get_new_JobInputter()
 		if ( basic::options::option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ){
 			 return get_JobInputter_from_string( "EnzdesJobInputter" );
 		}
-		if ( basic::options::option[ basic::options::OptionKeys::jd2::dd_parser ].user() && basic::options::option[ basic::options::OptionKeys::parser::patchdock ].user() ){
+		if ( option[ OptionKeys::jd2::dd_parser ].user() && option[ OptionKeys::parser::patchdock ].user() ){
 			return get_JobInputter_from_string( "ParserJobInputter" );
 		}
 		else{
 			return get_JobInputter_from_string( "PDBJobInputter" ); //SML override until we have other child classes
 		}
 	//silent file block
-	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::silent ].user() ) {
-		if ( basic::options::option[ basic::options::OptionKeys::jd2::lazy_silent_file_reader ].user() ){
+	} else if ( option[ OptionKeys::in::file::silent ].user() ) {
+		if ( option[ OptionKeys::jd2::lazy_silent_file_reader ].user() ){
 			return get_JobInputter_from_string( "LazySilentFileJobInputter" );
 		} else {
 			return get_JobInputter_from_string( "SilentFileJobInputter" );
 		}
 
- 	} else if (basic::options::option[basic::options::OptionKeys::in::file::atom_tree_diff].user() ){
+ 	} else if (option[OptionKeys::in::file::atom_tree_diff].user() ){
  			return get_JobInputter_from_string( "AtomTreeDiffJobInputter" );
- 	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::template_pdb ].user() || basic::options::option[ basic::options::OptionKeys::in::file::template_silent ].user() ) {
+ 	} else if ( option[ OptionKeys::in::file::template_pdb ].user() || option[ OptionKeys::in::file::template_silent ].user() ) {
 		return get_JobInputter_from_string( "ThreadingJobInputter" );
-	} else if (basic::options::option[basic::options::OptionKeys::in::use_database].user() ){
+	} else if (option[OptionKeys::in::use_database].user() ){
 		return get_JobInputter_from_string( "DatabaseJobInputter" );
+	} else if ( option[ OptionKeys::make_rot_lib::options_file ].user() ) {
+		return get_JobInputter_from_string( "MakeRotLibJobInputter" );
 	} else {
 		return get_JobInputter_from_string( "GenericJobInputter" ); //handles -nstruct alone; works for abinitio with no structure input
 	}

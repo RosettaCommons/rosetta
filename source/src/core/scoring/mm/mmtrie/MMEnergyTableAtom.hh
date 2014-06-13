@@ -12,7 +12,7 @@
 
 /// @file   core/scoring/mm/mmtrie/MMEnergyTableAtom.hh
 /// @brief  Header for the MMEnergyTableAtom. Heavily coppied from the EtableAtom.hh
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_core_scoring_mm_mmtrie_MMEnergyTableAtom_hh
 #define INCLUDED_core_scoring_mm_mmtrie_MMEnergyTableAtom_hh

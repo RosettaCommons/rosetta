@@ -482,6 +482,26 @@ increase_rotamer_precision(
 	return new_rotamer;
 }
 
+/// DOUG DOUG DOUG
+template < Size T >
+class RotamericData : public RotamerBuildingData
+{
+public:
+	RotamericData( DunbrackRotamer< T, Real > const & rotamer_in ) :
+		rotamer_( rotamer_in )
+	{}
+
+	virtual ~RotamericData() {}
+
+	DunbrackRotamer< T, Real > const &
+	rotamer() const {
+		return rotamer_;
+	}
+
+private:
+	DunbrackRotamer< T, Real > rotamer_;
+};
+
 
 } //dunbrack
 } //scoring

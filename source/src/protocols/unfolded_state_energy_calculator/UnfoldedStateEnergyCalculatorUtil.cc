@@ -9,7 +9,7 @@
 
 /// @file   protocols/UnfoldedStateEnergyCalculator/UnfoldedStateEnergyCalculatorUtil.hh
 /// @brief  Utility functions common to both UnfoldedStateEnergyCalculatorjob distributors
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorUtil.hh>

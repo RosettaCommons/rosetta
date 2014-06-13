@@ -348,8 +348,6 @@ public:
 	}
 
 
-
-
 	/// @brief Returns the AtomIndices of this residue's h-bond acceptor atoms
 	/// @note: AtomIndices == vector1< Size >
 	///
@@ -1632,6 +1630,13 @@ public:
 		return rsd_type_.is_protein();
 	}
 
+	/// @breif Returns if this residue is a peptoid
+	bool
+	is_peptoid() const
+	{
+		return rsd_type_.is_peptoid();
+	}
+
 	/// @brief Returns true if this residue is a DNA residue
 	bool
 	is_DNA() const
@@ -1934,6 +1939,10 @@ public:
 			Residue const & src,
 			utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 	);
+
+	/// @brief Orient our coords onto those of src, uses hard coded atom names (yuck) and will work for peptoid on to peptoid/peptide
+	void
+	orient_onto_residue_peptoid( Residue const & src, Conformation const & conformation );
 
 	/// @brief Place this rotamer at the sequence position occupied by  <src>
 	/// by reorienting the ideal side chain coordinates to match

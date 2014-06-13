@@ -1,0 +1,34 @@
+## Peptoid N Terminus Patch by Doug Renfrew (renfrew@nyu.edu)
+
+NAME NtermPeptoidFull
+TYPES LOWER_TERMINUS
+
+#############################################################################################
+## general requirements
+##   peptoid
+##   anything that is not already N terminally patched
+#############################################################################################
+BEGIN_SELECTOR
+PROPERTY PEPTOID
+NOT VARIANT_TYPE LOWER_TERMINUS
+END_SELECTOR
+
+#############################################################################################
+## general case
+## internal coordinates are made up
+#############################################################################################
+BEGIN_CASE
+
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+
+ADD_BOND N 1H
+ADD_BOND N 2H
+
+SET_ICOOR 1H 120 70.5 1 N CA CA1
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY LOWER_TERMINUS
+
+END_CASE

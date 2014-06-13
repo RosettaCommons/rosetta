@@ -814,7 +814,24 @@ read_topology_file(
 				n_bins_per_rot[i] = bin_size;
 			}
 			rsd->set_ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
-		}  else if ( tag == "VIRTUAL_SHADOW" ) {
+		}	else if ( tag == "PEPTOID_ROTLIB_PATH" ) {
+			std::string path;
+			l >> path;
+			rsd->set_peptoid_rotlib_path( path );
+			rsd->set_use_peptoid_rotlib( true );
+		} else if ( tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
+			Size n_rots(0);
+			utility::vector1<Size> n_bins_per_rot;
+			l >> n_rots;
+			rsd->set_peptoid_rotlib_n_rotameric_bins( n_rots );
+			n_bins_per_rot.resize( n_rots );
+			for( Size i = 1; i <= n_rots; ++i ) {
+				Size bin_size(0);
+				l >> bin_size;
+				n_bins_per_rot[i] = bin_size;
+			}
+			rsd->set_peptoid_rotlib_n_bin_per_rot( n_bins_per_rot );
+		} else if ( tag == "VIRTUAL_SHADOW" ) {
 			std::string shadower, shadowee;
 			l >> shadower >> shadowee;
 			rsd->set_shadowing_atom( shadower, shadowee );

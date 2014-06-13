@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMLJEnergyTable.fwd.hh
 /// @brief  core::scoring::mm::MMLJEnergyTable forward declarations
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 
 #ifndef INCLUDED_core_scoring_mm_MMLJEnergyTable_fwd_hh

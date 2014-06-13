@@ -19,6 +19,7 @@
 
 // Unit header
 #include <protocols/make_rot_lib/MakeRotLib.hh>
+#include <protocols/make_rot_lib/RotData.hh>
 
 
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -30,8 +31,8 @@
 static basic::Tracer TR("protocols.make_rot_lib.cxxtest.hh");
 
 // returns true on error.
-bool load_RotData( std::istream & in, protocols::MakeRotLib::RotVec & rotvec ) {
-	using namespace protocols::MakeRotLib;
+bool load_RotData( std::istream & in, protocols::make_rot_lib::RotVec & rotvec ) {
+	using namespace protocols::make_rot_lib;
 	char next;
 	std::string line;
 	while ( in.good() ) {
@@ -41,7 +42,7 @@ bool load_RotData( std::istream & in, protocols::MakeRotLib::RotVec & rotvec ) {
 			getline( in,line ); // Discard the comment line
 			continue;
 		}
-		RotData rd(0,0);
+		protocols::make_rot_lib::RotData rd(0,0);
 		if( rd.load( in ) ) { return true; }
 		rotvec.push_back( rd );
 		TR.Debug << "Loaded " << rotvec.size() << " RotData objects." << std::endl;
@@ -50,7 +51,7 @@ bool load_RotData( std::istream & in, protocols::MakeRotLib::RotVec & rotvec ) {
 }
 
 // returns true on error.
-bool load_RotData( std::string const & filename, protocols::MakeRotLib::RotVec & rotvec ) {
+bool load_RotData( std::string const & filename, protocols::make_rot_lib::RotVec & rotvec ) {
 	utility::io::izstream stream( filename );
 	return load_RotData( stream, rotvec );
 }
@@ -78,7 +79,7 @@ public:
 	// Note: These test results were made from existing behavior, and may differ from "ideal" behavior.
 
 	void test_init_rotamers_centroids() {
-		using namespace protocols::MakeRotLib;
+		using namespace protocols::make_rot_lib;
 		using namespace core;
 
 		test::UTracer UT_rot("protocols/make_rot_lib/init_rotamers.txt");
@@ -109,7 +110,7 @@ public:
 	// As might be expected from minimization, this shows sensitivity to platform,
 	// having different results on the test server Mac clang build.
 	void DISABLED_min_rotamers() {
-		using namespace protocols::MakeRotLib;
+		using namespace protocols::make_rot_lib;
 		using namespace core;
 		using namespace core::scoring;
 
@@ -141,7 +142,7 @@ public:
 	}
 
 	void test_calc_all_dist() {
-		using namespace protocols::MakeRotLib;
+		using namespace protocols::make_rot_lib;
 		using namespace core;
 		using namespace core::scoring;
 
@@ -159,7 +160,7 @@ public:
 	}
 
 	void test_calc_rotamer_clusters() {
-		using namespace protocols::MakeRotLib;
+		using namespace protocols::make_rot_lib;
 		using namespace core;
 		using namespace core::scoring;
 
@@ -177,7 +178,7 @@ public:
 
 
 	void test_calc_centroids() {
-		using namespace protocols::MakeRotLib;
+		using namespace protocols::make_rot_lib;
 		using namespace core;
 		using namespace core::scoring;
 

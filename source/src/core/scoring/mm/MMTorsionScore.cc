@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/mm/MMTorsionScore.cc
 /// @brief  Molecular mechanics torsion score class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
 #include <core/scoring/mm/MMTorsionScore.fwd.hh>
@@ -19,13 +19,13 @@
 
 // Project headers
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 #include <core/scoring/ScoringManager.hh>
 
 // Utility header
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
+
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
