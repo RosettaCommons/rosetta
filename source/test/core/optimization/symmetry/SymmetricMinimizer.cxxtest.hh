@@ -31,6 +31,7 @@
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 // AUTO-REMOVED #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <core/optimization/symmetry/SymMinimizerMap.hh> // RM: Needed for compilation on my platform.
 #include <core/optimization/MinimizerOptions.hh>
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>

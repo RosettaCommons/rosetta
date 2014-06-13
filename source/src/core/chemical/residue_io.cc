@@ -226,15 +226,19 @@ read_topology_file(
 ///
 /// BOND_TYPE:
 /// Declares a bond between two atoms, giving their names, and also
-/// describing the chemical nature of the bond.  See the "BondName"
-/// enumeration for acceptable bond types.
+/// describing the chemical nature of the bond. (The BOND_TYPE line takes the place of
+/// a BOND line - do not specify both.) Standard SDF-style numeric
+/// descriptors are accepted. (1, 2, 3 for single, double, triple), along with
+/// text version SINGLE, DOUBLE, TRIPLE, UNK (unknown), PSEUDO (pseudo bond), ORBITAL,
+/// ARO, AMIDE, CARBOXY (for delocalized carboxylate) and DELOCALIZED. Currently UNK/PSEUDO
+/// are treated identically, as are ARO/AMIDE/CARBOXY/DELOCALIZED.
+/// See convert_to_BondName() in src/core/chemical/Bond.cc for details on parsing.
 ///
 /// CHARGE:
 /// Declares a charge for a particular atom.
 /// Format CHARGE atom type value
 /// Currently valid types are FORMAL. (Partial charges are handled above.)
 /// E.g. "CHARGE OG2 FORMAL -1"
-///
 ///
 /// CHI:
 /// A misnomer for non-amino acids, declares a side-chain dihedral, its index, and the four atoms that define it.

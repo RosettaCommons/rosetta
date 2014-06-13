@@ -27,6 +27,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <ObjexxFCL/string.functions.hh>
+
 namespace core {
 namespace chemical {
 
@@ -42,7 +44,40 @@ BondName convert_to_BondName( std::string const & id ) {
 		return UnknownBond;
 	}
 
-	// Should we have string conversions here?
+	// String conversions - allow for upper, lower, mixed and abreviated forms
+	std::string const converted( ObjexxFCL::lowercased( id ) );
+	if( utility::startswith(converted, "ar") ) {
+		return AromaticBond;
+	}
+	if( utility::startswith(converted, "unk") ) {
+		return UnknownBond;
+	}
+	if( utility::startswith(converted, "sing") ) {
+		return SingleBond;
+	}
+	if( utility::startswith(converted, "doub") ) {
+		return DoubleBond;
+	}
+	if( utility::startswith(converted, "tri") ) {
+		return TripleBond;
+	}
+
+	// Aliases and others
+	if( utility::startswith(converted, "am") ) {
+		return AromaticBond; // Aromatic bond doubles for amide bond
+	}
+	if( utility::startswith(converted, "carboxy") ) {
+		return AromaticBond; // Aromatic bond doubles for delocalized carboxy bond
+	}
+	if( utility::startswith(converted, "delocal") ) {
+		return AromaticBond; // Aromatic bond doubles for general delocalized bond
+	}
+	if( utility::startswith(converted, "pseu") ) {
+		return UnknownBond; // PseudoBond
+	}
+	if( utility::startswith(converted, "orb") ) {
+		return OrbitalBond;
+	}
 
 	utility_exit_with_message("Unable to convert '" + id + "' to a bond type description.");
 	return UnknownBond;
