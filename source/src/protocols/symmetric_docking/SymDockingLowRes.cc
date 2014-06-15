@@ -244,9 +244,9 @@ void SymDockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 	using namespace moves;
 
 	PDBDumpMoverOP dump = new PDBDumpMover("lowres_cycle_");
-//	dump->apply( pose );
+	//	dump->apply( pose );
 	MCShowMoverOP mc_show = new MCShowMover( mc_ );
-//	mc_show->apply( pose );
+	//	mc_show->apply( pose );
 
 	rb_mover_->rot_magnitude( rot_magnitude_ );
 	rb_mover_->trans_magnitude( trans_magnitude_ );

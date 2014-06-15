@@ -258,9 +258,9 @@ private:
 	SymmetryInfoOP symm_info_;
 
 	// stores the symmetric transformation between subunits
-	// computed when needed, invalidated when a jump changes
-	utility::vector1< numeric::HomogeneousTransform< core::Real > > Tsymm_;
-
+	//   computed when needed, invalidated when a jump changes
+	// multicomp: store transforms for each component
+	std::map< char, utility::vector1< numeric::HomogeneousTransform< core::Real > > > Tsymm_;
 };
 
 } // symmetry

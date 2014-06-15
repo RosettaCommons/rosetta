@@ -402,6 +402,8 @@ if ($ncs_mode == 1) {
 	$NCS_ops->{T} = $COM_0;
 	$NCS_ops->{PATH} = "";
 	$NCS_ops->{CHILDREN} = [];
+	$NCS_ops->{AXIS} = [0,0,1];
+
 
 	my @allQs;
 	my @allCOMs;
@@ -438,9 +440,6 @@ if ($ncs_mode == 1) {
 
 		my $del_COM = vsub ($COM_i, $COM_0);
 		push @allCOMs, $del_COM;
-		#print STDERR "center ($primary_chain): ".$COM_0->[0]." ".$COM_0->[1]." ".$COM_0->[2]."\n";
-		#print STDERR "center ($sec_chain): ".$COM_i->[0]." ".$COM_i->[1]." ".$COM_i->[2]."\n";
-		#print STDERR "center->center transformation ".$del_COM->[0]." ".$del_COM->[1]." ".$del_COM->[2]."\n";
 
 		my ($X,$Y,$Z,$W)=R2quat($R);
 
@@ -518,7 +517,6 @@ if ($ncs_mode == 1) {
 		my $newDelCOM = vsub ( $com_secondary , $com_complex );
 
 		# symmetrize newT
-
 		my $err_pos = [0,0,0];
 		my $R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
 		foreach my $j (1..$sym_order) {
@@ -536,13 +534,13 @@ if ($ncs_mode == 1) {
 		}
 		print STDERR "translation error = ".vnorm( $err_pos )."\n";
 
-		# special case for icosehedral symmetry
-		# see above for restrictions
-
 		# get the center of the symmgp
 		my $adj_newDelCOM = vsub( $newDelCOM , [ $err_pos->[0]/$sym_order , $err_pos->[1]/$sym_order , $err_pos->[2]/$sym_order ] );
 
-		expand_symmops_by_split( $NCS_ops, $newR, $adj_newDelCOM, $sym_order);
+		my $axis_i =  [ $newQ->[0], $newQ->[1], $newQ->[2] ];
+		normalize($axis_i);
+
+		expand_symmops_by_split( $NCS_ops, $newR, $adj_newDelCOM, $sym_order, $axis_i);
 	}
 
 	print STDERR "system center  ".$NCS_ops->{T}->[0]." ".$NCS_ops->{T}->[1]." ".$NCS_ops->{T}->[2]."\n";
@@ -2364,12 +2362,13 @@ if ($pseudo_mode == 1) {
 
 # expand_symmops_by_split( $NCS_ops, $newR, $adj_newDelCOM, $sym_order)
 sub expand_symmops_by_split {
-	my ( $tree, $newR, $newDelT, $sym_order ) = @_;
+	my ( $tree, $newR, $newDelT, $sym_order, $axis_i ) = @_;
 
 	my $newNCSops = {};
 	my $COM_0 = [0 , 0 , 0];
 	$newNCSops->{R} = [ [1,0,0], [0,1,0], [0,0,1] ];
 	$newNCSops->{CHILDREN} = [];
+	$newNCSops->{AXIS} = deep_copy($axis_i); #axis of children
 
 	my $COM_i = [ 0,0,0 ];
 	my $R_i   = [ [1,0,0], [0,1,0], [0,0,1] ];
@@ -2383,6 +2382,7 @@ sub expand_symmops_by_split {
 		#    then translate to the new CoM
 		#apply_transformation ( $newNCSops_i, $R_i, $NCS_ops->{T}, $COM_i, $i );
 		apply_transformation ( $newNCSops_i, $R_i, $tree->{T}, $COM_i, $i );
+		$newNCSops_i->{AXIS} = deep_copy($axis_i);
 		push @{ $newNCSops->{CHILDREN} }, $newNCSops_i;
 
 		$newCOM0 = vadd( $newCOM0, $newNCSops_i->{T} );
@@ -2543,28 +2543,38 @@ sub get_subtree_recursive {
 ## ($vrt_lines, $connect_lines, $dof_lines) = fold_tree_from_ncs( $NCS_ops );
 ##
 ## This function recreates an NCS coordinate system from an NCS tree
-##    the meat of the code lives here
 sub fold_tree_from_ncs {
 	my $tree = shift;
 	my $nodes_by_depth = shift;
 	my $connected_subunits = shift;
 
 	# root doesnt have parents or siblings
-	my $parent_com = vadd( [1,0,0] ,get_com( $tree ) );
-	my $sibling_com = vadd( [0,1,0] , get_com( $tree ) );
+	# use 1st child instead
+	my $axis = $tree->{AXIS};
+
+	# parent com (arbitrarily) perpendicular to rot axis
+	my $paxis;
+	if ($axis->[1] != 0 || $axis->[2] != 0) {
+		$paxis = cross([1,0,0], $axis);
+	} else {
+		$paxis = cross([0,1,0], $axis);
+	}
+	my $parent_com = vadd( $paxis ,get_com( $tree ) );
+
 	my $nsiblings = 1;
 	my $vrt_lines = [];
 	my $connect_lines = [];
 	my $dof_lines = [];
 	my $debug_lines = [];
 
-	fold_tree_from_ncs_recursive( $tree , $parent_com, $nsiblings, $sibling_com, $vrt_lines,
+	fold_tree_from_ncs_recursive( $tree , $parent_com, $nsiblings, $vrt_lines,
 	                              $connect_lines, $dof_lines, $debug_lines,$nodes_by_depth, $connected_subunits );
 	return ( $vrt_lines, $connect_lines, $dof_lines , $debug_lines);
 }
 
+
 sub fold_tree_from_ncs_recursive {
-	my ($tree,$parent_com,$nsiblings, $sibling_com,
+	my ($tree,$parent_com,$nsiblings,
 	    $vrt_lines,$connect_lines,$dof_lines,$debug_lines,$nodes_by_depth,$connected_subunits) = @_;
 
 	my $origin = get_com( $tree );
@@ -2572,7 +2582,7 @@ sub fold_tree_from_ncs_recursive {
 
 	# x points from origin to parent CoM
 	my $myX = vsub( $parent_com , $origin );
-	my $myZ = mapply( $tree->{R}, [0,0,1]);
+	my $myZ = $tree->{AXIS}; #mapply( $tree->{R}, [0,0,1]);
 
 	# y is whatever is left
 	my $myY = cross( $myZ, $myX );
@@ -2588,8 +2598,7 @@ sub fold_tree_from_ncs_recursive {
 		my $child_idstring = $tree->{CHILDREN}->[$child_idx]->{PATH};
 
 		# now recursively call each child
-		my $sibling_com = get_com( $child_idx == 0? $tree->{CHILDREN}->[1] : $tree->{CHILDREN}->[0] );
-		fold_tree_from_ncs_recursive( $tree->{CHILDREN}->[$child_idx], $origin, $nchildren , $sibling_com,
+		fold_tree_from_ncs_recursive( $tree->{CHILDREN}->[$child_idx], $origin, $nchildren ,
 									  $vrt_lines, $connect_lines, $dof_lines, $debug_lines, $nodes_by_depth,$connected_subunits);
 	}
 

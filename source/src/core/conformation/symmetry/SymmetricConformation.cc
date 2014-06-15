@@ -453,7 +453,7 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 	}
 
 	//fpd may have implicitly changed a jump
-	Tsymm_.clear();
+	if (residue(seqpos).aa() == core::chemical::aa_vrt) Tsymm_.clear();
 }
 
 /// @details symmetry-safe replace residue
@@ -486,7 +486,7 @@ SymmetricConformation::replace_residue( Size const seqpos,
 	}
 
 	//fpd may have implicitly changed a jump
-	Tsymm_.clear();
+	if (residue(seqpos).aa() == core::chemical::aa_vrt) Tsymm_.clear();
 }
 
 
@@ -510,10 +510,15 @@ SymmetricConformation::get_upstream_vrt( Size seqpos ) const {
 // Get the transformation controlling resid i
 numeric::HomogeneousTransform< core::Real >
 SymmetricConformation::get_transformation( core::Size resid ) {
-	if (Tsymm_.size() != symm_info_->subunits())
+	if ( Tsymm_.size() == 0 )
 		recalculate_transforms( );
 
-	return Tsymm_[ symm_info_->subunit_index( resid ) ];
+	char compid = 'A';
+	if (symm_info_->get_num_components() >= 2) {
+		compid = symm_info_->get_component_of_residue( resid );
+	}
+
+	return Tsymm_[ compid ][ symm_info_->subunit_index( resid ) ];
 }
 
 //  Remap coordinate X from resid i to j
@@ -522,13 +527,19 @@ SymmetricConformation::apply_transformation(
 		PointPosition Xin,
 		core::Size residfrom,
 		core::Size residto ) {
-	if (Tsymm_.size() != symm_info_->subunits())
+	if (Tsymm_.size() == 0 )
 		recalculate_transforms( );
 
+	char compid = 'A';
+	if (symm_info_->get_num_components() >= 2) {
+		assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
+		compid = symm_info_->get_component_of_residue( residfrom );
+	}
+
 	numeric::HomogeneousTransform< core::Real > const &Tsymm_from
-		= Tsymm_[ symm_info_->subunit_index( residfrom ) ];
+		= Tsymm_[ compid ][ symm_info_->subunit_index( residfrom ) ];
 	numeric::HomogeneousTransform< core::Real > const &Tsymm_to
-		= Tsymm_[ symm_info_->subunit_index( residto ) ];
+		= Tsymm_[ compid ][ symm_info_->subunit_index( residto ) ];
 
 	PointPosition Xout;
 	Xout = (Tsymm_from.inverse() * Xin);
@@ -545,12 +556,18 @@ SymmetricConformation::apply_transformation_norecompute(
 		PointPosition Xin,
 		core::Size residfrom,
 		core::Size residto ) const {
-	runtime_assert(Tsymm_.size() == symm_info_->subunits());
+	char compid = 'A';
+	if (symm_info_->get_num_components() >= 2) {
+		assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
+		compid = symm_info_->get_component_of_residue( residfrom );
+	}
 
-	numeric::HomogeneousTransform< core::Real > const &Tsymm_from
-		= Tsymm_[ symm_info_->subunit_index( residfrom ) ];
-	numeric::HomogeneousTransform< core::Real > const &Tsymm_to
-		= Tsymm_[ symm_info_->subunit_index( residto ) ];
+	runtime_assert(Tsymm_.find(compid) != Tsymm_.end());
+
+	utility::vector1< numeric::HomogeneousTransform< core::Real > > const &T_i = (Tsymm_.find(compid))->second;
+
+	numeric::HomogeneousTransform< core::Real > const &Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
+	numeric::HomogeneousTransform< core::Real > const &Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
 
 	PointPosition Xout;
 	Xout = (Tsymm_from.inverse() * Xin);
@@ -661,125 +678,137 @@ SymmetricConformation::recalculate_transforms( ) {
 
 	ResidueOP vrt_res_op( 0 ); // maybe unused
 
+	// multicomp support
+	Size ncomps = symm_info_->get_num_components();
+
 	// check to see if all subunits have an upstream jump to vrt res
 	// do this because in some setups only one subunit has an upstream jump from a vrt res, would be
 	// bad to use for that guy and not others
 	bool each_subunit_has_vrt_control( true );
 	{ // scope
-		for ( Size isub=1; isub <= nsubunits; ++isub ) {
-			Size vrt_ctrl(0);
-			for ( Size j=1; j<= f.num_jump(); ++j ) {
-				if ( this->residue( f.upstream_jump_residue(j) ).aa() == chemical::aa_vrt &&
-						 symm_info_->subunit_index( f.downstream_jump_residue(j) ) == isub ) {
-					vrt_ctrl = f.upstream_jump_residue(j);
-					//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
-					break;
+		for ( Size icomp=1; icomp <= ncomps && each_subunit_has_vrt_control; ++icomp ) {
+			char comptag = (ncomps==1)? 'A' : symm_info_->get_component(icomp);
+			for ( Size isub=1; isub <= nsubunits && each_subunit_has_vrt_control; ++isub ) {
+				Size vrt_ctrl(0);
+				for ( Size j=1; j<= f.num_jump(); ++j ) {
+					Size downstream = f.downstream_jump_residue(j), upstream = f.upstream_jump_residue(j);
+					if ( this->residue( upstream ).aa() == chemical::aa_vrt
+								&& downstream <= symm_info_->num_total_residues_without_pseudo()
+								&& symm_info_->subunit_index( downstream ) == isub
+								&& ( ncomps==1 || symm_info_->get_component_of_residue( downstream ) == comptag ) ) {
+						vrt_ctrl = f.upstream_jump_residue(j);
+						//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
+						break;
+					}
 				}
-			}
-			if ( !vrt_ctrl ) {
-				each_subunit_has_vrt_control = false;
-				break;
+				if ( !vrt_ctrl ) {
+					each_subunit_has_vrt_control = false;
+				}
 			}
 		}
 	}
 
+	for ( Size icomp=1; icomp <= ncomps; ++icomp ) {
+		char comptag = (ncomps==1)? 'A' : symm_info_->get_component(icomp);
+		Tsymm_[comptag] = utility::vector1< numeric::HomogeneousTransform< core::Real > >(nsubunits);
 
-	for ( Size isub=1; isub <= nsubunits; ++isub ) {
-
-		// find upstream virtual... make this a separate function?
-		Size vrt_ctrl(0);
-		if ( each_subunit_has_vrt_control ) {
-			for ( Size j=1; j<= f.num_jump(); ++j ) {
-				if ( this->residue( f.upstream_jump_residue(j) ).aa() == chemical::aa_vrt &&
-						 symm_info_->subunit_index( f.downstream_jump_residue(j) ) == isub ) {
-					vrt_ctrl = f.upstream_jump_residue(j);
-					//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
-					break;
-				}
-			}
-		}
-
-		ResidueCAP vrt_res_cap(0);
-		if ( vrt_ctrl ) {
-			vrt_res_cap = &( residue( vrt_ctrl ) ); /// the standard logic, if virtual rsds are present
-
-		} else {
-			//runtime_assert( symm_info_->num_virtuals() == 0 ); // not necessarily
-
-			/// construct a pseudo virtual using the "first residue in each monomer"
-			Size first_independent_res( 0 );
-			for ( Size i=1; i<= this->size(); ++i ) {
-				if ( symm_info_->chi_is_independent( i ) ) {
-					first_independent_res = i;
-					break;
-				}
-			}
-			runtime_assert( first_independent_res );
-
-			Size coordframe_pos( 0 );
-			if ( symm_info_->subunit_index( first_independent_res ) == isub ) {
-				// we are the independent monomer; note that indep monomer not necessarily numbered 1...
-				coordframe_pos = first_independent_res;
-			} else {
-				for ( Size i=1; i<= this->size(); ++i ) {
-					if ( symm_info_->chi_follows(i) == first_independent_res &&
-							 symm_info_->subunit_index(i) == isub ) {
-						coordframe_pos = i;
+		for ( Size isub=1; isub <= nsubunits; ++isub ) {
+			Size vrt_ctrl(0);
+			if ( each_subunit_has_vrt_control ) {
+				for ( Size j=1; j<= f.num_jump(); ++j ) {
+					Size downstream = f.downstream_jump_residue(j), upstream = f.upstream_jump_residue(j);
+					if ( this->residue( upstream ).aa() == chemical::aa_vrt
+								&& downstream <= symm_info_->num_total_residues_without_pseudo()
+								&& symm_info_->subunit_index( downstream ) == isub
+								&& ( ncomps==1 || symm_info_->get_component_of_residue( downstream ) == comptag ) ) {
+						vrt_ctrl = f.upstream_jump_residue(j);
+						//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
 						break;
 					}
 				}
 			}
-			if ( !coordframe_pos ) {
-				std::cout << "unable to get coordframe_pos: " << isub << ' ' << first_independent_res << std::endl;
-				for ( Size i=1; i<= this->size(); ++i ) {
-					std::cout << "details: " << i << ' ' << symm_info_->chi_follows(i) << ' ' <<
-						symm_info_->subunit_index(i) << std::endl;
-				}
-			}
-			runtime_assert( coordframe_pos );
-			runtime_assert( symm_info_->subunit_index( coordframe_pos ) == isub );
 
-			Residue const & coordframe_rsd( residue( coordframe_pos ) );
-
-			if ( !vrt_res_op ) {
-				/// slow, create residueop
-				vrt_res_op = conformation::ResidueFactory::create_residue( coordframe_rsd.residue_type_set().name_map("VRT"));
-			}
-
-			/// create some reasonable coords based on coordframe_rsd
-			if ( coordframe_rsd.is_protein() ) {
-				Vector const orig( coordframe_rsd.xyz("CA") );
-				Vector const ihat( ( coordframe_rsd.xyz("N") - orig ).normalized() );
-				Vector jhat( coordframe_rsd.xyz("C") - orig );
-				jhat -= ihat.dot( jhat )*ihat;
-				jhat.normalize();
-				runtime_assert( std::abs( ihat.dot( jhat ) ) < 1e-6 ); // should make this an assert
-				vrt_res_op->set_xyz("ORIG", orig );
-				vrt_res_op->set_xyz("X", orig + ihat );
-				vrt_res_op->set_xyz("Y", orig + jhat );
+			ResidueCAP vrt_res_cap(0);
+			if ( vrt_ctrl ) {
+				vrt_res_cap = &( residue( vrt_ctrl ) ); /// the standard logic, if virtual rsds are present
 			} else {
-				/// could pretty easily add dna,rna,etc here
-				utility_exit_with_message("not setup for non-protein residues as anchor-rsds for virtual-rsd-less symm poses");
+				//runtime_assert( symm_info_->num_virtuals() == 0 ); // not necessarily
+
+				/// construct a pseudo virtual using the "first residue in each monomer"
+				Size first_independent_res( 0 );
+				for ( Size i=1; i<= this->size(); ++i ) {
+					if ( symm_info_->chi_is_independent( i ) ) {
+						first_independent_res = i;
+						break;
+					}
+				}
+				runtime_assert( first_independent_res );
+
+				Size coordframe_pos( 0 );
+				if ( symm_info_->subunit_index( first_independent_res ) == isub ) {
+					// we are the independent monomer; note that indep monomer not necessarily numbered 1...
+					coordframe_pos = first_independent_res;
+				} else {
+					for ( Size i=1; i<= this->size(); ++i ) {
+						if ( symm_info_->chi_follows(i) == first_independent_res &&
+								 symm_info_->subunit_index(i) == isub ) {
+							coordframe_pos = i;
+							break;
+						}
+					}
+				}
+				if ( !coordframe_pos ) {
+					std::cout << "unable to get coordframe_pos: " << isub << ' ' << first_independent_res << std::endl;
+					for ( Size i=1; i<= this->size(); ++i ) {
+						std::cout << "details: " << i << ' ' << symm_info_->chi_follows(i) << ' ' <<
+							symm_info_->subunit_index(i) << std::endl;
+					}
+				}
+				runtime_assert( coordframe_pos );
+				runtime_assert( symm_info_->subunit_index( coordframe_pos ) == isub );
+
+				Residue const & coordframe_rsd( residue( coordframe_pos ) );
+
+				if ( !vrt_res_op ) {
+					/// slow, create residueop
+					vrt_res_op = conformation::ResidueFactory::create_residue( coordframe_rsd.residue_type_set().name_map("VRT"));
+				}
+
+				/// create some reasonable coords based on coordframe_rsd
+				if ( coordframe_rsd.is_protein() ) {
+					Vector const orig( coordframe_rsd.xyz("CA") );
+					Vector const ihat( ( coordframe_rsd.xyz("N") - orig ).normalized() );
+					Vector jhat( coordframe_rsd.xyz("C") - orig );
+					jhat -= ihat.dot( jhat )*ihat;
+					jhat.normalize();
+					runtime_assert( std::abs( ihat.dot( jhat ) ) < 1e-6 ); // should make this an assert
+					vrt_res_op->set_xyz("ORIG", orig );
+					vrt_res_op->set_xyz("X", orig + ihat );
+					vrt_res_op->set_xyz("Y", orig + jhat );
+				} else {
+					/// could pretty easily add dna,rna,etc here
+					utility_exit_with_message("not setup for non-protein residues as anchor-rsds for virtual-rsd-less symm poses");
+				}
+				vrt_res_cap = vrt_res_op();
 			}
-			vrt_res_cap = vrt_res_op();
+			runtime_assert( vrt_res_cap ); // ensure success
+
+			// find the VRT that builds this res
+			//core::Size vrt_ctrl = get_upstream_vrt( nresMonomer*(i-1) + 1 );
+			Residue const &parent_vrt_res = *vrt_res_cap;
+
+			xyzVector< core::Real > const &orig = parent_vrt_res.atom("ORIG").xyz();
+			xyzVector< core::Real > X = parent_vrt_res.atom("X").xyz() - orig;
+			xyzVector< core::Real > Y = parent_vrt_res.atom("Y").xyz() - orig;
+			xyzVector< core::Real > Z = X.cross( Y );
+
+			//TR.Debug << "[TRANSFORM " << i << "/" << vrt_ctrl << "]" << std::endl
+			//         << "     X =  (" << X[0] << "," << X[1] << "," << X[2] << ")" << std::endl
+			// 				 << "     Y =  (" << Y[0] << "," << Y[1] << "," << Y[2] << ")" << std::endl
+			// 				 << "     Z =  (" << Z[0] << "," << Z[1] << "," << Z[2] << ")" << std::endl
+			// 				 << "  orig =  (" << orig[0] << "," << orig[1] << "," << orig[2] << ")" << std::endl;
+			Tsymm_[comptag][isub] = HomogeneousTransform< core::Real>( orig-Y,orig-Z, orig );
 		}
-		runtime_assert( vrt_res_cap ); // ensure success
-
-		// find the VRT that builds this res
-		//core::Size vrt_ctrl = get_upstream_vrt( nresMonomer*(i-1) + 1 );
-		Residue const &parent_vrt_res = *vrt_res_cap;
-
-		xyzVector< core::Real > const &orig = parent_vrt_res.atom("ORIG").xyz();
-		xyzVector< core::Real > X = parent_vrt_res.atom("X").xyz() - orig;
-		xyzVector< core::Real > Y = parent_vrt_res.atom("Y").xyz() - orig;
-		xyzVector< core::Real > Z = X.cross( Y );
-
-		//TR.Debug << "[TRANSFORM " << i << "/" << vrt_ctrl << "]" << std::endl
-		//         << "     X =  (" << X[0] << "," << X[1] << "," << X[2] << ")" << std::endl
-		// 				 << "     Y =  (" << Y[0] << "," << Y[1] << "," << Y[2] << ")" << std::endl
-		// 				 << "     Z =  (" << Z[0] << "," << Z[1] << "," << Z[2] << ")" << std::endl
-		// 				 << "  orig =  (" << orig[0] << "," << orig[1] << "," << orig[2] << ")" << std::endl;
-		Tsymm_.push_back( HomogeneousTransform< core::Real>( orig-Y,orig-Z, orig ) );
 	}
 }
 

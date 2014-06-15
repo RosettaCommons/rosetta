@@ -922,9 +922,10 @@ void RigidBodyDofRandomizeMover::apply( core::pose::Pose & pose )
 	using namespace core::conformation::symmetry;
 
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
-
 	TRBM.Debug << "Randomize: " << "Jump (before): " << flexible_jump << std::endl;
-	// randomize the translational dofs first. We have 3 possible directions: x, y,z
+
+	// randomize the translational dofs
+	Vector trans = flexible_jump.get_translation();
 	for ( int i = X_DOF; i <= Z_DOF; ++i ) {
 		// randomize if dof is allowed and we have specified a range to randomize the translation
 		// for the specific dof
@@ -935,17 +936,15 @@ void RigidBodyDofRandomizeMover::apply( core::pose::Pose & pose )
 			} else {
 				new_trans = dof_.range1_lower(i);
 			}
-			Vector trans;
-			if ( i == X_DOF ) trans = Vector(1,0,0)*new_trans;
-			if ( i == Y_DOF ) trans = Vector(0,1,0)*new_trans;
-			if ( i == Z_DOF ) trans = Vector(0,0,1)*new_trans;
-			// reverse the jump if the dof specifies so
-			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
-			flexible_jump.set_translation( trans );
-			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
-			pose.set_jump( rb_jump_, flexible_jump );
+			Real scale = (dof_.jump_direction(i) == c2n) ? -1 : 1;
+			if ( i == X_DOF ) trans[0] = scale*new_trans;
+			if ( i == Y_DOF ) trans[1] = scale*new_trans;
+			if ( i == Z_DOF ) trans[2] = scale*new_trans;
 		}
 	}
+	flexible_jump.set_translation( trans );
+	pose.set_jump( rb_jump_, flexible_jump );
+
 	// Now apply rotations
 	for ( int i = X_ANGLE_DOF; i <= Z_ANGLE_DOF; ++i ) {
 		// If the user has set 360 degrees rotation for X_ANGLE, Y_ANGLE and Z_ANGLE the n we want

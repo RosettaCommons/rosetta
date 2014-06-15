@@ -420,7 +420,14 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	protocols::simple_moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 
 	//set up sidechain movers for each movable jump
-	tf_->push_back( new RestrictToInterface( 1 ) );
+	//tf_->push_back( new RestrictToInterface( 1 ) );
+
+	//fpd -- repack any interface formed by a movable jump
+	utility::vector1<int> movable_jumps;
+	for (std::map<Size,SymDof>::iterator i=dofs.begin(),i_end=dofs.end(); i!=i_end; ++i) {
+		movable_jumps.push_back( i->first );
+	}
+	tf_->push_back( new RestrictToInterface( movable_jumps ) );
 
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new simple_moves::symmetry::SymRotamerTrialsMover( scorefxn_pack_, tf_ );
 
@@ -441,55 +448,8 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 		// This does not work for symmetry yet. Anyone is free to implement it...
 		if ( ( flex_bb_docking_type == "ccd" ) || ( flex_bb_docking_type == "kic" ) ||  ( flex_bb_docking_type == "backrub" ) ) {
-
-/*			core::kinematics::FoldTree docking_fold_tree( pose.fold_tree() );
-			core::kinematics::FoldTree loop_fold_tree = docking_fold_tree;
-
-			// jk Create a copy because we can't modify input pose, and we need energies and the docking fold tree
-			// Note: we need the docking fold tree so that we identify the correct "interface" when picking loops (ie. jump #1)
-			// jk For now, define loops based on the input structure
-			// (so that they're always the same, and we don't have to worry about relaxing a priori, akin to prepacking)
-			pose::Pose pose_for_loop_defn = *get_input_pose();
-			(*scorefxn_pack_)(pose_for_loop_defn);
-			pose_for_loop_defn.fold_tree( docking_fold_tree );
-
-			protocols::loops::Loops loop_set;
-			Real interface_dist = option[ OptionKeys::docking::flexible_bb_docking_interface_dist ];
-			define_loops( pose_for_loop_defn, loop_set, interface_dist );
-
-			loops::LoopMoverOP loop_refine;
-			if ( flex_bb_docking_type == "ccd" ) {
-				// jk CCD loop refinement (fullatom only)
-				TR << "Setting up for ccd loop modeling" << std::endl;
-				protocols::loops::fold_tree_from_loops( pose, loop_set, loop_fold_tree );
-				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = new loops::LoopMover_Refine_CCD( loop_set, scorefxn_pack_->clone() );
-			} else if ( flex_bb_docking_type == "kic" ) {
-				// jk KIC loop refinement (fullatom only)
-				TR << "Setting up for kinematic (kic) loop modeling" << std::endl;
-				protocols::loops::fold_tree_from_loops( pose, loop_set, loop_fold_tree );
-				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = new loops::LoopMover_Refine_KIC( loop_set, scorefxn_pack_->clone() );
-			} else if ( flex_bb_docking_type == "backrub" ) {
-				// jk backrub loop refinement (fullatom only)
-				TR << "Setting up for backrub loop modeling" << std::endl;
-				// jk backrub can't use segments that span a jump residue, so use a simple fold tree here
-				// note: this assumes that the termini are not allowed to move (and in define_loops they aren't)
-				loop_fold_tree.simple_tree( pose.total_residue() );
-				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = new loops::LoopMover_Refine_Backrub( loop_set, scorefxn_pack_->clone() );
-			}
-
-			moves::ChangeFoldTreeMoverOP get_loop_ft = new moves::ChangeFoldTreeMover( loop_fold_tree );
-			moves::ChangeFoldTreeMoverOP get_docking_ft = new moves::ChangeFoldTreeMover( docking_fold_tree );
-
-			interface_repack_and_move_loops->add_mover( get_loop_ft );
-			interface_repack_and_move_loops->add_mover( loop_refine );
-			interface_repack_and_move_loops->add_mover( get_docking_ft );
-			*/
 			TR << "[ ERROR ] flexible_bb_docking is not implemented for symmetric docking yet..." << std::endl;
 			exit(1);
-
 		} else {
 			TR << "[ ERROR ] Unknown flexible_bb_docking type: " << flex_bb_docking_type << std::endl;
 			exit(1);

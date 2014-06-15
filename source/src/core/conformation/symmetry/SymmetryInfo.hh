@@ -242,6 +242,7 @@ public:
 
 	Size const & get_num_components() const;
 	utility::vector1<char> const & get_components() const;
+	char get_component(Size i) const;
 	std::map<char,std::pair<Size,Size> > const & get_component_bounds() const;
 	std::map<std::string,char> const & get_subunit_name_to_component() const;
 	std::map<std::string,utility::vector1<char> > const & get_jump_name_to_components() const;

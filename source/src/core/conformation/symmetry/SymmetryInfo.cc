@@ -1705,6 +1705,12 @@ SymmetryInfo::get_components() const {
 	return components_;
 }
 
+char
+SymmetryInfo::get_component(Size i) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	return components_[i];
+}
+
 std::map<char,std::pair<Size,Size> > const &
 SymmetryInfo::get_component_bounds() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");

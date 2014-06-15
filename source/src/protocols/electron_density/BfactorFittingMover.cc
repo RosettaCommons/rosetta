@@ -458,6 +458,12 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		utility_exit_with_message( "Bfactor optimization _must_ be run with the -cryst::crystal_refine option" );
 	}
 
+	// make sure pose has pdbinfo
+	if (! pose.pdb_info() ) {
+		core::pose::PDBInfoOP newinfo(new core::pose::PDBInfo(pose));
+		pose.pdb_info( newinfo );
+	}
+
 	core::optimization::MinimizerOptions options( minimizer_, 1e-4, true, false, false );
 	options.max_iter(max_iter_);
 

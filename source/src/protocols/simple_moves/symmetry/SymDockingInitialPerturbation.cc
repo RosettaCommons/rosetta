@@ -154,8 +154,6 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 																															 slide_info.get_SlideCriteriaVal() );
 			symm_slider.apply( pose );
 		}
-//		SymDockingSlideIntoContact slide( dofs );
-//		slide.apply( pose );
 	}
 }
 
@@ -417,6 +415,7 @@ void SymmetrySlider::slide_away( core::pose::Pose & pose )
 	std::map< core::Size, bool >::const_iterator it;
 	std::map< core::Size, bool >::const_iterator it_begin = AllowSlideJumpMap_.begin();
 	std::map< core::Size, bool >::const_iterator it_end = AllowSlideJumpMap_.end();
+
 	// slide away sequentially. Why? Becuase I say so.
 	for ( it = it_begin; it != it_end; ++it ) {
 		if ( ( *it).second ) {
@@ -645,7 +644,6 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 		SymmetrySlider::disallow_current_slide();
 		// Select a new slide
 		select_jump();
-
 	}
 }
 

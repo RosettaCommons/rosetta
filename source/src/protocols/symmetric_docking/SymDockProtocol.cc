@@ -330,7 +330,6 @@ SymDockProtocol::apply( pose::Pose & pose )
 	using namespace scoring;
 	using namespace basic::options;
 	using namespace moves;
-	//using core::pose::datacache::CacheableDataType::SCORE_MAP;
 	using utility::file::FileName;
 
 	using namespace viewer;
@@ -346,7 +345,6 @@ SymDockProtocol::apply( pose::Pose & pose )
 	docking_low_->set_input_pose( input_pose );
 	docking_high_->set_input_pose( input_pose );
 	set_input_pose( input_pose );
-
 
 	if( init_task_factory_ ) {
 		TR << "Setting non-default TaskFactory." << std::endl;
@@ -395,7 +393,6 @@ SymDockProtocol::apply( pose::Pose & pose )
 			initial.apply( pose );
 
 			TR << "finished initial perturbation" << std::endl;
-
 			if( !hurry_ && get_native_pose() ){
 				Real st_rmsd = calc_rms( pose );
 				score_map_["st_rmsd"] = st_rmsd;//jd1
