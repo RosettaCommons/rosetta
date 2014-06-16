@@ -78,11 +78,11 @@ except ImportError:
 try:
     __import__("rosetta.protocols")
     __import__("rosetta.protocols.moves")
+    __import__("rosetta.protocols.jd2")
+    __import__("rosetta.protocols.jd2.archive")
     __import__("rosetta.protocols.canonical_sampling")
     __import__("rosetta.protocols.simple_moves")
     __import__("rosetta.protocols.jumping")
-    __import__("rosetta.protocols.jd2")
-    __import__("rosetta.protocols.jd2.archive")
     __import__("rosetta.protocols.abinitio")
 
     __import__("rosetta.protocols.filters")
@@ -128,6 +128,7 @@ _python_py_exit_callback = None
 
 ###############################################################################
 #Exception handling.
+import rosetta.utility as utility
 class PyRosettaException(Exception):
     #def __init__(self): pass
 
@@ -141,7 +142,6 @@ class PythonPyExitCallback(utility.PyExitCallback):
 
     def __init__(self):
         utility.PyExitCallback.__init__(self)
-
 
 ###############################################################################
 #

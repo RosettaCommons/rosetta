@@ -110,8 +110,12 @@ def main(args):
       help="Disable numpy type conversion support.",
       )
 
+    parser.add_argument("--package_path",
+        action="store", default="pyrosetta",
+        help="Target package directory for bindings. (default: %(default)s)",)
+
     parser.add_argument("--bindings_path",
-      action="store", default="rosetta",
+      action="store", default=None,
       help="Output directory for bindings. (default: %(default)s)",
       )
 
@@ -217,7 +221,8 @@ def main(args):
         raise ValueError("Can not specify both --one and --target.")
 
     #Expand relative to absolute bindings target path
-    bindings_path = os.path.abspath(options.bindings_path)
+    package_path = os.path.abspath(options.package_path)
+    bindings_path = path.join(package_path, "rosetta")
 
     # Resolve working directories from repository base directory
     repository_base_dir = subprocess.check_output('git rev-parse --show-toplevel', shell=True).strip()
@@ -273,6 +278,8 @@ def main(args):
     if error:
         logging.error('Some of the build scripts return an error, PyRosetta build failed!')
         sys.exit(1)
+
+    stageStaticFiles(repository_base_dir, script_root_dir, package_path)
 
     logging.info("Done!")
 
@@ -604,6 +611,59 @@ def preparePythonLibs(bindings_path):
 
     logger.info("Using python library path: %s", python_library_path)
     Options.L.append(python_library_path)
+
+def copy_tree_contents(src, dst, symlinks=False, ignore=None):
+    """Recursively copy contents of src into dst."""
+    from shutil import Error, WindowsError, copy2, copystat
+
+    names = os.listdir(src)
+    if ignore is not None:
+        ignored_names = ignore(src, names)
+    else:
+        ignored_names = set()
+
+    if not path.exists(dst):
+        os.makedirs(dst)
+
+    errors = []
+    for name in names:
+        if name in ignored_names:
+            continue
+        srcname = os.path.join(src, name)
+        dstname = os.path.join(dst, name)
+        try:
+            if symlinks and os.path.islink(srcname):
+                linkto = os.readlink(srcname)
+                os.symlink(linkto, dstname)
+            elif os.path.isdir(srcname):
+                copy_tree_contents(srcname, dstname, symlinks, ignore)
+            else:
+                copy2(srcname, dstname)
+        except (IOError, os.error) as why:
+            errors.append((srcname, dstname, str(why)))
+        # catch the Error from the recursive copytree so that we can
+        # continue with other files
+        except Error as err:
+            errors.extend(err.args[0])
+    try:
+        copystat(src, dst)
+    except WindowsError:
+        # can't copy file access times on Windows
+        pass
+    except OSError as why:
+        errors.extend((src, dst, str(why)))
+    if errors:
+        raise Error(errors)
+
+def stageStaticFiles(repository_root_dir, script_root_dir, target_dir):
+    logger.info("stageStaticFiles: %s", locals())
+
+    copy_tree_contents( path.join(script_root_dir, "static"), target_dir)
+
+    if not path.lexists( path.join(target_dir, "database") ):
+        os.symlink(
+            path.relpath( path.join(repository_root_dir, "database"), target_dir),
+            path.join(target_dir, "database"))
 
 class ModuleBuilder:
     def __init__(self, namespace_path, py_src_path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):

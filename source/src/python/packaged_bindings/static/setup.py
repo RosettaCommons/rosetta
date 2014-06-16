@@ -13,8 +13,12 @@ MINOR = 4
 ISRELEASED = False
 
 def resolve_build_version():
-    from rosetta.version import commit
-    version = commit
+    try:
+        from rosetta.version import commit
+        version = commit
+    except:
+        warnings.warn("Unable to resolve commit via rosetta.version, using HEAD.")
+        version = "HEAD"
 
     if subprocess.call("git rev-parse --git-dir", shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE) == 0:
         import dateutil
@@ -60,5 +64,6 @@ setup(
             "" : ["*.so", "libboost_python*"],
             "database" : database_files
             },
+        tests__requires = ["nose", "nose-pathmunge"],
         zip_safe = False
         )

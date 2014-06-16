@@ -28,11 +28,11 @@ def set_logging_handler():
     _logging_tracer = rosetta.basic.PyTracer()
     _logging_tracer.output_callback = _logging_callback
 
-    # Set the tracer hook, do not enable 'raw' in order to 
+    # Set the tracer hook, do not enable 'raw' in order to
     # allow rosetta's tracing settings to have priority.
     rosetta.basic.Tracer.set_ios_hook(
         _logging_tracer,
-        rosetta.basic.Tracer.get_AllChannels_string(),
+        rosetta.basic.Tracer.get_all_channels_string(),
         False)
 
     # Mute rosetta's standard logging output
