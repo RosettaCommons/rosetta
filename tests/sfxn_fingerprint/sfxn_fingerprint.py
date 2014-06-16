@@ -118,6 +118,9 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
     parser.add_option("--compareonly", action="store_true", dest="compareonly", default=False,
       help="Do not run test themself, just compare results in new and ref. (off by default)"
     )
+    parser.add_option("--skip-comparison", action="store_true", dest="skip_comparison", default=False,
+      help="Just run test themself but do not compare results (off by default)"
+    )
     parser.add_option("--yaml",
       default=None,
       help="Save results to specified file in YAML format. (default: None)",
@@ -217,54 +220,58 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
             f = file(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
 
     else:
-        diffs = 0
-        results = {}
-        full_log = ''
-        for test in tests:
-            dir_before = path.join("ref", test)
-            dir_after = path.join(outdir, test)
-            # diff returns 0 on no differences, 1 if there are differences
+        if options.skip_comparison:
+            print 'Skipping comparison phase because command line option "--skip-comparison" was specified...'
 
-            flags = ["-rq"]
-            if options.fulldiff: flags = ["-r"]
-            flags += ["--exclude=command.sh"]
-
-            proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
-
-            full_log_msg = "FAIL %s\n" % test
-
-
-            msg = "FAIL %s\n" % test
-            for diff in proc.stdout.readlines():
-                msg += "     %s\n" % diff.strip()
-                full_log_msg += "     %s\n" % diff.strip()
-
-            full_log_msg += '\n'
-
-            result = proc.wait()
-            results[test] = result
-
-            if result == 0:
-                print "ok   %s" % test
-                full_log += "ok   %s\n" % test
-            else:
-                print msg
-                full_log += full_log_msg
-
-                diffs += 1
-
-        if diffs:
-            print "%i test(s) failed.  Use 'diff' to compare results." % diffs
         else:
-            print "All tests passed."
+            diffs = 0
+            results = {}
+            full_log = ''
+            for test in tests:
+                dir_before = path.join("ref", test)
+                dir_after = path.join(outdir, test)
+                # diff returns 0 on no differences, 1 if there are differences
 
-        if options.yaml:
-            f = file(options.yaml, 'w')
-            brief = makeBriefResults(full_log)
-            brief = brief.replace('"', '\\"')
-            brief = '"' + brief.replace('\n', '\\n') + '"'
-            f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
-            f.close()
+                flags = ["-rq"]
+                if options.fulldiff: flags = ["-r"]
+                flags += ["--exclude=command.sh"]
+
+                proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
+
+                full_log_msg = "FAIL %s\n" % test
+
+
+                msg = "FAIL %s\n" % test
+                for diff in proc.stdout.readlines():
+                    msg += "     %s\n" % diff.strip()
+                    full_log_msg += "     %s\n" % diff.strip()
+
+                full_log_msg += '\n'
+
+                result = proc.wait()
+                results[test] = result
+
+                if result == 0:
+                    print "ok   %s" % test
+                    full_log += "ok   %s\n" % test
+                else:
+                    print msg
+                    full_log += full_log_msg
+
+                    diffs += 1
+
+            if diffs:
+                print "%i test(s) failed.  Use 'diff' to compare results." % diffs
+            else:
+                print "All tests passed."
+
+            if options.yaml:
+                f = file(options.yaml, 'w')
+                brief = makeBriefResults(full_log)
+                brief = brief.replace('"', '\\"')
+                brief = '"' + brief.replace('\n', '\\n') + '"'
+                f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
+                f.close()
 
     return 0
 

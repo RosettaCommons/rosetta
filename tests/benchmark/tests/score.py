@@ -61,7 +61,7 @@ def run_score_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
         timeout = 60*8 if mode == 'release' else 60*60  # setting timeout to 8min on release and one hour on debug
 
-        command_line = 'cd {}/tests/sfxn_fingerprint && ./sfxn_fingerprint.py --database=./../../database --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout)
+        command_line = 'cd {}/tests/sfxn_fingerprint && ./sfxn_fingerprint.py --skip-comparison --database=./../../database --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout)
         TR( 'Running sfxn_fingerprint script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'score.py: debug is enabled, skippig score script run...\n'
