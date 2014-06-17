@@ -127,7 +127,7 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
 		}
 	}
 	if (sized_database.size()==0){
-		utility_exit_with_message("no entries with correct length were found in the database" + database_fname_ );
+		utility_exit_with_message("no entries with correct length were found in the database: " + database_fname_ );
 	}
 	TR<<"Finished reading database "<<database_fname_<<" with "<<sized_database.size()<<" entries of length "<<segment_length<<std::endl;
 	core::Size const entry=RG.uniform() * sized_database.size() + 1;
