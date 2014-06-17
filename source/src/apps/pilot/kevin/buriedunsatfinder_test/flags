@@ -1,0 +1,27 @@
+# flags for new buried unsat calc
+#
+# all new options with default values
+#-bunsat_calc2
+# -layered_sasa
+# -generous_hbonds
+# -sasa_burial_cutoff 0.01
+# -AHD_cutoff 120
+# -dist_cutoff 3.0
+# -hxl_dist_cutoff 3.5
+# -sulph_dist_cutoff 3.3
+# -metal_dist_cutoff 2.7
+#-bunsat_calc2:layered_sasa
+#-bunsat_calc2:generous_hbonds
+#-bunsat_calc2:sasa_burial_cutoff 0.01
+#-bunsat_calc2:AHD_cutoff 90
+#-bunsat_calc2:dist_cutoff 3.0
+#-bunsat_calc2:hxl_dist_cutoff 3.5
+#-bunsat_calc2:sulph_dist_cutoff 3.3
+#-bunsat_calc2:metal_dist_cutoff 2.7
+#
+# good options to include
+-no_optH false
+-flip_HNQ
+#
+# in some cases this is appropriate
+#-ignore_zero_occupancy false

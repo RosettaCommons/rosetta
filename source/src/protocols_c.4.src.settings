@@ -109,9 +109,13 @@ sources = {
 		"StructureFeaturesCreator",
 		"StructureScoresFeatures",
 		"StructureScoresFeaturesCreator",
+		"TaskOperationFeatures",
+		"TaskOperationFeaturesCreator",
 		"UnrecognizedAtomFeatures",
 		"UnrecognizedAtomFeaturesCreator",
 		"util",
+		"WaterFeatures",
+		"WaterFeaturesCreator",
 	],
 	"protocols/features/helixAssembly": [
 		"ConcurrencyTest",

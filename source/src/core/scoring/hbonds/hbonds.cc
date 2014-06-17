@@ -268,6 +268,9 @@ fill_hbond_set_by_AHdist_threshold(
 	// and what the neighbor-numbers are for each residue since some of the
 	// weights are environment-dependent.
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+	// It's possible to miss some relevant neighbors at 10A
+	// 2*pose_max_nbr_radius(pose) gives me 12.2A for talaris2013 with fa_standard
+	//TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 	// loop over all nbr-pairs

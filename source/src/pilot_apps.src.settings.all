@@ -37,10 +37,9 @@ sources = {
 		"mmt_msd",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
 		"analyze_rtmin_failures",
-		"find_buns",
 		"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
 		"sweep_respair_energies",
-		"find_buns",
+		#"find_buns",
 		#"test_ik_match",
 	],
 	"pilot/aroop" : [
@@ -490,6 +489,14 @@ sources = {
 		#"fragpdb",
 		#"symfragrm",
 		#"sixdtreeTEST",
+	],
+	"pilot/kevin" : [
+		#"BuriedUnsatPolarsFinder2",
+		"vsasa_buns",
+		"vsasa_pdbcode_res",
+		"sasa_buns",
+		"wat_distances",
+		"khXtal_water_bunsat",
 	],
 	"pilot/krishna" : [
 		"pH_protocol",

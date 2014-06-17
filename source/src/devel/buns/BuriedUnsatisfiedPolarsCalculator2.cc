@@ -72,9 +72,9 @@ BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 	all_bur_unsat_polars_( 0 ),
 	special_region_bur_unsat_polars_(0),
 	name_of_weak_bunsat_calc_( weak_bunsat_calc ),
+	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
 	layered_sasa_(option[OptionKeys::bunsat_calc2::layered_sasa]),
 	generous_hbonds_(option[OptionKeys::bunsat_calc2::generous_hbonds]),
-	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
 	AHD_cutoff_(option[OptionKeys::bunsat_calc2::AHD_cutoff]),
 	dist_cutoff_(option[OptionKeys::bunsat_calc2::dist_cutoff]),
 	hxl_dist_cutoff_(option[OptionKeys::bunsat_calc2::hxl_dist_cutoff]),
@@ -96,9 +96,9 @@ BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 	special_region_bur_unsat_polars_(0),
 	name_of_weak_bunsat_calc_( weak_bunsat_calc ),
 	special_region_( special_region ),
+	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
 	layered_sasa_(option[OptionKeys::bunsat_calc2::layered_sasa]),
 	generous_hbonds_(option[OptionKeys::bunsat_calc2::generous_hbonds]),
-	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
 	AHD_cutoff_(option[OptionKeys::bunsat_calc2::AHD_cutoff]),
 	dist_cutoff_(option[OptionKeys::bunsat_calc2::dist_cutoff]),
 	hxl_dist_cutoff_(option[OptionKeys::bunsat_calc2::hxl_dist_cutoff]),
@@ -229,7 +229,86 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 	
 	TR << "Validating buried unsats" << std::endl;
 	
-	bunsats_thorough_check(pose, atom_bur_unsat_);
+	//bunsats_thorough_check(pose, atom_bur_unsat_);
+
+
+//    pose.update_residue_neighbors();
+//    scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+//    scorefxn->score(pose);
+//    pose.energies();
+//
+//    const Real max_nbr_radius = pose::pose_max_nbr_radius(pose);
+//    //constexpr const Real max_covalent_hbond_length = 1.5;
+//    const Real max_covalent_hbond_length = 1.5;
+//    const Real neighbor_cutoff = 2 * max_nbr_radius + max_covalent_hbond_length + AHdist_threshold;
+//
+//    conformation::PointGraphOP pg = new conformation::PointGraph;
+//    conformation::residue_point_graph_from_conformation(pose.conformation(), *pg);
+//    conformation::find_neighbors<conformation::PointGraphVertexData,
+//        conformation::PointGraphEdgeData>(pg, neighbor_cutoff);
+//
+//    id::AtomID_Map<Real> atom_sasa = vsasa_calc.calculate(pose);
+//
+//    Size nres = pose.total_residue();
+//
+//    scoring::hbonds::HBondSet hbond_set;
+//
+//    const scoring::hbonds::HBondDatabaseCOP hb_database = scoring::hbonds::HBondDatabase::get_database();
+//    const scoring::TenANeighborGraph& tenA_neighbor_graph(pose.energies().tenA_neighbor_graph());
+//
+//    for (Size lowerResNum = 1; lowerResNum <= nres; ++lowerResNum ) {
+//        const conformation::Residue& lowerRes(pose.residue(lowerResNum));
+//        const Size nbl = tenA_neighbor_graph.get_node(lowerResNum)->
+//            num_neighbors_counting_self_static();
+//        for (conformation::PointGraph::UpperEdgeListConstIter
+//                ue  = pg->get_vertex(lowerResNum).const_upper_edge_list_begin(),
+//                ue_end = pg->get_vertex(lowerResNum).const_upper_edge_list_end();
+//                ue != ue_end; ++ue ) {
+//            Size upperResNum = ue->upper_vertex();
+//            const conformation::Residue& upperRes(pose.residue(upperResNum));
+//            const Size nbu = tenA_neighbor_graph.get_node(upperResNum)->
+//                num_neighbors_counting_self_static();
+//            scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
+//                lowerRes, upperRes, nbl, nbu, AHdist_threshold, hbond_set);
+//            scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
+//                upperRes, lowerRes, nbu, nbl, AHdist_threshold, hbond_set);
+//        }
+//    }
+//
+//    Size buns = 0;
+//    const pose::PDBInfo& pdb_info = *(pose.pdb_info());
+//    for (Size resNum = 1; resNum <= nres; ++resNum) {
+//        const conformation::Residue& res = pose.residue(resNum);
+//        const chemical::ResidueType& res_type = res.type();
+//        for (Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum){
+//            if (!res.heavyatom_is_an_acceptor(atomNum) && !res.atom_is_polar_hydrogen(atomNum)) continue;
+//            if (pdb_info.temperature(resNum, atomNum) > 30) continue;
+//            if (pdb_info.occupancy(resNum, atomNum) < 1) continue;
+//
+//            id::AtomID at(atomNum, resNum);
+//            const Real vsasa = atom_sasa[at];
+//
+//            const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
+//
+//            if (vsasa > burial_cutoff) continue;
+//            utility::vector1<scoring::hbonds::HBondCOP> hbonds = hbond_set.atom_hbonds(at, false /*include only allowed*/);
+//            bool hbonded = false;
+//            for (utility::vector1<scoring::hbonds::HBondCOP>::iterator h = hbonds.begin(), end = hbonds.end();
+//                 h != end; h++) {
+//                if (hb_eval.evaluate(pose, *h)){
+//                    hbonded = true;
+//                    break;
+//                }
+//            }
+//            if (!hbonded) {
+//                ++buns;
+//				// found a bunsat, do stuff here
+//            }
+//        }
+//    }
+
+
+
 	
 } //recompute
 

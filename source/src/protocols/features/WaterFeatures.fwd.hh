@@ -7,26 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/buns/BuriedUnsatisfiedPolarsCalculator2.fwd.hh
+/// @file   protocols/features/WaterFeatures.fwd.hh
 /// @brief
 /// @author Kevin Houlihan
 
+#ifndef INCLUDED_protocols_features_WaterFeatures_fwd_hh
+#define INCLUDED_protocols_features_WaterFeatures_fwd_hh
 
-#ifndef INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_fwd_hh
-#define INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_fwd_hh
-
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
-namespace buns {
+namespace protocols{
+namespace features{
 
-class BuriedUnsatisfiedPolarsCalculator2;
-enum CALCULATORMODE { energy, geometry, check_buns1 };
+class WaterFeatures;
+typedef utility::pointer::owning_ptr< WaterFeatures > WaterFeaturesOP;
+typedef utility::pointer::owning_ptr< WaterFeatures const > WaterFeaturesCOP;
 
-typedef utility::pointer::owning_ptr< BuriedUnsatisfiedPolarsCalculator2> BuriedUnsatisfiedPolarsCalculator2OP;
-typedef utility::pointer::owning_ptr< BuriedUnsatisfiedPolarsCalculator2 const > BuriedUnsatisfiedPolarsCalculator2COP;
+}//features
+}//protocols
 
-} // namespace toolbox
-} // namespace protocols
-
-#endif
+#endif //include guard

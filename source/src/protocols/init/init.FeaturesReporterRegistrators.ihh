@@ -59,6 +59,7 @@ static FeaturesReporterRegistrator< SmotifFeaturesCreator > SmotifFeaturesCreato
 static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ScoreFunctionFeaturesCreator > ScoreFunctionFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< TaskOperationFeaturesCreator > TaskOperationFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< UnrecognizedAtomFeaturesCreator > UnrecognizedAtomFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< helixAssembly::HelixBundleFeaturesCreator > HelixBundleFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< helixAssembly::ConcurrencyTestCreator > ConcurrencyTestCreator_registrator;
@@ -67,6 +68,7 @@ static FeaturesReporterRegistrator< strand_assembly::SandwichFeaturesCreator > S
 static FeaturesReporterRegistrator< strand_assembly::StrandBundleFeaturesCreator > StrandBundleFeaturesCreator_registrator;
 //static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ResidueGridScoresFeaturesCreator >  ResidueGridScoresFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< WaterFeaturesCreator >  WaterFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< InterfaceFeaturesCreator > InterfaceFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< protocols::antibody::clusters::CDRClusterFeaturesCreator > CDRClusterFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< protocols::antibody::AntibodyFeaturesCreator > AntibodyFeaturesCreator_registrator;

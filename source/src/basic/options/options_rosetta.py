@@ -6193,9 +6193,12 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	), # pb_potential
 
 	Option_Group( 'bunsat_calc2',
-		Option( 'layered_sasa', 'Boolean', desc="Use the variable solvent distance SASA calculator for finding buried unsats", default="true"),
-		Option( 'generous_hbonds', 'Boolean', desc="Use generous hbond criteria", default = "true"),
+		Option( 'probe_radius', 'Real', desc="Probe radius for SASA calculation", default = '1.4' ),
+		Option( 'wobble', 'Real', desc="Distance atoms can move towards" \
+                    " or away from solvent. Value is subtracted from inner shell and added to outer shell for variable distance SASA.", default = '0.0' ),
 		Option( 'sasa_burial_cutoff', 'Real', desc="Minimum SASA to be considered exposed", default = '0.01' ),
+		Option( 'layered_sasa', 'Boolean', desc="Use the variable distance solvent SASA calculator for finding buried unsats", default="true"),
+		Option( 'generous_hbonds', 'Boolean', desc="Use generous hbond criteria", default = "true"),
 		Option( 'AHD_cutoff', 'Real', desc="Minimum AHD angle for secondary geometry based h-bond detection", default = '120' ),
 		Option( 'dist_cutoff', 'Real', desc="max dist", default = '3.0'),
 		Option( 'hxl_dist_cutoff', 'Real', desc="hxl max dist", default = '3.5'),

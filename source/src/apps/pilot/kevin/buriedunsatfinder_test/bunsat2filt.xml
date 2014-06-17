@@ -1,0 +1,36 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=talaris2013.wts />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name=init />
+		<RestrictToRepacking name=repack />
+	</TASKOPERATIONS>
+
+	<FILTERS>
+		<BuriedUnsatHbonds2 name=bunsat
+			scorefxn=s
+			jump_number=0
+			cutoff=20
+			layered_sasa=true
+			generous_hbonds=true
+			sasa_burial_cutoff=0.01
+			AHD_cutoff=90
+			dist_cutoff=3.0
+			hxl_dist_cutoff=3.5
+			sulph_dist_cutoff=3.3
+			metal_dist_cutoff=2.7 />
+	</FILTERS>
+
+	<MOVERS>
+		<PackRotamersMover name=pack
+			scorefxn=s
+			task_operations=repack />
+	</MOVERS>
+
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add filter_name=bunsat />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

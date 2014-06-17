@@ -14,6 +14,9 @@ conical_3d_normalization <- function(x){(1/sin(x))*1/sum(1/(sin(x)))}
 
 uniform_normalization <- function(x){ rep(1/length(x),length(x)) }
 
+# normalize according to spherical volume unit
+# r, radial distance and p, polar angle
+spherical_normalization <- function(r,p){ 1/( r^2 * sin(p) ) * 1/sum( r^2 * sin(p) )  }
 
 no_normalization <- function(x) rep(1,length(x))
 

@@ -15,4 +15,4 @@
 #ctags --append `find src/utility -name "*.cc" -or -name "*.hh"`
 #ctags --append `find src/numeric -name "*.cc" -or -name "*.hh"`
 
-find src/{core,protocols,devel,utility,numeric} -name "*.cc" -o -name "*.hh" | ctags -L -
+find src/{apps,core,devel,numeric,protocols,utility} test -name "*.cc" -o -name "*.hh" | ctags -L -

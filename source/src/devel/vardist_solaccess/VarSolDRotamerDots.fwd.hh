@@ -20,9 +20,12 @@ namespace devel {
 namespace vardist_solaccess {
 
 class VarSolDRotamerDots;
-
 typedef utility::pointer::owning_ptr< VarSolDRotamerDots > VarSolDRotamerDotsOP;
 typedef utility::pointer::owning_ptr< VarSolDRotamerDots const > VarSolDRotamerDotsCOP;
+
+class VarSolDistSasaCalculator;
+typedef utility::pointer::owning_ptr< VarSolDistSasaCalculator > VarSolDistSasaCalculatorOP;
+typedef utility::pointer::owning_ptr< VarSolDistSasaCalculator const > VarSolDistSasaCalculatorCOP;
 
 
 } // vardist_solaccess

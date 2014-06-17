@@ -485,13 +485,13 @@ calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa,
 
 Real
 calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa,bool normalize) {
-	id::AtomID_Map< bool > atom_subset; 
+	id::AtomID_Map< bool > atom_subset;
 	id::AtomID_Map< Real > atom_sasa;
 	static Real const  probe_radius=1.4;
 	static bool const use_big_polar_H=false;
 	atom_subset.clear();
 	core::pose::initialize_atomid_map( atom_subset, pose, true);
-	Real total_sasa=calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset,true /*use_naccess_sasa_radii*/ );	
+	Real total_sasa=calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset,true /*use_naccess_sasa_radii*/ );
 
 	for(Size i=1;i<=atom_sasa.n_residue();++i) {
 		rsd_sasa[i]=0;
@@ -500,7 +500,7 @@ calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_s
 			if(!rsd.atom_is_backbone(ii)) { // || (rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) ){
 				id::AtomID const id(ii,i);
 				rsd_sasa[i]+=atom_sasa[ id ];
-			} else { 
+			} else {
 				if(rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) {
 						id::AtomID const id(ii,i);
 						rsd_sasa[i]+=atom_sasa[ id ]*1.67234+0.235839; //Somehow Gly area is too small with *1.67234+0.235839;
@@ -540,33 +540,33 @@ calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_s
 
 static utility::vector1<Real> init_normalizing_area_sc() {
 	static utility::vector1<Real> area_sc(255,0);
-	area_sc[65]= 69.41;   // 69.41;     //A 
-	area_sc[67]= 96.75;   // 96.75;		 //C 
-	area_sc[68]=102.69;   // 48.00;		 //D 
-	area_sc[69]=134.74;   // 59.10;		 //E 
-	area_sc[70]=164.11;   //164.11;		 //F 
-	area_sc[71]= 32.33;   // 32.33;		 //G 
-	area_sc[72]=147.08;   // 96.01;		 //H 
-	area_sc[73]=137.96;   //137.96;		 //I 
-	area_sc[75]=163.30;   //115.38;		 //K 
-	area_sc[76]=141.12;   //141.12;		 //L 
-	area_sc[77]=156.64;   //156.64;		 //M 
-	area_sc[78]=106.24;   // 44.98;		 //N 
-	area_sc[80]=119.90;   //119.90;		 //P 
-	area_sc[81]=140.99;   // 51.03;		 //Q 
-	area_sc[82]=201.25;   // 76.60;		 //R 
-	area_sc[83]= 78.11;   // 46.89;		 //S 
-	area_sc[84]=101.70;   // 74.54;		 //T 
-	area_sc[86]=114.28;   //114.28;		 //V 
-	area_sc[87]=211.26;   //187.67;		 //W 
-	area_sc[89]=177.38;   //135.35;		 //Y 
+	area_sc[65]= 69.41;   // 69.41;     //A
+	area_sc[67]= 96.75;   // 96.75;		 //C
+	area_sc[68]=102.69;   // 48.00;		 //D
+	area_sc[69]=134.74;   // 59.10;		 //E
+	area_sc[70]=164.11;   //164.11;		 //F
+	area_sc[71]= 32.33;   // 32.33;		 //G
+	area_sc[72]=147.08;   // 96.01;		 //H
+	area_sc[73]=137.96;   //137.96;		 //I
+	area_sc[75]=163.30;   //115.38;		 //K
+	area_sc[76]=141.12;   //141.12;		 //L
+	area_sc[77]=156.64;   //156.64;		 //M
+	area_sc[78]=106.24;   // 44.98;		 //N
+	area_sc[80]=119.90;   //119.90;		 //P
+	area_sc[81]=140.99;   // 51.03;		 //Q
+	area_sc[82]=201.25;   // 76.60;		 //R
+	area_sc[83]= 78.11;   // 46.89;		 //S
+	area_sc[84]=101.70;   // 74.54;		 //T
+	area_sc[86]=114.28;   //114.28;		 //V
+	area_sc[87]=211.26;   //187.67;		 //W
+	area_sc[89]=177.38;   //135.35;		 //Y
 	//	std::cout << "INIT!!!!!!HELLO" << std::endl;
 	return area_sc;
 }
 
 static utility::vector1<Real> init_normalizing_area_total() {
 	static utility::vector1<Real> area_total(255,0);
-	area_total[65]=107.95;     //A 
+	area_total[65]=107.95;     //A
 	area_total[67]=134.28;		 //C
 	area_total[68]=140.39;		 //D
 	area_total[69]=172.25;		 //E
@@ -603,18 +603,18 @@ Real normalizing_area(char const res) {
 
 Real
 calc_per_atom_sasa(
-									 pose::Pose const & pose,
-									 id::AtomID_Map< Real > & atom_sasa,
-									 utility::vector1< Real > & rsd_sasa,
-									 Real const probe_radius,
-									 bool const use_big_polar_H,
-									 id::AtomID_Map< bool > & atom_subset,
-									 bool const use_naccess_sasa_radii /* =false */,
-									 bool const expand_polar_radii /* =false */,
-									 Real const polar_expansion_radius /* =1.0 */,
-									 bool const include_probe_radius_in_atom_radii, /* = true; used in calc of final sasas */
-									 bool const use_lj_radii /* = false */
-									 ) {
+	pose::Pose const & pose,
+	id::AtomID_Map< Real > & atom_sasa,
+	utility::vector1< Real > & rsd_sasa,
+	Real const probe_radius,
+	bool const use_big_polar_H,
+	id::AtomID_Map< bool > & atom_subset,
+	bool const use_naccess_sasa_radii /* =false */,
+	bool const expand_polar_radii /* =false */,
+	Real const polar_expansion_radius /* =1.0 */,
+	bool const include_probe_radius_in_atom_radii, /* = true; used in calc of final sasas */
+	bool const use_lj_radii /* = false */
+) {
 
 	using core::conformation::Residue;
 	using core::conformation::Atom;
@@ -637,9 +637,9 @@ calc_per_atom_sasa(
 	if ( use_naccess_sasa_radii ) {
 		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "NACCESS_SASA_RADIUS" );
 	} else {
-		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS_LEGACY" );
+		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "REDUCE_SASA_RADIUS" );
 	}
-	
+
 	utility::vector1< Real > radii( atom_type_set.n_atomtypes() );
 
 	for ( core::Size ii=1; ii <= radii.size(); ++ii ) {
@@ -696,7 +696,7 @@ calc_per_atom_sasa(
 	//j now do calculations: get the atom_masks by looping over all_atoms x all_atoms
 	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
 		Residue const & irsd( pose.residue( ii ) );
-		
+
 		//ronj for the other 'j' residue, only iterate over residues which have indexes > residue 'i'
 		for ( Size jj=ii; jj <= pose.total_residue(); ++jj ) {
 			Residue const & jrsd( pose.residue( jj ) );
@@ -762,7 +762,7 @@ calc_per_atom_sasa(
 #endif
 			atom_sasa[ id ] = area_exposed;
 			// jk Water SASA doesn't count toward the residue's SASA
-			if ( ! rsd.atom_type(iia).is_h2o() && 
+			if ( ! rsd.atom_type(iia).is_h2o() &&
 				 ! rsd.atom_type(iia).is_virtual()) {
 				rsd_sasa[ ii ] += area_exposed;
 				total_sasa += area_exposed;

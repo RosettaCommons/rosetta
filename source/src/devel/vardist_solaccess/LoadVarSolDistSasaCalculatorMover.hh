@@ -34,7 +34,7 @@ public:
 class LoadVarSolDistSasaCalculatorMover : public protocols::moves::Mover {
 
 public:
-	LoadVarSolDistSasaCalculatorMover();
+	LoadVarSolDistSasaCalculatorMover(core::Real probe_radius=1.4, core::Real wobble=0.0);
 	~LoadVarSolDistSasaCalculatorMover();
 
 	virtual protocols::moves::MoverOP clone() const;
@@ -48,6 +48,10 @@ public:
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
+
+private:
+	core::Real probe_radius_;
+	core::Real wobble_;
 
 };
 

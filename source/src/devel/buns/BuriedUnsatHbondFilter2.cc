@@ -62,8 +62,6 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 
 	calc_ = new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default");
 
-	if (tag->hasOption("layered_sasa"))
-		calc_->set_layered_sasa(tag->getOption<bool>( "layered_sasa", true  ));
 	if (tag->hasOption("generous_hbonds"))
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
 	if (tag->hasOption("sasa_burial_cutoff"))
