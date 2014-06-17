@@ -82,11 +82,13 @@ SpliceSegment::read_many( string const Protein_family_path , string const segmen
 
 			// Remove extension if present.
 			const size_t period_idx = segment_name.rfind('.');
-			if (std::string::npos != period_idx)
-			{
+			if (std::string::npos != period_idx){
 				segment_name.erase(period_idx);
 			}
-		//	TR<<"segment name:"<<segment_name<<std::endl;
+			else{
+				continue;
+			}
+			//	TR<<"segment name:"<<segment_name<<std::endl;
 			if ((segment_name.compare("") == 0)||(segment_name.compare(".") == 0)){//hack to avoid trying to read . or.. when looking into directory
 				continue;
 			}
@@ -106,7 +108,7 @@ void //this version of read_profile is an older one and it allows the user to en
 SpliceSegment::read_profile( string const file_name, string const segment_name ){
 	SequenceProfileOP new_seqprof( new SequenceProfile );
 	utility::file::FileName const fname( file_name );
-	//TR<<"reading sequence profile from "<<file_name<<std::endl;
+	//TR<<"Segment name: "<<segment_name<<",reading sequence profile from "<<file_name<<std::endl;
 	new_seqprof->read_from_file( fname );
 	//TR<< "SpliceSegmentsSeqProf:"<< new_seqprof->prof_row(1)<<std::endl;
 	//TR<< "SpliceSegmentspprobabilty:"<< new_seqprof->probability_row(1)<<std::endl;
@@ -139,19 +141,37 @@ SpliceSegment::sequence_profile( string const profile_name ){
 
 /// @brief generate one long sequence profile out of several sequence-profile segments.
 SequenceProfileOP
-concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered){
+concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered, std::string H3_seq){
 	SequenceProfileOP concatenated_profile( new SequenceProfile );
 	core::Size current_profile_size( 0 );
 	core::Size current_segment_name( 1 );
+	//TR<<"H3 seq "<<H3_seq<<std::endl;
+	SequenceProfileOP H3_profile( new SequenceProfile );
+	//TR<<"sequence of H3:"<<H3_seq<<std::endl;
+	if (H3_seq!=""){
+		core::sequence::Sequence H3seq;
+		H3seq.sequence(H3_seq);
+		H3_profile->generate_from_sequence(H3seq);
+		//TR<<"Size of H3 profile is: "<<H3_profile->size()<<std::endl;
+	}
 	BOOST_FOREACH( SequenceProfileOP const prof, profiles ){
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
+		//find H3 seq and constract a new PSSM from given seqeunce
+		bool first_pass=true;
 		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
 			current_profile_size++;
-			//TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
-
+			if (segment_names_ordered[ current_segment_name]=="H3" && pos>3 && first_pass){
+				for( core::Size H3_pos = 1; H3_pos <= H3_profile->size(); ++H3_pos ){
+					concatenated_profile->prof_row( H3_profile->prof_row( H3_pos ), current_profile_size );
+					TR<<"Res: "<<current_profile_size<<",prof:"<<H3_profile->prof_row(H3_pos)<<std::endl;
+					current_profile_size++;
+				}
+				first_pass=false;
+			}
+			TR<<"Res: "<<current_profile_size<<",prof:"<<prof->prof_row(pos)<<std::endl;
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
 			if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
-				//this option is by default false
+				//this option is by default false. If set to true then we read the propensity matrix alongside the pssm matrix. T
 				concatenated_profile->probabilty_row( prof->probability_row( pos ), current_profile_size );
 			}
 
@@ -190,35 +210,35 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	std::string fname;
+	std::string path_to_db;
 	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
-		fname = option[ in::path::database ](i).name();
+		path_to_db = option[ in::path::database ](i).name();
 		//TR<<"Trying to open folder:"<<fname<<std::endl;
 	}
 
 
 	//Get all PDB_profile_Match files from raltive path
-	const std::string target_path = (fname+Protein_family_path+"pdb_profile_match/");
+	const std::string target_path = (path_to_db+Protein_family_path+"pdb_profile_match/");
 
 
 	DIR *dir;
 	const char * c =target_path.c_str();
 	if ((dir = opendir (c))!= NULL) {
-			string fileName(target_path+"pdb_profile_match."+segment);
-			utility::io::izstream data( fileName );
-				if ( !data )
-					utility_exit_with_message( "File not found " + fileName );
-			std::string line;
-			TR<<"Loading pdb profile pairs from file "<<fileName<<std::endl;
-			while (getline( data, line )){
-				istringstream line_stream( line );
-				while( !line_stream.eof() ){
-					std::string pdb, profile;
-					line_stream >> pdb >> profile;
-					pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
-					//TR<<"Loading pdb-profile pair: "<<pdb<<" "<<profile<<std::endl;
-				}
+		string fileName(target_path+"pdb_profile_match."+segment);
+		utility::io::izstream data( fileName );
+		if ( !data )
+			utility_exit_with_message( "File not found " + fileName );
+		std::string line;
+		TR<<"Loading pdb profile pairs from file "<<fileName<<std::endl;
+		while (getline( data, line )){
+			istringstream line_stream( line );
+			while( !line_stream.eof() ){
+				std::string pdb, profile;
+				line_stream >> pdb >> profile;
+				pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
+				//TR<<"Loading pdb-profile pair: "<<pdb<<" "<<profile<<std::endl;
 			}
+		}
 
 		closedir (dir);
 	} else {
@@ -227,6 +247,37 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 
 	}
 }
+
+/// @brief Reads from given file the H3 sequences from all PDBs in the db
+std::map< std::string, std::string>
+read_H3_seq( std::string const Protein_family_path){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	std::map< std::string, std::string>pdb_to_H3_seq_map_;
+	pdb_to_H3_seq_map_.clear();
+	std::string path_to_db;
+	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+		path_to_db = option[ in::path::database ](i).name();
+	}
+	const std::string H3_seq_file = (path_to_db+Protein_family_path+"pssm/H3/H3_seq");
+	utility::io::izstream data( H3_seq_file );
+	if ( !data ){
+		TR<<"!!Can't open H3 seq file: "<<H3_seq_file<<". This is probably an error. Using PSSM files instead!!"<<std::endl;
+		return pdb_to_H3_seq_map_;//if file not found then return empty map.
+	}
+	std::string line;
+	while (getline( data, line )){
+		istringstream line_stream( line );
+		while( !line_stream.eof() ){
+			std::string pdb, seq;
+			line_stream >> pdb >> seq;
+			pdb_to_H3_seq_map_.insert( pair< string, string >( pdb, seq ) );
+			//TR<<"Loading pdb-seq pair: "<<pdb<<" "<<seq<<std::endl;
+		}
+	}
+	return pdb_to_H3_seq_map_;
+}
+
 
 
 } //splice

@@ -432,7 +432,7 @@ parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
 /// is greater than 2.0 returns 0 to indicate error
 core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
-	TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<<std::endl;
+	//TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<< " and residue "<<res<<std::endl;
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
 	for( core::Size i = 1; i <= source.total_residue(); ++i ){
 		if( source.residue( i ).is_ligand() ) continue;
@@ -478,14 +478,14 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 			break;
 		}
 	}
-	TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
+	//TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
 	for( core::Size i = res ;i > 0; --i ){
 		if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
 			disulfideN=i;
 		break;
 		}
 	}
-	TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
+	//TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
 	if ((disulfideC-res)>(res-disulfideN))
 		return disulfideN;
 	return disulfideC;

@@ -55,9 +55,8 @@ class SpliceSegment : public utility::pointer::ReferenceCount
 		core::sequence::SequenceProfileOP sequence_profile( std::string const profile_name ); // return a sequence profile according to a profile name
 		std::string get_cluster_name_by_PDB(std::string pdbNAme){return pdb_to_profile_map_[pdbNAme];}
 	private:
-		std::map< std::string/*L1.1*/, core::sequence::SequenceProfileOP > sequence_profile_;
-		std::map< std::string/*1y32*/, std::string/*L1.1*/ > pdb_to_profile_map_;
-		
+		std::map< std::string/*L3.10.1*/, core::sequence::SequenceProfileOP > sequence_profile_;
+		std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_profile_map_;
 
 };
 
@@ -67,7 +66,8 @@ segment_FR2 1x9q
 segment_L2 1jxw
 */
 
-core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered ); // utility function to generate a single concatenated profile from a vector of profiles
+core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered,std::string  H3_seq ); // utility function to generate a single concatenated profile from a vector of profiles
+std::map< std::string, std::string> read_H3_seq( std::string const Protein_family_path);
 
 } //splice
 } //devel

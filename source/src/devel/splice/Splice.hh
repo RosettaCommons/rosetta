@@ -86,10 +86,14 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		void stop_loop( core::Size const s ){ stop_loop_ = s; }
 		std::string source_pdb() const{ return source_pdb_; }
 		void source_pdb( std::string const s ){ source_pdb_ = s; }
+		std::string tail_segment() const{ return tail_segment_; }
+		void tail_segment( std::string const s ){ tail_segment_ = s; }
+		core::Size disulfide() const{ return disulfide_; }
+		void disulfide( core::Size const s ){ disulfide_ = s; }
 	private:
-		core::Size cut_site_, start_loop_, stop_loop_;
+		core::Size cut_site_, start_loop_, stop_loop_, disulfide_/*what is the disulfide on the template*/;
 		bbdof_list bbdofs_;
-		std::string source_pdb_; // the source pdb from which the loop is taken
+		std::string source_pdb_, tail_segment_/*either n or c*/; // the source pdb from which the loop is taken
 };
 
 
@@ -129,6 +133,8 @@ public:
 	core::Size res_move() const{ return res_move_; }
 	void randomize_cut( bool const r ){ randomize_cut_ = r; }
 	bool randomize_cut() const{ return randomize_cut_; }
+	void set_cut_res( core::Size const r ){ set_cut_res_ = r; }
+	core::Size set_cut_res() const{ return set_cut_res_; }
 	void cut_secondarystruc( bool const r){ cut_secondarystruc_ =r; }
 	bool cut_secondarystruc() const{ return cut_secondarystruc_; }
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -153,7 +159,7 @@ public:
 	void equal_length( bool const e ){ equal_length_ = e; }
 	bool equal_length() const{ return equal_length_; }
 	void fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const;
-	void tail_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) const ;
+	void tail_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut,core::Size chain_break) const ;
 	void set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) ;
 	bool design() const{ return design_; }
 	void design( bool const d ) { design_ = d; }
@@ -186,6 +192,7 @@ public:
 	void splice_filter( protocols::filters::FilterOP f );
 	void database_pdb_entry( std::string const s ){ database_pdb_entry_ = s; }
 	std::string database_pdb_entry() const { return database_pdb_entry_; }
+	void minimize_segment(core::pose::Pose & pose);
 
 /// sequence profiles
 /// Splice changes the backbone of the current pose and the following methods deal with dynamically constructing a
@@ -197,7 +204,7 @@ public:
 	void add_sequence_constraints( core::pose::Pose & pose ); // add SequenceProfileConstraints based on the sequence profile
 	/// @brief add dihedral constraint to grafted loop according to source pdb dihedral angles
 	void add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to );
-	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor);
+	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA");
 
 	void profile_weight_away_from_interface( core::Real const p );
 	core::Real profile_weight_away_from_interface() const;
@@ -223,6 +230,8 @@ private:
 	void retrieve_values(); // call at end of apply
 	std::string	parse_pdb_code(std::string pdb_file_name);
 	void copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res );
+	core::Size find_non_active_site_cut_site(core::pose::Pose const & pose)  ;
+
 
 	// This vector will hold the segment names by order so when the segments are concatenated into a single profile it
 	// is done by user defined order
@@ -248,7 +257,7 @@ private:
 	bool randomize_cut_;
 
 	bool cut_secondarystruc_; //dflt false; true: allows placing the cut within secondary structures
-
+	core::Size set_cut_res_; //dftl 0, mainly for debugging. Allows the user to set which residue will be used as the cut site.
 	// dflt NULL; Another access point to setting which residues to splice.
 	// This works at present only with one segment, so you set designable residues and Splice will then determine the
 	// first and last residues among these and splice that section out.
@@ -266,6 +275,8 @@ private:
 	core::Size database_entry_; //dflt 0; in which case tests a random entry in each apply
 	std::string database_pdb_entry_; // dflt ""; e.g., "1yihl" specify this only if you want just one loop to be spliced
 	utility::vector1< ResidueBBDofs > torsion_database_;
+	utility::vector1< ResidueBBDofs > tail_torsion_database_;
+
 
 	// dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to.
 	// The input structure may change during a trajectory and so from_res() and to_res() might lose their sense.
@@ -288,7 +299,7 @@ private:
 	bool dbase_iterate_; //dflt false;
 	bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
 	bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
-	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)
+	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)    
 	bool first_pass_; // dflt true;
 
 	// indices to the subset of the dbase library over which multiple calls iterate
@@ -366,6 +377,9 @@ private:
 								// The L1_L2 segment from a source antibody and used "N" option than the residues that
 								// are at the N terminal end of the segment all the way up to the first residue will also be added to the pose from the template
 								//PDB
+	bool min_seg_;//dflt false. if set to true then we perform minimization on bb and chi of segement after splice in
+	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_H3_seq_map_; /* This object will store the H3 seqeunces of all PDBs in the database. The logic for this is that the H3*/
+
 };
 
 } //splice

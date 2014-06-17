@@ -147,7 +147,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 		utility_exit_with_message( "Movemap not defined. Can't apply TailSegmentMover\n");
 
 	}
-
+	TR<<"TSM fold tree::"<<pose.fold_tree()<<std::endl;
 
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
@@ -182,8 +182,8 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	TR<<"The start and and residue of the tail segment are:"<<start_<<"-"<<stop_<<std::endl;
 	core::pack::task::TaskFactoryOP task_factory_min = new core::pack::task::TaskFactory; //set specific task factory for minimization
 	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell(0); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
-	dao->repack_shell(0);
+	dao->design_shell(0.001); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->repack_shell(6);
 	for (core::Size i = start_; i <=stop_;++i) {
 			dao->include_residue(i);
 
@@ -235,7 +235,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	small_mover_fa->movemap(movemap_);
 	shear_mover_fa->movemap(movemap_);
 	for ( core::Size i(1); i <= refine_applies; ++i ) {
-
+		//TR<<"TSM fold tree::"<<pose.fold_tree()<<std::endl;
 		if( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
 			TR<<"Doing Repacking"<<std::endl;
 			pack_mover->apply(pose);
