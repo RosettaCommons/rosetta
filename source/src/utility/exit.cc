@@ -110,9 +110,6 @@ exit(
 	int const status
 )
 {
-	#ifdef __native_client__
-	  throw ( std::string( file + ":" + message ) );
-	#endif
 	// Calling all preset exit-callback's
 	for(std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it) {
 		(*it)();
