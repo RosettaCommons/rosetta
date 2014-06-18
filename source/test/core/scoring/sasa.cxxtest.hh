@@ -311,12 +311,12 @@ class SasaTests : public CxxTest::TestSuite {
 		}
 
 		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset );
-		TS_ASSERT_DELTA( total_sasa, 208.8695, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( rsd_sasa[1], 208.8695, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( total_sasa, 223.8206, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( rsd_sasa[1], 223.8206, TOLERATED_ERROR );
 
-		TS_ASSERT_DELTA( atom_sasa[ core::id::AtomID( 1, 1 )], 63.4551, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( atom_sasa[ core::id::AtomID( 2, 1 ) ], 58.4964, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( atom_sasa[ core::id::AtomID( 3, 1 ) ], 8.4665, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( atom_sasa[ core::id::AtomID( 1, 1 )], 51.9289, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( atom_sasa[ core::id::AtomID( 2, 1 ) ], 86.9195, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( atom_sasa[ core::id::AtomID( 3, 1 ) ], 14.2736, TOLERATED_ERROR );
 
 	}
 
@@ -326,10 +326,10 @@ class SasaTests : public CxxTest::TestSuite {
 		core::pose::initialize_atomid_map( atom_subset, pose, true );
 
 		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset );
-		TS_ASSERT_DELTA( total_sasa, 5135.0014, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( total_sasa, 5240.4203, TOLERATED_ERROR );
 
-		TS_ASSERT_DELTA( rsd_sasa[1], 64.1370, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( rsd_sasa[11], 102.1410, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( rsd_sasa[1], 66.9017, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( rsd_sasa[11], 117.2182, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( rsd_sasa[33], 0.0, TOLERATED_ERROR );
 
 	}
@@ -343,11 +343,11 @@ class SasaTests : public CxxTest::TestSuite {
 		utility::vector1< core::Real > residue_hsasa( pose.total_residue(), 0.0 ); // hydrophobic SASA only
 		total_hydrophobic_sasa = core::scoring::calc_per_res_hydrophobic_sasa( pose, residue_sasa, residue_hsasa, 1.4 /* probe radius */ );
 
-		TS_ASSERT_DELTA( total_hydrophobic_sasa, 2701.0680, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( total_hydrophobic_sasa, 3212.4579, TOLERATED_ERROR );
 
-		TS_ASSERT_DELTA( residue_hsasa[1], 15.8268, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( residue_hsasa[11], 44.5458, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( residue_hsasa[33], 0.7696, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( residue_hsasa[1], 27.7418, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( residue_hsasa[11], 62.4142, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( residue_hsasa[33], 0.0, TOLERATED_ERROR );
 
 	}
 
