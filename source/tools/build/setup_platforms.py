@@ -75,16 +75,16 @@ def select_compiler_version(supported, compiler, requested):
             "Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % \
                 (compiler)
 
-    if compiler in supported.cxx:
-        versions = supported.cxx[compiler]
-        if actual not in versions:
-            raise KeyError, \
-                "Unknown version number %s for compiler '%s'" % \
-                (actual, compiler)
-    else:
-        raise KeyError, \
-            "Do not know how to verify version number for unknown compiler '%s'" % \
-            (compiler)
+    # if compiler in supported.cxx:
+    #     versions = supported.cxx[compiler]
+    #     if actual not in versions:
+    #         raise KeyError, \
+    #             "Unknown version number %s for compiler '%s'" % \
+    #             (actual, compiler)
+    # else:
+    #     raise KeyError, \
+    #         "Do not know how to verify version number for unknown compiler '%s'" % \
+    #         (compiler)
 
     # If the actual version doesn't match the requested version, fail.
     # By match we mean 'substring rooted at the start': it's legitimate
