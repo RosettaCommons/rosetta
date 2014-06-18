@@ -75,26 +75,6 @@
 
 #include <numeric/EulerAngles.hh>
 
-//Alglib:
-#include "apps/pilot/vmullig/alglib/ap.h"
-#include "apps/pilot/vmullig/alglib/alglibmisc.h"
-#include "apps/pilot/vmullig/alglib/alglibinternal.h"
-#include "apps/pilot/vmullig/alglib/dataanalysis.h"
-#include "apps/pilot/vmullig/alglib/linalg.h"
-#include "apps/pilot/vmullig/alglib/optimization.h"
-#include "apps/pilot/vmullig/alglib/solvers.h"
-#include "apps/pilot/vmullig/alglib/statistics.h"
-#include "apps/pilot/vmullig/alglib/specialfunctions.h"
-#include "apps/pilot/vmullig/alglib/ap.cpp"
-#include "apps/pilot/vmullig/alglib/alglibmisc.cpp"
-#include "apps/pilot/vmullig/alglib/alglibinternal.cpp"
-#include "apps/pilot/vmullig/alglib/dataanalysis.cpp"
-#include "apps/pilot/vmullig/alglib/linalg.cpp"
-#include "apps/pilot/vmullig/alglib/optimization.cpp"
-#include "apps/pilot/vmullig/alglib/solvers.cpp"
-#include "apps/pilot/vmullig/alglib/statistics.cpp"
-#include "apps/pilot/vmullig/alglib/specialfunctions.cpp"
-
 //For silent file output:
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
