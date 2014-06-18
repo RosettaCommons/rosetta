@@ -358,10 +358,10 @@ def main(args):
 
 
     # loadind include file/namespaces dict
-    global IncludeDict
-    IncludeDict = eval( file('python/bindings/IncludeDict').read() )
-    if type( IncludeDict['core'] ) == str:
-        for k in IncludeDict: IncludeDict[k] = ({'+':True, '-':False}[IncludeDict[k]], 999, [])
+    #global IncludeDict
+    #IncludeDict = eval( file('python/bindings/IncludeDict').read() )
+    #if type( IncludeDict['core'] ) == str:
+    #    for k in IncludeDict: IncludeDict[k] = ({'+':True, '-':False}[IncludeDict[k]], 999, [])
 
     if options.one:
         print 'Building just following namespaces:', options.one
