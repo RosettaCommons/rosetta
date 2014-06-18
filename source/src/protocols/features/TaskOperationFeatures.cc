@@ -20,7 +20,6 @@
 // Project Headers
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -86,17 +85,6 @@ using utility::tag::TagPtr;
 using boost::assign::list_of;
 
 static Tracer TR("protocols.features.TaskOperationFeatures");
-
-struct TaskOperationFeatures::Taskop_id_name_factory_ {
-	Taskop_id_name_factory_(
-		Size i,
-		std::string n,
-		core::pack::task::TaskFactoryCOP t
-	) : id(i), name(n), tf(t) {}
-	core::Size id;
-	std::string name;
-	core::pack::task::TaskFactoryCOP tf;
-};
 
 TaskOperationFeatures::TaskOperationFeatures()
 //	: run_once_(true)

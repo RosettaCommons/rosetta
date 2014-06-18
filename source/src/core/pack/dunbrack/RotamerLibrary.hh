@@ -39,7 +39,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
-#include <core/graph/Graph.hh> // WIN32 INCLUDE
+	#include <core/graph/Graph.hh>
+	#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+	#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #endif
 
 // Utility headers

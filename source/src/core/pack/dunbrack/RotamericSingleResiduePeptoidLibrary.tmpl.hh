@@ -50,6 +50,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/numeric.functions.hh>
 
 // Boost Headers
 #include <boost/cstdint.hpp>
@@ -316,7 +317,7 @@ RotamericSingleResiduePeptoidLibrary< T >::rotamer_energy_deriv(
 	// p0 - the base probability -- not modified by the chi-dev penalty
 	Real const rotprob( scratch.rotprob() );
 
-	Size const nbb( std::min( rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
+	Size const nbb( numeric::min( rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
 
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 
@@ -1716,7 +1717,7 @@ RotamericSingleResiduePeptoidLibrary< T >::write_to_binary( utility::io::ozstrea
 	delete [] packed_rotno_2_sorted_rotno;
 	}
 
-	*/ 
+	*/
 }
 
 /// DOUG DOUG DOUG This function needs more updating to use omega

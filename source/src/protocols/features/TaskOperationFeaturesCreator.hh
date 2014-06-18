@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_features_TaskOperationFeaturesCreator_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/features/TaskOperationFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers

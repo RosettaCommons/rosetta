@@ -26,7 +26,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -105,8 +105,17 @@ private:
 
 	//std::map<std::string, core::pack::task::TaskFactoryCOP> taskop_keys_factories_;
 
+	struct Taskop_id_name_factory_ {
+		Taskop_id_name_factory_(
+			Size i,
+			std::string n,
+			core::pack::task::TaskFactoryCOP t
+								) : id(i), name(n), tf(t) {}
+		core::Size id;
+		std::string name;
+		core::pack::task::TaskFactoryCOP tf;
+	};
 
-	struct Taskop_id_name_factory_;
 	utility::vector1<Taskop_id_name_factory_> taskops_;
 
 };
