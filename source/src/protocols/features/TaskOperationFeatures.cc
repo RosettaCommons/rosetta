@@ -147,7 +147,7 @@ TaskOperationFeatures::write_task_operation_residue_effects_table_schema(
 	sessionOP db_session
 ) const {
 	using namespace basic::database::schema_generator;
- 
+
 	TR << "Writing task_operation_residue_effects schema" << std::endl;
 	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
@@ -160,7 +160,7 @@ TaskOperationFeatures::write_task_operation_residue_effects_table_schema(
 	primary_key_columns.push_back(resNum);
 	primary_key_columns.push_back(taskop_id);
 	PrimaryKey primary_key(primary_key_columns);
-	
+
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id);
 	foreign_key_columns1.push_back(resNum);
@@ -223,8 +223,9 @@ TaskOperationFeatures::parse_my_tag(
 			taskops_.push_back(Taskop_id_name_factory_(taskop_id, *taskop_key, new_task_factory) );
 //			taskop_keys_factories_.insert(
 //				std::pair<std::string const, TaskFactoryCOP>(*taskop_key, new_task_factory));
-		} else {
-  	    throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *taskop_key + " not found in DataMap.");
+		}
+		else {
+  	        throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *taskop_key + " not found in DataMap.");
 		}
 	}
 }
@@ -245,7 +246,7 @@ TaskOperationFeatures::report_features(
 //			" given to TaskFeatures is empty.");
 	if (taskops_.empty()) utility_exit_with_message("List of TaskOperators"
 			" given to TaskFeatures is empty.");
-	
+
 	// task_operations table rows, only run once
 //	if (run_once_) {
 		TR << "Inserting TaskOperations rows" << std::endl;
