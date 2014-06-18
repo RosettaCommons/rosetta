@@ -26,6 +26,10 @@
 		--Added support for constraints files.
 		--Added support for a user-defined list of additional atoms to use in RMSD
 		calculation.
+	--Modified 18 June 2014:
+		--Took out all references to the Alglib library, because of the asenine Rosettacommons rules
+		about third-party libraries.
+		--Added a PCA function to the numeric library, and linked this to that.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -74,6 +78,9 @@
 #include <core/pose/annotated_sequence.hh>
 
 #include <numeric/EulerAngles.hh>
+
+//For principal component analysis:
+#include <numeric/PCA.hh>
 
 //For silent file output:
 #include <core/io/silent/SilentStructFactory.hh>
@@ -1105,8 +1112,12 @@ void shift_center_and_PCA(
 
 	core::pose::Pose clustcenterpose=firstpose;
 
-	alglib::real_2d_array Dphipsiomega; //A matrix whose columns are the phi, psi, and omega values of each state in the cluster, with the cluster centre subtracted off.  Columns will then be multiplied by the weighting coefficients.
-	Dphipsiomega.setlength(statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump()); //This should have a column for each state, and a row for each backbone dihedral angle and jump parameter.
+	utility::vector1 < utility::vector1 < core::Real > > Dphipsiomega; //A matrix whose columns are the phi, psi, and omega values of each state in the cluster, with the cluster centre subtracted off.  Columns will then be multiplied by the weighting coefficients.
+	Dphipsiomega.resize(statesincluster.size()); //A column for each state.
+	for(core::Size i=1, imax=statesincluster.size(); i<=imax; ++i) {
+		Dphipsiomega[i].resize( ndihedrals+6*clustcenterpose.num_jump() ); //A row for each backbone dihedral angle and jump parameter.
+	}
+	//Dphipsiomega.setlength(statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump()); //This should have a column for each state, and a row for each backbone dihedral angle and jump parameter.
 
 	if(clustmode==1) {
 		pose_from_posedata(firstpose, clustcenterpose, clustmode, clustcenter);
@@ -1127,7 +1138,7 @@ void shift_center_and_PCA(
 
 	deltaclustcenter.resize(ndihedrals + 6*clustcenterpose.num_jump());
 	for(core::Size i=1; i<=deltaclustcenter.size(); i++) deltaclustcenter[i]=0.0; //Initialize the array
-	for(core::Size i=1; i<=newclustcenter.size(); i++) Dphipsiomega[0][i-1] = newclustcenter[i]; //Initialize the first column of Dphipsiomega
+	for(core::Size i=1; i<=newclustcenter.size(); i++) Dphipsiomega[1][i] = newclustcenter[i]; //Initialize the first column of Dphipsiomega
 
 	if(statesincluster.size() > 1) { //If there is more than one state in this cluster.
 		for (core::Size i=2; i<=statesincluster.size(); i++) { //Loop through all other states in the cluster.
@@ -1149,7 +1160,7 @@ void shift_center_and_PCA(
 				trim_and_add_jump_data (currentdata, ndihedrals, currentpose); //Discard extra data and add jump data.
 
 				//Add this structure to Dphipsiomega:
-				for(core::Size j=1; j<=currentdata.size(); j++) Dphipsiomega[i-1][j-1]=currentdata[j];
+				for(core::Size j=1; j<=currentdata.size(); j++) Dphipsiomega[i][j]=currentdata[j];
 
 				//Add this to deltaclustcenter:
 				for(core::Size j=1, diffmode=2; j<=deltaclustcenter.size(); j++) {
@@ -1163,7 +1174,7 @@ void shift_center_and_PCA(
 				if(option[v_cluster_cyclic_permutations]()) slidearound(currentdata, cluster_offsets[statesincluster[i]], firstpose.n_residue(), firstpose);
 				for(core::Size j=1; j<=deltaclustcenter.size(); j++) deltaclustcenter[j] += (coeff[i]*elementdiff(currentdata[j], newclustcenter[j], clustmode));
 				//Add this structure to Dphipsiomega:
-				for(core::Size j=1; j<=ndihedrals; j++) Dphipsiomega[i-1][j-1]=currentdata[j];
+				for(core::Size j=1; j<=ndihedrals; j++) Dphipsiomega[i][j]=currentdata[j];
 			}
 		} //Looping through states in the cluster
 
@@ -1174,7 +1185,7 @@ void shift_center_and_PCA(
 		//Subtract clustcenter from Dphipsiomega, and multiply each resultant column by coeff:
 		for(core::Size i=1, imax=statesincluster.size(); i<=imax; i++) { //Loop through all states
 			for(core::Size j=1, jmax=newclustcenter.size(); j<=jmax; j++) { //Loop through all backbone dihedrals
-				Dphipsiomega[i-1][j-1] = coeff[i]/weighting_accumulator*elementdiff(Dphipsiomega[i-1][j-1],newclustcenter[j], (is_in_list(j, not_angle_list)?1:2));
+				Dphipsiomega[i][j] = coeff[i]/weighting_accumulator*elementdiff(Dphipsiomega[i][j],newclustcenter[j], (is_in_list(j, not_angle_list)?1:2));
 				//Dphipsiomega[i-1][j-1] = coeff[i]*(Dphipsiomega[i-1][j-1]-newclustcenter[j]);
 				//printf("%.4f\t", Dphipsiomega[i-1][j-1]); //DELETE ME
 			}
@@ -1183,19 +1194,20 @@ void shift_center_and_PCA(
 
 		//PCA analysis:
 		printf("\tPerforming principal component analysis for cluster %lu.\n", currentclusterindex); fflush(stdout);
-		alglib::ae_int_t PCAresult = 0;
-		alglib::real_1d_array variances;
-		variances.setlength(ndihedrals+6*clustcenterpose.num_jump());
-		alglib::real_2d_array PCmatrix;
-		PCmatrix.setlength(ndihedrals+6*clustcenterpose.num_jump(),ndihedrals+6*clustcenterpose.num_jump());
-		alglib::pcabuildbasis(Dphipsiomega, statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump(), PCAresult, variances, PCmatrix);
+		//alglib::ae_int_t PCAresult = 0;
+		//alglib::real_1d_array variances;
+		//variances.setlength(ndihedrals+6*clustcenterpose.num_jump());
+		//alglib::real_2d_array PCmatrix;
+		//PCmatrix.setlength(ndihedrals+6*clustcenterpose.num_jump(),ndihedrals+6*clustcenterpose.num_jump());
+		//alglib::pcabuildbasis(Dphipsiomega, statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump(), PCAresult, variances, PCmatrix);
+		std::pair< utility::vector1< utility::vector1 <core::Real> >,  utility::vector1 <core::Real> > pcaresult = numeric::principal_components_and_eigenvalues_ndimensions( Dphipsiomega, false );
 
 		//Store the variances and principal component vectors for output from this function.  Only the first N-1 should be nonzero, where N is the number of states in the cluster.
 		for(core::Size i=1; i<std::min(statesincluster.size(), ndihedrals+6*clustcenterpose.num_jump()); i++) {
-			coeff_list.push_back(variances[i-1]);
+			coeff_list.push_back( pcaresult.second[i] );
 			//printf("%.8f\n", variances[i-1]);fflush(stdout); //DELETE ME
-			utility::vector1 < core::Real > PCA_vector;
-			for(core::Size j=1; j<=ndihedrals+6*clustcenterpose.num_jump(); j++) PCA_vector.push_back(PCmatrix[j-1][i-1]);
+			utility::vector1 < core::Real > PCA_vector = pcaresult.first[i];
+			//for(core::Size j=1; j<=ndihedrals+6*clustcenterpose.num_jump(); j++) PCA_vector.push_back(PCmatrix[j-1][i-1]);
 			pca_vector_list.push_back(PCA_vector);
 		}
 

@@ -11,6 +11,7 @@
 ///
 /// @brief
 /// @author Tim Jacobs
+/// @author N-dimensional principal component analysis code by Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_numeric_PCA_hh
 #define INCLUDED_numeric_PCA_hh
@@ -20,6 +21,11 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/types.hh>
+//#include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
+
+// External headers
+#include <Eigen/Dense>
+#include <Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -114,6 +120,92 @@ namespace numeric {
 		return evecs_and_evals;
 	}
 
+	/// @brief Return a pair containing a matrix (vector of vectors) of all of the
+	/// principal components and a vector of the corresponding eigenvalues of the
+  /// given set of points in n-dimensional space.
+	/// @details Note that this does not assume that the input vectors are 3-dimensional.
+	/// If shift_center=false, the mean vector is not subtracted by this function.
+	/// (Failure to subtract mean vector prior to function call will produce odd results,
+	/// however.)
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline
+	std::pair<utility::vector1< utility::vector1< Real > >, utility::vector1< Real > >
+	principal_components_and_eigenvalues_ndimensions( utility::vector1< utility::vector1< Real > > const & coords, bool const shift_center )
+	{
+		Size const n_coords = coords.size();
+		runtime_assert_string_msg( n_coords > 0, "Empty coords matrix was passed to numeric::principal_components_and_eigenvalues_ndimensions()." );
+		Size const n_dimensions = coords[1].size();
+		
+		utility::vector1< Real > mean_vector;
+		mean_vector.resize(n_dimensions, 0);
+		for (Size i = 1; i <= n_coords; ++i)
+		{
+			runtime_assert_string_msg( coords[i].size()==n_dimensions, "Not all coordinate vectors in the coords matrix passed to numeric::principal_components_and_eigenvalues_ndimensions() are of the same dimension." );
+			if(shift_center) {
+				for(Size j=1; j<=n_coords; ++j) {
+					mean_vector[j] += coords[i][j];
+				}
+			}
+		}
+		if(shift_center) {
+			for(Size i=1; i<=n_dimensions; ++i) {
+				mean_vector[i] /= n_coords;
+			}
+		}
+		
+		//Compute the covariance matrix (upper-right half first):
+		Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic> covariance_matrix;
+		covariance_matrix.resize(n_dimensions, n_dimensions);
+		for (Size i = 1; i <= n_dimensions; ++i)
+		{
+			for (Size j = i; j <= n_dimensions; ++j)
+			{
+				covariance_matrix(i-1,j-1) = 0;
+				for (Size k = 1; k <= n_coords; ++k)
+				{
+					covariance_matrix(i-1,j-1) += (mean_vector[i] - coords[k][i]) * (mean_vector[j] - coords[k][j]);
+				}
+				covariance_matrix(i-1,j-1) /= n_coords;
+			}
+		}
+		//The covariance matrix is symmetric (so do the lower-left half by copying the upper-right half):
+		for(Size i=1; i<=n_dimensions; ++i) {
+			for(Size j=1; j<i; ++j) covariance_matrix(i-1,j-1)=covariance_matrix(j-1,i-1);
+		}
+		
+		//Solve eigenvectors/values
+		Eigen::SelfAdjointEigenSolver< Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic> >  eigensolver( covariance_matrix );
+		Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic> evecs = eigensolver.eigenvectors();
+		Eigen::Matrix<Real, Eigen::Dynamic, 1> evals = eigensolver.eigenvalues();
+		
+		utility::vector1< std::pair<Real, utility::vector1<Real> > > sorted_val_vec_pairs;
+		for (Size i = 1 ; i <= n_dimensions; ++i)
+		{
+			utility::vector1< Real > tempvect;
+			tempvect.resize(n_dimensions);
+			for(Size j=1; j<=n_dimensions; ++j) tempvect[j] = evecs(j-1,i-1);
+			sorted_val_vec_pairs.push_back(std::make_pair(evals(i-1,0), tempvect));
+		}
+		
+		//Sort eigenvectors highest to lowest based on eigenvalues
+		sort(sorted_val_vec_pairs.rbegin(), sorted_val_vec_pairs.rend());
+		utility::vector1< utility::vector1< Real > > sorted_evecs;
+		sorted_evecs.resize(n_dimensions);
+		for(Size i=1; i<=n_dimensions; ++i) {
+			sorted_evecs[i]=sorted_val_vec_pairs[i].second;
+		}
+		
+		utility::vector1 < Real > sorted_evals;
+		sorted_evals.resize(n_dimensions);
+		for(Size i=1; i<=n_dimensions; ++i) {
+			sorted_evals[i] = sorted_val_vec_pairs[i].first;
+		}
+		
+		std::pair<utility::vector1< utility::vector1< Real > >, utility::vector1< Real > > evecs_and_evals;
+		evecs_and_evals = (std::make_pair(sorted_evecs, sorted_evals));
+		
+		return evecs_and_evals;
+	}
 	
 }//namespace
 
