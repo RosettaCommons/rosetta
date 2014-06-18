@@ -70,6 +70,9 @@ void
 RestrictChainToRepackingOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	runtime_assert(chain_);
+	if (chain()>pose.conformation().num_chains()) {
+		utility_exit_with_message("Number of chains in pose is smaller than the number defined in the xml under \"chain=\"! Aborting!");
+  }
 	core::Size const chain_begin( pose.conformation().chain_begin( chain_ ) );
 	core::Size const chain_end( pose.conformation().chain_end( chain_ ) );
 

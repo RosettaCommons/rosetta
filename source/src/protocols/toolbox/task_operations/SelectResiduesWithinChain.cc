@@ -71,7 +71,9 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 {
 	utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
 	packing_residues.clear(); prevent_repacking_residues.clear();
-
+ if (chain()>pose.conformation().num_chains()) {
+    utility_exit_with_message("Number of chains in pose is smaller than the number defined in the xml under \"chain=\"! Aborting!");
+  }
 	if( allow_design() )
 		TR<<"Residues set to design ";
 	else
