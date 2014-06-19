@@ -60,7 +60,7 @@ public:
 	/// @brief calulated density from a vector of poses
 	ElectronDensity( utility::vector1< core::pose::PoseOP > poses, core::Real reso, core::Real apix );
 
-	/// @brief constructor from an FArray3D (debugging only)
+	/// @brief constructor from an FArray3D (used for debugging only!)
 	template<class T>
 	ElectronDensity( ObjexxFCL::FArray3D< T > const &map,
 	                 core::Real apix = 1.0,
@@ -201,35 +201,6 @@ public:
 				FSC, phaseError, phaseErrorSum, complexPlaneErrorK, complexPlaneErrorProb, masked, S2_bin, mask_radius );
 	}
 
-/*  OLD VERSIONS
-	void
-	getFSC(
-		poseCoords const &pose,
-		core::Size nbuckets,
-		core::Real maxreso, core::Real minreso,
-		utility::vector1< core::Real >&, utility::vector1< core::Real > &,
-		bool masked=false, bool S2_bin=false, core::Real mask_radius=0.0, bool verbose=false );
-
-	/// @brief Compute model-map expected phase error
-	void
-	getMLE(
-		poseCoords const &pose,
-		core::Size nbuckets,
-		core::Real maxreso, core::Real minreso,
-		utility::vector1< core::Real > const &,
-		utility::vector1< core::Real >&, Real &errS2,
-		bool masked=false, bool S2_bin=false, bool phase_only=false, core::Real mask_radius=0.0 );
-
-	/// @brief Compute map-map FSC
-	void
-	getFSC(
-			ObjexxFCL::FArray3D< float > const &map2,
-			core::Size nbuckets,
-			core::Real maxreso, core::Real minreso,
-			utility::vector1< core::Real >&, utility::vector1< core::Real > &,
-			bool S2_bin=false, bool phase_only=false, bool verbose=false);
-*/
-
 	/// @brief Compute model-map RSCC
 	core::Real
 	getRSCC( poseCoords const &pose );
@@ -245,15 +216,8 @@ public:
 	void
 	calcRhoC( poseCoords const &pose );
 
-	// for now use masking to handle solvent
-	/*
-	void
-	calcRhoCandSolvent( poseCoords const &pose );
-	*/
-
 	core::Real
 	maxNominalRes();
-
 
 	/////
 	/////  Scorefunction stuff
@@ -295,6 +259,17 @@ public:
 	compute_symm_rotations(
 		core::pose::Pose const &pose,
 		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
+	);
+
+	/// @brief access fastdens scoring for a single point
+	core::Real matchPointFast(
+		numeric::xyzVector< core::Real > X
+	);
+
+	/// @brief access fastdens scoring for a single point
+	void dCCdx_PointFast(
+		numeric::xyzVector< core::Real > X,
+		numeric::xyzVector< core::Real > & dCCdx
 	);
 
 	/// @brief Return the gradient of CC w.r.t. atom X's movement
@@ -504,6 +479,10 @@ public:
 		cartX = f2c*fracX;
 	}
 
+	numeric::xyzMatrix<core::Real> get_f2c() { return f2c; }
+	numeric::xyzMatrix<core::Real> get_c2f() { return c2f; }
+
+
 	numeric::xyzVector<core::Real> delt_cart(numeric::xyzVector<core::Real> const & cartX1, numeric::xyzVector<core::Real> const & cartX2);
 	numeric::xyzVector<core::Real> get_cart_unitCell(numeric::xyzVector<core::Real> const & cartX);
 	numeric::xyzVector<core::Real> get_nearest_UC(numeric::xyzVector<core::Real> const & cartX_in, numeric::xyzVector<core::Real> const & cartX_ref);
@@ -554,6 +533,7 @@ private:
 
 	// setup fast density scoring data
 	void setup_fastscoring_first_time(core::pose::Pose const &pose);
+	void setup_fastscoring_first_time(Real scalefactor);
 
 	// get Fdrho_d(xyz)
 	// compute if not already computed

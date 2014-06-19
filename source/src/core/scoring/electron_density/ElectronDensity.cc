@@ -2396,6 +2396,20 @@ utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > ElectronDensit
 /////////////////////////////////////
 /// setup oversampled maps for fast density scoring
 void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose) {
+	// atom count
+	core::Size natms=0,nres=0;
+	for (core::Size i=1; i<=pose.total_residue(); ++i) {
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue; nres++;
+		core::conformation::Residue const& rsd_i = pose.residue(i);
+		natms += rsd_i.nheavyatoms();
+	}
+	core::Real scalefactor = ((core::Real)natms/(core::Real)nres);
+	setup_fastscoring_first_time(scalefactor);
+}
+
+
+//
+void ElectronDensity::setup_fastscoring_first_time(Real scalefactor) {
 	fastgrid = grid;
 	fastorigin = origin;
 
@@ -2411,14 +2425,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	ObjexxFCL::FArray3D< double > rhoc, fastdens_score_i;
 	ObjexxFCL::FArray3D< std::complex<double> > Frhoo, Frhoc;
 	rhoc.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
-
-	// atom count
-	core::Size natms=0,nres=0;
-	for (core::Size i=1; i<=pose.total_residue(); ++i) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue; nres++;
-		core::conformation::Residue const& rsd_i = pose.residue(i);
-		natms += rsd_i.nheavyatoms();
-	}
 
 	fastdens_score.dimension( density.u1(), density.u2(), density.u3(), nkbins_);
 
@@ -2541,7 +2547,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 		}
 
 		if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
-			core::Real scalefactor = (natms/nres);
 			core::Real mu=0.5*(max_val+min_val), sigma=0.5*scalefactor*(max_val-min_val);
 			for (int i=1; i<=density.u1(); i++)
 			for (int j=1; j<=density.u2(); j++)
@@ -2553,7 +2558,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 		}
 	}
 
-	core::Real scalefactor = (natms/nres);
 	core::Real mu=0.0, sigma=0.5*scalefactor*(max_val-min_val);
 	if (legacy_) mu = 0.5*(max_val-min_val);
 	for (uint i = 0; i < nkbins_ * density.u1() * density.u2() * density.u3(); ++i) {
@@ -4475,6 +4479,68 @@ ElectronDensity::matchResFast(
 	}
 
 	return score;
+}
+
+/////////////////////////////////////
+/// Match a residue to the density map.  Use the fast version of the scoring function
+core::Real
+ElectronDensity::matchPointFast(
+	numeric::xyzVector< core::Real > X
+) {
+	// make sure map is loaded
+	if (!isLoaded) {
+		TR << "[ ERROR ]  ElectronDensity::matchResFast called but no map is loaded!\n";
+		return 0.0;
+	}
+
+	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
+		setup_fastscoring_first_time(0.1);
+
+	numeric::xyzVector<core::Real> fracX = c2f*X;
+	numeric::xyzVector< core::Real > idxX;
+	core::Real kbin = 1;
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
+	                                       fracX[1]*fastgrid[1] - fastorigin[1] + 1,
+	                                       fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+	core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
+
+	return score_i;
+}
+
+
+void
+ElectronDensity::dCCdx_PointFast(
+	numeric::xyzVector< core::Real > X,
+	numeric::xyzVector< core::Real > & dCCdX
+) {
+	// make sure map is loaded
+	if (!isLoaded) {
+		TR << "[ ERROR ]  ElectronDensity::matchResFast called but no map is loaded!\n";
+		return;
+	}
+
+	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
+		setup_fastscoring_first_time(0.1);
+
+	numeric::xyzVector<core::Real> fracX = c2f*X;
+	numeric::xyzVector< core::Real > idxX;
+	core::Real kbin = 1;
+	numeric::xyzVector<core::Real> dCCdX_grid;
+	core::Real dkbin;
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
+	                                       fracX[1]*fastgrid[1] - fastorigin[1] + 1,
+	                                       fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+	interp_dspline( fastdens_score , idxX, kbin,  dCCdX_grid, dkbin );
+
+	dCCdX[0] = dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
+	dCCdX[1] = dCCdX_grid[0]*c2f(1,2)*fastgrid[0] + dCCdX_grid[1]*c2f(2,2)*fastgrid[1] + dCCdX_grid[2]*c2f(3,2)*fastgrid[2];
+	dCCdX[2] = dCCdX_grid[0]*c2f(1,3)*fastgrid[0] + dCCdX_grid[1]*c2f(2,3)*fastgrid[1] + dCCdX_grid[2]*c2f(3,3)*fastgrid[2];
 }
 
 
