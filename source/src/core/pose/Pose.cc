@@ -233,7 +233,7 @@ Pose::chain( Size const seqpos ) const
 ///  a Pose's Conformation.  The prior PDBInfo, ConstraintSet and Energies will be
 ///  cleared as well.
 void
-Pose::set_new_conformation( ConformationOP new_conformation )
+Pose::set_new_conformation( conformation::ConformationCOP new_conformation )
 {
 
 	/// drop stuff

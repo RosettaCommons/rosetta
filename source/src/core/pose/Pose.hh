@@ -264,7 +264,7 @@ public:
 	/// @brief  Now that the conformation_ member data is an owning pointer,
 	/// and we have derived classes of Conformation.
 	void
-	set_new_conformation( ConformationOP new_conformation );
+	set_new_conformation( conformation::ConformationCOP new_conformation );
 
 	/// @brief  Now that the energies_ member data is an owning pointer,
 	/// and we have derived classes of Energies.
