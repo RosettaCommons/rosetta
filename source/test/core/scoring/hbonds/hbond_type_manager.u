@@ -11,8 +11,8 @@ HBondWeightType:
 HBDerivType:
 	hbderiv_NONE
 	hbderiv_ABE_GO
-	hbderiv_ABE_GO_NO_xD
-	hbderiv_ABE_GO_NO_xH
+	hbderiv_ABE_GO_GEOMSOL_OCC_ACC
+	hbderiv_ABE_GO_GEOMSOL_OCC_DON
 
 HBDonChemType:
 	hbdon_NONE
