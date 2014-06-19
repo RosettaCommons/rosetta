@@ -452,7 +452,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column topology_candidate	("topology_candidate",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-		// "fn3" or "not_fn3" or "not_known_topology"
+		// "fnIII" or "not_fnIII" or "not_known_topology"
 
 	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
@@ -4588,7 +4588,8 @@ SandwichFeatures::report_topology_candidate	(
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
-	// warning: this is NOT a strict fn3 topology determinator, this function is useful only to identify fn3 topology beta-sandwich from so many beta-sandwiches. So additional human inspection is required to confirm fn3 eventually after this function.
+	// warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches. So additional human inspection is required to confirm fnIII eventually after this function.
+	//	06/13/14, changed from "fn3" to "fnIII" because "fnIII" seems more correct according to "2008_Manipulating the stability of fibronectin type III domains by protein engineering"
 
 	//// <begin> retrieve sw_by_components_bs_id
 	string select_string =
@@ -4627,11 +4628,11 @@ SandwichFeatures::report_topology_candidate	(
 	{
 		if	(vector_of_sw_by_components_bs_id[1]	==	1 && vector_of_sw_by_components_bs_id[2]	==	3 &&	vector_of_sw_by_components_bs_id[3]	==	9)
 		{
-			topology_candidate	=	"fn3";
+			topology_candidate	=	"fnIII";
 		}
 		else
 		{
-			topology_candidate	=	"not_fn3";
+			topology_candidate	=	"not_fnIII";
 		}
 	}
 	// <begin> UPDATE sw_by_components table

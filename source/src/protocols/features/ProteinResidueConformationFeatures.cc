@@ -621,7 +621,7 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 			TR.Warning << missing_coordinates[ii] << ",";
 		}
 		TR.Warning << "]" << std::endl;
-		TR.Warning << "This can happen because you are using ProteinResidueConformationFeatures with a structure that contains non-protein residues, for example. To avoid this, extract with the ReisudeConformationFeatures instead." << std::endl;
+		TR.Warning << "This can happen because you are using ProteinResidueConformationFeatures with a structure that contains non-protein residues, for example. To avoid this, extract with the ResidueConformationFeatures instead." << std::endl;
 //		TR.Warning << "These residues will be deleted from the pose." << std::endl;
 //		for(Size ii=1; ii < missing_coordinates.size(); ++ii){
 //			pose.conformation().delete_residue_slow(ii);
