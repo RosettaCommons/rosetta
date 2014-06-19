@@ -31,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.sampling.movemap/util" );
+static basic::Tracer TR( "protocols.stepwise.sampling.movemap.util" );
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -49,6 +49,7 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace movemap {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -276,6 +277,7 @@ check_move_map_against_working_parameters( core::pose::Pose const & pose ,
 }
 
 
+} //movemap
 } //sampling
 } //stepwise
 } //protocols

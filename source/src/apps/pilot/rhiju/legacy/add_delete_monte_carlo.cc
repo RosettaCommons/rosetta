@@ -87,12 +87,12 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_WorkingParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseWorkingParametersUtil.hh>
 

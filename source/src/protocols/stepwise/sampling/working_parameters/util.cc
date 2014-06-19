@@ -16,7 +16,7 @@
 #include <protocols/stepwise/sampling/working_parameters/util.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/protein/util.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_WorkingParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/movemap/util.hh>
 #include <protocols/stepwise/sampling/util.hh>

@@ -60,5 +60,5 @@ RotamerOneValueComb::get_value_list( Size const id ){
 }
 
 
-}
-}
+} //rotamer_sampler
+} //protocols

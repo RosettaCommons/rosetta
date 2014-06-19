@@ -14,6 +14,8 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/id/AtomID.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -61,6 +63,7 @@
 #include <utility/excn/Exceptions.hh>
 
 OPT_KEY( String,  params_file )
+OPT_KEY( Boolean,  one_torsion_test )
 
 using namespace core;
 using namespace protocols;
@@ -90,6 +93,7 @@ rna_fullatom_minimize_test()
 	using namespace protocols::toolbox;
 	using namespace protocols::farna;
 	using namespace protocols::stepwise;
+	using namespace protocols::stepwise::full_model_info;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -187,6 +191,12 @@ rna_fullatom_minimize_test()
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
 			allow_insert->set( false );
 			rna_minimizer.set_extra_minimize_res( option[ in::file::minimize_res ]() );
+		} else if ( option[ one_torsion_test ]() ){
+			// allow_insert->set( false );
+			// for ( Size n = 1; n <= pose.residue(1).natoms(); n++ ) allow_insert->set_domain( id::AtomID( n, 1 ), 1 );
+			// for ( Size n = 1; n <= pose.residue(2).natoms(); n++ ) allow_insert->set_domain( id::AtomID( n, 2 ), 2 );
+			// allow_insert->set( id::NamedAtomID( " P  ", 2 ), pose, false );
+			// allow_insert->set( id::NamedAtomID( " O5'", 2 ), pose, false );
 		} else {
 			allow_insert->set( true );
 		}
@@ -283,6 +293,7 @@ try {
 	option.add_relevant( in::file::minimize_res );
 	option.add_relevant( out::pdb );
 	NEW_OPT( params_file, "Input file for pairings", "" );
+	NEW_OPT( one_torsion_test, "tracking down problem with geom_sol", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

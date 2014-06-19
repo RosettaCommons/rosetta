@@ -25,7 +25,7 @@ class McOneTorsion;
 typedef utility::pointer::owning_ptr< McOneTorsion > McOneTorsionOP;
 typedef utility::pointer::access_ptr< McOneTorsion > McOneTorsionAP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

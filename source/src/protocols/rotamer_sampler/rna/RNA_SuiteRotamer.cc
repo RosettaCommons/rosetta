@@ -267,6 +267,6 @@ RNA_SuiteRotamer::fast_sample_torsions_from_info(
 }
 //////////////////////////////////////////////////////////////////////////
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

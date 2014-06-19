@@ -21,6 +21,8 @@ namespace hbonds {
 
 class HBEvalTuple;
 
+extern HBEvalTuple DUMMY_HBE;
+
 } // namespace hbonds
 } // namespace scoring
 } // namespace core

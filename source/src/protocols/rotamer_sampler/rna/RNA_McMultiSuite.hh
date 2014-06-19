@@ -71,8 +71,8 @@ private:
 	utility::vector1<RNA_McSuiteOP> suite_samplers_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

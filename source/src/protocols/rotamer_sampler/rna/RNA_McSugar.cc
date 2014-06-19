@@ -79,6 +79,6 @@ void RNA_McSugar::set_idealize_coord( bool const setting ) {
 	sugar_rotamer_->set_idealize_coord( setting );
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

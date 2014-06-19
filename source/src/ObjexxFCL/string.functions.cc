@@ -835,11 +835,21 @@ ints_of( std::string const & s ){
 }
 
 /// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
+///  new -- allow comma separation.
 std::vector< int >
-ints_of( std::string const & s, bool & string_is_ok ){
+ints_of( std::string const & s_input, bool & string_is_ok ){
 
   std::vector< int > vals;
   string_is_ok = false;
+
+  std::string s( s_input );
+
+  // comma parsing:
+  while( s.find( ',' ) != std::string::npos  ){
+    std::vector< int > vals_up_to_comma = ints_of( s.substr( 0, s.find( ',' ) )  /* tag up to the comma*/ );
+    for ( unsigned n = 0; n < vals_up_to_comma.size(); n++ ) vals.push_back( vals_up_to_comma[ n ] );
+    s = s.substr( s.find( ',' )+1 ); // tag after the comma.
+  }
 
   size_t found_dash = s.find( "-" );
   if ( found_dash == 0 ) found_dash = s.substr(1).find("-") + 1;

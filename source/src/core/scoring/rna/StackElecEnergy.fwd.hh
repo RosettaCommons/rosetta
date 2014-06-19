@@ -32,8 +32,8 @@ namespace rna {
 ///
 class StackElecEnergy;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif // INCLUDED_core_scoring_ScoreFunction_HH

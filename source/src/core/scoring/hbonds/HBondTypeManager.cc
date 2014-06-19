@@ -84,8 +84,8 @@ HBondTypeManager::setup_type_names()
 
 	name2deriv_type_["hbderiv_NONE"] = hbderiv_NONE;
 	name2deriv_type_["hbderiv_ABE_GO"] = hbderiv_ABE_GO;
-	name2deriv_type_["hbderiv_ABE_GO_NO_xD"] = hbderiv_ABE_GO_NO_xD;
-	name2deriv_type_["hbderiv_ABE_GO_NO_xH"] = hbderiv_ABE_GO_NO_xH;
+	name2deriv_type_["hbderiv_ABE_GO_GEOMSOL_OCC_ACC"] = hbderiv_ABE_GO_GEOMSOL_OCC_ACC;
+	name2deriv_type_["hbderiv_ABE_GO_GEOMSOL_OCC_DON"] = hbderiv_ABE_GO_GEOMSOL_OCC_DON;
 
 	name2don_chem_type_["hbdon_NONE"] = hbdon_NONE;
 	name2don_chem_type_["hbdon_PBA"] = hbdon_PBA;

@@ -218,7 +218,7 @@ RNA_SuiteEnergy::get_f1_f2(
 	return true;
 }
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 

@@ -20,6 +20,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -27,9 +28,7 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/geometric_solvation/GeometricSolEnergy.hh>
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
-#include <core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
@@ -75,6 +74,7 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pose/util.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>

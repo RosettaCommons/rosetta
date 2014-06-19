@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< PackScreener > PackScreenerOP;
 	typedef utility::pointer::owning_ptr< PackScreener const > PackScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

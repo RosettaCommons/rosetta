@@ -134,7 +134,7 @@ RNA_TorsionEnergy::version() const
 
 
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 

@@ -81,6 +81,6 @@ void  RNA_McMultiSuite::set_init_from_pose( pose::Pose const & pose ) {
 			suite_samplers_[i]->set_init_from_pose( pose );
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

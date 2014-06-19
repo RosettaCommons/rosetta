@@ -28,13 +28,13 @@
 //Req'd on WIN32
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.FromScratchMover" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.FromScratchMover" );
 using namespace protocols::stepwise::sampling;
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	//Constructor
 	FromScratchMover::FromScratchMover()
@@ -126,7 +126,7 @@ namespace rna {
 		return "FromScratchMover";
 	}
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

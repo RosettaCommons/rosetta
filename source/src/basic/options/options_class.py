@@ -13,7 +13,7 @@
 import sys
 import time
 
-KnownTypes=['Boolean', 'Integer', 'Real', 'String', 'File', 'Path', 'BooleanVector', 'IntegerVector', 'RealVector', 'StringVector', 'FileVector', 'PathVector']
+KnownTypes=['Boolean', 'Integer', 'Real', 'String', 'File', 'Path', 'BooleanVector', 'IntegerVector', 'ResidueChainVector', 'RealVector', 'StringVector', 'FileVector', 'PathVector']
 
 # argument should be string or list<string>
 #  - wrap strings with "".
@@ -37,7 +37,7 @@ class Option:
                  lower=None, upper=None, default=None, legal=None, n=None, n_lower=None, n_upper=None, restrict_access=False):
 
         if ctype not in KnownTypes:
-            print 'Unknow type:%s!!!' % ctype
+            print 'Unknown type:%s!!!' % ctype
             sys.exit()
         if default == 'none' or default == 'None':
             print '*** Option %(name)s will default to the *string* "%(default)s"' % vars()

@@ -56,8 +56,8 @@ get_fade_correction(
 
 }
 
-} //ns rna
-} //ns scoring
-} //ns core
+} //rna
+} //scoring
+} //core
 
 

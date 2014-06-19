@@ -21,15 +21,15 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
-namespace rna {
+namespace modeler_options {
 	
 	class StepWiseRNA_ModelerOptions;
 	typedef utility::pointer::owning_ptr< StepWiseRNA_ModelerOptions > StepWiseRNA_ModelerOptionsOP;
 	typedef utility::pointer::owning_ptr< StepWiseRNA_ModelerOptions const > StepWiseRNA_ModelerOptionsCOP;
 	
-} //rna 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //modeler_options
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

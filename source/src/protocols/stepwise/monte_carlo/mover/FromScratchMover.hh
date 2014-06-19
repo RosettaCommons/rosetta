@@ -27,7 +27,7 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	class FromScratchMover: public protocols::moves::Mover {
 
@@ -67,7 +67,7 @@ namespace rna {
 
 	};
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

@@ -28,10 +28,10 @@ namespace phosphate {
 	typedef utility::pointer::owning_ptr< PhosphateMove > PhosphateMoveOP;
 	typedef utility::pointer::owning_ptr< PhosphateMove const > PhosphateMoveCOP;
 	
-} //phosphate 
-} //rna 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //phosphate
+} //rna
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

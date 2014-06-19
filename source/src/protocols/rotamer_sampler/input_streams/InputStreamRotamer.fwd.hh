@@ -26,8 +26,8 @@ namespace input_streams {
 	typedef utility::pointer::owning_ptr< InputStreamRotamer > InputStreamRotamerOP;
 	typedef utility::pointer::owning_ptr< InputStreamRotamer const > InputStreamRotamerCOP;
 	
-} //input_streams 
-} //rotamer_sampler 
-} //protocols 
+} //input_streams
+} //rotamer_sampler
+} //protocols
 
 #endif

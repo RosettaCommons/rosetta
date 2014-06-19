@@ -35,7 +35,7 @@ namespace protein {
       core::pose::Pose const & pose,
 			utility::vector1< core::Size > const & moving_res_list,
 			protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters,
-			protocols::stepwise::sampling::StepWiseModelerOptionsCOP options,
+			protocols::stepwise::sampling::modeler_options::StepWiseModelerOptionsCOP options,
 			utility::vector1< protocols::stepwise::sampling::protein::InputStreamWithResidueInfoOP > & input_streams );
 
 	void

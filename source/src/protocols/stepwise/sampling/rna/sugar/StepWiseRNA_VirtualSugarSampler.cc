@@ -66,7 +66,7 @@ using namespace core;
 using namespace core::pose;
 using utility::tools::make_vector1;
 
-static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_VirtualSugarSampler" );
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.sugar.StepWiseRNA_VirtualSugarSampler" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -219,7 +219,7 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	//	 Size const moving_suite = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : ( sugar_modeling_.moving_res - 1);
 	//TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << " DO_MINIMIZE " << do_minimize_ << TR.Reset << std::endl;
 	using namespace core::pose::full_model_info;
-	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info( pose );
+	utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info( pose );
 	checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker;
 	if ( chains[ five_prime_gap_res ] == chains[ three_prime_gap_res ] ){
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
@@ -432,7 +432,7 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_complete( utility::vector1<
 	utility::vector1< PoseOP > output_pose_list;
 	Size const rebuild_res = sugar_modeling_.bulge_res;
 	StepWiseModelerOP stepwise_modeler = new StepWiseModeler( rebuild_res, scorefxn_ );
-	StepWiseModelerOptionsOP options = new StepWiseModelerOptions;
+	modeler_options::StepWiseModelerOptionsOP options = new modeler_options::StepWiseModelerOptions;
 	options->set_use_phenix_geo( use_phenix_geo_ );
 	options->set_kic_sampling_if_relevant( true /*erraser sampling for speed & completeness*/ );
 	options->set_num_pose_minimize( 1 );

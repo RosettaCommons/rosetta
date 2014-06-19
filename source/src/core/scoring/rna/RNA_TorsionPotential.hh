@@ -124,8 +124,8 @@ private:
 
 };
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

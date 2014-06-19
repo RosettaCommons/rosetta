@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< ProteinCCD_ClosureScreener > ProteinCCD_ClosureScreenerOP;
 	typedef utility::pointer::owning_ptr< ProteinCCD_ClosureScreener const > ProteinCCD_ClosureScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

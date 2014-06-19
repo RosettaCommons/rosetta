@@ -54,7 +54,7 @@ using core::Real;
 
 static numeric::random::RandomGenerator RG(29111);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.RNA_AddDeleteMonteCarlo" ) ;
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_AddDeleteMonteCarlo" ) ;
 
 namespace protocols {
 namespace stepwise {
@@ -64,7 +64,7 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  AddOrDeleteMoverOP rna_add_or_delete_mover,
+	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna_add_or_delete_mover,
 																										 RNA_TorsionMoverOP     rna_torsion_mover,
 																										 RNA_O2PrimeMoverOP      rna_o2prime_mover,
 																										 core::scoring::ScoreFunctionOP scorefxn ):

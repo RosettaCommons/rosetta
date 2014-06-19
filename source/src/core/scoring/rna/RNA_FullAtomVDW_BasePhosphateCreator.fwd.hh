@@ -24,9 +24,9 @@ namespace rna {
 class RNA_FullAtomVDW_BasePhosphateCreator;
 
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 
 
 #endif

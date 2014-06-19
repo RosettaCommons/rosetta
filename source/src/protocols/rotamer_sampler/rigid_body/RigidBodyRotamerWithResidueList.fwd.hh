@@ -26,8 +26,8 @@ namespace rigid_body {
 	typedef utility::pointer::owning_ptr< RigidBodyRotamerWithResidueList > RigidBodyRotamerWithResidueListOP;
 	typedef utility::pointer::owning_ptr< RigidBodyRotamerWithResidueList const > RigidBodyRotamerWithResidueListCOP;
 	
-} //rigid_body 
-} //rotamer_sampler 
-} //protocols 
+} //rigid_body
+} //rotamer_sampler
+} //protocols
 
 #endif

@@ -111,6 +111,6 @@ RNA_CentroidInfo::update( pose::Pose const & pose )
 
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

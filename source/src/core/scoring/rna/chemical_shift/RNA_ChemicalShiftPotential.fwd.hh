@@ -21,9 +21,9 @@ namespace chemical_shift {
 
 class RNA_ChemicalShiftPotential;
 
-}
-}
-}
-}
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 #endif

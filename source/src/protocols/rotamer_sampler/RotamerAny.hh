@@ -89,8 +89,8 @@ private:
 	utility::vector1<core::Real> weights_, cdf_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif
 

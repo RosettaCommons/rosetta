@@ -24,8 +24,8 @@ namespace rna {
 class RNA_NucleosideRotamer;
 typedef utility::pointer::owning_ptr< RNA_NucleosideRotamer > RNA_NucleosideRotamerOP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

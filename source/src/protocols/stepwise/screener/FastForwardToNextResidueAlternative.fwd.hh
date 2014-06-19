@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< FastForwardToNextResidueAlternative > FastForwardToNextResidueAlternativeOP;
 	typedef utility::pointer::owning_ptr< FastForwardToNextResidueAlternative const > FastForwardToNextResidueAlternativeCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

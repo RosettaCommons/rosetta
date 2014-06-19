@@ -75,6 +75,7 @@ rna_score_test()
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::sampling;
+	using namespace protocols::stepwise::full_model_info;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );

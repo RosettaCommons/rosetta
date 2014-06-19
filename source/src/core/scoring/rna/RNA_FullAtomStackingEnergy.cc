@@ -631,6 +631,6 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 }
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

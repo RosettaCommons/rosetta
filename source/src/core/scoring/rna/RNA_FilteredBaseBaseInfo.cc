@@ -361,6 +361,6 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( RNA_DataInfo const & rna_data_inf
 	return rna_data_score;
 }
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

@@ -759,6 +759,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 																					 1.0  ) );
 	}
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

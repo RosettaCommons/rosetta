@@ -153,8 +153,8 @@ private:
 	screener::RNA_TorsionScreenerOP screener_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

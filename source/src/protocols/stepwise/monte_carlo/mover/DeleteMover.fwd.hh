@@ -24,12 +24,12 @@
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	class DeleteMover;
 	typedef utility::pointer::owning_ptr< DeleteMover > DeleteMoverOP;
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

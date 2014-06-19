@@ -28,7 +28,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.sampling.protein.packer.util" );
+static basic::Tracer TR( "protocols.stepwise.sampling.packer.util" );
 
 using namespace core::scoring;
 
@@ -42,7 +42,7 @@ namespace packer {
 	get_packer(
 		core::scoring::ScoreFunctionCOP pack_scorefxn,
 		utility::vector1< core::Size > const & moving_res_list,
-		protocols::stepwise::sampling::StepWiseModelerOptionsCOP options	) {
+		protocols::stepwise::sampling::modeler_options::StepWiseModelerOptionsCOP options	) {
 
 		using namespace core::scoring;
 		// may want to put in proper handling of moving_partition_res -- i.e., pack any residues that make new contacts:
@@ -50,6 +50,7 @@ namespace packer {
 		stepwise_packer->set_scorefxn( pack_scorefxn );
 		stepwise_packer->set_use_packer_instead_of_rotamer_trials( options->use_packer_instead_of_rotamer_trials() );
 		stepwise_packer->set_allow_virtual_side_chains( options->allow_virtual_side_chains() );
+		if ( !options->o2prime_legacy_mode() ) stepwise_packer->set_allow_virtual_o2prime_hydrogens( options->allow_virtual_side_chains() );
 		stepwise_packer->set_pack_all_side_chains( options->global_optimize() );
 		return stepwise_packer;
 	}

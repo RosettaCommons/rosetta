@@ -99,8 +99,8 @@ private:
 };
 
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

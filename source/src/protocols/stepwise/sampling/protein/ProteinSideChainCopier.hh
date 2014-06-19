@@ -40,9 +40,9 @@ namespace protein {
 	
 	};
 
-} //protein 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //protein
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

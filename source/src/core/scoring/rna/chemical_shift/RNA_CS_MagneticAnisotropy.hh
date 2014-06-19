@@ -42,9 +42,9 @@ core::Real
 magnetic_anisotropy_effect( numeric::xyzVector< core::Real > const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & source_rsd_CS_params );
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 #endif

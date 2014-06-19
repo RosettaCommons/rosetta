@@ -31,7 +31,7 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	class ResampleMover: public protocols::moves::Mover {
 
@@ -86,7 +86,7 @@ namespace rna {
 		bool slide_intermolecular_jumps_;
 	};
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

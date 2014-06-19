@@ -897,6 +897,6 @@ StackElecEnergy::version() const
 }
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

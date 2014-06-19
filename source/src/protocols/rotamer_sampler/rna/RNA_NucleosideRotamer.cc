@@ -91,6 +91,6 @@ void RNA_NucleosideRotamer::init() {
 	RotamerSizedAny::init();
 }
 //////////////////////////////////////////////////////////////////////////
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

@@ -46,6 +46,7 @@
 #include <utility/options/PathVectorOption.fwd.hh>
 #include <utility/options/RealOption.fwd.hh>
 #include <utility/options/RealVectorOption.fwd.hh>
+#include <utility/options/ResidueChainVectorOption.fwd.hh>
 #include <utility/options/StringOption.fwd.hh>
 #include <utility/options/StringVectorOption.fwd.hh>
 #include <utility/options/keys/AnyOptionKey.fwd.hh>
@@ -75,6 +76,8 @@
 #include <utility/options/keys/RealOptionKey.hh>
 #include <utility/options/keys/RealVectorOptionKey.fwd.hh>
 #include <utility/options/keys/RealVectorOptionKey.hh>
+#include <utility/options/keys/ResidueChainVectorOptionKey.fwd.hh>
+#include <utility/options/keys/ResidueChainVectorOptionKey.hh>
 #include <utility/options/keys/ScalarOptionKey.fwd.hh>
 #include <utility/options/keys/ScalarOptionKey.hh>
 #include <utility/options/keys/StringOptionKey.fwd.hh>
@@ -107,6 +110,7 @@ typedef  utility::options::PathOptionKey  PathOptionKey;
 typedef  utility::options::BooleanVectorOptionKey  BooleanVectorOptionKey;
 typedef  utility::options::IntegerVectorOptionKey  IntegerVectorOptionKey;
 typedef  utility::options::RealVectorOptionKey  RealVectorOptionKey;
+typedef  utility::options::ResidueChainVectorOptionKey  ResidueChainVectorOptionKey;
 typedef  utility::options::StringVectorOptionKey  StringVectorOptionKey;
 typedef  utility::options::FileVectorOptionKey  FileVectorOptionKey;
 typedef  utility::options::PathVectorOptionKey  PathVectorOptionKey;

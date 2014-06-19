@@ -28,6 +28,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
+namespace beta {
 
 	class StepWiseBetaAntiParallelJumpSampleGenerator: public StepWiseProteinJumpSampleGenerator {
 	public:
@@ -44,6 +45,7 @@ namespace protein {
 
   };
 
+} //beta
 } //protein
 } //sampling
 } //stepwise

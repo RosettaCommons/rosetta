@@ -25,7 +25,7 @@ namespace rotamer_sampler {
 	typedef utility::pointer::owning_ptr< NoOpRotamer > NoOpRotamerOP;
 	typedef utility::pointer::owning_ptr< NoOpRotamer const > NoOpRotamerCOP;
 	
-} //rotamer_sampler 
-} //protocols 
+} //rotamer_sampler
+} //protocols
 
 #endif

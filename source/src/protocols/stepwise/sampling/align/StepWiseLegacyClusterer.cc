@@ -50,7 +50,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.stepwise.StepWiseLegacyClusterer" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.align.StepWiseLegacyClusterer" ) ;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -79,7 +79,7 @@ namespace align {
 	// convenience constructor, used in StepWiseProteinModeler. Maybe should go into a util.
 	StepWiseLegacyClusterer::StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list,
 																				utility::vector1< Size > const & moving_res_list,
-																				StepWiseModelerOptionsCOP options,
+																				modeler_options::StepWiseModelerOptionsCOP options,
 																				bool const force_align ):
 		input_pose_list_( pose_list )
 	{

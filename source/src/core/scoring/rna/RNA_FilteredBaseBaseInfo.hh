@@ -156,8 +156,8 @@ private:
 	bool rna_verbose_;
 };
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

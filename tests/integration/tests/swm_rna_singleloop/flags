@@ -7,7 +7,6 @@
 -nstruct 1
 -cycles 3
 -score:rna_torsion_potential RNA11_based_new
--geom_sol_correct_acceptor_base
 -num_random_samples 100
 -chemical::enlarge_H_lj
 

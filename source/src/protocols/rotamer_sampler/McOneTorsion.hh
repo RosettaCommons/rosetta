@@ -94,7 +94,7 @@ private:
 	core::id::TorsionID torsion_id_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

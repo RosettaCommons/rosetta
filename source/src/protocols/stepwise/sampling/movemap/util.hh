@@ -25,6 +25,7 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace movemap {
 
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
@@ -61,6 +62,7 @@ check_move_map_against_working_parameters( core::pose::Pose const & pose ,
 
 
 
+} //movemap
 } //sampling
 } //stepwise
 } //protocols

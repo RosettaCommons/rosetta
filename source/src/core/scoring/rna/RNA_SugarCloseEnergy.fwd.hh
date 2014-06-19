@@ -28,9 +28,9 @@ class RNA_SugarCloseEnergy;
 typedef utility::pointer::owning_ptr< RNA_SugarCloseEnergy > RNA_SugarCloseEnergyOP;
 typedef utility::pointer::owning_ptr< RNA_SugarCloseEnergy const > RNA_SugarCloseEnergyCOP;
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 
 
 #endif

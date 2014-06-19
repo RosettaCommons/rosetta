@@ -58,7 +58,7 @@ static basic::Tracer tr( "core.scoring.rna.RNA_LowResolutionPotential" );
 
 namespace core {
 namespace scoring {
-namespace rna{
+namespace rna {
 
 core::Real RNA_LowResolutionPotential::dummy_deriv = 0.0;
 
@@ -2377,6 +2377,6 @@ RNA_LowResolutionPotential::check_forming_base_pair(
 
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

@@ -69,5 +69,5 @@ void McComb::set_uniform_sampling( bool const setting ) {
 			rotamer_list_[i]->set_uniform_sampling( setting );
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
+} //rotamer_sampler
+} //protocols

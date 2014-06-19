@@ -33,7 +33,7 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace sampling {
-namespace protein {
+namespace modeler_options {
 
 	// multiple inheritance -- bad form -- but will replace with composition later, perhaps.
 	class StepWiseProteinModelerOptions: public virtual basic::resource_manager::ResourceOptions {
@@ -195,7 +195,7 @@ namespace protein {
 
 	};
 
-} //protein
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

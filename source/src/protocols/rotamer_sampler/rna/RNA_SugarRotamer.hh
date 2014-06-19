@@ -95,8 +95,8 @@ private:
 	bool south_pucker_dofs_have_not_been_initialized_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

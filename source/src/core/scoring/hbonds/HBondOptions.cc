@@ -55,7 +55,6 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
 	params_database_tag_(params_db_tag),
-	use_incorrect_deriv_( true ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
 	sp2_outer_width_( 0.357 ),
@@ -84,7 +83,6 @@ HBondOptions::HBondOptions():
 	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
 	params_database_tag_("sp2_elec_params"),
-	use_incorrect_deriv_( false ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
 	sp2_outer_width_( 0.357 ),
@@ -114,7 +112,6 @@ void HBondOptions::initialize_from_options() {
 	}
 	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
-	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
@@ -164,7 +161,6 @@ HBondOptions::operator=( HBondOptions const & src )
 	bb_donor_acceptor_check_ = src.bb_donor_acceptor_check_;
 	decompose_bb_hb_into_pair_energies_ = src.decompose_bb_hb_into_pair_energies_;
 	params_database_tag_ = src.params_database_tag_;
-	use_incorrect_deriv_ = src.use_incorrect_deriv_;
 	use_sp2_chi_penalty_ = src.use_sp2_chi_penalty_;
 	sp2_BAH180_rise_ = src.sp2_BAH180_rise_;
 	sp2_outer_width_ = src.sp2_outer_width_;
@@ -232,9 +228,6 @@ HBondOptions::parse_my_tag(
 	}
 	if( tag->hasOption( "hbonds:params_database_tag" )) {
 		params_database_tag( tag->getOption<std::string>( "hbonds:params_database_tag" ) );
-	}
-	if( tag->hasOption( "hbonds:use_incorrect_deriv" )) {
-		use_incorrect_deriv( tag->getOption<bool>( "hbonds:use_incorrect_deriv" ) );
 	}
 	if( tag->hasOption( "hbonds:use_sp2_chi_penalty" )) {
 		use_sp2_chi_penalty( tag->getOption<bool>( "hbonds:use_sp2_chi_penalty" ) );
@@ -402,19 +395,6 @@ HBondOptions::Mbhbond( bool const setting )
 }
 
 ///
-bool
-HBondOptions::use_incorrect_deriv() const
-{
-	return use_incorrect_deriv_;
-}
-
-///
-void
-HBondOptions::use_incorrect_deriv( bool const setting )
-{
-	use_incorrect_deriv_ = setting;
-}
-
 bool HBondOptions::use_sp2_chi_penalty() const
 {
 	return use_sp2_chi_penalty_;
@@ -467,7 +447,6 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.bb_donor_acceptor_check_ == b.bb_donor_acceptor_check_ ) &&
 		( a.decompose_bb_hb_into_pair_energies_ == b.decompose_bb_hb_into_pair_energies_ ) &&
 		( a.params_database_tag_ == b.params_database_tag_ ) &&
-		( a.use_incorrect_deriv_ == b.use_incorrect_deriv_ ) &&
 		( a.use_sp2_chi_penalty_ == b.use_sp2_chi_penalty_ ) &&
 		( a.sp2_BAH180_rise_ == b.sp2_BAH180_rise_ ) &&
 		( a.sp2_outer_width_ == b.sp2_outer_width_ ) &&
@@ -511,8 +490,6 @@ HBondOptions::show( std::ostream & out ) const
 		<<( decompose_bb_hb_into_pair_energies_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: params_database_tag_: "
 		<< params_database_tag_ << std::endl;
-	out <<"HBondOptions::show: use_incorrect_deriv_: "
-		<<( use_incorrect_deriv_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: use_sp2_chi_penalty_: "
 		<<( use_sp2_chi_penalty_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: sp2_BAH180_rise_: "

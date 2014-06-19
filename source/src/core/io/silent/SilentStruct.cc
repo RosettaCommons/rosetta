@@ -49,6 +49,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -110,6 +111,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
 	scoreline_prefix_ = src.scoreline_prefix_;
 	residue_numbers_ = src.residue_numbers_;
 	chains_ = src.chains_;
+	full_sequence_ = src.full_sequence_;
 	return *this;
 }
 
@@ -166,7 +168,7 @@ void SilentStruct::extract_writeable_cacheable_data( core::pose::Pose const& pos
       for( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin();
            set_it != dataset.end(); set_it++ ){
         std::stringstream ss;
-        
+
         ss << "CACHEABLE_DATA ";
         (*set_it)->write( ss );
 
@@ -860,6 +862,7 @@ std::string SilentStruct::scoreline_prefix() const {
 
 std::string
 SilentStruct::one_letter_sequence() const {
+	if ( full_sequence_.size() > 0 ) return full_sequence_;
 	return sequence().one_letter_sequence();
 }
 /*
@@ -1031,6 +1034,9 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
 	set_residue_numbers( residue_numbers );
 	set_chains( chains );
+
+	using namespace core::pose::full_model_info;
+	if ( full_model_info_defined( pose ) ) full_sequence_ = const_full_model_info( pose ).full_sequence();
 
 }
 

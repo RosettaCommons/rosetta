@@ -24,7 +24,7 @@
 //Req'd on WIN32
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR( "protocols.stepwise.sampling.StepWiseModelerOptions" );
+static basic::Tracer TR( "protocols.stepwise.sampling.modeler_options.StepWiseModelerOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -32,6 +32,7 @@ using namespace basic::options::OptionKeys;
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace modeler_options {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -117,6 +118,7 @@ namespace sampling {
 		return sampler_options;
 	}
 
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

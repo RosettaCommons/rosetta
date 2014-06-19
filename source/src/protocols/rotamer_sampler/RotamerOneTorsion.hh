@@ -75,7 +75,7 @@ private:
 
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

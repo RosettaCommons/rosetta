@@ -52,10 +52,10 @@ get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const
 
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 
 

@@ -680,9 +680,9 @@ namespace chemical_shift {
 
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 

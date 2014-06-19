@@ -278,7 +278,7 @@ namespace monte_carlo {
 		utility::vector1< Size > partition_res1, partition_res2;
 		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 
 		// first look at suites
 		for ( Size i = 1; i < pose.total_residue(); i++ ){
@@ -347,7 +347,7 @@ namespace monte_carlo {
 		utility::vector1< bool > partition_definition;
 		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 
 		// look at jumps.
 		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
@@ -499,7 +499,7 @@ namespace monte_carlo {
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
-		utility::vector1< Size > const chains_current = figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > const chains_current = figure_out_chain_numbers_from_full_model_info_const( pose );
 		utility::vector1< Size > const chains_full = get_chains_full( pose );
 		utility::vector1< Size > const current_unique_chains = get_unique_chains( pose );
 
@@ -536,7 +536,7 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	SWA_MoveSelector::get_unique_chains( pose::Pose const & pose ){
-		utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 		utility::vector1< Size > unique_chains;
 		for ( Size n = 1; n <= chains.size(); n++ ){
 			if ( !unique_chains.has_value( chains[n] ) ) unique_chains.push_back( chains[n] );

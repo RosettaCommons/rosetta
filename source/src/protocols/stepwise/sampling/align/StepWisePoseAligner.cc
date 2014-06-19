@@ -64,6 +64,10 @@ namespace stepwise {
 namespace sampling {
 namespace align {
 
+	// these are 'extra' heavy atoms in the n-1 or n+1 residue that can change when residue n moves.
+	utility::vector1< std::string > const extra_suite_atoms_upper = make_vector1( " P  ", " OP1", " OP2", " O5'", "XO3'" /*happens in phosphate pack*/ );
+	utility::vector1< std::string > const extra_suite_atoms_lower = make_vector1( " O  ", "YP  ","YOP2","YOP1","YO5'" );
+
 	//Constructor
 	StepWisePoseAligner::StepWisePoseAligner( pose::Pose const & reference_pose ):
 		reference_pose_( reference_pose ),
@@ -104,8 +108,15 @@ namespace align {
 		if ( superimpose_atom_id_map_.size() > 0  && check_align ) {
 			Real const check_alignment_tolerance_( 1.0e-3 );
 			superimpose_rmsd_ = rms_at_corresponding_atoms_no_super( pose, *reference_pose_local_, superimpose_atom_id_map_ );
+			if ( superimpose_rmsd_ > check_alignment_tolerance_ ){
+				pose.dump_pdb( "CHECK_POSE.pdb" );
+				reference_pose_local_->dump_pdb( "REFERENCE_POSE.pdb" );
+				output_atom_id_map( superimpose_atom_id_map_, pose, *reference_pose_local_ );
+				TR << "rmsd_res_in_pose_ " << rmsd_res_in_pose_ << std::endl;
+				TR << "superimpose_res_in_pose_ " << superimpose_res_in_pose_ << std::endl;
+				TR << "superimpose rmsd: " << superimpose_rmsd_ << "  is greater than " << check_alignment_tolerance_ << std::endl;
+			}
 			runtime_assert( superimpose_rmsd_ <= check_alignment_tolerance_ );
-
 		}
 
 		if ( calc_rms_atom_id_map_.size() > 0 ) {
@@ -121,8 +132,9 @@ namespace align {
 	StepWisePoseAligner::initialize( pose::Pose const & pose ){
 		update_reference_pose_local( pose );
 		get_rmsd_res_and_superimpose_res_in_pose( pose );
-		update_calc_rms_atom_id_map( pose );
 		update_superimpose_atom_id_map( pose );
+		update_calc_rms_atom_id_map( pose );
+		annotated_sequence_used_for_atom_id_maps_ = pose.annotated_sequence(); // used for a consistency check.
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -172,41 +184,46 @@ namespace align {
 	void
 	StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ){
 
-		using namespace core::chemical;
-
-		utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
-
 		// first need to slice up reference_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
-		std::string const full_sequence = full_model_info.full_sequence();
-
 		if ( res_list.size() == 0 ) return; // special case -- blank pose.
 
 		utility::vector1< Size > calc_rms_res;
-		skipped_res_.clear();
 		for ( Size i = 1; i <= rmsd_res_in_pose_.size(); i++ ){
 			Size const & n = rmsd_res_in_pose_[ i ];
 			//  introduced by Arvind. Perhaps not relevant anymore.
-			if ( skip_bulges_ && residue_is_bulged( pose, n ) && residue_is_bulged( *reference_pose_local_, res_list[ n ] ) ) {
-				skipped_res_.push_back( n );	continue;
-			}
-			if ( user_defined_calc_rms_res_.size() > 0 && !user_defined_calc_rms_res_.has_value( n ) ){
-			 	skipped_res_.push_back( n ); continue;
-			}
+			if ( skip_bulges_ && residue_is_bulged( pose, n ) && residue_is_bulged( *reference_pose_local_, res_list[ n ] ) ) continue;
+			if ( user_defined_calc_rms_res_.size() > 0 && !user_defined_calc_rms_res_.has_value( n ) ) continue;
 			calc_rms_res.push_back( n );
 		}
 
-		// super special case.
+		// super special case -- is this still a possibility?
 		if ( calc_rms_res.size() == 0 && pose.total_residue() == 1 ) calc_rms_res.push_back( 1 );
 
-		calc_rms_atom_id_map_.clear();
+		get_calc_rms_atom_id_map( calc_rms_atom_id_map_, pose, calc_rms_res );
+
+	}
+
+	///////////////////////////////////////////////////////
+	void
+	StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID > & calc_rms_atom_id_map,
+																								 core::pose::Pose const & pose,
+																								 utility::vector1 < Size > const & calc_rms_res ) const {
+
+		using namespace core::chemical;
+
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		utility::vector1< Size > const & res_list = full_model_info.res_list();
+		utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
+		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+
+		calc_rms_atom_id_map.clear();
 		for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
 			Size const n = calc_rms_res[ k ];
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
-				add_to_atom_id_map_after_checks( calc_rms_atom_id_map_,
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
 																				 pose.residue_type( n ).atom_name( q ),
 																				 n, res_list_in_reference[ n ],
 																				 pose, *reference_pose_local_ );
@@ -235,57 +252,56 @@ namespace align {
 			}
 		}
 
-		utility::vector1< std::string > const extra_suite_atoms_upper = make_vector1( " P  ", " OP1", " OP2", " O5'" );
-		utility::vector1< std::string > const extra_suite_atoms_lower = make_vector1( " O  " );
 		for ( Size k = 1; k <= calc_rms_suites.size(); k++ ){
 			Size const n = calc_rms_suites[ k ];
 			for ( Size q = 1; q <= extra_suite_atoms_upper.size(); q++ ){
-				add_to_atom_id_map_after_checks( calc_rms_atom_id_map_, extra_suite_atoms_upper[ q ],
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms_upper[ q ],
 																				 n+1, res_list_in_reference[ n+1 ],
 																				 pose, *reference_pose_local_ );
 			}
 			for ( Size q = 1; q <= extra_suite_atoms_lower.size(); q++ ){
-				add_to_atom_id_map_after_checks( calc_rms_atom_id_map_, extra_suite_atoms_lower[ q ],
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms_lower[ q ],
 																				 n, res_list_in_reference[ n ],
 																				 pose, *reference_pose_local_ );
 			}
 		}
 
-		annotated_sequence_used_for_atom_id_maps_ = pose.annotated_sequence();
-
-		// output_atom_id_map( calc_rms_atom_id_map_ );
+		// output_atom_id_map( calc_rms_atom_id_map );
 	}
 
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// define superposition atoms. Should be over atoms in any fixed domains. This should be
-	// the 'inverse' of calc_rms atoms.
+	// the 'inverse' of complete_moving_atoms (of which calc_rms atoms is a subset).
 	void
 	StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 		using namespace core::id;
 		utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 
+		// everything that can move.
+		get_calc_rms_atom_id_map( complete_moving_atom_id_map_, pose, rmsd_res_in_pose_ );
+
 		superimpose_atom_id_map_.clear();
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
-			if ( skipped_res_.has_value( n ) ) continue;
 			if ( !superimpose_res_in_pose_.has_value( n ) ) continue;
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
-				if ( calc_rms_atom_id_map_.find( AtomID( q, n ) ) == calc_rms_atom_id_map_.end() ){
+				if ( complete_moving_atom_id_map_.find( AtomID( q, n ) ) == complete_moving_atom_id_map_.end() ){
+					std::string const atom_name = pose.residue_type( n ).atom_name( q );
+					if ( extra_suite_atoms_upper.has_value( atom_name ) ) continue; // never use phosphates to superimpose
+					if ( extra_suite_atoms_lower.has_value( atom_name ) ) continue; // never use carbonyl oxygens to superimpose
 					add_to_atom_id_map_after_checks( superimpose_atom_id_map_,
-													pose.residue_type( n ).atom_name( q ),
-													n, res_list_in_reference[n],
-													pose, *reference_pose_local_ );
+																					 atom_name,
+																					 n, res_list_in_reference[n],
+																					 pose, *reference_pose_local_ );
 				}
 			}
 		}
 
-		// What if there weren't any fixed atoms? superimpose over everything.
-		// CHANGE THIS? how about superposition over just N-CA-C triad (protein) or nucleobase (RNA), which should not change.
+		// What if there weren't any fixed atoms?
+		// How about superposition over just N-CA-C triad (protein) or nucleobase (RNA), which should not change.
 		if ( superimpose_atom_id_map_.size() == 0 ) {
 			superimpose_atom_id_map_ = get_root_triad_atom_id_map( pose );
 		}
-
-		//		output_atom_id_map( superimpose_atom_id_map_ );
   }
 
 
@@ -325,7 +341,6 @@ namespace align {
 		if ( user_defined_calc_rms_res_.size() > 0 ){
 			for ( Size n = 1; n <= user_defined_calc_rms_res_.size(); n++ )  domain_map[ user_defined_calc_rms_res_[n] ] = 0;
 		}
-		//		TR << "DOMAIN MAP " << domain_map << std::endl;
 
 		// figure out 'primary' domain number. Smallest number that is not zero.
 		// must be drawn from root_partition (if that partition is defined)
@@ -336,13 +351,18 @@ namespace align {
 			Size const d = domain_map[ n ];
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
 		}
-		//		TR << "PRIMARY DOMAIN " << d_primary << std::endl;
+		// if ( d_primary == 0 ){
+		// 	TR << "DOMAIN MAP " << domain_map << std::endl;
+		// 	TR << "USER_DEFINED_CALC_RMS_RES " << user_defined_calc_rms_res_ << std::endl;
+		// 	TR << "ROOT PARTITION RES " << root_partition_res_ << std::endl;
+		// 	TR << "PRIMARY DOMAIN " << d_primary << std::endl;
+		// }
 
 		rmsd_res_in_pose_.clear();
 		superimpose_res_in_pose_.clear();
 		if ( d_primary == 0 ){ // superimpose on everything.
 			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-				if ( !root_partition_res_.has_value( n ) )	rmsd_res_in_pose_.push_back( n );
+				rmsd_res_in_pose_.push_back( n );
 				if ( root_partition_res_.size() == 0 || root_partition_res_.has_value( n ) )	superimpose_res_in_pose_.push_back( n );
 			}
 		} else { // superimpose on primary domain, calculate rmsd over rest.
@@ -446,11 +466,19 @@ namespace align {
 		if ( pose1.residue_type( n1 ).is_protein() && ( idx1 >= pose1.residue_type( n1 ).first_sidechain_atom() ) ) return;
 		if ( pose2.residue_type( n2 ).is_protein() && ( idx2 >= pose2.residue_type( n2 ).first_sidechain_atom() ) ) return;
 
-		// no terminal phosphates...
-		if ( pose1.residue_type( n1 ).is_RNA() && !pose1.residue_type( n1 ).has_variant_type( "CUTPOINT_UPPER" )
-				 && ( n1 == 1 || pose1.fold_tree().is_cutpoint( n1 - 1 ) ) ) return;
-		if ( pose2.residue_type( n2 ).is_RNA() && !pose2.residue_type( n2 ).has_variant_type( "CUTPOINT_UPPER" )
-				 && ( n2 == 1 || pose2.fold_tree().is_cutpoint( n2 - 1 ) ) ) return;
+		// no terminal phosphates... (or more generally connection atoms)
+		if ( extra_suite_atoms_upper.has_value( atom_name ) &&
+				 !pose1.residue_type( n1 ).has_variant_type( "CUTPOINT_UPPER" ) &&
+				 ( n1 == 1 || pose1.fold_tree().is_cutpoint( n1 - 1 ) ) ) return;
+		if ( extra_suite_atoms_upper.has_value( atom_name ) &&
+				 !pose2.residue_type( n2 ).has_variant_type( "CUTPOINT_UPPER" ) &&
+				 ( n2 == 1 || pose2.fold_tree().is_cutpoint( n2 - 1 ) ) ) return;
+		if ( extra_suite_atoms_lower.has_value( atom_name ) &&
+				 !pose1.residue_type( n1 ).has_variant_type( "CUTPOINT_LOWER" ) &&
+				 ( n1 == pose1.total_residue() || pose1.fold_tree().is_cutpoint( n1 ) ) ) return;
+		if ( extra_suite_atoms_lower.has_value( atom_name ) &&
+				 !pose2.residue_type( n2 ).has_variant_type( "CUTPOINT_LOWER" ) &&
+				 ( n2 == pose2.total_residue() || pose2.fold_tree().is_cutpoint( n2 ) ) ) return;
 
 		atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
 

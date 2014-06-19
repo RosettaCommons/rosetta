@@ -35,7 +35,7 @@
 #include <protocols/stepwise/sampling/rna/sugar/util.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
-#include <protocols/stepwise/screener/legacy/RNA_AtrRepScreener.hh>
+#include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
 #include <protocols/stepwise/screener/BaseBinMapUpdater.hh>
 #include <protocols/stepwise/screener/BaseCentroidScreener.hh>
 #include <protocols/stepwise/screener/BulgeApplier.hh>
@@ -50,7 +50,7 @@
 #include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
 #include <protocols/stepwise/screener/PoseSelectionScreener.hh>
 #include <protocols/stepwise/screener/ProteinCCD_ClosureScreener.hh>
-#include <protocols/stepwise/screener/legacy/ProteinAtrRepScreener.hh>
+#include <protocols/stepwise/legacy/screener/ProteinAtrRepScreener.hh>
 #include <protocols/stepwise/screener/ResidueContactScreener.hh>
 #include <protocols/stepwise/screener/SampleApplier.hh>
 #include <protocols/stepwise/screener/Scorer.hh>
@@ -130,7 +130,7 @@ using namespace protocols::stepwise::sampling::rna;
 //
 // As in other stepwise code,
 //   StepWiseWorkingParameters holds information about this particular modeling job.
-//   StepWiseModelerOptions holds information that is const across all of stepwise monte carlo.
+//   modeler_options::StepWiseModelerOptions holds information that is const across all of stepwise monte carlo.
 // And, there are some 'useful info' varaibles derived below that are inferred from pose and above information -- use of KIC, etc. --
 //   they are set at the beginning and should not change again (perhaps should store them together as a COP).
 //
@@ -742,7 +742,7 @@ StepWiseConnectionSampler::set_pose_list( utility::vector1< pose::PoseOP > &	pos
 
 //////////////////////////////////////////////////////////////////
 void
-StepWiseConnectionSampler::set_options( StepWiseModelerOptionsCOP options ){
+StepWiseConnectionSampler::set_options( modeler_options::StepWiseModelerOptionsCOP options ){
 	options_ = options;
 }
 

@@ -335,6 +335,6 @@ RNA_KinematicCloser::apply( Pose & pose, Size const id ) {
 	}
 }
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

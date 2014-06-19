@@ -64,32 +64,19 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
-  
-  /// attempt to precalculate backbone/backbone energies in advance 
+
+  /// attempt to precalculate backbone/backbone energies in advance
   virtual
 	void
 	setup_for_packing(
     pose::Pose & pose,
     utility::vector1< bool > const &,
     utility::vector1< bool > const & ) const;
-	
-//	virtual
-//	void
-//	setup_for_minimizing(
-//		pose::Pose & pose,
-//		ScoreFunction const & sfxn,
-//		kinematics::MinimizerMapBase const & min_map
-//	) const;
-	
-//	virtual
-//	void
-//	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn
-//	) const;
-	
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
-	
+
 	virtual
 	bool
 	defines_score_for_residue_pair(
@@ -106,7 +93,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &
 	) const;
-	
+
 	virtual
 	etable::count_pair::CountPairFunctionCOP
 	get_count_pair_function(
@@ -138,7 +125,7 @@ public:
 		ResSingleMinimizationData const &,
 		ResPairMinimizationData & pair_data
 	) const;
-	
+
 	virtual
 	void
 	eval_residue_pair_derivatives(
@@ -152,7 +139,7 @@ public:
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
-	
+
 	virtual
 	void
 	eval_intrares_derivatives(
@@ -162,11 +149,11 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
 	) const;
-	
+
 	virtual
 	bool
 	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const;
-	
+
 	virtual
 	void
 	setup_for_minimizing_for_residue(
@@ -187,7 +174,7 @@ public:
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
-	
+
 	/// This evaluates everything for now,
 	/// but eventually may want to split this
 	/// based on backbone/backbone vs. others,
@@ -201,7 +188,7 @@ public:
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
-	
+
 	virtual
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
@@ -216,9 +203,9 @@ public:
 		 Vector & F2
 	) const;
 	*/
-  
-  
-  
+
+
+
   void
   finalize_total_energy(
     pose::Pose & pose,
@@ -264,12 +251,12 @@ public:
 	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;
-  
+
   void
   precalculate_bb_bb_energy_for_design(
     pose::Pose const &
   ) const;
-  
+
 
 private:
 
@@ -281,9 +268,9 @@ private:
   GeometricSolEnergyEvaluatorOP evaluator_;
 
   mutable Real precalculated_bb_bb_energy_;
-	
+
   mutable bool using_extended_method_;
-  
+
 
 };
 

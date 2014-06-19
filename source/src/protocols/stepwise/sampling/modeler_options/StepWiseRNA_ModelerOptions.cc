@@ -32,12 +32,12 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "protocols.stepwise.sampling.rna.StepWiseRNA_ModelerOptions" );
+static basic::Tracer TR( "protocols.stepwise.sampling.modeler_options.StepWiseRNA_ModelerOptions" );
 
 namespace protocols {
 namespace stepwise {
 namespace sampling {
-namespace rna {
+namespace modeler_options {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -204,7 +204,7 @@ namespace rna {
 	}
 
 
-} //rna
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

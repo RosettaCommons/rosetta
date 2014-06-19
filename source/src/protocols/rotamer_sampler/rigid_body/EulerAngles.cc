@@ -109,6 +109,6 @@ namespace rigid_body {
 	}
 
 
-} //rna
-} //swa
+} //rigid_body
+} //rotamer_sampler
 } //protocols

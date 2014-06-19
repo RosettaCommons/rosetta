@@ -48,5 +48,5 @@ void RotamerOneTorsion::apply( core::pose::Pose & pose, Size const i ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 
-}
-}
+} //rotamer_sampler
+} //protocols

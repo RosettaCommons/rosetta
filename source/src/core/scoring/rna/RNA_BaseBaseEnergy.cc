@@ -160,6 +160,6 @@ RNA_BaseBaseEnergy::atomic_interaction_cutoff() const
 	return 0.0; /// Uh, I don't know.
 }
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

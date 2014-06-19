@@ -68,11 +68,15 @@ namespace packer {
 		void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
 		bool allow_virtual_side_chains() const{ return allow_virtual_side_chains_; }
 
+		void set_allow_virtual_o2prime_hydrogens( bool const & setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
+		bool allow_virtual_o2prime_hydrogens() const{ return allow_virtual_o2prime_hydrogens_; }
+
 		void set_pack_all_side_chains( bool const & setting ){ pack_all_side_chains_ = setting; }
 		bool pack_all_side_chains() const{ return pack_all_side_chains_; }
 
 		void set_pack_o2prime_hydrogens( bool const & setting ){ pack_o2prime_hydrogens_ = setting; }
 		bool pack_o2prime_hydrogens() const { return pack_o2prime_hydrogens_; }
+
 		bool working_pack_res_was_inputted() const { return working_pack_res_was_inputted_; }
 
 		void set_working_pack_res( utility::vector1< Size > const & setting ) { working_pack_res_ = setting; }
@@ -95,6 +99,7 @@ namespace packer {
 		scoring::ScoreFunctionCOP scorefxn_;
 		bool use_packer_instead_of_rotamer_trials_;
 		bool allow_virtual_side_chains_;
+		bool allow_virtual_o2prime_hydrogens_;
 		bool pack_o2prime_hydrogens_;
 		pack::task::PackerTaskOP pack_task_;
 		pose::PoseOP pose_init_;

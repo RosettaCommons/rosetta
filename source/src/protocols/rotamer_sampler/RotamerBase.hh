@@ -88,7 +88,7 @@ private:
 	bool is_init_, random_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

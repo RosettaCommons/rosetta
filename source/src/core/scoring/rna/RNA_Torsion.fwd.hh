@@ -16,10 +16,12 @@
 
 namespace core {
 namespace scoring {
+namespace rna {
 
 class RNA_TorsionPotential;
 
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

@@ -24,8 +24,8 @@ namespace rna {
 class RNA_SugarRotamer;
 typedef utility::pointer::owning_ptr< RNA_SugarRotamer > RNA_SugarRotamerOP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

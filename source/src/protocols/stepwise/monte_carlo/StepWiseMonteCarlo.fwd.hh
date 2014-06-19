@@ -21,13 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
 	
 	class StepWiseMonteCarlo;
 	typedef utility::pointer::owning_ptr< StepWiseMonteCarlo > StepWiseMonteCarloOP;
 	typedef utility::pointer::owning_ptr< StepWiseMonteCarlo const > StepWiseMonteCarloCOP;
 	
-} //rna
 } //monte_carlo
 } //stepwise
 } //protocols

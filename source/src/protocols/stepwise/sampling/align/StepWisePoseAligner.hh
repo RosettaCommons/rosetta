@@ -88,6 +88,11 @@ namespace align {
 		update_calc_rms_atom_id_map( pose::Pose const & pose );
 
 		void
+		get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID > & calc_rms_atom_id_map,
+															core::pose::Pose const & pose,
+															utility::vector1 < Size > const & calc_rms_res ) const;
+
+		void
 		update_superimpose_atom_id_map( pose::Pose const & pose );
 
 		Size
@@ -134,8 +139,8 @@ namespace align {
 		utility::vector1< Size > rmsd_res_in_pose_;
 		utility::vector1< Size > superimpose_res_in_pose_;
 		std::map< id::AtomID, id::AtomID > calc_rms_atom_id_map_;
+		std::map< id::AtomID, id::AtomID > complete_moving_atom_id_map_;
 		std::map< id::AtomID, id::AtomID > superimpose_atom_id_map_;
-		utility::vector1< Size > skipped_res_;
 		std::string annotated_sequence_used_for_atom_id_maps_;
 
 		Real rmsd_;

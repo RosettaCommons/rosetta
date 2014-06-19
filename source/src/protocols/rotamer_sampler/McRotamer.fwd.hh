@@ -22,6 +22,6 @@ namespace rotamer_sampler {
 class McRotamer;
 typedef utility::pointer::owning_ptr< McRotamer > McRotamerOP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 #endif

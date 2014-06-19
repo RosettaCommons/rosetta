@@ -41,5 +41,5 @@ RotamerOneValue::RotamerOneValue(
 
 RotamerOneValue::~RotamerOneValue(){}
 
-}
-}
+} //rotamer_sampler
+} //protocols

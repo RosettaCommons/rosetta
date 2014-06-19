@@ -63,12 +63,13 @@ using core::Real;
 // files.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.protein.StepWiseProteinKIC_LoopBridger" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.protein.loop_close.StepWiseProteinKIC_LoopBridger" ) ;
 
 namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
+namespace loop_close {
 
 
 
@@ -491,6 +492,7 @@ return "StepWiseProteinKIC_LoopBridger";
 
 
 
+} //loop_close
 } //protein
 } //sampling
 } //stepwise

@@ -395,6 +395,6 @@ RNA_DataBackboneEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

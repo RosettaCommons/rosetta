@@ -25,8 +25,8 @@ class RNA_TorsionPotential;
 typedef  utility::pointer::owning_ptr< RNA_TorsionPotential > RNA_TorsionPotentialOP;
 typedef  utility::pointer::owning_ptr< RNA_TorsionPotential const > RNA_TorsionPotentialCOP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

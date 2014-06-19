@@ -27,11 +27,10 @@
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
 #include <protocols/stepwise/sampling/StepWiseModeler.fwd.hh>
 
-
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +119,7 @@ private:
 	bool start_added_residue_in_aform_;
 	Size internal_cycles_;
 
-	RNA_TorsionMoverOP rna_torsion_mover_;
+	rna::RNA_TorsionMoverOP rna_torsion_mover_;
 	core::Real sample_range_small_;
 	core::Real sample_range_large_;
 	core::Real kT_;
@@ -133,7 +132,7 @@ private:
 
 };
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

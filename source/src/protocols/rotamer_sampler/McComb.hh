@@ -68,8 +68,8 @@ private:
 	utility::vector1<McRotamerOP> rotamer_list_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif
 

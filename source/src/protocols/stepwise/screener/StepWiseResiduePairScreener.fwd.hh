@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< StepWiseResiduePairScreener > StepWiseResiduePairScreenerOP;
 	typedef utility::pointer::owning_ptr< StepWiseResiduePairScreener const > StepWiseResiduePairScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

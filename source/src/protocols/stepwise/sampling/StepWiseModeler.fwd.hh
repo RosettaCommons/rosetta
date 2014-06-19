@@ -26,8 +26,8 @@ namespace sampling {
 	typedef utility::pointer::owning_ptr< StepWiseModeler > StepWiseModelerOP;
 	typedef utility::pointer::owning_ptr< StepWiseModeler const > StepWiseModelerCOP;
 	
-} //sampling 
-} //stepwise 
-} //protocols 
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

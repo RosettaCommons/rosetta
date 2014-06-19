@@ -338,6 +338,7 @@ namespace silent {
 		Size nres_;
 		std::string decoy_tag_;
 		core::sequence::AnnotatedSequence sequence_;
+		std::string full_sequence_; // only filled in some cases.
 
 		std::map< std::string, std::string > parent_remarks_map_; //Similar to silent_comments_ but this doesn't get outputted back to the silent_file.
 

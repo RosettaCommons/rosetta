@@ -112,8 +112,8 @@ private:
 	utility::vector1<PuckerState> pucker_states_lower_, pucker_states_upper_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

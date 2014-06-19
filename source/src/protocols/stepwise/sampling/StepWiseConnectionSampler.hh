@@ -96,7 +96,7 @@ namespace sampling {
 		add_residue_alternative_set( rotamer_sampler::copy_dofs::ResidueAlternativeSet const & residue_alternative_set );
 
 		void
-		set_options( StepWiseModelerOptionsCOP options );
+		set_options( modeler_options::StepWiseModelerOptionsCOP options );
 
 		void
 		set_input_streams( utility::vector1< protein::InputStreamWithResidueInfoOP > const & input_streams ){ input_streams_ = input_streams; }
@@ -185,7 +185,7 @@ namespace sampling {
 		core::Size const moving_res_;
 		utility::vector1< core::Size > const moving_partition_res_;
 		core::scoring::ScoreFunctionCOP scorefxn_;
-		StepWiseModelerOptionsCOP options_;
+		modeler_options::StepWiseModelerOptionsCOP options_;
 
 		utility::vector1< core::pose::PoseOP > pose_list_;
 

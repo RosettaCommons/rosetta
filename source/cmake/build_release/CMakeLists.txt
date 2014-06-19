@@ -43,7 +43,7 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -s")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions")
 
 ## Inhibit non-error warning messages to keep ninja output clean.
 ## This is now turned off as it also inhibits the warnings as errors settings,

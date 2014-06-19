@@ -96,10 +96,31 @@ sources = {
     "protocols/stepwise/full_model_info/": [
 	"FullModelInfoSetupFromCommandLine",
     ],
-    "protocols/stepwise/sampling/legacy/": [
+    "protocols/stepwise/legacy/sampling": [
 	#"StepWiseLegacyMinimizer",
 	#"StepWiseLegacyConnectionSampler",
-	"RigidBodySampler",
+	#"RigidBodySampler",
+    ],
+    "protocols/stepwise/legacy/screener": [
+	"ProteinAtrRepScreener",
+	"RNA_AtrRepScreener",
+	"SimplePoseSelection",
+	"SimpleRMSD_Screener",
+    ],
+    "protocols/stepwise/legacy/sampling/protein": [
+	"StepWiseProteinMinimizer",
+	"StepWiseProteinPoseSetup",
+	#"StepWiseProteinConnectionSampler",
+    ],
+    "protocols/stepwise/legacy/sampling/rna/": [
+	"RNA_AnalyticLoopCloser",
+	#"StepWiseRNA_Minimizer",
+	"StepWiseRNA_WorkingParametersSetup",
+	"StepWiseRNA_PoseSetup",
+	"StepWiseRNA_PoseSetupFromCommandLine",
+    ],
+    "protocols/stepwise/legacy/sampling/rna/connection/": [
+	#"StepWiseRNA_ConnectionSampler",
     ],
     "protocols/stepwise/screener": [
 	"AnchorSugarScreener",
@@ -133,12 +154,6 @@ sources = {
 	"VDW_BinScreener",
 	"util",
     ],
-    "protocols/stepwise/screener/legacy": [
-	"ProteinAtrRepScreener",
-	"RNA_AtrRepScreener",
-	"SimplePoseSelection",
-	"SimpleRMSD_Screener",
-    ],
     "protocols/stepwise/sampling/": [ # move this into general?
 	"StepWiseModeler",
 	"StepWiseConnectionSampler",
@@ -149,7 +164,7 @@ sources = {
     "protocols/stepwise/sampling/align": [
 	"StepWiseClusterer",
 	"StepWiseLegacyClusterer",
-	"StepWiseLegacyClustererSilentBased", # legacy
+	"StepWiseLegacyClustererSilentBased",
 	"StepWisePoseAligner",
 	"util",
     ],
@@ -176,11 +191,6 @@ sources = {
     ],
     "protocols/stepwise/sampling/protein/checker": [
 	"ProteinAtrRepChecker",
-    ],
-    "protocols/stepwise/sampling/protein/legacy": [
-	"StepWiseProteinMinimizer",
-	"StepWiseProteinPoseSetup",
-	#"StepWiseProteinConnectionSampler",
     ],
     "protocols/stepwise/sampling/protein/loop_close": [
 	"StepWiseProteinCCD_Closer",
@@ -226,16 +236,6 @@ sources = {
 	"RNA_ChainClosureChecker",
 	"RNA_BaseCentroidChecker",
 	"RNA_VDW_BinChecker",
-    ],
-    "protocols/stepwise/sampling/rna/legacy/": [
-	"RNA_AnalyticLoopCloser",
-	#"StepWiseRNA_Minimizer",
-	"StepWiseRNA_WorkingParametersSetup",
-	"StepWiseRNA_PoseSetup",
-	"StepWiseRNA_PoseSetupFromCommandLine",
-    ],
-    "protocols/stepwise/sampling/rna/legacy/connection/": [
-	#"StepWiseRNA_ConnectionSampler",
     ],
     "protocols/stepwise/sampling/rna/sugar/": [
 	"StepWiseRNA_VirtualSugarJustInTimeInstantiator",

@@ -159,6 +159,6 @@ void  RNA_McSuite::clear_rotamer() {
 	McComb::clear_rotamer();
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

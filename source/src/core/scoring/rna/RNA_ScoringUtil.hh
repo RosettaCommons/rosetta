@@ -19,7 +19,7 @@
 
 namespace core {
 namespace scoring {
-namespace rna{
+namespace rna {
 
 void
 get_fade_correction(
@@ -30,8 +30,8 @@ get_fade_correction(
 										Real & fade_value,
 										Real & fade_deriv );
 
-} //ns rna
-} //ns scoring
-} //ns core
+} //rna
+} //scoring
+} //core
 
 #endif

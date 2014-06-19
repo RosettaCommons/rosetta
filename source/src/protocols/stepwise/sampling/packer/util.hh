@@ -31,7 +31,7 @@ namespace packer {
 	get_packer(
 		 core::scoring::ScoreFunctionCOP pack_scorefxn,
 		 utility::vector1< core::Size > const & moving_res_list,
-		 protocols::stepwise::sampling::StepWiseModelerOptionsCOP options );
+		 protocols::stepwise::sampling::modeler_options::StepWiseModelerOptionsCOP options );
 
 	utility::vector1< core::Size >
 	figure_out_working_interface_res( core::pose::Pose const & pose,

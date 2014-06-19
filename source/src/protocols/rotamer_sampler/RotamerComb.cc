@@ -98,5 +98,5 @@ void RotamerComb::set_random( bool const setting ) {
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
+} //rotamer_sampler
+} //protocols

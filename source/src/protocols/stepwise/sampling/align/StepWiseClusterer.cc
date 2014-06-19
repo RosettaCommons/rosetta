@@ -64,7 +64,7 @@ namespace align {
 	{
 	}
 
-  StepWiseClusterer::StepWiseClusterer( StepWiseModelerOptionsCOP options ):
+  StepWiseClusterer::StepWiseClusterer( modeler_options::StepWiseModelerOptionsCOP options ):
 		max_decoys_( options->sampler_num_pose_kept() ),
 		rmsd_( 0.0 ),
 		cluster_rmsd_( options->cluster_rmsd() ),

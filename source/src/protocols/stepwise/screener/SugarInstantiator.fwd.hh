@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< SugarInstantiator > SugarInstantiatorOP;
 	typedef utility::pointer::owning_ptr< SugarInstantiator const > SugarInstantiatorCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

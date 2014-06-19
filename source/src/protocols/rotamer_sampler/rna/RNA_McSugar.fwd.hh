@@ -20,14 +20,14 @@
 
 namespace protocols {
 namespace rotamer_sampler {
-namespace	rna {
+namespace rna {
 
 class RNA_McSugar;
 typedef utility::pointer::owning_ptr< RNA_McSugar > RNA_McSugarOP;
 typedef utility::pointer::access_ptr< RNA_McSugar > RNA_McSugarAP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

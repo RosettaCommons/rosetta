@@ -43,11 +43,14 @@ namespace full_model_info {
 	void
 	update_pdb_info_from_full_model_info( core::pose::Pose & pose );
 
-	utility::vector1< Size >
-	figure_out_chains_from_full_model_info( pose::Pose & pose );
+	utility::vector1< char >
+	figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose );
 
 	utility::vector1< Size >
-	figure_out_chains_from_full_model_info_const( pose::Pose const & pose );
+	figure_out_chain_numbers_from_full_model_info( pose::Pose & pose );
+
+	utility::vector1< Size >
+	figure_out_chain_numbers_from_full_model_info_const( pose::Pose const & pose );
 
 	utility::vector1< Size >
 	get_chains_full( pose::Pose const & pose );
@@ -102,6 +105,9 @@ namespace full_model_info {
 	utility::vector1< int >
 	get_res_num_from_pdb_info( pose::Pose const & pose );
 
+	utility::vector1< char >
+	get_chains_from_pdb_info( pose::Pose const & pose );
+
 	Size
 	get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose );
 
@@ -109,7 +115,7 @@ namespace full_model_info {
 	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose );
 
 
-}
-}
-}
+} //full_model_info
+} //pose
+} //core
 #endif

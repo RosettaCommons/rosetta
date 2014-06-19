@@ -492,7 +492,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 	instantiate_any_virtual_sugars( pose::Pose & pose,
 																	working_parameters::StepWiseWorkingParametersCOP working_parameters,
 																	core::scoring::ScoreFunctionCOP scorefxn,
-																	StepWiseModelerOptionsCOP options ) {
+																	modeler_options::StepWiseModelerOptionsCOP options ) {
 		Pose pose_save = pose;
 		StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator =
               new StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters );

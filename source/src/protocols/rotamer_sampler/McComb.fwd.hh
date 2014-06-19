@@ -23,7 +23,7 @@ namespace rotamer_sampler {
 class McComb;
 typedef utility::pointer::owning_ptr< McComb > McCombOP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

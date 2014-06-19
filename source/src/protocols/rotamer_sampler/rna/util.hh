@@ -30,7 +30,7 @@ namespace rna {
 
 	rotamer_sampler::RotamerBaseOP
 	setup_rotamer_sampler( core::pose::Pose const & pose,
-												 protocols::stepwise::sampling::StepWiseModelerOptionsCOP options,
+												 protocols::stepwise::sampling::modeler_options::StepWiseModelerOptionsCOP options,
 												 protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters,
 												 bool const build_pose_from_scratch,
 												 bool const kic_sampling,

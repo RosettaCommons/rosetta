@@ -104,7 +104,7 @@ namespace sugar {
 	instantiate_any_virtual_sugars( pose::Pose & pose,
 																	working_parameters::StepWiseWorkingParametersCOP working_parameters,
 																	core::scoring::ScoreFunctionCOP scorefxn,
-																	StepWiseModelerOptionsCOP options );
+																	modeler_options::StepWiseModelerOptionsCOP options );
 
 } //sugar
 } //rna

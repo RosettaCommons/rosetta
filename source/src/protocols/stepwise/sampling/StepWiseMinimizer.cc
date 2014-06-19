@@ -66,7 +66,7 @@ namespace sampling {
 	//Constructor
 	StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
 																				working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																				StepWiseModelerOptionsCOP modeler_options,
+																				modeler_options::StepWiseModelerOptionsCOP modeler_options,
 																				core::scoring::ScoreFunctionCOP scorefxn):
 		pose_list_( pose_list ),
 		modeler_options_( modeler_options ),
@@ -75,6 +75,7 @@ namespace sampling {
 		working_fixed_res_( working_parameters->working_fixed_res() ),
 		working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
 		vary_bond_geometry_( false ), // it remains unclear whether this is really different from cartesian.
+		allow_virtual_o2prime_hydrogens_( modeler_options->allow_virtual_side_chains() && !modeler_options_->o2prime_legacy_mode() ),
 		protein_ccd_closer_( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) )
 	{
 		set_native_pose( working_parameters->working_native_pose() );
@@ -164,13 +165,13 @@ namespace sampling {
 	//////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
-		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, modeler_options_->allow_virtual_side_chains() );
+		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
 		if ( modeler_options_->cart_min() ) {
 			cartesian_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
 		} else {
 			atom_tree_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
 		}
-		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, modeler_options_->allow_virtual_side_chains() );
+		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -199,7 +200,7 @@ namespace sampling {
 		utility::vector1< Size > working_minimize_res;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) { if (!working_fixed_res_.has_value( n )) working_minimize_res.push_back( n );}
 		bool const move_takeoff_torsions = !modeler_options_->disable_sampling_of_loop_takeoff();
-		figure_out_stepwise_movemap( mm, pose, working_minimize_res, move_takeoff_torsions );
+		movemap::figure_out_stepwise_movemap( mm, pose, working_minimize_res, move_takeoff_torsions );
 		output_movemap( mm, pose, TR.Debug );
 	}
 

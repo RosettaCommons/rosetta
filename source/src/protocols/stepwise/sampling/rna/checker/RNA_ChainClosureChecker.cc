@@ -27,7 +27,7 @@
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.stepwise.rna.checker.RNA_ChainClosureChecker" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.checker.RNA_ChainClosureChecker" ) ;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Kind of weird. I think chain closure always 'passes', since it depends on angle and atom-pair

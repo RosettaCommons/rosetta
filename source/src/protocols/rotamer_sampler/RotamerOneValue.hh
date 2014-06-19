@@ -82,7 +82,7 @@ protected: // will be available to derived classes.
 	ValueList values_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

@@ -83,8 +83,8 @@ private:
 	utility::vector1<RotamerSizedOP> rotamer_list_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif
 

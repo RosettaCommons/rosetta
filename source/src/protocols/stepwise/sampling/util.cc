@@ -79,7 +79,7 @@ using ObjexxFCL::string_of;
 using utility::operator<<;
 
 static numeric::random::RandomGenerator RG(539155021);  // <- Magic number, do not change it!
-static basic::Tracer TR( "protocols.stepwise.util" );
+static basic::Tracer TR( "protocols.stepwise.sampling.util" );
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -1119,7 +1119,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		jump_partners2 = map_to_local_numbering( jump_partners2, working_res );
 		cuts = map_to_local_numbering( cuts, working_res );
 
-		FoldTree f = get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
+		FoldTree f = full_model_info::get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 
 		Size root( 0 );
 		if ( fix_first_pose ) {
@@ -1800,7 +1800,7 @@ rotate( pose::Pose & pose, Matrix const M,
 																	utility::vector1< Size > & three_prime_chain_breaks,
 																	utility::vector1< Size > & chain_break_gap_sizes ){
 
-		utility::vector1< Size > const chains =	figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > const chains =	figure_out_chain_numbers_from_full_model_info_const( pose );
 		utility::vector1< Size > const & res_list =	get_res_list_from_full_model_info_const( pose );
 		Size five_prime_chain_break( 0 ), three_prime_chain_break( 0 );
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
@@ -2160,7 +2160,7 @@ is_protein( pose::Pose const & pose, utility::vector1< Size > const & moving_res
 core::scoring::ScoreFunctionOP
 get_minimize_scorefxn( core::pose::Pose const & pose,
 											 core::scoring::ScoreFunctionCOP scorefxn,
-											 StepWiseModelerOptionsCOP options ){
+											 modeler_options::StepWiseModelerOptionsCOP options ){
 	using namespace core::scoring;
 	ScoreFunctionOP minimize_scorefxn = scorefxn->clone();
 	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
@@ -2256,7 +2256,7 @@ remove_silent_file_if_it_exists( std::string const & silent_file){
 core::scoring::ScoreFunctionCOP
 initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 														pose::Pose const & pose,
-														StepWiseModelerOptionsCOP modeler_options ){
+														modeler_options::StepWiseModelerOptionsCOP modeler_options ){
 
 	using namespace core::scoring;
 

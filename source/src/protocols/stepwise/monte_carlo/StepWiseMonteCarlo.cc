@@ -46,6 +46,8 @@
 
 using namespace core;
 using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::monte_carlo::mover;
+using namespace protocols::stepwise::monte_carlo::rna;
 
 static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarlo" );
@@ -62,7 +64,6 @@ using ObjexxFCL::lead_zero_string_of;
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
 
 //Constructor
 StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn_input ):
@@ -214,7 +215,7 @@ StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
  	using namespace sampling::protein;
 
  	StepWiseModelerOP stepwise_modeler = new StepWiseModeler( scorefxn_ );
-	StepWiseModelerOptionsOP modeler_options = options_->setup_modeler_options();
+	modeler_options::StepWiseModelerOptionsOP modeler_options = options_->setup_modeler_options();
 	if ( enumerate_ ) {
 		modeler_options->set_choose_random( false );
 		if ( options_->num_pose_minimize() == 0 ) modeler_options->set_num_pose_minimize( 0 );
@@ -357,7 +358,6 @@ StepWiseMonteCarlo::preminimize_pose( pose::Pose & pose ) {
 	}
 }
 
-} //rna
 } //monte_carlo
 } //stepwise
 } //protocols

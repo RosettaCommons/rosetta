@@ -175,6 +175,7 @@ namespace sampling {
 			stepwise_minimizer.set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
 		}
 		stepwise_minimizer.apply( pose ); // will save work in pose_list_
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

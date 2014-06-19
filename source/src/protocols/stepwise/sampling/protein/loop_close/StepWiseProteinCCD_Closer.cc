@@ -57,7 +57,7 @@ using namespace protocols::stepwise::sampling;
 //
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.protein.StepWiseProteinCCD_Closer" );
+static basic::Tracer TR( "protocols.stepwise.sampling.protein.loop_close.StepWiseProteinCCD_Closer" );
 
 namespace protocols {
 namespace stepwise {

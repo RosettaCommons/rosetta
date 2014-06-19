@@ -20,6 +20,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
@@ -181,23 +182,33 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
 	PDBInfoOP pdb_info = new PDBInfo( pose );
-	pdb_info->set_numbering( res_list );
-
-	// fill chains...
-	utility::vector1< Size > chain_numbers = figure_out_chains_from_full_model_info( pose );
-	utility::vector1< char > chains;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( core::chemical::chr_chains[ chain_numbers[n]-1 ] );
-	pdb_info->set_chains( chains );
+	pdb_info->set_numbering( const_full_model_info( pose ).full_model_parameters()->full_to_conventional( res_list ) );
+	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
 
 	pose.pdb_info( pdb_info );
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+utility::vector1< char >
+figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose ) {
+	utility::vector1< char > chains;
+	utility::vector1< char > const & conventional_chains = const_full_model_info( pose ).conventional_chains();
+	if ( conventional_chains.size() > 0 ){
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( conventional_chains[ res_list[n] ] );
+	} else {
+		utility::vector1< Size > chain_numbers = figure_out_chain_numbers_from_full_model_info_const( pose );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( core::chemical::chr_chains[ chain_numbers[n]-1 ] );
+	}
+	return chains;
+}
+
 ///////////////////////////////////////////////////////////////////////////////utility::vector1< Size >
 utility::vector1< Size >
-figure_out_chains_from_full_model_info( pose::Pose & pose ) {
+figure_out_chain_numbers_from_full_model_info( pose::Pose & pose ) {
 	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
-	return figure_out_chains_from_full_model_info_const( pose );
+	return figure_out_chain_numbers_from_full_model_info_const( pose );
 }
 
 
@@ -227,7 +238,7 @@ get_chains_full( pose::Pose const & pose ){
 // assign to different chains. [Note: we could actually use PDBInfo for this bookkeeping... perhaps that's a good idea]
 // label them 1, 2, 3, etc.
 utility::vector1< Size >
-figure_out_chains_from_full_model_info_const( pose::Pose const & pose ) {
+figure_out_chain_numbers_from_full_model_info_const( pose::Pose const & pose ) {
 
 	using namespace core::pose::full_model_info;
 
@@ -283,6 +294,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 		if ( sequence_char == 'n' ) continue; // any nucleotide
 		if ( sequence_char != pose.residue_type( n ).name1() ) {
+			TR << res_list << std::endl;
 			TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
 			return false;
 		}
@@ -420,10 +432,8 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		utility::vector1< int > const & conventional_numbering = full_model_info.conventional_numbering();
 		for ( Size k = 1; k <= res_list.size(); k++ ) {
-			//			TR << pose_domain_number << " " << k << " " << res_list[k]  << " " << pose_domain_map.size() << std::endl;
-			pose_domain_map[ conventional_numbering.index( res_list[k] ) ] = pose_domain_number;
+			pose_domain_map[ res_list[k] ] = pose_domain_number;
 		}
 		utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
 		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
@@ -497,6 +507,22 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		}
 		return resnum;
 	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< char >
+	get_chains_from_pdb_info( pose::Pose const & pose ) {
+
+		utility::vector1< char > chains;
+
+		PDBInfoCOP pdb_info = pose.pdb_info();
+
+		if ( ( pdb_info != 0 ) && !pdb_info->obsolete())	{
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( pdb_info->chain( n ) );
+		} else {
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( ' ' );
+		}
+		return chains;
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size
 	get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose ){
@@ -506,9 +532,9 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size
 	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose ){
-		return figure_out_chains_from_full_model_info_const( pose )[ resnum ];
+		return figure_out_chain_numbers_from_full_model_info_const( pose )[ resnum ];
 	}
 
-}
-}
-}
+} //full_model_info
+} //pose
+} //core

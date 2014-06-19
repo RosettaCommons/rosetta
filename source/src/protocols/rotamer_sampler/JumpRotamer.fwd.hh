@@ -25,7 +25,7 @@ namespace rotamer_sampler {
 	typedef utility::pointer::owning_ptr< JumpRotamer > JumpRotamerOP;
 	typedef utility::pointer::owning_ptr< JumpRotamer const > JumpRotamerCOP;
 	
-} //rotamer_sampler 
-} //protocols 
+} //rotamer_sampler
+} //protocols
 
 #endif

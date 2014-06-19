@@ -26,8 +26,8 @@ namespace rigid_body {
 	typedef utility::pointer::owning_ptr< EulerAngles > EulerAnglesOP;
 	typedef utility::pointer::owning_ptr< EulerAngles const > EulerAnglesCOP;
 
-} //rna
-} //swa
+} //rigid_body
+} //rotamer_sampler
 } //protocols
 
 #endif

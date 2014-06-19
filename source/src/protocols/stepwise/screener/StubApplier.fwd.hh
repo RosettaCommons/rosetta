@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< StubApplier > StubApplierOP;
 	typedef utility::pointer::owning_ptr< StubApplier const > StubApplierCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

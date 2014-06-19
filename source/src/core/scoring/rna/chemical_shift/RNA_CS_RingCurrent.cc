@@ -540,9 +540,9 @@ get_ring_current_deriv( numeric::xyzVector< core::Real > const & CS_data_atom_xy
 }
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 

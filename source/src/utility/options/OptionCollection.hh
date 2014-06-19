@@ -31,6 +31,7 @@
 #include <utility/options/BooleanVectorOption.hh>
 #include <utility/options/IntegerVectorOption.hh>
 #include <utility/options/RealVectorOption.hh>
+#include <utility/options/ResidueChainVectorOption.hh>
 #include <utility/options/StringVectorOption.hh>
 #include <utility/options/FileVectorOption.hh>
 #include <utility/options/PathVectorOption.hh>
@@ -45,6 +46,7 @@
 #include <utility/options/keys/AnyOptionKey.hh>
 #include <utility/options/keys/BooleanVectorOptionKey.hh>
 #include <utility/options/keys/IntegerVectorOptionKey.hh>
+#include <utility/options/keys/ResidueChainVectorOptionKey.hh>
 #include <utility/options/keys/RealVectorOptionKey.hh>
 #include <utility/options/keys/StringVectorOptionKey.hh>
 #include <utility/options/keys/FileVectorOptionKey.hh>
@@ -91,6 +93,7 @@ private: // Types
 		BOOLEAN_VECTOR_OPTION,
 		INTEGER_VECTOR_OPTION,
 		REAL_VECTOR_OPTION,
+		RESIDUE_CHAIN_VECTOR_OPTION,
 		STRING_VECTOR_OPTION,
 		FILE_VECTOR_OPTION,
 		PATH_VECTOR_OPTION,
@@ -108,6 +111,7 @@ private: // Types
 	typedef  utility::keys::SmallKeyVector< BooleanVectorOptionKey, BooleanVectorOption >  BooleanVectors;
 	typedef  utility::keys::SmallKeyVector< IntegerVectorOptionKey, IntegerVectorOption >  IntegerVectors;
 	typedef  utility::keys::SmallKeyVector< RealVectorOptionKey, RealVectorOption >  RealVectors;
+	typedef  utility::keys::SmallKeyVector< ResidueChainVectorOptionKey, ResidueChainVectorOption >  ResidueChainVectors;
 	typedef  utility::keys::SmallKeyVector< StringVectorOptionKey, StringVectorOption >  StringVectors;
 	typedef  utility::keys::SmallKeyVector< FileVectorOptionKey, FileVectorOption >  FileVectors;
 	typedef  utility::keys::SmallKeyVector< PathVectorOptionKey, PathVectorOption >  PathVectors;
@@ -232,6 +236,16 @@ public: // Methods
 		check_key( key );
 		all_( key ) = REAL_VECTOR_OPTION;
 		return ( real_vectors_( key ) = RealVectorOption( key, description ) );
+	}
+
+	/// @brief Add an ResidueChainVectorOption
+	inline
+	ResidueChainVectorOption &
+	add( ResidueChainVectorOptionKey const & key, std::string const & description )
+	{
+		check_key( key );
+		all_( key ) = RESIDUE_CHAIN_VECTOR_OPTION;
+		return ( residue_chain_vectors_( key ) = ResidueChainVectorOption( key, description ) );
 	}
 
 
@@ -376,6 +390,16 @@ public: // Methods
 		check_key( option );
 		all_( option.key() ) = REAL_VECTOR_OPTION;
 		return ( real_vectors_( option.key() ) = option );
+	}
+
+	/// @brief Add an ResidueChainVectorOption
+	inline
+	ResidueChainVectorOption &
+	add( ResidueChainVectorOption const & option )
+	{
+		check_key( option );
+		all_( option.key() ) = RESIDUE_CHAIN_VECTOR_OPTION;
+		return ( residue_chain_vectors_( option.key() ) = option );
 	}
 
 
@@ -633,6 +657,14 @@ public: // Properties: predicate
 	has( RealVectorOptionKey const & key ) const
 	{
 		return real_vectors_.has( key );
+	}
+
+	/// @brief Is there an option with an IntegerVectorOptionKey?
+	inline
+	bool
+	has( ResidueChainVectorOptionKey const & key ) const
+	{
+		return residue_chain_vectors_.has( key );
 	}
 
 
@@ -1263,6 +1295,27 @@ public: // Indexers
 		return option;
 	}
 
+	/// @brief OptionCollection[ ResidueChainVectorOptionKey ]
+	inline
+	ResidueChainVectorOption const &
+	operator []( ResidueChainVectorOptionKey const & key ) const
+	{
+		ResidueChainVectorOption const & option( residue_chain_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
+	}
+
+
+	/// @brief OptionCollection[ ResidueChainVectorOptionKey ]
+	inline
+	ResidueChainVectorOption &
+	operator []( ResidueChainVectorOptionKey const & key )
+	{
+		ResidueChainVectorOption & option( residue_chain_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
+	}
+
 
 	/// @brief OptionCollection[ StringVectorOptionKey ]
 	inline
@@ -1417,6 +1470,9 @@ public: // Indexers
 		case REAL_VECTOR_OPTION:
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
 			break;
+		case RESIDUE_CHAIN_VECTOR_OPTION:
+			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
+			break;
 		case STRING_VECTOR_OPTION:
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
 			break;
@@ -1484,6 +1540,9 @@ public: // Indexers
 			break;
 		case REAL_VECTOR_OPTION:
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			break;
+		case RESIDUE_CHAIN_VECTOR_OPTION:
+			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
 			break;
 		case STRING_VECTOR_OPTION:
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
@@ -1596,6 +1655,7 @@ public: // Indexers
 		option.check_restricted_access(check_restricted_access);
 		return option;
 	}
+
 
 	/// @brief Option by StringOptionKey
 	inline
@@ -1777,6 +1837,28 @@ public: // Indexers
 	}
 
 
+	/// @brief VectorOption by ResidueChainVectorOptionKey
+	inline
+	ResidueChainVectorOption const &
+	operator ()( ResidueChainVectorOptionKey const & key, bool check_restricted_access=true ) const
+	{
+		ResidueChainVectorOption const & option( residue_chain_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
+	}
+
+
+	/// @brief VectorOption by ResidueChainVectorOptionKey
+	inline
+	ResidueChainVectorOption &
+	operator ()( ResidueChainVectorOptionKey const & key, bool check_restricted_access=true )
+	{
+		ResidueChainVectorOption & option( residue_chain_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
+	}
+
+
 	/// @brief VectorOption by StringVectorOptionKey
 	inline
 	StringVectorOption const &
@@ -1930,6 +2012,9 @@ public: // Indexers
 		case REAL_VECTOR_OPTION:
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
 			break;
+		case RESIDUE_CHAIN_VECTOR_OPTION:
+			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
+			break;
 		case STRING_VECTOR_OPTION:
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
 			break;
@@ -1997,6 +2082,9 @@ public: // Indexers
 			break;
 		case REAL_VECTOR_OPTION:
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			break;
+		case RESIDUE_CHAIN_VECTOR_OPTION:
+			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
 			break;
 		case STRING_VECTOR_OPTION:
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
@@ -2288,6 +2376,9 @@ private: // Fields
 
 	/// @brief Real vector options
 	RealVectors real_vectors_;
+
+	/// @brief Residue/chain vector options
+	ResidueChainVectors residue_chain_vectors_;
 
 	/// @brief String vector options
 	StringVectors string_vectors_;

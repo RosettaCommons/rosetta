@@ -51,7 +51,7 @@ get_out_tag( std::string & out_tag,
 						 std::string const & silent_file ){
 
   using namespace core::io::silent;
-	std::map< std::string, bool > tag_is_done;
+	static std::map< std::string, bool > tag_is_done;
 
 	static bool init( false );
 	if ( !init ){
@@ -60,7 +60,7 @@ get_out_tag( std::string & out_tag,
 	}
 
 	out_tag = "S_"+lead_zero_string_of( n, 6 );
-	if (tag_is_done[ out_tag ] ) {
+	if ( tag_is_done[ out_tag ] ) {
 		TR << "Already done: " << out_tag << std::endl;
 		return false;
 	}

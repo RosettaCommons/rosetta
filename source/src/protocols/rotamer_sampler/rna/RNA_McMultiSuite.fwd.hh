@@ -19,13 +19,13 @@
 
 namespace protocols {
 namespace rotamer_sampler {
-namespace	rna {
+namespace rna {
 
 class RNA_McMultiSuite;
 typedef utility::pointer::owning_ptr< RNA_McMultiSuite > RNA_McMultiSuiteOP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

@@ -151,8 +151,8 @@ core::Size version() const;
 };
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif // INCLUDED_core_scoring_ScoreFunction_HH

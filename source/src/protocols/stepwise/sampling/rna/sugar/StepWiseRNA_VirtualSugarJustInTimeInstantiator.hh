@@ -76,7 +76,7 @@ namespace sugar {
 		bool const & success() const{ return success_; }
 
 		void
-		set_options( StepWiseModelerOptionsCOP options );
+		set_options( modeler_options::StepWiseModelerOptionsCOP options );
 
 		Size
 		num_sets() const { return sugar_modeling_sets_.size(); }
@@ -132,7 +132,7 @@ namespace sugar {
 		bool keep_base_fixed_;
 		bool const moving_res_legacy_;
 
-		StepWiseModelerOptionsCOP options_;
+		modeler_options::StepWiseModelerOptionsCOP options_;
 		core::scoring::ScoreFunctionCOP scorefxn_;
 
 		std::map< Size, Size > reference_res_for_each_virtual_sugar_;

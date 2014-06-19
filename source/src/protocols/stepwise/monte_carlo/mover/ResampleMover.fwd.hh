@@ -21,13 +21,13 @@
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 	
 	class ResampleMover;
 	typedef utility::pointer::owning_ptr< ResampleMover > ResampleMoverOP;
 	typedef utility::pointer::owning_ptr< ResampleMover const > ResampleMoverCOP;
 	
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

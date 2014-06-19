@@ -87,7 +87,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_Minimizer.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_AnalyticalLoopCloseSampler.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>

@@ -57,12 +57,12 @@ using namespace protocols::stepwise::sampling;
 //////////////////////////////////////////////////////////////////////////
 static numeric::random::RandomGenerator RG(2555512);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.AddMover" ) ;
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddMover" ) ;
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ namespace rna {
 		minimize_single_res_( false ),
 		start_added_residue_in_aform_( false ),
 		internal_cycles_( 50 ),
-		rna_torsion_mover_( new RNA_TorsionMover ),
+		rna_torsion_mover_( new rna::RNA_TorsionMover ),
 		sample_range_small_( 5.0 ),
 		sample_range_large_( 40.0 ),
 		kT_( 0.5 )
@@ -460,7 +460,7 @@ namespace rna {
 
 	}
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

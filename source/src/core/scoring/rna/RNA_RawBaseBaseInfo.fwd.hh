@@ -29,8 +29,8 @@ class RNA_RawBaseBaseInfo;
 typedef utility::pointer::owning_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoOP;
 typedef utility::pointer::access_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoAP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

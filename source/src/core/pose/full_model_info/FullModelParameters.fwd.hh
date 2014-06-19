@@ -26,8 +26,8 @@ namespace full_model_info {
 	typedef utility::pointer::owning_ptr< FullModelParameters > FullModelParametersOP;
 	typedef utility::pointer::owning_ptr< FullModelParameters const > FullModelParametersCOP;
 	
-} //full_model_info 
-} //pose 
-} //core 
+} //full_model_info
+} //pose
+} //core
 
 #endif

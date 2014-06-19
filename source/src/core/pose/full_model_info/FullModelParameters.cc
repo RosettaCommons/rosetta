@@ -20,7 +20,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
 
@@ -80,7 +82,8 @@ namespace full_model_info {
 		parameter_values_at_res_( src.parameter_values_at_res_ ),
 		parameter_values_as_res_lists_( src.parameter_values_as_res_lists_ ),
 		full_sequence_( src.full_sequence_ ),
-		conventional_numbering_( src.conventional_numbering_ )
+		conventional_numbering_( src.conventional_numbering_ ),
+		conventional_chains_( src.conventional_chains_ )
 	{
 	}
 
@@ -152,22 +155,19 @@ namespace full_model_info {
 		conventional_numbering.clear();
 
 		utility::vector1< int > const pdb_res_list = get_res_num_from_pdb_info( pose );
+		Size count( 0 );
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			int const prev_res_num    = ( n > 1 && pose.chain( n-1 ) == pose.chain( n ) ) ? pdb_res_list[ n-1 ] : pdb_res_list[ n ];
 			int const current_res_num = pdb_res_list[ n ];
 			for ( int i = prev_res_num+1; i < current_res_num; i++ ) {
 				sequence.push_back( 'n' );
 				conventional_numbering.push_back( i );
+				count++;
 			}
 			sequence.push_back( pose.sequence()[ n-1 ] );
 			conventional_numbering.push_back( current_res_num );
+			res_list.push_back( ++count );
 		}
-
-		res_list.clear();
-		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			res_list.push_back( conventional_numbering.index( pdb_res_list[n] ) );
-		}
-
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,6 +235,78 @@ namespace full_model_info {
 		// kind of special -- CHAIN is a convenient thing to hold, but should match info in CUTPOINT_OPEN
 		if ( type == CUTPOINT_OPEN ) set_parameter( CHAIN, chains_in_full_model() );
 		if ( type == CHAIN ) runtime_assert( chains_in_full_model() == get_parameter( CHAIN ) );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	FullModelParameters::conventional_to_full( utility::vector1< int > const & res_list ) const {
+		utility::vector1< Size > res_list_in_full_numbering;
+		for ( Size n = 1; n <= res_list.size(); n++ ){
+			res_list_in_full_numbering.push_back( conventional_to_full( res_list[n] ) );
+		}
+		return res_list_in_full_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	FullModelParameters::conventional_to_full( int const res_num ) const {
+		bool found_match( false );
+		Size res_num_in_full_numbering( 0 );
+		for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ){
+			if ( res_num == conventional_numbering_[ n ] ){
+				if( found_match ) utility_exit_with_message( "ambiguous res_num (maybe supply chain?) "+ObjexxFCL::string_of(res_num) );
+				res_num_in_full_numbering = n;
+				found_match = true;
+			}
+		}
+		runtime_assert( found_match );
+		return res_num_in_full_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	FullModelParameters::conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const {
+		utility::vector1< Size > res_list_in_full_numbering;
+		utility::vector1< int  > const & resnum = resnum_and_chain.first;
+		utility::vector1< char > const & chain  = resnum_and_chain.second;
+		runtime_assert( resnum.size() == chain.size() );
+		for ( Size n = 1; n <= resnum.size(); n++ ){
+			res_list_in_full_numbering.push_back( conventional_to_full( resnum[n], chain[n] ) );
+		}
+		return res_list_in_full_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	FullModelParameters::conventional_to_full( int const res_num, char const chain ) const {
+		bool found_match( false );
+		Size res_num_in_full_numbering( 0 );
+		for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ){
+			if ( res_num != conventional_numbering_[ n ] ) continue;
+			if ( chain != ' ' && conventional_chains_.size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
+			if( found_match ) utility_exit_with_message( "ambiguous res_num & chain "+ObjexxFCL::string_of(res_num)+" "+ObjexxFCL::string_of(chain) );
+			res_num_in_full_numbering = n;
+			found_match = true;
+		}
+		runtime_assert( found_match );
+		return res_num_in_full_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< int >
+	FullModelParameters::full_to_conventional( utility::vector1< Size > const & res_list ) const {
+		utility::vector1< int > res_list_in_conventional_numbering;
+		for ( Size n = 1; n <= res_list.size(); n++ ){
+			res_list_in_conventional_numbering.push_back( full_to_conventional( res_list[n] ) );
+		}
+		return res_list_in_conventional_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	int
+	FullModelParameters::full_to_conventional( Size const res_num ) const {
+		runtime_assert( res_num >= 1 && res_num <= conventional_numbering_.size() );
+		return conventional_numbering_[ res_num ];
 	}
 
 } //full_model_info

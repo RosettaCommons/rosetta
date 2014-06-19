@@ -20,8 +20,8 @@ namespace rna {
 
 class RNA_SuiteEnergy;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif // INCLUDED_core_scoring_methods_RNA_SuiteEnergy_FWD_HH

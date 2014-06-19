@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< RNA_ChainClosableGeometryStubBasedScreener > RNA_ChainClosableGeometryStubBasedScreenerOP;
 	typedef utility::pointer::owning_ptr< RNA_ChainClosableGeometryStubBasedScreener const > RNA_ChainClosableGeometryStubBasedScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

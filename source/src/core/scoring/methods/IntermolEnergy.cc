@@ -152,7 +152,7 @@ IntermolEnergy::color_connected( utility::vector1< Size > & colors,
 void
 IntermolEnergy::get_chains_connected( pose::Pose const & pose, utility::vector1< utility::vector1< Size > > &  chains_connected ) const {
 	using namespace core::pose::full_model_info;
-	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
+	utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 	utility::vector1< Size > frozen_chains;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !frozen_chains.has_value( chains[ n ] ) ) frozen_chains.push_back( chains[ n ] );

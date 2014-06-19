@@ -29,7 +29,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static basic::Tracer TR( "protocols.stepwise.protein.checker.ProteinAtrRepChecker" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.protein.checker.ProteinAtrRepChecker" ) ;
 
 namespace protocols {
 namespace stepwise {

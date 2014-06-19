@@ -39,7 +39,7 @@
 using namespace protocols::stepwise::sampling;
 
 static numeric::random::RandomGenerator RG(239145021);  // <- Magic number, do not change it!
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.ResampleMover" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.ResampleMover" );
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	//Constructor
 	ResampleMover::ResampleMover(	protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler ):
@@ -256,7 +256,7 @@ namespace rna {
 		}
 
 		// need to make sure JUMP_INTERMOL remain in different chains!
-		utility::vector1< Size > chains = 	figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > chains = 	figure_out_chain_numbers_from_full_model_info_const( pose );
 		utility::vector1< std::pair< Size, Size > > possible_jump_pairs;
 		for ( Size i = 1; i <= root_partition_res.size(); i++ ) {
 			Size const & root_res = root_partition_res[ i ];
@@ -287,7 +287,7 @@ namespace rna {
 	}
 
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

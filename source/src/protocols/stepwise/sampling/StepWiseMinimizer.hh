@@ -39,7 +39,7 @@ namespace sampling {
 		//constructor
 		StepWiseMinimizer( utility::vector1< core::pose::PoseOP > const & pose_list,
 											 working_parameters::StepWiseWorkingParametersCOP working_parameters,
-											 StepWiseModelerOptionsCOP modeler_options,
+											 modeler_options::StepWiseModelerOptionsCOP modeler_options,
 											 core::scoring::ScoreFunctionCOP scorefxn);
 
 
@@ -92,7 +92,7 @@ namespace sampling {
 	private:
 
 		utility::vector1< core::pose::PoseOP > pose_list_;
-		StepWiseModelerOptionsCOP modeler_options_;
+		modeler_options::StepWiseModelerOptionsCOP modeler_options_;
 		core::scoring::ScoreFunctionCOP scorefxn_;
 		core::scoring::ScoreFunctionOP minimize_scorefxn_;
 
@@ -105,6 +105,7 @@ namespace sampling {
 		core::optimization::AtomTreeMinimizerOP atom_tree_minimizer_;
 		core::optimization::MinimizerOptionsOP minimizer_options_;
 		bool vary_bond_geometry_;
+		bool const allow_virtual_o2prime_hydrogens_;
 
 		protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer_;
 	};

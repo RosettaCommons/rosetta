@@ -23,7 +23,7 @@ namespace rotamer_sampler {
 class RotamerComb;
 typedef utility::pointer::owning_ptr< RotamerComb > RotamerCombOP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

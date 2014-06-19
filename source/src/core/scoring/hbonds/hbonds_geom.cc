@@ -83,7 +83,7 @@ bool DUMMY_BOOL(false);
 HBGeoDimType DUMMY_HBGEODIMTYPE(hbgd_NONE);
 HBondDerivs DUMMY_DERIVS;
 HBondDerivs const ZERO_DERIV2D = { DerivVectorPair(), DerivVectorPair(), DerivVectorPair(), DerivVectorPair(), DerivVectorPair() };
-
+HBEvalTuple DUMMY_HBE;
 
 ///////////////////////////////////////////////////////////////////////////////
 HBDonChemType
@@ -887,7 +887,7 @@ hb_energy_deriv_u2(
 		return;
 	}
 
-	//JSS the rest happens only if we want deriviative information
+	//JSS the rest happens only if we want derivative information
 	Real dE_dxH, dE_dxD, dE_dr, dE_dBAH, dE_dchi;
 	bool apply_chi_torsion_penalty( false );
 	HBGeoDimType AHD_geometric_dimension;
@@ -913,39 +913,40 @@ hb_energy_deriv_u2(
 
 	deriv.h_deriv.f1() = deriv.h_deriv.f2() = Vector(0.0);
 	deriv.acc_deriv.f1() = deriv.acc_deriv.f2() = Vector(0.0);
+	deriv.don_deriv.f1() = deriv.don_deriv.f2() = Vector(0.0);
 	deriv.abase_deriv.f1() = deriv.abase_deriv.f2() = Vector(0.0);
 	deriv.abase2_deriv.f1() = deriv.abase2_deriv.f2() = Vector(0.0);
 
-	if( ! hbondoptions.use_incorrect_deriv() ){
-		/// APL: replacing the older derivative evaluation logic with calls to the
-		/// numeric::deriv functions.
-		/// There are five atoms, and therefore five derivative-vector pairs.
-		/// D -- H -- A -- AB -- AB2
-		/// D gets an angle_p1_deriv for the D-H-A angle
-		/// H gets a) an angle_p2_deriv for the D-H-A angle,
-		///        b) an angle_p1_deriv for the H-A-AB angle, and
-		///        c) a distance_deriv for the H-A distance
-		///        d) a chi-penalty deriv for the H-A-AB-AB2 dihedral
-		/// A gets a) an angle_p1_deriv for the D-H-A angle,
-		///        b) an angle_p2_deriv for the H-A-AB angle, and
-		///        c) a distance_deriv for the H-A distance
-		///        d) a chi-penalty deriv for the H-A-AB-AB2 dihedral
-		/// AB gets a) an angle_p1_deriv for the H-A-AB angle
-		///         b) a chi-penalty deriv for the H-A-AB-AB2 dihedral
-		/// AB2 gets a chi-penalty deriv for the H-A-AB-AB2 dihedral
-		using namespace numeric::deriv;
+	/// APL: replacing the older derivative evaluation logic with calls to the
+	/// numeric::deriv functions.
+	/// There are five atoms, and therefore five derivative-vector pairs.
+	/// D -- H -- A -- AB -- AB2
+	/// D gets an angle_p1_deriv for the D-H-A angle
+	/// H gets a) an angle_p2_deriv for the D-H-A angle,
+	///        b) an angle_p1_deriv for the H-A-AB angle, and
+	///        c) a distance_deriv for the H-A distance
+	///        d) a chi-penalty deriv for the H-A-AB-AB2 dihedral
+	/// A gets a) an angle_p1_deriv for the D-H-A angle,
+	///        b) an angle_p2_deriv for the H-A-AB angle, and
+	///        c) a distance_deriv for the H-A distance
+	///        d) a chi-penalty deriv for the H-A-AB-AB2 dihedral
+	/// AB gets a) an angle_p1_deriv for the H-A-AB angle
+	///         b) a chi-penalty deriv for the H-A-AB-AB2 dihedral
+	/// AB2 gets a chi-penalty deriv for the H-A-AB-AB2 dihedral
+	using namespace numeric::deriv;
 
-		Vector f1,f2;
+	Vector f1,f2;
 
-		/// 1. H/A distance
-		Real temp_AHdis;
-		distance_f1_f2_deriv(Hxyz, Axyz, temp_AHdis, f1, f2);
-		deriv.h_deriv.f1() = dE_dr * f1;
-		deriv.h_deriv.f2() = dE_dr * f2;
-		deriv.acc_deriv.f1() = -1 * dE_dr * f1;
-		deriv.acc_deriv.f2() = -1 * dE_dr * f2;
+	/// 1. H/A distance
+	Real temp_AHdis;
+	distance_f1_f2_deriv(Hxyz, Axyz, temp_AHdis, f1, f2);
+	deriv.h_deriv.f1() = dE_dr * f1;
+	deriv.h_deriv.f2() = dE_dr * f2;
+	deriv.acc_deriv.f1() = -1 * dE_dr * f1;
+	deriv.acc_deriv.f2() = -1 * dE_dr * f2;
 
-		/// 2. theta derivatives (theta is the D-H-A angle)
+	/// 2. theta derivatives (theta is the D-H-A angle)
+	if ( deriv_type != hbderiv_ABE_GO_GEOMSOL_OCC_ACC ) {
 		if(AHD_geometric_dimension == hbgd_cosAHD){
 			Real theta;
 			angle_p1_deriv(  Axyz, Hxyz, Dxyz, theta, f1, f2);
@@ -954,8 +955,8 @@ hb_energy_deriv_u2(
 			deriv.acc_deriv.f2() += dE_dxD_sin_theta * f2;
 
 			angle_p1_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
-			deriv.don_deriv.f1() = dE_dxD_sin_theta * f1;
-			deriv.don_deriv.f2() = dE_dxD_sin_theta * f2;
+			deriv.don_deriv.f1() += dE_dxD_sin_theta * f1;
+			deriv.don_deriv.f2() += dE_dxD_sin_theta * f2;
 
 			angle_p2_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
 			deriv.h_deriv.f1() += dE_dxD_sin_theta * f1;
@@ -967,41 +968,50 @@ hb_energy_deriv_u2(
 			deriv.acc_deriv.f2() += dE_dxD * f2;
 
 			angle_p1_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
-			deriv.don_deriv.f1() = dE_dxD * f1;
-			deriv.don_deriv.f2() = dE_dxD * f2;
+			deriv.don_deriv.f1() += dE_dxD * f1;
+			deriv.don_deriv.f2() += dE_dxD * f2;
 
 			angle_p2_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
 			deriv.h_deriv.f1() += dE_dxD * f1;
 			deriv.h_deriv.f2() += dE_dxD * f2;
 		}
+	}
 
 
-		/// 3. phi derivatives (phi is the H-A-AB angle
-		{ // scope
-		Real phi;
-		Vector f1h(0.0),f2h(0.0);
-		angle_p1_deriv( Hxyz, Axyz, Bxyz, phi, f1h, f2h);
-		Real const dE_dxH_sin_phi = dE_dxH *sin( phi );
-		deriv.h_deriv.f1() += dE_dxH_sin_phi * f1h;
-		deriv.h_deriv.f2() += dE_dxH_sin_phi * f2h;
+	if ( deriv_type != hbderiv_ABE_GO_GEOMSOL_OCC_DON ) {
 
-		Vector f1b(0.0),f2b(0.0);
-		angle_p1_deriv( Bxyz, Axyz, Hxyz, phi, f1b, f2b);
-		deriv.abase_deriv.f1() = dE_dxH_sin_phi * f1b;
-		deriv.abase_deriv.f2() = dE_dxH_sin_phi * f2b;
+		// Geom sol places a perfectly oriented 'pseudo-water' at location of an occluding atom.
+		// We need to place F1/F2 point-of-rotation at donor (not donor H) for phi & chi.
+		// Because donor H of pseudo-water is colinear with acceptor and donor ('perfect' orientation),
+		// this does not change values of phi & chi, just F1/F2. -- rhiju
+		Vector const & Hxyz_working = ( deriv_type != hbderiv_ABE_GO_GEOMSOL_OCC_ACC ) ? Hxyz : Dxyz;
 
-		Vector f1a(0.0),f2a(0.0);
-		angle_p2_deriv( Bxyz, Axyz, Hxyz, phi, f1a, f2a);
-		deriv.acc_deriv.f1() += dE_dxH_sin_phi * f1a;
-		deriv.acc_deriv.f2() += dE_dxH_sin_phi * f2a;
-		if ( apply_chi_torsion_penalty ) {
-			deriv.acc_deriv.f1()   += dE_dBAH * f1a;
-			deriv.acc_deriv.f2()   += dE_dBAH * f2a;
-			deriv.abase_deriv.f1() += dE_dBAH * f1b;
-			deriv.abase_deriv.f2() += dE_dBAH * f2b;
-			deriv.h_deriv.f1()     += dE_dBAH * f1h;
-			deriv.h_deriv.f2()     += dE_dBAH * f2h;
-		}
+		/// 3. phi derivatives (phi is the H-A-AB angle )
+		{ //scope
+			Real phi;
+			Vector f1h(0.0),f2h(0.0);
+			angle_p1_deriv( Hxyz_working, Axyz, Bxyz, phi, f1h, f2h);
+			Real const dE_dxH_sin_phi = dE_dxH *sin( phi );
+			deriv.h_deriv.f1() += dE_dxH_sin_phi * f1h;
+			deriv.h_deriv.f2() += dE_dxH_sin_phi * f2h;
+
+			Vector f1b(0.0),f2b(0.0);
+			angle_p1_deriv( Bxyz, Axyz, Hxyz_working, phi, f1b, f2b);
+			deriv.abase_deriv.f1() += dE_dxH_sin_phi * f1b;
+			deriv.abase_deriv.f2() += dE_dxH_sin_phi * f2b;
+
+			Vector f1a(0.0),f2a(0.0);
+			angle_p2_deriv( Bxyz, Axyz, Hxyz_working, phi, f1a, f2a);
+			deriv.acc_deriv.f1() += dE_dxH_sin_phi * f1a;
+			deriv.acc_deriv.f2() += dE_dxH_sin_phi * f2a;
+			if ( apply_chi_torsion_penalty ) {
+				deriv.acc_deriv.f1()   += dE_dBAH * f1a;
+				deriv.acc_deriv.f2()   += dE_dBAH * f2a;
+				deriv.abase_deriv.f1() += dE_dBAH * f1b;
+				deriv.abase_deriv.f2() += dE_dBAH * f2b;
+				deriv.h_deriv.f1()     += dE_dBAH * f1h;
+				deriv.h_deriv.f2()     += dE_dBAH * f2h;
+			}
 		}
 
 		/// 4. The chi derivative, for the chi torsion defined by H -- A -- AB -- AB2,
@@ -1015,10 +1025,10 @@ hb_energy_deriv_u2(
 			Vector chi_ab_f1(0),  chi_ab_f2(0);
 			Vector chi_ab2_f1(0), chi_ab2_f2(0);
 
-			dihedral_p1_cosine_deriv( Hxyz,  Axyz, Bxyz, B2xyz, chi, chi_h_f1, chi_h_f2 );
-			dihedral_p2_cosine_deriv( Hxyz,  Axyz, Bxyz, B2xyz, chi, chi_a_f1, chi_a_f2 );
-			dihedral_p2_cosine_deriv( B2xyz, Bxyz, Axyz, Hxyz,  chi, chi_ab_f1, chi_ab_f2 );
-			dihedral_p1_cosine_deriv( B2xyz, Bxyz, Axyz, Hxyz,  chi, chi_ab2_f1, chi_ab2_f2 );
+			dihedral_p1_cosine_deriv( Hxyz_working,  Axyz, Bxyz, B2xyz, chi, chi_h_f1, chi_h_f2 );
+			dihedral_p2_cosine_deriv( Hxyz_working,  Axyz, Bxyz, B2xyz, chi, chi_a_f1, chi_a_f2 );
+			dihedral_p2_cosine_deriv( B2xyz, Bxyz, Axyz, Hxyz_working,  chi, chi_ab_f1, chi_ab_f2 );
+			dihedral_p1_cosine_deriv( B2xyz, Bxyz, Axyz, Hxyz_working,  chi, chi_ab2_f1, chi_ab2_f2 );
 
 			deriv.h_deriv.f1() += dE_dchi * chi_h_f1;
 			deriv.h_deriv.f2() += dE_dchi * chi_h_f2;
@@ -1033,106 +1043,6 @@ hb_energy_deriv_u2(
 			deriv.abase2_deriv.f2() += dE_dchi * chi_ab2_f2;
 
 		}
-
-	} else {
-		///APL -- older derivative evaluation logic depricated 2010-8-23
-
-		Vector f1( 0.0 );
-		Vector f2( 0.0 );
-
-		//car distance-dependent gradient component.
-		//car see also comments in minimize.cc
-		//car  dr/dphi = Eab x (V-Vb) . (V' - V)/|V-V'|
-		//db  (first cross product is the displacement of V upon a rotation dphi
-		//db   around the unit vector Eab, Vb is the coordinates of the second atom
-		//db   in the bond)
-
-		//car  dEr/dphi = dEr/dr * (Eab  x (V-Vb) . (V' - V)] / |V-V'|
-		//car  dEr/dphi = dEr/dr * (Eab  x (V-Vb) . (V' - V)] / r
-		//car  rearrange...
-		//car  dEr/dphi = dEr/dr * [Eab X Vb . (V' - V) + Eab . (V' x V)] / r
-
-		//car Eab and Eab X Vb are calulated in dfunc_vdw and dependent on the torison
-		//car angle with respect to which the derivative is being taken
-		//car f1 and f2 are independent of the torsion angle and here we're precomputing
-		//car increments to f1 and f2 for each hbond
-		//car f1 = dEr/dr * (V'xV) / r
-		//car f2 = dEr/dr * (V'-V) / r
-		//car here, V' = H
-		//car       V  = A
-		//car       dE/dr * 1/r = prefactor
-
-		//car Eab and Eab X Vb are calulated in dfunc_vdw, here
-
-		//car V'x V
-		Vector HxA;
-		HxA = cross( Hxyz, Axyz );
-
-		// in/decrements to the f1 and f2 of the angle moving donor/acceptor
-		Real prefactor = inv_AHdis * dE_dr;
-		f1 = prefactor * HxA;
-		f2 = prefactor * AH;
-
-		//car gradient component for xD (theta)
-		//car (see comments below for xH gradient)
-		if (deriv_type != hbderiv_ABE_GO_NO_xD ){
-			Vector BD;
-			prefactor = inv_AHdis * dE_dxD;
-			BD = prefactor * ( HDunit - xD * AHunit );
-
-			Vector BDxA;
-			BDxA = cross( BD, Axyz );
-
-			//BW in/decrements to the f1 and f2 of the angle moving donor/acceptor
-			f1 += BDxA;
-			f2 += BD;
-		}
-
-		//BW gradient component for xH (psi)
-		//car   (from code and paper by Bill Wedemeyer)
-		//car  xH = (BAunit . AH)/AHdis
-		//car  dxH/dphi = 1/AHdis * (BAunit . dAH/dphi - xH *dAHdis/dphi)
-		//car    (note dBAunit/dphi = 0)
-		//car
-		//car  dAHdis/dphi = AHunit . dAH/dphi
-		//car
-		//car  substituting and rearranging....
-		//car  dxH/dphi = 1/AHdis * dAH/dphi . (BAunit - xH*AHunit)
-		//car           = 1/AHdis * dAH/dphi . BH
-		//car
-		//car note: BH = (BAunit - xH*AHunit) = component of BAunit that is
-		//car       perpendicular to AHunit
-		//car
-		//car dAH/dphi = Eab x (V-Vb)  . (V' - V)/|V-V'|   from above
-		//car dAH/dphi = Eab x (H-Vb)  . AHunit
-		//car
-		//car dExH/dphi = dExH/dxH * dxH/dphi
-		//car           = dExH/dxH * 1/AHdis * dAH/dphi . BH
-		//car           = dExH/dxH * 1/AHdis * (Eab x (H-Vb) .(H-A)/AHdis) . BH
-		//car
-		//car rearrange as with dEr/dr above to get f1 and f2 component
-
-		//car f1 = dE/dxH *(1/AHdis) * BH x H
-		//car f2 = dE/dxH *(1/AHdis) * BH
-
-		if ( deriv_type != hbderiv_ABE_GO_NO_xH ){
-
-			Vector BH;
-			prefactor = inv_AHdis * dE_dxH;
-			BH = prefactor * ( BAunit - xH * AHunit );
-
-			Vector BHxH;
-			BHxH = cross( BH, Hxyz );
-
-			//BW in/decrements to the f1 and f2 of the angle moving donor/acceptor
-			f1 += BHxH;
-			f2 += BH;
-		}
-
-		deriv.h_deriv.f1() = f1;
-		deriv.h_deriv.f2() = f2;
-		deriv.acc_deriv.f1() = -1*f1;
-		deriv.acc_deriv.f2() = -1*f2;
 	}
 
 }

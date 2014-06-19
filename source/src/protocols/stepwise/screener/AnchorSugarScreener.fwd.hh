@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< AnchorSugarScreener > AnchorSugarScreenerOP;
 	typedef utility::pointer::owning_ptr< AnchorSugarScreener const > AnchorSugarScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

@@ -72,8 +72,8 @@ stepwise_monte_carlo()
   using namespace core::pose::full_model_info;
   using namespace protocols::stepwise;
   using namespace protocols::stepwise::sampling;
+	using namespace protocols::stepwise::full_model_info;
   using namespace protocols::stepwise::monte_carlo;
-  using namespace protocols::stepwise::monte_carlo::rna;
   using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but

@@ -40,6 +40,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
+namespace beta {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
@@ -113,6 +114,7 @@ namespace protein {
 
 	}
 
+} //beta
 } //protein
 } //sampling
 } //stepwise

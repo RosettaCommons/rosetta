@@ -27,9 +27,9 @@ namespace align {
 	typedef utility::pointer::owning_ptr< util > utilOP;
 	typedef utility::pointer::owning_ptr< util const > utilCOP;
 	
-} //align 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //align
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

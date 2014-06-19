@@ -136,9 +136,9 @@ private:
 
 };
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 
 
 #endif // INCLUDED_core_scoring_EtableEnergy_HH

@@ -28,10 +28,10 @@ namespace sugar {
 	typedef utility::pointer::owning_ptr< SugarVirtualizeMover > SugarVirtualizeMoverOP;
 	typedef utility::pointer::owning_ptr< SugarVirtualizeMover const > SugarVirtualizeMoverCOP;
 	
-} //sugar 
-} //rna 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //sugar
+} //rna
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

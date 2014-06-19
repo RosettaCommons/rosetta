@@ -351,9 +351,9 @@ magnetic_anisotropy_effect( numeric::xyzVector< core::Real > const & atom_xyz, c
 
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 

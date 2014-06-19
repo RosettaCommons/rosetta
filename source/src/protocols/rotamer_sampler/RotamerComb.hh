@@ -71,8 +71,8 @@ private:
 	utility::vector1<RotamerBaseOP> rotamer_list_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif
 

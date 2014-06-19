@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< CentroidDistanceScreener > CentroidDistanceScreenerOP;
 	typedef utility::pointer::owning_ptr< CentroidDistanceScreener const > CentroidDistanceScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

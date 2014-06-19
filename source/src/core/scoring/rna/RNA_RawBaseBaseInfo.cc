@@ -98,6 +98,6 @@ RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & 
   base_geometry_height_array_( i, j ) = src.base_geometry_height_array_( i, j );
 }
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

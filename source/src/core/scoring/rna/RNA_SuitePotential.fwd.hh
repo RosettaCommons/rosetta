@@ -25,8 +25,8 @@ class RNA_SuitePotential;
 typedef  utility::pointer::owning_ptr< RNA_SuitePotential > RNA_SuitePotentialOP;
 typedef  utility::pointer::owning_ptr< RNA_SuitePotential const > RNA_SuitePotentialCOP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

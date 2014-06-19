@@ -33,8 +33,8 @@ namespace rna {
 	class RNA_ScoringInfo;
 	typedef utility::pointer::owning_ptr< RNA_ScoringInfo > RNA_ScoringInfoOP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

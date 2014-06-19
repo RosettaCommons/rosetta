@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.sampling.protein.StepWiseProteinModelerOptions" );
+static basic::Tracer TR( "protocols.stepwise.sampling.modeler_options.StepWiseProteinModelerOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -34,7 +34,7 @@ using namespace basic::options::OptionKeys;
 namespace protocols {
 namespace stepwise {
 namespace sampling {
-namespace protein {
+namespace modeler_options {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -163,7 +163,7 @@ namespace protein {
 
 	}
 
-} //protein
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

@@ -251,7 +251,7 @@ public: // Assignment
 	/// @brief Find the index of an element. If not found then return 0;
  	inline
  	int
- 	index( T const & t ) const {
+ 	index( T const t ) const {
 		Size idx = 1 + std::distance( begin(), std::find(begin(), end(), t) );
 		if ( idx > size() ) return 0;
 		return idx;
@@ -260,7 +260,7 @@ public: // Assignment
 	/// @brief useful function -- was commented out previously due, I think, to a conflict with has() in OptionKeys! Now renamed to has_value().
  	inline
  	bool
- 	has_value( T const & t ) const {
+ 	has_value( T const t ) const {
  		return ( std::find(begin(), end(), t ) != end() );
  	}
 

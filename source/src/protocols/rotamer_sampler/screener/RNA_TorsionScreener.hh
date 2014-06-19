@@ -43,7 +43,7 @@ private:
 	core::pose::rna::RNA_SuiteNameOP suitename_;
 };
 
-}
-}
-}
+} //screener
+} //rotamer_sampler
+} //protocols
 #endif

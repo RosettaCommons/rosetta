@@ -19,6 +19,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.fwd.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 #include <core/types.hh>
 
@@ -34,8 +36,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-
-enum RNAAtomType { PHOSPHATE=1, SUGAR=2, BASE=3 };
 
 namespace core {
 namespace scoring {
@@ -64,16 +64,10 @@ namespace geometric_solvation {
 		EnergyMap & emap
 	) const;
 
-	/// f1 and f2 are zeroed
-	void
-	eval_atom_derivative(
+	Real
+	eval_atom_energy(
 		id::AtomID const & atom_id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+		pose::Pose const & pose
 	) const;
 
 	void
@@ -122,7 +116,8 @@ namespace geometric_solvation {
                                                 pose::Pose const & pose,
                                                 Real & energy,
                                                 bool const update_deriv = false,
-                                                hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
+                                                hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS,
+																								hbonds::HBEvalTuple & hbe = hbonds::DUMMY_HBE
                                                 ) const;
 
     void
@@ -134,7 +129,8 @@ namespace geometric_solvation {
                                                    pose::Pose const & pose,
                                                    Real & energy,
                                                    bool const update_deriv = false,
-                                                   hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
+                                                   hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS,
+																									 hbonds::HBEvalTuple & hbe = hbonds::DUMMY_HBE
                                                    ) const;
 
     void
@@ -144,18 +140,73 @@ namespace geometric_solvation {
         EnergyMap const & weights,
         Vector & F1,
         Vector & F2
-    ) const;
+		) const;
 
-	Real
-	eval_atom_energy(
-		id::AtomID const & atom_id,
-		pose::Pose const & pose
-	) const;
+		void
+    eval_intrares_derivatives(
+		    conformation::Residue const & rsd,
+				pose::Pose const & pose,
+				Real const & geom_sol_intra_weight,
+				utility::vector1< DerivVectorPair > & atom_derivs
+		) const;
 
+		void
+		eval_residue_pair_derivatives(
+				conformation::Residue const & ires,
+				conformation::Residue const & jres,
+				ResPairMinimizationData const & min_data,
+				pose::Pose const & pose, // provides context
+				Real const geom_sol_weight,
+				utility::vector1< DerivVectorPair > & r1_atom_derivs,
+				utility::vector1< DerivVectorPair > & r2_atom_derivs
+		) const;
+
+		Real
+		residue_pair_energy_ext(
+				conformation::Residue const & rsd1,
+				conformation::Residue const & rsd2,
+				ResPairMinimizationData const & min_data,
+				pose::Pose const & pose
+		) const;
+
+		bool
+		defines_score_for_residue_pair(
+				conformation::Residue const & rsd1,
+				conformation::Residue const & rsd2,
+				bool res_moving_wrt_eachother
+	  ) const;
+
+		etable::count_pair::CountPairFunctionCOP
+		get_count_pair_function(
+				 Size const res1,
+				 Size const res2,
+				 pose::Pose const & pose
+		) const;
+
+		etable::count_pair::CountPairFunctionCOP
+		get_count_pair_function(
+				conformation::Residue const & rsd1,
+				conformation::Residue const & rsd2
+		) const;
+
+		etable::count_pair::CountPairFunctionCOP
+		get_intrares_countpair(
+				conformation::Residue const & res
+		) const;
+
+		void
+		setup_for_minimizing_for_residue_pair(
+				conformation::Residue const & rsd1,
+				conformation::Residue const & rsd2,
+				ResPairMinimizationData & pair_data
+		) const;
+
+		Real
+		precalculate_bb_bb_energy_for_design(
+																				 pose::Pose const & pose
+																				 ) const;
 
 private:
-
-
 
 	inline
 	Real
@@ -171,11 +222,6 @@ private:
 		conformation::Residue const & occ_rsd,
 		pose::Pose const & pose ) const;
 
-
-  //test optimization function
-  //by Joseph Yesselman 9/5/13
-  // should remove!
-  ///////////////////////////////////////////////////////////
   inline
   Real
   donorRes_occludingRes_geometric_sol_one_way_bb_bb(
@@ -217,6 +263,7 @@ private:
 		hbonds::HBEvalTuple const & hbond_eval_type,
 		Vector const & polar_atm_xyz,
 		Vector const & base_atm_xyz,
+		Vector const & base2_atm_xyz,
 		Vector const & occluding_atm_xyz,
 		Size const & polar_nb,
 		Size const & occ_nb,
@@ -255,7 +302,8 @@ private:
 		pose::Pose const & pose ) const;
 
 	Vector
-	get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm ) const;
+	get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm,
+														 hbonds::HBEvalTuple const & hbt ) const;
 
 	private:
 
@@ -268,7 +316,6 @@ private:
 	hbonds::HBondDatabaseCOP hb_database_;
 	Real const dist_cut2_;
 	Real const geometric_sol_scale_;
-	bool const correct_geom_sol_acceptor_base_;
 	bool const verbose_;
 
 	};

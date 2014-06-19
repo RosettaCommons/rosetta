@@ -164,5 +164,5 @@ RotamerSizedComb::set_random( bool const setting ){
 	for ( Size n = 1; n <= rotamer_list_.size(); n++ )		rotamer_list_[ n ]->set_random( setting );
 }
 
-}
-}
+} //rotamer_sampler
+} //protocols

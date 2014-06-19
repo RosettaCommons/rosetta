@@ -108,8 +108,8 @@ protected: // can be read out by derived classes.
 	utility::vector1<RotamerSizedOP> rotamer_list_;
 
 };
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif
 

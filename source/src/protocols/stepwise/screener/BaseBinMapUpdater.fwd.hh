@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< BaseBinMapUpdater > BaseBinMapUpdaterOP;
 	typedef utility::pointer::owning_ptr< BaseBinMapUpdater const > BaseBinMapUpdaterCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

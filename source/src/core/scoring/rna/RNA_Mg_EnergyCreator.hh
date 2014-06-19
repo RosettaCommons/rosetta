@@ -44,8 +44,8 @@ public:
 
 };
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

@@ -33,8 +33,8 @@ class RNA_AtomVDW;
 typedef utility::pointer::owning_ptr< RNA_AtomVDW > RNA_AtomVDWOP;
 typedef utility::pointer::owning_ptr< RNA_AtomVDW const > RNA_AtomVDWCOP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif // INCLUDED_core_scoring_ScoreFunction_HH

@@ -25,8 +25,8 @@ namespace rna {
 class RNA_FilteredBaseBaseInfo;
 typedef utility::pointer::owning_ptr< RNA_FilteredBaseBaseInfo > RNA_FilteredBaseBaseInfoOP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

@@ -21,13 +21,13 @@
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 	
 	class TransientCutpointHandler;
 	typedef utility::pointer::owning_ptr< TransientCutpointHandler > TransientCutpointHandlerOP;
 	typedef utility::pointer::owning_ptr< TransientCutpointHandler const > TransientCutpointHandlerCOP;
 	
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

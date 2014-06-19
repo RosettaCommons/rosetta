@@ -40,7 +40,7 @@ class RNA_AddDeleteMonteCarlo: public protocols::moves::Mover {
 public:
 
 
-RNA_AddDeleteMonteCarlo(  AddOrDeleteMoverOP rna_add_or_delete_mover,
+RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna_add_or_delete_mover,
 													RNA_TorsionMoverOP     rna_torsion_mover,
 													RNA_O2PrimeMoverOP      rna_o2prime_mover,
 													core::scoring::ScoreFunctionOP scorefxn );
@@ -78,7 +78,7 @@ private:
 
 private:
 
-	AddOrDeleteMoverOP rna_add_or_delete_mover_;
+	mover::AddOrDeleteMoverOP rna_add_or_delete_mover_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
 	RNA_O2PrimeMoverOP rna_o2prime_mover_;
 

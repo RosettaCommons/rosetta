@@ -362,6 +362,6 @@ RNA_Mg_Energy::version() const
 }
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

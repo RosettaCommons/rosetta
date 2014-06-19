@@ -64,6 +64,7 @@ sources = {
 	"utility/options": [
 		"mpi_stderr",
 		"OptionCollection",
+	        "ResidueChainVectorOption"
 	],
 	"utility/options/keys": [
 		"OptionKeys",

@@ -37,12 +37,12 @@ using namespace core::pose::full_model_info;
 //  as to whether to add or delete nucleotide and chunks, and where.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.AddOrDeleteMover" ) ;
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddOrDeleteMover" ) ;
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ namespace rna {
 	}
 
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

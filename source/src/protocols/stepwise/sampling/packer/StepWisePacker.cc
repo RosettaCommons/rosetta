@@ -68,7 +68,7 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.protein.StepWisePacker" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.packer.StepWisePacker" ) ;
 
 namespace protocols {
 namespace stepwise {
@@ -81,6 +81,7 @@ namespace packer {
 		working_moving_res_list_( working_moving_res_list ),
 		use_packer_instead_of_rotamer_trials_( false ),
 		allow_virtual_side_chains_( false ),
+		allow_virtual_o2prime_hydrogens_( false ),
 		pack_o2prime_hydrogens_( true ),
 		working_pack_res_was_inputted_( false )
   {
@@ -168,7 +169,7 @@ namespace packer {
 					} else if ( pose.residue(i).is_RNA() ) {
 						if ( pack_o2prime_hydrogens_ ) {
 							pack_task_->nonconst_residue_task(i).or_ex4( true );
-							pack_task_->nonconst_residue_task(i).or_include_virtual_side_chain( allow_virtual_side_chains_ );
+							pack_task_->nonconst_residue_task(i).or_include_virtual_side_chain( allow_virtual_o2prime_hydrogens_ );
 						}
 					}
 

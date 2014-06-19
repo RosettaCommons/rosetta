@@ -183,6 +183,6 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 	}
 }
 //////////////////////////////////////////////////////////////////
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

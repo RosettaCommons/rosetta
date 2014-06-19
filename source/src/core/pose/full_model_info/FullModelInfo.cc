@@ -145,6 +145,10 @@ utility::vector1< int > const &
 FullModelInfo::conventional_numbering() const {
 	return full_model_parameters_->conventional_numbering();
 }
+utility::vector1< char > const &
+FullModelInfo::conventional_chains() const {
+	return full_model_parameters_->conventional_chains();
+}
 utility::vector1< Size > const &
 FullModelInfo::cutpoint_open_in_full_model() const {
 	return full_model_parameters_->get_res_list( CUTPOINT_OPEN );
@@ -381,6 +385,6 @@ set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info ){
 	update_pdb_info_from_full_model_info( pose );
 }
 
-}
-}
-}
+} //full_model_info
+} //pose
+} //core

@@ -23,7 +23,7 @@ namespace rotamer_sampler {
 class RotamerOneTorsion;
 typedef utility::pointer::owning_ptr< RotamerOneTorsion > RotamerOneTorsionOP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

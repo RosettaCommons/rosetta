@@ -44,7 +44,7 @@ namespace packer {
 
 		//constructor
 		StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-													StepWiseModelerOptionsCOP options );
+													modeler_options::StepWiseModelerOptionsCOP options );
 
 		//destructor
 		~StepWiseMasterPacker();
@@ -84,7 +84,7 @@ namespace packer {
 	private:
 
 		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-		StepWiseModelerOptionsCOP options_;
+		modeler_options::StepWiseModelerOptionsCOP options_;
 		core::scoring::ScoreFunctionCOP scorefxn_;
 		core::scoring::ScoreFunctionCOP phosphate_scorefxn_;
 		utility::vector1< core::Size > working_pack_res_;

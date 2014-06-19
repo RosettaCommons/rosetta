@@ -16,7 +16,6 @@
 -lj_hbond_hdis 1.75
 -lj_hbond_OH_donor_dis 2.6
 # -dun08 false
--use_incorrect_hbond_deriv false
 -linmem_ig 10
 -nblist_autoupdate true
 -enzdes::lig_packer_weight 1.8

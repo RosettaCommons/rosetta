@@ -31,13 +31,13 @@ namespace loop_close {
 	kic_close_loops_in_samples( rotamer_sampler::RotamerSizedOP & sampler,
 															core::pose::Pose const & pose,
 															working_parameters::StepWiseWorkingParametersCOP working_parameters_,
-															StepWiseModelerOptionsCOP options_ );
+															modeler_options::StepWiseModelerOptionsCOP options_ );
 
 	void
 	enable_sampling_of_loop_takeoff( rotamer_sampler::RotamerSizedOP & sampler,
 																	 core::pose::Pose & pose,
 																	 working_parameters::StepWiseWorkingParametersCOP working_parameters_,
-																	 StepWiseModelerOptionsCOP options_ );
+																	 modeler_options::StepWiseModelerOptionsCOP options_ );
 
 
 } //loop_close

@@ -248,6 +248,6 @@ RNA_SugarCloseEnergy::version() const
 }
 
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core

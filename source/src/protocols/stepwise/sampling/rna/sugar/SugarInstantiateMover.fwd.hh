@@ -28,10 +28,10 @@ namespace sugar {
 	typedef utility::pointer::owning_ptr< SugarInstantiateMover > SugarInstantiateMoverOP;
 	typedef utility::pointer::owning_ptr< SugarInstantiateMover const > SugarInstantiateMoverCOP;
 	
-} //sugar 
-} //rna 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //sugar
+} //rna
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

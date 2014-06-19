@@ -28,10 +28,10 @@ namespace loop_close {
 	typedef utility::pointer::owning_ptr< StepWiseProteinCCD_MultiPoseCloser > StepWiseProteinCCD_MultiPoseCloserOP;
 	typedef utility::pointer::owning_ptr< StepWiseProteinCCD_MultiPoseCloser const > StepWiseProteinCCD_MultiPoseCloserCOP;
 	
-} //loop_close 
-} //protein 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //loop_close
+} //protein
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

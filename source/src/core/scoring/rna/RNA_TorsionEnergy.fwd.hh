@@ -28,9 +28,9 @@ class RNA_TorsionEnergy;
 typedef utility::pointer::owning_ptr< RNA_TorsionEnergy > RNA_TorsionEnergyOP;
 typedef utility::pointer::owning_ptr< RNA_TorsionEnergy const > RNA_TorsionEnergyCOP;
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 
 
 #endif

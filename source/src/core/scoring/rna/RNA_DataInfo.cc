@@ -60,6 +60,6 @@ RNA_DataInfo::zero()
 }
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

@@ -78,6 +78,6 @@ void RNA_ChiRotamer::init() {
 	RotamerOneTorsion::init();
 }
 //////////////////////////////////////////////////////////////////////////
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols

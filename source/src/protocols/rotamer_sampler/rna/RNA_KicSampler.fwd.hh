@@ -24,8 +24,8 @@ namespace rna {
 class RNA_KicSampler;
 typedef utility::pointer::owning_ptr< RNA_KicSampler > RNA_KicSamplerOP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

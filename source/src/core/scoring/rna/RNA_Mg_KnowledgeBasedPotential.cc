@@ -240,6 +240,6 @@ RNA_Mg_KnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose
 }
 
 
-} // namespace rna
-} // namespace scoring
-} // namespace core
+} //rna
+} //scoring
+} //core

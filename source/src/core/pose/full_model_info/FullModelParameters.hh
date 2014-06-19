@@ -73,7 +73,12 @@ namespace full_model_info {
 		}
 
 		std::string const & full_sequence() const { return full_sequence_;}
-		utility::vector1< int > const & conventional_numbering() const { return conventional_numbering_;}
+
+		utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}
+		utility::vector1< char > const & conventional_chains() const { return conventional_chains_;}
+
+		void set_conventional_numbering( utility::vector1< int > const & setting ) { conventional_numbering_  = setting; }
+		void set_conventional_chains( utility::vector1< char > const & setting ) { conventional_chains_  = setting; }
 
 		// this is res_at_value
 		void
@@ -93,8 +98,23 @@ namespace full_model_info {
 		utility::vector1< Size > const &
 		get_parameter( FullModelParameterType const type ) const;
 
-		//		Size
-		//		get_value_at_res( Size const n, FullModelParameterType const type );
+		utility::vector1< Size >
+		conventional_to_full( utility::vector1< int > const & res_list ) const;
+
+		utility::vector1< Size >
+		conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const;
+
+		Size
+		conventional_to_full( int const res_num ) const;
+
+		Size
+		conventional_to_full( int const res_num, char const chain ) const;
+
+		utility::vector1< int >
+		full_to_conventional( utility::vector1< Size > const & res_list ) const;
+
+		int
+		full_to_conventional( Size const res_num ) const;
 
 		Size size() const { return full_sequence_.size(); }
 
@@ -128,8 +148,8 @@ namespace full_model_info {
 		std::map< FullModelParameterType, std::map< Size, utility::vector1< Size > > > parameter_values_as_res_lists_;
 
 		std::string full_sequence_;
-		utility::vector1< int > conventional_numbering_; // permits user to start numbering without beginning at 1.
-		// std::string conventional_chains_; // not defined yet!
+		utility::vector1< int >  conventional_numbering_; // permits user to start numbering without beginning at 1.
+		utility::vector1< char > conventional_chains_;
 
 	};
 

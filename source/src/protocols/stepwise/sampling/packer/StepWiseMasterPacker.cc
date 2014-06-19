@@ -32,7 +32,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.sampling.StepWiseMasterPacker" );
+static basic::Tracer TR( "protocols.stepwise.sampling.packer.StepWiseMasterPacker" );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -64,7 +64,7 @@ namespace packer {
 
 	//Constructor
 	StepWiseMasterPacker::StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																							StepWiseModelerOptionsCOP options ):
+																							modeler_options::StepWiseModelerOptionsCOP options ):
 		working_parameters_( working_parameters),
 		options_( options )
 	{}

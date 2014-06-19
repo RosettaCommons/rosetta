@@ -21,15 +21,15 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
-namespace protein {
+namespace modeler_options {
 	
 	class StepWiseProteinModelerOptions;
 	typedef utility::pointer::owning_ptr< StepWiseProteinModelerOptions > StepWiseProteinModelerOptionsOP;
 	typedef utility::pointer::owning_ptr< StepWiseProteinModelerOptions const > StepWiseProteinModelerOptionsCOP;
 	
-} //protein 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //modeler_options
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

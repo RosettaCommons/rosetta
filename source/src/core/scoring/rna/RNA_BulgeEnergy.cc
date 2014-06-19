@@ -105,7 +105,7 @@ RNA_BulgeEnergy::version() const
 
 
 
-} // methods
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 

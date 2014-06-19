@@ -256,7 +256,7 @@ build_rna_chi_rotamers(
 //
 void
 build_proton_chi_rotamers(
-		Size const,
+		Size const /* resid */,
 		pose::Pose const & pose,
 		chemical::ResidueTypeCOP concrete_residue,
 		pack::task::ResidueLevelTask const & residue_task,
@@ -309,6 +309,7 @@ build_proton_chi_rotamers(
 			}
 		}
 	}
+
 } //proton chi
 
 

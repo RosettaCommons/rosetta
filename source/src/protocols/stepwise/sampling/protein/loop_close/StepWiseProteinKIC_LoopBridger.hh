@@ -31,6 +31,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
+namespace loop_close {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   class StepWiseProteinKIC_LoopBridger: public protocols::moves::Mover {
@@ -124,6 +125,7 @@ namespace protein {
 
   };
 
+} //loop_close
 } //protein
 } //sampling
 } //stepwise

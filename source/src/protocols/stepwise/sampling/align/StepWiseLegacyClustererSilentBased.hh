@@ -53,7 +53,7 @@ namespace align {
 		// convenience constructor, used in StepWiseProteinModeler
 		StepWiseLegacyClustererSilentBased( core::io::silent::SilentFileDataOP silent_file_data,
 											 utility::vector1< Size > const & moving_res_list,
-											 StepWiseModelerOptionsCOP options,
+											 modeler_options::StepWiseModelerOptionsCOP options,
 											 bool const force_align );
 
     //destructor -- necessary?

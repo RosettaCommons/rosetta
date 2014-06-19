@@ -71,6 +71,6 @@ void McOneTorsion::regularize_angle( Real & angle ) {
 	while ( angle >= 180 ) angle -= 360;
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
+} //rotamer_sampler
+} //protocols
 

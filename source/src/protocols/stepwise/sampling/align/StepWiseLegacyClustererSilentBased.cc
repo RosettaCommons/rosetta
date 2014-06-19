@@ -50,7 +50,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.stepwise.StepWiseLegacyClustererSilentBased" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.align.StepWiseLegacyClustererSilentBased" ) ;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -104,7 +104,7 @@ namespace align {
 	// convenience constructor, used in StepWiseProteinModeler. Maybe should go into a util.
 	StepWiseLegacyClustererSilentBased::StepWiseLegacyClustererSilentBased( core::io::silent::SilentFileDataOP silent_file_data,
 																				utility::vector1< Size > const & moving_res_list,
-																				StepWiseModelerOptionsCOP options,
+																				modeler_options::StepWiseModelerOptionsCOP options,
 																				bool const force_align )
 	{
 		initialize_parameters_and_input();

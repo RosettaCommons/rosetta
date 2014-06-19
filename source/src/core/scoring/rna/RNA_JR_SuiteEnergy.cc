@@ -94,7 +94,7 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 	if ( dist > 1 ) emap[ rna_jr_suite ] += dist - 1;
 }
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 

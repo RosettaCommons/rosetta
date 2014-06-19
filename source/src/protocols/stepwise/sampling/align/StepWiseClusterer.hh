@@ -36,7 +36,7 @@ namespace align {
 		StepWiseClusterer();
 
 		//constructor
-		StepWiseClusterer( StepWiseModelerOptionsCOP options );
+		StepWiseClusterer( modeler_options::StepWiseModelerOptionsCOP options );
 
 		//destructor
 		~StepWiseClusterer();

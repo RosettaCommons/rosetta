@@ -28,8 +28,6 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/geometric_solvation/GeometricSolEnergy.hh>
-#include <core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/sequence/util.hh>

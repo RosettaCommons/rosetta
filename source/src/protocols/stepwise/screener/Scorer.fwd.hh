@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< Scorer > ScorerOP;
 	typedef utility::pointer::owning_ptr< Scorer const > ScorerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

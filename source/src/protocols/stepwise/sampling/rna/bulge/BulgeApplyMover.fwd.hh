@@ -28,10 +28,10 @@ namespace bulge {
 	typedef utility::pointer::owning_ptr< BulgeApplyMover > BulgeApplyMoverOP;
 	typedef utility::pointer::owning_ptr< BulgeApplyMover const > BulgeApplyMoverCOP;
 	
-} //bulge 
-} //rna 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //bulge
+} //rna
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

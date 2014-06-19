@@ -58,12 +58,12 @@ using utility::make_tag_with_dashes;
 //
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.DeleteMover" ) ;
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.DeleteMover" ) ;
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ namespace rna {
 		options_ = options;
 	}
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

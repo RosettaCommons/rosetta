@@ -23,7 +23,7 @@ namespace rotamer_sampler {
 class RotamerAny;
 typedef utility::pointer::owning_ptr< RotamerAny > RotamerAnyOP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 
 #endif

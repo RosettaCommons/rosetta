@@ -80,8 +80,8 @@ private:
 	utility::vector1<PuckerState> pucker_states_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

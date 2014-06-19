@@ -17,8 +17,8 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/stepwise/sampling/output_util.hh>
 //////////////////////////////////
 #include <core/types.hh>
@@ -63,7 +63,7 @@ using namespace core::chemical::rna;
 using core::Real;
 using basic::T;
 
-static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_Clusterer" );
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.StepWiseRNA_Clusterer" );
 
 
 namespace protocols {
@@ -1254,7 +1254,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file( std::string const & silent_file,
-				                                                     protocols::stepwise::sampling::rna::legacy::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
+				                                                     protocols::stepwise::legacy::sampling::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
 																													bool const write_score_only ){
 
 		using namespace core::io::silent;

@@ -75,6 +75,7 @@ public:
 
 	std::string const & full_sequence() const;
 	utility::vector1< int > const & conventional_numbering() const;
+	utility::vector1< char > const & conventional_chains() const;
 	utility::vector1< Size > const & cutpoint_open_in_full_model() const;
 	utility::vector1< Size > const & fixed_domain_map() const;
 	utility::vector1< Size > const & extra_minimize_res() const;
@@ -165,8 +166,7 @@ full_model_info_defined( pose::Pose const & pose );
 void
 set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info );
 
-
-}
-}
-}
+} //full_model_info
+} //pose
+} //core
 #endif

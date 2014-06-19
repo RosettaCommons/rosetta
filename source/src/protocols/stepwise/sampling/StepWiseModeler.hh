@@ -71,7 +71,7 @@ namespace sampling {
 		void set_working_parameters( working_parameters::StepWiseWorkingParametersCOP working_parameters );
 		working_parameters::StepWiseWorkingParametersCOP working_parameters();
 
-		void set_modeler_options( StepWiseModelerOptionsCOP options ) { modeler_options_ = options; }
+		void set_modeler_options( modeler_options::StepWiseModelerOptionsCOP options ) { modeler_options_ = options; }
 
 		Size
 		get_num_sampled(){ return pose_list_.size(); }
@@ -120,7 +120,7 @@ namespace sampling {
 		utility::vector1< Size > working_prepack_res_;
 
 		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-		StepWiseModelerOptionsCOP modeler_options_;
+		modeler_options::StepWiseModelerOptionsCOP modeler_options_;
 		scoring::ScoreFunctionCOP scorefxn_;
 		scoring::ScoreFunctionCOP sample_scorefxn_, pack_scorefxn_; // will be derived from scorefxn_
 

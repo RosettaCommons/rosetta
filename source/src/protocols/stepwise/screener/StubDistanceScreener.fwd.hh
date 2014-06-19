@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< StubDistanceScreener > StubDistanceScreenerOP;
 	typedef utility::pointer::owning_ptr< StubDistanceScreener const > StubDistanceScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

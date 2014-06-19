@@ -48,7 +48,7 @@
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/sampling/align/StepWiseLegacyClustererSilentBased.hh>
-#include <protocols/stepwise/sampling/protein/legacy/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/legacy/sampling/protein/StepWiseProteinPoseSetup.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/protein/util.hh>
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
@@ -131,6 +131,8 @@ using basic::Warning;
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
+using namespace protocols::stepwise::legacy::sampling;
+using namespace protocols::stepwise::legacy::sampling::protein;
 
 using utility::vector1;
 
@@ -267,7 +269,7 @@ rebuild_test(){
 	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, center_vector );
 
-	StepWiseModelerOptionsOP stepwise_modeler_options = new StepWiseModelerOptions;
+	modeler_options::StepWiseModelerOptionsOP stepwise_modeler_options = new modeler_options::StepWiseModelerOptions;
 	stepwise_modeler_options->initialize_from_command_line();
 	stepwise_modeler_options->set_output_minimized_pose_list( true );
 	stepwise_modeler_options->set_silent_file( option[ out::file::silent ]() );
@@ -330,7 +332,6 @@ cluster_outfile_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::stepwise::sampling;
 	using namespace align;
-	using namespace protein;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
 	StepWiseLegacyClustererSilentBased stepwise_clusterer( silent_files_in );
@@ -376,7 +377,6 @@ calc_rms_test(){
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
 	using namespace protocols::stepwise::sampling;
-	using namespace protein;
 	using namespace core::chemical;
 
 	PoseOP pose_op,native_pose;

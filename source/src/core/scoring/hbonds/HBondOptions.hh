@@ -155,14 +155,6 @@ public:
 	void
 	Mbhbond( bool const setting );
 
-	///
-	bool
-	use_incorrect_deriv() const;
-
-	///
-	void
-	use_incorrect_deriv( bool const setting );
-
 	bool use_sp2_chi_penalty() const;
 	void use_sp2_chi_penalty( bool setting );
 
@@ -238,7 +230,6 @@ private:
 	bool bb_donor_acceptor_check_; // T/F? Should we apply the rule that sc/bb hbonds are rejected if bb/bb exist?
 	bool decompose_bb_hb_into_pair_energies_;
 	std::string params_database_tag_;
-	bool use_incorrect_deriv_;
 	bool use_sp2_chi_penalty_;
 	Real sp2_BAH180_rise_;
 	Real sp2_outer_width_;

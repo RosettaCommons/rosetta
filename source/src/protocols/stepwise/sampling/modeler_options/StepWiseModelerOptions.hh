@@ -25,6 +25,7 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace modeler_options {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// Note the use of multiple inheritance. This makes the code more concise and easy to expand,
@@ -39,8 +40,8 @@ namespace sampling {
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
 	class StepWiseModelerOptions: public StepWiseBasicModelerOptions,
-																public protein::StepWiseProteinModelerOptions,
-																public rna::StepWiseRNA_ModelerOptions {
+																public modeler_options::StepWiseProteinModelerOptions,
+																public modeler_options::StepWiseRNA_ModelerOptions {
 
 	public:
 
@@ -96,6 +97,7 @@ namespace sampling {
 
 	};
 
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

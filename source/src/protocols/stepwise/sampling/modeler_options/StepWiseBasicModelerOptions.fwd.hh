@@ -21,13 +21,15 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace modeler_options {
 	
 	class StepWiseBasicModelerOptions;
 	typedef utility::pointer::owning_ptr< StepWiseBasicModelerOptions > StepWiseBasicModelerOptionsOP;
 	typedef utility::pointer::owning_ptr< StepWiseBasicModelerOptions const > StepWiseBasicModelerOptionsCOP;
 	
-} //sampling 
-} //stepwise 
-} //protocols 
+} //modeler_options
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

@@ -40,7 +40,6 @@ using namespace core;
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
 
 	class StepWiseMonteCarloOptions: public basic::resource_manager::ResourceOptions {
 
@@ -78,7 +77,7 @@ namespace rna {
 		void
 		initialize_from_command_line();
 
-		protocols::stepwise::sampling::StepWiseModelerOptionsOP setup_modeler_options() const;
+		protocols::stepwise::sampling::modeler_options::StepWiseModelerOptionsOP setup_modeler_options() const;
 
 		std::string const & silent_file() const { return silent_file_; }
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; };
@@ -256,7 +255,6 @@ namespace rna {
 		core::Real rmsd_screen_;
 	};
 
-} //rna
 } //monte_carlo
 } //stepwise
 } //protocols

@@ -27,11 +27,12 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "protocols.stepwise.sampling.StepWiseBasicModelerOptions" );
+static basic::Tracer TR( "protocols.stepwise.sampling.modeler_options.StepWiseBasicModelerOptions" );
 
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace modeler_options {
 
 	//Constructor
 	StepWiseBasicModelerOptions::StepWiseBasicModelerOptions()
@@ -115,6 +116,7 @@ namespace sampling {
 		skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
 	}
 
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

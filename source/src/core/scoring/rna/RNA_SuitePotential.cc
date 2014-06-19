@@ -195,6 +195,6 @@ void RNA_SuitePotential::regularize_torsions(
 	}
 }
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

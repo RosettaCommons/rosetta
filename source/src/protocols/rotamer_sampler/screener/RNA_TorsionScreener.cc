@@ -81,6 +81,6 @@ Real RNA_TorsionScreener::angle_conv( Real const input ) {
 	return angle;
 }
 /////////////////////////////////////////////////////////////////////
-}
-}
-}
+} //screener
+} //rotamer_sampler
+} //protocols

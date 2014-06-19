@@ -16,18 +16,17 @@
 
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 
 #include <core/types.hh>
 #include <core/chemical/types.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 
 #include <numeric/xyzVector.fwd.hh>
 
-// AUTO-REMOVED #include <utility>
 
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
@@ -478,9 +477,9 @@ enum HBGeoDimType {
 enum HBDerivType {
 	hbderiv_NONE = 1, // no derivative
 	hbderiv_ABE_GO, // standard hbond derivative calculation
-	hbderiv_ABE_GO_NO_xD, // needed for geometric solvation craziness
-	hbderiv_ABE_GO_NO_xH, // needed for geometric solvation craziness
-	hbderiv_MAX = hbderiv_ABE_GO_NO_xH
+	hbderiv_ABE_GO_GEOMSOL_OCC_ACC, // geometric solvation, occluding atom ('pseudo-water') + acceptor
+	hbderiv_ABE_GO_GEOMSOL_OCC_DON, // geometric solvation, occluding atom ('pseudo-water') + donor
+	hbderiv_MAX = hbderiv_ABE_GO_GEOMSOL_OCC_DON
 };
 
 extern Real DUMMY_DERIV;

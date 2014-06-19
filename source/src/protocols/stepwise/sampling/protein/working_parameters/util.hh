@@ -26,6 +26,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace protein {
+namespace working_parameters {
 
 	StepWiseProteinWorkingParametersOP
 	setup_protein_working_parameters_for_swa( utility::vector1< Size > const & moving_res_list,
@@ -34,6 +35,7 @@ namespace protein {
 																				utility::vector1< Size > const & bridge_res,
 																				utility::vector1< Size > const & working_minimize_res );
 
+} //working_parameters
 } //protein
 } //sampling
 } //stepwise

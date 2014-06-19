@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< PhosphateScreener > PhosphateScreenerOP;
 	typedef utility::pointer::owning_ptr< PhosphateScreener const > PhosphateScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

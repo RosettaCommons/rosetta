@@ -92,6 +92,6 @@ nonconst_rna_scoring_info_from_pose( pose::Pose & pose )
 }
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

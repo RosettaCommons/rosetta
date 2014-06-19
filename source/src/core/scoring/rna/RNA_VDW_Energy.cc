@@ -353,6 +353,6 @@ RNA_VDW_Energy::version() const
 }
 
 
-}
-}
-}
+} //rna
+} //scoring
+} //core

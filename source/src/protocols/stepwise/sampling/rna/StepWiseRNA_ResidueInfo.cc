@@ -37,7 +37,7 @@
 #include <map>
 
 
-static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_ResidueInfo" );
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.StepWiseRNA_ResidueInfo" );
 
 using namespace core;
 using namespace ObjexxFCL;

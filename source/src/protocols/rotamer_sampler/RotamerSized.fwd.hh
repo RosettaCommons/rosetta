@@ -22,6 +22,6 @@ namespace rotamer_sampler {
 class RotamerSized;
 typedef utility::pointer::owning_ptr< RotamerSized > RotamerSizedOP;
 
-}
-}
+} //rotamer_sampler
+} //protocols
 #endif

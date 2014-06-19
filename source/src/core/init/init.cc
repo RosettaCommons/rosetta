@@ -98,7 +98,7 @@
 //#include <core/scoring/etable/CoarseEtableEnergyCreator.hh>
 //XRW_E_T1
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergyCreator.hh>
-#include <core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh>
+#include <core/scoring/geometric_solvation/ContextDependentGeometricSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergy_onebodyCreator.hh>
@@ -379,7 +379,7 @@ static EnergyMethodRegistrator< scoring::electron_density_atomwise::ElecDensAtom
 //static EnergyMethodRegistrator< scoring::etable::CoarseEtableEnergyCreator > CoarseEtableEnergyCreator_registrator;
 //XRW_E_T1
 static EnergyMethodRegistrator< scoring::geometric_solvation::ExactOccludedHbondSolEnergyCreator > ExactOccludedHbondSolEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::geometric_solvation::GeometricSolEnergyCreator > GeometricSolEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::geometric_solvation::ContextDependentGeometricSolEnergyCreator > ContextDependentGeometricSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::ContextIndependentGeometricSolEnergyCreator > ContextIndependentGeometricSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::OccludedHbondSolEnergyCreator > OccludedHbondSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::OccludedHbondSolEnergy_onebodyCreator > OccludedHbondSolEnergy_onebodyCreator_registrator;

@@ -29,7 +29,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_VirtualSugarSamplerFromStringList" );
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.sugar.StepWiseRNA_VirtualSugarSamplerFromStringList" );
 
 namespace protocols {
 namespace stepwise {

@@ -76,8 +76,8 @@ private:
 	RNA_SugarRotamerOP sugar_rotamer_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

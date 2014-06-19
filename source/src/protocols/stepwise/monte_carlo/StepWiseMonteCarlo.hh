@@ -40,11 +40,11 @@ by our coding convention due to problems it create on modern compilers and becau
 For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
 */
 
+using namespace protocols::stepwise::monte_carlo::mover;
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
 
 	class StepWiseMonteCarlo: public protocols::moves::Mover {
 
@@ -150,7 +150,6 @@ namespace rna {
 
 	};
 
-} //rna
 } //monte_carlo
 } //stepwise
 } //protocols

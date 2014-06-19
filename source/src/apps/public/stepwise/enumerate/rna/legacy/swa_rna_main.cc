@@ -11,7 +11,7 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 // libRosetta headers
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -100,10 +100,10 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_Minimizer.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_Minimizer.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_WorkingParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
@@ -141,8 +141,10 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
-using namespace protocols::stepwise::sampling::rna::legacy;
 using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::legacy::sampling;
+using namespace protocols::stepwise::legacy::sampling::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -226,7 +228,7 @@ swa_rna_sample()
 	std::string const silent_file = option[ out::file::silent ]();
 	std::string swa_silent_file, out_tag;
 
-	StepWiseModelerOptionsOP stepwise_modeler_options = new StepWiseModelerOptions;
+	modeler_options::StepWiseModelerOptionsOP stepwise_modeler_options = new modeler_options::StepWiseModelerOptions;
 	stepwise_modeler_options->initialize_from_command_line();
 	stepwise_modeler_options->set_output_minimized_pose_list( !multiple_shots );
 	stepwise_modeler_options->set_disallow_realign( true );

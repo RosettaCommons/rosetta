@@ -214,6 +214,6 @@ RG_Energy_RNA::version() const
 
 
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core

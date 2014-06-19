@@ -29,7 +29,7 @@
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 
-#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 
@@ -156,7 +156,7 @@ namespace rna {
 
 		void
 		recalculate_rmsd_and_output_silent_file( std::string const & silent_file,
-				                                    protocols::stepwise::sampling::rna::legacy::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
+				                                    protocols::stepwise::legacy::sampling::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
 																					bool const write_score_only );
 
 		void

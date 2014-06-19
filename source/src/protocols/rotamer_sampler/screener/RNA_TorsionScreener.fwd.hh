@@ -23,7 +23,7 @@ namespace screener {
 class RNA_TorsionScreener;
 typedef utility::pointer::owning_ptr< RNA_TorsionScreener > RNA_TorsionScreenerOP;
 
-}
-}
-}
+} //screener
+} //rotamer_sampler
+} //protocols
 #endif

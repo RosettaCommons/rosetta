@@ -24,8 +24,8 @@ namespace rna {
 class RNA_ChiRotamer;
 typedef utility::pointer::owning_ptr< RNA_ChiRotamer > RNA_ChiRotamerOP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

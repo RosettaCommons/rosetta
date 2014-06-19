@@ -24,6 +24,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/types.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -38,13 +39,15 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.pose.full_model_info.FullModelInfoSetupFromCommandLine" );
+static basic::Tracer TR( "protocols.stepwise.full_model_info.FullModelInfoSetupFromCommandLine" );
 
 using namespace core;
+using namespace core::pose;
+using namespace core::pose::full_model_info;
 using utility::vector1;
 
-namespace core {
-namespace pose {
+namespace protocols {
+namespace stepwise {
 namespace full_model_info {
 
 
@@ -151,6 +154,68 @@ namespace full_model_info {
 
 	}
 
+	///////////////////////////////////////////////////////////////////////////////////////
+	// move following into SequenceOP object, or util.hh .
+	///////////////////////////////////////////////////////////////////////////////////////
+	std::string
+	get_concatenated_sequence( vector1< core::sequence::SequenceCOP > const & fasta_sequences ){
+		std::string sequence;
+		for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
+			sequence += fasta_sequences[n]->sequence();
+		}
+		return sequence;
+	}
+
+	vector1< Size >
+	get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences ){
+		vector1< Size > cutpoints;
+		Size ntot( 0 );
+		for ( Size n = 1; n < fasta_sequences.size(); n++ ){
+			ntot += fasta_sequences.size();
+			cutpoints.push_back( ntot );
+		}
+		return cutpoints;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	// looks for tab-delimited tags like 'chain:A' and 'res_num:5-20' in fasta IDs.
+	// move this to util.cc in core?
+	///////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
+																				 vector1< char > & conventional_chains,
+																				 vector1< int  > & conventional_numbering ){
+		using utility::string_split;
+		bool found_info_in_previous_sequence( false );
+		Size count( 0 );
+		for ( Size n = 1; n <= fasta_sequences.size(); n++ ){
+			char chain( ' ' );
+			vector1< int > resnum;
+			bool found_info( false );
+			std::string tag;
+			std::stringstream ss( fasta_sequences[n]->id() );
+			while( ss.good() ){
+				ss >> tag;
+				bool string_is_ok( false );
+				std::pair< std::vector< int >, std::vector< char > > resnum_and_chain =	utility::get_resnum_and_chain( tag, string_is_ok );
+				if ( !string_is_ok ) continue;
+				for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) resnum.push_back( resnum_and_chain.first[n] );
+				chain  = resnum_and_chain.second[0];
+				found_info = true;
+			}
+			if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
+			if ( !found_info || resnum.size() == 1 /*happens with stray numbers*/ ){
+				resnum.clear();
+				chain = ' '; // unknown chain
+				for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) resnum.push_back( ++count );
+			}
+			runtime_assert( fasta_sequences[n]->sequence().size() == resnum.size() );
+			for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_chains.push_back( chain );
+			for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) conventional_numbering.push_back( resnum[q] );
+
+			found_info_in_previous_sequence  = found_info;
+		}
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -165,18 +230,22 @@ namespace full_model_info {
 		}
 
 		std::string const fasta_file = option[ in::file::fasta ]()[1];
-		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-		std::string const desired_sequence = fasta_sequence->sequence();
+		vector1< core::sequence::SequenceOP > const fasta_sequences = core::sequence::read_fasta_file( fasta_file );
+		std::string const desired_sequence           = get_concatenated_sequence( fasta_sequences );
+		vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences );
 
 		FullModelParametersOP full_model_parameters =	new FullModelParameters( desired_sequence );
+		vector1< char > conventional_chains;
+		vector1< int  > conventional_numbering;
+		get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering );
+		full_model_parameters->set_conventional_numbering( conventional_numbering );
+		full_model_parameters->set_conventional_chains( conventional_chains );
 
-		vector1< Size > cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
-		vector1< Size > extra_minimize_res = option[ full_model::extra_min_res ]();
-		vector1< Size > input_res_list = option[ in::file::input_res ]();
+		if ( option[ full_model::cutpoint_open ].user() ) cutpoint_open_in_full_model = full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
+		vector1< Size > extra_minimize_res = full_model_parameters->conventional_to_full( option[ full_model::extra_min_res ].resnum_and_chain() );
+		vector1< Size > input_res_list = full_model_parameters->conventional_to_full( option[ in::file::input_res ].resnum_and_chain() );
 		bool const get_res_list_from_pdb = !option[ in::file::input_res ].user();
-		vector1< Size > sample_res = option[ full_model::sample_res ](); //stuff that can be resampled.
-		//		if ( option[ stepwise::rna::global_sample_res_list ].user() )	sample_res = option[ stepwise::rna::global_sample_res_list ](); // legacy.
-		//		vector1< Size > fixed_res = option[ stepwise::fixed_res ](); //legacy -- stuff that cannot be resampled.
+		vector1< Size > sample_res = full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
 
 		vector1< vector1< Size > > pose_res_lists;
 		vector1< Size > domain_map( desired_sequence.size(), 0 );
@@ -188,7 +257,7 @@ namespace full_model_info {
 			vector1< Size > input_res_for_pose;
 
 			if ( get_res_list_from_pdb ){
-				vector1< Size >  const res_list = get_res_num_from_pdb_info( pose );
+				vector1< Size > const res_list = full_model_parameters->conventional_to_full( std::make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
 				for ( Size n = 1; n <= res_list.size(); n++ ) input_res_list.push_back( res_list[n] );
 			}
 
@@ -197,7 +266,6 @@ namespace full_model_info {
 				runtime_assert( input_res_count <= input_res_list.size() );
 				Size const & number_in_full_model = input_res_list[ input_res_count ];
 				input_res_for_pose.push_back( number_in_full_model );
-				//				if ( fixed_res.size() > 0 && !fixed_res.has_value( number_in_full_model ) && !sample_res.has_value( number_in_full_model ) )  sample_res.push_back( number_in_full_model ); // legacy -- if fixed_res is specified, as opposed to sample_res.
 				if ( !sample_res.has_value( number_in_full_model ) ) domain_map[ number_in_full_model ] = n;
 			}
 			pose_res_lists.push_back( input_res_for_pose );
@@ -211,8 +279,6 @@ namespace full_model_info {
 			vector1< Size > const & res_list = pose_res_lists[ n ];
 			for ( Size i = 1; i < pose.total_residue(); i++ ){
 				if ( (res_list[ i+1 ] > res_list[ i ] + 1) && !pose.fold_tree().is_cutpoint(i) ){
-					//					TR << "Adding jump between non-contiguous residues [in full model numbering]: " <<
-					//						res_list[i] << " and " << res_list[ i+1 ] << std::endl;
 					put_in_cutpoint( pose, i );
 				}
 				if ( cutpoint_open_in_full_model.has_value( res_list[ i ]) ) continue;
@@ -228,11 +294,13 @@ namespace full_model_info {
 					cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
 				}
 			}
-			add_cutpoint_closed( pose, res_list, option[ full_model::cutpoint_closed ]()  );
+			add_cutpoint_closed( pose, res_list, full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() ) );
 			update_pose_fold_tree( pose, res_list,
 														 extra_minimize_res, sample_res,
-														 option[ full_model::jump_res ](), option[ full_model::root_res ]() );
-			add_virtual_sugar_res( pose, res_list, option[ full_model::virtual_sugar_res ]() );
+														 full_model_parameters->conventional_to_full( option[ full_model::jump_res ].resnum_and_chain() ),
+														 full_model_parameters->conventional_to_full( option[ full_model::root_res ].resnum_and_chain() ) );
+			add_virtual_sugar_res( pose, res_list,
+														 full_model_parameters->conventional_to_full( option[ full_model::virtual_sugar_res ].resnum_and_chain() ) );
 		}
 
 
@@ -240,9 +308,9 @@ namespace full_model_info {
 		full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
 		full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
 		full_model_parameters->set_parameter_as_res_list( SAMPLE, sample_res );
-		full_model_parameters->set_parameter_as_res_list( CALC_RMS, option[ full_model::calc_rms_res ]() );
-		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  option[ full_model::rna::force_syn_chi_res_list ]() );
-		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, option[ full_model::rna::terminal_res ]() );
+		full_model_parameters->set_parameter_as_res_list( CALC_RMS, full_model_parameters->conventional_to_full( option[ full_model::calc_rms_res ].resnum_and_chain() ) );
+		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
+		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() ) );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
@@ -485,5 +553,5 @@ namespace full_model_info {
 	}
 
 } //full_model_info
-} //pose
-} //core
+} //stepwise
+} //protocols

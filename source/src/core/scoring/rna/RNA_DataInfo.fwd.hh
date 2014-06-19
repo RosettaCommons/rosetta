@@ -32,8 +32,8 @@ namespace rna {
   typedef utility::pointer::owning_ptr< RNA_DataInfo > RNA_DataInfoOP;
   typedef utility::pointer::access_ptr< RNA_DataInfo > RNA_DataInfoAP;
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

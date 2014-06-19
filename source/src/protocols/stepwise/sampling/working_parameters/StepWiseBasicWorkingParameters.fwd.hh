@@ -21,13 +21,15 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace working_parameters {
 	
 	class StepWiseBasicWorkingParameters;
 	typedef utility::pointer::owning_ptr< StepWiseBasicWorkingParameters > StepWiseBasicWorkingParametersOP;
 	typedef utility::pointer::owning_ptr< StepWiseBasicWorkingParameters const > StepWiseBasicWorkingParametersCOP;
 	
-} //sampling 
-} //stepwise 
-} //protocols 
+} //working_parameters
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

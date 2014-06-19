@@ -73,8 +73,8 @@ private:
 			boost::numeric::ublas::vector<Real> & torsions ) const;
 };
 
-}
-}
-}
+} //rna
+} //scoring
+} //core
 
 #endif

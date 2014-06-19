@@ -18,16 +18,16 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core {
-namespace pose {
+namespace protocols {
+namespace stepwise {
 namespace full_model_info {
 	
 	class FullModelInfoSetupFromCommandLine;
 	typedef utility::pointer::owning_ptr< FullModelInfoSetupFromCommandLine > FullModelInfoSetupFromCommandLineOP;
 	typedef utility::pointer::owning_ptr< FullModelInfoSetupFromCommandLine const > FullModelInfoSetupFromCommandLineCOP;
 	
-} //full_model_info 
-} //pose 
-} //core 
+} //full_model_info
+} //stepwise
+} //protocols
 
 #endif

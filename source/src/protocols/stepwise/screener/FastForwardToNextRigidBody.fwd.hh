@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< FastForwardToNextRigidBody > FastForwardToNextRigidBodyOP;
 	typedef utility::pointer::owning_ptr< FastForwardToNextRigidBody const > FastForwardToNextRigidBodyCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

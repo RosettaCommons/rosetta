@@ -21,15 +21,15 @@
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 	
 	class FromScratchMover;
 	typedef utility::pointer::owning_ptr< FromScratchMover > FromScratchMoverOP;
 	typedef utility::pointer::owning_ptr< FromScratchMover const > FromScratchMoverCOP;
 	
-} //rna 
-} //monte_carlo 
-} //stepwise 
-} //protocols 
+} //mover
+} //monte_carlo
+} //stepwise
+} //protocols
 
 #endif

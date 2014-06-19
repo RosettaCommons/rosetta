@@ -25,7 +25,7 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
-namespace rna {
+namespace modeler_options {
 
 	// multiple inheritance -- bad form -- but will replace with composition later, perhaps.
 	class StepWiseRNA_ModelerOptions: public virtual basic::resource_manager::ResourceOptions {
@@ -233,7 +233,7 @@ namespace rna {
 		bool tether_jump_;
 	};
 
-} //rna
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

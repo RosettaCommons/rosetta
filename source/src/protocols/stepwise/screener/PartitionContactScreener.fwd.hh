@@ -26,8 +26,8 @@ namespace screener {
 	typedef utility::pointer::owning_ptr< PartitionContactScreener > PartitionContactScreenerOP;
 	typedef utility::pointer::owning_ptr< PartitionContactScreener const > PartitionContactScreenerCOP;
 	
-} //screener 
-} //stepwise 
-} //protocols 
+} //screener
+} //stepwise
+} //protocols
 
 #endif

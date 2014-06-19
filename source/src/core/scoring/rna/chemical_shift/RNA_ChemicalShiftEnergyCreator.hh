@@ -40,9 +40,9 @@ public:
 
 };
 
-}
-}
-}
-}
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 #endif

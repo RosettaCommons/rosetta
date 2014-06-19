@@ -28,12 +28,11 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::stepwise::sampling;
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.StepWiseMonteCarloOptions" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarloOptions" );
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
 
 	//Constructor
 	StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
@@ -131,10 +130,10 @@ namespace rna {
 
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	StepWiseModelerOptionsOP
+	modeler_options::StepWiseModelerOptionsOP
 	StepWiseMonteCarloOptions::setup_modeler_options() const{
 
-		StepWiseModelerOptionsOP modeler_options = new StepWiseModelerOptions;
+		modeler_options::StepWiseModelerOptionsOP modeler_options = new modeler_options::StepWiseModelerOptions;
 		modeler_options->set_silent_file( silent_file_ );
 		modeler_options->set_choose_random( true );
 		modeler_options->set_num_pose_minimize( 1 );
@@ -172,7 +171,6 @@ namespace rna {
 
 
 
-} //rna
 } //monte_carlo
 } //stepwise
 } //protocols

@@ -509,10 +509,9 @@ make_tag( utility::vector1< int > res_vector ){
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
 /// @author rhiju
 //
-//    note that this format is slightly different from frank's functions above -- this does not take commas (but
-//    could easily be expanded to do that), and looks for chains as prefixeds separated by a colon. (This allow chain IDs
-//    to be integers).
+//  #detailed  several kinds of tags are OK, including "A:1-5 B:20-22" and "A1-5 B20,21,22".
 //
+
 std::pair< std::vector< int >, std::vector< char > >
 get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
 
@@ -537,12 +536,18 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
   std::vector< int > resnum_from_tag;
   std::vector< char > chains_from_tag;
   char chain( ' ' );
+	std::string const numerical("-0123456789");
 
   size_t found_colon = tag.find( ":" );
   if ( found_colon == std::string::npos ){
-    resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+		if ( numerical.find( tag[0] ) == std::string::npos ) { // looks like a chain character at beginning
+			chain= tag[0];
+			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
+		} else {
+			resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+		}
   } else {
-    runtime_assert( found_colon == 1 );
+    if ( found_colon != 1 ) return false;
     chain = tag[0];
     resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
   }

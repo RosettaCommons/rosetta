@@ -25,7 +25,7 @@
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	class TransientCutpointHandler: public utility::pointer::ReferenceCount {
 
@@ -65,7 +65,7 @@ namespace rna {
 
 	};
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

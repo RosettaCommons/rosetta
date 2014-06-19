@@ -137,7 +137,7 @@ RNA_ChemicalShiftEnergy::version() const
 }
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core

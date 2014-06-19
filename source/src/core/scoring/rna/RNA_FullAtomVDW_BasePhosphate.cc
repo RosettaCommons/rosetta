@@ -434,7 +434,7 @@ RNA_FullAtomVDW_BasePhosphate::version() const
 
 
 
-} // rna
-} // scoring
-} // core
+} //rna
+} //scoring
+} //core
 

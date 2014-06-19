@@ -26,8 +26,8 @@ namespace copy_dofs {
 	typedef utility::pointer::owning_ptr< ResidueAlternativeSet > ResidueAlternativeSetOP;
 	typedef utility::pointer::owning_ptr< ResidueAlternativeSet const > ResidueAlternativeSetCOP;
 	
-} //copy_dofs 
-} //rotamer_sampler 
-} //protocols 
+} //copy_dofs
+} //rotamer_sampler
+} //protocols
 
 #endif

@@ -35,8 +35,8 @@ namespace rna {
 class RNA_LowResolutionPotential;
 typedef utility::pointer::owning_ptr< RNA_LowResolutionPotential > RNA_LowResolutionPotentialOP;
 
-} // ns rna
-} // ns scoring
-} // ns core
+} //rna
+} //scoring
+} //core
 
 #endif

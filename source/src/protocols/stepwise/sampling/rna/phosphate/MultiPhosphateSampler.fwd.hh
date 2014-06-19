@@ -28,10 +28,10 @@ namespace phosphate {
 	typedef utility::pointer::owning_ptr< MultiPhosphateSampler > MultiPhosphateSamplerOP;
 	typedef utility::pointer::owning_ptr< MultiPhosphateSampler const > MultiPhosphateSamplerCOP;
 	
-} //phosphate 
-} //rna 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //phosphate
+} //rna
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

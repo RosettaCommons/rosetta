@@ -110,5 +110,5 @@ RotamerSizedAny::id2state( core::Size const id ) const {
 	return std::make_pair( rotamer, id_rotamer );
 }
 ///////////////////////////////////////////////////////////////////////////
-}
-}
+} //rotamer_sampler
+} //protocols

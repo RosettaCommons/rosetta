@@ -23,6 +23,7 @@
 namespace protocols {
 namespace stepwise {
 namespace sampling {
+namespace modeler_options {
 
 	class StepWiseBasicModelerOptions: public virtual basic::resource_manager::ResourceOptions {
 
@@ -127,6 +128,7 @@ protected:
 
 	};
 
+} //modeler_options
 } //sampling
 } //stepwise
 } //protocols

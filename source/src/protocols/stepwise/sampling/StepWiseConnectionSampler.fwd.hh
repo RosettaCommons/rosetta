@@ -26,8 +26,8 @@ namespace sampling {
 	typedef utility::pointer::owning_ptr< StepWiseConnectionSampler > StepWiseConnectionSamplerOP;
 	typedef utility::pointer::owning_ptr< StepWiseConnectionSampler const > StepWiseConnectionSamplerCOP;
 	
-} //sampling 
-} //stepwise 
-} //protocols 
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

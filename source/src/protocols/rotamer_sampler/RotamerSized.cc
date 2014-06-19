@@ -68,5 +68,5 @@ bool RotamerSized::not_end() const {
 	return ( size() > 0 && id_ <= size() );
 }
 
-}
-}
+} //rotamer_sampler
+} //protocols

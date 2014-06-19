@@ -392,7 +392,7 @@ namespace sampling {
 	core::scoring::ScoreFunctionOP
 	get_minimize_scorefxn( core::pose::Pose const & pose,
 												 core::scoring::ScoreFunctionCOP scorefxn,
-												 StepWiseModelerOptionsCOP options );
+												 modeler_options::StepWiseModelerOptionsCOP options );
 
 	utility::vector1< core::Size >
 	get_domain_boundary_suites( pose::Pose const & pose );
@@ -415,7 +415,7 @@ namespace sampling {
 	core::scoring::ScoreFunctionCOP
 	initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 															pose::Pose const & pose,
-															StepWiseModelerOptionsCOP modeler_options );
+															modeler_options::StepWiseModelerOptionsCOP modeler_options );
 
 	core::scoring::ScoreFunctionCOP
 	initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn, pose::Pose const & pose );

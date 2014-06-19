@@ -53,6 +53,6 @@ private:
 	bool uniform_sampling_;
 };
 
-}
-}
+} //rotamer_sampler
+} //protocols
 #endif

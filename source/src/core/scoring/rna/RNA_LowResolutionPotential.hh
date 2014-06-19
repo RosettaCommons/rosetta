@@ -374,8 +374,8 @@ public:
 
 };
 
-} // ns rna
-} // ns scoring
-} // ns core
+} //rna
+} //scoring
+} //core
 
 #endif

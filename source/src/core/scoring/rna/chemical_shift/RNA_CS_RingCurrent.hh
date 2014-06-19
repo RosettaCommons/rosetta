@@ -46,9 +46,9 @@ get_ring_current_deriv( numeric::xyzVector< core::Real > const & CS_data_atom_xy
 											RNA_CS_residue_parameters const & source_rsd_CS_params );
 
 
-} // chemical_shift
-} // rna
-} // scoring
-} // core
+} //chemical_shift
+} //rna
+} //scoring
+} //core
 
 #endif

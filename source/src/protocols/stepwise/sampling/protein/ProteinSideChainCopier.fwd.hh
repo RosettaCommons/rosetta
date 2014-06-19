@@ -27,9 +27,9 @@ namespace protein {
 	typedef utility::pointer::owning_ptr< ProteinSideChainCopier > ProteinSideChainCopierOP;
 	typedef utility::pointer::owning_ptr< ProteinSideChainCopier const > ProteinSideChainCopierCOP;
 	
-} //protein 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //protein
+} //sampling
+} //stepwise
+} //protocols
 
 #endif

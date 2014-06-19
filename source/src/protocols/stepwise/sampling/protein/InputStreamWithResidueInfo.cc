@@ -27,7 +27,7 @@
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <protocols/stepwise/sampling/protein/legacy/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/legacy/sampling/protein/StepWiseProteinPoseSetup.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/stepwise/sampling/util.hh>
 

@@ -97,8 +97,8 @@ private:
 	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

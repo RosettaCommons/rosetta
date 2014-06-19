@@ -32,7 +32,7 @@ namespace protein {
 	ProteinSideChainCopier::~ProteinSideChainCopier()
 	{}
 
-} //protein 
-} //sampling 
-} //stepwise 
-} //protocols 
+} //protein
+} //sampling
+} //stepwise
+} //protocols

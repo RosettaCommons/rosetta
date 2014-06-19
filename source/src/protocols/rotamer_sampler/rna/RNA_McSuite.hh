@@ -121,8 +121,8 @@ private:
 	utility::vector1<RNA_McSugarOP> sugar_samplers_;
 };
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 
 #endif

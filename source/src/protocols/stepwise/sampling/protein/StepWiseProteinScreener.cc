@@ -71,7 +71,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.protein.StepWiseProteinScreener" ) ;
+static basic::Tracer TR( "protocols.stepwise.sampling.protein.StepWiseProteinScreener" ) ;
 
 namespace protocols {
 namespace stepwise {

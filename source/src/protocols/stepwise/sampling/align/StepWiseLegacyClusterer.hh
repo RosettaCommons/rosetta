@@ -48,7 +48,7 @@ namespace align {
 
 		StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list,
 											 utility::vector1< Size > const & moving_res_list,
-											 StepWiseModelerOptionsCOP options,
+											 modeler_options::StepWiseModelerOptionsCOP options,
 											 bool const force_align );
 
     //destructor -- necessary?

@@ -29,12 +29,12 @@
 using namespace core::chemical;
 using namespace core;
 
-static basic::Tracer TR( "protocols.stepwise.TransientCutpointHandler" );
+static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.TransientCutpointHandler" );
 
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
-namespace rna {
+namespace mover {
 
 	//Constructor
 	TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
@@ -124,7 +124,7 @@ namespace rna {
 		viewer_pose = pose;
 	}
 
-} //rna
+} //mover
 } //monte_carlo
 } //stepwise
 } //protocols

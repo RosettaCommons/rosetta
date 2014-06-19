@@ -24,7 +24,7 @@ namespace rna {
 class RNA_KinematicCloser;
 typedef utility::pointer::owning_ptr< RNA_KinematicCloser > RNA_KinematicCloserOP;
 
-}
-}
-}
+} //rna
+} //rotamer_sampler
+} //protocols
 #endif

@@ -85,7 +85,7 @@
 //      in certain situations. The code below contains check statements to
 //      prevent double-counting in these situations.
 
-static basic::Tracer TR( "protocols.stepwise.rna.StepWiseRNA_VirtualSugarJustInTimeInstantiator" );
+static basic::Tracer TR( "protocols.stepwise.sampling.rna.sugar.StepWiseRNA_VirtualSugarJustInTimeInstantiator" );
 
 namespace protocols {
 namespace stepwise {
@@ -392,7 +392,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::get_name() const {
 
 //////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_VirtualSugarJustInTimeInstantiator::set_options( StepWiseModelerOptionsCOP options ){
+StepWiseRNA_VirtualSugarJustInTimeInstantiator::set_options( modeler_options::StepWiseModelerOptionsCOP options ){
 	options_ = options;
 }
 

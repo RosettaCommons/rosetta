@@ -378,10 +378,10 @@ sources = {
 	],
 
 	"core/scoring/geometric_solvation": [
+		"ContextDependentGeometricSolEnergy",
 		"ContextIndependentGeometricSolEnergy",
 		"DatabaseOccSolEne",
 		"ExactOccludedHbondSolEnergy",
-		"GeometricSolEnergy",
 		"GeometricSolEnergyEvaluator",
 		"non_scorefxn_exact_model",
 		"OccludedHbondSolEnergy",

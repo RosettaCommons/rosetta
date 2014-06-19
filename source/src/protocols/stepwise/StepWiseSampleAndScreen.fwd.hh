@@ -25,7 +25,7 @@ namespace stepwise {
 	typedef utility::pointer::owning_ptr< StepWiseSampleAndScreen > StepWiseSampleAndScreenOP;
 	typedef utility::pointer::owning_ptr< StepWiseSampleAndScreen const > StepWiseSampleAndScreenCOP;
 	
-} //stepwise 
-} //protocols 
+} //stepwise
+} //protocols
 
 #endif
