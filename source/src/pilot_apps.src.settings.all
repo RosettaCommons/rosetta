@@ -492,7 +492,7 @@ sources = {
 	],
 	"pilot/kevin" : [
 		#"BuriedUnsatPolarsFinder2",
-		"vsasa_buns",
+		#"vsasa_buns",
 		"vsasa_pdbcode_res",
 		"sasa_buns",
 		"wat_distances",

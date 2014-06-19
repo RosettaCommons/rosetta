@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -6,7 +6,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 #First make sure that all the options files are properly built.
-./update_options.sh
+#./update_options.sh
 
 # This doesn't work, passes too many arguments and errors out
 #ctags `find src/core -name "*.cc" -or -name "*.hh"`
@@ -15,4 +15,7 @@
 #ctags --append `find src/utility -name "*.cc" -or -name "*.hh"`
 #ctags --append `find src/numeric -name "*.cc" -or -name "*.hh"`
 
-find src/{apps,core,devel,numeric,protocols,utility} test -name "*.cc" -o -name "*.hh" | ctags -L -
+# The -L flag requires Exuberant Ctags
+find ./src/{apps,core,devel,numeric,protocols,utility} test -name "*.cc" -o -name "*.hh" > tagged_files.txt
+ctags -L tagged_files.txt
+cscope -bqk -i tagged_files.txt
