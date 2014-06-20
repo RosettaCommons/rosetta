@@ -674,6 +674,12 @@ public:
 		core::Size	sw_can_by_sh_id);
 
 	core::Size
+	add_long_strand_id_in_each_sw (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id);
+
+	core::Size
 	report_hydrophobic_ratio_net_charge (
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,

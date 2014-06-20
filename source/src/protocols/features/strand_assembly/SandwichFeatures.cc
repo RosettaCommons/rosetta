@@ -158,10 +158,23 @@ utility::vector1<std::string>
 SandwichFeatures::features_reporter_dependencies() const
 {
 	utility::vector1<std::string> dependencies;
-	dependencies.push_back("ResidueFeatures");
+
 	dependencies.push_back("ProteinResidueConformationFeatures");
-	dependencies.push_back("ResidueSecondaryStructureFeatures");
+
+	//dependencies.push_back("ResidueConformationFeatures");
+		/*protocols.features.ProteinResidueConformationFeatures: (3) In loading the residue coodinates, some of the residues did not have coordinates specified:
+		protocols.features.ProteinResidueConformationFeatures: (3) 	[181,]
+		protocols.features.ProteinResidueConformationFeatures: (3) This can
+		happen because you are using ProteinResidueConformationFeatures with a
+		structure that contains non-protein residues, for example. To avoid
+		this, extract with the ResidueConformationFeatures instead.*/
+
+		// but format_converter regenerated pdb structures weirdly with 'ResidueConformationFeatures' 06/20/2014
+
+	dependencies.push_back("ResidueFeatures");
 	dependencies.push_back("ResidueScoresFeatures");
+	dependencies.push_back("ResidueSecondaryStructureFeatures");
+
 	return dependencies;
 } //features_reporter_dependencies()
 
@@ -284,6 +297,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	// could be redundant
 	Column sw_by_components_bs_id	("sw_by_components_bs_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column long_strand_id	("long_strand_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column strand_edge	("strand_edge",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 		// edge strand
@@ -475,6 +490,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	sw_by_components.add_column(sheet_antiparallel);
 	sw_by_components.add_column(sw_by_components_bs_id);
+	sw_by_components.add_column(long_strand_id);
 	sw_by_components.add_column(strand_edge);
 	sw_by_components.add_column(num_strands_in_each_sw);
 	sw_by_components.add_column(num_edge_strands_in_each_sw);
@@ -4588,19 +4604,52 @@ SandwichFeatures::report_topology_candidate	(
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
-	// warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches. So additional human inspection is required to confirm fnIII eventually after this function.
-	//	06/13/14, changed from "fn3" to "fnIII" because "fnIII" seems more correct according to "2008_Manipulating the stability of fibronectin type III domains by protein engineering"
+	// Warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches. So final human inspection is required to confirm fnIII eventually after this function. So column name is 'topology_candidate' instead of 'topology'
 
-	//// <begin> retrieve sw_by_components_bs_id
+	// Also, be sure to run with individual sandwich in each pdb file to better identify fnIII because sheet_id is not necessarily final one when each pdb file has multiple sandwiches (starting 06/20/2014)
+
+		//	06/13/14, changed from "fn3" to "fnIII" because "fnIII" seems more correct according to "Manipulating the stability of fibronectin type III domains by protein engineering, Sean P Ng, K S Billings, L G Randles and Jane Clarke, Nanotechnology 19 (2008) 384023"
+
+
+	//// <begin> retrieve long_strand_id
+	string select_string_all =
+	"SELECT\n"
+	"	long_strand_id	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(strand_edge=\'edge\' \n"
+	"	OR	strand_edge=\'core\') \n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_all(basic::database::safely_prepare_statement(select_string_all,	db_session));
+	select_statement_all.bind(1,	struct_id);
+	select_statement_all.bind(2,	sw_can_by_sh_id);
+	result res_all(basic::database::safely_read_from_database(select_statement_all));
+
+	utility::vector1<int> vector_of_long_strand_id;
+
+	while(res_all.next())
+	{
+		int long_strand_id;
+		res_all >> long_strand_id;
+		vector_of_long_strand_id.push_back(long_strand_id);
+	}
+	//// <end> retrieve long_strand_id
+
+
+	//// <begin> retrieve long_strand_id from sheet_id = 1
 	string select_string =
 	"SELECT\n"
-	"	sw_by_components_bs_id	\n"
+	"	long_strand_id	\n"
 	"FROM\n"
 	"	sw_by_components \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(sheet_id = 1)	\n"
-	"	AND	(strand_edge is not null)	\n"
+	"	AND	(strand_edge=\'edge\' \n"
+	"	OR	strand_edge=\'core\') \n"
 	"	AND	(sw_can_by_sh_id = ?);";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,	db_session));
@@ -4608,25 +4657,258 @@ SandwichFeatures::report_topology_candidate	(
 	select_statement.bind(2,	sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<int> vector_of_sw_by_components_bs_id;
+	utility::vector1<int> vector_of_long_strand_id_from_sheet_1;
 
 	while(res.next())
 	{
-		int sw_by_components_bs_id;
-		res >> sw_by_components_bs_id;
-		vector_of_sw_by_components_bs_id.push_back(sw_by_components_bs_id);
+		int long_strand_id_from_sheet_1;
+		res >> long_strand_id_from_sheet_1;
+		vector_of_long_strand_id_from_sheet_1.push_back(long_strand_id_from_sheet_1);
 	}
-	//// <end> retrieve sw_by_components_bs_id
+	//// <end> retrieve long_strand_id from sheet_id = 1
+
+
 
 	string	topology_candidate;
-	std::cout << vector_of_sw_by_components_bs_id.size()	<<	std::endl;
-	if	(vector_of_sw_by_components_bs_id.size()	<	3)
+
+	//// <begin> check whether there is 'P_or_mix' sheet like 1F56
+	string select_string_sheet =
+	"SELECT\n"
+	"	count(*)	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(sheet_antiparallel = 'P_or_mix')	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_sheet(basic::database::safely_prepare_statement(select_string_sheet,	db_session));
+	select_statement_sheet.bind(1,	struct_id);
+	select_statement_sheet.bind(2,	sw_can_by_sh_id);
+	result res_sheet(basic::database::safely_read_from_database(select_statement_sheet));
+
+	while(res_sheet.next())
+	{
+		Size num_P_or_mix;
+		res_sheet >> num_P_or_mix;
+		if (num_P_or_mix != 0)
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check whether there is 'P_or_mix' sheet like 1F56
+
+
+	//// <begin> check long_strand_id = 1
+	string select_string_1 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 1)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_1(basic::database::safely_prepare_statement(select_string_1,	db_session));
+	select_statement_1.bind(1,	struct_id);
+	select_statement_1.bind(2,	sw_can_by_sh_id);
+	result res_1(basic::database::safely_read_from_database(select_statement_1));
+
+	while(res_1.next())
+	{
+		string strand_edge;
+		res_1 >> strand_edge;
+		if (strand_edge != "edge")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 1
+
+
+	//// <begin> check long_strand_id = 2
+	string select_string_2 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 2)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2,	db_session));
+	select_statement_2.bind(1,	struct_id);
+	select_statement_2.bind(2,	sw_can_by_sh_id);
+	result res_2(basic::database::safely_read_from_database(select_statement_2));
+
+	while(res_2.next())
+	{
+		string strand_edge;
+		res_2 >> strand_edge;
+		if (strand_edge != "core")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 2
+
+
+	//// <begin> check long_strand_id = 3
+	string select_string_3 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 3)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_3(basic::database::safely_prepare_statement(select_string_3,	db_session));
+	select_statement_3.bind(1,	struct_id);
+	select_statement_3.bind(2,	sw_can_by_sh_id);
+	result res_3(basic::database::safely_read_from_database(select_statement_3));
+
+	while(res_3.next())
+	{
+		string strand_edge;
+		res_3 >> strand_edge;
+		if (strand_edge != "core")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 3
+
+	//// <begin> check long_strand_id = 4
+	string select_string_4 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 4)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_4(basic::database::safely_prepare_statement(select_string_4,	db_session));
+	select_statement_4.bind(1,	struct_id);
+	select_statement_4.bind(2,	sw_can_by_sh_id);
+	result res_4(basic::database::safely_read_from_database(select_statement_4));
+
+	while(res_4.next())
+	{
+		string strand_edge;
+		res_4 >> strand_edge;
+		if (strand_edge != "edge")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 4
+
+
+	//// <begin> check long_strand_id = 5
+	string select_string_5 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 5)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_5(basic::database::safely_prepare_statement(select_string_5,	db_session));
+	select_statement_5.bind(1,	struct_id);
+	select_statement_5.bind(2,	sw_can_by_sh_id);
+	result res_5(basic::database::safely_read_from_database(select_statement_5));
+
+	while(res_5.next())
+	{
+		string strand_edge;
+		res_5 >> strand_edge;
+		if (strand_edge != "edge")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 5
+
+
+	//// <begin> check long_strand_id = 6
+	string select_string_6 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 6)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_6(basic::database::safely_prepare_statement(select_string_6,	db_session));
+	select_statement_6.bind(1,	struct_id);
+	select_statement_6.bind(2,	sw_can_by_sh_id);
+	result res_6(basic::database::safely_read_from_database(select_statement_6));
+
+	while(res_6.next())
+	{
+		string strand_edge;
+		res_6 >> strand_edge;
+		if (strand_edge != "core")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 6
+
+
+	//// <begin> check long_strand_id = 7
+	string select_string_7 =
+	"SELECT\n"
+	"	strand_edge	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(long_strand_id = 7)	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement_7(basic::database::safely_prepare_statement(select_string_7,	db_session));
+	select_statement_7.bind(1,	struct_id);
+	select_statement_7.bind(2,	sw_can_by_sh_id);
+	result res_7(basic::database::safely_read_from_database(select_statement_7));
+
+	while(res_7.next())
+	{
+		string strand_edge;
+		res_7 >> strand_edge;
+		if (strand_edge != "edge")
+		{
+			topology_candidate	=	"not_fnIII";
+		}
+	}
+	//// <end> check long_strand_id = 7
+
+
+
+		TR << "vector_of_long_strand_id_from_sheet_1.size(): "	<<	vector_of_long_strand_id_from_sheet_1.size()	<<	std::endl;
+		std::cout << vector_of_long_strand_id_from_sheet_1.size()	<<	std::endl;
+
+
+	if	((vector_of_long_strand_id.size() != 7)	||	(vector_of_long_strand_id_from_sheet_1.size() != 3))
 	{
 		topology_candidate	=	"not_known_topology";
 	}
 	else
 	{
-		if	(vector_of_sw_by_components_bs_id[1]	==	1 && vector_of_sw_by_components_bs_id[2]	==	3 &&	vector_of_sw_by_components_bs_id[3]	==	9)
+		if (topology_candidate	==	"not_fnIII") // this sandwich didn't pass fnIII check based on 'edge'/'core' check
+		{
+		}
+		else if	(vector_of_long_strand_id_from_sheet_1[1]	==	1 && vector_of_long_strand_id_from_sheet_1[2]	==	2 &&	vector_of_long_strand_id_from_sheet_1[3]	==	5)
 		{
 			topology_candidate	=	"fnIII";
 		}
@@ -4635,6 +4917,7 @@ SandwichFeatures::report_topology_candidate	(
 			topology_candidate	=	"not_fnIII";
 		}
 	}
+
 	// <begin> UPDATE sw_by_components table
 	string insert =
 	"UPDATE sw_by_components set \n"
@@ -6418,6 +6701,60 @@ SandwichFeatures::add_num_edge_strands_in_each_sw (
 
 	return 0;
 } // add_num_edge_strands_in_each_sw
+
+
+Size
+SandwichFeatures::add_long_strand_id_in_each_sw (
+	StructureID struct_id,
+	sessionOP db_session,
+	Size sw_can_by_sh_id)
+{
+	string select_string =
+	"SELECT\n"
+	"	residue_begin \n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(strand_edge=\'edge\' \n"
+	"	OR	strand_edge=\'core\') \n"
+	"	AND sw_can_by_sh_id = ? \n"
+	"	AND struct_id = ? ;";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	sw_can_by_sh_id);
+	select_statement.bind(2,	struct_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	utility::vector1<Size> vec_residue_begin_of_long_strand;
+	while(res.next())
+	{
+		Size residue_begin_of_long_strand;
+		res >> residue_begin_of_long_strand;
+		vec_residue_begin_of_long_strand.push_back(residue_begin_of_long_strand);
+	}
+
+	for(Size i=1; i<=vec_residue_begin_of_long_strand.size(); i++)
+	{
+		string update =
+		"UPDATE sw_by_components set long_strand_id = ?	"
+		"WHERE\n"
+		"	sw_can_by_sh_id = ? \n"
+		"	AND	residue_begin = ? \n"
+		"	AND struct_id = ?;";
+
+		statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
+
+		update_statement.bind(1,	i);
+		update_statement.bind(2,	sw_can_by_sh_id);
+		update_statement.bind(3,	vec_residue_begin_of_long_strand[i]);
+		update_statement.bind(4,	struct_id);
+
+		basic::database::safely_write_to_database(update_statement);
+	}
+
+	return 0;
+} // add_long_strand_id_in_each_sw
+
 
 
 bool
@@ -8896,6 +9233,10 @@ SandwichFeatures::report_features(
 					);
 
 				report_avg_b_factor_CB_at_each_component(struct_id,	db_session, pose,
+					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+					);
+
+				add_long_strand_id_in_each_sw(struct_id,	db_session,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
 
