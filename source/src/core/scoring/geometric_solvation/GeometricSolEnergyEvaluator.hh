@@ -133,15 +133,6 @@ namespace geometric_solvation {
 																									 hbonds::HBEvalTuple & hbe = hbonds::DUMMY_HBE
                                                    ) const;
 
-    void
-    eval_atom_derivative_intra_RNA(
-        id::AtomID const & atom_id,
-        pose::Pose const & pose,
-        EnergyMap const & weights,
-        Vector & F1,
-        Vector & F2
-		) const;
-
 		void
     eval_intrares_derivatives(
 		    conformation::Residue const & rsd,
