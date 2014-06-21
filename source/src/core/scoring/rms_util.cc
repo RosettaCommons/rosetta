@@ -544,31 +544,24 @@ bool ExcludedResPredicate::operator()(
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
-	const core::pose::Pose & pose2
-) {
-	using namespace core;
-	Size start ( 1 );
-	Size end ( std::min( pose1.total_residue(), pose2.total_residue() ) );
-	return CA_rmsd( pose1, pose2, start, end );
-} // CA_rmsd
-
-core::Real
-CA_rmsd(
-	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
-	Size start,
-	Size end
+	Size start /* = 1 */,
+	Size end /* = 0 */
 ) {
 	PROF_START( basic::CA_RMSD_EVALUATION );
 	using namespace core;
+	core::Size calc_end(end);
+	if( end == 0 ) {
+		calc_end = std::min( pose1.total_residue(), pose2.total_residue() );
+	}
 	// copy coords into Real arrays
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	PredicateOP pred( new ResRangePredicate( start, end, new IsProteinCAPredicate ) );
+	PredicateOP pred( new ResRangePredicate( start, calc_end, new IsProteinCAPredicate ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
 
-	if ( (int) (end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_rmsd, residue range " << start << " to " << end
+	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_rmsd, residue range " << start << " to " << end
 			<< " requested but only " << natoms << " protein CA atoms found." << std::endl; }
 
 	Real rms = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
@@ -679,21 +672,6 @@ bb_rmsd(
 ) {
 
 	using namespace core;
-	Size start ( 1 );
-	Size end ( std::min( pose1.total_residue(), pose2.total_residue() ) );
-	utility::vector1<Size> blank;
-	return bb_rmsd( pose1, pose2, start, end, blank );
-} // bb_rmsd
-
-core::Real
-bb_rmsd(
-	const core::pose::Pose & pose1,
-	const core::pose::Pose & pose2,
-	Size,
-	Size,
-	utility::vector1< Size > const&
-) {
-	using namespace core;
 	Real rms = rmsd_with_super( pose1, pose2, is_protein_backbone );
 	return rms;
 } // bb_rmsd
@@ -702,22 +680,6 @@ core::Real
 bb_rmsd_including_O(
         const core::pose::Pose & pose1,
         const core::pose::Pose & pose2
-) {
-
-        using namespace core;
-        Size start ( 1 );
-        Size end ( std::min( pose1.total_residue(), pose2.total_residue() ) );
-        utility::vector1<Size> blank;
-        return bb_rmsd_including_O( pose1, pose2, start, end, blank );
-} // bb_rmsd_including_O
-
-core::Real
-bb_rmsd_including_O(
-        const core::pose::Pose & pose1,
-        const core::pose::Pose & pose2,
-        Size,
-        Size,
-        utility::vector1< Size > const&
 ) {
         using namespace core;
         Real rms = rmsd_with_super( pose1, pose2, is_protein_backbone_including_O );

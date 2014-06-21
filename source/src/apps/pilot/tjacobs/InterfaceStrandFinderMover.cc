@@ -481,8 +481,7 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
                   for (core::Size resInc = 0 ; resInc < beta_length_; resInc++){
                       knownFragment.append_residue_by_bond(known_strands[j].first.residue(l + resInc));
                   }
-                  utility::vector1<Size> blank;
-                  core::Real rms = core::scoring::bb_rmsd(testFragment, knownFragment, 1, testFragment.total_residue(), blank);
+                  core::Real rms = core::scoring::bb_rmsd(testFragment, knownFragment);
 
                   bool exposed = is_strand_exposed(pose, k, k+(beta_length_-1));
 

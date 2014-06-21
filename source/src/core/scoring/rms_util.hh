@@ -281,51 +281,28 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 
-core::Real
-CA_rmsd(
-	const core::pose::Pose & pose1,
-	const core::pose::Pose & pose2
-);
-
-// compute rmsd for residues between start and end
+/// @brief Compute rmsd for residues between start and end.
+/// If start and end aren't specified, use the entire pose.
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
-	Size start,
-	Size end
+	Size start = 1,
+	Size end = 0
 );
 
+/// @brief Compute rmsd for only backbone residues (excluding carboxyl oxygen)
 core::Real
 bb_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2
 );
 
-// compute rmsd for only backbone residues (excluding carboxyl oxygen) between start and end
-core::Real
-bb_rmsd(
-	const core::pose::Pose & pose1,
-	const core::pose::Pose & pose2,
-	Size start,
-	Size end,
-	utility::vector1< Size > const& exclude
-);
-
+/// @brief Compute rmsd for only backbone residues (including carboxyl oxygen)
 core::Real
 bb_rmsd_including_O(
         const core::pose::Pose & pose1,
         const core::pose::Pose & pose2
-);
-
-// compute rmsd for only backbone residues (including carboxyl oxygen) between start and end
-core::Real
-bb_rmsd_including_O(
-    const core::pose::Pose & pose1,
-    const core::pose::Pose & pose2,
-    Size start,
-    Size end,
-    utility::vector1< Size > const& exclude
 );
 
 // compute rmsd for residues between start and end
