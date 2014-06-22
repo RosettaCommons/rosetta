@@ -1,0 +1,14 @@
+<ROSETTASCRIPTS>
+	<MOVERS>
+		<FastRelax
+			name=fast_relax scorefxn=commandline/>
+		<LoopOver
+			name=cycle
+			mover_name=fast_relax
+			iterations=5
+			drift=false/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=cycle/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

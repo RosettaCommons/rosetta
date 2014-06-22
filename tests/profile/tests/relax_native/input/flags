@@ -1,0 +1,11 @@
+-options:user
+-run:no_prof_info_in_silentout
+-remember_unrecognized_res
+-jd2:delete_old_poses
+-parser:protocol input/features.xml
+-out:nooutput
+-mute protocols.jd2
+-mute core.io.pdb.file_data
+-mute core.scoring.etable
+-mute core.pack.task
+-mute protocols.ProteinInterfaceDesign.DockDesign

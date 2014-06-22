@@ -1,0 +1,18 @@
+Structure Selection:
+
+On April 19'th 2014
+www.rcsb.org/pdb/search/advSearch.do
+Number of Chains (Biological Assembly) Between 1 and 1
+Deposit Date Between 12-01-01 and 14-04-19
+X-ray Resolution Between 0 and 1.5
+Has Ligands: No
+Has Modified Residues: No
+Has External Links: Has EDS Link
+Number of Disulfide Bonds Between 0 and 0
+Retrieve only represntatives at 40% sequence identity matchin all of the above conditions.
+Returns 35 structure:
+
+3VQF, 3ZNY, 4B9I, 4DT4, 4G3N, 4GMQ, 4I84, 4JZ5, 4LTT
+3VZ6, 4B6G, 4CIL, 4EEW, 4G8D, 4GS3, 4IC4, 4JZQ, 4M9K
+3W24, 4B89, 4DMV, 4EF0, 4GAI, 4HJP, 4J5Q, 4KEE, 4NI6
+3ZBD, 4B9G, 4DQ7, 4EZA, 4GEI, 4HS5, 4JMI, 4LJ1

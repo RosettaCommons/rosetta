@@ -53,7 +53,9 @@ def run(test, options):
 
     print '  Rosetta database dir is: %s' % options.database
 
-    templates = dict(minidir=minidir, database=options.database, workdir=workdir, platform=platform, bin=bindir, compiler=compiler, mode=mode, binext=binext)
+    additional_flags = options.additional_flags
+
+    templates = dict(minidir=minidir, database=options.database, workdir=workdir, platform=platform, bin=bindir, compiler=compiler, mode=mode, binext=binext, additional_flags=additional_flags)
 
     fname = os.path.join(workdir, 'command')
     cmd = file(fname).read().strip()
@@ -135,6 +137,11 @@ def main(argv):
     parser.add_option("-d", "--database",
       default=None,
       help="Directory where rosetta database is located. (default: <main>/database)",
+    )
+
+    parser.add_option("--additional_flags",
+      default="",
+      help="Add additional flags to porfile tests. (default: None)",
     )
 
     parser.add_option("-t", "--timeout",

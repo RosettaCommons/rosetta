@@ -1,0 +1,51 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#   python      the full path to the Python interpretter
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+cd %(workdir)s
+rm -fr output
+mkdir output
+
+for i in %(workdir)s/input/*pdb.gz
+do
+    target=$(basename ${i%%.pdb.gz})
+    echo "processing ${target}"
+    res1=$(date +%%s.%%N)
+
+    %(bin)s/rosetta_scripts.%(binext)s \
+    	-database %(database)s \
+	%(additional_flags)s \
+    	-s $i \
+    	@%(workdir)s/input/flags \
+    	&> %(workdir)s/output/log_$target
+
+    res2=$(date +%%s.%%N)
+    echo "$target" $(echo "$res2 - $res1" | bc) >> %(workdir)s/output/timing.csv
+done

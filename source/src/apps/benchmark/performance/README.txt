@@ -32,8 +32,8 @@ See the performance benchmarks section on RosettaTests
 
 2) Run the benchark application from this directory
 
-     cd rosetta_source/src/apps/benchmark
-     ../../../bin/performance_benchmark.default.<platform/compiler>release \
+     cd src/apps/benchmark/performance
+     ../../../../bin/performance_benchmark.<platform/compiler>release \
        -database <path_to_database> \
        -benchmark_scale <multiple run length by this value> \
        [-run_one_benchmark <name of benchmark>]
