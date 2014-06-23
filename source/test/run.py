@@ -81,6 +81,8 @@ class Tester:
             cmd_str += " mode=%s" % (Options.mode)
         if Options.compiler:
             cmd_str += " cxx=%s" % (Options.compiler)
+        if Options.cxx_ver:
+            cmd_str += " cxx_ver=%s" % (Options.cxx_ver)
 
         pl = commands.getoutput(cmd_str)
         lines = pl.split('\n')
@@ -426,7 +428,7 @@ def main(args):
     parser.add_option("-j", "--jobs",
       default=1,
       type="int",
-      help="Number of processors to use when running testss (default: 1)",
+      help="Number of processors to use when running tests (default: 1)",
     )
 
     parser.add_option('--mute',
@@ -442,9 +444,15 @@ def main(args):
     )
 
     parser.add_option("-c", '--compiler',
-      default='gcc',
+      default=None,
       action="store",
       help="Name of the compiler used.",
+    )
+
+    parser.add_option('--cxx_ver',
+      default=None,
+      action="store",
+      help="Version of the compiler used.",
     )
 
     parser.add_option("-C", '--CMake',
