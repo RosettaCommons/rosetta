@@ -182,6 +182,7 @@ public:
 
 	virtual void min_type( std::string min_type_in );
 	virtual void tolerance( Real tolerance_in );
+	/// @copydoc core::optimization::MinimizerOptions::use_nblist(bool)
 	virtual void nb_list( bool nb_list_in );
 	virtual void deriv_check( bool deriv_check_in );
 
@@ -189,6 +190,7 @@ public:
 
 	Real tolerance() const;
 	std::string min_type() const;
+	/// @copydoc core::optimization::MinimizerOptions::use_nblist()
 	bool nb_list() const;
 	bool deriv_check() const;
 
