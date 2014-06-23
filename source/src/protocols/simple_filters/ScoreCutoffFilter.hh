@@ -105,6 +105,7 @@ private:
 
 	core::Real cutoff_;
 	bool report_residue_pair_energies_;
+	bool pdb_numbering_; //use pdb numbering when reporting resres pair energies
 
 	utility::vector1< core::scoring::ScoreType > score_types_;
 

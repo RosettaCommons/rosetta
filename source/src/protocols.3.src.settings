@@ -706,12 +706,14 @@ sources = {
 	"protocols/toolbox/rotamer_set_operations": [
 		"RigidBodyMoveRotSetOps",
 		"SpecialRotamerRotSetOps",
+		"AddGood2BPairEnergyRotamers",
 	],
 	"protocols/toolbox/task_operations": [
 		"CrystalContactsOperation",
 		"DatabaseThread",
 		"DesignAroundOperation",
 		"ImportUnboundRotamersOperation",
+		"InteractingRotamerExplosion",
 		"InterfaceTaskOperation",
 		"JointSequenceOperation",
 		"LimitAromaChi2Operation",

@@ -23,6 +23,7 @@
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
@@ -53,14 +54,14 @@ namespace simple_filters {
 
 
 ScoreCutoffFilter::ScoreCutoffFilter() :
-	parent("ScoreCutoffFilter"), cutoff_( 0.0 ), report_residue_pair_energies_( false ), total_score_( true ), unweighted_( false )
+	parent("ScoreCutoffFilter"), cutoff_( 0.0 ), report_residue_pair_energies_( false ), pdb_numbering_(true), total_score_( true ), unweighted_( false )
 {
 	score_types_.push_back( core::scoring::total_score );
 	positions_.clear();
 }
 
 ScoreCutoffFilter::ScoreCutoffFilter( core::Real cutoff_in ) :
-	parent("ScoreCutoffFilter"),cutoff_(cutoff_in), report_residue_pair_energies_( false ), total_score_( true ), unweighted_( false )
+	parent("ScoreCutoffFilter"),cutoff_(cutoff_in), report_residue_pair_energies_( false ), pdb_numbering_(true), total_score_( true ), unweighted_( false )
 {
 	score_types_.push_back( core::scoring::total_score );
 	positions_.clear();
@@ -158,6 +159,9 @@ ScoreCutoffFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	if (tag->hasOption("cutoff")) {
 		cutoff_ = tag->getOption<core::Real>("cutoff", 10000.0 );
 	}
+	if( tag->hasOption("pdb_numbering")) {
+		pdb_numbering_ = tag->getOption<bool>("pdb_numbering", true );
+	}
 }
 
 void
@@ -199,13 +203,19 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 	ostr << ObjexxFCL::format::A( field_width , "total" )<< " \n";
 
 	ostr << "ResResE " << ObjexxFCL::format::A( field_width, "nonzero" ) << " " << ObjexxFCL::format::A( field_width, "weights" ) << " ";
-	for( core::Size i =1; i <= active_st.size(); ++i) ostr << ObjexxFCL::format::F( field_width, 2, weights[ active_st[ i ] ] ) << " ";
+	for( core::Size i =1; i <= active_st.size(); ++i) ostr << ObjexxFCL::format::F( field_width, 3, weights[ active_st[ i ] ] ) << " ";
 	ostr << ObjexxFCL::format::A( field_width , "NA" ) << "\n";
 
 	EnergyGraph const & egraph( pose.energies().energy_graph() );
 
 	for( core::Size res1 = 1; res1 <= pose.total_residue(); ++res1 ){
-		std::string res1name( pose.residue_type( res1 ).name1() + utility::to_string( res1 ) );
+		std::string res1name("");
+		if( pdb_numbering_ ){
+			res1name = utility::to_string( pose.residue_type( res1 ).name1() ) + "_" + utility::to_string( pose.pdb_info()->chain( res1 ) ) + utility::to_string( pose.pdb_info()->number( res1 ) );
+		}
+		else{
+			res1name = utility::to_string( pose.residue_type( res1 ).name1()) + utility::to_string( res1 );
+		}
 		std::map< core::Size, EnergyMap > upper_interactions;
 
 		//1st, get short range enegires
@@ -237,15 +247,22 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 		for( std::map<  core::Size, EnergyMap >::const_iterator map_it = upper_interactions.begin(); map_it != upper_interactions.end(); ++map_it){
 			core::Size res2 = map_it->first;
 			EnergyMap const & this_emap( map_it->second );
-			std::string res2name( pose.residue_type( res2 ).name1() + utility::to_string( res2 ) );
+			std::string res2name("");
+			if( pdb_numbering_ ){
+				res2name = utility::to_string( pose.residue_type( res2 ).name1() ) + "_" + utility::to_string( pose.pdb_info()->chain( res2 ) ) + utility::to_string( pose.pdb_info()->number( res2 ) );
+			}
+			else{
+				res2name = pose.residue_type( res2 ).name1() + utility::to_string( res2 );
+			}
+
 			ostr << "ResResE " << ObjexxFCL::format::A( field_width, res1name ) << " " << ObjexxFCL::format::A( field_width, res2name ) << " ";
 			core::Real totscore(0.0);
 			for( core::Size i =1; i <=  active_st.size(); ++i){
 				core::Real score(  weights[ active_st[i] ] * this_emap[ active_st[i] ] );
 				totscore += score;
-				ostr << ObjexxFCL::format::F( field_width, 2, score) << " ";
+				ostr << ObjexxFCL::format::F( field_width, 3, score) << " ";
 			}
-			ostr << ObjexxFCL::format::F( field_width, 2, totscore) << "\n";
+			ostr << ObjexxFCL::format::F( field_width, 3, totscore) << "\n";
 		}
 	} //loop over all residues
 

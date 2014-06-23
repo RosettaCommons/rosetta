@@ -36,6 +36,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::CrystalCon
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DesignAroundOperationCreator > DesignAroundOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ImportUnboundRotamersOperationCreator > ImportUnboundRotamersOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::InteractingRotamerExplosionCreator > InteractingRotamerExplosionCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::JointSequenceOperationCreator > JointSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LimitAromaChi2OperationCreator > LimitAromaChi2OperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LinkResiduesCreator > LinkResiduesCreator_registrator;
