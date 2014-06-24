@@ -25,25 +25,14 @@
 namespace core {
 namespace util {
 
-void add_cutpoint_variants(core::pose::Pose* pose) {
-	const core::kinematics::FoldTree& tree(pose->fold_tree());
-	for (unsigned i = 1; i <= pose->total_residue(); ++i) {
-		if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
+void remove_cutpoint_variants(core::pose::Pose & pose) {
+	const core::kinematics::FoldTree& tree(pose.fold_tree());
+	for (unsigned i = 1; i <= pose.total_residue(); ++i) {
+		if (!tree.is_cutpoint(i) || i >= (pose.total_residue() - 1))
 			continue;
 
-		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
-		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i + 1);
-	}
-}
-
-void remove_cutpoint_variants(core::pose::Pose* pose) {
-	const core::kinematics::FoldTree& tree(pose->fold_tree());
-	for (unsigned i = 1; i <= pose->total_residue(); ++i) {
-		if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
-			continue;
-
-		core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
-		core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i + 1);
+		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, i);
+		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, i + 1);
 	}
 }
 

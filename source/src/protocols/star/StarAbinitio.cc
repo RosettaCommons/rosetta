@@ -192,16 +192,16 @@ void configure_rmc(MoverOP mover, ScoreFunctionOP score, Size num_cycles, Real t
   rmc->set_recover_low(recover_low);
 }
 
-void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned>& interior_cuts, Pose* pose) const {
+void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned>& interior_cuts, Pose & pose) const {
   assert(aligned.num_loop() >= 2);
   assert(interior_cuts.size() == (aligned.num_loop() - 1));
 
-  const Size num_residues = pose->total_residue();
+  const Size num_residues = pose.total_residue();
   const Size vres = num_residues + 1;
 
   xyzVector<double> center;
-  aligned.center_of_mass(*pose, &center);
-  core::pose::addVirtualResAsRoot(center, *pose);
+  aligned.center_of_mass(pose, &center);
+  core::pose::addVirtualResAsRoot(center, pose);
 
   vector1<std::pair<int, int> > jumps;
   for (Size i = 1; i <= aligned.num_loop(); ++i) {
@@ -230,10 +230,10 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
                                               vres);         // root
 
   runtime_assert(status);
-  pose->fold_tree(tree);
-  core::util::add_cutpoint_variants(pose);
+  pose.fold_tree(tree);
+  core::pose::correctly_add_cutpoint_variants(pose);
 
-  TR << pose->fold_tree() << std::endl;
+  TR << pose.fold_tree() << std::endl;
 }
 
 void StarAbinitio::apply(Pose& pose) {
@@ -246,7 +246,7 @@ void StarAbinitio::apply(Pose& pose) {
 
   ThreadingJob const * const job = protocols::nonlocal::current_job();
 
-  to_centroid(&pose);
+  to_centroid(pose);
   emit_intermediate(pose, "star_initial.out");
 
   Extender extender(job->alignment().clone(), pose.total_residue());
@@ -259,7 +259,7 @@ void StarAbinitio::apply(Pose& pose) {
   TR << "Aligned: " << aligned << std::endl;
 
   const Size num_residues = pose.total_residue();
-  setup_kinematics(aligned, extender.cutpoints(), &pose);
+  setup_kinematics(aligned, extender.cutpoints(), pose);
   setup_constraints(aligned, &pose);
 
   Probabilities probs_sm, probs_lg;
@@ -321,8 +321,8 @@ void StarAbinitio::apply(Pose& pose) {
   emit_intermediate(pose, "star_stage4.out");
 }
 
-void StarAbinitio::tear_down_kinematics(Pose* pose) const {
-  pose->conformation().delete_residue_slow(pose->total_residue());
+void StarAbinitio::tear_down_kinematics(Pose & pose) const {
+  pose.conformation().delete_residue_slow(pose.total_residue());
   core::util::remove_cutpoint_variants(pose);
   simple_fold_tree(pose);
 }

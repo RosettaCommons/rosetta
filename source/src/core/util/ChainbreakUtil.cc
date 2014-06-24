@@ -16,7 +16,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/util/kinematics_util.hh>
+#include <core/pose/util.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -36,7 +36,7 @@ bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) {
   }
 
   Pose copy(pose);
-  add_cutpoint_variants(&copy);
+  core::pose::correctly_add_cutpoint_variants(copy);
 
   score_->score(copy);
   return (*score_)[core::scoring::linear_chainbreak] > 0;

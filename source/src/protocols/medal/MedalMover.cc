@@ -207,7 +207,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight.
   // Early stages select fragments uniformly from the top 25, later stages select fragments according
   // to Gunn cost using the entire fragment library.
-  core::util::add_cutpoint_variants(&pose);
+  core::pose::correctly_add_cutpoint_variants(pose);
   ScoreFunctionOP score = score_function();
 
   const double cb_start = score->get_weight(core::scoring::linear_chainbreak);
@@ -229,7 +229,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Alternating small and shear moves
   MoverOP mover = create_small_mover(native, score);
   mover->apply(pose);
-  core::util::remove_cutpoint_variants(&pose);
+  core::util::remove_cutpoint_variants(pose);
 
   // Loop closure
   builder.tear_down(&pose);

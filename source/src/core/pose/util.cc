@@ -1512,7 +1512,7 @@ remove_variant_type_from_pose_residue(
 	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
-    
+
     // update connections
     for (Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con) {
         if (pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0) {
@@ -2290,6 +2290,16 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	return atom_ID_map;
 }
 
+/// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
+void
+correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
+	const core::kinematics::FoldTree& tree(pose.fold_tree());
+	for (core::Size i = 1; i < pose.total_residue(); ++i) { // Less than because cutpoints are between i and i+1
+		if ( tree.is_cutpoint(i) ) {
+			correctly_add_cutpoint_variants( pose, i, false );
+		}
+	}
+}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// try to unify all cutpoint addition into this function.

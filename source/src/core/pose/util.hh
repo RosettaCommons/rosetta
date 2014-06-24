@@ -658,9 +658,13 @@ return_nearest_residue(
 	int const end,
 	core::Vector center
 );
-	
+
 id::AtomID_Map< id::AtomID >
 convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map, core::pose::Pose const & pose );
+
+/// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
+void
+correctly_add_cutpoint_variants( core::pose::Pose & pose );
 
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,

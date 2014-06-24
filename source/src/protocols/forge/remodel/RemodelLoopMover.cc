@@ -284,7 +284,6 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 	//this function currently don't extract asymmetric unit because for sym+repeat mode, it is called before symmetrizing structures
 
-	using namespace core::pose;
 	using core::Size;
 	using namespace basic::options;
 
@@ -1023,7 +1022,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 	if(option[OptionKeys::remodel::staged_sampling::staged_sampling].user()){
 		//initialize options
-			
+
 		if(option[OptionKeys::remodel::staged_sampling::starting_sequence].user())
 			set_starting_sequence(pose);
 		if(option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices].user())
@@ -1032,7 +1031,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			set_starting_pdb(pose);
 		assert(!((option[OptionKeys::remodel::staged_sampling::starting_pdb].user()) && (option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices].user()))); // starting pdb not compatible with ideal helices
 
-	
+
 		//setup score functions and movemap and where to sample--------------
 		MoveMap movemap;
 		MoveMap movemapAll;
@@ -2078,7 +2077,7 @@ void RemodelLoopMover::abinitio_stage(
 	}
 }
 
-/// @brief  relax stage 
+/// @brief  relax stage
  void RemodelLoopMover::fa_relax_stage(
 				 Pose & pose
 				 ){
@@ -2121,7 +2120,7 @@ void RemodelLoopMover::abinitio_stage(
 								pose.set_secstruct(res,fa_pose.secstruct(res));
 						}
 				}
-				else{//non repeat case			
+				else{//non repeat case
 						pose = fa_pose;
 				}
 				pose.dump_pdb("finalRelaxStagePdb.pdb");
@@ -2225,7 +2224,7 @@ simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, t
 		small_mover->angle_max( 'E', e_range );
 		small_mover->angle_max( 'L', l_range );
 
-	
+
 	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
@@ -3377,7 +3376,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 						pose.set_omega(ii+repeatRes,180);
 						pose.set_secstruct(ii,'H');
 						pose.set_secstruct(ii+repeatRes,'H');
-				}	
+				}
 		}
 }
 
@@ -3413,7 +3412,7 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 			}
 		}
 		else{
-				if(option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){ 
+				if(option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){
 						std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
 				utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
 				BOOST_FOREACH( std::string const key, res_keys ){
@@ -3426,7 +3425,7 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 				Size repeatRes = (pose.total_residue()/2)+1;
 				char lastRes = ss[0];
 				for(Size ii=1; ii<=ss.size(); ++ii){
-						if((ss[ii-1] == 'H' || ss[ii-1] == 'E')&&(lastRes == 'L')){ 
+						if((ss[ii-1] == 'H' || ss[ii-1] == 'E')&&(lastRes == 'L')){
 								if(ii-(fragmentSize-1) > 0)
 										allowedRes.insert(ii-(fragmentSize-1));
 										allowedRes.insert(ii-(fragmentSize-1)+repeatRes);
@@ -3436,7 +3435,7 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 				if(((ss[ss.size()-1]=='H')||(ss[ss.size()-1]=='E'))&&(ss[0] == 'L')){
 						allowedRes.insert(ss.size());
 				}
-				}	
+				}
 		}
 		return(allowedRes);
 }

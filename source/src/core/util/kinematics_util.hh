@@ -21,14 +21,15 @@
 namespace core {
 namespace util {
 
-/// @brief Returns true if `pose` has a chainbreak, false otherwise
+// @brief Returns true if `pose` has a chainbreak, false otherwise
 // Undefinded, commenting out to fix PyRosetta Buuild  bool has_chainbreak(const core::pose::Pose& pose);
 
-/// @brief Adds cutpoint variants to `pose` by scanning the fold tree
-void add_cutpoint_variants(core::pose::Pose* pose);
+// @brief Adds cutpoint variants to `pose` by scanning the fold tree
+// Use core::pose::correctly_add_cutpoint_variants() instead.
+//void add_cutpoint_variants(core::pose::Pose & pose);
 
 /// @brief Removes cutpoint variants from `pose` by scanning the fold tree
-void remove_cutpoint_variants(core::pose::Pose* pose);
+void remove_cutpoint_variants(core::pose::Pose & pose);
 
 }  // namespace core
 }  // namespace util

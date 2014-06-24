@@ -26,10 +26,10 @@ namespace star {
 void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_filename);
 
 /// @brief Restores simple kinematics to pose
-void simple_fold_tree(core::pose::Pose* pose);
+void simple_fold_tree(core::pose::Pose & pose);
 
 /// @brief Converts pose to centroid residue type set
-void to_centroid(core::pose::Pose* pose);
+void to_centroid(core::pose::Pose & pose);
 
 }  // namespace star
 }  // namespace protocols

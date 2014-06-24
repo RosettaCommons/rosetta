@@ -18,7 +18,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/util/kinematics_util.hh>
+#include <core/pose/util.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -52,7 +52,7 @@ ChainSplitMover::apply( core::pose::Pose & pose )
 	core::Size upper_half_middle = ( pose.total_residue()+ 1 - cutpoint_ )/2 + cutpoint_;
 	jump_fold_tree.new_jump( lower_half_middle, upper_half_middle, cutpoint_ );
 	pose.fold_tree( jump_fold_tree );
-	core::util::add_cutpoint_variants( &pose );
+	core::pose::correctly_add_cutpoint_variants( pose );
 }
 
 protocols::moves::MoverOP

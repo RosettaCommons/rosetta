@@ -55,10 +55,10 @@ class StarAbinitio : public protocols::moves::Mover {
   /// consecutive aligned regions) are retrieved from the input parameter.
   void setup_kinematics(const protocols::loops::Loops& aligned,
                         const utility::vector1<unsigned>& interior_cuts,
-                        core::pose::Pose* pose) const;
+                        core::pose::Pose & pose) const;
 
   /// @detail Removes virtual residue, cutpoint variants and restores simple kinematics
-  void tear_down_kinematics(core::pose::Pose* pose) const;
+  void tear_down_kinematics(core::pose::Pose & pose) const;
 
   core::fragment::FragSetOP fragments_lg_;
   core::fragment::FragSetOP fragments_sm_;
