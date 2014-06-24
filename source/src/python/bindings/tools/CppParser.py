@@ -1437,13 +1437,14 @@ _import_order_ = {
     'basic': ['datacache', 'resource_manager'],
 
     'core': ['graph', 'conformation', 'id', 'io', 'scoring'],
-    'core/scoring': ['trie', 'methods', 'func'],
+    'core/scoring': ['trie', 'methods', 'func', 'hbonds'],
 
     'protocols': ['moves', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
                   'simple_moves', 'ligand_docking', 'rigid', 'toolbox', 'forge', 'loop_modeling', 'loops', 'wum', 'rosetta_scripts',
                   'simple_filters'],
     'protocols/forge' : ['remodel'],
     'protocols/match' : ['upstream'],
+    'protocols/stepwise' : ['screener'],
     #'protocols/loop_modeling' : ['LoopMover'],
 }
 
