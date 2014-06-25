@@ -166,6 +166,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCAP
 		restype_from_mio[ *aiter ] = vd;
 		Atom & restype_atom( restype->atom( vd ) );
 
+		restype_atom.name( atom.name() );
 		restype_atom.element_type( elements->element( atom.element() ) );
 		restype_atom.charge( atom.partial_charge() );
 		if( atom.partial_charge() != 0 ) {
@@ -218,7 +219,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCAP
 	}
 
 
-	// TODO: Can't directly specify internal coordiant tree or chi bond info
+	// TODO: Can't directly specify internal coordinate tree or chi bond info
 	// If that changes this needs to be adjusted so as not to overwrite those settings.
 
 	restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment

@@ -946,6 +946,14 @@ public:
 	void
 	delete_atom( Size const index );
 
+	/// @brief Add an alias name for an atom.
+	void
+	add_atom_alias( std::string const & rosetta_atom, std::string const & alias );
+
+	/// @brief Remove a given alias name for an atom.
+	void
+	delete_atom_alias( std::string const & alias );
+
 	/// @brief set atom type
 	void
 	set_atom_type(
@@ -1642,6 +1650,19 @@ public:
 		interchangeability_group_ = setting;
 	}
 
+	/// @brief Turn on geometry-based atom renaming when loading this residue type from PDB files
+	void
+	remap_pdb_atom_names( bool rename )
+	{
+		remap_pdb_atom_names_ = rename;
+	}
+
+	/// @brief Are we using geometry-based atom renaming when loading this residue type from PDB
+	bool remap_pdb_atom_names() const
+	{
+		return remap_pdb_atom_names_;
+	}
+
 	/// @brief our traditional residue type, if any
 	///
 	/// @details Used for knowledge-based scores, dunbrack, etc.
@@ -2285,6 +2306,9 @@ private:
 	/// This map will merely map those which do,
 	std::map< std::string, VD > atom_name_to_vd_;//atom_graph_index_;
 
+	/// @brief A mapping of alias atom names to canonical atom names -- Primary
+	/// Will be added to atom_name_to_vd_ during finalization
+	std::map< std::string, std::string > atom_aliases_;
 
 	/// @brief index lookup for orbitals based on atom name -- Derived, valid during Mutable
 	/// Updated in add_orbital()
@@ -2426,6 +2450,10 @@ private:
 	/// Controls which atoms are selected by "select_orient_atoms",
 	/// used to overlay residues during packing. -- Primary
 	bool force_nbr_atom_orient_;
+
+	/// @brief Should we attempt to rename atoms for this residue type
+	/// when we read in PDB files? -- Primary
+	bool remap_pdb_atom_names_;
 
 	/// The isotopically averaged mass of the residue -- Derived.
 	Real mass_;

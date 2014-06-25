@@ -25,6 +25,7 @@
 #include <core/io/pdb/Field.fwd.hh>
 #include <core/io/pdb/HeaderInformation.hh>
 #include <core/io/pdb/file_data.fwd.hh>
+#include <core/io/pdb/file_data_fixup.fwd.hh>
 
 // Package headers
 #include <core/io/pdb/file_data_options.fwd.hh>
@@ -47,7 +48,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
-
 
 // C++ headers
 #include <iostream>
@@ -130,7 +130,7 @@ public:
 	bool operator!=(ResidueInformation const & that) const;
 
 	/// For now, all member names have the same names as fields in PDB standard.
-	String resid;  // 6-character (partial) identifier used by reader
+	//String resid;  // 6-character (partial) identifier used by reader
 	String resName;
 	char chainID;
 	int resSeq;
@@ -139,6 +139,10 @@ public:
 	utility::vector1< AtomInformation > atoms;
 	std::map< std::string, Vector > xyz; //< map of names to coords;  redundant but used a lot in reader
 	std::map< std::string, double > temps; //< map of names to B-factors;  redundant but used a lot in reader
+
+	/// @brief Returns a short, printable designation for this residue.
+	String resid() const;
+
 };  // class ResidueInformation
 
 
@@ -315,8 +319,7 @@ public:
 	);
 
 
-	bool update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options,
-			std::string const & resid ) const;
+	bool update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options ) const;
 
 	///@brief randomize missing density
 	void randomize_missing_coords( AtomInformation & ai ) const;
@@ -439,6 +442,12 @@ void pose_from_pose(
 void
 fixup_rinfo_based_on_residue_type_set( 	utility::vector1< ResidueInformation > & rinfos,
 																			 	chemical::ResidueTypeSet const & residue_set );
+
+
+void fill_name_map( core::io::pdb::NameBimap & name_map,
+			ResidueInformation const & rinfo,
+			chemical::ResidueType const & rsd_type,
+			FileDataOptions const & options);
 
 } // namespace pdb
 } // namespace io

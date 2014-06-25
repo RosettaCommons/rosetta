@@ -88,6 +88,7 @@ sources = {
 	],
 	"io/pdb" : [
 		"Field",
+		"file_data_fixup",
 		"HeaderInformationTests",
 	],
 	"io/silent" : [

@@ -11,7 +11,7 @@
 
 @mainpage Rosetta core and protocols Documentation
 
-This is the main page for the documentation of Rosetta's core and protocols library. For application and overview documentation see the wiki at <a href="https://wiki.rosettacommons.org">the developer site</a>, or <a href="https://www.rosettacommons.org/manual_guide">the released documentation</a> 
+This is the main page for the documentation of Rosetta's core and protocols library. For application and overview documentation see the wiki at <a href="https://www.rosettacommons.org/docs/wiki/Home">the developer site</a>, or <a href="https://www.rosettacommons.org/docs/latest/">the released documentation</a> 
 For convenience, some quick links to important Rosetta classes are listed below.
 Documentation for more classes and functions can be found by looking at the Namespaces, Classes or Files tabs above, or using the search box.
 

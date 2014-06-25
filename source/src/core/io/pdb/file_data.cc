@@ -32,6 +32,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID_Map.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
@@ -91,15 +93,19 @@ namespace pdb {
 using core::Size;
 using core::SSize;
 
+using core::chemical::chr_chains;
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
+using ObjexxFCL::strip_whitespace;
+using ObjexxFCL::stripped_whitespace;
+using ObjexxFCL::rstripped_whitespace;
+using namespace ObjexxFCL::format;
+
 using std::string;
 using std::iostream;
-
-using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
 
 // Tracer instance for this file
 static basic::Tracer TR("core.io.pdb.file_data");
@@ -107,10 +113,9 @@ static basic::Tracer TR("core.io.pdb.file_data");
 // random number generator for randomizing missing density coordinates
 static numeric::random::RandomGenerator RG(231411);  // <- Magic number, do not change it!
 
-using core::chemical::chr_chains;
 
 ResidueInformation::ResidueInformation() :
-	resid( "" ),
+//	resid( "" ),
 	resName( "" ),
 	chainID( ' ' ),
 	resSeq( 0 ),
@@ -123,7 +128,7 @@ ResidueInformation::ResidueInformation() :
 
 ResidueInformation::ResidueInformation(
 	AtomInformation const & ai) :
-	resid( "" ),
+//	resid( "" ),
 	resName( ai.resName ),
 	chainID( ai.chainID ),
 	resSeq( ai.resSeq ),
@@ -151,6 +156,14 @@ ResidueInformation::operator!=(
 	return !(*this == that);
 }
 
+String ResidueInformation::resid() const {
+	String buf;
+	buf.resize(1024);
+	// This is horribly hacky. Is this necessary?
+	sprintf(&buf[0], "%4d%c%c", this->resSeq, this->iCode, this->chainID);
+	buf.resize(6);
+	return buf;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 FileData::FileData() :
@@ -353,12 +366,6 @@ FileData::get_residue_information(core::pose::Pose const & pose, core::uint cons
 		res_info.resSeq %= 10000;
 	}
 
-	string buf;
-	buf.resize(1024);
-	sprintf(&buf[0], "%4d%c%c", res_info.resSeq, res_info.iCode, res_info.chainID);
-	res_info.resid = string(buf);
-	res_info.resid.resize(6);
-
 	return res_info;
 }
 
@@ -528,14 +535,14 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 				link.chainID1 = start_res.chainID;
 				link.resSeq1 = start_res.resSeq;
 				link.iCode1 = start_res.iCode;
-				link.resID1 = start_res.resid;
+				link.resID1 = start_res.resid();
 
 				link.name2 = stop_atom;
 				link.resName2 = stop_res.resName;
 				link.chainID2 = stop_res.chainID;
 				link.resSeq2 = stop_res.resSeq;
 				link.iCode2 = stop_res.iCode;
-				link.resID2 = stop_res.resid;
+				link.resID2 = stop_res.resid();
 
 				// Calculate bond distance.
 				uint start_atom_index = pose.residue(start_num).atom_index(start_atom);
@@ -697,7 +704,6 @@ FileData::create_working_data(
 )
 {
 	rinfo.clear();
-	std::string buf;  buf.resize(1024);
 
 	for(Size ch=0; ch<chains.size(); ++ch) {
 		for(Size i=0; i<chains[ch].size(); ++i) {
@@ -708,15 +714,10 @@ FileData::create_working_data(
 			ai.resName = res_name;
 			ai.name = atom_name;
 
-			sprintf(&buf[0], "%4d%c%c", ai.resSeq, ai.iCode, ai.chainID);
-			std::string resid( buf ); // include chain ID
-			resid.resize(6);
-
-			bool const ok = update_atom_information_based_on_occupancy( ai, options, resid );
+			bool const ok = update_atom_information_based_on_occupancy( ai, options );
 			if (!ok) continue;
 
 			ResidueInformation new_res( ai );
-			new_res.resid = resid;
 			if( rinfo.size() == 0 || rinfo.back() != new_res ) rinfo.push_back(new_res);
 			ResidueInformation & curr_res = rinfo.back();
 			// Only insert atoms once, so we capture just the first alt conf.
@@ -736,7 +737,7 @@ FileData::create_working_data(
 // what to do if occupancy is 0.0?
 //chu modify the logic how atoms are treated with zero or negative occupancy field.
 bool
-FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options, std::string const & resid ) const {
+FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options ) const {
 
 	if ( ai.occupancy == 0.0 ) {
 		if( options.randomize_missing_coords() ) {
@@ -745,7 +746,7 @@ FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, File
 			// do nothing and keep this atom as it is
 		} else {
 			//When flag default changes from true to false, change to TR.Debug and remove second line
-			TR.Warning << "PDB reader is ignoring atom " << ai.name << " in residue " << resid
+			TR.Warning << "PDB reader is ignoring atom " << ai.name << " in residue " << ai.resSeq << ai.iCode << ai.chainID
 								 << ".  Pass flag -ignore_zero_occupancy false to change this behavior" << std::endl;
 			return false; // skip this atom with zero occ by default
 		}
@@ -760,15 +761,37 @@ FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, File
 
 
 // Helper Functions ///////////////////////////////////////////////////////////
-/// @details Remove spaces from given string.
-inline std::string
-local_strip_whitespace( std::string const & name )
-{
-	std::string trimmed_name( name );
-	left_justify( trimmed_name ); trim( trimmed_name ); // simpler way to dothis?
-	return trimmed_name;
-}
 
+void fill_name_map( core::io::pdb::NameBimap & name_map,
+			ResidueInformation const & rinfo,
+			chemical::ResidueType const & rsd_type,
+			FileDataOptions const & options) {
+	//Reset name map
+	bool rename = rsd_type.remap_pdb_atom_names();
+	for( core::Size ii(1); ii <= options.residues_for_atom_name_remapping().size(); ++ii) {
+		rename = rename || (options.residues_for_atom_name_remapping()[ ii ] == rsd_type.name3() );
+	}
+	if( rename ) {
+		// Remap names according to bonding pattern and elements
+		// Will reset whatever is in name_map
+		remap_names_on_geometry( name_map, rinfo, rsd_type );
+	} else {
+		name_map.clear();
+		// Using names as-is, except for canonicalizing
+		for( utility::vector1< AtomInformation >::const_iterator iter=rinfo.atoms.begin(), iter_end=rinfo.atoms.end(); iter!= iter_end; ++iter ) {
+			std::string const & name ( iter->name );
+			if( ! rinfo.xyz.count( name ) ) { // Only map atoms with coordinates.
+				continue;
+			}
+			std::string strip_name( stripped_whitespace(name) );
+			if( rsd_type.has( strip_name ) ) {
+				// We do the diversion through the index to canonicalize the atom name spacing to Rosetta standards.
+				std::string canonical( rsd_type.atom_name( rsd_type.atom_index(strip_name) ) );
+				name_map.insert( NameBimap::value_type( name, canonical ) );
+			}
+		}
+	}
+}
 
 /// @details The missing density regions in the input pdb should have 0.000 in the placeholders
 /// this routine puts random coordinates wherever there is 0.000 for mainchain atoms.
@@ -978,17 +1001,21 @@ build_pose_as_is1(
 	pose.clear();
 
 	utility::vector1< ResidueInformation > rinfos;
+	id::NamedAtomID_Mask coordinates_assigned(false);
 	// Map pose residue numbers to indices into rinfos.
 	// Some residues in the input file may be discarded (missing atoms, unrecognized, etc)
 	utility::vector1< Size > pose_to_rinfo;
 	fd.create_working_data( rinfos, options );
 	fixup_rinfo_based_on_residue_type_set( rinfos, residue_set );
-	Strings pose_resids;
+//	Strings pose_resids;
 	utility::vector1<ResidueTemps> pose_temps;
 
 	Strings branch_lower_termini;
 
 	Size const nres_pdb( rinfos.size() );
+
+	// Map rinfo atom names to Rosetta pose atom names (and pose->rinfo for the right map)
+	utility::vector1< core::io::pdb::NameBimap > rinfo_name_map(nres_pdb);
 
 	utility::vector1<Size> UA_res_nums;
 	utility::vector1<std::string> UA_res_names, UA_atom_names;
@@ -1016,7 +1043,7 @@ build_pose_as_is1(
 	for ( Size i=1; i<= nres_pdb; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
 		std::string const & pdb_name = rinfo.resName;
-		std::string const & resid = rinfo.resid;
+		std::string const & resid = rinfo.resid();
 		char chainID = rinfo.chainID;
 
 		runtime_assert( resid.size() == 6 );
@@ -1155,7 +1182,7 @@ build_pose_as_is1(
 			}
 
 			for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-				if ( !rsd_type.has( local_strip_whitespace(iter->first) ) &&
+				if ( !rsd_type.has( stripped_whitespace(iter->first) ) &&
 						!( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing BB H if Nterm
 					++rsd_missing;
 				}
@@ -1188,11 +1215,30 @@ build_pose_as_is1(
 		}
 
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
-		TR.Debug << "Match: '" << rsd_type.name() << "'; missing " << best_xyz_missing << " coordinates" << std::endl;
 
-		if ( best_rsd_missing ) {
-			TR.Warning << "[ WARNING ] discarding " << best_rsd_missing << " atoms at position " << i <<
-					" in file " << fd.filename << ". Best match rsd_type:  " << rsd_type.name() << std::endl;
+		TR.Trace << "Naive match of " << rsd_type.name() << " with " << best_rsd_missing << " missing and "
+				<< best_xyz_missing << " discarded atoms." << std::endl;
+
+
+		// Map the atom names.
+		fill_name_map(rinfo_name_map[i], rinfo, rsd_type, options);
+
+		assert( rsd_type.natoms() >= rinfo_name_map[i].left.size() );
+		core::Size missing_atoms( rsd_type.natoms() - rinfo_name_map[i].left.size() );
+		if( missing_atoms > 0 ) {
+			TR.Debug << "Match: '" << rsd_type.name() << "'; missing " << missing_atoms << " coordinates" << std::endl;
+		}
+
+		assert( rinfo.xyz.size() >= rinfo_name_map[i].left.size() );
+		core::Size discarded_atoms( rinfo.xyz.size() - rinfo_name_map[i].left.size() );
+		if( is_lower_terminus && rinfo.xyz.count(" H  ") && ! rinfo_name_map[i].left.count(" H  ") ) {
+			// Don't worry about missing BB H if Nterm
+			--discarded_atoms;
+		}
+		if( discarded_atoms > 0 ) {
+			TR.Warning << "[ WARNING ] discarding " << discarded_atoms
+					<< " atoms at position " << i << " in file " << fd.filename
+					<< ". Best match rsd_type:  " << rsd_type.name() << std::endl;
 		}
 
 		// check for missing mainchain atoms:
@@ -1202,9 +1248,18 @@ build_pose_as_is1(
 			if ( nbb >= 3 ) {
 				bool mainchain_core_present( false );
 				for ( Size k=1; k<= nbb-2; ++k ) {
-					if ( xyz.count( rsd_type.atom_name(mainchain[k  ])) &&
-						xyz.count( rsd_type.atom_name(mainchain[k+1])) &&
-						xyz.count( rsd_type.atom_name(mainchain[k+2])) ) {
+					std::string const & name1(rsd_type.atom_name(mainchain[k  ]));
+					std::string const & name2(rsd_type.atom_name(mainchain[k+1]));
+					std::string const & name3(rsd_type.atom_name(mainchain[k+2]));
+					if( !rinfo_name_map[i].right.count(name1) ||
+							!rinfo_name_map[i].right.count(name2) ||
+							!rinfo_name_map[i].right.count(name3) ){
+						continue;
+					}
+					std::string const & rinfo_name1( rinfo_name_map[i].right.find( name1 )->second );
+					std::string const & rinfo_name2( rinfo_name_map[i].right.find( name2 )->second );
+					std::string const & rinfo_name3( rinfo_name_map[i].right.find( name3 )->second );
+					if ( xyz.count( rinfo_name1 ) && xyz.count( rinfo_name2 ) && xyz.count( rinfo_name3 ) ) {
 						mainchain_core_present = true;
 						break;
 					}
@@ -1213,8 +1268,11 @@ build_pose_as_is1(
 					TR.Warning << "[ WARNING ] skipping pdb residue b/c it's missing too many mainchain atoms: " <<
 							resid << ' ' << pdb_name << ' ' << rsd_type.name() << std::endl;
 					for ( Size k=1; k<= nbb; ++k ) {
-						if ( !xyz.count( rsd_type.atom_name(mainchain[k] ) ) ) {
-							TR << "missing: " << rsd_type.atom_name( mainchain[k] ) << std::endl;
+						std::string const & name(rsd_type.atom_name(mainchain[k]));
+						if( !rinfo_name_map[i].right.count(name) ||
+								!xyz.count( rinfo_name_map[i].right.find(name)->second ) ) {
+							// Use of unmapped name deliberate
+							TR << "missing: " << name << std::endl;
 						}
 					}
 					if( options.exit_if_missing_heavy_atoms() == true ) {
@@ -1230,14 +1288,22 @@ build_pose_as_is1(
 
 		// ...and now fill in the coords
 		for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-			if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
+			std::string const & rinfo_name( iter->first );
+			if ( rinfo_name_map[i].left.count( rinfo_name ) ) {
 				// offsetting all coordinates by a small constant prevents problems with atoms located
 				// at position (0,0,0).
 				// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
 				// pdbs which usually start at 0,0,0. However the magnitude of this offset is so small
 				// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
+				// RM: I'm not sure what the problem with having coordinates exactly at the origin is.
+				// RM: If we do have a problem with that, it seems it should be fixed there and not here.
+				// RM: (As you could imagine theoretically hitting (0,0,0) during minimization or packing.)
 				double offset = 1e-250; // coordinates now double, so we can use _really_ small offset.
-				new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
+				std::string const & pose_name( rinfo_name_map[i].left.find( rinfo_name )->second );
+				new_rsd->atom( pose_name ).xyz( iter->second + offset );
+				// +1 here as we haven't added the residue to the pose yet.
+				id::NamedAtomID atom_id( pose_name, pose.total_residue()+1 );
+				coordinates_assigned.set( atom_id, true);
 			}
 			//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
 		}
@@ -1320,10 +1386,6 @@ build_pose_as_is1(
 				core::Real bondlength = ( last_rsd.atom( last_rsd.upper_connect_atom() ).xyz() -
 																	new_rsd->atom( new_rsd->lower_connect_atom() ).xyz() ).length();
 
-				// uncomment to look at PDB ids
-				//int last_resid = utility::string2int( rinfos[pose_to_rinfo[old_nres]].resid.substr(0,4) );
-				//int resid = utility::string2int( rinfo.resid.substr(0,4) );
-
 				if ( bondlength > 3.0 ) {
 					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *new_rsd, old_nres );
@@ -1344,7 +1406,6 @@ build_pose_as_is1(
 		}
 
 		pose_to_rinfo.push_back( Size(i) );
-		pose_resids.push_back( rinfo.resid );
 		pose_temps.push_back( rinfo.temps );
 
 		// update the pose-internal chain label if necessary
@@ -1358,9 +1419,12 @@ build_pose_as_is1(
 
 
 	// Check termini status of newly created pose residues.
+	// RM: All considered, this is a poor place to do this - we should ideally be doing this back
+	// when we're originally doing the typing - though some knowledge of downstream residues is necessary.
 	Size const nres( pose.total_residue() );
 	for ( Size i=1; i<= nres; ++i ) {
-		ResidueInformation const & rinfo = rinfos[i];
+		// Need to map pose index to rinfo index, in case we're skipping residues
+		ResidueInformation const & rinfo = rinfos[pose_to_rinfo[i]];
 		char chainID = rinfo.chainID;
 
 		bool const check_Ntermini_for_this_chain = ("ALL" == chains_to_check_if_Ntermini) ?
@@ -1372,6 +1436,7 @@ build_pose_as_is1(
 		if ( !check_Ctermini_for_this_chain ) continue;
 
 		//Residue const & rsd( pose.residue( i ) ); // THIS WAS A BAD BUG
+		bool type_changed(false);
 		if ( !pose.residue_type(i).is_polymer() ) continue;
 		if ( !pose.residue_type(i).is_lower_terminus() &&
 				( i == 1 ||
@@ -1380,6 +1445,7 @@ build_pose_as_is1(
 						!pose.residue_type( i ).has_variant_type(BRANCH_LOWER_TERMINUS)) ) ) {
 			TR << "Adding undetected lower terminus type to residue " << i << std::endl;
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
+			type_changed = true;
 		}
 		if ( !pose.residue_type(i).is_upper_terminus() &&
 				( i == nres ||
@@ -1388,6 +1454,21 @@ build_pose_as_is1(
 				pose.residue_type(i+1).has_variant_type(BRANCH_LOWER_TERMINUS)) ) {
 			TR << "Adding undetected upper terminus type to residue " << i << std::endl;
 			core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
+			type_changed = true;
+		}
+		if( type_changed ) {
+			// add_terminus_type will copy coordinates for matching atoms - see if there's additional atoms we missed.
+			for( core::Size ii(1); ii <= pose.residue_type(i).natoms(); ++ii ) {
+				std::string const & name( pose.residue_type(i).atom_name(ii) );
+				id::NamedAtomID atom_id( name, i );
+				// Unfortunately we're doing only exact name matches here.
+				if( ! coordinates_assigned[atom_id] && rinfo.xyz.count(name)  ) {
+					pose.set_xyz( atom_id, rinfo.xyz.find(name)->second );
+					coordinates_assigned.set(atom_id, true);
+					rinfo_name_map[pose_to_rinfo[i]].insert( NameBimap::value_type( name, name ) );
+					TR.Debug << "Setting coordinates for undetected atom " << name << " on residue " << i << std::endl;
+				}
+			}
 		}
 	}
 
@@ -1400,6 +1481,7 @@ build_pose_as_is1(
 
 	core::pose::initialize_atomid_map( missing, pose ); // dimension the missing-atom mask
 	if ( pose.total_residue() == 0 ) {
+		// if unchecked it segfaults further down...
 
 		// PDBInfo setup
 		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.total_residue() ) );
@@ -1409,17 +1491,15 @@ build_pose_as_is1(
 		// store pdb info
 		pose.pdb_info( pdb_info );
 		return;
-
-		utility_exit_with_message("ERROR: No residues in pose, empty file ? " );
-		// if unchecked it segfaults further down...
 	}
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		ResidueCoords const & xyz( rinfos[pose_to_rinfo[i]].xyz );
 
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
-			if ( xyz.count( rsd.atom_name(j) ) == 0 ) {
-				missing[ id::AtomID( j, i ) ] = true;
+			id::AtomID atom_id( j, i );
+			id::NamedAtomID named_atom_id( rsd.atom_name(j), i );
+			if ( ! coordinates_assigned[named_atom_id] ) {
+				missing[ atom_id ] = true;
 				if( !rsd.atom_is_hydrogen(j) ) num_heavy_missing++;
 			}
 		}
@@ -1435,18 +1515,9 @@ build_pose_as_is1(
 	//Size const nres( pose.total_residue() );
 	for ( Size i(1); i <= nres; ++i ) {
 		ResidueInformation const & rinfo = rinfos[pose_to_rinfo[i]];
-		std::string resid( rinfo.resid.substr(0,4) );
-		// pdb residue numbers can be negative
-		int resid_num;
-		std::istringstream ss( resid );
-		ss >> resid_num;
-		pdb_numbering.push_back( resid_num );
-
-		char const chain( rinfo.resid[5] );
-		pdb_chains.push_back( chain );
-
-		char const icode( rinfo.resid[4] );
-		insertion_codes.push_back( icode );
+		pdb_numbering.push_back( rinfo.resSeq );
+		pdb_chains.push_back( rinfo.chainID );
+		insertion_codes.push_back( rinfo.iCode );
 	}
 
 	// PDBInfo setup
@@ -1524,11 +1595,16 @@ build_pose_as_is1(
 	for( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
 		// fill in b-factor from pdb file
 		ResidueTemps & res_temps( rinfos[pose_to_rinfo[ir]].temps );
+		NameBimap const & namemap( rinfo_name_map[pose_to_rinfo[ir]] );
 		for( ResidueTemps::const_iterator iter=res_temps.begin(); iter != res_temps.end(); ++iter ) {
-			if( pose.residue(ir).type().has( local_strip_whitespace(iter->first) ) ) {
+			//namemap should only include atoms which have a presence in both rinfo and pose
+			if( namemap.left.count(iter->first) ) {
 				// printf("setting temp: res %d atom %s temp %f\n",ir,iter->first.c_str(),iter->second);
-				core::Size ia = pose.residue(ir).type().atom_index(local_strip_whitespace(iter->first)) ;
-				pdb_info->temperature( ir, ia, iter->second );
+				std::string const & pose_atom_name( namemap.left.find(iter->first)->second );
+				if( pose.residue(ir).type().has( pose_atom_name ) ) { // There are issues with terminus patching which means atoms can sometimes disappear
+					core::Size ia = pose.residue(ir).type().atom_index( pose_atom_name );
+					pdb_info->temperature( ir, ia, iter->second );
+				}
 			} else {
 				if( (iter->first)[0] == 'H' || ((iter->first)[0] == ' ' && (iter->first)[1] == 'H') ) {
 					;// don't warn if H
@@ -1651,11 +1727,11 @@ is_residue_type_recognized(
 			if( UA_res_nums.size() > 5000 ) {
 				utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
 			}
-			TR << "remember unrecognized atom " << pdb_residue_index << " " << pdb_name << " " << local_strip_whitespace(iter->first)
+			TR << "remember unrecognized atom " << pdb_residue_index << " " << pdb_name << " " << stripped_whitespace(iter->first)
 			<< " temp " << rtemp.find(iter->first)->second << std::endl;
 			UA_res_nums.push_back( pdb_residue_index );
 			UA_res_names.push_back( pdb_name );
-			UA_atom_names.push_back( local_strip_whitespace(iter->first) );
+			UA_atom_names.push_back( stripped_whitespace(iter->first) );
 			UA_coords.push_back( iter->second );
 			UA_temps.push_back( rtemp.find(iter->first)->second );
 		}

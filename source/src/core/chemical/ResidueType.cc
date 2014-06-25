@@ -158,6 +158,7 @@ ResidueType::ResidueType(
 		nbr_atom_( ResidueType::null_vertex ),
 		nbr_radius_( 0 ),
 		force_nbr_atom_orient_(false),
+		remap_pdb_atom_names_(false),
 		mass_(0),
 		lower_connect_id_( 0 ),
 		upper_connect_id_( 0 ),
@@ -233,6 +234,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		nu_atoms_(residue_type.nu_atoms_),
 		path_distance_(residue_type.path_distance_),
 		atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
+		atom_aliases_(residue_type.atom_aliases_),
 		orbitals_index_(residue_type.orbitals_index_),
 		chi_rotamers_(residue_type.chi_rotamers_),
 		rotamer_library_name_( residue_type.rotamer_library_name_ ),
@@ -289,6 +291,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		nbr_atom_(residue_type.nbr_atom_),
 		nbr_radius_( residue_type.nbr_radius_ ),
 		force_nbr_atom_orient_(residue_type.force_nbr_atom_orient_),
+		remap_pdb_atom_names_(residue_type.remap_pdb_atom_names_),
 		mass_(residue_type.mass_),
 		residue_connections_(residue_type.residue_connections_),
 		atom_2_residue_connection_map_(residue_type.atom_2_residue_connection_map_),
@@ -368,6 +371,14 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		assert(name_vd_inserted.second); // Don't add atoms with the same name
 		atom_name_to_vd_.insert( NameVDPair( strip_whitespace( a.name() ), vd) );
 		//assert(strip_name_vd_inserted.second); // If this is 4 chars, than it will be the same as before.
+	}
+	// We also have to add in the aliased names
+	for( std::map<std::string,std::string>::iterator iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
+			iter != iter_end; ++iter ) {
+		assert( !atom_name_to_vd_.count( iter->first ) );
+		assert( atom_name_to_vd_.count( iter->second ) );
+		VD vd( atom_name_to_vd_[ iter->second ] );
+		atom_name_to_vd_.insert( NameVDPair( iter->first, vd) );
 	}
 	// Setup the temporary ordered_atoms_ vector for refactor
 	VDs::const_iterator begin = residue_type.ordered_atoms_.begin();
@@ -1025,6 +1036,40 @@ ResidueType::delete_atom( Size const index )
 	VD const vd = ordered_atoms_[index];
 	graph_.clear_vertex(vd);
 	graph_.remove_vertex(vd);
+}
+
+/// @brief Add an alias name for an atom.
+void
+ResidueType::add_atom_alias( std::string const & rosetta_atom, std::string const & alias ) {
+	finalized_ = false;
+	if( ! has( rosetta_atom ) ) {
+		utility_exit_with_message( "Unable to add atom alias for non-existent atom "+rosetta_atom );
+	}
+	std::string stripped_alias( strip_whitespace( alias ) );
+	if( stripped_alias.size() == 0 ) {
+		utility_exit_with_message( "Cannot alias atom name to empty or all whitespace string." );
+	}
+	if( has( stripped_alias ) || atom_aliases_.count( stripped_alias ) ) {
+		utility_exit_with_message( "Cannot add atom alias, residue type already has an atom or alias named "+stripped_alias );
+	}
+
+	atom_aliases_[ alias ] = rosetta_atom;
+	atom_aliases_[ stripped_alias ] = rosetta_atom;
+}
+
+
+/// @brief Remove a given alias name for an atom.
+void
+ResidueType::delete_atom_alias( std::string const & alias ) {
+	finalized_ = false;
+	if( ! atom_aliases_.count(alias) ) {
+		utility_exit_with_message("Cannot remove atom alias "+alias+" as it does not exist as an alias.");
+	}
+	atom_aliases_.erase( atom_aliases_.find(alias) );
+	std::string stripped_alias( strip_whitespace( alias ) );
+	if( atom_aliases_.count(stripped_alias) ) { // Double check, as it might not be there, or alias==stripped_alias
+		atom_aliases_.erase( atom_aliases_.find(stripped_alias) );
+	}
 }
 
 /// @brief Set atom type, correctly updating internal state.
@@ -2089,6 +2134,14 @@ ResidueType::generate_atom_indices()
 		atom_name_to_vd_[ strip_whitespace( graph_[ ordered_atoms_[i]].name()  ) ] = ordered_atoms_[i];
 		vd_to_index_[ordered_atoms_[i]] = i;
 	}
+	// Add in aliased atoms
+	for( std::map<std::string,std::string>::iterator iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
+			iter != iter_end; ++iter ) {
+		assert( !atom_name_to_vd_.count( iter->first ) );
+		assert( atom_name_to_vd_.count( iter->second ) );
+		VD vd( atom_name_to_vd_[ iter->second ] );
+		atom_name_to_vd_[iter->first] = vd;
+	}
 
 	bonded_neighbor_.clear();
 	bonded_neighbor_type_.clear();
@@ -2436,16 +2489,16 @@ ResidueType::update_derived_data()
 	improper_dihedral_atom_sets_.clear();
 	improper_dihedrals_for_atom_.resize( natoms() );
 	for ( Size ii = 1; ii <= natoms(); ++ii ) improper_dihedrals_for_atom_[ ii ].clear();
-    
+
 	// get for all pairs of atoms separated by 1 bond
 	for ( Size central_atom1 = 1; central_atom1 < natoms(); ++central_atom1 ) {
 		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms(); ++central_atom2 ) {
 			if ( path_distance_[ central_atom1 ][ central_atom2 ] == 1 ) {
-                
+
 				// get all atoms separated from central_atom1/2 by one bond that are not central_atom2/1
 				utility::vector1< Size > ca1d1;
 				utility::vector1< Size > ca2d1;
-                
+
 				// ca1
 				for ( Size i = 1; i <= natoms(); ++i ) {
 					if ( ( path_distance_[ central_atom1 ][ i ] == 1 ) && ( i != central_atom2 ) ) {
@@ -2458,7 +2511,7 @@ ResidueType::update_derived_data()
 						ca2d1.push_back( i );
 					}
 				}
-                
+
 				// for each pair of dihedral angle start or end atoms create a dihedral angle using central atom
 				for ( utility::vector1< Size >::iterator terminal_atom1 = ca1d1.begin();
                      terminal_atom1 != ca1d1.end(); ++terminal_atom1 ) {
@@ -2471,7 +2524,7 @@ ResidueType::update_derived_data()
 						improper_dihedrals_for_atom_[   central_atom1 ].push_back( which_dihedral );
 						improper_dihedrals_for_atom_[   central_atom2 ].push_back( which_dihedral );
 						improper_dihedrals_for_atom_[ *terminal_atom2 ].push_back( which_dihedral );
-                    
+
                     }
                 }
                 for ( utility::vector1< Size >::iterator terminal_atom1 = ca2d1.begin();
@@ -2485,7 +2538,7 @@ ResidueType::update_derived_data()
 						improper_dihedrals_for_atom_[   central_atom1 ].push_back( which_dihedral );
 						improper_dihedrals_for_atom_[   central_atom2 ].push_back( which_dihedral );
 						improper_dihedrals_for_atom_[ *terminal_atom2 ].push_back( which_dihedral );
-                        
+
                     }
                 }
 			}

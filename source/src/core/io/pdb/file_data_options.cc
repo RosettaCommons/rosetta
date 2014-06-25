@@ -24,6 +24,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 
 namespace core {
 namespace io {
@@ -53,6 +54,9 @@ void FileDataOptions::parse_my_tag( utility::tag::TagCOP tag )
 
 	set_chains_whose_residues_are_separate_chemical_entities(
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ));
+
+	set_residues_for_atom_name_remapping( utility::string_split( tag->getOption< std::string >("remap_pdb_atom_names_for",""),
+		','));
 }
 
 std::string FileDataOptions::type() const { return "file_data_options"; }
@@ -75,6 +79,7 @@ bool FileDataOptions::remember_unrecognized_res() const { return remember_unreco
 bool FileDataOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
 bool FileDataOptions::write_pdb_link_records() const {return write_pdb_link_records_;}
 std::string const & FileDataOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
+utility::vector1<std::string> const & FileDataOptions::residues_for_atom_name_remapping() const { return residues_for_atom_name_remapping_; }
 
 // mutators
 
@@ -126,6 +131,10 @@ void FileDataOptions::set_chains_whose_residues_are_separate_chemical_entities( 
 { chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
 
 
+void FileDataOptions::set_residues_for_atom_name_remapping(utility::vector1<std::string> const & setting) {
+	residues_for_atom_name_remapping_ = setting;
+}
+
 void FileDataOptions::init_from_options()
 {
 	using namespace basic::options;
@@ -146,6 +155,9 @@ void FileDataOptions::init_from_options()
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]());
 	set_write_pdb_link_records(option[out::file::write_pdb_link_records]());
 	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
+	if( option[ in::file::remap_pdb_atom_names_for ].active() ) {
+		set_residues_for_atom_name_remapping( option[ in::file::remap_pdb_atom_names_for ] );
+	}
 }
 
 } // namespace pdb

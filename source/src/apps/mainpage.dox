@@ -11,7 +11,7 @@
 
 @mainpage Rosetta "all else" Documentation
 
-This is the main page for the code documentation for the non core/protocols section of Rosetta's library. For application and overview documentation see the wiki at <a href="https://wiki.rosettacommons.org">the developer site</a>, or <a href="https://www.rosettacommons.org/manual_guide">the released documentation</a> 
+This is the main page for the code documentation for the non core/protocols section of Rosetta's library. For application and overview documentation see the wiki at <a href="https://www.rosettacommons.org/docs/wiki/Home">the developer site</a>, or <a href="https://www.rosettacommons.org/docs/latest/">the released documentation</a> 
 For convenience, some quick links to important Rosetta classes are listed below.
 Documentation for more classes and functions can be found by looking at the Namespaces, Classes or Files tabs above, or using the search box.
 
@@ -22,6 +22,7 @@ Documentation for more classes and functions can be found by looking at the Name
 @section numeric_index numeric
 	- numeric::random
 		- numeric::random::RandomGenerator
+	- numeric::xyzVector
 
 @section utility_index utility
 	- utility::pointer

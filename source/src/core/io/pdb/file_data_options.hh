@@ -19,7 +19,9 @@
 // Unit headers
 #include <core/io/pdb/file_data_options.fwd.hh>
 
+
 // Basic headers
+#include <utility/vector1.hh>
 #include <basic/resource_manager/ResourceOptions.hh>
 
 // C++ headers
@@ -60,6 +62,7 @@ public:
 	bool remember_unrecognized_water() const;
 	bool write_pdb_link_records() const;
 	std::string const & chains_whose_residues_are_separate_chemical_entities() const;
+	utility::vector1<std::string> const & residues_for_atom_name_remapping() const;
 
 	// mutators
 	//void set_check_if_residues_are_termini( std::string check_if_residues_are_termini );
@@ -78,6 +81,7 @@ public:
 	void set_remember_unrecognized_water( bool remember_unrecognized_water );
 	void set_write_pdb_link_records(bool setting);
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
+	void set_residues_for_atom_name_remapping(utility::vector1<std::string> const & setting);
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
@@ -100,6 +104,8 @@ private:
 	bool write_pdb_link_records_;
 
 	std::string chains_whose_residues_are_separate_chemical_entities_; //treat_residues_in_these_chains_as_separate_chemical_entities
+	/// @brief Three letter codes of residues for which to allow atom renaming.
+	utility::vector1<std::string> residues_for_atom_name_remapping_;
 };
 
 } // namespace pdb

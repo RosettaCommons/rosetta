@@ -213,6 +213,14 @@ read_topology_file(
 /// if the "parse_charge" flag is on (whatever that is).
 /// E.g., "ATOM  CB  CH3  CT3  -0.27   0.000" from ALA.params.
 ///
+/// ATOM_ALIAS:
+/// Add alternative name(s) for a given atom, for example to be used when
+/// loading a PDB file. This line is column formatted. The canonical
+/// Rosetta atom name should be in columns 12-15, with the alternative
+/// names coming in columns 17-20, 22-25, etc: "ATOM_ALIAS RRRR 1111 2222 3333 ..."
+/// As with the ATOM line, whitespace matters. and aliases must be unique with
+/// respect to each other and with canonical names, even when whitespace is ignored
+///
 /// BACKBONE_AA:
 /// Sets the "backbone_aa" for a particular residue, which can be used
 /// to template the backbone scoring (rama and p_aa_pp terms).  For example,
@@ -418,6 +426,12 @@ read_topology_file(
 /// "PROTON_CHI 2 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0"
 /// from SER.params.
 ///
+/// REMAP_PDB_ATOM_NAMES:
+/// When reading in a PDB, attempt to match the input atoms for this residue
+/// based on elements and estimated connectivity, rather than atom names.
+/// (Connectivity by CONECT lines is ignored.) This only applies to input poses,
+/// and not to individually loaded residues, e.g. from the PDB_ROTAMERS line.
+///
 /// ROTAMER_AA:
 /// Sets the "rotamer_aa" for a particular residue, which can be used
 /// to describe to the RotamerLibrary what amino acid to mimic for the
@@ -599,10 +613,20 @@ read_topology_file(
 				rsd->add_metalbinding_atom( atom1 );
 				l >> atom1;
 			}
+		} else if ( tag == "ATOM_ALIAS" ) {
+			if( line.size() < 20 ) {
+				utility_exit_with_message("ATOM_ALIAS line too short");
+			}
+			atom1 = line.substr( 11, 4 ); // Rosetta atom
+			core::Size pos(16);
+			while( line.size() >= pos+4 ) {
+				atom2 = line.substr(pos, 4);
+				rsd->add_atom_alias( atom1, atom2 );
+				pos += 5;
+			}
 		} else if ( tag == "BOND" ) {
 			l >> atom1 >> atom2;
 			rsd->add_bond( atom1, atom2 );
-
 		} else if ( tag == "BOND_TYPE" ) {
 			l >> atom1 >> atom2 >> bond_type;
 			rsd->add_bond(atom1, atom2, convert_to_BondName(bond_type));
@@ -772,6 +796,8 @@ read_topology_file(
 		} else if ( tag == "PDB_ROTAMERS" ) {
 			found_PDB_ROTAMERS_record = true;
 			l >> pdb_rotamers_filename;
+		} else if ( tag == "REMAP_PDB_ATOM_NAMES" ) {
+			rsd->remap_pdb_atom_names( true );
 		} else if ( tag == "ACT_COORD_ATOMS" ) {
 			while ( l ) {
 				l >> atom1;

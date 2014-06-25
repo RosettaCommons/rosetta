@@ -11,6 +11,7 @@
 /// @file   core/io/pdb/file_data_fixup.cc
 /// @brief
 /// @author Rhiju Das
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 // Unit headers
 #include <core/io/pdb/file_data_fixup.hh>
@@ -19,11 +20,14 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ElementSet.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/Element.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -43,8 +47,14 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
+// Numeric headers
+#include <numeric/xyz.functions.hh>
+#include <numeric/numeric.functions.hh>
+
 // External headers
 #include <ObjexxFCL/format.hh>
+#include <boost/graph/vf2_sub_graph_iso.hpp>
+#include <boost/graph/mcgregor_common_subgraphs.hpp>
 
 // C++ headers
 #include <fstream>
@@ -441,6 +451,286 @@ get_closest_sister(  Vector const & xyz_sister1,
 									 Vector const & xyz_outgroup ) {
 	return ( xyz_sister1.distance( xyz_outgroup ) < xyz_sister2.distance( xyz_outgroup) ) ? 1 : 2;
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+// Utility functions for name remapping.
+//
+
+/// @brief Get theshold distance below which two atoms are considered bonded. (1.2*covalent)
+/// @details The closest distance of a non-bonded contact is likely to be something
+/// like the opposite atoms cyclobutane. This would be sqrt(2)*covalent bond distance.
+/// We thus set the contact distance threshold to 1.2*covalent bond distance to allow
+/// bond length flexibility. In initial tests this looks to give a clean decision.
+/// @details Pass-by-value is deliberate, as we want to strip the elements of whitespace
+core::Real
+bonding_distance_threshold( std::string element1, std::string element2 ) {
+	core::chemical::ElementSetCAP element_types = core::chemical::ChemicalManager::get_instance()->element_set("default");
+
+	utility::strip_whitespace( element1 );
+	utility::strip_whitespace( element2 );
+	if( ! element_types->contains_element_type( element1 ) ||
+			! element_types->contains_element_type( element2 ) ) {
+		utility_exit_with_message("Cannot find bonding distance threshold for elements '"+element1+"' and '"+element2+"'");
+	}
+	core::chemical::ElementCOP elem1( element_types->element(element1) );
+	core::chemical::ElementCOP elem2( element_types->element(element2) );
+	core::Real rad1( elem1->get_property(  core::chemical::Element::CovalentRadius ) );
+	core::Real rad2( elem2->get_property(  core::chemical::Element::CovalentRadius ) );
+	return 1.2 * (rad1 + rad2) ;
+}
+
+core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & rinfo, chemical::ResidueType const & rsd_type ) {
+	// Scoring:
+	// 1 point for each chirality match
+	// 1/natoms point for each atom present
+	// 1/natoms^2 point for each name match
+	// -2 points for each bond that shouldn't be made
+
+	core::Size const natoms = rsd_type.natoms();
+	core::Size const natoms2 = natoms*natoms;
+	//Inverse mapping - from Pose names to rinfo names
+	NameBimap::right_map const & inverse( mapping.right );
+
+	// Sum the scores for each of the atoms individually
+	core::Real score(0);
+	for( core::Size ii(1); ii <= natoms; ++ii) {
+		std::string const & name( rsd_type.atom_name(ii) );
+		if( inverse.count( name ) == 0 ) {
+			continue;
+		}
+		score += 1.0/natoms; // 1/natoms point for each atom present.
+		if( utility::stripped_whitespace(name) == utility::stripped_whitespace( inverse.find(name)->second ) ) {
+			score += 1.0 / natoms2; // 1/natoms^2 point for each name identity match.
+		}
+		// Check the chirality of the atoms
+		core::chemical::AtomIndices const & nbrs( rsd_type.bonded_neighbor(ii) );
+		// Make a name mapping for the bonded atoms, if present.
+		utility::vector1< std::string > type_nbrs;
+		for( core::Size jj(1); jj <= nbrs.size(); ++jj ) {
+			std::string const & posename( rsd_type.atom_name(nbrs[jj]) );
+			if( inverse.count( posename ) &&
+					rinfo.xyz.count( inverse.find(posename)->second ) ){
+				// Only look at neighbors with correspeondences and coordinates
+				type_nbrs.push_back( posename );
+			}
+		}
+		// Make sure we have enough information to compute the chirality
+		if( type_nbrs.size() == 3 ) {
+			// We can compute chirality with three atoms if we use the current atom as a reference
+			type_nbrs.push_back( name );
+		}
+		if( type_nbrs.size() >= 4 ) {
+			// We hope that the first four are sufficient for a chirality signature if there's more than 4 bonded neighbors
+			core::Real const rsd_dhd = numeric::dihedral_degrees(
+						rsd_type.atom( type_nbrs[1] ).ideal_xyz(),
+						rsd_type.atom( type_nbrs[2] ).ideal_xyz(),
+						rsd_type.atom( type_nbrs[3] ).ideal_xyz(),
+						rsd_type.atom( type_nbrs[4] ).ideal_xyz() );
+			//These will be found, because we only pushed back names which were present and had coordinates.
+			core::Real const rinfo_dhd = numeric::dihedral_degrees(
+						rinfo.xyz.find( inverse.find(type_nbrs[1])->second )->second,
+						rinfo.xyz.find( inverse.find(type_nbrs[2])->second )->second,
+						rinfo.xyz.find( inverse.find(type_nbrs[3])->second )->second,
+						rinfo.xyz.find( inverse.find(type_nbrs[4])->second )->second );
+			//TR << "Dihedral difference: " << rsd_dhd - rinfo_dhd << std::endl;
+			if( numeric::abs_difference( rsd_dhd, rinfo_dhd ) < 10.0 || // The atoms are near each other in dihedral (will also catch planar)
+					numeric::sign( rsd_dhd ) == numeric::sign( rinfo_dhd ) ) { // or they're in the same chiral orientation.
+				score += 1.0; // 1 point for each chirality match.
+			}
+		} // else too few bonded neighbors to do chirality checks.
+	}
+
+	// For each bond in the residue type, make sure that the mapped atoms are "close enough" to also be bonded.
+	// This check will keep the heurisitic from smashing together distal parts of the molecule
+	core::chemical::EIter bonditr, bonditr_end;
+	for( boost::tie( bonditr, bonditr_end ) = rsd_type.bond_iterators(); bonditr != bonditr_end; ++bonditr ) {
+		core::chemical::VD source( boost::source(*bonditr,rsd_type.graph()) ), target( boost::target(*bonditr,rsd_type.graph()) );
+		std::string const & name1( rsd_type.atom_name(source) );
+		std::string const & name2( rsd_type.atom_name(target) );
+		if( inverse.count(name1) && inverse.count(name2) &&
+				rinfo.xyz.count( inverse.find(name1)->second ) &&
+				rinfo.xyz.count( inverse.find(name2)->second ) ) {
+			Vector const & pos1(rinfo.xyz.find( inverse.find(name1)->second )->second);
+			Vector const & pos2(rinfo.xyz.find( inverse.find(name2)->second )->second);
+			std::string const & elem1( rsd_type.atom(source).element_type()->get_chemical_symbol() ) ;
+			std::string const & elem2( rsd_type.atom(target).element_type()->get_chemical_symbol() ) ;
+			core::Real bond_thresh( bonding_distance_threshold(elem1,elem2) );
+			if( pos1.distance_squared(pos2) > (bond_thresh*bond_thresh) ) {
+				score -= 2.0;
+			}
+		}
+	}
+
+	return score;
+}
+
+typedef boost::undirected_graph<AtomInformation /*Node information only*/ > AtomInfoGraph;
+typedef AtomInfoGraph::vertex_descriptor AIVD;
+
+class GeometricRenameIsomorphismCallback {
+public:
+	GeometricRenameIsomorphismCallback(AtomInfoGraph const & aigraph,
+					ResidueInformation const & rinfo,
+					core::chemical::ResidueType const & rsdtype,
+					NameBimap & mapping,
+					core::Real &  mapscore ):
+			aigraph_( aigraph ),
+			rinfo_(rinfo),
+			rsdtype_( rsdtype ),
+			mapping_( mapping ),
+			best_score_( mapscore ),
+			n_mappings_( new core::Size(0) )
+	{
+	}
+
+	template< class VD2VDmap1, class VD2VDmap2 >
+	bool operator()(VD2VDmap1 map_1_to_2, VD2VDmap2, core::Size = 0 /*needed for McGregor*/ ) {
+		NameBimap newmap;
+		AtomInfoGraph::vertex_iterator iter, iter_end;
+		for( boost::tie( iter, iter_end) = boost::vertices(aigraph_); iter != iter_end; ++iter) {
+			if( map_1_to_2[ *iter ] != core::chemical::ResidueGraph::null_vertex() ) {
+				newmap.insert( NameBimap::value_type( aigraph_[*iter].name , rsdtype_.atom_name( map_1_to_2[ *iter ] ) ) );
+			}
+		}
+		core::Real newscore( score_mapping( newmap, rinfo_, rsdtype_ ) );
+		++(*n_mappings_);
+		if( *n_mappings_ % 1000 == 0 ) {
+			TR.Debug << "Mapping " << *n_mappings_ << " has a score of " << newscore << std::endl;
+		}
+		if( newscore > best_score_ ) {
+			if( TR.Trace.visible() ) {
+				TR.Trace << "Found new best mapping, with score " << newscore << std::endl;
+			}
+			best_score_ = newscore;
+			mapping_ = newmap;
+		}
+		// We don't want to go forever - if there are too many mappings, just go with a "good enough" one.
+		// RM: The "too many" criteria here are arbitrary, based on wait times on my machine.
+		core::Size natoms( numeric::min(rsdtype_.natoms(),boost::num_vertices(aigraph_)) );
+		if( (*n_mappings_ >=  100000 && mapping_.left.size() > (3*natoms)/4 ) ||
+				(*n_mappings_ >=  300000 && mapping_.left.size() >   natoms/2 ) ||
+				(*n_mappings_ >= 1000000 && mapping_.left.size() >= 3 ) ) {
+			TR << "Too many mappings to consider in geometric name remapping - truncating search after " << *n_mappings_
+					<< " mappings, with " << mapping_.left.size() << " of " << natoms << " possible atoms matched." << std::endl;
+			return false;
+		}
+		return true;
+	}
+
+private:
+	AtomInfoGraph const & aigraph_;
+	ResidueInformation const & rinfo_;
+	core::chemical::ResidueType const & rsdtype_;
+	NameBimap & mapping_;
+	core::Real & best_score_;
+	// This needs to be a shared pointer as the callback is passed around by value
+	boost::shared_ptr< core::Size > n_mappings_;
+};
+
+/// @brief Will consider two verticies equivalent if they have the same element.
+class GeometricRenameVerticiesEquivalent {
+public:
+
+	GeometricRenameVerticiesEquivalent(AtomInfoGraph const & aigraph,
+					core::chemical::ResidueGraph const & rsdtype ):
+			aigraph_( aigraph ),
+			rsdtype_( rsdtype )
+	{}
+
+	bool operator() ( AIVD vd1, core::chemical::VD vd2 ) {
+		std::string pdb_elem( aigraph_[vd1].element );
+		utility::strip_whitespace( pdb_elem );
+		utility::uppercase( pdb_elem );
+		std::string rsdtype_elem( rsdtype_[vd2].element_type()->get_chemical_symbol() );
+		utility::strip_whitespace( rsdtype_elem );
+		utility::uppercase( pdb_elem );
+		//TR << "Element match '" << pdb_elem << "' '" << rsdtype_elem << "'" << std::endl;
+		return pdb_elem == rsdtype_elem;
+	}
+
+private:
+	AtomInfoGraph const & aigraph_;
+	core::chemical::ResidueGraph const & rsdtype_;
+};
+
+/// @brief Attempt to use element identity and connectivity to map atom names from the rinfo object onto the rsd_type object names.
+void
+remap_names_on_geometry( NameBimap & mapping,
+				ResidueInformation const & rinfo,
+				chemical::ResidueType const & rsd_type) {
+	// Set up the graph on the PDB side
+	AtomInfoGraph aigraph;
+	std::map< std::string, AIVD > name_aivd_map;
+	utility::vector1< AIVD > small_order;
+
+	for( utility::vector1< AtomInformation >::const_iterator iter=rinfo.atoms.begin(), iter_end=rinfo.atoms.end();
+				iter != iter_end; ++iter ) {
+		if( ! rinfo.xyz.count( iter->name ) ) {
+			continue; // Only look at atoms with coordinates
+		}
+		AIVD aivd = boost::add_vertex(*iter,aigraph);
+		//Fix up the element name, if we have an old-style short ATOM line.
+		//Atom info in the graph is a copy - so we can modify it if we need.
+		std::string & elem( aigraph[ aivd ].element );
+		if( elem == "  " ||  elem == "" ) {
+			aigraph[ aivd ].element = aigraph[ aivd ].name.substr(0,2); // First two letters of the atom name - typically this is the element code.
+		}
+		name_aivd_map[ iter->name ] = aivd;
+		small_order.push_back( aivd );
+	}
+
+	// Add bonds to all atoms which are within the contact distance of each other.
+	for( core::Size ii(1); ii <= rinfo.atoms.size(); ++ii ) {
+		std::string const & atomname( rinfo.atoms[ii].name );
+		Vector const & atomxyz( rinfo.xyz.find( atomname )->second );
+		// Need to pull the element out of the graph, as we may have adjusted it above
+		std::string const & elem1( aigraph[ name_aivd_map[ atomname ] ].element );
+		for( core::Size jj(ii+1); jj <= rinfo.atoms.size(); ++jj ) {
+			std::string const & atom2name( rinfo.atoms[jj].name );
+			Vector const &atom2xyz( rinfo.xyz.find( atom2name )->second );
+			std::string const & elem2( aigraph[ name_aivd_map[ atom2name ] ].element );
+			core::Real bond_thresh( bonding_distance_threshold(elem1,elem2) );
+			if( atomxyz.distance_squared( atom2xyz ) < (bond_thresh*bond_thresh) ) {
+				boost::add_edge( name_aivd_map[atomname], name_aivd_map[atom2name], aigraph);
+			}
+		}
+	}
+
+	TR.Debug << "Graph sizes: Ainfo " << boost::num_vertices(aigraph)
+			<< " ResidueType " <<  boost::num_vertices(rsd_type.graph()) << std::endl;
+	TR.Debug << "      sizes: order " << small_order.size() << std::endl;
+	TR.Debug << " Number of edges: Ainfo " << boost::num_edges(aigraph)
+			<< " ResidueType " <<  boost::num_edges(rsd_type.graph()) << std::endl;
+
+	core::Real best_score(-999999);
+	GeometricRenameIsomorphismCallback callback( aigraph, rinfo, rsd_type, mapping, best_score );
+	GeometricRenameVerticiesEquivalent vertices_equivalent( aigraph, rsd_type.graph() );
+
+	boost::vf2_subgraph_mono( aigraph, rsd_type.graph(), callback, small_order,
+			boost::vertices_equivalent( vertices_equivalent ) );
+
+	if( best_score == -999999 ) {
+		// The McGregor approach takes longer, but picks up additional mapping correspondences.
+		// (In particular, it allows for ignoring extraneous atoms on the PDB side.)
+		// It also tends to output a *lot* more mappings. In fact, we're only considering connected
+		// subgraphs to speed things up. This means that we're going to match on just the largest
+		// connected component, rather than multiple disconnected subgraphs.
+		TR.Debug << "Using the McGregor fall-back approach." << std::endl;
+		boost::mcgregor_common_subgraphs( aigraph, rsd_type.graph(), true /*only_connected_subgraphs*/,
+				callback, boost::vertices_equivalent( vertices_equivalent ) );
+	}
+
+	if( best_score == -999999 ) {
+		TR.Error << "ERROR: Difficulties mapping atom names from geometry for " << rinfo.resName << " " << rinfo.chainID << rinfo.resSeq
+				<< rinfo.iCode << " onto " << rsd_type.name() << std::endl;
+		utility_exit_with_message("Can't find good mapping between input residue and residue type.");
+	}
+
+	TR.Debug << "After geometric name remapping, missing " << (rsd_type.natoms()-mapping.left.size()) << " of " << rsd_type.natoms() << " atoms." << std::endl;
+}
+
 
 } // namespace pdb
 } // namespace io

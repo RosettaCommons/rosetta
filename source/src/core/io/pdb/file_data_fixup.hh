@@ -8,17 +8,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/io/pdb/file_data.hh
-///
-/// @brief
-/// @author Sergey Lyskov
+/// @file   core/io/pdb/file_data_fixup.hh
+/// @brief  Various utilities to accomodated PDB input issues.
+/// @author Sergey Lyskov, Rhiju Das, Rocco Moretti (rmorettiase@gmail.com)
 
 #ifndef INCLUDED_core_io_pdb_file_data_fixup_hh
 #define INCLUDED_core_io_pdb_file_data_fixup_hh
 
-
 // Unit headers
-#include <core/io/pdb/file_data_fixup.hh>
+#include <core/io/pdb/file_data_fixup.fwd.hh> // For typedefs
 
 // Package headers
 #include <core/io/pdb/file_data_options.fwd.hh>
@@ -34,6 +32,10 @@
 #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
+
+//External headers
+
+#include <boost/bimap.hpp>
 
 // C++ headers
 #include <iostream>
@@ -72,16 +74,16 @@ bool is_NA( std::string const & res_name );
 
 bool missing_O2prime( utility::vector1< AtomInformation > const & atoms );
 
-// @brief  This is a pretty good framework and could allow for other crazy nucleic acid atom name schemes.
+/// @brief  This is a pretty good framework and could allow for other crazy nucleic acid atom name schemes.
 	void convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const force_RNA = false  );
 
 void convert_nucleic_acid_atom_name_to_standard( AtomInformation & atom_info );
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// @brief due to differences in different crystallography/NMR/modeling packages, labeling of sister atoms
-//  (like OP1 <--> OP2, or H41 <--> H42) in PDBs is totally wacky. This is an attempt to regularize...
-//  and it can actually make a difference since sometimes partial charges on sister hydrogens
-//  can be different. Right now only set up for nucleic acids, but could probably generalize.
+/// @brief due to differences in different crystallography/NMR/modeling packages, labeling of sister atoms
+///  (like OP1 <--> OP2, or H41 <--> H42) in PDBs is totally wacky. This is an attempt to regularize...
+///  and it can actually make a difference since sometimes partial charges on sister hydrogens
+///  can be different. Right now only set up for nucleic acids, but could probably generalize.
 void check_and_correct_sister_atoms( core::conformation::ResidueOP & rsd );
 
 void check_and_correct_sister_atom_based_on_chirality( core::conformation::ResidueOP & rsd,
@@ -113,6 +115,23 @@ int
 get_closest_sister(  Vector const & xyz_sister1,
 										 Vector const & xyz_sister2,
 										 Vector const & xyz_outgroup );
+
+
+/// @brief Get theshold distance below which two atoms are considered bonded. (1.2*covalent)
+core::Real
+bonding_distance_threshold( std::string element1, std::string element2 );
+
+/// @brief Scoring scheme for the heuristic PDB renaming
+core::Real
+score_mapping( NameBimap const & mapping,
+				ResidueInformation const & rinfo,
+				chemical::ResidueType const & rsd_type );
+
+/// @brief Attempt to use element identity and connectivity to map atom names from the rinfo object onto the rsd_type object names.
+void
+remap_names_on_geometry( NameBimap & mapping,
+				ResidueInformation const & rinfo,
+				chemical::ResidueType const & rsd_type);
 
 
 } // namespace pdb

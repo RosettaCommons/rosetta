@@ -20,6 +20,9 @@
 #include <utility/stream_util.hh>
 #include <utility/exit.hh>
 
+// ObjexxFCL headers
+#include <ObjexxFCL/string.functions.hh>
+
 // Boost headers
 #include <boost/algorithm/string/erase.hpp>
 
@@ -32,6 +35,16 @@
 #include <typeinfo>
 
 namespace utility {
+
+//These are useful string utilities from the ObjexxFCL namespace - transclude them here so you have a one-stop shop for string functions.
+
+using ObjexxFCL::uppercase;
+using ObjexxFCL::lowercase;
+using ObjexxFCL::strip_whitespace;
+using ObjexxFCL::uppercased;
+using ObjexxFCL::lowercased;
+using ObjexxFCL::stripped_whitespace;
+
 
 /// @brief Reads the contents of <filename> into <contents>, preserving newline
 /// characters. Aborts if an error is encoutered.

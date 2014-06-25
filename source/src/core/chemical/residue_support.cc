@@ -151,6 +151,7 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 				TR.Trace << "Renaming atom from '"<< res.atom(*iter).name() << "' to '" << name << "'" << std::endl;
 			}
 			res.atom(*iter).name( name );
+			res.remap_pdb_atom_names( true ); // We've renamed an atom, so we need to be flexible with PDB loading.
 			name_counts[ name ]++;
 		}
 	}

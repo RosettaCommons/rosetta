@@ -1203,6 +1203,15 @@ public: // Properties
 	}
 
 
+	/// @brief Does the VectorOption contain the given value?
+	inline
+	bool
+	has_value( Value const & value ) {
+		been_accessed();
+		if ( state_ == INACTIVE ) inactive_error();
+		return value_.has_value( value );
+	}
+
 	/// @brief Value at a given index
 	inline
 	Value const &
