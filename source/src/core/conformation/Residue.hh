@@ -1170,6 +1170,13 @@ public:
 	void
 	clear_residue_connections();
 
+	/// @brief Search through the other residue for connections to this residue, and
+	/// ensure that this residue's connect_map is up to date with that residue's
+	/// connection indices (and residue number).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void
+	update_connections_to_other_residue( Residue const &other_rsd);
+
 	void
 	copy_residue_connections_from( Residue const & src );
 
@@ -1191,7 +1198,11 @@ public:
 	}
 
 	/// @brief Returns the residue number of a residue connected to this residue
-	/// with ResidueConnection  <resconn_index>  ?
+	/// at this residue's connection resconn_index.
+	/// @details  For example, in a normally-connected pose made of alpha-amino
+	/// acids, calling residue_connection_partner(1) on residue 6 should return
+	/// 5, since residue 6 is connected to residue 5 at the first connection of
+	/// residue 6.
 	Size
 	residue_connection_partner( Size const resconn_index ) const
 	{
@@ -1203,8 +1214,11 @@ public:
 	copy_residue_connections( Residue const & src_rsd );
 
 
-	/// @brief Returns the residue number of a residue connected to this residue
-	/// with ResidueConnection  <resconn_index>  ?
+	/// @brief Returns the connection id on the OTHER residue connected to this residue at this residue's
+	/// connection resconn_index.
+	/// @details For example, if this were a normally-connected alpha amino acid, residue_connection_conn_id(1)
+	/// would return 2, since the first connection in this residue is attached to the second connection in the
+	/// previous residue.
 	Size
 	residue_connection_conn_id( Size const resconn_index ) const
 	{

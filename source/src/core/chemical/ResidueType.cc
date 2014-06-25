@@ -819,6 +819,23 @@ ResidueType::bonded_neighbor_iterators( VD const & atom ) const {
 	return boost::adjacent_vertices( atom, graph_ );
 }
 
+/// @brief Indicates whether or not two atom indices have a chemical bond linking them.
+/// @details Note that this assumes that the Rosetta machinery is set up so that if
+/// atom 1 is bonded to atom 2, atom 2 is bonded to atom 1.  This function breaks if
+/// that assumption breaks.
+/// @author Vikram K. Mulligan
+bool
+ResidueType::atoms_are_bonded(
+	core::Size const atom_index1,
+	core::Size const atom_index2
+) const {
+	AtomIndices const atom1partners = nbrs(atom_index1);
+	for(core::Size i=1, imax=atom1partners.size(); i<=imax; ++i) {
+		if (atom1partners[i] == atom_index2) return true;
+	}
+	return false;
+}
+
 utility::vector1<BondName> const &
 ResidueType::bonded_neighbor_types(Size const atomno) const
 {

@@ -309,6 +309,7 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 	{ // Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( d_multiplier*res.mainchain_torsion( 1 ) );
 		Angle const psi( d_multiplier*res.mainchain_torsion( 2 ) );
+		//printf("P_AA_pp: res=%lu phi=%.2f psi=%.2f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 			return P_AA_pp_energy_splines_[ aa ].F( phi, psi );
 		} else {
@@ -372,7 +373,7 @@ P_AA::get_Paa_pp_deriv(
 	Size const phi_id = 1;
 	Size const psi_id = 2;
 
-	if ( ! res.is_terminus() && ( tor_id.type() == id::BB && (tor_id.torsion() == phi_id || tor_id.torsion() == psi_id )) & ! res.is_virtual_residue() ) {
+	if ( res.type().is_alpha_aa() && !res.is_terminus() && ( tor_id.type() == id::BB && (tor_id.torsion() == phi_id || tor_id.torsion() == psi_id )) & ! res.is_virtual_residue() ) {
 		 //ToDo Also exclude chainbreaks
 		// Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( d_multiplier*res.mainchain_torsion( phi_id ));

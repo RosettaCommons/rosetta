@@ -318,6 +318,28 @@ Residue::is_similar_rotamer( Residue const & other ) const
 	return match;
 }
 
+/// @brief Search through the other residue for connections to this residue, and
+/// ensure that this residue's connect_map is up to date with that residue's
+/// connection indices (and residue number).
+/// @details Throws an error if this residue doesn't have a connection id indicated
+/// by the other residue.  Overwrites connection ids otherwise, with no consideration
+/// of whether the original connection was to other_rsd.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+Residue::update_connections_to_other_residue( Residue const &other_rsd)
+{
+	for(core::Size ic=1, ic_max=other_rsd.type().n_residue_connections(); ic<=ic_max; ++ic) {
+		if(other_rsd.connected_residue_at_resconn(ic)==seqpos()) { //If the other's connection lists this residue's sequence position
+			core::Size const this_conn_id = other_rsd.connect_map(ic).connid();
+			//TR << "this_res=" << seqpos() << "other_res=" << other_rsd.seqpos() << " this_conn_id=" << this_conn_id << std::endl; //DELETE ME
+			runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
+			if(connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos())
+					TR.Warning << "Warning!  While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
+			residue_connection_partner( this_conn_id, other_rsd.seqpos(), ic ); //Set this residue's connection appropriately for the other residue's connection indices.
+		}
+	}
+	return;
+}
 
 void
 Residue::copy_residue_connections( Residue const & src_rsd )
@@ -376,8 +398,8 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 						if ( this_connid != ii ) {
 							TR.Debug << "WARNING: Residue connection id changed when creating a new residue at seqpos " << seqpos() <<
 								std::endl;
-							TR.Debug << "WARNING: ResConnID info stored on residue " << src_rsd.connect_map( ii ).resid();
-							TR.Debug << " is now out of date!" << std::endl;
+							TR.Debug << "WARNING: ResConnID info stored on the connected residue (residue " << src_rsd.connect_map( ii ).resid();
+							TR.Debug << ") is now out of date!" << std::endl;
 							TR.Debug << "Connection atom name (in src): " << src_rsd.atom_name( ii_connatom ) << std::endl;
 						}
 					}

@@ -38,6 +38,8 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
+#include <stdio.h>
+
 static basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
 
 namespace protocols {
@@ -69,7 +71,19 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		    }
 		}
 
+		printf("Stripping termini.\n"); fflush(stdout); //DELETE ME
+		if(atom1_=="N" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS, res1_);
+		if(atom2_=="N" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(LOWER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS, res2_);
+		if(atom1_=="C" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(UPPER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS, res1_);
+		if(atom2_=="C" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(UPPER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS, res2_);
+
+		printf("Declaring bond.\n"); fflush(stdout); //DELETE ME
 		pose.conformation().declare_chemical_bond(res1_, atom1_, res2_, atom2_);
+
+		//Rebuild the polymer bond dependent atoms:
+		printf("Rebuilding bond-dependent atoms.\n"); fflush(stdout); //DELETE ME
+		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(res1_);
+		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(res2_);
 
 		if(rebuild_fold_tree_) {
 		  core::pose::Pose const pose_copy(pose); //Make a reference copy of pose (const to prevent accidentally altering it).

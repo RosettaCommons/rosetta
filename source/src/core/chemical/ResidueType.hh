@@ -321,6 +321,12 @@ public:
 	AdjacentIterPair
 	bonded_neighbor_iterators( VD const & atom ) const;
 
+	/// @brief Indicates whether or not two atom indices have a chemical bond linking them.
+	/// @details Note that this assumes that the Rosetta machinery is set up so that if
+	/// atom 1 is bonded to atom 2, atom 2 is bonded to atom 1.  This function breaks if
+	/// that assumption breaks.
+	/// @author Vikram K. Mulligan
+	bool atoms_are_bonded( core::Size const atomindex1, core::Size const atomindex2 ) const;
 
 	utility::vector1<BondName> const & bonded_neighbor_types(Size const atomno) const;
 

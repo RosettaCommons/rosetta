@@ -492,6 +492,10 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	);
 
 
+	/// @brief Rebuilds the atoms that are depenent on polymer bonds for the specified residue only.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size const seqpos );
+
 	/// @brief Rebuild the atoms ( like HN(seqpos), OC(seqpos+1) ) that are dependent on the polymer bond between seqpos and seqpos+1
 	void
 	rebuild_polymer_bond_dependent_atoms( Size const seqpos );
@@ -1161,6 +1165,12 @@ private:
 		AtomID & id3,
 		AtomID & id4
 	) const;
+
+	/// @brief Helper method to determine whether two atoms have a chemical bond linking them.
+	/// @details Intended for internal use, but there's really no reason not to make this a public
+	/// method.  This works for atoms within the same residue or in different residues.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool atoms_are_bonded( AtomID const &id1, AtomID const &id2 ) const;
 
 
 private:  // setting the moved data
