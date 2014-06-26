@@ -246,9 +246,9 @@ ICoorAtomID::atom_id( Size const seqpos, Conformation const & conformation ) con
 	case INTERNAL:
 		return AtomID( atomno_, seqpos );
 	case POLYMER_LOWER:
-		return AtomID( conformation.residue_type( seqpos-1 ).upper_connect_atom(), seqpos - 1 );
+		return AtomID( conformation.residue_type( seqpos-1 ).upper_connect_atom(), seqpos - 1 ); //TODO: take out the seqpos-1 / seqpos+1 assumption, here.
 	case POLYMER_UPPER:
-		return AtomID( conformation.residue_type( seqpos+1 ).lower_connect_atom(), seqpos + 1 );
+		return AtomID( conformation.residue_type( seqpos+1 ).lower_connect_atom(), seqpos + 1 ); //TODO: take out the seqpos-1 / seqpos+1 assumption, here.
 	case CONNECT:
 		// in this case atomno_ is the connection identifer (index)
 		return conformation.inter_residue_connection_partner( seqpos, atomno_ );

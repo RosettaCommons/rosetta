@@ -100,10 +100,10 @@ void set_loop_pose (
 
 	TR << "Setting loop conformation based on solution from generalized kinematic closure." << std::endl; TR.flush(); //DELETE ME
 
-	for(core::Size ii=3, iimax=(b_len.size()-3); ii<=iimax; ++ii) { //Set bond lengths
+	for(core::Size ii=1, iimax=(b_len.size()-1); ii<=iimax; ++ii) { //Set bond lengths
 		pose.conformation().set_bond_length( atomlist[ii].first, atomlist[ii+1].first, b_len[ii] );
 	}
-	for(core::Size ii=3, iimax=(b_ang.size()-3); ii<=iimax; ++ii) { //Set bond angles
+	for(core::Size ii=2, iimax=(b_ang.size()-1); ii<=iimax; ++ii) { //Set bond angles
 		pose.conformation().set_bond_angle( atomlist[ii-1].first, atomlist[ii].first, atomlist[ii+1].first, radians(b_ang[ii]) );
 	}
 	for(core::Size ii=2, iimax=(t_ang.size()-2); ii<=iimax; ++ii){ //Set torsion angles

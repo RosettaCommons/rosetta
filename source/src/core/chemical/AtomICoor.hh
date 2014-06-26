@@ -143,12 +143,22 @@ public:
 		return ( type_ == POLYMER_UPPER );
 	}
 
+	/// @brief Returns true if this is the specified connection id
 	///
 	bool
 	is_connect( Size const connid ) const
 	{
 		return ( type_ == CONNECT && atomno_ == connid );
 	}
+
+	/// @brief Returns true if this is a connection.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool
+	is_connect( ) const
+	{
+		return ( type_ == CONNECT );
+	}
+
 
 public:
 
@@ -295,6 +305,7 @@ public:
 		return ( stub_atom1_.is_polymer_upper() || stub_atom2_.is_polymer_upper() || stub_atom3_.is_polymer_upper() );
 	}
 
+	/// @brief Returns true if any of the stub atoms is the specified connection ID.
 	///
 	bool
 	depends_on_residue_connection( Size const connid ) const
@@ -303,6 +314,17 @@ public:
 						 stub_atom2_.is_connect( connid ) ||
 						 stub_atom3_.is_connect( connid ) );
 	}
+
+	/// @brief Returns true if any of the stub atoms is a connection ID.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool
+	depends_on_residue_connection( ) const
+	{
+		return ( stub_atom1_.is_connect( ) ||
+						 stub_atom2_.is_connect( ) ||
+						 stub_atom3_.is_connect( ) );
+	}
+
 
 	/// @brief accessor to stub_atom ICoorAtomID
 	ICoorAtomID &

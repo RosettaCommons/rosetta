@@ -1163,11 +1163,11 @@ void GeneralizedKIC::pick_pivots(
 	using namespace protocols::generalized_kinematic_closure;
 	//TODO -- I THINK THE FIRST PIVOT HAS TO BE ATOM 5.  CHECK THIS.
 
-	runtime_assert_string_msg( pivot_1_rsd_ == residue_map[1].second, "The first pivot atom for kinematic closure must be in the first residue in the loop to be closed." );
-	runtime_assert_string_msg( pivot_3_rsd_ == residue_map[residue_map.size()].second, "The third pivot atom for kinematic closure must be in the last residue in the loop to be closed." );
-	runtime_assert_string_msg( original_pose.residue(residue_map[1].second).has(pivot_1_atmname_), "The first pivot atom was not found in the first residue in the loop to be closed." );
+	//runtime_assert_string_msg( pivot_1_rsd_ == residue_map[1].second, "The first pivot atom for kinematic closure must be in the first residue in the loop to be closed." );
+	//runtime_assert_string_msg( pivot_3_rsd_ == residue_map[residue_map.size()].second, "The third pivot atom for kinematic closure must be in the last residue in the loop to be closed." );
+	runtime_assert_string_msg( original_pose.residue(pivot_1_rsd_).has(pivot_1_atmname_), "The first pivot atom was not found in the first residue in the loop to be closed." );
 	runtime_assert_string_msg( original_pose.residue(pivot_2_rsd_).has(pivot_2_atmname_), "The second pivot atom was not found in the last residue in the loop to be closed." );
-	runtime_assert_string_msg( original_pose.residue(residue_map[residue_map.size()].second).has(pivot_3_atmname_), "The third pivot atom was not found in the last residue in the loop to be closed." );
+	runtime_assert_string_msg( original_pose.residue(pivot_3_rsd_).has(pivot_3_atmname_), "The third pivot atom was not found in the last residue in the loop to be closed." );
 
 	core::Size const pivot_1_atmindex = original_pose.residue(pivot_1_rsd_).atom_index(pivot_1_atmname_);
 	core::Size const pivot_2_atmindex = original_pose.residue(pivot_2_rsd_).atom_index(pivot_2_atmname_);
