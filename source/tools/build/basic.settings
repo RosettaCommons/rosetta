@@ -158,7 +158,7 @@ settings = {
                     "Wall",
                     "Wextra",
                     "pedantic",
-                    #"Werror",
+                    "Werror",
                     "Wno-long-long",
                     "Wno-strict-aliasing",
                 ],
@@ -978,7 +978,10 @@ settings = {
         "removes" : {
             "flags" : {
                 "warn" : [
-                    "Werror",
+                    # We turn off warnings as errors for Python build 
+                    # only because the automatic Python interface wrapping 
+                    # can introduce warnings.
+                    "Werror", 
                 ],
             },
         },
@@ -1792,7 +1795,7 @@ settings = {
                     "W",
                     "pedantic",
                     #"Weverything",
-                    #"Werror",
+                    "Werror",
                     "Wno-long-long",
                     #"Wno-documentation",
                     #"Wno-padded",
@@ -1829,7 +1832,6 @@ settings = {
                 "link" : [ "$__RPATH" ],
                 "cxx" : [ "std=c++98" ],
                 "shlink" : [ "$LINKFLAGS" ],
-                "warn" : ["Werror"],
             },
         },
     },

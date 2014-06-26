@@ -2120,7 +2120,8 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 			break;
 		}
 		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for peptoid library: " + n_rotlib_chi );
+			TR.Error << "ERROR: too many chi angles desired for peptoid library: " << n_rotlib_chi << std::endl;
+			utility_exit_with_message( "ERROR: too many chi angles desired for peptoid library." );
 			break;
 		}
 

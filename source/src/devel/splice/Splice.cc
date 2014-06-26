@@ -1639,8 +1639,9 @@ void Splice::read_torsion_database() {
 			  if (elements_in_line[i].find('*')!=std::string::npos){
 				  tail_element=i;
 				  line="";
-					const size_t last = elements_in_line[i].find('*');
 					/*remove * from element*/
+					// TODO: Do we just erase the last charachter, or should we instead actually look for the '*' charachter?
+					//const size_t last = elements_in_line[i].find('*');
 					elements_in_line[i].erase(elements_in_line[i].size()-1);
 				  break;
 			  }

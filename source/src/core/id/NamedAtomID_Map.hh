@@ -125,7 +125,7 @@ public: // Methods
 	/// @brief Resize the number of atoms of a residue and use the default fill value
 	inline
 	void
-	resize( Size const i_res, Size const n_atom )
+	resize( Size const, Size const )
 	{
 		// No-op - maps automatically resize. Kept for interface compatibility.
 	}
@@ -134,7 +134,7 @@ public: // Methods
 	/// @brief Resize the number of atoms of a residue and use a specified fill value
 	inline
 	void
-	resize( Size const i_res, Size const n_atom, Value const & value )
+	resize( Size const, Size const, Value const & )
 	{
 		// No-op - maps automatically resize. Kept for interface compatibility.
 	}

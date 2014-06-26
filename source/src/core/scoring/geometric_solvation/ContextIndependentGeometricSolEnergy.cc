@@ -113,7 +113,7 @@ ContextIndependentGeometricSolEnergy::clone() const
 
 void
 ContextIndependentGeometricSolEnergy::precalculate_bb_bb_energy_for_design(
- pose::Pose const & pose
+ pose::Pose const &
 ) const {
 }
 
@@ -140,7 +140,7 @@ ContextIndependentGeometricSolEnergy::setup_for_packing(
 
 ///
 void
-ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
+ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -213,7 +213,7 @@ void
 ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
+		pose::Pose const &,
 		ScoreFunction const &,
 		kinematics::MinimizerMapBase const &,
 		ResSingleMinimizationData const &,
@@ -318,7 +318,7 @@ ContextIndependentGeometricSolEnergy::minimize_in_whole_structure_context( pose:
 
 void
 ContextIndependentGeometricSolEnergy::finalize_total_energy(
-  pose::Pose & pose,
+  pose::Pose &,
   ScoreFunction const &,
   EnergyMap & totals
 ) const

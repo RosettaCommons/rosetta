@@ -1070,8 +1070,8 @@ fill_atom_derivs_for_donor( hbonds::HBondDerivs const & deriv,
 														Size const occatm,
 														utility::vector1< DerivVectorPair > & don_atom_derivs,
 														utility::vector1< DerivVectorPair > & occ_atom_derivs,
-														hbonds::HBEvalTuple const & hbe_type,
-														hbonds::HBondOptions const & hbond_options,
+														hbonds::HBEvalTuple const & /*hbe_type*/,
+														hbonds::HBondOptions const & /*hbond_options*/,
 														Real const & weighted_energy )
 {
 	Size const donatm = don_rsd.atom_base( don_hatm );

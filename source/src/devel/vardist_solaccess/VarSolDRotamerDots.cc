@@ -755,8 +755,7 @@ void VarSolDistSasaCalculator::set_element_radii(std::string elem, Real coll_rad
 
 	using namespace core::chemical;
 	AtomTypeSetCAP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-	// find index of atomtype 
-	Size i = 1;
+	// find index of atomtype
 	for (Size i=1; i <= atset->n_atomtypes(); i++) {
 		if ( (*atset)[i].element() == elem ) {
 			set_atom_type_radii( (*atset)[i].atom_type_name(), coll_radius, int_radius, nshells);

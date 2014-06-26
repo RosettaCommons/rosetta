@@ -139,7 +139,7 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
 
 ///
 void
-ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
+ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -254,7 +254,7 @@ void
 ContextDependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
     conformation::Residue const & rsd1,
     conformation::Residue const & rsd2,
-    pose::Pose const & pose,
+    pose::Pose const &,
     ScoreFunction const &,
     kinematics::MinimizerMapBase const &,
     ResSingleMinimizationData const &,
@@ -296,7 +296,7 @@ ContextDependentGeometricSolEnergy::residue_pair_energy(
 
 /////////////////////////////
 bool
-ContextDependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) const
+ContextDependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::Pose const & ) const
 {
 	return false; //pose.energies().use_nblist_auto_update(); //???
 }

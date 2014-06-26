@@ -78,7 +78,9 @@ InteractingRotamerExplosion::apply( core::pose::Pose const & pose, core::pack::t
 	for( 	std::set< core::Size >::const_iterator set_it( parsed_seqpos.begin() ), set_end( parsed_seqpos.end() ); set_it != set_end; ++set_it ) target_seqpos.push_back( *set_it );
 
 	std::string report_string("Potential rotamer explosion positions against target pdb pos");
-	for( core::Size j(1); j <= target_seqpos.size(); ++j ) report_string += (" " + pose.pdb_info()->chain( target_seqpos[j] )  + utility::to_string( pose.pdb_info()->number( target_seqpos[j] ) ) );
+	for( core::Size j(1); j <= target_seqpos.size(); ++j ) {
+		report_string += (" " + utility::to_string( pose.pdb_info()->chain( target_seqpos[j] ) )  + utility::to_string( pose.pdb_info()->number( target_seqpos[j] ) ) );
+	}
 	report_string += " are: ";
 
 	for( core::Size i(1); i <= pose.total_residue(); ++i){

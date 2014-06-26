@@ -259,7 +259,7 @@ WaterFeatures::report_features(
 
 	// locate candidate polar sites from the hbond_sites table
 	std::stringstream water_ss;
-	
+
 	water_ss <<
 		"SELECT\n"
 		"	ua.residue_number,\n"
@@ -329,7 +329,7 @@ WaterFeatures::report_features(
 
 	result wat_result(basic::database::safely_read_from_database(water_stmt));
 
-	core::Real dist, cosBAH, cosAHD, chi;
+	//core::Real dist, cosBAH, cosAHD, chi;
 
 
 	TR << "Checking water hbond site combinations for struct_id" << struct_id << std::endl;
@@ -382,7 +382,7 @@ WaterFeatures::report_features(
 				Angle whd = numeric::angle_degrees(hbond_site_base_xyz, hbond_site_xyz,
 						                              wat_xyz);
 
-				TR << "Attempting write to water_hbonds_acceptors with struct_id=" 
+				TR << "Attempting write to water_hbonds_acceptors with struct_id="
 					<< struct_id << ", unrecognized_atom_res="
 					<< unrecognized_atom_res << ", unrecognized_atom_name="
 					<< unrecognized_atom_name << ", partner_site_id="
@@ -410,7 +410,7 @@ WaterFeatures::report_features(
 				Angle chi = numeric::angle_degrees(hbond_site_base2_xyz,
 						                              hbond_site_base_xyz,
 						                              hbond_site_xyz, wat_xyz);
-				TR << "Attempting write to water_hbonds_donors with struct_id=" 
+				TR << "Attempting write to water_hbonds_donors with struct_id="
 					<< struct_id << ", unrecognized_atom_res="
 					<< unrecognized_atom_res << ", unrecognized_atom_name="
 					<< unrecognized_atom_name << ", partner_site_id="

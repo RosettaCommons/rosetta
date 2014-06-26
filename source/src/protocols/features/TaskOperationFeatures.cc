@@ -254,7 +254,7 @@ TaskOperationFeatures::report_features(
 	for (vector1<Taskop_id_name_factory_>::const_iterator
 			top = taskops_.begin(),
 			top_end = taskops_.end(); top != top_end; ++top) {
-		Size taskop_id = top->id;
+		//Size taskop_id = top->id;
 		tasks[top->id] = (top->tf)->create_task_and_apply_taskoperations( pose );
 	}
 
