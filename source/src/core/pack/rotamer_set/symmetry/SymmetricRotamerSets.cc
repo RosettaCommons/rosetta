@@ -650,7 +650,14 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
     rot_end = rotset_in->end();
     rot != rot_end; ++rot) {
       conformation::ResidueOP target_rsd( (*rot)->clone() /*pose.residue( seqpos )*/ );
-      target_rsd->orient_onto_residue( pose.residue( sympos ) );
+
+			// peptoids have a different orientation function due to the placement of the first side chain atom
+			if ( target_rsd->type().is_peptoid() ) {
+				target_rsd->orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
+			} else {
+				target_rsd->orient_onto_residue( pose.residue( sympos ) );
+			}
+
       sym_rotamer_set->add_rotamer( *target_rsd );
   }
   return sym_rotamer_set;
