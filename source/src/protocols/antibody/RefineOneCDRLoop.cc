@@ -221,6 +221,7 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 					if( CDR_H3_cter_filter(pose, ab_info_) ) {
 						break;
 					} else {
+						scorefxn_->score(pose); //Segfault protection
 						if(  pose.energies().total_energy() <= best_score ) {
 							best_score = pose.energies().total_energy();
 							best_pose = pose;
@@ -260,6 +261,7 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 					if( CDR_H3_cter_filter(pose, ab_info_) ) {
 						break;
 					} else {
+						scorefxn_->score(pose); //Segfault protection
 						if(  pose.energies().total_energy() <= best_score ) {
 							best_score = pose.energies().total_energy();
 							best_pose = pose;

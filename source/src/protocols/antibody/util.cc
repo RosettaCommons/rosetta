@@ -412,8 +412,8 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 
 	// chop out the loop:
 	//JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-	Size start(  ab_info->get_CDR_loop(h3).start()  -  2 );
-	Size stop(  ab_info->get_CDR_loop(h3).stop()  +  1  );
+	Size start(  ab_info->get_CDR_loop(h3, pose_in, Aroop).start()  -  2 );
+	Size stop(  ab_info->get_CDR_loop(h3, pose_in, Aroop).stop()  +  1  );
 
 
 	bool matched_kinked( false );
