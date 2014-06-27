@@ -104,7 +104,6 @@ residue_types/staple/08B.params
 ## Sidechain Conjugation Types
 #residue_types/sidechain_conjugation/CYX.params
 #residue_types/sidechain_conjugation/LYX.params
-#residue_types/sidechain_conjugation/ORX.params
 #residue_types/sidechain_conjugation/ASX.params
 
 ## Water Types
