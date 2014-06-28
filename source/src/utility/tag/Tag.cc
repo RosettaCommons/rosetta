@@ -259,7 +259,7 @@ Tag::getOption<bool>(std::string const& key) const {
 	options_t::const_iterator i = mOptions_.find(key);
 	if( i == mOptions_.end() ) {
 		std::stringstream error_message;
-		error_message << "Option " << key << " not found.\n";
+		error_message << "Option '" << key << "' not found in Tag named '" << this->getName() << "'.";
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
 	accessed_options_[key]= i->second;
