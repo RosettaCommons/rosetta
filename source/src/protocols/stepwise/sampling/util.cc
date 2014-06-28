@@ -865,12 +865,19 @@ rotate( pose::Pose & pose, Matrix const M,
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+		utility::vector1< Size > const & sample_res = full_model_info.sample_res();
 		if ( res_list[ i ] == 1 ||
-				 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ){ // great, nothing will ever get prepended here.
+				 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ||
+				 ( sample_res.size() > 0 && !sample_res.has_value( res_list[ i ] - 1 ) &&
+					 ( i == 1 || ( res_list[i - 1] < res_list[i] - 1 ) ) ) ){
+			// great, nothing will ever get prepended here.
 			return true;
 		}
 		if ( res_list[ i ] == full_model_info.size() ||
-				 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ){ // great, nothing will ever get appended here.
+				 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ||
+				 ( sample_res.size() > 0 && !sample_res.has_value( res_list[i] + 1 ) &&
+					 ( i == pose.total_residue() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
+			// great, nothing will ever get appended here.
 			return true;
 		}
 		return false;

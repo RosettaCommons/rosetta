@@ -136,6 +136,10 @@ namespace phosphate {
 						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) &&
 						 !pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) &&
 						 !pose.residue_type( n ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) ){
+					if ( static_cast<int>( n ) == pose.fold_tree().root() ){
+						TR.Debug << "skipping pack of root phosphate at " << n << ". In the future, fix this, rhiju!" << std::endl;
+						continue;
+					}
 					phosphate_move_list.push_back( PhosphateMove( n, FIVE_PRIME_PHOSPHATE ) );
 				}
 				if ( ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) &&
