@@ -238,7 +238,7 @@ vsasa_bunsats(
 			id::AtomID at(atomNum, resNum);
 			const Real vsasa = atom_sasa[at];
 
-			const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
+			//const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
 
 			if (vsasa > burial_cutoff) continue;
 			utility::vector1<scoring::hbonds::HBondCOP> hbonds = hbond_set.atom_hbonds(at, false /*include only allowed*/);

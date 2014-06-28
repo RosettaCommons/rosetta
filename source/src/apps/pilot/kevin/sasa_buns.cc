@@ -139,7 +139,7 @@ class hbond_energy_strat : public hbond_strat {
 class hbond_geom_strat : public hbond_strat {
 	public:
 	hbond_geom_strat (
-		Real AHdist_geom_eval_threshold,
+		Real AHdist_geom_eval_theeshold,
 		Real AHD_geom_eval_threshold
 	) :
 		AHdist_geom_eval_threshold_(AHdist_geom_eval_threshold),
@@ -226,7 +226,7 @@ sasa_bunsats(
 	const pose::PDBInfo& pdb_info = *(pose.pdb_info());
 	for (Size resNum = 1; resNum <= nres; ++resNum) {
 		const conformation::Residue& res = pose.residue(resNum);
-		const chemical::ResidueType& res_type = res.type();
+		//const chemical::ResidueType& res_type = res.type();
 		for (Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum){
 			if (!res.heavyatom_is_an_acceptor(atomNum) && !res.atom_is_polar_hydrogen(atomNum)) continue;
 			if (pdb_info.temperature(resNum, atomNum) > 30) continue;
@@ -235,7 +235,7 @@ sasa_bunsats(
 			id::AtomID at(atomNum, resNum);
 			const Real sasa = atom_sasa[at];
 
-			const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
+			//const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
 
 			if (sasa > burial_cutoff) continue;
 			utility::vector1<scoring::hbonds::HBondCOP> hbonds = hbond_set.atom_hbonds(at, false /*include only allowed*/);

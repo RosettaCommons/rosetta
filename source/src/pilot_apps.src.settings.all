@@ -493,10 +493,10 @@ sources = {
 	"pilot/kevin" : [
 		#"BuriedUnsatPolarsFinder2",
 		#"vsasa_buns",
-		"vsasa_pdbcode_res",
-		"sasa_buns",
-		"wat_distances",
-		"khXtal_water_bunsat",
+		#"vsasa_pdbcode_res",
+		#"sasa_buns",
+		#"wat_distances",
+		#"khXtal_water_bunsat",
 	],
 	"pilot/krishna" : [
 		"pH_protocol",

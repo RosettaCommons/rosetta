@@ -141,7 +141,7 @@ public:
 			for (Size atomNum=1; atomNum<=res.natoms(); ++atomNum) {
 				if (pdb_info.temperature(resNum, atomNum) > 30) continue;
 				if (pdb_info.occupancy(resNum, atomNum) < 1) continue;
-				const core::conformation::Atom& atom = res.atom(atomNum);
+				//const core::conformation::Atom& atom = res.atom(atomNum);
 				const core::chemical::AtomType& atom_type = res_type.atom_type(atomNum);
 				utility::file::FileName filename(pdb_info.modeltag());
 				platform::Real mindist = std::numeric_limits<platform::Real>::max();
@@ -153,7 +153,7 @@ public:
 				}
 				if (mindist > 5.0) continue;
 				const char& raw_icode = pdb_info.icode(resNum);
-				char icode = (isalnum(raw_icode) != 0) ? raw_icode : ' ';
+				//char icode = (isalnum(raw_icode) != 0) ? raw_icode : ' ';
 				std::cout << filename.base() << ","
 					<< pdb_info.chain(resNum)                             << ","
 					<< pdb_info.number(resNum)                            << ","
