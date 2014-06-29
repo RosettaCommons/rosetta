@@ -30,6 +30,7 @@
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
 #include <basic/database/open.hh>
+#include <core/pack/task/PackerTask.hh>
 
 
 
@@ -204,7 +205,7 @@ public:
 	void add_sequence_constraints( core::pose::Pose & pose ); // add SequenceProfileConstraints based on the sequence profile
 	/// @brief add dihedral constraint to grafted loop according to source pdb dihedral angles
 	void add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to );
-	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA");
+	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA",core::pack::task::PackerTaskOP task=NULL);
 
 	void profile_weight_away_from_interface( core::Real const p );
 	core::Real profile_weight_away_from_interface() const;
@@ -378,6 +379,9 @@ private:
 								// are at the N terminal end of the segment all the way up to the first residue will also be added to the pose from the template
 								//PDB
 	bool min_seg_;//dflt false. if set to true then we perform minimization on bb and chi of segement after splice in
+	bool CG_const_;//dflt false. if set to true then We aplly CG constraints from source pose onto pose according to PSSM rules
+	bool debug_;//dflt false if set to true then the all sorts of dump pdb options are activated
+	std::string mover_name_;
 	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_H3_seq_map_; /* This object will store the H3 seqeunces of all PDBs in the database. The logic for this is that the H3*/
 
 };

@@ -478,7 +478,7 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 			break;
 		}
 	}
-	//TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
+//	TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
 	for( core::Size i = res ;i > 0; --i ){
 		if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
 			disulfideN=i;
@@ -486,8 +486,11 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 		}
 	}
 	//TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
-	if ((disulfideC-res)>(res-disulfideN))
+	if ((disulfideN==0)&&(disulfideC==0))
+		utility_exit_with_message("Could not find disulfides on: "+pose.pdb_info()->name());
+	if (((disulfideC-res)>(res-disulfideN))&&disulfideN!=0)
 		return disulfideN;
+
 	return disulfideC;
 }
 } //RosettaScripts
