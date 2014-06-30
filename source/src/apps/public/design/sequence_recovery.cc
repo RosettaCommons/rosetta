@@ -97,7 +97,6 @@ void init_usage_prompt( std::string exe ) {
 	std::stringstream usage_stream;
 	usage_stream << "No files given: Use either -file:s or -file:l to designate a single pdb or a list of pdbs.\n\n"
 					<< "Usage: " << exe
-					<< "\n\t-database path/to/minidb"
 					<< "\n\t-native_pdb_list <list file>"
 					<< "\n\t-redesign_pdb_list <list file>"
 

@@ -1086,6 +1086,10 @@ private:
 	exclude_desinated_pdbs_;
 
 	bool
+	exclude_sandwich_that_is_suspected_to_have_not_facing_2_sheets_;
+
+
+	bool
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_;
 
 	bool

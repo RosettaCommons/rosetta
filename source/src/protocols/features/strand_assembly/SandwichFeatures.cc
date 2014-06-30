@@ -162,12 +162,14 @@ SandwichFeatures::features_reporter_dependencies() const
 	dependencies.push_back("ProteinResidueConformationFeatures");
 
 	//dependencies.push_back("ResidueConformationFeatures");
-		/*protocols.features.ProteinResidueConformationFeatures: (3) In loading the residue coodinates, some of the residues did not have coordinates specified:
+		/*
+		"protocols.features.ProteinResidueConformationFeatures: (3) In loading the residue coodinates, some of the residues did not have coordinates specified:
 		protocols.features.ProteinResidueConformationFeatures: (3) 	[181,]
 		protocols.features.ProteinResidueConformationFeatures: (3) This can
 		happen because you are using ProteinResidueConformationFeatures with a
 		structure that contains non-protein residues, for example. To avoid
-		this, extract with the ResidueConformationFeatures instead.*/
+		this, extract with the ResidueConformationFeatures instead."
+		*/
 
 		// but format_converter regenerated pdb structures weirdly with 'ResidueConformationFeatures' 06/20/2014
 
@@ -2714,11 +2716,13 @@ SandwichFeatures::check_sw_by_dis(
 
 			Real avg_dis_CA_CA = get_avg_dis_CA_CA(pose, i_resnum,	i_resnum_1, i_resnum_2, i_resnum_3, j_resnum, j_resnum_1, j_resnum_2, j_resnum_3);
 
-			if (avg_dis_CA_CA == -999){
+			if (avg_dis_CA_CA == -999)
+			{
 				break; // these sheets will not be sandwich ever, since these two sheets are too distant!
 			}
 
-			if (avg_dis_CA_CA == -99) { // dis_CA_CA_x < min_sheet_dis_ || dis_CA_CA_x > max_sheet_dis_
+			if (avg_dis_CA_CA == -99) // dis_CA_CA_x < min_sheet_dis_ || dis_CA_CA_x > max_sheet_dis_
+			{
 				continue;
 			}
 			return avg_dis_CA_CA;
@@ -4605,10 +4609,9 @@ SandwichFeatures::report_topology_candidate	(
 	Size sw_can_by_sh_id)
 {
 	// Warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches. So final human inspection is required to confirm fnIII eventually after this function. So column name is 'topology_candidate' instead of 'topology'
-
 	// Also, be sure to run with individual sandwich in each pdb file to better identify fnIII because sheet_id is not necessarily final one when each pdb file has multiple sandwiches (starting 06/20/2014)
-
-		//	06/13/14, changed from "fn3" to "fnIII" because "fnIII" seems more correct according to "Manipulating the stability of fibronectin type III domains by protein engineering, Sean P Ng, K S Billings, L G Randles and Jane Clarke, Nanotechnology 19 (2008) 384023"
+	// (starting 06/20/2014), all 103 fnIII identified out of 2,805 WT beta-sandwiches are confirmed to be correct even by manual inspection
+		//	Changed from "fn3" to "fnIII" because "fnIII" seems more correct according to "Manipulating the stability of fibronectin type III domains by protein engineering, Sean P Ng, K S Billings, L G Randles and Jane Clarke, Nanotechnology 19 (2008) 384023" (on 06/13/14)
 
 
 	//// <begin> retrieve long_strand_id
@@ -4894,10 +4897,8 @@ SandwichFeatures::report_topology_candidate	(
 	//// <end> check long_strand_id = 7
 
 
-
-		TR << "vector_of_long_strand_id_from_sheet_1.size(): "	<<	vector_of_long_strand_id_from_sheet_1.size()	<<	std::endl;
+			//TR << "vector_of_long_strand_id_from_sheet_1.size(): "	<<	vector_of_long_strand_id_from_sheet_1.size()	<<	std::endl;
 		std::cout << vector_of_long_strand_id_from_sheet_1.size()	<<	std::endl;
-
 
 	if	((vector_of_long_strand_id.size() != 7)	||	(vector_of_long_strand_id_from_sheet_1.size() != 3))
 	{
@@ -8047,19 +8048,14 @@ SandwichFeatures::parse_my_tag(
 
 
 	///////// strictness options ///////
+	do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("do_not_write_resfile_of_sandwich_that_has_non_canonical_LR", false);
+					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
+
 	exclude_desinated_pdbs_ = tag->getOption<bool>("exclude_desinated_pdbs", false);
 					//	definition: if true, exclude certain designated pdbs
 
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", false);
 					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
-
-	do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("do_not_write_resfile_of_sandwich_that_has_non_canonical_LR", false);
-					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
-
-	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", false);
-					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
-					//	Rationale of default=true (1)
-						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
 
 	exclude_sandwich_that_has_non_canonical_properties_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_properties", false);
 
@@ -8068,6 +8064,14 @@ SandwichFeatures::parse_my_tag(
 
 	exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw", false);
 					//	definition: if true, exclude sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_
+
+	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", false);
+					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
+					//	Rationale of default=true (1)
+						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
+
+	exclude_sandwich_that_is_suspected_to_have_not_facing_2_sheets_ = tag->getOption<bool>("exclude_sandwich_that_is_suspected_to_have_not_facing_2_sheets", true);
+					//	definition: if true, exclude that_is_suspected_to_have_not_facing_2_sheets
 
 	exclude_sandwich_with_SS_bond_ = tag->getOption<bool>("exclude_sandwich_with_SS_bond", false);
 
@@ -8675,20 +8679,25 @@ SandwichFeatures::report_features(
 				continue;
 			}
 
-			int facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
-			// if false, these two strand_pairs are linear to each other or do not face each other	properly
 
-			if	(facing == 0)
+			if	(exclude_sandwich_that_is_suspected_to_have_not_facing_2_sheets_)
 			{
-					TR.Debug << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << "	do	not	face	each other" << endl;
-				continue; // skip this sheet
+				int facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
+					// if false, these two strand_pairs are linear to each other or do not face each other	properly
+
+				if	(facing == 0)
+				{
+						TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << "	seem to not	face	to	each other" << endl;
+					continue; // skip this sheet
+				}
+
+				else if (facing == -99)
+				{
+						TR.Info << "at least one sheet (either " << all_distinct_sheet_ids[i] << " or " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << ")  may be a beta-barrel like sheet_id = 1 in 1N8O" << endl;
+					continue; // skip this sheet
+				}
 			}
-			else if (facing == -99)
-			{
-					TR.Info << "at least one sheet (either " << all_distinct_sheet_ids[i] << " or " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << ")  may be a beta-barrel like sheet_id = 1 in 1N8O" << endl;
-				continue; // skip this sheet
-			}
-			else
+
 					TR.Info << "writing into 'sandwich candidate by sheet'" << endl;
 				write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, all_distinct_sheet_ids[i], strands_from_sheet_i.size());
 				sw_can_by_sh_PK_id_counter++;
@@ -8712,7 +8721,10 @@ SandwichFeatures::report_features(
 
 		if (bs_of_sw_can_by_sh.size() == 0)
 		{
-				TR.Info << "no beta segment in sandwich_by_sheet (maybe there are only <3 number of strands in one sheet or these are too distant sheets or a beta barrel or \"non-canonical\" like 1MSP"") " << endl;
+				TR.Info << "no beta segment in sandwich_by_sheet "	<< endl;
+				TR.Info << "(maybe these two sheets do not face each other <OR> " << endl;
+				TR.Info	<<	"there are only < " <<	min_num_strands_in_sheet_ << " number of strands in one sheet <OR> "	<< endl;
+				TR.Info	<<	"these are too distant sheets <OR> this is a beta barrel <OR> \"non-canonical\" like 1MSP"") " << endl << endl;
 				TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
 			return 0;
 		}
@@ -9742,6 +9754,8 @@ SandwichFeatures::report_features(
 		//// <end> report number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
 
 
+
+
 		// <begin> write resfile automatically
 		if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -10015,6 +10029,24 @@ SandwichFeatures::report_features(
 
 		}
 		// <end> write resfile automatically
+
+
+
+
+		// development
+		// <begin> assign SS to blueprint file
+		ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
+		dssp.dssp_reduced(dsspSS);
+
+			//TR << "input PDB dssp assignment: (based on start structure)" << std::endl;
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			///TR << dsspSS(i);
+		}
+			//TR << std::endl;
+		// <end> assign SS to blueprint file
+		// development
+
+
 
 			TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
 
