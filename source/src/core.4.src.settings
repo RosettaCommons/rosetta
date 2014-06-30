@@ -9,7 +9,7 @@
 
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-sources = {	
+sources = {
         "core/optimization": [
 		"atom_tree_minimize",
 		"AtomTreeMinimizer",

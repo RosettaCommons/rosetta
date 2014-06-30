@@ -90,8 +90,8 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
   }
 }
 
-ClaimingMoverOP find_mover( utility::tag::TagCOP tag,
-                            moves::Movers_map movers ){
+moves::MoverOP find_mover( utility::tag::TagCOP tag,
+                    moves::Movers_map movers ){
 
   std::string mover_name("[NOT_SET]");
   if ( tag->hasOption( "name" ) ){
@@ -105,14 +105,8 @@ ClaimingMoverOP find_mover( utility::tag::TagCOP tag,
   moves::Movers_map::const_iterator mv_it = movers.find( mover_name );
 
   if( mv_it != movers.end() ){
-    ClaimingMoverOP mover = dynamic_cast< ClaimingMover* >( mv_it->second.get() );
-    if( !mover ){
-      std::string err = "The mover " + mover_name
-        + " is not a ClaimingMover, and thus cannot be used inside an BrokeredEnvironment.";
-      throw utility::excn::EXCN_RosettaScriptsOption( err );
-    } else {
-      return mover;
-    }
+    assert( mv_it->second );
+    return mv_it->second;
   } else {
     std::string err = "The mover " + mover_name + " could not be found. Check your spelling in the xml script.";
     throw utility::excn::EXCN_RosettaScriptsOption( err );
@@ -125,25 +119,31 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
                              filters::Filters_map const &,
                              moves::Movers_map const & movers,
                              core::pose::Pose const& ) {
-  std::set< ClaimingMoverOP > reg_only_movers;
+  std::set< moves::MoverOP > reg_only_movers;
 
-  if( tag->getName() == "Apply" ){
-    ClaimingMoverOP mover = find_mover( tag, movers );
-    env_->register_mover( mover );
-    movers_.add_mover( mover );
-    if( reg_only_movers.find( mover ) != reg_only_movers.end() ){
-      tr.Warning << "[TIP] You don't need to register the mover "
-                 << tag->getOption< std::string >( "name " )
-                 << " with the 'Apply' tag ahead of time. The 'Apply' Environment tag does that automatically." << std::endl;
+  try {
+    if( tag->getName() == "Apply" ){
+      moves::MoverOP mover = find_mover( tag, movers );
+      assert( mover );
+      env_->register_mover( mover );
+      movers_.add_mover( mover );
+      if( reg_only_movers.find( mover ) != reg_only_movers.end() ){
+        tr.Warning << "[TIP] You don't need to register the mover "
+                   << tag->getOption< std::string >( "name " )
+                   << " with the 'Apply' tag ahead of time. The 'Apply' Environment tag does that automatically." << std::endl;
+      }
+    } else if (tag->getName() == "Register" ){
+
+      moves::MoverOP mover = find_mover( tag, movers );
+      env_->register_mover( mover );
+      reg_only_movers.insert( mover );
+    } else {
+      std::ostringstream err;
+      err << "The Environment cannot be used with the tag '" << *tag << "'.";
+      throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
     }
-  } else if (tag->getName() == "Register" ){
-    ClaimingMoverOP mover = find_mover( tag, movers );
-    env_->register_mover( mover );
-    reg_only_movers.insert( mover );
-  } else {
-    std::ostringstream err;
-    err << "The Environment cannot be used with the tag '" << *tag << "'.";
-    throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
+  } catch ( utility::excn::EXCN_Msg_Exception e ) {
+    throw utility::excn::EXCN_RosettaScriptsOption( "In Environment '" + get_name() + "': " + e.msg() );
   }
 }
 

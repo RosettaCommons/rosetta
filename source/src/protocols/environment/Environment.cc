@@ -20,12 +20,16 @@
 #include <protocols/environment/EnvExcn.hh>
 
 // Project headers
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/MoverApplyingMover.hh>
+
 #include <core/environment/DofPassport.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/WriteableCacheableMap.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/chemical/VariantType.hh>
@@ -59,17 +63,37 @@ Environment::~Environment() {
   }
 }
 
-void Environment::register_mover( ClaimingMoverOP mover ){
-  if( !is_registered( mover ) ){
-    registered_movers_.insert( mover );
+void Environment::register_mover( moves::MoverOP mover ){
+  // I think this is kind of ugly, but I don't think this happens too often, so it's probably ok.
+  ClaimingMoverOP claiming_mover = dynamic_cast< ClaimingMover* >( mover.get() );
+  moves::MoverContainerOP mover_container = dynamic_cast< moves::MoverContainer* >( mover.get() );
+  moves::MoverApplyingMoverOP mover_applier = dynamic_cast< moves::MoverApplyingMover* >( mover.get() );
 
-    std::set< ClaimingMoverOP > submovers;
-    mover->yield_submovers( submovers );
-    register_movers( submovers.begin(), submovers.end() );
+  if( claiming_mover ) {
+    if( !is_registered( claiming_mover ) ){
+      registered_movers_.insert( claiming_mover );
+
+      std::set< ClaimingMoverOP > submovers;
+      claiming_mover->yield_submovers( submovers );
+      register_movers( submovers.begin(), submovers.end() );
+    }
+  } else if ( mover_container ) {
+    for( Size i = 0; i < mover_container->nr_moves(); ++i ){
+      register_mover( mover_container->movers()[ i ] );
+    }
+  } else if ( mover_applier ) {
+    register_mover( mover_applier->mover() );
+  } else {
+    std::ostringstream err;
+    err << "The mover '" << mover->name()
+        << "' is not a ClaimingMover or a MoverContainer, and thus cannot be used inside an BrokeredEnvironment.";
+    throw utility::excn::EXCN_BadInput( err.str() );
   }
 }
 
 core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
+
+  this->input_pose_ = in_pose;
 
   // This cast of reference to OP is ok because we know that Conformations are stored as pointers anyway.
   ConformationCOP in_conf = &in_pose.conformation();
@@ -91,6 +115,28 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
   tr.Debug << "Start environment: '" << name() << "'" << std::endl;
 
   core::pose::Pose broker_result = this->broker( in_pose );
+
+  //Rebuild an appropriate PDBInfo object.
+  if( broker_result.pdb_info() ){
+    tr.Error << "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" << std::endl;
+    utility_exit_with_message( "Problem in broking!" );
+  } else if( in_pose.pdb_info() ) {
+    core::Size const new_vrts = broker()->result().new_vrts.size();
+
+    core::pose::PDBInfoOP new_info = new core::pose::PDBInfo( *in_pose.pdb_info() );
+
+    for( Size i = 1; i <= new_vrts; ++i ){
+      new_info->append_res( new_info->nres(), 3 );
+    }
+
+    tr.Debug << "Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
+             << broker_result.total_residue() << ". Old Size: " << in_pose.pdb_info()->nres() << "; New Size: "
+             << new_info->nres() << std::endl;
+
+    broker_result.pdb_info( new_info );
+  } else {
+    tr.Debug << "  PDBInfo processing being ignored as it is null in the input pose." << std::endl;
+  }
 
   assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( broker_result.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 
@@ -128,6 +174,16 @@ core::pose::Pose Environment::end( core::pose::Pose const& pose ){
   tr.Debug << "Finish environment " << name() << " with sequence: " << new_pose.annotated_sequence()
            << " and fold tree: " << new_pose.fold_tree() << std::endl;
 
+  if( input_pose_.pdb_info() ){
+    tr.Trace << "  Applying old PDBInfo object with " << input_pose_.pdb_info()->nres() << " residues to pose with "
+             << new_pose.total_residue() << " residues." << std::endl;
+
+    new_pose.pdb_info( new core::pose::PDBInfo( *( input_pose_.pdb_info() ) ) );
+  } else {
+    tr.Trace << "  No PDBInfo object being built in to Environment's output pose, "
+             << "as it appears the input pose didn't have one." << std::endl;
+  }
+
   return new_pose;
 }
 
@@ -142,12 +198,12 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
   remove_nonpermenant_features( pose );
 
   try {
-    tr.Debug << "Applying original fold tree " << *input_ft_ << std::endl;
-    pose.fold_tree( *input_ft_ );
+    tr.Debug << "Applying original fold tree " << input_pose_.fold_tree() << std::endl;
+    pose.fold_tree( input_pose_.fold_tree() );
   } catch ( ... ){
     tr.Error << "Environment " << name() << " failed to apply the input fold tree at env closing." << std::endl
              << "Brokered fold tree was: " << conf->core::conformation::Conformation::fold_tree()
-             << "Attempted closed fold tree was: " << *input_ft_;
+             << "Attempted closed fold tree was: " << input_pose_.fold_tree();
     throw;
   }
 
@@ -196,7 +252,7 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
       ft_clean.set_jump_atoms( (int) i, "", "" );
     }
     pose.fold_tree( ft_clean );
-    pose.conformation().delete_residue_range_slow( input_ft_->nres()+1,
+    pose.conformation().delete_residue_range_slow( input_pose_.fold_tree().nres()+1,
                                                    pose.total_residue() );
   }
 
@@ -239,9 +295,10 @@ void Environment::inherit_cuts( bool setting ) {
 core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
   tr.Debug << "Beginning Broking for environment " << this->name() << " with "
            << registered_movers_.size() << " registered movers." << std::endl;
+  tr.Debug << "  Registered movers are:" << std::endl;
+  BOOST_FOREACH( ClaimingMoverOP mover, registered_movers_ ){ tr.Debug << "    " << mover->get_name() << std::endl; }
 
   std::map< ClaimingMoverOP, core::environment::DofPassportOP > mover_passports;
-  input_ft_ = new core::kinematics::FoldTree( in_pose.fold_tree() );
 
   BOOST_FOREACH( ClaimingMoverOP mover, registered_movers_ ){
     assert( mover_passports.find( mover ) == mover_passports.end() );
@@ -254,6 +311,7 @@ core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
     broker_ = new EnvClaimBroker( *this, mover_passports, in_pose, ann_ );
     out_pose = broker_->result().pose;
   } catch ( ... ){
+    // For exception safety. Revoke (possibly unfinished and/or now invalid) passports
     cancel_passports();
     throw;
   }

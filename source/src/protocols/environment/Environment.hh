@@ -21,6 +21,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <core/environment/DofPassport.fwd.hh>
 
@@ -62,7 +63,7 @@ public:
   virtual ~Environment();
 
   //@brief register the given mover and, recursively, and submovers yielded by yield_submovers.
-  void register_mover( ClaimingMoverOP );
+  void register_mover( moves::MoverOP );
 
   //@brief register multiple movers (repetitively calls register_mover)
   //@note must be implemented in header for linker
@@ -114,7 +115,7 @@ private:
   void remove_chainbreak_variants( core::pose::Pose&, core::Size up_res, core::Size down_res ) const;
 
   EnvClaimBrokerOP broker_;
-  core::kinematics::FoldTreeCOP input_ft_;
+  core::pose::Pose input_pose_;
   std::set<ClaimingMoverOP> registered_movers_;
 
   SequenceAnnotationOP ann_;

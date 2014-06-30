@@ -25,25 +25,48 @@
 
 // Project Headers
 #include <core/id/TorsionID.hh>
-
 #include <core/pose/util.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility/tag/Tag.hh>
+
 #include <basic/Tracer.hh>
 
 // C++ headers
 
 // option key includes
 
-static basic::Tracer tr("protocols.environment.JumpClaim",basic::t_info);
+static basic::Tracer tr("protocols.environment.claims.JumpClaim",basic::t_info);
 
 namespace protocols {
 namespace environment {
 namespace claims {
 
 using core::environment::LocalPosition;
+
+JumpClaim::JumpClaim( ClaimingMoverOP owner,
+                      utility::tag::TagCOP tag ):
+  EnvClaim( owner ),
+  label_( tag->getOption< std::string >( "jump_label" ) ),
+  pos1_( tag->getOption< std::string >( "position1" ) ),
+  pos2_( tag->getOption< std::string >( "position2" ) ),
+  c_str_( Parent::parse_ctrl_str( tag ) ),
+  i_str_( Parent::parse_ctrl_str( tag ) )
+{
+  if( tag->hasOption( "cut" ) ){
+    cut( LocalPosition( tag->getOption< std::string >( "cut" ) ) );
+  }
+  if( tag->hasOption( "atom1" ) && tag->hasOption( "atom2" ) ){
+    set_atoms( tag->getOption< std::string >( "atom1" ),
+               tag->getOption< std::string >( "atom2" ) );
+  }
+  if( tag->hasOption( "physical_cut" ) ){
+    physical( tag->getOption< bool >( "physical_cut" ) );
+  }
+}
+
 
 JumpClaim::JumpClaim( ClaimingMoverOP owner,
                       std::string const& jump_label,

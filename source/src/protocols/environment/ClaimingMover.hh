@@ -104,6 +104,12 @@ protected:
     return !passports_.empty();
   }
 
+  /// @brief convienence method for failing a state-set call after brokering.
+  /// @details once brokering has been completed, most state-set calls
+  ///          (e.g. set_mover or the like) don't make sense anymore. This
+  ///          method is used to convienently throw an explanatory exception.
+  bool state_check( std::string const& method_name, bool test ) const;
+
 private:
 
   /// @brief called by environments to push a new passport on the passport stack

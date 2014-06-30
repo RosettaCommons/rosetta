@@ -239,6 +239,7 @@
 
 #include <protocols/rigid/RigidBodyMoverCreator.hh>
 #include <protocols/rigid/RollMoverCreator.hh>
+#include <protocols/rigid/UniformRigidBodyCMCreator.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>
@@ -320,12 +321,16 @@
 #include <protocols/toolbox/task_operations/StoreTaskMoverCreator.hh>
 
 #include <protocols/environment/EnvMoverCreator.hh>
+#include <protocols/environment/CoMTrackerCMCreator.hh>
+#include <protocols/environment/ScriptCMCreator.hh>
 
 #include <protocols/abinitio/abscript/AbscriptMoverCreator.hh>
 #include <protocols/abinitio/abscript/ConstraintPreparerCreator.hh>
+#include <protocols/abinitio/abscript/FragmentCMCreator.hh>
 #include <protocols/abinitio/abscript/FragmentJumpCMCreator.hh>
 #include <protocols/abinitio/abscript/AbscriptLoopCloserCMCreator.hh>
 #include <protocols/abinitio/abscript/StructPerturberCMCreator.hh>
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
+
 
 

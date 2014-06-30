@@ -109,5 +109,17 @@ void ClaimingMover::pop_passport( EnvironmentCAP env ) {
   passport_updated();
 }
 
+bool ClaimingMover::state_check( std::string const& method_name, bool test ) const {
+  if( !has_passport() || test ){
+    return true;
+  } else {
+    std::ostringstream ss;
+    ss << "Call to " << this->get_name() << "::" << method_name << " is illegal because it has already "
+    << "issued its claims." << std::endl;
+    throw utility::excn::EXCN_Msg_Exception( ss.str() );
+  }
+}
+
+
 } // environment
 } // protocols

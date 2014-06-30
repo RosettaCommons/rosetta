@@ -57,9 +57,14 @@ std::set< core::id::DOF_ID >::const_iterator DofPassport::begin() const {
 
 
 //Movemap Config
-MoveMapOP DofPassport::render_movemap() const {
-  MoveMapOP mm = new core::kinematics::MoveMap();
 
+MoveMapOP DofPassport::render_movemap() const {
+  kinematics::MoveMapOP mm = new kinematics::MoveMap();
+  this->render_movemap( mm );
+  return mm;
+}
+
+void DofPassport::render_movemap( core::kinematics::MoveMapOP mm ) const {
   for( std::set<core::id::DOF_ID>::iterator id_it = accessible_dofs_.begin();
        id_it != accessible_dofs_.end(); ++id_it ){
     mm->set( *id_it, true);
@@ -72,7 +77,9 @@ MoveMapOP DofPassport::render_movemap() const {
         id::TorsionID t_id = id::TorsionID( seqpos, id::BB, torsion_type );
         id::DOF_ID d_id = conf_->dof_id_from_torsion_id( t_id );
 
-        seqpos_access &= d_id.valid() && accessible_dofs_.find( d_id ) != accessible_dofs_.end();
+        if( d_id.valid() ){
+          seqpos_access &= accessible_dofs_.find( d_id ) != accessible_dofs_.end();
+        }
       }
       mm->set_bb( seqpos, seqpos_access );
 
@@ -81,7 +88,9 @@ MoveMapOP DofPassport::render_movemap() const {
         id::TorsionID t_id = id::TorsionID( seqpos, id::CHI, chi_i );
         id::DOF_ID d_id = conf_->dof_id_from_torsion_id( t_id );
 
-        seqpos_access &= d_id.valid() && accessible_dofs_.find( d_id ) != accessible_dofs_.end();
+        if( d_id.valid() ){
+          seqpos_access &= accessible_dofs_.find( d_id ) != accessible_dofs_.end();
+        }
       }
       mm->set_chi( seqpos, seqpos_access );
     } else { // nonprotein (e.g. VRT) can't be configured into a movemap?
@@ -105,8 +114,6 @@ MoveMapOP DofPassport::render_movemap() const {
                   conf_->fold_tree().downstream_jump_residue( jump_i ),
                   allow );
   }
-
-  return mm;
 }
 
 bool DofPassport::has_jump_access( int jump_num ) const {

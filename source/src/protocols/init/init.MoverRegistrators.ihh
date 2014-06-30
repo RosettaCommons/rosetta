@@ -56,7 +56,7 @@ static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_C
 static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;
 static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;
-    
+
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
@@ -253,6 +253,7 @@ static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
 static MoverRegistrator< rigid::RigidBodyTransMoverCreator > reg_RigidBodyTransMoverCreator;
 static MoverRegistrator< rigid::RollMoverCreator > reg_RollMoverCreator;
+static MoverRegistrator< rigid::UniformRigidBodyCMCreator > reg_UniformRigidBodyCMCreator;
 
 static MoverRegistrator< rosetta_scripts::ParsedProtocolCreator > reg_ParsedProtocolCreator;
 static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCreator;
@@ -337,8 +338,12 @@ static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator
 static MoverRegistrator< toolbox::task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 
 static MoverRegistrator< environment::EnvMoverCreator > reg_EnvMoverCreator;
+static MoverRegistrator< environment::CoMTrackerCMCreator > reg_CoMTrackerCMCreator;
+static MoverRegistrator< environment::ScriptCMCreator > reg_ScriptCMCreator;
+
 static MoverRegistrator< abinitio::abscript::AbscriptMoverCreator > reg_AbscriptMoverCreator;
 static MoverRegistrator< abinitio::abscript::ConstraintPreparerCreator > reg_ConstraintPreparerCreator;
+static MoverRegistrator< abinitio::abscript::FragmentCMCreator > reg_FragmentCMCreator;
 static MoverRegistrator< abinitio::abscript::FragmentJumpCMCreator > reg_FragmentJumpCMCreator;
 static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_AbscriptLoopCloserCMCreator;
 static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;

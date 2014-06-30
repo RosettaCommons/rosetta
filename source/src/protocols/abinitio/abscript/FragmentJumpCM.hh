@@ -40,7 +40,7 @@ public:
   FragmentJumpCM();
 
   FragmentJumpCM( std::string const& topol_filename,
-                  std::string const& label,
+                  core::pack::task::residue_selector::ResidueSelectorCOP selector,
                   std::string const& moverkey );
 
   virtual
@@ -78,13 +78,14 @@ public:
 
   virtual
   moves::MoverOP clone() const;
-  
+
 protected:
   jumping::JumpSample calculate_jump_sample() const;
 
   void setup_fragments( jumping::JumpSample const& );
 
-  EnvClaims build_claims( jumping::JumpSample const& );
+  EnvClaims build_claims( utility::vector1< bool > const& selection,
+                          jumping::JumpSample const& );
 
 private:
   jumping::BaseJumpSetupOP jump_def_;

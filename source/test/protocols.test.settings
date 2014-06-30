@@ -16,6 +16,9 @@ sources = {
 		"PseudocontactShiftEnergy",
 		"WobbleMover",
 	],
+        "abinitio/abscript" : [
+                "FragmentCMTest",
+        ],
 
 	"antibody": [
 		"AntibodyInfo",
@@ -357,6 +360,7 @@ testinputfiles = [
 	"abinitio/score2_pcs_only.wts_patch",
 	"abinitio/score5_pcs_only.wts_patch",
 	"abinitio/score3_pcs_only.wts_patch",
+        "abinitio/abscript/one_frag3_per_pos",
 	"antibody/2j88.pdb",
 	"antibody/1bln_AB_chothia.pdb",
 	"antibody/1bln_AB_aho.pdb",

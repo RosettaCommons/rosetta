@@ -19,6 +19,7 @@
 
 // Package headers
 #include <protocols/simple_moves/FragmentMover.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 
 // Project headers
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
@@ -32,18 +33,27 @@ namespace abinitio {
 namespace abscript {
 
 class FragmentCM : public protocols::environment::ClaimingMover {
+  typedef protocols::environment::ClaimingMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
 
 public:
   FragmentCM();
 
-  FragmentCM( simple_moves::FragmentMoverOP, std::string const& );
+  FragmentCM( simple_moves::FragmentMoverOP,
+              core::pack::task::residue_selector::ResidueSelectorCOP = NULL );
 
-  virtual void set_label( std::string const& label );
+  virtual void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP );
 
   virtual void set_mover( simple_moves::FragmentMoverOP mover );
 
   virtual ~FragmentCM();
+
+  virtual void
+  parse_my_tag( utility::tag::TagCOP tag,
+               basic::datacache::DataMap & data,
+               protocols::filters::Filters_map const & filters,
+               protocols::moves::Movers_map const & movers,
+               core::pose::Pose const & pose );
 
   virtual EnvClaims yield_claims( core::pose::Pose const&,
                                   basic::datacache::WriteableCacheableMapOP );
@@ -54,7 +64,16 @@ public:
 
   virtual std::string get_name() const;
 
-  std::string const& label() const { return label_; }
+  core::pack::task::residue_selector::ResidueSelectorCOP const&
+  selector() const { return selector_; }
+
+  bool initialize() const { return bInitialize_; }
+
+  void initialize( bool setting );
+
+  bool yield_cut_bias() const { return bYieldCutBias_; }
+
+  void yield_cut_bias( bool setting );
 
 protected:
   virtual void passport_updated();
@@ -63,8 +82,9 @@ protected:
 
 private:
   simple_moves::FragmentMoverOP mover_;
-  std::string label_;
-  mutable bool bUpdateMM_;
+  core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+  bool bInitialize_;
+  bool bYieldCutBias_;
 
 }; // end FragmentCM base class
 

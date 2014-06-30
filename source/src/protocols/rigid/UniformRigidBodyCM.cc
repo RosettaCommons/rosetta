@@ -153,6 +153,7 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
                                                       stationary_label_ );
 
   jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
+  jclaim->create_vrt_if_necessary( true );
 
   claim_list.push_back( jclaim );
 
@@ -160,7 +161,9 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
 }
 
 std::string UniformRigidBodyCM::get_name() const {
-  return "UniformRigidBodyCM";
+  std::ostringstream name;
+  name << "UniformRigidBodyCM" << mobile_label_;
+  return name.str();
 }
 
 moves::MoverOP UniformRigidBodyCM::fresh_instance() const {

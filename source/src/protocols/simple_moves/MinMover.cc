@@ -78,7 +78,8 @@ MinMoverCreator::mover_name()
 
 // default constructor
 // proper lightweight default constructor
-MinMover::MinMover() : protocols::moves::Mover("MinMover"),
+MinMover::MinMover() :
+    Parent("MinMover"),
 		movemap_(0),
 		scorefxn_(0),
 		min_options_(0),
@@ -88,7 +89,8 @@ MinMover::MinMover() : protocols::moves::Mover("MinMover"),
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
 }
 
-MinMover::MinMover( std::string const & name ) : protocols::moves::Mover(name),
+MinMover::MinMover( std::string const & name ) :
+    Parent( name ),
 		movemap_(0),
 		scorefxn_(0),
 		min_options_(0),
@@ -109,7 +111,7 @@ MinMover::MinMover(
 	bool use_nb_list_in,
 	bool deriv_check_in /* = false */,
 	bool deriv_check_verbose_in /* = false */
-) : protocols::moves::Mover("MinMover"),
+) : Parent("MinMover"),
 		movemap_( movemap_in ),
 		scorefxn_( scorefxn_in ),
 		min_options_(0),
@@ -138,6 +140,10 @@ MinMover::movemap( MoveMapCOP movemap_in )
 {
 	runtime_assert( movemap_in );
 	movemap_ = new MoveMap( *movemap_in );
+}
+
+void MinMover::set_movemap( MoveMapCOP movemap_in ){
+  movemap( movemap_in );
 }
 
 MoveMapCOP

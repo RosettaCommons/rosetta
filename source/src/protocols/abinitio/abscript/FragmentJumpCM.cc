@@ -56,6 +56,8 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
+#include <basic/datacache/DataMap.hh>
+
 #include <boost/functional/hash.hpp>
 #include <boost/foreach.hpp>
 
@@ -97,16 +99,16 @@ FragmentJumpCM::FragmentJumpCM():
 {}
 
 FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
-                                std::string const& label,
+                                core::pack::task::residue_selector::ResidueSelectorCOP selector,
                                 std::string const& moverkey ) :
   moverkey_( moverkey )
 {
   set_topology( topol_filename );
-  Parent( mover(), label );
+  Parent( mover(), selector );
 }
 
 void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
-                                   basic::datacache::DataMap&,
+                                   basic::datacache::DataMap& datamap,
                                    protocols::filters::Filters_map const&,
                                    protocols::moves::Movers_map const&,
                                    core::pose::Pose const& ) {
@@ -132,18 +134,30 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
     throw utility::excn::EXCN_RosettaScriptsOption( "FragmentJumpCM incompatible options." );
   }
 
-  set_label( tag->getOption< std::string >( "label", "BASE" ) );
+  initialize( tag->getOption< bool >( "initialize", true ) );
+
+  set_selector( datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
   set_moverkey( tag->getOption< std::string >( "name" , "" ) );
 
-  tr.Debug << "Initialzed " << get_name() << " with label " << label()
-           << " and moverkey " << moverkey() << std::endl;
+  tr.Debug << "Initialzed " << get_name();
+  if( selector() )
+    tr.Debug << " with ResidueSelector";
+  else
+    tr.Debug << "without ResidueSelector";
+  tr.Debug << " and moverkey " << moverkey() << std::endl;
 
 }
 
-claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const&,
+claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
                                                 basic::datacache::WriteableCacheableMapOP map ){
   using namespace core::pose::datacache;
   using namespace basic::datacache;
+
+  utility::vector1< bool > selection( pose.total_residue(), 0 );
+  if( selector() )
+    selector()->apply( pose, selection );
+  else
+		selection = utility::vector1< bool >( pose.total_residue(), true );
 
   if( map->find( "JumpSampleData") != map->end() ){
     std::set< WriteableCacheableDataOP > const& data_set = map->find( "JumpSampleData" )->second;
@@ -159,7 +173,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const&,
                      << " topologies with input structure's information." << std::endl;
           jump_def_ = NULL;
         }
-        return build_claims( jumpdata_ptr->jump_sample() );
+        return build_claims( selection, jumpdata_ptr->jump_sample() );
       } else if( tr.Debug.visible() ) {
         tr.Debug << "Rejected JumpSampleDataOP with key " << jumpdata_ptr->moverkey()
                  << ", which conflicts with present key " << moverkey() << std::endl;
@@ -188,26 +202,33 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const&,
   JumpSampleDataOP data = new JumpSampleData( moverkey(), jump_sample );
   (*map)[ data->datatype() ].insert( data );
 
-  return build_claims( jump_sample );
+  return build_claims( selection, jump_sample );
 }
 
-claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_sample ) {
+claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& residue_selection,
+                                                jumping::JumpSample const& jump_sample ) {
   claims::EnvClaims claim_list;
 
   //Now that we've committed to a particular sample, configure fragments in the mover.
   setup_fragments( jump_sample );
 
+  int shift = residue_selection.index( true )-1;
+
   for( int i = 1; i <= (int) jump_sample.size(); i++ ){
-    Size const up( jump_sample.jumps()( 1, i ) );
-    Size const dn( jump_sample.jumps()( 2, i ) );
+    Size const up = jump_sample.jumps()( 1, i ) + shift;
+    Size const dn = jump_sample.jumps()( 2, i ) + shift;
 
     std::string jump_name = get_name() + "Jump" + utility::to_string( i );
 
     claims::JumpClaimOP jclaim = new claims::JumpClaim( this,
                                                         jump_name,
-                                                        LocalPosition( label(), up ),
-                                                        LocalPosition( label(), dn ) );
-    jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
+                                                        LocalPosition( "BASE", up ),
+                                                        LocalPosition( "BASE", dn ) );
+    if( initialize() ){
+      jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
+    } else {
+      jclaim->strength( claims::MUST_CONTROL, claims::DOES_NOT_CONTROL );
+    }
 
     jclaim->set_atoms( "", "" ); //allow jump atoms to be determined by ft at broker-time.
     jclaim->physical( false ); //jumps are not physical, and should be scored as chainbreaks
@@ -218,8 +239,8 @@ claims::EnvClaims FragmentJumpCM::build_claims( jumping::JumpSample const& jump_
 
     // Jump Fragments make the mover into a bit of an access primadonna because jump fragments
     // include torsions from the residues at takeoff and landing
-    claims::TorsionClaimOP tclaim_up = new claims::TorsionClaim( this, LocalPosition( label(), up ) );
-    claims::TorsionClaimOP tclaim_dn = new claims::TorsionClaim( this, LocalPosition( label(), dn ) );
+    claims::TorsionClaimOP tclaim_up = new claims::TorsionClaim( this, LocalPosition( "BASE", up ) );
+    claims::TorsionClaimOP tclaim_dn = new claims::TorsionClaim( this, LocalPosition( "BASE", dn ) );
 
     tclaim_up->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );
     tclaim_dn->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );

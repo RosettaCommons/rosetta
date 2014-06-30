@@ -24,6 +24,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
 
@@ -232,7 +233,7 @@ public:
 
     TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 0 );
     TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 0 );
-    
+
     TS_TRACE( "End: test_autocuts" );
   }
 
@@ -297,5 +298,23 @@ public:
     TS_ASSERT( final_pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
 
     TS_TRACE( "End: test_jump_moves" );
+  }
+
+  void test_pdb_info_persistence() {
+    core::pose::PDBInfoOP info = new core::pose::PDBInfo( pose.total_residue() );
+    info->set_chains( 'A' );
+    pose.pdb_info( info );
+
+    protocols::environment::Environment env( "env" );
+
+    core::pose::Pose protected_pose;
+    TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
+    TS_ASSERT( protected_pose.pdb_info() );
+    TS_ASSERT_EQUALS( protected_pose.pdb_info()->chain( 1 ), 'A' );
+
+    core::pose::Pose end_pose;
+    TS_ASSERT_THROWS_NOTHING( end_pose = env.end( protected_pose ) );
+    TS_ASSERT( end_pose.pdb_info() );
+    TS_ASSERT_EQUALS( end_pose.pdb_info()->chain( 1 ), 'A' );
   }
 };

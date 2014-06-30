@@ -17,6 +17,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoveMapMover.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -50,8 +51,8 @@ namespace simple_moves {
 ///     MinMover.apply
 ///     MinMover.movemap
 ///     MinMover.score_function
-class MinMover : public protocols::moves::Mover
-{
+class MinMover : public protocols::moves::MoveMapMover {
+  typedef protocols::moves::MoveMapMover Parent;
 public:
 
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
@@ -164,6 +165,7 @@ public:
 	///     MinMover.score_function
 	///     MoveMap
 	virtual void movemap( core::kinematics::MoveMapCOP movemap_in );
+  virtual void set_movemap( core::kinematics::MoveMapCOP movemap_in );
 	virtual core::kinematics::MoveMapCOP movemap() const;
 
 	/// @brief Sets the ScoreFunction to  <scorefxn_in>

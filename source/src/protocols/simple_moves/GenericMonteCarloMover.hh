@@ -45,7 +45,7 @@
 
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverApplyingMover.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -59,9 +59,9 @@ typedef boost::function<bool(core::Size,
                              core::scoring::ScoreFunctionOP)> GenericMonteCarloMoverTrigger;
 
 
-class GenericMonteCarloMover : public protocols::moves::Mover {
+class GenericMonteCarloMover : public protocols::moves::MoverApplyingMover {
+	typedef protocols::moves::MoverApplyingMover Super;
 public:
-	typedef protocols::moves::Mover Super;
 	typedef std::string String;
 	typedef core::Size Size;
 	typedef core::Real Real;
@@ -223,7 +223,7 @@ public:
 	void set_task_scaling( Size const scaling );
 
 	/// @brief set mover
-	void set_mover( MoverOP const & mover );
+	void set_mover( MoverOP mover );
 
 	/// @brief Pose is evaluated by ScoreFunctionOP during MC trials
 	void set_scorefxn( ScoreFunctionOP const & sfxn );

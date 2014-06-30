@@ -7,10 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file TopologyBroker
-/// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
-/// @author Oliver Lange
+/// @file src/protocols/environment/claims/EnvClaim.cc
+/// @brief  Abstract class for implementing an EnvClaim (e.g. TorsionClaim).
+/// @author Justin R. Porter
 
 // Unit Headers
 #include <protocols/environment/claims/EnvClaim.hh>
@@ -21,17 +20,25 @@
 
 #include <protocols/environment/claims/ClaimStrength.hh>
 
+#include <protocols/environment/claims/CutBiasClaim.hh>
+#include <protocols/environment/claims/JumpClaim.hh>
+#include <protocols/environment/claims/TorsionClaim.hh>
+
 // Project Headers
 
 // ObjexxFCL Headers
 
 // Utility headers
 #include <basic/Tracer.hh>
+
+#include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/vector1.hh>
+
+#include <boost/algorithm/string.hpp>
 
 //// C++ headers
 #include <iostream>
-#include <utility/vector1.hh>
 
 // option key includes
 
@@ -41,6 +48,16 @@ static basic::Tracer tr("protocols.environment.EnvClaim",basic::t_info);
 namespace protocols {
 namespace environment {
 namespace claims {
+
+EnvClaimOP EnvClaim::make_claim( std::string const& name,
+                                 ClaimingMoverOP owner,
+                                 utility::tag::TagCOP tag,
+                                 basic::datacache::DataMap& datamap ){
+  if      ( name == "CutBiasClaim" ) return new CutBiasClaim( owner, tag );
+  else if ( name == "JumpClaim" )    return new JumpClaim( owner, tag );
+  else if ( name == "TorsionClaim" ) return new TorsionClaim( owner, tag, datamap );
+  else throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
+}
 
 EnvClaim::EnvClaim( ClaimingMoverOP owner ):
   ReferenceCount(),
@@ -64,6 +81,28 @@ DOFElement EnvClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
 
 ClaimingMoverOP EnvClaim::owner() const {
   return claim_source_;
+}
+
+ControlStrength EnvClaim::parse_ctrl_str( utility::tag::TagCOP tag ) const {
+  return parse_ctrl_str( tag->getOption< std::string>( "control_strength" ) );
+}
+
+ControlStrength EnvClaim::parse_ctrl_str( std::string const& str ) const {
+  std::string lower = str;
+  boost::algorithm::to_lower( lower );
+
+  if( lower == "does_not_control" ){
+    return DOES_NOT_CONTROL;
+  } else if( lower == "can_control" ){
+    return CAN_CONTROL;
+  } else if( lower == "must_control" ){
+    return MUST_CONTROL;
+  } else if( lower == "exclusive" ){
+    return EXCLUSIVE;
+  } else {
+    throw utility::excn::EXCN_BadInput( "The initialization strength '" + str +
+                                        "' is not recognized." );
+  }
 }
 
 extern std::ostream& operator<<( std::ostream& os, EnvClaim const& dof ) {

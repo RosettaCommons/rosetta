@@ -21,7 +21,6 @@
 #include <protocols/abinitio/abscript/StagePreparer.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
-#include <protocols/environment/claims/CutBiasClaim.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
@@ -174,7 +173,7 @@ AbscriptMover::AbscriptMover():
   //I don't love this. This should be const static data.
   id_map_["I"] = I; id_map_["II"] = II;
   id_map_["IIIa"] = IIIa; id_map_["IIIb"] = IIIb;
-  id_map_["IVa"] = IIIa; id_map_["IVb"] = IIIb;
+  id_map_["IVa"] = IVa; id_map_["IVb"] = IVb;
 
   mc_ = new moves::MonteCarlo( *setup_score( "score3", OptionKeys::abinitio::stage4_patch ), DEFAULT_TEMP );
   canonical_sampling::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
@@ -412,6 +411,7 @@ AbscriptMover::parse_my_tag(
 
     if( stagetag->getName() == "Stage" ){
       std::string const& id_str = stagetag->getOption<std::string>("ids");
+      tr.Debug << "Adding movers for stages: " << id_str << std::endl;
       StageIDs stages = parse_stage_id( id_str );
 
       TagVector const& movertags = stagetag->getTags();
@@ -425,7 +425,7 @@ AbscriptMover::parse_my_tag(
           std::string name = movertag->getOption<std::string>( "name", "null" );
           if ( movers.find( name ) == movers.end() ) {
             tr.Error << "Mover not found for XML tag:\n" << movertag << std::endl;
-            throw utility::excn::EXCN_RosettaScriptsOption("Mover not found for XML tag.");
+            throw utility::excn::EXCN_RosettaScriptsOption("Mover '"+name+"' not found.");
           }
 
           if( movertag->getName() == "Mover" ){
@@ -433,7 +433,10 @@ AbscriptMover::parse_my_tag(
             register_submover( movers.find( name )->second, stages, weight );
           } else if ( movertag->getName() == "Preparer" ) {
             register_preparer( movers.find( name )->second, stages );
-          } else { assert( false ); } //no other options
+          } else {
+            throw utility::excn::EXCN_RosettaScriptsOption( "Stage subtag "+movertag->getName()+
+                                                            " is not valid. Only 'Mover' and 'Preparer' are accepted." );
+          }
         }
       }
     } else {
@@ -459,14 +462,11 @@ void AbscriptMover::add_default_frags( std::string const& small_fragfile, std::s
   FragSetOP frags_large = big_frag_io.read_data( large_fragfile );
 
   //embed standard movers in movers that will claim and unlock for them.
-  FragmentCMOP claim_large  = new FragmentCM( new ClassicFragmentMover( frags_large ), "BASE" );
-  FragmentCMOP claim_small  = new FragmentCM( new ClassicFragmentMover( frags_small ), "BASE" );
-  FragmentCMOP claim_smooth = new FragmentCM( new SmoothFragmentMover( frags_small, new GunnCost() ),
-                                              "BASE" );
+  FragmentCMOP claim_large  = new FragmentCM( new ClassicFragmentMover( frags_large ) );
+  FragmentCMOP claim_small  = new FragmentCM( new ClassicFragmentMover( frags_small ) );
+  FragmentCMOP claim_smooth = new FragmentCM( new SmoothFragmentMover( frags_small, new GunnCost() ) );
 
-  //apply cut biases based on small fragments' secondary structure
-  core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *frags_small );
-  claims_.push_back( new environment::claims::CutBiasClaim( this, "BASE", *ss ) );
+  claim_small->yield_cut_bias( true );
 
   //apply to appropriate stages
   for( StageID id = I; id <= IIIb; increment_stageid(id) ){
@@ -481,6 +481,12 @@ std::string AbscriptMover::get_name() const {
   return "AbscriptMover";
 }
 
+void verify_stage_ID( std::map< std::string, StageID > const& id_map, std::string const& id ){
+  if( id_map.find( id ) == id_map.end() ){
+    throw utility::excn::EXCN_RosettaScriptsOption( "Stage id '" + id + "' is not recognized." );
+  }
+}
+
 StageIDs AbscriptMover::parse_stage_id( std::string const& id_str ) const {
   typedef utility::vector0< std::string > Strings;
   Strings comma_delin = utility::string_split( id_str, ',' );
@@ -491,14 +497,18 @@ StageIDs AbscriptMover::parse_stage_id( std::string const& id_str ) const {
        range != comma_delin.end(); ++range ){
     Strings hyphen_delin = utility::string_split( *range, '-' );
     if( hyphen_delin.size() == 1 ){
+      verify_stage_ID( id_map_, hyphen_delin[0] );
       ids.push_back( id_map_.find( hyphen_delin[0] )->second );
     } else if( hyphen_delin.size() == 2 ){
+      verify_stage_ID( id_map_, hyphen_delin[0] );
+      verify_stage_ID( id_map_, hyphen_delin[1] );
+
       for( StageID id = id_map_.find( hyphen_delin[0] )->second;
-					 id <= id_map_.find( hyphen_delin[1] )->second; increment_stageid(id) ){
+           id <= id_map_.find( hyphen_delin[1] )->second; increment_stageid(id) ){
         ids.push_back( id );
       }
     } else {
-      throw utility::excn::EXCN_RosettaScriptsOption("Invalid stage ID: " + *range );
+      throw utility::excn::EXCN_RosettaScriptsOption("Stage ID range syntax error for '" + *range + "'" );
     }
   }
 

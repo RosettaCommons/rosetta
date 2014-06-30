@@ -20,7 +20,8 @@
 #include <protocols/environment/ScriptCM.fwd.hh>
 #include <protocols/environment/ClaimingMover.hh>
 
-// Package headers
+// Package headers#
+#include <protocols/moves/MoveMapMover.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
 
 // Project headers
@@ -75,7 +76,7 @@ protected:
 
 private:
   std::string name_;
-	moves::MoverOP client_;
+  moves::MoveMapMoverOP client_;
 
 }; // end ScriptCM base class
 

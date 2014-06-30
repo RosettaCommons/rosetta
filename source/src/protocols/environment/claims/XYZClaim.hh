@@ -34,6 +34,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 //#include <basic/options/option_macros.hh>
 
@@ -54,6 +55,9 @@ public:
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
 
+  XYZClaim( ClaimingMoverOP owner,
+            utility::tag::TagCOP tag );
+
   // Initializer for an empty XYZ claim
   XYZClaim( ClaimingMoverOP owner );
 
@@ -70,10 +74,6 @@ public:
                                DOFElements& elements ) const;
 
   void add_position( LocalPosition const& p );
-
-  void claim_external( bool in ) { internal_only_ = !in ;}
-
-  bool claim_external() const { return !internal_only_; }
 
   LocalPositions const& positions() const;
 

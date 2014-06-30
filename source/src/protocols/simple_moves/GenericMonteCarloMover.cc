@@ -93,7 +93,7 @@ GenericMonteCarloMoverCreator::mover_name()
 
 /// @brief default constructor
 GenericMonteCarloMover::GenericMonteCarloMover():
-	Mover("GenericMonteCarlo"),
+	Super( "GenericMonteCarlo" ),
 	maxtrials_( 10 ),
 	task_scaling_( 5 ),
 	mover_( NULL ),
@@ -294,7 +294,7 @@ GenericMonteCarloMover::set_task_scaling( Size const scaling )
 
 /// @brief set mover
 void
-GenericMonteCarloMover::set_mover( MoverOP const & mover )
+GenericMonteCarloMover::set_mover( MoverOP mover )
 {
   mover_ = mover;
 }

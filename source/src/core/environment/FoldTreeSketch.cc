@@ -186,6 +186,14 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
   }
 
   if( cuts.size() != jumps.size() ){
+    tr.Debug << "Cuts were: ";
+    BOOST_FOREACH( Size cut, cuts ){ tr.Debug << cut << ", "; }
+    tr.Debug << std::endl << "Jumps were: ";
+    for( std::set< std::pair< Size, Size > >::iterator it = jumps.begin(); it != jumps.end(); ++it ) {
+      tr.Debug << "(" << it->first << "," << it->second << "), ";
+    }
+    tr.Debug << std::endl;
+
     throw EXCN_FTSketchGraph( "Number of jumps ("+utility::to_string( jumps.size() )+
                               ") and number of cuts ("+utility::to_string(cuts.size())+
                               ") must be equal for rendering. Try randomized cut deletion first." );

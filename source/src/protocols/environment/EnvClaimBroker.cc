@@ -516,21 +516,36 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
   return claims;
 }
 
-
-
 void EnvClaimBroker::process_elements( ResidueElements const& elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
+
+
+
   for( ResidueElements::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
-
-    if( ann_->has_seq_label( e_it->label ) &&
-        e_it->allow_duplicates ){
-      // If we're allowing duplicates and we've already added this element
-      // it's cool, don't throw an exception and don't add it again.
-      continue;
+    if( !e_it->allow_duplicates ) {
+      ann_->append_seq( e_it->label );
+      fts.append_residue();
+      new_vrts[ fts.nres() ] = e_it->label;
+      tr.Debug << "  processed duplicate-disallowed residue element request (named '"
+               << e_it->label << "') at " << fts.nres() << std::endl;
     }
+  }
 
-    ann_->append_seq( e_it->label );
-    fts.append_residue();
-    new_vrts[ fts.nres() ] = e_it->label;
+  for( ResidueElements::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
+    if( e_it->allow_duplicates ) {
+      if( !ann_->has_seq_label( e_it->label ) ){
+        ann_->append_seq( e_it->label );
+        fts.append_residue();
+        new_vrts[ fts.nres() ] = e_it->label;
+
+        tr.Debug << "  processed duplicate-possible residue element request (named '"
+                 << e_it->label << "') at " << fts.nres() << std::endl;
+      } else {
+        // If we're allowing duplicates and we've already added this element
+        // it's cool, don't throw an exception and don't add it again.
+        tr.Debug << "  ignored duplicate-possible residue element request at " << fts.nres()
+                 << " ( label '" << e_it->label << "' already exists)." << std::endl;
+      }
+    }
   }
 }
 

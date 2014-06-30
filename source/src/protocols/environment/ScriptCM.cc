@@ -42,8 +42,8 @@
 namespace protocols {
 namespace environment {
 
-static basic::Tracer tr("protocols.environment.ScriptCM", basic::t_info);
-static numeric::random::RandomGenerator RG(9143235);
+static basic::Tracer tr( "protocols.environment.ScriptCM", basic::t_info );
+static numeric::random::RandomGenerator RG( 9143235 );
 
 using namespace core::environment;
 using namespace protocols::environment;
@@ -71,24 +71,23 @@ ScriptCM::ScriptCM():
 {}
 
 void ScriptCM::passport_updated(){
-  core::kinematics::MoveMapOP mm;
-  if( passport() ){
-    mm = passport()->render_movemap();
-    // client_->set_movemap( mm );
+  core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
+
+  if( has_passport() ){
+    passport()->render_movemap( mm );
   } else {
-    mm = new core::kinematics::MoveMap();
     mm->set_bb( true );
     mm->set_chi( true );
     mm->set_jump( true );
   }
 
-  // client_->set_movemap( mm );
+  client_->set_movemap( mm );
 
 }
 
 void ScriptCM::initialize( core::pose::Pose& pose ){
-  DofUnlock activeation( pose.conformation(), passport() );
-  // client_->initialize( pose );
+  DofUnlock activation( pose.conformation(), passport() );
+  client_->initialize( pose );
 }
 
 void ScriptCM::apply( core::pose::Pose& pose ){
@@ -97,7 +96,7 @@ void ScriptCM::apply( core::pose::Pose& pose ){
 }
 
 void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
-                             basic::datacache::DataMap&,
+                             basic::datacache::DataMap& datamap,
                              protocols::filters::Filters_map const&,
                              protocols::moves::Movers_map const& mover_map,
                              core::pose::Pose const& ) {
@@ -109,13 +108,20 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
     if( (*tag_it)->getName() == "Mover" ){
       std::string const& client_name = subtag->getOption< std::string >( "name" );
       if( mover_map.find( client_name ) != mover_map.end() ){
-        client_ = mover_map.find( client_name )->second;
+        moves::MoveMapMoverOP mover_ptr = dynamic_cast< moves::MoveMapMover * >( mover_map.find( client_name )->second.get() );
+        if( mover_ptr ){
+          client_ = mover_ptr;
+        } else {
+          moves::MoverOP bad_mover ( mover_map.find( client_name )->second.get() );
+          throw utility::excn::EXCN_RosettaScriptsOption( "The "+bad_mover->type()+" named '"+bad_mover->name()+
+                                                         "' doesn't implement MoveMapMover and can't be used by the ScriptCM." );
+        }
       } else {
         throw utility::excn::EXCN_RosettaScriptsOption( "The "+type()+" named "+name()+
                                                         " couldn't find the mover named "+client_name+"." );
       }
     } else {
-      //TODO: parse subtags
+      claims::EnvClaim::make_claim( subtag->getName(), this, subtag, datamap );
     }
   }
 }

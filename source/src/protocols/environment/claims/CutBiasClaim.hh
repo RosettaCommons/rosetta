@@ -54,6 +54,9 @@ class CutBiasClaim : public EnvClaim {
 
 public:
   CutBiasClaim( ClaimingMoverOP owner,
+                utility::tag::TagCOP tag );
+
+  CutBiasClaim( ClaimingMoverOP owner,
                 std::string const& label,
                 core::fragment::SecondaryStructure const& ss );
 

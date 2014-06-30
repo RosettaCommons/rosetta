@@ -34,6 +34,8 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility/tag/Tag.hh>
+
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -49,6 +51,17 @@ namespace claims {
 
 using core::environment::LocalPosition;
 using core::environment::LocalPositions;
+
+XYZClaim::XYZClaim( ClaimingMoverOP owner,
+                    utility::tag::TagCOP tag ):
+  EnvClaim( owner ),
+  c_str_( Parent::parse_ctrl_str( tag ) ),
+  i_str_( Parent::parse_ctrl_str( tag ) )
+{
+  //TODO: implement TorsionClaim residue range claiming. Use a selector?
+  throw utility::excn::EXCN_Msg_Exception( "TorsionClaim residue range claiming not implemented yet." );
+}
+
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner ):
   EnvClaim( owner ),
@@ -94,7 +107,6 @@ DOFElement XYZClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
 }
 
 void XYZClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
-
   if( ctrl_strength() == DOES_NOT_CONTROL &&
       init_strength() == DOES_NOT_CONTROL ){
     tr.Warning << "XYZClaim owned by " << owner()->get_name()

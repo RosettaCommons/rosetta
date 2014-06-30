@@ -28,14 +28,16 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
 
-
 // Project Headers
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
+
 #include <core/id/types.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 //#include <basic/options/option_macros.hh>
 
@@ -56,6 +58,10 @@ public:
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
 
+  TorsionClaim( ClaimingMoverOP owner,
+                utility::tag::TagCOP tag,
+                basic::datacache::DataMap& );
+
   // Initializer for a single backbone angle
   TorsionClaim( ClaimingMoverOP owner,
                 LocalPosition const& local_pos );
@@ -69,8 +75,6 @@ public:
                 LocalPositions const& positions );
 
   virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
-
-  LocalPositions const& positions() const;
 
   ControlStrength const& ctrl_strength() const;
 
@@ -97,7 +101,8 @@ protected:
   DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
 private:
-  LocalPositions local_positions_;
+  core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+
   ControlStrength c_str_;
   ControlStrength i_str_;
 

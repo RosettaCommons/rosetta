@@ -76,6 +76,7 @@ public:
 
 private:
   std::string vrt_label_;
+
   JumpClaim j_claim_;
   XYZClaim xyz_claim_;
 

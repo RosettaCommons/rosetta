@@ -28,6 +28,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility/tag/Tag.fwd.hh>
 
 //// C++ headers
 
@@ -43,6 +44,9 @@ class JumpClaim : public EnvClaim {
   typedef core::environment::LocalPosition LocalPosition;
 
 public:
+
+  JumpClaim( ClaimingMoverOP owner,
+             utility::tag::TagCOP tag );
 
   JumpClaim( ClaimingMoverOP owner,
              std::string const& label,

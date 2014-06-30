@@ -21,18 +21,22 @@
 #include <core/environment/LocalPosition.fwd.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
-#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
 #include <protocols/environment/ClaimingMover.fwd.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 
 // Project Headers
+#include <core/pose/Pose.fwd.hh>
+
 #include <core/types.hh>
+
+#include <basic/datacache/DataMap.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -51,6 +55,16 @@ class EnvClaim : public utility::pointer::ReferenceCount {
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
 
 public:
+  /// @brief factory method for claims.
+  /// @note I chose not to make a full-on factory implementation with registrators and creators and a factory
+  ///       because there aren't that many different kinds of claims, I think, and that level of complexity is
+  ///       likely superfluous.
+  static
+  EnvClaimOP make_claim( std::string const& name,
+                         ClaimingMoverOP owner,
+                         utility::tag::TagCOP tag,
+                         basic::datacache::DataMap& datamap );
+
   ///@brief Virtual destructor
   virtual ~EnvClaim();
 
@@ -58,6 +72,7 @@ public:
 
   virtual EnvClaimOP clone() const = 0;
 
+  /// @brief A clone used by the EnvClaimFactory to instantiate new EnvClaims using an XML tag.
   ClaimingMoverOP owner() const;
 
   /// @brief notify the Claim of the input pose. Used, for example, to resolve a ResidueSelector into a residue number
@@ -78,13 +93,14 @@ public:
   /// @brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
   virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& ) const {};
 
-  virtual std::string str_type() const = 0;
-
   virtual void show( std::ostream& os ) const;
 
 protected:
   virtual
   DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
+
+  ControlStrength parse_ctrl_str( utility::tag::TagCOP tag ) const;
+  ControlStrength parse_ctrl_str( std::string const& str ) const;
 
 private:
 

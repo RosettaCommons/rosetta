@@ -58,6 +58,8 @@ public:
 
   core::kinematics::MoveMapOP render_movemap() const;
 
+  void render_movemap( core::kinematics::MoveMapOP ) const;
+
   // typedef to make iteration through availiable dofs easy for client movers
   typedef std::set< core::id::DOF_ID >::const_iterator const_iterator;
 

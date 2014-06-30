@@ -129,11 +129,11 @@ public:
 
 	///@brief returns the maximal sequence position that can be affected by fragments in this set
 	Size max_pos() const
-	{ return max_pos_ + global_offset_; }
+	{ return max_pos_; }
 
 	///@brief returns the first sequence position that can be affected by fragments in this set
 	Size min_pos() const
-	{ return min_pos_ + global_offset_; }
+	{ return min_pos_; }
 
 	///@brief returns the longest fragment stored in this FragSet.
 	Size max_frag_length() const

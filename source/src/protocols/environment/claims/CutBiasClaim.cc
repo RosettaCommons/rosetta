@@ -27,6 +27,9 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+
 // C++ headers
 
 // option key includes
@@ -40,6 +43,21 @@ namespace claims {
 
 using core::environment::LocalPosition;
 using core::environment::LocalPositions;
+
+CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
+                            utility::tag::TagCOP tag ):
+  Parent( owner ),
+  label_( tag->getOption< std::string >( "label" ) )
+{
+  core::Real bias = tag->getOption< core::Real >( "bias" );
+  std::pair< core::Size, core::Size > range;
+  range.first = tag->getOption< core::Size >( "region_start" );
+  range.second = tag->getOption< core::Size >( "region_end" );
+
+  for( Size i = range.first; i <= range.second; ++i ){
+    biases_[ LocalPosition( label_, i ) ] = bias;
+  }
+}
 
 CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
                             std::string const& label,
