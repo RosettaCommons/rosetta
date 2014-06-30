@@ -41,6 +41,7 @@ namespace io {
 		using utility::file::trytry_ifstream_open;
 		using zlib_stream::zip_istream;
 
+		//std::cout << "FILELIST: Trying to open file: '" << filename_a << "' " << std::endl;
 
 #if defined( USE_FILE_PROVIDER )
 	utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();

@@ -89,7 +89,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 
 	core::Size const chains( pose.conformation().num_chains() );
 	if (chains<2){
-    utility_exit_with_message("Number of chains in pose is smaller than two! Cannot perform protein interface design without an interface. Aborting!");
+		   TR << "WARNING WARNING WARNING!!! I'm calling ProteinInterfaceDesignOperation but I have only chain in pose. No interface to design!!" << std::endl; 
 	}
 	DesignAroundOperation dao1, dao2;
 	dao1.design_shell( interface_distance_cutoff_ ); dao2.design_shell( interface_distance_cutoff_ );
