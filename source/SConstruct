@@ -135,6 +135,9 @@ Examples:
         Parallelize build into 3 threads (faster on multiproc. machine)
 
     scons extras=apbs
+
+    scons extras=hdf5
+        Enable support for HDF5 datastores.
 """
 
 def main():

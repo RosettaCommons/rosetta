@@ -153,6 +153,16 @@ Alias(project, tests)
 # of the files along with the test code seems to be the best solution.  However, the test executables get built in
 # the build directory.  When running them there, the text files are still in the test/ subdirectories.  We need to
 # have a separate command to copy text files used by test cases from test/ to the right build subdirectory.
+<<<<<<< HEAD
+env.Depends(target, env.Alias("copy_input_files"))
+
+for file in requested.testinputfiles:
+    file = path.join(project, file)
+    # File names are prefixed with the variant output directory during variant builds,
+    # so resolve the File node and re-extract the original source path for the source file.
+    # Repeated calls to alias add sub-commands to the alias.
+    env.Alias("copy_input_files", Command(file, File(file).srcnode(), Copy("$TARGET", "$SOURCE")))
+=======
 #
 # To get Scons to copy the file appropriately, we make an explicit dependancy between the main test executable and
 # the copied file location. We then use a Copy builder to set up the file copy. Doing it this way means that only
@@ -167,6 +177,7 @@ for file in requested.testinputfiles:
 	dest = "build/test/" + build.platform + "/" + project + "/" + file
 	env.Depends(target, "#"+dest)
 	env.Command("#"+dest, "#"+input, Copy(dest,input) )
+>>>>>>> origin/master
 
 # Setup useful aliases for building subdirectories of project.
 # This allows a target to be project + package and have SCons build only

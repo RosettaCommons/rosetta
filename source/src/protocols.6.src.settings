@@ -192,6 +192,8 @@ sources = {
 		"InterfaceHolesFilter",
 		"RelativeSegmentFilter",
 		"RmsdFilter",
+		"RmsdSimpleFilter",
+		"SSamountFilter",
 		"ClashWithTargetFilter",
 		"LRmsdFilter",
 		"IRmsdFilter",

@@ -1,0 +1,14 @@
+{
+    "coordinates_checksum": 2163240, 
+    "threshold_distance_checksum": 140, 
+    "num_entries": 14, 
+    "fragment_length": 5, 
+    "coordinates_file": "coordinates.dat", 
+    "threshold_distance_file": "threshold_distance.dat", 
+    "fragment_atoms": [
+        "N", 
+        "CA", 
+        "C"
+    ], 
+    "name": "partial_test_fragments"
+}

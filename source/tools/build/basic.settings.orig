@@ -810,6 +810,7 @@ settings = {
         },
     },
 
+
     # This target is somewhat sketchy in its implementation.
     # It ought to be done as a separate executable.
     # Deprecated.  If it isn't used within a certain time frame it will go away.
@@ -826,6 +827,7 @@ settings = {
         },
     },
 
+<<<<<<< HEAD
     "gcc, hdf5" : {
         "appends" : {
             "defines" : [ "USEHDF5" ],
@@ -837,9 +839,9 @@ settings = {
         "appends" : {
             "defines"       : [ "USEMPI" ],
         },
-    },
-
+=======
     "gcc, macos, graphics" : {
+>>>>>>> origin/master
         "appends" : {
             "include_path" : [ "/usr/X11R6/include" ],
             "library_path" : [ "/usr/X11R6/lib" ],
@@ -987,16 +989,6 @@ settings = {
                 "pthread",
                 "util"
             ],
-        },
-        "removes" : {
-            "flags" : {
-                "warn" : [
-                    # We turn off warnings as errors for Python build 
-                    # only because the automatic Python interface wrapping 
-                    # can introduce warnings.
-                    "Werror", 
-                ],
-            },
         },
     },
 
@@ -1165,51 +1157,6 @@ settings = {
         },
     },
 
-    "gcc, android_arm" : {
-        "appends" : {
-            "include_path" : [ "#external/androidarm-tc/arm-linux-androideabi/include", ],
-            "library_path"    : [ "#external/androidarm-tc/arm-linux-androideabi/lib",
-                                "#external/androidarm-tc/sysroot/usr/lib", ],
-            "flags" : {
-                "cc"        : [
-                                "Wall", "O3",
-                                "-sysroot=#external/androidarm-tc/sysroot",
-                                "DANDROID",
-                                 "mthumb", "frtti", "fno-strict-aliasing",
-                              ],
-                "cxx"        : [
-                                  "Wall","O3",
-                                  "-sysroot=#external/androidarm-tc/sysroot",
-                                  "DANDROID",
-                                  "mthumb", "frtti", "fno-strict-aliasing",
-                               ],
-                "link" : [
-                    "Wl,-Bdynamic -lz -Wl,-Bstatic",
-                ],
-
-            },
-            "libraries"  : [ "stdc++", "supc++" ],
-        },
-        "overrides" : {
-            "cc"            : "#external/androidarm-tc/bin/arm-linux-androideabi-gcc",
-            "cxx"           : "#external/androidarm-tc/bin/arm-linux-androideabi-g++",
-            "link"            : "#external/androidarm-tc/bin/arm-linux-androideabi-ld",
-        },
-        "removes" : {
-           "flags" : {
-                "warn" : [ "pedantic" ],
-                "compile" : [
-                    "malign-double",
-                    "march=pentium4",
-                    "march=athlon",
-                    "mtune=itanium2"
-                ],
-           },
-           "defines"  : [ "BOINC_GRAPHICS", ],
-           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "#external/include" ],
-           "library_path"  : [ "/lib", "/usr/lib", "/usr/local/lib","#external/lib", "#external", ],
-        },
-    },
 
     ###########################################################################
     # ICC #####################################################################
@@ -1991,6 +1938,5 @@ settings = {
             "defines" : [ "USEBOOSTMPI" ],
         },
     },
-
 
 }  # end settings

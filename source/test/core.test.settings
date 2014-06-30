@@ -80,6 +80,9 @@ sources = {
 	"import_pose" : [
 		"PoseFromPDBResourceLoader",
 	],
+	"indexed_structure_store" : [
+		"FragmentLookup",
+	],
 	"io" : [
 		"PDB_IO",
 	],
@@ -497,6 +500,14 @@ testinputfiles = [
 	"fragment/aat049603_05.200_v1_3.gz",
 	"fragment/picking/vall/vall_test.dat",
 	"grid/1dwc_3.gridbb.gz",
+  "indexed_structure_store/test_structure.pdb",
+  "indexed_structure_store/test_store.h5",
+  "indexed_structure_store/test_store/fragments/partial_test_fragments/metadata.json",
+  "indexed_structure_store/test_store/fragments/partial_test_fragments/coordinates.dat",
+  "indexed_structure_store/test_store/fragments/partial_test_fragments/threshold_distance.dat",
+  "indexed_structure_store/test_store/fragments/full_test_fragments/metadata.json",
+  "indexed_structure_store/test_store/fragments/full_test_fragments/coordinates.dat",
+  "indexed_structure_store/test_store/fragments/full_test_fragments/threshold_distance.dat",
 	"io/1ten.pdb",
 	"io/GTP.params",
 	"io/bin_silentfile_test.out",
