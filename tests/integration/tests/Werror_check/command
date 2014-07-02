@@ -1,0 +1,13 @@
+cd %(workdir)s
+
+echo 'Checking the status of the -Werror option in the Scons build settings:'
+
+if grep -q '#"Werror"' ../../../../source/tools/build/basic.settings; then
+    echo FAIL
+    echo 'Someone has commented OFF -Werror from the Scons build settings.' > log
+    echo 'This problem is still not fixed on' $(date)'.' >> log
+    # Outputting the timestamp ensures the test will remain broken until fixed.
+else
+    echo PASS
+    echo '-Werror is ON in the Scons build settings.' > log
+fi
