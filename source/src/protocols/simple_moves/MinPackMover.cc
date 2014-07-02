@@ -158,8 +158,6 @@ MinPackMover::apply( Pose & pose )
 		runtime_assert( task_ );
 		runtime_assert( task_is_valid( pose ) );
 		task = task_;
-		//core::pack::min_pack( pose, *scorefxn_, task_ );
-		core::pack::off_rotamer_pack( pose, *scorefxn_, task_ );
 	}
 
 	if ( off_rotamer_pack_ ) {
@@ -210,6 +208,9 @@ MinPackMover::parse_my_tag(
 	}
 	if (tag->hasOption( "cartesian" )) {
 		cartesian_ = tag->getOption<bool>( "cartesian" );
+	}
+	if (tag->hasOption( "off_rotamer_pack" )) {
+		off_rotamer_pack_ = tag->getOption<bool>( "off_rotamer_pack" );
 	}
 }
 

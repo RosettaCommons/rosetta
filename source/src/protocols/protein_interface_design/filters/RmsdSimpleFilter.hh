@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-//Include Rosetta protocols 
+//Include Rosetta protocols
 #include <protocols/filters/Filter.hh>
 
 //Include ObjexxFCL
@@ -39,46 +39,65 @@ class RmsdSimpleFilter : public protocols::filters::Filter
 {
 public:
 	RmsdSimpleFilter();
-	
-	RmsdSimpleFilter(core::Real const threshold,
-							core::pose::PoseOP reference_pose);
+
+	RmsdSimpleFilter(
+		core::Real const threshold,
+		core::pose::PoseOP reference_pose
+	);
+
 	bool apply( core::pose::Pose const & pose ) const;
+
 	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const{
-		return new RmsdSimpleFilter();
-	}
+	protocols::filters::FilterOP fresh_instance() const;
+
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~RmsdSimpleFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, 
-							basic::datacache::DataMap & data_map, 
-							protocols::filters::Filters_map const &, 
-							protocols::moves::Movers_map const &, 
-							core::pose::Pose const & reference_pose );
+
+	void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data_map,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & reference_pose
+	);
+
 private:
-	void superposition_transform(
+
+	void
+	superposition_transform(
 		core::Size natoms,
 		ObjexxFCL::FArray1_double const& weights,
 		ObjexxFCL::FArray2_double& ref_coords,
 		ObjexxFCL::FArray2_double& coords,
 		numeric::xyzMatrix< core::Real > &RotM,
 		numeric::xyzVector< core::Real > &TvecA,
-		numeric::xyzVector< core::Real > &TvecB) const;
-	core::Real rmsd_bb(
+		numeric::xyzVector< core::Real > &TvecB
+	) const;
+
+	core::Real
+	rmsd_bb(
 		core::pose::Pose const & poseA,
 		utility::vector1< core::Size > const & positions_to_alignA,
 		core::pose::Pose const & poseB,
-		utility::vector1< core::Size > const & positions_to_alignB) const;
-	core::Real dist_bb(
+		utility::vector1< core::Size > const & positions_to_alignB
+	) const;
+
+	core::Real
+	dist_bb(
 		core::pose::Pose const & poseA,
 		utility::vector1< core::Size > const & positions_to_alignA,
 		core::pose::Pose const & poseB,
-		utility::vector1< core::Size > const & positions_to_alignB) const;
+		utility::vector1< core::Size > const & positions_to_alignB
+	) const;
+
+private:
+
 	core::Real threshold_;
 	core::pose::PoseOP reference_pose_;
 	core::Size target_chain_;
-	core::Size do_aling_;
+	core::Size do_align_;
 	bool b_target_chain_;
 };
 

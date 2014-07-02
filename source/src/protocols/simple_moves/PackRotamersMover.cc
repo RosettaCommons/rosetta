@@ -141,7 +141,7 @@ PackRotamersMover::apply( Pose & pose )
 	for ( Size run(1); run <= nloop_; ++run ) {
 		// run SimAnnealer
 		core::PackerEnergy packer_energy( this->run( pose ) );
-//		Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result
+		// Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result
 		if ( run == 1 || packer_energy < best_energy ) {
 			best_pose = pose;
 			best_energy = packer_energy;

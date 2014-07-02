@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-//Include Rosetta protocols 
+//Include Rosetta protocols
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/superimpose.hh>
 
@@ -66,8 +66,8 @@ using namespace ObjexxFCL;
 RmsdSimpleFilter::RmsdSimpleFilter() :
 	protocols::filters::Filter( "RmsdSimple" ),
 	threshold_( 5.0 ),
-	reference_pose_( NULL ),
-	do_aling_( NULL )
+	reference_pose_( 0 ),
+	do_align_( 0 )
 {
 }
 
@@ -87,14 +87,21 @@ RmsdSimpleFilter::clone() const {
 	return new RmsdSimpleFilter( *this );
 }
 
+protocols::filters::FilterOP
+RmsdSimpleFilter::fresh_instance() const
+{
+	return new RmsdSimpleFilter();
+}
+
 static basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdSimpleFilter" );
+
 core::Real
 RmsdSimpleFilter::compute( core::pose::Pose const & pose ) const
 {
 	core::Real rmsd( 0.0 );
 	core::pose::Pose this_target_pose = pose;
 	core::pose::Pose this_refe_pose = *reference_pose_;
-	
+
 	TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.n_residue(), this_refe_pose.n_residue() )<< std::endl;
 	//Apply to a particular chain
 	if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ){
@@ -119,17 +126,17 @@ RmsdSimpleFilter::compute( core::pose::Pose const & pose ) const
 		positions_to_alignB.push_back(i);
 	}
 	//Do simple distance
-	if(do_aling_ == 0){
-		rmsd = dist_bb( this_target_pose, 
-						positions_to_alignA, 
-						this_refe_pose, 
+	if(do_align_ == 0){
+		rmsd = dist_bb( this_target_pose,
+						positions_to_alignA,
+						this_refe_pose,
 						positions_to_alignB );
-	}else if(do_aling_ == 1){ //do real RMSD
-		rmsd = rmsd_bb( this_target_pose, 
-						positions_to_alignA, 
-						this_refe_pose, 
+	}else if(do_align_ == 1){ //do real RMSD
+		rmsd = rmsd_bb( this_target_pose,
+						positions_to_alignA,
+						this_refe_pose,
 						positions_to_alignB );
-		
+
 	}else{
 		utility_exit_with_message("Error, incorrect align mode" );
 	}
@@ -150,17 +157,17 @@ void RmsdSimpleFilter::superposition_transform(
 	//Get/remove the first COM translation vector
 	protocols::toolbox::reset_x( natoms, ref_coords, weights, ref_transvec );
 	TvecA = numeric::xyzVector< core::Real >( ref_transvec( 1 ), ref_transvec( 2 ), ref_transvec( 3 ));
-	
+
 	//Get/remove the second COM translation vector
 	ObjexxFCL::FArray1D_double transvec( 3 );
 	protocols::toolbox::reset_x( natoms, coords, weights, transvec );
 	TvecB = numeric::xyzVector< core::Real >( transvec( 1 ), transvec( 2 ), transvec( 3 ));
-	
+
 	//Fit centered coords, returns the rotation matrix, shifted coordinates (to the center)
 	protocols::toolbox::fit_centered_coords( natoms, weights, ref_coords, coords, RotM );
 }
 
-/**@brief Function that performs alignment of the protein BB on the selected aminoacids. 
+/**@brief Function that performs alignment of the protein BB on the selected aminoacids.
  **Returns the RMSD,
  **Uses a reference to the rotation Matrix and Translation Vector,
  **Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
@@ -175,7 +182,7 @@ core::Real RmsdSimpleFilter::rmsd_bb(
 	core::Size sizeB=positions_to_alignB.size();
 	//Check if the align size vectors are equivalent in size, if not die with error(-1.0)
 	if(sizeA != sizeB) return -1.0;
-	
+
 	//To store the RMSD
 	core::Real RMSD;
 	//To store the translation and rotation matrix
@@ -209,10 +216,10 @@ core::Real RmsdSimpleFilter::rmsd_bb(
 	}
 	//Weighted alignment (as in Alex Ford code protocols/seeded_abinitio/util.[cc,hh])
 	ObjexxFCL::FArray1D< numeric::Real > weights_fa( (sizeA*4), 1);
-	
+
 	//The actual alignment (as in Alex Ford code protocols/seeded_abinitio/util.[cc,hh])
 	superposition_transform((sizeA*4), weights_fa, FmatrixA, FmatrixB, RotM, TvecA, TvecB);
-	
+
 	RMSD=0.0;
 	//Storage for d^2
 	core::Real tmpDistSqr;
@@ -267,7 +274,7 @@ core::Real RmsdSimpleFilter::dist_bb(
 			FmatrixB(j,i) = matrixB[i](j);
 		}
 	}
-	
+
 	RMSD=0.0;
 	core::Real tmpDistSqr=0.0;
 	//Calculate the RMSD
@@ -293,7 +300,7 @@ bool RmsdSimpleFilter::apply( core::pose::Pose const & pose ) const {
 	if( rmsd <= threshold_ ) {
 		TR<<" RMSD Filter Pass: "<< rmsd <<std::endl;
 		return( true );
-	} else { 
+	} else {
 	TR<<" RMSD Filter Fail:"<< rmsd << std::endl;
 	return( false );
 	}
@@ -311,17 +318,17 @@ core::Real RmsdSimpleFilter::report_sm( core::pose::Pose const & pose ) const {
 	return( (core::Real) rmsd );
 }
 
-void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP const tag, 
-											basic::datacache::DataMap & data_map, 
-											protocols::filters::Filters_map const &, 
-											protocols::moves::Movers_map const &, 
+void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP const tag,
+											basic::datacache::DataMap & data_map,
+											protocols::filters::Filters_map const &,
+											protocols::moves::Movers_map const &,
 											core::pose::Pose const & pose )
 {
 	/// @brief
 	reference_pose_ = new core::pose::Pose( pose );
 	target_chain_ = 0;
 	threshold_ = 0.0;
-	
+
 	if( tag->hasOption("reference_name") ){
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map );
 	}else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ){
@@ -335,17 +342,17 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	}else{
 		TR.Warning << "No chain specified, using them all for calculation" << std::endl;
 	}
-	
+
 	if( tag->hasOption("threshold") ){
 		threshold_ = tag->getOption<core::Real>( "threshold");
 	}else{
 		TR.Warning << "Threshold option not specified, using default" << threshold_ << std::endl;
 	}
 	if( tag->hasOption("align") ){
-		do_aling_ = tag->getOption<core::Size>( "align");
-		if(do_aling_ == 0){
+		do_align_ = tag->getOption<core::Size>( "align");
+		if(do_align_ == 0){
 			TR.Info << "Align mode is disabled, therefore the result will be the euclidean distance" << std::endl;
-		}else if(do_aling_ == 1){
+		}else if(do_align_ == 1){
 			TR.Info << "Align mode is enabled, therefore the result will be RMSD" << std::endl;
 		}else{
 			utility_exit_with_message("Align option is boolean, allowed values are 0 and 1 (deactivated/activated)");
@@ -355,17 +362,15 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	}
 }
 
-protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const { 
-	return new RmsdSimpleFilter; 
+protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
+	return new RmsdSimpleFilter;
 }
 
-std::string RmsdSimpleFilterCreator::keyname() const { 
-	return "RmsdSimple"; 
+std::string RmsdSimpleFilterCreator::keyname() const {
+	return "RmsdSimple";
 	}
 
 
 } // filters
 } // protein_interface_design
 } // devel
-
-
