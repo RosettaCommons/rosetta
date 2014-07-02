@@ -90,7 +90,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 	clock_t start_t = clock();
 
 	std::vector<FragmentLookupResult> lookup_result;
-	std::vector<numeric::Size> lookup_residue;
+	std::vector<core::Size> lookup_residue;
 
 	core::pose::Pose target_pose = pose;
 	TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
@@ -133,7 +133,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 	cached_lookup_result_.clear();
 	
 	core::Size num_failed_matches=0;
-	for (numeric::Size i = 0; i < lookup_result.size(); i++)
+	for (core::Size i = 0; i < lookup_result.size(); i++)
 	{
 		if(!lookup_result[i].found_match){
 			num_failed_matches+=1;
@@ -149,7 +149,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & ) const
 {
 	using namespace core::indexed_structure_store;
-	typedef std::map<numeric::Size, FragmentLookupResult> result_t;
+	typedef std::map<core::Size, FragmentLookupResult> result_t;
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Object;
 	using utility::json_spirit::Pair;
@@ -185,7 +185,7 @@ core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) cons
         //Get pose size just to avoid warning regarding pose
 	pose.n_residue();
 	using namespace core::indexed_structure_store;
-	typedef std::map<numeric::Size, FragmentLookupResult> result_t;
+	typedef std::map<core::Size, FragmentLookupResult> result_t;
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Object;
 	using utility::json_spirit::Pair;

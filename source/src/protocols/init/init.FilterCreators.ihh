@@ -38,6 +38,8 @@
 
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 
+#include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
+
 #include <protocols/ligand_docking/AtomCountFilterCreator.hh>
 #include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
 #include <protocols/ligand_docking/CompleteConnectionsFilterCreator.hh>
@@ -65,11 +67,13 @@
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/RmsdSimpleFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/ClashWithTargetFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/LRmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/IRmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/FNatFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/SSamountFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/SpecificResiduesNearInterfaceFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>

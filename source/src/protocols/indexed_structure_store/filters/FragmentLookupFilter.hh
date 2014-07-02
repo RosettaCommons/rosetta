@@ -10,7 +10,7 @@
 /// @file ./src/protocols/indexed_structure_store/filters/FragmentLookupFilter.hh
 /// @brief Header for FragmentLookupFilter class.
 /// @detailed
-/// @author Alex Ford (fordas@uw.edu)
+/// @author Alex Ford (fordas@uw.edu) and Daniel Adriano Silva (dadriano@uw.edu)
 
 
 #ifndef INCLUDED_protocols_indexed_structure_store_filters_FragmentLookupFilter_hh
@@ -22,7 +22,9 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/indexed_structure_store/FragmentLookup.fwd.hh>
+//#include <core/indexed_structure_store/FragmentLookup.fwd.hh>
+#include <core/indexed_structure_store/FragmentLookup.hh>
+#include <core/indexed_structure_store/FragmentStore.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -143,7 +145,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	
 	// @brief Per-fragment lookup results of previous apply call, keyed by fragment start residue id.
-	std::map<numeric::Size, FragmentLookupResult> const & lookup_result() { return cached_lookup_result_; }
+	std::map<core::Size, FragmentLookupResult> const & lookup_result() { return cached_lookup_result_; }
 
 	// @brief Fragment specification from underlying lookup, provides fragment length.
 	FragmentSpecification const & fragment_specification();
@@ -156,7 +158,7 @@ private:
 
 	/// @brief
 	FragmentLookupOP target_lookup_;
-	mutable std::map<numeric::Size, FragmentLookupResult> cached_lookup_result_;
+	mutable std::map<core::Size, FragmentLookupResult> cached_lookup_result_;
 
 	LookupMode lookup_mode_;
 	core::Size target_chain_;

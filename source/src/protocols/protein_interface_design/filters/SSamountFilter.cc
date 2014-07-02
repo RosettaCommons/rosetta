@@ -197,11 +197,11 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP const tag,
 		TR.Warning << "reference_name not implemented yet for SSamountFilter, FixMe if you can!" << std::endl;
 		utility_exit_with_message("This option hasn't been implemented yet");
                 reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map );
-        }else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ){
-                        core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
-        }else{
-                utility_exit_with_message("Not reference structure defined! Use [reference_name] or [-in::file::native] ");
-        }
+        }//else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ){
+        //                core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+        //}else{
+        //        utility_exit_with_message("Not reference structure defined! Use [reference_name] or [-in::file::native] ");
+        //}
 
 	/// @brief
 	target_chain_ = 0;

@@ -41,7 +41,7 @@ static FilterRegistrator< protocols::filters::TimeFilterCreator > reg_TimeFilter
 static FilterRegistrator< protocols::simple_filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 
 static FilterRegistrator< protocols::fldsgn::filters::CoreDunbrackFilterCreator > reg_CoreDunbrackFilterCreator;
-static FilterRegistrator< protocols:: fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
+static FilterRegistrator< protocols::fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HelixKinkFilterCreator > reg_HelixKinkFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HelixPairingFilterCreator > reg_HelixPairingFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HSSTripletFilterCreator > reg_HSSTripletFilterCreator;
@@ -53,6 +53,8 @@ static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureCountFil
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
+
+static FilterRegistrator< protocols::indexed_structure_store::filters::FragmentLookupFilterCreator > reg_FragmentLookupFilterCreator;
 
 static FilterRegistrator< protocols::ligand_docking::AtomCountFilterCreator > reg_AtomCountFilterCreator;
 static FilterRegistrator< protocols::ligand_docking::CompleteConnectionsFilterCreator > reg_CompleteConnectionsFilterCreator;
@@ -81,12 +83,14 @@ static FilterRegistrator< protocols::protein_interface_design::filters::HbondsTo
 static FilterRegistrator< protocols::protein_interface_design::filters::InterfaceHolesFilterCreator > reg_InterfaceHolesFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RelativeSegmentFilterCreator > reg_RelativeSegmentFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RmsdFilterCreator > reg_RmsdFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::filters::RmsdSimpleFilterCreator > reg_RmsdSimpleFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::ClashWithTargetFilterCreator > reg_ClashWithTargetFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::LRmsdFilterCreator > reg_LRmsdFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::IRmsdFilterCreator > reg_IRmsdFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::FNatFilterCreator > reg_FNatFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::SequenceRecoveryFilterCreator > reg_SequenceRecoveryFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::SpecificResiduesNearInterfaceFilterCreator > reg_SpecificResiduesNearInterfaceFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::filters::SSamountFilterCreator > reg_SSamountFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreFilterCreator > reg_StubScoreFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreLoopsFilterCreator > reg_StubScoreLoopsFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::TorsionCreator > reg_TorsionCreator;

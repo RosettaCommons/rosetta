@@ -2,12 +2,15 @@
 #include <limits>
 #include <cstddef>
 
+#ifndef FLATLOOKUP_HH
+#define FLATLOOKUP_HH
+
 namespace numeric
 {
 namespace coordinate_fitting
 {
 
-template <class QueryType, class EntryType, class Real=double>
+template <class QueryType, class EntryType, class Real=double> 
 class FlatLookup
 {
   public:
@@ -84,3 +87,5 @@ class FlatLookup
 
 }
 }
+
+#endif
