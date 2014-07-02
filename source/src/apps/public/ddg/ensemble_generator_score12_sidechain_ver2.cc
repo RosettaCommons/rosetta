@@ -62,7 +62,7 @@
 
 #include <basic/Tracer.hh>
 
-numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not change it!!!
+//numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not change it!!!
 
 #include <core/types.hh>
 
@@ -135,10 +135,10 @@ numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not chang
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+//#include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 //#include <protocols/looprelax/looprelax_main.hh>
-#include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
+//#include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
@@ -198,12 +198,12 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s){
 	}
 	mm.set_chi(true);
 	if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){
-		ScoreFunction one_tenth_orig(s);
-		reduce_fa_rep(0.1,one_tenth_orig);
-		min_struc.run(p,mm,one_tenth_orig,options);
-		ScoreFunction one_third_orig(s);
-		reduce_fa_rep(0.33,one_third_orig);
-		min_struc.run(p,mm,one_third_orig,options);
+		ScoreFunctionOP one_tenth_orig(s.clone());
+		reduce_fa_rep(0.1,*one_tenth_orig);
+		min_struc.run(p,mm,*one_tenth_orig,options);
+		ScoreFunctionOP one_third_orig(s.clone());
+		reduce_fa_rep(0.33,*one_third_orig);
+		min_struc.run(p,mm,*one_third_orig,options);
 	}
 	min_struc.run(p,mm,s,options);
 }

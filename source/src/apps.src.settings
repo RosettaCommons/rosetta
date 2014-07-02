@@ -94,6 +94,7 @@ sources = {
         ],
 	"public/ddg": [
 		"ddg_monomer",
+		"ensemble_generator_score12_sidechain_ver2",
 		"minimize_with_cst",
 	],
 	"public/design": [
