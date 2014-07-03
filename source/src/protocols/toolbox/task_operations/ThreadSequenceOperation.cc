@@ -44,7 +44,7 @@ using namespace std;
 
 ThreadSequenceOperation::ThreadSequenceOperation() : parent()
 {
-	target_sequence( "" ); start_res( 1 );
+	target_sequence( "" ); start_res( 1 ); allow_design_around( true );
 }
 
 ThreadSequenceOperation::ThreadSequenceOperation( std::string const seq ) : parent()

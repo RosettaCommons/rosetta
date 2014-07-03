@@ -70,3 +70,4 @@
 #include <protocols/toolbox/task_operations/SelectByDeltaScoreOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SelectByDensityFitOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>
+#include <protocols/toolbox/task_operations/AlignedThreadOperationCreator.hh>

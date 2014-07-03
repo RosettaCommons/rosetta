@@ -70,6 +70,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectByDe
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectResiduesWithinChainOperationCreator > SelectResiduesWithinChainCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SetIGTypeOperationCreator > SetIGTypeOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::AlignedThreadOperationCreator > AlignedThreadOperationCreator_registrator;
 
 
 using core::pack::task::operation::ResFilterRegistrator;
