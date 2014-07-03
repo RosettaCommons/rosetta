@@ -169,7 +169,7 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 		if (r.second.found_match) 
 		{
 			result_object.push_back(Pair("match_score", r.second.match_score));
-			result_object.push_back(Pair("match_index", r.second.match_index));
+			result_object.push_back(Pair("match_index", static_cast<boost::uint64_t>(r.second.match_index)));
 			result_object.push_back(Pair("match_rmsd_threshold", r.second.match_rmsd_threshold));
 			result_object.push_back(Pair("match_rmsd", r.second.match_rmsd));
 		}
@@ -205,7 +205,7 @@ core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) cons
 		if (r.second.found_match) 
 		{
 			result_object.push_back(Pair("match_score", r.second.match_score));
-			result_object.push_back(Pair("match_index", r.second.match_index));
+			result_object.push_back(Pair("match_index", static_cast<boost::uint64_t>(r.second.match_index)));
 			result_object.push_back(Pair("match_rmsd_threshold", r.second.match_rmsd_threshold));
 			result_object.push_back(Pair("match_rmsd", r.second.match_rmsd));
 		}

@@ -323,7 +323,7 @@ public:
 			rot_matrix[8] = a2 - x2 - y2 + z2;
 		}
 
-		if (isnan(mxEigenV))
+		if (std::isnan(mxEigenV))
 		{
 			return 0.0;
 		}

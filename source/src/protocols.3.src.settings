@@ -712,6 +712,7 @@ sources = {
 		"AddGood2BPairEnergyRotamers",
 	],
 	"protocols/toolbox/task_operations": [
+	        "AlignedThreadOperation",
 		"CrystalContactsOperation",
 		"DatabaseThread",
 		"DesignAroundOperation",

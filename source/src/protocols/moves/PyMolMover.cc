@@ -243,16 +243,18 @@ std::string PyMolMover::get_name() const
 
 std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 {
-	if( pymol_name_.size() ) return pymol_name_;
-    else {
+	if( pymol_name_.size() ) {
+		return pymol_name_;
+	} else {
 		core::pose::PDBInfoCOP info = pose.pdb_info();
-		if( info ) {
+		if( info && info->name().size() ) {
 			std::string n = info->name();
 			for(unsigned int i=0; i<n.size(); i++)
 				if( n[i] == '/' ) n[i] = '_';
 			return n;
+		} else {
+			return "pose";
 		}
-		else return "pose";
 	}
 }
 
@@ -277,10 +279,9 @@ void PyMolMover::apply( Pose const & pose)
 	TR.Trace << "PyMOL_Mover::apply It is time!" << std::endl;
 
 	std::string name = get_PyMol_model_name(pose);
-
 	TR.Trace << "PyMOL_Mover::apply name:" << name << std::endl;
 
-	// Creating message...
+	// Creating message
 	std::ostringstream os;
 	pose.dump_pdb(os);
 
