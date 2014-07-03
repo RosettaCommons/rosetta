@@ -100,7 +100,7 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 
 		if ( (  pose.residue(i).is_RNA() != pose.residue(i+1).is_RNA() ) ||
 				 (  pose.residue(i).is_protein() != pose.residue(i+1).is_protein() ) ||
-				 ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ){
+				 ( pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ){
 			f.new_jump( i, i+1, i );
 			m++;
 			continue;

@@ -88,7 +88,6 @@ get_pose_and_numbering( std::string const pdb_file, pose::Pose & pose, utility::
 	import_pose::pose_from_pdb( pose, *rsd_set,  pdb_file );
 
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
-
 	core::pose::rna::virtualize_5prime_phosphates( pose );
 
 	resnum.clear();

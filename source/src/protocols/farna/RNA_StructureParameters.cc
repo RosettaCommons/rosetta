@@ -3,7 +3,7 @@
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) The Rosetta software is developed by th37379e contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
@@ -376,7 +376,7 @@ RNA_StructureParameters::read_chain_connection( std::istringstream & line_stream
 
 			if (!line_stream.fail()  ){
 				line_stream >> pos1 >> pos2;
-				runtime_assert( pos2 > pos1 );
+				runtime_assert( pos2 >= pos1 );
 				for (Size i = pos1; i <= pos2; i++ ){
 					if (which_segment == 1 ) res_list1.push_back( i );
 					if (which_segment == 2 ) res_list2.push_back( i );
