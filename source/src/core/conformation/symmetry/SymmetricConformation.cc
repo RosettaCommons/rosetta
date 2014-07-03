@@ -79,6 +79,18 @@ SymmetricConformation::operator=( SymmetricConformation const & src )
 	return *this;
 }
 
+Conformation &
+SymmetricConformation::operator=( Conformation const & src ) 
+{
+	SymmetricConformation const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
+	if ( sym_conf ) {
+		SymmetricConformation::operator=( *sym_conf );
+	} else {
+		Conformation::operator=( src );
+	}
+
+	return *this;
+}
 
 ///@details make a copy of this conformation( allocate actual memory for it )
 ConformationOP

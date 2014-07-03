@@ -57,6 +57,11 @@ public:
 	Conformation &
 	operator=( SymmetricConformation const & src );
 
+	/// @brief equals operator. Must override this, since the operator= that takes a SymmetricConformation will not be used if both references are of type Conformation.
+	virtual
+	Conformation &
+	operator=( Conformation const & src );
+
   ConformationOP
   clone() const;
 
