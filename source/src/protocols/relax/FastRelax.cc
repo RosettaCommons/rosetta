@@ -337,6 +337,8 @@ FastRelax::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose
 ) {
+	using namespace basic::options;
+	
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
 
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
@@ -346,15 +348,20 @@ FastRelax::parse_my_tag(
 
 
 	//Make sure we have a taskfactory before we overwrite our null in the base class.
+	bool disable_design = tag->getOption<bool>("disable_design", true);
+	
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0){
+		if (disable_design){
+			tf->push_back(new core::pack::task::operation::RestrictToRepacking);
+		}
 		set_task_factory( tf );
 	}
 
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
 
-	using namespace basic::options;
+	
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
 
