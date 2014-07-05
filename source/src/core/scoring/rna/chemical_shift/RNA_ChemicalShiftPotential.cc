@@ -106,16 +106,16 @@ namespace chemical_shift {
 		utility::vector1< utility::vector1< std::string > > proton_entry_list;
 
 		proton_entry_list.push_back( string_list( "H1'" ) );
-		proton_entry_list.push_back( string_list( " H2'" ) );
+		proton_entry_list.push_back( string_list( "H2'" ) );
 		proton_entry_list.push_back( string_list( "H3'" ) );
 		proton_entry_list.push_back( string_list( "H4'" ) );
 
 		if ( H5_prime_mode_ == "UNIQUE" ){
-			proton_entry_list.push_back( string_list( " H5'" ) );
+			proton_entry_list.push_back( string_list( "H5'" ) );
 			proton_entry_list.push_back( string_list( "H5''" ) );
 
 		} else if ( H5_prime_mode_ == "LEAST_SQUARE" || H5_prime_mode_ == "LEAST_SQUARE_IGNORE_DUPLICATE" ){
-			proton_entry_list.push_back( string_list( " H5'", "H5''" ) ); 
+			proton_entry_list.push_back( string_list( "H5'", "H5''" ) );
 
 		} else{
 			utility_exit_with_message( "Invalid H5_prime_mode_ ( " + H5_prime_mode_ + " )!" );
@@ -225,7 +225,7 @@ namespace chemical_shift {
 			rosetta_atom_name = "H1'";
 
 		} else if ( input_atom_name == "H2'" ){
-			rosetta_atom_name = " H2'";
+			rosetta_atom_name = "H2'";
 
 		} else if ( input_atom_name == "H3'" ){
 			rosetta_atom_name = "H3'";
@@ -234,7 +234,7 @@ namespace chemical_shift {
 			rosetta_atom_name = "H4'";
 
 		} else if ( input_atom_name == "H5'" ){
-			rosetta_atom_name = " H5'";
+			rosetta_atom_name = "H5'";
 
 		} else if ( input_atom_name == "H5''" ){
 			rosetta_atom_name = "H5''";
@@ -916,9 +916,9 @@ namespace chemical_shift {
 
 			Size num_matching_atom_pairs_found = 0;
 
-			if ( CS_data_one.atom_name == " H5'" && CS_data_two.atom_name == "H5''" ) num_matching_atom_pairs_found++;
+			if ( CS_data_one.atom_name == "H5'" && CS_data_two.atom_name == "H5''" ) num_matching_atom_pairs_found++;
 
-			if ( CS_data_one.atom_name == "H5''" && CS_data_two.atom_name == " H5'" ) num_matching_atom_pairs_found++;
+			if ( CS_data_one.atom_name == "H5''" && CS_data_two.atom_name == "H5'" ) num_matching_atom_pairs_found++;
 
 			if ( num_matching_atom_pairs_found != 1 ) utility_exit_with_message( "num_matching_atom_pairs_found = ( " + string_of( num_matching_atom_pairs_found ) + " ) != 1" );
 			///////////////////////////////////////////////////////////////////////
@@ -1050,8 +1050,9 @@ namespace chemical_shift {
 	} // finalize_total_energy
 
 	///////////////////////////////////////////////////////////////////////////////
-	///Derivative of the specified CS_data atom (non-polar proton). Both ring current and magnetic_anisotropy effects
-	///This function should be called once for each CS_data atom!
+	/// Derivative of the specified CS_data atom (non-polar proton). Both ring 
+	/// current and magnetic_anisotropy effects.
+	/// This function should be called once for each CS_data atom!
 
 	void
 	RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(

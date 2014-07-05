@@ -164,11 +164,11 @@ namespace chemical_shift {
 			//OSHI 5.02  4.66  0     4.62  4.35  4.38  4.09  8.43  0    0    8.64  // OSHI, offset of the chemical shift calculation
 
 			atomnames_.push_back( "H1'" );  realatomdata_[23][csca] = 1.0;  realatomdata_[23][suga] = 1.0;	realatomdata_[23][oshi] = 5.02;		//23 
-			atomnames_.push_back( " H2'" );  realatomdata_[24][csca] = 1.0;  realatomdata_[24][suga] = 1.0;	realatomdata_[24][oshi] = 4.66;		//24 
+			atomnames_.push_back( "H2'" );  realatomdata_[24][csca] = 1.0;  realatomdata_[24][suga] = 1.0;	realatomdata_[24][oshi] = 4.66;		//24 
 			atomnames_.push_back( "HO2'" );  realatomdata_[25][csca] = 0.0;  realatomdata_[25][suga] = 1.0; 	realatomdata_[25][oshi] = 0.00;		//25  
 			atomnames_.push_back( "H3'" );  realatomdata_[26][csca] = 1.0;  realatomdata_[26][suga] = 1.0; 	realatomdata_[26][oshi] = 4.62;		//26  
 			atomnames_.push_back( "H4'" );  realatomdata_[27][csca] = 1.0;  realatomdata_[27][suga] = 1.0; 	realatomdata_[27][oshi] = 4.35;		//27  
-			atomnames_.push_back( " H5'" );  realatomdata_[28][csca] = 1.0;  realatomdata_[28][suga] = 1.0;	realatomdata_[28][oshi] = 4.38;		//28  
+			atomnames_.push_back( "H5'" );  realatomdata_[28][csca] = 1.0;  realatomdata_[28][suga] = 1.0;	realatomdata_[28][oshi] = 4.38;		//28  
 			atomnames_.push_back( "H5''" );  realatomdata_[29][csca] = 1.0;  realatomdata_[29][suga] = 1.0;	realatomdata_[29][oshi] = 4.09;		//29  
 			atomnames_.push_back( "H2"  );  realatomdata_[30][csca] = 1.0;  realatomdata_[30][suga] = 0.0;	realatomdata_[30][oshi] = 8.43;		//30 
 			atomnames_.push_back( "H61" );  realatomdata_[31][csca] = 0.0;  realatomdata_[31][suga] = 0.0;	realatomdata_[31][oshi] = 0.00;		//31 
@@ -279,11 +279,11 @@ namespace chemical_shift {
 			//OSHI 5.20  4.66  0     4.62  4.35  4.38  4.09  0    0    0    8.10
 
 			atomnames_.push_back( "H1'" );  realatomdata_[24][csca] = 1.0;  realatomdata_[24][suga] = 1.0;	realatomdata_[24][oshi] = 5.20;		//24 
-			atomnames_.push_back( " H2'" );  realatomdata_[25][csca] = 1.0;  realatomdata_[25][suga] = 1.0;	realatomdata_[25][oshi] = 4.66;		//25 
+			atomnames_.push_back( "H2'" );  realatomdata_[25][csca] = 1.0;  realatomdata_[25][suga] = 1.0;	realatomdata_[25][oshi] = 4.66;		//25 
 			atomnames_.push_back( "HO2'" );  realatomdata_[26][csca] = 0.0;  realatomdata_[26][suga] = 1.0; 	realatomdata_[26][oshi] = 0.00;		//26  
 			atomnames_.push_back( "H3'" );  realatomdata_[27][csca] = 1.0;  realatomdata_[27][suga] = 1.0; 	realatomdata_[27][oshi] = 4.62;		//27  
 			atomnames_.push_back( "H4'" );  realatomdata_[28][csca] = 1.0;  realatomdata_[28][suga] = 1.0; 	realatomdata_[28][oshi] = 4.35;		//28  
-			atomnames_.push_back( " H5'" );  realatomdata_[29][csca] = 1.0;  realatomdata_[29][suga] = 1.0;	realatomdata_[29][oshi] = 4.38;		//29  
+			atomnames_.push_back( "H5'" );  realatomdata_[29][csca] = 1.0;  realatomdata_[29][suga] = 1.0;	realatomdata_[29][oshi] = 4.38;		//29  
 			atomnames_.push_back( "H5''" );  realatomdata_[30][csca] = 1.0;  realatomdata_[30][suga] = 1.0;	realatomdata_[30][oshi] = 4.09;		//30  
 			atomnames_.push_back( "H1"  );  realatomdata_[31][csca] = 0.0;  realatomdata_[31][suga] = 0.0;	realatomdata_[31][oshi] = 0.00;		//31 
 			atomnames_.push_back( "H22" );  realatomdata_[32][csca] = 0.0;  realatomdata_[32][suga] = 0.0;	realatomdata_[32][oshi] = 0.00;		//32 
@@ -377,11 +377,11 @@ namespace chemical_shift {
 			//SUGA 1     1     1     1     1     1     1     0    0    0     0
 			//OSHI 5.23  4.66  0     4.62  4.35  4.38  4.09  0    0    6.12  8.16
 			atomnames_.push_back( "H1'" );  realatomdata_[21][csca] = 1.0;  realatomdata_[21][suga] = 1.0;	realatomdata_[21][oshi] = 5.23;		//21 
-			atomnames_.push_back( " H2'" );  realatomdata_[22][csca] = 1.0;  realatomdata_[22][suga] = 1.0;	realatomdata_[22][oshi] = 4.66;		//22 
+			atomnames_.push_back( "H2'" );  realatomdata_[22][csca] = 1.0;  realatomdata_[22][suga] = 1.0;	realatomdata_[22][oshi] = 4.66;		//22 
 			atomnames_.push_back( "HO2'" );  realatomdata_[23][csca] = 0.0;  realatomdata_[23][suga] = 1.0; 	realatomdata_[23][oshi] = 0.00;		//23  
 			atomnames_.push_back( "H3'" );  realatomdata_[24][csca] = 1.0;  realatomdata_[24][suga] = 1.0; 	realatomdata_[24][oshi] = 4.62;		//24  
 			atomnames_.push_back( "H4'" );  realatomdata_[25][csca] = 1.0;  realatomdata_[25][suga] = 1.0; 	realatomdata_[25][oshi] = 4.35;		//25  
-			atomnames_.push_back( " H5'" );  realatomdata_[26][csca] = 1.0;  realatomdata_[26][suga] = 1.0;	realatomdata_[26][oshi] = 4.38;		//26  
+			atomnames_.push_back( "H5'" );  realatomdata_[26][csca] = 1.0;  realatomdata_[26][suga] = 1.0;	realatomdata_[26][oshi] = 4.38;		//26  
 			atomnames_.push_back( "H5''" );  realatomdata_[27][csca] = 1.0;  realatomdata_[27][suga] = 1.0;	realatomdata_[27][oshi] = 4.09;		//27  
 			atomnames_.push_back( "H41" );  realatomdata_[28][csca] = 0.0;  realatomdata_[28][suga] = 0.0;	realatomdata_[28][oshi] = 0.00;		//28 
 			atomnames_.push_back( "H42" );  realatomdata_[29][csca] = 0.0;  realatomdata_[29][suga] = 0.0;	realatomdata_[29][oshi] = 0.00;		//29 
@@ -475,11 +475,11 @@ namespace chemical_shift {
 			//SUGA 1     1     1     1     1     1     1     0    0     0
 			//OSHI 5.57  4.66  0     4.62  4.35  4.38  4.09  0    8.25  6.04 
 			atomnames_.push_back( "H1'" );  realatomdata_[21][csca] = 1.0;  realatomdata_[21][suga] = 1.0;	realatomdata_[21][oshi] = 5.57;		//21 
-			atomnames_.push_back( " H2'" );  realatomdata_[22][csca] = 1.0;  realatomdata_[22][suga] = 1.0;	realatomdata_[22][oshi] = 4.66;		//22 
+			atomnames_.push_back( "H2'" );  realatomdata_[22][csca] = 1.0;  realatomdata_[22][suga] = 1.0;	realatomdata_[22][oshi] = 4.66;		//22 
 			atomnames_.push_back( "HO2'" );  realatomdata_[23][csca] = 0.0;  realatomdata_[23][suga] = 1.0; 	realatomdata_[23][oshi] = 0.00;		//23  
 			atomnames_.push_back( "H3'" );  realatomdata_[24][csca] = 1.0;  realatomdata_[24][suga] = 1.0; 	realatomdata_[24][oshi] = 4.62;		//24  
 			atomnames_.push_back( "H4'" );  realatomdata_[25][csca] = 1.0;  realatomdata_[25][suga] = 1.0; 	realatomdata_[25][oshi] = 4.35;		//25  
-			atomnames_.push_back( " H5'" );  realatomdata_[26][csca] = 1.0;  realatomdata_[26][suga] = 1.0;	realatomdata_[26][oshi] = 4.38;		//26  
+			atomnames_.push_back( "H5'" );  realatomdata_[26][csca] = 1.0;  realatomdata_[26][suga] = 1.0;	realatomdata_[26][oshi] = 4.38;		//26  
 			atomnames_.push_back( "H5''" );  realatomdata_[27][csca] = 1.0;  realatomdata_[27][suga] = 1.0;	realatomdata_[27][oshi] = 4.09;		//27  
 			atomnames_.push_back( "H3"  );  realatomdata_[28][csca] = 0.0;  realatomdata_[28][suga] = 0.0;	realatomdata_[28][oshi] = 0.00;		//28 
 			atomnames_.push_back( "H6"  );  realatomdata_[29][csca] = 1.0;  realatomdata_[29][suga] = 0.0;	realatomdata_[29][oshi] = 8.25;		//29 

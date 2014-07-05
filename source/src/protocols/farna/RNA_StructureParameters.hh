@@ -115,6 +115,16 @@ toolbox::AllowInsertOP
 	utility::vector1< BasePairStep >
 	get_base_pair_steps() const;
 
+	utility::vector1 < utility::vector1 <core::Size > >
+	get_obligate_pairing_sets() {
+		return obligate_pairing_sets_;
+	}
+
+	RNA_PairingList
+	get_rna_pairing_list() {
+		return rna_pairing_list_;
+	}
+
 	private:
 
 	void
