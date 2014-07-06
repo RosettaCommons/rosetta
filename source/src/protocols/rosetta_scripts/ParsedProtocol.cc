@@ -112,71 +112,81 @@ ParsedProtocol::~ParsedProtocol() {
 void
 ParsedProtocol::apply( Pose & pose )
 {
-	TR.Debug << "ParsedProtocol::apply BEGIN 0x" << this << std::endl;
 	if ( protocols::jd2::jd2_used() ) {
 		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
 		job_outputter->add_output_observer( this );
 	}
 
-	protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
-	pose.update_residue_neighbors();
 
-	//fpd search the mover-filter pairs backwards for movers that have remaining poses
-	MoverFilterVector::const_reverse_iterator rmover_it = movers_.rbegin();
-  const MoverFilterVector::const_reverse_iterator movers_crend = movers_.rend();
+	try {
 
-  if(resume_support_ && mode_ == "sequence") {
-		for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
-			core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
+		protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
+		pose.update_residue_neighbors();
 
-			// otherwise continue where we left off
-			if (checkpoint) {
-				std::string const mover_name( rmover_it->first.first->get_name() );
+		//fpd search the mover-filter pairs backwards for movers that have remaining poses
+		MoverFilterVector::const_reverse_iterator rmover_it = movers_.rbegin();
+		const MoverFilterVector::const_reverse_iterator movers_crend = movers_.rend();
 
-				// if mode_ is not 'sequence' then checkpointing is unsupported
-				if (checkpoint && mode_ != "sequence")
-					utility_exit_with_message("Mover "+mover_name+" returned multiple poses in a ParsedProtocol with mode!=sequence");
+		if(resume_support_ && mode_ == "sequence") {
+			for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+				core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
 
-				TR<<"=======================RESUMING FROM "<<mover_name<<"======================="<<std::endl;
-				pose = *checkpoint;
+				// otherwise continue where we left off
+				if (checkpoint) {
+					std::string const mover_name( rmover_it->first.first->get_name() );
 
-				if( ! apply_filter( pose, *rmover_it) ) {
-//					final_score(pose);
-					if ( protocols::jd2::jd2_used() ) {
-						protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-						job_outputter->remove_output_observer( this );
+					// if mode_ is not 'sequence' then checkpointing is unsupported
+					if (checkpoint && mode_ != "sequence")
+						utility_exit_with_message("Mover "+mover_name+" returned multiple poses in a ParsedProtocol with mode!=sequence");
+
+					TR<<"=======================RESUMING FROM "<<mover_name<<"======================="<<std::endl;
+					pose = *checkpoint;
+
+					if( ! apply_filter( pose, *rmover_it) ) {
+//						final_score(pose);
+						if ( protocols::jd2::jd2_used() ) {
+							protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+							job_outputter->remove_output_observer( this );
+						}
+						return;
+					} else {
+						break;
 					}
-					return;
-				} else {
-					break;
 				}
 			}
+		} else {
+			rmover_it = movers_.rend();
 		}
-	} else {
-    rmover_it = movers_.rend();
-  }
 
-	if(mode_ == "sequence"){
-		sequence_protocol(pose, rmover_it.base());
-	}else if(mode_ =="random_order"){
-		random_order_protocol(pose);
-	}else if(mode_ =="single_random"){
-		random_single_protocol(pose);
-	}else
-	{
-		TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
+		if(mode_ == "sequence"){
+			sequence_protocol(pose, rmover_it.base());
+		} else if(mode_ =="random_order"){
+			random_order_protocol(pose);
+		} else if(mode_ =="single_random"){
+			random_single_protocol(pose);
+		} else {
+			TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
+		}
+
+		if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) {// no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
+			final_score(pose);
+		}
+
+		if ( protocols::jd2::jd2_used() ) {
+			protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+			job_outputter->remove_output_observer( this );
+		}
+
+	} catch( ... ) {
+
+		TR.Error << "Exception while processing procotol:" << std::endl;
+		if ( protocols::jd2::jd2_used() ) {
+			protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+			job_outputter->remove_output_observer( this );
+		}
+
+		throw;
 	}
-
-	if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) {// no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
-		final_score(pose);
-	}
-
-	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-		job_outputter->remove_output_observer( this );
-	}
-
-	TR.Debug << "ParsedProtocol::apply   END 0x" << this << std::endl;
 }
 
 std::string
@@ -362,7 +372,7 @@ ParsedProtocol::parse_my_tag(
 	using namespace protocols::moves;
 	using namespace utility::tag;
 
-	TR<<"ParsedProtocol mover with the following movers and filters\n";
+	TR<<"ParsedProtocol mover with the following movers and filters" << std::endl;
 
 	mode_=tag->getOption<string>("mode", "sequence");
 	if(mode_ != "sequence" && mode_ != "random_order" && mode_ != "single_random"){
@@ -402,10 +412,10 @@ ParsedProtocol::parse_my_tag(
 			filter_to_add = new protocols::filters::TrueFilter;
 		}
 
-		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"\n";
+		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"" << std::endl;
 		if( mode_ == "single_random" ){
 			a_probability[ count ] = tag_ptr->getOption< core::Real >( "apply_probability", 1.0/dd_tags.size() );
-			TR<<"and execution probability of "<<a_probability[ count ]<<'\n';
+			TR<<"and execution probability of "<<a_probability[ count ]<<std::endl;
 		}
 		count++;
 
