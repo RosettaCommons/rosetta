@@ -170,7 +170,8 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		temp_tf->push_back( restrict_to_aligned_segments_ );
 		designable_aligned_segments = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
 	}
-
+	if(keep_native_)
+		tr<<"Adding native identities to allowed identities"<<std::endl;
 	tr<<"Allowing the following identities:"<<std::endl;
 
 	core::Size const resi_begin = ( chain_num_ == 0 ? 1 : pose.conformation().chain_begin( chain_num_ ) );
@@ -210,6 +211,8 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				else	keep_aas[ aa ] = true;
 				//std::cout << " " << static_cast<core::chemical::AA>(aa) << " prob=" << prob << ", ";
 			}
+			if (keep_native_)
+				keep_aas[ pose.residue_type(i).aa() ] = true;
 			if( keep_aas[ aa ] )
 				tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 		}
@@ -300,6 +303,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 		tr<<"Seqprof not loaded. Expecting another mover/filter to provide a sequence profile..."<<std::endl;
 	}
 	if( tag->hasOption("min_aa_probability") ) min_aa_probability_ = tag->getOption< Real >("min_aa_probability" );
+	if( tag->hasOption("keep_native") ) keep_native_ = tag->getOption< Real >("keep_native",false );//Include native aa identity in allowed identities even if below min_aa_prob.
 	chain_num_=tag->getOption< Size >("chain_num",1 );
 	if( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
 

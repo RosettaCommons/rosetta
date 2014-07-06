@@ -102,6 +102,7 @@ private:
 	core::sequence::SequenceProfileOP seqprof_;
 	/// @brief mininum probability that an aa must have in the sequence profile to be considered
 	core::Real min_aa_probability_;
+	bool keep_native_;
 	/// @brief whether probability of a given aa to be included needs to be higher than the probability of the aa in the input pose
 	bool prob_larger_current_;
 
