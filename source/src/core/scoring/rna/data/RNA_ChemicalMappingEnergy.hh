@@ -65,17 +65,6 @@ public:
 	) const;
 
 	virtual
-	void
-	eval_atom_derivative(
-	  id::AtomID const & atom_id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2 	) const;
-
-	virtual
 	Distance
 	atomic_interaction_cutoff() const;
 

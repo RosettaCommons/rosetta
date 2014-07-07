@@ -109,34 +109,8 @@ RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose const & pose ) const {
 	return score;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-void
-RNA_ChemicalMappingEnergy::eval_atom_derivative(
-	id::AtomID const & atom_id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
- 	) const
-{
-	//FixMe Constructor's variables must be used or will elicit compilation warnings
-	core::id::AtomID tmp_fixme_atom_id = atom_id;
-	pose::Pose tmp_fixme_pose = pose;
-	EnergyMap tmp_fixme_weights = weights;
-	Vector tmp_fixme_F1 = F1;
-	Vector tmp_fixme_F2 = F2;
-	//FixMe
-
-	// updated above, in setup_for_scoring
-	return;
-}
-
 
 /////////////////////////////////////////////////////////////////////////////////////
-
-
 /// @brief RNA_ChemicalMappingEnergy distance cutoff
 Distance
 RNA_ChemicalMappingEnergy::atomic_interaction_cutoff() const
