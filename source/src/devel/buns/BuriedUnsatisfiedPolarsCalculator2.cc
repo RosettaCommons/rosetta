@@ -229,7 +229,7 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 
 	TR << "Validating buried unsats" << std::endl;
 
-	//bunsats_thorough_check(pose, atom_bur_unsat_);
+	bunsats_thorough_check(pose, atom_bur_unsat_);
 
 
 //    pose.update_residue_neighbors();
