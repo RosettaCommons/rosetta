@@ -3,6 +3,9 @@
 #include "numeric/coordinate_fitting/FlatLookup.hh"
 #include "numeric/alignment/QCP_Kernel.hh"
 
+#ifndef COORDINATEARRRAY_RMSD_FLATLOOKUP_HH_
+#define COORDINATEARRRAY_RMSD_FLATLOOKUP_HH_
+
 namespace numeric
 {
 namespace coordinate_fitting
@@ -62,3 +65,4 @@ class CoordinateArray_RMSD_FlatLookup : public FlatLookup<Real *, std::size_t, R
 
 }
 }
+#endif
