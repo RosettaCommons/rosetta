@@ -41,7 +41,8 @@ public:
 	typedef RestrictOperationsBase parent;
 
 	AlignedThreadOperation();
-	AlignedThreadOperation( std::string const seq );
+	//@brief:undefined constructor
+	//AlignedThreadOperation( std::string const seq );
 
 	virtual ~AlignedThreadOperation();
 

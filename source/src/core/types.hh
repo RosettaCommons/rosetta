@@ -33,7 +33,7 @@ namespace core {
 
 	// Minimum and maximum values of integer scalar type
 	//static const Size SZ_MIN = std::numeric_limits<Size>::min();
-	static const Size SZ_MAX = std::numeric_limits<Size>::max();
+	const Size SZ_MAX = std::numeric_limits<Size>::max();
 
 #ifndef WIN32
   typedef platform::Real Real;

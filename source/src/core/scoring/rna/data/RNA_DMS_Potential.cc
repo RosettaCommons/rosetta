@@ -554,7 +554,8 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 	core::pose::Pose & pose            = *working_pose_;
 	core::pose::Pose & pose_with_probe = *working_pose_with_probe_;
 
-	int const seqpos = pose.pdb_info()->number( i );
+	//Commented unused variable
+	//int const seqpos = pose.pdb_info()->number( i );
 
 	update_virtual_base_if_necessary( pose, i );
 	update_virtual_base_if_necessary( pose_with_probe, i );

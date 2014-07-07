@@ -418,8 +418,10 @@ namespace align {
 		if ( rmsd_screen == 0.0 ) return;
 		runtime_assert( reference_pose_local_ != 0 ); // needs to be setup by apply() above.
 
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
+		//Commented unused variables: full_model_info, res_list
+		//FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		//utility::vector1< Size > const & res_list = full_model_info.res_list();
+
 		utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 		std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
