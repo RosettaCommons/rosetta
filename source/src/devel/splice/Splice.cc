@@ -311,6 +311,8 @@ namespace devel {
 					if (equal_length()) { // if equal_length, don't select different loop lengths
 						if (delta != 0)
 							continue;
+						else
+							TR << "DEBUG:: I'm appending " << torsion_database_[i].source_pdb() << " with delta of " << delta << std::endl;
 					}
 					bool const fit = std::find(delta_lengths_.begin(), delta_lengths_.end(), delta) != delta_lengths_.end();
 
@@ -346,7 +348,12 @@ namespace devel {
 			} // fi dbase_iterate
 			else if (dbase_entry == 0) {
 				if (database_pdb_entry_ == "") //randomize dbase entry
-					dbase_entry = dbase_subset_[(core::Size) (RG.uniform() * dbase_subset_.size() + 1)];
+					{
+							TR << "The dbase_subset size is " << dbase_subset_.size() << std::endl;
+							core::Size entry_no_to_choose = (core::Size) (RG.uniform() * dbase_subset_.size() + 1);
+							TR << "trying to pick entry " << entry_no_to_choose << std::endl; 
+							dbase_entry = dbase_subset_[ entry_no_to_choose ];
+					}
 				//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
 				else { // look for the pdb_entry name
 					for (core::Size count = 1; count <= dbase_subset_.size(); ++count) {
@@ -1275,7 +1282,8 @@ namespace devel {
 
 				//Debugging, remove after, gideonla aug13
 				//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
-				PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations(pose);
+				TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());	
+				PackerTaskOP ptask = tf_in()->create_task_and_apply_taskoperations(pose);
 				protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 				//		pose.conformation().detect_disulfides();
 				//		pose.update_residue_neighbors();
