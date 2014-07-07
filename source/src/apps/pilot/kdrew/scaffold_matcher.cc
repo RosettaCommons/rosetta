@@ -98,6 +98,7 @@ namespace scaffold_matcher{
 	StringOptionKey const hstarget( "scaffold_matcher::hstarget" );
 
 	BooleanOptionKey const hs_repack_only( "scaffold_matcher::hs_repack_only" );
+	RealOptionKey const stub_constraint_strength("scaffold_matcher::stub_constraint_strength");
 }
 
 class HotspotPlacementMover : public moves::Mover {
@@ -133,6 +134,7 @@ main( int argc, char* argv[] )
 		option.add( scaffold_matcher::ancillary_hs_stub_libs, "The path to additional hotspot stub pdbs" ).def( "" );
 		option.add( scaffold_matcher::hstarget, "Target pdb" ).def( "" );
 		option.add( scaffold_matcher::hs_repack_only, "Keep scaffold fixed, only repack sidechains" ).def( true );
+                option.add( scaffold_matcher::stub_constraint_strength, "strength of stub constraints (reasonable: 0.5 - 5.0)" ).def( 5.0 );
 
 		devel::init(argc, argv);
 
@@ -369,7 +371,7 @@ HotspotPlacementMover::apply(
 					score_fxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 
 				core::Real stub_bonus_value = hs_stub->second->bonus_value();
-				core::Real const force_constant = 5.0;
+				core::Real const force_constant = option[ scaffold_matcher::stub_constraint_strength ].value();
 
 				//core::scoring::constraints::ConstraintCOP bbstub_cst = new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, force_constant, "CB","CA","N","C" );
 
