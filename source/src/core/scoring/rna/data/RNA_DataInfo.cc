@@ -37,7 +37,7 @@ namespace data {
 
 
 /// @details Copy constructors must copy all data, not just some...
-RNA_DataInfo::RNA_DataInfo( RNA_DataInfo const & src )
+RNA_DataInfo::RNA_DataInfo( RNA_DataInfo const & src ) : utility::pointer::ReferenceCount(src)
 {
 	*this = src;
 }

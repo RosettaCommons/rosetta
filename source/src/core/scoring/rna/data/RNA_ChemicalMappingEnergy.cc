@@ -25,6 +25,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/id/AtomID.hh>
 
 #include <basic/Tracer.hh>
 
@@ -120,6 +121,13 @@ RNA_ChemicalMappingEnergy::eval_atom_derivative(
 	Vector & F2
  	) const
 {
+	//FixMe Constructor's variables must be used or will elicit compilation warnings
+	core::id::AtomID tmp_fixme_atom_id = atom_id;
+	pose::Pose tmp_fixme_pose = pose;
+	EnergyMap tmp_fixme_weights = weights;
+	Vector tmp_fixme_F1 = F1;
+	Vector tmp_fixme_F2 = F2;
+	//FixMe
 
 	// updated above, in setup_for_scoring
 	return;
