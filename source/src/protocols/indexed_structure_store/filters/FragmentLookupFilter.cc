@@ -231,7 +231,7 @@ bool FragmentLookupFilter::apply( Pose const & pose ) const
 	return false;
 }
 
-void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP const tag,
+void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
                            DataMap &,
                            Filters_map const &,
                            Movers_map const &,

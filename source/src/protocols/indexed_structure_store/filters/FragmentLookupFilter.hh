@@ -129,11 +129,11 @@ public:
 	virtual bool apply( Pose const & pose ) const;
 	
 	// @brief Parse arguments from rosettascripts XML 
-	virtual void parse_my_tag( utility::tag::TagCOP const tag,
-														 DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP tag,
+		 DataMap &,
+		 Filters_map const &,
+		 Movers_map const &,
+		 Pose const & );
 	
 	//Main Filter computation routine
 	core::Size compute( core::pose::Pose const & pose ) const;
