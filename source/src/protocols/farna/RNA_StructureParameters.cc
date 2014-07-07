@@ -27,11 +27,13 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
@@ -59,15 +61,66 @@
 #include <iostream>
 #include <list>
 
-#include <core/chemical/VariantType.hh>
 #include <utility/vector1.hh>
+#include <utility/stream_util.hh>
 
-//Auto Headers
-#include <core/kinematics/tree/Atom.hh>
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Parameter files for FARFAR (following taken from http://rosie.rosettacommons.org/documentation/rna_denovo)
+//
+// You can specify the bounding Watson/Crick base pairs, strand boundaries, and more in a "params file", with lines like
+//
+// CUTPOINT_OPEN  <N1> [ <N2> ... ]                                 means that strands end after nucleotides N1, N2, etc.
+//                                                                   Required if you have more than one strand!
+//
+// STEM    PAIR <N1> <M1> W W A  [  PAIR <N2> <M2>  W W A ... ]     means that residues N1 and M1 should form a
+//                                                                   base pair with their Watson-Crick edges ('W') in an
+//                                                                   antiparallel ('A') orientation; and N2 and M2, etc.. One
+//                                                                   'STEM' line per contiguous helix. This will produce
+//                                                                   constraints drawing the base-paired residues together,
+//                                                                   and will also provide potential connection points between
+//                                                                   strands for multi-strand motifs.
+//
+// OBLIGATE  PAIR <N> <M>  <E>  <F>  <O>                            means that a connection point between strands is forced between residues N and M
+//                                                                  using their edges E and F [permitted values: W ('Watson-Crick'),
+//                                                                  H ('Hoogsteen'), S ('sugar')] and orientation O [permitted
+//                                                                  values: A (antiparallel) or P (parallel), based on normal
+//                                                                  vectors on the two bases]. If modeling a single-strand motif,
+//                                                                  forcing this 'obligate pair' will result in a 'temporary'
+//                                                                  chainbreak, randomly placed in a non-stem residue.
+//                                                                  Typically will not use OBLIGATE except for complex
+//                                                                  topologies like pseudoknots.
+//
+// CUTPOINT_CLOSED <N>                                              Location of a 'temporary' chainbreak in strands. Typically
+//                                                                  will not use except for complex topologies.
+//
+// CHAIN_CONNECTION SEGMENT1 <N1> <N2> SEGMENT2 <M1> <M2>            Used instead of obligate pair -- if we know two strands
+//                                                                   are connected by a pair, but we don't know the residues, can ask
+//                                                                   for some pairing to occur between strands N1-N2 and M1-M2,
+//                                                                   sampled randomly. Typically will not use except for complex topologies.
+//
+// Recent update (2014):
+//
+// Allowing more flexible specification of residue sets which are connected by a base pair:
+//
+//  CHAIN_CONNECTION  SET1 <ints> SET2 <ints>
+//
+// where <ints> can be in the format like "5-7 90 92", etc.
+//
+//
+// This file can be set up via rna_denovo_setup.py, available in tools/rna_tools/.
+//
+// In the near future, this format will be deprecated in favor of direct command-line input of sequence &
+//  secondary structure -- most of the code is worked out in stepwise monte carlo on RNA/proteins, but needs
+//  to be ported over here. -- rhiju, 2014
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 namespace protocols {
@@ -75,7 +128,7 @@ namespace farna {
 
 static numeric::random::RandomGenerator RG(144620);  // <- Magic number, do not change it!
 
-static basic::Tracer tr( "protocols.rna.RNA_StructureParameters" ) ;
+static basic::Tracer TR( "protocols.farna.RNA_StructureParameters" ) ;
 
 using namespace core;
 
@@ -345,51 +398,77 @@ RNA_StructureParameters::get_pairings_from_line(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
+RNA_StructureParameters::save_res_lists_to_chain_connections_and_clear( utility::vector1< Size > & res_list1,
+																																				utility::vector1< Size > & res_list2 ) {
+	if ( res_list1.size() > 0 || res_list2.size() > 0 ) {
+		runtime_assert( res_list1.size() > 0 && res_list2.size() > 0 );
+		chain_connections_.push_back( std::make_pair(res_list1, res_list2) );
+		res_list1.clear();
+		res_list2.clear();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
 RNA_StructureParameters::read_chain_connection( std::istringstream & line_stream ) {
 
 	std::string tag;
 	Size pos1( 0 ), pos2( 0 ), which_segment( 1 );
 
+	bool legacy_segment_input( false );
 	utility::vector1< Size > res_list1, res_list2;
-
 	while ( !line_stream.fail() ) {
 
-		//Find the next non-whitespace character
-		char checkchar( ' ' );
-		while ( checkchar == ' ' && !line_stream.fail()) checkchar = line_stream.get();
+		line_stream >> tag;
+		if ( line_stream.fail() ) break;
 
-		if (line_stream.fail()  ) break;
-		line_stream.putback( checkchar );
+		if ( tag == "SEGMENT1" ) {
+			which_segment = 1;
+			legacy_segment_input = true;
+			save_res_lists_to_chain_connections_and_clear( res_list1, res_list2 );
+			continue;
+		} else if ( tag == "SEGMENT2" ) {
+			which_segment = 2;
+			legacy_segment_input = true;
+			continue;
+		} else if ( tag == "SET1" ) {
+			which_segment = 1;
+			legacy_segment_input = false;
+			save_res_lists_to_chain_connections_and_clear( res_list1, res_list2 );
+			continue;
+		} else if ( tag == "SET2" ) {
+			which_segment = 2;
+			legacy_segment_input = false;
+			continue;
+		}
 
-		if ( checkchar == 'S' ) {
+		if ( legacy_segment_input ) {
+			runtime_assert( is_int( tag ) );
+			pos1 = int_of( tag );
 			line_stream >> tag;
-
-			if ( tag == "SEGMENT1" ) {
-				which_segment = 1;
-			} else if ( tag == "SEGMENT2" ) {
-				which_segment = 2;
-			} else {
-				utility_exit_with_message(  "Looking for SEGMENT1 or SEGMENT2 in CHAIN_CONNECTION line, but got " + tag );
+			runtime_assert( is_int( tag ) );
+			pos2 = int_of( tag );
+			runtime_assert( pos2 >= pos1 );
+			for (Size i = pos1; i <= pos2; i++ ){
+				if (which_segment == 1 ) res_list1.push_back( i );
+				if (which_segment == 2 ) res_list2.push_back( i );
 			}
-
-		} else { //Better be two numbers.
-
-			if (!line_stream.fail()  ){
-				line_stream >> pos1 >> pos2;
-				runtime_assert( pos2 >= pos1 );
-				for (Size i = pos1; i <= pos2; i++ ){
-					if (which_segment == 1 ) res_list1.push_back( i );
-					if (which_segment == 2 ) res_list2.push_back( i );
-				}
+		} else {
+			bool string_is_ok( false );
+			std::vector< int > ints = ints_of( tag, string_is_ok );
+			runtime_assert( string_is_ok );
+			for (Size m = 0; m < ints.size(); m++ ){
+				if (which_segment == 1 ) res_list1.push_back( ints[m] );
+				if (which_segment == 2 ) res_list2.push_back( ints[m] );
 			}
 		}
-	}
 
-	if ( res_list1.size() == 0 || res_list2.size() == 0 ){
-		utility_exit_with_message(  "Did not specify SEGMENT1 or SEGMENT2 in CHAIN_CONNECTION line?" );
 	}
+	save_res_lists_to_chain_connections_and_clear( res_list1, res_list2 );
 
-	chain_connections_.push_back( std::make_pair(res_list1, res_list2) );
+	if ( chain_connections_.size() == 0 ){
+		utility_exit_with_message(  "Did not specify SEGMENT1 or SEGMENT2 or SET1 or SET2 in CHAIN_CONNECTION line?" );
+	}
 
 }
 
@@ -398,7 +477,7 @@ RNA_StructureParameters::read_chain_connection( std::istringstream & line_stream
 void
 RNA_StructureParameters::read_parameters_from_file( std::string const & filename ) {
 
-	tr << "Reading RNA parameters file: " << filename << std::endl;
+	TR << "Reading RNA parameters file: " << filename << std::endl;
 
 	Size a;
 
@@ -415,7 +494,6 @@ RNA_StructureParameters::read_parameters_from_file( std::string const & filename
 
 		std::istringstream line_stream( line );
 		line_stream >> tag;
-
 		if (line_stream.fail() ) continue; //Probably a blank line.
 
 		if (tag == "OBLIGATE" ) {
@@ -637,7 +715,7 @@ RNA_StructureParameters::sample_alternative_chain_connection( pose::Pose & pose,
 
 	//Now shift around the jump positions. Hmm, this is potentially dangerous.
 	Size ntries( 0 );
-	Size const MAX_TRIES( 1000 );
+	Size const MAX_TRIES( 10000 );
 	bool success( false );
 
 	// Get ready for a new fold-tree
@@ -652,28 +730,32 @@ RNA_StructureParameters::sample_alternative_chain_connection( pose::Pose & pose,
 
 	// IS this necessary? Or does which_jump == which_jump_in_list?
 	Size which_jump_in_list( 0 );
-	for ( which_jump_in_list = 1; which_jump_in_list <= num_jumps; which_jump_in_list++ ){
-		if ( Size( jump_points( 1, which_jump_in_list ) ) == jump_pos1 &&
-				 Size( jump_points( 2, which_jump_in_list ) ) == jump_pos2 ) break;
-		if ( Size( jump_points( 1, which_jump_in_list ) ) == jump_pos2 &&
-				 Size( jump_points( 2, which_jump_in_list ) ) == jump_pos1 ) break;
+	for ( Size n = 1; n <= num_jumps; n++ ){
+		if ( Size( jump_points( 1, n ) ) == jump_pos1 &&
+				 Size( jump_points( 2, n ) ) == jump_pos2 ) {
+			which_jump_in_list = n;
+			break;
+		}
+		if ( Size( jump_points( 1, n ) ) == jump_pos2 &&
+				 Size( jump_points( 2, n ) ) == jump_pos1 ) {
+			which_jump_in_list = n;
+			break;
+		}
 	}
-	if (which_jump_in_list > num_jumps ) {
+	if (which_jump_in_list == 0 ) {
 		utility_exit_with_message( "Problem with fold tree change --> Jump " + I(3, jump_pos1) + " " + I(3, jump_pos2) );
 	}
 
 	while( !success && ntries++ < MAX_TRIES ){
-			Size const new1( static_cast<Size>( RG.uniform() * res_list1.size() )  + 1 );
-			Size const new2( static_cast<Size>( RG.uniform() * res_list2.size() )  + 1 );
-			jump_points( 1, which_jump_in_list ) = res_list1[ new1 ];
-			jump_points( 2, which_jump_in_list ) = res_list2[ new2 ];
+			jump_points( 1, which_jump_in_list ) = RG.random_element( res_list1 );
+			jump_points( 2, which_jump_in_list ) = RG.random_element( res_list2 );
 			success = fold_tree.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps,
 																										jump_points, cuts, 1, false /*verbose*/ );
 	}
 
 	fill_in_default_jump_atoms( fold_tree, pose );
 
-	//	tr << "Changing fold_tree ==> " << fold_tree << std::endl;
+	//	TR << "Changing fold_tree ==> " << fold_tree << std::endl;
 
 	if (success) pose.fold_tree( fold_tree );
 
@@ -711,8 +793,8 @@ RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & po
 	setup_jumps( pose );
 	setup_chainbreak_variants( pose );
 
-	//	tr << pose.annotated_sequence() << std::endl;
-	//	tr << pose.fold_tree() << std::endl;
+	//	TR << pose.annotated_sequence() << std::endl;
+	//	TR << pose.fold_tree() << std::endl;
 
 
 }
@@ -822,7 +904,6 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		}
 	}
 
-
 	//////////////////////////////////////////////////////////////////////
 	// Jump residues.
 	//////////////////////////////////////////////////////////////////////
@@ -863,6 +944,10 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		// should typically be Watson-Crick stems, but this setup is general )
 		// Note that there might be three stems defined, but we only want two --
 		//  following picks a random set of two.
+		//
+		// Following has been ad hoc for a long time -- can be made more systematic
+		//  based on fold_tree build up that has been worked out in stepwise monte carlo.
+		//
 		FArray1D < bool > used_set( num_stem_pairing_sets, false );
 		Size num_sets_left( num_stem_pairing_sets );
 
@@ -1120,7 +1205,7 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1'", j ), pose ) ) ) continue;
 
 		if ( !rna_low_resolution_potential.check_forming_base_pair(pose,i,j) ) {
-			tr << "MISSING BASE PAIR " << i << " " << j << std::endl;
+			TR << "MISSING BASE PAIR " << i << " " << j << std::endl;
 			return false;
 		}
 
@@ -1166,7 +1251,7 @@ RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 
 		//Basic check that its canonical...
 		if ( !( rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation == 'A' ) ) {
-			tr <<  "skipping constraints for non-canonical base pair: " << I(3,i) << " " << I(3,j) << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << std::endl;
+			TR <<  "skipping constraints for non-canonical base pair: " << I(3,i) << " " << I(3,j) << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << std::endl;
 			continue;
 		}
 

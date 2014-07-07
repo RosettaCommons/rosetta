@@ -145,6 +145,10 @@ toolbox::AllowInsertOP
 												 bool const in_stem );
 
 	void
+	save_res_lists_to_chain_connections_and_clear( utility::vector1< Size > & res_list1,
+																							 utility::vector1< Size > & res_list2 );
+
+	void
 	read_chain_connection( std::istringstream & line_stream );
 
 	void

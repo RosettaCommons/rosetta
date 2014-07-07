@@ -15,8 +15,6 @@
 #ifndef INCLUDED_utility_stream_util_hh
 #define INCLUDED_utility_stream_util_hh
 
-// AUTO-REMOVED #include <utility/vector1.hh>
-
 #include <map>
 #include <list>
 #include <ostream>
@@ -27,8 +25,6 @@
 
 
 namespace utility {
-
-
 
 /// -------------------------------------------------------------------
 /// Predefined functions for Tracer IO
@@ -57,6 +53,17 @@ std::ostream & operator <<(std::ostream & os, utility::vector1<T> const & v) {
 		os << v[i];
 		if ( i < v.size() ) os << ", ";
 	}
+	os << "]";
+	return os;
+}
+
+/// @brief Output function for std::pair object.
+template <typename T1, typename T2>
+std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v) {
+	os << "[";
+	os << v.first;
+	os << ", ";
+	os << v.second;
 	os << "]";
 	return os;
 }

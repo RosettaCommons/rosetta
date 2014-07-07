@@ -429,7 +429,7 @@ public:
 
 
 	/// @brief Reorders the FoldTree to start at residue  <start_residue>
-	bool reorder( int const start_residue );
+	bool reorder( int const start_residue, bool const verbose_if_fail = true );
 	//	void refold_reorder( int const begin_res, int const end_res,
 	//										 ObjexxFCL::FArray1D_bool const & jump_moved );
 

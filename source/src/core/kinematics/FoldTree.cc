@@ -570,19 +570,19 @@ FoldTree::insert_residue_by_chemical_bond(
     assert( is_cutpoint( seqpos - 1 ) );
 	int const old_size( nres() );
 	//int const new_jump_number( num_jump() + 1 );
-    
+
 	utility::vector1< int > old2new( old_size, 0 );
 	for ( int i=1; i<= old_size; ++i ) {
 		if ( i<seqpos ) old2new[i] = i;
 		else old2new[i] = i+1;
 	}
 	int anchor_pos = old2new[ anchor_residue ];
-    
+
 	for ( iterator it = edge_list_.begin(), ite = edge_list_.end(); it != ite; ++it ) {
 		it->start() = old2new[ it->start() ];
 		it->stop () = old2new[ it->stop () ];
 	}
-    
+
 	add_edge( Edge( anchor_pos, seqpos, anchor_atom, root_atom ) ); // different from add_edge call in insert_residue_by_jump, here Edge constructor assumes it's a chemical edge
 	assert( check_fold_tree() );
 	new_topology = true;
@@ -1109,7 +1109,7 @@ FoldTree::upstream_jump_residue( int const jump_number ) const
 /// successfully, start_residue needs to be a vertex in the
 /// original fold tree.
 bool
-FoldTree::reorder( int const start_residue )
+FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true */ )
 {
 	if ( new_topology ) update_nres(); // need nres
 
@@ -1152,19 +1152,21 @@ FoldTree::reorder( int const start_residue )
 	}// while ( new_member )
 
 	if ( new_edge_list_.size() != edge_list_.size() ) {
-		TR.Error << "FoldTree::reorder( " << start_residue << " ) failed, new/old edge_list_ size mismatch" << std::endl;
-		TR.Error << edge_list_.size() << ' ' << new_edge_list_.size() << std::endl;
-		TR.Error << *this;
+		if ( verbose_if_fail ) {
+			TR.Error << "FoldTree::reorder( " << start_residue << " ) failed, new/old edge_list_ size mismatch" << std::endl;
+			TR.Error << edge_list_.size() << ' ' << new_edge_list_.size() << std::endl;
+			TR.Error << *this;
 
-		// TR.Error << "show old edge list " << std::endl;
-		// for( FoldTree::const_iterator it(edge_list_.begin()), end(edge_list_.end()); it!=end; ++it){
-		// 	TR.Error << *it << std::endl;
-		// }
+			// TR.Error << "show old edge list " << std::endl;
+			// for( FoldTree::const_iterator it(edge_list_.begin()), end(edge_list_.end()); it!=end; ++it){
+			// 	TR.Error << *it << std::endl;
+			// }
 
-		// TR.Error << "show new edge list " << std::endl;
-		// for( FoldTree::const_iterator it(new_edge_list_.begin()), end(new_edge_list_.end()); it!=end; ++it){
-		// 	TR.Error << *it << std::endl;
-		// }
+			// TR.Error << "show new edge list " << std::endl;
+			// for( FoldTree::const_iterator it(new_edge_list_.begin()), end(new_edge_list_.end()); it!=end; ++it){
+			// 	TR.Error << *it << std::endl;
+			// }
+		}
 
 		return false;
 	}
@@ -1397,11 +1399,9 @@ FoldTree::tree_from_jumps_and_cuts(
 		add_edge( jump_point_in(1,i), jump_point_in(2,i), i );
 	}
 
-	reorder(root_in);
-	//  This assertion is out of place:
-	//	assert( check_fold_tree() ); // tree should be valid now
-	//	return true;
-	//  the interface description says that the function returns false if it fails...
+	bool reorder_success = reorder(root_in, verbose);
+	if ( !reorder_success ) return false;
+
 	return check_fold_tree();
 }
 
