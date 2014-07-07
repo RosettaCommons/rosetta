@@ -17,21 +17,25 @@
 //
 //  Uses new RDAT 'feature' output format.
 //
-//
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_BasePairClassifier.hh>
+#include <protocols/viewer/viewers.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -49,6 +53,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
+#include <basic/database/open.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -61,10 +66,12 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/file/FileName.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/conversions.hh>
+#include <numeric/constants.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -82,6 +89,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
@@ -98,20 +106,12 @@ using namespace basic::options::OptionKeys;
 using namespace core::chemical::rna;
 
 using utility::vector1;
+using utility::tools::make_vector1;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
-
-///////////////////////////////////////////////////////////////////////////
-std::string get_WC_atom( core::chemical::AA const & res_type ){
-	using namespace core::chemical;
-	std::string WC_atom( "" );
-	if ( res_type == na_rad ) WC_atom = " N1 ";
-	if ( res_type == na_rcy ) WC_atom = " N3 ";
-	if ( res_type == na_rgu ) WC_atom = " N1 ";
-	if ( res_type == na_ura ) WC_atom = " N3 ";
-	return WC_atom;
-}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -131,6 +131,7 @@ save_feature( 	vector1< std::string > & feature_names,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// following could move to protocols/, along with rna_base_pair classification code?
 void
 update_edge_paired(  Size const i, Size const k,
 										 vector1< bool > & wc_edge_paired,
@@ -147,6 +148,7 @@ update_edge_paired(  Size const i, Size const k,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// following could move to protocols/, along with rna_base_pair classification code?
 void
 get_rna_base_pairing_status( core::pose::Pose & pose,
 														 vector1< bool > & wc_edge_paired,
@@ -183,27 +185,6 @@ get_rna_base_pairing_status( core::pose::Pose & pose,
 
 }
 
-///////////////////////////////////////////////////////////////////////
-bool
-check_hbonded( pose::Pose const & pose,
-							 Size const & i /*residue number*/,
-							 std::string const & atom_name,
-							 scoring::hbonds::HBondSetOP hbond_set,
-							 bool is_acceptor ){
-
-	using namespace core::scoring::hbonds;
-	// need to know what atoms could be in this nt.
-	// go through list of donors and list of acceptors
-
-	// check in HBond List
-	for (Size n = 1; n <= hbond_set->nhbonds(); n++ ) {
-		HBond const & hbond( hbond_set->hbond( n ) );
-		if ( is_acceptor && hbond.acc_res() == i && pose.residue_type(i).atom_name( hbond.acc_atm() ) == atom_name )			return true;
-		if ( !is_acceptor && hbond.don_res() == i && pose.residue_type(i).atom_name( hbond.don_hatm() ) == atom_name )			return true;
-	}
-	return false;
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 Size
@@ -216,7 +197,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	using namespace core::kinematics;
 	using namespace core::id;
 	using namespace protocols::farna;
-	using namespace chemical::rna;
+	using namespace core::chemical::rna;
 
 	vector1< std::string > feature_names;
 	vector1< char > chains;
@@ -230,20 +211,16 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	vector1<bool> wc_edge_paired, hoog_edge_paired, sugar_edge_paired, is_bulged;
 	get_rna_base_pairing_status( pose, wc_edge_paired, hoog_edge_paired, sugar_edge_paired, is_bulged );
 
-	//	(*scorefxn)(pose); // may need to create a dummy scorefxn with hbond_sc and score the pose...
-	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
-	hbond_options->use_hb_env_dep( false );
-	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
-	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
-
 	// sasa calculation
 	AtomID_Map< Real > atom_sasa;
 	utility::vector1< Real > rsd_sasa;
 	Real const probe_radius( 1.4 );
 	scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, true );
 
-	vector1< char  > nt_names = utility::tools::make_vector1( 'a', 'c', 'g', 'u' );
+	core::scoring::rna::data::RNA_DMS_Potential rna_dms_potential;
+	rna_dms_potential.initialize( pose );
 
+	vector1< char  > nt_names = utility::tools::make_vector1( 'a', 'c', 'g', 'u' );
 	Size const num_nt = nt_names.size();
 	runtime_assert( num_nt == 4 );
 
@@ -280,21 +257,21 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 
 
 		// What is hydrogen bonded?
+		bool ade_n1_hbonded = is_nt[1] && rna_dms_potential.check_hbonded( pose, i, " N1 ", true /*acceptor*/ );
+
 		for ( Size m = 1; m <= num_nt; m++ ){
 
 			// need an instance of this nucleotide to play around with.
 			// This better have RNA residue types in it.
 			ResidueTypeSet const & rsd_set = rsd.residue_type_set();
-			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( chemical::aa_from_oneletter_code( nt_names[m] ) );
+			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( core::chemical::aa_from_oneletter_code( nt_names[m] ) );
 			ResidueType const & rsd_type = *rsd_types[1];
-
-			bool ade_n1_hbonded = is_nt[1] && check_hbonded( pose, i, " N1 ", hbond_set, true /*acceptor*/ );
 
 			// what is hydrogen bonded? Acceptors.
 			AtomIndices accpt_pos = rsd_type.accpt_pos();
 			for ( Size k = 1; k <= accpt_pos.size(); k++ ){
 				std::string atom_name = rsd_type.atom_name( accpt_pos[ k ] );
-				bool hbonded = is_nt[m] && check_hbonded( pose, i, atom_name, hbond_set, true /*acceptor*/ );
+				bool hbonded = is_nt[m] && rna_dms_potential.check_hbonded( pose, i, atom_name, true /*acceptor*/ );
 				ObjexxFCL::strip_whitespace(atom_name);
 				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded", hbonded);
 
@@ -302,11 +279,20 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 				if (m==1) save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded"+"_and_N1_hbonded", hbonded && ade_n1_hbonded);
 			}
 
+			if ( m == 1 ) {
+				bool ade_n1_chbonded( false );
+				if ( is_nt[1] ) ade_n1_chbonded = rna_dms_potential.check_chbonded( pose, i, " N1 " );
+				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_N1_chbonded", ade_n1_chbonded );
+				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_N1_hbonded_or_chbonded",
+											ade_n1_chbonded || ade_n1_hbonded );
+			}
+
+
 			// what is hydrogen bonded? Donor hydrogens.
 			AtomIndices Hpos_polar = rsd_type.Hpos_polar();
 			for ( Size k = 1; k <= Hpos_polar.size(); k++ ){
 				std::string atom_name = rsd_type.atom_name( Hpos_polar[ k ] );
-				bool hbonded = is_nt[m] && check_hbonded( pose, i, atom_name, hbond_set, false /*acceptor --> check for polar hydrogen names*/ );
+				bool hbonded = is_nt[m] && rna_dms_potential.check_hbonded( pose, i, atom_name, false /*acceptor --> check for polar hydrogen names*/ );
 				ObjexxFCL::strip_whitespace(atom_name);
 				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded", hbonded);
 
@@ -322,7 +308,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 			// need an instance of this nucleotide to play around with.
 			// This better have RNA residue types in it.
 			ResidueTypeSet const & rsd_set = rsd.residue_type_set();
-			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( chemical::aa_from_oneletter_code( nt_names[m] ) );
+			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( core::chemical::aa_from_oneletter_code( nt_names[m] ) );
 			ResidueType const & rsd_type = *rsd_types[1];
 			for ( Size k = 1; k <= rsd_type.nheavyatoms(); k++ ){
 				std::string atom_name = rsd_type.atom_name( k );
@@ -334,6 +320,59 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 				ObjexxFCL::strip_whitespace(atom_name);
 				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_SASA", sasa_value);
 			}
+		}
+
+		// chi, delta
+		for ( Size m = 1; m <= num_nt; m++ ){
+			Real chi = is_nt[m] ? pose.chi( i ) : 0.0;
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_chi", chi);
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_is_syn", (chi < 0.0) );
+		}
+		for ( Size m = 1; m <= num_nt; m++ ){
+			Real delta = is_nt[m] ? pose.delta( i ) : 0.0;
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_delta", delta);
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_is_south", ( delta > 120.0) );
+		}
+
+		// occlusion of pseudo-methyl at N1 -- towards fitting a potential.
+		utility::vector1< Distance > probe_dists = make_vector1( 0.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.5 );
+		utility::vector1< Distance > const shells = make_vector1( 0.0, 2.0, 4.0, 6.0, 8.0 );
+		//utility::vector1< Real > const shells = make_vector1( 0.0, 3.0, 6.0, 9.0 );
+		for ( Size m = 1; m <= probe_dists.size(); m++ ){
+			utility::vector1< Real > occupancy_densities( (shells.size()-1), 0.0 ); // atoms per A^3.
+			Real const probe_dist = probe_dists[ m ];
+			if ( is_nt[ 1 ] ){
+				core::Vector const probe_xyz = rna_dms_potential.get_probe_xyz( pose.residue( i ), probe_dist );
+				rna_dms_potential.get_occupancy_densities( occupancy_densities, pose, i /*for exclusion*/, probe_xyz, shells );
+			}
+			for ( Size k = 1; k <= occupancy_densities.size(); k++ ){
+				std::string const tag =  is_nt_tag[1]+"_and_pseudomethyldist"+F(3,1,probe_dist)+"_shell_"+I( 1, shells[k] ) + "-" + I( 1, shells[k+1]);
+				save_feature( feature_names, feature_vals, feature_counter, tag, occupancy_densities[k] );
+			}
+		}
+
+		// actual computation of a potential around pseudo-methyl atom.
+		vector1< ScoreFunctionOP > probe_scorefxns = make_vector1( rna_dms_potential.get_probe_scorefxn( false /* soft_rep*/, false /* just_fa_atr*/  ),
+																															 rna_dms_potential.get_probe_scorefxn( true, false  ),
+																															 rna_dms_potential.get_probe_scorefxn( true, true ) );
+		vector1< std::string > scorefxntags = make_vector1( "hard", "soft", "justatrrep_soft" );
+		for ( Size k = 1; k <= probe_scorefxns.size(); k++ ){
+			Real pseudo_methyl_plus_oxygen_energy( 0 );
+			for ( Size m = 1; m <= probe_dists.size(); m++ ){
+				Real const probe_dist = probe_dists[ m ];
+				Real binding_energy( 0.0 );
+				if ( is_nt[ 1 ] ){
+					core::Vector const probe_xyz = rna_dms_potential.get_probe_xyz( pose.residue( i ), probe_dist );
+					binding_energy = rna_dms_potential.get_binding_energy( i, probe_xyz, *probe_scorefxns[k] );
+				}
+				if ( probe_dist == 3.5 || probe_dist == 5.5 ) pseudo_methyl_plus_oxygen_energy += binding_energy;
+				std::string const tag =  is_nt_tag[1]+"_and_pseudomethyldist"+F(3,1,probe_dist)+"_"+scorefxntags[k]+"_energy";
+				save_feature( feature_names, feature_vals, feature_counter, tag, binding_energy );
+			}
+
+			if ( is_nt[ 1 ] ) std::cout << std::endl;
+			std::string const tag =  is_nt_tag[1]+"_and_pseudomethyl_plus_oxygen_"+scorefxntags[k]+"_energy";
+			save_feature( feature_names, feature_vals, feature_counter, tag, pseudo_methyl_plus_oxygen_energy );
 		}
 
 		if ( num_features == 0 ) num_features = feature_counter; // initialize num_features.
@@ -388,7 +427,26 @@ create_rdat_header( utility::io::ozstream & out, pose::Pose & pose ){
 
 	std::string pdb_name = pose.pdb_info()->name();
 	out << "NAME\t" << pdb_name << std::endl;
-	out << "SEQUENCE\t" << pose.sequence() << std::endl;
+
+	out << "SEQUENCE\t";
+
+	int prev_resnum( 0 );
+	bool found_rna( false );
+	for (Size i = 1; i <= pose.total_residue(); i++) {
+		Residue const & rsd = pose.residue( i );
+		if ( !rsd.is_RNA() ) continue;
+		int resnum = pose.pdb_info()->number(i);
+		if ( !found_rna ) {
+			found_rna = true;
+			prev_resnum = resnum - 1;
+		}
+		if ( (resnum > prev_resnum) && ( resnum - prev_resnum ) < 20 ) {
+			for ( int n = prev_resnum+1; n <= resnum-1; n++ ) out << "n";
+			out << rsd.name1();
+			prev_resnum = resnum;
+		}
+	}
+	out << std::endl;
 
 	// later can replace this with actual structure...
 	std::string structure;
@@ -439,7 +497,7 @@ rhiju_pdbstats()
 	}
 
 	// later hope to replace this with fa_standard, which should soon include RNA, DNA, & protein.
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	Size count( 0 );
 	std::string outfile;
@@ -456,6 +514,8 @@ rhiju_pdbstats()
 
 		count++;
 		std::cout << "Doing input file " << I(4,count) << " ==> " << pdb_file << std::endl;
+		std::cout << "Read in pose sequence: " << pose.annotated_sequence() << std::endl;
+		pose.dump_pdb( "dump.pdb" );
 
 		if ( option[out::file::o].user() ) outfile  = option[ out::file::o ];
 		else outfile = pdb_file + ".rdat";
@@ -475,6 +535,18 @@ rhiju_pdbstats()
 
 }
 
+
+///////////////////////////////////////////////////////////////
+void*
+my_main( void* )
+{
+	rhiju_pdbstats();
+	protocols::viewer::clear_conformation_viewers();
+	exit( 0 );
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] )
@@ -484,9 +556,12 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 
 		core::init::init(argc, argv);
-		rhiju_pdbstats();
 
-		exit( 0 );
+		option[ OptionKeys::in::file::extra_res_fa ].push_back( utility::file::FileName( basic::database::full_name( "chemical/residue_type_sets/fa_standard//residue_types/extra/C.params" ) ) );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
+
+		protocols::viewer::viewer_main( my_main );
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

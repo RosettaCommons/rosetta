@@ -24,3 +24,6 @@ MM_ATOM_TYPE_SET fa_standard
 ../fa_standard/residue_types/nucleic/rna_nonnatural/ICY.params
 ../fa_standard/residue_types/nucleic/rna_nonnatural/1AP.params
 
+## Extras
+../fa_standard/residue_types/extra/C.params
+

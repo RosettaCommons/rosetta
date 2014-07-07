@@ -22,7 +22,7 @@
 // Project headers
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -115,7 +115,7 @@ public:
 	Energy_base_pair_list const scored_base_pair_list() const{ return scored_base_pair_list_; }
 	Energy_base_stack_list const scored_base_stack_list() const{ return scored_base_stack_list_; }
 
-	Real get_data_score( RNA_DataInfo const & rna_data_info ) const;
+	Real get_data_score( rna::data::RNA_DataInfo const & rna_data_info ) const;
 
 private:
 

@@ -197,6 +197,24 @@ public:
 	bool
 	use_orientation_dep_rna_ch_o_bonds(conformation::Residue const & don_rsd, conformation::Residue const & acc_rsd) const;
 
+	/// @details Atom pair interaction energy; returns true if the interaction energy
+	/// is nonzero.  The f2 vector returned when update_deriv is true is the force on
+	/// the hydrogen atom; f2 for the acceptor is -1 * f2 for the hydrogen.  f1 may
+	/// be computed by taking the cross product of f2 with the coordinate of the
+	/// acceptor/hydrogen respectively.
+	bool
+	get_atom_atom_carbon_hbond_energy(
+	  Size const don_h_atm,
+		conformation::Residue const & don_rsd,
+		Size const acc_atm,
+		conformation::Residue const & acc_rsd,
+		Real & energy,
+		bool const update_deriv = false,
+		Vector & f2 = DUMMY_VECTOR
+	) const;
+
+	Real max_dis2() const{ return max_dis2_; }
+
 private:
 
 	bool
@@ -256,22 +274,6 @@ private:
 
 	bool
 	atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
-
-	/// @details Atom pair interaction energy; returns true if the interaction energy
-	/// is nonzero.  The f2 vector returned when update_deriv is true is the force on
-	/// the hydrogen atom; f2 for the acceptor is -1 * f2 for the hydrogen.  f1 may
-	/// be computed by taking the cross product of f2 with the coordinate of the
-	/// acceptor/hydrogen respectively.
-	bool
-	get_atom_atom_carbon_hbond_energy(
-	  Size const don_h_atm,
-		conformation::Residue const & don_rsd,
-		Size const acc_atm,
-		conformation::Residue const & acc_rsd,
-		Real & energy,
-		bool const update_deriv = false,
-		Vector & f2 = DUMMY_VECTOR
-	) const;
 
 
 private:

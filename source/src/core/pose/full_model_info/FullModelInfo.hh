@@ -80,6 +80,7 @@ public:
 	utility::vector1< Size > const & fixed_domain_map() const;
 	utility::vector1< Size > const & extra_minimize_res() const;
 	utility::vector1< Size > const & sample_res() const;
+	utility::vector1< Size > const & working_res() const;
 	utility::vector1< Size > const & calc_rms_res() const;
 	utility::vector1< Size > const & rna_syn_chi_res() const;
 	utility::vector1< Size > const & rna_terminal_res() const;

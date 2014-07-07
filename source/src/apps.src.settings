@@ -184,6 +184,8 @@ sources = {
     "public/rna_util": [
 	    "rna_thread",
 	    "rna_suitename",
+	    "rna_features",
+	    "rna_graft",
 	],
 	"public/surface_docking": [
 	    "surface_docking",

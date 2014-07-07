@@ -325,8 +325,11 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_base_stagger"] = rna_base_stagger;
 	name2score_type_[ "rna_base_stack"] = rna_base_stack;
 	name2score_type_[ "rna_base_stack_axis"] = rna_base_stack_axis;
+
 	name2score_type_[ "rna_data_base"] = rna_data_base;
 	name2score_type_[ "rna_data_backbone"] = rna_data_backbone;
+	name2score_type_[ "rna_chem_map"] = rna_chem_map;
+
 	name2score_type_[ "rna_mg"] = rna_mg;
 	name2score_type_[ "rna_mg_rep"] = rna_mg_rep;
 	name2score_type_[ "rna_mg_indirect"] = rna_mg_indirect;
@@ -346,7 +349,6 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "loop_close"] = loop_close;
 	name2score_type_[ "missing_res"] = missing_res;
-	name2score_type_[ "swm_rmsd"] = swm_rmsd;
 	name2score_type_[ "bulge_bonus"] = bulge_bonus;
 	name2score_type_[ "num_hbonds"] = num_hbonds;
 	name2score_type_[ "num_stacks"] = num_stacks;

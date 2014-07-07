@@ -94,7 +94,7 @@ namespace sampling {
 		if ( pose_list_.size() == 0 ) pose_list_ = make_vector1( pose.clone() );
 
 		setup_minimizers();
-		minimize_scorefxn_ = get_minimize_scorefxn( pose, scorefxn_, modeler_options_ );
+		setup_scorefxns( pose );
 
 		do_full_minimizing( pose );
 		do_clustering( pose );
@@ -142,8 +142,9 @@ namespace sampling {
 
 			close_chainbreaks( pose, mm );
 
-			output_pose_list.push_back( pose.clone() );
 			TR << "Score minimized from " << F(8,3, score_original) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << std::endl;
+			( *final_scorefxn_ )( pose );
+			output_pose_list.push_back( pose.clone() );
     }
 
 		pose_list_ = output_pose_list;
@@ -160,6 +161,16 @@ namespace sampling {
     bool const use_nblist( true );
     minimizer_options_ = new MinimizerOptions( modeler_options_->min_type(), modeler_options_->min_tolerance(), use_nblist, false, false );
     minimizer_options_->nblist_auto_update( true );
+	}
+
+	void
+	StepWiseMinimizer::setup_scorefxns( pose::Pose const & pose ) {
+		using namespace core::scoring;
+		minimize_scorefxn_ = get_minimize_scorefxn( pose, scorefxn_, modeler_options_ );
+
+		// kind of ridiculous -- only here because rna_chem_map is so slow right now.
+		final_scorefxn_ = minimize_scorefxn_->clone();
+		final_scorefxn_->set_weight( rna_chem_map, scorefxn_->get_weight( rna_chem_map ) );
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -179,9 +179,6 @@ namespace sampling {
 	Real
 	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose );
 
-	Size
-	get_number_missing_residue_connections( pose::Pose & pose );
-
 	bool
 	is_at_terminus( pose::Pose const & pose, Size const i );
 

@@ -89,7 +89,6 @@ OPT_KEY( Real, suppress_bp_constraint )
 OPT_KEY( String,  refine_silent_file )
 OPT_KEY( String,  jump_library_file )
 OPT_KEY( String,  params_file )
-OPT_KEY( String,  data_file )
 OPT_KEY( String,  cst_file )
 OPT_KEY( IntegerVector, chunk_res ) // deprecated
 OPT_KEY( Boolean, allow_bulge )
@@ -219,7 +218,7 @@ rna_denovo_test()
 	}
 	if ( option[ use_1jj2_torsions ]() ) rna_de_novo_protocol.set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
 	if ( option[params_file].user() )	rna_de_novo_protocol.set_rna_params_file( in_path + option[ params_file ] );
-	if ( option[data_file].user() )	rna_de_novo_protocol.set_rna_data_file( in_path + option[ data_file ] );
+	if ( option[OptionKeys::rna::data_file].user() )	rna_de_novo_protocol.set_rna_data_file( in_path + option[ OptionKeys::rna::data_file ] );
 	if ( option[lores_scorefxn].user() )	rna_de_novo_protocol.set_lores_scorefxn( option[ lores_scorefxn ] );
 	if ( option[ rna_lores_linear_chainbreak_weight ].user() ) rna_de_novo_protocol.set_linear_chainbreak_weight( option[ rna_lores_linear_chainbreak_weight ]() );
 	if ( option[ rna_lores_chainbreak_weight ].user() ) rna_de_novo_protocol.set_chainbreak_weight( option[ rna_lores_chainbreak_weight ]() );
@@ -333,7 +332,6 @@ try {
 	NEW_OPT( staged_constraints, "Apply constraints in stages depending on sequence separation", false );
 	NEW_OPT( jump_library_file, "Input file for jumps", "sampling/rna/1jj2_RNA_jump_library.dat" );
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
-	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent or -s) ... use -input_res instead!", blank_size_vector );
 	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
@@ -357,7 +355,7 @@ try {
 
 	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
 	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
-	//	option.add_relevant( basic::options::OptionKeys::rna::jump_database );
+	option.add_relevant( basic::options::OptionKeys::rna::data_file );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

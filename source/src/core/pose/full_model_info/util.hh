@@ -114,6 +114,9 @@ namespace full_model_info {
 	Size
 	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose );
 
+	Size
+	get_number_missing_residue_connections( pose::Pose & pose );
+
 
 } //full_model_info
 } //pose

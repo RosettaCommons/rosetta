@@ -150,7 +150,6 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	rna_data_file_( "" ),
 	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
 	rna_structure_parameters_( RNA_StructureParametersOP( new RNA_StructureParameters ) ),
-	rna_data_reader_( RNA_DataReaderOP( new RNA_DataReader ) ),
 	output_lores_silent_file_( false ),
 	filter_lores_base_pairs_( false ),
 	filter_lores_base_pairs_early_( false ),

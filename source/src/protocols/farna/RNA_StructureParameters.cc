@@ -20,7 +20,7 @@
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>

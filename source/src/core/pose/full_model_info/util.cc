@@ -296,6 +296,8 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		if ( sequence_char != pose.residue_type( n ).name1() ) {
 			TR << res_list << std::endl;
 			TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
+			TR << "POSE SEQUENCE " << pose.sequence() << std::endl;
+			TR << "FULL MODEL SEQUENCE " << sequence << std::endl;
 			return false;
 		}
 	}
@@ -534,6 +536,37 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose ){
 		return figure_out_chain_numbers_from_full_model_info_const( pose )[ resnum ];
 	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_number_missing_residue_connections( pose::Pose & pose ) {
+
+		using namespace core::pose::full_model_info;
+		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
+		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
+		utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
+		utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
+
+		Size nmissing( 0 );
+		Size const nres = pose_domain_map.size();
+		for ( Size n = 1; n <= nres; n++ ){
+			if ( fixed_domain_map[ n ] == 0 ){
+				if ( pose_domain_map[ n ] == 0 && working_res.has_value( n ) ) nmissing++;
+			} else if ( n < nres &&
+									!cutpoint_open.has_value( n ) &&
+									fixed_domain_map[ n+1 ] > 0 &&
+									fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
+				if ( pose_domain_map[ n ] == 0 ||
+						 pose_domain_map[ n+1 ] == 0 ||
+						 ( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {
+					nmissing++;
+				}
+			}
+		}
+
+		return nmissing;
+	}
+
 
 } //full_model_info
 } //pose

@@ -164,7 +164,6 @@
 #include <core/scoring/packing/SurfEnergyCreator.hh>
 #include <core/scoring/rna/RG_Energy_RNACreator.hh>
 #include <core/scoring/rna/RNA_BulgeEnergyCreator.hh>
-#include <core/scoring/rna/RNA_DataBackboneEnergyCreator.hh>
 #include <core/scoring/rna/RNA_FullAtomStackingEnergyCreator.hh>
 #include <core/scoring/rna/RNA_JR_SuiteEnergyCreator.hh>
 #include <core/scoring/rna/RNA_LJ_BaseEnergyCreator.hh>
@@ -177,6 +176,8 @@
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
 #include <core/scoring/rna/StackElecEnergyCreator.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh>
+#include <core/scoring/rna/data/RNA_ChemicalMappingEnergyCreator.hh>
+#include <core/scoring/rna/data/RNA_DataBackboneEnergyCreator.hh>
 #include <core/scoring/loop_graph/LoopCloseEnergyCreator.hh>
 #include <core/scoring/sym_e/symECreator.hh>
 #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
@@ -440,7 +441,8 @@ static EnergyMethodRegistrator< scoring::packing::SurfVolEnergyCreator > SurfVol
 static EnergyMethodRegistrator< scoring::packing::SurfEnergyCreator > SurfEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RG_Energy_RNACreator > RG_Energy_RNACreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_BulgeEnergyCreator > RNA_BulgeEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::rna::RNA_DataBackboneEnergyCreator > RNA_DataBackboneEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::data::RNA_ChemicalMappingEnergyCreator > RNA_ChemicalMappingEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::data::RNA_DataBackboneEnergyCreator > RNA_DataBackboneEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomStackingEnergyCreator > RNA_FullAtomStackingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_JR_SuiteEnergyCreator > RNA_JR_SuiteEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_LJ_BaseEnergyCreator > RNA_LJ_BaseEnergyCreator_registrator;

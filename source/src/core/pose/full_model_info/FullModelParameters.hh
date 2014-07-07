@@ -104,6 +104,12 @@ namespace full_model_info {
 		utility::vector1< Size >
 		conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const;
 
+		bool
+		has_conventional_residue( int const res_num ) const;
+
+		bool
+		has_conventional_residue( int const res_num, char const chain ) const;
+
 		Size
 		conventional_to_full( int const res_num ) const;
 

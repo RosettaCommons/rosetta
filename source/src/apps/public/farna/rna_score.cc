@@ -19,6 +19,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/database/open.hh>
@@ -39,6 +42,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/stepwise/sampling/util.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
 // C++ headers
@@ -46,10 +50,12 @@
 #include <string>
 
 // option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -78,7 +84,7 @@ rna_score_test()
 	using namespace protocols::stepwise::full_model_info;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
 
 	// input stream
 	PoseInputStreamOP input;
@@ -139,6 +145,8 @@ rna_score_test()
 		if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
 	}
 
+	scoring::rna::data::RNA_DataInfoOP rna_data_info_save;
+	core::scoring::rna::data::RNA_ChemicalMappingEnergy rna_chemical_mapping_energy;
 	pose::Pose pose,start_pose;
 
 	Size i( 0 );
@@ -161,7 +169,6 @@ rna_score_test()
                         parameters.setup_base_pair_constraints( pose );
                         //rna_minimizer.set_allow_insert( parameters.allow_insert() );
                 }
-
 
 		if ( !option[ in::file::silent ].user() ) cleanup( pose );
 
@@ -187,7 +194,7 @@ rna_score_test()
 		//if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 		// do it
-		if ( ! option[ score::just_calc_rmsd]() ){
+		if ( ! option[ score::just_calc_rmsd]() && ! option[ OptionKeys::rna::data_file ].user() ){
 			(*scorefxn)( pose );
 		}
 
@@ -201,9 +208,9 @@ rna_score_test()
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
 
-			Real const rms_no_bulges = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose, true );
-			std::cout << "All atom rmsd over non-bulged moving residues: " << tag << " " << rms_no_bulges << std::endl;
-			s.add_energy( "non_bulge_rms", rms_no_bulges );
+			// Real const rms_no_bulges = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose, true );
+			// std::cout << "All atom rmsd over non-bulged moving residues: " << tag << " " << rms_no_bulges << std::endl;
+			// s.add_energy( "non_bulge_rms", rms_no_bulges );
 
 			// Stem RMSD
 			if ( option[params_file].user() ) {
@@ -215,6 +222,18 @@ rna_score_test()
 				}
 			}
 		}
+
+		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
+		if ( option[ OptionKeys::rna::data_file ].user() ) { // clumsy to read this in from scratch each time.
+			if ( i == 1 ){
+				rna_data_info_save = protocols::farna::get_rna_data_info( pose, option[ OptionKeys::rna::data_file ] ).clone();
+			} else {
+				scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info() = *rna_data_info_save;
+			}
+			pose.update_residue_neighbors();
+			s.add_energy(  "rna_chem_map", rna_chemical_mapping_energy.calculate_energy( pose ) );
+		}
+
 
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
@@ -262,6 +281,7 @@ main( int argc, char * argv [] )
 				option.add_relevant( in::file::input_res );
 				option.add_relevant( full_model::cutpoint_open );
 				option.add_relevant( score::just_calc_rmsd );
+				option.add_relevant( rna::data_file );
 				NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
 				NEW_OPT( params_file, "Input file for pairings", "" );
 
@@ -269,13 +289,13 @@ main( int argc, char * argv [] )
         // setup
         ////////////////////////////////////////////////////////////////////////////
         core::init::init(argc, argv);
+				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
+				option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
 
         ////////////////////////////////////////////////////////////////////////////
         // end of setup
         ////////////////////////////////////////////////////////////////////////////
-        //protocols::viewer::viewer_main( my_main );
-		rna_score_test();
-		exit( 0 );
+        protocols::viewer::viewer_main( my_main );
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cout << "caught exception " << e.msg() << std::endl;
 				return -1;

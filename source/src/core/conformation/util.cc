@@ -868,9 +868,6 @@ get_root_atomno(
 	int const forward( 1 );
 	int const backward( -1 );
 
-	// if ( rsd.is_RNA() ){
-	// 	return rsd.atom_index( chemical::rna::default_jump_atom( rsd ) );
-	// }
 	if ( dir == forward ) {
 		// N for proteins, P for DNA
 		if ( rsd.is_polymer() ) {
@@ -942,9 +939,6 @@ get_root_residue_root_atomno(
 			kinematics::Edge const & edge( fold_tree.jump_edge( i ) );
 			if ( seqpos == Size(edge.start()) && edge.has_atom_info() ) {
 				root_atomno = rsd.atom_index( edge.upstream_atom() );
-				// tracer was actually getting too big...
-				//				TR.Debug <<	"Using jump " << i <<
-				//				" anchor atom as atomtree root " << edge.upstream_atom() << std::endl;
 				break;
 			}
 		}

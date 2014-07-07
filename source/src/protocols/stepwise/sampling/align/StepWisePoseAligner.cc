@@ -152,7 +152,7 @@ namespace align {
 			char const pose_nt = pose.sequence()[ n-1 ];
 			if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ) {
 				if ( reference_pose_local_->sequence()[ res_list_in_reference[n] - 1 ] != pose_nt ) {
-					// need to alignize to protein... should be trivial.
+					// need to generalize to protein... should be trivial.
 					pose::rna::mutate_position( *reference_pose_local_, res_list_in_reference[n], pose_nt );
 				}
 			} else {
@@ -174,6 +174,7 @@ namespace align {
 		utility::vector1< Size > res_list_in_reference;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			Size const reference_pose_res = reference_pose_res_list.index( res_list[ n ] );
+			runtime_assert( reference_pose_res > 0 );
  			res_list_in_reference.push_back( reference_pose_res );
 		}
 		return res_list_in_reference;
@@ -419,12 +420,13 @@ namespace align {
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
+		utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 		std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				add_to_atom_id_map_after_checks( coordinate_constraint_atom_id_map,
 																				 pose.residue_type( n ).atom_name( q ),
-																				 n, res_list[ n ],
+																				 n, res_list_in_reference[ n ],
 																				 pose, *reference_pose_local_ );
 			}
 		}

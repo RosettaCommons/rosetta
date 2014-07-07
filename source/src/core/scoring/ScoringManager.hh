@@ -18,7 +18,6 @@
 #include <core/scoring/ScoringManager.fwd.hh>
 
 // Package headers
-//#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/scoring/PairEPotential.fwd.hh>
 #include <core/scoring/dna/DNA_BasePotential.fwd.hh>
 #include <core/scoring/dna/DNABFormPotential.fwd.hh>
@@ -34,7 +33,6 @@
 #include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
-//#include <core/scoring/InterchainPotential.fwd.hh>
 #include <core/scoring/ProQPotential.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
 #include <core/scoring/GenBornPotential.fwd.hh>
@@ -47,6 +45,7 @@
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
+#include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
 #include <core/scoring/P_AA.fwd.hh>
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
@@ -171,6 +170,8 @@ public:
 	rna::RNA_SuitePotential const & get_RNA_SuitePotential() const;
 
 	rna::chemical_shift::RNA_ChemicalShiftPotential const & get_RNA_ChemicalShiftPotential() const;
+
+	rna::data::RNA_DMS_Potential & get_RNA_DMS_Potential() const;
 
 	dna::DirectReadoutPotential const & get_DirectReadoutPotential() const;
 
@@ -313,6 +314,7 @@ private:
 	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
 	mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
+	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable P_AAOP p_aa_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;

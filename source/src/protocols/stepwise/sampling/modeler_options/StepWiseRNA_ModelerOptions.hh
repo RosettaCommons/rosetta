@@ -185,6 +185,9 @@ namespace modeler_options {
 		bool const & tether_jump() const { return tether_jump_; }
 		void set_tether_jump( bool const & setting ){ tether_jump_ = setting; }
 
+		bool const & turn_off_rna_chem_map_during_optimize() const { return turn_off_rna_chem_map_during_optimize_; }
+		void set_turn_off_rna_chem_map_during_optimize( bool const & setting ){ turn_off_rna_chem_map_during_optimize_ = setting; }
+
 	protected:
 
 		void
@@ -231,6 +234,7 @@ namespace modeler_options {
 		bool minimizer_allow_variable_bond_geometry_;
 		core::Real minimizer_vary_bond_geometry_frequency_;
 		bool tether_jump_;
+		bool turn_off_rna_chem_map_during_optimize_;
 	};
 
 } //modeler_options

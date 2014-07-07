@@ -102,6 +102,7 @@ namespace modeler_options {
 		minimizer_allow_variable_bond_geometry_ = false;
 		minimizer_vary_bond_geometry_frequency_ = 0.0;
 		tether_jump_ = true;
+		turn_off_rna_chem_map_during_optimize_ = true;
 	}
 
 	/// @brief clone the options
@@ -152,6 +153,7 @@ namespace modeler_options {
 		minimizer_vary_bond_geometry_frequency_ = src.minimizer_vary_bond_geometry_frequency_;
 		minimizer_allow_variable_bond_geometry_ = src.minimizer_allow_variable_bond_geometry_;
 		tether_jump_ = src.tether_jump_;
+		turn_off_rna_chem_map_during_optimize_ = src.turn_off_rna_chem_map_during_optimize_;
 
 		return *this;
 	}
@@ -200,6 +202,7 @@ namespace modeler_options {
 		allow_base_pair_only_centroid_screen_ = option[ OptionKeys::stepwise::rna::allow_base_pair_only_centroid_screen ]();
 		minimizer_rename_tag_ = option[ OptionKeys::stepwise::rna::minimizer_rename_tag ]();
 		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
+		turn_off_rna_chem_map_during_optimize_ = option[ OptionKeys::stepwise::rna::turn_off_rna_chem_map_during_optimize ]();
 
 	}
 

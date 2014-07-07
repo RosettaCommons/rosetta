@@ -199,6 +199,17 @@ possibly_canonical_strict( chemical::AA const & aa1,  chemical::AA const & aa2 )
 					 ( aa1 == na_ura && aa2 == na_rad )  );
 }
 
+///////////////////////////////////////////////////////////////////////////
+std::string get_WC_atom( core::chemical::AA const & res_type ){
+	using namespace core::chemical;
+	std::string WC_atom( "" );
+	if ( res_type == na_rad ) WC_atom = " N1 ";
+	if ( res_type == na_rcy ) WC_atom = " N3 ";
+	if ( res_type == na_rgu ) WC_atom = " N1 ";
+	if ( res_type == na_ura ) WC_atom = " N3 ";
+	return WC_atom;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_watson_crick_base_pair_atoms(

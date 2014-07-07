@@ -30,6 +30,10 @@ namespace stepwise {
 namespace full_model_info {
 
 	core::pose::PoseOP
+	get_pdb_with_full_model_info( std::string const input_file,
+																core::chemical::ResidueTypeSetCAP rsd_set );
+
+	core::pose::PoseOP
 	get_pdb_and_cleanup( std::string const input_file,
 											 core::chemical::ResidueTypeSetCAP rsd_set );
 
@@ -117,6 +121,19 @@ namespace full_model_info {
 	add_virtual_sugar_res( core::pose::Pose & pose,
 												 vector1< core::Size > const & res_list,
 												 vector1< core::Size > const & virtual_sugar_res );
+
+	utility::vector1< core::Size >
+	figure_out_working_res( utility::vector1< core::Size > const & domain_map,
+													utility::vector1< core::Size > const & sample_res );
+
+	utility::vector1< core::Size >
+	figure_out_sample_res( utility::vector1< core::Size > const & domain_map,
+												 utility::vector1< core::Size > const & working_res );
+
+	void
+	check_working_res( utility::vector1< core::Size > const & working_res,
+										 utility::vector1< core::Size > const & domain_map,
+										 utility::vector1< core::Size > const & sample_res );
 
 } //full_model_info
 } //stepwise

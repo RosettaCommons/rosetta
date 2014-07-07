@@ -573,3 +573,6 @@ residue_types/membrane/EMB.params
 residue_types/lipids/sphingosine.params
 ### Fatty Acids
 residue_types/lipids/linoleate.params
+
+## Extras
+residue_types/extra/C.params

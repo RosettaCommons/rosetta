@@ -13,7 +13,7 @@
 -z2 0.97
 -dump_motifs true
 -output_file output.file
--data_file data.file
+-motifs::data_file data.file
 -motifs::minimize false
 -minimize_dna false
 -enzdes::run_ligand_motifs true

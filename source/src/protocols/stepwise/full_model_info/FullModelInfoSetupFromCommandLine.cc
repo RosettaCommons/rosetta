@@ -18,6 +18,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
@@ -25,6 +26,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/types.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -52,6 +54,19 @@ namespace full_model_info {
 
 
 	//////////////////////////////////////////////////////////////////////////////////////
+	core::pose::PoseOP
+	get_pdb_with_full_model_info( std::string const input_file,
+																core::chemical::ResidueTypeSetCAP rsd_set ) {
+
+		core::pose::PoseOP pose = get_pdb_and_cleanup( input_file, rsd_set );
+
+		// a bit wasteful, since this checks command-line options over and over again, but hey this works.
+		fill_full_model_info_from_command_line( *pose );
+
+		return pose;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
 	// might be better to move these into core (e.g., core::pose::full_model_info ),
 	// or into a new protocols/full_model_setup/ directory.
 	core::pose::PoseOP
@@ -65,6 +80,7 @@ namespace full_model_info {
 		make_sure_full_model_info_is_setup( *input_pose );
 		return input_pose;
 	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	// currently have stuff we need for RNA... put any protein cleanup here too.
@@ -96,6 +112,30 @@ namespace full_model_info {
 			silent_file_data.read_file( input_silent_files[n] );
 			silent_file_data.begin()->fill_pose( *pose, *rsd_set );
 			input_poses.push_back( pose );
+		}
+
+		std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = option[ in::file::input_res ].resnum_and_chain();
+		vector1< Size > const & input_res_list = input_resnum_and_chain.first;
+		if ( input_res_list.size() ) {
+			vector1< char > input_chain_list = input_resnum_and_chain.second;
+			Size input_res_count = 0;
+			for ( Size n = 1; n <= input_poses.size(); n++ ) {
+				Pose & pose = *input_poses[ n ];
+				PDBInfoOP pdb_info = new PDBInfo( pose );
+				vector1< Size > input_res_for_pose;
+				vector1< char > input_chain_for_pose;
+				for ( Size k = 1; k <= pose.total_residue(); k++ ){
+					input_res_count++;
+					runtime_assert( input_res_count <= input_res_list.size() );
+					Size const & number_in_full_model = input_res_list[ input_res_count ];
+					input_res_for_pose.push_back( number_in_full_model );
+					input_chain_for_pose.push_back( input_chain_list[ input_res_count ] );
+				}
+				pdb_info->set_numbering( input_res_for_pose );
+				pdb_info->set_chains(    input_chain_for_pose );
+				pose.pdb_info( pdb_info );
+			}
+			runtime_assert( input_res_count == input_res_list.size() );
 		}
 
 		if ( input_poses.size() == 0 ) input_poses.push_back( new Pose ); // just a blank pose for now.
@@ -243,9 +283,10 @@ namespace full_model_info {
 
 		if ( option[ full_model::cutpoint_open ].user() ) cutpoint_open_in_full_model = full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
 		vector1< Size > extra_minimize_res = full_model_parameters->conventional_to_full( option[ full_model::extra_min_res ].resnum_and_chain() );
-		vector1< Size > input_res_list = full_model_parameters->conventional_to_full( option[ in::file::input_res ].resnum_and_chain() );
-		bool const get_res_list_from_pdb = !option[ in::file::input_res ].user();
 		vector1< Size > sample_res = full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
+		vector1< Size > working_res = full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
+		vector1< Size > input_res_list; // will be filled in below.
+		bool const get_res_list_from_pdb = true; //!option[ in::file::input_res ].user();
 
 		vector1< vector1< Size > > pose_res_lists;
 		vector1< Size > domain_map( desired_sequence.size(), 0 );
@@ -283,7 +324,9 @@ namespace full_model_info {
 				}
 				if ( cutpoint_open_in_full_model.has_value( res_list[ i ]) ) continue;
 				if ( (res_list[ i+1 ] == res_list[ i ] + 1) &&
-						 pose.fold_tree().is_cutpoint( i ) ){
+						 pose.fold_tree().is_cutpoint( i ) &&
+						 !pose.residue_type( i   ).has_variant_type( core::chemical::CUTPOINT_LOWER ) &&
+					 	 !pose.residue_type( i+1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
 					TR << "There appears to be a strand boundary at " << res_list[ i ] << " so adding to cutpoint_in_full_model." << std::endl;
 					cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
 				}
@@ -303,11 +346,15 @@ namespace full_model_info {
 														 full_model_parameters->conventional_to_full( option[ full_model::virtual_sugar_res ].resnum_and_chain() ) );
 		}
 
+		if ( sample_res.size() == 0 ) sample_res = figure_out_sample_res( domain_map, working_res ); // everything that is not fixed is sampleable (unless -sample_res explicitly specified).
+		if ( working_res.size() == 0 ) working_res = figure_out_working_res( domain_map, sample_res );
+		check_working_res( working_res, domain_map, sample_res );
 
 		full_model_parameters->set_parameter( FIXED_DOMAIN,  domain_map );
 		full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
 		full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
 		full_model_parameters->set_parameter_as_res_list( SAMPLE, sample_res );
+		full_model_parameters->set_parameter_as_res_list( WORKING, working_res );
 		full_model_parameters->set_parameter_as_res_list( CALC_RMS, full_model_parameters->conventional_to_full( option[ full_model::calc_rms_res ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() ) );
@@ -549,6 +596,47 @@ namespace full_model_info {
 			runtime_assert( i == 1 || pose.fold_tree().is_cutpoint( i - 1 ) );
 			runtime_assert( i == pose.total_residue() || pose.fold_tree().is_cutpoint( i ) );
 			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", i );
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	figure_out_working_res( utility::vector1< Size > const & domain_map,
+													utility::vector1< Size > const & sample_res ){
+		vector1< Size > working_res;
+		for ( Size n = 1; n <= domain_map.size(); n++ ){
+			if ( domain_map[ n ] == 0  && !sample_res.has_value( n ) ) continue;
+			working_res.push_back( n );
+		}
+		return working_res;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	// 'default': sample any residues that are not inputted as fixed PDBs.
+	utility::vector1< Size >
+	figure_out_sample_res( utility::vector1< Size > const & domain_map,
+												 utility::vector1< Size > const & working_res ){
+		vector1< Size > sample_res;
+		for ( Size n = 1; n <= domain_map.size(); n++ ){
+			if ( working_res.size() > 0 && !working_res.has_value( n ) ) continue;
+			if ( domain_map[ n ] == 0  ) sample_res.push_back( n );
+		}
+		return sample_res;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	void
+	check_working_res( utility::vector1< Size > const & working_res,
+										 utility::vector1< Size > const & domain_map,
+										 utility::vector1< Size > const & sample_res ){
+		for ( Size i = 1; i <= sample_res.size(); i++ ){
+			runtime_assert( working_res.has_value( sample_res[ i ] ) );
+		}
+		for ( Size n = 1; n <= domain_map.size(); n++ ){
+			if ( domain_map[ n ] > 0 ) {
+				runtime_assert( working_res.has_value( n ) );
+				runtime_assert( !sample_res.has_value( n ) );
+			}
 		}
 	}
 

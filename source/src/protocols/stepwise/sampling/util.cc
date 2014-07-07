@@ -695,36 +695,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		return rmsd;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Size
-	get_number_missing_residue_connections( pose::Pose & pose ) {
-
-		using namespace core::pose::full_model_info;
-		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
-		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
-		utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
-
-		Size nmissing( 0 );
-		Size const nres = pose_domain_map.size();
-		for ( Size n = 1; n <= nres; n++ ){
-			if ( fixed_domain_map[ n ] == 0 ){
-				if ( pose_domain_map[ n ] == 0 ) nmissing++;
-			} else if ( n < nres &&
-									!cutpoint_open.has_value( n ) &&
-									fixed_domain_map[ n+1 ] > 0 &&
-									fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
-				if ( pose_domain_map[ n ] == 0 ||
-						 pose_domain_map[ n+1 ] == 0 ||
-						 ( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {
-					nmissing++;
-				}
-			}
-		}
-
-		return nmissing;
-	}
-
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	is_at_terminus( core::pose::Pose const & pose, Size const i ){
@@ -2175,6 +2145,7 @@ get_minimize_scorefxn( core::pose::Pose const & pose,
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
 	//	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 ); // original SWA protein value.
 	minimize_scorefxn->set_weight( linear_chainbreak, 5.0 ); // unify with RNA.
+	if ( options->turn_off_rna_chem_map_during_optimize() )  minimize_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
 	if ( options->cart_min() && ( minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
 	if ( options->mapfile_activated() && minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	return minimize_scorefxn;
@@ -2285,6 +2256,7 @@ initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 			sample_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 		}
 	}
+	if ( modeler_options->turn_off_rna_chem_map_during_optimize() )  sample_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
 
 	return sample_scorefxn;
 }
@@ -2320,6 +2292,7 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 	// these also take too long to compute.
 	pack_scorefxn->set_weight( fa_stack, 0.0 );
 	pack_scorefxn->set_weight( ch_bond, 0.0 );
+	pack_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
 
 	return pack_scorefxn;
 }

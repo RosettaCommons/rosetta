@@ -18,7 +18,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -76,38 +75,6 @@ MissingEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 // scoring
 /////////////////////////////////////////////////////////////////////////////
-
-Size
-MissingEnergy::get_number_missing_residue_connections( pose::Pose & pose ) const {
-	
-	using namespace core::pose::full_model_info;
-	
-	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
-	utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
-	utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
-	
-	Size nmissing( 0 );
-	Size const nres = pose_domain_map.size();
-	for ( Size n = 1; n <= nres; n++ ){
-		if ( fixed_domain_map[ n ] == 0 ){
-			if ( pose_domain_map[ n ] == 0 ) nmissing++;
-		} else if ( n < nres &&
-				   !cutpoint_open.has_value( n ) &&
-				   fixed_domain_map[ n+1 ] > 0 &&
-				   fixed_domain_map[ n+1 ] != fixed_domain_map[ n ] ) {
-			if ( pose_domain_map[ n ] == 0 ||
-				pose_domain_map[ n+1 ] == 0 ||
-				( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {
-				nmissing++;
-			}
-		}
-	}
-	
-	return nmissing;
-}
-
-	
-///////////////////////////////////////////////////////////////////////////////
 void
 MissingEnergy::finalize_total_energy(
 	pose::Pose & pose,
@@ -115,7 +82,7 @@ MissingEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 
-	Size const num_missing_residue_connections = get_number_missing_residue_connections( pose );
+	Size const num_missing_residue_connections = pose::full_model_info::get_number_missing_residue_connections( pose );
 	totals[ missing_res ] = num_missing_residue_connections;
 
 } // finalize_total_energy
@@ -139,7 +106,7 @@ MissingEnergy::eval_atom_derivative(
 core::Size
 MissingEnergy::version() const
 {
-	return 1; // Initial versioning
+	return 2; // Initial versioning
 }
 
 

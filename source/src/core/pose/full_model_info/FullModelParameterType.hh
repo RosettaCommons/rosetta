@@ -54,11 +54,12 @@ namespace full_model_info {
 	enum FullModelParameterType {
 		NO_TYPE = 0,
 		CALC_RMS,
-		CHAIN, // Starts with 1 for first chain, then 2, ... note must agree with CUTPOINT_OPEN.
-		CUTPOINT_OPEN, // Just points where a full pose would have fold-tree cutpoints.
-		FIXED_DOMAIN,  // Non-zero over residues that are fixed (e.g., from input pdbs). Cannot delete or split these.
+		CHAIN,          // Starts with 1 for first chain, then 2, ... note must agree with CUTPOINT_OPEN.
+		CUTPOINT_OPEN,  // Just points where a full pose would have fold-tree cutpoints.
+		FIXED_DOMAIN,   // Non-zero over residues that are fixed (e.g., from input pdbs). Cannot delete or split these.
 		EXTRA_MINIMIZE, // Specified by user for job -- can go into 'fixed domains'
-		SAMPLE, // Whatever we can add/delete. Cannot include any FIXED_DOMAIN.
+		SAMPLE,         // Whatever we can add/delete. Cannot include any FIXED_DOMAIN.
+		WORKING,        // Everything that might be modeled [SAMPLE + FIXED_DOMAIN]
 
 		// next-section: RNA-specific. Eventually expand.
 		RNA_SYN_CHI,

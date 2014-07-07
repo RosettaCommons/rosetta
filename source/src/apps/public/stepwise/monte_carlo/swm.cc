@@ -21,6 +21,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
+#include <protocols/farna/RNA_DataReader.cc> // temporary, for scoring RNA chemical mapping data. Move into core?
 #include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
@@ -82,18 +83,19 @@ stepwise_monte_carlo()
 
 	PoseOP native_pose, align_pose;
 	if ( option[ in::file::native ].user() )  {
-		native_pose = get_pdb_and_cleanup( option[ in::file::native ](), rsd_set );
-		align_pose  = native_pose;
+		align_pose = native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
 	}
-	if ( option[ OptionKeys::stepwise::align_pdb ].user() ) align_pose = get_pdb_and_cleanup(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
+	if ( option[ OptionKeys::stepwise::align_pdb ].user() )	align_pose = get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
 
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
+	protocols::farna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ]() ); // temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
 	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+	if ( scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) scorefxn->set_weight( rna_chem_map, 1.0 );
 
 	// a unit test specific for two helix test case. leave this in here for now.
 	//	test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
@@ -202,12 +204,14 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
+		option.add_relevant( OptionKeys::rna::data_file );
 
 		core::init::init(argc, argv);
 
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping.
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
 

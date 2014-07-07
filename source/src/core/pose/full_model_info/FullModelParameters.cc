@@ -119,7 +119,7 @@ namespace full_model_info {
 	FullModelParameters::convert_to_parameter_values_at_res( utility::vector1< Size > const & res_list ){
 		utility::vector1< Size > parameter_values_at_res( size(), 0 );
 		for ( Size n = 1; n <= res_list.size(); n++ ){
-			runtime_assert ( res_list[n] > 0 && res_list[n] < size() );
+			runtime_assert ( res_list[n] >= 1 && res_list[n] <= size() );
 			parameter_values_at_res[ res_list[n] ] = 1;
 		}
 		return parameter_values_at_res;
@@ -264,6 +264,15 @@ namespace full_model_info {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	FullModelParameters::has_conventional_residue( int const res_num ) const {
+		for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ){
+			if ( res_num == conventional_numbering_[ n ] )	return true;
+		}
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	FullModelParameters::conventional_to_full( std::pair< utility::vector1< int >, utility::vector1< char > > const & resnum_and_chain ) const {
 		utility::vector1< Size > res_list_in_full_numbering;
@@ -290,6 +299,17 @@ namespace full_model_info {
 		}
 		runtime_assert( found_match );
 		return res_num_in_full_numbering;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	FullModelParameters::has_conventional_residue( int const res_num, char const chain ) const {
+		for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ){
+			if ( res_num != conventional_numbering_[ n ] ) continue;
+			if ( chain != ' ' && conventional_chains_.size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
+			return true;
+		}
+		return false;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

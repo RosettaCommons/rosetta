@@ -341,7 +341,7 @@ cluster_outfile_test(){
 	stepwise_clusterer.set_max_decoys( max_decoys );
 
 	utility::vector1< Size > const working_calc_rms_res = convert_to_working_res( option[ OptionKeys::full_model::calc_rms_res ](),
-																																								option[ basic::options::OptionKeys::stepwise::working_res ]() );
+																																								option[ basic::options::OptionKeys::full_model::working_res ]() );
 	stepwise_clusterer.set_calc_rms_res( working_calc_rms_res );
 
 	stepwise_clusterer.set_force_align( true );
@@ -393,9 +393,9 @@ calc_rms_test(){
 	utility::vector1< Size > calc_rms_res_ = option[ OptionKeys::full_model::calc_rms_res ]();
 
 	// Do we need to slice up native pose?
-	if ( option[  basic::options::OptionKeys::stepwise::working_res ].user() ) {
-		pdbslice( *native_pose, option[  basic::options::OptionKeys::stepwise::working_res ]() );
-		calc_rms_res_ = convert_to_working_res( calc_rms_res_, option[  basic::options::OptionKeys::stepwise::working_res ]() );
+	if ( option[  basic::options::OptionKeys::full_model::working_res ].user() ) {
+		pdbslice( *native_pose, option[  basic::options::OptionKeys::full_model::working_res ]() );
+		calc_rms_res_ = convert_to_working_res( calc_rms_res_, option[  basic::options::OptionKeys::full_model::working_res ]() );
 	}
 
 	while ( input->has_another_pose() ) {
@@ -477,7 +477,7 @@ main( int argc, char * argv [] )
 	option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 	option.add_relevant( OptionKeys::stepwise::use_green_packer );
 	option.add_relevant( OptionKeys::stepwise::fixed_res );
-	option.add_relevant( OptionKeys::stepwise::working_res );
+	option.add_relevant( OptionKeys::full_model::working_res );
 	option.add_relevant( OptionKeys::stepwise::align_pdb );
 	NEW_OPT( rebuild, "rebuild", false );
 	NEW_OPT( cluster_test, "cluster", false );

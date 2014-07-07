@@ -15,7 +15,8 @@
 
 #include <protocols/farna/RNA_DataReader.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -65,14 +66,21 @@ private:
 	void
 	setup_rna_data( core::pose::Pose & pose );
 
+	void
+	read_reactivity_info( std::istringstream & line_stream, core::scoring::rna::data::RNA_ReactivityType const type );
 
 	private:
 
-	core::scoring::rna::RNA_DataInfo rna_data_info_;
+	core::scoring::rna::data::RNA_DataInfoOP rna_data_info_;
 	ObjexxFCL::FArray1D< bool> backbone_burial_;
 	ObjexxFCL::FArray1D< bool> backbone_exposed_;
 
+	core::pose::full_model_info::FullModelParametersCOP full_model_parameters_;
+
 };
+
+core::scoring::rna::data::RNA_DataInfo const &
+get_rna_data_info( core::pose::Pose & pose, std::string const & rna_data_file );
 
 
 } //farna

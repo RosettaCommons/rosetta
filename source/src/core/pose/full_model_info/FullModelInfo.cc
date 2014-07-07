@@ -166,6 +166,10 @@ FullModelInfo::sample_res() const {
 	return full_model_parameters_->get_res_list( SAMPLE );
 }
 utility::vector1< Size > const &
+FullModelInfo::working_res() const {
+	return full_model_parameters_->get_res_list( WORKING );
+}
+utility::vector1< Size > const &
 FullModelInfo::calc_rms_res() const {
 	return full_model_parameters_->get_res_list( CALC_RMS );
 }

@@ -76,6 +76,9 @@ possibly_canonical( chemical::AA const & aa1,  chemical::AA const & aa2 );
 bool
 possibly_canonical_strict( chemical::AA const & aa1,  chemical::AA const & aa2 );
 
+std::string
+get_WC_atom( core::chemical::AA const & res_type );
+
 void
 get_watson_crick_base_pair_atoms(
 	 chemical::AA const & aa1,

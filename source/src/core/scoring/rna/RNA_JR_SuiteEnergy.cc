@@ -36,6 +36,7 @@ using namespace core::pose::rna;
 namespace core {
 namespace scoring {
 namespace rna {
+
 /// @details This must return a fresh instance,
 /// never an instance already in use
 methods::EnergyMethodOP

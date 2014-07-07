@@ -16,7 +16,7 @@
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <core/chemical/rna/util.hh>
 
 // Package headers
@@ -323,11 +323,11 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 }
 
 /////////////////////////////////////////////////////////////////////
-Real RNA_FilteredBaseBaseInfo::get_data_score( RNA_DataInfo const & rna_data_info ) const
+Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_data_info ) const
 {
 	Real rna_data_score( 0.0 );
 
-	utility::vector1< RNA_Datum > const & rna_data( rna_data_info.rna_data() );
+	utility::vector1< data::RNA_Datum > const & rna_data( rna_data_info.rna_data() );
 
 	for ( Size n = 1; n <= rna_data.size(); n++ ){
 

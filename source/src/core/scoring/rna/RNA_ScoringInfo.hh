@@ -24,7 +24,7 @@
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -57,10 +57,6 @@ public:
   {
     return new RNA_ScoringInfo( *this );
   }
-
-    // Undefinded, comented out to make python bindings complile
-	//void
-	//update( pose::Pose const & pose );
 
   Size
   size() const {
@@ -111,10 +107,10 @@ public:
 	rna::RNA_FilteredBaseBaseInfo const &
 	rna_filtered_base_base_info() const { return rna_filtered_base_base_info_; }
 
-	rna::RNA_DataInfo &
+	rna::data::RNA_DataInfo &
 	rna_data_info() { return rna_data_info_; }
 
-	rna::RNA_DataInfo const &
+	rna::data::RNA_DataInfo const &
 	rna_data_info() const { return rna_data_info_; }
 
 	void
@@ -134,7 +130,7 @@ private:
 	rna::RNA_CentroidInfo rna_centroid_info_;
 	rna::RNA_RawBaseBaseInfo rna_raw_base_base_info_;
 	rna::RNA_FilteredBaseBaseInfo rna_filtered_base_base_info_;
-	rna::RNA_DataInfo rna_data_info_;
+	rna::data::RNA_DataInfo rna_data_info_;
 
 	// for rna low-res VDW calculations
 	utility::vector1< utility::vector1< Size > > atom_numbers_for_vdw_calculation_;

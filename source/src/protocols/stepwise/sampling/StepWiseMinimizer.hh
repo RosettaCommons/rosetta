@@ -71,6 +71,8 @@ namespace sampling {
 																				  core::pose::Pose const & pose );
 		void setup_minimizers();
 
+		void setup_scorefxns( core::pose::Pose const & pose );
+
 		void do_minimize( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
 
 		void
@@ -94,7 +96,7 @@ namespace sampling {
 		utility::vector1< core::pose::PoseOP > pose_list_;
 		modeler_options::StepWiseModelerOptionsCOP modeler_options_;
 		core::scoring::ScoreFunctionCOP scorefxn_;
-		core::scoring::ScoreFunctionOP minimize_scorefxn_;
+		core::scoring::ScoreFunctionOP minimize_scorefxn_, final_scorefxn_;
 
     utility::vector1< core::Size > const working_moving_res_;
     utility::vector1< core::Size > working_fixed_res_;

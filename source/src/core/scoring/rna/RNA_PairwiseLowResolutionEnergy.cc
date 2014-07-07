@@ -21,7 +21,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -352,7 +352,7 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 		totals[ rna_base_stack_axis ]  = rna_filtered_base_base_info.get_total_base_stack_axis_score();
 
 		//		rna_filtered_base_base_info.set_calculated( false );
-		rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
+		rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 		totals[ rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
 
 	}
