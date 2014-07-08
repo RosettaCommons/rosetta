@@ -41,10 +41,6 @@
 #include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/FArray5D.hh>
 
-
-
-
-
 namespace core {
 namespace scoring {
 namespace rna {
@@ -160,6 +156,28 @@ public:
 	void
 	more_precise_base_pair_classification( bool const & value ){ more_precise_base_pair_classification_ = value; }
 
+	Distance const &
+	base_backbone_distance_cutoff() const { return base_backbone_distance_cutoff_;}
+
+	Distance const &
+	base_backbone_z_cutoff() const { return base_backbone_z_cutoff_;}
+
+	Distance const &
+	base_backbone_rho_cutoff() const { return base_backbone_rho_cutoff_;}
+
+	void
+	get_zeta_cutoff(
+									conformation::Residue const & res_i,
+									Real & zeta_hoogsteen_cutoff,
+									Real & zeta_sugar_cutoff
+									) const;
+
+	bool
+	check_for_base_neighbor(
+    conformation::Residue const & rsd1,
+		Vector const & heavy_atom_j,
+		Real & atom_cutoff_weight ) const;
+
 private:
 
 	void
@@ -271,24 +289,11 @@ private:
 													 conformation::Residue const & res_i,
 													 Size const & atom_num_j_bin ) const;
 
-	bool
-	check_for_base_neighbor(
-    conformation::Residue const & rsd1,
-		Vector const & heavy_atom_j,
-		Real & atom_cutoff_weight ) const;
-
 	void
 	setup_precise_zeta_cutoffs( chemical::AA const & na_rad,
 															std::string const & hoogsteen_cutoff_atom,
 															std::string const & sugar_cutoff_atom
 															);
-
-	void
-	get_zeta_cutoff(
-									conformation::Residue const & res_i,
-									Real & zeta_hoogsteen_cutoff,
-									Real & zeta_sugar_cutoff
-									) const;
 
 private: // data
 

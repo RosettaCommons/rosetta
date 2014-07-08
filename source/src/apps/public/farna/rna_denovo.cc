@@ -45,6 +45,7 @@
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -361,6 +362,7 @@ try {
 	// setup
 	////////////////////////////////////////////////////////////////////////////
 	core::init::init(argc, argv);
+	option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping.
 
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup

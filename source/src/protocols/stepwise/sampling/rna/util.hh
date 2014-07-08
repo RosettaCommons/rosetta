@@ -376,7 +376,7 @@ get_default_allowed_bulge_res(
 Size
 virtualize_bulges( pose::Pose & input_pose,
     utility::vector1< Size > const & in_allow_bulge_res_list,
-    scoring::ScoreFunctionOP const & scorefxn,
+    scoring::ScoreFunctionCOP const & scorefxn,
     std::string const & tag,
     bool const allow_pre_virtualize,
     bool const allow_consecutive_bulges,

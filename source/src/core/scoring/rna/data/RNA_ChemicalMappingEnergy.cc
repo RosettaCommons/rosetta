@@ -16,14 +16,18 @@
 #include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
 #include <core/scoring/rna/data/RNA_ChemicalMappingEnergyCreator.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
+#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
 
 // Package headers
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
@@ -33,7 +37,6 @@
 //
 // Scores based on log-odds of structural features that correlate with
 //  chemical reactivities based on 'gold standard' measurements in the Das lab.
-//
 //
 // NOTE: NO DERIVATIVES YET!
 //
@@ -57,11 +60,13 @@ ScoreTypes
 RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( rna_chem_map );
+	sts.push_back( rna_chem_map_lores );
 	return sts;
 }
 RNA_ChemicalMappingEnergy::RNA_ChemicalMappingEnergy():
 	parent( new RNA_ChemicalMappingEnergyCreator ),
-	DMS_potential_( ScoringManager::get_instance()->get_RNA_DMS_Potential() )
+	DMS_potential_( ScoringManager::get_instance()->get_RNA_DMS_Potential() ),
+	DMS_low_resolution_potential_( ScoringManager::get_instance()->get_RNA_DMS_LowResolutionPotential() )
 {
 }
 
@@ -80,35 +85,50 @@ RNA_ChemicalMappingEnergy::clone() const
 void
 RNA_ChemicalMappingEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
+	ScoreFunction const & scorefxn,
 	EnergyMap & totals
 ) const
 {
-	totals[ rna_chem_map ] += calculate_energy( pose );
+	bool const rna_base_pair_computed = scorefxn.has_nonzero_weight( rna_base_pair ); // assumes this was *earlier* in finalize_total_energy loop.
+	if ( scorefxn.has_nonzero_weight( rna_chem_map ) )       totals[ rna_chem_map ]       += calculate_energy( pose, false /*use_low_res*/, rna_base_pair_computed );
+	if ( scorefxn.has_nonzero_weight( rna_chem_map_lores ) ) totals[ rna_chem_map_lores ] += calculate_energy( pose, true  /*use_low_res*/, rna_base_pair_computed );
 }
 /////////////////////////////////////////////////////////////////////////////
 Real
-RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose const & pose ) const {
+RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose & pose,
+																						 bool const use_low_res /* = false */,
+																						 bool const rna_base_pair_computed /* = false */ ) const {
 
 	Real score( 0.0 );
 
+	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
   rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	RNA_Reactivities const & rna_reactivities = rna_data_info.rna_reactivities();
 
 	if ( rna_reactivities.size() == 0 ) return 0.0;
 
-	DMS_potential_.initialize( pose );
+	if ( use_low_res ) {
+		DMS_low_resolution_potential_.initialize( pose, rna_base_pair_computed );
+	} else {
+		DMS_potential_.initialize( pose );
+	}
+
 	// get DMS data that needs to be scored.
 	// cycle through those data.
 	for ( Size n = 1; n <= rna_reactivities.size(); n++ ){
 		RNA_Reactivity const & rna_reactivity = rna_reactivities[ n ];
-		if ( rna_reactivity.type() == DMS ) score += DMS_potential_.evaluate( pose, rna_reactivity );
+		if ( rna_reactivity.type() == DMS  ) 	{
+			if ( use_low_res ) {
+				score += DMS_low_resolution_potential_.evaluate( pose, rna_reactivity );
+			}	else {
+				score += DMS_potential_.evaluate( pose, rna_reactivity );
+			}
+		}
 	}
 
 	return score;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////
 /// @brief RNA_ChemicalMappingEnergy distance cutoff

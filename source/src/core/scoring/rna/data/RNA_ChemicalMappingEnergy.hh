@@ -18,6 +18,7 @@
 // Unit Headers
 #include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.fwd.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
+#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -54,7 +55,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	Real
-	calculate_energy( pose::Pose const & pose ) const;
+	calculate_energy( pose::Pose & pose,
+										bool const use_low_res = false,
+										bool const rna_base_pair_computed = false	) const;
 
 	virtual
 	void
@@ -76,6 +79,7 @@ public:
 private:
 
 	RNA_DMS_Potential & DMS_potential_;
+	RNA_DMS_LowResolutionPotential & DMS_low_resolution_potential_;
 
 };
 

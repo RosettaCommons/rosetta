@@ -32,9 +32,12 @@ namespace full_model_info {
 		full_model_parameters.set_parameter_as_res_list( FIXED_DOMAIN,       utility::vector1< Size >() );
 		full_model_parameters.set_parameter_as_res_list( EXTRA_MINIMIZE,     utility::vector1< Size >() );
 		full_model_parameters.set_parameter_as_res_list( SAMPLE,             utility::vector1< Size >() );
-		full_model_parameters.set_parameter_as_res_list( WORKING,            utility::vector1< Size >() );
 		full_model_parameters.set_parameter_as_res_list( RNA_SYN_CHI,        utility::vector1< Size >() );
 		full_model_parameters.set_parameter_as_res_list( RNA_TERMINAL,       utility::vector1< Size >() );
+
+		utility::vector1< Size > working_res;
+		for ( Size n = 1; n <= full_model_parameters.full_sequence().size(); n++ ) working_res.push_back( n );
+		full_model_parameters.set_parameter_as_res_list( WORKING,            working_res );
 	}
 
 } //full_model_info

@@ -253,7 +253,6 @@ enum ScoreType {
 	//RNA stuff
 	//Low resolution
 	rna_rg,           // Radius of gyration for RNA
-	rna_chem_map,     // chemical mapping data (DMS, CMCT, etc.)
 
 	// nucleotide resolution thermodynamics
 	loop_close,  // Loop closure terms -- attempting model full RNA folding free energy
@@ -395,7 +394,10 @@ enum ScoreType {
 	holes_min,
 	holes_min_mean,
 
+	// RNA-specific experiment-based scores (whole structure energies)
 	rna_chem_shift, //RNA NMR chemical shift pseudo-energy term
+	rna_chem_map, //  chemical mapping data (DMS, CMCT, etc.)
+	rna_chem_map_lores, //  chemical mapping data (DMS, CMCT, etc.)
 
 	dab_sasa, // classic 1.4A probe solvant accessible surface area
 	dab_sev,  // solvent excluded volume -- volume of atoms inflated by 1.4A
@@ -441,7 +443,6 @@ enum ScoreType {
 
 	// model-quality metrics.
 	rms,
-
 
 	// for ResidueConstraint
 	res_type_constraint,

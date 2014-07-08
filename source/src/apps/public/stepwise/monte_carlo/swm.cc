@@ -81,6 +81,11 @@ stepwise_monte_carlo()
 	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
+	// scorefunction
+	core::scoring::ScoreFunctionOP scorefxn;
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
+	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
+
 	PoseOP native_pose, align_pose;
 	if ( option[ in::file::native ].user() )  {
 		align_pose = native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
@@ -89,13 +94,7 @@ stepwise_monte_carlo()
 
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
-	protocols::farna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ]() ); // temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
-
-	// scorefunction
-	core::scoring::ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
-	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
-	if ( scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) scorefxn->set_weight( rna_chem_map, 1.0 );
+	protocols::farna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn ); // temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
 
 	// a unit test specific for two helix test case. leave this in here for now.
 	//	test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );

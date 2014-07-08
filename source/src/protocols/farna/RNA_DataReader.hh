@@ -17,9 +17,11 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -80,7 +82,8 @@ private:
 };
 
 core::scoring::rna::data::RNA_DataInfo const &
-get_rna_data_info( core::pose::Pose & pose, std::string const & rna_data_file );
+get_rna_data_info( core::pose::Pose & pose, std::string const & rna_data_file,
+									 core::scoring::ScoreFunctionOP scorefxn = 0 );
 
 
 } //farna

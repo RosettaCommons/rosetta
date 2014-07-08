@@ -231,7 +231,8 @@ rna_score_test()
 				scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info() = *rna_data_info_save;
 			}
 			pose.update_residue_neighbors();
-			s.add_energy(  "rna_chem_map", rna_chemical_mapping_energy.calculate_energy( pose ) );
+			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy.calculate_energy( pose, false /*use_low_res*/ ) );
+			s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy.calculate_energy( pose , true /*use_low_res*/ ) );
 		}
 
 

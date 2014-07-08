@@ -46,6 +46,7 @@
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
+#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
 #include <core/scoring/P_AA.fwd.hh>
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
@@ -172,6 +173,8 @@ public:
 	rna::chemical_shift::RNA_ChemicalShiftPotential const & get_RNA_ChemicalShiftPotential() const;
 
 	rna::data::RNA_DMS_Potential & get_RNA_DMS_Potential() const;
+
+	rna::data::RNA_DMS_LowResolutionPotential & get_RNA_DMS_LowResolutionPotential() const;
 
 	dna::DirectReadoutPotential const & get_DirectReadoutPotential() const;
 
@@ -315,6 +318,7 @@ private:
 	mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
+	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;
 	mutable P_AAOP p_aa_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;

@@ -15,13 +15,14 @@
 
 // Unit Headers
 #include <protocols/farna/RNA_DataReader.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/data/RNA_DataInfo.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/scoring/rna/data/RNA_DataInfo.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -77,6 +78,7 @@ RNA_DataReader::initialize(
 	using namespace pose::full_model_info;
 
 	if ( rna_data_file.length() == 0 ) return;
+
 	rna_data_info_ = new core::scoring::rna::data::RNA_DataInfo;
 
 	Size const nres( pose.total_residue() );
@@ -236,7 +238,9 @@ RNA_DataReader::setup_rna_data( pose::Pose & pose )
 
 /////////////////////////////////////////////////////////////////////
 core::scoring::rna::data::RNA_DataInfo const &
-get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file ) {
+get_rna_data_info( pose::Pose & pose,
+									 std::string const & rna_data_file,
+									 core::scoring::ScoreFunctionOP scorefxn /* = 0 */) {
 
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
@@ -253,6 +257,11 @@ get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file ) {
 	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
 		nonconst_rna_scoring_info_from_pose( *(other_pose_list[ n ]) ).rna_data_info() = rna_data_info;
+	}
+
+	if ( scorefxn != 0 &&
+			 scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
+		scorefxn->set_weight( core::scoring::rna_chem_map, 1.0 );
 	}
 
 	return rna_data_info;

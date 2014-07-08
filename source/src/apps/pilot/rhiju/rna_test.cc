@@ -87,15 +87,31 @@
 #include <basic/options/util.hh>
 
 #include <basic/options/option_macros.hh>
-#include <protocols/idealize/IdealizeMover.hh>
-
-#include <protocols/viewer/viewers.hh>
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/rna/RNA_BasePairClassifier.hh>
+
+//RNA stuff.
+#include <protocols/idealize/IdealizeMover.hh>
+#include <protocols/viewer/viewers.hh>
+#include <protocols/farna/RNA_DeNovoProtocol.hh>
+#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_DataReader.hh>
+#include <protocols/farna/util.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
+#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnergyMap.hh> //for EnergyMap
+#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
+
 #include <basic/database/open.hh>
 
 #include <devel/init.hh>
@@ -115,25 +131,6 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-//RNA stuff.
-//#include <protocols/farna/RNA_FragmentsClasses.hh>
-#include <protocols/farna/RNA_DeNovoProtocol.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_DataReader.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_BasePairClassifier.hh>
-#include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
-
-//For RNA jumps.
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/EnergyMap.hh> //for EnergyMap
-#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
 
 
 // C++ headers
@@ -4795,7 +4792,7 @@ rna_stats_test()
 
 		utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
 		utility::vector1< bool > is_bulged;
-		classify_base_pairs( pose, base_pair_list, is_bulged );
+		core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
 
 		rna_de_novo_protocol.output_to_silent_file( pose, silent_file, pdb_files[n], true /*score_only*/ );
 

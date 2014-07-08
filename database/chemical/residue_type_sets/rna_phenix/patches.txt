@@ -16,3 +16,4 @@
 #../fa_standard/patches/nucleic/rna/3prime_packable_phosphate.txt
 ../fa_standard/patches/nucleic/rna/5prime_phosphate.txt
 ../fa_standard/patches/nucleic/rna/3prime_phosphate.txt
+../fa_standard/patches/nucleic/rna/VirtualBase.txt # VIRTUAL_BASE

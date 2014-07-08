@@ -28,14 +28,16 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
+#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/scoring/rna/RNA_CentroidInfo.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_BasePairClassifier.hh>
-#include <protocols/viewer/viewers.hh>
+#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -51,16 +53,21 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
-
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/util.hh>
-#include <devel/init.hh>
+#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/import_pose/import_pose.hh>
+
+#include <devel/init.hh>
+
+#include <protocols/farna/util.hh>
+#include <protocols/viewer/viewers.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/database/open.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -131,62 +138,6 @@ save_feature( 	vector1< std::string > & feature_names,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// following could move to protocols/, along with rna_base_pair classification code?
-void
-update_edge_paired(  Size const i, Size const k,
-										 vector1< bool > & wc_edge_paired,
-										 vector1< bool > & hoogsteen_edge_paired,
-										 vector1< bool > & sugar_edge_paired ) {
-
-	if (k == WATSON_CRICK ) wc_edge_paired[i] = true;
-	else if (k == HOOGSTEEN ) hoogsteen_edge_paired[i] = true;
-	else {
-		runtime_assert( k == SUGAR );
-		sugar_edge_paired[i] = true;
-	}
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// following could move to protocols/, along with rna_base_pair classification code?
-void
-get_rna_base_pairing_status( core::pose::Pose & pose,
-														 vector1< bool > & wc_edge_paired,
-														 vector1< bool > & hoogsteen_edge_paired,
-														 vector1< bool > & sugar_edge_paired,
-														 vector1< bool > & is_bulged ){
-
-	using namespace core::scoring;
-
-	//initialize
-	is_bulged.clear();
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		wc_edge_paired.push_back( false );
-		hoogsteen_edge_paired.push_back( false );
-		sugar_edge_paired.push_back( false );
-	}
-
-	// score pose with low res scorefunction -- will determine base pairs
-	vector1< core::scoring::rna::Base_pair > base_pair_list;
-
-	ScoreFunctionOP scorefxn( new ScoreFunction );
-	scorefxn->set_weight( rna_base_pair, 1.0 );
-	scorefxn->set_weight( hbond_sc, 1.0 ); // used for HBondSet
-	(*scorefxn)( pose );
-	scorefxn->show( std::cout, pose );
-
-	protocols::farna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
-
-	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-		scoring::rna::Base_pair const base_pair = base_pair_list[ n ];
-		update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
-		update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
-	}
-
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 Size
 rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 {
@@ -194,6 +145,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	using namespace core::conformation;
 	using namespace core::chemical;
 	using namespace core::scoring;
+	using namespace core::scoring::rna::data;
 	using namespace core::kinematics;
 	using namespace core::id;
 	using namespace protocols::farna;
@@ -208,8 +160,6 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	Size res_count( 0 ), num_features( 0 );
 	Size const nres = pose.total_residue();
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	vector1<bool> wc_edge_paired, hoog_edge_paired, sugar_edge_paired, is_bulged;
-	get_rna_base_pairing_status( pose, wc_edge_paired, hoog_edge_paired, sugar_edge_paired, is_bulged );
 
 	// sasa calculation
 	AtomID_Map< Real > atom_sasa;
@@ -217,8 +167,13 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	Real const probe_radius( 1.4 );
 	scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, true );
 
-	core::scoring::rna::data::RNA_DMS_Potential rna_dms_potential;
+	RNA_DMS_Potential & rna_dms_potential  = ScoringManager::get_instance()->get_RNA_DMS_Potential();
+	pose.update_residue_neighbors();
 	rna_dms_potential.initialize( pose );
+
+	RNA_DMS_LowResolutionPotential & rna_dms_low_resolution_potential = ScoringManager::get_instance()->get_RNA_DMS_LowResolutionPotential();
+	//	rna_dms_low_resolution_potential.set_careful_base_pair_classifier( false );
+	rna_dms_low_resolution_potential.initialize( pose );
 
 	vector1< char  > nt_names = utility::tools::make_vector1( 'a', 'c', 'g', 'u' );
 	Size const num_nt = nt_names.size();
@@ -246,14 +201,26 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m], is_nt[m] );
  		}
 
+		// look for O2' in WC sector -- probably explains rest of DMS protections. Note that this is general, so
+		// perhaps should not be in a dms_low_resolution_potential, but instead in an rna_base_pair_info object?
+		bool wc_near_o2prime = rna_dms_low_resolution_potential.get_wc_near_o2prime( pose, i );
+
 		// probably makes sense to explicitly take product with is_a, etc. above -- in case classifier is not
 		// smart about leveraging products of features.
 		for ( Size m = 1; m <= num_nt; m++ ){
-			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_wc_edge_paired"   , wc_edge_paired[i] * is_nt[m] );
-			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_hoog_edge_paired" , hoog_edge_paired[i] * is_nt[m]);
-			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_sugar_edge_paired", sugar_edge_paired[i] * is_nt[m]);
-			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_is_bulged", is_bulged[i] * is_nt[m] );
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_wc_edge_paired"   ,
+										rna_dms_low_resolution_potential.wc_edge_paired()[i]    * is_nt[m] );
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_hoog_edge_paired" ,
+										rna_dms_low_resolution_potential.hoog_edge_paired()[i]  * is_nt[m]);
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_sugar_edge_paired",
+										rna_dms_low_resolution_potential.sugar_edge_paired()[i] * is_nt[m]);
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_is_bulged",
+										rna_dms_low_resolution_potential.is_bulged()[i] * is_nt[m] );
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_wc_near_o2prime"   , wc_near_o2prime * is_nt[m] );
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_wc_edge_paired_or_near_o2prime",
+										( wc_near_o2prime || rna_dms_low_resolution_potential.wc_edge_paired()[i] ) * is_nt[m] );
 		}
+
 
 
 		// What is hydrogen bonded?
@@ -367,6 +334,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 				}
 				if ( probe_dist == 3.5 || probe_dist == 5.5 ) pseudo_methyl_plus_oxygen_energy += binding_energy;
 				std::string const tag =  is_nt_tag[1]+"_and_pseudomethyldist"+F(3,1,probe_dist)+"_"+scorefxntags[k]+"_energy";
+				if ( is_nt[ 1 ] ) std::cout << pose.pdb_info()->number( i ) << " " << tag << ": " << binding_energy << std::endl; // some output since this takes so long.
 				save_feature( feature_names, feature_vals, feature_counter, tag, binding_energy );
 			}
 
@@ -557,7 +525,7 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		option[ OptionKeys::in::file::extra_res_fa ].push_back( utility::file::FileName( basic::database::full_name( "chemical/residue_type_sets/fa_standard//residue_types/extra/C.params" ) ) );
+		//		option[ OptionKeys::in::file::extra_res_fa ].push_back( utility::file::FileName( basic::database::full_name( "chemical/residue_type_sets/fa_standard//residue_types/extra/C.params" ) ) );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
 
 		protocols::viewer::viewer_main( my_main );

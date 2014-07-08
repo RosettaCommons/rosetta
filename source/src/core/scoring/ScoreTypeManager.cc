@@ -304,6 +304,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "holes_min" ] = holes_min;
 	name2score_type_[ "holes_min_mean" ] = holes_min_mean;
 	name2score_type_[ "rna_chem_shift" ] = rna_chem_shift;
+	name2score_type_[ "rna_chem_map"] = rna_chem_map;
+	name2score_type_[ "rna_chem_map_lores"] = rna_chem_map_lores;
 	name2score_type_[ "dab_sasa" ] = dab_sasa;
 	name2score_type_[ "dab_sev" ] = dab_sev;
 	name2score_type_[ "sa" ] = sa;
@@ -328,7 +330,6 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "rna_data_base"] = rna_data_base;
 	name2score_type_[ "rna_data_backbone"] = rna_data_backbone;
-	name2score_type_[ "rna_chem_map"] = rna_chem_map;
 
 	name2score_type_[ "rna_mg"] = rna_mg;
 	name2score_type_[ "rna_mg_rep"] = rna_mg_rep;

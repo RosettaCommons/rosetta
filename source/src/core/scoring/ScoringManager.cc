@@ -49,6 +49,7 @@
 #include <core/scoring/rna/RNA_SuitePotential.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
+#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
 #include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/P_AA.hh>
 #include <core/scoring/WaterAdductHBondPotential.hh>
@@ -434,6 +435,16 @@ ScoringManager::get_RNA_DMS_Potential() const
 		rna_dms_potential_ = new rna::data::RNA_DMS_Potential;
 	}
 	return *rna_dms_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+rna::data::RNA_DMS_LowResolutionPotential &
+ScoringManager::get_RNA_DMS_LowResolutionPotential() const
+{
+	if ( rna_dms_low_resolution_potential_ == 0 ) {
+		rna_dms_low_resolution_potential_ = new rna::data::RNA_DMS_LowResolutionPotential;
+	}
+	return *rna_dms_low_resolution_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

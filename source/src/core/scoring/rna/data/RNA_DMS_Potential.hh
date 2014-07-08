@@ -22,7 +22,6 @@
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/pointer/ReferenceCount.hh>

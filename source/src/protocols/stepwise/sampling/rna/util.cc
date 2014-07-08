@@ -19,7 +19,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/util.hh>
-#include <protocols/farna/RNA_BasePairClassifier.hh>
+#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/rotamer_sampler/rigid_body/util.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
@@ -2165,13 +2165,12 @@ namespace rna {
     }
 
     }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     core::Size
     virtualize_bulges( core::pose::Pose & input_pose,
         utility::vector1< core::Size > const & in_allow_bulge_res_list,
-        core::scoring::ScoreFunctionOP const & scorefxn,
+        core::scoring::ScoreFunctionCOP const & scorefxn,
         std::string const & tag,
         bool const allow_pre_virtualize,
         bool const allow_consecutive_bulges,

@@ -134,6 +134,7 @@ sources = {
 		"util",
 	],
     "core/pose/rna": [
+	"RNA_BasePairClassifier",
         "RNA_IdealCoord",
         "RNA_SuiteName",
         "util",
@@ -606,6 +607,8 @@ sources = {
 		"RNA_DataBackboneEnergy",
 		"RNA_DataInfo",
 		"RNA_DMS_Potential",
+		"RNA_DMS_LowResolutionPotential",
+		"util",
 	],
 	"core/scoring/rna/chemical_shift" : [
 		"RNA_CS_Parameters",

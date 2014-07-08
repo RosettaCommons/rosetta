@@ -62,8 +62,10 @@ namespace full_model_info {
 	FullModelParameters::FullModelParameters( pose::Pose const & pose,
 																						utility::vector1< Size > & res_list ) {
 
-		initialize_parameters( *this );
 		get_sequence_with_gaps_filled_with_n( pose, full_sequence_, conventional_numbering_, res_list );
+
+		initialize_parameters( *this );
+
 		set_parameter( CUTPOINT_OPEN, convert_to_parameter_values_at_res( get_cutpoint_open_from_pdb_info( pose ) ) );
 
 		// not sure what's best here -- for now setting that the pose's residues are 'fixed' within the domain map.

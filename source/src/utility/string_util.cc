@@ -162,7 +162,8 @@ string_split( std::string const & in, char splitchar /* = ' ' */ )
 	size_t i(0), j(0);
 	while ( j != std::string::npos ) {
 		j = in.find( splitchar, i );
-		parts.push_back( in.substr(i,j-i) );
+		std::string const part = in.substr(i,j-i);
+		parts.push_back( part );
 		i = j+1;
 	}
 	return parts;

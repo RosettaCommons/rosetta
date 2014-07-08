@@ -14,6 +14,7 @@
 
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
+#include <core/scoring/rna/data/util.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondEnergy.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -114,13 +115,6 @@ namespace data {
 		figure_out_potential( all_DMS_stats );
 	}
 
-	core::Size
-	lookup_idx( Real const value, vector1< Real > & values ) {
-		if ( values.has_value( value ) ) return values.index( value );
-		values.push_back( value );
-		return values.size();
-	}
-
 	//////////////////////////////////////////////////////////////////////////////////
 	vector1< vector1< vector1< Real > > > // this is silly -- should use a grid object
 	RNA_DMS_Potential::read_DMS_stats_file( std::string const & potential_file ) {
@@ -130,6 +124,17 @@ namespace data {
 		if ( !stream.good() ) utility_exit_with_message( "Unable to open "+potential_file );
 
 		std::string line;
+
+		// check labels
+		getline( stream, line );
+		std::istringstream l( line );
+		utility::vector1< std::string > labels( 4, "" );
+		l >> labels[1] >> labels[2] >> labels[3] >> labels[4];
+		runtime_assert( labels[1] == "occ" );
+		runtime_assert( labels[2] == "Ebind" );
+		runtime_assert( labels[3] == "DMS" );
+		runtime_assert( labels[4] == "log-stats" );
+
 		Real occ, binding_energy, DMS, stats_value, log_stats_value;
 		vector1< vector1< vector1< Real > > > DMS_stats;
 		while ( getline( stream, line ) ) {
@@ -284,26 +289,6 @@ namespace data {
 		working_pose_->set_new_energies_object( new scoring::Energies );
 		working_pose_with_probe_->set_new_energies_object( new scoring::Energies );
 
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////
-	Size
-	get_bool_idx( bool const value, vector1< bool > const & values ){
-		for ( Size n = 1; n <= values.size(); n++ ){
-			if ( value == values[ n ] ) return n;
-		}
-		return 0;
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////
-	// Later upgrade to return how far into bin the value is, then carry out bilinear
-	//  interpolation & derivs.
-	Size
-	get_idx( Real const value, vector1< Real > const & values ){
-		for ( Size n = 1; n < values.size(); n++ ){
-			if ( value >= values[ n ] && value < values[ n+1 ] ) return n;
-		}
-		return values.size();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -517,6 +502,7 @@ RNA_DMS_Potential::get_probe_scorefxn( bool const soft_rep, bool const just_atr_
 	scorefxn->set_weight( fa_rep, 0.20 );
 	if ( !just_atr_rep ){
 		scorefxn->set_weight( fa_stack, 0.13 ); // ?
+		scorefxn->set_weight( hbond_sc, 0.17 ); // needed for geom_sol in special cases incl. RNA/protein. a little ridiculous.
 		scorefxn->set_weight( geom_sol_fast, 0.17 );
 		scorefxn->set_weight( lk_nonpolar, 0.25 );
 	}

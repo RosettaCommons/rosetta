@@ -259,6 +259,8 @@ private:
 	void
 	setup_rigid_body_mover( core::pose::Pose const & pose, core::Size const r );
 
+	void
+	final_score( core::pose::Pose & pose );
 
 	void
 	output_silent_struct( core::io::silent::SilentStruct & s,
@@ -383,9 +385,11 @@ private:
 	std::map< std::string, bool > tag_is_done_;
 
 	std::string lores_scorefxn_;
-	core::scoring::ScoreFunctionOP denovo_scorefxn_, hires_scorefxn_;
+	core::scoring::ScoreFunctionOP denovo_scorefxn_;
+	core::scoring::ScoreFunctionOP hires_scorefxn_;
 	core::scoring::ScoreFunctionOP chem_shift_scorefxn_;
 	core::scoring::ScoreFunctionOP initial_denovo_scorefxn_;
+	core::scoring::ScoreFunctionOP final_scorefxn_;
 	core::scoring::rna::RNA_LowResolutionPotential local_rna_low_resolution_potential_;
 
 	utility::vector1< std::string > chunk_pdb_files_;

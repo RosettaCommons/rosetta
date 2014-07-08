@@ -18,7 +18,7 @@
 
 // Package headers
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/farna/RNA_BasePairClassifier.hh>
+#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/RNA_DataReader.hh>
 #include <protocols/farna/RNA_DataReader.fwd.hh>
 #include <protocols/farna/FullAtomRNA_Fragments.hh>
@@ -41,12 +41,13 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/id/AtomID_Map.hh>
@@ -370,15 +371,15 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		update_denovo_scorefxn_weights( rounds_ );
 		update_pose_constraints( rounds_, pose );
 		denovo_scorefxn_->show( std::cout, pose );
+		final_scorefxn_ = denovo_scorefxn_;
 
 		if ( output_lores_silent_file_ ) align_and_output_to_silent_file( pose, lores_silent_file_, out_file_tag );
 
 		if ( minimize_structure_ ) {
 			rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 			rna_minimizer_->apply( pose );
-			if ( close_loops_at_end_ ) {
-				rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
-			}
+			if ( close_loops_at_end_ ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+			final_scorefxn_ = hires_scorefxn_;
 		}
 
 		if ( use_chem_shift_data_ ) apply_chem_shift_data(pose, out_file_tag);
@@ -386,18 +387,16 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		if ( relax_structure_ ) rna_relaxer_->apply( pose );
 
 		if ( allow_bulge_ ) {
-			core::scoring::ScoreFunctionOP curr_scorefxn = hires_scorefxn_;
-			if ( use_chem_shift_data_ ) curr_scorefxn = chem_shift_scorefxn_;
 			//Identify and virtual the bulge residues.
 			/*Size const num_res_virtualized =*/
 			protocols::stepwise::sampling::rna::virtualize_bulges(
-				pose, allowed_bulge_res_, curr_scorefxn, out_file_tag,
+				pose, allowed_bulge_res_, final_scorefxn_, out_file_tag,
 				true /*allow_pre_virtualize*/, allow_consecutive_bulges_,
 				true /*verbose*/
 			);
-			//rescore the pose to add in bulge pseudo-energy term
-			( *curr_scorefxn )( pose );
 		}
+
+		final_score( pose ); // may include rna_chem_map score here.
 
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if ( dump_pdb_ ) dump_pdb( pose,  out_file_name );
@@ -471,9 +470,13 @@ void
 RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 
 	using namespace core::scoring;
+	using namespace basic::options;
 
 	// RNA low-resolution score function.
 	denovo_scorefxn_ = ScoreFunctionFactory::create_score_function( lores_scorefxn_ );
+	if ( scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
+		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna_chem_map_lores_weight ]() );
+	}
 
 	initialize_constraints( pose );
 
@@ -483,22 +486,16 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 
 	if ( linear_chainbreak_weight_ > -1 ) initial_denovo_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_ );
 
+	// RNA high-resolution score function.
+	hires_scorefxn_ = rna_minimizer_->clone_scorefxn();
 
-    // RNA high-resolution score function.
-    hires_scorefxn_ = rna_minimizer_->clone_scorefxn();
-
-
-    // RNA high-resolution score function + rna_chem_shift term
-    if(use_chem_shift_data_){
-
-        Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
-
-        chem_shift_scorefxn_ =  new ScoreFunction;
-
-        chem_shift_scorefxn_ = hires_scorefxn_->clone();
-
-        chem_shift_scorefxn_->set_weight( rna_chem_shift, CS_weight );
-    }
+	// RNA high-resolution score function + rna_chem_shift term
+	if(use_chem_shift_data_){
+		Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
+		chem_shift_scorefxn_ =  new ScoreFunction;
+		chem_shift_scorefxn_ = hires_scorefxn_->clone();
+		chem_shift_scorefxn_->set_weight( rna_chem_shift, CS_weight );
+	}
 
 }
 
@@ -528,6 +525,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_structure_parameters_->set_suppress_bp_constraint( suppress_bp_constraint_ );
 
 	// reads in any data on, e.g., exposure of different bases --> saves inside the pose's rna_data_info.
+	rna_data_reader_ = new RNA_DataReader;
 	rna_data_reader_->initialize( pose, rna_data_file_ );
 
 	all_rna_fragments_ = new FullAtomRNA_Fragments( all_rna_fragments_file_ );
@@ -753,6 +751,17 @@ RNA_DeNovoProtocol::get_moving_res( core::pose::Pose const & pose ) const {
 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::final_score( core::pose::Pose & pose ){
+	if ( scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
+		final_scorefxn_->set_weight( core::scoring::rna_chem_map, 1.0 );
+	}
+	( *final_scorefxn_ )( pose );
+	//	final_scorefxn_->show( pose );
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const
@@ -867,13 +876,14 @@ RNA_DeNovoProtocol::update_denovo_scorefxn_weights( Size const r )
 {
 	using namespace core::scoring;
 
-	Real const rna_base_axis_final_weight        = initial_denovo_scorefxn_->get_weight( rna_base_axis );
-	Real const rna_base_stagger_final_weight     = initial_denovo_scorefxn_->get_weight( rna_base_stagger );
-	Real const rna_base_stack_axis_final_weight  = initial_denovo_scorefxn_->get_weight( rna_base_stack_axis );
-	Real const linear_chainbreak_final_weight    = initial_denovo_scorefxn_->get_weight( linear_chainbreak );
-	Real const chainbreak_final_weight    = initial_denovo_scorefxn_->get_weight( chainbreak );
-	Real const atom_pair_constraint_final_weight = initial_denovo_scorefxn_->get_weight( atom_pair_constraint );
+	Real const rna_base_axis_final_weight         = initial_denovo_scorefxn_->get_weight( rna_base_axis );
+	Real const rna_base_stagger_final_weight      = initial_denovo_scorefxn_->get_weight( rna_base_stagger );
+	Real const rna_base_stack_axis_final_weight   = initial_denovo_scorefxn_->get_weight( rna_base_stack_axis );
+	Real const linear_chainbreak_final_weight     = initial_denovo_scorefxn_->get_weight( linear_chainbreak );
+	Real const chainbreak_final_weight            = initial_denovo_scorefxn_->get_weight( chainbreak );
+	Real const atom_pair_constraint_final_weight  = initial_denovo_scorefxn_->get_weight( atom_pair_constraint );
 	Real const coordinate_constraint_final_weight = initial_denovo_scorefxn_->get_weight( coordinate_constraint );
+	Real const rna_chem_map_lores_final_weight    = initial_denovo_scorefxn_->get_weight( rna_chem_map_lores );
 
 	//Keep score function coarse for early rounds.
 	// Real const suppress  = (r - 1.0) / (rounds - 1.0);
@@ -884,6 +894,7 @@ RNA_DeNovoProtocol::update_denovo_scorefxn_weights( Size const r )
 	if ( titrate_stack_bonus_ ) denovo_scorefxn_->set_weight( rna_base_stack_axis,suppress*rna_base_stack_axis_final_weight  );
 	denovo_scorefxn_->set_weight( atom_pair_constraint,  suppress*atom_pair_constraint_final_weight  );
 	denovo_scorefxn_->set_weight( coordinate_constraint,  suppress*coordinate_constraint_final_weight  );
+	denovo_scorefxn_->set_weight( rna_chem_map_lores,   suppress*rna_chem_map_lores_final_weight  );
 
 	// keep chainbreak extra low for early rounds... seems to be important for rigid body sampling.
 	//Real suppress_chainbreak  = ( r - ( rounds_/3.0 ) )/ ( static_cast<Real>( rounds_ ) - ( rounds_ / 3.0 ) );
@@ -1084,7 +1095,7 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 
 	utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
 	utility::vector1< bool > is_bulged;
-	classify_base_pairs( pose, base_pair_list, is_bulged );
+	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
 
 	Size N_WC( 0 ), N_NWC( 0 );
 
@@ -1114,11 +1125,11 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 
  	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
-	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, get_number_base_stacks( pose ) ) );
+	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
 
  	//s.add_energy( "N_WC",  N_WC );
 	//	s.add_energy( "N_NWC", N_NWC );
-	//	s.add_energy( "N_BS",  get_number_base_stacks( pose ) );
+	//	s.add_energy( "N_BS",  core::pose::rna::get_number_base_stacks( pose ) );
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1168,11 +1179,11 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 	utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
 	utility::vector1< bool > is_bulged;
-	classify_base_pairs( pose, base_pair_list, is_bulged );
+	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
 
 	utility::vector1< core::scoring::rna::Base_pair > base_pair_list_native;
 	utility::vector1< bool > is_bulged_native;
-	classify_base_pairs( native_pose, base_pair_list_native, is_bulged_native );
+	core::pose::rna::classify_base_pairs( native_pose, base_pair_list_native, is_bulged_native );
 
 
 	//(*denovo_scorefxn_)( pose );
@@ -1273,13 +1284,14 @@ RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string c
 	using namespace core::scoring;
 	using namespace core::io::pdb;
 
-	if(!use_chem_shift_data_) utility_exit_with_message("use_chem_shift_data_ == false!");
+	runtime_assert( use_chem_shift_data_ );
 
 	if (minimize_structure_){
 		rna_minimizer_->set_score_function(chem_shift_scorefxn_); //use the chem_shift_scorefxn_
 		rna_minimizer_->apply( pose );
 		rna_minimizer_->set_score_function(hires_scorefxn_); //set back the original scorefxn.
-		if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+		if ( close_loops_at_end_ ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+		final_scorefxn_ = chem_shift_scorefxn_;
 	}
 
 	(*chem_shift_scorefxn_)( pose );

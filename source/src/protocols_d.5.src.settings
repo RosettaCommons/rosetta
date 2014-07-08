@@ -20,7 +20,6 @@ sources = {
 		"BasePairStepLibrary",
 		"FullAtomRNA_Fragments",
 		"MultipleDomainMover",
-		"RNA_BasePairClassifier",
 		"RNA_ChunkLibrary",
 		"RNA_DataReader",
 		"RNA_DeNovoProtocol",
