@@ -25,6 +25,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
@@ -321,6 +322,28 @@ public:
 		//To make sure we are not testing the same residue type.
 		TS_ASSERT( pose.residue_type(1).name() != pose.residue_type(2).name() );
 		TS_ASSERT( ! rsd.has( pose.residue_type(2).atom_vertex( 1 ) ) );
+	}
+
+	void test_atom_add() {
+		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		string const tag(FA_STANDARD);
+		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		ElementSetCAP element_types = cm->element_set("default");
+		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+
+		core::chemical::ResidueType rsd(atom_types, element_types, mm_atom_types, orbital_types);
+		rsd.add_atom("ONE");
+		rsd.add_atom("MULT", "aroC", "VIRT", -1.5);
+		TS_ASSERT( rsd.has("ONE") );
+		TS_ASSERT( rsd.has("MULT") );
+		Atom multi( rsd.atom( "MULT" ) );
+		TS_ASSERT_EQUALS( multi.name(), "MULT" );
+		TS_ASSERT_EQUALS( multi.charge(), -1.5 );
+		TS_ASSERT_EQUALS( multi.element_type()->get_atomic_number(), 6 );
+		TS_ASSERT_EQUALS( (*atom_types)[multi.atom_type_index()].name(), "aroC" );
+		TS_ASSERT_EQUALS( (*mm_atom_types)[multi.mm_atom_type_index()].name(), "VIRT" );
 	}
 
 	void test_chi_assignment() {

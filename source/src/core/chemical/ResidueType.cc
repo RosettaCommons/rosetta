@@ -989,13 +989,12 @@ ResidueType::add_atom(
 	// signal that we need to update the derived data
 	finalized_ = false;
 
-	Atom atom;
-	VD v = graph_.add_vertex( atom );
+	VD v = graph_.add_vertex( Atom() );
 
 	if( atom_name.size() ) {
 		assert(atom_name_to_vd_.find(atom_name) == atom_name_to_vd_.end());
 		assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
-		atom.name( atom_name );
+		graph_[v].name( atom_name);
 		atom_name_to_vd_[ atom_name ] = v;
 		atom_name_to_vd_[ strip_whitespace( atom_name ) ] = v;
 	}
