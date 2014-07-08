@@ -84,7 +84,8 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	repack_( true ),
 	relax_mover_( NULL ),
 	pb_enabled_(false),
-	translate_by_(1000)
+	translate_by_(1000),
+	extreme_value_removal_( false )
 {
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
