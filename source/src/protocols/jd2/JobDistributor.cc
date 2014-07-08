@@ -339,11 +339,11 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 						pose,
 						option[OptionKeys::run::keep_pymol_simulation_history](),
 						option[OptionKeys::run::show_simulation_in_pymol].value());
-					
+
 				}
 				else if (option[OptionKeys::run::update_pymol_on_energy_changes_only]())
 				{
-					
+
 					moves::AddPyMolObserver_to_energies(
 						pose,
 						option[OptionKeys::run::keep_pymol_simulation_history](),
@@ -351,13 +351,13 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 				}
 				else if (option[OptionKeys::run::update_pymol_on_conformation_changes_only]())
 				{
-					
+
 					moves::AddPyMolObserver_to_conformation(
 						pose,
 						option[OptionKeys::run::keep_pymol_simulation_history](),
 						option[OptionKeys::run::show_simulation_in_pymol].value());
 				}
-				else 
+				else
 				{
 					moves::AddPyMolObserver(
 						pose,
@@ -374,6 +374,12 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 			protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
 
+		} catch (utility::excn::EXCN_RosettaScriptsOption& excn) {
+			// KAB - A RosettaScripts option exception is thrown when there is a problem
+			//       in the parsed script, which is used for all inputs. As it therefore
+			//       doesn't make sense to continue onto any other inputs, we reraise the
+			//       exception here.
+			throw;
 		} catch (utility::excn::EXCN_Base& excn)
 		{
 			basic::Error()
@@ -468,6 +474,12 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 			{
 				parser_->generate_mover_from_job(current_job_, mover_copy,
 						new_input);
+			} catch (utility::excn::EXCN_RosettaScriptsOption& excn) {
+				// KAB - A RosettaScripts option exception is thrown when there is a problem
+				//       in the parsed script, which is used for all inputs. As it therefore
+				//       doesn't make sense to continue onto any other inputs, we reraise the
+				//       exception here.
+				throw;
 			} catch (utility::excn::EXCN_Base& excn)
 			{
 				basic::Error()

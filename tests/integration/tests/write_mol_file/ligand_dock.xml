@@ -10,7 +10,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 			<Coordinates x="-1.731" y="32.589" z="-5.039"/>
 		</StartFrom>
 		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
-		<WriteLigandMolFile name="write_ligand" chain="X" directory="output"/>
+		<WriteLigandMolFile name="write_ligand" chain="X" directory="output" prefix="pre"/>
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name="start_from"/>

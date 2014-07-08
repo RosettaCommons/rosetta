@@ -602,7 +602,10 @@ ReportToDB::check_features_reporter_dependencies(
 				error_msg
 					<< "\t" << features_reporter->type_name() << endl;
 			}
-			utility_exit_with_message(error_msg.str());
+
+			// Theoretically this could be thrown in a non-RosettaScripts context,
+			// but that would be bad coding on the C++ developer's part
+			throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 		}
 	}
 }
