@@ -149,7 +149,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 		//	scorefxn_->initialize_from_file( basic::database::full_name( "scoring/weights/"+weights_tag+".wts" ) );
 		//}
 		if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-			scorefxn_ = core::scoring::getScoreFunction(); // This call handles the database vs working directory resolution -- DONT SUBVERT OR DUPLICATE IT
+			scorefxn_ = core::scoring::get_score_function(); // This call handles the database vs working directory resolution -- DONT SUBVERT OR DUPLICATE IT
 		}
 		else {
 			scorefxn_ = ScoreFunctionFactory::create_score_function( "talaris2013_cst", option[ OptionKeys::score::patch ]() ); //02/25/14 sboyken; changed default to talaris2013_cst

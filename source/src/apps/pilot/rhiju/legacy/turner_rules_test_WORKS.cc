@@ -230,7 +230,7 @@ search_translations( pose::Pose & pose,
 
 	bool const positive_Z =  option[ only_positive_Z ]();
 
-	static ScoreFunctionOP scorefxn = getScoreFunction();
+	static ScoreFunctionOP scorefxn = get_score_function();
 
 	utility::vector1< Vector > moving_atoms, partner_atoms;
 	setup_heavy_atoms( pose_to_translate, moving_atoms , moving_res );

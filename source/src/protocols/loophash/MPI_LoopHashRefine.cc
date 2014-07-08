@@ -142,7 +142,7 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 
 	// Rescore input structures for fair comparison with whatever comes back from relax calls	
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::getScoreFunction();
+	scorefxn = core::scoring::get_score_function();
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );  
 
 

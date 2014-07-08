@@ -44,7 +44,7 @@ main (int argc, char *argv[])
 
 		devel::init(argc, argv);
 		protocols::moves::MoverOP mover = new protocols::simple_moves::RepulsiveOnlyMover();
-		scoring::ScoreFunctionOP score = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP score = scoring::get_score_function();
 
 		pose::Pose pose;
 	//changing fa_standard to centroid

@@ -51,7 +51,7 @@ namespace simple_moves {
 
 void ProlineFixMover::apply( core::pose::Pose & pose ) {
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	// try a repack
 	core::pack::task::PackerTaskOP task(

@@ -118,7 +118,7 @@ MyScoreMover::MyScoreMover():
 	using namespace core;
 
 	// get sfxn_ and add constraints if defined
-	sfxn_ = scoring::getScoreFunction();
+	sfxn_ = scoring::get_score_function();
 
 	if ( option[ in::file::native ].user() ) {
 		// read native structure

@@ -31,7 +31,7 @@
 // AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-#include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
+#include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
@@ -165,7 +165,7 @@ main( int argc, char * argv [] )
 	}
 
 	// get scorefxn and add constraints if defined
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	if( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *sfxn );
 	} else {

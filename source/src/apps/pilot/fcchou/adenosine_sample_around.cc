@@ -464,7 +464,7 @@ adenine_probe_score_test()
 	// OK, how about a score function?
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ){
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 	} else {
 		scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
 		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
@@ -590,7 +590,7 @@ quick_score_test(){
 
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ){
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 	} else {
 		scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
 		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.

@@ -97,7 +97,7 @@ void run() {
 		basic::options::option[ basic::options::OptionKeys::in::path::database ].def( "/work/olange/minirosetta_database");
 	}
 
-	ScoreMoverOP tool =  new ScoreMover( scoring::getScoreFunction() );
+	ScoreMoverOP tool =  new ScoreMover( scoring::get_score_function() );
 	protocols::jd2::JobDistributor::get_instance()->go( tool );
 
 

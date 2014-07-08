@@ -100,7 +100,7 @@ public:
 		using namespace scoring;
 
 		// steal relax flags
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		kinematics::MoveMap mm;
 		mm.set_bb  ( true );
 		mm.set_chi ( true );

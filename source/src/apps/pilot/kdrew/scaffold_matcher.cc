@@ -188,7 +188,7 @@ HotspotPlacementMover::apply(
 
 	core::scoring::ScoreFunctionOP place_hs_score_fxn( new core::scoring::ScoreFunction() );
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
 	/*

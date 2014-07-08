@@ -1761,7 +1761,7 @@ byres_analysis(
 	*/
 
 	//create a ScoreFunction from commandline options
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	//and add decompose bb_hbond energies option
 	core::scoring::methods::EnergyMethodOptionsOP emopts(
 		new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
@@ -2089,7 +2089,7 @@ load_coords()
 void
 register_calcs()
 {
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 //	core::pose::metrics::PoseMetricCalculatorOP num_water_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberWaterHBondsCalculator();

@@ -48,7 +48,7 @@ namespace flxbb{
 		using namespace protocols::moves;
 		using protocols::jd2::JobDistributor;
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scoring::ScoreFunctionOP scorefxn_design = scorefxn;
 		scoring::ScoreFunctionOP scorefxn_relax = scorefxn;
 

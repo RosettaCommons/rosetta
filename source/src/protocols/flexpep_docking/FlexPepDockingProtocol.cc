@@ -166,7 +166,7 @@ void FlexPepDockingProtocol::set_default()
 
 	fullatom_ = option[ OptionKeys::out::file::fullatom ](); // TODO: use flags_
 	view_ = option[ OptionKeys::docking::view ](); // TODO: use flags_, and don't use docking:: options
-	scorefxn_ = core::scoring::getScoreFunction(); // from cmd-line (-score:weights -score:patch)
+	scorefxn_ = core::scoring::get_score_function(); // from cmd-line (-score:weights -score:patch)
 	scorefxn_lowres_ = ScoreFunctionFactory::create_score_function
 		( CENTROID_WTS, "score4L") ; // centroid score in between chains
 

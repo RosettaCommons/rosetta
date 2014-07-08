@@ -265,7 +265,7 @@ DesignRelaxMover::DesignRelaxMover() : Mover()
 	core::scoring::ScoreFunctionOP softfxn(
 		core::scoring::ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS, SCORE12_PATCH));
 	core::scoring::ScoreFunctionOP fullfxn(
-		core::scoring::getScoreFunction() );
+		core::scoring::get_score_function() );
 	designtaskfactory_ = designtaskfactory;
 	designfxn_ = softfxn;
 	relaxfxn_ = fullfxn;
@@ -279,7 +279,7 @@ DesignRelaxMover::DesignRelaxMover( core::pack::task::TaskFactoryOP designtaskfa
 	core::scoring::ScoreFunctionOP softfxn(
 		core::scoring::ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS, SCORE12_PATCH));
 	core::scoring::ScoreFunctionOP fullfxn(
-		core::scoring::getScoreFunction());
+		core::scoring::get_score_function());
 	designfxn_ = softfxn;
 	relaxfxn_ = fullfxn;
 }

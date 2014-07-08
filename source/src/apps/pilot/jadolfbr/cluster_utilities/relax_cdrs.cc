@@ -59,7 +59,7 @@ public:
 
 		//Setup Instances
 		AntibodyInfoOP ab_info = new AntibodyInfo(pose, AHO_Scheme, North);
-		ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(true);
+		ScoreFunctionOP scorefxn = core::scoring::get_score_function(true);
 		AntibodyDesignModeler modeler = AntibodyDesignModeler(ab_info);
 
 		//Setup Constraints

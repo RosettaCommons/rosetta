@@ -95,7 +95,7 @@ RosettaHolesMover() {
 	make_voids_     = basic::options::option[ basic::options::OptionKeys::holes::make_voids ]();
 	atom_scores_    = basic::options::option[ basic::options::OptionKeys::holes::atom_scores ]();
 	residue_scores_ = basic::options::option[ basic::options::OptionKeys::holes::residue_scores ]();
-	sf_             = core::scoring::getScoreFunction();
+	sf_             = core::scoring::get_score_function();
 	TR 	<< "HEADER         File/Tag         RosHol    resl   dec25   dec15   AAresl   AAdec25   AAdec15  RosScore" << std::endl;
 	if(basic::options::option[ basic::options::OptionKeys::in::file::native ].user()) TR << "     RMS";
 

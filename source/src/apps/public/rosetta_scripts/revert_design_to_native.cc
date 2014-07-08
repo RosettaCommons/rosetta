@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb( pose_des, des_fname );
 	pose::Pose pose_ref(pose_des);
 
-	ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() ); // defaults to sc12
+	ScoreFunctionOP scorefxn( core::scoring::get_score_function() ); // defaults to sc12
 	core::Real const ddg_thres( option[ revert_app::threshold ] );
 	Revert rev( scorefxn, ddg_thres, option[ revert_app::ddg_cycles ] );
 	rev.apply( pose_wt, pose_des );

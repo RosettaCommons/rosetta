@@ -336,7 +336,7 @@ core::scoring::ScoreFunctionOP get_cen_scorefxn() {
 }
 
 core::scoring::ScoreFunctionOP get_fa_scorefxn() {
-	return core::scoring::getScoreFunction();
+	return core::scoring::get_score_function();
 }
 
 

@@ -177,7 +177,7 @@ average_degree (Pose const &pose, Size nmono, vector1<Size> mutalyze_pos, Real d
 
 vector1<Size> design(Pose & p, Size nmono) {
   using namespace core::pack::task;
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
   PackerTaskOP task = TaskFactory::create_packer_task(p);
   // task->initialize_extra_rotamer_flags_from_command_line();
   vector1< bool > aac(20,false);
@@ -268,7 +268,7 @@ vector1<Size> design(Pose & p, Size nmono) {
 
 void repack(Pose & p, Size nmono, vector1<Size> const & iface) {
   using namespace core::pack::task;
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
   PackerTaskOP task = TaskFactory::create_packer_task(p);
   for(Size i = 1; i <= nmono; ++i) {
     if       ( iface[i] == 2 ) {
@@ -289,7 +289,7 @@ void repack(Pose & p, Size nmono, vector1<Size> const & iface) {
 
 void
 minimize(Pose & pose,  utility::vector1<Size> const & iface) {
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_jump(true);
@@ -306,7 +306,7 @@ minimize(Pose & pose,  utility::vector1<Size> const & iface) {
 
 
 Real get_ddg(Pose p, Size nmono, vector1<Size> const & iface) {
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
   repack(p,nmono,iface);
   minimize(p,iface);
   Real s1 = sf->score(p);
@@ -414,7 +414,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   for(Size i = 1; i <= iface.size(); ++i) avg_nchi += p.residue(iface[i]).nchi();
   avg_nchi /= iface.size();
 
-  core::scoring::getScoreFunction()->score(p);
+  core::scoring::get_score_function()->score(p);
 
   string tag = fn+"_"+str(ic)+"_"+str(iss)+"_"+str(irt);
 

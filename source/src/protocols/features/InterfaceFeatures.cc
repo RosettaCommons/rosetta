@@ -56,7 +56,7 @@ InterfaceFeatures::InterfaceFeatures() :
 	FeaturesReporter()
 {
 	interface_analyzer_ = NULL;
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	set_defaults();
 }
 

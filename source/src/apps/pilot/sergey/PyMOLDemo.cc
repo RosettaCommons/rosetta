@@ -62,7 +62,7 @@ int main( int argc, char * argv [] )
 		usleep(1000000);
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunctionLegacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->score(pose);
 	//pose.energies().residue_total_energies(1);
 	//T("Scoring done!") << "---------------------" << std::endl;

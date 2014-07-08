@@ -81,7 +81,7 @@ void EnergyReporter::parse_my_tag(
 {
 	scorefxn_ = tag->hasOption("scorefunction") ?
 		core::scoring::ScoreFunctionFactory::create_score_function( tag->getOption<std::string>("scorefunction") ) :
-		core::scoring::getScoreFunction();
+		core::scoring::get_score_function();
 
 	term_ = tag->hasOption("term") ?
 		tag->getOption<std::string>("term") :

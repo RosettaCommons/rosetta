@@ -99,7 +99,7 @@ using core::graph::EdgeListConstIterator;
 using core::graph::Graph;
 using core::scoring::calc_per_atom_sasa;
 using core::scoring::EnergyMap;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoringManager;
@@ -136,7 +136,7 @@ using basic::database::insert_or_ignore;
 static Tracer TR("protocols.features.HBondFeatures");
 
 HBondFeatures::HBondFeatures() :
-	scfxn_(getScoreFunction()),
+	scfxn_(get_score_function()),
 	definition_type_(hbdef_ENERGY),
 	definition_threshold_(0)
 {}
@@ -607,7 +607,7 @@ HBondFeatures::parse_my_tag(
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
 		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
 	} else {
-		scfxn_ = getScoreFunction();
+		scfxn_ = get_score_function();
 	}
 
 	string const definition_type(
@@ -639,7 +639,7 @@ HBondFeatures::report_features(
 	sessionOP db_session
 ){
 	if(!scfxn_){
-		scfxn_ = getScoreFunction();
+		scfxn_ = get_score_function();
 	}
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 

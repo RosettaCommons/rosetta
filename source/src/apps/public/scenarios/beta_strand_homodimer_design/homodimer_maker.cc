@@ -164,7 +164,7 @@ private:
 
 HDmakerMover::HDmakerMover() {
 	// variable definitions
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	sheet_start_ = option[ sheet_start ];
 	sheet_stop_ = option[ sheet_stop ];
 	pdb_chain_ = option[run::chain].def( "A");

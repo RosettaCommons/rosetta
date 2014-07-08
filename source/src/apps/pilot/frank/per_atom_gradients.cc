@@ -70,7 +70,7 @@ public:
 		using namespace core::optimization;
 		using namespace core::optimization::symmetry;
 
-		core::scoring::ScoreFunctionOP score_function_ref = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP score_function_ref = core::scoring::get_score_function();
 		core::scoring::ScoreFunctionOP rosetta_scorefxn = new core::scoring::ScoreFunction();
 
 		core::kinematics::MoveMap move_map;

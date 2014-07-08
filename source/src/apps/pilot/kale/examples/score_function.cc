@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
 	pose_from_pdb(pose, "structures/kic/1srp.pdb");
 
 	using core::scoring::ScoreFunctionOP;
-	using core::scoring::getScoreFunction;
+	using core::scoring::get_score_function;
 
-	ScoreFunctionOP function = getScoreFunction();
+	ScoreFunctionOP function = get_score_function();
 
 	cout << function->score(pose) << endl;
 

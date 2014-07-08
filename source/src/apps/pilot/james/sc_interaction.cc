@@ -115,7 +115,7 @@ public:
 		using core::id::AtomID;
 		using ObjexxFCL::format::F;
 
-		ScoreFunctionOP scorefxn( getScoreFunction() );
+		ScoreFunctionOP scorefxn( get_score_function() );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 		core::kinematics::MoveMap mm;

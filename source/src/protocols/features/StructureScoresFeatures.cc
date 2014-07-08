@@ -73,7 +73,7 @@ using core::scoring::Energies;
 using core::scoring::EnergyGraph;
 using core::scoring::EnergyMap;
 using core::scoring::EnergyEdge;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::hbond_sr_bb;
 using core::scoring::hbond_lr_bb;
 using core::scoring::n_score_types;
@@ -101,7 +101,7 @@ using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
 StructureScoresFeatures::StructureScoresFeatures() :
-	scfxn_(getScoreFunction())
+	scfxn_(get_score_function())
 {}
 
 StructureScoresFeatures::StructureScoresFeatures(

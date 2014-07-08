@@ -1706,7 +1706,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 core::scoring::ScoreFunctionOP AbrelaxApplication::generate_scorefxn( bool fullatom ) {
 	core::scoring::ScoreFunctionOP scorefxn( NULL );
 	if ( fullatom ) {
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 	} else {
 		if ( option[  basic::options::OptionKeys::abinitio::membrane ]() ) {
 			scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score_membrane" );

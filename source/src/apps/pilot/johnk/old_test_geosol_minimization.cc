@@ -79,7 +79,7 @@ main( int argc, char * argv [] )
 	TR << "jk testing derivatives for geometric solvation" << std::endl;
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	//	scorefxn->reset();
 	//	scorefxn->set_weight( core::scoring::fa_sol, 0.65 );

@@ -531,7 +531,7 @@ void
 	core::io::silent::SilentFileData sfd;
 
 	// Create a score function object, turn fa_elec off in the monomer
-	ScoreFunctionOP sf = getScoreFunction();
+	ScoreFunctionOP sf = get_score_function();
 	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 	eo.exclude_monomer_fa_elec(true);
 	sf->set_energy_method_options(eo);
@@ -739,7 +739,7 @@ void
 			      minimize(pose_for_design, sf, design_pos, false, true, min_rb);
 
 						// Repack and minimize using scorefxn
-						ScoreFunctionOP scorefxn = getScoreFunction();
+						ScoreFunctionOP scorefxn = get_score_function();
 						//repack(pose_for_design, scorefxn, design_pos);
 						//minimize(pose_for_design, scorefxn, design_pos, false, true, false);
 						scorefxn->score(pose_for_design);

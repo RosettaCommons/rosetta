@@ -723,7 +723,7 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 	
 	//Create Instances.  Make sure everything is ready to begin.
 	if (!scorefxn_){
-		scorefxn_ = core::scoring::getScoreFunction(true);
+		scorefxn_ = core::scoring::get_score_function(true);
 	}
 	if (scorefxn_->get_weight(core::scoring::dihedral_constraint) == 0.0){
 		scorefxn_->set_weight(core::scoring::dihedral_constraint, 1.0);	

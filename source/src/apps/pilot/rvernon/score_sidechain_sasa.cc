@@ -112,7 +112,7 @@ main( int argc, char* argv [] ) {
 		option[ in::file::residue_type_set ]()
 	);
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 	utility::vector1< Size > exposed_residues;
 	if ( option[ score::sidechain_exposed ].user() ) {

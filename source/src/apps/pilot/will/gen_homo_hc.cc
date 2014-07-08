@@ -358,7 +358,7 @@ void run(std::string fname) {
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
   ResidueTypeSetCAP crs=ChemicalManager::get_instance()->residue_type_set( CENTROID );
-  ScoreFunctionOP sfstd=getScoreFunction();
+  ScoreFunctionOP sfstd=get_score_function();
   ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
 

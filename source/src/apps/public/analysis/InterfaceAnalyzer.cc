@@ -86,7 +86,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
-IAMover::IAMover() : scorefxn_(core::scoring::getScoreFunction()) {}
+IAMover::IAMover() : scorefxn_(core::scoring::get_score_function()) {}
 
 //assign the correct constructor for the mover, and figure out the multichain assignment for that ctor
 void IAMover::assign_IA_mover(core::pose::Pose & pose){

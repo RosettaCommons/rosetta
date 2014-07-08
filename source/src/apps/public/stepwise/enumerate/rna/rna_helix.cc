@@ -128,7 +128,7 @@ rna_build_helix_test(){
 	rna_helix_assembler.set_dump( option[ dump ]() );
 	rna_helix_assembler.use_phenix_geo( is_use_phenix_geo );
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 		rna_helix_assembler.set_scorefxn ( scorefxn );
 	}
 	// if following is blank, there won't be a 'final' minimize.

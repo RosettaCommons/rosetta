@@ -575,7 +575,7 @@ sampling_closure_test(){
 	Real const bin_size( option[ bin_width]()  );
 	Size const num_bins = static_cast<Size>(360.0/bin_size);
 	Size const sample_residue = option[ sample_res ]();
-	ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	Size count( 0 );
 	(*scorefxn)( pose );

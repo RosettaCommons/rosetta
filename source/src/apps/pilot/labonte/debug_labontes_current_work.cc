@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 			cout << pose.residue(i) << endl << endl;
 		}*/
 
-		ScoreFunctionOP sf_std = getScoreFunction();
+		ScoreFunctionOP sf_std = get_score_function();
 		ScoreFunctionOP sf_mm = ScoreFunctionFactory::create_score_function("mm_std");
 
 		cout << "Initial score (std): " << endl;

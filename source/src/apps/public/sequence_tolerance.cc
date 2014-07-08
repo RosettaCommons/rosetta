@@ -209,7 +209,7 @@ sequence_tolerance_main( void * )
 	// set up the FitnessFunction
 	MultiStatePackerOP func = new MultiStatePacker(option[ ms::num_packs ]());
 	func->set_aggregate_function(new MultiStateAggregateFunction());
-	ScoreFunctionOP score_function( core::scoring::getScoreFunction() );
+	ScoreFunctionOP score_function( core::scoring::get_score_function() );
 	func->set_scorefxn( score_function );
 
 	// set up the PoseMetricCalculators to be used by the SingleStateFitnessFunction

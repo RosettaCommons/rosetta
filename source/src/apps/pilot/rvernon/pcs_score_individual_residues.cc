@@ -167,7 +167,7 @@ main( int argc, char* argv [] )
 	);
 
 	// configure score function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::EnergyMap emap;
 	emap.zero();
 

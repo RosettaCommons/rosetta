@@ -67,7 +67,7 @@ main( int argc, char * argv [] )
     using namespace core::scoring;
     // standard packer wts
     std::cout << "Standard packer weights without fa_rep term:" << std::endl;
-    ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+    ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
     scorefxn->set_weight( fa_rep, 0.0 );
     (*scorefxn)(pose);
     scorefxn->show(std::cout,pose);
@@ -84,7 +84,7 @@ main( int argc, char * argv [] )
 
     /// score12 w/ std packer wts
     std::cout << "Score12 with standard packer weights:" << std::endl;
-    ScoreFunctionOP score12( getScoreFunction() );
+    ScoreFunctionOP score12( get_score_function() );
     (*score12)(pose);
 
     std::cout << *score12;

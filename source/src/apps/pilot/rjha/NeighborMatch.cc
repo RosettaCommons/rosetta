@@ -56,7 +56,7 @@ main( int argc, char* argv[] )
 	option.add( local::master, "master pose (other poses matched against this" ).def("ubc12.pdb");
 	devel::init(argc, argv);
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	//pose containing res
 	core::pose::Pose master;

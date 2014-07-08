@@ -203,7 +203,7 @@ public:
 
 		// --- ScoreFunction ---
 		// create a score function using the standard packer weights
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 		scorefxn->set_weight( scoring::surface, 0.5 );
 		(*scorefxn)( pose );
 		pose.update_residue_neighbors();

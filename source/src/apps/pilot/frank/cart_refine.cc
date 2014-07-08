@@ -140,7 +140,7 @@ public:
 		sampler.apply( pose );
 
 		// relax (with CSTS)
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.5 );
 		scorefxn->set_weight( core::scoring::cart_bonded, 0.5 );
 		protocols::relax::FastRelax relax_prot( scorefxn, 4 );

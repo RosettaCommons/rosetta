@@ -300,7 +300,7 @@ int main( int argc, char * argv [] )
 	if ( option[ packing::resfile ].user() ) {
 		main_task_factory->push_back( new operation::ReadResfile );
 	}
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );

@@ -385,7 +385,7 @@ main( int argc, char * argv [] ) {
 	// that term from the score function.
 	// Don't include the solubility term or the pAA term that we are considering using here.
 	TR << "Creating score function." << std::endl;
-	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 
 	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 	energymethodoptions.hbond_options()->decompose_bb_hb_into_pair_energies( true );

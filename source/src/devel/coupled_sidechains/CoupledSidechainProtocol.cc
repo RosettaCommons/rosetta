@@ -231,7 +231,7 @@ CoupledSidechainProtocol::init_from_options() {
 	new_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
 	set_task_factory( new_task_factory );
 
-	set_scorefunction( core::scoring::getScoreFunction() );
+	set_scorefunction( core::scoring::get_score_function() );
 }
 
 void

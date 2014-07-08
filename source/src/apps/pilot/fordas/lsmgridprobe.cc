@@ -218,10 +218,10 @@ int main( int argc, char * argv [] )
 	// Initialize score function
 	core::scoring::ScoreFunctionOP scorefxn;
 	if( option[ score::weights ].user() ) {
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 	}
 	else {
-		scorefxn = core::scoring::getScoreFunctionLegacy( "score13" );
+		scorefxn = core::scoring::get_score_function_legacy( "score13" );
 		scorefxn->set_weight( core::scoring::envsmooth, 0 );
 	}
 

@@ -132,8 +132,8 @@ FlxbbDesignPack::get_name() const {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FlxbbDesign::FlxbbDesign() :
 	Mover( "FlxbbDesign" ),
-	scorefxn_design_( scoring::getScoreFunction() ),
-	scorefxn_relax_ ( scoring::getScoreFunction() ),
+	scorefxn_design_( scoring::get_score_function() ),
+	scorefxn_relax_ ( scoring::get_score_function() ),
 	nflxbb_cycles_( 3 ),
 	layer_mode_( "" ),
 	use_origseq_for_not_dsgned_layer_( true ),

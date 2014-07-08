@@ -88,7 +88,7 @@ main( int argc, char* argv [] ) {
 	using numeric::random::random_range;
 
 	devel::init( argc, argv );
-	ScoreFunctionOP scorefxn( getScoreFunction() );
+	ScoreFunctionOP scorefxn( get_score_function() );
 
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_bb(true);

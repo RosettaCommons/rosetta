@@ -60,7 +60,7 @@ using core::scoring::Energies;
 using core::scoring::EnergyGraph;
 using core::scoring::EnergyMap;
 using core::scoring::EnergyEdge;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::hbond_sr_bb;
 using core::scoring::hbond_lr_bb;
 using core::scoring::n_score_types;
@@ -78,7 +78,7 @@ using cppdb::statement;
 using cppdb::result;
 
 ScoreTypeFeatures::ScoreTypeFeatures() :
-	scfxn_(getScoreFunction())
+	scfxn_(get_score_function())
 {}
 
 ScoreTypeFeatures::ScoreTypeFeatures(

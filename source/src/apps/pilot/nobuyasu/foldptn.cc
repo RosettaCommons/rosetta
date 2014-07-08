@@ -132,7 +132,7 @@ public: // constructor/deconstructor
 		}
 
 		// set scorefxn
-		scorefxn_fullatom_ = getScoreFunction();
+		scorefxn_fullatom_ = get_score_function();
 		scorefxn_centroid_ = core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen" );
 
 		// output file

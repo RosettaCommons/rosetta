@@ -241,7 +241,7 @@ int main( int argc, char* argv[] ) {
 
 
 	// create a score function; uses either scorefxn or command line specified score function
-	scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 	energymethodoptions.hbond_options()->decompose_bb_hb_into_pair_energies(true);
 	scorefxn->set_energy_method_options( energymethodoptions );

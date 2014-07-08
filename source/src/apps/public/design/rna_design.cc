@@ -220,7 +220,7 @@ rna_design_test()
 
 	}
 
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
 	methods::EnergyMethodOptions options( scorefxn->energy_method_options() );

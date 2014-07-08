@@ -106,12 +106,12 @@ inline core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return new co
 inline core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
 inline core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
 
-	inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
-	inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
+	inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
+	inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
 inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return new core::scoring::ScoreFunction(); };
 
-//core::scoring::ScoreFunctionAP PyReturnValuePolicyTest_ScoreFunctionAP(void) { return core::scoring::getScoreFunction(); };
-//core::scoring::ScoreFunctionCAP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::getScoreFunction(); };
+//core::scoring::ScoreFunctionAP PyReturnValuePolicyTest_ScoreFunctionAP(void) { return core::scoring::get_score_function(); };
+//core::scoring::ScoreFunctionCAP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function(); };
 
 } //toolbox
 } //protocols

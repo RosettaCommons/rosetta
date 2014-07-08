@@ -82,7 +82,7 @@ public:
         using namespace core::optimization;
         using namespace core::optimization::symmetry;
 
-        core::scoring::ScoreFunctionOP score_function = core::scoring::getScoreFunction();
+        core::scoring::ScoreFunctionOP score_function = core::scoring::get_score_function();
 
         // repack pose
         core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;

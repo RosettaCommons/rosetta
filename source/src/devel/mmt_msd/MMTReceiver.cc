@@ -71,7 +71,7 @@ MMTReceiver::MMTReceiver() :
 	sleep_max_( 2000 ),
 	sleep_nsecs_( sleep_min_ )
 {
-	sfxn_ = core::scoring::getScoreFunction();
+	sfxn_ = core::scoring::get_score_function();
 	my_mpi_rank_ = utility::mpi_rank();
 }
 

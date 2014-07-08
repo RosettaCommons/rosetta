@@ -137,7 +137,7 @@ main( int argc, char * argv [] )
 	core::Size iterations = option[ casp::num_iterations ]();
 	//std::string weight_file = option[ casp::weight_file ]();
 	//ScoreFunctionOP scorefxn(ScoreFunctionFactory::create_score_function(weight_file));
-	ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 	//read in file specifying which residues to consider
 	std::string residue_spec_file = option[ casp::refine_res ]();

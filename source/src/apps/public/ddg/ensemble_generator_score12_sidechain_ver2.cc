@@ -385,7 +385,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			pose::Pose lowest_score_pose = mc->lowest_score_pose();
 
 			if(basic::options::option[OptionKeys::ddg::min_with_cst]()){
-				ScoreFunctionOP s = getScoreFunction();
+				ScoreFunctionOP s = get_score_function();
 
 				lowest_score_pose.remove_constraints((lowest_score_pose.constraint_set())->get_all_constraints());
 				setup_ca_constraints(lowest_score_pose, (*s), 9.0, 0.5);
@@ -442,7 +442,7 @@ main( int argc, char* argv [] )
 	Real cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
 	pose::Pose pose;
 
-	ScoreFunctionOP scorefxn( getScoreFunction());
+	ScoreFunctionOP scorefxn( get_score_function());
 
 	vector1<file::FileName> files;
 	if(basic::options::option[in::file::s].user()){

@@ -347,7 +347,7 @@ main( int argc, char* argv [] )
 
 	//	io::pdb::pose_from_pdb( pose, options::start_file() ); // gets filename from -s option
 
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 
 	if(basic::options::option[score::patch].user()){
 		scorefxn->apply_patch_from_file(basic::options::option[score::patch]);

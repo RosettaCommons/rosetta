@@ -83,7 +83,7 @@ private:
 SymFixbbMover::SymFixbbMover() {
 	using namespace basic::options;
   using namespace basic::options::OptionKeys;
-	scorefxn_a = core::scoring::getScoreFunction();
+	scorefxn_a = core::scoring::get_score_function();
 	scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_a );
   movemap_ = new core::kinematics::MoveMap();
 	main_task_factory_ = new core::pack::task::TaskFactory;

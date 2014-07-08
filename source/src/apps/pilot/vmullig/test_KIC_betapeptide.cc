@@ -243,7 +243,7 @@ int main( int argc, char * argv [] ) {
 	if(option[out::nstruct].user()) numstructs=(core::Size) option[out::nstruct]();
 
 	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::getScoreFunction();
+	sfxn = core::scoring::get_score_function();
 
 	protocols::relax::FastRelax frlx(sfxn, 1); //A fastrelax mover
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.

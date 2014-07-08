@@ -103,7 +103,7 @@ main( int argc, char* argv [] ) {
 	}
 
 	//YL, declare score function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	//YL, declare NullMover
 	protocols::moves::NullMover mover;
 	protocols::jobdist::not_universal_main( mover );

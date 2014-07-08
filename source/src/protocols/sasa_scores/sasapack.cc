@@ -366,7 +366,7 @@ compute_avge_scores(
 	static ScoreFunctionOP fa_scorefxn( 0 );
 
 	if ( !fa_scorefxn ) {
-		fa_scorefxn = getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		fa_scorefxn = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		if ( pose::symmetry::is_symmetric( *fa_scorefxn ) ) {
 			/// seems like residue energies may be messed up in the symmetric case, for intra-monomer interactions
 			///

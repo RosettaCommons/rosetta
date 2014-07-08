@@ -1855,7 +1855,7 @@ int main(int argc, char *argv[]) {
 	devel::init(argc, argv); //Initialize Rosetta
 	core::scoring::ScoreFunctionOP sfxn;
 	if(procnum!=0) {
-		sfxn = core::scoring::getScoreFunction(); //NOTE -- proc 0 never creates the scorefunction.  It SHOUOLDN'T ever use it, as a memory-saving thing.
+		sfxn = core::scoring::get_score_function(); //NOTE -- proc 0 never creates the scorefunction.  It SHOUOLDN'T ever use it, as a memory-saving thing.
 		if(option[v_cst_file].user()) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
 			if(sfxn->get_weight(atom_pair_constraint) < 1.0e-6) sfxn->set_weight(atom_pair_constraint, 1.0);
 			if(sfxn->get_weight(angle_constraint) < 1.0e-6) sfxn->set_weight(angle_constraint, 1.0);

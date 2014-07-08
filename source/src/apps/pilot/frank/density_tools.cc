@@ -267,7 +267,7 @@ densityTools()
 			core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
 			core::scoring::electron_density::getDensityMap().setWindow( 3 );
 
-			core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+			core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 			scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
 			(*scorefxn)(fullpose);
 

@@ -92,7 +92,7 @@ public:
 		using protocols::simple_moves::TaskAwareMinMoverOP;
 		using protocols::simple_moves::TaskAwareMinMover;
 
-		ScoreFunctionOP sf(getScoreFunction());
+		ScoreFunctionOP sf(get_score_function());
 
 		//TA + minmover for all positions fixed
 		protocols::simple_moves::MinMoverOP min_mover_all = new protocols::simple_moves::MinMover(

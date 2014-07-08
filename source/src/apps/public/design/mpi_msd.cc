@@ -309,7 +309,7 @@ public:
 	){
 		pose_ = new core::pose::Pose( pose );
 		task_ = task.clone();
-		sfxn_ = core::scoring::getScoreFunction();
+		sfxn_ = core::scoring::get_score_function();
 
 		//register calculators
 
@@ -420,7 +420,7 @@ int main( int argc, char ** argv )
 	ds->add_npdpro_calculator_creator( new HPatchByChainNPDCalculatorCreator );
 	ds->add_npdpro_calculator_creator( new NBuriedUnsatsCalcultorCreator );
 
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 	if ( ! option[ msd::dont_score_bbhbonds ] ) {
 		/// Count bb/bb hydrogen bonds in the packer energy; otherwise, the MSD

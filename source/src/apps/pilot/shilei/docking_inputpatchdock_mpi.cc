@@ -384,7 +384,7 @@ void run_parallel_docking() {
 	//initialize docking
 	utility::vector1< core::Size > movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
         core::scoring::ScoreFunctionOP scorefxn_cen( ScoreFunctionFactory::create_score_function("interchain_cen") );
-	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	core::scoring::ScoreFunctionOP cst_score_( core::scoring::ScoreFunctionFactory::create_score_function("empty") );
 
 	//add cst to the scoring

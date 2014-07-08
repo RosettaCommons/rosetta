@@ -272,7 +272,7 @@ void BaseRole::instantiate_scorefxns() {
 	}
 	// add default score12 if score12 isn't yet taken
   if( luabind::type( scorefxns_["score12"].raw() ) == 0 ) {
-    ScoreFunctionOP scorefxn = getScoreFunction();
+    ScoreFunctionOP scorefxn = get_score_function();
     ScoreFunctionSP tmpsp( scorefxn.get() ); 
     scorefxn.relinquish_ownership();
     luabind::globals(lstate_)["els"]["scorefxns"]["score12"] = tmpsp;

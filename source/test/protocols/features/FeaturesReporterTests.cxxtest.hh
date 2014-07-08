@@ -89,7 +89,7 @@ public:
 	void
 	setUp() {
 
-		using core::scoring::getScoreFunction;
+		using core::scoring::get_score_function;
 		using utility::sql_database::DatabaseSessionManager;
 		using namespace protocols::features;
 
@@ -106,7 +106,7 @@ public:
 		relevant_residues_ = utility::vector1< bool >(pose_1ten_->total_residue(), true);
 		batch_id_ = 0;
 
-		score_function_ = getScoreFunction();
+		score_function_ = get_score_function();
 
 		score_function_->score(*pose_1ten_);
 

@@ -175,7 +175,7 @@ public:
 		using protocols::simple_moves::PackRotamersMover;
 		using protocols::simple_moves::PackRotamersMoverOP;
 
-		core::scoring::ScoreFunctionOP scorefxn_pack = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn_pack = core::scoring::get_score_function();
 		core::scoring::ScoreFunctionOP scorefxn_dockmin = core::scoring::ScoreFunctionFactory::create_score_function("docking", "docking_min");
 		(*scorefxn_pack)(fullatom_pose);
 

@@ -82,7 +82,7 @@ namespace sampling {
 		moving_res_( moving_res ),
 		reference_axes_( Matrix::identity() ),
 		reference_centroid_( Vector( 0.0, 0.0, 0.0 ) ),
-		scorefxn_( core::scoring::getScoreFunction() ),
+		scorefxn_( core::scoring::get_score_function() ),
 		o2prime_trials_( false ),
 		ignore_o2prime_hbonds_in_filter_( false ),
 		assign_WC_edges_( false ),

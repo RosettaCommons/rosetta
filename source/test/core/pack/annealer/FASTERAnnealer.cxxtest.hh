@@ -81,7 +81,7 @@ public:
 			}
 		}
 
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		(*sfxn)( *trpcage ); // score the pose first;
 		sfxn->setup_for_packing( *trpcage, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( *trpcage, *sfxn, task );

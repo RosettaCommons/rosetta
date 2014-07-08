@@ -114,7 +114,7 @@ public:
 
 		tf->push_back(mmop);
 
-		PackRotamersMoverOP packer = new PackRotamersMover(core::scoring::getScoreFunction(true));
+		PackRotamersMoverOP packer = new PackRotamersMover(core::scoring::get_score_function(true));
 		packer->task_factory(tf);
 		packer->apply(pose);
 	}

@@ -192,7 +192,7 @@ sidechain_sample( pose::Pose & pose,
 	static core::scoring::dunbrack::RotamerLibrary rotamer_library_(core::scoring::ScoringManager::get_instance()->get_RotamerLibrary());
 
 	Pose pose_start = pose;
-	static const ScoreFunctionOP scorefxn = getScoreFunction();
+	static const ScoreFunctionOP scorefxn = get_score_function();
 
 	Real const start_score = (*scorefxn)( pose );
 	min_delta_score_tot = 0.0;
@@ -407,7 +407,7 @@ each_aa_test(){
 		////////////////////////////////////////////////////////////
 		// Not necessary, but allows "packing" of one residue
 		StepWiseProteinPacker stepwise_packer( moving_res_list, new StepWiseDoNothingSampleGenerator() );
-		stepwise_packer.set_scorefxn( getScoreFunction() );
+		stepwise_packer.set_scorefxn( get_score_function() );
 
 		// keep track of free energies vs. temperature.
 		utility::vector1< utility::vector1<Real >  > all_deltaG_diff_tot;

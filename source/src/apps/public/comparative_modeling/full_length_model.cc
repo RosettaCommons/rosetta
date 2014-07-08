@@ -131,7 +131,7 @@ void restore_hack( core::pose::Pose & pose ) {
 //		task->restrict_to_repacking();
 //		task->restrict_to_residues(residues_to_repack);
 //		ScoreFunctionOP scorefxn(
-//			getScoreFunction()
+//			get_score_function()
 //		);
 //		restore_hack( full_length_pose );
 //
@@ -223,7 +223,7 @@ main( int argc, char* argv [] ) {
 		task->restrict_to_repacking();
 		task->restrict_to_residues(residues_to_repack);
 		ScoreFunctionOP scorefxn(
-			getScoreFunction()
+			get_score_function()
 		);
 		restore_hack( full_length_pose );
 		//core::import_pose::pose_from_pdb( pose, *rsd_set, "debug.pdb" );

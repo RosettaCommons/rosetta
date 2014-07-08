@@ -378,7 +378,7 @@ void
     }
 
 		// Make a scorefunction
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 
     // Calculate the ddG of the input structure in the assembled and unassembled states
     protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);

@@ -782,7 +782,7 @@ apply ( core::pose::Pose & pose )
 	protocols::simple_moves::ConstraintSetMoverOP const_set = new protocols::simple_moves::ConstraintSetMover();
 	const_set->apply(pose);
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	(*scorefxn)(pose);
 
 	sample(pose, scorefxn);
@@ -917,7 +917,7 @@ my_main( void* ) {
 	whole_sequence->add_mover(sample_ss);
 
 	if (basic::options::option[ challenge::close_loops ]) {
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->set_weight(core::scoring::rama, 0.4);
 		scorefxn->set_weight(core::scoring::vdw, 0.8);
 

@@ -2049,7 +2049,7 @@ namespace motif_hash {
 				TR.Error << "FAIL TO READ " << fname << endl;
 				continue;
 			}
-			ScoreFunctionOP sf = core::scoring::getScoreFunction();
+			ScoreFunctionOP sf = core::scoring::get_score_function();
 			core::scoring::methods::EnergyMethodOptions myopt = sf->energy_method_options();
 			myopt.hbond_options().decompose_bb_hb_into_pair_energies(true);
 			sf->set_energy_method_options(myopt);

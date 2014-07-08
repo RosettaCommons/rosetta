@@ -533,7 +533,7 @@ main(int argc, char* argv []){
 	}
 
 
-	ScoreFunctionOP sfxn(getScoreFunction());
+	ScoreFunctionOP sfxn(get_score_function());
 
 	protocols::ddG::ddGData dat(in[1].name());
 	bool header_printed = false;

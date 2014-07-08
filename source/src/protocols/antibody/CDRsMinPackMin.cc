@@ -108,7 +108,7 @@ void CDRsMinPackMin::init() {
 		allcdr_map_ = NULL;
 
 		// setup all the scoring functions
-		loop_scorefxn_highres_ = core::scoring::getScoreFunction();
+		loop_scorefxn_highres_ = core::scoring::get_score_function();
 		loop_scorefxn_highres_->set_weight( core::scoring::chainbreak, 10. / 3. );
 		loop_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
 	}

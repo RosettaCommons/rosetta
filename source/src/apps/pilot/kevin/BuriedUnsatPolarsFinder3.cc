@@ -108,7 +108,7 @@ public:
 		
 		using namespace core::scoring;
 		
-		core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = get_score_function();
 		scorefxn->score(pose);
 
 		// TODO continue from here

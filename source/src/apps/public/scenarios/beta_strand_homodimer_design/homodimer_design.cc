@@ -194,7 +194,7 @@ private:
 
 HDdesignMover::HDdesignMover() {
 	// variable definitions
-	scorefxn_a = core::scoring::getScoreFunction();
+	scorefxn_a = core::scoring::get_score_function();
 	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_a );
 	tf_design_ = new TaskFactory();
 	//movemap_ = new core::kinematics::MoveMap();

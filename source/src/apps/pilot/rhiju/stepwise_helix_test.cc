@@ -560,7 +560,7 @@ pack_it( pose::Pose & pose ){
 	using namespace core::pack;
 	using namespace core::pack::task;
 
-	ScoreFunctionOP scorefxn_ = getScoreFunction();
+	ScoreFunctionOP scorefxn_ = get_score_function();
 
 	PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
 

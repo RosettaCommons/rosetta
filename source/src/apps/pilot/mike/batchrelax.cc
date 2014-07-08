@@ -115,7 +115,7 @@ main( int argc, char * argv [] )
 		}
 
 		core::scoring::ScoreFunctionOP scorefxn;
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 
 		for ( core::Size j=0;j<nstruct;j++ )
 		{

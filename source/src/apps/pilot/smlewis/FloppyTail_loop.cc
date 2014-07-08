@@ -190,7 +190,7 @@ public:
 		TR << "Using centroid scorefunction\n" << *centroid_scorefunction_;
 
 		//set up fullatom scorefunction
-		fullatom_scorefunction_ = getScoreFunction();
+		fullatom_scorefunction_ = get_score_function();
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
 		if( pair_off ) fullatom_scorefunction_->set_weight( fa_pair, 0.0 ); //not for general use
 		TR << "Using fullatom scorefunction (TALARIS_2013), pair may be modified\n"

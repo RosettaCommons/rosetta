@@ -62,7 +62,7 @@ public:
 			main_task_factory->push_back( new operation::ReadResfile );
 		}
 
-		score_fxn = core::scoring::getScoreFunction();
+		score_fxn = core::scoring::get_score_function();
 
 		pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( main_task_factory );
@@ -93,7 +93,7 @@ public:
 		pack_mover->apply(pose);
 
 		//this tests that the mid-pose output has the correct scorefunction (meaning that it also includes chainbreak)
-		core::scoring::ScoreFunctionOP score_fxn2 = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP score_fxn2 = core::scoring::get_score_function();
 		score_fxn2->set_weight( core::scoring::chainbreak, 2.0 );
 		(*score_fxn2)(pose);
 		/// Now handled automatically.  score_fxn2->accumulate_residue_total_energies(pose);

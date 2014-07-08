@@ -451,11 +451,11 @@ int main( int argc, char * argv [] ) {
 	                sfc->set_weight(core::scoring::rama,1.0);
 	                sfc->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sfc->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffa = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	ScoreFunctionOP sffa = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffa->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sffa->set_weight(core::scoring::omega,1.0);
 	                sffa->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
-	ScoreFunctionOP sffastd = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	ScoreFunctionOP sffastd = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffastd->set_weight(core::scoring::omega,1.0);
 	                sffastd->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
 

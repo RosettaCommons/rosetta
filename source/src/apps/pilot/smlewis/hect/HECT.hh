@@ -195,7 +195,7 @@ public:
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
-		fullatom_scorefunction_ = getScoreFunction();
+		fullatom_scorefunction_ = get_score_function();
 		TR << "Using fullatom scorefunction (TALARIS_2013), \n" << *fullatom_scorefunction_ << std::flush;
 
 		//read native structure for CA RMSD

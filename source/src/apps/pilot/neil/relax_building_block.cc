@@ -112,7 +112,7 @@ void
 	std::string sctag = string_of(numeric::random::uniform()).substr(2,4);
 
 	// Create a score function object, get the fa_rep weight from it (default = 0.44)
-	ScoreFunctionOP sf = getScoreFunction();
+	ScoreFunctionOP sf = get_score_function();
 
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
@@ -166,7 +166,7 @@ void
 */
 
 				// Rescore with scorefxn
-				//ScoreFunctionOP scorefxn = getScoreFunction();
+				//ScoreFunctionOP scorefxn = get_score_function();
 				//scorefxn->score(pose_for_design);
 
 				// Write the pdb file of the design

@@ -62,10 +62,10 @@ public:
 	getCutoff() const;
 
 	core::scoring::ScoreFunctionCOP
-	getScoreFunction() const;
+	get_score_function() const;
 
 	core::scoring::ScoreFunctionOP
-	getScoreFunction();
+	get_score_function();
 
 	virtual
 	void

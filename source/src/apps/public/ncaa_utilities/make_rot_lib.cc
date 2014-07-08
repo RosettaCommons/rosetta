@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 
 	// create score function
 	std::cout << "Creating scorefunction..." << std::flush << std::endl;
-	ScoreFunctionOP scrfxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP scrfxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 	scrfxn->set_weight( fa_dun, 0.0 );
 	scrfxn->set_weight( p_aa_pp, 0.0 );
 	scrfxn->set_weight( rama, 0.0 );

@@ -142,7 +142,7 @@ NcbbDockDesignProtocol::NcbbDockDesignProtocol():
 { 
 		Mover::type("NcbbDockDesignProtocol");
 	
-		score_fxn_ = getScoreFunction(); 
+		score_fxn_ = get_score_function(); 
 		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 }
 
@@ -245,7 +245,7 @@ NcbbDockDesignProtocol::apply(
 	core::pose::Pose & pose
 )
 {
-	scoring::ScoreFunctionOP soft_score_fxn  = getScoreFunction();
+	scoring::ScoreFunctionOP soft_score_fxn  = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*soft_score_fxn);
 	soft_score_fxn->set_etable( FA_STANDARD_SOFT );
 

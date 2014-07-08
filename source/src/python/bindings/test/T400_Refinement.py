@@ -38,7 +38,7 @@ mover_3mer.apply(pose_frag)
 
 
 print 'Creating standard score function with patch and scoring'
-scorefxn = getScoreFunction()
+scorefxn = get_score_function()
 scorefxn(pose)
 
 

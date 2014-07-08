@@ -712,7 +712,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 	core::scoring::ScoreFunctionOP scorefxn = scorefxn_in->clone();
 
 /*
-	core::scoring::ScoreFunctionOP noenvhbond_scorefxn( core::scoring::getScoreFunctionLegacy( "score13" ) );
+	core::scoring::ScoreFunctionOP noenvhbond_scorefxn( core::scoring::get_score_function_legacy( "score13" ) );
 	core::scoring::methods::EnergyMethodOptions options( noenvhbond_scorefxn->energy_method_options() );
 	options.hbond_options()->use_hb_env_dep( false );
 	noenvhbond_scorefxn->set_energy_method_options( options );
@@ -1053,7 +1053,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 	ala = core::conformation::ResidueFactory::create_residue( alatype );
 
 	// this scorefxn doesn't really matter, since we're just using it to repack the new residue and make sure the pose is scored.
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	for( core::Size i = 1; i <= hotspot_length(); ++i ) {
 		// add multimer and set extended chain parameters, eg - ala-Hotspot-ala-ala
@@ -1274,11 +1274,11 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	// set scorefunction.
 	core::scoring::ScoreFunctionOP noenvhbond_scorefxn;
 	//if( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-	//	noenvhbond_scorefxn = core::scoring::getScoreFunction();
+	//	noenvhbond_scorefxn = core::scoring::get_score_function();
 	//}
 	//else {
 	// just use sc12 with no env hbonding. Legacy reasons for this scorefxn, but it's only used for building neighbor graphs, packing ala poses, and bump checking.
-	noenvhbond_scorefxn = core::scoring::getScoreFunctionLegacy( "score13" );
+	noenvhbond_scorefxn = core::scoring::get_score_function_legacy( "score13" );
 	noenvhbond_scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 	noenvhbond_scorefxn->set_weight( core::scoring::envsmooth, 0 );
 	//}
@@ -1288,7 +1288,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 
 	core::scoring::ScoreFunctionOP full_scorefxn( noenvhbond_scorefxn );
 
-	//	core::scoring::ScoreFunctionOP full_scorefxn( core::scoring::getScoreFunction() );
+	//	core::scoring::ScoreFunctionOP full_scorefxn( core::scoring::get_score_function() );
 
 	// score the pose, to update the tenA_neighbor_graph and setup Hbond stuff
 	(*full_scorefxn)(unbound_pose);
@@ -1447,11 +1447,11 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	// set scorefunction.
 	core::scoring::ScoreFunctionOP noenvhbond_scorefxn;
 	//if( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-	//	noenvhbond_scorefxn = core::scoring::getScoreFunction();
+	//	noenvhbond_scorefxn = core::scoring::get_score_function();
 	//}
 	//else {
 	// just use sc12 with no env hbonding. Legacy reasons for this scorefxn, but it's only used for building neighbor graphs, packing ala poses, and bump checking.
-	noenvhbond_scorefxn = core::scoring::getScoreFunctionLegacy( "score13" );
+	noenvhbond_scorefxn = core::scoring::get_score_function_legacy( "score13" );
 	noenvhbond_scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 	noenvhbond_scorefxn->set_weight( core::scoring::envsmooth, 0 );
 	//}
@@ -1461,7 +1461,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 
 	core::scoring::ScoreFunctionOP full_scorefxn( noenvhbond_scorefxn );
 
-	//	core::scoring::ScoreFunctionOP full_scorefxn( core::scoring::getScoreFunction() );
+	//	core::scoring::ScoreFunctionOP full_scorefxn( core::scoring::get_score_function() );
 
 	// score the pose, to update the tenA_neighbor_graph and setup Hbond stuff
 	(*full_scorefxn)(unbound_pose);

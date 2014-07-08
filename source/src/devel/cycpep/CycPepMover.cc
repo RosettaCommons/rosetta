@@ -23,7 +23,7 @@ CycPepMover::CycPepMover():Mover() {
 	Mover::type( "CycPepMover" );
 
 	//set defaults to scoring function
-	_scorefxn = core::scoring::getScoreFunction();
+	_scorefxn = core::scoring::get_score_function();
 
 	//set defaults to loop relax mover
 	_loop_relax_mover.remodel("perturb_kic");

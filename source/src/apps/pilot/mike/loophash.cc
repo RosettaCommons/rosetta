@@ -163,7 +163,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 	}
 
 	// Set up contraints
-	ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+	ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
 
 	// convert pose to centroid pose:
 	if( !pose.is_fullatom() ){

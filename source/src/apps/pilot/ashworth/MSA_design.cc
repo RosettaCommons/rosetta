@@ -92,7 +92,7 @@ MSA_design(
 	// (BasePartner is simpler, and is used for DNA scoring methods in core)
 	scoring::dna::set_base_partner( *pose );
 
-	ScoreFunctionOP scorefxn( getScoreFunction() );
+	ScoreFunctionOP scorefxn( get_score_function() );
 
 	if ( ! option[ OptionKeys::constraints::cst_file ].user() ) {
 		if ( ! option[ OptionKeys::in::file::pssm ].user() ) {

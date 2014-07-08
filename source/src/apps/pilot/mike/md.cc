@@ -192,7 +192,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = getScoreFunction();
+	scorefxn = get_score_function();
 
 	// Build overall docking protocol Mover
 	Protocol_MolecularDynamics *md;

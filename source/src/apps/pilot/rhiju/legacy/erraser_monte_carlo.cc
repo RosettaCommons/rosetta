@@ -161,7 +161,7 @@ erraser_monte_carlo()
 	utility::vector1< Size > sample_res_list = option[ sample_res ]();
 
 	// scorefunction
-	core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = get_score_function();
 
 	bool const cart_min_ = option[ cart_min ]();
 	if ( cart_min_ && scorefxn->get_weight( cart_bonded ) == 0.0 ) scorefxn->set_weight( cart_bonded, 1.0 );

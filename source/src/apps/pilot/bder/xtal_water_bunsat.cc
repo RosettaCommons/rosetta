@@ -78,7 +78,7 @@ public:
 		
 		dry_pose_.dump_pdb("dry_pose.pdb");
 		
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->score(dry_pose_);
 		
 		using namespace core::pose::metrics;

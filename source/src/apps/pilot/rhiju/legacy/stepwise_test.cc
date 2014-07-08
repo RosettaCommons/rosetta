@@ -400,7 +400,7 @@ minimizer_test()
 	pose::Pose pose;
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 
 	if ( option[ in::file::s].user() ) {
 
@@ -709,7 +709,7 @@ sample_trp_tyr_test()
 
 
 
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 
 	PoseOP start_pose_op;
 	//Pose & start_pose = *start_pose_op;
@@ -986,7 +986,7 @@ rebuild_test(){
 // 		//		std::cout << "FILTER " << pose_list.size() << " " << minimize_pose_list.size() << std::endl;
 
 // 		StepWiseProteinPoseMinimizer stepwise_pose_minimizer( minimize_pose_list, moving_residues );
-//     ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
+//     ScoreFunctionOP minimize_scorefxn( core::scoring::get_score_function() );
 // 		if (pose.constraint_set()->has_constraints() )	minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 );
 // 		stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
 // 		stepwise_pose_minimizer.set_silent_file( silent_file );
@@ -1027,8 +1027,8 @@ cluster_outfile_test_OLD(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	/////////////////////////////
-	//static ScoreFunctionOP scorefxn = getScoreFunction();
-	static ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	//static ScoreFunctionOP scorefxn = get_score_function();
+	static ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	ClusterPhilStyleOP clustering( new ClusterPhilStyle );
 	PoseInputStreamOP input  = new SilentFilePoseInputStream( option[ in::file::silent ]() );
 	clustering->set_score_function( scorefxn );
@@ -1150,7 +1150,7 @@ peptide_plane_test_OLD(){
 
 	std::string const desired_sequence = "W";
 
-	ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	Pose pose;
 	make_pose_from_sequence( pose, desired_sequence, *rsd_set, false /*auto_termini*/);
@@ -1345,8 +1345,8 @@ score12_plot_test()
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	/////////////////////////////
-	//ScoreFunctionOP scorefxn = getScoreFunction();
-	static ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	//ScoreFunctionOP scorefxn = get_score_function();
+	static ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 	///////////////////////////////////////
   // Go through each possible sequence
@@ -1550,7 +1550,7 @@ color_by_lj_test()
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 
 	EtableOP etable_ptr
 		( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),

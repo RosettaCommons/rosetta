@@ -103,7 +103,7 @@ MyScoreMover::MyScoreMover():
 	using namespace core;
 
 	// get scorefxn and add constraints if defined
-	sfxn_ = core::scoring::getScoreFunction();
+	sfxn_ = core::scoring::get_score_function();
 	if ( option[ in::file::keep_input_scores ]() ){
 		set_keep_input_scores();
 	}

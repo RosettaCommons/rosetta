@@ -808,7 +808,7 @@ void run(std::string fname) {
 
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-  ScoreFunctionOP sfstd=getScoreFunction();
+  ScoreFunctionOP sfstd=get_score_function();
 
   // read pose info
   Pose natp,his,cys;

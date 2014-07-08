@@ -281,7 +281,7 @@ HybridizeProtocol::init() {
 	  option[ score::hbond_params ].value( "sp2_elec_params" );
 	}
 
-	fa_scorefxn_ = core::scoring::getScoreFunction();
+	fa_scorefxn_ = core::scoring::get_score_function();
 
 	if (!option[mistakes::restore_pre_talaris_2013_behavior] && !option[corrections::score::cenrot]) {
 		core::scoring::methods::EnergyMethodOptions optionsfa(fa_scorefxn_->energy_method_options());

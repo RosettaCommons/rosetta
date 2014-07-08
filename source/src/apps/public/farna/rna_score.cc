@@ -115,7 +115,7 @@ rna_score_test()
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 	} else {
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
 	}

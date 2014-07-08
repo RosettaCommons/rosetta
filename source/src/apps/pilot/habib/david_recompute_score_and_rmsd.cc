@@ -85,7 +85,7 @@ void define_interface( core::pose::Pose & ref_pose ) {
 	}
 
 	TR <<"sele ";
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
         (*scorefxn)(ref_pose);
 	EnergyGraph & energy_graph(ref_pose.energies().energy_graph());
 	for ( graph::Graph::EdgeListIter
@@ -244,8 +244,8 @@ main( int argc, char * argv [] )
         //}
 
 	// scoring function
-	//scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-	//scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
+	//scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	// PocketConstraint set to unweighted (1)
         //scorefxn->set_weight( core::scoring::pocket_constraint, 1 );

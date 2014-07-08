@@ -95,8 +95,8 @@ namespace io {
         getline(stream, line);
         TR << line << std::endl;
         std::istringstream l(line);
-        core::Size total_tmhelix;
-        core::Size total_residue_in_span_file;
+        core::Size total_tmhelix( 0 );
+        core::Size total_residue_in_span_file( 0 );
 
         TR << line << std::endl;
         l >> total_tmhelix >> total_residue_in_span_file;

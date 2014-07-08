@@ -173,7 +173,7 @@ core::id::AtomID_Map<Real>
 get_hbonde(
            core::pose::Pose & pose
            ) {
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
   // if(core::pose::symmetry::is_symmetric(pose)) {
   //  sf = new core::scoring::symmetry::SymmetricScoreFunction(sf);
   // }

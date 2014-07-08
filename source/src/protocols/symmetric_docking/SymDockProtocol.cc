@@ -236,7 +236,7 @@ SymDockProtocol::set_default()
 	docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
 	docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking" );
 	docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-	docking_score_pack_ = getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	docking_score_pack_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
 	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
 		docking_score_low_->set_weight(core::scoring::atom_pair_constraint, 1.0);
@@ -268,7 +268,7 @@ SymDockProtocol::set_default()
 	/*	docking_score_low_ = ScoreFunctionFactory::create_score_function( "interchain_cen" ) ;
 	docking_score_high_ = ScoreFunctionFactory::create_score_function( "docking" );
 	docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
-	docking_score_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;*/
+	docking_score_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;*/
 	design(false); //??
 
 	if ( dock_ppk_ ) set_local_refine(true);
@@ -447,7 +447,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			}
 
 			if(passed_highres_filter_ && option[ OptionKeys::docking::kick_relax ].user()) {
-				protocols::relax::relax_pose( pose, core::scoring::getScoreFunction(), "s" );
+				protocols::relax::relax_pose( pose, core::scoring::get_score_function(), "s" );
 			}
 		}
 

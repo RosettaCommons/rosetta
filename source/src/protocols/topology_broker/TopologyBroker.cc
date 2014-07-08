@@ -906,7 +906,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 	current_pose_ = new core::pose::Pose( pose );
 
 	//we will need this one in switch_to_fullatom
-	if ( !repack_scorefxn_ ) repack_scorefxn_ = core::scoring::getScoreFunction();
+	if ( !repack_scorefxn_ ) repack_scorefxn_ = core::scoring::get_score_function();
 
 	// initialize secondary structure from DSSP.
 	core::scoring::dssp::Dssp dssp_obj( pose );

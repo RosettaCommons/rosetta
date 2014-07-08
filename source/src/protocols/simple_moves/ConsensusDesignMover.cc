@@ -118,7 +118,7 @@ void
 ConsensusDesignMover::apply( core::pose::Pose & pose )
 {
 	//first two safeguards
-	if( !sfxn_) sfxn_ = core::scoring::getScoreFunction();
+	if( !sfxn_) sfxn_ = core::scoring::get_score_function();
 	if( use_seqprof_constraints_ && sfxn_->has_zero_weight( core::scoring::res_type_constraint ) ){
 		core::scoring::ScoreFunctionOP newsfxn = sfxn_->clone();
 		newsfxn->set_weight( core::scoring::res_type_constraint, 1.0 );

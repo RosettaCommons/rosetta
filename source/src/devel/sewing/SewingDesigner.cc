@@ -190,7 +190,7 @@ void
 SewingDesigner::apply( pose::Pose & pose )
 {
 	//Setup scorefunction and movers needed for design
-	scorefxn_ = scoring::getScoreFunction();
+	scorefxn_ = scoring::get_score_function();
 	scorefxn_->set_weight(core::scoring::res_type_constraint, 1.0);
 
 	repack_mover_ = new protocols::simple_moves::PackRotamersMover;

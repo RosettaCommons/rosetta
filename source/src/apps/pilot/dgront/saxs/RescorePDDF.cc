@@ -59,7 +59,7 @@ public:
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 		scorefxn_->set_weight( core::scoring::pddf_score, 1.0 );
 	}
 

@@ -371,7 +371,7 @@ void * my_main( void* ) {
 				// core::scoring::ScoreFunctionOP score_fxn = new core::scoring::ScoreFunction();
 				// score_fxn->set_weight(core::scoring::pair, 1.0);
 				// score_fxn->set_weight(core::scoring::env, 1.0);
-				//core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+				//core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
 				rescore_pose(score_fxn, native_pose, p, tag);
 			}
@@ -398,7 +398,7 @@ void * my_main( void* ) {
 				// core::scoring::ScoreFunctionOP score_fxn = new core::scoring::ScoreFunction();
 				// score_fxn->set_weight(core::scoring::pair, 1.0);
 				// score_fxn->set_weight(core::scoring::env, 1.0);
-				//core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+				//core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
 
 				rescore_pose(score_fxn, native_pose, p, option[ in::file::l ]()[npdb]);
@@ -473,10 +473,10 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	//score function
 	core::scoring::ScoreFunctionOP score_bb_fxn;
 	core::scoring::ScoreFunctionOP score_sc_fxn;
-	//score_bb_fxn = core::scoring::getScoreFunction();
+	//score_bb_fxn = core::scoring::get_score_function();
 	score_bb_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
 	//score_bb_fxn->set_weight(core::scoring::cen_rot_dun, 0.6);
-	//score_sc_fxn = core::scoring::getScoreFunction();
+	//score_sc_fxn = core::scoring::get_score_function();
 	score_sc_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
 	//score_sc_fxn->set_weight(core::scoring::cen_rot_dun, 0.6);
 
@@ -555,7 +555,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 
 	core::scoring::ScoreFunctionOP score_fxn;
 	if ( option[cenrot_score].user() ) {
-		//score_fxn = core::scoring::getScoreFunction();
+		//score_fxn = core::scoring::get_score_function();
 	  score_fxn = core::scoring::ScoreFunctionFactory::create_score_function(option[cenrot_score]);
 	}
 	else {

@@ -243,7 +243,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 void PeptideStapleMover::minimize_( core::pose::Pose & pose )
 {
 	using namespace core::scoring;
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scorefxn->set_weight( atom_pair_constraint, 1 );
 	scorefxn->set_weight( angle_constraint, 1 );
 	scorefxn->set_weight( dihedral_constraint, 1 );

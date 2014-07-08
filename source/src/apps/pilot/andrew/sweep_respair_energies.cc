@@ -1437,7 +1437,7 @@ int main( int argc, char * argv [] )
 	}
 
 	/// Read score fumction from the command line.
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	using namespace core;
 	scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ));
 	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );

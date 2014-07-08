@@ -184,7 +184,7 @@ RemodelMover::RemodelMover() :
 	redesign_loop_neighborhood_ = false;
 	dr_cycles_ =option[OptionKeys::remodel::dr_cycles];
 	centroid_sfx_ = core::scoring::ScoreFunctionFactory::create_score_function(option[OptionKeys::remodel::cen_sfxn] );
-	fullatom_sfx_ = core::scoring::getScoreFunction();
+	fullatom_sfx_ = core::scoring::get_score_function();
 
 	register_user_options();
 
@@ -564,7 +564,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 
 		// create a scorefunction and score the pose first
-		scoring::ScoreFunctionOP sfx = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP sfx = scoring::get_score_function();
 		(*sfx)( pose );
 
 		working_model.workingSetGen( pose, remodel_data );
@@ -1219,7 +1219,7 @@ void RemodelMover::apply( Pose & pose ) {
 				SS << filecount << ".pdb";
 			}
 			// this is to make sure that the final scoring is done with SCORE12
-			scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+			scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 
 		    if(option[OptionKeys::remodel::repeat_structure].user()) {
 							//Experiment with RemodelGlobalFrame
@@ -1541,7 +1541,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	pose.energies().clear();
 
 	// for refinement, always use standard repulsive
-	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
+	ScoreFunctionOP sfx = core::scoring::get_score_function();
 
 	// turning on weights
 	sfx->set_weight( core::scoring::coordinate_constraint, 1.0 );
@@ -1712,7 +1712,7 @@ bool RemodelMover::design_refine_cart_relax(
 	pose.fold_tree(minFT);
 
 	// for refinement, always use standard repulsive
-	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
+	ScoreFunctionOP sfx = core::scoring::get_score_function();
 	//turning on weights
 	sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
 	sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
@@ -1890,7 +1890,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	// define the score function
 	//ScoreFunctionOP sfx = fullatom_sfx_->clone();
 	//for refinement always use hard repulsive
-	scoring::ScoreFunctionOP sfx = core::scoring::getScoreFunction();
+	scoring::ScoreFunctionOP sfx = core::scoring::get_score_function();
 
 //turning on weights, for paranoya
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );

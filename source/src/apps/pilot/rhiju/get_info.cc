@@ -106,7 +106,7 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 
 	//////////////////////////////////////////////////////////
 	//H-bonds! Yea!
-	static ScoreFunctionOP scorefxn = getScoreFunction();
+	static ScoreFunctionOP scorefxn = get_score_function();
 	(*scorefxn)( pose );
 
 	FArray2D< bool > hb( pose.total_residue(), pose.total_residue(), false );

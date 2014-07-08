@@ -803,7 +803,7 @@ struct MatchSet {
 		// 	if(base.pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(base.pose,i);
 		// 	if(base.pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(base.pose,i);
 		// }
-		ScoreFunctionOP sflig = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		ScoreFunctionOP sflig = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		sflig->set_weight(core::scoring::fa_dun,0.01);
 		sflig->set_weight(core::scoring::fa_intra_rep,0.44);
 		sflig->set_weight(core::scoring::ref,0.0);
@@ -1223,7 +1223,7 @@ struct MatchSet {
 		// fixd.dump_pdb("fixd.pdb");
 		// move.dump_pdb("move.pdb");
 
-		ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+		ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
 		// fix crappy H placement ( needed for alignment)
 		// fixd.dump_pdb("0_lig_fixd.pdb");
@@ -1645,7 +1645,7 @@ struct MatchSet {
 			// std::exit(-1);
 		}
 
-		ScoreFunctionOP sf = core::scoring::getScoreFunction();
+		ScoreFunctionOP sf = core::scoring::get_score_function();
 
 		Size end2 = base.pose.n_residue()+b.base.pose.n_residue();
 

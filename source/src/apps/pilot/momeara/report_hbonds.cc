@@ -114,7 +114,7 @@ class HBondReporter : public protocols::moves::Mover {
 public:
   HBondReporter():
     allowNonProtein_( true ),
-    scfxn( getScoreFunction() ),
+    scfxn( get_score_function() ),
     relevant_chains_( "*" ),
     hb_database_( HBondDatabase::get_database() ){
 }

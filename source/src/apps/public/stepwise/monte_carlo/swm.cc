@@ -93,7 +93,7 @@ stepwise_monte_carlo()
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 	if ( scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) scorefxn->set_weight( rna_chem_map, 1.0 );
 

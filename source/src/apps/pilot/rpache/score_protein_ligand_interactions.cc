@@ -78,7 +78,7 @@ int main( int argc, char * argv [] )
 	core::Size const nres( pose.total_residue() );
 
 	//define score function
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	//score pose
 	(*score_fxn)(pose);

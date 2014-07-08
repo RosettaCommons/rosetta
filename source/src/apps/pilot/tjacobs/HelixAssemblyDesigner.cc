@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
 	///////////////////Setup pack rotamers mover with task factory/////////////////
 
 	//create a ScoreFunction from commandline options
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 

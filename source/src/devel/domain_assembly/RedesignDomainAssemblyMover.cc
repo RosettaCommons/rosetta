@@ -143,7 +143,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 		recover_sidechains( pose );
  	// otherwise warn about inserting random sidechains
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );
@@ -246,7 +246,7 @@ using namespace core::pack::task;
 		recover_sidechains( pose );
  	// otherwise warn about inserting random sidechains
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );

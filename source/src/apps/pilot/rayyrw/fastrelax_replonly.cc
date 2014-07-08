@@ -55,7 +55,7 @@ main ( int argc, char *argv[] ) {
 
 	devel::init(argc, argv);
 
-	scoring::ScoreFunctionOP score = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP score = scoring::get_score_function();
 
 	CompositionMoverOP container( new CompositionMover );
 	container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );

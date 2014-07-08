@@ -82,7 +82,7 @@ int run_boinc_debug() {
 		*( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ) )
  	);
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	utility::io::ozstream log( "debug_log.txt" );
 	// fragments

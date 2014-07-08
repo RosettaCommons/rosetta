@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 		exit(1);
 	}
 
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 	(*scorefxn)(input_pose);
 

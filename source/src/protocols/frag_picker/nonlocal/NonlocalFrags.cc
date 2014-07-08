@@ -267,8 +267,8 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	jd->job_outputter()->clear_evaluators();
 	jd->job_outputter()->add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( unmodified_pose ), "" ));
 
-	//scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
+	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 	Real unmodified_pose_score = (*scorefxn)( pose );
 
 	std::string output_name = protocols::jd2::current_output_name();

@@ -72,7 +72,7 @@ AntibodyDesignMover::AntibodyDesignMover() : protocols::moves::Mover(),
 	cdr_db_parser_ = new AntibodyDatabaseManager();
 	protocols::moves::Mover::type( "AntibodyDesign" );
 	read_options();
-	set_scorefxn(getScoreFunction());
+	set_scorefxn(get_score_function());
 }
 
 
@@ -101,7 +101,7 @@ AntibodyDesignMover::read_options(){
 		set_design_scorefxn(core::scoring::ScoreFunctionFactory::create_score_function(option [OptionKeys::antibody::design::design_scorefxn]()));
 	}
 	else{
-		set_design_scorefxn(getScoreFunction());
+		set_design_scorefxn(get_score_function());
 	}
 	
 }

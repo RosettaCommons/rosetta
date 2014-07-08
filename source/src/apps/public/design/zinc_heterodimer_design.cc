@@ -107,7 +107,7 @@ main( int argc, char* argv[] )
 
 	//initialize options
 	devel::init(argc, argv);
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].user())
 		utility_exit_with_message("do not use -s with zinc_heterodimer_design (program uses internally)");

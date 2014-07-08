@@ -713,11 +713,11 @@ void make_sf(SFOP& sfc, SFOP& sfd, SFOP& sf1, SFOP& sf2, SFOP& sf3, SFOP& sf4, S
 
 	sfc = ScoreFunctionFactory::create_score_function( CENTROID_WTS ) ;
 	sfd = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS ) ;
-	sf1 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
-	sf2 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
-	sf3 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
-	sf4 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
-	sf5 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf1 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf2 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf3 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf4 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf5 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 
 	// sfc->set_weight(metal_placement,1.0);
 

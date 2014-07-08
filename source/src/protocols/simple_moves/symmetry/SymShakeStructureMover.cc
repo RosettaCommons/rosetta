@@ -180,7 +180,7 @@ namespace symmetry {
       setup_ca_constraints(p,(*get_scorefunction() ),9.0,get_harmonic_ca_cst_std_dev() );
 
 			if(get_min_cst() || get_sc_min() ){
-				set_min_scorefunction( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+				set_min_scorefunction( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 			}
 
       if(get_mc_temperature() <= 0 && get_ensemble_ca_rmsd() > 0){

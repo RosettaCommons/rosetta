@@ -127,9 +127,9 @@ main( int argc, char * argv [] )
 			if( tgt == "" ) utility_exit_with_message( "Must specify a target to rescore against!" );
 
 			ScoreFunctionOP scorefxn;
-			if( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+			if( option[ score::weights ].user() ) scorefxn = get_score_function();
 			else {
-				ScoreFunctionOP noenvhbond_scorefxn( getScoreFunctionLegacy( "score13" ) );
+				ScoreFunctionOP noenvhbond_scorefxn( get_score_function_legacy( "score13" ) );
 				methods::EnergyMethodOptions options( noenvhbond_scorefxn->energy_method_options() );
 				options.hbond_options().use_hb_env_dep( false );
 				noenvhbond_scorefxn->set_energy_method_options( options );

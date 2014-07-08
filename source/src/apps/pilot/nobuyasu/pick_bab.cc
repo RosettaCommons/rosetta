@@ -156,8 +156,8 @@ public: // constructor/deconstructor
 				<< "spairs " << std::endl;
 
 		// set scorefxn
-		scorefxn_centroid_ = core::scoring::getScoreFunction( false );
-		scorefxn_fullatom_ = core::scoring::getScoreFunction();
+		scorefxn_centroid_ = core::scoring::get_score_function( false );
+		scorefxn_fullatom_ = core::scoring::get_score_function();
 
 		num_bab_ = 0;
 		nstruct_ = 0;

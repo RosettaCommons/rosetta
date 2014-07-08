@@ -478,7 +478,7 @@ void ZNCoordinationConstraintPlacerMover::apply( core::pose::Pose & p )
 void ZNCoordinationConstraintPlacerMover::mutate_the_interface_to_alanine( core::pose::Pose & p )
 {
 	// mutate the interface to alanine.
-	core::scoring::ScoreFunctionOP fa_sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP fa_sfxn = core::scoring::get_score_function();
 	(*fa_sfxn)( p );
 
 	protocols::simple_moves::symmetry::SymPackRotamersMover sympack;
@@ -696,7 +696,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 
 core::scoring::ScoreFunctionOP
 ZNCoordinationConstraintPlacerMover::fa_sfxn_w_cstterms() const {
-	core::scoring::ScoreFunctionOP fa_sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP fa_sfxn = core::scoring::get_score_function();
 	fa_sfxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	fa_sfxn->set_weight( core::scoring::angle_constraint, 1.0 );
 	fa_sfxn->set_weight( core::scoring::dihedral_constraint, 1.0 );

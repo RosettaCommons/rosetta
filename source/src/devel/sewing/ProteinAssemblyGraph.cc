@@ -68,7 +68,7 @@ ProteinAssemblyGraph::ProteinAssemblyGraph(
 db_session_(db_session),
 inter_structure_edge_counter_(0)
 {
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 }
 
 void

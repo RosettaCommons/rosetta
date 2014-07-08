@@ -231,7 +231,7 @@ int main (int argc, char *argv[])
 
 	devel::init(argc,argv);
 
-	ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction( core::scoring::getScoreFunction() );
+	ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction( core::scoring::get_score_function() );
 
 	Pose nat;
 	core::import_pose::pose_from_pdb(nat,option[willmatch::native1]());

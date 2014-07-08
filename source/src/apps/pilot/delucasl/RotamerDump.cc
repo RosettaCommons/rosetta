@@ -69,7 +69,7 @@ main( int argc, char * argv [] )
 	}
 
 	//create a ScoreFunction from commandline options
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	protocols::moves::MoverOP rotamer_mover(new protocols::RotamerDump::RotamerDumpMover(main_task_factory,score_fxn));
 

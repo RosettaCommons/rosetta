@@ -53,7 +53,7 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::InitializeFromCommandline;
 using core::pack::task::operation::ReadResfile;
 using core::pack::task::operation::RestrictToRepacking;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::ScoreFunctionOP;
 using protocols::rotamer_recovery::RotamerRecoveryOP;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 	string const & reporter( option[ rotamer_recovery::reporter ].value() );
 	string const & output_fname( option[ out::file::rotamer_recovery ].value() );
 	string const & comparer( option[ rotamer_recovery::comparer ].value() );
-	ScoreFunctionOP scfxn( getScoreFunction() );
+	ScoreFunctionOP scfxn( get_score_function() );
 	TaskFactoryOP task_factory( new TaskFactory );
 	task_factory->push_back( new InitializeFromCommandline );
 	if(option.has(OptionKeys::packing::resfile) && option[OptionKeys::packing::resfile].user()){

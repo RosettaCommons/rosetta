@@ -167,7 +167,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line_noPDBtag(
 ///@add side chains onto partial threads
 void add_side_chains_partialthread(Pose pose){
   using namespace core::scoring;
-  ScoreFunctionOP scorefxn( getScoreFunction() );
+  ScoreFunctionOP scorefxn( get_score_function() );
   // repack missing sidechains
   core::id::AtomID_Mask missing( true );
   core::pose::initialize_atomid_map( missing, pose );

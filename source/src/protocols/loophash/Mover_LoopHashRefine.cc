@@ -139,7 +139,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
   LoopHashSampler  lsampler( library_, simple_inserter );
 
 
-	ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+	ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
 	protocols::relax::FastRelax relax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
   core::pose::PoseOP native_pose;
 	if(  option[ in::file::native ].user() ){

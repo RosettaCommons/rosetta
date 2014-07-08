@@ -61,7 +61,7 @@ main( int argc, char * argv [] )
 	}
 
 	//create a ScoreFunction from commandline options
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	// now add density scores from cmd line
 	if ( option[ edensity::mapfile ].user() ) {

@@ -104,7 +104,7 @@ vector1<Size> get_des_pos(core::pose::Pose & pose_for_design) {
   Real const contact_dist = 10.0;
   Real const contact_dist_sq = contact_dist * contact_dist;
 
-  core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
 
   ////////////////////////////////////
   vector1<bool> indy_resis(pose_for_design.n_residue(),false);

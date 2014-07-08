@@ -155,7 +155,7 @@ main( int argc, char * argv [] )
 		std::string const weights( option[ OptionKeys::score::weights ]() );
 		// this sets BasePartner in pose cacheable data
 		scoring::dna::set_base_partner( pose );
-		ScoreFunctionOP scorefxn( getScoreFunction() );
+		ScoreFunctionOP scorefxn( get_score_function() );
 
 		//ScoreFunctionOP scorefxn( get_total_rebuild_fullatom_scorefxn() );
 		//protocols::motifs::make_dna_mutations( pose );

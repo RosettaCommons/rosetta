@@ -188,7 +188,7 @@ ExposedStrandMover::ExposedStrandMover() {
   sat_allow_= option[ sat_allow ];
   check_rmsd_ = option[ check_rmsd ];
   //strand_def_vector_ = option[ strand_span ];
-  scorefxn_ = core::scoring::getScoreFunction();
+  scorefxn_ = core::scoring::get_score_function();
   //struct_filename_ = option[ struct_file ];
 }
 

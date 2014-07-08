@@ -110,7 +110,7 @@ BuildAlaPose::apply( pose::Pose & pose )
 	setup_packer_and_movemap( pose );
 
 	using namespace core::scoring;
-	core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	pack::pack_rotamers( pose, *scorefxn, task_ );
 	(*scorefxn)( pose );
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );

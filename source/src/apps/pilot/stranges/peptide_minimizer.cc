@@ -121,7 +121,7 @@ private:
 //constructor
 PepMinMover::PepMinMover() {
   hbond_multiplier_ = option[ bbhbond_weight_mod ];
-  scorefxn_ = scoring::getScoreFunction();
+  scorefxn_ = scoring::get_score_function();
   ncycles_ = option[ncycles];
 
   //set up for scoring

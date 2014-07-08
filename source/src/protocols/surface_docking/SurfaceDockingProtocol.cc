@@ -181,7 +181,7 @@ void SurfaceDockingProtocol::copy_data(SurfaceDockingProtocol object_to_copy_to,
 void SurfaceDockingProtocol::init()
 	{
 		Mover::type( "SurfaceDockingProtocol");
-		score_sidechain_pack_ = scoring::getScoreFunction();
+		score_sidechain_pack_ = scoring::get_score_function();
 		TR << "Setting Weights for talaris" << std::endl;
 		score_sidechain_pack_->set_weight( core::scoring::fa_elec, 1.0 );
 		surface_parameters_ = NULL;

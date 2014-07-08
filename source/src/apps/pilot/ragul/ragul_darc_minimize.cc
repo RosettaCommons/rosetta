@@ -258,8 +258,8 @@ int main( int argc, char * argv [] ){
 		devel::init(argc, argv);
 
 	//setup scorefxn
-		scoring::ScoreFunctionOP scorefxn = getScoreFunction();
-		scoring::ScoreFunctionOP repack_scorefxn = getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = get_score_function();
+		scoring::ScoreFunctionOP repack_scorefxn = get_score_function();
 
 		std::string const ref_decoy_fname = option[ ref_decoy ];
 		// create pose from pdb

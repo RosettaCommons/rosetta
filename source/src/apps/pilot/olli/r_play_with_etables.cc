@@ -105,7 +105,7 @@ int main( int argc, char * argv [] ) {
 	make_etable( 0.5, "SOFT50" );
 	make_etable( 0.6, "SOFT60" );
 
-  scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+  scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
   scorefxn->set_etable( "FA_STANDARD_SOFT30" );
   scorefxn->set_etable( "FA_STANDARD_SOFT40" );

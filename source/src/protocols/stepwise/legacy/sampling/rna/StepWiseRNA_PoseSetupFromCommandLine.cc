@@ -463,7 +463,7 @@ create_scorefxn(){
 		utility_exit_with_message( "num_score_weight_file > 1" );
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = get_score_function();
 
 
 	if ( ! option[ OptionKeys::stepwise::rna::minimize_and_score_sugar]() ){

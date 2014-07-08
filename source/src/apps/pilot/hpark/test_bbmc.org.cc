@@ -326,14 +326,14 @@ my_main( void* )
 	}
 	else if ( option[mc::centroid] ) {
 		if ( option[score::weights].user() ) {
-			score_fxn = core::scoring::getScoreFunction();
+			score_fxn = core::scoring::get_score_function();
 		}
 		else {
 			score_fxn = core::scoring::ScoreFunctionFactory::create_score_function("cen_std");
 		}
 	}
 	else {
-		score_fxn = core::scoring::getScoreFunction();
+		score_fxn = core::scoring::get_score_function();
 	}
 
 	//bend score(for conrot and backrub)

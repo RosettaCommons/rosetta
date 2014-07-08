@@ -264,7 +264,7 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 	using namespace protocols::generalized_kinematic_closure;
 
 	core::scoring::ScoreFunctionOP my_sfxn=sfxn;
-	if(!my_sfxn) my_sfxn=core::scoring::getScoreFunction(); //Get the default scorefunction if one has not been supplied.
+	if(!my_sfxn) my_sfxn=core::scoring::get_score_function(); //Get the default scorefunction if one has not been supplied.
 	
 	//Variables for finding the lowest energy:
 	core::Real lowest_energy = 0.0;

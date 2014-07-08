@@ -93,7 +93,7 @@ void run() {
 		utility_exit_with_message("no input!");
 	}
 
-	core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction(); //new core::scoring::ScoreFunction;
+	core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function(); //new core::scoring::ScoreFunction;
 		//sf->set_weight(core::scoring::fa_dun,1.0);
 
 	for(Size ifile = 1; ifile <= infiles.size(); ifile++) {

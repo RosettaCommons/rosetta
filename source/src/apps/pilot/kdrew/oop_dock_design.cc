@@ -250,7 +250,7 @@ main( int argc, char* argv[] )
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
 	devel::init(argc, argv);
 
-	scoring::ScoreFunctionOP score_fxn = getScoreFunction();
+	scoring::ScoreFunctionOP score_fxn = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
 	//create mover instance

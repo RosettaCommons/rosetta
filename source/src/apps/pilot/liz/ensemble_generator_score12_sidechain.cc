@@ -484,7 +484,7 @@ main( int argc, char* argv [] )
 	//gone?
 	pose::Pose pose;
 
-	ScoreFunctionOP s = getScoreFunction();
+	ScoreFunctionOP s = get_score_function();
 
 	/**
 	scorefxn->set_weight(core::scoring::score_type_from_name("rama"), 4.0);

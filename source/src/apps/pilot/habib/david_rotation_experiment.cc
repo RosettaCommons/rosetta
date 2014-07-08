@@ -192,7 +192,7 @@ main( int argc, char * argv [] )
   	}
 
 
-	scoring::ScoreFunctionOP scorefxn = getScoreFunction();
+	scoring::ScoreFunctionOP scorefxn = get_score_function();
 
 	(*scorefxn)(input_pose);
   core::Real const starting_total_score = input_pose.energies().total_energies()[ total_score ];

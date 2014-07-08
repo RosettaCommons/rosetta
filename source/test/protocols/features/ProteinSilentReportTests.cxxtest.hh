@@ -65,7 +65,7 @@ public:
 		pose_1ten_ = fullatom_pose_from_string( pdb_string_1ten() );
     tag_into_pose( pose_1ten_, "1ten");
 
-    core::scoring::ScoreFunctionOP scfxn(core::scoring::getScoreFunction());
+    core::scoring::ScoreFunctionOP scfxn(core::scoring::get_score_function());
     scfxn->score(pose_1ten_);
 
     protein_silent_report_ = new ProteinSilentReport();

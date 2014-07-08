@@ -475,7 +475,7 @@ void run_m8() {
 	Pose const fa_pose = in_fa;
 	ImplicitFastClashCheck clashcheck(init_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	Real chi1incr = option[willmatch::chi1_increment]();
 	Real chi2incr = option[willmatch::chi2_increment]();

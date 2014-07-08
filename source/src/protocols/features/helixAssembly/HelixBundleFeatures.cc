@@ -79,7 +79,7 @@ HelixBundleFeatures::HelixBundleFeatures() :
 		bundle_size_(3),
 		helix_size_(14)
 {
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 }
 
 utility::vector1<std::string>

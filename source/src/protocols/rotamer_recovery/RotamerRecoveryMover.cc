@@ -116,7 +116,7 @@ using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::InitializeFromCommandline;
 using core::pack::task::operation::RestrictToRepacking;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using basic::Tracer;
@@ -266,7 +266,7 @@ RotamerRecoveryMover::parse_my_tag(
 ScoreFunctionOP
 RotamerRecoveryMover::score_function(){
 	if ( !scfxn_ )
-		scfxn_ = getScoreFunction();
+		scfxn_ = get_score_function();
 
 	return scfxn_;
 }

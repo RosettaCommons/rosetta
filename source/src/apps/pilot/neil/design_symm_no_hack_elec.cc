@@ -369,7 +369,7 @@ void
 		//if (option[ basic::options::OptionKeys::parser::view ]()) protocols::viewer::add_conformation_viewer(pose.conformation(),"symm_design",1000,1000);
 
 		// Create a score function object, get the fa_rep weight from it (default = 0.44)
-		ScoreFunctionOP sf = getScoreFunction();
+		ScoreFunctionOP sf = get_score_function();
 //		core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 //		eo.exclude_monomer_fa_elec(true);
 //		sf->set_energy_method_options(eo);

@@ -939,7 +939,7 @@ RotamerAnalysis()
 	pose_from_pdb( pose, pdbname );
 
 	//create a ScoreFunction from commandline options
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::ScoreFunctionOP scorefxn_edens( ( *scorefxn ).clone() );
 
 	//add edens score?

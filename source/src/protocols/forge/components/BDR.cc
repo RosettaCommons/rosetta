@@ -77,7 +77,7 @@ BDR::BDR() :
 	redesign_loop_neighborhood_( true ),
 	dr_cycles_( 3 ),
 	centroid_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" ) ),
-	fullatom_sfx_( core::scoring::getScoreFunction() )
+	fullatom_sfx_( core::scoring::get_score_function() )
 {}
 
 

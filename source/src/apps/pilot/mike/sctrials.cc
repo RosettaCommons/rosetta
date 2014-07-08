@@ -87,7 +87,7 @@ private:
 
 ScTrials::ScTrials() :
 	Mover( "rama_test_mover" ),
-	score_function_( getScoreFunction() )
+	score_function_( get_score_function() )
 {}
 
 ScTrials::~ScTrials() {}

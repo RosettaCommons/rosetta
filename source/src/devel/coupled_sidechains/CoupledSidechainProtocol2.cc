@@ -183,7 +183,7 @@ CoupledSidechainProtocol::init_from_options() {
 void
 CoupledSidechainProtocol::setup_objects() {
 
-	scoring::ScoreFunctionOP scorefunction( core::scoring::getScoreFunction() );
+	scoring::ScoreFunctionOP scorefunction( core::scoring::get_score_function() );
 
 	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
 	task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );

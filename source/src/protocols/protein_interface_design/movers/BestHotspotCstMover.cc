@@ -94,7 +94,7 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 {
 	using namespace protocols::hotspot_hashing;
 	HotspotStubSetOP working_stub_set( new HotspotStubSet( *stub_set_ ) ); // stub_set_ needs to remain pristine for next rounds of execution.
-	core::scoring::ScoreFunctionCOP scorefxn( getScoreFunction() ); // default scorefxn for several definitions within the function
+	core::scoring::ScoreFunctionCOP scorefxn( get_score_function() ); // default scorefxn for several definitions within the function
 
 	// find the residues that have the best constraint backbone_stub_constraint scores
 	utility::vector1< core::Size > const best_cst_residues( best_bbcst_residues( pose, host_chain_, n_resi_ ) );

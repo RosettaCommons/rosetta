@@ -48,7 +48,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
-#include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "getScoreFunction" ?
+#include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "get_score_function" ?
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -2953,7 +2953,7 @@ core::scoring::ScoreFunctionOP SandwichFeatures::generate_scorefxn( bool fullato
 	core::scoring::ScoreFunctionOP scorefxn( NULL );
 	if ( fullatom )
 	{
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 	}
 	else
 	{

@@ -110,7 +110,7 @@ void test( std::string fname ) {
 	using namespace scoring;
 	using namespace io::pdb;
 
-	ScoreFunctionOP sfxnOP( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP sfxnOP( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 	ScoreFunction & sfxn( *sfxnOP );
 
 	AtomTreeMinimizer minimizer;

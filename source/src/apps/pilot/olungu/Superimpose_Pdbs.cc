@@ -213,7 +213,7 @@ main( int argc, char* argv[] )
 	}
 
 	//make a scorefunction
-	scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	//initialize PackRotamersMover with defined task factory and score function
 	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;

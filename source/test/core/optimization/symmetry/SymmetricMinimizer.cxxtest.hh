@@ -134,7 +134,7 @@ public:
 
 		core::pose::symmetry::make_symmetric_pose( pose );
 
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = dynamic_cast< scoring::symmetry::SymmetricScoreFunction * > ( scorefxn() );
 
 		//std::cout << "Symmetric score c2: " << (* scorefxn )( pose ) << std::endl;
@@ -180,7 +180,7 @@ public:
 		core::pose::symmetry::make_symmetric_pose( pose );
 		//pose.dump_pdb( "c3b_before_min.pdb" );
 
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = dynamic_cast< scoring::symmetry::SymmetricScoreFunction * > ( scorefxn() );
 
 		//std::cout << "Symmetric score c3: " << (* scorefxn )( pose ) << std::endl;
@@ -239,7 +239,7 @@ public:
 		core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/fibril.symm -symmetry:initialize_rigid_body_dofs" );
 		//core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/fibril_min.symdef -symmetry:initialize_rigid_body_dofs" );
 
-		//scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		//scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = dynamic_cast< scoring::symmetry::SymmetricScoreFunction * > ( scorefxn() );
 
 		scoring::EnergyMap weights;
@@ -357,7 +357,7 @@ public:
 		core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/2bw9_INPUT.pdb" );
 		core::pose::symmetry::make_symmetric_pose( pose );
 
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 
 		//std::cout << "Symmetric score helix before: " << (* scorefxn )( pose ) << std::endl;
 

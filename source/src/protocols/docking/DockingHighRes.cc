@@ -66,7 +66,7 @@ DockingHighRes::DockingHighRes() : Mover()
 {
 	init( utility::tools::make_vector1<core::SSize>(1) ); // operate on the first jump
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-	scorefxn_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 }
 // default constructor
 DockingHighRes::DockingHighRes(
@@ -75,7 +75,7 @@ DockingHighRes::DockingHighRes(
 {
 	init( utility::tools::make_vector1<core::SSize>(rb_jump) ); // operate on the first jump
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-	scorefxn_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 }
 
 // constructor with arguments

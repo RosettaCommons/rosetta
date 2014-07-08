@@ -118,7 +118,7 @@ int main( int argc, char * argv [] )
 	ResidueType const& restype( pose.residue_type(target));
 
 	//Iterate through all possible rotamers
-	scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
 
 	protocols::simple_filters::EnergyPerResidueFilter energy_filter(
 		target, sfxn, score_type, energy_threshold );

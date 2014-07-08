@@ -85,9 +85,9 @@ public:
 		}
 
 		// read scorefxn
-		//scorefxn_ = core::scoring::getScoreFunction();
+		//scorefxn_ = core::scoring::get_score_function();
 		//		TR << "score will be calculated by remodel_cen.wts" << std::endl;
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 
 		// set output
 		std::ostringstream filename;

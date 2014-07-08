@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 	mm->set_jump(5, false);
 	// create a standard scorefxn
 	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
-		scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	// setup other inputs
 	std::string const min_type_in = "linmin";
 	Real tolerance_in = 0.01;
@@ -242,12 +242,12 @@ int main(int argc, char *argv[])
 	std::cout << pmm2 << std::endl;*/
 
 /*	// create a scorefxn
-	core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::get_score_function();
 	std::cout << "Score function 0's name: " << scorefxn0->get_name() << std::endl;
 
 	// create a standard scorefxn and read fa_sol weight
 	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
-	scorefxn = core::scoring::getScoreFunctionLegacy( "pre_talaris_2013_standard" );
+	scorefxn = core::scoring::get_score_function_legacy( "pre_talaris_2013_standard" );
 	enum core::scoring::ScoreType fa_sol = core::scoring::score_type_from_name("fa_sol");
 	std::cout << "fa_sol standard weight = " << scorefxn->get_weight(fa_sol) << std::endl;
 	// read name
@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
 	// create an empty loops object
 	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
 	// create a scorefxn
-/*	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+/*	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	// create a loops object
 	core::Size start = 15, start2 = 51;
 	core::Size stop = 24, stop2 = 60;

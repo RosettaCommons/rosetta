@@ -88,7 +88,7 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name ( basic::options::start_file() );
 	core::import_pose::pose_from_pdb( bound_pose_native, input_pdb_name );
 
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 
 	// Setup pose for unbound

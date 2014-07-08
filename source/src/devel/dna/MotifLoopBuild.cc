@@ -103,7 +103,7 @@ MotifLoopBuild::MotifLoopBuild()
 {
 
     //Load in the score function
-    scorefxnOP = ( core::scoring::getScoreFunction() );
+    scorefxnOP = ( core::scoring::get_score_function() );
 
     //rot_map = build_all_aa_rotamers();
     //Load in the full motif library

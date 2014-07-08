@@ -21,7 +21,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
+#include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/pose/Pose.fwd.hh>
 #include <basic/prof.hh>
 
@@ -129,7 +129,7 @@ SymMinMover::apply( pose::Pose & pose )
 	//}
 
 
-	if ( ! score_function() ) score_function( getScoreFunction() ); // get a default (INITIALIZED!) ScoreFunction
+	if ( ! score_function() ) score_function( get_score_function() ); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
 	if (!cartesian( )) {

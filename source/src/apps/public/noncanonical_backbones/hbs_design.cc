@@ -186,8 +186,8 @@ HbsDesignMover::apply(
 )
 {
 	// create score function
-	scoring::ScoreFunctionOP score_fxn( getScoreFunction() );
-	//scoring::ScoreFunctionOP score_fxn = getScoreFunction();
+	scoring::ScoreFunctionOP score_fxn( get_score_function() );
+	//scoring::ScoreFunctionOP score_fxn = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);

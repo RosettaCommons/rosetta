@@ -297,7 +297,7 @@ my_main( void* )
 
 	set_secstruct_from_psipred_ss2( pose );
 
- 	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+ 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	//scorefxn->set_weight(scoring::mm_bend, 1.00);
 
 	//bool const fa_input( option[OptionKeys::loops::fa_input] );

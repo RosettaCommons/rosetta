@@ -40,7 +40,7 @@
 //class OldAddCst : public protocols::relax::FastRelax {
 //public:
 //	OldAddCst() {
-//		set_scorefxn( core::scoring::getScoreFunction() );
+//		set_scorefxn( core::scoring::get_score_function() );
 //	}
 //	void apply( core::pose::Pose & pose ) {
 //		core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();

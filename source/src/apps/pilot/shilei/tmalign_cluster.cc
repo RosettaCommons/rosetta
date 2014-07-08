@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 	//std::vector< std::string > outtaglist;
 	//utility::vector1< std::string > outtaglist;
         //std::string scorecolumn=basic::options::option[ basic::options::OptionKeys::tmalign_cluster::column];
-        //core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+        //core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	//Real score;
 
 	TR.Info << "PoseVec.size(): "<< PoseVec.size() << std::endl;

@@ -191,7 +191,7 @@ public:
 		using namespace core;
 		using namespace scoring;
 
-		scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
 //		scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
 		pack::task::PackerTaskOP my_task( pack::task::TaskFactory::create_packer_task( pose ));
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -214,7 +214,7 @@ public:
 		using namespace core;
 		using namespace scoring;
 
-		scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
 //		scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
 		protocols::relax::ClassicRelax my_relax( score_fxn );
 
@@ -271,7 +271,7 @@ public:
 
 //			std::cout << *task << std::endl;
 
-			core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunction() );
+			core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function() );
 //			scoring::ScoreFunctionOP score_fxn2( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
 			core::scoring::methods::pHEnergy::set_pH ( curr_pH );
 

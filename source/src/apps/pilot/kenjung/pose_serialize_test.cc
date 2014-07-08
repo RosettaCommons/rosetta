@@ -58,7 +58,7 @@ main( int argc, char * argv [] )
 		core::import_pose::pose_from_pdb( *tmppose, *residue_set, option[ m::file]().name() );
 		tmppose->dump_pdb(option[ m::file]().name()+".dump");
 
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 		PoseSP out;
 		(*scorefxn)(*tmppose);
 		std::stringstream s;

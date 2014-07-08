@@ -115,7 +115,7 @@ main( int argc, char* argv[] )
 	utility::vector1< std::string > const pdbs( basic::options::start_files() );
 	core::Size const numpdbs(pdbs.size());
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	protocols::loops::Loops loops;
 	loops.read_loop_file( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value() );

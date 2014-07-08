@@ -244,7 +244,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 	if (option[frags::score_output_silent]()) {
 		pose::Pose relax_pose = pose;
 
-		core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 		if ( !relax_pose.is_fullatom() )
 			core::util::switch_to_residue_type_set( relax_pose, core::chemical::FA_STANDARD );

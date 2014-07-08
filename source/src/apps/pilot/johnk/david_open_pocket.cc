@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 		exit(1);
 	}
 
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	scorefxn->set_weight( core::scoring::pocket_constraint, option[ pocket_constraint_weight ] );
 
 	// report starting score

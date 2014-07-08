@@ -45,7 +45,7 @@ void test( std::string fname )
 	Pose pose;
 	core::import_pose::pose_from_pdb(pose,fname);
 
-  ScoreFunctionOP sf( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+  ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
   ScoreFunction sfpack;
 	sfpack.set_weight(pack_stat,1.0);

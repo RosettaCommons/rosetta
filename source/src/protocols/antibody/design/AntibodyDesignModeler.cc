@@ -82,7 +82,7 @@ AntibodyDesignModeler::AntibodyDesignModeler(AntibodyInfoOP ab_info){
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
 	read_command_line_options();
 	
-	scorefxn_ = getScoreFunction();
+	scorefxn_ = get_score_function();
 	docking_scorefxn_high_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
 	cmd_line_operation_ = new core::pack::task::operation::InitializeFromCommandline();
 	restrict_design_operation_ = new core::pack::task::operation::RestrictToRepacking();

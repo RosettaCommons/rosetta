@@ -274,8 +274,8 @@ void run() {
     Pose const fa_pose = in_fa;
     ImplicitFastClashCheck clashcheck(fa_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
-    ScoreFunctionOP sf     = core::scoring::getScoreFunction();
-    ScoreFunctionOP sfhard = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+    ScoreFunctionOP sf     = core::scoring::get_score_function();
+    ScoreFunctionOP sfhard = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
     //sf->set_weight(core::scoring::fa_dun,1.0);
     sf->set_weight(core::scoring::fa_sol,0.0);
     sf->set_weight(core::scoring::hbond_sr_bb,2.0);

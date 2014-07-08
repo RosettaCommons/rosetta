@@ -140,7 +140,7 @@ Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
 	if ( !scorefxn ) {
 		tr.Trace << "no scorefunction specified in TruncatedScoreEvaluator... make appropriate standard score " << std::endl;
 		if ( pose.is_fullatom() ) {
-			scorefxn = core::scoring::getScoreFunction();
+			scorefxn = core::scoring::get_score_function();
 		} else {
 			scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 		}

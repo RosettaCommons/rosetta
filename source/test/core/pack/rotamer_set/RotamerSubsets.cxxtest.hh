@@ -89,7 +89,7 @@ public:
 			}
 		}
 
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		(*sfxn)( *trpcage ); // score the pose first;
 
 		RotamerSetsOP rotsets( new RotamerSets() );

@@ -320,7 +320,7 @@ bk_test()
 	dimer.dump_pdb("dimer.pdb");
 
 	{ // minimize
-		ScoreFunctionOP scorefxn( getScoreFunction() );
+		ScoreFunctionOP scorefxn( get_score_function() );
 		runtime_assert( pose::symmetry::is_symmetric( *scorefxn ) ); // requires stoopid command line flag
 		scorefxn->set_weight( fa_rep, 0.01 );
 

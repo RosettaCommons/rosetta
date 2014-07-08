@@ -159,7 +159,7 @@ main( int argc, char * argv [] ) {
 	core::import_pose::pose_from_pdb(pose, option[ in::file::s ]()[1]);
 	core::pose::Pose const orig_pose(pose);
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	//scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 	scorefxn->set_weight( core::scoring::linear_chainbreak, 1.0 );
 	//scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );

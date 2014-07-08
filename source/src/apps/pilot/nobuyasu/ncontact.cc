@@ -112,7 +112,7 @@ public:
 		condist_( 36.0 ),
 		isep_residue_( 4 )
 	{
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 		initialize();
 		//write_header();
 	}
@@ -124,7 +124,7 @@ public:
 		condist_( numeric::square(cdist) ),
 		isep_residue_( sep )
 	{
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 		initialize();
 		//write_header();
 	}

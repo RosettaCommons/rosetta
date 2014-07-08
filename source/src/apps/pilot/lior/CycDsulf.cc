@@ -313,7 +313,7 @@ int main (int argc, char** argv) {
 
 			option[ out::file::fullatom ].value(true);
 			core::scoring::ScoreFunctionOP scorefxn(
-							core::scoring::getScoreFunction());
+							core::scoring::get_score_function());
 			utility::vector1 < std::pair< Size, Size > > dss;
 
 			utility::vector1_int ssAtoms;
@@ -387,7 +387,7 @@ int main (int argc, char** argv) {
 //	using namespace basic::options::OptionKeys;
 //
 //	devel::init(argc,argv);
-//	core: :scoring::ScoreFunctionOP scorefxn_ = core::scoring::getScoreFunction();
+//	core: :scoring::ScoreFunctionOP scorefxn_ = core::scoring::get_score_function();
 //	protocols::loops::Loops myloop;
 //	myloop.add_loop(2,6,4);
 //	protocols::loops::LoopRelaxMover loop_relax_mover;

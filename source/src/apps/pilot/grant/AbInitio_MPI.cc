@@ -97,7 +97,7 @@ public:
     movemap->set_bb( true );
 
 		core::scoring::ScoreFunctionOP fullfxn(
-                                           core::scoring::getScoreFunction()
+                                           core::scoring::get_score_function()
 		);
 
 		protocols::abinitio::ClassicAbinitioOP abinitio( new protocols::abinitio::ClassicAbinitio( fragset_3mer_, fragset_9mer_, movemap ));

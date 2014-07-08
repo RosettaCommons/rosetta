@@ -79,7 +79,7 @@ pre_talaris_2013_behavior_settings::pre_talaris_2013_behavior_settings() :
 	hb_sp2_outer_width( 0.33333 ),
 	expand_st_chi2sampling( false ),
 	score_weights( "pre_talaris_2013_standard.wts" ),
-	score_patch( "" ), // the default patch to score12 is handled in the core::scoring::getScoreFunction
+	score_patch( "" ), // the default patch to score12 is handled in the core::scoring::get_score_function
 	analytic_etable_evaluation( false ),
 	hbond_params( "score12_params" ),
 	smooth_fa_elec( false ),
@@ -500,7 +500,7 @@ init_nonideal_correction() {
 			option[ score::weights ].value( "talaris2013_cart.wts" );
 		}
 		else {
-			scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+			scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 			if ( !sfxn->ready_for_nonideal_scoring() )
 				TR.Warning << "option[ optimization::nonideal ] - scorefunction not set up for nonideal/Cartesian scoring (safe to ignore this warning if setting weights via RosettaScripts)" << std::endl;
 		}

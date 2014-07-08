@@ -269,7 +269,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 			core::util::switch_to_residue_type_set( input_pose, chemical::FA_STANDARD );
 
 
-			core::scoring::ScoreFunctionOP scorefxn_fa( getScoreFunction() );
+			core::scoring::ScoreFunctionOP scorefxn_fa( get_score_function() );
 			scorefxn_fa->set_weight( scoring::chainbreak, 1 ); // in order to pipe this scoring function  maybe I have to refresh the cutpoints
 			scorefxn_fa->set_weight(scoring::overlap_chainbreak, 1 );
 

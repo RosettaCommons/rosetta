@@ -589,7 +589,7 @@ public:
 			Pose symm_pose = best_pose_after_fragment_insertion.split_by_chain( 1 );
 			const Size mono_size = symm_pose.total_residue();
 			// set up the movemap
-			core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *core::scoring::getScoreFunction() );
+			core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *core::scoring::get_score_function() );
 			const Size junction_new_end = junction_end_ - (junction_aa_.size() - (junction_end_ - junction_start_ + 1) );
 			// set the junction as movable
 			MoveMapOP movemap = new MoveMap;

@@ -57,7 +57,7 @@ using core::chemical::AtomIndices;
 using core::chemical::ResidueType;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::hbonds::HBondDatabase;
 using core::scoring::hbonds::HBondDatabaseCOP;
 using protocols::filters::Filters_map;
@@ -74,13 +74,13 @@ static Tracer TR("protocols.features.HBondParameterFeatures");
 
 HBondParameterFeatures::HBondParameterFeatures() :
 	FeaturesReporter(),
-	scfxn_(getScoreFunction())
+	scfxn_(get_score_function())
 {}
 
 HBondParameterFeatures::HBondParameterFeatures(
 	ScoreFunctionOP ) :
 	FeaturesReporter(),
-	scfxn_(getScoreFunction())
+	scfxn_(get_score_function())
 {}
 
 HBondParameterFeatures::HBondParameterFeatures(

@@ -137,7 +137,7 @@ void run_hh(std::string fname) {
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
   ResidueTypeSetCAP crs=ChemicalManager::get_instance()->residue_type_set( "centroid" );
-  ScoreFunctionOP sfstd=getScoreFunction();
+  ScoreFunctionOP sfstd=get_score_function();
   ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
   Pose pose;
@@ -244,7 +244,7 @@ void run_hd(std::string fname) {
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
   //ResidueTypeSetCAP crs=ChemicalManager::get_instance()->residue_type_set( "centroid" );
-  ScoreFunctionOP sfstd=getScoreFunction();
+  ScoreFunctionOP sfstd=get_score_function();
   //ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
   Pose pose;

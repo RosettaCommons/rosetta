@@ -1689,7 +1689,7 @@ bool JumpSpecificAbrelax::check_filters( core::pose::Pose & pose ) {
 scoring::ScoreFunctionOP JumpSpecificAbrelax::generate_scorefxn( bool fullatom ) {
 	scoring::ScoreFunctionOP scorefxn( NULL );
 	if ( fullatom ) {
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 	} else {
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 	}

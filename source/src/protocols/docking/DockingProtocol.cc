@@ -202,7 +202,7 @@ void DockingProtocol::init(
 
 	if ( docking_score_high() == NULL ) {
 		docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
-		docking_scorefxn_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;
+		docking_scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;
 		docking_scorefxn_output_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	} else {
 		docking_scorefxn_high_ = docking_score_high;
@@ -211,7 +211,7 @@ void DockingProtocol::init(
 	}
 
 	if ( option[ score::weights ].user() ){
-		docking_scorefxn_high_ = core::scoring::getScoreFunction();
+		docking_scorefxn_high_ = core::scoring::get_score_function();
 		docking_scorefxn_output_ = docking_scorefxn_high_;
 	}
 

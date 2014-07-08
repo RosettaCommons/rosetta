@@ -78,7 +78,7 @@ main( int argc, char* argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	utility::vector1< std::string > pdbfiles = option[ in::file::s ]();
 	core::Real distance_cutoff = 200;
 	if ( option[ constraints::cst_weight ].user() ) {

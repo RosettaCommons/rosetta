@@ -193,7 +193,7 @@ int main( int argc, char * argv [] )
 		for ( core::Size ii = 1; ii <= input_jobs.size(); ++ii ) {
 			pose::Pose pose;
 			core::import_pose::pose_from_pdb( pose, input_jobs[ ii ]->input_tag() );
-			ScoreFunctionOP sfxn = getScoreFunction();
+			ScoreFunctionOP sfxn = get_score_function();
 			(*sfxn)(pose);
 
 			HBondSet hbset;

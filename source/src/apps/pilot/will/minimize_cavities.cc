@@ -126,8 +126,8 @@ test_suck_res( std::string fname ) {
 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
 	mm->set_bb ( true ); mm->set_chi( true );	mm->set_jump( true );
 
-  ScoreFunctionOP sfstd( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
-  ScoreFunctionOP sf( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+  ScoreFunctionOP sfstd( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+  ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 	// ScoreFunctionOP sf( new ScoreFunction );
 	sf->set_weight( suck , 1.0 );
 	sf->set_weight( coordinate_constraint, 1.0 );
@@ -266,10 +266,10 @@ test_suck_res( std::string fname ) {
 // 	mm->set_bb ( true );
 // 	mm->set_chi( true );
 //
-//   ScoreFunctionOP sf( getScoreFunction() );
+//   ScoreFunctionOP sf( get_score_function() );
 // 	sf->set_weight( atom_pair_constraint, 1.0 );
 //
-//   ScoreFunctionOP sfnoc( getScoreFunction() );
+//   ScoreFunctionOP sfnoc( get_score_function() );
 // 	sfnoc->set_weight( atom_pair_constraint, 0.0 );
 //
 // 	std::cerr << "get cavities" << std::endl;

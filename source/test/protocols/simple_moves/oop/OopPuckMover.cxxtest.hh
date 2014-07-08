@@ -74,7 +74,7 @@ public:
 		basic::options::option[ basic::options::OptionKeys::chemical::include_patches](utility::tools::make_vector1( std::string("patches/oop_pre.txt"), std::string("patches/oop_post.txt") ) );
 
 		// create score function
-		scoring::ScoreFunctionOP score_fxn( getScoreFunction() );
+		scoring::ScoreFunctionOP score_fxn( get_score_function() );
 		//scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
 		//kdrew: create new residue type set with oop patches included, cannot use chemical manager residue type set singleton because already initialized without oop patches

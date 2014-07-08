@@ -250,7 +250,7 @@ build_helix_test(){
 	task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
     }
 
-    ScoreFunctionOP scorefxn = getScoreFunction();
+    ScoreFunctionOP scorefxn = get_score_function();
     pack::rotamer_trials( pose, *scorefxn, task );
 
     // minimize

@@ -82,7 +82,7 @@ public:
 		surfEs->set_residue_range_not_surface( pose.num_jump()+1, pose.total_residue() );
 		pose.set_new_energies_object( surfEs );
 		
-		core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 		
 		core::Real score_before = (*sfxn)(pose);
 		

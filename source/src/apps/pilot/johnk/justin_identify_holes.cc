@@ -72,7 +72,7 @@ main( int argc, char * argv [] )
 	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	// Open output file, generate the header line (save it for printing in the log later), print to file
 	//	std::string outfname = "list_of_holes.out";

@@ -102,7 +102,7 @@ public:
 		if(basic::options::option[generous_hbond_settings])
 			generous_hbond();
 		
-		core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = get_score_function();
 		scorefxn->score(pose);
 		
 		TR << "Registering num_Hbond Calculator" << std::endl;
@@ -221,7 +221,7 @@ public:
 	generous_hbond()
 	const
 	{
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scoring::methods::EnergyMethodOptionsOP emopts(
 			new scoring::methods::EnergyMethodOptions(
 				scorefxn->energy_method_options()));

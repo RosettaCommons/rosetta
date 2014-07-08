@@ -257,7 +257,7 @@ void LoopMover_Refine_KIC::apply(
 		min_scorefxn->set_weight( core::scoring::occ_sol_exact, 0.0 );
 	}
 
-	//scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	//scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	//scorefxn->set_weight( chainbreak, 1.0 ); // confirm that chainbreak weight is set
 
 	//	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set

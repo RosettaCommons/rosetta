@@ -155,7 +155,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 		//TR << "Read in pdb file '" << pose.name() << "'" << std::endl;
 
 		// create a score function using the standard packer weights
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 		scorefxn->score( pose );
 		//TR << pose.energies() << std::endl;
@@ -291,7 +291,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 		//TR << "Read in pdb file '" << pose.name() << "'" << std::endl;
 
 		// create a score function using the standard packer weights
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 		scorefxn->score( pose );
 		//TR << pose.energies() << std::endl;
@@ -419,7 +419,7 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 {
 
 	// create a score function using the standard packer weights
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of percent hydrophobic for a given number of surace neighbors
 	std::map<int, std::vector<float> > percent_hp_in_se_nbs_by_nb;
@@ -588,7 +588,7 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 {
 
 	// create a score function using the standard packer weights
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of percent hydrophobic for a given number of surace neighbors
 	std::vector<float> percent_hp_in_se_nbs;
@@ -746,7 +746,7 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type
 	utility::vector1< utility::vector1< Real > > hp_ASA_by_aa_type_nbs_1_to_10( chemical::num_canonical_aas );
@@ -962,7 +962,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type and exposure amount
 	// we might need to add pseudocounts to this in case certain aa types are not seen at a given exposure level
@@ -1179,7 +1179,7 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type and exposure amount
 	// we might need to add pseudocounts to this in case certain aa types are not seen at a given exposure level
@@ -1437,7 +1437,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< Real > hASA_within_10A;
@@ -1635,7 +1635,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< Real > hASA_within_10A;
@@ -1827,7 +1827,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< std::pair< Size, Real > > hASA_within_10A;
@@ -1990,7 +1990,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< utility::vector1< Real > > hASA_within_10A( 20 );
@@ -2134,7 +2134,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< Real > hASA_within_10A;
@@ -2293,7 +2293,7 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has, broken up by res type
 	utility::vector1< utility::vector1< Real > > hASA_by_aa_type_nbs_1_to_10( chemical::num_canonical_aas );
@@ -2457,7 +2457,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 	// create a score function using the standard packer weights
 	// this will be used only to get a tenA neighbor graph
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// keep track of the amount of hydrophobic ASA every surface-exposed residue has
 	utility::vector1< utility::vector1< Real > > hASA_within_10A( 20 );

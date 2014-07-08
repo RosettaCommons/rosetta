@@ -149,7 +149,7 @@ namespace motifs {
 
 		// Relax away any clashes in the initial loop
 		//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
-		core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+		core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		core::scoring::methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 		options.exclude_DNA_DNA( false );
 		core::scoring::hbonds::HBondOptionsOP hb_options( new core::scoring::hbonds::HBondOptions );
@@ -274,7 +274,7 @@ namespace motifs {
 		std::string try_filename( my_output_path + "/" + unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
 
 		//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
-		core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+		core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		core::scoring::methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 		options.exclude_DNA_DNA( false );
 		core::scoring::hbonds::HBondOptionsOP hb_options( new core::scoring::hbonds::HBondOptions );
@@ -310,7 +310,7 @@ namespace motifs {
 		core::Real num_inverse_rotamers( 1.0 + setpos.size() ); // not an int because I need it for math
 
 		//ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
-		ScoreFunctionOP score_fxn( getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+		ScoreFunctionOP score_fxn( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 		options.exclude_DNA_DNA( false );
 		hbonds::HBondOptionsOP hb_options( new core::scoring::hbonds::HBondOptions );

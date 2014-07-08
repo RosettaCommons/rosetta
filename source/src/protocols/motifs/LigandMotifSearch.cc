@@ -1032,7 +1032,7 @@ LigandMotifSearch::incorporate_motifs(
 						constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
 						add_motif_sc_constraints( sc_cst_set, pose_dump, (*ir)->seqpos(), *build_rotamer, motifhitop->motifcop(), false );
 						//add_motif_sc_constraints( sc_cst_set, pose_dump2, (*ir)->seqpos(), *build_rotamer, motifhitop->motifcop(), false );
-						ScoreFunctionOP score_fxn( getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+						ScoreFunctionOP score_fxn( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 						methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 						score_fxn->set_energy_method_options( options );
 						score_fxn->set_weight( coordinate_constraint, 10.0 );

@@ -58,7 +58,7 @@ try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover(new protocols::canonical_sampling::MetropolisHastingsMover);
-	core::scoring::ScoreFunctionOP score_fxn(core::scoring::getScoreFunction());
+	core::scoring::ScoreFunctionOP score_fxn(core::scoring::get_score_function());
 	protocols::moves::MonteCarloOP monte_carlo(new protocols::moves::MonteCarlo(*score_fxn, option[ mh::kt ]));
 	metropolis_hastings_mover->set_monte_carlo(monte_carlo);
 	metropolis_hastings_mover->set_ntrials(option[ mh::ntrials ]);

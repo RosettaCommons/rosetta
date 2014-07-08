@@ -77,7 +77,7 @@ namespace denovo_protein_design {
 ///@details
 void SequenceFitnessMover::apply( core::pose::Pose & pose ){
 	using namespace core::scoring::packstat;
-	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
+	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
 
 	core::pose::Pose testpose;
 	core::import_pose::pose_from_pdb( testpose, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );

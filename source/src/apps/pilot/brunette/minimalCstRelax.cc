@@ -183,7 +183,7 @@ int main( int argc, char * argv [] ) {
 		if( option[ minimalCstRelax::relax_pdb]()){
 			core::pose::PoseOP finalRelax_poseOP =  new core::pose::Pose(*toRelax_poseOP);
 			protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new protocols::simple_moves::MissingDensityToJumpMover());
-			core::scoring::ScoreFunctionOP scorefxn_w_csts_ = getScoreFunction();
+			core::scoring::ScoreFunctionOP scorefxn_w_csts_ = get_score_function();
 			scorefxn_w_csts_->set_weight( coordinate_constraint, COORDINATE_CST_WT );
 			fixMissingDensityMover->apply(*finalRelax_poseOP);
 			add_virtual_residue_to_cterm(*finalRelax_poseOP);

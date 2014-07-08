@@ -127,7 +127,7 @@ public:
 	apply(core::pose::Pose & pose, ){
 
 		pose.update_residue_neighbors();
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		scorefxn->score(pose);
 		pose.energies();
 

@@ -208,7 +208,7 @@ AnchoredGraftMover::set_default_cen_scorefunction(){
 }
 void
 AnchoredGraftMover::set_default_fa_scorefunction(){
-	fa_scorefxn_=getScoreFunction();
+	fa_scorefxn_=get_score_function();
 	fa_scorefxn_->set_weight_if_zero(chainbreak, 20.0);
 	fa_scorefxn_->set_weight_if_zero(linear_chainbreak, 20.0);
 }

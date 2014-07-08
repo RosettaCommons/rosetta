@@ -301,7 +301,7 @@ swa_rna_sample()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Scorefunction -- choose a default. Put into its own setup function?
 	core::scoring::ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/farna/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
 
 	if ( !scorefxn->has_nonzero_weight( unfolded ) ) { 	// must have unfolded term!

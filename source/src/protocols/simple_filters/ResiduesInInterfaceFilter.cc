@@ -89,7 +89,7 @@ core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) c
 
 	core::pose::Pose temp_pose( pose );
 	core::scoring::ScoreFunctionOP scorefxn(
-		core::scoring::getScoreFunction() );
+		core::scoring::get_score_function() );
 	(*scorefxn)(temp_pose);
 
 	protocols::scoring::Interface interface(rb_jump_);

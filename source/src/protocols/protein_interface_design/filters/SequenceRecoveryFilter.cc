@@ -227,7 +227,7 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 		}
 	}
 	using namespace core::scoring;
-  protocols::protein_interface_design::ReportSequenceDifferences rsd( getScoreFunction() );
+  protocols::protein_interface_design::ReportSequenceDifferences rsd( get_score_function() );
   rsd.calculate( asym_ref_pose, asym_pose );
   std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
   std::map< core::Size, std::string > const res_names2( rsd.res_name2() );

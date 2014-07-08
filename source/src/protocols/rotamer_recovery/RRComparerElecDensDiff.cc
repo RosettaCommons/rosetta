@@ -113,7 +113,7 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ].user() )
 		core::scoring::electron_density::getDensityMap().setWindow( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ] );
 	
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scorefxn->set_weight( core::scoring::elec_dens_fast, 1.0 );
 	(*scorefxn)(pose1);
 	(*scorefxn)(pose2);

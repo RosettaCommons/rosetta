@@ -207,8 +207,8 @@ int main(int argc, char *argv[]) {
 	if(option[out::nstruct].user()) nstruct=option[out::nstruct]();
 
 	//Creating Rosetta's scorefunction.  This can be specified with flags by the user, and will otherwise default to the score12 scorefunction:
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
-	core::scoring::ScoreFunctionOP sfxn_constrained = core::scoring::getScoreFunction(); //For final fastrelax; includes constraint linking N- and C-termini.
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
+	core::scoring::ScoreFunctionOP sfxn_constrained = core::scoring::get_score_function(); //For final fastrelax; includes constraint linking N- and C-termini.
 	sfxn_constrained->set_weight(atom_pair_constraint, 1.0);
 	sfxn_constrained->set_weight(dihedral_constraint, 1.0);
 	sfxn_constrained->set_weight(angle_constraint, 1.0);

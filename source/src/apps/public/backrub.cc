@@ -303,7 +303,7 @@ BackrubProtocol::BackrubProtocol(): Mover(),
 	main_task_factory_->push_back( new operation::PreserveCBeta );
 
 	// set up the score function and add the bond angle energy term
-	score_fxn_ = core::scoring::getScoreFunction();
+	score_fxn_ = core::scoring::get_score_function();
 	score_fxn_->set_weight(core::scoring::mm_bend, option[ backrub::mm_bend_weight ]);
 	core::scoring::methods::EnergyMethodOptions energymethodoptions(score_fxn_->energy_method_options());
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);

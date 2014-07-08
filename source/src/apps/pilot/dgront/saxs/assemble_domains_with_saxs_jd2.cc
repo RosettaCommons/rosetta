@@ -94,7 +94,7 @@ main( int argc, char * argv [] ) {
 	CompositionMoverOP container( new CompositionMover );
 
 	core::scoring::ScoreFunctionOP score3 = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	score3->set_weight( core::scoring::saxs_score, 1.0 );
 
 	// docking
@@ -116,7 +116,7 @@ main( int argc, char * argv [] ) {
 			new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs )
 		);
 		container->add_mover(builder);
-		container->add_mover( new FastRelax( getScoreFunction() ) );
+		container->add_mover( new FastRelax( get_score_function() ) );
 	}
 
 	// execution

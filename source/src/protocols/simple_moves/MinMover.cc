@@ -23,7 +23,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
+#include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
@@ -236,7 +236,7 @@ MinMover::apply(pose::Pose & pose) {
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
 
-	if ( ! scorefxn_ ) scorefxn_ = getScoreFunction(); // get a default (INITIALIZED!) ScoreFunction
+	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
 	if (!cartesian( )) {

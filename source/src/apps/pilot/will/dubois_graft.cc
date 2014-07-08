@@ -149,7 +149,7 @@ main( int argc, char * argv [] )
 	core::conformation::ResidueOP ala = core::conformation::ResidueFactory::create_residue(alatype);
 	core::pose::remove_upper_terminus_type_from_pose_residue(init,1);
 
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	Pose init_sym = init;
 	core::pose::symmetry::make_symmetric_pose(init_sym);

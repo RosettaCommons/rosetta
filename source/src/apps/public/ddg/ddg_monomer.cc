@@ -242,7 +242,7 @@ main( int argc, char * argv [] )
 	}else if(basic::options::option[OptionKeys::ddg::minimization_scorefunction].user()){
 		minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::options::option[OptionKeys::ddg::minimization_scorefunction]());
 	}else{
-		minimize_sfxn=getScoreFunction();
+		minimize_sfxn=get_score_function();
 	}
 
 	int num_iterations = option[ OptionKeys::ddg::iterations ]();

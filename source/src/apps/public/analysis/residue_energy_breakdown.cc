@@ -67,7 +67,7 @@ main( int argc, char* argv [] ) {
 		option[ in::file::residue_type_set ]()
 	);
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::methods::EnergyMethodOptionsOP emopts(
 		new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
 	);

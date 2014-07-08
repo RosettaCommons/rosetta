@@ -108,7 +108,7 @@ public:
  	fragset_large_ = core::fragment::FragmentIO(option[ OptionKeys::abinitio::number_9mer_frags ] ).read_data( frag_large_file );
 	fragset_small_ = core::fragment::FragmentIO(option[ OptionKeys::abinitio::number_3mer_frags ] ).read_data( frag_small_file );
 
-//	core::scoring::ScoreFunctionOP scorefxn_ = core::scoring::getScoreFunction();
+//	core::scoring::ScoreFunctionOP scorefxn_ = core::scoring::get_score_function();
 //	scorefxn_->set_weight( core::scoring::pddf_score, 1.0 );
 
 	setup_pose();

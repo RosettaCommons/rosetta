@@ -121,8 +121,8 @@ int main( int argc, char * argv [] ){
 	std::string const input_ligand = option[ input_ligand_pdb ];
 
 	//setup scorefxn
-	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
-	scoring::ScoreFunctionOP repack_scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP scorefxn(get_score_function());
+	scoring::ScoreFunctionOP repack_scorefxn(get_score_function());
 
   //Register calculators
 	std::string sasa_calc_name = "sasa";

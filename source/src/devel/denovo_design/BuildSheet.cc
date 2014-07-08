@@ -434,7 +434,7 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 	mm->show( TR ); TR.flush();
 
 	// get a default centroid scorefunction
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction( "fa_standard" ) );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function( "fa_standard" ) );
 	scorefxn->set_weight( core::scoring::cart_bonded, 0.5 );
 	scorefxn->set_weight( core::scoring::coordinate_constraint, 1.0 );
 	protocols::simple_moves::MinMover minimize;

@@ -105,22 +105,22 @@ extern std::string const DOCK_LOW_PATCH;
 /// user's command line parameters -score:weights and -score:patch
 /// By default it returns weights=standard and patch=score12 for fullatom,
 /// and weights=cen_std and patch="" for centroid
-core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom = true );
+core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom = true );
 
-/// @brief A helper function that either returns a ScoreFunctionOP created by getScoreFunction() or
+/// @brief A helper function that either returns a ScoreFunctionOP created by get_score_function() or
 /// the one specified by the protocol which is activated by the -restore_pre_talaris_2013_behavior
 /// flag.  The purpose of this function is to preserve legacy behavior for the sake of reproducibility
 /// and so that a record of the old behavior is still preserved in the code to ease the process of
-/// reverting the change to getScoreFunction if that were the wrong behavior.
-core::scoring::ScoreFunctionOP getScoreFunctionLegacy(
+/// reverting the change to get_score_function if that were the wrong behavior.
+core::scoring::ScoreFunctionOP get_score_function_legacy(
 	std::string pre_talaris_2013_weight_set,
 	std::string pre_talaris_2013_patch_file = ""
 );
 
-/// @brief use the logic of getScoreFunction to get the name.
+/// @brief use the logic of get_score_function to get the name.
 /// The 	name format is <weights_tag>[_<patch_tag> ... ]
 std::string
-getScoreFunctionName(
+get_score_functionName(
 	bool const is_fullatom = true );
 
 } // namespace scoring

@@ -99,7 +99,7 @@ int main( int argc, char * argv [] )
 
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
-	ScoreFunctionOP sfxn = getScoreFunction();
+	ScoreFunctionOP sfxn = get_score_function();
 	(*sfxn)(pose);
 
 	PackerTaskOP task = TaskFactory::create_packer_task( pose );

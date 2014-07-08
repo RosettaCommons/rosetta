@@ -156,7 +156,7 @@ main( int argc, char* argv [] ) {
 		task->restrict_to_repacking();
 		task->restrict_to_residues(residues_to_repack);
 		ScoreFunctionOP scorefxn(
-			core::scoring::getScoreFunction()
+			core::scoring::get_score_function()
 		);
 		pack_rotamers( modeled_pose, *scorefxn, task );
 

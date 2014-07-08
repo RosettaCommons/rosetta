@@ -151,7 +151,7 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
 
 		// create a score function using the standard packer weights
-		sf = scoring::getScoreFunction();
+		sf = scoring::get_score_function();
 		(*sf)( pose );
 
 		scoring::EnergyMap emap;
@@ -193,7 +193,7 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 		sp->compute_pose_surface_energy( pose, total_surfaceE, residue_surfaceE );
 		TS_ASSERT_DELTA( total_surfaceE, 0.0000, TOLERATED_ERROR );  // tests unscored poses; return 0.0 for all residues
 
-		sf = scoring::getScoreFunction();
+		sf = scoring::get_score_function();
 		(*sf)( pose );
 
 		sp->compute_pose_surface_energy( pose, total_surfaceE, residue_surfaceE );
@@ -215,7 +215,7 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 		sp->compute_pose_surface_energy( pose, total_surfaceE, residue_surfaceE );
 		TS_ASSERT_DELTA( total_surfaceE, 0.0000, TOLERATED_ERROR );  // tests unscored poses; return 0.0 for all residues
 
-		sf = scoring::getScoreFunction();
+		sf = scoring::get_score_function();
 		(*sf)( pose );
 
 		sp->compute_pose_surface_energy( pose, total_surfaceE, residue_surfaceE );

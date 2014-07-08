@@ -72,7 +72,7 @@ OPT_1GRP_KEY(Real,bb_cluster,cluster_radius)
 static basic::Tracer TR("bb_cluster");
 
 void do_align( core::pose::Pose const &pose1, core::pose::Pose const &pose2, core::Real &rms) {
-	//core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	//core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
         rms=core::scoring::bb_rmsd(pose1,pose2);
 }
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 	//std::vector< std::string > outtaglist;
 	//utility::vector1< std::string > outtaglist;
         //std::string scorecolumn=basic::options::option[ basic::options::OptionKeys::bb_cluster::column];
-        //core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+        //core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	//Real score;
 
 	TR.Info << "PoseVec.size(): "<< PoseVec.size() << std::endl;

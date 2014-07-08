@@ -280,7 +280,7 @@ rebuild_test(){
 
 	ScoreFunctionOP scorefxn;
 	if ( ! option[ score::weights ].user() ) scorefxn = ScoreFunctionFactory::create_score_function( "score12_no_hb_env_dep.wts"  );
-	else scorefxn = core::scoring::getScoreFunction();
+	else scorefxn = core::scoring::get_score_function();
 
 	StepWiseModeler stepwise_modeler( scorefxn );
 	stepwise_modeler.set_native_pose( native_pose );

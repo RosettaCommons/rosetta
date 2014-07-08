@@ -504,7 +504,7 @@ LoopCreationMover::refine_loop(
 
 	core::scoring::ScoreFunctionOP scorefxn_min;
 	if( scorefxn_ == 0 ) {
-		scorefxn_ = scoring::getScoreFunction();
+		scorefxn_ = scoring::get_score_function();
 		scorefxn_min = scorefxn_->clone();
 	}
 	else {

@@ -195,7 +195,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 			}//foreach stubset_pos_pair
 			using namespace core::scoring;
 			ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
-			ScoreFunctionOP scorefxn_mod( getScoreFunction());
+			ScoreFunctionOP scorefxn_mod( get_score_function());
 			scorefxn_mod->set_weight( backbone_stub_constraint, 10.0 ); //This will not have any effect if the bbcsts are off
 			scorefxn_mod->set_weight( coordinate_constraint, 1.0 );//similarly
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
@@ -351,7 +351,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	std::unique( prev_pack.begin(), prev_pack.end() );
 	prevent_repacking( prev_pack );
 	//end add to prevent repacking
-	ScoreFunctionCOP scorefxn = getScoreFunction();
+	ScoreFunctionCOP scorefxn = get_score_function();
 
  if ( auction_->get_stub_scorefxn() == "backbone_stub_constraint" ) {
 	using namespace core::pack;
@@ -426,7 +426,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
           add_coordinatecst_for_hotspot_packing(saved_pose);
           pack_rotamers( saved_pose, *scorefxn, task );
 
-          ScoreFunctionOP scorefxnc = getScoreFunction();
+          ScoreFunctionOP scorefxnc = get_score_function();
           scorefxnc->set_weight( coordinate_constraint, 1.0 );
           (*scorefxnc)(saved_pose);
           Real cst_score = saved_pose.energies().total_energies()[core::scoring::coordinate_constraint ];
@@ -862,7 +862,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
 					core::pack::task::parse_resfile(pose, *task);
 
-				core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+				core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 				pack::pack_rotamers( *ala_pose, *scorefxn, task);
 				(*scorefxn)( *ala_pose );
 				stubset->pair_with_scaffold( *ala_pose, host_chain_, new protocols::filters::TrueFilter );

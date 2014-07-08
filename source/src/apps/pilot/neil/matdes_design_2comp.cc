@@ -619,7 +619,7 @@ void *dostuff(void*) {
 
 	option[OptionKeys::symmetry::symmetry_definition]("input/"+compkind[1].substr(0,1)+".sym");
 	// Create a score function object, turn fa_elec off in the monomer
-	ScoreFunctionOP sf = getScoreFunction();
+	ScoreFunctionOP sf = get_score_function();
 	// core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 	// eo.exclude_monomer_fa_elec(true);
 	// sf->set_energy_method_options(eo);
@@ -835,7 +835,7 @@ void *dostuff(void*) {
       			bool min_rb = option[matdes::mutalyze::min_rb]();
 
 						// Repack and minimize using scorefxn
-						ScoreFunctionOP scorefxn = getScoreFunction();
+						ScoreFunctionOP scorefxn = get_score_function();
 						repack(pose_for_design, scorefxn, design_pos);
 						minimize(pose_for_design, scorefxn, design_pos, false, true, min_rb);
 						scorefxn->score(pose_for_design);

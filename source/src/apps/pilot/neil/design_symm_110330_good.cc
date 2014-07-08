@@ -431,7 +431,7 @@ void
 	std::string sctag = string_of(numeric::random::uniform()).substr(2,4);
 
 	// Create a score function object, get the fa_rep weight from it (default = 0.44)
-	ScoreFunctionOP sf = getScoreFunction();
+	ScoreFunctionOP sf = get_score_function();
 	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 	eo.exclude_monomer_fa_elec(true);
 	sf->set_energy_method_options(eo);
@@ -660,7 +660,7 @@ void
 					TR << std::endl;
 
 				// Repack using scorefxn
-				ScoreFunctionOP scorefxn = getScoreFunction();
+				ScoreFunctionOP scorefxn = get_score_function();
 				repack(pose_for_design, scorefxn, design_pos);
 				//scorefxn->score(pose_for_design);
 

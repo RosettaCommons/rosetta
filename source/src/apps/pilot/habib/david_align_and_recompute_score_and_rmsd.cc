@@ -92,7 +92,7 @@ void define_interface( core::pose::Pose & ref_pose ) {
 	}
 
 	TR <<"sele ";
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
         (*scorefxn)(ref_pose);
 	EnergyGraph & energy_graph(ref_pose.energies().energy_graph());
 	for ( graph::Graph::EdgeListIter

@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 
 	// init sfxn
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::getScoreFunction();
+	scorefxn = core::scoring::get_score_function();
 
 	//mpi init
 	int numprocs = 1, rank = 1;

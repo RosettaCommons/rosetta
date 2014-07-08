@@ -331,8 +331,8 @@ void run() {
     // utility_exit_with_message("testing");
 
     Size nres = init.n_residue();
-    // ScoreFunctionOP sf = core::scoring::getScoreFunction();
-    ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+    // ScoreFunctionOP sf = core::scoring::get_score_function();
+    ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
     vector1<numeric::xyzTriple<Real> > chis;
     for(Size i = 2; i <= init.n_residue()-1; ++i) {

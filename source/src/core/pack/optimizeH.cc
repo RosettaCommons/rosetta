@@ -65,7 +65,7 @@ optimize_H_and_notify(
 
 	ScoreFunctionOP sfxn;
 	if ( !option[ score::optH_weights ].user() &&  !option[ score::optH_patch ].user() ) {
-		sfxn = getScoreFunction();
+		sfxn = get_score_function();
 	} else if ( option[ score::optH_weights ].user() && option[ score::optH_patch ].user() ) {
 		sfxn = ScoreFunctionFactory::create_score_function( option[ score::optH_weights ](), option[ score::optH_patch ]() );
 	} else if ( option[ score::optH_weights ].user() ) {

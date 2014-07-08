@@ -81,7 +81,7 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 		sfxn_ = datamap.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
 	} else {
-		sfxn_ = core::scoring::getScoreFunction();
+		sfxn_ = core::scoring::get_score_function();
 	}
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 
@@ -125,7 +125,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 	// score the pose to populate the 10A neighborgraph
 	core::pose::Pose bound( pose );
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	( *scorefxn )( bound );
 	bound.update_residue_neighbors();
 

@@ -320,8 +320,8 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 	//if missing density exists fix gaps.
 	protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new protocols::simple_moves::MissingDensityToJumpMover());
 	fixMissingDensityMover->apply(pose);
-	core::scoring::ScoreFunctionOP scorefxn_ = getScoreFunction();
-	core::scoring::ScoreFunctionOP scorefxn_w_csts_ = getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn_ = get_score_function();
+	core::scoring::ScoreFunctionOP scorefxn_w_csts_ = get_score_function();
 	scorefxn_w_csts_->set_weight( coordinate_constraint, COORDINATE_CST_WT );
 	core::pose::PoseOP relaxed_poseOP = new core::pose::Pose(pose);
 	Real dist_deviation_thresh = DIST_DEVIATION_THRESH_START;

@@ -460,7 +460,7 @@ int main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb(mut_ps, mut_pdb_name);
 
 	// score poses
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	(*scorefxn)(ps);
 	(*scorefxn)(mut_ps);
 

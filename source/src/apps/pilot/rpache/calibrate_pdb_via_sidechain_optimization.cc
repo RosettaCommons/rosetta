@@ -87,7 +87,7 @@ my_main( void* )
  	int const nres( pose.total_residue() );
 
 	//define score function
-	scoring::ScoreFunctionOP scorefxn=core::scoring::getScoreFunction();
+	scoring::ScoreFunctionOP scorefxn=core::scoring::get_score_function();
 
 	//get starting energy
 	Real starting_total_energy = (*scorefxn)(pose);

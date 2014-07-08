@@ -75,7 +75,7 @@ public:
 		minoptions.max_iter( 200 );
 
 		// scorefunction0 -- fix bad chainbreaks
-		core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::get_score_function();
 		scorefxn0->reset();
 		scorefxn0->set_weight( core::scoring::vdw, 0.1 );
 		scorefxn0->set_weight( core::scoring::cart_bonded, 0.1 );
@@ -87,7 +87,7 @@ public:
 
 		core::scoring::ScoreFunctionOP scorefxn1 = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth_cart");
 		if ( option[ score::weights ].user() ) {
-			scorefxn1 = core::scoring::getScoreFunction();
+			scorefxn1 = core::scoring::get_score_function();
 		}
 		core::scoring::methods::EnergyMethodOptions options1(scorefxn1->energy_method_options());
 		options1.set_cartesian_bonded_linear(true);

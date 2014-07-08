@@ -308,7 +308,7 @@ public:
 		}
 
 		//std::cout << *task << std::endl;
-		core::scoring::ScoreFunctionOP pack_score_fxn( core::scoring::getScoreFunction() );
+		core::scoring::ScoreFunctionOP pack_score_fxn( core::scoring::get_score_function() );
 		TR << "Tot_E of pose1:" << pdb_file_name_ << "\t" << "\tweighted_scores:\t" << pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << "\ttotal_score:\t" << pose.energies().total_energies().dot( score_fxn->weights() ) << std::endl;
 
 		protocols::simple_moves::RotamerTrialsMinMoverOP pack_mover( new protocols::simple_moves::RotamerTrialsMinMover( pack_score_fxn, *task ) );

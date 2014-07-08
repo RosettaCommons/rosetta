@@ -173,7 +173,7 @@ int main( int argc, char * argv [] )
 		//core::import_pose::pose_from_pdb(pose, "test_in.pdb");
 
 		//core::scoring::ScoreFunction scorefxn;
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunctionLegacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		T("Score:") << scorefxn->score(pose)  << std::endl;
 
 		//scorefxn(pose);

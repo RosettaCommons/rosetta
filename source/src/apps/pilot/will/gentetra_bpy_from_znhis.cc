@@ -348,7 +348,7 @@ void run() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 	ScoreFunctionOP sfrep = new core::scoring::ScoreFunction;
 	sfrep->set_weight(core::scoring::fa_rep,1.0);
 

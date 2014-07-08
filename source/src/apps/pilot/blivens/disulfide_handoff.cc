@@ -110,7 +110,7 @@ int main( int argc, char * argv [] )
 	pose::PoseOP pose(new pose::Pose);
 	core::import_pose::pose_from_pdb( *pose, infile );
 
-	scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
 
 
 	//initialize vectors of all disulf bonds

@@ -308,7 +308,7 @@ public:
 //	){
 //		pose_ = new core::pose::Pose( pose );
 //		task_ = task.clone();
-//		sfxn_ = core::scoring::getScoreFunction();
+//		sfxn_ = core::scoring::get_score_function();
 //
 //		//register calculators
 //		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {

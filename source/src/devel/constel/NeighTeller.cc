@@ -39,7 +39,7 @@ static basic::Tracer TR("devel.constel.NeighTeller");
 /// @remarks For speed, a scorefxn containing only fa_atr is used.
 ///
 NeighTeller::NeighTeller(Pose& ref_pose) :
-  scorefxn(core::scoring::getScoreFunction()),
+  scorefxn(core::scoring::get_score_function()),
   fa_atr_weight(0.8), interaction_score_threshold(-0.3),
 	nmap(MAXNGB, utility::vector1<bool>(MAXNGB, false)) {
 

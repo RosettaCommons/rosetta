@@ -314,8 +314,8 @@ dock(Pose & init, string /*fname*/) {
   protocols::scoring::ImplicitFastClashCheck ifc2(init,2.8);
 
   // Size nres = init.n_residue();
-  // ScoreFunctionOP sf = core::scoring::getScoreFunction();
-  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+  // ScoreFunctionOP sf = core::scoring::get_score_function();
+  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
   Pose pose = init;
 
@@ -917,7 +917,7 @@ void design_hits(Pose & p, string fn, vector1<Hit> h, vector1<Hit> allh) {
 
     core::pose::symmetry::make_symmetric_pose(psym);
 
-    ScoreFunctionOP sf = core::scoring::getScoreFunction();
+    ScoreFunctionOP sf = core::scoring::get_score_function();
 
     //psym.dump_pdb(tag+"_0.pdb");
 

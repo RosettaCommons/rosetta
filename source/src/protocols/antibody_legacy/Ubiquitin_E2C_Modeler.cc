@@ -215,7 +215,7 @@ void ubi_e2c_modeler::set_default() {
 	lowres_cst_scorefxn_->set_weight( core::scoring::vdw, cen_vdw_ );
 	lowres_cst_scorefxn_->set_weight( core::scoring::cbeta, cen_vdw_ );
 
-	pack_scorefxn_ = core::scoring::getScoreFunctionLegacy("pre_talaris_2013_standard.wts");
+	pack_scorefxn_ = core::scoring::get_score_function_legacy("pre_talaris_2013_standard.wts");
 
 	dockfa_scorefxn_ = core::scoring::ScoreFunctionFactory::
 	                   create_score_function( "docking" );
@@ -241,7 +241,7 @@ void ubi_e2c_modeler::set_default() {
 	dockfa_cst_min_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
 	                                      full_constraint_ );
 
-	pack_cst_scorefxn_ = core::scoring::getScoreFunction("pre_talaris_2013_standard.wts");
+	pack_cst_scorefxn_ = core::scoring::get_score_function("pre_talaris_2013_standard.wts");
 	// adding constraints
 	pack_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
 	                                full_constraint_ );
@@ -2154,7 +2154,7 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	               create_score_function( "cen_std" );
 	dockfa_score = core::scoring::ScoreFunctionFactory::
 	               create_score_function( "docking"  );
-	pack_score = core::scoring::getScoreFunction("pre_talaris_2013_standard.wts");
+	pack_score = core::scoring::get_score_function("pre_talaris_2013_standard.wts");
 
 	setup_key_residues( pose_in );
 	setup_complex_fold_tree( pose_in );

@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
 
 	// Load pose from pdb
 	Pose pose; pose_from_pdb(pose, "structures/linear/5.1ubq.pdb");
-	ScoreFunctionOP score_function = core::scoring::getScoreFunction();
+	ScoreFunctionOP score_function = core::scoring::get_score_function();
 	score_function->score(pose);
 	cout << "Original Score: " << pose.energies().total_energy() << endl;
 	pose.dump_pdb("pdb_from_pose.pdb");

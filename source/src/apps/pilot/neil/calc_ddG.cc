@@ -122,7 +122,7 @@ void
 		core::pose::symmetry::make_symmetric_pose(pose);
 
 		// Get scorefxn
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 		scorefxn->score(pose);
 
 		// Calculate binding energy

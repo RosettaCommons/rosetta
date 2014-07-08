@@ -146,7 +146,7 @@ rebuild_disulfide( core::pose::Pose & pose,
 		}
 	}
 	if( !packer_score ) {
-		packer_score = scoring::getScoreFunction();
+		packer_score = scoring::get_score_function();
 	}
 	if( !mm ) {
 		mm = MoveMapOP(new MoveMap);

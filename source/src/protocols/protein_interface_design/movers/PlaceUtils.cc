@@ -392,7 +392,7 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
 			core::pack::task::parse_resfile(*ala_pose, *task);
 
-		core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);
 		(*scorefxn)( *ala_pose );
 		stubset->pair_with_scaffold( *ala_pose, host_chain, new protocols::filters::TrueFilter );

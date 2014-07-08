@@ -71,7 +71,7 @@ motif_dna_packer_design()
 	utility::vector1< std::string > pdb_files( basic::options::start_files() );
 
 	// Set up scoring
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	bool minimize( false );
 	if ( basic::options::option[basic::options::OptionKeys::dna::design::minimize].user() ) minimize = basic::options::option[ basic::options::OptionKeys::dna::design::minimize ]();
 

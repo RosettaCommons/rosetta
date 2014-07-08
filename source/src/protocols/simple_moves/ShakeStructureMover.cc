@@ -401,7 +401,7 @@ ShakeStructureMover::setup_for_run(core::pose::Pose & p){
 	setup_ca_constraints(p,(*scorefxn),9.0,harmonic_ca_cst_std_dev);
 
 	if(min_cst || sc_min_only){
-		min_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		min_scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
 	if(mc_temp <= 0 && ensemble_ca_rmsd > 0){

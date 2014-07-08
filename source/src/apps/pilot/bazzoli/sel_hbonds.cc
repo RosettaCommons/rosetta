@@ -280,7 +280,7 @@ try {
 
 	// score pose
 	core::scoring::ScoreFunctionOP scorefxn(
-		core::scoring::getScoreFunction());
+		core::scoring::get_score_function());
 	(*scorefxn)(ps);
 
 	// open input hbond file

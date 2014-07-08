@@ -21,14 +21,14 @@ print version()
 
 pose = pose_from_pdb("test/data/test_in.pdb")
 
-scorefxn = getScoreFunction()
+scorefxn = get_score_function()
 scorefxn(pose)
 
 
 pose2 = Pose()
 make_pose_from_sequence(pose2, "ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
-scorefxn = getScoreFunction()
+scorefxn = get_score_function()
 scorefxn(pose2)
 
 

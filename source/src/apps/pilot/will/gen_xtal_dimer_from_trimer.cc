@@ -319,8 +319,8 @@ dock(Pose & init, string fname) {
   protocols::scoring::ImplicitFastClashCheck ifc2(init,2.8);
 
   Size nres = init.n_residue();
-  // ScoreFunctionOP sf = core::scoring::getScoreFunction();
-  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+  // ScoreFunctionOP sf = core::scoring::get_score_function();
+  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
   Pose pose = init;
 

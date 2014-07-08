@@ -64,7 +64,7 @@ AntibodySeqDesignMover::AntibodySeqDesignMover(AntibodyInfoOP ab_info){
 	}
 	
 	set_use_cluster_constraints(true);
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
 	set_use_conservative_design_range(CDRNameEnum_start, CDRNameEnum_total, false);
 	read_command_line_options();
@@ -79,7 +79,7 @@ AntibodySeqDesignMover::AntibodySeqDesignMover(AntibodyInfoOP ab_info, std::stri
 	}
 	
 	set_use_cluster_constraints(true);
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
 	set_use_conservative_design_range(CDRNameEnum_start, CDRNameEnum_total, false);
 	read_command_line_options();

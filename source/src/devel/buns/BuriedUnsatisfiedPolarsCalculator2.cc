@@ -233,7 +233,7 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 
 
 //    pose.update_residue_neighbors();
-//    scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+//    scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 //    scorefxn->score(pose);
 //    pose.energies();
 //
@@ -317,7 +317,7 @@ BuriedUnsatisfiedPolarsCalculator2::generous_hbond()
 const
 {
 	TR << "Setting generous_hbonds." << std::endl;
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scoring::methods::EnergyMethodOptionsOP emopts(
 			new scoring::methods::EnergyMethodOptions(
 			scorefxn->energy_method_options() ) );

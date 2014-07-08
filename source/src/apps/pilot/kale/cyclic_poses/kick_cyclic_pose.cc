@@ -85,7 +85,7 @@ int main(int argc, char* argv []) {
 
 		// Initialize the variables used in this function.
 
-		score_function = scoring::getScoreFunction();
+		score_function = scoring::get_score_function();
 		import_pose::pose_from_pdb(model, input_path);
 
 		mover = new kinematic_closure::KinematicMover();

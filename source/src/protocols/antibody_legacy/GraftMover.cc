@@ -196,7 +196,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		recover_sidechains.apply( pose_in );
 		bool include_current( false );
 		// High resolution scores
-		scoring::ScoreFunctionOP antibody_score( scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+		scoring::ScoreFunctionOP antibody_score( scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		set_packer_default( pose_in, antibody_score, include_current );
 		packer_->apply( pose_in );
 
@@ -844,7 +844,7 @@ LoopRlxMover::LoopRlxMover(
 } // LoopRlxMover default constructor
 
 void LoopRlxMover::set_default() {
-	highres_scorefxn_ = scoring::getScoreFunction();
+	highres_scorefxn_ = scoring::get_score_function();
 	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
 	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
 	return;

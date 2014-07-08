@@ -235,7 +235,7 @@ process_for_motifs(
 )
 {
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	core::Size nres( pose.total_residue() );
 

@@ -118,7 +118,7 @@ main( int argc, char* argv [] ) {
 	core::scoring::ScoreFunctionOP scorefxn;
 
 	if ( option[ in::file::rescore ]() ){
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 		tr.Debug << "scoring using ScoreFunction with weights: " << std::endl;
 		scorefxn->show( tr.Debug );
 		tr.flush();

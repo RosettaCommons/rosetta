@@ -564,7 +564,7 @@ void
     }
 
 		// Make a scorefunction
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 
     // Move the pose to the correct docked configuration before designing
     utility::vector1<Real> radial_disps = option[matdes::radial_disp]();

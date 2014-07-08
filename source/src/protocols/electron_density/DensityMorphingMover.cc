@@ -199,7 +199,7 @@ void DensityMorphingMover::apply(core::pose::Pose & pose) {
 	}
 
 	/*
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	if (scorefxn->get_weight(core::scoring::coordinate_constraint) < 1e-6) {
 		scorefxn->set_weight( core::scoring::coordinate_constraint, 1.0 );
 	}

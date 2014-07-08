@@ -535,11 +535,11 @@ int main( int argc, char * argv [] ) {
 	                sfc->set_weight(core::scoring::rama,1.0);
 	                sfc->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sfc->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffa = core::scoring::getScoreFunction();
+	ScoreFunctionOP sffa = core::scoring::get_score_function();
 	                sffa->set_weight(core::scoring::atom_pair_constraint,1.0);
 	                sffa->set_weight(core::scoring::omega,1.0);
 	                sffa->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
-	ScoreFunctionOP sffastd = core::scoring::getScoreFunction();
+	ScoreFunctionOP sffastd = core::scoring::get_score_function();
 	                sffastd->set_weight(core::scoring::omega,1.0);
 	                sffastd->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
 

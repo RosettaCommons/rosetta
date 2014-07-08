@@ -134,7 +134,7 @@ main( int argc, char * argv [] )
 	std::string const native_pdb_name = option[ native_pdb ] ;
 
 	if ( tmp_chain.length() != 1  || tmp2_chain.length() != 1 ) {
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	std::cerr << "ERROR!! Chain ID should be one character!" << std::endl;
 	exit(1);

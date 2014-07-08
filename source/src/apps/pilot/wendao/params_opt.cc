@@ -408,7 +408,7 @@ int main( int argc, char * argv [] ) {
 
 	utility::vector1<core::pose::PoseOP> models = load_models();
 	utility::vector1< utility::vector1<bool> > masks = select_residues_for_evaluation(models);
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::ScoreFunctionOP start_scorefxn = scorefxn->clone();
 
 	core::scoring::ScoreFunctionOP scorefxn_hi = core::scoring::ScoreFunctionFactory::create_score_function(option[rropt::sfhi]());

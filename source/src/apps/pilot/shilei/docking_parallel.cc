@@ -258,7 +258,7 @@ void run_parallel_docking() {
 
 	//initialize docking
 	utility::vector1< core::Size > movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
-	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
 	//add cst to the scoring
 	if (basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()) {

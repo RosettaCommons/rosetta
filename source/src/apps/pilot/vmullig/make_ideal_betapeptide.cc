@@ -236,7 +236,7 @@ int main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 
 	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::getScoreFunction();
+	sfxn = core::scoring::get_score_function();
 
 	protocols::relax::FastRelax frlx(sfxn, 1); //A fastrelax mover
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.

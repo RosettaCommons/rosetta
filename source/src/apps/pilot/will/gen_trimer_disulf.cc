@@ -383,7 +383,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	core::pose::Pose pose(in_pose);
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight(core::scoring::dslf_ss_dst,10.0); // S-S
 	scorefxn->set_weight(core::scoring::dslf_cs_ang,10.0); // CB-S-S
 	scorefxn->set_weight(core::scoring::dslf_ss_dih,10.0); //

@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
   // load pdb file into pose
   core::import_pose::pose_from_pdb( p, pdb_file );
   // initialize score function
-  ////core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+  ////core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
   // score pose
   ////(*score_fxn)(p);
   // output score

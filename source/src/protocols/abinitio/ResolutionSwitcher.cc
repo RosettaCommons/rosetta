@@ -172,7 +172,7 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
     copy_side_chains( pose, needToRepack, init_pose_ );
   }
 
-	if ( !scorefxn_fa_ ) scorefxn_fa_ = core::scoring::getScoreFunction();
+	if ( !scorefxn_fa_ ) scorefxn_fa_ = core::scoring::get_score_function();
 	scorefxn_fa_->set_weight(  scoring::coordinate_constraint , 1.0 );
 	runtime_assert( pose.is_fullatom() );
    // repack loop + missing-density residues

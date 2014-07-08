@@ -62,7 +62,7 @@ using core::conformation::Residue;
 using core::scoring::EnergyMap;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreTypes;
 using core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose;
@@ -79,7 +79,7 @@ using cppdb::statement;
 static basic::Tracer TR( "protocols.features.ResidueTotalScoresFeatures" );
 
 ResidueTotalScoresFeatures::ResidueTotalScoresFeatures() :
-	scfxn_(getScoreFunction())
+	scfxn_(get_score_function())
 {}
 
 ResidueTotalScoresFeatures::ResidueTotalScoresFeatures(

@@ -163,7 +163,7 @@ int main( int argc, char * argv [] )
 
 	// Score the pose
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::getScoreFunction();
+	scorefxn = core::scoring::get_score_function();
 
 	(*scorefxn)(target_pose);
 

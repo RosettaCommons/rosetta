@@ -205,7 +205,7 @@ protocols::moves::MoverOP setup_score_mover()
 	std::vector<std::string> chains;
 	chains.push_back("X");
 
-	core::scoring::ScoreFunctionOP score_fxn(core::scoring::getScoreFunctionLegacy( "score12prime.wts" ));
+	core::scoring::ScoreFunctionOP score_fxn(core::scoring::get_score_function_legacy( "score12prime.wts" ));
 
 	protocols::ligand_docking::InterfaceScoreCalculatorOP score_mover(new protocols::ligand_docking::InterfaceScoreCalculator());
 

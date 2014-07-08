@@ -255,17 +255,17 @@ int main( int argc, char * argv [] ) {
 	                sfc->set_weight(core::scoring::rama,1.0);
 	                sfc->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sfc->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffa = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	ScoreFunctionOP sffa = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffa->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sffa->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffastd = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	ScoreFunctionOP sffastd = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffastd->set_weight(core::scoring::omega,1.0);
 
 	core::io::silent::SilentFileData sfd;
 	Pose ref;
 
 	// liz stuff
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	//protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new protocols::canonical_sampling::CanonicalSamplingMover(sfxn,pool_ptr,1000));
 	protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
 	csm->set_scorefunction(sfxn);

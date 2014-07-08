@@ -349,7 +349,7 @@ main( int argc, char* argv[] ) {
 	if ( option[ surface_app::use_reweighted_score12_with_surfaceE_scorefunction ] ) {
 
 		TR << "Using reweighted score12 with surfaceE scorefunction (optE 458)." << std::endl;
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 
 		utility::vector1< Real > refEs_;
 		refEs_.resize( chemical::num_canonical_aas, 0.0 );
@@ -386,7 +386,7 @@ main( int argc, char* argv[] ) {
 	} else if ( option[ surface_app::use_reweighted_score12_score_function ] ) {
 
 		TR << "Using reweighted score12 scorefunction." << std::endl;
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 
 		utility::vector1< Real > refEs_;
 		refEs_.resize( chemical::num_canonical_aas, 0.0 );
@@ -420,7 +420,7 @@ main( int argc, char* argv[] ) {
 	} else {
 
 		TR << "Using standard score12 scorefunction." << std::endl;
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 
 	}
 

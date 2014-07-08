@@ -152,7 +152,7 @@ RotamerTrialsMinMover::parse_my_tag(
 	core::scoring::ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
 	if ( new_score_function == 0 ) {
 		TR << "Using default score function for RotamerTrialsMinMover." << std::endl;
-		new_score_function = core::scoring::getScoreFunction();
+		new_score_function = core::scoring::get_score_function();
 	}
 	score_function( new_score_function );
 

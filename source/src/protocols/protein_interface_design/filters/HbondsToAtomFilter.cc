@@ -143,7 +143,7 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 	using core::Size;
 
 	core::pose::Pose temp_pose( pose );
-	core::scoring::ScoreFunctionOP scorefxn(getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn(get_score_function() );
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 

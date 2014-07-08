@@ -87,7 +87,7 @@ main( int argc, char * argv [] )
 		main_task_factory->push_back( new operation::ReadResfile );
 	}
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 	core::pose::PoseOP input_pose;

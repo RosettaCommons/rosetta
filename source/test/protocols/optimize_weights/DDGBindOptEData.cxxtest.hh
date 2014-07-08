@@ -93,7 +93,7 @@ public:
 		// --- ScoreFunction ---
 		// create a score function using the standard packer weights
 		TR << "creating sfxn for calculating ddGs of binding" << std::endl;
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 		scorefxn->set_weight( core::scoring::surface, 0.5 );
 
 		// pretend the input file looks as follows

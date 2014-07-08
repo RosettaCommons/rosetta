@@ -101,7 +101,7 @@ public:
 		using namespace graph;
 
 		//typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 		// read in pose
 		Pose pose = create_trpcage_ideal_pose();

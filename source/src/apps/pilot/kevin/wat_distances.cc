@@ -70,7 +70,7 @@ public:
 	void
 	apply( core::pose::Pose & pose ){
 
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->score(pose);
 
 		utility::vector1< numeric::xyzVector<core::Real> > water_coords;

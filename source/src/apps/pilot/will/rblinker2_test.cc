@@ -282,7 +282,7 @@ void* doit(void*) {
 	sf->set_weight(core::scoring::pair ,1.0);
 	sf->set_weight(core::scoring::cbeta,1.0);
 	sf->set_weight(core::scoring::rama ,1.0);
-	sf = core::scoring::getScoreFunction();
+	sf = core::scoring::get_score_function();
 
 	Pose test,hyd;
 	core::import_pose::pose_from_pdb(test,*cenresset,"input/psI_0001_strip_0001.pdb");

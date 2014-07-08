@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name ( basic::options::start_file() );
 	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
 
-	//scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	//scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	// report starting score
 	//(*scorefxn)(input_pose);

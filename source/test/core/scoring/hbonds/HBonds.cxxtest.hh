@@ -225,7 +225,7 @@ public:
 		HBondDatabaseCOP database(HBondDatabase::get_database());
 		HBondOptions hboptions;
 		Pose pose = create_trpcage_ideal_pose();
-		ScoreFunctionOP score_function( getScoreFunction() );
+		ScoreFunctionOP score_function( get_score_function() );
 		score_function->score( pose );
 
 		HBondSet hbond_set( pose.n_residue() );

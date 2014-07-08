@@ -51,7 +51,7 @@ void LoopMover::apply(Pose & pose) { // {{{1
 
 	// Create a score function if necessary.
 	if (score_function_.get() == NULL) {
-		set_score_function(core::scoring::getScoreFunction());
+		set_score_function(core::scoring::get_score_function());
 	}
 
 	// Sample the loops.  If the existing fold tree isn't trusted, replace it

@@ -132,7 +132,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real pass=1;
 
 	// scoring is necessary for Interface to work reliably
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	scorefxn->set_weight( cart_bonded, 1.0);
 	(*scorefxn)(copy_pose);
 

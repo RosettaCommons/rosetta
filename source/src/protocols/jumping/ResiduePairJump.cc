@@ -416,7 +416,7 @@ ResiduePairJump::build_sidechain_rotamers()
 	runtime_assert( miniPose_->total_residue() == 2 );
 
 	// set up a scorefxn and packer_neighbor_graph for build_rotamers function
-	ScoreFunctionOP scorefxn( getScoreFunction() );
+	ScoreFunctionOP scorefxn( get_score_function() );
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( *miniPose_ );
 	task->initialize_from_command_line().restrict_to_repacking();
 	(*scorefxn)(*miniPose_);

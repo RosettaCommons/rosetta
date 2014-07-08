@@ -92,7 +92,7 @@ main( int argc, char * argv [] )
 
 	runtime_assert( pose1.total_residue() == pose2.total_residue() );
 
-	ScoreFunctionOP score_function_( getScoreFunction() );
+	ScoreFunctionOP score_function_( get_score_function() );
 
 	(*score_function_)(pose1);
 	(*score_function_)(pose2);

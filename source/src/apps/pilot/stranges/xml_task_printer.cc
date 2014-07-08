@@ -100,7 +100,7 @@ private:
 //constructor
 XMLprinterMover::XMLprinterMover(){
   //tagfile_name_ =  option[ optE::parse_tagfile ]() ;
-  scorefxn_ = core::scoring::getScoreFunction();
+  scorefxn_ = core::scoring::get_score_function();
   output_files_ = option[ XMLprinter::make_individual_files ];
 	pymol_selection_ = option[ XMLprinter::print_pymol_selection ];
 }

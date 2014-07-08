@@ -248,7 +248,7 @@ CyclizationMover::setup_scorefunction()
 
 	if ( score_fxn_ == 0 ) {
 		TR << "Creating score function and setting geometric constraint weights to 1" << std::endl;
-		score_fxn_ = getScoreFunction();
+		score_fxn_ = get_score_function();
 		score_fxn_->set_weight(	atom_pair_constraint, 10 );
 		score_fxn_->set_weight(	angle_constraint, 10 );
 		score_fxn_->set_weight(	dihedral_constraint, 10 );

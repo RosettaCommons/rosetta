@@ -136,7 +136,7 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
   }
 
   core::Real JSON_RPC::get_fa_score() {
-    core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+    core::scoring::ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
     return (*fascorefxn)(outputpose_);
   }
 

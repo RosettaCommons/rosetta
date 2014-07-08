@@ -461,7 +461,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 	if (dump_freq>cycles) dump_freq=cycles;
 
 	sidechain_moves::JumpRotamerSidechainMover jrmover;
-	core::scoring::ScoreFunctionOP scorefxn(  scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn(  scoring::get_score_function() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0 ); //since we use the JumpRotamer Mover the dunbrack energy is already in the sampling bias
 	core::pose::Pose pose;
 	core::pose::make_pose_from_sequence(	pose, sequence_, "fa_standard", true	);

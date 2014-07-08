@@ -238,7 +238,7 @@ int main( int argc, char ** argv )
 
 
 	ScoreFunctionFingerprintMoverOP sffm = new ScoreFunctionFingerprintMover;
-	sffm->sfxn( core::scoring::getScoreFunction() );
+	sffm->sfxn( core::scoring::get_score_function() );
 
 	protocols::jd2::JobDistributor::get_instance()->go(sffm);
 

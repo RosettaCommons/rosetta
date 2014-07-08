@@ -97,7 +97,7 @@ build_template( void* )
 		core::import_pose::pose_from_pdb( native_pose, native_fn );
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scorefxn->set_weight( atom_pair_constraint, option[ OptionKeys::constraints::cst_weight ]() );
 
 	std::string sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]() )[1];

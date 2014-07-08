@@ -92,7 +92,7 @@ public: // tests
 
 		using namespace test_pose;
 
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 
 		Pose * pose = new Pose;
 		core::import_pose::pose_from_pdb( *pose, "core/pose/pdbinfo_test_in.pdb" );

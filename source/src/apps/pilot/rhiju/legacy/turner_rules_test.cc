@@ -496,7 +496,7 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 	rigid_body_sampler->set_assign_WC_edges( option[ assign_WC_edges ]() );
 	rigid_body_sampler->set_fa_rep_cutoff( option[ fa_rep_cutoff ]() );
 
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 	rigid_body_sampler->set_score_function( scorefxn );
 	rigid_body_sampler->set_o2prime_trials( option[ o2prime_trials ]() );
 
@@ -1049,7 +1049,7 @@ cluster_rigid_body_settings_test(){
 	SilentFileData sfd;
 	ozstream out( outfile );
 	Pose pose_start = pose;
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 
 	std::cout << "Outputting  " << cluster_index.size() << " clusters to " << outfile << std::endl;
 	for ( Size i = 1; i <= cluster_index.size(); i++ ){
@@ -2117,7 +2117,7 @@ two_base_pairs_test(){
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	ScoreFunctionOP rep_scorefxn = new ScoreFunction;
 	rep_scorefxn->set_weight( fa_rep, 0.12 );
 
@@ -2491,7 +2491,7 @@ base_pair_to_base_pair_test(){
 	Size moving_suite( 1 ), chainbreak_suite( 3 );
 	RNA_LoopCloseSampler rna_loop_close_sampler( moving_suite, chainbreak_suite );
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	// This is intrusive, but needs to be done!
 
 	ScoreFunctionOP minimize_scorefxn = new ScoreFunction;
@@ -2636,7 +2636,7 @@ sample_state_to_state(
 	/////////////////////////////////////////////////
 	// Basic setup for clash checks and scoring.
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	rna_loop_close_sampler.set_scorefxn( scorefxn );
 
 	/////////////////////////////////////////////////
@@ -3007,7 +3007,7 @@ dinucleotide_test(){
 	ideal_pose.dump_pdb( "ideal.pdb" );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	ScoreFunctionOP rep_scorefxn = new ScoreFunction;
 	rep_scorefxn->set_weight( fa_rep, 0.12 );
 
@@ -3121,7 +3121,7 @@ delta_chi_correction_test(){
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 
 	utility::vector1< std::string >  nts;
 	nts.push_back("a");

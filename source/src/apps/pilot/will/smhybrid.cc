@@ -3381,10 +3381,10 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	using namespace ObjexxFCL::format;
 	core::pose::Pose & pose(pw.pose);
 	ScoreFunctionOP sf1,sf2,sf3,sf4;
-	sf1 = core::scoring::getScoreFunction();
-	sf2 = core::scoring::getScoreFunction();
-	sf3 = core::scoring::getScoreFunction();
-	sf4 = core::scoring::getScoreFunction();
+	sf1 = core::scoring::get_score_function();
+	sf2 = core::scoring::get_score_function();
+	sf3 = core::scoring::get_score_function();
+	sf4 = core::scoring::get_score_function();
 
 	sf1->set_weight(fa_rep,0.03);
 	sf2->set_weight(fa_rep,0.11);
@@ -3577,8 +3577,8 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 ScoreFunctionOP flxbb_nobu(PoseWrap & pw) {
 	using namespace core::scoring;
 	ScoreFunctionOP sf3,sf4;
-	sf3 = getScoreFunction();
-	sf4 = getScoreFunction();
+	sf3 = get_score_function();
+	sf4 = get_score_function();
 	sf3->set_weight(fa_rep,0.100);
 	sf4->set_weight(fa_rep,0.400);
 	sf3 = new symmetry::SymmetricScoreFunction(*sf3);

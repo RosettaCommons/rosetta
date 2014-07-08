@@ -221,7 +221,7 @@ std::string const DOCK_PATCH( "docking" );
 std::string const DOCK_LOW_PATCH( "docking_cen" );
 
 
-core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* default true */ ) {
+core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* default true */ ) {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
@@ -243,7 +243,7 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 		/// on the command line.  If the user has specified that they would like the standard weight set,
 		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
 
-		//tr << "getScoreFunction1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
+		//tr << "get_score_function1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
 		//tr << "option[ score::weights ].user() ? " << option[ score::weights ].user() << std::endl;
 		//tr << "option[ score::patch ].user() ? " << option[ score::patch ].user() << std::endl;
 
@@ -267,7 +267,7 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 				patch_tags.clear();
 			}
 		}
-		//tr << "getScoreFunction2: weight set " << weight_set << std::endl;
+		//tr << "get_score_function2: weight set " << weight_set << std::endl;
 
 	}
 
@@ -312,7 +312,7 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	return scorefxn;
 }
 
-core::scoring::ScoreFunctionOP getScoreFunctionLegacy(
+core::scoring::ScoreFunctionOP get_score_function_legacy(
 	std::string pre_talaris_2013_weight_set,
 	std::string pre_talaris_2013_patch_file
 )
@@ -320,11 +320,11 @@ core::scoring::ScoreFunctionOP getScoreFunctionLegacy(
 	if ( basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {
 		return ScoreFunctionFactory::create_score_function( pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
 	}
-	return getScoreFunction();
+	return get_score_function();
 }
 
 std::string
-getScoreFunctionName(
+get_score_functionName(
 	bool const is_fullatom /* default true */
 ) {
 	using basic::options::option;

@@ -73,7 +73,7 @@ typedef cl_uint8 uint8;
 
 
 // void repack(Pose & arg) {
-//   ScoreFunctionOP sf = core::scoring::getScoreFunction();
+//   ScoreFunctionOP sf = core::scoring::get_score_function();
 //   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
 //   task->restrict_to_repacking();
 //   for(Size i=1; i<=arg.n_residue(); ++i) if(arg.residue(i).name3()=="HIS") task->nonconst_residue_task(i).prevent_repacking();

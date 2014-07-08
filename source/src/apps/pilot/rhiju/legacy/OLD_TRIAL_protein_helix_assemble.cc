@@ -202,7 +202,7 @@ minimize_helix( pose::Pose & pose, Size const n ){
   //mm.set_jump( true );
 
   std::cout << "minimizing" << std::endl;
-  ScoreFunctionOP scorefxn =  core::scoring::getScoreFunction();
+  ScoreFunctionOP scorefxn =  core::scoring::get_score_function();
   minimizer.run( pose, mm, *scorefxn, options );
   (*scorefxn)( pose );
 
@@ -229,7 +229,7 @@ pack_sidechains( pose::Pose & pose ){
   }
 
 
-  ScoreFunctionOP scorefxn_ =  core::scoring::getScoreFunction();
+  ScoreFunctionOP scorefxn_ =  core::scoring::get_score_function();
   pack::rotamer_trials( pose, *scorefxn_, pack_task_ );
 
 }

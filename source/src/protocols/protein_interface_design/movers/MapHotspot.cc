@@ -174,7 +174,7 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	using namespace core::pack::task::operation;
 	using namespace core::scoring;
 	TaskFactory tf;
-	ScoreFunctionCOP scorefxn( getScoreFunction() );
+	ScoreFunctionCOP scorefxn( get_score_function() );
 	RotamerExplosionOP rotamer_exp_operation = new RotamerExplosion( hotspot_resnum, EX_THREE_THIRD_STEP_STDDEVS, explosion );
 	InitializeFromCommandlineOP init_from_commandline = new InitializeFromCommandline;
 	RestrictResidueToRepackingOP restrict_to_rep_operation = new RestrictResidueToRepacking;
@@ -222,7 +222,7 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 		core::Size curr_rotamer_num( 1 );
 		core::pose::Pose best_pose;
 		core::Real lowest_energy( 100000 );
-		ScoreFunctionCOP scorefxn( getScoreFunction() );
+		ScoreFunctionCOP scorefxn( get_score_function() );
 		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100/*threshold*/ );
 		for( Rotamers::const_iterator rot_it = rotset->begin(); rot_it!=rotset->end(); ++rot_it ){
 			TR<<"Current rotamer: "<<curr_rotamer_num++<<'\n';

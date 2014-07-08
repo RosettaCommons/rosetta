@@ -122,7 +122,7 @@ public:
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
-		fullatom_scorefunction_ = getScoreFunction();
+		fullatom_scorefunction_ = get_score_function();
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
 
 		TR << "Using fullatom scorefunction from commandline:\n" << *fullatom_scorefunction_;

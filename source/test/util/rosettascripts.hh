@@ -94,8 +94,8 @@ inline void prime_Movers( Movers_map & movers ) {
 ///@brief setup data map with *some* of the the RosettaScript defaults
 
 inline void prime_Data( basic::datacache::DataMap & data ) {
-	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
-	core::scoring::ScoreFunctionOP talaris2013 = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::get_score_function();
+	core::scoring::ScoreFunctionOP talaris2013 = core::scoring::get_score_function();
 
 	data.add( "scorefxns", "commandline", commandline_sfxn );
 	data.add( "scorefxns", "talaris2013", talaris2013 );

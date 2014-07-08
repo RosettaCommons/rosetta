@@ -85,7 +85,7 @@ WorkUnit_BatchRelax::run(){
   // there can only be one setting. The batch solution handles this better but is also much more
   // restricted in a way.
 	if( !scorefxn_ ) {
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_ );  
 	}
   protocols::relax::FastRelax relax( scorefxn_,  option[ OptionKeys::relax::sequence_file ]() );

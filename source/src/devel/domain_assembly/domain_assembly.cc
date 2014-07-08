@@ -357,7 +357,7 @@ optimize_linkers_fullatom_mode(
 )
 {
 	//core::util::switch_to_residue_type_set( full_pose, core::chemical::FA_STANDARD );
-	scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// for each residue - identify the nearest movable residue forward and backwards in sequence
 	// this will be used to help determine which side chains to repack
@@ -451,7 +451,7 @@ optimize_linkers_rna_fullatom_mode(
 )
 {
 	// Set the score function to include energies from NA-NA interactions
-	scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 	scoring::methods::EnergyMethodOptions scorefxn_opt  = scorefxn -> energy_method_options();
 	scorefxn_opt.exclude_DNA_DNA( false );
 	scorefxn -> set_energy_method_options( scorefxn_opt );
@@ -489,7 +489,7 @@ optimize_linkers_rna_fullatom_mode(
 	}
 
 	// Add the constraints, if any, to the score function
-	scoring::ScoreFunctionOP scorefxn_cont( scoring::getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn_cont( scoring::get_score_function() );
 	core::scoring::constraints::add_fa_constraints_from_cmdline(full_pose, *scorefxn_cont);
 
 	// Set the score function with constraints to also include NA-NA interactions
@@ -669,7 +669,7 @@ assemble_domains_optimize()
 			optimize_linkers_rna_fullatom_mode( mm, full_pose, all_rna_fragments, linker_ranges_rna );
 		}
 
-		scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 		core::scoring::constraints::add_fa_constraints_from_cmdline(full_pose, *scorefxn);
 		// final output
 		std::ostringstream outputfilename;

@@ -74,7 +74,7 @@ public:
 		residue_set.read_files(params_files);
 
 		// initialize common filters/movers/scorefxns
-		scorefxn = core::scoring::getScoreFunction( true );
+		scorefxn = core::scoring::get_score_function( true );
 
 		std::string const pdb_file( "devel/denovo_design/test_input.pdb" );
 		core::import_pose::pose_from_pdb( input_pose, pdb_file );

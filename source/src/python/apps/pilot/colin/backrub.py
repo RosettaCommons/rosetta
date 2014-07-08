@@ -57,7 +57,7 @@ else:
 main_task_factory.push_back(core.pack.task.operation.PreserveCBeta())
 
 # set up the score function and add the bond angle energy term
-score_fxn = core.scoring.getScoreFunction()
+score_fxn = core.scoring.get_score_function()
 score_fxn.set_weight(core.scoring.mm_bend, options.mm_bend_weight)
 energymethodoptions = score_fxn.energy_method_options()
 energymethodoptions.decompose_bb_hb_into_pair_energies(True)

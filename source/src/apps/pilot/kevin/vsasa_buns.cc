@@ -189,7 +189,7 @@ class hbond_geom_strat : public hbond_strat {
 	const Real burial_cutoff
 ) {
 	pose.update_residue_neighbors();
-	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 	scorefxn->score(pose);
 	pose.energies();
 

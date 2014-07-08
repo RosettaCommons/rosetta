@@ -348,7 +348,7 @@ int main( int argc, char * argv [] ) {
 
 	//Score function:
 	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::getScoreFunction();
+	sfxn = core::scoring::get_score_function();
 
 	//Repack and minimize movers:
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.

@@ -280,7 +280,7 @@ void* doit(void* /*x = NULL*/) {
 	}
 
 	ScoreFunctionOP sf;
-	sf = core::scoring::getScoreFunction();
+	sf = core::scoring::get_score_function();
 	// sf = new core::scoring::ScoreFunction();
 	// sf->set_weight(core::scoring::chainbreak,100.00);
 	sf->set_weight(core::scoring::atom_pair_constraint,2.00);

@@ -916,8 +916,8 @@ struct HubDenovo {
 		if(cfg.cst_bb.size()==0) cstwt = 0.0;
 		sf3->set_weight(atom_pair_constraint,cstwt);
 		sf3->set_weight(vdw,3.0);
-		sfsym  = getScoreFunction();
-		sfsymnocst  = getScoreFunction();
+		sfsym  = get_score_function();
+		sfsymnocst  = get_score_function();
 		sfasym = core::scoring::symmetry::asymmetrize_scorefunction(*sfsym);
 		sfsym->set_weight(atom_pair_constraint,4*cstwt);
 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
@@ -1126,7 +1126,7 @@ struct HubDenovo {
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
 	void design(Pose & p, bool hydrophobic_only=false) {
-		ScoreFunctionOP sf = core::scoring::getScoreFunction();
+		ScoreFunctionOP sf = core::scoring::get_score_function();
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(p);
 		task->initialize_extra_rotamer_flags_from_command_line();
 		string HRES = "AFILMVWY";

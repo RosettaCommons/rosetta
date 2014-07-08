@@ -138,7 +138,7 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 	}
 
 	if (!pssm_){
-		ReportSequenceDifferences rsd( core::scoring::getScoreFunction() );
+		ReportSequenceDifferences rsd( core::scoring::get_score_function() );
 		rsd.calculate( *get_reference_pose(), pose );
 		std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
 		core::Size const mutated( res_names1.size() );

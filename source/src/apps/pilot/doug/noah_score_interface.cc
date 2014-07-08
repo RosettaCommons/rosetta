@@ -119,7 +119,7 @@ int main( int argc, char * argv [] )
 	
 	register_metrics();
 	
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 	
 	utility::vector1<std::string> pdbs = basic::options::option[ in::file::s ]();
 	

@@ -132,7 +132,7 @@ main( int argc, char * argv [] ) {
 
 	MoverOP mover;
 	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::getScoreFunction();
+	sfxn = core::scoring::get_score_function();
 	if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() ) {
 		core::scoring::ScoreFunctionOP sfxn_sym =
 						new core::scoring::symmetry::SymmetricScoreFunction( *sfxn );

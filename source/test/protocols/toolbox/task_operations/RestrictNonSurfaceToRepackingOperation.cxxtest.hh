@@ -99,7 +99,7 @@ public:
 		//std::cout << *task << std::endl; // have to dereference the OP.  printing this only for debugging
 
 		// verify the nb count calculation using the tenA neighbor graph
-		//scorefxn = core::scoring::getScoreFunction();
+		//scorefxn = core::scoring::get_score_function();
 		//(*scorefxn)(pose);
 
 		//for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {

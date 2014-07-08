@@ -278,7 +278,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 		scorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
 
-	core::scoring::ScoreFunctionOP scorefxn_input = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn_input = core::scoring::get_score_function();
 	core::Real dens_patt = scorefxn_input->get_weight( core::scoring::patterson_cc );
 	core::Real dens_wind = scorefxn_input->get_weight( core::scoring::elec_dens_window );
 	core::Real dens_allca = scorefxn_input->get_weight( core::scoring::elec_dens_whole_structure_ca );

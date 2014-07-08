@@ -123,7 +123,7 @@ main(int argc, char* argv[]){
 	std::string input_pdb_atom = input_pdb_name; input_pdb_atom.append("_atom.pdb");
 	core::import_pose::pose_from_pdb(input_pose, input_pdb_atom);
 
-	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP scorefxn(get_score_function());
 	(*scorefxn)(input_pose);
 
 	// mjo commented out to fix unused variable warning

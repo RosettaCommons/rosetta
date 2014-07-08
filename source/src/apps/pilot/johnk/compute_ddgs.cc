@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 	trans_mover.apply( unbound_pose );
 
 	// Setup for scoring/repacking
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	(*scorefxn)(bound_pose);
 	(*scorefxn)(unbound_pose);

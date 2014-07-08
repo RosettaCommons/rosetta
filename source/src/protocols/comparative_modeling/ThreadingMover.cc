@@ -431,7 +431,7 @@ void ThreadingMover::apply(
 	// repack the structure if specified by the user
 	if ( repack_query() ) {
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn( getScoreFunction() );
+		ScoreFunctionOP scorefxn( get_score_function() );
 
 		// repack missing sidechains
 		core::id::AtomID_Mask missing( true );

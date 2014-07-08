@@ -115,7 +115,7 @@ public:
 		core::pose::Pose test_pose;
 		core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");
 		scoring::ScoreFunctionOP scorefxn;
-		scorefxn = core::scoring::getScoreFunction();
+		scorefxn = core::scoring::get_score_function();
 		(*scorefxn)(test_pose);
 
 		time_t start1, end1, start2, end2;

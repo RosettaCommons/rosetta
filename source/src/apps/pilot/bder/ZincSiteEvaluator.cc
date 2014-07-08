@@ -121,7 +121,7 @@ public:
 	void
 	score_pose( Pose & pose ) {
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = get_score_function();
 		scorefxn_ = scorefxn;
 		scorefxn_->score( pose );
 		return;

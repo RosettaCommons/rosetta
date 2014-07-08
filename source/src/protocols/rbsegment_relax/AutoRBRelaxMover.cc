@@ -130,7 +130,7 @@ AutoRBMover::AutoRBMover() {
 	tf_->push_back( new core::pack::task::operation::IncludeCurrent );
 	tf_->push_back( new core::pack::task::operation::NoRepackDisulfides );
 
-	fa_scorefxn_ = core::scoring::getScoreFunction();
+	fa_scorefxn_ = core::scoring::get_score_function();
 	fa_scorefxn_->set_weight( core::scoring::chainbreak, 10.0/3.0);
 
 	if ( option[ OptionKeys::edensity::mapfile ].user() ) {

@@ -152,7 +152,7 @@ private:
 
 CalcsTestMover::CalcsTestMover() {
 	// variable definitions
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	calcs_ready_=false;
 
 	burial_cutoff_ = basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff];

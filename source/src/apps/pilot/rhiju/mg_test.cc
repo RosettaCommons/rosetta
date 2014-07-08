@@ -596,7 +596,7 @@ mg_scan_test()
 	/////////////////////////////////////////////
 	ScoreFunctionOP scorefxn = new ScoreFunction;
 	if ( option[ score::weights ].user() ){
-		scorefxn = getScoreFunction();
+		scorefxn = get_score_function();
 	} else {
 		EnergyMethodOptions energy_options;
 		//		energy_options.elec_min_dis(  option[ elec_min_dis ]() );

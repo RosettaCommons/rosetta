@@ -90,7 +90,7 @@ IAMover::IAMover() {
   //firstline_printed_=false;
 	output_name_=basic::options::option[ia_stats_filename].value();
 	name_star_ = output_name_.c_str() ;
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	//add to the output file
 	//output_statsFile_.open( name_star );
 
@@ -103,7 +103,7 @@ void IAMover::assign_IA_mover(devel::anchored_design::InterfaceAnalyzerMoverOP &
     moverOP = new  devel::anchored_design::InterfaceAnalyzerMover(
 								 basic::options::option[ jumpnum ].value(),
 								 basic::options::option[ tracer_data_print ].value(),
-								 core::scoring::getScoreFunction(),
+								 core::scoring::get_score_function(),
 								 basic::options::option[ compute_packstat ].value(),
 								 basic::options::option[ pack_input ].value(),
 								 true, //pack the separated poses
@@ -117,7 +117,7 @@ void IAMover::assign_IA_mover(devel::anchored_design::InterfaceAnalyzerMoverOP &
     moverOP = new  devel::anchored_design::InterfaceAnalyzerMover(
 								 basic::options::option[ jumpnum ].value(),
 								 basic::options::option[ tracer_data_print ].value(),
-								 core::scoring::getScoreFunction(),
+								 core::scoring::get_score_function(),
 								 basic::options::option[ compute_packstat ].value(),
 								 basic::options::option[ pack_input ].value(),
 								 true, //pack the separated poses
@@ -145,7 +145,7 @@ void IAMover::assign_IA_mover(devel::anchored_design::InterfaceAnalyzerMoverOP &
     moverOP = new devel::anchored_design::InterfaceAnalyzerMover(
 								fixed_chains,
 								basic::options::option[ tracer_data_print ].value(),
-								core::scoring::getScoreFunction(),
+								core::scoring::get_score_function(),
 								basic::options::option[ compute_packstat ].value(),
 								basic::options::option[ pack_input ].value()
 								);

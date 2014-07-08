@@ -330,7 +330,7 @@ InterfaceAnalyzerMover::setup_scorefxn() {
 
 	if(!sf_) {
 		TR << "NULL scorefunction. Initialize from cmd line." << std::endl;
-		sf_ = core::scoring::getScoreFunction();
+		sf_ = core::scoring::get_score_function();
 	 }
 	core::scoring::methods::EnergyMethodOptionsOP emopts(
 		new core::scoring::methods::EnergyMethodOptions( sf_->energy_method_options() )
@@ -1341,7 +1341,7 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ){
 	// TR << "]" << std::endl;
 
 	//EM options for bb-bb hbond output
-	core::scoring::ScoreFunctionOP new_sf = scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP new_sf = scoring::get_score_function();
 	scoring::methods::EnergyMethodOptions energymethodoptions( new_sf->energy_method_options() );
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 	new_sf->set_energy_method_options( energymethodoptions );

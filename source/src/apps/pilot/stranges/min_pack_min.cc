@@ -129,7 +129,7 @@ MinPackMinMover::MinPackMinMover(){
 	no_rbmin_ = option[ MinPackMin::no_rbmin].def(false);
 	pack_first_ = option[ MinPackMin::pack_first].def(false);
 	//pymolreport_ = option[ MinPackMin::pymolreport ];
-	scorefxn_ = scoring::getScoreFunction();
+	scorefxn_ = scoring::get_score_function();
 }
 
 //begin mover apply

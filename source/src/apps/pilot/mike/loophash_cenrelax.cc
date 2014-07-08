@@ -183,7 +183,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     TR.Info << "Loophash apply function ! " << std::endl;
 
     // Set up contraints
-    ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+    ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
     //protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
     protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 

@@ -68,7 +68,7 @@ main( int argc, char * argv [] )
 	ddg_outstream2.open( "compare_NT3_rev.out", std::ios::out );
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 
 	// Setup packer task for NT3

@@ -98,7 +98,7 @@ FullatomRelaxMover::fresh_instance() const
 
 void FullatomRelaxMover::setup_defaults()
 	{
-	score_high_res_ = scoring::getScoreFunction();
+	score_high_res_ = scoring::get_score_function();
 	score_high_res_->set_weight( core::scoring::fa_elec, 0.25 );
 	small_min_type_="linmin";
 	shear_min_type_="dfpmin";

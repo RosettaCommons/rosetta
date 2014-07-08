@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 	Pose pose; pose_from_pdb(pose, "chain_break_input.pdb");
 	Loop loop(36, 47, 47);
 	Loops loops; loops.add_loop(loop);
-	ScoreFunctionOP score_function = core::scoring::getScoreFunction();
+	ScoreFunctionOP score_function = core::scoring::get_score_function();
 	FoldTree tree; protocols::loops::fold_tree_from_loops(pose, loops, tree);
 	pose.fold_tree(tree);
 

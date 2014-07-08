@@ -250,7 +250,7 @@ main( int argc, char * argv [] )
 
 		}
 
-		core::scoring::ScoreFunctionCOP scorefxn( getScoreFunction() );
+		core::scoring::ScoreFunctionCOP scorefxn( get_score_function() );
 
 
 		//setting a minimizer objet that will be ran after each design step

@@ -477,8 +477,8 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 ScoreFunctionOP flxbb_nobu(PoseWrap & pw) {
 	using namespace core::scoring;
 	ScoreFunctionOP sf3,sf4;
-	sf3 = getScoreFunction();
-	sf4 = getScoreFunction();
+	sf3 = get_score_function();
+	sf4 = get_score_function();
 	sf3->set_weight(fa_rep,0.100);
 	sf4->set_weight(fa_rep,0.400);
 	sf3 = new symmetry::SymmetricScoreFunction(*sf3);

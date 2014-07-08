@@ -134,7 +134,7 @@ MRMover::init(){
 	max_gaplength_to_model_ = 4;
 	cen1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score3");
 	cen2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth_cart");
-	fa_scorefxn_ = core::scoring::getScoreFunction();
+	fa_scorefxn_ = core::scoring::get_score_function();
 
 	// default is a relatively short relax
 	relax_max_iter_ = 200;

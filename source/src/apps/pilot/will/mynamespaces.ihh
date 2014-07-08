@@ -9,7 +9,7 @@ using core::pose::PoseCAP;
 using core::pose::PoseCOP;
 using core::pose::PoseOP;
 using core::Real;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using core::Size;

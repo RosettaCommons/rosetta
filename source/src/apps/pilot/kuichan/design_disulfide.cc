@@ -218,7 +218,7 @@ int main( int argc, char * argv [] )
 		disulf_pose->replace_residue(disulf->second, pose.residue(disulf->second),true);
 		disulf_pose->conformation().fix_disulfides( disulfides );
 
-		scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
 		core::util:: rebuild_disulfide(*disulf_pose,disulfides,NULL,sfxn,NULL,sfxn);
 		TR.Info << "relax:" << disulf_out.str() << std::endl;
 		protocols::relax::relax_pose(*disulf_pose,sfxn,disulf_out.str());

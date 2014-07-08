@@ -303,7 +303,7 @@ Pose make_single_res_pose(string rt) {
 Real sqr(Real x) { return x*x; }
 
 void dock(Pose init, std::string const & fn) {
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
   ScoreFunctionOP sfnosym = new core::scoring::ScoreFunction(*sf);
   if( sf->get_weight(core::scoring::atom_pair_constraint) < 0.0001 || sf->get_weight(core::scoring::atom_pair_constraint) < 0.0001 )
     utility_exit_with_message("no constraint weight on pair if angle!! use -score:weights");

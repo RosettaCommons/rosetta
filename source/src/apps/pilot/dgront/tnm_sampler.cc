@@ -222,7 +222,7 @@ int main(int argc, char * argv[]) {
         TNM tnm(option[tnm::input_modes]().name());
 //        tnm.write_modes(std::cout);
 
-	core::scoring::ScoreFunction scorefxn = *( core::scoring::getScoreFunction(false) );
+	core::scoring::ScoreFunction scorefxn = *( core::scoring::get_score_function(false) );
 
 //        core::Size i_mode = 1;
         cout << scorefxn(*tmp_pose) << endl;

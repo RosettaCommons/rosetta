@@ -70,7 +70,7 @@ main( int argc, char * argv [] )
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /*
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::ScoreFunctionOP scorefxn_design = scorefxn;
 	core::scoring::ScoreFunctionOP scorefxn_relax = scorefxn;
 

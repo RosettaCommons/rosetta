@@ -92,7 +92,7 @@ main( int argc, char * argv [] )
 	main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
 
 	//create a ScoreFunction from commandline options
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	/// TEMP!
 	if ( false ) {

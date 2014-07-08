@@ -230,7 +230,7 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 	using namespace core::conformation::symmetry;
 	using namespace core::pack::task;
 	using namespace core::scoring::constraints;
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
 	vector1<bool> allowed_aas(20,false);
@@ -343,7 +343,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 
   const core::Real PI = numeric::NumericTraits<Real>::pi();
 
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 	sf->set_weight(core::scoring::atom_pair_constraint ,10.0);
 	sf->set_weight(core::scoring::angle_constraint		 ,10.0);
 	sf->set_weight(core::scoring::coordinate_constraint,10.0);
@@ -514,7 +514,7 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
 	using namespace core::conformation::symmetry;
 	using namespace core::pack::task;
 	using namespace core::scoring::constraints;
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	// Get the symmetry info and make the packer task
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
@@ -648,7 +648,7 @@ void run() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 	ScoreFunctionOP sfrep = new core::scoring::ScoreFunction; sfrep->set_weight(core::scoring::fa_rep,1.0);
 	ScoreFunctionOP sfdun = new core::scoring::ScoreFunction; sfdun->set_weight(core::scoring::fa_dun,1.0);
 	ScoreFunctionOP sfsym = new core::scoring::symmetry::SymmetricScoreFunction(sf);

@@ -107,7 +107,7 @@ void real_test_GA()
 	start_pose = new pose::Pose();
 	core::import_pose::pose_from_pdb(*start_pose, "test_in.pdb");
 
-	scorefxn = core::scoring::getScoreFunctionLegacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
 	//kinematics::MoveMap mm;
 	for ( int i=30; i<= 35; ++i ) {

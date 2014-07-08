@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::getScoreFunction();
+	scorefxn = core::scoring::get_score_function();
 
         // Load a pose from a PDB file
         core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );

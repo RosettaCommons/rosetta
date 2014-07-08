@@ -169,7 +169,7 @@ int main( int argc, char ** argv )
 	std::string daf_filename( option[ msd::fitness_file ] );
 
 	DaemonSetOP ds = new DaemonSet;
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 	if ( ! option[ msd::dont_score_bbhbonds ] ) {
 		/// Count bb/bb hydrogen bonds in the packer energy; otherwise, the MSD

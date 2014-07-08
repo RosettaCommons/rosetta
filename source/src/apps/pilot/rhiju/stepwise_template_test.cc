@@ -304,7 +304,7 @@ parse_pathway_test(){
 
 	Size const nres( start_pose.total_residue() );
 
-	ScoreFunctionOP minimize_scorefxn = getScoreFunction();
+	ScoreFunctionOP minimize_scorefxn = get_score_function();
 
 	// initialize minimizer
 	bool const deriv_check_( false /*option[ deriv_check]*/ );
@@ -487,7 +487,7 @@ stepwise_template_test(){
 	//////////////////////////////////////////////////////
 	//  packer and minimizer setup.
 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
-	ScoreFunctionOP minimize_scorefxn = getScoreFunction();
+	ScoreFunctionOP minimize_scorefxn = get_score_function();
 
 	if ( constraints_exist ){
 		pack_scorefxn->set_weight( atom_pair_constraint, 1.0 );

@@ -146,8 +146,8 @@ void run() {
     ft.reorder(2);
     bpy.fold_tree(ft);
   }
-  // ScoreFunctionOP sf = core::scoring::getScoreFunction();
-  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+  // ScoreFunctionOP sf = core::scoring::get_score_function();
+  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
   for(Size ifile = 1; ifile <= option[in::file::s]().size(); ++ifile) {
     string infile = utility::file_basename(option[in::file::s]()[ifile]);

@@ -133,7 +133,7 @@ void RemodelAccumulator::apply( Pose & pose ){
 //make the object's own collection of poses
     core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
 
-    ScoreFunctionOP scorefxn( getScoreFunction());
+    ScoreFunctionOP scorefxn( get_score_function());
     sfxn_ = scorefxn;
 
     ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
@@ -301,7 +301,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 				this->apply(dummyPose);
 
-					ScoreFunctionOP scorefxn( getScoreFunction());
+					ScoreFunctionOP scorefxn( get_score_function());
 					sfxn_ = scorefxn;
 
 					ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );

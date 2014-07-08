@@ -132,7 +132,7 @@ public:
 
       std::cout << *task << std::endl;
 
-      scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
+      scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
       scoring::methods::pHEnergy::set_pH ( curr_pH );
 
       protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, task ) );
@@ -190,7 +190,7 @@ public:
 
       }
 */
-      scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
+      scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
       scoring::methods::pHEnergy::set_pH ( curr_pH );
 
       protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, task ) );

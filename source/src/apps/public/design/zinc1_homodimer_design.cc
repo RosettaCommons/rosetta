@@ -256,7 +256,7 @@ public:
     softrep_sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *softrep_scorefxn );
     TR << "Softrep Scorefunction: " << *softrep_sym_scorefxn_ << std::endl;
 
-    ScoreFunctionOP scorefxn = getScoreFunction(); // SCORE12, will become SymmetricScoreFunction when symmetry definition file is included as an option
+    ScoreFunctionOP scorefxn = get_score_function(); // SCORE12, will become SymmetricScoreFunction when symmetry definition file is included as an option
 		//scorefxn->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
     //scorefxn->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
     //scorefxn->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His

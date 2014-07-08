@@ -138,7 +138,7 @@ PDBOutput::output_pdb( ozstream & pdbout )
 {
 	if ( ! enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
 	runtime_assert( pose_copy_ );
-	if ( ! score_function_ ) score_function_ = getScoreFunction();
+	if ( ! score_function_ ) score_function_ = get_score_function();
 	( *score_function_ )( *pose_copy_ );
 	// if the sparse_pdb_output option is used, this limits most output to residues which differ from the reference structure (if it exists)
 	get_residue_indices_to_output();

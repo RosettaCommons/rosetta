@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
 		core::import_pose::pose_from_pdb(pose,infile);
 		infile = utility::file_basename(infile);
 
-		ScoreFunctionOP sf = core::scoring::getScoreFunction();
+		ScoreFunctionOP sf = core::scoring::get_score_function();
 
 		using namespace core::pack::task;
 		PackerTaskOP task = TaskFactory::create_packer_task(pose);

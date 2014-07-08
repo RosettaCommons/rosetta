@@ -343,7 +343,7 @@ FragmentLoopInserter::build_fragment_loop(
 //	{
 //		protocols::simple_moves::PackRotamersMoverOP repack_mover =
 //			new protocols::simple_moves::PackRotamersMover;
-//		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+//		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 //
 //		core::pack::task::TaskFactoryOP task_factory = new pack::task::TaskFactory;
 //

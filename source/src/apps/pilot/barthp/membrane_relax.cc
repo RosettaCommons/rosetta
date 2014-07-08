@@ -165,7 +165,7 @@ main( int argc, char * argv [] )
      rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
   // configure silent-file data object
-  ScoreFunctionOP scorefxn = getScoreFunction();
+  ScoreFunctionOP scorefxn = get_score_function();
 
   // configure silent-file data object
   core::io::silent::SilentFileData sfd;

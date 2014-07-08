@@ -37,7 +37,7 @@ using core::Size;
 using core::pack::min_pack;
 using core::pose::Pose;
 using core::scoring::ScoreFunction;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::pack::task::PackerTask;
 using basic::Tracer;
 

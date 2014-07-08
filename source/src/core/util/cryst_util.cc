@@ -69,7 +69,7 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 	using namespace core::optimization::symmetry;
 
 	// create two scorefunctions, one experimental only, one rosetta only
-	core::scoring::ScoreFunctionOP rosetta_scorefxn = scorefxn.clone(); //core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP rosetta_scorefxn = scorefxn.clone(); //core::scoring::get_score_function();
 	core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
@@ -198,7 +198,7 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 	using namespace core::optimization::symmetry;
 
 	// create two scorefunctions, one experimental only, one rosetta only
-	core::scoring::ScoreFunctionOP rosetta_scorefxn  = scorefxn.clone();//core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP rosetta_scorefxn  = scorefxn.clone();//core::scoring::get_score_function();
 	core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );

@@ -96,7 +96,7 @@ private:
 
 Minimize::Minimize() :
 	Mover( "benchmark" ),
-	score_function_( getScoreFunction() )
+	score_function_( get_score_function() )
 {
 
 	using namespace basic::options;

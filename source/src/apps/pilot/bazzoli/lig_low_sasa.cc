@@ -116,7 +116,7 @@ try {
 
 
 	// score pose
-	core::scoring::ScoreFunctionOP scorefxn(core::scoring::getScoreFunction());
+	core::scoring::ScoreFunctionOP scorefxn(core::scoring::get_score_function());
 	(*scorefxn)(ps);
 
 	// compute SASA for all atoms in the pose

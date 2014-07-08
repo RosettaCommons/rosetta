@@ -1053,7 +1053,7 @@ namespace mc_convergence_checks{
     Address universal_address( nlevels_, 0 );
     universal_address[ 1 ] = 1;
 
-    core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+    core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
     tr.Info << "checking for hierarchy..." << std::endl;
     if( tr.visible() ) tr.Debug << "does pool exist? " << hlevel_.lib_full_path( universal_address ) << " : " << hlevel_.pool_exists( universal_address ) << std::endl;
     if( !hlevel_.pool_exists( universal_address ) ) { //checks for directory assumed to contain hierarchy

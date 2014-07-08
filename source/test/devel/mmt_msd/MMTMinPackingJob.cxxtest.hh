@@ -63,7 +63,7 @@ public:
 	void
 	initialize_minpacking_job( devel::mmt_msd::MMTMinPackingJobOP job ) {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -93,7 +93,7 @@ public:
 	/// for the class are actually set and reflect their settings.
 	void test_initialize_minpacking_job() {
 		devel::mmt_msd::MMTMinPackingJobOP job =  create_and_initialize_minpacking_job();
-		core::scoring::ScoreFunctionOP dft_sfxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP dft_sfxn = core::scoring::get_score_function();
 
 		TS_ASSERT( job->has_pose() );
 		TS_ASSERT( job->has_sfxn() );

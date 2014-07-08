@@ -272,7 +272,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	core::Size const num_csts_before_min( csts_before_min.size() );
 
 	using namespace core::scoring;
-	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP scorefxn = get_score_function();
 	ScoreFunctionOP stub_scorefxn( scorefxn->clone() );
 	if( hurry ) {
 		TR << "Speeding up StubMinimize..." << std::endl;
@@ -613,7 +613,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 		}
 	}//change to ala pose
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::ScoreFunctionCOP soft_rep = core::scoring::ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 
 	core::pose::Pose const saved_pose( pose ); //saved after minimization
@@ -1183,7 +1183,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
 			core::pack::task::parse_resfile(pose, *task);
 
-		core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);
 		(*scorefxn)( *ala_pose );
 		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, new protocols::filters::TrueFilter );

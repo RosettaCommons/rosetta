@@ -135,7 +135,7 @@ public:
 		using namespace graph;
 
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		//scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction();
 
 		/// 1. test etable energies -- bad?
@@ -686,7 +686,7 @@ public:
 		Size niterations = 10;
 		for ( core::Size ii = 1; ii <= pdbs.size(); ++ii ) {
 			pose::Pose orig_pose;
-			scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
+			scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
 			core::import_pose::pose_from_pdb( orig_pose, "core/pack/" + pdbs[ ii ] );
 			(*sfxn)( orig_pose );
 			//clock_t start_time = clock();

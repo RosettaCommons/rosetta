@@ -326,7 +326,7 @@ apply(
 	// }
 
 	// score the pose
-	core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
 	sf->set_weight( core::scoring::fa_elec , 1.0 );
 	(*sf)(pose);
 

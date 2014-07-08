@@ -72,7 +72,7 @@ main(int argc, char* argv []){
 
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose , "test.pdb" );
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	//SilentStructOP ssin = SilentStructFactory::get_silent_struct_in();
 	if( !sidechainmover ){ //38.0 accorind to util.prof
 	  std::cout << "Selection: FAST-SC mover with detailed balance " << detailed_balance << std::endl;

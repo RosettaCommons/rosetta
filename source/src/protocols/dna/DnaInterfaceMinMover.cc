@@ -149,7 +149,7 @@ DnaInterfaceMinMover::apply( pose::Pose & pose )
 	}
 	if ( ! movemap() ) reset_from_interface(); // just in case
 	if ( ! score_function() ) {
-		score_function( getScoreFunction() );
+		score_function( get_score_function() );
 	}
 
 	AtomTreeMinimizer minimizer;

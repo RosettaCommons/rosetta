@@ -68,7 +68,7 @@ OPT_1GRP_KEY(String,cluster_hotspot_docking,column)
 static basic::Tracer TR("cluster_hotspot_docking");
 
 core::Real aa2sim_sc(core::pose::Pose pose1, core::pose::Pose pose2) {
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::Real rms(0.0);
 	runtime_assert( pose1.conformation().size() == 1 );
 	runtime_assert( pose2.conformation().size() == 1 );
@@ -78,7 +78,7 @@ core::Real aa2sim_sc(core::pose::Pose pose1, core::pose::Pose pose2) {
 
 
 core::Real aa2sim_all(core::pose::Pose pose1, core::pose::Pose pose2) {
-        core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+        core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
         core::Real rms(0.0);
         runtime_assert( pose1.conformation().size() == 1 );
         runtime_assert( pose2.conformation().size() == 1 );
@@ -87,7 +87,7 @@ core::Real aa2sim_all(core::pose::Pose pose1, core::pose::Pose pose2) {
 }
 
 core::Real aa2sim_ca(core::pose::Pose pose1, core::pose::Pose pose2) {
-        core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+        core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
         core::Real rms(0.0);
 	std::map< core::id::AtomID, core::id::AtomID > CA_map;
 	core::scoring::setup_matching_CA_atoms(pose1, pose2, CA_map );
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 	utility::vector1< std::string > outtaglist;
         std::string scorecolumn=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::column];
 
-        core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+        core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	Real score;
 
 	for( core::Size ii = 1; ii <= tags.size(); ii++ ) {

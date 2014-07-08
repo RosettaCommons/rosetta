@@ -209,7 +209,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	movers.insert( StringMover_pair( "null", null_mover) );
 
 // default scorefxns
-	ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
+	ScoreFunctionOP commandline_sfxn = core::scoring::get_score_function();
 	ScoreFunctionOP talaris2013 = ScoreFunctionFactory::create_score_function(TALARIS_2013);
 	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 	ScoreFunctionOP docking_score = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH );

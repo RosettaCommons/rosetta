@@ -106,7 +106,7 @@ main( int argc, char* argv [] )
 	}
 
 	// configure score function
-  core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+  core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
 	constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
 

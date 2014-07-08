@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 	devel::init(argc, argv); //Initialize Rosetta
 
 	//Default scorefunction:
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
 
 	core::pose::Pose pose1;

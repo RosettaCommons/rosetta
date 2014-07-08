@@ -184,7 +184,7 @@ namespace protein {
 		using namespace core::id;
 		using namespace core::io::silent;
 
-		static ScoreFunctionOP scorefxn = getScoreFunction();
+		static ScoreFunctionOP scorefxn = get_score_function();
 		ResidueTypeSetCAP rsd_set;
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 

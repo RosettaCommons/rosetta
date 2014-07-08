@@ -128,7 +128,7 @@ static core::io::silent::SilentFileData sfd;
 // 		string seq = option[OptionKeys::hub_sequence]();
 // 		if( seq[0] != 'Z' ) utility_exit_with_message("first residue must be Z!!");
 
-// 		sfsym  = getScoreFunction();
+// 		sfsym  = get_score_function();
 // 		sfasym = core::scoring::symmetry::asymmetrize_scorefunction(sfsym);
 // 		sf0 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score0"));
 // 		sf1 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score1"));
@@ -386,7 +386,7 @@ int main(int argc, char *argv[]) {
 		tmp.dump_pdb(option[OptionKeys::out::file::o]() + "/native_trimer.pdb");
 	}
 
-	ScoreFunctionOP sfsym  = getScoreFunction();
+	ScoreFunctionOP sfsym  = get_score_function();
 	ScoreFunctionOP sfasym = new ScoreFunction(*sfsym);
 
 	ScoreFunctionOP sf0 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score0"));

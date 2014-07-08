@@ -394,7 +394,7 @@ public:
 	{
 		using namespace core::pack::task;
 
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 
 		//bbgmover
 		bbgmover_ = new BBG8T3AMover();
@@ -465,7 +465,7 @@ public:
 	CenRotRBRelaxMover()
 	{
 		//setup score functions and movers
-		//scorefxn_dock_ = core::scoring::getScoreFunction();
+		//scorefxn_dock_ = core::scoring::get_score_function();
 		scorefxn_dock_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_cartmin");
 		scorefxn_repack_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_repack");
 
@@ -561,8 +561,8 @@ public:
 	CenRotDockingMover():first_run_(true)
 	{
 		//setup score functions and movers
-		scorefxn_dock_ = core::scoring::getScoreFunction();
-		scorefxn_repack_ = core::scoring::getScoreFunction();
+		scorefxn_dock_ = core::scoring::get_score_function();
+		scorefxn_repack_ = core::scoring::get_score_function();
 
 		//repack using high vdw can get better recovery power
 		Real pack_vdw_weight = scorefxn_repack_->get_weight(core::scoring::vdw);
@@ -739,7 +739,7 @@ public:
 		using simple_moves::SmoothFragmentMover;
 		using simple_moves::GunnCost;
 
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 
 		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
 		movemap->set_bb( true );
@@ -835,7 +835,7 @@ public:
 		using namespace core::id;
 		using namespace core::pack::task;
 
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
@@ -1006,7 +1006,7 @@ public:
 
 			// only for cart_min, set cart_bonded
 			// scorefunction0 -- fix bad chainbreaks
-			// core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::getScoreFunction();
+			// core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::get_score_function();
 			// scorefxn0->reset();
 			// scorefxn0->set_weight( core::scoring::vdw, 0.1 );
 			// scorefxn0->set_weight( core::scoring::cart_bonded, 0.1 );
@@ -1089,7 +1089,7 @@ my_main( void* ) {
 	else {
 		//setup the scorefxn
 		// TODO: if score:weights is not specified, load default cenrot rather than talaris2013
-		core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 		//repack
 		if (option[repack_cenrot]) {

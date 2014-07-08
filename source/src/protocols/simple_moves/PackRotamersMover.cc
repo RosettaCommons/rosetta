@@ -278,7 +278,7 @@ void PackRotamersMover::setup( Pose & pose )
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
 	if ( scorefxn_ == 0 ) {
 		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
-		scorefxn_ = getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		scorefxn_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
 	// if present, task_factory_ always overrides/regenerates task_

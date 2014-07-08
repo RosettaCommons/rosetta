@@ -480,7 +480,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		// fix any shitty backbone angles.
 
 		// Set up contraints
-		ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+		ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
 		//protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
 		protocols::relax::FastRelaxOP relax = new protocols::relax::FastRelax( fascorefxn,	option[ OptionKeys::relax::sequence_file ]() );
 

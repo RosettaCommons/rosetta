@@ -57,7 +57,7 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::getScoreFunction();
+	scorefxn = core::scoring::get_score_function();
 
 	MoverOP relax = new relax::ClassicRelax( scorefxn );
 

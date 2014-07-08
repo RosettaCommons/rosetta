@@ -518,7 +518,7 @@ dump_insert_pdb_and_remodel_blueprint(
   cut_pdbname = cut_pdbname.substr( cut_pdbnamestart, cut_pdbname.size() - cut_pdbnamestart - 4 );
 
   //create a ScoreFunction from commandline options (default is score12)
-  core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+  core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
   //and add decompose bb_hbond energies option
 
 	std::string in_name( "inst." + utility::to_string( in_cutpair.first ) +
@@ -716,7 +716,7 @@ go(
 	core::import_pose::pose_from_pdb( inpose, inpose_fname );
 
 	//create a ScoreFunction from commandline options (default is score12)
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 	//silent-type output
 //	io::silent::SilentFileData pose_silent_data;

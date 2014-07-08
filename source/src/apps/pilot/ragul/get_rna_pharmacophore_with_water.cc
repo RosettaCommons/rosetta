@@ -225,7 +225,7 @@ int main( int argc, char * argv [] ){
 
 	//find Hbond interactions and include it to the pharmacophore list
 	core::scoring::hbonds::HBondSet rna_hb_set;
-	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP scorefxn(get_score_function());
 	(*scorefxn)(temp_protein_rnabase_pose);
 
 	assert( temp_protein_rnabase_pose.energies().residue_neighbors_updated() );

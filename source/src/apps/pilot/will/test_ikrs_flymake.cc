@@ -655,7 +655,7 @@ void ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 }
 
 void repack(Pose & arg) {
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
   task->restrict_to_repacking();
   protocols::simple_moves::PackRotamersMover repack( sf, task );

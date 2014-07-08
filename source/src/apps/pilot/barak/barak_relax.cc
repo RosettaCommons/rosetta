@@ -71,7 +71,7 @@ main( int argc, char * argv [] )
 		main_task_factory->push_back( new operation::ReadResfile );
 	}
 
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 
 	MoverOP relax_mover = new ClassicRelax ( score_fxn );

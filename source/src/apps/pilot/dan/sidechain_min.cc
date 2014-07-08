@@ -282,7 +282,7 @@ my_main( void* )
 	core::import_pose::pose_from_pdb( pose, option[ OptionKeys::loops::input_pdb ]().name() );
  	int const nres( pose.total_residue() );
 
- 	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+ 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	//scorefxn->set_weight(scoring::mm_bend, 1.00);
 
 	//bool const fa_input( option[OptionKeys::loops::fa_input] );

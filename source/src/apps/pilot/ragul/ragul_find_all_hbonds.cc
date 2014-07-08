@@ -84,7 +84,7 @@ int main( int argc, char * argv [] )
 
 	// fill hbond set
 	core::scoring::hbonds::HBondSet hbs1;
-	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP scorefxn(get_score_function());
 	(*scorefxn)(pose_init);
 	core::scoring::hbonds::fill_hbond_set(pose_init, false, hbs1);
 

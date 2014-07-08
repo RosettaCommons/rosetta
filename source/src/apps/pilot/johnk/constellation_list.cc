@@ -280,7 +280,7 @@ main( int argc, char * argv [] )
 	}
 
 	// scoring function - for speed use a custom scorefxn containing only fa_atr, no need to evaluate other terms
-	scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 	scorefxn->reset();
 	core::Real const fa_atr_weight = 0.8;
 	scorefxn->set_weight(fa_atr,fa_atr_weight);
@@ -369,7 +369,7 @@ main( int argc, char * argv [] )
 					secondary_mut_site.at( chemical::aa_from_oneletter_code( allowable_secondary_mutations.at(jmut) ) ) = true;
 					mut_task->nonconst_residue_task(j).restrict_absent_canonical_aas( secondary_mut_site );
 					// call pack_rotamers
-					scoring::ScoreFunctionOP repack_scorefxn(getScoreFunction());
+					scoring::ScoreFunctionOP repack_scorefxn(get_score_function());
 					pack::pack_rotamers( mut_pose_init, *repack_scorefxn, mut_task );
 					// write the output pdb
 					std::ostringstream outProtein_name;

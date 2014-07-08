@@ -70,7 +70,7 @@ public:
 
 	/// @brief Uses fixed-backbone design to compute a profile for the given Pose.
 	virtual void apply( core::pose::Pose & pose ) {
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		protocols::simple_moves::PackRotamersMoverOP pack_mover
 			= new protocols::simple_moves::PackRotamersMover;
 		pack_mover->score_function( scorefxn );

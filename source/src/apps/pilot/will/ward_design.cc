@@ -217,7 +217,7 @@ main( int argc, char * argv [] )
 
 	std::string outdir = option[out::file::o]() + "/";
 
-	core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	utility::vector1<Size> primary_subs;
 	primary_subs.push_back(1);

@@ -89,7 +89,7 @@ private:
 
 Benchmark::Benchmark() :
 	Mover( "benchmark" ),
-	score_function_( getScoreFunction() )
+	score_function_( get_score_function() )
 {}
 
 Benchmark::~Benchmark() {}

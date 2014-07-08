@@ -1070,8 +1070,8 @@ vector1<Hit> dock(Pose & init, string fname) {
   }
 
  Size nres = init.n_residue();
-  // ScoreFunctionOP sf = core::scoring::getScoreFunction();
-  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+  // ScoreFunctionOP sf = core::scoring::get_score_function();
+  ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
   Mat R3a = rotation_matrix_degrees(Vec(0,0,1), 120.0);
   Mat R3b = rotation_matrix_degrees(Vec(0,0,1),-120.0);
@@ -1366,7 +1366,7 @@ vector1<Hit> dock(Pose & init, string fname) {
               sym.set_chi(2,dhits[id].rsd2+init.n_residue()*i,dhits[id].chi22);
             }
 
-            ScoreFunctionOP sf = core::scoring::getScoreFunction();
+            ScoreFunctionOP sf = core::scoring::get_score_function();
             TR << "design w/ dsf" << std::endl;
             design_1comp(sym,sf,todes.n_residue());
             Pose ssym(sym);
@@ -1400,7 +1400,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             Pose sym(todes);
             replace_nat_seq(sym,pnat);
             core::pose::symmetry::make_symmetric_pose(sym);
-            ScoreFunctionOP sf = core::scoring::getScoreFunction();
+            ScoreFunctionOP sf = core::scoring::get_score_function();
             TR << "design 1 component" << std::endl;
             design_1comp(sym,sf,todes.n_residue());
             {
@@ -1427,7 +1427,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             string tmp = option[symmetry::symmetry_definition]();
             option[symmetry::symmetry_definition].clear();
 
-            ScoreFunctionOP sf2 = core::scoring::getScoreFunction();
+            ScoreFunctionOP sf2 = core::scoring::get_score_function();
             replace_nat_seq(sym,pnat);
             TR << "design 2 component" << std::endl;
             design_1comp(sym,sf2,todes.n_residue());

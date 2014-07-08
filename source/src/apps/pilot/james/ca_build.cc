@@ -225,7 +225,7 @@ main( int argc, char* argv [] ) {
 					);
 				}
 
-				//core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+				//core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 				//l_container.add_mover(
 				//	new protocols::simple_moves::MinMover(
 				//		new core::kinematics::MoveMap, scorefxn, "dfpmin", 1e-5, true

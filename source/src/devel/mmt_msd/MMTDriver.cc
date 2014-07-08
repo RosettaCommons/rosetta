@@ -288,7 +288,7 @@ void MMTDriver::set_entity_resfile_fname( std::string const & setting )  { entit
 void
 MMTDriver::setup()
 {
-	if ( ! sfxn_ ) sfxn_ = core::scoring::getScoreFunction();
+	if ( ! sfxn_ ) sfxn_ = core::scoring::get_score_function();
 	if ( ! file_contents_ ) file_contents_ = new utility::io::FileContentsMap;
 	try {
 		std::istringstream entity_resfile_stream( file_contents_->get_file_contents_ref( entity_resfile_fname_ ) );

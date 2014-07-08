@@ -134,7 +134,7 @@ main( int argc, char* argv [] )
 		core::scoring::electron_density::getDensityMap().set_nres( nres );
 
 		// score pose to set up graphs
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
 		(*scorefxn)(pose);
 

@@ -155,7 +155,7 @@ public:
 			} // if residue is aligned
 		} // nres
 		using namespace core::scoring;
-		core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 		scorefxn->set_weight( coordinate_constraint, 0.5 );
 
 		// perform a fast repack/minimization on the pose. Maybe do

@@ -348,7 +348,7 @@ apply(core::pose::Pose & pose) {
 		random_mover->add_mover(fragment_insertion_mover, 1.-weight);
 		//random_mover->add_mover(new HelixMover(RG_));
 		
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		MoverOP sampling_mover = new RationalMonteCarlo(
 														random_mover,
 														scorefxn,

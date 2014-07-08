@@ -101,7 +101,7 @@ ScoreMoverCreator::mover_name()
 
 ScoreMover::ScoreMover() :
 	moves::Mover( ScoreMoverCreator::mover_name() ),
-	score_function_( getScoreFunction() ),
+	score_function_( get_score_function() ),
 	verbose_(true),
 	scorefile_("")
 {}

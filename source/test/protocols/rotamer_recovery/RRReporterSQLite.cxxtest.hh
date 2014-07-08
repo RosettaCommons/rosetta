@@ -218,7 +218,7 @@ public:
     using namespace basic::database;
 		using namespace protocols::rotamer_recovery;
 
-    core::scoring::ScoreFunctionOP scfxn(core::scoring::getScoreFunction());
+    core::scoring::ScoreFunctionOP scfxn(core::scoring::get_score_function());
     Pose pose ( fullatom_pose_from_string( pdb_string_1ten() ) );
     scfxn->score(pose);
 

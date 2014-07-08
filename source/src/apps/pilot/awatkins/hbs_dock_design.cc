@@ -256,11 +256,11 @@ HbsDockDesignMinimizeMover::apply(
 	//kdrew: old standard scoring function, using MM scoring function now because of NCAAs
 	//scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) );
 	//scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
-	scoring::ScoreFunctionOP score_fxn = getScoreFunction();
+	scoring::ScoreFunctionOP score_fxn = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	//kdrew: soft_rep score function
 	//scoring::ScoreFunctionOP soft_score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
-	scoring::ScoreFunctionOP soft_score_fxn  = getScoreFunction();
+	scoring::ScoreFunctionOP soft_score_fxn  = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*soft_score_fxn);
 	soft_score_fxn->set_etable( FA_STANDARD_SOFT );
 

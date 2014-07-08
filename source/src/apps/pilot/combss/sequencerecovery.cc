@@ -170,7 +170,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 
 	//we need to score the pose for many of the task operations passed from cmd line
 	if ( option[ optE::parse_tagfile ].user() ) {
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		(*scorefxn)( pose );
 	}
 	std::set< Size > designable_set;
@@ -195,7 +195,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_poses, utility::vector1<core::pose::Pose> & redesign_poses ) {
 
 	//set up scoring function
-	core::scoring::ScoreFunctionOP scorefxn( ( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
+	core::scoring::ScoreFunctionOP scorefxn( ( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
 
 	//set up packstats, unsatisfied hbonds, salt bridge, pi-pi, cat-pi metrics
 	 core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;

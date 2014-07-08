@@ -190,7 +190,7 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 	// Setup the monte carlo run.
 
 	MetropolisHastingsMoverOP canonical_mc = new MetropolisHastingsMover;
-	ScoreFunctionOP score_function = core::scoring::getScoreFunction();
+	ScoreFunctionOP score_function = core::scoring::get_score_function();
 	MonteCarloOP monte_carlo = new MonteCarlo(pose, *score_function, 0);
 
 	canonical_mc->set_ntrials(iterations_);

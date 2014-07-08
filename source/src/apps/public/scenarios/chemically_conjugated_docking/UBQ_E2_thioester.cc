@@ -143,7 +143,7 @@ public:
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
-		fullatom_scorefunction_ = getScoreFunction();
+		fullatom_scorefunction_ = get_score_function();
 
 		TR << "Using fullatom scorefunction from commandline:\n" << *fullatom_scorefunction_;
 

@@ -66,7 +66,7 @@ SwitchChainOrderMover::SwitchChainOrderMover()
 	: moves::Mover("SwitchChainOrder"),
 	residue_numbers_( NULL )
 {
-	scorefxn( core::scoring::getScoreFunction() );
+	scorefxn( core::scoring::get_score_function() );
 }
 
 void

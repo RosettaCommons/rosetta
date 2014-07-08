@@ -75,7 +75,7 @@ public:
 		residue_set.read_files(params_files);
 
 		// initialize common filters/movers/scorefxns
-		scorefxn = core::scoring::getScoreFunction( true );
+		scorefxn = core::scoring::get_score_function( true );
 
 		num_trp = new protocols::simple_filters::ResidueCountFilter();
 		utility::vector1< std::string > res_to_count;

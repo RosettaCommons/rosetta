@@ -324,7 +324,7 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
 			  recover_sidechains( pose );
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );
@@ -424,7 +424,7 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
 			  recover_sidechains( pose );
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );

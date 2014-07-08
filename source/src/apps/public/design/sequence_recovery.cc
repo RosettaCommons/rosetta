@@ -167,7 +167,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 
 	//we need to score the pose for many of the task operations passed from cmd line
 	if ( option[ sequence_recovery::parse_taskops_file ].user() ) {
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		(*scorefxn)( pose );
 	}
 	std::set< Size > designable_set;

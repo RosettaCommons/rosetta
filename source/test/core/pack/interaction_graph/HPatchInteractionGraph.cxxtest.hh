@@ -146,7 +146,7 @@ public:
 
 		// --- ScoreFunction ---
 		// create a score function using the standard packer weights
-		scorefxn = scoring::getScoreFunction();
+		scorefxn = scoring::get_score_function();
 		(*scorefxn)( pose );
 		pose.update_residue_neighbors();
 

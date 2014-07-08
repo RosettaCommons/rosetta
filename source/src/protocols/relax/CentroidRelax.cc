@@ -129,7 +129,7 @@ namespace relax {
         set_ramp_vdw(option [OptionKeys::relax::centroid::ramp_vdw]());
         set_ramp_rama(option [OptionKeys::relax::centroid::ramp_rama]());
         set_cartesian(option[OptionKeys::relax::cartesian]());
-        set_fa_score_function(core::scoring::getScoreFunction());
+        set_fa_score_function(core::scoring::get_score_function());
         set_use_rama2b(option [OptionKeys::score::ramaneighbors]());
 	set_use_increased_vdw_radii(option [OptionKeys::relax::centroid::increase_vdw_radii]());
 	do_final_repack(option [OptionKeys::relax::centroid::do_final_repack]());

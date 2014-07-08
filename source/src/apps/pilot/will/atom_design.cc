@@ -149,7 +149,7 @@ main( int argc, char * argv [] )
 	// rs.nonconst_name_map("NH5").set_RotamerLibraryName("input/NH5.pdb");
 	// rs.nonconst_name_map("CR5").set_RotamerLibraryName("input/CR5.pdb");
 
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	Pose pose;
 	import_pose::pose_from_pdb(pose,rs,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);

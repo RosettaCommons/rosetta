@@ -56,7 +56,7 @@ public:
 
 		// should be options[]
 		scorefxn_low = core::scoring::ScoreFunctionFactory::create_score_function("cen_std");
-		scorefxn_high = core::scoring::getScoreFunction();
+		scorefxn_high = core::scoring::get_score_function();
 	}
 
 	virtual std::string get_name() const { return "BBGWrapperMover";}

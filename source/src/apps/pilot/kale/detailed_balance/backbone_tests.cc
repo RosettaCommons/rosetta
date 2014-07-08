@@ -73,7 +73,7 @@ using core::Real;
 using core::pose::Pose;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 
 using protocols::moves::Mover;
 using protocols::moves::MoverOP;

@@ -70,8 +70,8 @@ main( int argc, char * argv [] )
 	std::string const ref_decoy_fname = option[ ref_decoy ];
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-	//	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
+	//	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	// create pose from pdb
 	pose::Pose ref_pose;

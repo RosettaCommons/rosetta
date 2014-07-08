@@ -170,12 +170,12 @@ int main( int argc, char * argv [] ) {
   sfc->set_weight(core::scoring::atom_pair_constraint,1.0);
   sfc->set_weight(core::scoring::angle_constraint    ,1.0);
   sfc->set_weight(core::scoring::dihedral_constraint ,1.0);
-  ScoreFunctionOP sffa = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+  ScoreFunctionOP sffa = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
   sffa->set_weight(core::scoring::atom_pair_constraint,1.0);
   sfc->set_weight(core::scoring::angle_constraint     ,1.0);
   sfc->set_weight(core::scoring::dihedral_constraint  ,1.0);
   sffa->set_weight(core::scoring::omega,2.0);
-  ScoreFunctionOP sffastd = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+  ScoreFunctionOP sffastd = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
   sffa->set_weight(core::scoring::omega,2.0);
 
   for(Size ITER = 1; ITER <= (Size)option[out::nstruct](); ++ITER) {

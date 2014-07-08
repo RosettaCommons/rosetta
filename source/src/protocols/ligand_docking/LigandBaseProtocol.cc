@@ -118,7 +118,7 @@ LigandBaseProtocol::LigandBaseProtocol():
 		// Note that you should now be able to specify exclude_protein_protein_fa_elec in the weights files.
 		if ( option[ OptionKeys::score::weights ].user() || option[ OptionKeys::score::patch ].user() ) {
 			TR.Debug << "Using untweaked command-line specified (hard) scorefunction. " << std::endl;
-			hard_scorefxn_ = core::scoring::getScoreFunction();
+			hard_scorefxn_ = core::scoring::get_score_function();
 		} else {
 			TR.Debug << "Using untweaked ligand.wts hard scorefunction." << std::endl;
 			hard_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand.wts");

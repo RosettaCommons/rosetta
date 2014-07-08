@@ -68,7 +68,7 @@ using core::Size;
 using core::Real;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pack::task::PackerTaskOP;
@@ -98,7 +98,7 @@ using cppdb::statement;
 static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
-	scfxn_(getScoreFunction()),
+	scfxn_(get_score_function()),
 	reporter_(new RRReporterSQLite() ),
 	protocol_(),
 	comparer_(),

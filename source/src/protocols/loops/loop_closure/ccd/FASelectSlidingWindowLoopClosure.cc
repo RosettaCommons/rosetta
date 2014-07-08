@@ -254,7 +254,7 @@ core::Real FASelectSlidingWindowLoopClosure::fascore( Pose& pose ) const {
 	Loops loops;
 	loops.add_loop( loop_ ); //for looprms
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	scorefxn->show( std::cout, pose );
 	std::cout << std::endl;
 	// default move map

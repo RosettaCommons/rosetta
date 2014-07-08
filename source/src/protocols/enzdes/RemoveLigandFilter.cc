@@ -79,7 +79,7 @@ RemoveLigandFilter::RemoveLigandFilter( ):
     
     MinMover* min_mover = dynamic_cast< MinMover* >( mover_.get() );
     min_mover->movemap( movemap );
-    core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+    core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
     min_mover->score_function( scorefxn );
 }
  

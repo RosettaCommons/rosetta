@@ -88,7 +88,7 @@ main( int argc, char * argv [] )
   }
 
   //create a ScoreFunction from commandline options
-  core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+  core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
   
   //create the PackRotamersMover which will do the packing
   protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;

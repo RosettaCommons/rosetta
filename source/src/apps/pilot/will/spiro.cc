@@ -431,10 +431,10 @@ fa_refine_and_design(PoseWrap & pw, Size /*NCYCLE*/) {
 	core::pose::Pose & pose(pw.pose);
 	// Size nres_mono = (pose.n_residue()-4)/4;
 	ScoreFunctionOP sf1,sf2,sf3,sf4;
-	sf1 = getScoreFunction();
-	sf2 = getScoreFunction();
-	sf3 = getScoreFunction();
-	sf4 = getScoreFunction();
+	sf1 = get_score_function();
+	sf2 = get_score_function();
+	sf3 = get_score_function();
+	sf4 = get_score_function();
 	sf1->set_weight(fa_rep,0.025);
 	sf2->set_weight(fa_rep,0.050);
 	sf3->set_weight(fa_rep,0.100);

@@ -76,7 +76,7 @@ FnonnatFilter::FnonnatFilter() :
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Fnonnat");
 	}
-	scorefxn_ = core::scoring::getScoreFunction();
+	scorefxn_ = core::scoring::get_score_function();
 	//	scorefxn_->show(TR.Info);
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
 	TR << "End constructer"<<std::endl;
@@ -109,7 +109,7 @@ FnonnatFilter::FnonnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size co
 // 	}
 
 	if( !sfxn ) {
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 	} else {
 		scorefxn_ = sfxn->clone();
 	}

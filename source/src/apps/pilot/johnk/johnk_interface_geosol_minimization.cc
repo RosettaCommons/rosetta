@@ -85,7 +85,7 @@ void define_interface( core::pose::Pose const & pose ) {
 	interface.resize( pose.total_residue(), false );
 	core::Real interface_dist = 8.0;
 	core::Size rb_jump = 1;
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	pack::task::TaskFactory tf;
 	tf.push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump, interface_dist ) );
 	pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 	TR << "jk doing geosol interface minimiations" << std::endl;
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 
 	if ( option[ use_geosol ] ) {
 		//	scorefxn->reset();

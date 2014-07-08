@@ -304,7 +304,7 @@ SymmAbRelaxTest()
     ProtocolOP prot_ptr;
     setup_for_folding( start_pose, prot_ptr );
     Protocol& abinitio_protocol( *prot_ptr );
-    abinitio_protocol.set_fullatom_scorefxn( core::scoring::getScoreFunction() );
+    abinitio_protocol.set_fullatom_scorefxn( core::scoring::get_score_function() );
     abinitio_protocol.set_centroid_scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ));
 
     for (Size i = 1; i<= 200; i++ ) {

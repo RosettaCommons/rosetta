@@ -322,8 +322,8 @@ void run() {
     core::import_pose::pose_from_pdb(init,*rs,fn);
 
     Size nres = init.n_residue();
-    // ScoreFunctionOP sf = core::scoring::getScoreFunction();
-    ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
+    // ScoreFunctionOP sf = core::scoring::get_score_function();
+    ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
     Pose pose = init;
 

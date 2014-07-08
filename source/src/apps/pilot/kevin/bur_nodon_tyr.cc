@@ -104,7 +104,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 
 	//we need to score the pose for many of the task operations passed from cmd line
 	if ( option[ bur_nodon_tyr::parse_taskops_file ].user() ) {
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 		(*scorefxn)( pose );
 	}
 	std::set< Size > designable_set;
@@ -128,7 +128,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 ///@brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
 void measure_sequence_recovery( core::pose::Pose & pose ) {
 	
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scorefxn->score( pose );
 
 	// figure out the task & neighbor info

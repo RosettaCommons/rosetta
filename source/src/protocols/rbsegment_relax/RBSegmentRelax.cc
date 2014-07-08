@@ -473,7 +473,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 		set_constraints( pose, pose_input, cst_width_, cst_stdev_, cst_seqwidth_ );
 
 		// setup scorefunction for loopbuilding
-		core::scoring::ScoreFunctionOP lr_fa_scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP lr_fa_scorefxn = core::scoring::get_score_function();
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *lr_fa_scorefxn );
 
 		// call looprelax

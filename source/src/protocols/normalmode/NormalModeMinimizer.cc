@@ -88,7 +88,7 @@ NormalModeMinimizer::~NormalModeMinimizer() {}
 void
 NormalModeMinimizer::apply( pose::Pose & pose ) {
 	if ( ! movemap_ ) movemap_ = new MoveMap;
-	if ( ! scorefxn_ ) scorefxn_ = getScoreFunction(); // get a default (INITIALIZED!) ScoreFunction
+	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
 	if ( options_->deriv_check() ) {
 		deriv_check_result_ = new NumericalDerivCheckResult;

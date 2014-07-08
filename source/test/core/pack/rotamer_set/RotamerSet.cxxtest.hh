@@ -107,7 +107,7 @@ public:
 		// user could request to run just one single test.
 		core::init::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 		// read in pose
 		Pose pose;

@@ -173,8 +173,8 @@ public:
 
 // ------------- Relax  --------------------------
 	    if ( option[ OptionKeys::relax::fast].user() ) {
-	    // core::scoring::ScoreFunctionOP scorefxn_fa( core::scoring::getScoreFunction() );
-    		core::scoring::ScoreFunctionOP scorefxn_fa = core::scoring::getScoreFunction();
+	    // core::scoring::ScoreFunctionOP scorefxn_fa( core::scoring::get_score_function() );
+    		core::scoring::ScoreFunctionOP scorefxn_fa = core::scoring::get_score_function();
 		protocols::moves::MoverOP relaxer = new protocols::relax::FastRelax( scorefxn_fa );
 		relaxer->apply( fa_pose );
 	    }

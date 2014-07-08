@@ -210,7 +210,7 @@ main( int argc, char* argv [] )
 
 
 
-	ScoreFunctionOP scfxn = getScoreFunction();
+	ScoreFunctionOP scfxn = get_score_function();
 
 	//	set_lk_dgfree_to_1();
 

@@ -638,7 +638,7 @@ int main( int argc, char * argv [] )
 		}
 
 		// get scoring function
-		core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 		utility::vector1<std::string> pdbs = basic::options::option[ in::file::s ]();
 		core::pose::Pose p;

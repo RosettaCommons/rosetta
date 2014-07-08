@@ -95,7 +95,7 @@ main( int argc, char* argv [] ) {
 
 	// set up ScoreFunction, make certain that hydrogen bonding energies
 	// are kept in the EnergyGraph.
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	core::scoring::methods::EnergyMethodOptionsOP emopts(
 		new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
 	);

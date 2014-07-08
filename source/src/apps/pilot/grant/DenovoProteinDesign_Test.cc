@@ -92,7 +92,7 @@ main( int argc, char * argv [] )
 
 	core::pose::Pose pose;
 
-	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
+	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
 
 	devel::denovo_protein_design::CreateStartingStructureMoverOP myCreateStartingStructureMover ( new devel::denovo_protein_design::CreateStartingStructureMover() );
 	devel::denovo_protein_design::DesignRelaxMoverOP myDesignRelaxMover ( new devel::denovo_protein_design::DesignRelaxMover() );

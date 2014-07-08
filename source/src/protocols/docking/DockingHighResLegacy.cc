@@ -117,7 +117,7 @@ DockingHighResLegacy::DockingHighResLegacy() : DockingHighRes()
 	// The following three lines are done by the parent class's constructor
 	//movable_jumps_.push_back(1); // operate on the first jump
 	//scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
-	//scorefxn_pack() = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	//scorefxn_pack() = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	moves::Mover::type( "DockingHighResLegacy" );
 	init_task_factory_ = NULL;
 	design_ = false;

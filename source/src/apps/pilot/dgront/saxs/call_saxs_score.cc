@@ -75,7 +75,7 @@ core::Real saxs_energy(core::pose::Pose & a_pose) {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
 
-    core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+    core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
     if ( option[ casp::repack ].user() ) {
 	core::pack::task::PackerTaskOP task(
                             core::pack::task::TaskFactory::create_packer_task( a_pose ));

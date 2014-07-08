@@ -525,7 +525,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	// make sure fmodel is initialized by scoring the pose
 	/*core::Real xraytgt =*/ core::scoring::cryst::getPhenixInterface().getScore( pose );
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	//fpd if the pose is symmetric use a symmetric scorefunction
 	if (core::pose::symmetry::is_symmetric(pose))
 		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );

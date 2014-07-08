@@ -113,7 +113,7 @@ public: //
 		Size resid( 10 ); 
 		
 		// create scorefxn
-		ScoreFunctionOP scfxn = core::scoring::getScoreFunction();
+		ScoreFunctionOP scfxn = core::scoring::get_score_function();
 
 		// set LimitAromaChi2Operation		
 		LimitAromaChi2OperationOP limitar = new LimitAromaChi2Operation;

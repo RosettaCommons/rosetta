@@ -205,7 +205,7 @@ public:
 			}
 		}
 
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		sfxn->set_weight( fa_pair, 0.0 );
 		sfxn->set_weight( hbond_sc, 0.0 );
 		sfxn->set_weight( hbond_bb_sc, 0.0 );
@@ -277,7 +277,7 @@ public:
 		using namespace core::pack::interaction_graph;
 
 		core::pose::Pose  oneten(create_1ten_pdb_pose());
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		sfxn->score(oneten);
 
 		SimpleInteractionGraphOP simple_ig = new SimpleInteractionGraph;

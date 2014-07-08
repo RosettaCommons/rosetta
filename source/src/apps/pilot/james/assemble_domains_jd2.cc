@@ -92,7 +92,7 @@ main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 	CompositionMoverOP container( new CompositionMover );
 
-	getScoreFunction();
+	get_score_function();
 
 	// docking
 	container->add_mover( new AddAssemblyConstraints );
@@ -113,7 +113,7 @@ main( int argc, char * argv [] ) {
 			new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs )
 		);
 		container->add_mover(builder);
-		container->add_mover( new FastRelax( getScoreFunction() ) );
+		container->add_mover( new FastRelax( get_score_function() ) );
 		container->add_mover( new PostDockAssemblyScorer( "post_rebuild_dist" ) );
 	}
 

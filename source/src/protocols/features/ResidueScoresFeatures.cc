@@ -68,7 +68,7 @@ using core::scoring::EnergyMap;
 using core::scoring::Energies;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using core::scoring::getScoreFunction;
+using core::scoring::get_score_function;
 using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreTypes;
 using core::scoring::EnergyGraph;
@@ -90,7 +90,7 @@ using utility::tools::make_vector;
 using cppdb::statement;
 
 ResidueScoresFeatures::ResidueScoresFeatures() :
-	scfxn_(getScoreFunction())
+	scfxn_(get_score_function())
 {}
 
 ResidueScoresFeatures::ResidueScoresFeatures(

@@ -106,7 +106,7 @@ void test_save_and_restore()
 	// Serialize the modified structure as a atom_tree_diff file
 	std::ostringstream outss;
 	std::map< std::string, core::Real > my_scores; // empty
-	scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
 	core::import_pose::atom_tree_diffs::map_of_weighted_scores(modified_pose, *sfxn, my_scores);
 	core::import_pose::atom_tree_diffs::dump_atom_tree_diff(outss, "tag", my_scores, start_pose, modified_pose);
 

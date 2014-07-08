@@ -269,7 +269,7 @@ rebuild_test()
     }
 
 
-    ScoreFunctionOP scorefxn =  core::scoring::getScoreFunction();
+    ScoreFunctionOP scorefxn =  core::scoring::get_score_function();
     pack::rotamer_trials( pose, *scorefxn, pack_task_ );
 
     // minimize the whole thing

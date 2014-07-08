@@ -76,7 +76,7 @@ public:
 		utility::file::FileName filename(pose.pdb_info()->name());
 		std::string pdbname_base = filename.base();
 		
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		scorefxn->score(pose);
 		
 		core::kinematics::AtomTree const & at = pose.atom_tree();

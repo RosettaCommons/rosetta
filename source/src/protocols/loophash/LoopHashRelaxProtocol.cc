@@ -122,7 +122,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     }
 
     // Set up contraints
-    ScoreFunctionOP fascorefxn = getScoreFunction();
+    ScoreFunctionOP fascorefxn = get_score_function();
 
     // convert pose to centroid pose:
     if( !pose.is_fullatom() ){

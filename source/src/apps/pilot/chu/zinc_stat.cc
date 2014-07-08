@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 		std::cerr << "starting " << i->name() << std::endl;
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, i->name() );
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		(*scorefxn)(pose); //scoring for tenA neighbor graph
 
 		core::pose::PDBInfoOP pdb_info = pose.pdb_info();

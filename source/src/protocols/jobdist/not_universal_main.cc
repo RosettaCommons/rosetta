@@ -117,7 +117,7 @@ int not_universal_main(
 		);
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	if ( option[ constraints::cst_weight ].user() ) {
 		Real const weight( option[ constraints::cst_weight ]() );
 		scorefxn->set_weight( core::scoring::angle_constraint,      weight );

@@ -457,7 +457,7 @@ void run_3bpy() {
 
   ImplicitFastClashCheck clashcheck(init_fa,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
 
   string pref = "";
   vector1<numeric::xyzTriple<Size> > chis;
@@ -600,7 +600,7 @@ void run_zn2his() {
   Pose const fa_pose = in_fa;
   ImplicitFastClashCheck clashcheck(init_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
 
   Real chi1incr = option[willmatch::chi1_increment]();
   Real chi2incr = option[willmatch::chi2_increment]();
@@ -909,7 +909,7 @@ void run_tyr_his() {
 
 
 
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
 
   Real chi1incr = option[willmatch::chi1_increment]();
   Real chi2incr = option[willmatch::chi2_increment]();
@@ -1351,7 +1351,7 @@ void run_diiron_glu() {
   Pose const fa_pose = in_fa;
   ImplicitFastClashCheck clashcheck(init_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
-  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  ScoreFunctionOP sf = core::scoring::get_score_function();
 
   Real chi1incr = option[willmatch::chi1_increment]();
   Real chi2incr = option[willmatch::chi2_increment]();

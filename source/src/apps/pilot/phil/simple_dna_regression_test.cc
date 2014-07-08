@@ -3131,7 +3131,7 @@ luxr_test()
 		scorefxn = new ScoreFunction();
 		scorefxn->initialize_from_file( option[ score_function ] );
 	} else {
-		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
+		scorefxn = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
 		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] ); // was 0.5
@@ -3766,7 +3766,7 @@ not1_test()
 		scorefxn = new ScoreFunction();
 		scorefxn->initialize_from_file( option[ score_function ] );
 	} else {
-		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
+		scorefxn = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
 		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] ); // was 0.5
@@ -4040,7 +4040,7 @@ compare_energies()
 	core::import_pose::pose_from_pdb( pose, start_file() );
 
 
-	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 	EnergyMap const & weights( scorefxn->weights() );
 
 	(*scorefxn)(pose); // HACK

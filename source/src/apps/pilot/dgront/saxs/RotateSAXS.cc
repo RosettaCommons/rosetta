@@ -63,7 +63,7 @@ public:
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 			core::options::option[ in::file::residue_type_set ]());
 
-		scorefxn_ = core::scoring::getScoreFunction();
+		scorefxn_ = core::scoring::get_score_function();
 
 		if(core::options::option[ in::file::residue_type_set ]() == "fa_standard") {
 		    is_fa_ = true;

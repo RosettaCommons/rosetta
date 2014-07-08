@@ -75,7 +75,7 @@ void RefineBetaBarrel::init( ) {
 		dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
 		dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-		pack_scorefxn_ = core::scoring::getScoreFunctionLegacy(  core::scoring::PRE_TALARIS_2013_STANDARD_WTS  );
+		pack_scorefxn_ = core::scoring::get_score_function_legacy(  core::scoring::PRE_TALARIS_2013_STANDARD_WTS  );
 	}
 
 	repulsive_ramp_ = true;

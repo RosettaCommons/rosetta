@@ -80,7 +80,7 @@ int main( int argc, char * argv [] ) {
 		)
 	);
 
-	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
+	ScoreFunctionOP sfx = core::scoring::get_score_function();
 	ScoreMoverOP scoremover = new ScoreMover( sfx );
 
 	BUNS_Output * buns_output = new BUNS_Output();

@@ -422,7 +422,7 @@ TemperedDocking::init_from_options()
 	}
 	if ( !docking_scorefxn_high_ ) {
 		docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-		docking_scorefxn_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		docking_scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		docking_scorefxn_output_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	}
 

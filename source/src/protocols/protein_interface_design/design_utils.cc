@@ -534,7 +534,7 @@ hbonded(
 	using namespace core::scoring::hbonds;
 
 	std::list< core::Size > hbonded_list;
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	Pose pose( in_pose );
 	(*scorefxn)(pose);
 
@@ -629,7 +629,7 @@ hbonded_atom (
 	using namespace core::scoring::hbonds;
 
 	std::list< core::Size > hbonded_list;
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	Pose pose( in_pose );
 	(*scorefxn)(pose);
 

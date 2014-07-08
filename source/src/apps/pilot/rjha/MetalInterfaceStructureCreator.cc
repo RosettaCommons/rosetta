@@ -122,7 +122,7 @@ main( int argc, char* argv[] )
 
 	//initialize options
 	devel::init(argc, argv);
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active())
 		utility_exit_with_message("do not use -s with MetalInterfaceStructureCreator (program uses internally)");

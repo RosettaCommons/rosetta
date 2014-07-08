@@ -105,7 +105,7 @@ public:
 	void test_daf_STATE_command() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -125,7 +125,7 @@ public:
 	void test_daf_STATE_command_missing_secondary_resfile() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -154,7 +154,7 @@ public:
 	void test_daf_STATE_command_missing_correspondence_file() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -183,7 +183,7 @@ public:
 	void test_daf_STATE_command_missing_pdb_file() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -215,7 +215,7 @@ public:
 	void test_daf_STATE_command_missing_secondary_resfile2() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -245,7 +245,7 @@ public:
 	void test_daf_STATE_command_missing_correspondence_file2() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -275,7 +275,7 @@ public:
 	void test_daf_STATE_command_missing_pdb_file2() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -307,7 +307,7 @@ public:
 	void test_daf_STATE_command_varname_illegal_name() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -338,7 +338,7 @@ public:
 	void test_daf_STATE_command_varname_function_name() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -372,7 +372,7 @@ public:
 	void test_daf_STATE_command_varname_duplicated() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -408,7 +408,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -433,7 +433,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_missing_listfile() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -462,7 +462,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_missing_varname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -491,7 +491,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_missing_listfile2() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -520,7 +520,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_missing_varname2() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -549,7 +549,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_illegal_varname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -579,7 +579,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_function_varname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -611,7 +611,7 @@ public:
 
 	void test_daf_STATE_VECTOR_command_duplicate_varname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -646,7 +646,7 @@ public:
 
 	void test_daf_POSE_ENERGY_command() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -668,7 +668,7 @@ public:
 	void test_daf_scalar_NPD_PROPERTY_command() {
 
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -688,7 +688,7 @@ public:
 
 	void test_daf_vector_NPD_PROPERTY_command() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -715,7 +715,7 @@ public:
 
 	void test_daf_VECTOR_EXPRESSION_command() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -740,7 +740,7 @@ public:
 
 	void test_daf_VECTOR_EXPRESSION_command_two_local_variables() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -765,7 +765,7 @@ public:
 
 	void test_daf_VECTOR_EXPRESSION_command_two_local_variables_misplaced_comma() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -796,7 +796,7 @@ public:
 
 	void test_daf_VECTOR_EXPRESSION_command_nocap_IN() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -825,7 +825,7 @@ public:
 
 	void test_daf_VECTOR_EXPRESSION_command_duplicated_local_varname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -855,7 +855,7 @@ public:
 
 	void test_daf_VECTOR_VARIABLE_command() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -880,7 +880,7 @@ public:
 
 	void test_daf_VECTOR_VARIABLE_command_bad_varname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -910,7 +910,7 @@ public:
 
 	void test_daf_VECTOR_VARIABLE_command_bad_vecvarname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
@@ -940,7 +940,7 @@ public:
 
 	void test_daf_VECTOR_VARIABLE_command_func_vecvarname() {
 		DaemonSetOP ds = new DaemonSet;
-		ScoreFunctionOP sfxn = getScoreFunction();
+		ScoreFunctionOP sfxn = get_score_function();
 		ds->set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );

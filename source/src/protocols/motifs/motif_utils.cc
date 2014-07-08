@@ -409,7 +409,7 @@ void mutate_position_vector_for_search(
 )
 {
 	// Get a score function
-	core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+	core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	// Set up the packer task
 	core::pack::task::PackerTaskOP alanize_task( core::pack::task::TaskFactory::create_packer_task( pose ) );
@@ -445,7 +445,7 @@ void mutate_loops_for_search(
 )
 {
 	// Get a score function
-	core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+	core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	// Set up the packer task
 	core::pack::task::PackerTaskOP alanize_task( core::pack::task::TaskFactory::create_packer_task( pose ) );

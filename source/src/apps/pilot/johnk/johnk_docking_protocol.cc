@@ -57,7 +57,7 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 //	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
-	core::scoring::ScoreFunctionOP highres_scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP highres_scorefxn = core::scoring::get_score_function();
 
 //	DockingProtocolOP dp = new DockingProtocol( utility::tools::make_vector1<core::SSize>(1), false, false, true, NULL, highres_scorefxn );
 	DockingProtocolOP dp = new DockingProtocol( 1, false, true, true, NULL, highres_scorefxn );

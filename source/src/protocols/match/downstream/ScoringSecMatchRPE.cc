@@ -444,13 +444,13 @@ ScoringSecMatchRPE::eval_cd_2b_residues(
 
 
 core::scoring::ScoreFunctionCOP
-ScoringSecMatchRPE::getScoreFunction() const
+ScoringSecMatchRPE::get_score_function() const
 {
   return sfxn_;
 }
 
 core::scoring::ScoreFunctionOP
-ScoringSecMatchRPE::getScoreFunction()
+ScoringSecMatchRPE::get_score_function()
 {
   return sfxn_;
 }

@@ -1494,7 +1494,7 @@ int main( int argc, char * argv [] ) {
 	register_options();
 	devel::init(argc, argv);
 	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::getScoreFunction();
+	sfxn = core::scoring::get_score_function();
 	if(option[v_cst_file].user()) { //If a constraints file has been specified by the user, turn on the atom_pair, angle, and dihedral constraint weights unless otherwise on.
 		if(sfxn->get_weight(atom_pair_constraint) < 1.0e-6) sfxn->set_weight(atom_pair_constraint, 1.0);
 		if(sfxn->get_weight(angle_constraint) < 1.0e-6) sfxn->set_weight(angle_constraint, 1.0);

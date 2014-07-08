@@ -70,7 +70,7 @@ void gpu_score_test(xyzStripeHashPoseWithMetaMode pom) {
   TR<<"octree gpu mimic: "<< poc.natom() << " " << F(20,10,sctest) << "                                " <<endl;
   // //TR<<poc.nbcount( poc.grid_atoms()[0].x, poc.grid_atoms()[0].y, poc.grid_atoms()[0].z )<<std::endl;
   
-  core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
   //sf.set_weight(core::scoring::fa_atr,1.0);
   //sf.set_weight(core::scoring::fa_rep,1.0);
   //sf.set_weight(core::scoring::fa_sol,1.0);

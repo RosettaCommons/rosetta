@@ -172,7 +172,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		if (run_kic_) {
 		    protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover = new protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 		    core::scoring::ScoreFunctionOP sfxn;
-		    sfxn = core::scoring::getScoreFunction();
+		    sfxn = core::scoring::get_score_function();
 		    if (kic_res1_ == 0) {
 		        kic_res1_ = 1;
 		    }

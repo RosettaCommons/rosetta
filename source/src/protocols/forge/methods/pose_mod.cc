@@ -197,7 +197,7 @@ restore_residues(
 	}
 
 	// fix HG of CYS to relieve clashes of any newly converted CYS
-	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
+	ScoreFunctionOP sfx = core::scoring::get_score_function();
 	TaskFactoryOP tf = new TaskFactory();
 	tf->push_back( new OptCysHG() );
 	pack_rotamers( pose, *sfx, tf->create_task_and_apply_taskoperations( pose ) );

@@ -208,7 +208,7 @@ int main( int argc, char * argv[] ) {
 
   // Get a scoring function
   core::scoring::ScoreFunctionOP scorefxn;
-  scorefxn = core::scoring::getScoreFunction();
+  scorefxn = core::scoring::get_score_function();
 
   // A Repacking Mover
   core::pack::task::TaskFactoryOP task = new core::pack::task::TaskFactory;

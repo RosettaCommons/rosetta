@@ -89,7 +89,7 @@ void GraftOneCDRLoop::init() {
 void GraftOneCDRLoop::finalize_setup() {
 
 	if(scorefxn_) {
-		scorefxn_=core::scoring::getScoreFunction();
+		scorefxn_=core::scoring::get_score_function();
 	}
 
 	if(stem_not_graft_) {

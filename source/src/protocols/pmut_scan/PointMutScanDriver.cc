@@ -113,7 +113,7 @@ PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_fi
 	output_mutant_structures_( output_mutant_structures ),
 	pdb_file_names_( pdb_file_names ),
 	DDG_cutoff_(0),
-	scorefxn_(core::scoring::getScoreFunction())
+	scorefxn_(core::scoring::get_score_function())
 {
 
 #ifdef USEMPI
@@ -136,7 +136,7 @@ PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_fi
 	// (to enable hpatch scoring, the command line weights file flag will have to be used)
 	// decompose bb hbond energies into pair energies
 	//
-	//scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction(); //in initialization list
+	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function(); //in initialization list
 	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies( true );
 	scorefxn_->set_energy_method_options( energymethodoptions );

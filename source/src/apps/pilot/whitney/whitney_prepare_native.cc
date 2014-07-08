@@ -69,8 +69,8 @@ main( int argc, char * argv [] )
 	TR << "Starting minimization and repacking" << std::endl;
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
-	scoring::ScoreFunctionOP repack_scorefxn( getScoreFunction() );
+	scoring::ScoreFunctionOP scorefxn( get_score_function() );
+	scoring::ScoreFunctionOP repack_scorefxn( get_score_function() );
 	//	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_WTS) );
 	//	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS) );
 

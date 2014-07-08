@@ -158,7 +158,7 @@ private:
 
 //constructor
 InterfaceStrandFinderMover::InterfaceStrandFinderMover() {
-  scorefxn_ = core::scoring::getScoreFunction();
+  scorefxn_ = core::scoring::get_score_function();
   beta_length_ = option[InterfaceStrandFinder::is_beta_length].def(4);
   max_RMSD_= option[InterfaceStrandFinder::is_max_RMSD].def(1);
   vector_length_ = option[InterfaceStrandFinder::is_vector_length].def(3);

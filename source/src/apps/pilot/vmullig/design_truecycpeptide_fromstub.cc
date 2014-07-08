@@ -1320,7 +1320,7 @@ int main( int argc, char * argv [] ) {
 
 	//Scorefunction, movemap, and reusable movers:
 	core::scoring::ScoreFunctionOP sfxn;
-	sfxn = core::scoring::getScoreFunction();
+	sfxn = core::scoring::get_score_function();
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_jump(option[relaxjumps]());
 	mm->set_bb(option[relaxbb]());

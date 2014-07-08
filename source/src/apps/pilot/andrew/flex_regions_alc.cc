@@ -69,7 +69,7 @@ int main( int argc, char * argv [] )
 	//myKinematicMover.set_sample_nonpivot_torsions( true );
 
 	Size ii = 1;
-	scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	while ( myKinematicMover.sweep_incomplete() ) {
 		pose::Pose loop_pose( pose );
 		myKinematicMover.apply( loop_pose );

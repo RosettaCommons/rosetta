@@ -83,7 +83,7 @@ static basic::Tracer TR("protocols.loops..LoopMover_Refine_Backrub");
 LoopMover_Refine_Backrub::LoopMover_Refine_Backrub() :
 	LoopMover()
 {
-	set_scorefxn( core::scoring::getScoreFunction() );
+	set_scorefxn( core::scoring::get_score_function() );
 	protocols::moves::Mover::type("LoopMover_Refine_Backrub");
 	set_default_settings();
 }
@@ -92,7 +92,7 @@ LoopMover_Refine_Backrub::LoopMover_Refine_Backrub(
 	protocols::loops::LoopsOP  loops_in
 ) : LoopMover( loops_in )
 {
-	set_scorefxn( core::scoring::getScoreFunction() );
+	set_scorefxn( core::scoring::get_score_function() );
 	protocols::moves::Mover::type("LoopMover_Refine_Backrub");
 	set_default_settings();
 }
@@ -160,7 +160,7 @@ void LoopMover_Refine_Backrub::apply(
 	if ( scorefxn() != 0 ) {
 		score_fxn = scorefxn()->clone();
 	} else {
-		score_fxn = getScoreFunction();
+		score_fxn = get_score_function();
 	}
 	(*score_fxn)(pose);
 

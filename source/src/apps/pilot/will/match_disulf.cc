@@ -206,8 +206,8 @@ int main(int argc, char *argv[]) {
 	// mm->set(core::id::RB1,true);
 	mm->set_jump(2,false);
 	mm->set_jump(3,false);
-	// protocols::relax::FastRelax relax(core::scoring::getScoreFunction(),"");
-	protocols::relax::FastMultiRelax relax(core::scoring::getScoreFunction());
+	// protocols::relax::FastRelax relax(core::scoring::get_score_function(),"");
+	protocols::relax::FastMultiRelax relax(core::scoring::get_score_function());
 	relax.set_movemap(mm);
 	relax.apply(pose);
 
