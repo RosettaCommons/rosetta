@@ -132,7 +132,7 @@ public:
 			try{
 				core::Size reps( base_scale_factor_*scaleFactor );
 				if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
-				for(int i=0; i < reps; i++) {
+				for(core::Size i=0; i < reps; i++) {
 					scorefxn.set_weight(score_type_, 1);
 					scorefxn.score(*pose_);
 					pose_->energies().clear();
