@@ -682,7 +682,7 @@ namespace devel {
 			llc.apply(pose);
 			TR << "Foldtree after loop length change: " << pose.fold_tree() << std::endl;
 			if (debug_)
-				pose.dump_pdb(mover_name_+"after_2ndllc_test.pdb");
+				pose.dump_pdb(mover_name_+"_after_2ndllc_test.pdb");
 			/// set torsions
 			core::Size const total_residue_new(dofs.size()); //how long is the introduced segment
 			TR << "Changing dofs"<<std::endl;
@@ -697,7 +697,7 @@ namespace devel {
 				TR<<"requested phi/psi/omega: "<<dofs[ i + 1 ].phi()<<'/'<<dofs[i+1].psi()<<'/'<<dofs[i+1].omega()<<std::endl;
 			}
 			if (debug_)
-				pose.dump_pdb(mover_name_+"after_segment_dofs_before_tail.pdb");
+				pose.dump_pdb(mover_name_+"_after_segment_dofs_before_tail.pdb");
 			if (!ccd() && tail_segment_!=""){//if not doing ccd then we are splicing in using torsion db dofs
 				tail_fold_tree(pose, cut_vl_vh_after_llc,0/*chainbreak*/); // setting a new fold tree
 				core::Size start_res=0;
@@ -721,7 +721,7 @@ namespace devel {
 
 			}
 			if (debug_)
-				pose.dump_pdb(mover_name_+"after_changedofs_test.pdb");
+				pose.dump_pdb(mover_name_+"_after_changedofs_test.pdb");
 			TR << std::endl;
 			std::string threaded_seq("");	/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
 			/// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
@@ -865,7 +865,7 @@ namespace devel {
 				protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 				prm.apply(pose);
 				if (debug_)
-					pose.dump_pdb(mover_name_+"after_threading.pdb");
+					pose.dump_pdb(mover_name_+"_after_threading.pdb");
 
 				using namespace protocols::loops;
 				using namespace protocols::rosetta_scripts;
@@ -981,7 +981,7 @@ namespace devel {
 				TR << "Weighted score function after ccd:" << std::endl;
 				scorefxn()->show(pose);
 				if (debug_)
-					pose.dump_pdb(mover_name_+"after_ccd.pdb");
+					pose.dump_pdb(mover_name_+"_after_ccd.pdb");
 				/*b/c of weird chain_break residues I add a second "copy dof from source" to correct this. Only for chain_break_res
 				 gideon,160614*/
 		/*		TR << "Changing chain break dofs"<<std::endl;
@@ -1288,8 +1288,23 @@ namespace devel {
 				//		pose.conformation().detect_disulfides();
 				//		pose.update_residue_neighbors();
 				//		(*scorefxn())(pose);
+				if (debug_){
+					utility::vector1<core::Size> designable_residues = residue_packer_states(pose, tf, true/*designable*/, false/*packable*/);
+					TR << "Residues Allowed to Design: "<< std::endl;
+					for (utility::vector1<core::Size>::const_iterator i(designable_residues.begin());i != designable_residues.end(); ++i) {
+						TR<<"Allowed aa's for residue "<<*i<<" are: ";
+						std::list< core::chemical::ResidueTypeCOP > allowed_aas =ptask->residue_task(*i).allowed_residue_types();
+						for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();restype != allowed_aas.end(); ++restype) {
+							TR<<(*restype )->name1()<<",";
+						}
+						TR<<std::endl;;
+					}
+
+					pose.dump_pdb(mover_name_+"_before_ppk.pdb");
+				}
 				prm.apply(pose);
-				//pose.dump_pdb("before_rtmin.pdb");
+				if (debug_)
+					pose.dump_pdb(mover_name_+"_before_rtmin.pdb");
 				//After Re-packing we add RotamerTrialMover to resolve any left over clashes, gideonla Aug13
 				if (rtmin()) {		//To prevent rtmin when not needed - Assaf Alon
 					TaskFactoryOP tf_rtmin = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
@@ -1297,7 +1312,8 @@ namespace devel {
 					ptask = tf_rtmin()->create_task_and_apply_taskoperations(pose);
 					protocols::simple_moves::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
 					rtmin.apply(pose);
-					//pose.dump_pdb("after_rtmin.pdb");
+					if (debug_)
+						pose.dump_pdb(mover_name_+"after_rtmin.pdb");
 				}
 				if (min_seg_){
 					core::kinematics::MoveMapOP mm;
@@ -1306,16 +1322,16 @@ namespace devel {
 					mm->set_bb(false);
 					mm->set_jump(false);
 					if (debug_==1)
-						pose.dump_pdb(mover_name_+"_Before_min.pdb");
+						pose.dump_pdb(mover_name_+source_pdb()+"_Before_min.pdb");
 					//TR<<"from_res()@minimization: "<<from_res()<<std::endl;
 					//set movemap for segment
 					for (core::Size i = 0; i < dofs.size(); ++i) {
 						core::Size const pose_resi(from_res() + i);
 						mm->set_chi(pose_resi, true);
 						mm->set_bb(pose_resi, true);
-						TR_min<<"from_res: "<<from_res()<<",to_res: "<<to_res()<<",dofs size: "<<dofs.size()<<std::endl;
-						add_coordinate_constraints(pose, pose, from_res(),from_res()+dofs.size()-1, find_nearest_disulfide(pose,from_res()));
 					}
+					TR_min<<"from_res: "<<from_res()<<",to_res: "<<to_res()<<",dofs size: "<<dofs.size()<<std::endl;
+					add_coordinate_constraints(pose, pose, from_res(),from_res()+dofs.size()-1, find_nearest_disulfide(pose,from_res()));
 					core::Size cut_site=0;
 					if (boost::iequals(tail_segment_, "n")){//This only matters for n-ter tail because C-ter tail residue are included in the previous mm
 						//add edge to fold tree
@@ -2404,7 +2420,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 				using namespace std;
 				string String = static_cast<ostringstream*>( &(ostringstream() << i) )->str();
 				if (debug_)
-					pose.dump_pdb("after_chi_change"+String+".pdb");
+					pose.dump_pdb(mover_name_+"_after_chi_change"+String+".pdb");
 
 			}
 			else if ((intersect.size()==allowed_aas_names.size())&&(std::find(aromatic_and_his.begin(), aromatic_and_his.end(),source_pose.residue(i + res_diff).name1())!=aromatic_and_his.end())){//if same size then all allowed identities are in the aromatic vector
@@ -2424,7 +2440,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 				using namespace std;
 				string String = static_cast<ostringstream*>( &(ostringstream() << i) )->str();
 				if (debug_)
-				pose.dump_pdb("after_chi_change"+String+".pdb");
+				pose.dump_pdb(mover_name_+"after_chi_change"+String+".pdb");
 			}
 			continue;
 		}
