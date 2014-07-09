@@ -32,7 +32,9 @@ public:
 		using namespace utility::keys;
 		using namespace basic::options;
 
-		for(int i=0; i<200000*scaleFactor; i++) {
+		core::Size reps( 200000*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor.
+		for(core::Size i=0; i<reps; i++) {
 			for( KeyLookup< OptionKey >::ConstIterator
 						 k = KeyLookup< OptionKey >::begin(),
 						 ke = KeyLookup< OptionKey >::end();

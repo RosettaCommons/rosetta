@@ -44,7 +44,7 @@ public:
 		test_feature_.write_schema_to_db(db_session);
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	virtual void run(core::Real /*scaleFactor*/) {
 
 		core::pose::Pose pose;
 

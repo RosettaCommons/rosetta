@@ -122,6 +122,14 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
   utility::vector1< bool > const & designing_residues
 ) const
 {
+	// Need an HBOND_SET if we don't already have one from regular HBONDS
+	// Note: The logic here is kinda hacky.
+	using EnergiesCacheableDataType::HBOND_SET;
+	if( ! pose.energies().data().has( HBOND_SET )	) {
+		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
+		hbond_set->setup_for_residue_pair_energies( pose );
+		pose.energies().data().set( HBOND_SET, hbond_set );
+	}
 
   bool might_be_designing( false );
 	for ( Size n = 1; n <= designing_residues.size(); n++ ){
@@ -142,6 +150,15 @@ void
 ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
+
+	// Need an HBOND_SET if we don't already have one from regular HBONDS
+	// Note: The logic here is kinda hacky.
+	using EnergiesCacheableDataType::HBOND_SET;
+	if( ! pose.energies().data().has( HBOND_SET )	) {
+		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
+		hbond_set->setup_for_residue_pair_energies( pose );
+		pose.energies().data().set( HBOND_SET, hbond_set );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

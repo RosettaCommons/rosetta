@@ -130,7 +130,9 @@ public:
 			// whole structure energies
 			core::scoring::ScoreFunction scorefxn;
 			try{
-				for(int i=0; i < base_scale_factor_*scaleFactor; i++) {
+				core::Size reps( base_scale_factor_*scaleFactor );
+				if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+				for(int i=0; i < reps; i++) {
 					scorefxn.set_weight(score_type_, 1);
 					scorefxn.score(*pose_);
 					pose_->energies().clear();
@@ -162,10 +164,12 @@ public:
 				<< "'" << std::endl
 				<< "Failed dynamic cast of energy method to OneBodyEnergy" << std::endl;
 		}
-	
+
 		OneBodyEnergy const & e1b( static_cast< OneBodyEnergy const & > ( *enmeth_() ));
 		EnergyMap emap;
-		for ( core::Size ii = 1; ii <= base_scale_factor_ * scaleFactor; ++ii ) {
+		core::Size reps( base_scale_factor_*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e1b.score_types() );
 			for ( core::Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
 				e1b.residue_energy( *res[ jj ], *pose_, emap );
@@ -192,7 +196,9 @@ public:
 
 		ShortRangeTwoBodyEnergy const & e2b( static_cast< ShortRangeTwoBodyEnergy const & > (*enmeth_()) );
 		EnergyMap emap;
-		for ( Size ii = 1; ii <= base_scale_factor_ * scaleFactor; ++ii ) {
+		core::Size reps( base_scale_factor_*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
 			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
 				for ( Node::EdgeListConstIter
@@ -226,7 +232,9 @@ public:
 		EnergyMap emap;
 		LREnergyContainerOP lrec = pose_->energies().nonconst_long_range_container( e2b.long_range_type() );
 
-		for ( Size ii = 1; ii <= base_scale_factor_ * scaleFactor; ++ii ) {
+		core::Size reps( base_scale_factor_*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
 			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
 				for ( ResidueNeighborIteratorOP
@@ -238,7 +246,7 @@ public:
 				}
 			}
 		}
-	
+
 	}
 
 	virtual void tearDown() {

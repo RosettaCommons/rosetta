@@ -58,7 +58,9 @@ public:
 	};
 
 	virtual void run(core::Real scaleFactor) {
-		for(int i=0; i<TScale*scaleFactor; i++) {
+		core::Size reps( TScale*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
+		for(int i=0; i<reps; i++) {
 			std::string stype = "unknow";
 			if( sft == SFT_dfpmin ) stype = "dfpmin";
 			if( sft == SFT_dfpmin_armijo ) stype = "dfpmin_armijo";

@@ -84,8 +84,9 @@ LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDoc
 #include <apps/benchmark/performance/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 
-#include <apps/benchmark/performance/ResidueType.bench.hh>
-ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
+//This benchmark isn't really a good representation of ResidueType performance
+//#include <apps/benchmark/performance/ResidueType.bench.hh>
+//ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 
 #include <apps/benchmark/performance/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");

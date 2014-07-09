@@ -40,7 +40,9 @@ public:
 	};
 
 	virtual void run(core::Real scaleFactor) {
-		for(int i=0; i<scaleFactor; i++) {
+		int reps( 1 * scaleFactor );
+		if( reps == 0 ) { reps = 1; } // Do at least one repetition, regardless of scaling factor
+		for(int i=0; i< reps; i++) {
 			pack_mover.apply(design_pose);
 		}
 		//design_pose.dump_scored_pdb("design_out.pdb", *pack_mover.scorefxn());// write out for debug

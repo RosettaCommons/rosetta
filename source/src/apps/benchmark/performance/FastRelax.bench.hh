@@ -86,10 +86,9 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		if ( scaleFactor < 1 ) {
-			TR.Warning << "FastRelax benchmarks cannot be run with a scale factor < 1" << std::endl;
-		}
-		for ( core::Size ii = 1; ii <= scaleFactor; ++ii ) {
+		core::Size reps( 1 * scaleFactor );
+		if( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scale factor.
+		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			core::pose::Pose runpose = *pose_; // don't start from the last iteration's pose
 			fr_->apply( runpose );
 		}

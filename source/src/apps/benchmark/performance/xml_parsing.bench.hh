@@ -114,8 +114,9 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-
-		for(int i=0; i<10000*scaleFactor; i++) {
+		core::Size reps( 10000*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scaling factor
+		for(core::Size i=0; i<reps; i++) {
 			utility::tag::Tag::create(rosetta_script_);
 			rosetta_script_.clear();
 			rosetta_script_.seekg(std::ios_base::beg);

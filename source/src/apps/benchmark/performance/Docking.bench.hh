@@ -54,8 +54,9 @@ public:
 		//for(int i=0; i<10; i++) {
 		//	std::cout << "i="<< i << " R=" << numeric::random::uniform() << std::endl;
 		//}
-
-		for(int i=0; i<TScale*scaleFactor; i++) {
+		int reps( TScale*scaleFactor );
+		if( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scaling
+		for(int i=0; i<reps; i++) {
 			core::pose::Pose pose;
 			pose = *start_pose;
 			docking->apply( pose );

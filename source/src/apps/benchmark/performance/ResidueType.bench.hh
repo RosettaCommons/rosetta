@@ -77,8 +77,9 @@ public:
 	virtual void run(core::Real scaleFactor) {
 		chemical::ResidueTypeCOPs::const_iterator const begin = residue_types_->residue_types().begin();
 		chemical::ResidueTypeCOPs::const_iterator const end = residue_types_->residue_types().end();
-		int const local_scale_factor = 2 * scaleFactor;
-		for(int i=0; i < local_scale_factor; i++){
+		core::Size local_scale_factor = 2 * scaleFactor;
+		if( local_scale_factor == 0 ) { local_scale_factor = 1; } // Do at least one repetition, regardless of scaling factor
+		for(core::Size i=0; i < local_scale_factor; i++){
 			for(chemical::ResidueTypeCOPs::const_iterator iter=begin; iter != end; ++iter) {
 				chemical::ResidueTypeCOP res_type = *iter;
 				chemical::ResidueTypeOP copy = res_type->clone(); // Tests the copy constructor
