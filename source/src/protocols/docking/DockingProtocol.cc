@@ -973,17 +973,18 @@ DockingProtocol::apply( pose::Pose & pose )
 
 	// High resolution docking
 	if ( passed_lowres_filter && docking_highres_mover_ ) {
+		if ( docking_constraint_ ) {
+			TR << "setting up the constraint set mover" << std::endl;
+			docking_constraint_->apply( pose );
+			if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+			// finish setting up constraints
+			setup_constraints( pose );
+		}
+
 		if ( !pose.is_fullatom() ) {
 			// Convert pose to high resolution and recover sidechains
 			to_all_atom_->apply( pose );
-			if ( docking_constraint_ ) {
-				TR << "setting up the constraint set mover" << std::endl;
-				docking_constraint_->apply( pose );
-				if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
-				// finish setting up constraints
-				setup_constraints( pose );
 
-			}
 			(*docking_highres_mover_->scorefxn())( pose );
 			jd2::write_score_tracer( pose, "Docking_to_all_atom" );
 			if ( recover_sidechains_ ) {
