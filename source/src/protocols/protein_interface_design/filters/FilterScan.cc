@@ -285,13 +285,13 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	residue_id_map.clear(); residue_id_val_map.clear();
 	unbind( pose );
 	core::pose::Pose const pose_orig( pose );// const to ensure that nothing silly happens along the way...
-	core::Real baseline( 0.0 );
 	BOOST_FOREACH( core::Size const resi, being_designed ){
 		pose = pose_orig;
 		///compute baseline
 // SJF 29Aug13 in the following we try to extract a stable baseline value for the substitution. The repacking steps create large levels of noise where mutations to self appear show high ddG differences. To prevent that, we cheat Rosetta by asking it to replace the residue to self three times in a row and take the baseline after the third computation. If you use ddG, it is recommended to use many repeats (>=5) to lower noise levels further. I think that if mutations to self show noise levels <=0.5R.e.u. the protocol is acceptable.
 		single_substitution( pose, resi, pose.residue( resi ).aa() ); /// mutates to self. This simply activates packing/rtmin/relax at the site. By doing this on a per residue basis we ensure that the baseline is computed in exactly the same way as the mutations
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
+		core::pose::Pose const pose_ref( pose ); // 10Jul14 Adi debugging: save pose after two substitutions to self but compute baseline relative to 3 substitutions
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
 //		pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
 		BOOST_FOREACH( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ){
@@ -300,8 +300,6 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			delta_filter->baseline( fbaseline );
 			TR<<"Computed baseline at position "<<resi<<" with filter "<<fname<<" is "<<fbaseline<<std::endl;
 		}
-		if( delta_filters_.size() == 0 )
-			baseline = filter()->report_sm( pose );
     typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
     ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
     utility::vector1< AA > allow_temp;
@@ -309,15 +307,19 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
     BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
     	allow_temp.push_back( t->aa() );
     }
-		core::pose::Pose const pose_ref( pose );
+//		core::pose::Pose const pose_ref( pose ); //10Jul14 Adi debugging: original line for pose_ref
 		BOOST_FOREACH( AA const target_aa, allow_temp ){
 			 pose = pose_ref; //29Aug13 previously was pose_orig; here
 			 single_substitution( pose, resi, target_aa );
 //				pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
 			 bool triage_filter_pass( false );
 			 if( delta_filters_.size() > 0 ){
+				 triage_filter_pass=true;
 				 BOOST_FOREACH( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ){
 					 triage_filter_pass = delta_filter->apply( pose );
+					 if( delta_filters_.size() == 1 )
+							residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(delta_filter()->report_sm( pose ), triage_filter_pass);
+
 					 if( !triage_filter_pass )
 						 break;
 				 }
@@ -326,14 +328,16 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 	triage_filter_pass = triage_filter()->apply( pose );
 			 if( !triage_filter_pass ){
 				 TR<<"Triage filter fails"<<std::endl;
-				 if(report_all_) {
+				 if(report_all_ && !delta()) {
 					 residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), false);
 				 }
 				 continue;
 			 }
 			 TR<<"Triage filter succeeds"<<std::endl;
-			 residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), true);
-    	 residue_id_map[ resi ].push_back( target_aa );
+			 if( !delta() ){
+			 		residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), true);
+    	 		residue_id_map[ resi ].push_back( target_aa );
+			 }
 			 if( dump_pdb() ){
 			 	using namespace protocols::jd2;
 			 	JobOP job( JobDistributor::get_instance()->current_job() );
@@ -379,7 +383,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		TR_residue_scan<<resfile_name()<<'\t'
 									 << pair->first.first<<'\t'
 									 << oneletter_code_from_aa( pair->first.second )<<'\t'
-		                             <<( delta() ? pair->second.first - baseline : pair->second.first )
+		                             <<pair->second.first
                             		 <<(pair->second.second?"":"\tTRIAGED")<<std::endl;
 	}
 	TR.flush();
