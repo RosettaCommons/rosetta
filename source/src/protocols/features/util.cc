@@ -191,6 +191,7 @@ get_protocol_and_batch_id(
 			db_session->begin_transaction();
 			batch_id = batch_features->report_features(batch_id, protocol_id, batch_name, batch_description, db_session);
 			db_session->force_commit_transaction();
+			write_features_reporters_table(features_reporters, db_session);
 			write_batch_reports_table(features_reporters, batch_id, db_session);
 
 			send_new_ids_to_head_node=true;
@@ -243,28 +244,21 @@ write_features_reporters_table(
 
 	features_reporters_schema.write(db_session);
 
-	//Only report features that aren't already in the database
-	string select_string =
-		"SELECT *\n"
-		"FROM\n"
-		"	features_reporters\n"
-		"WHERE\n"
-		"	report_name = ?;";
-	statement select_stmt(safely_prepare_statement(select_string, db_session));
-
-	string insert_string = "INSERT INTO features_reporters (report_name) VALUES (?);";
-	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
+  std::vector< std::string > column_names;
+	column_names.push_back("report_name");
+		std::vector< std::string > values;
 
 	BOOST_FOREACH(FeaturesReporterOP const & reporter, features_reporters){
 		string const report_name(reporter->type_name());
-		select_stmt.bind(1,report_name);
 
-		result res(safely_read_from_database(select_stmt));
-		if(!res.next()) {
-			insert_stmt.bind(1, report_name);
-			safely_write_to_database(insert_stmt);
-		}
+		values.clear();
+		values.push_back( report_name );
+		insert_or_ignore(
+			"features_reporters", column_names,
+			values, db_session
+		);
 	}
+
 }
 
 void

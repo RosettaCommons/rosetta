@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file test/protocols/features/InterfaceFeaturesTests.cxxtest.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -62,9 +62,9 @@ class InterfaceFeaturesTests : public CxxTest::TestSuite {
 	InterfaceFeaturesOP reporter_;
 	std::string db_name_;
 	utility::sql_database::sessionOP db_session_;
-	
+
 public:
-	
+
 	void setUp(){
 		core_init();
 		core::import_pose::pose_from_pdb(multimer_, "protocols/features/2J88.pdb");
@@ -74,45 +74,45 @@ public:
 		db_session_ = basic::database::get_db_session(db_name_);
 		TR <<"Setup"<<std::endl;
 	}
-	
+
 	void tearDown(){
 		multimer_.clear();
 	}
-	
+
 	void test_reporter(){
 		interface_test();
 		TR << "Testing features reporter" << std::endl;
 		utility::vector1<bool> relavant_residues(multimer_.total_residue(), true);
-		
+
 		reporter_->set_dSASA_cutoff(150); //Not real value
 		reporter_->set_pack_separated(false); //speed
 		reporter_->set_pack_together(false);
-		
+
 		vector1<std::string> interfaces;
 		interfaces.push_back("L_H");
 		//interfaces.push_back("L_A");
 		//interfaces.push_back("H_A");
 		interfaces.push_back("LH_A");
-		
+
 		reporter_->set_interface_chains(interfaces);
 		reporter_->set_dSASA_cutoff(150);
 		reporter_->set_pack_separated(false);
 		reporter_->set_pack_together(false); //speed
 		reporter_->set_compute_packstat(false); //speed
-		
+
 		StructureFeaturesOP structure_reporter = new StructureFeatures();
 		structure_reporter->write_schema_to_db(db_session_);
-		StructureID parent_id = structure_reporter->report_features(0, db_session_);
-		
+		StructureID parent_id = structure_reporter->report_features(0, db_session_, "output_tag", "input_tag");
+
 		ResidueFeaturesOP residue_reporter = new ResidueFeatures();
 		residue_reporter->write_schema_to_db(db_session_);
 		residue_reporter->report_features(multimer_, relavant_residues, parent_id, db_session_);
-		
+
 		TS_ASSERT_THROWS_NOTHING(reporter_->write_schema_to_db(db_session_));
 		TS_ASSERT_THROWS_NOTHING(reporter_->report_features(multimer_, relavant_residues, parent_id, db_session_));
-		
+
 	}
-	
+
 	void interface_test(){
 		TR << "Testing Interface combos" << std::endl;
 		utility::vector1<std::string> interfaces;
@@ -124,5 +124,3 @@ public:
 		TS_ASSERT_EQUALS(interfaces.size(), 6);
 	}
 };
-
-

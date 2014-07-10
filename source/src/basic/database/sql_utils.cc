@@ -669,59 +669,80 @@ insert_or_ignore(
 	string statement_string="";
 	switch(db_session->get_db_mode()){
 		case utility::sql_database::DatabaseMode::mysql:{
-			statement_string = "INSERT IGNORE into "+table_name+"(";
+			statement_string = "INSERT IGNORE into " + table_name + " (";
 			for(size_t i=0; i<column_names.size(); i++){
-				statement_string+=column_names[i];
+				statement_string += column_names[i];
 				if(i != column_names.size()-1){
-					statement_string+=",";
+					statement_string += ",";
 				}
 			}
 
 			statement_string+=") VALUES(";
 			for(size_t i=0; i<values.size(); i++){
-				statement_string+=values[i];
+				statement_string += "?";
 				if(i != column_names.size()-1){
-					statement_string+=",";
+					statement_string += ",";
 				}
 			}
-			statement_string+=");";
 
-			statement stmt = (*db_session) << statement_string;
+			statement_string += ");";
+
+			statement stmt( safely_prepare_statement(statement_string, db_session) );
+			for(size_t i=0; i<values.size(); i++){
+				stmt.bind(i+1, values[i]);
+			}
+
 			safely_write_to_database(stmt);
 			break;
 		}
 		case utility::sql_database::DatabaseMode::postgres:{
 			//This is a dirty postgres hack and seems to be the easiest workaround for lack of INSERT IGNORE support in postgres
-			string select_statement_string = "SELECT * FROM "+table_name+" WHERE ";
+			string select_statement_string = "SELECT * FROM " + table_name + " WHERE ";
 			for(size_t i=0; i<column_names.size(); i++){
-				select_statement_string+=column_names[i] + "=" + values[i];
+				select_statement_string += column_names[i] + "=?";
 				if(i != column_names.size()-1){
-					select_statement_string+=" AND ";
+					select_statement_string += " AND ";
 				}
 			}
 			select_statement_string+=";";
 
-			statement select_stmt = (*db_session) << select_statement_string;
+			statement select_stmt ( safely_prepare_statement(
+					select_statement_string, db_session
+				));
+
+			for(size_t i=0; i<values.size(); i++){
+				select_stmt.bind(i+1, values[i]);
+			}
+
 			result res = safely_read_from_database(select_stmt);
 
 			if(!res.next()){
-				statement_string += "INSERT into "+table_name+"(";
+				statement_string += "INSERT into " + table_name + "(";
 				for(size_t i=0; i<column_names.size(); i++){
-					statement_string+=column_names[i];
+					statement_string += column_names[i];
 					if(i != column_names.size()-1){
-						statement_string+=",";
+						statement_string += ",";
 					}
 				}
 
-				statement_string+=") VALUES(";
+				statement_string += ") VALUES(";
 				for(size_t i=0; i<values.size(); i++){
-					statement_string+=values[i];
+					statement_string += "?";
 					if(i != column_names.size()-1){
-						statement_string+=",";
+						statement_string += ",";
 					}
 				}
-				statement_string+=");";
-				statement stmt = (*db_session) << statement_string;
+
+				statement_string += ");";
+
+				statement stmt ( safely_prepare_statement(
+						statement_string, db_session
+					));
+
+				for(size_t i=0; i<values.size(); i++){
+					stmt.bind(i+1, values[i]);
+				}
+
 				safely_write_to_database(stmt);
 			}
 			break;
@@ -737,14 +758,18 @@ insert_or_ignore(
 
 			statement_string+=") VALUES(";
 			for(size_t i=0; i<values.size(); i++){
-				statement_string+=values[i];
+				statement_string += "?";
 				if(i != column_names.size()-1){
 					statement_string+=",";
 				}
 			}
 			statement_string+=");";
 
-			statement stmt = (*db_session) << statement_string;
+			statement stmt ( safely_prepare_statement(statement_string, db_session) );
+			for(size_t i=0; i<values.size(); i++){
+				stmt.bind(i+1, values[i]);
+			}
+
 			safely_write_to_database(stmt);
 			break;
 		}

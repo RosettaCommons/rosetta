@@ -57,7 +57,7 @@ static basic::Tracer tr("core.scoring.LinearChainbreak", basic::t_info);
 
   LinearChainbreakEnergy::LinearChainbreakEnergy()
     : parent(new LinearChainbreakEnergyCreator) {
-    initialize(core::SZ_MAX);
+    initialize( std::numeric_limits<core::Size>::max() );
   }
 
   LinearChainbreakEnergy::LinearChainbreakEnergy(Size allowable_sequence_sep)

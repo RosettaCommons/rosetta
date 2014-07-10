@@ -55,13 +55,6 @@ public:
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief collect all the feature data for the pose use
-	StructureID
-	report_features(
-		core::Size batch_id,
-		utility::sql_database::sessionOP db_session
-	);
-
 	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(

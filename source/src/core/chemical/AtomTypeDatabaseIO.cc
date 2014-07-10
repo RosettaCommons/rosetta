@@ -127,17 +127,17 @@ AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
 	string const table_name("atom_type_property_values");
 	std::vector<string> column_names;
 	column_names.push_back("property");
-	insert_or_ignore(table_name, column_names, list_of("'ACCEPTOR'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'ACCEPTOR'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'DONOR'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'POLAR_HYDROGEN'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'AROMATIC'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'H2O'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'ORBITALS'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'VIRTUAL'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'SP2_HYBRID'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'SP3_HYBRID'"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("'RING_HYBRID'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("ACCEPTOR"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("ACCEPTOR"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("DONOR"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("POLAR_HYDROGEN"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("AROMATIC"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("H2O"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("ORBITALS"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("VIRTUAL"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("SP2_HYBRID"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("SP3_HYBRID"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("RING_HYBRID"), db_session);
 
 }
 

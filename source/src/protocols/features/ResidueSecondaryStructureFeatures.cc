@@ -80,14 +80,14 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	dssp_codes.write(db_session);
 
 	std::vector<std::string> dssp_cols = list_of("code")("label");
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'H'")("'H: a-Helix'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'E'")("'E: b-Sheet'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'T'")("'T: HB Turn'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'G'")("'G: 3/10 Helix'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'B'")("'B: b-Bridge'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'S'")("'S: Bend'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("'I'")("'I: pi-Helix'"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("' '")("'Irregular'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("H")("H: a-Helix"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("E")("E: b-Sheet"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("T")("T: HB Turn"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("G")("G: 3/10 Helix"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("B")("B: b-Bridge"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("S")("S: Bend"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("I")("I: pi-Helix"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of(" ")("Irregular"), db_session);
 
 	/******residue_secondary_structure******/
 	Column struct_id("struct_id", new DbBigInt(), false);

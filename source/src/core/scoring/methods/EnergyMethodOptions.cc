@@ -61,7 +61,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	intrares_elec_correction_scale_( 0.0 ),
 	hbond_options_(new hbonds::HBondOptions()),
 	etable_options_(new core::scoring::etable::EtableOptions()),
-	cst_max_seq_sep_(core::SZ_MAX),
+	cst_max_seq_sep_( std::numeric_limits<core::Size>::max() ),
 	cartbonded_len_(-1.0),
 	cartbonded_ang_(-1.0),
 	cartbonded_tors_(-1.0),

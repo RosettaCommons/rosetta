@@ -57,6 +57,15 @@ public:
 		bool use_transactions=true,
 		core::Size cache_size=2000);
 
+	ReportToDB(
+		std::string const & name,
+		utility::sql_database::sessionOP db_session,
+		std::string const & batch_name,
+		std::string const & batch_description,
+		bool use_transactions=true,
+		core::Size cache_size=2000
+	);
+
 	ReportToDB(ReportToDB const & src);
 
 	virtual ~ReportToDB();
@@ -214,6 +223,13 @@ public:
 	StructureID
 	get_last_struct_id() const;
 
+protected:
+
+	/// @brief Checks if structure tags are not null and updates them
+	/// to current job tags
+	void
+	ensure_structure_tags_are_ready();
+
 private:
 	utility::sql_database::sessionOP db_session_;
 	std::string batch_name_;
@@ -228,8 +244,16 @@ private:
 	core::Size protocol_id_;
 	core::Size batch_id_;
 
+	/// @brief True if structure_tag_ has been set to a custom value
+	/// If false, will be reset with the JobDistributorTag
+	bool custom_structure_tag_;
 	std::string structure_tag_;
+
+	/// @brief True if structure_input_tag_ has been set to a custom value
+	/// If false, will be reset with the JobDistributorInputTag
+	bool custom_structure_input_tag_;
 	std::string structure_input_tag_;
+
 	StructureID last_struct_id_;
 
 	// initialized in parse_my_tag

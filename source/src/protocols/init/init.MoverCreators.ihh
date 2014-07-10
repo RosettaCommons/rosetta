@@ -78,6 +78,7 @@
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
 #include <protocols/features/ReportToDBCreator.hh> //this is a mover
+#include <protocols/features/TrajectoryReportToDBCreator.hh> //this is also a mover
 
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 #include <protocols/fldsgn/CircularPermutationCreator.hh>

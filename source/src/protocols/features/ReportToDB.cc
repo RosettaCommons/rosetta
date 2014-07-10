@@ -46,6 +46,7 @@
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
@@ -147,7 +148,9 @@ ReportToDB::ReportToDB():
 	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
+	custom_structure_tag_(false),
 	structure_tag_(""),
+	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
 	task_factory_(new TaskFactory()),
@@ -169,7 +172,9 @@ ReportToDB::ReportToDB(string const & type):
 	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
+	custom_structure_tag_(false),
 	structure_tag_(""),
+	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
 	task_factory_(new TaskFactory()),
@@ -196,7 +201,44 @@ ReportToDB::ReportToDB(
 	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
+	custom_structure_tag_(false),
 	structure_tag_(""),
+	custom_structure_input_tag_(false),
+	structure_input_tag_(""),
+	last_struct_id_(0),
+	task_factory_(new TaskFactory()),
+	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
+	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
+	features_reporters_(),
+	initialized( false )
+{
+	if(batch_name == ""){
+		utility::excn::EXCN_BadInput("Failed to create ReportToDB instance because the batch name must not be ''.");
+	}
+
+	initialize_reporters();
+}
+
+ReportToDB::ReportToDB(
+	string const & name,
+	sessionOP db_session,
+	string const & batch_name,
+	string const & batch_description,
+	bool use_transactions,
+	Size cache_size
+) :
+	Mover(name),
+	db_session_(db_session),
+	batch_name_(batch_name),
+	batch_description_(batch_description),
+	use_transactions_(use_transactions),
+	cache_size_(cache_size),
+	remove_xray_virt_(false),
+	protocol_id_(0),
+	batch_id_(0),
+	custom_structure_tag_(false),
+	structure_tag_(""),
+	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
 	task_factory_(new TaskFactory()),
@@ -222,7 +264,9 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	remove_xray_virt_(src.remove_xray_virt_),
 	protocol_id_(src.protocol_id_),
 	batch_id_(src.batch_id_),
+	custom_structure_tag_(src.custom_structure_tag_),
 	structure_tag_(src.structure_tag_),
+	custom_structure_input_tag_(src.custom_structure_input_tag_),
 	structure_input_tag_(src.structure_input_tag_),
 	last_struct_id_(src.last_struct_id_),
 	task_factory_(src.task_factory_),
@@ -325,6 +369,7 @@ ReportToDB::set_structure_tag(
 	std::string const & setting
 ) {
 	structure_tag_ = setting;
+	custom_structure_tag_ = true;
 }
 
 std::string
@@ -337,6 +382,7 @@ ReportToDB::set_structure_input_tag(
 	std::string const & setting
 ) {
 	structure_input_tag_ = setting;
+	custom_structure_input_tag_ = true;
 }
 
 std::string
@@ -732,10 +778,23 @@ ReportToDB::apply( Pose& pose ){
 	//Write linking tables after we have a valid batch_id
 //	write_linking_tables();
 
+	ensure_structure_tags_are_ready();
 	StructureID struct_id = report_structure_features();
 	report_features(pose, struct_id, relevant_residues);
 
 	last_struct_id_ = struct_id;
+}
+
+void
+ReportToDB::ensure_structure_tags_are_ready()
+{
+	if( (!custom_structure_tag_) || (structure_tag_ == "") ) {
+		structure_tag_ = JobDistributor::get_instance()->current_output_name();
+	}
+
+	if( (!custom_structure_input_tag_) || (structure_input_tag_ == "") ) {
+		structure_input_tag_ = JobDistributor::get_instance()->current_job()->input_tag();
+	}
 }
 
 StructureID
@@ -746,13 +805,9 @@ ReportToDB::report_structure_features() const {
 			db_session_->begin_transaction();
 		}
 
-		if(structure_tag_ != "" && structure_input_tag_ != ""){
-			struct_id = structure_features_->report_features(
-				batch_id_, db_session_, structure_tag_, structure_input_tag_);
-		} else {
-			struct_id = structure_features_->report_features(
-				batch_id_, db_session_);
-		}
+		struct_id = structure_features_->report_features(
+			batch_id_, db_session_, structure_tag_, structure_input_tag_
+		);
 
 		if(use_transactions_){
 			db_session_->commit_transaction();

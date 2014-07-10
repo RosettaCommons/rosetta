@@ -25,8 +25,6 @@
 #include <utility/tools/make_vector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <numeric/random/random.hh>
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -151,22 +149,7 @@ StructureFeatures::features_reporter_dependencies() const {
 	return dependencies;
 }
 
-
-//@details missing struct_id and input/output tags
-StructureID
-StructureFeatures::report_features(
-	Size batch_id,
-	sessionOP db_session
-){
-	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
-	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	StructureID struct_id(
-		report_features(
-			batch_id, db_session, output_tag, input_tag));
-	return struct_id;
-}
-
-//@details missing struct_id and input/output tags
+//@details missing struct_id
 StructureID
 StructureFeatures::report_features(
 	Size batch_id,

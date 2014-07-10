@@ -60,10 +60,13 @@
 
 			<feature name=SandwichFeatures/>
     </ReportToDB>
+    <TrajectoryReportToDB name=trajectory_features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the trajectory report to db mover." task_operations=all stride=2>
+    </TrajectoryReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name=init_struct/>
 		<Add mover_name=features_reporter/>
+		<Add mover_name=trajectory_features_reporter/>
 	</PROTOCOLS>
 </ROSETTASCRIPTS>
 

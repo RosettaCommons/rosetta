@@ -52,6 +52,8 @@
 #include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
 #include <protocols/features/UnrecognizedAtomFeatures.hh>
 
+#include <protocols/features/TrajectoryReportToDB.hh>
+
 // Project Headers
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
@@ -144,6 +146,10 @@ public:
 		features_reporters_.push_back(new strand_assembly::SandwichFeatures());
 		features_reporters_.push_back(new strand_assembly::StrandBundleFeatures());
 		features_reporters_.push_back(new UnrecognizedAtomFeatures());
+
+    // Use arbitrary outputtag and inputtag, instead of being dependent on getting this from JD2
+    output_tag_ = "FeaturesReporterTests_outputtag";
+    input_tag_ = "FeaturesReporterTests_inputtag";
 	}
 
 	void test_main() {
@@ -175,7 +181,7 @@ public:
 		using protocols::features::StructureID;
 
 		tr << "Creating structure entry." << std::endl;
-		StructureID parent_id = structure_reporter_->report_features(batch_id_, db_session_);
+		StructureID parent_id = structure_reporter_->report_features(batch_id_, db_session_, output_tag_, input_tag_);
 		tr << "Created structure id:" << parent_id << std::endl;
 
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
@@ -191,15 +197,15 @@ public:
 
 		tr << "Creating structure entry." << std::endl;
 
-		StructureID struct_id_one = structure_reporter_->report_features(batch_id_, db_session_);
+		StructureID struct_id_one = structure_reporter_->report_features(batch_id_, db_session_, output_tag_, input_tag_);
 		tr << "Created structure id:" << struct_id_one << std::endl;
 
-		StructureID struct_id_two = structure_reporter_->report_features(batch_id_, db_session_);
+		StructureID struct_id_two = structure_reporter_->report_features(batch_id_, db_session_, output_tag_, input_tag_);
 		tr << "Created structure id:" << struct_id_two << std::endl;
 
 		TS_ASSERT(struct_id_one == 1);
 		TS_ASSERT(struct_id_two == 2);
-		
+
 		// Create a second database session in a separate partition
 		// Delete the partitioned sqlite database
 		utility::file::file_delete(database_filename_ + "_1");
@@ -217,16 +223,41 @@ public:
 
 		tr << "Creating partitioned structure entry in database partition 1, structure prefix: " << structure_prefix << std::endl;
 
-		StructureID struct_id_one_partition1 = structure_reporter_->report_features(batch_id_, db_session_p1);
+		StructureID struct_id_one_partition1 = structure_reporter_->report_features(batch_id_, db_session_p1, output_tag_, input_tag_);
 		tr << "Created structure id:" << struct_id_one_partition1 << std::endl;
 
-		StructureID struct_id_two_partition1 = structure_reporter_->report_features(batch_id_, db_session_p1);
+		StructureID struct_id_two_partition1 = structure_reporter_->report_features(batch_id_, db_session_p1, output_tag_, input_tag_);
 		tr << "Created structure id:" << struct_id_two_partition1 << std::endl;
 
 
 		TS_ASSERT(struct_id_one_partition1 == 1 + structure_prefix);
 		TS_ASSERT(struct_id_two_partition1 == 2 + structure_prefix);
 	}
+
+  void test_trajectory_report_to_db() {
+    using protocols::features::TrajectoryReportToDBOP;
+    TrajectoryReportToDBOP traj_reporter = new protocols::features::TrajectoryReportToDB(
+      db_session_, "fake_batch_name", "fake_batch_description",
+      false, // false = don't use transactions
+      1 // cache_size
+    );
+
+    // Verify that default stride is 1 (to help make sure changes to this default are noticed)
+    TS_ASSERT(traj_reporter->get_stride() == 1);
+
+    TS_ASSERT_THROWS_NOTHING( traj_reporter->set_stride(2) );
+    TS_ASSERT( traj_reporter->get_stride() == 2 );
+
+    TS_ASSERT_THROWS_NOTHING( traj_reporter->apply(*pose_1ten_) );
+
+    // Verify that cycle_counts is initialized correctly
+    TS_ASSERT( traj_reporter->get_cycle_counts().size() == 1 );
+    TS_ASSERT( traj_reporter->get_cycle_counts().begin()->second == 1 );
+
+    // Verify that cycle counting is working correctly for same pose apply
+    TS_ASSERT_THROWS_NOTHING( traj_reporter->apply(*pose_1ten_) );
+    TS_ASSERT( traj_reporter->get_cycle_counts().begin()->second == 2 );
+  }
 
 private:
 	core::pose::PoseOP pose_1ten_;
@@ -240,4 +271,7 @@ private:
 
 	std::string database_filename_;
 	utility::sql_database::sessionOP db_session_;
+
+  std::string output_tag_;
+  std::string input_tag_;
 };

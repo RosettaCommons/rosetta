@@ -57,6 +57,7 @@
 #include <protocols/features/ScreeningFeaturesCreator.hh>
 #include <protocols/features/ScoreFunctionFeaturesCreator.hh>
 #include <protocols/features/TaskOperationFeaturesCreator.hh>
+#include <protocols/features/TrajectoryMapFeaturesCreator.hh>
 #include <protocols/features/UnrecognizedAtomFeaturesCreator.hh>
 //#include <protocols/features/BatchFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>

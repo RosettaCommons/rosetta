@@ -33,9 +33,11 @@ class PolicyFactory {
   /// given type, exits otherwise. The resulting instance is constructed with a
   /// copy of the given set of fragments, which may be optionally filtered by
   /// rank (see num_fragments).
-  static PolicyOP get_policy(const std::string& policy_name,
-                             core::fragment::FragSetCOP fragments,
-                             core::Size num_fragments = core::SZ_MAX);
+  static PolicyOP get_policy(
+		const std::string& policy_name,
+		core::fragment::FragSetCOP fragments,
+		core::Size num_fragments = std::numeric_limits<core::Size>::max()
+	);
 };
 
 }  // namespace nonlocal

@@ -97,6 +97,7 @@ static MoverRegistrator< enzdes::PackRotamersMoverPartGreedyCreator > reg_PackRo
 static MoverRegistrator< enzdes::PredesignPerturbMoverCreator > reg_PredesignPerturbMoverCreator;
 
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
+static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryReportToDBCreator;
 
 static MoverRegistrator< fldsgn::BluePrintBDRCreator > reg_BluePrintBDRCreator;
 static MoverRegistrator< fldsgn::CircularPermutationCreator > reg_CircularPermutationCreator;

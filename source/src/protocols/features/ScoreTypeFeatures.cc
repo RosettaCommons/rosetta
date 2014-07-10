@@ -196,7 +196,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 			std::vector<std::string> values;
 			values.push_back(protocol_id_s);
 			values.push_back(score_type_id_s);
-			values.push_back("'" + score_type + "'");
+			values.push_back(score_type);
 
 			insert_or_ignore(table_name, column_names,	values,	db_session);
 		}
