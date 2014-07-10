@@ -77,6 +77,9 @@ public:
 	set_extra_minimize_res( utility::vector1< core::Size > setting );
 
 	void
+	set_extra_minimize_chi_res( utility::vector1< core::Size > setting );
+
+	void
 	set_score_function( core::scoring::ScoreFunctionOP const & scorefxn );
 
 	core::scoring::ScoreFunctionOP const &
@@ -117,6 +120,7 @@ private:
 	toolbox::AllowInsertOP allow_insert_;
 
 	utility::vector1< core::Size > extra_minimize_res_;
+	utility::vector1< core::Size > extra_minimize_chi_res_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 

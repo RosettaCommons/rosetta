@@ -292,6 +292,8 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.
 	protocols::farna::let_rigid_body_jumps_move( mm, pose, move_first_rigid_body_ );
 
+	for ( Size n = 1; n <= extra_minimize_chi_res_.size(); n++ )	mm.set( id::TorsionID( extra_minimize_chi_res_[n], id::CHI, 1 ), true );
+
 	// vary bond geometry
 	if ( vary_bond_geometry_ ) {
 		// Let additional degrees of freedom vary -- but apply constraints to stay near
@@ -359,6 +361,12 @@ RNA_Minimizer::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 void
 RNA_Minimizer::set_extra_minimize_res( utility::vector1< core::Size > setting ){
 	extra_minimize_res_ = setting;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void
+RNA_Minimizer::set_extra_minimize_chi_res( utility::vector1< core::Size > setting ){
+	extra_minimize_chi_res_ = setting;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

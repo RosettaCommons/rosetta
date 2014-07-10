@@ -776,10 +776,7 @@ RNA_StructureParameters::insert_base_pair_jumps( pose::Pose & pose, bool & succe
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( i ) );
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( i ) );
 
-		if ( allow_insert_->get( jump_pos1 ) || allow_insert_->get( jump_pos2 ) ||
-				 ( allow_insert_->get_domain( jump_pos1 ) != allow_insert_->get_domain( jump_pos2 ) ) ) {
-			add_new_RNA_jump( pose, i, success );
-		}
+		if ( moveable_jump( jump_pos1, jump_pos2 ) )	add_new_RNA_jump( pose, i, success );
 
 		if (!success) return;
 
@@ -1129,6 +1126,27 @@ RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 
 /////////////////////////////////////////////////////////
 bool
+RNA_StructureParameters::moveable_jump( id::AtomID const & jump_atom_id1,
+																				id::AtomID const & jump_atom_id2 ) const {
+	if ( allow_insert_->get( jump_atom_id1 ) ) return true;
+	if ( allow_insert_->get( jump_atom_id2 ) ) return true;
+	if ( allow_insert_->get_domain( jump_atom_id1 ) != allow_insert_->get_domain( jump_atom_id2 ) ) return true;
+	return false;
+}
+
+/////////////////////////////////////////////////////////
+// should this really be separate from AtomID-base moveable_jump?
+bool
+RNA_StructureParameters::moveable_jump( Size const jump_pos1,
+																				Size const jump_pos2 ) const {
+	if ( allow_insert_->get( jump_pos1 ) ) return true;
+	if ( allow_insert_->get( jump_pos2 ) ) return true;
+	if ( allow_insert_->get_domain( jump_pos1 ) != allow_insert_->get_domain( jump_pos2 ) ) return true;
+	return false;
+}
+
+/////////////////////////////////////////////////////////
+bool
 RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 {
 
@@ -1159,8 +1177,7 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 		Residue const & rsd2 = pose.residue( jump_pos2 ); // Unused variable causes warning.
 		AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 ); // Unused variable causes warning.
 
-		if ( allow_insert_->get( jump_atom_id1 ) ||
-				 allow_insert_->get( jump_atom_id2 ) ) break; // found an OK jump.
+		if ( moveable_jump( jump_atom_id1, jump_atom_id2 ) ) break;
 
 	}
 	if (ntries >= MAX_TRIES ) return false;

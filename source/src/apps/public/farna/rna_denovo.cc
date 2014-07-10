@@ -96,6 +96,7 @@ OPT_KEY( Boolean, allow_bulge )
 OPT_KEY( Boolean, allow_consecutive_bulges )
 OPT_KEY( IntegerVector, allowed_bulge_res )
 OPT_KEY( IntegerVector, extra_minimize_res )
+OPT_KEY( IntegerVector, extra_minimize_chi_res )
 OPT_KEY( Boolean, root_at_first_rigid_body )
 OPT_KEY( Boolean, move_first_rigid_body )
 OPT_KEY( Boolean, output_filters )
@@ -263,6 +264,7 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_allow_consecutive_bulges( option[ allow_consecutive_bulges ]() ) ;
 	rna_de_novo_protocol.set_allowed_bulge_res( option[ allowed_bulge_res ]() ) ;
 	rna_de_novo_protocol.set_extra_minimize_res( option[ extra_minimize_res ]() ) ;
+	rna_de_novo_protocol.set_extra_minimize_chi_res( option[ extra_minimize_chi_res ]() ) ;
 
 	rna_de_novo_protocol.set_refine_pose_list( refine_pose_list );
 	if ( option[refine_native]() || option[refine_silent_file]() != "" ) rna_de_novo_protocol.set_rounds( 1 );
@@ -341,6 +343,7 @@ try {
   NEW_OPT( allow_bulge , "Automatically virtualize residues that are not energetically stable", false );
   NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  );
   NEW_OPT( extra_minimize_res, "Extra residues during minimize step", blank_size_vector  );
+  NEW_OPT( extra_minimize_chi_res, "Extra side-chain chis to move during minimize step", blank_size_vector  );
   NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );
   NEW_OPT( binary_output, "force output to binary rna silentstruct", false );
   NEW_OPT( move_first_rigid_body, "first_rigid_body is usually kept frozen, but might be useful to sample it.", false );

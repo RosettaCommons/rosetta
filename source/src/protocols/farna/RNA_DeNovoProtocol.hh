@@ -222,6 +222,9 @@ public:
 	set_extra_minimize_res( utility::vector1< core::Size > setting );
 
 	void
+	set_extra_minimize_chi_res( utility::vector1< core::Size > setting );
+
+	void
 	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting );
 
 	void
@@ -397,6 +400,7 @@ private:
 	utility::vector1< core::Size > input_res_;
 	utility::vector1< core::Size > allowed_bulge_res_;
 	utility::vector1< core::Size > extra_minimize_res_;
+	utility::vector1< core::Size > extra_minimize_chi_res_;
 	core::Real chunk_coverage_;
 
 	bool staged_constraints_;

@@ -350,19 +350,27 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 			if ( close_loops_at_end_ ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
 
-			// A bunch of filterings
+			// A bunch of filters
 			if ( filter_chain_closure_ ) {
-				if ( !rna_loop_closer_->check_closure(
-						pose, filter_chain_closure_distance_ ) ) continue;
+				if ( !rna_loop_closer_->check_closure( pose, filter_chain_closure_distance_ ) ) {
+					TR << "Failed chain closure filter." << std::endl;
+					continue;
+				}
 			}
 
 			if (filter_lores_base_pairs_) {
-				if ( !rna_structure_parameters_->check_base_pairs( pose ) ) continue;
+				if ( !rna_structure_parameters_->check_base_pairs( pose ) ) {
+					TR << "Failed base pairing filter." << std::endl;
+					continue;
+				}
 			}
 
 			lores_score_final_ = (*denovo_scorefxn_)( pose );
 			if ( autofilter_ ) {
-				if ( !check_score_filter( lores_score_final_, all_lores_score_final_ ) ) continue;
+				if ( !check_score_filter( lores_score_final_, all_lores_score_final_ ) ) {
+					TR << "Failed score filter." << std::endl;
+					continue;
+				}
 			}
 			break; //Pass all the filters, early exit
 		} // ++ntries <= max_tries
@@ -549,6 +557,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	rna_minimizer_->vary_bond_geometry( vary_bond_geometry_ );
 	rna_minimizer_->set_extra_minimize_res( extra_minimize_res_ );
+	rna_minimizer_->set_extra_minimize_chi_res( extra_minimize_chi_res_ );
 	rna_minimizer_->set_move_first_rigid_body( move_first_rigid_body_ );
 	rna_minimizer_->use_coordinate_constraints( minimizer_use_coordinate_constraints_ );
 
@@ -1252,6 +1261,12 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 void
 RNA_DeNovoProtocol::set_extra_minimize_res( utility::vector1< core::Size > setting ){
 	extra_minimize_res_ = setting;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::set_extra_minimize_chi_res( utility::vector1< core::Size > setting ){
+	extra_minimize_chi_res_ = setting;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
