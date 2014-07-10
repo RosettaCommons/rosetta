@@ -776,7 +776,8 @@ RNA_StructureParameters::insert_base_pair_jumps( pose::Pose & pose, bool & succe
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( i ) );
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( i ) );
 
-		if (allow_insert_->get( jump_pos1 ) || allow_insert_->get( jump_pos2 ) ) {
+		if ( allow_insert_->get( jump_pos1 ) || allow_insert_->get( jump_pos2 ) ||
+				 ( allow_insert_->get_domain( jump_pos1 ) != allow_insert_->get_domain( jump_pos2 ) ) ) {
 			add_new_RNA_jump( pose, i, success );
 		}
 
@@ -922,7 +923,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			count++;
 			jump_points(1, count) = rna_pairing_list_[which_pairing].pos1;
 			jump_points(2, count) = rna_pairing_list_[which_pairing].pos2;
-			//			std::cout << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			//			TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 
 
@@ -936,9 +937,9 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			count++;
 			jump_points(1, count) = res_list1[ pairing_index_in_list1 ];
 			jump_points(2, count) = res_list2[ pairing_index_in_list2 ];
-			//			std::cout << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			//			TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
-		//		std::cout << std::endl;
+		//		TR << std::endl;
 
 		// Then, to fill out pairings, look at remaining possible pairing sets (these
 		// should typically be Watson-Crick stems, but this setup is general )
@@ -970,7 +971,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			Size const pairing_index_in_set( static_cast<Size>( RG.uniform() * stem_pairing_sets[m].size() )  + 1 );
 			Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
 
-			//			std::cout << "USING SET: " << m  << " ==> " << pairing_index_in_set << std::endl;
+			//			std::cout  << "USING SET: " << m  << " ==> " << pairing_index_in_set << std::endl;
 
 			count++;
 			jump_points(1, count) = rna_pairing_list_[which_pairing].pos1;
@@ -985,9 +986,9 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		////////////////////////////////////////////////////////////////////////////////
 		//f.tree_from_jumps_and_cuts( nres, num_pairings_to_force, jump_points, cuts, true /* verbose */);
 
-		//		std::cout << "Making attempt " << ntries << std::endl;
+		//		TR << "Making attempt " << ntries << std::endl;
 		//		for (Size n = 1; n <= num_pairings_to_force; n++ ){
-		//			std::cout << "JUMPS " << jump_points(1, n) <<
+		//			TR << "JUMPS " << jump_points(1, n) <<
 		//				" " << 	jump_points(2, n)  <<  std::endl;
 		//		}
 
