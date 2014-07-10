@@ -16,6 +16,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -27,6 +28,7 @@
 // C++ headers
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <cmath>
 
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
@@ -52,7 +54,9 @@ Polynomial_1d::Polynomial_1d(
 	xmin_(xmin), xmax_(xmax), min_val_(min_val), max_val_(max_val), root1_(root1), root2_(root2),
 	degree_(degree),
 	coefficients_(coefficients)
-{}
+{
+	check_invariants();
+}
 
 Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
 	utility::pointer::ReferenceCount( src ),
@@ -60,9 +64,35 @@ Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
 	xmin_(src.xmin_), xmax_(src.xmax_), root1_(src.root1_), root2_(src.root2_),
 	degree_(src.degree_),
 	coefficients_(src.coefficients_)
-{}
+{
+	check_invariants();
+}
 
 Polynomial_1d::~Polynomial_1d(){}
+
+void
+Polynomial_1d::check_invariants() const
+{
+	if(xmin_ > xmax_){
+		std::stringstream msg;
+		msg	<< "Polnomial_1d is badly formed because (xmin: '" << xmin_ << "') > (xmax: '" << xmax_ << "')";
+		throw utility::excn::EXCN_Msg_Exception(msg.str() );
+	}
+
+	if(coefficients_.size() == 0){
+		std::stringstream msg;
+		msg	<< "Polnomial_1d is badly formed because no coefficients were provided";
+		throw utility::excn::EXCN_Msg_Exception(msg.str() );
+	}
+
+	if(coefficients_.size() != degree_){
+		std::stringstream msg;
+		msg	<< "Polnomial_1d is badly formed because the degree was given to be '" << degree_ << "' while '" << coefficients_.size() << "' coefficients were provided, while they should be equal.";
+		throw utility::excn::EXCN_Msg_Exception(msg.str() );
+	}
+
+
+}
 
 string
 Polynomial_1d::name() const

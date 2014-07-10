@@ -79,6 +79,80 @@ public:
     UT << p;
   }
 
+	void test_polynomial_1d_check_invariants(){
+
+		utility::vector1< core::Real > coefs;
+		coefs.push_back(5);
+		coefs.push_back(0);
+		coefs.push_back(-1);
+
+		try{
+			// xmax < xmin
+			core::scoring::hbonds::Polynomial_1d p(
+				"test_polynomial",
+				core::scoring::hbonds::hbgd_AHdist,
+				-3 /*xmin*/,
+				-4 /*xmax*/,
+				10.0 /*min_val*/,
+				10.0 /*max_val*/,
+				-.2 /*root1*/,
+				.2 /*root2*/,
+				3 /*degree*/,
+				coefs);
+			TS_ASSERT(false);
+		} catch {}
+
+		try{
+			// max_val < min_val
+			core::scoring::hbonds::Polynomial_1d p(
+				"test_polynomial",
+				core::scoring::hbonds::hbgd_AHdist,
+				-3 /*xmin*/,
+				3 /*xmax*/,
+				10.0 /*min_val*/,
+				-10.0 /*max_val*/,
+				-.2 /*root1*/,
+				.2 /*root2*/,
+				3 /*degree*/,
+				coefs);
+			TS_ASSERT(false);
+		} catch {}
+
+		try{
+			// coefficients are empty
+			utility::vector1< core::Real > empty_coefs;
+
+			core::scoring::hbonds::Polynomial_1d p(
+				"test_polynomial",
+				core::scoring::hbonds::hbgd_AHdist,
+				-3 /*xmin*/,
+				3 /*xmax*/,
+				10.0 /*min_val*/,
+				-10.0 /*max_val*/,
+				-.2 /*root1*/,
+				.2 /*root2*/,
+				3 /*degree*/,
+				empty_coefs);
+			TS_ASSERT(false);
+		} catch {}
+
+		try{
+			// degree != degree of passed in coefficients
+			core::scoring::hbonds::Polynomial_1d p(
+				"test_polynomial",
+				core::scoring::hbonds::hbgd_AHdist,
+				-3 /*xmin*/,
+				3 /*xmax*/,
+				10.0 /*min_val*/,
+				-10.0 /*max_val*/,
+				-.2 /*root1*/,
+				.2 /*root2*/,
+				2 /*degree*/,
+				empty_coefs);
+			TS_ASSERT(false);
+		} catch {}
+
+	}
 
 	void test_read_polynomials_from_database(){
 

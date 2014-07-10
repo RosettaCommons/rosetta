@@ -35,6 +35,7 @@
 // Utility Headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
@@ -48,7 +49,7 @@
 
 // C++ headers
 #include <cmath>
-
+#include <sstream>
 #include <ObjexxFCL/FArray3D.hh>
 
 
@@ -345,17 +346,32 @@ HBondDatabase::initialize_HBPoly1D()
 
 		vector1< Real > coefficients_;
 		Real c;
-		while( i <= tokens.size()){
+
+		while( i <= tokens.size() && i <= 11 + degree ){
 			stringstream buf; buf << tokens[i]; i++; buf >> c;
 			coefficients_.push_back(c);
 		}
 
-		Polynomial_1dOP p(new Polynomial_1d(
-			polynomial_name,
-			geometric_dimension,
-			xmin, xmax, min_val, max_val, root1, root2,
-			degree,
-			coefficients_));
+		Polynomial_1dOP p;
+		try{
+			p = new Polynomial_1d(
+				polynomial_name,
+				geometric_dimension,
+				xmin, xmax, min_val, max_val, root1, root2,
+				degree,
+				coefficients_);
+		} catch ( utility::excn::EXCN_Msg_Exception& excn ) {
+			std::stringstream msg;
+			msg
+				<< "ERROR: Unable to construct the polynomial '" << polynomial_name << "' "
+				<< "with the following parameters line:" << std::endl
+				<< std::endl
+				<< "    " << line << std::endl
+				<< std::endl
+				<< "because of the following errors:" << std::endl
+				<< excn.msg() << std::endl;
+			throw( utility::excn::EXCN_Msg_Exception( msg.str() ) );
+		}
 
 		if( HBPoly1D_lookup_.size() + 1 != id ){
 			stringstream message;
