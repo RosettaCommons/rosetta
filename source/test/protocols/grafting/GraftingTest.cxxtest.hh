@@ -19,6 +19,11 @@
 // Project Headers
 #include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
+#include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
+#include <protocols/grafting/simple_movers/InsertPoseIntoPoseMover.hh>
+#include <protocols/grafting/simple_movers/ReplaceRegionMover.hh>
+#include <protocols/grafting/simple_movers/KeepRegionMover.hh>
+
 #include <protocols/grafting/util.hh>
 
 // Core Headers
@@ -71,23 +76,50 @@ public:
     
 	void test_utility_functions(){
 		using namespace core::kinematics;
+		using namespace protocols::grafting::simple_movers;
 		TR<<"Return region"<<std::endl;
 		core::pose::Pose new_region = protocols::grafting::return_region(piece, 1+nter_overhang, piece.total_residue()-cter_overhang);
 		TS_ASSERT_EQUALS(insert_size, new_region.total_residue());
 		
 		TR<<"Replace Region"<<std::endl;
-		protocols::grafting::replace_region(scaffold_pose, new_region, 1, start, new_region.total_residue());
-		TS_ASSERT_EQUALS(starting_residues, scaffold_pose.total_residue());
+		TR << new_region << std::endl;
+		core::pose::Pose replaced_pose = protocols::grafting::replace_region(new_region, scaffold_pose, 1, 24, new_region.total_residue(), true);
+		TS_ASSERT_EQUALS(starting_residues, replaced_pose.total_residue());
 
-		TR<<"Delete Region"<<std::endl;
+		TR <<"Replace Region Mover" << std::endl;
+		TR << new_region << std::endl;
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
+		ReplaceRegionMover replacer = ReplaceRegionMover(new_region, 1, 24, new_region.total_residue());
+		replacer.apply(scaffold_copy);
+		TS_ASSERT_EQUALS(starting_residues, scaffold_pose.total_residue());
+		
+		TR<<"Delete Region"<<std::endl;
+		scaffold_copy = core::pose::Pose(scaffold_pose);
 		protocols::grafting::delete_region(scaffold_copy, start+1, end-1);
 		core::Size deleted_residues  = starting_residues-scaffold_copy.total_residue();
 		TS_ASSERT_EQUALS(deleted_residues, insert_size);
 	
 		TR<<"Insert Region"<<std::endl;
-		core::pose::Pose new_pose = protocols::grafting::insert_pose_into_pose(scaffold_copy, new_region, start, start+1);
+		core::pose::Pose new_pose = protocols::grafting::insert_pose_into_pose(scaffold_copy, new_region, start, start+1, true);
 		TS_ASSERT_EQUALS(new_pose.total_residue(), starting_residues);
+		
+		TR<<"Delete Region Mover" << std::endl;
+		scaffold_copy = core::pose::Pose(scaffold_pose);
+		DeleteRegionMover deleter = DeleteRegionMover(start+1, end-1);
+		deleter.apply(scaffold_copy);
+		deleted_residues  = starting_residues-scaffold_copy.total_residue();
+		TS_ASSERT_EQUALS(deleted_residues, insert_size);
+		
+		TR<<"Insert Region Mover" << std::endl;
+		InsertPoseIntoPoseMover inserter = InsertPoseIntoPoseMover(new_region, start, start+1);
+		inserter.apply(scaffold_copy);
+		TS_ASSERT_EQUALS(new_pose.total_residue(), starting_residues);
+		
+		TR << "Keep Region Mover" << std::endl;
+		scaffold_copy = core::pose::Pose(scaffold_pose);
+		KeepRegionMover keeper = KeepRegionMover(start+1, end-1);
+		keeper.apply(scaffold_copy);
+		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), insert_size);
 		
 		TR << "Combine MoveMaps" << std::endl;
 		
@@ -120,16 +152,12 @@ public:
 		
 	}
     
-	
 	void test_graft_classes(){
 		using namespace protocols::grafting;
-		AnchoredGraftMoverOP anchored_grafter = new protocols::grafting::AnchoredGraftMover(start, end);
+		AnchoredGraftMoverOP anchored_grafter = new protocols::grafting::AnchoredGraftMover(start, end, true);
 		CCDEndsGraftMoverOP cdr_grafter = new protocols::grafting::CCDEndsGraftMover(start, end, piece, nter_overhang, cter_overhang);
+		
 		////////////Anchored Graft /////////////////////////////////////
-		
-		
-		
-
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
 		
 		
@@ -149,7 +177,7 @@ public:
 		cdr_grafter->set_insert_flexibility(0, 0);
 		cdr_grafter->set_cycles(5);
 		cdr_grafter->apply(scaffold_copy);
-		scaffold_copy.dump_pdb("test.pdb");
+		//scaffold_copy.dump_pdb("/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test.pdb");
 		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues);
 		//core::Real rms = core::scoring::CA_rmsd(scaffold_copy, scaffold_pose);
 		//core::Real rms_assert = 0.0;
@@ -165,19 +193,10 @@ public:
 		anchored_grafter->stop_at_closure(false);
 		anchored_grafter->set_cycles(2);
 		anchored_grafter->apply(scaffold_copy);
-		scaffold_copy.dump_pdb("test2.pdb");
+		//scaffold_copy.dump_pdb("/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test2.pdb");
 		
 		TS_ASSERT_EQUALS(scaffold_pose.total_residue(), starting_residues);
 		
-	}
-	
-	void ref_test(core::pose::Pose & pose){
-		TR <<"Testing PoseOP from pose ref" << std::endl;
-		core::pose::PoseOP new_pose = new core::pose::Pose(pose);
-		if (! new_pose){
-			TR <<"New pose is empty!!" << std::endl;
-		}
-		TR<< "N: "<<new_pose->total_residue() << std::endl;
 	}
     
 };

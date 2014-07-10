@@ -36,7 +36,13 @@ sources = {
 		"CCDEndsGraftMover",
 		"GraftMoverBase",
 		"util",
-        ],
+	],
+	"protocols/grafting/simple_movers":[
+		"DeleteRegionMover",
+		"InsertPoseIntoPoseMover",
+                "KeepRegionMover",
+		"ReplaceRegionMover",
+	],
 	"protocols/helix_capper": [
 		"HelixNCapperMover",
 	],

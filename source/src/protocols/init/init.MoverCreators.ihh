@@ -31,6 +31,14 @@
 #include <protocols/canonical_sampling/TrialCounterObserverCreator.hh>
 
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
+
+#include <protocols/grafting/AnchoredGraftMoverCreator.hh>
+#include <protocols/grafting/CCDEndsGraftMoverCreator.hh>
+#include <protocols/grafting/simple_movers/DeleteRegionMoverCreator.hh>
+#include <protocols/grafting/simple_movers/InsertPoseIntoPoseMoverCreator.hh>
+#include <protocols/grafting/simple_movers/ReplaceRegionMoverCreator.hh>
+#include <protocols/grafting/simple_movers/KeepRegionMoverCreator.hh>
+
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/HybridizeSetupMoverCreator.hh>
 #include <protocols/hybridization/FoldTreeHybridizeCreator.hh>

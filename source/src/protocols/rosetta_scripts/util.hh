@@ -9,7 +9,13 @@
 
 /// @file src/protocols/RosettaScripts/util.hh
 /// @brief Utility functions useful in RosettaScripts.
-/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu), Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
+/// @author Sarel Fleishman (sarelf@u.washington.edu)
+///         Jacob Corn (jecorn@u.washington.edu)
+///         Rocco Moretti (rmoretti@u.washington.edu)
+///         Eva-Maria Strauch (evas01@uw.edu)
+
+
+
 
 #ifndef INCLUDED_protocols_rosetta_scripts_util_hh
 #define INCLUDED_protocols_rosetta_scripts_util_hh
@@ -88,14 +94,46 @@ get_score_function_name(
 
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol
+/// Will look for tag in in_tag variable
 core::pose::PoseOP
-saved_reference_pose( utility::tag::TagCOP in_tag, basic::datacache::DataMap & data_map );
+saved_reference_pose(
+	utility::tag::TagCOP in_tag,
+	basic::datacache::DataMap & data_map,
+	std::string const tag_str="reference_name" );
 
+/// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
+/// Still resets movemap if MoveMap branch not found!
 void
-parse_movemap( utility::tag::TagCOP in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm, basic::datacache::DataMap &, bool const reset_movemap = true /* should we turn everything to true at start?*/ );
+parse_movemap(
+	utility::tag::TagCOP in_tag,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMapOP & mm,
+	basic::datacache::DataMap &,
+	bool const reset_movemap = true /* should we turn everything to true at start?*/);
 
+///@details modifies an existing movemap according to tag
+/// the movemap defaults to move all bb, chi, and jumps.
+/// Still resets movemap if MoveMap branch not found!
 void
-parse_movemap( utility::tag::TagCOP in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm );
+parse_movemap(
+	utility::tag::TagCOP in_tag,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMapOP mm,
+	bool const reset_movemap = true /* should we turn everything to true at start?*/);
+
+///@brief Parses in_tag, adding any MoveMaps specified in branches with names to the datamap for use after.
+/// Skips any mm names that are already loaded.
+/// This should allow multiple MoveMaps to be specified and loaded in a mover.
+void
+add_movemaps_to_datamap(
+	utility::tag::TagCOP in_tag,
+	core::pose::Pose const & pose,
+	basic::datacache::DataMap & data,
+	bool initialize_mm_as_true = false);
+
+///@brief Does the tag have a branch of the given name
+bool
+has_branch(utility::tag::TagCOP in_tag, std::string const branch_name);
 
 protocols::filters::FilterOP
 parse_filter( std::string const filter_name, protocols::filters::Filters_map const & d );
@@ -118,6 +156,13 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
 /// @brief returns a vector containing all the residues with a given packer state according to the TF
 utility::vector1< core::Size >
 residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/ );
+
+///@brief Access res_num/pdb_num tag with prefix.
+/// This is to allow parsing at apply time (pdb_num) instead of at parse_my_tag.
+/// This allows one to use SavePoseMovers within a protocol with the correct residue from pdb_num.  
+/// This function is to prevent unused variable crash.
+void
+parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix);
 
 } // RosettaScripts
 } // protocols

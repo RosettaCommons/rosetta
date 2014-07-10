@@ -72,13 +72,17 @@ class CCDEndsGraftMover : public protocols::grafting::AnchoredGraftMover {
 	
 public:
     
+	CCDEndsGraftMover();
+	
 	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
-	CCDEndsGraftMover(Size const start, Size const end);
+	CCDEndsGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
 
 	CCDEndsGraftMover(
 		Size const start, Size const end, 
-		core::pose::Pose const & piece, Size Nter_overhang=2, Size Cter_overhang=2);
+		core::pose::Pose const & piece, Size Nter_overhang=2, Size Cter_overhang=2, bool copy_pdbinfo = false);
     
+	CCDEndsGraftMover(CCDEndsGraftMover const & src);
+
 	virtual ~CCDEndsGraftMover();
     
 	
@@ -101,9 +105,17 @@ public:
 	
 
 public:
+	
 	std::string
 	get_name();
 	
+	protocols::moves::MoverOP
+	clone() const;
+	
+	protocols::moves::MoverOP
+	fresh_instance() const;
+	
+
 private:
 	
 	virtual SmallMoverOP

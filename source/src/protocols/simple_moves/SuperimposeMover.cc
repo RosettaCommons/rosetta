@@ -22,6 +22,7 @@
 
 // project headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -71,9 +72,9 @@ SuperimposeMover::SuperimposeMover() :
 	ref_pose_(0)
 {}
 
-SuperimposeMover::SuperimposeMover( Pose const & pose ) :
+SuperimposeMover::SuperimposeMover( Pose const & ref_pose ) :
   protocols::moves::Mover("SuperimposeMover"),
-	ref_pose_(new Pose(pose))
+	ref_pose_(new Pose(ref_pose))
 	{}
 
 SuperimposeMover::SuperimposeMover(Pose const & ref_pose, core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end, bool CA_only):
@@ -114,6 +115,11 @@ SuperimposeMover::set_target_range( Size start, Size end ) {
 	target_start_ = start;
 	target_end_ = end;
 	runtime_assert(target_start_ > 0 && target_start_ < target_end_);
+}
+
+void
+SuperimposeMover::set_ca_only(bool setting){
+	CA_only_ = setting;
 }
 
 /// @details copied and modified from calpha_superimpose_pose
@@ -227,7 +233,7 @@ SuperimposeMover::get_name() const {
 
 void
 SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*data_map*/,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )
@@ -238,6 +244,9 @@ SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
 	target_end_ = tag->getOption< Size >("target_end",0);
 	CA_only_ = tag->getOption< bool >("CA_only",1);
 	if( tag->hasOption("ref_pose") ) ref_pose_ = core::import_pose::pose_from_pdb(tag->getOption< std::string >("ref_pose"));
+	else if (tag->hasOption("spm_reference_name")){
+		ref_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name");
+	}
 }
 
 } // moves

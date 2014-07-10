@@ -21,6 +21,7 @@
 #include <core/id/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -78,12 +79,13 @@ delete_region(Pose & pose, Size const start, Size const end){
 		return;
 	}
 	pose.conformation().delete_residue_range_slow(start, end);
-	
+	pose.conformation().detect_disulfides();
 	//for (core::Size i = 1; i <= num_residues; ++i) {
 		//pose_.conformation().delete_polymer_residue(resnum);
 		//pose.conformation().delete_residue_slow(start);
 
 	//}
+	pose.pdb_info()->obsolete(false);
 }
 
 
@@ -110,11 +112,27 @@ return_region(Pose & pose, Size const start, Size const end){
 
 
 	core::pose::create_subpose(pose, positions, new_foldtree, piece);
+	
+	//Create subpose results in a NULL PDBInfo.  We now need a new one.
+	core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo(piece.total_residue());
+	piece.pdb_info(pdb_info);
+	
+	piece.pdb_info()->copy(*(pose.pdb_info()), start, end, 1); //Should be an option directly within subpose
+	piece.pdb_info()->obsolete(false);
+	piece.conformation().detect_disulfides();
+	
 	return piece;
 }
 
 Pose
-replace_region(Pose const & to_pose, Pose const & from_pose, Size const from_pose_start_residue, Size const to_pose_start_residue, Size const insertion_length){
+replace_region(
+	Pose const & from_pose,
+	Pose const & to_pose,
+	Size const from_pose_start_residue,
+	Size const to_pose_start_residue,
+	Size const insertion_length,
+	bool copy_pdbinfo /*false*/)
+{
 	Pose combined(to_pose);
 	for (core::Size i= 0; i<= insertion_length-1; ++i) {
 		core::Size pose_num = to_pose_start_residue+i;
@@ -125,6 +143,13 @@ replace_region(Pose const & to_pose, Pose const & from_pose, Size const from_pos
 		combined.conformation().replace_residue(pose_num, piece_rsd, replace_backbone);
 
 	}
+	
+	
+	if (copy_pdbinfo && from_pose.pdb_info() && combined.pdb_info()){
+		combined.pdb_info()->copy(*(from_pose.pdb_info()), from_pose_start_residue, from_pose_start_residue + insertion_length -1, to_pose_start_residue);
+		combined.pdb_info()->obsolete(false);
+	}
+	combined.conformation().detect_disulfides();
 	return combined;
 }
 
@@ -132,20 +157,22 @@ Pose
 insert_pose_into_pose(
 	Pose const & scaffold_pose,
 	Pose const & insert_pose,
-	core::Size const insert_point
+	core::Size const insert_point,
+	bool copy_pdbinfo /*false*/
 		
 ){
-	return insert_pose_into_pose(scaffold_pose, insert_pose, insert_point, insert_point+1);
+	return insert_pose_into_pose(scaffold_pose, insert_pose, insert_point, insert_point+1, copy_pdbinfo);
 }
 
 ///@author Steven Lewis smlewi@gmail.com
 ///@details brief inserts one pose into another pose, returning the product as a new value. The insert pose will be added immediately after insert_point and before insert_point_end.
 Pose
 insert_pose_into_pose(
-											Pose const & scaffold_pose,
-											Pose const & insert_pose,
-											core::Size const insert_point,
-											core::Size const insert_point_end
+	Pose const & scaffold_pose,
+	Pose const & insert_pose,
+	core::Size const insert_point,
+	core::Size const insert_point_end,
+	bool copy_pdbinfo /*false*/
 ){
 	//local copies
 	core::pose::Pose scaffold(scaffold_pose);
@@ -203,6 +230,11 @@ insert_pose_into_pose(
 	core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
 	combined.fold_tree(new_tree);
 	
+	if (copy_pdbinfo && insert_pose.pdb_info() && combined.pdb_info()){
+		combined.pdb_info()->copy(*(insert_pose.pdb_info()), 1, insert_pose.total_residue(), insert_point+1);
+		combined.pdb_info()->obsolete(false);
+	}
+	
 	//Fix Disulfides.
 	for (core::Size i = 1; i <= disulfide_pair_list.size(); ++i){
 		core::Size new_resnum1 = disulfide_pair_list[i].first + insert_point;
@@ -214,7 +246,7 @@ insert_pose_into_pose(
 	
 	//TR << "Post insertion: " << std::endl;
 	//combined.constraint_set()->show(TR);
-	
+
 	return combined;
 }
 
@@ -368,17 +400,18 @@ void
 delete_overhang_residues(Pose & piece, Size Nter_overhang, Size Cter_overhang){
 
 	//Nter
-    for (core::Size i=1; i<=Nter_overhang; ++i){
-        //piece_.conformation().delete_polymer_residue(piece_res_num);
-        piece.conformation().delete_residue_slow(1);
-    }
+	for (core::Size i=1; i<=Nter_overhang; ++i){
+		//piece_.conformation().delete_polymer_residue(piece_res_num);
+		piece.conformation().delete_residue_slow(1);
+	}
 
-    //Cter
-    core::Size res_num_start = (piece.total_residue() - Cter_overhang + 1);
-    for (core::Size i=1; i<=Cter_overhang; ++i){
-        //piece_.conformation().delete_polymer_residue(piece_res_num);
-        piece.conformation().delete_residue_slow(res_num_start);
-    }
+	//Cter
+	core::Size res_num_start = (piece.total_residue() - Cter_overhang + 1);
+	for (core::Size i=1; i<=Cter_overhang; ++i){
+		//piece_.conformation().delete_polymer_residue(piece_res_num);
+		piece.conformation().delete_residue_slow(res_num_start);
+	}
+	piece.pdb_info()->obsolete(false);
 
 }
 

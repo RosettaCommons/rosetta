@@ -39,12 +39,18 @@ namespace grafting {
 class GraftMoverBase: public moves::Mover {
 
 public:
+	
+	///@brief Default constructor for RosettaScripts
+	GraftMoverBase(std::string mover_name);
+	
 	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	GraftMoverBase(Size const start, Size const end, std::string mover_name);
 
 	GraftMoverBase(Size const start, Size const end, std::string mover_name,
 		core::pose::Pose const & piece, Size Nter_overhang_length=0, Size Cter_overhang_length=0);
         
+	GraftMoverBase(GraftMoverBase const & src);
+	
 	virtual ~GraftMoverBase();
 
 	//@brief copy ctor
@@ -59,6 +65,15 @@ public:
 
 	virtual void
 	set_insert_region(Size const start, Size const end);
+	
+	///@brief Copy PDBInfo from the pose piece into pose during graft.  If false(default), PDBInfo will be obsoleted. 
+	void
+	copy_pdbinfo(bool copy_pdbinfo);
+	
+	bool
+	copy_pdbinfo() const {
+		return copy_pdbinfo_;
+	}
 	
 public:
 	/// @brief  Return the name of the Mover.
@@ -83,10 +98,15 @@ protected:
 	Size insertion_length();
 	
 	Size start();
+	void start(core::Size start);
 	Size end();
+	void end(core::Size end);
 	Size Nter_overhang_length();
+	void Nter_overhang_length(core::Size overhang);
 	Size Cter_overhang_length();
+	void Cter_overhang_length(core::Size overhang);
 	PoseOP piece();
+	void piece(PoseOP piece);
 	
 private:
    	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
@@ -105,6 +125,7 @@ private:
 	Size Nter_overhang_length_;
 	///@brief Number of overhang residues on C terminus.  Updates on delete_overhang_residues
 	Size Cter_overhang_length_;
+	bool copy_pdbinfo_;
 	
 };  // class GraftMoverBase
 

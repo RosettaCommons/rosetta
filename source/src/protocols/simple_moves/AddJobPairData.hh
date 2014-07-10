@@ -22,6 +22,11 @@
 namespace protocols {
 namespace simple_moves {
 
+///@brief Add an arbitrary piece of data to the current Job, which will be output in the silent file, database, etc. 
+/// This is useful for adding metadata to keep track of data generated using multiple experimental conditions.
+/// Currently ONLY RosettaScript interface supported.
+///@details The data appended to the Job consists of a key and a value. The key is a string, and the value can be either a real or string.
+///
 class AddJobPairData : public moves::Mover {
 public:
 	AddJobPairData();

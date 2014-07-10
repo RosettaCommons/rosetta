@@ -12,6 +12,7 @@
 /// @author  Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/grafting/CCDEndsGraftMover.hh>
+#include <protocols/grafting/CCDEndsGraftMoverCreator.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/grafting/util.hh>
 
@@ -20,6 +21,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/selection.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>
@@ -30,7 +32,10 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
+
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
+
 
 static basic::Tracer TR("protocols.grafting.CCDEndsGraftMover");
 
@@ -41,23 +46,42 @@ namespace grafting {
     using core::kinematics::MoveMapCOP;
     using core::Size;
     
-    
-CCDEndsGraftMover::CCDEndsGraftMover(const Size start, Size const end)
-	:AnchoredGraftMover(start, end)
-
+CCDEndsGraftMover::CCDEndsGraftMover():
+	AnchoredGraftMover(0, 0)
 {
-
+	Nter_overhang_length(2);
+	Cter_overhang_length(2);
 }
 
-CCDEndsGraftMover::CCDEndsGraftMover(const Size start, const Size end, core::pose::Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length)
-	:AnchoredGraftMover(start, end, piece, Nter_overhang_length, Cter_overhang_length)
-
-
+CCDEndsGraftMover::CCDEndsGraftMover(const Size start, Size const end, bool copy_pdb_info /*false*/)
+	:AnchoredGraftMover(start, end)
 {
+	Nter_overhang_length(2);
+	Cter_overhang_length(2);
+	
+	copy_pdbinfo(copy_pdb_info);
+}
 
+CCDEndsGraftMover::CCDEndsGraftMover(
+	const Size start,
+	const Size end,
+	core::pose::Pose const & piece,
+	Size Nter_overhang_length,
+	Size Cter_overhang_length,
+	bool copy_pdb_info /*false*/)
+	:AnchoredGraftMover(start, end, piece, Nter_overhang_length, Cter_overhang_length)
+{
+	copy_pdbinfo(copy_pdb_info);
+}
+
+CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& src):
+	AnchoredGraftMover(src)
+{
+	
 }
 
 CCDEndsGraftMover::~CCDEndsGraftMover() {}
+
 
 void
 CCDEndsGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
@@ -69,6 +93,31 @@ CCDEndsGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
 
 std::string
 CCDEndsGraftMover::get_name(){return "CCDEndsGraftMover";}
+
+protocols::moves::MoverOP
+CCDEndsGraftMoverCreator::create_mover() const {
+	return new CCDEndsGraftMover;
+}
+
+std::string
+CCDEndsGraftMoverCreator::keyname() const {
+	return CCDEndsGraftMoverCreator::mover_name();
+}
+
+std::string
+CCDEndsGraftMoverCreator::mover_name(){
+	return "CCDEndsGraftMover";
+}
+
+protocols::moves::MoverOP
+CCDEndsGraftMover::clone() const{
+	return new CCDEndsGraftMover(*this);
+}
+
+protocols::moves::MoverOP
+CCDEndsGraftMover::fresh_instance() const{
+	return new CCDEndsGraftMover();
+}
 
 SmallMoverOP
 CCDEndsGraftMover::setup_default_small_mover(){
@@ -113,12 +162,20 @@ CCDEndsGraftMover::apply(Pose & pose){
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
 	
+	if (tag()){
+		core::Size scaffold_start = core::pose::get_resnum(tag(), pose, "start_");
+		core::Size scaffold_end = core::pose::get_resnum(tag(), pose, "end_");
+	
+		set_insert_region(scaffold_start, scaffold_end);
+	}
+	
+	TR << "Start: " << start() << " End: " << end() << " NterO: "<<Nter_overhang_length() <<" CterO: " << Cter_overhang_length()<<std::endl;
+	
 	protocols::grafting::superimpose_overhangs_heavy(pose, *piece(), true, start(), end(), Nter_overhang_length(), Cter_overhang_length() );
 	
+	Pose combined = insert_piece(pose);
 	setup_movemap_and_regions(pose);
     
-	//Run the insertion.
-	Pose combined = insert_piece(pose);
 	core::kinematics::FoldTree original_ft = combined.fold_tree();
 	//Setup for the remodeling
 	core::Size const insert_start(start()+1); //this will be the first residue of the insert

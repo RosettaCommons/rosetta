@@ -46,8 +46,6 @@
 #include <utility/PyAssert.hh>
 #include <protocols/grafting/util.hh>
 
-#include "GraftMoverBase.hh"
-
 
 
 static basic::Tracer TR("protocols.grafting.GraftMoverBase");
@@ -67,11 +65,26 @@ using protocols::loops::Loop;
 using core::kinematics::MoveMapOP;
 using core::kinematics::MoveMap;
 
+GraftMoverBase::GraftMoverBase(std::string mover_name):
+	moves::Mover(mover_name),
+	start_(0),
+	end_(0),
+	original_end_(0),
+	Nter_overhang_length_(0),
+	Cter_overhang_length_(0),
+	copy_pdbinfo_(false)
+{
+	
+}
+
 GraftMoverBase::GraftMoverBase(Size start, Size end, std::string mover_name):
 	moves::Mover(mover_name),
 	start_(start),
 	end_(end),
-	original_end_(end)
+	original_end_(end),
+	Nter_overhang_length_(0),
+	Cter_overhang_length_(0),
+	copy_pdbinfo_(false)
 
 {
     
@@ -81,7 +94,10 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 	moves::Mover(mover_name),
 	start_(start),
 	end_(end),
-	original_end_(end)
+	original_end_(end),
+	Nter_overhang_length_(0),
+	Cter_overhang_length_(0),
+	copy_pdbinfo_(false)
 	
 {
     set_piece(piece, Nter_overhang_length, Cter_overhang_length);
@@ -89,11 +105,27 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
     
     
 ///@brief copy ctor
-//GraftMoverBase::GraftMoverBase( GraftMoverBase const & rhs ) :
-//	Mover(rhs)
-//{
-//	*this = rhs;
-//}
+GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
+	Mover(src),
+	start_(src.start_),
+	end_(src.end_),
+	original_end_(src.original_end_),
+	insertion_length_(src.insertion_length_),
+	Nter_overhang_length_(src.Nter_overhang_length_),
+	Cter_overhang_length_(src.Cter_overhang_length_),
+	copy_pdbinfo_(src.copy_pdbinfo_),
+	piece_(src.piece_)
+{
+	/*
+	if (src.piece_){
+		piece_ = new core::pose::Pose(*src.piece_);
+	}
+	else{
+		piece_ = NULL;
+	}
+	  */
+}
+
 
 // Destructor
 GraftMoverBase::~GraftMoverBase() {}
@@ -112,7 +144,8 @@ GraftMoverBase::insert_piece(Pose const & pose){
 
 	//Delete overhang if necessary.
 	delete_overhang_residues(*piece_, Nter_overhang_length_, Cter_overhang_length_);
-
+	insertion_length_ = piece_->total_residue()-Cter_overhang_length_-Nter_overhang_length_;
+	
 	//strip termini variants from insert if necessary
 	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::LOWER_TERMINUS, 1);
 	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::UPPER_TERMINUS, insertion_length_);
@@ -121,7 +154,7 @@ GraftMoverBase::insert_piece(Pose const & pose){
 	Pose final_pose(pose);
 	delete_region(final_pose, start_+1, end_-1);
 	//Pose insert(piece_); Does the piece still exist afterward?
-	final_pose = insert_pose_into_pose(final_pose, *piece_, start_, start_+1);
+	final_pose = insert_pose_into_pose(final_pose, *piece_, start_, start_+1, copy_pdbinfo_);
 
 	//Update end residue number.
 	end_ = start_+insertion_length_+1;
@@ -140,8 +173,14 @@ GraftMoverBase::get_name() const
 
 void
 GraftMoverBase::set_insert_region(const Size start, const Size end){
-    start_ = start;
-    end_ = end;
+	start_ = start;
+	end_ = end;
+	original_end_=end;
+}
+
+void
+GraftMoverBase::copy_pdbinfo(bool copy_pdbinfo){
+	copy_pdbinfo_ = copy_pdbinfo;
 }
 
 ///////Accessors and Mutators of private data for derived classes
@@ -160,10 +199,25 @@ void GraftMoverBase::insertion_length(Size insertion_length){
 Size GraftMoverBase::insertion_length(){return insertion_length_;}
 
 Size GraftMoverBase::start(){return start_;}
+void GraftMoverBase::start(core::Size start){
+	start_ = start;
+}
 Size GraftMoverBase::end(){return end_;}
+void GraftMoverBase::end(core::Size end){
+	end_ = end;
+	original_end_=end;
+}
 Size GraftMoverBase::Nter_overhang_length(){return Nter_overhang_length_;}
+void GraftMoverBase::Nter_overhang_length(core::Size overhang){
+	Nter_overhang_length_ = overhang;
+}
+
 Size GraftMoverBase::Cter_overhang_length(){return Cter_overhang_length_;}
+void GraftMoverBase::Cter_overhang_length(core::Size overhang){
+	Cter_overhang_length_ = overhang;
+}
 PoseOP GraftMoverBase::piece(){return piece_;}
+void GraftMoverBase::piece(PoseOP piece){piece_ = piece;}
 
 }  // namespace grafting
 }  // namespace protocols

@@ -241,11 +241,11 @@ get_score_function_name(
 
 
 core::pose::PoseOP
-saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map ){
+saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const tag_name ){
 
-	if( in_tag->hasOption("reference_name") ){
+	if( in_tag->hasOption(tag_name) ){
 		core::pose::PoseOP refpose(NULL);
-		std::string refpose_name(in_tag->getOption<std::string>( "reference_name") );
+		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
 
 		if( !data_map.has("spm_ref_poses",refpose_name) ){
 			refpose = new core::pose::Pose();
@@ -255,7 +255,7 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 
 		return refpose;
 	}
-	else std::cerr << "WARNING: saved_reference_pose function called even though tag has no 'reference_name' entry. something's unclean somewhere." << std::endl;
+	else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
 	return NULL;
 }
 
@@ -336,11 +336,10 @@ parse_movemap(
 	using namespace core::kinematics;
 
 	if( in_tag() == NULL ) return;
-
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() == "MoveMap" ){
+		if( (*tag_it)->getName() =="MoveMap"){
 			break;
 		}
 	}
@@ -349,9 +348,9 @@ parse_movemap(
 		mm->set_chi( true );
 		mm->set_jump( true );
 	}
-	if( tag_it == branch_tags.end() ) return;
+	if( tag_it == branch_tags.end()) return;
 
-	if( (*tag_it)->hasOption( "name" ) ){
+	if( (*tag_it)->hasOption("name") ){
 		std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
 		if( data.has( "movemaps", name ) ){
 			mm = data.get< MoveMap * >( "movemaps", name );
@@ -368,31 +367,84 @@ parse_movemap(
 ///@details modifies an existing movemap according to tag
 /// the movemap defaults to move all bb, chi, and jumps.
 void
-parse_movemap( utility::tag::TagCOP const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm ){
+parse_movemap(
+	utility::tag::TagCOP const in_tag,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMapOP mm,
+	bool const reset_movemap)
+{
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
 	if( in_tag() == NULL ) return;
-
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() == "MoveMap" ){
+		if( (*tag_it)->getName() =="MoveMap"){
 			break;
 		}
 	}
-	mm->set_bb( true );
-	mm->set_chi( true );
-	mm->set_jump( true );
-	if( tag_it == branch_tags.end() ) return;
-
-	if( (*tag_it)->hasOption( "name" ) ){
+	if (reset_movemap){
+		mm->set_bb( true );
+		mm->set_chi( true );
+		mm->set_jump( true );
+	}
+	if( tag_it == branch_tags.end()) return;
+	if( (*tag_it)->hasOption("name" ) ){
 		TR<<"ERROR in "<<*tag_it<<'\n';
 		throw utility::excn::EXCN_RosettaScriptsOption("Tag called with option name but this option is not available to this mover. Note that FastRelax cannot work with a prespecified movemap b/c its movemap is parsed at apply time. Sorry." );
 	}
-	if( tag_it == branch_tags.end() ) return;
+
 
 	foreach_movemap_tag( *tag_it, pose, mm );
+}
+
+void
+add_movemaps_to_datamap(
+	utility::tag::TagCOP in_tag,
+	core::pose::Pose const & pose,
+	basic::datacache::DataMap & data,
+	bool initialize_mm_as_true)
+{
+	using utility::tag::TagCOP;
+	using namespace core::kinematics;
+
+	if( in_tag() == NULL ) return;
+	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
+	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
+		if( (*tag_it)->getName() =="MoveMap"){
+			
+			if (! (*tag_it)->hasOption("name")) continue;
+			std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
+			if (data.has("movemaps", name)) continue;
+			
+			
+			MoveMapOP mm = new MoveMap();
+			if (initialize_mm_as_true){
+				mm->set_bb( true );
+				mm->set_chi( true );
+				mm->set_jump( true );
+			}
+			foreach_movemap_tag( *tag_it, pose, mm );
+			data.add("movemaps", name, mm);
+		}
+			
+	}
+}
+
+bool
+has_branch(utility::tag::TagCOP in_tag, std::string const branch_name){
+	using utility::tag::TagCOP;
+	
+	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
+	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
+		if( (*tag_it)->getName() == branch_name){
+			return true;
+		}
+	}
+	return false;
 }
 
 protocols::filters::FilterOP
@@ -492,6 +544,18 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 		return disulfideN;
 
 	return disulfideC;
+}
+
+void
+parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix){
+	std::string bogus;
+	if (tag->hasOption(prefix+"pdb_num")){
+		bogus = tag->getOption<std::string>(prefix+"pdb_num");
+	}
+	else if(tag->hasOption(prefix+"res_num")){
+		bogus = tag->getOption<std::string>(prefix+"res_num");
+	}
+	
 }
 } //RosettaScripts
 } //protocols

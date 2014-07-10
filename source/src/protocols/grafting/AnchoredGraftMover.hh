@@ -30,6 +30,7 @@
 #include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace grafting {
@@ -78,13 +79,17 @@ namespace grafting {
 class AnchoredGraftMover : public protocols::grafting::GraftMoverBase {
 public:
     
+	AnchoredGraftMover();
+	
 	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
-	AnchoredGraftMover(Size const start, Size const end);
+	AnchoredGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
 
 	AnchoredGraftMover(
 		Size const start, Size const end, 
-		core::pose::Pose const & piece, Size Nter_overhang_length=0, Size Cter_overhang_length=0);
+		core::pose::Pose const & piece, Size Nter_overhang_length=0, Size Cter_overhang_length=0, bool copy_pdbinfo = false);
     
+	AnchoredGraftMover(AnchoredGraftMover const & src);
+	
 	virtual ~AnchoredGraftMover();
 
 	void 
@@ -98,6 +103,25 @@ public:
 	///Deletes overhang and region between start and end if residues are present.
 	virtual void 
 	apply(Pose & pose);
+	
+public:
+	
+	protocols::moves::MoverOP
+	clone() const;
+	
+	protocols::moves::MoverOP
+	fresh_instance() const;
+	
+	
+	virtual void 
+	parse_my_tag(
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const & filters,
+		moves::Movers_map const & movers,
+		Pose const & pose
+	);
+	
 	
 public:
 	///@brief Stop at closure of both ends? 
@@ -158,7 +182,7 @@ public:
 
 	///@brief Neighbor distance for any repacking of side-chains.
 	void neighbor_dis(core::Real dis);
-	core::Real neighbor_dis();
+	core::Real neighbor_dis() const;
 	
 public:
 	Size get_nterm_scaffold_flexibility();
@@ -222,34 +246,37 @@ protected:
 protected:
 	//Accessors and Mutators of private data for derived classes
 	void movemap(MoveMapOP movemap);
-	MoveMapOP movemap();
+	MoveMapOP movemap() const;
 	
 	void scaffold_movemap(MoveMapCOP scaffold_movemap);
-	MoveMapCOP scaffold_movemap();
+	MoveMapCOP scaffold_movemap() const;
 	
 	void insert_movemap(MoveMapCOP insert_movemap);
-	MoveMapCOP insert_movemap();
+	MoveMapCOP insert_movemap() const;
 	
-	ScoreFunctionOP cen_scorefxn();
-	ScoreFunctionOP fa_scorefxn();
+	ScoreFunctionOP cen_scorefxn() const;
+	ScoreFunctionOP fa_scorefxn() const;
 	
 	void use_default_movemap(bool use_default_movemap);
-	bool use_default_movemap();
+	bool use_default_movemap() const;
 	
-	bool test_control_mode();
+	bool test_control_mode() const;
 	
-	Size Nter_scaffold_flexibility();
-	Size Cter_scaffold_flexibility();
-	Size Nter_insert_flexibility();
-	Size Cter_insert_flexibility();
-	Size Nter_loop_start();
-	Size Nter_loop_end();
-	Size Cter_loop_start();
-	Size Cter_loop_end();
+	Size Nter_scaffold_flexibility() const;
+	Size Cter_scaffold_flexibility() const;
+	Size Nter_insert_flexibility() const;
+	Size Cter_insert_flexibility() const;
+	Size Nter_loop_start() const;
+	Size Nter_loop_end() const;
+	Size Cter_loop_start() const;
+	Size Cter_loop_end() const;
 	
-	std::string mintype();
-	Size cycles();
-	bool skip_sampling();
+	std::string mintype() const;
+	Size cycles() const;
+	bool skip_sampling() const;
+	
+	TagCOP tag() const;
+	
 private:
 	Size cycles_;
     
@@ -279,6 +306,7 @@ private:
 	bool final_repack_;
 	
 	core::Real neighbor_dis_;
+	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 	
 }; //Class AnchoredGraftMover
 

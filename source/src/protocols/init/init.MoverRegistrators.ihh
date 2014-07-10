@@ -122,6 +122,13 @@ static MoverRegistrator< forge::constraints::RemoveCstsCreator > reg_RemoveCstsC
 static MoverRegistrator< forge::remodel::ResidueVicinityCstGeneratorCreator > reg_ResidueVicinityCstGeneratorCreator;
 static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverCreator;
 
+static MoverRegistrator< grafting::AnchoredGraftMoverCreator > reg_AnchoredGraftMoverCreator;
+static MoverRegistrator< grafting::CCDEndsGraftMoverCreator > reg_CCDEndsGraftMoverCreator;
+static MoverRegistrator< grafting::simple_movers::DeleteRegionMoverCreator > reg_DeleteRegionMoverCreator;
+static MoverRegistrator< grafting::simple_movers::InsertPoseIntoPoseMoverCreator > reg_InsertPoseIntoPoseMoverCreator;
+static MoverRegistrator< grafting::simple_movers::ReplaceRegionMoverCreator > reg_ReplaceRegionMoverCreator;
+static MoverRegistrator< grafting::simple_movers::KeepRegionMoverCreator > reg_KeepRegionMoverCreator;
+
 static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreator;
 
 static MoverRegistrator< hotspot_hashing::movers::PlaceSurfaceProbeCreator> reg_PlaceSurfaceProbeCreator;

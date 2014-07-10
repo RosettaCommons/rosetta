@@ -95,6 +95,7 @@ void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose);
 /// @brief Returns true if <residue> is positionally conserved, false otherwise
 bool is_position_conserved_residue(const Pose& pose, core::Size residue);
 
+///@brief Create a subpose of the src pose.  PDBInfo is set as NULL.
 void
 create_subpose(
 	Pose const & src,

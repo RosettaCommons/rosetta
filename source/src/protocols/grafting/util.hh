@@ -42,20 +42,26 @@ return_region(Pose & pose, Size const start, Size const end);
     
 ///@brief replaces residues from from_pose to to_pose into pose where insertion region is defined. Returns product as a new value.
 Pose
-replace_region(Pose const & from_pose, Pose const & to_pose, Size const from_pose_start_residue, Size const to_pose_start_residue, Size const insertion_length);
+replace_region(
+	Pose const & from_pose,
+	Pose const & to_pose,
+	Size const from_pose_start_residue,
+	Size const to_pose_start_residue,
+	Size const insertion_length,
+	bool copy_pdbinfo = false);
 
 ///@author Steven Lewis smlewi@gmail.com, Jared Adolf-Bryfogle
 ///@brief inserts one pose into another pose, returning the product as a new value. 
 ///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
 ///@details Begins insertion AFTER insert point.
 Pose
-insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point, Size const insert_point_end);
+insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point, Size const insert_point_end, bool copy_pdbinfo = false);
 
 ///@brief inserts one pose into another pose, returning the product as a new value. 
 ///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
 ///@details Begins insertion AFTER insert point. insert_point_end is assumed to be insert_point+1.
 Pose
-insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point);
+insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point, bool copy_pdbinfo = false);
 
 
 ////////////////////////////////

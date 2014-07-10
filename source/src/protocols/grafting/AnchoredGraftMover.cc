@@ -14,6 +14,7 @@
 
 //Unit Headers
 #include <protocols/grafting/AnchoredGraftMover.hh>
+#include <protocols/grafting/AnchoredGraftMoverCreator.hh>
 #include <protocols/grafting/GraftMoverBase.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/grafting/util.hh>
@@ -21,6 +22,8 @@
 //Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/selection.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -47,6 +50,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 //Option Headers
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -57,6 +61,7 @@
 #include <core/scoring/rms_util.hh>
 #include <map>
 #include <utility/PyAssert.hh>
+#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR("protocols.grafting.AnchoredGraftMover");
 namespace protocols {
@@ -69,22 +74,68 @@ namespace grafting {
 	using namespace protocols::simple_moves;
 	
 	
-AnchoredGraftMover::AnchoredGraftMover(const Size start, Size const end)
+AnchoredGraftMover::AnchoredGraftMover():
+	GraftMoverBase("AnchoredGraftMover")
+{
+	Nter_overhang_length(0);
+	Cter_overhang_length(0);
+	set_defaults();
+}
+
+AnchoredGraftMover::AnchoredGraftMover(const Size start, Size const end, bool copy_pdb_info /*false*/)
 	:GraftMoverBase(start, end, "AnchoredGraftMover")
 
 {
 	//moves::Mover("GraftMover"),
+	Nter_overhang_length(0);
+	Cter_overhang_length(0);
 	set_defaults();
+	copy_pdbinfo(copy_pdb_info);
 }
 
-AnchoredGraftMover::AnchoredGraftMover(const Size start, const Size end, core::pose::Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length)
+AnchoredGraftMover::AnchoredGraftMover(
+	const Size start,
+	const Size end,
+	core::pose::Pose const & piece,
+	Size Nter_overhang_length,
+	Size Cter_overhang_length,
+	bool copy_pdb_info /*false*/)
 	:GraftMoverBase(start, end, "AnchoredGraftMover", piece, Nter_overhang_length, Cter_overhang_length)
 	
 {
-    set_defaults();
+	set_defaults();
+	copy_pdbinfo(copy_pdb_info);
 }
 
 AnchoredGraftMover::~AnchoredGraftMover() {}
+
+AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
+	GraftMoverBase(src),
+	cycles_(src.cycles_),
+	mintype_(src.mintype_),
+	skip_sampling_(src.skip_sampling_),
+	test_control_mode_(src.test_control_mode_),
+	use_default_movemap_(src.use_default_movemap_),
+	Nter_scaffold_flexibility_(src.Nter_scaffold_flexibility_),
+	Nter_insert_flexibility_(src.Nter_insert_flexibility_),
+	Nter_loop_start_(src.Nter_loop_start_),
+	Nter_loop_end_(src.Nter_loop_end_),
+	Cter_scaffold_flexibility_(src.Cter_scaffold_flexibility_),
+	Cter_insert_flexibility_(src.Cter_insert_flexibility_),
+	Cter_loop_start_(src.Cter_loop_start_),
+	Cter_loop_end_(src.Cter_loop_end_),
+	stop_at_closure_(src.stop_at_closure_),
+	final_repack_(src.final_repack_),
+	neighbor_dis_(src.neighbor_dis_),
+	tag_(src.tag_)
+{
+	movemap_ = src.movemap_;
+	scaffold_movemap_ = src.scaffold_movemap_;
+	insert_movemap_ = src.insert_movemap_;
+	cen_scorefxn_ = src.cen_scorefxn_;
+	fa_scorefxn_ = src.fa_scorefxn_;
+	
+}
 
 void
 AnchoredGraftMover::set_defaults(){
@@ -93,6 +144,7 @@ AnchoredGraftMover::set_defaults(){
 	movemap_ = NULL;
 	scaffold_movemap_ =NULL;
 	insert_movemap_ = NULL;
+	tag_ = NULL;
 	
 	set_skip_sampling(false);
 	set_mintype("dfpmin_armijo_nonmonotone");
@@ -105,6 +157,78 @@ AnchoredGraftMover::set_defaults(){
 	final_repack(true);
 	neighbor_dis(4.0);
 }
+
+protocols::moves::MoverOP
+AnchoredGraftMover::clone() const{
+	return new AnchoredGraftMover(*this);
+}
+
+protocols::moves::MoverOP
+AnchoredGraftMover::fresh_instance() const
+{
+	return new AnchoredGraftMover;
+}
+
+void
+AnchoredGraftMover::parse_my_tag(
+	TagCOP tag,
+	basic::datacache::DataMap& data,
+	const Filters_map& ,
+	const moves::Movers_map& ,
+	const Pose& pose)
+{
+
+	set_cycles(tag->getOption<core::Size>("cycles", cycles_));
+	final_repack(tag->getOption<bool>("final_repack", final_repack_));
+	stop_at_closure(tag->getOption<bool>("stop_at_closure", stop_at_closure_));
+	neighbor_dis(tag->getOption<core::Real>("neighbor_dis", neighbor_dis_));
+	skip_sampling_ = (tag->getOption<bool>("skip_sampling", skip_sampling_));
+	set_mintype(tag->getOption<std::string>("mintype", mintype_));
+	copy_pdbinfo(tag->getOption<bool>("copy_pdbinfo", copy_pdbinfo()));
+	
+	Nter_scaffold_flexibility_ = tag->getOption<core::Size>("scaffold_flex_Nter", Nter_scaffold_flexibility_);
+	Cter_scaffold_flexibility_ = tag->getOption<core::Size>("scaffold_flex_Cter", Cter_scaffold_flexibility_);
+	
+	Nter_insert_flexibility_ = tag->getOption<core::Size>("insert_flex_Nter", Nter_insert_flexibility_);
+	Cter_insert_flexibility_ = tag->getOption<core::Size>("insert_flex_Cter", Cter_insert_flexibility_);
+	
+	Nter_overhang_length(tag->getOption<core::Size>("Nter_overhang", Nter_overhang_length()));
+	Cter_overhang_length(tag->getOption<core::Size>("Cter_overhang", Cter_overhang_length()));
+	
+	tag_ = tag->clone();
+	
+	//Protect from unused option crash.
+	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
+	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
+	
+	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
+	
+	if (tag->hasOption("cen_scorefxn")){
+		std::string cen_scorefxn = tag->getOption<std::string>("cen_scorefxn");
+		cen_scorefxn_ = data.get<core::scoring::ScoreFunction *>("scorefxns", cen_scorefxn);
+	}
+	if (tag->hasOption("fa_scorefxn")){
+		std::string fa_scorefxn = tag->getOption<std::string>("fa_scorefxn");
+		fa_scorefxn_ = data.get<core::scoring::ScoreFunction *>("scorefxns", fa_scorefxn);
+	}
+	
+	if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
+		protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
+		
+	}
+	if (data.has("movemaps", "scaffold_movemap") && data.has("movemaps", "scaffold_movemap")){
+		scaffold_movemap_ = data.get<MoveMap *>("movemaps", "scaffold_movemap");
+		insert_movemap_ = data.get<MoveMap *>("movemaps", "insert_movemap");
+	}
+	else if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
+		utility_exit_with_message("Movemaps must be specified using the names scaffold_movemap and insert_movemap");
+	}
+	else {
+		TR <<"scaffold_movemap and insert_movemap unspecified.  Using set flexibility settings." << std::endl; 
+	}
+
+}
+
 
 void
 AnchoredGraftMover::set_scaffold_flexibility(const Size Nter_scaffold_flexibility, const Size Cter_scaffold_flexibility){
@@ -345,6 +469,21 @@ AnchoredGraftMover::final_repack(){
     return final_repack_;
 }
 
+protocols::moves::MoverOP
+AnchoredGraftMoverCreator::create_mover() const {
+	return new AnchoredGraftMover;
+}
+
+std::string
+AnchoredGraftMoverCreator::keyname() const {
+	return AnchoredGraftMoverCreator::mover_name();
+}
+
+std::string
+AnchoredGraftMoverCreator::mover_name(){
+	return "AnchoredGraftMover";
+}
+
 void
 AnchoredGraftMover::apply(Pose & pose){
 	using core::pose::add_variant_type_to_pose_residue;
@@ -354,10 +493,16 @@ AnchoredGraftMover::apply(Pose & pose){
 	
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
-	setup_movemap_and_regions(pose);
-    
-	//Run the insertion.
+	
+	if (tag_){
+		core::Size scaffold_start = core::pose::get_resnum(tag_, pose, "start_");
+		core::Size scaffold_end = core::pose::get_resnum(tag_, pose, "end_");
+	
+		set_insert_region(scaffold_start, scaffold_end);
+	}
+	
 	Pose combined = insert_piece(pose);
+	setup_movemap_and_regions(pose);
 	core::kinematics::FoldTree original_ft = combined.fold_tree();
 	//Setup for the remodeling
 	core::Size const insert_start(start()+1); //this will be the first residue of the insert
@@ -450,80 +595,83 @@ AnchoredGraftMover::apply(Pose & pose){
 ///////Accessors and Mutators of private data for derived classes
 
 void AnchoredGraftMover::movemap(MoveMapOP movemap){movemap_ = movemap;}
-MoveMapOP AnchoredGraftMover::movemap(){return movemap_;}
+MoveMapOP AnchoredGraftMover::movemap() const {return movemap_;}
 
 void AnchoredGraftMover::scaffold_movemap(MoveMapCOP scaffold_movemap){
     scaffold_movemap_ = scaffold_movemap;
 }
 
-MoveMapCOP AnchoredGraftMover::scaffold_movemap() {
+MoveMapCOP AnchoredGraftMover::scaffold_movemap() const {
     return scaffold_movemap_;
 }
 
 void AnchoredGraftMover::insert_movemap(MoveMapCOP insert_movemap){
     insert_movemap_ = insert_movemap;
 }
-MoveMapCOP AnchoredGraftMover::insert_movemap(){
+MoveMapCOP AnchoredGraftMover::insert_movemap() const {
     return insert_movemap_;
 }
-ScoreFunctionOP AnchoredGraftMover::cen_scorefxn(){
+ScoreFunctionOP AnchoredGraftMover::cen_scorefxn() const {
     return cen_scorefxn_;
 }
-ScoreFunctionOP AnchoredGraftMover::fa_scorefxn(){
+ScoreFunctionOP AnchoredGraftMover::fa_scorefxn() const {
     return fa_scorefxn_;
 }
 void AnchoredGraftMover::use_default_movemap(bool use_default_movemap){
     use_default_movemap_ = use_default_movemap;
 }
-bool AnchoredGraftMover::use_default_movemap(){
+bool AnchoredGraftMover::use_default_movemap() const {
     return use_default_movemap_;
 }
-bool AnchoredGraftMover::test_control_mode(){
+bool AnchoredGraftMover::test_control_mode() const {
     return test_control_mode_;
 }
-Size AnchoredGraftMover::Nter_insert_flexibility(){
+Size AnchoredGraftMover::Nter_insert_flexibility() const {
     return Nter_insert_flexibility_;
 }
-Size AnchoredGraftMover::Cter_insert_flexibility(){
+Size AnchoredGraftMover::Cter_insert_flexibility() const {
     return Cter_insert_flexibility_;
 }
-Size AnchoredGraftMover::Nter_scaffold_flexibility(){
+Size AnchoredGraftMover::Nter_scaffold_flexibility() const {
     return Nter_scaffold_flexibility_;
 }
-Size AnchoredGraftMover::Cter_scaffold_flexibility(){
+Size AnchoredGraftMover::Cter_scaffold_flexibility() const {
     return Cter_scaffold_flexibility_;
 }
-Size AnchoredGraftMover::Nter_loop_start(){
+Size AnchoredGraftMover::Nter_loop_start() const {
     return Nter_loop_start_;
 }
-Size AnchoredGraftMover::Nter_loop_end(){
+Size AnchoredGraftMover::Nter_loop_end() const {
     return Nter_loop_end_;
 }
-Size AnchoredGraftMover::Cter_loop_start(){
+Size AnchoredGraftMover::Cter_loop_start() const {
     return Cter_loop_start_;
 }
-Size AnchoredGraftMover::Cter_loop_end(){
+Size AnchoredGraftMover::Cter_loop_end() const {
     return Cter_loop_end_;
 }
-std::string AnchoredGraftMover::mintype(){
+std::string AnchoredGraftMover::mintype() const {
     return mintype_;
 }
 
-Size AnchoredGraftMover::cycles(){
+Size AnchoredGraftMover::cycles() const {
     return cycles_;
 }
 
-bool AnchoredGraftMover::skip_sampling(){
+bool AnchoredGraftMover::skip_sampling() const {
     return skip_sampling_;
 }
 
 void AnchoredGraftMover::neighbor_dis(core::Real dis){
 	neighbor_dis_ = dis;
 }
-core::Real AnchoredGraftMover::neighbor_dis(){
+core::Real AnchoredGraftMover::neighbor_dis() const {
 	return neighbor_dis_;
 }
 
+utility::tag::TagCOP AnchoredGraftMover::tag() const {
+	return tag_;
+}
 
 } //Grafting
 } //Protocols
