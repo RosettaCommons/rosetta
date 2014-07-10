@@ -808,8 +808,7 @@ namespace devel {
 			} //for
 			TR << std::endl;
 			tf->push_back(dao);
-			TR
-					<< "allowing pro/gly only at positions (29Mar13, given sequence profiles, now allowing pro/gly/his at all designed positions. The following is kept for benchmarking): ";
+			TR<< "allowing pro/gly only at positions (29Mar13, given sequence profiles, now allowing pro/gly/his at all designed positions. The following is kept for benchmarking): ";
 			for (core::Size res_num = 1; res_num <= pose.total_residue(); res_num++) {
 				if (std::find(pro_gly_res.begin(), pro_gly_res.end(), res_num) == pro_gly_res.end()) {
 					operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
@@ -1283,13 +1282,17 @@ namespace devel {
 				//Debugging, remove after, gideonla aug13
 				//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
 				TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());	
+				tf_in->push_back(new operation::InitializeFromCommandline);
+				tf_in->push_back(new operation::NoRepackDisulfides);
+				tf_in->push_back(dao);
+				
 				PackerTaskOP ptask = tf_in()->create_task_and_apply_taskoperations(pose);
 				protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 				//		pose.conformation().detect_disulfides();
 				//		pose.update_residue_neighbors();
 				//		(*scorefxn())(pose);
 				if (debug_){
-					utility::vector1<core::Size> designable_residues = residue_packer_states(pose, tf, true/*designable*/, false/*packable*/);
+					utility::vector1<core::Size> designable_residues = residue_packer_states(pose, tf_in, true/*designable*/, false/*packable*/);
 					TR << "Residues Allowed to Design: "<< std::endl;
 					for (utility::vector1<core::Size>::const_iterator i(designable_residues.begin());i != designable_residues.end(); ++i) {
 						TR<<"Allowed aa's for residue "<<*i<<" are: ";
@@ -1733,9 +1736,11 @@ void Splice::read_torsion_database() {
 		std::istringstream tail_line_stream(line_tail);
 		ResidueBBDofs bbdof_entry;
 		bbdof_entry.clear();
-		//TR<<"tail bbdof_entry size is:"<<bbdof_entry.size()<<std::endl;
-		//TR<<"Tail dofs:"<<std::endl;
-		//TR<<tail_line_stream.str()<<std::endl;
+		if (debug_){
+			TR<<"tail bbdof_entry size is:"<<bbdof_entry.size()<<std::endl;
+			TR<<"Tail dofs:"<<std::endl;
+			TR<<tail_line_stream.str()<<std::endl;
+		}
 		while (!tail_line_stream.eof()) {
 			std::string phi, psi, omega,resn;
 			tail_line_stream >> phi >> psi >> omega >> resn;
