@@ -24,17 +24,20 @@
 
 // Package Headers
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>
+
+// Project headers
+#include <core/chemical/AA.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/ppo_torsion_bin.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+
 
 // Utility headers
 #include <utility/LexicographicalIterator.hh>
-
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace loops {
@@ -45,6 +48,7 @@ namespace kinematic_closure {
 ///@detail
 ///////////////////////////////////////////////////////////////////////////////
 class KinematicMover : public moves::Mover {
+public:
 
 public:
 
@@ -69,13 +73,13 @@ public:
 
 	Size segment_length() const {
 		return seg_len_; }
-	
+
 	Size loop_begin() const {
 		return loop_begin_; }
-	
+
 	Size loop_end() const {
 		return loop_end_; }
-	
+
 	core::Real BANGLE_MIN() const {
 		return BANGLE_MIN_; }
 
@@ -127,13 +131,13 @@ public:
 
 	// AS: for TabooSampling
 	void update_sequence( utility::vector1< core::chemical::AA > const & sequence ); // required for design and/or modeling multiple loops
-	//void refill_torsion_string_vector(); 
-	void insert_sampled_torsion_string_into_taboo_map( std::string const & ts ); // not sure if all of these should be public... 
-	//std::string next_torsion_string();
-	bool is_in_taboo_map( std::string const & ts ) const;
+	//void refill_torsion_string_vector();
+	void insert_sampled_torsion_string_into_taboo_map( core::conformation::torsion_bin_string const & ts );
+
+	bool is_in_taboo_map( core::conformation::torsion_bin_string const & ts ) const;
 	utility::vector1< core::chemical::AA > get_loop_sequence() const;
-	std::string torsion_features_string( core::pose::Pose const & pose ) const;
-	core::Real frequency_in_taboo_map( core::Size const & pos, char const & torsion_bin ) const;
+	core::conformation::torsion_bin_string torsion_features_string( core::pose::Pose const & pose ) const;
+	core::Real frequency_in_taboo_map( core::Size pos, core::conformation::ppo_torsion_bin ) const;
 
 	bool is_beta_aminoacid (const core::conformation::Residue &res) const; //Added by VKM, 23 Aug 2013
 	core::Size count_bb_atoms_in_residue (const core::pose::Pose &pose, const core::Size position) const; //Added by VKM, 23 Aug 2013
@@ -141,7 +145,7 @@ public:
 	std::string get_bb_atoms_for_residue (const core::conformation::Residue &res, const core::Size bb_atom_index) const; //Added by VKM, 26 Aug 2013
 	std::string get_bumpcheck_atoms_for_residue (	const core::conformation::Residue &rsd, const core::Size bumpcheck_atom_index) const; //Added by VKM, 27 Aug 2013
 	core::Size get_bumpcheck_atom_count_for_residue ( const core::conformation::Residue &rsd ) const; //Added by VKM, 27 Aug 2013
-	
+
 private:
 
 	// pivot residues
@@ -150,7 +154,7 @@ private:
 
 	Size loop_begin_; // AS: start of the full loop, only needs to be set once, required for correct indexing of the torsion bin vector -- in contrast, start_res_-end_res_ cover the (sub)segment that's actually sampled in the current iteration
 	Size loop_end_;
-	
+
 	//the perturber that sets/samples the chain angles/torsions
 	KinematicPerturberOP perturber_;
 
@@ -208,13 +212,22 @@ private:
 	utility::vector1< protocols::filters::FilterCOP > filters_;
 
 	// AS: for Taboo Sampling
-	std::map< std::string, bool > taboo_map_; // holds the torsion strings that have already been sampled [with a solution, no matter whether it was accepted or not], to avoid testing them again [until we've almost reached coverage of the torsion-bin space, then it is re-set] -- actually we could use a set instead... 
-	core::Real taboo_map_max_capacity_; 
-	std::map< utility::vector1< core::chemical::AA >, std::map< std::string, bool > > taboo_master_map_; // holds the taboo maps for different sequences, so that we don't loose all information (previously sampled angles) when switching between multiple loops)
-	utility::vector1< core::chemical::AA > sequence_; // sequence of the loop -- note that for the TabooSamplingKinematicPerturber this  has to be adjusted after each design step, and then random_torsion_strings_ must be emptied and re-filled, as the torsion bins are residue-dependent 
-	
+	// holds the torsion strings that have already been sampled [with a solution, no matter
+	// whether it was accepted or not], to avoid testing them again [until we've almost
+	// reached coverage of the torsion-bin space, then it is re-set] -- actually we could use a set instead...
+	std::map< core::conformation::torsion_bin_string, bool > taboo_map_;
 
-	
+	core::Real taboo_map_max_capacity_;
+
+	// holds the taboo maps for different sequences, so that we don't loose all information (previously sampled
+	// angles) when switching between multiple loops)
+	std::map< utility::vector1< core::chemical::AA >, std::map< core::conformation::torsion_bin_string, bool > > taboo_master_map_;
+
+	// sequence of the loop -- note that for the TabooSamplingKinematicPerturber this has to be adjusted
+	// after each design step, and then random_torsion_strings_ must be emptied and re-filled, as the
+	// torsion bins are residue-dependent
+	utility::vector1< core::chemical::AA > sequence_;
+
 	// private functions
 
 	/* AS Oct 03, 2012 -- commenting out unused function for vicinity refactoring
@@ -227,7 +240,7 @@ private:
 							Size const end_res
 							);
 	 */
-	
+
 	// this version checks rama for all residues in loop segment
 	bool perform_rama_check( core::pose::Pose const & pose,
 							 utility::vector1<core::Real> const & t_ang,

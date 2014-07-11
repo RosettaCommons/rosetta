@@ -2063,54 +2063,6 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 	}
 }
 
-	// @brief determine torsion bins for given phi/psi/omega combination
-	// assume that omega is 180 if not specified
-	// @author Amelie Stein
-	// @date Wed May  2 11:18:29 PDT 2012
-	// placed here to make it accessible to a wide range of applications, but it's quite possible that placing this code elsewhere would be better
-	// bin boundaries are currently hard-coded -- ideally in the future these can be read from external files, and thus adapted if desired
-	char get_torsion_bin (core::Real phi, core::Real  psi, core::Real omega) // omega defaults to 180 if not specified otherwise
-	{
-		if (phi > 180)
-			phi -= 360; // KIC returns positive values that need to be adjusted
-		if (psi > 180)
-			psi -= 360;
-		if (omega > 180)
-			omega -= 360;
-		char pos_bin = 'X';
-
-		if (omega > 90 || omega < -90) { // trans --> uppercase letters
-			if (phi <= 0) {
-				if (psi < -130 || psi > 50) {
-					pos_bin = 'B';
-				} else { // -130 <= psi <= 50
-					pos_bin = 'A';
-				}
-			} else { // phi > 0
-				if (psi < -90 || psi > 90) {
-					pos_bin = 'E';
-				} else { // -90 <= psi <= 90
-					pos_bin = 'G';
-				}
-			}
-		} else { // cis --> lowercase letters
-			if (phi <= 0) {
-				if (psi < -130 || psi > 50) {
-					pos_bin = 'b';
-				} else { // -130 <= psi <= 50
-					pos_bin = 'a';
-				}
-			} else { // phi > 0
-				if (psi < -90 || psi > 90) {
-					pos_bin = 'e';
-				} else { // -90 <= psi <= 90
-					pos_bin = 'g';
-				}
-			}
-		}
-		return pos_bin;
-	}
-
 
 } // namespace conformation
 } // namespace core

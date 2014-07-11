@@ -42,14 +42,18 @@ random_point_on_unit_sphere( RandomGenerator& RG ){
 /// @author Zhe Zhang
 /// @auhtor Justin R. Porter
 
-template< typename T >
+template < typename T >
 inline
 T // angle in radians
-random_rotation_angle( T rot_mag,
-                       RandomGenerator& RG ){
-  xyzMatrix< T > const mat( numeric::z_rotation_matrix_degrees( rot_mag * RG.gaussian() ) *
-                            numeric::y_rotation_matrix_degrees( rot_mag * RG.gaussian() ) *
-                            numeric::x_rotation_matrix_degrees( rot_mag * RG.gaussian() ) );
+random_rotation_angle(
+	T rot_mag,
+	RandomGenerator & RG
+)
+{
+  xyzMatrix< T > const mat(
+		numeric::z_rotation_matrix_degrees( rot_mag * RG.gaussian() ) *
+		numeric::y_rotation_matrix_degrees( rot_mag * RG.gaussian() ) *
+		numeric::x_rotation_matrix_degrees( rot_mag * RG.gaussian() ) );
   T theta;
   rotation_axis( mat, theta );
   return theta;
@@ -58,15 +62,71 @@ random_rotation_angle( T rot_mag,
 /// @brief produce a random translation in xyz space
 /// @author Zhe Zhang
 /// @author Justin R. Porter
-template< typename T >
+template < typename T >
 inline
 xyzVector< T >
-random_translation( T trans_mag,
-                    RandomGenerator& RG ){
-return xyzVector<T>( trans_mag * RG.gaussian(),
-                     trans_mag * RG.gaussian(),
-                     trans_mag * RG.gaussian() );
+random_translation(
+	T trans_mag,
+	RandomGenerator& RG
+)
+{
+	return xyzVector<T>(
+		trans_mag * RG.gaussian(),
+		trans_mag * RG.gaussian(),
+		trans_mag * RG.gaussian() );
 }
+
+/// @brief Return the index in the CDF array such that it is smaller than or equal to the
+/// uniform-random-number (urn) and that the next entry in the array is larger than urn.
+/// The CDF ought to represent the exclusive cumulative sum of the probabilities of some
+/// discrete set so that the width for entry i -- the gap between entry i and entry i+1
+/// should be the probability of entry i.
+template < typename T >
+platform::Size
+binary_search_cdf(
+	utility::vector1< T > const & cdf,
+	T urn
+)
+{
+	platform::Size lower( 1 ), upper( cdf.size() );
+	platform::Size guess( 0 );
+
+	while ( true ) {
+
+		guess = ( upper + lower ) / 2;
+		T guess_val = cdf[ guess ];
+		T next_val = guess < cdf.size() ? cdf[ guess+1 ] : 1.1;
+		if ( guess_val <= urn && urn < next_val ) {
+			// found it!
+			break;
+		}
+		if ( guess_val <= urn ) {
+			lower = guess+1;
+		} else {
+			upper = guess-1;
+		}
+	}
+
+	return guess;
+
+}
+
+/// @brief Choose an element from an array of positions representing the
+/// cumulative distribution function for some target distribution.  This uses
+/// binary search to quickly find the target index.  If any position has the
+/// same probability as the preceeding position, then its index won't be
+/// returned.
+template < typename T >
+platform::Size
+pick_random_index_from_cdf(
+	utility::vector1< T > const & cdf,
+	RandomGenerator & RG
+)
+{
+	T const urn = RG.uniform();
+	return binary_search_cdf( cdf, urn );
+}
+
 
 }
 }

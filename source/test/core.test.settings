@@ -187,7 +187,8 @@ sources = {
 	"scoring" : [
 		"EnergyMap",
 		"EnvPairPotential",
-        "Ramachandran",
+		"Ramachandran",
+		"Ramachandran2B",
 		"rms_util",
 		"sasa",
 		"sc",

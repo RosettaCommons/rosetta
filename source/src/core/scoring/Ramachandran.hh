@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
+#include <core/conformation/ppo_torsion_bin.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -33,15 +34,10 @@
 // Numeric headers
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
-
-#include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <ObjexxFCL/FArray4D.fwd.hh>
+// ObjexxFCL headers
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray4D.hh>
 
 // C++ Headers
 #include <map>
@@ -138,9 +134,9 @@ public:
 		Real & psi
 	) const;
 
-	/// @brief Return a phi/psi pair picked uniformly from the regions of rama 
-	/// space with nonzero weight.  Sampling with this method will not give a 
-	/// rama distribution; it will give a flat distribution in only the allowed 
+	/// @brief Return a phi/psi pair picked uniformly from the regions of rama
+	/// space with nonzero weight.  Sampling with this method will not give a
+	/// rama distribution; it will give a flat distribution in only the allowed
 	/// regions of rama space.
 	void
 	uniform_phipsi_from_allowed_rama(
@@ -149,7 +145,7 @@ public:
 		Real & psi
 	) const;
 
-	/// @brief Return true if the given phi/psi pair is in the allowed space 
+	/// @brief Return true if the given phi/psi pair is in the allowed space
 	/// sampled by uniform_phipsi_from_allowed_rama.
 	bool
 	phipsi_in_allowed_rama(
@@ -158,7 +154,7 @@ public:
 		Real psi
 	) const;
 
-	/// @brief Return false if the given phi/psi pair is in the allowed space 
+	/// @brief Return false if the given phi/psi pair is in the allowed space
 	/// sampled by uniform_phipsi_from_allowed_rama.
 	bool
 	phipsi_in_forbidden_rama(
@@ -172,21 +168,16 @@ public:
 	/// @author Amelie Stein
 	void
 	random_phipsi_from_rama_by_torsion_bin(
-										   AA const res_aa,
-										   Real & phi,
-										   Real & psi,
-										   char const torsion_bin
-										   ) const;
-	
-	core::Size get_torsion_bin_index(char torsion_bin) const;
-	
-	void
-	init_rama_sampling_tables_by_torsion_bin() const; 
-	
-	void
-	get_entries_per_torsion_bin( AA const res_aa, std::map< char, core::Size > & tb_frequencies ) const;
+		AA res_aa,
+		Real & phi,
+		Real & psi,
+		conformation::ppo_torsion_bin torsion_bin
+	) const;
 
-	
+	void
+	get_entries_per_torsion_bin( AA const res_aa, std::map< conformation::ppo_torsion_bin, core::Size > & tb_frequencies ) const;
+
+
 	///////////////////////////////
 	// unused??
 	void
@@ -201,12 +192,26 @@ public:
 	) const;
 
 	//Real get_rama_score_residue_deriv( int res, Pose const & a_pose, ProteinTorsion torsion ) const;
-	void eval_procheck_rama( Pose const & a_pose,
-		Real & favorable, Real & allowed, Real & generous ) const;
+	//void eval_procheck_rama( Pose const & a_pose,
+	//	Real & favorable, Real & allowed, Real & generous ) const;
 
 	/// @brief Function to do a quick check that the upper connection is seqpos+1 and the lower connection is seqpos-1.  Returns true if this is so, false otherwise.
 	/// @author Vikram K. Mulligan
 	bool is_normally_connected ( conformation::Residue const & res ) const;
+
+	Size n_phi_bins() const;
+	Size n_psi_bins() const;
+
+	Real rama_probability( core::chemical::AA aa, Real phi, Real psi ) const;
+	Real minimum_sampling_probability() const;
+
+	utility::vector1< Real > const & cdf_for_aa( core::chemical::AA aa ) const;
+
+	utility::vector1< Real > const & cdf_for_aa_for_torsion_bin(
+		chemical::AA aa,
+		conformation::ppo_torsion_bin
+	) const;
+
 
 private:
 
@@ -215,23 +220,27 @@ private:
 		bool use_bicubic_interpolation);
 
 	void read_rama_map_file ( utility::io::izstream * iunit );
-	void init_rama_sampling_table( char const torsion_bin ) const;
+	void initialize_rama_sampling_tables();
 
-	void init_uniform_sampling_table() const;
+	void init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bin );
+	void init_uniform_sampling_table();
 
-/*
-	static
 	void
-	procheck_map_initializer( FArray1D_string & map );
-*/
-	static bool rama_initialized_;
-	//static utility::vector1< utility::vector1 < FArray2D< Real > > > > ram_probabil_;
-	static ObjexxFCL::FArray4D< Real > ram_probabil_;
-	//static utility::vector1< utility::vector1 < FArray2D_int > > > ram_counts_;
-	static ObjexxFCL::FArray4D_int ram_counts_;
-	//static utility::vector1< utility::vector1 < FArray2D< Real > > > > ram_energ_;
-	static ObjexxFCL::FArray4D< Real > ram_energ_;
-	utility::vector1< numeric::interpolation::spline::BicubicSpline > rama_energy_splines_; // loops only
+	draw_random_phi_psi_from_cdf(
+		utility::vector1< Real > const & cdf,
+		Real & phi,
+		Real & psi
+	) const;
+
+private: // data
+	ObjexxFCL::FArray4D< Real > ram_probabil_;
+	ObjexxFCL::FArray4D_int ram_counts_;
+	ObjexxFCL::FArray4D< Real > ram_energ_;
+	ObjexxFCL::FArray2D< Real > ram_entropy_;
+
+	// loops only -- does not contain bicubic splines for the alpha or beta secondary structures
+	// in fact, there is basically nothing in rosetta that uses the alpha or beta ramachandran tables
+	utility::vector1< numeric::interpolation::spline::BicubicSpline > rama_energy_splines_;
 
 	static int const n_phi_ = 36;
 	static int const n_psi_ = 36;
@@ -239,21 +248,21 @@ private:
 	static Real const rama_sampling_thold_;
 	static Real const rama_sampling_factor_;
 	static int const n_aa_ = 20; // Ramachandran score defined for the cananical AAs only.
-	static ObjexxFCL::FArray2D< Real > ram_entropy_;
 
-	mutable utility::vector1< utility::vector1< utility::vector1< Real > > >
-		rama_sampling_table_; // vector of allowed phi/psi pairs for each residue
-	mutable utility::vector1 < utility::vector1< utility::vector1< utility::vector1< Real > > > >
-		rama_sampling_table_by_torsion_bin_; // first entry will be a letter indicating the torsion bin, the rest is like in the regular rama_sampling_table_
+	// The cumulative distribution functions (CDF) for all phi/psi bins for each amino acid.
+	utility::vector1< utility::vector1< Real > > cdf_;
+	// The CDF for all phi/psi bins given the left AA, the center AA, and the secondary-structure classification
+	// (ABEGO or ABEGX?).  "Torsion bin" here means the ABEGO classification.  This classification is encoded
+	// in core/conformation/util.cc  A phi/psi bin that doesn't land in the particular ss classification is
+	// assigned the probability of the previous bin so that it will not be selected if you sample phi/psi bins
+	// from a uniform probability distribution.
+	ObjexxFCL::FArray2D< utility::vector1< Real > > cdf_by_torsion_bin_;
 
-	/// @brief Table containing a uniform distribution of allowed torsion bins.  
-	/// @details The indices are: table[amino acid][list][torsion].  The amino 
-	/// acid index comes from the AA enum and probably just goes from 1-20.  The 
-	/// list index is what should be randomly chosen to produce uniform sampling.  
-	/// The torsion indices of 1 and 2 give the phi and psi bins, respectively.
-	
-	mutable utility::vector1< utility::vector1< utility::vector1< Real > > >
-		uniform_sampling_table_;
+	// The count of the number of valid phi/psi bins for a particular torsion bin for each amino acid.
+	ObjexxFCL::FArray2D< Size > n_valid_pp_bins_by_ppo_torbin_;
+
+	// The phi/psi bin indexes with probability greater than the rama_sampling_thold_ value for each amino acid.
+	utility::vector1< utility::vector1< Size > > phi_psi_bins_above_thold_;
 
 };
 

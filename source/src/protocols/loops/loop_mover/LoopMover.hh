@@ -18,16 +18,19 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
+#include <core/conformation/ppo_torsion_bin.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/LoopsFileIO.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
+
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
-#include <utility/vector1.fwd.hh>
+
+// Basic headers
 #include <basic/Tracer.fwd.hh>
 
 #ifdef WIN32
@@ -35,6 +38,8 @@
 	#include <core/fragment/FragSet.hh>
 #endif
 
+// Utility headers
+#include <utility/vector1.hh>
 
 // C++ Headers
 
@@ -102,8 +107,13 @@ public:
 	protocols::loops::LoopsOP loops();
 
 	const utility::vector1< core::fragment::FragSetOP > & frag_libs() const;
-	std::string	torsion_features_string( core::pose::Pose const & pose ) const; // AS
 
+	/// @brief create a string representing the torsion bins (ABEGX) for the loops defined in the
+	/// guarded_loops_ object.  A sentinal value of ppo_torbin_U is used to mark the boundaries
+	/// between the separate loops (unused as long as there's only one Loop object in the
+	/// guarded_loops_ object).
+	core::conformation::torsion_bin_string
+	torsion_features_string( core::pose::Pose const & pose ) const; // AS
 
 	/// @brief Extend a loop
 	virtual void set_extended_torsions( core::pose::Pose & pose, Loop const & loop );

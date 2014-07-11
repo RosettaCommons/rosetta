@@ -21,6 +21,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ppo_torsion_bin.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
@@ -31,6 +32,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/interpolation/periodic_range/half/interpolation.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random.functions.hh>
 #include <numeric/xyz.functions.hh>
 
 // Utility Headers
@@ -65,21 +67,27 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
+static numeric::random::RandomGenerator rama_rg( 56546 );
+
 // @brief Auto-generated virtual destructor
 Ramachandran::~Ramachandran() {}
 
 typedef Ramachandran R;
 
-bool R::rama_initialized_( false );
 Real const R::binw_( 10.0 );
 Real const R::rama_sampling_thold_( 0.00075 ); // only sample torsions with Rama prob above this value
 Real const R::rama_sampling_factor_( 10.0 ); // factor for increased precision of Rama sampling table
-ObjexxFCL::FArray4D< Real > R::ram_probabil_( R::n_phi_, R::n_psi_, 3, R::n_aa_ );
-ObjexxFCL::FArray4D_int R::ram_counts_( R::n_phi_, R::n_psi_, 3, R::n_aa_ );
-ObjexxFCL::FArray4D< Real > R::ram_energ_( R::n_phi_, R::n_psi_, 3, R::n_aa_);
-ObjexxFCL::FArray2D< Real > R::ram_entropy_( 3, R::n_aa_ );
 
-Ramachandran::Ramachandran()
+
+Ramachandran::Ramachandran() :
+	ram_probabil_( n_phi_, n_psi_, 3, n_aa_ ),
+	ram_counts_( n_phi_, n_psi_, 3, n_aa_ ),
+	ram_energ_( n_phi_, n_psi_, 3, n_aa_),
+	ram_entropy_( 3, n_aa_ ),
+	cdf_( n_aa_ ),
+	cdf_by_torsion_bin_( n_aa_, conformation::n_ppo_torsion_bins ),
+	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
+	phi_psi_bins_above_thold_( n_aa_ )
 {
 	using namespace basic::options;
 	read_rama(
@@ -87,11 +95,19 @@ Ramachandran::Ramachandran()
 		option[ OptionKeys::corrections::score::use_bicubic_interpolation ]);
 }
 
-
 Ramachandran::Ramachandran(
 	std::string const & rama_map_filename,
 	bool use_bicubic_interpolation
-) {
+) :
+	ram_probabil_( n_phi_, n_psi_, 3, n_aa_ ),
+	ram_counts_( n_phi_, n_psi_, 3, n_aa_ ),
+	ram_energ_( n_phi_, n_psi_, 3, n_aa_),
+	ram_entropy_( 3, n_aa_ ),
+	cdf_( n_aa_ ),
+	cdf_by_torsion_bin_( n_aa_, conformation::n_ppo_torsion_bins ),
+	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
+	phi_psi_bins_above_thold_( n_aa_ )
+{
 	read_rama(rama_map_filename, use_bicubic_interpolation);
 }
 
@@ -192,349 +208,108 @@ void
 Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 {}
 
-	///////////////////////////////////////////////////////////////////////////////
-	/// Initialize the table holding the sample-able torsion space for each residue
-	/// with each torsion given indices proportionate to its probability
-	void
-	Ramachandran::init_rama_sampling_table(
-										   char const torsion_bin) const // torsion_bin defaults to 'X' unless specified
-	{
-		//rama_sampling_table_.resize(n_aa_);
-		utility::vector1< utility::vector1< utility::vector1< Real > > > current_rama_sampling_table;
-		current_rama_sampling_table.resize(n_aa_);
-		int ss_type=3;
-		FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-		for (int aa=1; aa<=n_aa_; aa++) { // loop over all residue types
-			FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, aa), zero_index, zero_index );
-			Size max_allowed = n_phi_ * n_psi_;
-			Size actual_allowed = 0;
-			Real min_val = 1.0; // minimum probability (above rama_sampling_thold_) observed for this residue
-			Real max_val = 0.0; // maximum probability (above rama_sampling_thold_) observed for this residue
-			utility::vector1< utility::vector1< Real> > res_torsions( max_allowed ); // double vector of allowed torsions for this residue
-			utility::vector1< Real > res_probs( max_allowed ); // rama probs of allowed torsions for this residue (coupled to res_torsions by index)
-			//rama_sampling_table_[aa].resize(max_allowed);
-			for (int i=0; i<n_phi_; i++) {
-				for (int j=0; j<n_psi_; j++) {
-					Real res_prob = rama_for_res(i,j);
-					if ( res_prob > rama_sampling_thold_ ) {
-						//actual_allowed++; // AS: moved down into if statement, otherwise some entries are empty -> segfault
-						if (res_prob < min_val) min_val = res_prob;
-						else if (res_prob > max_val) max_val = res_prob;
-						//std::cout << res_prob << std::endl;
-						//res_probs[actual_allowed] = res_prob;
 
-						utility::vector1< Real > torsion(2);
-						Real cur_phi, cur_psi;
-						if (i <= n_phi_ / 2) {
-							cur_phi = i;
-						}
-						else {
-							cur_phi = 0 - (n_phi_ - i);
-						}
-						if (j <= n_psi_ / 2) {
-							cur_psi = j;
-						}
-						else {
-							cur_psi = 0 - (n_psi_ - j);
-						}
-						char cur_tb = ' ';
-						if (torsion_bin != 'X')
-							cur_tb = core::conformation::get_torsion_bin(cur_phi * 10, cur_psi * 10); //  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long...
-						if (torsion_bin == 'X' || cur_tb == torsion_bin) {
-							actual_allowed++;
-							res_probs[actual_allowed] = res_prob;
-							torsion[1] = static_cast <Real> (/*i*/ cur_phi * binw_);  // phi
-							torsion[2] = static_cast <Real> (/*j*/ cur_psi * binw_);  // psi
-							res_torsions[actual_allowed] = torsion;
-						}
-					}
-				}
-			}
+///////////////////////////////////////////////////////////////////////////////
+/// Sample phi/psi torsions with probabilities proportionate to their
+/// Ramachandran probabilities
+/// Note -- this function had previously required that the option
+/// loops::nonpivot_torsion_sampling be active.  This function now
+/// performs a just-in-time check to initialize these tables the first
+/// time they are requested -- To properly multi-thread this code, the
+/// function should nab a mutex so that no two threads try to execute
+/// the code at once.
+void
+Ramachandran::random_phipsi_from_rama(
+	AA const res_aa,
+	Real & phi,
+	Real & psi
+) const
+{
+	draw_random_phi_psi_from_cdf( cdf_[ res_aa ], phi, psi );
+}
 
-			if( ((int)aa < (int)1) || ((int)aa > (int)current_rama_sampling_table.size()) ){
-				std::cerr << "AA exceeded size of rama_sampling_table_ AA=" + ObjexxFCL::string_of( aa ) + " size()=" + ObjexxFCL::string_of( current_rama_sampling_table.size() );
-				continue; // Avoid death.
-			}
+void
+Ramachandran::uniform_phipsi_from_allowed_rama(
+	AA const res_aa,
+	Real & phi,
+	Real & psi
+) const
+{
+	using numeric::random::uniform;
+	using numeric::random::random_range;
 
-			// now populate the rama_sampling_table_ so the torsions are given index
-			// space proporionate to their probs
-			current_rama_sampling_table[aa].resize(Size(actual_allowed * (max_val / min_val) * rama_sampling_factor_));
-			Size index=0; // to increment the index into the aa's rama_sampling_table_ vector
-			for (Size tor = 1; tor <= actual_allowed; tor++) {
-				Size n_indices = Size(( res_probs[tor] / min_val ) * rama_sampling_factor_);
-				for (Size ind=1; ind<=n_indices; ind++) {
-					index++;
-					if( (int(index) < 1) || (int(index) > (int)current_rama_sampling_table[aa].size()) ){
-						std::cerr <<  "index exceeded size of rama_sampling_table_[aa] index=" +
-						ObjexxFCL::string_of( (index) ) +
-						" rama_sampling_table_[aa].size()=" +
-						ObjexxFCL::string_of( current_rama_sampling_table[aa].size() ) +
-						" AA=" + ObjexxFCL::string_of( aa );
+	Size n_torsions = phi_psi_bins_above_thold_[res_aa].size();
+	Size random_index = random_range(1, n_torsions);
+	Size ppbin_index = phi_psi_bins_above_thold_[ res_aa ][ random_index ];
+	Size phi_index = ppbin_index / n_psi_;
+	Size psi_index = ppbin_index - phi_index * n_psi_;
 
-						continue; // avoid certain death - we dont yet understand why its failing here occasionally
-					}
-					if( ((int)tor < 1) || ((int)tor > (int)res_torsions.size()) ){
-						std::cerr << "tor exceeded size of rama_sampling_table_[aa] index=" +
-						ObjexxFCL::string_of( tor ) +
-						" res_torsions.size()=" + ObjexxFCL::string_of( res_torsions.size() ) +
-						" AA=" + ObjexxFCL::string_of( aa );
-						continue; // avoid certain death - we dont yet understand why its failing here occasionally
-					}
+	phi = binw_ * ( phi_index + uniform());
+	psi = binw_ * ( psi_index + uniform());
+}
 
-					current_rama_sampling_table[aa][index] = res_torsions[tor];
-				}
-			}
-			current_rama_sampling_table[aa].resize(index);
-		}
+/// @brief return true if the bin that the given phi/psi pair falls in has a
+/// probability that exceeds the rama_sampling_thold_ constant.
+bool
+Ramachandran::phipsi_in_allowed_rama(
+	AA const aa,
+	Real phi,
+	Real psi
+) const
+{
+	phi = numeric::nonnegative_principal_angle_degrees(phi);
+	psi = numeric::nonnegative_principal_angle_degrees(psi);
 
-		if (torsion_bin == 'X') {
-			rama_sampling_table_ = current_rama_sampling_table;
-		}
-		core::Size tb_index = get_torsion_bin_index(torsion_bin);
-		if (rama_sampling_table_by_torsion_bin_.size() < tb_index)
-			rama_sampling_table_by_torsion_bin_.resize(tb_index);
-		rama_sampling_table_by_torsion_bin_[tb_index] = current_rama_sampling_table;
-	}
+	Size phi_bin = static_cast< Size > ( phi / binw_ );
+	Size psi_bin = static_cast< Size > ( psi / binw_ );
 
-	void
-	Ramachandran::init_uniform_sampling_table() const
-	{
-		uniform_sampling_table_.resize(n_aa_);
+	return ram_probabil_(phi_bin+1, psi_bin+1, 3, aa ) > rama_sampling_thold_;
+}
 
-		for (int aa = 1; aa <= n_aa_; aa++) {
-			FArray2A< Real >::IR const zero_index(0, n_phi_ - 1);
-			FArray2A< Real > const rama_for_res(
-					ram_probabil_(1, 1, 3, aa), zero_index, zero_index );
+bool
+Ramachandran::phipsi_in_forbidden_rama(
+	AA const aa,
+	Real phi,
+	Real psi
+) const
+{
+	return ! phipsi_in_allowed_rama(aa, phi, psi);
+}
 
-			for (int i = 0; i < n_phi_; i++) {
-				for (int j = 0; j < n_psi_; j++) {
+///////////////////////////////////////////////////////////////////////////////
+/// Sample phi/psi torsions with probabilities proportionate to their
+/// Ramachandran probabilities -- this version performs lookup restricted to specified torsion bins
+/// based on random_phipsi_from_rama and has the same issue for parallel running
 
-					// We want the sampling table to include each allowed phi/psi bin
-					// exactly once, to ensure uniform sampling.  Forbidden phi/psi bins
-					// should not appear in the table:
+/// @author Amelie Stein (amelie.stein@ucsf.edu)
+/// @date Fri May 11 15:52:01 PDT 2012
+/// @details returns a random phi/psi combination within the given torsion bin -- WARNING: this will only work for the torsion bins that are currently implemented
 
-					if (rama_for_res(i, j) < rama_sampling_thold_) continue;
-
-					utility::vector1<Real> torsion(2);
-					torsion[1] = i * binw_;
-					torsion[2] = j * binw_;
-
-					uniform_sampling_table_[aa].push_back(torsion);
-				}
-			}
-		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	/// Sample phi/psi torsions with probabilities proportionate to their
-	/// Ramachandran probabilities
-	/// Note -- this function had previously required that the option
-	/// loops::nonpivot_torsion_sampling be active.  This function now
-	/// performs a just-in-time check to initialize these tables the first
-	/// time they are requested -- To properly multi-thread this code, the
-	/// function should nab a mutex so that no two threads try to execute
-	/// the code at once.
-	void
-	Ramachandran::random_phipsi_from_rama(
-										  AA const res_aa,
-										  Real & phi,
-										  Real & psi
-										  ) const
-	{
-		using numeric::random::uniform;
-
-		if (res_aa==core::chemical::aa_unk) {
-			//TR.Warning << "Warning: aa_unk residue type passed to Ramachandran::random_phipsi_from_rama.  Returning nothing."
-			return;
-		}
-
-		if ( rama_sampling_table_.size() == 0 ) {
-			/// Danger -- not threadsafe.
-			init_rama_sampling_table('X');
-		}
-
-		// Use the equivalent L-amino acid if this is a D-amino acid.
-		AA res_aa2 = res_aa;
-		if (is_canonical_d_aminoacid(res_aa)) res_aa2=get_l_equivalent(res_aa);
-
-		Size n_torsions = rama_sampling_table_[res_aa2].size();
-		Size index = numeric::random::random_range(1, n_torsions);
-
-		// Select a random phi/psi bin from the rama_sampling_table_.  This table
-		// has been setup such that the number of times each psi/psi bin appears is
-		// proportional to the rama weight of that bin.  Once a bin is chosen, a
-		// specific phi/psi pair is chosen using a uniform distribution and no
-		// interpolation.
-
-		// AS Nov 2013 - note that phi/psi bins are lower left corners, so we only
-		// want to add "noise" from a uniform distribution
-
-		phi = rama_sampling_table_[res_aa2][index][1] + numeric::random::uniform() * binw_;
-		psi = rama_sampling_table_[res_aa2][index][2] + numeric::random::uniform() * binw_;
-
-		// Invert phi and psi if this is a D-amino acid.
-		if (is_canonical_d_aminoacid(res_aa)) {
-			phi=360.0-phi;
-			psi=360.0-psi;
-		}
-	}
-
-	void
-	Ramachandran::uniform_phipsi_from_allowed_rama(
-											AA const res_aa,
-											Real & phi,
-											Real & psi
-											) const
-	{
-		using numeric::random::uniform;
-		using numeric::random::random_range;
-
-		if (uniform_sampling_table_.empty()) {
-			init_uniform_sampling_table();
-		}
-
-		Size n_torsions = uniform_sampling_table_[res_aa].size();
-		Size index = random_range(1, n_torsions);
-
-		phi = uniform_sampling_table_[res_aa][index][1] + binw_ * uniform();
-		psi = uniform_sampling_table_[res_aa][index][2] + binw_ * uniform();
-	}
-
-	bool
-	Ramachandran::phipsi_in_allowed_rama(
-											AA const aa,
-											Real phi,
-											Real psi
-											) const
-	{
-		// Figure out which torsion bin the given phi/psi pair is in.  Angles must be
-		// given in degrees, but need not be given in any specific range.
-
-		phi = numeric::nonnegative_principal_angle_degrees(phi);
-		psi = numeric::nonnegative_principal_angle_degrees(psi);
-
-		Size phi_bin = floor(phi / binw_);
-		Size psi_bin = floor(psi / binw_);
-
-		// Return true if this bin has a non-zero rama probability.
-
-		FArray2A<Real>::IR const zero_index(0, n_phi_ - 1);
-		FArray2A<Real> const rama_for_res(
-				ram_probabil_(1, 1, 3, aa), zero_index, zero_index);
-
-		return rama_for_res(phi_bin, psi_bin) > rama_sampling_thold_;
-	}
-
-	bool
-	Ramachandran::phipsi_in_forbidden_rama(
-											AA const aa,
-											Real phi,
-											Real psi
-											) const
-	{
-		return ! phipsi_in_allowed_rama(aa, phi, psi);
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	/// Sample phi/psi torsions with probabilities proportionate to their
-	/// Ramachandran probabilities -- this version performs lookup restricted to specified torsion bins
-	/// based on random_phipsi_from_rama and has the same issue for parallel running
-
-	/// @author Amelie Stein (amelie.stein@ucsf.edu)
-	/// @date Fri May 11 15:52:01 PDT 2012
-	/// @details returns a random phi/psi combination within the given torsion bin -- WARNING: this will only work for the torsion bins that are currently implemented
-
-	void
-	Ramachandran::random_phipsi_from_rama_by_torsion_bin(
-														 AA const res_aa,
-														 Real & phi,
-														 Real & psi,
-														 char const torsion_bin
-														 ) const
-	{
+void
+Ramachandran::random_phipsi_from_rama_by_torsion_bin(
+	AA const res_aa,
+	Real & phi,
+	Real & psi,
+	conformation::ppo_torsion_bin torsion_bin
+) const
+{
+	draw_random_phi_psi_from_cdf( cdf_by_torsion_bin_( res_aa, torsion_bin ), phi, psi );
+}
 
 
-		//utility::vector1< utility::vector1< utility::vector1< Real > > > current_rama_sampling_table; // depends on the torsion bin
+void
+Ramachandran::get_entries_per_torsion_bin(
+	AA const res_aa,
+	std::map< conformation::ppo_torsion_bin, core::Size > & tb_frequencies
+) const
+{
+	tb_frequencies[ conformation::ppo_torbin_A ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_A ];
+	tb_frequencies[ conformation::ppo_torbin_B ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_B ];
+	tb_frequencies[ conformation::ppo_torbin_E ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_E ];
+	tb_frequencies[ conformation::ppo_torbin_G ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_G ];
+	tb_frequencies[ conformation::ppo_torbin_X ] = phi_psi_bins_above_thold_[ res_aa ][ conformation::ppo_torbin_X ];
+}
 
-		//if (rama_sampling_table_by_torsion_bin_.find(torsion_bin) == rama_sampling_table_by_torsion_bin_.end()) {
-		if (rama_sampling_table_by_torsion_bin_.size() == 0) {
-			init_rama_sampling_tables_by_torsion_bin();
-			// not threadsafe either
-			// initialize the table for this torsion bin and residue
-			// TODO: store the original sampling table before doing this, and then write it back after storing the result of this function, so that we don't lose or overwrite this information
-			//std::cerr << " generating rama sampling table for torsion bin " << torsion_bin << std::endl; // make sure that all of this is only done once
-
-		}
-
-		core::Size tb_index = get_torsion_bin_index(torsion_bin);
-		/*
-		 std::map< char, utility::vector1< utility::vector1< utility::vector1< Real > > > >::const_iterator m_iter = rama_sampling_table_by_torsion_bin_.find(torsion_bin);
-		 if (m_iter != rama_sampling_table_by_torsion_bin_.end()) {
-		 //std::cerr << "trying to fetch the table for torsion bin " << torsion_bin << std::endl;
-		 current_rama_sampling_table = m_iter->second;
-		 }
-
-		 std::cerr << " rama sampling table size / # torsion bins" << rama_sampling_table_by_torsion_bin_.size() << std::endl;
-		 std::cerr << " rama sampling table size " << rama_sampling_table_by_torsion_bin_[tb_index].size() << std::endl;
-		 std::cerr << " -- res: " << res_aa << " " << rama_sampling_table_by_torsion_bin_[tb_index][res_aa].size() << std::endl;
-		 */
-
-		Size n_torsions = rama_sampling_table_by_torsion_bin_[tb_index][res_aa].size();
-		Size index = numeric::random::random_range(1, n_torsions);
-
-		/*
-		 // check if for some reason the bins are not populated
-		 std::cerr << current_rama_sampling_table[res_aa][index].size() << " index " << index << std::endl;
-		 for (int i = 0; i < current_rama_sampling_table[res_aa][index].size(); i++)
-		 std::cerr << current_rama_sampling_table[res_aa][index][i] << " - " << i << std::endl;
-
-		 std::cerr << current_rama_sampling_table[res_aa][index][1] << " index " << index << " / 1" << std::endl;
-		 std::cerr << current_rama_sampling_table[res_aa][index][2] << " index " << index << " / 2" << std::endl;
-		 */
-		// following lines set phi and set to values drawn proportionately from Rama space
-        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
-		phi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][1] + numeric::random::uniform() * binw_;
-		psi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][2] + numeric::random::uniform() * binw_;
-		// DJM: debug
-		//std::cout << "res_aa: " << res_aa << std::endl;
-		//std::cout << "phi: " << phi << std::endl;
-		//std::cout << "psi: " << psi << std::endl;
-
-
-	} // random_phipsi_from_rama_by_torsion_bin
-
-
-
-	core::Size Ramachandran::get_torsion_bin_index(char torsion_bin) const
-	{
-		return toupper(torsion_bin) - toupper('A') + 1;
-	}
-
-
-	// just to avoid code duplication
-	void
-	Ramachandran::init_rama_sampling_tables_by_torsion_bin() const
-	{
-		init_rama_sampling_table( 'A' );
-		init_rama_sampling_table( 'B' );
-		init_rama_sampling_table( 'E' );
-		init_rama_sampling_table( 'G' );
-		init_rama_sampling_table( 'X' ); // to allow wildcards in the torsion string
-	}
-
-	void
-	Ramachandran::get_entries_per_torsion_bin( AA const res_aa, std::map< char, core::Size > & tb_frequencies ) const
-	{
-		// check if the tables are initialized, and if not, do so
-		if (rama_sampling_table_by_torsion_bin_.size() == 0) {
-			init_rama_sampling_tables_by_torsion_bin();
-		}
-		tb_frequencies['A'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('A')][res_aa].size();
-		tb_frequencies['B'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('B')][res_aa].size();
-		tb_frequencies['E'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('E')][res_aa].size();
-		tb_frequencies['G'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('G')][res_aa].size();
-		tb_frequencies['X'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('X')][res_aa].size();
-	}
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -553,26 +328,26 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 		return;
 	}
 
-	const core::conformation::Residue &lowerres=mypose.residue(res.residue_connection_partner(1));
-	const core::conformation::Residue &upperres=mypose.residue(res.residue_connection_partner(2));
+	core::conformation::Residue const & lowerres = mypose.residue(res.residue_connection_partner(1));
+	core::conformation::Residue const & upperres = mypose.residue(res.residue_connection_partner(2));
 
-	//NOTE: The following assumes that we're scoring something with an alpha-amino acid backbone!  At the time of this writing (7 Feb 2013), rama checks that the residue being scored is either a standard L- or D-amino acid.
+	// NOTE: The following assumes that we're scoring something with an alpha-amino acid backbone!  At the time
+	// of this writing (7 Feb 2013), rama checks that the residue being scored is either a standard L- or D-amino acid.
 	Real phi = numeric::nonnegative_principal_angle_degrees(
-				numeric::dihedral_degrees(
-					lowerres.xyz( lowerres.residue_connect_atom_index(res.residue_connection_conn_id(1)) ),
-					res.xyz("N"), //Position of N
-					res.xyz("CA"), //Position of CA
-					res.xyz("C") //Position of C
-				)
-			);
+		numeric::dihedral_degrees(
+		lowerres.xyz( lowerres.residue_connect_atom_index(res.residue_connection_conn_id(1)) ),
+		res.xyz("N"), //Position of N
+		res.xyz("CA"), //Position of CA
+		res.xyz("C") //Position of C
+		));
+
 	Real psi=numeric::nonnegative_principal_angle_degrees(
-				numeric::dihedral_degrees(
-					res.xyz("N"), //Position of N
-					res.xyz("CA"), //Position of CA
-					res.xyz("C"), //Position of C
-					upperres.xyz( upperres.residue_connect_atom_index(res.residue_connection_conn_id(2)) )
-				)
-			);
+		numeric::dihedral_degrees(
+		res.xyz("N"), //Position of N
+		res.xyz("CA"), //Position of CA
+		res.xyz("C"), //Position of C
+		upperres.xyz( upperres.residue_connect_atom_index(res.residue_connection_conn_id(2)) )
+		));
 
 	//printf("rsd %lu phi=%.3f psi=%.3f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
 
@@ -783,13 +558,13 @@ Ramachandran::eval_rama_score_residue(
 
 
 ///////////////////////////////////////////////////////////////////////////////
-void Ramachandran::eval_procheck_rama(
-	Pose const & /*pose*/,
-	Real & /*favorable*/,
-	Real & /*allowed*/,
-	Real & /*generous*/
-) const
-{}
+//void Ramachandran::eval_procheck_rama(
+//	Pose const & /*pose*/,
+//	Real & /*favorable*/,
+//	Real & /*allowed*/,
+//	Real & /*generous*/
+//) const
+//{}
 
 bool
 Ramachandran::is_normally_connected (
@@ -804,6 +579,41 @@ Ramachandran::is_normally_connected (
 
 	return (firstconn && secondconn);
 }
+
+Size Ramachandran::n_phi_bins() const { return n_phi_; }
+
+Size Ramachandran::n_psi_bins() const { return n_psi_; }
+
+Real Ramachandran::rama_probability( core::chemical::AA aa, Real phi, Real psi ) const {
+	phi = numeric::nonnegative_principal_angle_degrees( phi );
+	psi = numeric::nonnegative_principal_angle_degrees( psi );
+	Size phi_ind = static_cast< Size > ( floor( phi / binw_ ) ) + 1;
+	Size psi_ind = static_cast< Size > ( floor( psi / binw_ ) ) + 1;
+	return ram_probabil_( phi_ind, psi_ind, 3, aa );
+}
+
+Real Ramachandran::minimum_sampling_probability() const {
+	return rama_sampling_thold_;
+}
+
+
+
+utility::vector1< Real > const &
+Ramachandran::cdf_for_aa( core::chemical::AA aa ) const
+{
+	return cdf_[ aa ];
+}
+
+utility::vector1< Real > const &
+Ramachandran::cdf_for_aa_for_torsion_bin(
+	chemical::AA aa,
+	conformation::ppo_torsion_bin torsion_bin
+) const
+{
+	return cdf_by_torsion_bin_( aa, torsion_bin );
+}
+
+
 
 void
 Ramachandran::read_rama_map_file (
@@ -927,9 +737,132 @@ Ramachandran::read_rama(
 			rama_energy_splines_[ ii ] = ramaEspline;
 		}
 	}
-//cj      std::cout << "========================================" << std::endl;
+
+	initialize_rama_sampling_tables();
 }
 
+void
+Ramachandran::initialize_rama_sampling_tables()
+{
+	init_rama_sampling_table( conformation::ppo_torbin_X );
+	init_rama_sampling_table( conformation::ppo_torbin_A );
+	init_rama_sampling_table( conformation::ppo_torbin_B );
+	init_rama_sampling_table( conformation::ppo_torbin_E );
+	init_rama_sampling_table( conformation::ppo_torbin_G );
+
+	init_uniform_sampling_table();
+}
+
+void
+Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bin )
+{
+	utility::vector1< Real > inner_cdf( n_phi_ * n_psi_, 0.0 );
+	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
+	for ( Size ii = 1; ii <= n_aa_; ++ii ) {
+		std::fill( inner_cdf.begin(), inner_cdf.end(), Real( 0.0 ) );
+		FArray2A< Real > const ii_rama_prob( ram_probabil_( 1, 1, 3, ii ), zero_index, zero_index );
+
+		Size actual_allowed( 0 );
+		Real allowed_probability_sum( 0.0 );
+		for ( int jj = 0; jj < (int) n_phi_; ++jj ) {
+			for ( int kk = 0; kk < (int) n_psi_; ++kk ) {
+
+				inner_cdf[ jj*n_psi_ + kk +  1 ] = allowed_probability_sum;
+
+				Real jjkk_prob = ii_rama_prob( jj, kk );
+				if ( jjkk_prob < rama_sampling_thold_ ) continue;
+				Real const cur_phi = binw_ * ( jj - ( jj > n_phi_ / 2 ? n_phi_ : 0 ));
+				Real const cur_psi = binw_ * ( kk - ( kk > n_psi_ / 2 ? n_psi_ : 0 ));
+
+
+				conformation::ppo_torsion_bin cur_tb = conformation::ppo_torbin_X;
+				if (torsion_bin != conformation::ppo_torbin_X) {
+					//  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long...
+					cur_tb = core::conformation::get_torsion_bin(cur_phi, cur_psi);
+				}
+
+				//std::cout << "    " << ii << " " << cur_phi << " " << cur_psi << " " << core::conformation::map_torsion_bin_to_char( cur_tb ) << " " << jjkk_prob << std::endl;
+
+				if ( cur_tb == torsion_bin ) {
+					++actual_allowed;
+					// store the cumulative sum up to the current table entry
+					// then increment the cumulative sum with the current table entry
+					allowed_probability_sum += jjkk_prob;
+				}
+
+			}
+		}
+
+		//std::cout << "Ramachandran: " << ii << " " << core::conformation::map_torsion_bin_to_char( torsion_bin ) << " " << actual_allowed << std::endl;
+
+		if ( actual_allowed == 0 ) {
+			// store a vector of 0s instead of creating a vector of NaNs.
+			cdf_by_torsion_bin_( ii, torsion_bin ) = inner_cdf;
+			continue;
+		}
+
+		// now normalize the cdf vector by scaling by 1/allowed_probability_sum so that it represents a CDF that sums to 1.
+		// and mark all zero-probability bins with the CDF value of their predecessor.
+		Real const inv_allowed_probability_sum = 1 / allowed_probability_sum;
+		for ( Size jj = 1; jj <= n_phi_ * n_psi_; ++jj ) {
+			inner_cdf[ jj ] *= inv_allowed_probability_sum;
+			//if ( inner_cdf[ jj ] == 0 && jj != 1 ) {
+			//	inner_cdf[ jj ] = inner_cdf[ jj-1 ];
+			//}
+		}
+
+		// now update the cdf, cdf_by_torsion_bin, and n_valid_pp_bins_by_ppo_torbin tables
+		if ( torsion_bin == conformation::ppo_torbin_X ) {
+			cdf_[ ii ] = inner_cdf;
+		}
+		cdf_by_torsion_bin_( ii, torsion_bin ) = inner_cdf;
+		n_valid_pp_bins_by_ppo_torbin_( ii, torsion_bin ) = actual_allowed;
+
+	}
+
+}
+
+void
+Ramachandran::init_uniform_sampling_table()
+{
+	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
+	for ( Size ii = 1; ii <= n_aa_; ++ii ) {
+		utility::vector1< Size > minimum_prob_bin_inds;
+		minimum_prob_bin_inds.reserve( n_phi_ * n_psi_ );
+		FArray2A< Real > const ii_rama_prob( ram_probabil_( 1, 1, 3, ii ), zero_index, zero_index );
+		for ( Size jj = 0; jj < n_phi_; ++jj ) {
+			for ( Size kk = 0; kk < n_psi_; ++kk ) {
+				Real jjkk_prob = ii_rama_prob( jj, kk );
+				if ( jjkk_prob >= rama_sampling_thold_ ) {
+					minimum_prob_bin_inds.push_back( jj*n_psi_ + kk );
+				}
+			}
+		}
+		phi_psi_bins_above_thold_[ ii ] = minimum_prob_bin_inds;
+	}
+}
+
+void
+Ramachandran::draw_random_phi_psi_from_cdf(
+	utility::vector1< Real > const & cdf,
+	Real & phi,
+	Real & psi
+) const
+{
+	// the bin index can be unpacked to give the phi and psi indices
+	Size bin_from_cdf = numeric::random::pick_random_index_from_cdf( cdf, rama_rg );
+	--bin_from_cdf;
+
+	Size phi_ind = bin_from_cdf / n_psi_;
+	Size psi_ind = bin_from_cdf - phi_ind * n_phi_;
+
+	//std::cout << " phi_ind: " << phi_ind << " psi_ind: " << psi_ind << std::endl;
+
+	// following lines set phi and set to values drawn proportionately from Rama space
+	// AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+	phi = binw_ * ( phi_ind + numeric::random::uniform() );
+	psi = binw_ * ( psi_ind + numeric::random::uniform() );
+}
 
 
 }

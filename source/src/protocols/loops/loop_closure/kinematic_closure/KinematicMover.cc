@@ -14,51 +14,47 @@
 
 // Unit Headers
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
+
+// Package headers
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
+
 //#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
 
 // Rosetta Headers
+#include <core/id/DOF_ID.hh>
+#include <core/id/TorsionID.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Conformation.hh> // DJM: may go away
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh> // DJM: may go away
+#include <core/conformation/ppo_torsion_bin.hh>
 #include <core/conformation/ResidueFactory.hh> // DJM: may go away
 #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionAndAnglesSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
-#include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
-#include <basic/options/option.hh>
+
 #include <core/pose/Pose.hh>
-//#include <core/scoring/etable/Etable.hh>
-//#include <core/scoring/etable/EtableEnergy.hh>
-//#include <core/scoring/etable/count_pair/CountPairAll.hh>
-//#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-//#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-//#include <core/scoring/NeighborList.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 // #include <core/scoring/Energies.hh> // AS April 25, 2013 -- would be needed to get chainbreak energy
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
+
+// Basic headers
 #include <basic/Tracer.hh>
 
+// Numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
-
 #include <numeric/xyzVector.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
+// C++ headers
 #include <stdio.h>
 
 // option key includes
+#include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/id/TorsionID.hh>
-#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <boost/foreach.hpp>
@@ -159,7 +155,7 @@ void KinematicMover::set_pivots( Size start_res, Size middle_res, Size end_res )
 }
 
 // boundaries of the current loop, needed for torsion bin lookup and offset in torsion-restricted & taboo sampling
-void KinematicMover::set_loop_begin_and_end( Size loop_begin, Size loop_end ) 
+void KinematicMover::set_loop_begin_and_end( Size loop_begin, Size loop_end )
 {
 	loop_begin_ = loop_begin;
 	loop_end_ = loop_end;
@@ -186,7 +182,7 @@ void KinematicMover::set_sample_nonpivot_torsions( bool sample )
 {
 	KinematicMover::sample_nonpivot_torsions_=sample;
 }
-	
+
 bool KinematicMover::get_sample_nonpivot_torsions()
 {
 	return KinematicMover::sample_nonpivot_torsions_;
@@ -328,7 +324,7 @@ core::Size KinematicMover::count_bb_atoms (
 	//The residue following the loop:
 	if(pose.residue(end_res).is_upper_terminus()) counter += count_bb_atoms_in_residue(pose, end_res); //A copy of end_res is appended in KinematicMover::apply if the end residue is a terminus.
 	else counter += count_bb_atoms_in_residue(pose, end_res+1); //Otherwise, count the number of atoms in the residue after the end residue
-	
+
 	for(core::Size ir=start_res; ir<=end_res; ++ir) counter += count_bb_atoms_in_residue(pose, ir); //Count the atoms in the loop itself
 
 	return counter; //Return the number of atoms in the segement, including the residues before and after the segment.
@@ -512,7 +508,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	// idealize the loop if requested
 	// NOTE: for now, this only works for alpha-amino acids.  If there are beta-amino acids in the mix, this will return an error.
 	if (idealize_loop_first_) {
-	
+
 		// save a backbup of the non-ideal residues in case closure fails -- AS_DEBUG: now trying to simply store the entire pose and write it back
 		save_residues.resize(seg_len);
 		for (Size seqpos=start_res_, i=1; seqpos<=end_res_; seqpos++, i++) {
@@ -538,7 +534,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 				if( db_len.size() >= (i+1) ) db_len[i+1]=idl_beta_CA_CM_;
 				if( db_len.size() >= (i+2) ) db_len[i+2]=idl_beta_CM_C_;
 				if( db_len.size() >= (i+3) ) db_len[i+3]=idl_beta_C_N_;
-				if( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_canonical_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;				
+				if( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_canonical_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;
 			} else { //Default case: alpha-amino acid residue
 				if( db_ang.size() >= (i) )   db_ang[i]=idl_C_N_CA_;
 				if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_N_CA_C_;
@@ -549,7 +545,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 				if( dt_ang.size() >= (i+2) ) dt_ang[i+2]=OMEGA_MEAN_;
 			}
 
-			//Incrementing the atom counter:	
+			//Incrementing the atom counter:
 			if(res == start_res_ - 1) i += start_minus_one_bb_atom_count; //The padding residue at the start
 			else if (res == end_res_ + 1) i += end_plus_one_bb_atom_count; //The padding residue at the end
 			else i += count_bb_atoms_in_residue(pose, res); //The loop residues
@@ -599,10 +595,10 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		for (int i=1; i<=nsol; i++) {
 			pos[i]=i;
 		}
-		
+
 		//std::random__shuffle(pos.begin(), pos.end());
 		numeric::random::random_permutation(pos.begin(), pos.end(), RG); //Put the solutions in random order, since the first one encountered that passes the filters is accepted.
-		
+
 		// Look for solutions passing NaN, Rama, bump checks and eventual filters
 		for (Size i=nsol; i>=1; i--) {
 			//TR << "KINMOVER checking sol " << nsol - i + 1 << " of " << nsol << " .. "; // DJM: debug
@@ -629,14 +625,14 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			// set the torsions
 			perturber_->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true /* closure successful? */);
 
-			// AS: fetch & set the torsion string for Taboo Sampling 
+			// AS: fetch & set the torsion string for Taboo Sampling
 			insert_sampled_torsion_string_into_taboo_map( torsion_features_string( pose ) ); //VKM, 27 Aug 2013: This won't work properly with beta-amino acids, but won't crash, either...
-			
+
 			//now check if the pose passes all the filters
 			if( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ){
 				continue;
 			}
-			
+
 			if( do_sfxn_eval_every_iteration_ ) (*sfxn_)( pose );
 
 			if( filters_.size() != 0 ){
@@ -651,26 +647,26 @@ void KinematicMover::apply( core::pose::Pose & pose )
 					continue;
 				}
 			}
-		
+
 			// AS April 25, 2013
 			// adding temporary filter option to remove cases with a chainbreak score that exceeds the threshold -- there appears to be a bug in KIC that makes it occasionally return open conformations; while we're working on fixing the underlying issue, use this filter to remove problematic cases
-			
+
 			/*
 			if (sfxn_ && sfxn_->get_weight( chainbreak ) > 0) { // sfxn_ must be defined
 				(*sfxn_)(pose);
 				core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * sfxn_->get_weight( chainbreak );
-				
+
 				TR << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
-				if ( current_chainbreak > basic::options::option[ basic::options::OptionKeys::loops::kic_chainbreak_threshold ]() ) { 
+				if ( current_chainbreak > basic::options::option[ basic::options::OptionKeys::loops::kic_chainbreak_threshold ]() ) {
 					TR << "AS_DEBUG -- this structure probably has a chain break, skipping it " << start_res_ << "-" << end_res_ << std::endl;
 					sfxn_->show(pose); // AS_DEBUG
-					
+
 					pose.dump_pdb("high_chainbreak_score_" + utility::to_string(nits) + "_" + utility::to_string(start_res_) + "_" + utility::to_string(end_res_) + ".pdb");
 					continue;
 				}
 			}
 			 */
-			
+
 			last_move_succeeded_ = true;
 			//std::cerr << "kinmover success after " << nits << "...   ";
 
@@ -683,8 +679,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	//TR << "!!!last move not succeeded to pass filters" << std::endl;
 
 	// AS_DEBUG -- replace pose by stored pose in case the loop closure trials didn't work
-	pose = start_p; 
-	
+	pose = start_p;
+
 	//TR << "\tnumber of its: " << nits << std::endl;
 	return;
 
@@ -737,7 +733,7 @@ bool KinematicMover::pivots_within_vicinity(
 	return true;
 }
 */
-	
+
 // this version checks rama for all residues in loop segment
 bool KinematicMover::perform_rama_check(
 	core::pose::Pose const & pose,
@@ -1018,7 +1014,7 @@ KinematicMover::perform_bump_check(
 }
 
 // set default options
-// AS -- after vicinity refactoring, only the perturber knows about vicinity sampling -- for now this function doesn't do anything any more... 
+// AS -- after vicinity refactoring, only the perturber knows about vicinity sampling -- for now this function doesn't do anything any more...
 void
 KinematicMover::set_defaults() {
 	using namespace core;
@@ -1026,104 +1022,110 @@ KinematicMover::set_defaults() {
 
 	return;
 }
-	
-	/// @brief Taboo Sampling functions
-	/// @author Amelie Stein
-	/// @date Thu May 17 13:23:52 PDT 2012
-	
-	void 
-	KinematicMover::update_sequence( utility::vector1< core::chemical::AA > const & sequence )
-	{
-		
-		// note: it would be much better to implement this as a vector/map of strings, that then redirect to the corresponding taboo map -- otherwise we lose all information the moment we change loops, which will happen a lot when remodeling multiple loops -- TODO
-		// in other words, this implementation is only intended for remodeling single loops
-		
-		if (sequence != sequence_) { // is there an actual change?
-			
-			if (sequence_.size() > 0) {
-				// store last used taboo_map_ along with the corresponding sequence
-				/*
-				TR << "storing taboo map for "; // debug/testing info
-				for (Size i = 1; i <= sequence_.size(); i++) 
-					TR << sequence_[i] << " " ;
-				TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl; // actually I'm not sure when loop_begin_ and loop_end_ are updated... 
-				*/
-				taboo_master_map_[sequence_] = taboo_map_;
-			}
-			
-			sequence_ = sequence;
-			taboo_map_.clear();	
-			if (taboo_master_map_.find(sequence) != taboo_master_map_.end()) {
-				/*
-				TR << "reloading taboo map for "; // debug/testing info
-				for (Size i = 1; i <= sequence.size(); i++) 
-					TR << sequence[i];
-				TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl;
-				*/
-				taboo_map_ = taboo_master_map_[sequence]; // reload from previous use, if possible
-			}
-			//random_torsion_strings_.clear();
-			perturber_->clear_torsion_string_stack(); // only affects the TabooSampling perturber for now
+
+/// @brief Taboo Sampling functions
+/// @author Amelie Stein
+/// @date Thu May 17 13:23:52 PDT 2012
+
+void
+KinematicMover::update_sequence( utility::vector1< core::chemical::AA > const & sequence )
+{
+
+	// note: it would be much better to implement this as a vector/map of strings, that then redirect to the corresponding taboo map -- otherwise we lose all information the moment we change loops, which will happen a lot when remodeling multiple loops -- TODO
+	// in other words, this implementation is only intended for remodeling single loops
+
+	if (sequence != sequence_) { // is there an actual change?
+
+		if (sequence_.size() > 0) {
+			// store last used taboo_map_ along with the corresponding sequence
+			/*
+			TR << "storing taboo map for "; // debug/testing info
+			for (Size i = 1; i <= sequence_.size(); i++)
+				TR << sequence_[i] << " " ;
+			TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl; // actually I'm not sure when loop_begin_ and loop_end_ are updated...
+			*/
+			taboo_master_map_[sequence_] = taboo_map_;
 		}
-	}
-	
-	// the TabooSamplingKinematicPerturber must access this to derive the appropriate torsion bins
-	utility::vector1< core::chemical::AA > 
-	KinematicMover::get_loop_sequence() const 
-	{
-		return sequence_;		
-	}
-	
-	void
-	KinematicMover::insert_sampled_torsion_string_into_taboo_map( std::string const & ts )
-	{
-		if (sequence_.size() > 0 && taboo_map_.size() > pow(4.0, (double) sequence_.size()) * taboo_map_max_capacity_) {
-			TR << "Taboo map filled to " << taboo_map_max_capacity_*100 << "% capacity, clearing the map to avoid almost-endless loops. " << taboo_map_.size() << std::endl;
-			taboo_map_.clear();
+
+		sequence_ = sequence;
+		taboo_map_.clear();
+		if (taboo_master_map_.find(sequence) != taboo_master_map_.end()) {
+			/*
+			TR << "reloading taboo map for "; // debug/testing info
+			for (Size i = 1; i <= sequence.size(); i++)
+				TR << sequence[i];
+			TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl;
+			*/
+			taboo_map_ = taboo_master_map_[sequence]; // reload from previous use, if possible
 		}
-		
-		taboo_map_[ts] = true; 
+		//random_torsion_strings_.clear();
+		perturber_->clear_torsion_string_stack(); // only affects the TabooSampling perturber for now
 	}
-	
-	bool
-	KinematicMover::is_in_taboo_map( std::string const & ts ) const
-	{
-		return taboo_map_.find(ts) != taboo_map_.end();
-	}	
-	
-	
-	/// @brief Returns the frequency of torsion_bin at position pos in the current taboo map, used for shifting probabilities of sampled torsion bins in later rounds
-	core::Real
-	KinematicMover::frequency_in_taboo_map( core::Size const & pos, char const & torsion_bin ) const {
-		
-		if (taboo_map_.size() == 0) 
-			return 0;
-		
-		core::Size counter = 0;
-		if (pos >= sequence_.size()) {
-			TR << "error -- position " << pos << " exceeds the current taboo map string" << std::endl;
-			return counter;
-		} // assumption: all strings in the taboo map have the same size, and pos is within these bounds
-		for (std::map< std::string, bool >::const_iterator mi = taboo_map_.begin(); mi != taboo_map_.end(); mi++) {
-			counter += ( (mi->first)[pos] == torsion_bin ); // this might be slow... 
-		}
-		return core::Real(counter)/taboo_map_.size();
+}
+
+// the TabooSamplingKinematicPerturber must access this to derive the appropriate torsion bins
+utility::vector1< core::chemical::AA >
+KinematicMover::get_loop_sequence() const
+{
+	return sequence_;
+}
+
+void
+KinematicMover::insert_sampled_torsion_string_into_taboo_map( core::conformation::torsion_bin_string const & ts )
+{
+	if (sequence_.size() > 0 && taboo_map_.size() > pow(4.0, (double) sequence_.size()) * taboo_map_max_capacity_) {
+		TR << "Taboo map filled to " << taboo_map_max_capacity_*100 << "% capacity, clearing the map to avoid almost-endless loops. " << taboo_map_.size() << std::endl;
+		taboo_map_.clear();
 	}
-	
-	
-	///@brief bin torsion angles as described in http://www.ncbi.nlm.nih.gov/pubmed/19646450
-	///@detail generates a string with the torsion angle bins, using uppercase letters as in the publication above for omega ~ 180, and lowercase letters for omega ~ 0; to be used in loop sampling analysis -- same as in the LoopMover implementation... 
-	///@author Amelie Stein
-	///@date April 26, 2012
-	std::string KinematicMover::torsion_features_string( core::pose::Pose const & pose ) const 
-	{
-		std::string torsion_bins, pos_bin;
-		// assumption: we have only one loop ... 
-		for ( core::Size i = loop_begin_; i <= loop_end_; i++ ) {
-			torsion_bins += core::conformation::get_torsion_bin(pose.phi(i), pose.psi(i), pose.omega(i));
-		}
-		return torsion_bins;
-	} // torsion_features_string
+
+	taboo_map_[ts] = true;
+}
+
+bool
+KinematicMover::is_in_taboo_map( core::conformation::torsion_bin_string const & ts ) const
+{
+	return taboo_map_.find(ts) != taboo_map_.end();
+}
+
+
+/// @brief Returns the frequency of torsion_bin at position pos in the current taboo map, used for shifting probabilities of sampled torsion bins in later rounds
+core::Real
+KinematicMover::frequency_in_taboo_map( core::Size pos, core::conformation::ppo_torsion_bin torsion_bin ) const {
+
+	if (taboo_map_.size() == 0) {
+		return 0;
+	}
+
+	core::Size counter = 0;
+	if (pos >= sequence_.size()) {
+		TR << "error -- position " << pos << " exceeds the current taboo map string" << std::endl;
+		return counter;
+	} // assumption: all strings in the taboo map have the same size, and pos is within these bounds
+	for (std::map< core::conformation::torsion_bin_string, bool >::const_iterator
+			mi = taboo_map_.begin(); mi != taboo_map_.end(); mi++) {
+		counter += ( (mi->first)[pos] == torsion_bin ); // this might be slow...
+	}
+	return core::Real(counter)/taboo_map_.size();
+}
+
+
+/// @brief bin torsion angles as described in http://www.ncbi.nlm.nih.gov/pubmed/19646450
+/// @details generates a string with the torsion angle bins, using uppercase letters as in
+/// the publication above for omega ~ 180, and lowercase letters for omega ~ 0; to be used
+/// in loop sampling analysis -- same as in the LoopMover implementation...
+/// @author Amelie Stein
+/// @date April 26, 2012
+core::conformation::torsion_bin_string
+KinematicMover::torsion_features_string( core::pose::Pose const & pose ) const
+{
+	core::conformation::torsion_bin_string torsion_bins;
+	torsion_bins.reserve( loop_end_ - loop_begin_ + 1 );
+	// assumption: we have only one loop ...
+	for ( core::Size i = loop_begin_; i <= loop_end_; i++ ) {
+		torsion_bins.push_back( core::conformation::get_torsion_bin(pose.phi(i), pose.psi(i), pose.omega(i)) );
+	}
+	return torsion_bins;
+} // torsion_features_string
 
 
 } // namespace kinematic_closure

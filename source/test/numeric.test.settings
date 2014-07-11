@@ -57,13 +57,14 @@ sources = {
 	"kdtree" : [
 		"kdtree",
 	],
-    "linear_algebra": [
-        "GeneralizedEigenSolverTests",
-    ],
+	"linear_algebra": [
+		"GeneralizedEigenSolverTests",
+	],
 	"random" : [
-                "DistributionSampler",
+		"DistributionSampler",
+		"random.functions",
 		"reservoir_sample",
-                "WeightedReservoirSampler",
+		"WeightedReservoirSampler",
 		"WeightedSampler",
 	],
 
@@ -72,7 +73,7 @@ include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = [ "sqlite3", "cppdb", "basic", "numeric", "utility", "ObjexxFCL", "z",]
 subprojects  = []
-testinputfiles = [ 
+testinputfiles = [
 	"interpolation/Histogram_sample.hist",
 	"mt19937.u",
 	"sampling.prob",

@@ -93,6 +93,7 @@ sources = {
 	"core/conformation": [
 		"AtomGraph",
 		"Conformation",
+		"ppo_torsion_bin",
 		"PointGraph",
 		"PseudoBond",
 		"Residue",
