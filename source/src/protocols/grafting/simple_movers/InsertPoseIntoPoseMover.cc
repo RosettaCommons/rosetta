@@ -30,10 +30,10 @@ namespace simple_movers {
 
 InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(bool copy_pdbinfo /*false*/):
 protocols::moves::Mover("InsertPoseIntoPoseMover"),
-		src_pose_(NULL),
 		start_(0),
 		end_(0),
 		copy_pdbinfo_(copy_pdbinfo),
+		src_pose_(NULL),
 		tag_(NULL)
 {
 	
