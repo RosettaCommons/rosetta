@@ -71,6 +71,15 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( IntegerVector, superimpose_res )
 OPT_KEY( IntegerVector, graft_res )
+OPT_KEY( IntegerVector, unvirtualize_phosphate_res )
+
+void
+unvirtualize_phosphates( pose::Pose & pose, utility::vector1< Size > const & unvirtualize_phosphate_residues  ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+		if ( !unvirtualize_phosphate_residues.has_value( pose.pdb_info()->number( n ) ) ) continue;
+		core::pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
+	}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -196,6 +205,9 @@ get_pdbs_and_superimpose( pose::Pose & pose1 /* the 'parent pose'*/,
 	} else {
 		std::cout << "WARNING: no overlap residues found or specified (by -superimpose_res)!!!! " << std::endl;
 	}
+
+	unvirtualize_phosphates( pose1, option[ unvirtualize_phosphate_res ]() );
+	unvirtualize_phosphates( pose2, option[ unvirtualize_phosphate_res ]() );
 
 }
 
@@ -342,6 +354,9 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	PDBInfoOP pdb_info = new PDBInfo( pose_target );
 	pdb_info->set_numbering( resnum_target );
 	pose_target.pdb_info(  pdb_info );
+	std::cout << pose_target.annotated_sequence() << std::endl;
+	unvirtualize_phosphates( pose_target, option[ unvirtualize_phosphate_res ]() );
+	std::cout << pose_target.annotated_sequence() << std::endl;
 
 	std::string outfile = "graft.pdb";
 	if ( option[ out::file::o ].user() )	outfile = option[ out::file::o ]();
@@ -368,7 +383,7 @@ rna_superimpose_and_graft_test(){
 														resnum1,
 														resnum2); // in principle could store resnum, pdb_file1 inside PDBInfo object!
 
-	output_superimposed_pdb( pose2, pdb_file2 );
+	//	output_superimposed_pdb( pose2, pdb_file2 );
 
 	graft_pdb( pose1, pose2, resnum1, resnum2 );
 
@@ -406,12 +421,12 @@ main( int argc, char * argv [] )
 	//Uh, options?
 	NEW_OPT( superimpose_res, "residues over which to superimpose second pose onto first pose", blank_size_vector );
 	NEW_OPT( graft_res, "residues to graft from second pose", blank_size_vector );
+	NEW_OPT( unvirtualize_phosphate_res, "do not virtualize these phosphate (useful for cdiAMP)", blank_size_vector );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
 	devel::init(argc, argv);
-
 
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup
