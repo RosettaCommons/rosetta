@@ -323,6 +323,8 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 					 if( !triage_filter_pass )
 						 break;
 				 }
+				 if( triage_filter_pass )
+    	 		 residue_id_map[ resi ].push_back( target_aa );
 			 }
 			 else
 			 	triage_filter_pass = triage_filter()->apply( pose );
@@ -383,8 +385,8 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		TR_residue_scan<<resfile_name()<<'\t'
 									 << pair->first.first<<'\t'
 									 << oneletter_code_from_aa( pair->first.second )<<'\t'
-		                             <<pair->second.first
-                            		 <<(pair->second.second?"":"\tTRIAGED")<<std::endl;
+		               <<pair->second.first
+                   <<(pair->second.second?"":"\tTRIAGED")<<std::endl;
 	}
 	TR.flush();
 	return true;
