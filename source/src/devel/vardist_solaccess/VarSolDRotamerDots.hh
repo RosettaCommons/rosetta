@@ -55,7 +55,7 @@ public:
 
 	VarSolDRotamerDots(
 		core::conformation::ResidueCOP rotamer,
-		VarSolDistSasaCalculator& vsasa_calc
+		VarSolDistSasaCalculator const & vsasa_calc
 	);
 
 	virtual ~VarSolDRotamerDots();

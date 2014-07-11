@@ -28,46 +28,46 @@ namespace simple_movers {
 ///  In addition to the number of residues (span) .
 ///
 class ReplaceRegionMover : public  protocols::moves::Mover {
-	
+
 public:
 	ReplaceRegionMover(bool copy_pdbinfo = false);
 	ReplaceRegionMover(core::pose::Pose const & src_pose,
-			core::Size const src_pose_start, 
+			core::Size const src_pose_start,
 			core::Size const target_pose_start,
 			core::Size const span,
 			bool copy_pdbinfo = false);
 
 	ReplaceRegionMover(ReplaceRegionMover const & src);
-	
+
 	virtual ~ReplaceRegionMover();
-	
+
 	virtual void
 	apply(core::pose::Pose & pose);
-	
+
 public:
-	
+
 	core::Size src_pose_start() const;
 	void           src_pose_start(core::Size start);
-	
+
 	core::Size target_pose_start() const;
 	void           target_pose_start(core::Size start);
-	
+
 	core::Size span() const;
 	void            span(core::Size span);
-	
+
 	void src_pose(core::pose::Pose const & from_pose);
-	
+
 public:
-	
+
 	virtual std::string
 	get_name() const;
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
+
 	virtual void
 	parse_my_tag(
 		TagCOP tag,
@@ -76,7 +76,7 @@ public:
 		moves::Movers_map const & movers,
 		Pose const & pose
 	);
-	
+
 private:
 	core::Size src_pose_start_;
 	core::Size target_pose_start_;

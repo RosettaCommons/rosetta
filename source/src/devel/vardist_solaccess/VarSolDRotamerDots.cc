@@ -122,7 +122,7 @@ VarSolDRotamerDots::VarSolDRotamerDots(
 
 VarSolDRotamerDots::VarSolDRotamerDots(
 	conformation::ResidueCOP rotamer,
-	VarSolDistSasaCalculator& vsasa_calc
+	VarSolDistSasaCalculator const & vsasa_calc
 ) :
 	rotamer_(rotamer),
 	radii_(vsasa_calc.radii_),

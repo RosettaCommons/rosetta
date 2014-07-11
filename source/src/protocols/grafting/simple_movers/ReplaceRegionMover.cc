@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    protocols/grafting/simple_movers/ReplaceRegionMover.hh
-/// @brief  
+/// @brief
 /// @author  Jared Adolf-Bryfogle
 
 #include <protocols/grafting/simple_movers/ReplaceRegionMover.hh>
@@ -31,23 +31,24 @@ namespace grafting {
 namespace simple_movers {
 
 ReplaceRegionMover::ReplaceRegionMover(bool copy_pdbinfo /*false*/):
-protocols::moves::Mover("ReplaceRegionMover"),
-		src_pose_(NULL),
-		src_pose_start_(0),
-		target_pose_start_(0),
-		span_(0),
-		copy_pdbinfo_(copy_pdbinfo),
-		tag_(NULL)
+	protocols::moves::Mover("ReplaceRegionMover"),
+	src_pose_start_(0),
+	target_pose_start_(0),
+	span_(0),
+	copy_pdbinfo_(copy_pdbinfo),
+	src_pose_(NULL),
+	tag_(NULL)
 {
-	
+
 }
-	
+
 ReplaceRegionMover::ReplaceRegionMover(
-		core::pose::Pose const & src_pose,
-		Size const src_pose_start, 
-		Size const target_pose_start,
-		Size const span,
-		bool copy_pdbinfo /*false*/) :
+	core::pose::Pose const & src_pose,
+	Size const src_pose_start,
+	Size const target_pose_start,
+	Size const span,
+	bool copy_pdbinfo /*false*/
+) :
 	protocols::moves::Mover("ReplaceRegionMover"),
 	src_pose_start_(src_pose_start),
 	target_pose_start_(target_pose_start),
@@ -57,8 +58,8 @@ ReplaceRegionMover::ReplaceRegionMover(
 {
 	src_pose_ = new core::pose::Pose(src_pose);
 }
-	
-	
+
+
 ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
 	protocols::moves::Mover(src),
 	src_pose_start_(src.src_pose_start_),
@@ -68,7 +69,7 @@ ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
 	src_pose_(src.src_pose_),
 	tag_(src.tag_)
 {
-	
+
 }
 
 ReplaceRegionMover::~ReplaceRegionMover(){}
@@ -92,12 +93,12 @@ ReplaceRegionMover::parse_my_tag(
 	tag_ = tag->clone();
 	span_ = tag->getOption<core::Size>("span");
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);
-	
+
 	//Protect from unused option crash.
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "src_pose_start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "target_pose_start_");
-	
-	
+
+
 }
 
 protocols::moves::MoverOP
@@ -121,7 +122,7 @@ core::Size ReplaceRegionMover::src_pose_start() const{ return src_pose_start_; }
 void ReplaceRegionMover::target_pose_start(core::Size start) { target_pose_start_ = start; }
 core::Size ReplaceRegionMover::target_pose_start() const { return target_pose_start_;}
 
-void 
+void
 ReplaceRegionMover::src_pose(const core::pose::Pose& src_pose){
 	src_pose_ = new core::pose::Pose(src_pose);
 }
@@ -138,25 +139,23 @@ ReplaceRegionMover::fresh_instance() const {
 
 void
 ReplaceRegionMover::apply(core::pose::Pose& pose) {
-	
+
 	if (tag_){
 		src_pose_start_ = core::pose::get_resnum(tag_, *src_pose_, "src_pose_start_");
 		target_pose_start_= core::pose::get_resnum(tag_, pose, "target_pose_start_");
 	}
-	
+
 	PyAssert(src_pose_start_ != 0, "Cannot copy from a region starting with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(target_pose_start_ != 0, "Cannot copy to a region starting with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(span_ <= src_pose_->total_residue(), "Cannot delete region ending with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(src_pose_start_ + span_ <= pose.total_residue(), "Not enough residues in pose to copy all of the span of the source pose");
-	
-	
+
+
 	pose = protocols::grafting::replace_region (*src_pose_, pose, src_pose_start_, target_pose_start_, span_);
-	 
+
 }
 
 
 }
 }
 }
-
-
