@@ -61,11 +61,11 @@ ReplaceRegionMover::ReplaceRegionMover(
 	
 ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
 	protocols::moves::Mover(src),
-	src_pose_(src.src_pose_),
 	src_pose_start_(src.src_pose_start_),
 	target_pose_start_(src.target_pose_start_),
 	span_(src.span_),
 	copy_pdbinfo_(src.copy_pdbinfo_),
+	src_pose_(src.src_pose_),
 	tag_(src.tag_)
 {
 	

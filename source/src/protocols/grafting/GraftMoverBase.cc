@@ -107,14 +107,15 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 ///@brief copy ctor
 GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	Mover(src),
+	piece_(src.piece_),
 	start_(src.start_),
 	end_(src.end_),
 	original_end_(src.original_end_),
 	insertion_length_(src.insertion_length_),
 	Nter_overhang_length_(src.Nter_overhang_length_),
 	Cter_overhang_length_(src.Cter_overhang_length_),
-	copy_pdbinfo_(src.copy_pdbinfo_),
-	piece_(src.piece_)
+	copy_pdbinfo_(src.copy_pdbinfo_)
+	
 {
 	/*
 	if (src.piece_){

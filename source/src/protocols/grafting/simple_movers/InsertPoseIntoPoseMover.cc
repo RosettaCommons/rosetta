@@ -56,10 +56,11 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(
 	
 InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(const InsertPoseIntoPoseMover& src) :
 	protocols::moves::Mover(src),
-	src_pose_(src.src_pose_),
+	
 	start_(src.start_),
 	end_(src.end_),
 	copy_pdbinfo_(src.copy_pdbinfo_),
+	src_pose_(src.src_pose_),
 	tag_(src.tag_)
 {
 	
