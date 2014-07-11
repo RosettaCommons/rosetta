@@ -51,6 +51,7 @@
 
 utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP >
 varsoldist_rotamer_dots_for_pose(
+	devel::vardist_solaccess::VarSolDistSasaCalculator const & calc,
 	core::pose::Pose const & pose
 )
 {
@@ -61,7 +62,7 @@ varsoldist_rotamer_dots_for_pose(
 
 	utility::vector1< VarSolDRotamerDotsOP > rotamer_dots( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		rotamer_dots[ ii ] = new VarSolDRotamerDots( new core::conformation::Residue( pose.residue( ii )), true );
+		rotamer_dots[ ii ] = new VarSolDRotamerDots( new core::conformation::Residue( pose.residue( ii )), calc );
 		rotamer_dots[ ii ]->increment_self_overlap();
 	}
 
@@ -199,7 +200,8 @@ int main( int argc, char * argv [] )
 			HBondSet hbset;
 			fill_hbond_set( pose, false, hbset );
 
-			utility::vector1< VarSolDRotamerDotsOP > rotamer_dots = varsoldist_rotamer_dots_for_pose( pose );
+			VarSolDistSasaCalculator calc;
+			utility::vector1< VarSolDRotamerDotsOP > rotamer_dots = varsoldist_rotamer_dots_for_pose( calc, pose );
 			std::list< core::id::AtomID > buns = buns_for_pose( pose, rotamer_dots, hbset );
 
 			utility::file::FileName inputname = input_jobs[ ii ]->input_tag();
