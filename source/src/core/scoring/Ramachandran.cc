@@ -758,14 +758,14 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 {
 	utility::vector1< Real > inner_cdf( n_phi_ * n_psi_, 0.0 );
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-	for ( Size ii = 1; ii <= n_aa_; ++ii ) {
+	for ( int ii = 1; ii <= n_aa_; ++ii ) {
 		std::fill( inner_cdf.begin(), inner_cdf.end(), Real( 0.0 ) );
 		FArray2A< Real > const ii_rama_prob( ram_probabil_( 1, 1, 3, ii ), zero_index, zero_index );
 
 		Size actual_allowed( 0 );
 		Real allowed_probability_sum( 0.0 );
-		for ( int jj = 0; jj < (int) n_phi_; ++jj ) {
-			for ( int kk = 0; kk < (int) n_psi_; ++kk ) {
+		for ( int jj = 0; jj < n_phi_; ++jj ) {
+			for ( int kk = 0; kk < n_psi_; ++kk ) {
 
 				inner_cdf[ jj*n_psi_ + kk +  1 ] = allowed_probability_sum;
 
@@ -804,7 +804,7 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 		// now normalize the cdf vector by scaling by 1/allowed_probability_sum so that it represents a CDF that sums to 1.
 		// and mark all zero-probability bins with the CDF value of their predecessor.
 		Real const inv_allowed_probability_sum = 1 / allowed_probability_sum;
-		for ( Size jj = 1; jj <= n_phi_ * n_psi_; ++jj ) {
+		for ( int jj = 1; jj <= n_phi_ * n_psi_; ++jj ) {
 			inner_cdf[ jj ] *= inv_allowed_probability_sum;
 			//if ( inner_cdf[ jj ] == 0 && jj != 1 ) {
 			//	inner_cdf[ jj ] = inner_cdf[ jj-1 ];
@@ -826,12 +826,12 @@ void
 Ramachandran::init_uniform_sampling_table()
 {
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-	for ( Size ii = 1; ii <= n_aa_; ++ii ) {
+	for ( int ii = 1; ii <= n_aa_; ++ii ) {
 		utility::vector1< Size > minimum_prob_bin_inds;
 		minimum_prob_bin_inds.reserve( n_phi_ * n_psi_ );
 		FArray2A< Real > const ii_rama_prob( ram_probabil_( 1, 1, 3, ii ), zero_index, zero_index );
-		for ( Size jj = 0; jj < n_phi_; ++jj ) {
-			for ( Size kk = 0; kk < n_psi_; ++kk ) {
+		for ( int jj = 0; jj < n_phi_; ++jj ) {
+			for ( int kk = 0; kk < n_psi_; ++kk ) {
 				Real jjkk_prob = ii_rama_prob( jj, kk );
 				if ( jjkk_prob >= rama_sampling_thold_ ) {
 					minimum_prob_bin_inds.push_back( jj*n_psi_ + kk );
