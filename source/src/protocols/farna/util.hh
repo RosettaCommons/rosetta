@@ -23,8 +23,10 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 
 // Utility headers
 
@@ -169,6 +171,15 @@ process_input_file( std::string const & silent_file,
 void
 print_hbonds( core::pose::Pose & pose );
 
+bool
+moveable_jump( core::id::AtomID const & jump_atom_id1,
+							 core::id::AtomID const & jump_atom_id2,
+							 protocols::toolbox::AllowInsert const & allow_insert);
+
+bool
+moveable_jump( core::Size const jump_pos1,
+							 core::Size const jump_pos2,
+							 protocols::toolbox::AllowInsert const & allow_insert);
 
 } //farna
 } //protocols

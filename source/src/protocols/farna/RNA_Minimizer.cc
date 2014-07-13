@@ -15,7 +15,6 @@
 
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-
 #include <protocols/stepwise/sampling/rna/util.hh> //Parin Sripakdeevong
 #include <protocols/stepwise/sampling/util.hh> // for figuring out moving chainbreaks
 #include <protocols/farna/util.hh>
@@ -284,9 +283,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 		AtomID jump_atom_id2( 1, jump_pos2 );
 		if (jump_atom2.size() > 0) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
 
-		if ( allow_insert_->get( jump_atom_id1 ) || allow_insert_->get( jump_atom_id2 ) ) {
-			mm.set_jump( n, true );
-		}
+		if ( moveable_jump( jump_atom_id1, jump_atom_id2, *allow_insert_ ) ) 	mm.set_jump( n, true );
 	}
 
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.

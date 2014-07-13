@@ -81,14 +81,6 @@ public:
 	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose );
 
 	bool
-	moveable_jump( core::id::AtomID const & jump_atom_id1,
-								 core::id::AtomID const & jump_atom_id2 ) const;
-
-	bool
-	moveable_jump( core::Size const jump_pos1,
-								 core::Size const jump_pos2 ) const;
-
-	bool
 	random_jump_change( core::pose::Pose & pose ) const;
 
 toolbox::AllowInsertOP

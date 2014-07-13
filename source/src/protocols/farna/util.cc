@@ -17,6 +17,7 @@
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
@@ -1372,6 +1373,30 @@ print_hbonds( pose::Pose & pose ){
 			pose.residue( acc_res_num).name1() << acc_res_num << " " << pose.residue( acc_res_num ).atom_name( acc_atm ) << " ==> " << hbond.energy()
 							<< std::endl;
 	}
+}
+
+
+/////////////////////////////////////////////////////////
+bool
+moveable_jump( id::AtomID const & jump_atom_id1,
+							 id::AtomID const & jump_atom_id2,
+							 protocols::toolbox::AllowInsert const & allow_insert)  {
+	if ( allow_insert.get( jump_atom_id1 ) ) return true;
+	if ( allow_insert.get( jump_atom_id2 ) ) return true;
+	if ( allow_insert.get_domain( jump_atom_id1 ) != allow_insert.get_domain( jump_atom_id2 ) ) return true;
+	return false;
+}
+
+/////////////////////////////////////////////////////////
+// should this really be separate from AtomID-base moveable_jump?
+bool
+moveable_jump( Size const jump_pos1,
+							 Size const jump_pos2,
+							 protocols::toolbox::AllowInsert const & allow_insert)  {
+	if ( allow_insert.get( jump_pos1 ) ) return true;
+	if ( allow_insert.get( jump_pos2 ) ) return true;
+	if ( allow_insert.get_domain( jump_pos1 ) != allow_insert.get_domain( jump_pos2 ) ) return true;
+	return false;
 }
 
 
