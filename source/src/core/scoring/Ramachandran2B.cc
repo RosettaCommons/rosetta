@@ -728,8 +728,8 @@ Ramachandran2B::init_rama_sampling_table(
 {
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
 	utility::vector1< Real > inner_cdf( n_phi_ * n_psi_, 0.0 );
-	for ( Size ii=1; ii <= n_aa_; ++ii ) {
-		for ( Size jj=1; jj <= n_aa_; ++jj ) {
+	for ( int ii=1; ii <= n_aa_; ++ii ) {
+		for ( int jj=1; jj <= n_aa_; ++jj ) {
 
 			std::fill( inner_cdf.begin(), inner_cdf.end(), Real( 0.0 ) );
 

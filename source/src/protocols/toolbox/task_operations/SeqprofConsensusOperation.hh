@@ -95,6 +95,8 @@ public:
 	void protein_interface_design( ProteinInterfaceDesignOperationOP pido );
 	core::Real conservation_cutoff_protein_interface_design() const{ return conservation_cutoff_protein_interface_design_; }
 	void conservation_cutoff_protein_interface_design( core::Real const c ){ conservation_cutoff_protein_interface_design_ = c; }
+	void debug( bool const b ){ debug_ = b; }
+	bool debug() const{ return debug_; }
 private:
 
 	std::string seqprof_filename_;
@@ -119,6 +121,8 @@ private:
 	ProteinInterfaceDesignOperationOP protein_interface_design_; //dflt NULL; this is used to define which residues are considered to be interface, for conservation_cutoff_interface_design_
 	core::Real conservation_cutoff_protein_interface_design_; // dflt -100000;
 	core::Size chain_num_; //dflt set to 1
+
+	bool debug_; // dflt false; if true be more chatty
 };
 
 /// @brief a Task operation that will check whether the amino acid at a
@@ -165,9 +169,7 @@ public:
 	core::Real
 	position_ala_ddG( core::Size seqpos ) const;
 
-	bool
-	verbose() const {
-		return verbose_;}
+	bool verbose() const { return verbose_;}
 
 private:
 	std::string ddG_predictions_filename_;

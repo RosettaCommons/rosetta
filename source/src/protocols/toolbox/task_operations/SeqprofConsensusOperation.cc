@@ -76,7 +76,8 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	restrict_to_aligned_segments_( NULL ),
 	conservation_cutoff_aligned_segments_( -100000 ),
 	protein_interface_design_( NULL ),
-	conservation_cutoff_protein_interface_design_( -100000 )
+	conservation_cutoff_protein_interface_design_( -100000 ),
+	debug_( false )
 {
 	if( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() )
 		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
@@ -187,7 +188,8 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		else if( restrict_to_aligned_segments()() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
 			position_min_prob = conservation_cutoff_aligned_segments();
 
-		tr<<"At position "<<i<<", min_probability is: "<<position_min_prob<<std::endl;
+		if( debug() )
+			tr<<"At position "<<i<<", min_probability is: "<<position_min_prob<<std::endl;
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
@@ -213,10 +215,11 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 			}
 			if (keep_native_)
 				keep_aas[ pose.residue_type(i).aa() ] = true;
-			if( keep_aas[ aa ] )
+			if( keep_aas[ aa ] && debug() )
 				tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 		}
-		tr<<std::endl;
+		if( debug() )
+			tr<<std::endl;
 		//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
 
 		task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
@@ -248,7 +251,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				if( prob >0 ){
 					keep_aas[ aa ] = true;
 				}
-				if( keep_aas[ aa ] )
+				if( keep_aas[ aa ] && debug() )
 					tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 			}
 			}
@@ -263,11 +266,12 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 					if( prob >= position_min_prob  ){
 						keep_aas[ aa ] = true;
 					}
-					if( keep_aas[ aa ] )
+					if( keep_aas[ aa ] && debug() )
 						tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 				}
 			}
-			tr<<std::endl;
+			if( debug() )
+				tr<<std::endl;
 			//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
 
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
@@ -331,6 +335,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	}//foreach
 	runtime_assert( conservation_cutoff_protein_interface_design() <= conservation_cutoff_aligned_segments() );
 	runtime_assert( conservation_cutoff_aligned_segments() <= min_aa_probability_ );
+	debug( tag->getOption< bool >( "debug", false ) );
 }
 
 core::sequence::SequenceProfileCOP
