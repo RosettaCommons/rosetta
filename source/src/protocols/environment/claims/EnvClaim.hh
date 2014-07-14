@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file EnvClaim
-/// @brief
+/// @brief Virtual base class for all claims used with environment claiming system.
 /// @author Justin Porter
 
 #ifndef INCLUDED_protocols_environment_claims_EnvClaim_hh
@@ -23,7 +23,7 @@
 
 
 #include <protocols/environment/claims/BrokerElements.hh>
-#include <protocols/environment/ClaimingMover.fwd.hh>
+#include <protocols/environment/ClaimingMover.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 
 // Project Headers
