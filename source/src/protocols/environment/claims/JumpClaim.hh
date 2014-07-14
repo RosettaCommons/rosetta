@@ -60,7 +60,7 @@ public:
 
   virtual void yield_elements( core::environment::FoldTreeSketch const& fts, CutElements& elements ) const;
 
-  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
+  virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
 
   /// @brief set the two atom names to use as the start and beginning of the jump. Both must be set simultaneously
   ///        because the FoldTree requires this.
@@ -97,7 +97,7 @@ public:
 
   virtual EnvClaimOP clone() const;
 
-  virtual std::string str_type() const;
+  virtual std::string type() const;
 
   virtual void show( std::ostream& os ) const;
 

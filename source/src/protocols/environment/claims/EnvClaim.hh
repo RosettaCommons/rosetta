@@ -65,6 +65,9 @@ public:
                          utility::tag::TagCOP tag,
                          basic::datacache::DataMap& datamap );
 
+  static
+  bool is_claim( std::string const& name );
+
   ///@brief Virtual destructor
   virtual ~EnvClaim();
 
@@ -74,6 +77,8 @@ public:
 
   /// @brief A clone used by the EnvClaimFactory to instantiate new EnvClaims using an XML tag.
   ClaimingMoverOP owner() const;
+
+  void set_owner( ClaimingMoverOP owner ) { claim_source_ = owner; }
 
   /// @brief notify the Claim of the input pose. Used, for example, to resolve a ResidueSelector into a residue number
   virtual void input_pose( core::pose::Pose const& ) {}
@@ -91,9 +96,11 @@ public:
   virtual void yield_elements( FoldTreeSketch const&, CutBiasElements& ) const {};
 
   /// @brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
-  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& ) const {};
+  virtual void yield_elements( core::pose::Pose const&, DOFElements& ) const {};
 
   virtual void show( std::ostream& os ) const;
+
+  virtual std::string type() const = 0;
 
 protected:
   virtual

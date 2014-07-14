@@ -52,6 +52,8 @@ namespace claims {
     EXCLUSIVE
   };
 
+  extern std::ostream& operator<<( std::ostream& os, ControlStrength const& cstr );
+
 /// @note at the moment, this only makes virtual residues, but could be modified to hold on to the name of
 ///       the residue that should be created so that you could (for example) add a carbohydrate or ligand with
 ///       this system.
@@ -89,8 +91,7 @@ namespace claims {
   };
 
   struct DOFElement {
-    // no initializer because then we'd have to include the whole ClaimingMover header.
-    ClaimingMoverOP owner;
+    DOFElement() : id(), c_str( DOES_NOT_CONTROL ), i_str( DOES_NOT_CONTROL ) {}
     core::id::DOF_ID id;
     ControlStrength c_str;
     ControlStrength i_str;

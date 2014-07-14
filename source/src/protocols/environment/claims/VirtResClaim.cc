@@ -82,20 +82,20 @@ void VirtResClaim::yield_elements( FoldTreeSketch const& fts, CutElements& eleme
   j_claim_.yield_elements( fts, elements );
 }
 
-void VirtResClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
-  xyz_claim_.yield_elements( conf, elements );
+void VirtResClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elements ) const {
+  xyz_claim_.yield_elements( pose, elements );
 
   // Not using the jump claim's yield_elements code; we want to claim *all* jumps associated with the VRT
   // TODO: make this optional
 
-  core::Size vrt_pos = conf->annotations()->resolve_seq( vrt_label() )[1];
-  core::kinematics::FoldTree const& ft = conf->core::conformation::Conformation::fold_tree();
+  core::Size vrt_pos = static_cast< ProtectedConformation const* >( &pose.conformation() )->annotations()->resolve_seq( vrt_label() )[1];
+  core::kinematics::FoldTree const& ft = pose.conformation().fold_tree();
 
   for( int j_num = 1; j_num <= (int) ft.num_jump(); ++j_num ){
     if( ft.upstream_jump_residue( j_num ) == (int) vrt_pos ||
         ft.downstream_jump_residue( j_num ) == (int) vrt_pos ){
       for( core::Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ){
-        DOFElement e = Parent::wrap_dof_id( core::id::DOF_ID( conf->jump_atom_id( j_num ),
+        DOFElement e = Parent::wrap_dof_id( core::id::DOF_ID( pose.conformation().jump_atom_id( j_num ),
                                                               core::id::DOF_Type( rb_i ) ) );
 
         e.i_str = MUST_CONTROL;
@@ -120,12 +120,12 @@ std::string const& VirtResClaim::vrt_label() const {
   return vrt_label_;
 }
 
-std::string VirtResClaim::str_type() const{
+std::string VirtResClaim::type() const{
   return "VirtRes";
 }
 
 void VirtResClaim::show( std::ostream& os ) const {
-  os << str_type() << " '" << vrt_label() << "with jump '"
+  os << type() << " '" << vrt_label() << "with jump '"
      << j_claim_.label() << "' owned by a " << owner()->get_name();
 }
 

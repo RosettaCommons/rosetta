@@ -60,7 +60,7 @@ public:
 
   virtual void yield_elements( FoldTreeSketch const& fts, CutElements& elements ) const;
 
-  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
+  virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
 
   JumpClaim& jump() { return j_claim_; }
 
@@ -70,7 +70,7 @@ public:
 
   virtual EnvClaimOP clone() const;
 
-  virtual std::string str_type() const;
+  virtual std::string type() const;
 
   virtual void show( std::ostream& os ) const;
 

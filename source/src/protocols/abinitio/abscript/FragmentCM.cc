@@ -175,6 +175,11 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
   using namespace claims;
   claims::EnvClaims claim_list;
 
+  if( yield_cut_bias() ){
+    core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *( mover()->fragments() ) );
+    claim_list.push_back( new environment::claims::CutBiasClaim( this, "BASE", *ss ) );
+  }
+
   int shift = 0;
   if( selector() ){
     utility::vector1< bool > torsion_mask( pose.total_residue(), 0 );
@@ -193,11 +198,6 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
     new_claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
   }
   claim_list.push_back( new_claim );
-
-  if( yield_cut_bias() ){
-    core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *( mover()->fragments() ) );
-    claim_list.push_back( new environment::claims::CutBiasClaim( this, "BASE", *ss ) );
-  }
 
   return claim_list;
 }

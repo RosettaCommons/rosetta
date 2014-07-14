@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author Oliver Lange
+/// @file protocols/environment/claims/TorsionClaim.hh
+/// @brief An EnvClaim object for claiming arbitrary regions and types of torsional angles within a pose.
+/// @author Justin R. Porter
 
 
 #ifndef INCLUDED_protocols_environment_claims_TorsionClaim_hh
@@ -20,13 +20,15 @@
 #include <protocols/environment/claims/TorsionClaim.fwd.hh>
 
 // Package Headers
-#include <core/environment/LocalPosition.hh>
-#include <core/environment/FoldTreeSketch.hh>
-
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
+
+#include <core/environment/LocalPosition.hh>
+#include <core/environment/FoldTreeSketch.hh>
+
+#include <core/conformation/Conformation.hh>
 
 // Project Headers
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
@@ -54,6 +56,8 @@ class TorsionClaim : public EnvClaim {
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
   typedef EnvClaim Parent;
 
+  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+
 public:
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
@@ -61,6 +65,9 @@ public:
   TorsionClaim( ClaimingMoverOP owner,
                 utility::tag::TagCOP tag,
                 basic::datacache::DataMap& );
+
+  TorsionClaim( ClaimingMoverOP owner,
+                core::pack::task::residue_selector::ResidueSelectorCOP );
 
   // Initializer for a single backbone angle
   TorsionClaim( ClaimingMoverOP owner,
@@ -74,7 +81,7 @@ public:
   TorsionClaim( ClaimingMoverOP owner,
                 LocalPositions const& positions );
 
-  virtual void yield_elements( ProtectedConformationCOP const&, DOFElements& elements ) const;
+  virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
 
   ControlStrength const& ctrl_strength() const;
 
@@ -86,13 +93,17 @@ public:
 
   bool claim_backbone() const { return claim_backbone_; }
 
-  void strength( ControlStrength const&, ControlStrength const& );
+  /// @brief set the initialization and control strength of the TorsionClaim.
+  void strength( ControlStrength const& control_strength,
+                 ControlStrength const& initialization_strength );
 
   ControlStrength const& init_strength() const;
 
   virtual EnvClaimOP clone() const;
 
-  virtual std::string str_type() const;
+  virtual std::string type() const;
+
+  virtual ResidueSelectorCOP selector() const { return selector_; }
 
   virtual void show( std::ostream& os ) const;
 
@@ -100,8 +111,15 @@ protected:
   virtual
   DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
+  void insert_dof_element( core::conformation::Conformation const& conf,
+                           DOFElements& elements,
+                           core::Size seqpos,
+                           core::id::TorsionType type,
+                           core::Size torsion_number) const;
+
+
 private:
-  core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+  ResidueSelectorCOP selector_;
 
   ControlStrength c_str_;
   ControlStrength i_str_;

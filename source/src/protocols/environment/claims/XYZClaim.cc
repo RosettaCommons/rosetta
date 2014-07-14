@@ -24,6 +24,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
 #include <protocols/environment/claims/ClaimStrength.hh>
+#include <protocols/environment/claims/EnvLabelSelector.hh>
 
 #include <protocols/environment/ClaimingMover.hh>
 #include <protocols/environment/ProtectedConformation.hh>
@@ -53,13 +54,13 @@ using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
-                    utility::tag::TagCOP tag ):
+                    utility::tag::TagCOP tag,
+                    basic::datacache::DataMap& datamap ):
   EnvClaim( owner ),
   c_str_( Parent::parse_ctrl_str( tag ) ),
   i_str_( Parent::parse_ctrl_str( tag ) )
 {
-  //TODO: implement TorsionClaim residue range claiming. Use a selector?
-  throw utility::excn::EXCN_Msg_Exception( "TorsionClaim residue range claiming not implemented yet." );
+  selector_ = datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
 }
 
 
@@ -72,30 +73,19 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner ):
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
                     LocalPosition const& local_pos):
   EnvClaim( owner ),
+  selector_( new EnvLabelSelector( local_pos ) ),
   c_str_( DOES_NOT_CONTROL ),
   i_str_( DOES_NOT_CONTROL )
-{
-  local_positions_ = LocalPositions();
-  local_positions_.push_back( new LocalPosition( local_pos ) );
-}
+{}
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
                             std::string const& label,
                             std::pair< core::Size, core::Size > const& range ):
   EnvClaim( owner ),
+  selector_( new EnvLabelSelector( label, range ) ),
   c_str_( DOES_NOT_CONTROL ),
   i_str_( DOES_NOT_CONTROL )
-{
-  local_positions_ = LocalPositions();
-  for( Size i = range.first; i <= range.second; ++i){
-    local_positions_.push_back( new LocalPosition( label, i ) );
-  }
-}
-
-void XYZClaim::add_position( LocalPosition const& p ){
-  local_positions_.push_back( new LocalPosition( p ) );
-}
-
+{}
 
 DOFElement XYZClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   DOFElement e = Parent::wrap_dof_id( id );
@@ -106,7 +96,7 @@ DOFElement XYZClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   return e;
 }
 
-void XYZClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
+void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elements ) const {
   if( ctrl_strength() == DOES_NOT_CONTROL &&
       init_strength() == DOES_NOT_CONTROL ){
     tr.Warning << "XYZClaim owned by " << owner()->get_name()
@@ -114,29 +104,27 @@ void XYZClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements
                << "  Did you forget to set these values?" << std::endl;
   }
 
-  for( LocalPositions::const_iterator pos = positions().begin();
-      pos != positions().end(); ++pos ){
+  utility::vector1< bool > selection( pose.total_residue(), false );
+  selector()->apply( pose, selection );
 
-    Size seqpos = conf->annotations()->resolve_seq( **pos );
-    for( Size i = 1; i <= conf->residue( seqpos ).atoms().size(); ++i ){
-      core::id::AtomID atom_id( i, seqpos );
-      if( conf->atom_tree().atom( atom_id ).is_jump() ){
-        for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
-          elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
-                                                             core::id::DOF_Type( j ) ) ) );
-        }
-      } else {
-        for( int j = core::id::D; j <= core::id::PHI; ++j ){
-          elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
-                                                             core::id::DOF_Type( j ) ) ) );
+  for( Size seqpos = 1; seqpos <= selection.size(); ++seqpos ){
+    if( selection[seqpos] ){
+      for( Size i = 1; i <= pose.conformation().residue( seqpos ).atoms().size(); ++i ){
+        core::id::AtomID atom_id( i, seqpos );
+        if( pose.conformation().atom_tree().atom( atom_id ).is_jump() ){
+          for( int j = core::id::RB1; j <= core::id::RB6; ++j ){
+            elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
+                                                               core::id::DOF_Type( j ) ) ) );
+          }
+        } else {
+          for( int j = core::id::PHI; j <= core::id::D; ++j ){
+            elements.push_back( wrap_dof_id( core::id::DOF_ID( atom_id,
+                                                               core::id::DOF_Type( j ) ) ) );
+          }
         }
       }
     }
   }
-}
-
-LocalPositions const& XYZClaim::positions() const {
-  return local_positions_;
 }
 
 ControlStrength const& XYZClaim::ctrl_strength() const {
@@ -165,12 +153,12 @@ EnvClaimOP XYZClaim::clone() const {
   return new XYZClaim( *this );
 }
 
-std::string XYZClaim::str_type() const{
+std::string XYZClaim::type() const {
   return "Torsion";
 }
 
 void XYZClaim::show( std::ostream& os ) const {
-  os << str_type() << " owned by a " << owner()->get_name() << " with " << positions().size() << "positions.";
+  os << type() << " owned by a " << owner()->get_name() << ".";
 }
 
 } //claims

@@ -35,6 +35,8 @@
 namespace protocols {
 namespace rigid {
 
+int const NO_JUMP = 0;
+
 static basic::Tracer tr("protocols.rigid.UniformRigidBodyMover", basic::t_info);
 static numeric::random::RandomGenerator RG(434855);
 
@@ -59,7 +61,7 @@ UniformRigidBodyMoverCreator::mover_name() {
 
 UniformRigidBodyMover::UniformRigidBodyMover():
   ThermodynamicMover(),
-  target_jump_( 0 ),
+  target_jump_( NO_JUMP ),
   rotation_mag_( 3.0 ),
   translation_mag_( 8.0 )
 {}
@@ -76,6 +78,14 @@ UniformRigidBodyMover::UniformRigidBodyMover( JumpNumber target_jump,
 void UniformRigidBodyMover::apply( core::pose::Pose& pose ){
   using namespace numeric;
   using namespace numeric::random;
+
+  if( target_jump_ == NO_JUMP ){
+    std::ostringstream ss;
+    ss << "The target jump number of " << this->get_name()
+       << " was " << NO_JUMP << ", which probably means this value wasn't set properly.  "
+       << "If you're using RosettaScripts, try using the 'target_jump' option." << std::endl;
+    throw utility::excn::EXCN_BadInput( ss.str() );
+  }
 
   core::kinematics::Jump flexible_jump = pose.jump( target_jump_ );
 
@@ -105,13 +115,13 @@ UniformRigidBodyMover::JumpNumber UniformRigidBodyMover::jump_number() const {
 }
 
 void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP tag,
-																					basic::datacache::DataMap&,
-																					protocols::filters::Filters_map const&,
-																					protocols::moves::Movers_map const&,
-																					core::pose::Pose const& ) {
+                                          basic::datacache::DataMap&,
+                                          protocols::filters::Filters_map const&,
+                                          protocols::moves::Movers_map const&,
+                                          core::pose::Pose const& ) {
   rotation_mag_ = tag->getOption< core::Real >( "rotation_magnitude", 3.0 );
   translation_mag_ = tag->getOption< core::Real >( "translation_magnitude", 8.0 );
-  target_jump_ = tag->getOption< JumpNumber >("target_jump");
+  target_jump_ = tag->getOption< JumpNumber >("target_jump", NO_JUMP );
 }
 
 std::string UniformRigidBodyMover::get_name() const {

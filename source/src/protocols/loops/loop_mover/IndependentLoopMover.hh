@@ -42,6 +42,7 @@ class IndependentLoopMover : public LoopMover {
 public:
 	IndependentLoopMover();
 	IndependentLoopMover( LoopsOP loops_in );
+  IndependentLoopMover( utility::vector1< bool > const& selection );
 	IndependentLoopMover( LoopsFileData const & lfd );
 	IndependentLoopMover( GuardedLoopsFromFileOP guarded_loops );
 	

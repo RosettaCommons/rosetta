@@ -54,6 +54,7 @@
 #include <basic/datacache/WriteableCacheableData.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/PDBInfo.hh>
 
 // utility headers
 #include <utility/string_util.hh>
@@ -88,6 +89,42 @@ using core::environment::FoldTreeSketch;
 
 using core::conformation::Conformation;
 
+void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& pose ){
+  //Rebuild an appropriate PDBInfo object.
+  if( pose.pdb_info() ){
+    tr.Error << "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" << std::endl;
+    utility_exit_with_message( "Problem in broking!" );
+  } else if( input_pdb_info ) {
+    //ASSUMPTION: all new residues are virtual
+    core::Size const new_vrts = pose.total_residue() - input_pdb_info->nres();
+
+    core::pose::PDBInfoOP new_info = new core::pose::PDBInfo( *input_pdb_info );
+
+    for( Size i = 1; i <= new_vrts; ++i ){
+      new_info->append_res( new_info->nres(), 3 );
+    }
+
+    tr.Debug << "Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
+             << pose.total_residue() << ". Old Size: " << input_pdb_info->nres() << "; New Size: "
+             << new_info->nres() << std::endl;
+
+    pose.pdb_info( new_info );
+  } else {
+    tr.Debug << "  PDBInfo processing being ignored as it is null in the input pose." << std::endl;
+  }
+}
+
+void safe_set_conf( core::pose::Pose& pose, core::conformation::ConformationOP conf ){
+  if( pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ){
+    basic::datacache::WriteableCacheableMapOP data_map = dynamic_cast< basic::datacache::WriteableCacheableMap* >( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
+    assert( data_map );
+    pose.set_new_conformation( conf );
+    pose.data().set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA, data_map );
+  } else {
+    pose.set_new_conformation( conf );
+  }
+}
+
 EnvClaimBroker::EnvClaimBroker( Environment const& env,
                                 MoverPassMap const& movers_and_passes,
                                 core::pose::Pose const& in_pose,
@@ -114,16 +151,11 @@ EnvClaimBroker::EnvClaimBroker( Environment const& env,
     pair.second->reference_conformation( conf );
   }
 
-  broker_dofs( conf );
+  // Bookkeeping for pose-associated info caches (datacache and pdb_info).
+  safe_set_conf( pose, conf );
+  update_pdb_info( in_pose.pdb_info(), pose );
 
-  if( pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ){
-    basic::datacache::WriteableCacheableMapOP data_map = dynamic_cast< basic::datacache::WriteableCacheableMap* >( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
-    assert( data_map );
-    pose.set_new_conformation( conf );
-    pose.data().set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA, data_map );
-  } else {
-    pose.set_new_conformation( conf );
-  }
+  broker_dofs( pose );
 
   result_.pose = pose;
 
@@ -142,30 +174,27 @@ EnvClaimBroker::BrokerResult const& EnvClaimBroker::result() const {
 
 void EnvClaimBroker::broker_fold_tree( Conformation& conf,
                                        basic::datacache::BasicDataCache& datacache ){
+
   core::environment::FoldTreeSketch fts( conf.size() );
   result_.closer_ft = new core::kinematics::FoldTree( conf.fold_tree() );
 
   //FTElements: virtual residues ---------------------------------------------------------------
-  ResidueElements r_elems;
+  ResElemVect r_elems = collect_elements< ResidueElement >( fts );
   SizeToStringMap new_vrts;
-  collect_elements( r_elems, fts );
   process_elements( r_elems, fts, new_vrts );
   result_.new_vrts = new_vrts;
 
   //FTElements: jumps --------------------------------------------------------------------------
-  JumpElements j_elems;
-  collect_elements( j_elems, fts );
+  JumpElemVect j_elems = collect_elements< JumpElement >( fts );
   JumpDataMap new_jumps;
   process_elements( j_elems, fts, new_jumps );
 
   //FTElements cut -----------------------------------------------------------------------------
-  CutElements c_elems;
-  collect_elements( c_elems, fts );
+  CutElemVect c_elems = collect_elements< CutElement >( fts );
   process_elements( c_elems, fts );
 
   //FTElements CutBias -------------------------------------------------------------------------
-  CutBiasElements cb_elems;
-  collect_elements( cb_elems, fts );
+  CutBiasElemVect cb_elems = collect_elements< CutBiasElement >( fts );
   utility::vector1< core::Real > bias( fts.nres(), 1.0 );
   process_elements( cb_elems, bias );
 
@@ -343,28 +372,24 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
   }
 }
 
-ControlStrength const& init_str_selector( claims::DOFElement const& d ){
-  return d.i_str;
+ControlStrength const& init_str_selector( std::pair< claims::DOFElement, ClaimingMoverOP > const& d ){
+  return d.first.i_str;
 }
 
-ControlStrength const& ctrl_str_selector( claims::DOFElement const& d ){
-  return d.c_str;
+ControlStrength const& ctrl_str_selector( std::pair< claims::DOFElement, ClaimingMoverOP > const& d ){
+  return d.first.c_str;
 }
 
-void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
+void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 
   std::set< ClaimingMoverOP > initializers;
 
   //Broker Arbitrary DOFs ---------------------------------------------------------------------------
-  DOFElements d_elems;
-  collect_elements( d_elems, conf );
+  DOFElemVect d_elems = collect_elements< DOFElement >( pose );
   setup_passports( d_elems, init_str_selector );
 
   // Once all initialization passports for both RTs and Torsions are configured, allow
   // movers to initialize
-
-  core::pose::Pose p;
-  p.set_new_conformation( conf );
 
   // Now that passports are properly configured, allow each mover to initialize.
   // As soon as each mover initializes, access is revoked, so it can be built again
@@ -372,13 +397,10 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes_ ){
     if( pair.second->begin() != pair.second->end() ){
       pair.first->passport_updated();
-      pair.first->initialize( p );
+      pair.first->initialize( pose );
       pair.second->revoke_all_access();
     }
   }
-
-  //Copy the changes from the initialized conformation into conf
-  *conf = *( static_cast< ProtectedConformation const* >( &p.conformation() ) );
 
   setup_passports( d_elems, ctrl_str_selector );
 
@@ -391,70 +413,101 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
 /// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports
 class Comparator {
 public:
-  Comparator( claims::ControlStrength const& (*str_access)( DOFElement const& ) ):
+  Comparator( claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClaimingMoverOP > const& ) ):
     str_access_( str_access ) {}
-  bool operator() ( DOFElement const& a, DOFElement const& b ){
+  bool operator() ( std::pair< claims::DOFElement, ClaimingMoverOP > const& a,
+                    std::pair< claims::DOFElement, ClaimingMoverOP > const& b ){
     return str_access_( a ) > str_access_( b );
   }
 private:
-  claims::ControlStrength const& (*str_access_)( DOFElement const& );
+  claims::ControlStrength const& (*str_access_)( std::pair< claims::DOFElement, ClaimingMoverOP > const& );
 };
 
-void EnvClaimBroker::setup_passports( DOFElements& elems,
-                                      claims::ControlStrength const& (*str_access)( DOFElement const& ) ) {
+void EnvClaimBroker::setup_passports( DOFElemVect& elems,
+                                      claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClaimingMoverOP > const& ) ) {
+
+  // Figure out if we're doing initialization or not for output purposes.
+  std::string const style = ( str_access == *init_str_selector ) ? "initialization" : "sampling";
 
   // Similarly to setup_initialization_passports, sort by control strength
   std::sort( elems.begin(), elems.end(), Comparator( str_access ) );
-  std::map< core::id::DOF_ID, ControlStrength > max_strength;
+  std::map< core::id::DOF_ID, std::pair< ControlStrength, ClaimingMoverOP > > max_strength;
 
   //Iterate through each element. If it's EXCLUSIVE, we know not to admit any further claims.
-  BOOST_FOREACH( DOFElement element, elems ){
-    tr.Trace << "    considering: " << element.id << " from " << element.owner->get_name();
+  BOOST_FOREACH( DOFElemVect::Value pair, elems ){
+    DOFElement const& element = pair.first;
+    ClaimingMoverOP const& owner = pair.second;
+    ControlStrength const strength = str_access( pair );
 
-    ControlStrength prev_str = DOES_NOT_CONTROL;
+    tr.Trace << "    considering: " << element.id << " from " << owner->get_name();
+
+    if( !element.id.valid() ){
+      tr.Error << "[ERROR] During " << style << " the DOF element with id " << element.id
+               << " was produced by the mover '" << owner->get_name()
+               << ", which is not a valid DOF_ID object." << std::endl;
+      assert( element.id.valid() );
+    }
+
+    std::pair< ControlStrength, ClaimingMoverOP > prev_str = std::make_pair( DOES_NOT_CONTROL, ClaimingMoverOP( NULL ) );
+
     if( max_strength.find( element.id ) != max_strength.end() ){
       prev_str = max_strength[ element.id ];
     }
 
-    if( prev_str == EXCLUSIVE ){
-        if( str_access( element ) >= MUST_CONTROL ){
-          std::string msg = "Cannot broker " + element.type + " " + utility::to_string( element.id ) +
-                            "due conflicting control strengths (e.g. >1 EXCLUSIVE claim).";
-          throw utility::excn::EXCN_BadInput( msg );
+    if( prev_str.first == EXCLUSIVE ){
+        if( strength >= MUST_CONTROL ){
+          assert( prev_str.second );
+          std::ostringstream ss;
+          ss << "While broking for " << style << ", there were conflicting claim strengths on DoF "
+             << element.type << " " << element.id << ": "
+             << prev_str.first << " from '" << prev_str.second << "' and "
+             << strength << " from '" << owner->get_name() << "'." << std::endl;
+          throw utility::excn::EXCN_BadInput( ss.str() );
         } else {
           tr.Trace << " : not assigned" << std::endl;
         }
-    } else if( str_access( element ) > DOES_NOT_CONTROL ){
-      grant_access( element );
-      max_strength[ element.id ] = std::max( str_access( element ), prev_str );
+    } else if( str_access( pair ) > DOES_NOT_CONTROL ){
+      grant_access( element, owner );
+      if( prev_str.first < strength )
+        max_strength[ element.id ] = std::make_pair( strength, owner );
       tr.Trace << " : assigned " << std::endl;
     } else { tr.Trace << " : not assigned" << std::endl; }
   }
 }
 
-void EnvClaimBroker::grant_access( DOFElement const& e ) const {
+void EnvClaimBroker::grant_access( DOFElement const& e, ClaimingMoverOP owner ) const {
   using namespace core::id;
   using namespace core::kinematics::tree;
 
-  core::environment::DofPassportOP pass = movers_and_passes_.find( e.owner )->second;
+  core::environment::DofPassportOP pass = movers_and_passes_.find( owner.get() )->second;
 
   pass->add_dof_access( e.id );
 }
 
 template < typename T, typename I >
-void EnvClaimBroker::collect_elements( utility::vector1< T >& elements,
-                                       I const& info ) const {
-  typedef utility::vector1< T > ElementList;
+utility::vector1< std::pair< T, ClaimingMoverOP > > EnvClaimBroker::collect_elements( I const& info ) const {
+  typedef utility::vector1< std::pair< T, ClaimingMoverOP > > ElementList;
 
-  ElementList tmp;
+  utility::vector1< T > tmp;
+  ElementList elements;
+  std::ostringstream mover_breakdown;
 
   BOOST_FOREACH( EnvClaimOP claim, claims_ ){
     claim->yield_elements( info , tmp );
-    std::copy( tmp.begin(), tmp.end(), std::back_inserter( elements ) );
+    if( tmp.size() > 0 ){
+      mover_breakdown << "  collected " << tmp.size() << " " << T::type << " elements from "
+                      << claim->type() << "Claim owned by '" << claim->owner()->get_name() << "'."
+                      << std::endl;
+    }
+    BOOST_FOREACH( T e, tmp ){ elements.push_back( std::make_pair( e, claim->owner() ) ); }
     tmp.clear();
   }
 
   tr.Info << "collected " << elements.size() << " " << T::type << "." << std::endl;
+  tr.Debug << "\n" << mover_breakdown.str();
+  tr.Debug.flush();
+
+  return elements;
 }
 
 EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
@@ -485,7 +538,17 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
     WriteableCacheableMapOP sandbox_map = new WriteableCacheableMap( *orig_map );
 
     claims::EnvClaims in_claims = mp_it->first->yield_claims( pose, sandbox_map );
-    std::copy( in_claims.begin(), in_claims.end(), std::back_inserter( claims ) );
+    BOOST_FOREACH( EnvClaimOP claim, in_claims ){
+      if( claim ){
+        claims.push_back( claim );
+      } else {
+        std::ostringstream ss;
+        ss << "The mover '" << claim->owner() << "' yielded a null pointer as one of its "
+           << in_claims.size() << " claims during broking of the environment '" << this->env_.name()
+           << "'." << std::endl;
+        throw utility::excn::EXCN_NullPointer( ss.str() );
+      }
+    }
 
     // Copy any new data from the sandbox map into the "new" map.
     for( DataMap::const_iterator subset_it = sandbox_map->begin(); subset_it != sandbox_map->end(); ++subset_it ){
@@ -516,46 +579,59 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
   return claims;
 }
 
-void EnvClaimBroker::process_elements( ResidueElements const& elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
+void EnvClaimBroker::process_elements( ResElemVect const& elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
 
+  for( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
+    ResidueElement const& element = e_it->first;
+    ClaimingMoverCOP owner = e_it->second;
 
-
-  for( ResidueElements::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
-    if( !e_it->allow_duplicates ) {
-      ann_->append_seq( e_it->label );
+    if( !element.allow_duplicates ) {
+      if( ann_->has_seq_label( element.label ) ){
+        std::ostringstream ss;
+        ss << "[ERROR] Failed broking process due to duplicate residue claims for residue "
+           << element.label << " that do not allow duplicate labels.";
+        throw utility::excn::EXCN_BadInput( ss.str() );
+      }
+      ann_->append_seq( element.label );
       fts.append_residue();
-      new_vrts[ fts.nres() ] = e_it->label;
+      new_vrts[ fts.nres() ] = element.label;
       tr.Debug << "  processed duplicate-disallowed residue element request (named '"
-               << e_it->label << "') at " << fts.nres() << std::endl;
+               << element.label << "') at " << fts.nres() << std::endl;
     }
   }
 
-  for( ResidueElements::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
-    if( e_it->allow_duplicates ) {
-      if( !ann_->has_seq_label( e_it->label ) ){
-        ann_->append_seq( e_it->label );
+  for( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
+    ResidueElement const& element = e_it->first;
+    ClaimingMoverCOP owner = e_it->second;
+
+    if( element.allow_duplicates ) {
+      if( !ann_->has_seq_label( element.label ) ){
+        ann_->append_seq( element.label );
         fts.append_residue();
-        new_vrts[ fts.nres() ] = e_it->label;
+        new_vrts[ fts.nres() ] = element.label;
 
         tr.Debug << "  processed duplicate-possible residue element request (named '"
-                 << e_it->label << "') at " << fts.nres() << std::endl;
+                 << element.label << "') at " << fts.nres() << std::endl;
       } else {
         // If we're allowing duplicates and we've already added this element
         // it's cool, don't throw an exception and don't add it again.
         tr.Debug << "  ignored duplicate-possible residue element request at " << fts.nres()
-                 << " ( label '" << e_it->label << "' already exists)." << std::endl;
+                 << " ( label '" << element.label << "' already exists)." << std::endl;
       }
     }
   }
 }
 
-void EnvClaimBroker::process_elements( JumpElements const& elems,
+void EnvClaimBroker::process_elements( JumpElemVect const& elems,
                                        FoldTreeSketch& fts,
                                        JumpDataMap& new_jumps ){
   typedef std::map< std::pair< core::Size, core::Size >, BrokeredJumpDataCOP > PositionDataMap;
   PositionDataMap brokered_jumps;
 
-  BOOST_FOREACH( JumpElement element, elems ){
+  BOOST_FOREACH( JumpElemVect::Value pair, elems ){
+    JumpElement const& element = pair.first;
+    ClaimingMoverCOP owner = pair.second;
+
     Size abs_p1 = ann_->resolve_seq( element.p1 );
     Size abs_p2 = ann_->resolve_seq( element.p2 );
     std::pair< Size, Size > const pos_pair = std::make_pair( abs_p1, abs_p2 );
@@ -603,9 +679,11 @@ void EnvClaimBroker::process_elements( JumpElements const& elems,
   }
 }
 
-void EnvClaimBroker::process_elements( CutElements const& elems,
+void EnvClaimBroker::process_elements( CutElemVect const& elems,
                                        FoldTreeSketch& fts ){
-  BOOST_FOREACH( CutElement element, elems ){
+  BOOST_FOREACH( CutElemVect::Value pair, elems ){
+    CutElement element = pair.first;
+
     Size abs_p = ann_->resolve_seq( element.p );
     try {
       fts.insert_cut( abs_p );
@@ -619,15 +697,18 @@ void EnvClaimBroker::process_elements( CutElements const& elems,
   }
 }
 
-void EnvClaimBroker::process_elements( CutBiasElements const& elems, BiasVector& bias ){
-  for( CutBiasElements::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ){
-    Size abs_p = ann_->resolve_seq( e_it->p );
-    if( e_it-> bias > 1 || e_it->bias < 0 ){
-      throw utility::excn::EXCN_RangeError( "Cut biases must be between 0 and 1. Cut was ("+
-                                           utility::to_string( e_it->p )+","+
-                                           utility::to_string( bias )+")" );
+void EnvClaimBroker::process_elements( CutBiasElemVect const& elems, BiasVector& bias ){
+
+  BOOST_FOREACH( CutBiasElemVect::Value pair, elems ){
+    CutBiasElement element = pair.first;
+
+    Size abs_p = ann_->resolve_seq( element.p );
+    if( element.bias > 1 || element.bias < 0 ){
+      std::ostringstream ss;
+      ss << "Cut biases must be between 0 and 1. Cut was (" << element.p << "," << bias << ")";
+      throw utility::excn::EXCN_RangeError( ss.str() );
     }
-    bias[ abs_p ] *= e_it->bias;
+    bias[ abs_p ] *= element.bias;
   }
 }
 

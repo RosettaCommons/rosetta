@@ -23,6 +23,7 @@
 #include <protocols/environment/claims/CutBiasClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
+#include <protocols/environment/claims/XYZClaim.hh>
 
 // Project Headers
 
@@ -52,11 +53,20 @@ namespace claims {
 EnvClaimOP EnvClaim::make_claim( std::string const& name,
                                  ClaimingMoverOP owner,
                                  utility::tag::TagCOP tag,
-                                 basic::datacache::DataMap& datamap ){
+                                 basic::datacache::DataMap& datamap ) {
   if      ( name == "CutBiasClaim" ) return new CutBiasClaim( owner, tag );
   else if ( name == "JumpClaim" )    return new JumpClaim( owner, tag );
   else if ( name == "TorsionClaim" ) return new TorsionClaim( owner, tag, datamap );
+  else if ( name == "XYZClaim" )     return new XYZClaim( owner, tag, datamap );
   else throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
+}
+
+bool EnvClaim::is_claim( std::string const& name ) {
+  if      ( name == "CutBiasClaim" ) return true;
+  else if ( name == "JumpClaim" )    return true;
+  else if ( name == "TorsionClaim" ) return true;
+  else if ( name == "XYZClaim" )     return true;
+  else return false;
 }
 
 EnvClaim::EnvClaim( ClaimingMoverOP owner ):
@@ -73,7 +83,6 @@ void EnvClaim::show( std::ostream& os ) const {
 
 DOFElement EnvClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   DOFElement e;
-  e.owner = owner();
   e.id = id;
 
   return e;

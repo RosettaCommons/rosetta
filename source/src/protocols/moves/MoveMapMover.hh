@@ -37,6 +37,7 @@ namespace moves {
 class MoveMapMover : public Mover {
   typedef Mover Parent;
 public:
+  MoveMapMover(): Parent() {}
   MoveMapMover( std::string const& name ) : Parent( name ) {}
   MoveMapMover( MoveMapMover const & other ) : Parent( other ) {}
 

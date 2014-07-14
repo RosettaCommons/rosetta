@@ -79,6 +79,14 @@ IndependentLoopMover::IndependentLoopMover(
 }
 
 IndependentLoopMover::IndependentLoopMover(
+  utility::vector1< bool > const& selection
+) : LoopMover( new protocols::loops::Loops( selection ) )
+{
+  Mover::type("IndependentLoopMover");
+  set_defaults();
+}
+
+IndependentLoopMover::IndependentLoopMover(
 	protocols::loops::LoopsFileData const & lfd
 ) : LoopMover( lfd )
 {

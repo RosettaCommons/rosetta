@@ -43,7 +43,7 @@
 #include <basic/Tracer.hh>
 
 #ifdef WIN32
-	#include <basic/datacache/WriteableCacheableMap.hh>
+  #include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 
@@ -78,7 +78,8 @@ UniformRigidBodyCMCreator::mover_name() {
 }
 
 UniformRigidBodyCM::UniformRigidBodyCM():
-  ClaimingMover()
+  ClaimingMover(),
+  mover_( new UniformRigidBodyMover() )
 {}
 
 UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
@@ -90,8 +91,7 @@ UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
   name_( name ),
   mobile_label_( mobile_label ),
   stationary_label_( stationary_label ),
-  rotation_mag_( rotation_magnitude ),
-  translation_mag_( translation_magnitude )
+  mover_( new UniformRigidBodyMover( 0, rotation_magnitude, translation_magnitude ) )
 {}
 
 void UniformRigidBodyCM::passport_updated(){
@@ -101,7 +101,7 @@ void UniformRigidBodyCM::passport_updated(){
 
     // if the mover's not initialized or it's got a different dockjump
     if( !mover_ || mover_->jump_number() != dockjump ){
-      mover_ = new UniformRigidBodyMover( dockjump, rotation_mag_, translation_mag_ );
+      mover_->jump_number( dockjump );
     }
  } else {
     //configure a null moveset.
@@ -127,18 +127,17 @@ void UniformRigidBodyCM::apply( core::pose::Pose& pose ){
 }
 
 void UniformRigidBodyCM::parse_my_tag( utility::tag::TagCOP tag,
-                                       basic::datacache::DataMap&,
-                                       protocols::filters::Filters_map const&,
-                                       protocols::moves::Movers_map const&,
-                                       core::pose::Pose const& ) {
+                                       basic::datacache::DataMap& data,
+                                       protocols::filters::Filters_map const& filters,
+                                       protocols::moves::Movers_map const& movers,
+                                       core::pose::Pose const& pose ) {
 
   mobile_label_ = LocalPosition( tag->getOption< std::string >( "mobile" ) );
   stationary_label_ = LocalPosition( tag->getOption< std::string >( "stationary" ) );
 
   name_ = tag->getOption< std::string >( "name" );
 
-  rotation_mag_ = tag->getOption< core::Real >( "rotation_magnitude", 3.0 );
-  translation_mag_ = tag->getOption< core::Real >( "translation_magnitude", 8.0 );
+  mover_->parse_my_tag( tag, data, filters, movers, pose );
 }
 
 claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,

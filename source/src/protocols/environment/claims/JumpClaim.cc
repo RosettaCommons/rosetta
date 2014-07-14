@@ -93,14 +93,14 @@ void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, Residu
   if( create_vrt_p1_ ){
     ResidueElement e1;
     e1.label = pos1().label();
-    e1.allow_duplicates = true;
+    e1.allow_duplicates = create_vrt_p1_;
     elements.push_back( e1 );
   }
 
   if( create_vrt_p2_ ){
     ResidueElement e2;
     e2.label = pos2().label();
-    e2.allow_duplicates = true;
+    e2.allow_duplicates = create_vrt_p2_;
     elements.push_back( e2 );
   }
 }
@@ -119,16 +119,18 @@ void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, JumpEl
   elements.push_back( e );
 }
 
-void JumpClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
+void JumpClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elements ) const {
+  core::conformation::Conformation const& conf = pose.conformation();
+  core::environment::SequenceAnnotationCOP ann = static_cast< ProtectedConformation const* >( &conf )->annotations();
+
   for( core::Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ){
     DOFElement e;
 
-    e.id = core::id::DOF_ID( conf->jump_atom_id( (int) conf->annotations()->resolve_jump( label() ) ),
+    e.id = core::id::DOF_ID( conf.jump_atom_id( (int) ann->resolve_jump( label() ) ),
                              core::id::DOF_Type( rb_i ) );
 
     e.i_str = i_str_;
     e.c_str = c_str_;
-    e.owner.operator=( owner() );
 
     elements.push_back( e );
   }
@@ -184,12 +186,12 @@ EnvClaimOP JumpClaim::clone() const {
   return new JumpClaim( *this );
 }
 
-std::string JumpClaim::str_type() const{
+std::string JumpClaim::type() const{
   return "Jump";
 }
 
 void JumpClaim::show( std::ostream& os ) const {
-  os << str_type() << "(" << pos1() << "," << atoms().first << "->" << pos2()
+  os << type() << "(" << pos1() << "," << atoms().first << "->" << pos2()
      << "," << atoms().second << ") owned by a " << owner()->get_name();
 }
 

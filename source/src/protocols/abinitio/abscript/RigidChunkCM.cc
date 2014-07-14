@@ -179,14 +179,19 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
     claims.push_back( xyz_claim );
 
 
-    XYZClaimOP support_claim = new XYZClaim( this );
     if( loop_it->start() > 1 ){
-      support_claim->add_position( LocalPosition( label(), loop_it->start()-1 ) );
-    } if( loop_it->stop() < template_->total_residue() ){
-      support_claim->add_position( LocalPosition( label(), loop_it->stop()+1 ) );
+      XYZClaimOP support_claim = new XYZClaim( this,
+                                               LocalPosition( label(), loop_it->start()-1 ) );
+      support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
+      claims.push_back( support_claim );
     }
-    support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
-    claims.push_back( support_claim );
+
+    if( loop_it->stop() < template_->total_residue() ){
+      XYZClaimOP support_claim = new XYZClaim( this,
+                                               LocalPosition( label(), loop_it->stop()+1 ) );
+      support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
+      claims.push_back( support_claim );
+    }
 
     claims.push_back( new CutBiasClaim( this, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) );
 

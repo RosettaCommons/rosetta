@@ -44,6 +44,25 @@ EnvLabelSelector::EnvLabelSelector( LocalPositions const& positions_in ) {
   this->set_local_positions( positions_in );
 }
 
+EnvLabelSelector::EnvLabelSelector( LocalPosition const& local_pos ) {
+  LocalPositions local_positions = LocalPositions();
+  local_positions.push_back( new LocalPosition( local_pos ) );
+
+  this->set_local_positions( local_positions );
+}
+
+EnvLabelSelector::EnvLabelSelector( std::string const& label,
+                                    std::pair< core::Size, core::Size > const& range ) {
+  LocalPositions local_positions = LocalPositions();
+
+  for( Size i = range.first; i <= range.second; ++i){
+    local_positions.push_back( new LocalPosition( label, i ) );
+  }
+
+  this->set_local_positions( local_positions );
+}
+
+
 EnvLabelSelector::~EnvLabelSelector() {}
 
 void EnvLabelSelector::apply(
@@ -54,15 +73,15 @@ void EnvLabelSelector::apply(
   using core::environment::LocalPositionOP;
   assert( subset.size() == pose.total_residue() );
 
-  for( Size i = 1; i <= subset.size(); ++i ){
-    subset[i] = false;
-  }
+  subset = ResidueSubset( subset.size(), false );
 
   ProtectedConformationCOP conf = dynamic_cast< ProtectedConformation const* >( &( pose.conformation() ) );
   core::environment::SequenceAnnotationCOP ann = conf->annotations();
 
-  BOOST_FOREACH( LocalPositionOP pos, positions ){
-    subset[ ann->resolve_seq( *pos ) ] = true;
+  for( LocalPositions::const_iterator pos_it = positions_.begin();
+       pos_it != positions_.end(); ++pos_it ) {
+    core::Size const seqpos = ann->resolve_seq( **pos_it );
+    subset[ seqpos ] = true;
   }
 }
 
@@ -77,7 +96,7 @@ void EnvLabelSelector::set_local_positions( LocalPositions const& positions_in )
   using namespace core::environment;
 
   BOOST_FOREACH( LocalPositionOP pos, positions_in ){
-    positions.push_back( new LocalPosition( *pos ) );
+    positions_.push_back( new LocalPosition( *pos ) );
   }
 }
 

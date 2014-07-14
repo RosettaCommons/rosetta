@@ -38,12 +38,18 @@ namespace claims {
 class EnvLabelSelector : public core::pack::task::residue_selector::ResidueSelector {
   typedef core::pack::task::residue_selector::ResidueSubset ResidueSubset;
   typedef core::environment::LocalPositions LocalPositions;
+  typedef core::environment::LocalPosition LocalPosition;
 
 public:
   // derived from base class
   EnvLabelSelector();
 
   EnvLabelSelector( LocalPositions const& );
+
+  EnvLabelSelector( LocalPosition const& );
+
+  EnvLabelSelector( std::string const& label,
+                    std::pair< core::Size, core::Size > const& range );
 
   virtual ~EnvLabelSelector();
 
@@ -57,7 +63,9 @@ public:
 
   void set_local_positions( LocalPositions const& );
 
-  LocalPositions const& local_positions() const{ return positions; }
+  LocalPositions const& local_positions() const{ return positions_; }
+
+  void add_position( LocalPosition const& p ){ positions_.push_back( new LocalPosition( p ) ); }
 
   virtual
   std::string
@@ -66,7 +74,7 @@ public:
   static std::string class_name();
 
 private: // data members
-  LocalPositions positions;
+  LocalPositions positions_;
 };
 
 } //namespace claims

@@ -244,6 +244,7 @@ sources = {
 	],
 	"protocols/loops/loop_mover": [
 	    "IndependentLoopMover",
+	    "LoopCM",
 	    "LoopMover",
 	],
 	"protocols/loops/loop_mover/perturb": [

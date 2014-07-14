@@ -17,27 +17,29 @@
 
 #include <basic/Tracer.hh>
 
+#include <numeric/xyzVector.hh>
+
 #include <core/id/types.hh>
 
 #include <core/pack/task/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/conformation/Residue.hh>
 
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/CoMTrackerCM.hh>
 #include <protocols/environment/EnvExcn.hh>
+#include <protocols/environment/DofUnlock.hh>
 
-#include <protocols/environment/claims/JumpClaim.hh>
+#include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/XYZClaim.hh>
 
 #include <protocols/abinitio/abscript/StructPerturberCM.hh>
 
-#include <protocols/rigid/UniformRigidBodyCM.hh>
-
 #include <devel/init.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
+#include <boost/bind/bind.hpp>
 
 #define TS_ASSERT( x ) assert( x )
 #define TS_ASSERT_THROWS_NOTHING( x ) x
@@ -50,97 +52,92 @@
 
 static basic::Tracer tr("main");
 
-void test_com_rb( core::pose::Pose pose ) {
+class Tester : public protocols::environment::ClaimingMover {
+public:
 
-  using namespace core::environment;
-  using namespace protocols;
-  using namespace protocols::environment;
-  using namespace core::pack::task::residue_selector;
-  using namespace numeric;
-  using namespace core::conformation;
-  using namespace abinitio::abscript;
-  using namespace protocols::rigid;
-
-  TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
-
-  std::string const com1 = "com1";
-  std::string const com2 = "com2";
-
-  ChainSelectorOP chain1 = new ChainSelector();
-  ChainSelectorOP chain2 = new ChainSelector();
-  chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
-  chain2->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
-  CoMTrackerCMOP tracker1 = new CoMTrackerCM( com1, chain1 );
-  CoMTrackerCMOP tracker2 = new CoMTrackerCM( com2, chain2 );
-
-  StructPerturberCMOP perturb = new StructPerturberCM( "BASE", 10.0 );
-
-  UniformRigidBodyCMOP rigpert = new UniformRigidBodyCM( "perturb", LocalPosition( com1, 1 ), LocalPosition( com2, 1 ) );
-
-  Environment env( "env" );
-  env.register_mover( rigpert );
-  env.register_mover( tracker1 );
-  env.register_mover( tracker2 );
-  env.register_mover( perturb );
-
-  core::pose::Pose ppose;
-
-  //Test correct topology construction
-  TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
-  TS_ASSERT_EQUALS( ppose.num_jump(), 3 );
-
-  // TODO: make this determination less hacky and more declarative
-  int const comcom_jump = (int) ppose.fold_tree().jump_nr( ppose.total_residue()-1, ppose.total_residue() );
-  int const chain1_com =  (int) ppose.fold_tree().jump_nr( 2, ppose.total_residue()-1 );
-  int const chain2_com =  (int) ppose.fold_tree().jump_nr( ppose.total_residue()/2+1, ppose.total_residue() );
-
-  TS_ASSERT_DIFFERS( comcom_jump, 0 );
-  TS_ASSERT_DIFFERS( chain1_com, 0 );
-  TS_ASSERT_DIFFERS( chain2_com, 0 );
-
-  //Verify initialization perturbations
-  utility::vector1< core::kinematics::Jump > jumps( 3 );
-  for( Size i = 1; i <= ppose.num_jump(); ++i ){
-    core::kinematics::Jump j;
-    {
-      // calculate original transform between com1 and
-      core::pose::Pose tmp( pose );
-      core::kinematics::FoldTree tmp_ft = ppose.fold_tree();
-      tmp_ft.delete_seqpos( (int) pose.total_residue() );
-      tmp_ft.delete_seqpos( (int) pose.total_residue()-1 );
-      tmp.fold_tree( tmp_ft );
-      j = tmp.jump( (int) i );
-    }
-
-    TS_ASSERT_DIFFERS( j.get_translation(), ppose.jump( (int) i ).get_translation() );
-    TS_ASSERT_DIFFERS( j.get_rotation(), ppose.jump( (int) i ).get_rotation() );
-
-    //store values of jumps for later comparison
-    jumps[i] = ppose.jump( (int) i );
+  Tester() : claim_( NULL ) {}
+  Tester( protocols::environment::claims::EnvClaimOP claim ): claim_( claim ) {
+    claim_->set_owner( this );
   }
 
-  //Verify rigpert perturbation.
-  TS_ASSERT_THROWS_NOTHING( rigpert->apply( ppose ) );
+  virtual void apply( core::pose::Pose& pose ){}
 
-  // Verify rigpert modifies no jumps
-  TS_ASSERT_DIFFERS( jumps[comcom_jump].get_translation(), ppose.jump( comcom_jump ).get_translation() );
-  TS_ASSERT_DIFFERS( jumps[comcom_jump].get_rotation(), ppose.jump( comcom_jump ).get_rotation() );
-  TS_ASSERT_LESS_THAN( ( jumps[chain1_com].get_translation() - ppose.jump( chain1_com ).get_translation() ).length(), 1e-10 );
-  TS_ASSERT_LESS_THAN( ( jumps[chain2_com].get_translation() - ppose.jump( chain2_com ).get_translation() ).length(), 1e-10 );
+  // This use of bool apply allows us to apply an aribtrary functi
+  virtual void apply( core::pose::Pose& pose, boost::function< void() > f ) {
+    protocols::environment::DofUnlock activation( pose.conformation(), passport() );
+    f();
+  }
 
-  // Recalculate CoM residues.
-  TS_ASSERT_THROWS_NOTHING( tracker1->apply( ppose ) );
-  TS_ASSERT_THROWS_NOTHING( tracker2->apply( ppose ) );
+  virtual protocols::environment::claims::EnvClaims yield_claims( core::pose::Pose const&,
+                                                                  basic::datacache::WriteableCacheableMapOP ) {
+    protocols::environment::claims::EnvClaims claims;
+    if( claim_ ) claims.push_back( claim_ );
+    return claims;
+  }
 
-  // Verify correct recalculation of CoM Residues
-  TS_ASSERT_DIFFERS( jumps[comcom_jump].get_translation(), ppose.jump( comcom_jump ).get_translation() );
-  TS_ASSERT_DIFFERS( jumps[comcom_jump].get_rotation(), ppose.jump( comcom_jump ).get_rotation() );
-  TS_ASSERT_LESS_THAN( ( jumps[chain1_com].get_translation() - ppose.jump( chain1_com ).get_translation() ).length(), 1e-10 );
-  TS_ASSERT_LESS_THAN( ( jumps[chain2_com].get_translation() - ppose.jump( chain2_com ).get_translation() ).length(), 1e-10 );
+  virtual std::string get_name() const { return "TESTER"; }
 
-  //Test environment end
-  core::pose::Pose final_pose;
-  TS_ASSERT_THROWS_NOTHING( final_pose = env.end( ppose ) );
+private:
+  protocols::environment::claims::EnvClaimOP claim_;
+};
+
+typedef utility::pointer::owning_ptr< Tester > TesterOP;
+typedef utility::pointer::owning_ptr< Tester const > TesterCOP;
+
+void test_replace_residue( core::pose::Pose const& pose ) {
+
+  typedef utility::vector1<std::pair<std::string, std::string> > AtomPairVector;
+  using namespace protocols::environment::claims;
+
+  core::Size const SEQPOS = 5;
+
+  protocols::environment::Environment env( "env" );
+  TesterOP noclaim_test = new Tester();
+  XYZClaimOP claim = new XYZClaim( NULL, core::environment::LocalPosition( "BASE", SEQPOS ) );
+  claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
+  TesterOP xyzclaim_test = new Tester( claim );
+
+
+  env.register_mover( noclaim_test );
+  env.register_mover( xyzclaim_test );
+
+  core::pose::Pose prot_pose;
+  TS_ASSERT_THROWS_NOTHING( prot_pose = env.start( pose ) );
+
+  core::conformation::Residue const& new_same_rsd( pose.residue( SEQPOS ) );
+  AtomPairVector ap_vect;
+  ap_vect.push_back( std::make_pair( "CA", "CA" ) );
+  ap_vect.push_back( std::make_pair( "N", "N" ) );
+  ap_vect.push_back( std::make_pair( "C", "C" ) );
+
+  // Make aliases for the two versions of replace_residue (make a complicated test a *bit* more readable)
+  void (core::pose::Pose::*repres_bool) ( Size const, Residue const&, bool const) = &core::pose::Pose::replace_residue;
+  void (core::pose::Pose::*repres_apvect) ( int const, Residue const&, AtomPairVector const& ) = &core::pose::Pose::replace_residue;
+
+  //Verify: if we don't chage anything with this call, we pass
+  TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_same_rsd, ap_vect ) ) );
+  TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_same_rsd, true ) ) );
+
+  //Verify: if we change something without claiming, we get an exception
+  core::conformation::Residue new_diff_rsd( pose.residue( SEQPOS ) );
+  new_diff_rsd.set_xyz( 1, numeric::xyzVector< Real >( 1.0, 1.0, 1.0 ) );
+
+  TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_diff_rsd, ap_vect ) ),
+                    protocols::environment::EXCN_Env_Security_Exception );
+
+  for( Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ){
+    TS_ASSERT_LESS_THAN( ( new_same_rsd.xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
+  }
+
+
+  TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ),
+                    protocols::environment::EXCN_Env_Security_Exception );
+  for( Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ){
+    TS_ASSERT_LESS_THAN( ( new_same_rsd.xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
+  }
+
+  //Verify: if we change something WITH claiming, we pass
+  TS_ASSERT_THROWS_NOTHING( xyzclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ) );
 }
 
 int main( int argc, char** argv ){
@@ -149,18 +146,18 @@ int main( int argc, char** argv ){
   core::pose::Pose pose;
   core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
-  for( Size i = 1; i <= pose.total_residue(); ++i ){
-    pose.set_phi( i, -65 );
-    pose.set_psi( i, -41 );
-  }
-
-  pose.append_pose_by_jump( *pose.clone(), 5 );
-  core::kinematics::Jump j = pose.jump( 1 );
-  j.gaussian_move(1, 50, 0);
-  pose.set_jump(1, j);
+//  for( Size i = 1; i <= pose.total_residue(); ++i ){
+//    pose.set_phi( i, -65 );
+//    pose.set_psi( i, -41 );
+//  }
+//
+//  pose.append_pose_by_jump( *pose.clone(), 5 );
+//  core::kinematics::Jump j = pose.jump( 1 );
+//  j.gaussian_move(1, 50, 0);
+//  pose.set_jump(1, j);
 
   try {
-    test_com_rb( pose );
+    test_replace_residue( pose );
   } catch ( utility::excn::EXCN_Msg_Exception excn ){
     std::cout << excn << std::endl;
     std::exit( 1 );

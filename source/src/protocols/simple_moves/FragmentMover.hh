@@ -29,7 +29,7 @@
 // Project Headers
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoveMapMover.hh>
 
 
 // ObjexxFCL Headers
@@ -42,17 +42,15 @@
 
 namespace protocols {
 namespace simple_moves {
-// might want to live in protocols::moves
 
 ///@brief abstract base class for FragmentMovers
-class FragmentMover : public moves::Mover {
+class FragmentMover : public moves::MoveMapMover {
+  typedef moves::MoveMapMover Parent;
 public:
 	~FragmentMover();
 
 	///@brief choose and insert a fragment --> has to be overloaded
 	virtual void apply( core::pose::Pose& ) = 0;
-
-	using moves::Mover::apply;
 
 	///@brief apply a fragment at pos to movemable dofs
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )

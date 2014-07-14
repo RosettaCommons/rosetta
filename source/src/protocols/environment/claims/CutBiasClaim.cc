@@ -111,12 +111,12 @@ EnvClaimOP CutBiasClaim::clone() const {
   return new CutBiasClaim( *this );
 }
 
-std::string CutBiasClaim::str_type() const{
+std::string CutBiasClaim::type() const{
   return "CutBias";
 }
 
 void CutBiasClaim::show( std::ostream& os ) const {
-  os << str_type() << " owned by a " << owner()->get_name();
+  os << type() << " owned by a " << owner()->get_name();
 }
 
 } //claims

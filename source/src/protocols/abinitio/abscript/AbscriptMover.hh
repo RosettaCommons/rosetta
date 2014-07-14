@@ -30,6 +30,8 @@
 // Project headers
 #include <core/scoring/ScoreFunction.hh>
 
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+
 #include <core/pose/Pose.hh>
 
 #ifdef WIN32
@@ -92,7 +94,9 @@ private:
 
   class StageTracker;
 
-  void add_default_frags( std::string const& small_frags, std::string const& large_frags );
+  void add_frags( std::string const& small_frags,
+                  std::string const& large_frags,
+                  core::pack::task::residue_selector::ResidueSelectorCOP = NULL );
 
   void parse_subtags( utility::vector0< utility::tag::TagPtr > const&,
                       protocols::moves::Movers_map const& );

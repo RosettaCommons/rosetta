@@ -48,6 +48,15 @@ public:
 
     add_msg( msg.str() );
   }
+
+  EXCN_Env_Security_Exception( std::string const& message,
+                               std::string const& mover_name,
+                               EnvironmentCAP env ) :
+  Parent( env ) {
+    std::ostringstream msg;
+    msg << message << std::endl << "Failure due to a call by mover '" << mover_name << "'";
+    add_msg( msg.str() );
+  }
 };
 
 class EXCN_Env_Passport : public core::environment::EXCN_Env_Exception {

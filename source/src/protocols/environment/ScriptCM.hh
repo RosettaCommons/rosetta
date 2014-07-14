@@ -74,8 +74,15 @@ public:
 protected:
   virtual void passport_updated();
 
+  void set_client( moves::MoverOP );
+
+  void add_claim( claims::EnvClaimOP claim );
+
+  moves::MoveMapMoverOP client() const { return client_; }
+
 private:
   std::string name_;
+  EnvClaims claim_list_;
   moves::MoveMapMoverOP client_;
 
 }; // end ScriptCM base class

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file TorsionClaim
-/// @brief Claims access to a torsional angle.
-/// @author Justin Porter
+/// @file src/protocols/environment/claims/TorsionClaim.cc
+/// @brief Implementation file for TorsionClaim.
+/// @author Justin R. Porter
 
 // Unit Headers
 #include <protocols/environment/claims/TorsionClaim.hh>
@@ -51,6 +51,17 @@ using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
+                            core::pack::task::residue_selector::ResidueSelectorCOP selector ) :
+  EnvClaim( owner ),
+  selector_( selector ),
+  c_str_( MUST_CONTROL ),
+  i_str_( DOES_NOT_CONTROL ),
+  claim_sidechain_( false ),
+  claim_backbone_( true )
+{}
+
+
+TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             utility::tag::TagCOP tag,
                             basic::datacache::DataMap& datamap ):
   EnvClaim( owner ),
@@ -60,7 +71,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   claim_backbone_ = tag->getOption< bool >( "backbone", false );
   claim_sidechain_ = tag->getOption< bool >( "sidechain", false );
   if( !claim_sidechain_ && !claim_backbone_ ){
-    tr.Warning << str_type() << " owned by mover named "
+    tr.Warning << type() << " owned by mover named "
                << tag->getParent()->getOption< std::string >( "name" )
                << " was not configured to claim neither sidechains nor backbone torsions."
                << " Are you sure this is what you wanted?" << std::endl;
@@ -72,16 +83,12 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPosition const& local_pos):
   EnvClaim( owner ),
+  selector_( new EnvLabelSelector( local_pos ) ),
   c_str_( MUST_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
   claim_backbone_( true )
-{
-  LocalPositions local_positions = LocalPositions();
-  local_positions.push_back( new LocalPosition( local_pos ) );
-
-  selector_ = new EnvLabelSelector( local_positions );
-}
+{}
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             std::string const& label,
@@ -121,51 +128,65 @@ DOFElement TorsionClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   return e;
 }
 
-void TorsionClaim::yield_elements( ProtectedConformationCOP const& conf, DOFElements& elements ) const {
+void TorsionClaim::insert_dof_element( core::conformation::Conformation const& conf,
+                                       DOFElements& elements,
+                                       core::Size seqpos,
+                                       core::id::TorsionType type,
+                                       core::Size torsion_number) const {
+  using namespace core::id;
+
+  TorsionID const t_id( seqpos, type, torsion_number );
+  assert( t_id.valid() );
+
+  DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
+  if( d_id.valid() ){
+    elements.push_back( wrap_dof_id( d_id ) );
+  }
+}
+
+void TorsionClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elements ) const {
 
   using namespace core::id;
 
-  core::pose::Pose p;
-  p.set_new_conformation( conf->clone() );
+  utility::vector1< bool > subset( pose.total_residue(), false );
+  selector_->apply( pose, subset );
 
-  utility::vector1< bool > subset( p.total_residue(), false );
-  selector_->apply( p, subset );
+  Conformation const& conf = pose.conformation();
 
-
-  for( Size seqpos = 1; seqpos <= p.total_residue(); ++seqpos ){
+  for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
     if( !subset[seqpos] ){
+      // If this residue isn't selected by the selector, we're not supposed to do anything.
+      // Continue on to the next residue.
       continue;
     }
 
-    if( conf->residue( seqpos ).type().is_protein() ) {
+    if( conf.residue( seqpos ).type().is_protein() ) {
       if( claim_backbone() ){
-        TorsionID phi  ( seqpos, BB, phi_torsion );
-        TorsionID psi  ( seqpos, BB, psi_torsion );
-        TorsionID omega( seqpos, BB, omega_torsion );
-
-        DOF_ID phi_dof = conf->dof_id_from_torsion_id( phi );
-        DOF_ID psi_dof = conf->dof_id_from_torsion_id( psi );
-        DOF_ID omega_dof = conf->dof_id_from_torsion_id( omega );
-
-        elements.push_back( wrap_dof_id( phi_dof ) );
-        elements.push_back( wrap_dof_id( psi_dof ) );
-        elements.push_back( wrap_dof_id( omega_dof ) );
+        insert_dof_element( conf, elements, seqpos, BB, phi_torsion );
+        insert_dof_element( conf, elements, seqpos, BB, psi_torsion );
+        insert_dof_element( conf, elements, seqpos, BB, omega_torsion );
       }
       if( claim_sidechain() ){
-        for( Size i = 1; i <= conf->residue( seqpos ).nchi(); ++i ){
-          TorsionID t_id( seqpos, CHI, i );
-          elements.push_back( wrap_dof_id( conf->dof_id_from_torsion_id( t_id ) ) );
+        for( Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ){
+          insert_dof_element( conf, elements, seqpos, CHI, i );
         }
       }
+    } else if( conf.residue( seqpos ).is_virtual_residue() ) {
+      tr.Debug << *this << " ignoring seqpos " << seqpos << ", because it's a virtual residue." << std::endl;
     } else {
       // Hey there! If you got here because you're using sugars or RNA or something,
-      // all you have to do is put an else if for your case, and correctly
-      // generate the DOF_IDs for your case and then use wrap_dof_id to build
-      // a DOFElement out of it. JRP
-      tr.Debug << "TorsionClaim owned by " << owner()->get_name()
-               << " is ignoring residue " << seqpos
-               << " with name3 " << conf->residue( seqpos ).name3()
-               << " because it is not protein." << std::endl;
+      // all you have to do is put an else if for your case (see the virtual check above),
+      // and correctly generate the DOF_IDs for all your torsions. Then call wrap_dof_id( dof_id )
+      // to build a DOFElement out of it, and put it into elements. See insert_dof_element above. JRP
+
+      std::ostringstream ss;
+      ss << "[ERROR] TorsionClaim owned by " << owner()->get_name()
+         << " doesn't know how to handle residue " << seqpos << " with name3 "
+         << conf.residue( seqpos ).name3() << " because it is not protein."
+         << "If you're using non-protein residue types (sugars, RNA/DNA, etc.), check out "
+         << __FILE__ << ":" << __LINE__ << " to tell the TorsionClaim how to turn torsion "
+         << "numbers in to DOF_IDs" << std::endl;
+      throw utility::excn::EXCN_BadInput( ss.str() );
     }
   }
 }
@@ -197,12 +218,13 @@ EnvClaimOP TorsionClaim::clone() const {
   return new TorsionClaim( *this );
 }
 
-std::string TorsionClaim::str_type() const{
+std::string TorsionClaim::type() const{
   return "Torsion";
 }
 
 void TorsionClaim::show( std::ostream& os ) const {
-  os << str_type() << " owned by a '" << owner()->get_name() << "'";
+  os << type() << " owned by a '" << owner()->get_name() << "' with control strength "
+     << ctrl_strength() << " and init strength " << init_strength() << " with selector " << selector()->get_name();
 }
 
 } //claims

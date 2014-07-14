@@ -62,28 +62,24 @@ static basic::Tracer tr("protocols.simple_moves.FragmentMover");
 FragmentMover::~FragmentMover() {}
 
 /// @brief Empty constructor
-FragmentMover::FragmentMover(std::string type)
-{
+FragmentMover::FragmentMover(std::string type) {
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_bb(true); // standard MoveMap
-	movemap_= movemap;
+
+  set_movemap( movemap );
 	protocols::moves::Mover::type(type);
-	update_insert_map();
 }
 
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
-	std::string type
-) :
+	std::string type ) :
 	fragset_( fragset )
-	//		movemap_( movemap )//,
-	//bValidInsertMap_ ( false )
 {
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_bb( true ); //standard movemap
-	movemap_=movemap;
+
+	set_movemap( movemap );
 	protocols::moves::Mover::type( type );
-	update_insert_map();
 }
 
 ///@brief constructor
@@ -92,12 +88,10 @@ FragmentMover::FragmentMover(
 	core::kinematics::MoveMapCOP movemap,
 	std::string type
 ) :
-	fragset_( fragset ),
-	movemap_( movemap )//,
-	//bValidInsertMap_ ( false )
+	fragset_( fragset )
 {
 	protocols::moves::Mover::type( type );
-	update_insert_map();
+  set_movemap( movemap );
 }
 
 bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {

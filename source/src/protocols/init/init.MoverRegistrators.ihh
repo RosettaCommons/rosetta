@@ -169,6 +169,7 @@ static MoverRegistrator< loops::loop_mover::refine::LoopRefineInnerCycleContaine
 static MoverRegistrator< loops::loop_mover::refine::RepackTrialCreator > reg_RepackTrialCreator;
 static MoverRegistrator< loops::loop_mover::refine::ShearMinCCDTrialCreator > reg_ShearMinCCDTrial;
 static MoverRegistrator< loops::loop_mover::refine::SmallMinCCDTrialCreator > reg_SmallMinCCDTrial;
+static MoverRegistrator< loops::loop_mover::LoopCMCreator > reg_LoopCM;
 
 static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 

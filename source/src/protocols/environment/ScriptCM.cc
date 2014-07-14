@@ -24,6 +24,9 @@
 
 #include <core/kinematics/MoveMap.hh>
 
+#include <protocols/moves/MoverFactory.hh>
+
+
 //Utility Headers
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
@@ -32,7 +35,7 @@
 #include <basic/Tracer.hh>
 
 #ifdef WIN32
-	#include <basic/datacache/WriteableCacheableMap.hh>
+  #include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 // C++ Headers
@@ -41,6 +44,8 @@
 
 namespace protocols {
 namespace environment {
+
+std::string const NOT_SET = "[NOT_SET]";
 
 static basic::Tracer tr( "protocols.environment.ScriptCM", basic::t_info );
 static numeric::random::RandomGenerator RG( 9143235 );
@@ -66,7 +71,7 @@ ScriptCMCreator::mover_name() {
 
 ScriptCM::ScriptCM():
   ClaimingMover(),
-  name_( "[NOT_SET]" ),
+  name_( NOT_SET ),
   client_( NULL )
 {}
 
@@ -97,9 +102,9 @@ void ScriptCM::apply( core::pose::Pose& pose ){
 
 void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
                              basic::datacache::DataMap& datamap,
-                             protocols::filters::Filters_map const&,
+                             protocols::filters::Filters_map const& filters,
                              protocols::moves::Movers_map const& mover_map,
-                             core::pose::Pose const& ) {
+                             core::pose::Pose const& pose ) {
   name_ = tag->getOption< std::string >( "name" );
 
   for( utility::vector0< utility::tag::TagCOP>::const_iterator tag_it = tag->getTags().begin();
@@ -107,30 +112,54 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
     TagCOP subtag = *tag_it;
     if( (*tag_it)->getName() == "Mover" ){
       std::string const& client_name = subtag->getOption< std::string >( "name" );
+      tr.Debug << " Interpreting tag with name " << subtag->getName() << " as existing mover with name '"
+               << client_name << "'" << std::endl;
       if( mover_map.find( client_name ) != mover_map.end() ){
-        moves::MoveMapMoverOP mover_ptr = dynamic_cast< moves::MoveMapMover * >( mover_map.find( client_name )->second.get() );
-        if( mover_ptr ){
-          client_ = mover_ptr;
-        } else {
-          moves::MoverOP bad_mover ( mover_map.find( client_name )->second.get() );
-          throw utility::excn::EXCN_RosettaScriptsOption( "The "+bad_mover->type()+" named '"+bad_mover->name()+
-                                                         "' doesn't implement MoveMapMover and can't be used by the ScriptCM." );
-        }
+        set_client( mover_map.find( client_name )->second.get() );
       } else {
-        throw utility::excn::EXCN_RosettaScriptsOption( "The "+type()+" named "+name()+
-                                                        " couldn't find the mover named "+client_name+"." );
+        throw utility::excn::EXCN_RosettaScriptsOption( "Undefined mover '"+client_name+"'." );
       }
+    } else if( claims::EnvClaim::is_claim( subtag->getName() ) ) {
+      tr.Debug << " Interpreting tag with name " << subtag->getName() << " as new claim." << std::endl;
+      add_claim( claims::EnvClaim::make_claim( subtag->getName(), this, subtag, datamap ) );
     } else {
-      claims::EnvClaim::make_claim( subtag->getName(), this, subtag, datamap );
+      tr.Debug << " Interpreting tag with name " << subtag->getName() << " as a new mover." << std::endl;
+
+      set_client( moves::MoverFactory::get_instance()->newMover( subtag, datamap, filters, mover_map, pose ) );
+
+      if( subtag->hasOption( "name" ) ){
+        tr.Warning << "[WARNING] Mover " << subtag->getOption< std::string >( "name" ) << " will not be availiable to"
+                   << " reference by name. It will exist only within " << this->get_name() << std::endl;
+      }
     }
   }
 }
 
+void ScriptCM::set_client( moves::MoverOP mover_in ) {
+  if( client_ ){
+    throw utility::excn::EXCN_RosettaScriptsOption( "The ScriptCM '" + this->get_name() + "' cannot contain >1 client mover." );
+  }
+
+  moves::MoveMapMoverOP mover_ptr = dynamic_cast< moves::MoveMapMover * >( mover_in.get() );
+
+  if ( !mover_ptr ){
+    throw utility::excn::EXCN_RosettaScriptsOption( "The "+mover_in->type()+" named '"+mover_in->get_name()+
+                                                    "' doesn't implement MoveMapMover and can't be used by the ScriptCM." );
+  }
+
+  client_ = mover_ptr;
+}
+
+void ScriptCM::add_claim( claims::EnvClaimOP claim ) {
+  tr.Debug << "  " << this->get_name() << " added EnvClaim " << *claim << "added." << std::endl;
+  claim_list_.push_back( claim );
+}
+
+
 claims::EnvClaims ScriptCM::yield_claims( core::pose::Pose const&,
                                           basic::datacache::WriteableCacheableMapOP ){
-  claims::EnvClaims claim_list;
-
-  return claim_list;
+  tr.Debug << this->get_name() << " yielding " << claim_list_.size() << " EnvClaims." << std::endl;
+  return claim_list_;
 }
 
 std::string ScriptCM::get_name() const {

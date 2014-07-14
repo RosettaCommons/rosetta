@@ -141,6 +141,7 @@
 
 #include <protocols/loops/FoldTreeFromLoopsWrapperCreator.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
+#include <protocols/loops/loop_mover/LoopCMCreator.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCDCreator.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KICCreator.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCDCreator.hh>

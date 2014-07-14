@@ -116,28 +116,6 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
 
   core::pose::Pose broker_result = this->broker( in_pose );
 
-  //Rebuild an appropriate PDBInfo object.
-  if( broker_result.pdb_info() ){
-    tr.Error << "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" << std::endl;
-    utility_exit_with_message( "Problem in broking!" );
-  } else if( in_pose.pdb_info() ) {
-    core::Size const new_vrts = broker()->result().new_vrts.size();
-
-    core::pose::PDBInfoOP new_info = new core::pose::PDBInfo( *in_pose.pdb_info() );
-
-    for( Size i = 1; i <= new_vrts; ++i ){
-      new_info->append_res( new_info->nres(), 3 );
-    }
-
-    tr.Debug << "Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
-             << broker_result.total_residue() << ". Old Size: " << in_pose.pdb_info()->nres() << "; New Size: "
-             << new_info->nres() << std::endl;
-
-    broker_result.pdb_info( new_info );
-  } else {
-    tr.Debug << "  PDBInfo processing being ignored as it is null in the input pose." << std::endl;
-  }
-
   assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( broker_result.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 
   return broker_result;

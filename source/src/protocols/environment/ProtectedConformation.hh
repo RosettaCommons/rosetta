@@ -10,7 +10,7 @@
 /// @file src/protocols/environment/ProtectedConformation.hh
 /// @brief A conformation built by the environment to be protected.
 ///
-/// @author Justin Porter
+/// @author Justin R. Porter
 
 #ifndef INCLUDED_protocols_environment_ProtectedConformation_hh
 #define INCLUDED_protocols_environment_ProtectedConformation_hh
@@ -82,8 +82,9 @@ public:
   virtual void set_secstruct( Size const seqpos, char const setting );
 
   virtual void replace_residue( Size const seqpos, core::conformation::Residue const & new_rsd,
-                                utility::vector1< std::pair< std::string, std::string > > const& atom_pairs
-                  );
+                                utility::vector1< std::pair< std::string, std::string > > const& atom_pairs );
+
+  virtual void replace_residue( Size const seqpos, Residue const & new_rsd, bool const orient_backbone );
 
   virtual void set_stub_transform( core::id::StubID const & stub_id1,
                                    core::id::StubID const & stub_id2,
@@ -108,8 +109,6 @@ public:
 
 // Always-failing Security Overloads
 // The parameters aren't named on purpose. You're not supposed to use these functions.
-  virtual void contains_carbohydrate_residues( bool const );
-
   virtual void fold_tree( FoldTree const& );
 
   virtual void chain_endings( utility::vector1< Size > const& );
@@ -191,7 +190,8 @@ public:
 private:
   ProtectedConformation( EnvironmentCAP, core::conformation::Conformation const& );
 
-  // Verification helper methods.
+// Verification Helpers:
+private:
   inline bool verify( core::id::TorsionID const& );
 
   inline bool verify( core::id::DOF_ID const& );
@@ -202,10 +202,11 @@ private:
 
   inline void fail_verification( std::string const& str );
 
-  void fork_annotation();
+  template< typename Param >
+  void replace_residue_sandbox( Size const seqpos, Residue const& new_rsd, Param );
 
-  void attach_annotation( SequenceAnnotationCOP );
-
+// Passport Management:
+private:
   void push_passport( core::environment::DofPassportCOP );
 
   core::environment::DofPassportCOP pop_passport();
@@ -213,6 +214,8 @@ private:
   bool has_passport() const;
 
   void set_environment( EnvironmentCAP );
+
+  void attach_annotation( SequenceAnnotationCOP );
 
   std::stack<core::environment::DofPassportCOP> unlocks_;
   SequenceAnnotationCOP annotations_;

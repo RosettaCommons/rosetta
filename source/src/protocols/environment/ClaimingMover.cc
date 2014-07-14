@@ -54,7 +54,7 @@ ClaimingMover::~ClaimingMover() {}
 //CLAIMING METHODS:
 
 void ClaimingMover::initialize( Pose& ) {
-  throw utility::excn::EXCN_Msg_Exception( "ClaimingMover "+this->name()+
+  throw utility::excn::EXCN_Msg_Exception( "ClaimingMover "+this->get_name()+
                                            " claimed a dof to initialize, but did not override ClaimingMover::initialize" );
 }
 
@@ -62,7 +62,7 @@ void ClaimingMover::initialize( Pose& ) {
 //PASSPORT MANAGEMENT METHODS:
 core::environment::DofPassportCOP ClaimingMover::passport() const {
   if( passports_.empty() ){
-    throw utility::excn::EXCN_NullPointer( "ClaimingMover "+this->name()+
+    throw utility::excn::EXCN_NullPointer( "ClaimingMover "+this->get_name()+
                                            " tried to access its passports, of which it has none.");
   }
   return passports_.top().second;

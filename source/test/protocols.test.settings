@@ -55,6 +55,11 @@ sources = {
                 "CoMTrack",
                 "EnvironmentJump",
                 "EnvironmentTorsion",
+                "ProtectedConf",
+        ],
+
+        "environment/claims" : [
+                "ClaimTests",
         ],
 
 	"enzdes" : [

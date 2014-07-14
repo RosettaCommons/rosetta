@@ -73,7 +73,7 @@ public:
 
   EnvClaimOP clone() const;
 
-  virtual std::string str_type() const;
+  virtual std::string type() const;
 
   virtual void show( std::ostream& os ) const;
 

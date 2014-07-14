@@ -35,7 +35,7 @@ namespace environment {
 class EXCN_Env_Exception : public utility::excn::EXCN_Msg_Exception {
   typedef utility::excn::EXCN_Msg_Exception Parent;
 public:
-  EXCN_Env_Exception( EnvCoreCAP env ) {
+  EXCN_Env_Exception( EnvCoreCAP env ) : Parent("") {
     std::ostringstream elab_msg;
     elab_msg << "Environment exception in environment: '" << env->name();
 

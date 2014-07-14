@@ -23,6 +23,8 @@
 #include <core/environment/LocalPosition.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
+
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
 
@@ -50,13 +52,15 @@ namespace claims {
 class XYZClaim : public EnvClaim {
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
   typedef EnvClaim Parent;
-
-public:
   typedef core::environment::LocalPosition LocalPosition;
   typedef core::environment::LocalPositions LocalPositions;
+  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+
+public:
 
   XYZClaim( ClaimingMoverOP owner,
-            utility::tag::TagCOP tag );
+            utility::tag::TagCOP tag,
+            basic::datacache::DataMap& );
 
   // Initializer for an empty XYZ claim
   XYZClaim( ClaimingMoverOP owner );
@@ -70,12 +74,8 @@ public:
             std::string const& label,
             std::pair< core::Size, core::Size > const& range );
 
-  virtual void yield_elements( ProtectedConformationCOP const&,
+  virtual void yield_elements( core::pose::Pose const&,
                                DOFElements& elements ) const;
-
-  void add_position( LocalPosition const& p );
-
-  LocalPositions const& positions() const;
 
   ControlStrength const& ctrl_strength() const;
 
@@ -83,9 +83,11 @@ public:
 
   ControlStrength const& init_strength() const;
 
+  ResidueSelectorCOP selector() const { return selector_; }
+
   virtual EnvClaimOP clone() const;
 
-  virtual std::string str_type() const;
+  virtual std::string type() const;
 
   virtual void show( std::ostream& os ) const;
 
@@ -106,7 +108,7 @@ protected:
                                     DOFElements& elements ) const;
 
 private:
-  LocalPositions local_positions_;
+  ResidueSelectorCOP selector_;
   ControlStrength c_str_;
   ControlStrength i_str_;
   bool internal_only_;

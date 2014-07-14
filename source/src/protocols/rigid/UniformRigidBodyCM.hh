@@ -90,7 +90,6 @@ private:
 
   std::string name_;
   LocalPosition mobile_label_, stationary_label_;
-  core::Real rotation_mag_, translation_mag_;
   UniformRigidBodyMoverOP mover_;
 
 }; // end UniformRigidBodyCM base class

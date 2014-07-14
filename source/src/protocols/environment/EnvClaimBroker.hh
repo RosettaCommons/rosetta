@@ -60,6 +60,12 @@ class EnvClaimBroker : public utility::pointer::ReferenceCount {
   typedef core::conformation::ConformationOP ConformationOP;
   typedef core::conformation::ConformationCOP ConformationCOP;
 
+  typedef utility::vector1< std::pair< claims::ResidueElement, ClaimingMoverOP > > ResElemVect;
+  typedef utility::vector1< std::pair< claims::JumpElement, ClaimingMoverOP > > JumpElemVect;
+  typedef utility::vector1< std::pair< claims::CutElement, ClaimingMoverOP > > CutElemVect;
+  typedef utility::vector1< std::pair< claims::CutBiasElement, ClaimingMoverOP > > CutBiasElemVect;
+  typedef utility::vector1< std::pair< claims::DOFElement, ClaimingMoverOP > > DOFElemVect;
+
   typedef std::map< core::Size, std::string > SizeToStringMap;
   typedef std::map< std::string, std::pair< Size, Size > > StringToSizePairMap;
   typedef std::map< std::string, std::pair< std::string, std::string > > StringToStringPairMap;
@@ -107,7 +113,7 @@ private:
 
   void broker_fold_tree( Conformation&, basic::datacache::BasicDataCache& );
 
-  void broker_dofs( ProtectedConformationOP );
+  void broker_dofs( core::pose::Pose& );
 
   core::kinematics::FoldTreeOP render_fold_tree( FoldTreeSketch& fts,
                                                  utility::vector1< core::Real > const& bias,
@@ -122,27 +128,26 @@ private:
                              SizeToStringMap const& new_vrts,
                              SequenceAnnotationOP );
 
-  void process_elements( claims::ResidueElements const& elems,
+  void process_elements( ResElemVect const& elems,
                          FoldTreeSketch& fts,
                          SizeToStringMap& new_vrts );
 
-  void process_elements( claims::JumpElements const& elems,
+  void process_elements( JumpElemVect const& elems,
                          FoldTreeSketch& fts,
                          JumpDataMap& new_jumps );
 
-  void process_elements( claims::CutElements const& elems,
+  void process_elements( CutElemVect const& elems,
                          FoldTreeSketch& fts );
 
-  void process_elements( claims::CutBiasElements const& elems, BiasVector& bias );
+  void process_elements( CutBiasElemVect const& elems, BiasVector& bias );
 
-  void grant_access( claims::DOFElement const& e ) const;
+  void grant_access( claims::DOFElement const& e, ClaimingMoverOP owner ) const;
 
-  void setup_passports( claims::DOFElements& elements,
-                        claims::ControlStrength const& (*str_access)( claims::DOFElement const& ) );
+  void setup_passports( DOFElemVect& elements,
+                        claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClaimingMoverOP > const& ) );
 
   template < typename T, typename I >
-  void collect_elements( utility::vector1< T >& elements,
-                         I const& info ) const;
+  utility::vector1< std::pair< T, ClaimingMoverOP > > collect_elements( I const& info ) const;
 
   claims::EnvClaims collect_claims( MoverPassMap const& movers_and_passes,
                                     core::pose::Pose& pose );

@@ -38,6 +38,8 @@
 
 #include <core/pose/Pose.hh>
 
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
@@ -78,8 +80,9 @@
 
 // ObjexxFCL Headers
 
-//Req'd on WIN32
+#ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
+#endif
 
 static basic::Tracer tr("protocols.abinitio.abscript.AbscriptMover", basic::t_info);
 
@@ -395,12 +398,6 @@ AbscriptMover::parse_my_tag(
             << ". This stage will not be run." << std::endl;
   }
 
-  //standard fragments load/don't load
-  if( tag->getOption<bool>( "std_frags", true ) ){
-    add_default_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ] ),
-                       tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ] ) );
-  }
-
   //Load submovers using subtags.
   typedef utility::vector0< utility::tag::TagCOP > TagVector;
   TagVector const& subtags = tag->getTags();
@@ -439,15 +436,37 @@ AbscriptMover::parse_my_tag(
           }
         }
       }
+    } else if( stagetag->getName() == "Fragments" ||
+               stagetag->getName() == "fragments" ){
+      core::pack::task::residue_selector::ResidueSelectorCOP selector( NULL );
+      if( stagetag->hasOption( "selector" ) ){
+        selector = datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", stagetag->getOption<std::string>( "selector" ) );
+      }
+
+      add_frags( stagetag->getOption< std::string >( "small_frags" ),
+                 stagetag->getOption< std::string >( "large_frags" ),
+                 selector );
     } else {
-      tr.Error << "AbscriptMover recieved illegal tag (Stage is acceptable):\n" << stagetag << std::endl;
+      tr.Error << "AbscriptMover recieved illegal tag ('Stage' and 'Fragments' are acceptable): '" << stagetag << "'" << std::endl;
       throw utility::excn::EXCN_RosettaScriptsOption("Illegal AbscriptMover subtag.");
     }
   }
 
+  if( tag->hasOption( "std_frags" ) ){
+    // The die for unread tags will cause a crash, but we want to elaborate a bit on why.
+    tr.Error << "[ERROR] The AbscriptMover tag 'std_frags' is deprecated. Use 'Fragments' instead. For example:\n"
+             << "                 <Fragments small_frags='frag3.txt' large_frags='frag9.txt' selector='ChainA' />" << std::endl;
+  }
+
+  if( !tag->hasTag( "Fragments" ) && !tag->hasTag( "fragments" ) ){
+    add_frags( tag->getOption<std::string>("small_frags", option[ OptionKeys::in::file::frag3 ] ),
+               tag->getOption<std::string>("large_frags", option[ OptionKeys::in::file::frag9 ] ) );
+  }
 }
 
-void AbscriptMover::add_default_frags( std::string const& small_fragfile, std::string const& large_fragfile ){
+void AbscriptMover::add_frags( std::string const& small_fragfile,
+                               std::string const& large_fragfile,
+                               core::pack::task::residue_selector::ResidueSelectorCOP selector ){
   using namespace core::fragment;
   using namespace basic::options;
   using namespace protocols::simple_moves;
@@ -465,6 +484,12 @@ void AbscriptMover::add_default_frags( std::string const& small_fragfile, std::s
   FragmentCMOP claim_large  = new FragmentCM( new ClassicFragmentMover( frags_large ) );
   FragmentCMOP claim_small  = new FragmentCM( new ClassicFragmentMover( frags_small ) );
   FragmentCMOP claim_smooth = new FragmentCM( new SmoothFragmentMover( frags_small, new GunnCost() ) );
+
+  if( selector ){
+    claim_large->set_selector( selector );
+    claim_small->set_selector( selector );
+    claim_smooth->set_selector( selector );
+  }
 
   claim_small->yield_cut_bias( true );
 

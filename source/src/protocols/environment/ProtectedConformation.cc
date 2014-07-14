@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/moves/ProtectedConformation.cc
-/// @author Justin Porter
+/// @author Justin R. Porter
 
 // Unit Headers
 #include <protocols/environment/ProtectedConformation.hh>
@@ -29,9 +29,12 @@
 #include <core/kinematics/AtomTree.hh>
 
 // tracer
+#include <boost/bind/bind.hpp>
+#include <boost/ref.hpp>
 #include <basic/Tracer.hh>
 
 // C++ Headers
+#include <algorithm>
 
 // ObjexxFCL Headers
 
@@ -253,25 +256,29 @@ void jump_dofs( std::map< core::id::DOF_ID, core::Real >& dofs,
 
 }
 
-std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size seqpos, core::conformation::ConformationCOP conf ){
+/// @brief The plan here is to collect all the DoFs in the residue at 'seqpos' and on either side.
+std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size const seqpos, core::conformation::ConformationCOP conf ){
   using namespace core::id;
 
   typedef std::map< core::id::DOF_ID, core::Real > DofMap;
 
   DofMap old_dofs;
 
-  for( core::Size i = seqpos-1; i <= seqpos+1; ++i ) {
-    for( core::Size i = 1; conf->residue(i).natoms(); ++i ){
-      AtomID a_id = AtomID( i, seqpos );
+  for( core::Size i = std::max( (Size) 1, seqpos-1 ); i <= std::min( conf->size(), seqpos+1 ); ++i ) {
+    for( core::Size j = 1; j <= conf->residue(i).natoms(); ++j ){
+      AtomID a_id = AtomID( j, i );
+
       if( conf->atom_tree().atom( a_id ).is_jump() ) {
+        // If the atom's a jump atom, store the RB DoFs
         for( core::Size rbi = core::id::RB1; rbi <= core::id::RB6; ++rbi ){
           old_dofs[ DOF_ID( a_id, core::id::DOF_Type( rbi ) ) ] =
           conf->dof( DOF_ID( a_id, core::id::DOF_Type( rbi ) ) );
         }
       } else {
-        DOF_ID d( AtomID( i, seqpos ), core::id::D );
-        DOF_ID theta( AtomID( i, seqpos ), core::id::THETA );
-        DOF_ID phi( AtomID( i, seqpos ), core::id::PHI );
+        // If the atom's a normal bonded atom, store the bond length/angle/torsions.
+        DOF_ID d    ( AtomID( j, i ), core::id::D );
+        DOF_ID theta( AtomID( j, i ), core::id::THETA );
+        DOF_ID phi  ( AtomID( j, i ), core::id::PHI );
 
         old_dofs[ d ] = conf->dof( d );
         old_dofs[ theta ]  = conf->dof( theta );
@@ -283,34 +290,89 @@ std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size seqpos, core::
   return old_dofs;
 }
 
-void ProtectedConformation::replace_residue( Size const seqpos, core::conformation::Residue const& new_rsd,
-                                             utility::vector1< std::pair< std::string, std::string > > const & atom_pairs ){
+std::string dof_id_to_string( core::id::DOF_ID const& id, ProtectedConformation const& conf ){
+  std::ostringstream ss;
+  if( id.type() == core::id::PHI ){
+    ss << "Torsion Angle ";
+  } else if ( id.type() == core::id::THETA ){
+    ss << "Bond Angle ";
+  } else if ( id.type() == core::id::D ) {
+    ss << "Bond Length ";
+  } else if ( id.type() >= core::id::RB1 &&
+             id.type() <= core::id::RB6 ){
+    ss << "RB" << id.type() - core::id::RB1 + 1;
+  }
+  ss << " on " << conf.residue( id.rsd() ).name3() << id.rsd() << " owned by atom " << id.atomno() << "("
+  << conf.residue( id.rsd() ).atom_name( (int) id.atomno() ) << ")";
+  return ss.str();
+}
+
+template< typename Param >
+void ProtectedConformation::replace_residue_sandbox( Size const seqpos, Residue const & new_rsd, Param p ){
+  // TODO: accommodate design?
+
+  if( new_rsd.natoms() != this->residue( seqpos ).natoms() ){
+    std::ostringstream ss;
+    ss << "Residue replacement of residue " << residue( seqpos ).name3() << seqpos << " ("
+       << residue( seqpos ).natoms() << " atoms) failed because the input residue ("
+       << new_rsd.name3() << ", " << new_rsd.natoms() << " atoms) differed in the number of atoms from the current residue.";
+    throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
+  }
+
   typedef std::map< core::id::DOF_ID, core::Real > DofMap;
-
-  core::conformation::ResidueOP old_rsd = Parent::residue( seqpos ).clone();
-
   DofMap old_dofs = collect_dofs( seqpos, this );
+  Residue const old_rsd( residue( seqpos ) );
 
-  Parent::replace_residue( seqpos, new_rsd, atom_pairs );
+  //do the actual replacement
+  Parent::replace_residue( seqpos, new_rsd, p );
 
   DofMap new_dofs = collect_dofs( seqpos, this );;
 
-  if( old_dofs.size() != new_dofs.size() ){
-    fail_verification( "residue replacement of residue "+utility::to_string( seqpos )+
-                       ": dofs were created or destroyed during replacement." );
-  }
-
-  for( DofMap::iterator it = old_dofs.begin();
-       it != old_dofs.end(); ++it ){
-
-    core::id::DOF_ID const& dof = it->first;
-
-    if( ( old_dofs[ dof ] - new_dofs[ dof ] ) > 0.00001 &&
-        !verify( dof ) ){
-      fail_verification( "residue replacement of residue "+utility::to_string( seqpos )+
-                         ": dof "+utility::to_string(dof)+" was moved illegaly." );
+  try{
+    // Check to see that the passport was respected.
+    if( old_dofs.size() != new_dofs.size() ){
+      std::ostringstream ss;
+      ss << "residue replacement of residue " << residue( seqpos ).name3() << seqpos << " with a "
+         << new_rsd.name3() << " (" << new_rsd.natoms() << " failed"
+         << ": dofs were created or destroyed during replacement (old size: " << old_dofs.size()
+         << "; new size: " << new_dofs.size() << ")" << std::endl;
+      throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
     }
+
+    for( DofMap::iterator it = old_dofs.begin();
+        it != old_dofs.end(); ++it ){
+
+      core::id::DOF_ID const& dof = it->first;
+
+      // Use a linear difference for D and RB1-6 and angular difference for PHI and THETA
+      core::Real const angular_delta = std::cos( old_dofs[ dof ] ) - std::cos( new_dofs[ dof ] );
+      core::Real const linear_delta = old_dofs[ dof ] - new_dofs[ dof ];
+      core::Real const delta = dof.type() <= core::id::THETA ? angular_delta : linear_delta;
+
+      if( std::abs( delta ) > 1e-6 && !verify( dof ) ){
+        std::ostringstream ss;
+        ss << dof_id_to_string( dof, *this ) << " in replace_residue (dof delta " << delta << ")";
+        fail_verification( ss.str() );
+      }
+    }
+  } catch( EXCN_Env_Security_Exception const& e ){
+    //If we found an error, reset all the dofs to the previous values.
+    Parent::replace_residue( seqpos, old_rsd, false );
+
+    // re-throw the exception
+    throw e;
   }
+}
+
+void ProtectedConformation::replace_residue( Size const seqpos, Residue const & new_rsd, bool const orient_backbone ) {
+  replace_residue_sandbox( seqpos, new_rsd, orient_backbone );
+}
+
+void ProtectedConformation::replace_residue( Size const seqpos, core::conformation::Residue const& new_rsd,
+                                             utility::vector1< std::pair< std::string, std::string > > const & atom_pairs ){
+  // This is ok, since the parent function contains a call to the above function.
+  Parent::replace_residue( seqpos, new_rsd, atom_pairs );
+  //replace_residue_sandbox( seqpos, new_rsd, atom_pairs );
 }
 
 void ProtectedConformation::set_stub_transform( core::id::StubID const& stub_id1,
@@ -328,7 +390,7 @@ void ProtectedConformation::set_dof( DOF_ID const& id, core::Real const setting 
   if( verify( id ) ){
     return Parent::set_dof( id, setting);
   } else {
-    fail_verification( utility::to_string( id ) );
+    fail_verification( dof_id_to_string( id, *this ) );
   }
 }
 
@@ -342,7 +404,7 @@ void ProtectedConformation::set_torsion_angle( AtomID const & atom1,
   if( verify( id ) ){
     return Parent::set_torsion_angle(atom1, atom2, atom3, atom4, setting, quiet);
   } else {
-    fail_verification( utility::to_string(id)+" (via set_torsion_angle)" );
+    fail_verification( dof_id_to_string( id, *this )+" (via set_torsion_angle)" );
   }
 }
 
@@ -355,7 +417,7 @@ void ProtectedConformation::set_bond_angle( AtomID const & atom1,
   if( verify( id ) ){
     return Parent::set_bond_angle(atom1, atom2, atom3, setting);
   } else {
-    fail_verification( utility::to_string(id)+" (via set_bond_angle)" );
+    fail_verification( dof_id_to_string( id, *this ) + " (via set_bond_angle)" );
   }
 }
 
@@ -366,7 +428,7 @@ void ProtectedConformation::set_bond_length( AtomID const & atom1,
   if( verify( id ) ){
     return Parent::set_bond_length(atom1, atom2, setting);
   } else {
-    fail_verification( utility::to_string(id)+" (via set_bond_angle)" );
+    fail_verification( dof_id_to_string( id, *this )+" (via set_bond_angle)" );
   }
 }
 
@@ -387,14 +449,6 @@ void ProtectedConformation::attach_annotation( SequenceAnnotationCOP annotations
 SequenceAnnotationCOP ProtectedConformation::resolver() const {
   return annotations_;
 }
-
-void ProtectedConformation::fork_annotation() {
-  //TODO implmement annotation forking
-  tr.Error << "fork_annotation is not fully implemented yet. It needs to actually make whatever changes are required to the annotation before it attaches it to the COP." << std::endl;
-  runtime_assert( false );
-  annotations_ = new SequenceAnnotation( annotations_ );
-}
-
 
 // MISC OVERRIDES
 bool ProtectedConformation::same_type_as_me( Conformation const & other, bool recurse ) const {
@@ -448,7 +502,8 @@ bool ProtectedConformation::verify_jump( core::id::AtomID const& a_id ){
 }
 
 bool ProtectedConformation::verify( TorsionID const& id ){
-  return verify( dof_id_from_torsion_id( id ) );
+  core::id::DOF_ID const d_id = dof_id_from_torsion_id( id );
+  return !d_id.valid() || verify( dof_id_from_torsion_id( id ) );
 }
 
 bool ProtectedConformation::verify( core::id::DOF_ID const& id ){
@@ -460,10 +515,6 @@ void ProtectedConformation::fail_verification( std::string const& str ){
 }
 
 // ALWAYS-FAILING SECURITY OVERLOADS
-void ProtectedConformation::contains_carbohydrate_residues( bool const ){
-  fail_verification( "contains-carbohydrate flag" );
-}
-
 void ProtectedConformation::fold_tree( FoldTree const & ){
   fail_verification( "direct setting of foldtree" );
 }
