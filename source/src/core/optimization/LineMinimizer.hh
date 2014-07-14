@@ -47,15 +47,17 @@ private:
 	Multifunc const & _func;
 	int _eval_count;
 	int _deriv_count;
-	// unused Real _search_direction_magnitude;
+	// Real _search_direction_magnitude;
 public:
 	func_1d( Multivec & start, Multivec & dir, Multifunc const & score_fxn ) :
 		_starting_point( start ),
 		_search_direction( dir ),
 		_eval_point( dir.size(), 0.0 ),
 		_dE_dvars( dir.size(), 0.0 ),
-	 	_func( score_fxn ), _eval_count( 0 ), _deriv_count( 0 ),
-		_search_direction_magnitude( 0.0 )
+	 	_func( score_fxn ),
+		_eval_count( 0 ),
+		_deriv_count( 0 )
+		// _search_direction_magnitude( 0.0 )
 	{
 		assert( _starting_point.size() == _search_direction.size() );
 		//for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
