@@ -84,12 +84,12 @@ DNATorsionPotential::DNATorsionPotential():
 
 	c3prime_c2prime_c1prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	c3prime_c2prime_c1prime_angle_harm_func_(
-		new func::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ),
+		new func::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) )
 
 	// Might also be good to have additional angle or torsional potentials
 	// to preserve sugar geometry.
 	////////////////////////////////////////////////////////////////////////////
-	verbose_( false )
+	// unused verbose_( false )
 {
 	init_dna_torsion_parameters();
 }

@@ -45,8 +45,9 @@ FileListResourceLocatorCreator::locator_type() const
 	return "FileListResourceLocator";
 }
 
-FileListResourceLocator::FileListResourceLocator() : basic::resource_manager::ResourceLocator(),
-	open_mode_()
+FileListResourceLocator::FileListResourceLocator() :
+	basic::resource_manager::ResourceLocator(),
+	open_mode_( std::ios_base::in )
 {
 
 }
@@ -58,8 +59,9 @@ FileListResourceLocator::~FileListResourceLocator()
 
 FileListResourceLocator::FileListResourceLocator(
 	FileListResourceLocator const & /*src*/
-) : basic::resource_manager::ResourceLocator(),
-	open_mode_()
+) :
+	basic::resource_manager::ResourceLocator(),
+	open_mode_( std::ios_base::in )
 {
 
 }
@@ -76,6 +78,19 @@ FileListResourceLocator::type() const
 	return "FileListResourceLocator";
 }
 
+void
+FileListResourceLocator::set_open_mode(
+	std::ios_base::openmode open_mode
+)
+{
+	open_mode_ = open_mode;
+}
+
+std::ios_base::openmode
+FileListResourceLocator::get_open_mode() const {
+	return open_mode_;
+}
+
 ResourceStreamOP
 FileListResourceLocator::locate_resource_stream(std::string const & locator_tag) const
 {
@@ -83,11 +98,12 @@ FileListResourceLocator::locate_resource_stream(std::string const & locator_tag)
 
 	StringResourceStreamOP string_stream = new StringResourceStream;
 
-	for(utility::vector1<std::string>::const_iterator path_it = path_vector.begin();path_it != path_vector.end();++path_it)
-	{
-		FileStream new_file(*path_it);
-		while(new_file.stream().good())
-		{
+	for ( utility::vector1<std::string>::const_iterator
+			path_it = path_vector.begin();
+			path_it != path_vector.end();
+			++path_it) {
+		FileStream new_file( *path_it, open_mode_ );
+		while ( new_file.stream().good() ) {
 			std::string line;
 			getline(new_file.stream(),line);
 			string_stream->fill(line + "\n");

@@ -206,9 +206,9 @@ private: // data
 	ObjexxFCL::FArray3D< Real > pair_log_;
 	ObjexxFCL::FArray1D< Real > cenpack_log_;
 
-	Real const cen_dist6sqr_;
-	Real const cen_dist10sqr_;
-	Real const cen_dist12sqr_;
+	// unused Real const cen_dist6sqr_;
+	// unused Real const cen_dist10sqr_;
+	// unused Real const cen_dist12sqr_;
 
 	//cems transition regions between environment bins
 	//cems transition is from +/- sqrt(36+pad6) +/- sqrt(100+pad10) etc

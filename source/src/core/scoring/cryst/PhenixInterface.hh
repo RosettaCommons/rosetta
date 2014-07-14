@@ -118,7 +118,12 @@ private:
 		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & rosgrads );
 #endif
 
+#ifdef WITH_PYTHON
+	// These two variables are only used if this code is compiled with the WITH_PYTHON flag set.
+	// The ifdef guard around their inclusion here is to avoid unused-private-variable warnings
+	// from clang when that flag is not set.
 	core::Real res_low_, res_high_;
+#endif
 	std::string tempdir_;
 	std::string mtzfile_;
 	std::string phenix_home_;

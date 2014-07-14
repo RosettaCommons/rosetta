@@ -611,8 +611,8 @@ private:
 	Real const lj_slope_intercept;
 	bool const lj_use_hbond_radii;
 	Real const lj_hbond_hdis;
-	Real const lj_hbond_accOch_dis;
-	Real const lj_hbond_accOch_hdis;
+	// unused Real const lj_hbond_accOch_dis;
+	// unused Real const lj_hbond_accOch_hdis;
 	bool const lj_use_water_radii;
 	Real const lj_water_dis;
 	Real const lj_water_hdis;

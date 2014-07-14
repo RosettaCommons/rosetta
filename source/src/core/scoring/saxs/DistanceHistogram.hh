@@ -39,43 +39,49 @@ class DistanceHistogram: public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief  Create a histogram that collects distances between two predefined atom types
-	DistanceHistogram(void) : factor_(10.0), max_dist_(300),h_(10*300) {  }
-	
+	DistanceHistogram(void) :
+		factor_(10.0),
+		max_dist_(300),
+		h_(factor_*max_dist_, 0) // apl -- I really think you want to initialize the counts to 0
+	{}
+
 	/// @brief  Returns the number of counts for a given distance
 	Size operator()(Real distance) const { return h_[(Size)(distance*factor_)]; }
-	
+
 	/// @brief  Returns the number of counts for a given distance
 	Size get(Real distance) const  { return h_[(Size)(distance*factor_)]; }
-	
+
 	/// @brief  Returns the number of counts for a given bin
 	Size get(Size bin) const  { return h_[bin]; }
-	
+
 	/// @brief tells waht distance falls into a certain bin
 	Real distance(Size bin) const { return bin/factor_; }
-	
+
 	/// @brief Adds a distance observation to the histogram
-	void inline insert(Real distance) { 
+	void inline insert(Real distance) {
 	  Size b = (Size)(distance*factor_);
 	  if( b>last_nonempty_bin_ ) last_nonempty_bin_ = b;
-	  if ( b>0) 
-	      h_[b] ++; 
+	  if ( b>0) {
+	    ++h_[b];
+		}
 	}
-	
+
 	/// @brief Returns the size of this histogram
 	Size size() { return h_.size(); }
-	
+
 	/// @brief Clears this histogram by filling each cell with 0.0
 	void zeros() { for(Size i=1;i<=h_.size();i++) h_[i] = 0; last_nonempty_bin_ = 0; }
-	
+
 	/// @brief Returns the total number of counts in this histogram
-	Size total() const { 
+	Size total() const {
 	  Size cnt = 0;
 	  for(Size i=1;i<=h_.size();i++)
 	    cnt+=h_[i];
-	  return cnt; 
+	  return cnt;
 	}
-	
+
 	Size last_nonempty_bin() const { return last_nonempty_bin_; }
+
 private:
 	Real factor_;
 	Real max_dist_;

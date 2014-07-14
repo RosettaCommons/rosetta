@@ -95,11 +95,11 @@ private:
 // base convergence test class
 class DescentDirectionAlgorithm {
 public:
-	DescentDirectionAlgorithm( Multifunc const & in_func_ ): func_( in_func_ ) {}
+	DescentDirectionAlgorithm( Multifunc const & ) {} // func_ is unused? what's this class for? : func_( in_func_ ) {}
 //	Multivec operator()(){};
 	void initialize(){};
 private:
-	Multifunc const & func_;
+	// Multifunc const & func_;
 };
 
 //********************************************

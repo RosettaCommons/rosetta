@@ -73,9 +73,9 @@ CenListInfo::initialize( pose::Pose const & pose )
 EnvPairPotential::EnvPairPotential():
 	cen_dist_cutoff2( 144.0 ),
 
-	cen_dist6sqr_( 6 * 6 ),
-	cen_dist10sqr_( 10 * 10 ),
-	cen_dist12sqr_( 12 * 12 ),
+	// unused cen_dist6sqr_( 6 * 6 ),
+	// unused cen_dist10sqr_( 10 * 10 ),
+	// unused cen_dist12sqr_( 12 * 12 ),
 
 	//cems transition regions between environment bins
 	//cems transition is from +/- sqrt(36+pad6) +/- sqrt(100+pad10) etc

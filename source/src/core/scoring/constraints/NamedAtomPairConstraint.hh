@@ -119,7 +119,7 @@ private:
 	core::Size type1_id_;
 	core::Size type2_id_;
 	//@brief this could contain a checksum made from the "annotated-sequence"
-	Size pose_chemical_checksum_;
+	// unused Size pose_chemical_checksum_;
 };
 
 

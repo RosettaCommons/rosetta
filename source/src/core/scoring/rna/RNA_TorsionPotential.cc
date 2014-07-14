@@ -116,7 +116,7 @@ namespace rna {
 RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 	RNA_TorsionPotential::RNA_TorsionPotential():
-		rna_tight_torsions_( true ),
+		// unused rna_tight_torsions_( true ),
 		delta_fade_( 10.0 ),
 		alpha_fade_( 10.0 ),
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),

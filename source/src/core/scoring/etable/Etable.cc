@@ -112,8 +112,8 @@ Etable::Etable(
 	lj_slope_intercept        ( 0.0 ),
 	lj_use_hbond_radii        ( true ),
 	lj_hbond_hdis             ( options.lj_hbond_hdis ),
-	lj_hbond_accOch_dis       ( 2.80 ), // unused
-	lj_hbond_accOch_hdis      ( 1.75 ), // unused
+	// lj_hbond_accOch_dis       ( 2.80 ), // unused
+  // lj_hbond_accOch_hdis      ( 1.75 ), // unused
 	lj_use_water_radii        ( true ),
 	lj_water_dis              ( 3.0 ),
 	lj_water_hdis             ( 1.95 ),

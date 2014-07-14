@@ -36,7 +36,9 @@ namespace constraints {
 
 class DistancePairConstraint : public Constraint {
 public:
+	using Constraint::score;
 
+public:
 	virtual std::string type() const {
 		return "DistancePair";
 	}

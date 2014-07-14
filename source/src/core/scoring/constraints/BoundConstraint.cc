@@ -41,42 +41,37 @@ Real
 BoundFunc::func( Real const x ) const
 {
 
-//Real const rswitch_offset (( rswitch_ * rswitch_ ) - rswitch_ );
-Real delta;
-if ( x > ub_ ) {
-delta = x - ub_;
-} else if ( lb_ <= x ) {
-delta = 0;
-} else if ( x < lb_ ) {
-delta = lb_ - x;
-}
+	//Real const rswitch_offset (( rswitch_ * rswitch_ ) - rswitch_ );
+	Real delta( 0 );
+	if ( x > ub_ ) {
+		delta = x - ub_;
+	} else if ( x < lb_ ) {
+		delta = lb_ - x;
+	}
 //  tr.Trace << "evaluate x in [ lb_ ub_ ]: delta " << x << " " << lb_ << " " << ub_ << " " << delta << std::endl;
 
-delta/=sd_;
+	delta/=sd_;
 
-if ( x > ub_ + rswitch_*sd_ ) {
-return 2 * rswitch_ * delta - rswitch_ * rswitch_;
-} else {
-return delta * delta;
-}
+	if ( x > ub_ + rswitch_*sd_ ) {
+		return 2 * rswitch_ * delta - rswitch_ * rswitch_;
+	} else {
+		return delta * delta;
+	}
 }
 
 Real
 BoundFunc::dfunc( Real const x ) const {
 
-
-Real delta;
-if ( x > ub_ ) {
-delta = x - ub_;
-} else if ( lb_ <= x ) {
-delta = 0;
-} else if ( x < lb_ ) {
-delta = lb_ - x;
-}
-if ( x > ub_ + rswitch_*sd_ ) {
-return 2.0*rswitch_/sd_;
-}
-return 2.0 * (delta) / ( sd_ * sd_ ) * (( x < lb_ ) ? (-1.0) : 1.0);
+	Real delta( 0 );
+	if ( x > ub_ ) {
+		delta = x - ub_;
+	} else if ( x < lb_ ) {
+		delta = lb_ - x;
+	}
+	if ( x > ub_ + rswitch_*sd_ ) {
+		return 2.0*rswitch_/sd_;
+	}
+	return 2.0 * (delta) / ( sd_ * sd_ ) * (( x < lb_ ) ? (-1.0) : 1.0);
 }
 
 

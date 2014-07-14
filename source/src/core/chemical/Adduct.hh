@@ -89,9 +89,9 @@ private:
 	std::string adduct_name_;
 	std::string atom_name_;
 	std::string atom_type_name_;
-	AtomType* atom_type_;
+	// unused AtomType* atom_type_;
 	std::string mm_atom_type_name_;
-	MMAtomType *mm_atom_type_;
+	// unused MMAtomType *mm_atom_type_;
 	Real atom_charge_;
 	Real phi_;
 	Real theta_;

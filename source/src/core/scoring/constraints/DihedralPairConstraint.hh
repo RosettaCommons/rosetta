@@ -36,6 +36,9 @@ namespace constraints {
 
 class DihedralPairConstraint : public Constraint {
 public:
+	using Constraint::score;
+
+public:
 
 	virtual std::string type() const {
 		return "DihedralPair";

@@ -38,6 +38,8 @@ namespace constraints {
 class DihedralConstraint : public Constraint {
 public:
 
+	using Constraint::score; // for virtual Real score( Pose const & );
+
 	Real
 	score(
 		Vector const & xyz1,

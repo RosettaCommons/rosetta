@@ -334,11 +334,11 @@ public:
 		Param_TC ( 0.42857142857142857143 ),
 		Param_TD ( 0.444444444444444 ),
 		Param_TDD( 0.45454545454545454545 ),
-		Param_TE ( 1.333333333333333 ),
-		Param_TF ( 2.4 ),
-		Param_TG ( 3.42857142857142857143 ),
-		Param_TH ( 4.44444444444444444 ),
-		Param_THH( 5.45454545454545454545 ),
+		// unused Param_TE ( 1.333333333333333 ),
+		// unused Param_TF ( 2.4 ),
+		// unused Param_TG ( 3.42857142857142857143 ),
+		// unused Param_TH ( 4.44444444444444444 ),
+		// unused Param_THH( 5.45454545454545454545 ),
 
 		dummy_radius( 2.39 ),
 		dummy_scale( 0.80 ),
@@ -472,11 +472,11 @@ private:
 	Real const Param_TC;
 	Real const Param_TD;
 	Real const Param_TDD;
-	Real const Param_TE;
-	Real const Param_TF;
-	Real const Param_TG;
-	Real const Param_TH;
-	Real const Param_THH;
+	// unused Real const Param_TE;
+	// unused Real const Param_TF;
+	// unused Real const Param_TG;
+	// unused Real const Param_TH;
+	// unused Real const Param_THH;
 
 	Real const dummy_radius;
 	Real const dummy_scale;

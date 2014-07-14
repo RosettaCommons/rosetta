@@ -40,12 +40,21 @@ public:
 	virtual
 	void
 	show(
-		std::ostream & out) const;
+		std::ostream & out
+	) const;
 
 	/// @brief Return the name for this class: "FileListResourceLocator"
 	virtual
 	std::string
 	type() const;
+
+	void
+	set_open_mode(
+		std::ios_base::openmode open_mode
+	);
+
+	std::ios_base::openmode
+	get_open_mode() const;
 
 	/// @brief Take the input locator tag and split it by whitespace, interpret each substring
 	/// as the name of a file, and concatenate each file into a single stringstream to be

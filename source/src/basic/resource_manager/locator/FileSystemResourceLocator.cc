@@ -128,15 +128,19 @@ FileStream::stream() {
 
 FileSystemResourceLocator::FileSystemResourceLocator(
 	std::ios_base::openmode open_mode
-) : basic::resource_manager::ResourceLocator(),
-	open_mode_(open_mode), base_path_("")
+) :
+	basic::resource_manager::ResourceLocator(),
+	open_mode_(open_mode),
+	base_path_("")
 {}
 
 
 FileSystemResourceLocator::FileSystemResourceLocator(
 		FileSystemResourceLocator const & src
-) : basic::resource_manager::ResourceLocator(),
-	open_mode_(src.open_mode_), base_path_(src.base_path_)
+) :
+	basic::resource_manager::ResourceLocator(),
+	open_mode_(src.open_mode_),
+	base_path_(src.base_path_)
 {}
 
 void
@@ -167,14 +171,16 @@ FileSystemResourceLocator::show(
 //}
 
 std::string
-FileSystemResourceLocator::type() const {
+FileSystemResourceLocator::type() const
+{
 	return "FileSystemResourceLocator";
 }
 
 void
 FileSystemResourceLocator::set_open_mode(
 	std::ios_base::openmode open_mode
-) {
+)
+{
 	open_mode_ = open_mode;
 }
 
@@ -185,7 +191,7 @@ FileSystemResourceLocator::get_open_mode() const {
 
 FileSystemResourceLocator::~FileSystemResourceLocator() {}
 
-/// @brief 
+/// @brief
 ResourceStreamOP
 FileSystemResourceLocator::locate_resource_stream(
 	string const & locator_tag
@@ -193,7 +199,7 @@ FileSystemResourceLocator::locate_resource_stream(
 	// Concatenate base_path_ and the locator tag to generate the appropriate filename.
 	std::stringstream fully_specified_locator_tag;
 	fully_specified_locator_tag << base_path_ << locator_tag;
-	return new FileStream( fully_specified_locator_tag.str() );
+	return new FileStream( fully_specified_locator_tag.str(), open_mode_ );
 }
 
 /// @details Set the value for base_path if specified in the ResourceDefintionFile.

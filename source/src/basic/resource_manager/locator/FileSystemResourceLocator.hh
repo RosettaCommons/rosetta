@@ -83,17 +83,20 @@ class FileSystemResourceLocator : public basic::resource_manager::ResourceLocato
 {
 public:
 	FileSystemResourceLocator(
-		std::ios_base::openmode open_mode = std::ios_base::in);
+		std::ios_base::openmode open_mode = std::ios_base::in
+	);
 
 	FileSystemResourceLocator(
-		FileSystemResourceLocator const & src);
+		FileSystemResourceLocator const & src
+	);
 
 	virtual ~FileSystemResourceLocator();
 
 	virtual
 	void
 	show(
-		std::ostream & out) const;
+		std::ostream & out
+	) const;
 
 	virtual
 	std::string
@@ -101,7 +104,8 @@ public:
 
 	void
 	set_open_mode(
-		std::ios_base::openmode open_mode);
+		std::ios_base::openmode open_mode
+	);
 
 	std::ios_base::openmode
 	get_open_mode() const;

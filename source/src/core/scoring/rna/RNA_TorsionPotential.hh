@@ -100,7 +100,7 @@ private:
 	std::string path_to_torsion_files_;
 
 	// alpha, beta, gamma, delta, epsilon, zeta
-	bool const rna_tight_torsions_;
+	// unused bool const rna_tight_torsions_;
 	Real const delta_fade_;
 	Real const alpha_fade_;
 

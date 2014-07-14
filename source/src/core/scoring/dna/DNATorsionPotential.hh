@@ -173,7 +173,7 @@ private:
 	Real const c3prime_c2prime_c1prime_bond_angle_;
 	func::HarmonicFuncOP c3prime_c2prime_c1prime_angle_harm_func_;
 
-	bool const verbose_;
+	// unused bool const verbose_;
 
 };
 

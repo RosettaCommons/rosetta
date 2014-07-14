@@ -208,7 +208,6 @@ private:
 
 	Real const vdw_scale_factor_;
 	Real hydrogen_interaction_cutoff2_; // square distance at which the hydrogen-hydrogen interaction energy goes to zero
-	Real vdw_weight_; // used during the trie-vs-trie evaluation
 
 };
 

@@ -37,59 +37,63 @@ namespace optimization {
 // for univariate minimization
 
 class func_1d {
-	private:
-		Multivec const _starting_point;
-		Multivec const _search_direction;
-		Multivec _eval_point;
-	public:
-		Multivec _dE_dvars;
-	private:
-		Multifunc const & _func;
-		int _eval_count;
-		int _deriv_count;
-		Real _search_direction_magnitude;
-	public:
-		func_1d( Multivec & start, Multivec & dir, Multifunc const & score_fxn ):
-				_starting_point( start ),
-				_search_direction( dir ),
-				_eval_point( dir.size(), 0.0 ),
-				_dE_dvars( dir.size(), 0.0 ),
-	 			_func( score_fxn ), _eval_count( 0 ), _deriv_count( 0 ),
-				_search_direction_magnitude( 0.0 ) {
-			assert( _starting_point.size() == _search_direction.size() );
-			//for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
-			//	_search_direction_magnitude += _search_direction[i] * _search_direction[i];
-			//}
-			//_search_direction_magnitude = std::sqrt( _search_direction_magnitude );
-		};
-		Real operator() ( Real displacement ) {
-			_eval_count++;
-			for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
-				_eval_point[i] = _starting_point[i] +
-												( displacement * _search_direction[i] );
-			}
-			return _func( _eval_point );
-		};
-		Real dfunc( Real displacement ) {
-			_deriv_count++;
-			Real dot_product( 0.0 );
-			for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
-				_eval_point[i] = _starting_point[i] +
-												( displacement * _search_direction[i] );
-			}
-			_func.dfunc( _eval_point, _dE_dvars );
-			for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
-				dot_product += ( _dE_dvars[i] * _search_direction[i] );
-			}
-			return dot_product;
-		};
-		void reset_eval_count() { _eval_count = 0; };
-		int get_eval_count() { return _eval_count; };
-		int get_deriv_count() { return _deriv_count; };
-		/// @brief Error condition wherein the computed gradient does not match the actual gradient;
-		/// invokes the Multifunc::dump( vars, vars2 ) method.
-		void dump( Real displacement );
-		//Real search_direction_magnitude() { return _search_direction_magnitude; };
+private:
+	Multivec const _starting_point;
+	Multivec const _search_direction;
+	Multivec _eval_point;
+public:
+	Multivec _dE_dvars;
+private:
+	Multifunc const & _func;
+	int _eval_count;
+	int _deriv_count;
+	// unused Real _search_direction_magnitude;
+public:
+	func_1d( Multivec & start, Multivec & dir, Multifunc const & score_fxn ) :
+		_starting_point( start ),
+		_search_direction( dir ),
+		_eval_point( dir.size(), 0.0 ),
+		_dE_dvars( dir.size(), 0.0 ),
+	 	_func( score_fxn ), _eval_count( 0 ), _deriv_count( 0 ),
+		_search_direction_magnitude( 0.0 )
+	{
+		assert( _starting_point.size() == _search_direction.size() );
+		//for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+		//	_search_direction_magnitude += _search_direction[i] * _search_direction[i];
+		//}
+		//_search_direction_magnitude = std::sqrt( _search_direction_magnitude );
+	};
+
+	Real operator() ( Real displacement ) {
+		_eval_count++;
+		for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+			_eval_point[i] = _starting_point[i] +
+				( displacement * _search_direction[i] );
+		}
+		return _func( _eval_point );
+	};
+
+	Real dfunc( Real displacement ) {
+		_deriv_count++;
+		Real dot_product( 0.0 );
+		for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+			_eval_point[i] = _starting_point[i] +
+				( displacement * _search_direction[i] );
+		}
+		_func.dfunc( _eval_point, _dE_dvars );
+		for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+			dot_product += ( _dE_dvars[i] * _search_direction[i] );
+		}
+		return dot_product;
+	};
+
+	void reset_eval_count() { _eval_count = 0; };
+	int get_eval_count() { return _eval_count; };
+	int get_deriv_count() { return _deriv_count; };
+	/// @brief Error condition wherein the computed gradient does not match the actual gradient;
+	/// invokes the Multifunc::dump( vars, vars2 ) method.
+	void dump( Real displacement );
+	//Real search_direction_magnitude() { return _search_direction_magnitude; };
 };
 
 /////////////////////////////////////////////////////////
