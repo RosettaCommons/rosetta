@@ -12,27 +12,15 @@ else
     echo '-Werror is ON in the Scons build settings.' > log
 fi
 
-echo 'Checking the status of the -Werror option in the CMake release build settings:'
+echo 'Checking the status of the -Werror option in the CMake build settings:'
 
-if grep -qE '.*#.*COMPILE_FLAGS.*-Werror"[)]' ../../../../source/cmake/build_release/CMakeLists.txt; then
+if grep -qE '.*#.*-Werror' ../../../../source/cmake/*/CMakeLists.txt; then
     echo FAIL
-    echo 'Someone has commented OFF -Werror from the CMake release build settings.' > log
+    echo 'Someone has commented OFF -Werror from the CMake build settings in these file(s):' >> log
+    grep -lE '.*#.*-Werror' ../../../../source/cmake/*/CMakeLists.txt >> log
     echo 'This problem is still not fixed on' $(date)'.' >> log
     # Outputting the timestamp ensures the test will remain broken until fixed.
 else
     echo PASS
-    echo '-Werror is ON in the CMake release build settings.' > log
+    echo '-Werror is ON in the CMake build settings.' > log
 fi
-
-echo 'Checking the status of the -Werror option in the CMake debug build settings:'
-
-if grep -qE '.*#.*COMPILE_FLAGS.*-Werror"[)]' ../../../../source/cmake/build_debug/CMakeLists.txt; then
-    echo FAIL
-    echo 'Someone has commented OFF -Werror from the CMake debug build settings.' > log
-    echo 'This problem is still not fixed on' $(date)'.' >> log
-    # Outputting the timestamp ensures the test will remain broken until fixed.
-else
-    echo PASS
-    echo '-Werror is ON in the CMake debug build settings.' > log
-fi
-
