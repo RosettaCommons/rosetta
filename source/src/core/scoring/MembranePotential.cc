@@ -841,48 +841,48 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		TR << "ATOM   9999  Z   MEM A 999    " << F(8,3,best_center.x()-15.*best_normal.x())<< F(8,3,best_center.y()-15.*best_normal.y())<< F(8,3,best_center.z()-15.*best_normal.z()) << std::endl;
 	}
 	//append a Zn atom to the pose representing the membrane center
-		{
-			// find residue in the middle of transmembrane region
-			// pick a random transmembrane segment
-			Size ihelix = int(RG.uniform() * topology.tmhelix() + 1.);
-			Size jump_res (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
-
-			// create a residue, fullatom or centroid
-			bool fullatom = pose.is_fullatom();
-			core::chemical::ResidueTypeSetCAP const &residue_set(
-				core::chemical::ChemicalManager::get_instance()->residue_type_set
-				( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-				);
-
-			// The following code looks all kinds of wrong: name_map returns a single ResidueType const &, not a vector.
-			// Furthermore, "metal_ion/" is not going to be part of the ZN residue type's name.
-			// Is this code being used?
-			//core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name_map("metal_ion/ZN") );
-			//core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
-
-			core::chemical::ResidueType const & rsd_type( residue_set->name_map( "metal_ion/ZN") );
-			core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( rsd_type ));
-
-
-			// move to membrane_center if it's defined
-			if ( basic::options::option[basic::options::OptionKeys::membrane::membrane_center].user() ) {
-				Vector mem_center;
-				mem_center.x() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[1];
-				mem_center.y() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[2];
-				mem_center.z() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[3];
-
-				for ( Size j=1; j<= new_res->natoms(); ++j ) {
-					new_res->atom(j).xyz( new_res->atom(j).xyz() + mem_center);
-				}
-			}
-			//if the membrane center not specified by user, just use the one found here
-			else{
-				for ( Size j=1; j<= new_res->natoms(); ++j ) {
-					new_res->atom(j).xyz( new_res->atom(j).xyz() + membrane_embed.center());
-				}
-			}
-			pose.append_residue_by_jump( *new_res , jump_res );
-		}
+	// {
+	// 	// find residue in the middle of transmembrane region
+	// 	// pick a random transmembrane segment
+	// 	Size ihelix = int(RG.uniform() * topology.tmhelix() + 1.);
+	// 	Size jump_res (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
+	//
+	// 	// create a residue, fullatom or centroid
+	// 	bool fullatom = pose.is_fullatom();
+	// 	core::chemical::ResidueTypeSetCAP const &residue_set(
+	// 		core::chemical::ChemicalManager::get_instance()->residue_type_set
+	// 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
+	// 	);
+	//
+	// 	// The following code looks all kinds of wrong: name_map returns a single ResidueType const &, not a vector.
+	// 	// Furthermore, "metal_ion/" is not going to be part of the ZN residue type's name.
+	// 	// Is this code being used?
+	// 	//core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name_map("metal_ion/ZN") );
+	// 	//core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+	//
+	// 	core::chemical::ResidueType const & rsd_type( residue_set->name_map( "metal_ion/ZN") );
+	// 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( rsd_type ));
+	//
+	//
+	// 	// move to membrane_center if it's defined
+	// 	if ( basic::options::option[basic::options::OptionKeys::membrane::membrane_center].user() ) {
+	// 		Vector mem_center;
+	// 		mem_center.x() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[1];
+	// 		mem_center.y() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[2];
+	// 		mem_center.z() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[3];
+	//
+	// 		for ( Size j=1; j<= new_res->natoms(); ++j ) {
+	// 			new_res->atom(j).xyz( new_res->atom(j).xyz() + mem_center);
+	// 		}
+	// 	}
+	// 	//if the membrane center not specified by user, just use the one found here
+	// 	else{
+	// 		for ( Size j=1; j<= new_res->natoms(); ++j ) {
+	// 			new_res->atom(j).xyz( new_res->atom(j).xyz() + membrane_embed.center());
+	// 		}
+	// 	}
+	// 	pose.append_residue_by_jump( *new_res , jump_res );
+	// }
 }
 
 // duplicated in Embedding Factory and Embedding Residues
