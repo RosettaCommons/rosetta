@@ -53,6 +53,9 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
+	/// @brief Associates relevant options with the ConstraintSetMover class
+	static void register_options();
+
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
   virtual void parse_def( utility::lua::LuaObject const & def,

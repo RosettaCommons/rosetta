@@ -239,6 +239,7 @@ DockingProtocol::set_default()
 	sc_min_ = false;
 	partners_ = "_";
 	cst_weight_ = 0.0;
+	cst_fa_weight_ = 0.0;
 	use_csts_ = false;
 	score_cutoff_ = 1000000.0;
 	no_filters_ = false;
@@ -414,12 +415,17 @@ DockingProtocol::init_from_options()
 
 	// Defaults to 0
 	if( option[ OptionKeys::constraints::cst_weight ].user() ) {
-		set_cst_weight(option[ OptionKeys::constraints::cst_weight ]());
+		cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
+	}
+
+	// Defaults to 0
+	if( option[ OptionKeys::constraints::cst_fa_weight ].user() ) {
+		cst_fa_weight_ = option[ OptionKeys::constraints::cst_fa_weight ]();
 	}
 
 	// Defaults to false
-	set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() );
-
+	set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() ||
+		option[ OptionKeys::constraints::cst_fa_file ].user() );
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -482,7 +488,8 @@ DockingProtocol::register_options()
 	option.add_relevant( OptionKeys::docking::partners );
 	option.add_relevant( OptionKeys::docking::no_filters );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
-	option.add_relevant( OptionKeys::constraints::cst_file );
+	option.add_relevant( OptionKeys::constraints::cst_fa_weight );
+
 	option.add_relevant( OptionKeys::run::score_only );
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::docking::use_legacy_protocol );
@@ -493,6 +500,9 @@ DockingProtocol::register_options()
 	option.add_relevant( OptionKeys::docking::docking_centroid_outer_cycles );
 	option.add_relevant( OptionKeys::docking::ensemble1 );
 	option.add_relevant( OptionKeys::docking::ensemble2 );
+
+	// This takes care of the cst_file flags.
+	simple_moves::ConstraintSetMover::register_options();
 }
 
 void
@@ -598,10 +608,15 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	if ( docking_constraint_ ) {
 			TR << "setting up the constraint set mover" << std::endl;
 			docking_constraint_->apply( pose );
-			if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
-			// finish setting up constraints
-	}
+			if ( cst_weight_ == 0.0 ) {
+				cst_weight_ = 1.0;
+			}
 
+			if ( cst_fa_weight_ == 0.0 ) {
+				cst_fa_weight_ = 1.0;
+			}
+	}
+	// finish setting up constraints
 	setup_constraints( pose );
 }
 
@@ -659,6 +674,7 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	lhs.docking_local_refine_ = rhs.docking_local_refine_;
 	lhs.use_csts_ = rhs.use_csts_;
 	lhs.cst_weight_ = rhs.cst_weight_;
+	lhs.cst_fa_weight_ = rhs.cst_fa_weight_;
 	lhs.score_cutoff_ = rhs.score_cutoff_;
 	lhs.fold_tree_ = rhs.fold_tree_;
 	lhs.partners_ = rhs.partners_;
@@ -786,11 +802,20 @@ void DockingProtocol::set_use_legacy_protocol( bool const use_legacy_protocol )
 
 }
 
+/// @details Set the constraint weight for both centroid and full atom constraints to the same value
 void DockingProtocol::set_cst_weight( core::Real const cst_weight )
 {
+	// Set the centroid constraint weight
 	if ( cst_weight != cst_weight_ ){
 		cst_weight_ = cst_weight;
 		runtime_assert( cst_weight_ != 0.0 );
+		flags_and_objects_are_in_sync_ = false;
+	}
+
+	// Set the full atom constraint weight
+	if ( cst_weight != cst_fa_weight_ ){
+		cst_fa_weight_ = cst_weight;
+		runtime_assert( cst_fa_weight_ != 0.0 );
 		flags_and_objects_are_in_sync_ = false;
 	}
 }
@@ -839,25 +864,28 @@ void DockingProtocol::check_high_res_protocol()
 /// @brief setup the constrainta for each application of the docking protocol
 void DockingProtocol::setup_constraints( pose::Pose & pose )
 {
-    if ( cst_weight_!=0.0 ) {
-        if ( !pose.constraint_set() ) {
-            TR << "No ConstraintSet has been created, skipping cst_weight.  Use cst_file instead and set up desired ConstraintSet" << std::endl;
-            if( lowres_filter_ ) lowres_filter_->set_use_constraints( false );
-        } else {
-            if( lowres_filter_ ) lowres_filter_->set_use_constraints( true );
-            add_constraints_to_scorefunction();
-        }
-    }
-    else{
-        if( lowres_filter_ ) lowres_filter_->set_use_constraints( false );
-    }
+	bool filter_use_csts = false;
+
+	// Only checking cst_weight becuase this will only affect the lowres_filter
+	if ( cst_weight_ != 0.0 ) {
+		if ( ! pose.constraint_set() ) {
+			TR << "No ConstraintSet has been created, skipping cst_weight. "
+				<< "Use cst_file instead and set up desired ConstraintSet" << std::endl;
+		} else {
+			filter_use_csts = true;
+		}
+	}
+
+	if( lowres_filter_ ) { lowres_filter_->set_use_constraints( filter_use_csts ); }
+
+	add_constraints_to_scorefunction();
 }
 
 /// @brief add distance constraint to the docking score functions
 void DockingProtocol::add_constraints_to_scorefunction()
 {
 	// Add constraints to the low resolution docking mover if applicable
-	if ( docking_lowres_mover_ ) {
+	if ( docking_lowres_mover_ && cst_weight_ != 0.0 ) {
 		core::scoring::ScoreFunctionOP docking_scorefxn_cst = docking_scorefxn_low_->clone();
 		docking_scorefxn_cst->set_weight( core::scoring::atom_pair_constraint, cst_weight_ );
 		set_lowres_scorefxn( docking_scorefxn_cst );
@@ -866,9 +894,9 @@ void DockingProtocol::add_constraints_to_scorefunction()
 	}
 
 	// Add constraints to the high resolution docking mover if applicable
-	if ( docking_highres_mover_ ) {
+	if ( docking_highres_mover_ && cst_fa_weight_ != 0.0 ) {
 		core::scoring::ScoreFunctionOP docking_highres_cst = docking_scorefxn_output_->clone(); // needs to use the non-min score function to match assemble_domains test with constraints
-		docking_highres_cst->set_weight( core::scoring::atom_pair_constraint, cst_weight_ );
+		docking_highres_cst->set_weight( core::scoring::atom_pair_constraint, cst_fa_weight_ );
 		set_highres_scorefxn( docking_highres_cst, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
 		// pass the score function to the high res mover
 		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
@@ -930,7 +958,9 @@ DockingProtocol::apply( pose::Pose & pose )
 		if ( docking_constraint_ ) {
 			TR << "setting up the constraint set mover" << std::endl;
 			docking_constraint_->apply( pose );
-			if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+			if ( cst_weight_ == 0.0 ) {
+				cst_weight_ = 1.0;
+			}
 			// finish setting up constraints
 			setup_constraints( pose );
 		}
@@ -976,20 +1006,22 @@ DockingProtocol::apply( pose::Pose & pose )
 		if ( docking_constraint_ ) {
 			TR << "setting up the constraint set mover" << std::endl;
 			docking_constraint_->apply( pose );
-			if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+			if ( cst_fa_weight_ == 0.0 ) {
+				cst_fa_weight_ = 1.0;
+			}
 			// finish setting up constraints
 			setup_constraints( pose );
 		}
 
-		if ( !pose.is_fullatom() ) {
+		if ( ! pose.is_fullatom() ) {
 			// Convert pose to high resolution and recover sidechains
 			to_all_atom_->apply( pose );
 
-			(*docking_highres_mover_->scorefxn())( pose );
+			( * docking_highres_mover_->scorefxn() )( pose );
 			jd2::write_score_tracer( pose, "Docking_to_all_atom" );
 			if ( recover_sidechains_ ) {
 				recover_sidechains_->apply( pose );
-				(*docking_highres_mover_->scorefxn())( pose );
+				( * docking_highres_mover_->scorefxn() )( pose );
 				jd2::write_score_tracer( pose, "Docking_recovered_sidechains" );
 			} else {
 				if ( ensemble1_ ) {
@@ -1001,7 +1033,7 @@ DockingProtocol::apply( pose::Pose & pose )
 			}
 		}
 		docking_highres_mover_->apply( pose );
-		( *docking_scorefxn_output_ )( pose );
+		( * docking_scorefxn_output_ )( pose );
 		if ( highres_filter_ ) passed_highres_filter = highres_filter_->apply( pose );
 
 		if ( reporting_ ) {
@@ -1017,25 +1049,28 @@ DockingProtocol::apply( pose::Pose & pose )
 				}
 			}
 
-			// @TODO metrics doesn't need to always take scorefunctions (for example, not necessary for irms or fnat)
+			// TODO: metrics doesn't need to always take scorefunctions (for example, not necessary for irms or fnat)
 			job->add_string_real_pair("I_sc", calc_interaction_energy( pose, docking_scorefxn_output_, movable_jumps_ ) );
 			if ( get_native_pose() ) {
 				job->add_string_real_pair("Irms", calc_Irmsd(pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
 				job->add_string_real_pair("Fnat", calc_Fnat( pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
 			}
-//			pose.energies().show_total_headers( std::cout );
-//			pose.energies().show_totals( std::cout );
-//			TR << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
-//			TR << pose.energies().total_energies()[ core::scoring::dock_ens_conf ] << std::endl;
-			if ( ensemble1_ && ensemble2_ )
+
+			//	pose.energies().show_total_headers( std::cout );
+			//	pose.energies().show_totals( std::cout );
+			//	TR << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
+			//	TR << pose.energies().total_energies()[ core::scoring::dock_ens_conf ] << std::endl;
+
+			if ( ensemble1_ && ensemble2_ ) {
 				job->add_string_real_pair("conf_score",
 					pose.energies().total_energies()[ core::scoring::total_score ]
 					- ensemble1_->highres_reference_energy()
 					- ensemble2_->highres_reference_energy() );
+			}
 		}
 	}
 
-	if ( !passed_lowres_filter || !passed_highres_filter ){
+	if ( ! passed_lowres_filter || ! passed_highres_filter ){
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 	}
 	else{
@@ -1044,7 +1079,6 @@ DockingProtocol::apply( pose::Pose & pose )
 
 	basic::prof_show();
 }
-
 
 //getters for const access to movers and data of docking protocol
 protocols::simple_moves::SwitchResidueTypeSetMoverCOP DockingProtocol::to_centroid() const {
@@ -1063,7 +1097,7 @@ protocols::docking::DockingInitialPerturbationCOP DockingProtocol::perturber() c
 	return perturber_;
 }
 
-//Allow a developer to set a custom high resolution mover
+// Allow a developer to set a custom high resolution mover
 void DockingProtocol::set_docking_highres_mover( protocols::docking::DockingHighResOP docking_highres_mover )
 {
 	docking_highres_mover_ = docking_highres_mover;
@@ -1091,14 +1125,6 @@ void DockingProtocol::add_additional_low_resolution_step( protocols::moves::Move
 /// @details  Show the complete setup of the docking protocol
 void
 DockingProtocol::show( std::ostream & out ) const {
-	/*if ( !flags_and_objects_are_in_sync_ ){
-		sync_objects_with_flags();
-	}*/  // show() should be const
-	out << *this;
-}
-
-std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
-{
 	using namespace ObjexxFCL::format;
 
 	// All output will be 80 characters - 80 is a nice number, don't you think?
@@ -1109,9 +1135,10 @@ std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
 	// Display the movable jumps that will be used in docking
 	out << line_marker << " Dockable Jumps: ";
 
-	core::Size spaces_so_far = 23;
+	int spaces_so_far = 23;
+
 	bool first = true;
-	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ){
+	for ( DockJumps::const_iterator it = movable_jumps_.begin() ; it != movable_jumps_.end() ; ++it ){
 		if (!first) {
 			out << ", ";
 			spaces_so_far += 2;
@@ -1121,27 +1148,28 @@ std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
 		out << I( 1, *it );
 		spaces_so_far += 1;
 	}
-	core::Size remaining_spaces = 80 - spaces_so_far;
+
+	int remaining_spaces = 80 - spaces_so_far;
+
 	if ( remaining_spaces > 0 )	out << space( 80 - spaces_so_far );
 	out << line_marker << std::endl;
 
 	// Display the state of the low resolution docking protocol that will be used
-	out << line_marker << " Low Resolution Docking Protocol:  " << ( ( dp.docking_lowres_mover_ ) ? ( " on " ) : ( "off " ) );
+	out << line_marker << " Low Resolution Docking Protocol:  " << ( ( docking_lowres_mover_ ) ? ( " on " ) : ( "off " ) );
 	out << space( 35 ) << line_marker << std::endl;
 
 	// Display the state of the low resolution docking protocol that will be used
-	out << line_marker << " High Resolution Docking Protocol: " << ( ( dp.docking_highres_mover_ ) ? ( " on " ) : ( "off " ) );
+	out << line_marker << " High Resolution Docking Protocol: " << ( ( docking_highres_mover_ ) ? ( " on " ) : ( "off " ) );
 	out << space( 35 ) << line_marker << std::endl;
 
 	// Display the state of the filters (on or off)
-	out << line_marker << " Low Resolution Filter:  " << ( ( dp.lowres_filter_ ) ? ( " on " ) : ( "off " ) );
+	out << line_marker << " Low Resolution Filter:  " << ( ( lowres_filter_ ) ? ( " on " ) : ( "off " ) );
 	out << space( 45 ) << line_marker << std::endl;
-	out << line_marker << " High Resolution Filter: " << ( ( dp.highres_filter_ ) ? ( " on " ) : ( "off " ) );
+	out << line_marker << " High Resolution Filter: " << ( ( highres_filter_ ) ? ( " on " ) : ( "off " ) );
 	out << space( 45 ) << line_marker << std::endl;
 
 	// Close the box I have drawn
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-	return out;
 }
 
 void
@@ -1196,5 +1224,12 @@ DockingProtocolCreator::mover_name()
 {
     return "DockingProtocol";
 }
+
+std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
+{
+	dp.show( out );
+	return out;
+}
+
 } //docking
 } //protocols

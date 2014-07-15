@@ -45,7 +45,6 @@
 
 #include <utility/tag/Tag.fwd.hh>
 
-
 // Utility Headers
 #include <utility/vector1.hh>
 
@@ -72,20 +71,20 @@ public:
 
 	DockingProtocol(
 		Size const rb_jump_in,
-		bool const low_res_protocol_only=false, // if true: skip high resolution docking
-		bool const docking_local_refine=false, // if true: skip low resolution docking
-		bool const autofoldtree=true,
-		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP(NULL),
-		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP(NULL)
+		bool const low_res_protocol_only = false, // if true: skip high resolution docking
+		bool const docking_local_refine = false, // if true: skip low resolution docking
+		bool const autofoldtree = true,
+		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP( NULL ),
+		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP( NULL )
 	);
 
 	DockingProtocol(
 		DockJumps const movable_jumps,
-		bool const low_res_protocol_only=false, // if true: skip high resolution docking
-		bool const docking_local_refine=false, // if true: skip low resolution docking
-		bool const autofoldtree=true,
-		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP(NULL),
-		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP(NULL)
+		bool const low_res_protocol_only = false, // if true: skip high resolution docking
+		bool const docking_local_refine = false, // if true: skip low resolution docking
+		bool const autofoldtree = true,
+		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP( NULL ),
+		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP( NULL )
 	);
 
 	/// @brief Assigns default values to primitive members
@@ -93,7 +92,6 @@ public:
 
 	/// @brief Instantiates non-primitive members based on the value of the primitive members
 	void sync_objects_with_flags();
-
 
 	//destructor
 	~DockingProtocol();
@@ -111,8 +109,6 @@ public:
 	///@brief assignment operator
 	DockingProtocol & operator=( DockingProtocol const & rhs );
 
-
-
 	/// @brief Associates relevant options with the DockingProtocol class
 	static void register_options();
 
@@ -120,21 +116,24 @@ public:
 	void set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_low );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///		The same score function will be used for evaluating moves, packing and discriminating
+	///	The same score function will be used for evaluating moves, packing and discriminating
 	void set_highres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_high );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///		The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
+	///	The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
 	void set_highres_scorefxn(
 		core::scoring::ScoreFunctionOP docking_scorefxn_high,
-		core::scoring::ScoreFunctionOP docking_scorefxn_pack );
+		core::scoring::ScoreFunctionOP docking_scorefxn_pack
+	);
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///		The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for discriminating
+	///	The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for
+	/// discriminating
 	void set_highres_scorefxn(
 		core::scoring::ScoreFunctionOP docking_scorefxn_high,
 		core::scoring::ScoreFunctionOP docking_scorefxn_pack,
-		core::scoring::ScoreFunctionOP docking_scorefxn_output);
+		core::scoring::ScoreFunctionOP docking_scorefxn_output
+	);
 
 	void set_sc_min( bool sc_min );
 	void set_rt_min( bool rt_min );
@@ -152,17 +151,22 @@ public:
 	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
 	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
 
-
 	virtual void apply( core::pose::Pose & pose );
 
 	// score_only is no longer implemented.  It remains here until a decision is made about what to do with it.
 	// void score_only( core::pose::Pose & pose );
 
 	// inline getters
-	std::string partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
+	/// @brief returns the docking partners chain identifiers
+	std::string partners() const { return partners_;}
+
 	virtual std::string get_name() const { return "DockingProtocol"; }
-	DockJumps & movable_jumps(){ return movable_jumps_;} ///@brief returns ref to the jumps vector for docking
-	DockJumps const & movable_jumps() const { return movable_jumps_; } ///@ return const ref to the jumps vector for docking
+
+	/// @brief returns ref to the jumps vector for docking
+	DockJumps & movable_jumps(){ return movable_jumps_;}
+
+	/// @brief returns a const ref to the jumps vector for docking
+	DockJumps const & movable_jumps() const { return movable_jumps_; }
 	core::pack::task::TaskFactory const & task_factory() { return *init_task_factory_; }
 
 	//getters for const access to movers and data of docking protocol
@@ -172,12 +176,12 @@ public:
 	protocols::docking::DockingHighResCOP docking_highres_mover() const;
 	protocols::docking::DockingInitialPerturbationCOP perturber() const;
 
-	//Allow a developer to set a custom high resolution mover
+	// Allow a developer to set a custom high resolution mover
 	void set_docking_highres_mover( protocols::docking::DockingHighResOP docking_highres_mover );
 
-	//Allow a developer to add some additional steps to the end of the low resolution phase.
-	//Each mover that's added in this way is added to a SequenceMover that is applied after low resolution
-	//docking concludes.
+	// Allow a developer to add some additional steps to the end of the low resolution phase.
+	// Each mover that's added in this way is added to a SequenceMover that is applied after low resolution
+	// docking concludes.
 	void add_additional_low_resolution_step( protocols::moves::MoverOP additional_low_resolution_mover );
 
 	// inline setters
@@ -185,7 +189,10 @@ public:
 	void set_partners( std::string const& partners ){ partners_=partners; }
 	void set_inner_cycles( core::Size inner_cycles ) { lowres_inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { lowres_outer_cycles_=outer_cycles; }
-	void set_design( bool const design ) { design_ = design; } // for RosettaScripts.  to be deprecated when legacy high res disappears
+
+	// For RosettaScripts
+	// TODO: Remove when legacy high res disappears
+	void set_design( bool const design ) { design_ = design; }
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory ){ init_task_factory_ = task_factory; }
 	void set_ignore_default_docking_task(bool const ignore_default_docking_task){ignore_default_docking_task_ = ignore_default_docking_task;}
 	void set_movable_jumps( DockJumps const jump_numbers ){ movable_jumps_ = jump_numbers; }
@@ -193,11 +200,11 @@ public:
 	void set_ensemble1( std::string  const& ensemble1 ) { ensemble1_filename_ = ensemble1; }
 	void set_ensemble2( std::string  const& ensemble2 ) { ensemble2_filename_ = ensemble2; }
 	void set_recover_sidechains_filename( std::string const& file ) { recover_sidechains_filename_ = file; }
+
 	// Other member functions
 	void add_jump( core::Size const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
-	void show( std::ostream & out=std::cout ) const;
-	friend std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp );
+	virtual void show( std::ostream & out=std::cout ) const;
 
 	// function for the parser with lots of accessors
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
@@ -216,7 +223,7 @@ private:
 	bool rt_min_;
 	bool dock_min_;
 
-    bool if_ensemble_;  // Add by DK
+	bool if_ensemble_;  // Add by DK
     
 	bool no_filters_;
 	bool use_legacy_protocol_;
@@ -224,6 +231,7 @@ private:
 
 	bool use_csts_;
 	core::Real cst_weight_;
+	core::Real cst_fa_weight_;
 
 	core::Real score_cutoff_;
 	core::kinematics::FoldTree fold_tree_;
@@ -294,15 +302,18 @@ private:
 		core::scoring::ScoreFunctionOP docking_score_high
 	);
 
-  	void initForEqualOperatorAndCopyConstructor(DockingProtocol & lhs, DockingProtocol const & rhs);
+	void initForEqualOperatorAndCopyConstructor(DockingProtocol & lhs, DockingProtocol const & rhs);
 
 	void setup_objects();
 
-    void setup_constraints( core::pose::Pose & pose );
+	void setup_constraints( core::pose::Pose & pose );
 	void add_constraints_to_scorefunction();
-    void check_high_res_protocol();
+	void check_high_res_protocol();
 
 };
+
+std::ostream & operator<<(std::ostream & out, DockingProtocol const & dp );
+
 } // docking
 } // protocols
 

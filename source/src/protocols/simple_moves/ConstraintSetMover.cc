@@ -36,10 +36,9 @@ namespace protocols {
 namespace simple_moves {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace scoring;
-		using namespace constraints;
-
+using namespace basic::options;
+using namespace scoring;
+using namespace constraints;
 using namespace utility::tag;
 
 std::string
@@ -49,7 +48,8 @@ ConstraintSetMoverCreator::keyname() const
 }
 
 protocols::moves::MoverOP
-ConstraintSetMoverCreator::create_mover() const {
+ConstraintSetMoverCreator::create_mover() const
+{
 	return new ConstraintSetMover;
 }
 
@@ -76,12 +76,17 @@ ConstraintSetMover::ConstraintSetMover( std::string const & type )
 void
 ConstraintSetMover::read_options()
 {
-	if ( option[ OptionKeys::constraints::cst_file ].user() )
+	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
 		cst_file_ = option[ OptionKeys::constraints::cst_file ]().front();
-	if ( option[ OptionKeys::constraints::cst_fa_file ].user() )
+	}
+
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		cst_fa_file_ = option[ OptionKeys::constraints::cst_fa_file ]().front();
-	else cst_fa_file_=cst_file_;
-	add_constraints_ = false;
+	} else {
+		cst_fa_file_ = cst_file_;
+	}
+
+	add_constraints_ = false; // This is never used, lol.
 }
 
 void
@@ -159,6 +164,13 @@ ConstraintSetMover::get_name() const {
 
 protocols::moves::MoverOP ConstraintSetMover::clone() const { return new protocols::simple_moves::ConstraintSetMover( *this ); }
 protocols::moves::MoverOP ConstraintSetMover::fresh_instance() const { return new ConstraintSetMover; }
+
+void
+ConstraintSetMover::register_options()
+{
+	option.add_relevant( OptionKeys::constraints::cst_file );
+	option.add_relevant( OptionKeys::constraints::cst_fa_file );
+}
 
 void
 ConstraintSetMover::parse_my_tag(
