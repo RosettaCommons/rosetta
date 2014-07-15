@@ -113,27 +113,27 @@ residue_types/water/TP5.params
 #residue_types/water/HOH.params
 
 ## D-CAA Types
-residue_types/d-caa/DALA.params
-residue_types/d-caa/DARG.params
-residue_types/d-caa/DASN.params
-residue_types/d-caa/DASP.params
-residue_types/d-caa/DCYD.params
-residue_types/d-caa/DCYS.params
-residue_types/d-caa/DGLN.params
-residue_types/d-caa/DGLU.params
-residue_types/d-caa/DHIS_D.params
-residue_types/d-caa/DHIS.params
-residue_types/d-caa/DILE.params
-residue_types/d-caa/DLEU.params
-residue_types/d-caa/DLYS.params
-residue_types/d-caa/DMET.params
-residue_types/d-caa/DPHE.params
-residue_types/d-caa/DPRO.params
-residue_types/d-caa/DSER.params
-residue_types/d-caa/DTHR.params
-residue_types/d-caa/DTRP.params
-residue_types/d-caa/DTYR.params
-residue_types/d-caa/DVAL.params
+#residue_types/d-caa/DALA.params
+#residue_types/d-caa/DARG.params
+#residue_types/d-caa/DASN.params
+#residue_types/d-caa/DASP.params
+#residue_types/d-caa/DCYD.params
+#residue_types/d-caa/DCYS.params
+#residue_types/d-caa/DGLN.params
+#residue_types/d-caa/DGLU.params
+#residue_types/d-caa/DHIS_D.params
+#residue_types/d-caa/DHIS.params
+#residue_types/d-caa/DILE.params
+#residue_types/d-caa/DLEU.params
+#residue_types/d-caa/DLYS.params
+#residue_types/d-caa/DMET.params
+#residue_types/d-caa/DPHE.params
+#residue_types/d-caa/DPRO.params
+#residue_types/d-caa/DSER.params
+#residue_types/d-caa/DTHR.params
+#residue_types/d-caa/DTRP.params
+#residue_types/d-caa/DTYR.params
+#residue_types/d-caa/DVAL.params
 
 ## D-NCAA Types
 #residue_types/d-ncaa/DABA.params
@@ -259,16 +259,16 @@ residue_types/d-caa/DVAL.params
 #residue_types/d-ncaa/d-trifluoro-leucine.params
 
 ## L-NCAA Types
-residue_types/l-ncaa/ABA.params
+#residue_types/l-ncaa/ABA.params
 #residue_types/l-ncaa/APA.params
 residue_types/l-ncaa/HLU.params
-#residue_types/l-ncaa/YPN.params
+residue_types/l-ncaa/YPN.params
 #residue_types/l-ncaa/HPR.params
 #residue_types/l-ncaa/HTY.params
 #residue_types/l-ncaa/MAL.params
 #residue_types/l-ncaa/MPA.params
 #residue_types/l-ncaa/MTP.params
-residue_types/l-ncaa/NLU.params
+#residue_types/l-ncaa/NLU.params
 residue_types/l-ncaa/NVL.params
 #residue_types/l-ncaa/1-amino-cyclopentane-carboxylic_acid_puck1.params
 #residue_types/l-ncaa/1-amino-cyclopentane-carboxylic_acid_puck2.params
@@ -370,8 +370,8 @@ residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 #residue_types/l-ncaa/fluoro-leucine_ent1.params
 #residue_types/l-ncaa/fluoro-leucine_ent2.params
 #residue_types/l-ncaa/hexafluoro-leucine.params
-residue_types/l-ncaa/homocysteine.params
-residue_types/l-ncaa/homocysteine-disulfide.params
+#residue_types/l-ncaa/homocysteine.params
+#residue_types/l-ncaa/homocysteine-disulfide.params
 #residue_types/l-ncaa/homophenylalanine.params
 #residue_types/l-ncaa/homoserine.params
 #residue_types/l-ncaa/n-in-methyl-tryptophan.params
@@ -393,7 +393,7 @@ residue_types/l-ncaa/homocysteine-disulfide.params
 #residue_types/metal_binding_ncaa/BPY.params
 
 ## Peptoid Types
-residue_types/peptoids/sar.params
+##residue_types/peptoids/sar.params
 #
 residue_types/peptoids/001.params
 ##residue_types/peptoids/002.params	# MAJOR: No MM torsion params for ether oxygen next to aromatic ring
