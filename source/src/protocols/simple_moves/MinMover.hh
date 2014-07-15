@@ -195,6 +195,8 @@ public:
 	/// @copydoc core::optimization::MinimizerOptions::use_nblist()
 	bool nb_list() const;
 	bool deriv_check() const;
+	bool omega() const{ return omega_; }
+	void omega( bool const b ){ omega_ = b; }
 
 protected:
 	///@brief for use with RosettaScripts current method of using
@@ -207,6 +209,7 @@ protected:
 private:
 	// data
 	core::kinematics::MoveMapOP movemap_;
+	bool omega_; //dflt true ; minimize omega?
 	ScoreFunctionCOP scorefxn_;
 	MinimizerOptionsOP min_options_;
 	Real threshold_;

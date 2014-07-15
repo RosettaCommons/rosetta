@@ -14,6 +14,9 @@
 // Unit headers
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
+#include <core/conformation/Residue.hh>
+#include <core/id/TorsionID.hh>
+#include <core/id/types.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
@@ -24,7 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
@@ -86,6 +89,7 @@ MinMover::MinMover() :
 		cartesian_(false),
 		dof_tasks_()
 {
+	omega_ = true;
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
 }
 
@@ -97,6 +101,7 @@ MinMover::MinMover( std::string const & name ) :
 		cartesian_(false),
 		dof_tasks_()
 {
+	omega_ = true;
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
 }
 
@@ -119,6 +124,7 @@ MinMover::MinMover(
 		cartesian_(false),
 		dof_tasks_()
 {
+	omega_ = true;
 	min_options_ = new MinimizerOptions(
 		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in );
 }
@@ -241,6 +247,13 @@ MinMover::apply(pose::Pose & pose) {
 	PROF_START( basic::MINMOVER_APPLY );
 	if (!cartesian( )) {
 		AtomTreeMinimizer minimizer;
+		if( !omega_ ){
+			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
+			for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+			  if( !pose.residue( i ).is_protein() ) continue;
+				active_movemap->set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
+		  }
+    }
 		(*scorefxn_)(pose);
 		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );
 	} else {
@@ -397,9 +410,10 @@ void MinMover::parse_chi_and_bb( TagCOP const tag )
 {
 	if ( ! movemap_ ) movemap_ = new MoveMap;
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
+  omega_ = tag->getOption< bool >( "omega", true );
 	movemap_->set_chi( chi );
 	movemap_->set_bb( bb );
-	TR<<"Options chi, bb: "<<chi<<", "<<bb<<std::endl;
+	TR<<"Options chi, bb: "<<chi<<", "<<bb<<" omega: "<<omega_<<std::endl;
 	if ( tag->hasOption("bondangle") ) {
 		bool const value( tag->getOption<bool>("bondangle") );
 		movemap_->set( core::id::THETA, value );
