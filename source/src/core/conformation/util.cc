@@ -1769,7 +1769,8 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
 	// make sure we're working on a cys
-	if ( res.aa() != chemical::aa_cys ) {
+	if ( res.type().name3() != "CYS" && res.type().name3() != "CYD" && res.type().name3() != "CYX"
+		&& res.type().name3() != "C26" && res.type().name3() != "HCD" ) {
 		TR.Warning << "WARNING: change_cys_state() was called on non-cys residue " << index << ", skipping!" << std::endl;
 		return false;
 	}
@@ -1786,12 +1787,12 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	utility::vector1< chemical::VariantType > variant_types = res.type().variant_types();
 
 	// check and handle disulfide state
-	if ( res.has_variant_type( chemical::DISULFIDE ) && cys_type_name3 == "CYS" ) {
+	if ( res.has_variant_type( chemical::DISULFIDE ) && (cys_type_name3 == "CYS" || cys_type_name3 == "C26")) {
 		// if the old residue has DISULFIDE variant type then we are removing a
 		// disulfide, so remove the variant type from the list
 		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), chemical::DISULFIDE ) );
 	} else {
-		if ( cys_type_name3 == "CYD" )	variant_types.push_back( chemical::DISULFIDE );	// creating a disulfide
+		if ( cys_type_name3 == "CYD" || cys_type_name3 == "HCD")	variant_types.push_back( chemical::DISULFIDE );	// creating a disulfide
 	}
 
 	// Run through all possible new residue types.

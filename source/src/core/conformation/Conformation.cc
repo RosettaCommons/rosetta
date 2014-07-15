@@ -247,16 +247,14 @@ Conformation::debug_residue_torsions( bool verbose ) const
 			<< A( width, "atr_torsion"  )
 			<< std::endl;
 	}
-	for ( Size i=1; i<= size(); ++i ) {
+	for ( Size i = 1; i <= size(); ++i ) {
 		Residue const & rsd( residue(i) );
 
-		for ( Size r=1; r<= 2; ++r ) {
-			id::TorsionType const type( r == 1 ? id::BB :
-																					id::CHI );
-			Size const n( r == 1 ? rsd.mainchain_atoms().size() : rsd.nchi() );
+		for ( Size r = 1; r <= 2; ++r ) {
+			id::TorsionType const type( r == 1 ? id::BB : id::CHI );
+			Size const n ( r == 1 ? rsd.mainchain_atoms().size() : rsd.nchi() );
 
-
-			for ( Size j=1; j<= n; ++j ) {
+			for ( Size j = 1; j <= n; ++j ) {
 				TorsionID const tor_id( i, type, j );
 				AtomID atom1,atom2,atom3,atom4;
 				bool const fail
@@ -317,8 +315,6 @@ Conformation::show_residue_connections() const
 {
 	show_residue_connections(TR);
 }
-
-
 
 // Show each residue in the conformation and its connections.
 /// @note This method is a rewrite of an earlier version to include an argument
@@ -476,7 +472,7 @@ Conformation::chains_from_termini()
 
 	chain_endings_.clear();
 
-	for ( Size i=1; i< size(); ++i ) {
+	for ( Size i = 1; i < size(); ++i ) {
 		// should there be a chain ending between i and i+1 ?
 		if ( residues_[i]->is_polymer() && residues_[i]->is_upper_terminus() ) {
 			chain_endings_.push_back( i );
@@ -529,7 +525,7 @@ Conformation::const_residues() const
 {
 	// setup ResidueCAPs object
 	conformation::ResidueCAPs const_rsds;
-	for ( Size i=1; i<= size(); ++i ) {
+	for ( Size i = 1; i <= size(); ++i ) {
 		// pointer conversions are really annoying
 		const_rsds.push_back( &( *residues_[i] ) );
 	}
@@ -1409,7 +1405,7 @@ Conformation::fill_missing_atoms(
 
 	update_residue_coordinates(); //since we will be using residue_(seqpos) below
 
-	for ( Size i=1; i<= size(); ++i ) { //Loop through all residues in this conformation
+	for ( Size i = 1; i <= size(); ++i ) { //Loop through all residues in this conformation
 		Residue const & rsd( residue_(i) ); // prevent many many calls to update_residue_torsions()
 		Size const natoms( rsd.natoms() );
 		Size tries(0);
@@ -1420,10 +1416,10 @@ Conformation::fill_missing_atoms(
 			}
 			bool any_missing( false );
 			Size num_present = 0;
-			for ( Size j=1; j<= natoms; ++j ) {
+			for ( Size j = 1; j <= natoms; ++j ) {
 				if ( !missing[ AtomID( j, i ) ] ) num_present += 1;
 			}
-			for ( Size j=1; j<= natoms; ++j ) { //Loop through all atoms in this residue
+			for ( Size j = 1; j <= natoms; ++j ) { //Loop through all atoms in this residue
 				AtomID const id( j, i );
 				if ( missing[ id ] ) {
 					// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
@@ -1437,13 +1433,14 @@ Conformation::fill_missing_atoms(
 						//if the coordinates of this atom depend on a residue connection
 						//NOTE: we assume that the coordinates of the root atom are never connection-dependent (which is true).
 						bool needed_atom_is_missing(false);
-						for(core::Size ii=1; ii<=3; ++ii) { //Check whether needed residues are missing, ignoring connections.
-							if(!rsd.icoor(j).stub_atom(ii).is_connect() && missing[rsd.icoor(j).stub_atom(ii).atom_id(i, *this)] ) {
+						for ( core::Size ii = 1; ii <= 3; ++ii) {
+                            //Check whether needed residues are missing, ignoring connections.
+							if ( !rsd.icoor( j ).stub_atom( ii ).is_connect() && missing[rsd.icoor( j ).stub_atom( ii ).atom_id( i, *this )] ) {
 								needed_atom_is_missing = true;
 								break;
 							}
 						}
-						if(!needed_atom_is_missing) { //If no needed atoms are missing
+						if ( !needed_atom_is_missing ) { //If no needed atoms are missing
 								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
 								missing[ id ] = false;
 								num_present += 1;
@@ -1451,9 +1448,9 @@ Conformation::fill_missing_atoms(
 					} else { //if the coordinates of this atom do not depend on a residue connection
 						// check if our stub atoms are all present
 						AtomID const
-							stub_atom1( rsd.icoor( j ).stub_atom1().atom_id( i, *this ) ),
-							stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( i, *this ) ),
-							stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( i, *this ) );
+							stub_atom1 ( rsd.icoor( j ).stub_atom1().atom_id( i, *this ) ),
+							stub_atom2 ( rsd.icoor( j ).stub_atom2().atom_id( i, *this ) ),
+							stub_atom3 ( rsd.icoor( j ).stub_atom3().atom_id( i, *this ) );
 
 						if ( num_present < 3 && !missing[ stub_atom1 ] ) {
 							// with < 3 atoms, we can't build any stubs, so we're stuck forever unless we punt:
@@ -1480,30 +1477,33 @@ Conformation::fill_missing_atoms(
 							for ( Size root_atomno=1; root_atomno<= natoms; ++root_atomno ) {
 								if ( root_atomno == j ) continue;
 
-								kinematics::AtomPointer2D atom_pointer( i );
-								build_residue_tree( root_atomno, *tmp_rsd, atom_pointer[i], true/*root is jump*/ );
-								AtomTree rsd_tree( atom_pointer );
+								kinematics::AtomPointer2D atom_pointer ( i );
+								build_residue_tree ( root_atomno, *tmp_rsd, atom_pointer[i], true/*root is jump*/ );
+								AtomTree rsd_tree ( atom_pointer );
 
 								AtomID const
-									new_stub_atom1( rsd_tree.atom( id ).input_stub_atom1_id() ),
-									new_stub_atom2( rsd_tree.atom( id ).input_stub_atom2_id() ),
-									new_stub_atom3( rsd_tree.atom( id ).input_stub_atom3_id() );
+									new_stub_atom1 ( rsd_tree.atom( id ).input_stub_atom1_id() ),
+									new_stub_atom2 ( rsd_tree.atom( id ).input_stub_atom2_id() ),
+									new_stub_atom3 ( rsd_tree.atom( id ).input_stub_atom3_id() );
 
-								if ( !missing[ new_stub_atom1 ] && !missing[ new_stub_atom2 ] && !missing[ new_stub_atom3 ] ) {
+								if ( !missing[ new_stub_atom1 ]
+                                  && !missing[ new_stub_atom2 ]
+                                  && !missing[ new_stub_atom3 ] ) {
 									TR.Warning << "[ WARNING ] Building missing atom (" << rsd.atom_name( j ) <<
 										") at root of residue tree, using stubs: " <<
-										rsd.atom_name( new_stub_atom1.atomno() ) << ' ' <<
-										rsd.atom_name( new_stub_atom2.atomno() ) << ' ' <<
-										rsd.atom_name( new_stub_atom3.atomno() ) <<
+										rsd.atom_name ( new_stub_atom1.atomno() ) << ' ' <<
+										rsd.atom_name ( new_stub_atom2.atomno() ) << ' ' <<
+										rsd.atom_name ( new_stub_atom3.atomno() ) <<
 										"\nThis probably means that a torsion angle is being taken from the ideal residue and"
 										"\nshould be further optimized..." << std::endl;
 									kinematics::Stub stub
 										( rsd.xyz( new_stub_atom1.atomno() ),
-											rsd.xyz( new_stub_atom2.atomno() ),
-											rsd.xyz( new_stub_atom3.atomno() ) );
-									set_xyz( id, stub.spherical( rsd_tree.dof( DOF_ID( id, id::PHI ) ),
-										rsd_tree.dof( DOF_ID( id, id::THETA ) ),
-										rsd_tree.dof( DOF_ID( id, id::D ) ) ) );
+                                          rsd.xyz( new_stub_atom2.atomno() ),
+                                          rsd.xyz( new_stub_atom3.atomno() ) );
+									set_xyz( id, stub.spherical(
+                                        rsd_tree.dof ( DOF_ID( id, id::PHI ) ),
+										rsd_tree.dof ( DOF_ID( id, id::THETA ) ),
+										rsd_tree.dof ( DOF_ID( id, id::D ) ) ) );
 									missing[ id ] = false;
 									num_present += 1;
 									break;
@@ -1512,7 +1512,7 @@ Conformation::fill_missing_atoms(
 						} else {
 							// typical case
 							if ( !missing[ stub_atom1 ] && !missing[ stub_atom2 ] && !missing[ stub_atom3 ] ) {
-								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
+								set_xyz ( id , rsd.build_atom_ideal ( j, *this ) );
 								missing[ id ] = false;
 								num_present += 1;
 							}
@@ -1599,7 +1599,8 @@ Conformation::update_polymeric_connection(
 
 
 	if ( !disconnected ) set_polymeric_connection( lower_seqpos, lower_seqpos+1 );
-	if (update_connection_dep_atoms) { //Update connection-dependent atoms, EVEN if there's no connection between lower_seqpos and lower_seqpos+1
+	if (update_connection_dep_atoms) {
+        //Update connection-dependent atoms, EVEN if there's no connection between lower_seqpos and lower_seqpos+1
 		//TR << "Updating connection-dependent atoms." << std::endl; TR.flush();
 		rebuild_polymer_bond_dependent_atoms( lower_seqpos    ,  1 );
 		rebuild_polymer_bond_dependent_atoms( lower_seqpos + 1, -1 );
@@ -1655,36 +1656,42 @@ Conformation::set_noncanonical_connection(
 void
 Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds) {
 	typedef std::pair<Size,Size> SizePair;
-	BOOST_FOREACH(SizePair disulfide_bond, disulf_bonds){
+	BOOST_FOREACH ( SizePair disulfide_bond, disulf_bonds ) {
 		using utility::vector1;
 
 		Size l_index = (disulfide_bond).first; //Lower residue
 		Size u_index = (disulfide_bond).second; //Upper residue, usually l<u
 
 		// Check that the residues exist
-		if(l_index > size() ) {
+		if ( l_index > size() ) {
 			TR.Error << "[ERROR] Residue " << l_index << " is out of range." << std::endl;
 			utility_exit();
 		}
-		if(u_index > size() ) {
+		if ( u_index > size() ) {
 			TR.Error << "[ERROR] Residue " << u_index << " is out of range." << std::endl;
 			utility_exit();
 		}
 
+		Residue const& l_res( residue ( l_index ) );
+		Residue const& u_res( residue ( u_index ) );
+
 		//Swap the CYS for CYD
-		bool replaced = conformation::change_cys_state(l_index, "CYD", *this);
-		replaced = replaced && conformation::change_cys_state(u_index, "CYD", *this);
-		if(! replaced) {
-			TR.Error << "Failed to introduce CYD for disulfide ("
-				<< l_index <<", "<< u_index << ")." << std::endl;
+		bool replaced_l = (l_res.type().name3() == "CYS" || l_res.type().name3() == "CYD" ) ? conformation::change_cys_state(l_index, "CYD", *this) : conformation::change_cys_state(u_index, "HCD", *this);
+		bool replaced_u = (u_res.type().name3() == "CYS" || u_res.type().name3() == "CYD" ) ? conformation::change_cys_state(u_index, "CYD", *this) : conformation::change_cys_state(u_index, "HCD", *this);
+
+		if(! replaced_l ) {
+			TR.Error << "Failed to introduce " << ( (l_res.type().name3() == "CYS") ?  "CYD" : "HCD");
+			TR.Error << " for disulfide at " << l_index << " (" << l_index <<", "<< u_index << ")." << std::endl;
+			continue;
+		}
+		if(! replaced_u ) {
+			TR.Error << "Failed to introduce " << ( (u_res.type().name3() == "CYS") ?  "CYD" : "HCD");
+			TR.Error << " for disulfide at " << u_index << " (" << l_index <<", "<< u_index << ")." << std::endl;
 			continue;
 		}
 
 		//Next, form a bond between the two residues.
 		//This is a little messy since we don't know the residue types of l & u.
-		Residue const& l_res( residue( l_index ));
-		Residue const& u_res( residue( u_index ));
-
 		// Determine which atom forms the disulfide bond
 		// Prefer SG to SG (fullatom) or CEN to CEN (centroid) bonds
 		// Allow SG to CEN bonds, but give a warning
@@ -1693,14 +1700,20 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 
 		bool l_has_sg  = l_res.type().has("SG");
 		bool u_has_sg  = u_res.type().has("SG");
+		bool l_has_sd  = l_res.type().has("SD");
+		bool u_has_sd  = u_res.type().has("SD");
 		bool l_has_cen = l_res.type().has("CEN");
 		bool u_has_cen = u_res.type().has("CEN");
 
 		if( l_has_sg ) {
 			l_bond_atom = l_res.atom_index( "SG" );
-			if(! u_has_sg)
-				TR.Warning << "Bonding SG of residue " << l_index
-					<< " to non-SG of residue "<< u_index << std::endl;
+			if(! u_has_sg && ! u_has_sd)
+				TR.Warning << "Bonding SG of residue " << l_index << " to non-SG or SD of residue "<< u_index << std::endl;
+		}
+	        else if( l_has_sd ) {
+			l_bond_atom = l_res.atom_index( "SD" );
+			if(! u_has_sg && ! u_has_sd)
+				TR.Warning << "Bonding SD of residue " << l_index << " to non-SG or SD of residue "<< u_index << std::endl;
 		}
 		else if(l_has_cen) {
 			l_bond_atom = l_res.atom_index( "CEN" );
@@ -1712,16 +1725,17 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 
 		if( u_has_sg ) {
 			u_bond_atom = u_res.atom_index( "SG" );
-			if(! l_has_sg)
+			if(! l_has_sg && ! l_has_sd )
 				TR.Warning << "Bonding SG of residue " << u_index
-					<< " to non-SG of residue "<< l_index << std::endl;
+					<< " to non-SG or SD of residue "<< l_index << std::endl;
+		}
+        	else if( u_has_sd ) {
+			u_bond_atom = u_res.atom_index( "SD" );
+			if(! l_has_sg && ! l_has_sd )
+				TR.Warning << "Bonding SD of residue " << u_index << " to non-SG or SD of residue "<< l_index << std::endl;
 		}
 		else if(u_has_cen) {
 			u_bond_atom = u_res.atom_index( "CEN" );
-			//			TR.Debug << "return index before res-type finalize " << u_bond_atom << std::endl;
-			//residues_[ u_index ]->type().finalize();
-			//			u_bond_atom = u_res.atom_index( "CEN" );
-			//			TR.Debug << "return index after res-type finalize " << u_bond_atom << std::endl;
 		}
 		else {
 			TR.Error << "Cannot form disulfide bond with residue "<<l_index<< std::endl;
@@ -1758,7 +1772,9 @@ Conformation::detect_disulfides()
 	utility::vector1< Size > resid_2_cysid( size(), 0 );
 	Size num_cys( 0 );
 	for ( Size ii = 1; ii <= size(); ++ii ) {
-		if ( residue(ii).aa() == chemical::aa_cys ) {
+		//if ( residue(ii).aa() == chemical::aa_cys ) {
+		if ( residue(ii).name3() == "CYS" || residue(ii).name3() == "CYD" || residue(ii).name3() == "CYX"
+			|| residue(ii).name3() == "C26" || residue(ii).name3() == "HCD" ) {
 			++num_cys;
 			resid_2_cysid[ ii ] = num_cys;
 		}
@@ -1820,9 +1836,14 @@ Conformation::detect_disulfides()
 		//Determine which atom makes the disulfide bond
 		Size ii_sg_atomno(0);
 		if(ii_res.type().has("SG")) {
-			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SG" );
+			ii_sg_atomno = residue( ii_resid ).atom_index( "SG" );
+			//TR << "FORMING DISULFIDE: using atom SG of residue " << ii_resid << std::endl;
+		} else if (ii_res.type().has("SD")) {
+			ii_sg_atomno = residue( ii_resid ).atom_index( "SD" );
+			//TR << "FORMING DISULFIDE: using atom SD of residue " << ii_resid << std::endl;
 		} else if(ii_res.type().has("CEN")) {
-			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "CEN" );
+			ii_sg_atomno = residue( ii_resid ).atom_index( "CEN" );
+			//TR << "FORMING DISULFIDE: using CEN atom of residue " << ii_resid << std::endl;
 		} else {
 			TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 			utility_exit();
@@ -1847,12 +1868,28 @@ Conformation::detect_disulfides()
 				continue;
 			}
 
-			Distance dist = ii_res.atom( ii_res.atom_index( distance_atom ) ).xyz().distance(
-				jj_res.atom( jj_res.atom_index( distance_atom )).xyz() );
+			// if we're using fullatom and we're not on CYS but rather C26, use SD
+			std::string da1 = "CB";
+			std::string da2 = "CB";
+
+			if ( distance_atom == "SG" && (ii_res.type().name3() == "C26" || ii_res.type().name3() == "HCD")) {
+				da1 = "SD";
+			} else {
+				da1 = "SG";
+			}
+			
+			if ( distance_atom == "SG" && (jj_res.type().name3() == "C26" || jj_res.type().name3() == "HCD")) {
+				da2 = "SD";
+			} else {
+				da2 = "SG";
+			} 
+			Distance dist = ii_res.atom( ii_res.atom_index( da1 ) ).xyz().distance(
+				jj_res.atom( jj_res.atom_index( da2 )).xyz() );
 			if ( best_neighbor == 0 || dist < best_match ) {
 				best_neighbor = jj_resid;
 				//best_neighbor_cysid = jj;  // set but never used ~Labonte
 				best_match = dist;
+				//TR << "FORMING DISULFIDE: current best match for " << ii_resid << " is " << jj_resid << " at " << dist << std::endl;
 			}
 		}
 
@@ -1861,9 +1898,13 @@ Conformation::detect_disulfides()
 			// handle case where old disulfide doesn't exist anymore and
 			// needs to be cleared
 			if ( processed_cys.find( ii_resid ) == processed_cys.end() && ii_res.has_variant_type( chemical::DISULFIDE ) ) {
-				TR << "Reverting out-of-date disulfide CYD to CYS at resid " << ii_resid << std::endl;
-
-				bool const successful_revert = conformation::change_cys_state( ii_resid, "CYS", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+				TR << "Reverting out-of-date disulfide (distance " << best_match << ") CYD to CYS at resid " << ii_resid << std::endl;
+				bool successful_revert;
+				if (ii_res.type().name3() == "HCD") {
+					successful_revert = conformation::change_cys_state( ii_resid, "C26", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+				} else {
+					successful_revert = conformation::change_cys_state( ii_resid, "CYS", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+				}
 				if ( !successful_revert ) {
 					TR.Error << "ERROR: unable to revert CYD to CYS for removal of disulfide at resid " << ii_resid << std::endl;
 				}
@@ -1871,7 +1912,6 @@ Conformation::detect_disulfides()
 
 			// mark cys as processed
 			processed_cys.insert( ii_resid );
-
 			continue;
 
 		} else { // found disulfide bond
@@ -1880,38 +1920,81 @@ Conformation::detect_disulfides()
 			// end up doing a dummy replace for already existing disulfides,
 			// but it doesn't necessarily hurt just in case something weird
 			// happened.
-			TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
-			TR << "current variant for " << ii_resid << " " << ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
-			TR << "current variant for " << best_neighbor << " " << ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			TR << "Found " << (fullatom ? "" : "CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
+			if (ii_res.type().name3() == "CYS") {
+				TR << "current variant for " << ii_resid << " " << ( residue ( ii_resid ).has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			} else {
+				TR << "current variant for " << ii_resid << " " << ( residue ( ii_resid ).has_variant_type( chemical::DISULFIDE ) ? "HCD" : "C26" ) << std::endl;
+			}
+			if (residue ( best_neighbor ).type().name3() == "CYS") {
+				TR << "current variant for " << best_neighbor << " " << ( residue ( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			} else {
+				TR << "current variant for " << best_neighbor << " " << ( residue ( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ? "HCD" : "C26" ) << std::endl;
+			}
+			//TR << "current variant for " << ii_resid << " " << ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			//TR << "current variant for " << best_neighbor << " " << ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			
+			bool success_at_ii;
+			if (ii_res.type().name3() == "CYS") {
+				success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this ) && residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+				if ( success_at_ii ) {
+					TR << "current variant for " << ii_resid << " " << ( residue ( ii_resid ).has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+					//TR << "Successfully transformed to CYD at resid " << ii_resid << std::endl;
+				} else {
+					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << ii_resid << std::endl;
+				}
+			} else if (ii_res.type().name3() == "C26") {
+				success_at_ii = conformation::change_cys_state( ii_resid, "HCD", *this ) && residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+				if ( success_at_ii ) {
+					TR << "current variant for " << ii_resid << " " << ( residue ( ii_resid ).has_variant_type( chemical::DISULFIDE ) ? "HCD" : "C26" ) << std::endl;
+					//TR << "Successfully transformed to HCD at resid " << ii_resid << std::endl;
+				} else {
+					TR.Error << "ERROR: unable to create residue type HCD for disulfide at resid " << ii_resid << std::endl;
+				}
+			}
+            
+			bool success_at_best_neighbor;
+			if (residue ( best_neighbor ).type().name3() == "CYS") {
+				success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this ) && residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
+				if ( success_at_best_neighbor ) {
+					//TR << "Successfully transformed to CYD at resid " << best_neighbor << std::endl;
+					TR << "current variant for " << best_neighbor << " " << ( residue ( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+				} else {
+					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
+				}
 
-			bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
-				&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
-				&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
+			} else {
+				success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "HCD", *this ) && residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
+				if ( success_at_best_neighbor ) {
+					TR << "current variant for " << best_neighbor << " " << ( residue ( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ? "HCD" : "C26" ) << std::endl;
+					//TR << "Successfully transformed to HCD at resid " << best_neighbor << std::endl;
+				} else {
+					TR.Error << "ERROR: unable to create residue type HCD for disulfide at resid " << best_neighbor << std::endl;
+				}
 
-			if ( !success_at_ii ) {
-				TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << ii_resid << std::endl;
 			}
 
-			if ( !success_at_best_neighbor ) {
-				TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
+			/*if (ii_res.type().name3() == "CYS") {
+			} else {
 			}
-
-			TR << "current variant for " << ii_resid << " " << ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
-			TR << "current variant for " << best_neighbor << " " << ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			if (residue ( best_neighbor ).type().name3() == "CYS") {
+			} else {
+			}*/
 
 			// Record SG-SG connections.
 			if ( success_at_ii && success_at_best_neighbor ) {
 				Residue const & ii_new_res( residue( ii_resid ) );
 				// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
-				Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
+				Size ii_connid = ii_new_res.type().residue_connection_id_for_atom ( ii_sg_atomno );
 				Size jj_resid  = best_neighbor;
 				Residue const & jj_res = residue( jj_resid );
 				Size jj_sg_atomno(0);
-				if(jj_res.type().has("SG")) {
-					jj_sg_atomno = jj_res.atom_index( "SG" );
-				} else if(jj_res.type().has("CEN")) {
-					jj_sg_atomno = jj_res.atom_index( "CEN" );
+				if ( jj_res.type().has ("SG") ) {
+					jj_sg_atomno = jj_res.atom_index ( "SG" );
+				} else if ( jj_res.type().has ("SD") ) {
+					jj_sg_atomno = jj_res.atom_index ( "SD" );
+				} else if ( jj_res.type().has ("CEN") ) {
+					jj_sg_atomno = jj_res.atom_index ( "CEN" );
 				} else {
 					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 					utility_exit();
@@ -1971,23 +2054,23 @@ Conformation::insert_conformation_by_jump(
 	// sequence numbering of existing residues, *_moved --> do this before changing residues_ array
 	{
 		utility::vector1< Size > old2new;
-		for ( Size i=1; i<= old_size; ++i ) old2new.push_back( ( i >= insert_seqpos ) ? i+insert_size : i );
+		for ( Size i = 1; i <= old_size; ++i ) old2new.push_back( ( i >= insert_seqpos ) ? i + insert_size : i );
 		update_sequence_numbering( new_size, old2new );
 	}
 
 	// insert the residues from conf
 	{
 		utility::vector1< Size > old2new;
-		for ( Size i=1; i<= insert_size; ++i ) old2new.push_back( i+insert_seqpos-1 );
+		for ( Size i = 1; i <= insert_size; ++i ) old2new.push_back( i + insert_seqpos-1 );
 
 		utility::vector1< ResidueOP > new_residues;
-		for ( Size i=1; i<= insert_size; ++i ) {
+		for ( Size i = 1; i <= insert_size; ++i ) {
 			ResidueOP new_rsd( conf.residue(i).clone() );
 			new_rsd->update_sequence_numbering( old2new );
 			Size const new_seqpos( old2new[i] );
 			residues_.insert( residues_.begin() + new_seqpos-1, new_rsd );
-			xyz_moved_[ new_seqpos ].clear(); xyz_moved_[ new_seqpos ].resize( new_rsd->natoms(), true );
-			dof_moved_[ new_seqpos ].clear(); dof_moved_[ new_seqpos ].resize( new_rsd->natoms(), true );
+			xyz_moved_[ new_seqpos ].clear(); xyz_moved_[ new_seqpos ].resize ( new_rsd->natoms(), true );
+			dof_moved_[ new_seqpos ].clear(); dof_moved_[ new_seqpos ].resize ( new_rsd->natoms(), true );
 			secstruct_.insert( secstruct_.begin() + ( new_seqpos - 1 ),  secstruct_[i] );
 		}
 	}
@@ -2001,11 +2084,13 @@ Conformation::insert_conformation_by_jump(
 		}
 		for ( Size i=1; i< conf.num_chains(); ++i ) new_chain_endings.push_back( conf.chain_end(i) + insert_seqpos-1 );
 		if ( insert_seqpos > 1 &&
-		     std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos-1) == new_chain_endings.end())
+		     std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos-1) == new_chain_endings.end()) {
 			new_chain_endings.push_back( insert_seqpos-1 );
+        }
 		if ( insert_seqpos <= old_size &&
-		     std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos+insert_size-1) == new_chain_endings.end())
+            std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos+insert_size-1) == new_chain_endings.end()) {
 			new_chain_endings.push_back( insert_seqpos+insert_size-1 );
+        }
 		std::sort( new_chain_endings.begin(), new_chain_endings.end() );
 		chain_endings_ = new_chain_endings;
 		rederive_chain_ids();
@@ -2040,8 +2125,8 @@ Conformation::copy_segment(
 )
 {
 	for ( Size i=0; i< size; ++i ) {
-		Size const seqpos    (     begin + i );
-		Size const seqpos_src( src_begin + i );
+		Size const seqpos     (     begin + i );
+		Size const seqpos_src ( src_begin + i );
 		replace_residue( seqpos, src.residue(seqpos_src), false );
 	}
 }
@@ -2057,7 +2142,7 @@ Conformation::insert_fragment(
 
 	atom_tree_->insert_fragment( instub_id, outstub_transforms, frag_xyz, moved_atoms );
 
-	for ( Size i=1; i<= moved_atoms.size(); ++i ) {
+	for ( Size i = 1; i <= moved_atoms.size(); ++i ) {
 		set_dof_moved( moved_atoms[i] );
 	}
 }
@@ -2117,23 +2202,23 @@ Conformation::set_torsion(
 
 	if ( tor_id.type() == id::JUMP ) {
 		// jump rigid-body offset degree of freedom
-		DOF_ID const dof_id( dof_id_from_torsion_id( tor_id ) );
-		atom_tree_->set_dof( dof_id, setting );
+		DOF_ID const dof_id ( dof_id_from_torsion_id ( tor_id ) );
+		atom_tree_->set_dof ( dof_id, setting );
 
 		// update book-keeping to reflect that this torsion has changed
 		set_dof_moved( dof_id );
 
 	} else /* bb, chi, or nu */ {
 		// update residue torsions
-		switch (tor_id.type()) {
+		switch ( tor_id.type() ) {
 			case id::BB:
-				residues_[tor_id.rsd()]->mainchain_torsions()[tor_id.torsion()] = setting;
+				residues_[ tor_id.rsd() ]->mainchain_torsions()[ tor_id.torsion() ] = setting;
 				break;
 			case id::CHI:
-				residues_[tor_id.rsd()]->chi()[tor_id.torsion()] = setting;
+				residues_[ tor_id.rsd() ]->chi()[ tor_id.torsion() ] = setting;
 				break;
 			case id::NU:
-				residues_[tor_id.rsd()]->nus()[tor_id.torsion()] = setting;
+				residues_[ tor_id.rsd() ]->nus()[ tor_id.torsion() ] = setting;
 				break;
 			default:
 				TR.Error << "Unknown torsion type; no torsion set." << std::endl;
@@ -2146,7 +2231,7 @@ Conformation::set_torsion(
 		if ( fail ) 	return;
 
 		// AtomTree works in radians
-		DOF_ID const dof_id( atom_tree_->set_torsion_angle( id1, id2, id3, id4, radians(setting) ) );
+		DOF_ID const dof_id ( atom_tree_->set_torsion_angle( id1, id2, id3, id4, radians(setting) ) );
 
 		if ( !dof_id.valid() ) {
 			TR.Warning << "Unable to find torsion angle in atom_tree: " <<
@@ -2183,7 +2268,7 @@ Conformation::set_torsion_angle(
 )
 {
 	residue_torsions_need_updating_ = true;
-	DOF_ID const dof_id( atom_tree_->set_torsion_angle( atom1, atom2, atom3, atom4, setting, quiet ) );
+	DOF_ID const dof_id ( atom_tree_->set_torsion_angle( atom1, atom2, atom3, atom4, setting, quiet ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	} else if ( !quiet ) {
@@ -2213,7 +2298,7 @@ Conformation::set_bond_angle(
 	Real const setting
 )
 {
-	DOF_ID const dof_id( atom_tree_->set_bond_angle( atom1, atom2, atom3, setting ) );
+	DOF_ID const dof_id ( atom_tree_->set_bond_angle( atom1, atom2, atom3, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	}
@@ -2237,7 +2322,7 @@ Conformation::set_bond_length(
 	Real const setting
 )
 {
-	DOF_ID const dof_id( atom_tree_->set_bond_length( atom1, atom2, setting ) );
+	DOF_ID const dof_id ( atom_tree_->set_bond_length( atom1, atom2, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	}
@@ -2367,8 +2452,8 @@ Conformation::insert_ideal_geometry_at_polymer_bond( Size const seqpos )
 					( connect2.icoor().stub_atom1().atomno() == Size( atom3.atomno() ) ) &&
 					( connect2.icoor().stub_atom2().atomno() == Size( atom4.atomno() ) ) );
 
-	set_bond_angle( atom1, atom2, atom3, bond_angle1 );
-	set_bond_angle( atom2, atom3, atom4, bond_angle2 );
+	set_bond_angle ( atom1, atom2, atom3, bond_angle1 );
+	set_bond_angle ( atom2, atom3, atom4, bond_angle2 );
 	set_bond_length( atom2, atom3, bond_distance );
 
 	// unfortunately this appears to trigger a refold, in that it works in cartesian space to update the atom
@@ -2385,31 +2470,31 @@ Conformation::insert_ideal_geometry_at_residue_connection( Size const pos1, Size
 	// we use residues_[ xx ] rather than residue(xx) to avoid triggering refold/angle update
 	//
 	// determine what the other residue for this connection is:
-	ResidueCOP rsd1( residues_[ pos1 ]() );
-	Size const    pos2( rsd1->connect_map( connid1 ).resid() );
-	Size const connid2( rsd1->connect_map( connid1 ).connid() );
-	ResidueCOP rsd2( residues_[ pos2 ]() );
+	ResidueCOP rsd1    ( residues_[ pos1 ]() );
+	Size const    pos2 ( rsd1->connect_map( connid1 ).resid() );
+	Size const connid2 ( rsd1->connect_map( connid1 ).connid() );
+	ResidueCOP rsd2    ( residues_[ pos2 ]() );
 
 	// what is the ideal geometry?
-	chemical::ResidueConnection const & connect1( rsd1->residue_connection( connid1 ) );
-	chemical::ResidueConnection const & connect2( rsd2->residue_connection( connid2 ) );
+	chemical::ResidueConnection const & connect1 ( rsd1->residue_connection( connid1 ) );
+	chemical::ResidueConnection const & connect2 ( rsd2->residue_connection( connid2 ) );
 
-	Real const bond_distance( connect1.icoor().d() );
-	Real const bond_angle1( numeric::constants::d::pi - connect1.icoor().theta() );
-	Real const bond_angle2( numeric::constants::d::pi - connect2.icoor().theta() );
+	Real const bond_distance ( connect1.icoor().d() );
+	Real const bond_angle1   ( numeric::constants::d::pi - connect1.icoor().theta() );
+	Real const bond_angle2   ( numeric::constants::d::pi - connect2.icoor().theta() );
 
-	AtomID const atom1( connect1.icoor().stub_atom2().atomno(), pos1 );
-	AtomID const atom2( connect1.icoor().stub_atom1().atomno(), pos1 );
-	AtomID const atom3( connect2.icoor().stub_atom1().atomno(), pos2 );
-	AtomID const atom4( connect2.icoor().stub_atom2().atomno(), pos2 );
+	AtomID const atom1 ( connect1.icoor().stub_atom2().atomno(), pos1 );
+	AtomID const atom2 ( connect1.icoor().stub_atom1().atomno(), pos1 );
+	AtomID const atom3 ( connect2.icoor().stub_atom1().atomno(), pos2 );
+	AtomID const atom4 ( connect2.icoor().stub_atom2().atomno(), pos2 );
 
-	set_bond_angle( atom1, atom2, atom3, bond_angle1 );
-	set_bond_angle( atom2, atom3, atom4, bond_angle2 );
-	set_bond_length( atom2, atom3, bond_distance );
+	set_bond_angle  ( atom1, atom2, atom3, bond_angle1 );
+	set_bond_angle  ( atom2, atom3, atom4, bond_angle2 );
+	set_bond_length ( atom2, atom3, bond_distance );
 
 	// need to do something similar here:
-	rebuild_residue_connection_dependent_atoms( pos1, connid1 );
-	rebuild_residue_connection_dependent_atoms( pos2, connid2 );
+	rebuild_residue_connection_dependent_atoms ( pos1, connid1 );
+	rebuild_residue_connection_dependent_atoms ( pos2, connid2 );
 }
 
 
@@ -2441,11 +2526,11 @@ Conformation::update_orbital_coords( Size resid )
 
 void
 Conformation::update_orbital_coords( Residue & rsd) const{
-	BOOST_FOREACH(core::Size atom_with_orbitals, rsd.atoms_with_orb_index()){
-		utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
-			Vector orb_xyz(rsd.build_orbital_xyz(orbital_index));
-			rsd.set_orbital_xyz(orbital_index, orb_xyz );
+	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd.atoms_with_orb_index() ) {
+		utility::vector1<core::Size> const & orbital_indices ( rsd.bonded_orbitals(atom_with_orbitals) );
+		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
+			Vector orb_xyz ( rsd.build_orbital_xyz ( orbital_index ) );
+			rsd.set_orbital_xyz ( orbital_index, orb_xyz );
 		}
 	}
 }
@@ -2461,8 +2546,8 @@ Conformation::dof_id_from_torsion_id( TorsionID const & tor_id ) const
 		int const rb_no( tor_id.torsion() );
 		assert( rb_no >= 1 && rb_no <= 6 );
 		int const jump_number( tor_id.rsd() );
-		AtomID const id( jump_atom_id( jump_number ) );
-		return DOF_ID( id, id::get_rb_type( rb_no ) );
+		AtomID const id ( jump_atom_id( jump_number ) );
+		return DOF_ID ( id, id::get_rb_type( rb_no ) );
 	} else {
 		// bb or chi
 		// find out what are the four atoms that define this torsion angle
