@@ -575,6 +575,7 @@ sources = {
                 "RandomOmegaFlipMover",
 		"RepackSidechainsMover",
 		"RepulsiveOnlyMover",
+		"ResetBaselineMover",
 		"ResidueTypeConstraintMover",
 		"ReturnSidechainMover",
 		"ResTypeFragmentMover",
