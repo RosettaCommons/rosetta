@@ -179,6 +179,7 @@
 #include <protocols/simple_moves/MonteCarloRecoverCreator.hh>
 #include <protocols/simple_moves/MonteCarloTestCreator.hh>
 #include <protocols/simple_moves/MonteCarloResetCreator.hh>
+#include <protocols/simple_moves/ResetBaselineMoverCreator.hh>
 
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 
