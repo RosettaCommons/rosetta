@@ -16,7 +16,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
@@ -51,10 +53,18 @@ void use_backrub(core::pose::PoseOP & pose,core::scoring::ScoreFunctionOP scoref
                 backrubmover.branchopt().read_database();
 
                 // Setup MC
-                core::Real const mc_kT = 0.6;
+                core::Real const mc_kT( option[basic::options::OptionKeys::canonical_sampling::sampling::mc_kt] );
                 protocols::moves::MonteCarlo mc(p, *scorefxn, mc_kT );
                 mc.reset(p);
 
+		// Where will it happed?
+		utility::vector1<core::Size> pivot_residues;
+		for (core::Size i = 1; i <= option[ basic::options::OptionKeys::backrub::pivot_residues ].size(); ++i) {
+		    if (option[ OptionKeys::backrub::pivot_residues ][i] >= 1) 
+			pivot_residues.push_back(option[ basic::options::OptionKeys::backrub::pivot_residues ][i]);
+		}
+		backrubmover.set_pivot_residues(pivot_residues);
+		
                 //clear segments and set the input pose
                 backrubmover.clear_segments();
                 backrubmover.set_input_pose( pose );
