@@ -131,6 +131,7 @@ sources = {
 	"protocols/features/strand_assembly": [
                 #"ReportAADistributionFromDB",
                 #"ReportAADistributionFromDBCreator",
+	        "CheckForSandwichFeatures",
 		"SandwichFeatures",
 		"SandwichFeaturesCreator",
 		"SandwichFragment",

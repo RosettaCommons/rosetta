@@ -8,25 +8,29 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file SandwichFragment.hh
-///
 /// @brief Small helper class that stores the start and end of a strand secondary structure
-
 /// @author Doo Nam Kim (started from Tim jacobs' code)
 
 #ifndef INCLUDED_protocols_features_strand_assembly_SANDWICHFRAGMENT_HH
 #define INCLUDED_protocols_features_strand_assembly_SANDWICHFRAGMENT_HH
 
-//Core
-#include <core/types.hh>
-#include <core/pose/Pose.hh>
-
-//Utility
-#include <utility/vector1.fwd.hh>
-
 //C++ Headers
 #include <string>
 #include <vector>
 #include <map>
+
+//Core
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/types.hh>
+
+//Numeric
+#include <numeric/xyzVector.hh>
+#include <numeric/HomogeneousTransform.hh>
+
+//Utility
+#include <utility/string_util.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace features {

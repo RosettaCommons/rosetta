@@ -8,10 +8,13 @@
 // (c) for more information, see http://www.rosettacommons.org. questions about this can be
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
-/// @file protocols/features/strand_assembly/WriteToFileFromSW.cc
+/// @file protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.cc
 /// @brief Write to a file after SandwichFeatures
 /// @author Doo Nam Kim
 /// @overview
+
+//#ifndef INCLUDED_protocols_features_strand_assembly_WriteToFileFromSandwichFeatures_HH
+//#define INCLUDED_protocols_features_strand_assembly_WriteToFileFromSandwichFeatures_HH
 
 //Devel
 #include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
@@ -120,3 +123,5 @@ write_AA_distribution_without_direction_to_a_file(
 } //namespace strand_assembly
 } //namespace features
 } //namespace protocols
+
+//#endif // WriteToFileFromSandwichFeatures_HH

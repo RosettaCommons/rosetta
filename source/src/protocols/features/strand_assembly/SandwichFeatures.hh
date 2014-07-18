@@ -30,16 +30,15 @@
 
 // c++
 #include <algorithm>	// for avg,min,max
+#include <cmath>	// for std::abs				// reference:	http://www.cplusplus.com/reference/cmath/abs/
 #include <fstream>
 #include <iostream>
-#include <cmath>	// for std::abs				// reference:	http://www.cplusplus.com/reference/cmath/abs/
 #include <numeric>
 //#include <stdio.h>     //for remove( ) and rename( )
 #include <stdlib.h> // for abs()
 #include <vector>
 
 //Core
-#include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.hh>
@@ -50,6 +49,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
 #include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "get_score_function" ?
+#include <core/types.hh>
 
 //Devel
 #include <protocols/features/strand_assembly/SandwichFragment.hh>
@@ -210,12 +210,6 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
-	utility::vector1<SandwichFragment>
-	get_full_strands_from_sheet(
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size sheet_id);
-
 	utility::vector1<core::Size>
 	get_distinct_sheet_id_from_sheet_table(
 		StructureID struct_id,
@@ -274,12 +268,6 @@ public:
 		core::Size sheet_id,
 		std::string antiparallel);
 
-	std::string
-	get_sheet_antiparallel_info(
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size sheet_id);
-
 	bool
 	change_sheet_id_if_possible(
 		StructureID struct_id,
@@ -312,11 +300,11 @@ public:
 		SandwichFragment strand_i,
 		SandwichFragment strand_j);
 
-	core::Real
-	get_closest_distance_between_strands(
-		core::pose::Pose const & pose,
-		SandwichFragment strand_i,
-		SandwichFragment strand_j);
+//	core::Real
+//	get_closest_distance_between_strands(
+//		core::pose::Pose const & pose,
+//		SandwichFragment strand_i,
+//		SandwichFragment strand_j);
 
 	core::Real
 	get_avg_dis_CA_CA(
@@ -330,8 +318,6 @@ public:
 		core::Size j_resnum_2,
 		core::Size j_resnum_3);
 
-	core::Size round_to_Size(
-		core::Real x);
 
 	float round_to_float(
 		float x);
@@ -436,12 +422,6 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sw_can_by_sh_id,
-		core::Size sheet_id);
-
-	std::vector<Size>
-	get_cen_residues_in_this_sheet(
-		StructureID struct_id,
-		utility::sql_database::sessionOP	db_session,
 		core::Size sheet_id);
 
 	std::vector<Size>
@@ -791,23 +771,6 @@ public:
 		core::pose::Pose const & pose,
 		utility::vector1<core::Size>	all_distinct_sheet_ids);
 
-
-	core::Real
-	cal_min_dis_between_two_sheets_by_cen_res (
-		StructureID	struct_id,
-		utility::sql_database::sessionOP	db_session,
-		core::pose::Pose & dssp_pose,
-		core::Size sheet_id_1,
-		core::Size sheet_id_2);
-
-	std::pair<float, float>
-	cal_min_avg_dis_between_two_sheets_by_cen_res (
-		StructureID	struct_id,
-		utility::sql_database::sessionOP	db_session,
-		core::pose::Pose & dssp_pose,
-		core::Size sheet_id_1,
-		core::Size sheet_id_2);
-
 	float
 	cal_shortest_dis_between_facing_aro_in_sw (
 		StructureID	struct_id,
@@ -915,13 +878,6 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
 
-
-	bool
-	check_whether_sw_by_sh_id_still_alive(
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size sw_can_by_sh_id);
-
 	bool
 	see_whether_this_sw_has_SS_bond(
 		StructureID struct_id,
@@ -986,7 +942,11 @@ public:
 		std::string	heading_direction);
 
 
+	core::Real
+	min_CA_CA_dis_;
 
+	core::Real
+	max_CA_CA_dis_;
 
 private:
 
@@ -999,11 +959,6 @@ private:
 	core::Size
 	min_res_in_strand_;
 
-	core::Real
-	min_CA_CA_dis_;
-
-	core::Real
-	max_CA_CA_dis_;
 
 	core::Real
 	min_O_N_dis_;

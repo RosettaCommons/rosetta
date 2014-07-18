@@ -25,7 +25,13 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-core::Size
+	utility::vector1<Size>
+	get_vector_loop_AA_distribution(
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		string loop_kind);
+
+	core::Size
 	write_AA_distribution_without_direction_to_a_file(
 		string	tag,
 		StructureID	struct_id,
@@ -35,4 +41,4 @@ core::Size
 } //namespace features
 } //namespace protocols
 
-#endif /* SANDWICHFRAGMENT_HH_ */
+#endif /* WriteToFileFromSandwichFeatures_HH_ */

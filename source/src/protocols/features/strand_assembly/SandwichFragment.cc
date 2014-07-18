@@ -7,24 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /rosetta/rosetta_source/src/protocols/features/strand_assembly/SandwichFragment.cc
-///
+/// @file /rosetta/main/source/src/protocols/features/strand_assembly/SandwichFragment.cc
 /// @brief
-
 /// @author Doo Nam Kim based on Tim jacobs' code
 
 //Unit Headers
 #include <protocols/features/strand_assembly/SandwichFragment.hh>
 
-//Core
-#include <core/conformation/Residue.hh>
-
-//Utility
-#include <utility/string_util.hh>
-
-//Numeric
-#include <numeric/xyzVector.hh>
-#include <numeric/HomogeneousTransform.hh>
+////Core
+//#include <core/conformation/Residue.hh>
+//
+////Utility
+//#include <utility/string_util.hh>
+//
+////Numeric
+//#include <numeric/xyzVector.hh>
+//#include <numeric/HomogeneousTransform.hh>
 
 namespace protocols {
 namespace features {
@@ -36,8 +34,8 @@ SandwichFragment::SandwichFragment()
 // 1 parameter
 SandwichFragment::SandwichFragment(
 							   core::Size chain_B_resNum):
-chain_B_resNum_(chain_B_resNum),
-pdb_source_("")
+	chain_B_resNum_(chain_B_resNum),
+	pdb_source_("")
 {}
 
 
@@ -45,9 +43,9 @@ pdb_source_("")
 SandwichFragment::SandwichFragment(
 							   core::Size start,
 							   core::Size end):
-start_(start),
-end_(end),
-pdb_source_("")
+	start_(start),
+	end_(end),
+	pdb_source_("")
 {}
 
 // 3 parameters
@@ -56,10 +54,10 @@ SandwichFragment::SandwichFragment(
 							   core::Size sheet_id,
 							   core::Size start,
 							   core::Size end):
-sheet_id_(sheet_id),
-start_(start),
-end_(end),
-pdb_source_("")
+	sheet_id_(sheet_id),
+	start_(start),
+	end_(end),
+	pdb_source_("")
 {}
 
 // 4 parameters
@@ -68,13 +66,12 @@ SandwichFragment::SandwichFragment(
 							   core::Size strand_id,
 							   core::Size start,
 							   core::Size end):
-sheet_id_(sheet_id),
-strand_id_(strand_id),
-start_(start),
-end_(end),
-pdb_source_("")
+	sheet_id_(sheet_id),
+	strand_id_(strand_id),
+	start_(start),
+	end_(end),
+	pdb_source_("")
 {}
-
 
 // 5 parameters
 SandwichFragment::SandwichFragment(
@@ -83,17 +80,16 @@ SandwichFragment::SandwichFragment(
 								   core::Size strand_id,
 								   core::Size start,
 								   core::Size end):
-sw_can_by_sh_id_(sw_can_by_sh_id),
-sheet_id_(sheet_id),
-strand_id_(strand_id),
-start_(start),
-end_(end),
-pdb_source_("")
+	sw_can_by_sh_id_(sw_can_by_sh_id),
+	sheet_id_(sheet_id),
+	strand_id_(strand_id),
+	start_(start),
+	end_(end),
+	pdb_source_("")
 {}
 
 SandwichFragment::~SandwichFragment()
 {}
-
 
 core::Size
 SandwichFragment::get_start() const
@@ -141,20 +137,6 @@ SandwichFragment::get_size() const
 }
 
 
-// commented out since never used
-//std::string SandwichFragment::get_pdb_source() const
-//{
-//	return pdb_source_;
-//}
-//
-//void SandwichFragment::set_pdb_source(std::string pdb_source_)
-//{
-//	this->pdb_source_ = pdb_source_;
-//}
-
-
-
 } //namespace strand_assembly
 } //namespace features
 } //namespace protocols
-
