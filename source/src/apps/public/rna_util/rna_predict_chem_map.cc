@@ -102,7 +102,7 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 											 Real & DMS_maxL,
 											 Real & DMS_interval_low,
 											 Real & DMS_interval_high,
-											 Real const confidence_level = 0.68 /* one-sigma */ ) {
+											 Real const /* confidence_level = 0.68 one-sigma */ ) {
 	DMS_maxL = 0.0;
 	DMS_mean = 0.0;
 	DMS_std  = 0.0;
