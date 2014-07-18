@@ -71,7 +71,7 @@
 #include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/farna/MultipleDomainMover.hh>
 #include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/RNA_DataReader.hh>
+#include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
@@ -531,14 +531,14 @@ create_bp_jump_database_test( ){
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	EnergyBasePairList scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	utility::io::ozstream dataout( outfile );
 
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 				it != scored_base_pair_list.end(); ++it ){
 
-		Base_pair const base_pair = it->second;
+		BasePair const base_pair = it->second;
 
 		int const i = base_pair.res1;
 		int const k = base_pair.edge1;

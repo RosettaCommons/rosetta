@@ -11,6 +11,13 @@
 /// @brief
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// I think almost all of this is deprecated now. -- rhiju, 2014.
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
@@ -102,11 +109,11 @@
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_DataReader.hh>
+#include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/farna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh> //for EnergyMap
@@ -152,6 +159,7 @@
 #include <time.h>
 
 using namespace core;
+using namespace core::pose::rna;
 using namespace basic;
 using namespace protocols;
 using namespace ObjexxFCL;
@@ -467,8 +475,8 @@ rna_fullatom_score_test()
 		std::cout << "Check it! SEQUENCE " << pose.sequence() << std::endl;
 
 		if ( option[ data_file].user() ) {
-			protocols::farna::RNA_DataReader rna_data_reader;
-			rna_data_reader.initialize( pose, option[ data_file ] );
+			core::io::rna::RNA_DataReader rna_data_reader( option[ data_file ] );
+			rna_data_reader.fill_rna_data_info( pose );
 		}
 
 
@@ -856,8 +864,8 @@ rna_fullatom_minimize_test()
 		//		pose.dump_pdb( "tweaked.pdb" );
 
 		if ( option[ data_file].user() ) {
-			protocols::farna::RNA_DataReader rna_data_reader;
-			rna_data_reader.initialize( pose, option[ data_file ] );
+			core::io::rna::RNA_DataReader rna_data_reader( option[ data_file ] );
+			rna_data_reader.fill_rna_data_info( pose );
 		}
 
 		protocols::farna::RNA_Minimizer rna_minimizer;
@@ -2053,17 +2061,17 @@ is_regular_helix( pose::Pose const & pose,
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	bool forms_canonical_base_pair( false );
 	//	bool forms_non_canonical_base_pair( false );
 
 	Size k( 0 ), m( 0 );
 	Size partner( 0 ), canonical_partner( 0 );
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 				it != scored_base_pair_list.end(); ++it ){
 
-		Base_pair const base_pair = it->second;
+		BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
@@ -2143,12 +2151,12 @@ figure_out_domain_neighbors( Size const & i, core::pose::Pose const & pose  ){
 
 	//	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	//	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	//	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	// Reach across to anything base paired.
-	//	for ( Energy_base_pair_list::const_iterator it = local_scored_base_pair_list.begin();
+	//	for ( EnergyBasePairList::const_iterator it = local_scored_base_pair_list.begin();
 	//				it != local_scored_base_pair_list.end(); ++it ){
-	//		Base_pair const base_pair = it->second;
+	//		BasePair const base_pair = it->second;
 	//		Size const pos1 = base_pair.res1;
 	//		Size const pos2 = base_pair.res2;
 	//		if ( pos1 == i ) figure_out_domain_neighbors( pos2 );
@@ -4790,7 +4798,7 @@ rna_stats_test()
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
-		utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
+		utility::vector1< core::pose::rna::BasePair > base_pair_list;
 		utility::vector1< bool > is_bulged;
 		core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
 

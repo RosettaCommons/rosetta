@@ -35,6 +35,10 @@
 // In 2014, decided to start including actual experimental values and implementing score functions
 //  that compute log-odds scores for structural features that correlate with the data.
 //
+// In the future, should probably be able to deprecate backbone_burial_, backbone_exposed_ (FArrays! Dang that's old)
+//  and perhaps RNA_Data, which requires user to dial in weight for exposing base edges -- those were
+//  totally experimental (but nicely generic).
+//
 
 namespace core {
 namespace scoring {
@@ -50,9 +54,13 @@ public:
 		weight_ = weight;
 	}
 
-	Size position() const { return position_; };
-	Size edge() const { return edge_; };
-	Real weight() const { return weight_; };
+	Size const & position() const { return position_; };
+	Size const & edge() const { return edge_; };
+	Real const & weight() const { return weight_; };
+
+	void set_position( Size const setting ) { position_ = setting; };
+	void set_edge( Size const setting ) { edge_ = setting; };
+	void set_weight( Real const setting ) { weight_ = setting; };
 
 private:
 	Size position_;
@@ -74,6 +82,10 @@ public:
 	Size position() const { return position_; };
 	RNA_ReactivityType type() const { return type_; };
 	Real value() const { return value_; };
+
+	void set_position( 	Size const setting ) { position_ = setting; }
+	void set_type( RNA_ReactivityType const setting ) { type_ = setting; }
+	void set_value( Real const setting ) { value_ = setting; }
 
 private:
 	Size position_;

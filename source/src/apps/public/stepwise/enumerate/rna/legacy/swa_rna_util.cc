@@ -109,7 +109,7 @@
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_LoopCloser.fwd.hh>
 
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>

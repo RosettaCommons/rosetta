@@ -71,11 +71,21 @@ using namespace basic::options;
 //
 // TO DO:
 //  The following code is insanely compute-intensive -- used below to compute a potential
-//  for binding the chemical probe. Need to replace with calls to atom-level
-//  scoring terms for atr/rep, geom_sol, etc. Will definitely need to do that
-//  to get derivatives!
+//   for binding the chemical probe. Need to replace with calls to atom-level
+//   scoring terms for atr/rep, geom_sol, etc. Will definitely need to do that
+//   to get derivatives!
 //
-//  Put in separate statistics for DMS of syn-A.
+//  Put in separate statistics for DMS of syn-A [?]. Currently giving back score = 0.0,
+//   i.e. assuming that DMS distribution for syn-A matches that of total. But I think
+//   syn-A typically has very low DMS.
+//
+//  Work out cytidine potential?
+//
+//  Replace lookup of potential with an interpolation. There are some great functions to do this
+//   in numeric/interpolation/spline. In particular, TricubicSpline looks perfect.
+//
+//  Double-check whether we should include bin size when normalizing integrals below (e.g., DMS_stats_total); I think
+//   these divide out, but I should check.
 //
 //  -- rhiju
 //
@@ -107,12 +117,14 @@ namespace data {
 	//////////////////////////////////////////////////////////////////////////////////
 	void
 	RNA_DMS_Potential::initialize_DMS_potential() {
-		vector1< vector1< vector1< vector1< Real > > > > all_DMS_stats;
+		DMS_stats_.clear();
+
 		//Read in data file, and fill in private data.
-		all_DMS_stats.push_back( read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_not_bonded_logstats.txt" ) );
-		all_DMS_stats.push_back( read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_bonded_logstats.txt" ) );
+		DMS_stats_.push_back( read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_not_bonded_logstats.txt" ) );
+		DMS_stats_.push_back( read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_bonded_logstats.txt" ) );
 		is_bonded_values_ = make_vector1( false, true );
-		figure_out_potential( all_DMS_stats );
+
+		figure_out_potential(); // updates DMS_stats_, DMS_potential_, etc.
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -160,7 +172,7 @@ namespace data {
 	// the idea behind the log-odds score within Rosetta, for future
 	// reference. -- rhiju
 	void
-	RNA_DMS_Potential::figure_out_potential( vector1< vector1< vector1< vector1< Real > > > > & DMS_stats ){
+	RNA_DMS_Potential::figure_out_potential(){
 		// indices are: is_bonded, DMS, occ, binding_energy
 		//
 		// log-odds score is: -kT log P( is_bonded, DMS, occ, binding_energy ) / [ P( DMS ) P( is_bonded, occ, binding_energy ) ]
@@ -172,7 +184,7 @@ namespace data {
 			for ( Size i = 1; i <= occ_values_.size(); i++ ) {
 				for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
 					for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-						DMS_stats_total += DMS_stats[ h ][ i ][ j ][ k ];
+						DMS_stats_total += DMS_stats_[ h ][ i ][ j ][ k ];
 					}
 				}
 			}
@@ -181,19 +193,19 @@ namespace data {
 			for ( Size i = 1; i <= occ_values_.size(); i++ ) {
 				for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
 					for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-						DMS_stats[ h ][ i ][ j ][ k ] /= DMS_stats_total;
+						DMS_stats_[ h ][ i ][ j ][ k ] /= DMS_stats_total;
 					}
 				}
 			}
 		}
 
 		// initialize projections to 0.0. This is pretty clumsy -- would be better to have constructors.
-		vector1< Real > p_DMS( DMS_values_.size(), 0.0 );
-		vector1< vector1< vector1< Real > > > p_model; // 'model' = (is_bonded, occ, binding_energy).
+		p_DMS_ = vector1< Real >( DMS_values_.size(), 0.0 );
+		p_model_.clear(); // 'model' = (is_bonded, occ, binding_energy).
 		for ( Size i = 1; i <= is_bonded_values_.size(); i++ ) {
-			p_model.push_back( vector1< Real >() );
+			p_model_.push_back( vector1< Real >() );
 			for ( Size j = 1; j <= occ_values_.size(); j++ ) {
-				p_model[ i ].push_back( vector1< Real >( binding_energy_values_.size(), 0.0 ) );
+				p_model_[ i ].push_back( vector1< Real >( binding_energy_values_.size(), 0.0 ) );
 			}
 		}
 
@@ -212,29 +224,29 @@ namespace data {
 				for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
 					for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
 
-						p_DMS[ k ]                     += DMS_stats[ h ][ i ][ j ][ k ];
-						p_model[ h ][ i ][ j ]         += DMS_stats[ h ][ i ][ j ][ k ];
+						p_DMS_[ k ]                    += DMS_stats_[ h ][ i ][ j ][ k ];
+						p_model_[ h ][ i ][ j ]        += DMS_stats_[ h ][ i ][ j ][ k ];
 
 						// for separate feature scores [not on by default]
-						p_is_bonded[ h ]               += DMS_stats[ h ][ i ][ j ][ k ];
-						p_is_bonded_DMS[ h ][ k ]      += DMS_stats[ h ][ i ][ j ][ k ];
-						p_occ[ i ]                     += DMS_stats[ h ][ i ][ j ][ k ];
-						p_occ_DMS[ i ][ k ]            += DMS_stats[ h ][ i ][ j ][ k ];
-						p_binding_energy[ j ]          += DMS_stats[ h ][ i ][ j ][ k ];
-						p_binding_energy_DMS[ j ][ k ] += DMS_stats[ h ][ i ][ j ][ k ];
+						p_is_bonded[ h ]               += DMS_stats_[ h ][ i ][ j ][ k ];
+						p_is_bonded_DMS[ h ][ k ]      += DMS_stats_[ h ][ i ][ j ][ k ];
+						p_occ[ i ]                     += DMS_stats_[ h ][ i ][ j ][ k ];
+						p_occ_DMS[ i ][ k ]            += DMS_stats_[ h ][ i ][ j ][ k ];
+						p_binding_energy[ j ]          += DMS_stats_[ h ][ i ][ j ][ k ];
+						p_binding_energy_DMS[ j ][ k ] += DMS_stats_[ h ][ i ][ j ][ k ];
 
 					}
 				}
 			}
 		}
 
-		DMS_potential_ = DMS_stats; // values will be replaced
+		DMS_potential_ = DMS_stats_; // values will be replaced
 		for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
 			for ( Size i = 1; i <= occ_values_.size(); i++ ) {
 				for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
 					for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
 						DMS_potential_[ h ][ i ][ j ][ k ] =
-							-1.0 * log( DMS_stats[ h ][ i ][ j ][ k ] /( p_model[ h ][ i ][ j ] * p_DMS[ k ]) );
+							-1.0 * log( DMS_stats_[ h ][ i ][ j ][ k ] /( p_model_[ h ][ i ][ j ] * p_DMS_[ k ]) );
 					}
 				}
 			}
@@ -245,21 +257,21 @@ namespace data {
 		for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
 			for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
 				DMS_potential_is_bonded_[ h ][ k ] =
-					-1.0 * log( p_is_bonded_DMS[ h ][ k ] /( p_is_bonded[ h ] * p_DMS[ k ]) );
+					-1.0 * log( p_is_bonded_DMS[ h ][ k ] /( p_is_bonded[ h ] * p_DMS_[ k ]) );
 			}
 		}
 		DMS_potential_occ_ = p_occ_DMS; // values will be replaced
 		for ( Size i = 1; i <= occ_values_.size(); i++ ) {
 			for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
 				DMS_potential_occ_[ i ][ k ] =
-					-1.0 * log( p_occ_DMS[ i ][ k ] /( p_occ[ i ] * p_DMS[ k ]) );
+					-1.0 * log( p_occ_DMS[ i ][ k ] /( p_occ[ i ] * p_DMS_[ k ]) );
 			}
 		}
 		DMS_potential_binding_energy_ = p_binding_energy_DMS; // values will be replaced
 		for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
 			for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
 				DMS_potential_binding_energy_[ j ][ k ] =
-					-1.0 * log( p_binding_energy_DMS[ j ][ k ] /( p_binding_energy[ j ] * p_DMS[ k ]) );
+					-1.0 * log( p_binding_energy_DMS[ j ][ k ] /( p_binding_energy[ j ] * p_DMS_[ k ]) );
 			}
 		}
 
@@ -291,30 +303,19 @@ namespace data {
 
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////
-	Real
-	RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
-															 RNA_Reactivity const & rna_reactivity ) {
-
-		using namespace core::pose::full_model_info;
-
-		runtime_assert( rna_reactivity.type() == DMS );
-		Size const & pos = rna_reactivity.position();
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		if ( full_model_info.full_sequence()[ pos - 1 ] != 'a' ) return 0.0;
-		if ( !full_model_info.working_res().has_value( pos ) ) return 0.0;
-
-		// initialize feature values to what would be appropriate for a bulged A
-		bool ade_n1_bonded( false );
-		Real binding_energy( 0.0 ), occupancy_density( 0.0 );
-		Size i( 0 );
-		if ( full_model_info.res_list().has_value( pos ) ) {
-			i = full_model_info.full_to_sub( pos );
+	////////////////////////////////////////////////////////////////////////////////////
+	bool
+	RNA_DMS_Potential::get_features( pose::Pose const & pose,
+																	 Size const i,
+																	 bool & ade_n1_bonded,
+																	 Real & binding_energy,
+																	 Real & occupancy_density )
+	{
 			runtime_assert ( pose.residue( i ).aa() == core::chemical::na_rad );
 
 			// no syn-adenosines (some of these are exposed but not DMS-reactive -- chemical understanding
 			// is currently incomplete.
-			if ( pose.chi( i ) < 0.0 ) return 0.0;
+			if ( pose.chi( i ) < 0.0 ) return false;
 
 			// is the N1 sequestered in a hydrogen bond?
 			bool ade_n1_hbonded  = check_hbonded(  pose, i, " N1 ", true /*acceptor*/ );
@@ -331,7 +332,30 @@ namespace data {
 			Real const oxygen_binding_energy = get_binding_energy( i, oxygen_probe_xyz, *probe_scorefxn_ );
 
 			binding_energy = methyl_binding_energy + oxygen_binding_energy;
-		}
+			return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	Real
+	RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
+															 RNA_Reactivity const & rna_reactivity ) {
+
+		using namespace core::pose::full_model_info;
+
+		runtime_assert( rna_reactivity.type() == DMS );
+		Size const & pos = rna_reactivity.position();
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		if ( full_model_info.full_sequence()[ pos - 1 ] != 'a' ) return 0.0;
+		if ( !full_model_info.working_res().has_value( pos ) )   return 0.0;
+
+		// initialize feature values to what would be appropriate for a bulged A
+		if ( !full_model_info.res_list().has_value( pos ) ) return 0.0;
+
+		Size const i = full_model_info.full_to_sub( pos );
+		bool ade_n1_bonded( false );
+		Real binding_energy( 0.0 ), occupancy_density( 0.0 );
+		bool const success = get_features( pose, i, ade_n1_bonded, binding_energy, occupancy_density );
+		if ( !success ) return 0.0;
 
 		Size const n1_bond_idx = get_bool_idx( ade_n1_bonded, is_bonded_values_ );
 		Size const DMS_idx = get_idx( rna_reactivity.value(), DMS_values_ );
@@ -358,7 +382,7 @@ bool
 RNA_DMS_Potential::check_hbonded( pose::Pose const & pose,
 																	Size const & i /*residue number*/,
 																	std::string const & atom_name,
-																	bool is_acceptor ){
+																	bool is_acceptor ) const {
 
 	using namespace core::scoring::hbonds;
 	// need to know what atoms could be in this nt.
@@ -378,7 +402,7 @@ RNA_DMS_Potential::check_hbonded( pose::Pose const & pose,
 Real
 RNA_DMS_Potential::get_N1_lonepair_donor_angle(  core::conformation::Residue const & acc_rsd,
 																								 core::conformation::Residue const & don_rsd,
-																								 Size const don_h_atm ) {
+																								 Size const don_h_atm ) const {
 	runtime_assert( acc_rsd.has( " N1 " ) );
 	runtime_assert( acc_rsd.aa() == core::chemical::na_rad ); // for now
 	core::Vector u = ( acc_rsd.xyz( " N1 " ) - 0.5 * ( acc_rsd.xyz( " C6 " ) + acc_rsd.xyz( " C2 " ) ) ).normalized();
@@ -391,7 +415,7 @@ RNA_DMS_Potential::get_N1_lonepair_donor_angle(  core::conformation::Residue con
 bool
 RNA_DMS_Potential::check_chbonded( pose::Pose const & pose,
 																	 Size const & i /*residue number*/,
-																	 std::string const & atom_name ){
+																	 std::string const & atom_name ) const {
 
 	static core::scoring::carbon_hbonds::CarbonHBondEnergy const carbon_hbond_energy;
 
@@ -431,7 +455,7 @@ RNA_DMS_Potential::check_chbonded( pose::Pose const & pose,
 
 ///////////////////////////////////////////////////////////////////////////////
 core::Vector
-RNA_DMS_Potential::get_probe_xyz( core::conformation::Residue const & rsd, Distance const probe_dist  ){
+RNA_DMS_Potential::get_probe_xyz( core::conformation::Residue const & rsd, Distance const probe_dist ) const {
 	runtime_assert( rsd.has( " N1 " ) );
 	runtime_assert( rsd.name1() == 'a' ); // for now
 	// define unit vector.
@@ -446,7 +470,7 @@ RNA_DMS_Potential::get_occupancy_densities( utility::vector1< Real > & occupancy
 																						pose::Pose const & pose,
 																						Size const i /*for exclusion*/,
 																						core::Vector const & probe_xyz,
-																						utility::vector1< Distance > const & shells ){
+																						utility::vector1< Distance > const & shells ) const {
 
 	utility::vector1< Size > num_atoms_in_shells( shells.size() - 1, 0 );
 	Real const max_distance = shells[ shells.size() ];
@@ -479,7 +503,7 @@ Real
 RNA_DMS_Potential::get_occupancy_density( pose::Pose const & pose,
 																					Size const i /*for exclusion*/,
 																					core::Vector const & probe_xyz,
-																					std::pair< Distance, Distance > const & shells_pair ){
+																					std::pair< Distance, Distance > const & shells_pair ) const {
 	vector1< Distance > shells = make_vector1( shells_pair.first, shells_pair.second );
 	vector1< Distance > occupancy_densities;
 	get_occupancy_densities( occupancy_densities, pose, i, probe_xyz, shells );
@@ -488,7 +512,7 @@ RNA_DMS_Potential::get_occupancy_density( pose::Pose const & pose,
 
 ///////////////////////////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionOP
-RNA_DMS_Potential::get_probe_scorefxn( bool const soft_rep, bool const just_atr_rep ){
+RNA_DMS_Potential::get_probe_scorefxn( bool const soft_rep, bool const just_atr_rep ) const {
 
 	using namespace core::scoring;
 	using namespace core::scoring::methods;
@@ -561,6 +585,41 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 
 	return binding_energy;
 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TO DO: should interpolate DMS_stats.
+utility::vector1< Real >
+RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, utility::vector1< Real > const & DMS_values */  ){
+
+	runtime_assert( working_pose_ );
+	runtime_assert( working_pose_with_probe_ );
+
+	if ( pose.aa( i ) != chemical::na_rad ){
+		return vector1< Real >( DMS_values_.size(), 0.0 );
+ 	}
+
+	vector1< Real > logL_values;
+	bool ade_n1_bonded( false );
+	Real binding_energy( 0.0 ), occupancy_density( 0.0 );
+	bool const success = get_features( pose, i, ade_n1_bonded, binding_energy, occupancy_density );
+
+	if ( success ) {
+		Size const n1_bond_idx = get_bool_idx( ade_n1_bonded, is_bonded_values_ );
+		Size const occ_idx = get_idx( occupancy_density, occ_values_ );
+		Size const binding_energy_idx = get_idx( binding_energy, binding_energy_values_ );
+		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
+			logL_values.push_back( log( DMS_stats_[ n1_bond_idx ][ occ_idx ][ binding_energy_idx ][ k ]/
+																	p_model_  [ n1_bond_idx ][ occ_idx ][ binding_energy_idx ] ) /*for normalization*/ );
+		}
+	} else {
+		// return generic DMS distribution.
+		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
+			logL_values.push_back( log( p_DMS_[k] ) );
+		}
+	}
+
+	return logL_values;
 }
 
 

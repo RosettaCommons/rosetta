@@ -17,7 +17,7 @@
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <core/scoring/rna/data/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -259,14 +259,14 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		//	scorefxn->show( std::cout, pose );
 
 		// score pose with low res scorefunction -- will determine base pairs
-		vector1< core::scoring::rna::Base_pair > base_pair_list;
+		vector1< core::pose::rna::BasePair > base_pair_list;
 
 		// following makes use of atomic-resolution hbond information -- might be more computationally efficient
 		// to not compute that information -- and may contribute to smoother landscape at low-resolution stage.
 		pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
 
 		for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-			scoring::rna::Base_pair const base_pair = base_pair_list[ n ]; // move this to pose/rna?
+			pose::rna::BasePair const base_pair = base_pair_list[ n ]; // move this to pose/rna?
 			update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 			update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}
@@ -280,19 +280,19 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		RNA_ScoringInfo  const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 		rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() ); // assume this has been filled.
 
-		Energy_base_pair_list const & scored_base_pair_list = rna_filtered_base_base_info.scored_base_pair_list();
-		for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+		pose::rna::EnergyBasePairList const & scored_base_pair_list = rna_filtered_base_base_info.scored_base_pair_list();
+		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 					it != scored_base_pair_list.end(); it ++ ){
-			scoring::rna::Base_pair const base_pair = it->second;
+			pose::rna::BasePair const base_pair = it->second;
 			update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 			update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}
 
-		Energy_base_stack_list const & scored_base_stack_list = rna_filtered_base_base_info.scored_base_stack_list();
+		pose::rna::EnergyBaseStackList const & scored_base_stack_list = rna_filtered_base_base_info.scored_base_stack_list();
 		vector1< bool > is_stacked( pose.total_residue(), false );
-		for ( Energy_base_stack_list::const_iterator it = scored_base_stack_list.begin();
+		for ( pose::rna::EnergyBaseStackList::const_iterator it = scored_base_stack_list.begin();
 					it != scored_base_stack_list.end(); it ++ ){
-			scoring::rna::Base_stack const base_stack = it->second;
+			pose::rna::BaseStack const base_stack = it->second;
 			is_stacked[ base_stack.res1 ] = true;
 			is_stacked[ base_stack.res2 ] = true;
 		}

@@ -96,12 +96,13 @@ get_base_pairing_info( pose::Pose const & pose,
 											 FArray1D <bool> & edge_is_base_pairing ){
 
 	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
 	using namespace core::chemical;
 	using namespace core::conformation;
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	edge_is_base_pairing.dimension( 3 );
 	edge_is_base_pairing = false;
@@ -109,10 +110,10 @@ get_base_pairing_info( pose::Pose const & pose,
 	bool forms_canonical_base_pair( false ), forms_base_pair( false );
 
 	Size k( 0 ), m( 0 );
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 				it != scored_base_pair_list.end(); ++it ){
 
-		Base_pair const base_pair = it->second;
+		BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
@@ -167,6 +168,7 @@ get_base_pairing_list( pose::Pose & pose,
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
 
 	// Need some stuff to figure out which residues are base paired. First score.
 	ScoreFunctionOP scorefxn( new ScoreFunction );
@@ -175,7 +177,7 @@ get_base_pairing_list( pose::Pose & pose,
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	//	bool forms_canonical_base_pair( false );
 
@@ -183,10 +185,10 @@ get_base_pairing_list( pose::Pose & pose,
 
 	std::list < std::pair< Size,Size > > base_pair_list0;
 
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 				it != scored_base_pair_list.end(); ++it ){
 
-		Base_pair const base_pair = it->second;
+		BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
@@ -261,6 +263,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
 	using namespace protocols::farna;
 
 	Size const total_residue = pose.total_residue();
@@ -566,6 +569,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 {
 
 	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
 	using namespace core::scoring;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -575,17 +579,17 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	Size const nres( pose.total_residue() );
 	FArray1D_bool forms_noncanonical_base_pair( nres, false );
 	FArray1D_bool forms_canonical_base_pair( nres, false );
 	FArray1D_int  WC_base_pair_partner( nres, 0 );
 
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 				it != scored_base_pair_list.end(); ++it ){
 
-		Base_pair const base_pair = it->second;
+		BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
@@ -1239,6 +1243,7 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
 	using namespace core::chemical::rna;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -1251,13 +1256,13 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	EnergyBasePairList scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	Size k( 0 ), m( 0 );
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 				it != scored_base_pair_list.end(); ++it ){
 
-		Base_pair const base_pair = it->second;
+		BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;

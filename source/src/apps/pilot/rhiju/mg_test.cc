@@ -222,10 +222,10 @@ scan_magnesium( pose::Pose & pose,
 	using namespace core::scoring;
 	using namespace basic::options;
 
-	rna::RNA_Mg_KnowledgeBasedPotential rna_mg_low_res_potential;
+	scoring::rna::RNA_Mg_KnowledgeBasedPotential rna_mg_low_res_potential;
 	rna_mg_low_res_potential.setup_info_for_mg_calculation( pose );
 
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	scoring::rna::RNA_ScoringInfo const & rna_scoring_info( scoring::rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< utility::vector1< Size > > const
 			atom_numbers_for_mg_calculation( rna_scoring_info.atom_numbers_for_mg_calculation() );
 

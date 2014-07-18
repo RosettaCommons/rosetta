@@ -25,19 +25,19 @@
 //using core::Real;
 
 namespace core {
-namespace scoring {
+namespace pose {
 namespace rna {
 
 /////////////////////////////////////////////////////////////////////
 // Useful type definitions.
 /////////////////////////////////////////////////////////////////////
 
-class Base_pair
+class BasePair
 {
 
  public:
 
-	Base_pair():
+	BasePair():
 		res1( 0 ),
 		res2( 0 ),
 		edge1( 0 ),
@@ -48,7 +48,7 @@ class Base_pair
 	{
 	};
 
-	Base_pair( Size const & res1_input, Size const res2_input,
+	BasePair( Size const & res1_input, Size const res2_input,
 						 Size const & edge1_input, Size const edge2_input,
 						 Size const & orientation_input ):
 		res1( res1_input ),
@@ -83,7 +83,7 @@ class Base_pair
 	}
 
   friend
-    bool operator < ( Base_pair const & lhs, Base_pair const & rhs )
+    bool operator < ( BasePair const & lhs, BasePair const & rhs )
   {
     //There must be a more elegant way to do this...
     if ( lhs.res1 < rhs.res1 ) {
@@ -107,7 +107,7 @@ class Base_pair
   };
 
   friend
-    bool operator == ( Base_pair const & lhs, Base_pair const & rhs )
+    bool operator == ( BasePair const & lhs, BasePair const & rhs )
   {
 		return ( lhs.res1 == rhs.res1 &&
 						lhs.res2 == rhs.res2 &&
@@ -119,19 +119,19 @@ class Base_pair
 
   friend
     std::ostream &
-    operator << ( std::ostream & out, Base_pair const & s ){
+    operator << ( std::ostream & out, BasePair const & s ){
     out << s.res1 << " " << s.res2 << " " << s.edge1 << " " << s.edge2 << " " << s.orientation;
     return out;
   }
 };
 
-typedef std::pair< Real, Base_pair > Energy_base_pair;
-typedef std::list < Energy_base_pair > Energy_base_pair_list;
+typedef std::pair< Real, BasePair > EnergyBasePair;
+typedef std::list < EnergyBasePair > EnergyBasePairList;
 
-class Base_stack{
+class BaseStack{
  public:
 
-	Base_stack():
+	BaseStack():
 		res1( 0 ),
 		res2( 0 ),
 		orientation( 0 ),
@@ -146,7 +146,7 @@ class Base_stack{
   Size which_side;  // 1 = residue 2 is 3' to residue1;  2 = residue 2 is 5' to residue 1
 
   friend
-    bool operator < ( Base_stack const & lhs, Base_stack const & rhs ){
+    bool operator < ( BaseStack const & lhs, BaseStack const & rhs ){
     //There must be a more elegant way to do this...
     if ( lhs.res1 < rhs.res1 ) {
       return true;
@@ -167,7 +167,7 @@ class Base_stack{
 
   friend
     std::ostream &
-    operator << ( std::ostream & out, Base_stack const & s )
+    operator << ( std::ostream & out, BaseStack const & s )
     {
       out << s.res1 << " " << s.res2 << " " <<  s.orientation << " " << s.which_side;
       return out;
@@ -176,11 +176,11 @@ class Base_stack{
 
 };
 
-typedef std::pair< Real, Base_stack > Energy_base_stack;
-typedef std::list < Energy_base_stack > Energy_base_stack_list;
+typedef std::pair< Real, BaseStack > EnergyBaseStack;
+typedef std::list < EnergyBaseStack > EnergyBaseStackList;
 
 } //rna
-} //scoring
+} //pose
 } //core
 
 #endif

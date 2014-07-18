@@ -21,7 +21,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
-#include <protocols/farna/RNA_DataReader.cc> // temporary, for scoring RNA chemical mapping data. Move into core?
+#include <core/io/rna/RNA_DataReader.cc> // temporary, for scoring RNA chemical mapping data. Move into core?
 #include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
@@ -94,7 +94,7 @@ stepwise_monte_carlo()
 
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
-	protocols::farna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn ); // temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
+	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn ); // temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
 
 	// a unit test specific for two helix test case. leave this in here for now.
 	//	test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );

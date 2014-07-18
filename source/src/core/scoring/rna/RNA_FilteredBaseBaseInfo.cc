@@ -15,7 +15,7 @@
 // Unit headers
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
 #include <core/chemical/rna/util.hh>
 
@@ -133,7 +133,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 	ObjexxFCL::FArray2D < Real > raw_base_geometry_orientation_array( raw_base_base_info.base_geometry_orientation_array() );
 
 	//A rigorous list of base pairs, for scoring.
-	Energy_base_pair_list energy_base_pair_list;
+	pose::rna::EnergyBasePairList energy_base_pair_list;
 
 	scored_base_pair_list_.clear();
 
@@ -170,7 +170,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 					Real const total_base_pair_energy =
 						raw_base_pair_array( i, j, k ) + raw_base_pair_array( j, i, found_match );
 
-					Base_pair base_pair;
+					pose::rna::BasePair base_pair;
 					base_pair.res1 = i;
 					base_pair.edge1 = k;
 
@@ -193,10 +193,10 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 
 	//	static bool const scale_axis_stagger_by_xy_score = true;
 
-	for ( Energy_base_pair_list::const_iterator it = energy_base_pair_list.begin();
+	for ( pose::rna::EnergyBasePairList::const_iterator it = energy_base_pair_list.begin();
 				it != energy_base_pair_list.end(); ++it ){
 		Real const energy = it->first;
-		Base_pair const base_pair = it->second;
+		pose::rna::BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const k = base_pair.edge1;
@@ -285,7 +285,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 					 raw_base_stack_array( j, i ) < 0.0 ){
 				if ( rna_verbose_ ) std::cout << "BASE STACK: " << i << " " << j << std::endl;
 
-				Base_stack base_stack;
+				pose::rna::BaseStack base_stack;
 				base_stack.res1 = i;
 				base_stack.res2 = j;
 
@@ -334,10 +334,10 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 		Size const seqpos( rna_data[n].position() );
 
 		// This could be accelerated if needed.
-		for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list_.begin();
+		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list_.begin();
 					it != scored_base_pair_list_.end(); ++it ){
 
-			Base_pair const base_pair = it->second;
+			pose::rna::BasePair const base_pair = it->second;
 
 			Size const i = base_pair.res1;
 			Size const j = base_pair.res2;

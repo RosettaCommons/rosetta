@@ -7,40 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA_BasePairClassifier.hh
-/// @brief
+/// @file core/io/rna/RDAT.fwd.hh
+/// @brief 
 /// @detailed
-///
-/// @author Rhiju Das
+/// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_rna_RNA_BasePairClassifier_hh
-#define INCLUDED_protocols_rna_RNA_BasePairClassifier_hh
+#ifndef INCLUDED_core_scoring_rna_data_RDAT_FWD_HH
+#define INCLUDED_core_scoring_rna_data_RDAT_FWD_HH
 
-#include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-
-#include <utility/vector1.hh>
-
-
-//// C++ headers
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace pose {
+namespace io {
 namespace rna {
-
-void
-classify_base_pairs( core::pose::Pose const & pose, utility::vector1< core::pose::rna::BasePair> & base_pair_list, utility::vector1< bool > & is_bulged  );
-
-core::Size
-get_number_base_stacks(
-	 core::pose::Pose const & pose_input
-);
-
+	
+	class RDAT;
+	typedef utility::pointer::owning_ptr< RDAT > RDATOP;
+	typedef utility::pointer::owning_ptr< RDAT const > RDATCOP;
+	
 } //rna
-} //pose
+} //io
 } //core
 
 #endif

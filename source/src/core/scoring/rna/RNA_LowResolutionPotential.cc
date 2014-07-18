@@ -27,7 +27,7 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>

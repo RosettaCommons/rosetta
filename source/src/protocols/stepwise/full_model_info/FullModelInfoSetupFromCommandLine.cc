@@ -402,7 +402,6 @@ namespace full_model_info {
 		FoldTree f = get_tree( pose, cuts, jump_partners1, jump_partners2 );
 
 		reroot( f, res_list, root_res );
-
 		pose.fold_tree( f );
 
 	}

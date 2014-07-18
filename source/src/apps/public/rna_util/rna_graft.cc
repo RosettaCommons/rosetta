@@ -43,6 +43,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 using namespace core;
@@ -72,7 +73,10 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 OPT_KEY( IntegerVector, superimpose_res )
 OPT_KEY( IntegerVector, graft_res )
 OPT_KEY( IntegerVector, unvirtualize_phosphate_res )
+OPT_KEY( Boolean, graft_backbone_only )
 
+////////////////////////////////////////////////////////////////////////////
+// by default all 5' phosphates are virtualized -- keep some of them in.
 void
 unvirtualize_phosphates( pose::Pose & pose, utility::vector1< Size > const & unvirtualize_phosphate_residues  ){
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
@@ -101,10 +105,7 @@ get_pose_and_numbering( std::string const pdb_file, pose::Pose & pose, utility::
 
 	resnum.clear();
 	PDBInfoOP pdb_info = pose.pdb_info();
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
-		//std::cout << "For residue " << n << ", PDBInfo residue number is: " << pdb_info->number( n ) << std::endl;
-		resnum.push_back( pdb_info->number(n) );
-	}
+	for ( Size n = 1; n <= pose.total_residue(); n++ )		resnum.push_back( pdb_info->number(n) );
 
 }
 
@@ -150,6 +151,7 @@ calculate_res_map( utility::vector1< Size > const & superimpose_resnum,
 
 	return res_map;
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -239,7 +241,8 @@ graft_in_positions( pose::Pose const & pose1,
 										pose::Pose & pose_target,
 										utility::vector1< Size > const & resnum1,
 										utility::vector1< Size > const & resnum_target,
-										utility::vector1< Size > const & resnum_graft ){
+										utility::vector1< Size > const & resnum_graft,
+										bool const graft_backbone_only){
 
 	using namespace core::conformation;
 	using namespace core::id;
@@ -259,7 +262,9 @@ graft_in_positions( pose::Pose const & pose1,
 		for ( Size ii = 1; ii <= rsd_i.natoms(); ii++ ){
 
 			if (rsd_i.is_virtual( ii ) ) continue;
-
+			if ( graft_backbone_only &&
+					 ( ( ii >= rsd_i.first_sidechain_atom() && ii <= rsd_i.nheavyatoms() ) ||
+						 ( ii >= rsd_i.first_sidechain_hydrogen() && ii <= rsd_i.natoms() ) ) ) continue;
 			std::string const & atom_name = rsd_i.atom_name( ii ) ;
 
 			if ( !pose_target.residue( q ).has( atom_name )  ) continue;
@@ -278,7 +283,7 @@ graft_in_positions( pose::Pose const & pose1,
 										utility::vector1< Size > const & resnum1,
 										utility::vector1< Size > const & resnum_target) {
 	utility::vector1< Size > resnum_dummy;
-	graft_in_positions( pose1, pose_target, resnum1, resnum_target, resnum_dummy );
+	graft_in_positions( pose1, pose_target, resnum1, resnum_target, resnum_dummy, false );
 
 }
 
@@ -338,7 +343,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	graft_in_positions( pose1, pose_target, resnum1, resnum_target );
 
 	// Copy in non-virtual atoms from pose2;
-	graft_in_positions( pose2, pose_target, resnum2, resnum_target, graft_resnum );
+	graft_in_positions( pose2, pose_target, resnum2, resnum_target, graft_resnum, option[ graft_backbone_only ]() );
 
 	// kind of ad hoc. let's see if it works.
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose_target );
@@ -422,6 +427,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( superimpose_res, "residues over which to superimpose second pose onto first pose", blank_size_vector );
 	NEW_OPT( graft_res, "residues to graft from second pose", blank_size_vector );
 	NEW_OPT( unvirtualize_phosphate_res, "do not virtualize these phosphate (useful for cdiAMP)", blank_size_vector );
+	NEW_OPT( graft_backbone_only, "only graft backbone from 2nd PDB", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

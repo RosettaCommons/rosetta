@@ -42,7 +42,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/stepwise/sampling/util.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_DataReader.hh>
+#include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
 // C++ headers
@@ -145,7 +145,7 @@ rna_score_test()
 		if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
 	}
 
-	scoring::rna::data::RNA_DataInfoOP rna_data_info_save;
+	core::io::rna::RNA_DataReader rna_data_reader( option[OptionKeys::rna::data_file ]() );
 	core::scoring::rna::data::RNA_ChemicalMappingEnergy rna_chemical_mapping_energy;
 	pose::Pose pose,start_pose;
 
@@ -159,16 +159,16 @@ rna_score_test()
 		i++;
 
 		protocols::farna::RNA_StructureParameters parameters;
-                if ( option[params_file].user() ) {
-                        parameters.initialize(
-                                        pose, option[params_file],
-                                        basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-                                        false /*ignore_secstruct*/
-                        );
-                        // parameters.set_suppress_bp_constraint( 1.0 );
-                        parameters.setup_base_pair_constraints( pose );
-                        //rna_minimizer.set_allow_insert( parameters.allow_insert() );
-                }
+		if ( option[params_file].user() ) {
+			parameters.initialize(
+														pose, option[params_file],
+														basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+														false /*ignore_secstruct*/
+														);
+			// parameters.set_suppress_bp_constraint( 1.0 );
+			parameters.setup_base_pair_constraints( pose );
+			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
+		}
 
 		if ( !option[ in::file::silent ].user() ) cleanup( pose );
 
@@ -194,7 +194,7 @@ rna_score_test()
 		//if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 		// do it
-		if ( ! option[ score::just_calc_rmsd]() && ! option[ OptionKeys::rna::data_file ].user() ){
+		if ( ! option[ score::just_calc_rmsd]() && !rna_data_reader.has_reactivities() ){
 			(*scorefxn)( pose );
 		}
 
@@ -224,12 +224,8 @@ rna_score_test()
 		}
 
 		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
-		if ( option[ OptionKeys::rna::data_file ].user() ) { // clumsy to read this in from scratch each time.
-			if ( i == 1 ){
-				rna_data_info_save = protocols::farna::get_rna_data_info( pose, option[ OptionKeys::rna::data_file ] ).clone();
-			} else {
-				scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info() = *rna_data_info_save;
-			}
+		if ( rna_data_reader.has_reactivities() ){
+			rna_data_reader.fill_rna_data_info( pose );
 			pose.update_residue_neighbors();
 			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy.calculate_energy( pose, false /*use_low_res*/ ) );
 			s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy.calculate_energy( pose , true /*use_low_res*/ ) );
@@ -282,7 +278,7 @@ main( int argc, char * argv [] )
 				option.add_relevant( in::file::input_res );
 				option.add_relevant( full_model::cutpoint_open );
 				option.add_relevant( score::just_calc_rmsd );
-				option.add_relevant( rna::data_file );
+				option.add_relevant( OptionKeys::rna::data_file );
 				NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
 				NEW_OPT( params_file, "Input file for pairings", "" );
 

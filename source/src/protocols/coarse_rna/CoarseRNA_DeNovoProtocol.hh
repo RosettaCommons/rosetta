@@ -28,7 +28,7 @@
 #include <protocols/farna/MultipleDomainMover.fwd.hh>
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/RNA_StructureParameters.fwd.hh>
-#include <protocols/farna/RNA_DataReader.fwd.hh>
+#include <core/io/rna/RNA_DataReader.fwd.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -201,7 +201,7 @@ private:
 
 	protocols::farna::RNA_FragmentMoverOP frag_mover_;
 	protocols::farna::RNA_StructureParametersOP rna_structure_parameters_;
-	protocols::farna::RNA_DataReaderOP rna_data_reader_;
+	core::io::rna::RNA_DataReaderOP rna_data_reader_;
 	protocols::farna::RNA_ChunkLibraryOP rna_chunk_library_;
 	protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer_;
 	protocols::farna::MultipleDomainMoverOP multiple_domain_mover_;

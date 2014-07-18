@@ -169,6 +169,24 @@ string_split( std::string const & in, char splitchar /* = ' ' */ )
 	return parts;
 }
 
+/// @details split to vector1< std::string > using arbitrary split character, but no empty strings (closer to python string::split)
+utility::vector1< std::string >
+string_split_simple( std::string const & in, char splitchar /* = ' ' */ )
+{
+	utility::vector1< std::string > parts;
+	size_t i(0), j(0);
+	while ( j != std::string::npos ) {
+		j = in.find( splitchar, i );
+		std::string const part = in.substr(i,j-i);
+		if ( part.size() > 0 ) {
+			parts.push_back( part );
+		}
+		i = j+1;
+		}
+	return parts;
+}
+
+
 //overloaded to split on any of an array of chars, useful to split on any whitespace
 utility::vector1< std::string >
 string_split_multi_delim( std::string const & in, std::string splitchars )

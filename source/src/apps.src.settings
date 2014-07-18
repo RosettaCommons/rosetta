@@ -182,6 +182,7 @@ sources = {
 		"make_exemplar",
 	],
     "public/rna_util": [
+	    "rna_predict_chem_map",
 	    "rna_thread",
 	    "rna_suitename",
 	    "rna_features",

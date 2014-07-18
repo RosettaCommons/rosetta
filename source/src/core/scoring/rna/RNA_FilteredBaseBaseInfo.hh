@@ -21,7 +21,7 @@
 
 // Project headers
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
 
 #include <basic/datacache/CacheableData.hh>
@@ -112,8 +112,8 @@ public:
 	Real const & basepair_axis_stagger_scaling() const { return basepair_axis_stagger_scaling_; }
 	Real const & basestack_axis_scaling() const { return basestack_axis_scaling_; }
 
-	Energy_base_pair_list const scored_base_pair_list() const{ return scored_base_pair_list_; }
-	Energy_base_stack_list const scored_base_stack_list() const{ return scored_base_stack_list_; }
+	pose::rna::EnergyBasePairList const scored_base_pair_list() const{ return scored_base_pair_list_; }
+	pose::rna::EnergyBaseStackList const scored_base_stack_list() const{ return scored_base_stack_list_; }
 
 	Real get_data_score( rna::data::RNA_DataInfo const & rna_data_info ) const;
 
@@ -137,8 +137,8 @@ private:
   ObjexxFCL::FArray2D < Real > filtered_base_stack_array_;
   ObjexxFCL::FArray2D < Real > filtered_base_stack_axis_array_;
 
-	Energy_base_pair_list  scored_base_pair_list_;
-	Energy_base_stack_list scored_base_stack_list_;
+	pose::rna::EnergyBasePairList  scored_base_pair_list_;
+	pose::rna::EnergyBaseStackList scored_base_stack_list_;
 
 	Real total_base_pair_score_;
 	Real total_base_axis_score_;

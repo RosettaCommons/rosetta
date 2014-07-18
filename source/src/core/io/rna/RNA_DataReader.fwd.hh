@@ -16,13 +16,15 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace farna {
+namespace core {
+namespace io {
+namespace rna {
 
 	class RNA_DataReader;
 	typedef utility::pointer::owning_ptr< RNA_DataReader > RNA_DataReaderOP;
 
-} //farna
-} //protocols
+} //rna
+} //io
+} //core
 
 #endif

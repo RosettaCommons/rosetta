@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/farna/RNA_DataReader.fwd.hh>
+#include <core/io/rna/RNA_DataReader.fwd.hh>
 #include <protocols/farna/RNA_Fragments.fwd.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_LoopCloser.fwd.hh>
@@ -367,7 +367,7 @@ private:
 	std::string jump_library_file_;
 	// This object will actually hold the jump library...
 	RNA_StructureParametersOP rna_structure_parameters_;
-	RNA_DataReaderOP rna_data_reader_;
+	core::io::rna::RNA_DataReaderOP rna_data_reader_;
 
 	bool output_lores_silent_file_;
 

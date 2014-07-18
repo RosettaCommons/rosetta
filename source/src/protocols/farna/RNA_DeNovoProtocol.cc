@@ -19,8 +19,8 @@
 // Package headers
 #include <protocols/toolbox/AllowInsert.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <protocols/farna/RNA_DataReader.hh>
-#include <protocols/farna/RNA_DataReader.fwd.hh>
+#include <core/io/rna/RNA_DataReader.hh>
+#include <core/io/rna/RNA_DataReader.fwd.hh>
 #include <protocols/farna/FullAtomRNA_Fragments.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_LoopCloser.fwd.hh>
@@ -65,7 +65,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -533,8 +533,8 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_structure_parameters_->set_suppress_bp_constraint( suppress_bp_constraint_ );
 
 	// reads in any data on, e.g., exposure of different bases --> saves inside the pose's rna_data_info.
-	rna_data_reader_ = new RNA_DataReader;
-	rna_data_reader_->initialize( pose, rna_data_file_ );
+	rna_data_reader_ = new core::io::rna::RNA_DataReader( rna_data_file_ );
+	rna_data_reader_->fill_rna_data_info( pose );
 
 	all_rna_fragments_ = new FullAtomRNA_Fragments( all_rna_fragments_file_ );
 
@@ -768,7 +768,7 @@ RNA_DeNovoProtocol::final_score( core::pose::Pose & pose ){
 		final_scorefxn_->set_weight( core::scoring::rna_chem_map, 1.0 );
 	}
 	( *final_scorefxn_ )( pose );
-	//	final_scorefxn_->show( pose );
+	if ( final_scorefxn_->has_nonzero_weight( core::scoring::rna_chem_map ) )	final_scorefxn_->show( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1092,6 +1092,7 @@ void
 RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s ) const
 {
 	using namespace scoring::rna;
+	using namespace pose::rna;
 	using namespace conformation;
 
 	//	pose::Pose pose = pose_input;
@@ -1100,19 +1101,19 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 
 	//	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	//	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	//	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
+	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	utility::vector1< bool > is_bulged;
 	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
 
 	Size N_WC( 0 ), N_NWC( 0 );
 
-	//	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+	//	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 	//				it != scored_base_pair_list.end(); ++it ){
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 
-		Base_pair const base_pair = base_pair_list[ n ];
+		BasePair const base_pair = base_pair_list[ n ];
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
@@ -1143,16 +1144,16 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 
 /////////////////////////////////////////////////////////////////////
 bool
-check_in_base_pair_list( scoring::rna::Base_pair const & base_pair /*from native*/,
-												 utility::vector1< core::scoring::rna::Base_pair > const & base_pair_list /*for decoy*/)
+check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
+												 utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
-	using namespace scoring::rna;
+	using namespace pose::rna;
 
 	bool in_list( false );
 
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 
-		Base_pair const base_pair2 = base_pair_list[ n ];
+		BasePair const base_pair2 = base_pair_list[ n ];
 
 		if ( ( base_pair.res1 == base_pair2.res1 && base_pair.res2 == base_pair2.res2 )  &&
 				 ( base_pair.edge1 == base_pair2.edge1 && base_pair.edge2 == base_pair2.edge2 )  &&
@@ -1186,11 +1187,11 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 	pose::Pose native_pose = *get_native_pose();
 
-	utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
+	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	utility::vector1< bool > is_bulged;
 	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
 
-	utility::vector1< core::scoring::rna::Base_pair > base_pair_list_native;
+	utility::vector1< core::pose::rna::BasePair > base_pair_list_native;
 	utility::vector1< bool > is_bulged_native;
 	core::pose::rna::classify_base_pairs( native_pose, base_pair_list_native, is_bulged_native );
 
@@ -1202,11 +1203,11 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 	//	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	//	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	//	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	//	RNA_ScoringInfo const & rna_scoring_info_native( rna_scoring_info( native_pose ) );
 	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info_native( rna_scoring_info_native.rna_filtered_base_base_info() );
-	//	Energy_base_pair_list const & scored_base_pair_list_native( rna_filtered_base_base_info_native.scored_base_pair_list() );
+	//	EnergyBasePairList const & scored_base_pair_list_native( rna_filtered_base_base_info_native.scored_base_pair_list() );
 
 	Size N_WC_NATIVE( 0 ), N_NWC_NATIVE( 0 );
 	Size N_WC( 0 ), N_NWC( 0 );
@@ -1218,7 +1219,7 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 		//		Real const SCORE_CUTOFF( -1.0 );
 		//		if (score > SCORE_CUTOFF) continue;
 
-		core::scoring::rna::Base_pair const base_pair = base_pair_list_native[ n ];
+		core::pose::rna::BasePair const base_pair = base_pair_list_native[ n ];
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;

@@ -33,6 +33,10 @@ sources = {
 		"ScoreStructJSON",
 		"ScoreStructText",
 	],
+	"core/io/rna": [
+		"RDAT",
+		"RNA_DataReader",
+	],
 	"core/io/sequence_comparation": [
 		"DesignContrast",
 	],

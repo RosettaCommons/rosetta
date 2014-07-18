@@ -383,7 +383,7 @@ GenBornPotential::build_placeholders(
 				rsd_info->scale_factor ( dummy_index ) = dummy_scale;
 
 				// debug placement of dummy atom
-				assert( std::abs( rsd->xyz("CA").distance( rsd->xyz( dummy_index )) - dummy_distance ) < 1e-2 );
+				runtime_assert( std::abs( rsd->xyz("CA").distance( rsd->xyz( dummy_index )) - dummy_distance ) < 1e-2 );
 				gb_info.set_placeholder( i, rsd, rsd_info );
 
 			} else {

@@ -25,7 +25,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
@@ -557,7 +557,7 @@ bases_are_coplanar(
 void
 classify_base_pairs(
     core::pose::Pose const & pose_input,
-		utility::vector1< core::scoring::rna::Base_pair> & base_pair_list,
+		utility::vector1< core::pose::rna::BasePair> & base_pair_list,
 		utility::vector1< bool > & is_bulged
 )
 {
@@ -613,7 +613,7 @@ classify_base_pairs(
 
 
 			//			if ( n_i > 0 && n_j > 0 ) {
-			base_pair_list.push_back( core::scoring::rna::Base_pair( i, j, edge_classification_i, edge_classification_j , orientation ) );
+			base_pair_list.push_back( core::pose::rna::BasePair( i, j, edge_classification_i, edge_classification_j , orientation ) );
 			if ( false ) std::cout << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << core::chemical::rna::get_edge_from_num( edge_classification_i ) << " " << core::chemical::rna::get_edge_from_num( edge_classification_j ) << " " << orientation << std::endl;
 
 				//			}
@@ -650,7 +650,7 @@ get_number_base_stacks(
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_stack_list const & scored_base_stack_list( rna_filtered_base_base_info.scored_base_stack_list() );
+	EnergyBaseStackList const & scored_base_stack_list( rna_filtered_base_base_info.scored_base_stack_list() );
 
 	return scored_base_stack_list.size();
 

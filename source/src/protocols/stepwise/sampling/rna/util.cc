@@ -22,7 +22,7 @@
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/rotamer_sampler/rigid_body/util.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
 

@@ -614,7 +614,7 @@ Conformation::insert_residue_by_bond(
     runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
     //Size const new_size( old_size+1 );
-    
+
 	// first renumber things
 	utility::vector1< Size > old2new( old_size, 0 );
 	for ( Size i=1; i<= old_size; ++i ) {
@@ -622,7 +622,7 @@ Conformation::insert_residue_by_bond(
 		else old2new[i] = i+1;
 	}
 
-    
+
     Residue const & anchor_rsd( residue_( anchor_pos ) ); // no call to residue(anchor_pos)
 
     ResidueOP ideal_geometry_rsd;
@@ -630,7 +630,7 @@ Conformation::insert_residue_by_bond(
 		// get the geometries of the new bond
 		chemical::ResidueConnection new_rsd_connection;
 		chemical::ResidueConnection anchor_rsd_connection;
-        
+
         core::Size anchor_atomid(anchor_rsd.type().atom_index(anchor_atom));
         core::Size anchor_connecting_id = anchor_rsd.type().residue_connection_id_for_atom(anchor_atomid);
 
@@ -640,10 +640,10 @@ Conformation::insert_residue_by_bond(
         // using a non-polymer residue-residue connection
         new_rsd_connection    = new_rsd_in.residue_connection(   root_connecting_id );
         anchor_rsd_connection = anchor_rsd.residue_connection( anchor_connecting_id );
-        
+
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd_in.clone();
-        
+
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( anchor_pos ); // safety
 		orient_residue_for_ideal_bond( *ideal_geometry_rsd, new_rsd_connection, anchor_rsd, anchor_rsd_connection, *this, lookup_bond_length );
 
@@ -663,11 +663,11 @@ Conformation::insert_residue_by_bond(
 
 
     fold_tree_->insert_residue_by_chemical_bond( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
-    
+
     insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
-    
+
     residue_torsions_need_updating_ = true;
-    
+
     assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
     notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
@@ -1618,7 +1618,7 @@ Conformation::update_noncanonical_connection(
 {
     if ( lower_seqpos < 1 || lower_seqpos > size() ) return;
     if ( upper_seqpos < 1 || upper_seqpos > size() ) return;
-    
+
     set_noncanonical_connection( lower_seqpos, lr_conn_id, upper_seqpos, ur_conn_id );
 }
 
@@ -1877,12 +1877,12 @@ Conformation::detect_disulfides()
 			} else {
 				da1 = "SG";
 			}
-			
+
 			if ( distance_atom == "SG" && (jj_res.type().name3() == "C26" || jj_res.type().name3() == "HCD")) {
 				da2 = "SD";
 			} else {
 				da2 = "SG";
-			} 
+			}
 			Distance dist = ii_res.atom( ii_res.atom_index( da1 ) ).xyz().distance(
 				jj_res.atom( jj_res.atom_index( da2 )).xyz() );
 			if ( best_neighbor == 0 || dist < best_match ) {
@@ -1933,8 +1933,8 @@ Conformation::detect_disulfides()
 			}
 			//TR << "current variant for " << ii_resid << " " << ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
 			//TR << "current variant for " << best_neighbor << " " << ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
-			
-			bool success_at_ii;
+
+			bool success_at_ii( false );
 			if (ii_res.type().name3() == "CYS") {
 				success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this ) && residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
 				if ( success_at_ii ) {
@@ -1952,7 +1952,7 @@ Conformation::detect_disulfides()
 					TR.Error << "ERROR: unable to create residue type HCD for disulfide at resid " << ii_resid << std::endl;
 				}
 			}
-            
+
 			bool success_at_best_neighbor;
 			if (residue ( best_neighbor ).type().name3() == "CYS") {
 				success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this ) && residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
@@ -2898,7 +2898,7 @@ Conformation::append_residue(
 			// must be a chemical bond since the criteria for a polymer connection are not met
 			TR << "appending residue by a chemical bond in the foldtree: " << seqpos << ' ' <<
 				new_rsd.name() << " anchor: " << anchor_id << " root: " << root_atom <<  std::endl;
-            
+
 			fold_tree_->append_residue_by_chemical_bond( anchor_id.rsd(), anchor_id.atom(), root_atom );
 		} else {
 			fold_tree_->append_residue( attach_by_jump, anchor_id.rsd(), anchor_id.atom(), root_atom );
@@ -3168,7 +3168,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 		//Check whether the four atoms are a valid DOF id:
 		if(atom_tree_->torsion_angle_dof_id(id1,id2,id3,id4, true).valid()) {
 			//printf("Torsion angle %lu-%s %lu-%s %lu-%s %lu-%s is valid.\n",
-			//	id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(), 
+			//	id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(),
 			//	id2.rsd(), residue_(id2.rsd()).atom_name(id2.atomno()).c_str(),
 			//	id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
 			//	id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
@@ -3176,7 +3176,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 			return degrees( atom_tree_->torsion_angle( id1, id2, id3, id4 ) );
 		} else { //If the torsion is not in the atom tree, it might still be a valid torsion angle (e.g. an C-terminus-to-N-terminus peptide bond).
 			//printf("Torsion angle %lu-%s %lu-%s %lu-%s %lu-%s is NOT valid.\n",
-			//	id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(), 
+			//	id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(),
 			//	id2.rsd(), residue_(id2.rsd()).atom_name(id2.atomno()).c_str(),
 			//	id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
 			//	id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
@@ -3557,7 +3557,7 @@ bool Conformation::atoms_are_bonded(
 		//Get the list of connection ids in residue 1 that connect to residue 2:
 		utility::vector1< core::Size > connlist = residue_(id1.rsd()).connections_to_residue(id2.rsd());
 
-		//Loop through these, and check each for a connection between the atom pair in question. 
+		//Loop through these, and check each for a connection between the atom pair in question.
 		for(core::Size i=1, imax=connlist.size(); i<=imax; ++i) {
 			//Does the current connection id in residue 1 correspond to the correct atom index in residue 1?:
 			if(residue_(id1.rsd()).residue_connect_atom_index(connlist[i]) != id1.atomno() ) continue;
@@ -3565,7 +3565,7 @@ bool Conformation::atoms_are_bonded(
 			assert(residue_(id1.rsd()).connected_residue_at_resconn(connlist[i]) == id2.rsd() );
 			//Does the current connection id in residue 1 connect to a residue id in residue 2 with the correct atom id?:
 			if(   residue_(id2.rsd()).residue_connect_atom_index( residue_(id1.rsd()).residue_connection_conn_id( connlist[i]) ) == id2.atomno() ) return true;
-		} 
+		}
 	}
 	return false;
 }

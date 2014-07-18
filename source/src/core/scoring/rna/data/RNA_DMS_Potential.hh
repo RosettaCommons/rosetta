@@ -58,37 +58,43 @@ namespace data {
 		Real
 		get_N1_lonepair_donor_angle(  core::conformation::Residue const & acc_rsd,
 																	core::conformation::Residue const & don_rsd,
-																	Size const don_h_atm );
+																	Size const don_h_atm ) const;
 
 		bool
 		check_hbonded( pose::Pose const & pose,
 									 Size const & i /*residue number*/,
 									 std::string const & atom_name,
-									 bool is_acceptor );
+									 bool is_acceptor ) const;
 
 		bool
 		check_chbonded( pose::Pose const & pose,
 										Size const & i /*residue number*/,
-										std::string const & atom_name );
+										std::string const & atom_name ) const;
 
 		core::Vector
-		get_probe_xyz( core::conformation::Residue const & rsd, Distance const probe_dist  );
+		get_probe_xyz( core::conformation::Residue const & rsd, Distance const probe_dist  ) const;
 
 		core::scoring::ScoreFunctionOP
-		get_probe_scorefxn( bool const soft_rep, bool const just_atr_rep );
+		get_probe_scorefxn( bool const soft_rep, bool const just_atr_rep ) const;
 
 		void
 		get_occupancy_densities( utility::vector1< Real > & occupancy_densities,
 														 pose::Pose const & pose,
 														 Size const i /*for exclusion*/,
 														 core::Vector const & probe_xyz,
-														 utility::vector1< Distance > const & shells );
+														 utility::vector1< Distance > const & shells ) const;
 
 		Real
 		get_occupancy_density( pose::Pose const & pose,
 													 Size const i /*for exclusion*/,
 													 core::Vector const & probe_xyz,
-													 std::pair< Distance, Distance > const & shells );
+													 std::pair< Distance, Distance > const & shells ) const;
+
+		utility::vector1< Real >
+		get_logL_values( pose::Pose const & pose, Size const i /*, utility::vector1< Real > const & DMS_values */  );
+
+		utility::vector1< Real > const &
+		DMS_values() const { return DMS_values_; }
 
 	private:
 
@@ -99,7 +105,14 @@ namespace data {
 		read_DMS_stats_file( std::string const & potential_file );
 
 		void
-		figure_out_potential( utility::vector1< utility::vector1< utility::vector1< utility::vector1< core::Real > > > > & all_DMS_vals );
+		figure_out_potential();
+
+		bool
+		get_features( pose::Pose const & pose,
+									Size const i,
+									bool & ade_n1_bonded,
+									Real & binding_energy,
+									Real & occupancy_density );
 
 		void
 		add_probe_to_pose( pose::Pose & pose );
@@ -115,12 +128,21 @@ namespace data {
 		utility::vector1< bool > is_bonded_values_;
 		utility::vector1< Real > occ_values_, binding_energy_values_, DMS_values_;
 
+		// useful stats to hold on to.
+		utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > DMS_stats_;
+		// 'model' = (is_bonded, occ, binding_energy).
+		utility::vector1< utility::vector1< utility::vector1< Real > > > p_model_;
+		utility::vector1< Real > p_DMS_;
+
+		// Briefly, DMS_potential = -kT log( p / ( p_DMS  p_model ) );
 		// this is ridiculous -- there should be a universal grid object in Rosetta -- but will do the job for now:
 		utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > DMS_potential_;
 		utility::vector1< utility::vector1< Real > > DMS_potential_is_bonded_;
 		utility::vector1< utility::vector1< Real > > DMS_potential_occ_;
 		utility::vector1< utility::vector1< Real > > DMS_potential_binding_energy_;
 
+		// these are a bit silly -- currently using a very slow computation of binding energy
+		// of a 'mock' DMS molecule, based on virtualizing residues, scoring poses, etc.
 		core::pose::PoseOP working_pose_, working_pose_with_probe_;
 		hbonds::HBondSetOP hbond_set_;
 		core::scoring::ScoreFunctionOP probe_scorefxn_;

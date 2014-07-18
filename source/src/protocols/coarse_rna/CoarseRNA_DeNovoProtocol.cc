@@ -28,7 +28,7 @@
 #include <protocols/farna/RNA_FragmentMover.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_DataReader.hh>
+#include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 #include <core/scoring/rms_util.hh>
@@ -115,7 +115,6 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 		jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
 		lores_scorefxn_( "farna/coarse_rna.wts" ),
 		rna_structure_parameters_( new protocols::farna::RNA_StructureParameters ),
-		rna_data_reader_( new protocols::farna::RNA_DataReader ),
 		rna_loop_closer_( new protocols::coarse_rna::CoarseRNA_LoopCloser ),
 		close_loops_( false ),
 		choose_best_solution_( false ),
@@ -154,7 +153,8 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
-	rna_data_reader_->initialize( pose, rna_data_file_ );
+	rna_data_reader_ = new core::io::rna::RNA_DataReader( rna_data_file_ );
+	rna_data_reader_->fill_rna_data_info( pose ); // this seems repeated below? get rid of one instance?
 
 	if( input_res_.size() > 0 )	rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
 	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
@@ -169,7 +169,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	protocols::farna::RNA_FragmentsOP rna_fragments = new CoarseRNA_Fragments( all_rna_fragments_file_ );
 	frag_mover_ = new protocols::farna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() );
 
-	rna_data_reader_->initialize( pose, rna_data_file_ );
+	rna_data_reader_->fill_rna_data_info( pose );
 	initialize_constraints( pose );
 
 	// "force_ideal_chainbreak" means you can't change angles and dists at cutpoints.

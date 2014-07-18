@@ -21,7 +21,6 @@ sources = {
 		"FullAtomRNA_Fragments",
 		"MultipleDomainMover",
 		"RNA_ChunkLibrary",
-		"RNA_DataReader",
 		"RNA_DeNovoProtocol",
 		"RNA_FragmentMover",
 		"RNA_Fragments",

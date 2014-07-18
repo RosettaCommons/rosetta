@@ -112,12 +112,12 @@ SilentStructFactory::get_silent_struct( std::string const & type_name )
 		string msg("SilentStructFactory::get_instance()->get_silent_struct:  ");
 		msg += type_name + " does not name a known SilentStructType --> " +
 			"check spelling or register new SilentStruct type in SilentStructFactory!";
-
 		msg += "known types are:\n";
 		vector1< string > types = get_ss_names();
 		for ( vector1< string >::const_iterator it = types.begin(), end = types.end(); it != end; ++it ) {
 			msg += *it + "\n";
 		}
+		msg += "If you were using binary_rna, switch to binary\n";
 
 		utility_exit_with_message( msg );
 	}

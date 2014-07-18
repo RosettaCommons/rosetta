@@ -22,7 +22,7 @@
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/rotamer_sampler/rigid_body/EulerAngles.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
