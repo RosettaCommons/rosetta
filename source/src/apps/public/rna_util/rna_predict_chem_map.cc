@@ -217,7 +217,7 @@ predict_chem_map_test()
 	Size count( 0 );
 	std::string outfile;
 	pose::Pose pose;
-	Size total_residues( 0 );
+	//Size total_residues( 0 );
 
 	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 

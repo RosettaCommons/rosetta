@@ -527,8 +527,8 @@ namespace rna {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	std::string
 	RDAT::remove_tag( std::string & line, std::string const tag ) const {
-		char delim( '\t' );
-		if ( line.find( '\t' ) == std::string::npos )  delim = ' ';
+		//char delim( '\t' );
+		//if ( line.find( '\t' ) == std::string::npos )  delim = ' ';
 
 		std::string const tag_with_colon = tag + ":";
 		if ( line.find( tag_with_colon ) != std::string::npos ) {
