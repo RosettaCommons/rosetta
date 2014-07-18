@@ -37,89 +37,9 @@
 ///				@ task 4-4: Write total size of sandwich
 ///		@ task 5: Write resfiles automatically
 
-//Core
-#include <core/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh> // for dssp application
-#include <core/pose/PDBInfo.hh> // maybe for PDBInfoCOP
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
-#include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "get_score_function" ?
-
-//External
-#include <boost/uuid/uuid.hpp>
-
 //Devel
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
-
-//Utility and basic
-#include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <numeric/xyz.functions.hh> // for torsion calculations
-#include <utility/vector1.hh> // for utility::vector1<Column> primary_key_columns;
-
-//for vector
-#include <numeric/xyzVector.hh>
-#include <core/id/NamedAtomID.hh>
-
-//C library
-#include <math.h> // for round, floor, ceil, trunc, sqrt
-
-//External Headers
-#include <cppdb/frontend.h>
-
-//Basic rosetta
-#include <basic/Tracer.hh>
-#include <basic/options/util.hh>
-#include <basic/options/keys/strand_assembly.OptionKeys.gen.hh>
-#include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
-#include <basic/database/schema_generator/Column.hh>
-#include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-
-#include <utility/numbers.hh>
-
-// basic c++
-#include <algorithm>	// for avg,min,max
-#include <fstream>
-#include <iostream>
-#include <cmath>	// for std::abs				// reference:	http://www.cplusplus.com/reference/cmath/abs/
-
-#include <numeric>
-//#include <stdio.h>     //for remove( ) and rename( )
-#include <stdlib.h> // for abs()
-#include <vector>
-
-template <typename T, size_t N> const T* mybegin(const T (&a)[N]) { return a; }
-template <typename T, size_t N> const T* myend  (const T (&a)[N]) { return a+N; }
-// reference:	http://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector-c
-
-
-// exception handling
-#include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
-
-#include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
-
-//DSSP
-#include <core/scoring/dssp/Dssp.hh>
-
-// for parse_my_tag
-#include <basic/datacache/DataMap.hh>
-
-#include <utility/numbers.hh>
-
-
-#if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
-#endif
-
-
+#include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
 
 static basic::Tracer TR("protocols.features.strand_assembly.SandwichFeatures");
 
@@ -471,8 +391,14 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column topology_candidate	("topology_candidate",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 		// "fnIII" or "not_fnIII" or "not_known_topology"
 
+	Column min_dis_between_sheets_by_all_res	("min_dis_between_sheets_by_all_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+		// all residues of not only edge strands, but all strands
+
 	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+		// central residues of not only edge strands, but all strands
+
 	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+		// central residues of not only edge strands, but all strands
 
 	Column shortest_dis_between_facing_aro_in_sw	("shortest_dis_between_facing_aro_in_sw",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
@@ -631,6 +557,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(multimer_is_suspected);
 	sw_by_components.add_column(avg_b_factor_CB_at_each_component);
 	sw_by_components.add_column(topology_candidate);
+	sw_by_components.add_column(min_dis_between_sheets_by_all_res);
 	sw_by_components.add_column(min_dis_between_sheets_by_cen_res);
 	sw_by_components.add_column(avg_dis_between_sheets_by_cen_res);
 	sw_by_components.add_column(shortest_dis_between_facing_aro_in_sw);
@@ -8497,7 +8424,7 @@ SandwichFeatures::report_features(
 			{
 				continue; // i
 			}
-			Real lowest_avg_dis_between_sheets = 9999; //temp value
+			Real minimum_avg_dis_between_sheets = 9999; //temp value
 			Real avg_dis_between_sheets;
 
 			// <begin> identify sheet_j that_will_be_used_for_pairing_with_sheet_i to be a sandwich
@@ -8588,9 +8515,9 @@ SandwichFeatures::report_features(
 					continue; // continue j sheet loop
 				}
 
-				if (lowest_avg_dis_between_sheets > avg_dis_between_sheets)
+				if (minimum_avg_dis_between_sheets > avg_dis_between_sheets)
 				{
-					lowest_avg_dis_between_sheets = avg_dis_between_sheets;
+					minimum_avg_dis_between_sheets = avg_dis_between_sheets;
 
 					// <begin> check_strand_too_closeness
 						bool these_2_sheets_are_too_close = false; // temporary 'false' designation
@@ -9695,26 +9622,19 @@ SandwichFeatures::report_features(
 		// <end> write rama (ramachandran preferences) of residue to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
 
 
+
 		// <begin> write AA_distribution_without_direction to a file
 		if (write_loop_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
 		{
-			Size tag_len = tag.length();
-			string pdb_file_name = tag.substr(0, tag_len-5);
-			string AA_dis_file_name = pdb_file_name + "_AA_distribution_of_loops_sorted_alphabetically.txt";
-			ofstream AA_dis_file;
-
-			AA_dis_file.open(AA_dis_file_name.c_str());
-			utility::vector1<Size> vector_of_hairpin_AA = get_vector_loop_AA_distribution (struct_id,	db_session, "hairpin");
-			utility::vector1<Size> vector_of_inter_sheet_loop_AA = get_vector_loop_AA_distribution (struct_id,	db_session, "loop_connecting_two_sheets");
-
-			AA_dis_file << "hairpin_AA	inter_sheet_loop_AA" << endl;
-			for (Size i =1; i<=(vector_of_hairpin_AA.size()); i++)
-			{
-				AA_dis_file << vector_of_hairpin_AA[i] << "	" << vector_of_inter_sheet_loop_AA[i] << endl;
-			}
-			AA_dis_file.close();
+			write_AA_distribution_without_direction_to_a_file(
+				tag,
+				struct_id,
+				db_session);
+			// this function is defined in	WriteToFileFromSandwichFeatures.cc
 		}
 		// <end> write AA_distribution_without_direction to a file
+
+
 
 
 		//// <begin> report number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
@@ -9758,6 +9678,7 @@ SandwichFeatures::report_features(
 
 		// <begin> write resfile automatically
 		if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
+		// (07/10/2014) This automatic resfile generation seems useful only for design with ramping repulsions, for PackRotamersMover & OffRotamerPack, this kind of resfile seems not needed.
 		{
 			Size tag_len = tag.length();
 			string pdb_file_name = tag.substr(0, tag_len-5);

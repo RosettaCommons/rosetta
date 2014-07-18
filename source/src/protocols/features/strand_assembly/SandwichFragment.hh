@@ -63,7 +63,6 @@ public:
 	//This really shouldn't exist, but boost uses it for serialization (I couldn't figure out the way around this).
 	//Either way, start_ and end_ are read-only members, so a Fragment assembled in this way won't be very useful....
 	SandwichFragment();
-
 	~SandwichFragment();
 
 	std::string get_pdb_source() const;

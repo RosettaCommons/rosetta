@@ -91,53 +91,68 @@ end_(end),
 pdb_source_("")
 {}
 
-SandwichFragment::~SandwichFragment(){}
+SandwichFragment::~SandwichFragment()
+{}
 
-core::Size SandwichFragment::get_strand_id() const
-{
-	return strand_id_;
-}
 
-core::Size SandwichFragment::get_sheet_id() const
-{
-	return sheet_id_;
-}
-
-core::Size SandwichFragment::get_sw_can_by_sh_id() const
-{
-	return sw_can_by_sh_id_;
-}
-
-core::Size SandwichFragment::get_start() const
+core::Size
+SandwichFragment::get_start() const
 {
 	return start_;
 }
 
-core::Size SandwichFragment::get_end() const
+core::Size
+SandwichFragment::get_end() const
 {
 	return end_;
 }
 
-core::Size SandwichFragment::get_size() const
+
+core::Size
+SandwichFragment::get_sw_can_by_sh_id() const
+{
+	return sw_can_by_sh_id_;
+}
+
+core::Size
+SandwichFragment::get_sheet_id() const
+{
+	return sheet_id_;
+}
+
+core::Size
+SandwichFragment::get_strand_id() const
+{
+	return strand_id_;
+}
+
+
+core::Size
+SandwichFragment::get_resNum() const
+{
+	return chain_B_resNum_;
+}
+
+core::Size
+SandwichFragment::get_size() const
 {
 	if(end_ == start_){return 0;}
 	return end_-start_+1;
 }
 
-core::Size SandwichFragment::get_resNum() const
-{
-	return chain_B_resNum_;
-}
 
-std::string SandwichFragment::get_pdb_source() const
-{
-	return pdb_source_;
-}
+// commented out since never used
+//std::string SandwichFragment::get_pdb_source() const
+//{
+//	return pdb_source_;
+//}
+//
+//void SandwichFragment::set_pdb_source(std::string pdb_source_)
+//{
+//	this->pdb_source_ = pdb_source_;
+//}
 
-void SandwichFragment::set_pdb_source(std::string pdb_source_)
-{
-	this->pdb_source_ = pdb_source_;
-}
+
 
 } //namespace strand_assembly
 } //namespace features
