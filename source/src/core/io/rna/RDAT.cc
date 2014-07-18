@@ -26,6 +26,9 @@
 #include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "core.scoring.rna.data.RDAT" );
+using namespace ObjexxFCL;
+using namespace utility;
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -41,12 +44,6 @@ static basic::Tracer TR( "core.scoring.rna.data.RDAT" );
 //  * integration with full_model_info [probably goes with above improvements!]
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
-using utility::vector1;
-using utility::string_split_simple;
-using ObjexxFCL::strip_whitespace;
-using ObjexxFCL::int_of;
-using ObjexxFCL::double_of;
 
 namespace core {
 namespace io {
@@ -397,7 +394,7 @@ namespace rna {
 						q++;
 					}
 
-					if ( q < tag.size() & tag[q] == '(' ) q++;
+					if ( q < tag.size() && tag[q] == '(' ) q++;
 
 					while ( q < tag.size() &&
 									( numbers.find( tag[q] ) != std::string::npos || tag[q]==':' ) ){
@@ -405,7 +402,7 @@ namespace rna {
 						q++;
 					}
 
-					if ( q < tag.size() & tag[q] == ')' ) q++;
+					if ( q < tag.size() && tag[q] == ')' ) q++;
 					while ( q < tag.size() ) {
 						mut_seq += tag[ q ];
 						q++;
