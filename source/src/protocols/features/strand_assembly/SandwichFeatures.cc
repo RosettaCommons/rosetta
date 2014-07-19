@@ -40,6 +40,7 @@
 //Devel
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
+#include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
 
 static basic::Tracer TR("protocols.features.strand_assembly.SandwichFeatures");
@@ -1684,39 +1685,6 @@ SandwichFeatures::get_tag(
 } //get_tag
 
 
-//get_num_strands_in_this_sheet
-Size
-SandwichFeatures::get_num_strands_in_this_sheet(
-	StructureID struct_id,
-	sessionOP db_session,
-	Size sheet_id)
-{
-//		TR << "get_num_strands_in_this_sheet" << endl;
-//	time_t start_time = time(NULL);
-	string select_string =
-	"SELECT\n"
-	"	count(*) \n"
-	"FROM\n"
-	"	sheet \n"
-	"WHERE\n"
-	"	(struct_id = ?) \n"
-	"	AND (sheet_id = ?);";
-
-	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
-	select_statement.bind(1,struct_id);
-	select_statement.bind(2,sheet_id);
-	result res(basic::database::safely_read_from_database(select_statement));
-
-	Size num_strands;
-	while(res.next())
-	{
-		res >> num_strands;
-	}
-//	time_t end_time = time(NULL);
-//		TR.Info << "Finished in " << (end_time - start_time) << " seconds." << endl;
-	return num_strands;
-} //get_num_strands_in_this_sheet
-
 
 //	prepare_to_fill_sw_by_components
 //	<role>	It retrieves all beta-strands of sandwich_candidate_by_sheets, it does not make sandwich_by_components
@@ -2474,37 +2442,6 @@ SandwichFeatures::get_avg_dis_strands(
 } //SandwichFeatures::get_avg_dis_strands
 
 
-//// check whether these sheets are too close, the closeness is checked for every possible distances
-//Real
-//SandwichFeatures::get_closest_distance_between_strands(
-//	Pose const & pose,
-//	SandwichFragment strand_i,
-//	SandwichFragment strand_j)
-//{
-//	if (strand_i.get_start() == strand_j.get_start()) // strand_i and strand_j are same!
-//	{
-//		return 0.0;
-//	}
-//
-//	Real closest_dis_CA_CA = 9999;
-//	for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
-//	{
-//		Size i_resnum = strand_i.get_start()+strand_i_res;
-//			// <tip> I don't need to worry about the possibility of having different distance results depending on directionality of strands since I calculate all possible combinatorial distances (--> confirmed by experiment!)
-//		for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
-//		{
-//			Size j_resnum = strand_j.get_start()+strand_j_res;
-//			Real dis_CA_CA = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
-//			if (closest_dis_CA_CA > dis_CA_CA)
-//			{
-//				closest_dis_CA_CA = dis_CA_CA;
-//			}
-//		}
-//	}
-//	//	TR << "closest_dis_CA_CA: " <<	closest_dis_CA_CA << endl;
-//	return closest_dis_CA_CA;
-//} //SandwichFeatures::get_closest_distance_between_strands
-
 
 
 Real
@@ -2624,21 +2561,6 @@ SandwichFeatures::check_sw_by_dis(
 } //SandwichFeatures::check_sw_by_dis
 
 
-
-float
-SandwichFeatures::round_to_float(
-					float x)
-{
-	return floor((x	*	10)	+	0.5)	/	10;
-} //round_to_float
-
-Real
-SandwichFeatures::round_to_Real(
-					Real x)
-{
-	Real rounded = floor((x * 10) +	0.5)	/	10;
-	return rounded;
-} //round_to_Real
 
 
 // is_this_strand_at_edge
@@ -4334,93 +4256,13 @@ SandwichFeatures::report_dihedral_angle_between_core_strands_across_facing_sheet
 
 
 Size
-SandwichFeatures::report_avg_b_factor_CB_at_each_component	(
-	StructureID struct_id,
-	utility::sql_database::sessionOP db_session,
-	Pose const & pose,
-	Size sw_can_by_sh_id)
-{
-	//// <begin> retrieve residue_begin, residue_end at each component
-	string select_string =
-	"SELECT\n"
-	"	residue_begin, residue_end\n"
-	"FROM\n"
-	"	sw_by_components \n"
-	"WHERE\n"
-	"	(struct_id = ?) \n"
-	"	AND	(sw_can_by_sh_id = ?);";
-
-	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
-	select_statement.bind(1,	struct_id);
-	select_statement.bind(2,	sw_can_by_sh_id);
-	result res(basic::database::safely_read_from_database(select_statement));
-
-	utility::vector1<Size> vector_of_residue_begin;
-	utility::vector1<Size> vector_of_residue_end;
-
-	while(res.next())
-	{
-		Size residue_begin,	residue_end;
-		res >> residue_begin	>>	residue_end;
-		vector_of_residue_begin.push_back(residue_begin);
-		vector_of_residue_end.push_back(residue_end);
-	}
-	//// <end> retrieve residue_begin, residue_end at each component
-
-
-	pose::PDBInfoCOP info = pose.pdb_info();
-	if ( info )
-	{
-		for(Size i=1; i<=vector_of_residue_begin.size(); i++)
-		{
-			Real	sum_of_b_factor_CB_at_each_component	=	0;
-			Size	count_atoms	=	0;
-			for(Size resid=vector_of_residue_begin[i];	resid<=vector_of_residue_end[i];	resid++)
-			{
-				Real B_factor_of_CB = info->temperature( resid, 5 ); // '5' atom will be 'H' for Gly
-				sum_of_b_factor_CB_at_each_component	=	sum_of_b_factor_CB_at_each_component	+	B_factor_of_CB;
-				count_atoms++;
-				//for ( Size ii = 1; ii <= info->natoms( resid ); ++ii )
-				//{
-				//	std::cout << "Temperature on " << resid << " " << ii << " " << info->temperature( resid, ii ) << std::endl;
-				//}
-			}
-			Real	avg_b_factor_CB_at_each_component	=	sum_of_b_factor_CB_at_each_component/count_atoms;
-
-			// <begin> UPDATE sw_by_components table
-			string insert =
-			"UPDATE sw_by_components set \n"
-			"avg_b_factor_CB_at_each_component = ? \n"
-			"WHERE\n"
-			"	(struct_id = ?) \n"
-			"	AND	(sw_can_by_sh_id = ?) \n"
-			"	AND	(residue_begin = ?) ;";
-
-			statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
-
-			Real	rounded_avg_b_factor = utility::round(avg_b_factor_CB_at_each_component);
-			insert_stmt.bind(1,	rounded_avg_b_factor);
-			insert_stmt.bind(2,	struct_id);
-			insert_stmt.bind(3,	sw_can_by_sh_id);
-			insert_stmt.bind(4,	vector_of_residue_begin[i]);
-
-			basic::database::safely_write_to_database(insert_stmt);
-			// <end> UPDATE sw_by_components table
-
-		}
-	}
-	return 0;
-} //	SandwichFeatures::report_avg_b_factor_CB_at_each_component
-
-
-
-Size
 SandwichFeatures::report_topology_candidate	(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
-	// Warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches. So final human inspection is required to confirm fnIII eventually after this function. So column name is 'topology_candidate' instead of 'topology'
+	// Warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches.
+	// So final human inspection is required to confirm fnIII eventually after this function. So column name is 'topology_candidate' instead of 'topology'
 	// Also, be sure to run with individual sandwich in each pdb file to better identify fnIII because sheet_id is not necessarily final one when each pdb file has multiple sandwiches (starting 06/20/2014)
 	// (starting 06/20/2014), all 103 fnIII identified out of 2,805 WT beta-sandwiches are confirmed to be correct even by manual inspection
 		//	Changed from "fn3" to "fnIII" because "fnIII" seems more correct according to "Manipulating the stability of fibronectin type III domains by protein engineering, Sean P Ng, K S Billings, L G Randles and Jane Clarke, Nanotechnology 19 (2008) 384023" (on 06/13/14)
@@ -4890,79 +4732,6 @@ SandwichFeatures::report_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strand
 	return 0;
 
 } //	SandwichFeatures::report_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands
-
-
-
-Size
-SandwichFeatures::report_hydrophobic_ratio_net_charge	(
-	StructureID struct_id,
-	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id)
-{
-
-	// <begin> sum number_of_AA
-	string select_string =
-	"SELECT\n"
-	"	sum(A+V+I+L+M+F+Y+W), \n"
-	"	sum(R+H+K+D+E+S+T+N+Q), \n"
-	"	sum(C+G+P), \n"
-	"	sum(R+K), \n"
-	"	sum(D+E) \n"
-	"FROM\n"
-	"	sw_by_components\n"
-	"WHERE\n"
-	"	(struct_id = ?) \n"
-	"	AND (sw_can_by_sh_id = ?) ;";
-
-	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
-	select_statement.bind(1,struct_id);
-	select_statement.bind(2,sw_can_by_sh_id);
-	result res(basic::database::safely_read_from_database(select_statement));
-
-	int number_of_hydrophobic_res,	number_of_hydrophilic_res,	number_of_CGP,	number_of_RK_in_sw,	number_of_DE_in_sw;
-	while(res.next())
-	{
-		res >> number_of_hydrophobic_res >> number_of_hydrophilic_res >> number_of_CGP >> number_of_RK_in_sw >> number_of_DE_in_sw;
-	}
-	// <end> sum number_of_AA
-
-
-	// <begin> UPDATE sw_by_components table
-	string insert =
-	"UPDATE sw_by_components set \n"
-	"	number_of_hydrophobic_res = ?	,	\n"
-	"	number_of_hydrophilic_res = ?	,	\n"
-	"	number_of_CGP = ?	,	\n"
-	"	ratio_hydrophobic_philic_of_sw_in_percent = ?	,	\n"
-	"	number_of_RK_in_sw = ?	,	\n"
-	"	number_of_DE_in_sw = ?	,	\n"
-	"	net_charge_of_sw = ?	\n"
-	"WHERE\n"
-	"	(sw_can_by_sh_id = ?) \n"
-	"	AND	(struct_id = ?) ;";
-
-	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
-
-	insert_stmt.bind(1,	number_of_hydrophobic_res);
-	insert_stmt.bind(2,	number_of_hydrophilic_res);
-	insert_stmt.bind(3,	number_of_CGP);
-	Real ratio_hydrophobic_philic_of_sw_in_percent = (number_of_hydrophobic_res*100)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
-	insert_stmt.bind(4,	ratio_hydrophobic_philic_of_sw_in_percent);
-	insert_stmt.bind(5,	number_of_RK_in_sw);
-	insert_stmt.bind(6,	number_of_DE_in_sw);
-	int net_charge_int = number_of_RK_in_sw - number_of_DE_in_sw; // Size net_charge may return like '18446744073709551612', so I don't use Size here
-	//	TR << "net_charge_int: " << net_charge_int << endl;
-	insert_stmt.bind(7,	net_charge_int); // Net charge of His at pH 7.4 is just '+0.11' according to http://www.bmolchem.wisc.edu/courses/spring503/503-sec1/503-1a.htm
-	insert_stmt.bind(8,	sw_can_by_sh_id);
-	insert_stmt.bind(9,	struct_id);
-
-	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
-
-	return 0;
-
-} //	SandwichFeatures::report_hydrophobic_ratio_net_charge
-
 
 
 
@@ -7260,6 +7029,11 @@ SandwichFeatures::identify_sheet_id_by_residue_end(
 
 
 
+// as of 07/19,14, 
+//refactor of report_turn_type
+//is not possible due to allowed_deviation_for_turn_type_id_
+//let me ask Kevin/Tim
+
 string
 SandwichFeatures::report_turn_type(
 	Pose const & pose,
@@ -7366,212 +7140,6 @@ SandwichFeatures::report_turn_type(
 
 	return turn_type;
 } //report_turn_type
-
-
-
-
-
-
-
-
-void
-SandwichFeatures::report_turn_AA(
-	Pose const & pose,
-	Size sw_can_by_sh_id,
-	Size i,
-	StructureID struct_id,
-	sessionOP db_session,
-	string turn_type)
-{
-	string canonical_turn_AA	=	"F_canonical_turn_AA";
-	if	(turn_type == "I")
-	{
-		if (pose.residue_type(i).name3() == "LEU" || pose.residue_type(i).name3() == "ALA" || pose.residue_type(i).name3() == "GLY" || pose.residue_type(i).name3() == "PRO" ||
-			pose.residue_type(i).name3() == "THR" || pose.residue_type(i).name3() == "SER" || pose.residue_type(i).name3() == "GLU" || pose.residue_type(i).name3() == "ASN" ||
-			pose.residue_type(i).name3() == "ASP")
-		{
-			if (pose.residue_type(i+1).name3() == "LEU" ||	pose.residue_type(i+1).name3() == "ALA" || pose.residue_type(i+1).name3() == "PRO" ||
-				pose.residue_type(i+1).name3() == "THR" ||	pose.residue_type(i+1).name3() == "SER" || pose.residue_type(i+1).name3() == "GLU" ||
-				pose.residue_type(i+1).name3() == "ASP" ||	pose.residue_type(i+1).name3() == "LYS" )
-			{
-				if (pose.residue_type(i+2).name3() == "ALA" ||	pose.residue_type(i+2).name3() == "GLY" || pose.residue_type(i+2).name3() == "THR" ||
-					pose.residue_type(i+2).name3() == "SER" ||	pose.residue_type(i+2).name3() == "GLU" || pose.residue_type(i+2).name3() == "ASN" ||
-					pose.residue_type(i+2).name3() == "ASP" ||	pose.residue_type(i+2).name3() == "LYS" )
-				{
-					if (pose.residue_type(i+3).name3() == "VAL" ||	pose.residue_type(i+3).name3() == "LEU"	||	pose.residue_type(i+3).name3() == "ALA" ||
-						pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "THR"	||	pose.residue_type(i+3).name3() == "SER" ||
-						pose.residue_type(i+3).name3() == "GLU" ||	pose.residue_type(i+3).name3() == "ASP"	||	pose.residue_type(i+3).name3() == "LYS" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-	else if	(turn_type == "II")
-	{
-		if (pose.residue_type(i).name3() == "VAL" || pose.residue_type(i).name3() == "LEU" || pose.residue_type(i).name3() == "ALA" || pose.residue_type(i).name3() == "GLY" ||
-			pose.residue_type(i).name3() == "TYR" || pose.residue_type(i).name3() == "PRO" || pose.residue_type(i).name3() == "GLU" || pose.residue_type(i).name3() == "LYS")
-		{
-			if (pose.residue_type(i+1).name3() == "ALA" ||	pose.residue_type(i+1).name3() == "PRO" || pose.residue_type(i+1).name3() == "SER" ||
-				pose.residue_type(i+1).name3() == "GLU" ||	pose.residue_type(i+1).name3() == "LYS" )
-			{
-				if (pose.residue_type(i+2).name3() == "GLY")
-				{
-					if (pose.residue_type(i+3).name3() == "VAL" ||	pose.residue_type(i+3).name3() == "ALA"	||	pose.residue_type(i+3).name3() == "SER" ||
-						pose.residue_type(i+3).name3() == "GLU" ||	pose.residue_type(i+3).name3() == "LYS" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-	else if	(turn_type == "VIII")
-	{
-		if (pose.residue_type(i).name3() == "GLY" || pose.residue_type(i).name3() == "PRO")
-		{
-			if (pose.residue_type(i+1).name3() == "PRO" ||	pose.residue_type(i+1).name3() == "ASP" )
-			{
-				if (pose.residue_type(i+2).name3() == "VAL"	||	pose.residue_type(i+2).name3() == "LEU"	||	pose.residue_type(i+2).name3() == "ASN"	||	pose.residue_type(i+2).name3() == "ASP")
-				{
-					if (pose.residue_type(i+3).name3() == "PRO" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-	else if	(turn_type == "I_prime")
-	{
-		if (pose.residue_type(i).name3() == "ILE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "LEU"	||
-			pose.residue_type(i).name3() == "ALA"	||	pose.residue_type(i).name3() == "TYR"	||	pose.residue_type(i).name3() == "THR"	||
-			pose.residue_type(i).name3() == "SER"	||	pose.residue_type(i).name3() == "ASP"	||	pose.residue_type(i).name3() == "LYS")
-		{
-			if (pose.residue_type(i+1).name3() == "PRO" ||	pose.residue_type(i+1).name3() == "GLY"	 ||	pose.residue_type(i+1).name3() == "HIS" ||
-			 	pose.residue_type(i+1).name3() == "ASN" ||	pose.residue_type(i+1).name3() == "ASP" )
-			{
-				if (pose.residue_type(i+2).name3() == "GLY")
-				{
-					if (pose.residue_type(i+3).name3() == "VAL"	||	pose.residue_type(i+3).name3() == "GLU" || pose.residue_type(i+3).name3() == "ASN" ||
-						pose.residue_type(i+3).name3() == "LYS"	||	pose.residue_type(i+3).name3() == "ARG" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-	else if	(turn_type == "II_prime")
-	{
-		//	TR << "pose.residue_type(i).name3(): " << pose.residue_type(i).name3() << endl;
-		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "LEU"	||
-			pose.residue_type(i).name3() == "ALA"	||	pose.residue_type(i).name3() == "GLY"	||
-			pose.residue_type(i).name3() == "TYR"	||	pose.residue_type(i).name3() == "THR"	||
-			pose.residue_type(i).name3() == "SER"	||	pose.residue_type(i).name3() == "HIS"	||	pose.residue_type(i).name3() == "GLU"	||
-			pose.residue_type(i).name3() == "ASN"	||
-			pose.residue_type(i).name3() == "GLN"	||	pose.residue_type(i).name3() == "ASP"	||	pose.residue_type(i).name3() == "ARG")
-		{
-			//	TR << "pose.residue_type(i+1).name3(): " << pose.residue_type(i+1).name3() << endl;
-			if (pose.residue_type(i+1).name3() == "GLY")
-			{
-				//	TR << "pose.residue_type(i+2).name3(): " << pose.residue_type(i+2).name3() << endl;
-				if (pose.residue_type(i+2).name3() == "LEU"	||	pose.residue_type(i+2).name3() == "ALA"	||	pose.residue_type(i+2).name3() == "GLY"	||
-					pose.residue_type(i+2).name3() == "PRO"	||
-					pose.residue_type(i+2).name3() == "SER"	||	pose.residue_type(i+2).name3() == "GLU"	||
-					pose.residue_type(i+2).name3() == "ASN"	||	pose.residue_type(i+2).name3() == "ASP"	|| pose.residue_type(i+2).name3() == "LYS")
-				{
-					//	TR << "pose.residue_type(i+3).name3(): " << pose.residue_type(i+3).name3() << endl;
-					if (pose.residue_type(i+3).name3() == "PHE"	||	pose.residue_type(i+3).name3() == "VAL"	||	pose.residue_type(i+3).name3() == "LEU"	||
-						pose.residue_type(i+3).name3() == "ALA"	||
-						pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "TYR"	||	pose.residue_type(i+3).name3() == "THR"	||
-						pose.residue_type(i+3).name3() == "SER"	||	pose.residue_type(i+3).name3() == "GLU"	||
-						pose.residue_type(i+3).name3() == "ASN"	||	pose.residue_type(i+3).name3() == "GLN"	||	pose.residue_type(i+3).name3() == "LYS"	||	pose.residue_type(i+3).name3() == "ARG" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-
-	else if	(turn_type == "VIa1" ||	turn_type == "VIa2")
-	{
-		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "THR"	||	pose.residue_type(i).name3() == "HIS"	||
-			pose.residue_type(i).name3() == "ASN")
-		{
-			if (pose.residue_type(i+1).name3() == "ILE"	|| pose.residue_type(i+1).name3() == "SER" || pose.residue_type(i+1).name3() == "ASN")
-			{
-				if (pose.residue_type(i+2).name3() == "PRO")
-				{
-					if (pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "THR" ||	pose.residue_type(i+3).name3() == "HIS" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-
-	else if	(turn_type == "VIb")
-	{
-		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "GLY"	||	pose.residue_type(i).name3() == "THR"	||	pose.residue_type(i).name3() == "SER")
-		{
-			if (pose.residue_type(i+1).name3() == "LEU"	|| pose.residue_type(i+1).name3() == "TYR" || pose.residue_type(i+1).name3() == "THR"	 || pose.residue_type(i+1).name3() == "GLU")
-			{
-				if (pose.residue_type(i+2).name3() == "PRO")
-				{
-					if (pose.residue_type(i+3).name3() == "PHE"	||	pose.residue_type(i+3).name3() == "ALA" ||	pose.residue_type(i+3).name3() == "TYR"	||
-						pose.residue_type(i+3).name3() == "THR"	||	pose.residue_type(i+3).name3() == "LYS" )
-					{
-						canonical_turn_AA = "T_canonical_turn_AA";
-					}
-				}
-
-			}
-		}
-	}
-
-	else	//(turn_type == 'IV')
-	{
-		canonical_turn_AA = "uncertain_canonical_turn_AA_since_turn_type_eq_IV";
-	}
-
-
-	string select_string =
-	"UPDATE sw_by_components set \n"
-	"i_AA = ? , \n"
-	"i_p1_AA	=	? , \n"
-	"i_p2_AA	=	? , \n"
-	"i_p3_AA	=	? ,	\n"
-	"canonical_turn_AA	=	? \n"
-	"WHERE\n"
-	"	(sw_can_by_sh_id = ?) \n"
-	"	AND	(residue_begin = ?) \n"
-	"	AND (struct_id = ?);";
-
-	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
-	select_statement.bind(1,	pose.residue_type(i).name3());
-	select_statement.bind(2,	pose.residue_type(i+1).name3());
-	select_statement.bind(3,	pose.residue_type(i+2).name3());
-	select_statement.bind(4,	pose.residue_type(i+3).name3());
-	select_statement.bind(5,	canonical_turn_AA);
-	select_statement.bind(6,	sw_can_by_sh_id);
-	select_statement.bind(7,	(i+1));
-	select_statement.bind(8,	struct_id);
-	basic::database::safely_write_to_database(select_statement);
-
-} //report_turn_AA
-
-
-
 
 
 
@@ -8689,7 +8257,7 @@ SandwichFeatures::report_features(
 													db_session
 													);
 
-							report_turn_AA
+							WriteToDB_turn_AA
 								(pose,
 								vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
 								start_res,	// i
@@ -8761,7 +8329,7 @@ SandwichFeatures::report_features(
 													db_session
 													);
 
-						report_turn_AA
+						WriteToDB_turn_AA
 							(pose,
 							vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
 							start_res,	// i
@@ -8864,15 +8432,9 @@ SandwichFeatures::report_features(
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
 
-				report_hydrophobic_ratio_net_charge(struct_id,	db_session,
-					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
-					);
 
+				// as of 7/19/14, refactoring is no possible
 				report_dihedral_angle_between_core_strands_across_facing_sheets(struct_id,	db_session, pose,
-					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
-					);
-
-				report_avg_b_factor_CB_at_each_component(struct_id,	db_session, pose,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
 
@@ -8889,6 +8451,21 @@ SandwichFeatures::report_features(
 					dssp_pose,
 					all_distinct_sheet_ids
 					);
+
+				WriteToDB_min_dis_between_sheets_by_all_res	(struct_id,	db_session,
+					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
+					dssp_pose,
+					all_distinct_sheet_ids
+					);
+
+				WriteToDB_avg_b_factor_CB_at_each_component(struct_id,	db_session, pose,
+					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+					);
+
+				WriteToDB_hydrophobic_ratio_net_charge(struct_id,	db_session,
+					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+					);
+
 
 				Real	shortest_dis_between_facing_aro_in_sw	=	report_shortest_dis_between_facing_aro_in_sw	(struct_id,	db_session,
 					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id

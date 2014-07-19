@@ -15,100 +15,10 @@
 #ifndef INCLUDED_protocols_features_strand_assembly_SandwichFeatures_hh
 #define INCLUDED_protocols_features_strand_assembly_SandwichFeatures_hh
 
-//Basic rosetta
-#include <basic/database/schema_generator/Column.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
-#include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/Schema.hh>
-#include <basic/options/util.hh>
-#include <basic/options/keys/strand_assembly.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
-
-//C library
-#include <math.h> // for round, floor, ceil, trunc, sqrt
-
-// c++
-#include <algorithm>	// for avg,min,max
-#include <cmath>	// for std::abs				// reference:	http://www.cplusplus.com/reference/cmath/abs/
-#include <fstream>
-#include <iostream>
-#include <numeric>
-//#include <stdio.h>     //for remove( ) and rename( )
-#include <stdlib.h> // for abs()
-#include <vector>
-
-//Core
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh> // for dssp application
-#include <core/pose/PDBInfo.hh> // maybe for PDBInfoCOP
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
-#include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "get_score_function" ?
-#include <core/types.hh>
-
 //Devel
-#include <protocols/features/strand_assembly/SandwichFragment.hh>
-
-//DSSP
-#include <core/scoring/dssp/Dssp.hh>
-
-// exception handling
-#include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
-
-//External
-#include <boost/uuid/uuid.hpp>
-#include <cppdb/frontend.h>
-
-// for get_sw_can_by_sh_id, get_central_residues_in_each_of_two_edge_strands
-#include <vector>
-
-// for parse_my_tag
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <basic/datacache/DataMap.hh>
-
-// for string return
-#include <string>
-
-//for vector
-#include <numeric/xyzVector.hh>
-#include <core/id/NamedAtomID.hh>
-
-//Others
-#include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
-
-//Protocols
-#include <protocols/features/FeaturesReporter.hh>
-
-//Unit
 #include <protocols/features/strand_assembly/SandwichFeatures.fwd.hh>
-
-//Utility and basic
-#include <basic/database/sql_utils.hh>
-#include <numeric/xyz.functions.hh> // for torsion calculations
-#include <utility/numbers.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/vector1.hh> // for utility::vector1<Column> primary_key_columns;
-
-#if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
-#endif
-
-
-template <typename T, size_t N> const T* mybegin(const T (&a)[N]) { return a; }
-template <typename T, size_t N> const T* myend  (const T (&a)[N]) { return a+N; }
-// reference:	http://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector-c
-
+#include <protocols/features/strand_assembly/SandwichFragment.hh>
+#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
 
 namespace protocols {
 namespace features {
@@ -204,11 +114,6 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	core::Size
-	get_num_strands_in_this_sheet(
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size sheet_id);
 
 	utility::vector1<core::Size>
 	get_distinct_sheet_id_from_sheet_table(
@@ -300,12 +205,6 @@ public:
 		SandwichFragment strand_i,
 		SandwichFragment strand_j);
 
-//	core::Real
-//	get_closest_distance_between_strands(
-//		core::pose::Pose const & pose,
-//		SandwichFragment strand_i,
-//		SandwichFragment strand_j);
-
 	core::Real
 	get_avg_dis_CA_CA(
 		core::pose::Pose const & pose,
@@ -318,12 +217,6 @@ public:
 		core::Size j_resnum_2,
 		core::Size j_resnum_3);
 
-
-	float round_to_float(
-		float x);
-
-	core::Real round_to_Real(
-		core::Real x);
 
 	core::Real calculate_dihedral_w_4_resnums(
 		core::pose::Pose const & pose,
@@ -724,12 +617,6 @@ public:
 		utility::sql_database::sessionOP	db_session,
 		core::Size	sw_can_by_sh_id);
 
-	core::Size
-	report_hydrophobic_ratio_net_charge (
-		StructureID struct_id,
-		utility::sql_database::sessionOP	db_session,
-		core::Size	sw_can_by_sh_id);
-
 	bool
 	check_whether_this_pdb_should_be_excluded (
 		std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
@@ -742,12 +629,6 @@ public:
 		core::pose::Pose const & pose,
 		core::Size	sw_can_by_sh_id);
 
-	core::Size
-	report_avg_b_factor_CB_at_each_component (
-		StructureID struct_id,
-		utility::sql_database::sessionOP	db_session,
-		core::pose::Pose const & pose,
-		core::Size	sw_can_by_sh_id);
 
 	core::Size
 	report_topology_candidate (
@@ -762,6 +643,8 @@ public:
 		core::Size	sw_can_by_sh_id,
 		core::pose::Pose & dssp_pose,
 		utility::vector1<core::Size>	all_distinct_sheet_ids);
+
+
 
 	core::Real
 	report_shortest_dis_between_facing_aro_in_sw (
@@ -834,6 +717,21 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
+	utility::vector1<core::Size>
+	get_vector_loop_AA_distribution (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string loop_kind
+		);
+
+	utility::vector1<core::Size>
+	get_vector_strand_AA_distribution (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string heading_direction, // like core_heading, surface_heading
+		std::string strand_location // like edge_strand, core_strand
+		);
+
 	utility::vector1<int>
 	retrieve_residue_num_of_rkde(
 		StructureID struct_id,
@@ -856,20 +754,7 @@ public:
 		core::pose::Pose & dssp_pose,
 		core::Size sw_can_by_sh_id);
 
-	utility::vector1<core::Size>
-	get_vector_loop_AA_distribution (
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		std::string loop_kind
-		);
 
-	utility::vector1<core::Size>
-	get_vector_strand_AA_distribution (
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		std::string heading_direction, // like core_heading, surface_heading
-		std::string strand_location // like edge_strand, core_strand
-		);
 
 
 	utility::vector1<core::Size>
@@ -893,15 +778,6 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-
-	void
-	report_turn_AA(
-		core::pose::Pose const & pose,
-		core::Size sw_can_by_sh_id,
-		core::Size i,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		std::string turn_type);
 
 	void process_decoy(
 		core::pose::Pose & dssp_pose,
@@ -942,13 +818,18 @@ public:
 		std::string	heading_direction);
 
 
+
+private:
+
+	core::Real
+	allowed_deviation_for_turn_type_id_;
+
+
 	core::Real
 	min_CA_CA_dis_;
 
 	core::Real
 	max_CA_CA_dis_;
-
-private:
 
 	core::Size
 	min_num_strands_to_deal_;
@@ -1121,8 +1002,8 @@ private:
 	core::Real
 	min_N_H_O_angle_between_two_sheets_;
 
-	core::Real
-	allowed_deviation_for_turn_type_id_;
+//	core::Real
+//	allowed_deviation_for_turn_type_id_;
 
 	int
 	primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping_;

@@ -138,6 +138,7 @@ sources = {
                 "StrandBundleFeatures",
                 "StrandBundleFeaturesCreator",
                 "StrandFragment",
+		"WriteToDBFromSandwichFeatures",
 		"WriteToFileFromSandwichFeatures",
 	],
 	"protocols/rotamer_recovery": [

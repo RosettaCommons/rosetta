@@ -15,10 +15,7 @@
 #include <protocols/features/strand_assembly/SandwichFeaturesCreator.hh>
 
 // Package Headers
-
 #include <protocols/features/FeaturesReporterCreator.hh>
-// AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
-
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <utility/vector1.hh>
 

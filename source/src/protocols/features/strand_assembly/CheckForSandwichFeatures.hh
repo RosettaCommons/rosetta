@@ -15,7 +15,9 @@
 #define INCLUDED_protocols_features_strand_assembly_CheckForSandwichFeatures_HH
 
 //Devel
-#include <protocols/features/strand_assembly/SandwichFeatures.hh>
+#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
+//#include <protocols/features/strand_assembly/SandwichFeatures.hh>
+#include <protocols/features/strand_assembly/SandwichFragment.hh>
 
 using namespace std;
 
@@ -32,6 +34,15 @@ namespace strand_assembly {
 		core::Size sheet_id_1,
 		core::Size sheet_id_2);
 
+
+	float
+	cal_min_dis_between_sheets_by_all_res (
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		utility::vector1<core::Size>	all_distinct_sheet_ids);
+
+
 	float
 	cal_min_dis_between_two_sheets_by_all_res (
 		StructureID	struct_id,
@@ -45,6 +56,7 @@ namespace strand_assembly {
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
+
 
 	std::vector<Size>
 	get_all_residues_in_this_sheet(
@@ -71,11 +83,25 @@ namespace strand_assembly {
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
+	core::Size
+	get_num_strands_in_this_sheet(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sheet_id);
+
+
 	std::string
 	get_sheet_antiparallel_info(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
+
+	float round_to_float(
+		float x);
+
+	core::Real round_to_Real(
+		core::Real x);
+
 
 	core::Size round_to_Size(
 		core::Real x);

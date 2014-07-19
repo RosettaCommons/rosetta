@@ -17,7 +17,8 @@
 #define INCLUDED_protocols_features_strand_assembly_WriteToFileFromSandwichFeatures_HH
 
 //Devel
-#include <protocols/features/strand_assembly/SandwichFeatures.hh>
+#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
+//#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 
 using namespace std;
 
