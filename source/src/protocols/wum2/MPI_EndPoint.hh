@@ -15,7 +15,7 @@
 
 // role_available_mem is a functor to the role's available memory function
 //
-// this allows a role with multiple endpoints have its endpoints be aware of 
+// this allows a role with multiple endpoints have its endpoints be aware of
 // other endpoint memory usage and act accordingly
 /// @author Ken Jung
 
@@ -36,7 +36,6 @@
 namespace protocols {
 namespace wum2 {
 
-using namespace boost;
 enum {
   CLEARCOMMAND = 100,
   STATUSREQUEST,
@@ -47,13 +46,13 @@ enum {
 class MPI_EndPoint : public EndPoint {
 
 public:
-	MPI_EndPoint( mpi::communicator world, function< uint64_t () > role_available_mem );
+	MPI_EndPoint( boost::mpi::communicator world, boost::function< uint64_t () > role_available_mem );
 	~MPI_EndPoint(){}
 
 	int mpi_rank() { return world_.rank(); }
 
     // real memory usage
-	virtual uint64_t current_mem() {
+	virtual boost::uint64_t current_mem() {
 		return inq_.current_mem() +
 				inbuf_.current_mem() +
 				outq_.current_mem() +
@@ -62,7 +61,7 @@ public:
 
 	// checks and responds to a status request, then calls functor
 	// int refers to rank of node requesting the StatusResponse
-	virtual void check_and_act_status_request( function< void ( StatusResponse & , int ) > functor );
+	virtual void check_and_act_status_request( boost::function< void ( StatusResponse & , int ) > functor );
 
 	// default functor for check_and_act_status_request
 	// opens irecv from asking node in anticipation of wu isend from asking node
@@ -76,7 +75,7 @@ public:
 	virtual void send_status_request( int rank );
 
 	// for each inbound StatusResponse, calls functor on it and then deletes it if functor return true
-	virtual void act_on_status_response( function<bool ( StatusResponse & r )> functor );
+	virtual void act_on_status_response( boost::function<bool ( StatusResponse & r )> functor );
 
 	// default functor for acts_on_status_response
 	// opens irecv from asking node in anticipation of wu isend from asking node
@@ -88,12 +87,12 @@ public:
 	// deletes reqs and corresponding buffers that have been completed succesfully
 	// also moves stuff from inbuf to inq
 	virtual void cleanup_reqs();
-    
+
 	// setup an irecv from rank with WUs from rank's outbound totaling up to mem_size
-	void receive_wus( int rank, uint64_t mem_size );
+	void receive_wus( int rank, boost::uint64_t mem_size );
 
 	// setup an isend to rank with WUs from outbound totaling up to mem_size
-	void send_wus( int rank, uint64_t mem_size );
+	void send_wus( int rank, boost::uint64_t mem_size );
 
 	// checks and act to a clear queue command
 	virtual void check_and_act_clearcommand();
@@ -104,23 +103,23 @@ public:
 
 private:
 
-	mpi::communicator world_;
+	boost::mpi::communicator world_;
 
 	WUQueueBuffer inbuf_;
 	WUQueueBuffer outbuf_;
 
 	// these hold the buffers for statusresponse sending and receiving
-	std::list< tuple< mpi::request, StatusResponse > > outbound_statusresponse_;
-	std::list< tuple< mpi::request, StatusResponse > > inbound_statusresponse_;
+	std::list< boost::tuple< boost::mpi::request, StatusResponse > > outbound_statusresponse_;
+	std::list< boost::tuple< boost::mpi::request, StatusResponse > > inbound_statusresponse_;
 
 	// these hold the buffers for statusrequest sending and receiving
-	std::list< tuple< mpi::request, StatusRequest > > outbound_statusrequest_;
+	std::list< boost::tuple< boost::mpi::request, StatusRequest > > outbound_statusrequest_;
 
 	std::set<int> open_status_; // holds ranks of nodes who have not responded to a statusrequest
 
 	// keep a irecv open for status response and clearcommand always
-	tuple< mpi::request, int > clearcommand_channel_;
-	tuple< mpi::request, StatusRequest > statusrequest_channel_;
+	boost::tuple< boost::mpi::request, int > clearcommand_channel_;
+	boost::tuple< boost::mpi::request, StatusRequest > statusrequest_channel_;
 
 };
 

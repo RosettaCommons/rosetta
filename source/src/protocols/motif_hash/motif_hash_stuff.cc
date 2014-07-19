@@ -64,7 +64,7 @@
 	#include <protocols/sic_dock/read_biounit.hh>
 
 	#include <boost/unordered_set.hpp>
-
+	#include <boost/cstdint.hpp>
 	#include <boost/foreach.hpp>
 
 
@@ -838,8 +838,8 @@ namespace motif_hash {
 		return out;
 	}
 	bool write_motifs_binary(std::ostream & out, ResPairMotifs const & motifs){
-		uint64_t n = motifs.size();
-		out.write((char*)&n,sizeof(uint64_t));
+		boost::uint64_t n = motifs.size();
+		out.write((char*)&n,sizeof(boost::uint64_t));
 		for(ResPairMotifs::const_iterator i = motifs.begin(); i != motifs.end(); ++i){
 			ResPairMotif const & sm( *i );
 			out.write((char*)&sm,sizeof(ResPairMotif));
@@ -867,8 +867,8 @@ namespace motif_hash {
 	}
 	bool read_motifs_binary(std::istream & in, ResPairMotifs & motifs){
 		while(!in.eof()){
-			uint64_t n0=motifs.size(),n=0;
-			in.read((char*)&n,sizeof(uint64_t));
+			boost::uint64_t n0=motifs.size(),n=0;
+			in.read((char*)&n,sizeof(boost::uint64_t));
 			if(option[basic::options::OptionKeys::mh::generate_reverse_motifs]()){
 				motifs.resize(motifs.size()+2*n);
 				for(Size i = 1; i <= n; ++i){
@@ -942,8 +942,8 @@ namespace motif_hash {
 
 
 	struct MyHash {
-		uint64_t operator()(ResPairMotif const & rpm) const {
-			uint64_t const *x = (uint64_t const *)(&rpm);
+		boost::uint64_t operator()(ResPairMotif const & rpm) const {
+			boost::uint64_t const *x = (boost::uint64_t const *)(&rpm);
 			return x[0] ^ x[1] ^ x[2] ^ x[3] ^ x[4] ^ x[5];
 		}
 	};
@@ -1064,8 +1064,8 @@ namespace motif_hash {
 		return true;
 	}
 	bool read_xfres_binary( std::istream & in, vector1<Xfres> & xfres){
-		uint64_t n0=xfres.size(),n=0;
-		in.read((char*)&n,sizeof(uint64_t));
+		boost::uint64_t n0=xfres.size(),n=0;
+		in.read((char*)&n,sizeof(boost::uint64_t));
 		xfres.resize(xfres.size()+n);
 		for(Size i = 1; i <= n; ++i){
 			in.read((char*)&xfres[n0+i],sizeof(Xfres));
@@ -1073,8 +1073,8 @@ namespace motif_hash {
 		return true;
 	}
 	bool write_xfres_binary( std::ostream & out , vector1<Xfres> const & xfres){
-		uint64_t n = xfres.size();
-		out.write((char*)&n,sizeof(uint64_t));
+		boost::uint64_t n = xfres.size();
+		out.write((char*)&n,sizeof(boost::uint64_t));
 		cout << "write_xfres_binary " << n << endl;
 		for(vector1<Xfres>::const_iterator i = xfres.begin(); i != xfres.end(); ++i){
 			Xfres const & sm( *i );
@@ -1241,8 +1241,8 @@ namespace motif_hash {
 		return true;
 	}
 	bool read_xfrag_binary( std::istream & in, vector1<Xfrag> & xfrag){
-		uint64_t n0=xfrag.size(),n=0;
-		in.read((char*)&n,sizeof(uint64_t));
+		boost::uint64_t n0=xfrag.size(),n=0;
+		in.read((char*)&n,sizeof(boost::uint64_t));
 		xfrag.resize(xfrag.size()+n);
 		for(Size i = 1; i <= n; ++i){
 			in.read((char*)&xfrag[n0+i],sizeof(Xfrag));
@@ -1250,8 +1250,8 @@ namespace motif_hash {
 		return true;
 	}
 	bool write_xfrag_binary( std::ostream & out , vector1<Xfrag> const & xfrag){
-		uint64_t n = xfrag.size();
-		out.write((char*)&n,sizeof(uint64_t));
+		boost::uint64_t n = xfrag.size();
+		out.write((char*)&n,sizeof(boost::uint64_t));
 		cout << "write_xfrag_binary " << n << endl;
 		for(vector1<Xfrag>::const_iterator i = xfrag.begin(); i != xfrag.end(); ++i){
 			Xfrag const & sm( *i );
@@ -1596,15 +1596,15 @@ namespace motif_hash {
 		}
 
 		TR << "dump_motif_pdbs: find largest bucket / check counts" << endl;
-		uint64_t maxnum=0;
-		vector1<uint64_t> keys;
+		boost::uint64_t maxnum=0;
+		vector1<boost::uint64_t> keys;
 		if( !option[mh::dump_motif_pdbs_min_counts].user() ) keys.resize(1);
 		for(MotifHash::MotifMap::const_iterator i = mh.motif_hash_.cbegin(); i != mh.motif_hash_.cend(); ++i){
-			uint64_t n = mh.motif_hash_.count(i->first);
+			boost::uint64_t n = mh.motif_hash_.count(i->first);
 			if( n > maxnum ){
 				maxnum = n;
 				if( option[mh::dump_motif_pdbs_min_counts].user() ){
-					if((uint64_t)option[mh::dump_motif_pdbs_min_counts]() <= n ){
+					if((boost::uint64_t)option[mh::dump_motif_pdbs_min_counts]() <= n ){
 						keys.push_back(i->first);
 					}
 				} else {
@@ -1629,7 +1629,7 @@ namespace motif_hash {
 		ResPairMotif::print_header(TR);
 		for(Size k = 1; k <= keys.size(); ++k){
 			TR << "dump motif bin " << k << " " << endl;
-			uint64_t key = keys[k];
+			boost::uint64_t key = keys[k];
 			MotifHash::MotifMap::const_iterator l = mh.motif_hash_.equal_range(key).first;
 			MotifHash::MotifMap::const_iterator e = mh.motif_hash_.equal_range(key).second;
 			for(; l != e; ++l){
@@ -1833,10 +1833,10 @@ namespace motif_hash {
 		numeric::Real  cart_size =  cart_size_;
 		numeric::Real  cart_resl =  cart_resl_;
 		numeric::Real angle_resl = angle_resl_;
-		uint64_t nmotifs = num_samples();
-		uint64_t ncounts = num_bins();
-		out.write((char*)&   ncounts,sizeof(uint64_t));
-		out.write((char*)&   nmotifs,sizeof(uint64_t));
+		boost::uint64_t nmotifs = num_samples();
+		boost::uint64_t ncounts = num_bins();
+		out.write((char*)&   ncounts,sizeof(boost::uint64_t));
+		out.write((char*)&   nmotifs,sizeof(boost::uint64_t));
 		out.write((char*)& cart_size,sizeof(numeric::Real));
 		out.write((char*)& cart_resl,sizeof(numeric::Real));
 		out.write((char*)&angle_resl,sizeof(numeric::Real));
@@ -1870,9 +1870,9 @@ namespace motif_hash {
 		numeric::Real  cart_size=0;
 		numeric::Real  cart_resl=0;
 		numeric::Real angle_resl=0;
-		uint64_t ncounts,nmotifs;
-		in.read((char*)&   ncounts,sizeof(uint64_t));
-		in.read((char*)&   nmotifs,sizeof(uint64_t));
+		boost::uint64_t ncounts,nmotifs;
+		in.read((char*)&   ncounts,sizeof(boost::uint64_t));
+		in.read((char*)&   nmotifs,sizeof(boost::uint64_t));
 		in.read((char*)& cart_size,sizeof(numeric::Real));
 		in.read((char*)& cart_resl,sizeof(numeric::Real));
 		in.read((char*)&angle_resl,sizeof(numeric::Real));

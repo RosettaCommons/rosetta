@@ -15,7 +15,7 @@
 
 // role_available_mem is a functor to the role's available memory function
 //
-// this allows a role with multiple endpoints have its endpoints be aware of 
+// this allows a role with multiple endpoints have its endpoints be aware of
 // other endpoint memory usage and act accordingly
 /// @author Ken Jung
 
@@ -32,9 +32,11 @@
 namespace protocols {
 namespace wum2 {
 
+using namespace boost;
+
 static basic::Tracer TR("protocols.wum2.MPI_EndPoint");
 
-MPI_EndPoint::MPI_EndPoint( mpi::communicator world, function< uint64_t () > role_available_mem  )
+MPI_EndPoint::MPI_EndPoint( mpi::communicator world, function< boost::uint64_t () > role_available_mem  )
   : world_( world ),
   EndPoint( role_available_mem ) {
     // set up initial channels
@@ -47,8 +49,8 @@ void MPI_EndPoint::check_and_act_status_request( function< void ( StatusResponse
     mpi::request req;
     StatusResponse m;
     m.rank = mpi_rank();
-		uint64_t free_mem = role_available_mem_();
-		uint64_t available_work = statusrequest_channel_.get<1>().max_outgoing_wu_mem;
+		boost::uint64_t free_mem = role_available_mem_();
+		boost::uint64_t available_work = statusrequest_channel_.get<1>().max_outgoing_wu_mem;
     m.incoming_allocated = free_mem < available_work ? free_mem : available_work;
     m.outq_current_mem = outq_.current_mem();
 
@@ -114,7 +116,7 @@ void MPI_EndPoint::act_on_status_response( function<bool ( StatusResponse & r )>
 }
 
 bool MPI_EndPoint::initiate_wu_sendrecv( StatusResponse & r ) {
-  // assumption here is that only reason this node initiated a 
+  // assumption here is that only reason this node initiated a
   // StatusRequest->StatusResponse chain was to send and recv WU to the responding node
   //
   // we can't delete the status response until both send and recv are fulfilled
@@ -178,20 +180,20 @@ void MPI_EndPoint::cleanup_reqs() {
 	}
 }
 
-void MPI_EndPoint::receive_wus( int rank, uint64_t mem_size ) {
+void MPI_EndPoint::receive_wus( int rank, boost::uint64_t mem_size ) {
   if( mem_size != 0 ) {
     WUQueueBuffer::riterator itr = inbuf_.allocate_buffer( mem_size );
     itr->get<1>() = world_.irecv( rank, WORKUNITVEC, *(itr->get<2>()) );
   }
 }
 
-void MPI_EndPoint::send_wus( int rank, uint64_t mem_size ) {
+void MPI_EndPoint::send_wus( int rank, boost::uint64_t mem_size ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
   // this is kind of inefficient, copying the vector twice, but easiest way to track mem use
-  if( mem_size != 0 ) { 
+  if( mem_size != 0 ) {
     std::vector< WorkUnitSP > tmp;
-    uint64_t current_size = 0; 
+    boost::uint64_t current_size = 0;
 		int counter = 0;
 		// slave should not have any outbound limit
 		// master should have low outbound limit to promote distributing work among slaves
@@ -200,15 +202,15 @@ void MPI_EndPoint::send_wus( int rank, uint64_t mem_size ) {
 		// only implement limit for master send for now
 		// putting this in here is bad, should be one level up in master/slave/baserole
 
-		int num_masters = 
+		int num_masters =
 		(option[OptionKeys::els::num_traj]() / option[OptionKeys::els::traj_per_master]() ) +
 		(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 )) ;
 		int num_slaves = (world_.size() - num_masters)/num_masters;
     while( outq_.size_front() && current_size + outq_.size_front() <= mem_size ) {
 			current_size += outq_.size_front();
-      tmp.push_back( outq_.pop_front() ); 
+      tmp.push_back( outq_.pop_front() );
 
-			if( rank > mpi_rank() ) 
+			if( rank > mpi_rank() )
 				counter++;
 			if( outq_.size() < num_slaves || counter >= 2 ) break;
 

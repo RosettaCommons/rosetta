@@ -16,7 +16,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 namespace protocols{
 namespace features{
@@ -25,7 +25,7 @@ class FeaturesReporter;
 typedef utility::pointer::owning_ptr< FeaturesReporter > FeaturesReporterOP;
 typedef utility::pointer::owning_ptr< FeaturesReporter const > FeaturesReporterCOP;
 
-typedef uint64_t StructureID;
+typedef boost::uint64_t StructureID;
 
 } //namesapce
 } //namespace
