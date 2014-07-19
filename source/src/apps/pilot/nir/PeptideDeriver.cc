@@ -394,13 +394,13 @@ core::pose::PoseOP get_subPose(
 		}
 
 		pose->append_residue_by_jump(other->residue(pep_start), 1, "", "", true);
-		core::pose::add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS, pose->total_residue() );
+		core::pose::add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS_VARIANT, pose->total_residue() );
 
 		for (core::Size i=pep_start+1; i<=pep_end; ++i){
 
 				pose->append_residue_by_bond(other->residue(i),false,0,0,0,false);
 		}
-		core::pose::add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS, pose->total_residue() );
+		core::pose::add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS_VARIANT, pose->total_residue() );
 
 		pose->conformation().detect_disulfides();
 		return pose;

@@ -367,10 +367,10 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 			}
 		}
 	  if (! repeat_pose.residue(1).is_terminus()){
-		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::LOWER_TERMINUS, 1 );
+		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
 	  }
 	  if (! repeat_pose.residue( repeat_pose.total_residue() ).is_terminus()){
-		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::UPPER_TERMINUS, repeat_pose.total_residue());
+		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::UPPER_TERMINUS_VARIANT, repeat_pose.total_residue());
 	  }
 
 	using namespace protocols::loops;

@@ -21,17 +21,17 @@
 namespace core {
 namespace chemical {
 
-extern VariantType const UPPER_TERMINUS;
-extern VariantType const LOWER_TERMINUS;
-extern VariantType const UPPERTERM_TRUNC;
-extern VariantType const LOWERTERM_TRUNC;
+extern VariantType const UPPER_TERMINUS_VARIANT;
+extern VariantType const LOWER_TERMINUS_VARIANT;
+extern VariantType const UPPERTERM_TRUNC_VARIANT;
+extern VariantType const LOWERTERM_TRUNC_VARIANT;
 extern VariantType const CUTPOINT_UPPER;
 extern VariantType const CUTPOINT_LOWER;
 extern VariantType const DISULFIDE;
-extern VariantType const BRANCH_POINT;
-extern VariantType const BRANCH_LOWER_TERMINUS;
+extern VariantType const BRANCH_POINT_VARIANT;
+extern VariantType const BRANCH_LOWER_TERMINUS_VARIANT;
 extern VariantType const METHYLATION;
-extern VariantType const ADDUCT;
+extern VariantType const ADDUCT_VARIANT;
 extern VariantType const CENTROID_HA;
 extern VariantType const PROTONATED;
 extern VariantType const DEPROTONATED;
@@ -50,15 +50,15 @@ extern VariantType const DIMETHYLATION;
 extern VariantType const TRIMETHYLATION;
 extern VariantType const DIIODINATION;
 
-extern VariantType const ACETYLATED_NTERMINUS;
-extern VariantType const METHYLATED_CTERMINUS;
+extern VariantType const ACETYLATED_NTERMINUS_VARIANT;
+extern VariantType const METHYLATED_CTERMINUS_VARIANT;
 
 // this has different geometry/atoms then ACETYLATED_NTERMINUS above:
 extern VariantType const N_ACETYLATION;
 // this is distinct from METHYLATED_CTERMINUS above:
 extern VariantType const C_METHYLAMIDATION;
 
-extern VariantType const SC_ORBITALS;
+extern VariantType const SC_ORBITALS_VARIANT;
 
 extern VariantType const REPLONLY;
 

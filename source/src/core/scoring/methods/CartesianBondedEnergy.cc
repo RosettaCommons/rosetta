@@ -1029,7 +1029,7 @@ IdealParametersDatabase::lookup_torsion_legacy(
 				 || restype.atom_name(atm1) == " NH2" || restype.atom_name(atm4) == " NH2") ) {
 			phi_step = numeric::constants::d::pi;
 		}
-		if ( restype.has_variant_type(chemical::LOWER_TERMINUS) &&
+		if ( restype.has_variant_type(chemical::LOWER_TERMINUS_VARIANT) &&
 				 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
 					 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
 			Kphi=k_torsion_proton_;

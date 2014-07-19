@@ -13,7 +13,7 @@
 /// Phil Bradley
 /// Steven Combs
 /// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
-/// Jason W. Labonte (code related to lipids, carbohydrates, and other non-AAs)
+/// Jason W. Labonte (code related to properties, lipids, carbohydrates, and other non-AAs)
 
 // Unit headers
 #include <core/chemical/ResidueType.hh>
@@ -22,6 +22,7 @@
 #include <core/chemical/util.hh>
 
 // Package Headers
+#include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>
 
 // Project Headers
@@ -111,42 +112,11 @@ ResidueType::ResidueType(
 		n_backbone_heavyatoms_(0),
 		first_sidechain_hydrogen_( 0 ),
 		rotamer_library_name_( "" ),
-	  use_ncaa_rotlib_( false ),
-	  ncaa_rotlib_n_rots_( 0 ),
-  	use_peptoid_rotlib_( false ),
-	  peptoid_rotlib_n_rots_( 0 ),
-		is_polymer_( false ),
-		is_protein_( false ),
-		is_alpha_aa_(false),
-		is_beta_aa_(false),
-		is_l_aa_(false),
-		is_d_aa_(false),
-		is_charged_( false ),
-		is_polar_( false ),
-		has_sc_orbitals_(false),
-		is_aromatic_( false ),
-		is_cyclic_( false ),
-		is_DNA_( false ),
-		is_RNA_( false ),
-		is_NA_( false ),
-  	is_peptoid_( false ),
-		is_carbohydrate_( false ),
-		is_lipid_( false ),
-		is_ligand_( false ),
-		is_metal_( false ), //Is this residue type a metal ion?
-		is_metalbinding_( false ), //Is this residue type a type that has the potential to bind to metal ions?
-		is_surface_( false ),
-		is_terminus_( false ),
-		is_lower_terminus_( false ),
-		is_upper_terminus_( false ),
-		is_branch_lower_terminus_( false ),
-		is_phosphonate_( false ),
-		is_phosphonate_upper_( false ),
-		is_acetylated_nterminus_( false ),
-		is_methylated_cterminus_( false ),
-		is_coarse_( false ), //currently for coarse_RNA only
-		is_adduct_( false ),
-		is_virtual_residue_( false ),
+		use_ncaa_rotlib_( false ),
+		ncaa_rotlib_n_rots_( 0 ),
+		use_peptoid_rotlib_( false ),
+		peptoid_rotlib_n_rots_( 0 ),
+		properties_( new ResidueProperties ),
 		aa_( aa_unk ),
 		rotamer_aa_( aa_unk ),
 		backbone_aa_( aa_unk ),
@@ -244,42 +214,9 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
 		use_peptoid_rotlib_( residue_type.use_peptoid_rotlib_ ),
 		peptoid_rotlib_path_( residue_type.peptoid_rotlib_path_),
-	  peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
-	  peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
-		properties_(residue_type.properties_),
-		is_polymer_( residue_type.is_polymer_ ),
-		is_protein_( residue_type.is_protein_ ),
-		is_alpha_aa_( residue_type.is_alpha_aa_),
-		is_beta_aa_( residue_type.is_beta_aa_),
-		is_l_aa_( residue_type.is_l_aa_),
-		is_d_aa_( residue_type.is_d_aa_),
-		is_charged_( residue_type.is_charged_ ),
-		is_polar_( residue_type.is_polar_ ),
-		has_sc_orbitals_(residue_type.has_sc_orbitals_),
-		is_aromatic_( residue_type.is_aromatic_ ),
-		is_cyclic_( residue_type.is_cyclic_ ),
-		is_DNA_( residue_type.is_DNA_ ),
-		is_RNA_( residue_type.is_RNA_ ),
-		is_NA_( residue_type.is_NA_ ),
-		is_peptoid_( residue_type.is_peptoid_ ),
-		is_carbohydrate_( residue_type.is_carbohydrate_ ),
-		is_lipid_( residue_type.is_lipid_ ),
-		is_ligand_( residue_type.is_ligand_ ),
-		is_metal_( residue_type.is_metal_ ), //Is this residue type a metal ion?
-		is_metalbinding_( residue_type.is_metalbinding_ ), //Is this residue type a type capable of binding to a metal ion?
-		is_surface_( residue_type.is_surface_ ),
-		is_terminus_( residue_type.is_terminus_ ),
-		is_lower_terminus_( residue_type.is_lower_terminus_ ),
-		is_upper_terminus_( residue_type.is_upper_terminus_ ),
-		is_branch_lower_terminus_( residue_type.is_branch_lower_terminus_ ),
-		is_acetylated_nterminus_( residue_type.is_acetylated_nterminus_ ),
-		is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
-		is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
-		is_adduct_( residue_type.is_adduct_ ),
-		is_virtual_residue_( residue_type.is_virtual_residue_ ),
-		variant_types_( residue_type.variant_types_ ),
-		numeric_properties_(residue_type.numeric_properties_),
-		string_properties_(residue_type.string_properties_),
+		peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
+		peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
+		properties_( new ResidueProperties( *residue_type.properties_ ) ),
 		aa_( residue_type.aa_ ),
 		rotamer_aa_( residue_type.rotamer_aa_ ),
 		backbone_aa_( residue_type.backbone_aa_ ),
@@ -517,7 +454,6 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	for(Size i=1; i<= old_bb.size(); ++i){
 		force_bb_.push_back(old_to_new[ old_bb[i] ]);
 	}
-
 }
 
 
@@ -674,7 +610,7 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 ResidueConnection const &
 ResidueType::upper_connect() const
 {
-	assert( is_polymer_ );
+	assert( properties_->has_property( POLYMER ) );
 	assert( upper_connect_id_ != 0 );
 	return residue_connections_[ upper_connect_id_ ];
 }
@@ -682,14 +618,14 @@ ResidueType::upper_connect() const
 ResidueConnection const &
 ResidueType::lower_connect() const
 {
-	assert( is_polymer_ );
+	assert( properties_->has_property( POLYMER ) );
 	assert( lower_connect_id_ != 0 );
 	return residue_connections_[ lower_connect_id_ ];
 }
 
 Size
 ResidueType::lower_connect_atom() const {
-	assert( is_polymer_ );
+	assert( properties_->has_property( POLYMER ) );
 	assert( lower_connect_id_ != 0 );
 	return vd_to_index_.find(residue_connections_[ lower_connect_id_ ].vertex())->second;
 }
@@ -698,7 +634,7 @@ ResidueType::lower_connect_atom() const {
 Size
 ResidueType::upper_connect_atom() const
 {
-	assert( is_polymer_ );
+	assert( properties_->has_property( POLYMER ) );
 	assert( upper_connect_id_ != 0 );
 	return vd_to_index_.find(residue_connections_[ upper_connect_id_ ].vertex())->second;
 }
@@ -798,8 +734,8 @@ ResidueType::abase2( Size const atomno ) const
 }
 
 ///@brief Counts the number of virtual atoms and returns the count.
-///@details The virtual count is not stored in the resiude type.  This count is performed on the fly, and
-///can hurt performance if reapeatedly carried out.  Not intended for use in large loops -- instead, call
+///@details The virtual count is not stored in the residue type.  This count is performed on the fly, and
+///can hurt performance if repeatedly carried out.  Not intended for use in large loops -- instead, call
 ///once and store the value.
 ///@author Vikram K. Mulligan (vmullig@uw.edu)
 Size
@@ -1709,220 +1645,400 @@ ResidueType::set_mainchain_atoms( AtomIndices const & mainchain )
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
-/// @details get all specified properties for this residue type
-utility::vector1< std::string > const &
-ResidueType::properties() const
-{
-	return properties_;
-}
-
+// Property-Related Methods
 ///////////////////////////////////////////////////////////////////////////////
 
-/// @details add a property to this residue
-/** update boolean property member data accordingly **/
+ResidueProperties const &
+ResidueType::properties() const
+{
+	return *properties_;
+}
+
 void
 ResidueType::add_property( std::string const & property )
 {
-	// signal that we need to update the derived data
+	// signal that we need to update the derived data.
 	finalized_ = false;
 
-	if ( property == "POLYMER" ) {
-		is_polymer_ = true;
-	} else if ( property == "PROTEIN" ) {
-		is_protein_ = true;
-		is_polymer_ = true;
-	} else if ( property == "ALPHA_AA" ) {
-		is_protein_ = true;
-		is_polymer_ = true;
-		is_alpha_aa_ = true;
-	} else if ( property == "BETA_AA" ) {
-		is_protein_ = true;
-		is_polymer_ = true;
-		is_beta_aa_ = true;
-	} else if ( property == "L_AA" ) {
-		is_protein_ = true;
-		is_polymer_ = true;
-		is_alpha_aa_ = true;
-		is_l_aa_ = true;
-	} else if ( property == "D_AA" ) {
-		is_protein_ = true;
-		is_polymer_ = true;
-		is_alpha_aa_ = true;
-		is_d_aa_ = true;
-	} else if ( property == "POLAR" ) {
-		is_polar_ = true;
-	} else if( property == "SC_ORBITALS"){
-		has_sc_orbitals_ = true;
-	} else if ( property == "CHARGED" ) {
-		is_charged_ = true;
-	} else if ( property == "AROMATIC" ) {
-		is_aromatic_ = true;
-	} else if ( property == "CYCLIC" ) {
-		is_cyclic_ = true;
-	} else if ( property == "COARSE" ) {
-		is_coarse_ = true; //currently only for RNA
-	} else if ( property == "DNA" ) {
-		is_DNA_ = true;
-		is_NA_ = true;
-		is_polymer_ = true;
-	} else if ( property == "RNA" ) {
-		is_RNA_ = true;
-		is_NA_ = true;
-		is_polymer_ = true;
-	}	else if ( property == "PEPTOID" ) {
-		is_peptoid_ = true;
-		is_polymer_ = true;
-	} else if ( property == "CARBOHYDRATE") {
-		is_carbohydrate_ = true;
-	} else if ( property == "LIPID" ) {
-		is_lipid_ = true;
-	} else if ( property == "LIGAND" ) {
-		is_ligand_ = true;
-	} else if ( property == "METAL" ) { //Is this a metal ion?
-		is_metal_ = true;
-	} else if ( property == "METALBINDING" ) { //Can this amino acid residue bind metals?
-		is_metalbinding_ = true;
-	} else if ( property == "SURFACE" ) {
-		is_surface_ = true;
-	} else if ( property == "LOWER_TERMINUS" ) {
-		is_terminus_ = true;
-		is_lower_terminus_ = true;
-	} else if ( property == "UPPER_TERMINUS" ) {
-		is_terminus_ = true;
-		is_upper_terminus_ = true;
-	} else if ( property == "BRANCH_LOWER_TERMINUS" ) {
-		is_branch_lower_terminus_ = true;
-	} else if ( property == "LOWERTERM_TRUNC" ) {
-		is_terminus_ = true;
-		is_lower_terminus_ = true;
-	} else if ( property == "UPPERTERM_TRUNC" ) {
-		is_terminus_ = true;
-		is_upper_terminus_ = true;
-	} else if ( property == "PHOSPHONATE" ) {
-		is_polymer_ = true;
-		is_phosphonate_ = true;
-	} else if ( property == "PHOSPHONATE_UPPER" ) {
-		is_terminus_ = true;
-		is_upper_terminus_ = true;
-		is_phosphonate_ = true;
-		is_phosphonate_upper_ = true;
-	} else if ( property == "TERMINUS" ) {
-		is_terminus_ = true;
-	} else if ( property == "ACETYLATED_NTERMINUS" ) {
-		is_terminus_ = true;
-		is_lower_terminus_ = true;
-		is_acetylated_nterminus_ = true;
-	} else if ( property == "METHYLATED_CTERMINUS" ) {
-		is_terminus_ = true;
-		is_upper_terminus_ = true;
-		is_methylated_cterminus_ = true;
-	} else if ( property == "VIRTUAL_RESIDUE" ) {
-		is_virtual_residue_ = true;
-	} else if (property == "TAUTOMER") {
-		; // this is for HIS_D, following someone's suggestion in Patch applications. -- rhiju
-	} else if (property == "BRANCH_POINT") {
-		;  // Null statement for now.... ~ Labonte
-	} else if (carbohydrates::CarbohydrateInfo::sugar_properties().contains(property)) {
-		;  // Null statement -- these properties will be added to carbohydrate_info_ by update_derived_data().
-	} else {
-		tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
-	}
+	properties_->set_property( property, true );
 
-	properties_.push_back( property );
+	// Special "umbrella cases"
+	// FIXME: There really shouldn't be as many umbrella cases, IMO. ~Labonte
+	if ( property == "PROTEIN" ) {
+		properties_->set_property( POLYMER, true );
+	} else if ( property == "ALPHA_AA" ) {
+		properties_->set_property( PROTEIN, true );
+		properties_->set_property( POLYMER, true );
+	} else if ( property == "BETA_AA" ) {
+		properties_->set_property( PROTEIN, true );
+		properties_->set_property( POLYMER, true );
+	} else if ( property == "L_AA" ) {
+		properties_->set_property( PROTEIN, true );
+		properties_->set_property( POLYMER, true );
+		properties_->set_property( ALPHA_AA, true );
+	} else if ( property == "D_AA" ) {
+		properties_->set_property( PROTEIN, true );
+		properties_->set_property( POLYMER, true );
+		properties_->set_property( ALPHA_AA, true );
+	} else if ( property == "DNA" ) {
+		properties_->set_property( NA, true );
+		properties_->set_property( POLYMER, true );
+	} else if ( property == "RNA" ) {
+		properties_->set_property( NA, true );
+		properties_->set_property( POLYMER, true );
+	}	else if ( property == "PEPTOID" ) {
+		properties_->set_property( POLYMER, true );
+	} else if ( property == "LOWER_TERMINUS" ) {
+		properties_->set_property( TERMINUS, true );
+	} else if ( property == "UPPER_TERMINUS" ) {
+		properties_->set_property( TERMINUS, true );
+	} else if ( property == "LOWERTERM_TRUNC" ) {
+		properties_->set_property( TERMINUS, true );
+		properties_->set_property( LOWER_TERMINUS, true );
+	} else if ( property == "UPPERTERM_TRUNC" ) {
+		properties_->set_property( TERMINUS, true );
+		properties_->set_property( UPPER_TERMINUS, true );
+	} else if ( property == "PHOSPHONATE" ) {
+		properties_->set_property( POLYMER, true );
+	} else if ( property == "PHOSPHONATE_UPPER" ) {
+		properties_->set_property( TERMINUS, true );
+		properties_->set_property( UPPER_TERMINUS, true );
+		properties_->set_property( PHOSPHONATE, true );
+	} else if ( property == "ACETYLATED_NTERMINUS" ) {
+		properties_->set_property( TERMINUS, true );
+		properties_->set_property( LOWER_TERMINUS, true );
+	} else if ( property == "METHYLATED_CTERMINUS" ) {
+		properties_->set_property( TERMINUS, true );
+		properties_->set_property( UPPER_TERMINUS, true );
+	}
 }
+
+void
+ResidueType::set_adduct_flag( bool adduct_in )
+{
+	properties_->set_property( ADDUCT, adduct_in );
+}
+
 
 void
 ResidueType::add_numeric_property(std::string const & tag, core::Real value)
 {
-	numeric_properties_.insert(std::make_pair(tag,value));
+	properties_->add_numeric_property( tag, value );
 }
-
 
 void
 ResidueType::add_string_property(std::string const & tag, std::string value)
 {
-	string_properties_.insert(std::make_pair(tag,value));
+	properties_->add_string_property( tag, value );
 }
-///////////////////////////////////////////////////////////////////////////////
 
-/// @details delete a property to this residue
-/** update boolean property member data accordingly **/
-//    Added by Andy M. Chen in June 2009
-//    This is needed for deleting properties, which occurs in certain PTM's
+/// @details This is needed for deleting properties, which occurs in certain PTMs.
 void
 ResidueType::delete_property( std::string const & property )
 {
-	// signal that we need to update the derived data
+	// Signal that we need to update the derived data.
 	finalized_ = false;
 
-	if ( property == "POLYMER" ) {
-		is_polymer_ = false;
-	} else if ( property == "PROTEIN" ) {
-		is_protein_ = false;
-	} else if ( property == "ALPHA_AA" ) {
-		is_alpha_aa_ = false;
-	} else if ( property == "BETA_AA" ) {
-		is_beta_aa_ = false;
-	} else if ( property == "L_AA" ) {
-		is_l_aa_ = false;
-	} else if ( property == "D_AA" ) {
-		is_d_aa_ = false;
-	} else if ( property == "POLAR" ) {
-		is_polar_ = false;
-	}else if(property == "SC_ORBITALS"){
-		has_sc_orbitals_ = false;
-	}else if ( property == "CHARGED" ) {
-		is_charged_ = false;
-	} else if ( property == "AROMATIC" ) {
-		is_aromatic_ = false;
-	} else if ( property == "CYCLIC" ) {
-		is_cyclic_ = false;
-	} else if ( property == "COARSE" ) {
-		is_coarse_ = false;
-	} else if ( property == "DNA" ) {
-		is_DNA_ = false;
-	} else if ( property == "RNA" ) {
-		is_RNA_ = false;
-	} else if ( property == "PEPTOID" ) {
-		is_peptoid_ = false;
-	} else if ( property == "CARBOHYDRATE") {
-		is_carbohydrate_ = false;
-	} else if ( property == "LIPID") {
-		is_lipid_ = false;
-	} else if ( property == "LIGAND" ) {
-		is_ligand_ = false;
-	} else if ( property == "METAL" ) {
-		is_metal_ = false;
-	} else if ( property == "METALBINDING" ) {
-		is_metalbinding_ = false;
-	} else if ( property == "SURFACE" ) {
-		is_surface_ = false;
-	} else if ( property == "LOWER_TERMINUS" ) {
-		// could add an is_lower_terminus_ bool if needed?
-		is_lower_terminus_ = false;
-	} else if ( property == "UPPER_TERMINUS" ) {
-		is_upper_terminus_ = false;
-	} else if ( property == "BRANCH_LOWER_TERMINUS" ) {
-		is_branch_lower_terminus_ = false;
-	} else if ( property == "TERMINUS" ) {
-		is_terminus_ = false;
-	} else if ( property == "PHOSPHONATE" ) {
-		is_phosphonate_ = false;
-	} else if ( property == "PHOSPHONATE_UPPER" ) {
-		is_phosphonate_upper_ = false;
-	} else if ( property == "ACETYLATED_NTERMINUS" ) {
-		is_acetylated_nterminus_ = false;
-	} else if ( property == "METHYLATED_CTERMINUS" ) {
-		is_methylated_cterminus_ = false;
-	} else if ( property == "VIRTUAL_RESIDUE" ) {
-		is_virtual_residue_ = false;
-	} else {
-		tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
+	properties_->set_property( property, false );
+}
+
+
+bool
+ResidueType::is_polymer() const
+{
+	return properties_->has_property( POLYMER );
+}
+
+bool
+ResidueType::is_protein() const
+{
+	return properties_->has_property( PROTEIN );
+}
+
+bool
+ResidueType::is_alpha_aa() const
+{
+	return properties_->has_property( ALPHA_AA );
+}
+
+bool
+ResidueType::is_beta_aa() const
+{
+	return properties_->has_property( BETA_AA );
+}
+
+bool
+ResidueType::is_d_aa() const
+{
+	return properties_->has_property( D_AA );
+}
+
+bool
+ResidueType::is_l_aa() const
+{
+	return properties_->has_property( L_AA );
+}
+
+bool
+ResidueType::is_DNA() const
+{
+	return properties_->has_property( DNA );
+}
+
+bool
+ResidueType::is_RNA() const
+{
+	return properties_->has_property( RNA );
+}
+
+bool
+ResidueType::is_coarse() const
+{
+	return properties_->has_property( COARSE );
+}
+
+bool
+ResidueType::is_NA() const
+{
+	return properties_->has_property( NA );
+}
+
+bool
+ResidueType::is_peptoid() const
+{
+	return properties_->has_property( PEPTOID );
+}
+
+bool
+ResidueType::is_carbohydrate() const
+{
+	return properties_->has_property( CARBOHYDRATE );
+}
+
+bool
+ResidueType::is_ligand() const
+{
+	return properties_->has_property( LIGAND );
+}
+
+bool
+ResidueType::is_lipid() const
+{
+	return properties_->has_property( LIPID );
+}
+
+/// @details The METAL property is specified in the params file under PROPERTIES.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool
+ResidueType::is_metal() const
+{
+	return properties_->has_property( METAL );
+}
+
+/// @details The METALBINDING property is specified in the params file under PROPERTIES.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool
+ResidueType::is_metalbinding() const
+{
+	return properties_->has_property( METALBINDING );
+}
+
+bool
+ResidueType::is_surface() const
+{
+	return properties_->has_property( SURFACE );
+}
+
+bool
+ResidueType::has_sc_orbitals() const
+{
+	return properties_->has_property( SC_ORBITALS );
+}
+
+bool
+ResidueType::is_polar() const
+{
+	return properties_->has_property( POLAR );
+}
+
+bool
+ResidueType::is_charged() const
+{
+	return properties_->has_property( CHARGED );
+}
+
+bool
+ResidueType::is_aromatic() const
+{
+	return properties_->has_property( AROMATIC );
+}
+
+bool
+ResidueType::is_cyclic() const
+{
+	return properties_->has_property( CYCLIC );
+}
+
+bool
+ResidueType::is_terminus() const
+{
+	return properties_->has_property( TERMINUS );
+}
+
+bool
+ResidueType::is_lower_terminus() const
+{
+	return properties_->has_property( LOWER_TERMINUS );
+}
+
+bool
+ResidueType::is_upper_terminus() const
+{
+	return properties_->has_property( UPPER_TERMINUS );
+}
+
+bool
+ResidueType::is_branch_lower_terminus() const
+{
+	return properties_->has_property( BRANCH_LOWER_TERMINUS );
+}
+
+bool
+ResidueType::is_acetylated_nterminus() const
+{
+	return properties_->has_property( ACETYLATED_NTERMINUS );
+}
+
+bool
+ResidueType::is_methylated_cterminus() const
+{
+	return properties_->has_property( METHYLATED_CTERMINUS );
+}
+
+bool
+ResidueType::is_virtual_residue() const
+{
+	return properties_->has_property( VIRTUAL_RESIDUE );
+}
+
+bool
+ResidueType::is_adduct() const
+{
+	return properties_->has_property( ADDUCT );
+}
+
+
+bool
+ResidueType::has_property( std::string const & property ) const
+{
+	return properties_->has_property( property );
+}
+
+
+core::Real
+ResidueType::get_numeric_property(std::string const & tag) const
+{
+	std::map<std::string, core::Real> const numeric_properties( properties_->numeric_properties() );
+	std::map<std::string, core::Real>::const_iterator property_it( numeric_properties.find( tag ) );
+	if ( property_it == numeric_properties.end() )
+	{
+		throw utility::excn::EXCN_KeyError( tag + " does not exist in ResidueType with name " + name3_ );
+		return 0.0; //keep compilers happy
 	}
 
-	utility::vector1<std::string>::iterator i = std::find(properties_.begin(), properties_.end(), property);
-	properties_.erase(i);
+	return property_it->second;
+}
+
+std::string
+ResidueType::get_string_property(std::string const & tag) const
+{
+	std::map<std::string, std::string> const string_properties( properties_->string_properties() );
+	std::map<std::string, std::string>::const_iterator property_it(string_properties.find(tag));
+	if(property_it == string_properties.end())
+	{
+		throw utility::excn::EXCN_KeyError(tag + " does not exist in ResidueType with name " + name3_);
+		return "";
+	}
+	return property_it->second;
+}
+
+
+utility::vector1< VariantType > const &
+ResidueType::variant_types() const
+{
+	return properties_->variant_types();
+}
+
+void
+ResidueType::add_variant_type( VariantType const & variant_type )
+{
+	properties_->add_variant_type( variant_type );
+}
+
+bool
+ResidueType::has_variant_type( VariantType const & variant_type ) const
+{
+	return properties_->has_variant_type( variant_type );
+}
+
+bool
+ResidueType::variants_match( ResidueType const & other ) const
+{
+	utility::vector1< VariantType > const my_variant_types( properties_->variant_types() );
+	if ( ! basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) {
+		for ( Size ii = 1; ii <= my_variant_types.size(); ++ii ) {
+			if ( ! other.has_variant_type( my_variant_types[ ii ] ) ) {
+				return false;
+			}
+		}
+		return ( my_variant_types.size() == other.variant_types().size() );
+	}
+
+	//needed for protonated versions of the residues
+	else {
+		int this_variant_count_offset( 0 );
+		for ( Size ii = 1; ii <= my_variant_types.size(); ++ii ) {
+			if ( my_variant_types[ii] == PROTONATED || my_variant_types[ii] == DEPROTONATED ) {
+				this_variant_count_offset = 1;
+				continue;
+			}
+			if ( ! other.has_variant_type( my_variant_types[ ii ] ) ) {
+				return false;
+			}
+		}
+
+		int other_variant_count_offset( 0 );
+		if( other.has_variant_type( PROTONATED ) || other.has_variant_type( DEPROTONATED ) ) {
+			other_variant_count_offset = 1;
+		}
+
+		return ( ( my_variant_types.size() - this_variant_count_offset ) ==
+				( other.variant_types().size() - other_variant_count_offset ) );
+	}
+}
+
+bool
+ResidueType::nonadduct_variants_match( ResidueType const & other ) const
+{
+	int this_variant_count_offset( 0 );
+	utility::vector1< VariantType > const my_variant_types( properties_->variant_types() );
+	for ( Size ii = 1; ii <= my_variant_types.size(); ++ii ) {
+		if ( my_variant_types[ii] == ADDUCT_VARIANT ) {
+			this_variant_count_offset = 1;
+			continue;
+		}
+		if ( ! other.has_variant_type( my_variant_types[ ii ] ) ) {
+			return false;
+		}
+	}
+
+	int other_variant_count_offset( 0 );
+	if( other.has_variant_type( ADDUCT_VARIANT ) ) {
+		other_variant_count_offset = 1;
+	}
+
+	return ( ( my_variant_types.size() - this_variant_count_offset ) ==
+			( other.variant_types().size() - other_variant_count_offset ) );
 }
 
 
@@ -2625,23 +2741,23 @@ ResidueType::update_derived_data()
 	// Assign a set of possible ring conformations.
 	// Ring size is determined by the number of NU angles listed in the .params file, which should always be 2 less
 	// than the size of the ring.
-	if ( is_cyclic_ ) {
+	if ( properties_->has_property( CYCLIC ) ) {
 		// ring_size could be made a private datum, but it only really makes sense for monocyclics.  Since its only use
 		// for the time being is to set the proper RingConformerSet, I'll just leave it as a local variable here.
 		// ~Labonte
 		Size ring_size = nu_atoms_indices_.size() + 2;
-		conformer_set_ = new RingConformerSet(ring_size);
+		conformer_set_ = new RingConformerSet( ring_size );
 	}
 
-	if(is_RNA_){ //reinitialize and RNA derived data.
+	if( properties_->has_property( RNA ) ){ //reinitialize and RNA derived data.
 		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
 		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
 		rna_residue_type_ = new core::chemical::rna::RNA_ResidueType;
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
 		rna_residue_type_->rna_update_last_controlling_chi( this, last_controlling_chi_, atoms_last_controlled_by_chi_);
 		rna_residue_type_->update_derived_rna_data( this );
-	} else if (is_carbohydrate_) {
-		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo(this);
+	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
+		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo( this );
 		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();
@@ -2669,23 +2785,29 @@ ResidueType::perform_checks()
 	}
 
 	if(is_metalbinding() && metal_binding_atoms_.size()==0) {
-		msg << "A metal-binding residue has no metal binding atoms listed in its params file (PROPERTIES METALBINDING without METAL_BINDING_ATOMS list)." << std::endl;
+		msg << "A metal-binding residue has no metal binding atoms listed in its params file (PROPERTIES METALBINDING "
+				"without METAL_BINDING_ATOMS list)." << std::endl;
 		checkspass=false;
 	} else if (!is_metalbinding() && metal_binding_atoms_.size()>0) {
-		msg << "A residue that has not been declared as a metal-binding residue has metal binding atoms listed in its params file (METAL_BINDING_ATOMS list without PROPERTIES METALBINDING)." << std::endl;
+		msg << "A residue that has not been declared as a metal-binding residue has metal binding atoms listed in its "
+				"params file (METAL_BINDING_ATOMS list without PROPERTIES METALBINDING)." << std::endl;
 		checkspass=false;
 	}
 
-	if(is_alpha_aa_ && is_beta_aa_) {
-		msg << "Error!  A residue type specifies that it is both an alpha and a beta amino acid in its params file." << std::endl;
+	if( properties_->has_property( ALPHA_AA ) && properties_->has_property( BETA_AA ) ) {
+		msg << "Error!  A residue type specifies that it is both an alpha and a beta amino acid in its params file." <<
+				std::endl;
 		checkspass=false;
 	}
-	if(is_l_aa_ && is_d_aa_) {
-		msg << "Error!  A residue type specifies that it is both an L-amino acid and a D-amino acid in its params file." << std::endl;
+	if( properties_->has_property( L_AA ) && properties_->has_property( D_AA ) ) {
+		msg << "Error!  A residue type specifies that it is both an L-amino acid and a D-amino acid in its params "
+				"file." << std::endl;
 		checkspass=false;
 	}
-	if( (backbone_aa_ != core::chemical::aa_unk) && !is_alpha_aa_) {
-		msg << "Error!  A residue type specifies a standard alpha amino acid to use as a template for backbone scoring (rama and p_aa_pp scoring functions) without specifying that it is itself an alpha amino acid (PROPERTIES ALPHA_AA)." << std::endl;
+	if( (backbone_aa_ != core::chemical::aa_unk) && ! properties_->has_property( ALPHA_AA ) ) {
+		msg << "Error!  A residue type specifies a standard alpha amino acid to use as a template for backbone scoring"
+				" (rama and p_aa_pp scoring functions) without specifying that it is itself an alpha amino acid "
+				"(PROPERTIES ALPHA_AA)." << std::endl;
 		checkspass=false;
 	}
 
@@ -2706,14 +2828,14 @@ ResidueType::perform_checks()
 		----------------------------------------------------------
 		ordered_atoms_         v1<AtomAP>           add_atom //from base class
 		atom_name_             v1<string>           add_atom
-		atom_name_to_vd_      map<string,VD>       add_atom
+		atom_name_to_vd_       map<string,VD>       add_atom
 		atomic_charge          v1<Real>             add_atom
 		bonded_neighbor_       v1<v1<int>>          add_bond
 		bonded_neighbor_type   v1<v1<BondName>>     add_bond
 		atom_base_             v1<int>              set_atom_base
 		chi_atoms_             v1<v1<uint>>         add_chi
 		nu_atoms_              v1<v1<uint>>         add_nu
-		properties             bools                add_property
+		properties_            ResidueProperties    add_property
 		nbr_atom_              int                  nbr_atom( int )
 
 		This routine updates all the derived data.
@@ -2747,67 +2869,7 @@ ResidueType::finalize()
 
 }
 
-////////////////////////////////////////////////////////////////////
-
-
-bool
-ResidueType::variants_match( ResidueType const & other ) const
-{
-	if ( ! basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) {
-		for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
-			if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
-				return false;
-			}
-		}
-		return (variant_types_.size() == other.variant_types_.size());
-	}
-
-	//needed for protonated versions of the residues
-	else {
-		int this_variant_count_offset( 0 );
-		for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
-			if ( variant_types_[ii] == PROTONATED || variant_types_[ii] == DEPROTONATED ) {
-				this_variant_count_offset = 1;
-				continue;
-			}
-			if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
-				return false;
-			}
-		}
-
-		int other_variant_count_offset( 0 );
-		if( other.has_variant_type( PROTONATED ) || other.has_variant_type( DEPROTONATED ) ) {
-			other_variant_count_offset = 1;
-		}
-
-		return ( ( variant_types_.size() - this_variant_count_offset ) ==
-				( other.variant_types_.size() - other_variant_count_offset ) );
-	}
-}
-
-bool
-ResidueType::nonadduct_variants_match( ResidueType const & other ) const
-{
-	int this_variant_count_offset( 0 );
-	for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
-		if ( variant_types_[ii] == ADDUCT ) {
-			this_variant_count_offset = 1;
-			continue;
-		}
-		if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
-			return false;
-		}
-	}
-
-	int other_variant_count_offset( 0 );
-	if( other.has_variant_type( ADDUCT ) ) {
-		other_variant_count_offset = 1;
-	}
-
-	return ( ( variant_types_.size() - this_variant_count_offset ) ==
-			( other.variant_types_.size() - other_variant_count_offset ) );
-}
-
+///////////////////////////////////////////////////////////////////////////////
 
 Size
 ResidueType::atom_index( std::string const & name ) const
@@ -2927,8 +2989,16 @@ ResidueType::add_residue_connection( std::string const & atom_name )
 	return residue_connections_.size();
 }
 
-///@details update actcoord
-/** average geometrical center of the set of actcoord_atoms_ */
+
+bool
+ResidueType::requires_actcoord() const
+{
+	return properties_->has_property( PROTEIN ) &&
+			( properties_->has_property( POLAR ) || properties_->has_property( AROMATIC ) ) &&
+			actcoord_atoms_.size() != 0;
+}
+
+///@details average geometrical center of the set of actcoord_atoms_
 void
 ResidueType::update_actcoord( conformation::Residue & rot ) const
 {
@@ -3574,39 +3644,43 @@ void
 ResidueType::show( std::ostream & output ) const
 {
 	using namespace std;
+	using namespace utility;
 
 	output << name_ << " (" << name3_ << ", " << name1_ << "):" << endl;
 
-	output << " Properties:";
-	Size n_properties = properties_.size();
-	for ( uint i = 1; i <= n_properties; ++i ) {
-		output << ' ' << properties_[ i ];
+	properties_->show( output );
+
+	output << " Variant types:";
+	vector1< VariantType > const variant_types( properties_->variant_types() );
+	Size const n_variant_types( variant_types.size() );
+	for ( core::uint i = 1; i <= n_variant_types; ++i ) {
+		output << ' ' << variant_types[ i ];
 	}
 	output << endl;
 
 	output << " Main-chain atoms:";
-	Size n_mainchain_atoms = mainchain_atoms_indices_.size();
+	Size const n_mainchain_atoms(mainchain_atoms_indices_.size() );
 	for ( uint i = 1; i <= n_mainchain_atoms; ++i ) {
 		output << ' ' << atom_name( mainchain_atoms_indices_[ i ] );
 	}
 	output << endl;
 
 	output << " Backbone atoms:  ";
-	Size n_bb_atoms = all_bb_atoms_.size();
+	Size const n_bb_atoms( all_bb_atoms_.size() );
 	for ( uint i = 1; i <= n_bb_atoms; ++i ) {
 		output << ' ' << atom_name( all_bb_atoms_[ i ] );
 	}
 	output << endl;
 
 	output << " Side-chain atoms:";
-	Size n_sc_atoms = all_sc_atoms_.size();
+	Size const n_sc_atoms( all_sc_atoms_.size() );
 	for ( uint i = 1; i <= n_sc_atoms; ++i ) {
 		output << ' ' << atom_name( all_sc_atoms_[ i ] );
 	}
 	output << endl;
 
-	if ( is_carbohydrate_ ) {
-		carbohydrate_info_->show(output);
+	if ( properties_->has_property( CARBOHYDRATE ) ) {
+		carbohydrate_info_->show( output );
 	}
 }
 

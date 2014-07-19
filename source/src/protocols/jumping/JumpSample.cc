@@ -511,8 +511,8 @@ JumpSample::generate_jump_frags(
 void
 JumpSample::add_chainbreaks( pose::Pose &pose ) const {
   for ( Size i = 1; i<= njump_; i++ ) {
-		if ( pose.residue_type( cuts_(i) ).has_variant_type( chemical::UPPER_TERMINUS ) ) continue;
-		if ( pose.residue_type( cuts_(i)+1 ).has_variant_type( chemical::LOWER_TERMINUS ) ) continue;
+		if ( pose.residue_type( cuts_(i) ).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) continue;
+		if ( pose.residue_type( cuts_(i)+1 ).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) continue;
 		tr.Debug << "add chainbreak variant to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
     core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cuts_(i) );
     core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cuts_(i)+1 );
@@ -525,8 +525,8 @@ JumpSample::add_chainbreaks( pose::Pose &pose, Size max_dist, core::kinematics::
   for ( Size i = 1; i<= njump_; i++ ) {
     if ( sp.dist( cuts_(i), cuts_(i)+1 ) <= max_dist
 			&& pose.residue( cuts_(i) ).is_polymer() && pose.residue( cuts_(i)+1 ).is_polymer() ) {
-			if ( pose.residue_type( cuts_(i) ).has_variant_type( chemical::UPPER_TERMINUS ) ) continue;
-			if ( pose.residue_type( cuts_(i)+1 ).has_variant_type( chemical::LOWER_TERMINUS ) ) continue;
+			if ( pose.residue_type( cuts_(i) ).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) continue;
+			if ( pose.residue_type( cuts_(i)+1 ).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) continue;
 			tr.Debug << "add chainbreak variant to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
       core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cuts_(i) );
       core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cuts_(i)+1 );

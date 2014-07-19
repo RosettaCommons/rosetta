@@ -224,9 +224,9 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose )
 
 		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
 
-		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::UPPER_TERMINUS ) ) continue;
+		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) continue;
 
-		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS ) ) continue;
+		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) continue;
 
 		if ( !pose.residue_type( this_cutpoint ).is_protein() ) continue;
 		if ( !pose.residue_type( this_cutpoint +1 ).is_protein() ) continue;
@@ -251,9 +251,9 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose, utility::vector1< c
 			continue;
 		}
 
-		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::UPPER_TERMINUS ) ) continue;
+		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) continue;
 
-		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS ) ) continue;
+		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) continue;
 
 		if( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );

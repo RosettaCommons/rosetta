@@ -2621,7 +2621,7 @@ bk_test2()
 	pose1.dump_pdb("test2.pdb");
 
 
-	core::pose::remove_variant_type_from_pose_residue( pose2, UPPER_TERMINUS, nres2 );
+	core::pose::remove_variant_type_from_pose_residue( pose2, UPPER_TERMINUS_VARIANT, nres2 );
 	core::pose::add_variant_type_to_pose_residue( pose2, VariantType("CTERM_CONNECT"), nres2 );
 
 

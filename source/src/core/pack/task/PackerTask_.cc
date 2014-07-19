@@ -339,7 +339,7 @@ void ResidueLevelTask_::or_adducts( bool setting )
 	if ( setting ) return;
 
 	for ( ResidueTypeCOPListIter type_iter( allowed_residue_types_.begin() ), type_end(  allowed_residue_types_.end() ); type_iter != type_end; ) {
-		if ( (*type_iter)->has_variant_type( chemical::ADDUCT ) ) {
+		if ( (*type_iter)->has_variant_type( chemical::ADDUCT_VARIANT ) ) {
 			type_iter = allowed_residue_types_.erase( type_iter );
 		} else {
 			++type_iter;

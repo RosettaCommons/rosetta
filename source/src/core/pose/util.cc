@@ -1529,7 +1529,7 @@ add_lower_terminus_type_to_pose_residue(
 	Size const seqpos
 	)
 {
-	add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS, seqpos );
+	add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
 
 void
@@ -1538,7 +1538,7 @@ add_upper_terminus_type_to_pose_residue(
 	Size const seqpos
 	)
 {
-	add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS, seqpos );
+	add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
 void
@@ -1547,7 +1547,7 @@ remove_lower_terminus_type_from_pose_residue(
 	Size const seqpos
 	)
 {
-	core::pose::remove_variant_type_from_pose_residue( pose, chemical::LOWER_TERMINUS, seqpos );
+	core::pose::remove_variant_type_from_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
 
 void
@@ -1556,7 +1556,7 @@ remove_upper_terminus_type_from_pose_residue(
 	Size const seqpos
 	)
 {
-	core::pose::remove_variant_type_from_pose_residue( pose, chemical::UPPER_TERMINUS, seqpos );
+	core::pose::remove_variant_type_from_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
 ///@brief returns a Distance
@@ -2313,11 +2313,11 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 		runtime_assert( cutpoint_res < pose.total_residue() );
 		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
 
-		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, cutpoint_res );
+		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, cutpoint_res );
 		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", cutpoint_res );
 		remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", cutpoint_res );
 
-		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, cutpoint_res + 1 );
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, cutpoint_res + 1 );
 		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, cutpoint_res + 1 );
 		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", cutpoint_res + 1 );
 		remove_variant_type_from_pose_residue( pose, "N_ACETYLATION", cutpoint_res + 1);

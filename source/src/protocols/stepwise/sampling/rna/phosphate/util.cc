@@ -124,7 +124,7 @@ namespace phosphate {
 						make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
 						make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
 					} else { // order matters, since there's not variant with both virtual phosphate and five prime phosphate
-						make_variants_match( pose, reference_pose, n, LOWER_TERMINUS );
+						make_variants_match( pose, reference_pose, n, LOWER_TERMINUS_VARIANT );
 						make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
 						make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
 						make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
@@ -140,7 +140,7 @@ namespace phosphate {
 			} else {
 				runtime_assert( terminus == THREE_PRIME_PHOSPHATE );
 				if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) {
-					make_variants_match( pose, reference_pose, n, UPPER_TERMINUS );
+					make_variants_match( pose, reference_pose, n, UPPER_TERMINUS_VARIANT );
 					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
 					make_variants_match( pose, reference_pose, n, "THREE_PRIME_PHOSPHATE" );
 					torsion_ids.push_back( TorsionID( n, id::BB, EPSILON ) );

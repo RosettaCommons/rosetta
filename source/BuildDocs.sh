@@ -1,8 +1,14 @@
 #!/bin/bash
 
-echo 'Building documentation for each src/doxygen.*'
+echo 'Updating Rosetta options system...'
 
 ./update_options.sh
+
+echo 'Populating ResidueType properties from database...'
+
+./update_residue_properties.sh
+
+echo 'Building documentation for each src/doxygen.*...'
 
 mkdir html
 cp src/index.html html/

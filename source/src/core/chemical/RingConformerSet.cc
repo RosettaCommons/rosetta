@@ -315,8 +315,8 @@ RingConformerSet::init(core::uint const ring_size)
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 RingConformerSet::copy_data(
-		RingConformerSet object_to_copy_to,
-		RingConformerSet object_to_copy_from)
+		RingConformerSet & object_to_copy_to,
+		RingConformerSet const & object_to_copy_from)
 {
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
 	object_to_copy_to.nondegenerate_conformers_ = object_to_copy_from.nondegenerate_conformers_;

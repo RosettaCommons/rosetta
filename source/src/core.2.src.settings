@@ -1,6 +1,6 @@
 # -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
 #
-# Project settings for rosetta sources
+# Project settings for Rosetta sources
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -35,6 +35,7 @@ sources = {
 		"Orbital",
 		"Patch",
 		"PatchOperation",
+		"property_mappings",
 		"ResConnID",
 		"residue_io",
 		"ResidueDatabaseIO",
@@ -43,6 +44,7 @@ sources = {
 		"ResidueSelector",
 		"residue_support",
 		"ResidueGraphTypes",
+		"ResidueProperties",
 		"ResidueType",
 		"ResidueTypeKinWriter",
 		"ResidueTypeSet",

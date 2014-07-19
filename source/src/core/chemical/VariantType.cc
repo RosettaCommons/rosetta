@@ -44,15 +44,17 @@
 namespace core {
 namespace chemical {
 
+// TODO: Change to enums. ~Labonte
+
 /// @brief C-terminus cap
-VariantType const UPPER_TERMINUS( "UPPER_TERMINUS" );
+VariantType const UPPER_TERMINUS_VARIANT( "UPPER_TERMINUS" );
 /// @brief N-terminus cap
-VariantType const LOWER_TERMINUS( "LOWER_TERMINUS" );
+VariantType const LOWER_TERMINUS_VARIANT( "LOWER_TERMINUS" );
 
 /// @brief C-terminus truncation
-VariantType const UPPERTERM_TRUNC( "UPPERTERM_TRUNC" );
+VariantType const UPPERTERM_TRUNC_VARIANT( "UPPERTERM_TRUNC" );
 /// @brief N-terminus truncation
-VariantType const LOWERTERM_TRUNC( "LOWERTERM_TRUNC" );
+VariantType const LOWERTERM_TRUNC_VARIANT( "LOWERTERM_TRUNC" );
 
 /// @brief for use during loop modeling, at positions before a cutpoint
 VariantType const CUTPOINT_LOWER( "CUTPOINT_LOWER" );
@@ -61,11 +63,11 @@ VariantType const CUTPOINT_UPPER( "CUTPOINT_UPPER" );
 ///
 VariantType const DISULFIDE( "DISULFIDE" );
 /// @brief Variant type used for branched polymers and glycosylations.
-VariantType const BRANCH_POINT("BRANCH_POINT");
+VariantType const BRANCH_POINT_VARIANT("BRANCH_POINT");
 /// @brief Variant type used for branched polymers and glycosylations.
-VariantType const BRANCH_LOWER_TERMINUS("BRANCH_LOWER_TERMINUS");
+VariantType const BRANCH_LOWER_TERMINUS_VARIANT("BRANCH_LOWER_TERMINUS");
 ///
-VariantType const ADDUCT( "ADDUCT" );
+VariantType const ADDUCT_VARIANT( "ADDUCT" );
 
 VariantType const METHYLATION( "METHYLATION" );
 
@@ -93,10 +95,10 @@ VariantType const TRIMETHYLATION( "TRIMETHYLATION" );
 VariantType const DIIODINATION( "DIIODINATION" );
 
 /// @brief Acetylated N-terminus cap, written for creating amino acid dipeptides for NCAA rotamer libraries
-VariantType const ACETYLATED_NTERMINUS( "ACETYLATED_NTERMINUS" );
+VariantType const ACETYLATED_NTERMINUS_VARIANT( "ACETYLATED_NTERMINUS" );
 /// @brief Methylated C-terminus cap, written for creating amino acid dipeptides for NCAA rotamer libraries
-VariantType const METHYLATED_CTERMINUS( "METHYLATED_CTERMINUS" );
-VariantType const SC_ORBITALS("SC_ORBITALS");
+VariantType const METHYLATED_CTERMINUS_VARIANT( "METHYLATED_CTERMINUS" );
+VariantType const SC_ORBITALS_VARIANT("SC_ORBITALS");
 
 ///@brief Cap extensions at termini to include peptide bonds, written for stepwise assembly (SWA) code.
 VariantType const N_ACETYLATION( "N_ACETYLATION" );
@@ -105,7 +107,7 @@ VariantType const C_METHYLAMIDATION( "C_METHYLAMIDATION" );
 ///@ brief only the repulsive energy will be considered during structure calculations
 VariantType const REPLONLY("REPLONLY");
 
-// @breif N-terminal connect and C-terminal connect
+/// @brief N-terminal connect and C-terminal connect
 VariantType const NTERM_CONNECT( "NTERM_CONNECT" );
 VariantType const CTERM_CONNECT( "CTERM_CONNECT" );
 

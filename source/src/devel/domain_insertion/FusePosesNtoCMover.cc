@@ -585,13 +585,13 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 		if( fusion_seqpos == last_truncate_pos ){
 
 			if( nterm_truncation ){
-				if( to_return->residue_type( fusion_seqpos ).has_variant_type( core::chemical::LOWER_TERMINUS ) ){
+				if( to_return->residue_type( fusion_seqpos ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ){
 					core::conformation::remove_lower_terminus_type_from_conformation_residue( to_return->conformation(), fusion_seqpos );
 				}
 				add_variant_type_to_conformation_residue( to_return->conformation(), core::chemical::CUTPOINT_UPPER, fusion_seqpos );
 			}
 			else{
-				if( to_return->residue_type( fusion_seqpos ).has_variant_type( core::chemical::UPPER_TERMINUS ) ){
+				if( to_return->residue_type( fusion_seqpos ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ){
 					core::conformation::remove_upper_terminus_type_from_conformation_residue( to_return->conformation(), fusion_seqpos );
 				}
 				add_variant_type_to_conformation_residue( to_return->conformation(), core::chemical::CUTPOINT_LOWER, fusion_seqpos );
@@ -603,7 +603,7 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 			to_return->conformation().delete_residue_range_slow( last_truncate_pos, fusion_seqpos - 1 );
 			Size newfirstpos( to_return->conformation().chain_begin( pose_chain_no ) );
 
-			if( to_return->residue_type( newfirstpos ).has_variant_type( core::chemical::LOWER_TERMINUS ) ){
+			if( to_return->residue_type( newfirstpos ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ){
 				core::conformation::remove_lower_terminus_type_from_conformation_residue( to_return->conformation(), newfirstpos );
 			}
 			add_variant_type_to_conformation_residue( to_return->conformation(), core::chemical::CUTPOINT_UPPER, newfirstpos );
@@ -613,7 +613,7 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 			to_return->conformation().delete_residue_range_slow( fusion_seqpos + 1, last_truncate_pos);
 			Size newlastpos( to_return->conformation().chain_end( pose_chain_no ) );
 
-			if( to_return->residue_type( newlastpos ).has_variant_type( core::chemical::UPPER_TERMINUS ) ){
+			if( to_return->residue_type( newlastpos ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ){
 				core::conformation::remove_upper_terminus_type_from_conformation_residue( to_return->conformation(), newlastpos );
 			}
 			add_variant_type_to_conformation_residue( to_return->conformation(), core::chemical::CUTPOINT_LOWER, newlastpos );

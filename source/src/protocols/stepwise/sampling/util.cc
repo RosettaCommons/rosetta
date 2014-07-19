@@ -797,9 +797,9 @@ rotate( pose::Pose & pose, Matrix const M,
 	remove_upper_terminus( core::conformation::ResidueOP & rsd ){
 		using namespace chemical;
 		using namespace conformation;
-		if ( rsd->has_variant_type( UPPER_TERMINUS ) ){
+		if ( rsd->has_variant_type( UPPER_TERMINUS_VARIANT ) ){
 			ResidueTypeSet const & rsd_set( rsd->residue_type_set() );
-			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), UPPER_TERMINUS ) );
+			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), UPPER_TERMINUS_VARIANT ) );
 			rsd = new Residue( new_rsd_type, true );
 		}
 	}
@@ -809,9 +809,9 @@ rotate( pose::Pose & pose, Matrix const M,
 	remove_lower_terminus( core::conformation::ResidueOP & rsd ){
 		using namespace chemical;
 		using namespace conformation;
-		if ( rsd->has_variant_type( LOWER_TERMINUS ) ){
+		if ( rsd->has_variant_type( LOWER_TERMINUS_VARIANT ) ){
 			ResidueTypeSet const & rsd_set( rsd->residue_type_set() );
-			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), LOWER_TERMINUS ) );
+			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), LOWER_TERMINUS_VARIANT ) );
 			rsd = new Residue( new_rsd_type, true );
 		}
 	}
@@ -1409,11 +1409,11 @@ rotate( pose::Pose & pose, Matrix const M,
 				if ( res_list[ res ] < full_model_info.size() &&
 						 chains_full[ res_list[ res ] + 1 ] == chains_full[ res_list[ res ] ] &&
 						 ( res == pose.total_residue()  || res_list[ res ] + 1 < res_list[ res + 1 ] ) ){
-					remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res );
+					remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res );
 					add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", res );
 				} else {
 					remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", res );
-					add_variant_type_to_pose_residue( pose, UPPER_TERMINUS, res );
+					add_variant_type_to_pose_residue( pose, UPPER_TERMINUS_VARIANT, res );
 				}
 			}
 
@@ -1461,11 +1461,11 @@ rotate( pose::Pose & pose, Matrix const M,
 				if ( res_list[ res ] > 1 &&
 						 chains_full[ res_list[ res ] - 1 ] == chains_full[ res_list[ res ] ] &&
 						 ( res == 1 || res_list[ res ] - 1 > res_list[ res - 1 ] ) ){
-					remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res );
+					remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res );
 					add_variant_type_to_pose_residue( pose, "N_ACETYLATION", res );
 				} else {
 					remove_variant_type_from_pose_residue( pose, "N_ACETYLATION", res );
-					add_variant_type_to_pose_residue( pose, LOWER_TERMINUS, res );
+					add_variant_type_to_pose_residue( pose, LOWER_TERMINUS_VARIANT, res );
 				}
 			}
 
@@ -1514,7 +1514,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			if ( at_strand_beginning ) {
 				fix_up_residue_type_variants_at_strand_beginning( pose, n );
 			} else { // make sure there is nothing crazy here
-				remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, n );
+				remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, n );
 				remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
 				remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", n );
 				remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
@@ -1526,7 +1526,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			if ( at_strand_end ) {
 				fix_up_residue_type_variants_at_strand_end( pose, n );
 			} else {
-				remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, n );
+				remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, n );
 				remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );

@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Utility headers
 #include <utility/PyAssert.hh>
@@ -319,8 +320,8 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 CarbohydrateInfo::copy_data(
-		CarbohydrateInfo object_to_copy_to,
-		CarbohydrateInfo object_to_copy_from)
+		CarbohydrateInfo & object_to_copy_to,
+		CarbohydrateInfo const & object_to_copy_from)
 {
 	object_to_copy_to.residue_type_ = object_to_copy_from.residue_type_;
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
@@ -364,13 +365,14 @@ CarbohydrateInfo::get_n_carbons() const
 
 // Read through all the properties.  Check for impossible cases.  If any property type is not set, the default
 // value will be maintained.
+// TODO: Update my code to use enums instead of strings here after properties are refactored. ~Labonte
 void
 CarbohydrateInfo::read_and_set_properties()
 {
 	using namespace std;
 	using namespace utility;
 
-	vector1<string> properties = residue_type_->properties();
+	vector1<string> properties = residue_type_->properties().get_list_of_properties();
 	string property;
 	uint position;  // location of modification; 0 for a property that does not have an associated position
 	modifications_.resize(n_carbons_);
@@ -381,11 +383,11 @@ CarbohydrateInfo::read_and_set_properties()
 	bool anomer_is_set = false;
 
 	for (uint i = 1, n_properties = properties.size(); i <= n_properties; ++i) {
-		// If the 1st character of ith property is a number, it is a modification.
+		// If the 2nd character (index 1) of ith property is a number, it is a modification.
 		// Otherwise, it is a regular property or a modification for which the position is inherent, such as uronic
 		// acid.
 		property = properties[i];
-		position = atoi(&property[0]);
+		position = atoi(&property[1]);
 		if (!position) {
 			if (property == "ALDOSE") {
 				if (anomeric_carbon_ != 1) {
@@ -476,7 +478,7 @@ CarbohydrateInfo::read_and_set_properties()
 				utility_exit_with_message(
 						"A sugar cannot have multiple modifications at the same position; check the .params file.");
 			} else {
-				property = property.substr(2);  // assumes 2nd character is a hyphen
+				property = property.substr(3);  // assumes 1st and 3rd characters are underscores
 				boost::algorithm::to_lower(property);
 				replace(property.begin(), property.end(), '_', ' ');
 				modifications_[position] = property;

@@ -99,7 +99,7 @@ create_rna_vall_torsions_test( ){
 	using namespace core::chemical;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	utility::vector1 < std::string >  infiles  = option[ in::file::s ]();
 	std::string outfile  = option[ basic::options::OptionKeys::rna::vall_torsions ]();
@@ -284,7 +284,7 @@ create_bp_jump_database_test( ){
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string infile  = option[ in::file::s ][1];
 	std::string outfile  = option[ out::file::o ];
@@ -438,7 +438,7 @@ create_base_pair_step_database_test( ){
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	SilentFileData silent_file_data;
 

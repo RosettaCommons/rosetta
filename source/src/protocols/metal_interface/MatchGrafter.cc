@@ -85,8 +85,8 @@ MatchGrafter::graft( Pose & match,
 
 		partner_ungrafted.replace_residue(partner_resid, match.residue(i), true);
 
-		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::LOWER_TERMINUS, partner_resid);
-		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::UPPER_TERMINUS, partner_resid);
+		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::LOWER_TERMINUS_VARIANT, partner_resid);
+		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::UPPER_TERMINUS_VARIANT, partner_resid);
 		partner_ungrafted.conformation().update_polymeric_connection(partner_resid-1, true);
 		partner_ungrafted.conformation().update_polymeric_connection(partner_resid, true);
 		partner_ungrafted.conformation().update_polymeric_connection(partner_resid+1, true);
@@ -140,8 +140,8 @@ MatchGrafter::build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & par
 
 	//replace zinc on (moving) scaffold with zinc on (stationary) target
 	partner2.replace_residue(p2_zinc, partner1.residue(metal_res_num/*zinc is last residue of partner 1*/), false);
-	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::LOWER_TERMINUS, p2_zinc);
- 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS, p2_zinc);
+	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::LOWER_TERMINUS_VARIANT, p2_zinc);
+ 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS_VARIANT, p2_zinc);
 
 	//restore old jump transforms, which causes remainder of partner2 to align itself properly
  	partner2.set_jump(1, j1);

@@ -150,8 +150,8 @@ main( int argc, char* argv[] )
 		//		TR << "pdbnum and chain and partner1_resid" << pdbnum << chain << partner1_resid << std::endl;
 		partner1.replace_residue(partner1_resid, match.residue(i), true);
 		//strip termini and clean up residue connections
-		core::pose::remove_variant_type_from_pose_residue(partner1, core::chemical::LOWER_TERMINUS, partner1_resid);
-		core::pose::remove_variant_type_from_pose_residue(partner1, core::chemical::UPPER_TERMINUS, partner1_resid);
+		core::pose::remove_variant_type_from_pose_residue(partner1, core::chemical::LOWER_TERMINUS_VARIANT, partner1_resid);
+		core::pose::remove_variant_type_from_pose_residue(partner1, core::chemical::UPPER_TERMINUS_VARIANT, partner1_resid);
 		partner1.conformation().update_polymeric_connection(partner1_resid-1, true);
 		partner1.conformation().update_polymeric_connection(partner1_resid, true);
 		partner1.conformation().update_polymeric_connection(partner1_resid+1, true);
@@ -209,8 +209,8 @@ main( int argc, char* argv[] )
 
 	//replace residue partner2_residue
 	partner2.replace_residue(p2_res, match.residue(/*MatchPosition*/p2), false);
-	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::LOWER_TERMINUS, p2_res);
- 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS, p2_res);
+	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::LOWER_TERMINUS_VARIANT, p2_res);
+ 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS_VARIANT, p2_res);
 	partner2.conformation().update_polymeric_connection(p2_res-1, true);
 	partner2.conformation().update_polymeric_connection(p2_res, true);
   partner2.conformation().update_polymeric_connection(p2_res+1, true);

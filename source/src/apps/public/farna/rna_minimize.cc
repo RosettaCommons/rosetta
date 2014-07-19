@@ -96,7 +96,7 @@ rna_fullatom_minimize_test()
 	using namespace protocols::stepwise::full_model_info;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	// is_dump_pdb
 	bool is_dump_pdb( true );

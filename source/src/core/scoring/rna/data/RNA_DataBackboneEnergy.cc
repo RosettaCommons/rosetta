@@ -97,7 +97,7 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 
 	using namespace core::chemical;
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	ResidueTypeCOP const & rsd_type( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
 
 	atom_numbers_sugar_.clear();

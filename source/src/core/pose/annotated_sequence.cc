@@ -175,8 +175,8 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 				// pick a ResidueType
 				Size nvariants = rsd_type.variant_types().size();
 				if ( is_polymer && ( is_terminus && ( nvariants == 0 ) ) ) continue;
-				if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS ) ||
-														 is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS ) ) ) continue;
+				if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ||
+						is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;
 
 				best_index = j;
 				break;

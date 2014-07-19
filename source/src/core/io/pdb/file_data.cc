@@ -1110,22 +1110,22 @@ build_pose_as_is1(
 			// remain fixed for all residue_types with the same name3
 
 			// only take the desired variants
-			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS ) ||
-					rsd_type.has_variant_type( LOWERTERM_TRUNC );
-			bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS ) ||
-					rsd_type.has_variant_type( UPPERTERM_TRUNC );
+			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS_VARIANT ) ||
+					rsd_type.has_variant_type( LOWERTERM_TRUNC_VARIANT );
+			bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS_VARIANT ) ||
+					rsd_type.has_variant_type( UPPERTERM_TRUNC_VARIANT );
 			if ( is_polymer && (
 				(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the terminus state" << std::endl;
 				continue;
 			}
-			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT))) {
+			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT_VARIANT))) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the branch state" << std::endl;
 				continue;
 			}
-			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS))) {
+			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT))) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the branch lower terminus state" << std::endl;
 				continue;
@@ -1149,7 +1149,7 @@ build_pose_as_is1(
 				//TR.Debug << "because the residue is not a carbohydrate" << std::endl;
 				continue;
 			}
-			if (rsd_type.is_carbohydrate() && rsd_type.has_variant_type(BRANCH_POINT)) {
+			if (rsd_type.is_carbohydrate() && rsd_type.has_variant_type(BRANCH_POINT_VARIANT)) {
 				// The below assumes that ResidueTypes with fewer patches are selected 1st, that is, that an
 				// :->2-branch ResidueType will be checked as a possible match before an :->2-branch:->6-branch
 				// ResidueType.  If this were not the case, Rosetta could misassign an :->2-branch:->6-branch
@@ -1389,10 +1389,10 @@ build_pose_as_is1(
 				if ( bondlength > 3.0 ) {
 					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *new_rsd, old_nres );
-					if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS ) &&
-					    !pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC ) )
-						core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC, old_nres );
-					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC, old_nres+1 );
+					if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) &&
+					    !pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC_VARIANT ) )
+						core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC_VARIANT, old_nres );
+					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC_VARIANT, old_nres+1 );
 				} else {
 					//TR.Debug << rsd_type.name() << " " << i << " is appended to chain" << chainID << std::endl;
 					pose.append_residue_by_bond( *new_rsd );
@@ -1442,7 +1442,7 @@ build_pose_as_is1(
 				( i == 1 ||
 				!pose.residue_type( i-1 ).is_polymer() ||
 				(pose.residue_type( i-1 ).is_upper_terminus() &&
-						!pose.residue_type( i ).has_variant_type(BRANCH_LOWER_TERMINUS)) ) ) {
+						!pose.residue_type( i ).has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)) ) ) {
 			TR << "Adding undetected lower terminus type to residue " << i << std::endl;
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
 			type_changed = true;
@@ -1451,7 +1451,7 @@ build_pose_as_is1(
 				( i == nres ||
 				!pose.residue_type(i+1).is_polymer() ||
 				pose.residue_type(i+1).is_lower_terminus() ||
-				pose.residue_type(i+1).has_variant_type(BRANCH_LOWER_TERMINUS)) ) {
+				pose.residue_type(i+1).has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)) ) {
 			TR << "Adding undetected upper terminus type to residue " << i << std::endl;
 			core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
 			type_changed = true;
@@ -1798,7 +1798,7 @@ pose_from_pose(
 void
 fixup_rinfo_based_on_residue_type_set( 	utility::vector1< ResidueInformation > & rinfos,
 																			 	chemical::ResidueTypeSet const & residue_set ){
-	bool const force_RNA = ( residue_set.name() == core::chemical::RNA  ||
+	bool const force_RNA = ( residue_set.name() == core::chemical::FA_RNA  ||
 													 residue_set.name() == "rna_phenix" );
 	convert_nucleic_acid_residue_info_to_standard( rinfos, force_RNA );
 }

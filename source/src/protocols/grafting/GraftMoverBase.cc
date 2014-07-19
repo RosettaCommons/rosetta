@@ -148,8 +148,8 @@ GraftMoverBase::insert_piece(Pose const & pose){
 	insertion_length_ = piece_->total_residue()-Cter_overhang_length_-Nter_overhang_length_;
 	
 	//strip termini variants from insert if necessary
-	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::LOWER_TERMINUS, 1);
-	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::UPPER_TERMINUS, insertion_length_);
+	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::LOWER_TERMINUS_VARIANT, 1);
+	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::UPPER_TERMINUS_VARIANT, insertion_length_);
 
 	//Delete residues for pose.
 	Pose final_pose(pose);

@@ -1128,8 +1128,8 @@ void new_pose_generator(
 
 	TR << "Last Residue    " << target_loops.total_residue() <<std::endl;
 
-	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::LOWER_TERMINUS, 1 );
-	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS, target_loops.total_residue());
+	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::LOWER_TERMINUS_VARIANT, 1 );
+	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS_VARIANT, target_loops.total_residue());
 
 }
 

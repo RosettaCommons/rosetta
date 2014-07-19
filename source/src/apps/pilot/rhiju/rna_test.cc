@@ -2475,7 +2475,7 @@ create_rna_benchmark_test(){
 	initialize_pymol_colors();
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	utility::vector1< std::string > const infiles( option[ in::file::s ]() );
 
@@ -2556,7 +2556,7 @@ rna_chain_closure_test()
 	using namespace basic::options::OptionKeys;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string infile  = option[ in::file::s ][1];
 
@@ -2692,7 +2692,7 @@ rna_backbone_rebuild_test()
 	using namespace core::id;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string infile  = option[ in::file::s ][1];
 
@@ -2899,7 +2899,7 @@ rna_filter_base_pairs_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string const infile  = option[ in::file::silent  ][1];
 	std::string const outfile  = option[ out::file::silent  ]();
@@ -4949,7 +4949,7 @@ print_secstruct_test(){
 	using namespace core::pose;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
@@ -4976,7 +4976,7 @@ print_all_torsions_test(){
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];

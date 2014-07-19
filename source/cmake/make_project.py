@@ -17,6 +17,10 @@ def update_options():
 	cmd = 'cd ..; ./update_options.sh'
 	os.system(cmd)
 
+def update_options():
+	cmd = 'cd ..; ./update_residue_properties.sh'
+	os.system(cmd)
+
 
 def project_callback(project, project_path, project_files):
 	print 'making project files for project ' + project + ' ...',
@@ -107,6 +111,7 @@ os.chdir( rosetta_cmake_directory or "./" )
 
 update_version()
 update_options()
+update_residue_properties()
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
 

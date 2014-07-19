@@ -10,19 +10,21 @@
 /// @file   src/core/chemical/sdf/mol_writer.cc
 /// @author Sam DeLuca
 /// @details this class outputs a residue in the form of a V3000 molfile, for details of the spec, see http://www.symyx.com/downloads/public/ctfile/ctfile.pdf
+
 #include <core/chemical/sdf/mol_writer.hh>
 #include <core/chemical/sdf/mol_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <set>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
@@ -477,7 +479,7 @@ std::list<std::string> MolWriter::compose_rosetta_properties(core::conformation:
 	core::chemical::ResidueType const & restype( residue->type() );
 	std::list<std::string>	lines;
 
-	utility::vector1< std::string > const & properties( restype.properties() );
+	utility::vector1< std::string > const & properties( restype.properties().get_list_of_properties() );
 
 	if( properties.size() ) {
 		std::string header = "> <Rosetta Properties>\n";

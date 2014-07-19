@@ -227,7 +227,9 @@ RotamerSets::build_rotamers(
 					//residues.  These positions don't have a complete connect record.
 
 					if ((*itr)->seqpos() == 1 && copies[jj] != 1  ){
-					  if (cloneRes->has_variant_type("LOWER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
+					  if (cloneRes->has_variant_type("LOWER_TERMINUS")) {
+						  cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
+					  }
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
 					}
@@ -235,7 +237,9 @@ RotamerSets::build_rotamers(
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 					else if ( (*itr)->seqpos() == asym_length && copies[jj] != (int) asym_length ){
-						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
+						if (cloneRes->has_variant_type("UPPER_TERMINUS")) {
+							cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
+						}
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
 					}
@@ -258,11 +262,11 @@ RotamerSets::build_rotamers(
 					//if pose is cyclic, it'll have cutpoint variants; in those cases,
 					//leave alone
 					if (copies[jj]==1 && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_UPPER)) {
-						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
+						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
 					}
 					if (copies[jj]== (int) asym_length && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
-						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
+						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 						//std::cout << cloneRes->name() << " of variant type upper? " << cloneRes->has_variant_type("UPPER_TERMINUS") <<  std::endl;
 					}
 

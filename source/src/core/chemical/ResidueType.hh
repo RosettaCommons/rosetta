@@ -13,7 +13,7 @@
 /// Phil Bradley
 /// Steven Combs
 /// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
-/// Jason W. Labonte (code related to lipids, carbohydrates, and other non-AAs)
+/// Jason W. Labonte (code related to properties, lipids, carbohydrates, and other non-AAs)
 
 
 #ifndef INCLUDED_core_chemical_ResidueType_hh
@@ -22,6 +22,7 @@
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
+
 // Package headers
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
@@ -32,6 +33,8 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/ResidueProperties.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #ifdef WIN32
@@ -42,12 +45,13 @@
 #include <core/chemical/ResidueConnection.fwd.hh>
 #endif
 #include <core/chemical/rna/RNA_ResidueType.fwd.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>  // TODO: Fix this to use the fwd.hh.
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/RingConformerSet.fwd.hh>
 
+// Project headers
 #include <core/types.hh>
 
 // Numeric headers
@@ -59,13 +63,12 @@
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
 #include <functional>
 #include <string>
-#include <core/chemical/VariantType.fwd.hh>
-#include <utility/vector1.hh>
 
 // External headers
 #include <boost/graph/adjacency_list.hpp>
@@ -121,7 +124,7 @@ typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 ///
 /// Properties: Properties of a residue include things like DNA, PROTEIN, CHARGED, etc.  These properties indicate the
 /// type of residue it is and what properties are associated with the residue.  They are set when read in.
-/// Several lines of code must be modified to get them to work, all found in ResidueType.cc.
+/// To add new ResidueProperties, add them to core/chemical/residue_properties/general_properties.list.
 ///
 /// Orbitals: Orbitals are indexed separately from atoms.  They function much the same way as atoms, except for some
 /// key differences.  To find atoms bonded to orbitals, you must provide the atom index, not the orbital index.  (I
@@ -659,6 +662,9 @@ public:
 
 	}
 
+	/// @brief  Check if atom is virtual.
+	bool is_virtual( Size const & atomno ) const;
+
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	///////////////// MMAtom Functions              //////////////////////
@@ -906,13 +912,10 @@ public:
 
 
 	/// @brief require actcoord?
-	inline
-	bool
-	requires_actcoord() const { return is_protein_ && ( is_polar_ || is_aromatic_ ) && actcoord_atoms_.size() != 0; }
+	bool requires_actcoord() const;
 
 	/// @brief update actcoord
-	void
-	update_actcoord( conformation::Residue & rot ) const;
+	void update_actcoord( conformation::Residue & rot ) const;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -1334,210 +1337,154 @@ public:
 	Size
 	add_residue_connection( std::string const & atom_name );
 
-
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	///////////////// properties /////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-
-	/// @brief acess specified properties
-	utility::vector1< std::string > const &
-	properties() const;
-
-	/// @brief add properties
-	void
-	add_property( std::string const & property );
-
-	///@brief add a numeric property
-	void
-	add_numeric_property(std::string const & tag,core::Real value);
-
-	///@brief add a string property
-	void
-	add_string_property(std::string const & tag, std::string value);
-
-	/// @brief delete properties
-	//    Added by Andy M. Chen in June 2009
-	//    This is needed for deleting properties, which occurs in certain PTM's
-	void
-	delete_property( std::string const & property );
-
-
 	/// @brief add an atom to the list for calculating actcoord center
 	void add_actcoord_atom( std::string const & atom );
 
 
+	//////////////////////////////////////////////////////////////////////
+	///////////////// properties /////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	/// @brief Access the collection of properties for this ResidueType.
+	ResidueProperties const & properties() const;
+
+	/// @brief Add a property to this ResidueType.
+	void add_property( std::string const & property );
+
+	void set_adduct_flag( bool adduct_in );
+
+
+	///@brief Add a numeric property.
+	void add_numeric_property( std::string const & tag, core::Real value );
+
+	///@brief Add a string property.
+	void add_string_property( std::string const & tag, std::string value );
+
+	/// @brief Add a property of this ResidueType.
+	void delete_property( std::string const & property );
+
+
 	/// @brief is polymer?
-	bool is_polymer() const { return is_polymer_; }
+	bool is_polymer() const;
 
 	/// @brief is protein?
-	bool is_protein() const { return is_protein_; }
+	bool is_protein() const;
 
 	/// @brief is this an alpha amino acid?
-	bool is_alpha_aa() const { return is_alpha_aa_; }
+	bool is_alpha_aa() const;
 
 	/// @brief is this a beta amino acid?
-	bool is_beta_aa() const { return is_beta_aa_; }
+	bool is_beta_aa() const;
 
 	/// @brief is this a d-amino acid?
-	bool is_d_aa() const { return is_d_aa_; }
+	bool is_d_aa() const;
 
 	/// @brief is this an l-amino acid?
-	bool is_l_aa() const { return is_l_aa_; }
+	bool is_l_aa() const;
 
 	/// @brief is DNA?
-	bool is_DNA() const{ return is_DNA_; }
+	bool is_DNA() const;
 
 	/// @brief is RNA?
-	bool is_RNA() const{ return is_RNA_; }
+	bool is_RNA() const;
 
 	/// @brief is coarse?
-	bool is_coarse() const{ return is_coarse_; }
+	bool is_coarse() const;
 
 	/// @brief is Nucleic Acid?
-	bool is_NA() const{ return is_NA_; }
+	bool is_NA() const;
 
 	///@brief is peptoid?
-	bool is_peptoid() const {	return is_peptoid_; }
+	bool is_peptoid() const;
 
 	/// @brief is carbohydrate?
-	bool is_carbohydrate() const { return is_carbohydrate_; }
+	bool is_carbohydrate() const;
 
 	/// @brief is ligand?
-	bool is_ligand() const { return is_ligand_; }
+	bool is_ligand() const;
 
 	/// @brief is lipid?
-	bool is_lipid() const { return is_lipid_; }
+	bool is_lipid() const;
 
-	/// @brief Returns true if this residue type is a metal ion, false otherwise.  The METAL property is specified in the params file under PROPERTIES.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	bool is_metal() const { return is_metal_; }
+	/// @brief Return true if this residue type is a metal ion, false otherwise.
+	bool is_metal() const;
 
-	/// @brief Returns true if this residue type is a type that can bind to a metal ion (e.g. His, Asp, Cys, etc.), false otherwise.  The METALBINDING property is specified in the params file under PROPERTIES.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	bool is_metalbinding() const { return is_metalbinding_; }
+	/// @brief Return true if this residue type is a type that can bind to a metal ion (e.g. His, Asp, Cys, etc.),
+	/// false otherwise.
+	bool is_metalbinding() const;
 
 	/// @brief is surface? (e.g. enamel)
-	bool is_surface() const { return is_surface_; }
+	bool is_surface() const;
 
 	///@brief does this residue have sidechain orbitals?
-	bool has_sc_orbitals() const { return has_sc_orbitals_; }
+	bool has_sc_orbitals() const;
 
 	/// @brief is polar?
-	bool is_polar() const { return is_polar_; }
+	bool is_polar() const;
 
 	/// @brief is charged?
-	bool is_charged() const { return is_charged_; }
+	bool is_charged() const;
 
 	/// @brief is aromatic?
-	bool is_aromatic() const { return is_aromatic_; }
+	bool is_aromatic() const;
 
 	/// @brief is cyclic?
-	bool is_cyclic() const { return is_cyclic_; }
+	bool is_cyclic() const;
 
 	/// @brief is terminus?
-	bool is_terminus() const { return is_terminus_; }
+	bool is_terminus() const;
 
 	/// @brief is lower terminus?
-	bool is_lower_terminus() const { return is_lower_terminus_; }
+	bool is_lower_terminus() const;
 
 	/// @brief is upper terminus?
-	bool is_upper_terminus() const { return is_upper_terminus_; }
+	bool is_upper_terminus() const;
 
 	/// @brief is lower terminus of a branch?
-	bool is_branch_lower_terminus() const { return is_branch_lower_terminus_; }
+	bool is_branch_lower_terminus() const;
 
 	/// @brief is acetylated n terminus
-	bool is_acetylated_nterminus() const { return is_acetylated_nterminus_; }
+	bool is_acetylated_nterminus() const;
 
 	/// @brief is methylated c terminus
-	bool is_methylated_cterminus() const { return is_methylated_cterminus_; }
-
-	/// @brief  Check if atom is virtual.
-	bool is_virtual( Size const & atomno ) const;
+	bool is_methylated_cterminus() const;
 
 	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
-	bool is_virtual_residue() const { return is_virtual_residue_; }
+	bool is_virtual_residue() const;
 
 	/// @brief is an adduct-modified residue?
-	bool is_adduct() const { return is_adduct_; }
+	bool is_adduct() const;
 
-	void set_adduct_flag( bool adduct_in ) { is_adduct_ = adduct_in; }
 
-	// this probably isnt all that slow unless you have lots of properties, if its ever a problem
-	// there is no reason not make properties_ an STL set, since this is basically what sets exist for
-	/// @brief  Generic property access -- SLOW!!!!!
-	bool
-	has_property( std::string const & property ) const
-	{
-		return ( std::find( properties_.begin(), properties_.end(), property ) != properties_.end() );
-	}
+	/// @brief  Generic property access.
+	bool has_property( std::string const & property ) const;
 
-	///@brief get a numeric property
-	core::Real
-	get_numeric_property(std::string const & tag) const
-	{
-		std::map<std::string, core::Real>::const_iterator property_it(numeric_properties_.find(tag));
-		if(property_it == numeric_properties_.end())
-		{
-			throw utility::excn::EXCN_KeyError(tag + " does not exist in ResidueType with name " + name3_);
-			return 0.0; //keep compilers happy
-		}
 
-		return property_it->second;
-	}
+	///@brief Get a numeric property, if it exists.
+	core::Real get_numeric_property(std::string const & tag) const;
 
-	///@brief get a numeric property
-	std::string
-	get_string_property(std::string const & tag) const
-	{
-		std::map<std::string, std::string>::const_iterator property_it(string_properties_.find(tag));
-		if(property_it == string_properties_.end())
-		{
-			throw utility::excn::EXCN_KeyError(tag + " does not exist in ResidueType with name " + name3_);
-			return "";
-		}
-		return property_it->second;
-	}
+	///@brief Get a string property, if it exists.
+	std::string get_string_property(std::string const & tag) const;
 
-	/// @brief  Generic variant access -- SLOW!!!!!
-	bool
-	has_variant_type( VariantType const & variant_type ) const
-	{
-		return ( std::find( variant_types_.begin(), variant_types_.end(), variant_type ) != variant_types_.end() );
-	}
 
-	/// @brief get all the variant types for this ResidueType
-	utility::vector1< VariantType > const &
-	variant_types() const
-	{
-		return variant_types_;
-	}
+	/// @brief Get all the variant types for this ResidueType.
+	utility::vector1< VariantType > const & variant_types() const;
+
+	/// @brief Add a variant type to this ResidueType.
+	void add_variant_type( VariantType const & variant_type );
+
+	/// @brief  Generic variant access.
+	bool has_variant_type( VariantType const & variant_type ) const;
 
 	/// @brief  Does this residue have exactly the same set of properties as residue other?
-	/// phil -- this code does not look correct to me
-	/// should probably be other.has_variant_type not other.has_property
-	///
-	bool
-	variants_match( ResidueType const & other ) const;
+	bool variants_match( ResidueType const & other ) const;
 
-	/// @brief similar to variants_match(), but allows different
-	/// adduct-modified states
-	bool
-	nonadduct_variants_match( ResidueType const & other ) const;
+	/// @brief similar to variants_match(), but allows different adduct-modified states
+	bool nonadduct_variants_match( ResidueType const & other ) const;
 
 
-	/// @brief add one more variant type to this ResidueType
-	void
-	add_variant_type( VariantType const & variant_type )
-	{
-		if ( !has_variant_type( variant_type ) ) {
-			variant_types_.push_back( variant_type );
-		}
-	}
+	///////////////////////////////////////////////////////////////////////////
+
 
 	/// @brief set our aa-type (could be "UNK")
 	void
@@ -1575,7 +1522,6 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	///////////////// Names    //////////////////////////////////////////
 	///////////////// Names     /////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -2084,7 +2030,7 @@ private:
 	/// Non-const methods should mention if they're meant to be called during the Mutable stage.
 	/// (Such methods can be called from the Finalized stage, but will turn the ResidueType into a mutable one.
 	///
-	/// N.B. For typical ResidueType usage pretty much all of the levels/category distictions can be ignored.
+	/// N.B. For typical ResidueType usage pretty much all of the levels/category distinctions can be ignored.
 	/// For a constant, finalized ResidueType such as one gets as a COP from a ResidueTypeSet or a Residue,
 	/// all data and methods which are allowed are valid.
 	/////////////////////////////////////////////////////////////////////////////
@@ -2107,7 +2053,7 @@ private:
 	/// @brief The set for OrbitalTypes. -- Primary, can be null.
 	orbitals::OrbitalTypeSetCAP orbital_types_;
 
-	/// @brief The set of all possible ring conformers - Derived, can be null
+	/// @brief The set of all possible ring conformers -- Derived, can be null
 	RingConformerSetOP conformer_set_;
 
 	/// @brief The owning ResidueTypeSet, if any. -- Primary, can be null.
@@ -2216,7 +2162,7 @@ private:
 	utility::vector1< utility::vector1< Size > > bondangles_for_atom_;
 
 	/// @brief Data to describe virtual atoms that should shadow other atoms for the sake
-	/// of keeping inter-residue cycles closed when working with an atom tree, e.g.
+	/// of keeping intraresidue cycles closed when working with an atom tree, e.g.
 	/// NV shadows N on proline. For each atom, the following vector lists the index
 	/// of the atom it is shadowing. -- Primary
 	std::map<VD, VD> atom_shadowed_;
@@ -2357,61 +2303,12 @@ private:
 	utility::vector1< Size > peptoid_rotlib_n_bins_per_rot_;
 
 
-	/////////////////////////////////////
-	// properties -- some of these may be deducible from AA?
-	//
-	// If you add new bools they need to be initialized in the c-tor.
-	// C++ compilers do not (might not) initialize primitive types.
+	///////////////////////////////////////////////////////////////////////////
 
-	/// @brief Residue properties as defined in the residue param files -- Primary
-	utility::vector1< std::string > properties_;
+	/// @brief Residue properties as defined in the residue topology (.params) files -- Primary
+	ResiduePropertiesOP properties_;
 
-	// Generally, the following bools are derived from properties_ entries,
-	// but may be set manually as well, so they're Primary.
-	bool is_polymer_;
-	bool is_protein_;
-	bool is_alpha_aa_;
-	bool is_beta_aa_;
-	bool is_l_aa_;
-	bool is_d_aa_;
-	bool is_charged_;
-	bool is_polar_;
-	bool has_sc_orbitals_;
-	bool is_aromatic_;
-	bool is_cyclic_;
-	bool is_DNA_;
-	bool is_RNA_;
-	bool is_NA_;
-	bool is_peptoid_;
-	bool is_carbohydrate_;
-	bool is_lipid_;
-	bool is_ligand_;
-	bool is_metal_; //Is this residue type a metal ion?
-	bool is_metalbinding_; //Is this residue type a type capable of binding to a metal ion?
-	bool is_surface_;
-	bool is_terminus_; // last or first residue in a chain; set to TRUE during terminus patching
-	bool is_lower_terminus_; // first residue in a chain; set to TRUE during terminus patching
-	bool is_upper_terminus_; // last residue in a chain; set to TRUE during terminus patching
-	bool is_branch_lower_terminus_;
-	bool is_phosphonate_; // amino phosphonic acid instead of amino carboxylic acid
-	bool is_phosphonate_upper_;
-	bool is_acetylated_nterminus_;
-	bool is_methylated_cterminus_;
-	bool is_coarse_; //currently for coarse_RNA only
-	bool is_adduct_;
-	bool is_virtual_residue_;
-	// etc., etc.
-
-	/// @brief The patch operations/variant types that describe this residue -- Primary.
-	utility::vector1< VariantType > variant_types_;
-
-	/// @brief Arbitrary numeric properties with string names -- Primary.
-	std::map<std::string,core::Real> numeric_properties_;
-
-	/// @brief Arbitrary string properties with string names -- Primary.
-	std::map<std::string,std::string> string_properties_;
-
-	//////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 	// features
 
 	/// @brief standard rosetta aa-type for knowledge-based potentials, may be aa_unk -- Primary

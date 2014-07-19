@@ -200,8 +200,8 @@ namespace protein {
 		f.reassign_atoms_for_intra_residue_stubs(); // it seems silly that we need to do this separately.
 		scratch_pose.fold_tree( f );
 
-	pose::remove_variant_type_from_pose_residue( scratch_pose, LOWER_TERMINUS, 1 );
-	pose::remove_variant_type_from_pose_residue( scratch_pose, UPPER_TERMINUS, 2 );
+	pose::remove_variant_type_from_pose_residue( scratch_pose, LOWER_TERMINUS_VARIANT, 1 );
+	pose::remove_variant_type_from_pose_residue( scratch_pose, UPPER_TERMINUS_VARIANT, 2 );
 
 		// main loop
 	utility::vector1< std::string > in_files = load_s_and_l();

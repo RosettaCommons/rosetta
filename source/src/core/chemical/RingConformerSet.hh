@@ -127,7 +127,7 @@ private:
 	void init(core::uint const ring_size);
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void copy_data(RingConformerSet object_to_copy_to, RingConformerSet object_to_copy_from);
+	void copy_data(RingConformerSet & object_to_copy_to, RingConformerSet const & object_to_copy_from);
 
 
 	// Static constant data access
@@ -137,8 +137,6 @@ private:
 
 	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Size ring_size_;  // almost always 5 or 6, but one could make a RingConformerSet for other sizes
-	// TODO: Should this data be const?  Can it be const?  The same applies to CarbohydrateInfo data.  I don't think
-	// it can be const unless it is set in the initializer, but I am not using the initializer....
 
 	// TODO: Make these map<uint, vector1<RingConformer> >s, with the vectors indexed by an enum?
 	// Ring Conformer Subsets

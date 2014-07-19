@@ -606,7 +606,7 @@ Residue::orient_onto_residue_peptoid (
 			nbr1_xyz = stub.spherical(icoor.phi(), icoor.theta(), icoor.d() );
 
 			// AcetylatedPeptoidNterm
-		} else if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
+		} else if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 			//std::cout << "DEBUG LT ACE" << std::endl;
 			// cent: peptoid N, src N
 			cent_xyz = atom( atom_index( bb_nx ) ).xyz();

@@ -259,18 +259,18 @@ namespace protocols
 					}
 				}
 				
-				//Loop to remove LOWER and UPPER terminus from motif (should we do this before comming to this point/function?)
+				//Loop to remove LOWER and UPPER terminus from motif (should we do this before coming to this point/function?)
 				for (core::Size i=1; i <= target_motif_->total_residue(); ++i){
 					//Remove lower terminus type of the residues in the motif_copy (Needed/obligated to stitch the pieces)
 					//ToDo: should we like to move this to a helper function?
-					if(target_motif_->residue( i ).has_variant_type( core::chemical::LOWER_TERMINUS )){
+					if(target_motif_->residue( i ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT )){
 						TR.Debug << "TEST Removing LOWER terminus from residue: "<< i << std::endl;
-						core::pose::remove_variant_type_from_pose_residue(*target_motif_, core::chemical::LOWER_TERMINUS, i);
+						core::pose::remove_variant_type_from_pose_residue(*target_motif_, core::chemical::LOWER_TERMINUS_VARIANT, i);
 					}//else if
-					if(target_motif_->residue( i ).has_variant_type( core::chemical::UPPER_TERMINUS )){
+					if(target_motif_->residue( i ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )){
 						//Remove upper terminus type of the residues in the motif_copy (Needed/obligated to stitch the pieces)
 						TR.Debug << "TEST Removing UPPER terminus from residue: "<< i << std::endl;
-						core::pose::remove_variant_type_from_pose_residue(*target_motif_, core::chemical::UPPER_TERMINUS, i);
+						core::pose::remove_variant_type_from_pose_residue(*target_motif_, core::chemical::UPPER_TERMINUS_VARIANT, i);
 					}
 				}
 				

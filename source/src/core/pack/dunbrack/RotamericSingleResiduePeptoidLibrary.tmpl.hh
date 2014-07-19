@@ -1004,7 +1004,7 @@ RotamericSingleResiduePeptoidLibrary< T >::get_phi_from_rsd(
 		assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
 		return rsd.mainchain_torsion( RSD_PHI_INDEX );
 
-	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
+	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 		return rsd.mainchain_torsion( RSD_PHI_INDEX );
 
 	} else if ( rsd.is_lower_terminus() ) {
@@ -1030,7 +1030,7 @@ RotamericSingleResiduePeptoidLibrary< T >::get_psi_from_rsd(
 		assert( pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_peptoid() );
 		return rsd.mainchain_torsion( RSD_PSI_INDEX );
 
-	} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
+	} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 		return rsd.mainchain_torsion( RSD_PSI_INDEX );
 
 	} else if ( rsd.is_upper_terminus() ) {

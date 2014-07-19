@@ -75,8 +75,8 @@ MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {
 				core::kinematics::FoldTree update_tree(pose.fold_tree());
 				update_tree.new_jump(i,i+1,i);
 				pose.fold_tree(update_tree);
-				core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS, i);
-				core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS, i+1 );
+				core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, i);
+				core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, i+1 );
       }
     }
   }

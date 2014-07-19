@@ -146,7 +146,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 		ignore_unmatched_virtual_res_ = false; //Sept 07, 2011...for post-processing
 		output_pdb_ = false; //Sept 24, 2011
 		min_num_south_sugar_filter_ = 0; //Oct 02, 2011
-		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
 	}
 
   //////////////////////////////////////////////////////////////////////////

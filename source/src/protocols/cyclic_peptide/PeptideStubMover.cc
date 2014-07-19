@@ -66,11 +66,11 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
         if ( pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
             core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir );
         }
-        if (pose.residue_type(ir).has_variant_type(UPPER_TERMINUS)) {
-            core::pose::remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, ir );
+        if (pose.residue_type(ir).has_variant_type(UPPER_TERMINUS_VARIANT)) {
+            core::pose::remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, ir );
         }
-        if (pose.residue_type(ir).has_variant_type(LOWER_TERMINUS)) {
-            core::pose::remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, ir );
+        if (pose.residue_type(ir).has_variant_type(LOWER_TERMINUS_VARIANT)) {
+            core::pose::remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, ir );
         }
     }
         pose.update_residue_neighbors();
@@ -271,7 +271,6 @@ PeptideStubMover::get_name() const {
 
 //Private functions:
 
-///
 /// @brief Rebuilds all atoms that are dependent on bonds between residue_index and any other residues (including atoms on the other residues).
 void PeptideStubMover::rebuild_atoms(
 	core::pose::Pose &pose,

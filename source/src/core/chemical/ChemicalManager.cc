@@ -629,47 +629,9 @@ std::string const COARSE_TWO_BEAD( "coarse_two_bead" );
 /// @brief tag name for querying hybrid fullatom+centroid chemical type set.
 std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
 /// @brief tag name for querying RNA chemical type set.
-std::string const RNA = "rna";
+std::string const FA_RNA = "rna";
 /// @brief tag name for querying COARSE_RNA chemical type set.
 std::string const COARSE_RNA( "coarse_rna" );
 
 } // namespace core
 } // namespace chemical
-
-
-/// THIS TURNED OUT TO BE MORE TROUBLE THAN IT WAS WORTH: but maybe some day...
-
-
-/**
-/// @details  Duplicate a ResidueTypeSet, preparatory to modifying it in some way DOES NOT DUPLICATE ITS ATOMTYPESETS
-/// Uses ResidueTypeSet::clone()
-
-void
-ChemicalManager::copy_residue_type_set(
-																			 std::string const & old_name,
-																			 std::string const & new_name
-																			 )
-{
-	residue_type_set( old_name ); // triggers initialization if necessary
-	if ( residue_type_sets_.find( new_name ) ) {
-		utility_exit_with_message( "new name is already being used!" );
-	}
-	residue_type_sets_.insert( std::make_pair( new_name, residue_type_sets_.find( old_name )->second->clone() ) );
-}
-
-/// @details  Duplicate an AtomTypeSet, preparatory to modifying it in some way
-/// Uses AtomTypeSet::clone()
-
-void
-ChemicalManager::copy_atom_type_set(
-																		std::string const & old_name,
-																		std::string const & new_name
-																		)
-{
-	atom_type_set( old_name ); // triggers initialization if necessary
-	if ( atom_type_sets_.find( new_name ) ) {
-		utility_exit_with_message( "new name is already being used!" );
-	}
-	atom_type_sets_.insert( std::make_pair( new_name, atom_type_sets_.find( old_name )->second->clone() ) );
-}
-**/

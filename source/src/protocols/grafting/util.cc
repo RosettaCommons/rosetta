@@ -190,16 +190,16 @@ insert_pose_into_pose(
 	core::Size const insert_length = insert.total_residue();
 	//strip termini variants from insert if necessary
 	using core::pose::remove_variant_type_from_pose_residue;
-	core::pose::remove_variant_type_from_pose_residue(insert, core::chemical::LOWER_TERMINUS, 1);
-	core::pose::remove_variant_type_from_pose_residue(insert, core::chemical::UPPER_TERMINUS, insert_length);
+	core::pose::remove_variant_type_from_pose_residue(insert, core::chemical::LOWER_TERMINUS_VARIANT, 1);
+	core::pose::remove_variant_type_from_pose_residue(insert, core::chemical::UPPER_TERMINUS_VARIANT, insert_length);
 
 	core::Size const insert_start(insert_point+1); //this will be first residue of the inflexible insert
 	core::Size const insert_end(insert_point+insert_length); //this will be the last residue of the inflexible insert
 
 	//Just in case someone wants to do something crazy and add something to termini on two different chains.
 	//Not that it's been tested...
-	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::LOWER_TERMINUS, insert_point);
-	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::UPPER_TERMINUS, insert_point_end);
+	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::LOWER_TERMINUS_VARIANT, insert_point);
+	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::UPPER_TERMINUS_VARIANT, insert_point_end);
 	
 	TR << "insert_point " << insert_point << std::endl;
 	TR << "insert_start " << insert_start << std::endl;

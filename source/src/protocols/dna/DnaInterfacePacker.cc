@@ -685,7 +685,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 			end_type( rtask.allowed_residue_types_end() ); type != end_type; ++type ) {
 			if ( (*type)->aa() == bppos->second->aa() ) continue; // avoid duplicating input sequence
 			// ignore adduct variant types
-			if ( (*type)->has_variant_type( chemical::ADDUCT ) ) continue;
+			if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
 			// new copy of current sequence
 			ResTypeSequence single_bp_mutant( current_sequence );
 			// make change

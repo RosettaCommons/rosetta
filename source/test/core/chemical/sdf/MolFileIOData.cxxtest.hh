@@ -20,6 +20,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Atom.hh>
 
 // Project Headers
@@ -279,13 +280,13 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 			rsd1.is_adduct() != rsd2.is_adduct() ) {
 		TR << "Properties mismatch!" << std::endl;
 		TR << rsd1.name() << ": ";
-		utility::vector1< std::string > properties( rsd1.properties() );
+		utility::vector1< std::string > properties( rsd1.properties().get_list_of_properties() );
 		for( core::Size p1( 1 ); p1 <= properties.size(); ++p1 ) {
 			TR << properties[p1] << " ";
 		}
 		TR << std::endl;
 		TR << rsd2.name() << ": ";
-		properties = rsd2.properties();
+		properties = rsd2.properties().get_list_of_properties();
 		for( core::Size p2( 1 ); p2 <= properties.size(); ++p2 ) {
 			TR << properties[p2] << " ";
 		}

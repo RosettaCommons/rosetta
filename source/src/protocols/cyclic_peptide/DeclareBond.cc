@@ -72,10 +72,18 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		}
 
 		//printf("Stripping termini.\n"); fflush(stdout); //DELETE ME
-		if(atom1_=="N" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS, res1_);
-		if(atom2_=="N" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(LOWER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS, res2_);
-		if(atom1_=="C" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(UPPER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS, res1_);
-		if(atom2_=="C" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(UPPER_TERMINUS)) core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS, res2_);
+		if (atom1_=="N" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS_VARIANT)) {
+			core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS_VARIANT, res1_);
+		}
+		if (atom2_=="N" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(LOWER_TERMINUS_VARIANT)) {
+			core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS_VARIANT, res2_);
+		}
+		if (atom1_=="C" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(UPPER_TERMINUS_VARIANT)) {
+			core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS_VARIANT, res1_);
+		}
+		if (atom2_=="C" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(UPPER_TERMINUS_VARIANT)) {
+			core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS_VARIANT, res2_);
+		}
 
 		//printf("Declaring bond.\n"); fflush(stdout); //DELETE ME
 		pose.conformation().declare_chemical_bond(res1_, atom1_, res2_, atom2_);
@@ -144,7 +152,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 	          if (pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).lower_connect_id()) == 0) {
 	              if ( !pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
 	                  if (add_termini_) {
-	                      core::pose::add_variant_type_to_pose_residue(pose, LOWER_TERMINUS, ir);
+	                      core::pose::add_variant_type_to_pose_residue(pose, LOWER_TERMINUS_VARIANT, ir);
 	                  }
 	                  else {
 	                      core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_LOWER, ir);
@@ -156,7 +164,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 	          if (pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).upper_connect_id()) == 0) {
 	              if ( !pose.residue(ir).has_variant_type(CUTPOINT_UPPER) ) {
 	                  if (add_termini_) {
-	                      core::pose::add_variant_type_to_pose_residue(pose, UPPER_TERMINUS, ir);
+	                      core::pose::add_variant_type_to_pose_residue(pose, UPPER_TERMINUS_VARIANT, ir);
 	                  }
 	                  else {
 	                      core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_UPPER, ir);

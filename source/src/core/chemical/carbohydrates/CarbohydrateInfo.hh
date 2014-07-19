@@ -482,7 +482,7 @@ private:
 	void init(core::chemical::ResidueTypeCAP residue_type);
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void copy_data(CarbohydrateInfo object_to_copy_to, CarbohydrateInfo object_to_copy_from);
+	void copy_data(CarbohydrateInfo & object_to_copy_to, CarbohydrateInfo const & object_to_copy_from);
 
 	// Return the number of carbon atoms (not counting R groups) in the ResidueType.
 	core::Size get_n_carbons() const;

@@ -23,10 +23,12 @@ if GetOption("help"):
 elif GetOption("nover"):
     print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
     os.system("./update_options.sh")
+    os.system("./update_residue_properties.sh")
 else:
     import version
     version.main()
     os.system("./update_options.sh")
+    os.system("./update_residue_properties.sh")
 
 
 for kind in build.options.cat:

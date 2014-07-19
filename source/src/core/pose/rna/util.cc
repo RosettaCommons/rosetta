@@ -541,7 +541,7 @@ apply_pucker(
 		using namespace core::id;
 		using namespace core::io::pdb;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::RNA );
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::FA_RNA );
 
 		chemical::AA res_aa = aa_from_name( "RAD" );
 		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->aa_map( res_aa )[1] ) ) ;
@@ -599,8 +599,8 @@ apply_pucker(
 		runtime_assert( res_to_add < pose.total_residue() );
 		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
 
-		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
-		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
+		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res_to_add );
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res_to_add + 1 );
 
 		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_add );
 		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );

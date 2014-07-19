@@ -3269,7 +3269,7 @@ Conformation::backbone_torsion_angle_atoms(
 
 	// this is hacky
 	// the ACETYLATED_NTERMINUS and METHYLATED_CTERMINUS prepend and append additional backbone atoms which is why the numbers may seem off
-	if( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) && rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
+	if( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
 
@@ -3303,7 +3303,7 @@ Conformation::backbone_torsion_angle_atoms(
 		}
 
 		// the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one
-	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
+	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 		// torsion 1; phi
 		if( torsion == 1 ) {
 			//TR << "HI MOM, ACET_NTERM 1" << std::endl;
@@ -3464,7 +3464,7 @@ Conformation::backbone_torsion_angle_atoms(
 				// last two bb-torsions not well-defined
 				return true; // FAILURE
 			}
-		} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
+		} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 			if ( torsion+1 == ntorsions ) {
 				id3.rsd() = seqpos;
 				id3.atomno() = mainchain[ torsion+1 ];

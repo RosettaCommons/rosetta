@@ -193,7 +193,7 @@ pose_from_pdb(
 )
 {
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
+	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	pose_from_pdb(pose, residue_set, filenames_string, options, read_fold_tree);
 }
 
@@ -322,7 +322,7 @@ poses_from_pdbs(
 	using core::pose::Pose;
 
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
+	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 
 	vector1< Pose > poses;
 	typedef vector1< string >::const_iterator vec_it;
@@ -402,7 +402,7 @@ pose_from_pdb(
 )
 {
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
+	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	pose_from_pdb( poses, residue_set, filename, options, read_fold_tree );
 }
 
@@ -522,7 +522,7 @@ pose_from_pdbstring(
 	std::string const & filename
 ){
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
+	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	pose_from_pdbstring( pose, pdbcontents, residue_set, options, filename );
 }
 
@@ -574,7 +574,7 @@ void build_pose(
 )
 {
 	ImportPoseOptions options; // read from the command line
-	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
+	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	build_pose( fd, pose, residue_set, options);
 }
 
@@ -694,7 +694,7 @@ set_reasonable_fold_tree(pose::Pose & pose)
 		Edge e = *i;
 		// Jump to a ligand residue or polymer branch?
 		if( e.is_jump() &&
-				(pose.residue_type(e.stop()).has_variant_type(BRANCH_LOWER_TERMINUS) ||
+				(pose.residue_type(e.stop()).has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT) ||
 				!pose.residue_type(e.stop()).is_polymer() ) ) {
 			Size const ii = e.stop(); // the residue at the end of the jump
 			conformation::Residue const & ii_res = pose.residue(ii);
@@ -707,7 +707,7 @@ set_reasonable_fold_tree(pose::Pose & pose)
 				if ( jj_res_ID < ii){
 					core::conformation::Residue const &  jj_res=pose.residue(jj_res_ID);
 					// Ensure that the connection is either a polymer branching or a ligand of the same chain.
-					if ((jj_res.has_variant_type(BRANCH_POINT) && ii_res.has_variant_type(BRANCH_LOWER_TERMINUS)) ||
+					if ((jj_res.has_variant_type(BRANCH_POINT_VARIANT) && ii_res.has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)) ||
 							(jj_res.chain() == ii_res.chain())) {
 						int ii_connect_ID = ii_res.connect_atom(jj_res);
 						int jj_connect_ID = jj_res.connect_atom(ii_res);

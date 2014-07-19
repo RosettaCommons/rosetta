@@ -1,0 +1,142 @@
+# To add a new property to Rosetta for use in .params files, patch files, and
+# ResidueTypes, simply add a string to this list and run
+# add_residue_properties.py.
+# (You may also consider adding new is_ accessors to ResidueType and Residue.)
+
+# This is Part 1 of a major refactor of the properties system.  Eventually,
+# there will be separate lists of properties for separate classifications of
+# ResidueTypes as well as a general list of properties.  For now, all
+# properties belong in this file.
+
+# Comments added inline with a property will be converted to C++ comments, so
+# please feel free to add clarifications/definitions here.
+
+# WARNING: BE CAREFUL NOT TO DUPLICATE A PROPERTY!
+
+##############################################################################
+
+
+# GENERAL PROPERTIES (These properties apply to all ResidueTypes.)
+## Type of Residue
+POLYMER
+LIGAND
+
+## Residue Family
+PROTEIN  # TODO: Change this to AMINO_ACID, since that's what it really means. ~Labonte
+NA
+DNA
+RNA
+PEPTOID
+CARBOHYDRATE
+LIPID
+METAL  # This residue type is a metal ion.
+SURFACE
+WATER
+VIRTUAL_RESIDUE
+
+## Variants
+TERMINUS  # last or first residue in a chain
+LOWER_TERMINUS  # first residue in a chain
+UPPER_TERMINUS  # last residue in a chain
+BRANCH_LOWER_TERMINUS
+BRANCH_POINT
+LOWERTERM_TRUNC
+UPPERTERM_TRUNC
+COARSE  # currently for coarse_RNA only
+ADDUCT
+SC_ORBITALS
+
+## Qualitative Properties
+POLAR
+CHARGED
+AROMATIC
+CYCLIC
+METALBINDING  # This residue type is a one capable of binding to a metal ion.
+
+## Modifications
+PHOSPHONATE  # amino phosphonic acid instead of amino carboxylic acid
+PHOSPHONATE_UPPER
+ACETYLATED_NTERMINUS
+METHYLATED_CTERMINUS
+
+
+# AMINO-ACID-SPECIFIC PROPERTIES
+ALPHA_AA
+BETA_AA
+L_AA
+D_AA
+TAUTOMER
+
+
+# CARBOHYDRATE-SPECIFIC PROPERTIES
+# (For now, these are copied over from database/chemical/carbohydrates/
+# sugar_properties.list.  That file will be removed once I fully adapt sugars
+# to the new code. ~Labonte)
+## Oxidation types
+ALDOSE
+KETOSE
+
+## Stereochemistries
+L_SUGAR
+D_SUGAR
+
+## Ring sizes
+OXIROSE
+OXETOSE
+FURANOSE
+PYRANOSE
+SEPTANOSE
+
+## Anomeric Forms
+ALPHA_SUGAR
+BETA_SUGAR
+
+# Extra classifications
+SIALIC_ACID
+
+## Modifications
+ALDONIC_ACID
+_2_KETOALDONIC_ACID
+_3_KETOALDONIC_ACID
+_4_KETOALDONIC_ACID
+_5_KETOALDONIC_ACID
+_6_KETOALDONIC_ACID
+_7_KETOALDONIC_ACID
+_8_KETOALDONIC_ACID
+URONIC_ACID
+_1_DEOXY_SUGAR
+_2_DEOXY_SUGAR
+_3_DEOXY_SUGAR
+_4_DEOXY_SUGAR
+_5_DEOXY_SUGAR
+_6_DEOXY_SUGAR
+_7_DEOXY_SUGAR
+_8_DEOXY_SUGAR
+_9_DEOXY_SUGAR
+_1_AMINO_SUGAR
+_2_AMINO_SUGAR
+_3_AMINO_SUGAR
+_4_AMINO_SUGAR
+_5_AMINO_SUGAR
+_6_AMINO_SUGAR
+_7_AMINO_SUGAR
+_8_AMINO_SUGAR
+_9_AMINO_SUGAR
+_1_ACETYLAMINO_SUGAR
+_2_ACETYLAMINO_SUGAR
+_3_ACETYLAMINO_SUGAR
+_4_ACETYLAMINO_SUGAR
+_5_ACETYLAMINO_SUGAR
+_6_ACETYLAMINO_SUGAR
+_7_ACETYLAMINO_SUGAR
+_8_ACETYLAMINO_SUGAR
+_9_ACETYLAMINO_SUGAR
+_1_PHOSPHATE
+_2_PHOSPHATE
+_3_PHOSPHATE
+_4_PHOSPHATE
+_5_PHOSPHATE
+_6_PHOSPHATE
+_7_PHOSPHATE
+_8_PHOSPHATE
+_9_PHOSPHATE

@@ -85,7 +85,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file ):
-		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
+		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA ) ),
 		working_parameters_( working_parameters ),
 		verbose_( true ), //Parin Mar 22, 2010
 		filter_for_previous_contact_( false ),

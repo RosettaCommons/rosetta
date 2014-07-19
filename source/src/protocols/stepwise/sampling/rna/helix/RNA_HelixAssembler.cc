@@ -93,7 +93,7 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	minimize_all_( false ),
 	minimize_jump_( false ),
 	use_phenix_geo_( false ),
-	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
+	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA ) ),
 	torsion_info_(),
 	perturb_amplitude_( 10.0 ),
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_helix" ) ),
@@ -147,7 +147,7 @@ void RNA_HelixAssembler::use_phenix_geo( bool const setting )
 	if (setting) {
 		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
 	} else {
-		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
 	}
 }
 

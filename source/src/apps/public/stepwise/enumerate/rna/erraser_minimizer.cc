@@ -360,7 +360,7 @@ create_pose_reference (
   pose::Pose & pose_reference ) {
 	using namespace core::chemical;
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( FA_RNA );
 	make_pose_from_sequence ( pose_reference, pose.sequence(),	*rsd_set );
 	apply_ideal_coordinates ( pose, pose_reference );
 }
@@ -659,7 +659,7 @@ pdb_minimizer() {
 	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          									residue_type_set ( RNA );
+	          									residue_type_set ( FA_RNA );
 	bool const vary_bond_geometry_ =  option[ vary_geometry ];
 	bool const constrain_phosphate =  option[ constrain_P ];
 	bool const ready_set_only_ =  option[ ready_set_only ];

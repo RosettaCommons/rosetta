@@ -648,7 +648,7 @@ add_lower_terminus_type_to_conformation_residue(
 	Size const seqpos
 )
 {
-	core::conformation::add_variant_type_to_conformation_residue( conformation, chemical::LOWER_TERMINUS, seqpos );
+	core::conformation::add_variant_type_to_conformation_residue( conformation, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -658,7 +658,7 @@ remove_lower_terminus_type_from_conformation_residue(
 	Size const seqpos
 )
 {
-	remove_variant_type_from_conformation_residue( conformation, chemical::LOWER_TERMINUS, seqpos );
+	remove_variant_type_from_conformation_residue( conformation, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -668,7 +668,7 @@ add_upper_terminus_type_to_conformation_residue(
 	Size const seqpos
 )
 {
-	core::conformation::add_variant_type_to_conformation_residue( conformation, chemical::UPPER_TERMINUS, seqpos );
+	core::conformation::add_variant_type_to_conformation_residue( conformation, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -678,7 +678,7 @@ remove_upper_terminus_type_from_conformation_residue(
 	Size const seqpos
 )
 {
-	remove_variant_type_from_conformation_residue( conformation, chemical::UPPER_TERMINUS, seqpos );
+	remove_variant_type_from_conformation_residue( conformation, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
 

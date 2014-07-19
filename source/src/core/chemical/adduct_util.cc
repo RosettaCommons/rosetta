@@ -166,7 +166,7 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	new_rsd_type->name( new_rsd_name );
 
 	// Set the variant type
-	new_rsd_type->add_variant_type( ADDUCT );
+	new_rsd_type->add_variant_type( ADDUCT_VARIANT );
 
 	// Set as an adduct-modified type, which is helpful to know
 	// in rotamer-building, as adduct variants are generally allowed,

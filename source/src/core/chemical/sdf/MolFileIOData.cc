@@ -13,6 +13,7 @@
 #include <core/chemical/sdf/MolFileIOData.hh>
 
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -226,8 +227,8 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCAP
 	restype->autodetermine_chi_bonds(); // Must be after internal coordinate setup
 
 	// To match molfile_to_params, assume type is LIGAND if not otherwise specified.
-	if( restype->properties().size() == 0 ) {
-		restype->add_property("LIGAND");
+	if( restype->properties().get_list_of_properties().size() == 0 ) {  // TODO: I should add a size() method. ~Labonte
+		restype->add_property( "LIGAND" );
 	}
 
 	restype->finalize();

@@ -16,6 +16,7 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/AtomICoor.hh>
@@ -1062,7 +1063,7 @@ ResidueDatabaseIO::report_residue_type_properties(
 	ResidueType const & res_type,
 	utility::sql_database::sessionOP db_session
 )  {
-	BOOST_FOREACH(std::string const & property, res_type.properties()){
+	BOOST_FOREACH( std::string const & property, res_type.properties().get_list_of_properties() ) {
 
 		cppdb::statement stmt = (*db_session)
 					<< "INSERT INTO residue_type_property (residue_type_set_name, residue_type_name, property) VALUES (?,?,?);"

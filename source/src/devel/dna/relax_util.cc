@@ -374,10 +374,10 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 
 	Size const npairs( jump_pose.total_residue() / 2 );
 	jump_pose.conformation().insert_chain_ending( npairs );
-	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS, 1 );
-	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS, npairs+1 );
-	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS, npairs );
-	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS, jump_pose.total_residue() );
+	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
+	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS_VARIANT, npairs+1 );
+	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS_VARIANT, npairs );
+	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS_VARIANT, jump_pose.total_residue() );
 
 	td << "jump_pose foldtree: " << jump_pose.fold_tree() << std::endl;
 	set_base_partner( jump_pose );

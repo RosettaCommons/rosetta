@@ -14,6 +14,8 @@
 /src/basic/options/*.gen.hh
 /src/basic/options/full-options-list.md
 /src/basic/options/options.dox
+/src/core/chemical/ResidueProperty.hh
+/src/core/chemical/property_mappings.cc
 /tools/build/user.settings
 /tools/build/user.options
 /tools/build/site.settings
@@ -31,7 +33,7 @@ CMakeFiles
 /xcode/Rosetta.xcodeproj/project.xcworkspace/
 /xcode/Rosetta.xcodeproj/xcuserdata
 /xcode/Rosetta.xcodeproj/project.pbxproj
-# ignore the project.pbxproj.orig file. 
+# ignore the project.pbxproj.orig file.
 # project.pbxproj.template should be used instead!
 /xcode/Rosetta.xcodeproj/project.pbxproj.orig
 /ide/build

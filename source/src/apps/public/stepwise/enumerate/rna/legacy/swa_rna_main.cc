@@ -426,7 +426,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	output_title_text( "Enter rna_sample_virtual_sugar()", TR );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	core::scoring::ScoreFunctionOP const scorefxn = create_scorefxn();
 
@@ -478,7 +478,7 @@ filter_combine_long_loop()
 	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	///////////////////////////////
 	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters( false );
@@ -556,7 +556,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	output_title_text( "Enter post_rebuild_bulge_assembly()", TR );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 

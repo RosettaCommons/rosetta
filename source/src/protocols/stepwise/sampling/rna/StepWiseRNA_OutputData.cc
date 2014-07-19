@@ -228,7 +228,7 @@ namespace rna {
 		SilentFileData silent_file_data;
 
 		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
-			residue_type_set( core::chemical::RNA );
+			residue_type_set( core::chemical::FA_RNA );
 
 		Size NUM_trials = 10;
 		Real const local_angle_bin_size = 20;

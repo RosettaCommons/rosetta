@@ -81,7 +81,7 @@ public:
 		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
 		//TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
 
-		rss = RNA;
+		rss = FA_RNA;
 		rs = ChemicalManager::get_instance()->residue_type_set(rss );
 		TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
 

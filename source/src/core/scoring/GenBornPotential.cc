@@ -365,12 +365,12 @@ GenBornPotential::build_placeholders(
 				if ( existing_rsd.is_lower_terminus() ) {
 					protein_placeholder_residue_type =
 						&(residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-																															 chemical::LOWER_TERMINUS ) );
+								chemical::LOWER_TERMINUS_VARIANT ) );
 				}
 				if ( existing_rsd.is_upper_terminus() ) {
 					protein_placeholder_residue_type =
 						&(residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-																															 chemical::UPPER_TERMINUS ) );
+								chemical::UPPER_TERMINUS_VARIANT ) );
 				}
 
 				conformation::ResidueOP rsd

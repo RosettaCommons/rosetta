@@ -127,7 +127,7 @@ rna_denovo_test()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::PoseOP native_pose_OP = new pose::Pose;
 	pose::Pose & native_pose = *native_pose_OP;

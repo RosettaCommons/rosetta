@@ -475,7 +475,7 @@ align_pdbs(){
 	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	if ( !option[ in::file::native ].user() ) utility_exit_with_message( "User must supply in::file::native!" );
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -598,7 +598,7 @@ calculate_pairwise_RMSD(){
 
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	if ( !option[ in::file::native ].user() ) utility_exit_with_message( "User must supply in::file::native!" );
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -716,7 +716,7 @@ import_and_dump_pdb(){
 	if ( option[ in::file::s ].user() == false ) utility_exit_with_message( "User must supply in::file::s!" );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	utility::vector1< std::string > const pdb_file_list = option[ in::file::s ]();
 
@@ -753,7 +753,7 @@ o2prime_packer(){
 	using namespace core::id;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 //	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "single_strand_benchmark" );
 
@@ -817,7 +817,7 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const res_nam
 //	using namespace protocols::farna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose start_pose = pose;
 
@@ -854,7 +854,7 @@ mutate_residues_wrapper()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
@@ -898,7 +898,7 @@ slice_ellipsoid_envelope(){
 	clock_t const time_start( clock() );
 /////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn(); //replace this on Jun 11, 2010
 
@@ -1158,7 +1158,7 @@ slice_sample_res_and_surrounding(){
 	clock_t const time_start( clock() );
 /////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn(); //replace this on Jun 11, 2010
 
@@ -1344,7 +1344,7 @@ pdb_to_silent_file(){
 	using namespace core::pose;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	SilentFileData silent_file_data;
 
 	pose::Pose viewer_pose;
@@ -1447,7 +1447,7 @@ rna_fullatom_minimize_test()
 
 /////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 
 	if (	option[ in::file::silent ].user() &&  option[ input_tag_list ].user() ){

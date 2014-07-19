@@ -432,7 +432,7 @@ make_sequence_combinations(
 	for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( restask.allowed_residue_types_begin() );
 				type != restask.allowed_residue_types_end(); ++type ) {
 		// ignore adduct variant types for now (probably hydrated)
-		if ( (*type)->has_variant_type( chemical::ADDUCT ) ) continue;
+		if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
 		sequence[ resid ] = *type;
 
 		if ( seqset_iter == seq_indices.end() - 1 ) sequences.push_back( sequence );
@@ -457,7 +457,7 @@ make_single_mutants(
 		for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( rtask.allowed_residue_types_begin() );
 					type != rtask.allowed_residue_types_end(); ++type ) {
 			// ignore adduct variant types for now (probably hydrated)
-			if ( (*type)->has_variant_type( chemical::ADDUCT ) ) continue;
+			if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
 			if ( (*type)->aa() == it->second->aa() ) continue; // avoid duplicating input sequence
 			ResTypeSequence mutant( sequence );
 			mutant[ index ] = *type;

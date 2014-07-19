@@ -1993,7 +1993,7 @@ namespace rna {
 		using namespace core::conformation;
 
 		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
-			residue_type_set( core::chemical::RNA );
+			residue_type_set( core::chemical::FA_RNA );
 
 		core::io::silent::SilentFileData silent_file_data;
 		silent_file_data.read_file( silent_file );

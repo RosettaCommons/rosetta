@@ -426,8 +426,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 
 	    // take care of terminal types
-	  core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS, pose.total_residue());
-	  core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS, archive_pose.total_residue());
+	  core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.total_residue());
+	  core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS_VARIANT, archive_pose.total_residue());
 
 
 		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
