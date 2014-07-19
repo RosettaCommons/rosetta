@@ -206,7 +206,6 @@ utility::vector1_bool calc_interacting_vector(
 
 	// for all nodes in chain1 == for all residues in chain 1
 	// all this is setup by verify_chain_setup in InterfaceDefinitionBase
-	utility::vector1< Size > chain1_interface, chain2_interface;
 	for ( std::set<Size>::const_iterator side1_it = part1res.begin(); side1_it != part1res.end(); ++side1_it ) {
 		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( *side1_it ).upper_edge_list_begin(),
 						edge_end_iter = pg->get_vertex( *side1_it ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
@@ -365,7 +364,6 @@ find_neighbors_within_CB_cutoff( core::pose::Pose const & pose,
 
 	// for all nodes in chain1 == for all residues in chain 1
 	// all this is setup by verify_chain_setup in InterfaceDefinitionBase
-	utility::vector1< Size > chain1_interface, chain2_interface;
 	for ( Size partner1_res = ch1_begin_num; partner1_res <= ch1_end_num; ++partner1_res ) {
 		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( partner1_res ).upper_edge_list_begin(),
 						edge_end_iter = pg->get_vertex( partner1_res ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {

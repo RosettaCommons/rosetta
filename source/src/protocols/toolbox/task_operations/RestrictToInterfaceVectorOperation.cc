@@ -19,6 +19,7 @@
 //#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh> //shouldn't need this
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pack/task/operation/util/interface_vector_calculate.hh>
 //#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -155,6 +156,10 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 		for( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ){
 			//std::cout << "Calculating interface for jump: " <<*jj << std::endl;
 			//run detection based on jump
+			if( *jj == 0 || core::Size(*jj) > pose.num_jump() ) {
+				TR.Error << "In RestrictToInterfaceVectorOperation: Jump " << *jj << " not found in pose with " << pose.num_jump() << " jumps." << std::endl;
+				utility_exit_with_message("Specified jump does not exist.");
+			}
 			utility::vector1_bool repack =
 				core::pack::task::operation::util::calc_interface_vector(
 					pose,
@@ -186,6 +191,12 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 					{
 						core::Size current_upper_chain = *upper_chain_it;
 						TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
+						if( current_lower_chain == 0 || current_lower_chain > pose.conformation().num_chains() ||
+								current_upper_chain == 0 || current_upper_chain > pose.conformation().num_chains() ) {
+							TR.Error << "In RestrictToInterfaceVectorOperation: Cannot find interface between chains " << current_lower_chain <<
+									" and " << current_upper_chain << ". Pose only has " << pose.conformation().num_chains() << " chains." << std::endl;
+							utility_exit_with_message("Specified chain does not exist.");
+						}
 						utility::vector1_bool repack =
 							core::pack::task::operation::util::calc_interface_vector( pose,
 								current_lower_chain, current_upper_chain,
