@@ -17,7 +17,7 @@ def update_options():
 	cmd = 'cd ..; ./update_options.sh'
 	os.system(cmd)
 
-def update_options():
+def update_residue_properties():
 	cmd = 'cd ..; ./update_residue_properties.sh'
 	os.system(cmd)
 
