@@ -30,7 +30,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -127,7 +127,7 @@ public:
 		task_factory_compare.push_back( new protocols::enzdes::SetCatalyticResPackBehavior );
 		task_factory_compare.push_back( new core::pack::task::operation::ReadResfile( "protocols/enzdes/resfile_remap.resfile") );
 		//have to wipe out pdbinfo, this test is testing non-pdbinfo remapping functionality
-		test_pose.pdb_info( new core::pose::PDBInfo( test_pose ));
+		test_pose.pdb_info( new core::pose::PDB_Info( test_pose ));
 		core::pack::task::PackerTaskOP ptask( task_factory.create_task_and_apply_taskoperations( test_pose ) );
 		core::pack::task::PackerTaskOP ptask_compare( task_factory_compare.create_task_and_apply_taskoperations( compare_pose ) );
 
@@ -147,7 +147,7 @@ public:
 		test_pose.append_polymer_residue_after_seqpos( *dummyres, 57, true );
 		test_pose.append_polymer_residue_after_seqpos( *dummyres, 95, true );
 		(*scorefxn)(test_pose);
-		test_pose.pdb_info( new core::pose::PDBInfo( test_pose ));
+		test_pose.pdb_info( new core::pose::PDB_Info( test_pose ));
 
 		//compare the tasks a bit more
 		core::pack::task::PackerTaskOP ptask2( task_factory.create_task_and_apply_taskoperations( test_pose ) );

@@ -176,7 +176,7 @@ sources = {
 		"scmin/rtmin_setup",
 	],
 	"pose" : [
-		"PDBInfo",
+		"PDB_Info",
 		"PDBPoseMap",
 		"Pose",
 		"util",

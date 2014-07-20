@@ -24,7 +24,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
 
@@ -301,7 +301,7 @@ public:
   }
 
   void test_pdb_info_persistence() {
-    core::pose::PDBInfoOP info = new core::pose::PDBInfo( pose.total_residue() );
+    core::pose::PDB_InfoOP info = new core::pose::PDB_Info( pose.total_residue() );
     info->set_chains( 'A' );
     pose.pdb_info( info );
 

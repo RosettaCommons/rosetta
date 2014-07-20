@@ -102,7 +102,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/kinematics/types.hh>
-#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/PDB_Info.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>

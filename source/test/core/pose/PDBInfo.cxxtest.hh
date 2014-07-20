@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDBInfo.cxxtest.hh
-/// @brief  test suite for core::pose::PDBInfo
+/// @file   core/pose/PDB_Info.cxxtest.hh
+/// @brief  test suite for core::pose::PDB_Info
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 // Test headers
@@ -23,7 +23,7 @@
 #include <core/conformation/ResidueFactory.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/Pose.hh>
 
@@ -46,7 +46,7 @@
 
 // --------------- Test Class --------------- //
 
-class PDBInfoTests : public CxxTest::TestSuite {
+class PDB_InfoTests : public CxxTest::TestSuite {
 
 public:
 
@@ -54,7 +54,7 @@ public:
 	typedef core::Size Size;
 	typedef core::conformation::Conformation Conformation;
 	typedef core::conformation::ResidueOP ResidueOP;
-	typedef core::pose::PDBInfo PDBInfo;
+	typedef core::pose::PDB_Info PDB_Info;
 	typedef core::pose::PDBPoseMap PDBPoseMap;
 	typedef core::pose::Pose Pose;
 
@@ -81,8 +81,8 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	/// @brief test basic functionality of PDBInfo from input
-	void test_PDBInfo_from_input_pdb() {
+	/// @brief test basic functionality of PDB_Info from input
+	void test_PDB_Info_from_input_pdb() {
 		// chain
 		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 1 ), 'L' );
 		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 2 ), 'H' );
@@ -103,8 +103,8 @@ public:
 	}
 
 	/// @brief test basic functionality of internally maintained PDBPoseMap
-	///  of PDBInfo from input
-	void test_PDBInfo_from_input_pdb_PDBPoseMap() {
+	///  of PDB_Info from input
+	void test_PDB_Info_from_input_pdb_PDBPoseMap() {
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose().size(), 4 );
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'L', 1, ' ' ), 1 );
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'H', 100, 'C' ), 2 );
@@ -113,9 +113,9 @@ public:
 	}
 
 	/// @brief test single residue chain mutator
-	void test_PDBInfo_single_residue_chain_mutator() {
+	void test_PDB_Info_single_residue_chain_mutator() {
 		// make a copy of the input pdb_info
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		// invoke mutator
 		info.chain( 1, 'A' );
@@ -125,9 +125,9 @@ public:
 	}
 
 	/// @brief test single residue number mutator
-	void test_PDBInfo_single_residue_number_mutator() {
+	void test_PDB_Info_single_residue_number_mutator() {
 		// make a copy of the input pdb_info
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		// invoke mutator
 		info.number( 2, 999 );
@@ -137,9 +137,9 @@ public:
 	}
 
 	/// @brief test single residue insertion code mutator
-	void test_PDBInfo_single_residue_icode_mutator() {
+	void test_PDB_Info_single_residue_icode_mutator() {
 		// make a copy of the input pdb_info
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		// invoke mutator
 		info.icode( 3, 'Z' );
@@ -149,9 +149,9 @@ public:
 	}
 
 	/// @brief test single residue resinfo mutator
-	void test_PDBInfo_single_residue_resinfo_mutator() {
+	void test_PDB_Info_single_residue_resinfo_mutator() {
 		// make a copy of the input pdb_info
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		// invoke mutator
 		info.set_resinfo( 4, 'X', -1, 'Y' );
@@ -163,9 +163,9 @@ public:
 	}
 
 	/// @brief test en masse residue mutators
-	void test_PDBInfo_en_masse_residue_mutators() {
+	void test_PDB_Info_en_masse_residue_mutators() {
 		// make a copy of the input pdb_info
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		// make fake chain/resid/icode arrays
 		utility::vector1< char > chain;
@@ -197,8 +197,8 @@ public:
 	}
 
 	/// @brief test residue+atom record resize and availability
-	void test_PDBInfo_resize() {
-		PDBInfo info;
+	void test_PDB_Info_resize() {
+		PDB_Info info;
 		info.resize_residue_records( 4 );
 		info.resize_atom_records( pose );
 		info.occupancy( 4, 1, 0.5 );
@@ -208,36 +208,36 @@ public:
 	}
 
 	/// @brief test append residue
-	void test_PDBInfo_append_residue() {
-		PDBInfo info = *pose.pdb_info();
+	void test_PDB_Info_append_residue() {
+		PDB_Info info = *pose.pdb_info();
 
 		info.append_res( 3, 7, 2 ); // 2 residues after resid 3 with 7 atoms apiece
 
 		TS_ASSERT_EQUALS( info.nres(), 6 );
 		TS_ASSERT_EQUALS( info.natoms( 4 ), 7 );
 		TS_ASSERT_EQUALS( info.natoms( 5 ), 7 );
-		TS_ASSERT_EQUALS( info.chain( 5 ), PDBInfo::empty_record() );
+		TS_ASSERT_EQUALS( info.chain( 5 ), PDB_Info::empty_record() );
 		TS_ASSERT_EQUALS( info.chain( 3 ), 'H' );
 		TS_ASSERT_EQUALS( info.chain( 6 ), 'P' );
 	}
 
 	/// @brief test prepend residue
-	void test_PDBInfo_prepend_residue() {
-		PDBInfo info = *pose.pdb_info();
+	void test_PDB_Info_prepend_residue() {
+		PDB_Info info = *pose.pdb_info();
 
 		info.prepend_res( 3, 7, 2 ); // 2 residues before resid 3 with 7 atoms apiece
 
 		TS_ASSERT_EQUALS( info.nres(), 6 );
 		TS_ASSERT_EQUALS( info.natoms( 3 ), 7 );
 		TS_ASSERT_EQUALS( info.natoms( 4 ), 7 );
-		TS_ASSERT_EQUALS( info.chain( 3 ), PDBInfo::empty_record() );
+		TS_ASSERT_EQUALS( info.chain( 3 ), PDB_Info::empty_record() );
 		TS_ASSERT_EQUALS( info.chain( 2 ), 'H' );
 		TS_ASSERT_EQUALS( info.chain( 5 ), 'H' );
 	}
 
 	/// @brief test delete residue
-	void test_PDBInfo_delete_residue() {
-		PDBInfo info = *pose.pdb_info();
+	void test_PDB_Info_delete_residue() {
+		PDB_Info info = *pose.pdb_info();
 
 		info.delete_res( 2 );
 		TS_ASSERT_EQUALS( info.nres(), 3 );
@@ -246,9 +246,9 @@ public:
 	}
 
 	/// @brief test observer attach to/detach from Conformation
-	void test_PDBInfo_observe_attach_detach() {
+	void test_PDB_Info_observe_attach_detach() {
 		Conformation conf = pose.conformation();
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		info.attach_to( conf );
 		TS_ASSERT_EQUALS( info.is_observing(), &conf );
@@ -256,9 +256,9 @@ public:
 	}
 
 	/// @brief test Conformation observer behavior on append
-	void test_PDBInfo_observe_append() {
+	void test_PDB_Info_observe_append() {
 		Conformation conf = pose.conformation();
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 		Size ori_nres = conf.size();
 
 		info.attach_to( conf );
@@ -266,16 +266,16 @@ public:
 		info.detach_from();
 
 		TS_ASSERT_EQUALS( info.nres(), ori_nres + 1 );
-		TS_ASSERT_EQUALS( info.chain( 3 ), PDBInfo::empty_record() );
+		TS_ASSERT_EQUALS( info.chain( 3 ), PDB_Info::empty_record() );
 		TS_ASSERT_EQUALS( info.number( 3 ), 0 );
 		TS_ASSERT_EQUALS( info.icode( 3 ), ' ' );
 		TS_ASSERT( info.obsolete() );
 	}
 
 	/// @brief test Conformation observer behavior on prepend
-	void test_PDBInfo_observe_prepend() {
+	void test_PDB_Info_observe_prepend() {
 		Conformation conf = pose.conformation();
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 		Size ori_nres = conf.size();
 
 		info.attach_to( conf );
@@ -283,16 +283,16 @@ public:
 		info.detach_from();
 
 		TS_ASSERT_EQUALS( info.nres(), ori_nres + 1 );
-		TS_ASSERT_EQUALS( info.chain( 3 ), PDBInfo::empty_record() );
+		TS_ASSERT_EQUALS( info.chain( 3 ), PDB_Info::empty_record() );
 		TS_ASSERT_EQUALS( info.number( 3 ), 0 );
 		TS_ASSERT_EQUALS( info.icode( 3 ), ' ' );
 		TS_ASSERT( info.obsolete() );
 	}
 
 	/// @brief test Conformation observer behavior on delete
-	void test_PDBInfo_observe_delete() {
+	void test_PDB_Info_observe_delete() {
 		Conformation conf = pose.conformation();
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 		Size ori_nres = conf.size();
 
 		info.attach_to( conf );
@@ -305,7 +305,7 @@ public:
 	}
 
 	/// @brief test Conformation observer behavior on residue replacement
-	void test_PDBInfo_observe_replace() {
+	void test_PDB_Info_observe_replace() {
 		using namespace core::chemical;
 		using namespace core::conformation;
 
@@ -315,7 +315,7 @@ public:
 
 		Conformation conf = pose.conformation();
 		conf.fold_tree( core::kinematics::FoldTree( 4 ) );
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		info.attach_to( conf );
 		conf.replace_residue( 2, *nt_ala_rsd, true );
@@ -325,9 +325,9 @@ public:
 	}
 
 	/// @brief test observer auto-detach when Conformation is destroyed
-	void test_PDBInfo_detach_on_destroy() {
+	void test_PDB_Info_detach_on_destroy() {
 		Conformation * conf = new Conformation( pose.conformation() );
-		PDBInfo info = *pose.pdb_info();
+		PDB_Info info = *pose.pdb_info();
 
 		info.attach_to( *conf );
 		delete conf;

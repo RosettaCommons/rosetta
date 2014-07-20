@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
@@ -131,11 +131,11 @@ public: // tests
 
 		Pose pose;
 		make_pose_from_sequence(pose, "TE", "fa_standard");
-		pose.pdb_info(PDBInfoOP(new PDBInfo(pose)));
+		pose.pdb_info(PDB_InfoOP(new PDB_Info(pose)));
 
 		Pose pose2;
 		make_pose_from_sequence(pose2, "ST", "fa_standard");
-		pose2.pdb_info(PDBInfoOP(new PDBInfo(pose2)));
+		pose2.pdb_info(PDB_InfoOP(new PDB_Info(pose2)));
 
 		char pose2_chain = 'B';
 		pose2.pdb_info()->set_chains(pose2_chain);

@@ -22,7 +22,7 @@
 #include <test/core/init_util.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
@@ -48,8 +48,8 @@ public: // setup
 
 
 	typedef core::Size Size;
-	typedef core::pose::PDBInfo PDBInfo;
-	typedef core::pose::PDBInfoOP PDBInfoOP;
+	typedef core::pose::PDB_Info PDB_Info;
+	typedef core::pose::PDB_InfoOP PDB_InfoOP;
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseOP PoseOP;
 
@@ -105,8 +105,8 @@ public: // re-used methods
 	}
 
 
-	PDBInfoOP add_empty_pdb_info( Pose & pose ) {
-		PDBInfoOP pdbinfo = new PDBInfo( pose.n_residue() );
+	PDB_InfoOP add_empty_pdb_info( Pose & pose ) {
+		PDB_InfoOP pdbinfo = new PDB_Info( pose.n_residue() );
 		pose.pdb_info( pdbinfo );
 
 		return pdbinfo;
@@ -265,12 +265,12 @@ public: // tests
 
 		for ( Size i = 1, ie = 9; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), PDBInfo::empty_record() );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), PDB_Info::empty_record() );
 		}
 
 		for ( Size i = 10, ie = 20; i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_two->pdb_info()->number( i ), static_cast< int >( i - 9 ) );
-			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), PDBInfo::empty_record() );
+			TS_ASSERT_EQUALS( pose_two->pdb_info()->chain( i ), PDB_Info::empty_record() );
 		}
 
 	} // test_renumber_pdbinfo_based_on_conf_chains
