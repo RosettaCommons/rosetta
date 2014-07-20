@@ -523,11 +523,15 @@ MembranePotential::evaluate_pair(
 
 	chemical::AA const aa1( rsd1.aa() );
 	chemical::AA const aa2( rsd2.aa() );
-
+	std::string n1 = rsd1.type().name();
+	std::string n2 = rsd1.type().name();
+	bool disulf_n1 = ( n1.find( "CYD" ) != std::string::npos );
+	bool disulf_n2 = ( n2.find( "CYD" ) != std::string::npos );
 	//CAR  no pair score if a disulfide
-	if (	aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-		rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-		rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+	//if (	aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
+	if ( disulf_n1 && disulf_n2
+	  && rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1
+	  && rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
 
 	// no pair score for residues closer than 9 in sequence
 	if ( rsd1.polymeric_sequence_distance( rsd2 ) /* j - i */ <= 8 ) return;

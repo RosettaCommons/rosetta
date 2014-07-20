@@ -158,7 +158,8 @@ DomainAssembly::apply( core::pose::Pose & pose )
 
 	for ( core::Size i = linker_end_+1; i <= pose.total_residue(); ++i) {
 		if ( !pose.residue(i).is_protein() ) continue;
-		if( pose.residue(i).type().name() == "CYD" ) {
+		std::string n = pose.residue( i ).type().name();
+		if( n.find( "CYD" ) != std::string::npos) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 			continue;
 		}
@@ -175,7 +176,8 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	}
 	for ( core::Size i = 1; i <= linker_start_ - 1; ++i) {
 		if ( !pose.residue(i).is_protein() ) continue;
-		if( pose.residue(i).type().name() == "CYD" ) {
+		std::string n = pose.residue( i ).type().name();
+		if( n.find( "CYD" ) != std::string::npos) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 			continue;
 		}

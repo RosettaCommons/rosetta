@@ -651,12 +651,13 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 			core::Size const res( *host_pos_it );
 			Residue const res_host( pose.residue( res ) );
 			Residue const res_stub( *stub->residue() );
-
+			std::string n = res_host.type().name();
+			bool is_cyd = (n.find( "CYD" ) != std::string::npos);
 			// Obligatory Triaging
 			if( res_host.aa() != chemical::aa_ala ) continue; // position already designed
 			if( res_host.aa() == chemical::aa_gly
 					|| ( res_host.aa() == chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] )
-					|| res_host.type().name() == "CYD" )
+					|| is_cyd )
 				continue; // disallowed host amino acids
 			if( !prevent_repacking().empty()
 					&& std::find( prevent_repacking().begin(), prevent_repacking().end(), res ) != prevent_repacking().end() )

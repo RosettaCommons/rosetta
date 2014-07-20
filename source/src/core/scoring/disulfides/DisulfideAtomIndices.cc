@@ -26,22 +26,26 @@ namespace disulfides {
 
 
 DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) :
-	c_alpha_index_( res.atom_index( "CA" ) ),
-	c_beta_index_( res.atom_index(  "CB" ) ),
 	derivative_atom_types_( res.natoms(), NO_DERIVATIVES_FOR_ATOM )
 {
 	derivative_atom_types_[ c_alpha_index_ ] = CYS_C_ALPHA;
 	derivative_atom_types_[ c_beta_index_  ] = CYS_C_BETA;
 
 	if( res.type().has("SG") ) {
+		c_alpha_index_ = res.atom_index( "CA" );
+		c_beta_index_ = res.atom_index( "CB" );
 		disulf_atom_index_ = res.atom_index( "SG" );
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_GAMMA;
 	}
 	else if (res.type().has("SD") ) {
+		c_alpha_index_ = res.atom_index( "CB" );
+		c_beta_index_ = res.atom_index( "CG" );
 		disulf_atom_index_ = res.atom_index( "SD" );
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_DELTA;
 	}
 	else {
+		c_alpha_index_ = res.atom_index( "CA" );
+		c_beta_index_ = res.atom_index( "CB" );
 		assert(res.type().has("CEN") );//disulfides form to SG or CEN only
 
 		disulf_atom_index_ = res.atom_index( "CEN" );

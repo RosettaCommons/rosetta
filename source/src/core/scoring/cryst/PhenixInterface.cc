@@ -438,29 +438,40 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				// convert CYS->CYD
 				core::conformation::Residue newCys = rsd_i;
 				chemical::ResidueTypeSet const & residue_type_set = newCys.type().residue_type_set();
-				chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( "CYS" );
+				chemical::ResidueType possible_type;
+				std::string nct = newCys.type().name();
+
+				if (nct.find( "F26") != std::string::npos )
+					possible_type = residue_type_set.name_map( "DHCYD" );
+				else if (nct.find( "C26" ) != std::string::npos )
+					possible_type = residue_type_set.name_map( "HCYD" );
+				else if (nct.find( "DCYD" ) != std::string::npos ) 
+					possible_type = residue_type_set.name_map( "DCYD" );
+				else if (nct.find( "CYD" ) != std::string::npos )
+					possible_type = residue_type_set.name_map( "CYD" );
+
 				utility::vector1< chemical::VariantType > variant_types = newCys.type().variant_types();
 				variant_types.erase( std::find( variant_types.begin(), variant_types.end(), chemical::DISULFIDE ) );
 
-				bool matched = false;
-				chemical::ResidueTypeCOP matchedRes;
-				for ( chemical::ResidueTypeCOPs::const_iterator type_iter = possible_types.begin(), type_end = possible_types.end();
-				      type_iter != type_end && !matched ; ++type_iter ) {
+				bool matched = true;
+				//chemical::ResidueTypeCOP matchedRes;
+				//for ( chemical::ResidueTypeCOPs::const_iterator type_iter = possible_types.begin(), type_end = possible_types.end();
+				//      type_iter != type_end && !matched ; ++type_iter ) {
 					for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
-						if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
-							matched = true;
-							matchedRes = (*type_iter);
-							break;
-						}
+				//		if ( possible_type.has_variant_type( variant_types[ kk ] ) ) {
+				//			matched = true;
+							possible_type.add_variant_type( variant_types[ kk ] );
+				//			break;
+				//		}
 					}
 				}
 				if ( matched ) { // Do replacement.
 					core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( *matchedRes, newCys, pose.conformation()  );
 					copy_residue_coordinates_and_rebuild_missing_atoms( newCys, *new_res, pose.conformation() );
-					coords.push_back( new_res->xyz( new_res->atom_index(" HG ")) );
+					coords.push_back( new_res->xyz( new_res->atom_index( ( nct.find( "26" ) == std::string::npos) ? " HG " : " HD ")) ); // C26 and F26 both homocyst.
 				} else {
 					// fallback: just copy ref_pose_
-					coords.push_back( ref_pose_->residue(i).xyz( ref_pose_->residue(i).atom_index(" HG ")) );
+					coords.push_back( ref_pose_->residue(i).xyz( ref_pose_->residue(i).atom_index( ( nct.find( "26" ) == std::string::npos) ? " HG " : " HD ") ) );
 				}
 			}
 		}

@@ -146,7 +146,9 @@ void PrepackMover::apply( pose::Pose & pose )
 				continue;
 			}
 			// Check for disulfide bonded cysteines
-			if( pose.residue(i).type().name() == "CYD" ) mm_general->set_chi( i, false );
+			std::string n = pose.residue(i).type().name();
+			bool is_cyd = (n.find( "CYD" ) != std::string::npos );
+			if( is_cyd ) mm_general->set_chi( i, false );
 		}
   }
 	else{

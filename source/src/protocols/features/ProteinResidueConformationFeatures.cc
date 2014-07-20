@@ -477,11 +477,10 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 		get_res_type_res.next();
 		string db_res_type;
 		get_res_type_res >> db_res_type;
-
-		if(
-			db_res_type == "CYD" && num_requested_atoms == 10 &&
-			pose.residue_type(pose_resNum).name() == "CYS"
-		){
+		std::string n = pose.residue_type(resNum).name();
+		bool is_cys = (n.find( "CYS" ) != std::string::npos) || (n.find("C26") != std::string::npos) || (n.find("F26") != std::string::npos);
+		if( db_res_type == "CYD" && num_requested_atoms == 10 && is_cys ) // doesn't actually matter what kind, just that it's a mismatch
+		{
 			// The pose incorrectly says this cystine is
 			// forming a disulfide while the coordinates say that is
 			// not. Convert the residue type to CYD.
@@ -491,6 +490,81 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 				std::stringstream errmsg;
 				errmsg
 					<< "Failed to convert cystine from CYS to CYD for residue '" << resNum << "'";
+				if( pose_resNum != resNum){
+					errmsg
+						<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
+				} else {
+					errmsg
+						<< "." << std::endl;
+				}
+				utility_exit_with_message(errmsg.str());
+			} else {
+				// should probably rebuild disulfides when done...
+				return;
+			}
+		}
+
+		if( db_res_type == "DCYD" && num_requested_atoms == 10 && is_cys) 
+		{
+			// The pose incorrectly says this cystine is
+			// forming a disulfide while the coordinates say that is
+			// not. Convert the residue type to DCYD.
+			bool success = core::conformation::change_cys_state(
+				pose_resNum, "DCYD", pose.conformation());
+			if(!success){
+				std::stringstream errmsg;
+				errmsg
+					<< "Failed to convert cystine from DCYS to DCYD for residue '" << resNum << "'";
+				if( pose_resNum != resNum){
+					errmsg
+						<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
+				} else {
+					errmsg
+						<< "." << std::endl;
+				}
+				utility_exit_with_message(errmsg.str());
+			} else {
+				// should probably rebuild disulfides when done...
+				return;
+			}
+		}
+
+		if ( db_res_type == "HCYD" && num_requested_atoms == 13 && is_cys )
+		{
+			// The pose incorrectly says this cystine is
+			// forming a disulfide while the coordinates say that is
+			// not. Convert the residue type to HCYD.
+			bool success = core::conformation::change_cys_state(
+				pose_resNum, "HCYD", pose.conformation());
+			if(!success){
+				std::stringstream errmsg;
+				errmsg
+					<< "Failed to convert cystine from C26 to HCYD for residue '" << resNum << "'";
+				if( pose_resNum != resNum){
+					errmsg
+						<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
+				} else {
+					errmsg
+						<< "." << std::endl;
+				}
+				utility_exit_with_message(errmsg.str());
+			} else {
+				// should probably rebuild disulfides when done...
+				return;
+			}
+		}
+
+		if( db_res_type == "DHCYD" && num_requested_atoms == 13 && is_cys)
+		{
+			// The pose incorrectly says this cystine is
+			// forming a disulfide while the coordinates say that is
+			// not. Convert the residue type to DHCYD.
+			bool success = core::conformation::change_cys_state(
+				pose_resNum, "DHCYD", pose.conformation());
+			if(!success){
+				std::stringstream errmsg;
+				errmsg
+					<< "Failed to convert cystine from F26 to DHCYD for residue '" << resNum << "'";
 				if( pose_resNum != resNum){
 					errmsg
 						<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;

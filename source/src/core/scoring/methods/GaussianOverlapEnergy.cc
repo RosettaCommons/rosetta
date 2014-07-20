@@ -162,9 +162,15 @@ GaussianOverlapEnergy::residue_pair_energy(
 
 	        chemical::AA const aa1( rsd1.aa() );
 		chemical::AA const aa2( rsd2.aa() );
-           if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-                         rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-                         rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+		std::string n1 = rsd1.type().name();
+		std::string n2 = rsd2.type().name();
+		bool disulf_n1 = ( n1.find( "CYD" ) != std::string::npos );
+		bool disulf_n2 = ( n2.find( "CYD" ) != std::string::npos );
+           //if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
+           if ( disulf_n1 && disulf_n2
+             && rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1
+             && rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+
 	   if ( aa1 == chemical::aa_pro && aa2 == chemical::aa_pro ) return;
 
                 for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {

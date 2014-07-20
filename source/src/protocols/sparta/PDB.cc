@@ -175,6 +175,7 @@ void PDB::loadPDB(istream &file) {
 
 		residList[temp.resNum] = temp.resName; //resdiue list with three-letter-aa name
 		residListOne[temp.resNum] = getOneAAName(temp.resName); //resdiue list with one-letter-aa name
+		//awatkins: this prevents everything from being generalized to dcys/hcys/dhcys
 
 		// 		std::cout << "resNum: to check r1 rN: " << temp.resNum << " r1: " << r1 << " rN: " << rN << std::endl;
 		if ( temp.resNum < r1 ) r1 = temp.resNum;

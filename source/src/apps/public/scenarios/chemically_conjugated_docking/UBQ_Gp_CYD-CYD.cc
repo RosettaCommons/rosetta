@@ -172,17 +172,38 @@ public:
 
 		//replace cysteine
 		core::chemical::ResidueTypeSetCAP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
-		core::chemical::ResidueType const & cyd_rsd_type( fa_standard->name_map("CYD") );
+		std::string n = GTPase.residue( GTPase_cyd_).type().name();
+		std::string cyd_string = "";
+		if (n.find( "F26" ) != std::string::npos )
+			cyd_string = "DHCYD";
+		if (n.find( "C26" ) != std::string::npos )
+			cyd_string = "HCYD";
+		if (n.find( "DCYS" ) != std::string::npos )
+			cyd_string = "DCYD";
+		if (n.find( "CYS" ) != std::string::npos )
+			cyd_string = "CYD";
+		core::chemical::ResidueType const & cyd_rsd_type(fa_standard->name_map("CYD"));
 		//GTPase.dump_pdb("prereplace_GTPase.pdb");
 		GTPase.replace_residue( GTPase_cyd_, core::conformation::Residue(cyd_rsd_type, true), true);
 		//GTPase.dump_pdb("postreplace_GTPase.pdb");
 
 		//replace with CYD on ubiquitin too
 		//TR << UBQ.residue_type(UBQ_term).name() << std::endl;
-		//core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD"));
-		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD:CtermProteinFull"));
-		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyd_rsd_term_type, true), true);
+		//core::chemical::ResidueType const & cyd_rsd_term_type = new core::chemical::ResidueType(fa_standard->name_map("CYD"));
+		n = UBQ.residue( UBQ_term ).type().name();
+		std::string cyd_term_string = "";
+		if (n.find( "F26" ) != std::string::npos )
+			cyd_term_string = "DHCYD:CtermProteinFull";
+		if (n.find( "C26" ) != std::string::npos )
+			cyd_term_string = "HCYD:CtermProteinFull";
+		if (n.find( "DCYS" ) != std::string::npos )
+			cyd_term_string = "DCYD:CtermProteinFull";
+		if (n.find( "CYS" ) != std::string::npos )
+			cyd_term_string = "CYD:CtermProteinFull";
 
+		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map(cyd_term_string));
+		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyd_rsd_term_type, true), true);
+		
 		// check safety of connections (from phil)
 		core::chemical::ResidueType const & ubq_rsd_type( UBQ.residue_type( UBQ_term ) );
 		runtime_assert(ubq_rsd_type.name() == cyd_rsd_term_type.name());
@@ -218,14 +239,30 @@ public:
 		complex.conformation().insert_ideal_geometry_at_residue_connection( complex.total_residue(), ubq_connid );
 
 		core::Size const ubq_pos( complex.total_residue() );
-		core::id::AtomID const atom0( cyd_rsd_type.atom_index( "C" ), GTPase_cyd_ );
-		core::id::AtomID const atom1( cyd_rsd_type.atom_index( "CA" ), GTPase_cyd_ );
-		core::id::AtomID const atom2( cyd_rsd_type.atom_index( "CB" ), GTPase_cyd_ );
-		core::id::AtomID const atom3( cyd_rsd_type.atom_index( "SG" ), GTPase_cyd_ );
-		core::id::AtomID const atom4( ubq_rsd_type.atom_index( "SG"  ), ubq_pos );
-		core::id::AtomID const atom5( ubq_rsd_type.atom_index( "CB" ), ubq_pos );
-		core::id::AtomID const atom6( ubq_rsd_type.atom_index( "CA"  ), ubq_pos );
-
+		core::id::AtomID atom0, atom1, atom2, atom3, atom4, atom5, atom6;
+		n = UBQ.residue( GTPase_cyd_ ).type().name();
+		if (n.find( "HCYD" ) != std::string::npos) { // a homocystine!
+			atom0 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "CA" ), GTPase_cyd_ );
+			atom1 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "CB" ), GTPase_cyd_ );
+			atom2 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "CG" ), GTPase_cyd_ );
+			atom3 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "SD" ), GTPase_cyd_ );
+		} else {
+			atom0 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "C" ), GTPase_cyd_ );
+			atom1 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "CA" ), GTPase_cyd_ );
+			atom2 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "CB" ), GTPase_cyd_ );
+			atom3 = *new core::id::AtomID ( cyd_rsd_type.atom_index( "SG" ), GTPase_cyd_ );
+		}
+		n = UBQ.residue( ubq_pos ).type().name();
+		bool term_hc = (n.find( "HCYD" ) != std::string::npos); 
+		if (term_hc) { // a homocystine!
+			atom4 = *new core::id::AtomID ( ubq_rsd_type.atom_index( "SD"  ), ubq_pos );
+			atom5 = *new core::id::AtomID ( ubq_rsd_type.atom_index( "CG" ), ubq_pos );
+			atom6 = *new core::id::AtomID ( ubq_rsd_type.atom_index( "CB"  ), ubq_pos );
+		} else {
+			atom4 = *new core::id::AtomID ( ubq_rsd_type.atom_index( "SG"  ), ubq_pos );
+			atom5 = *new core::id::AtomID ( ubq_rsd_type.atom_index( "CB" ), ubq_pos );
+			atom6 = *new core::id::AtomID ( ubq_rsd_type.atom_index( "CA"  ), ubq_pos );
+		}
 		//starting values derived from disulfide code (FullatomDisulfidePotential.cc and also $database/scoring/score_functions/disulfides/fa_SS_distance_score
 		complex.conformation().set_torsion_angle( atom0, atom1, atom2, atom3, numeric::conversions::radians(52.0) ); //chi1
 		complex.conformation().set_torsion_angle( atom1, atom2, atom3, atom4, 1.709486 ); //chi2
@@ -257,11 +294,17 @@ public:
 		atomIDs[2] = atom1;
 		atomIDs[3] = atom2;
 		atomIDs[4] = atom3;
-		atomIDs[5] = core::id::AtomID( ubq_rsd_type.atom_index("SG" ), complexlength );
-		atomIDs[6] = core::id::AtomID( ubq_rsd_type.atom_index("CB" ), complexlength );
-		atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("CA" ), complexlength );
-		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength );
-
+		if (term_hc) {
+			atomIDs[5] = core::id::AtomID( ubq_rsd_type.atom_index("SD" ), complexlength );
+			atomIDs[6] = core::id::AtomID( ubq_rsd_type.atom_index("CA" ), complexlength );
+			atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("CB" ), complexlength );
+			atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("CA" ), complexlength );
+		} else {
+			atomIDs[5] = core::id::AtomID( ubq_rsd_type.atom_index("SG" ), complexlength );
+			atomIDs[6] = core::id::AtomID( ubq_rsd_type.atom_index("CB" ), complexlength );
+			atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("CA" ), complexlength );
+			atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength );
+		}
 
 		////////////////////////////extra bodies/////////////////////////////////////////////////
 		//The purpose of this code is to allow for static extra things in the system; for its original
