@@ -306,6 +306,7 @@ sources = {
 		"RestrictOperations",
 		"RestrictNonSurfaceToRepackingOperation",
 		"RestrictToCDRH3Loop",
+		"RestrictToLoopsTests",
 	],
 
 	"util": [
@@ -507,6 +508,7 @@ testinputfiles = [
 	"sparta/solution_0022372568.ir_solution.pdb",
 	"sparta/SAM-T08-server_TS3.pdb",
 	"sparta/17280_trim.tab",
+	"toolbox/task_operations/loops.txt",
 	"toolbox/task_operations/RestrictToInterfaceOperation.u",
 	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
 	"toolbox/task_operations/RestrictToNeighborhoodOperation.u",

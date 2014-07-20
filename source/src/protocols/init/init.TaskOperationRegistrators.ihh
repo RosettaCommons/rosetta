@@ -59,6 +59,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictTo
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceCreator > RestrictToInterfaceCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceOperationCreator > RestrictToInterfaceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceVectorOperationCreator > RestrictToInterfaceVectorOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToLoopsCreator > RestrictToLoopsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsCreator > RestrictToLoopsAndNeighborsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToNeighborhoodOperationCreator > RestrictToNeighborhoodOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToTerminiOperationCreator > RestrictToTerminiOperationCreator_registrator;

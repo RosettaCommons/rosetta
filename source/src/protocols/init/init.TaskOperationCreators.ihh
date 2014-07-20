@@ -59,6 +59,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterfaceCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToLoopsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighborsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToTerminiOperationCreator.hh>

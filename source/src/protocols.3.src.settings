@@ -744,6 +744,7 @@ sources = {
 		"RestrictToInterface",
 		"RestrictToInterfaceOperation",
 		"RestrictToInterfaceVectorOperation",
+		"RestrictToLoops",
 		"RestrictToLoopsAndNeighbors",
 		"RestrictToMoveMapChiOperation",
 		"RestrictToNeighborhoodOperation",

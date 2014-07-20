@@ -16,8 +16,8 @@
 #define INCLUDED_protocols_toolbox_task_operations_RestrictToLoopsAndNeighbors_HH
 
 // Unit headers
+#include <protocols/toolbox/task_operations/RestrictToLoops.hh>
 #include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 
 // Package headers
 #include <protocols/loops/Loops.fwd.hh>
@@ -36,32 +36,35 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-class RestrictToLoopsAndNeighbors : public core::pack::task::operation::TaskOperation
+class RestrictToLoopsAndNeighbors : public RestrictToLoops
 {
 public:
-	typedef core::pack::task::operation::TaskOperation parent;
+	typedef RestrictToLoops parent;
 
 public:
-	// default constructor
+	/// @brief Default constructor.
 	RestrictToLoopsAndNeighbors();
 
-	// copy constructor
+	/// @brief Copy constructor.
 	RestrictToLoopsAndNeighbors(RestrictToLoopsAndNeighbors const & src);
 
-	// destructor
+	/// @brief Default destructor.
 	virtual ~RestrictToLoopsAndNeighbors();
 
-	// assignment operator
+	/// @brief Assignment operator.
 	RestrictToLoopsAndNeighbors & operator=( RestrictToLoopsAndNeighbors const & rhs );
 
+	/// @copydoc RestrictToLoops::clone
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
+
+	/// @copydoc RestrictToLoops::parse_tag
+  void parse_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap & );
 
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
-
-	bool design_loop() const;
-	void set_design_loop( bool design_loop );
 
 	bool include_neighbors() const;
 	void set_include_neighbors( bool include_neighbors );
@@ -69,17 +72,13 @@ public:
 	core::Real cutoff_distance() const;
 	void set_cutoff_distance( core::Real cutoff_distance );
 
-	loops::LoopsCOP loops() const;
-	void set_loops( loops::LoopsCOP loops );
 private:
 	void init();
-	void init_for_equal_operator_and_copy_constructor( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs);
+	void init_for_copy( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs);
 	
 private:
-	bool design_loop_;
 	bool include_neighbors_;
 	core::Real cutoff_distance_;
-	loops::LoopsCOP loops_;
 
 };
 

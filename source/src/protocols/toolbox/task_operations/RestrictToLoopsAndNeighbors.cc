@@ -28,6 +28,8 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 
 
@@ -35,6 +37,8 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+using core::Size;
+using core::Real;
 using core::pose::Pose;
 using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
@@ -53,7 +57,7 @@ RestrictToLoopsAndNeighbors::RestrictToLoopsAndNeighbors() : parent()
 ///@brief copy constructor
 RestrictToLoopsAndNeighbors::RestrictToLoopsAndNeighbors( RestrictToLoopsAndNeighbors const & rhs ) : parent(rhs)
 {
-	init_for_equal_operator_and_copy_constructor( *this, rhs );
+	init_for_copy( *this, rhs );
 }
 
 ///@brief assignment operator
@@ -61,7 +65,7 @@ RestrictToLoopsAndNeighbors & RestrictToLoopsAndNeighbors::operator=( RestrictTo
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
 	parent::operator=( rhs );
-	init_for_equal_operator_and_copy_constructor( *this, rhs );
+	init_for_copy( *this, rhs );
 	return *this;
 }
 
@@ -80,67 +84,35 @@ RestrictToLoopsAndNeighbors::clone() const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+void RestrictToLoopsAndNeighbors::parse_tag(TagCOP tag, DataMap & data)
+{
+	parent::parse_tag(tag, data);
+
+	set_include_neighbors(
+			tag->getOption<bool>("include_neighbors", include_neighbors()));
+
+	set_cutoff_distance(
+			tag->getOption<Real>("cutoff_dist", cutoff_distance()));
+
+}
+
 void RestrictToLoopsAndNeighbors::apply( Pose const & pose, PackerTask & task ) const
 {
-
-	if ( ! loops() ) return;
-	
-	core::pack::task::operation::PreventRepacking turn_off_packing;
-	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
-
-	// Get an up-to-date list of the residues that can be packed
-	utility::vector1<bool> is_packable( pose.total_residue(), false );
-	select_loop_residues( pose, *loops(), include_neighbors(), is_packable, cutoff_distance() );
-
-	core::pose::symmetry::make_residue_mask_symmetric( pose, is_packable ); // does nothing if pose is not symm
-
-	// If we're designing, allow design at loop positions
-	utility::vector1< bool > is_designable( pose.total_residue(), false );
-	if ( design_loop() ) {
-		loops()->transfer_to_residue_vector( is_designable, true );
-	}
-
-	for ( Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number )
-	{
-		if ( is_packable[ residue_number ] &&  ! is_designable[ residue_number ] )
-		{
-			turn_off_design.include_residue( residue_number );
-		}
-		else if ( ! is_packable[ residue_number ] )
-		{
-			turn_off_packing.include_residue( residue_number );
-		}
-	}
-
-	turn_off_design.apply( pose, task );
-	turn_off_packing.apply( pose, task );
+	apply_helper(pose, task, include_neighbors(), cutoff_distance());
 }
 
 void RestrictToLoopsAndNeighbors::init()
 {
-	set_design_loop( false );
+	parent::init();
 	set_include_neighbors( true );
 	set_cutoff_distance( 10.0 );
-	set_loops( NULL );
 }
 
-void RestrictToLoopsAndNeighbors::init_for_equal_operator_and_copy_constructor( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs)
+void RestrictToLoopsAndNeighbors::init_for_copy( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs)
 {
-	// copy all data members from rhs to lhs
-	lhs.design_loop_ = rhs.design_loop_;
+	parent::copy(lhs, rhs);
 	lhs.include_neighbors_ = rhs.include_neighbors_;
 	lhs.cutoff_distance_ = rhs.cutoff_distance_;
-	lhs.loops_ = rhs.loops_;
-}
-
-bool RestrictToLoopsAndNeighbors::design_loop() const
-{
-	return design_loop_;
-}
-
-void RestrictToLoopsAndNeighbors::set_design_loop( bool design_loop )
-{
-	design_loop_ = design_loop;
 }
 
 bool RestrictToLoopsAndNeighbors::include_neighbors() const
@@ -164,16 +136,6 @@ void RestrictToLoopsAndNeighbors::set_cutoff_distance( core::Real cutoff_distanc
 	{
 		cutoff_distance_ = cutoff_distance;
 	}
-}
-
-loops::LoopsCOP RestrictToLoopsAndNeighbors::loops() const
-{
-	return loops_;
-}
-
-void RestrictToLoopsAndNeighbors::set_loops( loops::LoopsCOP loops )
-{
-	loops_ = loops;
 }
 
 TaskOperationOP RestrictToLoopsAndNeighborsCreator::create_task_operation() const
