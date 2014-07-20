@@ -96,8 +96,8 @@ sources = {
 	"core/pose": [
 		"annotated_sequence",
 		"MiniPose",
-		"PDBInfo",
-		"PDBPoseMap",
+		"PDB_Info",
+		"PDB_PoseMap",
 		"Pose",
 		"selection",
 		"util",

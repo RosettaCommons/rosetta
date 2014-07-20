@@ -36,7 +36,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/types.hh>

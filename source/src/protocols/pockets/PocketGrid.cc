@@ -25,7 +25,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>

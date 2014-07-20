@@ -43,7 +43,7 @@
 // AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 // AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>

@@ -34,7 +34,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>

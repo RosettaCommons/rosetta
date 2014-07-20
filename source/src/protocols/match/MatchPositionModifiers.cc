@@ -28,7 +28,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
@@ -314,7 +314,7 @@ utility::vector1< core::Real >
 BfactorMPM::get_ca_bfactors( core::pose::Pose const & pose ) const
 {
 	utility::vector1< core::Real > bfactors;
-	core::pose::PDBInfo const & pdb_info( *(pose.pdb_info()) );
+	core::pose::PDB_Info const & pdb_info( *(pose.pdb_info()) );
 	all_bfactors_zero_ = true;
 
 	if( use_relative_bfactors_ ){

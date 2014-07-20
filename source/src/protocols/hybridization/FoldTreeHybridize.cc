@@ -25,7 +25,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
@@ -922,11 +922,11 @@ FoldTreeHybridize::add_strand_pairing(
 	pairing_positions.push_back(pairing.Pos2());
 	core::pose::PoseOP trimmed_pairing_pose = new core::pose::Pose();
 	core::pose::create_subpose( *pairing_pose, pairing_positions, pairing_fold_tree, *trimmed_pairing_pose );
-	// add correct resnums to PDBInfo
+	// add correct resnums to PDB_Info
 	utility::vector1< int > pdb_numbering;
 	pdb_numbering.push_back(pairing.Pos1());
 	pdb_numbering.push_back(pairing.Pos2());
-	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( trimmed_pairing_pose->total_residue() ) );
+	core::pose::PDB_InfoOP pdb_info( new core::pose::PDB_Info( trimmed_pairing_pose->total_residue() ) );
 	pdb_info->set_numbering( pdb_numbering );
 	pdb_info->set_chains( ' ' );
 	pdb_info->obsolete( false );

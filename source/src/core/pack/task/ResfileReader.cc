@@ -19,7 +19,7 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // Project Headers
 #include <core/chemical/types.hh>

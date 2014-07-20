@@ -18,7 +18,7 @@
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <basic/Tracer.hh>
 

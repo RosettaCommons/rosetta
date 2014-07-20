@@ -29,7 +29,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/chemical/AA.hh>

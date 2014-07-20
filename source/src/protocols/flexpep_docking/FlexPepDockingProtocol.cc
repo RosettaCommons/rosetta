@@ -45,7 +45,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -279,7 +279,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 
 		// multichain receptor
         if (flags_.receptor_chain().size() > 1) {
-                core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
+                core::pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
                 Size resi = 1;
                 Size chain = 0;
                 while (resi < pose.total_residue() && chain < flags_.receptor_chain().size()-1) {
@@ -298,7 +298,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		//hack to support multiple ligands besides the peptide
 		//assumes ligand(s) is last residue in the pdb.
 		if (flags_.is_ligand_present(pose)) { // TODO: verify code validity for peptide-folding only (= no receptor)
-				core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
+				core::pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
 				if (flags_.receptor_nres() + flags_.peptide_nres() < (int)pose.total_residue()) {
 						cuts ( num_jumps+1 ) = flags_.peptide_last_res();
 						Size resi = flags_.receptor_nres() + flags_.peptide_nres() + 1;

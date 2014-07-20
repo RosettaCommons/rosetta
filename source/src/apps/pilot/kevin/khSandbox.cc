@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 //#include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>

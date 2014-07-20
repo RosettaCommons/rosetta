@@ -34,7 +34,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -47,7 +47,7 @@
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/sasa.hh>
 
-#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDB_PoseMap.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>

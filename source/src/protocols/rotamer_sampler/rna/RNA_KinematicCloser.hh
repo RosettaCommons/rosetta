@@ -19,7 +19,7 @@
 #include <protocols/rotamer_sampler/rna/RNA_KinematicCloser.fwd.hh>
 
 // Package headers
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.hh>
 
 // Project headers
 #ifdef WIN32
@@ -39,7 +39,7 @@ namespace rotamer_sampler {
 namespace rna {
 
 /// @brief The RNA de novo structure modeling protocol
-class RNA_KinematicCloser: public RotamerSized {
+class RNA_KinematicCloser: public RotamerSamplerSized {
 public:
 	RNA_KinematicCloser(
 		core::pose::PoseOP const & ref_pose,
@@ -52,13 +52,13 @@ public:
 	/// @brief Class name
 	std::string get_name() const { return "RNA_KinematicCloser"; }
 
-	/// @brief Type of class (see enum in RotamerTypes.hh)
-	virtual RotamerType type() const { return RNA_KINEMATIC_CLOSER; }
+	/// @brief Type of class (see enum in RotamerSamplerTypes.hh)
+	virtual RotamerSamplerType type() const { return RNA_KINEMATIC_CLOSER; }
 
 	/// @brief Initialization
 	void init();
 
-	using RotamerSized::apply;
+	using RotamerSamplerSized::apply;
 
 	/// @brief Apply the i-th rotamer to pose
 	virtual void apply( core::pose::Pose & pose, core::Size const id );

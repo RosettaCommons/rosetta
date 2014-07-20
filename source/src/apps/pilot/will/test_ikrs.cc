@@ -28,7 +28,7 @@
 	#include <core/pack/task/TaskFactory.hh>
 	#include <core/pose/annotated_sequence.hh>
 	#include <core/pose/Pose.hh>
-	// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+	// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 	// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 	#include <core/pose/util.hh>
 	#include <core/scoring/Energies.hh>

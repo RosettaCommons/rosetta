@@ -34,8 +34,8 @@
 #include <protocols/stepwise/screener/PackScreener.hh>
 #include <protocols/stepwise/screener/SimplePoseSelection.hh>
 #include <protocols/stepwise/StepWiseSampleAndScreen.hh>
-#include <protocols/rotamer_sampler/RotamerSizedComb.hh>
-#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamer.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSizedComb.hh>
+#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamerSampler.hh>
 #include <protocols/rotamer_sampler/protein/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>

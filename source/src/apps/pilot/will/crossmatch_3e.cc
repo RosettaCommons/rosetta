@@ -42,7 +42,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>

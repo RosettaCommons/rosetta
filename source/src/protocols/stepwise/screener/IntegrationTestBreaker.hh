@@ -48,7 +48,7 @@ namespace screener {
 		type() const { return INTEGRATION_TEST; }
 
 		void
-		fast_forward( rotamer_sampler::RotamerBaseOP sampler );
+		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
 
 	private:
 

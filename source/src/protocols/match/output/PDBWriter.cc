@@ -30,7 +30,7 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/Remarks.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/func/Func.hh>
 #include <basic/Tracer.hh>
 
@@ -304,7 +304,7 @@ PDBWriter::create_output_upstream_pose(
 	if( write_matchres_only_ ){
 		outpose = new core::pose::Pose();
 
-		core::pose::PDBInfoOP pdbinf = new core::pose::PDBInfo( *outpose );
+		core::pose::PDB_InfoOP pdbinf = new core::pose::PDB_Info( *outpose );
 		outpose->pdb_info( pdbinf );
 	}
 

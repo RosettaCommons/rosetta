@@ -16,7 +16,7 @@
 //////////////////////////////////
 #include <protocols/stepwise/sampling/rna/util.hh>
 #include <protocols/stepwise/sampling/rna/rigid_body/util.hh>
-#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
+#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamerSampler.hh>
 #include <protocols/stepwise/sampling/output_util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/util.hh>
@@ -419,7 +419,7 @@ setup_pose_with_moving_residue_alternative_list(
 
 	PuckerState pucker_state = ANY_PUCKER;
 
-	RNA_NucleosideRotamer sampler( moving_res, pucker_state, chi_state );
+	RNA_NucleosideRotamerSampler sampler( moving_res, pucker_state, chi_state );
 	sampler.set_extra_chi( extra_chi );
 	sampler.set_idealize_coord( use_phenix_geo );
 	sampler.set_skip_same_pucker( use_phenix_geo );

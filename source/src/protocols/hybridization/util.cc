@@ -47,7 +47,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // dynamic fragpick
 #include <protocols/moves/DsspMover.hh>

@@ -62,7 +62,7 @@ namespace screener {
 		type() const { return VDW_BIN; }
 
 		void
-		fast_forward( rotamer_sampler::RotamerBaseOP sampler );
+		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
 
 	private:
 

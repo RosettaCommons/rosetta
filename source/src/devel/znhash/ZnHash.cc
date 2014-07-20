@@ -31,7 +31,7 @@
 #include <core/scoring/hbonds/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/EnergyMap.hh>

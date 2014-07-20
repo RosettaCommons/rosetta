@@ -49,7 +49,7 @@
 #include <core/io/pdb/file_data.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <utility/string_util.hh>
 

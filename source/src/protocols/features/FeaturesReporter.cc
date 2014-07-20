@@ -27,7 +27,7 @@
 #include <basic/datacache/CacheableString.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/database/sql_utils.hh>
 
 // Boost Headers

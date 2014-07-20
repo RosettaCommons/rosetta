@@ -17,9 +17,9 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/StepWiseScreenerType.hh>
 #include <protocols/stepwise/screener/AnchorSugarScreener.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerComb.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerSamplerComb.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
@@ -55,7 +55,7 @@ namespace protocols {
 namespace stepwise {
 
 	//Constructor
-	StepWiseSampleAndScreen::StepWiseSampleAndScreen( rotamer_sampler::RotamerBaseOP sampler,
+	StepWiseSampleAndScreen::StepWiseSampleAndScreen( rotamer_sampler::RotamerSamplerBaseOP sampler,
 																										utility::vector1< screener::StepWiseScreenerOP > screeners ):
 		sampler_( sampler ),
 		screeners_( screeners ),
@@ -169,7 +169,7 @@ namespace stepwise {
 		using namespace protocols::rotamer_sampler;
 		using namespace protocols::rotamer_sampler::rigid_body;
 		if ( sampler_->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler_.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler_.get() ) );
 			ok_to_increment_screeners = ( rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() == 1 );
 		}
 		if ( ok_to_increment_screeners ){
@@ -206,7 +206,7 @@ namespace stepwise {
 		using namespace protocols::rotamer_sampler::rigid_body;
 		screener::StepWiseScreenerOP screener = screeners_[ n ];
 		if ( sampler_->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler_.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler_.get() ) );
 			TR << "Rigid body ID " << rigid_body_rotamer_with_residue_alternatives.rigid_body_rotamer()->id() << ": ";
 			TR << " ID overall " << rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() << "; ";
 			TR << " ID at 3 " << rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id_for_resnum( 3 ) << "; ";

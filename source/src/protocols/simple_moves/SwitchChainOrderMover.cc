@@ -31,7 +31,7 @@ static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover");
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 //options Includes
@@ -107,7 +107,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_ft.reorder( 1 );
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
-	new_pose.pdb_info( new core::pose::PDBInfo( new_pose, true ) ); //reinitialize the PDBInfo
+	new_pose.pdb_info( new core::pose::PDB_Info( new_pose, true ) ); //reinitialize the PDB_Info
 	
 	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
 	if (basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value()){

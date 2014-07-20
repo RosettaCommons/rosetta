@@ -14,9 +14,9 @@
 
 
 #include <protocols/stepwise/screener/StubDistanceScreener.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
 
 #include <basic/Tracer.hh>
 
@@ -53,15 +53,15 @@ namespace screener {
 
 	//////////////////////////////////////////
 	void
-	StubDistanceScreener::fast_forward( rotamer_sampler::RotamerBaseOP sampler ){
+	StubDistanceScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyRotamerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerWithResidueList * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
 			rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_translation();
 		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
 			rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_translation();
 		} else if ( sampler->type() == RIGID_BODY ){
-			RigidBodyRotamer & rigid_body_rotamer = *( static_cast< RigidBodyRotamer * >( sampler.get() ) );
+			RigidBodyRotamerSampler & rigid_body_rotamer = *( static_cast< RigidBodyRotamerSampler * >( sampler.get() ) );
 			rigid_body_rotamer.fast_forward_to_next_translation();
 		}
 	}

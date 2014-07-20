@@ -26,7 +26,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>

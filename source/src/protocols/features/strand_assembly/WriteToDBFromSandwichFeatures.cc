@@ -68,7 +68,7 @@ WriteToDB_avg_b_factor_CB_at_each_component	(
 	//// <end> retrieve residue_begin, residue_end at each component
 
 
-	pose::PDBInfoCOP info = pose.pdb_info();
+	pose::PDB_InfoCOP info = pose.pdb_info();
 	if ( info )
 	{
 		for(Size i=1; i<=vector_of_residue_begin.size(); i++)

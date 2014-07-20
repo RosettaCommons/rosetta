@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <core/init/init.hh>
-#include <protocols/rotamer_sampler/McOneTorsion.hh>
+#include <protocols/rotamer_sampler/MC_OneTorsion.hh>
 
 // C++ headers
 #include <iostream>
@@ -28,7 +28,7 @@ void
 run()
 {
 	core::id::TorsionID tor_id;
-	McOneTorsion sampler(tor_id, 0);
+	MC_OneTorsion sampler(tor_id, 0);
 	sampler.set_angle_range( -40, 40 );
 	sampler.init();
 	Size const n_step( 999999 );

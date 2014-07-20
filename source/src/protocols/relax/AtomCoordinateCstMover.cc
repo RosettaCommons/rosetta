@@ -16,7 +16,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pack/task/TaskFactory.hh>

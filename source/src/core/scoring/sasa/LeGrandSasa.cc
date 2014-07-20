@@ -23,7 +23,7 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> // temp
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh> // temp
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>

@@ -29,7 +29,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>

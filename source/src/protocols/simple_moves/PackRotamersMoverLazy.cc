@@ -17,7 +17,7 @@
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>

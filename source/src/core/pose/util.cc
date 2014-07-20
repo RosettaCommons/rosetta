@@ -17,7 +17,7 @@
 #include <core/pose/util.hh>
 
 // Package headers
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -880,21 +880,21 @@ void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<int,cha
 	}
 }
 
-/// @brief get Conformation chain -> PDBInfo chain mapping
-/// @remarks Any chains whose PDBInfo chain records are marked entirely as
-///  PDBInfo::empty_record() will be mapped to that character.  Note that
-///  Conformation -> PDBInfo is always unique, but the reverse may not be true.
-/// @return the mapping if PDBInfo available and chains appear consistent,
+/// @brief get Conformation chain -> PDB_Info chain mapping
+/// @remarks Any chains whose PDB_Info chain records are marked entirely as
+///  PDB_Info::empty_record() will be mapped to that character.  Note that
+///  Conformation -> PDB_Info is always unique, but the reverse may not be true.
+/// @return the mapping if PDB_Info available and chains appear consistent,
 ///  otherwise returns an empty mapping
 std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 	using core::Size;
-	using core::pose::PDBInfo;
+	using core::pose::PDB_Info;
 	typedef std::map< int, char > Conf2PDB;
 
 	Conf2PDB conf2pdb;
 
 	if ( !pose.pdb_info().get() ) {
-		TR.Warning << "WARNING: conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ..." << std::endl;
+		TR.Warning << "WARNING: conf2pdb_chain(): PDB_Info does not exist, returning default map 1=A, 2=B, ..." << std::endl;
 		conf2pdb_chain_default_map(pose,conf2pdb);
 		return conf2pdb;
 	}
@@ -911,10 +911,10 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 				//  (1) replace an existing empty record
 				//  (2) it's an unneeded empty record, so continue
 				//  (3) there is an actual problem
-				if ( pdb != PDBInfo::empty_record() && c2p->second == PDBInfo::empty_record() ) {
+				if ( pdb != PDB_Info::empty_record() && c2p->second == PDB_Info::empty_record() ) {
 					// replace the record
 					c2p->second = pdb;
-				} else if ( pdb == PDBInfo::empty_record() ) {
+				} else if ( pdb == PDB_Info::empty_record() ) {
 					continue; // skip empty record
 				} else {
 					// something is inconsistent
@@ -940,14 +940,14 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 }
 
 
-/// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
+/// @brief renumber PDB_Info based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record
-///  characters it finds in the PDBInfo. (default true)
+///  characters it finds in the PDB_Info. (default true)
 /// @param[in] start_from_existing_numbering If true, will attempt to start each
-///  chain from the existing numbering in the PDBInfo.  E.g. if the first residue
+///  chain from the existing numbering in the PDB_Info.  E.g. if the first residue
 ///  of chain 2 in the Conformation is 27, then the renumbering of the chain in
-///  PDBInfo will start from 27. (default true)
+///  PDB_Info will start from 27. (default true)
 /// @param[in] keep_insertion_codes If true, will maintain insertion codes and
 ///  will not increment the pdb residue numbering for those residues.  This means
 ///  new numbering with insertion codes will only reflect properly if the
@@ -956,11 +956,11 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 ///  (default false)
 /// @param[in] rotate_chain_ids If true, allows support for more than 26 pdb chains
 ///  by rotating [A,Z] continuously.  WARNING: This will break the assumption
-///  made by the PDBPoseMap that each pdb chain id is unique, so make sure you
-///  are not using the PDBPoseMap feature downstream in your code path without
+///  made by the PDB_PoseMap that each pdb chain id is unique, so make sure you
+///  are not using the PDB_PoseMap feature downstream in your code path without
 ///  corrections! (default false)
-/// @remarks If fixing chains and there is only one chain and the PDBInfo exists
-///  but all records are marked as empty, will renumber and set the PDBInfo chain
+/// @remarks If fixing chains and there is only one chain and the PDB_Info exists
+///  but all records are marked as empty, will renumber and set the PDB_Info chain
 ///  to 'A'.
 /// @return true if renumbering successful, false otherwise
 bool renumber_pdbinfo_based_on_conf_chains(
@@ -972,11 +972,11 @@ bool renumber_pdbinfo_based_on_conf_chains(
 )
 {
 	using core::Size;
-	using core::pose::PDBInfo;
+	using core::pose::PDB_Info;
 	typedef std::map< int, char > Conf2PDB;
 
 	if ( !pose.pdb_info().get() ) {
-		TR.Warning << "WARNING: renumber_pdbinfo_based_on_conf_chains(): no PDBInfo, returning" << std::endl;
+		TR.Warning << "WARNING: renumber_pdbinfo_based_on_conf_chains(): no PDB_Info, returning" << std::endl;
 		return false;
 	}
 
@@ -984,20 +984,20 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 	if ( fix_chains ) {
 		if ( conf2pdb.empty() ) { // something is wrong with chain consistency
-			TR.Warning << "WARNING: renumber_pdbinfo_based_on_conf_chains(): Request to fix PDBInfo chains, but ";
+			TR.Warning << "WARNING: renumber_pdbinfo_based_on_conf_chains(): Request to fix PDB_Info chains, but ";
 			TR.Warning << "chain mapping is inconsistent, so that step will be skipped." << std::endl;
 			fix_chains = false;
 		} else { // Try to fill in any empty record characters.
 
 			// two different schemes: rotating and fixed length
 			// WARNING: Rotating will break assumption of unique chain ids
-			// inside PDBPoseMap, so make sure you are not using the PDBPoseMap
+			// inside PDB_PoseMap, so make sure you are not using the PDB_PoseMap
 			// feature after calling this function without correcting!
 			// First either remove or rotate any existing chains to the end of
 			// the list.
 			std::string letters( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
-				if ( i->second != PDBInfo::empty_record() ) {
+				if ( i->second != PDB_Info::empty_record() ) {
 					std::string::size_type const j = letters.find( i->second );
 					if ( j != std::string::npos ) {
 						if ( rotate_chain_ids ) { // rotating
@@ -1011,7 +1011,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			// Now fill in empty records.
 			Size lidx = 0;
 			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
-				if ( i->second == PDBInfo::empty_record() ) {
+				if ( i->second == PDB_Info::empty_record() ) {
 					if ( rotate_chain_ids ) { // rotating
 						i->second = letters.at( lidx % letters.size() );
 					} else { // fixed length
@@ -1025,7 +1025,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 		} // if conf2pdb.empty()
 	} // if fix_chains
 
-	PDBInfo & pdbinfo = *pose.pdb_info();
+	PDB_Info & pdbinfo = *pose.pdb_info();
 
 	// grab all the chain endings
 	utility::vector1< Size > chain_endings = pose.conformation().chain_endings();
@@ -1037,7 +1037,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 		int pdb_res = 0; // new chain, so reset pdb_res counter
 		char chain;
 		char icode;
-		if ( start_from_existing_numbering && pdbinfo.chain( res ) != PDBInfo::empty_record() ) {
+		if ( start_from_existing_numbering && pdbinfo.chain( res ) != PDB_Info::empty_record() ) {
 			pdb_res = pdbinfo.number( res ) - 1;
 		}
 
@@ -1048,7 +1048,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 		for ( ; res <= chain_end; ++res ) {
 			// handle the pdb chain only if necessary
 			chain = pdbinfo.chain( res );
-			if ( pdbinfo.chain( res ) == PDBInfo::empty_record() && fix_chains && c2p != conf2pdb.end() ) {
+			if ( pdbinfo.chain( res ) == PDB_Info::empty_record() && fix_chains && c2p != conf2pdb.end() ) {
 				chain = c2p->second;
 			}
 
@@ -2075,8 +2075,8 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second ) {
 	core::id::SequenceMapping retval(first.total_residue(), second.total_residue());
-	core::pose::PDBInfoCOP first_pdbinfo = first.pdb_info();
-	core::pose::PDBInfoCOP second_pdbinfo = second.pdb_info();
+	core::pose::PDB_InfoCOP first_pdbinfo = first.pdb_info();
+	core::pose::PDB_InfoCOP second_pdbinfo = second.pdb_info();
 
 	if ( first_pdbinfo && !first_pdbinfo->obsolete() && second_pdbinfo && !second_pdbinfo->obsolete() ) {
 		for ( core::Size ii(1); ii<= first.total_residue(); ++ii ) {
@@ -2084,7 +2084,7 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 			retval[ii] = second_pdbinfo->pdb2pose( first_pdbinfo->chain(ii), first_pdbinfo->number(ii), first_pdbinfo->icode(ii) );
 		}
 	} else {
-		TR << "One or both poses do not have usable PDBInfo, using sequence alignment instead." << std::endl;
+		TR << "One or both poses do not have usable PDB_Info, using sequence alignment instead." << std::endl;
 		retval = core::sequence::map_seq1_seq2( new core::sequence::Sequence(first), new core::sequence::Sequence(second) );
 	}
 

@@ -25,7 +25,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/PDB_Info.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -94,16 +94,16 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 void
 make_symmetric_pdb_info(
 	pose::Pose const & pose,
-	pose::PDBInfoOP pdb_info_src,
-	pose::PDBInfoOP pdb_info_target
+	pose::PDB_InfoOP pdb_info_src,
+	pose::PDB_InfoOP pdb_info_target
 );
 
 // @details extract the pdbInfo from the asymmetric unit
 void
 extract_asymmetric_unit_pdb_info(
 	pose::Pose const & pose,
-	pose::PDBInfoCOP pdb_info_src,
-	pose::PDBInfoOP pdb_info_target
+	pose::PDB_InfoCOP pdb_info_src,
+	pose::PDB_InfoOP pdb_info_target
 );
 
 void

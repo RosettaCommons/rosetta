@@ -16,7 +16,7 @@
 #include <protocols/stepwise/screener/RNA_ChainClosureScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosureChecker.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 
@@ -70,7 +70,7 @@ namespace screener {
 	// this is also used in StepWiseResiduePairScreener and in principle this class
 	//  could derive from that parent, but we also want SampleApplier functionality...
 	void
-	RNA_ChainClosureScreener::fast_forward( rotamer_sampler::RotamerBaseOP sampler ){
+	RNA_ChainClosureScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 		fast_forward_to_next_residue_pair( sampler,
 																			 chain_closure_checker_->five_prime_res(),
 																			 chain_closure_checker_->five_prime_res() + 1); // in screener util.

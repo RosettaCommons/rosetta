@@ -30,7 +30,7 @@
 #include <protocols/stepwise/sampling/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/init/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -406,7 +406,7 @@ get_bps_tag( utility::vector1< Size > const &  base_pair_res, std::string const 
 
 	using namespace ObjexxFCL::format;
 
-	pose::PDBInfoOP pdb_info = pose.pdb_info();
+	pose::PDB_InfoOP pdb_info = pose.pdb_info();
 
 	std::stringstream pdb_tag_stream;
 	pdb_tag_stream << infile;

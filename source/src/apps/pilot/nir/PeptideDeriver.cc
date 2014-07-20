@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/options/util.hh>
 #include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>

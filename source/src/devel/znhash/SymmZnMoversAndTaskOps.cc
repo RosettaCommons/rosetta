@@ -35,7 +35,7 @@
 #include <core/scoring/hbonds/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
@@ -63,7 +63,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Remarks.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
@@ -383,8 +383,8 @@ add_znx_coordination_remark_lines_to_pose(
 		match_remarks.push_back( rinfo );
 	}
 	TR << std::endl;
-	core::pose::PDBInfoOP info = p.pdb_info();
-	if ( ! info ) { info = new core::pose::PDBInfo; }
+	core::pose::PDB_InfoOP info = p.pdb_info();
+	if ( ! info ) { info = new core::pose::PDB_Info; }
 	info->remarks() = match_remarks;
 	p.pdb_info( info );
 
@@ -538,7 +538,7 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 	}
 
 	//core::pose::symmetry::make_symmetric_pdb_info()
-	core::pose::PDBInfoOP newinfo = new core::pose::PDBInfo( p ); // fake new info
+	core::pose::PDB_InfoOP newinfo = new core::pose::PDB_Info( p ); // fake new info
 	p.pdb_info( newinfo );
 
 	//for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
@@ -670,8 +670,8 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 
 	}
 
-	//core::pose::PDBInfoOP info = p.pdb_info();
-	//if ( ! info ) { info = new core::pose::PDBInfo; }
+	//core::pose::PDB_InfoOP info = p.pdb_info();
+	//if ( ! info ) { info = new core::pose::PDB_Info; }
 	//info->remarks() = match_remarks;
 	//p.pdb_info( info );
 	add_znx_coordination_remark_lines_to_pose( p, coordination_data );

@@ -19,9 +19,9 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDB_PoseMap.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pack/task/TaskFactory.hh>

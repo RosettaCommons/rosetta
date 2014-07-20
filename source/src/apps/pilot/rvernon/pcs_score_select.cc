@@ -25,7 +25,7 @@
 #include <core/kinematics/RT.hh>
 #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/io/pdb/file_data.hh> //reading remarks
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> //reading remarks
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh> //reading remarks
 
 // AUTO-REMOVED #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh> // ?
 

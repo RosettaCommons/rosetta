@@ -27,8 +27,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDB_Info.hh>
 //#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/ScoreFunction.hh>

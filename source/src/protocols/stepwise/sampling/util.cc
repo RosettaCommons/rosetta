@@ -35,7 +35,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/id/AtomID.hh>
@@ -1539,7 +1539,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		// Just copying the conformation() makes sure that other objects (such as other_pose_list) don't get cloned --
 		//  can be important if external functions are holding OPs to those objects.
 		pose_to_fix.conformation() = pose.conformation();
-		pose_to_fix.pdb_info( pose.pdb_info() ); // silly -- ensures that PDBInfo is not flagged as 'obsolete'.
+		pose_to_fix.pdb_info( pose.pdb_info() ); // silly -- ensures that PDB_Info is not flagged as 'obsolete'.
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

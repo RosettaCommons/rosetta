@@ -54,7 +54,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>

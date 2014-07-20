@@ -19,7 +19,7 @@
 
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>
@@ -114,7 +114,7 @@ namespace loop_close {
 
 	private:
 
-		rotamer_sampler::RotamerSizedOP sampler_;
+		rotamer_sampler::RotamerSamplerSizedOP sampler_;
 
 		utility::vector1< Size > working_bridge_res_;
 		utility::vector1< Size > moving_residues_;

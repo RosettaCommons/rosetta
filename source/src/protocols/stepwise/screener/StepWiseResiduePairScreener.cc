@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.StepWiseResiduePairScreener" );
@@ -36,7 +36,7 @@ namespace screener {
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseResiduePairScreener::fast_forward( rotamer_sampler::RotamerBaseOP sampler ){
+	StepWiseResiduePairScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 		fast_forward_to_next_residue_pair( sampler, res1_, res2_ ); // in screener util.
 	}
 

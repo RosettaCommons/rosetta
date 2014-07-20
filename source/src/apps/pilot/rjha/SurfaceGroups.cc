@@ -16,7 +16,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>

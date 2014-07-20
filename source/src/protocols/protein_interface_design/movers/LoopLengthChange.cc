@@ -29,7 +29,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/kinematics/FoldTree.hh>
 //#include <time.h> // THIS IS USED FOR DEBUGGING!
 //#include <algorithm> // THIS IS USED FOR DEBUGGING!

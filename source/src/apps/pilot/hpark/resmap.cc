@@ -1,4 +1,4 @@
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 void
 get_resmap( pose::Pose const &pose,

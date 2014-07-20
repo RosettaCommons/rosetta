@@ -11,7 +11,7 @@
 /// @brief Implementation of interaction motifs
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/graph/Graph.hh>

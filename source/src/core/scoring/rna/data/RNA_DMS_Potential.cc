@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>

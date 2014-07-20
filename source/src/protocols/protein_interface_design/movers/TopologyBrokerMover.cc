@@ -50,7 +50,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -134,7 +134,7 @@ TopologyBrokerMover::apply( pose::Pose & pose )
   pose1.append_pose_by_jump(pose2,chain1end);
 	pose=pose1;
 	//copy pdbinfo
-  core::pose::PDBInfoOP pdbinfo = new core::pose::PDBInfo( pose);
+  core::pose::PDB_InfoOP pdbinfo = new core::pose::PDB_Info( pose);
   pose.pdb_info(pdbinfo);
 	
 }

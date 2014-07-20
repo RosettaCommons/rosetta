@@ -24,7 +24,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 
 // C++ headers
@@ -313,7 +313,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	using core::id::StubID;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
-	using core::pose::PDBInfo;
+	using core::pose::PDB_Info;
 	using protocols::forge::methods::merge;
 
 	// cache data
@@ -365,14 +365,14 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 		pose_left.set_secstruct( i + original_left_nres, pose_right_.secstruct( i ) );
 	}
 
-	// Handle PDBInfo separately. PDBInfo in pose_left
+	// Handle PDB_Info separately. PDB_Info in pose_left
 	// should always be obsolete after leaving modify_impl()
 	// as a safety.
 	if ( pose_right_.pdb_info().get() != NULL ) {
 
-		// if pose_left doesn't have PDBInfo, create it
+		// if pose_left doesn't have PDB_Info, create it
 		if ( pose_left.pdb_info().get() == NULL ) {
-			pose_left.pdb_info( new PDBInfo( pose_left ) );
+			pose_left.pdb_info( new PDB_Info( pose_left ) );
 		}
 
 		// force obsolete

@@ -26,8 +26,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh> //reading remarks
-#include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
+#include <core/pose/PDB_Info.hh> //reading remarks
+#include <core/pose/PDB_PoseMap.hh> //for PDB-info-to-resid functionality
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
@@ -213,7 +213,7 @@ EnzConstraintIO::process_pdb_header(
 {
 
 
-	core::pose::PDBPoseMap PDB_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDB_PoseMap PDB_map( pose.pdb_info()->pdb2pose() );
 	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
 
 	std::set< Size > found_cst_blocks;
@@ -222,7 +222,7 @@ EnzConstraintIO::process_pdb_header(
 	std::map< Size, std::pair< utility::vector1<Size >, utility::vector1< Size > > > cst_block_to_residues;
 
 	//basic::datacache::BasicDataCache const & pose_cache = pose.data();
-	core::pose::PDBInfoCOP pose_pdbinfo = pose.pdb_info();
+	core::pose::PDB_InfoCOP pose_pdbinfo = pose.pdb_info();
 	core::pose::Remarks const & pose_remarks = pose_pdbinfo->remarks();
 	std::string line, buffer(""), tag("");
 	Size cst_block(0), counted_blocks(0);

@@ -33,7 +33,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
@@ -258,7 +258,7 @@ prepare_threaded_model(
 	}
 
 	// fix up numbering.
-	PDBInfoOP pdb_info = new PDBInfo( pose );
+	PDB_InfoOP pdb_info = new PDB_Info( pose );
 	pdb_info->set_numbering( working_res );
 	pose.pdb_info( pdb_info );
 

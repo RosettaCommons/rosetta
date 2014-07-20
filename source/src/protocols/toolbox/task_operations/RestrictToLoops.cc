@@ -23,7 +23,7 @@
 // Project headers
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Utility headers
@@ -97,18 +97,18 @@ void RestrictToLoops::copy(RestrictToLoops & lhs, RestrictToLoops const & rhs) {
 	lhs.loops_ = new Loops(*rhs.loops_);
 }
 
-void RestrictToLoops::apply(Pose const & pose, PackerTask & task) const { 
+void RestrictToLoops::apply(Pose const & pose, PackerTask & task) const {
 	apply_helper(pose, task, false, 0);
 }
 
 void RestrictToLoops::apply_helper(
 		Pose const & pose,
-		PackerTask & task, 
+		PackerTask & task,
 		bool include_neighbors,
 		Real cutoff_distance) const {
 
 	if (! loops()) { return; }
-	
+
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 

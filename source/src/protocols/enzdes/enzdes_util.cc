@@ -29,7 +29,7 @@
 #include <core/graph/Graph.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableString.hh>

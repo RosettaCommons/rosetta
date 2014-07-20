@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockMCMCycle.hh>

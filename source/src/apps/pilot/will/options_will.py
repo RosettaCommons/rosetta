@@ -90,7 +90,7 @@ Options = Option_Group( '',
 		##Option( 'Ntermini', 'Boolean', desc="Invoke the modeling of N termini residue only", oldName='Nterminus' ),
 		##Option( 'Ctermini', 'Boolean', desc="Invoke the modeling of C termini residue only", oldName='Cterminus' ),
 		Option( 'ignore_unrecognized_res', 'Boolean', desc="Do not abort if unknown residues are found in PDB file;  instead, ignore them.", default='false' ),
-		Option( 'remember_unrecognized_res'  , 'Boolean', desc="Ignore unrecognized residues, but remember them in PDBInfo.", default='false' ),
+		Option( 'remember_unrecognized_res'  , 'Boolean', desc="Ignore unrecognized residues, but remember them in PDB_Info.", default='false' ),
 		Option( 'remember_unrecognized_water', 'Boolean', desc="Remember waters along with other unrecognized residues.", default='false' ),
 		Option( 'detect_disulf', 'Boolean',
 			desc="Forcably enable or disable disulfide detection. "

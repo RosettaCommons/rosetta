@@ -19,7 +19,7 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -39,7 +39,7 @@ namespace protein {
 
 	//Constructor
 	StepWiseProteinMultiPosePacker::StepWiseProteinMultiPosePacker( StepWisePackerOP packer,
-																																	rotamer_sampler::RotamerSizedOP sampler ):
+																																	rotamer_sampler::RotamerSamplerSizedOP sampler ):
 		packer_( packer ),
 		sampler_( sampler ),
 		prepack_( false ),

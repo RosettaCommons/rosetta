@@ -4,9 +4,9 @@
 
 // Package headers
 #include <protocols/rigid/RB_geometry.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 // Rosetta Headers
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>

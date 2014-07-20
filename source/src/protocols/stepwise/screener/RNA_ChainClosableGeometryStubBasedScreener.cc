@@ -15,9 +15,9 @@
 
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryStubBasedScreener.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueListRotamer.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueListRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
@@ -71,22 +71,22 @@ namespace screener {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	RNA_ChainClosableGeometryStubBasedScreener::get_update( rotamer_sampler::RotamerBaseOP sampler ){
+	RNA_ChainClosableGeometryStubBasedScreener::get_update( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 
 		using namespace rotamer_sampler;
 		using namespace rotamer_sampler::rigid_body;
 
 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyRotamerWithResidueList & rigid_body_rotamer_with_residue_list = *( static_cast< RigidBodyRotamerWithResidueList * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_residue_list = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
 			moving_rsd_at_origin_ = rigid_body_rotamer_with_residue_list.get_residue_at_origin();
 			return;
 		} else 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
 			moving_rsd_at_origin_ = rigid_body_rotamer_with_residue_alternatives.get_residue_at_origin().clone();
 			return;
 		}
 		runtime_assert ( sampler->type() == RESIDUE_LIST );
-		ResidueListRotamer & copy_dofs_rotamer = *( static_cast< ResidueListRotamer * >( sampler.get() ) );
+		ResidueListRotamerSampler & copy_dofs_rotamer = *( static_cast< ResidueListRotamerSampler * >( sampler.get() ) );
 		moving_rsd_at_origin_ = copy_dofs_rotamer.get_residue_at_origin();
 	}
 

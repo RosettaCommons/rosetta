@@ -145,7 +145,7 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 		add_jump( pose.jump(nr) );
 	}
 
-	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDB_Info object.
 
 } // RNA_SilentStruct
 

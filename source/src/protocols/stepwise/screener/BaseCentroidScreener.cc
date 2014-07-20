@@ -15,10 +15,10 @@
 
 #include <protocols/stepwise/screener/BaseCentroidScreener.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -82,20 +82,20 @@ namespace screener {
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	BaseCentroidScreener::fast_forward( rotamer_sampler::RotamerBaseOP sampler ){
+	BaseCentroidScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 		using namespace rotamer_sampler;
 		using namespace rotamer_sampler::rigid_body;
 
 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyRotamerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerWithResidueList * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
 			rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_euler_gamma();
 			return;
 		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
 			rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_euler_gamma();
 			return;
 		}	 else if ( sampler->type() == RIGID_BODY ){
-			RigidBodyRotamer & rigid_body_rotamer = *( static_cast< RigidBodyRotamer * >( sampler.get() ) );
+			RigidBodyRotamerSampler & rigid_body_rotamer = *( static_cast< RigidBodyRotamerSampler * >( sampler.get() ) );
 			rigid_body_rotamer.fast_forward_to_next_euler_gamma();
 		}
 

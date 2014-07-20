@@ -42,7 +42,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>

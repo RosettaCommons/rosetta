@@ -16,7 +16,7 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/docking/DockMCMProtocol.hh>

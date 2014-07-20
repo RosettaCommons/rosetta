@@ -24,3 +24,4 @@ else
     echo PASS
     echo '-Werror is ON in the CMake build settings.' > log
 fi
+

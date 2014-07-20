@@ -27,7 +27,7 @@
 #include <basic/datacache/DiagnosticData.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <devel/init.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>

@@ -13,10 +13,10 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_RotamerSamplerUtil_HH
-#define INCLUDED_protocols_rotamer_sampler_rna_RNA_RotamerSamplerUtil_HH
+#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_RotamerSamplerSamplerUtil_HH
+#define INCLUDED_protocols_rotamer_sampler_rna_RNA_RotamerSamplerSamplerUtil_HH
 
-#include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.fwd.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -28,7 +28,7 @@ namespace protocols {
 namespace rotamer_sampler {
 namespace rna {
 
-	rotamer_sampler::RotamerBaseOP
+	rotamer_sampler::RotamerSamplerBaseOP
 	setup_rotamer_sampler( core::pose::Pose const & pose,
 												 protocols::stepwise::sampling::modeler_options::StepWiseModelerOptionsCOP options,
 												 protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters,

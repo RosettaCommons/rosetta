@@ -30,7 +30,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/threadsc.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 

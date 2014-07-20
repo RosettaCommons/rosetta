@@ -26,7 +26,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <basic/Tracer.hh>
 
@@ -347,7 +347,7 @@ RigidLigandBuilder::downstream_pose_from_hit(
 	pose->append_residue_by_jump( lig_res, 1 );
 
 	//we should also set a different chain for the downstream pose
-	core::pose::PDBInfoOP pdbinf = new core::pose::PDBInfo( *pose );
+	core::pose::PDB_InfoOP pdbinf = new core::pose::PDB_Info( *pose );
 	pose->pdb_info( pdbinf );
 	pose->pdb_info()->chain( 1, 'X' );
 

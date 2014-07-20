@@ -23,8 +23,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
 #include <core/pack/task/operation/TaskOperation.hh>

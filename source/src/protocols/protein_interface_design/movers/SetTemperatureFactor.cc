@@ -23,7 +23,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/ResId.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/filters/Filter.hh>
 

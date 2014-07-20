@@ -23,7 +23,7 @@
 	#include <core/conformation/ResidueFactory.hh>
 	#include <core/import_pose/import_pose.hh>
 	#include <core/io/silent/SilentFileData.hh>
-	#include <core/pose/PDBInfo.hh>
+	#include <core/pose/PDB_Info.hh>
 	#include <core/pack/rotamer_set/RotamerSet.hh>
 	#include <core/pack/task/TaskFactory.hh>
 	#include <core/pose/Pose.hh>
@@ -763,7 +763,7 @@ namespace motif_hash {
 		core::pose::make_pose_from_sequence(pose,seq,"fa_standard");
 		core::pose::remove_lower_terminus_type_from_pose_residue(pose,1);
 		core::pose::remove_upper_terminus_type_from_pose_residue(pose,2);
-		core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo( pose, true );
+		core::pose::PDB_InfoOP pdb_info = new core::pose::PDB_Info( pose, true );
 		pdb_info->number(1,ir);
 		pdb_info->number(2,jr);
 		pose.pdb_info( pdb_info );

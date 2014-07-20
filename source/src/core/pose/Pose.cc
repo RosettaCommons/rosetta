@@ -20,7 +20,7 @@
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
@@ -230,7 +230,7 @@ Pose::chain( Size const seqpos ) const
 /// @warning Classes observing the Pose's old conformation will not automatically
 ///  be re-attached/listening to the new Conformation.  Please pay special attention
 ///  if you have a CacheableObserver in the ObserverCache that listens to
-///  a Pose's Conformation.  The prior PDBInfo, ConstraintSet and Energies will be
+///  a Pose's Conformation.  The prior PDB_Info, ConstraintSet and Energies will be
 ///  cleared as well.
 void
 Pose::set_new_conformation( conformation::ConformationCOP new_conformation )
@@ -360,8 +360,8 @@ Pose::split_by_chain(Size const chain_id) const
 /// made. ~ Labonte
 ///
 /// See also:
-///  PDBInfo.chain()
-///  PDBInfo.set_resinfo()
+///  PDB_Info.chain()
+///  PDB_Info.set_resinfo()
 ///  Pose.split_by_chain()
 ///  Conformation.rederive_chain_IDs()
 ///  Conformation.rederive_chain_endings()
@@ -1467,12 +1467,12 @@ Pose::get_stacking_map() const
 
 
 
-//////////////////////////////// PDBInfo methods /////////////////////////////////////
+//////////////////////////////// PDB_Info methods /////////////////////////////////////
 
 
 /// @brief get pdb info (const)
-/// @return NULL if no PDBInfo instance exists, the pdb info instance otherwise
-PDBInfoCOP
+/// @return NULL if no PDB_Info instance exists, the pdb info instance otherwise
+PDB_InfoCOP
 Pose::pdb_info() const
 {
 	assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
@@ -1480,8 +1480,8 @@ Pose::pdb_info() const
 }
 
 /// @brief get pdb info
-/// @return NULL if no PDBInfo instance exists, the pdb info instance otherwise
-PDBInfoOP
+/// @return NULL if no PDB_Info instance exists, the pdb info instance otherwise
+PDB_InfoOP
 Pose::pdb_info()
 {
 	assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
@@ -1492,23 +1492,23 @@ Pose::pdb_info()
 /// @param[in] new_info  the new pdb info to copy, pass NULL if you want to zero
 ///  the existence of pdb info inside this Pose
 /// @return the prior pdb info instance
-PDBInfoOP
-Pose::pdb_info( PDBInfoOP new_info )
+PDB_InfoOP
+Pose::pdb_info( PDB_InfoOP new_info )
 {
 	if ( pdb_info_ ) {
 		pdb_info_->detach_from();
 	}
 
-	PDBInfoOP prior_pdb_info = pdb_info_;
+	PDB_InfoOP prior_pdb_info = pdb_info_;
 
 	if ( new_info ) {
-		pdb_info_ = new PDBInfo( *new_info ); // make a copy
+		pdb_info_ = new PDB_Info( *new_info ); // make a copy
 		pdb_info_->attach_to( *conformation_ );
 	} else {
 		pdb_info_.reset_to_null();
 	}
 
-	PyAssert( pdb_info_ ? pdb_info_->nres() == total_residue() : true, "Invalid PDBInfo, pdb_info_->nres() != total_residue()" );
+	PyAssert( pdb_info_ ? pdb_info_->nres() == total_residue() : true, "Invalid PDB_Info, pdb_info_->nres() != total_residue()" );
 
 	assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
 
@@ -1571,7 +1571,7 @@ Pose::on_conf_xyz_change( core::conformation::signals::XYZEvent const & ) {
 
 std::ostream & operator << ( std::ostream & os, Pose const & pose)
 {
-	PDBInfoCOP p = pose.pdb_info();
+	PDB_InfoCOP p = pose.pdb_info();
 	if( p ) {
 		os << "PDB file name: "<< p->name() << std::endl;
 	}

@@ -15,11 +15,11 @@
 
 //////////////////////////////////
 #include <protocols/rotamer_sampler/protein/util.hh>
-#include <protocols/rotamer_sampler/input_streams/InputStreamRotamer.hh>
-#include <protocols/rotamer_sampler/protein/ProteinBetaAntiParallelRotamer.hh>
-#include <protocols/rotamer_sampler/protein/ProteinFragmentRotamer.hh>
-#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamer.hh>
-#include <protocols/rotamer_sampler/NoOpRotamer.hh>
+#include <protocols/rotamer_sampler/input_streams/InputStreamRotamerSampler.hh>
+#include <protocols/rotamer_sampler/protein/ProteinBetaAntiParallelRotamerSampler.hh>
+#include <protocols/rotamer_sampler/protein/ProteinFragmentRotamerSampler.hh>
+#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamerSampler.hh>
+#include <protocols/rotamer_sampler/NoOpRotamerSampler.hh>
 #include <protocols/stepwise/sampling/util.hh>
 #include <protocols/stepwise/sampling/align/StepWiseLegacyClustererSilentBased.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
@@ -40,7 +40,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <protocols/rotamer_sampler/RotamerSizedComb.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSizedComb.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -61,7 +61,7 @@ namespace rotamer_sampler {
 namespace protein {
 
 
-	rotamer_sampler::RotamerSizedOP
+	rotamer_sampler::RotamerSamplerSizedOP
 	get_basic_protein_sampler(
 		 core::pose::Pose const & pose,
 		 utility::vector1< core::Size > const & moving_res_list,
@@ -72,26 +72,26 @@ namespace protein {
 		using namespace protocols::stepwise::sampling::protein;
 		using namespace protocols::rotamer_sampler::input_streams;
 
-		RotamerSizedOP sampler;
+		RotamerSamplerSizedOP sampler;
 		if ( options->frag_files().size() > 0 ){
 			std::string const frag_file  = options->frag_files()[ 1 ];
 			utility::vector1< Size > const & slice_res = working_parameters->working_res_list();
-			sampler = new ProteinFragmentRotamer( frag_file, slice_res, moving_res_list );
+			sampler = new ProteinFragmentRotamerSampler( frag_file, slice_res, moving_res_list );
 			if ( input_streams.size() == 1 ) {
-				RotamerSizedOP sampler_identity = new InputStreamRotamer( input_streams[1] );
-				sampler = new RotamerSizedComb( sampler_identity /*outer*/, sampler /*inner, fragment generator above*/);
+				RotamerSamplerSizedOP sampler_identity = new InputStreamRotamerSampler( input_streams[1] );
+				sampler = new RotamerSamplerSizedComb( sampler_identity /*outer*/, sampler /*inner, fragment generator above*/);
 			}
 		} else if ( input_streams.size() == 2 ){
 			// assume that we want to "combine" two streams of poses...
 			// This would be the mode if we have a bunch of templates from which we will graft chunks.
 			// Or if we have SWA-based little fragments that we want to paste in.
 			//			runtime_assert( stepwise_pose_setup_ != 0 );
-			RotamerSizedOP input_stream_sampler1 = new InputStreamRotamer( input_streams[1] );
-			RotamerSizedOP input_stream_sampler2 = new InputStreamRotamer( input_streams[2] );
-			sampler= new RotamerSizedComb( input_stream_sampler1 /*outer*/, input_stream_sampler2 /*inner*/);
+			RotamerSamplerSizedOP input_stream_sampler1 = new InputStreamRotamerSampler( input_streams[1] );
+			RotamerSamplerSizedOP input_stream_sampler2 = new InputStreamRotamerSampler( input_streams[2] );
+			sampler= new RotamerSamplerSizedComb( input_stream_sampler1 /*outer*/, input_stream_sampler2 /*inner*/);
 		} else	if ( options->sample_beta() ) {
 			if ( moving_res_list.size() !=  1 ) utility_exit_with_message( "Sample beta only works for adding one residue to a beta sheet...");
-			sampler =	new ProteinBetaAntiParallelRotamer( pose, moving_res_list[1] );
+			sampler =	new ProteinBetaAntiParallelRotamerSampler( pose, moving_res_list[1] );
 		} else if ( moving_res_list.size() > 0 ) {
 
 			//////////////////////////////////////////////////////////////////////
@@ -120,10 +120,10 @@ namespace protein {
 			// Could also put loose chainbreak closure check here.
 			Pose sampler_pose = pose;
 			backbone_sampler.apply( sampler_pose );
-			sampler =  new ProteinMainChainRotamer( backbone_sampler.which_torsions(),
+			sampler =  new ProteinMainChainRotamerSampler( backbone_sampler.which_torsions(),
 																							backbone_sampler.main_chain_torsion_set_lists_real(),
 																							options->choose_random() );
-			TR << "Using ProteinMainChainRotamer. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
+			TR << "Using ProteinMainChainRotamerSampler. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
 		} else {
 			sampler = 0; // no op.
 		}

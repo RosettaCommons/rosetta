@@ -97,8 +97,8 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 
 #include <basic/options/util.hh>//option.hh>

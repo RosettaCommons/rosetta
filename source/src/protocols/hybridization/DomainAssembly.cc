@@ -18,7 +18,7 @@
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -352,7 +352,7 @@ DomainAssembly::run()
 
 				if (jpose == 1) {
 					full_length_pose = new core::pose::Pose(inserted_pose);
-					core::pose::PDBInfoOP pdb_info;
+					core::pose::PDB_InfoOP pdb_info;
 					full_length_pose->pdb_info(pdb_info);
 				}
 				else {
@@ -398,7 +398,7 @@ DomainAssembly::run()
 			if ( poses_[1]->pdb_info()->number(1) < poses_[ipose]->pdb_info()->number(1) ) {
 				full_length_pose = new core::pose::Pose(*poses_[1]);
 
-				core::pose::PDBInfoOP pdb_info;
+				core::pose::PDB_InfoOP pdb_info;
 				full_length_pose->pdb_info(pdb_info);
 
 				// remove overlap residues
@@ -453,7 +453,7 @@ DomainAssembly::run()
 			else {
 				full_length_pose = new core::pose::Pose(*poses_[ipose]);
 
-				core::pose::PDBInfoOP pdb_info;
+				core::pose::PDB_InfoOP pdb_info;
 				full_length_pose->pdb_info(pdb_info);
 
 				first_domain_end = full_length_pose->total_residue();

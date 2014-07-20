@@ -89,7 +89,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/pose_stream/PoseInputStream.hh>

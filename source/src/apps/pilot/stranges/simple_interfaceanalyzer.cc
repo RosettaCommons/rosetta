@@ -33,7 +33,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>

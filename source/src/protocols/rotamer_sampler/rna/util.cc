@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rotamer_sampler/rna/RNA_RotamerSamplerUtil.cc
+/// @file protocols/rotamer_sampler/rna/RNA_RotamerSamplerSamplerUtil.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
 #include <protocols/rotamer_sampler/rna/util.hh>
-#include <protocols/rotamer_sampler/rna/RNA_KicSampler.hh>
-#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
+#include <protocols/rotamer_sampler/rna/RNA_KIC_Sampler.hh>
+#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamerSampler.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <core/chemical/ResidueType.hh>
@@ -24,9 +24,10 @@
 #include <core/chemical/rna/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.rotamer_sampler.rna.RNA_RotamerSamplerUtil" );
+static basic::Tracer TR( "protocols.rotamer_sampler.rna.RNA_RotamerSamplerSamplerUtil" );
 
 using namespace core;
 using namespace protocols::stepwise::sampling::rna;
@@ -39,7 +40,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////
 // Fang-Chieh Chou nicely refactored the rotamer sampling
 //////////////////////////////////////////////////////////////////
-RotamerBaseOP
+RotamerSamplerBaseOP
 setup_rotamer_sampler( pose::Pose const & pose,
 											 modeler_options::StepWiseModelerOptionsCOP options,
 											 working_parameters::StepWiseWorkingParametersCOP working_parameters,
@@ -119,7 +120,7 @@ setup_rotamer_sampler( pose::Pose const & pose,
 		runtime_assert( chainbreak_suite > 0 );
 
 		pose::PoseOP new_pose = new pose::Pose( pose ); //hard copy
-		RNA_KicSamplerOP sampler = new RNA_KicSampler(
+		RNA_KIC_SamplerOP sampler = new RNA_KIC_Sampler(
 				new_pose, moving_suite_, chainbreak_suite );
 		//		runtime_assert( (moving_suite_ == chainbreak_suite + 1) || (moving_suite_ == chainbreak_suite - 1) );
 		Size const which_nucleoside_to_sample = ( moving_suite_ < chainbreak_suite ) ? 2 : 1;
@@ -145,7 +146,7 @@ setup_rotamer_sampler( pose::Pose const & pose,
 		return sampler;
 	}
 
-	RNA_SuiteRotamerOP sampler = new RNA_SuiteRotamer( moving_suite_,
+	RNA_SuiteRotamerSamplerOP sampler = new RNA_SuiteRotamerSampler( moving_suite_,
 			pucker_state[1], pucker_state[2], base_state[1], base_state[2] );
 	sampler->set_skip_same_pucker( options->use_phenix_geo() );
 	sampler->set_idealize_coord( options->use_phenix_geo() );
@@ -166,19 +167,38 @@ setup_rotamer_sampler( pose::Pose const & pose,
 bool
 sampling_sugar_at_five_prime( pose::Pose const & pose,
 															Size const moving_suite ) {
-	return ( moving_suite == 1 ||
-					 ( pose.fold_tree().is_cutpoint( moving_suite - 1 ) &&
-						 !pose.residue_type( moving_suite ).has_variant_type( chemical::CUTPOINT_UPPER ) ) );
+	using namespace core::pose::full_model_info;
+	if ( moving_suite == 1 ||
+			 ( pose.fold_tree().is_cutpoint( moving_suite - 1 ) &&
+				 !pose.residue_type( moving_suite ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+		if ( full_model_info_defined( pose ) ) {
+				utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
+				utility::vector1< Size > const & res_list   = const_full_model_info( pose ).res_list();
+				return sample_res.has_value( res_list[ moving_suite ] );
+		} else {
+			return true;
+		}
+	}
+	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////
 bool
 sampling_sugar_at_three_prime( pose::Pose const & pose,
 															Size const moving_suite ) {
-
-	return ( (moving_suite + 1) == pose.total_residue() ||
-					 ( pose.fold_tree().is_cutpoint( moving_suite + 1 ) &&
-						 !pose.residue_type( moving_suite + 1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) );
+	using namespace core::pose::full_model_info;
+	if ( (moving_suite + 1) == pose.total_residue() ||
+			 ( pose.fold_tree().is_cutpoint( moving_suite + 1 ) &&
+				 !pose.residue_type( moving_suite + 1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) ) {
+		if ( full_model_info_defined( pose ) ) {
+				utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
+				utility::vector1< Size > const & res_list   = const_full_model_info( pose ).res_list();
+				return sample_res.has_value( res_list[ moving_suite + 1 ] );
+		} else {
+			return true;
+		}
+	}
+	return false;
 }
 
 } //rna

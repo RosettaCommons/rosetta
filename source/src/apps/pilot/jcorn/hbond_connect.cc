@@ -22,7 +22,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <basic/MetricValue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>

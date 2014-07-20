@@ -12,7 +12,7 @@
 // Protocol Headers
 #include <devel/init.hh>
 #include <basic/options/option_macros.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/DarcElectrostatics.hh>
 #include <protocols/pockets/Fingerprint.hh>

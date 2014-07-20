@@ -17,7 +17,7 @@
 #ifndef INCLUDED_protocols_stepwise_protein_StepWiseBetaAntiparallelUtil_HH
 #define INCLUDED_protocols_stepwise_protein_StepWiseBetaAntiparallelUtil_HH
 
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.fwd.hh>
@@ -30,7 +30,7 @@ namespace protocols {
 namespace rotamer_sampler {
 namespace protein {
 
-	RotamerSizedOP
+	RotamerSamplerSizedOP
 	get_basic_protein_sampler(
       core::pose::Pose const & pose,
 			utility::vector1< core::Size > const & moving_res_list,

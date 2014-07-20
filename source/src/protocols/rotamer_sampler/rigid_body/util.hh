@@ -55,7 +55,7 @@ namespace rigid_body {
 
 
 	/////////////////////////////////////////////////////////////
-	// following functions are helpers for RigidBodyRotamer
+	// following functions are helpers for RigidBodyRotamerSampler
 	Size
 	figure_out_reference_res_for_jump( pose::Pose const & pose,
 																		 Size const moving_res );

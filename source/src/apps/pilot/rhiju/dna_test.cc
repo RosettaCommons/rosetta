@@ -44,8 +44,8 @@
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDB_Info.fwd.hh>
 
 #include <basic/basic.hh>
 

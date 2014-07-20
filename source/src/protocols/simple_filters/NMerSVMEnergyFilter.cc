@@ -26,7 +26,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/exit.hh>

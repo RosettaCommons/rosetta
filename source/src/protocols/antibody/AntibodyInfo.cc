@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreType.hh>    // scoring stuff can probably be removed / moved elsewhere
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 
@@ -1360,7 +1360,7 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	using namespace kinematics;
     
 	Size nres = pose.total_residue();
-	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
     
@@ -1439,7 +1439,7 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	using namespace kinematics;
 
 	Size nres = pose.total_residue();
-	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
 
@@ -1509,7 +1509,7 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 	using namespace kinematics;
 
 	Size nres = pose.total_residue();
-	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
 	bool lchain_jump = false;

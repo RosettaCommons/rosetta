@@ -25,7 +25,7 @@
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>

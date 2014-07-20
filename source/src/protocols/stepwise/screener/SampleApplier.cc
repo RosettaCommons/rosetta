@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -51,10 +51,10 @@ namespace screener {
 	{}
 
 	void
-	SampleApplier::get_update( rotamer_sampler::RotamerBaseOP sampler ){
+	SampleApplier::get_update( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 		if ( !apply_residue_alternative_sampler_ &&
 				 sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
 			rigid_body_rotamer_with_residue_alternatives.apply_rigid_body_only( pose_ );
 			return;
 		}

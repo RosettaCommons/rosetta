@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryResidueBasedScreener.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
 
 #include <basic/Tracer.hh>
 
@@ -38,13 +38,13 @@ namespace screener {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	RNA_ChainClosableGeometryResidueBasedScreener::get_update( rotamer_sampler::RotamerBaseOP sampler ){
+	RNA_ChainClosableGeometryResidueBasedScreener::get_update( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 
 		using namespace rotamer_sampler;
 		using namespace rotamer_sampler::rigid_body;
 
 		runtime_assert( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES );
-		RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler.get() ) );
+		RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
 
 		five_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res1_, " O3'" ); // 5' residue
 		three_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res2_, " C5'" ); // 3' residue

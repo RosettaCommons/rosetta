@@ -21,8 +21,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_PoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>

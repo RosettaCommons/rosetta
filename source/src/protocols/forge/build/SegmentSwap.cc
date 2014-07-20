@@ -23,7 +23,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/conformation/util.hh>
 #include <utility/vector1.hh>
@@ -268,7 +268,7 @@ SegmentSwap::Positions SegmentSwap::original_mutable_positions() const {
 /// @brief do the actual work of modifying the Pose
 void SegmentSwap::modify_impl( Pose & pose ) {
 	using core::kinematics::FoldTree;
-	using core::pose::PDBInfo;
+	using core::pose::PDB_Info;
 	using protocols::forge::methods::replace;
 
 	// save interim FoldTree for passing into replace() later
@@ -327,12 +327,12 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 		pose.set_secstruct( i, swap_in_.secstruct( j ) );
 	}
 
-	// copy pdb info if it exists; PDBInfo should always be
+	// copy pdb info if it exists; PDB_Info should always be
 	// obsolete after leaving modify_impl()
 	if ( swap_in_.pdb_info().get() != NULL ) {
 
 		if ( pose.pdb_info().get() == NULL ) {
-			pose.pdb_info( new PDBInfo( pose ) );
+			pose.pdb_info( new PDB_Info( pose ) );
 		}
 
 		// force obsolete

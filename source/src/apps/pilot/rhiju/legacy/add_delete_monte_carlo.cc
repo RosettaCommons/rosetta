@@ -64,7 +64,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>

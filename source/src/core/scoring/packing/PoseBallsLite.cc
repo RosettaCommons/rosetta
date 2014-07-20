@@ -13,7 +13,7 @@
 
 #include <core/scoring/packing/PoseBallsLite.hh>
 // AUTO-REMOVED #include <core/scoring/packstat/AtomRadiusMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 

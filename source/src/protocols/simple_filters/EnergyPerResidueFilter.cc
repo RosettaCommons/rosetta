@@ -28,7 +28,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>

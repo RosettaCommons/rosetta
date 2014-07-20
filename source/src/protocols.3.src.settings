@@ -279,7 +279,7 @@ sources = {
         "refiners/LocalMinimizationRefiner",
         "refiners/RepackingRefiner",
         "refiners/RotamerTrialsRefiner",
-        "samplers/LegacyKicSampler",
+        "samplers/LegacyKIC_Sampler",
         "utilities/AcceptanceCheck",
         "utilities/LoopFilter",
         "utilities/LoopMoverGroup",

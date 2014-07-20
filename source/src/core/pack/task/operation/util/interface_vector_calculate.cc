@@ -46,7 +46,7 @@
 #include <numeric/HomogeneousTransform.hh>
 #include <cmath>
 #include <set>
-//#include <core/pose/PDBInfo.hh> //debugging only
+//#include <core/pose/PDB_Info.hh> //debugging only
 
 //#include <cassert>
 

@@ -21,7 +21,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>

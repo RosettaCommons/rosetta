@@ -20,7 +20,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -160,7 +160,7 @@ public:
 		using namespace core;
 		using namespace protocols;
 
-		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+		core::pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 		char second_chain = '_';
 		core::Size cutpoint = 0;
 

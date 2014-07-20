@@ -32,7 +32,7 @@
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 // #include <devel/init.hh>
 //Added by VKM:
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <numeric/xyzVector.hh>
 #include <core/scoring/sasa.hh>
 #include <core/id/AtomID.hh>

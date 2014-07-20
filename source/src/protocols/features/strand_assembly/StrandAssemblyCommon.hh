@@ -44,7 +44,7 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh> // for dssp application
-#include <core/pose/PDBInfo.hh> // maybe for PDBInfoCOP
+#include <core/pose/PDB_Info.hh> // maybe for PDB_InfoCOP
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>

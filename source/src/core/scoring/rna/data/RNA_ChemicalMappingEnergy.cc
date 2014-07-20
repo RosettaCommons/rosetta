@@ -26,7 +26,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>

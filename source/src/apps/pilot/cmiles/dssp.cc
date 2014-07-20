@@ -22,7 +22,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
   devel::init(argc, argv);
   core::pose::PoseCOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
-  core::pose::PDBInfoCOP info = pose->pdb_info();
+  core::pose::PDB_InfoCOP info = pose->pdb_info();
 
   core::scoring::dssp::Dssp dssp(*pose);
   dssp.dssp_reduced();

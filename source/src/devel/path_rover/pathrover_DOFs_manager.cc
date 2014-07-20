@@ -15,7 +15,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <numeric/angle.functions.hh>
 // # #include "symmetry_info.h"
 #include "pathrover_DOFs_manager.hh"
@@ -390,7 +390,7 @@ int DOFs_manager::pdbres_to_poseres(Pdbres_id pdbres_id)
 // (does not require pre-initialization)
 void DOFs_manager::build_pdbres_to_pose_mapping()
 {
-  core::pose::PDBInfoCOP pdb_info = _template_pose->pdb_info();
+  core::pose::PDB_InfoCOP pdb_info = _template_pose->pdb_info();
   Pdbres_id pdbres;
   for(core::Size i=1; i < _template_pose->total_residue(); i++)
     {

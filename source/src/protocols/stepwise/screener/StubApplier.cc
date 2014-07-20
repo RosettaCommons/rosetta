@@ -14,9 +14,9 @@
 
 
 #include <protocols/stepwise/screener/StubApplier.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.StubApplier" );
@@ -40,20 +40,20 @@ namespace screener {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	StubApplier::get_update( rotamer_sampler::RotamerBaseOP sampler ){
+	StubApplier::get_update( rotamer_sampler::RotamerSamplerBaseOP sampler ){
 
 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyRotamerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerWithResidueList * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
 			stub_ = rigid_body_rotamer_with_copy_dofs.get_stub();
 			return;
 		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
 			stub_ = rigid_body_rotamer_with_residue_alternatives.get_stub();
 			return;
 		}
 
    runtime_assert( sampler->type() == RIGID_BODY );
-	 RigidBodyRotamer & rigid_body_rotamer = *( static_cast< RigidBodyRotamer * >( sampler.get() ) );
+	 RigidBodyRotamerSampler & rigid_body_rotamer = *( static_cast< RigidBodyRotamerSampler * >( sampler.get() ) );
 	 stub_ = rigid_body_rotamer.get_stub();
 
 	}

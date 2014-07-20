@@ -16,7 +16,7 @@
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_MultiPoseCloser.hh>
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_Closer.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.hh>
 #include <core/pose/Pose.hh>
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
@@ -42,7 +42,7 @@ namespace loop_close {
 
 	//Constructor
 	StepWiseProteinCCD_MultiPoseCloser::StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																																					rotamer_sampler::RotamerSizedOP sampler ):
+																																					rotamer_sampler::RotamerSamplerSizedOP sampler ):
 		ccd_closer_( new StepWiseProteinCCD_Closer( working_parameters ) ),
 		sampler_( sampler ),
 		choose_random_( false ),

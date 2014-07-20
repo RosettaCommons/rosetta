@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -38,7 +38,7 @@ namespace loop_close {
   public:
 
     //constructor!
-		StepWiseProteinKIC_LoopBridger( rotamer_sampler::RotamerSizedOP sampler,
+		StepWiseProteinKIC_LoopBridger( rotamer_sampler::RotamerSamplerSizedOP sampler,
 																protocols::stepwise::sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
     //destructor -- necessary?
@@ -95,7 +95,7 @@ namespace loop_close {
 
 	private:
 
-		rotamer_sampler::RotamerSizedOP sampler_;
+		rotamer_sampler::RotamerSamplerSizedOP sampler_;
 
 		utility::vector1< Size > working_bridge_res_;
 		utility::vector1< bool > is_pre_proline_;

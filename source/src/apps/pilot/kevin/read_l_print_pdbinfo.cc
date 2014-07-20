@@ -22,7 +22,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -187,7 +187,7 @@ public:
 
 		std::vector<id::AtomID> buns;
 
-		const core::pose::PDBInfo& pdb_info = *(pose.pdb_info());
+		const core::pose::PDB_Info& pdb_info = *(pose.pdb_info());
 		for (Size resNum = 1; resNum < nres; ++resNum) {
 			const core::conformation::Residue& res = pose.residue(resNum);
 			const core::chemical::ResidueType& res_type = res.type();

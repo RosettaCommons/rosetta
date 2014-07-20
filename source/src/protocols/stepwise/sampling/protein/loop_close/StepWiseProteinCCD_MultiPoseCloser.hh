@@ -20,7 +20,7 @@
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_MultiPoseCloser.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -36,7 +36,7 @@ namespace loop_close {
 
 		//constructor
 		StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																			  rotamer_sampler::RotamerSizedOP sampler );
+																			  rotamer_sampler::RotamerSamplerSizedOP sampler );
 
 		//destructor
 		~StepWiseProteinCCD_MultiPoseCloser();
@@ -67,7 +67,7 @@ namespace loop_close {
 	private:
 
 		StepWiseProteinCCD_CloserOP ccd_closer_;
-		rotamer_sampler::RotamerSizedOP sampler_;
+		rotamer_sampler::RotamerSamplerSizedOP sampler_;
 
 		utility::vector1< utility::vector1< core::Real > > main_chain_torsion_sets_;
 

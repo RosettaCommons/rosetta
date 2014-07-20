@@ -57,12 +57,12 @@ static basic::Tracer TR( "protocols.stepwise.sampling.protein.InputStreamWithRes
 // modeling).
 //
 // Later also set up ChunkLibrary (used in FragmentLibrary -- uses MiniPose for
-//  memory savings) and CopyDofRotamer (used in stepwise sample-and-screen --
+//  memory savings) and CopyDofRotamerSampler (used in stepwise sample-and-screen --
 //  some useful cacheing). Probably should choose one of these, and get rid of the
 //  rest -- need to define use cases & decide.
 //
 // Had to add 'advance_to_next_pose_segment', 'apply_current_pose_segment' operations
-//  to enable wiring up to stepwise sample-and-screen code as InputStreamRotamer, so this
+//  to enable wiring up to stepwise sample-and-screen code as InputStreamRotamerSampler, so this
 //  is really getting unwieldy.
 //
 //      -- rhiju, 2014

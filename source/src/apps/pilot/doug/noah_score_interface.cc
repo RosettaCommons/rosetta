@@ -26,7 +26,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>

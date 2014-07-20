@@ -28,11 +28,11 @@
 #include <core/id/TorsionID.hh>
 #include <utility/vector1.hh>
 
-#include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.hh>
-#include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.hh>
-#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
-#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/rotamer_sampler/rna/RNA_ChiRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rna/RNA_SugarRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamerSampler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerSamplerGeneratorWrapper.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
 
 //////////////////////////////////////////////////////////
@@ -68,8 +68,8 @@ void test() {
 
 
 /*
-	RNA_ChiRotamer chi_rotamer(2, WHATEVER, NORTH);
-	RNA_SugarRotamer sugar_rotamer(2, WHATEVER);
+	RNA_ChiRotamerSampler chi_rotamer(2, WHATEVER, NORTH);
+	RNA_SugarRotamerSampler sugar_rotamer(2, WHATEVER);
 
 	//chi_rotamer.set_extra_chi(true);
 	chi_rotamer.init();
@@ -92,19 +92,19 @@ void test() {
 	utility::vector1< core::Size > const suite_list( 1, 2 );
 
 	Pose pose_copy = pose;
-	StepWiseRNA_RotamerGeneratorWrapper rotamer_generator(
+	StepWiseRNA_RotamerSamplerGeneratorWrapper rotamer_generator(
 			pose_copy, suite_list, false, true );
 	rotamer_generator.set_include_syn_chi( true );
 	rotamer_generator.set_allow_syn_pyrimidine( true );
 	rotamer_generator.initialize_rotamer_generator_list();
 
 
-	RNA_NucleosideRotamer n_rotamer( 3, WHATEVER, WHATEVER );
+	RNA_NucleosideRotamerSampler n_rotamer( 3, WHATEVER, WHATEVER );
 	n_rotamer.set_idealize_coord( false );
 	n_rotamer.set_skip_same_pucker( false );
 	n_rotamer.init();
 
-	RNA_SuiteRotamer suite_rotamer( 2, NORTH, WHATEVER, WHATEVER, WHATEVER );
+	RNA_SuiteRotamerSampler suite_rotamer( 2, NORTH, WHATEVER, WHATEVER, WHATEVER );
 	suite_rotamer.set_sample_nucleoside_lower( false );
 	suite_rotamer.set_sample_nucleoside_upper( true );
 	suite_rotamer.set_idealize_coord( false );

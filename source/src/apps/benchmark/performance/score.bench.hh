@@ -63,7 +63,7 @@
 
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
-//#include <core/pose/PDBInfo.fwd.hh>
+//#include <core/pose/PDB_Info.fwd.hh>
 //#include <core/pose/Pose.fwd.hh>
 //#include <core/pose/datacache/ObserverCache.fwd.hh>
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>

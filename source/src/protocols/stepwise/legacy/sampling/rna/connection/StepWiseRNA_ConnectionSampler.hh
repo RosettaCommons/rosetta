@@ -31,11 +31,11 @@
 #include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/TagDefinition.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerComb.fwd.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerSamplerComb.fwd.hh>
 #include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeSet.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.fwd.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/kinematics/Stub.hh>
@@ -123,10 +123,10 @@ namespace connection {
 		void
 		initialize_full_rigid_body_sampler();
 
-		rotamer_sampler::RotamerBaseOP
+		rotamer_sampler::RotamerSamplerBaseOP
 		get_full_bond_sampler();
 
-		rotamer_sampler::copy_dofs::ResidueAlternativeRotamerCombOP
+		rotamer_sampler::copy_dofs::ResidueAlternativeRotamerSamplerCombOP
 		get_rsd_alternatives_rotamer();
 
 		void
@@ -169,8 +169,8 @@ namespace connection {
 
 		scoring::ScoreFunctionCOP scorefxn_;
 
-		rotamer_sampler::rigid_body::RigidBodyRotamerOP rigid_body_rotamer_;
-		protocols::rotamer_sampler::RotamerBaseOP sampler_;
+		rotamer_sampler::rigid_body::RigidBodyRotamerSamplerOP rigid_body_rotamer_;
+		protocols::rotamer_sampler::RotamerSamplerBaseOP sampler_;
 		utility::vector1< screener::StepWiseScreenerOP > screeners_;
 		screener::TagDefinitionOP tag_definition_;
 

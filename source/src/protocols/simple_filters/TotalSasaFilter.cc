@@ -25,7 +25,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 

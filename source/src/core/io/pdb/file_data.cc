@@ -48,7 +48,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -332,11 +332,11 @@ FileData::get_residue_information(core::pose::Pose const & pose, core::uint cons
 
 	// Use PDB-specific information?
 	if (use_PDB) {
-		PDBInfoCOP pdb_info = pose.pdb_info();
+		PDB_InfoCOP pdb_info = pose.pdb_info();
 
 		res_info.chainID = pdb_info->chain(seqpos);
-		if ( res_info.chainID == PDBInfo::empty_record() ) {  // safety
-			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
+		if ( res_info.chainID == PDB_Info::empty_record() ) {  // safety
+			TR.Warning << "PDB_Info chain ID was left as character '" << PDB_Info::empty_record()
 					<< "', denoting an empty record; for convenience, replacing with space." << endl;
 			res_info.chainID = ' ';
 		}
@@ -375,7 +375,7 @@ void
 FileData::append_residue(
 	core::conformation::Residue const & rsd,
 	core::Size & atom_index,
-	// for pdb numbering and chains, could change to PDBInfo if necessary (but casting here is perhaps best)
+	// for pdb numbering and chains, could change to PDB_Info if necessary (but casting here is perhaps best)
 	core::pose::Pose const & pose,
 	bool /*preserve_crystinfo*/
 )
@@ -384,8 +384,8 @@ FileData::append_residue(
 	using namespace basic::options;
 	using namespace utility;
 
-	// Extract PDBInfo pointer.
-	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	// Extract PDB_Info pointer.
+	pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 
 	// Setup options.
 	bool use_PDB(false);
@@ -454,7 +454,7 @@ FileData::append_residue(
 		ai.x = atom.xyz()(1);
 		ai.y = atom.xyz()(2);
 		ai.z = atom.xyz()(3);
-		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
+		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDB_Info
 
 		// Output with pdb-specific info if possible.
 		if ( use_PDB ) {
@@ -493,11 +493,11 @@ void
 FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options)
 {
 	using namespace core;
-	using core::pose::PDBInfo;
+	using core::pose::PDB_Info;
 
 	// Get Title Section information.
 	if( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
-		*remarks = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
+		*remarks = pose.pdb_info()->remarks();  // Get OP to PDB_Info object for remarks.
 		if(pose.pdb_info()->header_information()){
 			header = new HeaderInformation(*(pose.pdb_info()->header_information()));
 		} else {
@@ -522,7 +522,7 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 				uint const start_num = edge->start();
 				uint const stop_num = edge->stop();
 
-				// TODO: Don't assume use of PDBInfo.
+				// TODO: Don't assume use of PDB_Info.
 				ResidueInformation start_res = get_residue_information(pose, start_num);
 				ResidueInformation stop_res = get_residue_information(pose, stop_num);
 
@@ -896,7 +896,7 @@ write_additional_pdb_data(
 		}
 	}
 
-	// Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
+	// Added by Daniel-Adriano Silva, used to write the PDB_InfoLabels to the REMARK
 	// First test that the pdb_info() is not empty
 	if ( pose.pdb_info() ){
 		// Then output the labels
@@ -1483,8 +1483,8 @@ build_pose_as_is1(
 	if ( pose.total_residue() == 0 ) {
 		// if unchecked it segfaults further down...
 
-		// PDBInfo setup
-		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.total_residue() ) );
+		// PDB_Info setup
+		core::pose::PDB_InfoOP pdb_info( new core::pose::PDB_Info( pose.total_residue() ) );
 		for( Size i = 1; i <= UA_res_nums.size(); ++i ) {
 			pdb_info->add_unrecognized_atom( UA_res_nums[i], UA_res_names[i], UA_atom_names[i], UA_coords[i], UA_temps[i] );
 		}
@@ -1507,7 +1507,7 @@ build_pose_as_is1(
 
 	pose.conformation().fill_missing_atoms( missing );
 
-	//ja save the pdb residue indices in the Pose //well, PDBInfo
+	//ja save the pdb residue indices in the Pose //well, PDB_Info
 	//ja pdb residue indices can be negative
 	utility::vector1< int > pdb_numbering;
 	//sml chain char
@@ -1520,8 +1520,8 @@ build_pose_as_is1(
 		insertion_codes.push_back( rinfo.iCode );
 	}
 
-	// PDBInfo setup
-	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.total_residue() ) );
+	// PDB_Info setup
+	core::pose::PDB_InfoOP pdb_info( new core::pose::PDB_Info( pose.total_residue() ) );
 
 	// set pdb-wide information
 	pdb_info->name( fd.filename );
@@ -1586,12 +1586,12 @@ build_pose_as_is1(
 	// ensure enough space for atom level pdb information
 	pdb_info->resize_atom_records( pose );
 
-	// add unrecognized atoms to PDBInfo
+	// add unrecognized atoms to PDB_Info
 	for( Size i = 1; i <= UA_res_nums.size(); ++i ) {
 		pdb_info->add_unrecognized_atom( UA_res_nums[i], UA_res_names[i], UA_atom_names[i], UA_coords[i], UA_temps[i] );
 	}
 
-	// add temps to PDBInfo
+	// add temps to PDB_Info
 	for( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
 		// fill in b-factor from pdb file
 		ResidueTemps & res_temps( rinfos[pose_to_rinfo[ir]].temps );
@@ -1615,7 +1615,7 @@ build_pose_as_is1(
 		}
 	}
 
-	// mark PDBInfo as ok and store in Pose
+	// mark PDB_Info as ok and store in Pose
 	pdb_info->obsolete( false );
 	pose.pdb_info( pdb_info );
 

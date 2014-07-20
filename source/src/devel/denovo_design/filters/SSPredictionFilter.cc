@@ -20,7 +20,7 @@
 #include <devel/denovo_design/filters/PsiPredInterface.hh>
 
 // project headers
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/jd2/parser/BluePrint.hh>

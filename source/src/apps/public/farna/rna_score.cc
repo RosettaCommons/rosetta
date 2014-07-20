@@ -43,7 +43,7 @@
 #include <protocols/stepwise/sampling/util.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <core/io/rna/RNA_DataReader.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // C++ headers
 #include <iostream>
@@ -176,7 +176,7 @@ rna_score_test()
 			fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 		} else {
 			utility::vector1< Size > resnum;
-			core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+			core::pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 
 			if ( pdb_info )	{
 				//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;

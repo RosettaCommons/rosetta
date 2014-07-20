@@ -20,7 +20,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/string_util.hh>
@@ -250,56 +250,56 @@ ResidueLacksPropertyCreator::create_res_filter() const {
 ResFilterOP ResidueLacksProperty::clone() const { return new ResidueLacksProperty( *this ); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//begin ResiduePDBInfoHasLabel
-ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel()
+//begin ResiduePDB_InfoHasLabel
+ResiduePDB_InfoHasLabel::ResiduePDB_InfoHasLabel()
   : parent()
 {}
 
-ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel( std::string const & str )
+ResiduePDB_InfoHasLabel::ResiduePDB_InfoHasLabel( std::string const & str )
   : parent(),
     property_( str )
 {}
 
-bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
+bool ResiduePDB_InfoHasLabel::operator() ( Pose const & pose, Size index ) const
 {
   runtime_assert( index > 0 && index <= pose.total_residue() );
   return pose.pdb_info()->res_haslabel( index, property_ );
 }
 
 ResFilterOP
-ResiduePDBInfoHasLabelCreator::create_res_filter() const {
-  return new ResiduePDBInfoHasLabel;
+ResiduePDB_InfoHasLabelCreator::create_res_filter() const {
+  return new ResiduePDB_InfoHasLabel;
 }
 
-ResFilterOP ResiduePDBInfoHasLabel::clone() const { return new ResiduePDBInfoHasLabel( *this ); }
+ResFilterOP ResiduePDB_InfoHasLabel::clone() const { return new ResiduePDB_InfoHasLabel( *this ); }
 
-void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
+void ResiduePDB_InfoHasLabel::parse_tag( TagCOP tag )
 {
   if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
-//end ResiduePDBInfoHasLabel
+//end ResiduePDB_InfoHasLabel
 
-//begin ResiduePDBInfoLacksLabel
-ResiduePDBInfoLacksLabel::ResiduePDBInfoLacksLabel()
+//begin ResiduePDB_InfoLacksLabel
+ResiduePDB_InfoLacksLabel::ResiduePDB_InfoLacksLabel()
   : parent()
 {}
 
-ResiduePDBInfoLacksLabel::ResiduePDBInfoLacksLabel( std::string const & str )
+ResiduePDB_InfoLacksLabel::ResiduePDB_InfoLacksLabel( std::string const & str )
   : parent( str )
 {}
 
-bool ResiduePDBInfoLacksLabel::operator() ( Pose const & pose, Size index ) const
+bool ResiduePDB_InfoLacksLabel::operator() ( Pose const & pose, Size index ) const
 {
   return ( ! parent::operator()( pose, index ) );
 }
 
 ResFilterOP
-ResiduePDBInfoLacksLabelCreator::create_res_filter() const {
-  return new ResiduePDBInfoLacksLabel;
+ResiduePDB_InfoLacksLabelCreator::create_res_filter() const {
+  return new ResiduePDB_InfoLacksLabel;
 }
 
-ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return new ResiduePDBInfoLacksLabel( *this ); }
-//end ResiduePDBInfoLacksLabel
+ResFilterOP ResiduePDB_InfoLacksLabel::clone() const { return new ResiduePDB_InfoLacksLabel( *this ); }
+//end ResiduePDB_InfoLacksLabel
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueName3Is

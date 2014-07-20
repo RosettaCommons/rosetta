@@ -56,7 +56,7 @@ namespace screener {
 		check_screen();
 
 		void
-		fast_forward( rotamer_sampler::RotamerBaseOP sampler );
+		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
 
 	private:
 

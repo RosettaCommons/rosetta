@@ -13,7 +13,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -320,7 +320,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 				( residues1_cstr <= 'Z' && residues2_cstr >= 'A' ) &&
 				( residues[ 2 ].length() == 1 &&
 				( residues2_cstr <= 'Z' && residues2_cstr >= 'A' ) ) ){ // are we aligning two chains to one another?
-					core::pose::PDBInfoCOP pdbinfo1( pose()->pdb_info() ), pdbinfo2( p.pdb_info() );
+					core::pose::PDB_InfoCOP pdbinfo1( pose()->pdb_info() ), pdbinfo2( p.pdb_info() );
 					core::Size pose_res( 1 ), p_res( 1 );
 					for(; pose_res <= pose()->total_residue(); ++pose_res )// find chain1 start
 						if( pdbinfo1->chain( pose_res ) == residues1_cstr ) break;

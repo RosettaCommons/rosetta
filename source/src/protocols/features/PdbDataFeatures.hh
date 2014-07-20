@@ -90,7 +90,7 @@ private:
 	);
 
 	///@brief load the temperature and occupancy information into the
-	///PDBInfo object. Backbone atoms are assigned max_bb_temperature
+	///PDB_Info object. Backbone atoms are assigned max_bb_temperature
 	///and min_bb_occupancy while sidechain atoms are assigned
 	///max_sc_temperature and min_sc_occupancy.
 

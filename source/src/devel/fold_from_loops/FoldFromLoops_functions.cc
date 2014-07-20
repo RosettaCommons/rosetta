@@ -63,7 +63,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
@@ -1227,8 +1227,8 @@ void design_excluding_swap_loops (
 		using namespace basic::options::OptionKeys;
 
 
-		// PDBInfo setup to set the chains
-		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( fold_pose ) );
+		// PDB_Info setup to set the chains
+		core::pose::PDB_InfoOP pdb_info( new core::pose::PDB_Info( fold_pose ) );
 
 		pdb_info->set_chains('A');
 

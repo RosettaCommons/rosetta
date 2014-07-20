@@ -29,7 +29,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>

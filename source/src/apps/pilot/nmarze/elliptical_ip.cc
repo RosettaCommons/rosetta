@@ -27,7 +27,7 @@
 #include <utility/exit.hh>
 #include <protocols/docking/EllipsoidalRandomizationMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.hh>
 

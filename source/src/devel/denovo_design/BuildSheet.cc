@@ -26,7 +26,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -167,7 +167,7 @@ BuildSheet::parse_my_tag(
 void BuildSheet::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose newpose;
-	newpose.pdb_info( new core::pose::PDBInfo( pose, true ) );
+	newpose.pdb_info( new core::pose::PDB_Info( pose, true ) );
 	sheet_.generate_residue_positions();
 	sheet_.dump_ca_coords( "ca_coords.pdb" );
 	ParametricSheet::SheetGeometry const geom( sheet_.calc_geometry() );

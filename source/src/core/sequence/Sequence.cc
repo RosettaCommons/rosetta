@@ -17,7 +17,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // Utility headers
 #include <utility/exit.hh>

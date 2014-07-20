@@ -26,8 +26,8 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/StepWiseModeler.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
-#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
-#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
+#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamerSampler.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -204,7 +204,7 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 
 	clock_t const time_start( clock() );
 	//July 28th, 2011 Could set extra_chi here, BUT necessary?
-	RNA_NucleosideRotamer sampler( sugar_modeling_.moving_res,
+	RNA_NucleosideRotamerSampler sampler( sugar_modeling_.moving_res,
 																 sugar_modeling_.moving_res_pucker_state,
 																 sugar_modeling_.moving_res_base_state );
 	sampler.set_idealize_coord(   use_phenix_geo_ );
@@ -499,7 +499,7 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< P
 		}
 	}
 
-	RNA_SuiteRotamer sampler( bulge_suite, pucker_state[1], pucker_state[2], base_state[1], base_state[2] );
+	RNA_SuiteRotamerSampler sampler( bulge_suite, pucker_state[1], pucker_state[2], base_state[1], base_state[2] );
 	sampler.set_skip_same_pucker( use_phenix_geo_ );
 	sampler.set_idealize_coord( use_phenix_geo_ );
 	sampler.set_fast( integration_test_mode_ );

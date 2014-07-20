@@ -17,7 +17,7 @@
 #include <devel/constel/Primitives.hh>
 #include <devel/constel/MasterFilter.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/scoring/hbonds/hbonds.hh>

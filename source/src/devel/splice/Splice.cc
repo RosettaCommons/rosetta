@@ -47,7 +47,7 @@
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/simple_moves/MinMover.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomTypeSet.hh>

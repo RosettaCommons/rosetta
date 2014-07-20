@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_screener_StepWiseScreenerUtil_HH
 #define INCLUDED_protocols_stepwise_screener_StepWiseScreenerUtil_HH
 
-#include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.fwd.hh>
 #include <core/types.hh>
 
 using namespace core;
@@ -27,7 +27,7 @@ namespace screener {
 
 
 	void
-	fast_forward_to_next_residue_pair( rotamer_sampler::RotamerBaseOP sampler,
+	fast_forward_to_next_residue_pair( rotamer_sampler::RotamerSamplerBaseOP sampler,
 																		 Size const res1,
 																		 Size const res2 );
 

@@ -131,7 +131,7 @@ public:
     chain_closable_geometry_count( 0 ),
     chain_closable_geometry_count2( 0 ),
     chain_closable_geometry_count3( 0 ),
-    Near_Native_Rotamer_Count( 0 ),
+    Near_Native_RotamerSampler_Count( 0 ),
     base_pairing_count( 0 ),
     base_stack_count( 0 ),
     strict_base_pairing_count( 0 ),
@@ -169,7 +169,7 @@ public:
   core::Size chain_closable_geometry_count;
   core::Size chain_closable_geometry_count2;
   core::Size chain_closable_geometry_count3;
-  core::Size Near_Native_Rotamer_Count;
+  core::Size Near_Native_RotamerSampler_Count;
   core::Size base_pairing_count;
   core::Size base_stack_count;
   core::Size strict_base_pairing_count;

@@ -17,7 +17,7 @@
 #include <protocols/design_opt/ParetoOptMutationMoverCreator.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <fstream>
 // AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>

@@ -60,7 +60,7 @@
 #ifdef USEBOOSTSERIALIZE
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -74,7 +74,7 @@
 #else
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/PDB_Info.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -318,7 +318,7 @@ public:
 	/// See also:
 	///     Pose
 	///     Energies
-	///     PDBInfo
+	///     PDB_Info
 	///     ScoreFunction
 	///     create_score_function
 	scoring::Energies const &
@@ -364,31 +364,31 @@ public:
 
 	void transfer_constraint_set( const pose::Pose &pose );
 
-	/// @brief Returns the pose PDBInfo (const)
+	/// @brief Returns the pose PDB_Info (const)
 	///
 	/// example(s):
 	///     pose.pdb_info()
 	/// See also:
 	///     Pose
 	///     Energies
-	///     PDBInfo
+	///     PDB_Info
 	///	ScoreFunction
 	///	pose_from_pdb
-	/// @return NULL if no PDBInfo instance exists, the pdb info instance otherwise
-	PDBInfoCOP
+	/// @return NULL if no PDB_Info instance exists, the pdb info instance otherwise
+	PDB_InfoCOP
 	pdb_info() const;
 
-	/// @brief Returns the pose PDBInfo
-	/// @return NULL if no PDBInfo instance exists, the PDBInfo instance otherwise
-	PDBInfoOP
+	/// @brief Returns the pose PDB_Info
+	/// @return NULL if no PDB_Info instance exists, the PDB_Info instance otherwise
+	PDB_InfoOP
 	pdb_info();
 
-	/// @brief Sets pose PDBInfo to <new_info>
-	/// @param[in]  <new_info>  the new PDBInfo to copy, pass NULL
-	/// if you want to zero the existence of PDBInfo inside this Pose
-	/// @return the prior PDBInfo instance
-	PDBInfoOP
-	pdb_info( PDBInfoOP new_info );
+	/// @brief Sets pose PDB_Info to <new_info>
+	/// @param[in]  <new_info>  the new PDB_Info to copy, pass NULL
+	/// if you want to zero the existence of PDB_Info inside this Pose
+	/// @return the prior PDB_Info instance
+	PDB_InfoOP
+	pdb_info( PDB_InfoOP new_info );
 
 	void
 	metric( std::string const & calculator_name, std::string const & key, basic::MetricValueBase & val ) const;
@@ -1637,7 +1637,7 @@ private:
 	ObserverCacheOP observer_cache_;
 
 	/// @brief pdb info
-	PDBInfoOP pdb_info_;
+	PDB_InfoOP pdb_info_;
 
 	// constraint set
 	ConstraintSetOP constraint_set_;

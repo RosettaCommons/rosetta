@@ -66,7 +66,7 @@ RNA_KinematicCloser::RNA_KinematicCloser(
 	Size const moving_suite,
 	Size const chainbreak_suite
 ):
-	RotamerSized(),
+	RotamerSamplerSized(),
 	ref_pose_( ref_pose ),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),

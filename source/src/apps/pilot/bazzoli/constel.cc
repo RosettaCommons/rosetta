@@ -81,7 +81,7 @@
 #include <devel/constel/NeighTeller.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/chemical/AA.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>

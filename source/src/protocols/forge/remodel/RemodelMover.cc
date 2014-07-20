@@ -62,7 +62,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Remarks.hh>
 #include <core/pose/util.hh> // for pdbinfo
@@ -696,7 +696,7 @@ void RemodelMover::apply( Pose & pose ) {
 			simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 			// Remodel assumes chain ID is ' '
-			//pose::PDBInfoOP pdb_info ( pose.pdb_info() );
+			//pose::PDB_InfoOP pdb_info ( pose.pdb_info() );
 			//for ( Size i=1; i<= pdb_info->nres(); ++i ){
 			//	pdb_info->chain(i,' ');
 			//
@@ -1263,7 +1263,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 	TR << "Remodel poses remaining from original run: " << accumulator_.size() << std::endl;
 	// update PDBinfo
-	pose.pdb_info( new core::pose::PDBInfo( pose ));
+	pose.pdb_info( new core::pose::PDB_Info( pose ));
 
 	// setup calculators
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
@@ -2115,7 +2115,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	Real rmsd_native = sqrt(sum_sd_native);
 	Real rmsd_archive2native = sqrt(sum_sd_archive2native);
 
-	pose::PDBInfoOP temp_pdbinfo = pose.pdb_info();
+	pose::PDB_InfoOP temp_pdbinfo = pose.pdb_info();
 
 	pose::RemarkInfo remark;
 	remark.value = "KIC confirmation RMSD: " + utility::to_string( rmsd ) + " to native RMSD: " + utility::to_string( rmsd_native );

@@ -26,8 +26,8 @@
 #include <core/id/types.hh> //used for movemap to set omega angle false
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_PoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <core/chemical/ResidueType.hh>

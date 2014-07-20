@@ -33,7 +33,6 @@
 // Currently the standard i/o file format for RNA structure mapping data in the Das lab
 //  and in EteRNA.
 //
-// Does this belong somewhere in core/io ?
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 namespace core {

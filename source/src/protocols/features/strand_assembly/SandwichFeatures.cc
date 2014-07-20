@@ -1,4 +1,3 @@
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 // :notabs=false:tabSize=4:indentsize=4:
@@ -772,7 +771,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 			int	residue_num	=	vector_of_residue_num_of_rkde[residue_i];
 
 			// <begin> check whether "current" residue has low atom position uncertainty
-			pose::PDBInfoCOP info = pose.pdb_info();
+			pose::PDB_InfoCOP info = pose.pdb_info();
 			Real B_factor_of_CB = info->temperature( residue_num, 5 ); // '5' atom will be 'H' for Gly, otherwise typycal CB
 			if (B_factor_of_CB	>	CB_b_factor_cutoff_for_electrostatic_interactions_)
 			{
@@ -7029,7 +7028,7 @@ SandwichFeatures::identify_sheet_id_by_residue_end(
 
 
 
-// as of 07/19,14, 
+// as of 07/19,14,
 //refactor of report_turn_type
 //is not possible due to allowed_deviation_for_turn_type_id_
 //let me ask Kevin/Tim

@@ -24,7 +24,7 @@
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>

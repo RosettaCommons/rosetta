@@ -15,7 +15,7 @@
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
@@ -154,7 +154,7 @@ int process_pose(
 )
 {
 	sc.Reset();
-	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	core::pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 
 	// Split PDB into two surfaces
 	for(core::Size i = 1; i <= pose.n_residue(); i++) {

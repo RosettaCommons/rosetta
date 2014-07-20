@@ -95,7 +95,7 @@ numeric::random::RandomGenerator RG(1345675431); // <- Magic number, do not chan
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <devel/init.hh>
 

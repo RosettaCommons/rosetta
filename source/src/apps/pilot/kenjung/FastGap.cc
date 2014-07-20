@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 
 #include <protocols/loophash/FastGapMover.hh>
 

@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
@@ -28,13 +28,13 @@ namespace protein {
 namespace loop_close {
 
 	void
-	kic_close_loops_in_samples( rotamer_sampler::RotamerSizedOP & sampler,
+	kic_close_loops_in_samples( rotamer_sampler::RotamerSamplerSizedOP & sampler,
 															core::pose::Pose const & pose,
 															working_parameters::StepWiseWorkingParametersCOP working_parameters_,
 															modeler_options::StepWiseModelerOptionsCOP options_ );
 
 	void
-	enable_sampling_of_loop_takeoff( rotamer_sampler::RotamerSizedOP & sampler,
+	enable_sampling_of_loop_takeoff( rotamer_sampler::RotamerSamplerSizedOP & sampler,
 																	 core::pose::Pose & pose,
 																	 working_parameters::StepWiseWorkingParametersCOP working_parameters_,
 																	 modeler_options::StepWiseModelerOptionsCOP options_ );

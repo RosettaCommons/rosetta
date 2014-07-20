@@ -22,7 +22,7 @@
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -276,7 +276,7 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 //    }
 //
 //    Size buns = 0;
-//    const pose::PDBInfo& pdb_info = *(pose.pdb_info());
+//    const pose::PDB_Info& pdb_info = *(pose.pdb_info());
 //    for (Size resNum = 1; resNum <= nres; ++resNum) {
 //        const conformation::Residue& res = pose.residue(resNum);
 //        const chemical::ResidueType& res_type = res.type();

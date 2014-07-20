@@ -42,7 +42,7 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>

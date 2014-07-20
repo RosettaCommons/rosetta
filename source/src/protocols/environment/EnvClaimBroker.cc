@@ -54,7 +54,7 @@
 #include <basic/datacache/WriteableCacheableData.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // utility headers
 #include <utility/string_util.hh>
@@ -89,28 +89,28 @@ using core::environment::FoldTreeSketch;
 
 using core::conformation::Conformation;
 
-void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& pose ){
-  //Rebuild an appropriate PDBInfo object.
+void update_pdb_info( core::pose::PDB_InfoCOP input_pdb_info, core::pose::Pose& pose ){
+  //Rebuild an appropriate PDB_Info object.
   if( pose.pdb_info() ){
-    tr.Error << "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" << std::endl;
+    tr.Error << "Environment does not expect a PDB_Info object to be created during broking. Something has gone wrong!" << std::endl;
     utility_exit_with_message( "Problem in broking!" );
   } else if( input_pdb_info ) {
     //ASSUMPTION: all new residues are virtual
     core::Size const new_vrts = pose.total_residue() - input_pdb_info->nres();
 
-    core::pose::PDBInfoOP new_info = new core::pose::PDBInfo( *input_pdb_info );
+    core::pose::PDB_InfoOP new_info = new core::pose::PDB_Info( *input_pdb_info );
 
     for( Size i = 1; i <= new_vrts; ++i ){
       new_info->append_res( new_info->nres(), 3 );
     }
 
-    tr.Debug << "Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
+    tr.Debug << "Updating PDB_Info object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
              << pose.total_residue() << ". Old Size: " << input_pdb_info->nres() << "; New Size: "
              << new_info->nres() << std::endl;
 
     pose.pdb_info( new_info );
   } else {
-    tr.Debug << "  PDBInfo processing being ignored as it is null in the input pose." << std::endl;
+    tr.Debug << "  PDB_Info processing being ignored as it is null in the input pose." << std::endl;
   }
 }
 

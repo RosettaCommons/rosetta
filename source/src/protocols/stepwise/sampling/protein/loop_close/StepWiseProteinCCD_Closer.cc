@@ -19,7 +19,7 @@
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampling/util.hh>
 #include <protocols/simple_moves/TorsionSetMover.hh>
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/types.hh>

@@ -44,7 +44,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
@@ -584,7 +584,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 	using namespace kinematics;
 
 	Size nres = pose_in.total_residue();
-	core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
+	core::pose::PDB_InfoCOP pdb_info = pose_in.pdb_info();
 	char second_chain = 'H';
 	Size rb_cutpoint(0);
 

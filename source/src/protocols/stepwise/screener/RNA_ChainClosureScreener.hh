@@ -54,7 +54,7 @@ namespace screener {
 		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
 		void
-		fast_forward( rotamer_sampler::RotamerBaseOP sampler );
+		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
 
 	private:
 

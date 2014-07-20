@@ -182,29 +182,25 @@ sources = {
 		"make_exemplar",
 	],
     "public/rna_util": [
-	    "rna_predict_chem_map",
-	    "rna_thread",
-	    "rna_suitename",
 	    "rna_features",
 	    "rna_graft",
+	    "rna_helix",
+	    "rna_predict_chem_map",
+	    "rna_suitename",
+	    "rna_thread",
+	    "erraser_minimizer",
 	],
 	"public/surface_docking": [
 	    "surface_docking",
 	],
-	"public/stepwise/enumerate/rna": [
-	    "rna_helix",
-	    "erraser_minimizer",
-	],
-	"public/stepwise/enumerate/rna/legacy": [
+	"public/stepwise/legacy": [
+	    "swa_protein_main",
 	    "swa_rna_main",
 	    "swa_rna_util",
 	],
-	"public/stepwise/monte_carlo/": [
-		"swm",
+	"public/stepwise/": [
+	    "stepwise",
 	],
-	"public/stepwise/enumerate/protein": [
-		"swa_protein_main",
-        ],
 	"public/rosetta_scripts": [
 		"revert_design_to_native",
 		"rosetta_scripts",

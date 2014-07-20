@@ -29,7 +29,7 @@
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/func/SOGFunc.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>

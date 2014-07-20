@@ -16,7 +16,7 @@
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -587,7 +587,7 @@ void HotspotStubSet::read_data( std::string const filename ) {
 	for ( utility::vector1<core::pose::Pose>::iterator it = poses.begin(); it!= poses.end(); ++it )
 	{
 		// get REMARKS associated with the pose
-		core::pose::PDBInfoCOP pdbinfo = it->pdb_info();
+		core::pose::PDB_InfoCOP pdbinfo = it->pdb_info();
 		core::pose::Remarks const & remarks ( pdbinfo->remarks() );
 		core::Real score = 0;
 		 for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = remarks.begin(); remark_it != remarks.end(); ++remark_it)

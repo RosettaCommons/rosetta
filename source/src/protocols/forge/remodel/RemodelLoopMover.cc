@@ -46,7 +46,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -926,8 +926,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
     //pre_mover.apply( repeat_pose_ );
     pre_mover.apply( pose );
     // Remodel assumes chain ID is ' '
-    //pose::PDBInfoOP pdb_info ( repeat_pose_.pdb_info() );
-    pose::PDBInfoOP pdb_info ( pose.pdb_info() );
+    //pose::PDB_InfoOP pdb_info ( repeat_pose_.pdb_info() );
+    pose::PDB_InfoOP pdb_info ( pose.pdb_info() );
     for ( Size i=1; i<= pdb_info->nres(); ++i ){
       pdb_info->chain(i,' ');
     }

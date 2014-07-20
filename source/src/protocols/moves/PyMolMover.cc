@@ -25,7 +25,7 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -246,7 +246,7 @@ std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 	if( pymol_name_.size() ) {
 		return pymol_name_;
 	} else {
-		core::pose::PDBInfoCOP info = pose.pdb_info();
+		core::pose::PDB_InfoCOP info = pose.pdb_info();
 		if( info && info->name().size() ) {
 			std::string n = info->name();
 			for(unsigned int i=0; i<n.size(); i++)
@@ -325,7 +325,7 @@ void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 	if( !is_it_time() ) return;
 
 	std::string msg(7*energies.size(), ' ');
-	core::pose::PDBInfoCOP info = pose.pdb_info();
+	core::pose::PDB_InfoCOP info = pose.pdb_info();
 	for(unsigned int i=1; i<=energies.size(); i++) {
 		char chain = ' ';
 		int  res = i;
@@ -377,7 +377,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 		}
 		// We not using send_RAW_Energies for efficiency reasons...
 		std::string msg(7*e.size(), ' ');
-        core::pose::PDBInfoCOP info = pose.pdb_info();
+        core::pose::PDB_InfoCOP info = pose.pdb_info();
 		for(unsigned int i=1; i<=e.size(); i++) {
 			char chain = ' ';
 			int  res = i;

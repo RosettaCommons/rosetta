@@ -18,8 +18,8 @@
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinKIC_LoopBridger.hh>
 #include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/sampling/protein/StepWiseProteinBackboneSampler.hh>
-#include <protocols/rotamer_sampler/RotamerSizedComb.hh>
-#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamer.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSizedComb.hh>
+#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamerSampler.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/TorsionID.hh>
 
@@ -37,7 +37,7 @@ namespace loop_close {
 	// this is largely untested now -- if we want to reconstitute, we should
 	// probably fold KIC into rotamer_sampler, as is done for RNA.
 	void
-	kic_close_loops_in_samples( rotamer_sampler::RotamerSizedOP & sampler,
+	kic_close_loops_in_samples( rotamer_sampler::RotamerSamplerSizedOP & sampler,
 															core::pose::Pose const & pose,
 															working_parameters::StepWiseWorkingParametersCOP working_parameters_,
 															modeler_options::StepWiseModelerOptionsCOP options_ ){
@@ -68,8 +68,8 @@ namespace loop_close {
 		which_torsions = stepwise_loop_bridger.which_torsions();
 		main_chain_torsion_set_lists = stepwise_loop_bridger.main_chain_torsion_set_lists();
 
-		TR << "Using ProteinMainChainRotamer with loops" << std::endl;
-		ProteinMainChainRotamerOP new_sampler = new ProteinMainChainRotamer( which_torsions,
+		TR << "Using ProteinMainChainRotamerSampler with loops" << std::endl;
+		ProteinMainChainRotamerSamplerOP new_sampler = new ProteinMainChainRotamerSampler( which_torsions,
 																																				 main_chain_torsion_set_lists,
 																																				 options_->choose_random() );
 		new_sampler->init();
@@ -81,7 +81,7 @@ namespace loop_close {
 	// three residues with minimal sampling. It still makes sense to sample 'takeoff' phi and psi into the
 	// three-residue loop.
 	void
-	enable_sampling_of_loop_takeoff( rotamer_sampler::RotamerSizedOP & sampler,
+	enable_sampling_of_loop_takeoff( rotamer_sampler::RotamerSamplerSizedOP & sampler,
 																	 pose::Pose & pose,
 																	 working_parameters::StepWiseWorkingParametersCOP working_parameters_,
 																	 modeler_options::StepWiseModelerOptionsCOP options_ ) {
@@ -114,11 +114,11 @@ namespace loop_close {
 		TR << "Going to sample this many takeoff psi/phi combinations: " <<
 			backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
 
-		ProteinMainChainRotamerOP sampler_for_takeoff_res =
-          new ProteinMainChainRotamer( backbone_sampler.which_torsions(),
+		ProteinMainChainRotamerSamplerOP sampler_for_takeoff_res =
+          new ProteinMainChainRotamerSampler( backbone_sampler.which_torsions(),
 																			 backbone_sampler.main_chain_torsion_set_lists_real(),
 																			 false /*choose_random*/ );
-		sampler = new rotamer_sampler::RotamerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/);
+		sampler = new rotamer_sampler::RotamerSamplerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/);
 
 	}
 

@@ -23,7 +23,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <map>
-//#include <core/pose/PDBInfo.hh>
+//#include <core/pose/PDB_Info.hh>
 
 
 //Will move to protocols/toolbox after thorough testing.

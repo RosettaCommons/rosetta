@@ -61,16 +61,16 @@
 #include <protocols/stepwise/screener/VDW_BinScreener.hh>
 #include <protocols/stepwise/StepWiseSampleAndScreen.hh>
 #include <protocols/stepwise/sampling/util.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
-#include <protocols/rotamer_sampler/RotamerComb.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamer.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerComb.hh>
-#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamer.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerComb.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerSampler.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerSamplerComb.hh>
+#include <protocols/rotamer_sampler/protein/ProteinMainChainRotamerSampler.hh>
 #include <protocols/rotamer_sampler/protein/util.hh>
 #include <protocols/rotamer_sampler/rna/util.hh>
 #include <protocols/rotamer_sampler/rigid_body/util.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/chemical/rna/util.hh>
@@ -222,7 +222,7 @@ StepWiseConnectionSampler::figure_out_reference_res( pose::Pose const & pose ){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseConnectionSampler::figure_out_reference_res_with_rigid_body_rotamer( pose::Pose const & pose ){
-	rigid_body_rotamer_ = new rotamer_sampler::rigid_body::RigidBodyRotamer( pose, moving_res_ );
+	rigid_body_rotamer_ = new rotamer_sampler::rigid_body::RigidBodyRotamerSampler( pose, moving_res_ );
 	reference_res_ = rigid_body_rotamer_->reference_res();
 	runtime_assert( moving_partition_res_ == rigid_body_rotamer_->moving_partition_res() );
 }
@@ -577,7 +577,7 @@ StepWiseConnectionSampler::initialize_euler_angle_grid_parameters(){
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// definition of euler angle grid search parameters
 	// Following are set by #define in StepWiseRNA_FloatingBase_Samper_util_hh
-	rotamer_sampler::rigid_body::RigidBodyRotamerValueRange & value_range = rigid_body_rotamer_->value_range();
+	rotamer_sampler::rigid_body::RigidBodyRotamerSamplerValueRange & value_range = rigid_body_rotamer_->value_range();
 	value_range.set_euler_angle_bin_size( STANDARD_EULER_ANGLE_BIN_SIZE );
 	value_range.set_euler_z_bin_size( STANDARD_EULER_Z_BIN_SIZE );
 	value_range.set_centroid_bin_size( STANDARD_CENTROID_BIN_SIZE );
@@ -596,7 +596,7 @@ StepWiseConnectionSampler::initialize_xyz_grid_parameters(){
 	initialize_xyz_parameters( max_distance, max_distance_squared_,
 														 centroid_bin_min, centroid_bin_max,
 														 get_moving_rsd_list(), truly_floating_base() );
-	rotamer_sampler::rigid_body::RigidBodyRotamerValueRange & value_range = rigid_body_rotamer_->value_range();
+	rotamer_sampler::rigid_body::RigidBodyRotamerSamplerValueRange & value_range = rigid_body_rotamer_->value_range();
 	value_range.set_max_distance( max_distance );
 	value_range.set_centroid_bin_min( centroid_bin_min );
 	value_range.set_centroid_bin_max( centroid_bin_max );
@@ -654,11 +654,11 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-rotamer_sampler::RotamerSizedOP
+rotamer_sampler::RotamerSamplerSizedOP
 StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & pose ){
 	using namespace protocols::rotamer_sampler;
 	using namespace protocols::rotamer_sampler::protein;
-	RotamerSizedOP sampler = get_basic_protein_sampler( pose, moving_res_list_,
+	RotamerSamplerSizedOP sampler = get_basic_protein_sampler( pose, moving_res_list_,
 																											working_parameters_, options_, input_streams_ );
 
 	if ( protein_cutpoints_closed_.size() > 0 && options_->kic_sampling_if_relevant() ) {
@@ -669,19 +669,19 @@ StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & p
 }
 
 //////////////////////////////////////////////////////////////////////
-rotamer_sampler::RotamerBaseOP
+rotamer_sampler::RotamerSamplerBaseOP
 StepWiseConnectionSampler::initialize_rna_bond_sampler( pose::Pose const & pose ){
 	using namespace rotamer_sampler;
 	if ( moving_res_list_.size() == 0 ) return 0;
-	RotamerBaseOP rotamer_sampler_ = rotamer_sampler::rna::setup_rotamer_sampler( pose, options_,
+	RotamerSamplerBaseOP rotamer_sampler_ = rotamer_sampler::rna::setup_rotamer_sampler( pose, options_,
 																																								working_parameters_, false /*build_pose_from_scratch_*/,
 																																								kic_sampling_, (rna_cutpoints_closed_.size() > 0) );
-	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
+	ResidueAlternativeRotamerSamplerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
 	if ( rsd_alternatives_rotamer == 0 ) return rotamer_sampler_;
 
-	RotamerCombOP sampler = new RotamerComb;
-	sampler->add_rotamer( rsd_alternatives_rotamer );
-	sampler->add_rotamer( rotamer_sampler_ );
+	RotamerSamplerCombOP sampler = new RotamerSamplerComb;
+	sampler->add_external_loop_rotamer( rsd_alternatives_rotamer );
+	sampler->add_external_loop_rotamer( rotamer_sampler_ );
 	sampler->set_random( options_->choose_random() );
 	sampler->init();
 	return sampler;
@@ -694,27 +694,27 @@ StepWiseConnectionSampler::initialize_full_rigid_body_sampler(){
 	using namespace rotamer_sampler::rigid_body;
 	using namespace rotamer_sampler::copy_dofs;
 
-	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
-	sampler_ = new RigidBodyRotamerWithResidueAlternatives( rsd_alternatives_rotamer, rigid_body_rotamer_ );
+	ResidueAlternativeRotamerSamplerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
+	sampler_ = new RigidBodyRotamerSamplerWithResidueAlternatives( rsd_alternatives_rotamer, rigid_body_rotamer_ );
 	sampler_->set_random( options_->choose_random() );
 	sampler_->init();
 }
 
 //////////////////////////////////////////////////////////////////////
-rotamer_sampler::copy_dofs::ResidueAlternativeRotamerCombOP
+rotamer_sampler::copy_dofs::ResidueAlternativeRotamerSamplerCombOP
 StepWiseConnectionSampler::get_rsd_alternatives_rotamer(){
 
 	if ( residue_alternative_sets_.size() == 0 ) return 0;
-	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer =	new ResidueAlternativeRotamerComb();
+	ResidueAlternativeRotamerSamplerCombOP rsd_alternatives_rotamer =	new ResidueAlternativeRotamerSamplerComb();
 	// note that following will include moving_res_ for sampler, as well as any other chunks that might move...
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
 		ResidueAlternativeSet const & residue_alternative_set = residue_alternative_sets_[n];
-		ResidueAlternativeRotamerOP rsd_alt_rotamer;
+		ResidueAlternativeRotamerSamplerOP rsd_alt_rotamer;
 		if ( rigid_body_rotamer_ != 0 ){
-			rsd_alt_rotamer = new ResidueAlternativeRotamer( residue_alternative_set,
+			rsd_alt_rotamer = new ResidueAlternativeRotamerSampler( residue_alternative_set,
 																																									 *rigid_body_rotamer_->pose_at_origin() /*take representative residues from this pose after applying copy_dofs*/);
 		} else {
-			rsd_alt_rotamer = new ResidueAlternativeRotamer( residue_alternative_set );
+			rsd_alt_rotamer = new ResidueAlternativeRotamerSampler( residue_alternative_set );
 		}
 		rsd_alternatives_rotamer->add_residue_alternative_rotamer( rsd_alt_rotamer );
 	}

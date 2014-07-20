@@ -45,7 +45,7 @@
 #include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <protocols/scoring/Interface.hh>
 
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>

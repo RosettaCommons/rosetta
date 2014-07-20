@@ -48,12 +48,12 @@ namespace screener {
 
 		virtual
 		void
-		get_update( rotamer_sampler::RotamerBaseOP sampler );
+		get_update( rotamer_sampler::RotamerSamplerBaseOP sampler );
 
 		// kind of tricky -- put fast_forward above in get_update.
 		//		virtual
 		//		void
-		//		fast_forward( rotamer_sampler::RotamerBaseOP sampler );
+		//		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
 
 	private:
 

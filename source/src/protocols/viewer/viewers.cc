@@ -731,18 +731,18 @@ std::map<std::string, Vector>  get_sidechain_color_rhiju() {
     sidechain_color_rhiju[ "TRP" ] = Vector( 0.3, 0.3, 0.3);
     sidechain_color_rhiju[ "TYR" ] = Vector( 0.0, 0.5, 0.0); //green
     sidechain_color_rhiju[ "SEP" ] = Vector( 0.5, 0.5, 0.0); //orange
-    sidechain_color_rhiju[ "GUA" ] = Vector( 0.0, 0.0, 0.5); //blue
+    sidechain_color_rhiju[ "GUA" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
     sidechain_color_rhiju[ "ADE" ] = Vector( 0.5, 0.5, 0.0); //yellow
     sidechain_color_rhiju[ "CYT" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "THY" ] = Vector( 0.5, 0.0, 0.0); //red
-    sidechain_color_rhiju[ "RGU" ] = Vector( 0.0, 0.0, 0.5); //blue
+    sidechain_color_rhiju[ "THY" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+    sidechain_color_rhiju[ "RGU" ] = Vector( 0.5, 0.0, 0.0); //red [used to be blue, now matching EteRNA]
     sidechain_color_rhiju[ "RAD" ] = Vector( 0.5, 0.5, 0.0); //yellow
     sidechain_color_rhiju[ "RCY" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "URA" ] = Vector( 0.5, 0.0, 0.0); //red
-    sidechain_color_rhiju[ "  G" ] = Vector( 0.0, 0.0, 0.5); //blue
+    sidechain_color_rhiju[ "URA" ] = Vector( 0.0, 0.0, 0.5); //blue  [now matching EteRNA]
+    sidechain_color_rhiju[ "  G" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
     sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
     sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "  U" ] = Vector( 0.5, 0.0, 0.0); //red
+    sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
 
     return sidechain_color_rhiju;
 }

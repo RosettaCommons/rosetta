@@ -20,7 +20,7 @@
 #include <protocols/stepwise/sampling/protein/StepWisePacker.fwd.hh>
 #include <protocols/stepwise/sampling/protein/checker/ProteinAtrRepChecker.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -40,7 +40,7 @@ namespace protein {
 
 		//constructor
 		StepWiseProteinMultiPosePacker( StepWisePackerOP packer,
-																		rotamer_sampler::RotamerSizedOP sampler );
+																		rotamer_sampler::RotamerSamplerSizedOP sampler );
 
 		//destructor
 		~StepWiseProteinMultiPosePacker();
@@ -81,7 +81,7 @@ namespace protein {
 		utility::vector1< pose::PoseOP >  pose_list_;
 
 		StepWisePackerOP packer_;
-		rotamer_sampler::RotamerSizedOP sampler_;
+		rotamer_sampler::RotamerSamplerSizedOP sampler_;
 
 		screener::StepWiseScreenerOP pose_screener_;
 		checker::ProteinAtrRepCheckerOP atr_rep_checker_;

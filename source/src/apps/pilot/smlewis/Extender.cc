@@ -20,8 +20,8 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/chemical/ResidueTypeSet.hh>
@@ -79,7 +79,7 @@ void read_in_extension(
 
  	if (chain == '_') chain = ' ';
 
-	core::pose::PDBPoseMap const & pose_map(pose.pdb_info()->pdb2pose());
+	core::pose::PDB_PoseMap const & pose_map(pose.pdb_info()->pdb2pose());
 	loop_start = pose_map.find(chain, PDBloopstart);
 
 }//read_in_extension

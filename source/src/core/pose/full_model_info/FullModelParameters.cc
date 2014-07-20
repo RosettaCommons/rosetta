@@ -17,7 +17,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -176,7 +176,7 @@ namespace full_model_info {
 	utility::vector1< Size >
 	FullModelParameters::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const {
 
-		PDBInfoCOP pdb_info = pose.pdb_info();
+		PDB_InfoCOP pdb_info = pose.pdb_info();
 		utility::vector1< Size > cutpoint_open;
 
 		for ( Size n = 1; n < pose.total_residue(); n++ ){

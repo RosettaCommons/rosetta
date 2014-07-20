@@ -39,7 +39,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>

@@ -18,8 +18,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDB_PoseMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
@@ -141,7 +141,7 @@ void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::Data
 {
 	using namespace protocols::hotspot_hashing;
 
-	core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDB_PoseMap const pose_map( pose.pdb_info()->pdb2pose() );
 
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
 	n_resi_ = tag->getOption<core::Size>( "best_n", 3 );

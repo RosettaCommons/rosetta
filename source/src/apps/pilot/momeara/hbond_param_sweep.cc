@@ -50,7 +50,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -677,7 +677,7 @@ public:
 						pose_name << don_rsd->type().name() << "_" << hatm << "_";
 						pose_name << acc_rsd->type().name() << "_" << aatm << "_";
 						pose_name << AHdist << "-" << cosBAH << "-" << chi << "-" << cosAHD;
-						PDBInfoOP pdb_info( new PDBInfo( *pose ) );
+						PDB_InfoOP pdb_info( new PDB_Info( *pose ) );
 						assert( pdb_info->nres() == pose->total_residue() );
 						pdb_info->name( pose_name.str());
 					  pose->pdb_info( pdb_info );

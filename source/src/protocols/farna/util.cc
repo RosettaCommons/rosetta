@@ -38,7 +38,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
@@ -1228,7 +1228,7 @@ set_output_res_num( pose::Pose & extended_pose,
 	if ( output_res_num.size() == 0 ) return;
 	runtime_assert( output_res_num.size() == extended_pose.total_residue() );
 
-	PDBInfoOP pdb_info = new PDBInfo( extended_pose );
+	PDB_InfoOP pdb_info = new PDB_Info( extended_pose );
 	pdb_info->set_numbering( output_res_num );
 	extended_pose.pdb_info( pdb_info );
 }

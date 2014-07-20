@@ -34,13 +34,13 @@
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/stepwise/screener/TagDefinition.fwd.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerComb.fwd.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerSamplerComb.fwd.hh>
 #include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeSet.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.fwd.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueAlternatives.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerBase.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/kinematics/Stub.hh>
@@ -133,19 +133,19 @@ namespace sampling {
 		bool
 		initialize_sampler( core::pose::Pose const & pose );
 
-		rotamer_sampler::RotamerSizedOP
+		rotamer_sampler::RotamerSamplerSizedOP
 		initialize_protein_bond_sampler( core::pose::Pose const & pose );
 
-		rotamer_sampler::RotamerBaseOP
+		rotamer_sampler::RotamerSamplerBaseOP
 		initialize_rna_bond_sampler( core::pose::Pose const & pose );
 
 		void
 		initialize_full_rigid_body_sampler();
 
-		rotamer_sampler::RotamerBaseOP
+		rotamer_sampler::RotamerSamplerBaseOP
 		get_full_bond_sampler();
 
-		rotamer_sampler::copy_dofs::ResidueAlternativeRotamerCombOP
+		rotamer_sampler::copy_dofs::ResidueAlternativeRotamerSamplerCombOP
 		get_rsd_alternatives_rotamer();
 
 		void
@@ -194,8 +194,8 @@ namespace sampling {
 		bool kic_sampling_;
 		bool protein_connection_; // should be able to deprecate soon
 
-		rotamer_sampler::rigid_body::RigidBodyRotamerOP rigid_body_rotamer_;
-		protocols::rotamer_sampler::RotamerBaseOP sampler_;
+		rotamer_sampler::rigid_body::RigidBodyRotamerSamplerOP rigid_body_rotamer_;
+		protocols::rotamer_sampler::RotamerSamplerBaseOP sampler_;
 		utility::vector1< screener::StepWiseScreenerOP > screeners_;
 		screener::TagDefinitionOP tag_definition_;
 

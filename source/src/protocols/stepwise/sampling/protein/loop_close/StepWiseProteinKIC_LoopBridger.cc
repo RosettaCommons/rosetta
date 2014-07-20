@@ -18,7 +18,7 @@
 #include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinKIC_LoopBridger.hh>
 #include <protocols/stepwise/sampling/protein/util.hh>
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -75,7 +75,7 @@ namespace loop_close {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-  StepWiseProteinKIC_LoopBridger::StepWiseProteinKIC_LoopBridger( rotamer_sampler::RotamerSizedOP sampler,
+  StepWiseProteinKIC_LoopBridger::StepWiseProteinKIC_LoopBridger( rotamer_sampler::RotamerSamplerSizedOP sampler,
 																												  working_parameters::StepWiseWorkingParametersCOP working_parameters ):
 		sampler_( sampler ),
 		working_bridge_res_( working_parameters->working_bridge_res() ),

@@ -328,12 +328,13 @@ bool
 figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite ){
 	if ( !floating_base &&
 			 rotamer_sampler::rna::sampling_sugar_at_five_prime(  pose, rebuild_suite ) &&
-			 rotamer_sampler::rna::sampling_sugar_at_three_prime( pose, rebuild_suite ) &&
-			 !pose.residue( rebuild_suite ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
-			 !pose.residue( rebuild_suite + 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) ) {
-		TR << "SAMPLE_BOTH_SUGAR_BASE_ROTAMER!" << std::endl;
-		return true;
+			 rotamer_sampler::rna::sampling_sugar_at_three_prime( pose, rebuild_suite ) ){
+		if ( !pose.residue( rebuild_suite ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
+				 !pose.residue( rebuild_suite + 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) ) {
+			return true;
+		}
 	}
+
 	return false;
 }
 

@@ -31,7 +31,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dna/setup.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>

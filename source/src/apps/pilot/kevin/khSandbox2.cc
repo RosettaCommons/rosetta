@@ -17,7 +17,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>

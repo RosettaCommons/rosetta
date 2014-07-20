@@ -97,8 +97,8 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <basic/options/util.hh>//option.hh>
 // #include <basic/options/after_opts.hh>

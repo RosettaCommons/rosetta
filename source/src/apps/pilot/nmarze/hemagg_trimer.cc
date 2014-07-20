@@ -25,7 +25,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/exit.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.hh>
 #include <core/pose/symmetry/util.hh>

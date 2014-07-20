@@ -63,16 +63,16 @@ public:
 	virtual std::string keyname() const { return "ResidueLacksProperty"; }
 };
 
-class ResiduePDBInfoHasLabelCreator : public ResFilterCreator {
+class ResiduePDB_InfoHasLabelCreator : public ResFilterCreator {
 public:
   virtual ResFilterOP create_res_filter() const;
-  virtual std::string keyname() const { return "ResiduePDBInfoHasLabel"; }
+  virtual std::string keyname() const { return "ResiduePDB_InfoHasLabel"; }
 };
 
-class ResiduePDBInfoLacksLabelCreator : public ResFilterCreator {
+class ResiduePDB_InfoLacksLabelCreator : public ResFilterCreator {
 public:
   virtual ResFilterOP create_res_filter() const;
-  virtual std::string keyname() const { return "ResiduePDBInfoLacksLabel"; }
+  virtual std::string keyname() const { return "ResiduePDB_InfoLacksLabel"; }
 };
 
 class ResidueName3IsCreator : public ResFilterCreator {

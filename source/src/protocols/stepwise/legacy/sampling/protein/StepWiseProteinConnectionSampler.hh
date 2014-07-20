@@ -26,7 +26,7 @@
 #include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/stepwise/screener/SimplePoseSelection.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerSamplerSized.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -97,7 +97,7 @@ namespace protein {
 
 		void
 		enable_sampling_of_loop_takeoff( core::pose::Pose & pose,
-																		 rotamer_sampler::RotamerSizedOP sampler );
+																		 rotamer_sampler::RotamerSamplerSizedOP sampler );
 
 	private:
 
@@ -112,7 +112,7 @@ namespace protein {
 		utility::vector1< core::pose::PoseOP > ccd_poses_;
 		core::pose::PoseOP atr_rep_screening_pose_;
 
-		rotamer_sampler::RotamerSizedOP sampler_;
+		rotamer_sampler::RotamerSamplerSizedOP sampler_;
 		utility::vector1< screener::StepWiseScreenerOP > screeners_;
 		utility::vector1< loop_close::StepWiseProteinCCD_CloserOP > stepwise_ccd_closers_;
 		packer::StepWisePackerOP stepwise_packer_;

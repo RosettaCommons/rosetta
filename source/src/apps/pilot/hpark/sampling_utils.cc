@@ -10,7 +10,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>

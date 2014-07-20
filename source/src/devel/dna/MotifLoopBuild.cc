@@ -19,7 +19,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>

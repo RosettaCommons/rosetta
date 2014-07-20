@@ -27,7 +27,7 @@
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

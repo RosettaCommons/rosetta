@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -234,7 +234,7 @@ WaterFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
-	core::pose::PDBInfoCOP pdb_info(pose.pdb_info());
+	core::pose::PDB_InfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return 0;
 
 	InsertGenerator igen_wat_accepts("water_hbond_acceptors");

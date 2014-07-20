@@ -39,7 +39,7 @@
 // AUTO-REMOVED #include <core/scoring/packing/surf_vol.hh>
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 

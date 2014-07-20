@@ -36,7 +36,7 @@
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>

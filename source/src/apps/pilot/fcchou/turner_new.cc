@@ -25,8 +25,8 @@
 
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/stepwise/sampling/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/rotamer_sampler/rna/RNA_McSuite.hh>
-#include <protocols/rotamer_sampler/rna/RNA_McMultiSuite.hh>
+#include <protocols/rotamer_sampler/rna/RNA_MC_Suite.hh>
+#include <protocols/rotamer_sampler/rna/RNA_MC_MultiSuite.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -180,7 +180,7 @@ void vector2disk_in2d(
 //////////////////////////////////////////////////////////////////////////////
 
 void set_gaussian_stdev(
-	rotamer_sampler::rna::RNA_McMultiSuite & sampler,
+	rotamer_sampler::rna::RNA_MC_MultiSuite & sampler,
 	moves::SimulatedTempering const & tempering,
 	utility::vector1<Size> const & bp_rsd,
 	utility::vector1<Size> const & dangling_rsd
@@ -264,23 +264,23 @@ MC_run () {
 	}
 
 	// Sampler setup
-	RNA_McMultiSuite sampler;
+	RNA_MC_MultiSuite sampler;
 	for ( Size i = 1; i <= total_len; ++i ) {
 		bool const sample_near_a_form( bp_rsd.has_value( i ) );
 		if ( i == 1 || ( i > len1 && i != total_len ) ) {
-			RNA_McSuiteOP suite_sampler( new RNA_McSuite( i ) );
+			RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i ) );
 			suite_sampler->set_sample_bb( i != 1 );
 			suite_sampler->set_sample_lower_nucleoside( true );
 			suite_sampler->set_sample_upper_nucleoside( false );
 			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			sampler.add_rotamer( suite_sampler );
+			sampler.add_external_loop_rotamer( suite_sampler );
 		} else {
-			RNA_McSuiteOP suite_sampler( new RNA_McSuite( i - 1 ) );
+			RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i - 1 ) );
 			suite_sampler->set_sample_bb( len1 == total_len || i != total_len );
 			suite_sampler->set_sample_lower_nucleoside( false );
 			suite_sampler->set_sample_upper_nucleoside( true );
 			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			sampler.add_rotamer( suite_sampler );
+			sampler.add_external_loop_rotamer( suite_sampler );
 		}
 	}
 	sampler.init();

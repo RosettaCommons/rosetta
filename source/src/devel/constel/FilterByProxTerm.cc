@@ -18,7 +18,7 @@
 #include <devel/constel/cnl_info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <utility/vector1.hh>
 
 

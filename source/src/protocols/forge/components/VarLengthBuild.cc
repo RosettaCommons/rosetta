@@ -53,7 +53,7 @@
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/Energies.hh>

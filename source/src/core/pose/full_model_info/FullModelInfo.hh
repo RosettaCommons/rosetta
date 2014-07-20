@@ -136,7 +136,7 @@ private:
 
 private:
 
-	// residues that go with pose. In principle, this is redundant with PDBInfo,
+	// residues that go with pose. In principle, this is redundant with PDB_Info,
 	// but not in eventual case where user has favorite numbering/chain scheme.
 	utility::vector1< Size > res_list_;
 

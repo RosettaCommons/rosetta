@@ -22,8 +22,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
 
@@ -59,7 +59,7 @@ get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::st
 		}
 	}
 	else{
-		core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
+		core::pose::PDB_PoseMap const pose_map( pose.pdb_info()->pdb2pose() );
 		if( pdb_num_used ) {
 			std::string pdbnum( tag_ptr->getOption<std::string>( prefix + "pdb_num" ) );
 			char const chain( pdbnum[ pdbnum.length() - 1 ] );
@@ -121,7 +121,7 @@ parse_resnum(
 	ss >> n;
 	if( chain.size() == 1 ) { // PDB Number
 		TR.Trace << "Interpretting " << n << chain << " as a pdb number." << std::endl;
-		pose::PDBInfoCOP info = pose.pdb_info();
+		pose::PDB_InfoCOP info = pose.pdb_info();
 		runtime_assert(info);
 		return info->pdb2pose( chain[0], n );
 	}

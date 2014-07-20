@@ -38,7 +38,7 @@
 #include <core/pack/packer_neighbors.hh> //for calculating lig part sums
 #include <core/pack/rotamer_set/RotamerSets.hh> //for calculating lig part sums
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/pose/PDBInfo.hh> //for getting pdb name
+#include <core/pose/PDB_Info.hh> //for getting pdb name
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>

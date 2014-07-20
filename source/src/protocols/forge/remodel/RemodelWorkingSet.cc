@@ -556,7 +556,7 @@ void RemodelWorkingSet::manualPackerTaskGen( pose::Pose const & built_pose, prot
 	// create the real task
 	task = tf->create_task_and_apply_taskoperations( built_pose );
 
-	//pose::PDBPoseMap map(built_pose.pdb_info()->pdb2pose());
+	//pose::PDB_PoseMap map(built_pose.pdb_info()->pdb2pose());
 	//TR << map.find(' ',1,' ') << "PDBPosemap" << std::endl;
 	core::pack::task::parse_resfile_string( built_pose, *task, data.parsed_string_for_resfile );
 

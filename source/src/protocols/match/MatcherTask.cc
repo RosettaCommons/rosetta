@@ -38,7 +38,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/scoring/func/Func.hh>
 
 #include <basic/Tracer.hh>
@@ -1051,7 +1051,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 {
 	if( !upstream_pose_ ) return;
 
-	core::pose::PDBInfoCOP pose_pdbinfo = upstream_pose_->pdb_info();
+	core::pose::PDB_InfoCOP pose_pdbinfo = upstream_pose_->pdb_info();
 
 	core::pose::Remarks const & pose_remarks = pose_pdbinfo->remarks();
 

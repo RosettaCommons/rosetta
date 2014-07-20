@@ -17,7 +17,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
@@ -181,7 +181,7 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
-	PDBInfoOP pdb_info = new PDBInfo( pose );
+	PDB_InfoOP pdb_info = new PDB_Info( pose );
 	pdb_info->set_numbering( const_full_model_info( pose ).full_model_parameters()->full_to_conventional( res_list ) );
 	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
 
@@ -235,7 +235,7 @@ get_chains_full( pose::Pose const & pose ){
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// assign to different chains. [Note: we could actually use PDBInfo for this bookkeeping... perhaps that's a good idea]
+// assign to different chains. [Note: we could actually use PDB_Info for this bookkeeping... perhaps that's a good idea]
 // label them 1, 2, 3, etc.
 utility::vector1< Size >
 figure_out_chain_numbers_from_full_model_info_const( pose::Pose const & pose ) {
@@ -500,7 +500,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 		utility::vector1< int > resnum;
 
-		PDBInfoCOP pdb_info = pose.pdb_info();
+		PDB_InfoCOP pdb_info = pose.pdb_info();
 
 		if ( ( pdb_info != 0 ) && !pdb_info->obsolete())	{
 			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
@@ -516,7 +516,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 		utility::vector1< char > chains;
 
-		PDBInfoCOP pdb_info = pose.pdb_info();
+		PDB_InfoCOP pdb_info = pose.pdb_info();
 
 		if ( ( pdb_info != 0 ) && !pdb_info->obsolete())	{
 			for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( pdb_info->chain( n ) );

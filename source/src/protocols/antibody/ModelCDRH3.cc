@@ -36,7 +36,7 @@
 #include <protocols/antibody/H3PerturbCCD.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/H3CterInsert.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/conformation/util.hh>
 
 

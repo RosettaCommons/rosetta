@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Remarks.hh>
 #include <core/id/AtomID.hh>
 

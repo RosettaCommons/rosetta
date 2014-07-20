@@ -25,8 +25,8 @@
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDB_PoseMap.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <basic/Tracer.hh>
@@ -204,7 +204,7 @@ RestrictDesignToProteinDNAInterface::apply(
 			Size index( (*def)->pdbpos );
 			if ( pose.pdb_info() ) {
 				// if pose has PDB numbering and chain info, assume DNA defs refer to them
-				PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
+				PDB_PoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 				index = pdb_pose_map.find( (*def)->chain, (*def)->pdbpos );
 			}
 			if ( ! pose.residue_type( index ).is_DNA() ) {

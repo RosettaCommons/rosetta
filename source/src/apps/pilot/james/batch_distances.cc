@@ -24,7 +24,7 @@
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <devel/init.hh>
 
 // Objexx

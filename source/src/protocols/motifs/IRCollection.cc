@@ -21,7 +21,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/Energies.hh>

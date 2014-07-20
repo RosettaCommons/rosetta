@@ -41,7 +41,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

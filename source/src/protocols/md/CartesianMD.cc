@@ -56,7 +56,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>

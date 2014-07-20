@@ -21,7 +21,7 @@
 #include <core/id/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -92,7 +92,7 @@ delete_region(Pose & pose, Size const start, Size const end){
 
 Pose
 return_region(Pose & pose, Size const start, Size const end){
-	
+
     //Copy residues into a new pose.  Uses create_subpose.
 	Pose piece;
 	core::kinematics::FoldTree new_foldtree;
@@ -112,15 +112,15 @@ return_region(Pose & pose, Size const start, Size const end){
 
 
 	core::pose::create_subpose(pose, positions, new_foldtree, piece);
-	
-	//Create subpose results in a NULL PDBInfo.  We now need a new one.
-	core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo(piece.total_residue());
+
+	//Create subpose results in a NULL PDB_Info.  We now need a new one.
+	core::pose::PDB_InfoOP pdb_info = new core::pose::PDB_Info(piece.total_residue());
 	piece.pdb_info(pdb_info);
-	
+
 	piece.pdb_info()->copy(*(pose.pdb_info()), start, end, 1); //Should be an option directly within subpose
 	piece.pdb_info()->obsolete(false);
 	piece.conformation().detect_disulfides();
-	
+
 	return piece;
 }
 
@@ -143,8 +143,8 @@ replace_region(
 		combined.conformation().replace_residue(pose_num, piece_rsd, replace_backbone);
 
 	}
-	
-	
+
+
 	if (copy_pdbinfo && from_pose.pdb_info() && combined.pdb_info()){
 		combined.pdb_info()->copy(*(from_pose.pdb_info()), from_pose_start_residue, from_pose_start_residue + insertion_length -1, to_pose_start_residue);
 		combined.pdb_info()->obsolete(false);
@@ -159,7 +159,7 @@ insert_pose_into_pose(
 	Pose const & insert_pose,
 	core::Size const insert_point,
 	bool copy_pdbinfo /*false*/
-		
+
 ){
 	return insert_pose_into_pose(scaffold_pose, insert_pose, insert_point, insert_point+1, copy_pdbinfo);
 }
@@ -177,15 +177,15 @@ insert_pose_into_pose(
 	//local copies
 	core::pose::Pose scaffold(scaffold_pose);
 	core::pose::Pose insert(insert_pose);
-	
+
 	//TR << "Pre Insertion: " << std::endl;
 	//scaffold_pose.constraint_set()->show(TR);
 	//scaffold.constraint_set()->show(TR);
-	
+
 	//Get Disulfide information:
 	utility::vector1< std::pair< core::Size, core::Size > > disulfide_pair_list;
 	core::conformation::disulfide_bonds(insert.conformation(), disulfide_pair_list);
-	
+
 	core::kinematics::FoldTree original_scaffold_tree = scaffold.fold_tree();
 	core::Size const insert_length = insert.total_residue();
 	//strip termini variants from insert if necessary
@@ -200,12 +200,12 @@ insert_pose_into_pose(
 	//Not that it's been tested...
 	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::LOWER_TERMINUS_VARIANT, insert_point);
 	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::UPPER_TERMINUS_VARIANT, insert_point_end);
-	
+
 	TR << "insert_point " << insert_point << std::endl;
 	TR << "insert_start " << insert_start << std::endl;
 	TR << "insert_end " << insert_end << std::endl;
 	TR << "insert_length " << insert_length << std::endl;
-    
+
 	//Fold tree allows insertion into scaffold (all via jump)
 	using core::kinematics::Edge;
 	core::pose::Pose combined(scaffold);
@@ -229,12 +229,12 @@ insert_pose_into_pose(
 	//Set a fold tree.
 	core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
 	combined.fold_tree(new_tree);
-	
+
 	if (copy_pdbinfo && insert_pose.pdb_info() && combined.pdb_info()){
 		combined.pdb_info()->copy(*(insert_pose.pdb_info()), 1, insert_pose.total_residue(), insert_point+1);
 		combined.pdb_info()->obsolete(false);
 	}
-	
+
 	//Fix Disulfides.
 	for (core::Size i = 1; i <= disulfide_pair_list.size(); ++i){
 		core::Size new_resnum1 = disulfide_pair_list[i].first + insert_point;
@@ -243,7 +243,7 @@ insert_pose_into_pose(
 		//This is all we need, as the disulfides have already been detected in conformation. No need to mutate or optimize.
 		combined.conformation().declare_chemical_bond(new_resnum1,"SG",new_resnum2,"SG");
 	}
-	
+
 	//TR << "Post insertion: " << std::endl;
 	//combined.constraint_set()->show(TR);
 
@@ -253,7 +253,7 @@ insert_pose_into_pose(
 //////////////////////////////////////////////////////
 void
 repack_connection_and_residues_in_movemap(
-	core::pose::Pose & pose, core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::pose::Pose & pose, core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start, core::Size const end, core::kinematics::MoveMapCOP movemap){
 
 	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperationOP;
@@ -264,15 +264,15 @@ repack_connection_and_residues_in_movemap(
 	local->set_chi(start+1, true);
 	local->set_chi(end, true);
 	local->set_chi(end-1, true);
-	
+
 	RestrictToMoveMapChiOperationOP mm_task_op = new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local);
 	mm_task_op->set_include_neighbors(false);
-	
+
 	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
 	tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
 	tf->push_back(new core::pack::task::operation::RestrictToRepacking());
 	tf->push_back(mm_task_op);
-	
+
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
 	packer->apply(pose);
@@ -280,13 +280,13 @@ repack_connection_and_residues_in_movemap(
 
 void
 repack_connection_and_residues_in_movemap_and_piece(
-	core::pose::Pose & pose, core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::pose::Pose & pose, core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start, core::Size const end, core::kinematics::MoveMapCOP movemap){
 
 	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperationOP;
 	using namespace core::pack::task::operation;
 	using namespace core::pack::task;
-	
+
 	MoveMapOP local = movemap->clone();
 	local->set_chi(start, true);
 	local->set_chi(start+1, true);
@@ -295,15 +295,15 @@ repack_connection_and_residues_in_movemap_and_piece(
 	for (Size i = start+2; i <= end-2; ++i){
 	    local->set_chi(i, true);
 	}
-	
+
 	RestrictToMoveMapChiOperationOP mm_task_op = new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local);
 	mm_task_op->set_include_neighbors(false);
-	
+
 	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
 	tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
 	tf->push_back(new core::pack::task::operation::RestrictToRepacking());
 	tf->push_back(mm_task_op);
-	
+
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
 	packer->apply(pose);
@@ -311,13 +311,13 @@ repack_connection_and_residues_in_movemap_and_piece(
 
 void
 repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
-	core::pose::Pose & pose, ScoreFunctionCOP fa_scorefxn, 
+	core::pose::Pose & pose, ScoreFunctionCOP fa_scorefxn,
 	core::Size const start, core::Size const end, MoveMapCOP movemap, core::Real neighbor_dis)
 {
 	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperationOP;
 	using namespace core::pack::task::operation;
 	using namespace core::pack::task;
-	
+
 	MoveMapOP local = movemap->clone();
 	local->set_chi(start, true);
 	local->set_chi(start+1, true);
@@ -326,17 +326,17 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	for (Size i = start+2; i <= end-2; ++i){
 	    local->set_chi(i, true);
 	}
-	
-	
+
+
 	RestrictToMoveMapChiOperationOP mm_task_op = new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local);
 	mm_task_op->set_include_neighbors(true);
 	mm_task_op->set_cutoff_distance(neighbor_dis);
-	
+
 	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
 	tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
 	tf->push_back(new core::pack::task::operation::RestrictToRepacking());
 	tf->push_back(mm_task_op);
-	
+
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
 	packer->apply(pose);
@@ -344,7 +344,7 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 
 void
 superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, Size start, Size end, Size Nter_overhang, Size Cter_overhang){
-	
+
 	if (Nter_overhang == 0 && Cter_overhang ==0){
 		return;
 	}
@@ -487,7 +487,7 @@ add_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, it->cut());
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, it->cut()+1);
 	}
-	
+
 }
 
 void
@@ -506,7 +506,7 @@ graft_closed(Pose & pose, Loops & loops){
 			return false;
 		}
     }
-    
+
     return true;
 }
 
@@ -515,7 +515,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
     	///////////////////////////////////////Idealize////////////////////////////////////////////////////////
 	//this code also resets conformation variables: omegas to 180, newly made connections phi or psi to reasonable
 	//edges of insert will be somewhat mobile inside minimization (small and CCD moves will ignore it)
-    
+
 	//Order of idealization matters here.
 	//Nter regions
 	for(core::Size i = Nter_loop_start; i<=start; ++i) {
@@ -529,7 +529,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 	TR << "ideal " << insert_start << std::endl;
 
 	//Set individual torsions ON in the movemap for the start and end of the insert
-	
+
 	combined.set_phi(insert_start, -60);
 
 	//insert regions
@@ -542,7 +542,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 		}
 	}
 
-	
+
 	combined.conformation().insert_ideal_geometry_at_polymer_bond(insert_end);
 
 	TR << "ideal " << insert_end << std::endl;
@@ -550,7 +550,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 	combined.set_psi(insert_end, -40);
 
 	//Cter regions
-	
+
 	for(core::Size i=insert_end+1; i<=Cter_loop_end; ++i) {
 		//movemap->set( TorsionID(i, BB, omega_torsion), false ); //fixes omega angle
 		if (movemap->get_bb(i)){
@@ -559,7 +559,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 			TR << "mobile " << i << std::endl;
 		}
 	}
-	
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ///FOLDTREE SETUP.   options depending on how you want your graft algorithm to work!

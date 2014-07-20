@@ -13,7 +13,7 @@
 //#include <algorithm >
 #include <protocols/matdes/MatDesPointMutationCalculator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDB_Info.hh>
 #include <fstream>
 // AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
