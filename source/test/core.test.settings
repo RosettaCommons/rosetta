@@ -177,7 +177,7 @@ sources = {
 	],
 	"pose" : [
 		"PDB_Info",
-		"PDBPoseMap",
+		"PDB_PoseMap",
 		"Pose",
 		"util",
 	 ],

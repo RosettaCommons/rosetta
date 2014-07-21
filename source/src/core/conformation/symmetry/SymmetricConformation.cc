@@ -1047,7 +1047,7 @@ SymmetricConformation::detect_disulfides()
 			// needs to be cleared
 			if ( processed_cys.find( ii_resid ) == processed_cys.end() && ii_res.has_variant_type( chemical::DISULFIDE ) ) {
 				TR << "Reverting out-of-date disulfide (distance " << best_match << ") CYD to CYS at resid " << ii_resid << std::endl;
-				bool successful_revert;
+				bool successful_revert = false;
 				if (ii_res.type().name() == "HCYD") {
 					successful_revert = conformation::change_cys_state( ii_resid, "C26", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
 				} else if (ii_res.type().name() == "CYD") {

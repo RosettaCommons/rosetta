@@ -2016,21 +2016,22 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 		bool result = false;
 		std::string oname = conformation.residue_type( other_res ).name();
 		bool o_cys = (oname.find("CYS") != std::string::npos);
-		bool o_cyd = (oname.find("CYD") != std::string::npos);
+		//bool o_cyd = (oname.find("CYD") != std::string::npos);
 		bool o_dcys = (oname.find("DCYS") != std::string::npos);
-		bool o_dcyd = (oname.find("DCYD") != std::string::npos);
+		//bool o_dcyd = (oname.find("DCYD") != std::string::npos);
 		bool o_hcys = (oname.find("C26") != std::string::npos);
-		bool o_hcyd = (oname.find("HCYD") != std::string::npos);
+		//bool o_hcyd = (oname.find("HCYD") != std::string::npos);
 		bool o_dhcys = (oname.find("F26") != std::string::npos);
-		bool o_dhcyd = (oname.find("DHCYD") != std::string::npos);
-		if (o_cys)
+		// bool o_dhcyd = (oname.find("DHCYD") != std::string::npos);
+		if (o_cys) {
 			result = change_cys_state( other_res, "CYS", conformation );
-		else if (o_dcys)
+		} else if (o_dcys) {
 			result = change_cys_state( other_res, "DCYS", conformation );
-		else if (o_hcys)
+		} else if (o_hcys) {
 			result = change_cys_state( other_res, "C26", conformation );
-		else if (o_dhcys)
+		} else if (o_dhcys) {
 			result = change_cys_state( other_res, "F26", conformation );
+		}
 		runtime_assert_msg(result,"Error converting disulfide to reduced state");
 	}
 	else {

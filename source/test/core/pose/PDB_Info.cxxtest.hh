@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDB_Info.hh>
-#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDB_PoseMap.hh>
 #include <core/pose/Pose.hh>
 
 // utility headers
@@ -55,7 +55,7 @@ public:
 	typedef core::conformation::Conformation Conformation;
 	typedef core::conformation::ResidueOP ResidueOP;
 	typedef core::pose::PDB_Info PDB_Info;
-	typedef core::pose::PDBPoseMap PDBPoseMap;
+	typedef core::pose::PDB_PoseMap PDB_PoseMap;
 	typedef core::pose::Pose Pose;
 
 	// shared data
@@ -102,9 +102,9 @@ public:
 		TS_ASSERT_EQUALS( pose.pdb_info()->icode( 4 ), ' ' );
 	}
 
-	/// @brief test basic functionality of internally maintained PDBPoseMap
+	/// @brief test basic functionality of internally maintained PDB_PoseMap
 	///  of PDB_Info from input
-	void test_PDB_Info_from_input_pdb_PDBPoseMap() {
+	void test_PDB_Info_from_input_pdb_PDB_PoseMap() {
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose().size(), 4 );
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'L', 1, ' ' ), 1 );
 		TS_ASSERT_EQUALS( pose.pdb_info()->pdb2pose( 'H', 100, 'C' ), 2 );
