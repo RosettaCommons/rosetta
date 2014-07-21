@@ -191,11 +191,11 @@ namespace devel {
 			using namespace core::chemical;
 
 			core::Size from_nearest_on_source(0), to_nearest_on_source(0);
-			if (skip_alignment()) { // use skip alignment if you know the segments are perfectly aligned by residue number and there are no loop length changes. Ask Sarel
-				from_nearest_on_source = from_res;
-				to_nearest_on_source = to_res;
-			}
-			else {
+//			if (skip_alignment()) { // use skip alignment if you know the segments are perfectly aligned by residue number and there are no loop length changes. Ask Sarel
+//				from_nearest_on_source = from_res;
+//				to_nearest_on_source = to_res;
+//			}
+//			else {
 				core::Size const host_chain(chain_num() ); /// in certain cases, when the partner protein sterically overlaps with the designed protein, there are amibguities about which chain to search. The use of host_chain removes these ambiguities. Here, ugly hardwired
 				from_nearest_on_source = find_nearest_res(source, target, from_res, host_chain);
 				to_nearest_on_source = find_nearest_res(source, target, to_res, host_chain);
@@ -219,7 +219,7 @@ namespace devel {
 				//	target.dump_pdb( "before_copy_stretch_llc_test.pdb" );
 				llc.apply(target);
 					//target.dump_pdb( "after_copy_stretch_llc_test.pdb" );
-			}
+//			}
 
 			target.copy_segment(to_nearest_on_source - from_nearest_on_source + 1, source, from_res, from_nearest_on_source);
 			if (debug_)
@@ -295,6 +295,10 @@ namespace devel {
 			if (first_pass_) {		/// setup the dbase subset where loop lengths fit the selection criteria
 				for (core::Size i = 1; i <= torsion_database_.size(); ++i) {		// find entries that fit the length criteria
 					using namespace protocols::rosetta_scripts;
+					if( skip_alignment() ){/*skip_alignment=true means that we trust the torsiondb entirely*/
+						dbase_subset_.push_back( i );
+						continue;
+					}
 
 					ResidueBBDofs const & dofs(torsion_database_[i]);
 					//TR<<"Dofs start loop: "<<dofs.start_loop()<<std::endl;
@@ -316,7 +320,7 @@ namespace devel {
 					}
 					bool const fit = std::find(delta_lengths_.begin(), delta_lengths_.end(), delta) != delta_lengths_.end();
 
-					if (fit || database_pdb_entry_ != "" || dbase_entry != 0) {
+					if (fit || database_pdb_entry_ != "" || dbase_entry != 0 ) {
 						dbase_subset_.push_back(i);
 					}
 				}
@@ -351,7 +355,7 @@ namespace devel {
 					{
 							TR << "The dbase_subset size is " << dbase_subset_.size() << std::endl;
 							core::Size entry_no_to_choose = (core::Size) (RG.uniform() * dbase_subset_.size() + 1);
-							TR << "trying to pick entry " << entry_no_to_choose << std::endl; 
+							TR << "trying to pick entry " << entry_no_to_choose << std::endl;
 							dbase_entry = dbase_subset_[ entry_no_to_choose ];
 					}
 				//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
@@ -579,9 +583,7 @@ namespace devel {
 				nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
 				nearest_to_from = 1;
 				/// set from_res/to_res/cut_site on the incoming pose
-				if (template_file_ != "") { /// according to the template pose
-					from_res(find_nearest_res(pose, *template_pose_, dofs.start_loop(), 1/*chain*/));
-					to_res(find_nearest_res(pose, *template_pose_, dofs.stop_loop(), 1/*chain*/));
+				if (template_file_ != "" && !skip_alignment() ) { /// according to the template pose
 					//			to_res( from_res() + dofs.size() -1);
 					runtime_assert(from_res());
 					runtime_assert(to_res());
@@ -835,6 +837,7 @@ namespace devel {
 			acb.find_automatically(false);
 			acb.change_foldtree(false);
 
+//pose.dump_pdb("SJF_debugging.pdb");
 				acb.apply(pose);
 				TR << "Adding ccd chainbreak at: " << cut_site + residue_diff << std::endl;
 			}
@@ -1281,11 +1284,11 @@ namespace devel {
 
 				//Debugging, remove after, gideonla aug13
 				//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
-				TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());	
+				TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());
 				tf_in->push_back(new operation::InitializeFromCommandline);
 				tf_in->push_back(new operation::NoRepackDisulfides);
 				tf_in->push_back(dao);
-				
+
 				PackerTaskOP ptask = tf_in()->create_task_and_apply_taskoperations(pose);
 				protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 				//		pose.conformation().detect_disulfides();
