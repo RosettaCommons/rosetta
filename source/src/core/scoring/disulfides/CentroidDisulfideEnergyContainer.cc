@@ -564,9 +564,7 @@ CentroidDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		conformation::Residue res = pose.residue( ii );
-		//if ( res.aa() == chemical::aa_cys &&
-		// here we'll use name3 because we're checking variant type
-		if ( ( res.type().name3() == "CYS" || res.type().name3() == "DCS" || res.type().name3() == "C26" || res.type().name3() == "F26" ) &&
+		if ( res.aa() == chemical::aa_cys &&
 				res.has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
 				pose.residue_type( ii ).has( "CEN" )
@@ -618,9 +616,9 @@ CentroidDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
 			conformation::Residue res = pose.residue( ii );
-			if ( //res.aa() != chemical::aa_cys ||
+			if ( res.aa() != chemical::aa_cys ||
 					disulfide_residue_types_[ ii ]() != & (pose.residue_type( ii )) ||
-					/*subsumed by residue type check ! */ pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
+					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
 					! pose.residue_type( ii ).has( "CEN" ) || // not centroid
 					res.connect_map(
 						res.type().residue_connection_id_for_atom(
@@ -628,7 +626,7 @@ CentroidDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 					other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) ) {
 				return true;
 			}
-		} else if ( ( pose.residue( ii ).type().name() == "CYD" || pose.residue( ii ).type().name() == "DCYD" || pose.residue( ii ).type().name() == "HCYD" || pose.residue( ii ).type().name() == "DHCYD") && //aa() == chemical::aa_cys &&
+		} else if ( pose.residue( ii ).aa() == chemical::aa_cys &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE )) {
 			return true;
 		}

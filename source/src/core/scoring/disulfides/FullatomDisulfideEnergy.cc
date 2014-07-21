@@ -182,17 +182,12 @@ FullatomDisulfideEnergy::defines_score_for_residue_pair(
 ) const
 {
 	using namespace chemical;
-	std::string at1 = (res1.type().has( "SG" ) ? "SG":"SD");
-	std::string at2 = (res2.type().has( "SG" ) ? "SG":"SD");
-	if (!res1.type().has( at1 ) || !res2.type().has( at2 )) return false;
-
-	//awatkins: can use the name3 here for checking
-	return res_moving_wrt_eachother 
-		&& (res1.type().name3() == "CYS" || res1.type().name3() == "C26" || res1.type().name() == "DCS" || res1.type().name() == "F26") 
-		&& (res2.type().name3() == "CYS" || res2.type().name3() == "C26" || res2.type().name() == "DCS" || res2.type().name() == "F26") 
-		&& res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE ) 
-		&& res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( at1 ) ) ).resid() == res2.seqpos()
-		&& res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( at2 ) ) ).resid() == res1.seqpos();
+	return res_moving_wrt_eachother && res1.aa() == aa_cys && res2.aa() == aa_cys &&
+		res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE ) &&
+		res1.type().has( "SG" ) &&
+		res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( "SG" ) ) ).resid() == res2.seqpos() &&
+		res2.type().has( "SG" ) &&
+		res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( "SG" ) ) ).resid() == res1.seqpos();
 }
 
 bool
@@ -430,9 +425,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 		return;
 	}
 
-	//if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
-	if ( (rsd1.type().name() != "CYD" || rsd1.type().name() != "DCYD" || rsd1.type().name() != "HCYD" || rsd1.type().name() != "DHCYD") ) return;
-	if ( (rsd2.type().name() != "CYD" || rsd2.type().name() != "DCYD" || rsd2.type().name() != "HCYD" || rsd2.type().name() != "DHCYD") ) return;
+	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
 		static_cast< FullatomDisulfideEnergyContainer const * > (
 		pose.energies().long_range_container( methods::fa_disulfide_energy ).get() ));

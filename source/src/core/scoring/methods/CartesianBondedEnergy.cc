@@ -1020,10 +1020,6 @@ IdealParametersDatabase::lookup_torsion_legacy(
 		if ( restype.atom_name(atm1) == " CEN" || restype.atom_name(atm4) == " CEN") {
 			Kphi=0.0; phi0=0.0;
 		}
-		if ( (restype.name().find( "HCYD" ) != std::string::npos ) && restype.has_variant_type( chemical::DISULFIDE )  && //D- or L-homocystine
-			(restype.atom_name(atm2) == " SD " || restype.atom_name(atm3) == " SD ") ) {
-			Kphi=0.0; phi0=0.0; // awatkins: untested
-		}
 		if ( (restype.aa() == aa_cys || restype.aa() == aa_dcs) && restype.has_variant_type( chemical::DISULFIDE )  && //D- or L-cystine
 				(restype.atom_name(atm2) == " SG " || restype.atom_name(atm3) == " SG ") ) {
 			Kphi=0.0; phi0=0.0;

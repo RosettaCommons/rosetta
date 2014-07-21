@@ -52,8 +52,6 @@
 //#include <map>
 #include <algorithm>
 
-#include <core/conformation/util.hh>
-
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
 #include <utility/vector0.hh>
 #include <basic/Tracer.hh>
@@ -132,48 +130,16 @@ DisulfideMover::~DisulfideMover() {}
 ///   disulfide correctly.
 void DisulfideMover::form_disulfide(Pose & pose, Size lower_res, Size upper_res)
 {
-	//awatkins: reduce code duplication by using conformation's version of this function
-	core::conformation::form_disulfide(pose.conformation(), lower_res, upper_res);
-	
-	return;
-	
-	
 	ResidueTypeSetCAP restype_set =
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	ResidueCAP  l_disulf, u_disulf;
-	std::string l_atom,   u_atom;
-	if (pose.conformation().residue(lower_res).type().name() == "CYS") {
-		l_disulf = new Residue ( restype_set->name_map("CYD"), true/*dummy*/ );
-		l_atom = "SG";
-	} else if (pose.conformation().residue(lower_res).type().name() == "DCYS") {
-		l_disulf = new Residue ( restype_set->name_map("DCYD"), true/*dummy*/ );
-		l_atom = "SG";
-	} else if (pose.conformation().residue(lower_res).type().name() == "C26") {
-		l_disulf = new Residue ( restype_set->name_map("HCYD"), true/*dummy*/ );
-		l_atom = "SD";
-	} else if (pose.conformation().residue(lower_res).type().name() == "F26") {
-		l_disulf = new Residue( restype_set->name_map("DHCYD"), true/*dummy*/ );
-		l_atom = "SD";
-	}
-	if (pose.conformation().residue(upper_res).type().name() == "CYS") {
-		u_disulf = new Residue( restype_set->name_map("CYD"), true/*dummy*/ );
-		u_atom = "SG";
-	} else if (pose.conformation().residue(upper_res).type().name() == "DCYS") {
-		u_disulf = new Residue( restype_set->name_map("DCYD"), true/*dummy*/ );
-		u_atom = "SG";
-	} else if (pose.conformation().residue(upper_res).type().name() == "C26") {
-		u_disulf = new Residue( restype_set->name_map("HCYD"), true/*dummy*/ );
-		u_atom = "SD";
-	} else if (pose.conformation().residue(upper_res).type().name() == "F26") {
-		u_disulf = new Residue( restype_set->name_map("DHCYD"), true/*dummy*/ );
-		u_atom = "SD";
-	}
+	Residue const cyd( restype_set->name_map("CYD"), true/*dummy*/ );
+
 	//mutate the two residues
-	pose.replace_residue(lower_res, *l_disulf, true /*orient backbone*/);
-	pose.replace_residue(upper_res, *u_disulf, true /*orient backbone*/);
+	pose.replace_residue(lower_res, cyd, true /*orient backbone*/);
+	pose.replace_residue(upper_res, cyd, true /*orient backbone*/);
 
 	//form the bond between the two residues
-	pose.conformation().declare_chemical_bond(lower_res,l_atom,upper_res,u_atom);
+	pose.conformation().declare_chemical_bond(lower_res,"SG",upper_res,"SG");
 }
 
 void DisulfideMover::apply( Pose & pose ) {
@@ -253,7 +219,7 @@ void DisulfideMover::apply( Pose & pose ) {
 			task_, scorefxn_repack_, mm, scorefxn_minimize_);
 
 		std::string name = trial_pose->residue(disulf->first).name();
-		assert(name == "CYD" || name == "HCYD" || name == "DCYD" || name == "DHCYD");
+		assert(name == "CYD");
 
 		// Is this pose better than the previous best pose?
 		if( !best_pose ||

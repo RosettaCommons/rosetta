@@ -127,21 +127,18 @@ void CentroidDisulfideEnergy::residue_pair_energy(
 	Energy backbone_dihedral_score;
 
 	//Require cysteines
-	//if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
-	if ( ( rsd1.type().name() != "CYS" && rsd1.type().name() != "DCYS" && rsd1.type().name() != "C26" && rsd1.type().name() != "F26")
-	  || ( rsd2.type().name() != "CYS" && rsd2.type().name() != "DCYS" && rsd2.type().name() != "C26" && rsd2.type().name() != "F26") )
-		return;
-	
+	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
 	//Require Centroid
-	if ( rsd1.residue_type_set().name() != chemical::CENTROID || rsd2.residue_type_set().name() != chemical::CENTROID )
+	if (rsd1.residue_type_set().name() != chemical::CENTROID ||
+			rsd2.residue_type_set().name() != chemical::CENTROID )
 		return;
 
 	CentroidDisulfideEnergyContainerCOP dec = CentroidDisulfideEnergyContainerCOP (
 			static_cast< CentroidDisulfideEnergyContainer const * > (
 				pose.energies().long_range_container( methods::centroid_disulfide_energy ).get() ));
 	//Require they're bonded
-	if ( !dec->residue_forms_disulfide( rsd1.seqpos() ) 
-	  || dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
+	if ( ! dec->residue_forms_disulfide( rsd1.seqpos() ) ||
+			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
 		return;
 	}
 

@@ -125,7 +125,7 @@ Residue::Residue(
 
 	// Assumption: if two residue types have the same number of residue connections,
 	// then their residue connections are "the same" residue connections.
-	// This assumption works perfectly for all amino acids, except CYD and DCYD and HCYD and DHCYD.
+	// This assumption works perfectly for all amino acids, except CYD.
 	//
 	// THIS REALLY NEEDS TO BE FIXED AT SOME POINT
 

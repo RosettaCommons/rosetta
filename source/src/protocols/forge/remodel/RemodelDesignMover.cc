@@ -680,11 +680,8 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
 				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
-					std::string n1 = pose.residue(*itr).name();
-					std::string n2 = pose.residue(*itr2).name();
 					//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-					if (!rosetta_scripts_keep_current_ds_ || ( ( n1.find( "CYD" ) == std::string::npos )
-										&& ( n2.find( "CYD" ) == std::string::npos ) ) ) {
+					if (!rosetta_scripts_keep_current_ds_ || ( pose.residue(*itr).name() != "CYD" && pose.residue(*itr2).name() != "CYD")) {
 						Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
 						if ( dist_squared > 25 ) {
 							TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;

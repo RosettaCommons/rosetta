@@ -307,7 +307,7 @@ setup_corresponding_atoms(
 ///  or CYD.
 /// @param[inout] conf The conformation to modify
 /// @return true if the replacement was successful, false otherwise.
-bool change_cys_state( Size const index, std::string cys_type_name, core::conformation::Conformation & conf );
+bool change_cys_state( Size const index, std::string cys_type_name3, core::conformation::Conformation & conf );
 
 /// @brief Find whether there is a disulfide defined between two residues
 bool is_disulfide_bond( core::conformation::Conformation const& conformation, core::Size residueA_pos, core::Size residueB_pos);

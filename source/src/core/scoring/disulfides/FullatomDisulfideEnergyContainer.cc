@@ -567,15 +567,13 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= indep_res; ++ii ) {
-		//if ( pose.residue( ii ).aa() == chemical::aa_cys &&
-		//using name3 because we're checking disulfide variant
-		if ( (pose.residue( ii ).type().name3() == "CYS" || pose.residue( ii ).type().name3() == "C26" || pose.residue( ii ).type().name3() == "DCS" || pose.residue( ii ).type().name3() == "F26")
-				&& pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) 
-				&& resid_2_disulfide_index_[ ii ] == NO_DISULFIDE
-				&& (pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) // full atom residue
+		if ( pose.residue( ii ).aa() == chemical::aa_cys &&
+				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
+				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
+				pose.residue_type( ii ).has( "SG" ) // full atom residue
 				) {
 			++count_disulfides;
-			Size const ii_connect_atom( pose.residue_type( ii ).has( "SG" ) ? pose.residue( ii ).atom_index( "SG" ) : pose.residue( ii ).atom_index( "SD" ) );
+			Size const ii_connect_atom( pose.residue( ii ).atom_index( "SG" ) );
 			Size other_res( 0 );
 			for ( Size jj = pose.residue( ii ).type().n_residue_connections(); jj >= 1; --jj ) {
 				if ( (Size) pose.residue( ii ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
@@ -618,18 +616,17 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
-			//if ( pose.residue( ii ).aa() != chemical::aa_cys ||
-			if ( //pose.residue( ii ).aa() != chemical::aa_cys ||    subsumed by variant type check
+			if ( pose.residue( ii ).aa() != chemical::aa_cys ||
 					disulfide_residue_types_[ ii ]() != & (pose.residue_type( ii )) ||
-					/*// subsumed by residue type check !*/ pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
-					! ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" )) || //no longer full atom
+					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
+					! pose.residue_type( ii ).has( "SG" ) || //no longer full atom
 					pose.residue( ii ).connect_map(
 						pose.residue( ii ).type().residue_connection_id_for_atom(
 							pose.residue( ii ).atom_index( "SG" ) ) ).resid() !=
 					other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) ) {
 				return true;
 			}
-		} else if ( (pose.residue_type( ii ).name() == "CYD" || pose.residue_type( ii ).name() == "DCYD" || pose.residue_type( ii ).name() == "HCYD" || pose.residue_type( ii ).name() == "DHCYD") && //pose.residue( ii ).aa() == chemical::aa_cys &&
+		} else if ( pose.residue( ii ).aa() == chemical::aa_cys &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE )) {
 			return true;
 		}

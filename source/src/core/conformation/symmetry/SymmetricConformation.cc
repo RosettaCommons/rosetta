@@ -935,10 +935,7 @@ SymmetricConformation::detect_disulfides()
 	utility::vector1< Size > resid_2_cysid( size(), 0 );
 	Size num_cys( 0 );
 	for ( Size ii = 1; ii <= size(); ++ii ) {
-		if ( residue(ii).name() == "CYS" || residue(ii).name() == "CYD"  
-			|| residue(ii).name() == "C26"  || residue(ii).name() == "HCYD" 
-			|| residue(ii).name() == "DCYS" || residue(ii).name() == "DCYD"
-			|| residue(ii).name() == "F26"  || residue(ii).name() == "DHCYD") {
+		if ( residue(ii).aa() == chemical::aa_cys ) {
 			++num_cys;
 			resid_2_cysid[ ii ] = num_cys;
 		}
@@ -968,6 +965,7 @@ SymmetricConformation::detect_disulfides()
 	Real const tolerance = option[OptionKeys::in::detect_disulf_tolerance].user()
 	                     ? option[OptionKeys::in::detect_disulf_tolerance]()
 	                     : ( fullatom? 0.5 : 1.0 );
+	std::string const distance_atom = fullatom? "SG" : "CB";
 
 	// Create point graph
 	PointGraphOP pg = new PointGraph;
@@ -1000,8 +998,6 @@ SymmetricConformation::detect_disulfides()
 		Size ii_sg_atomno(0);
 		if(ii_res.type().has("SG")) {
 			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SG" );
-		} else if (ii_res.type().has("SD")) {
-			ii_sg_atomno = residue( ii_resid ).atom_index( "SD" );
 		} else if(ii_res.type().has("CEN")) {
 			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "CEN" );
 		} else {
@@ -1028,13 +1024,8 @@ SymmetricConformation::detect_disulfides()
 				continue;
 			}
 
-			std::string da1 = "CB";
-			std::string da2 = "CB";
-
-			( fullatom && (ii_res.type().name() == "C26" || ii_res.type().name() == "HCYD"
-					    || ii_res.type().name() == "F26" || ii_res.type().name() == "DHCYD")) ? da1 = "SD" : da1 = "SG";
-
-			Distance dist = ii_res.atom( ii_res.atom_index( da1 ) ).xyz().distance( jj_res.atom( jj_res.atom_index( da2 )).xyz() );
+			Distance dist = ii_res.atom( ii_res.atom_index( distance_atom ) ).xyz().distance(
+				jj_res.atom( jj_res.atom_index( distance_atom )).xyz() );
 			if ( best_neighbor == 0 || dist < best_match ) {
 				best_neighbor = jj_resid;
 				//best_neighbor_cysid = jj;  // set but never used ~Labonte
@@ -1046,17 +1037,9 @@ SymmetricConformation::detect_disulfides()
 			// handle case where old disulfide doesn't exist anymore and
 			// needs to be cleared
 			if ( processed_cys.find( ii_resid ) == processed_cys.end() && ii_res.has_variant_type( chemical::DISULFIDE ) ) {
-				TR << "Reverting out-of-date disulfide (distance " << best_match << ") CYD to CYS at resid " << ii_resid << std::endl;
-				bool successful_revert = false;
-				if (ii_res.type().name() == "HCYD") {
-					successful_revert = conformation::change_cys_state( ii_resid, "C26", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-				} else if (ii_res.type().name() == "CYD") {
-					successful_revert = conformation::change_cys_state( ii_resid, "CYS", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-				} else if (ii_res.type().name() == "DCYD") {
-					successful_revert = conformation::change_cys_state( ii_resid, "DCYS", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-				} else if (ii_res.type().name() == "DHCYD") {
-					successful_revert = conformation::change_cys_state( ii_resid, "F26", *this ) && !residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-				}
+				TR << "Reverting out-of-date disulfide CYD to CYS at resid " << ii_resid << std::endl;
+
+				bool const successful_revert = conformation::change_cys_state( ii_resid, "CYS", *this ) && !residue(ii_resid).has_variant_type( chemical::DISULFIDE );
 				if ( !successful_revert ) {
 					TR.Error << "ERROR: unable to revert CYD to CYS for removal of disulfide at resid " << ii_resid << std::endl;
 				}
@@ -1074,40 +1057,27 @@ SymmetricConformation::detect_disulfides()
 			// but it doesn't necessarily hurt just in case something weird
 			// happened.
 			TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
-			TR << "current variant for " << ii_resid << " " << ii_res.type().name() << std::endl;
-			TR << "current variant for " << best_neighbor << " " << residue( best_neighbor ).type().name() << std::endl;
-			
-			std::string ii_current = ii_res.type().name();
-			std::string ii_disulfide = "XXX";
-			if (ii_current == "CYS")  ii_disulfide = "CYD";
-			if (ii_current == "DCYS") ii_disulfide = "DCYD";
-			if (ii_current == "C26")  ii_disulfide = "HCYD";
-			if (ii_current == "F26")  ii_disulfide = "DHCYD";
+			TR << "current variant for " << ii_resid << " " << ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			TR << "current variant for " << best_neighbor << " " << ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
 
-			std::string bn_current = residue( best_neighbor ).type().name();
-			std::string bn_disulfide = "XXX";
-			if (bn_current == "CYS")  bn_disulfide = "CYD";
-			if (bn_current == "DCYS") bn_disulfide = "DCYD";
-			if (bn_current == "C26")  bn_disulfide = "HCYD";
-			if (bn_current == "F26")  bn_disulfide = "DHCYD";
+			bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
+				&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
+				&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
 
-			bool ii_success = (conformation::change_cys_state ( ii_resid, ii_disulfide, *this ) && residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ));
-			bool bn_success = (conformation::change_cys_state ( best_neighbor, bn_disulfide, *this ) && residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ));
-
-			if (ii_success) {
-				TR << "current variant for " << ii_resid << " " << ( residue ( ii_resid ).has_variant_type( chemical::DISULFIDE ) ? bn_current : bn_disulfide ) << std::endl;
-			} else {
-				TR.Error << "ERROR: unable to create residue type " << ii_disulfide << " for disulfide at resid " << ii_resid << std::endl;
+			if ( !success_at_ii ) {
+				TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << ii_resid << std::endl;
 			}
 
-			if (bn_success) {
-				TR << "current variant for " << best_neighbor << " " << ( residue ( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ? bn_current : bn_disulfide ) << std::endl;
-			} else {
-				TR.Error << "ERROR: unable to create residue type " << bn_disulfide << " for disulfide at resid " << best_neighbor << std::endl;
+			if ( !success_at_best_neighbor ) {
+				TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
 			}
+
+			TR << "current variant for " << ii_resid << " " << ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
+			TR << "current variant for " << best_neighbor << " " << ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ? "CYD" : "CYS" ) << std::endl;
 
 			// Record SG-SG connections.
-			if ( ii_success && bn_success ) {
+			if ( success_at_ii && success_at_best_neighbor ) {
 				Residue const & ii_new_res( residue( ii_resid ) );
 				// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
 				Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
@@ -1116,8 +1086,6 @@ SymmetricConformation::detect_disulfides()
 				Size jj_sg_atomno(0);
 				if(jj_res.type().has("SG")) {
 					jj_sg_atomno = jj_res.atom_index( "SG" );
-				} else if ( jj_res.type().has ("SD") ) {
-					jj_sg_atomno = jj_res.atom_index ( "SD" );
 				} else if(jj_res.type().has("CEN")) {
 					jj_sg_atomno = jj_res.atom_index( "CEN" );
 				} else {

@@ -1763,18 +1763,15 @@ setup_corresponding_atoms(
 ///  disulfide variants.  If the replacement fails for any reason a warning
 ///  will be printed.
 /// @return true if the replacement was successful, false otherwise.
-bool change_cys_state( Size const index, std::string cys_type_name, Conformation & conf ) {
+bool change_cys_state( Size const index, std::string cys_type_name3, Conformation & conf ) {
 	// Cache information on old residue.
 	Residue const & res( conf.residue( index ) );
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
-	std::string rn = res.type().name();
-
-	bool not_cys = ( rn.find("CYS") == std::string::npos && rn.find("CYD") == std::string::npos && rn.find("DCYS") == std::string::npos && rn.find("DCYD") == std::string::npos
-		      && rn.find("C26") == std::string::npos && rn.find("HCYD") == std::string::npos && rn.find("F26") == std::string::npos && rn.find("DHCYD") == std::string::npos );
 	// make sure we're working on a cys
-	if ( not_cys ) {
-		TR.Warning << "WARNING: change_cys_state() was called on non-cys residue " << index << " with name " << res.type().name() << ", skipping!" << std::endl;
+	if ( res.type().name3() != "CYS" && res.type().name3() != "CYD" && res.type().name3() != "CYX"
+		&& res.type().name3() != "C26" && res.type().name3() != "HCD" ) {
+		TR.Warning << "WARNING: change_cys_state() was called on non-cys residue " << index << ", skipping!" << std::endl;
 		return false;
 	}
 
@@ -1783,42 +1780,45 @@ bool change_cys_state( Size const index, std::string cys_type_name, Conformation
 	// yet handled via functions such as ResidueTypeSet::get_residue_type_with_variant_*
 	// functions, so we need the name3 string to grab the possible residue types and
 	// look through them manually to find the right one.
-	//chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( cys_type_name );
-	chemical::ResidueType possible_type = residue_type_set.name_map( cys_type_name );
+	chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( cys_type_name3 );
+
 	// Track the variant types of the old residue type.  We want the
 	// new residue to have the same variant type as the old.
 	utility::vector1< chemical::VariantType > variant_types = res.type().variant_types();
 
 	// check and handle disulfide state
-	if ( res.has_variant_type( chemical::DISULFIDE ) && (cys_type_name == "CYS" || cys_type_name == "DCS" || cys_type_name == "C26" || cys_type_name == "F26")) {
+	if ( res.has_variant_type( chemical::DISULFIDE ) && (cys_type_name3 == "CYS" || cys_type_name3 == "C26")) {
 		// if the old residue has DISULFIDE variant type then we are removing a
 		// disulfide, so remove the variant type from the list
 		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), chemical::DISULFIDE ) );
-	} else if ( cys_type_name == "CYD" || cys_type_name == "HCYD" || cys_type_name == "DCYD" || cys_type_name == "DHCYD") {
-		variant_types.push_back( chemical::DISULFIDE );	// creating a disulfide
+	} else {
+		if ( cys_type_name3 == "CYD" || cys_type_name3 == "HCD")	variant_types.push_back( chemical::DISULFIDE );	// creating a disulfide
 	}
 
 	// Run through all possible new residue types.
-	//for ( chemical::ResidueTypeCOPs::const_iterator
-	//	type_iter = possible_types.begin(), type_end = possible_types.end();
-	//	type_iter != type_end; ++type_iter )
-	//{
-	//	bool perfect_match( true ); // indicates this type has all the same variant types as the old residue
+	for ( chemical::ResidueTypeCOPs::const_iterator
+		type_iter = possible_types.begin(), type_end = possible_types.end();
+		type_iter != type_end; ++type_iter )
+	{
+		bool perfect_match( true ); // indicates this type has all the same variant types as the old residue
 		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
-			possible_type.add_variant_type( variant_types[ kk ] );
+			if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
+				perfect_match = false;
+				break;
+			}
 		}
 
-	//	if ( perfect_match ) { // Do replacement.*/
-			ResidueOP new_res = ResidueFactory::create_residue( possible_type, res, conf );
+		if ( perfect_match ) { // Do replacement.
+			ResidueOP new_res = ResidueFactory::create_residue( **type_iter, res, conf );
 			copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );
 			conf.replace_residue( index, *new_res, false );
-//
+
 			return true;
-//		}
-//	}
+		}
+	}
 
 	// If we are here then a residue type match wasn't found; issue error message.
-	TR.Error << "ERROR: Couldn't find a " << cys_type_name << " equivalent for residue " << index << "." <<std::endl;
+	TR.Error << "ERROR: Couldn't find a " << cys_type_name3 << " equivalent for residue " << index << "." <<std::endl;
 	return false;
 }
 
@@ -1903,7 +1903,6 @@ named_stub_id_to_stub_id(
 void
 form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 {
-	// awatkins: do we need to introduce name3 map and loop through to ensure we capture all variant types here?
 	// Verify we're dealing with a FA conformation
 	runtime_assert( conformation.is_fullatom() );
 
@@ -1911,21 +1910,12 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 		chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 	// Break existing disulfide bonds to lower
-	std::string lname = conformation.residue(lower_res).type().name();
-	bool l_cys = (lname.find("CYS") != std::string::npos);
-	bool l_cyd = (lname.find("CYD") != std::string::npos);
-	bool l_dcys = (lname.find("DCYS") != std::string::npos);
-	bool l_dcyd = (lname.find("DCYD") != std::string::npos);
-	bool l_hcys = (lname.find("C26") != std::string::npos);
-	bool l_hcyd = (lname.find("HCYD") != std::string::npos);
-	bool l_dhcys = (lname.find("F26") != std::string::npos);
-	bool l_dhcyd = (lname.find("DHCYD") != std::string::npos);
-
-	if ( conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE )
-	  && (conformation.residue_type( lower_res ).has( "SG" ) || conformation.residue_type( lower_res ).has( "SD" ))
-	  && (l_cys || l_cyd || l_dcys || l_dcyd || l_hcys || l_hcyd || l_dhcys || l_dhcyd ) )
+	if( conformation.residue(lower_res).aa() == chemical::aa_cys &&
+			conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) &&
+			conformation.residue_type( lower_res ).has( "SG" ) // full atom residue
+			)
 	{
-		Size const connect_atom( conformation.residue( lower_res ).atom_index( (conformation.residue_type( lower_res ).has( "SG" ) ? "SG" : "SD" ) ) );
+		Size const connect_atom( conformation.residue( lower_res ).atom_index( "SG" ) );
 		Size other_res( 0 );
 		Size conn(0);
 		for ( conn = conformation.residue( lower_res ).type().n_residue_connections(); conn >= 1; --conn ) {
@@ -1939,66 +1929,30 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 			utility_exit();
 		}
 
-		if ( other_res == upper_res ) {
+		if(other_res == upper_res) {
 			// Already a disulfide bond
 			runtime_assert_msg(conformation.residue( upper_res ).connect_map( conn ).resid() == lower_res,
-				"Error: Disulfide bond wasn't reciprocal");
+				"Error: Disulfide bond wasn't reciprical");
 			return;
 		}
 
 		// Break the disulfide bond to upper_res
-		bool result = false;
-		std::string oname = conformation.residue_type( other_res).name();
-		bool o_cys = (oname.find("CYS") != std::string::npos);
-		bool o_cyd = (oname.find("CYD") != std::string::npos);
-		bool o_dcys = (oname.find("DCYS") != std::string::npos);
-		bool o_dcyd = (oname.find("DCYD") != std::string::npos);
-		bool o_hcys = (oname.find("C26") != std::string::npos);
-		bool o_hcyd = (oname.find("HCYD") != std::string::npos);
-		bool o_dhcys = (oname.find("F26") != std::string::npos);
-		bool o_dhcyd = (oname.find("DHCYD") != std::string::npos);
-		if (o_cys || o_cyd )
-			result = change_cys_state( other_res, "CYS", conformation );
-		else if (o_dcys || o_dcyd) 
-			result = change_cys_state( other_res, "DCS", conformation );
-		else if (o_hcys || o_hcyd) 
-			result = change_cys_state( other_res, "C26", conformation );
-		else if (o_dhcys || o_dhcyd )
-			result = change_cys_state( other_res, "F26", conformation );
-		runtime_assert_msg(result,"Error converting disulfide to reduced state");
+		bool result = change_cys_state( other_res, "CYS", conformation );
+		runtime_assert_msg(result,"Error converting CYD->CYS");
 	}
 	else {
-		ResidueOP lower_cyd;
-		if (l_cys )
-			lower_cyd = ResidueFactory::create_residue( restype_set->name_map("CYD"), conformation.residue(lower_res), conformation );
-		else if (l_dcys)
-			lower_cyd = ResidueFactory::create_residue( restype_set->name_map("DCYD"), conformation.residue(lower_res), conformation );
-		else if (l_hcys)
-			lower_cyd = ResidueFactory::create_residue( restype_set->name_map("HCYD"), conformation.residue(lower_res), conformation );
-		else if (l_dhcys)
-			lower_cyd = ResidueFactory::create_residue( restype_set->name_map("DHCYD"), conformation.residue(lower_res), conformation );
-		
+		ResidueOP lower_cyd = ResidueFactory::create_residue( restype_set->name_map("CYD"), conformation.residue(lower_res), conformation );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			conformation.residue(lower_res), *lower_cyd, conformation );
 		conformation.replace_residue(lower_res, *lower_cyd, false /*backbone already oriented*/); // doug
 	}
-
 	// Break existing disulfide bonds to upper
-	std::string uname = conformation.residue(upper_res).type().name();
-	bool u_cys = (uname.find("CYS") != std::string::npos);
-	bool u_cyd = (uname.find("CYD") != std::string::npos);
-	bool u_dcys = (uname.find("DCYS") != std::string::npos);
-	bool u_dcyd = (uname.find("DCYD") != std::string::npos);
-	bool u_hcys = (uname.find("C26") != std::string::npos);
-	bool u_hcyd = (uname.find("HCYD") != std::string::npos);
-	bool u_dhcys = (uname.find("F26") != std::string::npos);
-	bool u_dhcyd = (uname.find("DHCYD") != std::string::npos);
-	
-	if ( conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE )
-	  && (conformation.residue_type( upper_res ).has( "SG" ) || conformation.residue_type( upper_res ).has( "SD" ))
-	  && (u_cys || u_cyd || u_dcys || u_dcyd || u_hcys || u_hcyd || u_dhcys || u_dhcyd ) )
+	if( conformation.residue(upper_res).aa() == chemical::aa_cys &&
+			conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) &&
+			conformation.residue_type( upper_res ).has( "SG" ) // full atom residue
+			)
 	{
-		Size const connect_atom( conformation.residue( upper_res ).atom_index( (conformation.residue_type( upper_res ).has( "SG" ) ? "SG" : "SD" ) ) );
+		Size const connect_atom( conformation.residue( upper_res ).atom_index( "SG" ) );
 		Size other_res( 0 );
 		Size conn(0);
 		for ( conn = conformation.residue( upper_res ).type().n_residue_connections(); conn >= 1; --conn ) {
@@ -2013,80 +1967,27 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 		}
 
 		// Break the disulfide bond to lower_res
-		bool result = false;
-		std::string oname = conformation.residue_type( other_res ).name();
-		bool o_cys = (oname.find("CYS") != std::string::npos);
-		//bool o_cyd = (oname.find("CYD") != std::string::npos);
-		bool o_dcys = (oname.find("DCYS") != std::string::npos);
-		//bool o_dcyd = (oname.find("DCYD") != std::string::npos);
-		bool o_hcys = (oname.find("C26") != std::string::npos);
-		//bool o_hcyd = (oname.find("HCYD") != std::string::npos);
-		bool o_dhcys = (oname.find("F26") != std::string::npos);
-		// bool o_dhcyd = (oname.find("DHCYD") != std::string::npos);
-		if (o_cys) {
-			result = change_cys_state( other_res, "CYS", conformation );
-		} else if (o_dcys) {
-			result = change_cys_state( other_res, "DCYS", conformation );
-		} else if (o_hcys) {
-			result = change_cys_state( other_res, "C26", conformation );
-		} else if (o_dhcys) {
-			result = change_cys_state( other_res, "F26", conformation );
-		}
-		runtime_assert_msg(result,"Error converting disulfide to reduced state");
-	}
-	else {
-		ResidueOP upper_cyd;
-		if (u_cys || u_cyd )
-			upper_cyd = ResidueFactory::create_residue( restype_set->name_map("CYD"), conformation.residue(upper_res), conformation );
-		else if (u_dcys || u_dcyd )
-			upper_cyd = ResidueFactory::create_residue( restype_set->name_map("DCYD"), conformation.residue(upper_res), conformation );
-		else if (u_hcys || u_hcyd )
-			upper_cyd = ResidueFactory::create_residue( restype_set->name_map("HCYD"), conformation.residue(upper_res), conformation );
-		else if (u_dhcys || u_dhcyd) 
-			upper_cyd = ResidueFactory::create_residue( restype_set->name_map("DHCYD"), conformation.residue(upper_res), conformation );
-		
+		bool result = change_cys_state( other_res, "CYS", conformation );
+		runtime_assert_msg(result,"Error converting CYD->CYS");
+	}	else {
+		ResidueOP upper_cyd = ResidueFactory::create_residue( restype_set->name_map("CYD"), conformation.residue(upper_res), conformation );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			conformation.residue(upper_res), *upper_cyd, conformation );
 		conformation.replace_residue(upper_res, *upper_cyd, false /*backbone already oriented*/);
 	}
 
 	// Both residues are now CYD
-	lname = conformation.residue( lower_res ).name();
-	uname = conformation.residue( upper_res ).name();
-	l_cys = (lname.find("CYS") != std::string::npos);
-	l_cyd = (lname.find("CYD") != std::string::npos);
-	l_dcys = (lname.find("DCYS") != std::string::npos);
-	l_dcyd = (lname.find("DCYD") != std::string::npos);
-	l_hcys = (lname.find("C26") != std::string::npos);
-	l_hcyd = (lname.find("HCYD") != std::string::npos);
-	l_dhcys = (lname.find("F26") != std::string::npos);
-	l_dhcyd = (lname.find("DHCYD") != std::string::npos);
-	u_cys = (uname.find("CYS") != std::string::npos);
-	u_cyd = (uname.find("CYD") != std::string::npos);
-	u_dcys = (uname.find("DCYS") != std::string::npos);
-	u_dcyd = (uname.find("DCYD") != std::string::npos);
-	u_hcys = (uname.find("C26") != std::string::npos);
-	u_hcyd = (uname.find("HCYD") != std::string::npos);
-	u_dhcys = (uname.find("F26") != std::string::npos);
-	u_dhcyd = (uname.find("DHCYD") != std::string::npos);
-	runtime_assert( ( l_cyd || l_dcyd || l_hcyd || l_dhcyd ) && ( u_cyd || u_dcyd || u_hcyd || u_dhcyd ) );
+	runtime_assert(conformation.residue(lower_res).name() == "CYD" && conformation.residue(upper_res).name() == "CYD" );
 
 	//form the bond between the two residues
-	std::string lca, uca;
-	if ( l_cyd  ||  l_dcyd )	lca = "SG";
-	if ( l_hcyd || l_dhcyd )	lca = "SD";
-	if ( u_cyd  ||  u_dcyd )	lca = "SG";
-	if ( u_hcyd || u_dhcyd )	lca = "SD";
-	
-	conformation.declare_chemical_bond(lower_res,lca,upper_res,uca);
-	conformation.declare_chemical_bond(lower_res,lca,upper_res,uca);
+	conformation.declare_chemical_bond(lower_res,"SG",upper_res,"SG");
 
 }
 
 /// @brief Find whether there is a disulfide defined between two residues
 ///
 /// @details We define a disulfide to exist between a pair of residues iff
-///  -# They are both cysteines @awatkins or homocysteines
+///  -# They are both cysteines
 ///  -# They are bonded by their sidechains
 bool
 is_disulfide_bond( conformation::Conformation const& conformation, Size residueA_pos, Size residueB_pos)
@@ -2105,8 +2006,6 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 	Size a_connect_atom;
 	if( A.type().has( "SG" ) )
 		a_connect_atom = A.atom_index( "SG" );
-	else if ( A.type().has( "SD" ) )
-		a_connect_atom = A.atom_index( "SD" );
 	else {
 		runtime_assert( A.type().has( "CEN" ) ); //should be fa or centroid
 		a_connect_atom = A.atom_index( "CEN" );
@@ -2131,13 +2030,11 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 		Residue const& res(conformation.residue(i));
 
 		// Skip things besides CYD
-		if( !(/*res.aa() == chemical::aa_cys &&*/ res.has_variant_type(chemical::DISULFIDE) ))
+		if( !(res.aa() == chemical::aa_cys && res.has_variant_type(chemical::DISULFIDE) ))
 			continue;
 		Size connect_atom( 0);
 		if( res.type().has( "SG" ))
 			connect_atom = res.atom_index( "SG" );
-		else if ( res.type().has( "SD" ) )
-			connect_atom = res.atom_index( "SD" );
 		else if( res.type().has( "CEN" ))
 			connect_atom = res.atom_index( "CEN" );
 		else {
