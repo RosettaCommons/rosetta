@@ -308,6 +308,7 @@ def main(args):
         #bindings_path = os.path.abspath('rosetta.windows')
         #if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
         execute('Updating Rosetta options...', 'cd ./../../../ && ./update_options.sh')
+        execute('Updating residue properties...', 'cd ./../../../ && ./update_residue_properties.sh')
         execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         #shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
@@ -965,7 +966,8 @@ def calculate_source_modification_date(source, binding_source_path, ignore=set()
     if source not in _source_modification_date_cache_:
         latest = -12600000  # 1969:08:08 花事了!
         if source in ignore: return latest
-        if  os.path.isfile(source):
+
+        if os.path.isfile(source):
             latest = max(latest, os.path.getmtime(source))
             if Options.ignore_dependency: return latest
             for line in file(source):
@@ -973,6 +975,8 @@ def calculate_source_modification_date(source, binding_source_path, ignore=set()
                     include = line.partition('<')[2].partition('>')[0]
                     include = os.path.abspath( os.path.join(binding_source_path, './../../' + include) )
                     if os.path.isfile(include): latest = max(latest, calculate_source_modification_date(include, binding_source_path, ignore.union([source]) ) )
+
+        else: latest = time.time()  # file does not exist - recompiling
 
         _source_modification_date_cache_[source] = latest
 

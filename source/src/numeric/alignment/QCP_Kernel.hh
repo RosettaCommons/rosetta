@@ -1,6 +1,8 @@
 #ifndef _numeric_alignment_QCP_Kernal_HPP_
 #define _numeric_alignment_QCP_Kernal_HPP_
 
+#include <utility/numbers.hh>
+
 #include <cstdlib>
 #include <cmath>
 
@@ -323,7 +325,7 @@ public:
 			rot_matrix[8] = a2 - x2 - y2 + z2;
 		}
 
-		if (std::isnan(mxEigenV))
+		if (utility::is_nan(mxEigenV))
 		{
 			return 0.0;
 		}
