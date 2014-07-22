@@ -4,7 +4,7 @@ echo 'Updating Rosetta options system...'
 
 ./update_options.sh
 
-echo 'Populating ResidueType properties from database...'
+echo 'Updating ResidueType properties...'
 
 ./update_residue_properties.sh
 
