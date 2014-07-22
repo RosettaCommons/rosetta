@@ -250,7 +250,19 @@ public:
 	set_max_angle_disp_slope(
 		core::Real max_angle_disp_slope
 	);
+	
+	/// @brief get whether rotation angle is customized
+	virtual
+	bool
+	custom_angle() const;
 
+	/// @brief set whether rotation angle is customized
+	virtual
+	void
+	set_custom_angle(
+		bool custom_angle
+	);
+	
 	/// @brief get whether detailed balance is preserved (i.e. no branch angle optimization during moves)
 	virtual
 	bool
@@ -335,6 +347,16 @@ public:
 	std::string
 	last_end_atom_name() const;
 
+	/// @brief set the rotation angle for the next move
+	void
+	set_next_angle(
+		core::Real next_angle
+	);
+	
+	/// @brief get the rotation angle for the next move
+	core::Real
+	next_angle() const;
+	
 	/// @brief get the last rotation angle
 	core::Real
 	last_angle() const;
@@ -359,7 +381,9 @@ private:
 	core::Size last_segment_id_;
 	std::string last_start_atom_name_;
 	std::string last_end_atom_name_;
+	core::Real next_angle_;
 	core::Real last_angle_;
+	bool custom_angle_;
 	bool preserve_detailed_balance_;
 	bool require_mm_bend_;
 };

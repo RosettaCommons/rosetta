@@ -102,7 +102,8 @@ protocols::backrub::BackrubMover::BackrubMover() :
 	max_angle_disp_slope_(numeric::conversions::radians(-1./3.)),
 	next_segment_id_(0),
 	preserve_detailed_balance_(false),
-	require_mm_bend_(true)
+	require_mm_bend_(true),
+	custom_angle_(false)
 {}
 
 protocols::backrub::BackrubMover::BackrubMover(
@@ -126,7 +127,9 @@ protocols::backrub::BackrubMover::BackrubMover(
 	last_end_atom_name_(mover.last_end_atom_name_),
 	last_angle_(mover.last_angle_),
 	preserve_detailed_balance_(mover.preserve_detailed_balance_),
-	require_mm_bend_(mover.require_mm_bend_)
+	require_mm_bend_(mover.require_mm_bend_),
+	custom_angle_(mover.custom_angle_),
+	next_angle_(mover.next_angle_)
 {}
 
 protocols::moves::MoverOP BackrubMover::clone() const { return new protocols::backrub::BackrubMover( *this ); }
@@ -277,7 +280,10 @@ protocols::backrub::BackrubMover::apply(
 	utility::vector0<Real> end_constants;
 
 	// pick a random angle
-	last_angle_ = random_angle(pose, segment_id, start_constants, end_constants);
+	if (custom_angle_)
+		last_angle_ = next_angle_;
+	else
+		last_angle_ = random_angle(pose, segment_id, start_constants, end_constants);
 
 	TR.Debug << "Applying " << numeric::conversions::degrees(last_angle_) << " degree rotation to segment " << segment_id
 	         << std::endl;
@@ -779,6 +785,20 @@ protocols::backrub::BackrubMover::set_max_angle_disp_slope(
 }
 
 bool
+protocols::backrub::BackrubMover::custom_angle() const
+{
+	return custom_angle_;
+}
+
+void
+protocols::backrub::BackrubMover::set_custom_angle(
+	bool custom_angle
+)
+{
+	custom_angle_ = custom_angle;
+}
+
+bool
 protocols::backrub::BackrubMover::preserve_detailed_balance() const
 {
 	return preserve_detailed_balance_;
@@ -1163,6 +1183,20 @@ std::string
 protocols::backrub::BackrubMover::last_end_atom_name() const
 {
 	return last_end_atom_name_;
+}
+
+core::Real
+protocols::backrub::BackrubMover::next_angle() const
+{
+	return next_angle_;
+}
+
+void
+protocols::backrub::BackrubMover::set_next_angle(
+	core::Real next_angle
+)
+{
+	next_angle_ = next_angle;
 }
 
 core::Real
