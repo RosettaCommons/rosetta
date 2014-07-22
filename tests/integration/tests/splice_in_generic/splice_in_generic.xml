@@ -1,0 +1,25 @@
+<dock_design>
+         <TASKOPERATIONS>
+				 	<ProteinInterfaceDesign name=pido design_chain1=1 design_chain2=1/>
+    		<InitializeFromCommandline name=init/>
+  	</TASKOPERATIONS>
+        <SCOREFXNS>
+		<talaris_cal weights=talaris2013_calibrated>
+			<Reweight scoretype="coordinate_constraint" weight=1/>
+			<Reweight scoretype="dihedral_constraint" weight=1/>
+		</talaris_cal>
+
+		<talaris_cal_chainbreak weights=talaris2013_calibrated>
+			<Reweight scoretype=chainbreak weight=1/>
+		</talaris_cal_chainbreak>
+        </SCOREFXNS>
+        <MOVERS>
+    <Splice name=splice chain_num=0 use_sequence_profiles=0 skip_alignment=true scorefxn=soft_rep torsion_database="1emv_2_3u43_hlh.db" database_entry=1 ccd=0 res_move=100 randomize_cut=0 delta_lengths=0 equal_length=1 design=1 template_file="3u43_aligned_ImB.pdb" design_task_operations=init design_shell=6.0 repack_shell=6.0>
+		      <Segments current_segment=endo/>
+					    </Splice>
+        </MOVERS>
+
+        <PROTOCOLS>
+                <Add mover=splice/>
+        </PROTOCOLS>
+</dock_design>

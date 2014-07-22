@@ -1,0 +1,13 @@
+-constant_seed
+-nodelay
+-use_input_sc
+-extrachi_cutoff 8
+-ignore_unrecognized_res
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+-jd2:ntrials 1
+-overwrite
+-out:file:fullatom
+-pdb_comments true ## this is the mover reades the comments in the input pdb file. The comments contain the pdb segments comprising the input pdb
+
+-s 3u43_aligned_ImB.pdb
+-parser:protocol splice_in_generic.xml

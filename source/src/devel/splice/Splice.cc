@@ -941,7 +941,10 @@ namespace devel {
 			//	pose.dump_pdb("before_ccd.pdb");
 				//pose.dump_pdb("before_coordinate_constraints");
 				TR << "Stretch I am applying the coordinate constraints on: " << from_res() << "-" << to_res() + residue_diff<< std::endl;
-				core::Size anchor_res(find_nearest_disulfide(pose, from_res()));
+
+				core::Size anchor_res( 1 );
+				if (protein_family_=="antibodies")/*if using "segment" and "protein_family" tags then we are using Rosetta db PSSMs*/
+				  anchor_res = find_nearest_disulfide(pose, from_res());
 				add_coordinate_constraints(pose, source_pose, from_res(), to_res() + residue_diff, anchor_res);	//add coordiante constraints to loop
 				//TR_constraints<<"score function after CA constraints"<<std::endl;
 				//scorefxn()->show(pose);
@@ -1213,7 +1216,8 @@ namespace devel {
 					//add chain breack again
 
 					if (!(boost::iequals(tail_segment_, "c"))){//When splicing in C-ter tails we don't insert chain-break therefore no need to check chain break filter, gideon
-						tail_fold_tree(pose,cut_vl_vh_after_llc,cut_site+residue_diff);
+						if( (protein_family_=="antibodies" ) )
+							tail_fold_tree(pose,cut_vl_vh_after_llc,cut_site+residue_diff); // why is this necessary? SJF 22Jul14
 						TR<<"fold tree before chain break val score: "<<pose.fold_tree()<<std::endl;
 						convert_filter << splice_filter()->score(pose);
 						Result_filter = convert_filter.str();
@@ -1251,10 +1255,11 @@ namespace devel {
 								<< ' ';
 					dbase_file << startn << ' ' << stop_on_template << ' ' << cut_site << ' ';
 					if (loop_pdb_source_ != "")
-						dbase_file << Pdb4LetName_ <<tail<<" ";
+						dbase_file << Pdb4LetName_;
 					else
 						dbase_file << "cut" ; // the word cut is used as a placeholder. It is advised to use instead the source pdb file in this field so as to keep track of the origin of dbase loops
 					if (tail_segment_ != "") { //add tail dihedral angles to db file
+						dbase_file << tail<<' ';
 						for (core::Size i = tail_start; i <= tail_end; ++i) {
 							dbase_file << pose.phi(i) << ' ' << pose.psi(i) << ' ' << pose.omega(i) << ' ' << pose.residue(i).name3()<< ' ';
 						}
@@ -1357,7 +1362,7 @@ namespace devel {
 						TR<<"Residue_diff is: " <<residue_diff<<std::endl;
 						cut_site=dofs.cut_site()+residue_diff;
 
-						TR << "Adding ccd chainbreak at: " << cut_site << std::endl;
+						TR << "Adding chainbreak at: " << cut_site << std::endl;
 						protocols::protein_interface_design::movers::AddChainBreak acb;
 						acb.resnum(utility::to_string(cut_site));
 						acb.find_automatically(false);
@@ -1958,11 +1963,11 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 	core::kinematics::FoldTree ft;
 	ft.clear();
 	if (conf.num_chains() == 1) {		/// build simple ft for the cut
-		ft.add_edge(1, s1, -1);
-		ft.add_edge(s1, s2, 1);
-		ft.add_edge(s1, cut, -1);
-		ft.add_edge(s2, cut + 1, -1);
-		ft.add_edge(s2, pose.total_residue(), -1);
+		ft.add_edge(1, s1-1, -1);
+		ft.add_edge(s1-1, s2+1, 1);
+		ft.add_edge(s1-1, cut, -1);
+		ft.add_edge(s2+1, cut + 1, -1);
+		ft.add_edge(s2+1, pose.total_residue(), -1);
 		ft.delete_self_edges();
 		//ft.reorder(s2);
 		TR << "single chain ft: " << ft << std::endl;
@@ -1970,11 +1975,11 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 		return;
 	}
 	if( chain_num() > 1 ){ // build simple ft surrounding the loop
-		ft.add_edge( 1, start, -1 );
-		ft.add_edge( start, stop, 1 );
-		ft.add_edge( start, cut, -1 );
-		ft.add_edge( stop, cut + 1, -1 );
-		ft.add_edge( stop, pose.total_residue(), -1 );
+		ft.add_edge( 1, start-1, -1 );
+		ft.add_edge( start-1, stop+1, 1 );
+		ft.add_edge( start-1, cut, -1 );
+		ft.add_edge( stop+1, cut + 1, -1 );
+		ft.add_edge( stop+1, pose.total_residue(), -1 );
 		pose.fold_tree( ft );
 		return;
 	}
@@ -1985,9 +1990,9 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 			break;
 		}
 	}
-	ft.add_edge(1, s1, -1);
-	ft.add_edge(s1, s2, 1);
-	ft.add_edge(s2, conf.chain_end(1), -1);
+	ft.add_edge(1, s1-1, -1);
+	ft.add_edge(s1-1, s2+1, 1);
+	ft.add_edge(s2+1, conf.chain_end(1), -1);
 	if (locked_res() > 0 && (locked_res() <= s2 && locked_res() >= s1)) {
 		TR << "s1,s2,locked_res: " << s1 << ',' << s2 << ',' << locked_res() << std::endl;
 		if (locked_res() < cut) {
@@ -2033,9 +2038,9 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 			TR << "locked_res " << locked_res() << " is outside loop scope so ignoring" << std::endl;
 		}
 
-		ft.add_edge(s1, cut, -1);
-		ft.add_edge(s2, cut + 1, -1);
-		ft.add_edge(s2, conf.chain_end(1), -1);
+		ft.add_edge(s1-1, cut, -1);
+		ft.add_edge(s2+1, cut + 1, -1);
+//		ft.add_edge(s2, conf.chain_end(1), -1); // SJF 22Jul14 this line already appears above, leading to bad fold tree here...
 		ft.add_edge(1, conf.chain_begin(2), 2);
 		ft.delete_self_edges();
 		TR<<"fold tree:"<<ft<<std::endl;
@@ -2145,7 +2150,7 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 		 std::ofstream out( pdb_dump_fname_.c_str() );
 		 pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
 		map<string, string> const comments = core::pose::get_all_comments(pose);
-		if (comments.size() < 3) {
+		if (comments.size() < 1) { /// SJF changed from <3 22Jul14
 			utility_exit_with_message(
 					"Please check comments field in the pdb file (header= ##Begin comments##), could not find any comments");
 		}
@@ -2467,16 +2472,20 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 }//func
 
 void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size start_res_on_pose, core::Size end_res_on_pose) {
+
+	int residue_diff( 0 );
+	if (protein_family_=="antibodies"){/*if using "segment" and "protein_family" tags then we are using Rosetta db PSSMs*/
 	//use disulfide to calculate residue difference (absolute residue difference) between source_pose and pose)
-	core::Size nearest_disulfide_on_pose(protocols::rosetta_scripts::find_nearest_disulfide(pose,start_res_on_pose));
-	TR_constraints<<"Nearest disulfie on pose is:"<<nearest_disulfide_on_pose<<std::endl;
-	core::Size nearest_disulfide_on_source(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,nearest_disulfide_on_pose,1));
+		core::Size nearest_disulfide_on_pose(protocols::rosetta_scripts::find_nearest_disulfide(pose,start_res_on_pose));
+		TR_constraints<<"Nearest disulfie on pose is:"<<nearest_disulfide_on_pose<<std::endl;
+		core::Size nearest_disulfide_on_source(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,nearest_disulfide_on_pose,1));
 //	core::Size from = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, start_res_on_pose, 1/*chain*/); //The following for loop itterates over the source pose residues
-	int residue_diff = nearest_disulfide_on_source - nearest_disulfide_on_pose;
-	TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
-	TR_constraints << "closest disulfide on source is: " << nearest_disulfide_on_source<<source_pose.residue(nearest_disulfide_on_source).name1()<< std::endl;
-	TR_constraints << "Residue difference :" << residue_diff << std::endl;
-	//inorder to compare the angles we keep track of the corresponding residues in the template pose
+		residue_diff = nearest_disulfide_on_source - nearest_disulfide_on_pose;
+		TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
+		TR_constraints << "closest disulfide on source is: " << nearest_disulfide_on_source<<source_pose.residue(nearest_disulfide_on_source).name1()<< std::endl;
+		TR_constraints << "Residue difference :" << residue_diff << std::endl;
+	}
+		//inorder to compare the angles we keep track of the corresponding residues in the template pose
 	TR_constraints << "Applying dihedral constraints to pose, Pose/Source PDB:" << std::endl;
 	for (core::Size i = start_res_on_pose + residue_diff; i <= end_res_on_pose + residue_diff; ++i) {
 		core::scoring::constraints::ConstraintOPs csts; //will hold dihedral constraints
