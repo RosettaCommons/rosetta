@@ -183,7 +183,8 @@ private:
 	/// @brief output value, the result of filterring calculation
 	mutable Real output_value_;
 
-
+	/// @brief if set, the filter will ignore the direction of the helix and return an angle between -90 and 90 instead of -180 and 180
+	bool ignore_helix_direction_;
 };
 
 } // filters

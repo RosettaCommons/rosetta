@@ -54,7 +54,8 @@ HSSTripletFilter::HSSTripletFilter():
 	filter_max_angle_( 90.0 ),
 	output_id_( 1 ),
 	output_type_( "dist" ),
-	output_value_( -990.0 )
+	output_value_( -990.0 ),
+	ignore_helix_direction_( false )
 {}
 
 // @brief constructor with arguments
@@ -68,7 +69,8 @@ HSSTripletFilter::HSSTripletFilter( HSSTriplets const & hss3s ):
 	filter_max_angle_( 90.0 ),
 	output_id_( 1 ),
 	output_type_( "dist" ),
-	output_value_( -990.0 )
+	output_value_( -990.0 ),
+	ignore_helix_direction_( false )
 {}
 
 // @brief constructor with arguments
@@ -82,7 +84,8 @@ HSSTripletFilter::HSSTripletFilter( String const & hss3s ):
 	filter_max_angle_( 90.0 ),
 	output_id_( 1 ),
 	output_type_( "dist" ),
-	output_value_( -990.0 )
+	output_value_( -990.0 ),
+	ignore_helix_direction_( false )
 {}
 
 // @brief copy constructor
@@ -97,7 +100,8 @@ HSSTripletFilter::HSSTripletFilter( HSSTripletFilter const & rval ):
 	filter_max_angle_( rval.filter_max_angle_ ),
 	output_id_( rval.output_id_ ),
 	output_type_( rval.output_type_ ),
-	output_value_( rval.output_value_ )
+	output_value_( rval.output_value_ ),
+	ignore_helix_direction_( rval.ignore_helix_direction_ )
 {}
 
 // @brief set filtered HSSTriplets
@@ -219,7 +223,19 @@ HSSTripletFilter::apply( Pose const & pose ) const
 		if( hssop->hsheet_dist() < filter_min_dist_ || hssop->hsheet_dist() > filter_max_dist_ ) {
 			filter = false;
 		}
-		if( hssop->hs_angle() < filter_min_angle_ || hssop->hs_angle() > filter_max_angle_ ) {
+
+		core::Real angle_val = hssop->hs_angle();
+		// ignore_helix_direction essentially makes the sheet-helix angle periodic from -90 to 90
+		if ( ignore_helix_direction_ ) {
+			while ( angle_val < -90.0 ) {
+				angle_val += 180;
+			}
+			while ( angle_val > 90.0 ) {
+				angle_val -= 180;
+			}
+		}
+
+		if( angle_val < filter_min_angle_ || angle_val > filter_max_angle_ ) {
 			filter = false;
 		}
 
@@ -227,7 +243,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 			if ( output_type_ == "dist" ) {
 				output_value_ = hssop->hsheet_dist();
 			} else if ( output_type_ == "angle" ) {
-				output_value_ = hssop->hs_angle();
+				output_value_ = angle_val;
 			}
 		}
 
@@ -297,6 +313,7 @@ HSSTripletFilter::parse_my_tag(
   filter_min_angle_ = tag->getOption<Real>( "min_angle", -12.5 );
   filter_max_angle_ = tag->getOption<Real>( "max_angle", 90.0 );
 
+	ignore_helix_direction_ = tag->getOption<bool>( "ignore_helix_direction", ignore_helix_direction_ );
 	output_id_ = tag->getOption<Size>( "output_id", 1 );
 	output_type_ = tag->getOption<String>( "output_type", "dist" );
 

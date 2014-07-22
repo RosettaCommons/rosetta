@@ -99,7 +99,6 @@ FastDesignCreator::mover_name()
 /// @brief default constructor
 FastDesign::FastDesign() :
 	FastRelax(),
-	allow_design_( true ),
 	design_worst_( false ),
 	design_by_psipred_( false ),
 	design_by_frag_qual_( false ),
@@ -118,6 +117,7 @@ FastDesign::FastDesign() :
 	filters_.clear();
 	allowed_aas_.clear();
 	num_redesigns_.clear();
+	set_enable_design( true );
 	//read_script_file( "", default_repeats_ );
 }
 
@@ -172,14 +172,10 @@ FastDesign::parse_my_tag(
 	set_task_factory( local_tf );
 	FastRelax::parse_my_tag( tag, data, filters, movers, pose );
 
-	allow_design_ = tag->getOption< bool >( "allow_design", allow_design_ );
 	design_worst_ = tag->getOption< bool >( "only_design_worst_region", design_worst_ );
 	design_by_psipred_ = tag->getOption< bool >( "design_by_psipred", design_by_psipred_ );
 	design_by_frag_qual_ = tag->getOption< bool >( "design_by_frag_qual", design_by_frag_qual_ );
 	only_design_changes_ = tag->getOption< bool >( "design_changes", only_design_changes_ );
-	if ( design_worst_ || design_by_psipred_ || design_by_frag_qual_ ) {
-		allow_design_ = true;
-	}
 	blueprint_file_ = tag->getOption< std::string >( "blueprint", blueprint_file_ );
 	// blueprint file must be specified if design_by_psipred is set
 	if ( blueprint_file_ == "" && design_by_psipred_ ) {
