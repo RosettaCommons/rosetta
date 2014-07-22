@@ -190,7 +190,7 @@ public:
 	) const;
 
 
-	core::Size get_torsion_bin_index(conformation::ppo_torsion_bin torsion_bin) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Size get_torsion_bin_index(conformation::ppo_torsion_bin torsion_bin) const;
 
 	void
 	get_entries_per_torsion_bin_left(

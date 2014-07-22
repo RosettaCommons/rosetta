@@ -42,7 +42,7 @@ public:
   void apply( core::pose::Pose& pose );
 
   virtual
-  void parse_my_tag( TagCOP const,
+  void parse_my_tag( TagCOP,
                      basic::datacache::DataMap&,
                      Filters_map const&,
                      moves::Movers_map const&,

@@ -69,7 +69,7 @@ public:
 	SandwichFragment();
 	~SandwichFragment();
 
-	std::string get_pdb_source() const;
+	// Undefined, commenting out to fix PyRosetta build  std::string get_pdb_source() const;
 
 	core::Size get_sw_can_by_sh_id() const;
 
@@ -83,8 +83,7 @@ public:
 
 	core::Size get_resNum() const;
 
-	void set_pdb_source(
-						std::string pdb_source_);
+	// Undefined, commenting out to fix PyRosetta build  void set_pdb_source(std::string pdb_source_);
 
 private:
 	core::Size	sw_can_by_sh_id_;

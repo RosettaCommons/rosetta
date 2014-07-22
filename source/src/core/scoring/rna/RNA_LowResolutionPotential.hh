@@ -156,13 +156,13 @@ public:
 	void
 	more_precise_base_pair_classification( bool const & value ){ more_precise_base_pair_classification_ = value; }
 
-	Distance const &
+	Distance const
 	base_backbone_distance_cutoff() const { return base_backbone_distance_cutoff_;}
 
-	Distance const &
+	Distance const
 	base_backbone_z_cutoff() const { return base_backbone_z_cutoff_;}
 
-	Distance const &
+	Distance const
 	base_backbone_rho_cutoff() const { return base_backbone_rho_cutoff_;}
 
 	void

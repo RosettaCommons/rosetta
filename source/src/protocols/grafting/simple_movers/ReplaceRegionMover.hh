@@ -52,8 +52,8 @@ public:
 	core::Size target_pose_start() const;
 	void           target_pose_start(core::Size start);
 
-	core::Size span() const;
-	void            span(core::Size span);
+	// Undefined, commenting out to fix PyRosetta build  core::Size span() const;
+	// Undefined, commenting out to fix PyRosetta build  void       span(core::Size span);
 
 	void src_pose(core::pose::Pose const & from_pose);
 

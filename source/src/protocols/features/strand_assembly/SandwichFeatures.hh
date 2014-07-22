@@ -717,12 +717,13 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
-	utility::vector1<core::Size>
-	get_vector_loop_AA_distribution (
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		std::string loop_kind
-		);
+	// Undefined, commenting out to fix PyRosetta build
+	// utility::vector1<core::Size>
+	// get_vector_loop_AA_distribution (
+	// 	StructureID struct_id,
+	// 	utility::sql_database::sessionOP db_session,
+	// 	std::string loop_kind
+	// 	);
 
 	utility::vector1<core::Size>
 	get_vector_strand_AA_distribution (
