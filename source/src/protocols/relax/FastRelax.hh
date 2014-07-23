@@ -133,9 +133,6 @@ public:
 		core::scoring::constraints::ConstraintSetOP input_csts = NULL,
 		core::Real decay_rate = 0.5 );
 
-	/// @brief sets the enable_design option
-	inline void set_enable_design( bool const val ) { enable_design_ = val; }
-
 protected:
 
   void cmd_accept_to_best(
@@ -207,8 +204,7 @@ private:   // options
 	/// @brief Dump pdb after repack, min, or ramp_repack_min?
 	bool dumpall_;
 
-	/// @brief Enable design -- if false, a RestrictToRepacking task will be added to the TaskFactory
-	bool enable_design_;
+
 
   /// @brief Quit after this many accepts ?// limits themaximum number of accepts, default is 1000000
 	core::Size script_max_accept_;

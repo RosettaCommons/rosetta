@@ -348,11 +348,11 @@ FastRelax::parse_my_tag(
 
 
 	//Make sure we have a taskfactory before we overwrite our null in the base class.
-	set_enable_design( !( tag->getOption<bool>("disable_design", !enable_design_ ) ) );
+	bool disable_design = tag->getOption<bool>("disable_design", true);
 	
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0){
-		if (!enable_design_){
+		if (disable_design){
 			tf->push_back(new core::pack::task::operation::RestrictToRepacking);
 		}
 		set_task_factory( tf );
@@ -470,8 +470,6 @@ void FastRelax::set_to_default( )
 	// dumpall
 	dumpall_ = false;
 
-	// design
-	enable_design_ = false;
 }
 
 
