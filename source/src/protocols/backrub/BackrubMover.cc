@@ -125,11 +125,11 @@ protocols::backrub::BackrubMover::BackrubMover(
 	last_segment_id_(mover.last_segment_id_),
 	last_start_atom_name_(mover.last_start_atom_name_),
 	last_end_atom_name_(mover.last_end_atom_name_),
+	next_angle_(mover.next_angle_),
 	last_angle_(mover.last_angle_),
 	preserve_detailed_balance_(mover.preserve_detailed_balance_),
 	require_mm_bend_(mover.require_mm_bend_),
-	custom_angle_(mover.custom_angle_),
-	next_angle_(mover.next_angle_)
+	custom_angle_(mover.custom_angle_)
 {}
 
 protocols::moves::MoverOP BackrubMover::clone() const { return new protocols::backrub::BackrubMover( *this ); }

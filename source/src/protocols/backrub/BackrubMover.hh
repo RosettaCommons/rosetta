@@ -383,9 +383,9 @@ private:
 	std::string last_end_atom_name_;
 	core::Real next_angle_;
 	core::Real last_angle_;
-	bool custom_angle_;
 	bool preserve_detailed_balance_;
 	bool require_mm_bend_;
+	bool custom_angle_;
 };
 
 /// @brief calculate constants necessary for calculating internal angles/derivatives
