@@ -9,7 +9,7 @@
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
 /// @file StrandAssemblyCommon.hh
-/// @brief
+/// @brief Has most basic inclusions and namespace usings
 /// @author Doo Nam Kim (doonam.kim@gmail.com)
 
 #ifndef INCLUDED_protocols_features_strand_assembly_StrandAssemblyCommon_hh
@@ -108,6 +108,9 @@ template <typename T, size_t N> const T* myend  (const T (&a)[N]) { return a+N; 
 namespace protocols {
 namespace features {
 namespace strand_assembly {
+
+using core::id::NamedAtomID;
+using numeric::xyzVector;
 
 
 } //namespace strand_assembly
