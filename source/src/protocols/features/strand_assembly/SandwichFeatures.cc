@@ -2196,7 +2196,6 @@ SandwichFeatures::report_features(
 					tag,
 					struct_id,
 					db_session,
-					pose,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
 			}

@@ -87,7 +87,6 @@ namespace strand_assembly {
 		string	tag,
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
-		core::pose::Pose const & pose,
 		core::Size sw_can_by_sh_id	// was 'vec_sw_can_by_sh_id[ii]'
 		);
 
