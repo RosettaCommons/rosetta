@@ -605,7 +605,8 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 			int	residue_num	=	vector_of_residue_num_of_rkde[residue_i];
 
 			// <begin> check whether "current" residue has low atom position uncertainty
-			pose::PDBInfoCOP info = pose.pdb_info();
+			//pose::PDBInfoCOP info = pose.pdb_info();
+			pose::PDB_InfoCOP info = pose.pdb_info();
 			Real B_factor_of_CB = info->temperature( residue_num, 5 ); // '5' atom will be 'H' for Gly, otherwise typycal CB
 			if (B_factor_of_CB	>	CB_b_factor_cutoff_for_electrostatic_interactions_)
 			{
