@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // Unit headers
-#include <protocols/loop_modeling/samplers/LegacyKIC_Sampler.hh>
+#include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -33,7 +33,7 @@ using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 
-LegacyKIC_Sampler::LegacyKIC_Sampler() { // {{{1
+LegacyKicSampler::LegacyKicSampler() { // {{{1
 
 	mover_ = new KinematicMover();
 	TorsionSamplingKinematicPerturberOP perturber =
@@ -43,7 +43,7 @@ LegacyKIC_Sampler::LegacyKIC_Sampler() { // {{{1
 	mover_->set_perturber(perturber);
 }
 
-bool LegacyKIC_Sampler::do_apply(Pose & pose, Loop const & loop) { // {{{1
+bool LegacyKicSampler::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	Size pivot_1 = loop.start();
 	Size pivot_3 = loop.stop();
 	Size pivot_2 = pivot_1 + (pivot_3 - pivot_1) / 2;

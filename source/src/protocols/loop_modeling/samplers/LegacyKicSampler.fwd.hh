@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_loop_modeling_samplers_LegacyKIC_Sampler_FWD_HH
-#define INCLUDED_protocols_loop_modeling_samplers_LegacyKIC_Sampler_FWD_HH
+#ifndef INCLUDED_protocols_loop_modeling_samplers_LegacyKicSampler_FWD_HH
+#define INCLUDED_protocols_loop_modeling_samplers_LegacyKicSampler_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -16,11 +16,11 @@ namespace protocols {
 namespace loop_modeling {
 namespace samplers {
 
-class LegacyKIC_Sampler;
+class LegacyKicSampler;
 
 using utility::pointer::owning_ptr;
-typedef owning_ptr<LegacyKIC_Sampler> LegacyKIC_SamplerOP;
-typedef owning_ptr<LegacyKIC_Sampler const> LegacyKIC_SamplerCOP;
+typedef owning_ptr<LegacyKicSampler> LegacyKicSamplerOP;
+typedef owning_ptr<LegacyKicSampler const> LegacyKicSamplerCOP;
 
 }
 }

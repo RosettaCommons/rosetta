@@ -87,7 +87,7 @@
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
-#include <protocols/loop_modeling/samplers/LegacyKIC_Sampler.hh>
+#include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
 #include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
