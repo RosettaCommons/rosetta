@@ -110,7 +110,7 @@ sources = {
 		"StructureScoresFeatures",
 		"StructureScoresFeaturesCreator",
 		"TaskOperationFeatures",
-		"TaskOperationFeaturesCreator",
+		#"TaskOperationFeaturesCreator",
 		"TrajectoryMapFeatures",
 		"TrajectoryMapFeaturesCreator",
 		"TrajectoryReportToDB",
