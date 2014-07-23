@@ -14,6 +14,10 @@
 #ifndef INCLUDED_protocols_features_TaskOperationFeatures_hh
 #define INCLUDED_protocols_features_TaskOperationFeatures_hh
 
+// Unit Headers
+#include <protocols/features/FeaturesReporter.hh>
+#include <protocols/features/TaskOperationFeatures.fwd.hh>
+
 //External
 
 // Project Headers
@@ -30,29 +34,23 @@
 
 // C++ Headers
 #include <string>
-#include <vector>
-
-#include <boost/unordered_map.hpp>
-
-#include <devel/metawidget/MetaWidget.hh>
-//#include <WidgetTypes.hh>
 
 namespace protocols{
 namespace features{
 
-//class TaskOperationFeatures : public protocols::features::FeaturesReporter {
-class TaskOperationFeatures : public MetaWidget::MetaWidget<MetaWidget::FeaturesReporter, TaskOperationFeatures> {
+class TaskOperationFeatures : public protocols::features::FeaturesReporter {
 public:
-#include <devel/metawidget/WidgetTypes.hh>
-	typedef MetaWidget<FeaturesReporter, TaskOperationFeatures> Base;
-	typedef Base::RegType RegType;
-	static const char* name;
-
 	TaskOperationFeatures();
-	~TaskOperationFeatures();
 
 	TaskOperationFeatures( TaskOperationFeatures const & src );
 
+	virtual ~TaskOperationFeatures();
+
+	///@brief return string with class name
+	std::string
+	type_name() const;
+
+	///@brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -72,28 +70,15 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagCOP tag,
+		utility::tag::TagPtr const tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
+	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
-
-	core::Size
-	report_task_operations(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
-
-	core::Size
-	report_task_operation_effects(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
@@ -102,8 +87,7 @@ public:
 	void
 	insert_task_operations_row(
 		core::Size const taskop_id,
-		std::string const& type_name,
-		std::string const& user_name,
+		std::string const & taskop_name,
 		utility::sql_database::sessionOP db_session);
 
 	void
@@ -116,14 +100,23 @@ public:
 		utility::sql_database::sessionOP db_session);
 
 private:
-	typedef core::pack::task::operation::TaskOperationCOP TaskOperationCOP;
-	struct named_taskop {
-		named_taskop(const std::string& type_name, const std::string& user_name, TaskOperation* to) : type_name(type_name), user_name(user_name), taskopOP(to) {}
-		std::string type_name;
-		std::string user_name;
-		TaskOperationCOP taskopOP;
+
+	bool run_once_;
+
+	//std::map<std::string, core::pack::task::TaskFactoryCOP> taskop_keys_factories_;
+
+	struct Taskop_id_name_factory_ {
+		Taskop_id_name_factory_(
+			Size i,
+			std::string n,
+			core::pack::task::TaskFactoryCOP t
+								) : id(i), name(n), tf(t) {}
+		core::Size id;
+		std::string name;
+		core::pack::task::TaskFactoryCOP tf;
 	};
-	std::vector<named_taskop> named_taskops;
+
+	utility::vector1<Taskop_id_name_factory_> taskops_;
 
 };
 

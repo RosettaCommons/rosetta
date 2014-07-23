@@ -21,7 +21,6 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -47,21 +46,19 @@
 // Boost Headers
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
-//#include <boost/unordred_set.hpp>
 #define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <algorithm>
-#include <iostream>
+
+
+//Auto Headers
 
 
 namespace protocols{
 namespace features{
-static basic::Tracer TR("protocols.features.TaskOperationFeatures");
-const char* TaskOperationFeatures::name = "TaskOperationFeatures";
-namespace{TaskOperationFeatures::RegType SelfRegistration;}
 
 using std::string;
 using std::stringstream;
@@ -79,22 +76,29 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::TaskFactoryCOP;
 using core::pack::task::TaskFactory;
 using core::pack::task::operation::TaskOperation;
+using utility::tag::TagPtr;
 using cppdb::statement;
 using utility::vector1;
 using basic::Tracer;
 using basic::database::insert_or_ignore;
+using utility::tag::TagPtr;
 using boost::assign::list_of;
 
+static Tracer TR("protocols.features.TaskOperationFeatures");
 
 TaskOperationFeatures::TaskOperationFeatures()
-{}
 //	: run_once_(true)
-
-TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &)
 {}
+
+TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
+	FeaturesReporter()
 //	run_once_(src.run_once_)
+{}
 
 TaskOperationFeatures::~TaskOperationFeatures() {}
+
+string
+TaskOperationFeatures::type_name() const { return "TaskOperationFeatures"; }
 
 void
 TaskOperationFeatures::write_schema_to_db(
@@ -113,8 +117,7 @@ TaskOperationFeatures::write_task_operations_table_schema(
 
 	TR << "Writing task_operations schema" << std::endl;
 	Column taskop_id("taskop_id", new DbInteger());
-	Column taskop_typename("taskop_typename", new DbText());
-	Column taskop_username("taskop_username", new DbText());
+	Column taskop_name("taskop_name", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(taskop_id);
@@ -122,8 +125,7 @@ TaskOperationFeatures::write_task_operations_table_schema(
 
 	Schema table("task_operations", primary_key);
 
-	table.add_column(taskop_typename);
-	table.add_column(taskop_username);
+	table.add_column(taskop_name);
 
 	table.write(db_session);
 }
@@ -138,8 +140,8 @@ TaskOperationFeatures::write_task_operation_residue_effects_table_schema(
 	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column taskop_id("taskop_id", new DbInteger());
-	Column pack("packable", new DbInteger());
-	Column design("designable", new DbInteger());
+	Column pack("pack", new DbInteger());
+	Column design("design", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -172,8 +174,7 @@ TaskOperationFeatures::write_task_operation_residue_effects_table_schema(
 }
 
 utility::vector1<std::string>
-TaskOperationFeatures::features_reporter_dependencies() const
-{
+TaskOperationFeatures::features_reporter_dependencies() const {
 	utility::vector1<std::string> dependencies;
 	dependencies.push_back("ResidueFeatures");
 	return dependencies;
@@ -181,120 +182,40 @@ TaskOperationFeatures::features_reporter_dependencies() const
 
 void
 TaskOperationFeatures::parse_my_tag(
-    utility::tag::TagCOP tag,
-    basic::datacache::DataMap& data,
-    const protocols::filters::Filters_map&,
-    const protocols::moves::Movers_map&,
-    const core::pose::Pose&
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
 ) {
-    // build map of TaskOperation type name to user name given in the Rosetta script
-    TagCOP root = tag->getParent();
-    std::string tagName = root->getName();
-    // move up the tag tree until we get to the root
-    while (tagName != "ROSETTASCRIPTS" && tagName != "dock_design") {
-        root = root->getParent();
-        tagName = root->getName();
-    }
+  	if ( ! tag->hasOption("task_operations") ) {
+		stringstream error_msg;
+		error_msg
+			<< "The " << type_name() << " reporter requires a 'task_operations' tag:" << endl
+			<< endl
+			<< "    <feature name=" << type_name() <<" task_operations=comma_separated_task_operation_names />" << endl;
+		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+	}
 
-    TR << "Got root tag, name = " << root->getName() << std::endl;
-    utility::vector0<TagCOP> root_subtags = root->getTags();
-    TR << "The root tag has " << root_subtags.size() << " subtags, diving in" << std::endl;
-    // from the root of the tag tree, find the TASKOPERATIONS tag
-    boost::unordered_map<std::string, std::string> named_taskop_types;
-    for (utility::vector0<TagCOP>::const_iterator it = root_subtags.begin(), root_subtags_end = root_subtags.end();
-            it != root_subtags_end; ++it) {
-        TR << "Looking for TASKOPERATIONS, inspecting tag: " << (*it)->getName() << std::endl;
-        if ((*it)->getName() == "TASKOPERATIONS") {
-            TR << "Found TASKOPERATIONS tag: " << (*it)->getName() << std::endl;
-            utility::vector0<TagCOP> taskop_subtags = (*it)->getTags();
-            for (utility::vector0<TagCOP>::const_iterator jt = taskop_subtags.begin(), taskop_subtags_end = taskop_subtags.end();
-                    jt != taskop_subtags_end; ++jt) {
-                TagCOP taskopTag = *jt;
-                const std::string taskoptype = taskopTag->getName();
-                const std::string uname = taskopTag->getOption<std::string>("name");
-                TR << "1) taskop type: " << taskoptype << std::endl;
-                TR << "1) taskop user name: " << uname << std::endl;
-                // map user provided name to type name
-                named_taskop_types[uname] = taskoptype;
-            }
-        }
-    }
-
-    const std::string task_op_opt = "task_operations";
-
-    // if an explicit list of task ops was given, find the given task ops and only the given task ops
-    if (tag->hasOption(task_op_opt)) {
-        utility::vector1<std::string> requested_taskops = utility::string_split(tag->getOption<std::string>(task_op_opt), ',');
-        for (utility::vector1<std::string>::const_iterator it = requested_taskops.begin(), end = requested_taskops.end(); it != end; ++it) {
-            const std::string user_name = *it;
-            const std::string type_name = named_taskop_types[user_name];
-            TaskOperation* top = data.get<core::pack::task::operation::TaskOperation*>( "task_operations", user_name );
-            named_taskops.push_back(named_taskop(type_name, user_name, top));
-        }
-    }
-    // if not explicit list of task ops was given, find them all
-    else {
-        TR << "iterating over DataMap" << std::endl;
-        typedef basic::datacache::DataMap DataMap;
-        typedef std::map<std::string, utility::pointer::ReferenceCountOP> SubDataMap;
-        for (DataMap::const_iterator it = data.begin(); it != data.end(); ++it) {
-            if (it->first == "task_operations") {
-                const SubDataMap& submap = it->second;
-                for (SubDataMap::const_iterator jt = submap.begin(); jt != submap.end(); ++jt) {
-                    const std::string user_name = jt->first;
-                    const std::string type_name = named_taskop_types[user_name];
-                    // TR << "\tKey: " << user_name << '\n';
-                    named_taskops.push_back( named_taskop(type_name, user_name, dynamic_cast<TaskOperation*>(jt->second.get())) );
-                }
-                break;
-            }
-        }
-    }
-
-    // get these from functions
-    // std::vector<std::string> requested_taskops = requested_taskops();
-    // std::vector<std::string> available_taskops = available_taskops();
-
-    // Debugger
-    /*
-    typedef utility::tag::Tag::options_t options_t;
-    const options_t options_map = tag->getOptions();
-    TR << "iterating over options in my tag\n";
-    for (options_t::const_iterator it = options_map.begin(); it != options_map.end(); ++it) {
-        TR << "option: first = " << it->first << ", second = " << it->second << std::endl;
-        // swallow extra options, cast to string will always be accepted
-        tag->getOption<std::string>(it->first);
-    }
-     */
-    // Debugger
-
-    // The above code qcquires a mapping of user name to TaskOperation* but the original
-    // derived types of the those TaskOperation classes are unknown.
-
-    // Work back up the tag system to find the original name, map it
-
-
-    for (std::vector<named_taskop>::const_iterator it = named_taskops.begin(), end = named_taskops.end();
-            it != end; ++it) {
-        TR << "Named taskop" << std::endl;
-        TR << '\t' << "user provided name: " << it->user_name << std::endl;
-        TR << '\t' << "Rosetta type: " << it->type_name << std::endl;
-    }
-
-    //data_taskops = data.get< core::pack::task::operation::TaskOperation * >( "task_operations", *t_o_key );
-
-    // TR << "Adding the following task operations\n";
-    // for ( vec1_str::const_iterator to_it = data_taskops.begin(), end = t_o_keys.end();
-    //         to_it != end; ++to_it ) {
-    //     if ( data.has( "task_operations", *t_o_key ) ) {
-    //         TR << *t_o_key << ' ';
-    //         named_taskops.push_back( named_taskop(*t_o_key, data.get<TaskOperation*>("task_operations", *t_o_key)) );
-    //     }
-    //     else {
-    //         throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
-    //     }
-    // }
-    // TR << std::endl;
+	// Fill task_factories_, one TaskFactoryCOP per TaskOperator
+	Size taskop_id(0);
+	std::string taskop_list = tag->getOption< std::string >("task_operations");
+	utility::vector0< std::string > const taskop_keys( utility::string_split( taskop_list, ',' ) );
+  	for ( utility::vector0< std::string>::const_iterator taskop_key( taskop_keys.begin() ),
+			end( taskop_keys.end() ); taskop_key != end; ++taskop_key ) {
+		taskop_id++;
+		if ( data.has( "task_operations", *taskop_key ) ) {
+			TaskFactoryOP new_task_factory( new TaskFactory );
+  	    	new_task_factory->push_back( data.get< TaskOperation * >
+					( "task_operations", *taskop_key ) );
+			taskops_.push_back(Taskop_id_name_factory_(taskop_id, *taskop_key, new_task_factory) );
+//			taskop_keys_factories_.insert(
+//				std::pair<std::string const, TaskFactoryCOP>(*taskop_key, new_task_factory));
+		}
+		else {
+  	        throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *taskop_key + " not found in DataMap.");
+		}
+	}
 }
 
 Size
@@ -304,82 +225,75 @@ TaskOperationFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
-
 	// assert pose.update_residue_neighbors() has been called:
 	runtime_assert(
 		 !pose.conformation().structure_moved() &&
 		 pose.energies().residue_neighbors_updated());
 
-	if (named_taskops.empty()) {
-        TR << "No TaskOperations found, none will be reported" << std::endl;
-        return 0;
-    }
-    report_task_operations(pose, relevant_residues, struct_id, db_session);
-    report_task_operation_effects(pose, relevant_residues, struct_id, db_session);
+//	if(taskop_keys_factories_.empty()) utility_exit_with_message("List of TaskOperators"
+//			" given to TaskFeatures is empty.");
+	if (taskops_.empty()) utility_exit_with_message("List of TaskOperators"
+			" given to TaskFeatures is empty.");
 
-    // task_operations table describes the taskoperations themselves
-    // taskop_ids the indices of whatever order the taskops happen to be in
+	// task_operations table rows, only run once
+//	if (run_once_) {
+		TR << "Inserting TaskOperations rows" << std::endl;
+		for (vector1<Taskop_id_name_factory_>::const_iterator
+				top = taskops_.begin(),
+				top_end = taskops_.end(); top != top_end; ++top) {
+			insert_task_operations_row(top->id, top->name, db_session);
+		}
+//		run_once_ = false;
+//	} else {
+//		TR << "Skipping task_operations rows" << std::endl;
+//	}
+
+	TR << "Generating tasks from saved task factories" << std::endl;
+	// gets tasks
+	std::map<core::Size, PackerTaskCOP> tasks;
+	for (vector1<Taskop_id_name_factory_>::const_iterator
+			top = taskops_.begin(),
+			top_end = taskops_.end(); top != top_end; ++top) {
+		//Size taskop_id = top->id;
+		tasks[top->id] = (top->tf)->create_task_and_apply_taskoperations( pose );
+	}
+
+	TR << "Inserting task_operation_residue_effects rows" << std::endl;
+	// task_operation_residue_effects rows
+	for( Size resNum = 1; resNum <= pose.n_residue(); ++resNum ){
+		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+
+		for(std::map<core::Size, PackerTaskCOP>::iterator task = tasks.begin(),
+				task_end = tasks.end(); task != task_end; task++) {
+			bool const pack = (task->second)->pack_residue(resNum);
+			bool const design = (task->second)->design_residue(resNum);
+			Size taskop_id = task->first;
+			insert_task_operation_residue_effects_row(struct_id, resNum,
+					taskop_id, pack, design, db_session);
+		}
+	}
 
 	return 0;
-}
-
-Size
-TaskOperationFeatures::report_task_operations(
-	Pose const&,
-	vector1< bool > const&,
-	StructureID,
-	sessionOP db_session
-){
-    core::Size task_op_id = 1;
-    for (std::vector<named_taskop>::const_iterator it = named_taskops.begin(), end = named_taskops.end(); it != end; ++it) {
-        insert_task_operations_row(task_op_id, it->type_name, it->user_name, db_session);
-        ++task_op_id;
-    }
-    return 0;
-}
-
-Size
-TaskOperationFeatures::report_task_operation_effects(
-	Pose const & pose,
-	vector1< bool > const & relevant_residues,
-	StructureID struct_id,
-	sessionOP db_session
-){
-    // how the task operations affect individual residues
-    core::Size taskop_id = 1;
-    for (std::vector<named_taskop>::const_iterator it = named_taskops.begin(), end = named_taskops.end(); it != end; ++it) {
-        TaskFactory tf;
-        tf.push_back(it->taskopOP);
-        PackerTaskCOP task = tf.create_task_and_apply_taskoperations(pose);
-        for (core::Size resi = 1, end = pose.n_residue() + 1; resi != end; ++resi) {
-            if (!relevant_residues[resi])
-                continue;
-            bool pack = task->pack_residue(resi);
-            bool design = task->design_residue(resi);
-            insert_task_operation_residue_effects_row(struct_id, resi, taskop_id, pack, design, db_session);
-        }
-        ++taskop_id;
-    }
-    return 0;
 }
 
 void
 TaskOperationFeatures::insert_task_operations_row(
 	Size const taskop_id,
-	std::string const& type_name,
-	std::string const& user_name,
+	std::string const & taskop_name,
 	sessionOP db_session
 ){
+	TR << "writing task_operation_residue_effects row" << std::endl;
+
 	string statement_string;
 	switch(db_session->get_db_mode()){
 	case utility::sql_database::DatabaseMode::sqlite3:
 		statement_string = "INSERT OR IGNORE INTO task_operations"
-				" (taskop_id, taskop_typename, taskop_username) VALUES (?,?,?);";
+				" (taskop_id, taskop_name) VALUES (?,?);";
 		break;
 	case utility::sql_database::DatabaseMode::mysql:
 	case utility::sql_database::DatabaseMode::postgres:
 		statement_string = "INSERT IGNORE INTO task_operations"
-				" (taskop_id, taskop_typename, taskop_username) VALUES (?,?,?);";
+				" (taskop_id, taskop_name) VALUES (?,?);";
 		break;
 	default:
 		utility_exit_with_message(
@@ -389,8 +303,7 @@ TaskOperationFeatures::insert_task_operations_row(
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string, db_session));
 	stmt.bind(1,taskop_id);
-	stmt.bind(2,type_name);
-	stmt.bind(3,user_name);
+	stmt.bind(2,taskop_name);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -404,8 +317,10 @@ TaskOperationFeatures::insert_task_operation_residue_effects_row(
 	bool design,
 	sessionOP db_session
 ){
+	TR << "writing task_operation_residue_effects row" << std::endl;
+
 	std::string statement_string = "INSERT INTO task_operation_residue_effects"
-		" (struct_id, resNum, taskop_id, packable, designable) VALUES (?,?,?,?,?);";
+		" (struct_id, resNum, taskop_id, pack, design) VALUES (?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string, db_session));
 	stmt.bind(1,struct_id);
 	stmt.bind(2,resNum);
