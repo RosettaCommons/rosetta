@@ -478,6 +478,9 @@ void FastRelax::set_to_default( )
 
 	// design
 	enable_design_ = false;
+
+	//	delete_virtual_residues_after_FastRelax_	=	'false' by default in this constructor, since parse_my_tag in rosetta_scripts alone is not enough to specifically designate default value for a user who uses command-line
+	delete_virtual_residues_after_FastRelax_	=	false;
 }	//set_to_default
 
 
@@ -953,7 +956,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 
 	checkpoints_.clear_checkpoints();
-
 
 	if	(constrain_coords())
 	{
