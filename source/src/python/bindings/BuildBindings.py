@@ -889,8 +889,8 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
 
     if Options.monolith:
         if rebuild: execute("Linking static mini lib...",
-                            "cd {mini_path} && cd {lib_path} && rm {mini} ; ar rcs {mini} {objs}" \
-                            .format(mini_path=mini_path, mini=mini, lib_path=lib_path, objs=objs) )
+                            "cd {mini_path} && cd {lib_path} && rm {mini} ; ar rcs {mini} @{all_objs_file}" \
+                            .format(mini_path=mini_path, mini=mini, lib_path=lib_path, all_objs_file=all_objs_file) )
     else:
         if rebuild: execute("Linking mini lib...",
                             "cd %(mini_path)s && cd %(lib_path)s && %(compiler)s %(add_loption)s \
