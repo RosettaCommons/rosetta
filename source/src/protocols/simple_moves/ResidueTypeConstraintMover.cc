@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file	ResidueTypeConstraintMover.cc
 /// @brief Assigns a ResidueTypeConstraint to a pose.
 ///	@author Doo Nam Kim (doonam.kim@gmail.com) (All I did is just making a simple mover using Sarel's ResidueTypeConstraint)
 

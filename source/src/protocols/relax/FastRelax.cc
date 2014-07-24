@@ -143,6 +143,7 @@ endrepeat
 #include <protocols/relax/Ramady.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/util.hh>
+#include <protocols/relax/cst_util.hh>
 
 //Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -401,7 +402,12 @@ FastRelax::parse_my_tag(
 	} else {
 		read_script_file( script_file );
 	}
-}
+
+	delete_virtual_residues_after_FastRelax_ = tag->getOption<bool>("delete_virtual_residues_after_FastRelax", false);
+		/// @brief if one uses constrain_relax_to_native_coords/constrain_relax_to_start_coords for the FastRelax,
+		// 		   virtual residues need to be deleted to calculate rmsd after FastRelax
+
+}	//parse_my_tag
 
 void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	utility::lua::LuaObject const & score_fxns,
@@ -441,7 +447,7 @@ void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	} else {
 		read_script_file( script_file );
 	}
-}
+}	//parse_def
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastRelax::set_to_default( )
@@ -472,7 +478,7 @@ void FastRelax::set_to_default( )
 
 	// design
 	enable_design_ = false;
-}
+}	//set_to_default
 
 
 
@@ -507,7 +513,7 @@ void FastRelax::cmd_accept_to_best(
 		irms = native_CA_rmsd( start_pose , best_pose );
 	}
 	TR << "MRP: " << accept_count << "  " << score << "  " << best_score << "  " << rms << "  " << irms << "  " << std::endl;
-}
+}	//cmd_accept_to_best
 
 
 void FastRelax::do_minimize(
@@ -946,10 +952,18 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			core::pose::setPoseExtraScores( pose, "S" + right_string_of(j,3,'0'), curr_score_log[j] );
 	}
 
-
-
 	checkpoints_.clear_checkpoints();
-}
+
+
+	if	(constrain_coords())
+	{
+		if (delete_virtual_residues_after_FastRelax_)
+		{
+			// remove extra virtual atom cooordinate constraints
+			protocols::relax::delete_virtual_residues( pose );
+		}
+	}
+}	//apply
 
 std::string
 FastRelax::get_name() const {

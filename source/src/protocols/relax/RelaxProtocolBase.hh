@@ -122,6 +122,7 @@ protected:
 	void output_debug_structure( core::pose::Pose & pose, std::string prefix );
 	void add_cst_files( std::string const cstfile){ cst_files_.push_back( cstfile ); }
 
+
 private:
   // Essentially MoveMap settings
 	bool fix_omega_;

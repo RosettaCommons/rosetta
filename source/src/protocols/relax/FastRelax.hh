@@ -177,6 +177,9 @@ private:   // options
 	/// @brief Number of repeats if using default script
   core::Size default_repeats_;
 
+  /// @brief If true, delete virtual residues at the end of FastRelax for smooth rmsd calculation later 
+	bool	delete_virtual_residues_after_FastRelax_;
+
   /// @brief Apply Ramady(tm) fix to residues with bad rama scores ?
   bool ramady_;
 
