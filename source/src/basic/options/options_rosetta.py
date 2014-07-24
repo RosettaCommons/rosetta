@@ -4252,7 +4252,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
       ),
     Option( 'max_kic_perturber_samples', 'Integer',
       desc='Maximum number of kinematic perturber samples',
-      default='500'
+      default='2000'
       ),
 		Option( 'nonpivot_torsion_sampling', 'Boolean',
 			desc='enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3',
@@ -4287,7 +4287,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
       default = '0', lower = '0'
     ),
 		Option( 'outer_cycles', 'Integer',
-			desc='outer cycles in fullatom loop refinement', default = '3', lower = '1'
+			desc='outer cycles in fullatom loop refinement', default = '5', lower = '1'
 		),
 		Option( 'max_inner_cycles', 'Integer',
 			desc='maxium number of inner cycles in fullatom loop refinement',
