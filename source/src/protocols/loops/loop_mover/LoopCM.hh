@@ -22,6 +22,12 @@
 
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
 
+#include <basic/datacache/WriteableCacheableMap.fwd.hh>
+
+#ifdef WIN32
+	#include <basic/datacache/WriteableCacheableMap.hh>
+#endif
+
 // C++ Headers
 
 ///////////////////////////////////////////////////////////////////////////////

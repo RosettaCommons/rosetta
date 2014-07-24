@@ -975,8 +975,15 @@ def calculate_source_modification_date(source, binding_source_path, ignore=set()
                     include = line.partition('<')[2].partition('>')[0]
                     include = os.path.abspath( os.path.join(binding_source_path, './../../' + include) )
                     if os.path.isfile(include): latest = max(latest, calculate_source_modification_date(include, binding_source_path, ignore.union([source]) ) )
+                    else:
+                        include_path_parts = os.path.relpath(include).replace('\\', '/').split()
+                        if len(include_path_parts) > 1  and  include_path_parts[0] in 'ObjexxFCL basic core devel numeric platform protocols utility':
+                            latest = time.time()
+                            print '______________________', os.path.relpath(include), line
 
-        else: latest = time.time()  # file does not exist - recompiling
+        else:
+            latest = time.time()  # file does not exist - recompiling
+            print '~~~~~~~~~~~~~~~~~~', os.path.relpath(include), line
 
         _source_modification_date_cache_[source] = latest
 
@@ -1574,6 +1581,21 @@ class ModuleBuilder:
             self.all_at_once_relative_files.extend( [source_fwd_hh, source_hh, source_cc] )  # just collecting file names...
 
 
+
+        self.all_at_once_relative_files.sort()
+
+
+        if not xml_recompile:
+            try:
+                d = json.load( file(self.all_at_once_json) )
+                previous_includes = 'relevant_files' in d  and  d['relevant_files']
+                if self.all_at_once_relative_files != previous_includes:
+                    xml_recompile = True
+                    print_(self.fname_base, color='green', bright=False)
+                    #print '__________', len(self.all_at_once_relative_files), len(previous_includes)
+            except ValueError: xml_recompile=True
+
+
         f = file(self.all_at_once_source_cpp, 'w');
         for fl in self.headers: f.write('#include <%s>\n' % fl);
         f.close()
@@ -1599,7 +1621,7 @@ class ModuleBuilder:
                 # Temporary injecting Mover in to protocols level
                 #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
 
-                code = tools.CppParser.parseAndWrapModule(self.all_at_once_base, namespaces_to_wrap, self.all_at_once_xml, self.all_at_once_relative_files, max_funcion_size=Options.max_function_size,
+                code = tools.CppParser.parseAndWrapModule(self.all_at_once_base, namespaces_to_wrap, self.all_at_once_xml, self.all_at_once_relative_files[:], max_funcion_size=Options.max_function_size,
                                                           by_hand_beginning=self.by_hand_beginning, by_hand_ending=self.by_hand_ending, monolith=Options.monolith)
 
                 print_('Getting include list...', color='black', bright=True)
@@ -1622,7 +1644,7 @@ class ModuleBuilder:
                     print_('.', color='black', bright=True, endline=False); sys.stdout.flush()
                 print_(' Done!', color='black', bright=True);
 
-                json.dump( dict(sources=source_list), file(self.all_at_once_json, 'w'), sort_keys=True, indent=2)
+                json.dump( dict(sources=source_list, relevant_files=self.all_at_once_relative_files), file(self.all_at_once_json, 'w'), sort_keys=True, indent=2)
 
             if Options.jobs > 1:
                 pid = mFork()
@@ -2036,7 +2058,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
             # Temporary injecting Mover in to protocols level
             #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
 
-            code = tools.CppParser.parseAndWrapModule(all_at_once_base, namespaces_to_wrap,  all_at_once_xml, all_at_once_relative_files, max_funcion_size=Options.max_function_size,
+            code = tools.CppParser.parseAndWrapModule(all_at_once_base, namespaces_to_wrap,  all_at_once_xml, all_at_once_relative_files[:], max_funcion_size=Options.max_function_size,
                                                       by_hand_beginning=by_hand_beginning, by_hand_ending=by_hand_ending)
 
             objs_list = []

@@ -5,12 +5,14 @@
 #ifndef FLATLOOKUP_HH
 #define FLATLOOKUP_HH
 
+#include <numeric/types.hh>
+
 namespace numeric
 {
 namespace coordinate_fitting
 {
 
-template <class QueryType, class EntryType, class Real=double> 
+template <class QueryType, class EntryType, class Real=double>
 class FlatLookup
 {
   public:
@@ -29,7 +31,7 @@ class FlatLookup
 
       distance = std::numeric_limits<Real>::max();
 
-      for (std::size_t i = 0; i < entries.size(); i++)
+      for (numeric::Size i = 0; i < entries.size(); i++)
       {
         Real test_distance = entry_distance(query, entries[i]);
 
@@ -51,7 +53,7 @@ class FlatLookup
 
       distance = std::numeric_limits<Real>::max();
 
-      for (std::size_t i = 0; i < entries.size(); i++)
+      for (numeric::Size i = 0; i < entries.size(); i++)
       {
         Real test_distance = entry_distance(query, entries[i]);
 
