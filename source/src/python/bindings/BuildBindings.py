@@ -1282,7 +1282,20 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     # "public: virtual bool __thiscall ObjexxFCL::IndexRange::contains(class ObjexxFCL::IndexRange const &)const " (?contains@IndexRange@ObjexxFCL@@UBE_NABV12@@Z)
 
 def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, binding_source_path, all_symbols=[], link=False):
-    files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
+    path = dir_name[len(base_dir)+1:].replace('\\', '/')
+    all_at_once_base = '_' + path.replace('/', '_') + ('_monolith_' if Options.monolith else '_')  # '_' + base_dir.replace('/', '_') + ('_monolith_' if Options.monolith else '_')
+    if not path: all_at_once_base = monolith_rosetta_library_name
+
+    fname_base = base_dir + '/' + path  #dest + '/' + path
+    all_at_once_json = fname_base + '/' + all_at_once_base + '.json'
+    info = json.load( file(all_at_once_json) )
+
+    # files_old = sorted( filter(lambda f: f.endswith('.cpp'), files) )
+    # print '_____ old:', files_old
+    files = sorted( [ f['cpp'] for f in info['sources'] ] )
+    # print '_____ new:', files
+    # if files_old != files: sys.exit(1)
+
     sub_dir = dir_name[ len(base_dir)+1: ]
 
     obj_dir = os.path.join(bindings_path, sub_dir)
