@@ -26,6 +26,11 @@
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/Span.fwd.hh>
 
+#ifdef WIN32
+	#include <core/conformation/membrane/Span.hh>
+#endif
+
+
 // Package Header
 #include <core/types.hh>
 
@@ -44,9 +49,9 @@ namespace conformation {
 namespace membrane {
 
 class SpanningTopology : public utility::pointer::ReferenceCount {
-    
+
 public: // constructors
-    
+
     /// @brief	Default Constructor (Private)
 	/// @details Construct an Empty Spanning Topology Object
     SpanningTopology();
@@ -57,7 +62,7 @@ public: // constructors
 		std::string spanfile,
 		Size total_residues = 0
 	);
-    
+
     /// @brief	Custom Constructor - Transmembrane Spans from xyz coords
 	/// @details Use coordinates of residue CA and thickness to determine the spanning regions in the pose
     SpanningTopology(
@@ -65,42 +70,42 @@ public: // constructors
 		utility::vector1< Size > chainID,
 		Real thickness
 		);
-	
+
 	/// @brief	Copy Constructor
 	/// @details Create a deep copy of this object copying over all private fields
 	SpanningTopology( SpanningTopology const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Overload assignemnt operator - required Rosetta method
 	SpanningTopology &
 	operator=( SpanningTopology const & src );
-    
+
     /// @brief Destructor
     ~SpanningTopology();
-    
+
 public: // methods
-    
+
 	/// @brief Show the current spans stored in this SpanningTopology Object
 	/// @details Generating a String Representation of Spanning Topology Object for debugging purposes
 	virtual void show( std::ostream & output=std::cout ) const;
-	
+
 	// write spanfile
 	void write_spanfile( std::string output_filename );
 
     /// @brief Return Spanning Topology
 	/// @details return spanning topology as a vector1 of transmembrane spans
     utility::vector1< SpanOP > get_spans();
-    
+
 	/// @brief Return Transmembrane Span
 	/// @details Return transmembrane span by it's index in the spanning topology object
     SpanOP span( Size span_number );
-	
+
 	// add span to end of SpanningTopology object, doesn't reorder
 	void add_span( SpanOP span );
-	
+
 	// reorder spans, for instance after adding one
 	void reorder_spans();
-    
+
     //// @brief Get total number of spans
 	/// @details Return the number of transmembrane spanning regions in this object
     Size total_spans();
@@ -108,28 +113,28 @@ public: // methods
     /// @brief Is the residue in the membrane region?
 	/// @details Return true if this residue is in a transmembrane span
     bool in_span( Size residue );
-	
+
 	/// @brief Does the span cross the membrane
 	/// @details Determine if the membrane spanning region crosses the whole membrane
 	bool spanning( utility::vector1< Real > res_z_coord, SpanOP span );
-    
+
     /// @brief Determine if this Spanning Topology Object is Valid
 	/// @details Check that spans still span the membrane
     bool is_valid();
 
 	// return number of residues in spanfile - for checking
 	Size nres_topo();
-   
+
 private: // methods
 
 	/// @brief Create spanning topology object from spanfile
 	SpanningTopology create_from_spanfile( std::string spanfile, Size nres);
-	  
+
 	/// @brief Create Transmembrane SPan OBject from structure
 	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, Real thickness );
-	
+
 private: // data
-    
+
     // vector of spans
     utility::vector1< SpanOP > topology_;
 
