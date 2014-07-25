@@ -630,12 +630,6 @@ DynamicAggregateFunction::select_relevant_states(
 	Entity const & entity
 )
 {
-	/// return them all for now.
-	//StateIndices indices( num_states() );
-	//for ( Size ii = 1; ii <= indices.size(); ++ii ) {
-	//	indices[ ii ] = ii;
-	//}
-	//return indices;
 	TR << "Recovering relevant states" << std::endl;
 	assign_state_energies_to_variables_and_subexpressions( state_energies, npd_properties, entity, true );
 	std::list< std::string > active_varnames = fitness_exp_->active_variables();
@@ -644,9 +638,9 @@ DynamicAggregateFunction::select_relevant_states(
 			iter = active_varnames.begin(), iter_end = active_varnames.end();
 			iter != iter_end; ++iter ) {
 		if ( state_variable_name_2_state_index_.find( *iter ) == state_variable_name_2_state_index_.end() ) {
-			/// Ignore active variables that are not in the state_varialbe_2_state_index_ map
-			/// These include POSE_ENERGY and POSE_ENERGY_VECTOR variables as well as
-			/// SCALAR_EXPRESSION variables that simply hold constants (e.g. "SCALAR_EXPRESSION five = 2 + 3" )
+			// Ignore active variables that are not in the state_variable_2_state_index_ map
+			// These include POSE_ENERGY and POSE_ENERGY_VECTOR variables as well as
+			// SCALAR_EXPRESSION variables that simply hold constants (e.g. "SCALAR_EXPRESSION five = 2 + 3" )
 			TR << "The variable named '" << *iter << "' contributes to the fitness but does not correspond to a state." << std::endl;
 			continue;
 		}
@@ -1047,14 +1041,13 @@ DynamicAggregateFunction::process_STATE_line(
 		<< " PDB= " << structure_file << " Corr= " << correspondence_file
 		<< " 2RF= " << secondary_resfile << std::endl;
 
-	scanner_->add_variable( state_name );
-	variable_names_dec_line_[ state_name ] = line_number;
-	scalar_variable_names_dec_line_[ state_name ] = line_number;
 
 	StructureFileNames sfn;
 	sfn.pdb_name_ = structure_file;
 	sfn.correspondence_file_name_ = correspondence_file;
 	sfn.resfile_name_ = secondary_resfile;
+
+	save_scalar_variable( state_name, line_number );
 
 	state_variable_names_.insert( state_name );
 	named_state_data_file_names_[ state_name ] = sfn;
@@ -1104,12 +1097,10 @@ DynamicAggregateFunction::process_STATE_VECTOR_line(
 	TR << "Read STATE_VECTOR line.  Name= " << state_vector_variable_name
 		<< " File= " << state_vector_filename << std::endl;
 
-	variable_names_dec_line_[ state_vector_variable_name ] = line_number;
-	state_vector_variable_names_.insert( state_vector_variable_name );
-	vector_variable_names_dec_line_[ state_vector_variable_name ] = line_number;
-	scanner_->add_variable( state_vector_variable_name );
+	save_vector_variable( state_vector_variable_name, line_number );
 
-	strucvec_filenames.push_back( std::make_pair( state_vector_variable_name, state_vector_filename ) );
+	state_vector_variable_names_.insert( state_vector_variable_name );
+ 	strucvec_filenames.push_back( std::make_pair( state_vector_variable_name, state_vector_filename ) );
 }
 
 void
@@ -1162,8 +1153,9 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	// ok -- go ahead and score the pose
 	TR << "  Scoring pose from pdb file '" << pdb_name << "'" << std::endl;
 	core::Real score = (*sfxn_)( pose );
-	scanner_->add_variable( varname );
 	scalar_expression_map_[ varname ] = new VariableExpression( varname, score );
+	save_scalar_variable( varname, line_number );
+
 	TR << "Saving POSE_ENERGY of " << score << " in variable " << varname << std::endl;
 }
 
@@ -1251,7 +1243,8 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		TR << "  Saving score of " << score << " in variable " << newvar << std::endl;
 		pose_energy_variables[ count_pdbs ] = new VariableExpression( newvar, score );;
 	}
-	scanner_->add_variable( varname );
+
+	save_vector_variable( varname, line_number );
 	vector_expression_map_[ varname ] = new VariableVectorExpression( varname, pose_energy_variables );
 
 
@@ -1331,15 +1324,10 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 	}
 	// TO DO. Error check: is this a supported property?
 
-	// what to do now?
-	variable_names_dec_line_[ varname ] = line_number;
-	scanner_->add_variable( varname );
 	if ( original_was_state_vector ) {
-		// create a new vector variable
-		vector_variable_names_dec_line_[ varname ] = line_number;
+		save_vector_variable( varname, line_number );
 	} else {
-		// create a new scalar variable
-		scalar_variable_names_dec_line_[ varname ] = line_number;
+		save_scalar_variable( varname, line_number );
 	}
 
 	npd_properties_for_state_variables_[ original_varname ].push_back( std::make_pair( npd_property, varname ) );
@@ -1395,10 +1383,7 @@ DynamicAggregateFunction::process_VECTOR_VARIABLE_line(
 		}
 	}
 
-	variable_names_dec_line_[ vector_variable_name ] = line_number;
-	vector_variable_names_dec_line_[ vector_variable_name ] = line_number;
-	scanner_->add_variable( vector_variable_name );
-
+	save_vector_variable( vector_variable_name, line_number );
 	vector_variables[ vector_variable_name ] = varname_list;
 }
 
@@ -1456,10 +1441,8 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 	expression_ast->parse( *tokens );
 
 	// Assuming we made it here, the AST has been correctly parsed.
+	save_scalar_variable( vname, line_number );
 	scalar_expression_asts[ vname ] = expression_ast;
-	variable_names_dec_line_[ vname ] = line_number;
-	scalar_variable_names_dec_line_[ vname ] = line_number;
-	scanner_->add_variable( vname );
 	expression_evaluation_order_by_name_.push_back( std::make_pair( 1, vname ));
 	TR << "SCALAR_EXPRESSION on line " << line_number << " successfully parsed" << std::endl;
 }
@@ -1592,11 +1575,8 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	vector_expression_ast->parse( *tokens );
 	TR << "VECTOR_EXPRESSION on line " << line_number << " successfully parsed" << std::endl;
 
-	variable_names_dec_line_[ vector_varname ] = line_number;
-	vector_variable_names_dec_line_[ vector_varname ] = line_number;
-	scanner_->add_variable( vector_varname );
+	save_vector_variable( vector_varname, line_number );
 	expression_evaluation_order_by_name_.push_back( std::make_pair( 2, vector_varname ));
-
 	vector_expression_asts[ vector_varname ] = std::make_pair( localvar_map, vector_expression_ast );
 }
 
@@ -1656,9 +1636,9 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 	std::istringstream iss( entfunc_contents );
 	entfunc->initialize_from_input_file( iss );
 
+	save_scalar_variable( entityfunc_name, line_number );
 	entity_funcs_[ entityfunc_name ] = std::make_pair( entfunc, new SurrogateVariableExpression( entityfunc_name ) );
 	entity_funcs_dec_line_[ entityfunc_name ] = line_number;
-	scanner_->add_variable( entityfunc_name );
 }
 
 
@@ -1692,6 +1672,24 @@ DynamicAggregateFunction::process_FITNESS_line(
 	fitness_expression_ast->parse( *tokens );
 	TR << "FITNESS on line " << line_number << " successfully parsed" << std::endl;
 }
+
+void
+DynamicAggregateFunction::save_scalar_variable( std::string const & varname, core::Size line_number )
+{
+	scanner_->add_variable( varname );
+	variable_names_dec_line_[ varname ] = line_number;
+	scalar_variable_names_dec_line_[ varname ] = line_number;
+}
+
+void
+DynamicAggregateFunction::save_vector_variable( std::string const & varname, core::Size line_number )
+{
+	scanner_->add_variable( varname );
+	variable_names_dec_line_[ varname ] = line_number;
+	vector_variable_names_dec_line_[ varname ] = line_number;
+}
+
+
 
 /// @details This function reads the contents of a state-vector file.  The input
 /// parameter vec_varname refers to the variable name associated with the file named

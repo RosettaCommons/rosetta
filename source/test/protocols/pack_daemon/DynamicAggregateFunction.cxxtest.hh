@@ -664,6 +664,32 @@ public:
 
 	}
 
+	void test_daf_POSE_ENERGY_into_VECTOR_VARIABLE_command() {
+		DaemonSetOP ds = new DaemonSet;
+		ScoreFunctionOP sfxn = get_score_function();
+		ds->set_score_function( *sfxn );
+		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
+		std::istringstream corr_resfile( corr_resfile_string );
+		ds->set_entity_resfile( corr_resfile, "unnamed" );
+
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
+		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
+		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
+		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
+		daf->add_file_contents( "trpcage.list", "1l2y.pdb 1l2y.correspondence.txt 1l2y.secondary.resfile\n" );
+		daf->set_score_function( *sfxn );
+
+		std::istringstream iss( "STATE_VECTOR trpcage trpcage.list\nPOSE_ENERGY trpcage_wt 1l2y.pdb\nVECTOR_VARIABLE tc_vec = trpcage_wt\nFITNESS trpcage - trpcage_wt\n" );
+		try {
+			daf->initialize_from_input_file( ds, iss );
+			TS_ASSERT( true );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			std::cout << "Caught exception: " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+
+	}
+
 
 	void test_daf_scalar_NPD_PROPERTY_command() {
 

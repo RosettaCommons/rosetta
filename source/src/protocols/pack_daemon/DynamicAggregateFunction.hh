@@ -611,6 +611,12 @@ private:
 	);
 
 	void
+	save_scalar_variable( std::string const & varname, core::Size line_number );
+
+	void
+	save_vector_variable( std::string const & varname, core::Size line_number );
+
+	void
 	read_state_vector_file(
 		std::string const & vec_varname,
 		std::string const & fname,
