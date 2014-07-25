@@ -28,7 +28,6 @@
 #include <core/conformation/membrane/LipidAccInfo.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 
-#include <core/membrane/io/LipoFileIO.hh>
 #include <core/membrane/io/LipoFileOptions.hh>
 
 // Utility Headers
@@ -62,8 +61,7 @@ LipoFileLoader::create_resource(
 	using namespace core::membrane::io;
 
 	// Create and initialize a lipid object
-	core::membrane::io::LipoFileIO lfio;
-	LipidAccInfoOP lips_exp = lfio.get_lips_exp_from_lipofile( locator_id );
+	LipidAccInfoOP lips_exp = new LipidAccInfo( locator_id );
 
 	// Cast generic options to lipofile opts
 	if ( ! dynamic_cast< LipoFileOptions const * > ( &options ) ) {

@@ -129,16 +129,6 @@ public:
         basic::resource_manager::ResourceOP embedding = lazy_resource_manager->get_resource_by_job_tag( "embedding", "membrane" );
         TS_ASSERT( embedding );
 
-        // Loading Membrane Embedding Options
-        TS_TRACE("loading membrane embedding parameters");
-        if (! lazy_resource_manager->has_resource_tag_by_job_tag("params", "membrane"))
-        {
-            throw utility::excn::EXCN_Msg_Exception("Either a resource definition file or the command line option -in:membrane:params "\
-                                                    "must be specified");
-        }
-        basic::resource_manager::ResourceOP params = lazy_resource_manager->get_resource_by_job_tag( "params", "membrane" );
-        TS_ASSERT( params );
-
         // Load Membrane Lips File
         TS_TRACE("Loading a membrane lipids obj from the resource manager");
         if (! lazy_resource_manager->has_resource_tag_by_job_tag("lipids", "membrane"))
@@ -160,9 +150,6 @@ public:
         "  <ResourceLocators>\n"
         "    <FileSystemResourceLocator tag=1afo base_path=\"core/membrane/io/\" />\n"
         "  </ResourceLocators>\n"
-        "  <ResourceOptions>\n"
-        "    <EmbedSearchParamsOptions tag=embed_options normal_search=1 />\n"
-        "  </ResourceOptions>\n"
         "  <Resources>\n"
         "    <PoseFromPDB tag=1afo_startstruct locator=1afo locatorID=\"1afo_test.pdb\" />\n"
         "    <SpanFile tag=1afo_topology file=\"core/membrane/io/1afo_test.span\" />\n"

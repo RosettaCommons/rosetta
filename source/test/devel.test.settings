@@ -17,7 +17,7 @@ sources = {
 	],
         "denovo_design" : [
                 "BuildSheet",
-                "GenericSimulatedAnnealer",
+               # "GenericSimulatedAnnealer",
         ],
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",

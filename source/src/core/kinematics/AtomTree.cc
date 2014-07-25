@@ -731,6 +731,7 @@ AtomTree::set_xyz(
 	update_xyz_coords();
 	atom_pointer_[ id ]->position( xyz );
 	internal_coords_need_updating_ = true;
+	
 }
 
 /////////////////////////////////////////////////////////////////////////////

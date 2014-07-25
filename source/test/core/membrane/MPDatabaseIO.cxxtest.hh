@@ -110,8 +110,8 @@ public: // test functions
         
         // Residue type information
         ResidueTypeSetCAP const & residue_set(
-                                              core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
-                                              );
+		  core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
+		  );
         
         // Create a membrane and embedding residue
         ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );

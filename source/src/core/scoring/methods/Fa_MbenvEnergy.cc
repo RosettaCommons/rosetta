@@ -39,7 +39,9 @@
 #include <ObjexxFCL/FArray1.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh> 
 
+static basic::Tracer TR( "core.scoring.methods.Fa_MbEnvEnergy" );
 
 namespace core {
 namespace scoring {
@@ -99,6 +101,7 @@ Fa_MbenvEnergy::residue_energy(
 
   for ( Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
       emap[ fa_mbenv ] += eval_fa_mbenv( rsd.atom(i), Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd.seqpos(),i));
+	  
   }
 }
 

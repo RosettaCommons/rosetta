@@ -41,9 +41,13 @@
 #endif
 
 #include <ObjexxFCL/FArrayTraits.hh>
+#include <utility/string_util.hh>
 
 // Boost Headers
 #include <boost/functional/hash.hpp>
+
+// C++ headers
+#include <cstdlib>
 
 namespace numeric {
 
@@ -354,6 +358,24 @@ public: // Assignment
 
 
 public: // Methods
+	
+    
+    /// @brief to_string, useful for utility exits
+	inline
+	std::string
+	to_string() const
+	{
+		return "(" + utility::to_string(x_) + ", " + utility::to_string(y_) + ", " + utility::to_string(z_) + ")";
+	}
+
+	
+	/// @brief Show
+	inline
+	void
+	show(std::ostream & output=std::cout) const
+	{
+		output << "(" << x_ << ", " << y_ << ", " << z_ << ")";
+	}
 
 
 	/// @brief Clear
@@ -2400,6 +2422,14 @@ struct FArrayTraits < numeric::xyzVector< T > >
 	        return numeric::xyzVector< T >(0,0,0); // Use all zeros
 	}
 }; // FArrayTraits
+
+// stream operator for show function
+template< typename T >
+std::ostream &operator<< (std::ostream &os, numeric::xyzVector< T > const &vector)
+{
+	vector.show(os);
+	return os;
+}
 
 }
 

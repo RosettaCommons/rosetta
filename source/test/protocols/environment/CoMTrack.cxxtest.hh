@@ -33,6 +33,8 @@
 //C++ headers
 #include <iostream>
 
+using namespace core; 
+
 class CoMTrack : public CxxTest::TestSuite {
 public:
 

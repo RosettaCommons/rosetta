@@ -79,6 +79,7 @@ static basic::Tracer tr("protocols.environment.EnvClaimBroker", basic::t_info);
 namespace protocols {
 namespace environment {
 
+using namespace core; 
 using namespace protocols::environment::claims;
 
 using core::environment::LocalPosition;

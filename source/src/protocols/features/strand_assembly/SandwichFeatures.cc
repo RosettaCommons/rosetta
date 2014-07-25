@@ -42,6 +42,11 @@
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
 
+#include <core/pose/Pose.hh> 
+#include <utility/vector1.hh> 
+#include <core/types.hh> 
+#include <utility/tag/Tag.hh> 
+
 static basic::Tracer TR("protocols.features.strand_assembly.SandwichFeatures");
 
 namespace protocols {
@@ -731,11 +736,11 @@ SandwichFeatures::parse_my_tag(
 	Pose const & /*pose*/
 )
 {
-	min_num_strands_to_deal_ = tag->getOption<Size>("min_num_strands_to_deal", 4);
+	min_num_strands_to_deal_ = tag->getOption<core::Size>("min_num_strands_to_deal", 4);
 					// At least 4 strands should be in pdb file
-	max_num_strands_to_deal_ = tag->getOption<Size>("max_num_strands_to_deal", 140);
+	max_num_strands_to_deal_ = tag->getOption<core::Size>("max_num_strands_to_deal", 140);
 					// example: (in all chains of 1FE8) There are 132 strands, it took ~ 7 cpu minutes to process
-	min_res_in_strand_ = tag->getOption<Size>("min_res_in_strand", 2);
+	min_res_in_strand_ = tag->getOption<core::Size>("min_res_in_strand", 2);
 					// definition: minimum number of residues in a strand, for edge strand definition & analysis
 					// example: 4=< is recommended (in 1A8M) min_res_in_strand = 2, (in 1PMY) min_res_in_strand = 3
 
@@ -785,7 +790,7 @@ SandwichFeatures::parse_my_tag(
 	max_sheet_torsion_cen_res_ = tag->getOption<Real>("max_sheet_torsion_cen_res", 150.0);
 					//	definition: "maximum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet
 					//	usage: used in judge_facing "torsion_i_j < max_sheet_torsion_cen_res_"
-	min_num_strands_in_sheet_ = tag->getOption<Size>("min_num_strands_in_sheet", 3);
+	min_num_strands_in_sheet_ = tag->getOption<core::Size>("min_num_strands_in_sheet", 3);
 					//  definition: a sheet with < 3 strands will be ignored
 					//	usage: if (num_strands_i < min_num_strands_in_sheet_)
 	min_inter_sheet_dis_CA_CA_ = tag->getOption<Real>("min_inter_sheet_dis_CA_CA", 4.0);
@@ -807,7 +812,7 @@ SandwichFeatures::parse_my_tag(
 					//	example: (in 1U3J chain A) 105 is possible for 4-7-11-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1QAC chain A) 128.5 is possible for 4-7-10-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1A3R chain L) 130 is possible for 4-7-10-14 dihedral angle (but this should be excluded as same direction strand)
-	max_num_sw_per_pdb_ = tag->getOption<Size>("max_num_sw_per_pdb", 100);
+	max_num_sw_per_pdb_ = tag->getOption<core::Size>("max_num_sw_per_pdb", 100);
 					//	definition: maximum number of sandwiches to be extracted per a pdb file
 	check_N_to_C_direction_by_ = tag->getOption<string>("check_N_to_C_direction_by", "PE");
 					//	definition: check N->C going direction by option
@@ -851,17 +856,17 @@ SandwichFeatures::parse_my_tag(
 	exclude_sandwich_with_SS_bond_ = tag->getOption<bool>("exclude_sandwich_with_SS_bond", false);
 
 
-	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
+	max_starting_loop_size_ = tag->getOption<core::Size>("max_starting_loop_size", 6);
 					//	definition: maximum starting loop size to extract
-	max_ending_loop_size_ = tag->getOption<Size>("max_ending_loop_size", 6);
+	max_ending_loop_size_ = tag->getOption<core::Size>("max_ending_loop_size", 6);
 					//	definition: maximum ending loop size to extract
 	no_helix_in_pdb_ = tag->getOption<bool>("no_helix_in_pdb", false);
 					// if true, ignore any pdb that has helix
-	max_E_in_extracted_sw_loop_ = tag->getOption<Size>("max_E_in_extracted_sw_loop", 10);
+	max_E_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_E_in_extracted_sw_loop", 10);
 					//	definition: maximum allowable number of E residues in extracted sandwich loop
 					//	usefulness: If used, it is useful to exclude [1LOQ] which is a beta-propeller
 
-	max_H_in_extracted_sw_loop_ = tag->getOption<Size>("max_H_in_extracted_sw_loop", 10);
+	max_H_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_H_in_extracted_sw_loop", 10);
 					//	definition: maximum allowable number of helix residues in extracted sandwich loop
 					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
 
@@ -894,7 +899,7 @@ SandwichFeatures::parse_my_tag(
 			//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
-	min_primary_seq_distance_diff_for_electrostatic_interactions_ = tag->getOption<Size>("min_primary_seq_distance_diff_for_electrostatic_interactions", 4);
+	min_primary_seq_distance_diff_for_electrostatic_interactions_ = tag->getOption<core::Size>("min_primary_seq_distance_diff_for_electrostatic_interactions", 4);
 		// rationale for default value: I hypothesize that electrostatic interaction between 38E and 41K of Tencon do not stabilize that much
 
 
@@ -1057,7 +1062,7 @@ SandwichFeatures::report_features(
 
 		utility::vector1<SandwichFragment> all_strands = get_full_strands(struct_id, db_session);
 
-		if ((static_cast<Size>(all_strands.size()) < min_num_strands_to_deal_) || (static_cast<Size>(all_strands.size()) > max_num_strands_to_deal_)){
+		if ((static_cast<core::Size>(all_strands.size()) < min_num_strands_to_deal_) || (static_cast<core::Size>(all_strands.size()) > max_num_strands_to_deal_)){
 				TR.Info << "Exit early since all_strands.size(): " << all_strands.size() << endl;
 			return 0;
 		}
@@ -1234,7 +1239,7 @@ SandwichFeatures::report_features(
 
 
 		// <begin> see_whether_sheet_is_antiparallel
-		utility::vector1<Size> all_distinct_sheet_ids = get_distinct_sheet_id_from_sheet_table(struct_id, db_session);
+		utility::vector1<core::Size> all_distinct_sheet_ids = get_distinct_sheet_id_from_sheet_table(struct_id, db_session);
 		for(Size i=1; i<=all_distinct_sheet_ids.size(); i++)
 		{
 			if (all_distinct_sheet_ids[i] == 99999) //all_strands[i].get_size() < min_res_in_strand_
@@ -1675,7 +1680,7 @@ SandwichFeatures::report_features(
 		/////////////////// <begin> update beta-hairpin or inter_sheet_connecting_loops (2nd judgement whether each sandwich_by_sheet_id can become a sandwich_by_components)
 
 		// get_distinct(sw_can_by_sh_id)
-		utility::vector1<Size> vec_sw_can_by_sh_id =  get_vec_of_sw_can_by_sh_id(struct_id, db_session);
+		utility::vector1<core::Size> vec_sw_can_by_sh_id =  get_vec_of_sw_can_by_sh_id(struct_id, db_session);
 
 		for(Size ii=1; ii<=vec_sw_can_by_sh_id.size(); ii++)
 		{ // I think that mostly vec_sw_can_by_sh_id.size() = just 1

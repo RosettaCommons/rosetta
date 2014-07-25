@@ -136,6 +136,15 @@
 #include <core/scoring/methods/MembraneEnvPenaltiesCreator.hh>
 #include <core/scoring/methods/MembraneLipoCreator.hh>
 #include <core/scoring/methods/MembraneEnvSmoothEnergyCreator.hh>
+#include <core/scoring/membrane/MPPairEnergyCreator.hh> 
+#include <core/scoring/membrane/MPEnvEnergyCreator.hh> 
+#include <core/scoring/membrane/MPCBetaEnergyCreator.hh>
+#include <core/scoring/membrane/MPNonHelixPenaltyCreator.hh> 
+#include <core/scoring/membrane/MPTerminiPenaltyCreator.hh> 
+#include <core/scoring/membrane/MPTMProjPenaltyCreator.hh>
+#include <core/scoring/membrane/FaMPEnvEnergyCreator.hh> 
+#include <core/scoring/membrane/FaMPSolvEnergyCreator.hh>
+#include <core/scoring/membrane/FaMPEnvSmoothEnergyCreator.hh>
 #include <core/scoring/methods/pHEnergyCreator.hh>
 #include <core/scoring/methods/PoissonBoltzmannEnergyCreator.hh>
 #include <core/scoring/methods/ChemicalShiftAnisotropyEnergyCreator.hh>
@@ -273,15 +282,11 @@ using basic::Warning;
 #include <core/chemical/ResidueLoaderOptionsCreator.hh>
 
 // ResourceManager Inlcudes for Membranes
-#include <core/membrane/io/SpanFileLoaderCreator.hh>
+//#include <core/membrane/io/SpanFileLoaderCreator.hh>
 #include <core/membrane/io/LipoFileLoaderCreator.hh>
-#include <core/membrane/io/EmbedSearchParamsLoaderCreator.hh>
-#include <core/membrane/io/EmbedDefLoaderCreator.hh>
 
-#include <core/membrane/io/SpanFileOptionsCreator.hh>
+//#include <core/membrane/io/SpanFileOptionsCreator.hh>
 #include <core/membrane/io/LipoFileOptionsCreator.hh>
-#include <core/membrane/io/EmbedSearchParamsOptionsCreator.hh>
-#include <core/membrane/io/EmbedDefOptionsCreator.hh>
 
 //option key includes for deprecated pdbs
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
@@ -415,6 +420,24 @@ static EnergyMethodRegistrator< scoring::methods::MembraneCbetaEnergyCreator > M
 static EnergyMethodRegistrator< scoring::methods::MembraneCenPairEnergyCreator > MembraneCenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvEnergyCreator > MembraneEnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvPenaltiesCreator > MembraneEnvPenaltiesCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPPairEnergyCreator >
+	MPPairEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPEnvEnergyCreator >
+	MPEnvEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPCbetaEnergyCreator >
+	MPCbetaEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPNonHelixPenaltyCreator >
+	MPNonHelixPenaltyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPTerminiPenaltyCreator >
+	MPTerminiPenaltyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::MPTMProjPenaltyCreator >
+	MPTMProjPenaltyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::FaMPEnvEnergyCreator >
+	FaMPEnvEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::FaMPSolvEnergyCreator >
+	FaMPSolvEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::membrane::FaMPEnvSmoothEnergyCreator >
+	FaMPEnvSMoothEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SmoothCenPairEnergyCreator > SmoothCenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SmoothEnvEnergyCreator > SmoothEnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenRotPairEnergyCreator > CenRotPairEnergyCreator_registrator;
@@ -575,10 +598,8 @@ static ResourceLoaderRegistrator< core::io::silent::SilentFileLoaderCreator > Si
 static ResourceLoaderRegistrator< core::import_pose::PoseFromPDBLoaderCreator > PoseFromPDBLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensityLoaderCreator > ElectronDensityLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > ResidueLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::membrane::io::EmbedSearchParamsLoaderCreator > EmbedSearchParamsLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::membrane::io::SpanFileLoaderCreator > SpanFileLoaderCreator_registrator;
+//static ResourceLoaderRegistrator< core::membrane::io::SpanFileLoaderCreator > SpanFileLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::membrane::io::LipoFileLoaderCreator > LipOFileLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::membrane::io::EmbedDefLoaderCreator > EmbedDefLoaderCreator_registrator;
 
 using basic::resource_manager::ResourceOptionsRegistrator;
 static ResourceOptionsRegistrator< core::conformation::symmetry::SymmDataOptionsCreator > SymmDataOptionsCreator_registrator;
@@ -586,10 +607,8 @@ static ResourceOptionsRegistrator< core::import_pose::ImportPoseOptionsCreator >
 static ResourceOptionsRegistrator< core::io::silent::SilentFileOptionsCreator > SilentFileOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::scoring::electron_density::ElectronDensityOptionsCreator > ElectronDensityOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator > ResiudeLoaderOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::membrane::io::EmbedSearchParamsOptionsCreator > EmbedSearchParamsOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::membrane::io::SpanFileOptionsCreator > SpanFileOptionsCreator_registrator;
+//static ResourceOptionsRegistrator< core::membrane::io::SpanFileOptionsCreator > SpanFileOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::membrane::io::LipoFileOptionsCreator > LipoFileLoaderCreator_registrator;
-static ResourceOptionsRegistrator< core::membrane::io::EmbedDefOptionsCreator > EmbedDefOptionsCreator_registrator;
 
 #endif
 

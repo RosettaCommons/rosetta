@@ -310,6 +310,11 @@ public:
 
 	/// @brief Send RAW energy array for coloring by PyMOL
 	void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
+	
+	/// @brief Send Membrane Planes to PyMol
+	/// @details If pose is a membrane pose and view_in_pymol flag is set to true
+	/// pymol viewer will build CGO planes from points specified
+	void send_membrane_planes( Pose const & );
 
 	/// @brief Tell PyMOL to color protein with supplied custom colors
 	virtual void send_colors(Pose const &, std::map<int, int> const & colors, X11Colors default_color=protocols::moves::XC_blue );
@@ -369,6 +374,9 @@ private:
 	bool update_energy_;
 
 	core::scoring::ScoreType energy_type_;
+
+	/// @brief If pose is a membrane pose, send planes
+	bool update_membrane_;
 
 	/// @brief Should PyMol keep history of all models that was sent? - Default is false.
 	bool keep_history_;

@@ -29,6 +29,9 @@
 #include <iostream>
 #include <boost/bind/bind.hpp>
 
+using namespace core; 
+using namespace core::conformation; 
+
 class Tester : public protocols::environment::ClaimingMover {
 public:
 

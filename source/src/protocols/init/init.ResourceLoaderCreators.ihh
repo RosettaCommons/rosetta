@@ -20,5 +20,3 @@
 #include <protocols/surface_docking/SurfaceVectorLoaderCreator.hh>
 #include <core/membrane/io/LipoFileLoaderCreator.hh>
 #include <core/membrane/io/SpanFileLoaderCreator.hh>
-#include <core/membrane/io/EmbedSearchParamsLoaderCreator.hh>
-#include <core/membrane/io/EmbedDefLoaderCreator.hh>

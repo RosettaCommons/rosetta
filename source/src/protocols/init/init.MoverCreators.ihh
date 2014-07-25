@@ -163,8 +163,6 @@
 #include <protocols/md/CartesianMDCreator.hh>
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>
 
-#include <protocols/membrane/CreateMembranePoseMoverCreator.hh>
-
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
 #include <protocols/motif_grafting/movers/MotifGraftCreator.hh>
@@ -343,5 +341,10 @@
 #include <protocols/abinitio/abscript/StructPerturberCMCreator.hh>
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
 
+#include <protocols/membrane/AddMembraneMoverCreator.hh> 
+#include <protocols/membrane/InitialMembranePositionMoverCreator.hh> 
+//#include <protocols/membrane/TransformIntoMembraneMoverCreator.hh> 
+//#include <protocols/membrane/MembranePositionRTMoverCreator.hh> 
+//#include <protocols/membrane/MembranePositionPerturbMoverCreator.hh> 
 
-
+#include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh> 

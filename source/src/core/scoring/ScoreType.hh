@@ -247,6 +247,8 @@ enum ScoreType {
 	pair, // centroid
 	cen_pair_smooth,  //fpd  smooth centroid pair
 	Mpair,
+	MPPair,
+	FaMPSolv,
 	// sucker atom energy
 	suck,
 
@@ -370,6 +372,17 @@ enum ScoreType {
 	burial, // informatic burial prediction
 	abego,  // informatic torsion-bin prediction
 
+	/// Membrane Framework Whole Structure Energies
+	/// centroid - added by @ralford 3/30/14
+	MPEnv,
+	MPCbeta,
+	MPLipo,
+	MPTermini,
+	MPNonHelix,
+	MPTMProj,
+	FaMPEnv,
+	FaMPEnvSmooth,
+	
 	/// Whole structure energies, centroid score
 	// secondary structure scores
 	natbias_ss,

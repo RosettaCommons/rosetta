@@ -565,7 +565,35 @@ Pose::n_residue() const
 {
 	return conformation_->size();
 }
+    
+/// @brief Returns the total number of atoms in the pose conformation
+/// example:
+///			pose.total_atoms()
+Size
+Pose::total_atoms() const{
+    core::Size atomno(0);
+    for (core::Size res = 1; res <= total_residue(); res++){
+        for (core::Size atms = 1; atms <= residue(res).natoms(); atms++){
+            atomno++;
+        }
+    }
+    return atomno;
+}
 
+/// @brief Returns the total number of atoms in the pose conformation
+/// example:
+///			pose.total_atoms()
+Size
+Pose::total_atoms( Size nres ) const{
+	core::Size atomno(0);
+	for (core::Size res = 1; res <= nres; res++){
+		for (core::Size atms = 1; atms <= residue(res).natoms(); atms++){
+			atomno++;
+		}
+	}
+	return atomno;
+}
+    
 bool
 Pose::empty() const
 {

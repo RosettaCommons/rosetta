@@ -574,6 +574,15 @@ public:
 	Size
 	n_residue() const;
 
+	/// @brief Returns the total number of atoms in the pose conformation
+	/// example:
+	///			pose.total_atoms()
+    Size total_atoms() const;
+  
+	/// @brief Returns the total number of atoms in the pose
+	/// up to a particular residue
+	Size total_atoms( Size nres ) const;
+    
 	/// @brief Returns true if there are no residues in the conformation
 	///
 	/// example(s):
@@ -652,6 +661,7 @@ public:
 	///     Residue
 	void
 	set_secstruct( Size const seqpos, char const setting );
+	
 
 	/// @brief  Returns a string representing the 1-letter-coded sequence of the pose conformation.
 	///

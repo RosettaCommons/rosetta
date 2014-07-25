@@ -394,14 +394,15 @@ Options = Option_Group( '',
 					default='false' ),
 
             ## Input Membrane Options
-            ## Last Modified: 1/12/14 - Old Option System
+            ## Last Modified: 1/12/14 - Old & New Option System
             ## Author: Rebecca Alford
             Option('spanfile', 'String', desc='Membrane spanning file'),
             Option('lipofile', 'String', desc='Membrane exposure file'),
-            Option('embedfile', 'String', desc='Membrane embedding definition file' ),
-            Option('embedparams', 'String', desc='Membrane embedding search parameters'),
+
             # Option for new membrane input system (Added by Rebecca: 1/12/14)
+			Option('membrane_input', 'String', desc='File containing all user inputs for membrane modeling'),
             Option('membrane_chains', 'String', desc='Membrane chains to initialize full pose'),
+			Option('embedfile', 'String', desc='Embedding definition file'),
 			Option('HDX', 'String', desc='HDX (Hydrogen exchange data file'),
 			Option('d2h_sa_reweight', 'Real', desc='d2h_sa reweight', default ='1.00'),
 			Option( 'sucker_params', 'File',
@@ -510,6 +511,8 @@ Options = Option_Group( '',
 		Option( 'silent_gz', 'Boolean', desc="Use gzipped compressed output (silent run level)",
 				default="false",
 				oldName="output_silent_gz" ),
+		Option( 'membrane_pdb', 'Boolean', desc="Write out the membrane in the PDB - on/off."),
+		Option( 'membrane_pdb_thickness', 'Real', desc="Thickness of the written membrane in the PDB file. Using this flag, turns on -out:membrane_pdb automatically. If flag is not given, it uses the default (30) or the one from the -membrane_new:thickness flag."),
 
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
@@ -2661,6 +2664,7 @@ Option_Group( 'PCSTS4',
 	),
 
 	Option_Group( 'mc',
+		Option( 'log_scores_in_MC', 'Boolean', desc="Score each decoy during a simulation and output it to log; slows down run!", default="false" ),
 		Option( 'hierarchical_pool', 'String', desc='specify prefix in order to look for hierarchical pool' ),
 	  Option( 'read_structures_into_pool', 'File', desc='specify the silent-structs to create a hierarchy for lazy users'),
 		Option( 'convergence_check_frequency', 'Integer', desc='how often check for convergences in MC object?', default = '100' ),
@@ -3523,14 +3527,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	),
 
 	Option_Group('cmiles',
-	  Option_Group('kcluster',
-      Option('num_clusters', 'Integer', desc = 'Number of clusters to use during k clustering')
-    ),
+		Option_Group('kcluster',
+      		Option('num_clusters', 'Integer', desc = 'Number of clusters to use during k clustering')
+	 		),
 		Option_Group('jumping',
-      Option('resi', 'Integer', desc = 'Residue i'),
+			Option('resi', 'Integer', desc = 'Residue i'),
 			Option('resj', 'Integer', desc = 'Residue j'),
-    ),
-  ),
+	    ),
+	),
 
 	##options for liz
 	#Option_Group('liz',
@@ -3559,14 +3563,78 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	),
 
-    # Membrane Protein Option Group
+	#New Membrane Protein Option group
+    Option_Group( 'membrane_new',
+
+    	# Scoring options
+		Option_Group( 'scoring',
+			Option( 'hbond', 'Boolean',
+					desc="Hydrogen bonding energy correction for membrane proteins"),
+		),
+
+		# Setup Options
+		Option_Group( 'setup',
+			Option( 'spanfiles', 'StringVector', desc="Spanning topology file from Octopus" ),
+			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
+	    		Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
+	    		Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
+		),
+
+		# Visualization Options (Visualize Membrane Mover)
+		Option_Group( 'visualize',
+			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
+			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
+			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
+			Option( 'plane_radius', 'Real', desc="Radius of membrane planes to draw in PyMol - part of the PyMol viewer plugin" ),
+		),
+
+		# Include a VRT anchored foldtree
+		Option( 'anchored_foldtree', 'Boolean', desc="Build a fold tree anchored by a VRT so the membrane and protein have explicit jumps to modify" ),
+
+		# Visualize in PyMol (PyMolMover)
+		Option( 'view_in_pymol', 'Boolean', desc="When the PyMol viewer is enabled, add points to explicitly define the membrane planes and view during the simulation" ),
+
+		Option_Group( 'viewer',
+			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
+			Option( 'num_points', 'Integer', desc="Number of points to define the membrane planes. x >= 3" ),
+		),
+
+		#Membrane options
+        Option( 'thickness', 'Real', desc='User-defined membrane thickness. Overwrites default thickness of 60A.'),
+
+		#Embedding options - advanced
+		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),
+		Option( 'center_delta', 'Real', desc='Perturbation of center in Angstrom.'),
+		Option( 'center_search_cycles', 'Real', desc='Iterations for center search.'),
+		Option( 'normal_start', 'RealVector', desc='Base vector for normal search. Angles go off that vector.'),
+		Option( 'normal_angle_start', 'Real', desc='Starting angle from base vector for normal search. Degrees.'),
+		Option( 'normal_angle_delta', 'Real', desc='Perturbation of normal angle in degrees.'),
+		Option( 'normal_search_cycles', 'Real', desc='Number of iterations for normal search.'),
+		Option( 'chain_normal_angle_max', 'Real', desc='Maximum of normal angle wrt normal_start for chain embedding. Degrees.'),
+		Option( 'pose_normal_angle_max', 'Real', desc='Maximum of normal angle wrt normal_start for pose embedding. Degrees.'),
+
+		#Scoring parameters - advanced
+		Option( 'no_interpolate_Mpair', 'Boolean', desc='from old code.'),
+		Option( 'Hbond_depth_correction', 'Boolean', desc='from old code.'),
+
+		#Penalties - advanced
+		Option( 'TMprojection', 'Boolean', desc='Penalty for hydrophobic mismatch on/off.'),
+		Option( 'wt_TMprojection', 'Real', desc='Weight for hydrophobic mismatch penalty.'),
+		Option( 'non_helix', 'Boolean', desc='Penalty for non-helix residues in the membrane on/off.'),
+		Option( 'wt_non_helix', 'Real', desc='Weight for non-helix penalty. '),
+		Option( 'termini', 'Boolean', desc='Penalty for termini in the membrane on/off.'),
+		Option( 'wt_termini', 'Real', desc='Weight for termini penalty.'),
+		Option( 'secstruct', 'Boolean', desc='Penalty if structure-based secondary structure doesn\'t match predicted one - on/off'),
+		Option( 'wt_secstruct', 'Real', desc='Weight for secondary structure penalty.'),
+		Option( 'spanning', 'Boolean', desc='Penalty if structure-based spanning doesn\'t match spanfile - on/off.'),
+		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
+	),
+
+    # Old Membrane Protein Option Group
     # Last Modified: 1/12/14
     # @author Rebecca Alford
     Option_Group( 'membrane',
         # New Membrane Input Option Group
-        Option( 'lipid_acc_files', 'FileVector', desc='Lipid accessibility data for membrane protein chains'),
-        Option( 'span_files', 'FileVector', desc='Membrane spanning topology data for membrane protein chains'),
-        Option( 'embed_files', 'FileVector', desc='Membrane embedding data for membrane protein chains'),
         Option( 'include_lips', 'Boolean', default='false', desc='Include lipid accessibility data for membrane protiens'),
         # Scoring Options
         Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
@@ -3577,19 +3645,19 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         Option( 'Menv_penalties','Boolean',default='false'),
 	    Option( 'Membed_init','Boolean',default='false'),
 	    Option( 'Fa_Membed_update','Boolean',default='false'),
-	            Option( 'center_search', 'Boolean', default='false', desc='perform membrane center search'),
-	            Option( 'normal_search', 'Boolean', default='false', desc='perform membrane normal search'),
-	            Option( 'center_max_delta', 'Integer', default='5', desc='magnitude of maximum membrane width deviation during membrane center search (Angstroms)' ),
-	            Option( 'normal_start_angle', 'Integer', default='10', desc='magnitude of starting angle during membrane normal search (degrees)' ),
-	            Option( 'normal_delta_angle', 'Integer', default='10', desc='magnitude of angle deviation during membrane normal search (degrees)' ),
+	    Option( 'center_search', 'Boolean', default='false', desc='perform membrane center search'),
+	    Option( 'normal_search', 'Boolean', default='false', desc='perform membrane normal search'),
+	    Option( 'center_max_delta', 'Integer', default='5', desc='magnitude of maximum membrane width deviation during membrane center search (Angstroms)' ),
+	    Option( 'normal_start_angle', 'Integer', default='10', desc='magnitude of starting angle during membrane normal search (degrees)' ),
+	    Option( 'normal_delta_angle', 'Integer', default='10', desc='magnitude of angle deviation during membrane normal search (degrees)' ),
 	    Option( 'normal_max_angle', 'Integer', default='40', desc='magnitude of maximum angle deviation during membrane normal search (degrees)' ),
-	            Option( 'debug', 'Boolean', default='false'),
+	    Option( 'debug', 'Boolean', default='false'),
 	    Option( 'fixed_membrane', 'Boolean', default='false', desc='fix membrane position, by default the center is at [0,0,0] and membrane normal is the z-axis'),
 	    Option( 'membrane_center', 'RealVector', desc="membrane center x,y,z" ),
 	    Option( 'membrane_normal', 'RealVector', desc="membrane normal x,y,z" ),
-	            Option( 'view', 'Boolean', default='false', desc='viewing pose during protocol'),
-	            Option( 'Mhbond_depth','Boolean',default='false', desc='membrane depth dependent correction to the hbond potential'),
-							Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
+	    Option( 'view', 'Boolean', default='false', desc='viewing pose during protocol'),
+	    Option( 'Mhbond_depth','Boolean',default='false', desc='membrane depth dependent correction to the hbond potential'),
+		Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
     ), # membrane
 
 	##relevent casp options for refinement protocols

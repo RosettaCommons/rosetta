@@ -53,6 +53,9 @@ AROMATIC
 CYCLIC
 METALBINDING  # This residue type is a one capable of binding to a metal ion.
 
+## Membranes
+MEMBRANE
+
 ## Modifications
 PHOSPHONATE  # amino phosphonic acid instead of amino carboxylic acid
 PHOSPHONATE_UPPER

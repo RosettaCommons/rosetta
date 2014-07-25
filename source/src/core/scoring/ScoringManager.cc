@@ -26,6 +26,7 @@
 #include <core/scoring/SmoothEnvPairPotential.hh>
 #include <core/scoring/CenHBPotential.hh>
 #include <core/scoring/MembranePotential.hh>
+#include <core/scoring/membrane/MembraneData.hh>
 #include <core/scoring/Membrane_FAPotential.hh> //pba
 #include <core/scoring/ProQPotential.hh>
 #include <core/scoring/SecondaryStructurePotential.hh>
@@ -270,6 +271,17 @@ ScoringManager::get_MembranePotential() const
 	return *membrane_potential_;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+membrane::MembraneData const &
+ScoringManager::get_MembraneData() const
+{
+	if (mp_base_potential_ == 0 )
+	{
+		mp_base_potential_ = new membrane::MembraneData();
+	}
+	return *mp_base_potential_;
+}
+	
 ///////////////////////////////////////////////////////////////////////////////
 Membrane_FAPotential const &
 ScoringManager::get_Membrane_FAPotential() const //pba

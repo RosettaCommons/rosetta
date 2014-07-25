@@ -27,11 +27,11 @@ namespace core {
 namespace membrane {
 namespace io {
     
-    /// @brief Options for generating per-chain membrane spanning data
-    /// @details Generate spanning topology object options set
-    class SpanFileOptions;
-    typedef utility::pointer::owning_ptr< SpanFileOptions > SpanFileOptionsOP;
-    typedef utility::pointer::owning_ptr< SpanFileOptions const > SpanFileOptionsCOP;
+/// @brief Options for generating per-chain membrane spanning data
+/// @details Generate spanning topology object options set
+class SpanFileOptions;
+typedef utility::pointer::owning_ptr< SpanFileOptions > SpanFileOptionsOP;
+typedef utility::pointer::owning_ptr< SpanFileOptions const > SpanFileOptionsCOP;
 
 } // io
 } // membrane

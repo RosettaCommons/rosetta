@@ -2,23 +2,24 @@
 # Type: EMB
 # Desc: defines a membrane protein chain embedding
 # Author: Rebecca Alford (rfalford12@gmail.com) 
-# Last Modified: 1/19/13
-NAME EMB
-IO_STRING EMB X
-TYPE LIGAND #residue type
+# Modified: JKLeman (julia.koehler1982@gmail.com)
+# Last Modified 3/28/14
+# version 0.1
+NAME EMB                #membrane embedding parameters
+IO_STRING EMB Z         #3 and 1-letter code
+TYPE LIGAND             #residue type
 AA UNK
-ATOM ORIG MPnm H    0.0 #normal
-ATOM  X   MPct H    0.0 #center
-ATOM  Y   MPdp H    0.0 #depth
-BOND ORIG X
-BOND ORIG Y
+ATOM CNTR MPct H    0.0 #center
+ATOM NORM MPnm H    0.0 #normal
+ATOM DPTH MPdp H    0.0 #depth
+BOND CNTR NORM
+BOND CNTR DPTH
 
 # Sets default values for membrane normal, center and thicnkess definitions
-ICOOR_INTERNAL ORIG 0.0  0.0 0.0 ORIG X Y # simulates normal parameter
-ICOOR_INTERNAL  X   0.0  0.0 1.0 ORIG X Y # simulates center parameter
-ICOOR_INTERNAL  Y   0.0 90.0 1.0 ORIG X Y # simulates depth parameter
+ICOOR_INTERNAL CNTR   0.000  0.000  0.000 CNTR NORM DPTH # simulates normal parameter
+ICOOR_INTERNAL NORM   0.000  0.000 10.000 CNTR NORM DPTH # simulates center parameter
+ICOOR_INTERNAL DPTH 270.000 90.000 30.000 CNTR NORM DPTH # simulates depth parameter
 
-PROPERTIES
-NBR_ATOM ORIG
+NBR_ATOM CNTR
 NBR_RADIUS -100000.0 ## dont interact with anyone
 FIRST_SIDECHAIN_ATOM ALL

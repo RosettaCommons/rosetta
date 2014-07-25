@@ -261,6 +261,7 @@ get_membrane_depth_dependent_weight(
 	Vector const & Axyz
 );
 
+
 Real
 hb_eval_type_weight(
 	HBEvalType const & hbe_type,

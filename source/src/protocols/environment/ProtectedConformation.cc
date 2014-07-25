@@ -43,6 +43,8 @@ static basic::Tracer tr("protocols.environment.ProtectedConformation", basic::t_
 namespace protocols {
 namespace environment {
 
+using namespace core; 
+
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 using core::conformation::Conformation;

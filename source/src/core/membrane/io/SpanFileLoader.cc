@@ -25,7 +25,6 @@
 #include <core/membrane/io/SpanFileLoaderCreator.hh>
 
 // Project Headers
-#include <core/membrane/io/SpanFileIO.hh>
 #include <core/membrane/io/SpanFileOptions.hh>
 
 #include <core/conformation/membrane/SpanningTopology.hh>
@@ -66,8 +65,7 @@ SpanFileLoader::create_resource(
 	using namespace core::conformation::membrane;
 
 	// Load a topology object from spanfile
-	SpanFileIO sfio;
-	SpanningTopologyOP topology = sfio.get_topology_from_spanfile( locator_id );
+	SpanningTopologyOP topology = new SpanningTopology( locator_id );
 
 	// Adding opts casting
 	if ( ! dynamic_cast< SpanFileOptions const * > ( &options ) ) {

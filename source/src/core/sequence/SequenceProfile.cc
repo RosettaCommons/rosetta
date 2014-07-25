@@ -192,6 +192,7 @@ void SequenceProfile::read_from_binary_chk(utility::file::FileName const & fn) {
     tr.Debug << "Read sequence " << strSeq << " from  " << fn << std::endl;
 
     char bb8[8];
+    //double row[20]; /// @ralford werror catches as an unused var 3/26/14
     for(int i = 0;i < seqLength;i++) {
       utility::vector1< Real > prof_row;
       for(int j = 0;j < 20;j++) {

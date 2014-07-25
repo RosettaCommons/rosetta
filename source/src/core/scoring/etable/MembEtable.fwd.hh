@@ -6,9 +6,16 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file
-/// @brief
-/// @author
+/// @file		core/scoring/memb_etable/MembEtable.fwd.hh
+///
+/// @brief		Generate the table for fa_atr/rep and fa_sol with membrane additions
+/// @details	Used by the scoring manager. becasue computing LJ potentials is time
+///				consuming, precomputes and discritizes the potential (broken down into bins).
+///				Once bins are created, will smooth bins for better interpolation.
+///				Last Modified: 5/13/14
+///
+/// @author		Patrick Barth
+/// @author		(Updates) Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_etable_MembEtable_fwd_hh
 #define INCLUDED_core_scoring_etable_MembEtable_fwd_hh
@@ -23,7 +30,6 @@ namespace etable {
 class MembEtable;
 
 typedef utility::pointer::owning_ptr< MembEtable > MembEtableOP;
-	//typedef utility::pointer::owning_ptr< Etable const > EtableCOP;
 typedef utility::pointer::access_ptr< MembEtable const > MembEtableCAP;
 
 } // etable

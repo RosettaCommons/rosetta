@@ -48,7 +48,11 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/pose/PDB_Info.hh>
+
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/pose/PDB_Info.hh> 
+
 #include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -824,6 +828,7 @@ write_additional_pdb_data(
 )
 {
 	using namespace basic::options;
+    using namespace basic::options::OptionKeys;
 
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
 	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.
@@ -913,7 +918,49 @@ write_additional_pdb_data(
 			}
 		}
 	}
+    
+    // Added by JKLeman to write VRT representing the membrane bilayer,
+    // these are NOT MEM and EMB residues, these are the ones representing the whole bilayer (LB)
+    if ( option[ OptionKeys::in::membrane ] &&
+            (option[ OptionKeys::out::membrane_pdb ].user() ||
+             option[ OptionKeys::out::membrane_pdb_thickness ].user()) ){
 
+        // get thickness from user input or from thickness in pose
+        Real thickness(30);
+
+        // TODO: get thickness from MembraneInfoObject
+        // ?? needs to be a const, but how can I change a const after initialization???
+//        Real const thickness( pose.conformation().membrane()->membrane_thickness());
+        thickness = option[ OptionKeys::out::membrane_pdb_thickness];
+                
+        // set variables for membrane plane
+        core::Real spacing( 5 );
+        core::Real width( 100 );
+        
+        // get atom numbers from pose
+/*
+                core::Size atomno(0);
+        for ( core::Size res = 1; res <= pose.total_residue(); res++){
+            for ( core::Size atms = 1; atms <= pose.residue(res).natoms(); atms++ ){
+                atomno++;
+            }
+        }
+*/
+        core::Size atomno(pose.total_atoms());
+        // weird correction needed to make it work
+        TR << "pose atoms: " << atomno << std::endl;
+        atomno -= 2;
+        
+        // write membrane
+        for ( core::Real i = -width; i <= width; i += spacing ){
+            for ( core::Real j = -width; j <= width; j += spacing ){
+                atomno++;
+                out << "HETATM" << I( 5, atomno ) << "  X    LB C1000    " << F(8, 3, i) << F(8, 3, j) << F(8, 3, thickness) << "  1.00  0.00           X" << std::endl;
+                atomno++;
+                out << "HETATM" << I( 5, atomno ) << "  X    LB C1000    " << F(8, 3, i) << F(8, 3, j) << F(8, 3, -thickness) << "  1.00  0.00           X" << std::endl;
+            }
+        }
+    }
 }
 
 

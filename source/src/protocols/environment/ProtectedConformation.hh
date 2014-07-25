@@ -40,6 +40,8 @@
 namespace protocols {
 namespace environment {
 
+using namespace core::conformation;
+
 class ProtectedConformation : public core::conformation::Conformation {
   friend class DofUnlock;
   friend class Environment;

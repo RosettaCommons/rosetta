@@ -1413,6 +1413,9 @@ public:
 	/// false otherwise.
 	bool is_metalbinding() const;
 
+	/// @brief is membrane? 
+	bool is_membrane() const; 
+
 	/// @brief is surface? (e.g. enamel)
 	bool is_surface() const;
 

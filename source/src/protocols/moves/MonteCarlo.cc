@@ -352,6 +352,12 @@ MonteCarlo::boltzmann(
 	//accepted !
 	PROF_START( basic::MC_ACCEPT );
 	*last_accepted_pose_ = pose;
+	
+	// print out the scores for each decoy to cmd out, if you pass a flag
+	// nice for testing
+	if ( basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ].user() && basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ]() == true ){
+		score_function_->show( pose );
+	}
 
 #ifdef BOINC_GRAPHICS
 	if( update_boinc_ )

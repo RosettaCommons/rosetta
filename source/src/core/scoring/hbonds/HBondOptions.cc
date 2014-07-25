@@ -31,6 +31,7 @@
 #include <basic/options/keys/dna.OptionKeys.gen.hh> //sthyme
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh> //pba
+#include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
 
 // C++ Headers
 #include <string>
@@ -61,6 +62,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
 	Mbhbond_( false ), //pba
+	mphbond_( false ), // membrane framework hbond option
 	hbond_energy_shift_( 0.0 ),
 	length_dependent_srbb_( false ),
 	ldsrbb_low_scale_( 0.5 ),
@@ -68,6 +70,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	ldsrbb_minlength_( 4 ),
 	ldsrbb_maxlength_( 17 )
 {
+
 	initialize_from_options();
 }
 
@@ -89,6 +92,7 @@ HBondOptions::HBondOptions():
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
 	Mbhbond_( false ), //pba
+	mphbond_( false ),
 	hbond_energy_shift_( 0.0 ),
 	length_dependent_srbb_( false ),
 	ldsrbb_low_scale_( 0.5 ),
@@ -110,6 +114,11 @@ void HBondOptions::initialize_from_options() {
 		option[OptionKeys::membrane::Mhbond_depth].user()){
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
+	
+	if ( option.has( OptionKeys::membrane_new::scoring::hbond ) ) {
+		mphbond_ = option[ OptionKeys::membrane_new::scoring::hbond ];
+	}
+	
 	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
@@ -167,6 +176,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	measure_sp3acc_BAH_from_hvy_ = src.measure_sp3acc_BAH_from_hvy_;
 	fade_energy_ = src.fade_energy_;
 	Mbhbond_ = src.Mbhbond_; //pba
+	mphbond_ = src.mphbond_;
 	hbond_energy_shift_ = src.hbond_energy_shift_;
 	length_dependent_srbb_ = src.length_dependent_srbb_;
 	ldsrbb_low_scale_ = src.ldsrbb_low_scale_;
@@ -246,6 +256,9 @@ HBondOptions::parse_my_tag(
 	}
 	if( tag->hasOption( "hbonds:Mbhbond" )) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:Mbhbond" ) );
+	}
+	if ( tag->hasOption( "hbonds:mphbond" )) {
+		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:mphbond" ) );
 	}
 
 
@@ -395,6 +408,19 @@ HBondOptions::Mbhbond( bool const setting )
 }
 
 ///
+bool
+HBondOptions::mphbond() const
+{
+	return mphbond_;
+}
+
+///
+void
+HBondOptions::mphbond( bool const setting )
+{
+	mphbond_ = setting;
+}
+
 bool HBondOptions::use_sp2_chi_penalty() const
 {
 	return use_sp2_chi_penalty_;
@@ -453,6 +479,7 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.measure_sp3acc_BAH_from_hvy_ == b.measure_sp3acc_BAH_from_hvy_ ) &&
 		( a.fade_energy_ == b.fade_energy_ ) &&
 		( a.Mbhbond_ == b.Mbhbond_ ) && //pba
+		( a.mphbond_ == b.mphbond_ ) &&
 		( a.hbond_energy_shift_ == b.hbond_energy_shift_ ) );
 }
 
@@ -502,6 +529,8 @@ HBondOptions::show( std::ostream & out ) const
 		<< fade_energy_ << std::endl;
 	out <<"HBondOptions::show: Mbhbond: "
 		<<( Mbhbond_ ? "true" : "false " ) << std::endl; //pba
+	out << "HbondOptions::show: mphbond: "
+		<<( mphbond_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: hbond_energy_shift: " << hbond_energy_shift_ << std::endl;
 }
 

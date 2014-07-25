@@ -39,6 +39,7 @@
 
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 // utility headers

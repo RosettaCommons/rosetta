@@ -1,2 +1,0 @@
-startstruct1
-startstruct2

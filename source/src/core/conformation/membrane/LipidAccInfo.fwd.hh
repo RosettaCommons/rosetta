@@ -10,10 +10,11 @@
 /// @file 		core/conformation/membrane/LipidAccInfo.fwd.hh
 ///
 /// @brief      Membrane Lipid Accessibility Data
-/// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
-///             and psiblast search using run_lips.pl script
+/// @details    Object for storing per-residue lipid exposed and buried surface
+///				area values. Predicted from sequence, transmembrane spans, and psiblast
+///				prediction using server called from the run_lips.pl script.
+///				Last Modified: 7/7/14
 ///
-/// @note       Last Modified: 1/1/14
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_LipidAccInfo_fwd_hh
@@ -26,13 +27,10 @@ namespace core {
 namespace conformation {
 namespace membrane {
             
-    /// @brief      Class: Membrane Lipid Accessibility Data
-    /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
-    ///             and psiblast search using run_lips.pl script
-    class LipidAccInfo;
-    typedef utility::pointer::owning_ptr< LipidAccInfo > LipidAccInfoOP;
-    typedef utility::pointer::owning_ptr< LipidAccInfo const > LipidAccInfoCOP;
-    
+class LipidAccInfo;
+typedef utility::pointer::owning_ptr< LipidAccInfo > LipidAccInfoOP;
+typedef utility::pointer::owning_ptr< LipidAccInfo const > LipidAccInfoCOP;
+
 } // membrane
 } // conformation
 } // core

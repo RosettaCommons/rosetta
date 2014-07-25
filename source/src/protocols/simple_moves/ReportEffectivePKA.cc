@@ -66,6 +66,7 @@ static basic::Tracer TR( "protocols.simple_moves.ReportEffectivePKA" );
 namespace protocols {
 namespace simple_moves {
 
+using namespace core;
 
 ReportEffectivePKA::ReportEffectivePKA() : moves::Mover() {
 	init();

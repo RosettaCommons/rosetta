@@ -26,6 +26,8 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
+	using namespace core; 
+
 
 core::Real
 absolute_vec (numeric::xyzVector<core::Real> vector);

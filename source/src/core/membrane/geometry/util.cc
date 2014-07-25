@@ -9,8 +9,9 @@
 
 /// @file 		core/membrane/geometry/util.cc
 ///
-/// @brief 		Utility methods for defining membranes and membrane embeddings
-/// @details 	Helps to check for internal errors, bounds, and object equality
+/// @brief 		Utility methods for membrane framework
+/// @details 	Utility methods include determining center of mass (moved down in the tree)
+///				and adjusting normal parameters for visualization.
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
@@ -21,26 +22,25 @@
 #include <core/membrane/geometry/util.hh>
 
 // Project Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+
+#include <core/conformation/Conformation.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/tag/Tag.hh>
-
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
@@ -53,7 +53,7 @@
 #include <cstdlib>
 #include <cmath>
 
-static basic::Tracer TR("core.membrane.geometry.util");
+static basic::Tracer TR( "core.membrane.geometry.util" );
 
 using basic::Error;
 using basic::Warning;
@@ -64,184 +64,133 @@ namespace core {
 namespace membrane {
 namespace geometry {
 
-    /// @brief      Virtual residue Equals
-    /// @details    Custom equality method - Checks two virtual atoms are equal in typesets
-    ///             and cartesian coordinates
-    ///
-    /// Precondition: (Checked) Both residues are virtual residues
-    ///
-    /// @param 	rsd1
-    ///				first atom to investigate
-    /// @param 	rsd2
-    ///				second residue to investigate
-    /// @param fullatom
-    ///				specifies if the atom typesef of the pose is fullatom
-    ///
-    ///	@return	bool
-    bool virtual_rsd_equal( core::conformation::ResidueOP rsd1, core::conformation::ResidueOP rsd2 ) {
+//////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
 
-        // The first two conditions check that each residue is a virtual residue
-        // which allows us to surpass additiona typeset checking. These are fatal cases
-        // indicating misuse of the method and will cause Rosetta to fail.
+/// @brief      Center of Mass
+/// @details    Calculates the center of mass of a pose - Stop and start positions (or residues)
+///             used ot find the starting and finishing locations
+///				the start and stop positions (or residues) within the pose are used to
+///				find the starting and finishing locations
+///
+/// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
+numeric::xyzVector< core::Real>
+center_of_mass(
+		   pose::Pose const & pose,
+		   core::SSize const start,
+		   core::SSize const stop
+		   )
+{
+	Vector center( 0.0 );
+	for ( core::SSize i = start; i <= stop; ++i ) {
+		if( !pose.residue( i ).is_protein() ) {
+			Vector ca_pos( pose.residue( i ).nbr_atom_xyz() );
+			center += ca_pos;
+		} else {
+			Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
+			center += ca_pos;
+		}
+	}
+	center /= ( stop - start + 1 );
 
-        // Check that the first residue is virtual
-        if ( rsd1->aa() != core::chemical::aa_vrt ) { return false; }
-        if ( rsd2->aa() != core::chemical::aa_vrt ) { return false; }
+	return center;
+}
 
-        // Checks virtual atom coordinates are equal
-        if ( rsd1->atom(2).xyz().x() != rsd2->atom(2).xyz().x() ) { return false; }
-        if ( rsd1->atom(2).xyz().y() != rsd2->atom(2).xyz().y() ) { return false; }
-        if ( rsd1->atom(2).xyz().z() != rsd2->atom(2).xyz().z() ) { return false; }
-        
-        // All of the conditions have been met!
-        return true;
-    }
 
-    /// @brief      Get Residue Depth in Membrane
-    /// @details    Calculate the depth of a residue with respect to membrane players
-    ///
-    /// @param      normal
-    ///                 provided normal vector to membrane
-    /// @param      center
-    ///                 provided center point for embedding for membrane
-    core::Real
-    get_mpDepth( core::Vector normal, core::Vector center, core::conformation::Residue rsd ) {
-        
-        // Get membrane xyz
-        Vector const & xyz( rsd.atom( 2 ).xyz() );
-        core::Real depth = dot( xyz-center, normal )+30;
-        return depth;
-    }
-    
-    /// @brief      Check Membrane Spanning
-    /// @details    Check that caucluated membrane spanning respects new
-    ///             normal and center definitions
-    ///
-    /// @throws     <none>
-    /// @note       Needs refactoring!!!
-	bool
-    check_spanning(
-                   core::pose::Pose const & pose,
-                   core::Vector const & normal,
-                   core::Vector const & center,
-                   SpanningTopologyOP topology
-                   ) {
-        
-        // Loop Through the Pose
-        for( Size i = 1; i <= topology->total_tmhelix()-1 ; ++i ) {
-            
-            // If scoring allowed at position, continue
-            if ( ! topology->allow_tmh_scoring()[i] ) continue;
-            
-            Vector const & start_i( pose.residue( topology->span()(i, 1) ).atom( 2 ).xyz());
-            bool start_i_side=(dot(start_i-center,normal) > 0);
-            bool span_check=false;
-            
-            // Loop through iteratively
-            for( Size j = i+1; j <= topology->total_tmhelix(); ++j) {
-                
-                // Check scoring is allowed at given position
-                if( !topology->allow_tmh_scoring()[j] || span_check ) continue;
-                span_check=true;
-                
-                Vector const & start_j( pose.residue( topology->span()(j, 2) ).atom( 2 ).xyz());
-                bool start_j_side=(dot(start_j-center,normal) > 0);
-                bool coord_para=(start_i_side==start_j_side);
-                
-                if ( topology->helix_id()[i]-topology->helix_id()[i] % 2 == 0 ) {
-                    
-                    if(!(coord_para)) { return false; }
-                    
-                } else {
-                    
-                    if(coord_para) { return false; }
-                }
-            }
-        }
-        return true;
-    }
+/// @brief      Residue Center of Mass
+/// @details    Calcualte the center of mass of a pose.
+///
+/// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
+core::SSize
+residue_center_of_mass(
+				   pose::Pose const & pose,
+				   core::SSize const start,
+				   core::SSize const stop
+				   )
+{
+	Vector center = center_of_mass( pose, start, stop );
+	return return_nearest_residue( pose, start, stop, center );
+}
 
-    //////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
-    
-    /// @brief      Center of Mass
-    /// @details    Calculates the center of mass of a pose - Stop and start positions (or residues)
-    ///             used ot find the starting and finishing locations
-    ///				the start and stop positions (or residues) within the pose are used to
-    ///				find the starting and finishing locations
-    ///
-    /// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
-    numeric::xyzVector< core::Real>
-    center_of_mass(
-                   pose::Pose const & pose,
-                   int const start,
-                   int const stop
-                   )
-    {
-        Vector center( 0.0 );
-        for ( int i=start; i<=stop; ++i ) {
-            if( !pose.residue( i ).is_protein()) {
-                Vector ca_pos( pose.residue( i ).nbr_atom_xyz() );
-                center += ca_pos;
-            } else {
-                Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
-                center += ca_pos;
-			}
-        }
-        center /= (stop-start+1);
-        
-        return center;
-    }
-    
-    
-    /// @brief      Residue Center of Mass
-    /// @details    Calcualte the center of mass of a pose.
-    ///
-    /// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
-    int
-    residue_center_of_mass(
-                           pose::Pose const & pose,
-                           int const start,
-                           int const stop
-                           )
-    {
-        Vector center = center_of_mass(pose, start, stop );
-        return return_nearest_residue( pose, start, stop, center );
-    }
-    
-    /// @brief      Return nearest residue
-    /// @details    Find the residue nearest some position passed in (normally a center of mass)
-    ///
-    /// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
-    int
-    return_nearest_residue(
-                           pose::Pose const & pose,
-                           int const begin,
-                           int const end,
-                           Vector center
-                           )
-    {
-        Real min_dist = 9999.9;
-        int res = 0;
-        for ( int i=begin; i<=end; ++i )
-        {
-            Vector ca_pos;
-            if( !pose.residue( i ).is_protein() ){
-                ca_pos = pose.residue( i ).nbr_atom_xyz();
-			} else {
-                //Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
-                ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
-			}
-            
-            ca_pos -= center;
-            Real tmp_dist( ca_pos.length_squared() );
-            if ( tmp_dist < min_dist ) {
-                res = i;
-                min_dist = tmp_dist;
-            }
-        }
-        return res;
-    }
-    
+/// @brief      Return nearest residue
+/// @details    Find the residue nearest some position passed in (normally a center of mass)
+///
+/// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
+core::SSize
+return_nearest_residue(
+				   pose::Pose const & pose,
+				   core::SSize const begin,
+				   core::SSize const end,
+				   Vector center
+				   )
+{
+	Real min_dist = 9999.9;
+	core::SSize res = 0;
+	for ( core::SSize i=begin; i<=end; ++i )
+	{
+		Vector ca_pos;
+		if ( !pose.residue( i ).is_protein() ){
+			ca_pos = pose.residue( i ).nbr_atom_xyz();
+		} else {
+			ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
+		}
+		
+		ca_pos -= center;
+		Real tmp_dist( ca_pos.length_squared() );
+
+		if ( tmp_dist < min_dist ) {
+			res = i;
+			min_dist = tmp_dist;
+		}
+	}
+	return res;
+}
+
+/// @brief		Get z-coord and chainID
+/// @details	Helper function that creates input for SpanningTopology
+///				which is not built at the time the Pose is built
+///				returns a pair of vectors:
+///				vector1 is z-coord of CA atoms of the pose
+///				vector2 is chainID of CA atoms of the pose
+std::pair< utility::vector1< Real >, utility::vector1< Real > >
+get_chain_and_z( pose::PoseOP pose ) {
+	
+	TR.Debug << "get_pose_info" << std::endl;
+	using namespace core::pose;
+	
+	// initialize variables
+	utility::vector1< Real > z_coord;
+	utility::vector1< Size > chain_info;
+	
+	// loop over residues, get chain info and z_coord
+	for ( Size i = 1; i <= pose->total_residue(); ++i ){
+		
+		// get info
+		z_coord.push_back( static_cast< Real >(pose->residue(i).atom(2).xyz().z()) );
+		chain_info.push_back( pose->chain(i) );
+	}
+	
+	// put the data in a pair
+	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( z_coord, chain_info );
+	
+	return pose_info;
+	
+} // get chain and z from pose
+
+/// @brief Normalize normal vector to length 15 for visualization
+void membrane_normal_to_length_15( pose::Pose & pose ){
+	
+	// get center and normal
+	Vector center = pose.conformation().membrane_center();
+	Vector normal = pose.conformation().membrane_normal();
+	
+	// normalize normal vector
+	normal.normalize( 15 );
+	
+	// Update membrane position with new coords
+	pose.conformation().update_membrane_position( center, normal );
+}
+
+
 } // geometry
 } // membrane
 } // core

@@ -109,6 +109,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 using namespace core;
+using namespace core::conformation;
 //using namespace protocols;
 using namespace basic::options::OptionKeys;
 using namespace core::chemical::rna;
@@ -119,16 +120,16 @@ using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using io::pdb::dump_pdb;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 
 ///////////////////////////////////////////////////////////////////////////
 void
 save_feature( 	vector1< std::string > & feature_names,
-								vector1< Real > & feature_vals,
+								vector1< core::Real > & feature_vals,
 								Size & feature_counter,
 								std::string const feature_name,
-								Real const feature_val ){
+								core::Real const feature_val ){
 
 	feature_counter++;
 
@@ -155,16 +156,16 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 	vector1< char > chains;
 	vector1< char > seqchars;
 	vector1< int > resnums;
-	vector1< vector1< Real > > all_feature_vals;
+	vector1< vector1< core::Real > > all_feature_vals;
 
 	Size res_count( 0 ), num_features( 0 );
 	Size const nres = pose.total_residue();
 	core::pose::PDB_InfoCOP pdb_info = pose.pdb_info();
 
 	// sasa calculation
-	AtomID_Map< Real > atom_sasa;
-	utility::vector1< Real > rsd_sasa;
-	Real const probe_radius( 1.4 );
+	AtomID_Map< core::Real > atom_sasa;
+	utility::vector1< core::Real > rsd_sasa;
+	core::Real const probe_radius( 1.4 );
 	scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, true );
 
 	RNA_DMS_Potential & rna_dms_potential  = ScoringManager::get_instance()->get_RNA_DMS_Potential();
@@ -189,7 +190,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 		resnums.push_back( pdb_info->number( i ) );
 		chains.push_back( pdb_info->chain( i ) );
 
-		vector1< Real > feature_vals;
+		vector1< core::Real > feature_vals;
 		Size feature_counter( 0 );
 
 		// is_a, is_c, etc.
@@ -279,7 +280,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 			ResidueType const & rsd_type = *rsd_types[1];
 			for ( Size k = 1; k <= rsd_type.nheavyatoms(); k++ ){
 				std::string atom_name = rsd_type.atom_name( k );
-				Real sasa_value = 0.0;
+				core::Real sasa_value = 0.0;
 				if ( rsd.type().has( atom_name ) ){
 					AtomID atom_id = pose::named_atom_id_to_atom_id( NamedAtomID( atom_name, i ), pose );
 					sasa_value = atom_sasa[ atom_id ];
@@ -291,12 +292,12 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 
 		// chi, delta
 		for ( Size m = 1; m <= num_nt; m++ ){
-			Real chi = is_nt[m] ? pose.chi( i ) : 0.0;
+			core::Real chi = is_nt[m] ? pose.chi( i ) : 0.0;
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_chi", chi);
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_is_syn", (chi < 0.0) );
 		}
 		for ( Size m = 1; m <= num_nt; m++ ){
-			Real delta = is_nt[m] ? pose.delta( i ) : 0.0;
+			core::Real delta = is_nt[m] ? pose.delta( i ) : 0.0;
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_delta", delta);
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+"_and_is_south", ( delta > 120.0) );
 		}
@@ -304,10 +305,10 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 		// occlusion of pseudo-methyl at N1 -- towards fitting a potential.
 		utility::vector1< Distance > probe_dists = make_vector1( 0.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.5 );
 		utility::vector1< Distance > const shells = make_vector1( 0.0, 2.0, 4.0, 6.0, 8.0 );
-		//utility::vector1< Real > const shells = make_vector1( 0.0, 3.0, 6.0, 9.0 );
+		//utility::vector1< core::Real > const shells = make_vector1( 0.0, 3.0, 6.0, 9.0 );
 		for ( Size m = 1; m <= probe_dists.size(); m++ ){
-			utility::vector1< Real > occupancy_densities( (shells.size()-1), 0.0 ); // atoms per A^3.
-			Real const probe_dist = probe_dists[ m ];
+			utility::vector1< core::Real > occupancy_densities( (shells.size()-1), 0.0 ); // atoms per A^3.
+			core::Real const probe_dist = probe_dists[ m ];
 			if ( is_nt[ 1 ] ){
 				core::Vector const probe_xyz = rna_dms_potential.get_probe_xyz( pose.residue( i ), probe_dist );
 				rna_dms_potential.get_occupancy_densities( occupancy_densities, pose, i /*for exclusion*/, probe_xyz, shells );
@@ -324,10 +325,10 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 																															 rna_dms_potential.get_probe_scorefxn( true, true ) );
 		vector1< std::string > scorefxntags = make_vector1( "hard", "soft", "justatrrep_soft" );
 		for ( Size k = 1; k <= probe_scorefxns.size(); k++ ){
-			Real pseudo_methyl_plus_oxygen_energy( 0 );
+			core::Real pseudo_methyl_plus_oxygen_energy( 0 );
 			for ( Size m = 1; m <= probe_dists.size(); m++ ){
-				Real const probe_dist = probe_dists[ m ];
-				Real binding_energy( 0.0 );
+				core::Real const probe_dist = probe_dists[ m ];
+				core::Real binding_energy( 0.0 );
 				if ( is_nt[ 1 ] ){
 					core::Vector const probe_xyz = rna_dms_potential.get_probe_xyz( pose.residue( i ), probe_dist );
 					binding_energy = rna_dms_potential.get_binding_energy( i, probe_xyz, *probe_scorefxns[k] );

@@ -29,6 +29,9 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
 
+// added by Rebecca Alford - fixes the build? 
+#include <core/conformation/ppo_torsion_bin.hh>
+
 //
 //// Rosetta Headers
 #include <core/chemical/VariantType.hh>
@@ -95,6 +98,7 @@ namespace refine {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
+using namespace core::conformation;
 
 static numeric::random::RandomGenerator RG(84888);
 static basic::Tracer TR("protocols.loops.loop_mover.refine.LoopMover_Refine_KIC");
@@ -363,7 +367,7 @@ void LoopMover_Refine_KIC::apply(
 		try {
 			std::string user_torbin_string = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
 			if ( ! user_torbin_string.empty() ) {
-				map_string_to_torsion_bin_string( user_torbin_string );
+				core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
 			}
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			throw utility::excn::EXCN_Msg_Exception( "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"

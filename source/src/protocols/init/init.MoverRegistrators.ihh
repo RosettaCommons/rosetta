@@ -177,8 +177,6 @@ static MoverRegistrator< matdes::ExtractSubposeMoverCreator > reg_ExtractSubpose
 static MoverRegistrator< matdes::MatDesGreedyOptMutationMoverCreator > reg_MatDesGreedyOptMutationMoverCreator;
 static MoverRegistrator< matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
 
-static MoverRegistrator< membrane::CreateMembranePoseMoverCreator > reg_CreateMembranePoseMover;
-
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
 
@@ -358,5 +356,13 @@ static MoverRegistrator< abinitio::abscript::FragmentJumpCMCreator > reg_Fragmen
 static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_AbscriptLoopCloserCMCreator;
 static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
 static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
+
+static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator; 
+static MoverRegistrator< membrane::InitialMembranePositionMoverCreator > reg_InitialMembranePositionMoverCreator; 
+//static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator; 
+//static MoverRegistrator< membrane::MembranePositionRTMoverCreator > reg_MembranePositionRTMoverCreator;
+//static MoverRegistrator< membrane::MembranePositionPerturbMoverCreator > reg_MembranePositionPerturbMoverCreator;
+
+static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator; 
 
 } //namespace protocols

@@ -154,6 +154,10 @@ public:
 	///pba
 	void
 	Mbhbond( bool const setting );
+	
+	/// Membrane framework hbonding correction
+	bool mphbond() const;
+	void mphbond( bool const setting );
 
 	bool use_sp2_chi_penalty() const;
 	void use_sp2_chi_penalty( bool setting );
@@ -236,6 +240,7 @@ private:
 	bool measure_sp3acc_BAH_from_hvy_;
 	bool fade_energy_;
 	bool Mbhbond_; //pba
+	bool mphbond_; // membrane framework: hydrogen bonding correction
 	Real hbond_energy_shift_; // a penalty applied to all hydrogen bonds; raises the well depth without changing the shape of the funnel
 	bool length_dependent_srbb_;
 	Real ldsrbb_low_scale_, ldsrbb_high_scale_; // linear scaling based on helix length from minlength->maxlength residues

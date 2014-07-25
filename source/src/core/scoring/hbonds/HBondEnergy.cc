@@ -44,10 +44,13 @@
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-//pba membrane specific initialization
+// membrane specific initialization
 #include <core/scoring/Membrane_FAPotential.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/scoring/MembranePotential.hh>
+#include <core/conformation/Conformation.hh>
+
+#include <core/conformation/membrane/MembraneInfo.hh>
+
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/scoring/ScoringManager.hh>
@@ -61,21 +64,12 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/CacheableData.hh>
 
-// Option Keys Headers
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-
 // Numeric Headers
 #include <numeric/numeric.functions.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/id/types.hh>
-#include <core/scoring/MembranePotential.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <utility/vector1.hh>
 #include <boost/unordered_map.hpp>
@@ -272,7 +266,7 @@ HBondEnergy::setup_for_packing(
 	pose.update_residue_neighbors();
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_ ) );
 
-	//pba membrane object initialization
+	// membrane object initialization
 	if (options_->Mbhbond()) {
 		Membrane_FAPotential const & memb_potential_ = ScoringManager::get_instance()->get_Membrane_FAPotential();
 		memb_potential_.compute_fa_projection( pose );
@@ -280,6 +274,17 @@ HBondEnergy::setup_for_packing(
 		center_ = MembraneEmbed_from_pose( pose ).center();
 		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
+	}
+	
+	// membrane framework object initialization
+	if ( options_->mphbond() ) {
+				
+		// Initialize membrane specific parameters
+		normal_ = pose.conformation().membrane_normal();
+		center_ = pose.conformation().membrane_center();
+		thickness_ = pose.conformation().membrane()->membrane_thickness();
+		steepness_ = pose.conformation().membrane()->membrane_steepness();
+		
 	}
 
 	hbond_set->setup_for_residue_pair_energies( pose );
@@ -341,7 +346,7 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	pose.update_residue_neighbors();
 	HBondSetOP hbond_set( new hbonds::HBondSet( *options_, pose.total_residue() ) );
 
-	//pba membrane object initialization
+	// membrane object initialization
 	if (options_->Mbhbond()) {
 		Membrane_FAPotential const & memb_potential_ = ScoringManager::get_instance()->get_Membrane_FAPotential();
 		memb_potential_.compute_fa_projection( pose );
@@ -349,6 +354,17 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		center_ = MembraneEmbed_from_pose( pose ).center();
 		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
+	}
+	
+	// membrane framework supported membrane object initialization
+	if ( options_->mphbond() ) {
+		
+		// Initialize membrane parameters
+		normal_ = pose.conformation().membrane_normal();
+		center_ = pose.conformation().membrane_center();
+		thickness_ = pose.conformation().membrane()->membrane_thickness();
+		steepness_ = pose.conformation().membrane()->membrane_steepness();
+
 	}
 
 	//fpd  we need secstruct info in some cases ... don't change while minimizing
@@ -440,7 +456,7 @@ HBondEnergy::residue_pair_energy(
 	if (rsd2.is_protein()) exclude_bsc = options_->bb_donor_acceptor_check() && hbond_set.acc_bbg_in_bb_bb_hbond(rsd2.seqpos());
 
 	//pba membrane dependent hbond potential hack
-	if (options_->Mbhbond()) {
+	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		identify_hbonds_1way_membrane(
 			*database_,
@@ -540,8 +556,8 @@ HBondEnergy::residue_pair_energy_ext(
 	assert( dynamic_cast< HBondResPairMinData const * > ( pairdata.get_data( hbond_respair_data )() ));
 	HBondResPairMinData const & hb_pair_dat( static_cast< HBondResPairMinData const & > ( pairdata.get_data_ref( hbond_respair_data ) ));
 
-	//pba membrane dependent hbond potential hack
-	if (options_->Mbhbond()) {
+	// membrane dependent hbond potential hack
+	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		{ // scope        /// 1st == evaluate hbonds with donor atoms on rsd1
 		/// case A: sc is acceptor, bb is donor && res2 is the acceptor residue -> look at the donor availability of residue 1
@@ -795,8 +811,8 @@ HBondEnergy::hbond_derivs_1way(
 				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
 			weighted_energy *= ssdep_weight_factor;
 
-			//pba membrane specific correction
-			if ( options_->Mbhbond()) {
+			// membrane specific correction
+			if ( options_->Mbhbond() && options_->mphbond()  ) {
 				weighted_energy = get_membrane_depth_dependent_weight(normal_, center_, thickness_,
 				steepness_, don_nb, acc_nb, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
 				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
@@ -1053,8 +1069,8 @@ HBondEnergy::backbone_backbone_energy(
 	hbonds::HBondSet const & hbond_set
 		( static_cast< hbonds::HBondSet const & >( pose.energies().data().get( HBOND_SET )));
 
-        //pba membrane dependent hbond potential hack
-	if (options_->Mbhbond()) {
+	// membrane dependent hbond potential hack
+	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		identify_hbonds_1way_membrane(
 			*database_,
@@ -1114,8 +1130,8 @@ HBondEnergy::backbone_sidechain_energy(
 	// this only works because we have already called
 	// hbond_set->setup_for_residue_pair_energies( pose )
 
-	//pba membrane dependent hbond potential hack
-	if (options_->Mbhbond()) {
+	// membrane dependent hbond potential hack
+	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-donor group
 		/// is already participating in a bb/bb hbond, then do not evaluate the identify_hbonds_1way_membrane function
@@ -1180,8 +1196,8 @@ HBondEnergy::sidechain_sidechain_energy(
 	Size nbrs1 = pose.energies().tenA_neighbor_graph().get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 	Size nbrs2 = pose.energies().tenA_neighbor_graph().get_node( rsd2.seqpos() )->num_neighbors_counting_self_static();
 
-	//pba membrane dependent hbond potential hack
-	if (options_->Mbhbond()) {
+	// membrane dependent hbond potential hack
+	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		identify_hbonds_1way_membrane(
 			*database_,
@@ -1737,15 +1753,12 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 			get_environment_dependent_weight( hbe_type, res1_nb_, res2_nb_, *options_ ));
 	}
 	//pba membrane specific correction
-	if ( options_->Mbhbond()) {
+	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		Real membrane_depth_dependent_weight( 1.0 );
 		membrane_depth_dependent_weight = ( flipped ? get_membrane_depth_dependent_weight(normal_, center_, thickness_,
 			steepness_, res2_nb_, res1_nb_, at2.xyz(), at1.xyz()) : get_membrane_depth_dependent_weight(normal_,
 			center_, thickness_, steepness_, res2_nb_, res1_nb_, at2.xyz(), at1.xyz()) );
-
-		// std::cout << "flipped " << flipped << " acc " << res1_nb_ << " don " << res2_nb_ << " wat " << envweight
-		//           << " memb " << membrane_depth_dependent_weight << std::endl;
 
 		envweight = membrane_depth_dependent_weight;
 	}

@@ -60,6 +60,8 @@ static basic::Tracer TR("protocols.grafting.util");
 namespace protocols {
 namespace grafting {
 
+using namespace core; 
+
 using namespace core::id;
 using core::pose::Pose;
 using core::kinematics::MoveMap;

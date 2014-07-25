@@ -1,0 +1,6 @@
+#penalty, in effect?, weight
+TMprojection 1 50
+non-helix 1 50
+termini 1 50
+secstruct 1 50
+spanning 1 50

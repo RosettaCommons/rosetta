@@ -161,7 +161,7 @@ protected:
 												 core::scoring::EnergyMap const & full_weights,
 												 core::Real const weight ) const;
   void do_md(
-    core::pose::Pose &pose,
+		core::pose::Pose &pose,
 		core::Real nstep,
 		core::Real temp0,
 		core::kinematics::MoveMapOP local_movemap,

@@ -75,7 +75,7 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::scoring::ScoreFunctionOP scorefxn;
+	core::scoring::ScoreFunctionOP scorefxn;	
 	scorefxn = core::scoring::get_score_function();
 	if ( option[ in::file::fullatom ]() || option[ OptionKeys::constraints::cst_fa_file ].user())
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );

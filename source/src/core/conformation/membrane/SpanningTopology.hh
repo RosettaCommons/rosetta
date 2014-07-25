@@ -7,14 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/conformation/membrane/SpanningTopology.hh
+///	@file		core/conformation/membrane/SpanningTopology.hh
 ///
-/// @brief      Membrane Spanning Topology Data
-/// @details    Stores information describing the membrane spanning
-///             topology of a pose. This definition is a dependency for embedding definitions
-///             and requires a spanningfile from OCTOPUS for initialization
+/// @brief      Transmembrane Spans Object
+/// @details	Object for storing membrane spanning regions as a vector1 of span objects.
+///				Spanning regions can be determined either from an input spanfile, xyz coordinates
+///				in the pose, or sequence. Object is constructed from span regions and will do internal
+///				checking for validity.
+///				Last Modified: 7/20/14
 ///
-/// @note       Last Modified: 1/1/14
+/// @author		Julia Koehler (julia.koehler1982@gmail.com)
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_SpanningTopology_hh
@@ -22,140 +24,122 @@
 
 // Unit headers
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
+#include <core/conformation/membrane/Span.fwd.hh>
 
-// Package Headers
+// Package Header
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <numeric/xyzVector.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
-
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
-
-// Platform headers
-#include <platform/types.hh>
+#include <utility/string_util.hh>
 
 // C++ Headers
-#include <cstddef>
 #include <cstdlib>
 #include <string>
-
-using namespace core;
 
 namespace core {
 namespace conformation {
 namespace membrane {
-    
-    /// @brief      Class: Membrane Spanning Topology
-    /// @details    Stores information describing the membrane spanning
-    ///             topology of a pose. This definition is a dependency for embedding definitions
-    ///             and requires a spanningfile from OCTOPUS for initialization
-    class SpanningTopology : public utility::pointer::ReferenceCount {
-    
-    public: // constructors
-        
-        /// @brief Constructor
-        SpanningTopology();
-        
-        /// @brief Destructor
-        ~SpanningTopology();
-        
-    public: // getter/setter
-        
-        /// @brief Getters
-        // Spanning ranges for transmembrane helices
-        ObjexxFCL::FArray1D< Size > helix_id();
-        ObjexxFCL::FArray2D< Size > span();
-        ObjexxFCL::FArray2D< Size > full_span();
-        ObjexxFCL::FArray2D< Size > relative_tmh_ori();
-        
-        // Needed for evaluating tm penalties in search methods
-        utility::vector1< bool > allow_scoring();
-        utility::vector1< bool > allow_tmh_scoring();
-        
-        // Info about sequence directly from spanfile
-        core::Size total_residue_in_span_file();
-        core::Size total_tmhelix();
-        core::Size tmh_inserted();
-        
-        // Vector of 0/1 specifying if tm region
-        utility::vector1< bool > tmregion();
-        
-        /// @brief Setters
-        // Spanning ranges for transmembrane helices
-        void set_helix_id( ObjexxFCL::FArray1D< Size > helix_id );
-        void set_span( ObjexxFCL::FArray2D< Size > span );
-        void set_full_span( ObjexxFCL::FArray2D< Size > full_span );
-        void set_relative_tmh_ori( ObjexxFCL::FArray2D< Size > relative_tmh_ori );
-        
-        // Needed for evaluating tm penalties in search methods
-        void set_allow_scoring( utility::vector1< bool > allow_scoring );
-        void set_allow_tmh_scoring( utility::vector1< bool > allow_tmh_scoring );
-        
-        // Vector of 0/1 specifying if tm region
-        void set_total_residue_in_spanfile( core::Size total );
-        void set_total_tmhelix( core::Size total );
-        void set_tmh_inserted( core::Size inserted );
-        
-        // Vector of 0/1 specifying if tm region
-        void set_tmregion( utility::vector1< bool > );
-        
-    public: // methods
-        
-        /// @brief Reset # TMH Inserted
-        core::Size reset_tmh_insert();
-        
-        /// @brief Reset allowed scoring positions
-        void reset_allowed_scoring();
-        
-        /// @brief Shift membrane spanning by shift factor
-        void shift_span( Size shift_factor );
-        
-        /// @brief Print tmh spanning info
-        void show();
-        
-        /// @brief Get a subset of helices from the topology object
-        void get_subset( utility::vector1< Size > & TMH_list );
-        
-    private: // helper methods
-        
-        /// @brief Copy Datag
-        void copy_data( SpanningTopology src, SpanningTopology copy );
-        
-    private: // data
-        
-        // Spanning ranges for transmembrane helices
-        ObjexxFCL::FArray1D< Size > helix_id_;
-        ObjexxFCL::FArray2D< Size > span_;
-        ObjexxFCL::FArray2D< Size > full_span_;
-        ObjexxFCL::FArray2D< Size > relative_tmh_ori_;
-        
-        // Needed for evaluating tm penalties in search methods
-        utility::vector1< bool > allow_scoring_;
-        utility::vector1< bool > allow_tmh_scoring_;
-        
-        // Info about sequence directly from spanfile
-        Size total_residue_in_span_file_;
-        Size total_tmhelix_;
-        Size tmh_inserted_;
-        
-        // Vector of 0/1 specifying if tm region
-        utility::vector1< bool > tmregion_;
 
-    }; // class SpanningTopology
+class SpanningTopology : public utility::pointer::ReferenceCount {
     
+public: // constructors
+    
+    /// @brief	Default Constructor (Private)
+	/// @details Construct an Empty Spanning Topology Object
+    SpanningTopology();
+
+    /// @brief	Custom Constructor - Transmembrane Spans from Spanfile
+	/// @details Use transmembrane spans provided to consturct a spanning topology object
+    SpanningTopology(
+		std::string spanfile,
+		Size total_residues = 0
+	);
+    
+    /// @brief	Custom Constructor - Transmembrane Spans from xyz coords
+	/// @details Use coordinates of residue CA and thickness to determine the spanning regions in the pose
+    SpanningTopology(
+		utility::vector1< Real > res_z_coord,
+		utility::vector1< Size > chainID,
+		Real thickness
+		);
+	
+	/// @brief	Copy Constructor
+	/// @details Create a deep copy of this object copying over all private fields
+	SpanningTopology( SpanningTopology const & src );
+	
+	/// @brief Assignment Operator
+	/// @details Overload assignemnt operator - required Rosetta method
+	SpanningTopology &
+	operator=( SpanningTopology const & src );
+    
+    /// @brief Destructor
+    ~SpanningTopology();
+    
+public: // methods
+    
+	/// @brief Show the current spans stored in this SpanningTopology Object
+	/// @details Generating a String Representation of Spanning Topology Object for debugging purposes
+	virtual void show( std::ostream & output=std::cout ) const;
+	
+	// write spanfile
+	void write_spanfile( std::string output_filename );
+
+    /// @brief Return Spanning Topology
+	/// @details return spanning topology as a vector1 of transmembrane spans
+    utility::vector1< SpanOP > get_spans();
+    
+	/// @brief Return Transmembrane Span
+	/// @details Return transmembrane span by it's index in the spanning topology object
+    SpanOP span( Size span_number );
+	
+	// add span to end of SpanningTopology object, doesn't reorder
+	void add_span( SpanOP span );
+	
+	// reorder spans, for instance after adding one
+	void reorder_spans();
+    
+    //// @brief Get total number of spans
+	/// @details Return the number of transmembrane spanning regions in this object
+    Size total_spans();
+
+    /// @brief Is the residue in the membrane region?
+	/// @details Return true if this residue is in a transmembrane span
+    bool in_span( Size residue );
+	
+	/// @brief Does the span cross the membrane
+	/// @details Determine if the membrane spanning region crosses the whole membrane
+	bool spanning( utility::vector1< Real > res_z_coord, SpanOP span );
+    
+    /// @brief Determine if this Spanning Topology Object is Valid
+	/// @details Check that spans still span the membrane
+    bool is_valid();
+
+	// return number of residues in spanfile - for checking
+	Size nres_topo();
+   
+private: // methods
+
+	/// @brief Create spanning topology object from spanfile
+	SpanningTopology create_from_spanfile( std::string spanfile, Size nres);
+	  
+	/// @brief Create Transmembrane SPan OBject from structure
+	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, Real thickness );
+	
+private: // data
+    
+    // vector of spans
+    utility::vector1< SpanOP > topology_;
+
+	// keep track of nres for checks
+	Size nres_topo_;
+
+}; // class SpanningTopology
+
 } // membrane
 } // conformation
 } // core
 
 #endif // INCLUDED_core_conformation_membrane_SpanningTopology_hh
-
-
-

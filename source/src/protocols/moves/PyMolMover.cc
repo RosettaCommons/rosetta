@@ -21,6 +21,10 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // core headers
+#include <core/conformation/Conformation.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembranePlanes.hh>
+
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/Energies.hh>
 
@@ -215,6 +219,7 @@ operator<<(std::ostream & output, UDPSocketClient const & client)
 PyMolMover::PyMolMover() :
 	update_energy_(false),
 	energy_type_(core::scoring::total_score),
+	update_membrane_(false),
 	keep_history_(false),
 	update_interval_(0),
 	last_packet_sent_time_(0),
@@ -227,6 +232,7 @@ PyMolMover::PyMolMover( PyMolMover const & other ) :
 	link_( other.link_ ),
 	update_energy_( other.update_energy_ ),
 	energy_type_( other.energy_type_ ),
+	update_membrane_( other.update_membrane_ ),
 	keep_history_( other.keep_history_ ),
 	update_interval_( other.update_interval_ ),
 	last_packet_sent_time_( other.last_packet_sent_time_ ),
@@ -281,6 +287,11 @@ void PyMolMover::apply( Pose const & pose)
 	std::string name = get_PyMol_model_name(pose);
 	TR.Trace << "PyMOL_Mover::apply name:" << name << std::endl;
 
+	// Check if pose is a membrane pose
+	if ( pose.conformation().is_membrane() && pose.conformation().membrane()->view_in_pymol() ) {
+		update_membrane_ = true;
+	}
+
 	// Creating message
 	std::ostringstream os;
 	pose.dump_pdb(os);
@@ -300,7 +311,8 @@ void PyMolMover::apply( Pose const & pose)
 	//TR << "Sending message, Size:" << message.size() << std::endl;
 
 	link_.sendMessage(message);
-
+	
+	if ( update_membrane_ ) send_membrane_planes(pose);
 	if ( update_energy_ ) send_energy(pose, energy_type_);
 }
 
@@ -390,7 +402,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 			sprintf(buf, "%c%4d%02x", chain, res, int(e[i]));
 			for(int k=0; k<7; k++) msg[(i-1)*7+k] = buf[k];
 		}
-        //TR << msg << std::endl;
+        TR << msg << std::endl;
 
 		// Compressing message
 		std::ostringstream zmsg;
@@ -417,6 +429,79 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
 {
 	send_energy(pose, core::scoring::ScoreTypeManager::score_type_from_name(stype) );
+}
+
+/// @brief Send Membrane Planes to PyMol
+/// @details If pose is a membrane pose and view_in_pymol flag is set to true
+/// pymol viewer will build CGO planes from points specified
+void PyMolMover::send_membrane_planes( Pose const & pose ) {
+	
+#ifndef __native_client__
+		
+	if ( !is_it_time() ) return;
+	
+	// Check the membrane planes can be visualized
+	if (!pose.conformation().is_membrane() || !pose.conformation().membrane()->view_in_pymol() ) return;
+	
+	// Get the upper & lower plane points
+	utility::vector1< Size > top_points = pose.conformation().membrane()->plane_info()->top_points();
+	utility::vector1< Size > bottom_points = pose.conformation().membrane()->plane_info()->bottom_points();
+	
+	// Get the normal vector
+	core::Vector normal( pose.conformation().membrane_normal() );
+	
+	// Check top and bottom planes are of equal size
+	if ( top_points.size() != bottom_points.size() ) {
+		utility_exit_with_message( "Cannot have unequal defined planes" );
+	}
+	
+	// Size to iterate over
+	std::string npoints = utility::to_string( top_points.size() );
+	
+	// Encode top point residue positions
+	std::string top_msg = ",";
+	for ( Size i = 1; i <= top_points.size(); ++i ) {
+		top_msg += utility::to_string( top_points[i] );
+		top_msg += ",";
+	}
+	
+	// Encode bottom point residue positions
+	std::string bottom_msg = "";
+	for ( Size i = 1; i <= bottom_points.size(); ++i ) {
+		bottom_msg += utility::to_string( bottom_points[i] );
+		bottom_msg += ",";
+	}
+	
+	// Encode normal vector
+	std::string normal_msg = "";
+	normal_msg += utility::to_string( normal.x() );
+	normal_msg += ",";
+	normal_msg += utility::to_string( normal.y() );
+	normal_msg += ",";
+	normal_msg += utility::to_string( normal.z() );
+	
+	// Construct full message
+	std::string msg = npoints + top_msg + bottom_msg + normal_msg;
+		
+	// Compressing message
+	std::ostringstream zmsg;
+	zlib_stream::zip_ostream zipper( zmsg, true );
+	zipper << msg;
+	zipper.zflush_finalize();
+	
+	std::string name = get_PyMol_model_name(pose);
+	std::string sname = "membrane_planes";
+	
+	std::string message =  std::string("Mem.gzip") + char(keep_history_) \
+	+ char(name.size()) + name \
+	+ char(sname.size()) + sname + zmsg.str();
+	
+	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
+	
+	link_.sendMessage(message);
+	
+#endif
+	
 }
 
 

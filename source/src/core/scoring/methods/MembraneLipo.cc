@@ -103,7 +103,6 @@ MembraneLipo::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) cons
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
-//	potential_.compute_membrane_embedding( pose );
 
 }
 
@@ -114,19 +113,6 @@ MembraneLipo::finalize_total_energy(
 	EnergyMap & emap
 ) const {
 
-	//using namespace core::pose::datacache::CacheableDataType;
-
-//	if(potential_.Menv_penalties()) //bw quick hack before putting them as individual scoring terms....
-//	{
-//		Real tm_projection(0);
-//		Real hbond_pen(0);
-//		Real termini_pen(0);
-//		potential_.tm_projection_penalty(pose,tm_projection);
-//		potential_.hbond_penalty(pose,hbond_pen);
-//		potential_.termini_penalty(pose,termini_pen);
-//		emap[ Menv_hbond ]=hbond_pen;
-//		emap[ Menv_termini ]=termini_pen;
-
 	Real lipo(0);
 
 	MembraneTopology const & topology( *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )())));
@@ -135,7 +121,7 @@ MembraneLipo::finalize_total_energy(
 		Real cen10Exposed(0);
 		Real cen10Buried_norm(0);
 		Real cen10Exposed_norm(0);
-		CenListInfo const & cenlist( *( static_cast< CenListInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )() ))); //cenlist_from_pose( pose ));
+		CenListInfo const & cenlist( *( static_cast< CenListInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )() ))); 
 		for(Size i=1;i<=pose.total_residue();++i) {
 			Size rsdSeq(i);
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -165,7 +151,6 @@ MembraneLipo::finalize_total_energy(
 					cen10Exposed_norm+=1;
 				}
 
-				//std::cout << i << " " << cenlist.fcen10(i) << " " << topology.tmh_inserted() << "\n";
 			}
 		}
 		Real B_mean(0);
@@ -178,29 +163,8 @@ MembraneLipo::finalize_total_energy(
 	}
 	emap[ Mlipo ]=lipo;
 	potential_.finalize( pose );
-//
-
-//		std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
-//	}
-//	potential_.finalize( pose );
-//	totals[ rms ]  = std::abs( rms_target_ - rmsd );
-
-	// PROF_STOP( basic::RMS );
-}
-/*
-MembraneTopology const &
-MembraneLipo::MembraneTopology_from_pose( pose::Pose & pose ) const
-	{
-		return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( basic::MEMBRANE_TOPOLOGY )() ));
-
-	}
-core::Size
-MembraneLipo::version() const
-{
-	return 1; // Initial versioning
 }
 
-	*/
 core::Size
 MembraneLipo::version() const
 {

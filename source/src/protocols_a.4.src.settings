@@ -54,12 +54,8 @@ sources = {
                 "ZincHeterodimerMover",
                 "ZincSiteFinder",
 	],
-   "protocols/neighbor": [
+	"protocols/neighbor": [
    		"Neighborhood",
-    ],
-    "protocols/membrane": [
-        "CreateMembranePoseMover",
-        "MembraneUnitTestMover",
     ],
 	"protocols/motifs": [
 		"BuildPosition",

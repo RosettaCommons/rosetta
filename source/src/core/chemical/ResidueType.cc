@@ -1844,6 +1844,12 @@ ResidueType::is_metalbinding() const
 }
 
 bool
+ResidueType::is_membrane() const
+{
+	return properties_->has_property( MEMBRANE );
+}
+
+bool
 ResidueType::is_surface() const
 {
 	return properties_->has_property( SURFACE );

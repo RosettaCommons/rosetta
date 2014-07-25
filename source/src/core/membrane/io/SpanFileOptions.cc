@@ -34,33 +34,30 @@ namespace core {
 namespace membrane {
 namespace io {
     
-    /// @brief Constructor
-    SpanFileOptions::SpanFileOptions() : basic::resource_manager::ResourceOptions() {}
-    
-    /// @brief Destructor
-    SpanFileOptions::~SpanFileOptions() {}
+/// @brief Constructor
+SpanFileOptions::SpanFileOptions() : basic::resource_manager::ResourceOptions() {}
 
-    /// @brief Parse Options from .xml Resource file
-    void
-    SpanFileOptions::parse_my_tag(
-                                  utility::tag::TagCOP
-                                  )
-    {}
+/// @brief Destructor
+SpanFileOptions::~SpanFileOptions() {}
 
-    /// @brief Return options class type
-    std::string
-    SpanFileOptions::type() const
-    {
-        return "SpanFileOptions";
-    }
+/// @brief Parse Options from .xml Resource file
+void
+SpanFileOptions::parse_my_tag( utility::tag::TagCOP ) {}
 
-    /// @brief Return options class type to registrator
-    std::string
-    SpanFileOptionsCreator::options_type() const { return "SpanFileOptions"; }
+/// @brief Return options class type
+std::string
+SpanFileOptions::type() const
+{
+	return "SpanFileOptions";
+}
 
-    /// @brief Return options class to registrator
-    basic::resource_manager::ResourceOptionsOP
-    SpanFileOptionsCreator::create_options() const { return new SpanFileOptions; }
+/// @brief Return options class type to registrator
+std::string
+SpanFileOptionsCreator::options_type() const { return "SpanFileOptions"; }
+
+/// @brief Return options class to registrator
+basic::resource_manager::ResourceOptionsOP
+SpanFileOptionsCreator::create_options() const { return new SpanFileOptions; }
 
 } // io
 } // memrbane

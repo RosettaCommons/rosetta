@@ -446,6 +446,15 @@ sources = {
 	"pilot/jjgray" : [
 		"antibody_metrics", # /* Jeff Gray,Documentation Location,Demo Location */
 	],
+	"pilot/jkleman" : [
+		#"mp_parameters", # /* Checking parameters */
+		#"input_from_cmd", # /* read input files */
+		"mpdocking",
+		"spanfile_from_pdb",
+		"mpdocking_setup",
+		"mpframework_test",
+		"mpfolding",
+	],
 	"pilot/johnk" : [
 		#"chet_trp_to_gly",
 		#"chet_report_rmsd",
@@ -540,6 +549,15 @@ sources = {
 	"pilot/mdsmith" : [
 		#"ligand_motifs",
 		#"motif_ligand_packer_design",
+	],
+	"pilot/membrane" : [
+		"mpframework_integration",
+		#"visualize_membrane",
+		"membrane_scorefxn",
+		"membrane_fa_scorefxn",
+		#"version_mpscorefxn",
+		#"read_mp_pose",
+		#"embed_mp_pose_from_topo",
 	],
 	"pilot/mike" : [
 		"crossaln",
@@ -673,16 +691,16 @@ sources = {
     "ragul_get_delphi_phimap",
 	],
     "pilot/ralford" : [
-        "membrane_foldtree",
-        #"membrane_pose_test",
-        #"membrane_integration",
-        #"virtual_residue_trees",
-        #"membrane_foldtree",
-        #"mpframework_integration",
-        #"mpframework_time_bchmk",
-	#"membrane_info",
-        #"mp_database_check",
-        #"mp_rigidbody_movers",
+    	"version_mpscorefxn",
+		"mp_rsd_energies",
+        "local_minimize",
+        "visualize_membrane",
+        "pymol_viewer_test",
+        #"membrane_sampling",
+        #====Integration Test Executables====
+        "load_membrane_pose",
+        "membrane_ddG",
+        "membrane_relax",
     ],
 	"pilot/rayyrw" : [
 		#"replonly",
@@ -694,11 +712,11 @@ sources = {
 	"pilot/rhiju" : [
 		"rna_test",
 		#"rna_assemble_test",
-	        #"gaussian_chain_func_test",
-	        "mg_test",
+	    #"gaussian_chain_func_test",
+	    "mg_test",
 		"mg_pdbstats",
 		"dna_test",
-	        "screen_phosphates",
+	    "screen_phosphates",
 		#"rna_protein_test",
 		#"pdbstats_test"
 	],

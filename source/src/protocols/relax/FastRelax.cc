@@ -220,8 +220,8 @@ using basic::Warning;
 static basic::Tracer TR("protocols.relax.FastRelax");
 
 using namespace core;
-using namespace core::io::silent ;
-using io::pdb::dump_pdb;
+using namespace core::io::silent;
+using core::io::pdb::dump_pdb;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -537,6 +537,13 @@ void FastRelax::do_minimize(
 	min_mover->cartesian( cartesian() );
 	if (max_iter() > 0) min_mover->max_iter( max_iter() );
   min_mover->apply( pose );
+  
+	// If relax membrane, update structure based embeddings
+	bool membrane = pose.conformation().is_membrane();
+	if ( membrane ) {
+		//pose.conformation().membrane()->update_structure_based_embeddings();
+	}
+
 }
 
 void FastRelax::do_md(
@@ -605,7 +612,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.
 	set_up_constraints( pose, *local_movemap );
 
-		// make a copy of the energy function too. SInce we're going to be ramping around with weights,
+	// make a copy of the energy function too. SInce we're going to be ramping around with weights,
 	// we dont want to modify the existing scorefunction
 	ScoreFunctionOP local_scorefxn( get_scorefxn()->clone() );
 
@@ -694,7 +701,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	int total_repeat_count = 0;
 
 
-	// Optain the native pose
+	// Obtain the native pose
 	if( !get_native_pose() ) set_native_pose( new Pose( start_pose ) );
 
 	// Statistic information
@@ -730,7 +737,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			if( cmd.nparams < 1 ){ utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number_of_repeats> " ); }
 			repeat_count = (int) cmd.param1;
 			repeat_step = ncmd;
-		} else
+	} else
 
 		if( cmd.command == "endrepeat" ){
 			TR.Debug << "CMD:  Repeat: " << repeat_count << std::endl;

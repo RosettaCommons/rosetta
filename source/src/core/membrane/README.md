@@ -1,22 +1,62 @@
-Rosetta Membrane Refactor
------
-Version 1.3.3 - Added on 3/21/2014
+Rosetta Membrane Protein Framework
+====================================
+Authors: 
+Rebecca Faye Alford (rfalford12@gmail.com)
+Julia Koehler Leman (julia.koehler1982@gmail.com)
+Jeffrey J. Gray (jgray@jhu.edu)
 
-Author: Rebecca Alford (rfalford12@gmail.com)
+Last Updated: 7/25/14
 
-Main Directory - Contians Components of static and dynamic representations of membrane proteins in Rosetta. Quick Descriptions of directory structure
+Database: 
+------------------------------
+  = MEM.params - Membrane position residue with default position normal=(0, 0, 1), center=(0, 0, 0)
+  = EMB.params - Embedding position residue with default position normal=(0, 0, 1), center=(0, 0, 0)
 
- - Top Level: Contains Membrane Protein Factory Code - Responsibile
-   for full initialization of poses as membrane proteins. Loads as a 
-   top level resource with tag "startstruct" to work with JD2
- - Config: Register protocols with mebrane protocol config manager
-   to update and maintain core support
- - Geometry: Code for representing geometry of the membrane and 
-   respective membrane embedding for protein chains
- - Scoring: Refactored scoring methods with modified interface for pre-build
-   search and score methods
- - io: Resource manager classes respondible for loading membrane related data
- - kinematics: Membrane protein specific fold tree code
- - util: Membrane definitions and exceptions
+MEM and EMB params have the residue type property MEMBRANE and are described in the fullatom and centroid residue type sets. 
 
-Last Modified: 12/5/13
+Core Library: 
+------------------------------
+core/conformation/membrane: 
+  = Membrane Exception Hierarchy - JD2 exceptions for when things go wrong. Shoud be used in the core layer, 
+    and are particularly useful for designing testable IO code. 
+  = Span: Describe a single transmembrane spanning region in the pose
+  = SpanningTopology: Describe the total spanning topology of the protein (stored as a colleciton of Spans)
+  = LipidAccInfo: Describe per-residue lipid exposed and buried surface areas (predicted by run_lips.pl 
+    server)
+  = MembraneParams: Enum for cleaning up code related to membrane position coordinate access
+  = MembranePlanes: Store the position of the membrane planes as a series of virtual residues. Will display 
+    as points - later used by the PyMol viewer for drawing CGO planes in visualization
+  = MembraneInfo: Top Level container for membrane data (non-coordinate derived). 
+
+core/membrane/geometry: 
+  = EmbeddingDef: Define the embedding of a part of the pose - can be a single span, chain or whole pose. 
+    Described by an embedding normal/center parameter
+  = Embedding: Class for computing the embedding parameter. Can be from topology, sequence, or structure. 
+
+Edits to Conformation: 
+  = Methods for setting up a MembraneInfo object in conformation
+  = Mehtods for accessing membrane positon parameters
+  = Methods for dealing with coordinate derived membrane information
+
+Protocols Library: 
+-----------------------------
+protocols/membrane: 
+  = AddMembraneMover: Initialize the membrane protein framework. This mover adds a membrane position residue, 
+    spanning topology, and optionally a lipophilicity object to the pose. Can be accessed via the command line, rosetta scripts or custom constructors (PyRosetta)
+  = MembranePositionFromTopology: Move the membrane position to one based on the spanning topology and CA 
+    coordinates in the pose. 
+  = SetMembranePositionMover: Set the membrane normal/center position in the pose as custom positions
+  = RandomMembranePositionMover: Randomnly rotate/translate the membrane position (first step to sampling)
+
+PyMOL Mover Updates: 
+-----------------------------
+ = ShowMembranePlanesMover (in protocols/membrane/visualize) - Will add residues defining a top and bottom 
+   plane to represent the membrane planes. This feature is designed specifically for visualization, but should not affect simulation results
+ = PyMOLMover: Added flags to send membrane center, normal and plane points over to the PyMolPyRosetta server
+ = PyMolPyRosettaServer: Recieves membrane message, will draw planes representing the membrane for real-time
+   visualization
+
+   This feature can be turned on using the flag -membrane_new:view_in_pymol when an application is supported
+   by the framework (see AddmembraneMover).
+
+

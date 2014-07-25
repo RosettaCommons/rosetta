@@ -1,24 +1,26 @@
 # rosetta residue topology file
 # Type: MEM
-# Desc; define a membrane protein coordinate system
+# Desc: defines a membrane coordinate system
 # Author: Rebecca Alford (rfalford12@gmail.com)
-# Last Modified 1/19/14
+# Modified: JKLeman (julia.koehler1982@gmail.com)
+# Last Modified 3/28/14
 # version 0.1
-NAME MEM #membrane virtual residue type
-IO_STRING XXX X
-TYPE LIGAND #residue type
+NAME MEM                #membrane virtual residue type
+IO_STRING MEM Z         #3 and 1-letter code
+TYPE LIGAND             #residue type
+PROPERTIES MEMBRANE
 AA UNK
-ATOM ORIG MPnm H    0.0 # normal
-ATOM  X   MPct H    0.0 # center 
-ATOM  Y   MPtk H    0.0 # thickness
-BOND ORIG X
-BOND ORIG Y
+ATOM THKN MPtk H    0.0 # thickness
+ATOM CNTR MPct H    0.0 # center
+ATOM NORM MPnm H    0.0 # normal
+BOND CNTR NORM
+BOND CNTR THKN
 
-ICOOR_INTERNAL ORIG 0.0  0.0 0.0 ORIG X Y # simulates normal parameter
-ICOOR_INTERNAL  X   0.0  0.0 1.0 ORIG X Y # simulates center parameter
-ICOOR_INTERNAL  Y   0.0 90.0 1.0 ORIG X Y # simulates thickness parameter
+# Sets default values for membrane normal, center and thicnkess definitions
+ICOOR_INTERNAL CNTR   0.000  0.000  0.000 CNTR THKN NORM # simulated normal coordinates
+ICOOR_INTERNAL THKN   0.000  0.000 15.000 CNTR THKN NORM # simulated center coordinates
+ICOOR_INTERNAL NORM 270.000 90.000 10.000 CNTR THKN NORM # simulated thickness parameter
 
-PROPERTIES
-NBR_ATOM ORIG
+NBR_ATOM CNTR
 NBR_RADIUS -100000.0 ## dont interact with anyone
 FIRST_SIDECHAIN_ATOM ALL

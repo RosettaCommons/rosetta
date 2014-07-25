@@ -1285,7 +1285,7 @@ get_membrane_depth_dependent_weight(
 	Real const steepness(Membrane_FAEmbed_from_pose( pose ).steepness());
 
 	// Hdonor depth
-	Real fa_depth_H = dot(Hxyz-center, normal);
+	Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
 	Real internal_product = std::abs(fa_depth_H);
 	Real z = internal_product;
 	z /= thickness;
@@ -1302,10 +1302,6 @@ get_membrane_depth_dependent_weight(
 
 	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
 	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
-
-	//pbadebug
-	//std::cout << "tot " << total_weight << " wat " << wat_weight << " memb " << memb_weight << " proj "
-	//<< fa_proj_AH << std::endl;
 
 	return total_weight;
 }
@@ -1347,12 +1343,9 @@ get_membrane_depth_dependent_weight(
 	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
 	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
 
-	//pbadebug
-	//std::cout << "tot " << total_weight << " wat " << wat_weight << " memb " << memb_weight << " proj "
-				//<< fa_proj_AH << std::endl;
-
 	return total_weight;
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 
 bool

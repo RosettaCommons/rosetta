@@ -290,6 +290,23 @@ sources = {
 		"MDBase",
 		"CartesianMD",
 	],
+	"protocols/membrane": [
+		"AddMembraneMover",
+		"MembranePositionRTMover",
+		"InitialMembranePositionMover", 
+		"RandomMembranePositionMover",
+    ],
+    "protocols/membrane/ddG": [
+    	"MembraneDDGMover",
+    	"Mutation",
+    ],
+    "protocols/membrane/relax": [
+    	#"MPFastRelaxMover",
+    ],
+    "protocols/membrane/visualize": [
+    	"VisualizeMembraneMover",
+    	"ShowMembranePlanesMover",
+    ],
 	"protocols/normalmode": [
 		"NormalMode",
 		"NormalModeMinimizer",
@@ -600,6 +617,7 @@ sources = {
 		"TorsionDOFMover",
 	        "TorsionSetMover",
 	        "Tumble",
+	    "UniformPositionMover",
 		"VirtualRootMover",
 		"WobbleMover",
 	],

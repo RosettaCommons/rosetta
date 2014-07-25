@@ -37,6 +37,8 @@
 //C++ headers
 #include <iostream>
 
+using namespace core; 
+
 class FragmentCMTest : public CxxTest::TestSuite {
 public:
 

@@ -127,6 +127,8 @@
 
 namespace devel {
 	namespace splice {
+	
+	using namespace core::conformation;
 
 		static basic::Tracer TR("devel.splice.Splice");
 		static basic::Tracer TR_ccd("devel.splice.Splice_ccd");

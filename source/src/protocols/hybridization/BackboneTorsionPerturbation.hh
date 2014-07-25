@@ -53,6 +53,8 @@
 namespace protocols {
 namespace hybridization {
 
+using namespace core; 
+
 class BackboneTorsionPerturbation: public protocols::moves::Mover
 {
 public:

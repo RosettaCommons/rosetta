@@ -29,6 +29,8 @@
 //C++ headers
 #include <iostream>
 
+using namespace core; 
+
 class UniformRigidBody : public CxxTest::TestSuite {
 public:
 

@@ -29,6 +29,8 @@
 #include <iostream>
 #include <boost/bind/bind.hpp>
 
+using namespace core; 
+
 // ---------------- Toy Movers --------------- //
 
 class Tester : public protocols::environment::ClaimingMover {

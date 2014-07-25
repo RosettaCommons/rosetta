@@ -39,6 +39,8 @@ from array import array
 
 import pymol
 
+from pymol.cgo import *
+
 #from NetLink import PR_UDPServer
 # ^^^ This does not work on CygWin PyMOL, so we just add our code here....
 
@@ -358,7 +360,6 @@ class PR_PyMOLServer:
             if flags:  # Go to the new frame.
                 pymol.cmd.frame(pymol.cmd.count_frames())
 
-
         #######################################################################
         # Energy data.
         elif ptype.startswith('Ene'):
@@ -402,6 +403,49 @@ class PR_PyMOLServer:
                 print "Commands failed..."
                 print "Did you forget to send the pose geometry first?"
 
+        #######################################################################
+        # Display membrane planes
+        elif ptype.startswith('Mem'):
+            e_type_len = ord(data[0])
+            e_type = data[1:(1 + e_type_len)].tostring()
+
+            pymol.cmd.delete('membrane_planes')
+
+            # Decompress data (currently only supporting .gzip from C++ end)
+            if ptype.endswith('.gzip'):
+                s = gzip.GzipFile('', 'r', 0,
+                                  StringIO(data[(1 + e_type_len):])).read()
+
+                # Read top points, bottom points, and normal coordinate
+                mem_data = s.split(',')
+
+                # Plane points defined is the first element
+                npoints = int(mem_data[0])
+
+                # Read in top positions
+                top_positions = []
+                for x in range(1, npoints+1):
+                    top_positions.append( mem_data[x] )
+
+                # Read in bottom positions
+                bottom_positions = []
+                for x in range(npoints+1, (npoints*2+1)):
+                    bottom_positions.append( mem_data[x] )
+
+                # Convert top positions to xyz coordinates (assumes CA position)
+                top_plane_coords = extract_CNTR_coords( name, "C", top_positions )
+ 
+                # Convert bottom positions to xyz coordiantes (assumes CA position)
+                bottom_plane_coords = extract_CNTR_coords( name, "D", bottom_positions )
+
+                # Read in normal coordinate
+                normal = XYZCoord()
+                normal.x = float(mem_data[npoints*2 + 1])
+                normal.y = float(mem_data[npoints*2 + 2])
+                normal.z = float(mem_data[npoints*2 + 3])
+
+                # Create planes from current
+                draw_membrane_planes( top_plane_coords, bottom_plane_coords, normal )
 
         #######################################################################
         # Display hydrogen bonds.
@@ -683,6 +727,110 @@ class PR_PyMOLServer:
         else:
             print 'Unknown packet type: %s, - ignoring...' % ptype
 
+###############################################################################
+# Membranes
+class XYZCoord(): 
+    """
+    Class for storing xyz coord or just a triple of real values
+    """
+
+    def __init__(self, x=0, y=0, z=0):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __str__(self):
+        return "(%8.3f, %8.3f, %8.3f)" % (self.x, self.y, self.z)
+
+def extract_CNTR_coords( name, chain, points ): 
+    """
+    Use the cmd.get_atom_coords method in the PyMol API to grab the center
+    coordinate of the virtual atom. This will eventually define the membrane plane
+    """
+    
+    # Create pymol selection
+    id = "/" + name + "//" + chain + "/" + "MEM`" 
+    id_end = "/CNTR"
+    
+    coords = []
+    for point in points: 
+
+        cntr_coord = cmd.get_atom_coords( id + str(point) + id_end )
+
+        new_coord = XYZCoord();
+        new_coord.x = cntr_coord[0]
+        new_coord.y = cntr_coord[1]
+        new_coord.z = cntr_coord[2]
+
+        coords.append(new_coord)
+
+    return coords
+
+def normalize( normal ): 
+    """
+    Ensure that the provided normal is a unit normal_vector
+    """
+
+    mag = math.sqrt( normal.x*normal.x + normal.y*normal.y + normal.z*normal.z )
+    x = normal.x / mag
+    y = normal.y / mag
+    z = normal.z / mag
+
+    return XYZCoord(x, y, z)
+
+
+def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
+    """
+    Draw CGO Planes Representing the upper & lower membrane planes
+    Adapted from Evan Baugh's Draw Object code by Rebecca Alford to work
+    with the framework
+
+    """
+
+    # Settings
+    name = 'membrane_planes'
+    color = XYZCoord( 0.50 , 0.50 , 0.50 )
+
+    normal = normalize( normal_vector )
+
+    # Create the top plane
+    top_plane = [
+        BEGIN, TRIANGLE_FAN,
+        ALPHA, 0.5,
+
+        COLOR, color.x, color.y, color.z,
+        NORMAL, normal.x, normal.y, normal.z,
+        ]
+
+    for i in top_coords:
+
+        top_plane.append( VERTEX )
+        top_plane.append( i.x )
+        top_plane.append( i.y )
+        top_plane.append( i.z )    
+
+    top_plane.append( END )
+
+
+    # Create the bottom plane
+    bottom_plane = [
+        BEGIN, TRIANGLE_FAN,
+        ALPHA, 0.5,
+
+        COLOR, color.x, color.y, color.z,
+        NORMAL, normal.x, normal.y, normal.z,
+        ]
+
+    for i in bottom_coords:
+        bottom_plane.append( VERTEX )
+        bottom_plane.append( i.x )
+        bottom_plane.append( i.y )
+        bottom_plane.append( i.z )    
+
+    bottom_plane.append( END )
+
+    # Display the upper & lower planes
+    cmd.load_cgo(  top_plane + bottom_plane , 'membrane_planes' )
 
 ###############################################################################
 # Graphing methods.

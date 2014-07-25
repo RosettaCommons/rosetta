@@ -28,6 +28,8 @@ namespace stepwise {
 namespace sampling {
 namespace packer {
 
+using namespace core::conformation;
+
 	//Constructor
 	SideChainCopier::SideChainCopier( core::pose::Pose const & reference_pose,
 																		bool const copy_o2prime_hydrogens /* = false */ ):

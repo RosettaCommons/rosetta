@@ -10,10 +10,11 @@
 /// @file 		core/conformation/membrane/LipidAccInfo.hh
 ///
 /// @brief      Membrane Lipid Accessibility Data
-/// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
-///             and psiblast search using run_lips.pl script
+/// @details    Object for storing per-residue lipid exposed and buried surface
+///				area values. Predicted from sequence, transmembrane spans, and psiblast
+///				prediction using server called from the run_lips.pl script.
+///				Last Modified: 7/7/14
 ///
-/// @note       Last Modified: 1/1/14
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_LipidAccInfo_hh
@@ -26,80 +27,66 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
-#include <numeric/xyzVector.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
-
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
-
-// Platform headers
-#include <platform/types.hh>
-
-// C++ Headers
-#include <cstddef>
-#include <cstdlib>
-#include <string>
-
-using namespace core;
 
 namespace core {
 namespace conformation {
 namespace membrane {
+
+using namespace core;
     
-    /// @brief      Membrane Lipid Accessibility Data
-    /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
-    ///             and psiblast search using run_lips.pl script
-    class LipidAccInfo : public utility::pointer::ReferenceCount {
-        
-    public: // constructors
-        
-        /// @brief Constructor
-        LipidAccInfo();
-        
-        /// @brief Conpy Constructor
-        LipidAccInfo( LipidAccInfo const & src );
-        
-        /// @brief Destructor
-        ~LipidAccInfo();
-        
-    public: // getter/setter
-        
-        /// @brief Getters
-        // Lipid burial and exposure
-        utility::vector1< core::Real > lipid_exposure();
-        utility::vector1< core::Real > lipid_burial();
-        
-        /// @brief Setters
-        // Lipid burial and exposure
-        void set_lipid_exposure( utility::vector1< core::Real > exp );
-        void set_lipid_burial( utility::vector1< core::Real > buried );
-        
-    private: // helper methods
-        
-        /// @brief Copy Data
-        void copy_data( LipidAccInfo src, LipidAccInfo copy );
-        
-    private: // data
-        
-        // Lipid burial and exposure
-        utility::vector1< core::Real > lipid_exposure_;
-        utility::vector1< core::Real > lipid_burial_;
-        
-    }; // class LipidAccInfo
+/// @brief      Membrane Lipid Accessibility Data
+/// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
+///             and psiblast search using run_lips.pl script
+class LipidAccInfo : public utility::pointer::ReferenceCount {
+	
+public: // constructors
+	
+	/// @brief Constructor
+	/// @details Create a blank copy of the lipid accessibility data object
+	LipidAccInfo();
+	
+	/// @brief Custom Constructor
+	/// @brief Construct from user-provided lipid Acc Info File
+	LipidAccInfo( std::string lipsfile );
+	
+	/// @brief Conpy Constructor
+	/// @details Create a deep copy of this object
+	LipidAccInfo( LipidAccInfo const & src );
+	
+	/// @brief Assignment Operator
+	/// @details Create a deep copy of this object, overloading the assignment operator
+	LipidAccInfo &
+	operator=( LipidAccInfo const & src );
+	
+	/// @brief Destructor
+	~LipidAccInfo();
+	
+public: // data access
+	
+	/// @brief Access Lipid exposed surface area per-residue
+	utility::vector1< core::Real > lipid_exposure();
+	
+	/// @details Access Lipid buried surface area per-residue
+	utility::vector1< core::Real > lipid_burial();
+		
+private: // helper methods
+	
+	/// @brief Copy Data
+	void copy_data( LipidAccInfo src, LipidAccInfo copy );
+	
+private: // data
+	
+	// Lipid burial and exposure
+	utility::vector1< core::Real > lipid_exposure_;
+	utility::vector1< core::Real > lipid_burial_;
+	
+}; // class LipidAccInfo
     
 } // membrane
 } // conformation
 } // core
 
 #endif // INCLUDED_core_conformation_membrane_LipidAccInfo_hh
-
-
-
-
 

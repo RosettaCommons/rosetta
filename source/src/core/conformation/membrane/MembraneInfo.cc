@@ -7,30 +7,41 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/conformation/membrane/MembraneInfo.cc
+/// @file		core/conformation/membrane/MembraneInfo.cc
 ///
-/// @brief 	 Membrane Conformation Info Object
-/// @details The Membrane Conformation Info Object is responsible for:
-///             - maintaining a correct membrane foldtree
-///             - maintaining references to the membrane and embedding residues
-///             - providing access to membrane related data
+/// @brief		MembraneInfo - Membrane Pose Definition Object
+/// @details	The membrane info object is responsible for storing non-coordinate
+///				derived information, extending the traditional definiton of a pose
+///				to describe a membrane protein in Rosetta. This information includes:
+///				 - the resiue number of the membrane virtual residue containing
+///					the posiiton of the membrane
+///				 - membrane spanning topology
+///				 - membrane lipophilicity info (user-specified)
 ///
-/// @note    Last Modified 3/12/14
-/// @author  Rebecca Alford (rfalford12@gmail.com)
-
-#ifndef INCLUDED_core_conformation_membrane_MembraneInfo_cc
-#define INCLUDED_core_conformation_membrane_MembraneInfo_cc
+///				This object belongs to the conformation and should be accessed
+///				via pose.conformation().membrane().
+///
+///	     		Last Modified: 6/21/14
+///
+/// @author		Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
+
+#include <core/conformation/membrane/MembranePlanes.hh>
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
+
+#include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
+
+#include <core/id/AtomID.hh>
 
 #include <core/conformation/membrane/Exceptions.hh>
 
@@ -46,390 +57,233 @@
 #include <string>
 #include <cmath>
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR("core.membrane.MembraneInfo");
-
-using namespace core::conformation;
-using namespace core::conformation::membrane;
 
 namespace core {
 namespace conformation {
 namespace membrane {
 
-	//// Constructors //////////////////////////
+using namespace core::conformation;
+using namespace core::conformation::membrane;
+using namespace core::kinematics;
 	
-	/// @brief Default Constructor
-	MembraneInfo::MembraneInfo() :
-		utility::pointer::ReferenceCount(),
-		conf_(NULL),
-		center_(0, 0, 0),
-		normal_(0, 0, 0),
-		steepness_(0),
-		membrane_(1)
-	{
-		init();
-	}
+////////////////////
+/// Constructors ///
+////////////////////
 
-	/// @brief Standard Constructor
-	MembraneInfo::MembraneInfo(
-		ConformationOP conf_in,
-		utility::vector1< std::pair< int, int > > embres_map,
-		int membrane
-		) :
-		utility::pointer::ReferenceCount(),
-		conf_( conf_in ),
-		center_(0, 0, 0),
-		normal_(0, 0, 0),
-		steepness_(0),
-		embres_map_( embres_map ),
-		membrane_( membrane )
-	{
-		init();
-	}
+/// @brief Default Constructor
+/// @details Creates a default copy of the membrane info object
+/// with the membrane virtual at nres = 1, thicnkess = 15A, steepenss
+/// of fullatom membrane transition = 10A and no spanning topology or
+/// lips info defined
+MembraneInfo::MembraneInfo() :
+	utility::pointer::ReferenceCount(),
+	thickness_( 15.0 ),
+	steepness_( 10.0 ),
+	membrane_rsd_num_( 1 ),
+	membrane_jump_( 2 ),
+	view_in_pymol_( false ),
+	plane_info_( 0 )
+{}
 
-	/// @brief Copy Constructor
-	MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
-		utility::pointer::ReferenceCount(),
-		conf_( src.conf_ ),
-		center_( src.center_ ),
-		normal_( src.normal_ ),
-		steepness_( src.steepness_ ),
-		embres_map_( src.embres_map_ ),
-		membrane_( src.membrane_ )
-	{
-		init();
+/// @brief Custom Constructor - Membrane pos & topology
+/// @details Creates a default copy of the membrane info object
+/// with the membrane virtual at nres = membrane_pos, thicnkess = 15A, steepenss
+/// of fullatom membrane transition = 10A and spanning topology defined
+/// by API provided vector1 of spanning topology obejcts (by chain)
+MembraneInfo::MembraneInfo(
+	core::Size membrane_pos,
+	SpanningTopologyOP topology,
+	core::SSize membrane_jump,
+	bool view_in_pymol
+	) :
+	utility::pointer::ReferenceCount(),
+	thickness_( 15.0 ),
+	steepness_( 10.0 ),
+	membrane_rsd_num_( membrane_pos ),
+	membrane_jump_( membrane_jump ),
+	spanning_topology_( topology ),
+	view_in_pymol_( view_in_pymol ),
+	plane_info_( 0 )
+{}
+
+/// @brief Custom Constructor - Membrane pos, topology & lips
+/// @details Creates a default copy of the membrane info object
+/// with the membrane virtual at nres = membrane_pos, thicnkess = 15A, steepenss
+/// of fullatom membrane transition = 10A, spanning topology defined
+/// by API provided vector1 of spanning topology obejcts (by chain), and
+/// lipid accessibility defined by a vector1 of lipid acc objects.
+MembraneInfo::MembraneInfo(
+	core::Size membrane_pos,
+	SpanningTopologyOP topology,
+	LipidAccInfoOP lips,
+	core::SSize membrane_jump,
+	bool view_in_pymol
+	) :
+	utility::pointer::ReferenceCount(),
+	thickness_( 15.0 ),
+	steepness_( 10.0 ),
+	membrane_rsd_num_( membrane_pos ),
+	membrane_jump_( membrane_jump ),
+	lipid_acc_data_( lips ),
+	spanning_topology_( topology ),
+	view_in_pymol_( view_in_pymol ),
+	plane_info_( 0 )
+{}
+
+/// @brief Copy Constructor
+/// @details Create a deep copy of this object
+MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
+	utility::pointer::ReferenceCount(),
+	thickness_( src.thickness_ ),
+	steepness_( src.steepness_ ),
+	membrane_rsd_num_( src.membrane_rsd_num_ ),
+	membrane_jump_( src.membrane_jump_ ),
+	lipid_acc_data_( src.lipid_acc_data_ ),
+	spanning_topology_( src.spanning_topology_ ),
+	view_in_pymol_( src.view_in_pymol_ ),
+	plane_info_( src.plane_info_ )
+{}
+
+/// @brief Assignment Operator
+/// @details Create a deep copy of this object while overloading the assignemnt
+/// operator "="
+MembraneInfo &
+MembraneInfo::operator=( MembraneInfo const & src ) {
+	
+	// Abort self-assignment.
+	if ( this == &src ) {
+		return *this;
 	}
+	
+	// Otherwise, create a new object
+	return *( new MembraneInfo( *this ) );
+}
+
+/// @brief Destructor
+MembraneInfo::~MembraneInfo() {}
+
+/// @brief  Generate string representation of MembraneInfo for debugging purposes.
+void
+MembraneInfo::show(std::ostream & output ) const {
+	
+	// Show generic membrane info
+	output << "MembraneInfo: Information about this Membrane Protein" << std::endl;
+	output << "Membrane Residue Num: " << membrane_rsd_num_ << std::endl;
+	output << "Membrane Fold Tree Jump: " << membrane_jump_ << std::endl;
+	output << "Membrane Thicnkess: " << thickness_ << std::endl;
+	output << "Membrane Steepness: " << steepness_ << std::endl;
+	output << "Membrane Spanning Topology " << std::endl;
+
+	// SHow spanning topology object
+	spanning_topology_->show();
+	
+	// Skipping lips for now, will go back to it
+	
+}
 
 
-	/// @brief Return Membrane Embedding Map
-	utility::vector1< std::pair< int, int > >
-	MembraneInfo::embres_map() const { return embres_map_; }
+////////////////////////////
+/// Membrane Data Access ///
+////////////////////////////
 
-	/// @brief Return Membrane root
-	int
-	MembraneInfo::membrane() const { return membrane_; }
+/// @brief Return position of membrane residue
+/// @details Return the residue number of the membrane virtual
+/// residue in the pose
+core::Size
+MembraneInfo::membrane_rsd_num() const { return membrane_rsd_num_; }
+	
+/// @brief Return membrane thickness
+/// @details Return the membrane thicnkess used by the
+/// fullatom energy method (centroid is hard coded for now
+core::Real
+MembraneInfo::membrane_thickness() const {
+	return thickness_;
+}
 
-	/// @brief Assert Membrane Conformation Invariants
-	bool MembraneInfo::is_membrane() const {
-		
-		// Check Class Invariants
-		
-		// Check membrane root is within the bounds of the pose
-		if ( membrane_ <= 0 || membrane_ > (int) conf_->size() ) {
-			TR << "Membrane root specified" << membrane_ << "must be between 1 and " << conf_->size() << std::endl;
-			return false;
-		}
-		
-		// Check that there is an embedding residue anchored by jump for each protein chain
-		if ( embres_map_.size() != conf_->num_chains()-1 ) {
-			TR << "There must exist an embedding residue for every protein chain in the pose" << std::endl;
-			TR << "Specified " << embres_map_.size() << " embedding residues but needs " << conf_->num_chains()-1 << std::endl;
-			return false;
-		}
-		
-		// Check that all of the jump anchors are within the bounds of the pose
-		for ( core::Size i = 1; i <= conf_->num_chains()-1; ++i ) {
-			if ( embres_map_[ i ].first <= 0 || embres_map_[ i ].first > (int) conf_->size() ) {
-				TR << "Embedding residue specified must be within the pose (between 1 and " << conf_->size() << ")" << std::endl;
-				TR << "Specified " << embres_map_[ i ].first << std::endl;
-				return false;
-			}
-		}
-		
-		// Check Fold tree
-		if ( !conf_->fold_tree().check_fold_tree() ) {
-			TR << "Membrane foldtree is an invalid foldtree!" << std::endl;
-			return false;
-		}
-		
-		// Check the membrane embedding residue is the root of the pose
-		if ( !conf_->fold_tree().is_root( membrane_ ) ) {
-			TR << "Membrane root " << membrane_ << " must be the root of the foldtree!" << std::endl;
-			return false;
-		}
-		
-		// Else return true
-		return true;
-	}
-	
-	/////////////////////////////// Membrane Info Class Helper Methods ///////////////////////////
-	
-	/// @brief Initialize Membrane Info Class
-	void MembraneInfo::init() {
-		
-		// Initialize Base info from Conformation
-		fullatom_ = conf_->is_fullatom();
-		nres_ = conf_->size();
-		
-		// Based on Residue Typeset, update whole pose embedding info
-		if ( fullatom_ ) {
-			
-			// Initialize Base Members
-			fa_proj_.resize(nres_);
-			fa_depth_.resize(nres_);
-			fa_proj_coord_.resize(nres_);
-			fa_proj_deriv_.resize(nres_);
-			
-			// not yet implemented
-			// should initialize: center, normal, steepness, all fa params
-			
-		} else {
-			
-			depth_.resize(nres_);
-			
-			// not yet implemented
-			// should initialize: center, normal, depth array
-			
-		}
-		
-		// Build fold tree, check is a membrane conf
-		build_membrane_foldtree();
-		assert( is_membrane() );
-		assert( !conformation_changed() );
-	}
-	
-	/// @brief Compute WHole Pose Centroid Embedding Parameters
-	void MembraneInfo::init_for_lowres() {
-		// not yet implemented
-	}
-	
-	/// @brief Compute Whole Pose Fullatom Embedding Parameters
-	void MembraneInfo::init_for_highres() {
-		// not yet implemented
-	}
-	
-	/// @brief Watch for Membrane Relevant changes in the conformation every time
-	///		   membrane info is updated.
-	bool MembraneInfo::conformation_changed() {
-		
-		// Keep track of changes
-		bool changed = false;
-		
-		// Grab new conformation info
-		core::Size new_nres_ = conf_->size();
-		bool new_fa_ = conf_->is_fullatom();
-		
-		// Check for differences and respond appropriately
-		if ( !new_fa_ && fullatom_ ) {
-			init_for_lowres();
-			changed = true;
-		} else if ( new_fa_ && !fullatom_ ) {
-			init_for_highres();
-			changed = true;
-		}
-		
-		// Check for pose length changed
-		if ( nres_ != new_nres_ ) {
-			throw new EXCN_NonMembrane("Cannot change length of a membrane pose!");
-		}
-		
-		return changed;
-	}
+/// @brief Return the membrane transition steepness
+/// @details Return the steepness betwen isotropic and ansitropic
+/// layers of the membrane used by the fullatom energy methods
+core::Real
+MembraneInfo::membrane_steepness() const {
+	return steepness_;
+}
 
-	
-	////////////////////////////////// Membrane Embedding Information ///////////////////////////////
-	
-	/// Membrane Postion Info ///////////
-	
-	/// @brief Get Membrane Center Coords
-	core::Vector
-	MembraneInfo::membrane_center() const {
-		return conf_->residue( membrane_ ).atom( 2 ).xyz();
+/// @brief Return a list of membrane spanning topology objects
+/// @details Return a vector1 of spanning topology objects defining
+/// the starting and ending position of membrane spans per chain.
+SpanningTopologyOP
+MembraneInfo::spanning_topology(){
+	return spanning_topology_;
+}
+
+/// @brief Return a list of lipid accessibility objects
+/// @details Return a vector1 of lipid accessibility info objects
+/// describing lipid exposre of individual residues in the pose
+LipidAccInfoOP
+MembraneInfo::lipid_acc_data() const {
+	return lipid_acc_data_;
+}
+
+////////////////////////////////////
+/// Membrane Base Fold Tree Info ///
+////////////////////////////////////
+
+/// @brief Get the number of the membrane jump
+/// @details Get a core::SSize (int) denoting the number of the fold tree jump
+/// relating the membrane residue to the rest of the pose
+core::SSize
+MembraneInfo::membrane_jump() const { return membrane_jump_; }
+
+/// @brief Check membrane fold tree
+/// @details Check that the membrane jump num is a jump point and located at the root
+/// of the fold tree in addition to maintaining a reasonable fold tree
+bool
+MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
+
+	// Check regular fold tree
+	if (! ft_in.check_fold_tree() ) {
+		return false;
 	}
 	
-	/// @brief Get Membrane Normal Coords
-	core::Vector
-	MembraneInfo::membrane_normal() const {
-		return conf_->residue( membrane_ ).atom( 1 ).xyz();
+	// Check memrbane residue is a jump point
+	if (! ft_in.is_jump_point( membrane_rsd_num_ ) ) {
+		return false;
 	}
 	
-	/// @brief Get Membrane Thickness Parameter
-	core::Real
-	MembraneInfo::membrane_thickness() const {
-		return conf_->residue( membrane_ ).atom( 3 ).xyz().y();
-	}
+	// Otherwise, looks reasonable!
+	return true;
 	
-	//// Chain Specific Embedding Residues
+}
+
+/////////////////////
+/// Visualizaiton ///
+/////////////////////
+
+/// @brief Check membrane planes are initialized for visualization
+bool
+MembraneInfo::view_in_pymol() const {
+	return plane_info_ != 0;
+}
+
+/// @brief Setup Planes Info Object
+void
+MembraneInfo::setup_plane_visualization(
+	utility::vector1< Size > top_points,
+	utility::vector1< Size > bottom_points
+	) {
 	
-	/// @brief Get Chain Embedding Center Coords
-	core::Vector
-	MembraneInfo::embedding_center( core::Size chain ) const {
-		core::Size resnum = embres_map_[ chain ].second;
-		return conf_->residue( resnum ).atom( 2 ).xyz();
-	}
-	
-	/// @brief Get Chain Embedding Normal coords
-	core::Vector
-	MembraneInfo::embedding_normal( core::Size chain ) const {
-		core::Size resnum = embres_map_[ chain ].second;
-		return conf_->residue( resnum ).atom( 1 ).xyz();
-	}
-	
-	/// @brief Get Chain Embedding Depth Parameter
-	core::Real
-	MembraneInfo::embedding_depth( core::Size chain ) const {
-		core::Size resnum = embres_map_[ chain ].second;
-		return conf_->residue( resnum ).atom( 3 ).xyz().y();
-	}
-	
-	/// Whole-Chain Non-Kinematic Embedding Info ////////////////
-	
-	/// @brief WHole Pose Center
-	core::Vector
-	MembraneInfo::pose_embedding_center() { return center_; }
-	
-	/// @brief WHole Pose Normal
-	core::Vector
-	MembraneInfo::pose_embedding_normal() { return normal_;}
-	
-	/// @brief Depth
-	core::Real 
-	MembraneInfo::residue_depth( core::Size seqpos ) { return depth_[seqpos]; }
-	
-	/// Fullatom Whole-Chain Non-Kinematic Membrane Info ///////////////
-	
-	/// @brief WHole Pose Steepness
-	core::Real
-	MembraneInfo::pose_embedding_steepness() {
-		if ( !fullatom_ ) {
-			TR << "Warning: Fullatom Membrane Conformation Data Uninitialized or Updated for a Centroid Pose!" << std::endl;
-		}
-		return steepness_;
-	}
-	
-	/// @brief Get Fullatom TM Projection at Seqpos and Atom Pos
-	core::Real
-	MembraneInfo::fa_proj( core::Size seqpos, core::Size atom ) {
-		if ( !fullatom_ ) {
-			TR << "Warning: Fullatom Membrane Conformation Data Uninitialized or Updated for a Centroid Pose!" << std::endl;
-		}
-		return fa_proj_[seqpos][atom];
-	}
-	
-	/// @brief Get Depth of FA Coordinate
-	core::Real MembraneInfo::fa_depth( core::Size seqpos, core::Size atom ) {
-		if ( !fullatom_ ) {
-			TR << "Warning: Fullatom Membrane Conformation Data Uninitialized or Updated for a Centroid Pose!" << std::endl;
-		}
-		return fa_depth_[seqpos][atom];
-	}
-	
-	/// @brief Get Fullatom Projection Derivative
-	core::Real
-	MembraneInfo::fa_proj_deriv( core::Size seqpos, core::Size atom ) {
-		if ( !fullatom_ ) {
-			TR << "Warning: Fullatom Membrane Conformation Data Uninitialized or Updated for a Centroid Pose!" << std::endl;
-		}
-		return fa_proj_deriv_[seqpos][atom];
-	}
-	
-	/// @brief Return Coordinate of the FA Proj
-	core::Vector
-	MembraneInfo::fa_proj_coord( core::Size seqpos, core::Size atom ) {
-		if ( !fullatom_ ) {
-			TR << "Warning: Fullatom Membrane Conformation Data Uninitialized or Updated for a Centroid Pose!" << std::endl;
-		}
-		return fa_proj_coord_[seqpos][atom];
-	}
-	
-	/// Update Fullatom or Centroid Info Set ///////////////
-	
-	/// @brief Update Whole Pose for High Resolution Typesets
-	void MembraneInfo::update_fullatom_info() {
-		// not yet implemented
-	}
-	
-	/// @brief Update HWole Pose Embedding Info for Low Resolution Typesets
-	void MembraneInfo::update_lowres_info() {
-		// not yet implemented
-	}
-	
-	/////////////////////////// Access Membrane Conformation Info ///////////////////////////
-	
-	/// @brief Return the total number of polymer residues in the pose (excluding mp residues)
-	core::Size
-	MembraneInfo::total_polymer_residue() const {
-		core::Size nres = conf_->num_chains();
-		return conf_->size()-nres;
-	}
-	
-	/// @brief Return the total number of polymer chains in the pose (excluding mp residues)
-	core::Size
-	MembraneInfo::num_polymer_chains() const {
-		return conf_->num_chains()-1;
-	}
-	
-	/// @brief Add Spanning Topology
-	void
-	MembraneInfo::add_topology_by_chain( SpanningTopology sp, core::Size ) {
-		spanning_topology_.push_back( sp );
-	}
-	
-	utility::vector1< SpanningTopology >
-	MembraneInfo::spanning_topology() const {
-		return spanning_topology_;
-	}
-	
-	/// @brief Add Lipid Accessibility Info
-	void
-	MembraneInfo::add_lips_by_chain( LipidAccInfo const & sp, core::Size ) {
-		lipid_acc_data_.push_back( sp );
-	}
-	
-	utility::vector1< LipidAccInfo >
-	MembraneInfo::lipid_acc_data() const {
-		return lipid_acc_data_;
-	}
-	
-	//// FoldTree ////////////////////////////
-	
-	/// @brief Build Membrane FoldTree
-	void
-	MembraneInfo::build_membrane_foldtree() {
-		
-		using namespace core::kinematics;
-		
-		// Construct a new foldtree
-		FoldTreeOP ft = new FoldTree();
-		
-		// Add Initial membrane edge and maintain a jump counter
-		int jump_counter = 1;
-		ft->add_edge( 1, membrane_, jump_counter );
-		jump_counter++;
-		
-		// Add peptide edges
-		for ( core::Size i = 1; i <= conf_->num_chains()-1; ++i ) {
-			
-			// Add edge for each chain
-			ft->add_edge( conf_->chain_begin(i), conf_->chain_end(i), -1 );
-			
-			// Add a chain-connecting edge if between chains
-			if ( i != conf_->num_chains()-1 ) {
-				ft->add_edge( conf_->chain_begin(i), conf_->chain_begin(i+1), jump_counter );
-				jump_counter++;
-			}
-		}
-		
-		// Set the membrane to the root of the foldtree. This must occur before adding embedding edges
-		// because the embedding edges are added to a non-vertex posiiton and will be lost in the reorder arbitrarily
-		ft->reorder(membrane_);
-		
-		// Add membrane edges
-		for ( core::Size i = 1; i <= embres_map_.size(); ++i ) {
-			
-			// Add edge between each chain beginning and its corresponding embedding
-			ft->add_edge( embres_map_[ i ].first, embres_map_[ i ].second, jump_counter );
-			jump_counter++;
-		}
-		
-		// Setup the new foldtree
-		conf_->fold_tree( *ft );
-	}
+	using namespace core::conformation::membrane;
+	plane_info_ = new MembranePlanes( top_points, bottom_points );
+}
+
+/// @brief Membrane Planes Points
+/// @details Return object containing membrane planes info. Initialized at setup
+MembranePlanesOP
+MembraneInfo::plane_info() {
+	return plane_info_;
+}
 	
 } // membrane
 } // conformation
 } // core
-
-#endif // INCLUDED_core_conformation_membrane_MembraneInfo_cc

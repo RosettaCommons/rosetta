@@ -15,6 +15,8 @@
 #include <protocols/outputter/SilentFileOutputter.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
+#include <core/io/silent/SilentStructFactory.hh>
+
 // tracer
 #include <basic/Tracer.hh>
 
@@ -50,9 +52,7 @@ void SilentFileOutputter::write( Pose & p ) {
 	std::string tag;
 	parse_format_string( filenameparts_, format_string_, outfilename );
 	parse_format_string( filenameparts_, tag_format_string_, tag);
-
 	core::io::silent::SilentStructOP tmp = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
-
 	tmp->fill_struct( p, tag );
 	sfd_.write_silent_struct( *tmp, outfilename, score_only_ );
 }

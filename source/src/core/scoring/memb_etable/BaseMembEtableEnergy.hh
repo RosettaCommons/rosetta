@@ -6,22 +6,14 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   core/scoring/etable/EtableEnergy.hh
-/// @brief  Etable energy method class declaration
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
-/// @author Oliver Lange
-
-/***********************************************************************
-++++++++++++++++++++++++++++ WARNING +++++++++++++++++++++++++++++++++++
-
-the CoarseEtable is currently not threadsafe, since it has the
-"mutable" element seq_dist...
-
-could move seq_dist into CoarseEtableEnergy --> then at least the
-CoarseEtable can be shared between threads
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-************************************************************************/
+/// @file		core/scoring/etable/BaseMembEtableEnergy.hh
+///
+/// @brief		Base class for membrane fullatom energy method classs
+/// @details	Warning: This class is not threadsafe because it has mutable elements
+///
+/// @author		(Original) Phil Bradley, Andrew Leaver-Fay, Oliver Lange
+/// @author		Patrick Barth
+/// @author		(updates) Rebecca Alford (rfalford12@gmail.com)
 
 
 #ifndef INCLUDED_core_scoring_memb_etable_BaseMembEtableEnergy_hh
@@ -45,10 +37,10 @@ CoarseEtable can be shared between threads
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/ContextGraphTypes.hh>
+
 // Project headers
 #include <core/conformation/Atom.hh>
 #include <core/pose/Pose.fwd.hh>
-
 
 #include <ObjexxFCL/FArray3D.hh>
 
@@ -65,7 +57,7 @@ public:
 
 public:
 
-	/// construction with an etable
+	/// @brief Construct given an Etable
 	BaseEtableEnergy(
 		Etable const & etable_in,
 		methods::EnergyMethodOptions const & options,
@@ -79,7 +71,8 @@ public:
 	// methods for ContextIndependentTwoBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	/// stashes nblist if use_nblist is true
+	/// @brief Setup TwoBody Energy for Minimization
+	/// @details Stash nblist if use_nblist is true
 	virtual
 	void
 	setup_for_minimizing(
@@ -88,11 +81,13 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
-	/// @brief check compatibility with atomtypeset
+	/// @brief Setup for Scoring Two Body Term
+	/// @details Check compatibility with atom typeset
  	virtual
  	void
  	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
+	/// @brief Setup two-body terms for derivatives
  	virtual
  	void
 	setup_for_derivatives(
@@ -100,15 +95,15 @@ public:
 		ScoreFunction const &scfxn
 	) const;
 
-	// The EtableEnergy method stores a vector of rotamer trie objects in the Energies
-	// object for use in rapid rotamer/background energy calculations.  Overrides default
-	// do-nothing behavior.
+	/// @brief Setup Two body Term for Packing
+	/// @details Etable Energy method scores a vector of rotamer trie objects in the
+	/// energies object for use in rapid rotamer/background energy calculations. Overrides
+	/// default do-nothing behavior.
 	virtual
 	void
 	setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
 
-	// Creates a rotamer trie for the input set of rotamers and stores the trie
-	// in the rotamer set.
+	/// @brief Create Rotamer Trie for the input set of rotamers and scores the trie in the rotamer set.
 	virtual
 	void
 	prepare_rotamers_for_packing(
@@ -116,8 +111,7 @@ public:
 		conformation::RotamerSetBase & set
 	) const;
 
-	// Updates the cached rotamer trie for a residue if it has changed during the course of
-	// a repacking
+	/// @brief Updates the cached rotamer trie for a residue if it has changed during the course of a repacking
 	virtual
 	void
 	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
@@ -146,7 +140,7 @@ public:
 		ScoreFunction const & sfxn
 	) const;
 
-	///
+	/// @brief Compute Two-Body residue Pair energy
 	virtual
 	void
 	residue_pair_energy(
@@ -157,7 +151,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///@brief Evaluates the interaction between the backbone of rsd1 and the
+	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -170,7 +164,7 @@ public:
 	) const;
 
 
-	///@brief Evaluates the interaction between the backbone of rsd1 and the
+	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -182,7 +176,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///@brief Evaluates the interaction between the sidechain of rsd1 and the
+	/// @brief Evaluates the interaction between the sidechain of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -206,8 +200,8 @@ public:
 	) const;
 
 
-	//@brief overrides default rotamer/background energy calculation and uses
-	// the trie-vs-trie algorithm instead
+	/// @brief Overrides default rotamer/background energy calculation and uses
+	/// the trie-vs-trie algorithm instead
 	virtual
 	void
 	evaluate_rotamer_background_energies(
@@ -239,7 +233,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	/// called at the end of energy evaluation
+	/// @brief Called at the end of an energy evaluation
 	virtual
 	void
 	finalize_total_energy(
@@ -248,12 +242,9 @@ public:
 		EnergyMap & totals
 	) const;
 
-
-	/// called during gradient-based minimization inside dfunc
-	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
-	**/
+	/// @brief Called during graident-based minimization inside dfunc
+	/// @details F1 and F2 are not zeroed -- contributions from this
+	/// atom are just summed in.
 	virtual
 	void
 	eval_atom_derivative(
@@ -270,7 +261,6 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// methods specific to EtableEnergy:
 	/////////////////////////////////////////////////////////////////////////////
-	/// Should/Could these inlined" in a separate .inline.hh?
 
 	// for some reason the virtual-function call to residue_pair_energy does not get passed thru to
 	// CoarseEnergyEtable... Use template based call instead...
@@ -286,7 +276,7 @@ public:
 	}
 
 
-	///
+	/// @brief Standard Atom Pair Energy
 	inline
 	void
 	atom_pair_energy(
@@ -298,48 +288,42 @@ public:
 	) const {
 		Energy atr, rep, solv, bb;
 		atr = rep = solv = bb = 0;
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
 		atom_pair_energy(atom1,atom2,weight,atr,rep,solv,bb,dsq);
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << "sol " << solv << std::endl;
 		emap[st_atr_]+=atr;
 		emap[st_rep_]+=rep;
 		emap[st_sol_]+=solv;
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << "total " << emap[st_sol_] << std::endl;
 		emap[coarse_beadlj]+=bb;
 	}
 
-  ///pba
-  inline
-  void
-  memb_atom_pair_energy(
-    conformation::Atom const & atom1,
-    conformation::Atom const & atom2,
-    Real const weight,
-    EnergyMap & emap,
-    Real & dsq
-  ) const {
-    Energy atr, rep, solv, bb;
-    atr = rep = solv = bb = 0;
-    //    std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
-    memb_atom_pair_energy(atom1,atom2,weight,atr,rep,solv,bb,dsq);
-    //    std::cerr << __FILE__<< ' ' << __LINE__ << "sol " << solv << std::endl;
-    emap[st_atr_]+=atr;
-    emap[st_rep_]+=rep;
-    emap[st_sol_]+=solv;
-    //    std::cerr << __FILE__<< ' ' << __LINE__ << "total " << emap[st_sol_] << std::endl;
-    emap[coarse_beadlj]+=bb;
-  }
+	/// @brief Membrane Specific Atom Pair Energy
+	inline
+	void
+	memb_atom_pair_energy(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const weight,
+		EnergyMap & emap,
+		Real & dsq
+	) const {
+		Energy atr, rep, solv, bb;
+		atr = rep = solv = bb = 0;
+		memb_atom_pair_energy(atom1,atom2,weight,atr,rep,solv,bb,dsq);
+		emap[st_atr_]+=atr;
+		emap[st_rep_]+=rep;
+		emap[st_sol_]+=solv;
+		emap[coarse_beadlj]+=bb;
+	}
 
-  ///pba
-  inline
-  void
-  fast_memb_env_energy(
-  conformation::Atom const & atom1,
-  int const attype1,
-  Real & mbenvE
-  ) const {
-    fast_memb_env_energy(atom1,attype1,mbenvE);
-  }
+	/// @brief Speed Optimized Membrane Environment Energy
+	inline
+	void
+	fast_memb_env_energy(
+		conformation::Atom const & atom1,
+		int const attype1,
+		Real & mbenvE
+	) const {
+		fast_memb_env_energy(atom1,attype1,mbenvE);
+	}
 
 	/// @brief for the trie-vs-trie algorithm; could test if the other
 	/// atom pair energy function could inline this function to avoid
@@ -356,39 +340,37 @@ public:
 		Energy & bb,
 		Real & dsq
 	) const  {
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
 		static_cast< Derived const* > (this) -> atom_pair_energy_(atom1,atom2,weight,atr,rep,solv,bb,dsq);
 	}
 
-  /// pba @brief for the trie-vs-trie algorithm; could test if the other
-  /// atom pair energy function could inline this function to avoid
-  /// the table reading code duplication.
-  inline
-  void
-  memb_atom_pair_energy(
-    conformation::Atom const & atom1,
-    conformation::Atom const & atom2,
-    Real const weight,
-    Energy & atr,
-    Energy & rep,
-    Energy & solv,
-    Energy & bb,
-    Real & dsq
-  ) const  {
-    //    std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
-    static_cast< Derived const* > (this) -> memb_atom_pair_energy_(atom1,atom2,weight,atr,rep,solv,bb,dsq);
-  }
+	/// @brief for the trie-vs-trie algorithm; could test if the other
+	/// atom pair energy function could inline this function to avoid
+	/// the table reading code duplication.
+	inline
+	void
+	memb_atom_pair_energy(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const weight,
+		Energy & atr,
+		Energy & rep,
+		Energy & solv,
+		Energy & bb,
+		Real & dsq
+	) const  {
+		static_cast< Derived const* > (this) -> memb_atom_pair_energy_(atom1,atom2,weight,atr,rep,solv,bb,dsq);
+	}
 
-  //pba
-  inline
-  void
-  fast_memb_env_energy(
-  conformation::Atom const & atom1,
-  int const attype1,
-  Real & mbenvE
-  ) const {
-    static_cast< Derived const* > (this) -> fast_memb_env_energy_(atom1,attype1,mbenvE);
-  }
+	/// @brief Compute fast membrane environment energy
+	inline
+	void
+	fast_memb_env_energy(
+		conformation::Atom const & atom1,
+		int const attype1,
+		Real & mbenvE
+	) const {
+		static_cast< Derived const* > (this) -> fast_memb_env_energy_(atom1,attype1,mbenvE);
+	}
 
 	///
 	inline
@@ -430,18 +412,18 @@ public:
 		return static_cast< Derived const* > (this) -> eval_dE_dR_over_r_(atom1,atom2,weights,f1,f2);
 	};
 
-  ///pba
-  inline
-  Real
-  memb_eval_dE_dR_over_r(
-    conformation::Atom const & atom1,
-    conformation::Atom const & atom2,
-    EnergyMap const & weights,
-    Vector & f1,
-    Vector & f2
-  ) const  {
-    return static_cast< Derived const* > (this) -> memb_eval_dE_dR_over_r_(atom1,atom2,weights,f1,f2);
-  };
+	///pba
+	inline
+	Real
+	memb_eval_dE_dR_over_r(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		EnergyMap const & weights,
+		Vector & f1,
+		Vector & f2
+	) const  {
+		return static_cast< Derived const* > (this) -> memb_eval_dE_dR_over_r_(atom1,atom2,weights,f1,f2);
+	};
 
 	///
 	Real
@@ -513,6 +495,7 @@ public:
 	}
 
 protected: //protected methods that may be used by derived classes
+
 	trie::TrieCountPairBaseOP
 	get_count_pair_function_trie(
 		conformation::RotamerSetBase const & set1,

@@ -34,6 +34,9 @@ sources = {
 		"TemperedDocking",
 		"util",
 	],
+	"protocols/docking/membrane":[
+#		"MPDockingMover",	
+	],
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",
 	],

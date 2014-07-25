@@ -45,8 +45,10 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/MembraneParams.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -130,6 +132,9 @@ Conformation::Conformation( Conformation const & src ) :
 
 	// carbohydrates?
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
+	
+	// membranes
+	membrane_info_ = src.membrane_info_; 
 
 	// chain info
 	chain_endings_ = src.chain_endings_;
@@ -175,6 +180,9 @@ Conformation::operator=( Conformation const & src )
 
 		// carbohydrates?
 		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
+		
+		// membranes
+		membrane_info_ = src.membrane_info_;
 
 		// chain info
 		chain_endings_ = src.chain_endings_;
@@ -484,18 +492,153 @@ Conformation::chains_from_termini()
 
 // Membranes /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// @brief Given Embedding and Membrane Positions, Setup a Membrane Info Object
+/// @brief Setup a Membrane Info object in Conformation - pos & topology
+/// @details Add a MembraneInfo object - describes the position of the
+/// membrane virtual residue, information on membrane spanning regions,
+/// lipid exposure/burial of residues in the pose, and fullatom steepness
+/// and thickness parameters. At construction, specify membrane position
+/// and list of spanning topology objects by chain.
 void
-Conformation::setup_membrane( utility::vector1< std::pair< int, int > > embres_map, int membrane ) {
-
-	// Create new membrane info object
-	membrane_info_ = new MembraneInfo( this, embres_map, membrane );
+Conformation::setup_membrane(
+   core::Size membrane_resnum,
+   membrane::SpanningTopologyOP topology,
+   core::SSize membrane_jump
+   ) {
+	
+	membrane_info_ = new membrane::MembraneInfo( membrane_resnum, topology, membrane_jump );
 }
 
-/// @brief Returns a Membrane Info Object in the conformation
+/// @brief Setup a Membrane Info object in Conformation - Pos, topology & lips
+/// @details Add a MembraneInfo object - describes the position of the
+/// membrane virtual residue, information on membrane spanning regions,
+/// lipid exposure/burial of residues in the pose, and fullatom steepness
+/// and thickness parameters. At construction, specify membrane position,
+/// list of spanning topology objects by chain, and lipod exposre info by chain.
+void
+Conformation::setup_membrane(
+   core::Size membrane_resnum,
+   membrane::SpanningTopologyOP topology,
+   membrane::LipidAccInfoOP lips,
+   core::SSize membrane_jump
+   ) {
+	
+	membrane_info_ = new membrane::MembraneInfo( membrane_resnum, topology, lips, membrane_jump );
+	
+}
+
+/// @brief Returns the MembraneInfo object in conformation
+/// @details Membrane Info contains information describing location of the
+/// membrane virtual residue in the pose sequence, membrane spanning region definitions
+/// and lipid exposure/burial data
 membrane::MembraneInfoOP
 Conformation::membrane() {
 	return membrane_info_;
+}
+
+/// @brief Returns a Membrane Info Object in the conformation
+/// @details Membrane Info contains information regarding membrane residues,
+/// foldtree modifications, fullatom vs. centroid embedding parameters for
+/// scoring and the spanning topology/lipids accessibility data
+membrane::MembraneInfoOP
+Conformation::membrane() const {
+	return membrane_info_;
+}
+
+/// @brief Return the center coordinate of the membrane
+/// @details Return the center xyz coordinate of the membrane described in the
+/// MPct atom of the membrane virtual residue
+Vector
+Conformation::membrane_center() const  {
+
+	return residue( membrane_info_->membrane_rsd_num() ).xyz( membrane::center );
+}
+
+/// @brief Returns the normal of the membrane
+/// @details Returns the normal (direction) of the membrane described in the MPnm
+/// atom of the membrane virtual residue.
+Vector
+Conformation::membrane_normal() const {
+	
+	Vector normal_tracked = residue( membrane_info_->membrane_rsd_num() ).xyz( membrane::normal );
+	Vector normal = normal_tracked - membrane_center();
+	
+	return normal.normalize();
+
+}
+
+/// @brief Update Normal, Center in the Membrane
+/// @details Sets the center and normal coordinates to the appropriate
+/// parameters and checks for a valid stub prior to returning.
+void
+Conformation::update_membrane_position( Vector center, Vector normal ) {
+
+	// Set membrane center
+	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::center, center );
+	
+	// Set membrane normal
+	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::normal, normal );
+
+	// Check coordinate frame is valid
+	check_valid_membrane();
+}
+
+/// @brief Check that a new membrane position is valid
+/// @details Given a new membrane normal/center pair, check that the newly constructed stub represents
+/// an orthogonal coordinate frame
+void
+Conformation::check_valid_membrane() const {
+	
+	using namespace core::kinematics;
+	
+	// Grab the membrane stub
+	core::SSize jump = membrane_info_->membrane_jump();
+	Stub membrane_stub = downstream_jump_stub( jump );
+	
+	// Check the stub still contains an orthogonal coordinate frame
+	if (! membrane_stub.is_orthogonal( 0.0001 ) ) {
+		utility_exit_with_message( "Cannot set xyz to create an invalid coordinate frame" );
+	}
+	
+}
+
+/// @brief Compute Residue Z Position relative to mem
+/// @details Compute the z position of a residue relative to the pre-defined
+/// layers in the membrane. Maintians the relative coordinate frame
+Real
+Conformation::residue_z_position( core::Size resnum ) const {
+	
+	// Compute z_position
+	Vector const & xyz( residue_( resnum ).atom( "CA" ).xyz() );
+	core::Real result = dot( xyz - membrane_center(), membrane_normal() );
+	return result;
+}
+
+/// @brief Compute atom Z Position relative to mem
+/// @details Compute the z position of an atom relative to the pre-defined
+/// layers in the membrane. Maintians the relative coordinate frame
+Real
+Conformation::atom_z_position( core::Size resnum, core::Size atomnum ) const {
+	
+	// Compute z_position
+	Vector const & xyz( residue_( resnum ).atom( atomnum ).xyz() );
+	core::Real result = dot( xyz - membrane_center(), membrane_normal() );
+	return result;
+}
+
+/// @brief Show Membranes
+void
+Conformation::show_membrane( std::ostream & output ) const {
+
+	// Show Membrane Info
+	membrane_info_->show( output );
+	
+	// Grab membrane center/normal
+	Vector center( membrane_center() );
+	Vector normal( membrane_normal() );
+	
+	// Show Current Membrane Position
+	output << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
+	output << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;
 }
 
 // Trees /////////////////////////////////////////////////////////////////////////////////////////////////////////////

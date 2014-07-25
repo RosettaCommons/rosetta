@@ -9,123 +9,92 @@
 
 /// @file 		core/membrane/geometry/util.hh
 ///
-/// @brief 		Utility methods for defining membranes and membrane embeddings
-/// @detailed 	Helps to check for internal errors, bounds, and object equality
+/// @brief 		Utility methods for membrane framework
+/// @details 	Utility methods include determining center of mass (moved down in the tree)
+///				and adjusting normal parameters for visualization.
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_membrane_geometry_util_hh
 #define INCLUDED_core_membrane_geometry_util_hh
 
-// Project Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
-
 // Package Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
-
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
 // C++ Headers
-#include <algorithm>
-#include <string>
 #include <cstdlib>
 #include <cmath>
-
-using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
 namespace geometry {
 
-    /// @brief	Virtual residue Equals
-    /// @detail Custom equality method - Checks two virtual atoms are equal in typesets
-    ///			and cartesian coordinates
-    ///
-    /// @param 	rsd1
-    ///				first atom to investigate
-    /// @param 	rsd2
-    ///				second residue to investigate
-    ///
-    ///	@return	bool
-    bool virtual_rsd_equal( core::conformation::ResidueOP rsd1, core::conformation::ResidueOP rsd2 );
-        
-    /// @brief      Get Residue Depth in Membrane
-    /// @details    Calculate the depth of a residue with respect to membrane players
-    ///
-    /// @param  normal
-    /// @param center
-    core::Real get_mpDepth( core::Vector normal, core::Vector center, core::conformation::Residue rsd );
-    
-    /// @brief Check Membrane Spanning
-    /// @details Check that caucluated membrane spanning respects new
-    ///          normal and center definitions
-    ///
-    /// @throws <none>
-	bool
-    check_spanning(
-                   core::pose::Pose const & pose,
-                   core::Vector const & normal,
-                   core::Vector const & center,
-                   SpanningTopologyOP topology
-                   );
-    
-    //////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
-    
-    /// @brief      Center of Mass
-    /// @details    Calculates the center of mass of a pose - Stop and start positions (or residues)
-    ///             used ot find the starting and finishing locations
-    ///				the start and stop positions (or residues) within the pose are used to
-    ///				find the starting and finishing locations
-    ///
-    /// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
-    numeric::xyzVector< core::Real>
-    center_of_mass(
-                   core::pose::Pose const & pose,
-                   int const start,
-                   int const stop
-                   );
-    
-    /// @brief      Residue Center of Mass
-    /// @details    Calcualte the center of mass of a pose.
-    ///
-    /// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
-    int
-    residue_center_of_mass(
-                           core::pose::Pose const & pose,
-                           int const start,
-                           int const stop
-                           );
-    
-    
-    /// @brief      Return nearest residue
-    /// @details    Find the residue nearest some position passed in (normally a center of mass)
-    ///
-    /// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
-    int
-    return_nearest_residue(
-                           core::pose::Pose const & pose,
-                           int const begin,
-                           int const end,
-                           core::Vector center
-                           );
-    
+//////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
+
+/// @brief      Center of Mass
+/// @details    Calculates the center of mass of a pose - Stop and start positions (or residues)
+///             used ot find the starting and finishing locations
+///				the start and stop positions (or residues) within the pose are used to
+///				find the starting and finishing locations
+///
+/// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
+numeric::xyzVector< core::Real>
+center_of_mass(
+			   core::pose::Pose const & pose,
+			   core::SSize const start,
+			   core::SSize const stop
+			   );
+
+/// @brief      Residue Center of Mass
+/// @details    Calcualte the center of mass of a pose.
+///
+/// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
+core::SSize
+residue_center_of_mass(
+					   core::pose::Pose const & pose,
+					   core::SSize const start,
+					   core::SSize const stop
+					   );
+
+
+/// @brief      Return nearest residue
+/// @details    Find the residue nearest some position passed in (normally a center of mass)
+///
+/// @author     Monica Berrondo, Modified by Javier Castellanos and Rebecca Alford
+core::SSize
+return_nearest_residue(
+					   core::pose::Pose const & pose,
+					   core::SSize const begin,
+					   core::SSize const end,
+					   core::Vector center
+					   );
+				
+/// @brief		Get z-coord and chainID
+/// @details	Helper function that creates input for SpanningTopology
+///				which is not built at the time the Pose is built
+///				returns a pair of vectors:
+///				vector1 is z-coord of CA atoms of the pose
+///				vector2 is chainID of CA atoms of the pose
+std::pair< utility::vector1< Real >, utility::vector1< Real > > get_chain_and_z( pose::PoseOP pose );
+
+/// @brief Normalize normal vector to length 15 for visualization
+void membrane_normal_to_length_15( pose::Pose & pose );
+
+
 } // geometry
 } // membrane
 } // core

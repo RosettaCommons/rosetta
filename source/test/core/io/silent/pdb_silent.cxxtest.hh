@@ -25,6 +25,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>

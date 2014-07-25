@@ -45,7 +45,7 @@
 
 using utility::tools::make_vector1;
 using utility::vector1;
-typedef  numeric::xyzMatrix< Real > Matrix;
+typedef  numeric::xyzMatrix< core::Real > Matrix;
 using namespace basic::options;
 
 //////////////////////////////////////////////////////

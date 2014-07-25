@@ -108,10 +108,12 @@ sources = {
 		"UltraLightResidue"
 	],
 	"core/conformation/membrane": [
-	       "definitions_util",
-	       "SpanningTopology",
-	       "LipidAccInfo",
-	       "MembraneInfo",
+		"Span",
+		"SpanningTopology",
+		"LipidAccInfo",
+		"MembraneInfo",
+		"MembranePlanes",
+		"util",
 	],
 	"core/conformation/orbitals": [
 		"OrbitalXYZCoords",

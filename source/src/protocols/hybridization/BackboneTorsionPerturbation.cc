@@ -71,6 +71,8 @@ static numeric::random::RandomGenerator RG(5694685);
 namespace protocols {
 namespace hybridization {
 
+using namespace core; 
+
 BackboneTorsionPerturbation::BackboneTorsionPerturbation() {
     init();
 }

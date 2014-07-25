@@ -1,32 +1,31 @@
 <JD2ResourceManagerJobInputter>
     <ResourceLocators>
-        <FileSystemResourceLocator tag="spanning_locator" base_path="protocols/membrane/"/>
-        <FileSystemResourceLocator tag="embedding_locator" base_path="protocols/membrane/"/>
-        <FileSystemResourceLocator tag="startstruct_locator" base_path="protocols/membrane/"/>
+        <FileSystemResourceLocator tag="spanning_locator" base_path="test/core/membrane/io"/>
+        <FileSystemResourceLocator tag="embedding_locator" base_path="test/core/membrane/io"/>
+        <FileSystemResourceLocator tag="startstruct_locator" base_path="test/core/membrane/io"/>
     </ResourceLocators>
-	    <ResourceOptions>
+    <ResourceOptions>
         <PoseFromPDBOptions
-           tag="pdb1"
-           ignore_unrecognized_res=1
+        tag="pdb1"
+        ignore_unrecognized_res=1
         />
     </ResourceOptions>
     <Resources>
-        <PoseFromPDB tag="1afo_A_my" locator="startstruct_locator" locatorID="1afo_A.pdb"/>
-        <EmbedDef tag="1afo_A_my_embed" file="protocols/membrane/1afo_A.embed"/>
-        <SpanFile tag="1afo_A_my_span" file="protocols/membrane/1afo_A.span"/>
-        <PoseFromPDB tag="1afo_B_my" locator="startstruct_locator" locatorID="1afo_B.pdb"/>
-        <EmbedDef tag="1afo_B_my_embed" file="protocols/membrane/1afo_B.embed"/>
-        <SpanFile tag="1afo_B_my_span" file="protocols/membrane/1afo_B.span"/>
+        <PoseFromPDB tag="1afoA" locator="startstruct_locator" locatorID="protocols/membrane/1afo_A.pdb" resource_options="pdb1"/>
+        <EmbedDef tag="1afoA_embed" locator="embedding_locator" locatorID="protocols/membrane/1afo_A.embed"/>
+        <SpanFile tag="1afoA_span" locator="spanning_locator" locatorID="protocols/membrane/1afo_A.span"/>
+        <PoseFromPDB tag="1afoB" locator="startstruct_locator" locatorID="protocols/membrane/1afo_B.pdb" resource_options="pdb1"/>
+        <EmbedDef tag="1afoB_embed" locator="embedding_locator" locatorID="protocols/membrane/1afo_B.embed"/>
+        <SpanFile tag="1afoB_span" locator="spanning_locator" locatorID="protocols/membrane/1afo_B.span"/>
     </Resources>
     <Jobs>
         <Job name="membrane">
-            <Data desc="startstruct" resource_tag="1afo_B_my"/>
-            <Data desc="1afo_A_embed" resource_tag="1afo_A_my_embed"/>
-            <Data desc="1afo_A_span"  resource_tag="1afo_A_my_span"/>
-            <Data desc="1afo_A" resource_tag="1afo_A_my"/>
-            <Data desc="1afo_B_embed" resource_tag="1afo_B_my_embed"/>
-            <Data desc="1afo_B_span"  resource_tag="1afo_B_my_span"/>
-            <Data desc="1afo_B" resource_tag="1afo_B_my"/>
+            <Data desc="startstruct" resource_tag="1afoA"/>
+            <Data desc="startstruct_embed" resource_tag="1afoA_embed"/>
+            <Data desc="startstruct_span"  resource_tag="1afoA_span"/>
+            <Data desc="startstruct2" resource_tag="1afoB"/>
+            <Data desc="startstruct2_embed" resource_tag="1afoB_embed"/>
+            <Data desc="startstruct2_span"  resource_tag="1afoB_span"/>
         </Job>
     </Jobs>
 </JD2ResourceManagerJobInputter>

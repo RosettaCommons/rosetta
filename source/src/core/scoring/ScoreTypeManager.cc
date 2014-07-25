@@ -270,6 +270,21 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_mbsolv" ] = fa_mbsolv;
 	name2score_type_[ "Menv_smooth" ] = Menv_smooth;
 
+	// Membrane Framework SupportedEnergy Terms
+	// centroid - added by @ralford 3/30/14
+	name2score_type_[ "mp_env" ] = MPEnv;
+	name2score_type_[ "mp_cbeta" ] = MPCbeta;
+	name2score_type_[ "mp_pair" ] = MPPair;
+	name2score_type_[ "mp_lipo" ] = MPLipo;
+	name2score_type_[ "mp_termini" ] = MPTermini;
+	name2score_type_[ "mp_nonhelix" ] = MPNonHelix;
+	name2score_type_[ "mp_tmproj" ] = MPTMProj;
+	
+	// fullatom - added by @ralford 5/14/14
+	name2score_type_[ "fa_mpenv" ] = FaMPEnv;
+	name2score_type_[ "fa_mpsolv" ] = FaMPSolv;
+	name2score_type_[ "fa_mpenv_smooth" ] = FaMPEnvSmooth;
+	
 	name2score_type_[ "rg" ] = rg;
 	name2score_type_[ "rg_local" ] = rg_local;
 	name2score_type_[ "co" ] = co;

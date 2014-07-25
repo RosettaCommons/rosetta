@@ -20,8 +20,6 @@
 
 // Tested Classes
 #include <core/membrane/geometry/util.hh>
-
-#include <core/conformation/membrane/definitions.hh>
 #include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
@@ -73,42 +71,7 @@ public:
         TS_ASSERT_DELTA( depth1, 30, 0.0001 );
         TS_ASSERT_DELTA( depth2, 34, 0.0001 );
     }
-    
-    /// @brief Testing virtual residue equals
-    void test_equals_non_virtual() {
-        
-        using namespace core::membrane::geometry;
-        
-        TS_TRACE("Testing virtual residue equals - non virtual type");
-        
-        TS_ASSERT( !virtual_rsd_equal( rsd_ok_, rsd_non_vrt_ ));
-        TS_ASSERT( !virtual_rsd_equal( rsd_non_vrt_, rsd_ok_ ));
-    }
-    
-    /// @brief Testing virtual residue equals
-    void test_equals_coord_neq() {
-        
-        using namespace core::membrane::geometry;
-        
-        TS_TRACE("Testing virtual residue equals - coordinates not equal (xyz)");
-        
-        // Checking fail cases
-        TS_ASSERT( !virtual_rsd_equal( rsd_ok_, rsd_diff_x_) );
-        TS_ASSERT( !virtual_rsd_equal( rsd_ok_, rsd_diff_y_) );
-        TS_ASSERT( !virtual_rsd_equal( rsd_ok_, rsd_diff_z_) );
-    }
-    
-    /// @brief Testing valid equals case
-    void test_equals() {
-        
-        using namespace core::membrane::geometry;
-        
-        TS_TRACE("Testing virtual residue equals - valid case");
-        
-        TS_ASSERT( virtual_rsd_equal( rsd_ok_, rsd_ok_) );
-        
-    }
-    
+
 private: // methods
     
     /// @brief Create base residues

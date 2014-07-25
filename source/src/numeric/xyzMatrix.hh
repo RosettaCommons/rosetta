@@ -2060,6 +2060,16 @@ public: // Comparison
 		 ( t > m.zx_ ) && ( t > m.zy_ ) && ( t > m.zz_ );
 	}
 
+	/// @brief Show
+	inline
+	void
+	show(std::ostream & output=std::cout) const
+	{
+		output << "(" << xx_ << ", " << xy_ << ", " << xz_ << ")" << std::endl;
+		output << "(" << yx_ << ", " << yy_ << ", " << yz_ << ")" << std::endl;
+		output << "(" << zx_ << ", " << zy_ << ", " << zz_ << ")" << std::endl;
+	}
+
 
 private: // Fields
 

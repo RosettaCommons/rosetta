@@ -14,6 +14,8 @@
 //C++ headers
 #include <iostream>
 
+using namespace core; 
+
 // ---------------- Toy Movers --------------- //
 
 namespace protocols {

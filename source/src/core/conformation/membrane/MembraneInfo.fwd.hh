@@ -7,16 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/conformation/membrane/MembraneInfo.fwd.hh
+/// @file		core/conformation/membrane/MembraneInfo.fwd.hh
 ///
-/// @brief 	 Membrane Conformation Info
-/// @details The Membrane Conformation Info object is responsible for:
-///             - maintaining a correct membrane foldtree
-///             - maintaining references to the membrane and embedding residues
-///             - providing access to membrane related data
+/// @brief		MembraneInfo - Membrane Pose Definition Object
+/// @details	The membrane info object is responsible for storing non-coordinate
+///				derived information, extending the traditional definiton of a pose
+///				to describe a membrane protein in Rosetta. This information includes:
+///				 - the resiue number of the membrane virtual residue containing
+///					the posiiton of the membrane
+///				 - membrane spanning topology
+///				 - membrane lipophilicity info (user-specified)
 ///
-/// @note    Last Modified 3/12/14
-/// @author  Rebecca Alford (rfalford12@gmail.com)
+///				This object belongs to the conformation and should be accessed
+///				via pose.conformation().membrane().
+///
+///	     		Last Modified: 6/21/14
+///
+/// @author		Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_MembraneInfo_fwd_hh
 #define INCLUDED_core_conformation_membrane_MembraneInfo_fwd_hh
@@ -28,11 +35,11 @@ namespace core {
 namespace conformation {
 namespace membrane {
 		
-	/// @brief Class: Membrane Conformation Info
-	/// @details Handles memrbane conformation, foldtree, and maintains memrbane info
-	class MembraneInfo;
-	typedef utility::pointer::owning_ptr< MembraneInfo > MembraneInfoOP;
-	typedef utility::pointer::owning_ptr< MembraneInfo const > MembraneInfoCOP;
+/// @brief Class: Membrane Info
+/// @details Handles memrbane conformation, foldtree, and maintains membrane info
+class MembraneInfo;
+typedef utility::pointer::owning_ptr< MembraneInfo > MembraneInfoOP;
+typedef utility::pointer::owning_ptr< MembraneInfo const > MembraneInfoCOP;
 		
 } // membrane
 } // conformation

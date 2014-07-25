@@ -26,6 +26,8 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
+using namespace core; 
+
 bool
 change_sheet_id_if_possible(
 	StructureID struct_id,
