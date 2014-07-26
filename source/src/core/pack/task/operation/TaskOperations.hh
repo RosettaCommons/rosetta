@@ -243,6 +243,25 @@ public:
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
 
+	void ex1( bool value );
+	void ex2( bool value );
+	void ex3( bool value );
+	void ex4( bool value );
+	void ex1aro( bool value );
+	void ex2aro( bool value );
+	void ex1aro_exposed( bool value );
+	void ex2aro_exposed( bool value );
+	void ex1_sample_level( ExtraRotSample value );
+	void ex2_sample_level( ExtraRotSample value );
+	void ex3_sample_level( ExtraRotSample value );
+	void ex4_sample_level( ExtraRotSample value );
+	void ex1aro_sample_level( ExtraRotSample value );
+	void ex2aro_sample_level( ExtraRotSample value );
+	void ex1aro_exposed_sample_level( ExtraRotSample value );
+	void ex2aro_exposed_sample_level( ExtraRotSample value );
+	void exdna_sample_level( ExtraRotSample value );
+	void extrachi_cutoff( Size value );
+
 private:
 
 	bool ex1_;

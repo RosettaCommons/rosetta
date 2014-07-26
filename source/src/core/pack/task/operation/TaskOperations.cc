@@ -528,6 +528,61 @@ ExtraRotamersGeneric::apply( pose::Pose const &, PackerTask & task ) const
 	}
 }
 
+void ExtraRotamersGeneric::ex1( bool value ) {
+	ex1_ = value;
+}
+void ExtraRotamersGeneric::ex2( bool value ) {
+	ex2_ = value;
+}
+void ExtraRotamersGeneric::ex3( bool value ) {
+	ex3_ = value;
+}
+void ExtraRotamersGeneric::ex4( bool value ) {
+	ex4_ = value;
+}
+void ExtraRotamersGeneric::ex1aro( bool value ) {
+	ex1aro_ = value;
+}
+void ExtraRotamersGeneric::ex2aro( bool value ) {
+	ex2aro_ = value;
+}
+void ExtraRotamersGeneric::ex1aro_exposed( bool value ) {
+	ex1aro_exposed_ = value;
+}
+void ExtraRotamersGeneric::ex2aro_exposed( bool value ) {
+	ex2aro_exposed_ = value;
+}
+void ExtraRotamersGeneric::ex1_sample_level( ExtraRotSample value ) {
+	ex1_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex2_sample_level( ExtraRotSample value ) {
+	ex2_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex3_sample_level( ExtraRotSample value ) {
+	ex3_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex4_sample_level( ExtraRotSample value ) {
+	ex4_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex1aro_sample_level( ExtraRotSample value ) {
+	ex1aro_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex2aro_sample_level( ExtraRotSample value ) {
+	ex2aro_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex1aro_exposed_sample_level( ExtraRotSample value ) {
+	ex1aro_exposed_sample_level_ = value;
+}
+void ExtraRotamersGeneric::ex2aro_exposed_sample_level( ExtraRotSample value ) {
+	ex2aro_exposed_sample_level_ = value;
+}
+void ExtraRotamersGeneric::exdna_sample_level( ExtraRotSample value ) {
+	exdna_sample_level_ = value;
+}
+void ExtraRotamersGeneric::extrachi_cutoff( Size value ) {
+	extrachi_cutoff_ = value;
+}
+
 /// BEGIN ReadResfile
 
 ReadResfile::ReadResfile() : parent()
