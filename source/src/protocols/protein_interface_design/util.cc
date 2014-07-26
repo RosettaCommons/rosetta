@@ -91,6 +91,7 @@ star_fold_tree( core::pose::Pose & pose )
 }
 
 // @details Connecting to the last carbon atom before the residue's action centre will allow                         // mimization to sample the residue's sidechain dofs without harming the interaction                                 // the stub with the target chain
+//kdrew: HIS was defaulting to CB but CG makes more sense, also changing LEU from CG to CD2, and ILE, VAL, SER, THR, PRO, CYS not to be default CB
 std::string
 optimal_connection_point( std::string const residue_type ){
 	std::string connect_to( "CB" ); // to which atom to hook up the atom tree
@@ -100,10 +101,22 @@ optimal_connection_point( std::string const residue_type ){
 		connect_to = "CZ";
 	if( residue_type == "MET" || residue_type == "DME")
 		connect_to = "SD";
-	if( residue_type == "LEU" || residue_type == "PHE" || residue_type == "DPH" || residue_type == "TRP" || residue_type == "DTR" || residue_type == "TYR" || residue_type == "DTY" || residue_type == "ASN" || residue_type == "DAS" || residue_type == "ASP"|| residue_type == "DAS" )
+	if( residue_type == "PHE" || residue_type == "DPH" || residue_type == "TRP" || residue_type == "DTR" || residue_type == "TYR" || residue_type == "DTY" || residue_type == "ASN" || residue_type == "DAS" || residue_type == "ASP"|| residue_type == "DAS" || residue_type == "HIS" || residue_type == "DHI")
 		connect_to = "CG";
-	if( residue_type == "DLE" )
+	if( residue_type == "LEU" || residue_type == "DLE" )
 		connect_to = "CD2";
+	if( residue_type == "ILE" || residue_type == "DIL" )
+		connect_to = "CD1";
+	if( residue_type == "VAL" || residue_type == "DVA" )
+		connect_to = "CG1";
+	if( residue_type == "PRO" || residue_type == "DPR" )
+		connect_to = "CD";
+	if( residue_type == "SER" || residue_type == "DSE" )
+		connect_to = "OG";
+	if( residue_type == "THR" || residue_type == "DTH" )
+		connect_to = "OG1";
+	if( residue_type == "CYS" || residue_type == "DCS" )
+		connect_to = "SG";
 	if( residue_type == "LYS" || residue_type == "DLY"  )
 		connect_to = "NZ";
 	if( residue_type == "GLY" )

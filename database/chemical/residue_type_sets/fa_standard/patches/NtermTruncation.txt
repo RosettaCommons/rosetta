@@ -30,6 +30,21 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
+BEGIN_CASE ## D-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+AA DPR
+END_SELECTOR
+
+## these are the operations involved
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
 BEGIN_CASE #### glycine ################################################
 
 ## these define which residues match this case

@@ -451,11 +451,26 @@ void ChiralMover::apply( core::pose::Pose & pose )
 	Real phi_angle = pose.phi( chiral_seq_pos_ );
 	Real psi_angle = pose.psi( chiral_seq_pos_ );
 
+
 	TR << "phi_angle: " << phi_angle << " psi_angle: " << psi_angle << std::endl;
 
 	//kdrew: get residue type
 	ResidueType rtype = pose.residue_type( chiral_seq_pos_ );
 	TR << "Current residue type: " << rtype.name()  << std::endl;
+	TR << "Current residue type lower terminus: " << rtype.is_lower_terminus()  << std::endl;
+	TR << "Current residue type upper terminus: " << rtype.is_upper_terminus()  << std::endl;
+
+	AtomID const atom1( rtype.atom_index( "N" ), chiral_seq_pos_ );
+	AtomID const atom2( rtype.atom_index( "CA" ), chiral_seq_pos_ );
+	AtomID const atom3( rtype.atom_index( "C" ), chiral_seq_pos_ );
+	AtomID const atom4( rtype.atom_index( "O" ), chiral_seq_pos_ );
+
+	Real pseudo_psi = 0.0;
+	if( rtype.is_upper_terminus() )
+	{
+    	pseudo_psi = pose.conformation().torsion_angle( atom1, atom2, atom3, atom4);
+		TR << "pseudo_psi: " << pseudo_psi << std::endl;
+	}
 	//kdrew: get chiral residue type
 	ResidueType const & chiral_rtype = get_chiral_residue_type( rtype, chirality_ );
 	TR << "Flipped residue type: " << chiral_rtype.name()  << " " << chiral_rtype.aa() << std::endl;
@@ -502,6 +517,31 @@ void ChiralMover::apply( core::pose::Pose & pose )
 		}
 			//if( !chiral_rtype.atom_type(chiral_neighbor_ids[j]).is_hydrogen() )
 
+		//kdrew: if there are not enough side chain atoms (ex. ALA) choose an atom from the backbone (ex. N) for alignment
+		if ( atom_pairs.size() < 3 )
+		{
+			for (core::Size j = 1; j <= neighbor_ids.size() && atom_pairs.size() < 3; ++j) 
+			{
+				TR << "looping through neighbors: " << rtype.name() << " " << rtype.atom_name(neighbor_ids[j]) << std::endl;
+
+				//kdrew: if heavy atom
+				if( !rtype.atom_type(neighbor_ids[j]).is_hydrogen()) 
+				{
+					AtomIndices neighbor_neighbor_ids = rtype.bonded_neighbor( neighbor_ids[j]  );
+					for (core::Size jj = 1; jj <= neighbor_neighbor_ids.size() && atom_pairs.size() < 3; ++jj) 
+					{
+						if( !rtype.atom_type(neighbor_neighbor_ids[jj]).is_hydrogen()) 
+						{
+								TR << "looping through neighbor neighbors: " << rtype.name() << " " << rtype.atom_name(neighbor_neighbor_ids[jj]) << std::endl;
+								atom_pairs.push_back( std::make_pair( rtype.atom_name( neighbor_neighbor_ids[jj] ), rtype.atom_name( neighbor_neighbor_ids[jj] )));
+						}
+					}
+
+				}
+			}
+
+		}
+
 		//kdrew: assert that residue type has three side chain atoms
 		runtime_assert_msg ( atom_pairs.size() == 3 , "not enough heavy atoms to align residues" );
 
@@ -534,6 +574,17 @@ void ChiralMover::apply( core::pose::Pose & pose )
 	pose.set_psi( chiral_seq_pos_, (-1.0 * psi_angle ) );
 	//pose.dump_pdb( "rosetta_out_chiral_moved_phi_psi.pdb" );
 	
+	 AtomID const atom1c( chiral_rtype.atom_index( "N" ), chiral_seq_pos_ );
+	 AtomID const atom2c( chiral_rtype.atom_index( "CA" ), chiral_seq_pos_ );
+	 AtomID const atom3c( chiral_rtype.atom_index( "C" ), chiral_seq_pos_ );
+	 AtomID const atom4c( chiral_rtype.atom_index( "O" ), chiral_seq_pos_ );
+
+	if( chiral_rtype.is_upper_terminus() )
+	{
+    	Real chiral_pseudo_psi = pose.conformation().torsion_angle( atom1c, atom2c, atom3c, atom4c);
+		TR << "chiral pseudo_psi: " << chiral_pseudo_psi << std::endl;
+    	pose.conformation().set_torsion_angle( atom1c, atom2c, atom3c, atom4c, -1.0*pseudo_psi);
+	}
 
 	TR << "chiral phi_angle: " << pose.phi( chiral_seq_pos_ ) << " chiral psi_angle: " << pose.psi( chiral_seq_pos_ ) << std::endl;
 
