@@ -1607,6 +1607,12 @@ class ModuleBuilder:
                     xml_recompile = True
                     print_(self.fname_base, color='green', bright=False)
                     #print '__________', len(self.all_at_once_relative_files), len(previous_includes)
+                else:
+                    for f in d['sources']:
+                        f = self.fname_base + '/' + f['cpp']
+                        #print 'Checking:', f
+                        if not os.path.isfile(f)  or  calculate_source_modification_date(f, self.binding_source_path) > os.path.getmtime(self.all_at_once_json): xml_recompile = True;  break;
+
             except ValueError: xml_recompile=True
 
 
