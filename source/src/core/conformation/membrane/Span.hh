@@ -35,9 +35,9 @@ namespace membrane {
 using namespace core;
 
 class Span : public utility::pointer::ReferenceCount {
-    
+
 public: // constructors
-    
+
 	/// @brief	Default Constructor
 	/// @details Construct a default span object representing a span from 1-1
 	/// this constructor should eventually be made private because it doesn't build a real thing
@@ -46,11 +46,11 @@ public: // constructors
 	/// @brief Custom Constructor - Construct new span
 	/// @details Constructor from start and end
 	Span( Size start, Size end );
-	
+
 	/// @brief Copy Consturctor
 	/// @details Make a deep copy of this object
-	Span( Span const & src );
-	
+	// Undefined, commenting out to fix PyRosetta build  Span( Span const & src );
+
 	/// @brief Assignment Operator
 	/// @details
 
@@ -58,37 +58,37 @@ public: // constructors
 	~Span();
 
 public: // getters
-    
+
     /// @brief Get start position
 	/// @details Get the Starting Position of a transmembrane span
     Size start();
-    
+
     /// @brief Get end position
 	/// @details Get the end position of a transmembrane span
     Size end();
-	
+
 	/// @brief Shift by offset
 	/// @details Shift the transmembrane span by a user-provided offset
 	void shift( Size offset );
-    
+
 	/// @brief Show This Span
 	/// @details Show the information in this span. TODO: Should override base method
 	void show();
-	
+
 	/// @brief Check that this Span is Valid
 	/// @details Check that this span describes a consecutive transmembrane span
 	/// of nonzero length.
 	bool is_valid();
-	
+
 	// TODO: get rid of this guy
 	void not_valid();
-    
+
 private: // data
-    
+
 	// Specify start/end position of a transmembrane span
     Size start_;
     Size end_;
-    
+
 };
 
 } // membrane
