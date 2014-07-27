@@ -78,17 +78,17 @@ RandomPositionRotationMover::RandomPositionRotationMover( RandomPositionRotation
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
 RandomPositionRotationMover &
-RandomPositionRotationMover::RandomPositionRotationMover::operator=( RandomPositionRotationMover const & src )
+RandomPositionRotationMover::operator=( RandomPositionRotationMover const & src )
 {
-	
+
 	// Abort self-assignment.
 	if (this == &src) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new RandomPositionRotationMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -107,28 +107,28 @@ RandomPositionRotationMover::get_name() const {
 /// @brief Apply Rotation
 void
 RandomPositionRotationMover::apply( Pose & pose ) {
-	
+
 	using namespace protocols::simple_moves;
-	
+
 	// Check the pose is a membrane protein
 	if (! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
-	
+
 	// Check the membrane fold tree is reasonable
 	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
-	
+
 	// Compute random rotation
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	current_normal.normalize();
 	Real theta = 2*RG.uniform() * rot_mag_;
-	
+
 	// Apply Uniform Rotation
 	UniformPositionRotationMoverOP rotate = new UniformPositionRotationMover( theta, current_normal, rb_jump_ );
 	rotate->apply( pose );
-	
+
 }
 
 // Random Translation Mover //////////////////////////////////////////////
@@ -168,15 +168,15 @@ RandomPositionTranslationMover::RandomPositionTranslationMover( RandomPositionTr
 /// @details Make a deep copy of this mover object, overriding the assignment operator
 RandomPositionTranslationMover &
 RandomPositionTranslationMover::operator=( RandomPositionTranslationMover const & src ) {
-	
+
 	// Abort self-assignment.
 	if (this == &src) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new RandomPositionTranslationMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -196,30 +196,30 @@ RandomPositionTranslationMover::get_name() const {
 /// @brief Translate membrane position to new center
 void
 RandomPositionTranslationMover::apply( Pose & pose ) {
-	
+
 	using namespace protocols::simple_moves;
-	
+
 	// Check the pose is a membrane protein
 	if (! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
-	
+
 	// Check the membrane fold tree is reasonable
 	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
-	
+
 	// Compute new posiiton based on random translation
 	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	Vector delta_trans = 2*RG.uniform()-1 * trans_mag_ * current_normal;
 	Vector new_position = current_center + delta_trans;
-	
+
 	// Apply translation
 	UniformPositionTranslationMoverOP translate = new UniformPositionTranslationMover( new_position, rb_jump_ );
 	translate->apply( pose );
-	
-	
+
+
 }
 
 } // membrane
