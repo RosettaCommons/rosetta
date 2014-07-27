@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file JumpClaim
-/// @brief Claims access to a torsional angle.
-/// @author Justin Porter
+/// @brief Claims access to a jump.
+/// @author Justin R. Porter
 
 // Unit Headers
 #include <protocols/environment/claims/JumpClaim.hh>
@@ -47,16 +47,27 @@ namespace claims {
 using core::environment::LocalPosition;
 
 JumpClaim::JumpClaim( ClaimingMoverOP owner,
-                      utility::tag::TagCOP tag ):
+                      utility::tag::TagCOP tag,
+                      basic::datacache::DataMap const& datamap ):
   EnvClaim( owner ),
   label_( tag->getOption< std::string >( "jump_label" ) ),
   pos1_( tag->getOption< std::string >( "position1" ) ),
   pos2_( tag->getOption< std::string >( "position2" ) ),
-  c_str_( Parent::parse_ctrl_str( tag ) ),
-  i_str_( Parent::parse_ctrl_str( tag ) )
+  c_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "control_strength" ) ) ),
+  i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
 {
+  if( datamap.has( "ResidueSelector", pos1().label() ) ){
+    this->queue_for_annotation( pos1().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", pos1().label() ) );
+  }
+  if( datamap.has( "ResidueSelector", pos2().label() ) ){
+    this->queue_for_annotation( pos2().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", pos2().label() ) );
+  }
+
   if( tag->hasOption( "cut" ) ){
     cut( LocalPosition( tag->getOption< std::string >( "cut" ) ) );
+    if( datamap.has( "ResidueSelector", cut().label() ) ){
+      this->queue_for_annotation( cut().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", cut().label() ) );
+    }
   }
   if( tag->hasOption( "atom1" ) && tag->hasOption( "atom2" ) ){
     set_atoms( tag->getOption< std::string >( "atom1" ),
@@ -137,9 +148,9 @@ void JumpClaim::yield_elements( core::pose::Pose const& pose, DOFElements& eleme
 }
 
 void JumpClaim::yield_elements( core::environment::FoldTreeSketch const&, CutElements& elements ) const {
-  if( cut_position() != LocalPosition( "", 0 ) ){
+  if( cut() != core::environment::NO_POSITION ){
     CutElement e;
-    e.p = cut_position();
+    e.p = cut();
     elements.push_back( e );
   }
 }
@@ -178,7 +189,7 @@ void JumpClaim::cut( claims::LocalPosition const& p ) {
   cut_ = p;
 }
 
-LocalPosition const& JumpClaim::cut_position() const {
+LocalPosition const& JumpClaim::cut() const {
   return cut_;
 }
 

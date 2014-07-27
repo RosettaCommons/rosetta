@@ -50,6 +50,10 @@ class VirtResClaim : public EnvClaim {
 public:
 
   VirtResClaim( ClaimingMoverOP owner,
+                utility::tag::TagCOP tag,
+                basic::datacache::DataMap const& );
+
+  VirtResClaim( ClaimingMoverOP owner,
                 LocalPosition parent,
                 std::string const& jump_label,
                 std::string const& vrt_label );

@@ -69,6 +69,8 @@ private:
 
 }; // end LocalPosition base class
 
+static const LocalPosition NO_POSITION = LocalPosition( "", 0 );
+
 extern std::ostream& operator<<( std::ostream&, LocalPosition const& );
 
 } // environment

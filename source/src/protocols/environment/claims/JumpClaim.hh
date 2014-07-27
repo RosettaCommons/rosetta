@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author Oliver Lange
+/// @author Justin R. Porter
 
 
 #ifndef INCLUDED_protocols_environment_claims_JumpClaim_hh
@@ -42,17 +42,20 @@ namespace claims {
 class JumpClaim : public EnvClaim {
   typedef EnvClaim Parent;
   typedef core::environment::LocalPosition LocalPosition;
+  typedef core::pack::task::residue_selector::ResidueSelector ResidueSelector;
+  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 
   JumpClaim( ClaimingMoverOP owner,
-             utility::tag::TagCOP tag );
+             utility::tag::TagCOP tag,
+             basic::datacache::DataMap const& );
 
   JumpClaim( ClaimingMoverOP owner,
              std::string const& label,
              LocalPosition const& jpos1,
              LocalPosition const& jpos2,
-             LocalPosition const& cutp = LocalPosition( "", 0 ) );
+             LocalPosition const& cutp = core::environment::NO_POSITION );
 
   virtual void yield_elements( core::environment::FoldTreeSketch const& fts, ResidueElements& elements ) const;
 
@@ -104,7 +107,7 @@ public:
 protected:
 
   //protected and not public because it can return garbage if the value isn't set.
-  LocalPosition const& cut_position() const;
+  LocalPosition const& cut() const;
 
 private:
 

@@ -137,6 +137,7 @@ EnvClaimBroker::EnvClaimBroker( Environment const& env,
   core::conformation::ConformationCOP in_conf = &in_pose.conformation();
   core::pose::Pose pose( in_pose );
   claims_ = collect_claims( movers_and_passes, pose );
+  BOOST_FOREACH( EnvClaimOP claim, claims_ ){ claim->annotate( pose, ann ); }
 
   // Build a temporary conformation for which we manipulate the fold tree. After the fold tree is set,
   // we "seal it" as a ProtectedConformation for initializing DoFs.
@@ -541,6 +542,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
     claims::EnvClaims in_claims = mp_it->first->yield_claims( pose, sandbox_map );
     BOOST_FOREACH( EnvClaimOP claim, in_claims ){
       if( claim ){
+        claim->annotate( pose, ann_ );
         claims.push_back( claim );
       } else {
         std::ostringstream ss;

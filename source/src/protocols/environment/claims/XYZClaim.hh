@@ -60,10 +60,7 @@ public:
 
   XYZClaim( ClaimingMoverOP owner,
             utility::tag::TagCOP tag,
-            basic::datacache::DataMap& );
-
-  // Initializer for an empty XYZ claim
-  XYZClaim( ClaimingMoverOP owner );
+            basic::datacache::DataMap const& );
 
   // Initializer for a single backbone angle
   XYZClaim( ClaimingMoverOP owner,
@@ -79,7 +76,7 @@ public:
 
   ControlStrength const& ctrl_strength() const;
 
-  void strength( ControlStrength const&, ControlStrength const& );
+  void strength( ControlStrength const& control, ControlStrength const& initialization );
 
   ControlStrength const& init_strength() const;
 
@@ -111,7 +108,6 @@ private:
   ResidueSelectorCOP selector_;
   ControlStrength c_str_;
   ControlStrength i_str_;
-  bool internal_only_;
 
 }; //class XYZClaim
 

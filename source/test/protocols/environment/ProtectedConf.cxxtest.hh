@@ -16,6 +16,8 @@
 #include <protocols/environment/ClaimingMover.hh>
 #include <protocols/environment/Environment.hh>
 
+#include <test/protocols/environment/TestClaimingMover.hh>
+
 //Other headers
 #include <core/conformation/Conformation.hh>
 
@@ -28,41 +30,6 @@
 //C++ headers
 #include <iostream>
 #include <boost/bind/bind.hpp>
-
-using namespace core; 
-using namespace core::conformation; 
-
-class Tester : public protocols::environment::ClaimingMover {
-public:
-
-  Tester() : claim_( NULL ) {}
-  Tester( protocols::environment::claims::EnvClaimOP claim ): claim_( claim ) {
-    claim_->set_owner( this );
-  }
-
-  virtual void apply( core::pose::Pose& ){}
-
-  // This use of bool apply allows us to apply an aribtrary functi
-  virtual void apply( core::pose::Pose& pose, boost::function< void() > f ) {
-    protocols::environment::DofUnlock activation( pose.conformation(), passport() );
-    f();
-  }
-
-  virtual protocols::environment::claims::EnvClaims yield_claims( core::pose::Pose const&,
-                                                                  basic::datacache::WriteableCacheableMapOP ) {
-    protocols::environment::claims::EnvClaims claims;
-    if( claim_ ) claims.push_back( claim_ );
-    return claims;
-  }
-
-  virtual std::string get_name() const { return "TESTER"; }
-
-private:
-  protocols::environment::claims::EnvClaimOP claim_;
-};
-
-typedef utility::pointer::owning_ptr< Tester > TesterOP;
-typedef utility::pointer::owning_ptr< Tester const > TesterCOP;
 
 // --------------- Test Class --------------- //
 
@@ -96,11 +63,10 @@ public:
     core::Size const SEQPOS = 5;
 
     protocols::environment::Environment env( "env" );
-    TesterOP noclaim_test = new Tester();
+		protocols::environment::TesterOP noclaim_test( new protocols::environment::Tester() );
     XYZClaimOP claim = new XYZClaim( NULL, core::environment::LocalPosition( "BASE", SEQPOS ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
-    TesterOP xyzclaim_test = new Tester( claim );
-
+		protocols::environment::TesterOP xyzclaim_test = new protocols::environment::Tester( claim );
 
     env.register_mover( noclaim_test );
     env.register_mover( xyzclaim_test );
@@ -115,8 +81,12 @@ public:
     ap_vect.push_back( std::make_pair( "C", "C" ) );
 
     // Make aliases for the two versions of replace_residue (make a complicated test a *bit* more readable)
-    void (core::pose::Pose::*repres_bool) ( Size const, Residue const&, bool const) = &core::pose::Pose::replace_residue;
-    void (core::pose::Pose::*repres_apvect) ( int const, Residue const&, AtomPairVector const& ) = &core::pose::Pose::replace_residue;
+    void (core::pose::Pose::*repres_bool) ( core::Size const,
+																						core::conformation::Residue const&,
+																						bool const ) = &core::pose::Pose::replace_residue;
+    void (core::pose::Pose::*repres_apvect) ( int const,
+																							core::conformation::Residue const&,
+																							AtomPairVector const& ) = &core::pose::Pose::replace_residue;
 
     //Verify: if we don't chage anything with this call, we pass
     TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_same_rsd, ap_vect ) ) );
@@ -124,20 +94,20 @@ public:
 
     //Verify: if we change something without claiming, we get an exception
     core::conformation::Residue new_diff_rsd( pose.residue( SEQPOS ) );
-    new_diff_rsd.set_xyz( 1, numeric::xyzVector< Real >( 1.0, 1.0, 1.0 ) );
-    new_diff_rsd.set_xyz( 2, numeric::xyzVector< Real >( 2.0, 2.0, 2.0 ) );
+    new_diff_rsd.set_xyz( 1, numeric::xyzVector< core::Real >( 1.0, 1.0, 1.0 ) );
+    new_diff_rsd.set_xyz( 2, numeric::xyzVector< core::Real >( 2.0, 2.0, 2.0 ) );
 
     TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_diff_rsd, ap_vect ) ),
                      protocols::environment::EXCN_Env_Security_Exception );
 
-    for( Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ){
+    for( core::Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ){
       TS_ASSERT_LESS_THAN( ( prot_pose.residue( SEQPOS ).xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
       TS_ASSERT_EQUALS( prot_pose.fold_tree(), pose.fold_tree() );
     }
 
     TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ),
                      protocols::environment::EXCN_Env_Security_Exception );
-    for( Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ){
+    for( core::Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ){
       TS_ASSERT_LESS_THAN( ( new_same_rsd.xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
       TS_ASSERT_EQUALS( prot_pose.fold_tree(), pose.fold_tree() );
     }

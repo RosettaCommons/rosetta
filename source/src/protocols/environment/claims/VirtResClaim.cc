@@ -26,6 +26,8 @@
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/ClaimingMover.hh>
 
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
+
 #include <core/kinematics/AtomTree.hh>
 
 // Project Headers
@@ -38,6 +40,9 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
+
+#include <utility/tag/Tag.hh>
 
 // C++ headers
 
@@ -48,6 +53,33 @@ static basic::Tracer tr("protocols.environment.VirtResClaim",basic::t_info);
 namespace protocols {
 namespace environment {
 namespace claims {
+
+std::string const VRT_LABEL_OPTION = "vrt_name";
+std::string const PARENT_LABEL_OPTION = "parent";
+
+VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
+                            utility::tag::TagCOP tag,
+                            basic::datacache::DataMap const& datamap ):
+  EnvClaim( owner ),
+  vrt_label_( tag->getOption< std::string >( VRT_LABEL_OPTION ) ),
+  j_claim_( owner,
+            tag->getOption( "jump_label", vrt_label()+"_jump" ),
+            tag->getOption< std::string >( PARENT_LABEL_OPTION ),
+            LocalPosition( vrt_label(), 1 ) ),
+  xyz_claim_( owner, vrt_label() )
+{
+  if( datamap.has( "ResidueSelector", j_claim_.pos2().label() ) ){
+    using core::pack::task::residue_selector::ResidueSelector;
+    this->queue_for_annotation( j_claim_.pos2().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", j_claim_.pos2().label() ) );
+  }
+
+  j_claim_.physical( true );
+  j_claim_.strength( Parent::parse_ctrl_str( tag->getOption< std::string >( "jump_control_strength", "DOES_NOT_CONTROL" ) ),
+                     DOES_NOT_CONTROL );
+  xyz_claim_.strength( MUST_CONTROL,
+                       DOES_NOT_CONTROL );
+}
+
 
 VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
                             LocalPosition parent,
@@ -62,7 +94,6 @@ VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
   xyz_claim_( owner, vrt_label )
 {
   j_claim_.physical( true );
-  xyz_claim_.strength( MUST_CONTROL, MUST_CONTROL );
   xyz_claim_.strength( MUST_CONTROL, MUST_CONTROL );
 }
 

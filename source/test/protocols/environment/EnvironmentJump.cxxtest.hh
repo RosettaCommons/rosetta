@@ -15,112 +15,48 @@
 
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/EnvExcn.hh>
-#include <protocols/environment/DofUnlock.hh>
-#include <protocols/environment/ClaimingMover.hh>
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/EnvClaimBroker.hh>
+
+#include <test/protocols/environment/TestClaimingMover.hh>
 
 //Other headers
 #include <core/conformation/Conformation.hh>
 
+#include <core/pack/task/residue_selector/ChainSelector.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/PDB_Info.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+
 #include <core/types.hh>
 
 #include <test/core/init_util.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/datacache/WriteableCacheableMap.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+
+#include <utility/tag/Tag.hh>
 
 //C++ headers
 #include <iostream>
+#include <boost/bind/bind.hpp>
 
-// ---------------- Toy Movers --------------- //
-
-namespace protocols {
-namespace environment {
+// --------------- Test Class --------------- //
 
 const core::Size JUMP_START = 3;
 const core::Size JUMP_END = 7;
 const core::Size CUT_POS = 5;
-
-class ToyMover : public protocols::environment::ClaimingMover {
-protected:
-
-  ToyMover( bool move ):
-  move_( move )
-  {}
-
-  //Yes I know this is against the law
-  bool move_;
-};
-
-class JumpMover : public ToyMover {
-public:
-  claims::JumpClaimOP claim_;
-
-  JumpMover( bool claim, bool move ):
-  ToyMover( move ),
-  claim_( 0 )
-  {
-
-    using core::environment::LocalPosition;
-
-    if( claim ){
-      claim_ = new claims::JumpClaim( this,
-                                     "claimed_jump",
-                                     LocalPosition( "BASE", JUMP_START ),
-                                     LocalPosition( "BASE", JUMP_END ) );
-      claim_->strength( claims::MUST_CONTROL, claims::DOES_NOT_CONTROL );
-    }
-
-  }
-
-  virtual void apply( Pose& pose ){
-    apply( pose, 1 );
-  }
-
-  virtual void apply( Pose& pose, Size jumpnum ){
-    DofUnlock activation( pose.conformation(), passport() );
-    core::kinematics::Jump j;
-    j.set_translation( numeric::xyzVector< core::Real >( 5, 10, 15 ) );
-    if( move_ ){
-      pose.set_jump( jumpnum, j );
-    }
-  }
-
-  virtual std::string get_name() const{
-    return "JumpMover";
-  }
-
-  claims::JumpClaimOP claim() {
-    return claim_;
-  }
-
-  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
-                                         basic::datacache::WriteableCacheableMapOP ){
-    claims::EnvClaims claims;
-    if( claim_ ){
-      claims.push_back( claim_ );
-    }
-    return claims;
-  }
-};
-
-typedef utility::pointer::owning_ptr< JumpMover > JumpMoverOP;
-
-} //environment
-} //protocols
-
-// --------------- Test Class --------------- //
 
 class EnvironmentJump : public CxxTest::TestSuite {
 public:
 
   // Shared data elements go here.
   core::pose::Pose pose;
+  void (core::pose::Pose::*set_jump_) ( int const, const core::kinematics::Jump & );
+	protocols::environment::claims::JumpClaimOP standard_claim_;
 
   // --------------- Fixtures --------------- //
 
@@ -129,9 +65,16 @@ public:
     core_init();
 
     using namespace protocols::environment;
+    using namespace protocols::environment::claims;
     using namespace core::environment;
 
     core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
+
+    set_jump_ = &core::pose::Pose::set_jump;
+    standard_claim_ = new claims::JumpClaim( NULL, "claimed_jump",
+                                             LocalPosition( "BASE", JUMP_START ),
+                                             LocalPosition( "BASE", JUMP_END ) );
+    standard_claim_->strength( claims::MUST_CONTROL, claims::DOES_NOT_CONTROL );
   }
 
   // Shared finalization goes here.
@@ -142,14 +85,15 @@ public:
     TS_TRACE( "Beginning: test_jump_moves" );
 
     using namespace protocols::environment;
+    using namespace protocols::environment::claims;
     using namespace core::environment;
 
-    JumpMoverOP allowed_mover = new JumpMover( true, true );
-    JumpMoverOP duplicate_claim_mover = new JumpMover( true, true );
-    JumpMoverOP no_claim_mover = new JumpMover( false, true );
-    JumpMoverOP unreg_mover = new JumpMover( true, true );
+    TesterOP allowed_mover = new Tester( new JumpClaim( *standard_claim_ ) );
+    TesterOP duplicate_claim_mover = new Tester( new JumpClaim( *standard_claim_ ) );
+    TesterOP no_claim_mover = new Tester();
+    TesterOP unreg_mover = new Tester( new JumpClaim( *standard_claim_ ) );
 
-    duplicate_claim_mover->claim()->cut( core::environment::LocalPosition( "BASE", CUT_POS ) );
+    static_cast< JumpClaim* >( duplicate_claim_mover->claim().get() )->cut( core::environment::LocalPosition( "BASE", CUT_POS ) );
 
     protocols::environment::Environment env( "env" );
 
@@ -175,14 +119,19 @@ public:
       TS_ASSERT_EQUALS( protected_pose.num_jump(), core::Size( 1 ) );
       TS_ASSERT_THROWS_NOTHING( init_jump = protected_pose.jump( 1 ) );
 
+      core::kinematics::Jump new_jump( init_jump );
+      new_jump.gaussian_move( 1, 10, 10 );
+
       //Verify invalid movers cannot move the jump, and do not change the conformation.
-      TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
-      TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::EXCN_NullPointer );
+      TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ),
+                       EXCN_Env_Security_Exception );
+      TS_ASSERT_THROWS( unreg_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ),
+                       utility::excn::EXCN_NullPointer );
       TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
       TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
 
       //Verify allowed movers are allowed
-      TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
+      TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ) );
       TS_ASSERT_DIFFERS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
       TS_ASSERT_DIFFERS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
 
@@ -207,13 +156,14 @@ public:
     TS_TRACE( "End: test_jump_moves" );
   }
 
-  void test_autocut_placement() {
+  void test_autocut_placement( core::pose::Pose & pose ) {
     TS_TRACE( "Beginning: test_autocuts" );
 
     using namespace protocols::environment;
+    using namespace protocols::environment::claims;
     using namespace core::environment;
 
-    JumpMoverOP allowed_mover = new JumpMover( true, true );
+    TesterOP allowed_mover = new Tester( new JumpClaim(*standard_claim_ ) );
 
     protocols::environment::Environment env( "env" );
 
@@ -225,10 +175,14 @@ public:
     TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
     TS_ASSERT_EQUALS( ppose.fold_tree().num_jump(), 1 );
     TS_ASSERT_EQUALS( ppose.fold_tree().num_cutpoint(), 1 );
-    core::kinematics::Jump orig_jump = ppose.jump( 1 );
-    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose ) );
-    TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_translation(), orig_jump.get_translation() );
-    TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_rotation(), orig_jump.get_rotation() );
+
+    core::kinematics::Jump old_jump = ppose.jump( 1 );
+    core::kinematics::Jump new_jump = old_jump;
+    new_jump.gaussian_move( 1, 10.0, 10.0 );
+
+    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose, boost::bind( set_jump_, &ppose, 1, new_jump ) ) );
+    TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_translation(), old_jump.get_translation() );
+    TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_rotation(), old_jump.get_rotation() );
     TS_ASSERT_THROWS_NOTHING( pose = env.end( ppose ) );
 
     TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 0 );
@@ -241,15 +195,15 @@ public:
     TS_TRACE( "Beginning: test_cut_inheritance" );
 
     using namespace protocols::environment;
+		using namespace protocols::environment::claims;
     using namespace core::environment;
 
     core::environment::FoldTreeSketch new_fts( pose.total_residue() );
     new_fts.insert_cut( CUT_POS );
     new_fts.insert_jump( 1, pose.total_residue() );
-    core::kinematics::FoldTree new_ft( *new_fts.render() );
-    pose.fold_tree( new_ft );
+    pose.fold_tree( *new_fts.render() );
 
-    JumpMoverOP allowed_mover = new JumpMover( true, true );
+    TesterOP allowed_mover = new Tester( new JumpClaim( *standard_claim_ ) );
 
     protocols::environment::Environment env( "env" );
     env.inherit_cuts( false );
@@ -257,23 +211,30 @@ public:
     env.register_mover( allowed_mover );
 
     core::pose::Pose ppose;
+
+    //Verify unbrokerable
     TS_ASSERT_THROWS( ppose = env.start( pose ) , utility::excn::EXCN_BadInput );
 
+    //Verify allowing cut inheritance allows brokering.
     env.inherit_cuts( true );
     TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
     TS_ASSERT_EQUALS( ppose.fold_tree().num_jump(), 1 );
     TS_ASSERT_EQUALS( ppose.fold_tree().num_cutpoint(), 1 );
     TS_ASSERT( ppose.fold_tree().is_cutpoint( CUT_POS ) );
-    core::kinematics::Jump orig_jump = ppose.jump( 1 );
-    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose ) );
-    TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_translation(), orig_jump.get_translation() );
-    TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_rotation(), orig_jump.get_rotation() );
-    TS_ASSERT_THROWS_NOTHING( pose = env.end( ppose ) );
 
-    TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 1 );
-    TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 1 );
-    TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 1 );
-    TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), pose.total_residue() );
+    //Verify jump exists, is movable.
+    core::kinematics::Jump orig_jump = ppose.jump( 1 );
+    core::kinematics::Jump new_jump( orig_jump );
+    new_jump.gaussian_move( 1, 10.0, 10.0 );
+
+    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose, boost::bind( set_jump_, &ppose, 1, new_jump ) ) );
+    TS_ASSERT_DIFFERS( ppose.jump( 1 ), orig_jump );
+
+    //Verify pose closable.
+    core::pose::Pose final_pose;
+    TS_ASSERT_THROWS_NOTHING( final_pose = env.end( ppose ) );
+
+    TS_ASSERT_EQUALS( final_pose.fold_tree(), pose.fold_tree() );
 
     TS_TRACE( "End: test_cut_inheritance" );
   }
@@ -316,5 +277,41 @@ public:
     TS_ASSERT_THROWS_NOTHING( end_pose = env.end( protected_pose ) );
     TS_ASSERT( end_pose.pdb_info() );
     TS_ASSERT_EQUALS( end_pose.pdb_info()->chain( 1 ), 'A' );
+  }
+
+  void test_JumpClaim_rscripts_creation( core::pose::Pose const& pose ) {
+    using namespace core::pack::task::residue_selector;
+    using namespace protocols::environment;
+    using namespace protocols::environment::claims;
+
+    core::pack::task::residue_selector::ChainSelectorOP chA_sele = new core::pack::task::residue_selector::ChainSelector();
+    chA_sele->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
+
+    core::pack::task::residue_selector::ChainSelectorOP chB_sele = new core::pack::task::residue_selector::ChainSelector();
+    chB_sele->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
+
+    basic::datacache::DataMap datamap;
+    datamap.add( "ResidueSelector", "ChainA", chA_sele );
+    datamap.add( "ResidueSelector", "ChainB", chB_sele );
+
+    std::string const tag_string = "<JumpClaim jump_label=\"labelA\" control_strength=CAN_CONTROL position1=\"ChainA,5\" position2=\"ChainB,5\" />";
+    std::stringstream ss( tag_string );
+    utility::tag::TagPtr tag = new utility::tag::Tag;
+    tag->read( ss );
+
+    TesterOP tester = new Tester();
+    tester->claim( EnvClaim::make_claim( tag->getName(), tester, tag, datamap ) );
+    protocols::environment::Environment env( "test" );
+    env.register_mover( tester );
+
+    core::pose::Pose ppose;
+    TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
+
+    core::kinematics::Jump const old_jump = ppose.jump( 1 );
+    core::kinematics::Jump new_jump( old_jump );
+    new_jump.gaussian_move( 1, 2.0, 2.0 );
+
+    TS_ASSERT_THROWS_NOTHING( tester->apply( ppose, boost::bind( boost::bind( set_jump_, &ppose, 1, new_jump ) ) ) );
+
   }
 };

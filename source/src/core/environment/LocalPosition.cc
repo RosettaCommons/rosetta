@@ -52,10 +52,12 @@ LocalPosition::LocalPosition( std::string const& comma_deliniated ):
   utility::vector1< std::string > str_split = utility::string_split( comma_deliniated, ',' );
   if( str_split.size() == 1 ){
     try {
+      // try casting to an integer, and use as global sequence number
       core::Size global_seqpos = boost::lexical_cast< core::Size >( str_split[1] );
       label( "BASE" );
       position( global_seqpos );
     } catch ( boost::bad_lexical_cast & ) {
+      // use string as a label
       label( str_split[1] );
       position( 1 );
     }

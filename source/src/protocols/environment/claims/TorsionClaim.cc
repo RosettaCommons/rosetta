@@ -65,8 +65,8 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             utility::tag::TagCOP tag,
                             basic::datacache::DataMap& datamap ):
   EnvClaim( owner ),
-  c_str_( Parent::parse_ctrl_str( tag ) ),
-  i_str_( Parent::parse_ctrl_str( tag ) )
+  c_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "control_strength" ) ) ),
+  i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
 {
   claim_backbone_ = tag->getOption< bool >( "backbone", false );
   claim_sidechain_ = tag->getOption< bool >( "sidechain", false );
@@ -173,17 +173,21 @@ void TorsionClaim::yield_elements( core::pose::Pose const& pose, DOFElements& el
       }
     } else if( conf.residue( seqpos ).is_virtual_residue() ) {
       tr.Debug << *this << " ignoring seqpos " << seqpos << ", because it's a virtual residue." << std::endl;
+    } else if( conf.residue( seqpos ).is_NA() ){
+      tr.Fatal << "[FATAL] The Broker is not currently built to deal with nucleic acids. Go in to TorsionClaim::"
+         << __FUNCTION__ << " in " << __FILE__ << ":" << __LINE__ << " and build the appropriate DOF_IDs." << std::endl;
+      utility_exit();
     } else {
-      // Hey there! If you got here because you're using sugars or RNA or something,
+      // Hey there! If you got here because you're using sugars or something,
       // all you have to do is put an else if for your case (see the virtual check above),
       // and correctly generate the DOF_IDs for all your torsions. Then call wrap_dof_id( dof_id )
       // to build a DOFElement out of it, and put it into elements. See insert_dof_element above. JRP
 
       std::ostringstream ss;
-      ss << "[ERROR] TorsionClaim owned by " << owner()->get_name()
+      ss << "[ERROR] TorsionClaim::" << __FUNCTION__ << " owned by " << owner()->get_name()
          << " doesn't know how to handle residue " << seqpos << " with name3 "
          << conf.residue( seqpos ).name3() << " because it is not protein."
-         << "If you're using non-protein residue types (sugars, RNA/DNA, etc.), check out "
+         << "If you're using non-protein residue types (sugars, ligands, RNA/DNA, etc.), check out "
          << __FILE__ << ":" << __LINE__ << " to tell the TorsionClaim how to turn torsion "
          << "numbers in to DOF_IDs" << std::endl;
       throw utility::excn::EXCN_BadInput( ss.str() );

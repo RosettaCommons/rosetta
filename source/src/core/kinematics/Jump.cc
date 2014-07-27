@@ -508,5 +508,15 @@ RT Jump::rt() const {
 	}
 }
 
+bool Jump::operator==( Jump const& other ) const {
+  if( this == &other )
+    return true;
+  else if ( this->get_rotation() == other.get_rotation() &&
+           this->get_translation() == other.get_translation() )
+    return true;
+  else
+    return false;
+}
+
 } // namespace kinematics
 } // namespace core

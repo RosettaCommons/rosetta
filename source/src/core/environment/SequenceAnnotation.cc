@@ -74,8 +74,16 @@ void SequenceAnnotation::_add_seq_label( std::string const& label, vector1_size 
   //verify that all members are within the sequence range.
   std::for_each( members.begin(), members.end(), LengthChecker( length_ ) );
 
-  if( label_to_pose_numbers_.find( label ) != label_to_pose_numbers_.end() ){
-    throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' alredy exists in the SequenceAnnotation object" );
+  if( label_to_pose_numbers_.find( label ) != label_to_pose_numbers_.end() ) {
+    if( members != resolve_seq( label ) ){
+      std::ostringstream ss;
+      ss << "The sequence label " << label << " already exists in the SequenceAnnotation object." << std::endl
+         << " Existing: " << resolve_seq( label ) << std::endl << "Conflicting: " << members;
+      throw utility::excn::EXCN_KeyError( ss.str() );
+    } else {
+      //bail because nothing needs to be done--this exact label/member combination is already in there.
+      return;
+    }
   } else {
     label_to_pose_numbers_[label] = vector1_size( members.begin(), members.end() );
   }
@@ -165,7 +173,7 @@ utility::vector1< core::Size > const& SequenceAnnotation::resolve_seq( std::stri
 }
 
 core::Size SequenceAnnotation::length( std::string const& label ) const {
-	return label_to_pose_numbers_.find( label )->second.size();
+  return label_to_pose_numbers_.find( label )->second.size();
 }
 
 } // environment

@@ -20,7 +20,9 @@
 // Package Headers
 #include <core/environment/LocalPosition.fwd.hh>
 #include <core/environment/FoldTreeSketch.hh>
+#include <core/environment/SequenceAnnotation.fwd.hh>
 
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
 #include <protocols/environment/ClaimingMover.hh>
@@ -51,8 +53,9 @@ namespace environment {
 namespace claims {
 
 class EnvClaim : public utility::pointer::ReferenceCount {
-
+  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
   typedef core::environment::FoldTreeSketch FoldTreeSketch;
+  typedef std::map< std::string, ResidueSelectorCOP > AnnotatingSelectors;
 
 public:
   /// @brief factory method for claims.
@@ -80,8 +83,8 @@ public:
 
   void set_owner( ClaimingMoverOP owner ) { claim_source_ = owner; }
 
-  /// @brief notify the Claim of the input pose. Used, for example, to resolve a ResidueSelector into a residue number
-  virtual void input_pose( core::pose::Pose const& ) {}
+  /// @brief allow the claim to use any internally queued ResidueSelectors to create sequence annotations.
+  void annotate( core::pose::Pose const&, core::environment::SequenceAnnotationOP ) const;
 
   /// @brief build ResidueElements that indicate the introduction of a new peptide edge into the fold tree.
   virtual void yield_elements( FoldTreeSketch const&, ResidueElements& ) const {};
@@ -106,11 +109,13 @@ protected:
   virtual
   DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
-  ControlStrength parse_ctrl_str( utility::tag::TagCOP tag ) const;
   ControlStrength parse_ctrl_str( std::string const& str ) const;
+
+  void queue_for_annotation( std::string const& label, ResidueSelectorCOP selector );
 
 private:
 
+  AnnotatingSelectors selector_list_;
   ClaimingMoverOP claim_source_;
 
 }; //class EnvClaim

@@ -34,8 +34,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
-//#include <basic/options/option_macros.hh>
+#include <basic/datacache/DataMap.hh>
 
 //// C++ headers
 #include <string>
@@ -54,7 +53,8 @@ class CutBiasClaim : public EnvClaim {
 
 public:
   CutBiasClaim( ClaimingMoverOP owner,
-                utility::tag::TagCOP tag );
+                utility::tag::TagCOP tag,
+                basic::datacache::DataMap const& );
 
   CutBiasClaim( ClaimingMoverOP owner,
                 std::string const& label,

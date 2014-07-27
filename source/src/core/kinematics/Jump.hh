@@ -229,6 +229,10 @@ public:
 		Vector const & center
 	);
 
+  bool operator==( Jump const& ) const;
+
+  bool operator!=( Jump const& other ) const { return !operator==( other ); }
+
 	/// @brief stream output operator
 	friend std::ostream & operator <<( std::ostream & os, const Jump & jump );
 	/// @brief stream input  operator

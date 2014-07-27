@@ -45,17 +45,25 @@ using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 
 CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
-                            utility::tag::TagCOP tag ):
+                            utility::tag::TagCOP tag,
+                            basic::datacache::DataMap const& datamap ):
   Parent( owner ),
   label_( tag->getOption< std::string >( "label" ) )
 {
+  using core::pack::task::residue_selector::ResidueSelector;
+
   core::Real bias = tag->getOption< core::Real >( "bias" );
+
   std::pair< core::Size, core::Size > range;
   range.first = tag->getOption< core::Size >( "region_start" );
   range.second = tag->getOption< core::Size >( "region_end" );
 
   for( Size i = range.first; i <= range.second; ++i ){
     biases_[ LocalPosition( label_, i ) ] = bias;
+  }
+
+  if( datamap.has( "ResidueSelector", label_ ) ){
+    this->queue_for_annotation( label_, datamap.get< ResidueSelector const* >( "ResidueSelector", label_ ) );
   }
 }
 

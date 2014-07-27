@@ -55,20 +55,20 @@ using core::environment::LocalPositions;
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
                     utility::tag::TagCOP tag,
-                    basic::datacache::DataMap& datamap ):
+                    basic::datacache::DataMap const& datamap ):
   EnvClaim( owner ),
-  c_str_( Parent::parse_ctrl_str( tag ) ),
-  i_str_( Parent::parse_ctrl_str( tag ) )
+  c_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "control_strength" ) ) ),
+  i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
 {
-  selector_ = datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
+  std::string const& selection = tag->getOption< std::string >( "selection" );
+  if( datamap.has( "ResidueSelector", selection ) ){
+    tr.Debug << "Pulling ResidueSelector '" << selection << "' from datamap in " << *this << std::endl;
+    selector_ = datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selection" ) );
+  } else {
+    tr.Debug << "Instantiating EnvLabelSelector for selection '" << selection << "' in " << *this << std::endl;
+    selector_ = new EnvLabelSelector( LocalPosition( selection ) );
+  }
 }
-
-
-XYZClaim::XYZClaim( ClaimingMoverOP owner ):
-  EnvClaim( owner ),
-  c_str_( DOES_NOT_CONTROL),
-  i_str_( DOES_NOT_CONTROL )
-{}
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
                     LocalPosition const& local_pos):

@@ -16,6 +16,8 @@
 #include <protocols/environment/ClaimingMover.hh>
 #include <protocols/environment/Environment.hh>
 
+#include <test/protocols/environment/TestClaimingMover.hh>
+
 //Other headers
 #include <core/conformation/Conformation.hh>
 
@@ -28,42 +30,6 @@
 //C++ headers
 #include <iostream>
 #include <boost/bind/bind.hpp>
-
-using namespace core; 
-
-// ---------------- Toy Movers --------------- //
-
-class Tester : public protocols::environment::ClaimingMover {
-public:
-
-  Tester() : claim_( NULL ) {}
-  Tester( protocols::environment::claims::EnvClaimOP claim ): claim_( claim ) {
-    claim_->set_owner( this );
-  }
-
-  virtual void apply( core::pose::Pose& ){}
-
-  // This use of bool apply allows us to apply an aribtrary functi
-  virtual void apply( core::pose::Pose& pose, boost::function< void() > f ) {
-    protocols::environment::DofUnlock activation( pose.conformation(), passport() );
-    f();
-  }
-
-  virtual protocols::environment::claims::EnvClaims yield_claims( core::pose::Pose const&,
-                                                                  basic::datacache::WriteableCacheableMapOP ) {
-    protocols::environment::claims::EnvClaims claims;
-    if( claim_ ) claims.push_back( claim_ );
-    return claims;
-  }
-
-  virtual std::string get_name() const { return "TESTER"; }
-
-private:
-  protocols::environment::claims::EnvClaimOP claim_;
-};
-
-typedef utility::pointer::owning_ptr< Tester > TesterOP;
-typedef utility::pointer::owning_ptr< Tester const > TesterCOP;
 
 // --------------- Test Class --------------- //
 
@@ -116,11 +82,11 @@ public:
     core::pose::Pose prot_pose;
     TS_ASSERT_THROWS_NOTHING( prot_pose = env.start( pose ) );
 
-    void (core::pose::Pose::*set_phi)   ( Size const, Real const ) = &core::pose::Pose::set_phi;
-    void (core::pose::Pose::*set_psi)   ( Size const, Real const ) = &core::pose::Pose::set_psi;
-    void (core::pose::Pose::*set_omega) ( Size const, Real const ) = &core::pose::Pose::set_omega;
+    void (core::pose::Pose::*set_phi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_phi;
+    void (core::pose::Pose::*set_psi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_psi;
+    void (core::pose::Pose::*set_omega) ( core::Size const, core::Real const ) = &core::pose::Pose::set_omega;
 
-    for( Size i = 1; i <= prot_pose.total_residue(); ++i ){
+    for( core::Size i = 1; i <= prot_pose.total_residue(); ++i ){
       if( i != SEQPOS ){
         std::cout << i << std::endl;
         if( i != 1 )
@@ -165,11 +131,11 @@ public:
     core::pose::Pose prot_pose;
     TS_ASSERT_THROWS_NOTHING( prot_pose = env.start( pose ) );
 
-    void (core::pose::Pose::*set_phi)   ( Size const, Real const ) = &core::pose::Pose::set_phi;
-    void (core::pose::Pose::*set_psi)   ( Size const, Real const ) = &core::pose::Pose::set_psi;
-    void (core::pose::Pose::*set_omega) ( Size const, Real const ) = &core::pose::Pose::set_omega;
+    void (core::pose::Pose::*set_phi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_phi;
+    void (core::pose::Pose::*set_psi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_psi;
+    void (core::pose::Pose::*set_omega) ( core::Size const, core::Real const ) = &core::pose::Pose::set_omega;
 
-    for( Size i = 1; i <= prot_pose.total_residue(); ++i ){
+    for( core::Size i = 1; i <= prot_pose.total_residue(); ++i ){
       if( i != SEQPOS1 && i != SEQPOS2 ){
         std::cout << i << std::endl;
         if( i != 1 )
@@ -214,11 +180,11 @@ public:
     core::pose::Pose prot_pose;
     TS_ASSERT_THROWS_NOTHING( prot_pose = env.start( pose ) );
 
-    void (core::pose::Pose::*set_phi)   ( Size const, Real const ) = &core::pose::Pose::set_phi;
-    void (core::pose::Pose::*set_psi)   ( Size const, Real const ) = &core::pose::Pose::set_psi;
-    void (core::pose::Pose::*set_omega) ( Size const, Real const ) = &core::pose::Pose::set_omega;
+    void (core::pose::Pose::*set_phi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_phi;
+    void (core::pose::Pose::*set_psi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_psi;
+    void (core::pose::Pose::*set_omega) ( core::Size const, core::Real const ) = &core::pose::Pose::set_omega;
 
-    for( Size i = 1; i <= prot_pose.total_residue(); ++i ){
+    for( core::Size i = 1; i <= prot_pose.total_residue(); ++i ){
       if( i < SEQPOS_START || i > SEQPOS_END ){
         std::cout << i << std::endl;
         if( i != 1 )
@@ -232,7 +198,7 @@ public:
 
     // Exception safety of the above calls is tested in other tests.
 
-    for( Size i = SEQPOS_START; i <= SEQPOS_END; ++i ){
+    for( core::Size i = SEQPOS_START; i <= SEQPOS_END; ++i ){
       TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) );
       TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) );
       TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) );
