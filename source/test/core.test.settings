@@ -42,7 +42,6 @@ sources = {
 	],
 	"conformation/membrane" : [
 		"MembraneInfo",
-		"MembraneConformation",
 		"Span",
 		"SpanningTopology",
 	],

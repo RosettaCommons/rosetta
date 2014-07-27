@@ -6,7 +6,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/InitialMembranePositionMover.cc
+/// @file	    protocols/membrane/MembranePositionFromTopologyMover.cc
 ///
 /// @brief      Compute the Initial Position of the membrane
 /// @details	Compute the initial position of the membrane from
@@ -19,16 +19,16 @@
 ///
 /// @author		Rebecca Alford (rflaford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_InitialMembranePositionMover_cc
-#define INCLUDED_protocols_membrane_InitialMembranePositionMover_cc
+#ifndef INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_cc
+#define INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_cc
 
 // Unit Headers
-#include <protocols/membrane/InitialMembranePositionMover.hh>
-#include <protocols/membrane/InitialMembranePositionMoverCreator.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMoverCreator.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/membrane/MembranePositionRTMover.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -63,7 +63,7 @@ using namespace core::pose;
 /// @brief Defualt Constructor
 /// @details Compute the embedding of the pose based on xyz coordinates
 /// and spanning topology provided in MembraneInfo
-InitialMembranePositionMover::InitialMembranePositionMover() :
+MembranePositionFromTopologyMover::MembranePositionFromTopologyMover() :
 	protocols::moves::Mover(),
 	structure_based_( true )
 {}
@@ -72,20 +72,20 @@ InitialMembranePositionMover::InitialMembranePositionMover() :
 /// @details Compute the embedding of the pose - if structure_based is
 /// true do this based on xyz coordinates. If structure_based is false,
 /// compute based on sequence.
-InitialMembranePositionMover::InitialMembranePositionMover( bool structure_based ) :
+MembranePositionFromTopologyMover::MembranePositionFromTopologyMover( bool structure_based ) :
 	protocols::moves::Mover(),
 	structure_based_( structure_based )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover
-InitialMembranePositionMover::InitialMembranePositionMover( InitialMembranePositionMover const & src ) :
+MembranePositionFromTopologyMover::MembranePositionFromTopologyMover( MembranePositionFromTopologyMover const & src ) :
 	protocols::moves::Mover( src ),
 	structure_based_( src.structure_based_ )
 {}
 
 /// @brief Destructor
-InitialMembranePositionMover::~InitialMembranePositionMover() {}
+MembranePositionFromTopologyMover::~MembranePositionFromTopologyMover() {}
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -93,19 +93,19 @@ InitialMembranePositionMover::~InitialMembranePositionMover() {}
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
-InitialMembranePositionMover::clone() const {
-	return ( new InitialMembranePositionMover( *this ) );
+MembranePositionFromTopologyMover::clone() const {
+	return ( new MembranePositionFromTopologyMover( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
-InitialMembranePositionMover::fresh_instance() const {
-	return new InitialMembranePositionMover();
+MembranePositionFromTopologyMover::fresh_instance() const {
+	return new MembranePositionFromTopologyMover();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
-InitialMembranePositionMover::parse_my_tag(
+MembranePositionFromTopologyMover::parse_my_tag(
    utility::tag::TagCOP tag,
    basic::datacache::DataMap &,
    protocols::filters::Filters_map const &,
@@ -121,20 +121,20 @@ InitialMembranePositionMover::parse_my_tag(
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
-InitialMembranePositionMoverCreator::create_mover() const {
-	return new InitialMembranePositionMover;
+MembranePositionFromTopologyMoverCreator::create_mover() const {
+	return new MembranePositionFromTopologyMover;
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
-InitialMembranePositionMoverCreator::keyname() const {
-	return InitialMembranePositionMoverCreator::mover_name();
+MembranePositionFromTopologyMoverCreator::keyname() const {
+	return MembranePositionFromTopologyMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
-InitialMembranePositionMoverCreator::mover_name() {
-	return "InitialMembranePositionMover";
+MembranePositionFromTopologyMoverCreator::mover_name() {
+	return "MembranePositionFromTopologyMover";
 }
 
 /////////////////////
@@ -145,7 +145,7 @@ InitialMembranePositionMoverCreator::mover_name() {
 /// @details Compute membrane posiiton based on sequence or structure
 /// and then call pose.update_membrane_position() to update the membrane position
 void
-InitialMembranePositionMover::apply( Pose & pose ) {
+MembranePositionFromTopologyMover::apply( Pose & pose ) {
 	
 	// Check pose is a membrane pose
 	if (! pose.conformation().is_membrane() ) {
@@ -173,14 +173,14 @@ InitialMembranePositionMover::apply( Pose & pose ) {
 
 /// @brief Get the name of this mover
 std::string
-InitialMembranePositionMover::get_name() const {
-	return "InitialMembranePositionMover";
+MembranePositionFromTopologyMover::get_name() const {
+	return "MembranePositionFromTopologyMover";
 }
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 void
-InitialMembranePositionMover::compute_structure_based_membrane_position(
+MembranePositionFromTopologyMover::compute_structure_based_membrane_position(
   Pose & pose,
   Vector & center,
   Vector & normal
@@ -197,13 +197,13 @@ InitialMembranePositionMover::compute_structure_based_membrane_position(
 	Vector outside(0);
 	
 	// Count tmhleices
-	core::Size total_spans = pose.conformation().membrane()->spanning_topology()->total_spans();
+	core::Size total_spans = pose.conformation().membrane_info()->spanning_topology()->total_spans();
 	
 	// iterate over spans
 	for ( Size j = 1; j <= total_spans; ++j ) {
 		
-		Vector const & start = pose.residue( pose.conformation().membrane()->spanning_topology()->span( j )->start() ).atom( CA ).xyz();
-		Vector const & end = pose.residue( pose.conformation().membrane()->spanning_topology()->span( j )->end() ).atom( CA ).xyz();
+		Vector const & start = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->start() ).atom( CA ).xyz();
+		Vector const & end = pose.residue( pose.conformation().membrane_info()->spanning_topology()->span( j )->end() ).atom( CA ).xyz();
 		
 		// Add odd helices from outside in
 		if ( j % 2 == 0 ) {
@@ -225,4 +225,4 @@ InitialMembranePositionMover::compute_structure_based_membrane_position(
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_InitialMembranePositionMover_cc
+#endif // INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_cc

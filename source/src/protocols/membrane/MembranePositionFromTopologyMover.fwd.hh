@@ -6,7 +6,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/InitialMembranePositionMover.fwd.hh
+/// @file	    protocols/membrane/MembranePositionFromTopologyMover.fwd.hh
 ///
 /// @brief      Compute the Initial Position of the membrane
 /// @details	Compute the initial position of the membrane from
@@ -19,8 +19,8 @@
 ///
 /// @author		Rebecca Alford (rflaford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_InitialMembranePositionMover_fwd_hh
-#define INCLUDED_protocols_membrane_InitialMembranePositionMover_fwd_hh
+#ifndef INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_fwd_hh
+#define INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -28,11 +28,11 @@
 namespace protocols {
 namespace membrane {
 		
-class InitialMembranePositionMover;
-typedef utility::pointer::owning_ptr< InitialMembranePositionMover > InitialMembranePositionMoverOP;
-typedef utility::pointer::owning_ptr< InitialMembranePositionMover const > InitialMembranePositionMoverCOP;
+class MembranePositionFromTopologyMover;
+typedef utility::pointer::owning_ptr< MembranePositionFromTopologyMover > MembranePositionFromTopologyMoverOP;
+typedef utility::pointer::owning_ptr< MembranePositionFromTopologyMover const > MembranePositionFromTopologyMoverCOP;
 		
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_InitialMembranePositionMover_fwd_hh
+#endif // INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_fwd_hh

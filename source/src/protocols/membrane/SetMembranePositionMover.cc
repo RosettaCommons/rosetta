@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/MembranePositionRTMover.cc
+/// @file		protocols/membrane/SetMembranePositionMover.cc
 ///
 /// @brief		Membrane Position Rotation/Translation Mover
 ///	@details	Apply a uniform rigid translation & rotation of the
@@ -18,8 +18,8 @@
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
-#include <protocols/membrane/MembranePositionRTMover.hh>
-#include <protocols/membrane/MembranePositionRTMoverCreator.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
+#include <protocols/membrane/SetMembranePositionMoverCreator.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -47,7 +47,7 @@
 #include <numeric/xyz.functions.hh>
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR( "protocols.membrane.MembranePositionRTMOver" );
+static basic::Tracer TR( "protocols.membrane.SetMembranePositionMover" );
 
 namespace protocols {
 namespace membrane {
@@ -61,7 +61,7 @@ using namespace protocols::simple_moves;
 ////////////////////
 
 /// @brief Construct a Default Membrane Position Mover
-MembranePositionRTMover::MembranePositionRTMover() :
+SetMembranePositionMover::SetMembranePositionMover() :
 	Mover(),
 	center_( 0, 0, 0 ),
 	normal_( 0, 0, 1 )
@@ -70,7 +70,7 @@ MembranePositionRTMover::MembranePositionRTMover() :
 /// @brief Custom Constructor
 /// @details Specify a new membrane center and normal
 ///	to move this position to
-MembranePositionRTMover::MembranePositionRTMover( Vector center, Vector normal ) :
+SetMembranePositionMover::SetMembranePositionMover( Vector center, Vector normal ) :
 	 Mover(),
 	 center_( center ),
 	 normal_( normal )
@@ -78,7 +78,7 @@ MembranePositionRTMover::MembranePositionRTMover( Vector center, Vector normal )
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-MembranePositionRTMover::MembranePositionRTMover( MembranePositionRTMover const & src ) :
+SetMembranePositionMover::SetMembranePositionMover( SetMembranePositionMover const & src ) :
 	Mover( src ),
 	center_( src.center_ ),
 	normal_( src.normal_ )
@@ -86,8 +86,8 @@ MembranePositionRTMover::MembranePositionRTMover( MembranePositionRTMover const 
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
-MembranePositionRTMover &
-MembranePositionRTMover::operator=( MembranePositionRTMover const & src )
+SetMembranePositionMover &
+SetMembranePositionMover::operator=( SetMembranePositionMover const & src )
 {
 	
 	// Abort self-assignment.
@@ -96,12 +96,12 @@ MembranePositionRTMover::operator=( MembranePositionRTMover const & src )
 	}
 	
 	// Otherwise, create a new object
-	return *( new MembranePositionRTMover( *this ) );
+	return *( new SetMembranePositionMover( *this ) );
 	
 }
 
 /// @brief Destructor
-MembranePositionRTMover::~MembranePositionRTMover() {}
+SetMembranePositionMover::~SetMembranePositionMover() {}
 
 /////////////////////
 /// Mover Methods ///
@@ -109,15 +109,15 @@ MembranePositionRTMover::~MembranePositionRTMover() {}
 
 /// @brief Get the name of this mover
 std::string
-MembranePositionRTMover::get_name() const {
-	return "MembranePositionRTMover";
+SetMembranePositionMover::get_name() const {
+	return "SetMembranePositionMover";
 }
 
 /// @brief Apply Rotation/Translation to Membrane
 /// @brief Translate the membrane position in this pose
 /// to the new center position, and rotate to new normal
 void
-MembranePositionRTMover::apply( Pose & pose ) {
+SetMembranePositionMover::apply( Pose & pose ) {
 	
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -129,7 +129,7 @@ MembranePositionRTMover::apply( Pose & pose ) {
 	}
 	
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 	
@@ -144,19 +144,19 @@ MembranePositionRTMover::apply( Pose & pose ) {
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
-MembranePositionRTMover::clone() const {
-	return ( new MembranePositionRTMover( *this ) );
+SetMembranePositionMover::clone() const {
+	return ( new SetMembranePositionMover( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
-MembranePositionRTMover::fresh_instance() const {
-	return new MembranePositionRTMover();
+SetMembranePositionMover::fresh_instance() const {
+	return new SetMembranePositionMover();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
-MembranePositionRTMover::parse_my_tag(
+SetMembranePositionMover::parse_my_tag(
 	utility::tag::TagCOP, //tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
@@ -169,20 +169,20 @@ MembranePositionRTMover::parse_my_tag(
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
-MembranePositionRTMoverCreator::create_mover() const {
-	return new MembranePositionRTMover;
+SetMembranePositionMoverCreator::create_mover() const {
+	return new SetMembranePositionMover;
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
-MembranePositionRTMoverCreator::keyname() const {
-	return MembranePositionRTMoverCreator::mover_name();
+SetMembranePositionMoverCreator::keyname() const {
+	return SetMembranePositionMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
-MembranePositionRTMoverCreator::mover_name() {
-	return "MembranePositionRTMoverr";
+SetMembranePositionMoverCreator::mover_name() {
+	return "SetMembranePositionMoverr";
 }
 
 // Membrane Position Rotation Mover /////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ MembranePositionRTMoverCreator::mover_name() {
 ////////////////////
 
 /// @brief Construct a Default Membrane Position Mover
-MembranePositionRotationMover::MembranePositionRotationMover() :
+SetMembraneNomalMover::SetMembraneNomalMover() :
 	Mover(),
 	normal_( 0, 0, 1 )
 {}
@@ -200,22 +200,22 @@ MembranePositionRotationMover::MembranePositionRotationMover() :
 /// @brief Custom Constructor
 /// @details Specify a new membrane normal
 ///	to move this position to
-MembranePositionRotationMover::MembranePositionRotationMover( Vector normal ) :
+SetMembraneNomalMover::SetMembraneNomalMover( Vector normal ) :
 	Mover(),
 	normal_( normal )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-MembranePositionRotationMover::MembranePositionRotationMover( MembranePositionRotationMover const & src ) :
+SetMembraneNomalMover::SetMembraneNomalMover( SetMembraneNomalMover const & src ) :
 	Mover( src ),
 	normal_( src.normal_ )
 {}
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
-MembranePositionRotationMover &
-MembranePositionRotationMover::operator=( MembranePositionRotationMover const & src )
+SetMembraneNomalMover &
+SetMembraneNomalMover::operator=( SetMembraneNomalMover const & src )
 {
 	
 	// Abort self-assignment.
@@ -224,12 +224,12 @@ MembranePositionRotationMover::operator=( MembranePositionRotationMover const & 
 	}
 	
 	// Otherwise, create a new object
-	return *( new MembranePositionRotationMover( *this ) );
+	return *( new SetMembraneNomalMover( *this ) );
 	
 }
 
 /// @brief Destructor
-MembranePositionRotationMover::~MembranePositionRotationMover() {}
+SetMembraneNomalMover::~SetMembraneNomalMover() {}
 
 /////////////////////
 /// Mover Methods ///
@@ -237,14 +237,14 @@ MembranePositionRotationMover::~MembranePositionRotationMover() {}
 
 /// @brief Get the name of this mover
 std::string
-MembranePositionRotationMover::get_name() const {
-	return "MembranePositionRotationMover";
+SetMembraneNomalMover::get_name() const {
+	return "SetMembraneNomalMover";
 }
 
 /// @brief Apply Rotation move to Membrane
 /// @brief Rotate membrane position to new normal
 void
-MembranePositionRotationMover::apply( Pose & pose ) {
+SetMembraneNomalMover::apply( Pose & pose ) {
 	
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -256,13 +256,13 @@ MembranePositionRotationMover::apply( Pose & pose ) {
 	}
 	
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 	
 	// Compute Rotation Axis - CrossProd between Current & New Normal axis
-	Vector current_normal( pose.conformation().membrane_normal() );
-	Vector current_center( pose.conformation().membrane_center() );
+	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
+	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
 	
 	pose.conformation().update_membrane_position( current_center, current_center + normal_ );
 
@@ -274,19 +274,19 @@ MembranePositionRotationMover::apply( Pose & pose ) {
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
-MembranePositionRotationMover::clone() const {
-	return ( new MembranePositionRotationMover( *this ) );
+SetMembraneNomalMover::clone() const {
+	return ( new SetMembraneNomalMover( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
-MembranePositionRotationMover::fresh_instance() const {
-	return new MembranePositionRotationMover();
+SetMembraneNomalMover::fresh_instance() const {
+	return new SetMembraneNomalMover();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
-MembranePositionRotationMover::parse_my_tag(
+SetMembraneNomalMover::parse_my_tag(
 	utility::tag::TagCOP, //tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
@@ -300,20 +300,20 @@ MembranePositionRotationMover::parse_my_tag(
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
-MembranePositionRotationMoverCreator::create_mover() const {
-	return new MembranePositionRotationMover;
+SetMembraneNomalMoverCreator::create_mover() const {
+	return new SetMembraneNomalMover;
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
-MembranePositionRotationMoverCreator::keyname() const {
-	return MembranePositionRotationMoverCreator::mover_name();
+SetMembraneNomalMoverCreator::keyname() const {
+	return SetMembraneNomalMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
-MembranePositionRotationMoverCreator::mover_name() {
-	return "MembranePositionRotationMoverr";
+SetMembraneNomalMoverCreator::mover_name() {
+	return "SetMembraneNomalMoverr";
 }
 
 // Membrane Position Rotation Mover /////////////////////////////////////////////////////////////////
@@ -323,29 +323,29 @@ MembranePositionRotationMoverCreator::mover_name() {
 ////////////////////
 
 /// @brief Construct a Default Membrane Position Mover
-MembranePositionTranslationMover::MembranePositionTranslationMover() :
+SetMembraneCenterMover::SetMembraneCenterMover() :
 	Mover(),
 	center_( 0, 0, 0 )
 {}
 
 /// @brief Custom Constructor
 /// @details Specify a new membrane center to move to
-MembranePositionTranslationMover::MembranePositionTranslationMover( Vector center ) :
+SetMembraneCenterMover::SetMembraneCenterMover( Vector center ) :
 	Mover(),
 	center_( center )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-MembranePositionTranslationMover::MembranePositionTranslationMover( MembranePositionTranslationMover const & src ) :
+SetMembraneCenterMover::SetMembraneCenterMover( SetMembraneCenterMover const & src ) :
 	Mover( src ),
 	center_( src.center_ )
 {}
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
-MembranePositionTranslationMover &
-MembranePositionTranslationMover::operator=( MembranePositionTranslationMover const & src )
+SetMembraneCenterMover &
+SetMembraneCenterMover::operator=( SetMembraneCenterMover const & src )
 {
 	
 	// Abort self-assignment.
@@ -354,12 +354,12 @@ MembranePositionTranslationMover::operator=( MembranePositionTranslationMover co
 	}
 	
 	// Otherwise, create a new object
-	return *( new MembranePositionTranslationMover( *this ) );
+	return *( new SetMembraneCenterMover( *this ) );
 	
 }
 
 /// @brief Destructor
-MembranePositionTranslationMover::~MembranePositionTranslationMover() {}
+SetMembraneCenterMover::~SetMembraneCenterMover() {}
 
 /////////////////////
 /// Mover Methods ///
@@ -367,15 +367,15 @@ MembranePositionTranslationMover::~MembranePositionTranslationMover() {}
 
 /// @brief Get the name of this mover
 std::string
-MembranePositionTranslationMover::get_name() const {
-	return "MembranePositionTranslationMover";
+SetMembraneCenterMover::get_name() const {
+	return "SetMembraneCenterMover";
 }
 
 /// @brief Apply Rotation/Translation to Membrane
 /// @brief Translate the membrane position in this pose
 /// to the new center position, and rotate to new normal
 void
-MembranePositionTranslationMover::apply( Pose & pose ) {
+SetMembraneCenterMover::apply( Pose & pose ) {
 	
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -387,12 +387,12 @@ MembranePositionTranslationMover::apply( Pose & pose ) {
 	}
 	
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 	
 	// Get current normal
-	Vector current_normal( pose.conformation().membrane_normal() );
+	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	
 	// Apply translation
 	pose.conformation().update_membrane_position( center_, current_normal + center_ );
@@ -405,19 +405,19 @@ MembranePositionTranslationMover::apply( Pose & pose ) {
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
-MembranePositionTranslationMover::clone() const {
-	return ( new MembranePositionTranslationMover( *this ) );
+SetMembraneCenterMover::clone() const {
+	return ( new SetMembraneCenterMover( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
-MembranePositionTranslationMover::fresh_instance() const {
-	return new MembranePositionTranslationMover();
+SetMembraneCenterMover::fresh_instance() const {
+	return new SetMembraneCenterMover();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
-MembranePositionTranslationMover::parse_my_tag(
+SetMembraneCenterMover::parse_my_tag(
    utility::tag::TagCOP, // tag,
    basic::datacache::DataMap &,
    protocols::filters::Filters_map const &,
@@ -430,20 +430,20 @@ MembranePositionTranslationMover::parse_my_tag(
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
-MembranePositionTranslationMoverCreator::create_mover() const {
-	return new MembranePositionTranslationMover;
+SetMembraneCenterMoverCreator::create_mover() const {
+	return new SetMembraneCenterMover;
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
-MembranePositionTranslationMoverCreator::keyname() const {
-	return MembranePositionTranslationMoverCreator::mover_name();
+SetMembraneCenterMoverCreator::keyname() const {
+	return SetMembraneCenterMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
-MembranePositionTranslationMoverCreator::mover_name() {
-	return "MembranePositionTranslationMoverr";
+SetMembraneCenterMoverCreator::mover_name() {
+	return "SetMembraneCenterMoverr";
 }
 
 } // membrane

@@ -26,7 +26,7 @@
 #include <protocols/membrane/ddG/Mutation.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/InitialMembranePositionMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -211,7 +211,7 @@ MembraneDDGMover::apply( Pose & pose ) {
 	
 	// Compute the initial position of the membrane based on its xyz coords
 	// and transmembrane spans
-	InitialMembranePositionMoverOP init_position = new InitialMembranePositionMover();
+	MembranePositionFromTopologyMoverOP init_position = new MembranePositionFromTopologyMover();
 	init_position->apply( pose );
 	
 	// Compute the score of the starting structure

@@ -25,6 +25,8 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
+#include <protocols/membrane/AddMembraneMover.hh>
+
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/conformation/membrane/SpanningTopology.hh>
@@ -39,9 +41,11 @@
 // Utility Headers
 #include <utility/vector1.hh>
 
+using namespace core;
 using namespace core::kinematics;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
+using namespace protocols::membrane;
 
 class MembraneInfoTest : public CxxTest::TestSuite {
 	
@@ -64,14 +68,14 @@ public: // test functions
         
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
-		SpanningTopologyOP topology = new SpanningTopology( spanfile, pose_->total_residue() );
 		
-		// Setup membrane info object
-		pose_->conformation().setup_membrane(
-			223, // position of the membrane residue
-			topology, // spanning topology
-			1 // membrane_jump
-		);
+		// Center/normal
+		Vector center(0, 0, 0);
+		Vector normal(0, 0, 1);
+		
+		AddMembraneMoverOP add_memb = new AddMembraneMover( center, normal, spanfile, true );
+		add_memb->apply( *pose_ );
+		
 	}
 	
 	/// @brief Tear Down Test
@@ -93,7 +97,7 @@ public: // test functions
 		TS_TRACE( "Testing a reasonable setup in MembraneInfo" );
 		
 		// Readability - grab object straight from conformation
-		MembraneInfoOP membrane_info = pose_->conformation().membrane();
+		MembraneInfoOP membrane_info = pose_->conformation().membrane_info();
 		
 		// Thickness & steepness
 		core::Real thickness = membrane_info->membrane_thickness();
@@ -113,6 +117,76 @@ public: // test functions
 		core::Size total_spans = membrane_info->spanning_topology()->total_spans();
 		TS_ASSERT_EQUALS( total_spans, 7 );
 		
+	}
+	
+	/// @brief Check that conformation returns valid center & normal position
+	void test_normal_center() {
+		
+		TS_TRACE( "Check that conformation returns a reasonable normal and center" );
+		
+		TS_TRACE( pose_->total_residue() );
+		
+		Vector center = pose_->conformation().membrane_info()->membrane_center();
+		Vector expected_center( 0, 0, 0 );
+		TS_ASSERT( position_equal_within_delta( center, expected_center, 0.0001 ) );
+		
+		Vector normal = pose_->conformation().membrane_info()->membrane_normal();
+		Vector expected_normal( 0, 0, 1 );
+		TS_ASSERT( position_equal_within_delta( normal, expected_normal, 0.0001 ) );
+		
+	}
+	
+	/// @brief Test residue z position method
+	void test_residue_z_position() {
+		
+		TS_TRACE( "Check computing relative residue z position in the membrane" );
+		
+		core::Real expected_z( -22.089 );
+		core::Real z( pose_->conformation().membrane_info()->residue_z_position( 1 ) );
+		TS_ASSERT_DELTA( z, expected_z, 0.0001 );
+	}
+	
+	/// @brief Test atom z position method
+	void test_atom_z_position() {
+		
+		TS_TRACE( "Check computing relative atom z position in the membrane" );
+		
+		core::Real expected_z( -22.089 );
+		core::Real z( pose_->conformation().membrane_info()->atom_z_position( 1, 2 ) );
+		TS_ASSERT_DELTA( z, expected_z, 0.0001 );
+	}
+	
+	/// @brief Check the fold tree has a reasonable setup
+	void test_reasonable_foldtree() {
+		
+		TS_TRACE( "Checking that the defualt setup for the membrane fold tree is a reasonable fold tree" );
+		
+		// Grab fold tree from the pose & check
+		FoldTree ft = pose_->fold_tree();
+		ft.show( std::cout );
+		TS_ASSERT( pose_->conformation().membrane_info()->check_membrane_fold_tree( ft ) );
+	}
+	
+	/// @brief Check the fold tree is unreasonble if membrane rsd is not a jump point
+	void test_unreasonable_foldtree() {
+		
+		TS_TRACE( "Checking that foldtree invariant returns false on a fold tree where membrane residue is not the jump point" );
+		
+		// Make new simple tree
+		FoldTreeOP ft = new FoldTree();
+		ft->simple_tree( pose_->total_residue() );
+		TS_ASSERT(! pose_->conformation().membrane_info()->check_membrane_fold_tree( *ft ) );
+		
+	}
+	
+	/// @brief Position equal within delta (helper method)
+	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
+		
+		TS_ASSERT_DELTA( a.x(), b.x(), delta );
+		TS_ASSERT_DELTA( a.y(), b.y(), delta );
+		TS_ASSERT_DELTA( a.z(), b.z(), delta );
+		
+		return true;
 	}
 		
 private:

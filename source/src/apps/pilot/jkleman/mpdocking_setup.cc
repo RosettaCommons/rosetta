@@ -24,9 +24,9 @@
 #include <core/membrane/geometry/util.hh>
 #include <core/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/InitialMembranePositionMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 //#include <protocols/membrane/OptimizeMembraneMover.hh>
-#include <protocols/membrane/MembranePositionRTMover.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
 
@@ -229,7 +229,7 @@ void mpdocking_setup(){
 	
 	// reorder only reorders, but does not rename jump edges
 	core::kinematics::FoldTree foldtree = pose1->fold_tree();
-	foldtree.reorder( pose1->conformation().membrane()->membrane_rsd_num() );
+	foldtree.reorder( pose1->conformation().membrane_info()->membrane_rsd_num() );
 	pose1->fold_tree( foldtree );
 	
 	// show foldtree
@@ -240,7 +240,7 @@ void mpdocking_setup(){
 	pose1->dump_pdb("before.pdb");
 
 	// 3) set initial position of pose 1 in the membrane
-	InitialMembranePositionMoverOP initial_position1 = new InitialMembranePositionMover( true );
+	MembranePositionFromTopologyMoverOP initial_position1 = new MembranePositionFromTopologyMover( true );
 	TR << "constructor called" << std::endl;
 	initial_position1->apply( *pose1 );
 
@@ -269,7 +269,7 @@ void mpdocking_setup(){
 //	TR << "added MEM to pose2" << std::endl;
 //	
 //	// 3) set initial position of pose 2a in membrane
-////	InitialMembranePositionMoverOP initial_position2a = new InitialMembranePositionMover( true );
+////	MembranePositionFromTopologyMoverOP initial_position2a = new MembranePositionFromTopologyMover( true );
 ////	initial_position2a->apply( *pose2a );
 //
 //	TR << "set initial position of pose2a" << std::endl;
@@ -284,7 +284,7 @@ void mpdocking_setup(){
 //
 //	TR << "got normal and center of pose1" << std::endl;
 //
-//	MembranePositionRTMoverOP rot_trans = new MembranePositionRTMover( center1, normal1 );
+//	SetMembranePositionMoverOP rot_trans = new SetMembranePositionMover( center1, normal1 );
 //	rot_trans->apply( *pose2a );
 //
 //	TR << "rotated and translated" << std::endl;
@@ -329,7 +329,7 @@ void mpdocking_setup(){
 //	TR << "shifted spans" << std::endl;
 //
 //	// update MembraneInfo object
-//	Size membrane_resnum = pose1a->conformation().membrane()->membrane_rsd_num();
+//	Size membrane_resnum = pose1a->conformation().membrane_info()->membrane_rsd_num();
 //	pose1a->conformation().setup_membrane( membrane_resnum, topo1a );
 //
 //	TR << "updated MemInfo" << std::endl;
@@ -340,7 +340,7 @@ void mpdocking_setup(){
 //	pull proteins apart by 100 Angstrom
 //	Vector trans (100, 0, 0);
 //	Vector new_center = center1 + trans;
-//	MembranePositionTranslationMoverOP translate = new MembranePositionTranslationMover( new_center );
+//	SetMembraneCenterMoverOP translate = new SetMembraneCenterMover( new_center );
 //	translate->apply( *pose2 );
 	
 	// slide together poses into contact:

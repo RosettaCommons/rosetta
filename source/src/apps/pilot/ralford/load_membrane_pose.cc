@@ -25,7 +25,7 @@
 
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 
 #include <protocols/jd2/JobDistributor.hh> 
 #include <protocols/jd2/util.hh>
@@ -33,6 +33,7 @@
 #include <protocols/moves/Mover.hh> 
 
 #include <core/conformation/Conformation.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh> 
 
 #include <core/pose/Pose.hh> 
 #include <core/types.hh> 
@@ -71,12 +72,15 @@ public:
 		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
 		add_memb->apply( pose ); 
 
+		// Show new pose membrane
+		pose.conformation().membrane_info()->show();
+		
 		// Initialize Membrane
-		InitialMembranePositionMoverOP init_memb = new InitialMembranePositionMover();
+		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover();
 		init_memb->apply( pose ); 
 
 		// Show new pose membrane
-		pose.conformation().show_membrane();
+		pose.conformation().membrane_info()->show();
 
 	}
 };

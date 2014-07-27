@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/MembranePositionRTMover.hh
+/// @file		protocols/membrane/SetMembranePositionMover.hh
 ///
 /// @brief		Membrane Position Rotation/Translation Mover
 ///	@details	Apply a uniform rigid translation & rotation of the
@@ -17,11 +17,11 @@
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_MembranePositionRTMover_hh
-#define INCLUDED_protocols_membrane_MembranePositionRTMover_hh
+#ifndef INCLUDED_protocols_membrane_SetMembranePositionMover_hh
+#define INCLUDED_protocols_membrane_SetMembranePositionMover_hh
 
 // Unit Headers
-#include <protocols/membrane/MembranePositionRTMover.fwd.hh>
+#include <protocols/membrane/SetMembranePositionMover.fwd.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -41,7 +41,7 @@ using namespace core;
 using namespace protocols::moves;
 
 /// @brief Membrane Position Translation-Rotation Mover
-class MembranePositionRTMover : public Mover {
+class SetMembranePositionMover : public Mover {
 	
 public:
 	
@@ -50,24 +50,24 @@ public:
 	////////////////////
 	
 	/// @brief Construct a Default Membrane Position Mover
-	MembranePositionRTMover();
+	SetMembranePositionMover();
 	
 	/// @brief Custom Constructor
 	/// @details Specify a new membrane center and normal
 	///	to move this position to
-	MembranePositionRTMover( Vector center, Vector normal );
+	SetMembranePositionMover( Vector center, Vector normal );
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
-	MembranePositionRTMover( MembranePositionRTMover const & src );
+	SetMembranePositionMover( SetMembranePositionMover const & src );
 	
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
-	MembranePositionRTMover &
-	operator=( MembranePositionRTMover const & src );
+	SetMembranePositionMover &
+	operator=( SetMembranePositionMover const & src );
 	
 	/// @brief Destructor
-	~MembranePositionRTMover();
+	~SetMembranePositionMover();
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -111,7 +111,7 @@ private:
 /// @brief Membrane Position Rotation Move
 /// @details Rotate the orientation of the membrane position to a new
 /// normal position. Applies rotation to jump
-class MembranePositionRotationMover : public Mover {
+class SetMembraneNomalMover : public Mover {
 	
 public:
 	
@@ -120,24 +120,24 @@ public:
 	////////////////////
 	
 	/// @brief Construct a Default Membrane Position Mover
-	MembranePositionRotationMover();
+	SetMembraneNomalMover();
 	
 	/// @brief Custom Constructor
 	/// @details Specify a new normal to rotate membranes to
 	///	to move this position to
-	MembranePositionRotationMover( Vector normal );
+	SetMembraneNomalMover( Vector normal );
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
-	MembranePositionRotationMover( MembranePositionRotationMover const & src );
+	SetMembraneNomalMover( SetMembraneNomalMover const & src );
 	
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
-	MembranePositionRotationMover &
-	operator=( MembranePositionRotationMover const & src );
+	SetMembraneNomalMover &
+	operator=( SetMembraneNomalMover const & src );
 	
 	/// @brief Destructor
-	~MembranePositionRotationMover();
+	~SetMembraneNomalMover();
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -178,7 +178,7 @@ private:
 
 /// @brief Membrane Position Translation Move
 /// @details Translate the center of the membrane stub ot the specified position
-class MembranePositionTranslationMover : public Mover {
+class SetMembraneCenterMover : public Mover {
 	
 public:
 	
@@ -187,23 +187,23 @@ public:
 	////////////////////
 	
 	/// @brief Construct a Default Membrane Position Mover
-	MembranePositionTranslationMover();
+	SetMembraneCenterMover();
 	
 	/// @brief Custom Constructor
 	/// @details Specify a new center position to translate this stub to
-	MembranePositionTranslationMover( Vector center );
+	SetMembraneCenterMover( Vector center );
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
-	MembranePositionTranslationMover( MembranePositionTranslationMover const & src );
+	SetMembraneCenterMover( SetMembraneCenterMover const & src );
 	
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
-	MembranePositionTranslationMover &
-	operator=( MembranePositionTranslationMover const & src );
+	SetMembraneCenterMover &
+	operator=( SetMembraneCenterMover const & src );
 	
 	/// @brief Destructor
-	~MembranePositionTranslationMover();
+	~SetMembraneCenterMover();
 	
 	/////////////////////
 	/// Mover Methods ///
@@ -245,4 +245,4 @@ private:
 } // membrane
 } // protocols
 
-#endif // #ifndef INCLUDED_protocols_membrane_MembranePositionRTMover_hh
+#endif // #ifndef INCLUDED_protocols_membrane_SetMembranePositionMover_hh

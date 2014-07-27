@@ -292,8 +292,8 @@ sources = {
 	],
 	"protocols/membrane": [
 		"AddMembraneMover",
-		"MembranePositionRTMover",
-		"InitialMembranePositionMover", 
+		"SetMembranePositionMover",
+		"MembranePositionFromTopologyMover", 
 		"RandomMembranePositionMover",
     ],
     "protocols/membrane/ddG": [

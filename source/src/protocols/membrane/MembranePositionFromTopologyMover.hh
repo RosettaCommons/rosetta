@@ -6,7 +6,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/InitialMembranePositionMover.hh
+/// @file	    protocols/membrane/MembranePositionFromTopologyMover.hh
 ///
 /// @brief      Compute the Initial Position of the membrane
 /// @details	Compute the initial position of the membrane from
@@ -19,11 +19,11 @@
 ///
 /// @author		Rebecca Alford (rflaford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_InitialMembranePositionMover_hh
-#define INCLUDED_protocols_membrane_InitialMembranePositionMover_hh
+#ifndef INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_hh
+#define INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_hh
 
 // Unit Headers
-#include <protocols/membrane/InitialMembranePositionMover.fwd.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.fwd.hh>
 
 // Package headers
 #include <core/pose/Pose.fwd.hh> 
@@ -41,7 +41,7 @@ using namespace core::pose;
 
 /// @brief Compute the initial position of the membrane based upon sequence
 /// or structure
-class InitialMembranePositionMover : public protocols::moves::Mover {
+class MembranePositionFromTopologyMover : public protocols::moves::Mover {
 	
 public:
 	
@@ -52,20 +52,20 @@ public:
 	/// @brief Defualt Constructor
 	/// @details Compute the embedding of the pose based on xyz coordinates
 	/// and spanning topology provided in MembraneInfo
-	InitialMembranePositionMover();
+	MembranePositionFromTopologyMover();
 	
 	/// @brief Custom Constructor - for Pyrosetta
 	/// @details Compute the embedding of the pose - if structure_based is
 	/// true do this based on xyz coordinates. If structure_based is false,
 	/// compute based on sequence.
-	InitialMembranePositionMover( bool structure_based );
+	MembranePositionFromTopologyMover( bool structure_based );
 	
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover
-	InitialMembranePositionMover( InitialMembranePositionMover const & src );
+	MembranePositionFromTopologyMover( MembranePositionFromTopologyMover const & src );
 	
 	/// @brief Destructor
-	~InitialMembranePositionMover();
+	~MembranePositionFromTopologyMover();
 	
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -119,4 +119,4 @@ private: // data
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_InitialMembranePositionMover_hh
+#endif // INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_hh

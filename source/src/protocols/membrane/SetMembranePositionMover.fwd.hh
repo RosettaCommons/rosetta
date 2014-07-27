@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/MembranePositionRTMover.fwd.hh
+/// @file		protocols/membrane/SetMembranePositionMover.fwd.hh
 ///
 /// @brief		Membrane Position Rotation/Translation Mover
 ///	@details	Apply a uniform rigid translation & rotation of the
@@ -17,8 +17,8 @@
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_MembranePositionRTMover_fwd_hh
-#define INCLUDED_protocols_membrane_MembranePositionRTMover_fwd_hh
+#ifndef INCLUDED_protocols_membrane_SetMembranePositionMover_fwd_hh
+#define INCLUDED_protocols_membrane_SetMembranePositionMover_fwd_hh
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh> 
@@ -27,21 +27,21 @@ namespace protocols {
 namespace membrane {
 
 /// @brief Membrane Position Rotation/Translation Mover (by stub & jump)
-class MembranePositionRTMover;
-typedef utility::pointer::owning_ptr< MembranePositionRTMover > MembranePositionRTMoverOP;
-typedef utility::pointer::owning_ptr< MembranePositionRTMover const > MembranePositionRTMoverCOP;
+class SetMembranePositionMover;
+typedef utility::pointer::owning_ptr< SetMembranePositionMover > SetMembranePositionMoverOP;
+typedef utility::pointer::owning_ptr< SetMembranePositionMover const > SetMembranePositionMoverCOP;
 
 /// @brief Membrane Position Rotation Mover (by jump)
-class MembranePositionRotationMover;
-typedef utility::pointer::owning_ptr< MembranePositionRotationMover > MembranePositionRotationMoverOP;
-typedef utility::pointer::owning_ptr< MembranePositionRotationMover const > MembranePositionRotationMoverCOP;
+class SetMembraneNomalMover;
+typedef utility::pointer::owning_ptr< SetMembraneNomalMover > SetMembraneNomalMoverOP;
+typedef utility::pointer::owning_ptr< SetMembraneNomalMover const > SetMembraneNomalMoverCOP;
 
 /// @brief Memrbane Position Translaiton Mover (by stub)
-class MembranePositionTranslationMover;
-typedef utility::pointer::owning_ptr< MembranePositionTranslationMover > MembranePositionTranslationMoverOP;
-typedef utility::pointer::owning_ptr< MembranePositionTranslationMover const > MembranePositionTranslationMoverCOP;
+class SetMembraneCenterMover;
+typedef utility::pointer::owning_ptr< SetMembraneCenterMover > SetMembraneCenterMoverOP;
+typedef utility::pointer::owning_ptr< SetMembraneCenterMover const > SetMembraneCenterMoverCOP;
 		
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_MembranePositionRTMover_fwd_hh
+#endif // INCLUDED_protocols_membrane_SetMembranePositionMover_fwd_hh

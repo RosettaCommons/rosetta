@@ -6,7 +6,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/MembranePositionRTMover.cxxtest.hh
+/// @file		protocols/membrane/Initial.cxxtest.hh
 ///
 /// @brief		Unit Test for Membrane Position Move (Rotation & Translation, Uniform)
 /// @details	The memrbane fold tree assumes that the membrane residue is attached by jump to
@@ -23,9 +23,10 @@
 
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/MembranePositionRTMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh> 
 #include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <numeric/xyzVector.hh>
@@ -47,7 +48,7 @@
 using namespace core;
 
 /// @brief Test Suite for Membrane Embedding factory
-class MembranePositionRTTest : public CxxTest::TestSuite {
+class MembranePositionFromTopologyMoverTest : public CxxTest::TestSuite {
     
 public:
     
@@ -82,63 +83,25 @@ public:
     /// @brief teardown
     void tearDown()
     {}
-    
-    /// @brief Testing Consecutive Transformations of the Membrane Center
-    void test_membrane_position_translation() {
-		
-		TS_TRACE( "Testing Deterministic Translation of the Membrane Position" );
-		
-		using namespace protocols::membrane;
-		
-		// Translate back along all 3 axes
-		Vector xyz_trans( -5, -11, -15 );
-		
-		// Apply translation move
-		MembranePositionTranslationMoverOP xyz_move = new MembranePositionTranslationMover( xyz_trans );
-		xyz_move->apply( *pose_ );
-		
-		// Check result
-		TS_ASSERT( xyz_trans == pose_->conformation().membrane_center() );
-		
-    }
 	
-    /// @brief Testing Consecutive Rotations of the membrane Normal (about fixed center)
-    void test_membrane_position_rotation() {
-		
-		TS_TRACE( "Testing Deterministic Rotation of the membrane position" );
-		
-		using namespace protocols::membrane;
-		
-		// Grab current normal
-		Vector current_normal( pose_->conformation().membrane_normal() );
-		
-		// Simple rotation 1
-		Vector rot_1( 0, 1, 0 );
-		MembranePositionRotationMoverOP first_move = new MembranePositionRotationMover( rot_1 );
-		first_move->apply( *pose_ );
-		TS_ASSERT_DELTA( angle_of( current_normal, pose_->conformation().membrane_normal() ), 1.57, 0.001);
-		TS_ASSERT( position_equal_within_delta( rot_1, pose_->conformation().membrane_normal(), 0.0001 ) );
-		
-	}
-	
-	/// @brief Testing uniform rotation & translation
-	void test_uniform_rotation_translation() {
+	/// @brief Testing initial membrane position move
+	void test_initial_membrane_position_move() {
 		
 		TS_TRACE( "Testing rotation & translation move" );
 		
 		using namespace protocols::membrane;
 		
 		// Pick a new center/normal position
-		Vector new_center( 0, 5, 10 );
-		Vector new_normal( 0, 1, 0 );
+		Vector new_center( 16.8406, 3.32664, -0.6575);
+		Vector new_normal( 0.044515, 0.0319111, -0.998499 );
 		
 		// Apply Rotation and translation move
-		MembranePositionRTMoverOP rt = new MembranePositionRTMover( new_center, new_normal );
+		MembranePositionFromTopologyMoverOP rt = new MembranePositionFromTopologyMover();
 		rt->apply( *pose_ );
 		
 		// Check the structure was moved to the correct position
-		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_center(), 0.0001 ) );
-		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_normal(), 0.0001 ) );
+		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center(), 0.0001 ) );
+		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.0001 ) );
 	}
 	
 	/// @brief Position equal within delta (helper method)
@@ -157,5 +120,5 @@ private: // data
     // Resulting Membrane Protein
     core::pose::PoseOP pose_;
     
-}; // class MembranePositionRTTest
+}; // class MembranePositionFromTopologyMoverTest
 

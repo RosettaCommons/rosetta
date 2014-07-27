@@ -33,6 +33,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh> 
+#include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -117,7 +118,7 @@ MPCbetaEnergy::residue_energy(
 	core::Size const seqpos = rsd.seqpos();
 	
 	// Determine total number of tmhs from membrane pose
-	Size num_tmh = pose.conformation().membrane()->spanning_topology()->total_spans();
+	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->total_spans();
 	
 	// Compute CBeta score at the position
 	membrane_cb_score = compute_mpcbeta_score( cenlist, seqpos, num_tmh );

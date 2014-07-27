@@ -930,7 +930,7 @@ write_additional_pdb_data(
 
         // TODO: get thickness from MembraneInfoObject
         // ?? needs to be a const, but how can I change a const after initialization???
-//        Real const thickness( pose.conformation().membrane()->membrane_thickness());
+//        Real const thickness( pose.conformation().membrane_info()->membrane_thickness());
         thickness = option[ OptionKeys::out::membrane_pdb_thickness];
                 
         // set variables for membrane plane

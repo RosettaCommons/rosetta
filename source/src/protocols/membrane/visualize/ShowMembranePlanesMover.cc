@@ -155,8 +155,8 @@ ShowMembranePlanesMover::apply( Pose & pose ) {
 	bool fullatom = pose.is_fullatom();
 	
 	// Grab the membrane center & normal parameters
-	Vector center( pose.conformation().membrane_center() );
-	Vector normal( pose.conformation().membrane_normal() );
+	Vector center( pose.conformation().membrane_info()->membrane_center() );
+	Vector normal( pose.conformation().membrane_info()->membrane_normal() );
 	normal.normalize();
 	
 	// Grab a list of relevant residues and go
@@ -183,7 +183,7 @@ ShowMembranePlanesMover::apply( Pose & pose ) {
 	utility::vector1< Vector > lower_points = select_plane_points( lower, normal, npoints_, rg );
 	
 	// Attach plane anchor residues by jump to the membrane virtual residue
-	core::Size membrane_rsd = pose.conformation().membrane()->membrane_rsd_num();
+	core::Size membrane_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
 	
 	// Attach and track residues
 	utility::vector1< Size > top_points;
@@ -218,7 +218,7 @@ ShowMembranePlanesMover::apply( Pose & pose ) {
 	}
 	
 	// Track plane residues in membrane info
-	pose.conformation().membrane()->setup_plane_visualization( top_points, bottom_points );
+	pose.conformation().membrane_info()->setup_plane_visualization( top_points, bottom_points );
 	
 }
 

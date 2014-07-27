@@ -30,6 +30,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
 // Package Headers
@@ -117,7 +118,7 @@ MPLipoEnergy::finalize_total_energy(
 	
 	// Determine total number of tmhs from membrane pose
 	TR << "WARNING: MPLipoEnergy: Using the number of spans instead of the number of inserted helices!!!" << std::endl;
-	Size num_tmh = pose.conformation().membrane()->spanning_topology()->total_spans();
+	Size num_tmh = pose.conformation().membrane_info()->spanning_topology()->total_spans();
 	
 	// Initialize MP Lips Score
 	Real mplipo_energy( 0 );
@@ -135,8 +136,8 @@ MPLipoEnergy::finalize_total_energy(
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		
 		// Otherwise, compute the score for the given residue
-		Real B( pose.conformation().membrane()->lipid_acc_data()->lipid_exposure()[ i ] );
-		Real E( pose.conformation().membrane()->lipid_acc_data()->lipid_burial()[ i ] );
+		Real B( pose.conformation().membrane_info()->lipid_acc_data()->lipid_exposure()[ i ] );
+		Real E( pose.conformation().membrane_info()->lipid_acc_data()->lipid_burial()[ i ] );
 		
 		if ( B != 0 ) {
 			cen10Buried += B * cenlist.fcen10(i);

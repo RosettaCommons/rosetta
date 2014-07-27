@@ -22,7 +22,7 @@
 
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 
 // Project Headers
 #include <protocols/relax/ClassicRelax.hh>
@@ -69,7 +69,7 @@ public:
 		add_memb->apply( pose ); 
 
 		// Initialze the posiiton of a membrane protein
-		InitialMembranePositionMoverOP init_position = new InitialMembranePositionMover(); 
+		MembranePositionFromTopologyMoverOP init_position = new MembranePositionFromTopologyMover(); 
 		init_position->apply( pose ); 
 
 		// Setup Relax Base Protocol

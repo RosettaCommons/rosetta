@@ -288,7 +288,7 @@ void PyMolMover::apply( Pose const & pose)
 	TR.Trace << "PyMOL_Mover::apply name:" << name << std::endl;
 
 	// Check if pose is a membrane pose
-	if ( pose.conformation().is_membrane() && pose.conformation().membrane()->view_in_pymol() ) {
+	if ( pose.conformation().is_membrane() && pose.conformation().membrane_info()->view_in_pymol() ) {
 		update_membrane_ = true;
 	}
 
@@ -441,14 +441,14 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	if ( !is_it_time() ) return;
 	
 	// Check the membrane planes can be visualized
-	if (!pose.conformation().is_membrane() || !pose.conformation().membrane()->view_in_pymol() ) return;
+	if (!pose.conformation().is_membrane() || !pose.conformation().membrane_info()->view_in_pymol() ) return;
 	
 	// Get the upper & lower plane points
-	utility::vector1< Size > top_points = pose.conformation().membrane()->plane_info()->top_points();
-	utility::vector1< Size > bottom_points = pose.conformation().membrane()->plane_info()->bottom_points();
+	utility::vector1< Size > top_points = pose.conformation().membrane_info()->plane_info()->top_points();
+	utility::vector1< Size > bottom_points = pose.conformation().membrane_info()->plane_info()->bottom_points();
 	
 	// Get the normal vector
-	core::Vector normal( pose.conformation().membrane_normal() );
+	core::Vector normal( pose.conformation().membrane_info()->membrane_normal() );
 	
 	// Check top and bottom planes are of equal size
 	if ( top_points.size() != bottom_points.size() ) {

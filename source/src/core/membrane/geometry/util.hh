@@ -26,6 +26,8 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers

@@ -25,7 +25,7 @@
 
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh> 
@@ -87,7 +87,7 @@ public:
 		add_memb->apply(pose); 
 
 		// Initialize Membrane Position
-		InitialMembranePositionMoverOP init_memb = new InitialMembranePositionMover(); 
+		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover(); 
 		init_memb->apply( pose ); 
 
 		// Setup Membrane Energy Function as is
@@ -133,8 +133,8 @@ public:
 	void
 	show_membrane_position( Pose & pose ) {
 
-		Vector center( pose.conformation().membrane_center() ); 
-		Vector normal( pose.conformation().membrane_normal() );
+		Vector center( pose.conformation().membrane_info()->membrane_center() ); 
+		Vector normal( pose.conformation().membrane_info()->membrane_normal() );
 
 		TR << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
 		TR << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;

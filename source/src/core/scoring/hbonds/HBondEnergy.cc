@@ -280,10 +280,10 @@ HBondEnergy::setup_for_packing(
 	if ( options_->mphbond() ) {
 				
 		// Initialize membrane specific parameters
-		normal_ = pose.conformation().membrane_normal();
-		center_ = pose.conformation().membrane_center();
-		thickness_ = pose.conformation().membrane()->membrane_thickness();
-		steepness_ = pose.conformation().membrane()->membrane_steepness();
+		normal_ = pose.conformation().membrane_info()->membrane_normal();
+		center_ = pose.conformation().membrane_info()->membrane_center();
+		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
+		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
 		
 	}
 
@@ -360,10 +360,10 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	if ( options_->mphbond() ) {
 		
 		// Initialize membrane parameters
-		normal_ = pose.conformation().membrane_normal();
-		center_ = pose.conformation().membrane_center();
-		thickness_ = pose.conformation().membrane()->membrane_thickness();
-		steepness_ = pose.conformation().membrane()->membrane_steepness();
+		normal_ = pose.conformation().membrane_info()->membrane_normal();
+		center_ = pose.conformation().membrane_info()->membrane_center();
+		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
+		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
 
 	}
 

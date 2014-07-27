@@ -34,6 +34,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/membrane/Span.hh>
@@ -102,23 +103,20 @@ MPTMProjPenalty::finalize_total_energy(
 	// Initialize TM Projection
 	core::Real tm_proj( 0.0 );
 	
-    // shorthand
-    ConformationOP conf = &pose.conformation();
-    MembraneInfoOP meminfo = conf->membrane();
-    
+
 	// Initialize WHole Pose Data
-	core::Vector center = conf->membrane_center();
-	core::Vector normal = conf->membrane_normal();
+	core::Vector center = pose.conformation().membrane_info()->membrane_center();
+	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
 
 	// Get Topology from the pose
-    SpanningTopologyOP topology = meminfo->spanning_topology();
+    SpanningTopologyOP topology = pose.conformation().membrane_info()->spanning_topology();
 	
 	// Read through spanning topology
 	for ( Size j = 1; j <= topology->total_spans(); ++j ) {
 		
 		// Get the center and normal z position
-		Real const & start_z_pos = pose.conformation().residue_z_position( topology->span(j)->start() );
-		Real const & end_z_pos = pose.conformation().residue_z_position( topology->span(j)->end() );
+		Real const & start_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->start() );
+		Real const & end_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->end() );
 		
 		// Compute seuqnece distance between the two residues
 		core::Real dist = topology->span(j)->end()-topology->span(j)->start()+1;

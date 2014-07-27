@@ -19,7 +19,7 @@
 ///				 - membrane lipophilicity info (user-specified)
 ///
 ///				This object belongs to the conformation and should be accessed
-///				via pose.conformation().membrane().
+///				via pose.conformation().membrane_info().
 ///
 ///	     		Last Modified: 6/21/14
 ///

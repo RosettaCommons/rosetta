@@ -19,9 +19,9 @@
 ///				 - membrane lipophilicity info (user-specified)
 ///
 ///				This object belongs to the conformation and should be accessed
-///				via pose.conformation().membrane().
+///				via pose.conformation().membrane_info().
 ///
-///	     		Last Modified: 6/21/14
+///	     		Last Modified: 7/25/14
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
@@ -32,6 +32,8 @@
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
 
 // Project Headers
+#include <core/conformation/Conformation.fwd.hh>
+
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/LipidAccInfo.fwd.hh>
 
@@ -82,6 +84,7 @@ public:
 	/// of fullatom membrane transition = 10A and spanning topology defined
 	/// by API provided vector1 of spanning topology obejcts (by chain)
 	MembraneInfo(
+		Conformation & conformation,
 		core::Size membrane_pos,
 		SpanningTopologyOP topology,
 		core::SSize membrane_jump = 2,
@@ -95,6 +98,7 @@ public:
 	/// by API provided vector1 of spanning topology obejcts (by chain), and
 	/// lipid accessibility defined by a vector1 of lipid acc objects.
 	MembraneInfo(
+		Conformation & conformation,
 		core::Size membrane_pos,
 		SpanningTopologyOP topology,
 		LipidAccInfoOP lips,
@@ -117,10 +121,36 @@ public:
 	
 	/// @brief  Generate string representation of MembraneInfo for debugging purposes.
 	virtual void show(std::ostream & output=std::cout) const;
+	
+	////////////////////////////////////////
+	/// Coordinate Derived Membrane Info ///
+	////////////////////////////////////////
+	
+	/// @brief Return the center coordinate of the membrane
+	/// @details Return the center xyz coordinate of the membrane described in the
+	/// MPct atom of the membrane virtual residue
+	Vector membrane_center() const;
+	
+	/// @brief Returns the normal of the membrane
+	/// @details Returns the normal (direction) of the membrane described in the MPnm
+	/// atom of the membrane virtual residue.
+	Vector membrane_normal() const;
+	
+	/// @brief Compute Residue Z Position relative to mem
+	/// @details Compute the z position of a residue relative to the pre-defined
+	/// layers in the membrane. Maintians the relative coordinate frame
+	Real
+	residue_z_position( core::Size resnum ) const;
+	
+	/// @brief Compute atom Z Position relative to mem
+	/// @details Compute the z position of an atom relative to the pre-defined
+	/// layers in the membrane. Maintians the relative coordinate frame
+	Real
+	atom_z_position( core::Size resnum, core::Size atomnum ) const;
 
-	////////////////////////////
-	/// Membrane Data Access ///
-	////////////////////////////
+	////////////////////////////////////////////
+	/// Non-Coordinate Derived Membrane Data ///
+	////////////////////////////////////////////
 	
 	/// @brief Return position of membrane residue
 	/// @details Return the residue number of the membrane virtual
@@ -183,6 +213,9 @@ public:
 
 	
 private: // data
+
+	// Keep track of the Pose's conformation
+	Conformation& conformation_;
 	
 	// Fullatom constants
 	core::Real thickness_;

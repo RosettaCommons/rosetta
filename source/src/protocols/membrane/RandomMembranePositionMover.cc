@@ -116,12 +116,12 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	}
 	
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 	
 	// Compute random rotation
-	Vector current_normal( pose.conformation().membrane_normal() );
+	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	current_normal.normalize();
 	Real theta = 2*RG.uniform() * rot_mag_;
 	
@@ -205,13 +205,13 @@ RandomPositionTranslationMover::apply( Pose & pose ) {
 	}
 	
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 	
 	// Compute new posiiton based on random translation
-	Vector current_center( pose.conformation().membrane_center() );
-	Vector current_normal( pose.conformation().membrane_normal() );
+	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
+	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	Vector delta_trans = 2*RG.uniform()-1 * trans_mag_ * current_normal;
 	Vector new_position = current_center + delta_trans;
 	

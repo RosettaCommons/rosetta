@@ -16,8 +16,8 @@
 
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh>
-#include <protocols/membrane/MembranePositionRTMover.hh>
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
@@ -70,14 +70,14 @@ public:
 		// reorder foldtree
 		pose.fold_tree().show(std::cout);
 		core::kinematics::FoldTree foldtree = pose.fold_tree();
-		foldtree.reorder( pose.conformation().membrane()->membrane_rsd_num() );
+		foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
 		pose.fold_tree( foldtree );
 		TR << "foldtree reordered" << std::endl;
 		pose.fold_tree().show(std::cout);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//		// MEMBRANEPOSITIONRTMOVER
+//		// SetMembranePositionMover
 //		// before move
 //		pose.dump_pdb("before1.pdb");
 //
@@ -85,7 +85,7 @@ public:
 //		Vector normal(20, 20, 10);
 //
 //		//Initialize Membrane
-//		MembranePositionRTMoverOP rt_memb = new MembranePositionRTMover( center, normal );
+//		SetMembranePositionMoverOP rt_memb = new SetMembranePositionMover( center, normal );
 //		rt_memb->apply( pose );
 //
 //		// after move
@@ -93,17 +93,17 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-		// INITIALMEMBRANEPOSITIONMOVER
+		// MembranePositionFromTopologyMover
 		// before move
 		pose.dump_pdb("before2.pdb");
 
 		//Initialize Membrane
-		InitialMembranePositionMoverOP init_memb = new InitialMembranePositionMover( true );
+		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover( true );
 		init_memb->apply( pose );
 
 		// normalize normal vector to length 15
-		Vector center = pose.conformation().membrane_center();
-		Vector normal = pose.conformation().membrane_normal();
+		Vector center = pose.conformation().membrane_info()->membrane_center();
+		Vector normal = pose.conformation().membrane_info()->membrane_normal();
 		normal.normalize( 15 );
 
 		// Update membrane position - shift normal along center
@@ -119,23 +119,23 @@ public:
 //		pose.conformation().show_membrane(); 
 //
 //		// Grab current membrane normal from the pose
-//		Vector center( pose.conformation().membrane_center() );
-//		Vector current_normal( pose.conformation().membrane_normal() );
+//		Vector center( pose.conformation().membrane_info()->membrane_center() );
+//		Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 //		current_normal.normalize();
 //		
 //		TR << "current normal: " << current_normal.to_string() << std::endl;
 //
-//		TR << "flexible jump: " << pose.conformation().membrane()->membrane_jump() << std::endl;
+//		TR << "flexible jump: " << pose.conformation().membrane_info()->membrane_jump() << std::endl;
 //
 //		// reorder foldtree
 //		pose.fold_tree().show(std::cout);
 //		core::kinematics::FoldTree foldtree = pose.fold_tree();
-//		foldtree.reorder( pose.conformation().membrane()->membrane_rsd_num() );
+//		foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
 //		pose.fold_tree( foldtree );
 //		pose.fold_tree().show(std::cout);
 //		
 //		// Grab the jump from the pose
-//		Jump flexible_jump = pose.jump( pose.conformation().membrane()->membrane_jump() );
+//		Jump flexible_jump = pose.jump( pose.conformation().membrane_info()->membrane_jump() );
 //
 //		TR << "flexible jump done" << std::endl;
 //

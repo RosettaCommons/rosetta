@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/InitialMembranePositionMoverCreator.hh
+/// @file	    protocols/membrane/MembranePositionFromTopologyMoverCreator.hh
 ///
 /// @brief      Compute the Initial Position of the membrane
 /// @details	Compute the initial position of the membrane from
@@ -20,8 +20,8 @@
 ///
 /// @author		Rebecca Alford (rflaford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_InitialMembranePositionMoverCreator_hh
-#define INCLUDED_protocols_membrane_InitialMembranePositionMoverCreator_hh
+#ifndef INCLUDED_protocols_membrane_MembranePositionFromTopologyMoverCreator_hh
+#define INCLUDED_protocols_membrane_MembranePositionFromTopologyMoverCreator_hh
 
 // Utility headers
 #include <protocols/moves/MoverCreator.hh>
@@ -30,7 +30,7 @@ namespace protocols {
 namespace membrane {
 
 /// @brief Mover Creator
-class InitialMembranePositionMoverCreator : public protocols::moves::MoverCreator {
+class MembranePositionFromTopologyMoverCreator : public protocols::moves::MoverCreator {
 	
 public:
 	
@@ -43,4 +43,4 @@ public:
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_InitialMembranePositionMoverCreator_hh
+#endif // INCLUDED_protocols_membrane_MembranePositionFromTopologyMoverCreator_hh

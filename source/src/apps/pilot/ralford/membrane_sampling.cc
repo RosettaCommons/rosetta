@@ -25,7 +25,7 @@
 #include <protocols/jd2/util.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 
 #include <core/scoring/ScoreFunction.hh> 
 #include <core/scoring/ScoreFunctionFactory.hh> 

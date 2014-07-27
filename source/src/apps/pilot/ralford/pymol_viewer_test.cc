@@ -27,7 +27,7 @@
 #include <protocols/jd2/util.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh> 
@@ -87,7 +87,7 @@ public:
 		add_memb->apply( pose ); 
 
 		// Set the Initial Position of the Membrane
-		InitialMembranePositionMoverOP init_memb = new InitialMembranePositionMover();
+		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover();
 		init_memb->apply( pose ); 
 
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function("fa_menv_smooth_2014");

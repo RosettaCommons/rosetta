@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/MembranePositionRTMoverCreator.hh
+/// @file		protocols/membrane/SetMembranePositionMoverCreator.hh
 ///
 /// @brief		Membrane Position Rotation/Translation Mover Creator
 ///	@details	Apply a uniform rigid translation & rotation of the
@@ -17,8 +17,8 @@
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_MembranePositionRTMoverCreator_hh
-#define INCLUDED_protocols_membrane_MembranePositionRTMoverCreator_hh
+#ifndef INCLUDED_protocols_membrane_SetMembranePositionMoverCreator_hh
+#define INCLUDED_protocols_membrane_SetMembranePositionMoverCreator_hh
 
 // Utility headers
 #include <protocols/moves/MoverCreator.hh>
@@ -27,7 +27,7 @@ namespace protocols {
 namespace membrane {
 
 /// @brief Mover Creator for composed RT mover
-class MembranePositionRTMoverCreator : public protocols::moves::MoverCreator {
+class SetMembranePositionMoverCreator : public protocols::moves::MoverCreator {
 	
 public:
 	
@@ -38,7 +38,7 @@ public:
 };
 
 /// @brief Mover creator for membrane rotation mover
-class MembranePositionRotationMoverCreator : public protocols::moves::MoverCreator {
+class SetMembraneNomalMoverCreator : public protocols::moves::MoverCreator {
 	
 public:
 	
@@ -49,7 +49,7 @@ public:
 };
 
 /// @brief Mover Creator for membrane translation mover
-class MembranePositionTranslationMoverCreator : public protocols::moves::MoverCreator {
+class SetMembraneCenterMoverCreator : public protocols::moves::MoverCreator {
 	
 public:
 	
@@ -62,4 +62,4 @@ public:
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_MembranePositionRTMoverCreator_hh
+#endif // INCLUDED_protocols_membrane_SetMembranePositionMoverCreator_hh

@@ -189,8 +189,8 @@ sources = {
 
 	"membrane" : [
 		"AddMembraneMover",
-		"MembranePositionRTMover",
-		"InitialMembranePositionMover",
+		"SetMembranePositionMover",
+		"MembranePositionFromTopologyMover",
     ],
 
 	"motif_grafting" : [

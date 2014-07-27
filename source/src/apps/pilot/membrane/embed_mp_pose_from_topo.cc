@@ -59,7 +59,7 @@ my_main( void* )
 	core::pose::PoseOP pose = mp->get_membrane_pose();
 	
 	// Get Mmebrane Topology for the Pose and create a dummy definiiton
-	utility::vector1< SpanningTopology > topology = pose->conformation().membrane()->spanning_topology();
+	utility::vector1< SpanningTopology > topology = pose->conformation().membrane_info()->spanning_topology();
 	EmbeddingFactoryOP emb = new EmbeddingFactory();
 
 	// Compute Embedding for Chain A

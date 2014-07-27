@@ -36,6 +36,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -180,8 +181,8 @@ get_chain_and_z( pose::PoseOP pose ) {
 void membrane_normal_to_length_15( pose::Pose & pose ){
 	
 	// get center and normal
-	Vector center = pose.conformation().membrane_center();
-	Vector normal = pose.conformation().membrane_normal();
+	Vector center = pose.conformation().membrane_info()->membrane_center();
+	Vector normal = pose.conformation().membrane_info()->membrane_normal();
 	
 	// normalize normal vector
 	normal.normalize( 15 );

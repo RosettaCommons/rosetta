@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
         core::Vector center(-4.494, -0.776, 0.302);
         core::Vector normal(-0.240, 0.209, -0.948);
 
-        membrane_pose->conformation().membrane()->set_whole_pose_embedding(center, normal);
+        membrane_pose->conformation().membrane_info()->set_whole_pose_embedding(center, normal);
 
         // Create new scoring function from membrane score weights
         ScoreFunctionOP sfxn = new ScoreFunction();

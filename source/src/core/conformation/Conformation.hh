@@ -51,10 +51,6 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
-#include <core/conformation/membrane/MembraneParams.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -278,8 +274,8 @@ public:  // Secondary Structure
 public: // membrane
 
 	///////////////////////////////////////////////////////////////////////////////
-	//// Rosetta Membrane Framework												///
-	//// Core data for interacting with membrane proteins in Rosetta			///
+	/// Rosetta Membrane Framework												///
+	/// Core data for interacting with membrane proteins in Rosetta			    ///
 	///																			///
 	/// Authors:																///
 	///  - Rebecca Alford (rfalford12@gmail.com)								///
@@ -295,47 +291,19 @@ public: // membrane
 	/// and thickness parameters. At construction, specify membrane position
 	/// and list of spanning topology objects by chain.
 	void
-	setup_membrane(
-		core::Size membrane_resnum,
-		membrane::SpanningTopologyOP topology,
-		core::SSize membrane_jump = 1
-	);
-
-	/// @brief Setup a Membrane Info object in Conformation - Pos, topology & lips
-	/// @details Add a MembraneInfo object - describes the position of the
-	/// membrane virtual residue, information on membrane spanning regions,
-	/// lipid exposure/burial of residues in the pose, and fullatom steepness
-	/// and thickness parameters. At construction, specify membrane position,
-	/// list of spanning topology objects by chain, and lipod exposre info by chain.
-	void
-	setup_membrane(
-		core::Size membrane_resnum,
-		membrane::SpanningTopologyOP topology,
-		membrane::LipidAccInfoOP lips,
-		core::SSize membrane_jump = 1
-		);
-
-	/// @brief Returns the const MembraneInfo object in conformation
-	/// @details Membrane Info contains information describing location of the
-	/// membrane virtual residue in the pose sequence, membrane spanning region definitions
-	/// and lipid exposure/burial data
-	membrane::MembraneInfoOP membrane();
+	set_membrane_info( membrane::MembraneInfoOP mem_info );
 	
 	/// @brief Returns the const MembraneInfo object in conformation
 	/// @details Membrane Info contains information describing location of the
 	/// membrane virtual residue in the pose sequence, membrane spanning region definitions
 	/// and lipid exposure/burial data
-	membrane::MembraneInfoOP membrane() const;
+	membrane::MembraneInfoOP membrane_info();
 	
-	/// @brief Return the center coordinate of the membrane
-	/// @details Return the center xyz coordinate of the membrane described in the
-	/// MPct atom of the membrane virtual residue
-	Vector membrane_center() const;
-	
-	/// @brief Returns the normal of the membrane
-	/// @details Returns the normal (direction) of the membrane described in the MPnm
-	/// atom of the membrane virtual residue.
-	Vector membrane_normal() const;
+	/// @brief Returns the const MembraneInfo object in conformation
+	/// @details Membrane Info contains information describing location of the
+	/// membrane virtual residue in the pose sequence, membrane spanning region definitions
+	/// and lipid exposure/burial data
+	membrane::MembraneInfoOP membrane_info() const;
 	
 	/// @brief Update Normal, Center in the Membrane
 	/// @details Sets the center and normal coordinates to the appropriate
@@ -348,22 +316,6 @@ public: // membrane
 	/// an orthogonal coordinate frame
 	void
 	check_valid_membrane() const;
-	
-	/// @brief Compute Residue Z Position relative to mem
-	/// @details Compute the z position of a residue relative to the pre-defined
-	/// layers in the membrane. Maintians the relative coordinate frame
-	Real
-	residue_z_position( core::Size resnum ) const;
-	
-	/// @brief Compute atom Z Position relative to mem
-	/// @details Compute the z position of an atom relative to the pre-defined
-	/// layers in the membrane. Maintians the relative coordinate frame
-	Real
-	atom_z_position( core::Size resnum, core::Size atomnum ) const;
-	
-	/// @brief Show Membrane normal and center
-	void
-	show_membrane( std::ostream & output=std::cout ) const;
 	
 public:  // Trees
 

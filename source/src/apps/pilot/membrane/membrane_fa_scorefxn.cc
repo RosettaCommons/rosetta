@@ -70,7 +70,7 @@ public:
         AddMembraneMoverOP mp = new AddMembraneMover();
         mp->apply(pose); 
 
-		pose.conformation().show_membrane();
+		pose.conformation().membrane_info()->show();
 
         // Create new scoring function from membrane score weights
         ScoreFunctionOP sfxn = new ScoreFunction();

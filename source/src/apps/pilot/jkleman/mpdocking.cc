@@ -236,7 +236,7 @@ MPDockingMover::apply( Pose & pose ) {
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 
 	// reorder only reorders, but does not rename jump edges
-	foldtree.reorder( pose.conformation().membrane()->membrane_rsd_num() );
+	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
 	pose.fold_tree( foldtree );
 	
 	// add a jump from protein 1 (fixed) to protein 2 (flexible)

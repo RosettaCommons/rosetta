@@ -342,7 +342,7 @@
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
 
 #include <protocols/membrane/AddMembraneMoverCreator.hh> 
-#include <protocols/membrane/InitialMembranePositionMoverCreator.hh> 
+//#include <protocols/membrane/InitialMembranePositionMoverCreator.hh> 
 //#include <protocols/membrane/TransformIntoMembraneMoverCreator.hh> 
 //#include <protocols/membrane/MembranePositionRTMoverCreator.hh> 
 //#include <protocols/membrane/MembranePositionPerturbMoverCreator.hh> 

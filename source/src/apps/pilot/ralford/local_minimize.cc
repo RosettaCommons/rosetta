@@ -29,7 +29,7 @@
 
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh> 
@@ -78,7 +78,7 @@ public:
 		add_memb->apply(pose); 
 
 		// Optimize Merane Position
-		InitialMembranePositionMover initialize_memb;
+		MembranePositionFromTopologyMover initialize_memb;
 		initialize_memb.apply(pose);
 
 		// Setup the Membrane Energy Function

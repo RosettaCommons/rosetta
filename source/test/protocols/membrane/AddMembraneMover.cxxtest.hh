@@ -90,7 +90,7 @@ public: // test functions
 		TS_TRACE( "Check that membrane residue number tracks a residue of type MEM" );
 		
 		// Grab membrane rsd num
-		core::Size resnum = pose_->conformation().membrane()->membrane_rsd_num();
+		core::Size resnum = pose_->conformation().membrane_info()->membrane_rsd_num();
 		std::string res_type = pose_->residue( resnum ).name3();
 		TS_ASSERT_EQUALS( res_type.compare( "MEM" ), 0 );
 		
@@ -101,8 +101,8 @@ public: // test functions
 		
 		TS_TRACE( "Check that the jump number tracks a jump containing the membrane residue" );
 		
-		core::Size jump = pose_->conformation().membrane()->membrane_jump();
-		core::Size resnum = pose_->conformation().membrane()->membrane_rsd_num();
+		core::Size jump = pose_->conformation().membrane_info()->membrane_jump();
+		core::Size resnum = pose_->conformation().membrane_info()->membrane_rsd_num();
 		core::Size expected = pose_->fold_tree().downstream_jump_residue( jump );
 		TS_ASSERT_EQUALS( expected, resnum );
 		

@@ -36,4 +36,4 @@ typedef utility::pointer::owning_ptr< Span const > SpanCOP;
 } // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_properties_Span_fwd_hh
+#endif // INCLUDED_core_conformation_membrane_Span_fwd_hh

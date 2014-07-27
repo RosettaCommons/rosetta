@@ -19,7 +19,7 @@
 ///				 - membrane lipophilicity info (user-specified)
 ///
 ///				This object belongs to the conformation and should be accessed
-///				via pose.conformation().membrane().
+///				via pose.conformation().membrane_info().
 ///
 ///	     		Last Modified: 6/21/14
 ///
@@ -33,6 +33,7 @@
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
+#include <core/conformation/membrane/MembraneParams.hh>
 #include <core/conformation/membrane/MembranePlanes.hh>
 
 // Package Headers
@@ -78,6 +79,7 @@ using namespace core::kinematics;
 /// lips info defined
 MembraneInfo::MembraneInfo() :
 	utility::pointer::ReferenceCount(),
+	conformation_( *(new Conformation()) ),
 	thickness_( 15.0 ),
 	steepness_( 10.0 ),
 	membrane_rsd_num_( 1 ),
@@ -92,12 +94,14 @@ MembraneInfo::MembraneInfo() :
 /// of fullatom membrane transition = 10A and spanning topology defined
 /// by API provided vector1 of spanning topology obejcts (by chain)
 MembraneInfo::MembraneInfo(
+	Conformation & conformation,
 	core::Size membrane_pos,
 	SpanningTopologyOP topology,
 	core::SSize membrane_jump,
 	bool view_in_pymol
 	) :
 	utility::pointer::ReferenceCount(),
+	conformation_( conformation ),
 	thickness_( 15.0 ),
 	steepness_( 10.0 ),
 	membrane_rsd_num_( membrane_pos ),
@@ -114,6 +118,7 @@ MembraneInfo::MembraneInfo(
 /// by API provided vector1 of spanning topology obejcts (by chain), and
 /// lipid accessibility defined by a vector1 of lipid acc objects.
 MembraneInfo::MembraneInfo(
+	Conformation & conformation,
 	core::Size membrane_pos,
 	SpanningTopologyOP topology,
 	LipidAccInfoOP lips,
@@ -121,6 +126,7 @@ MembraneInfo::MembraneInfo(
 	bool view_in_pymol
 	) :
 	utility::pointer::ReferenceCount(),
+	conformation_( conformation ),
 	thickness_( 15.0 ),
 	steepness_( 10.0 ),
 	membrane_rsd_num_( membrane_pos ),
@@ -135,6 +141,7 @@ MembraneInfo::MembraneInfo(
 /// @details Create a deep copy of this object
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::pointer::ReferenceCount(),
+	conformation_( src.conformation_ ),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
@@ -174,6 +181,14 @@ MembraneInfo::show(std::ostream & output ) const {
 	output << "Membrane Thicnkess: " << thickness_ << std::endl;
 	output << "Membrane Steepness: " << steepness_ << std::endl;
 	output << "Membrane Spanning Topology " << std::endl;
+	
+	// Grab membrane center/normal
+	Vector center( membrane_center() );
+	Vector normal( membrane_normal() );
+	
+	// Show Current Membrane Position
+	output << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
+	output << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;
 
 	// SHow spanning topology object
 	spanning_topology_->show();
@@ -182,6 +197,55 @@ MembraneInfo::show(std::ostream & output ) const {
 	
 }
 
+////////////////////////////////////////
+/// Coordinate Derived Membrane Info ///
+////////////////////////////////////////
+
+/// @brief Return the center coordinate of the membrane
+/// @details Return the center xyz coordinate of the membrane described in the
+/// MPct atom of the membrane virtual residue
+Vector
+MembraneInfo::membrane_center() const  {
+	
+	return conformation_.residue( membrane_rsd_num() ).xyz( membrane::center );
+}
+
+/// @brief Returns the normal of the membrane
+/// @details Returns the normal (direction) of the membrane described in the MPnm
+/// atom of the membrane virtual residue.
+Vector
+MembraneInfo::membrane_normal() const {
+	
+	Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
+	Vector normal = normal_tracked - membrane_center();
+	
+	return normal.normalize();
+	
+}
+
+/// @brief Compute Residue Z Position relative to mem
+/// @details Compute the z position of a residue relative to the pre-defined
+/// layers in the membrane. Maintians the relative coordinate frame
+Real
+MembraneInfo::residue_z_position( core::Size resnum ) const {
+	
+	// Compute z_position
+	Vector const & xyz( conformation_.residue( resnum ).atom( "CA" ).xyz() );
+	core::Real result = dot( xyz - membrane_center(), membrane_normal() );
+	return result;
+}
+
+/// @brief Compute atom Z Position relative to mem
+/// @details Compute the z position of an atom relative to the pre-defined
+/// layers in the membrane. Maintians the relative coordinate frame
+Real
+MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
+	
+	// Compute z_position
+	Vector const & xyz( conformation_.residue( resnum ).atom( atomnum ).xyz() );
+	core::Real result = dot( xyz - membrane_center(), membrane_normal() );
+	return result;
+}
 
 ////////////////////////////
 /// Membrane Data Access ///

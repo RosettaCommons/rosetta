@@ -27,6 +27,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
+#include <core/conformation/membrane/MembraneInfo.hh>
+
 #include <core/conformation/Atom.hh>
 #include <core/id/AtomID.hh>
 
@@ -418,7 +420,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 		low_bin = high_bin = 1; inter = 0;
 	}
 	
-	Real const z_position( pose.conformation().residue_z_position( rsd.seqpos() ) );
+	Real const z_position( pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() ) );
 	
 	Real thickness = 2.0;
 	int  slope = 14;

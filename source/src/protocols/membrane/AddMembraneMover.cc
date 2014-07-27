@@ -294,12 +294,16 @@ AddMembraneMover::apply( Pose & pose ) {
 	SpanningTopologyOP spans = new SpanningTopology( spanfile_, pose.total_residue()-1 );
 	
 	// Setup Membrane Info Object
+	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
-		pose.conformation().setup_membrane( membrane_pos, spans, 1 );
+		mem_info = new MembraneInfo( pose.conformation(), membrane_pos, spans, 1 );
 	} else {
 		LipidAccInfoOP lips = new LipidAccInfo( lipsfile_ );
-		pose.conformation().setup_membrane( membrane_pos, spans, lips, 1 );
+		mem_info = new MembraneInfo( pose.conformation(), membrane_pos, spans, lips, 1 );
 	}
+	
+	// Add Membrane Info Object to conformation
+	pose.conformation().set_membrane_info( mem_info );
 	
 	// Setup for viewing in pymol if user-specified
 	if ( view_in_pymol_ ) {

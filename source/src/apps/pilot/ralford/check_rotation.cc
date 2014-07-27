@@ -21,10 +21,10 @@
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh> 
 #include <protocols/membrane/TransformIntoMembraneMover.hh> 
-#include <protocols/membrane/InitialMembranePositionMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
 #include <protocols/membrane/visualize/VisualizeMembraneMover.hh> 
 #include <protocols/membrane/visualize/ShowMembranePlanesMover.hh> 
-#include <protocols/membrane/MembranePositionRTMover.hh> 
+#include <protocols/membrane/SetMembranePositionMover.hh> 
 
 #include <core/kinematics/Stub.hh> 
 #include <core/kinematics/Jump.hh> 
@@ -44,6 +44,7 @@
 
 #include <core/pose/Pose.hh> 
 #include <core/conformation/Conformation.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh> 
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -91,29 +92,29 @@ public:
 		//Vector center(16.6831, 3.8529, -1.39162);
 		//Vector normal(0.0437651, 0.00068703, 0.999042);
 
-		Vector center( 0, 5, 0 ); //= pose.conformation().membrane_center();
+		Vector center( 0, 5, 0 ); //= pose.conformation().membrane_info()->membrane_center();
 		Vector normal( 0, 0, 10 );
-		//MembranePositionRTMoverOP transform_memb2 = new MembranePositionRTMover( center, normal, 1 ); 
+		//SetMembranePositionMoverOP transform_memb2 = new SetMembranePositionMover( center, normal, 1 ); 
 		//transform_memb2->apply( pose ); 
 
  
-		MembranePositionRTMoverOP transform_memb = new MembranePositionRTMover( center, normal, 2 ); 
+		SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 2 ); 
 		transform_memb->apply( pose ); 
 
 
 
-		//InitialMembranePositionMoverOP initialize_memb = new InitialMembranePositionMover(); 
+		//MembranePositionFromTopologyMoverOP initialize_memb = new MembranePositionFromTopologyMover(); 
 		//initialize_memb->apply( pose ); 
 
 	
-	//	Vector normal = pose.conformation().membrane_normal();
+	//	Vector normal = pose.conformation().membrane_info()->membrane_normal();
 
-		//MembranePositionRTMoverOP transform_memb = new MembranePositionRTMover( center, normal, 1 ); 
+		//SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 1 ); 
 		//TransformIntoMembraneMoverOP transform_memb = new TransformIntoMembraneMover( 2, center, normal );
 		//transform_memb->apply( pose ); 
 
 
-		pose.conformation().show_membrane();
+		pose.conformation().membrane_info()->show();
 
 	}
 };

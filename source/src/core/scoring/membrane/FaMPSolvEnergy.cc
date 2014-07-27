@@ -449,8 +449,8 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 	// Alloc appropriate Farrays
 	setup_for_fullatom( pose );
 	
-	core::Real thickness = pose.conformation().membrane()->membrane_thickness();
-	core::Real steepness = pose.conformation().membrane()->membrane_steepness();
+	core::Real thickness = pose.conformation().membrane_info()->membrane_thickness();
+	core::Real steepness = pose.conformation().membrane_info()->membrane_steepness();
 	
 	// For convenience - grab nres
 	Real nres = pose.total_residue();
@@ -461,7 +461,7 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 			Vector const xyz( pose.residue( i ).xyz( j ) );
 			
 			// Compute Standard Z Position
-			fa_z_position_[i][j] = pose.conformation().atom_z_position( i, j );
+			fa_z_position_[i][j] = pose.conformation().membrane_info()->atom_z_position( i, j );
 			
 			// Compute Fa Projection
 			fa_proj_[i][j] = compute_fa_proj( fa_z_position_[i][j], thickness, steepness );

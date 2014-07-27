@@ -541,7 +541,7 @@ void FastRelax::do_minimize(
 	// If relax membrane, update structure based embeddings
 	bool membrane = pose.conformation().is_membrane();
 	if ( membrane ) {
-		//pose.conformation().membrane()->update_structure_based_embeddings();
+		//pose.conformation().membrane_info()->update_structure_based_embeddings();
 	}
 
 }
