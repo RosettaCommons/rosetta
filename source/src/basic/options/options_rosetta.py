@@ -4245,12 +4245,12 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		## Options affecting growing/combining of loops
 		## subprotocol components
 		Option( 'remodel', 'String', default = 'no',
-		legal=['no','perturb_ccd','perturb_kic','perturb_kic_refactor','quick_ccd','quick_ccd_moves','old_loop_relax','sdwindow'], desc = ''),
+		legal=['no','perturb_ccd','perturb_kic','perturb_kic_refactor','perturb_kic_with_fragments','quick_ccd','quick_ccd_moves','old_loop_relax','sdwindow'], desc = ''),
 		Option( 'intermedrelax', 'String',                 default = 'no',
 			legal=['no','relax','fastrelax','seqrelax'], desc = ''
 		),
 		Option( 'refine',  'String', default = 'no',
-			legal=['no','refine_ccd','refine_kic','refine_kic_refactor'],
+			legal=['no','refine_ccd','refine_kic','refine_kic_refactor','refine_kic_with_fragments'],
 			desc = 'method for performing full-atom refinement on loops'
 		),
 		Option( 'relax',  'String',                        default = 'no',

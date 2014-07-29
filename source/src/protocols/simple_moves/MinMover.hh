@@ -154,6 +154,9 @@ public:
 	/// @brief allow const access to the internal minimizer options object
 	virtual MinimizerOptionsCOP min_options() const;
 
+	/// @brief directly set the internal minimizer options object
+	virtual void min_options(MinimizerOptionsOP min_options);
+
 	/// @brief Sets the MoveMap to  <movemap_in>
 	/// determines which DOF to minimize
 	///

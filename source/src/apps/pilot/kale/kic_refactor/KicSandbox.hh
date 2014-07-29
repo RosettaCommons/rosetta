@@ -169,7 +169,7 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	// Finish configuring the loop modeling protocol {{{1
 
 	protocol->set_loop(loop);
-	protocol->set_iterations(iterations);
+	//protocol->set_iterations(iterations);
 	
 	// }}}1
 }

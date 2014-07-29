@@ -116,6 +116,8 @@
 
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbeCreator.hh>
 
+#include <protocols/kinematic_closure/KicMoverCreator.hh>
+
 #include <protocols/ligand_docking/AddHydrogensCreator.hh>
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/ComputeLigandRDFCreator.hh>
@@ -135,6 +137,14 @@
 #include <protocols/ligand_docking/WriteLigandMolFileCreator.hh>
 
 #include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
+
+#include <protocols/loop_modeling/LoopModelerCreator.hh>
+#include <protocols/loop_modeling/LoopProtocolCreator.hh>
+#include <protocols/loop_modeling/LoopBuilderCreator.hh>
+#include <protocols/loop_modeling/refiners/MinimizationRefinerCreator.hh>
+#include <protocols/loop_modeling/refiners/RepackingRefinerCreator.hh>
+#include <protocols/loop_modeling/refiners/RotamerTrialsRefinerCreator.hh>
+#include <protocols/loop_modeling/samplers/LegacyKicSamplerCreator.hh>
 
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
 #include <protocols/loophash/LoopHashDiversifierCreator.hh>

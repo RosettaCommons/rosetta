@@ -13,6 +13,7 @@
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @author James Thompson (tex@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
+/// @author Roland A. Pache, PhD
 ///
 
 // Unit Headers
@@ -73,6 +74,20 @@ FragSet::region_all(
 	return region( move_map, start, end, min_overlap, min_length, frames );
 }
 
+///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+///(also allows those frames that start before the region and reach into it)
+Size FragSet::overlapping_with_region(
+    kinematics::MoveMap const& mm,
+    core::Size start,
+    core::Size end,
+    core::Size min_overlap,
+    core::Size min_length,
+    FrameList &frames
+) const {
+    //call the region method by default (method can be overloaded to change behavior in child classes of FragSet)
+    return region( mm, start, end, min_overlap, min_length, frames );
+}
+    
 
 	// put all fragments in FragID_list into this FragSet.
 	// this function has the following effect:

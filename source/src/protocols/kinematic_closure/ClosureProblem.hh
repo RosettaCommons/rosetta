@@ -105,6 +105,15 @@ class ClosureProblem
 		/// @brief Perturb the C-N bond length in the given residue.
 		void perturb_c_n(Size residue, Real value);
 
+		/// @brief Provide non-const access to the raw torsion angle list.
+		ParameterList & perturb_torsions();
+
+		/// @brief Provide non-const access to the raw bond angle list.
+		ParameterList & perturb_angles();
+
+		/// @brief Provide non-const access to the raw bond length list.
+		ParameterList & perturb_lengths();
+
 		/// @brief Save the current state of the closure problem.  This is meant to 
 		/// facilitate undoing rejected perturbations when necessary.
 		class Memento {

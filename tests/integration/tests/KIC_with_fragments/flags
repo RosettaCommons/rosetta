@@ -1,0 +1,16 @@
+-in:file:fullatom
+-in:file:s inputs/4fxn.start.pdb
+-in:file:native inputs/4fxn.start.pdb
+-loops:loop_file inputs/4fxn.loop
+-loops:frag_sizes 9 3 1
+-loops:frag_files  inputs/cc4fxn_09_05.200_v1_3.gz inputs/cc4fxn_03_05.200_v1_3.gz none
+-loops:remodel perturb_kic_with_fragments 
+-loops:refine refine_kic_with_fragments
+-out:nstruct 1
+-out:overwrite
+-out:path ./
+-run:test_cycles 
+-loops:fast
+-mute core.io.database
+-mute protocols.looprelax.FragmentPerturber 
+-mute core.fragments.ConstantLengthFragSet

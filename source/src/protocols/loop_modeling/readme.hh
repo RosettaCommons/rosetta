@@ -6,7 +6,7 @@
 /// LoopMover.  LoopMover provides an interface for loop sampling algorithms.  
 /// Methods are provided for specifying which loops need to be sampled and for 
 /// setting up a compatible fold tree.  Some important LoopMover subclasses 
-/// include RepackingRefiner, LocalMinimizationRefiner, and KicMover.  The 
+/// include RepackingRefiner, MinimizationRefiner, and KicMover.  The 
 /// LoopProtocol class provides a framework for combining any number of loop 
 /// movers into a single Monte Carlo simulation.  Aspects of the simulation 
 /// like the number of iterations, the score function, and the temperature can 
@@ -30,7 +30,7 @@
 /// protocol->add_mover(new KicMover);
 /// protocol->add_mover(new PeriodicTask(new RepackingRefiner, repack_period));
 /// protocol->add_mover(new RotamerTrialsRefiner);
-/// protocol->add_mover(new LocalMinimizationRefiner);
+/// protocol->add_mover(new FullatomMinimizationRefiner);
 ///
 /// Size outer_cycles = 3;
 /// Size inner_cycles = 10 * loops->loop_size();

@@ -88,7 +88,7 @@
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
-#include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.hh>
+#include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
 #include <protocols/loop_modeling/utilities/RepeatedMover.hh>
@@ -98,6 +98,8 @@
 #include <protocols/loop_modeling/loggers/PdbLogger.hh>
 #include <protocols/loop_modeling/loggers/ScoreVsRmsd.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
+#include <protocols/kinematic_closure/perturbers/BondAnglePerturber.hh>
+#include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>  // this was auto-removed but is needed for graphics builds!
@@ -562,62 +564,87 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					LoopRebuild loop_rebuild( cen_scorefxn_, *loops );
 					loop_rebuild.apply( pose );
 				}
-				else if ( remodel() == "perturb_kic_refactor" ) {
+				else if ( remodel() == "perturb_kic_refactor" || remodel() == "perturb_kic_with_fragments") {
 					using namespace std;
 					using protocols::loop_modeling::LoopBuilder;
 					using protocols::loop_modeling::LoopBuilderOP;
 					using protocols::loop_modeling::LoopProtocol;
 					using protocols::loop_modeling::LoopProtocolOP;
 					using protocols::loop_modeling::loggers::ProgressBar;
-					using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
+					using protocols::loop_modeling::refiners::MinimizationRefiner;
 					using protocols::kinematic_closure::KicMover;
+					using protocols::kinematic_closure::KicMoverOP;
+					using protocols::kinematic_closure::perturbers::BondAnglePerturber;
+					using protocols::kinematic_closure::perturbers::FragmentPerturber;
 
 					bool const build_only =
 						option[ OptionKeys::loops::kic_leave_centroid_after_initial_closure ]();
 
-					Size outer_cycles = 3;
-					Size inner_cycles = min<Size>(20 * loops->loop_size(), 1000);
+					bool const kic_with_fragments =
+						(remodel() == "perturb_kic_with_fragments");
+
+					if (kic_with_fragments && frag_libs().empty()) {
+						throw utility::excn::EXCN_BadInput(": No fragment libraries loaded.");
+					}
+
+					Size sfxn_cycles = 3;
+					Size temp_cycles = min<Size>(20 * loops->loop_size(), 1000);
 
 					if ( option[ OptionKeys::loops::outer_cycles ].user() ) {
-						outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
+						sfxn_cycles = option[ OptionKeys::loops::outer_cycles ]();
 					}
 					if ( option[ OptionKeys::loops::fast ].user() ) {;
-						inner_cycles = min<Size>(5 * loops->loop_size(), 250);
+						temp_cycles = min<Size>(5 * loops->loop_size(), 250);
 					}
 					if ( option[ OptionKeys::loops::max_inner_cycles ].user() ) {
-						inner_cycles = option[ OptionKeys::loops::max_inner_cycles ]();
+						temp_cycles = option[ OptionKeys::loops::max_inner_cycles ]();
 					}
 					if ( option[ OptionKeys::run::test_cycles ]() ) {
-						outer_cycles = 3;
-						inner_cycles = 3;
+						sfxn_cycles = 3;
+						temp_cycles = 3;
 					}
 
 					LoopBuilderOP builder = new LoopBuilder;
 					LoopProtocolOP protocol = new LoopProtocol;
+
+					if (kic_with_fragments) {
+						builder->use_fragments(frag_libs());
+					}
 
 					TR << "Beginning centroid-mode loop rebuilding..." << endl;
 					builder->set_loops(*loops);
 					builder->set_score_function(cen_scorefxn_);
 					builder->apply(pose);
 
-					if ( !builder->was_successful() ) {
-							TR << "Structure failed initial kinematic closure.  Skipping..." << endl;
-							set_last_move_status(protocols::moves::FAIL_RETRY);
-							return;
+					if ( ! builder->was_successful() ) {
+						set_last_move_status(protocols::moves::FAIL_RETRY);
+						return;
 					}
-					else if ( option[ in::file::native ].user() ) {
+
+					if ( option[ in::file::native ].user() ) {
 						setPoseExtraScores(pose, "rebuild_rms",   core::scoring::native_CA_rmsd(native_pose, pose));
 						setPoseExtraScores(pose, "rebuild_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops));
 						setPoseExtraScores(pose, "rebuild_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops, true));
 					}
 
-					if ( !build_only ) {
+					if ( ! build_only ) {
 						TR << "Beginning centroid-mode KIC sampling..." << endl;
+
+						KicMoverOP kic_mover = new KicMover;
+
+						if (kic_with_fragments) {
+							kic_mover->clear_perturbers();
+							kic_mover->add_perturber(new BondAnglePerturber);
+							kic_mover->add_perturber(new FragmentPerturber(frag_libs()));
+						}
+
 						protocol->set_loops(*loops);
 						protocol->set_score_function(cen_scorefxn_);
-						protocol->set_iterations(outer_cycles, inner_cycles, 1);
-						protocol->add_mover(new KicMover);
-						protocol->add_mover(new LocalMinimizationRefiner);
+						protocol->set_sfxn_cycles(sfxn_cycles);
+						protocol->set_temp_cycles(temp_cycles);
+						protocol->set_mover_cycles(1);
+						protocol->add_mover(kic_mover);
+						protocol->add_mover(new MinimizationRefiner);
 						protocol->add_logger(new ProgressBar("Perturb: "));
 						protocol->apply(pose);
 					}
@@ -630,7 +657,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					all_loops_closed = true;
 					break;
 				}
-				else {
+                else {
 
 /* // DJM: does this cause a crash if the only loop is terminal
           if ( remodel() == "perturb_kic" ) {
@@ -1105,54 +1132,71 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				refine_kic.set_native_pose( new core::pose::Pose ( native_pose ) );
 				refine_kic.apply( pose );
 			} else
-			if ( refine() == "refine_kic_refactor" ) {
+			if ( refine() == "refine_kic_refactor" || refine() == "refine_kic_with_fragments") {
 				using namespace std;
 				using protocols::loop_modeling::LoopProtocol;
 				using protocols::loop_modeling::LoopProtocolOP;
 				using protocols::loop_modeling::refiners::RepackingRefiner;
 				using protocols::loop_modeling::refiners::RotamerTrialsRefiner;
-				using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
+				using protocols::loop_modeling::refiners::MinimizationRefiner;
 				using protocols::loop_modeling::utilities::PeriodicMover;
 				using protocols::loop_modeling::loggers::LoggerOP;
 				using protocols::loop_modeling::loggers::ProgressBar;
 				using protocols::kinematic_closure::KicMover;
+				using protocols::kinematic_closure::KicMoverOP;
+				using protocols::kinematic_closure::perturbers::BondAnglePerturber;
+				using protocols::kinematic_closure::perturbers::FragmentPerturber;
 
-				LoopProtocolOP protocol = new LoopProtocol;
+				TR << "Beginning full-atom KIC sampling..." << endl;
 
+				bool const kic_with_fragments =
+					(refine() == "refine_kic_with_fragments");
+
+				if (kic_with_fragments && frag_libs().empty()) {
+					throw utility::excn::EXCN_BadInput(": No fragment libraries loaded.");
+				}
+
+				Size sfxn_cycles = 3;
+				Size temp_cycles = 10 * loops->loop_size();
 				Size repack_period = 20;
+
+				if (option[OptionKeys::loops::outer_cycles].user()) {
+					sfxn_cycles = option[ OptionKeys::loops::outer_cycles ]();
+				}
+				if (option[OptionKeys::loops::max_inner_cycles].user()) {
+					Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
+					temp_cycles = std::max(temp_cycles, max_cycles);
+				}
+				if (option[OptionKeys::loops::fast]) {
+					sfxn_cycles = 3;
+					temp_cycles = 12;
+				}
 				if (option[OptionKeys::loops::repack_period].user()) {
 					repack_period = option[OptionKeys::loops::repack_period]();
 				}
 
-				protocol->add_mover(new KicMover);
-				protocol->add_mover(new PeriodicMover(new RepackingRefiner, repack_period));
-				protocol->add_mover(new RotamerTrialsRefiner);
-				protocol->add_mover(new LocalMinimizationRefiner);
+				LoopProtocolOP protocol = new LoopProtocol;
+				KicMoverOP kic_mover = new KicMover;
 
-				Size outer_cycles = 3;
-				Size inner_cycles = 10 * loops->loop_size();
-
-				if (option[OptionKeys::loops::outer_cycles].user()) {
-					outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
-				}
-				if (option[OptionKeys::loops::max_inner_cycles].user()) {
-					Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
-					inner_cycles = std::max(inner_cycles, max_cycles);
-				}
-				if (option[OptionKeys::loops::fast]) {
-					outer_cycles = 3;
-					inner_cycles = 12;
+				if (kic_with_fragments) {
+					kic_mover->add_perturber(new BondAnglePerturber);
+					kic_mover->add_perturber(new FragmentPerturber(frag_libs()));
 				}
 
-				TR << "Beginning full-atom KIC sampling..." << endl;
 				protocol->set_loops(*loops);
 				protocol->set_score_function(fa_scorefxn_);
-				protocol->set_iterations(outer_cycles, inner_cycles, 2);
+				protocol->set_sfxn_cycles(sfxn_cycles);
+				protocol->set_temp_cycles(temp_cycles);
+				protocol->set_mover_cycles(2);
+				protocol->add_mover(kic_mover);
+				protocol->add_mover(new PeriodicMover(new RepackingRefiner, repack_period));
+				protocol->add_mover(new RotamerTrialsRefiner);
+				protocol->add_mover(new MinimizationRefiner);
 				protocol->add_logger(new ProgressBar("Refine:  "));
 				protocol->apply(pose);
 			}
 
-			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_refine.pdb");
+			if ( debug ) { pose.dump_pdb(curr_job_tag + "_after_refine.pdb"); }
 			checkpoints_.checkpoint( pose, curr_job_tag, "refine", true);
 
 			// need to get the chainbreak score before the cutpoint variants are removed

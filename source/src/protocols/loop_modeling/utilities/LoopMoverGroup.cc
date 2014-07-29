@@ -32,7 +32,7 @@ using namespace std;
 using core::scoring::ScoreFunctionOP;
 
 bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
-	foreach (LoopMoverOP child, children_) {
+	foreach (LoopMoverOP child, get_nested_loop_movers()) {
 		child->apply(pose);
 		if (! child->was_successful()) return false;
 	}
@@ -40,16 +40,31 @@ bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
 }
 
 void LoopMoverGroup::add_mover(LoopMoverOP mover) { // {{{1
+	if (is_default_) { clear(); }
 	register_nested_loop_mover(mover);
-	children_.push_back(mover);
 }
 
 void LoopMoverGroup::add_filter(protocols::filters::FilterOP filter) { // {{{1
 	add_mover(new utilities::LoopFilter(filter));
 }
 
+LoopMoverGroupOP LoopMoverGroup::add_mover_group() { // {{{1
+	LoopMoverGroupOP group = new LoopMoverGroup;
+	add_mover(group);
+	return group;
+}
+
+void LoopMoverGroup::clear() { // {{{1
+	deregister_nested_loop_movers();
+	is_default_ = false;
+}
+
+void LoopMoverGroup::mark_as_default() { // {{{1
+	is_default_ = true;
+}
+
 bool LoopMoverGroup::empty() const { // {{{1
-	return children_.empty();
+	return get_nested_loop_movers().empty();
 }
 // }}}1
 

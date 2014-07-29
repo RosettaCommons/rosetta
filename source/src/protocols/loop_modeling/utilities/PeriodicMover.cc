@@ -25,10 +25,10 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 
-PeriodicMover::PeriodicMover(LoopMoverOP mover, Size period)
-	: mover_(mover), period_(period), iteration_(0) {
-
-	register_nested_loop_mover(mover);
+PeriodicMover::PeriodicMover(LoopMoverOP mover, Size period) {
+	mover_ = register_nested_loop_mover(mover);
+	period_ = period;
+	iteration_ = 0;
 }
 
 bool PeriodicMover::do_apply(Pose & pose) {

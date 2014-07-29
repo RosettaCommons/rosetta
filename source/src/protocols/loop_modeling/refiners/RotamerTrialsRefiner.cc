@@ -9,6 +9,7 @@
 
 // Unit headers
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
+#include <protocols/loop_modeling/refiners/RotamerTrialsRefinerCreator.hh>
 
 // Core headers
 #include <core/pack/rotamer_trials.hh>
@@ -36,6 +37,14 @@ using namespace std;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
+
+protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
+	return new RotamerTrialsRefiner;
+}
+
+std::string RotamerTrialsRefinerCreator::keyname() const {
+	return "RotamerTrialsRefiner";
+}
 
 RotamerTrialsRefiner::RotamerTrialsRefiner() {
 	using core::pack::task::TaskFactory;

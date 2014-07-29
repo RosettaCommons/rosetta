@@ -19,6 +19,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loop_modeling/LoopMover.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -35,6 +36,7 @@ using protocols::loops::Loops;
 using utility::vector1;
 
 typedef vector1<Size> IndexList;
+typedef vector1<LoopMoverOP> LoopMovers;
 
 }
 }

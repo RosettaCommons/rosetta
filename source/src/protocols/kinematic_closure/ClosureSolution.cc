@@ -136,7 +136,7 @@ bool ClosureSolution::check_rama( // {{{1
 		Real new_score = rama.eval_rama_score_residue(type, new_phi, new_psi);
 
 		// If we get the maximum possible rama score, bail out immediately.
-		if (new_score >= 20.0) return false;
+		if (new_score >= 20.0) { return false; }
 
 		Real old_phi = degrees(problem_->unperturbed_torsions_[ca - 1]);
 		Real old_psi = degrees(problem_->unperturbed_torsions_[ca]);
@@ -149,7 +149,7 @@ bool ClosureSolution::check_rama( // {{{1
 		if (new_score > old_score) {
 			Real const difference = old_score - new_score;
 			Real const probability = exp(difference / temperature);
-			if (uniform() >= probability) return false;
+			if (uniform() >= probability) { return false; }
 		}
 	}
 
@@ -211,7 +211,7 @@ bool ClosureSolution::check_overlap(
 					Real const bump_cutoff_sq = scale_factor * bump_cutoff * bump_cutoff;
 					Real const bump_distance_sq = (atom_i - atom_j).length_squared();
 
-					if (bump_distance_sq < bump_cutoff_sq) return false;
+					if (bump_distance_sq < bump_cutoff_sq) { return false; }
 				}
 			}
 		}

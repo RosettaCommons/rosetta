@@ -165,6 +165,10 @@ sources = {
 		"LoopsUtil",
 	],
 
+    "loop_modeling" : [
+        "LoopModelerTests",
+    ],
+
 	"make_rot_lib" : [
 		"MakeRotLib",
 	],
@@ -422,6 +426,7 @@ testinputfiles = [
 	"ligand_docking/ZNx.params",
 	"loops/2GB3.pdb",
 	"loops/4DZM.pdb",
+    "loop_modeling/inputs/loop.txt",
 	"make_rot_lib/all_dist_rotamers.txt",
 	"make_rot_lib/calc_centroids.txt",
 	"make_rot_lib/cluster_rotamers.txt",

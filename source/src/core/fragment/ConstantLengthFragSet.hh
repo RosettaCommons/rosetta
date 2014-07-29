@@ -12,6 +12,7 @@
 /// @brief  yields a simple implementation of a fragset
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
+/// @author Roland A. Pache, PhD
 ///
 
 #ifndef INCLUDED_core_fragment_ConstantLengthFragSet_HH
@@ -117,7 +118,19 @@ public:
 		core::Size , //min_length not used
 		FrameList &frames
 	) const;
+    
+    ///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+    ///(also allows those frames that start before the region and reach into it)
+    Size overlapping_with_region(
+        kinematics::MoveMap const& mm,
+        core::Size start,
+        core::Size end,
+        core::Size min_overlap,
+        core::Size min_length,
+        FrameList &frames
+    ) const;
 
+    
 // 	/// @brief Accessor for the Frames at the specified insertion position. Returns 0=false if
 // 	/// there is no frame at the specified position.
 // 	virtual Size frames(

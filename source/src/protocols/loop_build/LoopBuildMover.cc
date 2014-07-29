@@ -152,7 +152,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 	if ( ! basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
 
 			// if closure failed don't output
-			if ( remodel == "perturb_kic" ) {
+			if ( remodel == "perturb_kic" || remodel == "perturb_kic_refactor" || remodel == "perturb_kic_with_fragments") {
 				set_last_move_status( loop_relax_mover_.get_last_move_status() );
 				if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) {
 					TR << "Initial kinematic closure failed. Not outputting."
@@ -167,6 +167,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 						core::Real rebuild_looprms=0.0;
 						getPoseExtraScores( pose, "rebuild_looprms", rebuild_looprms );
 						job->add_string_real_pair("loop_rebuildrms ",rebuild_looprms );
+                        // mirror to tracer
 						TR << "loop_rebuildrms: " << rebuild_looprms << std::endl;
 					}
 
@@ -208,9 +209,8 @@ void LoopBuildMover::setup_loop_definition()
 {
 	using namespace basic::resource_manager;
   // load loopfile
-	if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) )
-	{
-		throw utility::excn::EXCN_Msg_Exception( "AHH IT'S THE END OF DAYS. RUN FOR YOUR LIVES" );
+	if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "No loop file specified." );
 	}
 	protocols::loops::LoopsFileDataOP loops_from_file = get_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
 	loop_relax_mover_.loops_file_data( *loops_from_file );

@@ -16,7 +16,7 @@
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
@@ -24,6 +24,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
+#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <boost/utility.hpp>
 
@@ -158,16 +159,38 @@ protected:
 	/// child classes.
 	virtual bool do_apply(Pose & pose, Loop const & loop);
 
+	/// @brief Disable all the LoopMover score function related methods.
+	/// @details This is useful in LoopMover subclasses like LoopModeler that 
+	/// don't fit the "one score function" paradigm.  When score function 
+	/// management is disabled, the get_score_function() and set_score_function() 
+	/// methods print a warning to the tracer and not do anything else.  Nested 
+	/// loop movers will need to be manually given score functions.
+	void dont_manage_score_function();
+
 	/// @brief Indicate that the given loop mover is used within do_apply().
 	/// @details Once registered, the nested mover will be always be configured 
 	/// with the same loops, the same score function, and the same fold tree as 
 	/// this loop mover.  Fold tree requests made by nested movers will be taken 
 	/// into account by the parent.  This synchronization is entirely managed by 
 	/// LoopMover, so subclasses don't need to do anything special.
-	void register_nested_loop_mover(LoopMoverOP mover);
+	template <class LoopMoverSubclassOP>
+	LoopMoverSubclassOP register_nested_loop_mover(LoopMoverSubclassOP mover) {
+		mover->trust_fold_tree();
+		mover->set_loops(loops_);
+		mover->set_score_function(score_function_);
+		nested_movers_.push_back(mover);
+		return mover;
+	}
+
+	/// @brief Drop association with any currently registered loop movers.
+	void deregister_nested_loop_movers();
+
+	/// @brief Return a reference to the list of nested loop movers.
+	vector1<LoopMoverOP> const & get_nested_loop_movers() const;
 
 private:
 	bool trust_fold_tree_;
+	bool manage_score_function_;
 	bool was_successful_;
 
 	Loops loops_;

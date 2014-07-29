@@ -19,4 +19,7 @@
 source/Makefile  
 source/xcode/Rosetta.xcodeproj/project.pbxproj
 source/xcode/DerivedData/
+source/ide/RosettaMini.xcodeproj/
+source/ide/RosettaMini.xcodeproj/project.xcworkspace/
+source/ide/RosettaMini.xcodeproj/xcuserdata/
 tests/sfxn_fingerprint/new/

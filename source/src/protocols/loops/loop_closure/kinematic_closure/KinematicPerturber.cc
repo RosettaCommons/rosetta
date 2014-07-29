@@ -13,7 +13,7 @@
 /// @author Rhiju Das, rhiju@stanford.edu, 2011 -- options of cis/trans prolines, and turn off ca bond geometry variation.
 /// @author Amelie Stein, amelie.stein@ucsf.edu, Oct 2012 -- vicinity sampling refactoring & new perturbers
 
-//Unit headers
+// Unit headers
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 
 // Project headers
@@ -36,23 +36,24 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-// numeric headers
+// Numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 #include <numeric/conversions.hh>
 
-// option key includes
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-
 // Utility headers
 #include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace loops {
 namespace loop_closure {
 namespace kinematic_closure {
+
+using namespace std;
+using core::Size;
+using core::Real;
 
 static numeric::random::RandomGenerator RG(43134);
 static basic::Tracer TR("protocols.loops.loop_closure.kinematic_closure.KinematicPerturber");
@@ -387,8 +388,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				const core::id::AtomID atomid_N (1, res);
 				const core::id::AtomID atomid_CA(2, res);
 
-				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
-							 numeric::conversions::radians(180 - bond_len[atom]));
+				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ), bond_len[atom]);
 			}
 			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
 		}
@@ -401,8 +401,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				const core::id::AtomID atomid_CA(2, res);
 				const core::id::AtomID atomid_C (3, res);
 
-				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
-							 numeric::conversions::radians(180 - bond_len[atom]));
+				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ), bond_len[atom]);
 			}
 			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
 		}
@@ -417,7 +416,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 				core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
 				if (pose.has_dof(dof_of_interest)) {
-					pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+					pose.set_dof(dof_of_interest, bond_len[atom]);
 				}
 			}
 			atom += kinmover()->count_bb_atoms_in_residue(pose, res);

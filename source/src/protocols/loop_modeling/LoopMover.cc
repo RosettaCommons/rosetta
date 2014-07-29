@@ -14,15 +14,15 @@
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Protocol headers
 #include <protocols/loops/loops_main.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+#include <basic/Tracer.hh>
 #include <boost/foreach.hpp>
+#include <utility/exit.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -32,8 +32,11 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using core::kinematics::FoldTree;
 
+static basic::Tracer TR("protocols.loop_modeling.LoopMover");
+
 LoopMover::LoopMover()  // {{{1
 	: trust_fold_tree_(false),
+		manage_score_function_(true),
 		was_successful_(false),
 		score_function_(NULL)
 	{}
@@ -97,10 +100,18 @@ Loops LoopMover::get_loops() const { // {{{1
 }
 
 ScoreFunctionCOP LoopMover::get_score_function() const { // {{{1
+	if (! manage_score_function_) {
+		TR.Warning << "get_score_function() being called on LoopMover which doesn't support it." << endl;
+		return NULL;
+	}
 	return score_function_;
 }
 
 ScoreFunctionOP LoopMover::get_score_function() { // {{{1
+	if (! manage_score_function_) {
+		TR.Warning << "get_score_function() being called on LoopMover which doesn't support it." << endl;
+		return NULL;
+	}
 	return score_function_;
 }
 
@@ -118,6 +129,11 @@ void LoopMover::set_loop(Loop const & loop) { // {{{1
 }
 
 void LoopMover::set_score_function(ScoreFunctionOP function) { // {{{1
+	if (! manage_score_function_) {
+		TR.Warning << "set_score_function() being called on LoopMover which doesn't support it." << endl;
+		return;
+	}
+
 	score_function_ = function;
 	BOOST_FOREACH (LoopMoverOP mover, nested_movers_) {
 		mover->set_score_function(function);
@@ -161,12 +177,16 @@ void LoopMover::setup_fold_tree( // {{{1
 	protocols::loops::add_cutpoint_variants(pose);
 }
 
-void LoopMover::register_nested_loop_mover(LoopMoverOP mover) { // {{{1
-	mover->trust_fold_tree();
-	mover->set_loops(loops_);
-	mover->set_score_function(score_function_);
+void LoopMover::dont_manage_score_function() { // {{{1
+	manage_score_function_ = false;
+}
 
-	nested_movers_.push_back(mover);
+void LoopMover::deregister_nested_loop_movers() { // {{{1
+	nested_movers_.clear();
+}
+
+vector1<LoopMoverOP> const & LoopMover::get_nested_loop_movers() const { // {{{1
+	return nested_movers_;
 }
 // }}}1
 

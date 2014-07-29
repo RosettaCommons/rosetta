@@ -11,6 +11,7 @@
 #include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/internal.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
+#include <protocols/kinematic_closure/KicMoverCreator.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
@@ -26,8 +27,13 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+// Basic headers
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 // Protocol headers
 #include <protocols/loops/Loop.hh>
+#include <protocols/moves/Mover.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -38,10 +44,21 @@ namespace protocols {
 namespace kinematic_closure {
 
 using namespace std;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 using protocols::kinematic_closure::pivot_pickers::PivotPickerOP;
 using protocols::kinematic_closure::solution_pickers::SolutionPickerOP;
 using protocols::loop_modeling::FoldTreeRequest;
 using protocols::loop_modeling::FTR_LOOPS_WITH_CUTS;
+
+protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
+	return new KicMover;
+}
+
+std::string KicMoverCreator::keyname() const { // {{{1
+	return "KicMover";
+}
+// }}}1
 
 KicMover::KicMover() { // {{{1
 	perturbers_ = new perturbers::PerturberSet;
@@ -60,11 +77,12 @@ bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	problem->frame(pose, loop, pivot_picker_);
 
 	bool problem_solved = false;
+	Size const max_attempts = option[OptionKeys::loops::max_kic_perturber_samples]();
 
-	// Make 2000 attempts to find a closure solution which passes which passes
-	// both rama and bump checks.  If no solution is found by then, give up.
+	// Attempt to find a closure solution which passes both rama and bump checks.  
+	// If no solution is found, give up.
 
-	for (Size i = 1; i <= 500 && ! problem_solved; i++) {
+	for (Size i = 1; i <= max_attempts and not problem_solved; i++) {
 		perturbers_->perturb(pose, problem);
 		SolutionList solutions = problem->solve();
 		problem_solved = solution_picker_->pick_and_apply(pose, solutions);
@@ -92,6 +110,10 @@ solution_pickers::SolutionPickerOP KicMover::get_solution_picker() { // {{{1
 
 void KicMover::add_perturber(perturbers::PerturberOP perturber) {
 	perturbers_->add(perturber);
+}
+
+void KicMover::clear_perturbers() { // {{{1
+	perturbers_->clear();
 }
 
 void KicMover::set_pivot_picker(PivotPickerOP picker) { // {{{1

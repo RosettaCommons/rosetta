@@ -48,6 +48,8 @@
 #include <boost/foreach.hpp>
 #include <iostream>
 
+#define foreach BOOST_FOREACH
+
 using namespace std;
 
 namespace protocols {
@@ -199,6 +201,18 @@ void ClosureProblem::perturb_ca_c(Size residue, Real value) { // {{{1
 void ClosureProblem::perturb_c_n(Size residue, Real value) { // {{{1
 	Size loop_residue = residue - first_residue() + 1;
 	perturbed_lengths_[3 * loop_residue + 0] = value;
+}
+
+ParameterList & ClosureProblem::perturb_torsions() { // {{{1
+	return perturbed_torsions_;
+}
+
+ParameterList & ClosureProblem::perturb_angles() { // {{{1
+	return perturbed_angles_;
+}
+
+ParameterList & ClosureProblem::perturb_lengths() { // {{{1
+	return perturbed_lengths_;
 }
 
 ClosureProblem::Memento::Memento(ClosureProblemOP problem) // {{{1
@@ -445,19 +459,41 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 		ParameterList const & torsion_angles,
 		Pose & pose) const {
 
+	// This function is complicated by the fact that the inputs (bond_lengths, 
+	// bond_angles, and torsion_angles) contain values which need to be ignored.  
+	// The bridge_objects() method accepts internal and cartesian coordinates for 
+	// every backbone atom within one residue of the loop.  Only the cartesian 
+	// coordinates are used for atoms outside the loop, and only the internal 
+	// coordinates are used for atoms inside the loop.  Internal coordinates for 
+	// atoms outside the loop are ignored, but are still copied into the matrices 
+	// that get returned and subsequently passed to this method.  The punchline 
+	// is that the internal coordinates for atoms outside the loop passed to this 
+	// function may not agree with the cartesian coordinates that were actually 
+	// used to solve the closure problem, and need to be ignored.
+	//
+	// This problem is triggered by the IdealizePerturber, which sets an omega 
+	// and some bond angles for atoms before the loop.  All these inputs are 
+	// ignored by bridge_objects(), but passed through to this method.  Applying 
+	// them results in a chain break.
+	//
+	// In my view, this is really a problem with bridge_objects() and the fact 
+	// that it requires redundant data.  However, bridge_objects() is a hairy 
+	// function that I'm already refactoring in another branch, so it's not worth 
+	// meddling with here.  Instead, I carefully chose indices for all the loops 
+	// in this function that avoid the bogus dofs.  I could have also made 
+	// changes to perturb_phi() and its brethren so that the bogus dofs couldn't 
+	// be set in the first place, but this seemed like a more robust approach.
+
 	using core::conformation::Conformation;
 	using core::id::AtomID;
 
 	Conformation & conformation = pose.conformation();
 	AtomID ids[4];
 
-	Size num_bond_lengths = num_atoms() - 1;
-	Size num_bond_angles = num_atoms() - 2;
-	Size num_torsion_angles = num_atoms() - 3;
+	// Set the bond lengths in the solution pose.  Note that in bond_lengths, 
+	// index x refers to the distance between atoms x and x+1.
 
-	// Set the bond lengths in the solution pose.
-
-	for (Size index = 1; index <= num_bond_lengths; index++) {
+	for (Size index = 5; index <= num_atoms() - 3; index++) {
 		ids[0] = id_from_index(index + 0);
 		ids[1] = id_from_index(index + 1);
 
@@ -468,26 +504,26 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	// Set the bond angles in the solution pose.  Note that in bond_angles, index
 	// x refers to the angle between atoms x-1 and x+1.
 
-	for (Size index = 1; index <= num_bond_angles; index++) {
-		ids[0] = id_from_index(index + 0);
-		ids[1] = id_from_index(index + 1);
-		ids[2] = id_from_index(index + 2);
+	for (Size index = 5; index <= num_atoms() - 3; index++) {
+		ids[0] = id_from_index(index - 1);
+		ids[1] = id_from_index(index + 0);
+		ids[2] = id_from_index(index + 1);
 
 		conformation.set_bond_angle(
-				ids[0], ids[1], ids[2], bond_angles[index + 1]);
+				ids[0], ids[1], ids[2], bond_angles[index]);
 	}
 
 	// Set the torsion angles in the solution pose.  Note that in torsion_angles,
 	// index x refers to the angle between atoms x-1 and x+2.
 
-	for (Size index = 1; index <= num_torsion_angles; index++) {
-		ids[0] = id_from_index(index + 0);
-		ids[1] = id_from_index(index + 1);
-		ids[2] = id_from_index(index + 2);
-		ids[3] = id_from_index(index + 3);
-
-		conformation.set_torsion_angle(                                //quiet
-					ids[0], ids[1], ids[2], ids[3], torsion_angles[index + 1], true);
+	for (Size index = 4; index <= num_atoms() - 4; index++) {
+		ids[0] = id_from_index(index - 1);
+		ids[1] = id_from_index(index + 0);
+		ids[2] = id_from_index(index + 1);
+		ids[3] = id_from_index(index + 2);
+		
+		conformation.set_torsion_angle(                            //quiet
+					ids[0], ids[1], ids[2], ids[3], torsion_angles[index], true);
 	}
 }
 

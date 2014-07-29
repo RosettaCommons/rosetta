@@ -142,6 +142,11 @@ MinMover::min_options() const {
 }
 
 void
+MinMover::min_options( MinimizerOptionsOP min_options) {
+	min_options_ = min_options;
+}
+
+void
 MinMover::movemap( MoveMapCOP movemap_in )
 {
 	runtime_assert( movemap_in );

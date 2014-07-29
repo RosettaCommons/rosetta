@@ -12,6 +12,7 @@
 /// @brief  set of fragments
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
+/// @author Roland A. Pache, PhD
 ///
 
 #ifndef INCLUDED_core_fragment_FragSet_HH
@@ -122,6 +123,17 @@ public:
 		core::Size min_length,
 		FrameList &frames
 	) const = 0;
+    
+    ///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+    ///(also allows those frames that start before the region and reach into it)
+    virtual Size overlapping_with_region(
+        kinematics::MoveMap const& mm,
+        core::Size start,
+        core::Size end,
+        core::Size min_overlap,
+        core::Size min_length,
+        FrameList &frames
+    ) const;
 
 	///@brief InsertMap and InsertSize gives quick overview which residues can be affected by fragments.
 	/// insert_map --- list of start-positions, insert_size corresponding list of longest fragment at position x

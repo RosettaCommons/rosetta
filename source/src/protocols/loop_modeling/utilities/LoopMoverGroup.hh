@@ -47,6 +47,16 @@ public:
 	/// @brief Add a filter to this group.
 	void add_filter(protocols::filters::FilterOP filter);
 
+	/// @brief Add a nested group to this group.
+	LoopMoverGroupOP add_mover_group();
+
+	/// @brief Remove all movers and filters from this group.
+	void clear();
+
+	/// @brief Indicate that the current set of movers in this group is meant as 
+	/// some sort of default, and should be cleared when a new mover is added.
+	void mark_as_default();
+
 	/// @brief Return true if no movers are contained in this group.
 	bool empty() const;
 
@@ -57,7 +67,7 @@ protected:
 	bool do_apply(Pose & pose);
 
 private:
-	utility::vector1<LoopMoverOP> children_;
+	bool is_default_;
 
 };
 

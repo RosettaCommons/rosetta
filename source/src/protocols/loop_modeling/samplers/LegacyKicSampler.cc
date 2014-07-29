@@ -9,6 +9,7 @@
 
 // Unit headers
 #include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
+#include <protocols/loop_modeling/samplers/LegacyKicSamplerCreator.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -33,13 +34,20 @@ using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 
-LegacyKicSampler::LegacyKicSampler() { // {{{1
+protocols::moves::MoverOP LegacyKicSamplerCreator::create_mover() const {
+	return new LegacyKicSampler;
+}
+
+std::string LegacyKicSamplerCreator::keyname() const {
+	return "LegacyKicSampler";
+}
+
+LegacyKicSampler::LegacyKicSampler() {
 
 	mover_ = new KinematicMover();
 	TorsionSamplingKinematicPerturberOP perturber =
 		new TorsionSamplingKinematicPerturber(mover_.get());
 
-	//perturber->set_max_sample_iterations(1);
 	mover_->set_perturber(perturber);
 }
 
@@ -48,12 +56,12 @@ bool LegacyKicSampler::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	Size pivot_3 = loop.stop();
 	Size pivot_2 = pivot_1 + (pivot_3 - pivot_1) / 2;
 
+	// This function doesn't actually set the pivots.  It sets the loop.
 	mover_->set_pivots(pivot_1, pivot_2, pivot_3);
 	mover_->apply(pose);
 
 	return true;
 }
-// }}}1
 
 }
 }

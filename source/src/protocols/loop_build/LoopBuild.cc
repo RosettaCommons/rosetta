@@ -12,6 +12,7 @@
 /// @author James Thompson
 /// @author Mike Tyka
 /// @author Daniel J. Mandell
+/// @author Roland A. Pache, PhD
 
 //unit headers
 #include <protocols/loop_build/LoopBuild.hh>
@@ -99,19 +100,9 @@ LoopBuild_main( bool  ) {
 
 
 	// fragment initialization
-	// is there any way to clean this up? This logic is very convoluted.
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
-	if ( remodel == "perturb_ccd" || remodel == "quick_ccd" ||
-			remodel == "quick_ccd_moves" || remodel == "old_loop_relax" ||
-			remodel == "sdwindow" ||
-			option[ OptionKeys::loops::build_initial ].value() ||
-	   	( option[ OptionKeys::loops::frag_files ].user()
-	      	&& (refine == "refine_ccd" || intermedrelax != "no" || relax != "no")
-			)
-	) {
-		// these protocols optionally take a fragment set .. only load if
-		// specified
-		loops::read_loop_fragments( frag_libs );
+	if ( option[ OptionKeys::loops::frag_files ].user()) {
+        loops::read_loop_fragments( frag_libs );
 	}
 
 	//setup of looprelax_mover

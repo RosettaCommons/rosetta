@@ -7,24 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_loop_modeling_refiners_LocalMinimizationRefiner_FWD_HH
-#define INCLUDED_protocols_loop_modeling_refiners_LocalMinimizationRefiner_FWD_HH
+#ifndef INCLUDED_protocols_loop_modeling_LoopBuilderCreator_HH
+#define INCLUDED_protocols_loop_modeling_LoopBuilderCreator_HH
 
-#include <utility/pointer/owning_ptr.hh>
+#include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace loop_modeling {
-namespace refiners {
 
-class LocalMinimizationRefiner;
-using utility::pointer::owning_ptr;
+class LoopBuilderCreator : public protocols::moves::MoverCreator {
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+};
 
-typedef owning_ptr<LocalMinimizationRefiner> LocalMinimizationRefinerOP;
-typedef owning_ptr<LocalMinimizationRefiner const> LocalMinimizationRefinerCOP;
-
-}
 }
 }
 
 #endif
-

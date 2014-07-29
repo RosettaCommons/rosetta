@@ -23,12 +23,15 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
 // Utility headers
+#include <basic/datacache/DataMap.fwd.hh>
 #include <boost/utility.hpp>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -75,6 +78,15 @@ protected:
 	/// conformations for the given loops.
 	bool do_apply(Pose & pose);
 
+public:
+
+	void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap & data,
+			protocols::filters::Filters_map const & filters,
+			protocols::moves::Movers_map const & movers,
+			Pose const & pose);
+
 private:
 
 	/// @brief Setup the aspects of the simulation like the loop movers, the 
@@ -103,6 +115,50 @@ public:
 	/// @details Loop movers will be applied in the order they're added.
 	void add_mover(LoopMoverOP mover);
 
+	/// @brief Add a LoopMover to the simulation as a refiner.
+	/// @details This method is very similar to add_mover().  Both methods add a 
+	/// new LoopMover to the simulation.  This difference is subtle, but relevant 
+	/// when a LoopProtocol is being filled with a default set of movers that 
+	/// might be modified later. 
+	/// 
+	/// This situation arises when a LoopModeler object is being constructed, or 
+	/// when a <LoopModeler> tag is being parsed by rosetta scripts.  In both of 
+	/// these cases, centroid and fullatom LoopProtocols are created right away 
+	/// and filled with default movers.  This avoids the necessity of specifying 
+	/// all the usual movers every time loop modeling is invoked.  But the 
+	/// default movers may be subsequently overridden.  In this case, there is a 
+	/// difference between LoopMovers added via add_mover() (i.e. movers) and 
+	/// add_refiner() (i.e. refiners).
+	///
+	/// The difference is that movers can be marked as "default" and then be 
+	/// implicitly overridden.  Consider the following sequence of calls:
+	///
+	///     protocol->add_mover(new CcdMover);
+	///     protocol->mark_as_default();
+	///     protocol->add_mover(new KicMover);
+	///
+	/// This will result in a LoopProtocol containing only a KicMover.  When 
+	/// mark_as_default() is called, all movers within the protocol are set to be 
+	/// replaced the next time add_mover() is called.  You can think of those 
+	/// movers as being part of a default configuration that should be replaced 
+	/// when a new configuration is given.
+	///
+	/// Refiners are not affected by mark_as_default().  Calling add_refiner() 
+	/// will always add a refiner and will never remove old ones, although old 
+	/// refiners can be explicitly removed with clear_refiners().  Refiners are 
+	/// also applied after movers, regardless of the order in which add_mover() 
+	/// and add_refiner() were called.  The purpose of all this is to make it 
+	/// easy to replace the parts of a LoopProtocol that are more variable 
+	/// without having to also replace those that are more static.
+	///
+	/// The variable part of a LoopProtocol is typically the sampling algorithm: 
+	/// KIC or CCD, often with myriad options.  The static part is typically the 
+	/// refinement algorithm: minimization, rotamer trials, and repacking, all 
+	/// with carefully tuned parameters.  Using add_mover(), mark_as_default(), 
+	/// and add_refiner() makes it easy to change the sampling algorithm without 
+	/// having to worry about the refinement algorithm.
+	void add_refiner(LoopMoverOP refiner);
+
 	/// @brief Add a Filter to the simulation.
 	void add_filter(protocols::filters::FilterOP filter);
 
@@ -110,7 +166,7 @@ public:
 	/// @details An acceptance check is always performed after all the loop 
 	/// movers have been applied, unless one of the movers failed.  This method 
 	/// allows additional acceptance checks to be included in the protocol by 
-	/// added a loop mover that does nothing but make that check.
+	/// adding a loop mover that does nothing but make that check.
 	void add_acceptance_check(string name="loop_move");
 
 	/// @brief Add a logger to this simulation.
@@ -120,38 +176,66 @@ public:
 	/// logging output.
 	void add_logger(loggers::LoggerOP logger);
 
-	/// @brief Set the number of iterations to use in this simulation.
-	/// @details The simulation consists of three nested loops, so the given 
-	/// list must contain three values.
-	void set_iterations(IndexList values);
+	void clear_movers();
 
-	/// @brief Set the number of iterations to use in this simulation.
-	void set_iterations(Size i, Size j, Size k);
+	void clear_refiners();
+
+	void clear_movers_and_refiners();
+
+	void mark_as_default();
+
+	/// @brief Specify how many times the loop that ramps the score function 
+	/// should iterate.
+	/// @details The score function loop is the outermost loop.  It contains the 
+	/// temperature loop and the mover loop.
+	void set_sfxn_cycles(Size x);
+
+	/// @brief Specify how many times the loop that ramps the temperature should 
+	/// iterate.
+	/// @details The temperature loop is contained by the score function loop.  
+	/// It contains the mover loop.
+	void set_temp_cycles(Size x, bool times_loop_length=false);
+
+	/// @brief Specify how many times the loops movers should be invoked after 
+	/// the score function and temperature have been updated.
+	/// @details The mover loop is the innermost loop.  It is contained by the 
+	/// score function loop and the temperature loop.
+	void set_mover_cycles(Size x);
 
 	/// @brief Set the initial and final temperatures for the simulation.
 	/// @details The temperature will be linearly interpolated between these 
 	/// values during the simulation.
-	void set_temperature_schedule(Real initial, Real final);
+	void set_temperature_schedule(Real start, Real stop);
 
 	/// @brief Enable or disable temperature ramping in this simulation.
 	void set_temperature_ramping(bool value);
 
-	/// @brief Enable or disable score function ramping in this simulation.
-	void set_score_function_ramping(bool value);
+	/// @brief Enable or disable ramping the repulsive term of the score 
+	/// function.
+	void set_repulsive_term_ramping(bool value);
+
+	/// @brief Enable or disable ramping the repulsive term of the score 
+	/// function.
+	void set_rama_term_ramping(bool value);
 
 private:
-	utilities::LoopMoverGroupOP movers_;
+	utilities::LoopMoverGroupOP protocol_;
+	utilities::LoopMoverGroupOP movers_, refiners_;
 	protocols::moves::MonteCarloOP monte_carlo_;
 	core::kinematics::FoldTree original_tree_;
-	IndexList iterations_;
 	loggers::LoggerList loggers_;
 
-	bool ramp_score_function_;
-	bool ramp_temperature_;
+	Size sfxn_cycles_;
+	Size temp_cycles_;
+	Size mover_cycles_;
 
-	Real initial_temperature_;
-	Real final_temperature_;
-	Real temperature_scale_factor_;
+	bool ramp_sfxn_rep_;
+	bool ramp_sfxn_rama_;
+	bool ramp_temp_;
+	bool scale_temp_cycles_;
+
+	Real initial_temp_;
+	Real final_temp_;
 };
 
 }

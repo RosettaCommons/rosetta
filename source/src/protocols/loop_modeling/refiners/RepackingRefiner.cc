@@ -9,6 +9,7 @@
 
 // Unit headers
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
+#include <protocols/loop_modeling/refiners/RepackingRefinerCreator.hh>
 
 // Core headers
 #include <core/pack/pack_rotamers.hh>
@@ -36,6 +37,14 @@ using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
+
+protocols::moves::MoverOP RepackingRefinerCreator::create_mover() const {
+	return new RepackingRefiner;
+}
+
+std::string RepackingRefinerCreator::keyname() const {
+	return "RepackingRefiner";
+}
 
 RepackingRefiner::RepackingRefiner() {
 	using core::pack::task::TaskFactory;

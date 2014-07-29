@@ -92,6 +92,9 @@ public:
 	/// @brief Specify how the non-pivot torsions should be sampled.
 	void add_perturber(perturbers::PerturberOP perturber);
 
+	/// @brief Forget any perturbers that had been previously added.
+	void clear_perturbers();
+
 	/// @brief Specify how the pivot residues should be chosen.
 	void set_pivot_picker(pivot_pickers::PivotPickerOP picker);
 

@@ -7,6 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @author Kale Kundert
+
 #ifndef INCLUDED_protocols_loop_modeling_LoopBuilder_FWD_HH
 #define INCLUDED_protocols_loop_modeling_LoopBuilder_FWD_HH
 

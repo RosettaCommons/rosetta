@@ -20,7 +20,7 @@
 #include <core/fragment/FrameList.fwd.hh>
 
 // Package Headers
-#include <core/fragment/Frame.fwd.hh>
+#include <core/fragment/Frame.hh>
 // AUTO-REMOVED #include <core/fragment/FragID.hh>
 
 // Utility headers
