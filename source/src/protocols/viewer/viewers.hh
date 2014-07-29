@@ -80,10 +80,10 @@ void
 add_conformation_viewer(
 	core::conformation::Conformation &,
 	std::string const = empty_string,
-	int const length = 900,
-	int const width = 900,
-	bool const debug_pause = false,
-	bool const set_center_vector = false,
+	int const = 900,
+	int const = 900,
+	bool const  = false,
+	bool const  = false,
 	core::Vector const = core::Vector( 0.0 ) ){
 }
 
