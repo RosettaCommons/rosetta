@@ -24,10 +24,11 @@
 #include <core/io/rna/RNA_DataReader.cc> // temporary, for scoring RNA chemical mapping data. Move into core?
 #include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/file_util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -63,6 +64,7 @@ using utility::vector1;
 
 static basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 stepwise_monte_carlo()
@@ -72,7 +74,7 @@ stepwise_monte_carlo()
   using namespace core::chemical;
   using namespace core::pose::full_model_info;
   using namespace protocols::stepwise;
-  using namespace protocols::stepwise::sampling;
+  using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::full_model_info;
   using namespace protocols::stepwise::monte_carlo;
   using namespace utility::file;
@@ -87,10 +89,7 @@ stepwise_monte_carlo()
 	else  scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 
 	PoseOP native_pose, align_pose;
-	if ( option[ in::file::native ].user() )  {
-		align_pose = native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
-	}
-	if ( option[ OptionKeys::stepwise::align_pdb ].user() )	align_pose = get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
+	initialize_native_and_align_pose( native_pose, align_pose, rsd_set );
 
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
@@ -102,10 +101,10 @@ stepwise_monte_carlo()
 	// actual pose to be sampled...
 	if ( pose.total_residue() > 0 ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
-	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, center_vector );
+protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
 
 	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
-	StepWiseMonteCarloOptionsOP options = new StepWiseMonteCarloOptions;
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options = new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions;
 	bool const just_preminimize = option[ OptionKeys::stepwise::preminimize ]();
 	bool const test_move = option[ OptionKeys::stepwise::move ].user() || just_preminimize;
 	if ( test_move ) options->set_output_minimized_pose_list( true );
@@ -135,7 +134,6 @@ stepwise_monte_carlo()
 
 	if ( just_preminimize ) pose.dump_pdb( "PREPACK.pdb" );
 }
-
 
 ///////////////////////////////////////////////////////////////
 void*
@@ -207,7 +205,6 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping.

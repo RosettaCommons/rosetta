@@ -62,7 +62,7 @@
 #include <protocols/farna/RNA_ChunkLibrary.hh>
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/stepwise/sampling/rna/helix/RNA_HelixAssembler.hh>
+#include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
 

@@ -1829,9 +1829,9 @@ void JumpSpecificAbrelax::fold() {
 					}
 					(*fullatom_scorefxn)( fold_pose );
 					if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {	//FastRelax adds another two columns, grr
-						relax::FastRelax::setPoseExtraScores( fold_pose );
+						relax::FastRelax::setPoseExtraScore( fold_pose );
 					} else {
-						relax::ClassicRelax().setPoseExtraScores( fold_pose ); // so we the same number of columns
+						relax::ClassicRelax().setPoseExtraScore( fold_pose ); // so we the same number of columns
 					}
 				}
 		} // if ( bRelax_ )
@@ -1904,9 +1904,9 @@ void JumpSpecificAbrelax::fold() {
 							if ( !it->is_fullatom() ) core::util::switch_to_residue_type_set( *it, chemical::FA_STANDARD );
 							(*fullatom_scorefxn)( *it );
 							if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {	//FastRelax adds another two columns, grr
-								relax::FastRelax::setPoseExtraScores(  *it );
+								relax::FastRelax::setPoseExtraScore(  *it );
 							} else {
-								relax::ClassicRelax().setPoseExtraScores( *it ); // so we the same number of columns
+								relax::ClassicRelax().setPoseExtraScore( *it ); // so we the same number of columns
 							}
 						}
 					}
@@ -1970,7 +1970,7 @@ bool JumpSpecificAbrelax::multi_fast_relax(
 		fast_relax.set_current_tag( string_of(curr_nstruct) + "_" + right_string_of(i,3,'0') );
 		fast_relax.apply( cpose );
 
-		core::pose::setPoseExtraScores( cpose, "extranumber", float(i) );
+		core::pose::setPoseExtraScore( cpose, "extranumber", float(i) );
 
 		Real scorevalue = (*scorefxn)(cpose);
 

@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/RNA_LegacyNativeRMSD_Screener.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 
@@ -23,7 +23,7 @@
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_LegacyNativeRMSD_Screener" );
 
-using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::modeler::rna;
 
 //////////////////////////////////////////////////////////////////////////
 // currently RNA-centric

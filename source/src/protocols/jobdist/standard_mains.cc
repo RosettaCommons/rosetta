@@ -393,7 +393,7 @@ int universal_main(
 				// SilentStruct
 				core::pose::Pose input_pose;
 				iter->fill_pose( input_pose, *rsd_set );
-				setPoseExtraScores( input_pose, "silent_score", iter->get_energy( "score" ) );
+				setPoseExtraScore( input_pose, "silent_score", iter->get_energy( "score" ) );
 
 				std::string user_tag( iter->get_comment( "user_tag" ) );
 	    	if ( user_tag == "" ) user_tag = iter->get_comment( "user_ta" );
@@ -453,10 +453,10 @@ int universal_main(
 				}
 
 		    // Statistics
-	      core::pose::setPoseExtraScores( *the_pose, "irms",  core::scoring::CA_rmsd( input_pose, *the_pose ) );
+	      core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( input_pose, *the_pose ) );
 	      if ( option[ in::file::native ].user() ){
-	        core::pose::setPoseExtraScores( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
-	        core::pose::setPoseExtraScores( *the_pose, "srms",  core::scoring::native_CA_rmsd( native_pose, input_pose ) );
+	        core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
+	        core::pose::setPoseExtraScore( *the_pose, "srms",  core::scoring::native_CA_rmsd( native_pose, input_pose ) );
 				}
 
 				if( ! option[ out::nooutput ]() ){
@@ -619,9 +619,9 @@ int universal_main(
 			}
 
 			// Statistics
-			core::pose::setPoseExtraScores( *the_pose, "irms",  core::scoring::CA_rmsd( *input_pose, *the_pose ) );
+			core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( *input_pose, *the_pose ) );
 			if ( option[ in::file::native ].user() )
-				core::pose::setPoseExtraScores( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
+				core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
 
 			// for now, output pdbs
 			if (!silent_output) {
@@ -863,10 +863,10 @@ int main_plain_pdb_mover(
 		/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( *the_pose );
 
 		// Statistics
-		core::pose::setPoseExtraScores( *the_pose, "irms",  core::scoring::CA_rmsd( *input_pose, *the_pose ) );
+		core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( *input_pose, *the_pose ) );
 
 		if ( option[ in::file::native ].user() )
-			core::pose::setPoseExtraScores( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
+			core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
 
 		// for now, output pdbs
 		if (!silent_output) {

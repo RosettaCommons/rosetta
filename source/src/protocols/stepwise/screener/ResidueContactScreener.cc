@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/ResidueContactScreener.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -42,7 +42,7 @@ namespace screener {
 	///////////////////////////////////////////////////////////
 	bool
 	ResidueContactScreener::check_screen(){
-		return sampling::rna::is_residues_in_contact( last_append_res_, screening_pose_,
+		return modeler::rna::is_residues_in_contact( last_append_res_, screening_pose_,
 																									 last_prepend_res_, screening_pose_,
 																									 atom_atom_overlap_dist_cutoff_, 1 /*num_atom_contacts_cutoff*/ );
 	}

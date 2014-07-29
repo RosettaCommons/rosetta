@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
-#include <protocols/stepwise/sampling/align/StepWisePoseAligner.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -41,10 +41,10 @@ namespace screener {
 		pass_count_( 0 ) // only incremented if do_screen true, and screen passes.
 	{
 		runtime_assert( moving_res_list_.size() > 0 );
-		pose_aligner_ = new sampling::align::StepWisePoseAligner( native_pose_ );
+		pose_aligner_ = new modeler::align::StepWisePoseAligner( native_pose_ );
 		pose_aligner_->set_user_defined_calc_rms_res( moving_res_list_ );
 		// this is extra -- I was originally doings checks of alignment based on RMSD screens.
-		//		pose_aligner_->set_root_partition_res( sampling::figure_out_root_partition_res( screening_pose_, moving_res_list ) );
+		//		pose_aligner_->set_root_partition_res( modeler::figure_out_root_partition_res( screening_pose_, moving_res_list ) );
 		pose_aligner_->initialize( screening_pose );
 	}
 

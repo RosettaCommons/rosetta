@@ -17,7 +17,7 @@
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -145,7 +145,7 @@ namespace mover {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	AddOrDeleteMover::set_options( StepWiseMonteCarloOptionsCOP options ){
+	AddOrDeleteMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
 		options_ = options;
 	}
 

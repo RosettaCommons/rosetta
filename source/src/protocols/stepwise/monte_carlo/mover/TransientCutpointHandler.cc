@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 
 #include <basic/Tracer.hh>
 

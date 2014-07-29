@@ -20,11 +20,11 @@
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -42,10 +42,10 @@
 #include <utility/file/file_sys_util.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 using namespace core;
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::monte_carlo::mover;
 using namespace protocols::stepwise::monte_carlo::rna;
 
@@ -55,7 +55,7 @@ using ObjexxFCL::lead_zero_string_of;
 
 //////////////////////////////////////////////////////////////////////////
 // StepWiseMonteCarlo -- monte carlo minimization framework for
-//  sampling RNA and moves that delete or add residues at chain termini.
+//  modeler RNA and moves that delete or add residues at chain termini.
 //
 // This is the master Mover.
 //
@@ -68,7 +68,7 @@ namespace monte_carlo {
 //Constructor
 StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn_input ):
 	scorefxn_input_( scorefxn_input ),
-	options_( new StepWiseMonteCarloOptions ), // can be replaced later
+	options_( new options::StepWiseMonteCarloOptions ), // can be replaced later
 	minimize_single_res_( false ), // changes during run
 	max_missing_weight_( scorefxn_input->get_weight( scoring::missing_res ) ), // for annealing
 	missing_weight_interval_( 0.0 ), // updated below
@@ -174,7 +174,7 @@ StepWiseMonteCarlo::initialize_scorefunction(){
 void
 StepWiseMonteCarlo::initialize_movers(){
 
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	stepwise_modeler_ = setup_unified_stepwise_modeler();
 	stepwise_modeler_->set_native_pose( get_native_pose() );
@@ -208,20 +208,20 @@ StepWiseMonteCarlo::initialize_movers(){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // used in all movers.
-sampling::StepWiseModelerOP
+modeler::StepWiseModelerOP
 StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
- 	using namespace sampling;
-	using namespace sampling::rna;
- 	using namespace sampling::protein;
+ 	using namespace modeler;
+	using namespace modeler::rna;
+ 	using namespace modeler::protein;
 
  	StepWiseModelerOP stepwise_modeler = new StepWiseModeler( scorefxn_ );
-	modeler_options::StepWiseModelerOptionsOP modeler_options = options_->setup_modeler_options();
+	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
 	if ( enumerate_ ) {
-		modeler_options->set_choose_random( false );
-		if ( options_->num_pose_minimize() == 0 ) modeler_options->set_num_pose_minimize( 0 );
+		options->set_choose_random( false );
+		if ( options_->num_pose_minimize() == 0 ) options->set_num_pose_minimize( 0 );
 	}
-	if ( just_preminimize_ ) modeler_options->set_use_packer_instead_of_rotamer_trials( true ); // for proteins.
-	stepwise_modeler->set_modeler_options( modeler_options );
+	if ( just_preminimize_ ) options->set_use_packer_instead_of_rotamer_trials( true ); // for proteins.
+	stepwise_modeler->set_options( options );
 
  	return stepwise_modeler;
  }
@@ -321,7 +321,7 @@ StepWiseMonteCarlo::set_minimize_single_res( bool const minimize_single_res ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseMonteCarlo::set_options( StepWiseMonteCarloOptionsCOP options ){
+StepWiseMonteCarlo::set_options( options::StepWiseMonteCarloOptionsCOP options ){
 	options_ = options;
 }
 

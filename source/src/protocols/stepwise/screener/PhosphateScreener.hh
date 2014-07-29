@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
 #include <protocols/stepwise/screener/PhosphateScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.fwd.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.fwd.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -29,7 +29,7 @@ namespace screener {
 	public:
 
 		//constructor
-		PhosphateScreener( sampling::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler );
+		PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler );
 
 		//destructor
 		~PhosphateScreener();
@@ -50,8 +50,8 @@ namespace screener {
 
 	private:
 
-		sampling::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
-		sampling::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_for_restoration_;
+		modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
+		modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_for_restoration_;
 
 	};
 

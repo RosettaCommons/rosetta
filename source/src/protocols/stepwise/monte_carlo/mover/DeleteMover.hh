@@ -23,8 +23,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.fwd.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.fwd.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -71,15 +71,15 @@ public:
 	void minimize_after_delete( core::pose::Pose & pose ) const;
 	void set_minimize_after_delete( bool const setting ){ minimize_after_delete_ = setting; }
 
-	void set_stepwise_modeler( protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler );
+	void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
 	void
-	set_options( StepWiseMonteCarloOptionsCOP options );
+	set_options( options::StepWiseMonteCarloOptionsCOP options );
 
 private:
 
-	protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler_;
-	StepWiseMonteCarloOptionsCOP options_;
+	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
+	options::StepWiseMonteCarloOptionsCOP options_;
 	bool minimize_after_delete_;
 	utility::vector1< Size > interface_res_;
 

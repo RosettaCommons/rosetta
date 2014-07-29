@@ -18,10 +18,10 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/BaseCentroidScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -32,12 +32,12 @@ namespace screener {
 	public:
 
 		//constructor
-		BaseCentroidScreener( sampling::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
+		BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 													core::pose::PoseOP screening_pose,
 													bool const force_centroid_interaction = true );
 
 		//constructor
-		BaseCentroidScreener( sampling::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
+		BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 													core::kinematics::Stub const & moving_res_base_stub );
 
 		//destructor
@@ -56,18 +56,18 @@ namespace screener {
 		check_screen();
 
 		void
-		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
 	private:
 
-		sampling::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
+		modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
 		core::pose::PoseOP screening_pose_;
 		bool const force_centroid_interaction_;
 
 		bool const using_stub_;
 		core::kinematics::Stub const & moving_res_base_stub_;
 
-		sampling::rna::StepWiseRNA_CountStruct count_data_;
+		modeler::rna::StepWiseRNA_CountStruct count_data_;
 
 	};
 

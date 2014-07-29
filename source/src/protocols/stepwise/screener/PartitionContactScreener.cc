@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/PartitionContactScreener.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -50,7 +50,7 @@ namespace screener {
 
 	//Constructor
 	PartitionContactScreener::PartitionContactScreener( pose::Pose const & pose,
-																											sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters,
+																											modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
 																											bool const use_loose_rep_cutoff ):
 		pose_( pose ),
 		moving_res_list_( working_parameters->working_moving_res_list() ),
@@ -59,7 +59,7 @@ namespace screener {
 		rep_cutoff_(  4.0 ), // 10.0 for proteins?
 		atr_cutoff_( -1.0 ), // -0.4 for proteins? [allow a single H-bond to count]
 		use_loose_rep_cutoff_( use_loose_rep_cutoff ),
-		close_chain_( sampling::figure_out_moving_cutpoints_closed_from_moving_res( pose, moving_res_list_ ).size() > 0 ),
+		close_chain_( modeler::figure_out_moving_cutpoints_closed_from_moving_res( pose, moving_res_list_ ).size() > 0 ),
 		actual_rep_cutoff_( rep_cutoff_ )
 	{
 		runtime_assert( moving_res_list_.size() > 0 );
@@ -122,7 +122,7 @@ namespace screener {
 		rep_ok = false;
 
 		utility::vector1< Size > root_partition_res, moving_partition_res;
-		sampling::figure_out_root_and_moving_partition_res( pose_, moving_res, root_partition_res, moving_partition_res );
+		modeler::figure_out_root_and_moving_partition_res( pose_, moving_res, root_partition_res, moving_partition_res );
 
 		EnergyMap emap;
 		//Distance const contact_dist( 4.0 );

@@ -195,13 +195,13 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	Real relaxed_score = (*sfxn_)( relax_sub_pose );
 	pose::Pose relaxed_pose = relax_sub_pose;
 
-	core::pose::setPoseExtraScores( pose, "nlf_rlx_rms", relaxed_rmsd );
-	core::pose::setPoseExtraScores( pose, "nlf_rlx", relaxed_score );
+	core::pose::setPoseExtraScore( pose, "nlf_rlx_rms", relaxed_rmsd );
+	core::pose::setPoseExtraScore( pose, "nlf_rlx", relaxed_score );
 
 	// DDG of relaxed fragment pair
 	protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, sfxn_, 1, 5);
 	Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
-	core::pose::setPoseExtraScores( pose, "nlf_ddg", relaxed_ddg_score );
+	core::pose::setPoseExtraScore( pose, "nlf_ddg", relaxed_ddg_score );
 
 	if ( has_rdc_ ) {
 		Size weight = 1;
@@ -237,8 +237,8 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 			core::scoring::store_RDC_in_pose( rdc_data_given_fragment, rdc_pose );
 			rdc_score = weight*rdc_data_given_fragment->compute_dipscore( rdc_pose );
 		}
-		core::pose::setPoseExtraScores( pose, "rdc", rdc_score );
-		core::pose::setPoseExtraScores( pose, "rdcs", rdc_data_given_fragment_lines.size() );
+		core::pose::setPoseExtraScore( pose, "rdc", rdc_score );
+		core::pose::setPoseExtraScore( pose, "rdcs", rdc_data_given_fragment_lines.size() );
 	}
 
 	// rmsd to native
@@ -275,8 +275,8 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 		// calculate rms of native to original pose
 		core::Real rms_orig_native = numeric::model_quality::rms_wrapper( natoms, p1a, p3a );
 		core::Real rms_relax_native = numeric::model_quality::rms_wrapper( natoms, p2a, p3a );
-		core::pose::setPoseExtraScores( pose, "rms", rms_orig_native );
-		core::pose::setPoseExtraScores( pose, "rms_rlx", rms_relax_native );
+		core::pose::setPoseExtraScore( pose, "rms", rms_orig_native );
+		core::pose::setPoseExtraScore( pose, "rms_rlx", rms_relax_native );
 	}
 }
 

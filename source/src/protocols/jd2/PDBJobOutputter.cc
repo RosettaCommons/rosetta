@@ -197,8 +197,8 @@ void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility
 
 
 ///@brief This function extracts the pose's extra data/scores and outputs them into the PDB
-///@details YOU are responsible for putting things into the pose's DataCache using core::pose::util::setPoseExtraScores().
-/// Both string_real and string_real pairs can be stored using setPoseExtraScores().
+///@details YOU are responsible for putting things into the pose's DataCache using core::pose::util::setPoseExtraScore().
+/// Both string_real and string_real pairs can be stored using setPoseExtraScore().
 void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 	core::pose::Pose const & pose,
 	utility::io::ozstream & out

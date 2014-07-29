@@ -87,14 +87,14 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_WorkingParametersSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseWorkingParametersUtil.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueSampler.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseWorkingParametersUtil.hh>
 
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
@@ -170,7 +170,7 @@ static numeric::random::RandomGenerator RG(2391121);  // <- Magic number, do not
 // and the SWA RNA pose setup should go to its own function
 OPT_KEY( Boolean, do_not_sample_multiple_virtual_sugar)
 OPT_KEY( Boolean, sample_ONLY_multiple_virtual_sugar)
-OPT_KEY( Boolean, skip_sampling)
+OPT_KEY( Boolean, skip_modeler)
 OPT_KEY( Boolean, skip_clustering)
 OPT_KEY( Boolean, minimize_and_score_native_pose)
 OPT_KEY( Integer, num_pose_minimize)
@@ -181,7 +181,7 @@ OPT_KEY( Boolean, filter_for_previous_contact)
 OPT_KEY( Boolean, filter_for_previous_clash)
 OPT_KEY( Boolean, filterer_undercount_sugar_rotamers)
 OPT_KEY( Boolean, combine_helical_silent_file)
-OPT_KEY( Boolean, exclude_alpha_beta_gamma_sampling)
+OPT_KEY( Boolean, exclude_alpha_beta_gamma_modeler)
 OPT_KEY( Boolean, debug_eplison_south_sugar_mode)
 OPT_KEY( Boolean, rebuild_bulge_mode)
 OPT_KEY( Boolean, sampler_include_torsion_value_in_tag)
@@ -192,7 +192,7 @@ OPT_KEY( Boolean, sampler_extra_epsilon_rotamer)
 OPT_KEY( Boolean, sample_both_sugar_base_rotamer)
 OPT_KEY( Boolean, reinitialize_CCD_torsions)
 OPT_KEY( Boolean, PBP_clustering_at_chain_closure)
-OPT_KEY( Boolean, finer_sampling_at_chain_closure)
+OPT_KEY( Boolean, finer_modeler_at_chain_closure)
 OPT_KEY( StringVector, 	VDW_rep_screen_info)
 OPT_KEY( Real, 	VDW_rep_alignment_RMSD_CUTOFF)
 OPT_KEY( Boolean, graphic )
@@ -287,8 +287,8 @@ swa_rna_sample()
   using namespace core::scoring;
   using namespace core::io::silent;
   using namespace core::pose::full_model_info;
-	using namespace protocols::stepwise::sampling::rna;
-	using namespace protocols::stepwise::sampling::rna::legacy;
+	using namespace protocols::stepwise::modeler::rna;
+	using namespace protocols::stepwise::modeler::rna::legacy;
 	using namespace protocols::stepwise::monte_carlo::rna;
 	using namespace protocols::moves;
 
@@ -439,7 +439,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
 	NEW_OPT( minimize_res, "optional: residues to be minimize in minimizer, alternative to fixed_res", blank_size_vector );
 	NEW_OPT( virtual_res, "optional: residues to be made virtual", blank_size_vector );
-	NEW_OPT( terminal_res, "optional: residues that are not allowed to stack during sampling", blank_size_vector );
+	NEW_OPT( terminal_res, "optional: residues that are not allowed to stack during modeler", blank_size_vector );
 	NEW_OPT( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
 	NEW_OPT( force_syn_chi_res_list, "optional: sample only syn chi for the res in sampler.", blank_size_vector); //April 29, 2011
 	NEW_OPT( force_north_sugar_list, "optional: sample only north sugar for the res in sampler.", blank_size_vector); //April 29, 2011
@@ -451,7 +451,7 @@ main( int argc, char * argv [] )
 
 	///////////////Sampler////////////
 	NEW_OPT( rebuild_bulge_mode, "rebuild_bulge_mode", false);
-	NEW_OPT( floating_base , " floating_base ", false ); //DO NOT CHANGE TO TRUE, since single-nucleotide sampling need this to be false! April 9th, 2011
+	NEW_OPT( floating_base , " floating_base ", false ); //DO NOT CHANGE TO TRUE, since single-nucleotide modeler need this to be false! April 9th, 2011
 
 	//////////////CombineLongLoopFilterer/////////////
 	NEW_OPT( filter_output_filename, "CombineLongLoopFilterer: filter_output_filename", "filter_struct.txt"); //Sept 12, 2010
@@ -482,11 +482,11 @@ main( int argc, char * argv [] )
 
 	///////////////Sampler////////////
 	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
-	NEW_OPT( skip_sampling, "no sampling step in rna_swa residue sampling", false );
+	NEW_OPT( skip_modeler, "no modeler step in rna_swa residue modeler", false );
 	NEW_OPT( do_not_sample_multiple_virtual_sugar, " Samplerer: do_not_sample_multiple_virtual_sugar " , false);
 	NEW_OPT( sample_ONLY_multiple_virtual_sugar, " Samplerer: sample_ONLY_multiple_virtual_sugar " , false);
 	NEW_OPT( filterer_undercount_sugar_rotamers, "Undercount all sugar_rotamers as 1 count", false); //July 29, 2011
-	NEW_OPT( exclude_alpha_beta_gamma_sampling, "Speed up the debug eplison south sugar mode", false);
+	NEW_OPT( exclude_alpha_beta_gamma_modeler, "Speed up the debug eplison south sugar mode", false);
 	NEW_OPT( debug_eplison_south_sugar_mode, "Check why when eplison is roughly -160 and pucker is south, energy is not favorable", false);
 	NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false);
 	NEW_OPT( sampler_extra_syn_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false);
@@ -495,19 +495,19 @@ main( int argc, char * argv [] )
 	NEW_OPT( sample_both_sugar_base_rotamer, "Samplerer: Super hacky for SQAURE_RNA", false);
 	NEW_OPT( reinitialize_CCD_torsions, "Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", false);
 	NEW_OPT( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false);
-	NEW_OPT( finer_sampling_at_chain_closure, "Samplerer: finer_sampling_at_chain_closure", false); //Jun 9, 2010
+	NEW_OPT( finer_modeler_at_chain_closure, "Samplerer: finer_modeler_at_chain_closure", false); //Jun 9, 2010
 	NEW_OPT( sampler_include_torsion_value_in_tag, "Samplerer:include_torsion_value_in_tag", true);
 	NEW_OPT( include_syn_chi, "include_syn_chi", true); //Change to true on Oct 10, 2010
 	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false); //Nov 15, 2010
 	NEW_OPT( fast, "quick runthrough for debugging", false );
 	NEW_OPT( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
 	NEW_OPT( centroid_screen, "centroid_screen", true);
-	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base sampling + dinucleotide.. deprecate option
+	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base modeler + dinucleotide.. deprecate option
 	NEW_OPT( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 
 	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);
-	NEW_OPT( n_sample, "Sample number for Random sampling", 0 );
+	NEW_OPT( n_sample, "Sample number for Random modeler", 0 );
 	NEW_OPT( output_period, "How often to output structure", 5000 );
 	NEW_OPT( stddev_small, "Sampling standard deviation in degree", 5.0 );
 	NEW_OPT( stddev_large, "Sampling standard deviation in degree", 40.0 );
@@ -515,13 +515,13 @@ main( int argc, char * argv [] )
 	NEW_OPT( kT, "kT of simulation in RU", 2.0 );
 	NEW_OPT( unfolded_weight, "weight on unfolded term", 1.0 );
 	NEW_OPT( skip_randomize, "do not randomize...", false );
-	NEW_OPT( sample_all_o2prime, "do not focus o2prime sampling at residue of interest...", false );
+	NEW_OPT( sample_all_o2prime, "do not focus o2prime modeler at residue of interest...", false );
 	NEW_OPT( start_added_residue_in_aform, "on add move, take starting configuration to be A-form, not random", false );
 	NEW_OPT( do_add_delete, "try add & delete moves...", false );
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
 	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
 	NEW_OPT( skip_delete, "normally wipe out all residues before building", false );
-	NEW_OPT( disallow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during sampling", false );
+	NEW_OPT( disallow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during modeler", false );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

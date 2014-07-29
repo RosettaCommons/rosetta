@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
 #include <protocols/stepwise/screener/PackScreener.fwd.hh>
-#include <protocols/stepwise/sampling/packer/StepWisePacker.fwd.hh>
+#include <protocols/stepwise/modeler/packer/StepWisePacker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 using namespace core;
@@ -33,7 +33,7 @@ namespace screener {
 
 		//constructor
 		PackScreener( pose::Pose & pose,
-												 sampling::packer::StepWisePackerOP stepwise_packer );
+												 modeler::packer::StepWisePackerOP stepwise_packer );
 
 		//destructor
 		~PackScreener();
@@ -54,7 +54,7 @@ namespace screener {
 
 	private:
 
-		sampling::packer::StepWisePackerOP stepwise_packer_;
+		modeler::packer::StepWisePackerOP stepwise_packer_;
 
 	};
 

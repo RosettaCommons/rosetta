@@ -117,6 +117,25 @@ void print_torsion_info( pose::Pose const & pose,	id::TorsionID const & torsion_
 
 bool is_torsion_valid( pose::Pose const & pose, id::TorsionID const & torsion_id,
 		bool verbose = false, bool skip_chainbreak_torsions = false );
+
+
+// might be deprecatable soon -- legacy of VirtualSugarSampler, which could get away with bulge variant.
+void
+apply_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num, bool const apply_check = true );
+
+// might be deprecatable soon -- legacy of VirtualSugarSampler, which could get away with bulge variant.
+void
+apply_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num, utility::vector1< Size > const & working_cutpoint_closed_list, bool const apply_check = true );
+
+// might be deprecatable soon -- legacy of VirtualSugarSampler, which could get away with bulge variant.
+void
+remove_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
+
+// might be deprecatable soon -- legacy of VirtualSugarSampler, which could get away with bulge variant.
+bool
+has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
+
+
 } //ns rna
 } //ns pose
 } //ns core

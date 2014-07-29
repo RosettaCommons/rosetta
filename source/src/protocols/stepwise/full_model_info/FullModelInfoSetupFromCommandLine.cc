@@ -91,6 +91,25 @@ namespace full_model_info {
 		pose.conformation().detect_disulfides();
 	}
 
+	///////////////////////////////////////////////////////////////
+	void
+	initialize_native_and_align_pose( PoseOP & native_pose, PoseOP & align_pose, core::chemical::ResidueTypeSetCAP rsd_set ) {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		if ( option[ in::file::native ].user() )  {
+			align_pose = native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
+		}
+		if ( option[ OptionKeys::stepwise::align_pdb ].user() ) {
+			align_pose = get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
+		}
+		if ( align_pose == 0 && option[ in::file::s ].user() ){
+			align_pose = get_pdb_with_full_model_info(  option[ in::file::s ]()[1], rsd_set );
+		}
+		if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
+	}
+
+
+
 	///////////////////////////////////////////////////////////////////////////////////////
 	pose::PoseOP
 	initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set ){
@@ -211,7 +230,7 @@ namespace full_model_info {
 		vector1< Size > cutpoints;
 		Size ntot( 0 );
 		for ( Size n = 1; n < fasta_sequences.size(); n++ ){
-			ntot += fasta_sequences.size();
+			ntot += fasta_sequences[n]->sequence().size();
 			cutpoints.push_back( ntot );
 		}
 		return cutpoints;

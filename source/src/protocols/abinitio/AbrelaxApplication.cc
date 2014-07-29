@@ -962,7 +962,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		if ( bRelax_ ) {  //always add all f@@#$ columns so we never-ever have a column mismatch....
 			tr.Info << "relax is active... add stupid extra score terms " << std::endl;
-			relax::ClassicRelax().setPoseExtraScores( pose );
+			relax::ClassicRelax().setPoseExtraScore( pose );
 		}
 
 		std::string tag = jobdist.get_current_output_tag();
@@ -1021,14 +1021,14 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 			if ( bCanRelax ) {
 				tr.Info << "relax is active... add stupid extra score terms " << std::endl;
-				relax::ClassicRelax().setPoseExtraScores( pose );
+				relax::ClassicRelax().setPoseExtraScore( pose );
 				relax( pose, fullatom_scorefxn, jobdist.get_current_output_tag() );
 			} else { //cannot relax
 				//need proper atom set to score with full-atom
 				(*fullatom_scorefxn)( pose );
 				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {
 				} else {
-					relax::ClassicRelax().setPoseExtraScores( pose ); // ClassicRelax adds four columns
+					relax::ClassicRelax().setPoseExtraScore( pose ); // ClassicRelax adds four columns
 				}
 			}
 		} // if ( bRelax_ )
@@ -1685,7 +1685,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 
 	    protocols::simple_filters::PDDFScoreFilterOP pddf_filter = new protocols::simple_filters::PDDFScoreFilter();
 	    bool flag = pddf_filter->apply(pose);
-	    core::pose::setPoseExtraScores( pose, "pddf_score", pddf_filter->recent_score());
+	    core::pose::setPoseExtraScore( pose, "pddf_score", pddf_filter->recent_score());
 	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement
 	}
 
@@ -1694,7 +1694,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 
 	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
 	    bool flag = saxs_filter->apply(pose);
-	    core::pose::setPoseExtraScores( pose, "saxs_score", saxs_filter->recent_score());
+	    core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
 	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement
 	}
 
@@ -1835,7 +1835,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 	#endif
 
 		if ( bRelax_ ) {  //always add all f@@#$ columns so we never-ever have a column mismatch....
-			relax::ClassicRelax().setPoseExtraScores( fold_pose );
+			relax::ClassicRelax().setPoseExtraScore( fold_pose );
 		}
 
 		// need to save RG states such that choices for constraints and fold-tree are the same.
@@ -1974,7 +1974,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 				(*fullatom_scorefxn)( fold_pose );
 				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {
 				} else {
-					relax::ClassicRelax().setPoseExtraScores( fold_pose ); // ClassicRelax adds four columns
+					relax::ClassicRelax().setPoseExtraScore( fold_pose ); // ClassicRelax adds four columns
 				}
 			}
 		} // if ( bRelax_ )
@@ -1982,12 +1982,12 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		//Add contact order to score file as an extra column
 		core::scoring::methods::ContactOrderEnergy co_energy;
 		Real contact_order = co_energy.calculate_contact_order( fold_pose );
-		core::pose::setPoseExtraScores( fold_pose, "co", contact_order );
+		core::pose::setPoseExtraScore( fold_pose, "co", contact_order );
 
 		// process decoy if this hasn't happened yet
 		if ( bProcessDecoy ) {
 			if( option[ run::checkpoint ]() ){
-				core::pose::setPoseExtraScores( fold_pose, "ichkpnt",
+				core::pose::setPoseExtraScore( fold_pose, "ichkpnt",
 						abinitio_protocol.get_checkpoints().get_checkpoint_recoveries() +
 						abrelax_checkpoints_.get_checkpoint_recoveries()     );
 			}

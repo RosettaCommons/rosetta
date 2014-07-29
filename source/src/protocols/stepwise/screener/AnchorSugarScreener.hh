@@ -18,17 +18,17 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/AnchorSugarScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.fwd.hh>
 #include <protocols/stepwise/screener/TagDefinition.fwd.hh>
-#include <protocols/stepwise/sampling/rna/sugar/SugarModeling.fwd.hh>
+#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #ifdef WIN32
-	#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
+	#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
 	#include <protocols/stepwise/screener/AnchorSugarScreener.hh>
-	#include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
+	#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 #endif
 
 /*
@@ -36,13 +36,13 @@ Commented out because “using namespace X” in header files outside of class d
 by our coding convention due to problem it create on modern compilers and because of name clashing.
 For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
 
-using namespace protocols::stepwise::sampling::rna::sugar;
-using namespace protocols::stepwise::sampling::rna::checker;
+using namespace protocols::stepwise::modeler::rna::sugar;
+using namespace protocols::stepwise::modeler::rna::checker;
 using namespace core;
 */
 
-// functionality in original floating_base sampling, setup for sample-and-screen framework.
-// This will likely be deprecated in favor of more general ResidueAlternative sampling
+// functionality in original floating_base modeler, setup for sample-and-screen framework.
+// This will likely be deprecated in favor of more general ResidueAlternative modeler
 
 namespace protocols {
 namespace stepwise {
@@ -53,12 +53,12 @@ namespace screener {
 	public:
 
 		//constructor
-		AnchorSugarScreener(sampling::rna::sugar::SugarModeling const & anchor_sugar_modeling,
-							sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
+		AnchorSugarScreener(modeler::rna::sugar::SugarModeling const & anchor_sugar_modeling,
+							modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
 							core::pose::Pose & sugar_screening_pose,
 							bool const is_prepend,
-							sampling::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
-							utility::vector1< sampling::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
+							modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
+							utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
 							TagDefinitionOP tag_definition );
 
 		//destructor
@@ -83,11 +83,11 @@ namespace screener {
 
 	private:
 
-		sampling::rna::sugar::SugarModeling const & anchor_sugar_modeling_;
-		sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker_;
+		modeler::rna::sugar::SugarModeling const & anchor_sugar_modeling_;
+		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker_;
 		core::pose::Pose & sugar_screening_pose_;
-		sampling::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar_;
-		utility::vector1< sampling::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models_;
+		modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar_;
+		utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models_;
 		TagDefinitionOP tag_definition_;
 
 		bool const is_prepend_;

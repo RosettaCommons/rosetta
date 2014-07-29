@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.fwd.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 
 using namespace core;
 
@@ -51,7 +51,7 @@ namespace mover {
 		virtual void apply( core::pose::Pose & pose_to_visualize );
 		virtual std::string get_name() const;
 
-		void set_stepwise_modeler( protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler );
+		void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
 	private:
 
@@ -63,7 +63,7 @@ namespace mover {
 
 	private:
 
-		protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler_;
+		protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 
 	};
 

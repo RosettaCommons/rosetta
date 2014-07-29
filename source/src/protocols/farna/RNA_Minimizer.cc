@@ -15,8 +15,8 @@
 
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/stepwise/sampling/rna/util.hh> //Parin Sripakdeevong
-#include <protocols/stepwise/sampling/util.hh> // for figuring out moving chainbreaks
+#include <protocols/stepwise/modeler/rna/util.hh> //Parin Sripakdeevong
+#include <protocols/stepwise/modeler/util.hh> // for figuring out moving chainbreaks
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <core/conformation/Residue.hh>
@@ -143,7 +143,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	if (use_coordinate_constraints_) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
 	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
 
-	utility::vector1< Size > moving_chainbreaks = stepwise::sampling::figure_out_moving_chain_break_res( pose, mm );
+	utility::vector1< Size > moving_chainbreaks = stepwise::modeler::figure_out_moving_chain_break_res( pose, mm );
 	RNA_LoopCloser rna_loop_closer;
 
 	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );

@@ -14,14 +14,14 @@
 
 
 #include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_AtrRepScreener" );
 
-using namespace protocols::stepwise::sampling::rna::checker;
+using namespace protocols::stepwise::modeler::rna::checker;
 using namespace core;
 
 ////////////////////////////////////////////////////////////////////////////////////////////

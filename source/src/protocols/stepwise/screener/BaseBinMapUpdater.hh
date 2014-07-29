@@ -18,11 +18,11 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/BaseBinMapUpdater.fwd.hh>
-#include <protocols/stepwise/sampling/rna/rigid_body/FloatingBaseClasses.hh>
+#include <protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.hh>
 #include <utility/vector1.fwd.hh>
 
 
-using namespace protocols::stepwise::sampling::rna::rigid_body;
+using namespace protocols::stepwise::modeler::rna::rigid_body;
 using namespace core;
 
 namespace protocols {
@@ -43,7 +43,7 @@ namespace screener {
 
 		virtual
 		void
-		get_update( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		get_update( sampler::StepWiseSamplerBaseOP sampler );
 
 		virtual
 		std::string

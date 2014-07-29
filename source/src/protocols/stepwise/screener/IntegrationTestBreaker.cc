@@ -14,14 +14,14 @@
 
 #include <protocols/stepwise/screener/IntegrationTestBreaker.hh>
 #include <protocols/stepwise/screener/NativeRMSD_Screener.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.IntegrationTestBreaker" );
 
-using namespace protocols::rotamer_sampler;
-using namespace protocols::rotamer_sampler::rigid_body;
+using namespace protocols::stepwise::sampler;
+using namespace protocols::stepwise::sampler::rigid_body;
 
 namespace protocols {
 namespace stepwise {
@@ -42,7 +42,7 @@ namespace screener {
 
 	//////////////////////////////////////////////////////////////////////////
 	// If you see an issue with changes to integration tests, take
-	// a close look at modeler_options -- note that it should 'spawn' get_sampler_options()
+	// a close look at options -- note that it should 'spawn' get_sampler_options()
 	// which is fixed for integration tests.
 	bool
 	IntegrationTestBreaker::check_screen() {
@@ -57,12 +57,12 @@ namespace screener {
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	IntegrationTestBreaker::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
+	IntegrationTestBreaker::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
+			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
 			rigid_body_rotamer_with_copy_dofs.fast_forward();
 		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 			rigid_body_rotamer_with_residue_alternatives.fast_forward();
 		}
 	}

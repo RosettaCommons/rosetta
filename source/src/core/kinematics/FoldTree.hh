@@ -208,6 +208,10 @@ public:
 	void
 	add_edge( Edge const & new_edge );
 
+	/// @brief Prepend the edge  <new_edge>. Useful alternative to add_edge for setting root.
+	void
+	prepend_edge( Edge const & new_edge );
+
 	/// @brief Deletes the edge  <edge>  in the FoldTree by iterator
 	void delete_edge( iterator edge );
 
@@ -259,7 +263,7 @@ public:
 
 	/// @brief Delete vertices that are no longer necessary any more
 	/// How is this determined?
-	void delete_extra_vertices( int const desired_root = 0 );
+	void delete_extra_vertices();
 
 	/// @brief Deletes a continuous segment from  <seq_begin>  to  <seq_end>
 	///

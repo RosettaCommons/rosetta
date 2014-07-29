@@ -80,12 +80,11 @@ void
 add_conformation_viewer(
 	core::conformation::Conformation &,
 	std::string const = empty_string,
-	int const = 900,
-	int const = 900,
-	bool = false,
-	core::Vector = core::Vector( 0.0 )
-)
-{
+	int const length = 900,
+	int const width = 900,
+	bool const debug_pause = false,
+	bool const set_center_vector = false,
+	core::Vector const = core::Vector( 0.0 ) ){
 }
 
 inline
@@ -111,12 +110,12 @@ void set_bg_color( core::Vector new_bg_color );
 void
 add_conformation_viewer(
 	core::conformation::Conformation & conformation,
-	std::string const name_in = empty_string,
+	std::string const = empty_string,
 	int const length = 900,
-	int const width  = 900,
-	bool debug_pause=false,
-	core::Vector center_vector = core::Vector( 0.0 )
-);
+	int const width = 900,
+	bool const debug_pause = false,
+	bool const set_center_vector = false,
+	core::Vector const = core::Vector( 0.0 ) );
 
 void
 add_monte_carlo_viewer(

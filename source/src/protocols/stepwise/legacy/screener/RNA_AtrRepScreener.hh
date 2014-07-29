@@ -18,12 +18,12 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
 #ifdef WIN32
-	#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
+	#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
 	#include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
 #endif
 
@@ -38,7 +38,7 @@ namespace screener {
 	public:
 
 		//constructor
-		RNA_AtrRepScreener( sampling::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
+		RNA_AtrRepScreener( modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
 										core::pose::Pose & screening_pose );
 
 		//destructor
@@ -60,7 +60,7 @@ namespace screener {
 
 	private:
 
-		sampling::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
+		modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
 		core::pose::Pose & screening_pose_;
 		bool exit_on_fail_;
 

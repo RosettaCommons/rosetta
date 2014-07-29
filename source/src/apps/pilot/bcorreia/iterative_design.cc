@@ -295,9 +295,9 @@ main( int argc, char * argv [] )
 			(*scorefxn)(init_pose);
 
 
-			setPoseExtraScores( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
+			setPoseExtraScore( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
 
-			setPoseExtraScores( init_pose, "loop_rms", 0 );
+			setPoseExtraScore( init_pose, "loop_rms", 0 );
 
 			core::io::silent::BinarySilentStructOP pss_init (
 											new core::io::silent::BinarySilentStruct ( init_pose , filename_init ));
@@ -434,9 +434,9 @@ main( int argc, char * argv [] )
 				std::string filename_ref (pdb_prefix + "_" + ObjexxFCL::right_string_of(pose_number,3,'0')+"_"+ObjexxFCL::right_string_of(iteration ,3,'0') + "_ref");
 
 
-				setPoseExtraScores( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
+				setPoseExtraScore( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
 
-				setPoseExtraScores( init_pose, "loop_rms", protocols::loops::loop_rmsd(nat_pose, init_pose, loops ));
+				setPoseExtraScore( init_pose, "loop_rms", protocols::loops::loop_rmsd(nat_pose, init_pose, loops ));
 
 
 				core::io::silent::BinarySilentStructOP pss_ref (
@@ -508,9 +508,9 @@ main( int argc, char * argv [] )
 
 			(*scorefxn)(init_pose);
 
-			setPoseExtraScores( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
+			setPoseExtraScore( init_pose, "packing", core::scoring::packstat::compute_residue_packing_score( init_pose, 2 ) );
 
-			setPoseExtraScores( init_pose, "loop_rms", 0 );
+			setPoseExtraScore( init_pose, "loop_rms", 0 );
 
 
 			core::io::silent::BinarySilentStructOP pss (

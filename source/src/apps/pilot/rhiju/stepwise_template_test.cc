@@ -63,7 +63,7 @@
 
 //StepWise!
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/protein/util.hh>
 
 //clustering

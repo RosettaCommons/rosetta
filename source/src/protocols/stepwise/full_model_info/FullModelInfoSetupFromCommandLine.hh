@@ -42,6 +42,11 @@ namespace full_model_info {
 										utility::vector1< std::string > const & other_files,
 										core::chemical::ResidueTypeSetCAP rsd_set );
 
+	void
+	initialize_native_and_align_pose( core::pose::PoseOP & native_pose,
+																		core::pose::PoseOP & align_pose,
+																		core::chemical::ResidueTypeSetCAP rsd_set );
+
 	core::pose::PoseOP
 	initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set );
 

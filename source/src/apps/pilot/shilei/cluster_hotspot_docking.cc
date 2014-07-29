@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
 		ss->fill_pose(pose);
 
 		//control over the columns for ranking
-		//getPoseExtraScores( pose, "ddg", score);
-		if ( getPoseExtraScores( pose, scorecolumn, score) ) {
+		//getPoseExtraScore( pose, "ddg", score);
+		if ( getPoseExtraScore( pose, scorecolumn, score) ) {
 			TR.Info << "Pose: "<< scorecolumn << ": " << score << std::endl;
 		} else if ( scorecolumn == "Isc" ) {
 			score=protocols::docking::calc_interaction_energy(pose,sfxn,utility::tools::make_vector1<core::Size>(1));
@@ -301,14 +301,14 @@ int main(int argc, char *argv[])
 
 	while ( input->has_another_pose() ) {
 		input->fill_pose( pose );
-                if ( getPoseExtraScores( pose, scorecolumn, score) ) {
+                if ( getPoseExtraScore( pose, scorecolumn, score) ) {
                         TR.Info << "Pose: "<< scorecolumn << ": " << score << std::endl;
                 } else if ( scorecolumn == "Isc" ) {
                         score=protocols::docking::calc_interaction_energy(pose,sfxn,utility::tools::make_vector1<core::Size>(1));
                 } else {
                         utility_exit_with_message("scorecolumn not in silent header, only those in header or Isc is supported");
                 }
-		//getPoseExtraScores( pose, "ddg", score);
+		//getPoseExtraScore( pose, "ddg", score);
 		std::string tag( tag_from_pose( pose ) );
 
     		std::ostringstream ss;

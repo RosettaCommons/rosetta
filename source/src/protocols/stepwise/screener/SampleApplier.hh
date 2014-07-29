@@ -49,7 +49,7 @@ namespace screener {
 
 		virtual
 		void
-		get_update( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		get_update( sampler::StepWiseSamplerBaseOP sampler );
 
 		virtual
 		std::string
@@ -70,8 +70,8 @@ namespace screener {
 
 		pose::Pose & pose_;
 
-		core::conformation::ResidueOP moving_rsd_at_origin; // only in use for rigid-body sampling.
-		utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list; // only in use for rigid-body sampling.
+		core::conformation::ResidueOP moving_rsd_at_origin; // only in use for rigid-body modeler.
+		utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list; // only in use for rigid-body modeler.
 		bool apply_residue_alternative_sampler_;
 	};
 

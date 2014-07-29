@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/PackScreener.hh>
-#include <protocols/stepwise/sampling/packer/StepWisePacker.hh>
-#include <protocols/stepwise/sampling/packer/SideChainCopier.hh>
+#include <protocols/stepwise/modeler/packer/StepWisePacker.hh>
+#include <protocols/stepwise/modeler/packer/SideChainCopier.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -28,7 +28,7 @@ namespace screener {
 
 	//Constructor
 	PackScreener::PackScreener( pose::Pose & pose,
-																						sampling::packer::StepWisePackerOP stepwise_packer ):
+																						modeler::packer::StepWisePackerOP stepwise_packer ):
 		SampleApplier( pose ),
 		stepwise_packer_( stepwise_packer )
 	{
@@ -47,7 +47,7 @@ namespace screener {
 	/////////////////////////////////////////
 	void
 	PackScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		update_mover->add_mover(  new sampling::packer::SideChainCopier( pose_,
+		update_mover->add_mover(  new modeler::packer::SideChainCopier( pose_,
 																																		 stepwise_packer_->previous_working_pack_res(),
 																																		 stepwise_packer_->pack_o2prime_hydrogens() )  );
 		restore_mover->add_mover( 0 ); // original choice.

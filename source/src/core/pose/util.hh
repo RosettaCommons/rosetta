@@ -104,6 +104,18 @@ create_subpose(
 	Pose & pose
 );
 
+///@brief Create a subpose of the src pose -- figures out a reasonable fold tree.
+void
+pdbslice( pose::Pose & new_pose,
+					pose::Pose const & pose,
+					utility::vector1< Size > const & slice_res );
+
+///@brief Create a subpose of the src pose -- figures out a reasonable fold tree.
+void
+pdbslice( pose::Pose & pose,
+					utility::vector1< Size > const & slice_res );
+
+
 void
 partition_pose_by_jump(
 	pose::Pose const & src,
@@ -131,13 +143,13 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 /// getters/setters for things in the Pose DataCache
 
 // ARBITRARY_FLOAT_DATA
-bool getPoseExtraScores(
+bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const name,
 	core::Real & value
 );
 
-void setPoseExtraScores(
+void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const name,
 	core::Real value
@@ -153,13 +165,13 @@ void clearPoseExtraScores(
 );
 
 // ARBITRARY_STRING_DATA
-bool getPoseExtraScores(
+bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const name,
 	std::string & value
 );
 
-void setPoseExtraScores(
+void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string name,
 	std::string const value

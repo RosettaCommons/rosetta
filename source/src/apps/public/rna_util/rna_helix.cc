@@ -32,7 +32,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/sampling/rna/helix/RNA_HelixAssembler.hh>
+#include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDB_Info.hh>
@@ -90,7 +90,7 @@ rna_build_helix_test(){
 	using namespace core::pose;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::sampling::rna::helix;
+	using namespace protocols::stepwise::modeler::rna::helix;
 
 	std::string full_sequence;
 	if ( option[ in::file::fasta ].user() ) {

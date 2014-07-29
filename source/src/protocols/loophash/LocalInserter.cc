@@ -116,7 +116,7 @@ LocalInserter_SimpleMin::make_local_bb_change(
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
 
 	TR.Debug << "INSERTRESULT: " << final_rms << "	" << final_score << std::endl;
-	core::pose::setPoseExtraScores( newpose, "lh_censcore", final_score );
+	core::pose::setPoseExtraScore( newpose, "lh_censcore", final_score );
 
 	//transfer_phi_psi( newpose, start_pose );
 
@@ -176,7 +176,7 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
 
 	TR.Debug << "INSERTRESULT: " << final_rms << "	" << final_score << std::endl;
-	core::pose::setPoseExtraScores( newpose, "censcore", final_score );
+	core::pose::setPoseExtraScore( newpose, "censcore", final_score );
 
 	// remove that extra virtual atom cooordinate constraints adds on
 	protocols::relax::delete_virtual_residues( newpose );
@@ -213,8 +213,8 @@ LocalInserter_SimpleMin::make_local_bb_change_include_cut(
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
 
 	TR.Debug << "INSERTRESULT: " << final_rms << "	" << final_score << std::endl;
-	core::pose::setPoseExtraScores( newpose, "censcore", final_score );
-	core::pose::setPoseExtraScores( newpose, "rms", final_rms );
+	core::pose::setPoseExtraScore( newpose, "censcore", final_score );
+	core::pose::setPoseExtraScore( newpose, "rms", final_rms );
 
 	//transfer_phi_psi( newpose, start_pose );
 

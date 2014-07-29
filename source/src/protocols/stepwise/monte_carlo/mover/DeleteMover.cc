@@ -14,11 +14,11 @@
 
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/sampling/packer/util.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/modeler/packer/util.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/util.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -40,11 +40,11 @@
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 using namespace core;
 using namespace core::pose::full_model_info;
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 using core::Real;
 using utility::make_tag_with_dashes;
 
@@ -69,7 +69,7 @@ namespace mover {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	DeleteMover::DeleteMover( ):
-		options_( new StepWiseMonteCarloOptions ),
+		options_( new options::StepWiseMonteCarloOptions ),
 		minimize_after_delete_( true )
 	{}
 
@@ -199,10 +199,10 @@ namespace mover {
 
 		using namespace core::pose::full_model_info;
 
-		// normally happens with sampling -- this is important for seeing if terminal phosphates that
+		// normally happens with modeler -- this is important for seeing if terminal phosphates that
 		// previously instantiated due to contact with deleted residues need to *disappear* now.
 		if ( options_->sampler_perform_phosphate_pack() ){
-			protocols::stepwise::sampling::rna::phosphate::MultiPhosphateSampler phosphate_sampler( pose );
+			protocols::stepwise::modeler::rna::phosphate::MultiPhosphateSampler phosphate_sampler( pose );
 			phosphate_sampler.sample_phosphates(); // samples on internal clone of pose.
 			phosphate_sampler.copy_phosphates( pose );
 		}
@@ -238,7 +238,7 @@ namespace mover {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	DeleteMover::set_stepwise_modeler( protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler ){
+	DeleteMover::set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ){
 		stepwise_modeler_ = stepwise_modeler;
 	}
 
@@ -250,7 +250,7 @@ namespace mover {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	DeleteMover::set_options( StepWiseMonteCarloOptionsCOP options ){
+	DeleteMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
 		options_ = options;
 	}
 

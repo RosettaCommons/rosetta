@@ -200,10 +200,10 @@ ScTrials::apply( Pose & pose ) {
 	pose = start_pose;
 	(*score_function_)(pose);
 
-	core::pose::setPoseExtraScores( pose, "free_energy", total_free_energy );
-	core::pose::setPoseExtraScores( pose, "enthalpy",    total_enthalpy );
-	core::pose::setPoseExtraScores( pose, "entropy",     total_minus_T_times_entropy );
-	core::pose::setPoseExtraScores( pose, "total_rot",   total_rotamers );
+	core::pose::setPoseExtraScore( pose, "free_energy", total_free_energy );
+	core::pose::setPoseExtraScore( pose, "enthalpy",    total_enthalpy );
+	core::pose::setPoseExtraScore( pose, "entropy",     total_minus_T_times_entropy );
+	core::pose::setPoseExtraScore( pose, "total_rot",   total_rotamers );
 	TR << "Total Rotamers: " << total_rotamers <<  std::endl;
 }
 

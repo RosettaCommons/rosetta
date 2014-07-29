@@ -454,9 +454,9 @@ TailsScoreMover::apply( pose::Pose & pose )
 		}
 	}
 
-	setPoseExtraScores( pose, "free_energy", free_energy);
-	setPoseExtraScores( pose, "left_tail",   out_min_ltail_length);
-	setPoseExtraScores( pose, "right_tail",  out_min_rtail_length);
+	setPoseExtraScore( pose, "free_energy", free_energy);
+	setPoseExtraScore( pose, "left_tail",   out_min_ltail_length);
+	setPoseExtraScore( pose, "right_tail",  out_min_rtail_length);
 }//apply
 
 std::string

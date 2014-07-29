@@ -89,7 +89,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 	);
 	tr.Debug << "decoy_tag() == " << current_struct_->decoy_tag() << std::endl;
 
-	core::pose::setPoseExtraScores( pose, "silent_score", current_struct_->get_energy( "score" ) );
+	core::pose::setPoseExtraScore( pose, "silent_score", current_struct_->get_energy( "score" ) );
 	preprocess_pose( pose );
 
 	// increment counters
@@ -134,7 +134,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 	);
 	tr.Debug << "decoy_tag() == " << current_struct_->decoy_tag() << std::endl;
 
-	core::pose::setPoseExtraScores( pose, "silent_score", current_struct_->get_energy( "score" ) );
+	core::pose::setPoseExtraScore( pose, "silent_score", current_struct_->get_energy( "score" ) );
 	preprocess_pose( pose );
 
 	// increment counters

@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryResidueBasedScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
 #include <core/conformation/Residue.hh>
 
 using namespace core;
@@ -32,7 +32,7 @@ namespace screener {
 	public:
 
 		//constructor
-		RNA_ChainClosableGeometryResidueBasedScreener( sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker );
+		RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker );
 
 		//destructor
 		~RNA_ChainClosableGeometryResidueBasedScreener();
@@ -40,7 +40,7 @@ namespace screener {
 	public:
 
 		void
-		get_update( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		get_update( sampler::StepWiseSamplerBaseOP sampler );
 
 		bool
 		check_screen();
@@ -53,7 +53,7 @@ namespace screener {
 
 	private:
 
-		sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
+		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
 //		core::conformation::ResidueCOP rsd1_, rsd2_;
 Vector five_prime_xyz_, three_prime_xyz_;
 	};

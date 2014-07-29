@@ -12,7 +12,6 @@
 /// @detailed
 /// @author Rhiju Das
 
-
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
@@ -1402,6 +1401,192 @@ moveable_jump( Size const jump_pos1,
 	if ( allow_insert.get( jump_pos2 ) ) return true;
 	if ( allow_insert.get_domain( jump_pos1 ) != allow_insert.get_domain( jump_pos2 ) ) return true;
 	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+get_default_allowed_bulge_res(
+															utility::vector1< core::Size > & allow_bulge_res_list,
+															core::pose::Pose const & pose,
+															bool const verbose ){
+
+	if ( allow_bulge_res_list.size() != 0 ){
+		utility_exit_with_message( "allow_bulge_res_list.size() != 0" );
+	}
+
+	if ( verbose ){
+		TR << "allow_bulge_res_list.size() == 0, ";
+		TR << "Getting default_allowed_bulge_res!" << std::endl;
+	}
+
+
+
+	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
+
+		//exclude edge residues:
+		if ( seq_num == 1 ) continue;
+
+		if ( seq_num == pose.total_residue() ) continue;
+
+		//bool is_cutpoint_closed=false;
+
+		bool is_cutpoint_lower = pose.residue( seq_num ).has_variant_type(
+																																			chemical::CUTPOINT_LOWER );
+
+		bool is_cutpoint_upper = pose.residue( seq_num ).has_variant_type(
+																																			chemical::CUTPOINT_UPPER );
+
+		bool near_cutpoint_closed = is_cutpoint_lower || is_cutpoint_upper;
+
+		bool near_cutpoint = pose.fold_tree().is_cutpoint( seq_num ) ||
+			pose.fold_tree().is_cutpoint( seq_num - 1 );
+
+
+		bool near_cutpoint_open = near_cutpoint && !near_cutpoint_closed;
+
+		if ( near_cutpoint_open ) continue;
+
+		allow_bulge_res_list.push_back( seq_num );
+
+	}
+
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+core::Size
+virtualize_bulges( core::pose::Pose & input_pose,
+									 utility::vector1< core::Size > const & in_allow_bulge_res_list,
+									 core::scoring::ScoreFunctionCOP const & scorefxn,
+									 std::string const & tag,
+									 bool const allow_pre_virtualize,
+									 bool const allow_consecutive_bulges,
+									 bool const verbose ){
+
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace ObjexxFCL;
+
+
+	Size const total_res = input_pose.total_residue();
+
+	Real const rna_bulge_bonus = ( scorefxn->get_weight( rna_bulge ) )*10;
+
+	utility::vector1< core::Size > allow_bulge_res_list = in_allow_bulge_res_list;
+
+	if ( allow_bulge_res_list.size() == 0 ){
+		get_default_allowed_bulge_res( allow_bulge_res_list, input_pose, verbose );
+	}
+
+
+	if ( verbose ){
+		TR << "Enter virtualize_bulges() " << std::endl;
+		TR << "rna_bulge_bonus = " << rna_bulge_bonus << std::endl;
+		//		output_boolean( "allow_pre_virtualize = ", allow_pre_virtualize, TR ); TR << std::endl;
+		//		output_boolean( "allow_consecutive_bulges = ", allow_consecutive_bulges, TR ); TR << std::endl;
+		//		output_seq_num_list( "allow_bulge_res_list = ", allow_bulge_res_list, TR );
+
+		//Testing to see if checking in core::pose::rna::apply_virtual_rna_residue_variant_type can be violated!//////////
+		pose::Pose testing_pose = input_pose;
+
+		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ){
+			if ( !testing_pose.residue( seq_num ).is_RNA() ) continue; //Fang's electron density code
+			if ( allow_bulge_res_list.has_value( seq_num ) == false ) continue;
+			core::pose::rna::apply_virtual_rna_residue_variant_type( testing_pose, seq_num, true /*apply_check*/ );
+		}
+		//////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	if ( !allow_pre_virtualize ){
+		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ){
+			if ( !input_pose.residue( seq_num ).is_RNA() ) continue; //Fang's electron density code
+			if ( input_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+				utility_exit_with_message( "allow_pre_virtualize == false but seq_num = " + string_of( seq_num ) + "  is already virtualized!!" );
+			}
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	pose::Pose working_pose = input_pose;
+	Real const start_score = ( *scorefxn )( working_pose );
+
+
+	Size num_res_virtualized = 0;
+	Size round_num = 0;
+
+	while ( true ){	//Need multiple round, since virtualizing a particular res will reduce the energy score of neighoring res and might effect wether neighoring res should be virtualized.
+		pose::Pose base_pose = input_pose;
+		Real const base_score = ( *scorefxn )( base_pose );
+
+		round_num++;
+
+		Size num_res_virtualized_in_this_round = 0;
+
+		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ){
+			if ( !input_pose.residue( seq_num ).is_RNA() ) continue; //Fang's electron density code
+			if ( allow_bulge_res_list.has_value( seq_num ) == false ) continue;
+
+			if ( input_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+				if ( input_pose.residue( seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) == false ){ //consistency_check
+					utility_exit_with_message( "seq_num = " + string_of( seq_num ) + "  is a virtual res but seq_num + 1 is not a virtual_res_upper!" );
+				}
+
+				if ( base_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ){ //consistency check
+					utility_exit_with_message( "input_pose have virtual at seq_num = " + string_of( seq_num ) + "  but input_pose doesn't!" );
+				}
+
+				continue;
+			}
+
+			if ( allow_consecutive_bulges == false ){
+				if ( ( seq_num + 1 ) <= total_res ){
+					if ( input_pose.residue( seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+				}
+
+				if ( ( seq_num - 1 ) >= 1 ){
+					if ( input_pose.residue( seq_num - 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+				}
+			}
+
+
+			working_pose = base_pose; //reset working_pose to base_pose
+			core::pose::rna::apply_virtual_rna_residue_variant_type( working_pose, seq_num, true )	;
+			Real const new_score = ( *scorefxn )( working_pose );
+
+			if ( new_score < base_score ){
+				num_res_virtualized++;
+				num_res_virtualized_in_this_round++;
+
+				TR << "tag = " << tag << " round_num = " << round_num << " seq_num = " << seq_num << ". new_score ( " << new_score << " ) is lesser than base_score ( " << base_score << " ). " << std::endl;
+
+				core::pose::rna::apply_virtual_rna_residue_variant_type( input_pose, seq_num, true )	;
+
+			}
+		}
+
+		if ( num_res_virtualized_in_this_round == 0 ) break;
+
+	}
+
+
+	working_pose = input_pose;
+	Real const final_score = ( *scorefxn )( working_pose );
+
+	if ( num_res_virtualized > 0 ){
+		TR << "----------------------------------------------------------" << std::endl;
+		TR << "Inside virtualize_bulges() " << std::endl;
+		TR << "TOTAL_NUM_ROUND = " << round_num << std::endl;
+		TR << "tag = " << tag << std::endl;
+		TR << "num_res_virtualized = " << num_res_virtualized << std::endl;
+		TR << "start_score = " << start_score << std::endl;
+		TR << "final_score = " << final_score << std::endl;
+		TR << "----------------------------------------------------------" << std::endl;
+
+	}
+
+	return num_res_virtualized;
+
 }
 
 

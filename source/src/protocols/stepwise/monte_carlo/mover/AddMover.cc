@@ -14,9 +14,9 @@
 
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
@@ -36,12 +36,12 @@
 #include <map>
 
 //Req'd on WIN32
-#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 using namespace core;
 using core::Real;
 using utility::make_tag_with_dashes;
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 
 //////////////////////////////////////////////////////////////////////////
 // Adds one residue to a 5' or 3' chain terminus, and appropriately
@@ -153,7 +153,7 @@ namespace mover {
 		setup_initial_torsions( viewer_pose );
 
 		///////////////////////////////////
-		// Presampling added residue
+		// Premodeler added residue
 		///////////////////////////////////
 		if ( presample_added_residue_ ){
 			if ( presample_by_swa_ ){
@@ -257,7 +257,7 @@ namespace mover {
 
 		using namespace core::chemical;
 		using namespace core::chemical::rna;
-		using namespace protocols::stepwise::sampling::rna;
+		using namespace protocols::stepwise::modeler::rna;
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
@@ -322,7 +322,7 @@ namespace mover {
 
 		using namespace core::chemical;
 		using namespace core::chemical::rna;
-		using namespace protocols::stepwise::sampling::rna;
+		using namespace protocols::stepwise::modeler::rna;
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
@@ -374,9 +374,11 @@ namespace mover {
 												default_jump_atom( pose.residue( res_to_build_off+1 ) ) );
 			pose.fold_tree( f );
 
-			if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
+			if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1) {
 				add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
-				add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add+1 );
+				if ( !pose.residue_type( res_to_add+1).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
+					add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add+1 );
+				}
 			}
 			suite_num_ = 0;
 		}
@@ -404,7 +406,7 @@ namespace mover {
 
 		using namespace protocols::moves;
 
-		TR.Debug << "presampling added residue! " << nucleoside_num_ << " over " << internal_cycles_ << " cycles " << std::endl;
+		TR.Debug << "premodeler added residue! " << nucleoside_num_ << " over " << internal_cycles_ << " cycles " << std::endl;
 		MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn_, kT_ );
 
 		std::string move_type( "" );
@@ -417,13 +419,13 @@ namespace mover {
 			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_small_);
 			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_small_);
 			monte_carlo_internal->boltzmann( pose, move_type );
-			//std::cout << "During presampling: " << (*scorefxn_)( pose );
+			//std::cout << "During premodeler: " << (*scorefxn_)( pose );
 		} // monte carlo cycles
 	}
 
 	///////////////////////////////////////////////////////////////////
 	void
-	AddMover::set_stepwise_modeler( protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler ){
+	AddMover::set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ){
 		stepwise_modeler_ = stepwise_modeler;
 	}
 

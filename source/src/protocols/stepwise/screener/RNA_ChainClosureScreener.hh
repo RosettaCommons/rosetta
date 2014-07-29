@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosureScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosureChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
@@ -30,11 +30,11 @@ namespace screener {
 	public:
 
 		//constructor
-		RNA_ChainClosureScreener( sampling::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
+		RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
 													core::pose::Pose & screening_pose,
 													bool const just_do_closure_check = false );
 
-		RNA_ChainClosureScreener( sampling::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker );
+		RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker );
 
 		//destructor
 		~RNA_ChainClosureScreener();
@@ -54,11 +54,11 @@ namespace screener {
 		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
 		void
-		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
 	private:
 
-		sampling::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker_;
+		modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker_;
 		core::pose::Pose & screening_pose_;
 		bool const just_do_closure_check_;
 

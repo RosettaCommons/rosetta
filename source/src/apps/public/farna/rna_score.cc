@@ -16,7 +16,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -40,7 +39,8 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDB_Info.hh>
@@ -80,7 +80,7 @@ rna_score_test()
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
-	using namespace protocols::stepwise::sampling;
+	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::full_model_info;
 
 	ResidueTypeSetCAP rsd_set;
@@ -204,7 +204,7 @@ rna_score_test()
 
 		if ( native_exists ){
 			//Real const rmsd      = all_atom_rmsd( native_pose, pose );
-			Real const rmsd = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose );
+			Real const rmsd = protocols::stepwise::modeler::align::superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose );
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
 

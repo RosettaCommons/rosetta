@@ -942,7 +942,7 @@ main( int argc, char* argv [] )
 
 
 
-		pose::setPoseExtraScores( extended_pose, "rms",  native_rmsd );
+		pose::setPoseExtraScore( extended_pose, "rms",  native_rmsd );
 		(*scorefxn_centr)(extended_pose); // score of the native structure
 
 
@@ -1082,7 +1082,7 @@ main( int argc, char* argv [] )
 
 		//Insert code to save the abinitio decoys here
 
-		pose::setPoseExtraScores( fold_pose, "rms",   rmsd_to_native );
+		pose::setPoseExtraScore( fold_pose, "rms",   rmsd_to_native );
 		(*scorefxn_centr)(fold_pose); // score of the native structure
 
 
@@ -1264,7 +1264,7 @@ main( int argc, char* argv [] )
 
 			Real final_rmsd  = core::scoring::rmsd_with_super(nat_pose, fold_pose, is_protein_CA); // calculating RMSD on CA
 
-			pose::setPoseExtraScores( fold_pose, "rms",  final_rmsd );
+			pose::setPoseExtraScore( fold_pose, "rms",  final_rmsd );
 
 
 
@@ -1287,7 +1287,7 @@ main( int argc, char* argv [] )
 
 			Real final_rmsd_rlx  = core::scoring::rmsd_with_super(nat_pose, fold_pose, is_protein_CA); // calculating RMSD on CA
 
-			pose::setPoseExtraScores( fold_pose, "rms",  final_rmsd_rlx );
+			pose::setPoseExtraScore( fold_pose, "rms",  final_rmsd_rlx );
 
 			core::io::silent::BinarySilentStructOP ss_fa_rlx_2 ( new core::io::silent::BinarySilentStruct( fold_pose, outfilename_rlx_2 ));
 

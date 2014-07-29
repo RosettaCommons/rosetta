@@ -46,7 +46,8 @@
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/stepwise/sampling/util.hh> // for other_pose.
+#include <protocols/stepwise/modeler/util.hh> // for other_pose.
+#include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 
 // C++ headers
@@ -222,7 +223,7 @@ rna_fullatom_minimize_test()
 			utility::vector1< Size > superimpose_res;
 			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
 			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-				protocols::stepwise::sampling::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+				protocols::stepwise::modeler::align::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}

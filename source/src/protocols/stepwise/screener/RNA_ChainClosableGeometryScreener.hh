@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
@@ -31,7 +31,7 @@ namespace screener {
 	public:
 
 		//constructor
-		RNA_ChainClosableGeometryScreener( sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
+		RNA_ChainClosableGeometryScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 													 core::pose::PoseOP screening_pose,
 													 bool const finer_sampling_at_chain_closure = false );
 
@@ -51,7 +51,7 @@ namespace screener {
 
 	private:
 
-		sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
+		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
 		core::pose::PoseOP screening_pose_;
 		bool const finer_sampling_at_chain_closure_;
 

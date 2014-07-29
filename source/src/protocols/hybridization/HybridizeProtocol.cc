@@ -1025,7 +1025,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		//write gdtmm to output
 		if (native_ && native_->total_residue()) {
 			gdtmm = get_gdtmm(*native_, pose, native_aln);
-			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
+			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1", gdtmm);
 			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 		}
 
@@ -1077,7 +1077,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		//write gdtmm to output
 		if (native_ && native_->total_residue()) {
 			gdtmm = get_gdtmm(*native_, pose, native_aln);
-			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
+			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage2", gdtmm);
 			TR << "GDTMM_after_stage2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 		}
 		// get fragment history
@@ -1200,7 +1200,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	}
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
-		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
+		core::pose::setPoseExtraScore( pose, "GDTMM_final", gdtmm);
 		TR << "GDTMM_final" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 }

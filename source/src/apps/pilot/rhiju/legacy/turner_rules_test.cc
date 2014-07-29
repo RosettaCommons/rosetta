@@ -58,20 +58,20 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <protocols/stepwise/sample_generators/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/stepwise/RigidBodySampler.hh>
 #include <protocols/stepwise/InputStreamWithResidueInfo.hh>
-//#include <protocols/stepwise/sampling/rna/rigid_body_settings.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
-#include <protocols/stepwise/sampling/rna/RNA_AnalyticLoopCloser.hh>
-#include <protocols/stepwise/sampling/rna/RNA_LoopCloseSampler.hh>
+//#include <protocols/stepwise/modeler/rna/rigid_body_settings.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/stepwise/modeler/rna/RNA_AnalyticLoopCloser.hh>
+#include <protocols/stepwise/modeler/rna/RNA_LoopCloseSampler.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -243,7 +243,7 @@ apply_ideal_A_form_torsions( pose::Pose & pose ){
 	using namespace chemical::rna;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	// For now assume delta, chi are at ideal values.
 	static RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -360,7 +360,7 @@ initialize_base_pair( pose::Pose & pose,
 	using namespace pose;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -579,7 +579,7 @@ adjust_pose_chi( core::pose::Pose & pose,
 								 Real const delstd ){
 
 	using namespace core::chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::id;
 
 	static RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -684,13 +684,13 @@ define_states_test(){
 
 	///////////////////////////////////////////////
 	// Rigid body sample. Keep track of total number of states so that we can extract a Kd
-	// Use input parameters to define fineness of sampling -- will look for convergence.
+	// Use input parameters to define fineness of modeler -- will look for convergence.
 	// Save lowest energy states.
 	///////////////////////////////////////////////
 	if ( option[ rigid_body_samples ].user() ){
 		rigid_body_sampler->apply_input_samples( pose, option[ rigid_body_samples ]() );
 	} else {
-		rigid_body_sampler->do_the_sampling( pose );
+		rigid_body_sampler->do_the_modeler( pose );
 	}
 
 	///////////////////////////////////////////////
@@ -731,7 +731,7 @@ define_states_test(){
 	// Print out Kd.
 	//Real const xyz_increment = option[ xyz_sample ]();
 	//Real const concentration = (1.0 / 6.022e-4);
-	//std::cout << "sampling concentration " << concentration << std::endl;
+	//std::cout << "modeler concentration " << concentration << std::endl;
 
 	//Real const additional_probability = Z * xyz_increment * xyz_increment * xyz_increment * alpha_increment / ( N_SAMPLE * N_SAMPLE_COSBETA * N_SAMPLE );
 	//	std::cout << "additional_probability: " <<  additional_probability << std::endl;
@@ -1167,9 +1167,9 @@ finely_sample_base_pair_test(){
 	rigid_body_sampler->set_native_pose( native_pose );
 	rigid_body_sampler->save_silent_struct( pose, "START" );
 
-	// do the sampling
+	// do the modeler
 	pose = pose_start;
-	rigid_body_sampler->do_the_sampling( pose );
+	rigid_body_sampler->do_the_modeler( pose );
 
 	// output energies & phase space volumes of discovered poses.
 	std::string const silent_file = option[ out::file::silent ]();
@@ -1329,7 +1329,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -1483,7 +1483,7 @@ get_bin_size(){
 	using namespace options;
 	using namespace options::OptionKeys;
 
-	Size bin_size = option[ fine_torsions ]() ?  10 : 20; /*instead of default 20.0 -- so 32x more sampling*/;
+	Size bin_size = option[ fine_torsions ]() ?  10 : 20; /*instead of default 20.0 -- so 32x more modeler*/;
 	if ( option[ super_fine_torsions ]() ) bin_size = 5;
 	if ( option[ bin_sample ].user() ) bin_size = option[ bin_sample ]();
 
@@ -1506,7 +1506,7 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 	using namespace pose;
 	using namespace scoring;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// Sample conformation [epsilon,zeta,alpha,beta,gamma] of suite in second strand
@@ -1689,7 +1689,7 @@ do_the_match(
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace options;
 	using namespace options::OptionKeys;
 
@@ -1839,7 +1839,7 @@ initialize_for_grid_matcher(	Real & box_size, Real & box_spacing,
 	int const numbins = 2 * static_cast< int >( box_size / box_spacing );
 	grid_strand2_index.dimension( numbins, numbins, numbins );
 
-	//centroids of strand2 base, based on sampling torsions in strand2
+	//centroids of strand2 base, based on modeler torsions in strand2
 	std::cout << "Filling grid_strand2_index... " << std::endl;
 	for ( Size n = 1; n <= v_list.size(); n++ ){
 
@@ -1894,7 +1894,7 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	Vector v1; 	Matrix M1;
 	get_base_centroid_and_rotation_matrix( pose, 2, v1, M1);
@@ -2093,7 +2093,7 @@ two_base_pairs_test(){
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	/////////////////////////////////////////////
 	/////////////////////////////////////////////
@@ -2241,7 +2241,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	/////////////////////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -2463,7 +2463,7 @@ base_pair_to_base_pair_test(){
 	using namespace pose;
 	using namespace io::silent;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace utility::io;
 
 	/////////////////////////////////////////////
@@ -2584,7 +2584,7 @@ rna_close_loop_test(){
 
 	using namespace pose;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace options;
 	using namespace options::OptionKeys;
 
@@ -2629,7 +2629,7 @@ sample_state_to_state(
 	using namespace id;
 	using namespace chemical::rna;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	RNA_LoopCloseSampler rna_loop_close_sampler( moving_suite, chainbreak_suite );
 
@@ -2683,7 +2683,7 @@ two_base_pairs_via_loop_closure_test(
 	using namespace options::OptionKeys;
 	using namespace pose;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace utility::io;
 
 	// set up two-base pair pose.
@@ -2905,7 +2905,7 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -2993,7 +2993,7 @@ dinucleotide_test(){
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	std::string const outfile_prefix = option[ out::file::o ]();
 
@@ -3116,7 +3116,7 @@ delta_chi_correction_test(){
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
@@ -3305,14 +3305,14 @@ main( int argc, char * argv [] )
 	NEW_OPT( torsion_increment, "Torsion increment for alpha, gamma (in degrees)", 2.0 );
 	NEW_OPT( min_contacts, "minimum number of contacts", 1 );
 	NEW_OPT( min_hbonds, "minimum number of H-bonds", 0 );
-	NEW_OPT( fa_rep_cutoff, "fa rep cutoff for rigid bdy sampling", 0.0 );
+	NEW_OPT( fa_rep_cutoff, "fa rep cutoff for rigid bdy modeler", 0.0 );
 	NEW_OPT( fixed_pair_state_number, "from reference file, which rigid body setting to use", 1 );
 	NEW_OPT( new_pair_state_number, "from reference file, which rigid body setting to use", 1 );
 	NEW_OPT( only_positive_Z, "only allow positive contributions to partition function", false );
 	NEW_OPT( o2prime_trials, "in dinucleotide test, do rotamer trials", false );
 	NEW_OPT( cycle_axes, "different coordinate system", false );
 	NEW_OPT( do_not_rotate_base2, "consistency test -- leave base 2 in arbitrary rotation", false );
-	NEW_OPT( cluster_poses, "Cluster after sampling", false );
+	NEW_OPT( cluster_poses, "Cluster after modeler", false );
 	NEW_OPT( filter_base_stack_direction, "filter base stack directionality in base_pair_to_base_pair", false );
 	NEW_OPT( expand_chi, "Expand chi after state definition", false );
 	NEW_OPT( base_doublet_rmsd, "Testing base doublet rmsd", false );

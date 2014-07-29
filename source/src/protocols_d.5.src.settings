@@ -32,57 +32,57 @@ sources = {
 		"RNA_StructureParameters",
 		"util",
 	],
-    "protocols/rotamer_sampler": [
+    "protocols/stepwise/sampler": [
         "MC_Comb",
         "MC_OneTorsion",
-        "NoOpRotamerSampler",
-	"JumpRotamerSampler",
-        "RotamerSamplerAny",
-        "RotamerSamplerComb",
-        "RotamerSamplerOneTorsion",
-        "RotamerSamplerOneValue",
-        "RotamerSamplerOneValueComb",
-        "RotamerSamplerSized",
-        "RotamerSamplerSizedAny",
-        "RotamerSamplerSizedComb",
+        "NoOpStepWiseSampler",
+	"JumpStepWiseSampler",
+        "StepWiseSamplerAny",
+        "StepWiseSamplerComb",
+        "StepWiseSamplerOneTorsion",
+        "StepWiseSamplerOneValue",
+        "StepWiseSamplerOneValueComb",
+        "StepWiseSamplerSized",
+        "StepWiseSamplerSizedAny",
+        "StepWiseSamplerSizedComb",
     ],
-    "protocols/rotamer_sampler/copy_dofs": [
-	"CopyDofRotamerSampler",
+    "protocols/stepwise/sampler/copy_dofs": [
+	"CopyDofStepWiseSampler",
 	"ResidueAlternativeSet",
-	"ResidueAlternativeRotamerSampler",
-	"ResidueAlternativeRotamerSamplerComb",
-	"ResidueListRotamerSampler",
+	"ResidueAlternativeStepWiseSampler",
+	"ResidueAlternativeStepWiseSamplerComb",
+	"ResidueListStepWiseSampler",
     ],
-    "protocols/rotamer_sampler/input_streams": [
-	"InputStreamRotamerSampler",
+    "protocols/stepwise/sampler/input_streams": [
+	"InputStreamStepWiseSampler",
     ],
-    "protocols/rotamer_sampler/protein": [
-	"ProteinMainChainRotamerSampler",
-	"ProteinBetaAntiParallelRotamerSampler",
-	"ProteinFragmentRotamerSampler",
+    "protocols/stepwise/sampler/protein": [
+	"ProteinMainChainStepWiseSampler",
+	"ProteinBetaAntiParallelStepWiseSampler",
+	"ProteinFragmentStepWiseSampler",
 	"util",
     ],
-    "protocols/rotamer_sampler/rigid_body": [
+    "protocols/stepwise/sampler/rigid_body": [
 	"EulerAngles",
-	"RigidBodyRotamerSampler",
-	"RigidBodyRotamerSamplerValueRange",
-	"RigidBodyRotamerSamplerWithResidueList",
-	"RigidBodyRotamerSamplerWithResidueAlternatives",
+	"RigidBodyStepWiseSampler",
+	"RigidBodyStepWiseSamplerValueRange",
+	"RigidBodyStepWiseSamplerWithResidueList",
+	"RigidBodyStepWiseSamplerWithResidueAlternatives",
 	"util",
     ],
-    "protocols/rotamer_sampler/rna": [
-        "RNA_ChiRotamerSampler",
+    "protocols/stepwise/sampler/rna": [
+        "RNA_ChiStepWiseSampler",
         "RNA_KIC_Sampler",
         "RNA_KinematicCloser",
         "RNA_MC_MultiSuite",
         "RNA_MC_Sugar",
         "RNA_MC_Suite",
-        "RNA_NucleosideRotamerSampler",
-        "RNA_SugarRotamerSampler",
-        "RNA_SuiteRotamerSampler",
+        "RNA_NucleosideStepWiseSampler",
+        "RNA_SugarStepWiseSampler",
+        "RNA_SuiteStepWiseSampler",
         "util",
     ],
-    "protocols/rotamer_sampler/screener": [
+    "protocols/stepwise/sampler/screener": [
         "RNA_TorsionScreener",
     ],
     "protocols/stepwise": [
@@ -91,10 +91,7 @@ sources = {
     "protocols/stepwise/full_model_info/": [
 	"FullModelInfoSetupFromCommandLine",
     ],
-    "protocols/stepwise/full_model_info/": [
-	"FullModelInfoSetupFromCommandLine",
-    ],
-    "protocols/stepwise/legacy/sampling": [
+    "protocols/stepwise/legacy/modeler": [
 	#"StepWiseLegacyMinimizer",
 	#"StepWiseLegacyConnectionSampler",
 	#"RigidBodySampler",
@@ -105,20 +102,27 @@ sources = {
 	"SimplePoseSelection",
 	"SimpleRMSD_Screener",
     ],
-    "protocols/stepwise/legacy/sampling/protein": [
+    "protocols/stepwise/legacy/modeler/protein": [
 	"StepWiseProteinMinimizer",
 	"StepWiseProteinPoseSetup",
 	#"StepWiseProteinConnectionSampler",
+	"util",
     ],
-    "protocols/stepwise/legacy/sampling/rna/": [
+    "protocols/stepwise/legacy/modeler/rna/": [
 	"RNA_AnalyticLoopCloser",
 	#"StepWiseRNA_Minimizer",
+	"StepWiseRNA_Clusterer",
 	"StepWiseRNA_WorkingParametersSetup",
+	"StepWiseRNA_PoseSelection",
 	"StepWiseRNA_PoseSetup",
 	"StepWiseRNA_PoseSetupFromCommandLine",
+	"util",
     ],
-    "protocols/stepwise/legacy/sampling/rna/connection/": [
+    "protocols/stepwise/legacy/modeler/rna/connection/": [
 	#"StepWiseRNA_ConnectionSampler",
+    ],
+    "protocols/stepwise/options/": [
+	"StepWiseBasicOptions",
     ],
     "protocols/stepwise/screener": [
 	"AnchorSugarScreener",
@@ -152,90 +156,91 @@ sources = {
 	"VDW_BinScreener",
 	"util",
     ],
-    "protocols/stepwise/sampling/": [ # move this into general?
+    "protocols/stepwise/modeler/": [ # move this into general?
 	"StepWiseModeler",
 	"StepWiseConnectionSampler",
 	"StepWiseMinimizer",
+	"constraint_util",
+	"file_util",
 	"output_util",
+	"scoring_util",
 	"util",
     ],
-    "protocols/stepwise/sampling/align": [
+    "protocols/stepwise/modeler/align": [
 	"StepWiseClusterer",
 	"StepWiseLegacyClusterer",
 	"StepWiseLegacyClustererSilentBased",
 	"StepWisePoseAligner",
 	"util",
     ],
-    "protocols/stepwise/sampling/modeler_options": [
+    "protocols/stepwise/modeler/options": [
 	"StepWiseBasicModelerOptions",
 	"StepWiseModelerOptions",
 	"StepWiseRNA_ModelerOptions",
 	"StepWiseProteinModelerOptions",
     ],
-    "protocols/stepwise/sampling/movemap": [
+    "protocols/stepwise/modeler/movemap": [
 	"util",
     ],
-    "protocols/stepwise/sampling/packer": [
+    "protocols/stepwise/modeler/packer": [
 	"StepWiseMasterPacker",
 	"StepWisePacker",
 	"SideChainCopier",
 	"util",
     ],
-    "protocols/stepwise/sampling/protein": [
+    "protocols/stepwise/modeler/protein": [
 	"InputStreamWithResidueInfo",
 	"MainChainTorsionSet",
 	"StepWiseProteinBackboneSampler",
 	"util",
     ],
-    "protocols/stepwise/sampling/protein/checker": [
+    "protocols/stepwise/modeler/protein/checker": [
 	"ProteinAtrRepChecker",
     ],
-    "protocols/stepwise/sampling/protein/loop_close": [
+    "protocols/stepwise/modeler/protein/loop_close": [
 	"StepWiseProteinCCD_Closer",
 	"StepWiseProteinCCD_MultiPoseCloser",
 	"StepWiseProteinKIC_LoopBridger",
 	"util",
     ],
-    "protocols/stepwise/sampling/working_parameters": [
+    "protocols/stepwise/modeler/working_parameters": [
 	"StepWiseBasicWorkingParameters",
 	"StepWiseWorkingParameters",
 	"util"
     ],
-    "protocols/stepwise/sampling/rna": [
-	"StepWiseRNA_Clusterer",
+    "protocols/stepwise/modeler/rna": [
 	"StepWiseRNA_CombineLongLoopFilterer",
 	"StepWiseRNA_OutputData",
-	"StepWiseRNA_PoseSelection",
 	"StepWiseRNA_ResidueInfo",
 	"util",
     ],
-    "protocols/stepwise/sampling/rna/bulge/": [
+    "protocols/stepwise/modeler/rna/bulge/": [
 	"BulgeApplyMover",
 	"BulgeUnApplyMover",
     ],
-    "protocols/stepwise/sampling/rna/helix": [
+    "protocols/stepwise/modeler/rna/helix": [
 	"RNA_HelixAssembler",
     ],
-    "protocols/stepwise/sampling/rna/rigid_body/": [
+    "protocols/stepwise/modeler/rna/rigid_body/": [
 	"util",
     ],
-    "protocols/stepwise/sampling/rna/o2prime/": [
+    "protocols/stepwise/modeler/rna/o2prime/": [
 	"O2PrimePacker",
     ],
-    "protocols/stepwise/sampling/rna/phosphate/": [
+    "protocols/stepwise/modeler/rna/phosphate/": [
 	"MultiPhosphateSampler",
 	"PhosphateMove",
 	"PhosphateMover",
 	"util",
     ],
-    "protocols/stepwise/sampling/rna/checker": [
+    "protocols/stepwise/modeler/rna/checker": [
 	"RNA_AtrRepChecker",
 	"RNA_ChainClosableGeometryChecker",
 	"RNA_ChainClosureChecker",
 	"RNA_BaseCentroidChecker",
 	"RNA_VDW_BinChecker",
     ],
-    "protocols/stepwise/sampling/rna/sugar/": [
+    "protocols/stepwise/modeler/rna/sugar/": [
 	"StepWiseRNA_VirtualSugarJustInTimeInstantiator",
 	"StepWiseRNA_VirtualSugarSampler",
 	"StepWiseRNA_VirtualSugarSamplerFromStringList",
@@ -248,7 +253,6 @@ sources = {
 	"SWA_Move",
 	"SWA_MoveSelector",
 	"StepWiseMonteCarlo",
-	"StepWiseMonteCarloOptions",
 	"util",
     ],
     "protocols/stepwise/monte_carlo/mover": [
@@ -258,6 +262,9 @@ sources = {
 	"FromScratchMover",
 	"ResampleMover",
 	"TransientCutpointHandler",
+    ],
+    "protocols/stepwise/monte_carlo/options": [
+	"StepWiseMonteCarloOptions",
     ],
     "protocols/stepwise/monte_carlo/rna": [
 	"RNA_AddDeleteMonteCarlo",

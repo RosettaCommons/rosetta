@@ -181,6 +181,16 @@ moveable_jump( core::Size const jump_pos1,
 							 core::Size const jump_pos2,
 							 protocols::toolbox::AllowInsert const & allow_insert);
 
+core::Size
+virtualize_bulges( core::pose::Pose & input_pose,
+									 utility::vector1< core::Size > const & in_allow_bulge_res_list,
+									 core::scoring::ScoreFunctionCOP const & scorefxn,
+									 std::string const & tag,
+									 bool const allow_pre_virtualize,
+									 bool const allow_consecutive_bulges,
+									 bool const verbose );
+
+
 } //farna
 } //protocols
 

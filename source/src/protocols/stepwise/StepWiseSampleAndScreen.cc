@@ -17,9 +17,9 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/StepWiseScreenerType.hh>
 #include <protocols/stepwise/screener/AnchorSugarScreener.hh>
-#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
-#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerSamplerComb.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
+#include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
@@ -32,14 +32,14 @@ using namespace core;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Unify all stepwise sampling
+// Unify all stepwise modeler
 //
 // Our previous work made it clear that information needs to be passed from early screens
-//  to later ones, but this communication was not clear in our original sampling code, despite
+//  to later ones, but this communication was not clear in our original modeler code, despite
 //  extensive encapsulation.
 //
-// It also became clear that suite sampling (for RNA), rigid body sampling (ligands, 'floating base' for RNA),
-//  protein main-chain sampling, and more could all go into one unified framework, with screens set up in a modular
+// It also became clear that suite modeler (for RNA), rigid body modeler (ligands, 'floating base' for RNA),
+//  protein main-chain modeler, and more could all go into one unified framework, with screens set up in a modular
 //  fashion (see StepWiseScreenerType).
 //
 // So this is that grand framework.
@@ -55,7 +55,7 @@ namespace protocols {
 namespace stepwise {
 
 	//Constructor
-	StepWiseSampleAndScreen::StepWiseSampleAndScreen( rotamer_sampler::RotamerSamplerBaseOP sampler,
+	StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP sampler,
 																										utility::vector1< screener::StepWiseScreenerOP > screeners ):
 		sampler_( sampler ),
 		screeners_( screeners ),
@@ -78,7 +78,10 @@ namespace stepwise {
 		using namespace protocols::moves;
 		using namespace protocols::stepwise::screener;
 
-		if ( verbose_ ) TR << "Running SampleAndScreen... " << std::endl;
+		if ( verbose_ ) {
+			TR << "Running SampleAndScreen... " << std::endl;
+			TR << std::endl; sampler_->show( TR ); TR << std::endl;
+		}
 
 		Size n( 0 );
 		CompositionMoverOP update_movers( new CompositionMover ), restore_movers( new CompositionMover );
@@ -159,17 +162,17 @@ namespace stepwise {
 
 	///////////////////////////////////////////////////////////////////////////
 	// kind of a hack, but needed right now for comparison to prior work.
-	// did not want to keep track of some 'inner loops' (sugar sampling),
+	// did not want to keep track of some 'inner loops' (sugar modeler),
 	// to be closer in line to classic SWA sampler code.
 	void
 	StepWiseSampleAndScreen::set_ok_to_increment(){
 
 		bool ok_to_increment_screeners( true );
 
-		using namespace protocols::rotamer_sampler;
-		using namespace protocols::rotamer_sampler::rigid_body;
+		using namespace protocols::stepwise::sampler;
+		using namespace protocols::stepwise::sampler::rigid_body;
 		if ( sampler_->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler_.get() ) );
+			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler_.get() ) );
 			ok_to_increment_screeners = ( rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() == 1 );
 		}
 		if ( ok_to_increment_screeners ){
@@ -202,11 +205,11 @@ namespace stepwise {
 		}
 
 
-		using namespace protocols::rotamer_sampler;
-		using namespace protocols::rotamer_sampler::rigid_body;
+		using namespace protocols::stepwise::sampler;
+		using namespace protocols::stepwise::sampler::rigid_body;
 		screener::StepWiseScreenerOP screener = screeners_[ n ];
 		if ( sampler_->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler_.get() ) );
+			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler_.get() ) );
 			TR << "Rigid body ID " << rigid_body_rotamer_with_residue_alternatives.rigid_body_rotamer()->id() << ": ";
 			TR << " ID overall " << rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() << "; ";
 			TR << " ID at 3 " << rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id_for_resnum( 3 ) << "; ";

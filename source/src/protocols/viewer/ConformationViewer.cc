@@ -77,6 +77,7 @@ ConformationViewer::ConformationViewer(std::string const & name_in ):
 	length_( 900 ),
 	width_( 900 ),
 	use_debug_pause_( false ),
+	center_vector_defined_( false ),
 	conf_( NULL )
 {
 	pthread_mutex_init( &residues_mut_, NULL );
@@ -90,6 +91,7 @@ ConformationViewer::ConformationViewer(std::string const & name_in, int length, 
 	length_( length ),
 	width_( width ),
 	use_debug_pause_( debug_pause ),
+	center_vector_defined_( false ),
 	conf_( NULL )
 {
 	pthread_mutex_init( &residues_mut_, NULL );

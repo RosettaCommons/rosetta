@@ -46,7 +46,7 @@ using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
 // RNA_AddDeleteMonteCarlo (a prototype for SWA Monte Carlo) -- framework for
-//  sampling RNA through torsion moves,
+//  modeler RNA through torsion moves,
 //  and moves that delete or add residues at chain termini.
 //  This probably should be deprecated soon -- could be captured by
 //  StepWiseMonteCarlo

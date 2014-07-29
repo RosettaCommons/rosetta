@@ -15,8 +15,8 @@
 
 #include <protocols/stepwise/screener/RNA_ChainClosureScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosureChecker.hh>
-#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 
@@ -31,7 +31,7 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-  RNA_ChainClosureScreener::RNA_ChainClosureScreener( sampling::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker ):
+  RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker ):
 		SampleApplier( chain_closure_checker->pose() ),
 		chain_closure_checker_( chain_closure_checker ),
 		screening_pose_( chain_closure_checker->pose() ),
@@ -39,7 +39,7 @@ namespace screener {
 	{}
 
 	//Constructor -- this one is useful if we don't want to close the chain but check if it is already closed.
-  RNA_ChainClosureScreener::RNA_ChainClosureScreener( sampling::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
+  RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
 																							pose::Pose & screening_pose,
 																							bool const just_do_closure_check /*= false */ ):
 		SampleApplier( chain_closure_checker->pose() ),
@@ -70,7 +70,7 @@ namespace screener {
 	// this is also used in StepWiseResiduePairScreener and in principle this class
 	//  could derive from that parent, but we also want SampleApplier functionality...
 	void
-	RNA_ChainClosureScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
+	RNA_ChainClosureScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
 		fast_forward_to_next_residue_pair( sampler,
 																			 chain_closure_checker_->five_prime_res(),
 																			 chain_closure_checker_->five_prime_res() + 1); // in screener util.

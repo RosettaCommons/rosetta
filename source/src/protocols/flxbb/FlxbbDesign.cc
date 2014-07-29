@@ -604,7 +604,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 	// calc packstat
 	core::Real packscore;
 	packscore = core::scoring::packstat::compute_packing_score( pose );
-	setPoseExtraScores( pose, "pack_stat", packscore );
+	setPoseExtraScore( pose, "pack_stat", packscore );
 
 } // FlxbbDesign::apply
 

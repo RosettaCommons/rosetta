@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/PhosphateScreener.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/moves/CompositionMover.hh>
 
 #include <basic/Tracer.hh>
@@ -26,7 +26,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	PhosphateScreener::PhosphateScreener( sampling::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler ):
+	PhosphateScreener::PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler ):
 		SampleApplier( phosphate_sampler->pose() ),
 		phosphate_sampler_( phosphate_sampler ),
 		phosphate_sampler_for_restoration_( phosphate_sampler->clone_sampler() ) // will not change, and will allow restoration of phosphate.

@@ -14,15 +14,15 @@
 
 
 #include <protocols/stepwise/screener/SugarInstantiator.hh>
-#include <protocols/stepwise/sampling/rna/sugar/SugarInstantiateMover.hh>
-#include <protocols/stepwise/sampling/rna/sugar/SugarVirtualizeMover.hh>
+#include <protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.hh>
+#include <protocols/stepwise/modeler/rna/sugar/SugarVirtualizeMover.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.SugarInstantiator" );
 
-using namespace protocols::stepwise::sampling::rna::sugar;
+using namespace protocols::stepwise::modeler::rna::sugar;
 
 namespace protocols {
 namespace stepwise {

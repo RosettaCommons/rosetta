@@ -166,7 +166,7 @@ namespace monte_carlo {
 																					 utility::vector1< SWA_Move > & swa_moves );
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// other moves [used in resampling]
+		// other moves [used in remodeler]
 		void
 		get_terminal_move_elements( pose::Pose const & pose,
 																utility::vector1< SWA_Move > & swa_moves,
@@ -206,7 +206,7 @@ namespace monte_carlo {
 		Real intermolecular_frequency_;
 		bool only_dock_preexisting_chunks_;
 		bool allow_shared_chains_in_dock_poses_;
-		bool resampling_;
+		bool remodeler_;
 	};
 
 } //monte_carlo

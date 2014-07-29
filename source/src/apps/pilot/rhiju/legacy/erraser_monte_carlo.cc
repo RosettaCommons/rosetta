@@ -42,9 +42,9 @@
 
 
 //////////////////////////////////////////////////////////
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/viewer/viewers.hh>
@@ -133,7 +133,7 @@ erraser_monte_carlo()
   using namespace core::optimization;
   using namespace core::import_pose;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace protocols::stepwise::monte_carlo::rna;
 	using namespace protocols::moves;
 
@@ -199,14 +199,14 @@ erraser_monte_carlo()
 		cutpoint_handler.put_in_cutpoints( pose );
 
 		StepWiseRNA_Modeler erraser_modeler( erraser_res, scorefxn );
-		StepWiseModelerOptionsOP modeler_options = new StepWiseModelerOptions;
-		modeler_options->set_choose_random( true );
-		modeler_options->set_force_centroid_interaction( true );
-		modeler_options->set_kic_sampling_if_relevant( true );
-		modeler_options->set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-		modeler_options->set_num_random_samples( option[ num_random_samples ]() );
-		modeler_options->set_num_pose_minimize( 1 );
-		erraser_modeler.set_options( modeler_options );
+		StepWiseModelerOptionsOP options = new StepWiseModelerOptions;
+		options->set_choose_random( true );
+		options->set_force_centroid_interaction( true );
+		options->set_kic_modeler_if_relevant( true );
+		options->set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		options->set_num_random_samples( option[ num_random_samples ]() );
+		options->set_num_pose_minimize( 1 );
+		erraser_modeler.set_options( options );
 		if ( !option[ minimize_single_res ]() )  erraser_modeler.set_minimize_res( sample_res_list );
 
 		erraser_modeler.apply( pose );

@@ -543,11 +543,11 @@ void ClassicRelax::set_rottrial ( protocols::simple_moves::RotamerTrialsMoverOP 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void ClassicRelax::setPoseExtraScores( pose::Pose &pose ){
-	core::pose::setPoseExtraScores( pose, "Filter_Stage2_dEnd", score_stage2_end);
-	core::pose::setPoseExtraScores( pose, "Filter_Stage2_cHalf", score_stage2_half);
-	core::pose::setPoseExtraScores( pose, "Filter_Stage2_bQuarter",score_stage2_quarter);
-	core::pose::setPoseExtraScores( pose, "Filter_Stage2_aBefore", score_stage2_beginning);
+void ClassicRelax::setPoseExtraScore( pose::Pose &pose ){
+	core::pose::setPoseExtraScore( pose, "Filter_Stage2_dEnd", score_stage2_end);
+	core::pose::setPoseExtraScore( pose, "Filter_Stage2_cHalf", score_stage2_half);
+	core::pose::setPoseExtraScore( pose, "Filter_Stage2_bQuarter",score_stage2_quarter);
+	core::pose::setPoseExtraScore( pose, "Filter_Stage2_aBefore", score_stage2_beginning);
 }
 
 
@@ -689,7 +689,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		score_stage2_quarter = temp_score;
 		score_stage2_half =  temp_score;
 		score_stage2_end = temp_score;
-		setPoseExtraScores( pose );
+		setPoseExtraScore( pose );
 		mc_->reset(pose);
 
 		if ( filter_stage2_beginning <  temp_score ) {
@@ -729,7 +729,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		if ( filter_stage2_quarter <  mc_->lowest_score() ) {
 			TR.Info << "Structure failed filter_stage2_quarter: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
 			mc_->recover_low( pose );
-			setPoseExtraScores( pose );
+			setPoseExtraScore( pose );
 			return;
 		}
 
@@ -740,7 +740,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		if ( filter_stage2_half <  mc_->lowest_score() ) {
 			TR.Info << "Structure failed filter_stage2_half: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
 			mc_->recover_low( pose );
-			setPoseExtraScores( pose );
+			setPoseExtraScore( pose );
 			return;
 		}
 
@@ -751,7 +751,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		if ( filter_stage2_end<  mc_->lowest_score() ) {
 			TR.Info << "Structure failed score_stage2_end: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
 			mc_->recover_low( pose );
-			setPoseExtraScores( pose );
+			setPoseExtraScore( pose );
 			return;
 		}
 
@@ -761,7 +761,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	mc_->recover_low( pose );
 	(*get_scorefxn())(pose);
 	get_scorefxn()->show(TR.Debug, pose);
-	setPoseExtraScores( pose );
+	setPoseExtraScore( pose );
 	mc_->reset(pose);
 
 	//	output_debug_structure( pose, "rl_stage2" );

@@ -153,7 +153,7 @@ OPT_KEY( String, pack_weights )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Real, bin_width )
 OPT_KEY( Boolean, auto_tune )
-OPT_KEY( Boolean, sampling )
+OPT_KEY( Boolean, modeler )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -528,7 +528,7 @@ output_to_silent( Size const count,
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-sampling_closure_test(){
+modeler_closure_test(){
 
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
@@ -639,8 +639,8 @@ my_main( void* )
 
 	using namespace core::options;
 
-	if ( option[ sampling ] ){
-		sampling_closure_test();
+	if ( option[ modeler ] ){
+		modeler_closure_test();
 	} else {
 		loop_closure_test();
 	}
@@ -681,7 +681,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
 	NEW_OPT( cut, "cutpoint", 0 );
 	NEW_OPT( sample_res, "cutpoint", 0 );
-	NEW_OPT( sampling, "sampling over 1 residue, close the others...", false );
+	NEW_OPT( modeler, "modeler over 1 residue, close the others...", false );
 	NEW_OPT( loop_res, "Loop residues to remodel", blank_size_vector );
 	NEW_OPT( bin_width, "width of bins", 10.0 );
 

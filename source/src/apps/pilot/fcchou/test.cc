@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <core/init/init.hh>
-#include <protocols/rotamer_sampler/MC_OneTorsion.hh>
+#include <protocols/stepwise/sampler/MC_OneTorsion.hh>
 
 // C++ headers
 #include <iostream>
@@ -21,7 +21,7 @@
 // Exception handling
 
 using namespace core;
-using namespace protocols::rotamer_sampler;
+using namespace protocols::stepwise::sampler;
 
 //////////////////////////////////////////////////////////////////////////////
 void

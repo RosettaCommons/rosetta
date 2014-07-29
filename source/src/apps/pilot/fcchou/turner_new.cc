@@ -25,8 +25,8 @@
 
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/stepwise/sampling/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/rotamer_sampler/rna/RNA_MC_Suite.hh>
-#include <protocols/rotamer_sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
+#include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -180,7 +180,7 @@ void vector2disk_in2d(
 //////////////////////////////////////////////////////////////////////////////
 
 void set_gaussian_stdev(
-	rotamer_sampler::rna::RNA_MC_MultiSuite & sampler,
+	sampler::rna::RNA_MC_MultiSuite & sampler,
 	moves::SimulatedTempering const & tempering,
 	utility::vector1<Size> const & bp_rsd,
 	utility::vector1<Size> const & dangling_rsd
@@ -217,7 +217,7 @@ Size data_dim() {
 //////////////////////////////////////////////////////////////////////////////
 void
 MC_run () {
-	using namespace protocols::rotamer_sampler::rna;
+	using namespace protocols::stepwise::sampler::rna;
 	using namespace protocols::moves;
 	using namespace scoring;
 

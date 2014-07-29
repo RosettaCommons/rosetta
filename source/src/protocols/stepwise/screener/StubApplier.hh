@@ -40,7 +40,7 @@ namespace screener {
 
 		virtual
 		void
-		get_update( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		get_update( sampler::StepWiseSamplerBaseOP sampler );
 
 		virtual
 		std::string

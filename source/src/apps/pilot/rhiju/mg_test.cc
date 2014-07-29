@@ -34,7 +34,7 @@
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
@@ -42,6 +42,7 @@
 #include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDB_Info.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -107,7 +108,7 @@ void	strip_out_magnesiums( pose::Pose & pose ){
 		slice_res.push_back( n );
 	}
 
-	protocols::stepwise::sampling::pdbslice( pose, slice_res );
+	core::pose::pdbslice( pose, slice_res );
 
 }
 

@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryStubBasedScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -32,7 +32,7 @@ namespace screener {
 	public:
 
 		//constructor
-		RNA_ChainClosableGeometryStubBasedScreener( sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
+		RNA_ChainClosableGeometryStubBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 																		utility::vector1< core::pose::PoseOP > screening_pose_list,
 																		core::kinematics::Stub const & moving_res_base_stub,
 																		Size const reference_res,
@@ -41,7 +41,7 @@ namespace screener {
 
 
 		//constructor
-		RNA_ChainClosableGeometryStubBasedScreener( sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
+		RNA_ChainClosableGeometryStubBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 																		utility::vector1< core::pose::PoseOP > screening_pose_list,
 																		core::kinematics::Stub const & moving_res_base_stub,
 																		Size const chain_break_reference_res );
@@ -52,7 +52,7 @@ namespace screener {
 	public:
 
 		void
-		get_update( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		get_update( sampler::StepWiseSamplerBaseOP sampler );
 
 		bool
 		check_screen();
@@ -65,7 +65,7 @@ namespace screener {
 
 	private:
 
-		sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
+		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
 
 		utility::vector1< core::pose::PoseOP > screening_pose_list_;
 		core::conformation::ResidueOP moving_rsd_at_origin_;

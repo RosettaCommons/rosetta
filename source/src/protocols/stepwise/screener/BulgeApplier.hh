@@ -17,13 +17,13 @@
 #define INCLUDED_protocols_stepwise_screener_BulgeApplier_HH
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <protocols/stepwise/screener/BulgeApplier.fwd.hh>
-#include <protocols/stepwise/sampling/rna/bulge/BulgeApplyMover.fwd.hh>
-#include <protocols/stepwise/sampling/rna/bulge/BulgeUnApplyMover.fwd.hh>
+#include <protocols/stepwise/modeler/rna/bulge/BulgeApplyMover.fwd.hh>
+#include <protocols/stepwise/modeler/rna/bulge/BulgeUnApplyMover.fwd.hh>
 
-using namespace protocols::stepwise::sampling::rna::checker;
+using namespace protocols::stepwise::modeler::rna::checker;
 
 namespace protocols {
 namespace stepwise {
@@ -60,8 +60,8 @@ namespace screener {
 
 		RNA_AtrRepCheckerOP atr_rep_checker_;
 		RNA_BaseCentroidCheckerOP base_centroid_checker_;
-		sampling::rna::bulge::BulgeApplyMoverOP   bulge_apply_mover_;
-		sampling::rna::bulge::BulgeUnApplyMoverOP bulge_unapply_mover_;
+		modeler::rna::bulge::BulgeApplyMoverOP   bulge_apply_mover_;
+		modeler::rna::bulge::BulgeUnApplyMoverOP bulge_unapply_mover_;
 
 	};
 

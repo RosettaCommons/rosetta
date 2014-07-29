@@ -106,7 +106,6 @@ namespace data {
 		oxygen_probe_dist_( 5.5 ),
 		occ_shells_( std::make_pair( 2.0, 4.0 ) )
 	{
-		initialize_DMS_potential();
 		probe_scorefxn_ = get_probe_scorefxn( true /*soft_rep*/, false /* just_atr_rep */);
 	}
 
@@ -341,6 +340,8 @@ namespace data {
 															 RNA_Reactivity const & rna_reactivity ) {
 
 		using namespace core::pose::full_model_info;
+
+		if ( DMS_potential_.size() == 0 ) initialize_DMS_potential();
 
 		runtime_assert( rna_reactivity.type() == DMS );
 		Size const & pos = rna_reactivity.position();

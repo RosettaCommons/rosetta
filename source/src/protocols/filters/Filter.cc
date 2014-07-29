@@ -121,7 +121,7 @@ void Filter::apply( core::io::serialization::PipeMap & pmap ) {
 }
 core::Real Filter::score( core::pose::Pose & pose ) {
 	core::Real score = report_sm( pose );
-	core::pose::setPoseExtraScores( pose, scorename_, score );
+	core::pose::setPoseExtraScore( pose, scorename_, score );
 	return score;
 }
 void Filter::score( core::io::serialization::PipeMap & pmap ) {

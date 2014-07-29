@@ -15,15 +15,15 @@
 
 #include <protocols/stepwise/screener/RNA_LegacyPoseSelectionScreener.hh>
 #include <protocols/stepwise/screener/TagDefinition.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSelection.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSelection.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_LegacyPoseSelectionScreener" );
 
-using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::modeler::rna;
 using namespace core::pose;
 using namespace core;
 
@@ -63,7 +63,7 @@ namespace screener {
 		std::string const & tag = tag_definition_->tag();
 		pose_selection_->pose_selection_by_full_score( selected_pose, tag );
 
-		if ( output_to_silent_file_ ) sampling::rna::output_data( silent_file_, tag, true,
+		if ( output_to_silent_file_ ) modeler::rna::output_data( silent_file_, tag, true,
 																															 selected_pose, native_pose_, working_parameters_ );
 
 		return true;

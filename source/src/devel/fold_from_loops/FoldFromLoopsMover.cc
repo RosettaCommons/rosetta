@@ -208,7 +208,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 	core::scoring::ScoreFunctionOP scorefxn_centr = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std","score4L" );
 
-	pose::setPoseExtraScores( input_pose, "rms",   rmsd_to_native );
+	pose::setPoseExtraScore( input_pose, "rms",   rmsd_to_native );
 	(*scorefxn_centr)(input_pose);
 
 

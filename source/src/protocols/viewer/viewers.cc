@@ -430,10 +430,11 @@ void
 add_conformation_viewer(
 	conformation::Conformation & conformation,
 	std::string const name_in, // = ""
-	int length,
-	int width,
-	bool debug_pause /* = false */,
-	Vector center_vector /* = empty_vector*/
+	int const length /* = 900 */,
+	int const width /* = 900 */,
+	bool const debug_pause /* = false */,
+	bool const set_center_vector /* = false */,
+	core::Vector const center_vector /* = empty_vector*/
 )
 {
 
@@ -445,7 +446,7 @@ add_conformation_viewer(
 			name_in );
 
 	ConformationViewerOP viewer( new ConformationViewer( window_name, length, width, debug_pause ) );
-	if ( center_vector != 0.0 ) viewer->set_center_vector( center_vector );
+	if ( set_center_vector ) viewer->set_center_vector( center_vector );
 
 	viewer->attach_to( conformation );
 

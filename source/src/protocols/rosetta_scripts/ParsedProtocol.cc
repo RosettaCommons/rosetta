@@ -254,7 +254,7 @@ ParsedProtocol::report_filters_to_pose( Pose & pose ) {
 			mover_it!=movers_.end(); ++mover_it ) {
 		core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
 		if( filter_value > -9999 ) {
-			setPoseExtraScores(pose, (*mover_it).second->get_user_defined_name(), (float)filter_value);
+			setPoseExtraScore(pose, (*mover_it).second->get_user_defined_name(), (float)filter_value);
 		}
 	}
 }

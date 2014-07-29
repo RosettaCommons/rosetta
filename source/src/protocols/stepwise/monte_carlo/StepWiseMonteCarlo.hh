@@ -18,14 +18,14 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.fwd.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.fwd.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -67,7 +67,7 @@ namespace monte_carlo {
 	public:
 
 		void
-		set_options( StepWiseMonteCarloOptionsCOP options );
+		set_options( options::StepWiseMonteCarloOptionsCOP options );
 
 		void set_model_tag( std::string const & setting ){ model_tag_ = setting; }
 		std::string model_tag() const{ return model_tag_; }
@@ -113,7 +113,7 @@ namespace monte_carlo {
 		bool
 		do_test_move( pose::Pose & pose );
 
-		sampling::StepWiseModelerOP
+		modeler::StepWiseModelerOP
 		setup_unified_stepwise_modeler();
 
 		void
@@ -124,8 +124,8 @@ namespace monte_carlo {
 		core::scoring::ScoreFunctionCOP scorefxn_input_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 
-		StepWiseMonteCarloOptionsCOP options_;
-		sampling::StepWiseModelerOP stepwise_modeler_;
+		options::StepWiseMonteCarloOptionsCOP options_;
+		modeler::StepWiseModelerOP stepwise_modeler_;
 		DeleteMoverOP delete_mover_;
 		AddMoverOP add_mover_;
 		FromScratchMoverOP from_scratch_mover_;

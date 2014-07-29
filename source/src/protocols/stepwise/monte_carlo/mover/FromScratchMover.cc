@@ -14,9 +14,9 @@
 
 
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/util.hh>
@@ -26,10 +26,10 @@
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.FromScratchMover" );
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 
 namespace protocols {
 namespace stepwise {
@@ -70,7 +70,7 @@ namespace mover {
 		std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 		for ( Size n = 1; n <= resnum.size(); n++ ) {
 			char newrestype = full_sequence[ resnum[n]-1 ];
-			sampling::rna::choose_random_if_unspecified_nucleotide( newrestype );
+			modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 			new_sequence += newrestype;
 		}
 
@@ -115,7 +115,7 @@ namespace mover {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	FromScratchMover::set_stepwise_modeler( protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler ){
+	FromScratchMover::set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ){
 		stepwise_modeler_ = stepwise_modeler;
 	}
 

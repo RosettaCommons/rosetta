@@ -117,11 +117,11 @@ public:
 
 		//examples for pose extra scores
 		//DEPRECATED
-// 		core::pose::setPoseExtraScores(pose, "this_is_a_test" + me, 987654321);
-// 		core::pose::setPoseExtraScores(pose, "alpha", 1.000);
-// 		core::pose::setPoseExtraScores(pose, "beta", 24000);
-// 		core::pose::setPoseExtraScores(pose, "gamma", 3.000);
-// 		core::pose::setPoseExtraScores(pose, "delta", 4.000);
+// 		core::pose::setPoseExtraScore(pose, "this_is_a_test" + me, 987654321);
+// 		core::pose::setPoseExtraScore(pose, "alpha", 1.000);
+// 		core::pose::setPoseExtraScore(pose, "beta", 24000);
+// 		core::pose::setPoseExtraScore(pose, "gamma", 3.000);
+// 		core::pose::setPoseExtraScore(pose, "delta", 4.000);
 
 		//this will show up in the final output, along with one set of intermediate stuff above
 		job_me->add_string("somemorestuff");

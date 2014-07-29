@@ -32,8 +32,8 @@
 #include <core/pack/rotamer_trials.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/rna/util.hh>
@@ -260,7 +260,7 @@ pack_phosphates()
 	pack::task::PackerTaskOP pack_task = pack::task::TaskFactory::create_packer_task( pose );
 	for ( Size i = 1; i <= pose.total_residue(); i++ ){
 		pack_task->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
-		//		pack_task->nonconst_residue_task( i ).or_ex4( true ); //extra O2prime sampling
+		//		pack_task->nonconst_residue_task( i ).or_ex4( true ); //extra O2prime modeler
 		//		pack_task->nonconst_residue_task( i ).or_include_current( true );
 		if ( pose.residue_type( i ).has_variant_type( "FIVE_PRIME_PACKABLE_PHOSPHATE" ) ) {
 			pack_task->nonconst_residue_task( i ).nonconst_rna_task().set_sample_five_prime_phosphate( true );

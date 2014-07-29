@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/PoseSelectionScreener.hh>
-#include <protocols/stepwise/sampling/align/StepWiseClusterer.hh>
+#include <protocols/stepwise/modeler/align/StepWiseClusterer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -30,7 +30,7 @@ namespace screener {
 	//Constructor
 	PoseSelectionScreener::PoseSelectionScreener( pose::Pose & pose,
 																								scoring::ScoreFunctionCOP scorefxn,
-																								sampling::align::StepWiseClustererOP stepwise_clusterer ):
+																								modeler::align::StepWiseClustererOP stepwise_clusterer ):
 		pose_( pose ),
 		scorefxn_( scorefxn ),
 		stepwise_clusterer_( stepwise_clusterer )

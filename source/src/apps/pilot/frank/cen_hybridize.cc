@@ -520,7 +520,7 @@ public:
 				// GDTMM
 				core::Real gdtmm = get_gdtmm( pose );
 				TR << "CYCLE 1  GDTMM = " << gdtmm << std::endl;
-				core::pose::setPoseExtraScores( pose, "GDTMM_0", gdtmm);
+				core::pose::setPoseExtraScore( pose, "GDTMM_0", gdtmm);
 			}
 
 			for (int m=2; m<=std::min((int)nmacrocycles,5); m+=1) {
@@ -691,7 +691,7 @@ public:
 					TR << "CYCLE " << m << "+min  GDTMM = " << gdtmm << std::endl;
 
 					//fpd write to output
-					core::pose::setPoseExtraScores( pose, "GDTMM_cen", gdtmm);
+					core::pose::setPoseExtraScore( pose, "GDTMM_cen", gdtmm);
 				}
 			}
 		}
@@ -711,7 +711,7 @@ public:
 
 		core::Real gdtmm = get_gdtmm( pose );
 		TR << "relax GDTMM = " << gdtmm << std::endl;
-		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
+		core::pose::setPoseExtraScore( pose, "GDTMM_final", gdtmm);
 	}
 
 	virtual std::string get_name() const {

@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/TagDefinition.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
@@ -48,7 +48,7 @@ namespace screener {
 	// this action could also be in the update_mover, which would move forward to all poses in later screeners.
 	bool
 	TagDefinition::check_screen(){
-		using namespace sampling::rna;
+		using namespace modeler::rna;
 		tag_ = create_tag( "U" + extra_tag_, first_sampler_->count() );
 		if ( sampler_include_torsion_value_in_tag_ &&
 				 ( moving_res_ != 0 ) &&

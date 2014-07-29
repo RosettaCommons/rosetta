@@ -15,8 +15,8 @@
 
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh> // probably do not need RNA in here.
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh> // probably do not need RNA in here.
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -39,7 +39,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.SWA_MoveSelector" );
 
 using namespace core;
 using namespace core::pose::full_model_info;
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 
 namespace protocols {
 namespace stepwise {
@@ -53,7 +53,7 @@ namespace monte_carlo {
 		intermolecular_frequency_( 0.0 ),
 		only_dock_preexisting_chunks_( false ),
 		allow_shared_chains_in_dock_poses_( false ),
-		resampling_( false )
+		remodeler_( false )
 	{}
 
 	//Destructor
@@ -111,7 +111,7 @@ namespace monte_carlo {
 	void
 	SWA_MoveSelector::get_resample_move_elements( pose::Pose const & pose,
 																								utility::vector1< SWA_Move > & swa_moves ) {
-		resampling_ = true;
+		remodeler_ = true;
 		if ( allow_internal_hinge_ ){
 			get_resample_internal_move_elements( pose, swa_moves );
 		} else {
@@ -123,7 +123,7 @@ namespace monte_carlo {
 		if ( allow_internal_local_ ){
 			get_resample_internal_local_move_elements( pose, swa_moves );
 		}
-		resampling_ = false;
+		remodeler_ = false;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ namespace monte_carlo {
 																														utility::vector1< SWA_Move > & swa_moves,
 																														MoveType const move_type ) {
 
-		using namespace protocols::stepwise::sampling::rna;
+		using namespace protocols::stepwise::modeler::rna;
 
 		utility::vector1< SWA_Move > swa_moves_split;
 		utility::vector1< bool > partition_definition;
@@ -341,7 +341,7 @@ namespace monte_carlo {
 	SWA_MoveSelector::get_intermolecular_split_move_elements( pose::Pose const & pose,
 																														utility::vector1< SWA_Move > & swa_moves,
 																														MoveType const move_type ){
-		using namespace protocols::stepwise::sampling::rna;
+		using namespace protocols::stepwise::modeler::rna;
 
 		utility::vector1< SWA_Move > swa_moves_split;
 		utility::vector1< bool > partition_definition;
@@ -370,7 +370,7 @@ namespace monte_carlo {
 	bool
 	SWA_MoveSelector::check_for_fixed_domain_or_from_scratch(  pose::Pose const & pose,
 																														 utility::vector1< Size> const & partition_res ) const {
-		if ( resampling_ ) return true;
+		if ( remodeler_ ) return true;
 		if ( from_scratch_frequency_ > 0.0 ) return true;
 		return check_for_fixed_domain( pose, partition_res );
 	}

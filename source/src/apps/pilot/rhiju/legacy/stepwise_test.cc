@@ -586,7 +586,7 @@ sample_trp_test()
 			green_packer->apply( pose );
 
 			( *scorefxn )( pose );
-			setPoseExtraScores( pose, "trp_rms", get_sidechain_rmsd( pose, start_pose, n )  );
+			setPoseExtraScore( pose, "trp_rms", get_sidechain_rmsd( pose, start_pose, n )  );
 			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
 			protocols::stepwise::protein::output_silent_struct( pose, native_pose_op, silent_file, tag );
 
@@ -601,19 +601,19 @@ void
 add_chi_tags( core::pose::Pose & pose, core::pose::Pose const & native_pose, Size const n_trp, Size const n_tyr ){
 
 	if ( pose.residue_type( n_trp ).nchi() > 1 ) {
-		setPoseExtraScores( pose, "trp_chi1", pose.chi( 1, n_trp ) );
-		setPoseExtraScores( pose, "trp_chi2", pose.chi( 2, n_trp ) );
+		setPoseExtraScore( pose, "trp_chi1", pose.chi( 1, n_trp ) );
+		setPoseExtraScore( pose, "trp_chi2", pose.chi( 2, n_trp ) );
 	} else {
-		setPoseExtraScores( pose, "trp_chi1", native_pose.chi( 1, n_trp) );
-		setPoseExtraScores( pose, "trp_chi2", native_pose.chi( 2, n_trp) );
+		setPoseExtraScore( pose, "trp_chi1", native_pose.chi( 1, n_trp) );
+		setPoseExtraScore( pose, "trp_chi2", native_pose.chi( 2, n_trp) );
 	}
 
 	if ( pose.residue_type( n_tyr ).nchi() > 1 ) {
-		setPoseExtraScores( pose, "tyr_chi1", pose.chi( 1, n_tyr ) );
-		setPoseExtraScores( pose, "tyr_chi2", pose.chi( 2, n_tyr ) );
+		setPoseExtraScore( pose, "tyr_chi1", pose.chi( 1, n_tyr ) );
+		setPoseExtraScore( pose, "tyr_chi2", pose.chi( 2, n_tyr ) );
 	} else {
-		setPoseExtraScores( pose, "tyr_chi1", native_pose.chi( 1, n_tyr) );
-		setPoseExtraScores( pose, "tyr_chi2", native_pose.chi( 2, n_tyr) );
+		setPoseExtraScore( pose, "tyr_chi1", native_pose.chi( 1, n_tyr) );
+		setPoseExtraScore( pose, "tyr_chi2", native_pose.chi( 2, n_tyr) );
 	}
 
 }
@@ -717,7 +717,7 @@ sample_trp_tyr_test()
 
 	Pose native_pose = pose_input;
 
-	// no sampling -- just gly/ala
+	// no modeler -- just gly/ala
 	std::string silent_file = silent_file_null;
 	{
 		std::string tag = "S_0";
@@ -947,7 +947,7 @@ rebuild_test(){
 
 // 	//////////////////////////////////////////////////////////////////////////
 // 	//////////////////////////////////////////////////////////////////////////
-// 	// StepWiseProteinConnectionSampler -- iterative and enumerative sampling
+// 	// StepWiseProteinConnectionSampler -- iterative and enumerative modeler
 // 	//   of backbone degrees of freedom.
 // 	//////////////////////////////////////////////////////////////////////////
 // 	//////////////////////////////////////////////////////////////////////////
@@ -1672,7 +1672,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( start_res, "starting residue", 0 );
 	NEW_OPT( end_res, "ending residue", 0 );
 	NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
-	NEW_OPT( filter_rmsd, "for fast sampling", -1.0 );
+	NEW_OPT( filter_rmsd, "for fast modeler", -1.0 );
 	NEW_OPT( trans_omega, "omega->180.0", false );
 	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
 	NEW_OPT( centroid_score_diff_cut, "score difference cut for clustering", 1000000.0 );
@@ -1688,7 +1688,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( score12_plot, "Figure out various terms for score12", false );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 	NEW_OPT( centroid_screen, "Centroid Screen", false );
-	NEW_OPT( no_sample_junction, "disable sampling of residue at junction inherited from start pose", false );
+	NEW_OPT( no_sample_junction, "disable modeler of residue at junction inherited from start pose", false );
 	NEW_OPT( add_peptide_plane, "Include N-acetylation and C-methylamidation caps at termini", false );
 	NEW_OPT( entropy_test, "Entropy test", false );
 	NEW_OPT( ghost_loops, "Virtualize loops in centroid screening", false );

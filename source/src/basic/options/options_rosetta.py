@@ -5788,6 +5788,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
     Option( 'use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for side-chain packing and O2' optimization", default='false' ),
     Option( 'rmsd_screen', 'Real', desc="keep sampled residues within this rmsd from the native pose",default="0.0" ),
 		Option( 'skip_minimize', 'Boolean', desc="Skip minimize, e.g. in prepack step",default="false" ),
+		Option( 'sampler_silent_file', 'String', desc='In StepWiseConnectionSampler, where to output all poses that pass filters', default='' ),
     Option_Group( 'monte_carlo',
 	    Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
 	    Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),

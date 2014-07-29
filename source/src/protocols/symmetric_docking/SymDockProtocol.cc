@@ -528,7 +528,7 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 		protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
     if( ! saxs_filter->apply(pose) )
 			passed_filter = false;
-		core::pose::setPoseExtraScores( pose, "saxs_score", saxs_filter->recent_score());
+		core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
 	}
 
 

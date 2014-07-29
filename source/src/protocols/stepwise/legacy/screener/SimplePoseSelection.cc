@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/legacy/screener/SimplePoseSelection.hh>
-#include <protocols/stepwise/sampling/align/StepWiseLegacyClusterer.hh>
+#include <protocols/stepwise/modeler/align/StepWiseLegacyClusterer.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
@@ -29,7 +29,7 @@ namespace screener {
 	//Constructor
 	SimplePoseSelection::SimplePoseSelection( pose::Pose const & pose,
 																						utility::vector1< Size > const & moving_res_list,
-																						sampling::modeler_options::StepWiseModelerOptionsCOP options,
+																						modeler::options::StepWiseModelerOptionsCOP options,
 																						bool const full_optimize ):
 		pose_( pose ),
 		moving_res_list_( moving_res_list ),
@@ -50,7 +50,7 @@ namespace screener {
 	void
 	SimplePoseSelection::finalize() {
 		if ( pose_list_.size() == 0 ) return;
-		sampling::align::StepWiseLegacyClusterer stepwise_clusterer( pose_list_,	moving_res_list_,
+		modeler::align::StepWiseLegacyClusterer stepwise_clusterer( pose_list_,	moving_res_list_,
 																														 options_, full_optimize_ /* force align*/ );
 		stepwise_clusterer.cluster();
 		pose_list_ = stepwise_clusterer.get_pose_list();

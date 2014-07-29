@@ -14,9 +14,9 @@
 
 
 #include <protocols/stepwise/screener/VDW_BinScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
@@ -29,7 +29,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	VDW_BinScreener::VDW_BinScreener( sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
+	VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 																		core::pose::Pose & screening_pose,
 																		Size const moving_res ):
 		vdw_bin_checker_( vdw_bin_checker),
@@ -40,7 +40,7 @@ namespace screener {
 		moving_res_base_stub_( core::kinematics::default_stub )
 	{}
 
-	VDW_BinScreener::VDW_BinScreener( sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
+	VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 																		pose::Pose & screening_pose,
 																		Size const moving_res,
 																		core::conformation::ResidueCOP screening_moving_rsd_at_origin,
@@ -68,15 +68,15 @@ namespace screener {
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	VDW_BinScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
-		using namespace rotamer_sampler;
-		using namespace rotamer_sampler::rigid_body;
+	VDW_BinScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+		using namespace sampler;
+		using namespace sampler::rigid_body;
 		if ( using_stub_ ){
 			if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
+RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
 				rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_rigid_body();
 } else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-				RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
+				RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 				rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_rigid_body();
 			}
 		}

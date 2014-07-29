@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
-#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -25,8 +25,8 @@
 static basic::Tracer TR( "protocols.stepwise.screener.SampleApplier" );
 
 using namespace core;
-using namespace protocols::rotamer_sampler;
-using namespace protocols::rotamer_sampler::rigid_body;
+using namespace protocols::stepwise::sampler;
+using namespace protocols::stepwise::sampler::rigid_body;
 
 namespace protocols {
 namespace stepwise {
@@ -51,10 +51,10 @@ namespace screener {
 	{}
 
 	void
-	SampleApplier::get_update( rotamer_sampler::RotamerSamplerBaseOP sampler ){
+	SampleApplier::get_update( sampler::StepWiseSamplerBaseOP sampler ){
 		if ( !apply_residue_alternative_sampler_ &&
 				 sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 			rigid_body_rotamer_with_residue_alternatives.apply_rigid_body_only( pose_ );
 			return;
 		}

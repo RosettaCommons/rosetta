@@ -14,16 +14,16 @@
 
 
 #include <protocols/stepwise/screener/BulgeApplier.hh>
-#include <protocols/stepwise/sampling/rna/bulge/BulgeApplyMover.hh>
-#include <protocols/stepwise/sampling/rna/bulge/BulgeUnApplyMover.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
+#include <protocols/stepwise/modeler/rna/bulge/BulgeApplyMover.hh>
+#include <protocols/stepwise/modeler/rna/bulge/BulgeUnApplyMover.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.BulgeApplier" );
 
-using namespace protocols::stepwise::sampling::rna::checker;
+using namespace protocols::stepwise::modeler::rna::checker;
 
 namespace protocols {
 namespace stepwise {
@@ -35,8 +35,8 @@ namespace screener {
 															Size const moving_res ):
 		atr_rep_checker_( atr_rep_checker ),
 		base_centroid_checker_( base_centroid_checker ),
-		bulge_apply_mover_( new sampling::rna::bulge::BulgeApplyMover( moving_res ) ),
-		bulge_unapply_mover_( new sampling::rna::bulge::BulgeUnApplyMover( moving_res ) )
+		bulge_apply_mover_( new modeler::rna::bulge::BulgeApplyMover( moving_res ) ),
+		bulge_unapply_mover_( new modeler::rna::bulge::BulgeUnApplyMover( moving_res ) )
 	{}
 
 	//Destructor
@@ -46,7 +46,7 @@ namespace screener {
 	////////////////////////////////////////////////////////////////////////////////////////
 	void
 	BulgeApplier::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		using namespace protocols::stepwise::sampling::rna::bulge;
+		using namespace protocols::stepwise::modeler::rna::bulge;
 		if ( bulge_variant_decision() ){
 			update_mover->add_mover( bulge_apply_mover_ );
 			restore_mover->add_mover( bulge_unapply_mover_ );

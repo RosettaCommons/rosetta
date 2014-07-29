@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/legacy/screener/ProteinAtrRepScreener.hh>
-#include <protocols/stepwise/sampling/protein/checker/ProteinAtrRepChecker.hh>
+#include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
@@ -34,7 +34,7 @@ namespace screener {
 
 	//Constructor
 	ProteinAtrRepScreener::ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
-																								sampling::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker ):
+																								modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker ):
 		stepwise::screener::SampleApplier( pose_atr_rep_screen ),
 		atr_rep_checker_( atr_rep_checker )
 	{}

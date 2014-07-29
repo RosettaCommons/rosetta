@@ -236,15 +236,15 @@ void addScoresForLoopParts(
 		if( loops.is_loop_residue(i) ) all_loop_list.push_back( i );
 	}
 	scorefxn(pose);
-	setPoseExtraScores( pose, "ScoreCore", 	scorefxn.get_sub_score_exclude_res( pose, all_loop_list ) );
+	setPoseExtraScore( pose, "ScoreCore", 	scorefxn.get_sub_score_exclude_res( pose, all_loop_list ) );
 
 	Real score =  scorefxn(pose);
 
 	for( Size l = 1; l <= nloops; l++ ){
 		if( l > loops.size() ){
-			setPoseExtraScores( pose, "ScoreLoopI" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
-			setPoseExtraScores( pose, "ScoreLoopC" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
-			setPoseExtraScores( pose, "ScoreLoopL" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
+			setPoseExtraScore( pose, "ScoreLoopI" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
+			setPoseExtraScore( pose, "ScoreLoopC" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
+			setPoseExtraScore( pose, "ScoreLoopL" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			continue;
 		}
 		utility::vector1< core::Size > loop_list;
@@ -259,9 +259,9 @@ void addScoresForLoopParts(
 
 		Real loopscore = scorefxn.get_sub_score_exclude_res( pose, loop_list );
 		Real nonloopscore = scorefxn.get_sub_score_exclude_res( pose, non_loop_list );
-		setPoseExtraScores( pose, "ScoreLoopI" + ObjexxFCL::right_string_of(l,3,'0'), loopscore );
-		setPoseExtraScores( pose, "ScoreLoopC" + ObjexxFCL::right_string_of(l,3,'0'), score - loopscore - nonloopscore );
-		setPoseExtraScores( pose, "ScoreLoopL" + ObjexxFCL::right_string_of(l,3,'0'), score - nonloopscore );
+		setPoseExtraScore( pose, "ScoreLoopI" + ObjexxFCL::right_string_of(l,3,'0'), loopscore );
+		setPoseExtraScore( pose, "ScoreLoopC" + ObjexxFCL::right_string_of(l,3,'0'), score - loopscore - nonloopscore );
+		setPoseExtraScore( pose, "ScoreLoopL" + ObjexxFCL::right_string_of(l,3,'0'), score - nonloopscore );
 	}
 
 	// Work out RMS values too
@@ -281,16 +281,16 @@ void addScoresForLoopParts(
 	core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 
 	int corelength;
-	setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength )	);
+	setPoseExtraScore(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength )	);
 
 	for( Size l = 1; l <= nloops; l++ ){
 		if( l > loops.size() ){
-			setPoseExtraScores( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
+			setPoseExtraScore( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			continue;
 		}
 		Loops temploops;
 		temploops.add_loop( loops[l] );
-		setPoseExtraScores( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'),
+		setPoseExtraScore( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'),
 												loops::loop_rmsd( native_pose_super, pose, temploops, true ) );
 	}
 }

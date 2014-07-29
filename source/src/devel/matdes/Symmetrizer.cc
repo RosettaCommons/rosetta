@@ -151,8 +151,8 @@ Symmetrizer::apply(Pose & pose) {
 	Real radial_disp = get_radial_disp();
 	Real angle = get_angle();
 	TR << "radial_disp = " << radial_disp << " angle = " << angle << std::endl;
-	core::pose::setPoseExtraScores(pose, "radial_disp", radial_disp);
-	core::pose::setPoseExtraScores(pose, "angle", angle);
+	core::pose::setPoseExtraScore(pose, "radial_disp", radial_disp);
+	core::pose::setPoseExtraScore(pose, "angle", angle);
 	Vec translation;
 	Mat rotation;
 	switch(symmetry_axis_) {

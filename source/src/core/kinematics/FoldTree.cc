@@ -235,6 +235,7 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	Size const pos1( std::min( new_res1, new_res2 ) );
 	Size const pos2( std::max( new_res1, new_res2 ) );
 	utility::vector1< Edge > new_edges, remove_edges;
+	Size const original_root( root() );
 	for( iterator it=begin(); it!=end(); ++it ){
 		core::Size const start( (core::Size)it->start() );
 		core::Size const stop( (core::Size)it->stop() );
@@ -256,14 +257,20 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 		delete_edge( *it );
 	}
   for( utility::vector1< Edge >::iterator it=new_edges.begin(); it!=new_edges.end(); ++it ) {
-    add_edge( *it );
+    if ( (core::Size)it->start() == original_root ) {
+			prepend_edge( *it ); // preserve root!
+		} else {
+			add_edge( *it );
+		}
   }
+	runtime_assert( (core::Size)root() == original_root );
 
 	Edge const new_jump_edge( pos1, pos2, jump_number );
 	delete_edge( old_jump_edge );
 	add_edge( new_jump_edge );
-	delete_extra_vertices( root_ );
+	delete_extra_vertices();
 	delete_self_edges();
+	runtime_assert( (core::Size)root() == original_root );
 	TR.Debug << "slide_jump: final tree= " << *this;
 }
 
@@ -823,6 +830,18 @@ FoldTree::add_edge(
 	edge_list_.push_back( new_edge );
 }
 
+/////////////////////////////////////////////////////////////////////////////
+/// @brief Prepend the edge  <new_edge>. Useful alternative to add_edge for setting root.
+/// @details  Does not ensure proper folding order
+void
+FoldTree::prepend_edge(
+	Edge const & new_edge
+)
+{
+	new_topology = true; // book-keeping
+	edge_list_.insert( edge_list_.begin(), new_edge );
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details
@@ -1010,7 +1029,7 @@ FoldTree::edge_label(
 /// tree which are neither jumps nor cutpoints. So delete them!
 /// this will combine two adjacent short edges into a long one
 void
-FoldTree::delete_extra_vertices( int const desired_root /* = 0 */ )
+FoldTree::delete_extra_vertices()
 {
 	// first get rid of any self-edges, eg left over from the tree when it was a single-residue tree
 	delete_self_edges();
@@ -1019,7 +1038,7 @@ FoldTree::delete_extra_vertices( int const desired_root /* = 0 */ )
 	// so ensure that this data is up-to-date
 	check_topology();
 
-	int const _root = (desired_root > 0) ? desired_root : root(); //need to keep that locally, since after killing the first edge the root() might have changed
+	int const _root = root(); //need to keep that locally, since after killing the first edge the root() might have changed
 	//
 	while ( true ) {
 		int kill_vertex( 0 );

@@ -54,7 +54,7 @@ namespace screener {
 
 		virtual
 		void
-		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
 	private:
 

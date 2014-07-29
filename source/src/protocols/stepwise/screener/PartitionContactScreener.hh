@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/PartitionContactScreener.fwd.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/types.hh>
@@ -32,7 +32,7 @@ namespace screener {
 
 		//constructor
 		PartitionContactScreener( core::pose::Pose const & pose,
-															sampling::working_parameters::StepWiseWorkingParametersCOP working_parameters,
+															modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
 															bool const use_loose_rep_cutoff );
 
 		//destructor

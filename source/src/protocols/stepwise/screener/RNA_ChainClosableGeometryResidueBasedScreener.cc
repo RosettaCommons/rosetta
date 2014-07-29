@@ -14,8 +14,8 @@
 
 
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryResidueBasedScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 
 #include <basic/Tracer.hh>
 
@@ -26,7 +26,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	RNA_ChainClosableGeometryResidueBasedScreener::RNA_ChainClosableGeometryResidueBasedScreener( sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker ):
+	RNA_ChainClosableGeometryResidueBasedScreener::RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker ):
 		StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
 																 chain_closable_geometry_checker->three_prime_chain_break_res() ),
 		chain_closable_geometry_checker_( chain_closable_geometry_checker )
@@ -38,13 +38,13 @@ namespace screener {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	RNA_ChainClosableGeometryResidueBasedScreener::get_update( rotamer_sampler::RotamerSamplerBaseOP sampler ){
+	RNA_ChainClosableGeometryResidueBasedScreener::get_update( sampler::StepWiseSamplerBaseOP sampler ){
 
-		using namespace rotamer_sampler;
-		using namespace rotamer_sampler::rigid_body;
+		using namespace sampler;
+		using namespace sampler::rigid_body;
 
 		runtime_assert( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES );
-		RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 
 		five_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res1_, " O3'" ); // 5' residue
 		three_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res2_, " C5'" ); // 3' residue

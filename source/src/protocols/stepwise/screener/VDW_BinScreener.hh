@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/VDW_BinScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -37,11 +37,11 @@ namespace screener {
 		// Undefined, commenting out to fix PyRosetta build  VDW_BinScreener();
 
 		//constructor
-		VDW_BinScreener( sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
+		VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 										 pose::Pose & screening_pose,
 										 Size const moving_res );
 
-		VDW_BinScreener( sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
+		VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 										 pose::Pose & screening_pose,
 										 Size const moving_res,
 										 core::conformation::ResidueCOP screening_moving_rsd_at_origin,
@@ -62,11 +62,11 @@ namespace screener {
 		type() const { return VDW_BIN; }
 
 		void
-		fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler );
+		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
 	private:
 
-		sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker_;
+		modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker_;
 		pose::Pose & screening_pose_;
 		Size const moving_res_;
 

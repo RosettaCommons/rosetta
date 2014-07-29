@@ -468,7 +468,7 @@ convert_silent_file_to_pose_data_list(std::string const silent_file){
 		silent_struct->fill_pose( *pose_op,*(rsd_set)  );
 
 		Real score( 0.0 );
-		getPoseExtraScores( *pose_op, "score", score );
+		getPoseExtraScore( *pose_op, "score", score );
 
 		std::string const & tag( silent_struct->decoy_tag() );
 

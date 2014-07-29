@@ -798,7 +798,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 						}
 						// calculate rms of native to original pose
 						core::Real rms_orig_native = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
-						core::pose::setPoseExtraScores( pose, "frms", rms_orig_native );
+						core::pose::setPoseExtraScore( pose, "frms", rms_orig_native );
 					}
 
 					// save fragment i and fragment j data
@@ -808,9 +808,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 					core::pose::add_score_line_string( pose, "tpos_j", string_of(thread_pairs[j][k]->get_candidate_j().first->get_residue(1)->resi()) ); // frag template j start position
 					core::pose::add_score_line_string( pose, "rank_i", string_of(thread_pairs[j][k]->get_candidate_i_rank()) ); // frag i rank
 					core::pose::add_score_line_string( pose, "rank_j", string_of(thread_pairs[j][k]->get_candidate_j_rank()) ); // frag j rank
-					core::pose::setPoseExtraScores( pose, "fscore_i", ms->total_score(thread_pairs[j][k]->get_candidate_i().second)); // frag i score
-					core::pose::setPoseExtraScores( pose, "fscore_j", ms->total_score(thread_pairs[j][k]->get_candidate_j().second)); // frag j score
-					core::pose::setPoseExtraScores( pose, "fscore", ms->total_score(thread_pairs[j][k]->get_candidate_i().second) + ms->total_score(thread_pairs[j][k]->get_candidate_j().second)); // frag i+j score
+					core::pose::setPoseExtraScore( pose, "fscore_i", ms->total_score(thread_pairs[j][k]->get_candidate_i().second)); // frag i score
+					core::pose::setPoseExtraScore( pose, "fscore_j", ms->total_score(thread_pairs[j][k]->get_candidate_j().second)); // frag j score
+					core::pose::setPoseExtraScore( pose, "fscore", ms->total_score(thread_pairs[j][k]->get_candidate_i().second) + ms->total_score(thread_pairs[j][k]->get_candidate_j().second)); // frag i+j score
 
 					// save contact counts
 					for ( iter = contact_type_cnt.begin(); iter != contact_type_cnt.end(); iter++ )

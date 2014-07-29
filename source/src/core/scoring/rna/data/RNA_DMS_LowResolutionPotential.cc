@@ -81,7 +81,6 @@ namespace data {
 	RNA_DMS_LowResolutionPotential::RNA_DMS_LowResolutionPotential():
 		careful_base_pair_classifier_( option[ OptionKeys::score::DMS_careful_base_pair_classifier ]() )
 	{
-		initialize_DMS_low_resolution_potential();
 	}
 
 	//Destructor
@@ -184,6 +183,8 @@ namespace data {
 															 RNA_Reactivity const & rna_reactivity ) {
 
 		using namespace core::pose::full_model_info;
+
+		if( DMS_low_resolution_potential_.size() == 0 ) initialize_DMS_low_resolution_potential();
 
 		runtime_assert( rna_reactivity.type() == DMS );
 		Size const & pos = rna_reactivity.position();

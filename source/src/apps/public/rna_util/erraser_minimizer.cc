@@ -15,8 +15,8 @@
 
 #include <protocols/farna/util.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/output_util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/output_util.hh>
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -656,7 +656,7 @@ pdb_minimizer() {
 	using namespace core::scoring::constraints;
 	using namespace core::optimization;
 	using namespace core::id;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->
 	          									residue_type_set ( FA_RNA );
@@ -734,7 +734,7 @@ pdb_minimizer() {
 	//Output the sequence
 	std::string working_sequence = pose.sequence();
 	std::cout << "Pose sequence = " << working_sequence << std::endl;
-	protocols::stepwise::sampling::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
+	//	protocols::stepwise::modeler::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" ); // in legacy now.
 
 	//Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {
@@ -868,7 +868,7 @@ pdb_minimizer() {
 		vary_bond_geometry ( mm, pose, pose_reference, allow_insert );
 	}
 
-	protocols::stepwise::sampling::output_movemap ( mm, pose );
+	protocols::stepwise::modeler::output_movemap ( mm, pose );
 	scorefxn->show ( std::cout, pose );
 	Real const score_before = ( (*scorefxn) (pose) );
 	Real const edens_score_before = ( (*edens_scorefxn) (pose) );

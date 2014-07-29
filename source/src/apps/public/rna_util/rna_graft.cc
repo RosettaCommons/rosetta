@@ -19,14 +19,14 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/farna/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDB_Info.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
+#include <protocols/farna/util.hh>
+#include <protocols/stepwise/modeler/align/util.hh>
+#include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -202,7 +202,7 @@ get_pdbs_and_superimpose( pose::Pose & pose1 /* the 'parent pose'*/,
 
 		// now superimpose based on this subset. Copied from RNA_DeNovoProtocol.cc
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::sampling::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
+			protocols::stepwise::modeler::align::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
 		core::scoring::superimpose_pose( pose2, pose1, alignment_atom_id_map_native );
 	} else {
 		std::cout << "WARNING: no overlap residues found or specified (by -superimpose_res)!!!! " << std::endl;

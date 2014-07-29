@@ -35,12 +35,12 @@
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/PhosphateMover.hh>
-#include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -95,9 +95,9 @@ screen_phosphates()
   using namespace core::chemical;
   using namespace core::chemical::rna;
   using namespace core::pose::full_model_info;
-  using namespace protocols::stepwise::sampling;
+  using namespace protocols::stepwise::modeler;
   using namespace protocols::stepwise::monte_carlo;
-  using namespace protocols::stepwise::sampling::rna::phosphate;
+  using namespace protocols::stepwise::modeler::rna::phosphate;
   using namespace protocols::stepwise::full_model_info;
   using namespace utility::file;
 

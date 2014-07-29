@@ -20,8 +20,8 @@
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.fwd.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.fwd.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.fwd.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.fwd.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -38,7 +38,7 @@ namespace mover {
 	public:
 
 		//constructor
-		ResampleMover( protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler );
+		ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
 		//destructor
 		~ResampleMover();
@@ -68,7 +68,7 @@ namespace mover {
 		bool minimize_single_res() const{ return minimize_single_res_; }
 
 		void
-		set_options( StepWiseMonteCarloOptionsCOP options );
+		set_options( options::StepWiseMonteCarloOptionsCOP options );
 
 		Size
 		get_remodel_res( SWA_Move const & swa_move, pose::Pose const & pose ) const;
@@ -78,9 +78,9 @@ namespace mover {
 
 	private:
 
-		protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler_;
+		protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 		SWA_MoveSelectorOP swa_move_selector_;
-		StepWiseMonteCarloOptionsCOP options_;
+		options::StepWiseMonteCarloOptionsCOP options_;
 
 		bool minimize_single_res_;
 		bool slide_intermolecular_jumps_;

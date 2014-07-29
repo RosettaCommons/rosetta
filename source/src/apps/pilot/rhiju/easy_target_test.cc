@@ -1997,7 +1997,7 @@ cst_relax_test()
   			relax_protocol.apply( pose );
 			}
 
-			//		setPoseExtraScores( pose, "rms",   protocols::simple_filters::native_CA_rmsd(native_pose, pose ) );
+			//		setPoseExtraScore( pose, "rms",   protocols::simple_filters::native_CA_rmsd(native_pose, pose ) );
 
 			std::string out_file_tag =   "S_"+lead_zero_string_of( n, 4 );
 			if ( score_only ) out_file_tag = start_files[j];
@@ -2075,7 +2075,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(backrub::max_atoms, "maximum backrub segment size (atoms)", 34);
 	NEW_OPT(backrub::ntrials, "number of Monte Carlo trials to run", 1000);
 	NEW_OPT(backrub::sc_prob, "probability of making a side chain move", 0.25);
-	NEW_OPT(backrub::sc_prob_uniform, "probability of uniformly sampling chi angles", 0.1);
+	NEW_OPT(backrub::sc_prob_uniform, "probability of uniformly modeler chi angles", 0.1);
 	NEW_OPT(backrub::mc_kt, "value of kT for Monte Carlo", 0.3);
 	NEW_OPT(backrub::mm_bend_weight, "weight of mm_bend bond angle energy term", 1.0);
 

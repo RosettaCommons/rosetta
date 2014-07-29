@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
 #include <protocols/stepwise/screener/ProteinCCD_ClosureScreener.fwd.hh>
-#include <protocols/stepwise/sampling/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
+#include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -29,7 +29,7 @@ namespace screener {
 	public:
 
 		//constructor
-		ProteinCCD_ClosureScreener( sampling::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
+		ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
 																pose::Pose & screening_pose );
 
 		//destructor
@@ -51,7 +51,7 @@ namespace screener {
 
 	private:
 
-		sampling::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer_;
+		modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer_;
 
 	};
 

@@ -147,7 +147,7 @@ void SilentFilePoseInputStream::fill_pose(
 	);
 	tr.Debug << "decoy_tag() == " << current_position_->decoy_tag() << std::endl;
 
-	core::pose::setPoseExtraScores( pose, "silent_score", current_position_->get_energy( "score" ) );
+	core::pose::setPoseExtraScore( pose, "silent_score", current_position_->get_energy( "score" ) );
 
 	preprocess_pose( pose );
 
@@ -180,7 +180,7 @@ void SilentFilePoseInputStream::fill_pose(
 	);
 	tr.Debug << "decoy_tag() == " << current_position_->decoy_tag() << std::endl;
 
-	core::pose::setPoseExtraScores( pose, "silent_score", current_position_->get_energy( "score" ) );
+	core::pose::setPoseExtraScore( pose, "silent_score", current_position_->get_energy( "score" ) );
 
 	preprocess_pose( pose );
 

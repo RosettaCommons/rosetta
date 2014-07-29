@@ -332,7 +332,7 @@ utility::vector1<bool> Filter::select_poses(
 
 		bool ok = filter_->apply( *pose );
 		core::Real const filter_value( filter_->report_sm( *pose ) );
-		setPoseExtraScores( *pose, filter_->get_user_defined_name(), (float)filter_value );
+		setPoseExtraScore( *pose, filter_->get_user_defined_name(), (float)filter_value );
 
 		TR.Debug << "Pose " << i << ": " << (ok ? "Pass" : "Fail") << std::endl;
 		selected_poses[i] = ok;

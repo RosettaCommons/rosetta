@@ -79,14 +79,14 @@ go_main() {
 			core::pose::PoseCOP in_pose = (*job_iter)->get_pose();
 			runtime_assert( in_pose );
 			core::Real value;
-			if( scoremap.find("ligand_is_touching") == scoremap.end() && getPoseExtraScores( *in_pose, "ligand_is_touching", value ) ) {
+			if( scoremap.find("ligand_is_touching") == scoremap.end() && getPoseExtraScore( *in_pose, "ligand_is_touching", value ) ) {
 				scoremap["ligand_is_touching"] = value;
 			}
-			if( scoremap.find("interface_delta") == scoremap.end() && getPoseExtraScores( *in_pose, "interface_delta", value ) ) {
+			if( scoremap.find("interface_delta") == scoremap.end() && getPoseExtraScore( *in_pose, "interface_delta", value ) ) {
 				scoremap["interface_delta"] = value;
 			}
 			if( scoremap.find("total_score") == scoremap.end() ) {
-				if( getPoseExtraScores( *in_pose, "total_score", value ) ) {
+				if( getPoseExtraScore( *in_pose, "total_score", value ) ) {
 					scoremap["total_score"] = value;
 				} else {
 					core::scoring::EnergyMap const & emap( in_pose->energies().total_energies() );

@@ -43,7 +43,7 @@ namespace screener {
 	void
 	StepWiseScreener::increment_count(){
 		if ( ok_to_increment_ ) count_++;
-		ok_to_increment_ = false; // needs to be manually reset by SampleAndScreen. Useful if you don't want to increment in some inner sampling loops.
+		ok_to_increment_ = false; // needs to be manually reset by SampleAndScreen. Useful if you don't want to increment in some inner modeler loops.
 	}
 
 } //screener

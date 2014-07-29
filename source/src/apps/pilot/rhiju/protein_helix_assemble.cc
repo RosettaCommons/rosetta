@@ -67,7 +67,7 @@
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/StepWiseProteinPoseSetup.hh>
 #include <protocols/stepwise/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/StepWiseDoNothingSampleGenerator.hh>
 #include <protocols/stepwise/StepWiseCombineSampleGenerator.hh>
 #include <protocols/stepwise/StepWiseIdentitySampleGenerator.hh>

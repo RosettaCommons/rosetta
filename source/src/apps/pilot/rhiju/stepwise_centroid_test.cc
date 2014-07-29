@@ -70,7 +70,7 @@
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/StepWisePoseMinimizer.hh>
 #include <protocols/stepwise/StepWiseProteinPoseSetup.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/StepWiseResidueSampler.hh>
 
 //clustering

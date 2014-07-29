@@ -92,7 +92,7 @@ MinScoreScoreFunction::operator()( pose::Pose & pose ) const
 	Real min_energy = uncst_energy < min_score_ ? min_score_ : uncst_energy;
 	tr.Debug << "uncst_energy: " << uncst_energy << " min_energy: " << min_energy << std::endl;
 	pose.energies().total_energies()[ total_score ] = min_energy + pose.energies().total_energies()[ atom_pair_constraint ]*cst_weight;
-	pose::setPoseExtraScores( pose, "min_score", uncst_energy );
+	pose::setPoseExtraScore( pose, "min_score", uncst_energy );
 	return pose.energies().total_energies()[ total_score ];
 }
 

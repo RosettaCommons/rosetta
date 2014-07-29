@@ -112,7 +112,7 @@ core::Real FilterReporter::report_property( core::pose::Pose & pose ) const
 
 	if(filter_) {
 		r = filter_->report_sm(pose);
-		setPoseExtraScores(pose, filter_->get_user_defined_name(), (float)r);
+		setPoseExtraScore(pose, filter_->get_user_defined_name(), (float)r);
 	} else
 		TR << "No filter instance; cannot score pose!" << std::endl;
 

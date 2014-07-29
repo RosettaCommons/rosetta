@@ -267,7 +267,7 @@ main( int argc, char* argv [] ) {
 			tr.Debug << "score(" << ss_out->decoy_tag() << ") = " << aln_score
 				<< std::endl;
 
-			using core::pose::setPoseExtraScores;
+			using core::pose::setPoseExtraScore;
 			if ( have_native ) {
 				// calc rmsd/gdt stats
 

@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.fwd.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.fwd.hh>
@@ -63,7 +63,7 @@ public:
 	void set_minimize_single_res( bool const setting );
 
 	void
-	set_options( StepWiseMonteCarloOptionsCOP options );
+	set_options( options::StepWiseMonteCarloOptionsCOP options );
 
 private:
 
@@ -77,7 +77,7 @@ private:
 	FromScratchMoverOP rna_from_scratch_mover_;
 	bool disallow_deletion_of_last_residue_;
 	SWA_MoveSelectorOP swa_move_selector_;
-	StepWiseMonteCarloOptionsCOP options_;
+	options::StepWiseMonteCarloOptionsCOP options_;
 
 };
 

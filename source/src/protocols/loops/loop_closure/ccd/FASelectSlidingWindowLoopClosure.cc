@@ -131,8 +131,8 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 	using namespace fragment;
 	runtime_assert( closure_fragments() );
 	// in case that we jump out... add extra scrores
-	core::pose::setPoseExtraScores( more_cut, "post_relax_looprms", -1 );
-  core::pose::setPoseExtraScores( more_cut, "fa_score", -1 );
+	core::pose::setPoseExtraScore( more_cut, "post_relax_looprms", -1 );
+  core::pose::setPoseExtraScore( more_cut, "fa_score", -1 );
 
 	Loops loops;
 	loops.add_loop( loop_ ); //for looprms
@@ -237,13 +237,13 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 	best_fragment_.apply( movemap(), less_cut );
   best_fragment_.apply( movemap(), more_cut );
 
-  core::pose::setPoseExtraScores( more_cut, "loop_vdw_score", vdw_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "loop_chain_score", chainbreak_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "loop_total_score", score_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "loop_overlap_score", overlap_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "looprms", rms_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "post_relax_looprms", post_relax_rms_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "fa_score", fascore_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_vdw_score", vdw_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_chain_score", chainbreak_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_total_score", score_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_overlap_score", overlap_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "looprms", rms_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "post_relax_looprms", post_relax_rms_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "fa_score", fascore_store.retrieve( best_fragment_ ));
 
 
 }

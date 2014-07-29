@@ -86,7 +86,7 @@ namespace rna {
 		if ( sample_all_o2prime_ ){
 			o2prime_res = get_random_o2prime_residue( pose );
 		} else {
-			std::cerr << "O2prime sampling is not yet properly worked out for general monte carlo case." << std::endl;
+			std::cerr << "O2prime modeler is not yet properly worked out for general monte carlo case." << std::endl;
 			runtime_assert( sample_all_o2prime_ );
 			// warning -- following might lead to weird 'hysteresis' effects since it picks
 			// o2prime to sample based on what's near moving residue.

@@ -134,7 +134,7 @@ public:
 
 	void set_rottrial ( protocols::simple_moves::RotamerTrialsMoverOP new_pack_rottrial );
 
-	void setPoseExtraScores( core::pose::Pose &pose );
+	void setPoseExtraScore( core::pose::Pose &pose );
 
 	void use_coarse_vdw() { //we need to know which scoring terms to ramp!
 		// one could generalize this by giving a RamperClass to the Protocol, which provides an iterator that yields a scoring function

@@ -1478,7 +1478,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	core::Real gdtmm = 0.0;
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
-		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_1", gdtmm);
+		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_1", gdtmm);
 		TR << "GDTMM_after_stage1_1" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
@@ -1514,7 +1514,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// evaluation
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
-		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_2", gdtmm);
+		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_2", gdtmm);
 		TR << "GDTMM_after_stage1_2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
@@ -1599,7 +1599,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// evaluation
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
-		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_3", gdtmm);
+		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_3", gdtmm);
 		TR << "GDTMM_after_stage1_3" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
@@ -1712,7 +1712,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// evaluation
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
-		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_4", gdtmm);
+		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_4", gdtmm);
 		TR << "GDTMM_after_stage1_4" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 

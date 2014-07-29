@@ -16,10 +16,10 @@
 #include <protocols/stepwise/screener/AnchorSugarScreener.hh>
 #include <protocols/stepwise/screener/AnchorSugarScreener.fwd.hh>
 #include <protocols/stepwise/screener/TagDefinition.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_AtrRepChecker.hh>
-#include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
-#include <protocols/stepwise/sampling/rna/sugar/util.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
+#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
+#include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <protocols/simple_moves/CopyDofMover.hh>
 #include <core/pose/Pose.hh>
@@ -28,8 +28,8 @@
 
 static basic::Tracer TR( "protocols.stepwise.screener.AnchorSugarScreener" );
 
-using namespace protocols::stepwise::sampling::rna::sugar;
-using namespace protocols::stepwise::sampling::rna::checker;
+using namespace protocols::stepwise::modeler::rna::sugar;
+using namespace protocols::stepwise::modeler::rna::checker;
 using namespace core;
 
 namespace protocols {

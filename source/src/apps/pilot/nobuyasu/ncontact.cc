@@ -283,11 +283,11 @@ void CountContact::apply ( pose::Pose & pose ){
 	float nchpatm ( Real(ncontact_hpatm_)/Real(pose.total_residue())) ;
   float nchpres ( Real(ncontact_atm_hpres_)/Real(pose.total_residue()));
 
-	setPoseExtraScores( pose, "nres", float(pose.total_residue()) );
-	setPoseExtraScores( pose, "ncon_atm", ncatm  );
-	setPoseExtraScores( pose, "ncon_hpatm", nchpatm );
-	setPoseExtraScores( pose, "ncon_atm_hpres", nchpres );
-	setPoseExtraScores( pose, "ss_entrpy", ss_entrpy );
+	setPoseExtraScore( pose, "nres", float(pose.total_residue()) );
+	setPoseExtraScore( pose, "ncon_atm", ncatm  );
+	setPoseExtraScore( pose, "ncon_hpatm", nchpatm );
+	setPoseExtraScore( pose, "ncon_atm_hpres", nchpres );
+	setPoseExtraScore( pose, "ss_entrpy", ss_entrpy );
 
 }
 

@@ -45,17 +45,19 @@
 #include <protocols/viewer/viewers.hh>
 
 //StepWiseProtein!
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.hh>
-#include <protocols/stepwise/sampling/align/StepWiseLegacyClustererSilentBased.hh>
-#include <protocols/stepwise/legacy/sampling/protein/StepWiseProteinPoseSetup.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/sampling/protein/util.hh>
-#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/rotamer_sampler/NoOpRotamerSampler.hh>
-#include <protocols/rotamer_sampler/protein/util.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.hh>
+#include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/legacy/modeler/protein/util.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/protein/util.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/file_util.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/sampler/NoOpStepWiseSampler.hh>
+#include <protocols/stepwise/sampler/protein/util.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -131,8 +133,8 @@ using basic::Warning;
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
-using namespace protocols::stepwise::legacy::sampling;
-using namespace protocols::stepwise::legacy::sampling::protein;
+using namespace protocols::stepwise::legacy::modeler;
+using namespace protocols::stepwise::legacy::modeler::protein;
 
 using utility::vector1;
 
@@ -177,8 +179,8 @@ OPT_KEY( IntegerVector, working_loop_bounds )
 OPT_KEY( Boolean, auto_tune )
 OPT_KEY( Boolean, centroid )
 
-using namespace protocols::stepwise::sampling;
-using namespace protocols::stepwise::sampling::protein;
+using namespace protocols::stepwise::modeler;
+using namespace protocols::stepwise::modeler::protein;
 
 void
 initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::ResidueTypeSetCAP & rsd_set );
@@ -198,7 +200,7 @@ rebuild_test(){
 	using namespace core::io::silent;
 	using namespace core::pose;
 	using namespace core::pack;
-	using namespace protocols::stepwise::sampling;
+	using namespace protocols::stepwise::modeler;
 	using namespace align;
 
 	// A lot of the following might be better handled by a JobDistributor!?
@@ -233,7 +235,7 @@ rebuild_test(){
 
 	// move following to its own function?
 	StepWiseProteinPoseSetupOP stepwise_pose_setup =
-		new StepWiseProteinPoseSetup( moving_res_list, /*the first element of moving_res_list is the sampling_res*/
+		new StepWiseProteinPoseSetup( moving_res_list, /*the first element of moving_res_list is the modeler_res*/
 																	desired_sequence,
 																	input_streams,
 																	option[ OptionKeys::full_model::cutpoint_open ](),
@@ -267,15 +269,15 @@ rebuild_test(){
 	working_parameters::StepWiseWorkingParametersOP & working_parameters = stepwise_pose_setup->working_parameters();
 
 	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, center_vector );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, ( native_pose != 0 ), center_vector );
 
-	modeler_options::StepWiseModelerOptionsOP stepwise_modeler_options = new modeler_options::StepWiseModelerOptions;
-	stepwise_modeler_options->initialize_from_command_line();
-	stepwise_modeler_options->set_output_minimized_pose_list( true );
-	stepwise_modeler_options->set_silent_file( option[ out::file::silent ]() );
-	stepwise_modeler_options->set_disallow_realign( true );
-	if ( stepwise_modeler_options->pack_weights().size() == 0 ) stepwise_modeler_options->set_pack_weights( "stepwise/protein/pack_no_hb_env_dep.wts" );
-	if ( stepwise_modeler_options->dump()	) pose.dump_pdb( "after_setup.pdb" );
+	options::StepWiseModelerOptionsOP stepwise_options = new options::StepWiseModelerOptions;
+	stepwise_options->initialize_from_command_line();
+	stepwise_options->set_output_minimized_pose_list( true );
+	stepwise_options->set_silent_file( option[ out::file::silent ]() );
+	stepwise_options->set_disallow_realign( true );
+	if ( stepwise_options->pack_weights().size() == 0 ) stepwise_options->set_pack_weights( "stepwise/protein/pack_no_hb_env_dep.wts" );
+	if ( stepwise_options->dump()	) pose.dump_pdb( "after_setup.pdb" );
 	remove_silent_file_if_it_exists( option[ out::file::silent] );
 
 	ScoreFunctionOP scorefxn;
@@ -286,7 +288,7 @@ rebuild_test(){
 	stepwise_modeler.set_native_pose( native_pose );
 	stepwise_modeler.set_moving_res_list( working_parameters->working_moving_res_list() );
 	stepwise_modeler.set_input_streams( input_streams );
-	stepwise_modeler.set_modeler_options( stepwise_modeler_options );
+	stepwise_modeler.set_options( stepwise_options );
 	if ( working_parameters->working_moving_res_list().size() == 0 ) stepwise_modeler.set_working_prepack_res( get_all_residues( pose ) );
 	if ( !option[ OptionKeys::stepwise::test_encapsulation ]() ) stepwise_modeler.set_working_parameters( working_parameters );
 
@@ -330,7 +332,7 @@ cluster_outfile_test(){
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace protocols::stepwise::sampling;
+	using namespace protocols::stepwise::modeler;
 	using namespace align;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
@@ -376,7 +378,7 @@ calc_rms_test(){
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
-	using namespace protocols::stepwise::sampling;
+	using namespace protocols::stepwise::modeler;
 	using namespace core::chemical;
 
 	PoseOP pose_op,native_pose;
@@ -418,7 +420,7 @@ my_main( void* )
 	if ( option[ cluster_test ] ){
 		cluster_outfile_test(); // probably should unify with 'PoseSelection' soon.
 	} else if ( option[ generate_beta_database ] ){
-		protocols::rotamer_sampler::protein::generate_beta_database_test(); // in StepWiseBetaAntiParallelUtil.cc
+		protocols::stepwise::sampler::protein::generate_beta_database_test(); // in StepWiseBetaAntiParallelUtil.cc
 	} else if ( option[ combine_loops ] ){
 		utility_exit_with_message( "-combine_loops is deprecated." );
 	} else if ( option[ big_bins ] ){
@@ -488,7 +490,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( cst_file, "Input file for constraints", "" );
 	NEW_OPT( disulfide_file, "Input file for disulfides", "" );
 	NEW_OPT( start_pdb, "For combine_loops, parent pdb", "" );
-	NEW_OPT( no_sample_junction, "disable sampling of residue at junction inherited from start pose", false );
+	NEW_OPT( no_sample_junction, "disable modeler of residue at junction inherited from start pose", false );
 	NEW_OPT( add_peptide_plane, "Include N-acetylation and C-methylamidation caps at termini", false );
 	NEW_OPT( generate_beta_database, "generate_beta_database", false );
 	NEW_OPT( combine_loops, "take a bunch of pdbs with loops remodeled and merge them into the parent pose", false );

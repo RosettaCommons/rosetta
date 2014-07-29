@@ -274,7 +274,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 		mzr.run( relax_pose, *mm_min, *sfxn, options );
 
 		Real sc_min_score = (*sfxn)( relax_pose );
-		core::pose::setPoseExtraScores( pose, "sc_min_score", sc_min_score );
+		core::pose::setPoseExtraScore( pose, "sc_min_score", sc_min_score );
 
 		// RELAX fragment
 		// setup relax protocol for pose
@@ -286,8 +286,8 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 		Real relaxed_rmsd = scoring::CA_rmsd( relax_pose, pose );
 		Real relaxed_score = (*sfxn)( relax_pose );
 
-		core::pose::setPoseExtraScores( pose, "rlx_rms", relaxed_rmsd );
-		core::pose::setPoseExtraScores( pose, "rlx_score", relaxed_score );
+		core::pose::setPoseExtraScore( pose, "rlx_rms", relaxed_rmsd );
+		core::pose::setPoseExtraScore( pose, "rlx_score", relaxed_score );
 	}
 
 	// add fragment info and scores
@@ -303,14 +303,14 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 
 	for (Size i = 1; i <= sc->size(); i++) {
 		scores::FragmentScoringMethodOP ms_i = ms->get_component(i);
-		core::pose::setPoseExtraScores( pose, ms_i->get_score_name(), sc->at(i) );
+		core::pose::setPoseExtraScore( pose, ms_i->get_score_name(), sc->at(i) );
 	}
   if (if_quota) {
-		core::pose::setPoseExtraScores( pose, "QUOTA_TOT", sc->get_quota_score());
-		core::pose::setPoseExtraScores( pose, "TOTAL", ms->total_score(sc));
+		core::pose::setPoseExtraScore( pose, "QUOTA_TOT", sc->get_quota_score());
+		core::pose::setPoseExtraScore( pose, "TOTAL", ms->total_score(sc));
 		core::pose::add_score_line_string( pose, "POOL_NAME", get_pool_name());
   } else {
-		core::pose::setPoseExtraScores( pose, "TOTAL", ms->total_score(sc));
+		core::pose::setPoseExtraScore( pose, "TOTAL", ms->total_score(sc));
   }
 	assert ( key() > 0 );
 	assert ( key() < 40000000 );

@@ -50,7 +50,7 @@ public:
 	{}
 
 	void apply( core::pose::Pose & pose ) {
-		//if ( !getPoseExtraScores( pose, "score", my_score ) ) my_score = 0;
+		//if ( !getPoseExtraScore( pose, "score", my_score ) ) my_score = 0;
 		core::Real my_score = pose.energies().total_energy();
 		seqs_.push_back( std::make_pair( pose.sequence(), my_score ) );
 	} // apply

@@ -23,15 +23,12 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
-
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
-
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 
@@ -60,12 +57,10 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
-///////////////////////////////////////////////////
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDB_Info.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -74,12 +69,7 @@
 #include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -93,19 +83,15 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-
 //////////////////////////////////////////////////////////
-#include <protocols/idealize/idealize.hh>
-#include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/viewer/viewers.hh>
-
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/farna/util.hh>
-
-#include <protocols/stepwise/sampling/output_util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/output_util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/legacy/modeler/rna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_LoopCloser.fwd.hh>
 
@@ -137,14 +123,16 @@
 
 
 using namespace core;
+using namespace core::pose::rna;
 using namespace protocols;
 using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
-using namespace protocols::stepwise::sampling;
-using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::modeler;
+using namespace protocols::stepwise::modeler::rna;
+using namespace protocols::stepwise::legacy::modeler::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -216,7 +204,7 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/sampling/rna/util.hh
+///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/modeler/rna/util.hh
 void
 align_pose_general( core::pose::Pose const & static_pose, std::string const static_tag, core::pose::Pose & moving_pose, std::string const moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only ){
 
@@ -333,7 +321,7 @@ check_alignment_RMSD_cutoff( core::pose::Pose const & static_pose, std::string c
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/sampling/rna/util.hh
+///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/modeler/rna/util.hh
 Real
 full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Pose const & pose_two, utility::vector1 < std::pair< Size, Size > > const & rmsd_res_pair_list, bool const verbose, bool const ignore_virtual_atom ){
 
@@ -472,7 +460,7 @@ align_pdbs(){
 	using namespace core::conformation;
 	using namespace core::pose;
 	using namespace protocols::farna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
@@ -593,7 +581,7 @@ calculate_pairwise_RMSD(){
 	using namespace core::conformation;
 	using namespace core::pose;
 	using namespace protocols::farna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace ObjexxFCL;
 
 
@@ -710,7 +698,7 @@ void
 import_and_dump_pdb(){
 
 	using namespace core::chemical;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::id;
 
 	if ( option[ in::file::s ].user() == false ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -749,7 +737,7 @@ o2prime_packer(){
 //	using namespace core::conformation;
 //	using namespace core::pose;
 //	using namespace protocols::farna;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::id;
 
 	ResidueTypeSetCAP rsd_set;
@@ -890,7 +878,7 @@ slice_ellipsoid_envelope(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 	using namespace core::id;
@@ -1150,7 +1138,7 @@ slice_sample_res_and_surrounding(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 	using namespace core::id;
@@ -1336,7 +1324,7 @@ pdb_to_silent_file(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
@@ -1443,7 +1431,7 @@ rna_fullatom_minimize_test()
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 /////////////////////////
 	ResidueTypeSetCAP rsd_set;

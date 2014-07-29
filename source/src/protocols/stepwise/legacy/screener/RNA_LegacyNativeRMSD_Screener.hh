@@ -18,12 +18,12 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/RNA_LegacyNativeRMSD_Screener.fwd.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 using namespace core;
-using namespace protocols::stepwise::sampling::working_parameters;
+using namespace protocols::stepwise::modeler::working_parameters;
 
 namespace protocols {
 namespace stepwise {

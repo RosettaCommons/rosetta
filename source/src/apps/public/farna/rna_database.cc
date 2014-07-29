@@ -27,8 +27,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/PDB_Info.hh>
 #include <core/init/init.hh>
@@ -470,7 +471,7 @@ create_base_pair_step_database_test( ){
 				utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
 
 				pose::Pose bps_pose;
-				protocols::stepwise::sampling::pdbslice( bps_pose, pose, base_pair_res );
+				core::pose::pdbslice( bps_pose, pose, base_pair_res );
 
 				std::string bps_seq = get_bps_seq( base_pair_res, sequence );
 				std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );

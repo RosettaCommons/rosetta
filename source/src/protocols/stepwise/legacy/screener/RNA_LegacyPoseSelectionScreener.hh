@@ -19,12 +19,12 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/TagDefinition.fwd.hh>
 #include <protocols/stepwise/screener/RNA_LegacyPoseSelectionScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSelection.fwd.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.fwd.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSelection.fwd.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-using namespace protocols::stepwise::sampling::working_parameters;
-using namespace protocols::stepwise::sampling::rna;
+using namespace protocols::stepwise::modeler::working_parameters;
+using namespace protocols::stepwise::modeler::rna;
 using namespace core::pose;
 
 namespace protocols {

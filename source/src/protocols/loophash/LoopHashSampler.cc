@@ -91,7 +91,7 @@ LoopHashSampler::set_defaults(){
 bool cmp( core::pose::Pose a, core::pose::Pose b) {
 	std::string scoreterm = "censcore";
 	core::Real as, bs;
-	core::pose::getPoseExtraScores( a, scoreterm, as ); core::pose::getPoseExtraScores( b, scoreterm, bs);
+	core::pose::getPoseExtraScore( a, scoreterm, as ); core::pose::getPoseExtraScore( b, scoreterm, bs);
 	return as < bs;
 }
 

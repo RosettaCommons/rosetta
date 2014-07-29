@@ -876,7 +876,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// print some debug info
 			if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 				core::Real imedscore = (*local_scorefxn)( pose );
-				core::pose::setPoseExtraScores( pose, "R" + right_string_of( total_count ,5,'0'), imedscore );
+				core::pose::setPoseExtraScore( pose, "R" + right_string_of( total_count ,5,'0'), imedscore );
 			}
 
 			if ( dumpall_ ) {
@@ -956,10 +956,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 		for( Size j = 0; j < best_score_log.size(); j++ )
-			core::pose::setPoseExtraScores( pose, "B" + right_string_of(j,3,'0'), best_score_log[j]);
+			core::pose::setPoseExtraScore( pose, "B" + right_string_of(j,3,'0'), best_score_log[j]);
 
 		for( Size j = 0; j < curr_score_log.size(); j ++ )
-			core::pose::setPoseExtraScores( pose, "S" + right_string_of(j,3,'0'), curr_score_log[j] );
+			core::pose::setPoseExtraScore( pose, "S" + right_string_of(j,3,'0'), curr_score_log[j] );
 	}
 
 	checkpoints_.clear_checkpoints();
@@ -1593,7 +1593,7 @@ void FastRelax::batch_apply(
 	for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 		relax_decoys[index].best_struct->fill_pose( pose );
 		if ( input_csts ) pose.constraint_set( input_csts );
-		setPoseExtraScores( pose, "giveup", relax_decoys[index].accept_count  );
+		setPoseExtraScore( pose, "giveup", relax_decoys[index].accept_count  );
 		core::Real rms = 0;
 		core::Real gdtmm = 0;
 		if ( get_native_pose() ){

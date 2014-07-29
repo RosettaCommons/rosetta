@@ -286,18 +286,18 @@ SlidingWindowLoopClosure::get_name() const {
 }
 
 
-void SlidingWindowLoopClosure::setPoseExtraScores( core::pose::Pose &pose ) {
-	core::pose::setPoseExtraScores( pose, "loop_vdw_score", -1 );
-	core::pose::setPoseExtraScores( pose, "loop_chain_score", -1 );
-	core::pose::setPoseExtraScores( pose, "loop_total_score", -1 );
-	core::pose::setPoseExtraScores( pose, "loop_overlap_score", -1 );
-	core::pose::setPoseExtraScores( pose, "looprms", -1 );
+void SlidingWindowLoopClosure::setPoseExtraScore( core::pose::Pose &pose ) {
+	core::pose::setPoseExtraScore( pose, "loop_vdw_score", -1 );
+	core::pose::setPoseExtraScore( pose, "loop_chain_score", -1 );
+	core::pose::setPoseExtraScore( pose, "loop_total_score", -1 );
+	core::pose::setPoseExtraScore( pose, "loop_overlap_score", -1 );
+	core::pose::setPoseExtraScore( pose, "looprms", -1 );
 }
 
 void
 SlidingWindowLoopClosure::apply( Pose& more_cut, Pose& less_cut ) {
 	if ( closure_fragments() ) { //because we might leave the following block via Exception for some poses
-		setPoseExtraScores( more_cut );
+		setPoseExtraScore( more_cut );
 	}
 
 
@@ -456,11 +456,11 @@ SlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_cut ) {
 
 	if( !best_fragment_.is_valid() ){
 	 	tr.Error << "Cannot apply best fragment because it is not valid or there is none." << std::endl;
-		core::pose::setPoseExtraScores( more_cut, "loop_vdw_score", 0 );
-		core::pose::setPoseExtraScores( more_cut, "loop_chain_score", 0);
-		core::pose::setPoseExtraScores( more_cut, "loop_total_score", 0 );
-		core::pose::setPoseExtraScores( more_cut, "loop_overlap_score", 0 );
-		core::pose::setPoseExtraScores( more_cut, "looprms", 0 );
+		core::pose::setPoseExtraScore( more_cut, "loop_vdw_score", 0 );
+		core::pose::setPoseExtraScore( more_cut, "loop_chain_score", 0);
+		core::pose::setPoseExtraScore( more_cut, "loop_total_score", 0 );
+		core::pose::setPoseExtraScore( more_cut, "loop_overlap_score", 0 );
+		core::pose::setPoseExtraScore( more_cut, "looprms", 0 );
 		return ;
 	}
 
@@ -472,11 +472,11 @@ SlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_cut ) {
   FragStore< Real > chainbreak_store("chainbreak");
   FragStore< Real > overlap_store("overlap");
   FragStore< Real > rms_store("loop_rms");
-  core::pose::setPoseExtraScores( more_cut, "loop_vdw_score", vdw_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "loop_chain_score", chainbreak_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "loop_total_score", score_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "loop_overlap_score", overlap_store.retrieve( best_fragment_ ));
-  core::pose::setPoseExtraScores( more_cut, "looprms", rms_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_vdw_score", vdw_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_chain_score", chainbreak_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_total_score", score_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "loop_overlap_score", overlap_store.retrieve( best_fragment_ ));
+  core::pose::setPoseExtraScore( more_cut, "looprms", rms_store.retrieve( best_fragment_ ));
 
   if ( closure_fragments() ) {
     std::string frag_file=basic::options::option[ basic::options::OptionKeys::out::file::silent ]()+"_best_frags";

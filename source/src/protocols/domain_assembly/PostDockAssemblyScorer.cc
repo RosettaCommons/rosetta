@@ -79,8 +79,8 @@ void PostDockAssemblyScorer::apply( core::pose::Pose & pose ) {
 						pose.residue(ii).xyz("CA")
 					)
 				);
-				using core::pose::setPoseExtraScores;
-				setPoseExtraScores( pose, score_prefix_, rebuild_dist );
+				using core::pose::setPoseExtraScore;
+				setPoseExtraScore( pose, score_prefix_, rebuild_dist );
 				break;
 			}
 		}

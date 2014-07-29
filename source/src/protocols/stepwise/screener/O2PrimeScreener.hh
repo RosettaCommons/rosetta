@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/SampleApplier.hh>
 #include <protocols/stepwise/screener/O2PrimeScreener.fwd.hh>
-#include <protocols/stepwise/sampling/rna/o2prime/O2PrimePacker.fwd.hh>
+#include <protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.fwd.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -29,7 +29,7 @@ namespace screener {
 	public:
 
 		//constructor
-		O2PrimeScreener( sampling::rna::o2prime::O2PrimePackerOP o2prime_packer );
+		O2PrimeScreener( modeler::rna::o2prime::O2PrimePackerOP o2prime_packer );
 
 		//destructor
 		~O2PrimeScreener();
@@ -50,7 +50,7 @@ namespace screener {
 
 	private:
 
-		sampling::rna::o2prime::O2PrimePackerOP o2prime_packer_;
+		modeler::rna::o2prime::O2PrimePackerOP o2prime_packer_;
 
 	};
 

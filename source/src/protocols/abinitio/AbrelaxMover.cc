@@ -312,8 +312,8 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	scoring::ScoreFunctionCOP last_scorefxn ( sampling_protocol()->current_scorefxn() );
 
 	// Make sure score columns always the same.
-	relax::ClassicRelax().setPoseExtraScores( pose );
-	protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure::setPoseExtraScores( pose );
+	relax::ClassicRelax().setPoseExtraScore( pose );
+	protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure::setPoseExtraScore( pose );
 
 	if ( pre_loop_closure_protocol_ ) {
 		tr.Info << "abrelax_stage: pre_loopclosing (i.e., idealize) for " << get_current_tag() << std::endl;

@@ -211,7 +211,7 @@ void GatherPosesMover::apply( Pose & pose ) {
 
 	core::Real score;
 	// does pose already have score set ?
-	if ( !getPoseExtraScores( pose, "silent_score", score ) ) {
+	if ( !getPoseExtraScore( pose, "silent_score", score ) ) {
 		// if not do we have scoring function ?
 
 		if ( !sfxn_ ) {
@@ -222,10 +222,10 @@ void GatherPosesMover::apply( Pose & pose ) {
 			scoring::constraints::add_constraints_from_cmdline( pose, *sfxn_ );
 			Real score = (*sfxn_)(pose)	;
 			tr.Info << "RESCORING: " << core::pose::extract_tag_from_pose( pose )<< std::endl;
-			setPoseExtraScores( pose, "silent_score", score );
+			setPoseExtraScore( pose, "silent_score", score );
 
 			if ( get_native_pose() ) {
-				setPoseExtraScores(
+				setPoseExtraScore(
 						 pose, "rms", get_distance_measure( pose, *get_native_pose() )
 				);
 			}
@@ -247,7 +247,7 @@ void GatherPosesMover::apply( Pose & pose ) {
 		core::Real template_score = template_scores[ template_name ];
 
 		score += template_score;
-		setPoseExtraScores( pose, "silent_score", score );
+		setPoseExtraScore( pose, "silent_score", score );
 	}
 
 	tr.Info << "Adding struc: " << score << std::endl;
@@ -406,7 +406,7 @@ void ClusterBase::sort_each_group_by_energy( ) {
 		std::vector< std::pair< int, Real > > cluster_energies;
 		for (j=0;j<(int)clusterlist[i].size();j++ ) {
 			Real score=0.0;
-			if ( !getPoseExtraScores( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
+			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Error << "Warning: no score available for " << std::endl;
 			}
 			cluster_energies.push_back( std::pair< int, Real > ( clusterlist[i][j], score ) );
@@ -431,7 +431,7 @@ void ClusterBase::remove_highest_energy_member_of_each_group() {
 		std::vector< std::pair< int, Real > > cluster_energies;
 		for (j=0;j<(int)clusterlist[i].size();j++ ) {
 			Real score=0.0;
-			if ( !getPoseExtraScores( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
+			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Error << "Warning: no score available for " << std::endl;
 			}
 
@@ -456,7 +456,7 @@ void ClusterBase::sort_groups_by_energy() {
 
 		// This assumes that the first member is already the lowest energy one!
 		int energy_member = 0;
-		if ( !getPoseExtraScores( poselist[ clusterlist[i][energy_member] ], "silent_score", score ) ) {
+		if ( !getPoseExtraScore( poselist[ clusterlist[i][energy_member] ], "silent_score", score ) ) {
 			tr.Error << "Warning: no score available for " << std::endl;
 		}
 
@@ -622,7 +622,7 @@ void ClusterBase::print_summary() {
 			tr.Info << "    ";
 			tr.Info << core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  ) << "  " ;
 			Real score = 0.0;
-			if ( !getPoseExtraScores( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
+			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Info << "----" ;
 			}else{
 				tr.Info << score ;
@@ -1075,7 +1075,7 @@ void AssignToClustersMover::apply( Pose & pose ) {
 	static int count=0;
 
 	Real score;
-	getPoseExtraScores(                        pose , "silent_score", score );
+	getPoseExtraScore(                        pose , "silent_score", score );
 	tr.Info << "Adding a "
 		<< core::pose::extract_tag_from_pose( pose )
 		<< "  " << score

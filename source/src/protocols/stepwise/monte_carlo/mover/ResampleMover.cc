@@ -17,11 +17,11 @@
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
-#include <protocols/stepwise/sampling/packer/util.hh>
-#include <protocols/stepwise/sampling/rna/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
+#include <protocols/stepwise/modeler/packer/util.hh>
+#include <protocols/stepwise/modeler/rna/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -33,10 +33,10 @@
 #include <numeric/random/random.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 
 static numeric::random::RandomGenerator RG(239145021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );
@@ -56,10 +56,10 @@ namespace monte_carlo {
 namespace mover {
 
 	//Constructor
-	ResampleMover::ResampleMover(	protocols::stepwise::sampling::StepWiseModelerOP stepwise_modeler ):
+	ResampleMover::ResampleMover(	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ):
 		stepwise_modeler_( stepwise_modeler ),
 		swa_move_selector_( new SWA_MoveSelector ),
-		options_( new StepWiseMonteCarloOptions ),
+		options_( new options::StepWiseMonteCarloOptions ),
 		minimize_single_res_( false ),
 		slide_intermolecular_jumps_( true )
 	{}
@@ -114,7 +114,7 @@ namespace mover {
 												std::string & move_type ){
 
 		using namespace protocols::stepwise;
-		using namespace protocols::stepwise::sampling::rna;
+		using namespace protocols::stepwise::modeler::rna;
 		using namespace protocols::stepwise::monte_carlo;
 		using namespace core::pose::full_model_info;
 
@@ -282,7 +282,7 @@ namespace mover {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	ResampleMover::set_options( StepWiseMonteCarloOptionsCOP options ){
+	ResampleMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
 		options_ = options;
 	}
 

@@ -14,11 +14,11 @@
 
 
 #include <protocols/stepwise/screener/BaseCentroidScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
-#include <protocols/rotamer_sampler/RotamerSamplerBase.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSampler.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueList.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerSamplerWithResidueAlternatives.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -30,7 +30,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	BaseCentroidScreener::BaseCentroidScreener( sampling::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
+	BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 																							core::pose::PoseOP screening_pose,
 																							bool const force_centroid_interaction /* = true */):
 		base_centroid_checker_( base_centroid_checker ),
@@ -42,7 +42,7 @@ namespace screener {
 	}
 
 	//constructor
-	BaseCentroidScreener::BaseCentroidScreener( sampling::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
+	BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 																							core::kinematics::Stub const & moving_res_base_stub ):
 		base_centroid_checker_( base_centroid_checker ),
 		screening_pose_( 0 ),
@@ -82,20 +82,20 @@ namespace screener {
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	BaseCentroidScreener::fast_forward( rotamer_sampler::RotamerSamplerBaseOP sampler ){
-		using namespace rotamer_sampler;
-		using namespace rotamer_sampler::rigid_body;
+	BaseCentroidScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+		using namespace sampler;
+		using namespace sampler::rigid_body;
 
 		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyRotamerSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyRotamerSamplerWithResidueList * >( sampler.get() ) );
+			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
 			rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_euler_gamma();
 			return;
 		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyRotamerSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyRotamerSamplerWithResidueAlternatives * >( sampler.get() ) );
+			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 			rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_euler_gamma();
 			return;
 		}	 else if ( sampler->type() == RIGID_BODY ){
-			RigidBodyRotamerSampler & rigid_body_rotamer = *( static_cast< RigidBodyRotamerSampler * >( sampler.get() ) );
+			RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
 			rigid_body_rotamer.fast_forward_to_next_euler_gamma();
 		}
 

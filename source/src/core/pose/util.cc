@@ -24,6 +24,7 @@
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -231,6 +232,71 @@ create_subpose(
 	pose.fold_tree(f);
 
 }
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// A bit like create_subpose() but does not require fold tree, and
+// a little optimized to handle some weird terminal variants and RNA jumps.
+void
+pdbslice( core::pose::Pose & new_pose,
+					core::pose::Pose const & pose,
+					utility::vector1< core::Size > const & slice_res )
+{
+		using namespace core::pose;
+		using namespace core::chemical;
+		using namespace core::conformation;
+		using namespace core::chemical::rna;
+
+		new_pose.clear();
+
+		for ( Size i = 1; i <= slice_res.size(); i++ ) {
+
+			ResidueOP residue_to_add = pose.residue( slice_res[ i ] ).clone() ;
+
+			if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ ||
+					 residue_to_add->is_lower_terminus() ||
+					 residue_to_add->has_variant_type( "N_ACETYLATION") ||
+					 (i>1 && pose.fold_tree().is_cutpoint( slice_res[i-1] ) ) ){
+				if( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ){
+
+					new_pose.append_residue_by_jump(  *residue_to_add, i-1,
+																						chi1_torsion_atom( new_pose.residue(i-1) ),
+																						chi1_torsion_atom( *residue_to_add ), true /*new chain*/ );
+				} else {
+
+					new_pose.append_residue_by_jump(  *residue_to_add, i-1, "", "", true /*new chain*/ );
+				}
+			} else {
+
+				new_pose.append_residue_by_bond(  *residue_to_add  ) ;
+			}
+		}
+
+		using namespace core::pose::full_model_info;
+		if ( full_model_info_defined( pose ) ){
+			FullModelInfoOP full_model_info = const_full_model_info( pose ).clone_info();
+			utility::vector1< Size > const & res_list = full_model_info->res_list();
+			utility::vector1< Size > new_res_list;
+			for ( Size n = 1; n <= new_pose.total_residue(); n++ ){
+				new_res_list.push_back( res_list[ slice_res[ n ] ] );
+			}
+			full_model_info->set_res_list( new_res_list );
+			set_full_model_info( new_pose, full_model_info );
+		}
+	}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+pdbslice( core::pose::Pose & pose,
+					utility::vector1< core::Size > const & slice_res ){
+
+	pose::Pose mini_pose;
+	pdbslice( mini_pose, pose, slice_res );
+	pose = mini_pose;
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 void
@@ -509,7 +575,7 @@ dump_comment_pdb(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool getPoseExtraScores(
+bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const name,
 	core::Real & value
@@ -536,7 +602,7 @@ bool getPoseExtraScores(
 	return true;
 }
 
-bool getPoseExtraScores(
+bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const name,
 	std::string & value
@@ -564,7 +630,7 @@ bool getPoseExtraScores(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void setPoseExtraScores(
+void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string name,
 	core::Real value
@@ -589,7 +655,7 @@ void setPoseExtraScores(
 	data->map()[name] = value;
 }
 
-void setPoseExtraScores(
+void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const name,
 	std::string value
@@ -1336,7 +1402,7 @@ core::Real energy_from_pose(
 core::Real total_energy_from_pose( core::pose::Pose const & pose ) {
 	Real total_energy = pose.energies().total_energy();
 	// when initiated from a silent struct, total energy lives in "extra data".
-	if ( total_energy == Real( 0.0 ) ) getPoseExtraScores( pose, "score", total_energy );
+	if ( total_energy == Real( 0.0 ) ) getPoseExtraScore( pose, "score", total_energy );
 	return total_energy;
 }
 
@@ -2267,8 +2333,8 @@ void lregister_util( lua_State * lstate ) {
 	[
 		luabind::namespace_("pose")
 		[
-			luabind::def("getExtraScore", &getPoseExtraScores, luabind::pure_out_value(_3)),
-			luabind::def("setExtraScore", &setPoseExtraScores),
+			luabind::def("getExtraScore", &getPoseExtraScore, luabind::pure_out_value(_3)),
+			luabind::def("setExtraScore", &setPoseExtraScore),
 			luabind::def("get_comment", &get_comment, luabind::pure_out_value(_3)),
 			luabind::def("add_comment", &add_comment),
 			luabind::def("getScore", (core::Real (*) (core::pose::Pose &, std::string const & ) ) &energy_from_pose),

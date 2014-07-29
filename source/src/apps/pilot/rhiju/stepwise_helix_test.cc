@@ -47,7 +47,7 @@
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 
 // C++ headers
 //#include <cstdlib>

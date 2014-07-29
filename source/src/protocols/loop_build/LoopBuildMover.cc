@@ -130,8 +130,8 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 	////
 	core::Real final_score( 0.0 );
 	using std::string;
-	using core::pose::getPoseExtraScores;
-	if ( core::pose::getPoseExtraScores(
+	using core::pose::getPoseExtraScore;
+	if ( core::pose::getPoseExtraScore(
 			pose, std::string("final_looprelax_score"), final_score
 	)
 	) {
@@ -165,14 +165,14 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 
 					if ( remodel == "perturb_kic_refactor" ) {
 						core::Real rebuild_looprms=0.0;
-						getPoseExtraScores( pose, "rebuild_looprms", rebuild_looprms );
+						getPoseExtraScore( pose, "rebuild_looprms", rebuild_looprms );
 						job->add_string_real_pair("loop_rebuildrms ",rebuild_looprms );
                         // mirror to tracer
 						TR << "loop_rebuildrms: " << rebuild_looprms << std::endl;
 					}
 
 					core::Real cen_looprms=0.0;
-					getPoseExtraScores( pose, "cen_looprms", cen_looprms );
+					getPoseExtraScore( pose, "cen_looprms", cen_looprms );
 					job->add_string_real_pair("loop_cenrms ",cen_looprms );
 					// mirror to tracer
 					TR << "loop_cenrms: " << cen_looprms << std::endl;
@@ -181,9 +181,9 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 					core::Real final_looprms=0.0;
 					core::Real final_score=0.0;
 					core::Real final_chainbreak=0.0;
-					getPoseExtraScores( pose, "looprms", final_looprms );
-					getPoseExtraScores( pose, "final_looprelax_score", final_score );
-					getPoseExtraScores( pose, "final_chainbreak", final_chainbreak );
+					getPoseExtraScore( pose, "looprms", final_looprms );
+					getPoseExtraScore( pose, "final_looprelax_score", final_score );
+					getPoseExtraScore( pose, "final_chainbreak", final_chainbreak );
 					job->add_string_real_pair("loop_rms ", final_looprms);
 					job->add_string_real_pair("total_energy ", final_score);
 					job->add_string_real_pair("chainbreak ", final_chainbreak);

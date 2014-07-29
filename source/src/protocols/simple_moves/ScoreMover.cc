@@ -162,18 +162,18 @@ ScoreMover::apply( Pose & pose ) {
 	if ( get_native_pose() ) {
 		Pose npose = *get_native_pose();
 		if ( npose.total_residue() == pose.total_residue() ) {
-			setPoseExtraScores( pose, "rms", core::scoring::native_CA_rmsd( *get_native_pose(), pose ) );
-			setPoseExtraScores( pose, "allatom_rms", all_atom_rmsd( *get_native_pose(), pose ) );
-			setPoseExtraScores( pose, "maxsub", CA_maxsub( *get_native_pose(), pose ) );
-			setPoseExtraScores( pose, "maxsub2.0", CA_maxsub( *get_native_pose(), pose, 2.0 ) );
+			setPoseExtraScore( pose, "rms", core::scoring::native_CA_rmsd( *get_native_pose(), pose ) );
+			setPoseExtraScore( pose, "allatom_rms", all_atom_rmsd( *get_native_pose(), pose ) );
+			setPoseExtraScore( pose, "maxsub", CA_maxsub( *get_native_pose(), pose ) );
+			setPoseExtraScore( pose, "maxsub2.0", CA_maxsub( *get_native_pose(), pose, 2.0 ) );
 			Real gdtmm, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 			gdtmm = CA_gdtmm( *get_native_pose(), pose, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
-			setPoseExtraScores( pose, "gdtmm", gdtmm);
-			setPoseExtraScores( pose, "gdtmm1_1", m_1_1);
-			setPoseExtraScores( pose, "gdtmm2_2", m_2_2);
-			setPoseExtraScores( pose, "gdtmm3_3", m_3_3);
-			setPoseExtraScores( pose, "gdtmm4_3", m_4_3);
-			setPoseExtraScores( pose, "gdtmm7_4", m_7_4);
+			setPoseExtraScore( pose, "gdtmm", gdtmm);
+			setPoseExtraScore( pose, "gdtmm1_1", m_1_1);
+			setPoseExtraScore( pose, "gdtmm2_2", m_2_2);
+			setPoseExtraScore( pose, "gdtmm3_3", m_3_3);
+			setPoseExtraScore( pose, "gdtmm4_3", m_4_3);
+			setPoseExtraScore( pose, "gdtmm7_4", m_7_4);
 		}
 	}
 
@@ -193,7 +193,7 @@ ScoreMover::apply( Pose & pose ) {
 	if ( option[ OptionKeys::evaluation::score_exclude_res ].user() ) {
 		utility::vector1<int> exclude_list = option[ OptionKeys::evaluation::score_exclude_res ];
 
-		setPoseExtraScores( pose, "select_score", score_function_->get_sub_score_exclude_res( pose, exclude_list ) );
+		setPoseExtraScore( pose, "select_score", score_function_->get_sub_score_exclude_res( pose, exclude_list ) );
 	}
 
 }

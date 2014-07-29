@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/legacy/screener/SimplePoseSelection.fwd.hh>
-#include <protocols/stepwise/sampling/modeler_options/StepWiseModelerOptions.fwd.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -36,7 +36,7 @@ namespace screener {
 		//constructor
 		SimplePoseSelection( pose::Pose const & pose,
 												 utility::vector1< Size > const & moving_res_list,
-												 sampling::modeler_options::StepWiseModelerOptionsCOP options,
+												 modeler::options::StepWiseModelerOptionsCOP options,
 												 bool const full_optimize );
 
 		//destructor
@@ -62,7 +62,7 @@ namespace screener {
 
 		pose::Pose const & pose_;
 		utility::vector1< Size > const moving_res_list_;
-		sampling::modeler_options::StepWiseModelerOptionsCOP options_;
+		modeler::options::StepWiseModelerOptionsCOP options_;
 		bool const full_optimize_;
 
 		utility::vector1< pose::PoseOP > pose_list_;

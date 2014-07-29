@@ -11,8 +11,8 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 // libRosetta headers
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
-#include <protocols/stepwise/sampling/StepWiseModeler.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -84,6 +84,7 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/copydofs/util.hh>
+#include <core/pose/rna/util.hh>
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -96,19 +97,20 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_Minimizer.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/legacy/sampling/rna/StepWiseRNA_WorkingParametersSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
-#include <protocols/stepwise/sampling/util.hh>
-#include <protocols/stepwise/sampling/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
+#include <protocols/stepwise/modeler/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Minimizer.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_WorkingParametersSetup.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Clusterer.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/legacy/modeler/rna/util.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -135,16 +137,17 @@
 #include <math.h>
 
 using namespace core;
+using namespace core::pose::rna;
 using namespace protocols;
 using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
-using namespace protocols::stepwise::sampling;
-using namespace protocols::stepwise::sampling::rna;
-using namespace protocols::stepwise::legacy::sampling;
-using namespace protocols::stepwise::legacy::sampling::rna;
+using namespace protocols::stepwise::modeler;
+using namespace protocols::stepwise::modeler::rna;
+using namespace protocols::stepwise::legacy::modeler;
+using namespace protocols::stepwise::legacy::modeler::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -197,8 +200,8 @@ swa_rna_sample()
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::sampling;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler;
+	using namespace protocols::stepwise::modeler::rna;
 
 	output_title_text( "Enter swa_rna_sample()", TR );
 
@@ -212,7 +215,7 @@ swa_rna_sample()
 	PoseCOP native_pose = working_parameters_COP->working_native_pose();
 
 	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
-	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400, false, center_vector );
+	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400, false, ( native_pose != 0 ), center_vector );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 	// put following in pose setup? IS THIS STILL WORKING?
@@ -228,10 +231,10 @@ swa_rna_sample()
 	std::string const silent_file = option[ out::file::silent ]();
 	std::string swa_silent_file, out_tag;
 
-	modeler_options::StepWiseModelerOptionsOP stepwise_modeler_options = new modeler_options::StepWiseModelerOptions;
-	stepwise_modeler_options->initialize_from_command_line();
-	stepwise_modeler_options->set_output_minimized_pose_list( !multiple_shots );
-	stepwise_modeler_options->set_disallow_realign( true );
+	options::StepWiseModelerOptionsOP stepwise_options = new options::StepWiseModelerOptions;
+	stepwise_options->initialize_from_command_line();
+	stepwise_options->set_output_minimized_pose_list( !multiple_shots );
+	stepwise_options->set_disallow_realign( true );
 	Pose start_pose = pose;
 
 	for ( Size n = 1; n <= num_struct; n++ ){
@@ -241,13 +244,13 @@ swa_rna_sample()
 		pose = start_pose;
 
 		if ( !get_tag_and_silent_file_for_struct( swa_silent_file, out_tag, n, multiple_shots, silent_file ) ) continue;
-		stepwise_modeler_options->set_silent_file( swa_silent_file );
+		stepwise_options->set_silent_file( swa_silent_file );
 
 		Size const working_moving_res = working_parameters_COP->working_moving_res();
 
 		StepWiseModeler stepwise_modeler( working_moving_res, scorefxn );
 		stepwise_modeler.set_native_pose( native_pose );
-		stepwise_modeler.set_modeler_options( stepwise_modeler_options );
+		stepwise_modeler.set_options( stepwise_options );
 		stepwise_modeler.set_working_prepack_res( get_all_residues( pose ) ); // this is new -- to allow virtual 2'-OH packing from input PDB.
 
 		// turn this on to test StepWiseRNA_Modeler's "on-the-fly" determination of job based on pose fold_tree, cutpoints, etc.
@@ -269,7 +272,7 @@ swa_rna_sample()
 void
 swa_rna_cluster(){
 
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	working_parameters::StepWiseWorkingParametersOP working_parameters;
 
@@ -346,7 +349,7 @@ swa_rna_cluster(){
 
 
 	//////////////////////////////////////////////////
-	protocols::stepwise::sampling::rna::StepWiseRNA_Clusterer stepwise_rna_clusterer( non_empty_silent_files_in );
+	StepWiseRNA_Clusterer stepwise_rna_clusterer( non_empty_silent_files_in );
 
 	stepwise_rna_clusterer.set_max_decoys( option[ clusterer_num_pose_kept ]() );
 	stepwise_rna_clusterer.set_score_diff_cut( option[ score_diff_cut ]() );
@@ -421,7 +424,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	output_title_text( "Enter rna_sample_virtual_sugar()", TR );
 
@@ -475,7 +478,7 @@ filter_combine_long_loop()
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
@@ -546,7 +549,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
 	using namespace core::io::silent;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
@@ -762,7 +765,7 @@ void*
 my_main( void* )
 {
 
-	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::modeler::rna;
   using namespace basic::options;
 
 	clock_t const my_main_time_start( clock() );

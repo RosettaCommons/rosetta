@@ -747,10 +747,12 @@ RNA_StructureParameters::sample_alternative_chain_connection( pose::Pose & pose,
 	}
 
 	while( !success && ntries++ < MAX_TRIES ){
-			jump_points( 1, which_jump_in_list ) = RG.random_element( res_list1 );
-			jump_points( 2, which_jump_in_list ) = RG.random_element( res_list2 );
-			success = fold_tree.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps,
-																										jump_points, cuts, 1, false /*verbose*/ );
+		Size jump_pos1 = RG.random_element( res_list1 );
+		Size jump_pos2 = RG.random_element( res_list2 );
+		jump_points( 1, which_jump_in_list ) = std::min( jump_pos1, jump_pos2 );
+		jump_points( 2, which_jump_in_list ) = std::max( jump_pos1, jump_pos2 );
+		success = fold_tree.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps,
+																									jump_points, cuts, 1, false /*verbose*/ );
 	}
 
 	fill_in_default_jump_atoms( fold_tree, pose );
@@ -929,11 +931,13 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		for (Size n = 1; n <= num_chain_connections ; n++ ){
 			utility::vector1 < Size > const & res_list1( chain_connections_[n].first );
 			utility::vector1 < Size > const & res_list2( chain_connections_[n].second);
+			Size jump_pos1 = RG.random_element( res_list1 );
+			Size jump_pos2 = RG.random_element( res_list2 );
 			Size const pairing_index_in_list1( static_cast<Size>( RG.uniform() * res_list1.size() )  + 1 );
 			Size const pairing_index_in_list2( static_cast<Size>( RG.uniform() * res_list2.size() )  + 1 );
 			count++;
-			jump_points(1, count) = res_list1[ pairing_index_in_list1 ];
-			jump_points(2, count) = res_list2[ pairing_index_in_list2 ];
+			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
+			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
 			//			TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 		//		TR << std::endl;

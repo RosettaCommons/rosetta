@@ -375,11 +375,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////
 	////
 	if( compute_rmsd() ){
-		setPoseExtraScores( pose, "cen_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+		setPoseExtraScore( pose, "cen_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 		if ( option[ in::file::native ].user() ) {
-			setPoseExtraScores( pose, "cen_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-			setPoseExtraScores( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
-			setPoseExtraScores( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops, true ) );
+			setPoseExtraScore( pose, "cen_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+			setPoseExtraScore( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			setPoseExtraScore( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops, true ) );
 		}
 	}
 
@@ -641,15 +641,15 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		TR << pose.fold_tree() << std::endl;
 		if( compute_rmsd() ){
-			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			setPoseExtraScore( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 			if ( option[ in::file::native ].user() ) {
 				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
-				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
-				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
+				setPoseExtraScore( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScore( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScore( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScore( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
 			}
 		}
 
@@ -673,15 +673,15 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	if ( intermedrelax() != "no" && (!all_loops_closed)) {
 		//The following keeps the score lines equivalent in the silent file.
 		if( compute_rmsd() ){
-			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			setPoseExtraScore( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 			if ( option[ in::file::native ].user() ) {
 				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
-				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
-				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
+				setPoseExtraScore( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScore( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScore( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScore( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
 			}
 		}
 	}
@@ -703,14 +703,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		long starttime = time(NULL);
 
 		if( compute_rmsd() ){
-			setPoseExtraScores( pose, "bref_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			setPoseExtraScore( pose, "bref_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 			if ( option[ in::file::native ].user() ) {
 				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
-				setPoseExtraScores( pose, "bref_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
-				setPoseExtraScores( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScore( pose, "bref_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScore( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScore( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 
@@ -792,12 +792,12 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			// Calculate a chainbreak score {{{1
 			if ( option[ OptionKeys::loops::kic_use_linear_chainbreak ]() ){
-				setPoseExtraScores(
+				setPoseExtraScore(
 					pose, "final_chainbreak",
 					pose.energies().total_energies()[ core::scoring::linear_chainbreak ]
 					);
 			} else {
-				setPoseExtraScores(
+				setPoseExtraScore(
 					pose, "final_chainbreak",
 					pose.energies().total_energies()[ core::scoring::chainbreak ]
 					);
@@ -822,14 +822,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	if ( refine() != "no" && (!all_loops_closed)) {
 		//The following keeps the score lines equivalent in the silent file.
 		if( compute_rmsd() ){
-			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			setPoseExtraScore( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 			if ( option[ in::file::native ].user() ) {
 				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
-				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScore( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScore( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScore( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 	}
@@ -882,14 +882,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		TR << pose.fold_tree() << std::endl;
 		if( compute_rmsd() ){
-			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			setPoseExtraScore( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 			if ( option[ in::file::native ].user() ) {
 				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
-				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScore( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScore( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScore( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 
@@ -942,14 +942,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	if ( relax() != "no" && (!all_loops_closed)) {
 		//The following keeps the score lines equivalent in the silent file.
 		if( compute_rmsd() ){
-			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			setPoseExtraScore( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 			if ( option[ in::file::native ].user() ) {
 				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
-				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScore( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScore( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScore( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 	}
@@ -963,19 +963,19 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	TR << "===" << std::endl;
 
 	if( compute_rmsd() ){
-		setPoseExtraScores(
+		setPoseExtraScore(
 			pose, "irms",  core::scoring::CA_rmsd( start_pose, pose )
 		);
 		if ( option[ in::file::native ].user() ) {
 			if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 			}
-			setPoseExtraScores(	pose, "rms",     core::scoring::native_CA_rmsd( native_pose, pose ));
-			setPoseExtraScores(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, true /*bb_only*/ ));
-			setPoseExtraScores(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, false /*bb_only*/ ));
-			setPoseExtraScores(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, *loops, true ));
-			setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, *loops, corelength )	);
-			setPoseExtraScores( pose, "corelen", corelength );
+			setPoseExtraScore(	pose, "rms",     core::scoring::native_CA_rmsd( native_pose, pose ));
+			setPoseExtraScore(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, true /*bb_only*/ ));
+			setPoseExtraScore(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, false /*bb_only*/ ));
+			setPoseExtraScore(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, *loops, true ));
+			setPoseExtraScore(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, *loops, corelength )	);
+			setPoseExtraScore( pose, "corelen", corelength );
 		}
 	}
 
@@ -987,7 +987,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	else                 final_score = (*cen_scorefxn_)(pose); // may include constraint score
 
 
-	core::pose::setPoseExtraScores(
+	core::pose::setPoseExtraScore(
 		pose, std::string("final_looprelax_score"), final_score
 	);
 	// }}}1

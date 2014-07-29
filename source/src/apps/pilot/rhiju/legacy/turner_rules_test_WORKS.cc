@@ -55,7 +55,7 @@
 #include <core/options/util.hh>
 #include <core/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -345,7 +345,7 @@ define_states_test(){
 
 
 	// Rigid body sample. Keep track of total number of states so that we can extract a Kd
-	// Use input parameters to define fineness of sampling -- will look for convergence.
+	// Use input parameters to define fineness of modeler -- will look for convergence.
 	// Save lowest energy states.
 
 	/////////////////////////////////////////////////////////////
@@ -426,7 +426,7 @@ define_states_test(){
 	// Print out Kd.
 	Real const xyz_increment = option[ xyz_sample ]();
 	Real const concentration = (1.0 / 6.022e-4);
-	std::cout << "sampling concentration " << concentration << std::endl;
+	std::cout << "modeler concentration " << concentration << std::endl;
 
 	Real const additional_probability = Z * xyz_increment * xyz_increment * xyz_increment * alpha_increment / ( N_SAMPLE * N_SAMPLE_COSBETA * N_SAMPLE );
 	std::cout << "additional_probability: " <<  additional_probability << std::endl;

@@ -37,6 +37,11 @@ output_to_silent_file( std::string const & out_tag,
 											 pose::PoseCOP native_pose );
 
 void
+output_to_silent_file( std::string const & out_tag,
+											 std::string const & silent_file,
+											 pose::Pose const & pose );
+
+void
 output_to_silent_file( std::string const & silent_file,
 											 utility::vector1< pose::PoseOP > & pose_list,
 											 pose::PoseCOP native_pose );

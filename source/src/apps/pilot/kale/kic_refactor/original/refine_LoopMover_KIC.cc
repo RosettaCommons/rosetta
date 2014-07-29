@@ -611,7 +611,7 @@ void LoopMover_Refine_KIC::apply(
 				(*local_scorefxn)(pose);
 				core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * local_scorefxn->get_weight( chainbreak );
 				
-				//getPoseExtraScores(pose, "chainbreak", current_chainbreak);
+				//getPoseExtraScore(pose, "chainbreak", current_chainbreak);
 				
 				tr() << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
 		

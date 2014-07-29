@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/screener/O2PrimeScreener.hh>
-#include <protocols/stepwise/sampling/rna/o2prime/O2PrimePacker.hh>
+#include <protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.hh>
 #include <protocols/moves/CompositionMover.hh>
 
 #include <basic/Tracer.hh>
@@ -26,7 +26,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	O2PrimeScreener::O2PrimeScreener( sampling::rna::o2prime::O2PrimePackerOP o2prime_packer ):
+	O2PrimeScreener::O2PrimeScreener( modeler::rna::o2prime::O2PrimePackerOP o2prime_packer ):
 		SampleApplier( o2prime_packer->pose() ),
 		o2prime_packer_( o2prime_packer )
 	{}

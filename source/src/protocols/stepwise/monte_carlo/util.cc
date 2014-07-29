@@ -14,7 +14,8 @@
 
 
 #include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/stepwise/sampling/util.hh>
+#include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/align/util.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -36,7 +37,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
 
 using ObjexxFCL::lead_zero_string_of;
 using namespace core;
-using namespace protocols::stepwise::sampling;
+using namespace protocols::stepwise::modeler;
 
 namespace protocols {
 namespace stepwise {
@@ -85,9 +86,7 @@ output_to_silent_file( std::string const & out_tag,
 	//Real rms_no_bulges ( 0.0 );
 	clearPoseExtraScores( pose );
 
-	if ( native_pose ) {
-		rms = superimpose_recursively( pose, *native_pose );
-	}
+	if ( native_pose )	rms = modeler::align::superimpose_recursively( pose, *native_pose );
 
 	BinarySilentStruct s( pose, out_tag );
 	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residue_connections( pose ) ) );
@@ -98,6 +97,15 @@ output_to_silent_file( std::string const & out_tag,
 	}
 
 	silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+output_to_silent_file( std::string const & out_tag,
+											 std::string const & silent_file,
+											 pose::Pose const & pose ){
+	Pose pose_copy = pose;
+	output_to_silent_file( out_tag, silent_file, pose_copy, 0 /*no native -- no superimpose*/ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

@@ -32,8 +32,8 @@
 #include <protocols/farna/RNA_ChunkLibrary.hh>
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/stepwise/sampling/util.hh> //move this to toolbox/
-#include <protocols/stepwise/sampling/rna/util.hh>
+#include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
+#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/farna/util.hh>
 
 // Project headers
@@ -397,7 +397,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		if ( allow_bulge_ ) {
 			//Identify and virtual the bulge residues.
 			/*Size const num_res_virtualized =*/
-			protocols::stepwise::sampling::rna::virtualize_bulges(
+			virtualize_bulges(
 				pose, allowed_bulge_res_, final_scorefxn_, out_file_tag,
 				true /*allow_pre_virtualize*/, allow_consecutive_bulges_,
 				true /*verbose*/
@@ -795,7 +795,7 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 		}
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::sampling::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			protocols::stepwise::modeler::align::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 
 		TR << "Aligning pose to native." << std::endl;
 
@@ -905,7 +905,7 @@ RNA_DeNovoProtocol::update_denovo_scorefxn_weights( Size const r )
 	denovo_scorefxn_->set_weight( coordinate_constraint,  suppress*coordinate_constraint_final_weight  );
 	denovo_scorefxn_->set_weight( rna_chem_map_lores,   suppress*rna_chem_map_lores_final_weight  );
 
-	// keep chainbreak extra low for early rounds... seems to be important for rigid body sampling.
+	// keep chainbreak extra low for early rounds... seems to be important for rigid body modeler.
 	//Real suppress_chainbreak  = ( r - ( rounds_/3.0 ) )/ ( static_cast<Real>( rounds_ ) - ( rounds_ / 3.0 ) );
 	//Real const suppress_chainbreak_min = 1 / static_cast< Real >( rounds_ );
 	//if ( suppress_chainbreak < suppress_chainbreak_min ) suppress_chainbreak = suppress_chainbreak_min;

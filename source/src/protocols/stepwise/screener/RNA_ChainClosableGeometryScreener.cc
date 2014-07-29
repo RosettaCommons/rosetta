@@ -13,7 +13,7 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryScreener.hh>
-#include <protocols/stepwise/sampling/rna/checker/RNA_ChainClosableGeometryChecker.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
@@ -25,7 +25,7 @@ namespace stepwise {
 namespace screener {
 
 	//Constructor
-	RNA_ChainClosableGeometryScreener::RNA_ChainClosableGeometryScreener( sampling::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
+	RNA_ChainClosableGeometryScreener::RNA_ChainClosableGeometryScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 																							  pose::PoseOP screening_pose,
 																								bool const finer_sampling_at_chain_closure ):
 		StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),

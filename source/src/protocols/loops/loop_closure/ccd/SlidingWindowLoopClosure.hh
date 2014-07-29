@@ -101,7 +101,7 @@ public:
 	// returns less_cut and more_cut with best fragment already applied..
 	virtual void apply( core::pose::Pose& more_cut );
 
-	static void setPoseExtraScores( core::pose::Pose &pose );
+	static void setPoseExtraScore( core::pose::Pose &pose );
 
 	//@brief return the list of collected fragments -- here it actually will be more than one Frame
 	core::fragment::FragSetCOP
