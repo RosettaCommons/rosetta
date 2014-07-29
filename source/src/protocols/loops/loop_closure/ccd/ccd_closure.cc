@@ -756,8 +756,8 @@ fast_ccd_loop_closure(
 					assert( nbb == 3 );
 					//////////////////////////////////////
 					// evaluate the rama score difference:
-					Real const old_rama_score( rama->eval_rama_score_residue( pose.aa(pos), torsions[pos][1], torsions[pos][2]));
-					Real const new_rama_score( rama->eval_rama_score_residue( pose.aa(pos), save_torsions[1], save_torsions[2]));
+					Real const new_rama_score( rama->eval_rama_score_residue( pose.aa(pos), torsions[pos][1], torsions[pos][2]));
+					Real const old_rama_score( rama->eval_rama_score_residue( pose.aa(pos), save_torsions[1], save_torsions[2]));
 
 					if (local_verbose)
 						tccd.Warning  << "rama_check_boltzmann: " << pos << ' ' << old_rama_score << ' ' << new_rama_score << std::endl;
@@ -1035,8 +1035,8 @@ ccd_moves(
 				assert( nbb == 3 );
 				//////////////////////////////////////
 				// evaluate the rama score difference:
-				Real const old_rama_score( rama->eval_rama_score_residue( pose.aa(pos), torsions[pos][1], torsions[pos][2]));
-				Real const new_rama_score( rama->eval_rama_score_residue( pose.aa(pos), save_torsions[1], save_torsions[2]));
+				Real const new_rama_score( rama->eval_rama_score_residue( pose.aa(pos), torsions[pos][1], torsions[pos][2]));
+				Real const old_rama_score( rama->eval_rama_score_residue( pose.aa(pos), save_torsions[1], save_torsions[2]));
 
 				if (local_verbose)
 					tccd.Debug << "rama_check_boltzmann: " << pos << ' ' << old_rama_score << ' ' << new_rama_score << std::endl;
