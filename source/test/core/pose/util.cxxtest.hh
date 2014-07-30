@@ -160,19 +160,19 @@ public: // tests
 		core::Real val( 0.0 );
 		bool key_exists;
 
-		key_exists = getPoseExtraScores( pose, key, val );
+		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == false );
 		TS_ASSERT( val == 0.0 );
 
-		setPoseExtraScores( pose, key, desired_val );
+		setPoseExtraScore( pose, key, desired_val );
 
-		key_exists = getPoseExtraScores( pose, key, val );
+		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == true );
 		TS_ASSERT( val == desired_val );
 
 		val = 0.0;
 		clearPoseExtraScore( pose, key );
-		key_exists = getPoseExtraScores( pose, key, val );
+		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == false );
 		TS_ASSERT( val == 0.0 )
 	} // test_pose_float_map

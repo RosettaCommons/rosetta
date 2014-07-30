@@ -231,7 +231,6 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 {
 	TR.Debug << "slide_jump: starting tree= " << *this;
 	Edge const old_jump_edge( jump_edge( jump_number ) );
-	int const root_( root() );
 	Size const pos1( std::min( new_res1, new_res2 ) );
 	Size const pos2( std::max( new_res1, new_res2 ) );
 	utility::vector1< Edge > new_edges, remove_edges;
