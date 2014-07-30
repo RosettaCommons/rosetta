@@ -38,7 +38,7 @@ namespace screener {
 	public:
 
 		//constructor
-		RNA_AtrRepScreener( modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
+		RNA_AtrRepScreener( protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
 										core::pose::Pose & screening_pose );
 
 		//destructor
@@ -60,7 +60,7 @@ namespace screener {
 
 	private:
 
-		modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
+		protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
 		core::pose::Pose & screening_pose_;
 		bool exit_on_fail_;
 

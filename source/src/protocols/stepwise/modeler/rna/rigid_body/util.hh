@@ -42,19 +42,19 @@ core::Real
 get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const atom_name );
 
 void
-initialize_xyz_parameters( Distance & max_distance,
-													 Distance & max_distance_squared,
+initialize_xyz_parameters( core::Distance & max_distance,
+													 core::Distance & max_distance_squared,
 													 int & centroid_bin_min,
 													 int & centroid_bin_max,
 													 utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
-													 Size const gap_size_to_anchor );
+													 core::Size const gap_size_to_anchor );
 
 utility::vector1 < core::pose::PoseOP >
 setup_pose_with_moving_residue_alternative_list(
-	pose::Pose const & pose,
-	Size const & moving_res,
-	bool const extra_chi,
-	bool const use_phenix_geo		);
+																								core::pose::Pose const & pose,
+																								core::Size const & moving_res,
+																								bool const extra_chi,
+																								bool const use_phenix_geo		);
 
 int
 DOF_bin_value( std::map< BaseBin, int, compare_base_bin > ::const_iterator const & base_bin_it, std::string const & DOF );

@@ -1,0 +1,8 @@
+In file included from protocols/stepwise/screener/SampleApplier.hh:19:
+In file included from ./protocols/stepwise/screener/StepWiseScreener.hh:19:
+In file included from ./utility/pointer/ReferenceCount.hh:31:
+In file included from ./utility/pointer/ReferenceCount.fwd.hh:18:
+./utility/pointer/owning_ptr.hh:42:10: fatal error: 'boost/type_traits/remove_const.hpp' file not found
+#include <boost/type_traits/remove_const.hpp>
+         ^
+1 error generated.

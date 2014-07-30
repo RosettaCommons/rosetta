@@ -33,7 +33,7 @@ namespace screener {
 	public:
 		//constructor
 		ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
-													 modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker );
+													 protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker );
 
 		//destructor
 		~ProteinAtrRepScreener();
@@ -51,7 +51,7 @@ namespace screener {
 
 	private:
 
-		modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker_;
+		protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker_;
 
 	};
 
