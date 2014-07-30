@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_filters/DeltaFilter.fwd.hh>
-
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
 // Unit headers
@@ -69,6 +69,8 @@ public:
 	void jump( core::Size const j );
 	protocols::moves::MoverOP relax_mover() const;
 	void relax_mover( protocols::moves::MoverOP const mover );
+	void scorefxn( core::scoring::ScoreFunctionOP s );
+	core::scoring::ScoreFunctionOP scorefxn() const;
 private:
 
 	protocols::filters::FilterOP filter_; //which filter to use
@@ -84,6 +86,7 @@ private:
 	mutable core::Real ref_baseline_; // The baseline from the reference pose
 
 	void unbind( core::pose::Pose & ) const; //utility function for unbinding the pose
+	core::scoring::ScoreFunctionOP scorefxn_; //dflt default scorefxn; used to score the pose before relax_mover, but is really just a place holder. If you're using a symmetric pose, you need to define a symmetric scorefxn here.
 };
 
 } // simple_filters

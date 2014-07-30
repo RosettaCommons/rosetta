@@ -42,7 +42,8 @@ DeltaFilter::DeltaFilter() :
 	changing_baseline_( false ),
 	jump_( 0 ),
 	reference_pose_(NULL),
-	ref_baseline_( 1234567890.0 ) // unlikely "uninitialized" sentinel value
+	ref_baseline_( 1234567890.0 ), // unlikely "uninitialized" sentinel value
+  scorefxn_( NULL )
 {}
 
 bool
@@ -215,6 +216,7 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	relax_unbound( tag->getOption< bool >( "relax_unbound", false ) );
 	changing_baseline( tag->getOption< bool >( "changing_baseline", false ) );
+	scorefxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 	if( unbound() )
 		jump( tag->getOption< core::Size >( "jump", 1 ) );
 	// need to score the pose before packing...
@@ -227,10 +229,9 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 		reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	}
-	else{
+	else if( tag->hasOption( "relax_mover" ) ){
 		core::pose::Pose p( pose );
-		core::scoring::ScoreFunctionOP score12 = data.get< core::scoring::ScoreFunction *>( "scorefxns", "score12" );
-		(*score12)(p);
+		(*scorefxn())(p);
 		relax_mover()->apply( p );
 		unbind( p );
 		baseline( filter()->report_sm( p ) );
@@ -269,6 +270,12 @@ void
 DeltaFilter::relax_mover( protocols::moves::MoverOP const m ){
 	relax_mover_ = m;
 }
+
+void
+DeltaFilter::scorefxn( core::scoring::ScoreFunctionOP s ){ scorefxn_ = s; }
+
+core::scoring::ScoreFunctionOP
+DeltaFilter::scorefxn() const{ return scorefxn_; }
 
 } // simple_filters
 } // protocols
