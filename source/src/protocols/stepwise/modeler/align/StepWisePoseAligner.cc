@@ -568,10 +568,10 @@ namespace align {
 		for ( Size i = 1; i <= 3; i++ ){
 			Size const n = stub_atoms[i]->id().rsd();
 			Size const q = stub_atoms[i]->id().atomno();
-			bool added = add_to_atom_id_map_after_checks( root_triad_atom_id_map,
-																										pose.residue_type( n ).atom_name( q ),
-																										n, res_list_in_reference[ n ],
-																										pose, *reference_pose_local_, false /* do_the_checks */ );
+			add_to_atom_id_map_after_checks( root_triad_atom_id_map,
+																			 pose.residue_type( n ).atom_name( q ),
+																			 n, res_list_in_reference[ n ],
+																			 pose, *reference_pose_local_, false /* do_the_checks */ );
 		}
 		return root_triad_atom_id_map;
 
