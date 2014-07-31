@@ -82,7 +82,7 @@ remap_cis_omega_torsion_bins_to_trans( ppo_torsion_bin torbin ) {
 			break;
 		case ppo_torbin_G :
 		case ppo_torbin_g :
-			remapped_torbin = ppo_torbin_g;
+			remapped_torbin = ppo_torbin_G;
 			break;
 		default :
 			remapped_torbin = ppo_torbin_X;

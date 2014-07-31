@@ -5,7 +5,7 @@
 -loops:max_kic_build_attempts 25
 -loops:ramp_fa_rep
 -loops:ramp_rama
-#-loops:kic_rama2b ## commented out as this needs lots of memory, working on a way to make this integration-testable
+-loops:kic_rama2b 
 -kic_omega_sampling
 -allow_omega_move true
 -in:file:fullatom
