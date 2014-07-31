@@ -226,6 +226,15 @@ public:
 
 	bool skip_alignment() const{ return skip_alignment_; }
 	void skip_alignment( bool const b ){ skip_alignment_ = b; }
+
+	bool superimposed() const{ return superimposed_; }
+	void superimposed( bool const b ){ superimposed_ = b; }
+
+	core::Size source_pdb_from_res() const{ return source_pdb_from_res_; }
+	void source_pdb_from_res( core::Size const s ){ source_pdb_from_res_ = s; }
+
+	core::Size source_pdb_to_res() const{ return source_pdb_to_res_; }
+	void source_pdb_to_res( core::Size const s ){ source_pdb_to_res_ = s; }
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -300,7 +309,7 @@ private:
 	bool dbase_iterate_; //dflt false;
 	bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
 	bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
-	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)    
+	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)
 	bool first_pass_; // dflt true;
 
 	// indices to the subset of the dbase library over which multiple calls iterate
@@ -383,6 +392,8 @@ private:
 	bool debug_;//dflt false if set to true then the all sorts of dump pdb options are activated
 	std::string mover_name_;
 	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_H3_seq_map_; /* This object will store the H3 seqeunces of all PDBs in the database. The logic for this is that the H3*/
+	bool superimposed_; //dflt true; when doing splice out, is the source pdb superimposed on the template pdb? This is usually the case. If it isn't we expect the user to specify the stem sites on the source and template exactly. Only dihedral restraints will be used in this case.
+	core::Size source_pdb_from_res_, source_pdb_to_res_; //dflt 0,0; see above superimposed.
 
 };
 

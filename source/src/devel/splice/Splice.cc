@@ -127,7 +127,7 @@
 
 namespace devel {
 	namespace splice {
-	
+
 	using namespace core::conformation;
 
 		static basic::Tracer TR("devel.splice.Splice");
@@ -180,6 +180,9 @@ namespace devel {
 			skip_alignment_ = false;
 			set_fold_tree_only_=false;
 			chain_num( 1 );
+			superimposed( true );
+			source_pdb_from_res( 0 );
+			source_pdb_to_res( 0 );
 			}
 
 		Splice::~Splice() {
@@ -480,7 +483,11 @@ namespace devel {
 				core::Size source_pdb_cut(ccm.chain_cut(source_pose));
 				if (source_pdb_cut!=0)//found cut site in source pose
 						utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
-				if (segment_type_=="H3"&& (tail_segment_=="c")){
+				if( !superimposed() ){
+					nearest_to_from = source_pdb_from_res();
+					nearest_to_to   = source_pdb_to_res();
+				}
+				else if (segment_type_=="H3"&& (tail_segment_=="c")){
 					nearest_to_from = find_nearest_res(source_pose, pose,from_res()/*should be the 2 vh cys on template*/, 1);//start res is nearest disulfide on source_pdb
 					nearest_to_to = source_pose.total_residue();
 				}
@@ -1186,7 +1193,9 @@ namespace devel {
 				} //fi "tail_segment"
 				//pose.dump_pdb("after_tail_segemtn_mover.pdb");
 				/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is a pretty decent filter
-				if (torsion_database_fname_ == "") { // no use computing rms if coming from a database (no coordinates)
+				if( !superimposed() )
+					TR<<"Not computing RMSd of spliced segment to source because superimposed is turned off."<<std::endl;
+				else if (torsion_database_fname_ == "") { // no use computing rms if coming from a database (no coordinates)
 					core::Real rms(0);
 					for (core::Size i = 0; i <= total_residue_new - 1; ++i) {
 						core::Real const dist(
@@ -1418,6 +1427,12 @@ namespace devel {
 			rb_sensitive(tag->getOption<bool>("rb_sensitive", false));
 			chain_num_ = tag->getOption<core::Size>("chain_num", 1);
 			tail_segment_ = tag->getOption<std::string>("tail_segment", "");
+			superimposed( tag->getOption< bool >( "superimposed", true ) );
+			if( !superimposed() ){
+				source_pdb_from_res( tag->getOption< core::Size >( "source_pdb_from_res" ) );
+				source_pdb_to_res( tag->getOption< core::Size >( "source_pdb_to_res" ) );
+				runtime_assert( source_pdb_from_res() > 0 && source_pdb_to_res() > source_pdb_from_res() );
+			}
 			if ((tag->hasOption("tail_segment"))
 					&& !(((boost::iequals/*BOOST function for comparing strings */(tail_segment_, "c")))
 							|| (boost::iequals(tail_segment_, "n")))) {
@@ -2378,6 +2393,10 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 
 ///@brief apply coordinate constraints on the segment being inserted. "to" and "from" are residue number of the pose(!), anchor residue number is also on the pose
 void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size from, core::Size to, core::Size anchor, std::string atom_type, core::pack::task::PackerTaskOP task) {
+	if( !superimposed() ){
+		TR<<"The source pose is not superimposed on the template, so we're not using coordinate restraints, only dihedrals"<<std::endl;
+		return;
+	}
 	core::scoring::constraints::ConstraintOPs cst;
 	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 1/*chain*/);
 	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
