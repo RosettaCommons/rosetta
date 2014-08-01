@@ -153,9 +153,11 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 //	}
 
 	vector1< std::string > poses_dssp;
-	poses_dssp.clear();
-	BOOST_FOREACH( core::pose::PoseOP p, poses )
-		poses_dssp.push_back( dssp( *p ) );
+	if( stems_on_sse() ){ // dssp calculations are time consuming
+		poses_dssp.clear();
+		BOOST_FOREACH( core::pose::PoseOP p, poses )
+			poses_dssp.push_back( dssp( *p ) );
+	}
 	vector1< Real > distances( pose.total_residue(), 0.0 );
 	for( Size pos = 1; pos <= pose.total_residue(); ++pos ){
 		if( pos <= from_res() || pos >= to_res() || template_dssp[ pos - 1 ] == 'L' ){ // position is not in secondary structure element
@@ -166,7 +168,10 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			Size position_on_target( 0 );
 			Real dist( 0.0 );
 			protocols::rosetta_scripts::find_nearest_res( *poses[ pose_idx ], pose, pos, position_on_target, dist );
-			if( position_on_target > 0  && ( !stems_on_sse() || poses_dssp[ pose_idx ][ pos - 1 ] == template_dssp[ pos - 1 ] ) )
+			bool sec_struct_agreement( true );
+			if( stems_on_sse() )
+				sec_struct_agreement = poses_dssp[ pose_idx ][ pos - 1 ] == template_dssp[ pos - 1 ];
+			if( position_on_target > 0  && sec_struct_agreement )
 				distances[ pos ] += dist;
 			else{
 				distances[ pos ] += 9999999.9; // this position is taken out of consideration
@@ -187,6 +192,9 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		for( Size dist_idx = 1; dist_idx < distances.size() - neighbor_separation() + 1; ++dist_idx ){
 			if( distances[ dist_idx ] <= 999999.9 ){
 				for( Size j = dist_idx + neighbor_separation() - 1; j <= distances.size(); ++j ){
+					if( std::find( neighbor_idxs.begin(), neighbor_idxs.end(), dist_idx ) != neighbor_idxs.end() &&
+							std::find( neighbor_idxs.begin(), neighbor_idxs.end(), j )        != neighbor_idxs.end() )
+						continue;
 					if( distances[ j ] <= 99999.9 ){
 						Real const res_res_dist = res_res_min_distance( pose, dist_idx, pose, j );
 						if( res_res_dist <= neighbor_distance() ){
@@ -201,7 +209,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		vector1< Size >::iterator it = std::unique( neighbor_idxs.begin(), neighbor_idxs.end() );
 		neighbor_idxs.resize( std::distance( neighbor_idxs.begin(), it ) );
 		BOOST_FOREACH( Size const n, neighbor_idxs )
-			TR<<pose.conformation().residue( n ).name1()<<n<<' '<<distances[ n ]<<'\n';
+			TR<<conf.residue( n ).name1()<<n<<' '<<distances[ n ]<<'\n';
 		TR<<std::endl;
 		if( neighbor_idxs.size() == 0 ){
 			TR<<"No pairs found"<<std::endl;
@@ -217,7 +225,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 				Real const res_res_dist = res_res_min_distance( pose, neighbor_idxs[ i ], pose, neighbor_idxs[ j ] );
 				if( res_res_dist <= neighbor_distance() ){
 					stem_pairs[ neighbor_idxs[ i ] ] = neighbor_idxs[ j ];
-					TR<<"Pair: "<<pose.conformation().residue( neighbor_idxs[ i ] ).name1()<<neighbor_idxs[ i ]<<' '<<pose.conformation().residue( neighbor_idxs[ j ] ).name1()<<neighbor_idxs[ j ]<<' '<<res_res_dist<<'\n';
+					TR<<"Pair: "<<conf.residue( neighbor_idxs[ i ] ).name1()<<neighbor_idxs[ i ]<<' '<<conf.residue( neighbor_idxs[ j ] ).name1()<<neighbor_idxs[ j ]<<' '<<res_res_dist<<'\n';
 				}
 			}
 		}
@@ -227,18 +235,17 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		for( std::map< Size, Size >::const_iterator mit = stem_pairs.begin(); mit != stem_pairs.end(); ++mit ){
 			std::map< Size, Size >::const_iterator third_partner( stem_pairs.find( mit->second ) );
 			if( third_partner != stem_pairs.end() )
-					TR<<"Triplet: "<<pose.conformation().residue( mit->first ).name1()<<mit->first<<' '<<pose.conformation().residue( mit->second ).name1()<<mit->second<<' '<<conf.residue( third_partner->second ).name1()<<third_partner->second<<'\n';
+					TR<<"Triplet: "<<conf.residue( mit->first ).name1()<<mit->first<<' '<<conf.residue( mit->second ).name1()<<mit->second<<' '<<conf.residue( third_partner->second ).name1()<<third_partner->second<<'\n';
 		}
 		TR<<std::endl;
 	}
 	else {
 		for( Size dist_idx = 1; dist_idx <= distances.size(); ++dist_idx ){
 			if( distances[ dist_idx ] <= 999999.9 )
-				TR<<pose.conformation().residue( dist_idx ).name1()<<dist_idx<<' '<<distances[ dist_idx ]<<'\n';
+				TR<<conf.residue( dist_idx ).name1()<<dist_idx<<' '<<distances[ dist_idx ]<<'\n';
 		}
 		TR<<std::endl;
 	}
-
 	return true;
 }
 
