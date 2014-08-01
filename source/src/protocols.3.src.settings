@@ -297,7 +297,7 @@ sources = {
 	"protocols/membrane": [
 		"AddMembraneMover",
 		"SetMembranePositionMover",
-		"MembranePositionFromTopologyMover", 
+		"MembranePositionFromTopologyMover",
 		"RandomMembranePositionMover",
     ],
     "protocols/membrane/ddG": [
@@ -532,6 +532,7 @@ sources = {
 		"ShapeComplementarityFilter",
 		"SheetFilter",
 		"SidechainRmsdFilter",
+		"StemFinderFilter",
 		"StructuralSimilarityEvaluator",
 		"StructureSimilarityEvaluatorCreator",
 		"SymmetricMotifFilter",

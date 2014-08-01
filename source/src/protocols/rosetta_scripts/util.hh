@@ -149,6 +149,10 @@ parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain = 0 );
 
+/// @brief find nearest residue and also return the distance
+void
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & dist, core::Size const chain = 0 );
+
 /// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
 core::Size
 find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
@@ -159,7 +163,7 @@ residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFact
 
 ///@brief Access res_num/pdb_num tag with prefix.
 /// This is to allow parsing at apply time (pdb_num) instead of at parse_my_tag.
-/// This allows one to use SavePoseMovers within a protocol with the correct residue from pdb_num.  
+/// This allows one to use SavePoseMovers within a protocol with the correct residue from pdb_num.
 /// This function is to prevent unused variable crash.
 void
 parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix);

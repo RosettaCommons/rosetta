@@ -414,12 +414,12 @@ add_movemaps_to_datamap(
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
 		if( (*tag_it)->getName() =="MoveMap"){
-			
+
 			if (! (*tag_it)->hasOption("name")) continue;
 			std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
 			if (data.has("movemaps", name)) continue;
-			
-			
+
+
 			MoveMapOP mm = new MoveMap();
 			if (initialize_mm_as_true){
 				mm->set_bb( true );
@@ -429,14 +429,14 @@ add_movemaps_to_datamap(
 			foreach_movemap_tag( *tag_it, pose, mm );
 			data.add("movemaps", name, mm);
 		}
-			
+
 	}
 }
 
 bool
 has_branch(utility::tag::TagCOP in_tag, std::string const branch_name){
 	using utility::tag::TagCOP;
-	
+
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
@@ -499,6 +499,26 @@ find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & targ
 	else return 0;
 }
 
+void
+find_nearest_res(  core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & target_dist, core::Size const chain/*=0*/ ){
+	target_res = 0; target_dist = 0.0;
+	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
+	for( core::Size i = 1; i <= source.total_residue(); ++i ){
+		if( source.residue( i ).is_ligand() ) continue;
+		if( chain && source.residue( i ).chain() != chain ) continue;
+		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
+		if( dist <= min_dist ){
+			min_dist = dist;
+			nearest_res = i;
+		}
+	}
+	if( min_dist <= 3.0 ){
+		target_res = nearest_res;
+		target_dist = min_dist;
+	}
+}
+
+
 utility::vector1< core::Size >
 residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/) {
   utility::vector1< core::Size > designable_vec, packable_vec, both;
@@ -555,7 +575,7 @@ parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix){
 	else if(tag->hasOption(prefix+"res_num")){
 		bogus = tag->getOption<std::string>(prefix+"res_num");
 	}
-	
+
 }
 } //RosettaScripts
 } //protocols

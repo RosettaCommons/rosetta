@@ -22,6 +22,7 @@
 #include <protocols/filters/ContingentFilterCreator.hh>
 #include <protocols/filters/ReplicateFilterCreator.hh>
 #include <protocols/simple_filters/RelativePoseFilterCreator.hh>
+#include <protocols/simple_filters/StemFinderFilterCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
 
 #include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>
