@@ -151,11 +151,6 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 //	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
 //		TR<<pose.conformation().residue( i ).name1()<<i<<' '<<template_dssp[ i - 1 ]<<'\n';
 //	}
-	TR<<std::endl;
-//	vector1< Size > const secstruct_in_template( positions_in_secstruct( pose ) );
-//	vector1< vector1< Size > > secstruct_in_poses;
-//	BOOST_FOREACH( core::pose::PoseOP p, poses )
-//		secstruct_in_poses.push_back( positions_in_secstruct( *p ) );
 
 	vector1< std::string > poses_dssp;
 	poses_dssp.clear();
@@ -186,7 +181,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			distances[ pos ] = (Real) distances[pos ] / (Real) poses.size();
 	}
 	TR<<"Candidate positions on template:\n";
-	if( stems_are_neighbors() ){
+	if( stems_are_neighbors() ){//find positions that are at most a cutoff distance from other positions
 		vector1< Size > neighbor_idxs;
 		neighbor_idxs.clear();
 		for( Size dist_idx = 1; dist_idx < distances.size() - neighbor_separation() + 1; ++dist_idx ){
@@ -212,13 +207,13 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			TR<<"No pairs found"<<std::endl;
 			return false;
 		}
+		//Find nearby pairs: A->B that cover large segments
 		std::map< Size/*start stem*/, Size/*end stem*/ > stem_pairs;
 		stem_pairs.clear();
 		for( Size i = 1; i <= neighbor_idxs.size() - 1; ++i ){
 			for( Size j = i + 1; j <= neighbor_idxs.size(); ++j ){
 				if( neighbor_idxs[ i ] + neighbor_separation() > neighbor_idxs[ j ] )
 					continue;
-//				Real const res_res_dist = conf.residue( neighbor_idxs[ i ] ).nbr_atom_xyz().distance( conf.residue( neighbor_idxs[ j ] ).nbr_atom_xyz() );
 				Real const res_res_dist = res_res_min_distance( pose, neighbor_idxs[ i ], pose, neighbor_idxs[ j ] );
 				if( res_res_dist <= neighbor_distance() ){
 					stem_pairs[ neighbor_idxs[ i ] ] = neighbor_idxs[ j ];
@@ -227,6 +222,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			}
 		}
 		TR<<std::endl;
+		//Find contiguous triplets that cover large segments: A->B->C
 		TR<<"Connected pairs:\n";
 		for( std::map< Size, Size >::const_iterator mit = stem_pairs.begin(); mit != stem_pairs.end(); ++mit ){
 			std::map< Size, Size >::const_iterator third_partner( stem_pairs.find( mit->second ) );
