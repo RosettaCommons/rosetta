@@ -71,6 +71,23 @@ class StemFinder : public filters::Filter
 		core::Real neighbor_distance_; //dflt 4.0A
 		core::Size neighbor_separation_; //dflt 10; at least 10 aa separation between residues
 };
+
+/// potentially useful utility functions
+
+/// @brief read dssp for a pose and return a string
+std::string dssp( core::pose::Pose const & pose );
+
+/// @brief find helix, sheet positions in dssp
+utility::vector1< core::Size > positions_in_secstruct( core::pose::Pose const & pose );
+
+/// @brief load PDBs into a vector
+utility::vector1< core::pose::PoseOP > load_poses( utility::vector1< std::string > const filenames );
+
+/// @brief find the minimal atom-atom distance between two residues
+core::Real
+res_res_min_distance( core::pose::Pose const &p1, core::Size const r1,
+											core::pose::Pose const &p2, core::Size const r2 );
+
 }
 }
 

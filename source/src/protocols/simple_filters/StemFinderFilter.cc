@@ -76,11 +76,17 @@ StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &,
 	TR<<std::endl;
 }
 
-utility::vector1< core::Size >
-positions_in_secstruct( core::pose::Pose const & pose ){
+std::string
+dssp( core::pose::Pose const & pose ){
   core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced(); // switch to simplified H E L notation
   std::string const sec_struct( dssp.get_dssp_secstruct() );
+	return( sec_struct );
+}
+
+utility::vector1< core::Size >
+positions_in_secstruct( core::pose::Pose const & pose ){
+  std::string const sec_struct( dssp( pose ) );
 
 	utility::vector1< core::Size > positions;
 	positions.clear();
@@ -89,14 +95,6 @@ positions_in_secstruct( core::pose::Pose const & pose ){
 			positions.push_back( i + 1 );
 	}
 	return positions;
-}
-
-std::string
-dssp( core::pose::Pose const & pose ){
-  core::scoring::dssp::Dssp dssp( pose );
-	dssp.dssp_reduced(); // switch to simplified H E L notation
-  std::string const sec_struct( dssp.get_dssp_secstruct() );
-	return( sec_struct );
 }
 
 utility::vector1< core::pose::PoseOP >
