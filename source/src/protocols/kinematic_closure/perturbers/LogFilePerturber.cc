@@ -48,7 +48,7 @@ LogFilePerturber::LogFilePerturber(string path) {
 	string line;
   ifstream file (path.c_str());
 
-	if (not file.is_open()) {
+	if (!file.is_open()) {
 		utility_exit_with_message("LogFilePerturber can't open file: " + path);
 	}
 
