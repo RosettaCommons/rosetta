@@ -1444,7 +1444,7 @@ _import_order_ = {
                   'simple_filters'],
     'protocols/forge' : ['remodel'],
     'protocols/match' : ['upstream'],
-    'protocols/stepwise' : ['screener'],
+    'protocols/stepwise' : ['screener', 'modeler'],
     #'protocols/loop_modeling' : ['LoopMover'],
 }
 

@@ -51,10 +51,10 @@ FragmentLookupFilter::FragmentLookupFilter() :
 }
 
 FragmentLookupFilter::FragmentLookupFilter(
-			std::string lookup_name, 
-			FragmentLookupFilter::LookupMode mode) :
+			std::string lookup_name,
+			LookupMode mode) :
 			target_lookup_(StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name)),
-			lookup_mode_(mode), 
+			lookup_mode_(mode),
 			target_chain_(0),
 			threshold_(0),
 			b_target_chain_(false)
@@ -62,9 +62,9 @@ FragmentLookupFilter::FragmentLookupFilter(
 }
 
 FragmentLookupFilter::FragmentLookupFilter(
-			std::string lookup_name, 
-			std::string store_path, 
-			FragmentLookupFilter::LookupMode mode,
+			std::string lookup_name,
+			std::string store_path,
+			LookupMode mode,
 			core::Size target_chain,
 			core::Size threshold,
 			bool b_target_chain) :
@@ -95,7 +95,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 	core::pose::Pose target_pose = pose;
 	TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
 	//Apply to a particular chain
-	
+
 	if (b_target_chain_){
 		TR <<  "Target chain: " << target_chain_ << "in a pose with #Chains: " << pose.conformation().num_chains() << std::endl;
 		if(target_chain_ > pose.conformation().num_chains() ){
@@ -104,7 +104,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 		target_pose = *pose.split_by_chain(target_chain_);
 		TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.n_residue() << std::endl;
 	}
-	
+
 	if(lookup_mode_ == First)
 	{
 		target_lookup_->lookup_pose_fragments(target_pose, std::back_inserter(lookup_result), std::back_inserter(lookup_residue));
@@ -131,7 +131,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 	}
 
 	cached_lookup_result_.clear();
-	
+
 	core::Size num_failed_matches=0;
 	for (core::Size i = 0; i < lookup_result.size(); i++)
 	{
@@ -140,7 +140,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 		}
 		cached_lookup_result_[lookup_residue[i]] = lookup_result[i];
 	}
-	
+
 	return num_failed_matches;
 }
 
@@ -161,12 +161,12 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 		Object result_object;
 
 		result_object.push_back(Pair("found_match", r.second.found_match));
-		
+
 		if(!r.second.found_match){
 			num_failed_matches+=1;
 		}
 
-		if (r.second.found_match) 
+		if (r.second.found_match)
 		{
 			result_object.push_back(Pair("match_score", r.second.match_score));
 			result_object.push_back(Pair("match_index", static_cast<boost::uint64_t>(r.second.match_index)));
@@ -197,12 +197,12 @@ core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) cons
 		Object result_object;
 
 		result_object.push_back(Pair("found_match", r.second.found_match));
-		
+
 		if(!r.second.found_match){
 			num_failed_matches+=1;
 		}
 
-		if (r.second.found_match) 
+		if (r.second.found_match)
 		{
 			result_object.push_back(Pair("match_score", r.second.match_score));
 			result_object.push_back(Pair("match_index", static_cast<boost::uint64_t>(r.second.match_index)));
@@ -215,7 +215,7 @@ core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) cons
 	TR << "\n";
 	utility::json_spirit::write(result_container, TR, utility::json_spirit::pretty_print);
 	TR << std::endl;
-	
+
 	return ((core::Real)num_failed_matches);
 }
 
@@ -240,13 +240,13 @@ void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
   std::string lookup_name = tag->getOption< std::string >( "lookup_name", "" );
   std::string store_path = tag->getOption< std::string >( "store_path", "");
   std::string lookup_mode = tag->getOption< std::string >( "lookup_mode", "");
-  
+
   if (lookup_name == "")
   {
     utility_exit_with_message("FragmentLookupFilter tag without mandatory parameter: lookup_name");
   }
 
-	
+
 
   if (store_path != "")
   {
@@ -257,7 +257,7 @@ void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
     target_lookup_ = StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name);
   }
 
-	
+
 
   if (lookup_mode == "" || lookup_mode == "first")
   {
@@ -271,7 +271,7 @@ void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
 	{
     utility_exit_with_message("FragmentLookupFilter tag with invalid lookup_mode: " + lookup_mode);
 	}
-	
+
 	if( tag->hasOption("chain") ){
 		target_chain_ = tag->getOption<core::Size>( "chain" );
 		b_target_chain_ = true;

@@ -57,7 +57,7 @@ class SSMotifFinder : public filters::Filter
 		core::kinematics::Jump jump() const;
 		core::kinematics::Jump compute_jump( core::pose::Pose const & pose, core::Size const start, core::Size const end ) const;
 
-		core::Real compute_rmsd() const;
+		// Undefined, commenting out to fix PyRosetta build  core::Real compute_rmsd() const;
 
 		std::string filename() const{ return filename_; }
 		void filename( std::string const s ){ filename_ = s;}

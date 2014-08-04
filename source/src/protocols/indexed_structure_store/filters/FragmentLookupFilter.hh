@@ -38,6 +38,16 @@ namespace protocols {
 namespace indexed_structure_store {
 namespace filters {
 
+// @brief Lookup mode used by filter.
+//
+// First - Returns the first fragment matching the lookup criteria.  Faster
+// but not guarenteed to identify the closest potential library fragment.
+//
+// Closest - Returns the closest fragment with the target lookup.
+// Significantly slower.
+enum LookupMode {First, Closest};
+
+
 // @brief Lookup pose sub-fragments within a target fragment library, filtering
 // pose which contain fragments not present in the library.
 //
@@ -72,21 +82,12 @@ public:
 
 	friend class FragmentLookupFilterCreator;
 
-	// @brief Lookup mode used by filter.
-	//
-	// First - Returns the first fragment matching the lookup criteria.  Faster
-	// but not guarenteed to identify the closest potential library fragment.
-	// 				
-	// Closest - Returns the closest fragment with the target lookup.
-	// Significantly slower.
-	enum LookupMode {First, Closest};
-
 public:
 	/// @brief Construct targeting the given named lookup in the default backend.
 	//
 	// lookup_name - Lookup name within store. See StructureStoreManager.
 	// mode - Filter mode, see LookupMode.
-	FragmentLookupFilter(std::string lookup_name, 
+	FragmentLookupFilter(std::string lookup_name,
 								LookupMode mode=First);
 
 	/// @brief Construct targeting the given lookup in the given backend.
@@ -96,8 +97,8 @@ public:
 	//     HDF5 support is enabled. Root directory of binary store if not HDF5
 	//     support.
 	// mode - Filter mode, see LookupMode.
-	FragmentLookupFilter(std::string lookup_name, 
-								std::string store_path, 
+	FragmentLookupFilter(std::string lookup_name,
+								std::string store_path,
 								LookupMode mode=First,
 								core::Size target_chain=0,
 								core::Size threshold=0,
@@ -127,14 +128,14 @@ public:
 	// Cached lookup results are available under
 	// FragmentLookupFilter::lookup_result after apply call.
 	virtual bool apply( Pose const & pose ) const;
-	
-	// @brief Parse arguments from rosettascripts XML 
+
+	// @brief Parse arguments from rosettascripts XML
 	virtual void parse_my_tag( utility::tag::TagCOP tag,
 		 DataMap &,
 		 Filters_map const &,
 		 Movers_map const &,
 		 Pose const & );
-	
+
 	//Main Filter computation routine
 	core::Size compute( core::pose::Pose const & pose ) const;
 
@@ -143,7 +144,7 @@ public:
 
 	// @Report back to JD2.
 	core::Real report_sm( core::pose::Pose const & pose ) const;
-	
+
 	// @brief Per-fragment lookup results of previous apply call, keyed by fragment start residue id.
 	std::map<core::Size, FragmentLookupResult> const & lookup_result() { return cached_lookup_result_; }
 
