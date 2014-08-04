@@ -6,4 +6,6 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 cd "src/basic/options/"
 python options.py
+exitcode=$?
 cd ../../..
+exit $exitcode

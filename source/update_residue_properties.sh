@@ -6,4 +6,6 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 cd "src/core/chemical/residue_properties"
 python add_residue_properties.py
+exitcode=$?
 cd ../../../..
+exit $exitcode

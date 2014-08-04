@@ -3,7 +3,8 @@
 # Main build script for all librosetta projects.
 # Schedules all the directories which contain build targets of their own.
 
-import os
+import os, sys
+import subprocess
 
 # Bring in the shared build state
 Import("build")
@@ -18,18 +19,14 @@ AddOption('--nover',
           action="store_true", default=False,
           help="Don't run the versioning script.")
 
-if GetOption("help"):
-    pass
-elif GetOption("nover"):
-    print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
-    os.system("./update_options.sh")
-    os.system("./update_residue_properties.sh")
-else:
-    import version
-    version.main()
-    os.system("./update_options.sh")
-    os.system("./update_residue_properties.sh")
-
+if not GetOption("help"):
+    if GetOption("nover"):
+        print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
+    else:
+        import version
+        version.main()
+    subprocess.check_call(["./update_options.sh"])
+    subprocess.check_call(["./update_residue_properties.sh"])
 
 for kind in build.options.cat:
     for project in build.projects[kind]:

@@ -5,6 +5,10 @@
 import os, sys
 
 EnsureSConsVersion(0, 98, 1) # Need version 0.98.1 or above
+if( not (2,4) < sys.version_info < (3,0) ):
+    print "A version of Python between 2.4 and 2.7 is required to build Rosetta."
+    print "Version being used:"
+    print sys.version
 
 def print_build(build):
     from tools.build.settings import Settings

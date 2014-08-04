@@ -65,10 +65,13 @@ NAMESPACE_CLOSING = [
 def read_lines_from_file(filename):
     """Return each line of a file to a list."""
     lines = []
-    with open(filename) as f:
+    f = open(filename)
+    try:
         for line in f:
             if not line.startswith("#") and line != "\n":
                 lines.append(line)
+    finally:
+        f.close()
     return lines
 
 
@@ -106,13 +109,19 @@ def write_lines_to_file_if_necessary(lines, filename):
 
     """
     if isfile('../' + filename):
-        with open('../' + filename, "r") as f:
+        f = open('../' + filename, "r")
+        try:
             existing_lines = f.readlines()
+        finally:
+            f.close()
         if lines == existing_lines:
             return False
 
-    with open('../' + filename, "w") as f:
+    f = open('../' + filename, "w")
+    try:
         f.writelines(lines)
+    finally:
+        f.close()
     print 'Successfully generated ' + filename + "."
     return True
 
