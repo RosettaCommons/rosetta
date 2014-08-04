@@ -28,10 +28,10 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/import_pose/import_pose.hh>
-#include <boost/regex.hpp>
-#include <boost/regex/v4/regex_search.hpp>
+//#include <boost/regex.hpp>
+//#include <boost/regex/v4/regex_search.hpp>
 #include <boost/foreach.hpp>
-#include <boost/xpressive/xpressive.hpp>
+//#include <boost/xpressive/xpressive.hpp>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/Edge.hh>
@@ -120,7 +120,6 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 	using core::Real;
 	using namespace boost;
 	using utility::vector1;
-	using namespace boost::xpressive;
 
   core::scoring::dssp::Dssp pose_dssp( pose );
 	pose_dssp.dssp_reduced(); // switch to simplified H E L notation
