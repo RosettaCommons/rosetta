@@ -248,6 +248,11 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 }
 
 void
+StemFinder::add_filename( std::string const s ){
+	filenames_.push_back( s );
+}
+
+void
 StemFinder::report( std::ostream &, core::pose::Pose const & ) const {
 }
 
