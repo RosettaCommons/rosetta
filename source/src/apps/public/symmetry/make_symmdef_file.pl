@@ -1428,8 +1428,14 @@ if ($helix_mode == 1) {
 	#
 	my ($sym_order_ncs, $R_ncs, $T_ncs, $global_T) = (1,[[1,0,0],[0,1,0],[0,0,1]], [0,0,0], [0,0,0]);
 	my $ncs_chain='';
+	my $force_ncs_sym_order=0;
 	if ( scalar( @secondary_chains ) == 1 ) {
-		$ncs_chain = $secondary_chains[0];
+		#$ncs_chain = $secondary_chains[0];
+		my @sec_chain_ids = split( ':',  $secondary_chains[0] );
+        $ncs_chain = $sec_chain_ids[0];
+		if ($#sec_chain_ids > 0) {
+			$force_ncs_sym_order = $sec_chain_ids[1];
+		}
 		print STDERR "Point symm found at chain $ncs_chain\n";
 	} elsif ( scalar( @secondary_chains ) > 1 ) {
 		die "Nonpolar helical symmetry currently unsupported!  Please specify a single chain for -i.";
@@ -1458,6 +1464,9 @@ if ($helix_mode == 1) {
 		if ($W_ncs < 0) { $W_ncs = -$W_ncs; $Wmult_ncs = -1; }
 		my $omega_ncs = acos($W_ncs);
 		$sym_order_ncs = int(PI/$omega_ncs + 0.5);
+		if ($force_ncs_sym_order > 0) {
+			$sym_order_ncs = $force_ncs_sym_order;
+		}
 		print STDERR "Found ".$sym_order_ncs."-fold (".(PI/$omega_ncs).") symmetric complex at chain ".$ncs_chain."\n";
 
 		# if we have a 2D lattice only allow C1/C2 symmetry
@@ -1503,9 +1512,12 @@ if ($helix_mode == 1) {
 		$global_T = vsub ( $helix_center, $CoM_cplx );
 		print STDERR "com_complex  = ".$CoM_cplx->[0].",".$CoM_cplx->[1].",".$CoM_cplx->[2]."\n";
 		print STDERR "global_T     = ".$global_T->[0].",".$global_T->[1].",".$global_T->[2]."\n";
+		my $COM_0 = vadd( $global_T, $COM_0);
+		print STDERR "COM_0_new    = ".$COM_0->[0].",".$COM_0->[1].",".$COM_0->[2]."\n";
 	}
 
-	print STDERR "Radius (to CoM) = ".vnorm( vsub( $helix_center, vadd( $global_T, $COM_0) ) )."\n";
+	#print STDERR "Radius (to CoM) = ".vnorm( vsub( $helix_center, vadd( $global_T, $COM_0) ) )."\n";
+	print STDERR "Radius (to CoM) = ".vnorm( vsub( $helix_center, $COM_0 ) )."\n";
 
 	##########################
 	my $omega = acos($W);
