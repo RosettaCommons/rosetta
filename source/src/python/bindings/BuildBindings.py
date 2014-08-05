@@ -1219,6 +1219,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
         if Options.utility_only and not (dir_name == pre_generated_sources  or dir_name.startswith( os.path.join(pre_generated_sources, 'utility'))): continue
         if Options.core_only and dir_name.startswith( os.path.join(pre_generated_sources, 'protocols') ): continue
 
+        if not os.path.isdir( binding_source_path+'\\..\\..'+dir_name[len(pre_generated_sources):] ): continue  # print '-', dir_name;
+
         l, objs = windows_buildOneNamespace(pre_generated_sources, dir_name, files, bindings_path, build_dir, binding_source_path, symbols)
         latest = max(l, latest)
 
