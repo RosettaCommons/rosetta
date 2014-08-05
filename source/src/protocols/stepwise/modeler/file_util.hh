@@ -18,6 +18,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <string>
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
