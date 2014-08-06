@@ -211,7 +211,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	
 	//combined.dump_pdb("before_idealize.pdb");
 
-	idealize_combined_pose(combined, movemap(), start(), insert_start, insert_end, Nter_loop_start(), Cter_loop_end());
+	idealize_combined_pose(combined, movemap(), start(), insert_start, insert_end, Nter_loop_start(), Cter_loop_end(), idealize_insert());
 	movemap()->set( TorsionID(insert_start, BB, phi_torsion), true);
 	movemap()->set( TorsionID(insert_end, BB, psi_torsion), true);
 	

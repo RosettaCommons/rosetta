@@ -24,44 +24,47 @@
 
 namespace protocols {
 namespace grafting {
-using core::pose::Pose;
-using core::Size;
-using core::kinematics::MoveMapOP;
-using core::kinematics::MoveMapCOP;
-using core::scoring::ScoreFunctionCOP;
-using protocols::loops::Loops;
-using protocols::loops::Loop;
+
 
 ///@brief Deletes a region of the pose. Starting from and including 'start' and 'end' residue.
 void 
-delete_region(Pose & pose, Size const start, Size const end);
+delete_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
         
 ///@brief Returns a region of the pose including start and end as a new pose. Has a simple foldtree.
-Pose 
-return_region(Pose & pose, Size const start, Size const end);
+core::pose::Pose 
+return_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
     
 ///@brief replaces residues from from_pose to to_pose into pose where insertion region is defined. Returns product as a new value.
-Pose
+core::pose::Pose
 replace_region(
-	Pose const & from_pose,
-	Pose const & to_pose,
-	Size const from_pose_start_residue,
-	Size const to_pose_start_residue,
-	Size const insertion_length,
+	core::pose::Pose const & from_pose,
+	core::pose::Pose const & to_pose,
+	core::Size const from_pose_start_residue,
+	core::Size const to_pose_start_residue,
+	core::Size const insertion_length,
 	bool copy_pdbinfo = false);
 
 ///@author Steven Lewis smlewi@gmail.com, Jared Adolf-Bryfogle
 ///@brief inserts one pose into another pose, returning the product as a new value. 
 ///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
 ///@details Begins insertion AFTER insert point.
-Pose
-insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point, Size const insert_point_end, bool copy_pdbinfo = false);
+core::pose::Pose
+insert_pose_into_pose(
+	core::pose::Pose const & scaffold_pose,
+	core::pose::Pose const & insert_pose,
+	core::Size const insert_point,
+	core::Size const insert_point_end,
+	bool copy_pdbinfo = false);
 
 ///@brief inserts one pose into another pose, returning the product as a new value. 
 ///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
 ///@details Begins insertion AFTER insert point. insert_point_end is assumed to be insert_point+1.
-Pose
-insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point, bool copy_pdbinfo = false);
+core::pose::Pose
+insert_pose_into_pose(
+	core::pose::Pose const & scaffold_pose,
+	core::pose::Pose const & insert_pose,
+	core::Size const insert_point,
+	bool copy_pdbinfo = false);
 
 
 ////////////////////////////////
@@ -71,22 +74,32 @@ insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size
 ///@details flexible Nter and Cter residues plus the first and last residue of the insert.
 void
 repack_connection_and_residues_in_movemap(
-	core::pose::Pose & pose, ScoreFunctionCOP fa_scorefxn, 
-	core::Size const start, core::Size const end, MoveMapCOP movemap);
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::Size const start,
+	core::Size const end,
+	core::kinematics::MoveMapCOP movemap);
 
 ///@brief convenience function for AFTER apply method.
 ///@details flexible Nter and Cter residues plus the entire insert.
 void
 repack_connection_and_residues_in_movemap_and_piece(
-	core::pose::Pose & pose, ScoreFunctionCOP fa_scorefxn, 
-	core::Size const start, core::Size const end, MoveMapCOP movemap);
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::Size const start,
+	core::Size const end,
+	core::kinematics::MoveMapCOP movemap);
 
 ///@brief convenience function for AFTER apply method.
 ///@details flexible Nter and Cter residues plus the entire insert and neighbors.
 void
 repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
-	core::pose::Pose & pose, ScoreFunctionCOP fa_scorefxn, 
-	core::Size const start, core::Size const end, MoveMapCOP movemap, core::Real neighbor_dis = 4.0);
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::Size const start,
+	core::Size const end,
+	core::kinematics::MoveMapCOP movemap,
+	core::Real neighbor_dis = 4.0);
 
 ///@brief uses rms_util to superimpose overhang residues of piece onto pose.
 ///@details Start + End denote residue number before and after the insert will be.  
@@ -94,13 +107,22 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 /// or a scaffold where you are superposimposing a linker between two domains - 
 /// one that ends at start and the other that begins at end
 void 
-superimpose_overhangs_heavy(Pose const & pose, Pose & piece, 
-		bool ca_only, Size start, Size end, Size Nter_overhang_len=2,  Size Cter_overhang_length_len=2);
+superimpose_overhangs_heavy(
+	core::pose::Pose const & pose,
+	core::pose::Pose & piece, 
+	bool ca_only,
+	core::Size start,
+	core::Size end,
+	core::Size Nter_overhang_len=2, 
+	core::Size Cter_overhang_length_len=2);
 
 /// @brief deletes overhang residues of the pose piece.
 /// Recommended use is within apply method
 void 
-delete_overhang_residues(Pose & piece, Size Nter_overhang_len, Size Cter_overhang_length_len);
+delete_overhang_residues(
+	core::pose::Pose & piece,
+	core::Size Nter_overhang_len,
+	core::Size Cter_overhang_length_len);
 
 
 
@@ -109,32 +131,51 @@ delete_overhang_residues(Pose & piece, Size Nter_overhang_len, Size Cter_overhan
 ///@brief combines the two main movemaps to use after the insertion.
 ///@details Start + End denote residue number before and after the insert. 
 /// original_end denotes the end residue number before insertion occurred
-MoveMapOP 
-combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
-	Size start,  Size original_end,
-	Size insertion_length, Size cter_overhang_start = 0);
+core::kinematics::MoveMapOP 
+combine_movemaps_post_insertion(
+	core::kinematics::MoveMapCOP scaffold_mm,
+	core::kinematics::MoveMapCOP insert_mm,
+	core::Size start,
+	core::Size original_end,
+	core::Size insertion_length,
+	core::Size cter_overhang_start = 0);
 
 /// @brief Uses a small mover at high KT to perturb residues in the movemap for testing.
 ///  Returns bb_RMS_including_o
 core::Real 
-perturb_backbone_for_test(Pose & pose, MoveMapOP mm);
+perturb_backbone_for_test(core::pose::Pose & pose, core::kinematics::MoveMapOP mm);
 
-///Idealize loop residues and residues in movemap
+///@brief Idealize loop residues and residues in movemap.
+// Optionally idealize insert residues as well.
 void
-idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size insert_start, Size insert_end, Size Nter_loop_start, Size Cter_loop_end);
+idealize_combined_pose(
+	core::pose::Pose & combined,
+	core::kinematics::MoveMapOP movemap,
+	core::Size start,
+	core::Size insert_start,
+	core::Size insert_end,
+	core::Size Nter_loop_start,
+	core::Size Cter_loop_end,
+	bool idealize_insert = false);
 
 ///@brief Adds cutpoint varients above and below cutpoint
 void
-add_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops);
+add_cutpoint_variants_for_ccd(
+	core::pose::Pose & pose,
+	protocols::loops::Loops const & loops);
 
 ///@brief Removes cutpoint variants above and below cutpoint
 void
-remove_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops);
+remove_cutpoint_variants_for_ccd(
+	core::pose::Pose & pose,
+	protocols::loops::Loops const & loops);
 
 ///@brief Uses has_severe_peptide_bond_issues with stringent geometry values to 
 /// determine graft closure at cutpoint.
 bool
-graft_closed(Pose & pose, Loops & loops);
+graft_closed(
+	core::pose::Pose & pose,
+	protocols::loops::Loops & loops);
 
 
 
@@ -152,7 +193,11 @@ graft_closed(Pose & pose, Loops & loops);
 /// @params lower_cutpoint for CCD and loops is Cter_loop_end-1
 ///
 void 
-setup_single_loop_single_arm_remodeling_foldtree(Pose & pose, Size const Nter_loop_start, Size const Cter_loop_end, bool loop_modeling=false);
+setup_single_loop_single_arm_remodeling_foldtree(
+	core::pose::Pose & pose,
+	core::Size const Nter_loop_start,
+	core::Size const Cter_loop_end,
+	bool loop_modeling=false);
 
 //////////////////////////////////////////////////////////////////
 /// @brief ****Nter_loop_start---->Piece | <----Nter_loop_end****
@@ -160,7 +205,11 @@ setup_single_loop_single_arm_remodeling_foldtree(Pose & pose, Size const Nter_lo
 /// @params lower_cutpoint for CCD and loops is end_-1
 ///
 void 
-setup_single_loop_double_arm_remodeling_foldtree(Pose & pose, Size const Nter_loop_start, Size const Cter_loop_end, Size end, bool loop_modeling=false);
+setup_single_loop_double_arm_remodeling_foldtree(
+	core::pose::Pose & pose,
+	core::Size const Nter_loop_start,
+	core::Size const Cter_loop_end,
+	core::Size end, bool loop_modeling=false);
 
 
 

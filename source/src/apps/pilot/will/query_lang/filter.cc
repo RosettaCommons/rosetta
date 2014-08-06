@@ -18,7 +18,9 @@
 #include <iostream>
 #include <vector>
 
-#include <utility/query/all.hh>
+#include <utility/query/types.hh>
+#include <utility/query/Metric.hh>
+#include <utility/query/Filter.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <ObjexxFCL/string.functions.hh>

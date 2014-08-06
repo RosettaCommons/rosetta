@@ -144,8 +144,8 @@ Pose
 GraftMoverBase::insert_piece(Pose const & pose){
 
 	//Delete overhang if necessary.
-	delete_overhang_residues(*piece_, Nter_overhang_length_, Cter_overhang_length_);
 	insertion_length_ = piece_->total_residue()-Cter_overhang_length_-Nter_overhang_length_;
+	delete_overhang_residues(*piece_, Nter_overhang_length_, Cter_overhang_length_);
 	
 	//strip termini variants from insert if necessary
 	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::LOWER_TERMINUS_VARIANT, 1);

@@ -66,7 +66,6 @@
 #include <protocols/topology_broker/util.hh>
 #include <protocols/topology_broker/FragmentClaimer.hh>
 #include <protocols/topology_broker/JumpClaimer.hh>
-#include <protocols/topology_broker/weights/all.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 #include <protocols/topology_broker/ConstraintClaimer.hh>
@@ -216,7 +215,6 @@
 #include <protocols/topology_broker/util.hh>
 #include <protocols/topology_broker/FragmentClaimer.hh>
 #include <protocols/topology_broker/JumpClaimer.hh>
-#include <protocols/topology_broker/weights/all.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 #include <protocols/topology_broker/ConstraintClaimer.hh>

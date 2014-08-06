@@ -145,6 +145,8 @@ public:
 		grafter.final_repack(false);
 		grafter.stop_at_closure(false);
 		
+		grafter.idealize_insert(true); //JAB - Idealize angles and omega (180) as has been the case.
+		
 		Pose combined(scaffold);//Copy the scaffold into combined before passing to Mover.
 		grafter.apply(combined);
 

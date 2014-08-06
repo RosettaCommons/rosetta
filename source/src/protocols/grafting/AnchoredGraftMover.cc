@@ -127,7 +127,8 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	stop_at_closure_(src.stop_at_closure_),
 	final_repack_(src.final_repack_),
 	neighbor_dis_(src.neighbor_dis_),
-	tag_(src.tag_)
+	tag_(src.tag_),
+	idealize_insert_(src.idealize_insert_)
 {
 	movemap_ = src.movemap_;
 	scaffold_movemap_ = src.scaffold_movemap_;
@@ -146,6 +147,7 @@ AnchoredGraftMover::set_defaults(){
 	insert_movemap_ = NULL;
 	tag_ = NULL;
 	
+	idealize_insert(false);
 	set_skip_sampling(false);
 	set_mintype("dfpmin_armijo_nonmonotone");
 	set_test_control_mode(false);
@@ -229,6 +231,10 @@ AnchoredGraftMover::parse_my_tag(
 
 }
 
+void
+AnchoredGraftMover::idealize_insert(bool idealize){
+	idealize_insert_ = idealize;
+}
 
 void
 AnchoredGraftMover::set_scaffold_flexibility(const Size Nter_scaffold_flexibility, const Size Cter_scaffold_flexibility){
@@ -524,7 +530,7 @@ AnchoredGraftMover::apply(Pose & pose){
         
 	add_cutpoint_variants_for_ccd(combined, loops);
 	
-	idealize_combined_pose(combined, movemap_, start(), insert_start, insert_end, Nter_loop_start_, Cter_loop_end_);
+	idealize_combined_pose(combined, movemap_, start(), insert_start, insert_end, Nter_loop_start_, Cter_loop_end_, idealize_insert());
 	movemap_->set( TorsionID(insert_start, BB, phi_torsion), true);
 	movemap_->set( TorsionID(insert_end, BB, psi_torsion), true);
 	

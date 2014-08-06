@@ -406,6 +406,7 @@ testinputfiles = [
 	"frag_picker/1a32A-H1.9mers",
 	"grafting/2j88_NoL1.pdb",
 	"grafting/2j88_L1_overhang3_rotated.pdb",
+        "grafting/2aabL_L1.pdb",
 	"hotspot_hashing/3ve0_IJ.pdb",
 	"jd2/parser/test.bbskel",
 	"jobdist/PlainSilentFileJobDistributor_test.out",

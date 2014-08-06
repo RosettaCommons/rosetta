@@ -69,6 +69,7 @@ using core::kinematics::MoveMapOP;
 using core::kinematics::MoveMapCOP;
 using core::Size;
 using protocols::loops::Loops;
+using core::scoring::ScoreFunctionCOP;
 
 void
 delete_region(Pose & pose, Size const start, Size const end){
@@ -147,7 +148,7 @@ replace_region(
 	}
 
 
-	if (copy_pdbinfo && from_pose.pdb_info() && combined.pdb_info()){
+	if (copy_pdbinfo && from_pose.pdb_info() && to_pose.pdb_info()){
 		combined.pdb_info()->copy(*(from_pose.pdb_info()), from_pose_start_residue, from_pose_start_residue + insertion_length -1, to_pose_start_residue);
 		combined.pdb_info()->obsolete(false);
 	}
@@ -232,7 +233,7 @@ insert_pose_into_pose(
 	core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
 	combined.fold_tree(new_tree);
 
-	if (copy_pdbinfo && insert_pose.pdb_info() && combined.pdb_info()){
+	if (copy_pdbinfo && insert_pose.pdb_info() && scaffold_pose.pdb_info()){
 		combined.pdb_info()->copy(*(insert_pose.pdb_info()), 1, insert_pose.total_residue(), insert_point+1);
 		combined.pdb_info()->obsolete(false);
 	}
@@ -513,7 +514,7 @@ graft_closed(Pose & pose, Loops & loops){
 }
 
 void
-idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size insert_start, Size insert_end, Size Nter_loop_start, Size Cter_loop_end){
+idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size insert_start, Size insert_end, Size Nter_loop_start, Size Cter_loop_end, bool idealize_insert /*false*/){
     	///////////////////////////////////////Idealize////////////////////////////////////////////////////////
 	//this code also resets conformation variables: omegas to 180, newly made connections phi or psi to reasonable
 	//edges of insert will be somewhat mobile inside minimization (small and CCD moves will ignore it)
@@ -525,7 +526,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 		if (movemap->get_bb(i)){
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(i);
 			combined.set_omega(i, 180);
-			TR << "mobile " << i << std::endl;
+			TR << "idealized  " << i << std::endl;
 		}
 	}
 	TR << "ideal " << insert_start << std::endl;
@@ -535,12 +536,14 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 	combined.set_phi(insert_start, -60);
 
 	//insert regions
-	for(core::Size i = start +1; i<=insert_end; ++i) {
-		//movemap->set( TorsionID(i, BB, omega_torsion), false ); //fixes omega angle
-		if (movemap->get_bb(i)){
-			combined.conformation().insert_ideal_geometry_at_polymer_bond(i);
-			combined.set_omega(i, 180);
-			TR << "mobile " << i << std::endl;
+	if (idealize_insert){
+		for(core::Size i = start +1; i<=insert_end; ++i) {
+			//movemap->set( TorsionID(i, BB, omega_torsion), false ); //fixes omega angle
+			if (movemap->get_bb(i)){
+				combined.conformation().insert_ideal_geometry_at_polymer_bond(i);
+				combined.set_omega(i, 180);
+				TR << "idealized " << i << std::endl;
+			}
 		}
 	}
 
@@ -558,7 +561,7 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 		if (movemap->get_bb(i)){
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(i);
 			combined.set_omega(i, 180);
-			TR << "mobile " << i << std::endl;
+			TR << "idealized " << i << std::endl;
 		}
 	}
 

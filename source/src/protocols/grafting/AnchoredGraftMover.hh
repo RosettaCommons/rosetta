@@ -126,47 +126,43 @@ public:
 public:
 	///@brief Stop at closure of both ends? 
 	/// Default True.
-	void
-	stop_at_closure(bool stop_at_closure);
+	void stop_at_closure(bool stop_at_closure);
 	
 	///@brief Stop at closure of both ends?
-	bool
-	stop_at_closure();
+	bool stop_at_closure();
 	
 	///@brief Pack sidechains of flexible residues, insert and neighbors at end?
 	/// Default True.
-	void
-	final_repack(bool final_repack);
+	void final_repack(bool final_repack);
 	
 	///@brief Pack sidechains of flexible residues, insert and neighbors at end?
-	bool
-	final_repack();
+	bool final_repack();
+	
+	void idealize_insert(bool idealize);
+	
+	bool idealize_insert() const {
+		return idealize_insert_;
+	}
 	
 public:
     
-	virtual void
-	set_cen_scorefunction(core::scoring::ScoreFunctionCOP score);
+	virtual void set_cen_scorefunction(core::scoring::ScoreFunctionCOP score);
     
-	virtual void 
-	set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
+	virtual void set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
 	
 	///@brief Sets the mintype for the MinMover
-	void 
-	set_mintype(std::string mintype);
+	void set_mintype(std::string mintype);
 
 	///@brief Sets the mover to skip the small mover sampling step.
-	void 
-	set_skip_sampling(bool skip_sampling);
+	void set_skip_sampling(bool skip_sampling);
 	
 public:
 
 	///@brief Sets scaffold flexiblity on either end of scaffold
-	virtual void 
-	set_scaffold_flexibility(Size const Nter_scaffold_flexibility, Size const Cter_scaffold_flexibility);
+	virtual void set_scaffold_flexibility(Size const Nter_scaffold_flexibility, Size const Cter_scaffold_flexibility);
 	
 	///@brief Sets insert flexibility on either end of insert
-	virtual void 
-	set_insert_flexibility(Size const Nter_insert_flexibility, Size const Cter_insert_flexibility);
+	virtual void set_insert_flexibility(Size const Nter_insert_flexibility, Size const Cter_insert_flexibility);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///@brief Advanced way to set flexibility and residues used for CCD
@@ -177,8 +173,7 @@ public:
 	/// Note: Will disregard flexibility settings, as the movemaps will be used as primary way to define flexibility.
 	/// May want to consider turning off the sampling step when passing crazy movemaps.
 	
-	virtual void 
-	set_movemaps(MoveMapCOP const scaffold_mm, MoveMapCOP const insert_mm);
+	virtual void set_movemaps(MoveMapCOP const scaffold_mm, MoveMapCOP const insert_mm);
 
 	///@brief Neighbor distance for any repacking of side-chains.
 	void neighbor_dis(core::Real dis);
@@ -307,6 +302,7 @@ private:
 	
 	core::Real neighbor_dis_;
 	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
+	bool idealize_insert_;
 	
 }; //Class AnchoredGraftMover
 

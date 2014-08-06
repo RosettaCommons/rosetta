@@ -75,10 +75,16 @@ public:
 		return copy_pdbinfo_;
 	}
 	
+	
 public:
 	/// @brief  Return the name of the Mover.
 	virtual std::string 
 	get_name() const;
+
+	Size start();
+	Size original_end();
+	Size end();
+	Size insertion_length();
 	
 protected:
     
@@ -92,15 +98,10 @@ protected:
 protected:
 	///Setters and accessors of private data
 	void original_end(Size original_end);
-	Size original_end();
-	
 	void insertion_length(Size insertion_length);
-	Size insertion_length();
-	
-	Size start();
 	void start(core::Size start);
-	Size end();
 	void end(core::Size end);
+	
 	Size Nter_overhang_length();
 	void Nter_overhang_length(core::Size overhang);
 	Size Cter_overhang_length();
