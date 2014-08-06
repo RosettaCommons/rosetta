@@ -232,22 +232,17 @@ void FullatomRelaxMover::reorient_and_slide_into_surface( core::pose::Pose & pos
 		// Random Orient the Partner (make sure this is the peptide)
 		TR<<"Preparing to dock protein to surface"<<std::endl;
 		TR<<"Randomizing orientation..."<<std::endl;
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/before_rb_randomize.pdb");
 		Size rb_jump_=pose.num_jump(); //default value
 		rigid::RigidBodyRandomizeMover rmover( pose, rb_jump_, rigid::partner_upstream );
 		rmover.apply( pose );
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_rb_randomize.pdb");
 		//Axis Spin
 		rigid::RigidBodySpinMover smover( rb_jump_ );
 		smover.apply( pose );
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_rb_spin.pdb");
 		TR<<"Repositioning protein above surface..."<<std::endl;
 		reposition_above_surface(pose);
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_position_above_in_reorient_and_slide.pdb");
 		// SurfaceOrient Mover
 		TR<<"Reorienting protein to central unit cell..."<<std::endl;
 		surface_orient_->apply(pose);
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_orient_in_reorient_and_slide.pdb");
 		TR<<"Sliding protein into contact with the surface..."<<std::endl;
 		surface_contact_mover_->apply( pose );
 		monte_carlo_->reset(pose);
@@ -286,7 +281,6 @@ void FullatomRelaxMover::outer_loop_refinement_solution(core::pose::Pose & pose)
 void FullatomRelaxMover::outer_loop_refinement_adsorbed(core::pose::Pose & pose)
 	{
 		surface_orient_->apply(pose);
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_orient_in_outer_loop_refinement.pdb");
 		TR<<"outer_loop_refinement: sliding protein into contact"<<std::endl;
 		surface_contact_mover_->apply( pose );
 		//reposition_above_surface( pose );

@@ -141,7 +141,7 @@ void SurfaceDockingProtocol::apply(pose::Pose & pose)
 	
 	TR<<"Repositioning protein above the surface..."<<std::endl;
 	position_above_surface_->apply(pose);
-	 pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_position_above.pdb");
+
 	
 	TR<<"Fullatom refinement started..."<<std::endl;
 	fullatom_relax_->apply(pose);
