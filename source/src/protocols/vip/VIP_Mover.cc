@@ -27,7 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>

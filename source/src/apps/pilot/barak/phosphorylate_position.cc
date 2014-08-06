@@ -32,7 +32,7 @@
 //#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/threadsc.OptionKeys.gen.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 //#include <core/util/basic.hh>
@@ -91,7 +91,7 @@ main( int argc, char * argv [] )
   string output_fname = option[ OptionKeys::out::file::o ];
 
 	// phosphorylate
-  core::pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
+  core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
   Size pose_res = pdbinfo->pdb2pose(chain[0], pdb_res);
 	core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
   core::io::pdb::dump_pdb(pose, output_fname);

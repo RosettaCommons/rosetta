@@ -29,7 +29,7 @@ static basic::Tracer TR("protocols.simple_moves.AddChainMover");
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <boost/foreach.hpp>
 #include <core/import_pose/import_pose.hh>
@@ -103,7 +103,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
-	pose.pdb_info( new core::pose::PDB_Info( pose, true ) ); //reinitialize the PDB_Info
+	pose.pdb_info( new core::pose::PDBInfo( pose, true ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
 
 	core::pose::add_comment(pose,"AddedChainName ",curr_fname);
@@ -182,7 +182,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
-	pose.pdb_info( new core::pose::PDB_Info( pose, true ) ); //reinitialize the PDB_Info
+	pose.pdb_info( new core::pose::PDBInfo( pose, true ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
 }
     

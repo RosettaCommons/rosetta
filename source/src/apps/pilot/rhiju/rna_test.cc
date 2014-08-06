@@ -98,8 +98,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 
 //RNA stuff.
@@ -4686,7 +4686,7 @@ color_by_geom_sol_RNA_test()
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
-		PDB_InfoOP pdb_info(  new PDB_Info( pose, true ) );
+		PDBInfoOP pdb_info(  new PDBInfo( pose, true ) );
 
 		(*scorefxn)( pose );
 
@@ -4738,7 +4738,7 @@ color_by_lj_base_RNA_test()
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
-		PDB_InfoOP pdb_info(  new PDB_Info( pose, true ) );
+		PDBInfoOP pdb_info(  new PDBInfo( pose, true ) );
 
 		(*scorefxn)( pose );
 

@@ -35,7 +35,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 
 // numeric headers
@@ -888,7 +888,7 @@ pose.dump_pdb("test_idl.pdb");
 		pose.set_secstruct( r, ss_.at( i ) );
 	}
 
-// safety, make sure PDB_Info leaves obsolete
+// safety, make sure PDBInfo leaves obsolete
   if ( pose.pdb_info().get() ) {
 	    pose.pdb_info()->obsolete( true );
 			  }

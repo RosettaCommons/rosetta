@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_Info.cc
+/// @file   core/pose/PDBInfo.cc
 /// @brief  class to hold PDB information so it's not loose in the pose
 /// @author Steven Lewis
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 // Unit headers
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Project headers
 #include <core/chemical/types.hh>
@@ -22,7 +22,7 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBPoseMap.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -49,10 +49,10 @@ using core::chemical::chr_chains;
 namespace core {
 namespace pose {
 
-static basic::Tracer TR("core.pose.PDB_Info");
+static basic::Tracer TR("core.pose.PDBInfo");
 
 /// @brief default constructor, obsolete is *true*
-PDB_Info::PDB_Info() :
+PDBInfo::PDBInfo() :
 	Super(),
 	obsolete_( true ),
 	name_( "" ),
@@ -65,7 +65,7 @@ PDB_Info::PDB_Info() :
 
 /// @brief size constructor (ensure space for 'n' residue records),
 ///  obsolete is *true*
-PDB_Info::PDB_Info( Size const n ) :
+PDBInfo::PDBInfo( Size const n ) :
 	Super(),
 	obsolete_( true ),
 	name_( "" ),
@@ -83,7 +83,7 @@ PDB_Info::PDB_Info( Size const n ) :
 /// @param[in] init  if true (default), then residue records are initialized
 ///  and obsolete set to false, otherwise obsolete is true
 ///  using Pose residue numbering and chains of the Residues in the Conformation
-PDB_Info::PDB_Info(
+PDBInfo::PDBInfo(
 	Pose const & pose,
 	bool init
 ) :
@@ -115,7 +115,7 @@ PDB_Info::PDB_Info(
 
 
 /// @brief copy constructor
-PDB_Info::PDB_Info( PDB_Info const & info ) :
+PDBInfo::PDBInfo( PDBInfo const & info ) :
 	Super( info ),
 	obsolete_( info.obsolete_ ),
 	name_( info.name_ ),
@@ -135,7 +135,7 @@ PDB_Info::PDB_Info( PDB_Info const & info ) :
 
 
 /// @brief default destructor
-PDB_Info::~PDB_Info()
+PDBInfo::~PDBInfo()
 {
 	detach_from(); // stop observing Conformation
 }
@@ -144,8 +144,8 @@ PDB_Info::~PDB_Info()
 /// @brief copy assignment
 /// @details any Conformation already being observed stays constant, there is no
 ///  re-assignment
-PDB_Info &
-PDB_Info::operator =( PDB_Info const & info )
+PDBInfo &
+PDBInfo::operator =( PDBInfo const & info )
 {
 	if ( this != &info ) {
 		Super::operator =( info );
@@ -175,39 +175,39 @@ PDB_Info::operator =( PDB_Info const & info )
 }
 
 
-/// @brief is this PDB_Info currently observing a conformation?
+/// @brief is this PDBInfo currently observing a conformation?
 /// @return the Conformation being observed, otherwise NULL
 core::conformation::Conformation const *
-PDB_Info::is_observing() {
+PDBInfo::is_observing() {
 	return conf_;
 }
 
 
 /// @brief attach to Conformation and begin observation
 void
-PDB_Info::attach_to( core::conformation::Conformation & conf ) {
+PDBInfo::attach_to( core::conformation::Conformation & conf ) {
 	// detach from prior Conformation if necessary
 	if ( conf_ ) {
 		detach_from();
 	}
 
-	conf.attach_connection_obs( &PDB_Info::on_connection_change, this );
-	conf.attach_identity_obs( &PDB_Info::on_identity_change, this );
-	conf.attach_length_obs( &PDB_Info::on_length_change, this );
+	conf.attach_connection_obs( &PDBInfo::on_connection_change, this );
+	conf.attach_identity_obs( &PDBInfo::on_identity_change, this );
+	conf.attach_length_obs( &PDBInfo::on_length_change, this );
 
 	conf_ = &conf;
 }
 
 
 /// @brief detach from Conformation and stop observation
-/// @remarks takes no arguments because PDB_Info can only observe one
+/// @remarks takes no arguments because PDBInfo can only observe one
 ///  Conformation at a time
 void
-PDB_Info::detach_from() {
+PDBInfo::detach_from() {
 	if ( conf_ ) {
-		conf_->detach_connection_obs( &PDB_Info::on_connection_change, this );
-		conf_->detach_identity_obs( &PDB_Info::on_identity_change, this );
-		conf_->detach_length_obs( &PDB_Info::on_length_change, this );
+		conf_->detach_connection_obs( &PDBInfo::on_connection_change, this );
+		conf_->detach_identity_obs( &PDBInfo::on_identity_change, this );
+		conf_->detach_length_obs( &PDBInfo::on_length_change, this );
 	}
 
 	conf_ = NULL;
@@ -216,7 +216,7 @@ PDB_Info::detach_from() {
 
 /// @brief update when connection to Conformation is changed
 void
-PDB_Info::on_connection_change( core::conformation::signals::ConnectionEvent const & event ) {
+PDBInfo::on_connection_change( core::conformation::signals::ConnectionEvent const & event ) {
 	using core::conformation::signals::ConnectionEvent;
 
 	switch ( event.tag ) {
@@ -225,7 +225,7 @@ PDB_Info::on_connection_change( core::conformation::signals::ConnectionEvent con
 			detach_from();
 			break;
 		case ConnectionEvent::TRANSFER:
-			// Disconnect -- PDB_Info does not honor TRANSFER tag.
+			// Disconnect -- PDBInfo does not honor TRANSFER tag.
 			break;
 		default: // do nothing
 			break;
@@ -236,7 +236,7 @@ PDB_Info::on_connection_change( core::conformation::signals::ConnectionEvent con
 
 /// @brief update atom records when residue identity changes in Conformation
 void
-PDB_Info::on_identity_change( core::conformation::signals::IdentityEvent const & event ) {
+PDBInfo::on_identity_change( core::conformation::signals::IdentityEvent const & event ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::conformation::signals::IdentityEvent;
@@ -266,16 +266,16 @@ PDB_Info::on_identity_change( core::conformation::signals::IdentityEvent const &
 
 
 /// @brief update residue and atom records when length changes in Conformation,
-///  obsoletes PDB_Info
-/// @details Residue and atoms records in PDB_Info will be automatically resized
-///  and the obsolete flag will be set to true, causing PDB_Info to not be used
-///  on pdb output.  Existing data inside the PDB_Info is not touched.  After
+///  obsoletes PDBInfo
+/// @details Residue and atoms records in PDBInfo will be automatically resized
+///  and the obsolete flag will be set to true, causing PDBInfo to not be used
+///  on pdb output.  Existing data inside the PDBInfo is not touched.  After
 ///  filling in the data for the newly updated residues, setting
-///  PDB_Info::obsolete( false ) will re-enable usage of PDB_Info on pdb output.
-///  If PDB_Info receives a LengthEvent::INVALIDATE, it will obsolete and then
+///  PDBInfo::obsolete( false ) will re-enable usage of PDBInfo on pdb output.
+///  If PDBInfo receives a LengthEvent::INVALIDATE, it will obsolete and then
 ///  detach itself for safety.
 void
-PDB_Info::on_length_change( core::conformation::signals::LengthEvent const & event ) {
+PDBInfo::on_length_change( core::conformation::signals::LengthEvent const & event ) {
 	using core::conformation::signals::LengthEvent;
 
 	switch( event.tag ) {
@@ -296,7 +296,7 @@ PDB_Info::on_length_change( core::conformation::signals::LengthEvent const & eve
 		}
 		case LengthEvent::RESIDUE_DELETE: {
 			delete_res( event.position, abs( event.length_change ) );
-			//Shouldn't obsolete PDB_Info on delete - every residue that still exists has valid information
+			//Shouldn't obsolete PDBInfo on delete - every residue that still exists has valid information
 			//obsolete( true );
 			break;
 		}
@@ -317,7 +317,7 @@ PDB_Info::on_length_change( core::conformation::signals::LengthEvent const & eve
 ///  the data state inconsistent.  See append_res/prepend_res/delete_res
 ///  for that type of functionality.
 void
-PDB_Info::resize_residue_records( Size const n )
+PDBInfo::resize_residue_records( Size const n )
 {
 	residue_rec_.resize( n );
 	rebuild_pdb2pose();
@@ -329,7 +329,7 @@ PDB_Info::resize_residue_records( Size const n )
 /// @param[in] n  number of atoms
 /// @param[in] zero  if true, zero the atom records for this residue
 void
-PDB_Info::resize_atom_records(
+PDBInfo::resize_atom_records(
 	Size const res,
 	Size const n,
 	bool const zero
@@ -348,7 +348,7 @@ PDB_Info::resize_atom_records(
 /// @param[in] n  number of atoms
 /// @param[in] zero  if true, zero the atom records
 void
-PDB_Info::resize_atom_records(
+PDBInfo::resize_atom_records(
 	Size const n,
 	bool const zero
 )
@@ -370,7 +370,7 @@ PDB_Info::resize_atom_records(
 ///  to match number of atoms within each residue in Pose.  Only newly
 ///  created records will be zeroed, any existing records are untouched.
 void
-PDB_Info::resize_atom_records( Pose const & pose )
+PDBInfo::resize_atom_records( Pose const & pose )
 {
 	using core::conformation::Residue;
 
@@ -384,7 +384,7 @@ PDB_Info::resize_atom_records( Pose const & pose )
 
 /// @brief tighten memory usage
 void
-PDB_Info::tighten_memory()
+PDBInfo::tighten_memory()
 {
 	// tighten remarks vector
 	if ( remarks_.capacity() > remarks_.size() ) {
@@ -409,10 +409,10 @@ PDB_Info::tighten_memory()
 /// for use in PyRosetta.
 /// @param[in] res pose residue number
 /// @return pdb string containing chainID and number
-PDB_Info::String
-PDB_Info::pose2pdb( Size const res ) const
+PDBInfo::String
+PDBInfo::pose2pdb( Size const res ) const
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::pose2pdb( Size const res ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::pose2pdb( Size const res ): res is not in this PDBInfo!" );
 	std::stringstream pdb_num, pdb_chain;
 	pdb_chain << residue_rec_[res].chainID;
 	pdb_num << residue_rec_[res].resSeq;
@@ -423,9 +423,9 @@ PDB_Info::pose2pdb( Size const res ) const
 /// @note the retrun string is a concatenation of all the strings inside of the vector label<>
 /// @param[in] res  residue in pose numbering
 utility::vector1 < std::string >
-PDB_Info::get_reslabels( Size const res ) const
+PDBInfo::get_reslabels( Size const res ) const
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::get_label( Size const res ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::get_label( Size const res ): res is not in this PDBInfo!" );
 	utility::vector1< std::string > pdb_label;
 	for (core::Size i=1; i<= residue_rec_[res].label.size(); ++i ){
 		pdb_label.push_back(residue_rec_[res].label[i]);
@@ -436,12 +436,12 @@ PDB_Info::get_reslabels( Size const res ) const
 /// @brief set chain id for residue
 /// @remarks chain id should not be the empty record character, currently '^'
 void
-PDB_Info::chain(
+PDBInfo::chain(
 	Size const res,
 	char const chain_id
 )
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::chain( Size const res, char const chain_id ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::chain( Size const res, char const chain_id ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
@@ -454,12 +454,12 @@ PDB_Info::chain(
 
 /// @brief set pdb residue sequence number
 void
-PDB_Info::number(
+PDBInfo::number(
 	Size const res,
 	int const pdb_res
 )
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::number( Size const res, int const pdb_res ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::number( Size const res, int const pdb_res ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
@@ -472,12 +472,12 @@ PDB_Info::number(
 
 /// @brief set insertion code for residue
 void
-PDB_Info::icode(
+PDBInfo::icode(
 	Size const res,
 	char const ins_code
 )
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::icode( Size const res, ins_code ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
@@ -490,7 +490,7 @@ PDB_Info::icode(
 
 /// @brief Displays the PDB info by expressing continuous chain segments
 void
-PDB_Info::show(
+PDBInfo::show(
 	std::ostream & out
 ) const
 {
@@ -540,7 +540,7 @@ PDB_Info::show(
 /// @param[in] pdb_res  residue in pdb numbering
 /// @param[in] ins_code  pdb insertion code
 void
-PDB_Info::set_resinfo(
+PDBInfo::set_resinfo(
 	Size const res,
 	char const chain_id,
 	int const pdb_res,
@@ -565,12 +565,12 @@ PDB_Info::set_resinfo(
 /// @param[in] res  residue in pose numbering
 /// @param[in] label  string that is the "label"
 void
-PDB_Info::add_reslabel(
+PDBInfo::add_reslabel(
 	Size const res,
 	std::string const label
 )
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::icode( Size const res, ins_code ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 	//Avoid label duplication
 	if (!(std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), label ) != residue_rec_[res].label.end())){
@@ -581,18 +581,18 @@ PDB_Info::add_reslabel(
 /// @brief clean all the label(s) associated to a pose resid.
 /// @param[in] res  residue in pose numbering
 void
-PDB_Info::clear_reslabel(
+PDBInfo::clear_reslabel(
 	Size const res
 )
 {
-	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDB_Info::icode( Size const res, ins_code ): res is not in this PDB_Info!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 	rr.label.clear();
 }
 
 /// @brief set all residue chain IDs to a single character
 void
-PDB_Info::set_chains( char const id ) {
+PDBInfo::set_chains( char const id ) {
 	for ( ResidueRecords::iterator i = residue_rec_.begin(), ie = residue_rec_.end(); i < ie; ++i ) {
 		i->chainID = id;
 	}
@@ -601,15 +601,15 @@ PDB_Info::set_chains( char const id ) {
 }
 
 
-/// @brief copy a section from another PDB_Info
-/// @param[in] input_info the PDB_Info to copy from
+/// @brief copy a section from another PDBInfo
+/// @param[in] input_info the PDBInfo to copy from
 /// @param[in] copy_from the first residue position in input_info to copy
 /// @param[in] copy_to the final residue position in input_info to copy
-/// @param[in] start_from the first residue position in this PDB_Info to
+/// @param[in] start_from the first residue position in this PDBInfo to
 ///  copy into
 void
-PDB_Info::copy(
-	PDB_Info const & input_info,
+PDBInfo::copy(
+	PDBInfo const & input_info,
 	Size const copy_from,
 	Size const copy_to,
 	Size const start_from
@@ -647,7 +647,7 @@ PDB_Info::copy(
 /// @param[in] natoms  number of atoms in type of appended residue
 /// @param[in] n    number of residue records to append
 void
-PDB_Info::append_res(
+PDBInfo::append_res(
 	Size const res,
 	Size const natoms,
 	Size const n
@@ -671,7 +671,7 @@ PDB_Info::append_res(
 /// @param[in] natoms  number of atoms in type of appended residue
 /// @param[in] n    number of residue records to prepend
 void
-PDB_Info::prepend_res(
+PDBInfo::prepend_res(
 	Size const res,
 	Size const natoms,
 	Size const n
@@ -696,7 +696,7 @@ PDB_Info::prepend_res(
 /// @param[in] res residue to replace
 /// @param[in] natoms number of atoms in type of residue
 void
-PDB_Info::replace_res(
+PDBInfo::replace_res(
 	Size const res,
 	Size const natoms
 )
@@ -708,7 +708,7 @@ PDB_Info::replace_res(
 }
 
 void
-PDB_Info::replace_res_remap_bfactors(
+PDBInfo::replace_res_remap_bfactors(
 	Size const res,
 	conformation::Residue const & tgt
 )
@@ -769,7 +769,7 @@ PDB_Info::replace_res_remap_bfactors(
 /// @param[in] res  residue to start deleting from (in internal/pose numbering)
 /// @param[in] n    number of residue records to delete
 void
-PDB_Info::delete_res(
+PDBInfo::delete_res(
 	Size const res,
 	Size const n
 )
@@ -796,7 +796,7 @@ PDB_Info::delete_res(
 // added by sheffler
 /// @brief remembers info about atoms not read into the pose
 void
-PDB_Info::add_unrecognized_atom(
+PDBInfo::add_unrecognized_atom(
 	Size resnum,
 	std::string resname,
 	std::string atomname,
@@ -818,25 +818,25 @@ PDB_Info::add_unrecognized_atom(
 /// @note This is meant to be used only for en masse methods, not individual
 ///  residue/atom methods
 void
-PDB_Info::check_residue_records_size( Size const size ) const
+PDBInfo::check_residue_records_size( Size const size ) const
 {
 	if ( residue_rec_.size() != size ) {
-		basic::Error() << "PDB_Info::check_residue_records_size() failed.  An en masse action attempted to access or set more residues than exists in PDB_Info."
+		basic::Error() << "PDBInfo::check_residue_records_size() failed.  An en masse action attempted to access or set more residues than exists in PDBInfo."
 		  << std::endl;
 		utility_exit();
 	}
 }
 
 
-/// @brief rebuilds PDB_PoseMap from scratch
+/// @brief rebuilds PDBPoseMap from scratch
 void
-PDB_Info::rebuild_pdb2pose()
+PDBInfo::rebuild_pdb2pose()
 {
 	pdb2pose_.clear();
 	pdb2pose_.fill( *this );
 }
 
-std::ostream & operator << (std::ostream & os, PDB_Info const & info)
+std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 {
 	//os << "PDB file name: " << info.name() << std::endl;
 	info.show(os);

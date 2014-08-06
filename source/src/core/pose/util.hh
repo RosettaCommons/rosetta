@@ -246,23 +246,23 @@ std::map< std::string, std::string > get_all_score_line_strings(
 	core::pose::Pose const & pose
 );
 
-/// @brief get Conformation chain -> PDB_Info chain mapping
-/// @remarks Any chains whose PDB_Info chain records are marked entirely as
-///  PDB_Info::empty_record() will be mapped to that character.  Note that
-///  Conformation -> PDB_Info is always unique, but the reverse may not be true.
-/// @return the mapping if PDB_Info available and chains appear consistent,
+/// @brief get Conformation chain -> PDBInfo chain mapping
+/// @remarks Any chains whose PDBInfo chain records are marked entirely as
+///  PDBInfo::empty_record() will be mapped to that character.  Note that
+///  Conformation -> PDBInfo is always unique, but the reverse may not be true.
+/// @return the mapping if PDBInfo available and chains appear consistent,
 ///  otherwise returns an empty mapping
 std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose );
 
 
-/// @brief renumber PDB_Info based on Conformation chains; each chain starts from 1
+/// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record
-///  characters it finds in the PDB_Info. (default true)
+///  characters it finds in the PDBInfo. (default true)
 /// @param[in] start_from_existing_numbering If true, will attempt to start each
-///  chain from the existing numbering in the PDB_Info.  E.g. if the first residue
+///  chain from the existing numbering in the PDBInfo.  E.g. if the first residue
 ///  of chain 2 in the Conformation is 27, then the renumbering of the chain in
-///  PDB_Info will start from 27. (default true)
+///  PDBInfo will start from 27. (default true)
 /// @param[in] keep_insertion_codes If true, will maintain insertion codes and
 ///  will not increment the pdb residue numbering for those residues.  This means
 ///  new numbering with insertion codes will only reflect properly if the
@@ -271,11 +271,11 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose );
 ///  (default false)
 /// @param[in] rotate_chain_ids If true, allows support for more than 26 pdb chains
 ///  by rotating [A,Z] continuously.  WARNING: This will break the assumption
-///  made by the PDB_PoseMap that each pdb chain id is unique, so make sure you
-///  are not using the PDB_PoseMap feature downstream in your code path without
+///  made by the PDBPoseMap that each pdb chain id is unique, so make sure you
+///  are not using the PDBPoseMap feature downstream in your code path without
 ///  corrections! (default false)
-/// @remarks If fixing chains and there is only one chain and the PDB_Info exists
-///  but all records are marked as empty, will renumber and set the PDB_Info chain
+/// @remarks If fixing chains and there is only one chain and the PDBInfo exists
+///  but all records are marked as empty, will renumber and set the PDBInfo chain
 ///  to 'A'.
 /// @return true if renumbering successful, false otherwise
 bool renumber_pdbinfo_based_on_conf_chains(
@@ -628,8 +628,8 @@ initialize_disulfide_bonds(
 ///@brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
 std::string extract_tag_from_pose( core::pose::Pose &pose );
 
-/// @brief Create a sequence map of first pose onto the second, matching the PDB_Info
-///    If the PDB_Info of either Pose is missing or invalid, do a simple sequence alignment matching.
+/// @brief Create a sequence map of first pose onto the second, matching the PDBInfo
+///    If the PDBInfo of either Pose is missing or invalid, do a simple sequence alignment matching.
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second );
 #ifdef USELUA
 void lregister_util( lua_State * lstate );

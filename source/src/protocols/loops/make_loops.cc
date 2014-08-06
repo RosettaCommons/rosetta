@@ -16,7 +16,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 
 // AUTO-REMOVED #include <numeric/random/random.hh>
@@ -54,7 +54,7 @@ void add_loop(
 	if ( seg_begin >= seg_end || pose.chain( seg_begin ) != pose.chain( seg_end ) ) {
 		TR(t_info) << "WARNING: skipping segment with illegal beginning/ending: ";
 		if ( pose.pdb_info() ) {
-			pose::PDB_Info const & pdb( *pose.pdb_info() );
+			pose::PDBInfo const & pdb( *pose.pdb_info() );
 			TR(t_info) << pdb.chain(seg_begin) << "." << pdb.number(seg_begin) << "."
 				<< pose.residue_type(seg_begin).name3() << "/"
 				<< pdb.chain(seg_end) << "." << pdb.number(seg_end) << "."
@@ -78,7 +78,7 @@ void add_loop(
 	runtime_assert( pose.residue_type( cut+1 ).aa() != aa_pro );
 
 	if ( pose.pdb_info() ) {
-		pose::PDB_Info const & pdb( *pose.pdb_info() );
+		pose::PDBInfo const & pdb( *pose.pdb_info() );
 		TR(t_info) << "adding segment: " << pdb.number( seg_begin ) << "-(" << pdb.number( cut ) << ")-"
 			<< pdb.number( seg_end ) << " Chain " << pdb.chain( seg_end ) << std::endl;
 	} else {

@@ -45,7 +45,7 @@
 // AUTO-REMOVED #include <core/chemical/residue_io.hh>  //needed for writing out .params files
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh> //needed for clean residue type modification
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
 #include <core/id/AtomID.hh>
 #include <core/pose/Remarks.hh> //reading remarks
@@ -817,7 +817,7 @@ EnzConstraintParameters::update_pdb_remarks(
 
 	using namespace core::pose;
 
-	core::pose::PDB_Info & pdbinfo( *(pose.pdb_info() ) );
+	core::pose::PDBInfo & pdbinfo( *(pose.pdb_info() ) );
 	Remarks & rems(pose.pdb_info()->remarks() );
 	EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 

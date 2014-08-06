@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
 #include <core/chemical/VariantType.hh>
@@ -312,7 +312,7 @@ void PeptideStubMover::update_pdb_numbering (
 
 	char const chainids []="0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
-	core::pose::PDB_InfoOP pdbinfo = pose.pdb_info();
+	core::pose::PDBInfoOP pdbinfo = pose.pdb_info();
     if (pdbinfo.get() != NULL) {
 	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
 		pdbinfo->set_resinfo(ir, (pose.chain(ir) <=62 ? chainids[ pose.chain(ir) ] : '0'), static_cast<int>(ir));

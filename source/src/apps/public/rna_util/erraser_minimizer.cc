@@ -103,7 +103,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 ///////////////////////////////////////////////////
 
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>

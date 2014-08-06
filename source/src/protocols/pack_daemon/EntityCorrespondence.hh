@@ -20,7 +20,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDB_PoseMap.fwd.hh>
+#include <core/pose/PDBPoseMap.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -65,7 +65,7 @@ private:
 
 private:
 	core::pose::PoseCOP           pose_;
-	core::pose::PDB_PoseMapCOP     pdb_pose_map_;
+	core::pose::PDBPoseMapCOP     pdb_pose_map_;
 	utility::vector1< ResIDList > entity_id_2_resids_; // one entity may correspond to several residues
 	utility::vector1< Size >      resid_2_entity_id_;  // each residue corresponds to at most one entity.
 

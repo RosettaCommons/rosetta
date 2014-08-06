@@ -22,7 +22,7 @@ namespace task {
 namespace operation {
 
 class ResidueHasProperty;
-class ResiduePDB_InfoHasLabel;
+class ResiduePDBInfoHasLabel;
 class ResidueLacksProperty;
 class ResidueName3Is;
 class ResidueName3Isnt;
@@ -34,7 +34,7 @@ class ChainIs;
 class ChainIsnt;
 
 typedef utility::pointer::owning_ptr< ResidueHasProperty > ResidueHasPropertyOP;
-typedef utility::pointer::owning_ptr< ResiduePDB_InfoHasLabel >  ResiduePDB_InfoHasLabelOP;
+typedef utility::pointer::owning_ptr< ResiduePDBInfoHasLabel >  ResiduePDBInfoHasLabelOP;
 typedef utility::pointer::owning_ptr< ResidueLacksProperty > ResidueLacksPropertyOP;
 typedef utility::pointer::owning_ptr< ResidueName3Is > ResidueName3IsOP;
 typedef utility::pointer::owning_ptr< ResidueName3Isnt > ResidueName3IsntOP;

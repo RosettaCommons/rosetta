@@ -20,7 +20,7 @@
 // Rosetta Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
@@ -257,9 +257,9 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	for (int i=1; i <= (int)nrbsegs; ++i )
 		mm->set_jump(i,true);
 
-	core::pose::PDB_InfoOP pdbinfo_old;
+	core::pose::PDBInfoOP pdbinfo_old;
 	if (pose.pdb_info())
-		pdbinfo_old = new core::pose::PDB_Info( *(pose.pdb_info()) );
+		pdbinfo_old = new core::pose::PDBInfo( *(pose.pdb_info()) );
 
 	// cb variants
 	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
@@ -356,9 +356,9 @@ setup_disconnected( core::pose::Pose & pose ) {
 	TR << "New (asu) fold tree: " << f << std::endl;
 	core::pose::symmetry::set_asymm_unit_fold_tree( pose , f );
 
-	core::pose::PDB_InfoOP pdbinfo_old;
+	core::pose::PDBInfoOP pdbinfo_old;
 	if (pose.pdb_info())
-		pdbinfo_old = new core::pose::PDB_Info( *(pose.pdb_info()) );
+		pdbinfo_old = new core::pose::PDBInfo( *(pose.pdb_info()) );
 
 	// cb variants
 	for( core::Size i=1; i<=nres; ++i) {

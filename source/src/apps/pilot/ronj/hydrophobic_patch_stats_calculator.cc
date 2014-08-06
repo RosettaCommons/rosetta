@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

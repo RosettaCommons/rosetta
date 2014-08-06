@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_PoseMap.cc
+/// @file   core/pose/PDBPoseMap.cc
 /// @brief  class to allow querying for pose resid with pdb chain/seqpos
 /// @author Steven Lewis
 
 // Unit headers
-#include <core/pose/PDB_PoseMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
@@ -32,17 +32,17 @@
 namespace core {
 namespace pose {
 
-static basic::Tracer TR("core.pose.PDB_PoseMap");
+static basic::Tracer TR("core.pose.PDBPoseMap");
 
 
 /// @brief default constructor
-PDB_PoseMap::PDB_PoseMap() :
+PDBPoseMap::PDBPoseMap() :
 	Super()
 {}
 
 
-/// @brief PDB_Info constructor
-PDB_PoseMap::PDB_PoseMap( PDB_Info const & info ) :
+/// @brief PDBInfo constructor
+PDBPoseMap::PDBPoseMap( PDBInfo const & info ) :
 	Super()
 {
 	fill( info );
@@ -50,20 +50,20 @@ PDB_PoseMap::PDB_PoseMap( PDB_Info const & info ) :
 
 
 /// @brief copy constructor
-PDB_PoseMap::PDB_PoseMap( PDB_PoseMap const & map ) :
+PDBPoseMap::PDBPoseMap( PDBPoseMap const & map ) :
 	Super( map ),
 	pdb2pose_( map.pdb2pose_ )
 {}
 
 
 /// @brief default destructor
-PDB_PoseMap::~PDB_PoseMap()
+PDBPoseMap::~PDBPoseMap()
 {}
 
 
 /// @brief copy assignment
-PDB_PoseMap &
-PDB_PoseMap::operator =( PDB_PoseMap const & m )
+PDBPoseMap &
+PDBPoseMap::operator =( PDBPoseMap const & m )
 {
 	if ( this != &m ) {
 		pdb2pose_ = m.pdb2pose_;
@@ -77,17 +77,17 @@ PDB_PoseMap::operator =( PDB_PoseMap const & m )
 /// @param[in] pdb_res  pdb residue numbering
 /// @param[in] ins_code insertion code, use ' ' if no insertion code
 /// @param[in] pose_res  pose numbering for residue
-/// @remarks if the chain is equal to the PDB_Info's empty record character,
+/// @remarks if the chain is equal to the PDBInfo's empty record character,
 ///  the insertion will be skipped
 void
-PDB_PoseMap::insert(
+PDBPoseMap::insert(
 	char const chain,
 	int const pdb_res,
 	char const ins_code,
 	Size const pose_res
 )
 {
-	if ( chain != PDB_Info::empty_record() ) {
+	if ( chain != PDBInfo::empty_record() ) {
 		pdb2pose_[ ResidueKey( chain, pdb_res, ins_code ) ] = pose_res;
 	}
 }
@@ -96,7 +96,7 @@ PDB_PoseMap::insert(
 /// @brief fill with corresponding pdb -> pose residue mapping
 /// @note does not clear any currently existing mapping data
 void
-PDB_PoseMap::fill( PDB_Info const & info )
+PDBPoseMap::fill( PDBInfo const & info )
 {
 	for ( Size i = 1; i <= info.nres(); ++i ) {
 		insert( info.chain( i ), info.number( i ), info.icode( i ), i );

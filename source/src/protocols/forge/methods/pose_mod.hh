@@ -103,7 +103,7 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>

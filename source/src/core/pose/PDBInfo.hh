@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_Info.hh
+/// @file   core/pose/PDBInfo.hh
 /// @brief  pose information so it's not loose in the pose
 /// @author Steven Lewis
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 
-#ifndef INCLUDED_core_pose_PDB_Info_hh
-#define INCLUDED_core_pose_PDB_Info_hh
+#ifndef INCLUDED_core_pose_PDBInfo_hh
+#define INCLUDED_core_pose_PDBInfo_hh
 
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // Unit headers
@@ -31,7 +31,7 @@
 #include <core/conformation/signals/IdentityEvent.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/CrystInfo.hh>
 
 #include <core/io/pdb/HeaderInformation.hh>
@@ -92,15 +92,15 @@ private:
 ///  constructors without 'init' or appending/prepending residues, the
 ///  chain id for the new records will be set to a character, currently
 ///  '^', denoting "empty record".  This character may be looked up by
-///  calling the static method PDB_Info::empty_record().
+///  calling the static method PDBInfo::empty_record().
 /// @remarks Class implementation is biased towards simplicity and fast lookup.
 ///  Residue/atom information are kept in vectors.  An internally maintained
-///  PDB_PoseMap provides mapping from pdb -> pose residue numbering.  This
+///  PDBPoseMap provides mapping from pdb -> pose residue numbering.  This
 ///  causes residue mutators to be a bit more expensive due to map updates,
 ///  but this is ok because they are typically called sparingly.  Accessors
 ///  and mutators have overloaded method convention, while special mutators
 ///  use .set_* convention.
-class PDB_Info : public utility::pointer::ReferenceCount {
+class PDBInfo : public utility::pointer::ReferenceCount {
 
 
 public: // typedefs
@@ -168,7 +168,7 @@ private: // structs
 	struct ResidueRecord {
 		/// @brief default constructor
 		ResidueRecord () :
-			chainID( PDB_Info::empty_record() ),
+			chainID( PDBInfo::empty_record() ),
 			resSeq( 0 ),
 			iCode( ' ')
 		{}
@@ -206,12 +206,12 @@ public: // constructors
 
 
 	/// @brief default constructor, obsolete is *true*
-	PDB_Info();
+	PDBInfo();
 
 
 	/// @brief size constructor (ensure space for 'n' residue records),
 	///  obsolete is *true*
-	PDB_Info( Size const n );
+	PDBInfo( Size const n );
 
 
 	/// @brief Pose constructor (ensures space for residue and atom records
@@ -220,42 +220,42 @@ public: // constructors
 	/// @param[in] init  if true (default), then residue records are initialized
 	///  and obsolete set to false, otherwise obsolete is true
 	///  using Pose residue numbering and chains of the Residues in the Conformation
-	PDB_Info(
+	PDBInfo(
 		Pose const & pose,
 		bool init = true
 	);
 
 
 	/// @brief copy constructor
-	PDB_Info( PDB_Info const & info );
+	PDBInfo( PDBInfo const & info );
 
 
 public: // destructor
 
 
 	/// @brief default destructor
-	virtual ~PDB_Info();
+	virtual ~PDBInfo();
 
 
 public: // assignment
 
 
 	/// @brief copy assignment
-	PDB_Info &
-	operator =( PDB_Info const & info );
+	PDBInfo &
+	operator =( PDBInfo const & info );
 
 
 public: // observer interface
 
 
-	/// @brief Returns the Conformation if this PDB_Info is currently observing
+	/// @brief Returns the Conformation if this PDBInfo is currently observing
 	/// a conformation, otherwise return NULL
 	///
 	/// example(s):
 	///     pose.pdb_info().is_observing()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	core::conformation::Conformation const *
 	is_observing();
 
@@ -266,20 +266,20 @@ public: // observer interface
 	///
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	void
 	attach_to( core::conformation::Conformation & conf );
 
 
 	/// @brief Detaches the Conformation and stops observation
-	/// @remarks takes no arguments because PDB_Info can only observe one
+	/// @remarks takes no arguments because PDBInfo can only observe one
 	/// Conformation at a time
 	///
 	/// example(s):
 	///     pose.pdb_info().detach_from()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	void
 	detach_from();
 
@@ -295,7 +295,7 @@ public: // observer interface
 
 
 	/// @brief Updates residue and atom records when length changes in Conformation,
-	/// obsoletes PDB_Info
+	/// obsoletes PDBInfo
 	void
 	on_length_change( core::conformation::signals::LengthEvent const & event );
 
@@ -303,7 +303,7 @@ public: // observer interface
 public: // obsolescence
 
 
-	/// @brief Returns true if PDB_Info is obsolete and needs updating
+	/// @brief Returns true if PDBInfo is obsolete and needs updating
 	/// @details This flag is currently not used within the class and
 	/// is provided for user convenience.  Setting this will
 	/// forcibly turn off pdb numbering when dumping pdbs.
@@ -312,7 +312,7 @@ public: // obsolescence
 	///     pose.pdb_info().obsolete()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	bool
 	obsolete() const
@@ -336,13 +336,13 @@ public: // obsolescence
 public: // state
 
 
-	/// @brief Returns the number of residues represented in PDB_Info
+	/// @brief Returns the number of residues represented in PDBInfo
 	///
 	/// example(s):
 	///     pose.pdb_info().nres()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	Size
 	nres() const
@@ -358,12 +358,12 @@ public: // state
 	///     pose.pdb_info().natoms(3)
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	Size
 	natoms( Size const res ) const
 	{
-		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDB_Info::natoms( Size const res): res is not in this PDB_Info!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::natoms( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].atomRec.size();
 	}
 
@@ -430,7 +430,7 @@ public: // pdb-wide accessors/mutators
 	///     pose.pdb_info().name()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	String const &
 	name() const
@@ -445,7 +445,7 @@ public: // pdb-wide accessors/mutators
 	///     pose.pdb_info().name('MyPDB')
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	void
 	name( String const & s )
@@ -460,7 +460,7 @@ public: // pdb-wide accessors/mutators
 	///     pose.pdb_info().modeltag()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	String const &
 	modeltag() const
@@ -475,7 +475,7 @@ public: // pdb-wide accessors/mutators
 	///     pose.pdb_info().modeltag('Number1')
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	void
 	modeltag( String const & tag )
@@ -490,7 +490,7 @@ public: // pdb-wide accessors/mutators
 	///     pose.pdb_info().remarks()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	Remarks const &
 	remarks() const
@@ -501,14 +501,14 @@ public: // pdb-wide accessors/mutators
 
 	/// @brief Returns the pdb remarks (mutable)
 	/// @note we allow direct access to the remarks vector because its
-	/// state is independent of the rest of PDB_Info and it's much more
+	/// state is independent of the rest of PDBInfo and it's much more
 	/// convenient for the user
 	///
 	/// example(s):
 	///     pose.pdb_info().remarks()
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	Remarks &
 	remarks()
@@ -523,7 +523,7 @@ public: // pdb-wide accessors/mutators
 	///
 	/// See also:
 	///     Pose
-	///     PDB_Info
+	///     PDBInfo
 	inline
 	void
 	remarks( Remarks const & in )
@@ -585,14 +585,14 @@ public: // single residue accessors
 	///     pose.pdb_info().chain(3)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
 	char const &
 	chain( Size const res ) const
 	{
-		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDB_Info::chain( Size const res): res is not in this PDB_Info!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::chain( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].chainID;
 	}
 
@@ -603,14 +603,14 @@ public: // single residue accessors
 	///     pose.pdb_info().number(3)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
 	int const &
 	number( Size const res ) const
 	{
-		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDB_Info::number( Size const res): res is not in this PDB_Info!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::number( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].resSeq;
 	}
 
@@ -621,14 +621,14 @@ public: // single residue accessors
 	///     pose.pdb_info().icode(3)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
 	char const &
 	icode( Size const res ) const
 	{
-		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDB_Info::icode( Size const res): res is not in this PDB_Info!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::icode( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].iCode;
 	}
 
@@ -643,8 +643,8 @@ public: // single residue accessors
 	///     pose.pdb_info().pdb2pose("B",5)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pose2pdb
 	inline
 	Size
 	pdb2pose(
@@ -666,8 +666,8 @@ public: // single residue accessors
 	///     pose.pdb_info().pose2pdb(25)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
 	String
 	pose2pdb( Size const res ) const;
 
@@ -687,9 +687,9 @@ public: // single residue mutators
 	///     pose.pdb_info().chain(3,"R")
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	void
 	chain(
 		Size const res,
@@ -704,9 +704,9 @@ public: // single residue mutators
 	///     pose.pdb_info().number(3,81)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	void
 	number(
 		Size const res,
@@ -721,9 +721,9 @@ public: // single residue mutators
 	///
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	void
 	icode(
 		Size const res,
@@ -742,12 +742,12 @@ public: // single residue mutators
 	///     pose.pdb_info().icode(3)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.chain
-	///     PDB_Info.icode
-	///     PDB_Info.number
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.chain
+	///     PDBInfo.icode
+	///     PDBInfo.number
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	void
 	set_resinfo(
 		Size const res,
@@ -812,9 +812,9 @@ public: // atom accessors
 	///     pose.pdb_info().alt_loc(1,1)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
 	char const &
 	alt_loc(
@@ -832,9 +832,9 @@ public: // atom accessors
 	///     pose.pdb_info().occupancy(1,1)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
 	Real const &
 	occupancy(
@@ -852,9 +852,9 @@ public: // atom accessors
 	///     pose.pdb_info().temperature(1,1)
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
 	Real const &
 	temperature(
@@ -932,17 +932,17 @@ public: // atom mutators
 public: // residue accessors en masse
 
 
-	/// @brief Returns the internally maintained PDB_PoseMap
+	/// @brief Returns the internally maintained PDBPoseMap
 	///
 	/// example(s):
 	///
 	/// See also:
 	///     Pose
-	///     PDB_Info
-	///     PDB_Info.pdb2pose
-	///     PDB_Info.pose2pdb
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
 	inline
-	PDB_PoseMap const &
+	PDBPoseMap const &
 	pdb2pose() const
 	{
 		return pdb2pose_;
@@ -955,11 +955,11 @@ public: // residue accessors en masse
 	///     pose.pdb_info().show()
 	///
 	/// See Also:
-	///     PDB_Info
-	///     PDB_Info.chain
-	///     PDB_Info.icode
-	///     PDB_Info.nres
-	///     PDB_Info.number
+	///     PDBInfo
+	///     PDBInfo.chain
+	///     PDBInfo.icode
+	///     PDBInfo.nres
+	///     PDBInfo.number
 	///     Pose
 	///     Pose.pdb_info
 	void
@@ -1096,15 +1096,15 @@ public: // residue mutators en masse
 	}
 
 
-	/// @brief Copyies a section from PDB_Info  <input_info>
-	/// @param[in] input_info the PDB_Info to copy from
+	/// @brief Copyies a section from PDBInfo  <input_info>
+	/// @param[in] input_info the PDBInfo to copy from
 	/// @param[in] copy_from the first residue position in input_info to copy
 	/// @param[in] copy_to the final residue position in input_info to copy
-	/// @param[in] start_from the first residue position in this PDB_Info to
+	/// @param[in] start_from the first residue position in this PDBInfo to
 	///  copy into
 	void
 	copy(
-		PDB_Info const & input_info,
+		PDBInfo const & input_info,
 		Size const copy_from,
 		Size const copy_to,
 		Size const start_from
@@ -1213,7 +1213,7 @@ public: // residue insertion/deletion
 		Real temp
 	);
 
-	/// @brief rebuilds PDB_PoseMap from scratch
+	/// @brief rebuilds PDBPoseMap from scratch
 	//fpd  making this public because methods in this class don't keep the pdb2pose mapping in sync
 	void
 	rebuild_pdb2pose();
@@ -1269,7 +1269,7 @@ private: // data
 
 
 	/// @brief maps PDB chain,residue -> internal residue numbering
-	PDB_PoseMap pdb2pose_;
+	PDBPoseMap pdb2pose_;
 
 
 	/// @brief Conformation being observed, NULL if not attached
@@ -1286,13 +1286,13 @@ private: // data
 
 	// fpd spacegroup and crystal parameters
 	CrystInfo crystinfo_;
-}; //end class PDB_Info
+}; //end class PDBInfo
 
 // for Python bindings
-std::ostream & operator << ( std::ostream & os, PDB_Info const & info);
+std::ostream & operator << ( std::ostream & os, PDBInfo const & info);
 
 } // namespace pose
 } // namespace core
 
 
-#endif //INCLUDED_core_pose_PDB_Info_HH
+#endif //INCLUDED_core_pose_PDBInfo_HH

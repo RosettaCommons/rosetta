@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>

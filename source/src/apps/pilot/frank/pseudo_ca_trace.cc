@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/util.hh>

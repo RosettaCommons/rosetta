@@ -79,7 +79,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 
 // AUTO-REMOVED #include <basic/options/option.hh>

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_Info.fwd.hh
-/// @brief  fwd declaration of classes defined in pose/PDB_Info
+/// @file   core/pose/PDBInfo.fwd.hh
+/// @brief  fwd declaration of classes defined in pose/PDBInfo
 /// @author Steven Lewis (smlewi@unc.edu)
 
 
-#ifndef INCLUDED_core_pose_PDB_Info_fwd_hh
-#define INCLUDED_core_pose_PDB_Info_fwd_hh
+#ifndef INCLUDED_core_pose_PDBInfo_fwd_hh
+#define INCLUDED_core_pose_PDBInfo_fwd_hh
 
 
 // Utility headers
@@ -23,10 +23,10 @@
 namespace core {
 namespace pose {
 
-class PDB_Info;
+class PDBInfo;
 
-typedef utility::pointer::owning_ptr< PDB_Info > PDB_InfoOP;
-typedef utility::pointer::owning_ptr< PDB_Info const > PDB_InfoCOP;
+typedef utility::pointer::owning_ptr< PDBInfo > PDBInfoOP;
+typedef utility::pointer::owning_ptr< PDBInfo const > PDBInfoCOP;
 
 } // namespace pose
 } // namespace core

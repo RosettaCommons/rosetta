@@ -16,7 +16,7 @@
 #include <core/io/rna/RDAT.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <utility/io/izstream.hh>

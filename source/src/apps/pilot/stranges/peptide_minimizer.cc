@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>

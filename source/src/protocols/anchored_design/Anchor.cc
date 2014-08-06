@@ -19,8 +19,8 @@
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_PoseMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -140,13 +140,13 @@ void protocols::anchored_design::Anchor::read_anchorfile(
 		utility_exit();
 	}
 	//use info to modify Anchor's data members
-	using core::pose::PDB_Info;
-	using core::pose::PDB_PoseMap;
+	using core::pose::PDBInfo;
+	using core::pose::PDBPoseMap;
 	if( !pose.pdb_info() ){ //if that's not a NULL pointer
-		utility_exit_with_message("Cannot read anchor file because pose has no PDB_Info");
+		utility_exit_with_message("Cannot read anchor file because pose has no PDBInfo");
 	}
 
-	PDB_PoseMap const & pose_map = pose.pdb_info()->pdb2pose();
+	PDBPoseMap const & pose_map = pose.pdb_info()->pdb2pose();
 	start_ = pose_map.find(chain, PDBstart);
 	end_ = pose_map.find(chain, PDBend);
 

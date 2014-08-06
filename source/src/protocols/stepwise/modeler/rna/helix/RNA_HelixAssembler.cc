@@ -15,7 +15,7 @@
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <utility/vector1.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -687,7 +687,7 @@ RNA_HelixAssembler::fill_chain_info( pose::Pose & pose, std::string const & full
 		if ( !is_blank_seq( full_sequence[i-1] ) ) chains.push_back( 'B' );
 	}
 
-	PDB_InfoOP pdb_info = new PDB_Info( pose );
+	PDBInfoOP pdb_info = new PDBInfo( pose );
 	pdb_info->set_chains( chains );
 	pdb_info->obsolete( false ); // this is silly.
 

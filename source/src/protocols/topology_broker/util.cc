@@ -27,7 +27,7 @@
 #include <protocols/topology_broker/LoopFragmentClaimer.hh>
 #include <protocols/topology_broker/CutBiasClaimer.hh>
 #include <core/fragment/SecondaryStructure.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <basic/options/option.hh>

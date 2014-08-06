@@ -24,7 +24,7 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>

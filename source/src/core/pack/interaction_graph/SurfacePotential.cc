@@ -36,7 +36,7 @@
 #include <core/pack/interaction_graph/RotamerDots.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 
@@ -848,7 +848,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 		for ( Size ii=1; ii <= (*it).second.size(); ++ii ) {
 			id::AtomID const & atomid = ds_index_2_atomid[ (*it).second[ii] ];
 			
-			// output PDB numbering if there's a PDB_Info object present
+			// output PDB numbering if there's a PDBInfo object present
 			core::conformation::Residue const & rsd = pose.residue( atomid.rsd() );
 			if ( pose.pdb_info() ) {
 				if ( pose.pdb_info()->chain( atomid.rsd() ) != ' ' ) {

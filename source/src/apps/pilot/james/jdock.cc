@@ -22,7 +22,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>

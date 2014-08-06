@@ -46,7 +46,7 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -185,7 +185,7 @@ void SilentStruct::finish_pose(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	pose.pdb_info( new core::pose::PDB_Info(pose) );
+	pose.pdb_info( new core::pose::PDBInfo(pose) );
 
 	if ( option[ in::file::keep_input_scores ]() ) {
 		tr.Debug << "keep input scores... call energies into pose " << std::endl;
@@ -1013,7 +1013,7 @@ SilentStruct::get_parent_remark_from_line( std::string const line ){
 void
 SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
-	pose::PDB_InfoCOP pdb_info = pose.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 
 	if ( !pdb_info ) return;
 
@@ -1053,7 +1053,7 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 		utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
 	}
 
-	pose::PDB_InfoOP pdb_info = pose.pdb_info();
+	pose::PDBInfoOP pdb_info = pose.pdb_info();
 	pdb_info->set_numbering( residue_numbers_ );
 
 	runtime_assert( residue_numbers_.size() == chains_.size() );

@@ -28,7 +28,7 @@
 #include <basic/options/util.hh>//option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
@@ -165,8 +165,8 @@ main( int argc, char * argv [] )
   string output_fname = option[ OptionKeys::out::file::o ];
 
   // overlay bond angles
-  core::pose::PDB_InfoCOP ref_pdbinfo = ref_pose.pdb_info();
-  core::pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
+  core::pose::PDBInfoCOP ref_pdbinfo = ref_pose.pdb_info();
+  core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
   Size ref_fromres = ref_pdbinfo->pdb2pose('C',0);
   Size trg_fromres = pdbinfo->pdb2pose('C',1);
   Size nres = 10;

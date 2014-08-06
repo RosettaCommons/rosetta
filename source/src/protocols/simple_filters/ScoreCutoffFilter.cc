@@ -23,7 +23,7 @@
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>

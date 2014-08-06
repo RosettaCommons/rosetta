@@ -18,7 +18,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
@@ -140,7 +140,7 @@ namespace full_model_info {
 			Size input_res_count = 0;
 			for ( Size n = 1; n <= input_poses.size(); n++ ) {
 				Pose & pose = *input_poses[ n ];
-				PDB_InfoOP pdb_info = new PDB_Info( pose );
+				PDBInfoOP pdb_info = new PDBInfo( pose );
 				vector1< Size > input_res_for_pose;
 				vector1< char > input_chain_for_pose;
 				for ( Size k = 1; k <= pose.total_residue(); k++ ){

@@ -27,7 +27,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
@@ -208,7 +208,7 @@ AlaScan::report( std::ostream & out, core::pose::Pose const & const_pose ) const
 			core::Real const mut_ddg( ddG_for_single_residue( const_pose, resi ) );
 			core::Real const diff_ddg( mut_ddg - wt_ddg );
 
-			core::pose::PDB_InfoCOP pose_info( const_pose.pdb_info() );
+			core::pose::PDBInfoCOP pose_info( const_pose.pdb_info() );
 			char const chain( pose_info->chain( resi ) );
 			int const number( pose_info->number( resi ) );
 			std::string const res_type( const_pose.residue( resi ).name3() );
@@ -264,7 +264,7 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 			//core::Real const mut_ddg( ddg.compute( const_pose ) );
 			core::Real const diff_ddg( mut_ddg - wt_ddg );
 
-			core::pose::PDB_InfoCOP pose_info( const_pose.pdb_info() );
+			core::pose::PDBInfoCOP pose_info( const_pose.pdb_info() );
 			//char const chain( pose_info->chain( resi ) );
 			//core::Size const number( pose_info->number( resi ) );
 			std::string const res_type( const_pose.residue( resi ).name3() );

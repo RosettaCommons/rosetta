@@ -18,7 +18,7 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>  // b factors
+#include <core/pose/PDBInfo.hh>  // b factors
 
 #include <iostream>
 

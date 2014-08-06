@@ -60,7 +60,7 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <core/pack/task/operation/TaskOperations.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>

@@ -35,7 +35,7 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoringManager.hh>

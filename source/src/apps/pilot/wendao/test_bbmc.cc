@@ -39,7 +39,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>

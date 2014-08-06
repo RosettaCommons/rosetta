@@ -42,7 +42,7 @@
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/ScoreFunction.hh>

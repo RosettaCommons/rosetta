@@ -13,7 +13,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -198,7 +198,7 @@ HbsCreatorMover::apply(
 	utility::vector1< core::Size > all_positions;
 	char hbs_chain = option[hbs_creator::hbs_chain].value()[0];
 	core::Size final_res = option[hbs_creator::hbs_final_res].value();
-	core::pose::PDB_InfoCOP pdb_info( pose.pdb_info() );
+	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
 	for(Size i=1; i<=pose.total_residue(); ++i) {
 		char chn = pdb_info->chain(i);

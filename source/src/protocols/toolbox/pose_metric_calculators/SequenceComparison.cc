@@ -57,7 +57,7 @@
 #include <protocols/toolbox/pose_metric_calculators/SequenceComparison.hh>
 
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

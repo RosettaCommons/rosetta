@@ -21,7 +21,7 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>

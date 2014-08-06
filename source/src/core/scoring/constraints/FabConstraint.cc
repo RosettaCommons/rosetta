@@ -24,7 +24,7 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>

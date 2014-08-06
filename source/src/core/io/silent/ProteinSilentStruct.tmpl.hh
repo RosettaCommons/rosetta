@@ -146,7 +146,7 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/MiniPose.fwd.hh>
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.tmpl.hh>
@@ -459,7 +459,7 @@ ProteinSilentStruct_Template<T>::fill_struct(
 		add_jump( pose.jump(nr) );
 	}
 
-	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDB_Info object.
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
 
 	chain_endings( pose.conformation().chain_endings() );
 }

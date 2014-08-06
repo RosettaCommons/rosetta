@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <protocols/loops/loops_main.hh>
@@ -92,7 +92,7 @@ main( int argc, char * argv [] )
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		(*scorefxn)(pose); //scoring for tenA neighbor graph
 
-		core::pose::PDB_InfoOP pdb_info = pose.pdb_info();
+		core::pose::PDBInfoOP pdb_info = pose.pdb_info();
 
 		core::Size zinc_count(0);
 		for ( core::Size j = 1; j <= pose.total_residue(); ++j ) {

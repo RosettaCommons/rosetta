@@ -20,7 +20,7 @@
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>

@@ -99,7 +99,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/pose_stream/PoseInputStream.hh>
@@ -1579,7 +1579,7 @@ color_by_lj_test()
 
 		input->fill_pose( pose, *rsd_set );
 
-		PDB_InfoOP pdb_info(  new PDB_Info( pose, true ) );
+		PDBInfoOP pdb_info(  new PDBInfo( pose, true ) );
 
 		(*scorefxn)( pose );
 		scorefxn->show( std::cout, pose );

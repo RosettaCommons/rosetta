@@ -11,7 +11,7 @@
 #include <protocols/protein_interface_design/filters/FilterScan.hh>
 #include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <fstream>
 // AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>

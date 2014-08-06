@@ -15,8 +15,8 @@
 #include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
 
 #include <core/pose/Pose.hh>
-// PDB_Info for debug
-#include <core/pose/PDB_Info.hh>
+// PDBInfo for debug
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>

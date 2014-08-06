@@ -35,7 +35,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/options/option.hh>

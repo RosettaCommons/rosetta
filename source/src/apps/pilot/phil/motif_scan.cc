@@ -89,8 +89,8 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 
 #include <basic/options/util.hh>
 //#include <basic/options/after_opts.hh>
@@ -228,7 +228,7 @@ motif_deviation( Motif const & P, Motif const & E )
 vector1< Size >
 parse_pdb_pos( pose::Pose const & pose )
 {
-	core::pose::PDB_PoseMap pose_map(pose.pdb_info()->pdb2pose());
+	core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
 	vector1< string > pdb_pos_list( option[ OK::dna::specificity::pdb_pos ]() );
 	vector1< Size >  pose_pos_list;
@@ -491,7 +491,7 @@ motif_scan()
 		Pose pose;
 		core::import_pose::pose_from_pdb( pose, filename );
 		Size const nres( pose.total_residue() );
-		core::pose::PDB_PoseMap pose_map(pose.pdb_info()->pdb2pose());
+		core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
 
 		scoring::dna::set_base_partner( pose );

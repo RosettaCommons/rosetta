@@ -21,7 +21,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
@@ -338,7 +338,7 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 {
 	utility::vector1< core::Size > start_stop;
 	
-	pose::PDB_InfoCOP pdb_info = pose_in.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	
 	if ( !pdb_info ) {
 		utility_exit_with_message("Attempting to identify docking partners, however, the pdb_info object associated "

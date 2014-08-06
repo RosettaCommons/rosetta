@@ -66,7 +66,7 @@ chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence(std::string con
 ///     make_pose_from_sequence(pose,"THANKSEVAN","fa_standard")
 /// See also:
 ///     Pose
-///     PDB_Info
+///     PDBInfo
 ///     pose_from_pdb
 ///     pose_from_rcsb
 ///     pose_from_sequence

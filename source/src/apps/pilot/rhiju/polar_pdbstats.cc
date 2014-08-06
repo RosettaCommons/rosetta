@@ -38,7 +38,7 @@
 #include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 

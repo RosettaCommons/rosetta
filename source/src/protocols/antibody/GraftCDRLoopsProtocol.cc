@@ -18,7 +18,7 @@
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>

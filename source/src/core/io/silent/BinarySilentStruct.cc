@@ -191,7 +191,7 @@ BinarySilentStruct::fill_struct(
 
 	chain_endings( pose.conformation().chain_endings() );
 
-	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDB_Info object.
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
 
 } // BinarySilentStruct
 

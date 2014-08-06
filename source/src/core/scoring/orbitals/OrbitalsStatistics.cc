@@ -49,7 +49,7 @@
 #include <core/conformation/Residue.hh>
 #include <numeric/xyzVector.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 
 //utility headers

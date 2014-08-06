@@ -16,7 +16,7 @@
 #include <devel/inv_kin_lig_loop_design/ResID.hh>
 
 // Project headers
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>

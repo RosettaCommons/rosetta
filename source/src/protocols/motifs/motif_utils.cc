@@ -49,8 +49,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -703,7 +703,7 @@ make_dna_mutations(
 )
 {
 	using namespace protocols::dna;
-	core::pose::PDB_PoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	core::scoring::dna::set_base_partner( pose );
 	for ( DnaDesignDefOPs::const_iterator def( target.begin() );
 			def != target.end(); ++def ) {
@@ -734,7 +734,7 @@ defs2vector(
 )
 {
 	using namespace protocols::dna;
-	core::pose::PDB_PoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	utility::vector1< core::Size > positions;
 	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
 			def != targets.end(); ++def ) {
@@ -751,7 +751,7 @@ defs2allowedtypes(
 )
 {
 	using namespace protocols::dna;
-	core::pose::PDB_PoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	utility::vector1< std::pair< core::Size, utility::vector1< std::string > > > positions;
 	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
 			def != targets.end(); ++def ) {
@@ -784,7 +784,7 @@ defs2map(
 )
 {
 	using namespace protocols::dna;
-	core::pose::PDB_PoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	std::map< core::Size, std::set< std::string > > positions;
 	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
 			def != targets.end(); ++def ) {
@@ -817,7 +817,7 @@ bpdefs2map(
 )
 {
 	using namespace protocols::dna;
-	core::pose::PDB_PoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
+	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	std::map< core::Size, std::set< std::string > > positions;
 	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
 			def != targets.end(); ++def ) {

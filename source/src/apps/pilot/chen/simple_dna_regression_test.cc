@@ -89,7 +89,7 @@
 // AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDB_PoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
 
 
 // AUTO-REMOVED #include <basic/options/util.hh>

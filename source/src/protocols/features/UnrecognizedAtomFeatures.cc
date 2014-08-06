@@ -22,7 +22,7 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
 #include <core/io/pdb/file_data.hh>
 #include <basic/datacache/DataMap.hh>
@@ -69,7 +69,7 @@ using core::Real;
 using core::Distance;
 using core::pose::UnrecognizedAtomRecord;
 using core::pose::Pose;
-using core::pose::PDB_InfoCOP;
+using core::pose::PDBInfoCOP;
 using core::conformation::Residue;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
@@ -258,7 +258,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
-	PDB_InfoCOP pdb_info(pose.pdb_info());
+	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
 
@@ -313,7 +313,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
-	PDB_InfoCOP pdb_info(pose.pdb_info());
+	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
 
@@ -352,7 +352,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
-	PDB_InfoCOP pdb_info(pose.pdb_info());
+	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
 

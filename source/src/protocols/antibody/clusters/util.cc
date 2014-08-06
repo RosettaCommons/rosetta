@@ -16,7 +16,7 @@
 
 #include <numeric/NumericTraits.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>

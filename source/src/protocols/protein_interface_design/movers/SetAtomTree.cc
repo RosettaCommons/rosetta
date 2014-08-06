@@ -29,8 +29,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/vector0.hh>
@@ -303,7 +303,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	core::Size anchor_num( 0 );
 	std::string connect_from( connect_from_ );
 	if ( anchor_res_ != "" ) {
-			core::pose::PDB_PoseMap const pose_map( pose.pdb_info()->pdb2pose() );
+			core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
     	char const chain( anchor_res_[ anchor_res_.length() - 1 ] );
 			std::stringstream ss( anchor_res_.substr( 0, anchor_res_.length() - 1 ) );
       core::Size number;

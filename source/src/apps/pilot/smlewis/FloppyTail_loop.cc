@@ -18,8 +18,8 @@
 
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/pose/PDB_PoseMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 

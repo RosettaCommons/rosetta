@@ -38,8 +38,8 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh> //reading remarks
-//#include <core/pose/PDB_PoseMap.hh> //for PDB-info-to-resid functionality
+#include <core/pose/PDBInfo.hh> //reading remarks
+//#include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/scoring/Energies.hh>
@@ -612,7 +612,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	core::pose::Pose outpose( *ref_pose_ );
 
 	CacheableStringOP outcache = outpose.data().get_ptr< CacheableString >( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG );
-	core::pose::PDB_InfoOP pose_pdbinfo = outpose.pdb_info();
+	core::pose::PDBInfoOP pose_pdbinfo = outpose.pdb_info();
 	std::string outtag = outcache->str() + "_sm";
 
 	//2. then we need to go through the found residues, figure

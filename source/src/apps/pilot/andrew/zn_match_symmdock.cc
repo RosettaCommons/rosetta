@@ -24,7 +24,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Remarks.hh>
 
 #include <core/scoring/Energies.hh>

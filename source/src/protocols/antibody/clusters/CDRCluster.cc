@@ -13,7 +13,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/clusters/CDRCluster.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <math.h>
 
 namespace protocols {

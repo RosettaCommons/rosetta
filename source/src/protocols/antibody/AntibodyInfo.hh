@@ -222,7 +222,7 @@ public:
 	//
 	
 
-	///@brief Used to get a residue number of a particular place in the framework or conserved residue in the CDR.  Use this instead of PDB_Info.
+	///@brief Used to get a residue number of a particular place in the framework or conserved residue in the CDR.  Use this instead of PDBInfo.
 	///
 	///@details If the current numbering scheme is not 'scheme', will return the equivalent position of the current numbering scheme using the transform scheme file in the database.  
 	/// Should not be used for residues within CDRs since numbering schemes vary greatly in their within cdr alignments and numbering.  Use get_CDR_start/end/loop functions with relative positions for this purpose.

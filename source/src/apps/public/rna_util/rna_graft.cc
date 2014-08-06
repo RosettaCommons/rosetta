@@ -21,7 +21,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <protocols/farna/util.hh>
@@ -104,7 +104,7 @@ get_pose_and_numbering( std::string const pdb_file, pose::Pose & pose, utility::
 	core::pose::rna::virtualize_5prime_phosphates( pose );
 
 	resnum.clear();
-	PDB_InfoOP pdb_info = pose.pdb_info();
+	PDBInfoOP pdb_info = pose.pdb_info();
 	for ( Size n = 1; n <= pose.total_residue(); n++ )		resnum.push_back( pdb_info->number(n) );
 
 }
@@ -301,7 +301,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	Pose pose_target;
 
-	// make a generic RNA pose with the desired sequence. God I hope this works. Need to figure out PDB_Info crap too.
+	// make a generic RNA pose with the desired sequence. God I hope this works. Need to figure out PDBInfo crap too.
 	// what's the sequence?
 
 	utility::vector1< Size > graft_resnum;
@@ -355,8 +355,8 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 		if ( n == 1 || ( resnum_target[n] > resnum_target[n-1] + 1 ) )  add_variant_type_to_pose_residue( pose_target, "VIRTUAL_PHOSPHATE", n );
 	}
 
-	// Need to fill in PDB_Info!
-	PDB_InfoOP pdb_info = new PDB_Info( pose_target );
+	// Need to fill in PDBInfo!
+	PDBInfoOP pdb_info = new PDBInfo( pose_target );
 	pdb_info->set_numbering( resnum_target );
 	pose_target.pdb_info(  pdb_info );
 	std::cout << pose_target.annotated_sequence() << std::endl;
@@ -386,7 +386,7 @@ rna_superimpose_and_graft_test(){
 														pdb_file1,
 														pdb_file2,
 														resnum1,
-														resnum2); // in principle could store resnum, pdb_file1 inside PDB_Info object!
+														resnum2); // in principle could store resnum, pdb_file1 inside PDBInfo object!
 
 	//	output_superimposed_pdb( pose2, pdb_file2 );
 

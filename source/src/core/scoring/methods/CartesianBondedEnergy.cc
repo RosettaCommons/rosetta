@@ -78,7 +78,7 @@
 
 #include <utility/vector1.hh>
 
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // cutoff for reporting outliers
 #define CUTOFF 1

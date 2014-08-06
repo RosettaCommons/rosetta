@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_PoseMap.fwd.hh
-/// @brief  fwd declaration of classes defined in pose/PDB_PoseMap
+/// @file   core/pose/PDBPoseMap.fwd.hh
+/// @brief  fwd declaration of classes defined in pose/PDBPoseMap
 /// @author Steven Lewis
 
 
-#ifndef INCLUDED_core_pose_PDB_PoseMap_fwd_hh
-#define INCLUDED_core_pose_PDB_PoseMap_fwd_hh
+#ifndef INCLUDED_core_pose_PDBPoseMap_fwd_hh
+#define INCLUDED_core_pose_PDBPoseMap_fwd_hh
 
 
 // Unit headers
@@ -29,10 +29,10 @@
 namespace core {
 namespace pose {
 
-class PDB_PoseMap;
+class PDBPoseMap;
 
-typedef utility::pointer::owning_ptr< PDB_PoseMap > PDB_PoseMapOP;
-typedef utility::pointer::owning_ptr< PDB_PoseMap const > PDB_PoseMapCOP;
+typedef utility::pointer::owning_ptr< PDBPoseMap > PDBPoseMapOP;
+typedef utility::pointer::owning_ptr< PDBPoseMap const > PDBPoseMapCOP;
 
 } // namespace pose
 } // namespace core

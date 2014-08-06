@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -78,7 +78,7 @@ void PartialThreadingMover::apply(
 	tr.Debug << "final sequence is " << query_pose.sequence() << std::endl;
 
 	std::reverse(pdb_numbering.begin(), pdb_numbering.end());
-	core::pose::PDB_InfoOP new_pdb_info( new core::pose::PDB_Info(query_pose,true) );
+	core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(query_pose,true) );
 	new_pdb_info->set_numbering( pdb_numbering );
 	new_pdb_info->set_chains( pdb_chains );
 	query_pose.pdb_info( new_pdb_info );

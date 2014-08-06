@@ -183,7 +183,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 
 		// Record contains multimodel PDBs as specified in the Coordinate Section of the PDB file..
 		} else if (record_type == "MODEL " ) {
-			// store the serial number as the filename, which will become the PDB_Info name of the pose
+			// store the serial number as the filename, which will become the PDBInfo name of the pose
 			std::string temp_model = ObjexxFCL::strip_whitespace( VR[i]["serial"].value ) ;
 			fd.modeltag = temp_model.c_str();
 			if( options.new_chain_order() ) {

@@ -24,7 +24,7 @@
 #include <core/scoring/EnergyGraph.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
 #include <core/conformation/Residue.hh>
@@ -460,7 +460,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 	// make sure pose has pdbinfo
 	if (! pose.pdb_info() ) {
-		core::pose::PDB_InfoOP newinfo(new core::pose::PDB_Info(pose));
+		core::pose::PDBInfoOP newinfo(new core::pose::PDBInfo(pose));
 		pose.pdb_info( newinfo );
 	}
 

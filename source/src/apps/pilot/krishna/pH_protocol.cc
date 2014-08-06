@@ -19,7 +19,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>

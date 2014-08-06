@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_PoseMap.hh
+/// @file   core/pose/PDBPoseMap.hh
 /// @brief  class to allow querying for pose resid with pdb chain/seqpos
 /// @author Steven Lewis
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 
-#ifndef INCLUDED_core_pose_PDB_PoseMap_hh
-#define INCLUDED_core_pose_PDB_PoseMap_hh
+#ifndef INCLUDED_core_pose_PDBPoseMap_hh
+#define INCLUDED_core_pose_PDBPoseMap_hh
 
 
 // Unit headers
-#include <core/pose/PDB_PoseMap.fwd.hh>
+#include <core/pose/PDBPoseMap.fwd.hh>
 
 // Package headers
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
@@ -37,11 +37,11 @@
 namespace core {
 namespace pose {
 
-/// @brief PDB_PoseMap can be queried with PDB information (chain, sequence position)
+/// @brief PDBPoseMap can be queried with PDB information (chain, sequence position)
 ///  and returns a pose's resid position.  Useful for handing input/output in terms
 ///  of PDB positions.  Can be tucked into the pose for repeated access, or generated
 ///  just-in-time for a single use.  Basically a wrapper class for std::map.
-class PDB_PoseMap : public utility::pointer::ReferenceCount {
+class PDBPoseMap : public utility::pointer::ReferenceCount {
 
 
 public: // typedefs
@@ -62,7 +62,7 @@ private: // typedefs
 
 private: // structs
 
-	/// @brief sortable residue key internal to PDB_PoseMap
+	/// @brief sortable residue key internal to PDBPoseMap
 	struct ResidueKey {
 		/// @brief default constructor
 		ResidueKey () :
@@ -114,26 +114,26 @@ private: // structs
 public: // constructors
 
 	/// @brief default constructor
-	PDB_PoseMap();
+	PDBPoseMap();
 
-	/// @brief PDB_Info constructor
-	PDB_PoseMap( PDB_Info const & info );
+	/// @brief PDBInfo constructor
+	PDBPoseMap( PDBInfo const & info );
 
 	/// @brief copy constructor
-	PDB_PoseMap( PDB_PoseMap const & map );
+	PDBPoseMap( PDBPoseMap const & map );
 
 
 public: // destructor
 
 	/// @brief default destructor
-	virtual ~PDB_PoseMap();
+	virtual ~PDBPoseMap();
 
 
 public: // assignment
 
 	/// @brief copy assignment
-	PDB_PoseMap &
-	operator =( PDB_PoseMap const & m );
+	PDBPoseMap &
+	operator =( PDBPoseMap const & m );
 
 
 public: // methods
@@ -172,7 +172,7 @@ public: // methods
 	/// @param[in] pdb_res  pdb residue numbering
 	/// @param[in] ins_code insertion code, use ' ' if no insertion code
 	/// @param[in] pose_res  pose numbering for residue
-	/// @remarks if the chain is equal to the PDB_Info's empty record character,
+	/// @remarks if the chain is equal to the PDBInfo's empty record character,
 	///  the insertion will be skipped
 	void
 	insert(
@@ -232,7 +232,7 @@ public: // methods
 	/// @brief fill with corresponding pdb -> pose residue mapping
 	/// @note does not clear any currently existing mapping data
 	void
-	fill( PDB_Info const & info );
+	fill( PDBInfo const & info );
 
 private: // methods
 
@@ -252,7 +252,7 @@ private: // data
 	Pdb2Pose pdb2pose_;
 
 
-}; //end class PDB_PoseMap
+}; //end class PDBPoseMap
 
 } // namespace pose
 } // namespace core

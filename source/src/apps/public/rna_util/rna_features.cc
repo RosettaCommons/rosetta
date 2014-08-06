@@ -55,8 +55,8 @@
 #include <core/kinematics/Stub.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/import_pose/import_pose.hh>
@@ -160,7 +160,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 
 	Size res_count( 0 ), num_features( 0 );
 	Size const nres = pose.total_residue();
-	core::pose::PDB_InfoCOP pdb_info = pose.pdb_info();
+	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 
 	// sasa calculation
 	AtomID_Map< core::Real > atom_sasa;

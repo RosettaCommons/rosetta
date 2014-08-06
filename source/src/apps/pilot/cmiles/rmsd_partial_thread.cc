@@ -23,11 +23,11 @@
 // Project headers
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 
-using core::pose::PDB_InfoCOP;
+using core::pose::PDBInfoCOP;
 using core::pose::PoseCOP;
 
 int main(int argc, char* argv[]) {
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
   map<Size, Size> residues;
 
-  PDB_InfoCOP info = partial_thread->pdb_info();
+  PDBInfoCOP info = partial_thread->pdb_info();
   for (Size i = 1; i <= partial_thread->total_residue(); ++i) {
     Size reference_pos = info->number(i);
     residues[reference_pos] = i;

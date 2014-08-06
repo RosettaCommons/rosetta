@@ -175,7 +175,7 @@ namespace protein {
 	// Wrapper for routine below (which requires a const pose). If you call this,
 	// note that the pose's full_model_info object will be initialized based on its
 	// current fold_tree, cutpoint_variants, and any chain/residue-numbering information in
-	// PDB_Info.
+	// PDBInfo.
 	stepwise::modeler::working_parameters::StepWiseWorkingParametersOP
 	StepWiseProteinModeler::setup_working_parameters_for_stepwise_with_full_model_info( core::pose::Pose & pose )
 	{

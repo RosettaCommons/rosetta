@@ -333,7 +333,7 @@ void test( std::string fname )
 		Pose pose;
 		std::cerr << fname << std::endl;
 		core::import_pose::pose_from_pdb(pose,fname);
-		// std::cerr << "test_leerichards: PDB_Info: " << pose.pdb_info()() << std::endl;
+		// std::cerr << "test_leerichards: PDBInfo: " << pose.pdb_info()() << std::endl;
 		// std::cerr << "test_leerichards: pose has " << pose.pdb_info()->get_unrecognized_atoms().size() << " unrecognized atoms" << std::endl;
 		MultiProbePoseAccumulator *accum = new MultiProbePoseAccumulator(pose,fname);
 		AccumulatorOP accumOP(accum);

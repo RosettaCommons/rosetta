@@ -21,7 +21,7 @@
 #include <core/id/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -115,8 +115,8 @@ return_region(Pose & pose, Size const start, Size const end){
 
 	core::pose::create_subpose(pose, positions, new_foldtree, piece);
 
-	//Create subpose results in a NULL PDB_Info.  We now need a new one.
-	core::pose::PDB_InfoOP pdb_info = new core::pose::PDB_Info(piece.total_residue());
+	//Create subpose results in a NULL PDBInfo.  We now need a new one.
+	core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo(piece.total_residue());
 	piece.pdb_info(pdb_info);
 
 	piece.pdb_info()->copy(*(pose.pdb_info()), start, end, 1); //Should be an option directly within subpose

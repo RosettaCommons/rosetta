@@ -24,7 +24,7 @@
 #include <protocols/elscripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>

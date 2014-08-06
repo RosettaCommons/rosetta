@@ -16,7 +16,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>

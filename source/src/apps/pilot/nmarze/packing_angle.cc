@@ -28,7 +28,7 @@
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.hh>
 

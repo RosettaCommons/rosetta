@@ -24,7 +24,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -370,7 +370,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 					continue;
 				}
 
-				pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
+				pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 
 				// j and k are starting positions for fragment pairs
 				// count CA contacts

@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>

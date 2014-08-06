@@ -22,7 +22,7 @@
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDB_Info.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 // AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>

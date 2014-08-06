@@ -37,7 +37,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 

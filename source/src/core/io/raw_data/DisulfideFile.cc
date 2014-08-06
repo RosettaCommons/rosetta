@@ -17,7 +17,7 @@
 // AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>
@@ -138,7 +138,7 @@ void DisulfideFile::read_in_and_set_disulfides( Pose &pose) {
     
 /// @brief Convert a ResNum object into the rosetta residue index
 /// @details For ResNums with the rosetta_num type, this just return the n field.
-///  For pdb_num ResNums the pose's PDB_Info is used to translate to rosetta numbering.
+///  For pdb_num ResNums the pose's PDBInfo is used to translate to rosetta numbering.
 ///
 ///  This function exits with an error message if it is unable to do the conversion.
 Size DisulfideFile::resnum_to_rosetta_num(Pose const& pose, ResNum const& resnum) const
@@ -153,7 +153,7 @@ Size DisulfideFile::resnum_to_rosetta_num(Pose const& pose, ResNum const& resnum
 	}
 
 	//PDB number
-	PDB_InfoCOP info( pose.pdb_info() );
+	PDBInfoCOP info( pose.pdb_info() );
 	if( info == 0 ) {
 		TR.Error << "[ERROR] PDB Number expected from format, but no PDB Info present."
 			<< std::endl;

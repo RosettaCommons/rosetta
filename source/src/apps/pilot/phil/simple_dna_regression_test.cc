@@ -90,7 +90,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBPoseMap.hh>
 
 
 #include <basic/options/util.hh>
@@ -4090,7 +4090,7 @@ zf_test()
 	Pose ref_pose;
 	std::string const filename( "1aay.pdb" );
 	core::import_pose::pose_from_pdb( ref_pose, filename );
-	core::pose::PDB_PoseMap ref_pose_map(ref_pose.pdb_info()->pdb2pose());
+	core::pose::PDBPoseMap ref_pose_map(ref_pose.pdb_info()->pdb2pose());
 
 	// For now hard-coded, perhaps change to a nested loop ...
 	Size const ref_motif_begin_protein( ref_pose_map.find( 'A', 146 ) ),
@@ -4118,7 +4118,7 @@ zf_test()
 		Pose pose;
 		core::import_pose::pose_from_pdb( pose, file );
 		scoring::dna::set_base_partner( pose );
-	core::pose::PDB_PoseMap pose_map(pose.pdb_info()->pdb2pose());
+	core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
 
 		// read the extra motif data
@@ -4494,7 +4494,7 @@ dna_chain_check()
 vector1< Size >
 parse_pdb_pos( pose::Pose const & pose, utility::options::StringVectorOptionKey const & key )
 {
-	core::pose::PDB_PoseMap pose_map(pose.pdb_info()->pdb2pose());
+	core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
 	vector1< string > pdb_pos_list( option[ key ]() );
 	vector1< Size >  pose_pos_list;

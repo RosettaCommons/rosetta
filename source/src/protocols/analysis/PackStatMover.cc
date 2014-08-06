@@ -18,7 +18,7 @@
 
 //#include <protocols/jobdist/standard_mains.hh>
 
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <basic/options/option.hh>
 

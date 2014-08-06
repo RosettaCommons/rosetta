@@ -17,8 +17,8 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_PoseMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/conformation/Residue.hh>
@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/option.hh>
@@ -171,8 +171,8 @@ combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chai
 	
 	TR<<"new poseOP total number should contain the additional target chain number: " << combo_pose->total_residue();
 
-	core::pose::PDB_InfoOP pdb_info_design( new core::pose::PDB_Info( design_pose ) );
-	core::pose::PDB_InfoOP pdb_info_target( new core::pose::PDB_Info( target_chain ) );
+	core::pose::PDBInfoOP pdb_info_design( new core::pose::PDBInfo( design_pose ) );
+	core::pose::PDBInfoOP pdb_info_target( new core::pose::PDBInfo( target_chain ) );
 	pdb_info_target->set_chains( 'A');
 	pdb_info_design->set_chains('B');
 

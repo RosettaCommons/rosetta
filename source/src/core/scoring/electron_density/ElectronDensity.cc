@@ -25,7 +25,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>  // b factors
+#include <core/pose/PDBInfo.hh>  // b factors
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/Energies.hh>

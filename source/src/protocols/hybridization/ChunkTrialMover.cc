@@ -15,7 +15,7 @@
 #include <protocols/hybridization/ChunkTrialMover.hh>
 #include <protocols/hybridization/util.hh>
 
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

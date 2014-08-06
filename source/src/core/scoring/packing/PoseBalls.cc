@@ -12,7 +12,7 @@
 /// @author
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 #include <core/scoring/packstat/AtomRadiusMap.hh>
@@ -150,7 +150,7 @@ PoseBalls::PoseBalls(
 // std::cerr << "PoseBalls.cc:134 (" << ")" << std::endl;
 
 	// add hetero atoms not in pose
-	// res num is *NOT* necessarially the same as PDB_Info res num!!!!!
+	// res num is *NOT* necessarially the same as PDBInfo res num!!!!!
 	core::scoring::packstat::AtomRadiusMap arm;
 	std::map<core::Size,core::Size> atomcount;
 	std::map<core::Size,core::Size> resnum;
@@ -259,7 +259,7 @@ PoseBalls::PoseBalls(
 // std::cerr << "PoseBalls.cc:134 (" << ")" << std::endl;
 
 	// add hetero atoms not in pose
-	// res num is *NOT* necessarially the same as PDB_Info res num!!!!!
+	// res num is *NOT* necessarially the same as PDBInfo res num!!!!!
 	core::scoring::packstat::AtomRadiusMap arm;
 	std::map<core::Size,core::Size> atomcount;
 	std::map<core::Size,core::Size> resnum;

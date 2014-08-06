@@ -68,7 +68,7 @@
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <basic/options/util.hh>
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -4048,7 +4048,7 @@ bool
 IterativeOptEDriver::residue_has_bad_bfactor( core::pose::Pose const & pose, Size const resid ) const
 {
 	using namespace core::pose;
-	PDB_InfoCOP info = pose.pdb_info();
+	PDBInfoCOP info = pose.pdb_info();
 	if ( !info ) return false;
 
 	for ( Size ii = 1; ii <= info->natoms( resid ); ++ii ) {

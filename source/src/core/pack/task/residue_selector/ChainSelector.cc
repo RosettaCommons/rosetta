@@ -18,7 +18,7 @@
 // Package headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
@@ -124,7 +124,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 {
   if ( !pose.pdb_info() ){
     std::ostringstream err;
-    err << get_name() << "Selector recieved a pose without a valid PDB_Info--chains cannot be selected.";
+    err << get_name() << "Selector recieved a pose without a valid PDBInfo--chains cannot be selected.";
     throw utility::excn::EXCN_NullPointer( err.str() );
   }
   

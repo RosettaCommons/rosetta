@@ -11,7 +11,7 @@
 #include <protocols/simple_filters/MutationsFilter.hh>
 #include <protocols/simple_filters/MutationsFilterCreator.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>

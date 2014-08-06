@@ -23,7 +23,7 @@
 #include <basic/options/keys/flexPepDocking.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <utility/exit.hh>
@@ -263,10 +263,10 @@ FlexPepDockingFlags::updateChains
 {
 	// TODO: extend for multichains?
 	// update chain ids if needed
-	core::pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
+	core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 	if(!pdbinfo){
-		TR.Warning << "Missing PDB_Info in input pose - generating default PDB_Info from pose object" << std::endl;
-		pdbinfo = new core::pose::PDB_Info(pose);
+		TR.Warning << "Missing PDBInfo in input pose - generating default PDBInfo from pose object" << std::endl;
+		pdbinfo = new core::pose::PDBInfo(pose);
  	}
 	core::Size resi = 1;
 	// get receptor chain if needed

@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>

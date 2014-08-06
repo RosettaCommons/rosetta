@@ -41,7 +41,7 @@
 // Package Headers
 #include <core/kinematics/Edge.hh>
 #include <core/io/pdb/HeaderInformation.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <basic/Tracer.hh>
 
@@ -142,11 +142,11 @@ make_symmetric_pose(
 	pose.set_new_conformation( symm_conf );
 	pose.set_new_energies_object( symm_energy );
 
-	pose::PDB_InfoOP pdb_info = new pose::PDB_Info( pose, true );
+	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose, true );
 
 	//fpd if the input pdb info is valid copy it
 	if ( pose.pdb_info() && pose.pdb_info()->nres() == pose.total_residue() ) {
-		pdb_info = new pose::PDB_Info( *(pose.pdb_info()) );
+		pdb_info = new pose::PDBInfo( *(pose.pdb_info()) );
 	}
 	pose.pdb_info( pdb_info );
 
@@ -169,9 +169,9 @@ make_symmetric_pose(
 
 	using namespace basic::options;
 
-	pose::PDB_InfoOP pdb_info_src( pose.pdb_info() );
+	pose::PDBInfoOP pdb_info_src( pose.pdb_info() );
 	if ( !pose.pdb_info() ) {
-		pdb_info_src = new pose::PDB_Info( pose, true );
+		pdb_info_src = new pose::PDBInfo( pose, true );
 	}
 
 	conformation::symmetry::SymmetricConformationOP symm_conf
@@ -182,7 +182,7 @@ make_symmetric_pose(
 	pose.set_new_conformation( symm_conf );
 	pose.set_new_energies_object( symm_energy );
 
-	pose::PDB_InfoOP pdb_info = new pose::PDB_Info( pose, true );
+	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose, true );
 	core::pose::symmetry::make_symmetric_pdb_info( pose, pdb_info_src, pdb_info );
 	pose.pdb_info( pdb_info );
 
@@ -318,11 +318,11 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
   	pose_out.fold_tree( f_in );
 	}
 
-	pose::PDB_InfoOP pdb_info = new pose::PDB_Info( pose_out, true );
+	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose_out, true );
 
-	pose::PDB_InfoCOP pdb_info_src ( pose_in.pdb_info() );
+	pose::PDBInfoCOP pdb_info_src ( pose_in.pdb_info() );
 	if ( !pose_in.pdb_info() )
-		pdb_info_src = new pose::PDB_Info( pose_in, true );
+		pdb_info_src = new pose::PDBInfo( pose_in, true );
 
 	core::pose::symmetry::extract_asymmetric_unit_pdb_info( pose_in, pdb_info_src, pdb_info );
 	pose_out.pdb_info( pdb_info );
@@ -382,8 +382,8 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 void
 make_symmetric_pdb_info(
 	pose::Pose const & pose,
-	pose::PDB_InfoOP pdb_info_src,
-	pose::PDB_InfoOP pdb_info_target
+	pose::PDBInfoOP pdb_info_src,
+	pose::PDBInfoOP pdb_info_target
 )
 {
 	using namespace core::conformation::symmetry;
@@ -506,14 +506,14 @@ make_symmetric_pdb_info(
 void
 extract_asymmetric_unit_pdb_info(
 	pose::Pose const & pose,
-	pose::PDB_InfoCOP pdb_info_src,
-	pose::PDB_InfoOP pdb_info_target
+	pose::PDBInfoCOP pdb_info_src,
+	pose::PDBInfoOP pdb_info_target
 )
 {
 	using namespace core::conformation::symmetry;
 
 	if (!is_symmetric(pose)) {
-		pdb_info_target = new pose::PDB_Info( *pdb_info_src );
+		pdb_info_target = new pose::PDBInfo( *pdb_info_src );
 		return;
 	}
 

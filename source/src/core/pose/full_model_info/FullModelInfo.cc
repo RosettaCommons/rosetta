@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/kinematics/FoldTree.hh>

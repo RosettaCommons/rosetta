@@ -81,7 +81,7 @@ read_pdbinfo_labels(
 ///     pose = pose_from_pdb("YFP.pdb")
 /// See also:
 ///     Pose
-///     PDB_Info
+///     PDBInfo
 ///     make_pose_from_sequence
 ///     pose_from_rcsb
 ///     pose_from_sequence
@@ -127,7 +127,7 @@ pose_from_pdb(
 ///     pose_from_pdb(pose,"YFP.pdb")
 /// See also:
 ///     Pose
-///     PDB_Info
+///     PDBInfo
 void
 pose_from_pdb(
 	pose::Pose & pose,

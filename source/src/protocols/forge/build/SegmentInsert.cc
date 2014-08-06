@@ -30,7 +30,7 @@
 #include <core/conformation/util.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
@@ -1233,7 +1233,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		pose.set_secstruct( r, insert_pose_.secstruct( i ) );
 	}
 
-	// safety, make sure PDB_Info leaves obsolete
+	// safety, make sure PDBInfo leaves obsolete
 	if ( pose.pdb_info().get() ) {
 		pose.pdb_info()->obsolete( true );
 	}

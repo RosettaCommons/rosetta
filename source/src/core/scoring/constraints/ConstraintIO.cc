@@ -36,7 +36,7 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 

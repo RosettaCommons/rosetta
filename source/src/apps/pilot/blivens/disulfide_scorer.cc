@@ -42,7 +42,7 @@
 #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <apps/pilot/blivens/disulfides.hh>
@@ -112,7 +112,7 @@ public:
 		resA_name_ = resA.name1();
 		resB_name_ = resB.name1();
 
-		pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
+		pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		pdb_posA_ = pdbinfo->number(posA_);
 		chainA_   = pdbinfo->chain(posA_);
 		pdb_posB_ = pdbinfo->number(posB_);

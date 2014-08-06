@@ -29,7 +29,7 @@ static basic::Tracer TR("protocols.simple_moves.PSSM2BfactorMover");
 #include <boost/foreach.hpp>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Residue.hh>

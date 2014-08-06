@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/PDB_PoseMap.cxxtest.hh
-/// @brief  test for PDB_PoseMap class
+/// @file   core/pose/PDBPoseMap.cxxtest.hh
+/// @brief  test for PDBPoseMap class
 /// @author Steven Lewis
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
@@ -17,7 +17,7 @@
 
 #include <core/types.hh>
 
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBPoseMap.hh>
 #include <utility/vector1.hh>
 
 #include <test/core/init_util.hh> //necessary if there is tracer output
@@ -28,12 +28,12 @@
 
 // --------------- Test Class --------------- //
 
-class PDB_PoseMapTests : public CxxTest::TestSuite {
+class PDBPoseMapTests : public CxxTest::TestSuite {
 
 public:
 
 	// typedefs
-	typedef core::pose::PDB_PoseMap PDB_PoseMap;
+	typedef core::pose::PDBPoseMap PDBPoseMap;
 
 	// shared initialization
 	void setUp() {
@@ -46,7 +46,7 @@ public:
 
 	// ------------- Helper Functions ------------- //
 
-	void fill_map( PDB_PoseMap & map ) {
+	void fill_map( PDBPoseMap & map ) {
 		map.insert( ' ',  -1, 'C', 1 );
 		map.insert( 'X', 999, ' ', 2 );
 		map.insert( 'A',  10, 'A', 3 );
@@ -54,15 +54,15 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	void test_PDB_PoseMap_insert() {
-		PDB_PoseMap map;
+	void test_PDBPoseMap_insert() {
+		PDBPoseMap map;
 		fill_map( map );
 
 		TS_ASSERT_EQUALS( map.size(), 3 );
 	}
 
-	void test_PDB_PoseMap_find() {
-		PDB_PoseMap map;
+	void test_PDBPoseMap_find() {
+		PDBPoseMap map;
 		fill_map( map );
 
 		TS_ASSERT_EQUALS( map.find( ' ',  -1, 'C' ), 1 );
@@ -71,8 +71,8 @@ public:
 		TS_ASSERT_EQUALS( map.find( 'B',   0, ' ' ), 0 ); // 0 == not found
 	}
 
-	void test_PDB_PoseMap_erase() {
-		PDB_PoseMap map;
+	void test_PDBPoseMap_erase() {
+		PDBPoseMap map;
 		fill_map( map );
 		map.erase( ' ', -1, 'C' );
 

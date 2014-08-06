@@ -27,7 +27,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -816,7 +816,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 	Size const nres( pose.total_residue() );
 
-	pose::PDB_InfoCOP pdb_data( pose.pdb_info() );
+	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
 	// Identify DNA duplexed regions
 	protocols::dna::DNAParameters dna_info( pose );
@@ -1091,7 +1091,7 @@ set_base_segment_chainbreak_constraints(
 	using namespace id;
 	using numeric::conversions::radians;
 
-	pose::PDB_InfoCOP pdb_data( pose.pdb_info() );
+	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
 //	Size const nres( pose.total_residue() );
 

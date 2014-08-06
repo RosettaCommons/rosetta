@@ -13,7 +13,7 @@
 #include <protocols/features/PdbDataFeatures.hh>
 
 //project headers
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
 
@@ -66,9 +66,9 @@ using basic::database::safely_write_to_database;
 using basic::database::table_exists;
 using cppdb::result;
 using cppdb::statement;
-using core::pose::PDB_Info;
-using core::pose::PDB_InfoOP;
-using core::pose::PDB_InfoCOP;
+using core::pose::PDBInfo;
+using core::pose::PDBInfoOP;
+using core::pose::PDBInfoCOP;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
@@ -253,7 +253,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	}
 
 	if(!pose.pdb_info()){
-		pose.pdb_info(new PDB_Info(pose.total_residue()));
+		pose.pdb_info(new PDBInfo(pose.total_residue()));
 	}
 
 	pose.pdb_info()->set_numbering(pdb_numbers);
@@ -307,7 +307,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 	if(!table_exists(db_session, "residue_pdb_confidence")) return;
 
 	if(!pose.pdb_info()){
-		pose.pdb_info(new PDB_Info(pose.total_residue()));
+		pose.pdb_info(new PDBInfo(pose.total_residue()));
 	}
 
 	std::string statement_string =
@@ -392,7 +392,7 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	StructureID struct_id,
 	sessionOP db_session
 ) {
-	PDB_InfoCOP pdb_info(pose.pdb_info());
+	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
 

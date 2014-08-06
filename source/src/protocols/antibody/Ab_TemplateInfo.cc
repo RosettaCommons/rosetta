@@ -21,8 +21,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
-#include <core/pose/PDB_Info.fwd.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/PDBInfo.hh>
 
 static basic::Tracer TR("antibody.Ab_TemplateInfo");
 

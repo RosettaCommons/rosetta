@@ -25,7 +25,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -236,7 +236,7 @@ class hbond_geom_strat : public hbond_strat {
 	}
 
 	core::Size buns = 0;
-	const pose::PDB_Info& pdb_info = *(pose.pdb_info());
+	const pose::PDBInfo& pdb_info = *(pose.pdb_info());
 	for (core::Size resNum = 1; resNum <= nres; ++resNum) {
 		const conformation::Residue& res = pose.residue(resNum);
 		const chemical::ResidueType& res_type = res.type();

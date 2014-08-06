@@ -52,7 +52,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -310,7 +310,7 @@ void HybridizeSetup::add_template(
 
 	// if pdbinfo doesn't exist (not read from pdb file)
 	if (!template_pose->pdb_info()) {
-		core::pose::PDB_InfoOP new_pdb_info = new core::pose::PDB_Info( *template_pose );
+		core::pose::PDBInfoOP new_pdb_info = new core::pose::PDBInfo( *template_pose );
 
 		utility::vector1< int > pdb_numbering;
 		utility::vector1< char > pdb_chains;

@@ -31,7 +31,7 @@
 
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/rms_util.hh>
 

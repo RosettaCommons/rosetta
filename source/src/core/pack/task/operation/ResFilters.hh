@@ -126,12 +126,12 @@ public:
 	virtual ResFilterOP clone() const;
 };
 
-class ResiduePDB_InfoHasLabel : public ResFilter {
+class ResiduePDBInfoHasLabel : public ResFilter {
 public:
   typedef ResFilter parent;
 public:
-  ResiduePDB_InfoHasLabel();
-  ResiduePDB_InfoHasLabel( std::string const & );
+  ResiduePDBInfoHasLabel();
+  ResiduePDBInfoHasLabel( std::string const & );
   virtual bool operator() ( Pose const &, Size ) const;
   virtual ResFilterOP clone() const;
   virtual void parse_tag( TagCOP );
@@ -140,12 +140,12 @@ private:
   std::string property_;
 };
 
-class ResiduePDB_InfoLacksLabel : public ResiduePDB_InfoHasLabel {
+class ResiduePDBInfoLacksLabel : public ResiduePDBInfoHasLabel {
 public:
-  typedef ResiduePDB_InfoHasLabel parent;
+  typedef ResiduePDBInfoHasLabel parent;
 public:
-  ResiduePDB_InfoLacksLabel();
-  ResiduePDB_InfoLacksLabel( std::string const & );
+  ResiduePDBInfoLacksLabel();
+  ResiduePDBInfoLacksLabel( std::string const & );
   virtual bool operator() ( Pose const &, Size ) const;
   virtual ResFilterOP clone() const;
 };

@@ -33,8 +33,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_PoseMap.hh> //for PDB-info-to-resid functionality
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>

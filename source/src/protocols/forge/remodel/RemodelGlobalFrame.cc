@@ -28,7 +28,7 @@
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/util/disulfide_util.hh>
 #include <core/conformation/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/Remarks.hh>
 #include <core/pose/util.hh> // for pdbinfo
@@ -164,7 +164,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	//Size numRes = pose.total_residue();  // unused ~Labonte
 
 	// dumping information into PDB header
-  core::pose::PDB_InfoOP temp_pdbinfo( new core::pose::PDB_Info(pose,true));
+  core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true));
 
   core::pose::RemarkInfo remark;
 	//capture stream

@@ -40,7 +40,7 @@
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
 
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -165,7 +165,7 @@ basic_idealize(
 
 		// find chain breaks to add cut points
 		bool new_cutpoint = false;
-		pose::PDB_InfoCOP pdbinfo = pose.pdb_info();
+		pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		kinematics::FoldTree f( pose.fold_tree() );
 		for ( Size i = 1; i < nres; ++i ) {
 			if ( f.is_cutpoint(i) ) continue;

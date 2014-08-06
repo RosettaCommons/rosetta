@@ -16,7 +16,7 @@
 #include <protocols/matdes/MatDesGreedyOptMutationMoverCreator.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <fstream>
 #include <iostream>
 #include <numeric/random/random.hh>

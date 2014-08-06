@@ -43,7 +43,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/sequence_comparation/DesignContrast.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <basic/options/option.hh>
 
@@ -210,7 +210,7 @@ static basic::Tracer TR("core.io.sequence_comparation.DesignContrast");
     vector1<char> chain_ids;
     vector1<int> pdb_res_num;
 
-    // this block is commented out due to deprecation of old PDB_Info interface
+    // this block is commented out due to deprecation of old PDBInfo interface
     // chain ids
 //    chain_ids = decoy_pose.pdb_chains();
 //		TR << "after get chains"<< std::endl;

@@ -44,7 +44,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 
@@ -764,7 +764,7 @@ namespace protocols
 				//Will store the stitched pose
 				core::pose::Pose p_result;
 				//Create PDB info for the p_result pose
-				p_result.pdb_info( new core::pose::PDB_Info(p_result, true) );
+				p_result.pdb_info( new core::pose::PDBInfo(p_result, true) );
 				
 				//Get a copy of the scaffold rotated to the final position
 				core::pose::Pose p_scaffold_rotated = get_rotated_and_translated_pose(p_scaffold, m2s_dat.RotM, m2s_dat.TvecA, m2s_dat.TvecB);

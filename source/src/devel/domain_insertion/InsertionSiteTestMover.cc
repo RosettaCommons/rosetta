@@ -37,7 +37,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>

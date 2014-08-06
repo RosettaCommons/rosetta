@@ -23,7 +23,7 @@
 // Project headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>

@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/pose/copydofs/CopyDofs.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

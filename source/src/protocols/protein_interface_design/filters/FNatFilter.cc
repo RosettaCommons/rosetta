@@ -23,7 +23,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/docking/metrics.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/option.hh>

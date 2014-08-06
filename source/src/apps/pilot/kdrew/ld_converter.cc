@@ -13,8 +13,8 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -187,7 +187,7 @@ LDConverterMover::apply(
 	utility::vector1< core::Size > l_positions = option[ ld_converter::convert_L_positions ].value();
 	//kdrew: parse pdb numbering in convert_pdb_position options
 	utility::vector1< std::string > const l_pdb_positions = option[ ld_converter::convert_L_pdb_positions].value();
-	core::pose::PDB_PoseMap const & pose_map(pose.pdb_info()->pdb2pose());
+	core::pose::PDBPoseMap const & pose_map(pose.pdb_info()->pdb2pose());
 	//kdrew: chain and res numbers are a pair so increment by 2
 	for( Size i = 1; i <= l_pdb_positions.size(); i=i+2 )
 	{

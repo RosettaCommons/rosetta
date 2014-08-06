@@ -32,7 +32,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 
@@ -625,7 +625,7 @@ void build_pose_as_is2(
 	using namespace chemical;
 	using namespace conformation;
 
-	core::pose::PDB_InfoOP pdb_info( new core::pose::PDB_Info(*pose.pdb_info()) );
+	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(*pose.pdb_info()) );
 
 	if ( !options.skip_set_reasonable_fold_tree() ) {
 		set_reasonable_fold_tree( pose );

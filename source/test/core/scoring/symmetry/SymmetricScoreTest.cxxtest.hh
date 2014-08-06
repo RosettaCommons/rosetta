@@ -57,7 +57,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ContextGraph.fwd.hh>
 #include <core/scoring/ContextGraphTypes.hh>

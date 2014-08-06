@@ -17,8 +17,8 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDB_PoseMap.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -102,7 +102,7 @@ public:
 
 		if (chain == '_') chain = ' ';
 
-		core::pose::PDB_PoseMap const & pose_map(scaffold.pdb_info()->pdb2pose());
+		core::pose::PDBPoseMap const & pose_map(scaffold.pdb_info()->pdb2pose());
 		insert_loop_start = pose_map.find(chain, PDBloopstart);
 		insert_loop_end = pose_map.find(chain, PDBloopend);
 		insert_point = pose_map.find(chain, PDBinsertstart);

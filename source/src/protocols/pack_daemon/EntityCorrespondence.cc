@@ -19,8 +19,8 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
-#include <core/pose/PDB_PoseMap.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -86,10 +86,10 @@ void EntityCorrespondence::set_pose( core::pose::PoseCOP pose )
 	}
 	pose_ = pose;
 	if ( ! pose_->pdb_info() ) {
-		PDB_Info info(*pose_);
-		pdb_pose_map_ = new PDB_PoseMap( info ); //use PDB_Info ctor for PDB_PoseMap
+		PDBInfo info(*pose_);
+		pdb_pose_map_ = new PDBPoseMap( info ); //use PDBInfo ctor for PDBPoseMap
 	} else {
-		pdb_pose_map_ = new PDB_PoseMap( pose_->pdb_info()->pdb2pose());
+		pdb_pose_map_ = new PDBPoseMap( pose_->pdb_info()->pdb2pose());
 	}
 }
 

@@ -28,7 +28,7 @@
 
 // Utility headers
 #include <numeric/random/random.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
@@ -149,8 +149,8 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	}
 */
 
-	// make a PDB_Info for the pose...
-	pose::PDB_InfoOP pdb_info = new pose::PDB_Info( pose, true );
+	// make a PDBInfo for the pose...
+	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose, true );
 
 	utility::vector1< char > chain;
 	for ( Size i=1; i<= pdb_info->nres(); ++i ) {

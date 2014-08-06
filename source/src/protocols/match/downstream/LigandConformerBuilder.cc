@@ -29,7 +29,7 @@
 // AUTO-REMOVED #include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -385,7 +385,7 @@ LigandConformerBuilder::downstream_pose_from_hit(
 	pose->append_residue_by_jump( lig_res, 1 );
 
 	//we should also set a different chain for the downstream pose
-	core::pose::PDB_InfoOP pdbinf = new core::pose::PDB_Info( *pose );
+	core::pose::PDBInfoOP pdbinf = new core::pose::PDBInfo( *pose );
 	pose->pdb_info( pdbinf );
 	pose->pdb_info()->chain( 1, 'X' );
 

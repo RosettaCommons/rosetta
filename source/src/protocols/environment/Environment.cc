@@ -29,7 +29,7 @@
 #include <basic/datacache/WriteableCacheableMap.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/chemical/VariantType.hh>
@@ -153,12 +153,12 @@ core::pose::Pose Environment::end( core::pose::Pose const& pose ){
            << " and fold tree: " << new_pose.fold_tree() << std::endl;
 
   if( input_pose_.pdb_info() ){
-    tr.Trace << "  Applying old PDB_Info object with " << input_pose_.pdb_info()->nres() << " residues to pose with "
+    tr.Trace << "  Applying old PDBInfo object with " << input_pose_.pdb_info()->nres() << " residues to pose with "
              << new_pose.total_residue() << " residues." << std::endl;
 
-    new_pose.pdb_info( new core::pose::PDB_Info( *( input_pose_.pdb_info() ) ) );
+    new_pose.pdb_info( new core::pose::PDBInfo( *( input_pose_.pdb_info() ) ) );
   } else {
-    tr.Trace << "  No PDB_Info object being built in to Environment's output pose, "
+    tr.Trace << "  No PDBInfo object being built in to Environment's output pose, "
              << "as it appears the input pose didn't have one." << std::endl;
   }
 

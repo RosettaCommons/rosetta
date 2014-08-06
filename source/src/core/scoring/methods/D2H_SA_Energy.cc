@@ -28,7 +28,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 
@@ -241,7 +241,7 @@ D2H_SA_Energy::finalize_total_energy(
 	Size rsa_index_start=0;
 	Size rsa_index_end=0;
 
-	pose::PDB_InfoCOP pdb_info = pose.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	if(rsa_index_start_ == 0) { 
 		for(Size i=1;i<=nres;i++) {
 			conformation::Residue const & rsd( pose.residue(i) );

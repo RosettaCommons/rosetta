@@ -29,7 +29,7 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 //for resfile reading

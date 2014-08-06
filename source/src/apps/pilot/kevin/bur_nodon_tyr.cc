@@ -22,7 +22,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <core/scoring/ScoreType.hh>
@@ -31,7 +31,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

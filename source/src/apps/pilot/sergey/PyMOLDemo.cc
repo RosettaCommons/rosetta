@@ -17,7 +17,7 @@
 
 #include <protocols/moves/PyMolMover.hh>
 #include <core/pose/Pose.hh>
-//#include <core/pose/PDB_Info.hh>
+//#include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

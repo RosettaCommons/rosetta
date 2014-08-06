@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Protocol Includes
 #include <protocols/moves/MonteCarlo.hh>
@@ -361,10 +361,10 @@ AntibodyGraftDesignMover::read_instructions(std::string instruction_path){
 void
 AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end) {
   
-	//using core::pose::PDB_Info;
+	//using core::pose::PDBInfo;
   
-	//PDB_Info should not be obsolete when calling this function.
-	//PDB_Info & pdbinfo = *pose.pdb_info();
+	//PDBInfo should not be obsolete when calling this function.
+	//PDBInfo & pdbinfo = *pose.pdb_info();
 	core::Size cdr_length = ab_info_->get_cluster_length(cluster);
 	core::Real result = (core::Real)cdr_length/2;
 	core::Size pdb_num_start = pose.pdb_info()->number(original_start);
@@ -376,7 +376,7 @@ AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRCl
 		core::Size pdb_num = pdb_num_start+i;
 		core::Size pose_num = original_start+i;
 		char chain = ab_info_->get_CDR_chain(cdr);
-		TR.Debug << "Set PDB_Info: "<< pose_num<<": "<< pdb_num << " "<<  chain <<std::endl;
+		TR.Debug << "Set PDBInfo: "<< pose_num<<": "<< pdb_num << " "<<  chain <<std::endl;
 		pose.pdb_info()->set_resinfo(pose_num, chain , pdb_num);
 	}
   
@@ -385,7 +385,7 @@ AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRCl
 		core::Size pdb_num = pdb_num_end-i;
 		core::Size pose_num = original_end-i;
 		char chain = ab_info_->get_CDR_chain(cdr);
-		TR.Debug << "Set PDB_Info: "<< pose_num<<": "<< pdb_num << " "<<  chain <<std::endl;
+		TR.Debug << "Set PDBInfo: "<< pose_num<<": "<< pdb_num << " "<<  chain <<std::endl;
 		pose.pdb_info()->set_resinfo(pose_num, chain , pdb_num);
 	}
 }
@@ -414,7 +414,7 @@ AntibodyGraftDesignMover::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameE
 bool
 AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size index){
 	
-	//Get CDR start/end in PDB_Info is now dynamic.  As long as pdb_info is not obsolete
+	//Get CDR start/end in PDBInfo is now dynamic.  As long as pdb_info is not obsolete
 	//This should go into a log, we should figure out how to have this info written to the resulting file.
 	TR << "Grafting CDR from cluster " << ab_info_->get_cluster_name(cdr_cluster_map_[cdr][index]) << " fragment "<< pdbmap_[cdr][index] << std::endl;
 	
@@ -483,7 +483,7 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 	pose.pdb_info()->copy(*((cdr_set_[cdr][index])->pdb_info()), 1 + overhang_, (cdr_set_[cdr][index])->total_residue()-overhang_, start+1);
 	pose.pdb_info()->obsolete(false);
 	
-	TR << "PDB_Info Set" << std::endl;
+	TR << "PDBInfo Set" << std::endl;
 	modeler_->set_cdr_only(cdr, true);
 	
 	

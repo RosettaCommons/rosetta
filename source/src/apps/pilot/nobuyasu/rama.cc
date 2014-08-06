@@ -20,7 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/util/ABEGOManager.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <utility/excn/Exceptions.hh>
 

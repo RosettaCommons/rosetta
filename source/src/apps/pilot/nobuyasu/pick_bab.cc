@@ -33,7 +33,7 @@
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>

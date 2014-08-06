@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/types.hh>

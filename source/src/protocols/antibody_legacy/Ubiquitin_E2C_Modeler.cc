@@ -39,7 +39,7 @@
 #include <protocols/scoring/Interface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
@@ -769,7 +769,7 @@ ubi_e2c_modeler::setup_key_residues(
 
 	TR << "UBI Setting Up Key Residues" << std::endl;
 
-	pose::PDB_InfoCOP pdb_info = pose_in.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	d77_end_ = pose_in.total_residue();
 
 	char chain = '_';
@@ -2517,7 +2517,7 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 
 	TR << "UBI Mono Ubi Setting Up Key Residues" << std::endl;
 
-	pose::PDB_InfoCOP pdb_info = pose_in.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	monoub_end_ = pose_in.total_residue();
 
 	char chain = '_';

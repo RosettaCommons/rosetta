@@ -44,7 +44,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/util.hh>
@@ -253,7 +253,7 @@ void MRMover::apply( Pose &pose ) {
 				 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
 				 && template_pose->residue(template_pose->total_residue()).is_polymer())
 		core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
-		core::pose::PDB_InfoOP new_pdb_info = new core::pose::PDB_Info( *template_pose );
+		core::pose::PDBInfoOP new_pdb_info = new core::pose::PDBInfo( *template_pose );
 
 		// pdbinfo
 		new_pdb_info->set_numbering( pdb_numbering );
@@ -465,9 +465,9 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	if (new_invmapping[old_root] != 0)
 		f.reorder( new_invmapping[old_root] );
 
-	//PDB_Info stuff
-	core::pose::PDB_InfoOP pdb_info( query_pose.pdb_info() );
-	core::pose::PDB_InfoOP new_pdb_info( new core::pose::PDB_Info(new_nres) );
+	//PDBInfo stuff
+	core::pose::PDBInfoOP pdb_info( query_pose.pdb_info() );
+	core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(new_nres) );
 	utility::vector1< int > pdb_numbering;
 	utility::vector1< char > pdb_chains;
 

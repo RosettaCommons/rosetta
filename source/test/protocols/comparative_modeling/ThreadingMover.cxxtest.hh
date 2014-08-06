@@ -80,7 +80,7 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
-#include <core/pose/PDB_Info.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>

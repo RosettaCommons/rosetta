@@ -31,7 +31,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/types.hh>
-#include <core/pose/PDB_Info.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 // Utility headers
@@ -66,7 +66,7 @@ using core::Size;
 using core::conformation::Conformation;
 using core::kinematics::FoldTree;
 using core::pose::Pose;
-using core::pose::PDB_InfoCOP;
+using core::pose::PDBInfoCOP;
 using protocols::scoring::InterfaceInfoOP;
 
 /// @brief Setup foldtree for across an interface specified by a
@@ -100,7 +100,7 @@ setup_foldtree(
 	DockJumps & movable_jumps
 ) {
 
-	PDB_InfoCOP pdb_info = pose.pdb_info();
+	PDBInfoCOP pdb_info = pose.pdb_info();
 	movable_jumps.clear(); //Why is this required and then cleared?
 
 	if(!pdb_info){
