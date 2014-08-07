@@ -295,6 +295,7 @@ sources = {
 		"ABEGOManager",
 		#"ChainbreakUtil",
 		"MetricValueIO",
+		"metalloprotein_import",
 	],
 }
 include_path = [ "#external/cxxtest", "#" ]
@@ -649,5 +650,6 @@ testinputfiles = [
 	"sequence/test.general_aln",
 	"sequence/test.grishin_aln",
 	"util/abego_test.pdb",
+	"util/2c9v_stripped.pdb",
 	"pack/task/short_his.pdb",
 ]
