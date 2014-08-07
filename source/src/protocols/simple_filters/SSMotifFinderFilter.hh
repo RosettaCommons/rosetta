@@ -61,6 +61,8 @@ class SSMotifFinder : public filters::Filter
 
 		std::string filename() const{ return filename_; }
 		void filename( std::string const s ){ filename_ = s;}
+		std::string pdbname() const{ return pdbname_; }
+		void pdbname ( std::string const s ){ pdbname_ = s;}
 	private:
 		core::Size from_res_, to_res_; // dflt 0,0; minimal and maximal sequence separation for motif search
 		core::pose::PoseOP template_pose_; // dflt NULL
@@ -68,6 +70,7 @@ class SSMotifFinder : public filters::Filter
 		core::kinematics::Jump jump_; //dflt NULL; template jump information. Computed once at parse time and used during apply
 		core::Real rmsd_; //dflt 0; the maximal RMSd
 		std::string filename_; //dflt ""; the file name into which to write the report
+		std::string pdbname_; //dflt ""; the pdb in which the motif is searched 
 };
 }
 }

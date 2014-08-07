@@ -35,6 +35,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/Edge.hh>
+#include <core/pose/PDBInfo.hh>
 
 namespace protocols{
 namespace simple_filters {
@@ -56,7 +57,8 @@ template_pose_( NULL ),
 template_stem1_( 0 ),
 template_stem2_ ( 0 ),
 rmsd_( 0.0 ),
-filename_( "" )
+filename_( "" ),
+pdbname_( "" )
 {
 }
 
@@ -69,6 +71,7 @@ SSMotifFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 	to_res( tag->getOption< core::Size >( "to_res" ) );
 	rmsd( tag->getOption< core::Real >( "rmsd" ) );
 	filename( tag->getOption< std::string >( "filename" ) );
+	pdbname( tag->getOption< std::string >( "pdbname" ) );
 
 	std::string template_pose_filename( tag->getOption< std::string >( "template_pose" ) );
 	template_pose_ = new core::pose::Pose;
@@ -78,7 +81,7 @@ SSMotifFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 
 	jump_ = compute_jump( *template_pose_, template_stem1(), template_stem2() );
 
-	TR<<"SSMotifFinder with options: from_res "<<from_res()<<", to_res "<<to_res()<<", template_stem1 "<<template_stem1()<<", template_stem2 "<<template_stem2()<<", rmsd "<<rmsd()<<", filename "<<filename()<<", template_pose "<<template_pose_filename<<std::endl;
+	TR<<"SSMotifFinder with options: from_res "<<from_res()<<", to_res "<<to_res()<<", template_stem1 "<<template_stem1()<<", template_stem2 "<<template_stem2()<<", rmsd "<<rmsd()<<", filename "<<filename()<<", template_pose "<<template_pose_filename<<", pdbname "<<pdbname()<<std::endl;
 }
 
 core::Real
@@ -106,11 +109,16 @@ two_res_rmsd( core::conformation::Residue const & r1, core::conformation::Residu
 }
 
 void
-write_to_file( std::string const filename, core::Size const stem1, core::Size const stem2, core::Real const rmsd ){
+write_to_file( std::string const filename, core::Size const stem1, core::Size const stem2, core::Real const rmsd, std::string const pdbname, core::pose::Pose const & pose ){
+	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
+
+	char const chain1( pdb_info->chain( stem1 ) ), chain2( pdb_info->chain( stem2 ) );
+	int const resnum1( pdb_info->number( stem1 )), resnum2( pdb_info->number( stem2 ) );
+
   std::ofstream stem_file;
 	stem_file.open( filename.c_str(), std::ios::app );
 	runtime_assert( stem_file );
-	stem_file<<stem1<<' '<<stem2<<' '<<rmsd<<'\n';
+	stem_file<<pdbname<<' '<<resnum1<<chain1<<' '<<resnum2<<chain2<<' '<<rmsd<<'\n';
 }
 
 bool
@@ -169,11 +177,11 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 		core::pose::Pose copy_pose( pose );
 		copy_pose.conformation().append_residue_by_jump( res_stem2, stem1 );
 		TR<<"new foldtree: "<<copy_pose.fold_tree()<<std::endl;
-		copy_pose.set_jump( 1, jump() );
+		copy_pose.set_jump( copy_pose.num_jump(), jump() );
 		Real const motif_rmsd = two_res_rmsd( res_stem2, copy_pose.conformation().residue( copy_pose.total_residue() ) );
 		TR<<"rmsd="<<motif_rmsd<<std::endl;
 		if( motif_rmsd <= rmsd() )
-			write_to_file( filename_, stem1, stem2, motif_rmsd );
+			write_to_file( filename_, stem1, stem2, motif_rmsd, pdbname_, pose );
 	}
 
 	return true;
@@ -195,6 +203,7 @@ core::kinematics::Jump
 SSMotifFinder::compute_jump( core::pose::Pose const & pose, core::Size const start, core::Size const end ) const {
 	using namespace core::kinematics;
 
+	runtime_assert( pose.conformation().num_chains() == 1 );
 	core::pose::Pose copy_pose( pose );
 	core::conformation::Residue const res( pose.conformation().residue( end ) );
 	copy_pose.conformation().append_residue_by_jump( res, start );
