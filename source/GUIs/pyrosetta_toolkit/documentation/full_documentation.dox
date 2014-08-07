@@ -205,14 +205,9 @@ Main Functions:
  This is so you do not need to source SetPyRosettaEnvironment.sh each time you want to use Toolkit.  Takes a few minutes, but worth it.  For more information on to what a bash shell is: http://superuser.com/questions/49289/what-is-bashrc-file
  
  To do this:
-  @li 1) open SetPyRosettaEnvironment.sh in a text editor (Can be found in PyRosetta directory).  Copy it's text from where it says export PYROSETTA down.
-  @li 2) open $HOME/.bashrc (linux) or $HOME/.bash_profile (mac) into vi or gedit through the command-line.
-  --> <code>vi $HOME/.bashrc</code>
-  @li 3) paste what was in SetPyRosettaEnvironment, editing this line: 
-        <code>export PYROSETTA</code>   to   
-	<code>export PYROSETTA='full/path/to/PyRosetta/directory'</code>
-  @li Also, Make sure there are no extra spaces next to the equals sign. 
-  @li 4) Your bashrc will run each time a new terminal window or tab is created.  To run it now: source $HOME/.bashrc
+  @li 1) Add a line to your bashrc or zshrc if  your using zsh ($HOME/.bashrc) or ($HOME/.bash_profile on mac) ($HOME/.zshrc if you use zsh shell):
+  	<code>source full/path/to/SetPyRosettaEnvironment.sh<ccode>
+	(This file is found in the PyRosetta directory)
 
 @subsection pymol PyMOL Setup 
 Setup so that the pymol server runs + listens each time PyMOL is opened.
