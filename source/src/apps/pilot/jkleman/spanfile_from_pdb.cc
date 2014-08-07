@@ -41,6 +41,9 @@
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 
+// utility headers
+#include <utility/excn/Exceptions.hh>
+
 // C++ Headers
 #include <cstdlib>
 #include <string>
@@ -186,11 +189,18 @@ void spanfile_from_pdb(){
 int
 main( int argc, char * argv [] )
 {
-	// initialize option system, random number generators, and all factory-registrators
-	devel::init(argc, argv);
-	//protocols::init(argc, argv);
-	
-	// call my function
-	spanfile_from_pdb();
+	try {
 
+		// initialize option system, random number generators, and all factory-registrators
+		devel::init(argc, argv);
+		//protocols::init(argc, argv);
+
+		// call my function
+		spanfile_from_pdb();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

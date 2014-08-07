@@ -86,14 +86,14 @@ public:
     }
 };
 
-typedef utility::pointer::owning_ptr< MembraneSfxnMover > MembraneSfxnMoverOP;  
+typedef utility::pointer::owning_ptr< MembraneSfxnMover > MembraneSfxnMoverOP;
 
 /// @brief Main Function
 int main( int argc, char* argv[] )
 {
     try {
-        
-        using namespace core::scoring; 
+
+        using namespace core::scoring;
         using namespace protocols::membrane;
         using namespace protocols::jd2;
 
@@ -101,18 +101,20 @@ int main( int argc, char* argv[] )
 
         // Initialize Options System, RG, and All Factory_Registrators
         devel::init(argc, argv);
-        
+
         TR << "Membrane Fullatom Scoring Function ScoreFunction Fingerprint Test" << std::endl;
         TR << "@ralford - updated 5/14/14" << std::endl;
-        TR << "=======================================================" << std::endl; 
+        TR << "=======================================================" << std::endl;
 
         // Initialize Membrane protein From Membrane Mover
-        
-        MembraneSfxnMoverOP mp = new MembraneSfxnMover(); 
+
+        MembraneSfxnMoverOP mp = new MembraneSfxnMover();
         JobDistributor::get_instance()->go(mp);
 
     } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
+			std::cout << "caught exception " << e.msg() << std::endl;
+			return -1;
     }
 
+		return 0;
 }
