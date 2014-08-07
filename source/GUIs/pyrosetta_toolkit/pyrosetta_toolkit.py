@@ -291,7 +291,7 @@ if __name__ == '__main__':
    rosetta.init()
    main_window_class = main_window()
    main_window_class.TR = MainTracer(main_window_class.output_textbox)
-   rosetta.basic.Tracer.set_ios_hook(main_window_class.TR, rosetta.basic.Tracer.get_AllChannels_string(), False)
+   rosetta.basic.Tracer.set_ios_hook(main_window_class.TR, rosetta.basic.Tracer.get_all_channels_string(), False)
    #rosetta.init(extra_options="-mute all")
    
    main_window_class.run()
