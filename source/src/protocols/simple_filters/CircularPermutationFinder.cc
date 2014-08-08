@@ -135,6 +135,9 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 	using namespace protocols::toolbox::task_operations;
 	using namespace core::pack::task;
 
+	if( !pose.conformation().residue( pose.conformation().chain_begin( chainA ) ).is_protein() ||
+			!pose.conformation().residue( pose.conformation().chain_begin( chainB ) ).is_protein() )
+		return;
 	TR<<"Testing chainA: "<<chainA<<" chainB: "<<chainB<<std::endl;
 	vector1< PoseOP > pose_chains( pose.split_by_chain() );
 	pose_chains[ chainA ]->append_pose_by_jump( *pose_chains[ chainB ], 1 );

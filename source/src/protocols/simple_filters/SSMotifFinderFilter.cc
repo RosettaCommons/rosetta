@@ -154,10 +154,12 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 	vector1< pair< Size/*stem1*/, Size/*stem2*/ > > stems;
 	stems.clear();
 	for( Size stem1 = 1; stem1 <= pose.total_residue() - from_res(); ++stem1 ){
-		if( sec_struct[ stem1 - 1 ] != template_sec_struct[ template_stem1() - 1 ] )
+		if( sec_struct[ stem1 - 1 ] != template_sec_struct[ template_stem1() - 1 ] ||
+				!pose.conformation().residue( stem1 ).is_protein() )
 			continue;
 		for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.total_residue(); ++stem2 ){
-			if( sec_struct[ stem2 - 1 ] != template_sec_struct[ template_stem2() - 1 ] )
+			if( sec_struct[ stem2 - 1 ] != template_sec_struct[ template_stem2() - 1 ] ||
+			    !pose.conformation().residue( stem2 ).is_protein() )
 				continue;
 			stems.push_back( pair< Size, Size >( stem1, stem2 ) );
 		}
