@@ -24,6 +24,7 @@
 #include <protocols/simple_filters/RelativePoseFilterCreator.hh>
 #include <protocols/simple_filters/StemFinderFilterCreator.hh>
 #include <protocols/simple_filters/SSMotifFinderFilterCreator.hh>
+#include <protocols/simple_filters/CircularPermutationFinderCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
 
 #include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>

@@ -459,6 +459,7 @@ sources = {
 		"BuriedUnsatHbondFilter",
 		"CamShiftEvaluator",
 		"CamShiftEvaluatorCreator",
+		"CircularPermutationFinder",
 		"COFilter",
 		"ConservedPosMutationFilter",
 		"ConstraintScoreCutoffFilter",

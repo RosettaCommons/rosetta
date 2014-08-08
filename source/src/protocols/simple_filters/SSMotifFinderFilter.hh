@@ -22,6 +22,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -70,8 +71,14 @@ class SSMotifFinder : public filters::Filter
 		core::kinematics::Jump jump_; //dflt NULL; template jump information. Computed once at parse time and used during apply
 		core::Real rmsd_; //dflt 0; the maximal RMSd
 		std::string filename_; //dflt ""; the file name into which to write the report
-		std::string pdbname_; //dflt ""; the pdb in which the motif is searched 
+		std::string pdbname_; //dflt ""; the pdb in which the motif is searched
 };
+
+///@brief compute the atomic distance between two atoms on two residues
+core::Real
+atom_distance( core::conformation::Residue const & r1, std::string const a1,
+               core::conformation::Residue const & r2, std::string const a2 );
+
 }
 }
 

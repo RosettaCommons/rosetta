@@ -41,6 +41,7 @@ static FilterRegistrator< protocols::filters::TimeFilterCreator > reg_TimeFilter
 static FilterRegistrator< protocols::simple_filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 static FilterRegistrator< protocols::simple_filters::StemFinderFilterCreator > reg_StemFinderFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SSMotifFinderFilterCreator > reg_SSMotifFinderFilterCreator;
+static FilterRegistrator< protocols::simple_filters::CircularPermutationFinderFilterCreator > reg_CircularPermutaitonFinderCreator;
 
 static FilterRegistrator< protocols::fldsgn::filters::CoreDunbrackFilterCreator > reg_CoreDunbrackFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
