@@ -54,6 +54,9 @@ public:
 	~LinkResidues();
 
 	virtual TaskOperationOP clone() const;
+
+	void add_group( std::string group );
+
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
   virtual void parse_tag(TagCOP tag, DataMap & );

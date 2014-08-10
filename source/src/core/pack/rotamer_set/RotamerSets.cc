@@ -194,6 +194,15 @@ RotamerSets::build_rotamers(
 
 			int num_rot = 1000000;
 			int smallest_res = 0;
+
+			//Added to handle cases where no equivalent residue has been set. This shouldn't
+			//happen except in special cases (my scenario: add rotamer links and then relax
+			//with coordinate constraints, which addes virtual residues that have no equivalents
+			//set
+			if( copies.size() == 0 ) {
+				smallest_res = moltenres_2_resid_[ii];
+			}
+
 			for (uint jj = 1; jj <= copies.size(); ++jj){
 				visited[ copies[jj] ] = true;
 				int buffer;

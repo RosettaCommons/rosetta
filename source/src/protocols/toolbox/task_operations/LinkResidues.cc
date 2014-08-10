@@ -89,10 +89,12 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 						for(Size ll=1; ll<=grp_i.size(); ++ll){
 								Size numResInSet = grp_i[kk].size();
 								for(Size mm=1; mm<=numResInSet; ++mm){
-										Size source = grp_i[kk][mm];
-										Size target = grp_i[ll][mm];
-										assert(source != target);
-										equiv_pos[source].push_back(target);
+										if(kk != ll) {
+											Size source = grp_i[kk][mm];
+											Size target = grp_i[ll][mm];
+											assert(source != target);
+											equiv_pos[source].push_back(target);
+										}
 								}
 						}
 				}
@@ -111,6 +113,11 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 						links->set_equiv(ii,equiv_pos[ii]);
 		}
 		task.rotamer_links( links );
+}
+
+void
+LinkResidues::add_group( std::string group  ){
+	allGroups_.push_back(group);
 }
 
 void
