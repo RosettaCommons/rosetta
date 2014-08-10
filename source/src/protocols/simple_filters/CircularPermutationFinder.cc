@@ -114,7 +114,7 @@ superimpose_parts( utility::vector1< numeric::xyzVector< core::Real > > & ref_co
 	core::Size const aa_atom_num( 4 );
 	utility::vector1< numeric::xyzVector< core::Real > > rotated_coords( ref_coords );
 
-	std::rotate( ref_coords.begin(), ref_coords.begin() + cut * aa_atom_num, ref_coords.end());
+	std::rotate( rotated_coords.begin(), rotated_coords.begin() + ( cut - 1 ) * aa_atom_num, rotated_coords.end());
 
   numeric::xyzMatrix< core::Real > rotation;
   numeric::xyzVector< core::Real > to_init_center, to_fit_center;
@@ -145,7 +145,7 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 
 	Real const n_c_dist( atom_distance( rewired_pose.conformation().residue( 1 ), "CA",
 																			rewired_pose.conformation().residue( rewired_pose.conformation().chain_end( 1 ) ), "CA" ) );
-	TR<<"Distance = "<<n_c_dist;
+	TR<<"Distance = "<<n_c_dist<<std::endl;
 	if( n_c_dist >= N_C_distance() ){
 		TR<<" failed distance cutoff"<<std::endl;
 		return;
@@ -159,8 +159,8 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 	TaskFactoryOP tf_interface( new TaskFactory);
 	tf_interface->push_back(pido);
   vector1< Size > const chainA_interface( protocols::rosetta_scripts::residue_packer_states( rewired_pose, tf_interface, true, true));
-	TR<<"Number of binding residues: "<<chainA_interface.size();
-	if( chainA_interface.size() <= 15 ){
+	TR<<"Number of binding residues: "<<chainA_interface.size()<<std::endl;
+	if( chainA_interface.size() <= 5 ){
 		TR<<"Number too small; failing"<<std::endl;
 		return;
 	}
@@ -179,6 +179,7 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 	vector1< numeric::xyzVector< core::Real > > aligned_coords( bb_coords( rewired_pose, aligned_positions ) );
 	for( Size cut = 2; cut < aligned_positions.size(); ++cut ){
 		Real const internal_rmsd = superimpose_parts( aligned_coords, cut );
+		TR<<"At cut position: "<<aligned_positions[ cut ]<<" rmsd: "<<internal_rmsd<<std::endl;
 		rmsds[ aligned_positions[ cut ] ] = internal_rmsd;
 	}
 	Real min_rmsd( 100000.0 );
@@ -190,7 +191,7 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 		}
 	}
 	if( min_rmsd <= rmsd() )
-		write_to_file( filename_, pose, chainA_interface[ 1 ], min_cut, chainA_interface[ chainA_interface.size() ], min_rmsd );
+		write_to_file( filename_, rewired_pose, chainA_interface[ 1 ], min_cut, chainA_interface[ chainA_interface.size() ], min_rmsd );
 }
 
 
