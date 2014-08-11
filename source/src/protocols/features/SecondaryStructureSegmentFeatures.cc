@@ -160,7 +160,7 @@ SecondaryStructureSegmentFeatures::is_helix(std::string dssp_code){
 ///@brief collect all the feature data for the pose
 core::Size
 SecondaryStructureSegmentFeatures::report_features(
-	core::pose::Pose const & pose,
+	core::pose::Pose const & /*pose*/,
 	utility::vector1< bool > const & relevant_residues,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
@@ -189,11 +189,15 @@ SecondaryStructureSegmentFeatures::report_features(
 	// used to determine if segement should be reported based on relevant_residues
 	utility::vector1<Size> current_residues;
 
+	core::Size prev_resNum=0;
+	core::Size resNum;
+	std::string residue_secondary;
 	while(res.next()){
-		core::Size resNum;
-		std::string residue_secondary;
+	
 
 		res >> resNum >> residue_secondary;
+
+		std::cout << "Current resNum " << resNum << std::endl;
 
 		//Use non-standard 'L' for all loop-like dssp codes
 		if(is_loop(residue_secondary))
@@ -206,11 +210,11 @@ SecondaryStructureSegmentFeatures::report_features(
 			residue_secondary="H";
 		}
 
-		if(residue_secondary != segment_secondary)
+		if(residue_secondary != segment_secondary || (resNum != prev_resNum+1 && prev_resNum !=0))
 		{
 			if(resNum > 1 && check_relevant_residues(relevant_residues, current_residues))
 			{
-				segment_end=resNum-1;
+				segment_end=prev_resNum;
 
 				//write segment to DB
 				cppdb::statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
@@ -229,7 +233,7 @@ SecondaryStructureSegmentFeatures::report_features(
 			segment_begin=resNum;
 		}
 		current_residues.push_back(resNum);
-
+		prev_resNum = resNum;
 	}
 
 	//write final segment to DB
@@ -237,7 +241,7 @@ SecondaryStructureSegmentFeatures::report_features(
 	stmt.bind(1,struct_id);
 	stmt.bind(2,segment_counter);
 	stmt.bind(3,segment_begin);
-	stmt.bind(4,pose.total_residue());
+	stmt.bind(4,resNum);
 	stmt.bind(5,segment_secondary);
 	basic::database::safely_write_to_database(stmt);
 
