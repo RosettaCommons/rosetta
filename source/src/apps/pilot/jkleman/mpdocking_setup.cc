@@ -371,10 +371,17 @@ void mpdocking_setup(){
 int
 main( int argc, char * argv [] )
 {
-	// initialize option system, random number generators, and all factory-registrators
-	devel::init(argc, argv);
-	
-	// call my function
-	mpdocking_setup();
+	try {
+		// initialize option system, random number generators, and all factory-registrators
+		devel::init(argc, argv);
 
+		// call my function
+		mpdocking_setup();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+
+	return 0;
 }

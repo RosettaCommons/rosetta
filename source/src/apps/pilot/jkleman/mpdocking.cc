@@ -311,13 +311,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-//		using namespace protocols::docking::membrane;
+		// using namespace protocols::docking::membrane;
 		using namespace protocols::jd2;
-		
+
 		// initialize option system, random number generators, and all factory-registrators
 		devel::init(argc, argv);
 		//protocols::init(argc, argv);
-		
+
 		MPDockingMoverOP mpdm = new MPDockingMover();
 		JobDistributor::get_instance()->go(mpdm);
 	}
@@ -325,4 +325,6 @@ main( int argc, char * argv [] )
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
+
+	return 0;
 }
