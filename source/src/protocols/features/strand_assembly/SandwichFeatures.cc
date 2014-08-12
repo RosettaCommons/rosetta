@@ -45,13 +45,13 @@
 #include <core/pose/Pose.hh> 
 #include <utility/vector1.hh> 
 #include <core/types.hh> 
-#include <utility/tag/Tag.hh> 
-
-static basic::Tracer TR("protocols.features.strand_assembly.SandwichFeatures");
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace features {
 namespace strand_assembly {
+
+static basic::Tracer TR("protocols.features.strand_assembly.SandwichFeatures");
 
 // for parse_my_tag
 using utility::tag::TagCOP;
@@ -119,7 +119,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	// could be redundant
 	Column sheet_id	("sheet_id",	new DbInteger(), true /*could be null*/, false /*no autoincrement*/);
-		// <history> changed into 'null-possible' because of sw_by_components
+		// <history> changed into 'null-possible' because of sandwich
 
 	Column sheet_antiparallel	("sheet_antiparallel",	new DbText(), true /* could be null at first, eventually it will not be null though*/, false /*no autoincrement*/);
 		// A: antiparallel
@@ -215,16 +215,16 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 /****** <end> writing sw_can_by_sh ******/
 
 
-/****** <begin> writing sw_by_components (sandwich candidate by components such as strands, loops, helices) ******/
+/****** <begin> writing sandwich (sandwich candidate by components such as strands, loops, helices) ******/
 
 	// Columns
-	// id of sw_by_components
+	// id of sandwich
 
 	//unique
-	Column sw_by_components_PK_id	("sw_by_components_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column sandwich_PK_id	("sandwich_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sw_by_components_bs_id	("sw_by_components_bs_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column sandwich_bs_id	("sandwich_bs_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column long_strand_id	("long_strand_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
@@ -416,175 +416,175 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	// Schema
 	// PrimaryKey
-	utility::vector1<Column> primary_key_columns_sw_by_components;
-	primary_key_columns_sw_by_components.push_back(struct_id);
-	primary_key_columns_sw_by_components.push_back(sw_by_components_PK_id);
+	utility::vector1<Column> primary_key_columns_sandwich;
+	primary_key_columns_sandwich.push_back(struct_id);
+	primary_key_columns_sandwich.push_back(sandwich_PK_id);
 
 	// table name
-	Schema sw_by_components("sw_by_components",  PrimaryKey(primary_key_columns_sw_by_components));
+	Schema sandwich("sandwich",  PrimaryKey(primary_key_columns_sandwich));
 
 	// add column which is neither PrimaryKey nor ForeignKey
-	sw_by_components.add_column(tag);
-	sw_by_components.add_column(sw_can_by_sh_id);
-	sw_by_components.add_column(sheet_id);
+	sandwich.add_column(tag);
+	sandwich.add_column(sw_can_by_sh_id);
+	sandwich.add_column(sheet_id);
 
-	sw_by_components.add_column(sheet_antiparallel);
-	sw_by_components.add_column(sw_by_components_bs_id);
-	sw_by_components.add_column(long_strand_id);
-	sw_by_components.add_column(strand_edge);
-	sw_by_components.add_column(num_strands_in_each_sw);
-	sw_by_components.add_column(num_edge_strands_in_each_sw);
+	sandwich.add_column(sheet_antiparallel);
+	sandwich.add_column(sandwich_bs_id);
+	sandwich.add_column(long_strand_id);
+	sandwich.add_column(strand_edge);
+	sandwich.add_column(num_strands_in_each_sw);
+	sandwich.add_column(num_edge_strands_in_each_sw);
 
-	sw_by_components.add_column(intra_sheet_con_id);
-	sw_by_components.add_column(inter_sheet_con_id);
-	sw_by_components.add_column(loop_kind); // better to be located right after intra_sheet_con_id/inter_sheet_con_id for better readability
+	sandwich.add_column(intra_sheet_con_id);
+	sandwich.add_column(inter_sheet_con_id);
+	sandwich.add_column(loop_kind); // better to be located right after intra_sheet_con_id/inter_sheet_con_id for better readability
 
-	sw_by_components.add_column(LR);
-	sw_by_components.add_column(canonical_LR);
+	sandwich.add_column(LR);
+	sandwich.add_column(canonical_LR);
 
-	sw_by_components.add_column(turn_type);
-	sw_by_components.add_column(i_AA);
-	sw_by_components.add_column(i_p1_AA);
-	sw_by_components.add_column(i_p2_AA);
-	sw_by_components.add_column(i_p3_AA);
+	sandwich.add_column(turn_type);
+	sandwich.add_column(i_AA);
+	sandwich.add_column(i_p1_AA);
+	sandwich.add_column(i_p2_AA);
+	sandwich.add_column(i_p3_AA);
 
-	sw_by_components.add_column(canonical_turn_AA);
+	sandwich.add_column(canonical_turn_AA);
 
-	sw_by_components.add_column(PA_by_preceding_E);
-	sw_by_components.add_column(PA_by_following_E);
-	sw_by_components.add_column(cano_PA);
-	sw_by_components.add_column(heading_direction); // nega,posi,meet ...
-	sw_by_components.add_column(parallel_EE);
-	sw_by_components.add_column(cano_parallel_EE);
+	sandwich.add_column(PA_by_preceding_E);
+	sandwich.add_column(PA_by_following_E);
+	sandwich.add_column(cano_PA);
+	sandwich.add_column(heading_direction); // nega,posi,meet ...
+	sandwich.add_column(parallel_EE);
+	sandwich.add_column(cano_parallel_EE);
 
-	sw_by_components.add_column(A);
-	sw_by_components.add_column(C);
-	sw_by_components.add_column(D);
-	sw_by_components.add_column(E);
-	sw_by_components.add_column(F);
-	sw_by_components.add_column(G);
-	sw_by_components.add_column(H);
-	sw_by_components.add_column(I);
-	sw_by_components.add_column(K);
-	sw_by_components.add_column(L);
-	sw_by_components.add_column(M);
-	sw_by_components.add_column(N);
+	sandwich.add_column(A);
+	sandwich.add_column(C);
+	sandwich.add_column(D);
+	sandwich.add_column(E);
+	sandwich.add_column(F);
+	sandwich.add_column(G);
+	sandwich.add_column(H);
+	sandwich.add_column(I);
+	sandwich.add_column(K);
+	sandwich.add_column(L);
+	sandwich.add_column(M);
+	sandwich.add_column(N);
 
-	sw_by_components.add_column(P);
+	sandwich.add_column(P);
 
-	sw_by_components.add_column(Q);
+	sandwich.add_column(Q);
 
-	sw_by_components.add_column(R);
-	sw_by_components.add_column(S);
-	sw_by_components.add_column(T);
+	sandwich.add_column(R);
+	sandwich.add_column(S);
+	sandwich.add_column(T);
 
-	sw_by_components.add_column(V);
+	sandwich.add_column(V);
 
-	sw_by_components.add_column(W);
+	sandwich.add_column(W);
 
-	sw_by_components.add_column(Y);
+	sandwich.add_column(Y);
 
-	sw_by_components.add_column(A_core_heading);
-	sw_by_components.add_column(A_surface_heading);
-	sw_by_components.add_column(C_core_heading);
-	sw_by_components.add_column(C_surface_heading);
-
-
-	sw_by_components.add_column(D_core_heading);
-	sw_by_components.add_column(D_surface_heading);
-	sw_by_components.add_column(E_core_heading);
-	sw_by_components.add_column(E_surface_heading);
+	sandwich.add_column(A_core_heading);
+	sandwich.add_column(A_surface_heading);
+	sandwich.add_column(C_core_heading);
+	sandwich.add_column(C_surface_heading);
 
 
-	sw_by_components.add_column(F_core_heading);
-	sw_by_components.add_column(F_surface_heading);
-
-	sw_by_components.add_column(G_core_heading);
-	sw_by_components.add_column(G_surface_heading);
-
-
-	sw_by_components.add_column(H_core_heading);
-	sw_by_components.add_column(H_surface_heading);
-	sw_by_components.add_column(I_core_heading);
-	sw_by_components.add_column(I_surface_heading);
-
-	sw_by_components.add_column(K_core_heading);
-	sw_by_components.add_column(K_surface_heading);
-
-	sw_by_components.add_column(L_core_heading);
-	sw_by_components.add_column(L_surface_heading);
-
-	sw_by_components.add_column(M_core_heading);
-	sw_by_components.add_column(M_surface_heading);
-
-	sw_by_components.add_column(N_core_heading);
-	sw_by_components.add_column(N_surface_heading);
-
-	sw_by_components.add_column(P_core_heading);
-	sw_by_components.add_column(P_surface_heading);
-
-	sw_by_components.add_column(Q_core_heading);
-	sw_by_components.add_column(Q_surface_heading);
-
-	sw_by_components.add_column(R_core_heading);
-	sw_by_components.add_column(R_surface_heading);
-
-	sw_by_components.add_column(S_core_heading);
-	sw_by_components.add_column(S_surface_heading);
-	sw_by_components.add_column(T_core_heading);
-	sw_by_components.add_column(T_surface_heading);
-
-	sw_by_components.add_column(V_core_heading);
-	sw_by_components.add_column(V_surface_heading);
-	sw_by_components.add_column(W_core_heading);
-	sw_by_components.add_column(W_surface_heading);
-
-	sw_by_components.add_column(Y_core_heading);
-	sw_by_components.add_column(Y_surface_heading);
+	sandwich.add_column(D_core_heading);
+	sandwich.add_column(D_surface_heading);
+	sandwich.add_column(E_core_heading);
+	sandwich.add_column(E_surface_heading);
 
 
-	sw_by_components.add_column(H_percentage);
-	sw_by_components.add_column(E_percentage);
-	sw_by_components.add_column(L_percentage);
+	sandwich.add_column(F_core_heading);
+	sandwich.add_column(F_surface_heading);
 
-	sw_by_components.add_column(number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands);
-	sw_by_components.add_column(number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands);
+	sandwich.add_column(G_core_heading);
+	sandwich.add_column(G_surface_heading);
 
-	sw_by_components.add_column(number_of_hydrophobic_res);	//	A,V,I,L,M,F,Y,W
-	sw_by_components.add_column(number_of_hydrophilic_res);	//	R,H,K,D,E,S,T,N,Q
-	sw_by_components.add_column(number_of_CGP);	//	C,G,P
-	sw_by_components.add_column(ratio_hydrophobic_philic_of_sw_in_percent);	//	(no_hydrophobic/no_hydrophilic)*100
 
-	sw_by_components.add_column(number_of_RK_in_sw);	//	R,K
-	sw_by_components.add_column(number_of_DE_in_sw);	//	D,E
-	sw_by_components.add_column(net_charge_of_sw);
-	sw_by_components.add_column(number_of_core_heading_FWY_in_sw);
-	sw_by_components.add_column(ratio_of_core_heading_FWY_in_sw);
-	sw_by_components.add_column(number_of_core_heading_W_in_sw);
-	sw_by_components.add_column(number_of_core_heading_L_in_core_strands_in_sw);
-	sw_by_components.add_column(number_of_core_heading_W_in_core_strands_in_sw);
-	sw_by_components.add_column(number_of_core_heading_Y_in_core_strands_in_sw);
-	sw_by_components.add_column(avg_dihedral_angle_between_core_strands_across_facing_sheets);
-	sw_by_components.add_column(sw_res_size);
-	sw_by_components.add_column(multimer_is_suspected);
-	sw_by_components.add_column(avg_b_factor_CB_at_each_component);
-	sw_by_components.add_column(topology_candidate);
-	sw_by_components.add_column(min_dis_between_sheets_by_all_res);
-	sw_by_components.add_column(min_dis_between_sheets_by_cen_res);
-	sw_by_components.add_column(avg_dis_between_sheets_by_cen_res);
-	sw_by_components.add_column(shortest_dis_between_facing_aro_in_sw);
+	sandwich.add_column(H_core_heading);
+	sandwich.add_column(H_surface_heading);
+	sandwich.add_column(I_core_heading);
+	sandwich.add_column(I_surface_heading);
 
-	sw_by_components.add_column(num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop);
-	sw_by_components.add_column(num_PRO_in_starting_loop);
-	sw_by_components.add_column(num_PRO_in_1st_inter_sheet_loop);
-	sw_by_components.add_column(num_PRO_in_3rd_inter_sheet_loop);
-	sw_by_components.add_column(weighted_num_PRO_prevent);
+	sandwich.add_column(K_core_heading);
+	sandwich.add_column(K_surface_heading);
 
-	sw_by_components.add_column(component_size);
+	sandwich.add_column(L_core_heading);
+	sandwich.add_column(L_surface_heading);
+
+	sandwich.add_column(M_core_heading);
+	sandwich.add_column(M_surface_heading);
+
+	sandwich.add_column(N_core_heading);
+	sandwich.add_column(N_surface_heading);
+
+	sandwich.add_column(P_core_heading);
+	sandwich.add_column(P_surface_heading);
+
+	sandwich.add_column(Q_core_heading);
+	sandwich.add_column(Q_surface_heading);
+
+	sandwich.add_column(R_core_heading);
+	sandwich.add_column(R_surface_heading);
+
+	sandwich.add_column(S_core_heading);
+	sandwich.add_column(S_surface_heading);
+	sandwich.add_column(T_core_heading);
+	sandwich.add_column(T_surface_heading);
+
+	sandwich.add_column(V_core_heading);
+	sandwich.add_column(V_surface_heading);
+	sandwich.add_column(W_core_heading);
+	sandwich.add_column(W_surface_heading);
+
+	sandwich.add_column(Y_core_heading);
+	sandwich.add_column(Y_surface_heading);
+
+
+	sandwich.add_column(H_percentage);
+	sandwich.add_column(E_percentage);
+	sandwich.add_column(L_percentage);
+
+	sandwich.add_column(number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands);
+	sandwich.add_column(number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands);
+
+	sandwich.add_column(number_of_hydrophobic_res);	//	A,V,I,L,M,F,Y,W
+	sandwich.add_column(number_of_hydrophilic_res);	//	R,H,K,D,E,S,T,N,Q
+	sandwich.add_column(number_of_CGP);	//	C,G,P
+	sandwich.add_column(ratio_hydrophobic_philic_of_sw_in_percent);	//	(no_hydrophobic/no_hydrophilic)*100
+
+	sandwich.add_column(number_of_RK_in_sw);	//	R,K
+	sandwich.add_column(number_of_DE_in_sw);	//	D,E
+	sandwich.add_column(net_charge_of_sw);
+	sandwich.add_column(number_of_core_heading_FWY_in_sw);
+	sandwich.add_column(ratio_of_core_heading_FWY_in_sw);
+	sandwich.add_column(number_of_core_heading_W_in_sw);
+	sandwich.add_column(number_of_core_heading_L_in_core_strands_in_sw);
+	sandwich.add_column(number_of_core_heading_W_in_core_strands_in_sw);
+	sandwich.add_column(number_of_core_heading_Y_in_core_strands_in_sw);
+	sandwich.add_column(avg_dihedral_angle_between_core_strands_across_facing_sheets);
+	sandwich.add_column(sw_res_size);
+	sandwich.add_column(multimer_is_suspected);
+	sandwich.add_column(avg_b_factor_CB_at_each_component);
+	sandwich.add_column(topology_candidate);
+	sandwich.add_column(min_dis_between_sheets_by_all_res);
+	sandwich.add_column(min_dis_between_sheets_by_cen_res);
+	sandwich.add_column(avg_dis_between_sheets_by_cen_res);
+	sandwich.add_column(shortest_dis_between_facing_aro_in_sw);
+
+	sandwich.add_column(num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop);
+	sandwich.add_column(num_PRO_in_starting_loop);
+	sandwich.add_column(num_PRO_in_1st_inter_sheet_loop);
+	sandwich.add_column(num_PRO_in_3rd_inter_sheet_loop);
+	sandwich.add_column(weighted_num_PRO_prevent);
+
+	sandwich.add_column(component_size);
 
 
 	// ForeignKey
-	sw_by_components.add_foreign_key(ForeignKey(struct_id,	"structures",	"struct_id",	true /*defer*/));
+	sandwich.add_foreign_key(ForeignKey(struct_id,	"structures",	"struct_id",	true /*defer*/));
 		// (reference) wiki.rosettacommons.org/index.php/MultiBodyFeaturesReporters#StructureFeatures
 
 	utility::vector1<std::string> fkey_reference_cols;
@@ -595,16 +595,16 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	residue_begin_fkey_cols.push_back(struct_id);
 	residue_begin_fkey_cols.push_back(residue_begin);
 
-	sw_by_components.add_foreign_key(ForeignKey(residue_begin_fkey_cols,	"residues",	fkey_reference_cols,	true /*defer*/));
+	sandwich.add_foreign_key(ForeignKey(residue_begin_fkey_cols,	"residues",	fkey_reference_cols,	true /*defer*/));
 
 	utility::vector1<Column> residue_end_fkey_cols;
 	residue_end_fkey_cols.push_back(struct_id);
 	residue_end_fkey_cols.push_back(residue_end);
 
-	sw_by_components.add_foreign_key(ForeignKey(residue_end_fkey_cols,	"residues",	fkey_reference_cols,	true /*defer*/));
+	sandwich.add_foreign_key(ForeignKey(residue_end_fkey_cols,	"residues",	fkey_reference_cols,	true /*defer*/));
 
-	sw_by_components.write(db_session);
-/****** <end> writing sw_by_components ******/
+	sandwich.write(db_session);
+/****** <end> writing sandwich ******/
 
 
 
@@ -950,6 +950,11 @@ SandwichFeatures::parse_my_tag(
 	write_resfile_ = tag->getOption<bool>("write_resfile", false);
 					//	definition: if true, write resfile automatically
 
+	write_resfile_NOT_FWY_on_surface_ = tag->getOption<bool>("write_resfile_NOT_FWY_on_surface", false);
+
+	write_resfile_when_seq_rec_is_bad_ = tag->getOption<bool>("write_resfile_when_seq_rec_is_bad", false);
+	//      definition: if true, write resfile as if score fn's seq_rec_is_bad
+
 	write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands_ = tag->getOption<bool>("write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands", false);
 					//	definition: if true, write resfile to_minimize_too_many_core_heading_FWY_on_core_strands
 
@@ -1027,6 +1032,7 @@ SandwichFeatures::report_features(
 			write_resfile_to_minimize_too_much_hydrophobic_surface_	=	true;
 			write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands_	=	true;
 			write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_	=	true;
+			write_resfile_when_seq_rec_is_bad_ = true;
 			write_p_aa_pp_files_	= true;
 			write_rama_at_AA_to_files_	=	true;
 			write_heading_directions_of_all_AA_in_a_strand_	=	true;
@@ -1056,7 +1062,7 @@ SandwichFeatures::report_features(
 		Size rkde_PK_id_counter=1; //initial value
 
 		Size sw_can_by_sh_id_counter=1; //initial value
-		Size sw_by_components_PK_id_counter=1; //initial value
+		Size sandwich_PK_id_counter=1; //initial value
 		Size intra_sheet_con_id_counter=1; //initial value
 		Size inter_sheet_con_id_counter=1; //initial value
 
@@ -1545,10 +1551,10 @@ SandwichFeatures::report_features(
 
 
 
-	/////////////////// <begin> fill a table 'sw_by_components' by secondary_structure_segments
-			TR.Info << "<begin> fill a table 'sw_by_components' by secondary_structure_segments" << endl;
+	/////////////////// <begin> fill a table 'sandwich' by secondary_structure_segments
+			TR.Info << "<begin> fill a table 'sandwich' by secondary_structure_segments" << endl;
 
-		utility::vector1<SandwichFragment> bs_of_sw_can_by_sh = prepare_WriteToDB_sw_by_components(struct_id, db_session);
+		utility::vector1<SandwichFragment> bs_of_sw_can_by_sh = prepare_WriteToDB_sandwich(struct_id, db_session);
 			// It retrieves all beta-strands of sandwich_candidate_by_sheets, it does not make sandwich_by_components
 
 		if (bs_of_sw_can_by_sh.size() == 0)
@@ -1587,8 +1593,8 @@ SandwichFeatures::report_features(
 											max_CA_CA_dis_);
 
 				Size component_size = bs_of_sw_can_by_sh[ii].get_size();
-				WriteToDB_sw_by_components (struct_id, db_session, pose, sw_by_components_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size, bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
-				sw_by_components_PK_id_counter++;
+				WriteToDB_sandwich (struct_id, db_session, pose, sandwich_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size, bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
+				sandwich_PK_id_counter++;
 
 				Size res_at_terminal;
 				for (Size res_num = bs_of_sw_can_by_sh[ii].get_start(); res_num <= bs_of_sw_can_by_sh[ii].get_end(); res_num++)
@@ -1646,8 +1652,8 @@ SandwichFeatures::report_features(
 											max_CA_CA_dis_);
 
 				Size component_size = bs_of_sw_can_by_sh[ii].get_size();
-				WriteToDB_sw_by_components (struct_id, db_session, pose, sw_by_components_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size,	bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
-				sw_by_components_PK_id_counter++;
+				WriteToDB_sandwich (struct_id, db_session, pose, sandwich_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size,	bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
+				sandwich_PK_id_counter++;
 			}
 		}	//!write_phi_psi_of_E_
 
@@ -1662,13 +1668,13 @@ SandwichFeatures::report_features(
 				{
 					break;
 				}
-				WriteToDB_sw_by_components_by_AA_w_direction (struct_id, db_session, pose, pose_w_center_000,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
+				WriteToDB_sandwich_by_AA_w_direction (struct_id, db_session, pose, pose_w_center_000,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
 			}
 			//// <end> count AA with direction
 		}
 
-	/////////////////// <end> fill a table 'sw_by_components' by secondary_structure_segments
-			TR.Info << "<end> fill a table 'sw_by_components' by secondary_structure_segments" << endl;
+	/////////////////// <end> fill a table 'sandwich' by secondary_structure_segments
+			TR.Info << "<end> fill a table 'sandwich' by secondary_structure_segments" << endl;
 
 
 		if (do_not_connect_sheets_by_loops_)
@@ -1687,8 +1693,8 @@ SandwichFeatures::report_features(
 				TR << "See whether sw_candidate_by_sheets_id " << vec_sw_can_by_sh_id[ii] << " be a canonical sw or not" << endl;
 
 			bool chance_of_being_canonical_sw	=	true; // not yet decided fate whether this could be canonical sandwich or not, but assumed to be true for now
-			Size size_sw_by_components_PK_id =
-			get_size_sw_by_components_PK_id(
+			Size size_sandwich_PK_id =
+			get_size_sandwich_PK_id(
 				struct_id,
 				db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
@@ -1699,7 +1705,7 @@ SandwichFeatures::report_features(
 			Size former_start_res = 0; //temporary
 
 				// this 'jj' is used for 'for' iteration purpose only and this 'for' loop iterates only for connecting sheets/strands
-			for(Size jj=1; jj<=size_sw_by_components_PK_id-1; ++jj) {
+			for(Size jj=1; jj<=size_sandwich_PK_id-1; ++jj) {
 				// get_starting_res_for_connecting_strands and its sheet_id
 				std::pair<Size, Size>
 				start_res_sh_id =
@@ -1864,7 +1870,7 @@ SandwichFeatures::report_features(
 						struct_id,
 						db_session,
 						pose,
-						sw_by_components_PK_id_counter,
+						sandwich_PK_id_counter,
 						tag,
 						vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
 						loop_kind, // "hairpin" or "a_loop_that_connects_same_direction_strands_within_same_sheet"
@@ -1908,7 +1914,7 @@ SandwichFeatures::report_features(
 						}
 					}
 
-					sw_by_components_PK_id_counter++;
+					sandwich_PK_id_counter++;
 					intra_sheet_con_id_counter++;
 				}
 				else // this loop connects sheets as inter-sheet way
@@ -1939,7 +1945,7 @@ SandwichFeatures::report_features(
 						struct_id,
 						db_session,
 						pose,
-						sw_by_components_PK_id_counter,
+						sandwich_PK_id_counter,
 						tag,
 						vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
 						"loop_connecting_two_sheets",
@@ -1980,11 +1986,11 @@ SandwichFeatures::report_features(
 							);
 					}
 
-					sw_by_components_PK_id_counter++;
+					sandwich_PK_id_counter++;
 					inter_sheet_con_id_counter++;
 				}	// this loop connects sheets as inter-sheet way
 
-			} // for(Size jj=1; (jj<=size_sw_by_components_PK_id-1) && (bool_no_helix_in_loop) && (bool_no_more_strand_in_loop); ++jj)
+			} // for(Size jj=1; (jj<=size_sandwich_PK_id-1) && (bool_no_helix_in_loop) && (bool_no_more_strand_in_loop); ++jj)
 		/////////////////// <end> update beta-hairpin or inter_sheet_connecting_loops (2nd judgement whether each sandwich_by_sheet_id becomes sandwich_by_components)
 
 
@@ -2021,22 +2027,22 @@ SandwichFeatures::report_features(
 					struct_id,
 					db_session,
 					dssp_pose,
-					sw_by_components_PK_id_counter,	//sw_by_components_PK_id
+					sandwich_PK_id_counter,	//sandwich_PK_id
 					vec_sw_can_by_sh_id[ii],	//sw_can_by_sh_id
 					tag,
 					max_starting_loop_size_);
-				sw_by_components_PK_id_counter++;
+				sandwich_PK_id_counter++;
 
 				WriteToDB_ending_loop(
 					struct_id,
 					db_session,
 					dssp_pose,
-					sw_by_components_PK_id_counter,	//sw_by_components_PK_id
+					sandwich_PK_id_counter,	//sandwich_PK_id
 					vec_sw_can_by_sh_id[ii],	// sw_can_by_sh_id
 					tag,
 					max_starting_loop_size_);
 
-				sw_by_components_PK_id_counter++;
+				sandwich_PK_id_counter++;
 
 
 				// <begin> mark beta-sandwiches that is not connected by continuous atoms like 1A78
@@ -2347,7 +2353,9 @@ SandwichFeatures::report_features(
 		if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
 		// (07/10/2014) This automatic resfile generation seems useful only for design with ramping repulsions, for PackRotamersMover & OffRotamerPack, this kind of resfile seems not needed.
 		{
-			write_resfile_to_a_file(
+		  if (write_resfile_when_seq_rec_is_bad_)
+		    {
+			write_resfile_to_a_file_when_seq_rec_is_bad(
 				tag,
 				struct_id,	// needed argument
 				db_session,	// needed argument
@@ -2356,6 +2364,14 @@ SandwichFeatures::report_features(
 				write_resfile_to_minimize_too_much_hydrophobic_surface_,
 				write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands_,
 				write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_);
+		    }
+		  write_resfile_to_a_file(
+					tag,
+					struct_id,      // needed argument
+					db_session,     // needed argument
+					pose,
+					bs_of_sw_can_by_sh,
+					write_resfile_NOT_FWY_on_surface_);
 		}
 		// <end> write resfile automatically
 

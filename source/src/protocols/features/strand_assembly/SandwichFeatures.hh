@@ -280,6 +280,9 @@ private:
 	write_resfile_;
 
 	bool
+	write_resfile_NOT_FWY_on_surface_;
+
+ 	bool
 	write_resfile_to_minimize_too_much_hydrophobic_surface_;
 
 	bool
@@ -287,6 +290,9 @@ private:
 
 	bool
 	write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_;
+
+  bool
+  write_resfile_when_seq_rec_is_bad_;
 
 	bool
 	write_strand_AA_distribution_files_;

@@ -14,16 +14,6 @@
 //Unit Headers
 #include <protocols/features/strand_assembly/SandwichFragment.hh>
 
-////Core
-//#include <core/conformation/Residue.hh>
-//
-////Utility
-//#include <utility/string_util.hh>
-//
-////Numeric
-//#include <numeric/xyzVector.hh>
-//#include <numeric/HomogeneousTransform.hh>
-
 namespace protocols {
 namespace features {
 namespace strand_assembly {

@@ -7,11 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /rosetta/rosetta_source/src/protocols/features/strand_assembly/StrandFragment.cc
-///
+/// @file /rosetta/main/source/src/protocols/features/strand_assembly/StrandFragment.cc
 /// @brief
-
-/// @author Tim jacobs
+/// @author Doo Nam Kim (doonam.kim@gmail.com) based on Tim jacobs' helix assembly
 
 //Unit Headers
 #include <protocols/features/strand_assembly/StrandFragment.hh>

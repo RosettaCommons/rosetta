@@ -30,8 +30,6 @@ using cppdb::result;
 
 static basic::Tracer TR("protocols.features.strand_assembly.WriteToDBFromSandwichFeatures");
 
-
-
 //change_sheet_id_if_possible
 bool
 change_sheet_id_if_possible( // combine_sheets_if_possible
@@ -40,15 +38,11 @@ change_sheet_id_if_possible( // combine_sheets_if_possible
 	Pose const & pose,
 	Real	min_CA_CA_dis_,
 	Real	max_CA_CA_dis_,
-	Real	min_C_O_N_angle_
-	)
-{
+	Real	min_C_O_N_angle_)	{
 	bool	sheet_id_changed = false; // don't repeat change_sheet_id_if_possible
 	Size max_sheet_id = get_max_sheet_id(struct_id, db_session);
-	for(Size i=1; i<=max_sheet_id-1; ++i)
-	{
-		for(Size j=i+1; j<=max_sheet_id; ++j)
-		{
+	for(Size i=1; i<=max_sheet_id-1; ++i)	{
+		for(Size j=i+1; j<=max_sheet_id; ++j)	{
 			bool sheets_can_be_combined = see_whether_sheets_can_be_combined(
 																			 struct_id,
 																			 db_session,
@@ -97,7 +91,7 @@ delete_this_sw_can_by_sh_id_from_sw_by_comp(
 	string select_string =
 	"DELETE	\n"
 	"FROM\n"
-	"	sw_by_components	\n"
+	"	sandwich	\n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -120,7 +114,7 @@ delete_this_struct_id(
 	string select_string =
 	"DELETE	\n"
 	"FROM\n"
-	"	sw_by_components	\n"
+	"	sandwich	\n"
 	"WHERE\n"
 	"	(struct_id = ?) ;";
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
@@ -131,11 +125,11 @@ delete_this_struct_id(
 
 
 
-//prepare_WriteToDB_sw_by_components
-//	prepare_to_fill_sw_by_components
+//prepare_WriteToDB_sandwich
+//	prepare_to_fill_sandwich
 //	<role>	It retrieves all beta-strands of sandwich_candidate_by_sheets, it does not make sandwich_by_components
 utility::vector1<SandwichFragment>
-prepare_WriteToDB_sw_by_components(
+prepare_WriteToDB_sandwich(
 	StructureID struct_id,
 	sessionOP db_session)
 {
@@ -143,7 +137,7 @@ prepare_WriteToDB_sw_by_components(
 	"SELECT \n"
 	"	sw_sh.sw_can_by_sh_id AS sw_can_by_sh_id, \n"
 	"	sh.sheet_id AS sheet_id, \n"
-	"	sss.segment_id AS sw_by_components_bs_id, \n"
+	"	sss.segment_id AS sandwich_bs_id, \n"
 	"	sss.residue_begin AS	residue_begin, \n"
 	"	sss.residue_end AS	residue_end \n"
 	"FROM  \n"
@@ -164,7 +158,7 @@ prepare_WriteToDB_sw_by_components(
 		sss.struct_id AS struct_id,
 		sw_sh.sw_can_by_sh_id AS sw_can_by_sh_id,
 		sh.sheet_id AS sheet_id,
-		sss.segment_id AS sw_by_components_bs_id,
+		sss.segment_id AS sandwich_bs_id,
 		sss.residue_begin AS	residue_begin,
 		sss.residue_end AS	residue_end
 	FROM
@@ -188,12 +182,12 @@ prepare_WriteToDB_sw_by_components(
 	utility::vector1<SandwichFragment> all_strands;
 	while(res.next())
 	{
-		Size sw_can_by_sh_id, sheet_id, sw_by_components_bs_id, residue_begin,	residue_end;
-		res >> sw_can_by_sh_id >> sheet_id >> sw_by_components_bs_id >> residue_begin >> residue_end;
-		all_strands.push_back(SandwichFragment(sw_can_by_sh_id, sheet_id, sw_by_components_bs_id, residue_begin, residue_end));
+		Size sw_can_by_sh_id, sheet_id, sandwich_bs_id, residue_begin,	residue_end;
+		res >> sw_can_by_sh_id >> sheet_id >> sandwich_bs_id >> residue_begin >> residue_end;
+		all_strands.push_back(SandwichFragment(sw_can_by_sh_id, sheet_id, sandwich_bs_id, residue_begin, residue_end));
 	}
 	return all_strands;
-} //prepare_WriteToDB_sw_by_components
+} //prepare_WriteToDB_sandwich
 
 
 
@@ -203,7 +197,7 @@ WriteToDB_AA_to_terminal_loops (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size	sw_by_components_PK_id_counter,
+	Size	sandwich_PK_id_counter,
 	Size	sw_can_by_sh_id,
 	string tag,
 	bool starting_loop,
@@ -221,11 +215,11 @@ WriteToDB_AA_to_terminal_loops (
 		loop_kind = "ending_loop";
 	}
 
-	string insert =	"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, loop_kind, component_size,	residue_begin, residue_end, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+	string insert =	"INSERT INTO sandwich (struct_id, sandwich_PK_id, tag, sw_can_by_sh_id, loop_kind, component_size,	residue_begin, residue_end, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 	insert_stmt.bind(1,	struct_id);
-	insert_stmt.bind(2,	sw_by_components_PK_id_counter);
+	insert_stmt.bind(2,	sandwich_PK_id_counter);
 	insert_stmt.bind(3,	tag);
 	insert_stmt.bind(4,	sw_can_by_sh_id);
 	insert_stmt.bind(5,	loop_kind);
@@ -268,7 +262,7 @@ WriteToDB_ending_loop (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size	sw_by_components_PK_id_counter,
+	Size	sandwich_PK_id_counter,
 	Size	sw_can_by_sh_id,
 	string tag,
 	Size	max_starting_loop_size_)
@@ -277,7 +271,7 @@ WriteToDB_ending_loop (
 	"SELECT\n"
 	"	max(residue_end) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -332,7 +326,7 @@ WriteToDB_ending_loop (
 		return 0;
 	}
 
-	WriteToDB_AA_to_terminal_loops (struct_id,	db_session,	dssp_pose,	sw_by_components_PK_id_counter,	sw_can_by_sh_id,	tag,	false,	starting_res_of_ending_loop,	ending_res_of_ending_loop);
+	WriteToDB_AA_to_terminal_loops (struct_id,	db_session,	dssp_pose,	sandwich_PK_id_counter,	sw_can_by_sh_id,	tag,	false,	starting_res_of_ending_loop,	ending_res_of_ending_loop);
 
 	return 0;
 } // WriteToDB_ending_loop
@@ -350,7 +344,7 @@ WriteToDB_long_strand_id_in_each_sw (
 	"SELECT\n"
 	"	residue_begin \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(strand_edge=\'edge\' \n"
 	"	OR	strand_edge=\'core\') \n"
@@ -373,7 +367,7 @@ WriteToDB_long_strand_id_in_each_sw (
 	for(Size i=1; i<=vec_residue_begin_of_long_strand.size(); i++)
 	{
 		string update =
-		"UPDATE sw_by_components set long_strand_id = ?	"
+		"UPDATE sandwich set long_strand_id = ?	"
 		"WHERE\n"
 		"	sw_can_by_sh_id = ? \n"
 		"	AND	residue_begin = ? \n"
@@ -406,7 +400,7 @@ WriteToDB_avg_b_factor_CB_at_each_component	(
 	"SELECT\n"
 	"	residue_begin, residue_end\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(sw_can_by_sh_id = ?);";
@@ -448,9 +442,9 @@ WriteToDB_avg_b_factor_CB_at_each_component	(
 			}
 			Real	avg_b_factor_CB_at_each_component	=	sum_of_b_factor_CB_at_each_component/count_atoms;
 
-			// <begin> UPDATE sw_by_components table
+			// <begin> UPDATE sandwich table
 			string insert =
-			"UPDATE sw_by_components set \n"
+			"UPDATE sandwich set \n"
 			"avg_b_factor_CB_at_each_component = ? \n"
 			"WHERE\n"
 			"	(struct_id = ?) \n"
@@ -466,7 +460,7 @@ WriteToDB_avg_b_factor_CB_at_each_component	(
 			insert_stmt.bind(4,	vector_of_residue_begin[i]);
 
 			basic::database::safely_write_to_database(insert_stmt);
-			// <end> UPDATE sw_by_components table
+			// <end> UPDATE sandwich table
 
 		}
 	}
@@ -524,9 +518,9 @@ WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets	(
 	//// <end> report average dihedral angles between core strands between facing sheets
 
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"avg_dihedral_angle_between_core_strands_across_facing_sheets = ? \n"
 	"WHERE\n"
 	"	(sw_can_by_sh_id = ?) \n"
@@ -539,7 +533,7 @@ WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets	(
 	insert_stmt.bind(3,	struct_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 } //	WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets
@@ -565,7 +559,7 @@ WriteToDB_dssp_ratio_in_sw (
 	}
 
 	string update =
-	"UPDATE sw_by_components set \n "
+	"UPDATE sandwich set \n "
 	"	H_percentage = ?	,"
 	"	E_percentage = ?	,"
 	"	L_percentage = ?	"
@@ -611,7 +605,7 @@ WriteToDB_hydrophobic_ratio_net_charge	(
 	"	sum(R+K), \n"
 	"	sum(D+E) \n"
 	"FROM\n"
-	"	sw_by_components\n"
+	"	sandwich\n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) ;";
@@ -629,9 +623,9 @@ WriteToDB_hydrophobic_ratio_net_charge	(
 	// <end> sum number_of_AA
 
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"	number_of_hydrophobic_res = ?	,	\n"
 	"	number_of_hydrophilic_res = ?	,	\n"
 	"	number_of_CGP = ?	,	\n"
@@ -659,7 +653,7 @@ WriteToDB_hydrophobic_ratio_net_charge	(
 	insert_stmt.bind(9,	struct_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 
@@ -691,9 +685,9 @@ WriteToDB_min_avg_dis_between_sheets_by_cen_res	(
 		// [caution] these values are only meaningful when pdb files has only	one beta-sandwich
 	//// <end> calculate minimum distance between sheets
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"	min_dis_between_sheets_by_cen_res = ? ,"
 	"	avg_dis_between_sheets_by_cen_res = ? "
 	"WHERE\n"
@@ -707,7 +701,7 @@ WriteToDB_min_avg_dis_between_sheets_by_cen_res	(
 	insert_stmt.bind(4,	sw_can_by_sh_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 } //	WriteToDB_min_avg_dis_between_sheets_by_cen_res
@@ -728,9 +722,9 @@ WriteToDB_min_dis_between_sheets_by_all_res	(
 		// [caution] these values are only meaningful when pdb files has only	one beta-sandwich
 	//// <end> calculate minimum distance between sheets
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"	min_dis_between_sheets_by_all_res = ? \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
@@ -743,7 +737,7 @@ WriteToDB_min_dis_between_sheets_by_all_res	(
 	insert_stmt.bind(3,	sw_can_by_sh_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 } //	WriteToDB_min_dis_between_sheets_by_all_res
@@ -760,7 +754,7 @@ WriteToDB_number_of_edge_strands_in_each_sw (
 	"SELECT\n"
 	"	count(*) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	strand_edge=\'edge\' \n"
 	"	AND sw_can_by_sh_id = ? \n"
@@ -778,7 +772,7 @@ WriteToDB_number_of_edge_strands_in_each_sw (
 	}
 
 	string update =
-	"UPDATE sw_by_components set num_edge_strands_in_each_sw = ?	"
+	"UPDATE sandwich set num_edge_strands_in_each_sw = ?	"
 	"WHERE\n"
 	"	sw_can_by_sh_id = ? \n"
 	"	AND struct_id = ?;";
@@ -855,7 +849,7 @@ WriteToDB_number_of_core_heading_LWY_in_core_strands_in_sw (
 	"SELECT\n"
 	"	sum(L_core_heading),	sum(W_core_heading),	sum(Y_core_heading) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (strand_edge = 'core') \n"
@@ -875,7 +869,7 @@ WriteToDB_number_of_core_heading_LWY_in_core_strands_in_sw (
 	}
 
 	string update =
-	"UPDATE sw_by_components set\n"
+	"UPDATE sandwich set\n"
 	"	number_of_core_heading_L_in_core_strands_in_sw = ?	,\n"
 	"	number_of_core_heading_W_in_core_strands_in_sw = ?	,\n"
 	" 	number_of_core_heading_Y_in_core_strands_in_sw = ?	\n"
@@ -906,7 +900,7 @@ WriteToDB_number_of_core_heading_FWY_in_sw (
 	"SELECT\n"
 	"	sum(F_core_heading+W_core_heading+Y_core_heading) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -923,7 +917,7 @@ WriteToDB_number_of_core_heading_FWY_in_sw (
 	}
 
 	string update =
-	"UPDATE sw_by_components set number_of_core_heading_FWY_in_sw = ?	"
+	"UPDATE sandwich set number_of_core_heading_FWY_in_sw = ?	"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -949,7 +943,7 @@ WriteToDB_number_of_core_heading_W_in_sw (
 	"SELECT\n"
 	"	sum(W_core_heading) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -966,7 +960,7 @@ WriteToDB_number_of_core_heading_W_in_sw (
 	}
 
 	string update =
-	"UPDATE sw_by_components set number_of_core_heading_W_in_sw = ?	"
+	"UPDATE sandwich set number_of_core_heading_W_in_sw = ?	"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -996,11 +990,11 @@ WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands	(
 	"SELECT\n"
 	"	sum(R_core_heading + H_core_heading + K_core_heading + D_core_heading + E_core_heading ) \n"
 	"FROM\n"
-	"	sw_by_components\n"
+	"	sandwich\n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
-	"	AND ((sw_by_components_bs_id = ?) or (sw_by_components_bs_id = ?));";
+	"	AND ((sandwich_bs_id = ?) or (sandwich_bs_id = ?));";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1,	struct_id);
@@ -1016,12 +1010,12 @@ WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands	(
 	}
 	// <end> sum numbers of inward-pointing-AAs in current_bs_id and closest_bs_id
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands = ? \n"
 	"WHERE\n"
-	"	(sw_by_components_bs_id = ?)	\n"
+	"	(sandwich_bs_id = ?)	\n"
 	"	AND (sw_can_by_sh_id = ?) \n"
 	"	AND	(struct_id = ?) ;";
 
@@ -1033,7 +1027,7 @@ WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands	(
 	insert_stmt.bind(4,	struct_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 
@@ -1054,11 +1048,11 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands	(
 	"SELECT\n"
 	"	sum(F_core_heading + Y_core_heading + W_core_heading) \n"
 	"FROM\n"
-	"	sw_by_components\n"
+	"	sandwich\n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
-	"	AND ((sw_by_components_bs_id = ?) or (sw_by_components_bs_id = ?));";
+	"	AND ((sandwich_bs_id = ?) or (sandwich_bs_id = ?));";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1,struct_id);
@@ -1074,12 +1068,12 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands	(
 	}
 	// <end> sum numbers of inward-pointing-AAs in current_bs_id and closest_bs_id
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands = ? \n"
 	"WHERE\n"
-	"	(sw_by_components_bs_id = ?)	\n"
+	"	(sandwich_bs_id = ?)	\n"
 	"	AND (sw_can_by_sh_id = ?) \n"
 	"	AND	(struct_id = ?) ;";
 
@@ -1091,7 +1085,7 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands	(
 	insert_stmt.bind(4,	struct_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 
@@ -1135,7 +1129,7 @@ WriteToDB_number_strands_in_each_sw // it includes even 'short_edge_strands'
 	"SELECT\n"
 	"	count(*) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	strand_edge is not null \n"
 	"	AND sw_can_by_sh_id = ? \n"
@@ -1153,7 +1147,7 @@ WriteToDB_number_strands_in_each_sw // it includes even 'short_edge_strands'
 	}
 
 	string update =
-	"UPDATE sw_by_components set num_strands_in_each_sw = ?	"
+	"UPDATE sandwich set num_strands_in_each_sw = ?	"
 	"WHERE\n"
 	"	sw_can_by_sh_id = ? \n"
 	"	AND struct_id = ?;";
@@ -1182,7 +1176,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	"SELECT\n"
 	"	P \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?)	\n"
@@ -1205,7 +1199,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	"SELECT\n"
 	"	P \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?)	\n"
@@ -1229,7 +1223,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	"SELECT\n"
 	"	P \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?)	\n"
@@ -1254,7 +1248,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 
 
 	string update =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop = ? , \n"
 	"num_PRO_in_starting_loop	=	? , \n"
 	"num_PRO_in_1st_inter_sheet_loop = ? , \n"
@@ -1292,7 +1286,7 @@ WriteToDB_ratio_of_core_heading_FWY_in_sw (
 	"SELECT\n"
 	"	sum(F_core_heading+W_core_heading+Y_core_heading) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -1311,7 +1305,7 @@ WriteToDB_ratio_of_core_heading_FWY_in_sw (
 	Real	ratio_of_core_heading_FWY_in_sw	=	round_to_Real((static_cast<Real>(number_of_core_heading_FWY_in_sw)*100)/static_cast<Real>(pose.total_residue()));
 
 	string update =
-	"UPDATE sw_by_components set ratio_of_core_heading_FWY_in_sw = ?	"
+	"UPDATE sandwich set ratio_of_core_heading_FWY_in_sw = ?	"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -1456,7 +1450,7 @@ WriteToDB_sheet_connectivity(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
-	Size sw_by_components_PK_id_counter,
+	Size sandwich_PK_id_counter,
 	string tag,
 	Size sw_can_by_sh_id,
 	string loop_kind,
@@ -1481,7 +1475,7 @@ WriteToDB_sheet_connectivity(
 	if (loop_kind == "inter_sheet") // this loop connects by a inter_sheet way
 	{
 		insert =
-		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+		"INSERT INTO sandwich (struct_id, sandwich_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
 		con_id = inter_sheet_con_id;
 	}
 
@@ -1493,14 +1487,14 @@ WriteToDB_sheet_connectivity(
 														start_res-1); // residue_end of preceding strand
 
 		insert =
-		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, intra_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+		"INSERT INTO sandwich (struct_id, sandwich_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, intra_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
 		con_id = intra_sheet_con_id;
 	}
 
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 	insert_stmt.bind(1,	struct_id);
-	insert_stmt.bind(2,	sw_by_components_PK_id_counter);
+	insert_stmt.bind(2,	sandwich_PK_id_counter);
 	insert_stmt.bind(3,	tag);
 	insert_stmt.bind(4,	sw_can_by_sh_id);
 	insert_stmt.bind(5,	sheet_id);
@@ -1573,9 +1567,9 @@ WriteToDB_shortest_dis_between_facing_aro_in_sw	(
 			min_num_strands_in_sheet_);
 	//// <end> calculate minimum distance between sheets
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"	shortest_dis_between_facing_aro_in_sw = ? "
 	"WHERE\n"
 	"	(struct_id = ?) \n"
@@ -1593,7 +1587,7 @@ WriteToDB_shortest_dis_between_facing_aro_in_sw	(
 	insert_stmt.bind(3,	sw_can_by_sh_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return	round_to_Real(shortest_dis_between_facing_aro_in_sw);
 } //	WriteToDB_shortest_dis_between_facing_aro_in_sw
@@ -1607,7 +1601,7 @@ WriteToDB_starting_loop (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size	sw_by_components_PK_id_counter,
+	Size	sandwich_PK_id_counter,
 	Size	sw_can_by_sh_id,
 	string tag,
 	Size	max_starting_loop_size_)
@@ -1616,7 +1610,7 @@ WriteToDB_starting_loop (
 	"SELECT\n"
 	"	min(residue_begin) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -1672,7 +1666,7 @@ WriteToDB_starting_loop (
 		return 0;
 	}
 
-	WriteToDB_AA_to_terminal_loops (struct_id,	db_session,	dssp_pose,	sw_by_components_PK_id_counter,	sw_can_by_sh_id,	tag,	true,	starting_res_of_starting_loop,	ending_res_of_starting_loop);
+	WriteToDB_AA_to_terminal_loops (struct_id,	db_session,	dssp_pose,	sandwich_PK_id_counter,	sw_can_by_sh_id,	tag,	true,	starting_res_of_starting_loop,	ending_res_of_starting_loop);
 
 	return 0;
 } // WriteToDB_starting_loop
@@ -1688,7 +1682,7 @@ WriteToDB_sw_res_size (
 	"SELECT\n"
 	"	min(residue_begin), max(residue_end) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -1707,7 +1701,7 @@ WriteToDB_sw_res_size (
 	Size sw_res_size = ending_res_of_sw - starting_res_of_sw + 1;
 
 	string update =
-	"UPDATE sw_by_components set sw_res_size = ?	"
+	"UPDATE sandwich set sw_res_size = ?	"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -1724,35 +1718,35 @@ WriteToDB_sw_res_size (
 } // WriteToDB_sw_res_size
 
 
-//WriteToDB_sw_by_components
+//WriteToDB_sandwich
 Size
-WriteToDB_sw_by_components	(
+WriteToDB_sandwich	(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sw_by_components_PK_id_counter,
+	Size sandwich_PK_id_counter,
 	string tag,
 	Size sw_can_by_sh_id,
 	Size sheet_id,
 	string sheet_antiparallel,
-	Size sw_by_components_bs_id,
+	Size sandwich_bs_id,
 	string strand_is_at_edge,
 	Size component_size,
 	Size residue_begin,
 	Size residue_end)
 {
 	string insert =
-	"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id, sheet_antiparallel, sw_by_components_bs_id, strand_edge, component_size, residue_begin, residue_end, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,	?,?,?,?,?,	?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+	"INSERT INTO sandwich (struct_id, sandwich_PK_id, tag, sw_can_by_sh_id, sheet_id, sheet_antiparallel, sandwich_bs_id, strand_edge, component_size, residue_begin, residue_end, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,	?,?,?,?,?,	?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 
 	insert_stmt.bind(1,	struct_id);
-	insert_stmt.bind(2,	sw_by_components_PK_id_counter);
+	insert_stmt.bind(2,	sandwich_PK_id_counter);
 	insert_stmt.bind(3,	tag);
 	insert_stmt.bind(4,	sw_can_by_sh_id);
 	insert_stmt.bind(5,	sheet_id);
 	insert_stmt.bind(6,	sheet_antiparallel);
-	insert_stmt.bind(7,	sw_by_components_bs_id); //bs_id
+	insert_stmt.bind(7,	sandwich_bs_id); //bs_id
 	insert_stmt.bind(8,	strand_is_at_edge);
 	insert_stmt.bind(9,	component_size);
 	insert_stmt.bind(10,	residue_begin);
@@ -1783,13 +1777,13 @@ WriteToDB_sw_by_components	(
 
 	basic::database::safely_write_to_database(insert_stmt);
 	return 0;
-} //WriteToDB_sw_by_components
+} //WriteToDB_sandwich
 
 
 
-// WriteToDB_sw_by_components_by_AA_w_direction
+// WriteToDB_sandwich_by_AA_w_direction
 Size
-WriteToDB_sw_by_components_by_AA_w_direction	(
+WriteToDB_sandwich_by_AA_w_direction	(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
@@ -1800,7 +1794,7 @@ WriteToDB_sw_by_components_by_AA_w_direction	(
 	Size residue_end)
 {
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"R_core_heading = ? , \n"
 	"R_surface_heading	=	? , \n"
 	"H_core_heading = ? , \n"
@@ -1899,7 +1893,7 @@ WriteToDB_sw_by_components_by_AA_w_direction	(
 
 	basic::database::safely_write_to_database(insert_stmt);
 	return 0;
-} // WriteToDB_sw_by_components_by_AA_w_direction
+} // WriteToDB_sandwich_by_AA_w_direction
 
 //WriteToDB_sw_can_by_sh
 Size
@@ -1946,7 +1940,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	long_strand_id	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(strand_edge=\'edge\' \n"
@@ -1974,7 +1968,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	long_strand_id	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(sheet_id = 1)	\n"
@@ -2006,7 +2000,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	count(*)	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(sheet_antiparallel = 'P_or_mix')	\n"
@@ -2034,7 +2028,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 1)	\n"
@@ -2062,7 +2056,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 2)	\n"
@@ -2090,7 +2084,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 3)	\n"
@@ -2117,7 +2111,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 4)	\n"
@@ -2145,7 +2139,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 5)	\n"
@@ -2173,7 +2167,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 6)	\n"
@@ -2201,7 +2195,7 @@ WriteToDB_topology_candidate	(
 	"SELECT\n"
 	"	strand_edge	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND	(long_strand_id = 7)	\n"
@@ -2246,9 +2240,9 @@ WriteToDB_topology_candidate	(
 		}
 	}
 
-	// <begin> UPDATE sw_by_components table
+	// <begin> UPDATE sandwich table
 	string insert =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"topology_candidate = ? \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
@@ -2261,7 +2255,7 @@ WriteToDB_topology_candidate	(
 	insert_stmt.bind(3,	sw_can_by_sh_id);
 
 	basic::database::safely_write_to_database(insert_stmt);
-	// <end> UPDATE sw_by_components table
+	// <end> UPDATE sandwich table
 
 	return 0;
 } //	WriteToDB_topology_candidate
@@ -2440,7 +2434,7 @@ WriteToDB_turn_AA(
 
 
 	string select_string =
-	"UPDATE sw_by_components set \n"
+	"UPDATE sandwich set \n"
 	"i_AA = ? , \n"
 	"i_p1_AA	=	? , \n"
 	"i_p2_AA	=	? , \n"
@@ -2558,7 +2552,7 @@ WriteToDB_turn_type(
 
 
 	string select_string =
-	"UPDATE sw_by_components set turn_type = ?	"
+	"UPDATE sandwich set turn_type = ?	"
 	"WHERE\n"
 	"	(sw_can_by_sh_id = ?) \n"
 	"	AND	(residue_begin = ?) \n"
@@ -2583,7 +2577,7 @@ WriteToDB_whether_sw_is_not_connected_with_continuous_atoms (
 	string sw_is_not_connected_with_continuous_atoms)
 {
 	string update =
-	"UPDATE sw_by_components set multimer_is_suspected = ?	"
+	"UPDATE sandwich set multimer_is_suspected = ?	"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ?);";

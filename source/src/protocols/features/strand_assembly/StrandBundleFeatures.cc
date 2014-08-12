@@ -58,11 +58,11 @@
 #include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
 #include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
 
-static basic::Tracer TR("protocols.features.strand_assembly.StrandBundleFeatures");
-
 namespace protocols {
 namespace features {
 namespace strand_assembly {
+
+static basic::Tracer TR("protocols.features.strand_assembly.StrandBundleFeatures");
 
 using namespace std;
 using namespace core;

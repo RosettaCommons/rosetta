@@ -122,7 +122,16 @@ namespace strand_assembly {
 
 
 	core::Size
-	write_resfile_to_a_file(
+  write_resfile_to_a_file(
+		string  tag,
+		StructureID struct_id,
+		utility::sql_database::sessionOP  db_session,
+		core::pose::Pose const & pose,
+		utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+		bool  write_resfile_NOT_FWY_on_surface_);
+
+	core::Size
+	write_resfile_to_a_file_when_seq_rec_is_bad(
 		string	tag,
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,

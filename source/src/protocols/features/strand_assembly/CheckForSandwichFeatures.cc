@@ -1126,7 +1126,7 @@ check_whether_hairpin_connects_short_strand(
 	"SELECT\n"
 	"	component_size	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?)\n"
 	"	AND (residue_begin = ?);";
@@ -1151,7 +1151,7 @@ check_whether_hairpin_connects_short_strand(
 	"SELECT\n"
 	"	component_size	\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?)\n"
 	"	AND (residue_begin = ?);";
@@ -1403,9 +1403,9 @@ check_whether_sw_by_sh_id_still_alive(
 {
 	string select_string =
 	"SELECT\n"
-	"	sw_by_components_PK_id \n"
+	"	sandwich_PK_id \n"
 	"FROM\n"
-	"	sw_by_components\n"
+	"	sandwich\n"
 	"WHERE\n"
 	"	(sw_can_by_sh_id = ?)\n"
 	"	AND (struct_id = ?);";
@@ -1437,7 +1437,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 	"SELECT\n"
 	"	min(residue_begin), max(residue_end) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND (sw_can_by_sh_id = ? );";
@@ -2550,7 +2550,7 @@ get_chain_B_resNum(
 	"SELECT\n"
 	"	r.resNum \n"
 	"FROM\n"
-	"	sw_by_components AS sw, \n"
+	"	sandwich AS sw, \n"
 	"	residues AS r \n"
 	"WHERE\n"
 	"	(sw.sw_can_by_sh_id=?) \n"
@@ -2717,12 +2717,12 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	Size residue_begin,
 	Size residue_end)
 {
-	// <begin> retrieve current sw_by_components_bs_id
+	// <begin> retrieve current sandwich_bs_id
 	string select_string =
 	"SELECT\n"
-	"	sw_by_components_bs_id \n"
+	"	sandwich_bs_id \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
@@ -2734,12 +2734,12 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	select_statement.bind(3,	residue_begin);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size current_sw_by_components_bs_id;
+	Size current_sandwich_bs_id;
 	while(res.next())
 	{
-		res >> current_sw_by_components_bs_id;
+		res >> current_sandwich_bs_id;
 	}
-	// <end> retrieve current sw_by_components_bs_id
+	// <end> retrieve current sandwich_bs_id
 
 
 	// <begin> retrieve other edge_strands in different sheet
@@ -2748,7 +2748,7 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	"	residue_begin, \n"
 	"	residue_end \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
@@ -2787,12 +2787,12 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 			residue_begin_of_nearest_strand = other_edge_strands[i].get_start();
 		}
 	}
-		// <begin> retrieve the closest sw_by_components_bs_id
+		// <begin> retrieve the closest sandwich_bs_id
 		string select_string_3 =
 		"SELECT\n"
-		"	sw_by_components_bs_id \n"
+		"	sandwich_bs_id \n"
 		"FROM\n"
-		"	sw_by_components \n"
+		"	sandwich \n"
 		"WHERE\n"
 		"	(struct_id = ?) \n"
 		"	AND (sw_can_by_sh_id = ?) \n"
@@ -2804,16 +2804,16 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 		select_statement_3.bind(3,	residue_begin_of_nearest_strand);
 		result res_3(basic::database::safely_read_from_database(select_statement_3));
 
-		Size closest_sw_by_components_bs_id;
+		Size closest_sandwich_bs_id;
 		while(res_3.next())
 		{
-			res_3 >> closest_sw_by_components_bs_id;
+			res_3 >> closest_sandwich_bs_id;
 		}
-		// <end> retrieve the closest sw_by_components_bs_id
+		// <end> retrieve the closest sandwich_bs_id
 
 	// <end> see which other edge_strand in different sheet is closest to a current strand
 
-	return std::make_pair(current_sw_by_components_bs_id, closest_sw_by_components_bs_id);
+	return std::make_pair(current_sandwich_bs_id, closest_sandwich_bs_id);
 
 } // get_current_bs_id_and_closest_edge_bs_id_in_different_sheet
 
@@ -2821,9 +2821,9 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 
 
 
-//get_distinct_sw_id_from_sw_by_components_table
+//get_distinct_sw_id_from_sandwich_table
 utility::vector1<Size>
-get_distinct_sw_id_from_sw_by_components_table(
+get_distinct_sw_id_from_sandwich_table(
 	StructureID struct_id,
 	sessionOP db_session)
 {
@@ -2831,7 +2831,7 @@ get_distinct_sw_id_from_sw_by_components_table(
 	"SELECT\n"
 	"	distinct sw_can_by_sh_id\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ?;";
 
@@ -2847,7 +2847,7 @@ get_distinct_sw_id_from_sw_by_components_table(
 		all_distinct_sw_ids.push_back(distinct_sw_id);
 	}
 	return all_distinct_sw_ids;
-} //get_distinct_sw_id_from_sw_by_components_table
+} //get_distinct_sw_id_from_sandwich_table
 
 
 //get_full_strands_from_sheet
@@ -2901,7 +2901,7 @@ get_next_starting_res_for_connecting_strands(
 	"SELECT\n"
 	"	min(residue_begin) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
@@ -2922,7 +2922,7 @@ get_next_starting_res_for_connecting_strands(
 	"SELECT\n"
 	"	sheet_id \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
@@ -3156,18 +3156,18 @@ get_shortest_among_4_vals(
 } // get_shortest_among_4_vals (simple one with just four parameters)
 
 
-//get_size_sw_by_components_PK_id
+//get_size_sandwich_PK_id
 Size
-get_size_sw_by_components_PK_id(
+get_size_sandwich_PK_id(
 	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
 	string select_string =
 	"SELECT\n"
-	"	count(sw_by_components_PK_id) \n"
+	"	count(sandwich_PK_id) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?);";
@@ -3177,13 +3177,13 @@ get_size_sw_by_components_PK_id(
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size size_of_sw_by_components_PK_id;
+	Size size_of_sandwich_PK_id;
 	while(res.next())
 	{
-		res >> size_of_sw_by_components_PK_id;
+		res >> size_of_sandwich_PK_id;
 	}
-	return size_of_sw_by_components_PK_id;
-} //get_size_sw_by_components_PK_id
+	return size_of_sandwich_PK_id;
+} //get_size_sandwich_PK_id
 
 
 
@@ -3231,7 +3231,7 @@ get_starting_res_for_connecting_strands(
 	"SELECT\n"
 	"	min(residue_end) \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
@@ -3261,7 +3261,7 @@ get_starting_res_for_connecting_strands(
 	"SELECT\n"
 	"	sheet_id \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) \n"
@@ -3323,7 +3323,7 @@ get_vec_AA_kind (
 	"	sum(H+F+Y+W), \n"	//	aromatic
 	"	sum(C+G+P+A+V+I+L+M) \n"	//	hydrophobic
 	"FROM\n"
-	"	sw_by_components\n"
+	"	sandwich\n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (sw_can_by_sh_id = ?) ;";
@@ -3403,7 +3403,7 @@ get_vector_of_strand_AA_distribution (
 		"	sum(M_core_heading), sum(N_core_heading), sum(P_core_heading), sum(Q_core_heading), sum(R_core_heading), \n"
 		"	sum(S_core_heading), sum(T_core_heading), sum(V_core_heading), sum(W_core_heading), sum(Y_core_heading) \n"
 		"FROM\n"
-		"	sw_by_components \n"
+		"	sandwich \n"
 		"WHERE\n"
 		"	strand_edge = ? \n"
 		"	AND struct_id = ? ;";
@@ -3417,7 +3417,7 @@ get_vector_of_strand_AA_distribution (
 		"	sum(M_surface_heading), sum(N_surface_heading), sum(P_surface_heading), sum(Q_surface_heading), sum(R_surface_heading), \n"
 		"	sum(S_surface_heading), sum(T_surface_heading), sum(V_surface_heading), sum(W_surface_heading), sum(Y_surface_heading) \n"
 		"FROM\n"
-		"	sw_by_components \n"
+		"	sandwich \n"
 		"WHERE\n"
 		"	strand_edge = ? \n"
 		"	AND struct_id = ? ;";
@@ -3474,7 +3474,7 @@ get_vec_distinct_sheet_id(
 	"SELECT\n"
 	"	distinct sheet_id\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"	AND	sw_can_by_sh_id = ? \n"
@@ -3508,7 +3508,7 @@ identify_sheet_id_by_residue_end(
 	"SELECT\n"
 	"	sheet_id \n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	(struct_id = ?) \n"
 	"	AND (residue_end = ?);";
@@ -3694,7 +3694,7 @@ is_this_strand_at_edge_by_looking_db(
 	"SELECT\n"
 	"	strand_edge\n"
 	"FROM\n"
-	"	sw_by_components \n"
+	"	sandwich \n"
 	"WHERE\n"
 	"	struct_id = ? \n"
 	"  AND residue_begin = ? ;";
@@ -4127,14 +4127,13 @@ string
 see_edge_or_core_or_loop_or_short_edge (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size	residue_num
-	)
+	Size	residue_num)
 {
 	string	sum_string =
 		"SELECT\n"
 		"	strand_edge \n"
 		"FROM\n"
-		"	sw_by_components \n"
+		"	sandwich \n"
 		"WHERE\n"
 		"	? between residue_begin and residue_end \n "
 		"	AND struct_id = ? ;";
@@ -4160,9 +4159,13 @@ see_edge_or_core_or_loop_or_short_edge (
 	{
 		edge_or_core = "core";
 	}
+	else if (strand_edge == "short_edge")
+	{
+		edge_or_core = "short_edge";
+	}
 	else
 	{
-		edge_or_core = "loop_or_short_edge";
+		edge_or_core = "loop";
 	}
 	return edge_or_core;
 }	//	see_edge_or_core_or_loop_or_short_edge

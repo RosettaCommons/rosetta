@@ -50,7 +50,7 @@ delete_this_sw_can_by_sh_id_from_sw_by_comp(
 	core::Size sw_can_by_sh_id);
 
 utility::vector1<SandwichFragment>
-prepare_WriteToDB_sw_by_components(
+prepare_WriteToDB_sandwich(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session);
 
@@ -59,7 +59,7 @@ WriteToDB_AA_to_terminal_loops (
 	StructureID struct_id,
 	utility::sql_database::sessionOP	db_session,
 	core::pose::Pose & dssp_pose,
-	core::Size	sw_by_components_PK_id_counter,
+	core::Size	sandwich_PK_id_counter,
 	core::Size	sw_can_by_sh_id,
 	std::string tag,
 	bool starting_loop,
@@ -73,7 +73,7 @@ WriteToDB_ending_loop(
 	StructureID	struct_id,
 	utility::sql_database::sessionOP	db_session,
 	core::pose::Pose & dssp_pose,
-	core::Size	sw_by_components_PK_id_counter,
+	core::Size	sandwich_PK_id_counter,
 	core::Size	sw_can_by_sh_id,
 	std::string	tag,
 	core::Size	max_starting_loop_size_);
@@ -250,7 +250,7 @@ WriteToDB_sheet_connectivity(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	core::Size sw_by_components_PK_id_counter,
+	core::Size sandwich_PK_id_counter,
 	std::string tag,
 	core::Size sw_can_by_sh_id,
 	std::string loop_kind,
@@ -289,22 +289,22 @@ WriteToDB_starting_loop(
 	StructureID	struct_id,
 	utility::sql_database::sessionOP	db_session,
 	core::pose::Pose & dssp_pose,
-	core::Size	sw_by_components_PK_id_counter,
+	core::Size	sandwich_PK_id_counter,
 	core::Size	sw_can_by_sh_id,
 	std::string	tag,
 	core::Size	max_starting_loop_size_);
 
 core::Size
-WriteToDB_sw_by_components(
+WriteToDB_sandwich(
 	StructureID	struct_id,
 	utility::sql_database::sessionOP	db_session,
 	core::pose::Pose const & pose,
-	core::Size	sw_by_components_PK_id_counter,
+	core::Size	sandwich_PK_id_counter,
 	std::string	tag,
 	core::Size	sw_can_by_sh_id,
 	core::Size	sheet_id,
 	std::string	sheet_antiparellel,
-	core::Size	sw_by_components_bs_id,
+	core::Size	sandwich_bs_id,
 	std::string	strand_is_at_edge,
 	core::Size component_size,
 	core::Size	residue_begin,
@@ -312,7 +312,7 @@ WriteToDB_sw_by_components(
 
 
 core::Size
-WriteToDB_sw_by_components_by_AA_w_direction(
+WriteToDB_sandwich_by_AA_w_direction(
 	StructureID	struct_id,
 	utility::sql_database::sessionOP	db_session,
 	core::pose::Pose const & pose,

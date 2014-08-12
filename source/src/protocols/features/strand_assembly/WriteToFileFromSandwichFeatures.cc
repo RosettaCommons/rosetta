@@ -47,7 +47,7 @@ get_vector_of_loop_AA_distribution (
 		"	sum(M), sum(N), sum(P), sum(Q), sum(R), \n"
 		"	sum(S), sum(T), sum(V), sum(W), sum(Y) \n"
 		"FROM\n"
-		"	sw_by_components \n"
+		"	sandwich \n"
 		"WHERE\n"
 		"	loop_kind = ? \n"
 		"	AND struct_id = ? ;";
@@ -578,7 +578,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 
 	ElectroStatic_file << "resNum	type	"	<<	number_of_attractions_title	<<	"	"	<<	number_of_repulsions_title << "	attrac_minus_repul	salt_bridge	CC_bridge	NO_bridge	sum_of_salt_CC_NO_bridges	longer_range_ion_pair"	<<	endl;
 
-	utility::vector1<Size>	vector_of_unique_distinct_sw_ids	=	get_distinct_sw_id_from_sw_by_components_table	(struct_id,	db_session);
+	utility::vector1<Size>	vector_of_unique_distinct_sw_ids	=	get_distinct_sw_id_from_sandwich_table	(struct_id,	db_session);
 
 	std::vector<int> vec_number_of_attractions_by_centroid;
 	std::vector<int> vec_number_of_repulsions_by_centroid;
@@ -1202,9 +1202,9 @@ write_rama_of_AAs_to_a_file(
 	return 0;
 }	//write_rama_of_AAs_to_a_file
 
-//write_resfile_to_a_file
+// write_resfile_to_a_file_when_seq_rec_is_bad
 core::Size
-write_resfile_to_a_file(
+write_resfile_to_a_file_when_seq_rec_is_bad(
 	string	tag,
 	StructureID	struct_id,	// needed argument
 	utility::sql_database::sessionOP	db_session,	// needed argument
@@ -1219,7 +1219,7 @@ write_resfile_to_a_file(
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	// <begin> make a resfile to design all residues
-	string resfile_name = pdb_file_name + "_resfile_to_design_all_residues.txt";
+	string resfile_name = pdb_file_name + "_resfile_to_design_all_residues_when_seq_rec_is_bad.txt";
 	ofstream resfile_stream;
 
 	resfile_stream.open(resfile_name.c_str());
@@ -1268,7 +1268,7 @@ write_resfile_to_a_file(
 					{
 						// see_edge_or_core_or_loop_or_short_edge is refactored
 						string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
-						if (edge_or_core == "loop_or_short_edge")
+						if (edge_or_core == "loop" || edge_or_core == "short_edge")
 						{
 							continue;	//	I will write resfile for this residue later
 						}
@@ -1378,7 +1378,7 @@ write_resfile_to_a_file(
 	for (Size i =1; i<=(pose.total_residue()); i++)
 	{
 		string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	i);
-		if (edge_or_core == "loop_or_short_edge")
+		if (edge_or_core == "loop" || edge_or_core == "short_edge")
 		{
 			resfile_stream << i << "	A	EX	1	NOTAA	CFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
 
@@ -1390,7 +1390,7 @@ write_resfile_to_a_file(
 
 
 	// <begin> make a resfile to design surface heading or loop residues
-	string surface_loop_resfile_name = pdb_file_name + "_resfile_to_design_surface_heading_or_loop_residues.txt";
+	string surface_loop_resfile_name = pdb_file_name + "_resfile_to_design_surface_heading_or_loop_residues_when_seq_rec_is_bad.txt";
 	ofstream surface_loop_resfile_stream;
 
 	surface_loop_resfile_stream.open(surface_loop_resfile_name.c_str());
@@ -1427,7 +1427,7 @@ write_resfile_to_a_file(
 					if	(write_resfile_to_minimize_too_much_hydrophobic_surface_)
 					{
 						string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	residue_num);
-						if (edge_or_core == "loop_or_short_edge")
+						if (edge_or_core == "loop" || edge_or_core == "short_edge")
 						{
 							continue;	//	I will write resfile for this residue later
 						}
@@ -1475,7 +1475,7 @@ write_resfile_to_a_file(
 	for (Size i =1; i<=(pose.total_residue()); i++)
 	{
 		string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id,	db_session,	i);
-		if (edge_or_core == "loop_or_short_edge")
+		if (edge_or_core == "loop" || edge_or_core == "short_edge")
 		{
 			surface_loop_resfile_stream << i << "	A	EX	1	NOTAA	CFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
 		}
@@ -1485,9 +1485,60 @@ write_resfile_to_a_file(
 	// <end> make a resfile to design surface heading or loop residues
 
 	return 0;
+}//write_resfile_to_a_file_when_seq_rec_is_bad
+
+
+// write_resfile_to_a_file
+core::Size
+write_resfile_to_a_file(
+	string	tag,
+	StructureID	struct_id,	// needed argument
+	utility::sql_database::sessionOP	db_session,	// needed argument
+	core::pose::Pose const & pose,
+	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	bool	write_resfile_NOT_FWY_on_surface_
+	)
+{
+	Size tag_len = tag.length();
+	string pdb_file_name = tag.substr(0, tag_len-5);
+
+	// <begin> make a resfile to design all residues
+	string resfile_name = pdb_file_name + "_resfile_to_design_all_residues.txt";
+	ofstream resfile_stream;
+
+	resfile_stream.open(resfile_name.c_str());
+
+	resfile_stream << "NOTAA C" << endl;
+	resfile_stream << "start" << endl;
+	resfile_stream << "# final resfile rule update: 07/29/2014" << endl;
+	resfile_stream << "# NOTAA CFWY for loops and surface_heading residues" << endl;
+
+	for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) { // per each beta-strand 
+		Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
+		Size residue_end	=	bs_of_sw_can_by_sh[ii].get_end();
+		for (Size	residue_num	=	residue_begin;	residue_num	<=	residue_end; residue_num++) {
+			if (write_resfile_NOT_FWY_on_surface_) {
+				string  heading = determine_heading_direction_by_vector (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(),  residue_begin,  residue_end,  residue_num);
+				if (heading == "surface") {
+				resfile_stream << residue_num << " A NOTAA CFWY #surface heading" << endl;
+				}
+			}
+		}
+	}
+
+	for (Size residue_num = 1;  residue_num <=  pose.total_residue(); residue_num++) {
+		string id = see_edge_or_core_or_loop_or_short_edge (struct_id,  db_session, residue_num);
+		if (id == "loop") {
+			resfile_stream << residue_num << " A NOTAA CFWY #loop" << endl;
+		}
+	}
+
+	resfile_stream.close();
+	// <end> make a resfile to design all residues
+
+	return 0;
 }//write_resfile_to_a_file
 
 } //namespace strand_assembly
 } //namespace features
 } //namespace protocols
-
