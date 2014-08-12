@@ -124,6 +124,7 @@
 #include <ctime>
 #include <devel/splice/RBInMover.hh>
 #include <devel/splice/RBOutMover.hh>
+#include <protocols/toolbox/superimpose.hh>
 
 namespace devel {
 	namespace splice {
@@ -379,6 +380,45 @@ namespace devel {
 			return dbase_entry;
 		}
 
+utility::vector1< numeric::xyzVector< core::Real > >
+coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
+  utility::vector1< numeric::xyzVector< core::Real > > coords;
+
+  coords.clear();
+  BOOST_FOREACH( core::Size const pos, positions ){
+    coords.push_back( pose.residue( pos ).xyz( "N" ) );
+    coords.push_back( pose.residue( pos ).xyz( "CA" ) );
+    coords.push_back( pose.residue( pos ).xyz( "C" ) );
+    coords.push_back( pose.residue( pos ).xyz( "O" ) );
+  }
+  return coords;
+}
+
+void
+Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::Pose & source_pose ){
+  using namespace protocols::toolbox;
+
+	runtime_assert( !superimposed() );
+	utility::vector1< core::Size > pose_positions, template_positions;
+  pose_positions.clear(); template_positions.clear();
+	pose_positions.push_back( source_pdb_from_res() );
+	pose_positions.push_back( source_pdb_to_res() );
+	template_positions.push_back( from_res() );
+	template_positions.push_back( to_res() );
+  utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( source_pose, pose_positions ) ), ref_coords( coords( pose/*this is the starting pose, the structure on which we want to graft the loop from the source protein*/, template_positions )
+);
+
+  numeric::xyzMatrix< core::Real > rotation;
+  numeric::xyzVector< core::Real > to_init_center, to_fit_center;
+
+  superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
+
+  apply_superposition_transform( source_pose, rotation, to_init_center, to_fit_center );
+	/// DEBUGGING
+	if( debug_)
+		source_pose.dump_pdb( "superimposed_source_pose.pdb" );
+}
+
 		void Splice::apply(core::pose::Pose & pose) {
 			using namespace protocols::rosetta_scripts;
 			using core::chemical::DISULFIDE;
@@ -486,6 +526,7 @@ namespace devel {
 				if( !superimposed() ){
 					nearest_to_from = source_pdb_from_res();
 					nearest_to_to   = source_pdb_to_res();
+					superimpose_source_on_pose( pose, source_pose );
 				}
 				else if (segment_type_=="H3"&& (tail_segment_=="c")){
 					nearest_to_from = find_nearest_res(source_pose, pose,from_res()/*should be the 2 vh cys on template*/, 1);//start res is nearest disulfide on source_pdb
@@ -1193,9 +1234,10 @@ namespace devel {
 				} //fi "tail_segment"
 				//pose.dump_pdb("after_tail_segemtn_mover.pdb");
 				/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is a pretty decent filter
-				if( !superimposed() )
-					TR<<"Not computing RMSd of spliced segment to source because superimposed is turned off."<<std::endl;
-				else if (torsion_database_fname_ == "") { // no use computing rms if coming from a database (no coordinates)
+//				if( !superimposed() )
+//					TR<<"Not computing RMSd of spliced segment to source because superimposed is turned off."<<std::endl;
+//				else
+				if (torsion_database_fname_ == "") { // no use computing rms if coming from a database (no coordinates)
 					core::Real rms(0);
 					for (core::Size i = 0; i <= total_residue_new - 1; ++i) {
 						core::Real const dist(
@@ -2393,10 +2435,10 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 
 ///@brief apply coordinate constraints on the segment being inserted. "to" and "from" are residue number of the pose(!), anchor residue number is also on the pose
 void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size from, core::Size to, core::Size anchor, std::string atom_type, core::pack::task::PackerTaskOP task) {
-	if( !superimposed() ){
-		TR<<"The source pose is not superimposed on the template, so we're not using coordinate restraints, only dihedrals"<<std::endl;
-		return;
-	}
+//	if( !superimposed() ){
+//		TR<<"The source pose is not superimposed on the template, so we're not using coordinate restraints, only dihedrals"<<std::endl;
+//		return;
+//	}
 	core::scoring::constraints::ConstraintOPs cst;
 	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 1/*chain*/);
 	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
