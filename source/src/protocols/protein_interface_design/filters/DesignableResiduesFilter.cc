@@ -152,7 +152,7 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 		TR<<"Repackable residues:"<<std::endl;
 		for( core::Size resi=1; resi<=total_residue; ++resi ){
 			if( packer_task->being_packed( resi ) ) {
-				TR<<pose.residue( resi ).name3()<<" "<<pose.pdb_info()->number( resi )<<std::endl;
+				TR<<pose.residue( resi ).name3()<<" "<<pose.pdb_info()->number( resi )<<pose.pdb_info()->chain( resi )<<std::endl;
 				packable_pos++;
 				select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 			}
