@@ -542,14 +542,13 @@ settings = {
     "gcc, release_debug" : {
         "appends" : {
             "flags" : {
-                "compile"  : [
+                "compile" : [
                     "O3",
                     "ffast-math",
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
-                    "g",
-                    "ggdb"
+                    "s"
                 ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
@@ -558,8 +557,6 @@ settings = {
                     "Wno-unused-parameter",
                 ],
             },
-            # Uncomment to turn asserts on if speed matters and assert failures
-            # are not expected.
             #"defines" : [ "NDEBUG" ],
         },
     },
@@ -991,10 +988,10 @@ settings = {
         "removes" : {
             "flags" : {
                 "warn" : [
-                    # We turn off warnings as errors for Python build 
-                    # only because the automatic Python interface wrapping 
+                    # We turn off warnings as errors for Python build
+                    # only because the automatic Python interface wrapping
                     # can introduce warnings.
-                    "Werror", 
+                    "Werror",
                 ],
             },
         },
@@ -1354,14 +1351,9 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "ip" ],
-                "mode" : [
-                    "O3",
-                    "g"
-                ],
+                "mode" : [ "O3" ],
             },
-        # Uncomment below to turn asserts on if speed matters and assert
-        # failures not expected.
-        #"defines" : [ "NDEBUG" ],
+            #"defines" : [ "NDEBUG" ],
         },
     },
 
@@ -1880,7 +1872,6 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "O3" ],
-                "mode" : [ "g" ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [
@@ -1888,6 +1879,7 @@ settings = {
                     "Wno-unused-parameter",
                 ],
             },
+            #"defines" : [ "NDEBUG" ],
         },
     },
 
