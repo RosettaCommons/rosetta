@@ -83,7 +83,9 @@ SetAtomTree::SetAtomTree() :
 	connect_from_( "" ),
 	host_chain_( 2 ),
 	fold_tree_( NULL )
-{}
+{
+	start_tree_at_chain_ = '\0';
+}
 
 SetAtomTree::~SetAtomTree() {}
 
@@ -95,6 +97,10 @@ SetAtomTree::clone() const {
 void
 SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
+	if( tag->hasOption( "start_tree_at_chain" ) ){
+		start_tree_at_chain( tag->getOption< char >( "start_tree_at_chain", '\0' ) );
+		return;
+	}
 	std::string const ft_name( tag->getOption< std::string >( "fold_tree_file", "" ) );
 	if( ft_name != "" ){
 		utility::io::izstream data( ft_name );
@@ -237,6 +243,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 			new_ft.add_edge( cut + 1, CoM2, -1 );
 			new_ft.add_edge( CoM2, pose.conformation().chain_end( 1 ), -1 );
 		}
+
 		else{
 			new_ft.add_edge( 1, CoM1, -1 );
 			new_ft.add_edge( CoM1, cut, -1 );
@@ -288,6 +295,35 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		pose.fold_tree( new_ft );
 		return;
 	}
+	}
+	if( start_tree_at_chain() != '\0' ){
+		core::Size chain_num( 1 );
+		core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
+		core::conformation::Conformation const & conf( pose.conformation() );
+		for( ; chain_num <= conf.num_chains(); ++chain_num ){
+			if( pdb_info->chain( conf.chain_begin( chain_num ) ) == start_tree_at_chain() )
+				break;
+		}
+		runtime_assert( pdb_info->chain( conf.chain_begin( chain_num ) ) == start_tree_at_chain() );
+
+		core::kinematics::FoldTree new_ft;
+
+		new_ft.clear();
+		new_ft.add_edge( conf.chain_begin( chain_num ), conf.chain_end( chain_num ), -1 );
+		core::Size prev_node( conf.chain_begin( chain_num ) );
+		core::Size jump_num = 1;
+		for( core::Size chaini = 1; chaini <= conf.num_chains(); ++chaini ){
+			if( chaini == chain_num )
+				continue;
+			new_ft.add_edge( prev_node, conf.chain_begin( chaini ), jump_num );
+			new_ft.add_edge( conf.chain_begin( chaini ), conf.chain_end( chaini ), -1 );
+			prev_node = conf.chain_begin( chaini );
+			++jump_num;
+		}
+		new_ft.delete_self_edges();
+		TR<<"New fold tree: "<<new_ft<<std::endl;
+		pose.fold_tree( new_ft );
+		return;
 	}
 
 

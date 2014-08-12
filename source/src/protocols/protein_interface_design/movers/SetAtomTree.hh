@@ -51,8 +51,11 @@ public :
 
 	core::kinematics::FoldTreeOP fold_tree() const;
 	void fold_tree( core::kinematics::FoldTreeOP ft_ );
+	char start_tree_at_chain() const{ return start_tree_at_chain_; }
+	void start_tree_at_chain( char const c ){ start_tree_at_chain_ = c; }
 private :
 	bool docking_ft_, simple_ft_, two_parts_chain1_; //dflt false; false; false; two-parts-chain1 is intended for cases where chain1 has a cut and we want to optimize the jump between part1 and part2 along with the jump between chain1 and chain2
+	char start_tree_at_chain_; //dflt ''; if set, start the fold tree in the defined chain, and put all other chains beyond that jump
 	core::Size jump_; //dflt true
 	std::string resnum_, connect_to_, anchor_res_, connect_from_; //as parsed
 	core::Size host_chain_; //dflt 2
