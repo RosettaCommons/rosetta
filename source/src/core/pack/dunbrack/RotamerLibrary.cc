@@ -1462,28 +1462,6 @@ RotamerLibrary::random_tempname( std::string const & prefix ) const
 	char * tmpname_output = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
 	std::string tempfilename = tmpname_output;
 	free( tmpname_output );
-#elif USEMPI
-	// jk change this to mkstemp to prevent race condition
-	// apl -- any reason mkstemp can't become the standard?
-	//shouldn't write temporary files into the database
-	// database might be read-only if rosetta is installed for multiple users
-	//tempnam is good in finding a suitable directory
-	char * tmpname_output1 = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
-	std::string str_name = std::string(tmpname_output1)+"XXXXXX";
-	free( tmpname_output1 );
-	char * tmpname_output = new char [str_name.size()+20]; // Why + 20?  Apparently mkstemp can overflow.
-	strcpy(tmpname_output, str_name.c_str()); // use strcpy to get char* instead of const char*
-	int fid = mkstemp( tmpname_output );
-	if ( fid == -1 ) { // error condition of mkstemp.
-	  utility_exit_with_message("Failed to open temporary file with mkstemp" );
-	}
-	close( fid ); // have to close the file in order to open it again.
-	/// On the web, it says the file descriptor alone returned by mkstemp and not the file name is hacker safe.
-	/// http://lists.virus.org/vulnwatch-0212/msg00023.html
-	/// I suppose this is a security flaw with mini... just as soon as someone figures out
-	/// how to open a stream with a file descriptor, this code should be replaced.
-	std::string tempfilename = tmpname_output;
-	delete [] tmpname_output;
 #else
 	bool exists = false;
 	std::string dirname = option[ in::path::database ](1).name();
