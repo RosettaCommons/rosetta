@@ -197,8 +197,6 @@ SecondaryStructureSegmentFeatures::report_features(
 
 		res >> resNum >> residue_secondary;
 
-		std::cout << "Current resNum " << resNum << std::endl;
-
 		//Use non-standard 'L' for all loop-like dssp codes
 		if(is_loop(residue_secondary))
 		{
