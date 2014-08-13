@@ -798,12 +798,12 @@ def get_all_rosetta_objs(mini_path):
     version_add_on = execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/default/'
 
     # fix this for diferent platform
-    if Platform == "linux": lib_path = 'build/src/'+mode+'/linux/' + platform.release()[:3] + '/' + PlatformBits +'/x86/gcc/'
+    if Platform == "linux": lib_path = 'build/src/'+mode+'/linux/' + re.search( r'(\d\.\d+)\..*', platform.release()).group(1) + '/' + PlatformBits +'/x86/gcc/'
     elif Platform == "cygwin": lib_path = 'build/src/'+mode+'/cygwin/1.7/32/x86/gcc/'
     else:
         if Platform == "macos" and PlatformBits=='32': lib_path = 'build/src/'+mode+'/macos/10.5/32/x86/gcc/'
         if Platform == "macos" and PlatformBits=='64':
-            if platform.release()[:2] == '10': lib_path = 'build/src/'+mode+'/macos/10.6/64/x86/gcc/'
+            if   platform.release()[:2] == '10': lib_path = 'build/src/'+mode+'/macos/10.6/64/x86/gcc/'
             elif platform.release()[:2] == '11': lib_path = 'build/src/'+mode+'/macos/10.7/64/x86/gcc/'
             elif platform.release()[:2] == '12': lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
             elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = '5.0/default/'
