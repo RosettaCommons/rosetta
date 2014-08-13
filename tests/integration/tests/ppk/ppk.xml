@@ -3,7 +3,7 @@
         </SCOREFXNS>
         <FILTERS>
 					<ScoreType name=total_score scorefxn=score12 score_type=total_score threshold=100/>
-					<Delta name=delta_score upper=1 lower=0 range=1 filter=total_score unbound=1 jump=1 confidence=0/>
+					<Delta name=delta_score upper=1 lower=0 range=1 filter=total_score unbound=1 jump=1 confidence=0 scorefxn=score12/>
         </FILTERS>
         <MOVERS>
                 <Prepack name=ppk jump_number=1 scorefxn=score12/>
