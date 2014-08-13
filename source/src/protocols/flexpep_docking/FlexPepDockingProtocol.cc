@@ -278,7 +278,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 			"invalid anchor indexing in FlexPepDock parameter file (or in default FlexPepDock parameters)");
 
 		// multichain receptor
-        if (flags_.receptor_chain().size() > 1) {
+        if (! flags_.pep_fold_only && flags_.receptor_chain().size() > 1) {
                 core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
                 Size resi = 1;
                 Size chain = 0;
@@ -321,9 +321,9 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		f.clear();
 		f.tree_from_jumps_and_cuts
 			( pose.total_residue(), num_jumps, jumps, cuts );
-		TR.Debug << "old fold tree: " << pose.fold_tree() << std::endl;
+		TR << "old fold tree: " << pose.fold_tree() << std::endl;
 		pose.fold_tree(f);
-		TR.Debug << "new fold tree: " << pose.fold_tree() << std::endl;
+		TR << "new fold tree: " << pose.fold_tree() << std::endl;
 }
 
 
