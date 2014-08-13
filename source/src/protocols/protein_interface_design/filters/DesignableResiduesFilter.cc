@@ -103,7 +103,7 @@ DesignableResiduesFilter::task_factory( core::pack::task::TaskFactoryOP task_fac
 }
 
 bool
-DesignableResiduesFilter::apply(core::pose::Pose const & pose ) const
+DesignableResiduesFilter::apply(core::pose::Pose const & ) const
 {
 		return true;
 }
@@ -167,7 +167,7 @@ DesignableResiduesFilter::report_sm( core::pose::Pose const & pose ) const
 }
 
 void
-DesignableResiduesFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
+DesignableResiduesFilter::report( std::ostream & , core::pose::Pose const & ) const
 {
 }
 
