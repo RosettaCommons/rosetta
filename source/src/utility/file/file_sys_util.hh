@@ -33,6 +33,10 @@ namespace file {
 bool
 file_exists( std::string const & path );
 
+/// @brief Is the file a directory?
+bool
+is_directory( std::string const & path );
+
 /// @brief Delete file
 int
 file_delete( std::string const & path );
@@ -56,7 +60,6 @@ file_size( std::string const & filename );
 /// @brief Create a blank file if it doesn't already exist
 bool
 create_blank_file( std::string const & blank_file );
-
 
 /// @brief Create a directory if it doesn't already exist
 bool

@@ -40,6 +40,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/mpistream.hh>
 #include <utility/inline_file_provider.hh>
+
 // C++ headers
 #include <iostream>
 
@@ -66,6 +67,11 @@
 #ifdef WIN_PYROSETTA
 	#include <direct.h>
 	#define mkdir _mkdir
+#endif
+
+// Windows compatibility shim (*nixes should have it already defined.)
+#ifndef S_ISDIR
+#define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
 #endif
 
 
@@ -112,6 +118,18 @@ file_exists( std::string const & path )
 #endif
 }
 
+
+/// @brief Is the given path a directory?
+bool
+is_directory( std::string const & path ) {
+	// Does this need to be specialized for Windows builds, etc.?
+	// As far as I can tell, not necessarily.
+	struct stat buf;
+	if( stat(path.c_str(), &buf) ) { // stat() returns non-zero on failure
+		return false; // A non-existant file is not a directory.
+	}
+	return S_ISDIR(buf.st_mode);
+}
 
 /// @brief Delete File
 int
@@ -234,7 +252,7 @@ create_directory(
 	std::string const & dir_path
 )
 {
-#if !defined( __native_client__ ) 
+#if !defined( __native_client__ )
 #if (defined WIN32)
 	// Windows code
 	return !mkdir(dir_path.c_str());
@@ -298,6 +316,12 @@ trytry_ifstream_open(
 	// leave now (avoid 5-second delay!!)
 	if ( open_mode & ios::in ) {
 		if ( !file_exists( resolved_name ) ) {
+			ifstream_.setstate( ios_base::failbit ); // set ios state to failbit
+			return false;
+		}
+		// On some platforms, "opening" a directory as a file for reading succeeds and gives an empty "file".
+		// Catch this and error out instead.
+		if ( is_directory( resolved_name ) ) {
 			ifstream_.setstate( ios_base::failbit ); // set ios state to failbit
 			return false;
 		}

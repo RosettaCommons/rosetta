@@ -105,6 +105,33 @@ class IZStreamTests : public CxxTest::TestSuite {
 		TS_ASSERT( line == "to be compacted" );
 	}
 
+	/// The default istream behavior on some platforms when given a directory name
+	/// (rather than a filename) is to open it as a valid but empty stream.
+	/// In contrast, izstream state for opening a directory should be invalid, just
+	/// like it is for opening a non-existant file.
+	void test_izstream_directory_read() {
+		using namespace utility::io;
+		// Note that for C++ streams, good() is not exactly opposite to fail() or even to bad()
+		// Ain't C++ fun?
+
+		// regular file
+		izstream reg("utility/io/no_final_newline.txt");
+		TS_ASSERT( reg.good() );
+		TS_ASSERT( ! reg.fail() );
+		// zipped file.
+		izstream zip("utility/io/zipped_file.txt.gz");
+		TS_ASSERT( zip.good() );
+		TS_ASSERT( ! zip.fail() );
+		//non-existant file.
+		izstream missing("utility/io/This_file_should_not_exist._Delete_it_if_it_does.txt");
+		TS_ASSERT( ! missing.good() );
+		TS_ASSERT( missing.fail() );
+		//directory.
+		izstream dir("utility/io");
+		TS_ASSERT( ! dir.good() );
+		TS_ASSERT( dir.fail() );
+	}
+
 	/// izstream does not support seekg.  This is good to know.
 	void dont_test_izstream_seekg() {
 		using namespace utility::io;
