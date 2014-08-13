@@ -34,9 +34,14 @@
 #include <numeric/xyzMatrix.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <protocols/hybridization/TMalign.hh>
+#include <core/id/AtomID.hh>
+#include <core/pose/util.hh>
 
 namespace protocols{
 namespace simple_filters {
+
+using namespace std;
 
 static basic::Tracer TR( "protocols.simple_filters.CircularPermutationFinder" );
 
@@ -82,9 +87,9 @@ write_to_file( std::string const filename, core::pose::Pose const & pose, core::
 	file<<resnum_begin<<chain<<' '<<resnum_cut<<chain<<' '<<resnum_end<<chain<<' '<<rmsd<<'\n';
 }
 
-utility::vector1< numeric::xyzVector< core::Real > >
+vector< numeric::xyzVector< core::Real > >
 bb_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const & positions ){
-  utility::vector1< numeric::xyzVector< core::Real > > coords;
+  vector< numeric::xyzVector< core::Real > > coords;
 
   coords.clear();
   BOOST_FOREACH( core::Size const pos, positions ){
@@ -97,11 +102,11 @@ bb_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const &
 }
 
 core::Real
-coord_rmsd( utility::vector1< numeric::xyzVector< core::Real > > const & c1, utility::vector1< numeric::xyzVector< core::Real > > const & c2 ){
+coord_rmsd( vector< numeric::xyzVector< core::Real > > const & c1, vector< numeric::xyzVector< core::Real > > const & c2 ){
 	runtime_assert( c1.size() == c2.size() );
 
 	core::Real sum_dist2( 0.0 );
-	for( core::Size i = 1; i <= c1.size(); ++i )
+	for( core::Size i = 0; i <  c1.size(); ++i )
 		sum_dist2 += c1[ i ].distance_squared( c2[ i ] );
 
 	sum_dist2 /= ( core::Real ) c1.size();
@@ -110,19 +115,120 @@ coord_rmsd( utility::vector1< numeric::xyzVector< core::Real > > const & c1, uti
 }
 
 core::Real
-superimpose_parts( utility::vector1< numeric::xyzVector< core::Real > > & ref_coords, core::Size const cut ){
+superimpose_parts( vector< numeric::xyzVector< core::Real > > & ref_coords, core::Size const cut ){
 	core::Size const aa_atom_num( 4 );
-	utility::vector1< numeric::xyzVector< core::Real > > rotated_coords( ref_coords );
+	vector< numeric::xyzVector< core::Real > > rotated_coords( ref_coords );
 
 	std::rotate( rotated_coords.begin(), rotated_coords.begin() + ( cut - 1 ) * aa_atom_num, rotated_coords.end());
 
   numeric::xyzMatrix< core::Real > rotation;
   numeric::xyzVector< core::Real > to_init_center, to_fit_center;
 
+	double *Kabsch_rms = new double;
+	*Kabsch_rms = 0.0;
+	protocols::hybridization::TMalign tmalign;
+	bool const success = tmalign.Kabsch( ref_coords, rotated_coords, ref_coords.size(), 1, Kabsch_rms, to_fit_center, rotation );
+
+	if( !success )
+		return 99999.9;
+	return ( core::Real )( *Kabsch_rms );
+}
+/*
+
   protocols::toolbox::superposition_transform( rotated_coords, ref_coords, rotation, to_init_center, to_fit_center );
 
 	return( coord_rmsd( rotated_coords, ref_coords ) );
  // apply_superposition_transform( pose, rotation, to_init_center, to_fit_center );
+}*/
+
+core::Real
+superimpose_parts( core::pose::Pose const & pose, utility::vector1< core::Size > const & vec, core::Size const cut ){
+	using namespace protocols::hybridization;
+
+	std::list< core::Size > resi_list;
+	resi_list.clear();
+	BOOST_FOREACH( core::Size const s, vec )
+		resi_list.push_back( s );
+
+	utility::vector1< core::Size > rotated_vec = vec;
+
+	std::rotate( rotated_vec.begin(), rotated_vec.begin() + cut, rotated_vec.end() );
+	std::list< core::Size > rotated_list;
+	rotated_list.clear();
+	BOOST_FOREACH( core::Size const s, rotated_vec )
+	  rotated_list.push_back( s );
+
+	TMalign tm_align;
+  std::string seq_pose, seq_ref, aligned;
+  core::id::AtomID_Map< core::id::AtomID > atom_map;
+  core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+  core::Size n_mapped_residues=0;
+
+//	std::list< core::Size > const rotated_list = std::rotate( resi_list.begin(), resi_list.begin() + cut, resi_list.end() );
+  tm_align.apply( pose, pose, resi_list, rotated_list );
+  tm_align.alignment2AtomMap( pose, pose, resi_list, rotated_list, n_mapped_residues, atom_map);
+  tm_align.alignment2strings(seq_pose, seq_ref, aligned);
+  core::Real TMscore = tm_align.TMscore(resi_list.size()/*normalize_length*/);
+
+  TR << "Align domain with TMscore of " << TMscore << std::endl;
+  TR << seq_pose << std::endl;
+  TR << aligned << std::endl;
+  TR << seq_ref << std::endl;
+	return TMscore;
+}
+
+core::pose::Pose
+rotate_pose( core::pose::Pose const & pose, core::Size const cut ){
+	using namespace core::pose;
+
+	Pose rotated_pose;
+
+	utility::vector1< core::Size > circ_perm;
+	circ_perm.clear();
+	for( core::Size i = cut + 1; i <= pose.total_residue(); ++i )
+		circ_perm.push_back( i );
+	for( core::Size i = 1; i <= cut; ++i )
+		circ_perm.push_back( i );
+
+	create_subpose( pose, circ_perm, pose.fold_tree(), rotated_pose );
+	return( rotated_pose );
+}
+
+core::Real
+superimpose_parts( core::pose::Pose const & pose, core::Size const cut ){
+	using namespace protocols::hybridization;
+
+	std::list< core::Size > resi_list;
+	resi_list.clear();
+	for( core::Size i = 1; i <= pose.total_residue(); ++i )
+		resi_list.push_back( i );
+
+//	utility::vector1< core::Size > rotated_vec = vec;
+
+//	std::rotate( rotated_vec.begin(), rotated_vec.begin() + cut, rotated_vec.end() );
+//	std::list< core::Size > rotated_list;
+//	rotated_list.clear();
+//	BOOST_FOREACH( core::Size const s, rotated_vec )
+//	  rotated_list.push_back( s );
+
+	core::pose::Pose const r_p = rotate_pose( pose, cut );
+
+	TMalign tm_align;
+  std::string seq_pose, seq_ref, aligned;
+  core::id::AtomID_Map< core::id::AtomID > atom_map;
+  core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+  core::Size n_mapped_residues=0;
+
+	tm_align.apply( pose, r_p, resi_list, resi_list );
+  tm_align.alignment2AtomMap( pose, r_p, resi_list, resi_list, n_mapped_residues, atom_map);
+  tm_align.alignment2strings(seq_pose, seq_ref, aligned);
+  core::Real TMscore = tm_align.TMscore(resi_list.size()/*normalize_length*/);
+
+  TR << "Align domain with TMscore of " << TMscore << std::endl;
+  TR << seq_pose << std::endl;
+  TR << aligned << std::endl;
+  TR << seq_ref << std::endl;
+	return TMscore;
 }
 
 void
@@ -155,7 +261,7 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 	pido->repack_chain1( true );
 	pido->design_chain1( true );
 	pido->repack_chain2( false );
-	pido->interface_distance_cutoff( 8.0 );
+	pido->interface_distance_cutoff( 1200.0 );
 	TaskFactoryOP tf_interface( new TaskFactory);
 	tf_interface->push_back(pido);
   vector1< Size > const chainA_interface( protocols::rosetta_scripts::residue_packer_states( rewired_pose, tf_interface, true, true));
@@ -176,11 +282,13 @@ CircularPermutationFinder::circular_permutation( core::pose::Pose const & pose, 
 		for( Size i = min_res; i <= max_res; ++i )
 			aligned_positions.push_back( i );
 	}
-	vector1< numeric::xyzVector< core::Real > > aligned_coords( bb_coords( rewired_pose, aligned_positions ) );
-	for( Size cut = 2; cut < aligned_positions.size(); ++cut ){
-		Real const internal_rmsd = superimpose_parts( aligned_coords, cut );
-		TR<<"At cut position: "<<aligned_positions[ cut ]<<" rmsd: "<<internal_rmsd<<std::endl;
-		rmsds[ aligned_positions[ cut ] ] = internal_rmsd;
+	vector< numeric::xyzVector< core::Real > > aligned_coords( bb_coords( rewired_pose, aligned_positions ) );
+	for( Size cut = 1; cut < aligned_positions.size(); ++cut ){
+//		Real const internal_rmsd = superimpose_parts( aligned_coords, cut );
+//		Real const internal_TMscore = superimpose_parts( pose, aligned_positions, cut );
+		Real const internal_TMscore = superimpose_parts( pose, cut );
+		TR<<"At cut position: "<<aligned_positions[ cut ]<<" TMscore: "<<internal_TMscore<<std::endl;
+		rmsds[ aligned_positions[ cut ] ] = internal_TMscore;
 	}
 	Real min_rmsd( 100000.0 );
 	Size min_cut( 0 );

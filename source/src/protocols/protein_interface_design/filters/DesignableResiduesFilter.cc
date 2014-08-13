@@ -105,15 +105,7 @@ DesignableResiduesFilter::task_factory( core::pack::task::TaskFactoryOP task_fac
 bool
 DesignableResiduesFilter::apply(core::pose::Pose const & pose ) const
 {
-	core::Size design_pos(compute( pose ));
-	if( (design_pos >= lower_threshold_) && (design_pos <= upper_threshold_) ){
-		TR<<"passing."<<std::endl;
 		return true;
-	}
-	else {
-		TR<<"failing."<<std::endl;
-		return false;
-	}
 }
 
 core::Size
@@ -177,7 +169,6 @@ DesignableResiduesFilter::report_sm( core::pose::Pose const & pose ) const
 void
 DesignableResiduesFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	out<<"DesignableResiduesFilter returns "<<compute( pose )<<std::endl;
 }
 
 void
