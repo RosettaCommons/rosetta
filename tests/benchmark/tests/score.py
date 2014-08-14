@@ -116,8 +116,8 @@ def compare(test, results, files_path, previous_results, previous_files_path):
         for test in os.listdir(files_path):
             if os.path.isdir(files_path + '/' + test):
                 exclude = ''.join([' --exclude="{}"'.format(f) for f in ignore_files] )
-                res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {exclude} {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test, exclude=exclude), return_='tuple')
-                res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {exclude} {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test, exclude=exclude), return_='tuple')
+                res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {exclude} {0}/{test} {1}/{test}'.format(previous_files_path, files_path, test=test, exclude=exclude), return_='tuple')
+                res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {exclude} {0}/{test} {1}/{test}'.format(previous_files_path, files_path, test=test, exclude=exclude), return_='tuple')
                 diff = 'Brief Diff:\n' + brief_diff + ( ('\n\nFull Diff:\n' + full_diff[:1024*1024*16]) if full_diff != brief_diff else '' )
                 results['tests'][test] = {_StateKey_: _S_failed_ if res else _S_finished_, _LogKey_: diff if res else ''}
 
