@@ -27,6 +27,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
@@ -346,12 +347,10 @@ StepWiseMonteCarlo::do_test_move( pose::Pose & pose ){
 void
 StepWiseMonteCarlo::preminimize_pose( pose::Pose & pose ) {
 	fix_up_residue_type_variants( pose );
-
 	stepwise_modeler_->set_moving_res_and_reset( 0 );
 	stepwise_modeler_->set_working_prepack_res( get_all_residues( pose ) );
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	stepwise_modeler_->apply( pose );
-
 	utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
 	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
 		preminimize_pose( *( other_pose_list[ n ] ) );

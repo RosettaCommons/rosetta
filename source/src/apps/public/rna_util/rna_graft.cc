@@ -25,6 +25,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <protocols/farna/util.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
@@ -156,27 +157,15 @@ calculate_res_map( utility::vector1< Size > const & superimpose_resnum,
 
 ////////////////////////////////////////////////////////////////////////////
 void
-get_pdbs_and_superimpose( pose::Pose & pose1 /* the 'parent pose'*/,
-													pose::Pose & pose2 /*the one that got superimposed*/,
-													std::string & pdb_file1,
-													std::string & pdb_file2,
-													utility::vector1< Size > & resnum1,
-													utility::vector1< Size > & resnum2){
+superimpose_pdb( pose::Pose & pose1 /* the 'parent pose'*/,
+								 pose::Pose & pose2 /*the one that got superimposed*/,
+								 utility::vector1< Size > const & resnum1,
+								 utility::vector1< Size > const & resnum2){
 
 	using namespace core::pose;
 	using namespace basic::options;
 
-	utility::vector1< std::string > pdb_files = option[ in::file::s ]();
-	runtime_assert( pdb_files.size() == 2 );
-	pdb_file1 = pdb_files[ 1 ];
-	pdb_file2 = pdb_files[ 2 ];
-
 	utility::vector1< Size > superimpose_resnum;
-	// note that following will also try to estimate a fold_tree & virtualize 5' phosphates
-	// (which will be ignored in superposition).
-	get_pose_and_numbering( pdb_file1, pose1, resnum1 );
-	get_pose_and_numbering( pdb_file2, pose2, resnum2 );
-
 	if ( option[superimpose_res].user() ){
 		// check if all specified residues are actually in the file.
 		superimpose_resnum = option[ superimpose_res ]();
@@ -277,6 +266,7 @@ graft_in_positions( pose::Pose const & pose1,
 
 }
 
+////////////////////////////////////////////////////////////////////////////
 void
 graft_in_positions( pose::Pose const & pose1,
 										pose::Pose & pose_target,
@@ -289,9 +279,38 @@ graft_in_positions( pose::Pose const & pose1,
 
 ////////////////////////////////////////////////////////////////////////////
 void
+close_loops( core::pose::Pose & pose,
+						 utility::vector1< Size > const & resnum ) {
+
+	using namespace core::kinematics;
+
+	utility::vector1< Size > cutpoints;
+	for ( Size n = 2; n <= resnum.size(); n++ ){
+		if ( resnum[n] == resnum[n-1] + 1 ) {
+			if ( ( pose.residue( n-1 ).xyz( " O3'" ) - pose.residue( n ).xyz( " P  " ) ).length() > 2.0 ) {
+				FoldTree f = pose.fold_tree();
+				f.new_jump( n-1, n, n-1 );
+				f.set_jump_atoms( f.num_jump(),
+													core::chemical::rna::chi1_torsion_atom( pose.residue( n-1 ) ),
+													core::chemical::rna::chi1_torsion_atom( pose.residue( n   ) )   );
+				pose.fold_tree( f );
+				correctly_add_cutpoint_variants( pose, n-1 );
+				cutpoints.push_back( n-1 );
+			}
+		}
+	}
+
+	protocols::farna::RNA_LoopCloser rna_loop_closer;
+	rna_loop_closer.apply( pose, cutpoints );
+}
+
+////////////////////////////////////////////////////////////////////////////
+void
 graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 					 utility::vector1< Size > const & resnum1,
-					 utility::vector1< Size > const & resnum2 ){
+					 utility::vector1< Size > const & resnum2,
+					 pose::Pose & pose_target,
+					 utility::vector1< Size > & resnum_target ){
 
 	using namespace core::pose;
 	using namespace core::chemical;
@@ -299,7 +318,8 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	using namespace basic::options;
 	using namespace protocols::farna;
 
-	Pose pose_target;
+	pose_target.clear();
+	resnum_target.clear();
 
 	// make a generic RNA pose with the desired sequence. God I hope this works. Need to figure out PDBInfo crap too.
 	// what's the sequence?
@@ -328,7 +348,6 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	resnum_seq_list.sort();
 
 	std::string sequence_target;
-	utility::vector1< Size > resnum_target;
 	for ( std::list< std::pair< Size, char > >::const_iterator iter = resnum_seq_list.begin();
 					iter != resnum_seq_list.end(); iter++ ){
 		resnum_target.push_back( iter->first );
@@ -341,9 +360,11 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	// Copy in non-virtual atoms from pose1;
 	graft_in_positions( pose1, pose_target, resnum1, resnum_target );
-
 	// Copy in non-virtual atoms from pose2;
 	graft_in_positions( pose2, pose_target, resnum2, resnum_target, graft_resnum, option[ graft_backbone_only ]() );
+
+	// close loops
+	close_loops( pose_target, resnum_target );
 
 	// kind of ad hoc. let's see if it works.
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose_target );
@@ -375,22 +396,29 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 void
 rna_superimpose_and_graft_test(){
 
-	using namespace core::pose;
 	using namespace basic::options;
 
-	Pose pose1, pose2;
-	std::string pdb_file1, pdb_file2;
-	utility::vector1< Size > resnum1, resnum2;
-	get_pdbs_and_superimpose( pose1 /* the 'parent pose'*/,
-														pose2 /*the one that got superimposed*/,
-														pdb_file1,
-														pdb_file2,
-														resnum1,
-														resnum2); // in principle could store resnum, pdb_file1 inside PDBInfo object!
+	utility::vector1< std::string > pdb_files = option[ in::file::s ]();
+	runtime_assert( pdb_files.size() >= 2 );
 
-	//	output_superimposed_pdb( pose2, pdb_file2 );
+	pose::Pose pose1, pose2, pose_target;
+	utility::vector1< Size > resnum1, resnum2, resnum_target;
 
-	graft_pdb( pose1, pose2, resnum1, resnum2 );
+	// note that following will also try to estimate a fold_tree & virtualize 5' phosphates
+	// (which will be ignored in superposition).
+	get_pose_and_numbering( pdb_files[ 1 ], pose1, resnum1 );
+
+	for ( Size i = 2; i <= pdb_files.size(); i++ ){
+		get_pose_and_numbering( pdb_files[ i ], pose2, resnum2 );
+		superimpose_pdb( pose1 /* the 'parent pose'*/,
+										 pose2 /*the one that got superimposed*/,
+										 resnum1,
+										 resnum2); // in principle could store resnum, pdb_file1 inside PDBInfo object!
+		graft_pdb( pose1, pose2, resnum1, resnum2, pose_target, resnum_target );
+
+		resnum1 = resnum_target;
+		pose1   = pose_target;
+	}
 
 }
 

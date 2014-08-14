@@ -141,6 +141,7 @@ namespace modeler {
 	////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseModeler::do_prepacking( core::pose::Pose & pose ) {
+
 		master_packer_ = new packer::StepWiseMasterPacker( working_parameters_, options_->get_sampler_options() );
 		master_packer_->set_scorefxn( pack_scorefxn_ );
 		master_packer_->initialize( pose );
@@ -149,6 +150,7 @@ namespace modeler {
 
 		master_packer_->set_working_pack_res( working_prepack_res_ );
 		master_packer_->do_prepack( pose ); // will split at moving_res_list
+
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////

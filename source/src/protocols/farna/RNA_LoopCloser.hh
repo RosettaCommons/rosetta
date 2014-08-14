@@ -90,6 +90,9 @@ public:
 								Size const cutpoint
 								) const;
 
+	void
+	set_verbose( bool const setting ){ verbose_ = setting; }
+
 private:
 
 	bool

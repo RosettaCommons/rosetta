@@ -103,6 +103,7 @@ stepwise_monte_carlo()
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
 
+
 	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
 	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options = new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions;
 	bool const just_preminimize = option[ OptionKeys::stepwise::preminimize ]();
@@ -171,7 +172,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::cutpoint_closed );
 		option.add_relevant( OptionKeys::full_model::sample_res );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::cycles );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::verbose_scores );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::add_delete_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency );
@@ -190,14 +190,10 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::preminimize );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
-		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
 		option.add_relevant( OptionKeys::stepwise::rna::bulge_res );
 		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
-		option.add_relevant( OptionKeys::stepwise::protein::skip_coord_constraints );
-		option.add_relevant( OptionKeys::stepwise::protein::filter_native_big_bins );
-		option.add_relevant( OptionKeys::stepwise::protein::protein_prepack );
 		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );

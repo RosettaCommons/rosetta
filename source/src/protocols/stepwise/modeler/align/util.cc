@@ -111,6 +111,10 @@ namespace align {
 		pose_aligner.apply( pose );
 		rmsd = pose_aligner.rmsd();
 		natoms_rmsd = pose_aligner.natoms_rmsd();
+		if ( natoms_rmsd  == 0 ){ // happens in rna_score -- superimpose over everything, rmsd computed over nothing.
+			rmsd = pose_aligner.superimpose_rmsd();
+			natoms_rmsd = pose_aligner.natoms_superimpose_rmsd();
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

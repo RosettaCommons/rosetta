@@ -905,13 +905,26 @@ SilentStruct::one_letter_sequence() const {
 //    -> natoms>=9 on unpatched proteins residue should indicate fullatom
 //  if it remains unclear --> use the cmd-line flag to determine fullatom-ness...
 //
+//* additional note (rhiju) -- checked for DNA, RNA, some patches, which all go with fullatom -- this is getting byzantine, so
+//  perhaps we should set FA_STANDARD (fullatom) as default residue_type_set unless some kind of CENTROID tags is specified.
+//
 void SilentStruct::detect_fullatom( core::Size pos, core::Size natoms, bool& fullatom, bool& well_defined ) {
-	if ( sequence().is_patched( pos ) ) return;
+
 	if ( sequence().aa( pos ) > core::chemical::num_canonical_aas ) {
 		if ( sequence().aa( pos ) >= core::chemical::aa_vrt  ) return;
 		well_defined = true;
 		fullatom = true;
 		tr.Debug << "found RNA or DNA " << sequence().one_letter( pos )  << std::endl;
+		return;
+	}
+	if ( sequence().is_patched( pos ) ) {
+		utility::vector1< std::string > const patches = utility::string_split( 	sequence().patch_str( pos ), ':' );
+		if ( patches.has_value( "Virtual_Protein_SideChain" ) ||
+				 patches.has_value( "C_methylamidated" ) ||
+				 patches.has_value( "N_acetylated" ) ){
+			well_defined = true;
+			fullatom = true;
+		}
 		return;
 	}
 	//	if ( well_defined ) return; // no more checks necessary

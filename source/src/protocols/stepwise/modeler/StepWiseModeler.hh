@@ -73,6 +73,8 @@ namespace modeler {
 
 		void set_options( options::StepWiseModelerOptionsCOP options ) { options_ = options; }
 
+		options::StepWiseModelerOptionsCOP options(){ return options_; }
+
 		Size
 		get_num_sampled(){ return pose_list_.size(); }
 

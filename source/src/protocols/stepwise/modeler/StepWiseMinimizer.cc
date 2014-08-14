@@ -73,6 +73,7 @@ namespace modeler {
 		pose_list_( pose_list ),
 		options_( options ),
 		scorefxn_( scorefxn ),
+		num_pose_minimize_( options_->num_pose_minimize() ),
 		working_moving_res_( get_all_working_moving_res( working_parameters ) ),
 		working_fixed_res_( working_parameters->working_fixed_res() ),
 		working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
@@ -84,6 +85,11 @@ namespace modeler {
 		runtime_assert( !options_->skip_coord_constraints() );
 		runtime_assert( !options_->skip_minimize() );
 		runtime_assert( !options_->move_jumps_between_chains() );
+		runtime_assert( pose_list.size() > 0 );
+		// note this choice -- found that 5 really is necessary for protein stepwise monte carlo. can't minimize all due to slowdown.
+		if ( options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
+			num_pose_minimize_ =  ( protein::contains_protein( *pose_list[1] ) ? 5 : 1 );
+		}
 	}
 
 	//Destructor
@@ -128,7 +134,7 @@ namespace modeler {
 
 		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
 
-			if ( options_->num_pose_minimize() > 0 &&  n > options_->num_pose_minimize() ) break;
+			if ( num_pose_minimize_ > 0 &&  n > num_pose_minimize_ ) break;
 
 			pose = *pose_list_[ n ];
 			Real const score_original = (*minimize_scorefxn_)( pose );

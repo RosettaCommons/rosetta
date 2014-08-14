@@ -194,7 +194,7 @@ namespace options {
 		options->set_silent_file( silent_file() );
 		options->set_sampler_silent_file( sampler_silent_file() );
 		options->set_choose_random( true );
-		options->set_num_pose_minimize( 1 );
+		options->set_num_pose_minimize( 0 );
 		options->set_num_random_samples( num_random_samples() );
 		if ( num_pose_minimize() > 0 ) options->set_num_pose_minimize( num_pose_minimize() );
 		options->set_rmsd_screen( rmsd_screen() );
@@ -222,6 +222,7 @@ namespace options {
 		if ( rebuild_bulge_mode_ )	options->set_force_centroid_interaction( false );
 		options->set_tether_jump( tether_jump() );
 		options->set_o2prime_legacy_mode( o2prime_legacy_mode() );
+		options->set_sampler_perform_phosphate_pack( sampler_perform_phosphate_pack() );
 
 		return options;
 	}

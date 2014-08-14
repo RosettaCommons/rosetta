@@ -74,6 +74,9 @@ namespace align {
 		Real rmsd() const { return rmsd_;}
 		Size natoms_rmsd() const { return calc_rms_atom_id_map_.size();}
 
+		Real superimpose_rmsd() const { return superimpose_rmsd_;}
+		Size natoms_superimpose_rmsd() const { return superimpose_atom_id_map_.size();}
+
 		Real rmsd_over_alignment_atoms() const { return superimpose_rmsd_;}
 
 	private:

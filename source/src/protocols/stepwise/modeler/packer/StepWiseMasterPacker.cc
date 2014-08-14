@@ -108,7 +108,7 @@ namespace packer {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseMasterPacker::do_prepack( pose::Pose & pose ) {
-		phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
+		if ( phosphate_sampler_ != 0 )	phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
 		packer_->do_prepack( pose );
 	}
 
@@ -136,7 +136,7 @@ namespace packer {
 	///////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseMasterPacker::reset( pose::Pose const & pose ){
-		phosphate_sampler_->reset( pose );
+		if ( phosphate_sampler_ != 0 ) phosphate_sampler_->reset( pose );
 		packer_->reset( pose );
 	}
 
