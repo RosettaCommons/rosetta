@@ -515,16 +515,11 @@ HotspotPlacementMover::setup_pert_foldtree_byres(
 	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
 
 	//kdrew: make the jump go through the CB atom
-	core::conformation::Residue jump_res = pose.residue(dock_jump_pos_pro);
-	core::chemical::AtomType pro_atom_type = jump_res.atom_type( pose.residue( dock_jump_pos_pro ).nbr_atom() );
+	core::chemical::AtomType pro_atom_type = pose.residue( dock_jump_pos_pro ).atom_type( pose.residue( dock_jump_pos_pro ).nbr_atom() );
 	std::string pro_atom_name = pro_atom_type.element();
 	//kdrew: need to change this if using peptoids or anything that does not have a traditional CB
 	//awatkins: this works for peptoids and scaffolds containnig beta aas because they at least still name it CB
-	if (jump_res.type().is_peptoid()) {
-		f.set_jump_atoms( jump_index, pro_atom_name, "CA1");
-	} else {
-		f.set_jump_atoms( jump_index, pro_atom_name, "CB" );
-	}
+	f.set_jump_atoms( jump_index, pro_atom_name, "CB" );
 	//f.set_jump_atoms( jump_index, pose.residue( dock_jump_pos_pro ).atom_type( pose.residue( dock_jump_pos_pro ).nbr_atom() ).element(), "CB" );
 
 	// set pose foldtree to foldtree we just created
