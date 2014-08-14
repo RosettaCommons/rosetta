@@ -32,6 +32,8 @@
 // Package headers
 #include <core/id/AtomID.hh>
 
+#include <core/types.hh>
+
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
@@ -506,11 +508,12 @@ swap( AtomID_Map<T> & a, AtomID_Map<T> & b )
 }
 
 
-
 // PyRosetta concrete types
-class AtomID_Map_AtomID: public AtomID_Map< AtomID > {}; 
+class AtomID_Map_bool: public AtomID_Map< bool > {};
+class AtomID_Map_Real: public AtomID_Map< Real > {};
+class AtomID_Map_AtomID: public AtomID_Map< AtomID > {};
 
-	
+
 } // namespace id
 } // namespace core
 
