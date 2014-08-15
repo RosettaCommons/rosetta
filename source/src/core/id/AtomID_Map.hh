@@ -40,6 +40,10 @@
 #include <utility/vector1_bool.hh>
 
 
+#ifdef WIN32
+	#include <vector>
+	#include <map>
+#endif
 
 namespace core {
 namespace id {
@@ -509,7 +513,7 @@ swap( AtomID_Map<T> & a, AtomID_Map<T> & b )
 
 
 // PyRosetta concrete types
-//class AtomID_Map_bool: public AtomID_Map< bool > {};
+class AtomID_Map_bool: public AtomID_Map< bool > {};
 class AtomID_Map_Real: public AtomID_Map< Real > {};
 class AtomID_Map_AtomID: public AtomID_Map< AtomID > {};
 

@@ -191,7 +191,8 @@ class CppType_Complex(CppType):  # 'Class', 'Struct', 'Union', 'Typedef', 'Enume
         context, name = resolve_context_and_name(self.context, self.name)
         r = context + name
 
-        if r.startswith('::std::_List_const_iterator<'): r = '::std::list< ' + r.partition('<')[2][:-1] + '> ::const_iterator'
+        if   r == '::std::_Bit_reference': r = '::std::vector<bool>::reference'
+        elif r.startswith('::std::_List_const_iterator<'): r = '::std::list< ' + r.partition('<')[2][:-1] + '> ::const_iterator'
         elif r.startswith('::std::_List_iterator<'): r = '::std::list< ' + r.partition('<')[2][:-1] + '> ::iterator'
 
         elif r.startswith('::std::_Rb_tree_const_iterator<std::pair<const '): r = '::std::map< ' + r.partition('<const ')[2][:-1] + '::const_iterator'
