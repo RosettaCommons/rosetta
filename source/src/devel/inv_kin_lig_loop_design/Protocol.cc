@@ -31,7 +31,9 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
 
 
 #include <core/pack/task/TaskFactory.hh>
@@ -136,7 +138,6 @@ namespace devel {
       Mover mover(pose.get());
 
       for( int cycles_start = 0; cycles_start < max_cycles_start; ++cycles_start ) {
-
 				cout << ">>> StageI / start - " << REPORTCYCLES1(cycles_start,max_cycles_start) << endl;
 
 				(*pose) = (*pose_init);
@@ -206,7 +207,7 @@ namespace devel {
 							cout << "start_3mer_1mer: " << REPORTCYCLES3(cycles_start,max_cycles_start,cycles_start_3mer,max_cycles_start_3mer,cycles_start_3mer_1mer,max_cycles_start_3mer_1mer) << endl;
 
 							mover.insertFragment(a,b,1);
-							atm.run(*pose,move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
+							atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
 
 							min_start_3mer_inner.boltzmann(*pose);
 
@@ -244,37 +245,20 @@ namespace devel {
 					mover.smallMoves(loop.lo,loop.hi);
 					//mover.insertFragment(a,b,1);
 
-					atm.run(*pose,move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",0.01,true,false,false) );
-
-					/*
-						int
-						fast_ccd_loop_closure(
-						core::pose::Pose & pose,
-						core::kinematics::MoveMap const & mm,
-						int const loop_begin,
-						int const loop_end,
-						int const cutpoint,
-						int const ii_cycles,
-						core::Real const tolerance,
-						bool const rama_check,
-						core::Real const max_rama_score_increase,
-						core::Real const max_total_delta_helix,
-						core::Real const max_total_delta_strand,
-						core::Real const max_total_delta_loop,
-						core::Real & forward_deviation, // output
-						core::Real & backward_deviation, // output
-						core::Real & torsion_delta,
-						core::Real & rama_delta
-						);
-					*/
+					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",0.01,true,false,false) );
 
 					if( loop.to ) {
-                        using protocols::loops::loop_closure::ccd::fast_ccd_loop_closure;
-						core::Real fdev, rdev, tdelta, rdelta;
-						fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
-						//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
-						fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
-						//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
+						protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
+						ccd_loop_closure_mover.movemap( move_map );
+						ccd_loop_closure_mover.tolerance( 0.1 );
+						ccd_loop_closure_mover.rama()->max_rama_score_increase( 5.0 );
+						ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 5.0, 5.0, 5.0 );
+
+						ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.lo-1, loop.to-1, loop.lo ) );
+						ccd_loop_closure_mover.apply( *pose );
+
+						ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
+						ccd_loop_closure_mover.apply( *pose );
 
 						(*score_fxn_lores)( *pose );
 						pose->energies().show_total_headers( cout ); cout << endl;
@@ -285,7 +269,7 @@ namespace devel {
 						assert( false );
 					}
 
-					atm.run(*pose,move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",0.01,true,false,false) );
+					atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",0.01,true,false,false) );
 
 					pose->energies().show_total_headers( cout ); cout << endl;
 					pose->energies().show_totals( cout ); cout << endl;
@@ -305,9 +289,6 @@ namespace devel {
     }
 
     void Protocol::phase_hires() {
-
-      using protocols::loops::loop_closure::ccd::fast_ccd_loop_closure;
-
       // let's do this in a random order
       vector<Loop> loops_shuffled = loops;
       numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),RG);
@@ -355,18 +336,29 @@ namespace devel {
 						for( int cycles_ramp_sm_min = 0; cycles_ramp_sm_min < max_cycles_ramp_sm_min ; ++ cycles_ramp_sm_min ) {
 
 							if( loop.to ) {
-								core::Real fdev, rdev, tdelta, rdelta;
-								fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
-								cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
-								fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
-								cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
+								protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
+								ccd_loop_closure_mover.movemap( move_map );
+								ccd_loop_closure_mover.tolerance( 0.1 );
+								ccd_loop_closure_mover.rama()->max_rama_score_increase( 5.0 );
+								ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 5.0, 5.0, 5.0 );
 
+								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.lo-1, loop.to-1, loop.lo ) );
+								ccd_loop_closure_mover.apply( *pose );
+								cout << "dev=" << ccd_loop_closure_mover.deviation() <<
+										" tdelta=" << ccd_loop_closure_mover.torsion_delta() <<
+										" rdelta=" << ccd_loop_closure_mover.rama_delta() << endl;
+
+								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
+								ccd_loop_closure_mover.apply( *pose );
+								cout << "dev=" << ccd_loop_closure_mover.deviation() <<
+										" tdelta=" << ccd_loop_closure_mover.torsion_delta() <<
+										" rdelta=" << ccd_loop_closure_mover.rama_delta() << endl;
 							}
 							else {
 								assert( false );
 							}
 
-							atm.run(*pose,move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
+							atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
 
 							min_ramp.boltzmann(*pose); // !!! don't recover here
 
@@ -427,20 +419,23 @@ namespace devel {
 						for( int cycles_design_sm_min = 0; cycles_design_sm_min < max_cycles_design_sm_min; ++cycles_design_sm_min ) {
 
 							if( loop.to ) {
-								//cout << "calling ccd on: " << a << " " << loop.to << " " << b << endl;
+								protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
+								ccd_loop_closure_mover.movemap( move_map );
+								ccd_loop_closure_mover.tolerance( 0.1 );
+								ccd_loop_closure_mover.rama()->max_rama_score_increase( 5.0 );
+								ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 5.0, 5.0, 5.0 );
 
-								core::Real fdev, rdev, tdelta, rdelta;
-								fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
-								//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
-								fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
-								//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
+								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.lo-1, loop.to-1, loop.lo ) );
+								ccd_loop_closure_mover.apply( *pose );
 
+								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
+								ccd_loop_closure_mover.apply( *pose );
 							}
 							else {
 								assert( false );
 							}
 
-							atm.run(*pose,move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
+							atm.run(*pose,*move_map,*score_fxn_lores,core::optimization::MinimizerOptions("dfpmin",1,true,false,false) );
 
 							min_design_sm.boltzmann(*pose);
 
@@ -459,7 +454,7 @@ namespace devel {
 
     void Protocol::apply(core::pose::PoseOP pose_) {
       pose = pose_;
-      move_map = get_move_map(pose->n_residue(),loops);
+      move_map =  new core::kinematics::MoveMap( get_move_map(pose->n_residue(),loops) );
 
       const double CHAINBREAK_WEIGHT = 10;
       const double RAMA_WEIGHT       = 10;

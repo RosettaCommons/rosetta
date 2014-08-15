@@ -19,7 +19,7 @@
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 
 // Project Headers
@@ -57,9 +57,6 @@
 
 #include <core/fragment/FragData.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-
 
 
 
@@ -129,7 +126,7 @@ void LoopClosure::init() {
   ptr->enable_end_bias_check( false ); //uniform sampling
 	ptr->set_check_ss( false );
 	if ( bEnableCcdMoves_ ) {
-		ccd_mover_ = new CcdMover( loop_, movemap_ );//well this has to change
+		ccd_mover_ = new CCDLoopClosureMover( loop_, movemap_ );
 	}
 	runtime_assert( loop_.size() > 0 );
   init_mc();
@@ -183,9 +180,9 @@ LoopClosure::apply( pose::Pose const& pose_in ) {
 		Real score;
     score = (*scorefxn_)( pose );
 		tr.Trace << "start ccd " << std::endl;
-    CcdLoopClosureMover fast_ccd( loop_, movemap() );
+    CCDLoopClosureMover fast_ccd( loop_, movemap() );
 		fast_ccd.apply( pose );
-    Real fdev = fast_ccd.forward_deviation();
+    Real dev = fast_ccd.deviation();
 		//    if ( tr.Trace.visible() ) scorefxn_->show( tr, pose );
 
     if ( fast_ccd.success() ) {
@@ -193,7 +190,7 @@ LoopClosure::apply( pose::Pose const& pose_in ) {
       catch_fragment( pose );
     }
 		tr.Debug << "LoopClosure: fragment " << c1 << " best_score: " << best_score << " pre ccd score: " <<  score
-						 << " fdev: " << fdev << " bdev: " << fast_ccd.backward_deviation() << " " << ( fast_ccd.success() ? "SUCCESS" : "FAIL" )
+						 << " dev: " << dev << " " << ( fast_ccd.success() ? "SUCCESS" : "FAIL" )
 						 << std::endl;
   }
 	return closure_frame_->nr_frags() >= 1;

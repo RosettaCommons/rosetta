@@ -61,7 +61,7 @@ namespace devel {
       int max_cycles_design_sm_min;
 
       core::pose::PoseOP pose;
-      core::kinematics::MoveMap move_map;
+      core::kinematics::MoveMapOP move_map;
       core::scoring::ScoreFunctionOP score_fxn_lores;
       core::scoring::ScoreFunctionOP score_fxn_hires;
       vector<Loop> loops;

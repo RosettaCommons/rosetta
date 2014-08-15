@@ -70,7 +70,7 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 
@@ -1038,8 +1038,8 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			//now we need to add on closure, if the loop is not terminal and we didn't use KinematicMover above
 			if( internal && !perturb_CCD_off_ ){
 				///////////////////////////generate CCD close mover///////////////////////////////
-				using protocols::loops::loop_closure::ccd::CcdLoopClosureMover;
-				oneloop_subsequence->add_mover(new CcdLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)));
+				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
+				oneloop_subsequence->add_mover(new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)));
 				T_perturb << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
 				if( debug_ ){
@@ -1382,9 +1382,9 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 			//if not a terminal loop
 			if (internal && !refine_CCD_off_) {
-				using protocols::loops::loop_closure::ccd::CcdLoopClosureMover;
+				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
 				using protocols::moves::MoverOP;
-				MoverOP CCD_mover = new CcdLoopClosureMover(interface_->loop(i), interface_->movemap_fa_omegafixed(i));
+				MoverOP CCD_mover = new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_fa_omegafixed(i));
 				oneloop_subsequence->add_mover(CCD_mover);
 				T_refine << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 

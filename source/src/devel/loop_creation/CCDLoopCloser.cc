@@ -27,7 +27,8 @@
 #include <core/kinematics/Edge.hh>
 
 //protocols
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 
@@ -142,56 +143,48 @@ CCDLoopCloser::apply(
 	protocols::loops::add_single_cutpoint_variant(pose, loop());
 	
 	// setup movemap
-	kinematics::MoveMap mm;
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	for ( Size ii=loop().start(); ii<=loop().stop(); ++ii )
 	{
-		mm.set_bb( ii, true );
+		mm->set_bb( ii, true );
 		
 		//don't change phi for prolines
 		if ( pose.residue(ii).aa() == chemical::aa_pro )
 		{
-			mm.set( id::TorsionID( id::phi_torsion, id::BB, ii ), false );
+			mm->set( id::TorsionID( id::phi_torsion, id::BB, ii ), false );
 		}
 	}
 	TR.Debug << "CCD residues: " << loop().start() << " " << loop().stop() << std::endl;
 	TR.Debug << "CCD cutpoint: " << loop().cut() << std::endl;
 	
 	//output variable for fast_ccd_closure
-	core::Real forward_deviation, backward_deviation, torsion_delta, rama_delta;
+	core::Real deviation, torsion_delta, rama_delta;
 	
 	core::pose::Pose saved_pose = pose;
-	for(core::Size i=1; i<=max_closure_attempts_; ++i)
-	{
-		core::Size num_moves_needed = protocols::loops::loop_closure::ccd::fast_ccd_loop_closure(
-			pose,
-			mm,
-			loop().start(),
-			loop().stop(),
-			loop().cut(),
-			max_ccd_moves_per_closure_attempt_,
-			early_exit_cutoff_,
-			true/*rama_check*/,
-			max_rama_score_increase_,
+	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover( loop(), mm );
+	ccd_loop_closure_mover.max_cycles( max_ccd_moves_per_closure_attempt_ );
+	ccd_loop_closure_mover.tolerance( early_exit_cutoff_ );
+	ccd_loop_closure_mover.rama()->max_rama_score_increase( max_rama_score_increase_ );
+	ccd_loop_closure_mover.max_total_torsion_delta_per_residue(
 			max_total_delta_helix_,
 			max_total_delta_strand_,
-			max_total_delta_loop_,
-			forward_deviation,
-			backward_deviation,
-			torsion_delta,
-			rama_delta
-		);
+			max_total_delta_loop_ );
+	for(core::Size i=1; i<=max_closure_attempts_; ++i) {
+		ccd_loop_closure_mover.apply( pose );
+
+		deviation = ccd_loop_closure_mover.deviation();
+		torsion_delta = ccd_loop_closure_mover.torsion_delta();
+		rama_delta = ccd_loop_closure_mover.rama_delta();
+		core::Size num_moves_needed = ccd_loop_closure_mover.actual_cycles();
 		
 		TR.Debug << "Loop closure attempt " << i << " returned in " << num_moves_needed << " iterations (max of "
 			<< max_ccd_moves_per_closure_attempt_ << ")" << std::endl;
 			
 		TR.Debug << "torsion rmsd: " << torsion_delta << std::endl;
 		TR.Debug << "rama delta: " << rama_delta << std::endl;
-		TR.Debug << "forward deviation: " << forward_deviation << std::endl;
-		TR.Debug << "backward deviation: " << backward_deviation << std::endl;
-		
-			
-	
-		if(forward_deviation < tolerance_ && backward_deviation < tolerance_)
+		TR.Debug << "ccd deviation: " << deviation << std::endl;
+
+		if(deviation < tolerance_ )
 		{
 			//Calculator for backbone clash detection
 			core::pose::metrics::PoseMetricCalculatorOP clash_calculator =

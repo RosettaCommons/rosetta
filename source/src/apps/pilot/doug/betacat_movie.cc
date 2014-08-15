@@ -93,7 +93,7 @@
 
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-// AUTO-REMOVED #include <protocols/loops/CcdLoopClosureMover.hh>
+// AUTO-REMOVED #include <protocols/loops/CCDLoopClosureMover.hh>
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 

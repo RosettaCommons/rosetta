@@ -45,7 +45,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -250,8 +250,8 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 
 	// the Monte Carlo mover
@@ -271,7 +271,6 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	// cut points variants for chain-break scoring
 	loops::remove_cutpoint_variants( pose, true ); //remove first
 	loops::add_cutpoint_variants( pose );
-
 
 
 	// pack the loop and its neighboring residues
@@ -297,7 +296,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// ccd moves
-	CcdMoverOP ccd_moves = new CcdMover( the_loop_, cdrh3_map_ );
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( the_loop_, cdrh3_map_ );
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves_);
 
 
@@ -313,19 +312,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	wiggle_cdr_h3_->add_mover( ccd_cycle );
 	wiggle_cdr_h3_->add_mover( change_FT_to_flankloop_ );
 	wiggle_cdr_h3_->add_mover( loop_min_mover_ );
-
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 //APPLY
@@ -465,21 +452,9 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 }
 
 
-
-
 void H3RefineCCD::set_task_factory(pack::task::TaskFactoryCOP tf) {
 	tf_ = new pack::task::TaskFactory(*tf);
 }
-
-
-
-
-
-
-
-
-
-
 
 
 } // namespace antibody

@@ -43,7 +43,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/docking/ConformerSwitchMover.hh>
 #include <protocols/docking/DockFilters.fwd.hh>
 #include <protocols/docking/DockFilters.hh>
@@ -362,8 +362,8 @@ int main(int argc, char *argv[])
 	//mm->set_chi_true_range(chi_begin, chi_end);
 	//mm->set_jump(2, true);
 
-/*	// create a CcdLoopClosureMover object
-	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
+/*	// create a CCDLoopClosureMover object
+	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CCDLoopClosureMover(loop, mm) );
 	std::cout << ccdmover << std::endl;*/
 
 	// create an empty loops object

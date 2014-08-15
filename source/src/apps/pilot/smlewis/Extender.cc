@@ -144,7 +144,7 @@ int main( int argc, char* argv[] )
 
 	//feed loop into movemap, remember to leave omegas fixed at 180
 
-	// 	protocols::loops::CcdLoopClosureMover close( interface_->loop(1), movemap );
+	// 	protocols::loops::CCDLoopClosureMover close( interface_->loop(1), movemap );
 	// 	close.apply(combined); //close the other gap
 	// 	combined.dump_pdb("combined_nopretty.pdb");
 

@@ -167,6 +167,7 @@ static MoverRegistrator< loophash::LoopHashMoverWrapperCreator > reg_LoopHashMov
 static MoverRegistrator< loophash::LoopHashDiversifierCreator > reg_LoopHashDiversifierCreator;
 
 static MoverRegistrator< loops::FoldTreeFromLoopsCreator > reg_FoldTreeFromLoops_Creator;
+static MoverRegistrator< loops::loop_closure::ccd::CCDLoopClosureMoverCreator > reg_CCDLoopClosureMoverCreator;
 static MoverRegistrator< loops::loop_mover::perturb::LoopMover_Perturb_CCDCreator > reg_LoopMover_Perturb_CCDCreator;
 static MoverRegistrator< loops::loop_mover::perturb::LoopMover_Perturb_KICCreator > reg_LoopMover_Perturb_KIC;
 static MoverRegistrator< loops::loop_mover::perturb::LoopMover_Perturb_QuickCCDCreator > reg_LoopMover_Perturb_QuickCCDCreator;

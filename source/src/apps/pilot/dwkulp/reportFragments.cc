@@ -38,7 +38,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/CCDLoopClosureMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh> //23
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>

@@ -221,9 +221,10 @@ sources = {
 	],
 	"protocols/loops/loop_closure/ccd": [
 	    "ccd_closure",
-		"CcdLoopClosureMover",
+		"CCDLoopClosureMover",
 		"FASelectSlidingWindowLoopClosure",
 		"LoopClosure",
+		"RamaCheck",
 		"ShortLoopClosure",
 		"SlidingWindowLoopClosure",
 		"WidthFirstSlidingWindowLoopClosure",

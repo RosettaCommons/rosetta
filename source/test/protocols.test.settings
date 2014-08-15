@@ -16,9 +16,9 @@ sources = {
 		"PseudocontactShiftEnergy",
 		"WobbleMover",
 	],
-        "abinitio/abscript" : [
-                "FragmentCMTest",
-        ],
+	"abinitio/abscript" : [
+		"FragmentCMTest",
+	],
 
 	"antibody": [
 		"AntibodyInfo",
@@ -163,6 +163,10 @@ sources = {
 		"LoopsFileOptions",
 		"LoopsFoldTree",
 		"LoopsUtil",
+	],
+	
+	"loops/closers" : [
+		"CCDLoopClosureMover",
 	],
 
     "loop_modeling" : [

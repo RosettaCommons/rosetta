@@ -45,7 +45,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
@@ -526,7 +526,7 @@ AnchoredGraftMover::apply(Pose & pose){
 	Loop Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);      
 	loops.add_loop(Cter_loop);
 	
-	loop_closure::ccd::CcdLoopClosureMoverOP ccd_mover = new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
+	loop_closure::ccd::CCDLoopClosureMoverOP ccd_mover = new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap_);
         
 	add_cutpoint_variants_for_ccd(combined, loops);
 	

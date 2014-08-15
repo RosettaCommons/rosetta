@@ -38,7 +38,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/CCDLoopClosureMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh> //23
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
@@ -129,7 +129,7 @@ int main( int argc, char * argv[] ) {
 
   cout << "Done getting loops"<<endl;
   // Get CCD closure movers (one per loop)
-  vector<protocols::loops::CcdLoopClosureMoverOP> ccds;
+  vector<protocols::loops::CCDLoopClosureMoverOP> ccds;
   //vector<protocols::simple_moves::BackboneMoverOP> bbMovers;
   vector<vector<protocols::moves::MoverOP> > bbMovers;
 
@@ -179,7 +179,7 @@ int main( int argc, char * argv[] ) {
 
     }
 
-    protocols::loops::CcdLoopClosureMoverOP closer = new protocols::loops::CcdLoopClosureMover(l , moveMap );
+    protocols::loops::CCDLoopClosureMoverOP closer = new protocols::loops::CCDLoopClosureMover(l , moveMap );
     closer->set_bRama_check(true);
 
     // Keep list of CCD Closure Movers

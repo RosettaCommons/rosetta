@@ -43,7 +43,7 @@
 
 #include <protocols/antibody_legacy/AntibodyClass.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -555,8 +555,8 @@ void CloseOneMover::close_one_loop_stem (
 	using namespace protocols;
 	using namespace protocols::loops;
 
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 
 	// storing starting fold tree
@@ -651,9 +651,7 @@ void CloseOneMover::close_one_loop_stem (
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-
-
-	CcdMoverOP ccd_moves = new CcdMover(one_loop,loop_map);
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
 
 	SequenceMoverOP wiggle_cdr( new SequenceMover() );
@@ -709,8 +707,8 @@ void CloseOneMover::close_one_loop_stem (
 	using namespace protocols;
 	using namespace protocols::loops;
 
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 
 	// storing starting fold tree
@@ -785,9 +783,7 @@ void CloseOneMover::close_one_loop_stem (
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-
-
-	CcdMoverOP ccd_moves = new CcdMover(one_loop,loop_map);
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover(one_loop,loop_map);
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
 
 	SequenceMoverOP wiggle_cdr( new SequenceMover() );
@@ -883,8 +879,8 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	TR << "LoopRlxMover: Apply" << std::endl;
 
@@ -971,7 +967,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CcdMoverOP ccd_moves = new CcdMover( one_loop, loop_map );
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
 
 	SequenceMoverOP wiggle_loop( new SequenceMover() );

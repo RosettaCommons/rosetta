@@ -66,7 +66,7 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/CCDLoopClosureMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
@@ -305,7 +305,7 @@ loop_closure_test(){
 		movemap->set_bb( true );
 
 		///// CCD close
-		//CcdLoopClosureMover ccd_closer( loop, movemap );
+		//CCDLoopClosureMover ccd_closer( loop, movemap );
 		//	ccd_closer.set_ccd_cycles( 1000 );
 		//	ccd_closer.apply( pose );
 		Real forward_deviation, backward_deviation, torsion_delta, rama_delta;

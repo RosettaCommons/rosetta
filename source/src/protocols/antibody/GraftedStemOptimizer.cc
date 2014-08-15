@@ -30,7 +30,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/moves/PyMolMover.hh>
 
@@ -116,10 +116,10 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	loops::Loop Nter_stem(cdr_loop_->start()-stem_size_, cdr_loop_->start()+stem_size_-1, cdr_loop_->start()-1);
 	loops::Loop Cter_stem(cdr_loop_->stop()-stem_size_+1, cdr_loop_->stop()+stem_size_, cdr_loop_->stop() );
 	using namespace loops::loop_closure::ccd;
-	CcdLoopClosureMoverOP close_Nter_stem=new CcdLoopClosureMover(Nter_stem, get_stem_movemap(pose, "N"));
-	close_Nter_stem->set_tolerance(0.001);
-	CcdLoopClosureMoverOP close_Cter_stem=new CcdLoopClosureMover(Cter_stem, get_stem_movemap(pose, "C"));
-	close_Cter_stem->set_tolerance(0.001);
+	CCDLoopClosureMoverOP close_Nter_stem=new CCDLoopClosureMover(Nter_stem, get_stem_movemap(pose, "N"));
+	close_Nter_stem->tolerance( 0.001 );
+	CCDLoopClosureMoverOP close_Cter_stem=new CCDLoopClosureMover(Cter_stem, get_stem_movemap(pose, "C"));
+	close_Cter_stem->tolerance( 0.001 );
 
 	/// Rotamer_Trial_Mover
 	RotamerTrialsMoverOP rotamer_trial_mover = new RotamerTrialsMover( scorefxn_, get_stem_taskfactory(pose, "NC") );

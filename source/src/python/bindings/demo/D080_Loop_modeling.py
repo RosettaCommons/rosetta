@@ -204,7 +204,7 @@ def sample_single_loop_modeling(pdb_filename,
     fragment_mover = ClassicFragmentMover(fragset, movemap)
 
     # 7. create a Mover for loop modeling using CCD (low resolution)
-    ccd_closure = CcdLoopClosureMover(my_loop, movemap)
+    ccd_closure = CCDLoopClosureMover(my_loop, movemap)
 
     # 8. create ScoreFunctions
     # for centroid, use the default centroid ScoreFunction with chainbreak on

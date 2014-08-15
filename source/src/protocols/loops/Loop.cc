@@ -149,6 +149,16 @@ Loop::is_terminal( core::pose::Pose const & pose ) const
 	return false;
 }
 
+/// @details Print the start, stop and cut residues along with the skip rate and the whether or not the loop
+/// will be extended.
+void
+Loop::show( std::ostream & output ) const
+{
+	output << "LOOP start: " << start_ << "  stop: " << stop_ << "  cut: " << cut_ <<
+	"  size: " << size() << "  skip rate: " << skip_rate_ << "  extended?: " <<
+	( extended_ ? "True" : "False" ) <<  std::endl;
+}
+
 } // namespace loops
 } // namespace protocols
 

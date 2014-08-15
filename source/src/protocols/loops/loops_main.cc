@@ -17,7 +17,7 @@
 #include <protocols/loops/loops_main.hh>
 
 // Package headers
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -722,39 +722,21 @@ add_loop_flank_residues_bb_to_movemap(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// @details take a pose and loop defintions, close each loop separately by the CCD algorithm. Currently
-/// hard-code all parameters related to CCD and then call fast_ccd_loop_closure for closing this single
-/// loop
-///////////////////////////////////////////////////////////////////////////////////////////////////
+/// @details This function takes a pose and loop definitions and closes each loop separately by the CCD algorithm.
+/// All parameters related to CCD are hard-coded.  If one wishes more control over the options, s/he should use the
+/// CCDLoopClosureMover.
 void
 ccd_close_loops(
-	pose::Pose & pose,
-	Loops const & loops,
-	kinematics::MoveMap const& mm
-)
+		pose::Pose & pose,
+		Loops const & loops,
+		kinematics::MoveMap const & mm )
 {
-	// param for ccd_closure
-	int   const ccd_cycles = { 100 }; // num of cycles of ccd_moves
-	Real  const ccd_tol = { 0.01 }; // criterion for a closed loop
-	bool  const rama_check = { true };
-	Real  const max_rama_score_increase = { 2.0 }; // dummy number when rama_check is false
-	Real  const max_total_delta_helix = { 10.0 }; // max overall angle changes for a helical residue
-	Real  const max_total_delta_strand = { 50.0 }; // ... for a residue in strand
-	Real  const max_total_delta_loop = { 75.0 }; // ... for a residue in loop
-	// output for ccd_closure
-	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
-	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
+	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
+	ccd_loop_closure_mover.movemap( kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
 
-	for( Loops::const_iterator it=loops.begin(), it_end=loops.end();
-			 it != it_end; ++it ) {
-		Size const loop_begin = it->start();
-		Size const loop_end = it->stop();
-		Size const cutpoint = it->cut();
-		// ccd close this loop
-		loop_closure::ccd::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
-			ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
-			max_total_delta_strand, max_total_delta_loop, forward_deviation,
-			backward_deviation, torsion_delta, rama_delta );
+	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end(); it != it_end; ++it ) {
+		ccd_loop_closure_mover.loop( *it );
+		ccd_loop_closure_mover.apply( pose );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

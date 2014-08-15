@@ -39,7 +39,8 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <protocols/viewer/viewers.hh>
@@ -2185,19 +2186,22 @@ ccd_test()
 	Pose start_pose;
 	start_pose = pose;
 
-	kinematics::MoveMap mm;
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 
 	// setup moving dofs
 	for ( int i=15; i<= 22; ++i ) {
-		mm.set_bb ( i, true );
-		mm.set( TorsionID( i, BB, 3 ), false ); // omega off
+		mm->set_bb ( i, true );
+		mm->set( TorsionID( i, BB, 3 ), false ); // omega off
 	}
 
 	{ // ccd closure
 
-		Real fwd,bwd,tor_delta, rama_delta;
-		protocols::loops::loop_closure::ccd::fast_ccd_loop_closure( pose, mm, 15, 22, cutpoint, 100, 0.05, true, 100, 100, 100, 100,
-																	fwd, bwd, tor_delta, rama_delta );
+		protocols::loops::Loop loop( 15, 22, cutpoint );
+		protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover( loop, mm );
+		ccd_loop_closure_mover.tolerance( 0.05 );
+		ccd_loop_closure_mover.rama()->max_rama_score_increase( 100 );
+		ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 100, 100, 100 );
+		ccd_loop_closure_mover.apply( pose );
 
 		dump_pdb( pose, "tmp_after_ccd.pdb" );
 
@@ -2213,7 +2217,7 @@ ccd_test()
 		scorefxn.set_weight( scoring::chainbreak, 1.0 );
 
 		pose = start_pose;
-		minimizer.run( pose, mm, scorefxn, options );
+		minimizer.run( pose, *mm, scorefxn, options );
 
 		dump_pdb( pose, "tmp_after_dfpmin.pdb" );
 	}

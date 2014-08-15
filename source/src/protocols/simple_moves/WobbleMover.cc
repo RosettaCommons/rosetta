@@ -26,7 +26,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
@@ -87,34 +87,15 @@ WobbleMover::get_name() const {
 bool WobbleMover::ccd_closure(
 	pose::Pose & pose,
 	protocols::loops::Loops const & loops,
-	kinematics::MoveMap const& mm ) const
+	kinematics::MoveMap const & mm ) const
 {
-	// param for ccd_closure
-	int   const ccd_cycles = { 100 }; // num of cycles of ccd_moves
-	Real  const ccd_tol = { 0.01 }; // criterion for a closed loop
-	bool  const rama_check = { true };
-	Real  const max_rama_score_increase = { 2.0 }; // dummy number when rama_check is false
-	Real  const max_total_delta_helix = { 10.0 }; // max overall angle changes for a helical residue
-	Real  const max_total_delta_strand = { 50.0 }; // ... for a residue in strand
-	Real  const max_total_delta_loop = { 75.0 }; // ... for a residue in loop
+	// There is only one loop.
+	protocols::loops::Loops::const_iterator it = loops.begin();
+	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
+			*it, kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+	ccd_loop_closure_mover.apply( pose );
 
-	// output for ccd_closure
-	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
-	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
-
-	//there is only one loop
-	protocols::loops::Loops::const_iterator it=loops.begin();
-	int const loop_begin = it->start();
-	int const loop_end = it->stop();
-	int const cutpoint = it->cut();
-
-	// ccd close this loop
-	protocols::loops::loop_closure::ccd::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
-		ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
-		max_total_delta_strand, max_total_delta_loop, forward_deviation,
-		backward_deviation, torsion_delta, rama_delta );
-
-	return ( backward_deviation < backward_threshold_) && ( forward_deviation < forward_threshold_ );
+	return ( ccd_loop_closure_mover.deviation() < forward_threshold_ );
 }
 
 /// @brief make a wobble move ( smooth move + ccd loop closure )
@@ -158,9 +139,10 @@ bool WobbleMover::apply_fragment (
 		original_tree = pose.fold_tree();
 		TR.Debug << "original " << original_tree << std::endl;
 		kinematics::FoldTree fold_tree;
-		protocols::loops::fold_tree_from_loops( pose, frag_loop, fold_tree );
+		protocols::loops::fold_tree_from_loops( pose, frag_loop, fold_tree, true );
 		TR.Debug << "for loops " << fold_tree << std::endl;
 		pose.fold_tree( fold_tree );
+		loops::add_cutpoint_variants( pose );
 
 	} // ccd preparation
 
@@ -173,10 +155,13 @@ bool WobbleMover::apply_fragment (
 		pose::Pose orig_pose = pose;
 		success = ccd_closure( pose, frag_loop, movemap );
 		if ( !success ) pose = orig_pose;
-	};
+	}
 
 	//clean up
-	if ( use_ccd ) pose.fold_tree( original_tree );
+	if ( use_ccd ) {
+		loops::remove_cutpoint_variants( pose );
+		pose.fold_tree( original_tree );
+	}
 
 	return success;
 }

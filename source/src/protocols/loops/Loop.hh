@@ -34,7 +34,8 @@
 #include <functional>
 #endif
 
-#include <ostream>
+#include <iostream>
+//#include <ostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
@@ -150,7 +151,8 @@ public:
 
 	bool is_terminal( core::pose::Pose const & pose ) const;
 
-	friend std::ostream & operator<<( std::ostream & os, const Loop & loop );
+	/// @brief  Generate a string representation of Loop
+	virtual void show( std::ostream & output=std::cout ) const;
 
 private:
 	core::Size start_;
@@ -161,10 +163,8 @@ private:
 }; // Loop
 
 //////////////////////////////////////////////////////////////////////
-inline std::ostream & operator<<( std::ostream & os, const Loop & loop ) {
-	os << "LOOP " << loop.start_ << " " << loop.stop_ << " "
-	<< loop.cut_ << " "
-	<< loop.skip_rate_ << " " << loop.extended_;
+inline std::ostream & operator<<( std::ostream & os, Loop const & loop ) {
+	loop.show( os );
 	return os;
 }
 	

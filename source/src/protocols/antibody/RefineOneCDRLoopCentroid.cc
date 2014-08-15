@@ -32,7 +32,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -156,16 +156,17 @@ void RefineOneCDRLoopCentroid::apply( pose::Pose & pose ) {
 /// @last_modified 05/07/2010
 ///////////////////////////////////////////////////////////////////////////
 void RefineOneCDRLoopCentroid::loop_centroid_relax(
-    pose::Pose & pose_in,
-    Size const loop_begin,
-    Size const loop_end ) {
+		pose::Pose & pose_in,
+		Size const loop_begin,
+		Size const loop_end )
+{
 	using namespace protocols;
 	using namespace protocols::simple_moves;
 	using namespace protocols::loops;
 	using namespace protocols::moves;
 
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	// storing starting fold tree
 	kinematics::FoldTree tree_in( pose_in.fold_tree() );
@@ -197,7 +198,6 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
 			core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 	}
-
 
 
 	Real min_tolerance = 0.001;
@@ -234,7 +234,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CcdMoverOP ccd_moves = new CcdMover( one_loop, loop_map );
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
 
 	SequenceMoverOP wiggle_cdr_centroid_loop_( new SequenceMover() );

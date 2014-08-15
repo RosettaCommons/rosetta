@@ -41,7 +41,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
@@ -410,11 +410,6 @@ void LoopRebuild::set_looprlx_allow_move_map(
 }
 
 
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////////////////
 /// @details  Rebuild a loop via fragment insertion + ccd closure + minimization
 void LoopRebuild::build_loop_with_ccd_closure(
@@ -524,10 +519,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	else                                       idealize_loop(  pose, Loop( loop_begin, loop_end ) );
 
 
-
-
-
-	/// prepare fragment movers
+	// prepare fragment movers
 	MoveMapOP movemap = new MoveMap();
 	movemap->set_bb_true_range(loop_begin, loop_end);
 
@@ -580,25 +572,6 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	core::Real temperature = init_temp;
  	mc_->reset( pose );
 	mc_->set_temperature( temperature );
-
-
-
-	// Run abinitio if the loop is longer than 15 residues!
-//	if( (loop_end - loop_begin) > 15 ){
-//		using namespace core::fragment;
-//
-//		protocols::abinitio::AbrelaxApplication abrelax_app;
-//		do {
-//			protocols::abinitio::ClassicAbinitio abinitio( frag_libs_[0], frag_libs_[1],movemap );
-//			abinitio.apply( pose );
-//		} while( !abrelax_app.check_filters( pose ) );
-//
-//		pose.dump_pdb("abinitio_after.pdb");
-//		return;
-//	}
-
-	//int counter=0;
-
 
 
 	// --- Figure out constraints (ConstraintSet)	  ------
@@ -757,7 +730,11 @@ void LoopRebuild::build_loop_with_ccd_closure(
 				} else {
 					//do ccd_moves here
 					if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
-						loop_closure::ccd::ccd_moves(5, pose, mm_one_loop, loop_begin, loop_end, cutpoint );
+						loop_closure::ccd::CCDLoopClosureMover ccd_mover(
+								Loop( loop_begin, loop_end, cutpoint ),
+								MoveMapCOP( new MoveMap( mm_one_loop ) ) );
+						ccd_mover.max_cycles( 25 );  // Used to be 5 moves, which would result in 25 "tries" in the old code. ~Labonte
+						ccd_mover.apply( pose );
 					}
 				}
 				mc_->boltzmann( pose, "ccd_moves" );
@@ -795,36 +772,21 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 
 //////////////////////////////////////////////////////////////////////////////////
-/// @details  CCD close the loop [loop_begin,loop_end].  Wraps protocols::loops::fast_ccd_loop_closure,
-///    setting reasonable weights for the protocol.
+/// @details  CCD close the loop [loop_begin,loop_end].
+/// Wraps protocols::loops::loop_closure::ccd::CCDLoopClosureMover.apply() using most of its default options.
+/// rama scores are not checked, however, and the secondary structure is "fixed" afterward.
+/// @remark   This is a misnomer; it actually closes a single loop only. ~Labonte
 void LoopRebuild::fast_ccd_close_loops(
-																		 core::pose::Pose & pose,
-																		 int const & loop_begin,
-																		 int const & loop_end,
-																		 int const & cutpoint,
-																		 kinematics::MoveMap & mm
-																		 ) {
-	// param for ccd_closure
-	int  const ccd_cycles = { 100 }; // num of cycles of ccd_moves
-	Real const ccd_tol = { 0.01 }; // criterion for a closed loop
-	bool const rama_check = { false };
-	Real const max_rama_score_increase = { 2.0 }; // dummy number when rama_check is false
-	Real const max_total_delta_helix = { 10.0 }; // max overall angle changes for a helical residue
-	Real const max_total_delta_strand = { 50.0 }; // ... for a residue in strand
-	Real const max_total_delta_loop = { 75.0 }; // ... for a residue in loop
-
-	// output for ccd_closure
-	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
-	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
-
-	//Real const bond_angle1( pose.residue( cutpoint ).upper_connect().icoor().theta() );// CA-C=N bond angle
-	//Real const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
-	//Real const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
-
-	loop_closure::ccd::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
-																			 ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
-																			 max_total_delta_strand, max_total_delta_loop, forward_deviation,
-																			 backward_deviation, torsion_delta, rama_delta );
+		core::pose::Pose & pose,
+		int const & loop_begin,
+		int const & loop_end,
+		int const & cutpoint,
+		kinematics::MoveMap & mm )
+{
+	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
+			Loop( loop_begin, loop_end, cutpoint ), kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+	ccd_loop_closure_mover.check_rama_scores( false );
+	ccd_loop_closure_mover.apply( pose );
 
 	// fix secondary structure??
 	for (int i=loop_begin; i<=loop_end; ++i) {
@@ -833,7 +795,6 @@ void LoopRebuild::fast_ccd_close_loops(
 			pose.set_secstruct( i , 'L' );
 	}
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -960,7 +921,6 @@ bool LoopRebuild::select_one_loop(
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////
 core::Real LoopRebuild::get_score_filter_cutoff() {
 	using namespace basic::options;
@@ -991,7 +951,6 @@ bool LoopRebuild::loop_model()
 	}
 	return loop_model;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1294,12 +1253,6 @@ void LoopRebuild::set_extended_loop( bool val ) {
 }
 
 
-
-
-
-
-
-
 //////////////////////////////////////////////////////////
 ///@brief Helper function tokenizes a str
 /////////////////////////////////////////////////////////
@@ -1318,103 +1271,6 @@ void Tokenize(const std::string              &str,
         pos = str.find_first_of(delimiters, lastPos);
     }
 }
-
-/*
-//////////////////////////////////////////////////////////////////////////////////
-void LoopRebuild::read_loop_file(
-	utility::vector1< LRLoop > &loops,
-	std::string filename
-) {
-	loops.clear();
-	std::ifstream infile( filename.c_str() );
-
-	if (!infile.good()) {
-		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + filename + "'" );
-	}
-	std::string line;
-	utility::vector1< std::string > tokens;
-
-	while( getline(infile,line) ) {
-		Tokenize( line, tokens ) ;
-
-		if( tokens.size() > 0 ) {
-			if ( tokens[1] == "LOOP" ) {
-				if ( tokens.size() < 3 ) {
-					utility_exit_with_message( "[ERROR] Error parsing line '" + line + "'"  );
-				}
-				core::Size start_res = (core::Size) atoi(tokens[2].c_str());
-				core::Size end_res   = (core::Size) atoi(tokens[3].c_str());
-				core::Size cutpt = 0;        // default - let LoopRebuild choose cutpoint
-				core::Real skip_rate = 0.0;  // default - never skip
-				std::string extend_loop_str;
-				bool extend_loop = false;
-
-				if (tokens.size() > 3)
-					cutpt = (core::Size) atoi(tokens[4].c_str());
-				if (tokens.size() > 4)
-					skip_rate = atof(tokens[5].c_str());
-				if (tokens.size() > 5)
-					extend_loop_str = tokens[6];
-
-				if (extend_loop_str.length() > 0)
-					extend_loop = true;
-
-				if( start_res >= end_res ){
-					utility_exit_with_message( "[ERROR] Line '" + string_of(line) + "' has invalid loop definition (start residue >= end residue) - ERROR"  );
-				}else{
-					loops.push_back( LRLoop(start_res, end_res, cutpt, skip_rate, extend_loop) );
-				}
-			} else if ( tokens[1][0] != '#' ) {
-				if (tokens.size() >= 2) {
-					TR << "[WARNING] Reading r++ style loopfile" << std::endl;
-					core::Size start_res = (core::Size) atoi(tokens[1].c_str());
-					core::Size end_res   = (core::Size) atoi(tokens[2].c_str());
-					core::Size cutpt = 0;        // default - let LRLoopRebuild choose cutpoint
-					core::Real skip_rate = 0.0;  // default - never skip
-					bool extend_loop = false;
-
-					if (tokens.size() > 2)
-						cutpt = (core::Size) atoi(tokens[3].c_str());
-					if (tokens.size() > 3)
-						skip_rate = atof(tokens[4].c_str());
-
-					if( start_res >= end_res ){
-						utility_exit_with_message( "[ERROR] Line '" + string_of(line) + "' has invalid loop definition (start residue >= end residue) - ERROR"  );
-					}else{
-						loops.push_back( LRLoop(start_res, end_res, cutpt, skip_rate, extend_loop) );
-					}
-				} else {
-					TR << "[WARNING] Skipping line '" << line << "'" << std::endl;
-				}
-			}
- 		}
-	}
-
-
-	// sort by start residue
-	std::sort( loops.begin(), loops.end(), Loop_lt() );
-
-	// debug ... print in the data structure
-	for (core::Size i=1; i<=loops.size(); ++i) {
-		TR << "[debug] LOOP  " << loops[i].start() << "   " << loops[i].stop()
-		   << "   " << loops[i].cut() << "   " << loops[i].skip_rate() << std::endl;
-	}
-}
-
-*/
-
-
-
-///  ///////////////////////////////////////////////////////////////////////
-///  LRLoop combine_loops( const LRLoop &loop1 , const LRLoop &loop2 ){
-///  	return LRLoop(
-///  		std::min( loop1.start() , loop2.start() ),
-///  		std::max( loop1.start() , loop2.start() ),
-///  		(loop1.cut() + loop2.cut()) / 2,
-///  		1.0 - (1.0-loop1.skip_rate()) * (1.0-loop2.skip_rate()) ,
-///  		loop1.is_extended() || loop2.is_extended()
-///  	);
-///  }
 
 
 ///////////////////////////////////////////////////////////////////////

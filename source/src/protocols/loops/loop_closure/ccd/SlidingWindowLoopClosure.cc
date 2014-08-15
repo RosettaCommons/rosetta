@@ -19,7 +19,7 @@
 
 // Package Headers
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/ShortLoopClosure.hh>
 #include <protocols/loops/loops_main.hh>
@@ -375,7 +375,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 		FrameList closure_frames;
 		closure_frame->steal( more_cut );
 
-    CcdLoopClosureMover fast_ccd( loop_, movemap_ );
+    CCDLoopClosureMover fast_ccd( loop_, movemap_ );
 		fast_ccd.apply( more_cut );
 		if ( fast_ccd.success() ) {
 			closure_frame->steal( more_cut );

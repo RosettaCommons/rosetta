@@ -46,7 +46,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <basic/Tracer.hh> // tracer output
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 
 //Utility Headers
 #include <numeric/random/random.hh>
@@ -387,32 +387,20 @@ std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
 
 
 //////////////////////////////////////////////////////////////////////////////////
-/// @details  CCD close the loop [loop_begin,loop_end].  Wraps
-/// protocols::loops::fast_ccd_loop_closure, sets reasonable weights for the
-/// protocol.
+/// @details  CCD close the loop [loop_begin,loop_end].
+/// Wraps protocols::loops::loop_closure::ccd::CCDLoopClosureMover.apply() using most of its default options.
+/// rama scores are not checked, however, and the secondary structure is "fixed" afterward.
+/// @remark   This is a misnomer; it actually closes a single loop only. ~Labonte
 void fast_ccd_close_loops(
 	core::pose::Pose & pose,
 	Loop const & loop,
 	kinematics::MoveMap & mm
 )
 {
-	// param for ccd_closure
-	int  const ccd_cycles = { 100 }; // num of cycles of ccd_moves
-	Real const ccd_tol = { 0.01 }; // criterion for a closed loop
-	bool const rama_check = { false };
-	Real const max_rama_score_increase = { 2.0 }; // dummy number when rama_check is false
-	Real const max_total_delta_helix = { 10.0 }; // max overall angle changes for a helical residue
-	Real const max_total_delta_strand = { 50.0 }; // ... for a residue in strand
-	Real const max_total_delta_loop = { 75.0 }; // ... for a residue in loop
-	// output for ccd_closure
-	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
-	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
-	loop_closure::ccd::fast_ccd_loop_closure(
-		pose, mm, loop.start() , loop.stop(), loop.cut(), ccd_cycles,
-		ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
-		max_total_delta_strand, max_total_delta_loop, forward_deviation,
-		backward_deviation, torsion_delta, rama_delta
-	);
+	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
+			loop, kinematics::MoveMapCOP( new kinematics::MoveMap( mm ) ) );
+	ccd_loop_closure_mover.check_rama_scores( false );
+	ccd_loop_closure_mover.apply( pose );
 
 	// fix secondary structure??
 	for (core::Size i=loop.start(); i<=loop.stop(); ++i) {

@@ -36,7 +36,7 @@ print "setting up movers"
 #backbone movers
 fragset3mer = ConstantLengthFragSet(3, "test_in3_fragments")
 mover_3mer = ClassicFragmentMover(fragset3mer,movemap)
-ccd_closure = CcdLoopClosureMover(my_loop, movemap)
+ccd_closure = CCDLoopClosureMover(my_loop, movemap)
 
 #centroid/fullatom conversion movers
 to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')

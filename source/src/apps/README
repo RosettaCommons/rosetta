@@ -5,7 +5,7 @@
 (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 src/apps/benchmark/
-	A directory with mini performance benchmark application.
+	A directory with Rosetta performance benchmark applications.
 
 src/apps/public/
 	A directory with published or about-to-be-published protocols and curated applications.
@@ -13,5 +13,8 @@ src/apps/public/
 	Documentation should be entered into super-easy-to-use github-integrated wiki at: https://www.rosettacommons.org/docs/wiki/Home.
 
 src/apps/pilot/
-	An area where people can put anything that they are working on but
-	haven't completely finished yet.
+	An area where people can put anything that they are working on but haven't completely finished yet.
+
+src/apps/test/
+	A directory intended for for finished integration test applications that are not true protocols and will never be
+	published

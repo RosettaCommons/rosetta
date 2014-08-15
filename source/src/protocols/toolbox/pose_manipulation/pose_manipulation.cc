@@ -44,7 +44,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loops.hh>
 
 

@@ -22,7 +22,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/CCDLoopClosureMover.hh>
 
 #include <protocols/moves/PyMolMover.hh>
 
@@ -105,7 +105,7 @@ my_main( void* ) {
 	mm->set_bb(false);
 	loops->loops()[1].switch_movemap( *mm, id::BB, true);
 
-	CcdLoopClosureMover ccd  = CcdLoopClosureMover( loops->loops()[1], mm);
+	CCDLoopClosureMover ccd  = CCDLoopClosureMover( loops->loops()[1], mm);
 	ccd.apply(*pose);
 	pose->dump_pdb("src/apps/pilot/weitzner/1bzq_closed.pdb");
 	return 0;

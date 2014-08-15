@@ -48,11 +48,10 @@
 #include <numeric/xyz.functions.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-//#include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
@@ -687,8 +686,8 @@ void CDRH3Modeler::scored_frag_close (
 	using namespace protocols::loops;
 	using loop_closure::ccd::CcdMover;
 	using loop_closure::ccd::CcdMoverOP;
-	using loop_closure::ccd::CcdLoopClosureMover;
-	using loop_closure::ccd::CcdLoopClosureMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	TR <<  "H3M Fragments based centroid CDR H3 loop building" << std::endl;
 
@@ -805,7 +804,7 @@ void CDRH3Modeler::scored_frag_close (
 			if ( (c2 > cycles2/2 && RG.uniform() * cycles2 < c2) ||
 			        ( trimmed_cdr_h3.size() <= 5) ) {
 				// in 2nd half of simulation, start trying to close the loop:
-				CcdMoverOP ccd_moves = new CcdMover( trimmed_cdr_h3, cdrh3_map );
+				CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map );
 				RepeatMoverOP ccd_cycle;
 				if( trimmed_cdr_h3.size() <= 5 ) {
 					ccd_cycle = new RepeatMover(ccd_moves,500*trimmed_cdr_h3.size());
@@ -819,17 +818,16 @@ void CDRH3Modeler::scored_frag_close (
 		}
 
 		mc->recover_low( pose_in );
-		CcdLoopClosureMoverOP ccd_closure = new CcdLoopClosureMover(
+		CCDLoopClosureMoverOP ccd_closure = new CCDLoopClosureMover(
 		    trimmed_cdr_h3, cdrh3_map );
-		ccd_closure->set_tolerance( ccd_threshold );
-		ccd_closure->set_ccd_cycles( 500 );
+		ccd_closure->tolerance( ccd_threshold );
+		ccd_closure->max_cycles( 500 );
 		ccd_closure->apply( pose_in );
 
 		if( total_cycles == 1 )
 			outer_mc->reset( pose_in );
 
-		if ( ccd_closure->forward_deviation() <= ccd_threshold &&
-		        ccd_closure->backward_deviation() <= ccd_threshold ) {
+		if ( ccd_closure->deviation() <= ccd_threshold ) {
 			// CDR-H3 filter for antibody mode
 			// introduce enough diversity
 			outer_mc->boltzmann( pose_in );
@@ -885,13 +883,11 @@ void CDRH3Modeler::scored_frag_close (
 ///
 /// @last_modified 02/04/2010
 ///////////////////////////////////////////////////////////////////////////
-bool CDRH3Modeler::CDR_H3_filter(
-    const pose::Pose & pose_in,
-    Size const loop_begin,
-    Size const size,
-    char const light_chain
-) {
-
+bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
+		Size const loop_begin,
+		Size const size,
+		char const light_chain )
+{
 	TR <<  "H3M Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
 	if( !H3_filter_ || is_camelid_ )
@@ -1060,10 +1056,8 @@ bool CDRH3Modeler::CDR_H3_filter(
 ///
 /// @last_modified 02/04/2010
 ///////////////////////////////////////////////////////////////////////////
-void CDRH3Modeler::loop_fa_relax(
-    pose::Pose & pose_in,
-    Size const loop_begin,
-    Size const loop_end ) {
+void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, Size const loop_end )
+{
 	using namespace protocols;
 	using namespace protocols::simple_moves;
 	using namespace protocols::loops;
@@ -1072,8 +1066,8 @@ void CDRH3Modeler::loop_fa_relax(
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	TR << "H3M Relaxing CDR H3 Loop" << std::endl;
 
@@ -1219,7 +1213,7 @@ void CDRH3Modeler::loop_fa_relax(
 		shear_mover->angle_max( 'L', 6.0 );
 	}
 
-	CcdMoverOP ccd_moves = new CcdMover( one_loop, cdrh3_map );
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, cdrh3_map );
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
 
 	SequenceMoverOP wiggle_cdr_h3( new SequenceMover() );
@@ -1379,10 +1373,9 @@ void CDRH3Modeler::loop_fa_relax(
 ///
 /// @last_modified 05/07/2010
 ///////////////////////////////////////////////////////////////////////////
-void CDRH3Modeler::loop_centroid_relax(
-    pose::Pose & pose_in,
-    Size const loop_begin,
-    Size const loop_end ) {
+void
+CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, Size const loop_end )
+{
 	using namespace protocols;
 	using namespace protocols::simple_moves;
 	using namespace protocols::loops;
@@ -1390,8 +1383,8 @@ void CDRH3Modeler::loop_centroid_relax(
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	TR << "H3M Centroid Relaxing Loop" << std::endl;
 
@@ -1470,7 +1463,7 @@ void CDRH3Modeler::loop_centroid_relax(
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CcdMoverOP ccd_moves = new CcdMover( one_loop, loop_map );
+	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
 	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
 
 	SequenceMoverOP wiggle_cdr_h3( new SequenceMover() );

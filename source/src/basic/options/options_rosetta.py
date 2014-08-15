@@ -4583,6 +4583,18 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				desc='path to a blueprint file specifying loops.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive',
 			),
 		), # Option_Group( 'loop_closure' )
+		Option_Group( 'ccd' ,
+		  Option( 'max_rama_score_increase', 'Real', desc='Maximum increase in Ramachandran score that will be tolerated.', default='2.0' ),
+		  Option( 'max_torsion_delta_per_move', 'RealVector', desc='Maxmimum absolute torsion deviation for a single residue in a given move. Different deviations for residues in helical, extended or coil conformations must be supplied (in that order).',
+		          default=['1.0', '5.0', '10.0'], n='3' ),
+		  Option( 'max_torsion_delta', 'RealVector', desc='Maxmimum absolute torsion deviation for a single residue over the entire CCD closure. Different deviations for residues in helical, extended or coil conformations must be supplied (in that order).',
+		          default=['10.0', '50.0', '75.0'] , n='3'),
+		  Option( 'tolerance', 'Real', desc='Maximum RMSD (in Angstroms) of the duplicated atoms across the cutpoint that will be considered a successful closure.', default='0.08' ),
+		  Option( 'max_cycles', 'Integer', desc='Maximum number of CCD iterations to attempt. CCD will stop if the loop is closed in fewer cycles than the maximum.', default='100' ),
+		  Option( 'check_rama_scores', 'Boolean', desc="Bias toward moves that improve the moving resiude's Ramachandran score.", legal=['true','false'], default='true' ),
+		  Option( 'rama_2b', 'Boolean', desc="Use two-body (neighbor-dependent) Ramachandran score.", legal=['true','false'], default='false' ),
+		  Option( 'temperature', 'Real', desc='Temperature (roughly in units of kT) to use when accepting a move that does not improve the Ramachandran score.', default='0.25' ),
+		), # Option_Group( 'ccd' )
 	), # Option_Group( 'loops' )
 
 	Option_Group( 'assembly',

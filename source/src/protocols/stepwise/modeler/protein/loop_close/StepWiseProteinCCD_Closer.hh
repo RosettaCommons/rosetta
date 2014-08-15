@@ -9,7 +9,7 @@
 
 /// @file SWA_ProteinCCD_Closer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -122,7 +122,7 @@ namespace loop_close {
 		Size ccd_close_res_;
 
 		loops::Loop loop_;
-		kinematics::MoveMap mm_;
+		kinematics::MoveMapOP mm_;
 
 		utility::vector1< id::TorsionID >  which_torsions_;
 

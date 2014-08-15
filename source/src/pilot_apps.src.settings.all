@@ -959,6 +959,7 @@ sources = {
 	"pilot/vmullig" : [
 		#"bettercluster",
 	],
+
 	# Z ######################################################################
 	"pilot/zhezhang" : [
 		"extract_CA_coords",
@@ -966,7 +967,13 @@ sources = {
 	"pilot/shirst" : [
 		"TestTopologySampler",
 		"LoophashFilter"
-		]
+	],
+
+
+	# INTEGRATION TEST APPLICATIONS ##########################################
+	"tests" : [
+		"test_CCD_loop_closure",
+	],
 }
 
 

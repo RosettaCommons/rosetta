@@ -43,7 +43,7 @@ movemap.set_bb(True)
 movemap.set_chi(True)
 
 loop1 = Loop(15, 24, 19)
-ccd = CcdLoopClosureMover(loop1, movemap)
+ccd = CCDLoopClosureMover(loop1, movemap)
 
 ccd.apply(pose)
 set_single_loop_fold_tree(pose, loop1)

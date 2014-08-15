@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>
 #include <core/conformation/Conformation.hh>
@@ -89,8 +89,8 @@ CloseOneCDRLoop::get_name() const {
 
 
 void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
-	using loops::loop_closure::ccd::CcdMover;
-	using loops::loop_closure::ccd::CcdMoverOP;
+	using loops::loop_closure::ccd::CCDLoopClosureMover;
+	using loops::loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	Size const N ( 1 ); // N atom
 	Size const C ( 3 ); // C atom
@@ -128,14 +128,14 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	if( nter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( loop_start_, cdr_loop_start_, cdr_loop_start_-1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
-		CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
+		CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, movemap_ );
 		ccd_moves->apply( pose_in );
 	}
 
 	if( cter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( cdr_loop_end_, loop_end_, cdr_loop_end_+1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
-		CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
+		CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, movemap_ );
 		ccd_moves->apply( pose_in );
 	}
 
@@ -148,7 +148,7 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 		if( separation > allowed_separation_ ) {
 			Size cutpoint = ii;
 			loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
-			CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
+			CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, movemap_ );
 			ccd_moves->apply( pose_in );
 		}
 	}

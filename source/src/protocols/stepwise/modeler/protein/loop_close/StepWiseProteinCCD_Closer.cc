@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file StepWiseProteinCCD_Closer
-/// @brief Makes a list of (phi, psi, omega) at moving_residues that
-///              could be useful for full-atom packing
-/// @detailed
+/// @brief Makes a list of (phi, psi, omega) at moving_residues that could be useful for full-atom packing
+/// @details
 /// @author Rhiju Das
 
 
@@ -19,8 +18,9 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/simple_moves/TorsionSetMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -72,6 +72,7 @@ namespace loop_close {
 		moving_residues_( working_parameters->working_moving_res_list() ),
 		is_pre_proline_( working_parameters->is_pre_proline() ),
 		ccd_close_res_( 0 ),
+		mm_( new kinematics::MoveMap ),
 		closed_loop_( false ),
 		ntries_( 0 )
 	{
@@ -120,44 +121,39 @@ namespace loop_close {
 		ntries_ = 0;
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	bool
-  StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose ) {
+///////////////////////////////////////////////////////////////////////////
+bool
+StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
+{
+	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover( loop_, mm_ );
+	ccd_loop_closure_mover.max_cycles( 1000 );
+	ccd_loop_closure_mover.tolerance( 0.001 );
+	ccd_loop_closure_mover.check_rama_scores( false );
+	ccd_loop_closure_mover.rama()->max_rama_score_increase( 100.0 );
+	// FYI: I think anything over 180 is meaningless below. ~Labonte
+	ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 100.0, 500.0, 3600.0 );
 
-		// param for ccd_closure
-		int  const ccd_cycles = { 1000 }; // num of cycles of ccd_moves
-		Real const ccd_tol = { 0.001 }; // criterion for a closed loop
-		//		bool const rama_check_boltzmann = { true }; // random!?
-		bool const rama_check_boltzmann = { false };
-		Real const max_rama_score_increase = { 100.0 }; // dummy number when rama_check is false
-		Real const max_total_delta_helix   = { 100.0 }; // max overall angle changes for a helical residue
-		Real const max_total_delta_strand  = { 500.0 }; // ... for a residue in strand
-		Real const max_total_delta_loop    = { 3600.0 }; // ... for a residue in loop
-		// cutoff for acceptance
-		Real const rmsd_acceptance_cutoff =  1.5; // can be a little relaxed, since there will be a minimize afterwards.
-		// output for ccd_closure
-		Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
-		Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
+	// cutoff for acceptance
+	Real const rmsd_acceptance_cutoff =  1.5; // can be a little relaxed, since there will be a minimize afterwards.
 
-		Size const n_cycles = protocols::loops::loop_closure::ccd::fast_ccd_loop_closure(
-																						pose, mm_, loop_.start() , loop_.stop(), loop_.cut(), ccd_cycles,
-																						ccd_tol, rama_check_boltzmann, max_rama_score_increase, max_total_delta_helix,
-																						max_total_delta_strand, max_total_delta_loop, forward_deviation,
-																						backward_deviation, torsion_delta, rama_delta
-																						);
+	ccd_loop_closure_mover.apply( pose );
 
-		ntries_++;
+	ntries_++;
 
-		bool const loop_closed = ( forward_deviation <= rmsd_acceptance_cutoff && backward_deviation <= rmsd_acceptance_cutoff );
+	// FYI: CCDLoopClosureMover has a success() method. ~Labonte
+	bool const loop_closed = ( ccd_loop_closure_mover.deviation() <= rmsd_acceptance_cutoff );
 
-		TR.Debug << "CCD forward_dev: " << forward_deviation << "  backward_dev: " << backward_deviation << "  torsion_delta: " << torsion_delta << " rama_delta: " << rama_delta << "  number of cycles: " << n_cycles << "  loop_closed:  "<< loop_closed << std::endl;
-		if ( !loop_closed ) return false;
+	TR.Debug << "CCD dev: " << ccd_loop_closure_mover.deviation() <<
+			"  torsion_delta: " << ccd_loop_closure_mover.torsion_delta() <<
+			" rama_delta: " << ccd_loop_closure_mover.rama_delta() <<
+			"  number of cycles: " << ccd_loop_closure_mover.actual_cycles() <<
+			"  loop_closed:  " << loop_closed << std::endl;
+	if ( !loop_closed ) return false;
 
-		grab_main_chain_torsion_set_list( pose );
+	grab_main_chain_torsion_set_list( pose );
 
-		return true;
-
-	}
+	return true;
+}
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -215,13 +211,13 @@ namespace loop_close {
 	void
 	StepWiseProteinCCD_Closer::figure_out_movemap(){
 		using namespace core::id;
-		mm_.clear();
-		mm_.set( TorsionID( loop_.start(), id::BB, 2 ),  true );
+		mm_->clear();
+		mm_->set( TorsionID( loop_.start(), id::BB, 2 ),  true );
 		for ( Size n = loop_.start()+1; n <= loop_.stop()-1; n++ ){
-			mm_.set( TorsionID( n, id::BB, 1 ),  true );
-			mm_.set( TorsionID( n, id::BB, 2 ),  true );
+			mm_->set( TorsionID( n, id::BB, 1 ),  true );
+			mm_->set( TorsionID( n, id::BB, 2 ),  true );
 		}
-		mm_.set( TorsionID( loop_.stop(), id::BB, 1 ),  true );
+		mm_->set( TorsionID( loop_.stop(), id::BB, 1 ),  true );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////

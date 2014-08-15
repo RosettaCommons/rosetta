@@ -31,7 +31,6 @@
 #include <iostream>
 
 
-// TODO: Move to simple_moves.
 namespace protocols {
 namespace simple_moves {
 

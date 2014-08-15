@@ -11,24 +11,19 @@
 /// @brief kinematic loop closure main protocols
 /// @author Mike Tyka
 
-//// Unit Headers
+// Unit Headers
 #include <protocols/loops/loops_main.hh>
-//#include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_MovesCreator.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
-//
-//
-//// Rosetta Headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+
+// Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -37,35 +32,23 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/fragment/FragSet.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
-//#include <core/pack/task/TaskFactory.hh>
-//#include <core/pack/task/PackerTask.hh>
-//#include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-//#include <protocols/simple_moves/BackboneMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
 #include <basic/Tracer.hh> // tracer output
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 //Utility Headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // C++ Headers
 #include <iostream>
@@ -79,12 +62,6 @@
 
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-
-
-
-
 
 
 namespace protocols {
@@ -285,7 +262,9 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 			} else {
 				//do ccd_moves here
 				if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
-					loop_closure::ccd::ccd_moves(5, pose, *mm_one_loop, loop.start(), loop.stop(), loop.cut() );
+					loop_closure::ccd::CCDLoopClosureMover ccd_mover( loop, mm_one_loop );
+					ccd_mover.max_cycles( 25 );  // Used to be 5 moves, which would result in 25 "tries" in the old code. ~Labonte
+					ccd_mover.apply( pose );
 				}
 			}
 			mc_->boltzmann( pose, "QuickCCD_Moves" );

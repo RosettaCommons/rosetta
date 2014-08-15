@@ -19,7 +19,7 @@
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/CcdLoopClosureMover.hh>
+// AUTO-REMOVED #include <protocols/loops/CCDLoopClosureMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>

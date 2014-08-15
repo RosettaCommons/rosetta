@@ -200,10 +200,6 @@ RingConformationMover::movemap(kinematics::MoveMapOP new_movemap)
 void
 RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 {
-	using namespace std;
-	using namespace utility;
-	using namespace id;
-
 	type("RingConformationMover");
 
 	movemap_ = movemap;

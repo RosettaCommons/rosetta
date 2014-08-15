@@ -16,6 +16,7 @@ sources = {
 		"ClusteringTreeNode",
 		"color_util",
 		"constants",
+		"cyclic_coordinate_descent",
 		"MultiDimensionalHistogram",
 		"polynomial",
 		"prob_util",

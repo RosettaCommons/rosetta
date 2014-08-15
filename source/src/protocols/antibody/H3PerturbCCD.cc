@@ -44,7 +44,7 @@
 #include <core/pose/util.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -179,10 +179,8 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	using namespace protocols;
 	using namespace protocols::simple_moves;
 	using namespace protocols::loops;
-	using loop_closure::ccd::CcdMover;
-	using loop_closure::ccd::CcdMoverOP;
-	using loop_closure::ccd::CcdLoopClosureMover;
-	using loop_closure::ccd::CcdLoopClosureMoverOP;
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
 
 	TR <<  "Fragments based centroid CDR H3 loop building" << std::endl;
 
@@ -190,16 +188,10 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		utility_exit_with_message("Loop too small for modeling");
 	}
 
-
-
-
-
 	// params
 	Size h3_attempts(0);
 	Real current_h3_prob = RG.uniform();
 	TR<<"current_h3_prob="<<current_h3_prob<<std::endl;
-
-
 
 	Size frag_size(0);
 	FragSetOP frags_to_use;
@@ -275,8 +267,6 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		}
 		Size local_h3_attempts(0);
 
-
-
 		for ( Size c2 = 1; c2 <= num_cycles2; ++c2 ) {
 			TR<<"c1="<<total_cycles<<"    "<<"c2="<<c2<<std::endl;
 			// apply a random fragment
@@ -284,8 +274,6 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			cfm->apply( pose_in );
-
-
 
 			bool H3_found_current(false);
 			if( current_loop_is_H3_ && H3_filter_ && ( local_h3_attempts++ < (50 * num_cycles2) ) ) {
@@ -316,7 +304,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 			// JQX: this "RG.uniform() * num_cycles2 < c2" is so weird, not sure what Aroop really wants to do
 			if ( (c2 > num_cycles2/2 && RG.uniform() * num_cycles2 < c2) || ( trimmed_cdr_h3.size() <= 5) ) {
 				// in 2nd half of simulation, start trying to close the loop:
-				CcdMoverOP ccd_moves = new CcdMover( trimmed_cdr_h3, cdrh3_map );
+				CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map );
 				protocols::moves::RepeatMoverOP ccd_cycle;
 				if( trimmed_cdr_h3.size() <= 5 ) {
 					ccd_cycle = new protocols::moves::RepeatMover(ccd_moves,500*trimmed_cdr_h3.size());
@@ -330,23 +318,18 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		}// finish cycles2
 
 
-
 		mc_->recover_low( pose_in );
 
-
-
-		CcdLoopClosureMoverOP ccd_closure = new CcdLoopClosureMover(trimmed_cdr_h3, cdrh3_map );
-		ccd_closure->set_tolerance( ccd_threshold_ );
-		ccd_closure->set_ccd_cycles( max_ccd_cycles_ );
+		CCDLoopClosureMoverOP ccd_closure = new CCDLoopClosureMover(trimmed_cdr_h3, cdrh3_map );
+		ccd_closure->tolerance( ccd_threshold_ );
+		ccd_closure->max_cycles( max_ccd_cycles_ );
 		ccd_closure->apply( pose_in );
-
-
 
 		if( total_cycles == 1 ) {
 			outer_mc_->reset( pose_in );
 		}
 
-		if ( ccd_closure->forward_deviation() <= ccd_threshold_ && ccd_closure->backward_deviation()<= ccd_threshold_ ) {
+		if ( ccd_closure->deviation() <= ccd_threshold_ ) {
 			// CDR-H3 filter for antibody mode
 			// introduce enough diversity
 			outer_mc_->boltzmann( pose_in );

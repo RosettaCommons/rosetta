@@ -26,7 +26,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -190,7 +190,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	Loop Nter_loop;
 	Loop Cter_loop;
 	LoopsOP loop_set = new Loops();
-	std::map< Loop, loop_closure::ccd::CcdLoopClosureMoverOP > loop_set_map; //Would not work without owning pointer.
+	std::map< Loop, loop_closure::ccd::CCDLoopClosureMoverOP > loop_set_map; //Would not work without owning pointer.
 
 	Nter_loop = Loop(Nter_loop_start(), Nter_loop_end()+1, Nter_loop_end());//(LEFT LOOP)
 	Cter_loop = Loop(Cter_loop_start()-1, Cter_loop_end(), Cter_loop_start()-1);//(RIGHT LOOP)
@@ -206,8 +206,8 @@ CCDEndsGraftMover::apply(Pose & pose){
 	ft_loop.loops(loop_set);
 	ft_loop.apply(combined);
 
-	loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap());
-	loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap());
+	loop_set_map[Nter_loop]=new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap());
+	loop_set_map[Cter_loop]=new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap());
 	
 	//combined.dump_pdb("before_idealize.pdb");
 

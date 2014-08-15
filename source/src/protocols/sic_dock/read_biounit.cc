@@ -10,6 +10,7 @@
  #include <basic/Tracer.hh>
  #include <core/chemical/AtomType.hh>
  #include <core/chemical/ChemicalManager.hh>
+ #include <core/conformation/Residue.hh>
  #include <core/import_pose/import_pose.hh>
  #include <core/pose/PDBInfo.hh>
  #include <core/pose/Pose.hh>
