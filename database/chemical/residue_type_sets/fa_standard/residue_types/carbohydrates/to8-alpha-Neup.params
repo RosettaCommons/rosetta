@@ -91,6 +91,8 @@ BOND  C9  1H9
 BOND  C9  2H9
 BOND  O9   HO9
 
+VIRTUAL_SHADOW VO6   O6
+
 CHI 1  C2   C1  1O1  H1O1  # meaningless chi; this is just a placeholder
 CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
 CHI_ROTAMERS 2   0 0

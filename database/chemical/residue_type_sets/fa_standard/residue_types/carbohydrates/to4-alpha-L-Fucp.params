@@ -65,6 +65,8 @@ BOND  C6  2H6
 BOND  C6  3H6
 BOND  O6   HO6
 
+VIRTUAL_SHADOW VO5   O5
+
 CHI 1  VO5  C1   O1   HO1  # cannot use O5 to define torsion, since atom tree doesn't treat it as connected
 CHI_ROTAMERS 1   0 0
 CHI_ROTAMERS 1  60 0
