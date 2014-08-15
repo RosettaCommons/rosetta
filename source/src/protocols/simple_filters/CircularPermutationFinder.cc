@@ -34,7 +34,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/hybridization/TMalign.hh>
+//#include <protocols/hybridization/TMalign.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/util.hh>
 
@@ -126,8 +126,8 @@ superimpose_parts( vector< numeric::xyzVector< core::Real > > & ref_coords, core
 
 	double *Kabsch_rms = new double;
 	*Kabsch_rms = 0.0;
-	protocols::hybridization::TMalign tmalign;
-	bool const success = tmalign.Kabsch( ref_coords, rotated_coords, ref_coords.size(), 1, Kabsch_rms, to_fit_center, rotation );
+//	protocols::hybridization::TMalign tmalign;
+	bool const success = true; //tmalign.Kabsch( ref_coords, rotated_coords, ref_coords.size(), 1, Kabsch_rms, to_fit_center, rotation );
 
 	if( !success )
 		return 99999.9;
@@ -143,7 +143,7 @@ superimpose_parts( vector< numeric::xyzVector< core::Real > > & ref_coords, core
 
 core::Real
 superimpose_parts( core::pose::Pose const & pose, utility::vector1< core::Size > const & vec, core::Size const cut ){
-	using namespace protocols::hybridization;
+//	using namespace protocols::hybridization;
 
 	std::list< core::Size > resi_list;
 	resi_list.clear();
@@ -158,17 +158,17 @@ superimpose_parts( core::pose::Pose const & pose, utility::vector1< core::Size >
 	BOOST_FOREACH( core::Size const s, rotated_vec )
 	  rotated_list.push_back( s );
 
-	TMalign tm_align;
+//	TMalign tm_align;
   std::string seq_pose, seq_ref, aligned;
   core::id::AtomID_Map< core::id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
   core::Size n_mapped_residues=0;
 
 //	std::list< core::Size > const rotated_list = std::rotate( resi_list.begin(), resi_list.begin() + cut, resi_list.end() );
-  tm_align.apply( pose, pose, resi_list, rotated_list );
-  tm_align.alignment2AtomMap( pose, pose, resi_list, rotated_list, n_mapped_residues, atom_map);
-  tm_align.alignment2strings(seq_pose, seq_ref, aligned);
-  core::Real TMscore = tm_align.TMscore(resi_list.size()/*normalize_length*/);
+//  tm_align.apply( pose, pose, resi_list, rotated_list );
+//  tm_align.alignment2AtomMap( pose, pose, resi_list, rotated_list, n_mapped_residues, atom_map);
+ // tm_align.alignment2strings(seq_pose, seq_ref, aligned);
+	core::Real TMscore = 1; //tm_align.TMscore(resi_list.size()/*normalize_length*/);
 
   TR << "Align domain with TMscore of " << TMscore << std::endl;
   TR << seq_pose << std::endl;
@@ -196,7 +196,7 @@ rotate_pose( core::pose::Pose const & pose, core::Size const cut ){
 
 core::Real
 superimpose_parts( core::pose::Pose const & pose, core::Size const cut ){
-	using namespace protocols::hybridization;
+//	using namespace protocols::hybridization;
 
 	std::list< core::Size > resi_list;
 	resi_list.clear();
@@ -213,16 +213,16 @@ superimpose_parts( core::pose::Pose const & pose, core::Size const cut ){
 
 	core::pose::Pose const r_p = rotate_pose( pose, cut );
 
-	TMalign tm_align;
+//	TMalign tm_align;
   std::string seq_pose, seq_ref, aligned;
   core::id::AtomID_Map< core::id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
   core::Size n_mapped_residues=0;
 
-	tm_align.apply( pose, r_p, resi_list, resi_list );
-  tm_align.alignment2AtomMap( pose, r_p, resi_list, resi_list, n_mapped_residues, atom_map);
-  tm_align.alignment2strings(seq_pose, seq_ref, aligned);
-  core::Real TMscore = tm_align.TMscore(resi_list.size()/*normalize_length*/);
+//	tm_align.apply( pose, r_p, resi_list, resi_list );
+//  tm_align.alignment2AtomMap( pose, r_p, resi_list, resi_list, n_mapped_residues, atom_map);
+//  tm_align.alignment2strings(seq_pose, seq_ref, aligned);
+  core::Real TMscore = 1;//tm_align.TMscore(resi_list.size()/*normalize_length*/);
 
   TR << "Align domain with TMscore of " << TMscore << std::endl;
   TR << seq_pose << std::endl;
