@@ -72,7 +72,6 @@
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 
-
 namespace protocols {
 namespace rosetta_scripts {
 
@@ -94,10 +93,10 @@ RosettaScriptsParser::~RosettaScriptsParser(){}
 
 typedef utility::tag::TagCOP TagCOP;
 typedef utility::tag::TagOP TagOP;
-typedef utility::vector0< TagCOP > TagCOPs;
 
 /// @details Uses the Tag interface to the xml reader library in boost to parse an xml file that contains design
 /// protocol information. A sample protocol file can be found in src/pilot/apps/sarel/dock_design.protocol.
+/// INCLUDES allows inclusion of additional module files (in XML format).
 /// SCOREFXNS provides a way to define scorefunctions as they are defined in the rosetta database, using the
 /// weights/patch convenctions. Several default scorefunctions are preset and can be used without defining them
 /// explicitly.
@@ -228,12 +227,21 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 
 	/// Data Loaders
 	std::set< std::string > non_data_loader_tags;
+	non_data_loader_tags.insert( "INCLUDES" );
 	non_data_loader_tags.insert( "MOVERS" );
 	non_data_loader_tags.insert( "APPLY_TO_POSE" );
 	non_data_loader_tags.insert( "FILTERS" );
 	non_data_loader_tags.insert( "PROTOCOLS" );
 	non_data_loader_tags.insert( "OUTPUT" );
 	non_data_loader_tags.insert( "IMPORT" );
+
+	/// Load includes from separate files; nodes will be merged into the tag tree
+	{
+		int processed_includes = 0;
+		if( process_includes( tag, processed_includes ) ) {
+			TR << "Pre-processed script (with " << processed_includes << " includes):\n" << tag << std::endl;
+		}
+	}
 
 	/// Load in data into the basic::datacache::DataMap object.  All tags beside those listed
 	/// in the non_data_loader_tags set are considered DataLoader tags.
@@ -245,6 +253,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 		DataLoaderOP loader = DataLoaderFactory::get_instance()->newDataLoader( iitag->getName() );
 		loader->load_data( pose, iitag, data );
 	}
+
 	if ( !tag->hasTag("PROTOCOLS") )
 		throw utility::excn::EXCN_RosettaScriptsOption("parser::protocol file must specify PROTOCOLS section");
 
@@ -351,6 +360,111 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	tag->die_for_unaccessed_options_recursively();
 
 	return protocol;
+}
+
+/// @brief Process include statements in INCLUDES block.
+/// No cycle detection yet... but a simple "too many includes" check exists.
+#define MAX_INCLUDES 100
+
+int RosettaScriptsParser::process_includes( TagCOP const_root_tag, int & processed_includes ) {
+
+	// Ugly const voodoo... is there a better way?
+	TagOP root_tag = utility::pointer::const_pointer_cast< utility::tag::Tag >( const_root_tag );
+	TagCOPs & tags = * const_cast< TagCOPs * >( &root_tag->getTags() );
+
+	utility::vector0 < TagOP > tags_from_includes;
+
+	for(
+		TagCOPs::iterator it = tags.begin();
+		it != tags.end() && processed_includes < MAX_INCLUDES;
+	 ){
+		TagCOP tag( *it );
+
+		if( tag->getName() != "INCLUDES" ) {
+			++it;
+			continue;
+		}
+
+		TagCOPs const includes( tag->getTags() );
+		BOOST_FOREACH(TagCOP include, includes) {
+
+			std::string include_type = include->getName();
+			std::transform( include_type.begin(), include_type.end(), include_type.begin(), ::toupper );
+
+			if(include_type == "XML") {
+				process_include_xml(include, tags_from_includes, processed_includes);
+			} else {
+				throw utility::excn::EXCN_RosettaScriptsOption("Unknown include type: " + include_type);
+			}
+		}
+
+		it = tags.erase( it );
+	}
+
+	// Now add new tags (don't do it above as doing so may invalidate it)
+	BOOST_FOREACH(TagOP tag, tags_from_includes) {
+		root_tag->addTag(tag);
+	}
+
+	return processed_includes;
+}
+
+/// @brief Process a single XML include file
+void RosettaScriptsParser::process_include_xml(
+	TagCOP include,
+	utility::vector0 < TagOP > & tags_from_includes,
+	int & processed_includes
+) {
+	std::string filename = include->getOption<std::string>("file");
+
+	// Open include file
+	utility::io::izstream fin;
+	fin.open( filename.c_str() );
+	if(!fin.good()) {
+		throw utility::excn::EXCN_RosettaScriptsOption("Failed to open file for inclusion: " + filename);
+		return;
+	}
+
+	// Variable substitution from command line options
+	utility::options::StringVectorOption script_vars;
+	if( option[ OptionKeys::parser::script_vars ].user() ) {
+		script_vars = option[ OptionKeys::parser::script_vars ];
+	}
+
+	// Additional variable substitutions from tag
+	BOOST_FOREACH( utility::tag::Tag::options_t::value_type const & option, include->getOptions() ) {
+		if(option.first != "file")
+			script_vars.push_back(option.first + "=" + option.second);
+	}
+
+	// Replace variables in script
+	std::stringstream fin_sub;
+	fin_sub << "<XML>";
+	if( script_vars.size() ) {
+		substitute_variables_in_stream(fin, script_vars, fin_sub);
+	} else {
+		while(fin.good()) {
+			std::string s;
+			fin.getline(s);
+			fin_sub << s;
+		}
+	}
+	fin_sub << "</XML>";
+
+	// Create new tag from substituted script
+	TagOP new_tag = utility::tag::Tag::create(fin_sub);
+	if(new_tag) {
+		++processed_includes;
+		process_includes( new_tag, processed_includes );
+		BOOST_FOREACH( TagCOP tag, new_tag->getTags() ) {
+			tags_from_includes.push_back( tag->clone() );
+		}
+
+		if(processed_includes > MAX_INCLUDES) {
+			TR << "Inclusion file limit of " << MAX_INCLUDES << " files exceeded; possible inclusion cycle." << std::endl;
+			return;
+		}
+	}
 }
 
 ///@brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block

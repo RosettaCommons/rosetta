@@ -28,6 +28,7 @@
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/options/StringVectorOption.fwd.hh>
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -42,6 +43,7 @@ namespace rosetta_scripts {
 class RosettaScriptsParser : public protocols::jd2::Parser
 {
 public:
+	typedef utility::vector0< utility::tag::TagCOP > TagCOPs;
 	typedef protocols::moves::MoverFactory MoverFactory;
 	typedef protocols::moves::MoverFactoryOP MoverFactoryOP;
 	typedef std::pair<std::string, std::string> ImportTagName;
@@ -77,6 +79,12 @@ private:
 	static
 	void
 	substitute_variables_in_stream( std::istream & in, utility::options::StringVectorOption const& script_vars, std::stringstream & out);
+
+	int
+	process_includes( utility::tag::TagCOP root_tag, int & processed_includes );
+
+	void
+	process_include_xml( utility::tag::TagCOP tag, utility::vector0 < utility::tag::TagOP > & tags_from_includes, int & processed_includes );
 
 }; // Parser
 
