@@ -1,2 +1,0 @@
--in:file:s inputs/1C3W_TR_A.pdb
--membrane_new:setup:spanfiles inputs/1C3W_A.span
