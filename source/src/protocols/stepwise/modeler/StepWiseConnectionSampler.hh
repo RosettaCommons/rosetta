@@ -20,8 +20,8 @@
 #include <protocols/stepwise/modeler/align/StepWiseClusterer.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
-#include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.fwd.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
@@ -41,7 +41,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.fwd.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.fwd.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -50,7 +50,6 @@
 
 #ifdef PYROSETTA
 	#include <core/scoring/ScoreFunction.hh>
-	#include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.hh>
 	#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 #endif
 

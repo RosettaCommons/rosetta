@@ -27,7 +27,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <utility/exit.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 #include <utility/vector1.hh>
 

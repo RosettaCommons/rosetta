@@ -16,6 +16,8 @@
 // Unit Headers
 #include <protocols/abinitio/abscript/RigidChunkCM.fwd.hh>
 #include <protocols/environment/ClaimingMover.hh>
+#include <protocols/environment/claims/EnvClaim.hh>
+
 
 // Package headers
 #include <protocols/loops/Loop.hh>

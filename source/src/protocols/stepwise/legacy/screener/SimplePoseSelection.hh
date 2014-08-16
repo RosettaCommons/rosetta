@@ -20,7 +20,7 @@
 #include <protocols/stepwise/legacy/screener/SimplePoseSelection.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 using namespace core;
 

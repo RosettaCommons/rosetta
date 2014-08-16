@@ -33,6 +33,8 @@
 // Project Headers
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 
+#include <core/io/silent/SilentStruct.hh>
+
 // ObjexxFCL Headers
 
 // Utility headers

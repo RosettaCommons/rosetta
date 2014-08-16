@@ -25,12 +25,8 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
-
-#ifdef PYROSETTA
-	#include <core/scoring/ScoreFunction.hh>
-#endif
 
 
 namespace protocols {

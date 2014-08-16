@@ -20,7 +20,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinMinimizer.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>

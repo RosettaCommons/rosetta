@@ -17,7 +17,7 @@
 // Unit Headers
 #include <protocols/canonical_sampling/BiasedMonteCarlo.fwd.hh>
 
-#include <protocols/canonical_sampling/BiasEnergy.fwd.hh>
+#include <protocols/canonical_sampling/BiasEnergy.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 

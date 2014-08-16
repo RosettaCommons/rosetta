@@ -23,9 +23,9 @@
 // core headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 
 namespace protocols {
 namespace simple_moves {

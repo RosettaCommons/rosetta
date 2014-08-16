@@ -24,7 +24,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>

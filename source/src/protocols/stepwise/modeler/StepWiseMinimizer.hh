@@ -22,8 +22,8 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/AtomTreeMinimizer.fwd.hh>
 #include <core/optimization/CartesianMinimizer.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
