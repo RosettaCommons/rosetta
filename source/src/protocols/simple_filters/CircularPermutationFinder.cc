@@ -162,7 +162,7 @@ superimpose_parts( core::pose::Pose const & pose, utility::vector1< core::Size >
   std::string seq_pose, seq_ref, aligned;
   core::id::AtomID_Map< core::id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
-  core::Size n_mapped_residues=0;
+  //core::Size n_mapped_residues=0;
 
 //	std::list< core::Size > const rotated_list = std::rotate( resi_list.begin(), resi_list.begin() + cut, resi_list.end() );
 //  tm_align.apply( pose, pose, resi_list, rotated_list );
@@ -217,7 +217,7 @@ superimpose_parts( core::pose::Pose const & pose, core::Size const cut ){
   std::string seq_pose, seq_ref, aligned;
   core::id::AtomID_Map< core::id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
-  core::Size n_mapped_residues=0;
+  //core::Size n_mapped_residues=0;
 
 //	tm_align.apply( pose, r_p, resi_list, resi_list );
 //  tm_align.alignment2AtomMap( pose, r_p, resi_list, resi_list, n_mapped_residues, atom_map);
