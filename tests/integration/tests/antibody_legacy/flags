@@ -1,7 +1,7 @@
 -s FR02.pdb
 -detect_disulf true
 -input_fv FR02
--out:level 550
+-out:level 300
 -out:nstruct 1
 -graft_l1
 -graft_l2
