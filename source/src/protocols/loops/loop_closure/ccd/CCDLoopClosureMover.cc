@@ -690,6 +690,9 @@ CCDLoopClosureMover::close_loop_in_single_direction(
 			start_pos = loop_.stop();
 			stop_pos = loop_.cut() + 1;
 			break;
+		default:
+			utility_exit_with_message("Unknown chain direction.");
+			break;
 	}
 
 	// Cycle through each residue position in the loop in the proper direction.
