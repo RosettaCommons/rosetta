@@ -806,7 +806,7 @@ def get_all_rosetta_objs(mini_path):
             if   platform.release()[:2] == '10': lib_path = 'build/src/'+mode+'/macos/10.6/64/x86/gcc/'
             elif platform.release()[:2] == '11': lib_path = 'build/src/'+mode+'/macos/10.7/64/x86/gcc/'
             elif platform.release()[:2] == '12': lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
-            elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = '5.0/default/'
+            elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = execute("Getting GCC version...", 'clang --version', return_='output').split()[3] + '/default/'  #'5.0/default/'
             else: print 'Unknown MacOS version:', platform.release()[:2];  sys.exit(1)  #lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
 
     # to add: branch on 'xcodebuild -version' output
@@ -880,7 +880,7 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
             rebuild = False
             for f in objs.split():
                 if not f.startswith('/'): f = mini_path+'/'+lib_path+f
-                if os.path.getmtime(f) > os.path.getmtime(mini): rebuild=True;  break
+                if not os.path.isfile(f)  or  os.path.getmtime(f) > os.path.getmtime(mini): rebuild=True;  break
 
     # if rebuild: execute("Linking mini lib...",
     #                     "cd %(mini_path)s && cd %(lib_path)s && gcc %(add_loption)s \
