@@ -1673,7 +1673,7 @@ if ($helix_mode == 1) {
 	$symmname =~ s/\.pdb$//;
 	$symmname = $symmname."_helix_C".$sym_order_ncs;
 	print "symmetry_name $symmname\n";
-	print "E = ".($sym_order_ncs)."*VRT_0_0_0_base";
+	print "E = 2*VRT_0_0_0_base";
 	foreach my $complex (keys %symminterface) {
 		my ($sec_shift,$subunit,$i) = split '_', $complex;
 
@@ -1686,11 +1686,11 @@ if ($helix_mode == 1) {
 		my $cplx_string = $complex;
 		$cplx_string =~ s/_-(\d)/_n\1/g;
 
-		#if ($subunit == 0 && $i == $sym_order_ncs/2) {
+		if ($sec_shift==0 && $subunit == 0 && $i == $sym_order_ncs/2) {
 			print " + 1*(VRT_0_0_0_base:VRT_".$cplx_string."_base)";
-		#} else {
-		#	print " + 2*(VRT_0_0_0_base:VRT_".$cplx_string."_base)";
-		#}
+		} else {
+			print " + 2*(VRT_0_0_0_base:VRT_".$cplx_string."_base)";
+		}
 	}
 	print "\n";
 	print "anchor_residue COM\n";
@@ -2599,6 +2599,11 @@ sub fold_tree_from_ncs_recursive {
 	# y is whatever is left
 	my $myY = cross( $myZ, $myX );
 
+	# at top level, if symm axis is X, this can happen
+	if (abs($myY->[0]) < 1e-6 && abs($myY->[1]) < 1e-6 && abs($myY->[2]) < 1e-6 ) {
+		$myZ = mapply( $tree->{R}, [1,0,0]);
+		$myY = cross( $myZ, $myX );
+	}
 	normalize( $myX );
 	normalize( $myY );
 
