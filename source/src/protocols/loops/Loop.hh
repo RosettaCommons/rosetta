@@ -163,10 +163,7 @@ private:
 }; // Loop
 
 //////////////////////////////////////////////////////////////////////
-inline std::ostream & operator<<( std::ostream & os, Loop const & loop ) {
-	loop.show( os );
-	return os;
-}
+std::ostream & operator<<( std::ostream & os, Loop const & loop );
 	
 /// @brief Orders loops by start position
 class RationalLoopComparator : public std::binary_function<double, double, bool> {

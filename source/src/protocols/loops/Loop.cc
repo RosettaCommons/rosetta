@@ -159,6 +159,14 @@ Loop::show( std::ostream & output ) const
 	( extended_ ? "True" : "False" ) <<  std::endl;
 }
 
+//////////////////////////////////////////////////////////////////////
+std::ostream &
+operator<<( std::ostream & os, Loop const & loop )
+{
+	loop.show( os );
+	return os;
+}
+
 } // namespace loops
 } // namespace protocols
 

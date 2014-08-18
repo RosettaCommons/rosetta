@@ -231,38 +231,36 @@ Loops::write_loops_to_stream(
 
 void
 Loops::add_loop( loops::Loop loop, core::Size minimal_gap ) {
-  Size const start( loop.start() );
-  Size const stop( loop.stop() );
-  Size const cut( loop.cut() );
-  tr.Trace << "adding loop " << loop << std::endl;
-  if (  ( cut == 0 || ( cut>=start-1 && cut <= stop )) && start <= stop ) {
-    for( iterator it = loops_.begin(), it_end = loops_.end();
-         it != it_end; ++it ) {
-      // check for conflicts
-      if( stop+minimal_gap >= it->start() && start <= it->stop() + minimal_gap ) {
-        Loop new_loop( std::min( (int) start, (int) it->start() ), std::max( (int) it->stop(), (int) stop ), it->cut(), it->skip_rate() );
-        loops_.erase( it );
-        tr.Trace << "overlapping loop found: " << loop << " overlaps with " << *it << " create new loop " << new_loop << std::endl;
-        add_loop( new_loop );
-        return;
-    //     std::string msg;
-// 				msg += "Loops::add_loop error -- overlapping loop regions\n";
-// 				msg += "existing loop begin/end: " + string_of( it->start() ) + "/";
-// 				msg += string_of( it->stop() ) + "\n";
-// 				msg += "new loop begin/end: " + string_of(start) + "/" + string_of(stop);
-// 				utility_exit_with_message( msg );
-      }
-    } // no overlaps
-    loops_.push_back( loop );
-  } else {
-    std::string msg;
-    msg += "Loops::add_loop error -- bad loop definition\n";
-    msg += "begin/end/cut: " + string_of(start) + "/" + string_of(stop) + "/";
-    msg += string_of(cut) + "\n";
+	Size const start( loop.start() );
+	Size const stop( loop.stop() );
+	Size const cut( loop.cut() );
+	tr.Trace << "adding loop " << loop << std::endl;
+	if (  ( cut == 0 || ( cut>=start-1 && cut <= stop )) && start <= stop ) {
+		for ( iterator it = loops_.begin(), it_end = loops_.end(); it != it_end; ++it ) {
+			// check for conflicts
+			if ( stop+minimal_gap >= it->start() && start <= it->stop() + minimal_gap ) {
+			Loop new_loop(
+					std::min( (int) start, (int) it->start() ),
+					std::max( (int) it->stop(), (int) stop ),
+					it->cut(),
+					it->skip_rate() );
+			tr.Trace << "overlapping loop found: " << loop << " overlaps with " << *it << " create new loop " <<
+					new_loop << std::endl;
+			loops_.erase( it );
+			add_loop( new_loop );
+			return;
+			}
+		} // no overlaps
+		loops_.push_back( loop );
+	} else {
+		std::string msg;
+		msg += "Loops::add_loop error -- bad loop definition\n";
+		msg += "begin/end/cut: " + string_of(start) + "/" + string_of(stop) + "/";
+		msg += string_of(cut) + "\n";
 
-    //    runtime_assert( false );
-    utility_exit_with_message( msg );
-  }
+		//runtime_assert( false );
+		utility_exit_with_message( msg );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
