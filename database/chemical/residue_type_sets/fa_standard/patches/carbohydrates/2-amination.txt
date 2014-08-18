@@ -26,6 +26,8 @@ ADD_ATOM 1HN2 Hpol HC   0.16   ## Get correct values here and below.
 ADD_ATOM 2HN2 Hpol HC   0.16
 ADD_ATOM 3HN2 Hpol HC   0.16
 
+SET_FORMAL_CHARGE  N2  +1
+
 SET_MM_ATOM_TYPE H2 HB
 
 ADD_BOND  C2   N2

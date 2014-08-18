@@ -7,8 +7,6 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin Bond
-///
 /// @brief
 /// A class for holding bond information
 ///

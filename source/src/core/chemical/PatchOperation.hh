@@ -300,6 +300,26 @@ private:
 	Real const charge_;
 };
 
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for adding an atom alias to a ResidueType.
+/// @note    See residue_io.cc for a description of atom aliases.
+/// @remarks Atom aliases were graciously added to Rosetta by Rocco Moretti.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class AddAtomAlias : public PatchOperation {
+public:
+	// Constructor
+	AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	virtual bool apply( ResidueType & rsd ) const;
+
+private:
+	std::string rosetta_atom_name_;
+	std::string alias_;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief add a bond to ResidueType
 class AddBond : public PatchOperation {
@@ -322,6 +342,29 @@ private:
 
 };
 
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for adding a specific type of bond to a ResidueType.
+/// @note    See residue_io.cc for a description of bond types.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class AddBondType : public PatchOperation {
+public:
+	// Constructor
+	AddBondType(
+			std::string const & atom1_in,
+			std::string const & atom2_in,
+			std::string const & bond_type_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	virtual bool apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom1_;
+	std::string atom2_;
+	std::string bond_type_;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set an atom's charge
 class SetAtomicCharge : public PatchOperation {
@@ -342,6 +385,23 @@ private:
 	std::string atom_name_;
 	/// atom's charge
 	Real charge_;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for setting the formal charge of a ResidueType's atom.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class SetFormalCharge : public PatchOperation {
+public:
+	// Constructor
+	SetFormalCharge( std::string const & atom_name_in, core::SSize charge_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	virtual bool apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_name_;
+	core::SSize charge_;
 };
 
 

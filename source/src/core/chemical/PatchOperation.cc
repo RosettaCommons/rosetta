@@ -19,6 +19,7 @@
 
 // Project headers
 #include <core/chemical/Atom.hh>
+#include <core/chemical/Bond.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -325,6 +326,27 @@ AddAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
+
+// AddAtomAlias ///////////////////////////////////////////////////////////////
+
+AddAtomAlias::AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in ) :
+		rosetta_atom_name_( rosetta_atom_name_in ),
+		alias_( alias_in )
+{}
+
+/// @return  true on failure
+/// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
+/// from ResidueType. ~Labonte
+bool
+AddAtomAlias::apply( ResidueType & rsd ) const
+{
+	rsd.add_atom_alias( rosetta_atom_name_, alias_ );
+	return false;  // success
+}
+
+
+// AddBond ////////////////////////////////////////////////////////////////////
+
 AddBond::AddBond(
 	std::string const & atom1_in,
 	std::string const & atom2_in
@@ -347,6 +369,31 @@ AddBond::apply( ResidueType & rsd ) const
 	return false;
 }
 
+
+// AddBondType ////////////////////////////////////////////////////////////////
+
+AddBondType::AddBondType(
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & bond_type_in ) :
+		atom1_( atom1_in ),
+		atom2_( atom2_in ),
+		bond_type_( bond_type_in )
+{}
+
+/// @return  true on failure
+/// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
+/// from ResidueType. ~Labonte
+bool
+AddBondType::apply( ResidueType & rsd ) const
+{
+	rsd.add_bond( atom1_, atom2_, convert_to_BondName( bond_type_ ) );
+	return false;  // success
+}
+
+
+// SetAtomicCharge ////////////////////////////////////////////////////////////
+
 SetAtomicCharge::SetAtomicCharge(
 	std::string const & atom_name_in,
 	Real const charge_in
@@ -367,6 +414,30 @@ SetAtomicCharge::apply( ResidueType & rsd ) const
 	}
 	return false;
 }
+
+
+// SetFormalCharge ////////////////////////////////////////////////////////////
+
+SetFormalCharge::SetFormalCharge( std::string const & atom_name_in, core::SSize charge_in ) :
+		atom_name_( atom_name_in ),
+		charge_( charge_in )
+{}
+
+/// @return  true on failure
+bool
+SetFormalCharge::apply( ResidueType & rsd ) const
+{
+	if ( ! rsd.has( atom_name_ ) ) {
+		TR_PatchOperations.Error << "SetFormalCharge::apply() failed: " << rsd.name() << " is missing atom: " <<
+				atom_name_ << std::endl;
+		return true;  // failure
+	}
+	rsd.atom( atom_name_ ).formal_charge( charge_ );
+	return false;  // success
+}
+
+
+// SetAtomType ////////////////////////////////////////////////////////////////
 
 SetAtomType::SetAtomType(
 	std::string const & atom_name_in,
@@ -607,9 +678,11 @@ PatchOperationOP
 patch_operation_from_patch_file_line( std::string const & line ) {
 	using numeric::conversions::radians;
 	std::istringstream l( line );
-	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_type_name, mm_atom_type_name, property, dummy;
+	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_alias, atom_type_name, mm_atom_type_name, bond_type,
+			property, dummy;
 	Real charge, mean, sdev, radius;
 	Size chino;
+	SSize formal_charge;
 	l >> tag;
 	if ( l.fail() || tag[0] == '#' ) return 0;
 	if ( tag == "ADD_ATOM" ) {
@@ -628,6 +701,13 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> atom_name;
 		if ( l.fail() ) return 0;
 		return new DeleteAtom( atom_name );
+
+	} else if ( tag == "ADD_ATOM_ALIAS" ) {
+		l >> atom_name >> atom_alias;
+		if ( l.fail() ) {
+			return NULL;
+		}
+		return new AddAtomAlias( atom_name, atom_alias );
 
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
@@ -729,6 +809,13 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		if ( l.fail() ) return 0;
 		return new AddBond( atom1, atom2 );
 
+	} else if ( tag == "ADD_BOND_TYPE" ) {
+			l >> atom1 >> atom2 >> bond_type;
+			if ( l.fail() ) {
+				return NULL;
+			}
+			return new AddBondType( atom1, atom2, bond_type );
+
 	} else if ( tag == "ADD_CONNECT" ) {
 		std::string connect_atom;
 		l >> connect_atom;
@@ -756,6 +843,13 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> atom_name >> mm_atom_type_name;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetMMAtomType( atom_name, mm_atom_type_name );
+
+	} else if ( tag == "SET_FORMAL_CHARGE" ) {
+		l >> atom_name >> formal_charge;
+		if ( l.fail() ) {
+			return NULL;
+		}
+		return new SetFormalCharge( atom_name, formal_charge );
 
 	} else if ( tag == "SET_ATOMIC_CHARGE" ) {
 		l >> atom_name >> charge;

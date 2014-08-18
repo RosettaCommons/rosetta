@@ -520,7 +520,6 @@ sources = {
 		"debug_labontes_current_work",
 		"test_sugar_torsion_getters_and_setters",
 		"test_RingConformationMover",
-		"test_CarbohydrateInfo",
 		"test_ResidueProperties"
 	],
 	"pilot/lemmon" : [
@@ -973,6 +972,7 @@ sources = {
 	# INTEGRATION TEST APPLICATIONS ##########################################
 	"tests" : [
 		"test_CCD_loop_closure",
+		"test_CarbohydrateInfo",
 	],
 }
 

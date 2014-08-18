@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    test_CarbohydrateInfo.cc
-/// @brief   Pilot application source code for testing CarbohydrateInfo.
+/// @brief   Application source code for testing CarbohydrateInfo.
 /// @author  labonte
-
 
 // Project headers
 #include <devel/init.hh>
@@ -42,32 +41,32 @@ string const PATH = "input/";
 
 
 void
-test_sugar(Pose & sugar)
+test_sugar( Pose const & sugar )
 {
 	cout << endl << sugar << endl;
 
 	cout << "Sequences:" << endl;
-	Size n_chains = sugar.conformation().num_chains();
-	for (core::uint i = 1; i <= n_chains; ++i) {
+	Size const n_chains( sugar.conformation().num_chains() );
+	for ( core::uint i = 1; i <= n_chains; ++i ) {
 		cout << " Chain " << i << ": ";
-		cout << sugar.chain_sequence(i) << endl;
+		cout << sugar.chain_sequence( i ) << endl;
 	}
 
 	cout << endl << "Residue Info:" << endl;
-	Size n_res = sugar.total_residue();
-	for (core::uint i = 1; i <= n_res; ++i) {
-		Residue res = sugar.residue(i);
-		cout << "PDB ID: " << sugar.pdb_info()->pose2pdb(i) << ": " << res << endl << endl;
+	Size const n_res( sugar.total_residue() );
+	for ( core::uint i = 1; i <= n_res; ++i ) {
+		Residue const & res( sugar.residue( i ) );
+		cout << "PDB ID: " << sugar.pdb_info()->pose2pdb( i ) << ": " << res << endl << endl;
 	}
 }
 
 
 int
-main(int argc, char *argv[])
+main( int argc, char *argv[] )
 {
 	try {
 		// Initialize core.
-		devel::init(argc, argv);
+		devel::init( argc, argv );
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
@@ -76,25 +75,25 @@ main(int argc, char *argv[])
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
 
-		pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
+		pose_from_pdb( maltotriose, PATH + "maltotriose.pdb" );
 
-		test_sugar(maltotriose);
+		test_sugar( maltotriose );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing isomaltose:" << endl;
 
-		pose_from_pdb(isomaltose, PATH + "isomaltose.pdb");
+		pose_from_pdb( isomaltose, PATH + "isomaltose.pdb" );
 
-		test_sugar(isomaltose);
+		test_sugar( isomaltose );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing lactose:" << endl;
 
-		pose_from_pdb(lactose, PATH + "lactose.pdb");
+		pose_from_pdb( lactose, PATH + "lactose.pdb" );
 
-		test_sugar(lactose);
+		test_sugar( lactose );
 
 
 		/*cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -115,42 +114,42 @@ main(int argc, char *argv[])
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing branched amylopectin fragment:" << endl;
 
-		pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
+		pose_from_pdb( amylopectin, PATH + "amylopectin_fragment.pdb" );
 
-		test_sugar(amylopectin);
+		test_sugar( amylopectin );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated sample:" << endl;
 
-		pose_from_pdb(glycopeptide, PATH + "glycosylated_peptide.pdb");
+		pose_from_pdb( glycopeptide, PATH + "glycosylated_peptide.pdb" );
 
-		test_sugar(glycopeptide);
+		test_sugar( glycopeptide );
 		cout << endl << glycopeptide << endl;
 
 		cout << "Sequences:" << endl;
-		for (core::uint i = 1; i <= 2; ++i) {
+		for ( core::uint i = 1; i <= 2; ++i ) {
 			cout << " Chain " << i << ": ";
-			cout << glycopeptide.chain_sequence(i) << endl;
+			cout << glycopeptide.chain_sequence( i ) << endl;
 		}
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing glucosamine:" << endl;
 
-		pose_from_pdb(glucosamine, PATH + "GlcN.pdb");
+		pose_from_pdb( glucosamine, PATH + "GlcN.pdb" );
 
-		test_sugar(glucosamine);
+		test_sugar( glucosamine );
 
-		cout << *glucosamine.residue(1).type().ring_conformer_set();
+		cout << *glucosamine.residue( 1 ).type().ring_conformer_set();
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated 14-mer:" << endl;
 
-		pose_from_pdb(N_linked_14_mer, PATH + "N-linked_14-mer_glycan.pdb");
+		pose_from_pdb( N_linked_14_mer, PATH + "N-linked_14-mer_glycan.pdb" );
 
-		test_sugar(N_linked_14_mer);
+		test_sugar( N_linked_14_mer );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -158,33 +157,41 @@ main(int argc, char *argv[])
 
 		pose_from_pdb(psicose, PATH + "beta-psicose.pdb");
 
-		test_sugar(psicose);
+		test_sugar( psicose );
 
-		cout << *psicose.residue(1).type().ring_conformer_set();
+		cout << *psicose.residue( 1 ).type().ring_conformer_set();
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing alpha-neuraminic acid:" << endl;
 
-		pose_from_pdb(neuraminate, PATH + "Neu.pdb");
+		pose_from_pdb( neuraminate, PATH + "Neu.pdb" );
 
-		test_sugar(neuraminate);
+		test_sugar( neuraminate );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing Lewisx:" << endl;
 
-		pose_from_pdb(Lex, PATH + "Lex.pdb");
+		pose_from_pdb( Lex, PATH + "Lex.pdb" );
 
-		test_sugar(Lex);
+		test_sugar( Lex );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing Lewisx with alternate GlcNAc atom names:" << endl;
+
+		pose_from_pdb( Lex, PATH + "Lex_alternate_names.pdb" );
+
+		test_sugar( Lex );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing GalCer:" << endl;
 
-		pose_from_pdb(GalCer, PATH + "GalCer.pdb");
+		pose_from_pdb( GalCer, PATH + "GalCer.pdb" );
 
-		test_sugar(GalCer);
+		test_sugar( GalCer );
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;
