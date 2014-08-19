@@ -219,9 +219,6 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 			stems.push_back( pair< Size, Size >( stem1, stem2 ) );
 		}
 	}
-	for( core::Size i = 1 ; i <= 100; ++i ){
-		TR<<"WHAT???"<<std::endl;
-  }
 //	sort( stems.begin(), stems.end() );
 //	vector1< pair< Size, Size > >::iterator it = unique( stems.begin(), stems.end() );
 //	stems.resize( std::distance( stems.begin(), it ) );
