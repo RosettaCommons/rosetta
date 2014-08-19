@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -34,7 +35,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
-
+#include <protocols/loops/loops_main.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -231,6 +232,9 @@ namespace devel {
 
 				protocols::moves::MonteCarlo min_start_1mer(*pose,*score_fxn_lores,temp);
 
+				// Store the initial FoldTree so it can be set back to the pose after loop closure
+				core::kinematics::FoldTree orig_ft = pose->fold_tree();
+
 				for( int cycles_start_1mer = 0; cycles_start_1mer < max_cycles_start_1mer /*&& get_acceptance_rate(min_start_1mer,DEFAULT_MIN_ACCEPTANCE_RATE)*/ ; ++cycles_start_1mer ) {
 
 					cout << "Stage I / start / 1mer " << REPORTCYCLES2(cycles_start,max_cycles_start,cycles_start_1mer,max_cycles_start_1mer) << endl;
@@ -254,11 +258,23 @@ namespace devel {
 						ccd_loop_closure_mover.rama()->max_rama_score_increase( 5.0 );
 						ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 5.0, 5.0, 5.0 );
 
+						// Set the loop to the CCD mover and then generate an appropriate FoldTree for loop closure
 						ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.lo-1, loop.to-1, loop.lo ) );
+						protocols::loops::set_single_loop_fold_tree( *pose, ccd_loop_closure_mover.loop() );
+						protocols::loops::add_cutpoint_variants( *pose );
 						ccd_loop_closure_mover.apply( *pose );
+						protocols::loops::remove_cutpoint_variants( *pose );
 
+						// Set the loop to the CCD mover and then generate an appropriate FoldTree for loop closure
+						// The current FoldTree will be thrown asunder
 						ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
+						protocols::loops::set_single_loop_fold_tree( *pose, ccd_loop_closure_mover.loop() );
+						protocols::loops::add_cutpoint_variants( *pose );
 						ccd_loop_closure_mover.apply( *pose );
+						protocols::loops::remove_cutpoint_variants( *pose );
+
+						// Set the pose's FoldTree back to the incoming FoldTree
+						pose->fold_tree( orig_ft );
 
 						(*score_fxn_lores)( *pose );
 						pose->energies().show_total_headers( cout ); cout << endl;
@@ -301,8 +317,10 @@ namespace devel {
       const double MIN_WEIGHT_REP = 0.001;
       const double MAX_WEIGHT_REP = score_fxn_hires->get_weight( core::scoring::fa_rep );
 
-      // LJRep Ramp up
+			// Store the initial FoldTree so it can be set back to the pose after loop closure
+			core::kinematics::FoldTree orig_ft = pose->fold_tree();
 
+      // LJRep Ramp up
       for( int cycles_ramp = 0; cycles_ramp <= max_cycles_ramp; ++cycles_ramp ) {
 
 				cout << ">>> Stage II / start / ramp - " << REPORTCYCLES1(cycles_ramp,max_cycles_ramp) << endl;
@@ -342,14 +360,30 @@ namespace devel {
 								ccd_loop_closure_mover.rama()->max_rama_score_increase( 5.0 );
 								ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 5.0, 5.0, 5.0 );
 
+								// Set the loop to the CCD mover and then generate an appropriate FoldTree for loop closure
 								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.lo-1, loop.to-1, loop.lo ) );
+								protocols::loops::set_single_loop_fold_tree( *pose, ccd_loop_closure_mover.loop() );
+								protocols::loops::add_cutpoint_variants( *pose );
+
 								ccd_loop_closure_mover.apply( *pose );
+								protocols::loops::remove_cutpoint_variants( *pose );
+
 								cout << "dev=" << ccd_loop_closure_mover.deviation() <<
 										" tdelta=" << ccd_loop_closure_mover.torsion_delta() <<
 										" rdelta=" << ccd_loop_closure_mover.rama_delta() << endl;
 
+								// Set the loop to the CCD mover and then generate an appropriate FoldTree for loop closure
+								// The current FoldTree will be thrown asunder
 								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
+								protocols::loops::set_single_loop_fold_tree( *pose, ccd_loop_closure_mover.loop() );
+								protocols::loops::add_cutpoint_variants( *pose );
+
 								ccd_loop_closure_mover.apply( *pose );
+								protocols::loops::remove_cutpoint_variants( *pose );
+
+								// Set the pose's FoldTree back to the incoming FoldTree
+								pose->fold_tree( orig_ft );
+
 								cout << "dev=" << ccd_loop_closure_mover.deviation() <<
 										" tdelta=" << ccd_loop_closure_mover.torsion_delta() <<
 										" rdelta=" << ccd_loop_closure_mover.rama_delta() << endl;
@@ -425,11 +459,27 @@ namespace devel {
 								ccd_loop_closure_mover.rama()->max_rama_score_increase( 5.0 );
 								ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 5.0, 5.0, 5.0 );
 
+								// Set the loop to the CCD mover and then generate an appropriate FoldTree for loop closure
 								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.lo-1, loop.to-1, loop.lo ) );
-								ccd_loop_closure_mover.apply( *pose );
+								protocols::loops::set_single_loop_fold_tree( *pose, ccd_loop_closure_mover.loop() );
+								protocols::loops::add_cutpoint_variants( *pose );
 
-								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
 								ccd_loop_closure_mover.apply( *pose );
+								protocols::loops::remove_cutpoint_variants( *pose );
+
+
+								// Set the loop to the CCD mover and then generate an appropriate FoldTree for loop closure
+								// The current FoldTree will be thrown asunder
+								ccd_loop_closure_mover.loop ( protocols::loops::Loop( loop.to+1, loop.hi+1, loop.hi ) );
+								protocols::loops::set_single_loop_fold_tree( *pose, ccd_loop_closure_mover.loop() );
+								protocols::loops::add_cutpoint_variants( *pose );
+
+								ccd_loop_closure_mover.apply( *pose );
+								protocols::loops::remove_cutpoint_variants( *pose );
+
+								// Set the pose's FoldTree back to the incoming FoldTree
+								pose->fold_tree( orig_ft );
+
 							}
 							else {
 								assert( false );
