@@ -72,6 +72,7 @@ class SSMotifFinder : public filters::Filter
 		core::Real rmsd_; //dflt 0; the maximal RMSd
 		std::string filename_; //dflt ""; the file name into which to write the report
 		std::string pdbname_; //dflt ""; the pdb in which the motif is searched
+		void superimpose_pose_on_template( core::pose::Pose const &, core::pose::Pose &, core::Size const, core::Size const ) const;
 };
 
 ///@brief compute the atomic distance between two atoms on two residues

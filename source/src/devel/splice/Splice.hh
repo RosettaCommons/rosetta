@@ -301,7 +301,7 @@ private:
 
 	// template - relative to what is the torsion dbase computed (1x9q)
 	// start - the starting pose for replacing the torsions at the start
-	core::pose::PoseOP template_pose_, start_pose_;
+	core::pose::PoseOP template_pose_, start_pose_, source_pose_;
 	core::kinematics::FoldTreeOP saved_fold_tree_;
 
 	bool design_; //dflt false; design all non-pro/gly residues in template

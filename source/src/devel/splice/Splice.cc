@@ -153,7 +153,7 @@ namespace devel {
 				Mover(SpliceCreator::mover_name()),	from_res_(0), to_res_(0), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
 				NULL), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_(	NULL),
 				design_task_factory_( NULL), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
-				template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(NULL), start_pose_( NULL),
+				template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(NULL), start_pose_( NULL), source_pose_(NULL),
 				saved_fold_tree_( NULL), design_(false), dbase_iterate_(false), allow_all_aa_(false), allow_threading_(true),
 				rtmin_(true), first_pass_(true), locked_res_( NULL), locked_res_id_(' '), checkpointing_file_(""),
 				loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(NULL), splice_filter_( NULL), Pdb4LetName_(""),
@@ -401,10 +401,18 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 	runtime_assert( !superimposed() );
 	utility::vector1< core::Size > pose_positions, template_positions;
   pose_positions.clear(); template_positions.clear();
+	pose_positions.push_back( source_pdb_from_res() -1 );
 	pose_positions.push_back( source_pdb_from_res() );
+	pose_positions.push_back( source_pdb_from_res() +1 );
+	pose_positions.push_back( source_pdb_to_res() -1 );
 	pose_positions.push_back( source_pdb_to_res() );
+	pose_positions.push_back( source_pdb_to_res() +1 );
+	template_positions.push_back( from_res() -1 );
 	template_positions.push_back( from_res() );
+	template_positions.push_back( from_res() +1 );
+	template_positions.push_back( to_res() -1 );
 	template_positions.push_back( to_res() );
+	template_positions.push_back( to_res() +1 );
   utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( source_pose, pose_positions ) ), ref_coords( coords( pose/*this is the starting pose, the structure on which we want to graft the loop from the source protein*/, template_positions )
 );
 
@@ -508,7 +516,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				from_res(designable[1]);
 				to_res(designable[designable.size()]);
 			}
-			core::pose::Pose source_pose;
+			//source_pose_ = new core::pose::Pose;
 			core::Size nearest_to_from(0), nearest_to_to(0);
 			int residue_diff(0); // residues on source_pose that are nearest to from_res and to_res; what is the difference in residue numbers between incoming pose and source pose. 21/11/13: CN&SF This was changed from Core:Size to int as residue diff very well could be shorter than 0! //
 			ResidueBBDofs dofs; /// used to store the torsion/resid dofs from any of the input files
@@ -517,29 +525,29 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			tail_dofs.clear();
 			core::Size cut_site(0);
 			if (torsion_database_fname_ == "") { // read dofs from source pose rather than database
-				core::import_pose::pose_from_pdb(source_pose, source_pdb_);
+				//core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
 				//Check if there are chain_breaks in the source PDB, if so exit with error msg. gideon 24jun14
 				protocols::simple_moves::CutChainMover ccm;
-				core::Size source_pdb_cut(ccm.chain_cut(source_pose));
+				core::Size source_pdb_cut(ccm.chain_cut(*source_pose_));
 				if (source_pdb_cut!=0)//found cut site in source pose
 						utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
 				if( !superimposed() ){
 					nearest_to_from = source_pdb_from_res();
 					nearest_to_to   = source_pdb_to_res();
-					superimpose_source_on_pose( pose, source_pose );
+					superimpose_source_on_pose( pose, *source_pose_ );
 				}
 				else if (segment_type_=="H3"&& (tail_segment_=="c")){
-					nearest_to_from = find_nearest_res(source_pose, pose,from_res()/*should be the 2 vh cys on template*/, 1);//start res is nearest disulfide on source_pdb
-					nearest_to_to = source_pose.total_residue();
+					nearest_to_from = find_nearest_res(*source_pose_, pose,from_res()/*should be the 2 vh cys on template*/, 1);//start res is nearest disulfide on source_pdb
+					nearest_to_to = source_pose_->total_residue();
 				}
 				else if(segment_type_=="L3"&& (tail_segment_=="c")){
-					nearest_to_from = find_nearest_res(source_pose, pose,from_res()/*should be the 2 vl cys on template*/, 1);//start res is nearest disulfide on source_pdb
-					nearest_to_to = source_pose.total_residue();
+					nearest_to_from = find_nearest_res(*source_pose_, pose,from_res()/*should be the 2 vl cys on template*/, 1);//start res is nearest disulfide on source_pdb
+					nearest_to_to = source_pose_->total_residue();
 					TR<<"from_res()"<<from_res()<<"nearest_to_from: "<<nearest_to_from<<std::endl;
 				}
 				else{
-					nearest_to_from = find_nearest_res(source_pose, pose, from_res(), 1/*chain*/);
-					nearest_to_to = find_nearest_res(source_pose, pose, to_res(), 1/*chain*/);
+					nearest_to_from = find_nearest_res(*source_pose_, pose, from_res(), 1/*chain*/);
+					nearest_to_to = find_nearest_res(*source_pose_, pose, to_res(), 1/*chain*/);
 
 				}
 
@@ -558,7 +566,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				residue_diff = nearest_to_to - nearest_to_from - (to_res() - from_res());
 				TR<<"Residue diff is: "<<residue_diff<<std::endl;
 				for (core::Size i = nearest_to_from; i <= nearest_to_to; ++i) {
-					if (source_pose.residue(i).has_variant_type(DISULFIDE)) { /// in future, using disulfides would be a great boon as it rigidifies loops.
+					if (source_pose_->residue(i).has_variant_type(DISULFIDE)) { /// in future, using disulfides would be a great boon as it rigidifies loops.
 						std::ostringstream os;
 						//temp removed following error to test large chunk splice
 						//os<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
@@ -573,16 +581,16 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					/// Feed the source_pose dofs into the BBDofs array
 					BBDofs residue_dofs;
 					residue_dofs.resid(i); /// resid is probably never used
-					residue_dofs.phi(source_pose.phi(i));
-					residue_dofs.psi(source_pose.psi(i));
-					residue_dofs.omega(source_pose.omega(i));
+					residue_dofs.phi(source_pose_->phi(i));
+					residue_dofs.psi(source_pose_->psi(i));
+					residue_dofs.omega(source_pose_->omega(i));
 
 					//core::Size const nearest_on_target( find_nearest_res( pose, source_pose, i ) );
 
 					/// convert 3let residue code to 1let code
 					std::stringstream ss;
 					std::string s;
-					ss << source_pose.residue(i).name1();
+					ss << source_pose_->residue(i).name1();
 					ss >> s;
 					residue_dofs.resn(s);
 
@@ -664,7 +672,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			/// this is important b/c nearest_to_from/nearest_to_to are degenerate if the dbase is used.
 			if (randomize_cut()) {
 				/// choose cutsite randomly within loop residues on the loop (no 2ary structure)
-				core::scoring::dssp::Dssp dssp(source_pose);
+				core::scoring::dssp::Dssp dssp(*source_pose_);
 				dssp.dssp_reduced(); // switch to simplified H E L notation
 				std::vector<core::Size> loop_positions_in_source;
 				loop_positions_in_source.clear();
@@ -680,7 +688,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				TR.Debug << "The sequence of the source loop is: ";
 				for (core::Size i = nearest_to_from; i <= std::min(nearest_to_to, to_res() - from_res() + nearest_to_from);
 						++i) {
-					TR.Debug << source_pose.residue(i).name1() << " ";
+					TR.Debug << source_pose_->residue(i).name1() << " ";
 				}
 				TR << std::endl;
 				cut_site = loop_positions_in_source[(core::Size) (RG.uniform() * loop_positions_in_source.size())]
@@ -688,10 +696,10 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				TR << "Cut placed at: " << cut_site << std::endl;
 			} // fi randomize_cut
 			else if (ccd()){
-				cut_site = find_non_active_site_cut_site(source_pose);//find the first non functional residue on the source segment
+				cut_site = find_non_active_site_cut_site(*source_pose_);//find the first non functional residue on the source segment
 				//b/c the source segment is not the same length as the pose we have to find the difference between the pose and source pose. we do this by finding the first conserved residue
 				//for antibodies its the cysteines. For other protein (TIM-barrels and such) it will be something else.gideon 16jun14
-				core::Size source_pose_nearest_disulfide(find_nearest_res(source_pose,pose,find_nearest_disulfide(pose,from_res()),1));
+				core::Size source_pose_nearest_disulfide(find_nearest_res(*source_pose_,pose,find_nearest_disulfide(pose,from_res()),1));
 				TR<<"from res disulfide on source is:"<<source_pose_nearest_disulfide<<std::endl;
 				int start_res_diff = find_nearest_disulfide(pose,from_res())-source_pose_nearest_disulfide;
 				TR<<"Res diff is:"<<start_res_diff<<std::endl;
@@ -992,23 +1000,23 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//pose.dump_pdb("before_coordinate_constraints");
 				TR << "Stretch I am applying the coordinate constraints on: " << from_res() << "-" << to_res() + residue_diff<< std::endl;
 
-				core::Size anchor_res( 1 );
+				core::Size anchor_res( from_res() );
 				if (protein_family_=="antibodies")/*if using "segment" and "protein_family" tags then we are using Rosetta db PSSMs*/
 				  anchor_res = find_nearest_disulfide(pose, from_res());
-				add_coordinate_constraints(pose, source_pose, from_res(), to_res() + residue_diff, anchor_res);	//add coordiante constraints to loop
+				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res);	//add coordiante constraints to loop
 				//TR_constraints<<"score function after CA constraints"<<std::endl;
 				//scorefxn()->show(pose);
-				add_coordinate_constraints(pose, source_pose, from_res(), to_res() + residue_diff, anchor_res,"CB");	//add coordiante constraints to loop
+				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res,"CB");	//add coordiante constraints to loop
 				//TR_constraints<<"score function after CB constraints"<<std::endl;
 					//			scorefxn()->show(pose);
 				if (CG_const_){
 				PackerTaskOP ptask_for_coor_const(tf()->create_task_and_apply_taskoperations(pose));
-				add_coordinate_constraints(pose, source_pose, from_res(), to_res() + residue_diff, anchor_res,"CG",ptask_for_coor_const);	//add coordiante constraints to loop
+				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res,"CG",ptask_for_coor_const);	//add coordiante constraints to loop
 				TR_constraints<<"score function after CG constraints"<<std::endl;
 												scorefxn()->show(pose);
 				}
 				if (!(boost::iequals(tail_segment_, "c")))//if we splcing out tail segment then we don't want to do dihedral constraint here. We will do it in the tail segemtn
-					add_dihedral_constraints(pose, source_pose, from_res(), to_res() + residue_diff);	//add dihedral constraints loop
+					add_dihedral_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff);	//add dihedral constraints loop
 				//as control I want to see which residues are allowed to be design according to design shell.Gideonla may13
 				//uncommnet this for debugging
 
@@ -1113,7 +1121,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					}
 					//pose.dump_pdb("before_tail.pdb");
 					//TR << "Setting new fold tree and move map for tail segment"<< std::endl;
-					core::Size nearest_disulfide_on_source = find_nearest_res(source_pose, pose, disulfide_res, 1);
+					core::Size nearest_disulfide_on_source = find_nearest_res(*source_pose_, pose, disulfide_res, 1);
 					TR<<"disulfide res on pose is:"<<disulfide_res<<std::endl;
 					TR << "Nearest disulfide on source is: " << nearest_disulfide_on_source << std::endl;
 					int res_diff = nearest_disulfide_on_source - disulfide_res;
@@ -1129,16 +1137,16 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 						/// Feed the source_pose dofs into the BBDofs array
 						BBDofs residue_dofs;
 						//TR<<"Copying the following dihedral angles from source pdb:"<< std::endl;
-						TR << source_pose.residue(i + res_diff).name() << i + res_diff << source_pose.phi(i + res_diff) << ","
-								<< source_pose.psi(i + res_diff) << "," << source_pose.omega(i + res_diff) << "," << std::endl;
-						residue_dofs.phi(source_pose.phi(i + res_diff));
-						residue_dofs.psi(source_pose.psi(i + res_diff));
-						residue_dofs.omega(source_pose.omega(i + res_diff));
+						TR << source_pose_->residue(i + res_diff).name() << i + res_diff << source_pose_->phi(i + res_diff) << ","
+								<< source_pose_->psi(i + res_diff) << "," << source_pose_->omega(i + res_diff) << "," << std::endl;
+						residue_dofs.phi(source_pose_->phi(i + res_diff));
+						residue_dofs.psi(source_pose_->psi(i + res_diff));
+						residue_dofs.omega(source_pose_->omega(i + res_diff));
 
 						/// convert 3let residue code to 1let code
 						std::stringstream ss;
 						std::string s;
-						ss << source_pose.residue(i + res_diff).name1();
+						ss << source_pose_->residue(i + res_diff).name1();
 						ss >> s;
 						residue_dofs.resn(s);
 
@@ -1148,17 +1156,17 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					//copy dofs from source pdb to pose
 					//before copying dofs apply coordinate constrains
 					TR << "Applying dihedral and coordinate constraints" << std::endl;
-					add_coordinate_constraints(pose, source_pose, tail_start, tail_end, disulfide_res);	//add coordinate constraints to loop
-					add_coordinate_constraints(pose, source_pose, tail_start, tail_end, disulfide_res,"CB");	//add coordiante constraints to loop
+					add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res);	//add coordinate constraints to loop
+					add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res,"CB");	//add coordiante constraints to loop
 					//TR_constraints<<"score function after CB constraints"<<std::endl;
 					//			scorefxn()->show(pose);
 					if (CG_const_){
 						PackerTaskOP ptask_for_coor_const(tf()->create_task_and_apply_taskoperations(pose));
-						add_coordinate_constraints(pose, source_pose, tail_start, tail_end, disulfide_res,"CG",ptask_for_coor_const);	//add coordiante constraints to loop
+						add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res,"CG",ptask_for_coor_const);	//add coordiante constraints to loop
 						//TR_constraints<<"score function after CG constraints"<<std::endl;
 						//scorefxn()->show(pose);
 					}
-					add_dihedral_constraints(pose, source_pose,boost::iequals(tail_segment_, "n")?tail_start+1: tail_start, boost::iequals(tail_segment_, "c")?tail_end-1: tail_end);
+					add_dihedral_constraints(pose, *source_pose_,boost::iequals(tail_segment_, "n")?tail_start+1: tail_start, boost::iequals(tail_segment_, "c")?tail_end-1: tail_end);
 					tail_size = dofs.size();
 					tail_fold_tree(pose, cut_vl_vh_after_llc,0/*chain_break*/); // setting a new fold tree
 					TR << "Changing dofs, the size of the tail segment is: " << tail_size << std::endl;
@@ -1241,7 +1249,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					core::Real rms(0);
 					for (core::Size i = 0; i <= total_residue_new - 1; ++i) {
 						core::Real const dist(
-								pose.residue(from_res() + i).xyz("CA").distance(source_pose.residue(nearest_to_from + i).xyz("CA")));
+								pose.residue(from_res() + i).xyz("CA").distance(source_pose_->residue(nearest_to_from + i).xyz("CA")));
 						rms += dist;
 					}
 					core::Real const average_rms(rms / total_residue_new);
@@ -1470,11 +1478,21 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			chain_num_ = tag->getOption<core::Size>("chain_num", 1);
 			tail_segment_ = tag->getOption<std::string>("tail_segment", "");
 			superimposed( tag->getOption< bool >( "superimposed", true ) );
+
+			if (tag->hasOption("source_pdb")){
+        source_pdb(tag->getOption<std::string>("source_pdb"));
+        source_pose_ = new core::pose::Pose;
+        core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
+      }
+			
 			if( !superimposed() ){
-				source_pdb_from_res( tag->getOption< core::Size >( "source_pdb_from_res" ) );
-				source_pdb_to_res( tag->getOption< core::Size >( "source_pdb_to_res" ) );
+				source_pdb_from_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_from_res", "0"), *source_pose_));
+      	source_pdb_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_to_res", "0"), *source_pose_));
+				//source_pdb_from_res( tag->getOption< core::Size >( "source_pdb_from_res" ) );
+				//source_pdb_to_res( tag->getOption< core::Size >( "source_pdb_to_res" ) );
 				runtime_assert( source_pdb_from_res() > 0 && source_pdb_to_res() > source_pdb_from_res() );
 			}
+			
 			if ((tag->hasOption("tail_segment"))
 					&& !(((boost::iequals/*BOOST function for comparing strings */(tail_segment_, "c")))
 							|| (boost::iequals(tail_segment_, "n")))) {
@@ -1628,6 +1646,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 		if (!tag->hasOption("task_operations")) {
 			from_res(core::pose::parse_resnum(tag->getOption<std::string>("from_res", "0"), pose));
 			to_res(core::pose::parse_resnum(tag->getOption<std::string>("to_res", "0"), pose));
+			//source_pdb_from_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_from_res", "0"), *source_pose_));
+			//source_pdb_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_to_res", "0"), *source_pose_));
 		}
 		if (tag->hasOption("design_task_operations")) {
 			TR << "Defined design_task_factory, which will be used during splice design" << std::endl;
@@ -1659,8 +1679,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				runtime_assert(database_entry() <= torsion_database_.size());
 			}
 		}
-		else
-			source_pdb(tag->getOption<std::string>("source_pdb"));
+		//else
+			//source_pdb(tag->getOption<std::string>("source_pdb"));
 
 		ccd(tag->getOption<bool>("ccd", 1));
 //dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
@@ -2441,6 +2461,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 //	}
 	core::scoring::constraints::ConstraintOPs cst;
 	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 1/*chain*/);
+  runtime_assert( anchor_source );
 	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
 	int res_diff = anchor_source - anchor;
 	TR_constraints << "res diff in coordinate constarint is: " << res_diff << std::endl;

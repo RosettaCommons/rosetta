@@ -36,6 +36,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/pose/PDBInfo.hh>
+#include <protocols/toolbox/superimpose.hh>
+#include <utility/vector1.hh>
 
 namespace protocols{
 namespace simple_filters {
@@ -91,19 +93,26 @@ atom_distance( core::conformation::Residue const & r1, std::string const a1,
 }
 
 core::Real
-two_res_rmsd( core::conformation::Residue const & r1, core::conformation::Residue const & r2 ){
+res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, utility::vector1< core::Size > const template_res_for_rmsd, core::pose::Pose const & copy_pose, core::pose::Pose const & template_pose ){
+//two_res_rmsd( core::conformation::Residue const & r1, core::conformation::Residue const & r2 ){
 	core::Real rmsd( 0.0 );
+	core::Size count = 0.0;	
+	runtime_assert( pose_res_for_rmsd.size() == template_res_for_rmsd.size() );	
 
-	rmsd += pow( atom_distance( r1, "N", r2, "N"   ), 2.0 );
-	rmsd += pow( atom_distance( r1, "O", r2, "O"   ), 2.0 );
-	rmsd += pow( atom_distance( r1, "CA", r2, "CA" ), 2.0 );
-	rmsd += pow( atom_distance( r1, "C", r2, "C"   ), 2.0 );
-	if ( (r1.name3()!="GLY") && (r2.name3()!="GLY") ){
-		rmsd += pow( atom_distance( r1, "CB", r2, "CB" ), 2.0 );
-		rmsd /= 5.0;
+	for (core::Size i = 1; i <= pose_res_for_rmsd.size(); i++){
+		core::conformation::Residue r1 = copy_pose.conformation().residue( pose_res_for_rmsd[i] );
+		core::conformation::Residue r2 = template_pose.conformation().residue( template_res_for_rmsd[i] );
+		rmsd += pow( atom_distance( r1, "N", r2, "N"   ), 2.0 );
+		rmsd += pow( atom_distance( r1, "O", r2, "O"   ), 2.0 );
+		rmsd += pow( atom_distance( r1, "CA", r2, "CA" ), 2.0 );
+		rmsd += pow( atom_distance( r1, "C", r2, "C"   ), 2.0 );
+		count = count + 4;
+		//if ( (r1.name3()!="GLY") && (r2.name3()!="GLY") ){
+			//rmsd += pow( atom_distance( r1, "CB", r2, "CB" ), 2.0 );
+			//count++;
+		//}
 	}
-	else
-		rmsd /= 4.0;
+	rmsd /= (core::Real) count;
 	rmsd = pow( rmsd, 0.5 );
 	return rmsd;
 }
@@ -119,6 +128,52 @@ write_to_file( std::string const filename, core::Size const stem1, core::Size co
 	stem_file.open( filename.c_str(), std::ios::app );
 	runtime_assert( stem_file );
 	stem_file<<pdbname<<' '<<resnum1<<chain1<<' '<<resnum2<<chain2<<' '<<rmsd<<'\n';
+}
+
+utility::vector1< numeric::xyzVector< core::Real > >
+coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
+  utility::vector1< numeric::xyzVector< core::Real > > coords;
+
+  coords.clear();
+  BOOST_FOREACH( core::Size const pos, positions ){
+    coords.push_back( pose.residue( pos ).xyz( "N" ) );
+    coords.push_back( pose.residue( pos ).xyz( "CA" ) );
+    coords.push_back( pose.residue( pos ).xyz( "C" ) );
+    coords.push_back( pose.residue( pos ).xyz( "O" ) );
+		//if (pose.residue( pos ).name3()!="GLY")
+			//coords.push_back( pose.residue( pos ).xyz( "CB" ) );
+  }
+  return coords;
+}
+
+void
+SSMotifFinder::superimpose_pose_on_template( core::pose::Pose const & template_pose, core::pose::Pose & copy_pose, core::Size const pose_stem1, core::Size const pose_stem2) const{
+  using namespace protocols::toolbox;
+	
+  utility::vector1< core::Size > pose_positions, template_positions;
+  pose_positions.clear(); template_positions.clear();
+  template_positions.push_back( template_stem1() -1 );
+  template_positions.push_back( template_stem1() );
+  template_positions.push_back( template_stem1() +1 );
+  template_positions.push_back( template_stem2() -1 );
+  template_positions.push_back( template_stem2() );
+  template_positions.push_back( template_stem2() +1 );
+	pose_positions.push_back( pose_stem1 -1 );
+  pose_positions.push_back( pose_stem1 );
+  pose_positions.push_back( pose_stem1 +1 );
+  pose_positions.push_back( pose_stem2 -1 );
+  pose_positions.push_back( pose_stem2 );
+  pose_positions.push_back( pose_stem2 +1 );
+
+  utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( copy_pose, pose_positions ) ), ref_coords( coords( template_pose, template_positions )
+);
+
+  numeric::xyzMatrix< core::Real > rotation;
+  numeric::xyzVector< core::Real > to_init_center, to_fit_center;
+
+  superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
+
+  apply_superposition_transform( copy_pose, rotation, to_init_center, to_fit_center );
 }
 
 bool
@@ -153,17 +208,20 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 
 	vector1< pair< Size/*stem1*/, Size/*stem2*/ > > stems;
 	stems.clear();
-	for( Size stem1 = 1; stem1 <= pose.total_residue() - from_res(); ++stem1 ){
+	for( Size stem1 = 2; stem1 <= pose.total_residue() - from_res() - 1 ; ++stem1 ){ //changed this line from for(Size stem1 = 1; stem1 <= pose.total_residue() - from_res() ; ++stem1 )  
 		if( sec_struct[ stem1 - 1 ] != template_sec_struct[ template_stem1() - 1 ] ||
 				!pose.conformation().residue( stem1 ).is_protein() )
 			continue;
-		for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.total_residue(); ++stem2 ){
+		for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.total_residue() - 1; ++stem2 ){ //changed this line from for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.total_residue() ; ++stem2 )
 			if( sec_struct[ stem2 - 1 ] != template_sec_struct[ template_stem2() - 1 ] ||
 			    !pose.conformation().residue( stem2 ).is_protein() )
 				continue;
 			stems.push_back( pair< Size, Size >( stem1, stem2 ) );
 		}
 	}
+	for( core::Size i = 1 ; i <= 100; ++i ){
+		TR<<"WHAT???"<<std::endl;
+  }
 //	sort( stems.begin(), stems.end() );
 //	vector1< pair< Size, Size > >::iterator it = unique( stems.begin(), stems.end() );
 //	stems.resize( std::distance( stems.begin(), it ) );
@@ -175,12 +233,32 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 	for( vector1< pair< Size, Size > >::const_iterator vit = stems.begin(); vit != stems.end(); ++vit ){
 		Size const stem1( vit->first ), stem2( vit->second );
 		TR<<"Testing stems: "<<stem1<<' '<<stem2<<std::endl;
-		core::conformation::Residue const res_stem2( pose.conformation().residue( stem2 ) );
+		//core::conformation::Residue const res_stem2( pose.conformation().residue( stem2 ) );
 		core::pose::Pose copy_pose( pose );
-		copy_pose.conformation().append_residue_by_jump( res_stem2, stem1 );
-		TR<<"new foldtree: "<<copy_pose.fold_tree()<<std::endl;
-		copy_pose.set_jump( copy_pose.num_jump(), jump() );
-		Real const motif_rmsd = two_res_rmsd( res_stem2, copy_pose.conformation().residue( copy_pose.total_residue() ) );
+		//copy_pose.conformation().append_residue_by_jump( res_stem2, stem1 );
+		//TR<<"new foldtree: "<<copy_pose.fold_tree()<<std::endl;
+		//copy_pose.set_jump( copy_pose.num_jump(), jump() );
+		superimpose_pose_on_template( *template_pose_, copy_pose, stem1, stem2);
+
+		vector1< Size > pose_res_for_rmsd, template_res_for_rmsd;
+		pose_res_for_rmsd.clear(); template_res_for_rmsd.clear();
+		pose_res_for_rmsd.push_back( stem1 - 1 );
+		pose_res_for_rmsd.push_back( stem1 );
+		pose_res_for_rmsd.push_back( stem1 + 1 );
+		pose_res_for_rmsd.push_back( stem2 - 1 );
+    pose_res_for_rmsd.push_back( stem2 );
+    pose_res_for_rmsd.push_back( stem2 + 1 );
+
+		template_res_for_rmsd.push_back( template_stem1() - 1 );
+    template_res_for_rmsd.push_back( template_stem1() );
+    template_res_for_rmsd.push_back( template_stem1() + 1 );
+		template_res_for_rmsd.push_back( template_stem2() - 1 );
+    template_res_for_rmsd.push_back( template_stem2() );
+    template_res_for_rmsd.push_back( template_stem2() + 1 ); 
+		
+		Real const motif_rmsd = res_rmsd( pose_res_for_rmsd, template_res_for_rmsd, copy_pose, *template_pose_ );
+		//Real const motif_rmsd = two_res_rmsd( res_stem2, copy_pose.conformation().residue( copy_pose.total_residue() ) );
+
 		TR<<"rmsd="<<motif_rmsd<<std::endl;
 		if( motif_rmsd <= rmsd() )
 			write_to_file( filename_, stem1, stem2, motif_rmsd, pdbname_, pose );
