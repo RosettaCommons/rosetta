@@ -154,6 +154,8 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 		H3_profile->generate_from_sequence(H3seq);
 		//TR<<"Size of H3 profile is: "<<H3_profile->size()<<std::endl;
 	}
+
+
 	BOOST_FOREACH( SequenceProfileOP const prof, profiles ){
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		//find H3 seq and constract a new PSSM from given seqeunce
@@ -164,6 +166,11 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 				for( core::Size H3_pos = 1; H3_pos <= H3_profile->size(); ++H3_pos ){
 					concatenated_profile->prof_row( H3_profile->prof_row( H3_pos ), current_profile_size );
 					TR<<"Res: "<<current_profile_size<<",prof:"<<H3_profile->prof_row(H3_pos)<<std::endl;
+					if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
+						//this option is by default false. If set to true then we read the propensity matrix alongside the pssm matrix. T
+						utility::vector1< core::Real > occurence_row (20,0); //H3 lopps apexes do not have occurence data, so I just insert a vector of 0's, gideonla 16/08/14
+						concatenated_profile->probabilty_row(occurence_row, current_profile_size );
+					}
 					current_profile_size++;
 				}
 				first_pass=false;

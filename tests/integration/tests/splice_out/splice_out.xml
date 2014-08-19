@@ -1,45 +1,31 @@
 <dock_design>
-         <TASKOPERATIONS>
-    		<InitializeFromCommandline name=init/>
-		<SeqprofConsensus name=seqprofcons min_aa_probability=2 conservation_cutoff_protein_interface_design=0 conservation_cutoff_aligned_segments=1 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1> 
-				<ProteinInterfaceDesign design_chain1=1 design_chain2=0/> 
-				<RestrictToAlignedSegments chain=1>
-					<L1 source_pdb="%%source_pdb%%" start_res=24 stop_res=41/>
-					<L2 source_pdb="%%source_pdb%%" start_res=51 stop_res=60/>
-					<L3 source_pdb="%%source_pdb%%" start_res=94 stop_res=105/>
-					<H1 source_pdb="%%source_pdb%%" start_res=135 stop_res=147/>
-					<H2 source_pdb="%%source_pdb%%" start_res=155 stop_res=171/>
-					<H3 source_pdb="%%source_pdb%%" start_res=209 stop_res=220/>
-				</RestrictToAlignedSegments>
-			</SeqprofConsensus>
-  	</TASKOPERATIONS>
-        <SCOREFXNS>
-		<talaris_cal weights=talaris2013_calibrated>
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name=init/>
+<SeqprofConsensus name=seqprofcons min_aa_probability=2 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1/>
+
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<sc12_w_correction weights=talaris2013_calibrated>
 			<Reweight scoretype="res_type_constraint" weight=0.5/>
-			<Reweight scoretype="coordinate_constraint" weight=1/>
+			<Reweight scoretype="coordinate_constraint" weight=10/>
 			<Reweight scoretype="dihedral_constraint" weight=1/>
-		</talaris_cal>
+		</sc12_w_correction>
+  		<score12_chainbreak weights=talaris2013_calibrated>
+        	<Reweight scoretype=chainbreak weight=1/>
+        </score12_chainbreak>
+	</SCOREFXNS>
+	<FILTERS>
+		<ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=0.5/>
 
-		<talaris_cal_chainbreak weights=talaris2013_calibrated>
-			<Reweight scoretype=chainbreak weight=1/>
-		</talaris_cal_chainbreak>
-        </SCOREFXNS>
-
-        <FILTERS>
-	        <ScoreType name=chainbreak_val scorefxn=talaris_cal_chainbreak score_type=chainbreak threshold=100/>
-	        <DesignableResidues name=designable task_operations=seqprofcons/>
-        </FILTERS>
-
-        <MOVERS>
-		<Splice name=splice loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="L1_L2.db" scorefxn=talaris_cal ccd=1 res_move=100 randomize_cut=1 cut_secondarystruc=0 from_res=25 to_res=90 rms_cutoff=100 
-splice_filter=chainbreak_val thread_ala=0 template_file="%%source_pdb%%" design_task_operations=init,seqprofcons design=1 segment=L1_L2 protein_family=antibodies/>
-
-        </MOVERS>
-
-        <APPLY_TO_POSE>
-        </APPLY_TO_POSE>
-        <PROTOCOLS>
-                <Add mover=splice/>
-                <Add filter=designable/>
-        </PROTOCOLS>
+	</FILTERS>
+	<MOVERS>
+		<Splice name=splice loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="H1_H2.db" scorefxn=sc12_w_correction ccd=1  randomize_cut=1 cut_secondarystruc=0 rms_cutoff=0.5 splice_filter=chainbreak_val thread_ala=0 template_file="%%source_pdb%%" design_task_operations=init,seqprofcons design_shell=6 repack_shell=8 design=1 protein_family="antibodies" segment=H1_H2 tail_segment="n" use_sequence_profiles=1 allow_threading=0 CG_const=0 debug=0> //using the disulfide as start and end points for the segment
+		</Splice>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=splice/> 
+		Add filter=designable/>
+	</PROTOCOLS>
 </dock_design>

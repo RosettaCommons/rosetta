@@ -135,7 +135,11 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				 SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
 				 seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
 				 if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
-				 seqprof->probabilty_row( seqprof_pos->occurrence_data()[ seqpos ], seqpos );
+
+					 seqprof->probabilty_row( seqprof_pos->occurrence_data()[ seqpos ], seqpos );
+					 tr<<"Testing occurence_data for pos "<<seqpos<<std::endl;
+					 tr<<seqprof_pos->occurrence_data()[ seqpos ]<<std::endl;
+
 				 }
 		     cst_num++;
 		   }

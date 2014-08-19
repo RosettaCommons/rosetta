@@ -133,6 +133,10 @@ public:
 	void profile(
 		utility::vector1< utility::vector1< Real > > const & new_profile
 	);
+	/// @brief Sets the 2D vector1 of Real values of the probabilties of each aa.
+	void occurrence_data(
+			utility::vector1< utility::vector1< Real > >  const & new_occurrence_data
+		);
 
 	/// @brief Inserts a character at the given position.
 	virtual void insert_char( core::Size pos, char new_char );

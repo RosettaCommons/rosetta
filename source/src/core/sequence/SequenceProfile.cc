@@ -298,12 +298,12 @@ void SequenceProfile::read_from_file(
 		}
 
 
-		//using the same while loop to read % matrix in the pssm file. All the numbers after index 20 are stored in the % matrix. I am doing it this way
+		//using the same while loop to read % matrix in the pssm file. All the numbers after index 20 are stored in the percentage matrix. I am doing it this way
 		// So I don't have to change anything in the existing code , gideonla 120214
 		if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
 		index=1;
 		while ( !line_stream.fail() && index <= order.size() ) {
-			//tr <<"Percentage :"<<score<<std::endl;
+		//	tr <<"Percentage :"<<score<<std::endl;
 			probability_row[ order[index] ] = score;
 			line_stream >> score;
 			++index;
@@ -406,6 +406,11 @@ void SequenceProfile::profile(
 	utility::vector1< utility::vector1< core::Real > > const & new_prof
 ) {
 	profile_ = new_prof;
+}
+void SequenceProfile::occurrence_data(
+	utility::vector1< utility::vector1< core::Real > > const & new_occurrence_data
+) {
+	occurrence_data_ = new_occurrence_data;
 }
 
 void SequenceProfile::prof_row( utility::vector1< Real > const & new_prof_row, core::Size pos ) {

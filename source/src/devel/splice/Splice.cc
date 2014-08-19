@@ -153,8 +153,8 @@ namespace devel {
 				Mover(SpliceCreator::mover_name()),	from_res_(0), to_res_(0), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
 				NULL), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_(	NULL),
 				design_task_factory_( NULL), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
-				template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(NULL), start_pose_( NULL), source_pose_(NULL),
-				saved_fold_tree_( NULL), design_(false), dbase_iterate_(false), allow_all_aa_(false), allow_threading_(true),
+				template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(NULL), start_pose_( NULL),source_pose_(NULL),
+				saved_fold_tree_( NULL), design_(false), dbase_iterate_(false), allow_all_aa_(false), thread_original_sequence_(false),
 				rtmin_(true), first_pass_(true), locked_res_( NULL), locked_res_id_(' '), checkpointing_file_(""),
 				loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(NULL), splice_filter_( NULL), Pdb4LetName_(""),
 				use_sequence_profiles_(false), segment_type_("") {
@@ -433,14 +433,15 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 			if (add_sequence_constraints_only()) {
 				TR << "Only adding sequence constraints!!! Not doing any splice!!!" << std::endl;
-				//Because of Dror's problem with reverse chain order I am now passing by chain
 				ccd_ = false; //WE ARE NOT DOING CCD!
 				add_sequence_constraints(pose);
 
 				return;
 			}
-			protocols::simple_moves::CutChainMover ccm;
-			vl_vh_cut = ccm.chain_cut(pose); //find_vl_vh cut point. important for when doing floppy tail mover;
+			if (protein_family_=="antibodies"){
+				protocols::simple_moves::CutChainMover ccm;
+				vl_vh_cut = ccm.chain_cut(pose); //find_vl_vh cut point. important for when doing floppy tail mover;
+			}
 
 			set_last_move_status(protocols::moves::MS_SUCCESS);
 			TR << "Starting splice apply" << std::endl;
@@ -467,7 +468,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				to_res(template_to_res);
 			} // fi template_file != ""
 			if (!from_res() && !to_res() &&protein_family_=="antibodies" &&ccd()/*this is for splice out*/) {//if user has not defined from res and to res then we use antibody disulfides as start and end points
-				utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain, I assume that the order is VL and then VH, gideon
+				utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain, I assume that the order is VL and then VH, Gideon Lapidoth
 				for (core::Size i = 1; i <= pose.total_residue(); ++i) {
 					if (pose.residue(i).has_variant_type(core::chemical::DISULFIDE)) {
 						cys_pos.push_back(i);
@@ -496,7 +497,6 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			if (set_fold_tree_only_) {
 				TR << "Only setting fold tree!!! Not doing any splice!!!" << std::endl;
 				load_pdb_segments_from_pose_comments(pose); //load comments form pdb to pose
-				//Because of Dror's problem with reverse chain order I am now passing by chain
 				ccd_ = false; //WE ARE NOT DOING CCD!
 				set_fold_tree(pose, vl_vh_cut);
 
@@ -708,7 +708,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 			}
 
-			//	pose.dump_pdb( "before_ft_test.pdb" ); //this is the strucutre before changing the loop
+			//pose.dump_pdb( "before_ft_test.pdb" ); //this is the strucutre before changing the loop
+			if (debug_){
+				TR<<"Debug: Fold Tree residues for loop segment:"<<std::endl;
+				TR<<"From_res:"<<from_res()<<std::endl;
+				TR<<"to_res:"<<to_res()<<std::endl;
+			}
 			if (cut_site==to_res())
 					cut_site=cut_site-1;
 			fold_tree(pose, from_res(), to_res(), cut_site); /// the fold_tree routine will actually set the fold tree to surround the loop
@@ -824,14 +829,14 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					}
 				}
 			}
-			//pose.dump_pdb( "after_sequence_thread.pdb" );
+		//	pose.dump_pdb( "after_sequence_thread.pdb" );
 			using namespace protocols::toolbox::task_operations;
 			using namespace core::pack::task;
 			ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
 				tso->target_sequence(threaded_seq);
 				tso->start_res(from_res());
 				tso->allow_design_around(true); // 21Sep12: from now on the design shell is determined downstream //false );
-				TR << "Threading sequence: " << threaded_seq << " starting from " << from_res() << std::endl;
+				TR << "Source segment sequence: " << threaded_seq << " starting from " << from_res() << std::endl;
 			TaskFactoryOP tf;
 			if (design_task_factory()() == NULL)
 				tf = new TaskFactory;
@@ -847,12 +852,11 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 			tf->push_back(new operation::InitializeFromCommandline);
 			tf->push_back(new operation::NoRepackDisulfides);
-			if (allow_threading()) {
-				TR << "THREADING ALLOWED" << std::endl;
+			if (thread_original_sequence()) {
+				TR << "THREADING ORIGINAL SEGMENT" << std::endl;
 				tf->push_back(tso);
 			}
-			else
-				TR << "THREADING NOT ALLOWED" << std::endl;
+
 			DesignAroundOperationOP dao = new DesignAroundOperation;
 			dao->design_shell((design_task_factory()() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 			dao->repack_shell(repack_shell());
@@ -908,7 +912,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			}
 			if (ccd()) {
 				TR<<"Before doing CCD threading sequence from source pose onto pose"<<std::endl;
-			//pose.dump_pdb("before_threading.pdb");
+
 				TaskFactoryOP tf_thread = new TaskFactory();
 				DesignAroundOperationOP dao_for_threading =  new DesignAroundOperation;
 				for (core::Size i = from_res(); i <= from_res() + total_residue_new - 1; ++i) {
@@ -1000,10 +1004,11 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//pose.dump_pdb("before_coordinate_constraints");
 				TR << "Stretch I am applying the coordinate constraints on: " << from_res() << "-" << to_res() + residue_diff<< std::endl;
 
-				core::Size anchor_res( from_res() );
+				core::Size anchor_res( from_res()-1 );
 				if (protein_family_=="antibodies")/*if using "segment" and "protein_family" tags then we are using Rosetta db PSSMs*/
 				  anchor_res = find_nearest_disulfide(pose, from_res());
 				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res);	//add coordiante constraints to loop
+				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res,"O");	//add coordiante constraints to loop
 				//TR_constraints<<"score function after CA constraints"<<std::endl;
 				//scorefxn()->show(pose);
 				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res,"CB");	//add coordiante constraints to loop
@@ -1157,6 +1162,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					//before copying dofs apply coordinate constrains
 					TR << "Applying dihedral and coordinate constraints" << std::endl;
 					add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res);	//add coordinate constraints to loop
+					add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res,"O");	//add coordiante constraints to loop
 					add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res,"CB");	//add coordiante constraints to loop
 					//TR_constraints<<"score function after CB constraints"<<std::endl;
 					//			scorefxn()->show(pose);
@@ -1206,7 +1212,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					}
 					tf->push_back(new operation::InitializeFromCommandline);
 					tf->push_back(new operation::NoRepackDisulfides);
-					if (allow_threading()) {
+					if (thread_original_sequence()) {
 						TR << "THREADING ALLOWED" << std::endl;
 						tf->push_back(tso);
 					}
@@ -1404,10 +1410,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					}
 					TR_min<<"from_res: "<<from_res()<<",to_res: "<<to_res()<<",dofs size: "<<dofs.size()<<std::endl;
 					add_coordinate_constraints(pose, pose, from_res(),from_res()+dofs.size()-1, find_nearest_disulfide(pose,from_res()));
+					add_coordinate_constraints(pose, pose, from_res(),from_res()+dofs.size()-1, find_nearest_disulfide(pose,from_res()),"O");
 					core::Size cut_site=0;
 					if (boost::iequals(tail_segment_, "n")){//This only matters for n-ter tail because C-ter tail residue are included in the previous mm
 						//add edge to fold tree
 						add_coordinate_constraints(pose, pose, find_nearest_disulfide(pose,from_res())-tail_dofs.size(), find_nearest_disulfide(pose,from_res())-1, find_nearest_disulfide(pose,from_res()));//add coordinate constraint to tail
+						add_coordinate_constraints(pose, pose, find_nearest_disulfide(pose,from_res())-tail_dofs.size(), find_nearest_disulfide(pose,from_res())-1, find_nearest_disulfide(pose,from_res()),"O");//add coordinate constraint to tail
 						for (core::Size i =find_nearest_disulfide(pose,from_res())-tail_dofs.size(); i<find_nearest_disulfide(pose,from_res()) ; ++i) {
 							mm->set_chi(i, true);
 							mm->set_bb(i, true);
@@ -1540,11 +1548,11 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			BOOST_FOREACH( TagCOP const sub_tag, sub_tags ) {
 
 				if( sub_tag->getName() == "Segments" ) {
-					//if this flag is present then we don't use the subtags, get all pssm data from the database
-					if (tag->hasOption("segment")) { //if both tags are turned on exit with error msg.
+					//if this sub_tag is present this means that the user is inputing their own PSSM files
+					if (tag->hasOption("segment"))  //if both tags are turned on exit with error msg, This tag is used when user wants to use Rosetta db file.
 						utility_exit_with_message(
-								"it appears you are trying to run both \"segment\" and sub tags \"segments\" simoutansiously, this is not a valid option. Please only choose one\n");
-					}
+								"it appears you are trying to run both \"segment\" tag and \"Segments\" sub tag simoutansiously, this is not a valid option. Please only choose one\n");
+
 					segment_names_ordered_.clear();	//This string vector holds all the segment names inserted by the user, the pssm will be constructed in this order so user must make sure the order is correct
 					check_segment = false;//This is set to false unless current segment appears in the segment list
 					use_sequence_profiles_ = true;
@@ -1679,8 +1687,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				runtime_assert(database_entry() <= torsion_database_.size());
 			}
 		}
-		//else
-			//source_pdb(tag->getOption<std::string>("source_pdb"));
+		else
+			source_pdb(tag->getOption<std::string>("source_pdb"));
 
 		ccd(tag->getOption<bool>("ccd", 1));
 //dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
@@ -1717,7 +1725,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 	//TR<<std::endl;
 
 	design(tag->getOption<bool>("design", false));
-	allow_threading(tag->getOption<bool>("allow_threading", true)); // to stop Splice from threading the Gly and Pro residues from the source - Assaf Alon
+	thread_original_sequence(tag->getOption<bool>("thread_original_sequence", false)); // to stop Splice from threading the Gly and Pro residues from the source - Assaf Alon
 	rtmin(tag->getOption<bool>("rtmin", true)); // to prevent splice from doing rtmin when not needed - Assaf Alon
 	allow_all_aa(tag->getOption<bool>("allow_all_aa", false)); // to allow all amino acids in design - Assaf Alon
 	dbase_iterate(tag->getOption<bool>("dbase_iterate", false));
@@ -2043,10 +2051,10 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 	ft.clear();
 	if (conf.num_chains() == 1) {		/// build simple ft for the cut
 		ft.add_edge(1, s1-1, -1);
-		ft.add_edge(s1-1, s2+1, 1);
+		ft.add_edge(s1-1, std::min(s2+1,pose.total_residue()), 1);
 		ft.add_edge(s1-1, cut, -1);
-		ft.add_edge(s2+1, cut + 1, -1);
-		ft.add_edge(s2+1, pose.total_residue(), -1);
+		ft.add_edge (std::min(s2+1,pose.total_residue()), cut + 1, -1);
+		ft.add_edge(std::min(s2+1,pose.total_residue()), pose.total_residue(), -1);
 		ft.delete_self_edges();
 		//ft.reorder(s2);
 		TR << "single chain ft: " << ft << std::endl;
@@ -2243,9 +2251,9 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 			 pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
 
 		}
-		else {
+		else
 			Pdb4LetName_ = parse_pdb_code(source_pdb_);		//
-		}
+
 		if (!add_sequence_constraints_only_) {///If only doing sequence constraints then don't add to pose comments source name
 			TR << "The current segment is: " << segment_type_ << " and the source pdb is " << Pdb4LetName_ << std::endl;
 			core::pose::add_comment(pose, "segment_" + segment_type_, Pdb4LetName_);//change correct association between current loop and pdb file
@@ -2509,7 +2517,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					utility::vector1< core::Size > const chiAtoms=pose.residue(i).chi_atoms(chi);//get chi atoms from chi angle so we can apply coordiante constraints
 					for (core::Size chiAtom=1;chiAtom<=4; chiAtom++){
 						core::scoring::func::FuncOP coor_cont_fun = new core::scoring::func::HarmonicFunc(0.0, 1);
-						TR<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
+						TR_constraints<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
 						cst.push_back(new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun));
 						pose.add_constraints(cst);
 					}//for chiAtom
@@ -2558,18 +2566,11 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size start_res_on_pose, core::Size end_res_on_pose) {
 
 	int residue_diff( 0 );
-	if (protein_family_=="antibodies"){/*if using "segment" and "protein_family" tags then we are using Rosetta db PSSMs*/
-	//use disulfide to calculate residue difference (absolute residue difference) between source_pose and pose)
-		core::Size nearest_disulfide_on_pose(protocols::rosetta_scripts::find_nearest_disulfide(pose,start_res_on_pose));
-		TR_constraints<<"Nearest disulfie on pose is:"<<nearest_disulfide_on_pose<<std::endl;
-		core::Size nearest_disulfide_on_source(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,nearest_disulfide_on_pose,1));
-//	core::Size from = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, start_res_on_pose, 1/*chain*/); //The following for loop itterates over the source pose residues
-		residue_diff = nearest_disulfide_on_source - nearest_disulfide_on_pose;
-		TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
-		TR_constraints << "closest disulfide on source is: " << nearest_disulfide_on_source<<source_pose.residue(nearest_disulfide_on_source).name1()<< std::endl;
-		TR_constraints << "Residue difference :" << residue_diff << std::endl;
-	}
-		//inorder to compare the angles we keep track of the corresponding residues in the template pose
+
+	core::Size nearest_from_res_source_pdb(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,1));
+	residue_diff = nearest_from_res_source_pdb - start_res_on_pose;
+	TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
+	//inorder to compare the angles we keep track of the corresponding residues in the template pose
 	TR_constraints << "Applying dihedral constraints to pose, Pose/Source PDB:" << std::endl;
 	for (core::Size i = start_res_on_pose + residue_diff; i <= end_res_on_pose + residue_diff; ++i) {
 		core::scoring::constraints::ConstraintOPs csts; //will hold dihedral constraints

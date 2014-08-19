@@ -1,4 +1,4 @@
--constant_seed
+-constant_seed 1
 -nodelay
 -use_input_sc
 -extrachi_cutoff 8
@@ -16,9 +16,9 @@
 -pdb_comments true ## this is the mover reades the comments in the input pdb file. The comments contain the pdb segments comprising the input pdb
 -use_occurrence_data ## restrict PSSM choice only to possition that acctually appear in the msa
 
--parser:script_vars source_pdb=1x9q.ppk.pdb"
+-parser:script_vars source_pdb=2BRR.ppk.pdb"
 -parser:script_vars source=1AHW.pdb"
 -parser:protocol splice_out.xml
-
--s 1x9q.ppk.pdb
+-TailSegment::refine_cycles 2
+-s 2BRR.ppk.pdb
 

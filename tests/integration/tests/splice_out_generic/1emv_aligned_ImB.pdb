@@ -2036,6 +2036,3 @@ ATOM   3298  HD1 HIS B 208      95.761  24.686  23.812  1.00  0.00           H
 ATOM   3299  HD2 HIS B 208      97.165  20.712  23.799  1.00  0.00           H
 ATOM   3300  HE1 HIS B 208      98.188  24.830  23.572  1.00  0.00           H
 TER
-##Begin comments##
-segment_endo 1emv_endo
-##End comments##
