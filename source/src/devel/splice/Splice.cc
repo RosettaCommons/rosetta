@@ -664,6 +664,9 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			/// The database is computed with respect to the template pose, so before applying dofs from the dbase it's important to make that stretch identical to
 			/// the template. from_res() and to_res() were previously computed to be with respect to the incoming pose, so within this subroutine the refer to pose rather
 			/// than template_pose (this is a bit confusing, but it works!)
+			// Important! By applying copy_stretch the bond lengths & angles of pose are reset to what they are in template_pose. For this reason template_pose must
+			// always be the same as the pose on which modeling was first done during splice_out or splice in will produce wacky results. (SJF 13Aug14)
+			//
 			copy_stretch(pose, *template_pose_, from_res(), to_res());
 			//	( *scorefxn() ) ( pose );
 
@@ -1492,7 +1495,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
         source_pose_ = new core::pose::Pose;
         core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
       }
-			
+
 			if( !superimposed() ){
 				source_pdb_from_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_from_res", "0"), *source_pose_));
       	source_pdb_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_to_res", "0"), *source_pose_));
@@ -1500,7 +1503,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//source_pdb_to_res( tag->getOption< core::Size >( "source_pdb_to_res" ) );
 				runtime_assert( source_pdb_from_res() > 0 && source_pdb_to_res() > source_pdb_from_res() );
 			}
-			
+
 			if ((tag->hasOption("tail_segment"))
 					&& !(((boost::iequals/*BOOST function for comparing strings */(tail_segment_, "c")))
 							|| (boost::iequals(tail_segment_, "n")))) {
