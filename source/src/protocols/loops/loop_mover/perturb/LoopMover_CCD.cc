@@ -216,7 +216,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 
 	Size const loop_begin( loop.start() ), loop_end( loop.stop() ), loop_cut( loop.cut() );
 	Size const loop_size( loop_end - loop_begin + 1 );
-	runtime_assert( !loop.is_terminal( pose ) || pose.fold_tree().is_cutpoint( loop_cut ) );
+	runtime_assert( loop.is_terminal( pose ) || pose.fold_tree().is_cutpoint( loop_cut ) );
 
 	// see if we should skip large frags. Don't if that would mean no fragment insertions:
   // mt temporary removed this.

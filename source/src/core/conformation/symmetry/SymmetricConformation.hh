@@ -176,11 +176,12 @@ public:
 
 	/// @brief Remap coordinate X from resid i's frame to resid j's frame
 	PointPosition
-	apply_transformation( PointPosition Xin, core::Size residfrom, core::Size residto );
+	apply_transformation( PointPosition Xin, core::Size residfrom, core::Size residto, bool rotationonly=false );
 
 	/// @brief Remap coordinate X from resid i's frame to resid j's frame
+	///   assumes that the transformations are already computed (thus can be const)
 	PointPosition
-	apply_transformation_norecompute( PointPosition Xin, core::Size residfrom, core::Size residto ) const;
+	apply_transformation_norecompute( PointPosition Xin, core::Size residfrom, core::Size residto, bool rotationonly=false ) const;
 
 	// @brief force recomputation of Tsymm_'s from the current conformation
 	void

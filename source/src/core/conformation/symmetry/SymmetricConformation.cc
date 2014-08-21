@@ -80,7 +80,7 @@ SymmetricConformation::operator=( SymmetricConformation const & src )
 }
 
 Conformation &
-SymmetricConformation::operator=( Conformation const & src ) 
+SymmetricConformation::operator=( Conformation const & src )
 {
 	SymmetricConformation const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
 	if ( sym_conf ) {
@@ -538,7 +538,8 @@ PointPosition
 SymmetricConformation::apply_transformation(
 		PointPosition Xin,
 		core::Size residfrom,
-		core::Size residto ) {
+		core::Size residto,
+		bool rotationonly ) {
 	if (Tsymm_.size() == 0 )
 		recalculate_transforms( );
 
@@ -548,10 +549,15 @@ SymmetricConformation::apply_transformation(
 		compid = symm_info_->get_component_of_residue( residfrom );
 	}
 
-	numeric::HomogeneousTransform< core::Real > const &Tsymm_from
-		= Tsymm_[ compid ][ symm_info_->subunit_index( residfrom ) ];
-	numeric::HomogeneousTransform< core::Real > const &Tsymm_to
-		= Tsymm_[ compid ][ symm_info_->subunit_index( residto ) ];
+	runtime_assert(Tsymm_.find(compid) != Tsymm_.end());
+	utility::vector1< numeric::HomogeneousTransform< core::Real > > const &T_i = (Tsymm_.find(compid))->second;
+	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
+	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
+
+	if (rotationonly) {
+		Tsymm_from.set_identity_transform();
+		Tsymm_to.set_identity_transform();
+	}
 
 	PointPosition Xout;
 	Xout = (Tsymm_from.inverse() * Xin);
@@ -567,7 +573,8 @@ PointPosition
 SymmetricConformation::apply_transformation_norecompute(
 		PointPosition Xin,
 		core::Size residfrom,
-		core::Size residto ) const {
+		core::Size residto,
+		bool rotationonly ) const {
 	char compid = 'A';
 	if (symm_info_->get_num_components() >= 2) {
 		assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
@@ -575,11 +582,14 @@ SymmetricConformation::apply_transformation_norecompute(
 	}
 
 	runtime_assert(Tsymm_.find(compid) != Tsymm_.end());
-
 	utility::vector1< numeric::HomogeneousTransform< core::Real > > const &T_i = (Tsymm_.find(compid))->second;
+	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
+	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
 
-	numeric::HomogeneousTransform< core::Real > const &Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
-	numeric::HomogeneousTransform< core::Real > const &Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
+	if (rotationonly) {
+		Tsymm_from.set_identity_transform();
+		Tsymm_to.set_identity_transform();
+	}
 
 	PointPosition Xout;
 	Xout = (Tsymm_from.inverse() * Xin);

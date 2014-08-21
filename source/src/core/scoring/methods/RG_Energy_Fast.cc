@@ -268,7 +268,7 @@ RG_Energy_Fast::eval_atom_derivative(
 			for (int i=1; i<=(int)bbclones.size(); ++i) {
 				numeric::xyzVector<core::Real> Xsymm = pose.xyz(id::AtomID(atmid, bbclones[i]));
 				numeric::xyzVector<core::Real> drg_dxsymm = (Xsymm-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
-				drg_dx += symmconf.apply_transformation_norecompute( drg_dxsymm, bbclones[i], i );
+				drg_dx += symmconf.apply_transformation_norecompute( drg_dxsymm, bbclones[i] , resid,  true );
 			}
 		}
 		drg_dx /= symminfo->score_multiply_factor();

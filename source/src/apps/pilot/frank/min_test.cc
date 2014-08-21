@@ -24,6 +24,13 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
@@ -86,6 +93,7 @@ using io::pdb::dump_pdb;
 OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, debug_verbose)
 OPT_1GRP_KEY(Boolean, min, cartesian)
+OPT_1GRP_KEY(Boolean, min, pack)
 OPT_1GRP_KEY(String, min, minimizer)
 
 
@@ -95,6 +103,9 @@ public:
 	void apply( core::pose::Pose & pose) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
+		using namespace core::pack;
+		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 
 		using namespace protocols::moves;
 		using namespace scoring;
@@ -145,6 +156,24 @@ public:
 		pose::PoseOP start_pose ( new pose::Pose(pose) );
 		(*scorefxn)(pose);
 		scorefxn->show(std::cout, pose);
+
+		if ( option[ OptionKeys::min::pack ]() )  {
+			TaskFactoryOP local_tf = new TaskFactory();
+			local_tf->push_back(new InitializeFromCommandline());
+			local_tf->push_back(new RestrictToRepacking());
+			local_tf->push_back(new IncludeCurrent());
+
+			protocols::simple_moves::PackRotamersMoverOP pack_full_repack = new protocols::simple_moves::PackRotamersMover( scorefxn );
+			if ( core::pose::symmetry::is_symmetric( pose ) )  {
+				pack_full_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn );
+			}
+			pack_full_repack->task_factory(local_tf);
+			pack_full_repack->apply( pose );
+
+			(*scorefxn)(pose);
+			scorefxn->show(std::cout, pose);
+		}
+
 
 		bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
 		bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
@@ -220,18 +249,19 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] )
 {
-    try {
+try {
 	NEW_OPT(min::debug, "debug derivs?", false);
 	NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 	NEW_OPT(min::cartesian, "cartesian minimization?", false);
+	NEW_OPT(min::pack, "pack first?", false);
 	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
 
 	devel::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-                                  }
-        return 0;
-    }
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
+	return 0;
+}
