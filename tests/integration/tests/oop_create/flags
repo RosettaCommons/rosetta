@@ -1,7 +1,7 @@
 -include_patches patches/oop_pre.txt patches/oop_post.txt
 -s input/ala4_pep.pdb 
--resfile input/oop_dimer.res 
+#-resfile input/oop_dimer.res 
 -in:file:fullatom 
--score:weights mm_std 
+#-score:weights mm_std 
 -out:nstruct 1 
 -oop_plus_positions 1 3 
