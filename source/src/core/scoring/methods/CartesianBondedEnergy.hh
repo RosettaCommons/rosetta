@@ -100,6 +100,7 @@ public:
 	void pro_CD_index( Size index );
 
 	void ca_cprev_n_h_interres_torsion_params( CartBondedParametersCOP );
+	void oprev_cprev_n_h_interres_torsion_params( CartBondedParametersCOP );
 	void ca_nnext_c_o_interres_torsion_params( CartBondedParametersCOP );
 	void pro_cd_cprev_n_ca_interres_torsion_params( CartBondedParametersCOP );
 	void cprev_n_bond_length_params( CartBondedParametersCOP );
@@ -162,6 +163,11 @@ public:
 	}
 
 	CartBondedParametersCOP
+	oprev_cprev_n_h_interres_torsion_params() const {
+		return oprev_cprev_n_h_interres_torsion_params_;
+	}
+
+	CartBondedParametersCOP
 	ca_nnext_c_o_interres_torsion_params() const {
 		return ca_nnext_c_o_interres_torsion_params_;
 	}
@@ -175,6 +181,8 @@ public:
 	cprev_n_bond_length_params() const {
 		return cprev_n_bond_length_params_;
 	}
+
+
 
 private:
 	utility::vector1< length_parameter  > length_params_;
@@ -203,6 +211,7 @@ private:
 	Size pro_CD_index_;
 
 	CartBondedParametersCOP ca_cprev_n_h_interres_torsion_params_;
+	CartBondedParametersCOP oprev_cprev_n_h_interres_torsion_params_;
 	CartBondedParametersCOP ca_nnext_c_o_interres_torsion_params_;
 	CartBondedParametersCOP pro_cd_cprev_n_ca_interres_torsion_params_;
 	CartBondedParametersCOP cprev_n_bond_length_params_;
