@@ -1,4 +1,3 @@
--relax:membrane
 -relax:quick
 -relax:default_repeats 2
 -s input/BRD4.pdb

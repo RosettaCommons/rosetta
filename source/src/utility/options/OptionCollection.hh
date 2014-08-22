@@ -562,6 +562,10 @@ public: // Methods
 	/// @brief Show inaccessed user-specified options
 	void show_inaccessed_user_options(std::ostream & stream) const;
 
+	/// @brief Show options that were user-specified, but not yet accessed.
+	/// Differs from show_inaccessed_user_options() mainly by formatting
+	/// And how the options are accessed. (This one should be destructor safe.)
+	void show_unused_options(std::ostream & stream) const;
 
 	/// @brief Returns a copy of the concatenated argv strings that were initialized
 	/// in load().
@@ -2343,6 +2347,8 @@ public: // Static functions
 	/// @brief modify 'show_accessed_options' flag;
 	static void set_show_accessed_options_flag(bool v) { show_accessed_options_ = v; }
 
+	/// @brief modify 'show_unused_options' flag;
+	static void set_show_unused_options_flag(bool v) { show_unused_options_ = v; }
 
 private: // Fields
 
@@ -2407,6 +2413,11 @@ private: // Fields
 	///             OptionCollection is called.
 	///        This flag is false by default.
 	static bool show_accessed_options_;
+
+	/// @brief Flag indicating that list of user specified but inaccessed options should be printed
+	///             when destructor of OptionCollection is called.
+	///        This flag is false by default.
+	static bool show_unused_options_;
 
 }; // OptionCollection
 

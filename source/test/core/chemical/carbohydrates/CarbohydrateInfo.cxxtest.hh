@@ -41,7 +41,7 @@ public:
 
 		option[OptionKeys::in::include_sugars](true);
 		option[OptionKeys::in::file::read_pdb_link_records](true);
-		option[OptionKeys::in::enable_branching](true);
+		//option[OptionKeys::in::enable_branching](true);
 
 		// Test that oligosaccharides are loaded correctly.
 		pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");

@@ -28,7 +28,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/option.cc.gen.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>

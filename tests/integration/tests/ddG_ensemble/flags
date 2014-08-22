@@ -5,6 +5,5 @@
 -nstruct 1
 -ddg::min_with_cst true
 -ddg::temperature 10.0
--ddg::use_bound_cst true
 
 

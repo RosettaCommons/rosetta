@@ -4,4 +4,3 @@
 -out::path::pdb .
 -in::path::pdb ./pdb_set
 -motifs::hbond_max_threshold -1.0
--run:silent

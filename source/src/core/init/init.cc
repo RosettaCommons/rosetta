@@ -136,13 +136,13 @@
 #include <core/scoring/methods/MembraneEnvPenaltiesCreator.hh>
 #include <core/scoring/methods/MembraneLipoCreator.hh>
 #include <core/scoring/methods/MembraneEnvSmoothEnergyCreator.hh>
-#include <core/scoring/membrane/MPPairEnergyCreator.hh> 
-#include <core/scoring/membrane/MPEnvEnergyCreator.hh> 
+#include <core/scoring/membrane/MPPairEnergyCreator.hh>
+#include <core/scoring/membrane/MPEnvEnergyCreator.hh>
 #include <core/scoring/membrane/MPCBetaEnergyCreator.hh>
-#include <core/scoring/membrane/MPNonHelixPenaltyCreator.hh> 
-#include <core/scoring/membrane/MPTerminiPenaltyCreator.hh> 
+#include <core/scoring/membrane/MPNonHelixPenaltyCreator.hh>
+#include <core/scoring/membrane/MPTerminiPenaltyCreator.hh>
 #include <core/scoring/membrane/MPTMProjPenaltyCreator.hh>
-#include <core/scoring/membrane/FaMPEnvEnergyCreator.hh> 
+#include <core/scoring/membrane/FaMPEnvEnergyCreator.hh>
 #include <core/scoring/membrane/FaMPSolvEnergyCreator.hh>
 #include <core/scoring/membrane/FaMPEnvSmoothEnergyCreator.hh>
 #include <core/scoring/methods/pHEnergyCreator.hh>
@@ -650,6 +650,7 @@ init_options(int argc, char * argv []) {
 
 	// Set option system global
 	OptionCollection::set_show_accessed_options_flag( option[ out::show_accessed_options ].value() );
+	OptionCollection::set_show_unused_options_flag( option[ out::show_unused_options ].value() );
 }
 
 void
@@ -912,10 +913,11 @@ void init_random_generators(int const start_seed, RND_RunType run_type, std::str
 
 void
 random_delay(){
+	if( !option[ run::nodelay ]() ){
 	// no silly waiting in DEBUG or BOINC builds
+	// Test inside if statement so that nodelay option gets touched even in debug mode.
 #ifdef NDEBUG
 #ifndef BOINC
-	if( !option[ run::nodelay ]() ){
 		if( option[ run::delay ]() > 0 ) {
 			int waittime = option[ run::delay ]();
 			TR << "Delaying start of mini for " << waittime << " seconds due to -delay option" << std::endl;
@@ -931,9 +933,9 @@ random_delay(){
 				 << "To change the random wait time use -run::random_delay <int> " << std::endl;
 			utility::sys_sleep( waittime );
 		}
+#endif
+#endif
 	}
-#endif
-#endif
 }
 
 void

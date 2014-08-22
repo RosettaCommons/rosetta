@@ -19,5 +19,4 @@
 -membrane:no_interpolate_Mpair
 -membrane:Menv_penalties
 -membrane:Membed_init
--relax:membrane
 

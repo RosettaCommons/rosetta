@@ -1,8 +1,9 @@
 #include <iostream>
 #include <devel/init.hh>
 
-#include <basic/options/option.cc.gen.hh>
 #include <basic/options/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>

@@ -48,6 +48,8 @@ class Option:
         self.lower = lower;  self.upper = upper;  self.default = default;  self.legal=legal
         self.restrict_access = restrict_access;
         self.n = n;  self.n_lower = n_lower;  self.n_upper = n_upper
+        #Is this the synonymous member of an option group (e.g. -in:file:file)
+        self.is_option_group = False
         # Wraping c-strings in "
         if ctype == 'String' or ctype == 'Path' or ctype == 'File' or \
            ctype == 'StringVector' or ctype == 'PathVector' or ctype == 'FileVector':
@@ -103,6 +105,8 @@ class Option:
                 else:
                     s+='.def()'
         if self.restrict_access: s+= '.restrict_access(true)'
+        #These have to be last, as they're in the base class
+        if self.is_option_group: s+= '.is_group(true)'
         return s + ';\n'
 
 
@@ -202,11 +206,15 @@ def Option_Group(group, *args):
         for o in res:
             if o.group: o.group = group + ':' + o.group
             else: o.group = group
-            if o.name == group: found_option_for_group = True
+            if o.name == group:
+                found_option_for_group = True
+                o.is_option_group = True
         # In order to nest option specifiers in a flags file (passed with @flags.txt),
         # there must be a boolean option with the same name as each option group.
         if not found_option_for_group:
-            res.insert( 0, Option( group, 'Boolean', group=group, desc=group+" option group", legal='true', default='true' ) )
+            o = Option( group, 'Boolean', group=group, desc=group+" option group", legal='true', default='true' )
+            o.is_option_group = True
+            res.insert( 0, o )
     return res
 
 

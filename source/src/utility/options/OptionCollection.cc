@@ -54,12 +54,16 @@ namespace options {
 /// @brief Flag indicating that list of accessed option should be printed when destructor of OptionCollection is called.
 	bool OptionCollection::show_accessed_options_ = false;
 
+/// @brief Flag indicating that list of user set but not accessed option should be printed when destructor of OptionCollection is called.
+	bool OptionCollection::show_unused_options_ = false;
+
 	std::vector< OptionKey const *> OptionCollection::relevant_;
 
 
 	OptionCollection::~OptionCollection()
 	{
 		if( show_accessed_options_ ) show_accessed_options(std::cout);
+		if( show_unused_options_ ) show_unused_options(std::cout);
 	}
 
 
@@ -864,6 +868,53 @@ void OptionCollection::load_option_from_file(
 		stream << std::endl;
 	}
 
+
+	/// Local helper function for implementing show_unused_options
+	template< class T >
+	void show_unused_options_T(T i, T e, std::vector< std::string > &sv) {
+		for (; i != e; ++i ) {
+			Option const & opt( *i );
+			// We store the accessed status because user() will alter it.
+			bool accessed = opt.is_been_accessed();
+			// Don't count option groups, which are set by the nested
+			// syntax of flags files, but are never used.
+			if( !accessed && opt.user() && ! opt.is_group() ) {
+				std::ostringstream buf;
+				buf << "-" << opt.id() << " " << opt.value_string();
+				sv.push_back( buf.str() );
+			}
+			opt.set_accessed( accessed ); // Reset accessed to original state.
+		}
+	}
+
+	void OptionCollection::show_unused_options(std::ostream & stream) const {
+		using std::string;
+
+		std::vector< std::string > sv;
+		show_unused_options_T(booleans_.begin(),        booleans_.end(), sv);
+		show_unused_options_T(integers_.begin(),        integers_.end(), sv);
+		show_unused_options_T(reals_.begin(),           reals_.end(), sv);
+		show_unused_options_T(strings_.begin(),         strings_.end(), sv);
+		show_unused_options_T(files_.begin(),           files_.end(), sv);
+		show_unused_options_T(paths_.begin(),           paths_.end(), sv);
+		show_unused_options_T(boolean_vectors_.begin(), boolean_vectors_.end(), sv);
+		show_unused_options_T(integer_vectors_.begin(), integer_vectors_.end(), sv);
+		show_unused_options_T(real_vectors_.begin(),    real_vectors_.end(), sv);
+		show_unused_options_T(string_vectors_.begin(),  string_vectors_.end(), sv);
+		show_unused_options_T(file_vectors_.begin(),    file_vectors_.end(), sv);
+		show_unused_options_T(path_vectors_.begin(),    path_vectors_.end(), sv);
+
+		if( sv.size() > 0 ) {
+			std::sort(sv.begin(), sv.end());
+
+			// '\n' instead of std::endl so that the options won't get prefixed if stream is a tracer.
+			stream << "WARNING: The following options have been set, but have not yet been used:\n";
+			for(unsigned int i=0; i<sv.size(); i++) {
+				stream << "\t" << sv[i] << '\n';
+			}
+			stream << std::endl; // Now we flush
+		}
+	}
 
 	std::string
 	OptionCollection::get_argv() const {

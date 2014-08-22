@@ -1,7 +1,6 @@
 -include_sugars
 -include_lipids
 -read_pdb_link_records
--enable_branching
 -mute all
 -unmute core.chemical.carbohydrates
 -unmute core.pose.carbohydrates

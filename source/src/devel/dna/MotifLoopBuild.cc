@@ -53,6 +53,7 @@
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
 #include <protocols/motifs/IRCollection.hh>
 
+#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
@@ -75,12 +76,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 
-#include <basic/options/option.cc.gen.hh>
-
 #include <devel/dna/MotifLoopBuildCreator.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.cc.gen.hh>
 #include <core/id/types.hh>
 
 #include <core/scoring/rms_util.hh>

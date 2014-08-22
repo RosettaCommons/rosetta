@@ -1,4 +1,5 @@
-# -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
+# -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+# vi: set ts=2 noet:
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -83,12 +84,26 @@ from options_class import Option, Option_Group
 
 if __name__ == "__main__": print "Don't run this one, run options.py instead!"
 
+##################################################################
+# Option Group Ordering:
+# First comes the "major" option groups: in, out, run, jd2, score, packing
+# Next comes "general" option groups in alphabetical order
+# Then comes application-specific groups in alphabetical order
+# Finally comes personal/pilot groups in alphabetical order
+#
+# (Please leave a descriptive comment with any option group your move out of
+# alphabetical order to be associated with a logically related option group
+##################################################################
+
 # Data base of all rosetta options
 Options = Option_Group( '',
 
+###################################
+# Major option groups:
+
 	# Input options ---------------------------------------------------------------------------------------------------
 	Option_Group( 'in',
-		Option( 'in', 'Boolean', desc="Input option group", legal='true', default='true' ),
+#		Option( 'in', 'Boolean', desc="Input option group", legal='true', default='true' ),
 
 		# Termini options -----------------------------------------------------
 		#Option( 'termini', 'String', default = 'ALL', desc="Put full N and C termini on input structures"),
@@ -133,22 +148,21 @@ Options = Option_Group( '',
 				short="Load mineral surface residues into memory?",
 				legal=["true", "false"],
 				default="false"),
-		Option("enable_branching", "Boolean",
-				desc='Sets whether or not polymer branching is allowed.  '
-						'The default value is false.',
-				short="Allow polymer branching?",
-				legal=["true", "false"],
-				default="false"),
+#		Option("enable_branching", "Boolean",
+#				desc='Sets whether or not polymer branching is allowed.  '
+#						'The default value is false.',
+#				short="Allow polymer branching?",
+#				legal=["true", "false"],
+#				default="false"),
 
-    ## Membrane JD2 Option
-    ## Last Modified: 1/12/14
-    ## Author: Rebecca Alford
-    Option("membrane", "Boolean",
-					 desc="Initialize pose as a membrane protein using specified membrane parameters. Default is false",
-           short="initialize membrane",
-           legal=["true", "false"],
-           default="false"),
-
+		## Membrane JD2 Option
+		## Last Modified: 1/12/14
+		## Author: Rebecca Alford
+		Option("membrane", "Boolean",
+			desc="Initialize pose as a membrane protein using specified membrane parameters. Default is false",
+			short="initialize membrane",
+			legal=["true", "false"],
+			default="false"),
 
 		# PDB data-preservation options ---------------------------------------
 		Option( 'remember_unrecognized_res'  , 'Boolean',
@@ -188,8 +202,8 @@ Options = Option_Group( '',
 					"using harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding distance constraints.",
 					default="1.0" ),
 		Option( "metals_angle_constraint_multiplier", "Real", desc="Angles between metals, metal-binding atoms, and metal-binding atom parents "
-					"are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding angle "
-					"constraints.",
+					"are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0. "
+					"Set to 0.0 to skip adding angle constraints.",
 					default="1.0" ),
 
 		# Other input options -------------------------------------------------
@@ -208,15 +222,15 @@ Options = Option_Group( '',
 				desc="Read in structures from database.  Specify database via -inout:dbms:database_name and wanted "
 						"structures with -in:file:tags or select_structures_from_database"),
 
+#		Option( 'database_protocol', 'Integer', desc="Database to use when reading in structures", default="1"),
+		Option( 'select_structures_from_database', 'StringVector',
+				desc="specify an SQL query to determine which structures get read in from a database specified with "
+						"-inout:dbms:database_name.  SELECT query must return structures.tag"),
 		# Database options
 		Option_Group( 'dbms',
 			Option( 'struct_ids', 'StringVector',
 					desc="List of struct_ids (hex representation) to be used by the database job inputter"),
 		),
-		Option( 'database_protocol', 'Integer', desc="Database to use when reading in structures", default="1"),
-		Option( 'select_structures_from_database', 'StringVector',
-				desc="specify an SQL query to determine which structures get read in from a database specified with "
-						"-inout:dbms:database_name.  SELECT query must return structures.tag"),
 		Option_Group( 'path',
 			Option( 'path', 'PathVector',
 					desc="Paths to search for input files (checked after type-specific paths)",
@@ -224,17 +238,16 @@ Options = Option_Group( '',
 			Option( 'fragments', 'PathVector', desc="Fragment file input search paths", oldName='frag_dir' ),
 			Option( 'pdb', 'PathVector', desc="PDB file input search paths" ),
 			Option( 'database', 'PathVector',
-					desc="Database file input search paths.  If the database is not found the ROSETTA3_DB environment "
-							"variable is tried."),
-					),
+				desc="Database file input search paths.  If the database is not found the ROSETTA3_DB environment "
+					"variable is tried."),
+		), # in:path
 
 		# File options --------------------------------------------------------
 		Option_Group( 'file',
 			Option( 'file', 'Boolean', desc="Input file option group", legal='true', default='true' ),
 			Option( 's', 'FileVector', desc="Name(s) of single PDB file(s) to process", default=[] ),
 			Option( 't', 'FileVector', desc="Name(s) of second PDB file(s) to process (pairs with -s)" ),
-			Option( 'l', 'FileVector',  # TODO remove this option or move list to l
-					desc="File(s) containing list(s) of PDB files to process" ),
+			Option( 'l', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
 			Option( 'list', 'FileVector',
 					desc="File(s) containing list(s) of PDB files.  PDBs on the same line become one pose" ),
 			Option( 'screening_list','FileVector',
@@ -262,8 +275,8 @@ Options = Option_Group( '',
 					desc='file with list of tags to be resampled from file given with in:resample:silent',
 					default='TAGS' ),
 			Option( 'frag_files', 'FileVector', desc="Fragment input file names", default=[] ),
-			Option( 'frag_sizes', 'IntegerVector', desc="Fragment file sizes" ),
-                        Option( 'remap_pdb_atom_names_for', 'StringVector', desc="When reading PDBs, use geometry to rename atoms for the residues with the given three letter codes." ),
+#			Option( 'frag_sizes', 'IntegerVector', desc="Fragment file sizes" ),
+			Option( 'remap_pdb_atom_names_for', 'StringVector', desc="When reading PDBs, use geometry to rename atoms for the residues with the given three letter codes." ),
 			Option( 'extra_res', 'FileVector', desc=".params file(s) for new residue types (e.g. ligands)" ),
 			Option( 'extra_res_fa', 'FileVector',
 					desc=".params file(s) for new fullatom residue types (e.g. ligands)" ),
@@ -301,14 +314,14 @@ Options = Option_Group( '',
 			Option( 'fragB', 'String' ),
 			Option( 'surface_vectors', 'String' , desc="Input file containing three sets of xyz coordinates which define the plane and periodicity of the solid surface"),
 			Option( 'xyz', 'String',desc="Input coordinates in a raw XYZ format (three columns)" ),
-			Option( 'fragA_size', 'Integer', default = '9' ),
+#			Option( 'fragA_size', 'Integer', default = '9' ),
 			##Option( 'fragB_size', 'Integer', default = '3' ),
 			Option('keep_input_scores', 'Boolean',
 					desc = "Keep/Don't keep scores from input file in Pose.",
 					default = 'true'
 			),
 			Option( 'lazy_silent', 'Boolean', default = 'false', desc = 'Activate LazySilentFileJobInputter' ),
-		  Option( 'silent', 'FileVector', desc = 'silent input filename(s)',default=[]),
+			Option( 'silent', 'FileVector', desc = 'silent input filename(s)',default=[]),
 			Option( 'force_silent_bitflip_on_read', 'Boolean', default = 'false', desc = 'Force bit-flipping when reading binary silent files.  This is useful if the files are produced on a little-endian system and read on a big-endian system.' ),
 			Option( 'atom_tree_diff', 'FileVector', desc= 'atom_tree_diff input filename(s)'),
 			Option( 'zip', 'String', desc = 'zipped input file, used for BOINC database'),
@@ -325,7 +338,7 @@ Options = Option_Group( '',
 			Option( 'silent_energy_cut', 'Real', default = '1.0', desc = 'energy cut for silent-files' ),
 			Option( 'silent_list', 'FileVector', desc = 'Silent input filename list(s) - like -l is to -s '),
 			Option('silent_renumber', 'Boolean', desc ='renumber decoys in not_universal_main or not', default='false'),
-			Option( 'silent_optH', 'Boolean', desc="Call optH when reading a silent file"),
+#			Option( 'silent_optH', 'Boolean', desc="Call optH when reading a silent file"),
 			Option('silent_struct_type', 'String',
 					desc='Type of SilentStruct object to use in silent-file input',
 					default='protein'
@@ -393,16 +406,16 @@ Options = Option_Group( '',
 					desc='Governs whether input poses are rescored or not in not_universal_main, defaults to false.',
 					default='false' ),
 
-            ## Input Membrane Options
-            ## Last Modified: 1/12/14 - Old & New Option System
-            ## Author: Rebecca Alford
-            Option('spanfile', 'String', desc='Membrane spanning file'),
-            Option('lipofile', 'String', desc='Membrane exposure file'),
+			## Input Membrane Options
+			## Last Modified: 1/12/14 - Old & New Option System
+			## Author: Rebecca Alford
+			Option('spanfile', 'String', desc='Membrane spanning file'),
+			Option('lipofile', 'String', desc='Membrane exposure file'),
 
-            # Option for new membrane input system (Added by Rebecca: 1/12/14)
-			Option('membrane_input', 'String', desc='File containing all user inputs for membrane modeling'),
-            Option('membrane_chains', 'String', desc='Membrane chains to initialize full pose'),
-			Option('embedfile', 'String', desc='Embedding definition file'),
+			# Option for new membrane input system (Added by Rebecca: 1/12/14)
+#			Option('membrane_input', 'String', desc='File containing all user inputs for membrane modeling'),
+#			Option('membrane_chains', 'String', desc='Membrane chains to initialize full pose'),
+#			Option('embedfile', 'String', desc='Embedding definition file'),
 			Option('HDX', 'String', desc='HDX (Hydrogen exchange data file'),
 			Option('d2h_sa_reweight', 'Real', desc='d2h_sa reweight', default ='1.00'),
 			Option( 'sucker_params', 'File',
@@ -420,7 +433,7 @@ Options = Option_Group( '',
 			Option( 'ddg_predictions_file', 'File',
 					desc='File that contains mutational ddG information. Used by ddG task operation/filter.',
 					default=''),
-		  Option( 'input_res', 'ResidueChainVector', desc='Residues already present in starting file',default=[]),
+			Option( 'input_res', 'ResidueChainVector', desc='Residues already present in starting file',default=[]),
 			Option( 'minimize_res', 'IntegerVector', desc='Residues to minimize',default=[]),
 			Option( 'md_schfile', 'String', desc='File name containing MD schedule'),
 			Option("read_pdb_link_records", "Boolean",
@@ -431,7 +444,7 @@ Options = Option_Group( '',
 					default="false"),
 			Option( 'native_contacts', 'File',
 					desc='native contacts pair list for fnat/fnon-nat calculation in Docking'),
-		), # file
+		), # in:file
 
 		# RDF options ---------------------------------------------------------
 		Option_Group( 'rdf',
@@ -439,7 +452,7 @@ Options = Option_Group( '',
 				desc='separate RDFs by SS for backbone atypes ',
 				default = 'true'
 			),
-		), # rdf
+		), # in:rdf
 
 	), # in
 
@@ -491,7 +504,7 @@ Options = Option_Group( '',
 					default='false'),
 			Option( 'retry_failed_reads','Boolean',desc="If a database read fails for an unknown reason, try again several times before giving up",default='false')
 
-		),  # dbms
+		),  # inout:dbms
 	),  # inout
 
 	# Output options --------------------------------------------------------------------------------------------------
@@ -502,8 +515,8 @@ Options = Option_Group( '',
 		Option( 'shuffle_nstruct', 'Integer', desc="total number of decoys to produce", default="1" ),
 		Option( 'prefix', 'String', desc="Prefix for output structure names, like old -series code", default="" ),
 		Option( 'suffix', 'String', desc="Suffix for output structure names", default="" ),
-		Option( 'force_output_name', 'String',
-				desc="Force output name to be this.  Needed for some cluster environments." ),
+#		Option( 'force_output_name', 'String',
+#				desc="Force output name to be this.  Needed for some cluster environments." ),
 		Option( 'no_nstruct_label', 'Boolean', desc="Do not tag the first output structure with _0001",
 				default="false" ),
 		Option( 'pdb_gz', 'Boolean', desc="Compress (gzip) output pdbs", default="false", oldName="output_pdb_gz" ),
@@ -535,6 +548,9 @@ Options = Option_Group( '',
 				default="1.0"),
 		Option( 'show_accessed_options', 'Boolean',
 				desc="In the end of the run show options that has been accessed.",
+				default="false"),
+		Option( 'show_unused_options', 'Boolean',
+				desc="In the end of the run show options that were set by the user but never accessed. (Will automatically happen for JD2 protocols.)",
 				default="false"),
 		Option( 'sf', 'File', desc='filename for score output', default='score.fsc' ),
 
@@ -611,12 +627,12 @@ Options = Option_Group( '',
 			Option( 'silent_print_all_score_headers', 'Boolean',
 					desc='Print a SCORE header for every SilentStruct in a silent-file',
 					default='false' ),
-			Option( 'silent_decoytime', 'Boolean',
-					desc='Add time since last silent structure was written to score line',
-					default = 'false' ),
-			Option( 'silent_comment_bound', 'Integer',
-					desc='String data longer than this ends up as remark rather than in score line',
-					default = '15' ),
+#			Option( 'silent_decoytime', 'Boolean',
+#					desc='Add time since last silent structure was written to score line',
+#					default = 'false' ),
+#			Option( 'silent_comment_bound', 'Integer',
+#					desc='String data longer than this ends up as remark rather than in score line',
+#					default = '15' ),
 			Option( 'raw', 'Boolean', desc="Use silent-type file output", default="false" ),
 			Option( 'weight_silent_scores', 'Boolean', desc='Weight scores in silent-file output.', default='true' ),
 
@@ -662,9 +678,9 @@ Options = Option_Group( '',
 			# Fragment file options -------------------------------------------
 			Option( 'frag_prefix', 'String', desc='Prefix for fragment output', default='default.frags' ),
 
-                        # SDF file options
+			# SDF file options
 			Option( 'no_extra_sdf_data', 'Boolean', desc='Do not add extra round-tripping data to SDF file output', default='false' ),
-		), # file
+		), # out:file
 
 		# Path options -------------------------------------------------------
 		Option_Group( 'path',
@@ -672,466 +688,15 @@ Options = Option_Group( '',
 			Option( 'path', 'Path', desc="Default file output path", default="." ),
 			Option( 'pdb', 'Path', desc="PDB file output path" ),
 			Option( 'score', 'Path', desc="Score file output path" ),
-			Option( 'movie', 'Path', desc="Movie file output path" ),
+#			Option( 'movie', 'Path', desc="Movie file output path" ),
 			Option( 'scratch', 'Path', desc="use this path as scratch drive", default=['/scratch/USERS/'] ),
 			Option( 'mpi_rank_dir','Boolean',
 					desc="Put silent-output files in individual directory as determined by mpi-rank",
 					default='false'),
-		), # path
+		), # out:path
 	), # out
 
-
-	# Rigid body motion options ---------------------------------------------------------------------------------------
-	Option_Group( 'rigid',
-		Option('chainbreak_bias', 'Real', desc = 'Strength of bias applied to the translation component of rigid body moves to close chainbreak', default = '0.00'),
-		Option('close_loops', 'Boolean', desc = 'Perform loop closure at the end of medal', default = 'true'),
-		Option('fragment_cycles', 'Integer', desc = 'Number of fragment insertion/rigid body cycles', default = '10000'),
-		Option('log_accepted_moves', 'Boolean', desc = 'Write accepted moves to silent file output', default = 'false'),
-		Option('max_ca_ca_dist', 'Real', desc = 'Maximum distance between consecutive CA atoms before chunk partitioning occurs', default = '5.0'),
-		Option('medium_range_seqsep', 'Integer', desc = 'Constraints with sequence separation less than x are scored', default = '30'),
-		Option('patch', 'File', desc = 'Patch file containing energy terms and their respective weights'),
-		Option('residues_backbone_move', 'Integer', desc = 'Number of residues perturbed by a backbone move', default = '5'),
-		Option('rotation', 'Real', desc = 'Rotation magnitude', default = '2.5'),
-		Option('sampling_prob', 'File', desc = 'Normalized, per-residue sampling probabilities'),
-		Option('score', 'String', desc = 'Centroid-level score function', default = 'score3'),
-		Option('sequence_separation', 'Integer', desc = 'Maximum sequence separation for scoring chainbreaks', default = '20'),
-		Option('short_range_seqsep', 'Integer', desc = 'Constraints with sequence separation less than x are scored', default = '15'),
-		Option('small_cycles', 'Integer', desc = 'Number of small/shear cycles', default = '8000'),
-		Option('stages', 'Integer', desc = 'Number of stages over which to interpolate ramped values', default = '4'),
-		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),
-		Option('translation', 'Real', desc = 'Translation magnitude', default = '0.5'),
-	),
-
-	Option_Group( 'MM',
-		Option( 'ignore_missing_bondangle_params', 'Boolean', default = 'false', desc = 'ignore failed lookups for missing bond angle parameters' ),
-	), # MM
-	Option_Group( 'qsar',
-		Option( 'weights','String',default='talaris2013',desc = 'select qsar weight set to use'),
-		Option( 'grid_dir','String',desc = 'Directory to store grids in'),
-		Option( 'max_grid_cache_size','Integer',desc= 'delete old grids if grid cache exceeds specified size')
-	),
-
-	# Some of the PCS options are migrating into TopologyClaimer framework.
-	Option_Group( 'PCS',
-			 Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor informations, AT EACH ENERGY EVALUATION. More suited for rescoring'),
-			 Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
-#	     Option( 'npc_files_input', 'StringVector', desc = 'A list of pseudocontact shift (PCS)  files in the .npc format. One file per lanthanide' ),
-#			 Option( 'pcs_weight', 'Real', desc = 'Reweight the pseudocontact shift (PCS) energy term.'),
-#			 Option( 'pcs_grid_search_parameter', 'StringVector', desc = 'Describe the grid search: `Residue_number Atom_name Edge_size Step_size` will describe a grid search centered at the residue number and atom name specified, the grid search beeing a cube of edge edge_size, and step step_size. Example: -pcs_grid_search_parameter 68 CB 12 1' ),
-#			 Option( 'minimize_tensor', 'Boolean', desc = 'Optimize the best tensor found form the grid search'),
-	),
-Option_Group( 'PCSTS1',
-			 Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
-			 Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
-),
-Option_Group( 'PCSTS2',
-			 Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
-			 Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
-),
-Option_Group( 'PCSTS3',
-			 Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
-			 Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
-),
-Option_Group( 'PCSTS4',
-			 Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
-			 Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
-),
-	# Coarse options
-	##Option_Group( 'coarse',
-	##  Option( 'crescore', 'Boolean', desc = "rescore structures in fine and coarse"),
-	##  Option( 'crelax', 'Boolean', desc = "rescore structures in fine and coarse after relax"),
-	##  Option( 'crepack', 'Boolean', desc = "rescore structures in fine and coarse after repack"),
-	##  Option( 'cstrip_relax', 'Boolean', desc = "rescore structures in fine and coarse, full repack (stripped sidechains) and relax"),
-	##  Option( 'cjob','String', desc = "list of input pdb files"),
-	##),
-
-
-	##############################################################################
-	# PocketGrid/Fingerprint options ---------------------------------------------
-	Option_Group('pocket_grid',
-		Option( 'pocket_grid_size',	     'Real',default='0',desc='grid spacing in Angstroms'),
-		Option( 'pocket_grid_size_x',	     'Real',default='10',desc='grid spacing in Angstroms'),
-		Option( 'pocket_grid_size_y',	     'Real',default='10',desc='grid spacing in Angstroms'),
-		Option( 'pocket_grid_size_z',	     'Real',default='10',desc='grid spacing in Angstroms'),
-		Option( 'pocket_grid_spacing',	     'Real',default='0.5',desc='grid spacing in Angstroms'),
-		Option( 'pocket_max_spacing',	     'Real',default='8',desc='Maximum residue-residue distance to be considered a pocket'),
-		Option( 'pocket_min_size',	     'Real',default='10',desc='Minimum pocket size to score, in cubic Angstroms'),
-		Option( 'pocket_max_size',	     'Real',default='0',desc='Maximum pocket size to report, in cubic Angstroms, 0 for no limit'),
-		Option( 'pocket_probe_radius',	     'Real',default='1.0',desc='radius of surface probe molecule'),
-		Option( 'central_relax_pdb_num',     'String',default='-1',desc='Residue number:(optional)Chain around which to do Pocket Constraint'),
-		Option( 'pocket_ntrials',	     'Integer',default='100000',desc='Number of trials to use for backrub'),
-		Option( 'pocket_num_angles',	     'Integer',default='1',desc='Number of different pose angles to measure pocket score at'),
-		Option( 'pocket_side', 'Boolean', desc="Include only side chain residues for target surface", default='false' ),
-		Option( 'pocket_dump_pdbs', 'Boolean', desc="Generate PDB files",default='false' ),
-    Option( 'pocket_dump_exemplars', 'Boolean', desc="Generate exemplar PDB files",default='false' ),
-    Option( 'pocket_filter_by_exemplar', 'Boolean', desc="Restrict the pocket to the exemplars",default='false' ),
-		Option( 'pocket_dump_rama', 'Boolean', desc="Generate Ramachandran maps for each pocket cluster",default='false' ),
-		Option( 'pocket_restrict_size', 'Boolean', desc="Pockets that are too large return score of 0",default='false' ),
-		Option( 'pocket_ignore_buried', 'Boolean', desc="Ignore pockets that are not solvent exposed",default='true' ),
-		Option( 'pocket_only_buried', 'Boolean', desc="Identify only pockets buried in the protein core (automatically sets -pocket_ignored_buried false)",default='false' ),
-		Option( 'pocket_psp', 'Boolean', desc="Mark Pocket-Solvent-Pocket events as well",default='true' ),
-		Option( 'pocket_sps', 'Boolean', desc="Unmark Solvent-Pocket-Solvent events",default='false' ),
-    Option( 'pocket_search13', 'Boolean', desc="Search in 13 directions (all faces and edges of a cube) versus faces and diagonal",default='false' ),
-		Option( 'pocket_surface_score',	     'Real',default='0',desc='Score given to pocket surface'),
-		Option( 'pocket_surface_dist',	     'Real',default='2.5',desc='Distance to consider pocket surface'),
-		Option( 'pocket_buried_score',	     'Real',default='5.0',desc='Score given to deeply buried pocket points'),
-		Option( 'pocket_buried_dist',	     'Real',default='2.0',desc='Distance to consider pocket buried'),
-    Option( 'pocket_exemplar_vdw_pen',       'Real',default='300.0',desc='Temporary max penalty for vdW class in exemplar discovery'),
-		Option( 'pocket_debug_output', 'Boolean', desc="Print any and all debuggind output related to pockets", default='false' ),
- 	  Option( 'print_grid', 'Boolean', desc="print the grid points into a PDB file",default='false' ),
-		Option( 'extend_eggshell', 'Boolean', desc="Extend the eggshell points",default='false' ),
-    Option( 'extend_eggshell_dist',	     'Real',default='1',desc='Distance to extend eggshell'),
-    Option( 'extra_eggshell_dist',	     'Real',default='4',desc='Distance to extend extra eggshell points'),
-    Option( 'eggshell_dist',     'Real',default='4',desc='Distance to extend eggshell points from ligand atoms'),
-		Option( 'reduce_rays',	     'Boolean', default='true', desc='reduce no. of rays by rounding and removing duplicate xyz coordinates'),
-    Option( 'pocket_static_grid', 'Boolean', desc="No autoexpanding grid", default='false' ),
-	),
-
-	Option_Group('fingerprint',
-    Option( 'print_eggshell', 'Boolean', desc="print the eggshell points into a PDB file",default='false' ),
-		Option( 'atom_radius_scale', 'Real', default='0.9', desc='Scale to shrink the radius of atom'),
-		Option( 'atom_radius_buffer', 'Real', default='1.0', desc='Value to subtract from all atomic radii, to match PocketGrid buffer thickness'),
-		Option( 'packing_weight', 'Real', default='1', desc='Add weight to rho large deviation'),
-		Option( 'dist_cut_off', 'Real', default='5', desc='set cut_off distance to add packing weight'),
-    Option( 'include_hydrogens', 'Boolean', desc="include hydrogen atoms for fingerprint",default='false' ),
-    Option( 'use_DARC_gpu', 'Boolean', desc="use GPU when computing DARC score",default='false' ),
-    Option( 'square_score', 'Boolean', desc="square the terms in DARC scoring function",default='false' ),
-    Option( 'set_origin',     'Integer',default='0',desc='option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center'),
-    Option( 'origin_res_num', 'Integer', default='0', desc='residue to be used as origin'),
-	),
-
-	##############################################################################
-	# ContactMap options
-	Option_Group( 'contactMap',
-		Option( 'contactMap', 'Boolean',
-			desc="contactMap option group",
-			legal='true', default='true'
-		),
-		Option( 'prefix', 'String',
-			default = 'contact_map_',
-			desc = "Prefix of contactMap filename"
-		),
-		Option( 'distance_cutoff', 'Real',
-			default = '10.0',
-			desc = "Cutoff Backbone distance for two atoms to be considered interacting"
-		),
-		Option( 'energy_cutoff', 'Real',
-			default = '1.0',
-			lower = '0.0', upper = '1.0',
-			desc= "Energy_Cutoff (percentage value - only affecting silent file input)"
-		),
-		Option( 'region_def', 'String',
-			default = '',
-			desc = "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X"
-		 ),
-		Option( 'row_format', 'Boolean',
-			default = 'false',
-			desc = "Flag whether to output in row instead of matrix format"
-		),
-		Option( 'distance_matrix', 'Boolean',
-			default = 'false',
-			desc = "Output a distance matrix instead of a contact map"
-		),
-	),
-	##############################################################################
-	# Docking options ---------------------------------------------------------
-	Option_Group('docking',
-		 Option( 'kick_relax', 'Boolean',
-                        desc='Add relax step at the end of symmetric docking',
-                         default='false'
-                        ),
-		Option( 'docking', 'Boolean',
-			desc='Docking option group',
-			legal='true', default='true'
-			),
-		Option( 'view', 'Boolean',
-			desc='Decide whether to use the viewer (graphical) or not',
-			default='false'
-			),
-		Option( 'no_filters', 'Boolean',
-			desc='Toggle the use of filters',
-			default='false'
-			),
-    Option( 'design_chains', 'StringVector',
-      short='Which chains do we want to allow to design?',
-      desc='Pass in the one-letter chain identifiers, separated by space, for each chain to design: -design_chains A B',
-      ),
-		Option( 'recover_sidechains', 'File',
-			short='take sidechains from this pdb',
-			desc='usually side-chains are taken from the input structure if it is fullatom - this overrides this behavior and takes sidechains from the pdb-file',
-		),
-		Option('partners', 'String',
-			short='defines docking partners by chainID for multichain docking partners',
-			desc='defines docking partners by ChainID, example: docking chains L+H with A is -partners LH_A',
-			default='_'
-			),
-		Option('docking_local_refine', 'Boolean',
-			short='Skip centroid mode',
-			desc='Do a local refinement of the docking position (high resolution)',
-			default='false'
-			),
-		Option('low_res_protocol_only', 'Boolean',
-			short='Only low resolution',
-			desc='Run only low resolution docking, skip high resolution docking',
-			default='false'
-			),
-		Option('randomize1', 'Boolean',
-			short='Randomize the first docking partner.',
-			desc='Randomize the first docking partner.',
-			default='false'
-			),
-		Option('randomize2', 'Boolean',
-			short='Randomize the second docking partner.',
-			desc='Randomize the second docking partner.',
-			default='false'
-			),
-		Option('use_ellipsoidal_randomization', 'Boolean',
-			short='Use ellipsoidal docking randomization.',
-			desc='Modify docking randomization to use ellipsoidal rather than spherical method.',
-			default='false'
-			),
-		Option('spin', 'Boolean',
-			short='Spin a second docking partner.',
-			desc='Spin a second docking partner around axes from center of mass of partner1 to partner2',
-			default='false'
-			),
-		Option('dock_pert', 'RealVector',
-			short='Do a small perturbation with partner two: -dock_pert ANGSTROMS DEGREES.',
-			desc='Do a small perturbation with partner two: -dock_pert ANGSTROMS DEGREES.  Good values for protein docking are 3 A and 8 deg.',
-			n='2'
-# DO NOT supply default values for this option -- reasonable values differ for protein and ligand protocols.
-# Also, default values will cause a perturbation to *always* occur, even with no command line flags -- very surprising.
-# Adding defaults WILL BREAK existing protocols in unexpected ways.
-# Decided by Jeff, Monica, Ian, and Sid in March 2008.
-#
-# Jeff notes that eventually there should be 3 parameters, like Rosetta++:
-# rotation, normal translation, and perpendicular translation.
-			),
-		Option('uniform_trans', 'Real',
-				short='Uniform random repositioning within a sphere of the given radius.'
-			),
-    Option('center_at_interface', 'Boolean',
-        short='Perform all initial perturbations with the center of rotation at the interface between partners',
-        desc='Perform all initial perturbations with the center of rotation at the interface between partners instead of at the center of mass of the oppposite partner.',
-        default='false'
-        ),
-		Option('dock_mcm_first_cycles', 'Integer',
-			short='First cycle of DockMCMProtocol.',
-			desc='Perfrom 4 cycles to let the filter decide to continue.',
-			default='4'
-			),
-		Option('dock_mcm_second_cycles', 'Integer',
-			short='Second cycle of DockMCMProtocol.',
-			desc='If the first cycle pass the fliter, continue 45 cycles.',
-			default='45'
-			),
-		Option('docking_centroid_outer_cycles', 'Integer',
-			short='Outer cycles during docking rigid body adaptive moves.',
-			desc='Outer cycles during cking rigid body adaptive moves.',
-			default='10'
-			),
-		Option('docking_centroid_inner_cycles', 'Integer',
-			short='Inner cycles during docking rigid body adaptive moves.',
-			desc='Inner cycles during docking rigid body adaptive moves.',
-			default='50'
-			),
-		##Option('dock_mcm', 'Boolean',
-		##	   short='Do a monte-carlo minimize search.',
-		##       desc='Do a monte-carlo minimize search.',
-		##       default='true'
-		##),
-		Option('dock_min', 'Boolean',
-			short='Minimize the final fullatom structure.',
-			desc='Minimize the final fullatom structure.',
-			default='false'
-			),
-		Option('flexible_bb_docking', 'String',
-			short='How to do flexible backbone docking, if at all.',
-			desc='How to do flexible backbone docking, if at all. Choices include fixedbb, ccd, alc, and backrub.',
-			default='fixedbb'
-			),
-		Option('flexible_bb_docking_interface_dist', 'Real',
-			short='Distance between chains required to define a residue as having flexible backbone (ie. loop).',
-			desc='Distance between chains required to define a residue as having flexible backbone (ie. loop).',
-			default='10.0'
-			),
-		Option('ensemble1', 'String',
-			short='denotes partner1 as an ensemble',
-			desc='turns on ensemble mode for partner 1.  String is multi-model pdb file',
-			default=''
-			),
-		Option('ensemble2', 'String',
-			short='denotes partner2 as an ensemble',
-			desc='turns on ensemble mode for partner 2.  String is multi-model pdb file',
-			default=''
-			),
-		Option('dock_mcm_trans_magnitude', 'Real',
-			short='The magnitude of the translational perturbation during mcm in docking.',
-			desc='The magnitude of the translational perturbation during mcm in docking.',
-			default='0.1'
-			),
-		Option('dock_mcm_rot_magnitude', 'Real',
-			short='The magnitude of the rotational perturbation during mcm in docking.',
-			desc='The magnitude of the rotational perturbation during mcm in docking.',
-			default='5.0'
-			),
-                Option('minimization_threshold', 'Real',
-                        short='Threhold for Rosetta to decide whether to minimize jump after a rigid_pert',
-                        desc='Threhold for Rosetta to decide whether to minimize jump after a rigid_pert',
-                        default='15'
-                        ),
-                Option('temperature', 'Real',
-                        short='Temperature setting for the mc object during rigid-body docking',
-                        desc='Temperature setting for the mc object during rigid-body docking',
-                        default='0.8'
-                        ),
-                Option('repack_period', 'Integer',
-                        short='full repack period during dockingMCM',
-                        desc='full repack period during dockingMCM',
-                        default='8'
-                        ),
-                Option('extra_rottrial', 'Boolean',
-                        short='extra rotamer trial after minimization',
-                        desc='extra rotamer trial after minimization',
-                        default='false'
-                        ),
-		Option('dock_rtmin', 'Boolean',
-			short='does rotamer trials with minimization, RTMIN',
-			desc='does rotamer trials with minimization, RTMIN',
-			default='false'
-			),
-		Option('sc_min', 'Boolean',
-			short='does sidechain minimization of interface residues',
-			desc='does sidechain minimization of interface residues',
-			default='false'
-			),
-		Option('norepack1', 'Boolean',
-			short='Do not repack the side-chains of partner 1.',
-			desc='Do not repack the side-chains of partner 1.',
-			default='false'
-			),
-		Option('norepack2', 'Boolean',
-			short='Do not repack the side-chains of partner 2.',
-			desc='Do not repack the side-chains of partner 2.',
-			default='false'
-			),
-		Option('bb_min_res', 'IntegerVector',
-			short='Minimize backbone at these positions.',
-			desc='Minimize backbone at these positions.'
-			),
-		Option('sc_min_res', 'IntegerVector',
-			short='Minimize backbone at these positions.',
-			desc='Minimize backbone at these positions.'
-			),
-		Option('dock_ppk', 'Boolean',
-			short='docking prepack mode',
-			desc='docking prepack mode',
-			default='false'
-			),
-		Option('max_repeats', 'Integer',
-			short='how many repeats to use',
-			desc='If a decoy does not pass the low- and high-resolution filters, how many attempts to make before failur',
-			default='1000'
-			),
-		Option('dock_lowres_filter', 'RealVector',
-			short='manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>',
-			desc='manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>. Default values for protein docking are 10.0 and 1.0'
-			),
-		Option( 'multibody', 'IntegerVector', desc="List of jumps allowed to move during docking" ),
-
-		Option('ignore_default_docking_task', 'Boolean',
-					 short='Ignore the DockingTask',
-					 desc='Allows the user to define another task to give to Docking and will ignore the default DockingTask.  Task will default to designing everything if no other TaskFactory is given to docking.',
-					 default='false'
-					 ),
-
-		################ patches for explicit scoring - NGS
-		Option( 'low_patch', 'String',
-			desc="Name of weights patch file (without extension .wts) to use during rigid body "),
-		Option( 'high_patch', 'String',
-			desc="Name of weights patch file (without extension .wts) to use during docking"),
-		Option( 'high_min_patch', 'String',
-			desc="Name of weights patch file (without extension .wts) to use during "),
-		Option( 'pack_patch', 'String',
-			desc="Name of weights patch file (without extension .wts) to use during packing"),
-     		Option('use_legacy_protocol', 'Boolean',
-			short='Use the legacy high resolution docking algorithm.',
-			desc='Use the legacy high resolution docking algorithm for output compatibility.',
-			default='false'
-			),
-                Option('docklowres_trans_magnitude', 'Real',
-                        short='The magnitude of the translational perturbation during lowres in docking.',
-                        desc='The magnitude of the translational perturbation during lowres in docking.',
-                        default='0.7'
-                        ),
-                Option('docklowres_rot_magnitude', 'Real',
-                        short='The magnitude of the rotational perturbation during lowres in docking.',
-                        desc='The magnitude of the rotational perturbation during lowres in docking.',
-                        default='5.0'
-                        ),
-
-		###################################################################################
-		# ligand options ( part of docking )--------------------------------------
-		Option_Group( 'ligand',
-			Option( 'ligand', 'Boolean', desc="docking:ligand option group", legal='true', default='true' ),
-			Option( 'protocol', 'String', desc="Which protocol to run?", default='abbreviated' ),
-			Option( 'soft_rep', 'Boolean', desc="Use soft repulsive potential?", default='false' ),
-			Option( 'tweak_sxfn', 'Boolean', desc="Apply default modifications to the score function?", default='true' ),
-			Option( 'old_estat', 'Boolean', desc="Emulate Rosetta++ electrostatics? (higher weight, ignore protein-protein)", default='false' ),
-			Option( 'random_conformer', 'Boolean', desc="Start from a random ligand rotamer chosen from the library", default='false' ),
-			Option( 'improve_orientation', 'Integer', desc="Do N cycles of randomization to minimize clashes with backbone" ),
-			Option( 'mutate_same_name3', 'Boolean', desc="Allow ligand to 'design' to residue types with same name3?  Typically used for protonation states / tautomers.", default='false' ),
-			Option( 'subset_to_keep', 'Real', desc="When selecting a subset of ligand poses, what fraction (number if > 1.0) to keep?", default='0.05' ),
-			Option( 'min_rms', 'Real', desc="When selecting a subset of ligand poses, all must differ by at least this amount.", default='0.8' ),
-			Option( 'max_poses', 'Integer', desc="When selecting a subset of ligand poses, select as most this many.", default='50' ),
-			Option( 'minimize_ligand', 'Boolean', desc="Allow ligand torsions to minimize?", default='false' ),
-			Option( 'harmonic_torsions', 'Real', desc="Minimize with harmonic restraints with specified stddev (in degrees)", default='10.0' ),
-			Option( 'use_ambig_constraints', 'Boolean', desc="Use ambiguous constraints to restrain torsions instead of adding and removing constraints", default='false' ),
-			Option( 'shear_moves', 'Integer', desc="Do N pseudo-shear moves on ligand torsions per MCM cycle", default='0' ),
-			Option( 'minimize_backbone', 'Boolean', desc="Allow protein backbone to minimize?  Restrained except near ligand.", default='false' ),
-			Option( 'harmonic_Calphas', 'Real', desc="Minimize with harmonic restraints with specified stddev (in Angstroms)", default='0.2' ),
-			Option( 'tether_ligand', 'Real', desc="Restrain ligand to starting point with specified stddev (in Angstroms)" ),
-			Option( 'start_from', 'RealVector', desc="One or more XYZ locations to choose for the ligand:  -start_from X1 Y1 Z1  -start_from X2 Y2 Z2  ..." ),
-			Option('option_file', 'String', desc="Name of Ligand Option File for use with multi_ligand_dock application"),
-			Option('rescore', 'Boolean', desc="No docking (debug/benchmark mode)", default='false'),
-			Option_Group( 'grid',
-				Option( 'grid', 'Boolean', desc="docking:ligand:grid option group", legal='true', default='true' ),
-				Option( 'grid_kin', 'File', desc="Write kinemage version of generated grid to named file" ),
-				Option( 'grid_map', 'File', desc="Write grid to named file as electron density in BRIX (aka `O'-map) format" ),
-			), # grid
-    ),
-	Option_Group( 'symmetry',
-		Option( 'minimize_backbone', 'Boolean', desc="Allow protein backbone to minimize? ", default='false' ),
-		Option( 'minimize_sidechains', 'Boolean', desc="Allow protein sidechains to minimize? ", default='false' ),
-	),
-  ),
-
 	###################################################################################
-
-	# Residue protonation state options
-	Option_Group( 'pH' ,
-		Option( 'pH_mode', 'Boolean', desc="Allow protonated/deprotonated versions of the residues based on pH", default='false' ),
-		Option( 'keep_input_protonation_state', 'Boolean', desc="Read in residue protonation states from input pdb?", default='false' ),
-		Option( 'value_pH', 'Real', desc="pH value input for the pHEnergy score", default = '7.0' ),
-		Option_Group( 'calc_pka',
-			Option( 'pka_all', 'Boolean', desc="Calculate pKa values for all protonatable protein residues in the PDB?", default='false' ),
-			Option( 'pka_for_resnos', 'RealVector', desc="Residue no whose pKa value is to be determined", default = '0' ),
-			Option( 'pka_for_chainno', 'String', desc="Chain no of the residue whose pKa is to be determined", default = 'A' ),
-			Option( 'pH_neighbor_pack', 'Boolean', desc="Pack the neighbors while calculating pKa?", default='false' ),
-			Option( 'pka_rad', 'Real', desc="Radius of repack", default = '5.0' ),
-			Option( 'pH_prepack', 'Boolean', desc="Prepack structure before calculating pKa values?", default='false' ),
-			Option( 'pH_relax', 'Boolean', desc="Relax structure before calculating pKa values?", default='false' ),
-			Option( 'rotamer_prot_stats', 'Boolean', desc="Get rotamer protonation statistics when titrating?", default='false' ),
-		),
-		Option( 'pH_unbound', 'FileVector', desc="Name(s) of unbound receptor and ligand PDB file(s)" ),
-		Option( 'output_raw_scores', 'Boolean', desc="Return raw scores contributing to interface score?" ),
-		Option( 'pre_process', 'Boolean', desc="Refine rigid body orientation?" ),
-		Option( 'cognate_partners', 'String', desc="Chain IDs for the cognate complex", default='_' ),
-		Option( 'cognate_pdb', 'File', desc="File containing the cognate Antigen-Antibody complex" ),
-	),
-
-	###################################################################################
-
 	# Run options ---------------------------------------------------------
 	Option_Group( 'run',
 		Option( 'run', 'Boolean',
@@ -1140,10 +705,10 @@ Option_Group( 'PCSTS4',
 			),
 		Option( 'batches', 'FileVector', desc= 'batch_flag_files', default='' ),
 		Option( 'no_prof_info_in_silentout','Boolean',desc='no time-columns appears in score/silent - files', default='false' ),
-		##		Option( 'no_execptions', 'Boolean', desc='always exit immediatly if EXCN is thrown ... make backtracing easier', default='false' ),
+		##Option( 'no_execptions', 'Boolean', desc='always exit immediatly if EXCN is thrown ... make backtracing easier', default='false' ),
 		##Option( 'ralph', 'Boolean',
-		##				desc='Give some more output to stderr and stdout',
-		##			  default='false'
+		##		desc='Give some more output to stderr and stdout',
+		##		default='false'
 		##),
 		Option( 'archive', 'Boolean', desc='run MPIArchiveJobDistributor', default='false' ),
 		Option( 'n_replica', 'Integer', desc='run MPIMultiCommJobDistributor with n_replica processes per job', default='1' ),
@@ -1161,8 +726,8 @@ Option_Group( 'PCSTS4',
 			lower='0', default='1'
 			),
 		Option( 'max_min_iter', 'Integer',
-		         desc='Maximum number of iterations of dfpmin',
-		         default='200'
+			desc='Maximum number of iterations of dfpmin',
+			default='200'
 		),
 		Option( 'maxruntime', 'Integer',
 			desc='Maximum runtime in seconds. JobDistributor will signal end if time is exceeded no matter how many jobs were finished.',
@@ -1172,11 +737,11 @@ Option_Group( 'PCSTS4',
 			'Boolean',
 			desc='write failed structures to output',
 			default='false' ),
-		Option('clean', 'Boolean',
-			short='clean input pdb befere processing them',
-			desc='clean input pdb befere processing them',
-			default='false'
-			),
+#		Option('clean', 'Boolean',
+#			short='clean input pdb befere processing them',
+#			desc='clean input pdb befere processing them',
+#			default='false'
+#			),
 		Option( 'benchmark', 'Boolean',
 			desc='Run in benchmark mode'
 			),
@@ -1187,7 +752,7 @@ Option_Group( 'PCSTS4',
 		Option( 'memory_test_cycles', 'Boolean',
 			desc='use together with test_cycles to keep number of copies of anything as high as in production mode',
 			default='false'
-    ),
+			),
 		Option( 'dry_run', 'Boolean',
 			desc="Run through structures/tasks/etc skipping the actual calculation step for testing of I/O and/or setup",
 			default='false',
@@ -1203,10 +768,10 @@ Option_Group( 'PCSTS4',
 			desc='If a job fails with FAIL_RETRY retry this many times at most',
 			default='10'
 			),
-		Option( 'verbosity', 'Integer',
-			desc='Logging verbosity level',
-			lower='0', upper='9', default='0'
-			),
+#		Option( 'verbosity', 'Integer',
+#			desc='Logging verbosity level',
+#			lower='0', upper='9', default='0'
+#			),
 		Option( 'version', 'Boolean',
 			desc="write out SVN version info, if it was available at compile time",
 			default='true'
@@ -1225,14 +790,14 @@ Option_Group( 'PCSTS4',
 		Option( 'timer', 'Boolean',
 			desc="write out time per decoy in minutes in scorefile",
 			),
-		Option( 'series', 'String',
-			desc="alternate way to specify the code name chain",
-			default='ss',
-			),
-		Option( 'protein', 'String',
-			desc="protein <pdbcode> these options override the first three args",
-			default='----',
-			),
+#		Option( 'series', 'String',
+#			desc="alternate way to specify the code name chain",
+#			default='ss',
+#			),
+#		Option( 'protein', 'String',
+#			desc="protein <pdbcode> these options override the first three args",
+#			default='----',
+#			),
 		Option( 'chain', 'String',
 			desc="-chain <chain_id>",
 			default='-',
@@ -1241,9 +806,9 @@ Option_Group( 'PCSTS4',
 			desc='calculate the score only and exit',
 			default='false'
 			),
-		Option( 'silent_input', 'Boolean',
-			desc="read start structures from compressed format requires -refold -s <.out file> -l <label/index list file> or use -all in place of -l <list> to use all files",
-			),
+#		Option( 'silent_input', 'Boolean',
+#			desc="read start structures from compressed format requires -refold -s <.out file> -l <label/index list file> or use -all in place of -l <list> to use all files",
+#			),
 		##Option( 'by_index', 'Boolean',
 		##       desc="read compressed start structures by index # (by label is the default)",
 		##),
@@ -1293,9 +858,9 @@ Option_Group( 'PCSTS4',
 		##Option( 'measure_changed_environment', 'Boolean',
 		##       desc="-measure_changed_environment Color B-factors based on difference in distances to neighboring atoms compared with native",
 		##),
-		Option( 'status', 'Boolean',
-			desc="Generate a status file",
-			),
+#		Option( 'status', 'Boolean',
+#			desc="Generate a status file",
+#			),
 		Option( 'constant_seed', 'Boolean',
 			desc="Use a constant seed (1111111 unless specified)",
 			),
@@ -1324,20 +889,20 @@ Option_Group( 'PCSTS4',
 		##Option( 'delay_at_start', 'Boolean',
 		##       desc="Wait 'seed_offset' seconds before starting the job, so that multiple jobs don't all start in sync",
 		##),
-		Option( 'run_level', 'Integer',
-			desc="Specify runlevel by integer",
-			default='0',
-			),
-		Option( 'verbose', 'String', # This is being replaced by verbosity
-			desc="Keyword runlevels (decreasing verbosity): gush yap chat inform quiet silent",
-			legal=['gush', 'yap', 'chat', 'inform', 'quiet', 'silent']
-			),
-		Option( 'silent', 'Boolean',
-			desc="use compressed output (also a runlevel)",
-			),
-		Option( 'regions', 'Boolean',
-			desc="Specify regions of the protein allowed to move",
-			),
+#		Option( 'run_level', 'Integer',
+#			desc="Specify runlevel by integer",
+#			default='0',
+#			),
+#		Option( 'verbose', 'String', # This is being replaced by verbosity
+#			desc="Keyword runlevels (decreasing verbosity): gush yap chat inform quiet silent",
+#			legal=['gush', 'yap', 'chat', 'inform', 'quiet', 'silent']
+#			),
+#		Option( 'silent', 'Boolean',
+#			desc="use compressed output (also a runlevel)",
+#			),
+#		Option( 'regions', 'Boolean',
+#			desc="Specify regions of the protein allowed to move",
+#			),
 		##Option( 'regionfile', 'String',
 		##       desc="Specify extension for region file (default=regions) (region file root must be same as start structure)",
 		##       default='regions',
@@ -1348,10 +913,10 @@ Option_Group( 'PCSTS4',
 		##Option( 'check_homs', 'Boolean',
 		##       desc="Stop execution if homologs detected in fragment files; otherwise no checking occurs",
 		##),
-		Option( 'find_disulf', 'Boolean',
-			desc="Each time the pose is scored, attempt to find new disulfide bonds.",
-			legal=['true','false'], default='false',
-			),
+#		Option( 'find_disulf', 'Boolean',
+#			desc="Each time the pose is scored, attempt to find new disulfide bonds.",
+#			legal=['true','false'], default='false',
+#			),
 		Option( 'rebuild_disulf', 'Boolean',
 			desc="Attempt to build correct disulfide geometry when converting "
 				"from a centroid pose to a full atom pose. Disulfides must be "
@@ -1366,18 +931,18 @@ Option_Group( 'PCSTS4',
 		##Option( 'disulf_filter', 'Boolean',
 		##       desc="turn on disulfide filter. The default is off. require -find_disulf or -fix_disulf is on first",
 		##),
-		Option( 'movie', 'Boolean',
-			desc="Update _movie.pdb file for rasmol_rt",
-			),
-		Option( 'trajectory', 'Boolean',
-			desc="Write a pdb file of each accepted structure",
-			),
+#		Option( 'movie', 'Boolean',
+#			desc="Update _movie.pdb file for rasmol_rt",
+#			),
+#		Option( 'trajectory', 'Boolean',
+#			desc="Write a pdb file of each accepted structure",
+#			),
 		##Option( 'ise_movie', 'Boolean',
 		##       desc="Write a pdb of every move (accept or reject)",
 		##),
-		Option( 'IUPAC', 'Boolean',
-			desc="Use IUPAC hydrogen conventions in place of PDB conventions",
-			),
+#		Option( 'IUPAC', 'Boolean',
+#			desc="Use IUPAC hydrogen conventions in place of PDB conventions",
+#			),
 		##Option( 'repeatout', 'Boolean',
 		##       desc="Will write log of RNG state for each structure generated so that any trajectory can be repeated. Should work with any mode, but only tested with ab-initio",
 		##),
@@ -1427,9 +992,9 @@ Option_Group( 'PCSTS4',
 		##       desc="place centroids at actual centers of mass (relative to backbone) as read \
 		##             in from native state, rather than the average position observed for each amino acid in PDB",
 		##),
-		Option( 'evolution', 'Boolean',
-			desc="evolutionary algorithm applied to fullatom refinement of structure models",
-		),
+#		Option( 'evolution', 'Boolean',
+#			desc="evolutionary algorithm applied to fullatom refinement of structure models",
+#		),
 		##Option( 'evol_recomb', 'Boolean',
 		##       desc="evolutionary algorithm applied to centroid level recombinations of deocys",
 		##),
@@ -1516,13 +1081,13 @@ Option_Group( 'PCSTS4',
 		Option( 'proc_id',  'Integer',      desc='give process number... Jobdistributor will only work on proc_id mod nproc part of work ',     default='0' ),
 		Option( 'exit_if_missing_heavy_atoms', 'Boolean', default='false', desc="quit if heavy atoms missing in pdb"),
 
-# PyMOL -----------------------
-	Option( 'show_simulation_in_pymol', 'Real', default='5.0', desc="Attach PyMOL observer to pose at the beginning of the simulation. Waits until at least every [argument] seconds before sending pose if something has changed, default 5. A value of 0 indicates to not skip any packets from sending! Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!"),
-	Option( 'update_pymol_on_energy_changes_only', 'Boolean', default = 'false', desc= 'Only Update the simulation in on energy change.  Useful if pymol observer is segfaulting on length changes.'),
-	Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'),
+		# PyMOL -----------------------
+		Option( 'show_simulation_in_pymol', 'Real', default='5.0', desc="Attach PyMOL observer to pose at the beginning of the simulation. Waits until at least every [argument] seconds before sending pose if something has changed, default 5. A value of 0 indicates to not skip any packets from sending! Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!"),
+		Option( 'update_pymol_on_energy_changes_only', 'Boolean', default = 'false', desc= 'Only Update the simulation in on energy change.  Useful if pymol observer is segfaulting on length changes.'),
+		Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'),
 		Option( 'keep_pymol_simulation_history', 'Boolean', desc='Keep history when using show_simulation_in_pymol flag?', default='false' ),
 
-	), # run
+	), # -run
 
 	# jd2 Options ---------------------------------------------------------
 	Option_Group( 'jd2',
@@ -1556,624 +1121,6 @@ Option_Group( 'PCSTS4',
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 	), # jd2
 
-	# Evaluator Options ---------------------------------------------------------
-	Option_Group( 'evaluation' ,
-		Option( 'rmsd_target', 'FileVector', desc='[vector] determine rmsd against this/these structure(s)'),
-		Option( 'rmsd_column', 'StringVector', desc='[vector] use xxx as column name: rms_xxx'),
-		Option( 'rmsd_select', 'FileVector', desc='[vector] a bunch of loop files which makes rmsds with tags: rms_XXX, where XXX is basename of file' ),
-		Option( 'align_rmsd_target', 'FileVector', desc='[vector] determine rmsd against this/these structure(s) using simple sequence alignment'),
-		Option( 'structural_similarity', 'FileVector', desc='[vector] measure average similarity against these structures (option specifies a silent-file)', ),
-		Option( 'contact_map', 'Boolean', desc='Calculate contact map similarity using the given native' ),
-		Option( 'jscore_evaluator', 'StringVector', desc='Calculate scores using the given score function weights files and, residue type set names (e.g score12 fa_standard score3 centroid)' ),
-		Option( 'align_rmsd_column', 'StringVector', desc='[vector] use xxx as column name for align_rmsd_target: rms_xxx'),
-		Option( 'align_rmsd_fns', 'FileVector', desc='[vector] of sequence alignments used for align_rmsd files'),
-		Option( 'align_rmsd_format', 'String',
-			desc='format for sequence alignment between structures used in evaluation',
-			legal = ['grishin','general'], default='grishin'
-		),
-		Option( 'predicted_burial_fn', 'String', desc='file for burial predictions', default = '' ),
-		Option( 'pool', 'File', desc='find closest matching structure in this pool and report tag and rmsd' ),
-		Option( 'rmsd', 'FileVector', desc='[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)'),
-		Option( 'chirmsd', 'FileVector', desc='[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) '),
-		Option( 'gdtmm', 'Boolean', desc='for each rmsd evaluator also a gdtmm evaluator is created', default='false'),
-		Option( 'gdttm', 'Boolean', desc='for each rmsd evaluator also a gdttm evaluator is created', default='false'),
-		Option( 'score_with_rmsd','Boolean', desc='score the pose on the same subset of atoms as in the rmsd poses'),
-		Option( 'constraints', 'FileVector', desc='[vector] evaluate against these constraint sets'),
-		Option( 'constraints_column', 'FileVector', desc='[vector] use xxx as column name: cst_xxx'),
-		Option( 'combined_constraints', 'FileVector', desc='[vector] use xxx as cst-file but combine constraints before applying'),
-		Option( 'combined_constraints_column', 'FileVector', desc='[vector] use xxx as cst-file but combine constraints before applying'),
-		Option( 'combine_statistics','Integer', default ='10', desc='repeat constraint evaluation X times to get statistics of constraint combination'),
-
-		Option( 'chemical_shifts','StringVector', desc='compute chemical shift score with SPARTA+ use tuples: talos_file [cs]_column_name  (ATTENTION uses filesystem)'),
-		Option( 'sparta_dir','String', desc='[optional] point to an external resource for the sparta directory (instead of minirosetta_database)', default='SPARTA+'),
-		Option( 'cam_shifts','StringVector', desc='compute chemical shift score with Camshift talos_file [cs]_column_name  (ATTENTION uses filesystem)'),
-		Option( 'pales','StringVector', desc='compute Residual Dipolar Couplings using the PALES program (ATTENTION uses filesystem)'),
-		Option( 'extra_score','FileVector', desc='[vector] provide .wts files to generate extra columns'),
-		Option( 'extra_score_patch','FileVector', desc='[vector] provide .patch files, set NOPATCH for columns that are not patched'),
-
-	 	Option( 'extra_score_column', 'StringVector', desc='[vector] use xxx as column name: score_xxx'),
-    Option( 'extra_score_select','FileVector',desc='[vector] /rigid/ files for selection, use SELECT_ALL as placeholder'),
-    Option( 'rdc_select', 'FileVector', desc='[vector] as rmsd_select provide loop-file(RIGID) to compute RDC score on selected residues' ),
-		Option( 'rdc_target', 'FileVector', desc='[vector] as rmsd_target/column provide PDB wih missing density to compute RDC score on selected residues' ),
-		Option( 'symmetric_rmsd', 'Boolean', desc='calculate the rmsd symmetrically by checking all chain orderings'),
-
-    Option( 'rdc_column', 'StringVector', desc='[vector] column names for rdc_select'),
-		Option( 'rdc','StringVector', desc='[vector] rdc-files and column names for RDC calculation'),
-		Option( 'built_in_rdc','String', desc='evaluate rdc from -in:file:rdc with standard score function and store under column xxx'),
-    Option( 'jump_nr', 'Boolean', desc='adds the JumpNrEvaluator for the nrjumps column', default='false' ),
-		Option( 'score_exclude_res', 'IntegerVector', desc="Calculates a select_score column based on all residues not excluded by the command line vector" ),
-		Option( 'score_sscore_short_helix', 'Integer', desc='defines the maximum length of a helix that is not scored if it terminates a loop', default='5' ),
-		Option( 'score_sscore_maxloop', 'Integer', desc='defines the maximum length of a loop that is still considered for the sscore - score', default='3' ),
-		Option( 'rpf', 'Boolean', desc='will compute RPF score with distance cutoff 5 and store in column rpf_score', default='false' ),
-		Option( 'window_size', 'Integer', desc='Window size for local RMSD calculations in windowed_rmsd app', default='5'),
-		Option( 'I_sc', 'String', desc='score function name used to calculate I_sc', default = 'score12' ),
-		Option( 'Irms', 'Boolean', desc='will compute the docking interface rmsd', default='false'),
-    Option( 'Ca_Irms', 'Boolean', desc='will compute the docking Ca-atom interface rmsd', default='false'),
-		Option( 'Fnat', 'Boolean', desc='will compute the docking recovered fraction of native contacts', default='false'),
-		Option( 'Lrmsd', 'Boolean', desc='will compute the docking ligand rmsd', default='false'),
-		Option( 'Fnonnat', 'Boolean', desc='will compute the fraction of non-native contacts for docking', default='false'),
-		Option( 'DockMetrics', 'Boolean', desc='will compute all docking metrics (I_sc/Irms/Fnat/Lrmsd for now) for replica docking', default='false'),
-	),
-
-	# Filter Options -----------------------------------------------------------
-	Option_Group( 'filters',
-		Option( 'disable_all_filters', 'Boolean',
-			desc="turn off all centroid filters: RG, CO, and Sheet",
-			default = 'false' ),
-		Option( 'disable_rg_filter', 'Boolean',
-			desc="turn off RG filter",
-			default = 'false' ),
-		Option( 'disable_co_filter', 'Boolean',
-			desc="turn off contact order filter",
-			default = 'false' ),
-		Option( 'disable_sheet_filter', 'Boolean',
-			desc="turn off sheet filter",
-			default = 'false' ),
-		Option( 'set_pddf_filter', 'Real', desc="Turns on PDDF filter with a given score cutoff",default="5.0"),
-		Option( 'set_saxs_filter', 'Real', desc="Turns on SAXS energy filter with a given score cutoff",default="-3"),
-	), # filters
-
-	Option_Group( 'MonteCarlo',
-		Option( 'temp_initial', 'Real', default='2', lower='0.001', desc='initial temperature for Monte Carlo considerations' ),
-		Option( 'temp_final', 'Real', default='0.6', lower='0.001', desc='final temperature for Monte Carlo considerations' ),
-	),
-
-## --------------------------  FRAGMENT PICKING --------------
-  Option_Group( 'frags',
-		Option( 'j', 'Integer', desc='Number of threads to use'),
-		Option( 'filter_JC', 'Boolean',
-                        desc='Filter J-coupling values in the dynamic range ', default='false'),
-
-                Option(
-			'bounded_protocol', 'Boolean',
-			desc = 'makes the picker use bounded protocol to select fragments. This is teh default behavior',
-			default = 'true'
-		),
-		Option(
-			'keep_all_protocol', 'Boolean',
-			desc = 'makes the picker use keep-all protocol to select fragments. The default is bounded protocol',
-			default = 'false'
-		),
-                Option(
-                        'quota_protocol', 'Boolean',
-                        desc = 'quota protocol implies the use of a QuotaCollector and a QuotaSelelctor, no matter what user set up by other flags.',
-                        default = 'false'                ),
-                Option(
-                        'nonlocal_pairs', 'Boolean',
-                        desc = 'identifies and outputs nonlocal fragment pairs.',
-                        default = 'false'
-                ),
-                Option(
-                        'fragment_contacts', 'Boolean',
-                        desc = 'identifies and outputs fragment contacts.',
-                        default = 'false'
-                ),
-                Option(
-                        'p_value_selection', 'Boolean',
-                        desc = 'the final fragment selection will b based on p-value rather than on a total score for the given fragment',
-                        default = 'false'                ),
-
-		Option(
-			'n_frags', 'Integer',
-			desc = 'number of fragments per position',
-			default = '200'
-		),
-		Option(
-			'allowed_pdb', 'File',
-			desc = "provides a text file with allowed PDB chains (five characters per entry, e.g.'4mbA'). Only these PDB chains from Vall will be used to pick fragments",
-		),
-		Option(
-			'ss_pred', 'StringVector',
-			desc = 'provides one or more files with secondary structure prediction (PsiPred SS2 format) , to be used by secondary structure scoring and quota selector. Each file name must be followed by a string ID.',
-		),
-                Option(
-                        'spine_x', 'File',
-                        desc = "provides phi and psi torsion angle predictions and solvent accessibility prediction from Spine-X",
-                ),
-                Option(
-                        'depth', 'File',
-                        desc = "provides residue depth values from DEPTH",
-                ),
-		Option(
-			'denied_pdb', 'File',
-			desc = "provides a text file with denied PDB chains (five characters per entry, e.g.'4mbA'). This way close homologs may be excluded from fragment picking.",
-		),
-		Option(
-			'frag_sizes', 'IntegerVector',
-			desc = 'sizes of fragments to pick from the vall',
-			default = ['9','3','1'],
-		),
-		Option( 'write_ca_coordinates','Boolean', desc='Fragment picker will store CA Cartesian coordinates in output fragment files. By default only torsion coordinates are stored.',default='false'),
-		Option( 'write_scores', 'Boolean', desc='Fragment picker will write scores in output fragment files.', default='false' ),
-		Option( 'annotate',         'Boolean',     desc='read the annotation from the rosetta++ fragment file',     default='false' ),
-		Option( 'nr_large_copies',  'Integer',       desc='make N copies for each standard 9mer (or so) fragment',     default='1' ),
-
-        Option( 'n_candidates', 'Integer',
-                desc = 'number of fragment candidates per position; the final fragments will be selected from them',
-                default = '200'
-        ),
-		Option( 'write_rama_tables','Boolean', desc='Fragment picker will spit out sequence specific ramachandran score tables for your viewing pleasure. These ramachandran tables are based on the secondary structure predictions fed into RamaScore, and you may occasionally want to look at what the program has defined.',default='false'),
-		Option( 'rama_C', 'Real', desc='Constant in RamaScore equation, command line is for optimization tests', default='0.0'),
-	Option( 'rama_B', 'Real', desc='Constant in RamaScore equation, command line is for optimization tests', default='1.0'),
-		Option( 'sigmoid_cs_A', 'Real', desc='Constant in CSScore equation, command line is for optimization tests', default='2.0'),
-		Option( 'sigmoid_cs_B', 'Real', desc='Constant in CSScore equation, command line is for optimization tests', default='4.0'),
-		Option( 'seqsim_H', 'Real', desc='Secondary structure type prediction multiplier, for use in fragment picking', default='1.0'),
-		Option( 'seqsim_E', 'Real', desc='Secondary structure type prediction multiplier, for use in fragment picking', default='1.0'),
-		Option( 'seqsim_L', 'Real', desc='Secondary structure type prediction multiplier, for use in fragment picking', default='1.0'),
-		Option( 'rama_norm', 'Real', desc='Used to multiply rama table values after normalization, default (0.0) means use raw counts (unnormalized)', default='0.0'),
-		Option( 'describe_fragments','String',desc='Writes scores for all fragments into a file', default=''),
-		Option( 'picking_old_max_score', 'Real', desc='maximal score allowed for fragments picked by the old vall (used by RosettaRemodel).', default='1000000.0'),
-		Option( 'write_sequence_only', 'Boolean', desc='Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score.', default='false'),
-		Option( 'output_silent', 'Boolean', desc='Fragment picker will output fragments into a silent file.', default='false'),
-		Option( 'score_output_silent', 'Boolean', desc='Fragment picker will output fragments into a silent file. Scores of relaxed fragments are added to the silent file.', default='false'),
-	Option_Group( 'scoring',
-		Option('config', 'File', desc = 'scoring scheme used for picking fragments', default = '', ),
-                Option('profile_score', 'String', desc = 'scoring scheme used for profile-profile comparison', default = 'L1', ),
-                Option( 'predicted_secondary', 'FileVector',
-                         desc = 'provides one or more files with secondary structure prediction, to be used by secondary structure scoring and quota selector',
-                         default = '',
-                ),
-        ),
-
-        Option_Group( 'picking',
-                Option( 'selecting_rule', 'String',
-                         desc = 'the way how fragments are selected from candidates, e.g. QuotaSelector of BestTotalScoreSelector',
-                         default = 'BestTotalScoreSelector',
-                         legal=['QuotaSelector','BestTotalScoreSelector'],
-                ),
-
-		Option( 'selecting_scorefxn', 'String',
-                         desc = 'in the case user chose BestTotalScoreSelector to be used, this option provides a custom scoring function to be used at the selection step',
-                ),
-
-                Option( 'quota_config_file', 'File',
-                        desc = 'provides a configuration file for quota selector',
-                ),
-                Option( 'query_pos','IntegerVector',
-                        desc = 'provide sequence position for which fragments will be picked. By default fragments are picked for the whole query sequence',
-                ),
-        ),
-
-        Option_Group( 'nonlocal',
-                Option( 'relax_input', 'Boolean',
-                        desc = 'relax input before running protocol' ),
-                Option( 'relax_input_with_coordinate_constraints', 'Boolean',
-                        desc = 'relax input with coordinate constraints before running protocol' ),
-                Option( 'relax_frags_repeats', 'Integer',
-                        desc = 'relax repeats for relaxing fragment pair' ),
-                Option( 'single_chain', 'Boolean',
-                        desc = 'non-local fragment pairs will be restricted to the same chain' ),
-                Option( 'min_contacts_per_res', 'Real',
-                        desc = 'minimum contacts per residue in fragment to be considered a fragment pair', default = '1.0' ),
-                Option( 'max_ddg_score', 'Real',
-                        desc = 'maximum DDG score of fragment pair' ),
-                Option( 'max_rmsd_after_relax', 'Real',
-                        desc = 'maximum rmsd of fragment pair after relax' ),
-                Option( 'output_frags_pdbs', 'Boolean',
-                        desc = 'output non-local fragment pair PDBs' ),
-                Option( 'output_idealized', 'Boolean',
-                        desc = 'output an idealized pose which can be used for generating a new VALL' ),
-                Option( 'output_silent', 'Boolean',
-                        desc = 'output non-local fragment pairs silent file', default = 'true' ),
-
-        ),
-
-        Option_Group( 'contacts',
-                Option( 'min_seq_sep', 'Integer',
-                        desc = 'minimum sequence separation between contacts', default = '12' ),
-                Option( 'dist_cutoffs', 'RealVector', default = ['9.0'], desc = 'distance cutoffs to be considered a contact. contact counts will only be saved.' ),
-		Option( 'centroid_distance_scale_factor', 'Real', default = '1.0', desc = 'Scaling factor for centroid distance cutoffs.' ),
-		Option( 'type', 'StringVector',
-                        desc='Atom considered for contacts',
-                        legal = ['ca','cb','cen'], default='utility::vector1<std::string>(1,"ca")'
-                ),
-                Option( 'neighbors', 'Integer',
-                        desc = 'number of adjacent residues to a contact for finding neighboring contacts', default = '0' ),
-                Option( 'output_all', 'Boolean', desc = 'output all contacts', default = 'false' ),
-        ),
-
-        Option_Group( 'ABEGO',
-                Option( 'phi_psi_range_A' , 'Real', desc = 'Further filter phi&psi during frag picking process in design', default = '999.0'),
-
-               ),
-  ),
-## --------------------------  END OF fragment picking --------------
-
-  # Broker stuff -----------------------------------------------------------
-  Option_Group( 'broker',
-		Option( 'setup', 'FileVector', desc="setup file for topology-broker",default='NO_SETUP_FILE' ),
-		Option('rb_mover_stage1_weight', 'Real', desc = 'weight of RB mover in abinitio stage 1', default = '5.0'),
-		Option('large_frag_mover_stage1_weight', 'Real', desc = 'weight of fragment mover in abinitio stage 1',default = '1.0'),
-		Option('small_frag_mover_stage1_weight', 'Real', desc = 'weight of fragment mover in abinitio stage 1',default = '1.0'),
-	),
-
-	# Chunk related stuff -----------------------------------------------------------
-	Option_Group( 'chunk',
-		Option( 'pdb2', 'File', desc="file for chunk2" ),
-		Option( 'loop2', 'File', desc="rigid region for chunk2" ),
-	),
-
-  # NonlocalAbinitio
-  Option_Group('nonlocal',
-		Option('builder', 'String', desc = 'One of {simple, star}. Specifies how non-local abinitio should construct the fold tree', default = 'star'),
-		Option('chunks', 'File', desc = 'Decsribes how the structure is partitioned into chunks. Each residue must be present in 1 and only 1 chunk. Loop file format.'),
-		Option('max_chunk_size', 'Integer', desc = 'Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.', default = '20'),
-		Option('randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
-	  Option('rdc_weight', 'Real', desc = 'Weight for the rdc energy term in nonlocal abinitio protocol', default = '5'),
-  ),
-
-	# Ab initio mode -----------------------------------------------------------
-	Option_Group( 'abinitio',
-    Option_Group('star',
-				Option('initial_dist_cutoff', 'Real', desc = 'Maximum distance cutoff for restraints that constrain aligned residues to their initial positions', default = '8.0'),
-				Option('min_unaligned_len', 'Integer', desc = 'Minimum length of an unaligned region', default = '3'),
-				Option('short_loop_len', 'Integer', desc = 'StarAbinitio treats short loops differently from long ones. If the sequence separation between the consecutive aligned regions is <= short_loop_len, it is considered short, otherwise it is considered long.', default = '18'),
-    ),
-		Option( 'prob_perturb_weights', 'Real', desc='Probability of perturbing score function weights', default='0', lower='0', upper='1',),
-		Option( 'abinitio', 'Boolean', desc="Ab initio mode" ),
-		Option('membrane', 'Boolean', desc = "will use the membrane abinitio protocol. sequential insertion of TMH", default='false' ),
-		#Option('TMH_topology','Boolean',desc="use TMHTopologySampler to sample membrane SSE placements"),
-		Option('use_loophash_filter','Boolean',desc='use loophash filter to determine if SSEs too far away'),
-		Option('loophash_filter_acceptance_rate','Real',desc='fraction at which want to accept poses from loophash filter if no loophash hits found'),
-		Option('kill_hairpins', 'File', desc="setup hairpin killing in score (kill hairpin file or psipred file)"),
-		Option('kill_hairpins_frequency', 'Real', desc="automated hairpin killing frequency (for use with psipred file)", default='0.2'),
-		Option( 'smooth_cycles_only', 'Boolean', desc = "Only smooth cycles in abinitio protocol", default = 'false' ),
-		Option( 'relax', 'Boolean', desc = "Do a relax after abinitio = abrelax ?" ),
-		Option( 'final_clean_relax','Boolean', desc = 'Do a final relax without constraints' ),
-		Option( 'fastrelax', 'Boolean', desc = "Do a fastrelax after abinitio = abfastrelax ?" ),
-		Option( 'multifastrelax', 'Boolean', desc = "Do a fastrelax after abinitio = abfastrelax ?" ),
-		Option( 'debug', 'Boolean', default = 'false' ),
-		Option( 'clear_pose_cache', 'Boolean', desc = "always clear extra-scores away before output", default = 'false' ),
-		Option(
-			'explicit_pdb_debug', 'Boolean', default = 'false',
-			desc = 'always dump pdb (not silent ) files during abinitio stages'
-			),
-		##Option( 'test_broker', 'Boolean', default = 'false', desc='use topology_broker system '),
-		Option( 'use_filters', 'Boolean', default = 'false', desc='use RG, contact-order and sheet filters '),
-		Option( 'increase_cycles', 'Real',
-			desc='Increase number of cycles at each stage of fold_abinitio (or pose_abinitio) by this factor',
-			lower='0.001',
-			default='1.0',
-		),
-		Option( 'number_3mer_frags', 'Integer',
-			desc="Number of top 3mer fragments to use in fold_abinitio protocol",
-			lower='0', default='200'
-			),
-		Option( 'number_9mer_frags', 'Integer',
-			desc='Number of top 9mer fragments to use in fold_abinitio protocol',
-			lower='0', default='25'
-			),
-		Option( 'temperature', 'Real', oldName='abinitio_temperature',
-			desc='Temperature used in fold_abinitio',
-			default='2.0'
-			),
-		##Option( 'vdw_reweight', 'Real',
-		##       desc='Reweight contribution of van der Waals score to total score by this scale factor',
-		##       default='1.0'
-		##),
-		##Option( 'env_reweight', 'Real',
-		##       desc='Reweight contribution of environment score to total score by this scale factor (default 1.0)',
-		##       default='1.0'
-		##),
-		##Option( 'pair_reweight', 'Real',
-		##       desc='Reweight contribution of pair score to total score by this scale factor',
-		##       default='1.0'
-		##),
-		##Option( 'cb_reweight', 'Real',
-		##       desc='Reweight contribution of C_beta (packing density) score to total score by this scale factor',
-		##       default='1.0'
-		##),
-		##Option( 'sheet_reweight', 'Real',
-		##       desc='Reweight contribution of sheet score to total score by this scale factor',
-		##       default='1.0'
-		##),
-		##Option( 'ss_reweight', 'Real',
-		##       desc='Reweight contribution of strand-strand score to total score by this scale factor',
-		##       default='1.0'
-		##),
-		##Option( 'hs_reweight', 'Real',
-		##       desc='Reweight contribution of helix-strand score to total score by this scale factor',
-		##       default='1.0'
-		##),
-		##Option( 'rsigma_reweight', 'Real',
-		##       desc='Reweight contribution of R-sigma score (strand pair distance/register) to total score by this scale factor',
-		##       default='1.0'
-		##),
-		Option( 'rg_reweight', 'Real',
-			desc='Reweight contribution of radius of gyration to total score by this scale factor',
-			default='1.0'
-			),
-		##Option( 'parallel_weight', 'Real',
-		##       desc='Reweight score for parallel strand pairing between residues whose strands are separated by more than 10 A',
-		##),
-		##Option( 'antiparallel_weight', 'Real',
-		##       desc='Reweight score for antiparallel strand pairing between residues whose strands are separated by more than 10 A',
-		##       default='1.0',
-		##),
-		Option( 'strand_dist_cutoff', 'Real',
-			desc='Specify distance cutoff (in Angstroms) between strand dimers within which they are called paired',
-			default='6.5'
-			),
-		Option( 'stretch_strand_dist_cutoff', 'Boolean',
-			desc="Allow strand distance cutoff to change from 6.5 A to a larger value (specified by '-max_strand_dist_cutoff <float>') linearly scaled according to sequence separation over a range specified by '-seq_sep_scale <float>' ",
-			),
-		Option( 'rsd_wt_helix', 'Real',
-			desc='Reweight env,pair,cb for helix residues by this factor',
-			default='1.0',
-			),
-		Option( 'rsd_wt_strand', 'Real',
-			desc='Reweight env,pair,cb for strand residues by this factor',
-			default='1.0',
-			),
-		Option( 'rsd_wt_loop', 'Real',
-			desc='Reweight env,pair,cb for loop residues by this factor',
-			default='1.0',
-			),
-
-		##Option( 'rand_envpair_res_wt', 'Boolean',
-		##       desc='Reweight of env,pair,cb contributions by random factors (between 0.5 and 1.2) for each residue',
-		##),
-		##Option( 'rand_SS_wt', 'Boolean',
-		##       desc='Reweight helix-strand, strand-strand, sheet, and rsigma scores by random factors between 0.5 and 1.5',
-		##),
-		##Option( 'random_parallel_antiparallel', 'Boolean',
-		##       desc="For each decoy, randomly choose whether to drastically upweight long range parallel strand pairings (by a random factor up to 10-fold) and downweight long range antiparallel pairings, or vice versa",
-		##),
-		##Option( 'optimize_rmsd', 'Boolean',
-		##       desc='Optimize a score function composed of van der waals score plus a component proportional to -1/rmsd',
-		##),
-		##Option( 'handedness_score', 'Boolean',
-		##       desc='Evaluate whether any beta-alpha-beta connections are left-handed during run; if so, adds a penalty to sheet score',
-		##),
-		# May be need its own category, look: https://wiki.rosettacommons.org/index.php/Command-line_reference
-		Option( 'fast', 'Boolean',
-			desc='Runs protocol without minimization or gradients, giving a significant speed advantage For NOE data only, -fast yields essentially the protocol published by Bowers et al., JBNMR, 2000. For RDC data only, -fast omits the refinement step included in examples published in Rohl&Baker, JACS, 2002. without the -fast option',
-			),
-		##Option( 'score_contact_flag', 'Boolean',
-		##       desc='To turn the contact scoring on',
-		##),
-		### Default is computed and passed in lookup
-		##Option( 'score_contact_file', 'File',
-		##       desc='Name of a file containing the probabilities. Default filename is <5lettercode>.contact The format is a line with the number of contacts, then: aa1(integer) aa2(integer) probability(double) one contact per line, everything after the third word will be ignored',
-		##),
-		##Option( 'score_contact_weight', 'Real',
-		##       desc='To set the weight - default is 1',
-		##       default='1.0'
-		##),
-		##Option( 'score_contact_threshold', 'Real',
-		##       desc='Prediction probabilities above this threshold result in a bonus for the decoy, probabilities below this threshold result in a penalty - default is 0.5',
-		##       default='0.5'
-		##),
-		##Option( 'score_contact_seq_sep', 'Integer',
-		##       desc='Only AA separated at least this number in sequence are considered - default is 1',
-		##       default='1'
-		##),
-		##Option( 'score_contact_calpha', 'Boolean',
-		##       desc='Use distances between alpha carbons, not centroids to assign bonuses',
-		##),
-		##
-		### Default (8 or 11) passed in lookup: Should this be a 2-valued option?
-		##Option( 'score_contact_distance', 'Real',
-		##       desc='Give distance under which contact is given bonus  [Default is 8 angstroms (centroid/centroid)  or  11 angstroms (c_alpha/c_alpha)]',
-		##),
-		##Option( 'score_contact_readindist', 'Boolean',
-		##       desc='Instead of using score_contact_distance, read in distances from contact file as fourth column: aa1(integer) aa2(integer) probability(double) distance(double)',
-		##),
-		##Option( 'score_contact_fullatom', 'Boolean',
-		##       desc="By default the 'contact score' is off during full atom; this option turns it on"
-		##),
-		Option( 'skip_convergence_check', 'Boolean',
-			desc="this option turns off the convergence check in stage3 (score 2/5)"
-			),
-		Option( 'stage1_patch', 'FileVector',
-			desc="Name of weights patch file (without extension .wts) to use during stage1 abinitio"),
-		Option( 'stage2_patch', 'FileVector',
-			desc="Name of weights patch file (without extension .wts) to use during stage2 abinitio"),
-		Option( 'stage3a_patch', 'FileVector',
-			desc="Name of weights patch file (without extension .wts) to use during stage3a abinitio"),
-		Option( 'stage3b_patch', 'FileVector',
-			desc="Name of weights patch file (without extension .wts) to use during stage3b abinitio"),
-		Option( 'stage4_patch', 'FileVector',
-			desc="Name of weights patch file (without extension .wts) to use during stage4 abinitio"),
-		Option( 'stage5_patch', 'FileVector',
-			desc="Name of weights patch file (without extension .wts) to use during stage5 abinitio"),
-		Option( 'exit_when_converged', 'Boolean', desc="finish abinitio if mc_converged", default='false' ),
-
-		Option( 'steal_3mers' ,                 'Boolean',       desc='stealing: use 3mers from native', default='false' ),
-		Option( 'steal_9mers' ,                 'Boolean',       desc='stealing: use 9mers from native', default='false' ),
-		Option( 'no_write_failures',            'Boolean',       desc='dont write failed structures to silent-out',     default='false' ),
-		Option( 'relax_failures',                'Boolean',       desc='relax failures anyway',     default='false' ),
-		#	Option( 'no_prof_info_in_silentout',    'Boolean',       desc='add column <seconds> to silent output',     default='false' ),
-		Option( 'relax_with_jumps',             'Boolean',       desc='switch to allow relax even if loops are not closed ',         default='false' ),
-		Option( 'process_store',                'Boolean',       desc='run process_decoy on each structure in the structure store',     default='false' ),
-		Option( 'fix_residues_to_native',       'IntegerVector', desc='these residues torsions are copied from native and fixed',     default='0' ),
-		Option( 'return_full_atom',             'Boolean',       desc='return a full-atom structure even if no relax is done',       default='false' ),
-		Option( 'detect_disulfide_before_relax','Boolean',       desc='run detect_disulfides() before relax',     default='false' ),
-
-		Option( 'close_loops',                  'Boolean',       desc='close loops',     default='false' ),
-
-		Option( 'bGDT', 'Boolean', desc="compute gdtmmm", default='true' ),
-
-		Option( 'dump_frags',  'Boolean',      desc='for control purposes... dump fragments',     default='false' ),
-		Option( 'jdist_rerun', 'Boolean',       desc='go through intput structures and evaluate ( pca, rmsd, cst-energy )',     default='false' ),
-
-		Option( 'perturb',   'Real',      desc='add some perturbation (gaussian) to phi/psi of native',     default='0.0' ),
-		Option( 'rerun',     'Boolean',    desc='go through intput structures and evaluate ( pca, rmsd, cst-energy )',     default='false' ),
-		Option( 'rmsd_residues',    'IntegerVector',     desc='give start and end residue for rmsd calcul.',     default='-1' ),
-		Option( 'start_native',      'Boolean',   desc='start from native structure (instead of extended)',     default='false' ),
-		Option( 'debug_structures', 'Boolean', desc="write structures to debug-out files", default='false' ),
-
-		Option( 'log_frags',               'File',         desc='fragment insertions (each trial) will be logged to file',     default='' ),
-		Option( 'only_stage1',             'Boolean',      desc='useful for benchmarks sets cycle of all higher stages to 0',     default='false' ),
-		Option( 'end_bias',                'Real',         desc='set the endbias for Fragment moves',     default='30.0' ),
-		Option( 'symmetry_residue',        'Integer',      desc='hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1',     default='-1' ),
-		Option( 'vdw_weight_stage1',       'Real',         desc='vdw weight in stage1',     default='1.0' ),
-		Option( 'override_vdw_all_stages', 'Boolean',      desc='apply vdw_weight_stage1 for all stages',     default='false' ),
-		Option( 'recover_low_in_stages',   'IntegerVector',desc='say default: 2 3 4 recover_low happens in stages 2 3 4',     default='0' ),
-		Option( 'skip_stages',   'IntegerVector',desc='say: 2 3 4, and it will skip stages 2 3 4',     default='0' ),
-		Option( 'close_chbrk',             'Boolean',      desc='Chain break closure during classic abinito ',     default='false' ),
-		Option( 'include_stage5',             'Boolean',      desc='stage5 contains small moves only',     default='false' ),
-		Option( 'close_loops_by_idealizing',    'Boolean', desc='close loops by idealizing the structure after stage 4',     default='false' ),
-		Option( 'optimize_cutpoints_using_kic', 'Boolean', desc='optimize around cutpoints using kinematic relax',     default='false' ),
-		Option( 'optimize_cutpoints_margin',     'Integer', desc='', default='5' ),
-
-		Option ('HD_EX_Info', 'File', desc= 'input list of residues with low amide protection '  ),
-		Option ('HD_penalty', 'Real', desc= 'penatlty for each inconsistent pairing with HD data ', default='0.1' ),
-		Option ('HD_fa_penalty','Real', desc = 'penalty for each Hbond donor inconsistent with HD donor', default = '0.1' ),
-		Option ('sheet_edge_pred','File', desc= 'file with interior/exterior predictions for strands' ),
-		Option ('SEP_score_scalling','Real', desc= 'scalling factor', default = '1.0' ),
-
-
-	), # abinitio
-
-	Option_Group( 'fold_cst',
-		Option( 'constraint_skip_rate',    'Real',    desc='if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column',     default='0' ),
-		Option( 'violation_skip_basis',    'Integer', desc='local skip_rate is viol/base', default='100' ),
-		Option( 'violation_skip_ignore',   'Integer', desc='no skip for numbers below this level', default='10' ),
-		Option( 'keep_skipped_csts', 'Boolean', desc='final score only with active constraints', default='false'),
-		Option( 'no_minimize',                         'Boolean',      desc='No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure.',     default='false' ),
-		Option( 'force_minimize',                      'Boolean',      desc='Minimization moves in fold_constraints protocol also if no constraints present',     default='false' ),
-		Option( 'seq_sep_stages',                      'RealVector',   desc='give vector with sequence_separation after stage1, stage3 and stage4',     default='0' ),
-		Option( 'reramp_cst_cycles',                   'Integer',      desc='in stage2 do xxx cycles where atom_pair_constraint is ramped up',     default='0' ),
-		Option( 'reramp_start_cstweight',              'Real',         desc='drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0',     default='0.01' ),
-		Option( 'reramp_iterations',                   'Integer',      desc='do X loops of annealing cycles',     default='1' ),
-		Option( 'skip_on_noviolation_in_stage1',       'Boolean',      desc='if constraints report no violations --- skip cycles',     default='false' ),
-		Option( 'stage1_ramp_cst_cycle_factor',        'Real',         desc='spend x*<standard cycles> on each step of sequence separation',     default='0.25' ),
-		Option( 'stage2_constraint_threshold',         'Real',         desc='stop runs that violate this threshold at end of stage2',     default='0' ),
-		Option( 'ignore_sequence_seperation',          'Boolean',      desc='usually constraints are switched on according to their separation in the fold-tree',     default='false' ),
-		Option( 'no_recover_low_at_constraint_switch', 'Boolean',      desc='dont recover low when max_seq_sep is increased',     default='false' ),
-		Option( 'ramp_coord_cst', 'Boolean', desc='ramp coord csts just like chainbreak-weights during fold-cst', default='false' ),
-	),
-
-	Option_Group( 'resample',
-		Option( 'silent',               'File',         desc='a silent file for decoys to restart sampling from ',     default='' ),
-		Option( 'tag',                  'String',      desc='which decoy to select from silent file ',     default='' ),
-		Option( 'stage1',               'Boolean',      desc='if true restart after stage1, otherwise after stage2 ',     default='false' ),
-		Option( 'stage2',               'Boolean',      desc='if true restart after stage1, otherwise after stage2 ',     default='false' ),
-		Option( 'jumps',                'Boolean',      desc='if true restart after stage1, otherwise after stage2 ',     default='false' ),
-		Option( 'min_max_start_seq_sep','RealVector',  desc='range of (random) start values for seq-separation',     default='0' ),
-	),
-
-	Option_Group( 'loopfcst',
-		Option( 'coord_cst_weight',             'Real',    desc='use coord constraints for template',     default='0.0' ),
-		Option( 'coord_cst_all_atom',           'Boolean', desc='use coord constraints on all atoms and not just CA',     default='false' ),
-		Option( 'use_general_protocol',         'Boolean', desc='use the new machinery around classes KinematicXXX',     default='false' ),
-		Option( 'coord_cst_weight_array',       'File',    desc='use these weights (per seqpos) for coord cst in rigid regions',     default='' ),
-		Option( 'dump_coord_cst_weight_array',  'File',    desc='dump these weights (per seqpos) for coord cst in rigid regions',     default='' ),
-	),
-
-	Option_Group( 'jumps',
-		Option( 'evaluate',             'Boolean',           desc='evaluate N-CA-C gemoetry for all jumps in the fold-tree',     default='false' ),
-		Option( 'extra_frags_for_ss',         'File',      desc='use ss-def from this fragset',     default='' ),
-		Option( 'fix_chainbreak',              'Boolean',    desc= 'minimize to fix ccd in re-runs',     default='false' ),
-		Option( 'fix_jumps',                    'File',    desc='read jump_file',     default='' ),
-		Option( 'jump_lib',                    'File',     desc='read jump_library_file for automatic jumps',     default='' ),
-		Option( 'loop_definition_from_file',   'File',    desc= 'use ss-def from this file',     default='' ),
-		Option( 'no_chainbreak_in_relax',     'Boolean',      desc='dont penalize chainbreak in relax',     default='false' ),
-		Option( 'pairing_file',             'File',        desc='file with pairings',     default='' ),
-		Option( 'random_sheets',             'IntegerVector',        desc='random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i',     default='1' ),
-		Option( 'residue_pair_jump_file',     'File',       desc='a file to define residue pair jump',     default='' ),
-		Option( 'sheets',                     'IntegerVector',        desc='sheet topology--> replaces -sheet1 -sheet2 ... -sheetN',     default='1' ),
-		Option( 'topology_file',             'File',        desc='read a file with topology info ( PairingStats )',     default='' ),
-
-		Option( 'bb_moves',                     'Boolean',        desc='Apply bb_moves ( wobble, small, shear) during stage3 and stage 4.',     default='false' ),
-		Option( 'no_wobble',                    'Boolean',        desc='Don t apply the useless wobble during stage3 and stage 4.',     default='false' ),
-		Option( 'no_shear',                     'Boolean',        desc='Don t apply the useless shear during stage3 and stage 4.',     default='false' ),
-		Option( 'no_sample_ss_jumps',           'Boolean',        desc='sample jump-frags during folding',     default='false' ),
-		Option( 'invrate_jump_move',            'Integer',        desc='give 5 here to have 5 torsion moves for each jump move',     default='10' ),
-		Option( 'chainbreak_weight_stage1',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
-		Option( 'chainbreak_weight_stage2',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
-		Option( 'chainbreak_weight_stage3',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
-		Option( 'chainbreak_weight_stage4',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
-		Option( 'ramp_chainbreaks',             'Boolean',        desc='ramp up the chainbreak weight stage1-0, stage2 0.25, stage3 alternating 0.5..2.5, stage4 2.5..4',     default='true' ),
-		Option( 'increase_chainbreak','Real', desc='multiply ramped chainbreak weight by this amount', default='1.0'),
-		Option( 'overlap_chainbreak',           'Boolean',        desc='use the overlap chainbrak term in stage4',     default='false' ),
-		Option( 'sep_switch_accelerate',        'Real',           desc='constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>',     default='0.4' ),
-		Option( 'dump_frags',                   'Boolean',        desc='dump jump_fragments ',     default='false' ),
-		Option( 'njumps', 'Integer', desc='number_of_jumps to select from library for each trajectory (membrane mode)', default='1' ),
-		Option( 'max_strand_gap_allowed', 'Integer', desc='merge strands if they less than X residues but same register', default='2' ),
-		Option( 'contact_score', 'Real', desc='the strand-weight will have a weight * contact_order component', default='0.0' ),
-		Option( 'filter_templates', 'Boolean', desc='filter hybridization protocol templates', default='false'),
-	),
-
-	Option_Group( 'templates',
-		Option( 'config',                'File',        desc='read a list of templates and alignments',     default='templates.dat' ),
-		Option( 'fix_aligned_residues',  'Boolean',     desc='pick only from template fragments and then keep these residues fixed',     default='false' ),
-		Option( 'fix_frag_file',         'File',        desc=' fragments from this file are picked once in beginning and then kept fixed',     default='' ),
-		Option( 'fix_margin',            'Integer',     desc='keep n residues at edges of fixed fragments moveable',     default='1' ),
-		Option( 'min_nr_large_frags',    'Integer',     desc='how many large fragments should be present',     default='100000' ),
-		Option( 'min_nr_small_frags',    'Integer',     desc='how many small fragments should be present',     default='100000' ),
-		Option( 'no_pick_fragments',     'Boolean',     desc='no further fragment picking from templates',     default='false' ),
-		Option( 'nr_large_copies',       'Integer',     desc='make N copies of each picked template fragment -- a hacky way to weight them',     default='4' ),
-		Option( 'nr_small_copies',       'Integer',     desc='make N copies of each picked template fragment -- a hacky way to weight them',     default='20' ),
-		Option( 'pairings',              'Boolean',     desc='use pairings from templates',     default='false' ),
-		Option( 'pick_multiple_sizes',   'Boolean',     desc='pick 9mers, 18mers and 27mers',     default='false' ),
-		Option( 'strand_constraint',     'Boolean',     desc='use the template-based strand-constraints',     default='false' ),
-		Option( 'vary_frag_size',        'Boolean',     desc='pick fragments as long as aligned regions',     default='false' ),
-		Option( 'no_culling',            'Boolean',     desc='dont throw out constraints that are violated by other templates',     default='false' ),
-		Option( 'helix_pairings',        'File',        desc='file with list of pairings that are enforced (pick jumps from templates with H)',     default='' ),
-		Option( 'prefix',                'File',        desc='path for config directory -- applied to all filenames in template_config_file',     default='' ),
-		Option( 'change_movemap',        'Integer',     desc='stage in which movemap is switched to allow all bb-residues to move, valid stages: 3..4 (HACK)',    default='3' ),
-		Option( 'force_native_topology', 'Boolean',     desc='force the native toplogy (geometries from templates)',     default='false' ),
-		Option( 'topology_rank_cutoff',  'Real',        desc='select jumps from all topologies with a higher relative score than if 1.0 take top 5',     default='1.0' ),
-		Option( 'min_frag_size',         'Integer', desc='smallest fragment picked from aligned template regions',     default='6' ),
-		Option( 'max_shrink',         'Integer', desc='pick fragments up to max_shrink smaller than aligned regions',     default='0' ),
-		Option( 'shrink_step',         'Integer', desc='shrink_step 5 , eg., 27mer 22mer 17mer',     default='5' ),
-		Option( 'shrink_pos_step',         'Integer', desc='distance between start pos in shrinked fragments',     default='5' ),
-		Option( 'min_padding',         'Integer', desc='minimum space between fragment and gap',     default='0' ),
-		Option( 'min_align_pos',         'Integer', desc='ignore aligned residues before this position',     default='0' ),
-		Option( 'max_align_pos',         'Integer', desc='ignore aligned residues after this position',     default='-1' ),
-
-		Option_Group( 'cst',
-			Option( 'topN',             'Integer',     desc='topN ranking models are used for constraints ( culling and source )',     default='0' ),
-			Option( 'wTopol',           'Real',        desc='weight for beta-pairing topology score in ranking',     default='0.5' ),
-			Option( 'wExtern',          'Real',        desc='weight for external score ( column in template_config_file, e.g, svn-score',     default='0.5' ),
-		),
-
-		Option_Group( 'fragsteal',
-			Option( 'topN',       'Integer',     desc='topN ranking models are used for fragment stealing',     default='0' ),
-			Option( 'wTopol',     'Real',        desc='weight for beta-pairing topology score in ranking',     default='0.5' ),
-			Option( 'wExtern',    'Real',        desc='weight for external score ( column in template_config_file, e.g, svn-score',     default='0.5' ),
-		),
-	), # templates
-
-	# abrelax mode -----------------------------------------------------------
-	Option_Group( 'abrelax',
-		Option( 'abrelax', 'Boolean', desc="ab initio relax mode" ),
-		Option( 'filters', 'Boolean', desc="", oldName='abrelax_filters' ),
-                Option(	'fail_unclosed', 'Boolean', desc="structures which don't close loops are reported as FAIL_DO_NOT_RETRY", default='false' ),
-	),
-
-	# chemical settings -----------------------------------------------------------
-	Option_Group( 'chemical',
-		Option( 'exclude_patches', 'StringVector', desc="Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use" ),
-		Option( 'include_patches', 'StringVector', desc="Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches", ),
-		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
-		Option( 'add_atom_type_set_parameters', 'StringVector', desc="Additional AtomTypeSet extra-parameter files that should be read; format is a sequence of paired strings: <atom-type-set-tag1> <filename1> <atom-type-set-tag2> <filename2> ..." ),
-		Option( 'set_atom_properties', 'StringVector', desc="Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' " ),
-		Option( 'patch_selectors', 'StringVector', desc = 'allow patch files that have CMDLINE_SELECTOR tags can be switched on with this option',default=[] ),
-		Option( 'override_rsd_type_limit', 'Boolean', desc="over-ride cap on number of residue types.", default='false'),
-	),
 	# score function settings  -----------------------------------------------------------
 	Option_Group( 'score',
 		Option( 'score_pose_cutpoint_variants', 'Boolean', desc='Include cutpoint variants in the pose during linear chainbreak', default='false'),
@@ -2190,7 +1137,7 @@ Option_Group( 'PCSTS4',
 		Option( 'fa_max_dis', 'Real', desc='How far does the FA pair potential go out to ?', default='6.0', ),
 		Option( 'fa_Hatr', 'Boolean', desc='Turn on Lennard Jones attractive term for hydrogen atoms'),
 		Option( 'no_smooth_etables', 'Boolean',desc="Revert to old style etables" ),
-		Option( 'etable_lr'     , 'Real',   desc="lowers energy well at 6.5A" ),
+#		Option( 'etable_lr'     , 'Real',   desc="lowers energy well at 6.5A" ),
 		Option( 'no_lk_polar_desolvation', 'Boolean', desc="Disable the polar-desolvation component of the LK solvation model; effectively set dGfree for polar atoms to 0" ),
 		Option( 'input_etables' , 'String', desc="Read etables from files with given prefix" ),
 		Option( 'output_etables', 'String', desc="Write out etables to files with given prefix" ),
@@ -2200,7 +1147,7 @@ Option_Group( 'PCSTS4',
 		Option( 'optH_weights', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'optH_patch', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='sp2_elec_params'),
-                Option( 'hbond_bb_per_residue_energy', 'Boolean', desc="In score tables, separate out backbone hydrogens bond energies per residue. By default, bb hbonds are included in the total energy, but not per residue energies",default='false'),
+		Option( 'hbond_bb_per_residue_energy', 'Boolean', desc="In score tables, separate out backbone hydrogens bond energies per residue. By default, bb hbonds are included in the total energy, but not per residue energies",default='false'),
 		Option( 'hbond_disable_bbsc_exclusion_rule', 'Boolean', desc="Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded", default='false' ),
 		Option( 'symE_units', 'Integer', desc="Number of symmetric Units in design for use with symE scoring",default='-1'),
 		Option( 'symE_bonus', 'Real', desc="Energy bonus per match for use with symE scoring",default='0.0'),
@@ -2240,7 +1187,7 @@ Option_Group( 'PCSTS4',
 		Option( 'extra_improper_file', 'String', desc="Add extra parameters for improper torsions"),
 		Option( 'pro_close_planar_constraint', 'Real', desc="stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method", default='0.1' ),
 		Option( 'linear_bonded_potential', 'Boolean', desc="use linear (instead of quadratic) bonded potential", default='false'),
-		Option('use_membrane_rg','Boolean',desc="use the modified RG score where RG calculated over input span centers of mass",default='false'),
+#		Option('use_membrane_rg','Boolean',desc="use the modified RG score where RG calculated over input span centers of mass",default='false'),
 		Option( 'free_suite_bonus', 'Real', desc="Amount to reward virtualization of a nucleotide suite", default='-1.0'),
 		Option( 'free_sugar_bonus', 'Real', desc="Amount to reward virtualization of a sugar/ribose", default='-1.0'),
 		Option( 'free_2HOprime_bonus', 'Real', desc="Amount to reward virtualization of a 2'-OH", default='-0.5'),
@@ -2251,25 +1198,7 @@ Option_Group( 'PCSTS4',
 		Option( 'unmodifypot', 'Boolean', desc="Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms"),
 		Option( 'conc', 'Real', desc="intermolecular concentration to use in intermol term (give in M)", default="1.0"),
 		Option( 'loop_fixed_cost', 'Real', desc="For loop_close term, a fixed cost of instantiating an end of a Gaussian chain; calibrated based on RNA bulge/loop data", default="-0.29" ),
-		Option_Group( 'saxs',
-			Option('min_score', 'Real', desc="minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum", default='-5' ),
-			Option( 'custom_ff', 'String',desc="Name of config file providing extra from factors",default=""),
-			Option( 'print_i_calc', 'String',desc="File to optionally write scaled computed spectra",default=""),
-			Option( 'ref_fa_spectrum','File'  , desc="reads reference full-atom spectrum from a file"),
-			Option( 'ref_cen_spectrum','File'  , desc="reads reference centroid spectrum from a file"),
-			Option( 'ref_spectrum','File'  , desc="reads reference spectrum from a file"),
-			Option( 'ref_pddf','File'  , desc="reads reference pairwise distance distribution function"),
-			Option('skip_hydrogens', 'Boolean',desc="skip hydrogen atoms", default='false' ),
-			Option('d_min', 'Real', desc="minimum value of distance used in PDDF score evaluation (in [A])", default='5.0' ),
-			Option('d_max', 'Real', desc="maximum value of distance used in PDDF score evaluation (in [A])", default='100.0' ),
-			Option('d_step', 'Real', desc="step of distance used in PDDF score evaluation (in [A])", default='0.1' ),
-			Option('q_min', 'Real', desc="minimum value of q used in spectra calculations (in [A^-1])", default='0.01' ),
-			Option('q_max', 'Real', desc="maximum value of q used in spectra calculations (in [A^-1])", default='0.25' ),
-			Option('q_step', 'Real', desc="step of q used in spectra calculations (in [A^-1])", default='0.01' ),
-			Option('fit_pddf_area', 'Boolean', desc="PDDF curve for a scored pose will be normalized to match the area under the reference PDDF curve"
-			    , default='false' ),
-		),
-			Option( 'sidechain_buried', 'IntegerVector', desc="count buried residues (rvernon pilot app)", default = '-1' ),
+		Option( 'sidechain_buried', 'IntegerVector', desc="count buried residues (rvernon pilot app)", default = '-1' ),
 		Option( 'sidechain_exposed', 'IntegerVector', desc="count exposed residues (rvernon pilot app)", default = '-1' ),
 		Option( 'elec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
 		Option( 'elec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
@@ -2300,657 +1229,43 @@ Option_Group( 'PCSTS4',
 		Option( 'facts_eff_charge_dir','String', desc='directory where residue topology files for FACTS charge are stored', default="scoring/score_functions/facts/eff" ),
 		Option( 'facts_plane_aa','StringVector', desc='AAs to apply plane rule'),
 		Option( 'facts_eq_type','String', desc='FACTS equation type',default="exact"),
-                Option( 'length_dep_srbb','Boolean', desc='Enable helix-length-dependent sr backbone hbonds', default="false" ),
-                Option( 'ldsrbb_low_scale','Real', desc='Helix-length-dependent scaling at minlength.', default="0.5" ),
-                Option( 'ldsrbb_high_scale','Real', desc='Helix-length-dependent scaling at maxlength.', default="2.0" ),
-                Option( 'ldsrbb_minlength','Integer', desc='Helix-length-dependent scaling minlength.', default="4" ),
-                Option( 'ldsrbb_maxlength','Integer', desc='Helix-length-dependent scaling maxlength.', default="17" ),
-    Option( 'nmer_ref_energies', 'String', desc='nmer ref energies database filename' ),
-    Option( 'nmer_ref_energies_list', 'String', desc='list of nmer ref energies database filenames' ),
-    Option( 'nmer_pssm', 'String', desc='nmer pssm database filename' ),
-    Option( 'nmer_pssm_list', 'String', desc='list of nmer pssm database filenames' ),
-    Option( 'nmer_pssm_scorecut', 'Real', desc='nmer pssm scorecut gate for ignoring lowscore nmers', default='0.0' ),
-    Option( 'nmer_svm', 'String', desc='nmer svm filename (libsvm)' ),
-    Option( 'nmer_svm_list', 'String', desc='list of nmer svm filenames (libsvm)' ),
-    Option( 'nmer_svm_scorecut', 'Real', desc='nmer svm scorecut gate for ignoring lowscore nmers', default='0.0' ),
-    Option( 'nmer_svm_aa_matrix', 'String', desc='nmer svm sequence encoding matrix filename' ),
-    Option( 'nmer_svm_term_length', 'Integer', desc='how many up/dnstream res to avg and incl in svm sequence encoding', default='3' ),
-    Option( 'nmer_svm_pssm_feat', 'Boolean', desc='add pssm features to svm encoding?', default='true' ),
-    Option( 'nmer_ref_seq_length', 'Integer', desc='length of nmers in nmer_ref score', default='9' ),
+		Option( 'length_dep_srbb','Boolean', desc='Enable helix-length-dependent sr backbone hbonds', default="false" ),
+		Option( 'ldsrbb_low_scale','Real', desc='Helix-length-dependent scaling at minlength.', default="0.5" ),
+		Option( 'ldsrbb_high_scale','Real', desc='Helix-length-dependent scaling at maxlength.', default="2.0" ),
+		Option( 'ldsrbb_minlength','Integer', desc='Helix-length-dependent scaling minlength.', default="4" ),
+		Option( 'ldsrbb_maxlength','Integer', desc='Helix-length-dependent scaling maxlength.', default="17" ),
+		Option( 'nmer_ref_energies', 'String', desc='nmer ref energies database filename' ),
+		Option( 'nmer_ref_energies_list', 'String', desc='list of nmer ref energies database filenames' ),
+		Option( 'nmer_pssm', 'String', desc='nmer pssm database filename' ),
+		Option( 'nmer_pssm_list', 'String', desc='list of nmer pssm database filenames' ),
+		Option( 'nmer_pssm_scorecut', 'Real', desc='nmer pssm scorecut gate for ignoring lowscore nmers', default='0.0' ),
+		Option( 'nmer_svm', 'String', desc='nmer svm filename (libsvm)' ),
+		Option( 'nmer_svm_list', 'String', desc='list of nmer svm filenames (libsvm)' ),
+		Option( 'nmer_svm_scorecut', 'Real', desc='nmer svm scorecut gate for ignoring lowscore nmers', default='0.0' ),
+		Option( 'nmer_svm_aa_matrix', 'String', desc='nmer svm sequence encoding matrix filename' ),
+		Option( 'nmer_svm_term_length', 'Integer', desc='how many up/dnstream res to avg and incl in svm sequence encoding', default='3' ),
+		Option( 'nmer_svm_pssm_feat', 'Boolean', desc='add pssm features to svm encoding?', default='true' ),
+		Option( 'nmer_ref_seq_length', 'Integer', desc='length of nmers in nmer_ref score', default='9' ),
 		Option( 'just_calc_rmsd', "Boolean", desc="In rna_score, just calculate rmsd -- do not replace score.", default='false' ),
-	),
-	Option_Group ( 'ProQ',
-		 Option( 'svmmodel','Integer', desc="SVM model to use (in cross-validation, default is to use all [1-5])",default='1'),
-		 Option( 'basename','String', desc="basename location for sequence specific inputfile)",default=""),
-		 Option( 'membrane','Boolean', desc="use membrane version (ProQM)",default='false'),
-		 Option( 'prof_bug','Boolean', desc="reproduce the profile bug in ProQres",default='false'),
-	 	 Option( 'output_feature_vector','Boolean', desc="outputs the feature vector",default='false'),
-		 Option( 'output_local_prediction','Boolean', desc="outputs the local predicted values",default='false'),
-		 Option( 'prefix','String', desc="prefix for outputfiles)",default=""),
-		 Option( 'use_gzip','Boolean', desc="gzip output files", default='false'),
-		 Option( 'normalize','Real', desc="Normalizing factor (usually target sequence length)", default='1.0'),
-  ),
-	# correction for testing ------------------------------------------------------------
-	Option_Group( 'corrections',
-		Option( 'beta', 'Boolean', desc='use beta score function', default='false'),
-		Option( 'correct', 'Boolean',
-			desc="turn on default corrections:"
-			"-corrections::chemical:icoor_05_2009"
-			"-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009"
-			"-corrections::score:p_aa_pp_nogridshift"
-			#"-corrections::score:no_his_his_pairE"
-			"-corrections::score:p_aa_pp_nogridshift"
-			"-corrections::score:rama_not_squared"
-			"-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat"
-			"-scoring::hbond_params helix_hb_06_2009"
-			"-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05"
-			"-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat",
-			default="false"),
-		Option( 'hbond_sp2_correction', 'Boolean',
-			desc="turn on the hbond Sp2 correction with a single flag"
-			" use with sp2_correction.wts. Note, these weight sets are chosen automatically by default."
-			" -score::hb_sp2_chipen"
-			" -hb_sp2_BAH180_rise 0.75"
-			" -hb_sp2_outer_width 0.357"
-			" -hb_fade_energy"
-			" -hbond_measure_sp3acc_BAH_from_hvy"
-			" -lj_hbond_hdis 1.75"
-			" -lj_hbond_OH_donor_dis 2.6"
-			" -hbond_params sp2_elec_params"
-			" -expand_st_chi2sampling"
-			" -smooth_fa_elec"
-			" -elec_min_dis 1.6"
-			" -elec_r_option false"
-			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70"),
-
-		Option( 'facts_default', 'Boolean',
-			desc="turn on default options for FACTS"
-			" use with scorefacts.wts. Incompatible with hbond_sp2_correction option."
-		  " -correct"
-		  " -lj_hbond_hdis 2.3"
-		  " -lj_hbond_OH_donor_dis 3.4"
-		  " -use_bicubic_interpolation "
-		  " -hbond_params sp2_elec_params"
-		  " -hb_sp2_chipen "
-		  " -hbond_measure_sp3acc_BAH_from_hby"
-		  " -facts_GBpair_cut 10.0"
-		  " -facts_min_dis 1.5"
-  		" -facts_dshift 1.4"
-  		" -facts_die 1.0"
-  		" -facts_kappa 12.0"
-		  " -facts_asp_patch 3"
-		  " -facts_intrares_scale 0.4"
-		  " -facts_elec_sh_exponent 1.8",
-			default="false"),
-		Option_Group( 'score',
-			Option( 'bbdep_omega', 'Boolean', desc="Enable phi-psi dependent omega", ),
-			Option( 'bbdep_bond_params', 'Boolean', desc="Enable phi-psi dependent bondlengths and bondangles", ),
-			Option( 'bbdep_bond_devs', 'Boolean', desc="Enable phi-psi dependent deviations for bondlengths and bondangles", ),
-			Option( 'no_his_his_pairE', 'Boolean', desc="Set pair term for His-His to zero", ),
-			Option( 'no_his_DE_pairE', 'Boolean', desc="Set pair term for His-Glu and His-Asp to zero", ),
-			Option( 'hbond_His_Phil_fix', 'Boolean', desc="Phil's fix on Histidine interaction angular dependence"),
-			Option( 'helix_hb_06_2009',   'Boolean', desc="Helix backbone-backbone hbond potential with a different angular dependence"),
-			Option( 'p_aa_pp',   'String', desc="Name of scoring/score_functions/P_AA_pp/P_AA_PP potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/P_AA_pp/P_AA_pp" ),
-			Option( 'p_aa_pp_nogridshift',   'Boolean', desc="the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" ),
-			Option( 'rama_not_squared', 'Boolean', desc="Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0" ),
-			Option( 'rama_map', 'File', default = 'scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4', desc="Ramachandran file used by rama" ),
-			Option( 'cenrot',   'Boolean', desc="Use the Centroid Rotamer Model.", default="false" ),
-			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the the 2002 library.", default="true"  ),
-			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),
-			Option( 'dun02_file',  'String', desc="Name of dun02 input file", default="rotamer/bbdep02.May.sortlib" ),
-			Option( 'ch_o_bond_potential',   'String', desc="Name of ch_o_bond potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat" ),
-			Option( 'fa_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in fa_elec_bb_bb", default = 'false' ),
-			Option( 'lj_hbond_hdis', 'Real', desc="Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)", default = '1.75' ),
-			Option( 'lj_hbond_OH_donor_dis', 'Real', desc="Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)", default='2.6'),
-			Option( 'score12prime', 'Boolean', desc="Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery", default='false' ),
-			Option( 'talaris2014', 'Boolean', desc="Use the talaris2014.wts weights set wherever get_score_function is invoked; the talaris2014 weight set downweights hydrogen bond strength by twenty percent relative to the talaris2013 weights set.  Reference energies have been re-fit.", default='false' ),
-			Option( 'hbond_energy_shift', 'Real', desc="The shift upwards (through addition) of the well depth for the hydrogen bond polynomials; this shift is applied before the weights are applied.", default="0.0"),
-			Option( 'hb_sp2_BAH180_rise', 'Real', desc="The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential", default="0.75"),
-			Option( 'hb_sp2_outer_width', 'Real', desc="The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag.", default="0.357"),
-			Option( 'hb_sp2_chipen', 'Boolean', desc="Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%", default="true" ),
-			Option( 'hbond_measure_sp3acc_BAH_from_hvy', 'Boolean', desc="If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen", default="true" ),
-			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="true"),
-			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
-			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
-			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shanon entropy correction to rotamer energy: E = -logP + S", default="false" ),
-		),
-		Option_Group( 'chemical',
-			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
-			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
-			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-talaris fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues", default="false"),
-		),
-	),
-
-    Option_Group( 'indexed_structure_store',
-		Option( 'fragment_store', 'File', desc='Fragment store. [.h5] file')
-    ),
-	Option_Group( 'mistakes',
-		Option( 'restore_pre_talaris_2013_behavior', 'Boolean',
-			desc="Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value"
-			" -mistakes::chemical::pre_talaris2013_geometries true"
-			" -corrections::score::dun10 false"
-			" -corrections::score::use_bicubic_interpolation false"
-			" -corrections::score:hb_sp2_chipen false"
-			" -corrections::score::hb_fade_energy false"
-			" -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false"
-			" -corrections::score::lj_hbond_hdis 1.95"
-			" -corrections::score::lj_hbond_OH_donor_dis 3.0"
-			" -corrections::chemical::expand_st_chi2sampling false"
-			" -score::weights pre_talaris_2013_standard.wts"
-			" -score::patch score12.wts_patch"
-			" -score::analytic_etable_evaluation false"
-			" -score::hbond_params score12_params"
-			" -score::smooth_fa_elec false"
-			" -score::elec_min_dis 1.5"
-			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77",
-			default="false" ),
-		Option_Group( 'chemical',
-			Option( 'pre_talaris2013_geometries', 'Boolean', desc="Use the version of the fa_standard geometries that were active before the Talaris2013 parameters were taken as default", default="false" ),
-		),
-	),
-	Option_Group( 'willmatch',
-		Option( 'arg_dun_th', 'Real', desc='fa_dun thresh for ARG', default='16.0' ),
-		Option( 'asp_dun_th', 'Real', desc='fa_dun thresh for ASP', default='8.0' ),
-		Option( 'glu_dun_th', 'Real', desc='fa_dun thresh for GLU', default='12.0' ),
-		Option( 'lys_dun_th', 'Real', desc='fa_dun thresh for LYS', default='16.0' ),
-		Option( 'usecache', 'Boolean', desc='use cached stage 1 data', default='false' ),
-		Option( 'write_reduced_matchset', 'StringVector',desc="<name> <pdb1> <pdb2> ..."),
-		Option( 'interface_size', 'Real',desc="num CB-CB within 8A",default='30'),
-		Option( 'max_dis_any',  'Real',desc="",default='3.0'),
-		Option( 'max_dis_all',  'Real',desc="",default='2.6'),
-		Option( 'max_dis_hb',   'Real',desc="",default='3.2'),
-		Option( 'min_dis_hb',   'Real',desc="",default='2.2'),
-		Option( 'max_dis_hb_colinear',   'Real',desc="",default='0.7'),
-		Option( 'max_dis_metal','Real',desc="",default='1.0'),
-		Option( 'max_ang_metal','Real',desc="",default='5.0'),
-		Option( 'clash_dis',    'Real',desc="",default='3.5'),
-		Option( 'c2_linker_dist',      'Real',desc="",default='3.5'),
-		Option( 'identical_match_dis', 'Real',desc="",default='0.0001'),
-		Option( 'chi1_increment', 'Real',desc="",default='10.0'),
-		Option( 'chi2_increment', 'Real',desc="",default='20.0'),
-		Option( 'c2_symm_increment', 'Real',desc="",default='20.0'),
-		Option( 'cb_sasa_thresh', 'Real',desc="",default='20.0'),
-		Option( 'design_interface', 'Boolean',desc="", default="true" ),
-		Option( 'chilist', 'File',desc="" ),
-		Option( 'fixed_res', 'File',desc="" ),
-		Option( 'native1', 'File',desc="" ),
-		Option( 'native2', 'File',desc="" ),
-		Option( 'exclude_res1', 'File',desc="",default="" ),
-		Option( 'exclude_res2', 'File',desc="",default="" ),
-		Option( 'taglist', 'File',desc="" ),
-		Option( 'residues', 'IntegerVector',desc="" ),
-		Option( 'symmetry_d2', 'Boolean', desc="", default='false'),
-		Option( 'symmetry_c2_dock', 'Boolean', desc="", default='false'),
-		Option( 'splitwork', 'IntegerVector', desc=""),
-		Option( 'exclude_ala', 'Boolean', desc="", default="false"),
-		Option( 'match_overlap_dis','Real',desc="distance under which to consider matches redundant",default='00.20'),
-		Option( 'match_overlap_ang','Real',desc="ang(deg) under which to consider matches redundant",default='10.00'),
-		Option( 'forbid_residues', 'IntegerVector',desc="disallow residues for matching" ),
-		Option( 'poi', 'RealVector',desc="xyz coords of some site of interest" ),
-		Option( 'poidis', 'Real',desc="poi distance threshold" ),
-		Option( 'homodimer', 'Boolean', desc="examine only homodimer configs", default="false"),
-		Option( 'fa_dun_thresh','Real',desc="",default='6.0'),
-
-		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
-	),
-
-	# rosetta holes settings  -----------------------------------------------------------
-	Option_Group( 'holes',
-		Option('dalphaball','File', desc="The DAlaphaBall_surf program"),
-		Option('params','File', desc="File containing score parameters",default="holes_params.dat"),
-		Option('h_mode','Integer', desc="include H's or no... see PoseBalls.cc",default="0"),
-		Option('water','Boolean', desc="include water or no",default="false"),
-		Option('make_pdb'      ,'Boolean', desc="make pdb with scores",default="false"),
-		Option('make_voids'    ,'Boolean', desc="do separate SLOW void calculation",default="false"),
-		Option('atom_scores'   ,'Boolean', desc="output scores for all atoms",default="false"),
-		Option('residue_scores','Boolean', desc="output scores for all residues (avg over atoms)",default="false"),
-      	Option('cav_shrink'    ,'Real'   , desc="Cavity ball radii reduced by this amount",default="0.7"),
-      	Option('minimize'      ,'String' , desc="RosettaHoles params to use: decoy15, decoy25 or resl",default="decoy15"),
-      	Option('debug'      ,'Boolean' , desc="dump debug output",default="false"),
-	),
-
-	# packstat measure settings  -----------------------------------------------------------
-	Option_Group( 'packstat',
-		Option( 'include_water', 'Boolean',desc="Revert to old style etables", default="false" ),
-		Option( 'oversample', "Integer", desc="Precision of SASA measurements", default='0' ),
-		Option( 'packstat_pdb', "Boolean", desc="Output a pdb with packing visualizations", default='false' ),
-		Option( 'surface_accessibility', "Boolean", desc="Compute extra cavity burial information", default='false' ),
-		Option( 'residue_scores', "Boolean", desc="Output the score for each resdiue", default='false' ),
-		Option( 'cavity_burial_probe_radius', "Real", desc="Radius probe to consider a cavity buried", default='1.4' ),
-		Option( 'raw_stats', "Boolean", desc="Output the raw stats per-residue (for training, etc...)", default='false'),
-		Option( 'threads', "Integer", desc="Number of threads to use (0 for no threading)", default='0' ),
-		Option( 'cluster_min_volume', 'Real', desc='voids smaller than this will not be shown.', default='30'),
-		Option( 'min_surface_accessibility', 'Real', desc='voids must be at least this exposed', default='-1.0'),
-		Option( 'min_cluster_overlap', 'Real', desc='void-balls must overlap by this much to be clustered', default='0.1'),
-		Option( 'min_cav_ball_radius', 'Real', desc='radius of smallest void-ball to consider', default='0.7'),
-		Option( 'max_cav_ball_radius', 'Real', desc='radius of largest void-ball to consider', default='3.0'),
-	),
-
-
-	# packstat measure settings  -----------------------------------------------------------
-	Option_Group( 'crossmatch',
-		Option( 'write_reduced_matchset', 'StringVector',desc="<name> <pdb1> <pdb2> ..."),
-		Option( 'interface_size', 'Integer',desc="num CB-CB within 8A",default='30'),
-		Option( 'max_dis_any', 'Real',desc="",default='3.0'),
-		Option( 'max_dis_all', 'Real',desc="",default='2.6'),
-		Option( 'max_dis_metal', 'Real',desc="",default='1.0'),
-		Option( 'clash_dis', 'Real',desc="",default='3.0'),
-		Option( 'identical_match_dis', 'Real',desc="",default='0.0001'),
-		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
-	),
-
-	# packstat measure settings  -----------------------------------------------------------
-	Option_Group( 'smhybrid',
-		Option( 'add_cavities',      'Boolean',desc="output cavities in result pdbs", default="false" ),
-		Option( 'abinitio_design',   'Boolean',desc="do a design run in centroid mode", default="true" ),
-		Option( 'fa_refine',         'Boolean',desc="Do nobu's flxbb", default="true" ),
-		Option( 'virtual_nterm',     'Boolean',desc="remove Nterm", default="false" ),
-		Option( 'debug',             'Boolean',desc="debug", default="false" ),
-		Option( 'refine',            'Boolean',desc="don't do bit centroid moves", default="false" ),
-		Option( 'filter',            'Boolean',desc="filter centroid results as you go", default="false" ),
-		Option( 'floating_scs_rep',  'Boolean',desc="should floating scs repel those in other subunits?", default="false" ),
-		Option( 'flxbb',             'Boolean',desc="allow bb moves in minimization", default="false" ),
-		Option( 'centroid_all_val',  'Boolean',desc="mutate all to VAL in centroid mode", default="false" ),
-		Option( 'subsubs_attract' ,  'Boolean',desc="attract subsubs togeher", default="false" ),
-		Option( 'linker_cst'      ,  'Boolean',desc="attract N/C termini for linker", default="false" ),
-		Option( 'pseudosym'       ,  'Boolean',desc="HACK pseudosymmetry", default="false" ),
-		Option( 'design_linker'   ,  'Boolean',desc="allow design on added 'linker' residues", default="true" ),
-		Option( 'design'          ,  'Boolean',desc="allow design on added 'linker' residues", default="true" ),
-		Option( 'restrict_design_to_interface','Boolean',desc="allow design on added 'linker' residues", default="false" ),
-		Option( 'restrict_design_to_subsub_interface','Boolean',desc="allow design on added 'linker' residues", default="false" ),
-		Option( 'design_hydrophobic','Boolean',desc="design all hydrophobic", default="false" ),
-		Option( 'add_metal_at_0'  ,  'Boolean',desc="DEPRECATED", default="false" ),
-		Option( 'nres_mono',         'Integer',desc="target number of residues per monomer", default="20" ),
-		Option( 'abinitio_cycles',   'Integer',desc="number of abinitio cycles", default="10000" ),
-		Option( 'primary_subsubunit','Integer' ,desc="primary subunut", default="1" ),
-		Option( 'minbb'             ,'Integer' ,desc="level of bb min 0=None 1=little 2=all", default="1" ),
-		Option( 'switch_concert_sub','Integer' ,desc="assume prmary subsub is on this subunit for concerted RB moves", default="1" ),
-		Option( 'temperature'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
-		Option( 'inter_subsub_cst'  ,'Boolean' ,desc="add dis csts inter-subsub", default="false" ),
-		Option( 'rb_mag'            ,'Real' ,desc="magnitude of rb moves", default="1.0" ),
-		Option( 'ss',                'String' ,desc="secondary structure", default="" ),
-		Option( 'symm_def_template', 'File',desc="template for symmetry definition file" ),
-		Option( 'symm_def_template_reduced', 'File',desc="template for reduced symmetry definition file" ),
-		Option( 'attach_as_sc',      'IntegerVector',desc="attach the group via side chain" ),
-		Option( 'attach_as_sc_sub',  'IntegerVector',desc="attach the group via side chain in this sub" ),
-		Option( 'inversion_subs',    'IntegerVector',desc="subunits to be inverted, if any" ),
-		Option( 'chainbreaks',       'BooleanVector',desc="close chainbreak from this subsub to the next" ),
-		Option( 'design_res_files',  'StringVector',default='""',desc="files containing designable residues for each component pose" ),
-		Option( 'fixed_res_files',   'StringVector',default='""',desc="files containing fixed residues (no repack even) for each component pose" ),
-		Option( 'frag_res_files',    'StringVector',default='""',desc="files containing residues ok to insert frags into. will have starting ss" ),
-		Option( 'scattach_res_files','StringVector',default='""',desc="files containing residues ok to scattach to."     ),
-		Option( 'rep_edge_files','StringVector',default='""',desc="files containing residues which are edge strands."     ),
-		Option( 'virtual_res_files' ,'StringVector',default='""',desc="files containing residues that should be virtual" ),
-		Option( 'jumpcut_files',     'StringVector',default='""',desc="file specifying jumps and cuts for subsubunits"   ),
-		Option( 'cst_sub_files',     'StringVector',default='""',desc="file specifying which subunits are part of a structural unit and shoudl be constrained"),
-		Option( 'symm_file_tag',     'StringVector',default='""',desc="label for each subunit" ),
-		Option( 'attach_atom',       'StringVector',default='""',desc="attach atom on each subunit" ),
-		Option( 'add_res_before',    'StringVector',default='""',desc="SS to add before each subunit region" ),
-		Option( 'add_res_after',     'StringVector',default='""',desc="SS to add after each subunit region" ),
-		Option( 'add_ss_before',     'StringVector',default='""',desc="residues to add" ),
-		Option( 'add_ss_after',      'StringVector',default='""',desc="SS to add after each subunit region" ),
-		Option( 'add_atom_at_cen',   'StringVector',default='""',desc="SS to add after each subunit region" ),
-		Option( 'attach_rsd',        'StringVector',default='""',desc="attach rsd on each subunit" ),
-
-	),
-
-	# evolution mode -----------------------------------------------------------
-	Option_Group( 'evolution',
-		Option( 'parentlist', 'FileVector', desc="File(s) containing list(s) of Parent PDB files to process" ),
-		Option( 'childlist', 'FileVector', desc="File(s) containing list(s) of Parent PDB files to process" ),
-		Option( 'action' , 'String', desc="One of the following:  diversify, intensify ", default = "diversify" ),
-		Option( 'rms_threshold', 'Real', desc='RMS Clustering threshold', default='3.5'),
-		Option( 'rms_topmargin', 'Real', desc='RMS Clustering threshold', default='5.0'),
-		Option( 'targetdir' , 'String', desc="Write target new parent polulation to this directory ! ", default = "./"  ),
-		Option( 'padding_score_filter', 'Real', desc='RMS Clustering threshold', default='5.0'),
-		Option( 'padding_stage2_filter', 'Real', desc='RMS Clustering threshold', default='15.0'),
-	),
-
-	# clustering options -----------------------------------------------------------
-	Option_Group( 'cluster',
-		Option('lite','Boolean',desc="uses light-weight method of outputting cluster-centers, useful for when there's a HUGE amount of data!",default='false'),
-		Option( 'input_score_filter', 'Real', desc="Only read in structures below a certain energy", default = '1000000.0' ),
-		Option( 'output_score_filter', 'Real', desc="Only read in structures below a certain energy", default = '1000000.0' ),
-		Option( 'exclude_res', 'IntegerVector', desc="Residue numbers to be excluded from cluster RMS calculation", default = '-1' ),
-		Option( 'thinout_factor', 'Real', desc="Ignore this fraction of decoys in the first round !", default = '-1' ),
-		Option( 'max_cluster_seeds', 'Integer', desc="Do not calculate initial cluster centers for more then this many structuers", default = '500' ),
-		Option( 'radius', 'Real', desc="Cluster radius", default = '3.0' ),
-		Option( 'limit_cluster_size', 'Integer', desc="For each cluster only retain top N ", default = '-1' ),
-		Option( 'limit_cluster_size_percent', 'Real', desc="0 to 1. For each cluster only retain top N % " ),
-		Option( 'random_limit_cluster_size_percent', 'Real', desc="0 to 1. For each cluster only retain random N % " ),
-		Option( 'limit_clusters', 'Integer', desc="Only retain largest N clusters", default = '100' ),
-		Option( 'limit_total_structures', 'Integer', desc="Only retain the first N structures (ordered by cluster number)", default = '-1' ),
-		Option( 'max_total_cluster','Integer', desc="Only ever make N clusters or less", default = '1000'),
-		Option( 'gdtmm', 'Boolean', desc="Cluster by gdtmm instead of RMS", default = 'false' ),
-		Option( 'sort_groups_by_energy', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
-		Option( 'sort_groups_by_size', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
-		Option( 'remove_singletons', 'Boolean', desc="Get rid of single-member clusters", default = 'false' ),
-		Option( 'export_only_low', 'Boolean', desc="Print only the lowest energy member", default = 'false' ),
-		Option( 'remove_highest_energy_member', 'Boolean', desc="Remove highest energy member from each cluster", default = 'false' ),
-		Option( 'idealize_final_structures', 'Boolean', desc="Run an idealization over the resulting structures", default = 'false' ),
-		Option( 'limit_dist_matrix', 'Integer', desc="Only calculate full matrix for a subset of structres. Then simply assign structures to nearest cluster", default = '-1'),
-		Option( 'make_ensemble_cst', "Boolean", desc="Create a set of constraints describing the variablity in each cluster of each residue.", default='false' ),
-		Option( 'hotspot_hash', "Boolean", desc="Cluster hotspot hashing results. Each input PDB must contain both the target and the newly docked hotspot (which should be the last residue in the pose).", default='false' ),
-		Option( 'loops', "Boolean", desc='Cluster the loop specified with the -loops:loop_file option', default = 'false' ),
-		Option( 'population_weight', 'Real', desc="Order Clusters by (1-p)*score - p*size whpere p = population_weight " , default = '0.09' ),
-
-		Option( 'template_scores', 'String', desc="imple textfile containing template names (in caps) and scores." ),
-
-		Option( 'K_level', "Integer", desc='Hierarchical cluster level number', default = '1'),
-		Option( 'K_radius', "RealVector", desc='Radius list of different level of cluster', default = 'utility::vector1<float>(1, 2.0)'),
-		Option( 'K_n_cluster', "IntegerVector", desc='How many clusters in each level', default = 'utility::vector1<int>(1, 10000)'),
-		Option( 'K_style', "StringVector", desc='Which K-cluster engine to use', default = 'utility::vector1<std::string>(9, "GKC")'),
-		Option( 'K_threshold', "Real", desc='Threshold for test the convergence of iteration', default = '0.01'),
-		Option( 'K_n_sub', "Integer", desc='Number of clusters in subdir', default = '100'),
-		Option( 'K_deque_size', "Integer", desc='Size of subcluster deque', default = '20'),
-		Option( 'K_deque_level', "Integer", desc='Provide deque in top level', default = '1'),
-		Option( 'K_redundant', "Boolean", desc='Keep all the higher level center structure in sub-pools', default = 'true'),
-		Option( 'K_not_fit_xyz', "Boolean", desc='Do not rotate xyz when calculate rmsd', default = 'false'),
-		Option( 'K_save_headers', "Boolean", desc='Save headers in silent file', default = 'false'),
-		Option( 'score_diff_cut','Real',desc='score difference cut for RNA and SWA clustering', default = '1000000.0' ),
-		Option( 'auto_tune', 'Boolean', desc='autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer', default='false' ),
-	),
-
-	# rescore mode -----------------------------------------------------------
-	Option_Group( 'rescore',
-		Option( 'pose_metrics', 'Boolean', desc="Do pose metrics calc" ),
-
-		Option( 'assign_ss', 'Boolean', desc="Invoke DSSP to assign secondary structure.", default = 'false' ),
-
-		Option( 'skip', 'Boolean', desc="Dont actually call scoring function (i.e. get evaluators only)" ),
-		Option( 'verbose', 'Boolean', desc="Full break down of weights, raw scores and weighted scores ?" ),
-
-		Option( 'msms_analysis', 'String', desc="Run MSMS on the structure and determine surface properties. " ),
-	),
-
-	Option_Group( 'mc',
-		Option( 'log_scores_in_MC', 'Boolean', desc="Score each decoy during a simulation and output it to log; slows down run!", default="false" ),
-		Option( 'hierarchical_pool', 'String', desc='specify prefix in order to look for hierarchical pool' ),
-	  Option( 'read_structures_into_pool', 'File', desc='specify the silent-structs to create a hierarchy for lazy users'),
-		Option( 'convergence_check_frequency', 'Integer', desc='how often check for convergences in MC object?', default = '100' ),
-		Option( 'known_structures', 'File',
-			desc='specify a filename of a silent-file containing known structures',
-			default='known_structs.in'
-		), ##using this option will cause that tag of nearest structure to sampled decoys is reported
-		Option( 'max_rmsd_against_known_structures', 'Real', desc='stop sampling if rmsd to a known-structure is lower than X',default='1.5' ),
-		Option( 'excluded_residues_from_rmsd', 'IntegerVector', desc='residues that are not used for RMSD computation in pool' ),
-		Option( 'heat_convergence_check', 'Integer',
-			desc ="jump out of current abinitio run if X unsuccesful mc-trials reached", default='0'),
-	), # mc
-
-	# relax mode -----------------------------------------------------------
-	Option_Group( 'batch_relax',
-		Option( 'batch_size',         'Integer',    desc='Size of batches - note that thsie affects memory usage significantly', default='100' ),
-		#Option( 'return_all',         'Boolean',    desc='Return all structures or only the ones that made it to the end ?', default='false' ),
-	),
-
-	# relax mode -----------------------------------------------------------
-	Option_Group( 'relax',
-		## Different relax modes:
-		Option( 'fast',                      'Boolean', desc='Do a preset, small cycle number FastRelax' ),
-		Option( 'thorough',                  'Boolean', desc='Do a preset, large cycle number FastRelax' ),
-		Option( 'membrane',                  'Boolean', desc='Do membrane relax', default='false' ),
-		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
-		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
-		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended' ),
-
-		## Options for Sequence Relax
-		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),
-		Option( 'ramady_rms_limit',        'Real', desc='(ramady-only) Reject rama changes which perturb structure by more than this', default='0.5' ),
-		Option( 'ramady_cutoff',           'Real', desc='(ramady-only) Cutoff at which a rama is considered bad', default='2.0' ),
-		Option( 'ramady_max_rebuild',        'Integer', desc='(ramady-only) The maximum number of bad ramas to fix per repack-min cycle', default='1' ),
-		Option( 'ramady_force',              'Boolean', desc='(ramady-only) Force rebuilding of bad ramas (normal skip-rate = 10%)', default='false' ),
-		Option( 'script',                    'File',    desc='Relax script file', default='' ),
-		Option( 'script_max_accept',       'Integer',    desc='Limit number of best accepts', default = '10000000' ),
-
-		Option( 'superimpose_to_native',     'Boolean', desc='Superimpose input structure to native', default='false' ),
-		Option( 'superimpose_to_file',     'File', desc='Superimpose input structure to file', default='false' ),
-		Option( 'constrain_relax_to_native_coords', 'Boolean', desc = "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native", default="false" ),
-		Option( 'constrain_relax_to_start_coords', 'Boolean', desc = "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native", default="false" ),
-		Option( 'coord_constrain_sidechains', 'Boolean', desc = "For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)", default="false" ),
-		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
-		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
-                Option( 'respect_resfile', 'Boolean', desc = "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.", default="false"),
-
-                ## Options to manipulate the movemap
-		Option( 'bb_move', 'Boolean', default='true', desc='allow backbone to move during relax'),
-		Option( 'chi_move', 'Boolean', default='true', desc='allow sidechain to move during relax'),
-		Option( 'jump_move', 'Boolean', default='false', desc='allow jump to move during relax'),
-		Option( 'dna_move', 'Boolean', default='false', desc='allow dna to move during relax + allow DNA-DNA interactions. Best if used with orbitals scorefunction. DNA stays together with great molprobity results.  Not recommended for general use at this time.'),
-		Option( 'fix_omega',          'Boolean', default='false', desc='Fix omega angles during relax' ),
-		Option( 'minimize_bond_lengths',          'Boolean', default='false', desc='Free bond length DOFs during relax for all atoms' ),
-		Option( 'minimize_bond_angles',           'Boolean', default='false', desc='Free bond angle DOFs during relax for all atoms' ),
-		Option( 'minimize_bondlength_subset', 'Integer', legal=[ '0', '1', '2', '3'], default='0',
- 				desc="Minimize only a subset of bondlengths \
-0 Default  all bondlengths \
-1          backbone only \
-2          sidechain only \
-3          CA only (Ca-C,Ca-N and Ca-Cb)",
-			),
-		Option( 'minimize_bondangle_subset', 'Integer', legal=[ '0', '1', '2', '3', '4'], default='0',
- 				desc="Minimize only a subset of bondlengths \
-0 Default  all bondangles \
-1          backbone only \
-2          sidechain only \
-3          tau only \
-4          Ca-Cb only",
-			),
-		## Use an alternate minimizer
-		Option( 'min_type', 'String', default = 'dfpmin_armijo_nonmonotone', desc = 'minimizer to use during relax.'),
-		Option( 'cartesian', 'Boolean', default='false', desc='Use Cartesian minimizer' ),
-
-		Option( 'chainbreak_weight',            'Real',    desc='chainbreak weight', default='0.0'),
-		Option( 'linear_chainbreak_weight',     'Real',    desc='linear chainbreak weight', default='0.0'),
-		Option( 'overlap_chainbreak_weight',     'Real',    desc='overlap chainbreak weight', default='0.0'),
-
-
-		# Older, deprecated protocols
-		Option( 'classic',                   'Boolean', desc='Do very old classic relax ! This is a poor protocol - don\'t use it !' ),
-		Option( 'sequence_file',             'File',    desc='Relax script file', default='' ),
-		Option( 'quick',                     'Boolean', desc='Do a preset, small cycle number FastRelax' ),
-		Option( 'sequence',                  'Boolean', desc='Do a preset, small cycle number FastRelax' ),
-
-		Option( 'minirelax_repeats',         'Integer', desc='', default='2'),
-		Option( 'minirelax_sdev', 'Real', desc='tether on coordinate constraints for minirelax', default='0.5' ),
-		Option( 'wobblemoves',               'Boolean', desc='Do Wobble moves ?', default="false" ),
-		Option( 'constrain_relax_segments',  'File',    desc='loop definition file', default='' ),
-		Option( 'coord_cst_width',           'Real',    desc='Width on coordinate constraints from constrain_relax_* options', default='0.0' ),
-		Option( 'coord_cst_stdev',           'Real',    desc='Stdev on coordinate constraints from constrain_relax_* options', default='0.5' ),
-		Option( 'ramp_constraints',          'Boolean', desc='Ramp constraints during phase1 of relax from full to zero', default='false' ),
-		Option( 'energycut',                 'Real',    desc='Rottrial energycut (per residue!)', default='0.01'),
-		Option( 'mini', 'Boolean', desc='perform a relax that is only a minimization and repack.', default='false' ),
-		Option( 'stage1_ramp_cycles',        'Integer', desc='Ramp cyclesin stage 1 ', default='8'),
-		Option( 'stage1_ramp_inner_cycles',  'Integer', desc='Inner cycles means how many small shear moves + rottrials', default='1'),
-		Option( 'stage2_repack_period',      'Integer', desc='Full repack after how many cycles in stage 2', default='100'),
-		Option( 'stage2_cycles',             'Integer', desc='How many stage 2 cycles ? (by default its -1 means Nresidues*4 )', default='-1'),
-		Option( 'min_tolerance',             'Real',    desc='Minimizer tolerance', default='0.00025'),
-		Option( 'stage3_cycles',             'Integer', desc='How many stage 3 cycles ? (by default its -1 means Nresidues )', default='-1'),
-		Option( 'cycle_ratio',               'Real',    desc='Post-multiplier for cycle numbers', default='1.0'),
-		Option( 'filter_stage2_beginning',   'Real',    desc='FArelax score filter', default='99999999.00'),
-		Option( 'filter_stage2_quarter',     'Real',    desc='FArelax score filter', default='99999999.00'),
-		Option( 'filter_stage2_half',        'Real',    desc='FArelax score filter', default='99999999.00'),
-		Option( 'filter_stage2_end',         'Real',    desc='FArelax score filter', default='99999999.00'),
-
-		## Options for CentroidRelax
-		Option_Group('centroid',
-			Option( 'weights',           'String',  desc="Weights to use for centroid minimization", default='score4_smooth_cen_relax'),
-			Option( 'ramp_vdw',          'Boolean', desc="Ramp up the VDW weight", default='true'),
-			Option( 'ramp_rama',         'Boolean', desc="Ramp up the rama/rama2b weight", default='false'),
-			Option( 'parameters',        'String',  desc="Database file for ramp/min parameter", default='sampling/cen_relax/default_relax_parameters.txt'),
-			Option( 'do_final_repack',   'Boolean', desc="Repack sidechains in movemap after protocol if given a fullatom structure", default='false'),
-			Option( 'increase_vdw_radii','Boolean', desc="Increase BB vdw radii", default='false'),
-		),
-	),
-
-	## options for enzyme design
-	Option_Group('enzdes',
-		Option( 'enzdes', 'Boolean', desc="enzdes option group", legal='true', default='true' ),
-		Option( 'checkpoint', 'String', default = '', desc = 'write/read checkpoint files to the desired filename.'),
-		Option('enz_score', 'Boolean', default = 'false',
-			desc="prevent repacking in enzyme design calculation"),
-		Option('enz_repack', 'Boolean', default = 'false',
-			desc="prevent redesign in enzyme design calculation"),
-		Option('cst_opt', 'Boolean', default = 'false',
-			desc="pre design constraint minimization"),
-		Option('cst_predock', 'Boolean', default = 'false',
-			desc="docks a ligand relative the catalytic residue"),
-		Option('trans_magnitude','Real',default = '0.1',
-			desc="rigid body translation in Angstrom"),
-		Option('rot_magnitude','Real',default = '2',
-			desc="rigid body rotation in deg"),
-		Option('dock_trials','Real',default = '100',
-			desc="number of docking trials"),
-		Option('cst_min', 'Boolean', default = 'false',
-			desc="after design minimization, constraints turned off"),
-		Option('cst_design', 'Boolean', default = 'false',
-			desc="invokes actual design"),
-		Option('design_min_cycles', 'Integer', default = '1',
-			desc="determines how many iterations of designing/minimizing are done during a design run"),
-	  Option('make_consensus_mutations', 'Boolean', default = 'false',
-			desc="Invokes mutations back to sequence profile consensus throughout whole protein in EnzdesFixBB protocol. sequence profile file must be specified through -in:pssm option."),
-		Option('bb_min','Boolean', default = 'false',
-			desc="allows backbone of active site residues to move during cst_opt and cst_min. In the cst_opt stage, residue Cas will be constrained to their original positions."),
-		Option('bb_min_allowed_dev','Real', default = '0.5',
-			desc="distance by which Cas are allowed to move during backbone minimization before a penalty is assigned."),
-		Option('loop_bb_min_allowed_dev','Real', default = '0.5',
-			desc="distance by which Cas are allowed to move during backbone minimization before a penalty is assigned. Applied only for loops as determined by DSSP."),
-		Option('minimize_ligand_torsions','Real', default = '10.0',
-      desc="degrees by which ligand torsions are allowed to rotate before a penalty is assigned. Only those torsions which have diversity in the conformational ensemble are allowed this std dev. rest are constrained to 0.1"),
-		Option('minimize_all_ligand_torsions','Real', default = '10.0',
-			desc="allows constrained minimization of all ligand torsions using stddev."),
-		Option('chi_min','Boolean', default = 'false',
-			desc="allows chi values of active site residues to move during cst_opt and cst_min."),
-		Option('min_all_jumps','Boolean', default = 'false',
-			desc="allows all jumps in the pose to minimize  during cst_opt and cst_min. By default only ligand-associated jumps minimize"),
-		Option('cst_dock', 'Boolean', default = 'false',
-			desc="ligand docking after design. By default, constraints (except covalent connections will be turned off for this stage."),
-		Option('run_ligand_motifs', 'Boolean', default = 'false',
-			desc="run ligand motif search and add motif rotamers to packer"),
-		Option('enz_debug', 'Boolean', default = 'false',
-			desc="invokes various debug routines around the enzdes code"),
-		Option('cstfile','File', default = 'constraints.cst',
-			desc="file that contains all necessary constraints for an enzyme design calculation"),
-		Option('enz_loops_file','File', default = 'eloops.els',
-			desc="file that contains definitions of loop regions"),
-		Option('flexbb_protocol', 'Boolean', default = 'false',
-			desc="triggers flexible backbone design"),
-		Option('remodel_protocol', 'Boolean', default = 'false',
-			desc="triggers remodel protocol design"),
-		Option('kic_loop_sampling', 'Boolean', default = 'false', desc="Generate alternate loop conformations using KIC loop closure instead of backrub"),
-		Option('dump_loop_samples', 'String', default = "no", legal=["no","yes","quit_afterwards"], desc="yes/no? Create loop pdb files named loopreg_[regionid]_[whichsample].pdb for the chosen loop samples; if 'quit_afterwards' is given, then the program exits after all loops have been generated"),
-		Option('fix_catalytic_aa', 'Boolean', default = 'false',
-			desc="preventing catalytic aa from repacking"),
-		Option('additional_packing_ligand_rb_confs', 'Integer', default = '0',
-			desc="Ligand Rotamers will be built at additional random rigid body positions during packing"),
-	 Option( 'ex_catalytic_rot', 'Integer', legal=[ '0', '1', '2', '3', '4', '5', '6', '7' ], default='1', desc="convenience option to use higher number of rotamers for catalytic residues. The chosen level will be applied to all chis of every catalytic residue." ),
-		Option('single_loop_ensemble_size', 'Integer', default = '100',
-			desc="number of conformations generated for each of the independent loops in a flexbb calculation"),
-		Option('loop_generator_trials', 'Integer', default = '200',
-			desc="number of trials of that the respective loop generator(backrub/kinematic kic) does in enzdes flexbb"),
-		Option('no_catres_min_in_loopgen', 'Boolean', default = 'false',
-			desc="prevents minimization of catalytic residues when generating loop ensembles"),
-		Option('mc_kt_low', 'Real', default = '0.6',
-			desc="low monte carlo limit for ensemble generation using backrub"),
-		Option('mc_kt_high', 'Real', default = '0.9',
-			desc="high monte carlo limit for ensemble generation using backrub"),
-		Option('min_cacb_deviation', 'Real', default = '0.3',
-			desc="Fragment uniqueness filter. On by default.  Minimum CA/CB average deviation that at least one residue must have from all other already-included fragments for a new fragment to be included"),
-		Option('max_bb_deviation', 'Real', default = '0.1',
-			desc="Fragment smoothness filter.  Off by default. Upper limit on the backbone average deviation a new fragment may have to its most-similar fragment that has already been included in the fragment set."),
-		Option('max_bb_deviation_from_startstruct', 'Real', default = '1.5',
-			desc="Fragment native-proximity Filter. Always on. Maximum tolerated backbone average deviation from the starting backbone for a fragment that to be included in the fragment set."),
-		Option('flexbb_outstructs', 'Integer', default = '10',
-			desc="doesn't do much anymore in the current implementation of the flexbb protocol"),
-		Option('remodel_trials', 'Integer', default = '100',
-			desc="how often each loop is being remodeled in the enzdes_remodel mover"),
-		Option('remodel_secmatch', 'Boolean', default = 'false',
-			desc="if constrained interactions are missing in the pose during remodel, the SecondaryMatcher will be used to try to find them in the remodeled region. very experimental at this point"),
-		Option('dump_inverse_rotamers', 'Boolean', default = 'false',
-			desc="in case of remodel secmatching against inverse rotamers, these rotamers will be dumped before the protocol starts for visual inspection by the user"),
-		Option('remodel_aggressiveness', 'Real', default = '0.1',
-			desc="determines the aggressiveness with which a given loop is remodeled. legal values between 0 and 1, where 1 is aggressive and 0 conservative."),
-		Option('favor_native_res','Real', default = '0.5',
-			desc="a bonus energy assigned to the native res during a design calculation"),
-		Option('detect_design_interface', 'Boolean', default = 'false',
-			desc="automatically detect design/repack region around ligand(s)"),
-		Option('include_catres_in_interface_detection', 'Boolean', default = 'false',
-			desc="if option -detect_design_interface is active, invoking this option causes all residues that are within the specified cuts of any catalytic residue are also set to designing/repacking"),
-		Option('arg_sweep_interface', 'Boolean', default = 'false',
-			desc="Use protein-DNA design-like interface detection, involving generation of arginine rotamers at each position, checking to see if argininte can make interaction with ligand."),
-		Option('arg_sweep_cutoff', 'Real', default = '3.7',
-			desc="Interaction cutoff distance from arginine to ligand when performing arginine sweep interface detection."),
-		Option('cut1','Real', default = '0.0',
-			desc="option to specify redesign cutoff 1 in enzdes calculation"),
-		Option('cut2','Real', default = '0.0',
-			desc="option to specify redesign cutoff 2 in enzdes calculation"),
-		Option('cut3','Real', default = '10.0',
-			desc="option to specify repack cutoff 1 in enzdes calculation"),
-		Option('cut4','Real', default = '10.0',
-			desc="option to specify repack cutoff 2 in enzdes calculation"),
-		Option('lig_packer_weight','Real', default = '1.0',
-			desc="specifies the weights for protein ligand interaction during packing (and only packing!! )"),
-		Option('no_unconstrained_repack', 'Boolean', default = 'false',
-			desc="no unconstrained repacking after the design stage"),
-		Option('secmatch_Ecutoff', 'Real', default = '1.0',
-			desc="the maximum constraint energy at which a residue is accepted in the secondary matcher"),
-		Option('change_lig','File', default = 'ligchange_file.txt',
-			desc="Can be used with the secondary matching protocol if different incarnations of the ligand are used for design and primary matching. The file needs to contain information on what atoms to superimpose."),
-		Option('process_ligrot_separately','String', default = 'default_lig',
-			desc="In the EnzdesFixBB protocol, causes the protocol to be executed separately for all non_bb clashing ligand rotamers."),
-			Option('start_from_random_rb_conf','Boolean', default = 'false',
-			desc="In the EnzdesFixBB protocol, if there are additional ligand rigid body conformations available (from a multimodel pdb), a random one of these will be the starting point for the protocol."),
-		Option('bb_bump_cutoff','Real', default = '2.0',
-			desc="option to specify the maximum allowed backbone energie when replacing a new residue type"),
-		Option('sc_sc_bump_cutoff','Real', default = '2.0',
-			desc="option to specify the maximum allowed energy between two newly placed sidechains in the secondary matcher"),
-		Option('no_packstat_calculation','Boolean', default = 'false',
-			desc="will determine whether the computationally intensive packstat calculation will be done at the end of a run"),
-		Option('compare_native','String', default = './',
-			desc="triggers comparison of every designed structure to its respective native pdb. the value of the option needs to be a directory path that contains all the native pdb files"),
-		Option('final_repack_without_ligand','Boolean', default = 'false',
-			desc="if a scorefile is requested, this option triggers every structure to be repacked without the ligand. the resulting structure will be output in a multimodel pdb, and differences in energy and rmsd are added to the scorefile."),
-		Option('dump_final_repack_without_ligand_pdb','Boolean', default = 'false',
-			desc="If option -final_repack_without_ligand is active, this option will cause the repacked structure to be separately dumped."),
-		Option('parser_read_cloud_pdb','Boolean', default = 'false',
-			desc="read cloud format PDB for enzdes in rosetta scripts"),
-
-	), # enzdez
-
-	# Sasa options --------------------------------------------------------------Does not work with SasaCalculatorLegacy/sasa functions in use pre-2014
-	Option_Group( 'sasa',
-		Option('method', 'String',
-			desc=   'The method used to calculate sasa.  More will hopefully be added in the future.',
-			default='LeGrand',
-			legal =['LeGrand']),
-		Option('include_hydrogens_explicitly', 'Boolean',
-			desc=     'Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  Some protocols may overwrite this setting to their needs.',
-			default = 'true'),
-		Option('probe_radius', 'Real',
-			desc=   'Probe radius used by SasaCalc.  Default is radius of water.  1.2 is also commonly used.',
-			default='1.4'),
-		Option('include_probe_radius_in_atom_radii', 'Boolean',
-			desc=   'This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the Surface Area instead.',
-			default='true'
-			),
-		Option('include_only_C_S_in_hsasa', 'Boolean',
-			desc=   'Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically.',
-			default='true'),
-		Option('exclude_polar_atoms_by_charge_in_hsasa', 'Boolean',
-			desc=   'Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa',
-			default='false'),
-		Option('polar_charge_cutoff', 'Real',
-			desc=    'Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded.',
-			default='.4'
-			),
-		Option('implicit_hydrogen_radii_set', 'String',
-			desc=   'The radii set to use when including hydrogens implicitly instead of explicitly. Chothia 1976 radii are used by the program Naccess.  chothia=naccess',
-			default='chothia',
-			legal= ['chothia', 'naccess']),
-		Option('explicit_hydrogen_radii_set', 'String',
-			desc=   'The radii set to use when including hydrogens explicitly. Default is reduce, which was generally agreed upon at Minicon 2014 and come from original data from Bondi (1964) and Gavezzotti (1983) .  LJ are the Rosetta leonard-jones radii, which are not quite exactly from Charmm.  Legacy radii were optimized for a no-longer-in-Rosetta scoreterm (Jerry Tsai et al 2003)',
-			default='reduce',
-			legal=['reduce', 'LJ', 'legacy']),
-	), #Sasa
+		Option_Group( 'saxs',
+			Option('min_score', 'Real', desc="minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum", default='-5' ),
+			Option( 'custom_ff', 'String',desc="Name of config file providing extra from factors",default=""),
+			Option( 'print_i_calc', 'String',desc="File to optionally write scaled computed spectra",default=""),
+			Option( 'ref_fa_spectrum','File'  , desc="reads reference full-atom spectrum from a file"),
+			Option( 'ref_cen_spectrum','File'  , desc="reads reference centroid spectrum from a file"),
+			Option( 'ref_spectrum','File'  , desc="reads reference spectrum from a file"),
+			Option( 'ref_pddf','File'  , desc="reads reference pairwise distance distribution function"),
+#			Option('skip_hydrogens', 'Boolean',desc="skip hydrogen atoms", default='false' ),
+			Option('d_min', 'Real', desc="minimum value of distance used in PDDF score evaluation (in [A])", default='5.0' ),
+			Option('d_max', 'Real', desc="maximum value of distance used in PDDF score evaluation (in [A])", default='100.0' ),
+			Option('d_step', 'Real', desc="step of distance used in PDDF score evaluation (in [A])", default='0.1' ),
+			Option('q_min', 'Real', desc="minimum value of q used in spectra calculations (in [A^-1])", default='0.01' ),
+			Option('q_max', 'Real', desc="maximum value of q used in spectra calculations (in [A^-1])", default='0.25' ),
+			Option('q_step', 'Real', desc="step of q used in spectra calculations (in [A^-1])", default='0.01' ),
+			Option('fit_pddf_area', 'Boolean', desc="PDDF curve for a scored pose will be normalized to match the area under the reference PDDF curve"
+				, default='false' ),
+		), # -score:saxs
+	), # -score
 
 	# packing options -----------------------------------------------------------
 	Option_Group( 'packing',
@@ -2987,9 +1302,9 @@ Option_Group( 'PCSTS4',
 		Option( 'dunbrack_prob_nonburied', 'Real', default='0.95', lower='0', upper='1',
 			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\' residues"
 			),
-		Option( 'dunbrack_prob_nonburied_semirotameric', 'Real', default='0.95', lower='0', upper='1',
-			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\', semi-rotameric residues"
-			),
+#		Option( 'dunbrack_prob_nonburied_semirotameric', 'Real', default='0.95', lower='0', upper='1',
+#			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\', semi-rotameric residues"
+#			),
 		Option( 'no_optH',  'Boolean',
 			desc="Do not optimize hydrogen placement at the time of a PDB load", default="true"
 			),
@@ -3010,6 +1325,210 @@ Option_Group( 'PCSTS4',
 			desc="include pymol-style selections when printing a PackerTask", default="false"
 			),
 
+		Option( 'extrachi_cutoff', 'Integer', default='18',
+			desc="number of neighbors a residue must have before extra rotamers are used. default: 18",
+			),
+		Option( 'resfile', 'FileVector', default=['resfile'], desc="resfile filename(s).  Most protocols use only the first and will ignore the rest; it does not track against -s or -l automatically."),
+
+		# Are below option is packing options? -----------------------------------
+		# ----------
+		# options for packing (applicable only for fullatom scoring):
+		# ----------
+		##Option( 'ex1cys', 'Boolean',
+		##       desc="use more chi1 rotamers for cystine.  Uses EX_SIX_QUARTER_STEP_STDDEVS sampling",
+		##),
+		##Option( 'exOH', 'Boolean',
+		##       desc="use extra chi samples for hydroxyl hydrogens in ST&Y",
+		##),
+		##Option( 'exdb', 'File',
+		##       desc="specify any extra chi angle combination using an input file following the -exdb flag. Example file \
+		##             is rundata.exdb.example. This method is an alternative \
+		##             to the other -ex[1234] flags; you cannot specify extra \
+		##             rotamers using both types of flags",
+		##       default='exrot_file',
+		##),
+		##Option( 'rotamer_explosion', 'Real',
+		##       desc="screen through an expanded rotamer set, filtering out rotamers based upon some particular quality threshold",
+		##       default='-1.0',
+		##),
+		##Option( 'rot_pert', 'Boolean',
+		##       desc="add 'perturbed rotamers' by changing base rotamers chi angles by 'pert_size' degrees (below)",
+		##),
+		##Option( 'rot_pert_input', 'Boolean',
+		##       desc="Add 'perturbed rotamers' for the starting sidechains (analogous to rot_pert flag)",
+		##),
+		##Option( 'pert_acc_prob', 'Real',
+		##       desc="Fraction of potential 'perturbed rotamers' to include",
+		##       default='1.0',
+		##),
+		##Option( 'pert_size', 'Real',
+		##       desc="Number of degrees each perturbation should entail",
+		##       default='5.0',
+		##),
+		Option( 'outeriterations_scaling', 'Real',      desc="Multiplier for number of outer iterations",      default='1.0',  ),
+		Option( 'inneriterations_scaling', 'Real',      desc="Multiplier for number of inner iterations",      default='1.0',  ),
+		#Option( 'ignore_residue_burial', 'Boolean', desc="when generating rotamers in the packer task, do not take residue burial into account", default='false',),
+#		Option( 'explicit_h2o', 'Boolean',
+#			desc="Use rotamers with explicit waters",
+#			),
+		Option( 'adducts', 'StringVector',
+			desc="Gives list of adduct names to generate for residue \
+			definitions.  Each adduct name may be followed by an \
+			optional integer, which gives a maximum number of adducts \
+			of that type which will be generated.",
+			),
+#		Option( 'solvate', 'Boolean',
+#			desc="Add explicit water, but don't try to place water \
+#			such that it bridges Hbonds, just put it on every \
+#			available Hbond donor/acceptor where there's no \
+#			clash (implies explicit_h2o)",
+#			),
+		Option( 'use_input_sc', 'Boolean',
+			desc="Use rotamers from input structure in packing \
+			By default, input sidechain coords are NOT \
+			included in rotamer set but are discarded \
+			before the initial pack; with this flag, the \
+			the input rotamers will NOT be discarded. \
+			Note that once the starting rotamers are \
+			replaced by any mechanism, they are no longer \
+			included in the rotamer set \
+			(rotamers included by coordinates)",
+			),
+		Option( 'unboundrot', 'FileVector', desc="Read 'native' rotamers from supplied PDB(s).  \
+			Unlike -use_input_sc, these rotamers will not be lost during repacks.  \
+			This option requires specific support from the protocol;  \
+			it is NOT built in to PackerTask.initialize_from_command_line()" ),
+		##Option( 'norepack_disulf', 'Boolean',
+		##       desc="do not change disulfides in pack or rotamer trials or sidechain minimize",
+		##),
+		##Option( 'minimize_rot', 'Boolean',
+		##       desc="minimize each rotamer in rotamer_trials",
+		##),
+		##Option( 'try_both_his_tautomers', 'Boolean',
+		##		desc="Turns on a variant for histidine with the side chain polar hydrogen moved from NE2 to ND1",
+		##		default='true',
+		##),
+		##Option( 'write_interaction_graph', 'Boolean',
+		##       desc="Write binary file of rotamer pair energies. Must be in design mode",
+		##),
+		##Option( 'read_interaction_graph', 'Boolean',
+		##       desc="Read binary file of rotamer pair energies; must use same \
+		##             coordinates for backbone used to produce the interaction graph file. \
+		##             Simple translation and rotation of a pdb will \
+		##             introduce enough numerical noise to invalidate the energies in the file. \
+		##             Must be in design mode",
+		##),
+		##Option( 'ig_file', 'File',
+		##       desc="The name of the interaction graph file.  I suggest the extension '.igf' \
+		##             for interaction graph file.  This flag/input is necessary if either \
+		##             -write_interaction_graph or -read_interaction_graph are set",
+		##),
+		##Option( 'dump_rotamers_pdb', 'Integer',
+		##       desc="for residue # (rosetta numbering -- see resfile) \
+		##             output a file containing the set of rotamers used \
+		##             during design, with their one-body energies printed \
+		##             in the b-factor column. If you want multiple residues at once, you can edit \
+		##             the code to do so",
+		##       default='0',
+		##),
+		Option( 'max_rotbump_energy', 'Real',
+			desc='discard rotamers with poor interactions with the background using  \
+				the specified cutoff.  Values must be in the range of 0 to 5.0.',
+			default='5.0'
+		),
+		Option( 'lazy_ig', 'Boolean',
+			desc="Force the packer to always allocate pair energy storage but procrastinate \
+				energy caclulation until each RPE is needed; each RPE is \
+				computed at most once. Memory use is quadratic in rotamers per residue. \
+				The InteractionGraphFactory will prefer the linear-memory interaction graph \
+				to the Lazy Interaction graph, so specifying both linmem_ig and lazy_ig results \
+				in the use of the linear-memory interaction graph.  The Surface-series IGs \
+				(surface weight in scorefunction is nonzero) also overrides this IG.",
+			default='false',
+		),
+		Option( 'double_lazy_ig', 'Boolean',
+			desc="Force the packer to always procrastinate allocation AND energy caclulation \
+				until each RPE is needed; each RPE is computed at most once. \
+				The InteractionGraphFactory will prefer the linear-memory interaction graph \
+				to the DoubleLazy Interaction graph, so specifying both linmem_ig and lazy_ig results \
+				in the use of the linear-memory interaction graph.  The Surface-series IGs (surface \
+				weight in scorefunction is nonzero) also overrides this IG.",
+			default='false',
+		),
+#		Option( 'double_lazy_ig_mem_limit', 'Integer',
+#			desc="The amount of memory, in MB, that each double-lazy interaction graph should be allowed \
+#				to allocate toward rotamer pair energies.  Using this flag will not trigger the \
+#				use of the double-lazy interaction graph, and this flag is not read in the PackerTask's \
+#				initialize_from_command_line routine.  For use in multistate design",
+#			default='0',
+#		),
+		Option( 'linmem_ig', 'Integer',
+			desc="Force the packer to use the linear memory interaction graph; each \
+				RPE may be computed more than once, but recently-computed RPEs \
+				are reused.  The integer parameter specifies the number \
+				of recent rotamers to store RPEs for.  10 is the recommended size. \
+				Memory use scales linearly with the number of \
+				rotamers at about 200 bytes per rotamer per recent rotamers to \
+				store RPEs for (~4 KB per rotamer by default)",
+			default='10',
+			),
+		##Option( 'minimalist_ig', 'Boolean',
+		##       desc="DOES NOT YET WORK. Force the packer to use the minimalist interaction graph.  The minimalist \
+		##             interaction graph allocates no space for RPE storage.  It is \
+		##             somewhat slow.  Memory use scales linearly with the number of rotamers",
+		##),
+		##Option( 'packer_precompute_only', 'Boolean',
+		##       desc="DOES NOT YET WORK. force the packer to precompute rotamer pair energies; by default \
+		##             the packer will either precompute RPEs or use the Lazy interaction \
+		##             graph after predicting which is faster",
+		##),
+		##Option( 'tight_memory_restrictions', 'Boolean',
+		##       desc="DOES NOT YET WORK. decide between precomputing pair energies and using the linmem IG \
+		##             depending on whether pair energy storage would exceed the MB limit \
+		##             indicated  (default 256 MB);\
+		##             Caution: it is possible for the linmem IG to use more memory \
+		##             than the given limit",
+		##),
+		##Option( 'MB_limit_for_RPEs', 'Integer',
+		##		desc="DOES NOT YET WORK. for use with the -tight_memory_restrictions flag",
+		##),
+		Option( 'multi_cool_annealer', 'Integer',
+			desc="Alternate annealer for packing.  Runs multiple quence cycles in a first cooling stage, and tracks \
+			the N best network states it observes.  It then runs low-temperature rotamer substitutions with repeated \
+			quenching starting from each of these N best network states.  10 is recommended.",
+			),
+
+		Option( 'minpack_temp_schedule', 'RealVector',
+			desc="Alternate annealing schedule for min_pack.",
+		),
+		Option( 'minpack_inner_iteration_scale', 'Integer',
+			desc="The number of inner iterations per rotamer to run at each temperature in min pack.",
+		),
+		Option( 'minpack_disable_bumpcheck', 'Boolean',
+			desc="Disable bump check in min pack (i.e. include rotamers that collide with the background.",
+		),
+
+		##Option( 'Wint_repack_only', 'Boolean',
+		##       desc="set weights to int weights (use environment dependent H-bond energy) when repacking \
+		##       (calling subroutine 'pack_rotamer') default weight is current packer weights \
+		##       (no environment dependent weight for hb) No longer be used. If you are in ddg mode, \
+		##       use -Wpack_only",
+		##),
+		##Option( 'Wint_score_only', 'Boolean',
+		##       desc="set weights to int weights (use environment dependent H-bond energy) \
+		##             when scoring (calling subroutine 'fullatom_energy') \
+		##             default weight is current packer weights \
+		##             (no environment dependent weight for hb) \
+		##             No longer be used. If you are in ddg mode, \
+		##             use -Wint_only",
+		##),
+		#Option( 'read_hetero_h2o', 'Boolean',
+		#       desc="read native water from pdbfile calculate the energy between native water \
+		#             and protein atoms output native water information",
+		#),
+		##Option( 'int_score', 'Boolean',
+		##       desc="set up for reading and scoring protein complex",
+		##),
 		Option_Group( 'ex1',
 			Option( 'ex1', 'Boolean',
 				desc="use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff",
@@ -3185,639 +1704,54 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			##),
 			##Option( 'use_input_dna_bb', 'Boolean', desc="Use DNA backbone from input structure in packing",
 			##),
-		), # exdna
-		Option( 'extrachi_cutoff', 'Integer', default='18',
-			desc="number of neighbors a residue must have before extra rotamers are used. default: 18",
-			),
-		Option( 'resfile', 'FileVector', default=['resfile'], desc="resfile filename(s).  Most protocols use only the first and will ignore the rest; it does not track against -s or -l automatically."),
+		), # -packing:exdna
+	), # -packing
 
-		# Are below option is packing options? -----------------------------------
-		# ----------
-		# options for packing (applicable only for fullatom scoring):
-		# ----------
-		##Option( 'ex1cys', 'Boolean',
-		##       desc="use more chi1 rotamers for cystine.  Uses EX_SIX_QUARTER_STEP_STDDEVS sampling",
-		##),
-		##Option( 'exOH', 'Boolean',
-		##       desc="use extra chi samples for hydroxyl hydrogens in ST&Y",
-		##),
-		##Option( 'exdb', 'File',
-		##       desc="specify any extra chi angle combination using an input file following the -exdb flag. Example file \
-		##             is rundata.exdb.example. This method is an alternative \
-		##             to the other -ex[1234] flags; you cannot specify extra \
-		##             rotamers using both types of flags",
-		##       default='exrot_file',
-		##),
-		##Option( 'rotamer_explosion', 'Real',
-		##       desc="screen through an expanded rotamer set, filtering out rotamers based upon some particular quality threshold",
-		##       default='-1.0',
-		##),
-		##Option( 'rot_pert', 'Boolean',
-		##       desc="add 'perturbed rotamers' by changing base rotamers chi angles by 'pert_size' degrees (below)",
-		##),
-		##Option( 'rot_pert_input', 'Boolean',
-		##       desc="Add 'perturbed rotamers' for the starting sidechains (analogous to rot_pert flag)",
-		##),
-		##Option( 'pert_acc_prob', 'Real',
-		##       desc="Fraction of potential 'perturbed rotamers' to include",
-		##       default='1.0',
-		##),
-		##Option( 'pert_size', 'Real',
-		##       desc="Number of degrees each perturbation should entail",
-		##       default='5.0',
-		##),
-		Option( 'outeriterations_scaling', 'Real',      desc="Multiplier for number of outer iterations",      default='1.0',  ),
-		Option( 'inneriterations_scaling', 'Real',      desc="Multiplier for number of inner iterations",      default='1.0',  ),
-		#Option( 'ignore_residue_burial', 'Boolean', desc="when generating rotamers in the packer task, do not take residue burial into account", default='false',),
-		Option( 'explicit_h2o', 'Boolean',
-			desc="Use rotamers with explicit waters",
-			),
-		Option( 'adducts', 'StringVector',
-			desc="Gives list of adduct names to generate for residue \
-			definitions.  Each adduct name may be followed by an \
-			optional integer, which gives a maximum number of adducts \
-			of that type which will be generated.",
-			),
-		Option( 'solvate', 'Boolean',
-			desc="Add explicit water, but don't try to place water \
-			such that it bridges Hbonds, just put it on every \
-			available Hbond donor/acceptor where there's no \
-			clash (implies explicit_h2o)",
-			),
-		Option( 'use_input_sc', 'Boolean',
-			desc="Use rotamers from input structure in packing \
-			By default, input sidechain coords are NOT \
-			included in rotamer set but are discarded \
-			before the initial pack; with this flag, the \
-			the input rotamers will NOT be discarded. \
-			Note that once the starting rotamers are \
-			replaced by any mechanism, they are no longer \
-			included in the rotamer set \
-			(rotamers included by coordinates)",
-			),
-		Option( 'unboundrot', 'FileVector', desc="Read 'native' rotamers from supplied PDB(s).  \
-			Unlike -use_input_sc, these rotamers will not be lost during repacks.  \
-			This option requires specific support from the protocol;  \
-			it is NOT built in to PackerTask.initialize_from_command_line()" ),
-		##Option( 'norepack_disulf', 'Boolean',
-		##       desc="do not change disulfides in pack or rotamer trials or sidechain minimize",
-		##),
-		##Option( 'minimize_rot', 'Boolean',
-		##       desc="minimize each rotamer in rotamer_trials",
-		##),
-		##Option( 'try_both_his_tautomers', 'Boolean',
-		##       desc="Turns on a variant for histidine with the side chain polar hydrogen moved from NE2 to ND1",
-		##				 default='true',
-		##),
-		##Option( 'write_interaction_graph', 'Boolean',
-		##       desc="Write binary file of rotamer pair energies. Must be in design mode",
-		##),
-		##Option( 'read_interaction_graph', 'Boolean',
-		##       desc="Read binary file of rotamer pair energies; must use same \
-		##             coordinates for backbone used to produce the interaction graph file. \
-		##             Simple translation and rotation of a pdb will \
-		##             introduce enough numerical noise to invalidate the energies in the file. \
-		##             Must be in design mode",
-		##),
-		##Option( 'ig_file', 'File',
-		##       desc="The name of the interaction graph file.  I suggest the extension '.igf' \
-		##             for interaction graph file.  This flag/input is necessary if either \
-		##             -write_interaction_graph or -read_interaction_graph are set",
-		##),
-		##Option( 'dump_rotamers_pdb', 'Integer',
-		##       desc="for residue # (rosetta numbering -- see resfile) \
-		##             output a file containing the set of rotamers used \
-		##             during design, with their one-body energies printed \
-		##             in the b-factor column. If you want multiple residues at once, you can edit \
-		##             the code to do so",
-		##       default='0',
-		##),
-		Option( 'max_rotbump_energy', 'Real',
-				desc='discard rotamers with poor interactions with the background using  \
-					the specified cutoff.  Values must be in the range of 0 to 5.0.',
-				default='5.0'
-		),
-		Option( 'lazy_ig', 'Boolean',
-		       desc="Force the packer to always allocate pair energy storage but procrastinate \
-		             energy caclulation until each RPE is needed; each RPE is \
-		             computed at most once. Memory use is quadratic in rotamers per residue. \
-						 The InteractionGraphFactory will prefer the linear-memory interaction graph \
-						 to the Lazy Interaction graph, so specifying both linmem_ig and lazy_ig results \
-						 in the use of the linear-memory interaction graph.  The Surface-series IGs (surface weight in scorefunction is nonzero) also overrides this IG.",
-				 default='false',
-		),
-		Option( 'double_lazy_ig', 'Boolean',
-		       desc="Force the packer to always procrastinate allocation AND energy caclulation \
-                 until each RPE is needed; each RPE is computed at most once. \
-						 The InteractionGraphFactory will prefer the linear-memory interaction graph \
-						 to the DoubleLazy Interaction graph, so specifying both linmem_ig and lazy_ig results \
-						 in the use of the linear-memory interaction graph.  The Surface-series IGs (surface weight in scorefunction is nonzero) also overrides this IG.",
-				 default='false',
-		),
-		Option( 'double_lazy_ig_mem_limit', 'Integer',
-			desc="The amount of memory, in MB, that each double-lazy interaction graph should be allowed \
-				to allocate toward rotamer pair energies.  Using this flag will not trigger the \
-				use of the double-lazy interaction graph, and this flag is not read in the PackerTask's \
-				initialize_from_command_line routine.  For use in multistate design",
-			default='0',
-		),
-		Option( 'linmem_ig', 'Integer',
-			desc="Force the packer to use the linear memory interaction graph; each \
-			RPE may be computed more than once, but recently-computed RPEs \
-			are reused.  The integer parameter specifies the number \
-			of recent rotamers to store RPEs for.  10 is the recommended size. \
-			Memory use scales linearly with the number of \
-			rotamers at about 200 bytes per rotamer per recent rotamers to \
-			store RPEs for (~4 KB per rotamer by default)",
-			default='10',
-			),
-		##Option( 'minimalist_ig', 'Boolean',
-		##       desc="DOES NOT YET WORK. Force the packer to use the minimalist interaction graph.  The minimalist \
-		##             interaction graph allocates no space for RPE storage.  It is \
-		##             somewhat slow.  Memory use scales linearly with the number of rotamers",
-		##),
-		##Option( 'packer_precompute_only', 'Boolean',
-		##       desc="DOES NOT YET WORK. force the packer to precompute rotamer pair energies; by default \
-		##             the packer will either precompute RPEs or use the Lazy interaction \
-		##             graph after predicting which is faster",
-		##),
-		##Option( 'tight_memory_restrictions', 'Boolean',
-		##       desc="DOES NOT YET WORK. decide between precomputing pair energies and using the linmem IG \
-		##             depending on whether pair energy storage would exceed the MB limit \
-		##             indicated  (default 256 MB);\
-		##             Caution: it is possible for the linmem IG to use more memory \
-		##             than the given limit",
-		##),
-		##Option( 'MB_limit_for_RPEs', 'Integer',
-		##		desc="DOES NOT YET WORK. for use with the -tight_memory_restrictions flag",
-		##),
-		Option( 'multi_cool_annealer', 'Integer',
-			desc="Alternate annealer for packing.  Runs multiple quence cycles in a first cooling stage, and tracks \
-			the N best network states it observes.  It then runs low-temperature rotamer substitutions with repeated \
-			quenching starting from each of these N best network states.  10 is recommended.",
-			),
+####################################
+# General option groups
+# Please keep in alphabetical order.
 
-		Option( 'minpack_temp_schedule', 'RealVector',
-			desc="Alternate annealing schedule for min_pack.",
-		),
-		Option( 'minpack_inner_iteration_scale', 'Integer',
-			desc="The number of inner iterations per rotamer to run at each temperature in min pack.",
-		),
-		Option( 'minpack_disable_bumpcheck', 'Boolean',
-			desc="Disable bump check in min pack (i.e. include rotamers that collide with the background.",
-		),
+	################################
+	# archive options
+	Option_Group( 'archive',
+		Option( 'reread_all_structures','Boolean', desc='ignore pool file... reread from batches', default='false'),
+		Option( 'completion_notify_frequency','Integer', desc='tell Archive every X completed decoys', default='100'),
+	), # -archive
 
-		##Option( 'Wint_repack_only', 'Boolean',
-		##       desc="set weights to int weights (use environment dependent H-bond energy) when repacking \
-		##       (calling subroutine 'pack_rotamer') default weight is current packer weights \
-		##       (no environment dependent weight for hb) No longer be used. If you are in ddg mode, \
-		##       use -Wpack_only",
-		##),
-		##Option( 'Wint_score_only', 'Boolean',
-		##       desc="set weights to int weights (use environment dependent H-bond energy) \
-		##             when scoring (calling subroutine 'fullatom_energy') \
-		##             default weight is current packer weights \
-		##             (no environment dependent weight for hb) \
-		##             No longer be used. If you are in ddg mode, \
-		##             use -Wint_only",
-		##),
-		#Option( 'read_hetero_h2o', 'Boolean',
-		#       desc="read native water from pdbfile calculate the energy between native water \
-		#             and protein atoms output native water information",
-		#),
-		##Option( 'int_score', 'Boolean',
-		##       desc="set up for reading and scoring protein complex",
-		##),
-	), # packing
+#	###########################################################################
+#	# Carbohydrate Options
+#	Option_Group("carbohydrates",
+#		Option("lock_rings", "Boolean",
+#			desc='Sets whether or not alternative ring conformations'
+#			'will be sampled by the protocol, (e.g, ring flips or'
+#			'puckering).  The default value is false.',
+#			short='Are saccharide rings allowed to flip or pucker?',
+#			legal=["true", "false"],
+#			default="false"),
+#	), # -carbohydrates
 
+	# chemical settings -----------------------------------------------------------
+	Option_Group( 'chemical',
+		Option( 'exclude_patches', 'StringVector', desc="Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use" ),
+		Option( 'include_patches', 'StringVector', desc="Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches", ),
+		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
+		Option( 'add_atom_type_set_parameters', 'StringVector', desc="Additional AtomTypeSet extra-parameter files that should be read; format is a sequence of paired strings: <atom-type-set-tag1> <filename1> <atom-type-set-tag2> <filename2> ..." ),
+		Option( 'set_atom_properties', 'StringVector', desc="Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' " ),
+		Option( 'patch_selectors', 'StringVector', desc = 'allow patch files that have CMDLINE_SELECTOR tags can be switched on with this option',default=[] ),
+		Option( 'override_rsd_type_limit', 'Boolean', desc="over-ride cap on number of residue types.", default='false'),
+	), #-chemical
 
-	## these are just temporary for hacking/debugging -- if they conflict with something else let me know and
-	## I can get rid of them
-	##                     -Phil
-	Option_Group( 'phil',
-		#Option( 'nstruct', 'Integer', default='10'),
-			Option( 'nloop', 'Integer', default='10'),
-			Option( 'vall_file', 'String'),
-			Option( 'align_file', 'String'),
-	), # phil
-
-	Option_Group( 'wum',
-		Option( 'n_slaves_per_master', 'Integer', default='64' , desc = 'A value between 32 and 128 is usually recommended' ),
-		Option( 'n_masters', 'Integer', default='1' , desc = 'Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload' ),
-		Option( 'memory_limit', 'Integer', default = '0', desc = 'Memory limit for queues (in kB) ' ),
-
-		Option( 'extra_scorefxn', 'String', desc='Extra score function for post-batchrelax-rescoring' ),
-		Option( 'extra_scorefxn_ref_structure', 'File', desc='Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)' ),
-		Option( 'extra_scorefxn_relax', 'Integer', default='0', desc='After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)' ),
-		Option( 'trim_proportion', 'Real', default='0.0' ),
-
-	), #wum
-	Option_Group( 'els',
-      Option( 'master_wu_per_send', 'Integer', default='1' , desc = 'How many wu to send in one isend from master.  Set to ~ (WU generated: slaves per master) ratio' ),
-      Option( 'vars', 'String', default='' , desc = 'Any variables you want to pass to lua, semi colon separated, in the form: myvar=5' ),
-      Option( 'script', 'File', default='' , desc = 'Path to the ElScript' ),
-      Option( 'num_traj', 'Integer', desc = 'Number of trajectories' ),
-      Option( 'traj_per_master', 'Integer', desc = 'Number of trajectories per master node' ),
-      Option( 'shortest_wu', 'Integer', default='60', desc = 'Length of time of shortest wu in seconds, used for determining status request resend period.  Err on the side of smaller times' ),
-      Option( 'pool', 'Boolean', default='false', desc = 'Using pool node?' ),
-      Option( 'singlenode', 'Boolean', default='false', desc = 'Using singlenode role with mpi?' ),
-	), #wum
-
-	Option_Group( 'lh',
-		Option( 'db_prefix', 'String', default = 'loopdb', desc='stem for loop database' ),
-		Option( 'loopsizes', 'IntegerVector', default = ['10','15','20'] , desc='Which loopsizes to use' ),
-		Option( 'num_partitions', 'Integer', default = '1', desc='Number of partitions to split the database into'),
-		Option( 'db_path', 'Path', default = '', desc = 'Path to database' ),
-		Option( 'exclude_homo', 'Boolean', default = 'false', desc = 'Use a homolog exclusion filter' ),
-		Option( 'bss', 'Boolean', default = 'false', desc = 'Use BinaryProteinSilentStruct instead of ProteinSilentStruct (needed for nonideal)' ),
-		Option( 'refstruct', 'String', default = '', desc = 'File with a target reference structure' ),
-		Option( 'homo_file', 'String', default = '', desc = 'File containing homologs to exclude' ),
-		Option( 'createdb_rms_cutoff', 'RealVector', default = ['0','0','0'], desc = 'RMS cutoff used for throwing out similar fragments.' ),
-		Option( 'min_bbrms', 'Real', default='20.0' ),
-		Option( 'max_bbrms', 'Real', default='1400.0' ),
-		Option( 'min_rms'  , 'Real', default='0.5' ),
-		Option( 'max_rms'  , 'Real', default='4.0' ),
-		Option( 'filter_by_phipsi',  'Boolean', default = 'true' ),
-		Option( 'max_radius'  , 'Integer', default='4' ),
-		Option( 'max_struct'  , 'Integer', default='10' ),
-		Option( 'max_struct_per_radius'  , 'Integer', default='10' ),
-		Option( 'grid_space_multiplier'  , 'Real', default = '1' ),
-		Option( 'grid_angle_multiplier'  , 'Real', default = '2.5' ),
-		Option( 'skim_size', 'Integer', default='100' ),
-		Option( 'rounds', 'Integer', default='100' ),
-		Option( 'jobname',    'String', desc = 'Prefix (Ident string) !', default = 'default' ),
-		Option( 'max_lib_size', 'Integer', default = '2' ),
-		Option( 'max_emperor_lib_size', 'Integer', default = '25' ),
-		Option( 'max_emperor_lib_round', 'Integer', default = '0' ),
-		Option( 'library_expiry_time', 'Integer', default = '2400' ),
-		Option( 'objective_function', 'String', desc = 'What to use as the objective function', default='score' ),
-		Option( 'expire_after_rounds', 'Integer', desc = 'If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles', default='0' ),
-		Option( 'mpi_resume', 'String', desc = 'Prefix (Ident string) for resuming a previous job!'),
-		Option( 'mpi_feedback',  'String', default = 'no',
-			legal=['no','add_n_limit','add_n_replace', 'single_replace', 'single_replace_rounds' ], ),
-		Option( 'mpi_batch_relax_chunks',      'Integer', default='100' ),
-		Option( 'mpi_batch_relax_absolute_max', 'Integer', default='300' ),
-		Option( 'mpi_outbound_wu_buffer_size', 'Integer', default='60' ),
-		Option( 'mpi_loophash_split_size    ', 'Integer', default='50' ),
-		Option( 'mpi_metropolis_temp', 'Real', default='1000000.0' ),
-		Option( 'mpi_save_state_interval', 'Integer', default='1200' ),
-		Option( 'mpi_master_save_score_only',  'Boolean', default = 'true' ),
-		Option( 'max_loophash_per_structure', 'Integer', default='1' ),
-		Option( 'rms_limit', 'Real', default='2.0', desc = 'How to deal with returned relaxed structures' ),
-		Option( 'centroid_only',     'Boolean', default = 'false', desc = 'false' ),
-		Option( 'write_centroid_structs',   'Boolean', default = 'false', desc = 'Output raw loophashed decoys as well as relaxed ones' ),
-		Option( 'write_all_fa_structs',   'Boolean', default = 'false', desc = 'Write out all structures returned from batch relax' ),
-		Option( 'sandbox',   'Boolean', default = 'false', desc = 'Sand box mode' ),
-		Option( 'create_db', 'Boolean', default = 'false', desc = 'Make database with this loopsize' ),
-		Option( 'sample_weight_file', 'File', desc = 'Holds the initial per residue sample weights' ),
-		Option( 'radius_size', 'Real',default = '2',desc='tune the radius for hypershell'),
-		Option_Group( 'fragpdb',
-			Option( 'out_path', 'String', default = '', desc='Path where pdbs are saved' ),
-			Option( 'indexoffset', 'IntegerVector', desc='list of index offset pairs' , default = ['-1']),
-            Option( 'bin', 'StringVector', desc='list of bin keys', default = 'utility::vector1<std::string>()' ),
-		),
-		Option_Group( 'symfragrm',
-			Option( 'pdblist', 'FileVector', desc='list of pdbs to be processed' ),
-		),
-	),
-
-	Option_Group( 'rbe',
-		Option( 'server_url', 'String', desc='serverurl for rosetta backend' ),
-		Option( 'server_port', 'String', default = '80', desc='port for rosetta backend' ),
-		Option( 'poll_frequency', 'Real', default='1.0' ),
-  ),
-
-	## Options for Spencer Bliven's apps
-	Option_Group( 'blivens',
-		Option_Group( 'disulfide_scorer',
-			Option( 'nds_prob', 'Real', desc='The probability of scoring a non-disulfide pair', default = '0.0' ),
-			Option( 'cys_prob', 'Real', desc='The probability of outputing a pair of non-disulf cysteines. Default to nds_prob', default = '-1.0' ),
-		),
-		Option( 'score_type', 'String', desc='The scoring type to use, eg for a filter.', default = 'total_score' ),
-	),
-
-	Option_Group( 'krassk',
-		Option( 'left_tail', 'Integer', default='0' ),
-		Option( 'right_tail', 'Integer', default='0' ),
-		Option( 'tail_mode', 'Boolean', default = 'false'),
-		Option( 'tail_mode_name', 'Integer', default = '1' ),
-		Option( 'tail_output_file_name', 'String', default='tail_output'),
-	),
-
-        Option_Group('rotamerdump',
-                Option('xyz','Boolean',default= 'false',desc="when using the RotamerDump application, output the xyz coords of every rotamer"),
-                Option('one_body','Boolean',default='false',desc="when using the RotamerDump application, output the one_body energies of every rotamer"),
-                Option('two_body','Boolean',default='false',desc="when using the RotamerDump application, output the two_body energies of every rotamer"),
-                Option('annealer','Boolean',default='false',desc="Run the annealer and output the rotamers it chose"),
-        ),
-
-	##options for Robert
-	#Option_Group('Robert',
-	#  Option( 'score', 'Boolean', default='true'),
-	#						 ),
-	##  options for my pilot apps. Only the best for Robert!
-	##  Robert
-	Option_Group( 'robert',
-		Option( 'pairdata_input_pdb_list', 'String', default='', desc="Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)"),
-		Option( 'pcs_maxsub_filter', 'Real', default='0.9', desc="minimum normalized maxsub for PCS clustering protocol"),
-		Option( 'pcs_maxsub_rmsd', 'Real', default='4.0', desc="maxsub calculation's rmsd threshold"),
-		Option( 'pcs_dump_cluster', 'Boolean', default = 'false'),
-		Option( 'pcs_cluster_coverage', 'Real', default='0.3', desc="cluster coverage required"),
-		Option( 'pcs_cluster_lowscoring', 'Boolean', default = 'true', desc="cluster lowest 20% against lowest 50%"),
-	),
-
-	Option_Group('cmiles',
-		Option_Group('kcluster',
-      		Option('num_clusters', 'Integer', desc = 'Number of clusters to use during k clustering')
-	 		),
-		Option_Group('jumping',
-			Option('resi', 'Integer', desc = 'Residue i'),
-			Option('resj', 'Integer', desc = 'Residue j'),
-	    ),
-	),
-
-	##options for liz
-	#Option_Group('liz',
-	#  Option( 'score', 'Boolean', default='true'),
-	#						 ),
-	##  options for my pilot apps. No big deal if these need to change!
-	##  tex
-	Option_Group( 'james',
-		Option( 'min_seqsep', 'Integer', default = '0' ),
-		Option( 'atom_names', 'StringVector', default = 'utility::vector1<std::string>()' ),
-		Option( 'dist_thresholds', 'RealVector', default = 'utility::vector1<float>(1, 1.0)' ),
-		Option( 'torsion_thresholds', 'RealVector', default = 'utility::vector1<float>(1, 30.0)' ),
-		Option( 'sog_cutoff', 'Real', default='5.0' ),
-		Option( 'shift_sog_func', 'Boolean', default = 'true' ),
-		Option( 'min_type', 'String', default='dfpmin_armijo_nonmonotone' ),
-		Option( 'min_tol', 'Real', default='0.0001' ),
-		Option( 'debug', 'Boolean', default='false'),
-		Option( 'real', 'Real', default = '7.0', desc = 'Option for keeping things real.' ),
-		Option(
-			'n_designs', 'Integer',
-			default = '1', desc = 'total number of designs that James should make.'
-		),
-		Option( 'awesome_mode', 'Boolean', default = 'true', desc = 'activates or deactivates awesome_mode.' ),
-		Option( 'n_clusters', 'Integer', default = '10', desc = 'number of clusters for k-means clustering.' ),
-		Option( 'thread_unaligned', 'Boolean', default = 'false', desc = 'basic_threading without performing an alignment' ),
-
-	),
-
-	#New Membrane Protein Option group
-    Option_Group( 'membrane_new',
-
-    	# Scoring options
-		Option_Group( 'scoring',
-			Option( 'hbond', 'Boolean',
-					desc="Hydrogen bonding energy correction for membrane proteins"),
-		),
-
-		# Setup Options
-		Option_Group( 'setup',
-			Option( 'spanfiles', 'StringVector', desc="Spanning topology file from Octopus" ),
-			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
-	    		Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
-	    		Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
-		),
-
-		# Visualization Options (Visualize Membrane Mover)
-		Option_Group( 'visualize',
-			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
-			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
-			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
-			Option( 'plane_radius', 'Real', desc="Radius of membrane planes to draw in PyMol - part of the PyMol viewer plugin" ),
-		),
-
-		# Include a VRT anchored foldtree
-		Option( 'anchored_foldtree', 'Boolean', desc="Build a fold tree anchored by a VRT so the membrane and protein have explicit jumps to modify" ),
-
-		# Visualize in PyMol (PyMolMover)
-		Option( 'view_in_pymol', 'Boolean', desc="When the PyMol viewer is enabled, add points to explicitly define the membrane planes and view during the simulation" ),
-
-		Option_Group( 'viewer',
-			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
-			Option( 'num_points', 'Integer', desc="Number of points to define the membrane planes. x >= 3" ),
-		),
-
-		#Membrane options
-        Option( 'thickness', 'Real', desc='User-defined membrane thickness. Overwrites default thickness of 60A.'),
-
-		#Embedding options - advanced
-		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),
-		Option( 'center_delta', 'Real', desc='Perturbation of center in Angstrom.'),
-		Option( 'center_search_cycles', 'Real', desc='Iterations for center search.'),
-		Option( 'normal_start', 'RealVector', desc='Base vector for normal search. Angles go off that vector.'),
-		Option( 'normal_angle_start', 'Real', desc='Starting angle from base vector for normal search. Degrees.'),
-		Option( 'normal_angle_delta', 'Real', desc='Perturbation of normal angle in degrees.'),
-		Option( 'normal_search_cycles', 'Real', desc='Number of iterations for normal search.'),
-		Option( 'chain_normal_angle_max', 'Real', desc='Maximum of normal angle wrt normal_start for chain embedding. Degrees.'),
-		Option( 'pose_normal_angle_max', 'Real', desc='Maximum of normal angle wrt normal_start for pose embedding. Degrees.'),
-
-		#Scoring parameters - advanced
-		Option( 'no_interpolate_Mpair', 'Boolean', desc='from old code.'),
-		Option( 'Hbond_depth_correction', 'Boolean', desc='from old code.'),
-
-		#Penalties - advanced
-		Option( 'TMprojection', 'Boolean', desc='Penalty for hydrophobic mismatch on/off.'),
-		Option( 'wt_TMprojection', 'Real', desc='Weight for hydrophobic mismatch penalty.'),
-		Option( 'non_helix', 'Boolean', desc='Penalty for non-helix residues in the membrane on/off.'),
-		Option( 'wt_non_helix', 'Real', desc='Weight for non-helix penalty. '),
-		Option( 'termini', 'Boolean', desc='Penalty for termini in the membrane on/off.'),
-		Option( 'wt_termini', 'Real', desc='Weight for termini penalty.'),
-		Option( 'secstruct', 'Boolean', desc='Penalty if structure-based secondary structure doesn\'t match predicted one - on/off'),
-		Option( 'wt_secstruct', 'Real', desc='Weight for secondary structure penalty.'),
-		Option( 'spanning', 'Boolean', desc='Penalty if structure-based spanning doesn\'t match spanfile - on/off.'),
-		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
-	),
-
-    # Old Membrane Protein Option Group
-    # Last Modified: 1/12/14
-    # @author Rebecca Alford
-    Option_Group( 'membrane',
-        # New Membrane Input Option Group
-        Option( 'include_lips', 'Boolean', default='false', desc='Include lipid accessibility data for membrane protiens'),
-        # Scoring Options
-        Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
-        Option( 'normal_mag', 'Real', default='5', desc='magnitude of membrane normal angle search (degrees)'),
-        Option( 'center_mag', 'Real', default='1', desc='magnitude of membrane normal center search (Angstroms)' ),
-        Option( 'smooth_move_frac', 'Real', default='0.5'),
-        Option( 'no_interpolate_Mpair', 'Boolean', default='false'),
-        Option( 'Menv_penalties','Boolean',default='false'),
-	    Option( 'Membed_init','Boolean',default='false'),
-	    Option( 'Fa_Membed_update','Boolean',default='false'),
-	    Option( 'center_search', 'Boolean', default='false', desc='perform membrane center search'),
-	    Option( 'normal_search', 'Boolean', default='false', desc='perform membrane normal search'),
-	    Option( 'center_max_delta', 'Integer', default='5', desc='magnitude of maximum membrane width deviation during membrane center search (Angstroms)' ),
-	    Option( 'normal_start_angle', 'Integer', default='10', desc='magnitude of starting angle during membrane normal search (degrees)' ),
-	    Option( 'normal_delta_angle', 'Integer', default='10', desc='magnitude of angle deviation during membrane normal search (degrees)' ),
-	    Option( 'normal_max_angle', 'Integer', default='40', desc='magnitude of maximum angle deviation during membrane normal search (degrees)' ),
-	    Option( 'debug', 'Boolean', default='false'),
-	    Option( 'fixed_membrane', 'Boolean', default='false', desc='fix membrane position, by default the center is at [0,0,0] and membrane normal is the z-axis'),
-	    Option( 'membrane_center', 'RealVector', desc="membrane center x,y,z" ),
-	    Option( 'membrane_normal', 'RealVector', desc="membrane normal x,y,z" ),
-	    Option( 'view', 'Boolean', default='false', desc='viewing pose during protocol'),
-	    Option( 'Mhbond_depth','Boolean',default='false', desc='membrane depth dependent correction to the hbond potential'),
-		Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
-    ), # membrane
-
-	##relevent casp options for refinement protocols
-	Option_Group( 'casp',
-		Option( 'decoy', 'String'),
-		Option( 'wt', 'String'),
-		Option( 'rots' , 'String'),
-		Option( 'opt_radius', 'Real', desc='optimization radius for repacking and minimization'),
-		Option( 'repack', 'Boolean', desc='should we repack the structure?'),
-		Option( 'sc_min', 'Boolean', desc='should we sidechain minimize the structure?'),
-		Option( 'sequential', 'Boolean', desc='should mutations be considered in sequence or all together?'),
-		Option( 'num_iterations', 'Real', desc='number of iterations to perform'),
-		Option( 'weight_file', 'String', desc='what weight-file to use?'),
-		Option( 'refine_res', 'String', desc='specifies file that contains which residues to refine'),
-	),
-
-
-	# options for pose metric calculators-------------------------------------------------------
-	Option_Group( 'pose_metrics',
-		Option( 'atomic_burial_cutoff', 'Real', default='0.3', desc=' maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator' ),
-		Option( 'sasa_calculator_probe_radius', 'Real', default='1.4', desc=' the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator' ),
-		Option( 'interface_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator'),
-		Option( 'min_sequence_separation', 'Integer', default='6', desc=' minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator' ),
-		Option( 'contact_cutoffE', 'Real', default='-1.0', desc=' maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator' ),
-		Option( 'neighbor_by_distance_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator'),
-		Option( 'inter_group_neighbors_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator'),
-		Option( 'semiex_water_burial_cutoff', 'Real', default='0.25', desc='water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)' ),
-	 ),
-
-
-	##  ekellogg. Options for ddg protocol
-	Option_Group( 'ddg',
-		Option('avg_rot_cst_enrg','Boolean',default='false'),
-		Option('use_bound_cst','Boolean',default='false'),
-		Option('cap_rot_cst_enrg','Real',default='false'),
-		Option('opt_input_structure','Boolean',default='false'),
-		Option('pack_until_converge','Boolean',default='false'),
-		Option('no_constraints','Boolean',default='false'),
-		Option('apply_rot_cst_to_mutation_region_only','Real'),
-		Option('rot_cst_enrg_cutoff','Real'),
-		Option('use_rotamer_constraints_to_native','Boolean',default='false'),
-		Option('single_res_scoring','Boolean'),
-		Option('downweight_by_sasa','Boolean'),
-		Option('global','Boolean'),
-		Option('exclude_solvent_exposed_res','Boolean'),
-		Option('radius','Real'),
-		Option('wt','String'),
-		Option('mut','String'),
-
-		Option('suppress_checkpointing','Boolean',default='false',desc="boinc specific options to suppress checkpointing behavior"),
-		Option('wt_only','Boolean',desc="option added to minirosetta app in order to produce only refinement in wt structures"),
-		Option('mut_only','Boolean',desc="options added to minirosetta app in order to produce refinement in only mutant structure"),
-		Option('output_silent','Boolean'),
-		Option('minimization_scorefunction','String'),
-		Option('minimization_patch','String'),
-		Option('min_cst','Boolean',default='true',desc="Following sidechain optimization in the packer, should we then proceed to minimize the backbone at all.  Constraints will be used to keep the structure from moving too far." ),
-		Option('lowest_x_decoys','Integer'),
-		Option('local_opt_only','Boolean',default='false'),
-		Option('print_per_res_diff','Boolean',default='false'),
-		Option('mean','Boolean'),
-		Option('min','Boolean'),
-		Option('rb_restrict_to_mutsite_nbrs','Boolean',default='false'),
-		Option('no_bb_movement','Boolean',default='false'),
-		Option('initial_repack','Boolean',default='false'),
-		Option('rb_file','String'),
-		Option('interface_ddg','Integer',default='0', desc='Calculate ddGs across an interface? Uses jump # specified for determining interface.'),
-		Option('ens_variation', 'Real', default='0.5'),
-		Option('sc_min_only','Boolean',default='true'),
-		Option('min_cst_weights','String',default='talaris2013'),
-		Option('opt_radius','Real',default='8.0'),
-		Option('output_dir','String',default='./'),
-		##Option('accepted_mc_pose_dir','String',default='./'),
-		Option('last_accepted_pose_dir','String',default='./'),
-		Option('min_with_cst','Boolean', default='false', desc="Used in ensemble generation"),
-		Option('temperature', 'Real', default='10',desc='because I really dont know what the monte carlo temperature should be set to'),
-		Option('ramp_repulsive','Boolean',default='false',desc='set fa_rep to 0.1, 0.33 of original value when minimizing in the minimization phase following packing'),
-		Option('mut_file','String',desc='alternate specification for mutations.  File format described in fix_bb_monomer_ddg.cc above the read_in_mutations function'),
-		Option('mut_file_tlc','Boolean',desc='alternate specification for mutations using three letter codes instead of one letter codes so that it is compatible with noncanonical amino acids.',default='false'),
-		Option('out_pdb_prefix','String',desc='specifies the prefix assigned to output so that no overwriting happens'),
-		Option('constraint_weight','Real',default='1.0',desc='because that other option isnt working'),
-		Option( 'harmonic_ca_tether', 'Real', default='2.0', desc='default CA tether for harmonic constraints'),
-		Option('iterations','Integer',default='20',desc='specifies the number of iterations of refinement'),
-		Option('out', 'String',default='ddg_predictions.out',desc='create output file of predicted ddgs'),
-		Option('debug_output', 'Boolean', default='false',desc='specify whether or not to write a whole bunch of debug statements to standard out'),
-		Option('dump_pdbs','Boolean',default='true',desc='specify whether or not to dump repacked wild-type and mutant pdbs'),
-		Option('weight_file', 'String', default='ddg.wts',desc='specifies the weight-files to be used in calculations'),
-Option('translate_by', 'Integer', desc='specify the distance in Angstrom that takes to move away when unbounded.  Should keep it around 100 when this protocol is used in conjunction with the Poisson-Boltzmann potential score-term.'),
-
-	),
-
-	# options for my inv_kin_lig_loop_design program.
-	Option_Group( 'murphp',
-		Option( 'inv_kin_lig_loop_design_filename', 'String', desc='input filename to be used for inv_kin_lig_loop_design' ),
-	),
-
-	# options for motif protocol stuff
-	Option_Group( 'motifs',
-		Option( 'close_enough', 'Real', default = '1.0', desc='4-atom rmsd cutoff beyond which you don\'t bother trying an inverse rotamer' ),
-		Option( 'max_depth', 'Integer', default = '1', desc='Maximum recursion depth - i.e., maximum number of motifs to incorporate' ),
-		Option( 'keep_motif_xtal_location', 'Boolean', default = 'false', desc="used to dna_motif_collector - controls whether motifs are moved away from original PDB location (comparison is easier if they are moved, so that's default)" ),
-		Option( 'pack_score_cutoff', 'Real', default = '-0.5', desc = 'used in dna_motif_collector - fa_atr + fa_rep energy threshold for a two-residue interaction to determine if it is a motif'),
-		Option( 'hb_score_cutoff', 'Real', default = '-0.3', desc = 'used in dna_motif_collector - hbond_sc energy threshold for a two-residue interaction to determine if it is a motif'),
-		Option( 'water_score_cutoff', 'Real', default = '-0.3', desc = 'used in dna_motif_collector - h2o_hbond energy threshold for a two-residue interaction to determine if it is a motif'),
-		Option( 'pack_min_threshold', 'Real', default = '-9999.0', desc = 'Used for motif extraction - packing scores below this value will cause a motif to be discarded'),
-		Option( 'pack_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - packing scores above this value will cause a motif to be discarded'),
-		Option( 'hbond_min_threshold', 'Real', default = '-9999.0', desc = 'Used for motif extraction - hbond scores below this value will cause a motif to be discarded'),
-		Option( 'hbond_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - hbond scores above this value will cause a motif to be discarded'),
-		Option( 'elec_min_threshold', 'Real', default = '-9999.0', desc = 'Used for motif extraction - fa_elec scores below this value will cause a motif to be discarded'),
-		Option( 'elec_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - fa_elec scores above this value will cause a motif to be discarded'),
-		Option( 'duplicate_dist_cutoff', 'Real', default = '1.0', desc = 'Value for determining whether a motif is different from others already in a library'),
-		Option( 'duplicate_angle_cutoff', 'Real', default = '0.4', desc = 'Value for determining whether a motif is different from others already in a library'),
-		Option( 'motif_output_directory', 'String', desc = 'used in dna_motif_collector - path for the directory where all the collected motifs are dumped as 2-residue pdbs'),
-		Option( 'eliminate_weak_motifs', 'Boolean', default = 'true', desc="used to dna_motif_collector - controls whether only the top 1-2 motifs are counted for every protein position in a protein-DNA interface" ),
-		Option( 'duplicate_motif_cutoff', 'Real', default = '0.2', desc = 'used in dna_motif_collector - RMSD cutoff for an identical base placed via a motif to see if that motif already exists in a motif library'),
-		Option( 'preminimize_motif_pdbs', 'Boolean', default = 'false', desc="used to dna_motif_collector - controls whether the input PDB structure sidechains and bb are minimized before motifs are collected" ),
-		Option( 'preminimize_motif_pdbs_sconly', 'Boolean', default = 'false', desc="used to dna_motif_collector - controls whether the input PDB structure sidechains are minimized before motifs are collected" ),
-		Option( 'place_adduct_waters', 'Boolean', default = 'true', desc="used to dna_motif_collector - whether or not adduct waters are placed before motifs are collected, there will be no water interaction calculated if this is false" ),
-		Option( 'list_motifs', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
-		Option( 'motif_filename', 'String', desc="File containing motifs" ),
-		Option( 'file_prefix', 'String', default = 'motif', desc="File containing motifs" ),
-		Option( 'build_residue_file', 'String', desc="File containing the target positions for building and incorporating motifs" ),
-		Option( 'motif_flexible_loop_file', 'String', desc="File containing the flexible loop definition" ),
-		Option( 'residue_trim_file', 'String', desc="File a list of residues to trim to Ala before motif incorporation." ),
-		Option( 'BPData', 'String', desc="File containing BuildPosition specific motifs and/or rotamers" ),
-		Option( 'list_dnaconformers', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
-		Option( 'target_dna_defs', 'StringVector', default = '""', desc = ''),
-		Option( 'motif_build_defs', 'StringVector', default = '""', desc = ''),
-		Option( 'motif_build_position_chain', 'String', default = '""', desc = ''),
-		Option( 'motif_build_positions', 'IntegerVector', desc = ''),
-		Option( 'r1', 'Real', default = '4.5', lower = '0', desc = 'RMSD cutoff between motif anchor position and motif target position for allowing a particular motif rotamer to continue on to expand with DNA conformers'),
-		Option( 'r2', 'Real', default = '1.1', lower = '0', desc = 'RMSD cutoff between motif anchor position and motif target position for accepting the motif'),
-		Option( 'z1', 'Real', default = '0.75', lower = '0', desc = 'DNA motif specific: cutoff between motif target DNA position and standardized base for allowing a particular motif to continue on to expand with DNA conformers'),
-		Option( 'z2', 'Real', default = '0.95', lower = '0', desc = 'DNA motif specific: cutoff between motif target DNA position and DNA conformer placed according to motif for accepting the pair of residues'),
-		Option( 'dtest', 'Real', default = '5.5', lower = '0', desc = 'DNA motif specific: cutoff between motif target DNA position and DNA conformer placed according to motif for accepting the pair of residues'),
-		Option( 'rotlevel', 'Integer', default = '5', lower = '1', desc = 'level of rotamer sampling for motif search'),
-		Option( 'num_repacks', 'Integer', default = '5', lower = '0', desc = 'number of cycles of dropping special_rot weight and design'),
-		Option( 'minimize', 'Boolean', default = 'true', desc = 'whether or not to minimize the motifs toward the xtal structure DNA'),
-		Option( 'minimize_dna', 'Boolean', default = 'true', desc = 'whether or not to minimize DNA after every round of design with special_rot weight dropping'),
-		Option( 'run_motifs', 'Boolean', default = 'true', desc = 'whether or not to use motifs in DnaPackerMotif'),
-		Option( 'expand_motifs', 'Boolean', default = 'true', desc = 'whether or not to use expand (use all types) motifs in DnaPackerMotif'),
-		Option( 'aromatic_motifs', 'Boolean', default = 'true', desc = 'whether or not to use expand (use aromatic only types) motifs in DnaPackerMotif'),
-		Option( 'dump_motifs', 'Boolean', default = 'true', desc = 'whether or not to output pdbs with the best rotamer/conformer for each motifs'),
-		Option( 'quick_and_dirty', 'Boolean', default = 'true', desc = 'quick motif run to get a list of all possible motifs before doing a real run'),
-		Option( 'special_rotweight', 'Real', default = '-40.0', desc = 'starting weight for the weight on motif rotamers'),
-		Option( 'output_file', 'String', desc = 'name of output file for all the best motifs and rotamers or for the dna_motif_collector it is the file where all the motifs are dumped'),
-		Option( 'data_file', 'String', desc = 'name of output file for any data about how many rotamers and motifs pass what tests, etc'),
-		Option( 'target_aa', 'String', default = 'LEU', desc = 'three letter code for the target amino acid for finding motifs'),
-		Option( 'constraint_max', 'Real', default = '20.0', lower = '0', desc = 'highest value for constraint score (before and after minimization) that results in the rotamer being dropped'),
-		Option( 'flex_sugar', 'Boolean', default = 'true', desc = 'whether or not to add the flexible sugar, not using PB way of adding options'),
-		Option( 'clear_bprots', 'Boolean', default = 'true', desc = 'whether or not to clear the rotamers that were read in from a previous run and restart with only the motifs that were read in and the specified rotlevel'),
-		Option( 'rots2add', 'Integer', default = '100', lower = '1', desc = 'number of rotamers to add to design from the MotifSearch for each amino acid type'),
-		Option( 'restrict_to_wt', 'Boolean', default = 'true', desc = 'restrict the motif search to finding motifs of the same amino acid as the starting pose, for homology modeling'),
-		Option( 'rerun_motifsearch', 'Boolean', default = 'true', desc = 'setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run'),
-		Option( 'no_rotamer_bump', 'Boolean', default = 'false', desc = 'skip the bump check when making the rotamers that will be tested for motif interactions, makes code much slower, but it is advised to increase the max_rotbump_energy to at least 10.0 instead of the default of 5.0 if bump_check is being used'),
-		Option('ligand_motif_sphere','Real', default = '6.0',
-			desc="option to specify radius of motif search around ligand"),
-	), #motifs
+	# Coarse options
+	##Option_Group( 'coarse',
+	##  Option( 'crescore', 'Boolean', desc = "rescore structures in fine and coarse"),
+	##  Option( 'crelax', 'Boolean', desc = "rescore structures in fine and coarse after relax"),
+	##  Option( 'crepack', 'Boolean', desc = "rescore structures in fine and coarse after repack"),
+	##  Option( 'cstrip_relax', 'Boolean', desc = "rescore structures in fine and coarse, full repack (stripped sidechains) and relax"),
+	##  Option( 'cjob','String', desc = "list of input pdb files"),
+	##),
 
 	Option_Group( 'constraints',
-		Option( 'CA_tether', 'Real', default='2.0', desc='default CA tether for harmonic constraints'),
+#		Option( 'CA_tether', 'Real', default='2.0', desc='default CA tether for harmonic constraints'),
 		##Option( 'p_cst', 'Real', default='0.1', desc='probability of res-res constraint'),
 		Option( 'exit_on_bad_read', 'Boolean', default = 'false', desc='exit if error is encountered reading constraints' ),
 		Option( 'cst_file', 'StringVector', desc='constraints filename(s) for centoroid. When multiple files are given a *random* one will be picked.' ),
@@ -3836,7 +1770,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'named',                    'Boolean',         desc='enable named constraints to avoid problems with changing residue-types e.g., cutpoint-variants',     default='false' ),
 		Option( 'no_cst_in_relax',          'Boolean',         desc='remove constraints for relax',     default='false' ),
 		Option( 'no_linearize_bounded',     'Boolean',         desc='dont switch to linearized in BOUNDED func',     default='false' ),
-		Option( 'pocket_constraint_weight',	     'Real',default='0',desc='Weight of the Pocket Constraint'),
+		Option( 'pocket_constraint_weight',	'Real',default='0',desc='Weight of the Pocket Constraint'),
 		Option( 'pocket_zero_derivatives', 'Boolean', desc="Return zero for PocketConstaint derivatives", default='false' ),
 		Option( 'viol',        'Boolean',     desc='show violations',     default='false' ),
 		Option( 'viol_level',  'Integer',      desc='how much detail for violation output',     default='1' ),
@@ -3849,321 +1783,215 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'combine_exclude_region', 'File', desc='core-defintion file do not combine constraints that are core-core' ),
 		Option( 'skip_redundant', 'Boolean', desc='skip redundant constraints', default='false'),
 		Option( 'skip_redundant_width', 'Integer', desc='radius of influence for redundant constraints', default='2'),
-		Option( 'increase_constraints', 'Real', desc='Multiplicative factor applied to constraints. Not widely supported yet.', default='1.0'),
-	), # constraints
+#		Option( 'increase_constraints', 'Real', desc='Multiplicative factor applied to constraints. Not widely supported yet.', default='1.0'),
+	), # -constraints
 
-	Option_Group( 'dna',
-		Option_Group( 'specificity',
-			Option( 'exclude_dna_dna', 'Boolean', default='true'),
-			Option( 'params', 'RealVector', desc="vector of real-valued params"),
-			Option( 'frag_files', 'FileVector', desc="files to collect frags from" ),
-			Option( 'exclude_bb_sc_hbonds', 'Boolean', default='false'),
-			Option( 'only_repack', 'Boolean', default='false'),
-			Option( 'design_DNA', 'Boolean', default='false'),
-			Option( 'run_test', 'Boolean', default='false'),
-			Option( 'soft_rep', 'Boolean', default='false'),
-			Option( 'dump_pdbs', 'Boolean', default='false'),
-			Option( 'fast', 'Boolean', default='false'),
-			Option( 'randomize_motif', 'Boolean', default='false'),
-			Option( 'Wfa_elec', 'Real', default='0'),
-			Option( 'Wdna_bs', 'Real', default='0'),
-			Option( 'Wdna_bp', 'Real', default='0'),
-			Option( 'minimize_tolerance', 'Real', default='0.001'),
-			Option( 'weights_tag', 'String'),
-			Option( 'weights_tag_list', 'String'),
-			Option( 'min_type', 'String', default='dfpmin'),
-			#Option( 'output_tag', 'String'),
-			Option( 'tf', 'String'),
-			Option( 'mode', 'String'),
-			Option( 'score_function', 'String'),
-			Option( 'pre_minimize', 'Boolean', default='false'),
-			Option( 'post_minimize', 'Boolean', default='false'),
-			Option( 'pre_pack', 'Boolean', default='false'),
-			Option( 'nloop', 'Integer', default='20'),
-			Option( 'n_inner', 'Integer' ),
-			Option( 'n_outer', 'Integer' ),
-			Option( 'nstep_water', 'Integer', default='0'),
-			Option( 'moving_jump', 'Integer', default='0'),
-			Option( 'motif_begin', 'Integer', default='0'),
-			Option( 'motif_size', 'Integer', default='0'),
-			Option( 'pdb_pos', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb, eg: -pdb_pos 125:A 127:A 4:C'),
-			Option( 'methylate', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb to be methylated, eg: -methylate 125:A 127:A 4:C'),
-		), # dna:specificity
+	# correction for testing ------------------------------------------------------------
+	Option_Group( 'corrections',
+		Option( 'beta', 'Boolean', desc='use beta score function', default='false'),
+		Option( 'correct', 'Boolean',
+			desc="turn on default corrections:"
+			"-corrections::chemical:icoor_05_2009"
+			"-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009"
+			"-corrections::score:p_aa_pp_nogridshift"
+			#"-corrections::score:no_his_his_pairE"
+			"-corrections::score:p_aa_pp_nogridshift"
+			"-corrections::score:rama_not_squared"
+			"-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat"
+			"-scoring::hbond_params helix_hb_06_2009"
+			"-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05"
+			"-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat",
+			default="false"),
+		Option( 'hbond_sp2_correction', 'Boolean',
+			desc="turn on the hbond Sp2 correction with a single flag"
+			" use with sp2_correction.wts. Note, these weight sets are chosen automatically by default."
+			" -score::hb_sp2_chipen"
+			" -hb_sp2_BAH180_rise 0.75"
+			" -hb_sp2_outer_width 0.357"
+			" -hb_fade_energy"
+			" -hbond_measure_sp3acc_BAH_from_hvy"
+			" -lj_hbond_hdis 1.75"
+			" -lj_hbond_OH_donor_dis 2.6"
+			" -hbond_params sp2_elec_params"
+			" -expand_st_chi2sampling"
+			" -smooth_fa_elec"
+			" -elec_min_dis 1.6"
+			" -elec_r_option false"
+			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70"),
+		Option( 'facts_default', 'Boolean',
+			desc="turn on default options for FACTS"
+			" use with scorefacts.wts. Incompatible with hbond_sp2_correction option."
+			" -correct"
+			" -lj_hbond_hdis 2.3"
+			" -lj_hbond_OH_donor_dis 3.4"
+			" -use_bicubic_interpolation "
+			" -hbond_params sp2_elec_params"
+			" -hb_sp2_chipen "
+			" -hbond_measure_sp3acc_BAH_from_hby"
+			" -facts_GBpair_cut 10.0"
+			" -facts_min_dis 1.5"
+			" -facts_dshift 1.4"
+			" -facts_die 1.0"
+			" -facts_kappa 12.0"
+			" -facts_asp_patch 3"
+			" -facts_intrares_scale 0.4"
+			" -facts_elec_sh_exponent 1.8",
+			default="false"),
+		Option_Group( 'score',
+			Option( 'bbdep_omega', 'Boolean', desc="Enable phi-psi dependent omega", ),
+			Option( 'bbdep_bond_params', 'Boolean', desc="Enable phi-psi dependent bondlengths and bondangles", ),
+			Option( 'bbdep_bond_devs', 'Boolean', desc="Enable phi-psi dependent deviations for bondlengths and bondangles", ),
+			Option( 'no_his_his_pairE', 'Boolean', desc="Set pair term for His-His to zero", ),
+			Option( 'no_his_DE_pairE', 'Boolean', desc="Set pair term for His-Glu and His-Asp to zero", ),
+#			Option( 'hbond_His_Phil_fix', 'Boolean', desc="Phil's fix on Histidine interaction angular dependence"),
+#			Option( 'helix_hb_06_2009',   'Boolean', desc="Helix backbone-backbone hbond potential with a different angular dependence"),
+			Option( 'p_aa_pp',   'String', desc="Name of scoring/score_functions/P_AA_pp/P_AA_PP potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/P_AA_pp/P_AA_pp" ),
+			Option( 'p_aa_pp_nogridshift',   'Boolean', desc="the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" ),
+			Option( 'rama_not_squared', 'Boolean', desc="Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0" ),
+			Option( 'rama_map', 'File', default = 'scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4', desc="Ramachandran file used by rama" ),
+			Option( 'cenrot',   'Boolean', desc="Use the Centroid Rotamer Model.", default="false" ),
+			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the the 2002 library.", default="true"  ),
+			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),
+			Option( 'dun02_file',  'String', desc="Name of dun02 input file", default="rotamer/bbdep02.May.sortlib" ),
+			Option( 'ch_o_bond_potential',   'String', desc="Name of ch_o_bond potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat" ),
+#			Option( 'fa_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in fa_elec_bb_bb", default = 'false' ),
+			Option( 'lj_hbond_hdis', 'Real', desc="Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)", default = '1.75' ),
+			Option( 'lj_hbond_OH_donor_dis', 'Real', desc="Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)", default='2.6'),
+			Option( 'score12prime', 'Boolean', desc="Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery", default='false' ),
+			Option( 'talaris2014', 'Boolean', desc="Use the talaris2014.wts weights set wherever get_score_function is invoked; the talaris2014 weight set downweights hydrogen bond strength by twenty percent relative to the talaris2013 weights set.  Reference energies have been re-fit.", default='false' ),
+			Option( 'hbond_energy_shift', 'Real', desc="The shift upwards (through addition) of the well depth for the hydrogen bond polynomials; this shift is applied before the weights are applied.", default="0.0"),
+			Option( 'hb_sp2_BAH180_rise', 'Real', desc="The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential", default="0.75"),
+			Option( 'hb_sp2_outer_width', 'Real', desc="The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag.", default="0.357"),
+			Option( 'hb_sp2_chipen', 'Boolean', desc="Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%", default="true" ),
+			Option( 'hbond_measure_sp3acc_BAH_from_hvy', 'Boolean', desc="If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen", default="true" ),
+			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="true"),
+			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
+			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
+			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shanon entropy correction to rotamer energy: E = -logP + S", default="false" ),
+		), #-corrections:score
+		Option_Group( 'chemical',
+			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
+			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
+			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-talaris fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues", default="false"),
+		), #-corrections:chemical
+	), # -corrections
 
-		# ashworth
-		Option_Group( 'design',
-			Option( 'output_initial_pdb', 'Boolean', default = 'false', desc = 'write pdb file for loaded and scored input structure'),
-			Option( 'output_unbound_pdb', 'Boolean', default = 'false', desc = 'write out an unbound pdb if doing binding score calculations'),
-			Option( 'z_cutoff', 'Real', default = '3.5', lower = '0', desc = 'distance along DNA-axis from designing DNA bases to allow amino acids to design' ),
-			# the following options are not implemented yet
-			Option( 'protein_scan', 'String', default = 'ACDEFGHIKLMNPQRSTVWY', desc = 'single-residue scanning of protein residue types for binding and specificity scores'),
-			Option( 'checkpoint', 'String', default = '', desc = 'write/read checkpoint files for higher-level protocols that proceed linearly for long periods of time.  Provide a checkpoint filename after this option.'),
-			Option( 'minimize', 'Boolean', default = 'false', desc = 'Perform minimization in DNA design mode.'),
-			Option( 'iterations', 'Integer', default = '1', lower = '1', desc = ''),
-			Option( 'bb_moves', 'String', default = 'ccd', legal=['ccd','backrub'], desc = ''),
-			Option( 'dna_defs', 'StringVector', default = '""', desc = ''),
-			Option( 'dna_defs_file', 'String', default = '', desc = ''),
-			Option( 'preminimize_interface', 'Boolean', default = 'false', desc = ''),
-			Option( 'prepack_interface', 'Boolean', default = 'false', desc = ''),
-			Option( 'flush', 'Boolean', default = 'false', desc = 'enable some tracer flushes in order to see more frequent output'),
-			Option( 'nopdb', 'Boolean', default = 'false', desc = 'use this flag to disable pdb output' ),
-			Option( 'nopack', 'Boolean', default = 'false', desc = 'don\'t actually repack structures' ),
-			Option( 'more_stats', 'Boolean', default = 'false' ),
-			Option( 'pdb_each_iteration', 'Boolean', default = 'false' ),
-			Option( 'designable_second_shell', 'Boolean', default = 'false' ),
-			Option( 'base_contacts_only', 'Boolean', default = 'false' ),
-			Option( 'probe_specificity',         'Integer',    desc='Rapidly estimate the explicit specificity of DNA designs during fixed-backbone repacking', default='1' ),
-			Option_Group( 'specificity',
-				Option( 'output_structures', 'Boolean', default='false', desc='output structures for each sequence combination'),
-				Option( 'include_dna_potentials', 'Boolean', default='false', desc='include DNA potentials in calculations of DNA sequence specificity'),
-			),
-			Option( 'reversion_scan',            'Boolean',    desc='Try to revert spurious mutations after designing', default='false' ),
-			Option_Group( 'reversion',
-				Option( 'dscore_cutoff', 'Real', desc='limit for acceptable loss in energy', default='1.5' ),
-				Option( 'dspec_cutoff', 'Real', desc='limit for acceptable loss in specificity', default='-0.05' ),
-			),
-			Option( 'binding',                   'Boolean',    desc='compute a protein-DNA binding energy', default='false' ),
-			Option( 'Boltz_temp',                'Real',       desc='temperature for Boltzmann calculations', default='0.6' ),
-			Option( 'repack_only',               'Boolean',    desc='Do not allow protein sequences to mutate arbitrarily', default='false' ),
-			Option( 'sparse_pdb_output',         'Boolean',    desc='Output only coordinates that change relative to the input structure', default='false' ),
-		), # dna:design
-	), # dna
+	# Evaluator Options ---------------------------------------------------------
+	Option_Group( 'evaluation' ,
+		Option( 'rmsd_target', 'FileVector', desc='[vector] determine rmsd against this/these structure(s)'),
+		Option( 'rmsd_column', 'StringVector', desc='[vector] use xxx as column name: rms_xxx'),
+		Option( 'rmsd_select', 'FileVector', desc='[vector] a bunch of loop files which makes rmsds with tags: rms_XXX, where XXX is basename of file' ),
+		Option( 'align_rmsd_target', 'FileVector', desc='[vector] determine rmsd against this/these structure(s) using simple sequence alignment'),
+		Option( 'structural_similarity', 'FileVector', desc='[vector] measure average similarity against these structures (option specifies a silent-file)', ),
+		Option( 'contact_map', 'Boolean', desc='Calculate contact map similarity using the given native' ),
+		Option( 'jscore_evaluator', 'StringVector', desc='Calculate scores using the given score function weights files and, residue type set names (e.g score12 fa_standard score3 centroid)' ),
+		Option( 'align_rmsd_column', 'StringVector', desc='[vector] use xxx as column name for align_rmsd_target: rms_xxx'),
+		Option( 'align_rmsd_fns', 'FileVector', desc='[vector] of sequence alignments used for align_rmsd files'),
+		Option( 'align_rmsd_format', 'String',
+			desc='format for sequence alignment between structures used in evaluation',
+			legal = ['grishin','general'], default='grishin'
+		),
+		Option( 'predicted_burial_fn', 'String', desc='file for burial predictions', default = '' ),
+		Option( 'pool', 'File', desc='find closest matching structure in this pool and report tag and rmsd' ),
+		Option( 'rmsd', 'FileVector', desc='[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)'),
+		Option( 'chirmsd', 'FileVector', desc='[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) '),
+		Option( 'gdtmm', 'Boolean', desc='for each rmsd evaluator also a gdtmm evaluator is created', default='false'),
+		Option( 'gdttm', 'Boolean', desc='for each rmsd evaluator also a gdttm evaluator is created', default='false'),
+		Option( 'score_with_rmsd','Boolean', desc='score the pose on the same subset of atoms as in the rmsd poses'),
+		Option( 'constraints', 'FileVector', desc='[vector] evaluate against these constraint sets'),
+		Option( 'constraints_column', 'FileVector', desc='[vector] use xxx as column name: cst_xxx'),
+		Option( 'combined_constraints', 'FileVector', desc='[vector] use xxx as cst-file but combine constraints before applying'),
+		Option( 'combined_constraints_column', 'FileVector', desc='[vector] use xxx as cst-file but combine constraints before applying'),
+		Option( 'combine_statistics','Integer', default ='10', desc='repeat constraint evaluation X times to get statistics of constraint combination'),
 
-	Option_Group( 'flxbb',
-		Option( 'view',              'Boolean', desc='viewing pose during protocol'  ),
-		Option( 'ncycle',            'Integer', desc='number of cycles of design and relax' ),
-		Option( 'constraints_sheet', 'Real', desc='weight constraints between Ca atoms in beta sheet'  ),
-		Option( 'constraints_sheet_include_cacb_pseudotorsion', 'Boolean', desc ="puts an additional constraint on two residues paired in a beta-sheet to ensure their CA-CB vectors are pointing the same way.", default = 'false' ),
-		Option( 'constraints_NtoC', 'Real', desc='weight constraints between N- and C- terminal CA atoms'  ),
-		Option( 'filter_trial', 'Integer', desc="number of filtering trial " ),
-		Option( 'filter_type', 'String', desc="filter type name, currently only packstat is available" ),
-		Option( 'exclude_Met', 'Boolean', desc="do not use Met for design" ),
-		Option( 'exclude_Ala', 'Boolean', desc="do not use Ala for design" ),
-		Option( 'blueprint',         'File',  desc='blueprint file '  ),
-		Option( 'movemap_from_blueprint', 'Boolean', desc='viewing pose during protocol'  ),
-		Option_Group( 'layer',
-			Option( 'layer', 'String',
-				desc='design core, boundary, and surface with different aa types', default='normal'
-				),
-			Option( 'pore_radius', 'Real',
-				desc="sphere radius for sasa calculation",
-				),
-			Option( 'burial', 'Real',
-				desc="surface area when residues regarded as core ",
-				),
-			Option( 'surface', 'Real',
-				desc="surface area when residues regarded as surface ",
-				),
-		), # layer
-	), # flexbb
+		Option( 'chemical_shifts','StringVector', desc='compute chemical shift score with SPARTA+ use tuples: talos_file [cs]_column_name  (ATTENTION uses filesystem)'),
+		Option( 'sparta_dir','String', desc='[optional] point to an external resource for the sparta directory (instead of minirosetta_database)', default='SPARTA+'),
+		Option( 'cam_shifts','StringVector', desc='compute chemical shift score with Camshift talos_file [cs]_column_name  (ATTENTION uses filesystem)'),
+		Option( 'pales','StringVector', desc='compute Residual Dipolar Couplings using the PALES program (ATTENTION uses filesystem)'),
+		Option( 'extra_score','FileVector', desc='[vector] provide .wts files to generate extra columns'),
+		Option( 'extra_score_patch','FileVector', desc='[vector] provide .patch files, set NOPATCH for columns that are not patched'),
 
-	Option_Group( 'fldsgn',
-		Option( 'view', 'Boolean', desc='viewing pose during protocol'  ),
-		Option( 'blueprint', 'FileVector', default=['blueprint'], desc="blueprint filename(s). "),
-		Option( 'dr_cycles', 'Integer', desc="design-refine cycles", default='3' ),
-		Option( 'centroid_sfx', 'String', desc="filename of the centroid score function to use," ),
-		Option( 'centroid_sfx_patch', 'String', desc="filename of the centroid score function patch to use," ),
-		Option( 'fullatom_sfx', 'String', desc="filename of the full-atom score function to use" ),
-		Option( 'fullatom_sfx_patch', 'String', desc="filename of the full-atom score function patch to use" ),
-		Option( 'run_flxbb', 'Integer', desc='run flxbb at the given stage'  ),
-	), # fldsgn
+		Option( 'extra_score_column', 'StringVector', desc='[vector] use xxx as column name: score_xxx'),
+		Option( 'extra_score_select','FileVector',desc='[vector] /rigid/ files for selection, use SELECT_ALL as placeholder'),
+#		Option( 'rdc_select', 'FileVector', desc='[vector] as rmsd_select provide loop-file(RIGID) to compute RDC score on selected residues' ),
+		Option( 'rdc_target', 'FileVector', desc='[vector] as rmsd_target/column provide PDB wih missing density to compute RDC score on selected residues' ),
+		Option( 'symmetric_rmsd', 'Boolean', desc='calculate the rmsd symmetrically by checking all chain orderings'),
 
-	Option_Group( 'rna',
-		Option( 'minimize_rounds', 'Integer', desc='The number of rounds of minimization.', default = '2' ),
-		Option( 'corrected_geo', 'Boolean', desc="Use PHENIX-based RNA sugar close energy and params files", default='true'),
-		Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
-		Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
-		Option( 'skip_o2prime_trials', 'Boolean', desc='No O2* packing in minimizer',default='false' ),
-		Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
-	  Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),
-	  Option( 'bps_database', 'Boolean', desc='Generate a database of base pair steps extracted from a big RNA file', default='false' ),
-		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
-		Option( 'deriv_check', 'Boolean', desc="In rna_minimize, check derivatives numerically", default='false' ),
-    Option( 'data_file', 'String', desc="RDAT or legacy-format file with RNA chemical mapping data",default='' ),
-	),
-	Option_Group( 'cm', # comparative modeling
-    Option_Group('sanitize',
-		  Option('bound_delta', 'Real', desc = 'Distance in Angstroms from aligned position before a penalty is incurred', default = '0.5'),
-			Option('bound_sd', 'Real', desc = 'Value of standard deviation in bound func', default = '1.0'),
-			Option('num_fragments', 'Integer', desc = 'Use the top k fragments at each position during sanitization', default = '25'),
-			Option('cst_weight_pair', 'Real', desc = 'atom_pair_constraint weight', default = '1.0'),
-			Option('cst_weight_coord', 'Real', desc = 'coordinate_constraint weight', default = '1.0'),
-    ),
+		Option( 'rdc_column', 'StringVector', desc='[vector] column names for rdc_select'),
+		Option( 'rdc','StringVector', desc='[vector] rdc-files and column names for RDC calculation'),
+		Option( 'built_in_rdc','String', desc='evaluate rdc from -in:file:rdc with standard score function and store under column xxx'),
+		Option( 'jump_nr', 'Boolean', desc='adds the JumpNrEvaluator for the nrjumps column', default='false' ),
+		Option( 'score_exclude_res', 'IntegerVector', desc="Calculates a select_score column based on all residues not excluded by the command line vector" ),
+		Option( 'score_sscore_short_helix', 'Integer', desc='defines the maximum length of a helix that is not scored if it terminates a loop', default='5' ),
+		Option( 'score_sscore_maxloop', 'Integer', desc='defines the maximum length of a loop that is still considered for the sscore - score', default='3' ),
+#		Option( 'rpf', 'Boolean', desc='will compute RPF score with distance cutoff 5 and store in column rpf_score', default='false' ),
+		Option( 'window_size', 'Integer', desc='Window size for local RMSD calculations in windowed_rmsd app', default='5'),
+		Option( 'I_sc', 'String', desc='score function name used to calculate I_sc', default = 'score12' ),
+		Option( 'Irms', 'Boolean', desc='will compute the docking interface rmsd', default='false'),
+		Option( 'Ca_Irms', 'Boolean', desc='will compute the docking Ca-atom interface rmsd', default='false'),
+		Option( 'Fnat', 'Boolean', desc='will compute the docking recovered fraction of native contacts', default='false'),
+		Option( 'Lrmsd', 'Boolean', desc='will compute the docking ligand rmsd', default='false'),
+		Option( 'Fnonnat', 'Boolean', desc='will compute the fraction of non-native contacts for docking', default='false'),
+		Option( 'DockMetrics', 'Boolean', desc='will compute all docking metrics (I_sc/Irms/Fnat/Lrmsd for now) for replica docking', default='false'),
+	), # -evaluation
 
-		Option( 'start_models_only',   'Boolean',    desc='Make starting models only!', default='false' ),
-		Option(
-			'aln_format', 'String', legal = ['grishin','general'],
-			default='grishin'
-		),
-		Option(
-			'recover_side_chains', 'Boolean', desc='recover side-chains',
-			default='false'
-		),
-		Option(
-			'steal_extra_residues', 'FileVector',
-			desc='list of template extra residues (ie ligands) to add to query pose in comparative modeling',
-		),
-		Option(
-			'loop_mover', 'String',
-			legal = [
-				'quick_ccd','quick_ccd_moves','perturb_ccd','perturb_kic','sdwindow'
-			],
-			default='quick_ccd',
-		),
-		Option(
-			'loop_close_level', 'Integer', legal=[ '0', '1', '2', '3' ],
-			default='0',
-			desc="level of aggressiveness to use in closing loops. \
-					The integers that follow flags specify how aggressively \
-					loops are rebuilt. Each option implies all non-zero levels below it,\
-					so that loop_close_level 2 implies level 1 as well. Meaning of \
-					the options are: \
-					NO_REBUILD              0     don't rebuild loops at all \
-					REBUILD_UNALIGNED       1     rebuild loops around unaligned regions \
-					REBUILD_CHAINBREAK      2     rebuild loops around chainbreaks \
-					REBUILD_EXHAUSTIVE      3     rebuild loops around regions with a chainbreak until no chainbreaks remain",
-		),
-		Option(
-			'min_loop_size', 'Integer',
-			desc='Minimum size of loops to remodel when building threading models.',
-			default='5'
-		),
-		Option(
-			'max_loop_rebuild', 'Integer',
-			desc='Maximum number of times to try to rebuild a loop before giving up.',
-			default='10'
-		),
-		Option(
-			'loop_rebuild_filter', 'Real',
-			desc='Maximum score a structure must have after loop rebuilding.',
-			default='0'
-		),
-		Option(
-			'aln_length_filter_quantile', 'Real',
-			desc='Only use alignment lengths longer than the Xth quantile. e.g. setting this to 0.75 will only use the 25% longest alignments',
-			default='0.0',
-		),
-		Option(
-			'aln_length_filter', 'Integer',
-			desc='Only use alignment longer or equal to this length',
-			default='-1',
-		),
-		Option(
-			'template_ids', 'StringVector',
-			desc = 'List of template identifiers to use in comparative modeling',
-		),
-		Option(
-			'ligand_pdb', 'File',
-			desc = 'Add a ligand to the system',
-		),
-		Option(
-			'seq_score', 'StringVector',
-			desc = 'sequence-based scoring scheme used for generating alignments',
-			legal = [ 'L1', 'ProfSim', 'DP', 'Matrix', 'Simple', 'ChemicalShift' ],
-			default = 'utility::vector1<std::string>(1,"Simple")',
-		),
-		Option(
-			'aligner', 'String',
-			desc = 'algorithm for making sequence alignments',
-			legal = [ 'local', 'global', 'mc' ],
-		),
-		Option(
-			'min_gap_open', 'Real',
-			desc = 'gap opening penalty for sequence alignments (usually negative)',
-			default = '-2.0',
-		),
-		Option(
-			'max_gap_open', 'Real',
-			desc = 'gap opening penalty for sequence alignments (usually negative)',
-			default = '-2.0',
-		),
-		Option(
-			'min_gap_extend', 'Real',
-			desc = 'gap extension penalty for sequence alignments (usually negative)',
-			default = '-0.2'
-		),
-		Option(
-			'max_gap_extend', 'Real',
-			desc = 'gap extension penalty for sequence alignments (usually negative)',
-			default = '-0.2'
-		),
-		Option(
-			'nn', 'Integer',
-			desc = 'number of neighbors to include in constraint derivation',
-			default = '500',
-		),
-		Option(
-			'fr_temperature', 'Real',
-			desc = 'temperature to use during fragment-based refinement of structures',
-			default = '2.0'
-		),
-		Option(
-			'ev_map','FileVector', desc='Input file that maps pdbChains to blast e-values'
-		),
-		Option(
-			'hh_map','FileVector', desc='Input file that maps pdbChains to hhsearch probabilities'
-		),
-		Option_Group( 'hybridize', # tempalate hybridization
-			Option( 'templates',                      'FileVector', desc='Input list of template files'),
-			Option( 'template_list',                  'File', desc='Input list of templates, constaints, cluster, and weights'),
-			Option( 'starting_template',              'IntegerVector',    desc='Define starting templates' ),
-			Option( 'realign_domains',                'Boolean',     desc='domain parse and realign the starting templates', default='true' ),
-			Option( 'add_non_init_chunks',            'Boolean',     desc='non chunks from templates other than the initial one', default='false' ),
-			Option( 'ss',                             'String',     desc='secondary structure elements used to split the pose', default='HE' ),
-			Option( 'stage1_increase_cycles',         'Real',     desc='Scale stage 1 cycles', default='1.0' ),
-			Option( 'stage2_increase_cycles',         'Real',     desc='Scale stage 2 cycles', default='1.0' ),
-			Option( 'stage2min_increase_cycles',      'Real',    desc='Scale minimizer cycles after stage 2', default='1.0'),
-			Option( 'stage1_probability',             'Real',     desc='Probability of running stage 1, 0=never, 1=always', default='1.0' ),
-			Option( 'stage1_weights',                 'String',     desc='weight for fold tree hybridize stage', default='score3' ),
-			Option( 'stage1_patch',                   'String',     desc='weight patch for fold tree hybridize stage', default='' ),
-			Option( 'skip_stage2',                    'Boolean',    desc='skip cartesian fragment hybridize stage', default='false' ),
-			Option( 'no_global_frame',                'Boolean',    desc='no global-frame fragment insertions', default='false' ),
-			Option( 'linmin_only',                    'Boolean',    desc='linmin only in stage 2', default='false' ),
-			Option( 'stage2_weights',                 'String',     desc='weight for cartesian fragment hybridize stage', default='score4_smooth_cart' ),
-			Option( 'stage2_patch',                   'String',     desc='weight patch for cartesian fragment hybridize stage', default='' ),
-			Option( 'relax',                          'Integer',    desc='if n==1, perform relax at end; if n>1 perform batch relax over n centroids', default='0' ),
-			Option( 'frag_weight_aligned',            'Real',       desc='Probability of fragment insertion in the aligned region', default='0.' ),
-			Option( 'move_anchor',                    'Boolean',    desc='move anchor residue when copying xyz in stage 1', default='false' ),
-			Option( 'max_registry_shift',             'Integer',    desc='maximum registry shift', default='0' ),
-			Option( 'alignment_from_template_seqpos', 'Boolean',    desc='alignment from template resSeq', default='true' ),
-			Option( 'alignment_from_chunk_mapping',   'IntegerVector',    desc='alignment from secondary structure mapping' ),
-			Option( 'virtual_loops',                  'Boolean',    desc='use virtual loops', default='false' ),
-			Option( 'revert_real_loops',              'Boolean',    desc='revert back to non-virtual loops', default='false' ),
-			Option( 'realign_domains_stage2',         'Boolean',     desc='realign the starting templates to the pose after stage1', default='false' ),
-			Option( 'frag_1mer_insertion_weight',     'Real',       desc='weight for 1mer fragment insertions where fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
-			Option( 'small_frag_insertion_weight',    'Real',       desc='weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
-			Option( 'big_frag_insertion_weight',       'Real',       desc='weight for big fragment insertions vs. template chunk insertions in stage1', default='0.5' ),
-			Option( 'auto_frag_insertion_weight',     'Boolean',    desc='automatically set the weight for fragment insertions vs. template chunk insertions in stage1', default='true' ),
-			Option( 'stage1_1_cycles',                'Integer',    desc='Number of cycles for ab initio stage 1 in Stage1', default='2000'),
-			Option( 'stage1_2_cycles',                'Integer',    desc='Number of cycles for ab initio stage 2 in Stage1', default='2000'),
-			Option( 'stage1_3_cycles',                'Integer',    desc='Number of cycles for ab initio stage 3 in Stage1', default='2000'),
-			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='400'),
-			Option( 'stage2_temperature',             'Real',       desc='Monte Carlo temperature in the stage2', default='2.0'),
-			Option( 'stage1_4_cenrot_score',          'String',     desc='Switch to cenrot model in stage1_4', default='score_cenrot_cm_stage1_4.wts'),
+	# Filter Options -----------------------------------------------------------
+	Option_Group( 'filters',
+		Option( 'disable_all_filters', 'Boolean',
+			desc="turn off all centroid filters: RG, CO, and Sheet",
+			default = 'false' ),
+		Option( 'disable_rg_filter', 'Boolean',
+			desc="turn off RG filter",
+			default = 'false' ),
+		Option( 'disable_co_filter', 'Boolean',
+			desc="turn off contact order filter",
+			default = 'false' ),
+		Option( 'disable_sheet_filter', 'Boolean',
+			desc="turn off sheet filter",
+			default = 'false' ),
+		Option( 'set_pddf_filter', 'Real', desc="Turns on PDDF filter with a given score cutoff",default="5.0"),
+		Option( 'set_saxs_filter', 'Real', desc="Turns on SAXS energy filter with a given score cutoff",default="-3"),
+	), # -filters
 
-		), # hybridize
-	), # cm
-	Option_Group( 'ms' , # multistate_design
+	Option_Group( 'gpu',
+		Option('gpu', 'Boolean', desc='Enable/Disable GPU support', default ='true'),
+		Option('device', 'Integer', desc='GPU device to use', default = '1'),
+		Option('threads', 'Integer', desc='Max GPU threads to use', default = '2048'),
+	), # -gpu
 
-		Option( 'share_data',                    'Boolean',          desc='share rotamers and energies between states -- valid only if state variability is defined rotamerically', default='false' ),
-		Option( 'verbose',                       'Boolean',       desc='', default='false' ),
-		Option( 'restrict_to_canonical',         'Boolean',                     desc='design only canonical residue types', default='false' ),
-		Option( 'pop_from_ss',                   'Integer',           desc='generate starting sequence population based on single-state design results', default='0' ),
-		Option( 'pop_size',                      'Integer',        desc='genetic algorithm population size', default='100' ),
-		Option( 'generations',                   'Integer',           desc='number of genetic algorithm generations', default='20' ),
-		Option( 'num_packs',                     'Integer',         desc='number of repack trials per sequence/state combination', default='1' ),
-		Option( 'numresults',                    'Integer',          desc='number of top-fitness results to save for explicit reference at the end of multistate design', default='1' ),
-		Option( 'anchor_offset',                 'Real',                desc='energy offset from the energy of single-state design toward the target state -- used to generate an affinity anchor for fitness calculations', default='5.0' ),
-		Option( 'Boltz_temp',                    'Real',             desc='thermodynamic temperature to use for specificity calculations', default='0.6' ),
-		Option( 'mutate_rate',                   'Real',              desc='rate of mutation per position', default='0.5' ),
-		Option( 'fraction_by_recombination',     'Real',                            desc='fraction of the population that should be generated by recombination during the evolution stage', default='0.5' ),
-		Option_Group( 'checkpoint',
-			Option( 'prefix',             'String',                  desc='prefix to add to the beginning of checkpoint file names', default='' ),
-			Option( 'interval',             'Integer',                  desc='frequency with which the entity checkpoint is written', default='0' ),
-			Option( 'gz',             'Boolean',                  desc='compress checkpoing files with gzip', default='false' ),
-			Option( 'rename',             'Boolean',                  desc='rename checkpoint files after genetic algorithm completes', default='false' ),
-		),
-	),
+	Option_Group( 'jumps',
+		Option( 'evaluate',             'Boolean',           desc='evaluate N-CA-C gemoetry for all jumps in the fold-tree',     default='false' ),
+		Option( 'extra_frags_for_ss',         'File',      desc='use ss-def from this fragset',     default='' ),
+		Option( 'fix_chainbreak',              'Boolean',    desc= 'minimize to fix ccd in re-runs',     default='false' ),
+		Option( 'fix_jumps',                    'File',    desc='read jump_file',     default='' ),
+		Option( 'jump_lib',                    'File',     desc='read jump_library_file for automatic jumps',     default='' ),
+		Option( 'loop_definition_from_file',   'File',    desc= 'use ss-def from this file',     default='' ),
+		Option( 'no_chainbreak_in_relax',     'Boolean',      desc='dont penalize chainbreak in relax',     default='false' ),
+		Option( 'pairing_file',             'File',        desc='file with pairings',     default='' ),
+		Option( 'random_sheets',             'IntegerVector',        desc='random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i',     default='1' ),
+		Option( 'residue_pair_jump_file',     'File',       desc='a file to define residue pair jump',     default='' ),
+		Option( 'sheets',                     'IntegerVector',        desc='sheet topology--> replaces -sheet1 -sheet2 ... -sheetN',     default='1' ),
+		Option( 'topology_file',             'File',        desc='read a file with topology info ( PairingStats )',     default='' ),
+
+		Option( 'bb_moves',                     'Boolean',        desc='Apply bb_moves ( wobble, small, shear) during stage3 and stage 4.',     default='false' ),
+		Option( 'no_wobble',                    'Boolean',        desc='Don t apply the useless wobble during stage3 and stage 4.',     default='false' ),
+		Option( 'no_shear',                     'Boolean',        desc='Don t apply the useless shear during stage3 and stage 4.',     default='false' ),
+		Option( 'no_sample_ss_jumps',           'Boolean',        desc='sample jump-frags during folding',     default='false' ),
+		Option( 'invrate_jump_move',            'Integer',        desc='give 5 here to have 5 torsion moves for each jump move',     default='10' ),
+		Option( 'chainbreak_weight_stage1',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
+		Option( 'chainbreak_weight_stage2',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
+		Option( 'chainbreak_weight_stage3',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
+		Option( 'chainbreak_weight_stage4',     'Real',           desc='the weight on chainbreaks',     default='1.0' ),
+		Option( 'ramp_chainbreaks',             'Boolean',        desc='ramp up the chainbreak weight stage1-0, stage2 0.25, stage3 alternating 0.5..2.5, stage4 2.5..4',     default='true' ),
+		Option( 'increase_chainbreak','Real', desc='multiply ramped chainbreak weight by this amount', default='1.0'),
+		Option( 'overlap_chainbreak',           'Boolean',        desc='use the overlap chainbrak term in stage4',     default='false' ),
+		Option( 'sep_switch_accelerate',        'Real',           desc='constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>',     default='0.4' ),
+		Option( 'dump_frags',                   'Boolean',        desc='dump jump_fragments ',     default='false' ),
+		Option( 'njumps', 'Integer', desc='number_of_jumps to select from library for each trajectory (membrane mode)', default='1' ),
+		Option( 'max_strand_gap_allowed', 'Integer', desc='merge strands if they less than X residues but same register', default='2' ),
+		Option( 'contact_score', 'Real', desc='the strand-weight will have a weight * contact_order component', default='0.0' ),
+		Option( 'filter_templates', 'Boolean', desc='filter hybridization protocol templates', default='false'),
+	), # -jumps
 
 	Option_Group( 'loops',
 		Option( 'loops', 'Boolean', desc='loop modeling option group', legal=['true','false'], default='true'),
@@ -4184,9 +2012,9 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'refine_only', 'Boolean', desc='perform full atom refinement only on loops',
 			legal=['true', 'false'], default='false'
 		),
-		Option( 'fa_input', 'Boolean', desc='input structures are in full atom format',
-			legal=['true', 'false'], default='false'
-		),
+#		Option( 'fa_input', 'Boolean', desc='input structures are in full atom format',
+#			legal=['true', 'false'], default='false'
+#		),
 		Option( 'fast', 'Boolean', desc='reduce number of simulation cycles in loop modeling',
 			legal=['true', 'false'], default='false'
 		),
@@ -4256,9 +2084,9 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'relax',  'String',                        default = 'no',
 			legal=['no','relax','fastrelax','seqrelax','minirelax'], desc = ''
 		),
-		Option(
-			'n_rebuild_tries', 'Integer', default='1', desc='number of times to retry loop-rebuilding'
-		),
+#		Option(
+#			'n_rebuild_tries', 'Integer', default='1', desc='number of times to retry loop-rebuilding'
+#		),
 
 		Option( 'final_clean_fastrelax',    'Boolean',
 			desc='Add a final fastrelax without constraints',
@@ -4277,51 +2105,53 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Calculate loopscores individually',
 		),
 		Option( 'timer', 'Boolean',
-      desc='Output time spent in seconds for each loop modeling job',
-      legal=['true','false'], default='false'
-    ),
+			desc='Output time spent in seconds for each loop modeling job',
+			legal=['true','false'], default='false'
+		),
 
 		## Kinematic loop building (KIC)
 		Option( 'vicinity_sampling', 'Boolean',
 			desc='only sample within a certain region of the current torsion values',
 			legal=['true','false'], default='false'
-			),
+		),
 		Option( 'vicinity_degree', 'Real',
 			desc='number of degrees to sample within current torsion values for vicinity sampling',
 			default='1.0'
-			),
-    Option( 'neighbor_dist', 'Real',
-      desc='CB distance cutoff for repacking, rotamer trails, and side-chain minimization during loop modeling. NOTE: values over 10.0 are effectively reduced to 10.0',
-      default='10.0'
-      ),
-    Option( 'kic_max_seglen', 'Integer',
-      desc='maximum size of residue segments used in kinematic closure calculations',
-      default='12'
-      ),
-    Option( 'kic_recover_last', 'Boolean',
-      desc='If true, do not recover lowest scoring pose after each outer cycle and at end of protocol in kic remodel and refine',
-      default='false'
-      ),
-    Option( 'kic_min_after_repack', 'Boolean',
-      desc='Should the kinematic closure refine protocol minimize after repacking steps',
-      default='true'
-      ),
+		),
+		Option( 'neighbor_dist', 'Real',
+			desc='CB distance cutoff for repacking, rotamer trails, and side-chain minimization during loop modeling. NOTE: values over 10.0 are effectively reduced to 10.0',
+			default='10.0'
+		),
+		Option( 'kic_max_seglen', 'Integer',
+			desc='maximum size of residue segments used in kinematic closure calculations',
+			default='12'
+		),
+		Option( 'kic_recover_last', 'Boolean',
+			desc='If true, do not recover lowest scoring pose after each outer cycle and at end of protocol in kic remodel and refine',
+			default='false'
+		),
+		Option( 'kic_min_after_repack', 'Boolean',
+			desc='Should the kinematic closure refine protocol minimize after repacking steps',
+			default='true'
+		),
 		Option( 'optimize_only_kic_region_sidechains_after_move', 'Boolean',
-      desc='Should we perform rotamer trials and minimization after every KIC move but only within the loops:neighbor_dist of the residues in the moved KIC segment. Useful to speed up when using very large loop definitions (like when whole chains are used for ensemble generation).',
-      default='false'
-      ),
-    Option( 'max_kic_build_attempts', 'Integer',
-      desc='Number of attempts at initial kinematic closure loop building',
-      default='10000'
-      ),
-    Option( 'remodel_kic_attempts', 'Integer',
-      desc='Number of kic attempts per inner cycle during perturb_kic protocol',
-      default='300'
-      ),
-    Option( 'max_kic_perturber_samples', 'Integer',
-      desc='Maximum number of kinematic perturber samples',
-      default='2000'
-      ),
+			desc='Should we perform rotamer trials and minimization after every KIC move but only within the loops:neighbor_dist '
+				'of the residues in the moved KIC segment. Useful to speed up when using very large loop definitions '
+				'(like when whole chains are used for ensemble generation).',
+			default='false'
+		),
+		Option( 'max_kic_build_attempts', 'Integer',
+			desc='Number of attempts at initial kinematic closure loop building',
+			default='10000'
+		),
+		Option( 'remodel_kic_attempts', 'Integer',
+			desc='Number of kic attempts per inner cycle during perturb_kic protocol',
+			default='300'
+		),
+		Option( 'max_kic_perturber_samples', 'Integer',
+			desc='Maximum number of kinematic perturber samples',
+			default='2000'
+		),
 		Option( 'nonpivot_torsion_sampling', 'Boolean',
 			desc='enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3',
 			legal=['true','false'], default='true'
@@ -4342,18 +2172,18 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Allow loop omega to minimize during loop modeling',
 			legal=['true','false'], default='false'
 		),
-                Option( 'kic_with_cartmin', 'Boolean',
-                        desc="Use cartesian minimization in KIC loop modeling",
-                        legal=['true', 'false'], default='false'
-                ),
+		Option( 'kic_with_cartmin', 'Boolean',
+			desc="Use cartesian minimization in KIC loop modeling",
+			legal=['true', 'false'], default='false'
+		),
 		Option( 'allow_takeoff_torsion_move', 'Boolean',
 			desc='Allow takeoff phi/psi to move during loop modeling',
 			legal=['true','false'], default='false'
 		),
-    Option( 'extend_length', 'Integer',
-      desc='Number of alanine residues to append after cutpoint in loopextend app',
-      default = '0', lower = '0'
-    ),
+		Option( 'extend_length', 'Integer',
+			desc='Number of alanine residues to append after cutpoint in loopextend app',
+			default = '0', lower = '0'
+		),
 		Option( 'outer_cycles', 'Integer',
 			desc='outer cycles in fullatom loop refinement', default = '5', lower = '1'
 		),
@@ -4365,10 +2195,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='repack period during fullatom loop refinement',
 			default = '20', lower = '1'
 		),
-		Option( 'repack_never', 'Boolean',
-			desc='option to disable repacking during loop movement',
-			default = 'false'
-		),
+#		Option( 'repack_never', 'Boolean',
+#			desc='option to disable repacking during loop movement',
+#			default = 'false'
+#		),
 		##Option( 'repack_all', 'Boolean', default = 'false' ),
 		Option( 'remodel_init_temp' , 'Real',
 			desc='Initial temperature for loop rebuiding. Currently only supported in kinematic (KIC) mode',
@@ -4400,22 +2230,22 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 						desc='number of RotamerTrial iterations in each KIC cycle -- default is 1',
 						default = '1'
 		),
-                Option( 'kic_omega_sampling', 'Boolean',
-                        desc="Perform sampling of omega angles around 179.6 for trans, and including 0 for pre-prolines -- default false, for legacy reasons",
-                        default='false'
-                ),
-                Option( 'kic_bump_overlap_factor', 'Real',
-                        desc="allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)",
-                        default='0.36'
-                ),
-                Option( 'kic_cen_weights', 'String',
-                        desc='centroid weight set to be used for KIC and next-generation KIC -- note that the smooth weights are strongly recommended for use with Talaris2013',
-                        default="score4_smooth"
-                ),
-                Option( 'kic_cen_patch', 'String',
-                        desc='weights patch file to be used for KIC+NGK centroid modeling stage',
-                        default=""
-                ),
+		Option( 'kic_omega_sampling', 'Boolean',
+			desc="Perform sampling of omega angles around 179.6 for trans, and including 0 for pre-prolines -- default false, for legacy reasons",
+			default='false'
+		),
+		Option( 'kic_bump_overlap_factor', 'Real',
+			desc="allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)",
+			default='0.36'
+		),
+#		Option( 'kic_cen_weights', 'String',
+#			desc='centroid weight set to be used for KIC and next-generation KIC -- note that the smooth weights are strongly recommended for use with Talaris2013',
+#			default="score4_smooth"
+#		),
+#		Option( 'kic_cen_patch', 'String',
+#			desc='weights patch file to be used for KIC+NGK centroid modeling stage',
+#			default=""
+#		),
 
 		## next-generation KIC
 		Option( 'restrict_kic_sampling_to_torsion_string', 'String',
@@ -4450,30 +2280,30 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='use neighbor-dependent Ramachandran distributions in random torsion angle sampling',
 			default = 'false'
 		),
-		Option( 'kic_small_moves', 'Boolean',
-			desc='sample torsions by adding or subtracting a small amount from the previous value, instead of picking from the Ramachandran distribution.',
-			default = 'false'
-		),
-		Option( 'kic_small_move_magnitude', 'Real',
-			desc='specify the magnitude of the small moves.  Only meant to be used for initial testing and optimization.',
-			default = '5.0'
-		),
-		Option( 'kic_pivot_based', 'Boolean',
-			desc='use ramachandran sampling if the pivots are closer than 8 residues apart, otherwise use small moves.',
-			default = 'false'
-		),
-		Option( 'kic_no_centroid_min', 'Boolean',
-			desc='don\'t minimize in centroid mode during KIC perturb',
-			default = 'false'
-		),
+#		Option( 'kic_small_moves', 'Boolean',
+#			desc='sample torsions by adding or subtracting a small amount from the previous value, instead of picking from the Ramachandran distribution.',
+#			default = 'false'
+#		),
+#		Option( 'kic_small_move_magnitude', 'Real',
+#			desc='specify the magnitude of the small moves.  Only meant to be used for initial testing and optimization.',
+#			default = '5.0'
+#		),
+#		Option( 'kic_pivot_based', 'Boolean',
+#			desc='use ramachandran sampling if the pivots are closer than 8 residues apart, otherwise use small moves.',
+#			default = 'false'
+#		),
+#		Option( 'kic_no_centroid_min', 'Boolean',
+#			desc='don\'t minimize in centroid mode during KIC perturb',
+#			default = 'false'
+#		),
 		Option( 'kic_leave_centroid_after_initial_closure', 'Boolean',
 			desc="only use centroid mode for initial loop closure -- all further loop closures will be performed in full-atom",
 			default = 'false'
 		),
-		Option( 'kic_repack_neighbors_only', 'Boolean',
-			desc='select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)',
-			default='false'
-		),
+#		Option( 'kic_repack_neighbors_only', 'Boolean',
+#			desc='select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)',
+#			default='false'
+#		),
 		Option ( 'legacy_kic', 'Boolean',
 			desc='always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more (false by default)',
 			default='false'
@@ -4521,7 +2351,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 
 		Option( 'score_filter_cutoff', 'Real', desc='value for score filter', default='1.0' ),
 		##Option( 'loop_skip_rate', 'Real', desc='skip rate for not building a chosen loop', default='0.0' ),
-		Option( 'loop_farlx', 'Boolean', desc='do fullatom loop refinement', legal=['true','false'], default='false'),
+#		Option( 'loop_farlx', 'Boolean', desc='do fullatom loop refinement', legal=['true','false'], default='false'),
 		Option( 'ccd_closure', 'Boolean', desc='apply ccd closure',   legal=['true','false'], default='false'),
 		Option( 'skip_ccd_moves', 'Boolean', desc='when running in ccd_moves mode, dont actually do ccd_moves.. just do fragment insertions', default='false'),
 		Option( 'no_randomize_loop', 'Boolean', desc='Leave loop as it is', default='false'),
@@ -4547,14 +2377,14 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Extended tempfactor: stochastic extendedness: p_ext = exp( - beta * length ) ',
 			default='-1.0'
 		),
-		Option( 'shortrelax', 'Boolean',
-			desc='do a short fullatom relax after loop remodeling',
-			default='false'
-		),
-		Option( 'fastrelax', 'Boolean',
-			desc='do a fast fullatom relax after loop remodeling',
-			default='false'
-		),
+#		Option( 'shortrelax', 'Boolean',
+#			desc='do a short fullatom relax after loop remodeling',
+#			default='false'
+#		),
+#		Option( 'fastrelax', 'Boolean',
+#			desc='do a fast fullatom relax after loop remodeling',
+#			default='false'
+#		),
 		Option( 'no_looprebuild', 'Boolean', desc='do not rebuild loops',
 			legal=['true','false'],
 			default='false'
@@ -4571,543 +2401,260 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('refine_design_iterations','Integer',
 			desc='iterations of refine and design', default='1'
 		),
-		Option_Group( 'loop_closure' ,
-      			Option( 'loop_insert', 'String',
-              			desc='List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrc and blueprint options are mutually exclusive.',
-			),
-			Option( 'loop_insert_rclrc', 'String',
-               		desc='Comma delimited list of tuples, each formed as R1C1:L:R2C2, where R1C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25A:7:28B,50B:6:53C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive.',
-
-			),
-			Option( 'blueprint', 'String',
-				desc='path to a blueprint file specifying loops.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive',
-			),
-		), # Option_Group( 'loop_closure' )
+#		Option_Group( 'loop_closure' ,
+#			Option( 'loop_insert', 'String',
+#				desc='List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrc and blueprint options are mutually exclusive.',
+#			),
+#			Option( 'loop_insert_rclrc', 'String',
+#				desc='Comma delimited list of tuples, each formed as R1C1:L:R2C2, where R1C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25A:7:28B,50B:6:53C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive.',
+#			),
+#			Option( 'blueprint', 'String',
+#				desc='path to a blueprint file specifying loops.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive',
+#			),
+#		), # -loops:loop_closure'
 		Option_Group( 'ccd' ,
-		  Option( 'max_rama_score_increase', 'Real', desc='Maximum increase in Ramachandran score that will be tolerated.', default='2.0' ),
-		  Option( 'max_torsion_delta_per_move', 'RealVector', desc='Maxmimum absolute torsion deviation for a single residue in a given move. Different deviations for residues in helical, extended or coil conformations must be supplied (in that order).',
-		          default=['1.0', '5.0', '10.0'], n='3' ),
-		  Option( 'max_torsion_delta', 'RealVector', desc='Maxmimum absolute torsion deviation for a single residue over the entire CCD closure. Different deviations for residues in helical, extended or coil conformations must be supplied (in that order).',
-		          default=['10.0', '50.0', '75.0'] , n='3'),
-		  Option( 'tolerance', 'Real', desc='Maximum RMSD (in Angstroms) of the duplicated atoms across the cutpoint that will be considered a successful closure.', default='0.08' ),
-		  Option( 'max_cycles', 'Integer', desc='Maximum number of CCD iterations to attempt. CCD will stop if the loop is closed in fewer cycles than the maximum.', default='100' ),
-		  Option( 'check_rama_scores', 'Boolean', desc="Bias toward moves that improve the moving resiude's Ramachandran score.", legal=['true','false'], default='true' ),
-		  Option( 'rama_2b', 'Boolean', desc="Use two-body (neighbor-dependent) Ramachandran score.", legal=['true','false'], default='false' ),
-		  Option( 'temperature', 'Real', desc='Temperature (roughly in units of kT) to use when accepting a move that does not improve the Ramachandran score.', default='0.25' ),
-		), # Option_Group( 'ccd' )
-	), # Option_Group( 'loops' )
+			Option( 'max_rama_score_increase', 'Real', desc='Maximum increase in Ramachandran score that will be tolerated.', default='2.0' ),
+			Option( 'max_torsion_delta_per_move', 'RealVector',
+				desc='Maxmimum absolute torsion deviation for a single residue in a given move. Different deviations for residues in helical, extended or coil conformations must be supplied (in that order).',
+				default=['1.0', '5.0', '10.0'], n='3' ),
+			Option( 'max_torsion_delta', 'RealVector',
+				desc='Maxmimum absolute torsion deviation for a single residue over the entire CCD closure. Different deviations for residues in helical, extended or coil conformations must be supplied (in that order).',
+				default=['10.0', '50.0', '75.0'] , n='3'),
+			Option( 'tolerance', 'Real', desc='Maximum RMSD (in Angstroms) of the duplicated atoms across the cutpoint that will be considered a successful closure.', default='0.08' ),
+			Option( 'max_cycles', 'Integer', desc='Maximum number of CCD iterations to attempt. CCD will stop if the loop is closed in fewer cycles than the maximum.', default='100' ),
+			Option( 'check_rama_scores', 'Boolean', desc="Bias toward moves that improve the moving resiude's Ramachandran score.", legal=['true','false'], default='true' ),
+			Option( 'rama_2b', 'Boolean', desc="Use two-body (neighbor-dependent) Ramachandran score.", legal=['true','false'], default='false' ),
+			Option( 'temperature', 'Real', desc='Temperature (roughly in units of kT) to use when accepting a move that does not improve the Ramachandran score.', default='0.25' ),
+		), # -loops:ccd' )
+	), # -loops
 
-	Option_Group( 'assembly',
-		Option( 'pdb1','File', desc='pdb1 file' ),
-		Option( 'pdb2','File', desc='pdb2 file' ),
-		Option( 'nterm_seq', 'String', default='', desc='extra sequence at Nterminus' ),
-		Option( 'cterm_seq', 'String', default='', desc='extra sequence at Cterminus' ),
-		Option( 'linkers_pdb1', 'IntegerVector', desc="Residue numbers to be built as linkers " ),
-		Option( 'linkers_pdb2', 'IntegerVector', desc="Residue numbers to be built as linkers " ),
-		Option( 'preserve_sidechains_pdb1', 'IntegerVector', desc="Residue numbers to be sidchain-preserved " ),
-		Option( 'preserve_sidechains_pdb2', 'IntegerVector', desc="Residue numbers to be sidchain-preserved " ),
-	), # assembly
+	#New Membrane Protein Option group
+	Option_Group( 'membrane_new',
 
-	Option_Group( 'fast_loops',
-			Option( 'window_accept_ratio',       'Real',   desc='windows with more than x percent of good loops in fast-loop sampling are used for scored-sampling',  default='0.01' ),
-			Option( 'nr_scored_sampling_passes', 'Integer',desc='good windows go into scored-sampling N times',  default='4'  ),
-			Option( 'nr_scored_fragments',       'Integer',desc='scored loops sampled per good window each pass',  default='20'  ),
-			Option( 'min_breakout_good_loops',   'Integer',desc='stop doing scored sampling if N or more good loops have been found',  default='5'  ),
-			Option( 'min_breakout_fast_loops',   'Integer',desc='stop doing fast sampling if N or more good loops have been found',  default='80'  ),
-			Option( 'min_good_loops',            'Integer',desc='treat as failure if less good-loops than',  default='0'  ),
-			Option( 'min_fast_loops',            'Integer',desc='treat as failure if less fast-loops than',  default='3'  ),
-			Option( 'vdw_delta',                 'Real',   desc='accept as good loop if vdw-score < vdw-score-start+vdw-delta',  default='0.5' ),
-			Option( 'give_up',                   'Integer',desc='if N scored_frag_attemps didnt give any good loop -- jump out',  default='1000' ),
-			Option( 'chainbreak_max',            'Real',   desc='accept only loops that have a maximum chainbreak score of... (sum of linear_chainbreak / chainbreak and overlap_chainbreak', default='0.2'),
-			Option( 'fragsample_score',          'File',   desc='Scorefunction used durgin scored-frag sampling', default='loop_fragsample.wts' ),
-			Option( 'fragsample_patch',          'File',   desc='Patch weights for scorefunction used during scored-frag sampling' ),
-			Option( 'overwrite_filter_scorefxn', 'File',   desc='force Scorefunction to be used during filter stage (instead last score of sampling protocol)' ),
-			Option( 'patch_filter_scorefxn', 'File', desc='apply patch to Scorefunction used during filter stage' ),
-			Option( 'filter_cst_file', 'File', desc='use these constraints to filter loops --- additional to whatever is in pose already' ),
-			Option( 'filter_cst_weight', 'Real', desc='weight for constraints versus normal score (might contain additional constraints)', default='1.0' ),
-			Option( 'fast_relax_sequence_file', 'File', desc='use this FastRelax protocol for loop-selection'),
-	),
+		# Include a VRT anchored foldtree
+		Option( 'anchored_foldtree', 'Boolean', desc="Build a fold tree anchored by a VRT so the membrane and protein have explicit jumps to modify" ),
 
-   Option_Group( 'SSrbrelax',
-      Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),
-      Option( 'rb_file','File', desc='rb definition file', default='rb_file' ),
-      Option( 'rb_param_file','File', desc='rb param file', default='rb_param_file' ),
-      Option( 'frag_sizes','IntegerVector', desc='lengths of fragments to be used in loop modeling', default=['9','3','1']),
-      Option( 'frag_files', 'FileVector', desc='fragment libraries files', default=['FragFile9','FragFile3','FragFile1'] ),
-   ),
-   Option_Group( 'boinc',
-								Option( 'graphics',  'Boolean', desc='The boinc client uses this option for the windowed graphics',                default='false' ),
-								Option( 'fullscreen','Boolean', desc='The boinc client uses this option for the screensaver full screen graphics', default='false' ),
-								Option( 'max_fps',   'Integer', desc='Maximum frames per second, overrides user preference.', default='0' ),
-								Option( 'max_cpu',   'Integer', desc='Maximum cpu percentage, overrides user preferecne.', default='0' ),
-								Option( 'noshmem',   'Boolean', desc='for testing graphics without shared memory.', default='false' ),
-                 Option('cpu_run_time', 'Integer', desc='Target cpu run time in seconds', default='10800'),
-								 Option('max_nstruct', 'Integer', desc='Maximum number of output models (failed or successful) for a given client', default='99' ),
-                 Option('cpu_frac', 'Real', desc='Percentage of CPU time used for graphics', default='10.0'),
-                 Option('frame_rate', 'Real', desc='Number of frames per second for graphics', default='10.0'),
-                 Option('watchdog', 'Boolean', desc='Turn watchdog on', default='false'),
-                 Option('watchdog_time', 'Integer', desc='Time interval in seconds used by watchdog to check if run is stuck or going too long (default every 5 minutes)', default='300'),
-                 Option('cpu_run_timeout', 'Integer', desc='Maximum time the WU may exceed the users WU time settings. Default is 4 hours.  Used by watchdog.', default='14400'),
-                 Option('description_file', 'File', desc='work unit description file', default='rosetta_description.txt'),
-                 Option('score_cut_pct','Real', desc='score cut done on the local nodes by percentage, required to return centroid models'),
-                 Option('score_cut_fl', 'File', desc='temp file where output is stored in', default='score_cut_tmp.out'),
-                 Option('score_cut_smart_throttle', 'Boolean', desc='makes absolutely sure you are generating < 1 model per 60 seconds.(set to 65 sec to be safe)'),
-   ),
-  Option_Group( 'LoopModel',
-                Option( 'input_pdb','File', desc='input pdb file', default='LoopModel::input_pdb' ),
-                Option( 'loop_file','File', desc='input loops list file', default='LoopModel::loop_file' ),
- ),
-	#########################AnchoredDesign#############################
- Option_Group( 'AnchoredDesign',
-               Option( 'anchor', 'File', desc='anchor specification file', default='anchor' ),
-               Option( 'allow_anchor_repack', 'Boolean', desc='allow repacking of anchor (default is to prevent)', default='false'),
-               Option( 'vary_cutpoints', 'Boolean', desc='vary loop cutpoints.  Picks new cutpoints at start of each nstruct', default='false'),
-               Option( 'no_frags', 'Boolean', desc='use no fragments.  Overrides passing an old-style fragment file.  Skips new-style fragment generation.', default='false'),
-               Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
-               Option( 'show_extended', 'Boolean', desc='dump pre-perturb PDB to check if loop torsions are extended and/or sequence is fuzzed; debugging only', default='false' ),
-               Option( 'refine_only', 'Boolean', desc='refine only mode (skip perturbation step)', default='false' ),
-               Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
-               Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
-               Option( 'perturb_temp', 'Real', desc='perturbation phase temperature for monte carlo', default = '0.8' ),
-               Option( 'perturb_CCD_off', 'Boolean', desc='CCD-style loop remodeling off in perturb phase (meaning, KIC only)', default = 'false' ),
-               Option( 'perturb_KIC_off', 'Boolean', desc='KIC-style loop remodeling off in perturb phase (meaning, CCD only)', default = 'false' ),
-               Option( 'refine_CCD_off', 'Boolean', desc='CCD-style loop remodeling off in refine phase (meaning, KIC only)', default = 'false' ),
-               Option( 'refine_KIC_off', 'Boolean', desc='KIC-style loop remodeling off in refine phase (meaning, CCD only)', default = 'false' ),
-               Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '5' ),
-               Option( 'refine_temp', 'Real', desc='refinement phase temperature for monte carlo', default = '0.8' ),
-               Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles', lower = '2', default = '20' ),
-               Option( 'rmsd', 'Boolean', desc='Calculate result structure CA RMSD from starting structure', default = 'false'),
-							 Option( 'unbound_mode', 'Boolean', desc='Ignore the anchor, as if this were loop modeling', default = 'false'),
-							 Option( 'chainbreak_weight', 'Real', desc='Chainbreak term weight', default = '2.0'),
-               Option_Group( 'filters',
-								 Option( 'score', 'Real', desc='do not print trajectories with scores greater than this total scorefunction value', default='0'),
-                 Option( 'sasa', 'Real', desc='do not print trajectories with sasas less than this interface delta sasa value', default='500'),
-                 Option( 'omega', 'Boolean', desc='filter out non-trans omegas', default='false'),
-               ),
-							 Option_Group( 'akash',
-				    		 Option( 'dyepos', 'Integer', desc='dye position', default = '0'), #deliberate illegal default - flag should be ignored if not user specified ),
-							 ),
-							 Option_Group( 'testing',
-				   			 Option( 'VDW_weight', 'Real', desc='centroid VDW weight; testing if 2 better than 1', lower='0', default = '1.0'),
-								 Option( 'anchor_via_constraints', 'Boolean', desc='allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!', default = 'false'),
-								 Option( 'delete_interface_native_sidechains', 'Boolean', desc='benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains.'),
-								 Option( 'RMSD_only_this', 'File', desc='Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging.'),
-								 Option( 'anchor_noise_constraints_mode', 'Boolean', desc='Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor\'s placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer\'s commentary.', default = 'false'),
-								 Option( 'super_secret_fixed_interface_mode', 'Boolean', desc='hold the anchor-containing loop fixed.  Currently in testing.', default = 'false'),
-								 Option( 'randomize_input_sequence', 'Boolean', desc='randomizes the input sequence by packing with a null scorefunction; uses the AnchoredDesign-specified packer task (obeys resfile, etc).', default = 'false'),
-							 ), #closes subgroup testing
-  ), #closes option group AnchoredDesign
+		#Membrane options
+		Option( 'thickness', 'Real', desc='User-defined membrane thickness. Overwrites default thickness of 60A.'),
 
-  ############################UBQ_*, chemically_conjugated_docking, UBQ_E2_thioester, UBQ_Gp_*########################
- Option_Group( 'chemically_conjugated_docking',
-							 #UBQ_E2_thioester AND shared group
-							 Option( 'UBQpdb', 'File', desc='ubiquitin structure, or the structure for the attached thing that is moving', default='1UBQ.pdb'),
-							 Option( 'E2pdb', 'File', desc='E2 structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
-							 Option( 'E2_residue', 'Integer', desc='E2 catalytic cysteine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of E2pdb', default='85'),
-							 Option( 'SASAfilter', 'Real', desc='filter out structures with interface dSASA less than this', default='1000'),
-							 Option( 'scorefilter', 'Real', desc='filter out structures with total score greater than this', default='10'),
-							 Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.', default='false'),
-							 Option( 'n_tail_res', 'Integer', desc='Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)', default='3'),
-							 Option( 'two_ubiquitins', 'Boolean', desc='Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
-							 Option( 'extra_bodies', 'FileVector', desc='extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.', default=''),
-							 Option( 'UBQ2_lys', 'Integer', desc='which Lys on the second UB will be conjugated', default='48'),
-							 Option( 'UBQ2_pdb', 'File', desc='PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.'),
-							 Option( 'dont_minimize_omega', 'Boolean', desc='disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker)', default='false'),
-							 #UBQ_Gp_LYX-Cterm and UBQ_Gp_CYD-CYD group
-							 Option( 'pdz', 'Boolean', desc='For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
-							 Option( 'GTPasepdb', 'File', desc='GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
-							 Option( 'GTPase_residue', 'Integer', desc='GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb', default='85'),
-							 ), #closes option group chemically_conjugated_docking
+		#Embedding options - advanced
+		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),
+		Option( 'center_delta', 'Real', desc='Perturbation of center in Angstrom.'),
+		Option( 'center_search_cycles', 'Real', desc='Iterations for center search.'),
+		Option( 'normal_start', 'RealVector', desc='Base vector for normal search. Angles go off that vector.'),
+		Option( 'normal_angle_start', 'Real', desc='Starting angle from base vector for normal search. Degrees.'),
+		Option( 'normal_angle_delta', 'Real', desc='Perturbation of normal angle in degrees.'),
+		Option( 'normal_search_cycles', 'Real', desc='Number of iterations for normal search.'),
+		Option( 'chain_normal_angle_max', 'Real', desc='Maximum of normal angle wrt normal_start for chain embedding. Degrees.'),
+		Option( 'pose_normal_angle_max', 'Real', desc='Maximum of normal angle wrt normal_start for pose embedding. Degrees.'),
 
-  #################################FloppyTail####################################################
-	Option_Group( 'FloppyTail',
-	  Option( 'flexible_start_resnum', 'Integer', desc='starting residue for the flexible region, using PDB numbering', default='180'),
-		Option( 'flexible_stop_resnum', 'Integer', desc='stop residue for the flexible region, using PDB numbering.  If unspecified, it assumes the end of the pose.', default='0'),
-		Option( 'flexible_chain', 'String', desc='chain ID for flexible region', default='C'),
-		Option( 'shear_on', 'Real', desc='fraction of perturb moves when shear turns on (0.5 = halfway through)', default='1.0/3.0'),
-		Option_Group( 'short_tail',
-			Option( 'short_tail_fraction', 'Real', desc='what fraction of the flexible segment is used in the short-tail section of refinement (not compatible with non-terminal flexible regions)', default='1.0'),
-			Option( 'short_tail_off', 'Real', desc='fraction of refine cycles where movemap reverts to full tail (0.5 = halfway through)', default='0.0'),
-    ),
-		Option( 'pair_off', 'Boolean', desc='turn off Epair electrostatics term.  Used once for a simple side experiment, not meant for general use.', default='false'),
-		Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running publication demo.', default='false'),
-		Option( 'C_root', 'Boolean', desc='Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.', default='false'),
-		Option( 'force_linear_fold_tree', 'Boolean', desc='Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics', default='false'),
-		Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
-		Option( 'cen_weights', 'String', desc = 'Use a different/custom scorefunction for centroid step'),
-    Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
-    Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
-    Option( 'perturb_temp', 'Real', desc='perturbation phase temperature for monte carlo', default = '0.8' ),
-    Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '5' ),
-    Option( 'refine_temp', 'Real', desc='refinement phase temperature for monte carlo', default = '0.8' ),
-    Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles', lower = '2', default = '20' ),
-  ), #closes option group FloppyTail
+		#Scoring parameters - advanced
+		Option( 'no_interpolate_Mpair', 'Boolean', desc='from old code.'),
+		Option( 'Hbond_depth_correction', 'Boolean', desc='from old code.'),
 
- #################################TailSegment####################################################
-	Option_Group( 'TailSegment',
-    Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '100' ),
-    Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles',  default = '10' ),
-  ), #closes option group TailSegment
+		#Penalties - advanced
+		Option( 'TMprojection', 'Boolean', desc='Penalty for hydrophobic mismatch on/off.'),
+		Option( 'wt_TMprojection', 'Real', desc='Weight for hydrophobic mismatch penalty.'),
+		Option( 'non_helix', 'Boolean', desc='Penalty for non-helix residues in the membrane on/off.'),
+		Option( 'wt_non_helix', 'Real', desc='Weight for non-helix penalty. '),
+		Option( 'termini', 'Boolean', desc='Penalty for termini in the membrane on/off.'),
+		Option( 'wt_termini', 'Real', desc='Weight for termini penalty.'),
+		Option( 'secstruct', 'Boolean', desc='Penalty if structure-based secondary structure doesn\'t match predicted one - on/off'),
+		Option( 'wt_secstruct', 'Real', desc='Weight for secondary structure penalty.'),
+		Option( 'spanning', 'Boolean', desc='Penalty if structure-based spanning doesn\'t match spanfile - on/off.'),
+		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
 
+		# Visualize in PyMol (PyMolMover)
+		Option( 'view_in_pymol', 'Boolean', desc="When the PyMol viewer is enabled, add points to explicitly define the membrane planes and view during the simulation" ),
 
- Option_Group( 'DenovoProteinDesign',
-                Option( 'redesign_core', 'Boolean', desc='redesign core of pdb', default='false'),
-								Option( 'redesign_loops', 'Boolean', desc='redesign loops of pdb', default='false'),
-								Option( 'redesign_surface', 'Boolean', desc='redesign surface of pdb', default='false'),
-                Option( 'redesign_complete', 'Boolean', desc='complete redesign of pdb', default='false'),
-								##Option( 'disfavor_native_aa', 'Boolean', desc='penalize native aa in design', default='false'),
-                Option( 'disallow_native_aa', 'Boolean', desc='do not allow native aa in design', default='false'),
-                Option( 'optimize_loops', 'Boolean', desc="do serious loop modeling at the end of designrelax mover"),
-                Option( 'secondary_structure_file', 'File', desc="has fasta file format - describes secondary structure of desired target with H/C/E" ),
-                Option( 'hydrophobic_polar_pattern', 'File', desc="has fasta file format - describes hydrophobic(B) polar(P) pattern" ),
-                Option( 'use_template_sequence', 'Boolean', desc='use the template pdbs sequence when creating starting structures', default='false'),
-                Option( 'use_template_topology', 'Boolean', desc='use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures', default='false'),
-                Option( 'create_from_template_pdb', 'File', desc='create starting structure from a template pdb, follow with pdb name'),
-                Option( 'create_from_secondary_structure', 'Boolean', desc='create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format', default='false'),
-                ),
-  Option_Group( 'RBSegmentRelax',
-                Option( 'input_pdb','File', desc='input pdb file', default='--' ),
-                Option( 'rb_file','File', desc='input rb segment file', default='--' ),
-                Option( 'cst_wt', 'Real', desc='Weight on constraint term in scoring function', default = '0.1' ),
-                Option( 'cst_width', 'Real', desc='Width of harmonic constraints on csts', default = '1.0' ),
-                Option( 'cst_pdb', 'String', desc='PDB file from which to draw constraints', default = '--' ),
-                Option( 'nrbmoves', 'Integer', desc='number of rigid-body moves', default = '100' ),
-                Option( 'nrboutercycles', 'Integer', desc='number of rigid-body moves', default = '5' ),
-                Option( 'rb_scorefxn', 'String', desc='number of rigid-body moves', default = 'score5' ),
-                Option( 'skip_fragment_moves', 'Boolean', desc='omit fragment insertions (in SS elements)', default = 'false' ),
-                Option( 'skip_seqshift_moves', 'Boolean', desc='omit sequence shifting moves', default = 'false' ),
-                Option( 'skip_rb_moves', 'Boolean', desc='omit rigid-body moves', default = 'false' ),
-                Option( 'helical_movement_params', 'RealVector', desc='helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation', default = 'utility::vector1<float>(4,0.0)' ),
-                Option( 'strand_movement_params', 'RealVector', desc='strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn' , default = 'utility::vector1<float>(4,0.0)' ),
-                Option( 'default_movement_params', 'RealVector', desc='default-rotation, default-translation' , default = 'utility::vector1<float>(2,0.0)' ),
-		Option( 'cst_seqwidth', 'Integer', desc='sequence width on constraints', default = '0' ),
-                ),
-  Option_Group( 'edensity',
-                Option( 'debug', 'Boolean', default = 'false'),
-                Option( 'mapfile', 'String' ),
-                Option( 'mapreso', 'Real', default = '0.0'),
-                Option( 'grid_spacing', 'Real', default = '0.0'),
-                Option( 'centroid_density_mass', 'Real', default = '0.0'),
-                Option( 'sliding_window', 'Integer', default = '1'),
-                Option( 'cryoem_scatterers', 'Boolean', default = 'false'),
-                Option( 'force_apix', 'Real', default = '0.0', desc='force pixel spacing to take a particular value'),
-                Option( 'fastdens_wt', 'Real', default = '0.0', desc='wt of fast edens score'),
-                Option( 'fastdens_params', 'RealVector',  desc='parameters for fastdens scoring'),
-                Option( 'legacy_fastdens_score', 'Boolean', default = 'false', desc='use the pre-June 2013 normalization for scoring'),
-                Option( 'sliding_window_wt', 'Real', default = '0.0', desc='wt of edens sliding-window score'),
-                Option( 'score_sliding_window_context', 'Boolean', default = 'false', desc='when using sl. win. density fit, include neighbor atoms (slows trajectory)'),
-                Option( 'whole_structure_ca_wt', 'Real', default = '0.0', desc='wt of edens centroid (CA-only) scoring'),
-                Option( 'whole_structure_allatom_wt', 'Real', default = '0.0', desc='wt of edens centroid (allatom) scoring'),
-                Option( 'no_edens_in_minimizer', 'Boolean', default = 'false', desc='exclude density score from minimizer'),
-                Option( 'debug_derivatives', 'Boolean', default = 'false', desc='calculate numeric derivatives for density terms and compare with analytical'),
-                Option( 'realign', 'String' , default = 'no' , legal=['no', 'min', 'random', 'membrane', 'membrane_min'] , desc='how to initially align the pose to density'),
-								Option( 'membrane_axis', 'String' , default = 'Z' , desc='the membrane normal axis'),
-                Option( 'atom_mask', 'Real', default = '3.2', desc='override default (=3.2A) atom mask radius to this value (hi-res scoring)'),
-                Option( 'atom_mask_min', 'Real', default = '2.0', desc='override the 3 sigma minimum value which takes precedence over atom_mask value (hi-res scoring)'),
-                Option( 'ca_mask', 'Real', default = '6.0', desc='override default (=6A) CA mask radius to this value (low-res scoring)'),
-                Option( 'score_symm_complex', 'Boolean', default = 'false', desc='If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer'),
-                Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default same as mainchain density)'),
-                Option( 'n_kbins', 'Integer', default = '1', desc='Number of B-factor bins'),
-                Option( 'render_sigma', 'Real', default = '2', desc='initially render at this sigma level (extras=graphics build only)'),
-                Option( 'unmask_bb', 'Boolean', default = 'false', desc='Only include sidechain atoms in atom mask'),
-	),
-  Option_Group( 'patterson',
-                Option( 'debug', 'Boolean', default = 'false'),
-                Option( 'weight', 'Real', default = '0.0', desc='wt of patterson correlation'),
-                Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default = same as mainchain density)'),
-                Option( 'radius_cutoffs', 'RealVector', desc='patterson-space radius cuttoffs'),
-                Option( 'resolution_cutoffs', 'RealVector', desc='reciprocal space F^2 cuttoffs'),
-                Option( 'Bsol', 'Real', default = '300.0', desc='solvent B'),
-                Option( 'Fsol', 'Real', default = '0.95', desc='solvent fraction'),
-                Option( 'model_B', 'Real', default = '0.0', desc='B factor computing patterson CC'),
-                Option( 'rmsd', 'Real', default = '2.0', desc='Expected RMS error for sigma-A calculation'),
-                Option( 'no_ecalc', 'Boolean', default = 'false', desc='Do not normalize p_o with ecalc'),
-                Option( 'nshells', 'Integer', default = '50', desc='Number of resolution shells for patterson normalization'),
-                Option( 'use_spline_interpolation', 'Boolean', default = 'false', desc='use spline interpolation for derivative evaluation? (default trilinear)'),
-                Option( 'use_on_repack', 'Boolean', default = 'false', desc='SLOW - use patterson correlation on repacks (default no)'),
-                Option( 'dont_use_symm_in_pcalc', 'Boolean', default = 'false', desc='perform Pcalc in P1 (default no)'),
-	),
-  Option_Group( 'cryst',
-		Option( 'mtzfile', 'String', desc = 'mtz file'),
-		Option( 'crystal_refine', 'Boolean', desc='Turns on crystal-refinement-specific options', default='false' ),
-	),
-
-	Option_Group( 'optE',
-		Option( 'optE', 'Boolean', desc="optE option group", legal='true', default='true' ),
-		Option( 'load_from_silent', 'String', default='pdb_set.silent', desc='load from silent instead of pdb - uses path of requested pdb to find silent file, each PDB needs to have all of its structures in its own folder (ie: 1agy/pdb_set.silent) - only works in optimize_decoy_discrimination' ),
-		Option( 'data_in', 'String', default='optE.data', desc='file from which to read in optE data' ),
-		Option( 'data_out', 'String', default='optE.data.out', desc='file to which to write optE data' ),
-		Option( 'weights', 'String', desc='a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization.' ),
-		Option( 'fix', 'StringVector', desc='weights to be fixed (must also appear in the weightfile given by the -optE::weights option)' ),
-		Option( 'free', 'File', desc='IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type'),
-		Option( 'fixed', 'File', desc='IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed'),
-		Option( 'parse_tagfile', 'File', desc='a file in utility::tag format that optE may parse to customize its operation'),
-		Option( 'constant_logic_taskops_file', 'File', desc='a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design'),
-		Option( 'optE_soft_rep', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable' ),
-		Option( 'no_hb_env_dependence', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bond terms'),
-		Option( 'no_hb_env_dependence_DNA', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bonds involving DNA'),
-		Option( 'optE_no_protein_fa_elec', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable', default='false' ),
-		Option( 'design_first', 'Boolean', desc='Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights.'),
-		Option( 'n_design_cycles', 'Integer', desc='The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred', default='10'),
-		##Option( 'recover_nat_aa',   'Boolean', desc='With the iterative optE driver, use design to recover the native amino acids'),
-		Option( 'recover_nat_rot',  'Boolean', desc='With the iterative optE driver, repack to recover the native rotamers'),
-		Option( 'component_weights', 'File', desc='With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0' ),
-		Option( 'optimize_nat_aa',  'Boolean', desc='With the iterative optE driver, optimize weights to maximize the probability of the native rotamer'),
-		Option( 'optimize_nat_rot', 'Boolean', desc='With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context'),
-		Option( 'optimize_ligand_rot', 'File', desc='With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand'),
-		Option( 'optimize_pssm', 'Boolean', desc='With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution'),
-		Option( 'optimize_dGbinding', 'File', desc='With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG'),
-		Option( 'optimize_ddG_bind_correlation', 'File', desc='With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding'),
-		Option( 'optimize_ddGmutation', 'File', desc='With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples'),
-		Option( 'optimize_ddGmutation_straight_mean', 'Boolean', desc='With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set.'),
-		Option( 'optimize_ddGmutation_boltzman_average', 'Boolean', desc='With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set.'),
-		Option( 'exclude_badrep_ddGs', 'Real', desc='With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value'),
-		Option( 'pretend_no_ddG_repulsion','Boolean', desc='With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations'),
-		Option( 'optimize_decoy_discrimination', 'File', desc='With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >.'),
-		Option( 'normalize_decoy_score_spread', 'String', desc="In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set"),
-		Option( 'ramp_nativeness', 'Boolean', desc="In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition."),
-		Option( 'n_top_natives_to_optimize', 'Integer', desc='For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function', default='1'),
-		Option( 'approximate_decoy_entropy', 'Real', desc='Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha.' ),
-		Option( 'repack_and_minimize_decoys', 'Boolean', desc='Generate new structures in each round of iterative optE by repacking and minimizing the input decoys & natives using the weights obtained in the last round'),
-		Option( 'repack_and_minimize_input_structures', 'Boolean', desc='Minimizing the input decoys & natives using the starting weights -- allows structures a chance to see the energy function before decoy discrimination begins without the memory overhead of the repack_and_minimize_decoys flag'),
-		Option( 'output_top_n_new_decoys', 'Integer', desc='For use with repack_and_minimize_decoys flag: Write out the top N decoys generated each round in this iterative refinement', default='0'),
-		Option( 'optimize_ligand_discrimination', 'File', desc='With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >.'),
-		Option( 'no_design', 'Boolean', desc="Don't bother loading pdbs and doing design; just optimize weights for decoy-discrim and or native rotamer recovery"),
-		Option( 'sqrt_pssm', 'Boolean', desc='Turn the pssm probability vectors into unit vectors so that dot product is a true similarity measure'),
-		Option( 'min_decoy_rms_to_native', 'Real', desc='For use with the optimize_decoy_discrimination flag: exclude decoys that are within a certain RMS of the native structure'),
-		Option( 'max_rms_from_native', 'Real', desc='For use with the optimize_decoy_discrimination flag: exclude natives that are more than a certain RMS of the crystal structure.  max_rms_from_native of 1.5, min_decoy_rms_from_native 2.0 would throw out structures in the range of 1.5 and 2.0 RMS from consideration'),
-		Option( 'optimize_starting_free_weights', 'Boolean', desc='With the iterative optE driver, try many different starting points for the minimization', default='false'),
-		Option( 'wrap_dof_optimization', 'File', desc='Create new dofs and setup arithmetic dependencies for free dofs.' ),
-		Option( 'randomly_perturb_starting_free_weights', 'Real', desc='With the iterative optE driver, perturb the weights by +/- <input value> for those weights listed as free'),
-		Option( 'inv_kT_natrot', 'Real', desc='1 / kT for the pNativeRotamer fitness function', default = '1' ),
-		Option( 'inv_kT_nataa', 'Real', desc='1 / kT for the pNatAA and PSSM fitness function', default = '1' ),
-		Option( 'inv_kT_natstruct', 'Real', desc='1 / kT for the pNativeStructure fitness function', default = '1' ),
-		Option( 'mpi_weight_minimization', 'Boolean', desc='Distribute OptEMultifunc func/dfunc evaluations across nodes' ),
-		Option( 'dont_use_reference_energies', 'Boolean', desc='Do not use reference energies anywhere during the protocol.', default='false' ),
-		Option( 'number_of_swarm_particles', 'Integer', desc='The number of particles to use during particle swarm weight optimization.', default='100' ),
-		Option( 'number_of_swarm_cycles', 'Integer', desc='The number of cycles to run the swarm minimizer for.', default='20' ),
-		Option( 'constrain_weights', 'File', desc='When minimizing the fitness objective function, also include weight constraints in the objective function'),
-		Option( 'fit_reference_energies_to_aa_profile_recovery', 'Boolean', desc='In the inner-loop sequence recovery/weight tweaking stage, accept/reject weight sets based on both the sequence recovery rate, and the mutual information between the expected and observed amino acid frequency distributions'),
-		Option( 'starting_refEs', 'File', desc='IterativeOptEDriver flag: specify a weights file to read reference energies from; do not optimize reference energies in the first round of weight fitting'),
-		Option( 'repeat_swarm_optimization_until_fitness_improves', 'Boolean', desc='After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization.', default='false'),
-		Option( 'design_with_minpack', 'Boolean', desc='Use the min-packer to design in the sequence recovery stages.', default='false'),
-		Option( 'limit_bad_scores',  'Boolean', desc='Quit after 100,000 inf or NaN errors in optE objective function'),
-		Option_Group( 'rescore',
-			Option( 'weights', 'File', desc='Weight set to use when rescoring optE partition functions' ),
-			Option( 'context_round', 'Integer', desc='Integer of the context PDBs generated during design to use to measure the pNatAA'),
-			Option( 'outlog', 'File', desc='File to which the OptEPosition data should be written'),
-			Option( 'measure_sequence_recovery', 'Boolean', desc='When rescoring a weight set, run design with that weight set and measure the sequence recovery.', default='false' ),
+		Option_Group( 'viewer',
+			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
+			Option( 'num_points', 'Integer', desc="Number of points to define the membrane planes. x >= 3" ),
 		),
-		Option('no_design_pdb_output','Boolean',desc='Do not write out the designed pdbs to the workdir_ directories over the course of the optE run'),
-	), # optE
 
-	##  options for BackrubMover
-	Option_Group( 'backrub',
-		Option( 'pivot_residues', 'IntegerVector', desc='residues for which contiguous stretches can contain segments (internal residue numbers, defaults to all residues)', default = 'utility::vector1<int>()'),
-		Option( 'pivot_atoms', 'StringVector', desc='main chain atoms usable as pivots', default = 'utility::vector1<std::string>(1, "CA")'),
-		Option( 'min_atoms', 'Integer', desc='minimum backrub segment size (atoms)', default = '3'),
-		Option( 'max_atoms', 'Integer', desc='maximum backrub segment size (atoms)', default = '34'),
-	),
-
-	##  options for BBGaussianMover
-	Option_Group( 'bbg',
-		Option( 'factorA', 'Real', desc='Control how big the move would be(acceptance rate), default 1.0', default='1.0'),
-		Option( 'factorB', 'Real', desc='Control how local the move would be(folded 10.0, unfolded 0.1), default 10.0', default='10.0'),
-		Option( 'ignore_improper_res', "Boolean", desc='Skip improper residues (proline)', default = 'false'),
-		Option( 'fix_short_segment', "Boolean", desc='Do not apply small mover to short segments, for loop', default = 'false'),
-	),
-
-	Option_Group( 'flexpack',
-		Option_Group( 'annealer',
-			Option( 'inner_iteration_scale', 'Real', desc="Scale up or down the number of inner iterations in the flexpack annealer"),
-			Option( 'outer_iteration_scale', 'Real', desc="Scale up or down the number of outer iterations in the flexpack annealer"),
-			Option( 'fixbb_substitutions_scale', 'Real', desc="Scale up or down the number of fixed-backbone rotamer substitutions in the flexpack annealer"),
-			Option( 'pure_movebb_substitutions_scale', 'Real', desc="Scale up or down the number of backbone moves"),
-			Option( 'rotsub_movebb_substitutions_scale', 'Real', desc="Scale up or down the number of rotamer substitions with backbone moves"),
+		# Visualization Options (Visualize Membrane Mover)
+		Option_Group( 'visualize',
+			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
+			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
+			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
+			Option( 'plane_radius', 'Real', desc="Radius of membrane planes to draw in PyMol - part of the PyMol viewer plugin" ),
 		),
-	),
 
-	## options for hotspot hashing
-	Option_Group( 'hotspot',
-		Option( 'allow_gly', 'Boolean', desc='Allow glycines in hotspot hashing constraints?', default = 'false' ),
-		Option( 'allow_proline', 'Boolean', desc='Allow prolines in hotspot hashing constraints?', default = 'false' ),
-		Option( 'benchmark', 'Boolean', desc='Score existing interface?', default = 'false'),
-		Option( 'residue', 'StringVector', desc='mini residue name3 to use for hotspot hashing', default = 'utility::vector1<std::string>(1,"ALL")'),
-		Option( 'hashfile', 'File', desc='Existing hotspot hash file.'),
-		Option( 'target', 'File', desc='Target PDB of the hotspot hash. Used for both de novo hashing and making hash density maps.'),
-		Option( 'target_res', 'Integer', desc='Rosetta residue number of interest on the target PDB. Used for targeted hashing'),
-		Option( 'target_dist', 'Real', desc='Tolerated distance from the target residue. Used for targeted hashing', default='20' ),
-		Option( 'density', 'File', desc='Filename to write *unweighted* hotspot density (compared to -target PDB).'),
-		Option( 'weighted_density', 'File', desc='Filename to write *score weighted* hotspot density (compared to -target PDB).'),
-		Option( 'rms_target', 'File', desc='Filename to write best rms of hotspot to target complex. Suitable for pymol data2b_res'),
-		Option( 'rms_hotspot', 'File', desc='Filename to write best rms of hotspot to target complex. Suitable for rms vs E scatter plots.'),
-		Option( 'rms_hotspot_res', 'Integer', desc='Rosetta residue # to use for calculating rms_hotspot.'),
-		Option( 'rescore', 'Boolean', desc='Rescore hotspots from -hashfile based on the supplied -target PDB.', default='false'),
-		Option( 'threshold', 'Real', desc='Score threshold for hotspot accepts. Found hotspots must be better than or equal to threshold', default='-1.0' ),
-		Option( 'sc_only', 'Boolean', desc='Make backbone atoms virtual to find sidechain-only hotspots?', default='true'),
-		Option( 'fxnal_group', 'Boolean', desc='Only use a stubs functional group for rmsd calculations.', default='true'),
-		Option( 'cluster', 'Boolean', desc='Cluster stubset. Will take place before colonyE.', default='false'),
-		Option( 'colonyE', 'Boolean', desc='Rescore hotspots from -hashfile based on colony energy.', default='false'),
-		Option( 'length', 'Integer', desc='Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center.', default='1'),
-		Option( 'envhb', 'Boolean', desc='Use environment dependent Hbonds when scoring hotspots.', default='false'),
-		Option( 'angle', 'Real', desc='Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)', default='-1' ),
-		Option( 'angle_res', 'Integer', desc='Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass', default='0' ),
-	),
-
-	## options for parser
-	Option_Group( 'parser',
-		Option( 'protocol', 'String', desc='File name for the xml parser protocol' ),
-		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
-		Option( 'view', 'Boolean', desc='Use the viewer?' ),
-		Option( 'patchdock', 'String', desc='Patchdock output file name.' ),
-		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),
-	),
-
-	##domainassembly
-	Option_Group( 'DomainAssembly',
-		Option( 'da_setup', 'Boolean', desc='run DomainAssembly setup routine', legal=['true','false'], default='false'),
-		Option( 'da_setup_option_file','File', desc='input list of pdbs and linker sequences', default='--' ),
-		Option( 'da_setup_output_pdb','File',desc='PDB file output by DomainAssemblySetup',default='--' ),
-		Option( 'da_linker_file','File',desc='input file with linker definitions',default='--' ),
-		Option( 'da_require_buried','File',desc='Input file containing residues to be buried in the domain interface',default='--'),
-		Option( 'da_start_pdb','File',desc='input pdb for linker optimization',default='--' ),
-		Option( 'run_fullatom','Boolean', desc='Run fullatom stage of the protocol', legal=['true','false'], default='false'),
-		Option( 'run_centroid','Boolean', desc='Run centroid stage of the protocol', legal=['true','false'], default='false'),
-		Option( 'run_centroid_abinitio','Boolean', desc='Run centroid abinitio stage of the protocol', legal=['true','false'], default='true'),
-		Option( 'da_nruns','Integer', desc='number of runs', default='1' ),
-		Option( 'da_start_pdb_num','Integer', desc='starting number for output pdb files', default='1' ),
-		Option( 'da_linker_file_rna','File', desc='input file with moveable RNA definitions', default='--' ),
-		Option( 'residues_repack_only','String', desc='Residues not to be redesigned under any circumstances'),
-		Option( 'da_eval_pose_map','File', desc='input file that maps pose coordinates to structurally related positions of native pose'),
-	),
-
-	##remodel
-	Option_Group( 'remodel',
-		Option(  'help', 'Boolean', desc='help menu.'),
-		Option(  'autopilot', 'Boolean', desc='autopilot'),
-		Option(  'blueprint', 'File', desc='blueprint file name'),
-		Option(  'cstfile', 'File', desc='description'),
-		Option(  'cstfilter', 'Integer', desc='filter cst energy', default='10'),
-		Option(  'cen_sfxn', 'String', desc = 'centroid score function to be used for building', default='remodel_cen'),
-		Option( 'check_scored_centroid', 'Boolean', desc = 'dump centroid structures after build'),
-		Option(  'num_trajectory', 'Integer', desc='Number of remodel trajectories.', default = '10'),
-		Option(  'save_top' , 'Integer', desc= 'the number of final low scoring pdbs to keep.', default = '5'),
-		Option(  'swap_refine_confirm_protocols' , 'Boolean', desc= 'swapping the protocols used refinement and confirmation', default = 'false'),
-		Option(  'num_frag_moves', 'Integer', desc= 'number of fragment moves to try in the centroid stage.'),
-		Option(  'bypass_fragments', 'Boolean' , desc= 'only works on input PDB, so no extensions or deletions are honored in the blueprint.  Blueprint (H,L,E,D) becomes allow_move definitionsi.'),
-		Option(  'use_same_length_fragments', 'Boolean' , desc= 'harvest fragments that matches the length to rebuild', default = 'true'),
-		Option(  'enable_ligand_aa', 'Boolean' , desc= 'handles ligand attachment and clash check after centroid build.'),
-		Option(  'no_jumps', 'Boolean', desc= 'will setup simple foldtree and fold through it during centroid build.'),
-		Option(  'backrub', 'Boolean', desc= 'run backrub MC trajectory after every completed loop building attempt'),
-		Option(  'use_blueprint_sequence ', 'Boolean', desc=' picks fragments based on both secondary structure and the second column (sequence) in blueprint file'),
-		Option(  'randomize_equivalent_fragments ', 'Boolean', desc=' will randomize identical scoring fragments; without either this flag or'),
-		Option(  'quick_and_dirty ', 'Boolean', desc=' only do fragment insertion'),
-		Option(  'checkpoint ', 'Boolean', desc=' this writes out the best pdbs collected so far after each design step.'),
-		Option(  'use_ccd_refine ', 'Boolean', desc=' maintain a default chainbreak position (loop start+1) and try using CCD for refinement.  try 20 times for 5 closed loops.'),
-		Option(  'use_pose_relax ', 'Boolean', desc=' an alternative to the default minimization step, but use constraints in a similar way.'),
-		Option(  'use_cart_relax ', 'Boolean', desc=' an alternative to the default minimization step, but use constraints in a similar way.'),
-		Option(  'free_relax ', 'Boolean', desc=' running pose_relax with no constraints.'),
-		Option(  'use_dssp_assignment' , 'Boolean', desc=' use dssp assignment.'),
-		Option(  'keep_jumps_in_minimizer ', 'Boolean', desc=' no constraint is setup for minimization, only rebuilt regions allow bbmove.'),
-		Option(  'output_fragfiles', 'File', desc='output fragment file [filename ,e.g. aafr01].'),
-		Option(  'read_fragfile' , 'File' , desc='read fragment file.'),
-		Option(  'generic_aa' , 'String' , desc='the type of AA for centroid building', default='V'),
-		Option(  'cluster_radius', 'Real', desc='cluster radius for accumulator, default to auto set value', default = '-1.0'),
-		Option(  'use_clusters', 'Boolean', desc='use clustering in accumulator', default = 'false'),
-		Option(  'run_confirmation', 'Boolean', desc='use KIC rms confirmation', default = 'false'),
-		Option(  'cluster_on_entire_pose', 'Boolean', desc='cluster use all pose, not just loops', default = 'false'),
-		Option(  'collect_clustered_top', 'Integer', desc='take the best N from each cluster', default = '1'),
-		Option(  'dr_cycles', 'Integer', desc='number of design-refine cycles to use', default = '3'),
-		Option(  'two_chain_tree', 'Integer', desc='label the start of the second chain'),
-		Option(  'repeat_structure', 'Integer', desc='build identical repeats this many times', default='1'),
-		Option(  'lh_ex_limit', 'Integer', desc='loophasing neighboring bin expansion limit', default='5'),
-		Option(  'lh_filter_string', 'StringVector', desc='loophash ABEGO filter target fragment type. list sequentially for each loop'),
-		Option(  'lh_cbreak_selection', 'Integer', desc='loophash with cbreak dominant weight', default='10'),
-		Option(  'lh_closure_filter', 'Boolean', desc='filter for close rms when bypass_closure is used', default='false'),
-		Option(  'cen_minimize', 'Boolean' , desc= 'centroid minimization after fragment building', default = 'false'),
-		Option(  'core_cutoff', 'Integer', desc='number of neighbors required to consider core in auto design', default = '18'),
-		Option(  'boundary_cutoff', 'Integer', desc='number of neighbors required to consider boundary in auto design', default = '15'),
-                Option(  'resclass_by_sasa', 'Boolean' , desc= 'switch to use sasa for residue classification', default = 'false'),
-
-		Option(  'helical_rise', 'Real', desc='helical parameter: rise', default = '0.0'),
-		Option(  'helical_radius', 'Real', desc='helical parameter: radius', default = '0.0'),
-		Option(  'helical_omega', 'Real', desc='helical parameter: omega', default = '0.0'),
-		Option(  'COM_sd', 'Real', desc='center of mass coordinate constraint sd value', default = '1.0'),
-		Option(  'COM_tolerance', 'Real', desc='center of mass coordinate constraint tolerance value', default = '0.0'),
-
-        Option_Group( 'staged_sampling',
-		    Option(  'staged_sampling', 'Boolean', desc = 'sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure', default = 'false'),
-		    Option(  'residues_to_sample', 'File', desc = 'residues to allow sampling (format:1,3,5)', default = ''),
-	    	Option(  'starting_sequence', 'String', desc = 'AA sequence to start', default = ''),
-            Option(  'starting_pdb', 'File', desc = 'pdb to start', default = ''),
-            Option(  'require_frags_match_blueprint', 'Boolean', desc = 'makes sure the frags match the definition in the blueprint', default = 'true'),
-            Option( 'start_w_ideal_helices', 'Boolean', desc = 'begins with all helices set to -63.8 phi and -41.1 for psi.', default = 'false'),
-            Option( 'sample_over_loops', 'Boolean', desc = 'sample residues defined as loops in the blueprint', default = 'false'),
-            Option( 'small_moves', 'Boolean', desc = 'add a stage of small moves', default = 'false'),
-            Option( 'fa_relax_moves', 'Boolean', desc = 'Adds a stage of fa relax', default = 'false'),
-            ),
-		Option_Group( 'domainFusion',
-				Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),
-				#Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),
+		# Scoring options
+		Option_Group( 'scoring',
+			Option( 'hbond', 'Boolean',
+					desc="Hydrogen bonding energy correction for membrane proteins"),
 		),
-		Option(  'vdw', 'Real', desc='set vdw weight', default = '1.0'),
-		Option(  'rama', 'Real', desc='set rama weight', default = '0.1'),
-		Option(  'cbeta', 'Real', desc='set cbeta weight', default = '0.0'),
-		Option(  'cenpack', 'Real', desc='set cenpack weight', default = '0.0'),
-		Option(  'rg_local', 'Real', desc='set rg_local weight', default = '0.0'),
-		Option(  'hb_lrbb', 'Real', desc='set hbond_lrbb weight', default = '0.0'),
-		Option(  'hb_srbb', 'Real', desc='set hbond_srbb weight', default = '0.0'),
-		Option(  'rg', 'Real', desc='set rg weight'),
-		Option(  'rsigma', 'Real', desc='set rsigma weight', default = '0.0'),
-		Option(  'ss_pair', 'Real', desc='set sspair weight', default = '0.0'),
-		Option(  'build_disulf', 'Boolean', desc='build disulfides', default = 'false'),
-		Option(  'max_disulf_allowed', 'Integer', desc='number of disulf pairs can be generated at a time', default = '1'),
-		Option(  'match_rt_limit', 'Real', desc='match RT score cutoff', default = '0.4'),
-		Option(  'disulf_landing_range', 'IntegerVector', desc='residue range for disulf landing sites', n = '2'),
-		Option_Group( 'design',
-     Option(  'no_design ', 'Boolean', desc=' skips all design steps. WARNING: will only output centroid level structures and dump all fragment tries.' ),
-     Option(  'design_all', 'Boolean', desc=' force AUTO design procedure (layered) to perform design on all positions. ' ),
-     Option(  'allow_rare_aro_chi', 'Boolean', desc='allow all aromatic rotamers, not issuing AroChi2 filter', default= 'false' ),
-     Option(  'silent', 'Boolean', desc=' dumps all structures by silent-mode WARNING: will work only during no_design protocol (see -no_design).' ),
-     Option(  'skip_partial', 'Boolean', desc=' skip design stage that operate only on burial positions', default = 'false' ),
-     Option(  'design_neighbors', 'Boolean', desc= 'design neighbors.', default='false'),
-     Option(  'find_neighbors', 'Boolean', desc = 'find neighbors for design/repack' ,default= 'false' ),
-    ),
-    Option( 'rank_by_bsasa' ,'Boolean', desc= 'rank results by bsasa.'),
 
-		## remodel loop mover options
-		Option_Group( 'RemodelLoopMover',
-			Option( 'max_linear_chainbreak', 'Real', desc="linear chainbreak is <= this value, loop is considered closed (default 0.07) ", default = '0.07' ),
-			Option( 'randomize_loops', 'Boolean', desc="randomize loops prior to running main protocol (default true)", default='true' ),
-			Option( 'use_loop_hash', 'Boolean', desc="centroid build with loop hash (default false)", default='false' ),
-			Option( 'allowed_closure_attempts', 'Integer', desc="the allowed number of overall closure attempts (default 1)", default='1' ),
-			Option( 'loophash_cycles', 'Integer', desc="the number of loophash closure cycles to perform (default 8)", default='8' ),
-			Option( 'simultaneous_cycles', 'Integer', desc="the number of simultaneous closure cycles to perform (default 2)", default='2' ),
-			Option( 'independent_cycles', 'Integer', desc="the number of independent closure cycles to perform (default 8)", default='8' ),
-			Option( 'boost_closure_cycles', 'Integer', desc="the maximum number of possible lockdown closure cycles to perform (default 30)", default='30' ) ,
-			Option( 'force_cutting_N', 'Boolean', desc="force a cutpoint at N-term side of blueprint assignment", default='false' ) ,
-			Option( 'bypass_closure', 'Boolean', desc="turning off CCD closure in the mover for tethered docking purpose", default='false' ),
-			Option( 'cyclic_peptide', 'Boolean', desc="circularize structure joining N and C-term.", default='false' ),
-			Option( 'temperature', 'Real', desc="temperature for monte carlo ( default 2.0)", default='2.0' ),
-			Option( 'max_chews', 'Integer', desc='maxium number of residues to chew on either side of loop', default='1'),
+		# Setup Options
+		Option_Group( 'setup',
+			Option( 'spanfiles', 'StringVector', desc="Spanning topology file from Octopus" ),
+			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
+			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
+			Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
 		),
+
 	),
 
-	# fold from loops
-	Option_Group('fold_from_loops',
-		Option ('native_ca_cst', 'Boolean', desc = 'derive constraints from the native topology', default ='false'),
-		Option('swap_loops','File', desc='pdb of the target loops ', default='--'),
-		Option( 'checkpoint', 'String', desc = 'write/read checkpoint files for nstruct. Provide a checkpoint filename after this option.', default=''),
-		Option ('ca_csts_dev', 'Real', desc = 'standard deviation allowed to each constraint', default='0.5'),
-		Option ('add_relax_cycles', 'Integer', desc ='additional relax cycles', default='2' ),
-		Option ('loop_mov_nterm', 'Integer', desc ='Movable region inside the provided loop(nterm)', default='0' ),
-		Option ('loop_mov_cterm', 'Integer', desc ='Moveable region inside the provided loop(cterm)', default='0' ),
-		Option ('ca_rmsd_cutoff', 'Real', desc = 'Filter the decoys to pass the relax-design stage ', default='5.0'),
-		Option ('res_design_bs', 'IntegerVector', desc='enumerate the residues to be designed within the fixed binding site' ),
-		Option ('clear_csts','File', desc='input loops file with ranges free of CA csts', default='--'),
-		Option ('output_centroid','Boolean',desc='output centroid structures befor the design stage', default = 'false'),
-		Option ('add_cst_loop','Boolean',desc='add CA csts of motif to constraint set', default = 'false'),
+	# Old Membrane Protein Option Group
+	# Last Modified: 1/12/14
+	# @author Rebecca Alford
+	Option_Group( 'membrane',
+		# New Membrane Input Option Group
+#		Option( 'include_lips', 'Boolean', default='false', desc='Include lipid accessibility data for membrane protiens'),
+		# Scoring Options
+		Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
+		Option( 'normal_mag', 'Real', default='5', desc='magnitude of membrane normal angle search (degrees)'),
+		Option( 'center_mag', 'Real', default='1', desc='magnitude of membrane normal center search (Angstroms)' ),
+		Option( 'smooth_move_frac', 'Real', default='0.5'),
+		Option( 'no_interpolate_Mpair', 'Boolean', default='false'),
+		Option( 'Menv_penalties','Boolean',default='false'),
+		Option( 'Membed_init','Boolean',default='false'),
+		Option( 'Fa_Membed_update','Boolean',default='false'),
+		Option( 'center_search', 'Boolean', default='false', desc='perform membrane center search'),
+		Option( 'normal_search', 'Boolean', default='false', desc='perform membrane normal search'),
+		Option( 'center_max_delta', 'Integer', default='5', desc='magnitude of maximum membrane width deviation during membrane center search (Angstroms)' ),
+		Option( 'normal_start_angle', 'Integer', default='10', desc='magnitude of starting angle during membrane normal search (degrees)' ),
+		Option( 'normal_delta_angle', 'Integer', default='10', desc='magnitude of angle deviation during membrane normal search (degrees)' ),
+		Option( 'normal_max_angle', 'Integer', default='40', desc='magnitude of maximum angle deviation during membrane normal search (degrees)' ),
+		Option( 'debug', 'Boolean', default='false'),
+		Option( 'fixed_membrane', 'Boolean', default='false', desc='fix membrane position, by default the center is at [0,0,0] and membrane normal is the z-axis'),
+		Option( 'membrane_center', 'RealVector', desc="membrane center x,y,z" ),
+		Option( 'membrane_normal', 'RealVector', desc="membrane normal x,y,z" ),
+		Option( 'view', 'Boolean', default='false', desc='viewing pose during protocol'),
+		Option( 'Mhbond_depth','Boolean',default='false', desc='membrane depth dependent correction to the hbond potential'),
+		Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
+	), # membrane
+
+	Option_Group( 'mistakes',
+		Option( 'restore_pre_talaris_2013_behavior', 'Boolean',
+			desc="Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value"
+			" -mistakes::chemical::pre_talaris2013_geometries true"
+			" -corrections::score::dun10 false"
+			" -corrections::score::use_bicubic_interpolation false"
+			" -corrections::score:hb_sp2_chipen false"
+			" -corrections::score::hb_fade_energy false"
+			" -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false"
+			" -corrections::score::lj_hbond_hdis 1.95"
+			" -corrections::score::lj_hbond_OH_donor_dis 3.0"
+			" -corrections::chemical::expand_st_chi2sampling false"
+			" -score::weights pre_talaris_2013_standard.wts"
+			" -score::patch score12.wts_patch"
+			" -score::analytic_etable_evaluation false"
+			" -score::hbond_params score12_params"
+			" -score::smooth_fa_elec false"
+			" -score::elec_min_dis 1.5"
+			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77",
+			default="false" ),
+		Option_Group( 'chemical',
+			Option( 'pre_talaris2013_geometries', 'Boolean', desc="Use the version of the fa_standard geometries that were active before the Talaris2013 parameters were taken as default", default="false" ),
+		), # -mistakes:chemical
+	), # -mistakes
+
+	Option_Group( 'MM',
+		Option( 'ignore_missing_bondangle_params', 'Boolean', default = 'false', desc = 'ignore failed lookups for missing bond angle parameters' ),
+	), # MM
+
+	Option_Group( 'MonteCarlo',
+		Option( 'temp_initial', 'Real', default='2', lower='0.001', desc='initial temperature for Monte Carlo considerations' ),
+		Option( 'temp_final', 'Real', default='0.6', lower='0.001', desc='final temperature for Monte Carlo considerations' ),
+	), # -MonteCarlo
+
+	################################
+	# optimization options
+	Option_Group( 'optimization',
+		Option( 'default_max_cycles','Integer', desc='max cycles for MinimizerOptions', default='2000'),
+		Option( 'armijo_min_stepsize','Real', desc='min stepsize in armijo minimizer', default='1e-8'),
+		Option( 'scale_normalmode_dampen','Real', desc='dampening scale over normal mode index, used for NormalModeMinimizer', default='0.05'),
+		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='64'),
+		Option( 'scale_d','Real', desc='max cycles for MinimizerOptions', default='1'),
+		Option( 'scale_theta','Real', desc='max cycles for MinimizerOptions', default='1'),
+		Option( 'scale_rb','Real', desc='max cycles for MinimizerOptions', default='10'),
+		Option( 'scale_rbangle','Real', desc='max cycles for MinimizerOptions', default='1'),
+		Option( 'scmin_nonideal','Boolean', desc='Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)', default='false'),
+		Option( 'scmin_cartesian', 'Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)', default='false'),
+		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
+		Option( 'new_sym_min', 'Boolean', desc='New approach to sym-min where all dofs, dep+indep, go into the map', default='false'),
+	), # -optimization
+
+	################STEVEN COMBS#######################
+	Option_Group( 'orbitals',
+		Option( 'Hpol', 'Boolean', desc="look at only polar hydrogen interactions", default='false' ),
+		Option( 'Haro', 'Boolean', desc="look at only aromatic hydrogen interactions", default='false' ),
+		Option( 'bb_stats', 'Boolean', desc="look at orbital backbone stats", default='false' ),
+		Option( 'sc_stats', 'Boolean', desc="look at orbital sc stats", default='false' ),
+#		Option( 'orb_orb_stats', 'Boolean', desc="look at orbital orbital stats", default='false' ),
+#		Option('sc_bb', 'Boolean', desc="score the backbone", default='false'),
+	), # -orbitals
+
+	# options for pose metric calculators-------------------------------------------------------
+	Option_Group( 'pose_metrics',
+		Option( 'atomic_burial_cutoff', 'Real', default='0.3', desc=' maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator' ),
+		Option( 'sasa_calculator_probe_radius', 'Real', default='1.4', desc=' the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator' ),
+		Option( 'interface_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator'),
+		Option( 'min_sequence_separation', 'Integer', default='6', desc=' minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator' ),
+		Option( 'contact_cutoffE', 'Real', default='-1.0', desc=' maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator' ),
+		Option( 'neighbor_by_distance_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator'),
+		Option( 'inter_group_neighbors_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator'),
+		Option( 'semiex_water_burial_cutoff', 'Real', default='0.25', desc='water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)' ),
 	),
+
+	# Rigid body motion options ---------------------------------------------------------------------------------------
+	Option_Group( 'rigid',
+		Option('chainbreak_bias', 'Real', desc = 'Strength of bias applied to the translation component of rigid body moves to close chainbreak', default = '0.00'),
+		Option('close_loops', 'Boolean', desc = 'Perform loop closure at the end of medal', default = 'true'),
+		Option('fragment_cycles', 'Integer', desc = 'Number of fragment insertion/rigid body cycles', default = '10000'),
+		Option('log_accepted_moves', 'Boolean', desc = 'Write accepted moves to silent file output', default = 'false'),
+		Option('max_ca_ca_dist', 'Real', desc = 'Maximum distance between consecutive CA atoms before chunk partitioning occurs', default = '5.0'),
+#		Option('medium_range_seqsep', 'Integer', desc = 'Constraints with sequence separation less than x are scored', default = '30'),
+		Option('patch', 'File', desc = 'Patch file containing energy terms and their respective weights'),
+		Option('residues_backbone_move', 'Integer', desc = 'Number of residues perturbed by a backbone move', default = '5'),
+		Option('rotation', 'Real', desc = 'Rotation magnitude', default = '2.5'),
+		Option('sampling_prob', 'File', desc = 'Normalized, per-residue sampling probabilities'),
+		Option('score', 'String', desc = 'Centroid-level score function', default = 'score3'),
+		Option('sequence_separation', 'Integer', desc = 'Maximum sequence separation for scoring chainbreaks', default = '20'),
+#		Option('short_range_seqsep', 'Integer', desc = 'Constraints with sequence separation less than x are scored', default = '15'),
+		Option('small_cycles', 'Integer', desc = 'Number of small/shear cycles', default = '8000'),
+		Option('stages', 'Integer', desc = 'Number of stages over which to interpolate ramped values', default = '4'),
+		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),
+		Option('translation', 'Real', desc = 'Translation magnitude', default = '0.5'),
+	), # rigid
+
+	# Sasa options --------------------------------------------------------------Does not work with SasaCalculatorLegacy/sasa functions in use pre-2014
+	Option_Group( 'sasa',
+		Option('method', 'String',
+			desc=   'The method used to calculate sasa.  More will hopefully be added in the future.',
+			default='LeGrand',
+			legal =['LeGrand']),
+		Option('include_hydrogens_explicitly', 'Boolean',
+			desc=     'Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  Some protocols may overwrite this setting to their needs.',
+			default = 'true'),
+		Option('probe_radius', 'Real',
+			desc=   'Probe radius used by SasaCalc.  Default is radius of water.  1.2 is also commonly used.',
+			default='1.4'),
+		Option('include_probe_radius_in_atom_radii', 'Boolean',
+			desc=   'This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the Surface Area instead.',
+			default='true'
+			),
+		Option('include_only_C_S_in_hsasa', 'Boolean',
+			desc=   'Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically.',
+			default='true'),
+		Option('exclude_polar_atoms_by_charge_in_hsasa', 'Boolean',
+			desc=   'Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa',
+			default='false'),
+		Option('polar_charge_cutoff', 'Real',
+			desc=    'Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded.',
+			default='.4'
+			),
+		Option('implicit_hydrogen_radii_set', 'String',
+			desc=   'The radii set to use when including hydrogens implicitly instead of explicitly. Chothia 1976 radii are used by the program Naccess.  chothia=naccess',
+			default='chothia',
+			legal= ['chothia', 'naccess']),
+		Option('explicit_hydrogen_radii_set', 'String',
+			desc=   'The radii set to use when including hydrogens explicitly. Default is reduce, which was generally agreed upon at Minicon 2014 and come from original data from Bondi (1964) and Gavezzotti (1983) .  LJ are the Rosetta leonard-jones radii, which are not quite exactly from Charmm.  Legacy radii were optimized for a no-longer-in-Rosetta scoreterm (Jerry Tsai et al 2003)',
+			default='reduce',
+			legal=['reduce', 'LJ', 'legacy']),
+	), # -sasa
 
 	# symmetry options
 	Option_Group( 'symmetry',
@@ -5116,174 +2663,286 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'initialize_rigid_body_dofs','Boolean', desc="Initialize the RB dofs from the symmetry definition file?",default='false'),
 		Option( 'detect_bonds','Boolean', desc="allow new cross subunit bond formation",default='true'),
 		Option( 'perturb_rigid_body_dofs','RealVector',
-           desc='(As in docking) Do a small perturbation of the symmetric DOFs: -perturb_rigid_body_dofs ANGSTROMS DEGREES',
-           n='2'
-		    ),
+			desc='(As in docking) Do a small perturbation of the symmetric DOFs: -perturb_rigid_body_dofs ANGSTROMS DEGREES',
+			n='2'
+		),
 		Option( 'symmetric_rmsd', 'Boolean', desc='calculate the rmsd symmetrically by checking all chain orderings'),
-	),
-	Option_Group( 'fold_and_dock',
-		Option( 'move_anchor_points','Boolean', desc="move the anchor points that define symmetric coordinate system during symmetry fragment insertion", default='false'),
-		Option( 'set_anchor_at_closest_point','Boolean', desc="set the anchor points that define symmetric coordinate system to the nearest point between two consecutive chains during fragment insertion", default='false'),
-		Option( 'rotate_anchor_to_x','Boolean', desc="rotate the anchor residue to the x-axis before applying rigid body transformations", default='true'),
-		Option ('trans_mag_smooth', 'Real', desc = 'translation perturbation size for smooth refinement', default='0.1'),
-		Option ('rot_mag_smooth', 'Real', desc = 'rotational perturbation size for smooth refinement', default='1.0'),
-		Option ('rb_rot_magnitude', 'Real', desc = 'rotational perturbation size for rigid body pertubations', default='8.0'),
-		Option ('rb_trans_magnitude', 'Real', desc = 'translational perturbation size rigid body pertubations', default='3.0'),
-		Option ('rigid_body_cycles', 'Integer', desc ='number of rigid bosy cycles during fold and dock fragment insertion', default='50' ),
-		Option ('move_anchor_frequency', 'Real', desc = 'Frequency of slide-anchor moves', default='1.0'),
-		Option ('rigid_body_frequency', 'Real', desc = 'The fraction of times rigid body cycles are applied during fragment assembly moves', default='0.2'),
-		Option( 'rigid_body_disable_mc','Boolean', desc="Dissallow moves to be accepted locally by MC criteria within the rigid body mover ", default='false'),
-		Option ('slide_contact_frequency', 'Real', desc = 'The fraction of times subunits are slided together during fragment assembly moves', default='0.1'),
-	),
+	), # -symmetry
 
-	Option_Group( 'match',
-		Option( 'lig_name', 'String', desc="Name of the ligand to be matched.  This should be the same as the NAME field of the ligand's parameter file (the .params file)" ),
-		Option( 'bump_tolerance', 'Real', desc='The permitted level of spherical overlap betweeen any two atoms.  Used to detect collisions between the upstream atoms and the background, the upstream atoms and the downstream atoms, and the downstream atoms and the background', default='0.0' ),
-		Option( 'active_site_definition_by_residue', 'File', desc='File describing the active site of the scaffold as a set of resid/radius pairs' ),
-		Option( 'active_site_definition_by_gridlig', 'File', desc='File containing 1s and Os describing the volume of space for the active site.  .gridlig file format from Rosetta++' ),
-		Option( 'required_active_site_atom_names', 'File', desc='File listing the downstream-residue-atom names which must reside in the defined active site.  Requires either the flag active_site_definition_by_residue or the flag active_site_definition_by_gridlig to be specified.' ),
-		Option( 'grid_boundary', 'File', desc='File describing the volume in space in which the third orientation atom must lie', default = ''),
-		Option( 'geometric_constraint_file', 'File', desc='File describing the geometry of the downstream object relative to the upstream object' ),
-		Option( 'scaffold_active_site_residues', 'File', desc="File with the residue indices on the scaffold that should be \
-			considered as potential launch points for the scaffold's active site.  File format described in MatcherTask.cc \
-			in the details section of the initialize_scaffold_active_site_residue_list_from_command_line() method.", default = ''),
-		Option( 'scaffold_active_site_residues_for_geomcsts', 'File', desc="File which lists the residue indices on the \
-			scaffold to consider as potential launch points for the scaffold's active site for each geometric constraint; \
-			each constraint may have a separate set of residue ids. File format described in MatcherTask.cc in the details \
-			section of the initialize_scaffold_active_site_residue_list_from_command_line() method.", default = ''),
-		Option( 'euclid_bin_size', 'Real', desc='The bin width for the 3-dimensional coordinate hasher, in Angstroms', default = '1.0'),
-		Option( 'euler_bin_size', 'Real', desc='The bin width for the euler angle hasher, in degrees', default = '10.0'),
-		Option( 'consolidate_matches', 'Boolean', desc='Instead of outputting all matches, group matches and then write only the top -match::output_matches_per_group from each group.', default = 'false'),
-		Option( 'output_matches_per_group', 'Integer', desc='The number of matches to output per group. Requires the -match::consolidate_matches flag is active.', default = '10'),
-		Option( 'orientation_atoms', 'StringVector', desc="The three atoms, by name, on the downstream partner \
-			to use to describe its 6 dimensional coordinate; its position and orientation. \
-			Only usable when the downstream partner is a single residue. Exactly 3 atom names must be given. \
-			If these atoms are unspecified, the matcher will use the residues neighbor atom and two atoms \
-			bonded to the neighbor atom to define the orientation.  The euclidean coordinate of the third \
-			orientation atom is used as the first the dimensions of the downstream residues 6D coordinate; the \
-			other three dimensions are the three euler angles described by creating a coordinate frame at orientation \
-			atom 3, with the z axis along the vector from orientation atom 2 to orientation atom 3, and the y axis \
-			lying in the plane with orientation atoms 1,2&3."),
-	 	Option( 'output_format', 'String', desc='The format in which the matches are output', default = 'CloudPDB', legal = [ 'PDB', 'KinWriter', 'CloudPDB' ] ),
-		Option( 'match_grouper', 'String', desc='The parameters that matches are grouped according to by the MatchConsolidator or the CloudPDBWriter', default = 'SameSequenceAndDSPositionGrouper', legal = [ 'SameChiBinComboGrouper', 'SameSequenceGrouper', 'SameSequenceAndDSPositionGrouper', 'SameRotamerComboGrouper' ] ),
-		Option( 'grouper_downstream_rmsd', 'Real', desc='Maximum allowed rmsd between two orientations of the downstream pose to be considered part of the same group ', default = '1.5' ),
-		Option( 'output_matchres_only', 'Boolean', desc='Whether to output the matched residues only or the whole pose for every match', default = 'false'),
-		Option( 'geom_csts_downstream_output', 'IntegerVector', desc='For which of the geometric constraints the downstream residue/ligand will be output', default = ['1']),
-		Option( 'filter_colliding_upstream_residues', 'Boolean', desc='Filter the output matches if the hits induce a collision between the upstream residues', default = 'true' ),
-		Option( 'upstream_residue_collision_tolerance', 'Real', desc='The amount of atom overlap allowed between upstream residues in a match.  If this is unspecified on the command line, then the value in the bump_tolerance option is used', default = '0.0' ),
-		Option( 'upstream_residue_collision_score_cutoff', 'Real', desc='The score cutoff for upstream residue pairs to use in the collision filter.  Activating this cutoff uses the etable atr/rep/sol terms to evaluate residue-pair interactions instead of hard-sphere overlap detection', default = '10.0' ),
-		Option( 'upstream_residue_collision_Wfa_atr', 'Real', desc='The fa_atr weight to use in the upstream-collision filter; use in tandem with upstream_residue_collision_score_cutoff', default = '0.8'  ),
-		Option( 'upstream_residue_collision_Wfa_rep', 'Real', desc='The fa_rep weight to use in the upstream-collision filter; use in tandem with upstream_residue_collision_score_cutoff', default = '0.44' ),
-		Option( 'upstream_residue_collision_Wfa_sol', 'Real', desc='The fa_sol weight to use in the upstream-collision filter; use in tandem with upstream_residue_collision_score_cutoff', default = '0.0'  ),
-		Option( 'filter_upstream_downstream_collisions', 'Boolean', desc='Filter the output matches if the hits induce a collision between the upstream residues and the downstream pose', default = 'true' ),
-		Option( 'updown_collision_tolerance', 'Real', desc='The amount of atom overlap allowed between upstream and downstream atoms in a match.  If this is unspecified on the command line, then the value in the bump_tolerance option is used', default = '0.0' ),
-		Option( 'updown_residue_collision_score_cutoff', 'Real', desc='The score cutoff for upstream/downstream residue pairs to use in the collision filter.  Activating this cutoff uses the etable atr/rep/sol terms to evaluate residue-pair interactions instead of hard-sphere overlap detection', default = '10.0' ),
-		Option( 'updown_residue_collision_Wfa_atr', 'Real', desc='The fa_atr weight to use in the upstream-downstream-collision filter; use in tandem with updown_residue_collision_score_cutoff', default = '0.8'  ),
-		Option( 'updown_residue_collision_Wfa_rep', 'Real', desc='The fa_rep weight to use in the upstream-downstream-collision filter; use in tandem with updown_residue_collision_score_cutoff', default = '0.44' ),
-		Option( 'updown_residue_collision_Wfa_sol', 'Real', desc='The fa_sol weight to use in the upstream-downstream-collision filter; use in tandem with updown_residue_collision_score_cutoff', default = '0.0'  ),
+######################################
+# Application specific options
+# Please keep option groups in alphabetical order
 
-		Option( 'define_match_by_single_downstream_positioning', 'Boolean', desc="Enumerate combinations of matches where a \
-			single positioning of the downstream partner as well as the conformations of the upstream residues defines the \
-			match; it is significantly faster to enumerate unique matches when they are defined this way instead of enumerating the \
-			(combinatorially many) matches when a match is defined by n-geometric-constraint locations of the downstream partner. \
-			This faster technique for outputting matches is automatically chosen when the flag -match::output_format is PDB." ),
-		Option( 'ligand_rotamer_index', 'Integer', desc="Match with a particular conformation of the ligand; the index \
-			represents which conformation in the multi-model .pdb file specified in the ligand's .params file by the \
-			PDB_ROTAMERS field.  The index of the first conformation in that file is 1; valid indices range from 1 to \
-			the number of entries in the multi-model .pdb file.  If this command-line flag is not used, then the conformation \
-			of the ligand described by the ICOOR_INTERNAL lines of the ligand's .params file is used instead." ),
-		Option( 'enumerate_ligand_rotamers', 'Boolean', desc="Match with all ligand rotamers specified in the multi-model \
-			.pdb file specified in the ligand's .params file by the PDB_ROTAMERS field.  This flag may not be used in \
-			combination with the match::ligand_rotamer_index flag.  Geometry of the ligand rotamers in the .pdb file will \
-			be idealized to the .params file bond angles and lengths.", default = 'true' ),
-		Option( 'only_enumerate_non_match_redundant_ligand_rotamers', 'Boolean', desc="Only defined if enumerate_ligand_rotamers is true \
-             this option causes the matcher to determine which rotamers in the ligand rotamer library are redundant in terms of matching, \
-             meaning the atoms they're matched through are superimposable. after having subdivided the ligand rotamer library into match-redundant \
-             subgroups, the matcher will then only place the first nonclashing rotamer from each subgroup. ", default = 'true' ),
-		Option( 'dynamic_grid_refinement', 'Boolean', desc="When too many hits land in the same 'connected component', requiring the \
-				enumeration of twoo many matches, refine the grid size to be smaller so that fewer matches have to be enumerated. \
-				This process works on individual connected components and is not applied to all regions of 6D.  This is significantly \
-				more efficient than enumerating all matches, while allowing the grid size to remain large and the rotamer and external \
-				geometry to remain dense. (*A connected component refers to " ),
-		Option( 'build_round1_hits_twice', 'Boolean', desc="Memory saving strategy that avoids paying for the storage of all the round-1 hits \
-			and instead records only what 6D voxels those hits fall in to.  Then the second round of matching proceeds storing only the hits that \
-			fall into the same voxels that the hits from the first round fell into.  Then the matcher goes back and generates the first-round hits \
-			again, but only keeps the ones that land into the same voxels that hits from round 2 fell into.  To be used, round 2 must also use the \
-			classic match algorithm (and must not use secondary matching).", default='false' ),
-	),
-
-
-############################################################################
-# equilibrium sampling options
-	Option_Group('canonical_sampling',
-				 Option_Group('probabilities',
-									 Option('sc','Real',desc='probability of making a side chain move',default = '0.25'),
-									 Option('localbb','Real',desc='probability of making a small move',default = '0.75'),
-									 Option('sc_prob_uniform','Real',desc='probability of uniformly sampling chi angles',default = '0.1'),
-									 Option('sc_prob_withinrot','Real',desc='probability of sampling within the current rotamer',default = '0.9'),
-									 Option('sc_prob_perturbcurrent','Real',desc='probability of perturbing the current rotamer',default = '0.0'),
-									 Option('MPI_sync_pools','Boolean',desc='use MPI to synchronize pools and communicate between nodes',default = 'false'),
-									 Option('MPI_bcast','Boolean',desc='use broadcasting in syncing',default = 'false'),
-									 Option('fast_sc_moves','Boolean',desc='use the fast SidechainMCMover',default = 'false'),
-									 Option('fast_sc_moves_ntrials','Real',desc='specify the number of ntrials for each call of scmover apply',default='1000'),
-									 Option('no_jd2_output','Boolean',desc='do not write to silent-file specified by -out:file:silent',default = 'false'),
-									 Option('use_hierarchical_clustering','Boolean',desc='use the HierarchicalLevel class',default = 'false'),
-									 Option('hierarchical_max_cache_size','Integer',desc='set the max-cache size of the hierarchy',default = '1000'),
-									 Option('backrub','Real',desc='set the probability of executing a backrub move when making a backbone move',default = '0.5'),
-									 Option('conrot','Real',desc='set relative probability of executing a conrot move when making a backbone move',default = '0.0'),
-				 ),
-				 Option_Group('sampling',
-									 Option('no_detailed_balance','Boolean',desc='preserve detailed balance',default = 'false'),
-									 Option('ntrials','Integer',desc='number of Monte Carlo trials to run',default = '1000' ),
-									 Option('mc_kt','Real',desc='value of kT for Monte Carlo',default='0.6'),
-									 Option('interval_pose_dump','Integer',desc='dump a pose out every x steps',default='1000'),
-									 Option('interval_data_dump','Integer',desc='dump data out every x steps',default='100'),
-									 Option('output_only_cluster_transitions','Boolean',desc='output only cluster transitions',default = 'false'),
-									 Option('transition_threshold','Real',desc='if rmsd to known_structures larger than X, add a new structure to pool',default = '2.0'),
-									 Option('max_files_per_dir','Integer',desc='distribute traj and transition files into subdirectories with max N entries',default = '1000'),
-									 Option('save_loops_only','Boolean',desc='save only loop conformation to pool',default = 'false'),
-									 Option('dump_loops_only','Boolean',desc='dump only loop conformation in silent-files',default = 'false'),
-		     ),
-				 Option_Group('out',
-									 Option('new_structures','File',desc='',default = 'discovered_decoys.out'),
-				 ),
-  ),
-############################################################################
-# CS-Rosetta options
-   Option_Group('rdc',
-	Option( 'correct_NH_length', 'Boolean', desc='fix N-H bond-vector to 1.04 as measured in ottiger&bax 98', default='true'),
-	Option( 'reduced_couplings', 'Boolean', desc='gives more equal weights to different bond-vectors', default='false'),
-	Option( 'weights', 'File', desc='specify weights for individual residues ( works for all couplings at this reside)' ),
-	Option( 'iterate_weights', 'Real', desc='do a wRDC computation, i.e., iterate tensor calculation until weights are ~exp ( -dev2/sigma )', default='1' ),
-	Option( 'segment_file','File',desc='Definition of rigid segments for alignment tensor optimization'),
-
- Option( 'segment_scoring_mode', 'String',
-			desc="Type of treatment of alignment tensor-based scoring : pairwise or fixed_axis_z (e.g. for homo-dimers) ",
-			legal=['pairwise', 'fixed_axis_z', 'fixed_sum']
+	# Ab initio mode -----------------------------------------------------------
+	Option_Group( 'abinitio',
+		Option( 'abinitio', 'Boolean', desc="Ab initio mode" ),
+#		Option( 'prob_perturb_weights', 'Real', desc='Probability of perturbing score function weights', default='0', lower='0', upper='1',),
+		Option('membrane', 'Boolean', desc = "will use the membrane abinitio protocol. sequential insertion of TMH", default='false' ),
+		#Option('TMH_topology','Boolean',desc="use TMHTopologySampler to sample membrane SSE placements"),
+		Option('use_loophash_filter','Boolean',desc='use loophash filter to determine if SSEs too far away'),
+		Option('loophash_filter_acceptance_rate','Real',desc='fraction at which want to accept poses from loophash filter if no loophash hits found'),
+		Option('kill_hairpins', 'File', desc="setup hairpin killing in score (kill hairpin file or psipred file)"),
+		Option('kill_hairpins_frequency', 'Real', desc="automated hairpin killing frequency (for use with psipred file)", default='0.2'),
+		Option( 'smooth_cycles_only', 'Boolean', desc = "Only smooth cycles in abinitio protocol", default = 'false' ),
+		Option( 'relax', 'Boolean', desc = "Do a relax after abinitio = abrelax ?" ),
+		Option( 'final_clean_relax','Boolean', desc = 'Do a final relax without constraints' ),
+		Option( 'fastrelax', 'Boolean', desc = "Do a fastrelax after abinitio = abfastrelax ?" ),
+		Option( 'multifastrelax', 'Boolean', desc = "Do a fastrelax after abinitio = abfastrelax ?" ),
+		Option( 'debug', 'Boolean', default = 'false' ),
+		Option( 'clear_pose_cache', 'Boolean', desc = "always clear extra-scores away before output", default = 'false' ),
+		Option(
+			'explicit_pdb_debug', 'Boolean', default = 'false',
+			desc = 'always dump pdb (not silent ) files during abinitio stages'
+			),
+		##Option( 'test_broker', 'Boolean', default = 'false', desc='use topology_broker system '),
+		Option( 'use_filters', 'Boolean', default = 'false', desc='use RG, contact-order and sheet filters '),
+		Option( 'increase_cycles', 'Real',
+			desc='Increase number of cycles at each stage of fold_abinitio (or pose_abinitio) by this factor',
+			lower='0.001',
+			default='1.0',
+		),
+		Option( 'number_3mer_frags', 'Integer',
+			desc="Number of top 3mer fragments to use in fold_abinitio protocol",
+			lower='0', default='200'
+			),
+		Option( 'number_9mer_frags', 'Integer',
+			desc='Number of top 9mer fragments to use in fold_abinitio protocol',
+			lower='0', default='25'
+			),
+		Option( 'temperature', 'Real', oldName='abinitio_temperature',
+			desc='Temperature used in fold_abinitio',
+			default='2.0'
+			),
+		##Option( 'vdw_reweight', 'Real',
+		##       desc='Reweight contribution of van der Waals score to total score by this scale factor',
+		##       default='1.0'
+		##),
+		##Option( 'env_reweight', 'Real',
+		##       desc='Reweight contribution of environment score to total score by this scale factor (default 1.0)',
+		##       default='1.0'
+		##),
+		##Option( 'pair_reweight', 'Real',
+		##       desc='Reweight contribution of pair score to total score by this scale factor',
+		##       default='1.0'
+		##),
+		##Option( 'cb_reweight', 'Real',
+		##       desc='Reweight contribution of C_beta (packing density) score to total score by this scale factor',
+		##       default='1.0'
+		##),
+		##Option( 'sheet_reweight', 'Real',
+		##       desc='Reweight contribution of sheet score to total score by this scale factor',
+		##       default='1.0'
+		##),
+		##Option( 'ss_reweight', 'Real',
+		##       desc='Reweight contribution of strand-strand score to total score by this scale factor',
+		##       default='1.0'
+		##),
+		##Option( 'hs_reweight', 'Real',
+		##       desc='Reweight contribution of helix-strand score to total score by this scale factor',
+		##       default='1.0'
+		##),
+		##Option( 'rsigma_reweight', 'Real',
+		##       desc='Reweight contribution of R-sigma score (strand pair distance/register) to total score by this scale factor',
+		##       default='1.0'
+		##),
+		Option( 'rg_reweight', 'Real',
+			desc='Reweight contribution of radius of gyration to total score by this scale factor',
+			default='1.0'
+			),
+		##Option( 'parallel_weight', 'Real',
+		##       desc='Reweight score for parallel strand pairing between residues whose strands are separated by more than 10 A',
+		##),
+		##Option( 'antiparallel_weight', 'Real',
+		##       desc='Reweight score for antiparallel strand pairing between residues whose strands are separated by more than 10 A',
+		##       default='1.0',
+		##),
+#		Option( 'strand_dist_cutoff', 'Real',
+#			desc='Specify distance cutoff (in Angstroms) between strand dimers within which they are called paired',
+#			default='6.5'
+#			),
+#		Option( 'stretch_strand_dist_cutoff', 'Boolean',
+#			desc="Allow strand distance cutoff to change from 6.5 A to a larger value (specified by '-max_strand_dist_cutoff <float>') linearly scaled according to sequence separation over a range specified by '-seq_sep_scale <float>' ",
+#			),
+		Option( 'rsd_wt_helix', 'Real',
+			desc='Reweight env,pair,cb for helix residues by this factor',
+			default='1.0',
+			),
+		Option( 'rsd_wt_strand', 'Real',
+			desc='Reweight env,pair,cb for strand residues by this factor',
+			default='1.0',
+			),
+		Option( 'rsd_wt_loop', 'Real',
+			desc='Reweight env,pair,cb for loop residues by this factor',
+			default='1.0',
 			),
 
-		Option( 'total_weight','Real',desc='Weight for RDC scores of individual al. tensors', default='1.0'),
-		Option( 'tensor_weight','Real',desc='Weight for pairwise scoring of al. tensors', default='1.0'),
-  	Option( 'print_rdc_values','File',desc='print computed vs experimental RDC values'),
-	Option( 'iterate_tol','Real',desc='tolerance for tensor iterations', default='0.01'),
-	Option( 'iterate_reset','Boolean',desc='reset weights to 1.0 when optimizing for new structure', default='false' ),
-	Option( 'dump_weight_trajectory','File', desc='if yes, write weights to file for each scoring event'),
-	Option( 'fix_normAzz', 'RealVector', desc='divide by this axial tensor component' ),
-	Option( 'select_residues_file', 'File', desc='loop/rigid-file with RIGID entries that define the set of residues active for RDC score' ),
-        Option( 'fit_method', 'String', legal = [ 'svd', 'nls'], default = 'nls' ),
-        Option( 'fixDa', 'RealVector'),
-        Option( 'fixR', 'RealVector'),
-        Option( 'nlsrepeat', 'Integer', default = '5' ),
-    ),
+		##Option( 'rand_envpair_res_wt', 'Boolean',
+		##       desc='Reweight of env,pair,cb contributions by random factors (between 0.5 and 1.2) for each residue',
+		##),
+		##Option( 'rand_SS_wt', 'Boolean',
+		##       desc='Reweight helix-strand, strand-strand, sheet, and rsigma scores by random factors between 0.5 and 1.5',
+		##),
+		##Option( 'random_parallel_antiparallel', 'Boolean',
+		##       desc="For each decoy, randomly choose whether to drastically upweight long range parallel strand pairings (by a random factor up to 10-fold) and downweight long range antiparallel pairings, or vice versa",
+		##),
+		##Option( 'optimize_rmsd', 'Boolean',
+		##       desc='Optimize a score function composed of van der waals score plus a component proportional to -1/rmsd',
+		##),
+		##Option( 'handedness_score', 'Boolean',
+		##       desc='Evaluate whether any beta-alpha-beta connections are left-handed during run; if so, adds a penalty to sheet score',
+		##),
+		# May be need its own category, look: https://wiki.rosettacommons.org/index.php/Command-line_reference
+#		Option( 'fast', 'Boolean',
+#			desc='Runs protocol without minimization or gradients, giving a significant speed advantage For NOE data only, -fast yields essentially the protocol published by Bowers et al., JBNMR, 2000. For RDC data only, -fast omits the refinement step included in examples published in Rohl&Baker, JACS, 2002. without the -fast option',
+#			),
+#		##Option( 'score_contact_flag', 'Boolean',
+		##       desc='To turn the contact scoring on',
+		##),
+		### Default is computed and passed in lookup
+		##Option( 'score_contact_file', 'File',
+		##       desc='Name of a file containing the probabilities. Default filename is <5lettercode>.contact The format is a line with the number of contacts, then: aa1(integer) aa2(integer) probability(double) one contact per line, everything after the third word will be ignored',
+		##),
+		##Option( 'score_contact_weight', 'Real',
+		##       desc='To set the weight - default is 1',
+		##       default='1.0'
+		##),
+		##Option( 'score_contact_threshold', 'Real',
+		##       desc='Prediction probabilities above this threshold result in a bonus for the decoy, probabilities below this threshold result in a penalty - default is 0.5',
+		##       default='0.5'
+		##),
+		##Option( 'score_contact_seq_sep', 'Integer',
+		##       desc='Only AA separated at least this number in sequence are considered - default is 1',
+		##       default='1'
+		##),
+		##Option( 'score_contact_calpha', 'Boolean',
+		##       desc='Use distances between alpha carbons, not centroids to assign bonuses',
+		##),
+		##
+		### Default (8 or 11) passed in lookup: Should this be a 2-valued option?
+		##Option( 'score_contact_distance', 'Real',
+		##       desc='Give distance under which contact is given bonus  [Default is 8 angstroms (centroid/centroid)  or  11 angstroms (c_alpha/c_alpha)]',
+		##),
+		##Option( 'score_contact_readindist', 'Boolean',
+		##       desc='Instead of using score_contact_distance, read in distances from contact file as fourth column: aa1(integer) aa2(integer) probability(double) distance(double)',
+		##),
+		##Option( 'score_contact_fullatom', 'Boolean',
+		##       desc="By default the 'contact score' is off during full atom; this option turns it on"
+		##),
+		Option( 'skip_convergence_check', 'Boolean',
+			desc="this option turns off the convergence check in stage3 (score 2/5)"
+			),
+		Option( 'stage1_patch', 'FileVector',
+			desc="Name of weights patch file (without extension .wts) to use during stage1 abinitio"),
+		Option( 'stage2_patch', 'FileVector',
+			desc="Name of weights patch file (without extension .wts) to use during stage2 abinitio"),
+		Option( 'stage3a_patch', 'FileVector',
+			desc="Name of weights patch file (without extension .wts) to use during stage3a abinitio"),
+		Option( 'stage3b_patch', 'FileVector',
+			desc="Name of weights patch file (without extension .wts) to use during stage3b abinitio"),
+		Option( 'stage4_patch', 'FileVector',
+			desc="Name of weights patch file (without extension .wts) to use during stage4 abinitio"),
+		Option( 'stage5_patch', 'FileVector',
+			desc="Name of weights patch file (without extension .wts) to use during stage5 abinitio"),
+#		Option( 'exit_when_converged', 'Boolean', desc="finish abinitio if mc_converged", default='false' ),
 
-############################################################################
-# Solid state NMR orientational constraints
-   Option_Group('csa',
-        Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring csa'),
-   ),
-   Option_Group('dc',
-        Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring dc'),
-   ),
+		Option( 'steal_3mers' ,                 'Boolean',       desc='stealing: use 3mers from native', default='false' ),
+		Option( 'steal_9mers' ,                 'Boolean',       desc='stealing: use 9mers from native', default='false' ),
+		Option( 'no_write_failures',            'Boolean',       desc='dont write failed structures to silent-out',     default='false' ),
+		Option( 'relax_failures',                'Boolean',       desc='relax failures anyway',     default='false' ),
+		#	Option( 'no_prof_info_in_silentout',    'Boolean',       desc='add column <seconds> to silent output',     default='false' ),
+		Option( 'relax_with_jumps',             'Boolean',       desc='switch to allow relax even if loops are not closed ',         default='false' ),
+		Option( 'process_store',                'Boolean',       desc='run process_decoy on each structure in the structure store',     default='false' ),
+		Option( 'fix_residues_to_native',       'IntegerVector', desc='these residues torsions are copied from native and fixed',     default='0' ),
+		Option( 'return_full_atom',             'Boolean',       desc='return a full-atom structure even if no relax is done',       default='false' ),
+		Option( 'detect_disulfide_before_relax','Boolean',       desc='run detect_disulfides() before relax',     default='false' ),
+
+		Option( 'close_loops',                  'Boolean',       desc='close loops',     default='false' ),
+
+		Option( 'bGDT', 'Boolean', desc="compute gdtmmm", default='true' ),
+
+		Option( 'dump_frags',  'Boolean',      desc='for control purposes... dump fragments',     default='false' ),
+		Option( 'jdist_rerun', 'Boolean',       desc='go through intput structures and evaluate ( pca, rmsd, cst-energy )',     default='false' ),
+
+		Option( 'perturb',   'Real',      desc='add some perturbation (gaussian) to phi/psi of native',     default='0.0' ),
+		Option( 'rerun',     'Boolean',    desc='go through intput structures and evaluate ( pca, rmsd, cst-energy )',     default='false' ),
+		Option( 'rmsd_residues',    'IntegerVector',     desc='give start and end residue for rmsd calcul.',     default='-1' ),
+		Option( 'start_native',      'Boolean',   desc='start from native structure (instead of extended)',     default='false' ),
+		Option( 'debug_structures', 'Boolean', desc="write structures to debug-out files", default='false' ),
+
+		Option( 'log_frags',               'File',         desc='fragment insertions (each trial) will be logged to file',     default='' ),
+		Option( 'only_stage1',             'Boolean',      desc='useful for benchmarks sets cycle of all higher stages to 0',     default='false' ),
+		Option( 'end_bias',                'Real',         desc='set the endbias for Fragment moves',     default='30.0' ),
+		Option( 'symmetry_residue',        'Integer',      desc='hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1',     default='-1' ),
+		Option( 'vdw_weight_stage1',       'Real',         desc='vdw weight in stage1',     default='1.0' ),
+		Option( 'override_vdw_all_stages', 'Boolean',      desc='apply vdw_weight_stage1 for all stages',     default='false' ),
+		Option( 'recover_low_in_stages',   'IntegerVector',desc='say default: 2 3 4 recover_low happens in stages 2 3 4',     default='0' ),
+		Option( 'skip_stages',   'IntegerVector',desc='say: 2 3 4, and it will skip stages 2 3 4',     default='0' ),
+		Option( 'close_chbrk',             'Boolean',      desc='Chain break closure during classic abinito ',     default='false' ),
+		Option( 'include_stage5',             'Boolean',      desc='stage5 contains small moves only',     default='false' ),
+		Option( 'close_loops_by_idealizing',    'Boolean', desc='close loops by idealizing the structure after stage 4',     default='false' ),
+		Option( 'optimize_cutpoints_using_kic', 'Boolean', desc='optimize around cutpoints using kinematic relax',     default='false' ),
+		Option( 'optimize_cutpoints_margin',     'Integer', desc='', default='5' ),
+
+#		Option ('HD_EX_Info', 'File', desc= 'input list of residues with low amide protection '  ),
+#		Option ('HD_penalty', 'Real', desc= 'penatlty for each inconsistent pairing with HD data ', default='0.1' ),
+#		Option ('HD_fa_penalty','Real', desc = 'penalty for each Hbond donor inconsistent with HD donor', default = '0.1' ),
+#		Option ('sheet_edge_pred','File', desc= 'file with interior/exterior predictions for strands' ),
+#		Option ('SEP_score_scalling','Real', desc= 'scalling factor', default = '1.0' ),
+
+		Option_Group('star',
+			Option('initial_dist_cutoff', 'Real', desc = 'Maximum distance cutoff for restraints that constrain aligned residues to their initial positions', default = '8.0'),
+			Option('min_unaligned_len', 'Integer', desc = 'Minimum length of an unaligned region', default = '3'),
+#			Option('short_loop_len', 'Integer', desc = 'StarAbinitio treats short loops differently from long ones. If the sequence separation between the consecutive aligned regions is <= short_loop_len, it is considered short, otherwise it is considered long.', default = '18'),
+		), # -abinito:star
+	), # -abinitio
+
+	# abrelax mode -----------------------------------------------------------
+	Option_Group( 'abrelax',
+		Option( 'abrelax', 'Boolean', desc="ab initio relax mode" ),
+#		Option( 'filters', 'Boolean', desc="", oldName='abrelax_filters' ),
+		Option(	'fail_unclosed', 'Boolean', desc="structures which don't close loops are reported as FAIL_DO_NOT_RETRY", default='false' ),
+	), # -abrelax
+
+	#########################AnchoredDesign#############################
+	Option_Group( 'AnchoredDesign',
+		Option( 'anchor', 'File', desc='anchor specification file', default='anchor' ),
+		Option( 'allow_anchor_repack', 'Boolean', desc='allow repacking of anchor (default is to prevent)', default='false'),
+		Option( 'vary_cutpoints', 'Boolean', desc='vary loop cutpoints.  Picks new cutpoints at start of each nstruct', default='false'),
+		Option( 'no_frags', 'Boolean', desc='use no fragments.  Overrides passing an old-style fragment file.  Skips new-style fragment generation.', default='false'),
+		Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
+		Option( 'show_extended', 'Boolean', desc='dump pre-perturb PDB to check if loop torsions are extended and/or sequence is fuzzed; debugging only', default='false' ),
+		Option( 'refine_only', 'Boolean', desc='refine only mode (skip perturbation step)', default='false' ),
+		Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
+		Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
+		Option( 'perturb_temp', 'Real', desc='perturbation phase temperature for monte carlo', default = '0.8' ),
+		Option( 'perturb_CCD_off', 'Boolean', desc='CCD-style loop remodeling off in perturb phase (meaning, KIC only)', default = 'false' ),
+		Option( 'perturb_KIC_off', 'Boolean', desc='KIC-style loop remodeling off in perturb phase (meaning, CCD only)', default = 'false' ),
+		Option( 'refine_CCD_off', 'Boolean', desc='CCD-style loop remodeling off in refine phase (meaning, KIC only)', default = 'false' ),
+		Option( 'refine_KIC_off', 'Boolean', desc='KIC-style loop remodeling off in refine phase (meaning, CCD only)', default = 'false' ),
+		Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '5' ),
+		Option( 'refine_temp', 'Real', desc='refinement phase temperature for monte carlo', default = '0.8' ),
+		Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles', lower = '2', default = '20' ),
+		Option( 'rmsd', 'Boolean', desc='Calculate result structure CA RMSD from starting structure', default = 'false'),
+		Option( 'unbound_mode', 'Boolean', desc='Ignore the anchor, as if this were loop modeling', default = 'false'),
+		Option( 'chainbreak_weight', 'Real', desc='Chainbreak term weight', default = '2.0'),
+		Option_Group( 'filters',
+			Option( 'score', 'Real', desc='do not print trajectories with scores greater than this total scorefunction value', default='0'),
+			Option( 'sasa', 'Real', desc='do not print trajectories with sasas less than this interface delta sasa value', default='500'),
+			Option( 'omega', 'Boolean', desc='filter out non-trans omegas', default='false'),
+		), # -AnchoredDesign:filters
+		Option_Group( 'akash',
+			Option( 'dyepos', 'Integer', desc='dye position', default = '0'), #deliberate illegal default - flag should be ignored if not user specified ),
+		), # -AnchoredDesign:akash
+		Option_Group( 'testing',
+			Option( 'VDW_weight', 'Real', desc='centroid VDW weight; testing if 2 better than 1', lower='0', default = '1.0'),
+			Option( 'anchor_via_constraints', 'Boolean', desc='allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!', default = 'false'),
+			Option( 'delete_interface_native_sidechains', 'Boolean', desc='benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains.'),
+			Option( 'RMSD_only_this', 'File', desc='Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging.'),
+			Option( 'anchor_noise_constraints_mode', 'Boolean', desc='Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor\'s placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer\'s commentary.', default = 'false'),
+			Option( 'super_secret_fixed_interface_mode', 'Boolean', desc='hold the anchor-containing loop fixed.  Currently in testing.', default = 'false'),
+			Option( 'randomize_input_sequence', 'Boolean', desc='randomizes the input sequence by packing with a null scorefunction; uses the AnchoredDesign-specified packer task (obeys resfile, etc).', default = 'false'),
+		), # -AnchoredDesign:testing
+	), # -AnchoredDesign
 
 	##############################################################################
 	# Rosetta Antibody Options -----------------------------------------------
@@ -5312,50 +2971,50 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Graft CDR L1 from template',
 			default='false'
 			),
-		Option('l1_template', 'String',
-			desc='Choose specified template for CDR L1 grafting',
-			default='l1.pdb'
-			),
+#		Option('l1_template', 'String',
+#			desc='Choose specified template for CDR L1 grafting',
+#			default='l1.pdb'
+#			),
 		Option( 'graft_l2', 'Boolean',
 			desc='Graft CDR L2 from template',
 			default='false'
 			),
-		Option('l2_template', 'String',
-			desc='Choose specified template for CDR L2 grafting',
-			default='l2.pdb'
-			),
+#		Option('l2_template', 'String',
+#			desc='Choose specified template for CDR L2 grafting',
+#			default='l2.pdb'
+#			),
 		Option( 'graft_l3', 'Boolean',
 			desc='Graft CDR L3 from template',
 			default='false'
 			),
-		Option('l3_template', 'String',
-			desc='Choose specified template for CDR L3 grafting',
-			default='l3.pdb'
-			),
+#		Option('l3_template', 'String',
+#			desc='Choose specified template for CDR L3 grafting',
+#			default='l3.pdb'
+#			),
 		Option( 'graft_h1', 'Boolean',
 			desc='Graft CDR H1 from template',
 			default='false'
 			),
-		Option('h1_template', 'String',
-			desc='Choose specified template for CDR H1 grafting',
-			default='h1.pdb'
-			),
+#		Option('h1_template', 'String',
+#			desc='Choose specified template for CDR H1 grafting',
+#			default='h1.pdb'
+#			),
 		Option( 'graft_h2', 'Boolean',
 			desc='Graft CDR H2 from template',
 			default='false'
 			),
-		Option('h2_template', 'String',
-			desc='Choose specified template for CDR H2 grafting',
-			default='h2.pdb'
-			),
+#		Option('h2_template', 'String',
+#			desc='Choose specified template for CDR H2 grafting',
+#			default='h2.pdb'
+#			),
 		Option( 'graft_h3', 'Boolean',
 			desc='Graft CDR H3 from template',
 			default='false'
 			),
-		Option('h3_template', 'String',
-			desc='Choose specified template for CDR H3 grafting',
-			default='h3.pdb'
-			),
+#		Option('h3_template', 'String',
+#			desc='Choose specified template for CDR H3 grafting',
+#			default='h3.pdb'
+#			),
 		Option( 'h3_no_stem_graft', 'Boolean',
 			desc='Graft CDR H3 from template, use stem to superimpose, but do not copy the stem',
 			default='false'
@@ -5444,13 +3103,13 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='The option to turn on/off the VL-VH QQ H-bond in docking scoring function',
 			default='false'
 			),
-		Option( 'snug_loops', 'Boolean',
-			desc='Allow CDR loop backbone flexibility during minimization',
-			default='false'
-			),
-		Option( 'input_fv','File',
-			desc='input antibody variable (Fv) region',
-			default='FR02.pdb' ),
+#		Option( 'snug_loops', 'Boolean',
+#			desc='Allow CDR loop backbone flexibility during minimization',
+#			default='false'
+#			),
+#		Option( 'input_fv','File',
+#			desc='input antibody variable (Fv) region',
+#			default='FR02.pdb' ),
 		Option( 'camelid','Boolean',
 			desc='Camelid input with only heavy (VH) chain',
 			default='false' ),
@@ -5466,8 +3125,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				default='/sampling/antibodies/antibody_database_rosetta.db'),
 			Option('design_cdrs', 'StringVector',
 				desc = "Design these CDRs in graft and sequence design steps (if enabled).  Use instead of an instruction file.  If an instruction file is given, will override FIX options for both stages."),
-      Option('do_graft_design', 'Boolean',
-      		desc='Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.',
+			Option('do_graft_design', 'Boolean',
+				desc='Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.',
 				default='true'),
 			Option('do_post_graft_design_modeling', 'Boolean',
 				desc='Run dock/min modeling step after the graft design step if run.',
@@ -5512,10 +3171,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option('rb_min_post_graft', 'Boolean',
 				desc='Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump',
 				default='false'),
-			Option('design_post_graft', 'Boolean',
-				desc='Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs.',
-				default='false'
-				),
+#			Option('design_post_graft', 'Boolean',
+#				desc='Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs.',
+#				default='false'
+#				),
 			Option('dock_rounds', 'Integer',
 				desc='Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.',
 				default='2'),
@@ -5536,9 +3195,9 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option('benchmark_basic_design', 'Boolean',
 				desc="Used to benchmark basic design vs probabilistic vs conservative.  Not for general use.",
 				default = 'false'),
-			Option('use_filters', 'Boolean',
-				desc='Use filters after graft step and design step.  Defaults false for now to optimize sensitivity',
-				default='false'),
+#			Option('use_filters', 'Boolean',
+#				desc='Use filters after graft step and design step.  Defaults false for now to optimize sensitivity',
+#				default='false'),
 			Option('stats_cutoff', 'Integer',
 				desc='Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability.',
 				default='10'),
@@ -5554,8 +3213,1104 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option('extend_native_cdrs', 'Boolean',
 				desc = 'extend native CDRs as part of the graft design step.  Used for benchmarking',
 				default='false'),
-		), #design
-	), # antibody
+		), # -antibody:design
+	), # -antibody
+
+	Option_Group( 'assembly',
+		Option( 'pdb1','File', desc='pdb1 file' ),
+		Option( 'pdb2','File', desc='pdb2 file' ),
+#		Option( 'nterm_seq', 'String', default='', desc='extra sequence at Nterminus' ),
+#		Option( 'cterm_seq', 'String', default='', desc='extra sequence at Cterminus' ),
+#		Option( 'linkers_pdb1', 'IntegerVector', desc="Residue numbers to be built as linkers " ),
+#		Option( 'linkers_pdb2', 'IntegerVector', desc="Residue numbers to be built as linkers " ),
+#		Option( 'preserve_sidechains_pdb1', 'IntegerVector', desc="Residue numbers to be sidchain-preserved " ),
+#		Option( 'preserve_sidechains_pdb2', 'IntegerVector', desc="Residue numbers to be sidchain-preserved " ),
+	), # -assembly
+
+	##  options for BackrubMover
+	Option_Group( 'backrub',
+		Option( 'pivot_residues', 'IntegerVector', desc='residues for which contiguous stretches can contain segments (internal residue numbers, defaults to all residues)', default = 'utility::vector1<int>()'),
+		Option( 'pivot_atoms', 'StringVector', desc='main chain atoms usable as pivots', default = 'utility::vector1<std::string>(1, "CA")'),
+		Option( 'min_atoms', 'Integer', desc='minimum backrub segment size (atoms)', default = '3'),
+		Option( 'max_atoms', 'Integer', desc='maximum backrub segment size (atoms)', default = '34'),
+	), # -backrub
+
+	# batch_relax mode -----------------------------------------------------------
+	Option_Group( 'batch_relax',
+		Option( 'batch_size',         'Integer',    desc='Size of batches - note that thsie affects memory usage significantly', default='100' ),
+		#Option( 'return_all',         'Boolean',    desc='Return all structures or only the ones that made it to the end ?', default='false' ),
+	), # -batch_relax
+
+	##  options for BBGaussianMover
+	Option_Group( 'bbg',
+		Option( 'factorA', 'Real', desc='Control how big the move would be(acceptance rate), default 1.0', default='1.0'),
+		Option( 'factorB', 'Real', desc='Control how local the move would be(folded 10.0, unfolded 0.1), default 10.0', default='10.0'),
+		Option( 'ignore_improper_res', "Boolean", desc='Skip improper residues (proline)', default = 'false'),
+		Option( 'fix_short_segment', "Boolean", desc='Do not apply small mover to short segments, for loop', default = 'false'),
+	), # -bbg
+
+	Option_Group( 'boinc',
+		Option( 'graphics',  'Boolean', desc='The boinc client uses this option for the windowed graphics',                default='false' ),
+		Option( 'fullscreen','Boolean', desc='The boinc client uses this option for the screensaver full screen graphics', default='false' ),
+		Option( 'max_fps',   'Integer', desc='Maximum frames per second, overrides user preference.', default='0' ),
+		Option( 'max_cpu',   'Integer', desc='Maximum cpu percentage, overrides user preferecne.', default='0' ),
+		Option( 'noshmem',   'Boolean', desc='for testing graphics without shared memory.', default='false' ),
+		Option('cpu_run_time', 'Integer', desc='Target cpu run time in seconds', default='10800'),
+		Option('max_nstruct', 'Integer', desc='Maximum number of output models (failed or successful) for a given client', default='99' ),
+		Option('cpu_frac', 'Real', desc='Percentage of CPU time used for graphics', default='10.0'),
+		Option('frame_rate', 'Real', desc='Number of frames per second for graphics', default='10.0'),
+		Option('watchdog', 'Boolean', desc='Turn watchdog on', default='false'),
+		Option('watchdog_time', 'Integer', desc='Time interval in seconds used by watchdog to check if run is stuck or going too long (default every 5 minutes)', default='300'),
+		Option('cpu_run_timeout', 'Integer', desc='Maximum time the WU may exceed the users WU time settings. Default is 4 hours.  Used by watchdog.', default='14400'),
+		Option('description_file', 'File', desc='work unit description file', default='rosetta_description.txt'),
+		Option('score_cut_pct','Real', desc='score cut done on the local nodes by percentage, required to return centroid models'),
+		Option('score_cut_fl', 'File', desc='temp file where output is stored in', default='score_cut_tmp.out'),
+		Option('score_cut_smart_throttle', 'Boolean', desc='makes absolutely sure you are generating < 1 model per 60 seconds.(set to 65 sec to be safe)'),
+	), # -boinc
+
+	# Broker stuff -----------------------------------------------------------
+	Option_Group( 'broker',
+		Option( 'setup', 'FileVector', desc="setup file for topology-broker",default='NO_SETUP_FILE' ),
+		Option('rb_mover_stage1_weight', 'Real', desc = 'weight of RB mover in abinitio stage 1', default = '5.0'),
+		Option('large_frag_mover_stage1_weight', 'Real', desc = 'weight of fragment mover in abinitio stage 1',default = '1.0'),
+		Option('small_frag_mover_stage1_weight', 'Real', desc = 'weight of fragment mover in abinitio stage 1',default = '1.0'),
+	), # -broker
+
+	Option_Group( 'bunsat_calc2',
+#		Option( 'probe_radius', 'Real', desc="Probe radius for SASA calculation", default = '1.4' ),
+#		Option( 'wobble', 'Real', desc="Distance atoms can move towards" \
+#			" or away from solvent. Value is subtracted from inner shell and added to outer shell for variable distance SASA.", default = '0.0' ),
+		Option( 'sasa_burial_cutoff', 'Real', desc="Minimum SASA to be considered exposed", default = '0.01' ),
+		Option( 'layered_sasa', 'Boolean', desc="Use the variable distance solvent SASA calculator for finding buried unsats", default="true"),
+		Option( 'generous_hbonds', 'Boolean', desc="Use generous hbond criteria", default = "true"),
+		Option( 'AHD_cutoff', 'Real', desc="Minimum AHD angle for secondary geometry based h-bond detection", default = '120' ),
+		Option( 'dist_cutoff', 'Real', desc="max dist", default = '3.0'),
+		Option( 'hxl_dist_cutoff', 'Real', desc="hxl max dist", default = '3.5'),
+		Option( 'sulph_dist_cutoff', 'Real', desc="max sulph dist", default = '3.3'),
+		Option( 'metal_dist_cutoff', 'Real', desc="max metal dist", default = '2.7'),
+	), # -bunsat_calc2
+
+	############################################################################
+	# equilibrium sampling options
+	Option_Group('canonical_sampling',
+		Option_Group('probabilities',
+			Option('sc','Real',desc='probability of making a side chain move',default = '0.25'),
+			Option('localbb','Real',desc='probability of making a small move',default = '0.75'),
+			Option('sc_prob_uniform','Real',desc='probability of uniformly sampling chi angles',default = '0.1'),
+			Option('sc_prob_withinrot','Real',desc='probability of sampling within the current rotamer',default = '0.9'),
+			Option('sc_prob_perturbcurrent','Real',desc='probability of perturbing the current rotamer',default = '0.0'),
+			Option('MPI_sync_pools','Boolean',desc='use MPI to synchronize pools and communicate between nodes',default = 'false'),
+			Option('MPI_bcast','Boolean',desc='use broadcasting in syncing',default = 'false'),
+			Option('fast_sc_moves','Boolean',desc='use the fast SidechainMCMover',default = 'false'),
+			Option('fast_sc_moves_ntrials','Real',desc='specify the number of ntrials for each call of scmover apply',default='1000'),
+			Option('no_jd2_output','Boolean',desc='do not write to silent-file specified by -out:file:silent',default = 'false'),
+			Option('use_hierarchical_clustering','Boolean',desc='use the HierarchicalLevel class',default = 'false'),
+#			Option('hierarchical_max_cache_size','Integer',desc='set the max-cache size of the hierarchy',default = '1000'),
+			Option('backrub','Real',desc='set the probability of executing a backrub move when making a backbone move',default = '0.5'),
+			Option('conrot','Real',desc='set relative probability of executing a conrot move when making a backbone move',default = '0.0'),
+		), # -canonical_sampling:probabilities
+		Option_Group('sampling',
+			Option('no_detailed_balance','Boolean',desc='preserve detailed balance',default = 'false'),
+			Option('ntrials','Integer',desc='number of Monte Carlo trials to run',default = '1000' ),
+			Option('mc_kt','Real',desc='value of kT for Monte Carlo',default='0.6'),
+			Option('interval_pose_dump','Integer',desc='dump a pose out every x steps',default='1000'),
+			Option('interval_data_dump','Integer',desc='dump data out every x steps',default='100'),
+			Option('output_only_cluster_transitions','Boolean',desc='output only cluster transitions',default = 'false'),
+			Option('transition_threshold','Real',desc='if rmsd to known_structures larger than X, add a new structure to pool',default = '2.0'),
+			Option('max_files_per_dir','Integer',desc='distribute traj and transition files into subdirectories with max N entries',default = '1000'),
+			Option('save_loops_only','Boolean',desc='save only loop conformation to pool',default = 'false'),
+			Option('dump_loops_only','Boolean',desc='dump only loop conformation in silent-files',default = 'false'),
+		), # -canonical_sampling:sampling
+		Option_Group('out',
+			Option('new_structures','File',desc='',default = 'discovered_decoys.out'),
+		), # -canonical_sampling:out
+	), # -canonical_sampling
+
+	##relevent casp options for refinement protocols
+	Option_Group( 'casp',
+#		Option( 'decoy', 'String'),
+#		Option( 'wt', 'String'),
+#		Option( 'rots' , 'String'),
+		Option( 'opt_radius', 'Real', desc='optimization radius for repacking and minimization'),
+		Option( 'repack', 'Boolean', desc='should we repack the structure?'),
+		Option( 'sc_min', 'Boolean', desc='should we sidechain minimize the structure?'),
+		Option( 'sequential', 'Boolean', desc='should mutations be considered in sequence or all together?'),
+		Option( 'num_iterations', 'Real', desc='number of iterations to perform'),
+#		Option( 'weight_file', 'String', desc='what weight-file to use?'),
+		Option( 'refine_res', 'String', desc='specifies file that contains which residues to refine'),
+	), # -casp
+
+	############################UBQ_*, chemically_conjugated_docking, UBQ_E2_thioester, UBQ_Gp_*########################
+	Option_Group( 'chemically_conjugated_docking',
+		#UBQ_E2_thioester AND shared group
+		Option( 'UBQpdb', 'File', desc='ubiquitin structure, or the structure for the attached thing that is moving', default='1UBQ.pdb'),
+		Option( 'E2pdb', 'File', desc='E2 structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
+		Option( 'E2_residue', 'Integer', desc='E2 catalytic cysteine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of E2pdb', default='85'),
+		Option( 'SASAfilter', 'Real', desc='filter out structures with interface dSASA less than this', default='1000'),
+		Option( 'scorefilter', 'Real', desc='filter out structures with total score greater than this', default='10'),
+		Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.', default='false'),
+		Option( 'n_tail_res', 'Integer', desc='Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)', default='3'),
+		Option( 'two_ubiquitins', 'Boolean', desc='Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
+		Option( 'extra_bodies', 'FileVector', desc='extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.', default=''),
+		Option( 'UBQ2_lys', 'Integer', desc='which Lys on the second UB will be conjugated', default='48'),
+		Option( 'UBQ2_pdb', 'File', desc='PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.'),
+		Option( 'dont_minimize_omega', 'Boolean', desc='disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker)', default='false'),
+		#UBQ_Gp_LYX-Cterm and UBQ_Gp_CYD-CYD group
+		Option( 'pdz', 'Boolean', desc='For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
+		Option( 'GTPasepdb', 'File', desc='GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
+		Option( 'GTPase_residue', 'Integer', desc='GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb', default='85'),
+	), # -chemically_conjugated_docking
+
+	# Chunk related stuff -----------------------------------------------------------
+	Option_Group( 'chunk',
+		Option( 'pdb2', 'File', desc="file for chunk2" ),
+		Option( 'loop2', 'File', desc="rigid region for chunk2" ),
+	), # -chunk
+
+	# clustering options -----------------------------------------------------------
+	Option_Group( 'cluster',
+		Option('lite','Boolean',desc="uses light-weight method of outputting cluster-centers, useful for when there's a HUGE amount of data!",default='false'),
+		Option( 'input_score_filter', 'Real', desc="Only read in structures below a certain energy", default = '1000000.0' ),
+		Option( 'output_score_filter', 'Real', desc="Only read in structures below a certain energy", default = '1000000.0' ),
+		Option( 'exclude_res', 'IntegerVector', desc="Residue numbers to be excluded from cluster RMS calculation", default = '-1' ),
+		Option( 'thinout_factor', 'Real', desc="Ignore this fraction of decoys in the first round !", default = '-1' ),
+#		Option( 'max_cluster_seeds', 'Integer', desc="Do not calculate initial cluster centers for more then this many structuers", default = '500' ),
+		Option( 'radius', 'Real', desc="Cluster radius", default = '3.0' ),
+		Option( 'limit_cluster_size', 'Integer', desc="For each cluster only retain top N ", default = '-1' ),
+		Option( 'limit_cluster_size_percent', 'Real', desc="0 to 1. For each cluster only retain top N % " ),
+		Option( 'random_limit_cluster_size_percent', 'Real', desc="0 to 1. For each cluster only retain random N % " ),
+		Option( 'limit_clusters', 'Integer', desc="Only retain largest N clusters", default = '100' ),
+		Option( 'limit_total_structures', 'Integer', desc="Only retain the first N structures (ordered by cluster number)", default = '-1' ),
+		Option( 'max_total_cluster','Integer', desc="Only ever make N clusters or less", default = '1000'),
+		Option( 'gdtmm', 'Boolean', desc="Cluster by gdtmm instead of RMS", default = 'false' ),
+		Option( 'sort_groups_by_energy', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
+		Option( 'sort_groups_by_size', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
+		Option( 'remove_singletons', 'Boolean', desc="Get rid of single-member clusters", default = 'false' ),
+		Option( 'export_only_low', 'Boolean', desc="Print only the lowest energy member", default = 'false' ),
+		Option( 'remove_highest_energy_member', 'Boolean', desc="Remove highest energy member from each cluster", default = 'false' ),
+		Option( 'idealize_final_structures', 'Boolean', desc="Run an idealization over the resulting structures", default = 'false' ),
+		Option( 'limit_dist_matrix', 'Integer', desc="Only calculate full matrix for a subset of structres. Then simply assign structures to nearest cluster", default = '-1'),
+		Option( 'make_ensemble_cst', "Boolean", desc="Create a set of constraints describing the variablity in each cluster of each residue.", default='false' ),
+		Option( 'hotspot_hash', "Boolean", desc="Cluster hotspot hashing results. Each input PDB must contain both the target and the newly docked hotspot (which should be the last residue in the pose).", default='false' ),
+		Option( 'loops', "Boolean", desc='Cluster the loop specified with the -loops:loop_file option', default = 'false' ),
+		Option( 'population_weight', 'Real', desc="Order Clusters by (1-p)*score - p*size whpere p = population_weight " , default = '0.09' ),
+
+		Option( 'template_scores', 'String', desc="imple textfile containing template names (in caps) and scores." ),
+
+		Option( 'K_level', "Integer", desc='Hierarchical cluster level number', default = '1'),
+		Option( 'K_radius', "RealVector", desc='Radius list of different level of cluster', default = 'utility::vector1<float>(1, 2.0)'),
+		Option( 'K_n_cluster', "IntegerVector", desc='How many clusters in each level', default = 'utility::vector1<int>(1, 10000)'),
+		Option( 'K_style', "StringVector", desc='Which K-cluster engine to use', default = 'utility::vector1<std::string>(9, "GKC")'),
+#		Option( 'K_threshold', "Real", desc='Threshold for test the convergence of iteration', default = '0.01'),
+		Option( 'K_n_sub', "Integer", desc='Number of clusters in subdir', default = '100'),
+		Option( 'K_deque_size', "Integer", desc='Size of subcluster deque', default = '20'),
+		Option( 'K_deque_level', "Integer", desc='Provide deque in top level', default = '1'),
+		Option( 'K_redundant', "Boolean", desc='Keep all the higher level center structure in sub-pools', default = 'true'),
+		Option( 'K_not_fit_xyz', "Boolean", desc='Do not rotate xyz when calculate rmsd', default = 'false'),
+		Option( 'K_save_headers', "Boolean", desc='Save headers in silent file', default = 'false'),
+		Option( 'score_diff_cut','Real',desc='score difference cut for RNA and SWA clustering', default = '1000000.0' ),
+		Option( 'auto_tune', 'Boolean', desc='autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer', default='false' ),
+	),
+
+	Option_Group( 'cm', # comparative modeling
+		Option_Group('sanitize',
+#			Option('bound_delta', 'Real', desc = 'Distance in Angstroms from aligned position before a penalty is incurred', default = '0.5'),
+#			Option('bound_sd', 'Real', desc = 'Value of standard deviation in bound func', default = '1.0'),
+			Option('num_fragments', 'Integer', desc = 'Use the top k fragments at each position during sanitization', default = '25'),
+			Option('cst_weight_pair', 'Real', desc = 'atom_pair_constraint weight', default = '1.0'),
+			Option('cst_weight_coord', 'Real', desc = 'coordinate_constraint weight', default = '1.0'),
+		), # -cm:sanitize
+
+		Option( 'start_models_only',   'Boolean',    desc='Make starting models only!', default='false' ),
+		Option( 'aln_format', 'String', legal = ['grishin','general'],
+			default='grishin'
+		),
+		Option( 'recover_side_chains', 'Boolean', desc='recover side-chains',
+			default='false'
+		),
+		Option( 'steal_extra_residues', 'FileVector',
+			desc='list of template extra residues (ie ligands) to add to query pose in comparative modeling',
+		),
+		Option( 'loop_mover', 'String',
+			legal = [
+				'quick_ccd','quick_ccd_moves','perturb_ccd','perturb_kic','sdwindow'
+			],
+			default='quick_ccd',
+		),
+		Option( 'loop_close_level', 'Integer', legal=[ '0', '1', '2', '3' ],
+			default='0',
+			desc="level of aggressiveness to use in closing loops. \
+					The integers that follow flags specify how aggressively \
+					loops are rebuilt. Each option implies all non-zero levels below it,\
+					so that loop_close_level 2 implies level 1 as well. Meaning of \
+					the options are: \
+					NO_REBUILD              0     don't rebuild loops at all \
+					REBUILD_UNALIGNED       1     rebuild loops around unaligned regions \
+					REBUILD_CHAINBREAK      2     rebuild loops around chainbreaks \
+					REBUILD_EXHAUSTIVE      3     rebuild loops around regions with a chainbreak until no chainbreaks remain",
+		),
+		Option( 'min_loop_size', 'Integer',
+			desc='Minimum size of loops to remodel when building threading models.',
+			default='5'
+		),
+		Option( 'max_loop_rebuild', 'Integer',
+			desc='Maximum number of times to try to rebuild a loop before giving up.',
+			default='10'
+		),
+		Option(
+			'loop_rebuild_filter', 'Real',
+			desc='Maximum score a structure must have after loop rebuilding.',
+			default='0'
+		),
+		Option( 'aln_length_filter_quantile', 'Real',
+			desc='Only use alignment lengths longer than the Xth quantile. e.g. setting this to 0.75 will only use the 25% longest alignments',
+			default='0.0',
+		),
+		Option( 'aln_length_filter', 'Integer',
+			desc='Only use alignment longer or equal to this length',
+			default='-1',
+		),
+#		Option( 'template_ids', 'StringVector',
+#			desc = 'List of template identifiers to use in comparative modeling',
+#		),
+#		Option( 'ligand_pdb', 'File',
+#			desc = 'Add a ligand to the system',
+#		),
+		Option( 'seq_score', 'StringVector',
+			desc = 'sequence-based scoring scheme used for generating alignments',
+			legal = [ 'L1', 'ProfSim', 'DP', 'Matrix', 'Simple', 'ChemicalShift' ],
+			default = 'utility::vector1<std::string>(1,"Simple")',
+		),
+		Option( 'aligner', 'String',
+			desc = 'algorithm for making sequence alignments',
+			legal = [ 'local', 'global', 'mc' ],
+		),
+		Option( 'min_gap_open', 'Real',
+			desc = 'gap opening penalty for sequence alignments (usually negative)',
+			default = '-2.0',
+		),
+		Option( 'max_gap_open', 'Real',
+			desc = 'gap opening penalty for sequence alignments (usually negative)',
+			default = '-2.0',
+		),
+		Option( 'min_gap_extend', 'Real',
+			desc = 'gap extension penalty for sequence alignments (usually negative)',
+			default = '-0.2'
+		),
+		Option( 'max_gap_extend', 'Real',
+			desc = 'gap extension penalty for sequence alignments (usually negative)',
+			default = '-0.2'
+		),
+		Option( 'nn', 'Integer',
+			desc = 'number of neighbors to include in constraint derivation',
+			default = '500',
+		),
+#		Option( 'fr_temperature', 'Real',
+#			desc = 'temperature to use during fragment-based refinement of structures',
+#			default = '2.0'
+#		),
+		Option( 'ev_map','FileVector', desc='Input file that maps pdbChains to blast e-values'
+		),
+		Option( 'hh_map','FileVector', desc='Input file that maps pdbChains to hhsearch probabilities'
+		),
+		Option_Group( 'hybridize', # tempalate hybridization
+#			Option( 'templates',                      'FileVector', desc='Input list of template files'),
+			Option( 'template_list',                  'File', desc='Input list of templates, constaints, cluster, and weights'),
+			Option( 'starting_template',              'IntegerVector',    desc='Define starting templates' ),
+			Option( 'realign_domains',                'Boolean',     desc='domain parse and realign the starting templates', default='true' ),
+			Option( 'add_non_init_chunks',            'Boolean',     desc='non chunks from templates other than the initial one', default='false' ),
+#			Option( 'ss',                             'String',     desc='secondary structure elements used to split the pose', default='HE' ),
+			Option( 'stage1_increase_cycles',         'Real',     desc='Scale stage 1 cycles', default='1.0' ),
+			Option( 'stage2_increase_cycles',         'Real',     desc='Scale stage 2 cycles', default='1.0' ),
+			Option( 'stage2min_increase_cycles',      'Real',    desc='Scale minimizer cycles after stage 2', default='1.0'),
+			Option( 'stage1_probability',             'Real',     desc='Probability of running stage 1, 0=never, 1=always', default='1.0' ),
+			Option( 'stage1_weights',                 'String',     desc='weight for fold tree hybridize stage', default='score3' ),
+			Option( 'stage1_patch',                   'String',     desc='weight patch for fold tree hybridize stage', default='' ),
+			Option( 'skip_stage2',                    'Boolean',    desc='skip cartesian fragment hybridize stage', default='false' ),
+			Option( 'no_global_frame',                'Boolean',    desc='no global-frame fragment insertions', default='false' ),
+			Option( 'linmin_only',                    'Boolean',    desc='linmin only in stage 2', default='false' ),
+			Option( 'stage2_weights',                 'String',     desc='weight for cartesian fragment hybridize stage', default='score4_smooth_cart' ),
+			Option( 'stage2_patch',                   'String',     desc='weight patch for cartesian fragment hybridize stage', default='' ),
+			Option( 'relax',                          'Integer',    desc='if n==1, perform relax at end; if n>1 perform batch relax over n centroids', default='0' ),
+			Option( 'frag_weight_aligned',            'Real',       desc='Probability of fragment insertion in the aligned region', default='0.' ),
+#			Option( 'move_anchor',                    'Boolean',    desc='move anchor residue when copying xyz in stage 1', default='false' ),
+			Option( 'max_registry_shift',             'Integer',    desc='maximum registry shift', default='0' ),
+			Option( 'alignment_from_template_seqpos', 'Boolean',    desc='alignment from template resSeq', default='true' ),
+			Option( 'alignment_from_chunk_mapping',   'IntegerVector',    desc='alignment from secondary structure mapping' ),
+#			Option( 'virtual_loops',                  'Boolean',    desc='use virtual loops', default='false' ),
+#			Option( 'revert_real_loops',              'Boolean',    desc='revert back to non-virtual loops', default='false' ),
+			Option( 'realign_domains_stage2',         'Boolean',     desc='realign the starting templates to the pose after stage1', default='false' ),
+			Option( 'frag_1mer_insertion_weight',     'Real',       desc='weight for 1mer fragment insertions where fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
+			Option( 'small_frag_insertion_weight',    'Real',       desc='weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
+			Option( 'big_frag_insertion_weight',       'Real',       desc='weight for big fragment insertions vs. template chunk insertions in stage1', default='0.5' ),
+			Option( 'auto_frag_insertion_weight',     'Boolean',    desc='automatically set the weight for fragment insertions vs. template chunk insertions in stage1', default='true' ),
+			Option( 'stage1_1_cycles',                'Integer',    desc='Number of cycles for ab initio stage 1 in Stage1', default='2000'),
+			Option( 'stage1_2_cycles',                'Integer',    desc='Number of cycles for ab initio stage 2 in Stage1', default='2000'),
+			Option( 'stage1_3_cycles',                'Integer',    desc='Number of cycles for ab initio stage 3 in Stage1', default='2000'),
+			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='400'),
+			Option( 'stage2_temperature',             'Real',       desc='Monte Carlo temperature in the stage2', default='2.0'),
+			Option( 'stage1_4_cenrot_score',          'String',     desc='Switch to cenrot model in stage1_4', default='score_cenrot_cm_stage1_4.wts'),
+
+		), # -cm:hybridize
+	), # -cm
+
+	##############################################################################
+	# ContactMap options
+	Option_Group( 'contactMap',
+		Option( 'contactMap', 'Boolean',
+			desc="contactMap option group",
+			legal='true', default='true'
+		),
+		Option( 'prefix', 'String',
+			default = 'contact_map_',
+			desc = "Prefix of contactMap filename"
+		),
+		Option( 'distance_cutoff', 'Real',
+			default = '10.0',
+			desc = "Cutoff Backbone distance for two atoms to be considered interacting"
+		),
+		Option( 'energy_cutoff', 'Real',
+			default = '1.0',
+			lower = '0.0', upper = '1.0',
+			desc= "Energy_Cutoff (percentage value - only affecting silent file input)"
+		),
+		Option( 'region_def', 'String',
+			default = '',
+			desc = "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X"
+		),
+		Option( 'row_format', 'Boolean',
+			default = 'false',
+			desc = "Flag whether to output in row instead of matrix format"
+		),
+		Option( 'distance_matrix', 'Boolean',
+			default = 'false',
+			desc = "Output a distance matrix instead of a contact map"
+		),
+	), # -contactMap
+
+	##################################
+	# VIP mover options
+	Option_Group( 'cp',
+		Option( 'cutoff', 'Real', desc="designable neighbor cutoff", default='16' ),
+#		Option( 'minimizer', 'String', desc="minimizer to use for initial minimization", default='score12_full'),
+		Option( 'relax_sfxn', 'String', desc="score function for final relaxation step", default='score12_full'),
+		Option( 'pack_sfxn', 'String', desc="score function for mutational trials",default='gauss'),
+#		Option( 'minimizer_tol', 'Real', desc="tolerance for minimization", default='.0001'),
+		Option( 'minimizer_score_fxn', 'String', desc="score function for initial minimization", default='score12_full'),
+		Option( 'output', 'String', desc="file where we want to dump the final pose",default='final_mutant.pdb'),
+		Option( 'ncycles', 'Integer', desc="how many cycles to run refinement for",default='0'),
+		Option( 'max_failures', 'Integer', desc="how many failures to tolerate at each iteration before quitting",default='1'),
+		Option( 'print_reports', 'Boolean', desc="print reports to text file?",default='false' ),
+		Option( 'vipReportFile', 'String', desc="File to print reports to", default='reports.txt' ),
+		Option( 'exclude_file', 'String', desc="Optional input file to specify positions that should not be mutated", default='cp_excludes' ),
+		Option( 'relax_mover', 'String', desc="relax w/o constraints=relax, w constraints=cst_relax", default='relax'),
+		Option( 'skip_relax','Boolean',desc="Skip relax step... may reduce accurate identification of mutations",default='false'),
+		Option( 'local_relax','Boolean',desc="Limit relax step to neighbors",default='false'),
+		Option( 'print_intermediate_pdbs','Boolean',desc="Output a pdb file for each consecutive mutation",default='false'),
+		Option( 'use_unrelaxed_starting_points', 'Boolean', desc="For subsequent iterations, uses mutation before relaxation",default='false' ),
+		Option( 'easy_vip_acceptance', 'Boolean', desc="For all iterations, use initial energy for acceptance test",default='false' ),
+	), # -cp
+	# end VIP
+
+	Option_Group( 'cryst',
+		Option( 'mtzfile', 'String', desc = 'mtz file'),
+		Option( 'crystal_refine', 'Boolean', desc='Turns on crystal-refinement-specific options', default='false' ),
+	),
+
+	############################################################################
+	# Solid state NMR orientational constraints
+	Option_Group('csa',
+		Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring csa'),
+	),
+
+	# cutoutdomain Options -----------------------------------------------------------
+	Option_Group( 'cutoutdomain',
+		Option( 'start', 'Integer', desc="start residue", default = '1' ),
+		Option( 'end', 'Integer', desc="end residue", default = '2' ),
+	), # -cutoutdomain
+
+	## Cyclization Options ##
+	Option_Group( 'cyclization',
+		#Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize", default="1" ),
+		#Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize", default="0" ),
+		Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize" ),
+		Option( 'num_min_rebuild', 'Integer', desc="The number of time to iterate between minimization and rebuilding the connection dependant atom positions", default='3' ),
+	), # -cyclization
+
+	Option_Group('dc',
+		Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring dc'),
+	),
+
+	##  ekellogg. Options for ddg protocol
+	Option_Group( 'ddg',
+#		Option('avg_rot_cst_enrg','Boolean',default='false'),
+#		Option('use_bound_cst','Boolean',default='false'),
+#		Option('cap_rot_cst_enrg','Real',default='false'),
+		Option('opt_input_structure','Boolean',default='false'),
+		Option('pack_until_converge','Boolean',default='false'),
+		Option('no_constraints','Boolean',default='false'),
+#		Option('apply_rot_cst_to_mutation_region_only','Real'),
+#		Option('rot_cst_enrg_cutoff','Real'),
+		Option('use_rotamer_constraints_to_native','Boolean',default='false'),
+#		Option('single_res_scoring','Boolean'),
+#		Option('downweight_by_sasa','Boolean'),
+#		Option('global','Boolean'),
+#		Option('exclude_solvent_exposed_res','Boolean'),
+#		Option('radius','Real'),
+#		Option('wt','String'),
+#		Option('mut','String'),
+
+		Option('suppress_checkpointing','Boolean',default='false',desc="boinc specific options to suppress checkpointing behavior"),
+		Option('wt_only','Boolean',desc="option added to minirosetta app in order to produce only refinement in wt structures"),
+		Option('mut_only','Boolean',desc="options added to minirosetta app in order to produce refinement in only mutant structure"),
+		Option('output_silent','Boolean'),
+		Option('minimization_scorefunction','String'),
+		Option('minimization_patch','String'),
+		Option('min_cst','Boolean',default='true',desc="Following sidechain optimization in the packer, should we then proceed to minimize the backbone at all.  Constraints will be used to keep the structure from moving too far." ),
+		Option('lowest_x_decoys','Integer'),
+		Option('local_opt_only','Boolean',default='false'),
+		Option('print_per_res_diff','Boolean',default='false'),
+		Option('mean','Boolean'),
+		Option('min','Boolean'),
+#		Option('rb_restrict_to_mutsite_nbrs','Boolean',default='false'),
+		Option('no_bb_movement','Boolean',default='false'),
+		Option('initial_repack','Boolean',default='false'),
+#		Option('rb_file','String'),
+		Option('interface_ddg','Integer',default='0', desc='Calculate ddGs across an interface? Uses jump # specified for determining interface.'),
+		Option('ens_variation', 'Real', default='0.5'),
+		Option('sc_min_only','Boolean',default='true'),
+		Option('min_cst_weights','String',default='talaris2013'),
+		Option('opt_radius','Real',default='8.0'),
+		Option('output_dir','String',default='./'),
+		##Option('accepted_mc_pose_dir','String',default='./'),
+		Option('last_accepted_pose_dir','String',default='./'),
+		Option('min_with_cst','Boolean', default='false', desc="Used in ensemble generation"),
+		Option('temperature', 'Real', default='10',desc='because I really dont know what the monte carlo temperature should be set to'),
+		Option('ramp_repulsive','Boolean',default='false',desc='set fa_rep to 0.1, 0.33 of original value when minimizing in the minimization phase following packing'),
+		Option('mut_file','String',desc='alternate specification for mutations.  File format described in fix_bb_monomer_ddg.cc above the read_in_mutations function'),
+#		Option('mut_file_tlc','Boolean',desc='alternate specification for mutations using three letter codes instead of one letter codes so that it is compatible with noncanonical amino acids.',default='false'),
+		Option('out_pdb_prefix','String',desc='specifies the prefix assigned to output so that no overwriting happens'),
+		Option('constraint_weight','Real',default='1.0',desc='because that other option isnt working'),
+		Option( 'harmonic_ca_tether', 'Real', default='2.0', desc='default CA tether for harmonic constraints'),
+		Option('iterations','Integer',default='20',desc='specifies the number of iterations of refinement'),
+		Option('out', 'String',default='ddg_predictions.out',desc='create output file of predicted ddgs'),
+		Option('debug_output', 'Boolean', default='false',desc='specify whether or not to write a whole bunch of debug statements to standard out'),
+		Option('dump_pdbs','Boolean',default='true',desc='specify whether or not to dump repacked wild-type and mutant pdbs'),
+		Option('weight_file', 'String', default='ddg.wts',desc='specifies the weight-files to be used in calculations'),
+#		Option('translate_by', 'Integer', desc='specify the distance in Angstrom that takes to move away when unbounded.  Should keep it around 100 when this protocol is used in conjunction with the Poisson-Boltzmann potential score-term.'),
+	), # -ddg
+
+	Option_Group( 'DenovoProteinDesign',
+		Option( 'redesign_core', 'Boolean', desc='redesign core of pdb', default='false'),
+		Option( 'redesign_loops', 'Boolean', desc='redesign loops of pdb', default='false'),
+		Option( 'redesign_surface', 'Boolean', desc='redesign surface of pdb', default='false'),
+		Option( 'redesign_complete', 'Boolean', desc='complete redesign of pdb', default='false'),
+		##Option( 'disfavor_native_aa', 'Boolean', desc='penalize native aa in design', default='false'),
+#		Option( 'disallow_native_aa', 'Boolean', desc='do not allow native aa in design', default='false'),
+		Option( 'optimize_loops', 'Boolean', desc="do serious loop modeling at the end of designrelax mover"),
+		Option( 'secondary_structure_file', 'File', desc="has fasta file format - describes secondary structure of desired target with H/C/E" ),
+		Option( 'hydrophobic_polar_pattern', 'File', desc="has fasta file format - describes hydrophobic(B) polar(P) pattern" ),
+		Option( 'use_template_sequence', 'Boolean', desc='use the template pdbs sequence when creating starting structures', default='false'),
+		Option( 'use_template_topology', 'Boolean', desc='use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures', default='false'),
+		Option( 'create_from_template_pdb', 'File', desc='create starting structure from a template pdb, follow with pdb name'),
+		Option( 'create_from_secondary_structure', 'Boolean', desc='create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format', default='false'),
+	), # -DenovoProteinDesign
+
+	Option_Group( 'dna',
+		Option_Group( 'specificity',
+			Option( 'exclude_dna_dna', 'Boolean', default='true'),
+			Option( 'params', 'RealVector', desc="vector of real-valued params"),
+			Option( 'frag_files', 'FileVector', desc="files to collect frags from" ),
+#			Option( 'exclude_bb_sc_hbonds', 'Boolean', default='false'),
+			Option( 'only_repack', 'Boolean', default='false'),
+			Option( 'design_DNA', 'Boolean', default='false'),
+#			Option( 'run_test', 'Boolean', default='false'),
+			Option( 'soft_rep', 'Boolean', default='false'),
+			Option( 'dump_pdbs', 'Boolean', default='false'),
+			Option( 'fast', 'Boolean', default='false'),
+			Option( 'randomize_motif', 'Boolean', default='false'),
+			Option( 'Wfa_elec', 'Real', default='0'),
+			Option( 'Wdna_bs', 'Real', default='0'),
+			Option( 'Wdna_bp', 'Real', default='0'),
+			Option( 'minimize_tolerance', 'Real', default='0.001'),
+			Option( 'weights_tag', 'String'),
+			Option( 'weights_tag_list', 'String'),
+			Option( 'min_type', 'String', default='dfpmin'),
+			#Option( 'output_tag', 'String'),
+#			Option( 'tf', 'String'),
+			Option( 'mode', 'String'),
+			Option( 'score_function', 'String'),
+			Option( 'pre_minimize', 'Boolean', default='false'),
+			Option( 'post_minimize', 'Boolean', default='false'),
+			Option( 'pre_pack', 'Boolean', default='false'),
+			Option( 'nloop', 'Integer', default='20'),
+			Option( 'n_inner', 'Integer' ),
+			Option( 'n_outer', 'Integer' ),
+			Option( 'nstep_water', 'Integer', default='0'),
+			Option( 'moving_jump', 'Integer', default='0'),
+			Option( 'motif_begin', 'Integer', default='0'),
+			Option( 'motif_size', 'Integer', default='0'),
+			Option( 'pdb_pos', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb, eg: -pdb_pos 125:A 127:A 4:C'),
+			Option( 'methylate', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb to be methylated, eg: -methylate 125:A 127:A 4:C'),
+		), # -dna:specificity
+
+		# ashworth
+		Option_Group( 'design',
+#			Option( 'output_initial_pdb', 'Boolean', default = 'false', desc = 'write pdb file for loaded and scored input structure'),
+			Option( 'output_unbound_pdb', 'Boolean', default = 'false', desc = 'write out an unbound pdb if doing binding score calculations'),
+			Option( 'z_cutoff', 'Real', default = '3.5', lower = '0', desc = 'distance along DNA-axis from designing DNA bases to allow amino acids to design' ),
+			# the following options are not implemented yet
+			Option( 'protein_scan', 'String', default = 'ACDEFGHIKLMNPQRSTVWY', desc = 'single-residue scanning of protein residue types for binding and specificity scores'),
+			Option( 'checkpoint', 'String', default = '', desc = 'write/read checkpoint files for higher-level protocols that proceed linearly for long periods of time.  Provide a checkpoint filename after this option.'),
+			Option( 'minimize', 'Boolean', default = 'false', desc = 'Perform minimization in DNA design mode.'),
+#			Option( 'iterations', 'Integer', default = '1', lower = '1', desc = ''),
+#			Option( 'bb_moves', 'String', default = 'ccd', legal=['ccd','backrub'], desc = ''),
+			Option( 'dna_defs', 'StringVector', default = '""', desc = ''),
+			Option( 'dna_defs_file', 'String', default = '', desc = ''),
+#			Option( 'preminimize_interface', 'Boolean', default = 'false', desc = ''),
+#			Option( 'prepack_interface', 'Boolean', default = 'false', desc = ''),
+#			Option( 'flush', 'Boolean', default = 'false', desc = 'enable some tracer flushes in order to see more frequent output'),
+			Option( 'nopdb', 'Boolean', default = 'false', desc = 'use this flag to disable pdb output' ),
+#			Option( 'nopack', 'Boolean', default = 'false', desc = 'don\'t actually repack structures' ),
+#			Option( 'more_stats', 'Boolean', default = 'false' ),
+#			Option( 'pdb_each_iteration', 'Boolean', default = 'false' ),
+			Option( 'designable_second_shell', 'Boolean', default = 'false' ),
+			Option( 'base_contacts_only', 'Boolean', default = 'false' ),
+			Option( 'probe_specificity',         'Integer',    desc='Rapidly estimate the explicit specificity of DNA designs during fixed-backbone repacking', default='1' ),
+			Option( 'reversion_scan',            'Boolean',    desc='Try to revert spurious mutations after designing', default='false' ),
+			Option( 'binding',                   'Boolean',    desc='compute a protein-DNA binding energy', default='false' ),
+			Option( 'Boltz_temp',                'Real',       desc='temperature for Boltzmann calculations', default='0.6' ),
+			Option( 'repack_only',               'Boolean',    desc='Do not allow protein sequences to mutate arbitrarily', default='false' ),
+			Option( 'sparse_pdb_output',         'Boolean',    desc='Output only coordinates that change relative to the input structure', default='false' ),
+			Option_Group( 'specificity',
+				Option( 'output_structures', 'Boolean', default='false', desc='output structures for each sequence combination'),
+				Option( 'include_dna_potentials', 'Boolean', default='false', desc='include DNA potentials in calculations of DNA sequence specificity'),
+			),
+			Option_Group( 'reversion',
+				Option( 'dscore_cutoff', 'Real', desc='limit for acceptable loss in energy', default='1.5' ),
+				Option( 'dspec_cutoff', 'Real', desc='limit for acceptable loss in specificity', default='-0.05' ),
+			),
+		), # -dna:design
+	), # -dna
+
+	##############################################################################
+	# Docking options ---------------------------------------------------------
+	Option_Group('docking',
+		Option( 'kick_relax', 'Boolean',
+			desc='Add relax step at the end of symmetric docking',
+			default='false'
+			),
+		Option( 'docking', 'Boolean',
+			desc='Docking option group',
+			legal='true', default='true'
+			),
+		Option( 'view', 'Boolean',
+			desc='Decide whether to use the viewer (graphical) or not',
+			default='false'
+			),
+		Option( 'no_filters', 'Boolean',
+			desc='Toggle the use of filters',
+			default='false'
+			),
+		Option( 'design_chains', 'StringVector',
+			short='Which chains do we want to allow to design?',
+			desc='Pass in the one-letter chain identifiers, separated by space, for each chain to design: -design_chains A B',
+			),
+		Option( 'recover_sidechains', 'File',
+			short='take sidechains from this pdb',
+			desc='usually side-chains are taken from the input structure if it is fullatom - this overrides this behavior and takes sidechains from the pdb-file',
+		),
+		Option('partners', 'String',
+			short='defines docking partners by chainID for multichain docking partners',
+			desc='defines docking partners by ChainID, example: docking chains L+H with A is -partners LH_A',
+			default='_'
+			),
+		Option('docking_local_refine', 'Boolean',
+			short='Skip centroid mode',
+			desc='Do a local refinement of the docking position (high resolution)',
+			default='false'
+			),
+		Option('low_res_protocol_only', 'Boolean',
+			short='Only low resolution',
+			desc='Run only low resolution docking, skip high resolution docking',
+			default='false'
+			),
+		Option('randomize1', 'Boolean',
+			short='Randomize the first docking partner.',
+			desc='Randomize the first docking partner.',
+			default='false'
+			),
+		Option('randomize2', 'Boolean',
+			short='Randomize the second docking partner.',
+			desc='Randomize the second docking partner.',
+			default='false'
+			),
+		Option('use_ellipsoidal_randomization', 'Boolean',
+			short='Use ellipsoidal docking randomization.',
+			desc='Modify docking randomization to use ellipsoidal rather than spherical method.',
+			default='false'
+			),
+		Option('spin', 'Boolean',
+			short='Spin a second docking partner.',
+			desc='Spin a second docking partner around axes from center of mass of partner1 to partner2',
+			default='false'
+			),
+		Option('dock_pert', 'RealVector',
+			short='Do a small perturbation with partner two: -dock_pert ANGSTROMS DEGREES.',
+			desc='Do a small perturbation with partner two: -dock_pert ANGSTROMS DEGREES.  Good values for protein docking are 3 A and 8 deg.',
+			n='2'
+# DO NOT supply default values for this option -- reasonable values differ for protein and ligand protocols.
+# Also, default values will cause a perturbation to *always* occur, even with no command line flags -- very surprising.
+# Adding defaults WILL BREAK existing protocols in unexpected ways.
+# Decided by Jeff, Monica, Ian, and Sid in March 2008.
+#
+# Jeff notes that eventually there should be 3 parameters, like Rosetta++:
+# rotation, normal translation, and perpendicular translation.
+			),
+		Option('uniform_trans', 'Real',
+				short='Uniform random repositioning within a sphere of the given radius.'
+			),
+		Option('center_at_interface', 'Boolean',
+			short='Perform all initial perturbations with the center of rotation at the interface between partners',
+			desc='Perform all initial perturbations with the center of rotation at the interface between partners instead of at the center of mass of the oppposite partner.',
+			default='false'
+			),
+		Option('dock_mcm_first_cycles', 'Integer',
+			short='First cycle of DockMCMProtocol.',
+			desc='Perfrom 4 cycles to let the filter decide to continue.',
+			default='4'
+			),
+		Option('dock_mcm_second_cycles', 'Integer',
+			short='Second cycle of DockMCMProtocol.',
+			desc='If the first cycle pass the fliter, continue 45 cycles.',
+			default='45'
+			),
+		Option('docking_centroid_outer_cycles', 'Integer',
+			short='Outer cycles during docking rigid body adaptive moves.',
+			desc='Outer cycles during cking rigid body adaptive moves.',
+			default='10'
+			),
+		Option('docking_centroid_inner_cycles', 'Integer',
+			short='Inner cycles during docking rigid body adaptive moves.',
+			desc='Inner cycles during docking rigid body adaptive moves.',
+			default='50'
+			),
+		##Option('dock_mcm', 'Boolean',
+		##	short='Do a monte-carlo minimize search.',
+		##	desc='Do a monte-carlo minimize search.',
+		##	default='true'
+		##),
+		Option('dock_min', 'Boolean',
+			short='Minimize the final fullatom structure.',
+			desc='Minimize the final fullatom structure.',
+			default='false'
+			),
+		Option('flexible_bb_docking', 'String',
+			short='How to do flexible backbone docking, if at all.',
+			desc='How to do flexible backbone docking, if at all. Choices include fixedbb, ccd, alc, and backrub.',
+			default='fixedbb'
+			),
+		Option('flexible_bb_docking_interface_dist', 'Real',
+			short='Distance between chains required to define a residue as having flexible backbone (ie. loop).',
+			desc='Distance between chains required to define a residue as having flexible backbone (ie. loop).',
+			default='10.0'
+			),
+		Option('ensemble1', 'String',
+			short='denotes partner1 as an ensemble',
+			desc='turns on ensemble mode for partner 1.  String is multi-model pdb file',
+			default=''
+			),
+		Option('ensemble2', 'String',
+			short='denotes partner2 as an ensemble',
+			desc='turns on ensemble mode for partner 2.  String is multi-model pdb file',
+			default=''
+			),
+		Option('dock_mcm_trans_magnitude', 'Real',
+			short='The magnitude of the translational perturbation during mcm in docking.',
+			desc='The magnitude of the translational perturbation during mcm in docking.',
+			default='0.1'
+			),
+		Option('dock_mcm_rot_magnitude', 'Real',
+			short='The magnitude of the rotational perturbation during mcm in docking.',
+			desc='The magnitude of the rotational perturbation during mcm in docking.',
+			default='5.0'
+			),
+		Option('minimization_threshold', 'Real',
+			short='Threhold for Rosetta to decide whether to minimize jump after a rigid_pert',
+			desc='Threhold for Rosetta to decide whether to minimize jump after a rigid_pert',
+			default='15'
+			),
+		Option('temperature', 'Real',
+			short='Temperature setting for the mc object during rigid-body docking',
+			desc='Temperature setting for the mc object during rigid-body docking',
+			default='0.8'
+			),
+		Option('repack_period', 'Integer',
+			short='full repack period during dockingMCM',
+			desc='full repack period during dockingMCM',
+			default='8'
+			),
+		Option('extra_rottrial', 'Boolean',
+			short='extra rotamer trial after minimization',
+			desc='extra rotamer trial after minimization',
+			default='false'
+			),
+		Option('dock_rtmin', 'Boolean',
+			short='does rotamer trials with minimization, RTMIN',
+			desc='does rotamer trials with minimization, RTMIN',
+			default='false'
+			),
+		Option('sc_min', 'Boolean',
+			short='does sidechain minimization of interface residues',
+			desc='does sidechain minimization of interface residues',
+			default='false'
+			),
+		Option('norepack1', 'Boolean',
+			short='Do not repack the side-chains of partner 1.',
+			desc='Do not repack the side-chains of partner 1.',
+			default='false'
+			),
+		Option('norepack2', 'Boolean',
+			short='Do not repack the side-chains of partner 2.',
+			desc='Do not repack the side-chains of partner 2.',
+			default='false'
+			),
+		Option('bb_min_res', 'IntegerVector',
+			short='Minimize backbone at these positions.',
+			desc='Minimize backbone at these positions.'
+			),
+		Option('sc_min_res', 'IntegerVector',
+			short='Minimize backbone at these positions.',
+			desc='Minimize backbone at these positions.'
+			),
+		Option('dock_ppk', 'Boolean',
+			short='docking prepack mode',
+			desc='docking prepack mode',
+			default='false'
+			),
+		Option('max_repeats', 'Integer',
+			short='how many repeats to use',
+			desc='If a decoy does not pass the low- and high-resolution filters, how many attempts to make before failur',
+			default='1000'
+			),
+		Option('dock_lowres_filter', 'RealVector',
+			short='manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>',
+			desc='manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>. Default values for protein docking are 10.0 and 1.0'
+			),
+		Option( 'multibody', 'IntegerVector', desc="List of jumps allowed to move during docking" ),
+
+		Option('ignore_default_docking_task', 'Boolean',
+			short='Ignore the DockingTask',
+			desc='Allows the user to define another task to give to Docking and will ignore the default DockingTask.  Task will default to designing everything if no other TaskFactory is given to docking.',
+			default='false'
+			),
+
+		################ patches for explicit scoring - NGS
+		Option( 'low_patch', 'String',
+			desc="Name of weights patch file (without extension .wts) to use during rigid body "),
+		Option( 'high_patch', 'String',
+			desc="Name of weights patch file (without extension .wts) to use during docking"),
+		Option( 'high_min_patch', 'String',
+			desc="Name of weights patch file (without extension .wts) to use during "),
+		Option( 'pack_patch', 'String',
+			desc="Name of weights patch file (without extension .wts) to use during packing"),
+		Option('use_legacy_protocol', 'Boolean',
+			short='Use the legacy high resolution docking algorithm.',
+			desc='Use the legacy high resolution docking algorithm for output compatibility.',
+			default='false'
+			),
+		Option('docklowres_trans_magnitude', 'Real',
+			short='The magnitude of the translational perturbation during lowres in docking.',
+			desc='The magnitude of the translational perturbation during lowres in docking.',
+			default='0.7'
+			),
+		Option('docklowres_rot_magnitude', 'Real',
+			short='The magnitude of the rotational perturbation during lowres in docking.',
+			desc='The magnitude of the rotational perturbation during lowres in docking.',
+			default='5.0'
+			),
+
+		###################################################################################
+		# ligand options ( part of docking )--------------------------------------
+		Option_Group( 'ligand',
+			Option( 'ligand', 'Boolean', desc="docking:ligand option group", legal='true', default='true' ),
+			Option( 'protocol', 'String', desc="Which protocol to run?", default='abbreviated' ),
+			Option( 'soft_rep', 'Boolean', desc="Use soft repulsive potential?", default='false' ),
+			Option( 'tweak_sxfn', 'Boolean', desc="Apply default modifications to the score function?", default='true' ),
+			Option( 'old_estat', 'Boolean', desc="Emulate Rosetta++ electrostatics? (higher weight, ignore protein-protein)", default='false' ),
+			Option( 'random_conformer', 'Boolean', desc="Start from a random ligand rotamer chosen from the library", default='false' ),
+			Option( 'improve_orientation', 'Integer', desc="Do N cycles of randomization to minimize clashes with backbone" ),
+			Option( 'mutate_same_name3', 'Boolean', desc="Allow ligand to 'design' to residue types with same name3?  Typically used for protonation states / tautomers.", default='false' ),
+			Option( 'subset_to_keep', 'Real', desc="When selecting a subset of ligand poses, what fraction (number if > 1.0) to keep?", default='0.05' ),
+			Option( 'min_rms', 'Real', desc="When selecting a subset of ligand poses, all must differ by at least this amount.", default='0.8' ),
+			Option( 'max_poses', 'Integer', desc="When selecting a subset of ligand poses, select as most this many.", default='50' ),
+			Option( 'minimize_ligand', 'Boolean', desc="Allow ligand torsions to minimize?", default='false' ),
+			Option( 'harmonic_torsions', 'Real', desc="Minimize with harmonic restraints with specified stddev (in degrees)", default='10.0' ),
+			Option( 'use_ambig_constraints', 'Boolean', desc="Use ambiguous constraints to restrain torsions instead of adding and removing constraints", default='false' ),
+			Option( 'shear_moves', 'Integer', desc="Do N pseudo-shear moves on ligand torsions per MCM cycle", default='0' ),
+			Option( 'minimize_backbone', 'Boolean', desc="Allow protein backbone to minimize?  Restrained except near ligand.", default='false' ),
+			Option( 'harmonic_Calphas', 'Real', desc="Minimize with harmonic restraints with specified stddev (in Angstroms)", default='0.2' ),
+			Option( 'tether_ligand', 'Real', desc="Restrain ligand to starting point with specified stddev (in Angstroms)" ),
+			Option( 'start_from', 'RealVector', desc="One or more XYZ locations to choose for the ligand:  -start_from X1 Y1 Z1  -start_from X2 Y2 Z2  ..." ),
+			Option('option_file', 'String', desc="Name of Ligand Option File for use with multi_ligand_dock application"),
+#			Option('rescore', 'Boolean', desc="No docking (debug/benchmark mode)", default='false'),
+			Option_Group( 'grid',
+				Option( 'grid', 'Boolean', desc="docking:ligand:grid option group", legal='true', default='true' ),
+				Option( 'grid_kin', 'File', desc="Write kinemage version of generated grid to named file" ),
+				Option( 'grid_map', 'File', desc="Write grid to named file as electron density in BRIX (aka `O'-map) format" ),
+			), # -docking:ligand:grid
+		), # -docking:ligand
+#		Option_Group( 'symmetry',
+#			Option( 'minimize_backbone', 'Boolean', desc="Allow protein backbone to minimize? ", default='false' ),
+#			Option( 'minimize_sidechains', 'Boolean', desc="Allow protein sidechains to minimize? ", default='false' ),
+#		), # -docking:symmetry
+	), # -docking
+
+	##domainassembly
+	Option_Group( 'DomainAssembly',
+		Option( 'da_setup', 'Boolean', desc='run DomainAssembly setup routine', legal=['true','false'], default='false'),
+		Option( 'da_setup_option_file','File', desc='input list of pdbs and linker sequences', default='--' ),
+		Option( 'da_setup_output_pdb','File',desc='PDB file output by DomainAssemblySetup',default='--' ),
+		Option( 'da_linker_file','File',desc='input file with linker definitions',default='--' ),
+		Option( 'da_require_buried','File',desc='Input file containing residues to be buried in the domain interface',default='--'),
+		Option( 'da_start_pdb','File',desc='input pdb for linker optimization',default='--' ),
+		Option( 'run_fullatom','Boolean', desc='Run fullatom stage of the protocol', legal=['true','false'], default='false'),
+		Option( 'run_centroid','Boolean', desc='Run centroid stage of the protocol', legal=['true','false'], default='false'),
+		Option( 'run_centroid_abinitio','Boolean', desc='Run centroid abinitio stage of the protocol', legal=['true','false'], default='true'),
+		Option( 'da_nruns','Integer', desc='number of runs', default='1' ),
+		Option( 'da_start_pdb_num','Integer', desc='starting number for output pdb files', default='1' ),
+		Option( 'da_linker_file_rna','File', desc='input file with moveable RNA definitions', default='--' ),
+		Option( 'residues_repack_only','String', desc='Residues not to be redesigned under any circumstances'),
+		Option( 'da_eval_pose_map','File', desc='input file that maps pose coordinates to structurally related positions of native pose'),
+	), # -DomainAssembly
+
+	Option_Group( 'edensity',
+		Option( 'debug', 'Boolean', default = 'false'),
+		Option( 'mapfile', 'String' ),
+		Option( 'mapreso', 'Real', default = '0.0'),
+		Option( 'grid_spacing', 'Real', default = '0.0'),
+		Option( 'centroid_density_mass', 'Real', default = '0.0'),
+		Option( 'sliding_window', 'Integer', default = '1'),
+		Option( 'cryoem_scatterers', 'Boolean', default = 'false'),
+		Option( 'force_apix', 'Real', default = '0.0', desc='force pixel spacing to take a particular value'),
+		Option( 'fastdens_wt', 'Real', default = '0.0', desc='wt of fast edens score'),
+		Option( 'fastdens_params', 'RealVector',  desc='parameters for fastdens scoring'),
+		Option( 'legacy_fastdens_score', 'Boolean', default = 'false', desc='use the pre-June 2013 normalization for scoring'),
+		Option( 'sliding_window_wt', 'Real', default = '0.0', desc='wt of edens sliding-window score'),
+		Option( 'score_sliding_window_context', 'Boolean', default = 'false', desc='when using sl. win. density fit, include neighbor atoms (slows trajectory)'),
+		Option( 'whole_structure_ca_wt', 'Real', default = '0.0', desc='wt of edens centroid (CA-only) scoring'),
+		Option( 'whole_structure_allatom_wt', 'Real', default = '0.0', desc='wt of edens centroid (allatom) scoring'),
+#		Option( 'no_edens_in_minimizer', 'Boolean', default = 'false', desc='exclude density score from minimizer'),
+		Option( 'debug_derivatives', 'Boolean', default = 'false', desc='calculate numeric derivatives for density terms and compare with analytical'),
+		Option( 'realign', 'String' , default = 'no' , legal=['no', 'min', 'random', 'membrane', 'membrane_min'] , desc='how to initially align the pose to density'),
+		Option( 'membrane_axis', 'String' , default = 'Z' , desc='the membrane normal axis'),
+		Option( 'atom_mask', 'Real', default = '3.2', desc='override default (=3.2A) atom mask radius to this value (hi-res scoring)'),
+		Option( 'atom_mask_min', 'Real', default = '2.0', desc='override the 3 sigma minimum value which takes precedence over atom_mask value (hi-res scoring)'),
+		Option( 'ca_mask', 'Real', default = '6.0', desc='override default (=6A) CA mask radius to this value (low-res scoring)'),
+		Option( 'score_symm_complex', 'Boolean', default = 'false', desc='If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer'),
+		Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default same as mainchain density)'),
+		Option( 'n_kbins', 'Integer', default = '1', desc='Number of B-factor bins'),
+#		Option( 'render_sigma', 'Real', default = '2', desc='initially render at this sigma level (extras=graphics build only)'),
+		Option( 'unmask_bb', 'Boolean', default = 'false', desc='Only include sidechain atoms in atom mask'),
+	), # -edensity
+
+	Option_Group( 'els',
+		Option( 'master_wu_per_send', 'Integer', default='1' , desc = 'How many wu to send in one isend from master.  Set to ~ (WU generated: slaves per master) ratio' ),
+		Option( 'vars', 'String', default='' , desc = 'Any variables you want to pass to lua, semi colon separated, in the form: myvar=5' ),
+		Option( 'script', 'File', default='' , desc = 'Path to the ElScript' ),
+		Option( 'num_traj', 'Integer', desc = 'Number of trajectories' ),
+		Option( 'traj_per_master', 'Integer', desc = 'Number of trajectories per master node' ),
+		Option( 'shortest_wu', 'Integer', default='60', desc = 'Length of time of shortest wu in seconds, used for determining status request resend period.  Err on the side of smaller times' ),
+		Option( 'pool', 'Boolean', default='false', desc = 'Using pool node?' ),
+		Option( 'singlenode', 'Boolean', default='false', desc = 'Using singlenode role with mpi?' ),
+	), # -els
+
+	## options for enzyme design
+	Option_Group('enzdes',
+		Option( 'enzdes', 'Boolean', desc="enzdes option group", legal='true', default='true' ),
+		Option( 'checkpoint', 'String', default = '', desc = 'write/read checkpoint files to the desired filename.'),
+		Option('enz_score', 'Boolean', default = 'false',
+			desc="prevent repacking in enzyme design calculation"),
+		Option('enz_repack', 'Boolean', default = 'false',
+			desc="prevent redesign in enzyme design calculation"),
+		Option('cst_opt', 'Boolean', default = 'false',
+			desc="pre design constraint minimization"),
+		Option('cst_predock', 'Boolean', default = 'false',
+			desc="docks a ligand relative the catalytic residue"),
+		Option('trans_magnitude','Real',default = '0.1',
+			desc="rigid body translation in Angstrom"),
+		Option('rot_magnitude','Real',default = '2',
+			desc="rigid body rotation in deg"),
+		Option('dock_trials','Real',default = '100',
+			desc="number of docking trials"),
+		Option('cst_min', 'Boolean', default = 'false',
+			desc="after design minimization, constraints turned off"),
+		Option('cst_design', 'Boolean', default = 'false',
+			desc="invokes actual design"),
+		Option('design_min_cycles', 'Integer', default = '1',
+			desc="determines how many iterations of designing/minimizing are done during a design run"),
+		Option('make_consensus_mutations', 'Boolean', default = 'false',
+			desc="Invokes mutations back to sequence profile consensus throughout whole protein in EnzdesFixBB protocol. sequence profile file must be specified through -in:pssm option."),
+		Option('bb_min','Boolean', default = 'false',
+			desc="allows backbone of active site residues to move during cst_opt and cst_min. In the cst_opt stage, residue Cas will be constrained to their original positions."),
+		Option('bb_min_allowed_dev','Real', default = '0.5',
+			desc="distance by which Cas are allowed to move during backbone minimization before a penalty is assigned."),
+		Option('loop_bb_min_allowed_dev','Real', default = '0.5',
+			desc="distance by which Cas are allowed to move during backbone minimization before a penalty is assigned. Applied only for loops as determined by DSSP."),
+		Option('minimize_ligand_torsions','Real', default = '10.0',
+			desc="degrees by which ligand torsions are allowed to rotate before a penalty is assigned. Only those torsions which have diversity in the conformational ensemble are allowed this std dev. rest are constrained to 0.1"),
+		Option('minimize_all_ligand_torsions','Real', default = '10.0',
+			desc="allows constrained minimization of all ligand torsions using stddev."),
+		Option('chi_min','Boolean', default = 'false',
+			desc="allows chi values of active site residues to move during cst_opt and cst_min."),
+		Option('min_all_jumps','Boolean', default = 'false',
+			desc="allows all jumps in the pose to minimize  during cst_opt and cst_min. By default only ligand-associated jumps minimize"),
+		Option('cst_dock', 'Boolean', default = 'false',
+			desc="ligand docking after design. By default, constraints (except covalent connections will be turned off for this stage."),
+		Option('run_ligand_motifs', 'Boolean', default = 'false',
+			desc="run ligand motif search and add motif rotamers to packer"),
+		Option('enz_debug', 'Boolean', default = 'false',
+			desc="invokes various debug routines around the enzdes code"),
+		Option('cstfile','File', default = 'constraints.cst',
+			desc="file that contains all necessary constraints for an enzyme design calculation"),
+		Option('enz_loops_file','File', default = 'eloops.els',
+			desc="file that contains definitions of loop regions"),
+		Option('flexbb_protocol', 'Boolean', default = 'false',
+			desc="triggers flexible backbone design"),
+		Option('remodel_protocol', 'Boolean', default = 'false',
+			desc="triggers remodel protocol design"),
+		Option('kic_loop_sampling', 'Boolean', default = 'false', desc="Generate alternate loop conformations using KIC loop closure instead of backrub"),
+		Option('dump_loop_samples', 'String', default = "no", legal=["no","yes","quit_afterwards"], desc="yes/no? Create loop pdb files named loopreg_[regionid]_[whichsample].pdb for the chosen loop samples; if 'quit_afterwards' is given, then the program exits after all loops have been generated"),
+		Option('fix_catalytic_aa', 'Boolean', default = 'false',
+			desc="preventing catalytic aa from repacking"),
+		Option('additional_packing_ligand_rb_confs', 'Integer', default = '0',
+			desc="Ligand Rotamers will be built at additional random rigid body positions during packing"),
+		Option( 'ex_catalytic_rot', 'Integer', legal=[ '0', '1', '2', '3', '4', '5', '6', '7' ], default='1', desc="convenience option to use higher number of rotamers for catalytic residues. The chosen level will be applied to all chis of every catalytic residue." ),
+		Option('single_loop_ensemble_size', 'Integer', default = '100',
+			desc="number of conformations generated for each of the independent loops in a flexbb calculation"),
+		Option('loop_generator_trials', 'Integer', default = '200',
+			desc="number of trials of that the respective loop generator(backrub/kinematic kic) does in enzdes flexbb"),
+		Option('no_catres_min_in_loopgen', 'Boolean', default = 'false',
+			desc="prevents minimization of catalytic residues when generating loop ensembles"),
+		Option('mc_kt_low', 'Real', default = '0.6',
+			desc="low monte carlo limit for ensemble generation using backrub"),
+		Option('mc_kt_high', 'Real', default = '0.9',
+			desc="high monte carlo limit for ensemble generation using backrub"),
+		Option('min_cacb_deviation', 'Real', default = '0.3',
+			desc="Fragment uniqueness filter. On by default.  Minimum CA/CB average deviation that at least one residue must have from all other already-included fragments for a new fragment to be included"),
+		Option('max_bb_deviation', 'Real', default = '0.1',
+			desc="Fragment smoothness filter.  Off by default. Upper limit on the backbone average deviation a new fragment may have to its most-similar fragment that has already been included in the fragment set."),
+		Option('max_bb_deviation_from_startstruct', 'Real', default = '1.5',
+			desc="Fragment native-proximity Filter. Always on. Maximum tolerated backbone average deviation from the starting backbone for a fragment that to be included in the fragment set."),
+#		Option('flexbb_outstructs', 'Integer', default = '10',
+#			desc="doesn't do much anymore in the current implementation of the flexbb protocol"),
+		Option('remodel_trials', 'Integer', default = '100',
+			desc="how often each loop is being remodeled in the enzdes_remodel mover"),
+		Option('remodel_secmatch', 'Boolean', default = 'false',
+			desc="if constrained interactions are missing in the pose during remodel, the SecondaryMatcher will be used to try to find them in the remodeled region. very experimental at this point"),
+		Option('dump_inverse_rotamers', 'Boolean', default = 'false',
+			desc="in case of remodel secmatching against inverse rotamers, these rotamers will be dumped before the protocol starts for visual inspection by the user"),
+		Option('remodel_aggressiveness', 'Real', default = '0.1',
+			desc="determines the aggressiveness with which a given loop is remodeled. legal values between 0 and 1, where 1 is aggressive and 0 conservative."),
+		Option('favor_native_res','Real', default = '0.5',
+			desc="a bonus energy assigned to the native res during a design calculation"),
+		Option('detect_design_interface', 'Boolean', default = 'false',
+			desc="automatically detect design/repack region around ligand(s)"),
+		Option('include_catres_in_interface_detection', 'Boolean', default = 'false',
+			desc="if option -detect_design_interface is active, invoking this option causes all residues that are within the specified cuts of any catalytic residue are also set to designing/repacking"),
+		Option('arg_sweep_interface', 'Boolean', default = 'false',
+			desc="Use protein-DNA design-like interface detection, involving generation of arginine rotamers at each position, checking to see if argininte can make interaction with ligand."),
+		Option('arg_sweep_cutoff', 'Real', default = '3.7',
+			desc="Interaction cutoff distance from arginine to ligand when performing arginine sweep interface detection."),
+		Option('cut1','Real', default = '0.0',
+			desc="option to specify redesign cutoff 1 in enzdes calculation"),
+		Option('cut2','Real', default = '0.0',
+			desc="option to specify redesign cutoff 2 in enzdes calculation"),
+		Option('cut3','Real', default = '10.0',
+			desc="option to specify repack cutoff 1 in enzdes calculation"),
+		Option('cut4','Real', default = '10.0',
+			desc="option to specify repack cutoff 2 in enzdes calculation"),
+		Option('lig_packer_weight','Real', default = '1.0',
+			desc="specifies the weights for protein ligand interaction during packing (and only packing!! )"),
+		Option('no_unconstrained_repack', 'Boolean', default = 'false',
+			desc="no unconstrained repacking after the design stage"),
+		Option('secmatch_Ecutoff', 'Real', default = '1.0',
+			desc="the maximum constraint energy at which a residue is accepted in the secondary matcher"),
+		Option('change_lig','File', default = 'ligchange_file.txt',
+			desc="Can be used with the secondary matching protocol if different incarnations of the ligand are used for design and primary matching. The file needs to contain information on what atoms to superimpose."),
+		Option('process_ligrot_separately','String', default = 'default_lig',
+			desc="In the EnzdesFixBB protocol, causes the protocol to be executed separately for all non_bb clashing ligand rotamers."),
+			Option('start_from_random_rb_conf','Boolean', default = 'false',
+			desc="In the EnzdesFixBB protocol, if there are additional ligand rigid body conformations available (from a multimodel pdb), a random one of these will be the starting point for the protocol."),
+		Option('bb_bump_cutoff','Real', default = '2.0',
+			desc="option to specify the maximum allowed backbone energie when replacing a new residue type"),
+		Option('sc_sc_bump_cutoff','Real', default = '2.0',
+			desc="option to specify the maximum allowed energy between two newly placed sidechains in the secondary matcher"),
+		Option('no_packstat_calculation','Boolean', default = 'false',
+			desc="will determine whether the computationally intensive packstat calculation will be done at the end of a run"),
+		Option('compare_native','String', default = './',
+			desc="triggers comparison of every designed structure to its respective native pdb. the value of the option needs to be a directory path that contains all the native pdb files"),
+		Option('final_repack_without_ligand','Boolean', default = 'false',
+			desc="if a scorefile is requested, this option triggers every structure to be repacked without the ligand. the resulting structure will be output in a multimodel pdb, and differences in energy and rmsd are added to the scorefile."),
+		Option('dump_final_repack_without_ligand_pdb','Boolean', default = 'false',
+			desc="If option -final_repack_without_ligand is active, this option will cause the repacked structure to be separately dumped."),
+		Option('parser_read_cloud_pdb','Boolean', default = 'false',
+			desc="read cloud format PDB for enzdes in rosetta scripts"),
+	), # -enzdes
+
+	Option_Group( 'fast_loops',
+			Option( 'window_accept_ratio',       'Real',   desc='windows with more than x percent of good loops in fast-loop sampling are used for scored-sampling',  default='0.01' ),
+			Option( 'nr_scored_sampling_passes', 'Integer',desc='good windows go into scored-sampling N times',  default='4'  ),
+			Option( 'nr_scored_fragments',       'Integer',desc='scored loops sampled per good window each pass',  default='20'  ),
+			Option( 'min_breakout_good_loops',   'Integer',desc='stop doing scored sampling if N or more good loops have been found',  default='5'  ),
+			Option( 'min_breakout_fast_loops',   'Integer',desc='stop doing fast sampling if N or more good loops have been found',  default='80'  ),
+			Option( 'min_good_loops',            'Integer',desc='treat as failure if less good-loops than',  default='0'  ),
+			Option( 'min_fast_loops',            'Integer',desc='treat as failure if less fast-loops than',  default='3'  ),
+			Option( 'vdw_delta',                 'Real',   desc='accept as good loop if vdw-score < vdw-score-start+vdw-delta',  default='0.5' ),
+			Option( 'give_up',                   'Integer',desc='if N scored_frag_attemps didnt give any good loop -- jump out',  default='1000' ),
+			Option( 'chainbreak_max',            'Real',   desc='accept only loops that have a maximum chainbreak score of... (sum of linear_chainbreak / chainbreak and overlap_chainbreak', default='0.2'),
+			Option( 'fragsample_score',          'File',   desc='Scorefunction used durgin scored-frag sampling', default='loop_fragsample.wts' ),
+			Option( 'fragsample_patch',          'File',   desc='Patch weights for scorefunction used during scored-frag sampling' ),
+			Option( 'overwrite_filter_scorefxn', 'File',   desc='force Scorefunction to be used during filter stage (instead last score of sampling protocol)' ),
+			Option( 'patch_filter_scorefxn', 'File', desc='apply patch to Scorefunction used during filter stage' ),
+			Option( 'filter_cst_file', 'File', desc='use these constraints to filter loops --- additional to whatever is in pose already' ),
+			Option( 'filter_cst_weight', 'Real', desc='weight for constraints versus normal score (might contain additional constraints)', default='1.0' ),
+			Option( 'fast_relax_sequence_file', 'File', desc='use this FastRelax protocol for loop-selection'),
+	), # -fast_loops
+
+	Option_Group('fingerprint',
+#		Option( 'print_eggshell', 'Boolean', desc="print the eggshell points into a PDB file",default='false' ),
+		Option( 'atom_radius_scale', 'Real', default='0.9', desc='Scale to shrink the radius of atom'),
+		Option( 'atom_radius_buffer', 'Real', default='1.0', desc='Value to subtract from all atomic radii, to match PocketGrid buffer thickness'),
+#		Option( 'packing_weight', 'Real', default='1', desc='Add weight to rho large deviation'),
+#		Option( 'dist_cut_off', 'Real', default='5', desc='set cut_off distance to add packing weight'),
+		Option( 'include_hydrogens', 'Boolean', desc="include hydrogen atoms for fingerprint",default='false' ),
+#		Option( 'use_DARC_gpu', 'Boolean', desc="use GPU when computing DARC score",default='false' ),
+		Option( 'square_score', 'Boolean', desc="square the terms in DARC scoring function",default='false' ),
+		Option( 'set_origin', 'Integer',default='0',desc='option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center'),
+		Option( 'origin_res_num', 'Integer', default='0', desc='residue to be used as origin'),
+	), # -fingerprint
+
+#	Option_Group( 'fldsgn',
+#		Option( 'view', 'Boolean', desc='viewing pose during protocol'  ),
+#		Option( 'blueprint', 'FileVector', default=['blueprint'], desc="blueprint filename(s). "),
+#		Option( 'dr_cycles', 'Integer', desc="design-refine cycles", default='3' ),
+#		Option( 'centroid_sfx', 'String', desc="filename of the centroid score function to use," ),
+#		Option( 'centroid_sfx_patch', 'String', desc="filename of the centroid score function patch to use," ),
+#		Option( 'fullatom_sfx', 'String', desc="filename of the full-atom score function to use" ),
+#		Option( 'fullatom_sfx_patch', 'String', desc="filename of the full-atom score function patch to use" ),
+#		Option( 'run_flxbb', 'Integer', desc='run flxbb at the given stage'  ),
+#	), # -fldsgn
+
+	Option_Group( 'flexpack',
+		Option_Group( 'annealer',
+			Option( 'inner_iteration_scale', 'Real', desc="Scale up or down the number of inner iterations in the flexpack annealer"),
+			Option( 'outer_iteration_scale', 'Real', desc="Scale up or down the number of outer iterations in the flexpack annealer"),
+			Option( 'fixbb_substitutions_scale', 'Real', desc="Scale up or down the number of fixed-backbone rotamer substitutions in the flexpack annealer"),
+			Option( 'pure_movebb_substitutions_scale', 'Real', desc="Scale up or down the number of backbone moves"),
+			Option( 'rotsub_movebb_substitutions_scale', 'Real', desc="Scale up or down the number of rotamer substitions with backbone moves"),
+		), # -flexpack:annealer
+	), # -flexpack
 
 	# FlexPepDocking Options -----------------------------------------------------------
 	Option_Group( 'flexPepDocking',
@@ -5631,8 +4386,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc="Defines the perturbations size of small/sheer moves",
 			lower='0.0', default = '6.0' ),
 		Option( 'min_receptor_bb', 'Boolean',
-						desc="Whether to include protein backbone in minimization",
-						default='false' ),
+			desc="Whether to include protein backbone in minimization",
+			default='false' ),
 		Option( 'random_trans_start','Real',
 			desc="Size of random perturbation of peptide's rigid body translation",
 			lower='0.0', default = '0.0' ),
@@ -5666,30 +4421,1772 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			lower='0', default = '0' ),
 		Option('frag5', 'String', desc="5-mer fragments for ab-initio flexPepDock" ),
 		Option('frag9_weight', 'Real',
-					 desc='Relative weight of 9-mers in ab-initio',
-					 lower='0', default='0.1'),
+			desc='Relative weight of 9-mers in ab-initio',
+			lower='0', default='0.1'),
 		Option('frag5_weight', 'Real',
-					 desc='relative weight of 5-mers in ab-initio',
-					 lower='0', default='0.25'),
+			desc='relative weight of 5-mers in ab-initio',
+			lower='0', default='0.25'),
 		Option('frag3_weight', 'Real',
-					 desc='Relative weight of 3-mers in ab-initio',
-					 lower='0', default='1.0'),
+			desc='Relative weight of 3-mers in ab-initio',
+			lower='0', default='1.0'),
 		Option('pSer2Asp_centroid', 'Boolean',
-					 desc='convert pSer to Asp during centroid mode',
-					 default='false'),
+			desc='convert pSer to Asp during centroid mode',
+			default='false'),
 		Option('pSer2Glu_centroid', 'Boolean',
-					 desc='convert pSer to Glu during centroid mode',
-					 default='false'),
+			desc='convert pSer to Glu during centroid mode',
+			default='false'),
 		Option('dumpPDB_abinitio', 'Boolean',
-					 desc='dump PDB during Monte-Carlo ab-initio',
-					 default='false'),
+			desc='dump PDB during Monte-Carlo ab-initio',
+			default='false'),
 		Option('dumpPDB_lowres', 'Boolean',
-					 desc='dump PDB during Monte-Carlo low-res',
-					 default='false'),
+			desc='dump PDB during Monte-Carlo low-res',
+			default='false'),
 		Option('dumpPDB_hires', 'Boolean',
-					 desc='dump PDB during Monte-Carlo hi-res',
-					 default='false'),
-	), # flexpepdocking
+			desc='dump PDB during Monte-Carlo hi-res',
+			default='false'),
+	), # -flexPepDocking
+
+	#################################FloppyTail####################################################
+	Option_Group( 'FloppyTail',
+		Option( 'flexible_start_resnum', 'Integer', desc='starting residue for the flexible region, using PDB numbering', default='180'),
+		Option( 'flexible_stop_resnum', 'Integer', desc='stop residue for the flexible region, using PDB numbering.  If unspecified, it assumes the end of the pose.', default='0'),
+		Option( 'flexible_chain', 'String', desc='chain ID for flexible region', default='C'),
+		Option( 'shear_on', 'Real', desc='fraction of perturb moves when shear turns on (0.5 = halfway through)', default='1.0/3.0'),
+		Option( 'pair_off', 'Boolean', desc='turn off Epair electrostatics term.  Used once for a simple side experiment, not meant for general use.', default='false'),
+		Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running publication demo.', default='false'),
+		Option( 'C_root', 'Boolean', desc='Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.', default='false'),
+		Option( 'force_linear_fold_tree', 'Boolean', desc='Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics', default='false'),
+		Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
+		Option( 'cen_weights', 'String', desc = 'Use a different/custom scorefunction for centroid step'),
+		Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
+		Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
+		Option( 'perturb_temp', 'Real', desc='perturbation phase temperature for monte carlo', default = '0.8' ),
+		Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '5' ),
+		Option( 'refine_temp', 'Real', desc='refinement phase temperature for monte carlo', default = '0.8' ),
+		Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles', lower = '2', default = '20' ),
+		Option_Group( 'short_tail',
+			Option( 'short_tail_fraction', 'Real', desc='what fraction of the flexible segment is used in the short-tail section of refinement (not compatible with non-terminal flexible regions)', default='1.0'),
+			Option( 'short_tail_off', 'Real', desc='fraction of refine cycles where movemap reverts to full tail (0.5 = halfway through)', default='0.0'),
+		),
+	), # -FloppyTail
+
+	Option_Group( 'flxbb',
+		Option( 'view',              'Boolean', desc='viewing pose during protocol'  ),
+		Option( 'ncycle',            'Integer', desc='number of cycles of design and relax' ),
+		Option( 'constraints_sheet', 'Real', desc='weight constraints between Ca atoms in beta sheet'  ),
+		Option( 'constraints_sheet_include_cacb_pseudotorsion', 'Boolean', desc ="puts an additional constraint on two residues paired in a beta-sheet to ensure their CA-CB vectors are pointing the same way.", default = 'false' ),
+		Option( 'constraints_NtoC', 'Real', desc='weight constraints between N- and C- terminal CA atoms'  ),
+		Option( 'filter_trial', 'Integer', desc="number of filtering trial " ),
+		Option( 'filter_type', 'String', desc="filter type name, currently only packstat is available" ),
+#		Option( 'exclude_Met', 'Boolean', desc="do not use Met for design" ),
+#		Option( 'exclude_Ala', 'Boolean', desc="do not use Ala for design" ),
+		Option( 'blueprint',         'File',  desc='blueprint file '  ),
+		Option( 'movemap_from_blueprint', 'Boolean', desc='viewing pose during protocol'  ),
+		Option_Group( 'layer',
+			Option( 'layer', 'String',
+				desc='design core, boundary, and surface with different aa types', default='normal'
+				),
+#			Option( 'pore_radius', 'Real',
+#				desc="sphere radius for sasa calculation",
+#				),
+#			Option( 'burial', 'Real',
+#				desc="surface area when residues regarded as core ",
+#				),
+#			Option( 'surface', 'Real',
+#				desc="surface area when residues regarded as surface ",
+#				),
+		), # -flxbb:layer
+	), # -flxbb
+
+	Option_Group( 'fold_and_dock',
+		Option( 'move_anchor_points','Boolean', desc="move the anchor points that define symmetric coordinate system during symmetry fragment insertion", default='false'),
+		Option( 'set_anchor_at_closest_point','Boolean', desc="set the anchor points that define symmetric coordinate system to the nearest point between two consecutive chains during fragment insertion", default='false'),
+		Option( 'rotate_anchor_to_x','Boolean', desc="rotate the anchor residue to the x-axis before applying rigid body transformations", default='true'),
+		Option ('trans_mag_smooth', 'Real', desc = 'translation perturbation size for smooth refinement', default='0.1'),
+		Option ('rot_mag_smooth', 'Real', desc = 'rotational perturbation size for smooth refinement', default='1.0'),
+		Option ('rb_rot_magnitude', 'Real', desc = 'rotational perturbation size for rigid body pertubations', default='8.0'),
+		Option ('rb_trans_magnitude', 'Real', desc = 'translational perturbation size rigid body pertubations', default='3.0'),
+		Option ('rigid_body_cycles', 'Integer', desc ='number of rigid bosy cycles during fold and dock fragment insertion', default='50' ),
+		Option ('move_anchor_frequency', 'Real', desc = 'Frequency of slide-anchor moves', default='1.0'),
+		Option ('rigid_body_frequency', 'Real', desc = 'The fraction of times rigid body cycles are applied during fragment assembly moves', default='0.2'),
+		Option( 'rigid_body_disable_mc','Boolean', desc="Dissallow moves to be accepted locally by MC criteria within the rigid body mover ", default='false'),
+		Option ('slide_contact_frequency', 'Real', desc = 'The fraction of times subunits are slided together during fragment assembly moves', default='0.1'),
+	), # -fold_and_dock
+
+	Option_Group( 'fold_cst',
+		Option( 'constraint_skip_rate',    'Real',    desc='if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column',     default='0' ),
+		Option( 'violation_skip_basis',    'Integer', desc='local skip_rate is viol/base', default='100' ),
+		Option( 'violation_skip_ignore',   'Integer', desc='no skip for numbers below this level', default='10' ),
+		Option( 'keep_skipped_csts', 'Boolean', desc='final score only with active constraints', default='false'),
+		Option( 'no_minimize',                         'Boolean',      desc='No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure.',     default='false' ),
+		Option( 'force_minimize',                      'Boolean',      desc='Minimization moves in fold_constraints protocol also if no constraints present',     default='false' ),
+		Option( 'seq_sep_stages',                      'RealVector',   desc='give vector with sequence_separation after stage1, stage3 and stage4',     default='0' ),
+		Option( 'reramp_cst_cycles',                   'Integer',      desc='in stage2 do xxx cycles where atom_pair_constraint is ramped up',     default='0' ),
+		Option( 'reramp_start_cstweight',              'Real',         desc='drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0',     default='0.01' ),
+		Option( 'reramp_iterations',                   'Integer',      desc='do X loops of annealing cycles',     default='1' ),
+		Option( 'skip_on_noviolation_in_stage1',       'Boolean',      desc='if constraints report no violations --- skip cycles',     default='false' ),
+		Option( 'stage1_ramp_cst_cycle_factor',        'Real',         desc='spend x*<standard cycles> on each step of sequence separation',     default='0.25' ),
+		Option( 'stage2_constraint_threshold',         'Real',         desc='stop runs that violate this threshold at end of stage2',     default='0' ),
+		Option( 'ignore_sequence_seperation',          'Boolean',      desc='usually constraints are switched on according to their separation in the fold-tree',     default='false' ),
+		Option( 'no_recover_low_at_constraint_switch', 'Boolean',      desc='dont recover low when max_seq_sep is increased',     default='false' ),
+		Option( 'ramp_coord_cst', 'Boolean', desc='ramp coord csts just like chainbreak-weights during fold-cst', default='false' ),
+	), # -fold_cst
+
+	# fold from loops
+	Option_Group('fold_from_loops',
+		Option ('native_ca_cst', 'Boolean', desc = 'derive constraints from the native topology', default ='false'),
+		Option('swap_loops','File', desc='pdb of the target loops ', default='--'),
+		Option( 'checkpoint', 'String', desc = 'write/read checkpoint files for nstruct. Provide a checkpoint filename after this option.', default=''),
+		Option ('ca_csts_dev', 'Real', desc = 'standard deviation allowed to each constraint', default='0.5'),
+		Option ('add_relax_cycles', 'Integer', desc ='additional relax cycles', default='2' ),
+		Option ('loop_mov_nterm', 'Integer', desc ='Movable region inside the provided loop(nterm)', default='0' ),
+		Option ('loop_mov_cterm', 'Integer', desc ='Moveable region inside the provided loop(cterm)', default='0' ),
+		Option ('ca_rmsd_cutoff', 'Real', desc = 'Filter the decoys to pass the relax-design stage ', default='5.0'),
+		Option ('res_design_bs', 'IntegerVector', desc='enumerate the residues to be designed within the fixed binding site' ),
+		Option ('clear_csts','File', desc='input loops file with ranges free of CA csts', default='--'),
+		Option ('output_centroid','Boolean',desc='output centroid structures befor the design stage', default = 'false'),
+		Option ('add_cst_loop','Boolean',desc='add CA csts of motif to constraint set', default = 'false'),
+	), # -fold_from_loops
+
+## --------------------------  FRAGMENT PICKING --------------
+	Option_Group( 'frags',
+#		Option( 'j', 'Integer', desc='Number of threads to use'),
+		Option( 'filter_JC', 'Boolean',
+			desc='Filter J-coupling values in the dynamic range ', default='false'),
+
+		Option( 'bounded_protocol', 'Boolean',
+			desc = 'makes the picker use bounded protocol to select fragments. This is teh default behavior',
+			default = 'true'
+		),
+		Option( 'keep_all_protocol', 'Boolean',
+			desc = 'makes the picker use keep-all protocol to select fragments. The default is bounded protocol',
+			default = 'false'
+		),
+		Option( 'quota_protocol', 'Boolean',
+			desc = 'quota protocol implies the use of a QuotaCollector and a QuotaSelelctor, no matter what user set up by other flags.',
+			default = 'false'),
+		Option(
+			'nonlocal_pairs', 'Boolean',
+			desc = 'identifies and outputs nonlocal fragment pairs.',
+			default = 'false'
+		),
+		Option(	'fragment_contacts', 'Boolean',
+			desc = 'identifies and outputs fragment contacts.',
+			default = 'false'
+		),
+		Option(	'p_value_selection', 'Boolean',
+			desc = 'the final fragment selection will b based on p-value rather than on a total score for the given fragment',
+			default = 'false'),
+
+		Option(	'n_frags', 'Integer',
+			desc = 'number of fragments per position',
+			default = '200'
+		),
+		Option(	'allowed_pdb', 'File',
+			desc = "provides a text file with allowed PDB chains (five characters per entry, e.g.'4mbA'). Only these PDB chains from Vall will be used to pick fragments",
+		),
+		Option(	'ss_pred', 'StringVector',
+			desc = 'provides one or more files with secondary structure prediction (PsiPred SS2 format) , to be used by secondary structure scoring and quota selector. Each file name must be followed by a string ID.',
+		),
+		Option(	'spine_x', 'File',
+			desc = "provides phi and psi torsion angle predictions and solvent accessibility prediction from Spine-X",
+		),
+		Option(	'depth', 'File',
+			desc = "provides residue depth values from DEPTH",
+		),
+		Option(	'denied_pdb', 'File',
+			desc = "provides a text file with denied PDB chains (five characters per entry, e.g.'4mbA'). This way close homologs may be excluded from fragment picking.",
+		),
+		Option(	'frag_sizes', 'IntegerVector',
+			desc = 'sizes of fragments to pick from the vall',
+			default = ['9','3','1'],
+		),
+		Option( 'write_ca_coordinates','Boolean', desc='Fragment picker will store CA Cartesian coordinates in output fragment files. By default only torsion coordinates are stored.',default='false'),
+		Option( 'write_scores', 'Boolean', desc='Fragment picker will write scores in output fragment files.', default='false' ),
+		Option( 'annotate',  'Boolean',     desc='read the annotation from the rosetta++ fragment file',     default='false' ),
+		Option( 'nr_large_copies',  'Integer',       desc='make N copies for each standard 9mer (or so) fragment',     default='1' ),
+
+		Option( 'n_candidates', 'Integer',
+			desc = 'number of fragment candidates per position; the final fragments will be selected from them',
+			default = '200'
+		),
+		Option( 'write_rama_tables','Boolean', desc='Fragment picker will spit out sequence specific ramachandran score tables for your viewing pleasure. These ramachandran tables are based on the secondary structure predictions fed into RamaScore, and you may occasionally want to look at what the program has defined.',default='false'),
+		Option( 'rama_C', 'Real', desc='Constant in RamaScore equation, command line is for optimization tests', default='0.0'),
+		Option( 'rama_B', 'Real', desc='Constant in RamaScore equation, command line is for optimization tests', default='1.0'),
+		Option( 'sigmoid_cs_A', 'Real', desc='Constant in CSScore equation, command line is for optimization tests', default='2.0'),
+		Option( 'sigmoid_cs_B', 'Real', desc='Constant in CSScore equation, command line is for optimization tests', default='4.0'),
+		Option( 'seqsim_H', 'Real', desc='Secondary structure type prediction multiplier, for use in fragment picking', default='1.0'),
+		Option( 'seqsim_E', 'Real', desc='Secondary structure type prediction multiplier, for use in fragment picking', default='1.0'),
+		Option( 'seqsim_L', 'Real', desc='Secondary structure type prediction multiplier, for use in fragment picking', default='1.0'),
+		Option( 'rama_norm', 'Real', desc='Used to multiply rama table values after normalization, default (0.0) means use raw counts (unnormalized)', default='0.0'),
+		Option( 'describe_fragments','String',desc='Writes scores for all fragments into a file', default=''),
+		Option( 'picking_old_max_score', 'Real', desc='maximal score allowed for fragments picked by the old vall (used by RosettaRemodel).', default='1000000.0'),
+		Option( 'write_sequence_only', 'Boolean', desc='Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score.', default='false'),
+		Option( 'output_silent', 'Boolean', desc='Fragment picker will output fragments into a silent file.', default='false'),
+		Option( 'score_output_silent', 'Boolean', desc='Fragment picker will output fragments into a silent file. Scores of relaxed fragments are added to the silent file.', default='false'),
+
+		Option_Group( 'scoring',
+			Option('config', 'File', desc = 'scoring scheme used for picking fragments', default = '', ),
+			Option('profile_score', 'String', desc = 'scoring scheme used for profile-profile comparison', default = 'L1', ),
+#			Option( 'predicted_secondary', 'FileVector',
+#				desc = 'provides one or more files with secondary structure prediction, to be used by secondary structure scoring and quota selector',
+#				default = '',
+#			),
+		), # -frags:scoring
+
+		Option_Group( 'picking',
+			Option( 'selecting_rule', 'String',
+				desc = 'the way how fragments are selected from candidates, e.g. QuotaSelector of BestTotalScoreSelector',
+				default = 'BestTotalScoreSelector',
+				legal=['QuotaSelector','BestTotalScoreSelector'],
+			),
+			Option( 'selecting_scorefxn', 'String',
+				desc = 'in the case user chose BestTotalScoreSelector to be used, this option provides a custom scoring function to be used at the selection step',
+			),
+			Option( 'quota_config_file', 'File',
+				desc = 'provides a configuration file for quota selector',
+			),
+			Option( 'query_pos','IntegerVector',
+				desc = 'provide sequence position for which fragments will be picked. By default fragments are picked for the whole query sequence',
+			),
+		), # -frags:picking
+
+		Option_Group( 'nonlocal',
+			Option( 'relax_input', 'Boolean',
+				desc = 'relax input before running protocol' ),
+			Option( 'relax_input_with_coordinate_constraints', 'Boolean',
+				desc = 'relax input with coordinate constraints before running protocol' ),
+			Option( 'relax_frags_repeats', 'Integer',
+				desc = 'relax repeats for relaxing fragment pair' ),
+			Option( 'single_chain', 'Boolean',
+				desc = 'non-local fragment pairs will be restricted to the same chain' ),
+			Option( 'min_contacts_per_res', 'Real',
+				desc = 'minimum contacts per residue in fragment to be considered a fragment pair', default = '1.0' ),
+			Option( 'max_ddg_score', 'Real',
+				desc = 'maximum DDG score of fragment pair' ),
+			Option( 'max_rmsd_after_relax', 'Real',
+				desc = 'maximum rmsd of fragment pair after relax' ),
+			Option( 'output_frags_pdbs', 'Boolean',
+				desc = 'output non-local fragment pair PDBs' ),
+			Option( 'output_idealized', 'Boolean',
+				desc = 'output an idealized pose which can be used for generating a new VALL' ),
+			Option( 'output_silent', 'Boolean',
+				desc = 'output non-local fragment pairs silent file', default = 'true' ),
+		), # -frags:nonlocal
+
+		Option_Group( 'contacts',
+			Option( 'min_seq_sep', 'Integer',
+				desc = 'minimum sequence separation between contacts', default = '12' ),
+			Option( 'dist_cutoffs', 'RealVector', default = ['9.0'], desc = 'distance cutoffs to be considered a contact. contact counts will only be saved.' ),
+			Option( 'centroid_distance_scale_factor', 'Real', default = '1.0', desc = 'Scaling factor for centroid distance cutoffs.' ),
+			Option( 'type', 'StringVector',
+				desc='Atom considered for contacts',
+				legal = ['ca','cb','cen'], default='utility::vector1<std::string>(1,"ca")'
+			),
+			Option( 'neighbors', 'Integer',
+				desc = 'number of adjacent residues to a contact for finding neighboring contacts', default = '0' ),
+			Option( 'output_all', 'Boolean', desc = 'output all contacts', default = 'false' ),
+		), # -frags:contacts
+
+		Option_Group( 'ABEGO',
+			Option( 'phi_psi_range_A' , 'Real', desc = 'Further filter phi&psi during frag picking process in design', default = '999.0'),
+		), # -frags:ABEGO
+	), # -frags
+## --------------------------  END OF fragment picking --------------
+
+	# rosetta holes settings  -----------------------------------------------------------
+	Option_Group( 'holes',
+		Option('dalphaball','File', desc="The DAlaphaBall_surf program"),
+		Option('params','File', desc="File containing score parameters",default="holes_params.dat"),
+		Option('h_mode','Integer', desc="include H's or no... see PoseBalls.cc",default="0"),
+		Option('water','Boolean', desc="include water or no",default="false"),
+		Option('make_pdb'      ,'Boolean', desc="make pdb with scores",default="false"),
+		Option('make_voids'    ,'Boolean', desc="do separate SLOW void calculation",default="false"),
+		Option('atom_scores'   ,'Boolean', desc="output scores for all atoms",default="false"),
+		Option('residue_scores','Boolean', desc="output scores for all residues (avg over atoms)",default="false"),
+#		Option('cav_shrink'    ,'Real'   , desc="Cavity ball radii reduced by this amount",default="0.7"),
+		Option('minimize'      ,'String' , desc="RosettaHoles params to use: decoy15, decoy25 or resl",default="decoy15"),
+		Option('debug'      ,'Boolean' , desc="dump debug output",default="false"),
+	), # -holes
+
+	## options for hotspot hashing
+	Option_Group( 'hotspot',
+		Option( 'allow_gly', 'Boolean', desc='Allow glycines in hotspot hashing constraints?', default = 'false' ),
+		Option( 'allow_proline', 'Boolean', desc='Allow prolines in hotspot hashing constraints?', default = 'false' ),
+		Option( 'benchmark', 'Boolean', desc='Score existing interface?', default = 'false'),
+		Option( 'residue', 'StringVector', desc='mini residue name3 to use for hotspot hashing', default = 'utility::vector1<std::string>(1,"ALL")'),
+		Option( 'hashfile', 'File', desc='Existing hotspot hash file.'),
+		Option( 'target', 'File', desc='Target PDB of the hotspot hash. Used for both de novo hashing and making hash density maps.'),
+		Option( 'target_res', 'Integer', desc='Rosetta residue number of interest on the target PDB. Used for targeted hashing'),
+		Option( 'target_dist', 'Real', desc='Tolerated distance from the target residue. Used for targeted hashing', default='20' ),
+		Option( 'density', 'File', desc='Filename to write *unweighted* hotspot density (compared to -target PDB).'),
+		Option( 'weighted_density', 'File', desc='Filename to write *score weighted* hotspot density (compared to -target PDB).'),
+		Option( 'rms_target', 'File', desc='Filename to write best rms of hotspot to target complex. Suitable for pymol data2b_res'),
+		Option( 'rms_hotspot', 'File', desc='Filename to write best rms of hotspot to target complex. Suitable for rms vs E scatter plots.'),
+		Option( 'rms_hotspot_res', 'Integer', desc='Rosetta residue # to use for calculating rms_hotspot.'),
+		Option( 'rescore', 'Boolean', desc='Rescore hotspots from -hashfile based on the supplied -target PDB.', default='false'),
+		Option( 'threshold', 'Real', desc='Score threshold for hotspot accepts. Found hotspots must be better than or equal to threshold', default='-1.0' ),
+		Option( 'sc_only', 'Boolean', desc='Make backbone atoms virtual to find sidechain-only hotspots?', default='true'),
+		Option( 'fxnal_group', 'Boolean', desc='Only use a stubs functional group for rmsd calculations.', default='true'),
+		Option( 'cluster', 'Boolean', desc='Cluster stubset. Will take place before colonyE.', default='false'),
+		Option( 'colonyE', 'Boolean', desc='Rescore hotspots from -hashfile based on colony energy.', default='false'),
+		Option( 'length', 'Integer', desc='Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center.', default='1'),
+		Option( 'envhb', 'Boolean', desc='Use environment dependent Hbonds when scoring hotspots.', default='false'),
+		Option( 'angle', 'Real', desc='Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)', default='-1' ),
+		Option( 'angle_res', 'Integer', desc='Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass', default='0' ),
+	), # -hotspot
+
+	Option_Group( 'indexed_structure_store',
+		Option( 'fragment_store', 'File', desc='Fragment store. [.h5] file')
+	), # -indexed_structure_store
+
+	Option_Group( 'lh',
+#		Option( 'db_prefix', 'String', default = 'loopdb', desc='stem for loop database' ),
+		Option( 'loopsizes', 'IntegerVector', default = ['10','15','20'] , desc='Which loopsizes to use' ),
+		Option( 'num_partitions', 'Integer', default = '1', desc='Number of partitions to split the database into'),
+		Option( 'db_path', 'Path', default = '', desc = 'Path to database' ),
+		Option( 'exclude_homo', 'Boolean', default = 'false', desc = 'Use a homolog exclusion filter' ),
+		Option( 'bss', 'Boolean', default = 'false', desc = 'Use BinaryProteinSilentStruct instead of ProteinSilentStruct (needed for nonideal)' ),
+		Option( 'refstruct', 'String', default = '', desc = 'File with a target reference structure' ),
+		Option( 'homo_file', 'String', default = '', desc = 'File containing homologs to exclude' ),
+		Option( 'createdb_rms_cutoff', 'RealVector', default = ['0','0','0'], desc = 'RMS cutoff used for throwing out similar fragments.' ),
+		Option( 'min_bbrms', 'Real', default='20.0' ),
+		Option( 'max_bbrms', 'Real', default='1400.0' ),
+		Option( 'min_rms'  , 'Real', default='0.5' ),
+		Option( 'max_rms'  , 'Real', default='4.0' ),
+		Option( 'filter_by_phipsi',  'Boolean', default = 'true' ),
+		Option( 'max_radius'  , 'Integer', default='4' ),
+		Option( 'max_struct'  , 'Integer', default='10' ),
+		Option( 'max_struct_per_radius'  , 'Integer', default='10' ),
+		Option( 'grid_space_multiplier'  , 'Real', default = '1' ),
+		Option( 'grid_angle_multiplier'  , 'Real', default = '2.5' ),
+		Option( 'skim_size', 'Integer', default='100' ),
+		Option( 'rounds', 'Integer', default='100' ),
+		Option( 'jobname',    'String', desc = 'Prefix (Ident string) !', default = 'default' ),
+		Option( 'max_lib_size', 'Integer', default = '2' ),
+		Option( 'max_emperor_lib_size', 'Integer', default = '25' ),
+		Option( 'max_emperor_lib_round', 'Integer', default = '0' ),
+		Option( 'library_expiry_time', 'Integer', default = '2400' ),
+		Option( 'objective_function', 'String', desc = 'What to use as the objective function', default='score' ),
+		Option( 'expire_after_rounds', 'Integer', desc = 'If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles', default='0' ),
+		Option( 'mpi_resume', 'String', desc = 'Prefix (Ident string) for resuming a previous job!'),
+		Option( 'mpi_feedback',  'String', default = 'no',
+			legal=['no','add_n_limit','add_n_replace', 'single_replace', 'single_replace_rounds' ], ),
+		Option( 'mpi_batch_relax_chunks',      'Integer', default='100' ),
+		Option( 'mpi_batch_relax_absolute_max', 'Integer', default='300' ),
+		Option( 'mpi_outbound_wu_buffer_size', 'Integer', default='60' ),
+		Option( 'mpi_loophash_split_size    ', 'Integer', default='50' ),
+		Option( 'mpi_metropolis_temp', 'Real', default='1000000.0' ),
+		Option( 'mpi_save_state_interval', 'Integer', default='1200' ),
+		Option( 'mpi_master_save_score_only',  'Boolean', default = 'true' ),
+		Option( 'max_loophash_per_structure', 'Integer', default='1' ),
+		Option( 'rms_limit', 'Real', default='2.0', desc = 'How to deal with returned relaxed structures' ),
+		Option( 'centroid_only',     'Boolean', default = 'false', desc = 'false' ),
+		Option( 'write_centroid_structs',   'Boolean', default = 'false', desc = 'Output raw loophashed decoys as well as relaxed ones' ),
+		Option( 'write_all_fa_structs',   'Boolean', default = 'false', desc = 'Write out all structures returned from batch relax' ),
+		Option( 'sandbox',   'Boolean', default = 'false', desc = 'Sand box mode' ),
+		Option( 'create_db', 'Boolean', default = 'false', desc = 'Make database with this loopsize' ),
+		Option( 'sample_weight_file', 'File', desc = 'Holds the initial per residue sample weights' ),
+		Option( 'radius_size', 'Real',default = '2',desc='tune the radius for hypershell'),
+		Option_Group( 'fragpdb',
+			Option( 'out_path', 'String', default = '', desc='Path where pdbs are saved' ),
+			Option( 'indexoffset', 'IntegerVector', desc='list of index offset pairs' , default = ['-1']),
+			Option( 'bin', 'StringVector', desc='list of bin keys', default = 'utility::vector1<std::string>()' ),
+		), # -lh:fragpdb
+		Option_Group( 'symfragrm',
+			Option( 'pdblist', 'FileVector', desc='list of pdbs to be processed' ),
+		), # -lh:symfragrm
+	), # -lh
+
+	Option_Group( 'loopfcst',
+		Option( 'coord_cst_weight',             'Real',    desc='use coord constraints for template',     default='0.0' ),
+		Option( 'coord_cst_all_atom',           'Boolean', desc='use coord constraints on all atoms and not just CA',     default='false' ),
+		Option( 'use_general_protocol',         'Boolean', desc='use the new machinery around classes KinematicXXX',     default='false' ),
+		Option( 'coord_cst_weight_array',       'File',    desc='use these weights (per seqpos) for coord cst in rigid regions',     default='' ),
+		Option( 'dump_coord_cst_weight_array',  'File',    desc='dump these weights (per seqpos) for coord cst in rigid regions',     default='' ),
+	), # -loopfcst
+
+	Option_Group( 'LoopModel',
+		Option( 'input_pdb','File', desc='input pdb file', default='LoopModel::input_pdb' ),
+#		Option( 'loop_file','File', desc='input loops list file', default='LoopModel::loop_file' ),
+	), # -LoopModel
+
+	## Make Rot Lib Options ##
+	Option_Group( 'make_rot_lib',
+		Option( 'options_file', 'File', desc='path to make rot lib options file' ),
+		Option( 'two_fold_symetry_135_315', 'IntegerVector', desc='the chi number at which to apply two fold symetry across the 135/315 axis' ),
+		Option( 'two_fold_symetry_0_180'  , 'IntegerVector', desc='the chi number at which to apply two fold symetry across the 0/180 axis' ),
+		Option( 'three_fold_symetry_90_210_330'  , 'IntegerVector', desc='the chi number at which to apply two fold symetry across the 0/180 axis' ),
+	), # -make_rot_lib
+
+	Option_Group( 'match',
+		Option( 'lig_name', 'String', desc="Name of the ligand to be matched.  This should be the same as the NAME field of the ligand's parameter file (the .params file)" ),
+		Option( 'bump_tolerance', 'Real', desc='The permitted level of spherical overlap betweeen any two atoms.  Used to detect collisions between the upstream atoms and the background, the upstream atoms and the downstream atoms, and the downstream atoms and the background', default='0.0' ),
+		Option( 'active_site_definition_by_residue', 'File', desc='File describing the active site of the scaffold as a set of resid/radius pairs' ),
+		Option( 'active_site_definition_by_gridlig', 'File', desc='File containing 1s and Os describing the volume of space for the active site.  .gridlig file format from Rosetta++' ),
+		Option( 'required_active_site_atom_names', 'File', desc='File listing the downstream-residue-atom names which must reside in the defined active site.  Requires either the flag active_site_definition_by_residue or the flag active_site_definition_by_gridlig to be specified.' ),
+		Option( 'grid_boundary', 'File', desc='File describing the volume in space in which the third orientation atom must lie', default = ''),
+		Option( 'geometric_constraint_file', 'File', desc='File describing the geometry of the downstream object relative to the upstream object' ),
+		Option( 'scaffold_active_site_residues', 'File', desc="File with the residue indices on the scaffold that should be \
+			considered as potential launch points for the scaffold's active site.  File format described in MatcherTask.cc \
+			in the details section of the initialize_scaffold_active_site_residue_list_from_command_line() method.", default = ''),
+		Option( 'scaffold_active_site_residues_for_geomcsts', 'File', desc="File which lists the residue indices on the \
+			scaffold to consider as potential launch points for the scaffold's active site for each geometric constraint; \
+			each constraint may have a separate set of residue ids. File format described in MatcherTask.cc in the details \
+			section of the initialize_scaffold_active_site_residue_list_from_command_line() method.", default = ''),
+		Option( 'euclid_bin_size', 'Real', desc='The bin width for the 3-dimensional coordinate hasher, in Angstroms', default = '1.0'),
+		Option( 'euler_bin_size', 'Real', desc='The bin width for the euler angle hasher, in degrees', default = '10.0'),
+		Option( 'consolidate_matches', 'Boolean', desc='Instead of outputting all matches, group matches and then write only the top -match::output_matches_per_group from each group.', default = 'false'),
+		Option( 'output_matches_per_group', 'Integer', desc='The number of matches to output per group. Requires the -match::consolidate_matches flag is active.', default = '10'),
+		Option( 'orientation_atoms', 'StringVector', desc="The three atoms, by name, on the downstream partner \
+			to use to describe its 6 dimensional coordinate; its position and orientation. \
+			Only usable when the downstream partner is a single residue. Exactly 3 atom names must be given. \
+			If these atoms are unspecified, the matcher will use the residues neighbor atom and two atoms \
+			bonded to the neighbor atom to define the orientation.  The euclidean coordinate of the third \
+			orientation atom is used as the first the dimensions of the downstream residues 6D coordinate; the \
+			other three dimensions are the three euler angles described by creating a coordinate frame at orientation \
+			atom 3, with the z axis along the vector from orientation atom 2 to orientation atom 3, and the y axis \
+			lying in the plane with orientation atoms 1,2&3."),
+		Option( 'output_format', 'String', desc='The format in which the matches are output', default = 'CloudPDB', legal = [ 'PDB', 'KinWriter', 'CloudPDB' ] ),
+		Option( 'match_grouper', 'String', desc='The parameters that matches are grouped according to by the MatchConsolidator or the CloudPDBWriter', default = 'SameSequenceAndDSPositionGrouper', legal = [ 'SameChiBinComboGrouper', 'SameSequenceGrouper', 'SameSequenceAndDSPositionGrouper', 'SameRotamerComboGrouper' ] ),
+		Option( 'grouper_downstream_rmsd', 'Real', desc='Maximum allowed rmsd between two orientations of the downstream pose to be considered part of the same group ', default = '1.5' ),
+		Option( 'output_matchres_only', 'Boolean', desc='Whether to output the matched residues only or the whole pose for every match', default = 'false'),
+		Option( 'geom_csts_downstream_output', 'IntegerVector', desc='For which of the geometric constraints the downstream residue/ligand will be output', default = ['1']),
+		Option( 'filter_colliding_upstream_residues', 'Boolean', desc='Filter the output matches if the hits induce a collision between the upstream residues', default = 'true' ),
+		Option( 'upstream_residue_collision_tolerance', 'Real', desc='The amount of atom overlap allowed between upstream residues in a match.  If this is unspecified on the command line, then the value in the bump_tolerance option is used', default = '0.0' ),
+		Option( 'upstream_residue_collision_score_cutoff', 'Real', desc='The score cutoff for upstream residue pairs to use in the collision filter.  Activating this cutoff uses the etable atr/rep/sol terms to evaluate residue-pair interactions instead of hard-sphere overlap detection', default = '10.0' ),
+		Option( 'upstream_residue_collision_Wfa_atr', 'Real', desc='The fa_atr weight to use in the upstream-collision filter; use in tandem with upstream_residue_collision_score_cutoff', default = '0.8'  ),
+		Option( 'upstream_residue_collision_Wfa_rep', 'Real', desc='The fa_rep weight to use in the upstream-collision filter; use in tandem with upstream_residue_collision_score_cutoff', default = '0.44' ),
+		Option( 'upstream_residue_collision_Wfa_sol', 'Real', desc='The fa_sol weight to use in the upstream-collision filter; use in tandem with upstream_residue_collision_score_cutoff', default = '0.0'  ),
+		Option( 'filter_upstream_downstream_collisions', 'Boolean', desc='Filter the output matches if the hits induce a collision between the upstream residues and the downstream pose', default = 'true' ),
+		Option( 'updown_collision_tolerance', 'Real', desc='The amount of atom overlap allowed between upstream and downstream atoms in a match.  If this is unspecified on the command line, then the value in the bump_tolerance option is used', default = '0.0' ),
+		Option( 'updown_residue_collision_score_cutoff', 'Real', desc='The score cutoff for upstream/downstream residue pairs to use in the collision filter.  Activating this cutoff uses the etable atr/rep/sol terms to evaluate residue-pair interactions instead of hard-sphere overlap detection', default = '10.0' ),
+		Option( 'updown_residue_collision_Wfa_atr', 'Real', desc='The fa_atr weight to use in the upstream-downstream-collision filter; use in tandem with updown_residue_collision_score_cutoff', default = '0.8'  ),
+		Option( 'updown_residue_collision_Wfa_rep', 'Real', desc='The fa_rep weight to use in the upstream-downstream-collision filter; use in tandem with updown_residue_collision_score_cutoff', default = '0.44' ),
+		Option( 'updown_residue_collision_Wfa_sol', 'Real', desc='The fa_sol weight to use in the upstream-downstream-collision filter; use in tandem with updown_residue_collision_score_cutoff', default = '0.0'  ),
+
+		Option( 'define_match_by_single_downstream_positioning', 'Boolean', desc="Enumerate combinations of matches where a \
+			single positioning of the downstream partner as well as the conformations of the upstream residues defines the \
+			match; it is significantly faster to enumerate unique matches when they are defined this way instead of enumerating the \
+			(combinatorially many) matches when a match is defined by n-geometric-constraint locations of the downstream partner. \
+			This faster technique for outputting matches is automatically chosen when the flag -match::output_format is PDB." ),
+		Option( 'ligand_rotamer_index', 'Integer', desc="Match with a particular conformation of the ligand; the index \
+			represents which conformation in the multi-model .pdb file specified in the ligand's .params file by the \
+			PDB_ROTAMERS field.  The index of the first conformation in that file is 1; valid indices range from 1 to \
+			the number of entries in the multi-model .pdb file.  If this command-line flag is not used, then the conformation \
+			of the ligand described by the ICOOR_INTERNAL lines of the ligand's .params file is used instead." ),
+		Option( 'enumerate_ligand_rotamers', 'Boolean', desc="Match with all ligand rotamers specified in the multi-model \
+			.pdb file specified in the ligand's .params file by the PDB_ROTAMERS field.  This flag may not be used in \
+			combination with the match::ligand_rotamer_index flag.  Geometry of the ligand rotamers in the .pdb file will \
+			be idealized to the .params file bond angles and lengths.", default = 'true' ),
+		Option( 'only_enumerate_non_match_redundant_ligand_rotamers', 'Boolean', desc="Only defined if enumerate_ligand_rotamers is true \
+			this option causes the matcher to determine which rotamers in the ligand rotamer library are redundant in terms of matching, \
+			meaning the atoms they're matched through are superimposable. after having subdivided the ligand rotamer library into match-redundant \
+			subgroups, the matcher will then only place the first nonclashing rotamer from each subgroup. ", default = 'true' ),
+		Option( 'dynamic_grid_refinement', 'Boolean', desc="When too many hits land in the same 'connected component', requiring the \
+			enumeration of twoo many matches, refine the grid size to be smaller so that fewer matches have to be enumerated. \
+			This process works on individual connected components and is not applied to all regions of 6D.  This is significantly \
+			more efficient than enumerating all matches, while allowing the grid size to remain large and the rotamer and external \
+			geometry to remain dense. (*A connected component refers to " ),
+		Option( 'build_round1_hits_twice', 'Boolean', desc="Memory saving strategy that avoids paying for the storage of all the round-1 hits \
+			and instead records only what 6D voxels those hits fall in to.  Then the second round of matching proceeds storing only the hits that \
+			fall into the same voxels that the hits from the first round fell into.  Then the matcher goes back and generates the first-round hits \
+			again, but only keeps the ones that land into the same voxels that hits from round 2 fell into.  To be used, round 2 must also use the \
+			classic match algorithm (and must not use secondary matching).", default='false' ),
+	), # -match
+
+	Option_Group( 'matdes',
+		Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='1'),
+		Option('num_subs_total', 'Integer', desc='The number of subunits in the target assembly', default='1'),
+		Option('pdbID', 'String', desc='The PDB ID', default='0xxx'),
+		Option('prefix', 'String', desc='Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_...', default='pre_'),
+		Option('radial_disp', 'RealVector', desc='Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb'),
+		Option('angle', 'RealVector', desc='Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb'),
+		Option('tag', 'String', desc='Four digit ID tag attached to a design model during design'),
+		Option_Group( 'dock',
+			Option('neg_r', 'Real', desc='Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.', default='0'),
+			Option('dump_pdb', 'Boolean', desc='Dump a pdb of a particular docked configuration', default='false'),
+			Option('dump_chainA_only', 'Boolean', desc='Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb', default='false'),
+		), # -matdes:dock
+
+		Option_Group( 'design',
+			Option('contact_dist', 'Real', desc='CA-CA distance for defining interface residues', default='10.0'),
+			Option('grid_size_angle' , 'Real', desc='The width of angle space to start design/minimize runs from, centered on the starting angle', default='1.0'),
+			Option('grid_size_radius', 'Real', desc='The width of radius space to start design/minimize runs from, centered on the starting radius', default='1.0'),
+			Option('grid_nsamp_angle' , 'Integer', desc='The number of samples the rigid body grid is divided into in angle space', default='9'),
+			Option('grid_nsamp_radius', 'Integer', desc='The number of samples the rigid body grid is divided into in radius space', default='9'),
+			Option('fav_nat_bonus', 'Real', desc='Bonus to be awarded to native residues', default='0.0'),
+		), # -matdes:design
+
+		Option_Group( 'mutalyze',
+			Option('calc_rot_boltz', 'Boolean', desc='Specify whether to calculate RotamerBoltzmann probabilities or not', default='0'),
+			Option('ala_scan', 'Boolean', desc='Specify whether to calculate ddGs for alanine-scanning mutants at the designed interface', default='1'),
+			Option('revert_scan', 'Boolean', desc='Specify whether to calculate ddGs for reversion mutants at the designed interface', default='1'),
+			Option('min_rb', 'Boolean', desc='Specify whether to minimize the rigid body DOFs', default='1'),
+		), # -matdes:mutalyze
+
+	), # -matdes
+
+	Option_Group( 'mc',
+		Option( 'log_scores_in_MC', 'Boolean', desc="Score each decoy during a simulation and output it to log; slows down run!", default="false" ),
+		Option( 'hierarchical_pool', 'String', desc='specify prefix in order to look for hierarchical pool' ),
+		Option( 'read_structures_into_pool', 'File', desc='specify the silent-structs to create a hierarchy for lazy users'),
+		Option( 'convergence_check_frequency', 'Integer', desc='how often check for convergences in MC object?', default = '100' ),
+		Option( 'known_structures', 'File',
+			desc='specify a filename of a silent-file containing known structures',
+			default='known_structs.in'
+		), ##using this option will cause that tag of nearest structure to sampled decoys is reported
+		Option( 'max_rmsd_against_known_structures', 'Real', desc='stop sampling if rmsd to a known-structure is lower than X',default='1.5' ),
+		Option( 'excluded_residues_from_rmsd', 'IntegerVector', desc='residues that are not used for RMSD computation in pool' ),
+		Option( 'heat_convergence_check', 'Integer',
+			desc ="jump out of current abinitio run if X unsuccesful mc-trials reached", default='0'),
+	), # -mc
+
+	Option_Group( 'mh', # sheffler willsheffler@gmail.com
+		Option( 'motif_out_file'             , 'String'    , desc="file to dump ResPairMotifs to"                                    , default="default"         ),
+		Option( 'harvest_motifs'             , 'FileVector', desc="files to harvest ResPairMotifs from"                              , default="SPECIFY_ME_DUMMY"),
+		Option( 'print_motifs'               , 'FileVector', desc="files to print ResPairMotifs from"                                , default="SPECIFY_ME_DUMMY"),
+		Option( 'dump_motif_pdbs'            , 'FileVector', desc="files to extract ResPairMotifs clusters from"                     , default="SPECIFY_ME_DUMMY"),
+		Option( 'merge_motifs'               , 'FileVector', desc="files to merge ResPairMotifs from"                                , default="SPECIFY_ME_DUMMY"),
+#		Option( 'merge_motifs_one_per_bin'   , 'Boolean'   , desc="keep only one motif per hash bin (for sepcified grid)"            , default="false"     ),
+		Option( 'generate_reverse_motifs'    , 'Boolean'   , desc="keep only one motif per hash bin (for sepcified grid)"            , default="false"     ),
+		Option( 'dump_input_pdb'             , 'FileVector', desc="files to dump biount interpretation from"                         , default="SPECIFY_ME_DUMMY"),
+#		Option( 'score_pdbs'                 , 'FileVector', desc="files to score with input counts file"                            , default="SPECIFY_ME_DUMMY"),
+		Option( 'xform_score_data'           , 'FileVector', desc="motif hash data for scoring"                                           ),
+		Option( 'xform_score_data_ee'        , 'FileVector', desc="motif hash data for scoring"                                           ),
+		Option( 'xform_score_data_eh'        , 'FileVector', desc="motif hash data for scoring"                                           ),
+		Option( 'xform_score_data_he'        , 'FileVector', desc="motif hash data for scoring"                                           ),
+		Option( 'xform_score_data_hh'        , 'FileVector', desc="motif hash data for scoring"                                           ),
+		Option( 'xform_score_data_sspair'    , 'FileVector', desc="motif hash data for scoring strand pairings"                           ),
+#		Option( 'sequence_recovery'          , 'FileVector', desc="pdb files to score"                                               , default="SPECIFY_ME_DUMMY"),
+#		Option( 'explicit_motif_score'       , 'FileVector', desc="pdb files to score"                                               , default="SPECIFY_ME_DUMMY"),
+		Option( 'input_motifs'               , 'FileVector', desc="motifs to score with"                                             , default="SPECIFY_ME_DUMMY"),
+		Option( 'harvest_scores'             , 'FileVector', desc="get counts from ResPairMotif files and dump to binary counts file", default=""                ),
+		Option( 'print_scores'               , 'File'      , desc="print a binary counts file"                                       , default=""                ),
+		Option( 'dump_matching_motifs'       , 'FileVector', desc="pdb files to score"                                               , default="SPECIFY_ME_DUMMY"),
+		Option( 'dump_matching_motifs_cutoff', 'Real'      , desc="rms cutoff"                                                       , default=  '1.0'           ),
+		Option( 'score_across_chains_only'   , 'Boolean'   , desc="ignore intra-chain motifs"                                        , default=  'false'         ),
+#		Option( 'normalize_score_ncontact'   , 'Boolean'   , desc="normalize by total num contacts"                                  , default=  'true'          ),
+		Option( 'dump_motif_pdbs_min_counts' , 'Integer'   , desc="min counts to dump"                                               , default=  '99999999'      ),
+		Option( 'hash_cart_size'             , 'Real'      , desc="dimensions of binned space"                                       , default=  '12.0'          ),
+		Option( 'hash_cart_resl'             , 'Real'      , desc="width of cartesian bin"                                           , default=   '0.8'          ),
+		Option( 'hash_angle_resl'            , 'Real'      , desc="width of euler angle bin"                                         , default=  '15.0'          ),
+		Option( 'harvest_motifs_min_hh_ends' , 'Integer'   , desc="restrict to middle of hilix contacts "                            , default=    '0'           ),
+		Option( 'harvest_scores_min_count'   , 'Integer'   , desc=" "                                                                , default=    '0'           ),
+		Option( 'ignore_io_errors'           , 'Boolean'   , desc=" "                                                                , default=   'false'        ),
+		Option( 'motif_match_radius'         , 'Real'      , desc="width of euler angle bin"                                         , default=  '0.6'           ),
+		Option( 'merge_similar_motifs'       , 'RealVector', desc="give 3 hash params"                                               ),
+		Option_Group('score',
+			Option('noloops'                  ,'Boolean'     , desc="ignore loop ss in scored structs"                                           , default=   'true'            ),
+#			Option('spread_ss_element'        ,'Boolean'     , desc="ignore loop ss in scored structs"                                           , default=   'true'            ),
+#			Option('min_cover_fraction'       ,'Real'        , desc="ignore loop ss in scored structs"                                           , default=   '0.0'             ),
+			Option('strand_pair_weight'       ,'Real'        , desc="ignore loop ss in scored structs"                                           , default=   '1.0'             ),
+			Option('min_contact_pairs'        ,'Real'        , desc="ignore loop ss in scored structs"                                           , default=   '0.0'             ),
+			Option('max_contact_pairs'        ,'Real'        , desc="ignore loop ss in scored structs"                                           , default=   '9e9'             ),
+		), # -mh:score
+		Option_Group('filter',
+			Option('filter_harvest'           ,'Boolean'     , desc="filter while harvesting"                                                    , default=   'true'             ),
+			Option('filter_io'                ,'Boolean'     , desc="filter while reading filter"                                                , default=   'true'             ),
+			Option('restype'                  ,'String'      , desc="allowed res types"                                                          , default='ACDEFGHIKLMNPQRSTVWY'),
+			Option('restype_one'              ,'String'      , desc="allowed res types need at least one"                                        , default='ACDEFGHIKLMNPQRSTVWY'),
+			Option('not_restype'              ,'String'      , desc="disallowed res types"                                                       , default='ACGP' ),
+			Option('not_restype_one'          ,'String'      , desc="disallowed res types at least one not"                                      , default='ACGP' ),
+			Option('seqsep'                   ,'Integer'     , desc="min filter seqsep"                                                          , default=   '0'                ),
+			Option('no_hb_bb'                 ,'Boolean'     , desc="no bb hbonded"                                                              , default=   'false'            ),
+			Option('mindist2'                 ,'Real'        , desc="min CA-CA dist sq"                                                          , default=   '0.0'              ),
+			Option('maxdist2'                 ,'Real'        , desc="max CA-CA dist sq"                                                          , default=  '999999.0'          ),
+			Option('ss1'                      ,'String'      , desc="filter ss1"                                                                 , default=   ''                 ),
+			Option('ss2'                      ,'String'      , desc="filter ss2"                                                                 , default=   ''                 ),
+			Option('dssp1'                    ,'String'      , desc="filter dssp1"                                                               , default=   ''                 ),
+			Option('dssp2'                    ,'String'      , desc="filter dssp2"                                                               , default=   ''                 ),
+			Option('aa1'                      ,'String'      , desc="filter aa1"                                                                 , default=   ''                 ),
+			Option('aa2'                      ,'String'      , desc="filter aa2"                                                                 , default=   ''                 ),
+			Option('sasa'                     ,'Real'        , desc="filter max sasa"                                                            , default=    '999.0'           ),
+			# Option('avge_cut'                 ,'Real'        , desc="filter max total rosetta E cut (default 999.0 = no filtering"             , default=  '999.0'             ),
+			Option('faatr'                    ,'Real'        , desc="filter max faatr (default 999.0 = no filtering"                             , default=  '999.0'             ),
+			Option('hb_sc'                    ,'Real'        , desc="filter max hb_sc (default 999.0 = no filtering"                             , default=  '999.0'             ),
+			Option('hb_bb_sc'                 ,'Real'        , desc="filter max hb_bb_sc (default 999.0 = no filtering"                          , default=  '999.0'             ),
+			Option('hb_bb'                    ,'Real'        , desc="filter max hb_bb (default 999.0 = no filtering"                             , default=  '999.0'             ),
+#			Option('occupancy'                ,'Real'        , desc="filter min occupancy (default 0.0 = no filtering")                          , default=    '0.0'             ),
+			Option('coorderr'                 ,'Real'        , desc="filter max bfac coorderr = sqrt(B/8*pi**2)) (default 999.0 = no filtering)" , default=  '999.0'             ),
+			Option('faatr_or_hbbb'            ,'Real'        , desc="filter require atr or hb (bb allowed) below thresh"                         , default=  '999.0'             ),
+			Option('faatr_or_hb'              ,'Real'        , desc="filter require atr or hb below thresh"                                      , default=  '999.0'             ),
+			Option('noloops'                  ,'Boolean'     , desc=""                                                                           , default=   'false'            ),
+			Option('oneloop'                  ,'Boolean'     , desc=""                                                                           , default=   'false'            ),
+			Option('nodisulf'                 ,'Boolean'     , desc=""                                                                           , default=   'false'            ),
+		), # -mh:filter
+	), # -mh
+
+	# options for motif protocol stuff
+	Option_Group( 'motifs',
+		Option( 'close_enough', 'Real', default = '1.0', desc='4-atom rmsd cutoff beyond which you don\'t bother trying an inverse rotamer' ),
+		Option( 'max_depth', 'Integer', default = '1', desc='Maximum recursion depth - i.e., maximum number of motifs to incorporate' ),
+		Option( 'keep_motif_xtal_location', 'Boolean', default = 'false', desc="used to dna_motif_collector - controls whether motifs are moved away from original PDB location (comparison is easier if they are moved, so that's default)" ),
+		Option( 'pack_score_cutoff', 'Real', default = '-0.5', desc = 'used in dna_motif_collector - fa_atr + fa_rep energy threshold for a two-residue interaction to determine if it is a motif'),
+		Option( 'hb_score_cutoff', 'Real', default = '-0.3', desc = 'used in dna_motif_collector - hbond_sc energy threshold for a two-residue interaction to determine if it is a motif'),
+		Option( 'water_score_cutoff', 'Real', default = '-0.3', desc = 'used in dna_motif_collector - h2o_hbond energy threshold for a two-residue interaction to determine if it is a motif'),
+		Option( 'pack_min_threshold', 'Real', default = '-9999.0', desc = 'Used for motif extraction - packing scores below this value will cause a motif to be discarded'),
+		Option( 'pack_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - packing scores above this value will cause a motif to be discarded'),
+		Option( 'hbond_min_threshold', 'Real', default = '-9999.0', desc = 'Used for motif extraction - hbond scores below this value will cause a motif to be discarded'),
+		Option( 'hbond_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - hbond scores above this value will cause a motif to be discarded'),
+		Option( 'elec_min_threshold', 'Real', default = '-9999.0', desc = 'Used for motif extraction - fa_elec scores below this value will cause a motif to be discarded'),
+		Option( 'elec_max_threshold', 'Real', default = '9999.0', desc = 'Used for motif extraction - fa_elec scores above this value will cause a motif to be discarded'),
+		Option( 'duplicate_dist_cutoff', 'Real', default = '1.0', desc = 'Value for determining whether a motif is different from others already in a library'),
+		Option( 'duplicate_angle_cutoff', 'Real', default = '0.4', desc = 'Value for determining whether a motif is different from others already in a library'),
+		Option( 'motif_output_directory', 'String', desc = 'used in dna_motif_collector - path for the directory where all the collected motifs are dumped as 2-residue pdbs'),
+		Option( 'eliminate_weak_motifs', 'Boolean', default = 'true', desc="used to dna_motif_collector - controls whether only the top 1-2 motifs are counted for every protein position in a protein-DNA interface" ),
+		Option( 'duplicate_motif_cutoff', 'Real', default = '0.2', desc = 'used in dna_motif_collector - RMSD cutoff for an identical base placed via a motif to see if that motif already exists in a motif library'),
+		Option( 'preminimize_motif_pdbs', 'Boolean', default = 'false', desc="used to dna_motif_collector - controls whether the input PDB structure sidechains and bb are minimized before motifs are collected" ),
+		Option( 'preminimize_motif_pdbs_sconly', 'Boolean', default = 'false', desc="used to dna_motif_collector - controls whether the input PDB structure sidechains are minimized before motifs are collected" ),
+		Option( 'place_adduct_waters', 'Boolean', default = 'true', desc="used to dna_motif_collector - whether or not adduct waters are placed before motifs are collected, there will be no water interaction calculated if this is false" ),
+		Option( 'list_motifs', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
+		Option( 'motif_filename', 'String', desc="File containing motifs" ),
+		Option( 'file_prefix', 'String', default = 'motif', desc="File containing motifs" ),
+		Option( 'build_residue_file', 'String', desc="File containing the target positions for building and incorporating motifs" ),
+		Option( 'motif_flexible_loop_file', 'String', desc="File containing the flexible loop definition" ),
+		Option( 'residue_trim_file', 'String', desc="File a list of residues to trim to Ala before motif incorporation." ),
+		Option( 'BPData', 'String', desc="File containing BuildPosition specific motifs and/or rotamers" ),
+		Option( 'list_dnaconformers', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ),
+		Option( 'target_dna_defs', 'StringVector', default = '""', desc = ''),
+		Option( 'motif_build_defs', 'StringVector', default = '""', desc = ''),
+#		Option( 'motif_build_position_chain', 'String', default = '""', desc = ''),
+		Option( 'motif_build_positions', 'IntegerVector', desc = ''),
+		Option( 'r1', 'Real', default = '4.5', lower = '0', desc = 'RMSD cutoff between motif anchor position and motif target position for allowing a particular motif rotamer to continue on to expand with DNA conformers'),
+		Option( 'r2', 'Real', default = '1.1', lower = '0', desc = 'RMSD cutoff between motif anchor position and motif target position for accepting the motif'),
+		Option( 'z1', 'Real', default = '0.75', lower = '0', desc = 'DNA motif specific: cutoff between motif target DNA position and standardized base for allowing a particular motif to continue on to expand with DNA conformers'),
+		Option( 'z2', 'Real', default = '0.95', lower = '0', desc = 'DNA motif specific: cutoff between motif target DNA position and DNA conformer placed according to motif for accepting the pair of residues'),
+		Option( 'dtest', 'Real', default = '5.5', lower = '0', desc = 'DNA motif specific: cutoff between motif target DNA position and DNA conformer placed according to motif for accepting the pair of residues'),
+		Option( 'rotlevel', 'Integer', default = '5', lower = '1', desc = 'level of rotamer sampling for motif search'),
+		Option( 'num_repacks', 'Integer', default = '5', lower = '0', desc = 'number of cycles of dropping special_rot weight and design'),
+		Option( 'minimize', 'Boolean', default = 'true', desc = 'whether or not to minimize the motifs toward the xtal structure DNA'),
+		Option( 'minimize_dna', 'Boolean', default = 'true', desc = 'whether or not to minimize DNA after every round of design with special_rot weight dropping'),
+		Option( 'run_motifs', 'Boolean', default = 'true', desc = 'whether or not to use motifs in DnaPackerMotif'),
+		Option( 'expand_motifs', 'Boolean', default = 'true', desc = 'whether or not to use expand (use all types) motifs in DnaPackerMotif'),
+		Option( 'aromatic_motifs', 'Boolean', default = 'true', desc = 'whether or not to use expand (use aromatic only types) motifs in DnaPackerMotif'),
+		Option( 'dump_motifs', 'Boolean', default = 'true', desc = 'whether or not to output pdbs with the best rotamer/conformer for each motifs'),
+		Option( 'quick_and_dirty', 'Boolean', default = 'true', desc = 'quick motif run to get a list of all possible motifs before doing a real run'),
+		Option( 'special_rotweight', 'Real', default = '-40.0', desc = 'starting weight for the weight on motif rotamers'),
+		Option( 'output_file', 'String', desc = 'name of output file for all the best motifs and rotamers or for the dna_motif_collector it is the file where all the motifs are dumped'),
+		Option( 'data_file', 'String', desc = 'name of output file for any data about how many rotamers and motifs pass what tests, etc'),
+		Option( 'target_aa', 'String', default = 'LEU', desc = 'three letter code for the target amino acid for finding motifs'),
+#		Option( 'constraint_max', 'Real', default = '20.0', lower = '0', desc = 'highest value for constraint score (before and after minimization) that results in the rotamer being dropped'),
+		Option( 'flex_sugar', 'Boolean', default = 'true', desc = 'whether or not to add the flexible sugar, not using PB way of adding options'),
+		Option( 'clear_bprots', 'Boolean', default = 'true', desc = 'whether or not to clear the rotamers that were read in from a previous run and restart with only the motifs that were read in and the specified rotlevel'),
+		Option( 'rots2add', 'Integer', default = '100', lower = '1', desc = 'number of rotamers to add to design from the MotifSearch for each amino acid type'),
+		Option( 'restrict_to_wt', 'Boolean', default = 'true', desc = 'restrict the motif search to finding motifs of the same amino acid as the starting pose, for homology modeling'),
+		Option( 'rerun_motifsearch', 'Boolean', default = 'true', desc = 'setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run'),
+		Option( 'no_rotamer_bump', 'Boolean', default = 'false', desc = 'skip the bump check when making the rotamers that will be tested for motif interactions, makes code much slower, but it is advised to increase the max_rotbump_energy to at least 10.0 instead of the default of 5.0 if bump_check is being used'),
+		Option('ligand_motif_sphere','Real', default = '6.0',
+			desc="option to specify radius of motif search around ligand"),
+	), # -motifs
+
+	Option_Group( 'ms' , # multistate_design
+#		Option( 'share_data',                    'Boolean',          desc='share rotamers and energies between states -- valid only if state variability is defined rotamerically', default='false' ),
+#		Option( 'verbose',                       'Boolean',       desc='', default='false' ),
+#		Option( 'restrict_to_canonical',         'Boolean',                     desc='design only canonical residue types', default='false' ),
+		Option( 'pop_from_ss',                   'Integer',           desc='generate starting sequence population based on single-state design results', default='0' ),
+		Option( 'pop_size',                      'Integer',        desc='genetic algorithm population size', default='100' ),
+		Option( 'generations',                   'Integer',           desc='number of genetic algorithm generations', default='20' ),
+		Option( 'num_packs',                     'Integer',         desc='number of repack trials per sequence/state combination', default='1' ),
+		Option( 'numresults',                    'Integer',          desc='number of top-fitness results to save for explicit reference at the end of multistate design', default='1' ),
+		Option( 'anchor_offset',                 'Real',                desc='energy offset from the energy of single-state design toward the target state -- used to generate an affinity anchor for fitness calculations', default='5.0' ),
+		Option( 'Boltz_temp',                    'Real',             desc='thermodynamic temperature to use for specificity calculations', default='0.6' ),
+		Option( 'mutate_rate',                   'Real',              desc='rate of mutation per position', default='0.5' ),
+		Option( 'fraction_by_recombination',     'Real',                            desc='fraction of the population that should be generated by recombination during the evolution stage', default='0.5' ),
+		Option_Group( 'checkpoint',
+			Option( 'prefix',             'String',                  desc='prefix to add to the beginning of checkpoint file names', default='' ),
+			Option( 'interval',             'Integer',                  desc='frequency with which the entity checkpoint is written', default='0' ),
+			Option( 'gz',             'Boolean',                  desc='compress checkpoing files with gzip', default='false' ),
+			Option( 'rename',             'Boolean',                  desc='rename checkpoint files after genetic algorithm completes', default='false' ),
+		), # -ms:checkpoint
+	), # -ms:
+
+	# NonlocalAbinitio
+	Option_Group('nonlocal',
+#		Option('builder', 'String', desc = 'One of {simple, star}. Specifies how non-local abinitio should construct the fold tree', default = 'star'),
+		Option('chunks', 'File', desc = 'Decsribes how the structure is partitioned into chunks. Each residue must be present in 1 and only 1 chunk. Loop file format.'),
+#		Option('max_chunk_size', 'Integer', desc = 'Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.', default = '20'),
+		Option('randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
+#		Option('rdc_weight', 'Real', desc = 'Weight for the rdc energy term in nonlocal abinitio protocol', default = '5'),
+	), # -nonlocal
+
+	Option_Group( 'optE',
+		Option( 'optE', 'Boolean', desc="optE option group", legal='true', default='true' ),
+		Option( 'load_from_silent', 'String', default='pdb_set.silent', desc='load from silent instead of pdb - uses path of requested pdb to find silent file, each PDB needs to have all of its structures in its own folder (ie: 1agy/pdb_set.silent) - only works in optimize_decoy_discrimination' ),
+		Option( 'data_in', 'String', default='optE.data', desc='file from which to read in optE data' ),
+		Option( 'data_out', 'String', default='optE.data.out', desc='file to which to write optE data' ),
+		Option( 'weights', 'String', desc='a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization.' ),
+		Option( 'fix', 'StringVector', desc='weights to be fixed (must also appear in the weightfile given by the -optE::weights option)' ),
+		Option( 'free', 'File', desc='IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type'),
+		Option( 'fixed', 'File', desc='IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed'),
+		Option( 'parse_tagfile', 'File', desc='a file in utility::tag format that optE may parse to customize its operation'),
+		Option( 'constant_logic_taskops_file', 'File', desc='a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design'),
+		Option( 'optE_soft_rep', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable' ),
+		Option( 'no_hb_env_dependence', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bond terms'),
+		Option( 'no_hb_env_dependence_DNA', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bonds involving DNA'),
+		Option( 'optE_no_protein_fa_elec', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable', default='false' ),
+		Option( 'design_first', 'Boolean', desc='Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights.'),
+		Option( 'n_design_cycles', 'Integer', desc='The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred', default='10'),
+		##Option( 'recover_nat_aa',   'Boolean', desc='With the iterative optE driver, use design to recover the native amino acids'),
+		Option( 'recover_nat_rot',  'Boolean', desc='With the iterative optE driver, repack to recover the native rotamers'),
+		Option( 'component_weights', 'File', desc='With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0' ),
+		Option( 'optimize_nat_aa',  'Boolean', desc='With the iterative optE driver, optimize weights to maximize the probability of the native rotamer'),
+		Option( 'optimize_nat_rot', 'Boolean', desc='With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context'),
+		Option( 'optimize_ligand_rot', 'File', desc='With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand'),
+		Option( 'optimize_pssm', 'Boolean', desc='With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution'),
+		Option( 'optimize_dGbinding', 'File', desc='With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG'),
+		Option( 'optimize_ddG_bind_correlation', 'File', desc='With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding'),
+		Option( 'optimize_ddGmutation', 'File', desc='With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples'),
+		Option( 'optimize_ddGmutation_straight_mean', 'Boolean', desc='With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set.'),
+		Option( 'optimize_ddGmutation_boltzman_average', 'Boolean', desc='With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set.'),
+		Option( 'exclude_badrep_ddGs', 'Real', desc='With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value'),
+		Option( 'pretend_no_ddG_repulsion','Boolean', desc='With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations'),
+		Option( 'optimize_decoy_discrimination', 'File', desc='With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >.'),
+		Option( 'normalize_decoy_score_spread', 'String', desc="In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set"),
+		Option( 'ramp_nativeness', 'Boolean', desc="In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition."),
+		Option( 'n_top_natives_to_optimize', 'Integer', desc='For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function', default='1'),
+		Option( 'approximate_decoy_entropy', 'Real', desc='Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha.' ),
+		Option( 'repack_and_minimize_decoys', 'Boolean', desc='Generate new structures in each round of iterative optE by repacking and minimizing the input decoys & natives using the weights obtained in the last round'),
+		Option( 'repack_and_minimize_input_structures', 'Boolean', desc='Minimizing the input decoys & natives using the starting weights -- allows structures a chance to see the energy function before decoy discrimination begins without the memory overhead of the repack_and_minimize_decoys flag'),
+		Option( 'output_top_n_new_decoys', 'Integer', desc='For use with repack_and_minimize_decoys flag: Write out the top N decoys generated each round in this iterative refinement', default='0'),
+		Option( 'optimize_ligand_discrimination', 'File', desc='With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >.'),
+		Option( 'no_design', 'Boolean', desc="Don't bother loading pdbs and doing design; just optimize weights for decoy-discrim and or native rotamer recovery"),
+		Option( 'sqrt_pssm', 'Boolean', desc='Turn the pssm probability vectors into unit vectors so that dot product is a true similarity measure'),
+		Option( 'min_decoy_rms_to_native', 'Real', desc='For use with the optimize_decoy_discrimination flag: exclude decoys that are within a certain RMS of the native structure'),
+		Option( 'max_rms_from_native', 'Real', desc='For use with the optimize_decoy_discrimination flag: exclude natives that are more than a certain RMS of the crystal structure.  max_rms_from_native of 1.5, min_decoy_rms_from_native 2.0 would throw out structures in the range of 1.5 and 2.0 RMS from consideration'),
+		Option( 'optimize_starting_free_weights', 'Boolean', desc='With the iterative optE driver, try many different starting points for the minimization', default='false'),
+		Option( 'wrap_dof_optimization', 'File', desc='Create new dofs and setup arithmetic dependencies for free dofs.' ),
+		Option( 'randomly_perturb_starting_free_weights', 'Real', desc='With the iterative optE driver, perturb the weights by +/- <input value> for those weights listed as free'),
+		Option( 'inv_kT_natrot', 'Real', desc='1 / kT for the pNativeRotamer fitness function', default = '1' ),
+		Option( 'inv_kT_nataa', 'Real', desc='1 / kT for the pNatAA and PSSM fitness function', default = '1' ),
+		Option( 'inv_kT_natstruct', 'Real', desc='1 / kT for the pNativeStructure fitness function', default = '1' ),
+		Option( 'mpi_weight_minimization', 'Boolean', desc='Distribute OptEMultifunc func/dfunc evaluations across nodes' ),
+		Option( 'dont_use_reference_energies', 'Boolean', desc='Do not use reference energies anywhere during the protocol.', default='false' ),
+		Option( 'number_of_swarm_particles', 'Integer', desc='The number of particles to use during particle swarm weight optimization.', default='100' ),
+		Option( 'number_of_swarm_cycles', 'Integer', desc='The number of cycles to run the swarm minimizer for.', default='20' ),
+		Option( 'constrain_weights', 'File', desc='When minimizing the fitness objective function, also include weight constraints in the objective function'),
+		Option( 'fit_reference_energies_to_aa_profile_recovery', 'Boolean', desc='In the inner-loop sequence recovery/weight tweaking stage, accept/reject weight sets based on both the sequence recovery rate, and the mutual information between the expected and observed amino acid frequency distributions'),
+		Option( 'starting_refEs', 'File', desc='IterativeOptEDriver flag: specify a weights file to read reference energies from; do not optimize reference energies in the first round of weight fitting'),
+		Option( 'repeat_swarm_optimization_until_fitness_improves', 'Boolean', desc='After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization.', default='false'),
+		Option( 'design_with_minpack', 'Boolean', desc='Use the min-packer to design in the sequence recovery stages.', default='false'),
+		Option( 'limit_bad_scores',  'Boolean', desc='Quit after 100,000 inf or NaN errors in optE objective function'),
+		Option('no_design_pdb_output','Boolean',desc='Do not write out the designed pdbs to the workdir_ directories over the course of the optE run'),
+		Option_Group( 'rescore',
+			Option( 'weights', 'File', desc='Weight set to use when rescoring optE partition functions' ),
+			Option( 'context_round', 'Integer', desc='Integer of the context PDBs generated during design to use to measure the pNatAA'),
+			Option( 'outlog', 'File', desc='File to which the OptEPosition data should be written'),
+			Option( 'measure_sequence_recovery', 'Boolean', desc='When rescoring a weight set, run design with that weight set and measure the sequence recovery.', default='false' ),
+		), # -optE:rescore
+	), # -optE
+
+	# packstat measure settings  -----------------------------------------------------------
+	Option_Group( 'packstat',
+		Option( 'include_water', 'Boolean',desc="Revert to old style etables", default="false" ),
+		Option( 'oversample', "Integer", desc="Precision of SASA measurements", default='0' ),
+		Option( 'packstat_pdb', "Boolean", desc="Output a pdb with packing visualizations", default='false' ),
+		Option( 'surface_accessibility', "Boolean", desc="Compute extra cavity burial information", default='false' ),
+		Option( 'residue_scores', "Boolean", desc="Output the score for each resdiue", default='false' ),
+		Option( 'cavity_burial_probe_radius', "Real", desc="Radius probe to consider a cavity buried", default='1.4' ),
+		Option( 'raw_stats', "Boolean", desc="Output the raw stats per-residue (for training, etc...)", default='false'),
+		Option( 'threads', "Integer", desc="Number of threads to use (0 for no threading)", default='0' ),
+		Option( 'cluster_min_volume', 'Real', desc='voids smaller than this will not be shown.', default='30'),
+		Option( 'min_surface_accessibility', 'Real', desc='voids must be at least this exposed', default='-1.0'),
+		Option( 'min_cluster_overlap', 'Real', desc='void-balls must overlap by this much to be clustered', default='0.1'),
+		Option( 'min_cav_ball_radius', 'Real', desc='radius of smallest void-ball to consider', default='0.7'),
+#		Option( 'max_cav_ball_radius', 'Real', desc='radius of largest void-ball to consider', default='3.0'),
+	), # -packstat
+
+	## options for parser
+	Option_Group( 'parser',
+		Option( 'protocol', 'String', desc='File name for the xml parser protocol' ),
+		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
+		Option( 'view', 'Boolean', desc='Use the viewer?' ),
+		Option( 'patchdock', 'String', desc='Patchdock output file name.' ),
+		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),
+	), # -parser
+
+	Option_Group( 'patterson',
+#		Option( 'debug', 'Boolean', default = 'false'),
+		Option( 'weight', 'Real', default = '0.0', desc='wt of patterson correlation'),
+		Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default = same as mainchain density)'),
+		Option( 'radius_cutoffs', 'RealVector', desc='patterson-space radius cuttoffs'),
+		Option( 'resolution_cutoffs', 'RealVector', desc='reciprocal space F^2 cuttoffs'),
+		Option( 'Bsol', 'Real', default = '300.0', desc='solvent B'),
+		Option( 'Fsol', 'Real', default = '0.95', desc='solvent fraction'),
+		Option( 'model_B', 'Real', default = '0.0', desc='B factor computing patterson CC'),
+		Option( 'rmsd', 'Real', default = '2.0', desc='Expected RMS error for sigma-A calculation'),
+		Option( 'no_ecalc', 'Boolean', default = 'false', desc='Do not normalize p_o with ecalc'),
+		Option( 'nshells', 'Integer', default = '50', desc='Number of resolution shells for patterson normalization'),
+		Option( 'use_spline_interpolation', 'Boolean', default = 'false', desc='use spline interpolation for derivative evaluation? (default trilinear)'),
+		Option( 'use_on_repack', 'Boolean', default = 'false', desc='SLOW - use patterson correlation on repacks (default no)'),
+		Option( 'dont_use_symm_in_pcalc', 'Boolean', default = 'false', desc='perform Pcalc in P1 (default no)'),
+	), # -patterson
+
+	Option_Group( 'pb_potential',
+		Option( 'charged_chains', 'IntegerVector', desc="Chain numbers that carries charge in the PB calculation",default='1' ),
+		Option( 'sidechain_only', 'Boolean', desc="Only calculate interactions to sidechain.", default="true" ),
+		Option( 'revamp_near_chain', 'IntegerVector', desc="Scale down PB interactions if near the given chain. Use chain numbers as input." ),
+		Option( 'apbs_path', 'String', desc="Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable"),
+		Option( 'potential_cap', 'Real', desc="Cap for PB potential input", default = '20.0' ),
+		Option( 'epsilon', 'Real', desc="Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.", default='2.0'),
+		Option( 'apbs_debug', 'Integer', desc="APBS debug level [0-6]", default="2"),
+		Option( 'calcenergy', 'Boolean', desc="Calculate energy?", default="false"),
+	), # -pb_potential
+
+	# Some of the PCS options are migrating into TopologyClaimer framework.
+	Option_Group( 'PCS',
+			Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor informations, AT EACH ENERGY EVALUATION. More suited for rescoring'),
+			Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
+#			Option( 'npc_files_input', 'StringVector', desc = 'A list of pseudocontact shift (PCS)  files in the .npc format. One file per lanthanide' ),
+#			Option( 'pcs_weight', 'Real', desc = 'Reweight the pseudocontact shift (PCS) energy term.'),
+#			Option( 'pcs_grid_search_parameter', 'StringVector', desc = 'Describe the grid search: `Residue_number Atom_name Edge_size Step_size` will describe a grid search centered at the residue number and atom name specified, the grid search beeing a cube of edge edge_size, and step step_size. Example: -pcs_grid_search_parameter 68 CB 12 1' ),
+#			Option( 'minimize_tensor', 'Boolean', desc = 'Optimize the best tensor found form the grid search'),
+	), # PCS
+	Option_Group( 'PCSTS1',
+			Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
+			Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
+	), # PCSTS1
+	Option_Group( 'PCSTS2',
+			Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
+			Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
+	), # PCSTS2
+	Option_Group( 'PCSTS3',
+			Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
+			Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
+	), # PCSTS3
+	Option_Group( 'PCSTS4',
+			Option( 'write_extra', 'File', desc = 'Write into the File PCS calc, PCS exp, PCS dev, tensor imformation, AT EACH ENERGY EVALUATION. More suited for rescoring'),
+			Option( 'normalization_id', 'Integer', desc = 'Normalize individual data set. The integer identify the normalization method to be used'),
+	), # PCSTS4
+
+	###############################################################################
+	## peptide specificity / flexible backbone design options (chrisk)
+	Option_Group( 'pepspec',
+		Option( 'soft_wts', 'String', default='soft_rep.wts'),
+		Option( 'cen_wts', 'String', default='cen_ghost.wts'),
+		Option( 'binding_score', 'Boolean', default='true'),
+
+		Option( 'no_cen', 'Boolean', default='true'),
+		Option( 'no_cen_rottrials', 'Boolean', default='true'),
+		Option( 'run_sequential', 'Boolean', default='false'),
+		Option( 'pep_anchor', 'Integer' ),
+		Option( 'pep_chain', 'String', default=' '),
+		Option( 'n_peptides', 'Integer', default='8' ),
+		Option( 'n_build_loop', 'Integer', default='1000' ),
+		Option( 'n_cgrelax_loop', 'Integer', default='1' ),
+		Option( 'n_dock_loop', 'Integer', default='4' ),
+		Option( 'interface_cutoff', 'Real', default='5.0'),
+		Option( 'use_input_bb', 'Boolean', default='false'),
+		Option( 'remove_input_bb', 'Boolean', default='false'),
+		Option( 'homol_csts', 'String', default='prep.csts'),
+		Option( 'p_homol_csts', 'Real', default='1.0'),
+#		Option( 'frag_file', 'String', default='sampling/filtered.vall.dat.2006-05-05.gz'),
+		Option( 'gen_pep_bb_sequential', 'Boolean', default='false'),
+		Option( 'input_seq', 'String' ),
+		Option( 'ss_type', 'String' ),
+		Option( 'upweight_interface', 'Boolean', default='false'),
+		Option( 'calc_sasa', 'Boolean', default='false'),
+
+		Option( 'diversify_pep_seqs', 'Boolean', default='true'),
+		Option( 'diversify_lvl', 'Integer', default='10'),
+		Option( 'dump_cg_bb', 'Boolean', default='false'),
+		Option( 'save_low_pdbs', 'Boolean', default='true'),
+		Option( 'save_all_pdbs', 'Boolean', default='false'),
+		Option( 'no_design', 'Boolean', default='false'),
+
+		Option( 'pdb_list', 'String' ),
+		Option( 'ref_pdb_list', 'String' ),
+		Option( 'add_buffer_res', 'Boolean', default='false'),
+		Option( 'cg_res_type', 'String', default = 'ALA' ),
+
+		Option( 'native_pep_anchor', 'Integer' ),
+		Option( 'native_pep_chain', 'String', default=''),
+		Option( 'native_align', 'Boolean', default='false'),
+		Option( 'rmsd_analysis', 'Boolean', default='false'),
+#		Option( 'phipsi_analysis', 'Boolean', default='false'),
+
+		Option( 'anchor_type', 'String', default='ALA' ),
+		Option( 'no_prepack_prot', 'Boolean', default='false'),
+		Option( 'prep_use_ref_rotamers', 'Boolean', default='false'),
+		Option( 'n_prepend', 'Integer', default='0' ),
+		Option( 'n_append', 'Integer', default='0' ),
+		Option( 'clash_cutoff', 'Real', default='5' ),
+		Option( 'n_anchor_dock_std_devs', 'Real', default='1.0' ),
+		Option( 'prep_trans_std_dev', 'Real', default='0.5' ),
+		Option( 'prep_rot_std_dev', 'Real', default='10.0' ),
+		Option( 'seq_align', 'Boolean', default='false'),
+		Option( 'prep_align_prot_to', 'String'),
+	), # -pepspec
+
+	###################################################################################
+	# Residue protonation state options
+	Option_Group( 'pH' ,
+		Option( 'pH_mode', 'Boolean', desc="Allow protonated/deprotonated versions of the residues based on pH", default='false' ),
+		Option( 'keep_input_protonation_state', 'Boolean', desc="Read in residue protonation states from input pdb?", default='false' ),
+		Option( 'value_pH', 'Real', desc="pH value input for the pHEnergy score", default = '7.0' ),
+		Option_Group( 'calc_pka',
+			Option( 'pka_all', 'Boolean', desc="Calculate pKa values for all protonatable protein residues in the PDB?", default='false' ),
+			Option( 'pka_for_resnos', 'RealVector', desc="Residue no whose pKa value is to be determined", default = '0' ),
+			Option( 'pka_for_chainno', 'String', desc="Chain no of the residue whose pKa is to be determined", default = 'A' ),
+			Option( 'pH_neighbor_pack', 'Boolean', desc="Pack the neighbors while calculating pKa?", default='false' ),
+			Option( 'pka_rad', 'Real', desc="Radius of repack", default = '5.0' ),
+			Option( 'pH_prepack', 'Boolean', desc="Prepack structure before calculating pKa values?", default='false' ),
+			Option( 'pH_relax', 'Boolean', desc="Relax structure before calculating pKa values?", default='false' ),
+			Option( 'rotamer_prot_stats', 'Boolean', desc="Get rotamer protonation statistics when titrating?", default='false' ),
+		), # -pH:calc_pka
+		Option( 'pH_unbound', 'FileVector', desc="Name(s) of unbound receptor and ligand PDB file(s)" ),
+		Option( 'output_raw_scores', 'Boolean', desc="Return raw scores contributing to interface score?" ),
+		Option( 'pre_process', 'Boolean', desc="Refine rigid body orientation?" ),
+		Option( 'cognate_partners', 'String', desc="Chain IDs for the cognate complex", default='_' ),
+		Option( 'cognate_pdb', 'File', desc="File containing the cognate Antigen-Antibody complex" ),
+	), # -pH
+
+	##############################################################################
+	# PocketGrid options ---------------------------------------------
+	Option_Group('pocket_grid',
+		Option( 'pocket_grid_size',	     'Real',default='0',desc='grid spacing in Angstroms'),
+		Option( 'pocket_grid_size_x',	     'Real',default='10',desc='grid spacing in Angstroms'),
+		Option( 'pocket_grid_size_y',	     'Real',default='10',desc='grid spacing in Angstroms'),
+		Option( 'pocket_grid_size_z',	     'Real',default='10',desc='grid spacing in Angstroms'),
+		Option( 'pocket_grid_spacing',	     'Real',default='0.5',desc='grid spacing in Angstroms'),
+		Option( 'pocket_max_spacing',	     'Real',default='8',desc='Maximum residue-residue distance to be considered a pocket'),
+		Option( 'pocket_min_size',	     'Real',default='10',desc='Minimum pocket size to score, in cubic Angstroms'),
+		Option( 'pocket_max_size',	     'Real',default='0',desc='Maximum pocket size to report, in cubic Angstroms, 0 for no limit'),
+		Option( 'pocket_probe_radius',	     'Real',default='1.0',desc='radius of surface probe molecule'),
+		Option( 'central_relax_pdb_num',     'String',default='-1',desc='Residue number:(optional)Chain around which to do Pocket Constraint'),
+		Option( 'pocket_ntrials',	     'Integer',default='100000',desc='Number of trials to use for backrub'),
+		Option( 'pocket_num_angles',	     'Integer',default='1',desc='Number of different pose angles to measure pocket score at'),
+		Option( 'pocket_side', 'Boolean', desc="Include only side chain residues for target surface", default='false' ),
+		Option( 'pocket_dump_pdbs', 'Boolean', desc="Generate PDB files",default='false' ),
+		Option( 'pocket_dump_exemplars', 'Boolean', desc="Generate exemplar PDB files",default='false' ),
+		Option( 'pocket_filter_by_exemplar', 'Boolean', desc="Restrict the pocket to the exemplars",default='false' ),
+#		Option( 'pocket_dump_rama', 'Boolean', desc="Generate Ramachandran maps for each pocket cluster",default='false' ),
+		Option( 'pocket_restrict_size', 'Boolean', desc="Pockets that are too large return score of 0",default='false' ),
+		Option( 'pocket_ignore_buried', 'Boolean', desc="Ignore pockets that are not solvent exposed",default='true' ),
+		Option( 'pocket_only_buried', 'Boolean', desc="Identify only pockets buried in the protein core (automatically sets -pocket_ignored_buried false)",default='false' ),
+		Option( 'pocket_psp', 'Boolean', desc="Mark Pocket-Solvent-Pocket events as well",default='true' ),
+		Option( 'pocket_sps', 'Boolean', desc="Unmark Solvent-Pocket-Solvent events",default='false' ),
+		Option( 'pocket_search13', 'Boolean', desc="Search in 13 directions (all faces and edges of a cube) versus faces and diagonal",default='false' ),
+		Option( 'pocket_surface_score',	     'Real',default='0',desc='Score given to pocket surface'),
+		Option( 'pocket_surface_dist',	     'Real',default='2.5',desc='Distance to consider pocket surface'),
+		Option( 'pocket_buried_score',	     'Real',default='5.0',desc='Score given to deeply buried pocket points'),
+		Option( 'pocket_buried_dist',	     'Real',default='2.0',desc='Distance to consider pocket buried'),
+		Option( 'pocket_exemplar_vdw_pen',	   'Real',default='300.0',desc='Temporary max penalty for vdW class in exemplar discovery'),
+#		Option( 'pocket_debug_output', 'Boolean', desc="Print any and all debuggind output related to pockets", default='false' ),
+		Option( 'print_grid', 'Boolean', desc="print the grid points into a PDB file",default='false' ),
+#		Option( 'extend_eggshell', 'Boolean', desc="Extend the eggshell points",default='false' ),
+#		Option( 'extend_eggshell_dist',		 'Real',default='1',desc='Distance to extend eggshell'),
+		Option( 'extra_eggshell_dist',		 'Real',default='4',desc='Distance to extend extra eggshell points'),
+		Option( 'eggshell_dist',	 'Real',default='4',desc='Distance to extend eggshell points from ligand atoms'),
+#		Option( 'reduce_rays',		 'Boolean', default='true', desc='reduce no. of rays by rounding and removing duplicate xyz coordinates'),
+		Option( 'pocket_static_grid', 'Boolean', desc="No autoexpanding grid", default='false' ),
+	), # -pocket_grid
+
+	Option_Group ( 'ProQ',
+		Option( 'svmmodel','Integer', desc="SVM model to use (in cross-validation, default is to use all [1-5])",default='1'),
+		Option( 'basename','String', desc="basename location for sequence specific inputfile)",default=""),
+		Option( 'membrane','Boolean', desc="use membrane version (ProQM)",default='false'),
+		Option( 'prof_bug','Boolean', desc="reproduce the profile bug in ProQres",default='false'),
+		Option( 'output_feature_vector','Boolean', desc="outputs the feature vector",default='false'),
+		Option( 'output_local_prediction','Boolean', desc="outputs the local predicted values",default='false'),
+		Option( 'prefix','String', desc="prefix for outputfiles)",default=""),
+		Option( 'use_gzip','Boolean', desc="gzip output files", default='false'),
+		Option( 'normalize','Real', desc="Normalizing factor (usually target sequence length)", default='1.0'),
+	), # -ProQ
+
+	Option_Group( 'qsar',
+		Option( 'weights','String',default='talaris2013',desc = 'select qsar weight set to use'),
+		Option( 'grid_dir','String',desc = 'Directory to store grids in'),
+		Option( 'max_grid_cache_size','Integer',desc= 'delete old grids if grid cache exceeds specified size')
+	), # qsar
+
+	Option_Group( 'rbe',
+		Option( 'server_url', 'String', desc='serverurl for rosetta backend' ),
+		Option( 'server_port', 'String', default = '80', desc='port for rosetta backend' ),
+		Option( 'poll_frequency', 'Real', default='1.0' ),
+	),
+
+	Option_Group( 'RBSegmentRelax',
+		Option( 'input_pdb','File', desc='input pdb file', default='--' ),
+		Option( 'rb_file','File', desc='input rb segment file', default='--' ),
+#		Option( 'cst_wt', 'Real', desc='Weight on constraint term in scoring function', default = '0.1' ),
+#		Option( 'cst_width', 'Real', desc='Width of harmonic constraints on csts', default = '1.0' ),
+#		Option( 'cst_pdb', 'String', desc='PDB file from which to draw constraints', default = '--' ),
+		Option( 'nrbmoves', 'Integer', desc='number of rigid-body moves', default = '100' ),
+		Option( 'nrboutercycles', 'Integer', desc='number of rigid-body moves', default = '5' ),
+		Option( 'rb_scorefxn', 'String', desc='number of rigid-body moves', default = 'score5' ),
+		Option( 'skip_fragment_moves', 'Boolean', desc='omit fragment insertions (in SS elements)', default = 'false' ),
+		Option( 'skip_seqshift_moves', 'Boolean', desc='omit sequence shifting moves', default = 'false' ),
+		Option( 'skip_rb_moves', 'Boolean', desc='omit rigid-body moves', default = 'false' ),
+		Option( 'helical_movement_params', 'RealVector', desc='helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation', default = 'utility::vector1<float>(4,0.0)' ),
+		Option( 'strand_movement_params', 'RealVector', desc='strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn' , default = 'utility::vector1<float>(4,0.0)' ),
+		Option( 'default_movement_params', 'RealVector', desc='default-rotation, default-translation' , default = 'utility::vector1<float>(2,0.0)' ),
+		Option( 'cst_seqwidth', 'Integer', desc='sequence width on constraints', default = '0' ),
+	), # -RBSegmentRelax
+
+	############################################################################
+	# CS-Rosetta options
+	Option_Group('rdc',
+		Option( 'correct_NH_length', 'Boolean', desc='fix N-H bond-vector to 1.04 as measured in ottiger&bax 98', default='true'),
+		Option( 'reduced_couplings', 'Boolean', desc='gives more equal weights to different bond-vectors', default='false'),
+		Option( 'weights', 'File', desc='specify weights for individual residues ( works for all couplings at this reside)' ),
+		Option( 'iterate_weights', 'Real', desc='do a wRDC computation, i.e., iterate tensor calculation until weights are ~exp ( -dev2/sigma )', default='1' ),
+		Option( 'segment_file','File',desc='Definition of rigid segments for alignment tensor optimization'),
+
+		Option( 'segment_scoring_mode', 'String',
+			desc="Type of treatment of alignment tensor-based scoring : pairwise or fixed_axis_z (e.g. for homo-dimers) ",
+			legal=['pairwise', 'fixed_axis_z', 'fixed_sum']
+		),
+
+		Option( 'total_weight','Real',desc='Weight for RDC scores of individual al. tensors', default='1.0'),
+		Option( 'tensor_weight','Real',desc='Weight for pairwise scoring of al. tensors', default='1.0'),
+		Option( 'print_rdc_values','File',desc='print computed vs experimental RDC values'),
+		Option( 'iterate_tol','Real',desc='tolerance for tensor iterations', default='0.01'),
+		Option( 'iterate_reset','Boolean',desc='reset weights to 1.0 when optimizing for new structure', default='false' ),
+		Option( 'dump_weight_trajectory','File', desc='if yes, write weights to file for each scoring event'),
+		Option( 'fix_normAzz', 'RealVector', desc='divide by this axial tensor component' ),
+#		Option( 'select_residues_file', 'File', desc='loop/rigid-file with RIGID entries that define the set of residues active for RDC score' ),
+		Option( 'fit_method', 'String', legal = [ 'svd', 'nls'], default = 'nls' ),
+		Option( 'fixDa', 'RealVector'),
+		Option( 'fixR', 'RealVector'),
+		Option( 'nlsrepeat', 'Integer', default = '5' ),
+	), # -rdc
+
+	# relax mode -----------------------------------------------------------
+	Option_Group( 'relax',
+		## Different relax modes:
+		Option( 'fast',                      'Boolean', desc='Do a preset, small cycle number FastRelax' ),
+		Option( 'thorough',                  'Boolean', desc='Do a preset, large cycle number FastRelax' ),
+#		Option( 'membrane',                  'Boolean', desc='Do membrane relax', default='false' ),
+		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
+		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
+		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended' ),
+
+		## Options for Sequence Relax
+		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),
+		Option( 'ramady_rms_limit',        'Real', desc='(ramady-only) Reject rama changes which perturb structure by more than this', default='0.5' ),
+		Option( 'ramady_cutoff',           'Real', desc='(ramady-only) Cutoff at which a rama is considered bad', default='2.0' ),
+		Option( 'ramady_max_rebuild',        'Integer', desc='(ramady-only) The maximum number of bad ramas to fix per repack-min cycle', default='1' ),
+		Option( 'ramady_force',              'Boolean', desc='(ramady-only) Force rebuilding of bad ramas (normal skip-rate = 10%)', default='false' ),
+		Option( 'script',                    'File',    desc='Relax script file', default='' ),
+		Option( 'script_max_accept',       'Integer',    desc='Limit number of best accepts', default = '10000000' ),
+
+		Option( 'superimpose_to_native',     'Boolean', desc='Superimpose input structure to native', default='false' ),
+		Option( 'superimpose_to_file',     'File', desc='Superimpose input structure to file', default='false' ),
+		Option( 'constrain_relax_to_native_coords', 'Boolean', desc = "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native", default="false" ),
+		Option( 'constrain_relax_to_start_coords', 'Boolean', desc = "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native", default="false" ),
+		Option( 'coord_constrain_sidechains', 'Boolean', desc = "For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)", default="false" ),
+		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
+		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
+		Option( 'respect_resfile', 'Boolean', desc = "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.", default="false"),
+
+		## Options to manipulate the movemap
+		Option( 'bb_move', 'Boolean', default='true', desc='allow backbone to move during relax'),
+		Option( 'chi_move', 'Boolean', default='true', desc='allow sidechain to move during relax'),
+		Option( 'jump_move', 'Boolean', default='false', desc='allow jump to move during relax'),
+		Option( 'dna_move', 'Boolean', default='false', desc='allow dna to move during relax + allow DNA-DNA interactions. Best if used with orbitals scorefunction. DNA stays together with great molprobity results.  Not recommended for general use at this time.'),
+		Option( 'fix_omega',          'Boolean', default='false', desc='Fix omega angles during relax' ),
+		Option( 'minimize_bond_lengths',          'Boolean', default='false', desc='Free bond length DOFs during relax for all atoms' ),
+		Option( 'minimize_bond_angles',           'Boolean', default='false', desc='Free bond angle DOFs during relax for all atoms' ),
+		Option( 'minimize_bondlength_subset', 'Integer', legal=[ '0', '1', '2', '3'], default='0',
+			desc="Minimize only a subset of bondlengths \
+0 Default  all bondlengths \
+1          backbone only \
+2          sidechain only \
+3          CA only (Ca-C,Ca-N and Ca-Cb)",
+			),
+		Option( 'minimize_bondangle_subset', 'Integer', legal=[ '0', '1', '2', '3', '4'], default='0',
+			desc="Minimize only a subset of bondlengths \
+0 Default  all bondangles \
+1          backbone only \
+2          sidechain only \
+3          tau only \
+4          Ca-Cb only",
+			),
+		## Use an alternate minimizer
+		Option( 'min_type', 'String', default = 'dfpmin_armijo_nonmonotone', desc = 'minimizer to use during relax.'),
+		Option( 'cartesian', 'Boolean', default='false', desc='Use Cartesian minimizer' ),
+
+		Option( 'chainbreak_weight',            'Real',    desc='chainbreak weight', default='0.0'),
+		Option( 'linear_chainbreak_weight',     'Real',    desc='linear chainbreak weight', default='0.0'),
+		Option( 'overlap_chainbreak_weight',     'Real',    desc='overlap chainbreak weight', default='0.0'),
+
+
+		# Older, deprecated protocols
+		Option( 'classic',                   'Boolean', desc='Do very old classic relax ! This is a poor protocol - don\'t use it !' ),
+		Option( 'sequence_file',             'File',    desc='Relax script file', default='' ),
+		Option( 'quick',                     'Boolean', desc='Do a preset, small cycle number FastRelax' ),
+		Option( 'sequence',                  'Boolean', desc='Do a preset, small cycle number FastRelax' ),
+
+		Option( 'minirelax_repeats',         'Integer', desc='', default='2'),
+		Option( 'minirelax_sdev', 'Real', desc='tether on coordinate constraints for minirelax', default='0.5' ),
+		Option( 'wobblemoves',               'Boolean', desc='Do Wobble moves ?', default="false" ),
+		Option( 'constrain_relax_segments',  'File',    desc='loop definition file', default='' ),
+		Option( 'coord_cst_width',           'Real',    desc='Width on coordinate constraints from constrain_relax_* options', default='0.0' ),
+		Option( 'coord_cst_stdev',           'Real',    desc='Stdev on coordinate constraints from constrain_relax_* options', default='0.5' ),
+		Option( 'ramp_constraints',          'Boolean', desc='Ramp constraints during phase1 of relax from full to zero', default='false' ),
+		Option( 'energycut',                 'Real',    desc='Rottrial energycut (per residue!)', default='0.01'),
+		Option( 'mini', 'Boolean', desc='perform a relax that is only a minimization and repack.', default='false' ),
+		Option( 'stage1_ramp_cycles',        'Integer', desc='Ramp cyclesin stage 1 ', default='8'),
+		Option( 'stage1_ramp_inner_cycles',  'Integer', desc='Inner cycles means how many small shear moves + rottrials', default='1'),
+		Option( 'stage2_repack_period',      'Integer', desc='Full repack after how many cycles in stage 2', default='100'),
+		Option( 'stage2_cycles',             'Integer', desc='How many stage 2 cycles ? (by default its -1 means Nresidues*4 )', default='-1'),
+		Option( 'min_tolerance',             'Real',    desc='Minimizer tolerance', default='0.00025'),
+		Option( 'stage3_cycles',             'Integer', desc='How many stage 3 cycles ? (by default its -1 means Nresidues )', default='-1'),
+		Option( 'cycle_ratio',               'Real',    desc='Post-multiplier for cycle numbers', default='1.0'),
+		Option( 'filter_stage2_beginning',   'Real',    desc='FArelax score filter', default='99999999.00'),
+		Option( 'filter_stage2_quarter',     'Real',    desc='FArelax score filter', default='99999999.00'),
+		Option( 'filter_stage2_half',        'Real',    desc='FArelax score filter', default='99999999.00'),
+		Option( 'filter_stage2_end',         'Real',    desc='FArelax score filter', default='99999999.00'),
+
+		## Options for CentroidRelax
+		Option_Group('centroid',
+			Option( 'weights',           'String',  desc="Weights to use for centroid minimization", default='score4_smooth_cen_relax'),
+			Option( 'ramp_vdw',          'Boolean', desc="Ramp up the VDW weight", default='true'),
+			Option( 'ramp_rama',         'Boolean', desc="Ramp up the rama/rama2b weight", default='false'),
+			Option( 'parameters',        'String',  desc="Database file for ramp/min parameter", default='sampling/cen_relax/default_relax_parameters.txt'),
+			Option( 'do_final_repack',   'Boolean', desc="Repack sidechains in movemap after protocol if given a fullatom structure", default='false'),
+			Option( 'increase_vdw_radii','Boolean', desc="Increase BB vdw radii", default='false'),
+		), # -relax:centroid
+	), # -relax
+
+	##remodel
+	Option_Group( 'remodel',
+#		Option(  'help', 'Boolean', desc='help menu.'),
+#		Option(  'autopilot', 'Boolean', desc='autopilot'),
+		Option(  'blueprint', 'File', desc='blueprint file name'),
+#		Option(  'cstfile', 'File', desc='description'),
+		Option(  'cstfilter', 'Integer', desc='filter cst energy', default='10'),
+		Option(  'cen_sfxn', 'String', desc = 'centroid score function to be used for building', default='remodel_cen'),
+		Option( 'check_scored_centroid', 'Boolean', desc = 'dump centroid structures after build'),
+		Option(  'num_trajectory', 'Integer', desc='Number of remodel trajectories.', default = '10'),
+		Option(  'save_top' , 'Integer', desc= 'the number of final low scoring pdbs to keep.', default = '5'),
+		Option(  'swap_refine_confirm_protocols' , 'Boolean', desc= 'swapping the protocols used refinement and confirmation', default = 'false'),
+#		Option(  'num_frag_moves', 'Integer', desc= 'number of fragment moves to try in the centroid stage.'),
+		Option(  'bypass_fragments', 'Boolean' , desc= 'only works on input PDB, so no extensions or deletions are honored in the blueprint.  Blueprint (H,L,E,D) becomes allow_move definitionsi.'),
+		Option(  'use_same_length_fragments', 'Boolean' , desc= 'harvest fragments that matches the length to rebuild', default = 'true'),
+#		Option(  'enable_ligand_aa', 'Boolean' , desc= 'handles ligand attachment and clash check after centroid build.'),
+		Option(  'no_jumps', 'Boolean', desc= 'will setup simple foldtree and fold through it during centroid build.'),
+#		Option(  'backrub', 'Boolean', desc= 'run backrub MC trajectory after every completed loop building attempt'),
+		Option(  'use_blueprint_sequence ', 'Boolean', desc=' picks fragments based on both secondary structure and the second column (sequence) in blueprint file'),
+#		Option(  'randomize_equivalent_fragments ', 'Boolean', desc=' will randomize identical scoring fragments; without either this flag or'),
+		Option(  'quick_and_dirty ', 'Boolean', desc=' only do fragment insertion'),
+		Option(  'checkpoint ', 'Boolean', desc=' this writes out the best pdbs collected so far after each design step.'),
+#		Option(  'use_ccd_refine ', 'Boolean', desc=' maintain a default chainbreak position (loop start+1) and try using CCD for refinement.  try 20 times for 5 closed loops.'),
+		Option(  'use_pose_relax ', 'Boolean', desc=' an alternative to the default minimization step, but use constraints in a similar way.'),
+		Option(  'use_cart_relax ', 'Boolean', desc=' an alternative to the default minimization step, but use constraints in a similar way.'),
+		Option(  'free_relax ', 'Boolean', desc=' running pose_relax with no constraints.'),
+#		Option(  'use_dssp_assignment' , 'Boolean', desc=' use dssp assignment.'),
+#		Option(  'keep_jumps_in_minimizer ', 'Boolean', desc=' no constraint is setup for minimization, only rebuilt regions allow bbmove.'),
+#		Option(  'output_fragfiles', 'File', desc='output fragment file [filename ,e.g. aafr01].'),
+#		Option(  'read_fragfile' , 'File' , desc='read fragment file.'),
+		Option(  'generic_aa' , 'String' , desc='the type of AA for centroid building', default='V'),
+		Option(  'cluster_radius', 'Real', desc='cluster radius for accumulator, default to auto set value', default = '-1.0'),
+		Option(  'use_clusters', 'Boolean', desc='use clustering in accumulator', default = 'false'),
+		Option(  'run_confirmation', 'Boolean', desc='use KIC rms confirmation', default = 'false'),
+		Option(  'cluster_on_entire_pose', 'Boolean', desc='cluster use all pose, not just loops', default = 'false'),
+#		Option(  'collect_clustered_top', 'Integer', desc='take the best N from each cluster', default = '1'),
+		Option(  'dr_cycles', 'Integer', desc='number of design-refine cycles to use', default = '3'),
+		Option(  'two_chain_tree', 'Integer', desc='label the start of the second chain'),
+		Option(  'repeat_structure', 'Integer', desc='build identical repeats this many times', default='1'),
+		Option(  'lh_ex_limit', 'Integer', desc='loophasing neighboring bin expansion limit', default='5'),
+		Option(  'lh_filter_string', 'StringVector', desc='loophash ABEGO filter target fragment type. list sequentially for each loop'),
+		Option(  'lh_cbreak_selection', 'Integer', desc='loophash with cbreak dominant weight', default='10'),
+		Option(  'lh_closure_filter', 'Boolean', desc='filter for close rms when bypass_closure is used', default='false'),
+		Option(  'cen_minimize', 'Boolean' , desc= 'centroid minimization after fragment building', default = 'false'),
+		Option(  'core_cutoff', 'Integer', desc='number of neighbors required to consider core in auto design', default = '18'),
+		Option(  'boundary_cutoff', 'Integer', desc='number of neighbors required to consider boundary in auto design', default = '15'),
+		Option(  'resclass_by_sasa', 'Boolean' , desc= 'switch to use sasa for residue classification', default = 'false'),
+
+		Option(  'helical_rise', 'Real', desc='helical parameter: rise', default = '0.0'),
+		Option(  'helical_radius', 'Real', desc='helical parameter: radius', default = '0.0'),
+		Option(  'helical_omega', 'Real', desc='helical parameter: omega', default = '0.0'),
+		Option(  'COM_sd', 'Real', desc='center of mass coordinate constraint sd value', default = '1.0'),
+		Option(  'COM_tolerance', 'Real', desc='center of mass coordinate constraint tolerance value', default = '0.0'),
+
+		Option(  'vdw', 'Real', desc='set vdw weight', default = '1.0'),
+		Option(  'rama', 'Real', desc='set rama weight', default = '0.1'),
+		Option(  'cbeta', 'Real', desc='set cbeta weight', default = '0.0'),
+		Option(  'cenpack', 'Real', desc='set cenpack weight', default = '0.0'),
+		Option(  'rg_local', 'Real', desc='set rg_local weight', default = '0.0'),
+		Option(  'hb_lrbb', 'Real', desc='set hbond_lrbb weight', default = '0.0'),
+		Option(  'hb_srbb', 'Real', desc='set hbond_srbb weight', default = '0.0'),
+		Option(  'rg', 'Real', desc='set rg weight'),
+		Option(  'rsigma', 'Real', desc='set rsigma weight', default = '0.0'),
+		Option(  'ss_pair', 'Real', desc='set sspair weight', default = '0.0'),
+		Option(  'build_disulf', 'Boolean', desc='build disulfides', default = 'false'),
+#		Option(  'max_disulf_allowed', 'Integer', desc='number of disulf pairs can be generated at a time', default = '1'),
+		Option(  'match_rt_limit', 'Real', desc='match RT score cutoff', default = '0.4'),
+		Option(  'disulf_landing_range', 'IntegerVector', desc='residue range for disulf landing sites', n = '2'),
+#		Option( 'rank_by_bsasa' ,'Boolean', desc= 'rank results by bsasa.'),
+
+		Option_Group( 'staged_sampling',
+			Option(  'staged_sampling', 'Boolean', desc = 'sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure', default = 'false'),
+			Option(  'residues_to_sample', 'File', desc = 'residues to allow sampling (format:1,3,5)', default = ''),
+			Option(  'starting_sequence', 'String', desc = 'AA sequence to start', default = ''),
+			Option(  'starting_pdb', 'File', desc = 'pdb to start', default = ''),
+			Option(  'require_frags_match_blueprint', 'Boolean', desc = 'makes sure the frags match the definition in the blueprint', default = 'true'),
+			Option( 'start_w_ideal_helices', 'Boolean', desc = 'begins with all helices set to -63.8 phi and -41.1 for psi.', default = 'false'),
+			Option( 'sample_over_loops', 'Boolean', desc = 'sample residues defined as loops in the blueprint', default = 'false'),
+			Option( 'small_moves', 'Boolean', desc = 'add a stage of small moves', default = 'false'),
+			Option( 'fa_relax_moves', 'Boolean', desc = 'Adds a stage of fa relax', default = 'false'),
+		), # -remodel:staged_sampling
+		Option_Group( 'domainFusion',
+			Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),
+			#Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),
+		), # -remodel:domainFusion
+		Option_Group( 'design',
+			Option(  'no_design ', 'Boolean', desc=' skips all design steps. WARNING: will only output centroid level structures and dump all fragment tries.' ),
+			Option(  'design_all', 'Boolean', desc=' force AUTO design procedure (layered) to perform design on all positions. ' ),
+			Option(  'allow_rare_aro_chi', 'Boolean', desc='allow all aromatic rotamers, not issuing AroChi2 filter', default= 'false' ),
+#			Option(  'silent', 'Boolean', desc=' dumps all structures by silent-mode WARNING: will work only during no_design protocol (see -no_design).' ),
+			Option(  'skip_partial', 'Boolean', desc=' skip design stage that operate only on burial positions', default = 'false' ),
+			Option(  'design_neighbors', 'Boolean', desc= 'design neighbors.', default='false'),
+			Option(  'find_neighbors', 'Boolean', desc = 'find neighbors for design/repack' ,default= 'false' ),
+		), # -remodel:design
+
+		## remodel loop mover options
+		Option_Group( 'RemodelLoopMover',
+			Option( 'max_linear_chainbreak', 'Real', desc="linear chainbreak is <= this value, loop is considered closed (default 0.07) ", default = '0.07' ),
+			Option( 'randomize_loops', 'Boolean', desc="randomize loops prior to running main protocol (default true)", default='true' ),
+			Option( 'use_loop_hash', 'Boolean', desc="centroid build with loop hash (default false)", default='false' ),
+			Option( 'allowed_closure_attempts', 'Integer', desc="the allowed number of overall closure attempts (default 1)", default='1' ),
+			Option( 'loophash_cycles', 'Integer', desc="the number of loophash closure cycles to perform (default 8)", default='8' ),
+			Option( 'simultaneous_cycles', 'Integer', desc="the number of simultaneous closure cycles to perform (default 2)", default='2' ),
+			Option( 'independent_cycles', 'Integer', desc="the number of independent closure cycles to perform (default 8)", default='8' ),
+			Option( 'boost_closure_cycles', 'Integer', desc="the maximum number of possible lockdown closure cycles to perform (default 30)", default='30' ) ,
+			Option( 'force_cutting_N', 'Boolean', desc="force a cutpoint at N-term side of blueprint assignment", default='false' ) ,
+			Option( 'bypass_closure', 'Boolean', desc="turning off CCD closure in the mover for tethered docking purpose", default='false' ),
+			Option( 'cyclic_peptide', 'Boolean', desc="circularize structure joining N and C-term.", default='false' ),
+			Option( 'temperature', 'Real', desc="temperature for monte carlo ( default 2.0)", default='2.0' ),
+#			Option( 'max_chews', 'Integer', desc='maxium number of residues to chew on either side of loop', default='1'),
+		), # -remodel:RemodelLoopMover
+	), # -remodel
+
+	Option_Group( 'resample',
+		Option( 'silent',               'File',         desc='a silent file for decoys to restart sampling from ',     default='' ),
+		Option( 'tag',                  'String',      desc='which decoy to select from silent file ',     default='' ),
+		Option( 'stage1',               'Boolean',      desc='if true restart after stage1, otherwise after stage2 ',     default='false' ),
+		Option( 'stage2',               'Boolean',      desc='if true restart after stage1, otherwise after stage2 ',     default='false' ),
+		Option( 'jumps',                'Boolean',      desc='if true restart after stage1, otherwise after stage2 ',     default='false' ),
+		Option( 'min_max_start_seq_sep','RealVector',  desc='range of (random) start values for seq-separation',     default='0' ),
+	), # -resample
+
+	# rescore mode -----------------------------------------------------------
+	Option_Group( 'rescore',
+#		Option( 'pose_metrics', 'Boolean', desc="Do pose metrics calc" ),
+		Option( 'assign_ss', 'Boolean', desc="Invoke DSSP to assign secondary structure.", default = 'false' ),
+		Option( 'skip', 'Boolean', desc="Dont actually call scoring function (i.e. get evaluators only)" ),
+		Option( 'verbose', 'Boolean', desc="Full break down of weights, raw scores and weighted scores ?" ),
+#		Option( 'msms_analysis', 'String', desc="Run MSMS on the structure and determine surface properties. " ),
+	), # -rescore
+
+	Option_Group( 'rna',
+		Option( 'minimize_rounds', 'Integer', desc='The number of rounds of minimization.', default = '2' ),
+		Option( 'corrected_geo', 'Boolean', desc="Use PHENIX-based RNA sugar close energy and params files", default='true'),
+		Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
+		Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
+		Option( 'skip_o2prime_trials', 'Boolean', desc='No O2* packing in minimizer',default='false' ),
+		Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
+		Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),
+		Option( 'bps_database', 'Boolean', desc='Generate a database of base pair steps extracted from a big RNA file', default='false' ),
+		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
+		Option( 'deriv_check', 'Boolean', desc="In rna_minimize, check derivatives numerically", default='false' ),
+		Option( 'data_file', 'String', desc="RDAT or legacy-format file with RNA chemical mapping data",default='' ),
+	), # -rna
+
+	Option_Group('rotamerdump',
+		Option('xyz','Boolean',default= 'false',desc="when using the RotamerDump application, output the xyz coords of every rotamer"),
+		Option('one_body','Boolean',default='false',desc="when using the RotamerDump application, output the one_body energies of every rotamer"),
+		Option('two_body','Boolean',default='false',desc="when using the RotamerDump application, output the two_body energies of every rotamer"),
+		Option('annealer','Boolean',default='false',desc="Run the annealer and output the rotamers it chose"),
+	), # -rotamerdump
+
+	###############################################################################
+	## peptide specificity / flexible backbone design options (chrisk)
+	Option_Group( 'sicdock',
+		Option( 'clash_dis'    ,    'Real', default='3.5' , desc="max acceptable clash dis"),
+		Option( 'contact_dis'  ,    'Real', default='12.0', desc="max acceptable contact dis"),
+		Option( 'hash_2D_vs_3D',    'Real', default='1.3' , desc="grid spacing top 2D hash"),
+#		Option( 'term_min_expose',  'Real', default='0.1' , desc="terminus at least X exposed"),
+#		Option( 'term_max_angle',   'Real', default='45.0' , desc="terminus at most X degrees from XY plane"),
+	), # -sicdock
+
+	################################
+	## In development helix assembly options
+	Option_Group( 'sewing',
+		####Old options - to be removed shortly####
+		Option('query_structure_path','File', desc=""),
+		Option('frag1_start','Integer', desc=""),
+		Option('frag1_end','Integer', desc=""),
+		Option('frag2_start','Integer', desc=""),
+		Option('frag2_end','Integer', desc=""),
+		Option('minimum_helix_contacts','Integer', desc=""),
+		Option('helices_to_add','Integer', desc=""),
+		Option('single_helix_rmsd_cutoff','Real', desc=""),
+		Option('helix_pair_rmsd_cutoff','Real', desc=""),
+		####End old stuff####
+
+		Option('nat_ro_file','File', desc="A file containing coordinates for 'native' rotamers"),
+		Option('helix_cap_dist_cutoff','Real', desc="Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle"),
+		Option('helix_contact_dist_cutoff','Real', desc="Maximum distance between c-alpha residues in two helices in order to call them interacting"),
+		Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),
+	), # -sewing
+
+	Option_Group( 'SSrbrelax',
+#		Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),
+		Option( 'rb_file','File', desc='rb definition file', default='rb_file' ),
+		Option( 'rb_param_file','File', desc='rb param file', default='rb_param_file' ),
+		Option( 'frag_sizes','IntegerVector', desc='lengths of fragments to be used in loop modeling', default=['9','3','1']),
+		Option( 'frag_files', 'FileVector', desc='fragment libraries files', default=['FragFile9','FragFile3','FragFile1'] ),
+	), # -SSrbrelax
+
+	################################
+	# step-wise assembly options
+	Option_Group( 'stepwise',
+		Option( 's1', 'StringVector',desc="input file(s)"),
+		Option( 's2', 'StringVector',desc="input file(s)"),
+		Option( 'silent1', 'StringVector',desc="input file"),
+		Option( 'silent2', 'StringVector',desc="input file"),
+		Option( 'tags1', 'StringVector',desc="input tag(s)"),
+		Option( 'tags2', 'StringVector',desc="input tag(s)"),
+		Option( 'slice_res1', 'IntegerVector',desc='Residues to slice out of starting file',default=[]),
+		Option( 'slice_res2', 'IntegerVector',desc='Residues to slice out of starting file',default=[]),
+		Option( 'input_res1', 'IntegerVector',desc='Residues already present in starting file',default=[]),
+		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2',default=[]),
+		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
+		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
+		Option( 'fixed_res', 'IntegerVector', desc='Do not move these residues during minimization.', default=[] ),
+		Option( 'test_encapsulation', 'Boolean', desc="Test ability StepWiseRNA Modeler to figure out what it needs from just the pose - no JobParameters", default="false" ),
+		Option( 'choose_random', 'Boolean', desc="ask swa residue sampler for a random solution", default="false" ),
+		Option( 'num_random_samples', 'Integer', desc="In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best", default="20" ),
+		Option( 'num_pose_minimize','Integer', desc='optional: set_num_pose_minimize by Minimizer', default='0' ),
+		Option( 'atr_rep_screen', 'Boolean', desc='In packing, screen for contacts (but no clash) between partitions before packing',default='true' ),
+		Option( 'align_pdb', 'String', desc='PDB to align to. Default will be -native, or no alignment', default='' ),
+		Option( 'enumerate', 'Boolean', desc="For SWM. Force enumeration (SWA-like) instead of random", default="false" ),
+		Option( 'preminimize', 'Boolean', desc="For SWM. Just prepack and minimize", default="false" ),
+		Option( 'dump', 'Boolean', desc="Dump intermediate silent & PDB files",default="false" ),
+		Option( 'VERBOSE', 'Boolean', desc= "VERBOSE", default='false' ),
+		Option( 'use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for side-chain packing and O2' optimization", default='false' ),
+		Option( 'rmsd_screen', 'Real', desc="keep sampled residues within this rmsd from the native pose",default="0.0" ),
+		Option( 'skip_minimize', 'Boolean', desc="Skip minimize, e.g. in prepack step",default="false" ),
+		Option( 'sampler_silent_file', 'String', desc='In StepWiseConnectionSampler, where to output all poses that pass filters', default='' ),
+		Option( 'move', 'StringVector', desc="For SWM. Format: 'ADD 5 BOND_TO_PREVIOUS 4'", default=[] ),
+		Option_Group( 'monte_carlo',
+			Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
+			Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),
+#			Option( 'erraser', 'Boolean', desc= "Use KIC sampling", default='true' ),
+			Option( 'allow_internal_hinge_moves', 'Boolean', desc= "Allow moves in which internal suites are sampled (hinge-like motions)", default='true' ),
+			Option( 'allow_internal_local_moves', 'Boolean', desc= "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", default='false' ),
+			Option( 'allow_skip_bulge', 'Boolean', desc= "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base", default='false' ),
+			Option( 'from_scratch_frequency', 'Real', desc= "Allow modeling of 'free' dinucleotides that are not part of input poses", default='0.1' ),
+			Option( 'allow_split_off', 'Boolean', desc= "Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains.", default='true' ),
+			Option( 'cycles', 'Integer', desc= "Number of Monte Carlo cycles", default='50' ),
+			Option( 'temperature', 'Real', desc= "Monte Carlo temperature", default='1.0' ),
+			Option( 'add_delete_frequency', 'Real', desc= "Frequency of add/delete vs. resampling", default='0.5' ),
+			Option( 'intermolecular_frequency', 'Real', desc= "Frequency of intermolecular (docking) vs. intramolecular folding moves", default='0.2' ),
+			Option( 'minimize_single_res_frequency', 'Real', desc= "Frequency with which to minimize the residue that just got rebuilt, instead of all", default='0.0' ),
+			Option( 'allow_variable_bond_geometry', 'Boolean', desc= "In 10% of moves, let bond angles & distance change", default='true' ),
+			Option( 'switch_focus_frequency', 'Real', desc= "Frequency with which to switch the sub-pose that is being modeled", default='0.5' ),
+			Option( 'just_min_after_mutation_frequency', 'Real', desc= "After a mutation, how often to just minimize (without further sampling the mutated residue)", default='0.5' ),
+			Option( 'local_redock_only', 'Boolean', desc='In ResampleMover, docking partners can change anywhere across connected chains. Force the new partners to be close to the old ones.', default='true' ),
+			Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
+		), # -stepwise:monte_carlo
+		Option_Group( 'rna',
+			Option( 'sampler_num_pose_kept', 'Integer', desc="set_num_pose_kept by ResidueSampler )", default='108' ),
+			Option( 'native_edensity_score_cutoff', 'Real', desc= "native_edensity_score_cutoff", default='-1.0' ), #Fang's electron density code,
+			Option( 'o2prime_legacy_mode', 'Boolean', desc="complete virtualization of O2' hydrogen during sampling, and then complete restoration and packing", default='false' ),
+#			Option( 'allow_virtual_o2prime', 'Boolean', desc= "allow O2' to be virtualized during packing.", default='false' ),
+			Option( 'sampler_perform_phosphate_pack', 'Boolean', desc= "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler", default='true' ),
+			Option( 'distinguish_pucker', 'Boolean', desc= "distinguish pucker when cluster:both in sampler and clusterer", default='true' ),
+			Option( 'finer_sampling_at_chain_closure', 'Boolean', desc= "Samplerer: finer_sampling_at_chain_closure", default='false' ), #Jun 9, 201,
+			Option( 'PBP_clustering_at_chain_closure', 'Boolean', desc= "Samplerer: PBP_clustering_at_chain_closure", default='false' ),
+			Option( 'sampler_allow_syn_pyrimidine', 'Boolean', desc="sampler_allow_syn_pyrimidine", default='false' ), #Nov 15, 2010
+			Option( 'sampler_extra_chi_rotamer', 'Boolean', desc="Samplerer: extra_syn_chi_rotamer", default='false' ),
+			Option( 'sampler_extra_beta_rotamer', 'Boolean', desc="Samplerer: extra_beta_rotamer", default='false' ),
+			Option( 'sampler_extra_epsilon_rotamer', 'Boolean', desc="Samplerer: extra_epsilon_rotamer", default='true' ), #Change this to true on April 9, 2011
+			Option( 'force_centroid_interaction', 'Boolean', desc="Require base stack or pair even for single residue loop closed (which could also be bulges!)", default='false' ), #for SWM
+			Option( 'virtual_sugar_legacy_mode', 'Boolean', desc="In virtual sugar sampling, use legacy protocol to match Parin's original workflow", default='false' ),
+			Option( 'erraser', 'Boolean', desc="Use KIC sampling", default='false' ),
+			Option( 'centroid_screen', 'Boolean', desc="centroid_screen", default='true' ),
+			Option( 'VDW_atr_rep_screen', 'Boolean', desc="classic VDW_atr_rep_screen", default='true' ),
+			Option( 'minimize_and_score_native_pose', 'Boolean', desc="minimize_and_score_native_pose ", default='false' ), #Sept 15, 2010
+			Option( 'rm_virt_phosphate', 'Boolean', desc="Remove virtual phosphate patches during minimization", default='false' ),
+			Option( 'VDW_rep_screen_info', 'StringVector', desc="VDW_rep_screen_info to create VDW_rep_screen_bin ( useful when building loop from large poses )", default=[] ), #Jun 9, 2010
+			Option( 'VDW_rep_alignment_RMSD_CUTOFF', 'Real', desc="use with VDW_rep_screen_info", default='0.001' ), #Nov 12, 2010
+			Option( 'VDW_rep_delete_matching_res', 'StringVector', desc="delete residues in VDW_rep_pose that exist in the working_pose", default=[] ), #Feb 20, 2011
+			Option( 'VDW_rep_screen_physical_pose_clash_dist_cutoff', 'Real', desc="The distance cutoff for VDW_rep_screen_with_physical_pose", default='1.2' ), #March 23, 2011
+			Option( 'integration_test', 'Boolean', desc=" integration_test ", default='false' ), #March 16, 2012
+			Option( 'allow_bulge_at_chainbreak', 'Boolean', desc="Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", default='true' ),
+			Option( 'parin_favorite_output', 'Boolean', desc=" parin_favorite_output ", default='true' ), #Change to true on Oct 10, 2010
+			Option( 'reinitialize_CCD_torsions', 'Boolean', desc="Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", default='false' ),
+			Option( 'sample_both_sugar_base_rotamer', 'Boolean', desc="Samplerer: Super hacky for SQUARE_RNA", default='false' ),
+			Option( 'sampler_include_torsion_value_in_tag', 'Boolean', desc="Samplerer:include_torsion_value_in_tag", default='true' ),
+			Option( 'sampler_assert_no_virt_sugar_sampling', 'Boolean', desc="sampler_assert_no_virt_sugar_sampling", default='false' ), #July 28, 2011
+			Option( 'sampler_try_sugar_instantiation', 'Boolean', desc="for floating base sampling, try to instantiate sugar if it looks promising", default='false' ), #July 28, 2011
+			Option( 'do_not_sample_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: do_not_sample_multiple_virtual_sugar ", default='false' ),
+			Option( 'sample_ONLY_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: sample_ONLY_multiple_virtual_sugar ", default='false' ),
+			Option( 'allow_base_pair_only_centroid_screen', 'Boolean', desc="allow_base_pair_only_centroid_screen", default='false' ), #This only effect floating base sampling + dinucleotide.. deprecate option
+			Option( 'minimizer_rename_tag', 'Boolean', desc="Reorder and rename the tag by the energy_score", default='true' ), #March 15, 2012
+			Option( 'minimize_res', 'IntegerVector', desc='alternative to fixed_res', default=[] ),
+			Option( 'alignment_res', 'StringVector', desc="align_res_list", default=[] ),
+			Option( 'native_alignment_res', 'IntegerVector', desc="optional: native_alignment_res ", default=[] ),
+			Option( 'rmsd_res', 'IntegerVector', desc="residues that will be use to calculate rmsd ( for clustering as well as RMSD to native_pdb if specified )", default=[] ),
+			Option( 'missing_res', 'IntegerVector', desc='Residues missing in starting pose_1, alternative to input_res',default=[] ),
+			Option( 'missing_res2', 'IntegerVector', desc='Residues missing in starting pose_2, alternative to input_res2',default=[] ),
+			Option( 'job_queue_ID', 'Integer', desc="swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported ( start from 0! )", default='0' ),
+			Option( 'minimize_and_score_sugar', 'Boolean', desc="minimize and sugar torsion + angle? and include the rna_sugar_close_score_term ", default='true' ),
+			Option( 'global_sample_res_list', 'IntegerVector', desc="A list of all the nucleotide to be build/sample over the entire dag.",default=[] ),
+			Option( 'filter_output_filename', 'File', desc="CombineLongLoopFilterer: filter_output_filename", default="filter_struct.txt" ),
+			Option( 'combine_long_loop_mode', 'Boolean', desc=" Sampler: combine_long_loop_mode ", default="false" ),
+			Option( 'combine_helical_silent_file', 'Boolean', desc="CombineLongLoopFilterer: combine_helical_silent_file", default="false" ),
+			Option( 'output_extra_RMSDs', 'Boolean', desc="output_extra_RMSDs", default="false" ),
+			Option( 'protonated_H1_adenosine_list', 'IntegerVector', desc="optional: protonate_H1_adenosine_list", default=[] ),
+			Option( 'native_virtual_res', 'IntegerVector', desc=" optional: native_virtual_res ", default=[] ),
+			Option( 'simple_append_map', 'Boolean', desc="simple_append_map", default="false" ),
+			Option( 'allow_fixed_res_at_moving_res', 'Boolean', desc="mainly just to get Hermann Duplex modeling to work", default="false" ),
+			Option( 'force_user_defined_jumps', 'Boolean', desc="Trust and use user defined jumps", default="false" ),
+			Option( 'jump_point_pairs', 'StringVector', desc="optional: extra jump_points specified by the user for setting up the fold_tree ", default=[] ),
+			Option( 'add_virt_root', 'Boolean', desc="add_virt_root", default="false" ),
+			Option( 'floating_base', 'Boolean', desc=" floating_base ", default="false" ),
+			Option( 'floating_base_anchor_res', 'Integer', desc="If we want floating base to be connected via a jump to an anchor res (with no intervening virtual residues), specify the anchor.", default="0" ),
+			Option( 'allow_chain_boundary_jump_partner_right_at_fixed_BP', 'Boolean', desc="mainly just to get Hermann nano - square RNA modeling to work", default="false" ),
+			Option( 'bulge_res', 'IntegerVector', desc="optional: residues to be turned into a bulge variant", default=[] ),
+			Option( 'rebuild_bulge_mode', 'Boolean', desc="rebuild_bulge_mode", default="false" ),
+			Option( 'virtual_sugar_keep_base_fixed', 'Boolean', desc="When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!", default="true" ),
+			Option( 'virtual_sugar_do_minimize', 'Boolean', desc="When instantiating virtual sugar, minimize (as in original SWA code) -- takes extra time!", default="true" ),
+			Option( 'sampler_max_centroid_distance', 'Real', desc="max centroid distance of moving base to reference in floating base sampler", default='0.0' ), #Nov 12, 2010
+			Option( 'filter_user_alignment_res', 'Boolean', desc=" filter_user_alignment_res ", default="true" ),
+			Option( 'tether_jump', 'Boolean', desc="In rigid body moves, keep moving residue close to (jump-connected) reference residue  (8.0 A) and force centroid interaction between them", default="true" ),
+			Option( 'turn_off_rna_chem_map_during_optimize', 'Boolean', desc="When using rna_chem_map, only score with this after minimizing (takes too long to compute during optimizing).", default="true" ),
+		), # -stepwise:rna
+		Option_Group( 'protein',
+			Option( 'global_optimize', 'Boolean', desc="In clustering, packing, minimizing, use all residues.",default="false" ),
+			Option( 'disable_sampling_of_loop_takeoff', 'Boolean', desc="For KIC protein loop closure, disallow sampling of psi at N-terminus and phi at C-terminus takeoff residues",default="false" ),
+			Option( 'sample_beta', 'Boolean', desc="sample beta strand pairing -- later need to specify parallel/antiparallel",default="false" ),
+			Option( 'ghost_loops', 'Boolean', desc="Virtualize loops in centroid screening",default="false" ),
+			Option( 'min_type', 'String', desc="Minimizer type",default="dfpmin_armijo_nonmonotone" ),
+			Option( 'min_tolerance', 'Real', desc="Minimizer tolerance",default="0.000025" ),
+			Option( 'centroid_screen', 'Boolean', desc="Centroid Screen",default="false" ),
+			Option( 'centroid_score_diff_cut', 'Real', desc="If doing -centroid_screen, only keep poses whose energies are within this energy of reference..",default="20.0" ),
+			Option( 'centroid_weights', 'String', desc="weights for centroid filter",default="score3.wts" ),
+			Option( 'score_diff_cut', 'Real', desc="score difference cut for clustering",default="10.0" ),
+			Option( 'filter_native_big_bins', 'Boolean', desc="Figure out various terms for score12",default="false" ),
+			Option( 'cluster_by_all_atom_rmsd', 'Boolean', desc="cluster by all atom rmsd",default="false" ),
+			Option( 'centroid_output', 'Boolean', desc="output centroid structure during screening",default="false" ),
+			Option( 'n_sample', 'Integer', desc="number of samples per torsion angle",default="18" ),
+			Option( 'nstruct_centroid', 'Integer', desc="Number of decoys to output from centroid screening",default="0" ),
+			Option( 'ccd_close', 'Boolean', desc="Close loops with CCD",default="false" ),
+			Option( 'bridge_res', 'IntegerVector', desc="instead of enumerative sampling of backbone torsions, combine silent files that contains pieces of loops", default=[] ),
+			Option( 'cart_min', 'Boolean', desc="Use cartesian minimizer",default="false" ),
+			Option( 'move_jumps_between_chains', 'Boolean', desc="Move all jumps",default="false" ),
+			Option( 'use_packer_instead_of_rotamer_trials', 'Boolean', desc="Use packer instead of rotamer trials in residue sampling",default="false" ),
+			Option( 'expand_loop_takeoff', 'Boolean', desc="expand -sample_res loop to include connection to previous/next residues",default="false" ),
+			Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
+			Option( 'allow_virtual_side_chains', 'Boolean', desc='In packing, allow virtual side chains',default='true' ),
+			Option( 'protein_prepack', 'Boolean', desc='In packing, prepack separate partitions',default='true' ),
+		), # -stepwise:protein
+	), # -stepwise
+
+	################################
+	# full_model_info --> may replace stepwise stuff above.
+	Option_Group( 'full_model',
+		Option( 'cutpoint_open',   'ResidueChainVector',desc='open cutpoints in full model',default=[]),
+		Option( 'cutpoint_closed', 'ResidueChainVector',desc='closed cutpoints in full model',default=[]),
+		Option( 'other_poses', 'StringVector',desc='list of PDB files containing other poses'),
+		Option( 'extra_min_res', 'ResidueChainVector', desc= "specify residues other than those being built that should be minimized", default=[] ),
+		Option( 'jump_res', 'ResidueChainVector', desc= "optional: residues for defining jumps -- please supply in pairs", default=[] ),
+		Option( 'root_res', 'ResidueChainVector', desc= "optional: desired root res (used in SWM move testing)", default=[] ),
+		Option( 'virtual_sugar_res', 'ResidueChainVector', desc= "optional: starting virtual sugars (used in SWM move testing)", default=[] ),
+		Option( 'virtual_res', 'ResidueChainVector', desc="optional: residues for defining virtual residues", default=[] ),
+		Option( 'sample_res', 'ResidueChainVector', desc="residues to build (for SWA, the first element is the actual sample res while the other are the bulge residues)", default=[] ),
+		Option( 'calc_rms_res', 'ResidueChainVector', desc="residues over which to calculate rms for SWA. Not in wide use anymore.", default=[] ),
+		Option( 'working_res', 'ResidueChainVector', desc="residues that are being built [by default will be set from sample_res and any input pdbs]", default=[] ),
+		Option_Group( 'rna',
+			Option( 'terminal_res', 'ResidueChainVector', desc="optional: residues that are not allowed to stack during sampling", default=[] ),
+			Option( 'force_syn_chi_res_list', 'ResidueChainVector', desc="optional: sample only syn chi for the res in sampler.", default=[] ),
+			Option( 'force_north_sugar_list', 'ResidueChainVector', desc="optional: sample only north sugar for the res in sampler.", default=[] ),
+			Option( 'force_south_sugar_list', 'ResidueChainVector', desc="optional: sample only south sugar for the res in sampler.", default=[] ),
+		), # -full_model:rna
+	), # -full_model
+
+	## strand assembly options
+	Option_Group( 'strand_assembly',
+		# all options are for StrandBundleFeaatures only, since SandwichFeatures are dealt with parse_my_tag
+		# default values are in code
+		Option('min_num_strands_to_deal','Integer', desc="Minimum number of strands to handle beta-sandwich"),
+		Option('max_num_strands_to_deal','Integer', desc="Maximum number of strands to handle beta-sandwich"),
+		Option('extract_native_only', 'Boolean', desc="if true, extract native full strands only"),
+		Option('min_res_in_strand','Integer', desc="minimum number of residues in a strand, for edge strand definition & analysis"),
+		Option('max_res_in_strand','Integer', desc="Maximum number of residues in a strand, for edge strand definition & analysis"),
+		Option('min_O_N_dis','Real', desc="Minimum distance between backbone oxygen and backbone nitrogen"),
+		Option('max_O_N_dis','Real', desc="Maximum distance between backbone oxygen and backbone nitrogen"),
+		Option('min_sheet_dis','Real', desc="Minimum distance between sheets (CA and CA)"),
+		Option('max_sheet_dis','Real', desc="Maximum distance between sheets (CA and CA)"),
+		Option('min_sheet_torsion','Real', desc="Minimum torsion between sheets (CA and CA) with respect to terminal residues"),
+		Option('max_sheet_torsion','Real', desc="Maximum torsion between sheets (CA and CA) with respect to terminal residues"),
+		Option('min_sheet_angle','Real', desc="Minimum angle between sheets (CA and CA)"),
+		Option('max_sheet_angle','Real', desc="Maximum angle between sheets (CA and CA)"),
+		Option('min_shortest_dis_sidechain_inter_sheet','Real', desc="minimum distance between sidechains between sheets (pairs of strands)"),
+	), # -strand_assembly
+
+	#################################TailSegment####################################################
+	Option_Group( 'TailSegment',
+		Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '100' ),
+		Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles',  default = '10' ),
+	), # -TailSegment
+
+	Option_Group( 'templates',
+		Option( 'config',                'File',        desc='read a list of templates and alignments',     default='templates.dat' ),
+		Option( 'fix_aligned_residues',  'Boolean',     desc='pick only from template fragments and then keep these residues fixed',     default='false' ),
+		Option( 'fix_frag_file',         'File',        desc=' fragments from this file are picked once in beginning and then kept fixed',     default='' ),
+		Option( 'fix_margin',            'Integer',     desc='keep n residues at edges of fixed fragments moveable',     default='1' ),
+		Option( 'min_nr_large_frags',    'Integer',     desc='how many large fragments should be present',     default='100000' ),
+		Option( 'min_nr_small_frags',    'Integer',     desc='how many small fragments should be present',     default='100000' ),
+		Option( 'no_pick_fragments',     'Boolean',     desc='no further fragment picking from templates',     default='false' ),
+		Option( 'nr_large_copies',       'Integer',     desc='make N copies of each picked template fragment -- a hacky way to weight them',     default='4' ),
+		Option( 'nr_small_copies',       'Integer',     desc='make N copies of each picked template fragment -- a hacky way to weight them',     default='20' ),
+		Option( 'pairings',              'Boolean',     desc='use pairings from templates',     default='false' ),
+		Option( 'pick_multiple_sizes',   'Boolean',     desc='pick 9mers, 18mers and 27mers',     default='false' ),
+		Option( 'strand_constraint',     'Boolean',     desc='use the template-based strand-constraints',     default='false' ),
+		Option( 'vary_frag_size',        'Boolean',     desc='pick fragments as long as aligned regions',     default='false' ),
+		Option( 'no_culling',            'Boolean',     desc='dont throw out constraints that are violated by other templates',     default='false' ),
+		Option( 'helix_pairings',        'File',        desc='file with list of pairings that are enforced (pick jumps from templates with H)',     default='' ),
+		Option( 'prefix',                'File',        desc='path for config directory -- applied to all filenames in template_config_file',     default='' ),
+		Option( 'change_movemap',        'Integer',     desc='stage in which movemap is switched to allow all bb-residues to move, valid stages: 3..4 (HACK)',    default='3' ),
+		Option( 'force_native_topology', 'Boolean',     desc='force the native toplogy (geometries from templates)',     default='false' ),
+		Option( 'topology_rank_cutoff',  'Real',        desc='select jumps from all topologies with a higher relative score than if 1.0 take top 5',     default='1.0' ),
+		Option( 'min_frag_size',         'Integer', desc='smallest fragment picked from aligned template regions',     default='6' ),
+		Option( 'max_shrink',         'Integer', desc='pick fragments up to max_shrink smaller than aligned regions',     default='0' ),
+		Option( 'shrink_step',         'Integer', desc='shrink_step 5 , eg., 27mer 22mer 17mer',     default='5' ),
+		Option( 'shrink_pos_step',         'Integer', desc='distance between start pos in shrinked fragments',     default='5' ),
+		Option( 'min_padding',         'Integer', desc='minimum space between fragment and gap',     default='0' ),
+		Option( 'min_align_pos',         'Integer', desc='ignore aligned residues before this position',     default='0' ),
+		Option( 'max_align_pos',         'Integer', desc='ignore aligned residues after this position',     default='-1' ),
+
+		Option_Group( 'cst',
+			Option( 'topN',             'Integer',     desc='topN ranking models are used for constraints ( culling and source )',     default='0' ),
+			Option( 'wTopol',           'Real',        desc='weight for beta-pairing topology score in ranking',     default='0.5' ),
+			Option( 'wExtern',          'Real',        desc='weight for external score ( column in template_config_file, e.g, svn-score',     default='0.5' ),
+		),
+
+		Option_Group( 'fragsteal',
+			Option( 'topN',       'Integer',     desc='topN ranking models are used for fragment stealing',     default='0' ),
+			Option( 'wTopol',     'Real',        desc='weight for beta-pairing topology score in ranking',     default='0.5' ),
+			Option( 'wExtern',    'Real',        desc='weight for external score ( column in template_config_file, e.g, svn-score',     default='0.5' ),
+		),
+	), # -templates
+
+	## Unfolded State Options ##
+	Option_Group( 'unfolded_state',
+		Option( 'unfolded_energies_file', 'File', desc='path to an alternative unfolded state energies file' ),
+	), # -unfolded_state
+
+	Option_Group( 'wum',
+		Option( 'n_slaves_per_master', 'Integer', default='64' , desc = 'A value between 32 and 128 is usually recommended' ),
+		Option( 'n_masters', 'Integer', default='1' , desc = 'Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload' ),
+		Option( 'memory_limit', 'Integer', default = '0', desc = 'Memory limit for queues (in kB) ' ),
+
+		Option( 'extra_scorefxn', 'String', desc='Extra score function for post-batchrelax-rescoring' ),
+		Option( 'extra_scorefxn_ref_structure', 'File', desc='Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)' ),
+		Option( 'extra_scorefxn_relax', 'Integer', default='0', desc='After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)' ),
+		Option( 'trim_proportion', 'Real', default='0.0' ),
+
+	), # -wum
+
+#######################################
+# Personal/Pilot option groups
+# Please keep in alphabetical order
+
+	## Options for Spencer Bliven's apps
+	Option_Group( 'blivens',
+		Option_Group( 'disulfide_scorer',
+			Option( 'nds_prob', 'Real', desc='The probability of scoring a non-disulfide pair', default = '0.0' ),
+			Option( 'cys_prob', 'Real', desc='The probability of outputing a pair of non-disulf cysteines. Default to nds_prob', default = '-1.0' ),
+		),
+		Option( 'score_type', 'String', desc='The scoring type to use, eg for a filter.', default = 'total_score' ),
+	), # -blivens
+
+#	###############################################################################
+#	## chrisk's crazy options
+#	Option_Group( 'chrisk',
+#		Option( 'hb_elec', 'Boolean', desc="turn on hb-elec switch function", default='false' ),
+#	), # -chrisk
+
+	Option_Group('cmiles',
+		Option_Group('kcluster',
+			Option('num_clusters', 'Integer', desc = 'Number of clusters to use during k clustering')
+		),
+		Option_Group('jumping',
+			Option('resi', 'Integer', desc = 'Residue i'),
+			Option('resj', 'Integer', desc = 'Residue j'),
+		),
+	), # -cmiles
+
+	Option_Group( 'crossmatch',
+#		Option( 'write_reduced_matchset', 'StringVector',desc="<name> <pdb1> <pdb2> ..."),
+#		Option( 'interface_size', 'Integer',desc="num CB-CB within 8A",default='30'),
+#		Option( 'max_dis_any', 'Real',desc="",default='3.0'),
+#		Option( 'max_dis_all', 'Real',desc="",default='2.6'),
+#		Option( 'max_dis_metal', 'Real',desc="",default='1.0'),
+		Option( 'clash_dis', 'Real',desc="",default='3.0'),
+#		Option( 'identical_match_dis', 'Real',desc="",default='0.0001'),
+		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
+	), # -crossmatch
+
+	## dwkulp some options for programs
+	Option_Group( 'dwkulp',
+		Option( 'forcePolyAAfragments', 'String', desc="a single amino acid that will be used for fragment picking,default is blank which means taking actual sequence from pose" ,default=""),
+	), # -dwkulp
+
+	# evolution mode -----------------------------------------------------------
+	Option_Group( 'evolution',
+		Option( 'parentlist', 'FileVector', desc="File(s) containing list(s) of Parent PDB files to process" ),
+		Option( 'childlist', 'FileVector', desc="File(s) containing list(s) of Parent PDB files to process" ),
+		Option( 'action' , 'String', desc="One of the following:  diversify, intensify ", default = "diversify" ),
+		Option( 'rms_threshold', 'Real', desc='RMS Clustering threshold', default='3.5'),
+		Option( 'rms_topmargin', 'Real', desc='RMS Clustering threshold', default='5.0'),
+		Option( 'targetdir' , 'String', desc="Write target new parent polulation to this directory ! ", default = "./"  ),
+		Option( 'padding_score_filter', 'Real', desc='RMS Clustering threshold', default='5.0'),
+		Option( 'padding_stage2_filter', 'Real', desc='RMS Clustering threshold', default='15.0'),
+	),
+
+	##  options for my pilot apps. No big deal if these need to change!
+	##  tex
+	Option_Group( 'james',
+		Option( 'min_seqsep', 'Integer', default = '0' ),
+		Option( 'atom_names', 'StringVector', default = 'utility::vector1<std::string>()' ),
+		Option( 'dist_thresholds', 'RealVector', default = 'utility::vector1<float>(1, 1.0)' ),
+		Option( 'torsion_thresholds', 'RealVector', default = 'utility::vector1<float>(1, 30.0)' ),
+#		Option( 'sog_cutoff', 'Real', default='5.0' ),
+#		Option( 'shift_sog_func', 'Boolean', default = 'true' ),
+#		Option( 'min_type', 'String', default='dfpmin_armijo_nonmonotone' ),
+#		Option( 'min_tol', 'Real', default='0.0001' ),
+		Option( 'debug', 'Boolean', default='false'),
+		Option( 'real', 'Real', default = '7.0', desc = 'Option for keeping things real.' ),
+		Option(
+			'n_designs', 'Integer',
+			default = '1', desc = 'total number of designs that James should make.'
+		),
+#		Option( 'awesome_mode', 'Boolean', default = 'true', desc = 'activates or deactivates awesome_mode.' ),
+#		Option( 'n_clusters', 'Integer', default = '10', desc = 'number of clusters for k-means clustering.' ),
+		Option( 'thread_unaligned', 'Boolean', default = 'false', desc = 'basic_threading without performing an alignment' ),
+	),
+
+	Option_Group( 'krassk',
+#		Option( 'left_tail', 'Integer', default='0' ),
+#		Option( 'right_tail', 'Integer', default='0' ),
+		Option( 'tail_mode', 'Boolean', default = 'false'),
+		Option( 'tail_mode_name', 'Integer', default = '1' ),
+		Option( 'tail_output_file_name', 'String', default='tail_output'),
+	),
+
+	##options for liz
+	#Option_Group('liz',
+	#  Option( 'score', 'Boolean', default='true'),
+	#),
+
+	# options for my inv_kin_lig_loop_design program.
+	Option_Group( 'murphp',
+		Option( 'inv_kin_lig_loop_design_filename', 'String', desc='input filename to be used for inv_kin_lig_loop_design' ),
+	),
+
+	## these are just temporary for hacking/debugging -- if they conflict with something else let me know and
+	## I can get rid of them
+	##                     -Phil
+	Option_Group( 'phil',
+		#Option( 'nstruct', 'Integer', default='10'),
+			Option( 'nloop', 'Integer', default='10'),
+			Option( 'vall_file', 'String'),
+#			Option( 'align_file', 'String'),
+	), # phil
+
+	##options for Robert
+	#Option_Group('Robert',
+	#  Option( 'score', 'Boolean', default='true'),
+	#						),
+	##  options for my pilot apps. Only the best for Robert!
+	##  Robert
+	Option_Group( 'robert',
+		Option( 'pairdata_input_pdb_list', 'String', default='', desc="Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)"),
+		Option( 'pcs_maxsub_filter', 'Real', default='0.9', desc="minimum normalized maxsub for PCS clustering protocol"),
+		Option( 'pcs_maxsub_rmsd', 'Real', default='4.0', desc="maxsub calculation's rmsd threshold"),
+		Option( 'pcs_dump_cluster', 'Boolean', default = 'false'),
+		Option( 'pcs_cluster_coverage', 'Real', default='0.3', desc="cluster coverage required"),
+		Option( 'pcs_cluster_lowscoring', 'Boolean', default = 'true', desc="cluster lowest 20% against lowest 50%"),
+	),
+
+	###############################################################################
+	## rotamer analysis options (chrisk)
+	Option_Group( 'rot_anl',
+		Option( 'tag', 'String', desc="nametag", default='.' ),
+
+#		Option( 'premin', 'Boolean', desc="do all sc min and dump pdb", default='false' ),
+		Option( 'min', 'Boolean', desc="do sc min", default='false' ),
+#		Option( 'diff_to_min', 'Boolean', desc="native pose is post-min", default='false' ),
+		Option( 'repack', 'Boolean', desc="", default='false' ),
+		Option( 'rtmin', 'Boolean', desc="", default='false' ),
+		Option( 'scmove', 'Boolean', desc="", default='false' ),
+		Option( 'design', 'Boolean', desc="", default='false' ),
+
+#		Option( 'score_tol', 'Real', desc="score filter for dump_pdb", default='1.0' ),
+#		Option( 'rmsd_tol', 'Real', desc="rmsd filter for dump_pdb", default='1.0' ),
+		Option( 'dump_pdb', 'Boolean', desc="dump_pdb when pass thresh", default='false' ),
+		Option( 'nloop_scmove', 'Integer', desc="base of scmover loop (total=nloop^n_chi)", default='9' ),
+	), # -rot_anl
+
+	Option_Group( 'smhybrid',
+		Option( 'add_cavities',      'Boolean',desc="output cavities in result pdbs", default="false" ),
+		Option( 'abinitio_design',   'Boolean',desc="do a design run in centroid mode", default="true" ),
+		Option( 'fa_refine',         'Boolean',desc="Do nobu's flxbb", default="true" ),
+		Option( 'virtual_nterm',     'Boolean',desc="remove Nterm", default="false" ),
+		Option( 'debug',             'Boolean',desc="debug", default="false" ),
+		Option( 'refine',            'Boolean',desc="don't do bit centroid moves", default="false" ),
+#		Option( 'filter',            'Boolean',desc="filter centroid results as you go", default="false" ),
+#		Option( 'floating_scs_rep',  'Boolean',desc="should floating scs repel those in other subunits?", default="false" ),
+#		Option( 'flxbb',             'Boolean',desc="allow bb moves in minimization", default="false" ),
+		Option( 'centroid_all_val',  'Boolean',desc="mutate all to VAL in centroid mode", default="false" ),
+		Option( 'subsubs_attract' ,  'Boolean',desc="attract subsubs togeher", default="false" ),
+		Option( 'linker_cst'      ,  'Boolean',desc="attract N/C termini for linker", default="false" ),
+		Option( 'pseudosym'       ,  'Boolean',desc="HACK pseudosymmetry", default="false" ),
+		Option( 'design_linker'   ,  'Boolean',desc="allow design on added 'linker' residues", default="true" ),
+		Option( 'design'          ,  'Boolean',desc="allow design on added 'linker' residues", default="true" ),
+		Option( 'restrict_design_to_interface','Boolean',desc="allow design on added 'linker' residues", default="false" ),
+		Option( 'restrict_design_to_subsub_interface','Boolean',desc="allow design on added 'linker' residues", default="false" ),
+		Option( 'design_hydrophobic','Boolean',desc="design all hydrophobic", default="false" ),
+		Option( 'add_metal_at_0'  ,  'Boolean',desc="DEPRECATED", default="false" ),
+		Option( 'nres_mono',         'Integer',desc="target number of residues per monomer", default="20" ),
+		Option( 'abinitio_cycles',   'Integer',desc="number of abinitio cycles", default="10000" ),
+		Option( 'primary_subsubunit','Integer' ,desc="primary subunut", default="1" ),
+		Option( 'minbb'             ,'Integer' ,desc="level of bb min 0=None 1=little 2=all", default="1" ),
+		Option( 'switch_concert_sub','Integer' ,desc="assume prmary subsub is on this subunit for concerted RB moves", default="1" ),
+		Option( 'temperature'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
+		Option( 'inter_subsub_cst'  ,'Boolean' ,desc="add dis csts inter-subsub", default="false" ),
+		Option( 'rb_mag'            ,'Real' ,desc="magnitude of rb moves", default="1.0" ),
+#		Option( 'ss',                'String' ,desc="secondary structure", default="" ),
+		Option( 'symm_def_template', 'File',desc="template for symmetry definition file" ),
+		Option( 'symm_def_template_reduced', 'File',desc="template for reduced symmetry definition file" ),
+		Option( 'attach_as_sc',      'IntegerVector',desc="attach the group via side chain" ),
+		Option( 'attach_as_sc_sub',  'IntegerVector',desc="attach the group via side chain in this sub" ),
+#		Option( 'inversion_subs',    'IntegerVector',desc="subunits to be inverted, if any" ),
+		Option( 'chainbreaks',       'BooleanVector',desc="close chainbreak from this subsub to the next" ),
+		Option( 'design_res_files',  'StringVector',default='""',desc="files containing designable residues for each component pose" ),
+		Option( 'fixed_res_files',   'StringVector',default='""',desc="files containing fixed residues (no repack even) for each component pose" ),
+		Option( 'frag_res_files',    'StringVector',default='""',desc="files containing residues ok to insert frags into. will have starting ss" ),
+		Option( 'scattach_res_files','StringVector',default='""',desc="files containing residues ok to scattach to."     ),
+		Option( 'rep_edge_files','StringVector',default='""',desc="files containing residues which are edge strands."     ),
+		Option( 'virtual_res_files' ,'StringVector',default='""',desc="files containing residues that should be virtual" ),
+		Option( 'jumpcut_files',     'StringVector',default='""',desc="file specifying jumps and cuts for subsubunits"   ),
+		Option( 'cst_sub_files',     'StringVector',default='""',desc="file specifying which subunits are part of a structural unit and shoudl be constrained"),
+		Option( 'symm_file_tag',     'StringVector',default='""',desc="label for each subunit" ),
+		Option( 'attach_atom',       'StringVector',default='""',desc="attach atom on each subunit" ),
+		Option( 'add_res_before',    'StringVector',default='""',desc="SS to add before each subunit region" ),
+		Option( 'add_res_after',     'StringVector',default='""',desc="SS to add after each subunit region" ),
+		Option( 'add_ss_before',     'StringVector',default='""',desc="residues to add" ),
+		Option( 'add_ss_after',      'StringVector',default='""',desc="SS to add after each subunit region" ),
+		Option( 'add_atom_at_cen',   'StringVector',default='""',desc="SS to add after each subunit region" ),
+		Option( 'attach_rsd',        'StringVector',default='""',desc="attach rsd on each subunit" ),
+	), # -smhybrid
 
 	# thread side-chains tools (barak) -----------------------------------------------------------
 	Option_Group( 'threadsc',
@@ -5719,227 +6216,6 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			),
 	), # threadsc
 
-
-
-        ##################################
-        # VIP mover options
-
-                Option_Group( 'cp',
-                        Option( 'cutoff', 'Real', desc="designable neighbor cutoff", default='16' ),
-                        Option( 'minimizer', 'String', desc="minimizer to use for initial minimization", default='score12_full'),
-                        Option( 'relax_sfxn', 'String', desc="score function for final relaxation step", default='score12_full'),
-                        Option( 'pack_sfxn', 'String', desc="score function for mutational trials",default='gauss'),
-                        Option( 'minimizer_tol', 'Real', desc="tolerance for minimization", default='.0001'),
-                        Option( 'minimizer_score_fxn', 'String', desc="score function for initial minimization", default='score12_full'),
-                        Option( 'output', 'String', desc="file where we want to dump the final pose",default='final_mutant.pdb'),
-                        Option( 'ncycles', 'Integer', desc="how many cycles to run refinement for",default='0'),
-                        Option( 'max_failures', 'Integer', desc="how many failures to tolerate at each iteration before quitting",default='1'),
-                        Option( 'print_reports', 'Boolean', desc="print reports to text file?",default='false' ),
-                        Option( 'vipReportFile', 'String', desc="File to print reports to", default='reports.txt' ),
-                        Option( 'exclude_file', 'String', desc="Optional input file to specify positions that should not be mutated", default='cp_excludes' ),
-                        Option( 'relax_mover', 'String', desc="relax w/o constraints=relax, w constraints=cst_relax", default='relax'),
-			Option( 'skip_relax','Boolean',desc="Skip relax step... may reduce accurate identification of mutations",default='false'),
-			Option( 'local_relax','Boolean',desc="Limit relax step to neighbors",default='false'),
-			Option( 'print_intermediate_pdbs','Boolean',desc="Output a pdb file for each consecutive mutation",default='false'),
-			Option( 'use_unrelaxed_starting_points', 'Boolean', desc="For subsequent iterations, uses mutation before relaxation",default='false' ),
-			Option( 'easy_vip_acceptance', 'Boolean', desc="For all iterations, use initial energy for acceptance test",default='false' ),
-                ),
-
-        # end VIP
-
-	################################
-	# archive options
-	Option_Group( 'archive',
-		Option( 'reread_all_structures','Boolean', desc='ignore pool file... reread from batches', default='false'),
-		Option( 'completion_notify_frequency','Integer', desc='tell Archive every X completed decoys', default='100'),
-        ),
-
-	################################
-	# optimization options
-	Option_Group( 'optimization',
-		Option( 'default_max_cycles','Integer', desc='max cycles for MinimizerOptions', default='2000'),
-		Option( 'armijo_min_stepsize','Real', desc='min stepsize in armijo minimizer', default='1e-8'),
-		Option( 'scale_normalmode_dampen','Real', desc='dampening scale over normal mode index, used for NormalModeMinimizer', default='0.05'),
-		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='64'),
-		Option( 'scale_d','Real', desc='max cycles for MinimizerOptions', default='1'),
-		Option( 'scale_theta','Real', desc='max cycles for MinimizerOptions', default='1'),
-		Option( 'scale_rb','Real', desc='max cycles for MinimizerOptions', default='10'),
-		Option( 'scale_rbangle','Real', desc='max cycles for MinimizerOptions', default='1'),
-		Option( 'scmin_nonideal','Boolean', desc='Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)', default='false'),
-		Option( 'scmin_cartesian', 'Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)', default='false'),
-		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
-		Option( 'new_sym_min', 'Boolean', desc='New approach to sym-min where all dofs, dep+indep, go into the map', default='false'),
-	),
-
-	################################
-	# step-wise assembly options
-	Option_Group( 'stepwise',
-		Option( 's1', 'StringVector',desc="input file(s)"),
-		Option( 's2', 'StringVector',desc="input file(s)"),
-		Option( 'silent1', 'StringVector',desc="input file"),
-		Option( 'silent2', 'StringVector',desc="input file"),
-		Option( 'tags1', 'StringVector',desc="input tag(s)"),
-		Option( 'tags2', 'StringVector',desc="input tag(s)"),
-		Option( 'slice_res1', 'IntegerVector',desc='Residues to slice out of starting file',default=[]),
-		Option( 'slice_res2', 'IntegerVector',desc='Residues to slice out of starting file',default=[]),
-		Option( 'input_res1', 'IntegerVector',desc='Residues already present in starting file',default=[]),
-		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2',default=[]),
-		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
-		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
-		Option( 'fixed_res', 'IntegerVector', desc='Do not move these residues during minimization.', default=[] ),
-		Option( 'test_encapsulation', 'Boolean', desc="Test ability StepWiseRNA Modeler to figure out what it needs from just the pose - no JobParameters", default="false" ),
-		Option( 'choose_random', 'Boolean', desc="ask swa residue sampler for a random solution", default="false" ),
-		Option( 'num_random_samples', 'Integer', desc="In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best", default="20" ),
-		Option( 'num_pose_minimize','Integer', desc='optional: set_num_pose_minimize by Minimizer', default='0' ),
-    Option( 'atr_rep_screen', 'Boolean', desc='In packing, screen for contacts (but no clash) between partitions before packing',default='true' ),
-		Option( 'align_pdb', 'String', desc='PDB to align to. Default will be -native, or no alignment', default='' ),
-		Option( 'enumerate', 'Boolean', desc="For SWM. Force enumeration (SWA-like) instead of random", default="false" ),
-		Option( 'preminimize', 'Boolean', desc="For SWM. Just prepack and minimize", default="false" ),
-    Option( 'dump', 'Boolean', desc="Dump intermediate silent & PDB files",default="false" ),
-		Option( 'VERBOSE', 'Boolean', desc= "VERBOSE", default='false' ),
-    Option( 'use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for side-chain packing and O2' optimization", default='false' ),
-    Option( 'rmsd_screen', 'Real', desc="keep sampled residues within this rmsd from the native pose",default="0.0" ),
-		Option( 'skip_minimize', 'Boolean', desc="Skip minimize, e.g. in prepack step",default="false" ),
-		Option( 'sampler_silent_file', 'String', desc='In StepWiseConnectionSampler, where to output all poses that pass filters', default='' ),
-    Option_Group( 'monte_carlo',
-	    Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
-	    Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),
-	    Option( 'erraser', 'Boolean', desc= "Use KIC sampling", default='true' ),
-	    Option( 'allow_internal_hinge_moves', 'Boolean', desc= "Allow moves in which internal suites are sampled (hinge-like motions)", default='true' ),
-	    Option( 'allow_internal_local_moves', 'Boolean', desc= "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", default='false' ),
-	    Option( 'allow_skip_bulge', 'Boolean', desc= "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base", default='false' ),
-	    Option( 'from_scratch_frequency', 'Real', desc= "Allow modeling of 'free' dinucleotides that are not part of input poses", default='0.1' ),
-	    Option( 'allow_split_off', 'Boolean', desc= "Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains.", default='true' ),
-	    Option( 'cycles', 'Integer', desc= "Number of Monte Carlo cycles", default='50' ),
-	    Option( 'temperature', 'Real', desc= "Monte Carlo temperature", default='1.0' ),
-	    Option( 'add_delete_frequency', 'Real', desc= "Frequency of add/delete vs. resampling", default='0.5' ),
-	    Option( 'intermolecular_frequency', 'Real', desc= "Frequency of intermolecular (docking) vs. intramolecular folding moves", default='0.2' ),
-	    Option( 'minimize_single_res_frequency', 'Real', desc= "Frequency with which to minimize the residue that just got rebuilt, instead of all", default='0.0' ),
-	    Option( 'allow_variable_bond_geometry', 'Boolean', desc= "In 10% of moves, let bond angles & distance change", default='true' ),
-	    Option( 'switch_focus_frequency', 'Real', desc= "Frequency with which to switch the sub-pose that is being modeled", default='0.5' ),
-      Option( 'just_min_after_mutation_frequency', 'Real', desc= "After a mutation, how often to just minimize (without further sampling the mutated residue)", default='0.5' ),
-		  Option( 'local_redock_only', 'Boolean', desc='In ResampleMover, docking partners can change anywhere across connected chains. Force the new partners to be close to the old ones.', default='true' ),
-		  Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
- 							),
-		  Option( 'move', 'StringVector', desc="For SWM. Format: 'ADD 5 BOND_TO_PREVIOUS 4'", default=[] ),
-    Option_Group( 'rna',
-	    Option( 'sampler_num_pose_kept', 'Integer', desc="set_num_pose_kept by ResidueSampler )", default='108' ),
-		  Option( 'native_edensity_score_cutoff', 'Real', desc= "native_edensity_score_cutoff", default='-1.0' ), #Fang's electron density code,
-		  Option( 'o2prime_legacy_mode', 'Boolean', desc="complete virtualization of O2' hydrogen during sampling, and then complete restoration and packing", default='false' ),
-		  Option( 'allow_virtual_o2prime', 'Boolean', desc= "allow O2' to be virtualized during packing.", default='false' ),
-		  Option( 'sampler_perform_phosphate_pack', 'Boolean', desc= "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler", default='true' ),
-		  Option( 'distinguish_pucker', 'Boolean', desc= "distinguish pucker when cluster:both in sampler and clusterer", default='true' ),
-		  Option( 'finer_sampling_at_chain_closure', 'Boolean', desc= "Samplerer: finer_sampling_at_chain_closure", default='false' ), #Jun 9, 201,
-		  Option( 'PBP_clustering_at_chain_closure', 'Boolean', desc= "Samplerer: PBP_clustering_at_chain_closure", default='false' ),
-		  Option( 'sampler_allow_syn_pyrimidine', 'Boolean', desc="sampler_allow_syn_pyrimidine", default='false' ), #Nov 15, 2010
-		  Option( 'sampler_extra_chi_rotamer', 'Boolean', desc="Samplerer: extra_syn_chi_rotamer", default='false' ),
-	    Option( 'sampler_extra_beta_rotamer', 'Boolean', desc="Samplerer: extra_beta_rotamer", default='false' ),
-	    Option( 'sampler_extra_epsilon_rotamer', 'Boolean', desc="Samplerer: extra_epsilon_rotamer", default='true' ), #Change this to true on April 9, 2011
-	    Option( 'force_centroid_interaction', 'Boolean', desc="Require base stack or pair even for single residue loop closed (which could also be bulges!)", default='false' ), #for SWM
-	    Option( 'virtual_sugar_legacy_mode', 'Boolean', desc="In virtual sugar sampling, use legacy protocol to match Parin's original workflow", default='false' ),
-	    Option( 'erraser', 'Boolean', desc="Use KIC sampling", default='false' ),
-	    Option( 'centroid_screen', 'Boolean', desc="centroid_screen", default='true' ),
-	    Option( 'VDW_atr_rep_screen', 'Boolean', desc="classic VDW_atr_rep_screen", default='true' ),
-	    Option( 'minimize_and_score_native_pose', 'Boolean', desc="minimize_and_score_native_pose ", default='false' ), #Sept 15, 2010
-	    Option( 'rm_virt_phosphate', 'Boolean', desc="Remove virtual phosphate patches during minimization", default='false' ),
-	    Option( 'VDW_rep_screen_info', 'StringVector', desc="VDW_rep_screen_info to create VDW_rep_screen_bin ( useful when building loop from large poses )", default=[] ), #Jun 9, 2010
-	    Option( 'VDW_rep_alignment_RMSD_CUTOFF', 'Real', desc="use with VDW_rep_screen_info", default='0.001' ), #Nov 12, 2010
-	    Option( 'VDW_rep_delete_matching_res', 'StringVector', desc="delete residues in VDW_rep_pose that exist in the working_pose", default=[] ), #Feb 20, 2011
-	    Option( 'VDW_rep_screen_physical_pose_clash_dist_cutoff', 'Real', desc="The distance cutoff for VDW_rep_screen_with_physical_pose", default='1.2' ), #March 23, 2011
-	    Option( 'integration_test', 'Boolean', desc=" integration_test ", default='false' ), #March 16, 2012
-	    Option( 'allow_bulge_at_chainbreak', 'Boolean', desc="Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", default='true' ),
-	    Option( 'parin_favorite_output', 'Boolean', desc=" parin_favorite_output ", default='true' ), #Change to true on Oct 10, 2010
-	    Option( 'reinitialize_CCD_torsions', 'Boolean', desc="Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", default='false' ),
-	    Option( 'sample_both_sugar_base_rotamer', 'Boolean', desc="Samplerer: Super hacky for SQUARE_RNA", default='false' ),
-	    Option( 'sampler_include_torsion_value_in_tag', 'Boolean', desc="Samplerer:include_torsion_value_in_tag", default='true' ),
-	    Option( 'sampler_assert_no_virt_sugar_sampling', 'Boolean', desc="sampler_assert_no_virt_sugar_sampling", default='false' ), #July 28, 2011
-	    Option( 'sampler_try_sugar_instantiation', 'Boolean', desc="for floating base sampling, try to instantiate sugar if it looks promising", default='false' ), #July 28, 2011
-	    Option( 'do_not_sample_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: do_not_sample_multiple_virtual_sugar ", default='false' ),
-	    Option( 'sample_ONLY_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: sample_ONLY_multiple_virtual_sugar ", default='false' ),
-	    Option( 'allow_base_pair_only_centroid_screen', 'Boolean', desc="allow_base_pair_only_centroid_screen", default='false' ), #This only effect floating base sampling + dinucleotide.. deprecate option
-	    Option( 'minimizer_rename_tag', 'Boolean', desc="Reorder and rename the tag by the energy_score", default='true' ), #March 15, 2012
-      Option( 'minimize_res', 'IntegerVector', desc='alternative to fixed_res', default=[] ),
-	    Option( 'alignment_res', 'StringVector', desc="align_res_list", default=[] ),
-	    Option( 'native_alignment_res', 'IntegerVector', desc="optional: native_alignment_res ", default=[] ),
-	    Option( 'rmsd_res', 'IntegerVector', desc="residues that will be use to calculate rmsd ( for clustering as well as RMSD to native_pdb if specified )", default=[] ),
-      Option( 'missing_res', 'IntegerVector', desc='Residues missing in starting pose_1, alternative to input_res',default=[] ),
-	    Option( 'missing_res2', 'IntegerVector', desc='Residues missing in starting pose_2, alternative to input_res2',default=[] ),
-	    Option( 'job_queue_ID', 'Integer', desc="swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported ( start from 0! )", default='0' ),
-	    Option( 'minimize_and_score_sugar', 'Boolean', desc="minimize and sugar torsion + angle? and include the rna_sugar_close_score_term ", default='true' ),
-	    Option( 'global_sample_res_list', 'IntegerVector', desc="A list of all the nucleotide to be build/sample over the entire dag.",default=[] ),
-		  Option( 'filter_output_filename', 'File', desc="CombineLongLoopFilterer: filter_output_filename", default="filter_struct.txt" ),
-	    Option( 'combine_long_loop_mode', 'Boolean', desc=" Sampler: combine_long_loop_mode ", default="false" ),
-	    Option( 'combine_helical_silent_file', 'Boolean', desc="CombineLongLoopFilterer: combine_helical_silent_file", default="false" ),
-	    Option( 'output_extra_RMSDs', 'Boolean', desc="output_extra_RMSDs", default="false" ),
-	    Option( 'protonated_H1_adenosine_list', 'IntegerVector', desc="optional: protonate_H1_adenosine_list", default=[] ),
-	    Option( 'native_virtual_res', 'IntegerVector', desc=" optional: native_virtual_res ", default=[] ),
-	    Option( 'simple_append_map', 'Boolean', desc="simple_append_map", default="false" ),
-	    Option( 'allow_fixed_res_at_moving_res', 'Boolean', desc="mainly just to get Hermann Duplex modeling to work", default="false" ),
-	    Option( 'force_user_defined_jumps', 'Boolean', desc="Trust and use user defined jumps", default="false" ),
-	    Option( 'jump_point_pairs', 'StringVector', desc="optional: extra jump_points specified by the user for setting up the fold_tree ", default=[] ),
-	    Option( 'add_virt_root', 'Boolean', desc="add_virt_root", default="false" ),
-	    Option( 'floating_base', 'Boolean', desc=" floating_base ", default="false" ),
-	    Option( 'floating_base_anchor_res', 'Integer', desc="If we want floating base to be connected via a jump to an anchor res (with no intervening virtual residues), specify the anchor.", default="0" ),
-	    Option( 'allow_chain_boundary_jump_partner_right_at_fixed_BP', 'Boolean', desc="mainly just to get Hermann nano - square RNA modeling to work", default="false" ),
-	    Option( 'bulge_res', 'IntegerVector', desc="optional: residues to be turned into a bulge variant", default=[] ),
-	    Option( 'rebuild_bulge_mode', 'Boolean', desc="rebuild_bulge_mode", default="false" ),
-	    Option( 'virtual_sugar_keep_base_fixed', 'Boolean', desc="When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!", default="true" ),
-	    Option( 'virtual_sugar_do_minimize', 'Boolean', desc="When instantiating virtual sugar, minimize (as in original SWA code) -- takes extra time!", default="true" ),
-	    Option( 'sampler_max_centroid_distance', 'Real', desc="max centroid distance of moving base to reference in floating base sampler", default='0.0' ), #Nov 12, 2010
-	    Option( 'filter_user_alignment_res', 'Boolean', desc=" filter_user_alignment_res ", default="true" ),
-		  Option( 'tether_jump', 'Boolean', desc="In rigid body moves, keep moving residue close to (jump-connected) reference residue  (8.0 A) and force centroid interaction between them", default="true" ),
-		  Option( 'turn_off_rna_chem_map_during_optimize', 'Boolean', desc="When using rna_chem_map, only score with this after minimizing (takes too long to compute during optimizing).", default="true" ),
-		),
-    Option_Group( 'protein',
-	    Option( 'global_optimize', 'Boolean', desc="In clustering, packing, minimizing, use all residues.",default="false" ),
-	    Option( 'disable_sampling_of_loop_takeoff', 'Boolean', desc="For KIC protein loop closure, disallow sampling of psi at N-terminus and phi at C-terminus takeoff residues",default="false" ),
-	    Option( 'sample_beta', 'Boolean', desc="sample beta strand pairing -- later need to specify parallel/antiparallel",default="false" ),
-	    Option( 'ghost_loops', 'Boolean', desc="Virtualize loops in centroid screening",default="false" ),
-	    Option( 'min_type', 'String', desc="Minimizer type",default="dfpmin_armijo_nonmonotone" ),
-	    Option( 'min_tolerance', 'Real', desc="Minimizer tolerance",default="0.000025" ),
-	    Option( 'centroid_screen', 'Boolean', desc="Centroid Screen",default="false" ),
-	    Option( 'centroid_score_diff_cut', 'Real', desc="If doing -centroid_screen, only keep poses whose energies are within this energy of reference..",default="20.0" ),
-	    Option( 'centroid_weights', 'String', desc="weights for centroid filter",default="score3.wts" ),
-	    Option( 'score_diff_cut', 'Real', desc="score difference cut for clustering",default="10.0" ),
-	    Option( 'filter_native_big_bins', 'Boolean', desc="Figure out various terms for score12",default="false" ),
-	    Option( 'cluster_by_all_atom_rmsd', 'Boolean', desc="cluster by all atom rmsd",default="false" ),
-	    Option( 'centroid_output', 'Boolean', desc="output centroid structure during screening",default="false" ),
-	    Option( 'n_sample', 'Integer', desc="number of samples per torsion angle",default="18" ),
-	    Option( 'nstruct_centroid', 'Integer', desc="Number of decoys to output from centroid screening",default="0" ),
-	    Option( 'ccd_close', 'Boolean', desc="Close loops with CCD",default="false" ),
-	    Option( 'bridge_res', 'IntegerVector', desc="instead of enumerative sampling of backbone torsions, combine silent files that contains pieces of loops", default=[] ),
-	    Option( 'cart_min', 'Boolean', desc="Use cartesian minimizer",default="false" ),
-	    Option( 'move_jumps_between_chains', 'Boolean', desc="Move all jumps",default="false" ),
-	    Option( 'use_packer_instead_of_rotamer_trials', 'Boolean', desc="Use packer instead of rotamer trials in residue sampling",default="false" ),
-	    Option( 'expand_loop_takeoff', 'Boolean', desc="expand -sample_res loop to include connection to previous/next residues",default="false" ),
-		  Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
-		  Option( 'allow_virtual_side_chains', 'Boolean', desc='In packing, allow virtual side chains',default='true' ),
-		  Option( 'protein_prepack', 'Boolean', desc='In packing, prepack separate partitions',default='true' ),
-	),
-	),
-
-	################################
-	# full_model_info --> may replace stepwise stuff above.
-	Option_Group( 'full_model',
-    Option( 'cutpoint_open',   'ResidueChainVector',desc='open cutpoints in full model',default=[]),
-		Option( 'cutpoint_closed', 'ResidueChainVector',desc='closed cutpoints in full model',default=[]),
-		Option( 'other_poses', 'StringVector',desc='list of PDB files containing other poses'),
-		Option( 'extra_min_res', 'ResidueChainVector', desc= "specify residues other than those being built that should be minimized", default=[] ),
-		Option( 'jump_res', 'ResidueChainVector', desc= "optional: residues for defining jumps -- please supply in pairs", default=[] ),
-    Option( 'root_res', 'ResidueChainVector', desc= "optional: desired root res (used in SWM move testing)", default=[] ),
-    Option( 'virtual_sugar_res', 'ResidueChainVector', desc= "optional: starting virtual sugars (used in SWM move testing)", default=[] ),
-    Option( 'virtual_res', 'ResidueChainVector', desc="optional: residues for defining virtual residues", default=[] ),
-		Option( 'sample_res', 'ResidueChainVector', desc="residues to build (for SWA, the first element is the actual sample res while the other are the bulge residues)", default=[] ),
-		Option( 'calc_rms_res', 'ResidueChainVector', desc="residues over which to calculate rms for SWA. Not in wide use anymore.", default=[] ),
-		Option( 'working_res', 'ResidueChainVector', desc="residues that are being built [by default will be set from sample_res and any input pdbs]", default=[] ),
-    Option_Group( 'rna',
-	    Option( 'terminal_res', 'ResidueChainVector', desc="optional: residues that are not allowed to stack during sampling", default=[] ),
-	    Option( 'force_syn_chi_res_list', 'ResidueChainVector', desc="optional: sample only syn chi for the res in sampler.", default=[] ),
-	    Option( 'force_north_sugar_list', 'ResidueChainVector', desc="optional: sample only north sugar for the res in sampler.", default=[] ),
-	    Option( 'force_south_sugar_list', 'ResidueChainVector', desc="optional: sample only south sugar for the res in sampler.", default=[] ),
-		),
-	),
-
 	###############################################################################
 	## (yab) ufv sandbox options
 	Option_Group( 'ufv',
@@ -5963,565 +6239,53 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option( 'insert_pdb', 'File', desc="pdb of insert structure" ),
 			Option( 'attached_pdb', 'File', desc="pdb of structure in rigid body relationship with insert structure" ),
 			Option( 'connection_scheme', 'String', desc="enforce type of insertion: choose either n2c or c2n" ),
-		),
-	),
+		), # -ufv:insert
+	), # -ufv
 
-	###############################################################################
-	## chrisk's crazy options
-	Option_Group( 'chrisk',
-		Option( 'hb_elec', 'Boolean', desc="turn on hb-elec switch function", default='false' ),
+	Option_Group( 'willmatch',
+#		Option( 'arg_dun_th', 'Real', desc='fa_dun thresh for ARG', default='16.0' ),
+#		Option( 'asp_dun_th', 'Real', desc='fa_dun thresh for ASP', default='8.0' ),
+#		Option( 'glu_dun_th', 'Real', desc='fa_dun thresh for GLU', default='12.0' ),
+#		Option( 'lys_dun_th', 'Real', desc='fa_dun thresh for LYS', default='16.0' ),
+#		Option( 'usecache', 'Boolean', desc='use cached stage 1 data', default='false' ),
+		Option( 'write_reduced_matchset', 'StringVector',desc="<name> <pdb1> <pdb2> ..."),
+		Option( 'interface_size', 'Real',desc="num CB-CB within 8A",default='30'),
+		Option( 'max_dis_any',  'Real',desc="",default='3.0'),
+		Option( 'max_dis_all',  'Real',desc="",default='2.6'),
+		Option( 'max_dis_hb',   'Real',desc="",default='3.2'),
+		Option( 'min_dis_hb',   'Real',desc="",default='2.2'),
+		Option( 'max_dis_hb_colinear',   'Real',desc="",default='0.7'),
+		Option( 'max_dis_metal','Real',desc="",default='1.0'),
+		Option( 'max_ang_metal','Real',desc="",default='5.0'),
+		Option( 'clash_dis',    'Real',desc="",default='3.5'),
+		Option( 'c2_linker_dist',      'Real',desc="",default='3.5'),
+		Option( 'identical_match_dis', 'Real',desc="",default='0.0001'),
+		Option( 'chi1_increment', 'Real',desc="",default='10.0'),
+		Option( 'chi2_increment', 'Real',desc="",default='20.0'),
+		Option( 'c2_symm_increment', 'Real',desc="",default='20.0'),
+		Option( 'cb_sasa_thresh', 'Real',desc="",default='20.0'),
+		Option( 'design_interface', 'Boolean',desc="", default="true" ),
+		Option( 'chilist', 'File',desc="" ),
+		Option( 'fixed_res', 'File',desc="" ),
+		Option( 'native1', 'File',desc="" ),
+		Option( 'native2', 'File',desc="" ),
+		Option( 'exclude_res1', 'File',desc="",default="" ),
+		Option( 'exclude_res2', 'File',desc="",default="" ),
+		Option( 'taglist', 'File',desc="" ),
+		Option( 'residues', 'IntegerVector',desc="" ),
+		Option( 'symmetry_d2', 'Boolean', desc="", default='false'),
+		Option( 'symmetry_c2_dock', 'Boolean', desc="", default='false'),
+		Option( 'splitwork', 'IntegerVector', desc=""),
+		Option( 'exclude_ala', 'Boolean', desc="", default="false"),
+		Option( 'match_overlap_dis','Real',desc="distance under which to consider matches redundant",default='00.20'),
+		Option( 'match_overlap_ang','Real',desc="ang(deg) under which to consider matches redundant",default='10.00'),
+		Option( 'forbid_residues', 'IntegerVector',desc="disallow residues for matching" ),
+		Option( 'poi', 'RealVector',desc="xyz coords of some site of interest" ),
+		Option( 'poidis', 'Real',desc="poi distance threshold" ),
+		Option( 'homodimer', 'Boolean', desc="examine only homodimer configs", default="false"),
+		Option( 'fa_dun_thresh','Real',desc="",default='6.0'),
 
-	),
+		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
+	), #-willmatch
 
-	###############################################################################
-	## rotamer analysis options (chrisk)
-	Option_Group( 'rot_anl',
-		Option( 'tag', 'String', desc="nametag", default='.' ),
-
-		Option( 'premin', 'Boolean', desc="do all sc min and dump pdb", default='false' ),
-		Option( 'min', 'Boolean', desc="do sc min", default='false' ),
-		Option( 'diff_to_min', 'Boolean', desc="native pose is post-min", default='false' ),
-		Option( 'repack', 'Boolean', desc="", default='false' ),
-		Option( 'rtmin', 'Boolean', desc="", default='false' ),
-		Option( 'scmove', 'Boolean', desc="", default='false' ),
-		Option( 'design', 'Boolean', desc="", default='false' ),
-
-		Option( 'score_tol', 'Real', desc="score filter for dump_pdb", default='1.0' ),
-		Option( 'rmsd_tol', 'Real', desc="rmsd filter for dump_pdb", default='1.0' ),
-		Option( 'dump_pdb', 'Boolean', desc="dump_pdb when pass thresh", default='false' ),
-		Option( 'nloop_scmove', 'Integer', desc="base of scmover loop (total=nloop^n_chi)", default='9' ),
-	),
-
-	################################
-	## In development helix assembly options
-	Option_Group( 'sewing',
-        ####Old options - to be removed shortly####
-		Option('query_structure_path','File', desc=""),
-		Option('frag1_start','Integer', desc=""),
-		Option('frag1_end','Integer', desc=""),
-		Option('frag2_start','Integer', desc=""),
-		Option('frag2_end','Integer', desc=""),
-		Option('minimum_helix_contacts','Integer', desc=""),
-		Option('helices_to_add','Integer', desc=""),
-		Option('single_helix_rmsd_cutoff','Real', desc=""),
-		Option('helix_pair_rmsd_cutoff','Real', desc=""),
-        ####End old stuff####
-
-        Option('nat_ro_file','File', desc="A file containing coordinates for 'native' rotamers"),
-        Option('helix_cap_dist_cutoff','Real', desc="Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle"),
-        Option('helix_contact_dist_cutoff','Real', desc="Maximum distance between c-alpha residues in two helices in order to call them interacting"),
-        Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),
-	),
-
- ## strand assembly options
-	Option_Group( 'strand_assembly',
-		 # all options are for StrandBundleFeaatures only, since SandwichFeatures are dealt with parse_my_tag
-		 # default values are in code
-			Option('min_num_strands_to_deal','Integer', desc="Minimum number of strands to handle beta-sandwich"),
-			Option('max_num_strands_to_deal','Integer', desc="Maximum number of strands to handle beta-sandwich"),
-			Option('extract_native_only', 'Boolean', desc="if true, extract native full strands only"),
-			Option('min_res_in_strand','Integer', desc="minimum number of residues in a strand, for edge strand definition & analysis"),
-			Option('max_res_in_strand','Integer', desc="Maximum number of residues in a strand, for edge strand definition & analysis"),
-			Option('min_O_N_dis','Real', desc="Minimum distance between backbone oxygen and backbone nitrogen"),
-			Option('max_O_N_dis','Real', desc="Maximum distance between backbone oxygen and backbone nitrogen"),
-			Option('min_sheet_dis','Real', desc="Minimum distance between sheets (CA and CA)"),
-			Option('max_sheet_dis','Real', desc="Maximum distance between sheets (CA and CA)"),
-			Option('min_sheet_torsion','Real', desc="Minimum torsion between sheets (CA and CA) with respect to terminal residues"),
-			Option('max_sheet_torsion','Real', desc="Maximum torsion between sheets (CA and CA) with respect to terminal residues"),
-			Option('min_sheet_angle','Real', desc="Minimum angle between sheets (CA and CA)"),
-			Option('max_sheet_angle','Real', desc="Maximum angle between sheets (CA and CA)"),
-			Option('min_shortest_dis_sidechain_inter_sheet','Real', desc="minimum distance between sidechains between sheets (pairs of strands)"),
-),
-
-
-	###############################################################################
-	## peptide specificity / flexible backbone design options (chrisk)
-	Option_Group( 'pepspec',
-		Option( 'soft_wts', 'String', default='soft_rep.wts'),
-		Option( 'cen_wts', 'String', default='cen_ghost.wts'),
-		Option( 'binding_score', 'Boolean', default='true'),
-
-		Option( 'no_cen', 'Boolean', default='true'),
-		Option( 'no_cen_rottrials', 'Boolean', default='true'),
-		Option( 'run_sequential', 'Boolean', default='false'),
-		Option( 'pep_anchor', 'Integer' ),
-		Option( 'pep_chain', 'String', default=' '),
-		Option( 'n_peptides', 'Integer', default='8' ),
-		Option( 'n_build_loop', 'Integer', default='1000' ),
-		Option( 'n_cgrelax_loop', 'Integer', default='1' ),
-		Option( 'n_dock_loop', 'Integer', default='4' ),
-		Option( 'interface_cutoff', 'Real', default='5.0'),
-		Option( 'use_input_bb', 'Boolean', default='false'),
-		Option( 'remove_input_bb', 'Boolean', default='false'),
-		Option( 'homol_csts', 'String', default='prep.csts'),
-		Option( 'p_homol_csts', 'Real', default='1.0'),
-		Option( 'frag_file', 'String', default='sampling/filtered.vall.dat.2006-05-05.gz'),
-		Option( 'gen_pep_bb_sequential', 'Boolean', default='false'),
-		Option( 'input_seq', 'String' ),
-		Option( 'ss_type', 'String' ),
-		Option( 'upweight_interface', 'Boolean', default='false'),
-		Option( 'calc_sasa', 'Boolean', default='false'),
-
-		Option( 'diversify_pep_seqs', 'Boolean', default='true'),
-		Option( 'diversify_lvl', 'Integer', default='10'),
-		Option( 'dump_cg_bb', 'Boolean', default='false'),
-		Option( 'save_low_pdbs', 'Boolean', default='true'),
-		Option( 'save_all_pdbs', 'Boolean', default='false'),
-		Option( 'no_design', 'Boolean', default='false'),
-
-		Option( 'pdb_list', 'String' ),
-		Option( 'ref_pdb_list', 'String' ),
-		Option( 'add_buffer_res', 'Boolean', default='false'),
-		Option( 'cg_res_type', 'String', default = 'ALA' ),
-
-		Option( 'native_pep_anchor', 'Integer' ),
-		Option( 'native_pep_chain', 'String', default=''),
-		Option( 'native_align', 'Boolean', default='false'),
-		Option( 'rmsd_analysis', 'Boolean', default='false'),
-		Option( 'phipsi_analysis', 'Boolean', default='false'),
-
-		Option( 'anchor_type', 'String', default='ALA' ),
-		Option( 'no_prepack_prot', 'Boolean', default='false'),
-		Option( 'prep_use_ref_rotamers', 'Boolean', default='false'),
-		Option( 'n_prepend', 'Integer', default='0' ),
-		Option( 'n_append', 'Integer', default='0' ),
-		Option( 'clash_cutoff', 'Real', default='5' ),
-		Option( 'n_anchor_dock_std_devs', 'Real', default='1.0' ),
-		Option( 'prep_trans_std_dev', 'Real', default='0.5' ),
-		Option( 'prep_rot_std_dev', 'Real', default='10.0' ),
-		Option( 'seq_align', 'Boolean', default='false'),
-		Option( 'prep_align_prot_to', 'String'),
-
-	),
-
-## Unfolded State Options ##
-		Option_Group( 'unfolded_state',
-		   Option( 'unfolded_energies_file', 'File', desc='path to an alternative unfolded state energies file' ),
-    ),
-
-## Make Rot Lib Options ##
-    Option_Group( 'make_rot_lib',
-			 Option( 'options_file', 'File', desc='path to make rot lib options file' ),
-			 Option( 'two_fold_symetry_135_315', 'IntegerVector', desc='the chi number at which to apply two fold symetry across the 135/315 axis' ),
-			 Option( 'two_fold_symetry_0_180'  , 'IntegerVector', desc='the chi number at which to apply two fold symetry across the 0/180 axis' ),
-			 Option( 'three_fold_symetry_90_210_330'  , 'IntegerVector', desc='the chi number at which to apply two fold symetry across the 0/180 axis' ),
-),
-
-## Cyclization Options ##
-		Option_Group( 'cyclization',
-			 #Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize", default="1" ),
-       #Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize", default="0" ),
-			 Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize" ),
-			 Option( 'num_min_rebuild', 'Integer', desc="The number of time to iterate between minimization and rebuilding the connection dependant atom positions", default='3' ),
-),
-
-	###############################################################################
-	## peptide specificity / flexible backbone design options (chrisk)
-	Option_Group( 'sicdock',
-		Option( 'clash_dis'    ,    'Real', default='3.5' , desc="max acceptable clash dis"),
-		Option( 'contact_dis'  ,    'Real', default='12.0', desc="max acceptable contact dis"),
-		Option( 'hash_2D_vs_3D',    'Real', default='1.3' , desc="grid spacing top 2D hash"),
-		Option( 'term_min_expose',  'Real', default='0.1' , desc="terminus at least X exposed"),
-		Option( 'term_max_angle',   'Real', default='45.0' , desc="terminus at most X degrees from XY plane"),
-	),
-
-	Option_Group( 'mh', # sheffler willsheffler@gmail.com
-		Option( 'motif_out_file'              , 'String'         , desc="file to dump ResPairMotifs to"                                                     , default="default"              ),
-		Option( 'harvest_motifs'              , 'FileVector'     , desc="files to harvest ResPairMotifs from"                                               , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'print_motifs'                , 'FileVector'     , desc="files to print ResPairMotifs from"                                                 , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'dump_motif_pdbs'             , 'FileVector'     , desc="files to extract ResPairMotifs clusters from"                                      , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'merge_motifs'                , 'FileVector'     , desc="files to merge ResPairMotifs from"                                                 , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'merge_motifs_one_per_bin'    , 'Boolean'        , desc="keep only one motif per hash bin (for sepcified grid)"                             , default="false"     ),
-		Option( 'generate_reverse_motifs'     , 'Boolean'        , desc="keep only one motif per hash bin (for sepcified grid)"                             , default="false"     ),
-		Option( 'dump_input_pdb'              , 'FileVector'     , desc="files to dump biount interpretation from"                                          , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'score_pdbs'                  , 'FileVector'     , desc="files to score with input counts file"                                             , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'xform_score_data'            , 'FileVector'     , desc="motif hash data for scoring"                                                            ),
-		Option( 'xform_score_data_ee'         , 'FileVector'     , desc="motif hash data for scoring"                                                            ),
-		Option( 'xform_score_data_eh'         , 'FileVector'     , desc="motif hash data for scoring"                                                            ),
-		Option( 'xform_score_data_he'         , 'FileVector'     , desc="motif hash data for scoring"                                                            ),
-		Option( 'xform_score_data_hh'         , 'FileVector'     , desc="motif hash data for scoring"                                                            ),
-		Option( 'xform_score_data_sspair'     , 'FileVector'     , desc="motif hash data for scoring strand pairings"                                            ),
-		Option( 'sequence_recovery'           , 'FileVector'     , desc="pdb files to score"                                                                , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'explicit_motif_score'        , 'FileVector'     , desc="pdb files to score"                                                                , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'input_motifs'                , 'FileVector'     , desc="motifs to score with"                                                              , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'harvest_scores'              , 'FileVector'     , desc="get counts from ResPairMotif files and dump to binary counts file"                 , default=""                     ),
-		Option( 'print_scores'                , 'File'           , desc="print a binary counts file"                                                        , default=""                     ),
-		Option( 'dump_matching_motifs'        , 'FileVector'     , desc="pdb files to score"                                                                , default="SPECIFY_ME_DUMMY"     ),
-		Option( 'dump_matching_motifs_cutoff' , 'Real'           , desc="rms cutoff"                                                                        , default=  '1.0'                ),
-		Option( 'score_across_chains_only'    , 'Boolean'        , desc="ignore intra-chain motifs"                                                         , default=  'false'              ),
-		Option( 'normalize_score_ncontact'    , 'Boolean'        , desc="normalize by total num contacts"                                                   , default=  'true'               ),
-		Option( 'dump_motif_pdbs_min_counts'  , 'Integer'        , desc="min counts to dump"                                                                , default=  '99999999'           ),
-		Option( 'hash_cart_size'              , 'Real'           , desc="dimensions of binned space"                                                        , default=  '12.0'               ),
-		Option( 'hash_cart_resl'              , 'Real'           , desc="width of cartesian bin"                                                            , default=   '0.8'               ),
-		Option( 'hash_angle_resl'             , 'Real'           , desc="width of euler angle bin"                                                          , default=  '15.0'               ),
-		Option( 'harvest_motifs_min_hh_ends'  , 'Integer'        , desc="restrict to middle of hilix contacts "                                             , default=    '0'                ),
-		Option( 'harvest_scores_min_count'    , 'Integer'        , desc=" "                                                                                 , default=    '0'                ),
-		Option( 'ignore_io_errors'            , 'Boolean'        , desc=" "                                                                                 , default=   'false'             ),
-		Option( 'motif_match_radius'          , 'Real'           , desc="width of euler angle bin"                                                          , default=  '0.6'               ),
-		Option( 'merge_similar_motifs'        , 'RealVector'     , desc="give 3 hash params"                                                                ),
-		Option_Group('score',
-			Option('noloops'                  ,'Boolean'         , desc="ignore loop ss in scored structs"                                                  , default=   'true'             ),
-			Option('spread_ss_element'        ,'Boolean'         , desc="ignore loop ss in scored structs"                                                  , default=   'true'             ),
-			Option('min_cover_fraction'       ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '0.0'             ),
-			Option('strand_pair_weight'       ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '1.0'             ),
-			Option('min_contact_pairs'        ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '0.0'             ),
-			Option('max_contact_pairs'        ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '9e9'             ),
-		),
-		Option_Group('filter',
-			Option('filter_harvest'           ,'Boolean'         , desc="filter while harvesting"                                                           , default=   'true'             ),
-			Option('filter_io'                ,'Boolean'         , desc="filter while reading filter"                                                       , default=   'true'             ),
-			Option('restype'                  ,'String'          , desc="allowed res types"                                                                 , default='ACDEFGHIKLMNPQRSTVWY' ),
-			Option('restype_one'              ,'String'          , desc="allowed res types need at least one"                                               , default='ACDEFGHIKLMNPQRSTVWY' ),
-			Option('not_restype'              ,'String'          , desc="disallowed res types"                                                              , default='ACGP' ),
-			Option('not_restype_one'          ,'String'          , desc="disallowed res types at least one not"                                             , default='ACGP' ),
-			Option('seqsep'                   ,'Integer'         , desc="min filter seqsep"                                                                 , default=   '0'                 ),
-			Option('no_hb_bb'                 ,'Boolean'         , desc="no bb hbonded"                                                                     , default=   'false'             ),
-			Option('mindist2'                 ,'Real'            , desc="min CA-CA dist sq"                                                                 , default=   '0.0'               ),
-			Option('maxdist2'                 ,'Real'            , desc="max CA-CA dist sq"                                                                 , default=  '999999.0'           ),
-			Option('ss1'                      ,'String'          , desc="filter ss1"                                                                        , default=   ''                  ),
-			Option('ss2'                      ,'String'          , desc="filter ss2"                                                                        , default=   ''                  ),
-			Option('dssp1'                    ,'String'          , desc="filter dssp1"                                                                      , default=   ''                  ),
-			Option('dssp2'                    ,'String'          , desc="filter dssp2"                                                                      , default=   ''                  ),
-			Option('aa1'                      ,'String'          , desc="filter aa1"                                                                        , default=   ''                  ),
-			Option('aa2'                      ,'String'          , desc="filter aa2"                                                                        , default=   ''                  ),
-			Option('sasa'                     ,'Real'            , desc="filter max sasa"                                                                   , default=    '999.0'            ),
-			# Option('avge_cut'                 ,'Real'            , desc="filter max total rosetta E cut (default 999.0 = no filtering"                    , default=  '999.0'              ),
-			Option('faatr'                    ,'Real'            , desc="filter max faatr (default 999.0 = no filtering"                                    , default=  '999.0'              ),
-			Option('hb_sc'                    ,'Real'            , desc="filter max hb_sc (default 999.0 = no filtering"                                    , default=  '999.0'              ),
-			Option('hb_bb_sc'                 ,'Real'            , desc="filter max hb_bb_sc (default 999.0 = no filtering"                                 , default=  '999.0'              ),
-			Option('hb_bb'                    ,'Real'            , desc="filter max hb_bb (default 999.0 = no filtering"                                    , default=  '999.0'              ),
-			Option('occupancy'                ,'Real'            , desc="filter min occupancy (default 0.0 = no filtering"                                  , default=    '0.0'              ),
-			Option('coorderr'                 ,'Real'            , desc="filter max bfac coorderr = sqrt(B/8*pi**2)) (default 999.0 = no filtering"         , default=  '999.0'              ),
-			Option('faatr_or_hbbb'            ,'Real'            , desc="filter require atr or hb (bb allowed) below thresh"                                , default=  '999.0'              ),
-			Option('faatr_or_hb'              ,'Real'            , desc="filter require atr or hb below thresh"                                             , default=  '999.0'              ),
-			Option('noloops'                  ,'Boolean'         , desc=""                                                           , default=   'false'             ),
-			Option('oneloop'                  ,'Boolean'         , desc=""                                                           , default=   'false'             ),
-			Option('nodisulf'                 ,'Boolean'         , desc=""                                                           , default=   'false'             ),
-		),
-	),
-
-################STEVEN COMBS#######################
-	Option_Group( 'orbitals',
-		Option( 'Hpol', 'Boolean', desc="look at only polar hydrogen interactions", default='false' ),
-		Option( 'Haro', 'Boolean', desc="look at only aromatic hydrogen interactions", default='false' ),
-		Option( 'bb_stats', 'Boolean', desc="look at orbital backbone stats", default='false' ),
-		Option( 'sc_stats', 'Boolean', desc="look at orbital sc stats", default='false' ),
-		Option( 'orb_orb_stats', 'Boolean', desc="look at orbital orbital stats", default='false' ),
-		Option('sc_bb', 'Boolean', desc="score the backbone", default='false'),
-	),
-# cutoutdomain Options -----------------------------------------------------------
-	Option_Group( 'cutoutdomain',
-		Option( 'start', 'Integer', desc="start residue", default = '1' ),
-		Option( 'end', 'Integer', desc="end residue", default = '2' ),
-	),
-	###########################################################################
-	# Carbohydrate Options
-	Option_Group("carbohydrates",
-            Option("lock_rings", "Boolean",
-                    desc='Sets whether or not alternative ring conformations'
-                    'will be sampled by the protocol, (e.g, ring flips or'
-                    'puckering).  The default value is false.',
-                    short='Are saccharide rings allowed to flip or pucker?',
-                    legal=["true", "false"],
-                    default="false")
-	),
-
-  ## dwkulp some options for programs
-  Option_Group( 'dwkulp',
-			Option( 'forcePolyAAfragments', 'String', desc="a single amino acid that will be used for fragment picking,default is blank which means taking actual sequence from pose" ,default=""),
-  ),
-
-	Option_Group( 'matdes',
-                        Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='1'),
-                        Option('num_subs_total', 'Integer', desc='The number of subunits in the target assembly', default='1'),
-                        Option('pdbID', 'String', desc='The PDB ID', default='0xxx'),
-                        Option('prefix', 'String', desc='Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_...', default='pre_'),
-                        Option('radial_disp', 'RealVector', desc='Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb'),
-                        Option('angle', 'RealVector', desc='Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb'),
-			Option('tag', 'String', desc='Four digit ID tag attached to a design model during design'),
-		Option_Group( 'dock',
-                        Option('neg_r', 'Real', desc='Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.', default='0'),
-                        Option('dump_pdb', 'Boolean', desc='Dump a pdb of a particular docked configuration', default='false'),
-                        Option('dump_chainA_only', 'Boolean', desc='Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb', default='false'),
-                ), # dock
-
-                Option_Group( 'design',
-                        Option('contact_dist', 'Real', desc='CA-CA distance for defining interface residues', default='10.0'),
-                        Option('grid_size_angle' , 'Real', desc='The width of angle space to start design/minimize runs from, centered on the starting angle', default='1.0'),
-                        Option('grid_size_radius', 'Real', desc='The width of radius space to start design/minimize runs from, centered on the starting radius', default='1.0'),
-                        Option('grid_nsamp_angle' , 'Integer', desc='The number of samples the rigid body grid is divided into in angle space', default='9'),
-                        Option('grid_nsamp_radius', 'Integer', desc='The number of samples the rigid body grid is divided into in radius space', default='9'),
-                        Option('fav_nat_bonus', 'Real', desc='Bonus to be awarded to native residues', default='0.0'),
-                ), # design
-
-		Option_Group( 'mutalyze',
-			Option('calc_rot_boltz', 'Boolean', desc='Specify whether to calculate RotamerBoltzmann probabilities or not', default='0'),
-			Option('ala_scan', 'Boolean', desc='Specify whether to calculate ddGs for alanine-scanning mutants at the designed interface', default='1'),
-			Option('revert_scan', 'Boolean', desc='Specify whether to calculate ddGs for reversion mutants at the designed interface', default='1'),
-			Option('min_rb', 'Boolean', desc='Specify whether to minimize the rigid body DOFs', default='1'),
-		), # mutalyze
-
-	), # matdes
-
-        Option_Group( 'gpu',
-                Option('gpu', 'Boolean', desc='Enable/Disable GPU support', default ='true'),
-                Option('device', 'Integer', desc='GPU device to use', default = '1'),
-                Option('threads', 'Integer', desc='Max GPU threads to use', default = '2048'),
-        ), # gpu
-
-	Option_Group( 'pb_potential',
-		Option( 'charged_chains', 'IntegerVector', desc="Chain numbers that carries charge in the PB calculation",default='1' ),
-		Option( 'sidechain_only', 'Boolean', desc="Only calculate interactions to sidechain.", default="true" ),
-		Option( 'revamp_near_chain', 'IntegerVector', desc="Scale down PB interactions if near the given chain. Use chain numbers as input." ),
-		Option( 'apbs_path', 'String', desc="Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable"),
-		Option( 'potential_cap', 'Real', desc="Cap for PB potential input", default = '20.0' ),
-		Option( 'epsilon', 'Real', desc="Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.", default='2.0'),
-		Option( 'apbs_debug', 'Integer', desc="APBS debug level [0-6]", default="2"),
-		Option( 'calcenergy', 'Boolean', desc="Calculate energy?", default="false"),
-	), # pb_potential
-
-	Option_Group( 'bunsat_calc2',
-		Option( 'probe_radius', 'Real', desc="Probe radius for SASA calculation", default = '1.4' ),
-		Option( 'wobble', 'Real', desc="Distance atoms can move towards" \
-                    " or away from solvent. Value is subtracted from inner shell and added to outer shell for variable distance SASA.", default = '0.0' ),
-		Option( 'sasa_burial_cutoff', 'Real', desc="Minimum SASA to be considered exposed", default = '0.01' ),
-		Option( 'layered_sasa', 'Boolean', desc="Use the variable distance solvent SASA calculator for finding buried unsats", default="true"),
-		Option( 'generous_hbonds', 'Boolean', desc="Use generous hbond criteria", default = "true"),
-		Option( 'AHD_cutoff', 'Real', desc="Minimum AHD angle for secondary geometry based h-bond detection", default = '120' ),
-		Option( 'dist_cutoff', 'Real', desc="max dist", default = '3.0'),
-		Option( 'hxl_dist_cutoff', 'Real', desc="hxl max dist", default = '3.5'),
-		Option( 'sulph_dist_cutoff', 'Real', desc="max sulph dist", default = '3.3'),
-		Option( 'metal_dist_cutoff', 'Real', desc="max metal dist", default = '2.7'),
-	),
 ) # end options
-
-
-""" Questionable options:
-
-# is default different in dif. modes?
-Option('Real', name='score_contact_distance', group='abinitio',
-       desc='Give distance under which contact is given bonus. [Default is 8 angstroms  (centroid/centroid), or  11 angstroms (c_alpha/c_alpha).]',
-       default='8.0'),
-
-
-(Make one options instead?):
-  -no_farlx_rot_trials       Disable rotamer_trials in fullatom relax
-  -farlx_rot_trials          Enable rotamer_trials in fullatom relax (defunct; now rot. trials on by default on all builds)
-
-
-# default? types???
--"cst":
-	Found in options_rosetta
-	rosetta++/options.cc String default= "cst"
-	rosetta++/pose_benchmark.cc Boolean
-	rosetta++/pose_benchmark.cc double default=0.0
-		Different defaults!!!defaults:set(['0.0', ' "cst"'])
-		Different types!!!types:set(['Real', 'Boolean', 'String'])
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# multiple defaults
--"env_stats_file":
-	Found in options_rosetta
-	rosetta++/pdbstats.cc String default= filename
-	rosetta++/pdbstats.cc String default= filename
-	rosetta++/structure.cc String default=  "-"
-	rosetta++/structure.cc String default=  "-"
-		Different defaults!!!defaults:set(['  "-"', ' filename'])
-		Options_Rosetta has different type!!! Options_Rosetta type:File
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# Type??? Defaults???
--"extrachi_cutoff":
-	Found in options_rosetta
-	rosetta++/pose_dna.cc String
-	rosetta++/pose_dna.cc String
-	rosetta++/pose_dna.cc String
-	rosetta++/pose_dna.cc String
-	rosetta++/RotamerOptions.cc Integer default=extrachi_cutoff
-		Different types!!!types:set(['Integer', 'String'])
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:18
-	Options_Rosetta defaults:18
-
-# looks like default is calcualted dynamicly
--"neighbor_repack":
-	Found in options_rosetta
-	rosetta++/pKa_mode.cc Boolean
-	rosetta++/pKa_mode.cc String default=protein_name_prefix + protein_name + ".repack"
-		Different types!!!types:set(['Boolean', 'String'])
-		Options_Rosetta has different type!!! Options_Rosetta type:File
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# looks like default is calcualted dynamicly
--"neighbor_rt":
-	Found in options_rosetta
-	rosetta++/pKa_mode.cc Boolean
-	rosetta++/pKa_mode.cc String default=protein_name_prefix + protein_name + ".repack"
-		Different types!!!types:set(['Boolean', 'String'])
-		Options_Rosetta has different type!!! Options_Rosetta type:File
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# looks like default is calcualted dynamicly
--"site_repack":
-	Found in options_rosetta
-	rosetta++/pKa_mode.cc Boolean
-	rosetta++/pKa_mode.cc String default=protein_name_prefix + protein_name + ".repack"
-		Different types!!!types:set(['Boolean', 'String'])
-		Options_Rosetta has different type!!! Options_Rosetta type:File
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
--"site_rt":
-	Found in options_rosetta
-	rosetta++/pKa_mode.cc Boolean
-	rosetta++/pKa_mode.cc String default=protein_name_prefix + protein_name + ".repack"
-		Different types!!!types:set(['Boolean', 'String'])
-		Options_Rosetta has different type!!! Options_Rosetta type:File
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# different defaults
--"nstruct":
-	Found in options_rosetta
-	rosetta++/docking.cc Integer default=default_nstruct
-	rosetta++/enzyme.cc Integer default=1
-	rosetta++/fibril.cc Integer default= 25000
-	rosetta++/jumping_pairings.cc Integer default=1000
-	rosetta++/options.cc Integer default=default_nstruct
-	rosetta++/pose_dna.cc Integer
-	rosetta++/pose_dna.cc Integer
-	rosetta++/pose_rna.cc Integer default= 100
-	rosetta++/pose_rna_jumping.cc Integer default= 100
-	rosetta++/pose_routines.cc Boolean
-	rosetta++/pose_routines.cc Integer
-		Different defaults!!!defaults:set([' 25000 ', '1', 'default_nstruct', ' 100', '1000'])
-		Different types!!!types:set(['Integer', 'Boolean'])
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# type?
--"paths":
-	Found in options_rosetta
-	rosetta++/read_paths.cc String default= "paths.txt"
-		Options_Rosetta has different type!!! Options_Rosetta type:File
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:None
-	Options_Rosetta defaults:None
-
-# different defaults 8.0 and 11.0
--"score_contact_distance":
-	Found in options_rosetta
-	rosetta++/filters.cc double default=float
-	rosetta++/filters.cc double default=float
-		Options_Rosetta has different defaults!!! Options_Rosetta defaults:8.0
-	Options_Rosetta defaults:8.0
-
-# different defaults
--"dock_pert":
-	Found in options_rosetta
-	rosetta++/design_structure.cc Boolean
-	rosetta++/options.cc Boolean
-	rosetta++/options.cc RealVector default=1.0
-	rosetta++/options.cc RealVector default=3.0
-		Different defaults!!!defaults:set(['1.0', '3.0'])
-		Different types!!!types:set(['Boolean', 'RealVector'])
-           desc='<pose_loops_file format>   four number separated by white space per
-			     line, e.g, 120 134 128 1
-			     which defines loop starts at residue 120,
-			     ends at residue 134, is cut at residue
-			     128 and should be modeled from extended
-			     conformation( 0 otherwise ). Note that
-			     start-1 <= cut <= end indicates a fixed
-			     cutpoint within the loop region,
-			     otherwise a cutpoint will be randomly
-			     chosen. Multiple loops can be input and
-			     they will be built by the order provided.
-               ',
-    ),
-
-
-
-#type? File or Boolean?
-    Option('dock_des_min_inter', '',
-           desc='Protocol for interface design: dock and then interface design using
-                             the design_minimize_interface protocol.  Uses docking site
-                             constraints if provided in .cst file.',
-    ),
-
-
-
-# multiple defaults?
-Option('score_delta5', 'Real',
-       desc="-score_delta5 x Define the scorefilter buffering cutoff values on command-line. They are used to \
-             skip models with very bad scores in the early stages. The default values are \
-             still 500, 10 and 5",
-),
-
-
-# default depends on other option value
--"ring_tether":
-	Found in options_rosetta
-	rosetta++/pose_routines.cc double default= bond_length_tether
-		options_rosetta has different type!!! options_rosetta type:Boolean
-		options_rosetta has different defaults!!! options_rosetta defaults:None
-	options_rosetta defaults:None
-
-# unknow default
--"stage2_cycles":
-	Found in options_rosetta
-	rosetta++/relax_structure.cc Integer default= stage2_cycles
-		options_rosetta has different type!!! options_rosetta type:Boolean
-		options_rosetta has different defaults!!! options_rosetta defaults:None
-	options_rosetta defaults:None
-
-
-# multiple defaults?
--"turn_begin":
-	Found in options_rosetta
-	rosetta++/fibril.cc Integer default= asp_pos - 2
-	rosetta++/fibril.cc Integer default= asp_pos
-		Different defaults!!!defaults:set([' asp_pos ', ' asp_pos - 2 '])
-		options_rosetta has different type!!! options_rosetta type:Boolean
-		options_rosetta has different defaults!!! options_rosetta defaults:None
-	options_rosetta defaults:None
-
-# multiple defaults?
--"turn_end":
-	Found in options_rosetta
-	rosetta++/fibril.cc Integer default= lys_pos + 2
-	rosetta++/fibril.cc Integer default= lys_pos
-		Different defaults!!!defaults:set([' lys_pos ', ' lys_pos + 2 '])
-		options_rosetta has different type!!! options_rosetta type:Boolean
-		options_rosetta has different defaults!!! options_rosetta defaults:None
-	options_rosetta defaults:None
-
-
-
-Can not have namespace and option with the same name (possible that this is just dublication in Docs)
-relax mode:
-  -looprlx                   Run only the loop relax protocol
-   looprlx submode:
-     -looprlx                   Run only the loop relax protocol to build loops in
-                                centroid mode.
-
-. relax:looprlx might be a candidate for simplification to
-something like relax:loop since the rlx part isn't needed
-within the relax context.
-
-. And looprlx_idealization can also lose the redundant looprlx_
-prefix.
-
-. The -abinitio:score_contact_* options might be enough to
-justify grouping into a nested score_contact group/namespace.
-
-. Similarly, the *_reweight options are probably best put
-in a abinitio:reweight group: abinitio:reweight:vdw and
-so forth.
-
-
-
-
-"""
-

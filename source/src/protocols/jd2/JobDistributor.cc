@@ -659,6 +659,11 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 				<< std::endl;
 	job_outputter_->flush(); //This call forces out any unprinted data
 	basic::prof_show();
+	if ( tried_jobs != 0 ) {
+		// We had a successful run - show any options which were set by the user, but not accessed.
+		// (This shouldn't be printed for errors and for no outputs, as not all the protocol may have been run.)
+		basic::options::option.show_unused_options( tr.Warning );
+	}
 }
 
 JobOP JobDistributor::current_job() const

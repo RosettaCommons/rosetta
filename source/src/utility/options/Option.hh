@@ -66,6 +66,7 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	Option() :
+		is_group_(false),
 		been_accessed_(false),
 		restricted_access_(false)
 	{}
@@ -74,6 +75,7 @@ protected: // Creation
 	/// @brief Copy constructor
 	inline
 	Option( Option const & option) :
+		is_group_(option.is_group_),
 		been_accessed_(false),
 		restricted_access_(option.restricted_access_)
 	{}
@@ -200,6 +202,15 @@ public: // Methods
 
 public: // Properties
 
+	Option &
+	is_group( bool value ) {
+		is_group_ = value;
+		return *this;
+	}
+
+	/// @brief Is this the synonymous option for an option group (e.g. -in:file:file)
+	bool
+	is_group() const { return is_group_; }
 
 	/// @brief Key
 	virtual
@@ -419,6 +430,9 @@ public: // Comparison
 
 
 private: // Private data members
+
+	/// @brief Is this a synonymous option for an option group (e.g. -in:file:file)
+	bool is_group_;
 
 	/// @brief flag, will be true if application was trying to anyhow access/check option value.
 	///        Used to create option usage reports.

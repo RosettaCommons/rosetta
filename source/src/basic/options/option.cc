@@ -222,33 +222,36 @@ process()
 {
 	using namespace utility::options;
 
-	{ // Stupid binary fullatom options that really suck.
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-		if ( option[ in::file::fullatom ].user() ) {
-			TR.Warning << "option[ in::file::fullatom ]() re-interpreted as setting "
-				<< "option[ in::file::residue_type_set ]() to ";
-			std::string type_set_name("fa_standard");
-			if ( !option[ in::file::fullatom ]() ) {
-				type_set_name = "centroid";
-			}
-
-			TR.Warning << type_set_name << std::endl;
-			option[ in::file::residue_type_set ].value( type_set_name );
-		}
-
-		if ( option[ out::file::fullatom ].user() ) {
-			TR.Warning << "option[ out::file::fullatom ]() re-interpreted as setting "
-				<< "option[ out::file::residue_type_set ]() to ";
-			std::string type_set_name("fa_standard");
-			if ( !option[ out::file::fullatom ]() ) {
-				type_set_name = "centroid";
-			}
-
-			TR.Warning << type_set_name << std::endl;
-			option[ out::file::residue_type_set ].value( type_set_name );
-		}
-	}
+// Removing - This translation isn't used in the current code base
+// (Where -in::file::residue_type_set is checked, -in:file:fullatom is also checked,
+// or is not listed as a valid option.)
+//	{ // Stupid binary fullatom options that really suck.
+//		using namespace basic::options;
+//		using namespace basic::options::OptionKeys;
+//		if ( option[ in::file::fullatom ].user() ) {
+//			TR.Warning << "option[ in::file::fullatom ]() re-interpreted as setting "
+//				<< "option[ in::file::residue_type_set ]() to ";
+//			std::string type_set_name("fa_standard");
+//			if ( !option[ in::file::fullatom ]() ) {
+//				type_set_name = "centroid";
+//			}
+//
+//			TR.Warning << type_set_name << std::endl;
+//			option[ in::file::residue_type_set ].value( type_set_name );
+//		}
+//
+//		if ( option[ out::file::fullatom ].user() ) {
+//			TR.Warning << "option[ out::file::fullatom ]() re-interpreted as setting "
+//				<< "option[ out::file::residue_type_set ]() to ";
+//			std::string type_set_name("fa_standard");
+//			if ( !option[ out::file::fullatom ]() ) {
+//				type_set_name = "centroid";
+//			}
+//
+//			TR.Warning << type_set_name << std::endl;
+//			option[ out::file::residue_type_set ].value( type_set_name );
+//		}
+//	}
 
 	{ // Input paths
 		using namespace basic::options::OptionKeys::in::path;
@@ -263,14 +266,14 @@ process()
 
 		option[ pdb ].default_to( option[ path ] );
 		option[ score ].default_to( option[ path ] );
-		option[ movie ].default_to( option[ path ] );
+		//option[ movie ].default_to( option[ path ] );
 	}
 
-	{ // Packing options
-		using namespace basic::options::OptionKeys::packing;
-
-		if ( option[ solvate ] ) option[ explicit_h2o ].value( true ); // -solvate => -explicit_h2o
-	}
+//	{ // Packing options
+//		using namespace basic::options::OptionKeys::packing;
+//
+//		//if ( option[ solvate ] ) option[ explicit_h2o ].value( true ); // -solvate => -explicit_h2o
+//	}
 
 	TR.flush();
 	return option;

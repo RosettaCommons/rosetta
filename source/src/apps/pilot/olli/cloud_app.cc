@@ -25,7 +25,6 @@
 
 // Utility headers
 #include <basic/options/option_macros.hh>
-#include <basic/options/option.cc.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
