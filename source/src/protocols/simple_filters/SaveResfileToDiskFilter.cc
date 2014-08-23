@@ -170,7 +170,7 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
 		if ( renumber_pdb() ) {
 			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]);
 		} else {
-			resfile << pose.pdb_info()->number( selected_residues[i] ) << '\t' << pose.pdb_info()->chain(selected_residues[i]);
+			resfile << pose.pdb_info()->number( selected_residues[i] ) << pose.pdb_info()->icode( selected_residues[i] ) << '\t' << pose.pdb_info()->chain(selected_residues[i]);
 		}
 		if ( selected_resis_property() != "" ) {
 			resfile << " " << selected_resis_property() << '\n';
