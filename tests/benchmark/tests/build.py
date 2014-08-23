@@ -17,6 +17,11 @@ import os, json, commands
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
+_api_version_ = '1.0'  # api version
+
+# _TestSuite_ = False  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
+
+
 tests = dict(
     debug     = NT(command='./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
     release   = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
@@ -28,33 +33,29 @@ tests = dict(
     levels    = NT(command='./update_options.sh && python version.py && cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
 )
 
-_TestSuite_ = False  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
-
-def set_up():
-    pass
-
-
-def tear_down():
-    pass
-
-
-def rollover():
-    pass
-
+# def set_up():
+#     pass
+# def tear_down():
+#     pass
+# def rollover():
+#     pass
 
 def get_tests():
     return tests.keys()
 
 
-
-def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
+def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
+    memory = config['memory']
+    jobs = config['cpu_count']
+
+    if test.startswith('PyRosetta'): jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 1Gb per memory per thread
 
     TR = Tracer(verbose)
 
-    TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
@@ -87,6 +88,6 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     raise BenchmarkError('Build script does not support TestSuite-like run!')
 
 
-def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if test: return run_test(test, rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

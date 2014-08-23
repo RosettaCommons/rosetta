@@ -13,7 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import os, sys, imp, shutil, json, platform
+import os, sys, imp, shutil, json, platform, commands
 
 import argparse
 
@@ -39,8 +39,14 @@ def main(args):
 
     parser.add_argument('-j', '--jobs',
       default=1, type=int,
-      help="Number of processors to use on when building. (default: %(default)s)",
+      help="Number of processors to use on when building. (default: use all avaliable memory)",
     )
+
+    parser.add_argument('-m', '--memory',
+      default=0, type=float,
+      help="Amount of memory to use (default: use 2Gb per job",
+    )
+
 
     parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
 
@@ -59,7 +65,13 @@ def main(args):
 
     Platform['extras'] = Options.extras.split(',') if Options.extras else []
 
-    print('Platform: {}'.format(Platform))
+    if Options.memory: memory = Options.memory
+    elif Platform['os'] == 'Linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
+    elif Platform['os'] == 'Mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[2]) / 1024 / 1024 / 1024
+
+    config = dict(cpu_count=Options.jobs, memory=memory)
+    print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
+
     if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
     else: print('Running tests: {}'.format(Options.args) )
 
@@ -103,7 +115,13 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
-            res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
+            try: api_version = test_suite._api_version_
+            except AttributeError as e: api_version = ''
+
+            if api_version < '1.0':
+                res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
+            else:
+                res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, verbose=True, debug=Options.debug)
 
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))

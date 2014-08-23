@@ -33,6 +33,10 @@
 
 cd %(workdir)s
 
+# making script terminate with error after any command that return non zero exit code
+set -e
+
+
 #
 # After that, do whatever you want.
 # It's nice to test that the executable exists first, to ensure the test actually runs:
