@@ -1,4 +1,4 @@
--constant_seed 1
+#-constant_seed 1
 -nodelay
 -use_input_sc
 -extrachi_cutoff 8
@@ -17,8 +17,10 @@
 -use_occurrence_data ## restrict PSSM choice only to possition that acctually appear in the msa
 
 -parser:script_vars source_pdb=2BRR.ppk.pdb"
--parser:script_vars source=1AHW.pdb"
+-parser:script_vars source=4HBC.pdb"
 -parser:protocol splice_out.xml
 -TailSegment::refine_cycles 2
 -s 2BRR.ppk.pdb
-
+-mute devel.splice.Splice_constraints
+-mute devel.splice.Splice_pssm
+-mute devel.splice.SpliceSegment

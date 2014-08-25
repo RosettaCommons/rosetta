@@ -45,6 +45,9 @@ public:
 core::Size
 chain_cut( core::pose::Pose & pose);
 
+core::Size
+chain_cut( core::pose::Pose & pose, core::Size start_res,core::Size end_res);
+
 void
 create_subpose(core::pose::Pose & pose );
 

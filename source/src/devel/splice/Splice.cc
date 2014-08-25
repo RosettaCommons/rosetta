@@ -403,6 +403,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
   pose_positions.clear(); template_positions.clear();
 	pose_positions.push_back( source_pdb_from_res() -1 );
 	pose_positions.push_back( source_pdb_from_res() );
+	TR<<"source_pdb_from_res:"<<source_pdb_from_res()<<std::endl;
 	pose_positions.push_back( source_pdb_from_res() +1 );
 	pose_positions.push_back( source_pdb_to_res() -1 );
 	pose_positions.push_back( source_pdb_to_res() );
@@ -527,13 +528,11 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			if (torsion_database_fname_ == "") { // read dofs from source pose rather than database
 				//core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
 				//Check if there are chain_breaks in the source PDB, if so exit with error msg. gideon 24jun14
-				protocols::simple_moves::CutChainMover ccm;
-				core::Size source_pdb_cut(ccm.chain_cut(*source_pose_));
-				if (source_pdb_cut!=0)//found cut site in source pose
-						utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
+
 				if( !superimposed() ){
 					nearest_to_from = source_pdb_from_res();
 					nearest_to_to   = source_pdb_to_res();
+					TR<<"source_pdb_from_Res: "<<source_pdb_from_res()<<std::endl;
 					superimpose_source_on_pose( pose, *source_pose_ );
 				}
 				else if (segment_type_=="H3"&& (tail_segment_=="c")){
@@ -561,6 +560,10 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					 */
 
 				}
+				protocols::simple_moves::CutChainMover ccm;
+								core::Size source_pdb_cut(ccm.chain_cut(*source_pose_,nearest_to_from,nearest_to_to));
+								if (source_pdb_cut!=0)//found cut site in source pose
+										utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
 				TR << "nearest_to_from: " << nearest_to_from << " nearest_to_to: " << nearest_to_to << std::endl;
 				TR << "from_res():"<<from_res()<<"to_res():"<<to_res()<<std::endl;
 				residue_diff = nearest_to_to - nearest_to_from - (to_res() - from_res());
@@ -694,8 +697,10 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					TR.Debug << source_pose_->residue(i).name1() << " ";
 				}
 				TR << std::endl;
+
 				cut_site = loop_positions_in_source[(core::Size) (RG.uniform() * loop_positions_in_source.size())]
 						- nearest_to_from + from_res();
+				TR << "Cut site on source PDB: "<< cut_site+ nearest_to_from -from_res()<<std::endl;
 				TR << "Cut placed at: " << cut_site << std::endl;
 			} // fi randomize_cut
 			else if (ccd()){
@@ -742,12 +747,16 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			}
 			else{
 			llc.loop_start(from_res());
-			llc.loop_end(cut_site + residue_diff < from_res() ? to_res() : cut_site);
+			llc.loop_end(cut_site);
 			llc.delta(residue_diff);
 			}
 			core::Size cut_vl_vh_after_llc(from_res() < vl_vh_cut ? vl_vh_cut + residue_diff : vl_vh_cut); //update cut site between vl and vh after loop insertion, only if the loop was inserted to the vl.
 			TR << "Foldtree before loop length change: " << pose.fold_tree() << std::endl;
+			TR<<"cut_site:"<<cut_site<<std::endl;
 			llc.apply(pose);
+		//	protocols::simple_moves::CutChainMover ccm;
+		//	core::Size cut_site_after_llc(ccm.chain_cut(pose,from_res(),to_res()+residue_diff));
+			fold_tree(pose,from_res(),to_res()+residue_diff,cut_site);//llc changes fold tree when new loop is longer then old loop
 			TR << "Foldtree after loop length change: " << pose.fold_tree() << std::endl;
 			if (debug_)
 				pose.dump_pdb(mover_name_+"_after_2ndllc_test.pdb");
@@ -898,13 +907,13 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			//	}
 			if (!(boost::iequals(tail_segment_, "c"))) { //if splicing out a c-ter tail then we are not doing ccd but rather tail segment mover, therefore we don't want to add a chainbreak. GDL
 			protocols::protein_interface_design::movers::AddChainBreak acb;
-			acb.resnum(utility::to_string(cut_site + residue_diff));
+			acb.resnum(utility::to_string(cut_site));
 			acb.find_automatically(false);
 			acb.change_foldtree(false);
 
 //pose.dump_pdb("SJF_debugging.pdb");
 				acb.apply(pose);
-				TR << "Adding ccd chainbreak at: " << cut_site + residue_diff << std::endl;
+				TR << "Adding ccd chainbreak at: " << cut_site << std::endl;
 			}
 			//SJF debug	pose.conformation().detect_disulfides();
 			//	( *scorefxn() ) ( pose );
@@ -1010,6 +1019,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				core::Size anchor_res( from_res()-1 );
 				if (protein_family_=="antibodies")/*if using "segment" and "protein_family" tags then we are using Rosetta db PSSMs*/
 				  anchor_res = find_nearest_disulfide(pose, from_res());
+				TR<<"Anchor res before applying coordinate constraints: "<<anchor_res<<std::endl;
 				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res);	//add coordiante constraints to loop
 				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res,"O");	//add coordiante constraints to loop
 				//TR_constraints<<"score function after CA constraints"<<std::endl;
@@ -2471,8 +2481,9 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 //		return;
 //	}
 	core::scoring::constraints::ConstraintOPs cst;
-	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 1/*chain*/);
-  runtime_assert( anchor_source );
+	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 0);
+	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
+	runtime_assert( anchor_source );
 	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
 	int res_diff = anchor_source - anchor;
 	TR_constraints << "res diff in coordinate constarint is: " << res_diff << std::endl;
@@ -2570,7 +2581,8 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 
 	int residue_diff( 0 );
 
-	core::Size nearest_from_res_source_pdb(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,1));
+	core::Size nearest_from_res_source_pdb(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,0));
+	runtime_assert(nearest_from_res_source_pdb); //if find_nearest_res fails it return 0
 	residue_diff = nearest_from_res_source_pdb - start_res_on_pose;
 	TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
 	//inorder to compare the angles we keep track of the corresponding residues in the template pose
@@ -2579,15 +2591,19 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::constraints::ConstraintOPs csts; //will hold dihedral constraints
 //Set up constraints for the phi angle
 		core::id::AtomID phi_resi_n(source_pose.residue_type(i).atom_index("N"), i);
+		core::id::AtomID pose_phi_resi_n(pose.residue_type(i-residue_diff).atom_index("N"), i - residue_diff);
 		numeric::xyzVector<core::Real> xyz_Ni = source_pose.residue(i).atom("N").xyz();
 
 		core::id::AtomID phi_resj_c(source_pose.residue_type(i - 1).atom_index("C"), i - 1);
+		core::id::AtomID pose_phi_resj_c(pose.residue_type(i - 1-residue_diff).atom_index("C"), i - 1 -residue_diff);
 		numeric::xyzVector<core::Real> xyz_Cj = source_pose.residue(i - 1).atom("C").xyz();
 
 		core::id::AtomID phi_resi_co(source_pose.residue_type(i).atom_index("C"), i);
+		core::id::AtomID pose_phi_resi_co(pose.residue_type(i-residue_diff).atom_index("C"), i-residue_diff);
 		numeric::xyzVector<core::Real> xyz_Ci = source_pose.residue(i).atom("C").xyz();
 
 		core::id::AtomID phi_resi_ca(source_pose.residue_type(i).atom_index("CA"), i);
+		core::id::AtomID pose_phi_resi_ca(pose.residue_type(i-residue_diff).atom_index("CA"), i-residue_diff);
 		numeric::xyzVector<core::Real> xyz_Cai = source_pose.residue(i).atom("CA").xyz();
 
 		TR_constraints << "Phi: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.phi(i - residue_diff)
@@ -2596,43 +2612,50 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_phi = new core::scoring::func::CircularHarmonicFunc(
 				(source_pose.phi(i) * numeric::constants::d::pi_2) / 360, 1);
 		csts.push_back(
-				new core::scoring::constraints::DihedralConstraint(phi_resj_c, phi_resi_n, phi_resi_ca, phi_resi_co,
+				new core::scoring::constraints::DihedralConstraint(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
 						di_const_func_phi));
-//for debuggin comment this out
 
 //Set up constraints for the psi angle
 		core::id::AtomID psi_resi_n(source_pose.residue_type(i).atom_index("N"), i);
+		core::id::AtomID pose_psi_resi_n(pose.residue_type(i-residue_diff).atom_index("N"), i-residue_diff);
 		xyz_Ni = source_pose.residue(i).atom("N").xyz();
 
 		core::id::AtomID psi_resj_n(source_pose.residue_type(i + 1).atom_index("N"), i + 1);
+		core::id::AtomID pose_psi_resj_n(pose.residue_type(i + 1-residue_diff).atom_index("N"), i + 1-residue_diff);
 		numeric::xyzVector<core::Real> xyz_Nj = source_pose.residue(i + 1).atom("N").xyz();
 
 		core::id::AtomID psi_resi_co(source_pose.residue_type(i).atom_index("C"), i);
+		core::id::AtomID pose_psi_resi_co(pose.residue_type(i-residue_diff).atom_index("C"), i-residue_diff);
 		xyz_Ci = source_pose.residue(i).atom("C").xyz();
 
 		core::id::AtomID psi_resi_ca(source_pose.residue_type(i).atom_index("CA"), i);
+		core::id::AtomID pose_psi_resi_ca(pose.residue_type(i-residue_diff).atom_index("CA"), i-residue_diff);
 		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
 
 //for each residue the ideal angle is taken from the source pdb
 		core::scoring::func::FuncOP di_const_func_psi = new core::scoring::func::CircularHarmonicFunc(
 				(source_pose.psi(i) * numeric::constants::d::pi_2) / 360, 1);
 		csts.push_back(
-				new core::scoring::constraints::DihedralConstraint(psi_resi_n, psi_resi_ca, psi_resi_co, psi_resj_n,
+				new core::scoring::constraints::DihedralConstraint(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
 						di_const_func_psi));
 		TR_constraints << "Psi: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.psi(i - residue_diff)
 				<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Ni, xyz_Cai, xyz_Ci, xyz_Nj)
 				<< std::endl;
 //Set up constraints for the omega angle
 		core::id::AtomID omega_resj_n(source_pose.residue_type(i + 1).atom_index("N"), i + 1);
+		core::id::AtomID pose_omega_resj_n(pose.residue_type(i + 1-residue_diff).atom_index("N"), i + 1-residue_diff);
 		xyz_Ni = source_pose.residue(i + 1).atom("N").xyz();
 
 		core::id::AtomID omega_resi_ca(source_pose.residue_type(i).atom_index("CA"), i);
+		core::id::AtomID pose_omega_resi_ca(pose.residue_type(i-residue_diff).atom_index("CA"), i-residue_diff);
 		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
 
 		core::id::AtomID omega_resi_co(source_pose.residue_type(i).atom_index("C"), i);
+		core::id::AtomID pose_omega_resi_co(pose.residue_type(i-residue_diff).atom_index("C"), i-residue_diff);
 		xyz_Ci = source_pose.residue(i).atom("C").xyz();
 
 		core::id::AtomID omega_resj_ca(source_pose.residue_type(i + 1).atom_index("CA"), i + 1);
+		core::id::AtomID pose_omega_resj_ca(pose.residue_type(i + 1-residue_diff).atom_index("CA"), i + 1-residue_diff);
 		numeric::xyzVector<core::Real> xyz_Caj = source_pose.residue(i + 1).atom("CA").xyz();
 		TR_constraints << "omega: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.omega(i - residue_diff)
 				<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Cai, xyz_Ci, xyz_Nj, xyz_Caj)
@@ -2641,7 +2664,7 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_omega = new core::scoring::func::CircularHarmonicFunc(
 				(source_pose.omega(i) * numeric::constants::d::pi_2) / 360, 1);
 		csts.push_back(
-				new core::scoring::constraints::DihedralConstraint(omega_resi_ca, omega_resi_co, omega_resj_n, omega_resj_ca,
+				new core::scoring::constraints::DihedralConstraint(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
 						di_const_func_omega));
 
 		pose.add_constraints(csts);

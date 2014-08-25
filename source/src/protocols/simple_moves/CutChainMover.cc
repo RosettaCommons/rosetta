@@ -161,6 +161,22 @@ CutChainMover::chain_cut( core::pose::Pose & pose)
 	}
 	return( cut_pos );//cut_pos is the amino acid position BEFORE the cut
 }
+core::Size
+CutChainMover::chain_cut(core::pose::Pose & pose, core::Size start_res,core::Size end_res)
+{
+	core::Size cut_pos = 0;
+	for( core::Size resj = start_res; resj <=end_res; ++resj ){
+		core::Real const distance = pose.residue( resj+1 ).xyz( "N" ).distance(pose.residue( resj ).xyz( "C" ));
+//			TR<<"distance is: "<<distance<<std::endl;
+//			TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
+		if( distance > bond_length()){
+			cut_pos = resj;
+			TR<<"Found cut at: "<<resj<<std::endl;
+			break;
+		}
+	}
+	return( cut_pos );//cut_pos is the amino acid position BEFORE the cut
+}
 
 void
 CutChainMover::create_subpose(core::pose::Pose & pose)

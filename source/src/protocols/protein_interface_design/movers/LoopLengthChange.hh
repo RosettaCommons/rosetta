@@ -42,12 +42,14 @@ public:
 	virtual ~LoopLengthChange();
 	void loop_start( core::Size const loop_start );
 	void loop_end( core::Size const loop_end );
+	void loop_cut( core::Size const loop_cut );
 	core::Size loop_start() const;
 	core::Size loop_end() const;
+	core::Size loop_cut() const;
 	void delta( int const d );
 	int delta() const;
 private:
-	core::Size loop_start_, loop_end_;
+	core::Size loop_start_, loop_end_, loop_cut_;
 	int delta_; // delta_: by how much to change
 };
 
