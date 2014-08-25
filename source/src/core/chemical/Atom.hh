@@ -6,42 +6,33 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-//////////////////////////////////////////////////////////////////////
-/// @begin Atom
-///
-/// @brief
-/// A class for defining chemical atoms, with properties specific to the atom. This class should not have information
-/// associated with the conformation or residuetype. Everything should be concerning the atom. Conformation goes
-/// in core::conformation while data for ResidueTYpe is cached there
-///
-///
-///
-///
-/// @author
-/// Steven Combs
-///
-/////////////////////////////////////////////////////////////////////////
 
+/// @file   core/chemical/Atom.hh
+/// @brief  Class definitions for chemical::Atom
+/// @note   not to be confused with conformation::Atom
+/// @author Steven Combs
 
-#ifndef INCLUDED_core_chemical_Atom_hh
-#define INCLUDED_core_chemical_Atom_hh
+#ifndef INCLUDED_core_chemical_Atom_HH
+#define INCLUDED_core_chemical_Atom_HH
 
 
 // Unit headers
 #include <core/chemical/Atom.fwd.hh>
-//#include <core/chemical/AtomICoor.hh>
-#include <core/types.hh>
-#include <numeric/xyzVector.hh>
+
+// Package headers
+#include <core/chemical/types.hh>
 //#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/Element.hh>
-
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// Package headers
-#include <core/chemical/types.hh>
+// Project headers
+#include <core/types.hh>
+
+// Numeric headers
+#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1_bool.hh>
@@ -49,27 +40,32 @@
 // C++ headers
 #include <string>
 
+
 namespace core {
 namespace chemical {
 
-/// @brief basic chemical atom
-///
-/// @details name, element, certain properties and parameters from .params file
-///
-
+/// @details This class contains the "chemical" information for atoms.  This does not contain the actual xyz
+/// coordinates of the atom, (which are found in core/conformation/Atom.hh).  The atom_type properties are assigned by
+/// the class AtomSet, which is initiated from the ChemicalManager.  AtomType properties are currently read in from the
+/// file chemical/atom_type_sets/fa_standard/atom_properties.txt.  These properties contain the the properties of
+/// LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, and LK_VOLUME and are used in the scoring methods fa_atr, fa_rep, and
+/// fa_sol, which are located in the Etable (core/scoring/etable/Etable.hh).  Additional parameters are acceptor/donor,
+/// hybridization, and orbital paramaters.  This class should not have information associated with the Conformation or
+/// ResidueType; it represents an atom divorced from a particular conformation or residue but not from things that
+/// affect it chemically.  It is distinct from an Element, in that it can have a particular hybridization state,
+/// charge, etc.  It is distinct from conformation::Atom in that it does not have coordinates.  Everything stored here
+/// should be concerning the atom.  Conformation information goes in core::conformation, while data for ResidueType
+/// is cached there.
+/// @note    chemical::Atoms are stored in chemical::ResidueType (within its ResidueGraph);
+/// conformation::Atoms are stored in conformation::Residue
 class Atom {
 
 public:
-
 	/// @brief Construct a new atom type with its name and element.
-	///
-	/// @details All its properties are unset by default.
-	///
 	Atom();
 
 
 	/// @brief Construct a new atom with the name, mm type, element, charge and position.
-	/// Rosetta atom type should be set through the ResidueType to ensure data consistency.
 	Atom(
 			std::string const & name_in,
 			std::string const mm_name,
@@ -85,12 +81,8 @@ public:
 	//destructor (default)
 	~Atom();
 
-	void
-	print( std::ostream & out ) const;
-
-	friend
-	std::ostream &
-	operator<< ( std::ostream & out, Atom const & atom);
+	/// @brief  Generate string representation of chemical::Atom for debugging purposes.
+	void show( std::ostream & out=std::cout ) const;
 
 	bool operator==(Atom const & atom) const{
 		return	name_== atom.name_ &&
@@ -134,14 +126,13 @@ public:
 	bool is_haro() const{return is_haro_;}
 	bool is_virtual() const{return is_virtual_;}
 	bool has_orbitals() const{return has_orbitals_;}
-	// Non-const getters
 
 
 	// Setters
 	void name( std::string const & name ) { name_ = name; };
 	void mm_name( std::string const & name ) { mm_name_ = name; };
 
-	/// @details - you probably don't want to use this directly.
+	/// @details You probably don't want to use this directly.
 	/// Use ResidueType::set_atom_type() which correctly updates the internal state of the residuetype/atom
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
 
@@ -162,7 +153,6 @@ public:
 	// Calculated data
 
 	/// @brief Return true if this represents a fake/mock atom.
-	/// (Real atoms have elements that exist on the periodic table.)
 	bool is_fake() const;
 
 	// data
@@ -203,10 +193,9 @@ private:
 
 };
 
+std::ostream & operator<< ( std::ostream & out, Atom const & atom);
 
-} // chemical
-} // core
+}  // chemical
+}  // core
 
-
-
-#endif // INCLUDED_core_chemical_Atom_HH
+#endif  // INCLUDED_core_chemical_Atom_HH

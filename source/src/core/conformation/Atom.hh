@@ -6,28 +6,15 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-//////////////////////////////////////////////////////////////////////
-/// @begin Atom.hh
-///
-/// @brief
-/// The conformation class of the atom object
-///
-/// @detailed
-/// This atom class differs from the AtomType/AtomTypeSet class in that it only contains the
-/// information about the xyz coordinates, the index of the atom, and the index of the atomtype.
-/// This information is generally initialized and set by conformation/Residue.hh.
-/// Steven Combs - comments
-///
-/// @authors
-/// Phil Bradley
-///
-///
-///
-/// @last_modified December 9 2010
-/////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDED_core_conformation_Atom_hh
-#define INCLUDED_core_conformation_Atom_hh
+/// @file   core/conformation/Atom.hh
+/// @brief  Class definitions for conformation::Atom
+/// @note   not to be confused with chemical::Atom
+/// @author Phil Bradley
+/// @author Steven Combs - some comments
+
+#ifndef INCLUDED_core_conformation_Atom_HH
+#define INCLUDED_core_conformation_Atom_HH
 
 
 // Unit headers
@@ -36,20 +23,23 @@
 // Project headers
 #include <core/types.hh>
 
-// Utility headers
+// Numeric headers
 #include <numeric/xyzVector.hh>
 
-// C++ headers
 
 namespace core {
 namespace conformation {
 
-/// A simple object with atom's position and its chemical type
+/// @details This atom class differs from the chameical::Atom, AtomType, and AtomTypeSet classes in that it only
+/// contains the information about the xyz coordinates.  In the future, it might contain information about such things
+/// as B-factor.  This information is generally initialized and set by conformation::Residue.
+/// @note    chemical::Atoms are stored in chemical::ResidueType (within its ResidueGraph);
+/// conformation::Atoms are stored in conformation::Residue
 class Atom {
 
 public:
-	/// @brief default constructor and set atom type number to 0 and place the
-	/// atom at the origin
+	/// @brief   Default constructor
+	/// @details Set atom type number to 0 and place the atom at the origin.
 	Atom():
 		xyz_( 0.0 ),
 		type_( 0 ),
@@ -75,6 +65,11 @@ public:
 	/// @brief destructor
 	virtual
 	~Atom() {}
+
+
+	/// @brief  Generate string representation of conformation::Atom for debugging purposes.
+	void show( std::ostream & output=std::cout ) const;
+
 
 	/// @brief set the atom type number
 	void type( ShortSize const type_in )
@@ -140,24 +135,24 @@ private:
 #endif
 	// data
 
-	/// position
+	// position
 	Vector xyz_;
 
-	/// rosetta atom_type
+	// FIXME: Why is this stored if it is also in chemical::Atom? ~Labonte
+	// rosetta atom_type
 	ShortSize type_;
 
-	/// mm_atom_type
+	// FIXME: Why is this stored if it is also in chemical::Atom? ~Labonte
+	// mm_atom_type
 	ShortSize mm_type_;
 
-	/// b-factor from pdb file
+	// b-factor from pdb file
 	// Real temperature_;
 };
 
-std::ostream & operator << ( std::ostream & os, Atom const & atom );
+std::ostream & operator << ( std::ostream & out, Atom const & atom );
 
-} // pose
-} // core
+}  // conformation
+}  // core
 
-
-
-#endif // INCLUDED_core_pose_Residues_HH
+#endif  // INCLUDED_core_conformation_Atom_HH

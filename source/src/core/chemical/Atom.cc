@@ -6,48 +6,34 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-//////////////////////////////////////////////////////////////////////
-/// @begin Atom
-///
-/// @brief
-/// A class for defining atom parameters, known as atom_types
-///
-/// @details
-/// This class contains the "chemical" information for atoms. This does not contain the actual
-/// xyz coordinates of the class (xyz found in core/conformation/Atom.hh. The atom_type properties
-/// are assigned by the class AtomSet which is initiated from the ChemicalManager. Atom type properties
-/// are currently are read in from the file located chemical/atom_type_sets/fa_standard/atom_properties.txt.
-/// These properties contain the the properties of LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, LK_VOLUME.
-/// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable (core/scoring/etable/Etable.hh)
-/// Additional parameters are acceptor/donor, hybridzation, and orbital paramaters.
-///
-///
-///
-/// @author
-/// Phil Bradley
-/// Steven Combs - comments
-///
-///
-/// @last_modified December 6 2010
-/////////////////////////////////////////////////////////////////////////
 
-// Rosetta headers
+/// @file   core/chemical/Atom.hh
+/// @brief  Method definitions for chemical::Atom
+/// @note   not to be confused with conformation::Atom
+/// @author Phil Bradley
+
+// Unit header
 #include <core/chemical/Atom.hh>
 
+// Package header
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 
-// Utility headers
-#include <utility/exit.hh>
+// Basic header
 #include <basic/Tracer.hh>
 
-// C++ headers
+// Utility header
+#include <utility/exit.hh>
+
+// C++ header
 #include <algorithm>
+
 
 namespace core {
 namespace chemical {
 
 static basic::Tracer TR("core.chemical.Atom");
 
+/// @details All its properties are unset by default.
 Atom::Atom():
 		name_(""),
 		mm_name_(""),
@@ -58,14 +44,16 @@ Atom::Atom():
 		formal_charge_(0),
 		charge_(0),
 		ideal_xyz_(),
-		is_acceptor_(0),
-		is_polar_hydrogen_(0),
-		is_hydrogen_(0),
-		is_haro_(0),
-		is_virtual_(0),
-		has_orbitals_(0)
+		heavyatom_has_polar_hydrogens_( false ),
+		is_acceptor_( false ),
+		is_polar_hydrogen_( false ),
+		is_hydrogen_( false ),
+		is_haro_( false ),
+		is_virtual_( false ),
+		has_orbitals_( false )
 {}
 
+/// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
 Atom::Atom(
 		std::string const & name_in,
 		std::string const mm_name,
@@ -82,7 +70,14 @@ Atom::Atom(
 	gasteiger_atom_type_(0),
 	formal_charge_(0),
 	charge_(charge),
-	ideal_xyz_(ideal_xyz)
+	ideal_xyz_(ideal_xyz),
+	heavyatom_has_polar_hydrogens_( false ),
+	is_acceptor_( false ),
+	is_polar_hydrogen_( false ),
+	is_hydrogen_( false ),
+	is_haro_( false ),
+	is_virtual_( false ),
+	has_orbitals_( false )
 {}
 
 Atom::Atom(Atom const & src) :
@@ -133,6 +128,8 @@ gasteiger::GasteigerAtomTypeDataCOP Atom::gasteiger_atom_type() const { return g
 
 void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type ) { gasteiger_atom_type_ = gasteiger_atom_type; }
 
+// Return true if this represents a fake/mock atom.
+/// @note  (Real atoms have elements that exist on the periodic table.)
 bool
 Atom::is_fake() const {
 	if( is_virtual_ ) { return true; }
@@ -145,34 +142,61 @@ Atom::is_fake() const {
 }
 
 void
-Atom::print(
-	std::ostream & out
-) const {
-	out << "Name: " << name() << std::endl;
-//	out << "Type: " << type() << std::endl;
-	out << "MM Name: " << mm_name() << std::endl;
-	out << "atom_type_index: " << atom_type_index() << std::endl;
-	out << "mm_atom_type_index: " << mm_atom_type_index() << std::endl;
-	if( gasteiger_atom_type() ) {
-		out << "gasteiger_atom_type: " << gasteiger_atom_type()->get_name() << std::endl;
+Atom::show( std::ostream & out ) const
+{
+	using namespace std;
+
+	out << name_;
+	if ( ! is_virtual_ ) {
+		out << " (" << element_->get_chemical_symbol() << ')';
 	} else {
-		out << "gasteiger_atom_type: (None)" << std::endl;
+		out << " (virtual)";
 	}
-	out << "charge: " << charge() << std::endl;
+	out << endl;
+
+	out << "   Types (type set indices): ";
+	out << "Rosetta: " /*<< type_name_*/ << " (" << atom_type_index_ << "); ";
+	out << "CHARMm: " << mm_name_ << " (" << mm_atom_type_index_ << "); ";
+	out << "Gasteiger: ";
+	if ( gasteiger_atom_type() ) {
+		out << gasteiger_atom_type_->get_name();
+	} else {
+		out << "None";
+	}
+	out << endl;
+
+	out << "   Charge: " << "partial: " << charge_ << "; formal: ";
+	if ( formal_charge_ > 0 ) {
+		out << '+';
+	}
+	out << formal_charge_ << endl;
+
+	out << "   Properties: ";
+	if ( heavyatom_has_polar_hydrogens_ ) {
+		out << "H-bond donor, ";
+	}
+	if ( is_acceptor_ ) {
+		out << "H-bond acceptor, ";
+	}
+	if ( is_hydrogen_ ) {
+		if ( is_polar_hydrogen_ ) {
+			out << "polar hydrogen, ";
+		} else if ( is_haro_ ) {
+			out << "aromatic hydrogen, ";
+		} else {
+			out << "non-polar hydrogen, ";
+		}
+	}
 	out << std::endl;
 }
 
 
 std::ostream &
-operator<< (std::ostream & out, Atom const & atom ){
-	atom.print( out );
+operator<< ( std::ostream & out, Atom const & atom )
+{
+	atom.show( out );
 	return out;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
 
 } // pose
 } // core

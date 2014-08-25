@@ -7,32 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/conformation/Atom.fwd.hh
-/// @brief  Class declaration for conformation::Atom
+/// @file   core/conformation/Atom.cc
+/// @brief  Method definitions for conformation::Atom
 /// @note   not to be confused with chemical::Atom
-/// @author Phil Bradley
+/// @author Labonte <JWLabonte@jhu.edu>
 
-
-#ifndef INCLUDED_core_conformation_Atom_FWD_HH
-#define INCLUDED_core_conformation_Atom_FWD_HH
-
-// Utility header
-#include <utility/vector1.fwd.hh>
+// Unit header
+#include <core/conformation/Atom.hh>
 
 
 namespace core {
 namespace conformation {
 
-/// @brief A simple class with an atom's position and its chemical type.
-class Atom;
+void
+Atom::show( std::ostream & output ) const
+{
+	output << xyz_.x() << ", " << xyz_.y() << ", " << xyz_.z();
+}
 
-typedef utility::vector1< Atom > Atoms;
+
+std::ostream &
+operator << ( std::ostream & out, Atom const & atom )
+{
+	atom.show( out );
+	return out;
+}
 
 }  // conformation
 }  // core
-
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/vector.hpp>
-#endif
-
-#endif  // INCLUDED_core_conformation_Atom_FWD_HH

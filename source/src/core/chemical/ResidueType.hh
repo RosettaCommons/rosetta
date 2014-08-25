@@ -1939,7 +1939,7 @@ public:
 	}
 
 	/// @brief  Generate string representation of ResidueType for debugging purposes.
-	void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output=std::cout, bool output_atomic_details=false ) const;
 
 
 public:

@@ -93,6 +93,7 @@ sources = {
 		"SDFParser",
 	],
 	"core/conformation": [
+		"Atom",
 		"AtomGraph",
 		"Conformation",
 		"ppo_torsion_bin",

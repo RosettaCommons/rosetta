@@ -114,7 +114,7 @@ public:
 	ResidueOP clone() const;
 
 	/// @brief  Generate string representation of Residue for debugging purposes.
-	void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output=std::cout, bool output_atomic_details=false ) const;
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////

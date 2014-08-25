@@ -3645,9 +3645,9 @@ ResidueType::RNA_type() const{
 	return ( *rna_residue_type_ );
 }
 
-/// @author Labonte
+/// @author Labonte <JWLabonte@jhu.edu>
 void
-ResidueType::show( std::ostream & output ) const
+ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 {
 	using namespace std;
 	using namespace utility;
@@ -3687,6 +3687,15 @@ ResidueType::show( std::ostream & output ) const
 
 	if ( properties_->has_property( CARBOHYDRATE ) ) {
 		carbohydrate_info_->show( output );
+	}
+
+	if ( output_atomic_details ) {
+		output << " Atomic Details:" << endl;
+		Size n_atoms = natoms();
+		for ( core::uint i = 1; i <= n_atoms; ++i ) {
+			output << "  Atom " << i << ": ";
+			atom( i ).show( output );
+		}
 	}
 }
 

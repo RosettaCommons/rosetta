@@ -8,19 +8,24 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/chemical/Atom.fwd.hh
+/// @brief  Class declaration for chemical::Atom
+/// @note   not to be confused with conformation::Atom
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_chemical_Atom_fwd_hh
-#define INCLUDED_core_chemical_Atom_fwd_hh
+#ifndef INCLUDED_core_chemical_Atom_FWD_HH
+#define INCLUDED_core_chemical_Atom_FWD_HH
 
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
+
 namespace core {
 namespace chemical {
 
+/// @brief  A class for defining atom parameters, known as atom_types, with properties specific to the atom.
 class Atom;
 
 typedef  utility::pointer::owning_ptr< Atom >  AtomOP;
@@ -30,9 +35,7 @@ typedef  utility::vector1< AtomOP >  AtomOPs;
 typedef  utility::vector1< AtomCOP >  AtomCOPs;
 typedef  utility::vector1< AtomAP >  AtomAPs;
 
-} // chemical
-} // core
+}  // chemical
+}  // core
 
-
-
-#endif // INCLUDED_core_chemical_Atom_FWD_HH
+#endif  // INCLUDED_core_chemical_Atom_FWD_HH

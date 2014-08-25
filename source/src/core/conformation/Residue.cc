@@ -207,20 +207,22 @@ Residue::clone() const
 	return new Residue( *this );
 }
 
+
+/// @author Labonte <JWLabonte@jhu.edu>
 void
-Residue::show( std::ostream & output ) const
+Residue::show( std::ostream & output, bool output_atomic_details ) const
 {
 	using namespace std;
 
 	output << "Residue " << seqpos_ << ": ";
-	rsd_type_.show(output);
+	rsd_type_.show( output, output_atomic_details );
 
-	output << "Atom Coordinates:" << endl;
+	output << " Atom Coordinates:" << endl;
 	Size n_atoms = natoms();
-	for ( Size i = 1; i <= n_atoms; ++i ) {
-		Atom const & atom ( atoms_[ i ] );
-		output << atom_name( i ) << ": ";
-		output << atom.xyz().x() << ", " << atom.xyz().y() << ", " << atom.xyz().z();
+	for ( core::uint i = 1; i <= n_atoms; ++i ) {
+		conformation::Atom const & atom_coords( atoms_[ i ] );
+		output << "  " << atom_name( i ) << ": ";
+		atom_coords.show( output );
 		if ( is_virtual( i ) ) {
 			output << " (virtual)";
 		}
@@ -1320,12 +1322,6 @@ Residue::is_virtual( Size const & atomno ) const
 std::ostream & operator << ( std::ostream & os, Residue const & res )
 {
 	res.show(os);
-	return os;
-}
-
-std::ostream & operator << ( std::ostream & os, Atom const & atom )
-{
-	os << "Atom type:" << atom.type() << " xyz:" << atom.xyz().x() << ' ' << atom.xyz().y() << ' ' << atom.xyz().z();
 	return os;
 }
 
