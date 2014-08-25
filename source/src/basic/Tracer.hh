@@ -249,7 +249,6 @@ protected:
 	/// @brief overload member function.
 	virtual void t_flush(std::string const &);
 
-
 private: /// Functions
 	/// @brief copy constructor.
 	Tracer(Tracer const & tr);
@@ -267,6 +266,9 @@ private: /// Functions
 	/// @brief calcualte visibility of the current object depending of the channel name and priority.
 	void calculate_visibility(void) const;
 	static void calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, int &mute_level_, bool muted_by_default);
+
+	/// @brief Output a message in a manner that is safe if the Tracers/output are poorly initialized.
+	static void safe_output(std::string const &);
 
 private: /// Data members
 

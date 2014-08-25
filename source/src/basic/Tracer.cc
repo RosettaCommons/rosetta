@@ -373,6 +373,17 @@ bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, b
 	return false;
 }
 
+/// @brief Output a message in a manner that is safe if the Tracers/output are poorly initialized.
+void Tracer::safe_output(std::string const & message ) {
+	if( ios_hook() ) {
+		*ios_hook() << message << std::endl;
+	} else if ( final_stream() ) {
+		*final_stream() << message << std::endl;
+	} else {
+		std::cerr << "Tracer Error: " << message << std::endl;
+	}
+}
+
 /// Same as before but return integer value for matched channel or closest match (we asume that 'v' in levels format, ie like: <channel name>:level )
 bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std::string const ch, bool strict, int &res)
 {
@@ -382,6 +393,10 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 	for(size_t i=1; i<=v.size(); i++) {
 		bool flag = false;
 		utility::vector1< std::string > spl = utility::string_split(v[i], ':');
+		if( spl.size() != 2 ) {
+			safe_output("WARNING: Cannot parse -out:levels setting '"+v[i]+"'. Does not follow the format of 'tracer:level'. Ignoring.");
+			continue;
+		}
 		//std::cout << "Split:" << spl << " size:" << spl[1].size() << std::endl;
 
 		if( spl[1] == "all" && len == 0 ) flag = true;  // we can asume that 'all' is shorter then any valid core/protocol path... but we don't!
@@ -394,7 +409,7 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 				if( s == spl[1] ) flag=true;
 			}
 		}
-		if(flag  && ( len < spl[1].size() ) ) {
+		if(flag  && ( len <= spl[1].size() ) ) { // If specified twice, use the later one.
 			math = true;
 			len = spl[1].size();
 			res = utility::string2int(spl[2]);
@@ -406,12 +421,7 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 			if( spl2_lower == "debug" )   res = t_debug;
 			if( spl2_lower == "trace" )   res = t_trace;
 			if( res == -1 ) {
-				std::string message( "WARNING:: The setting '" + spl[2] + "' is not recognized as a valid tracer level." );
-				if( ios_hook() ) {
-					*ios_hook() << message << std::endl;
-				} else if ( final_stream() ) {
-					*final_stream() << message << std::endl;
-				}
+				safe_output( "WARNING: The setting '" + spl[2] + "' is not recognized as a valid tracer level." );
 				res = t_info; // Set such that you get standard amount of output instead of none.
 			}
 			//std::cout << "Match:" << spl << " ch:" << ch << " res:"<< res << std::endl;
