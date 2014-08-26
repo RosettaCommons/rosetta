@@ -638,7 +638,7 @@ def getCompilerOptions():
     else:
         add_option = '-pipe -ffor-scope -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA'
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA -DUNUSUAL_ALLOCATOR_DECLARATION'
     add_option += (' -DDEBUG -O0 -g -ggdb' if Options.debug else ' -O3 -DNDEBUG')
 
     if Options.numpy_support: add_option += ' -DPYROSETTA_NUMPY'  # PYROSETTA_NO_NUMPY ← defines/variables with no negation in the name produce much more readable code
@@ -2623,7 +2623,6 @@ def build():
     mb.code_creator.user_defined_directories.append( os.path.abspath('.') )  # make include relative
 
     mb.write_module( os.path.join( os.path.abspath('.'), 'generated.cpp' ) )
-
 
 '''
 
