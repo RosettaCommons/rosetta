@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Ramachandran2B.hh>
+#include <core/scoring/ScoringManager.hh>
 
 // Utility Headers
 #include <utility/assert.hh>
@@ -282,7 +283,8 @@ RamaCheckBase::accept_new_conformation(
 // RamaCheck1B //
 // Empty constructor
 /// @details Initialize RamaCheck1B with a pointer to the Ramachandran potential.
-RamaCheck1B::RamaCheck1B() : RamaCheckBase(), rama_( new core::scoring::Ramachandran )
+RamaCheck1B::RamaCheck1B() : RamaCheckBase(),
+	rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran_ptr() )
 {}
 
 // Copy constructor
@@ -335,7 +337,8 @@ RamaCheck1B::compute_rama_score(
 
 void RamaCheck1B::copy_data( RamaCheck1B & to, RamaCheck1B const & from ) const
 {
-	to.rama_ = new core::scoring::Ramachandran( * from.rama_ );
+	// This is a shallow copy because we only want to point to the singe shared instance of the potential
+	to.rama_ = from.rama_;
 }
 
 // End of RamaCheck1B //
@@ -343,7 +346,8 @@ void RamaCheck1B::copy_data( RamaCheck1B & to, RamaCheck1B const & from ) const
 // RamaCheck2B //
 // Empty constructor
 /// @details Initialize RamaCheck2B with a pointer to the Ramachandran2B potential.
-RamaCheck2B::RamaCheck2B() : RamaCheckBase(), rama_( new core::scoring::Ramachandran2B )
+RamaCheck2B::RamaCheck2B() : RamaCheckBase(),
+	rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran2B_ptr() )
 {}
 
 // Copy constructor
@@ -390,44 +394,35 @@ core::Real
 RamaCheck2B::compute_rama_score(
 	core::pose::Pose const & pose,
 	core::uint const seqpos,
-	core::Real const /*phi*/,
-	core::Real const /*psi*/
+	core::Real const phi,
+	core::Real const psi
 ) const
 {
-
-	// FIXME: The current implementation of the Ramachandran2B potential uses the phi and psi values
-	// from the residue instance that is passed through. This means that we cannot evaluate a trial
-	// conformation, only the current conformation.  Boo. That class needs to be (lightly) refactored
-	// to allow evaluating arbitrary conformations.
-
 	// If we're looking at the first residue, we cannot compute the energy of the "triple" so we'll
 	// return the neighbor-dependent ramachandran score considering only the downstream (C-terminal,
 	// right, higher res no -- however you want to put it) neighbor
 	if ( seqpos == 1 ) {
-		return rama_->RamaE_Upper( pose.residue( seqpos ), pose.aa( seqpos + 1 ) );
+		return rama_->RamaE_Upper( phi, psi, pose.aa( seqpos ), pose.aa( seqpos + 1 ) );
 	}
 
 	// If we're looking at the last residue, we cannot compute the energy of the "triple" so we'll
 	// return the neighbor-dependent ramachandran score considering only the upstream (N-terminal,
 	// left, lower res no -- however you want to put it) neighbor
 	if ( seqpos == pose.total_residue() ) {
-		return rama_->RamaE_Lower( pose.residue( seqpos ), pose.aa( seqpos - 1 ) );
+		return rama_->RamaE_Lower( phi, psi, pose.aa( seqpos ), pose.aa( seqpos - 1 ) );
 	}
 
 	// Compute the score of the "triple" - that is, consider the conformation of the current residue
 	// and the identity of the residues to which it is bound. Since we're working in score space, we
 	// can simply add the scores of the upper and lower neighbors and subtract away the score of the
 	// current conformation of the central residue averaged over all neighbor types.
-	core::Real score( 0.0 );
-	score += rama_->RamaE_Lower( pose.residue( seqpos ), pose.aa( seqpos - 1 ) );
-	score += rama_->RamaE_Upper( pose.residue( seqpos ), pose.aa( seqpos + 1 ) );
-	score -= rama_->RamaE( pose.residue( seqpos ) );
-	return score;
+	return rama_->eval_rama_score_residue( phi, psi, pose.aa( seqpos ), pose.aa( seqpos - 1 ), pose.aa( seqpos + 1 ) );
 }
 
 void RamaCheck2B::copy_data( RamaCheck2B & to, RamaCheck2B const & from ) const
 {
-	to.rama_ = new core::scoring::Ramachandran2B( * from.rama_ );
+	// This is a shallow copy because we only want to point to the singe shared instance of the potential
+	to.rama_ = from.rama_;
 }
 
 // End of RamaCheck2B //

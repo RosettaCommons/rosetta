@@ -504,25 +504,37 @@ ScoringManager::get_WaterAdductHBondPotential() const
 //}
 
 ///////////////////////////////////////////////////////////////////////////////
-Ramachandran const &
-ScoringManager::get_Ramachandran() const
+RamachandranCOP
+ScoringManager::get_Ramachandran_ptr() const
 {
 	if ( rama_ == 0 )
 	{
 		rama_ =  new Ramachandran;
 	}
-	return *rama_;
+	return rama_;
+}
+
+Ramachandran const &
+ScoringManager::get_Ramachandran() const
+{
+	return *get_Ramachandran_ptr();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Ramachandran2B const &
-ScoringManager::get_Ramachandran2B() const
+Ramachandran2BCOP
+ScoringManager::get_Ramachandran2B_ptr() const
 {
 	if ( rama2b_ == 0 )
 	{
 		rama2b_ =  new Ramachandran2B;
 	}
-	return *rama2b_;
+	return rama2b_;
+}
+
+Ramachandran2B const &
+ScoringManager::get_Ramachandran2B() const
+{
+	return *get_Ramachandran2B_ptr();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

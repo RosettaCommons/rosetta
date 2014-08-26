@@ -75,6 +75,32 @@ public:
 	) const;
 
 	Real
+	eval_rama_score_residue(
+		Real phi,
+		Real psi,
+		chemical::AA const res,
+		chemical::AA const left_aa,
+		chemical::AA const right_aa
+	) const;
+
+	Real
+	eval_rama_score_residue(
+		Real phi,
+		Real psi,
+		chemical::AA const res,
+		chemical::AA const left_aa,
+		chemical::AA const right_aa,
+		Real & drama_dphi,
+		Real & drama_dpsi
+	) const;
+
+	Real
+	RamaE_Lower(
+		conformation::Residue const &rsd,
+		chemical::AA const &neighbor
+	) const;
+
+	Real
 	RamaE_Lower(
 		conformation::Residue const &rsd,
 		chemical::AA const &neighbor,
@@ -84,7 +110,25 @@ public:
 
 	Real
 	RamaE_Lower(
-		conformation::Residue const &rsd,
+		Real phi,
+		Real psi,
+		chemical::AA const & rsd,
+		chemical::AA const & neighbor
+	) const;
+
+	Real
+	RamaE_Lower(
+		Real phi,
+		Real psi,
+		chemical::AA const & rsd,
+		chemical::AA const & neighbor,
+		Real & drama_dphi,
+		Real & drama_dpsi
+	) const;
+
+	Real
+	RamaE_Upper(
+		conformation::Residue const & rsd,
 		chemical::AA const &neighbor
 	) const;
 
@@ -98,13 +142,18 @@ public:
 
 	Real
 	RamaE_Upper(
-		conformation::Residue const & rsd,
-		chemical::AA const &neighbor
+		Real phi,
+		Real psi,
+		chemical::AA const & rsd,
+		chemical::AA const & neighbor
 	) const;
 
 	Real
-	RamaE(
-		conformation::Residue const & rsd,
+	RamaE_Upper(
+		Real phi,
+		Real psi,
+		chemical::AA const & rsd,
+		chemical::AA const & neighbor,
 		Real &drama_dphi,
 		Real &drama_dpsi
 	) const;
@@ -112,6 +161,22 @@ public:
 	Real
 	RamaE(
 		conformation::Residue const & rsd
+	) const;
+
+	Real
+	RamaE(
+		conformation::Residue const & rsd,
+		Real &drama_dphi,
+		Real &drama_dpsi
+	) const;
+
+	Real
+	RamaE(
+		Real phi,
+		Real psi,
+		chemical::AA const & rsd,
+		Real &drama_dphi,
+		Real &drama_dpsi
 	) const;
 	// finished
 

@@ -227,23 +227,45 @@ Ramachandran2B::eval_rama_score_residue(
 	if( ! basic::options::option[ basic::options::OptionKeys::score::ramaneighbors ] ) {
 		eval_rama_score_residue( center.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
 	} else {
-		//if(left.seqpos() == center.seqpos()) {
-		//	Ramachandran::RamaE_Upper(center, right_aa, drama_dphi, drama_dpsi);
-		//} else if(right.seqpos() == center.seqpos()) {
-		//	Ramachandran::RamaE_Lower(center, left_aa, drama_dphi, drama_dpsi);
-		//} else {
-		Real rama_L(0.0), drama_dphi_L(0.0), drama_dpsi_L(0.0);
-		Real rama_R(0.0), drama_dphi_R(0.0), drama_dpsi_R(0.0);
-		Real rama_0(0.0), drama_dphi_0(0.0), drama_dpsi_0(0.0);
-		rama_L = RamaE_Lower(center, left_aa, drama_dphi_L, drama_dpsi_L);
-		rama_R = RamaE_Upper(center, right_aa, drama_dphi_R, drama_dpsi_R);
-		rama_0 = RamaE(center, drama_dphi_0, drama_dpsi_0);
-
-		rama = rama_L + rama_R - rama_0;
-		drama_dphi = drama_dphi_L + drama_dphi_R - drama_dphi_0;
-		drama_dpsi = drama_dpsi_L + drama_dpsi_R - drama_dpsi_0;
-		//}
+		rama = eval_rama_score_residue( phi, psi, center.aa(), left_aa, right_aa, drama_dphi, drama_dpsi );
 	}
+}
+
+Real
+Ramachandran2B::eval_rama_score_residue(
+	Real phi,
+	Real psi,
+	chemical::AA const res,
+	chemical::AA const left_aa,
+	chemical::AA const right_aa
+) const
+{
+	Real drama_dphi, drama_dpsi;
+	return eval_rama_score_residue( phi, psi, res, left_aa, right_aa, drama_dphi, drama_dpsi );
+}
+
+Real
+Ramachandran2B::eval_rama_score_residue(
+	Real phi,
+	Real psi,
+	chemical::AA const res,
+	chemical::AA const left_aa,
+	chemical::AA const right_aa,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const
+{
+	Real rama_L( 0.0 ), drama_dphi_L( 0.0 ), drama_dpsi_L( 0.0 );
+	Real rama_R( 0.0 ), drama_dphi_R( 0.0 ), drama_dpsi_R( 0.0 );
+	Real rama_0( 0.0 ), drama_dphi_0( 0.0 ), drama_dpsi_0( 0.0 );
+	rama_L = RamaE_Lower( phi, psi, res, left_aa, drama_dphi_L, drama_dpsi_L );
+	rama_R = RamaE_Upper( phi, psi, res, right_aa, drama_dphi_R, drama_dpsi_R );
+	rama_0 = RamaE( phi, psi, res, drama_dphi_0, drama_dpsi_0 );
+
+	drama_dphi = drama_dphi_L + drama_dphi_R - drama_dphi_0;
+	drama_dpsi = drama_dpsi_L + drama_dpsi_R - drama_dpsi_0;
+
+	return rama_L + rama_R - rama_0; // rama
 }
 
 void
@@ -323,14 +345,40 @@ Ramachandran2B::RamaE_Lower(
 		return 0.0;
 	}
 
+	return RamaE_Lower( phi, psi, rsd.aa(), neighbor, drama_dphi, drama_dpsi );
+}
+
+Real
+Ramachandran2B::RamaE_Lower(
+	Real phi,
+	Real psi,
+	chemical::AA const & rsd,
+	chemical::AA const & neighbor
+) const
+{
+	Real drama_dphi, drama_dpsi;
+	return RamaE_Lower( phi, psi, rsd, neighbor, drama_dphi, drama_dpsi );
+}
+
+Real
+Ramachandran2B::RamaE_Lower(
+	Real phi,
+	Real psi,
+	chemical::AA const & rsd,
+	chemical::AA const & neighbor,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const
+{
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-	FArray2A< Real > const rama_for_res( ram_energ_left_(1, 1, rsd.aa(), neighbor), zero_index, zero_index );
-	Real entropy = ram_entropy_left_(rsd.aa(), neighbor);
+	FArray2A< Real > const rama_for_res( ram_energ_left_(1, 1, rsd, neighbor), zero_index, zero_index );
+	Real entropy = ram_entropy_left_(rsd, neighbor);
 
 	Real rama;
 	IdealizeRamaEnergy( phi, psi, rama, drama_dphi, drama_dpsi, entropy, rama_for_res );
 	return rama;
 }
+
 Real
 Ramachandran2B::RamaE_Upper(
 	conformation::Residue const &rsd,
@@ -368,9 +416,34 @@ Ramachandran2B::RamaE_Upper(
 		return 0.0;
 	}
 
-	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-	FArray2A< Real > const rama_for_res( ram_energ_right_(1, 1, rsd.aa(), neighbor), zero_index, zero_index );
-	Real entropy = ram_entropy_right_(rsd.aa(), neighbor);
+	return RamaE_Upper( phi, psi, rsd.aa(), neighbor, drama_dphi, drama_dpsi );
+}
+
+Real
+Ramachandran2B::RamaE_Upper(
+	Real phi,
+	Real psi,
+	chemical::AA const & rsd,
+	chemical::AA const & neighbor
+) const
+{
+	Real drama_dphi, drama_dpsi;
+	return RamaE_Upper( phi, psi, rsd, neighbor, drama_dphi, drama_dpsi );
+}
+
+Real
+Ramachandran2B::RamaE_Upper(
+	Real phi,
+	Real psi,
+	chemical::AA const & rsd,
+	chemical::AA const & neighbor,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const
+{
+	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1 );
+	FArray2A< Real > const rama_for_res( ram_energ_right_( 1, 1, rsd, neighbor ), zero_index, zero_index );
+	Real entropy = ram_entropy_right_( rsd, neighbor );
 
 	Real rama;
 	IdealizeRamaEnergy( phi, psi, rama, drama_dphi, drama_dpsi, entropy, rama_for_res );
@@ -407,8 +480,20 @@ Ramachandran2B::RamaE(
 		return 0.0;
 	}
 
+	return RamaE( phi, psi, rsd.aa(), drama_dphi, drama_dpsi );
+}
+
+Real
+Ramachandran2B::RamaE(
+	Real phi,
+	Real psi,
+	chemical::AA const & rsd,
+	Real &drama_dphi,
+	Real &drama_dpsi
+) const
+{
 	Real ramaE(0.0);
-	eval_rama_score_residue( rsd.aa(), phi, psi, ramaE, drama_dphi, drama_dpsi );
+	eval_rama_score_residue( rsd, phi, psi, ramaE, drama_dphi, drama_dpsi );
 	return ramaE;
 }
 

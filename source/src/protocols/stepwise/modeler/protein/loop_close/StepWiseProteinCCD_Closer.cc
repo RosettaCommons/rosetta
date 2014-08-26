@@ -68,6 +68,7 @@ namespace loop_close {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
   StepWiseProteinCCD_Closer::StepWiseProteinCCD_Closer( working_parameters::StepWiseWorkingParametersCOP working_parameters ):
+		ccd_loop_closure_mover_( NULL ),
 		working_bridge_res_( working_parameters->working_bridge_res() ),
 		moving_residues_( working_parameters->working_moving_res_list() ),
 		is_pre_proline_( working_parameters->is_pre_proline() ),
@@ -125,29 +126,40 @@ namespace loop_close {
 bool
 StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 {
-	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover( loop_, mm_ );
-	ccd_loop_closure_mover.max_cycles( 1000 );
-	ccd_loop_closure_mover.tolerance( 0.001 );
-	ccd_loop_closure_mover.check_rama_scores( false );
-	ccd_loop_closure_mover.rama()->max_rama_score_increase( 100.0 );
-	// FYI: I think anything over 180 is meaningless below. ~Labonte
-	ccd_loop_closure_mover.max_total_torsion_delta_per_residue( 100.0, 500.0, 3600.0 );
+	// Lazy initialization of ccd_loop_closure_mover_
+	if ( ccd_loop_closure_mover_.get() == NULL ) {
+		ccd_loop_closure_mover_ = new loops::loop_closure::ccd::CCDLoopClosureMover();
+		ccd_loop_closure_mover_->max_cycles( 1000 );
+		ccd_loop_closure_mover_->tolerance( 0.001 );
+		ccd_loop_closure_mover_->check_rama_scores( false );
+		ccd_loop_closure_mover_->rama()->max_rama_score_increase( 100.0 );
+
+		// FYI: I think anything over 180 is meaningless below. ~Labonte
+		ccd_loop_closure_mover_->max_total_torsion_delta_per_residue( 100.0, 500.0, 3600.0 );
+	}
+
+	// Does a typical use of this have changing Loop and/or MoveMap definitions?
+	ccd_loop_closure_mover_->loop(  loop_ );
+	ccd_loop_closure_mover_->movemap( mm_ );
 
 	// cutoff for acceptance
 	Real const rmsd_acceptance_cutoff =  1.5; // can be a little relaxed, since there will be a minimize afterwards.
 
-	ccd_loop_closure_mover.apply( pose );
+	ccd_loop_closure_mover_->apply( pose );
 
 	ntries_++;
 
 	// FYI: CCDLoopClosureMover has a success() method. ~Labonte
-	bool const loop_closed = ( ccd_loop_closure_mover.deviation() <= rmsd_acceptance_cutoff );
+	bool const loop_closed = ( ccd_loop_closure_mover_->deviation() <= rmsd_acceptance_cutoff );
 
-	TR.Debug << "CCD dev: " << ccd_loop_closure_mover.deviation() <<
-			"  torsion_delta: " << ccd_loop_closure_mover.torsion_delta() <<
-			" rama_delta: " << ccd_loop_closure_mover.rama_delta() <<
-			"  number of cycles: " << ccd_loop_closure_mover.actual_cycles() <<
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "CCD dev: " << ccd_loop_closure_mover_->deviation() <<
+			"  torsion_delta: " << ccd_loop_closure_mover_->torsion_delta() <<
+			" rama_delta: " << ccd_loop_closure_mover_->rama_delta() <<
+			"  number of cycles: " << ccd_loop_closure_mover_->actual_cycles() <<
 			"  loop_closed:  " << loop_closed << std::endl;
+	}
+
 	if ( !loop_closed ) return false;
 
 	grab_main_chain_torsion_set_list( pose );

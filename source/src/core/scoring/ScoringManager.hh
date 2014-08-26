@@ -134,8 +134,10 @@ public:
 
 	Rama2BOffset const & get_Rama2BOffset() const;
 
+	Ramachandran2BCOP get_Ramachandran2B_ptr() const;
 	Ramachandran2B const & get_Ramachandran2B() const;
 
+	RamachandranCOP get_Ramachandran_ptr() const;
 	Ramachandran const & get_Ramachandran() const;
 
 	dna::DNABFormPotential const & get_DNABFormPotential() const;

@@ -204,7 +204,7 @@ private: //methods
 	void copy_data( RamaCheck1B & to, RamaCheck1B const & from ) const;
 
 private: // data
-	mutable core::scoring::RamachandranOP rama_;
+	core::scoring::RamachandranCOP rama_;
 
 }; // RamaCheck1B
 
@@ -244,7 +244,7 @@ private: // methods
 	void copy_data( RamaCheck2B & to, RamaCheck2B const & from ) const;
 
 private: // data
-	mutable core::scoring::Ramachandran2BOP rama_;
+	core::scoring::Ramachandran2BCOP rama_;
 
 }; // RamaCheck2B
 
