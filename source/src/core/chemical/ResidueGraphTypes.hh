@@ -104,7 +104,20 @@ has( ResidueGraph const & graph, ED ed ) {
 	EIterPair iters( boost::edges(graph) );
 	return std::find( iters.first, iters.second, ed ) != iters.second;
 }
-
+    
+///@brief When adding and deleting nodes in a graph, sometimes the inner counting of nodes/edges gets outdated.
+///Run this to fix the problem.
+template <typename Graph>
+void regenerate_graph_vertex_index(Graph & graph){
+        Size index(0); //counter
+        typename boost::graph_traits<Graph>::vertex_iterator itr, end;
+        for(boost::tie(itr,end) = boost::vertices(graph); itr !=end; ++itr ){
+            boost::put(boost::vertex_index, graph, *itr, index);
+            ++index;
+        }
+    }
+    
+    
 ///Light weight graph typedefs
 ///The light weight graph is a graph that holds a pointer to the edge descriptor
 ///and vertex descriptor or the ResidueGraph. We generate the light weight graph

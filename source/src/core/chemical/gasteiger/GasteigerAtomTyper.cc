@@ -1257,6 +1257,9 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 	RealFilter filter( restype.graph() );
 	RealResidueGraph real_graph( restype.graph(), filter );
 
+    //Make sure that the internal graph representation is up to date.
+	core::chemical::regenerate_graph_vertex_index( real_graph);
+    
 	VIter iter, iter_end;
 	for( boost::tie(iter,iter_end) = restype.atom_iterators(); iter != iter_end; ++iter ) {
 		if( keep_existing && restype.atom(*iter).gasteiger_atom_type() &&
