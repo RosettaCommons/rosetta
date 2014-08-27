@@ -821,8 +821,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 			if ( perform_score_diff_cut_ && ( score > ( score_min + score_diff_cut_ ) ) ) break;
 
 			std::string const & tag( silent_struct->decoy_tag() );
-			TR << "CHECKING " << tag << " with score " << score << " ( score_min = " << score_min << " ) against list of size " << silent_struct_output_list_.size();
-			TR << " Num_pose_clustered so far " << num_pose_clustered << std::endl;
+			TR << "CHECKING " << tag << " with score " << score << " ( score_min = " << score_min << " ) against list of size " << silent_struct_output_list_.size() << " Num_pose_clustered so far " << num_pose_clustered << std::endl;
 
 			//Hacky thing. Ignore messed structure until we find a fix...ideally should just remove messed up pose from input_ at beginning of the Class.
 			if ( protocols::stepwise::modeler::rna::check_for_messed_up_structure( (*pose_op), tag ) == true ) continue;
