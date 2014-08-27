@@ -32,7 +32,7 @@ namespace cryst {
 
 class SetCrystWeightMover : public moves::Mover {
 public:
-	SetCrystWeightMover() : Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0) {}
+	SetCrystWeightMover() : Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0), weight_min_(2000.0) {}
 
 	virtual std::string get_name() const { return SetCrystWeightMoverCreator::mover_name(); }
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
@@ -48,7 +48,7 @@ public:
 private:
 	bool autoset_wt_;
 	bool cartesian_;
-	core::Real weight_, weight_scale_;
+	core::Real weight_, weight_scale_, weight_min_;
 
 	core::scoring::ScoreFunctionOP score_function_;
 	core::scoring::ScoreFunctionOP score_function_ref_;

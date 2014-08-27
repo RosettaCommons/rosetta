@@ -215,6 +215,7 @@ SetRefinementOptionsMoverCreator::mover_name() {
 /// movers
 
 void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
+	// if a weight is <0, then report detailed information on gradients
 	if (weight_ < 0) {
 		using namespace core::optimization;
 		using namespace core::optimization::symmetry;
@@ -285,7 +286,6 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 			f_ros.dfunc( vars, dEros_dvars[ii+1] );
 		}
 
-		// report
 		// GRAD  name id atom_name total total_no_cartbond fa_atr fa_rep fa_sol fa_intra_rep fa_pair fa_dun hbond_lr_bb hbond_sr_bb hbond_bb_sc hbond_sc p_aa_pp dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih pro_close rama omega cart_bonded_angle cart_bonded_length cart_bonded_torsion
 		for (core::Size counter=0; counter<dEros_dvars[1].size()/3; ++counter) {
 			id::AtomID id = min_map.get_atom( counter+1 );
@@ -317,6 +317,10 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 				auto_weight = core::util::getMLweight( *score_function_ref_, pose );
 			}
 		}
+
+		// stay above min weight
+		auto_weight = std::max( auto_weight, weight_min_ );
+
 		score_function_->set_weight( core::scoring::xtal_ml, auto_weight * weight_scale_ );
 		TR << "set xtal_weight to " << score_function_->get_weight( core::scoring::xtal_ml ) << std::endl;
 	} else {
@@ -385,6 +389,10 @@ void SetCrystWeightMover::parse_my_tag(
 	if ( tag->hasOption("weight") ) {
 		weight_ = tag->getOption<core::Real>("weight");
 		autoset_wt_ = false;
+	}
+
+	if ( tag->hasOption("weight_min") ) {
+		weight_min_ = tag->getOption<core::Real>("weight_min");
 	}
 	weight_scale_ = tag->getOption<core::Real>("weight_scale", 1.0);
 	cartesian_ = tag->getOption<bool>("cartesian", false);

@@ -106,7 +106,7 @@ CartesianMD::CartesianMD()
 	init();
 }
 
-CartesianMD::CartesianMD( core::pose::Pose const & pose, 
+CartesianMD::CartesianMD( core::pose::Pose const & pose,
 													core::scoring::ScoreFunctionCOP sfxn,
 													core::kinematics::MoveMapCOP movemap )
 {
@@ -181,17 +181,17 @@ void CartesianMD::get_native_info( pose::Pose const &pose )
 {
 
 	native_given_ = true;
-	
+
 	std::string nativepdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
 	core::chemical::ResidueTypeSetCAP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	core::import_pose::pose_from_pdb( native_, *rsd_set, nativepdb );
-	
+
 	// Set resmap
 	std::map< Size, Size > resmap;
 	for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
 		Size ii_pdb( pose.pdb_info()->number( ires ) );
-		
+
 		for( Size jres = 1; jres <= native_.total_residue(); ++jres ){
 			Size jj_pdb( native_.pdb_info()->number( jres ) );
 			if( ii_pdb == jj_pdb ){
@@ -284,7 +284,7 @@ void CartesianMD::apply( core::pose::Pose & pose ){
 	Emin_obj_ = 1.0e6;
 	time_minobj_ = 0.0;
 
-	// Main 
+	// Main
 	if( !scheduled_ ){ // typical run
 		do_MD( pose, nstep(), temp0(), true );
 
@@ -323,12 +323,12 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 {
 	CartesianMinimizer minimizer;
 
-	if( show_energy ){ 
-		Real score_before = scorefxn_->score( pose ); 
+	if( show_energy ){
+		Real score_before = scorefxn_->score( pose );
 
 		minimizer.run( pose, *movemap(), *scorefxn_, options );
 
-		Real score_after = scorefxn_->score( pose ); 
+		Real score_after = scorefxn_->score( pose );
 		TR << "Energy before/after Min: " << score_before << " " << score_after << std::endl;
 
 	} else {
@@ -338,7 +338,7 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 
 void CartesianMD::do_MD( core::pose::Pose & pose,
 												 Size const &nstep,
-												 Real const &temp0, 
+												 Real const &temp0,
 												 bool const &initialize )
 {
 	if( initialize ){
@@ -358,7 +358,7 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 
 	// Set thermostat
   Thermostat thermostat( temp0, n_dof_temp_ );
- 
+
   // Start MD integrator
 	scorefxn_->setup_for_minimizing( pose, min_map );
 
@@ -449,7 +449,7 @@ void CartesianMD::initialize_velocity( core::Real const &temperature )
 		// pass Virtual atoms
 		if ( mass_[i_atm] < 1e-3 ) continue;
 
-    vel_[i_dof] = sqrt(2.0*temperature*Boltzmann/mass_[i_atm])*RG.gaussian(); 
+    vel_[i_dof] = sqrt(2.0*temperature*Boltzmann/mass_[i_atm])*RG.gaussian();
 		acc_[i_dof] = 0.0;
   }
 }
@@ -491,7 +491,7 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 	TR << " " << Eobj << " " << Emin_obj_;
 	TR << std::endl;
 
-	if( cummulative_time() > 0.1 && // Truncate initial 1ps to remove minimization memory 
+	if( cummulative_time() > 0.1 && // Truncate initial 1ps to remove minimization memory
 		 selectmode_.compare("minobj") == 0 && Eobj < Emin_obj_ ){
 		pose_minobj_ = pose;
 		Emin_obj_ = scorefxn_obj_->score( pose );
@@ -541,7 +541,7 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 }
 
 // pose_ref should have exactly same molecule as stored in trj
-utility::vector1< pose::Pose > 
+utility::vector1< pose::Pose >
 CartesianMD::dump_poses( pose::Pose const &pose_ref ) const {
 
 	utility::vector1< pose::Pose > poses;
@@ -588,14 +588,14 @@ void CartesianMD::parse_opts(
 	using namespace scoring;
 
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn" ) );
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name )->clone();
+	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name ); //->clone();
 
 	std::string const scoreobj_name( tag->getOption< std::string >( "scorefxn_obj","" ) );
 
 	if( scoreobj_name.compare("") == 0 ){
-		scorefxn_obj_ = scorefxn_->clone();
+		scorefxn_obj_ = scorefxn_; //->clone();
 	} else {
-		scorefxn_obj_ = data.get< ScoreFunction * >( "scorefxns", scoreobj_name )->clone();
+		scorefxn_obj_ = data.get< ScoreFunction * >( "scorefxns", scoreobj_name ); //->clone();
 	}
 
 	use_rattle_ = tag->getOption< bool >( "rattle", true );
