@@ -561,9 +561,9 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 				}
 				protocols::simple_moves::CutChainMover ccm;
-								core::Size source_pdb_cut(ccm.chain_cut(*source_pose_,nearest_to_from,nearest_to_to));
-								if (source_pdb_cut!=0)//found cut site in source pose
-										utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
+				core::Size source_pdb_cut(ccm.chain_cut(*source_pose_,nearest_to_from,nearest_to_to));
+				if (source_pdb_cut!=0)//found cut site in source pose
+					utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
 				TR << "nearest_to_from: " << nearest_to_from << " nearest_to_to: " << nearest_to_to << std::endl;
 				TR << "from_res():"<<from_res()<<"to_res():"<<to_res()<<std::endl;
 				residue_diff = nearest_to_to - nearest_to_from - (to_res() - from_res());
@@ -738,7 +738,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					llc.loop_end(vl_vh_cut);
 				else if (segment_type_=="H3"){
 					core::conformation::Conformation const & conf(pose.conformation());
-						llc.loop_end(conf.chain_end(1));//Asuming that the ligand is chain 2;
+						llc.loop_end(conf.chain_end(1)+residue_diff);//Asuming that the ligand is chain 2;
 				}
 				else
 					utility_exit_with_message("Attempting to copy c-ter tail stretch from source PDB but segment type is not H3 or L3. Failing\n");
@@ -756,7 +756,10 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			llc.apply(pose);
 		//	protocols::simple_moves::CutChainMover ccm;
 		//	core::Size cut_site_after_llc(ccm.chain_cut(pose,from_res(),to_res()+residue_diff));
-			fold_tree(pose,from_res(),to_res()+residue_diff,cut_site);//llc changes fold tree when new loop is longer then old loop
+			if (tail_segment_!="")
+				tail_fold_tree(pose,cut_vl_vh_after_llc,0);
+			else
+				fold_tree(pose,from_res(),to_res()+residue_diff,cut_site);//llc changes fold tree when new loop is longer then old loop
 			TR << "Foldtree after loop length change: " << pose.fold_tree() << std::endl;
 			if (debug_)
 				pose.dump_pdb(mover_name_+"_after_2ndllc_test.pdb");
@@ -2481,7 +2484,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 //		return;
 //	}
 	core::scoring::constraints::ConstraintOPs cst;
-	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 0);
+	core::Size anchor_source = protocols::rosetta_scripts::find_nearest_res(source_pose, pose, anchor, 1);
 	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
 	runtime_assert( anchor_source );
 	TR_constraints << "closest residue to anchor residue on source is : " <<anchor_source << std::endl;
@@ -2581,7 +2584,7 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 
 	int residue_diff( 0 );
 
-	core::Size nearest_from_res_source_pdb(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,0));
+	core::Size nearest_from_res_source_pdb(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,1));
 	runtime_assert(nearest_from_res_source_pdb); //if find_nearest_res fails it return 0
 	residue_diff = nearest_from_res_source_pdb - start_res_on_pose;
 	TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
