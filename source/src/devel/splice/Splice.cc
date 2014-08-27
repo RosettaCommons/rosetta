@@ -2587,7 +2587,7 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 	TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
 	//inorder to compare the angles we keep track of the corresponding residues in the template pose
 	TR_constraints << "Applying dihedral constraints to pose, Pose/Source PDB:" << std::endl;
-	for (core::Size i = start_res_on_pose + residue_diff; i <= end_res_on_pose + residue_diff; ++i) {
+	for (core::Size i = start_res_on_pose + residue_diff; i < end_res_on_pose + residue_diff; ++i) {
 		core::scoring::constraints::ConstraintOPs csts; //will hold dihedral constraints
 //Set up constraints for the phi angle
 		core::id::AtomID phi_resi_n(source_pose.residue_type(i).atom_index("N"), i);
