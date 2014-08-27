@@ -59,7 +59,7 @@ int main( int argc, char * argv [] )
 	protocols::moves::AddPyMolObserver( pose );
 	for(int j=0; j<32; j++) {
 		pose.set_phi(70, pose.phi(70) + 1. );
-		usleep(1000000);
+		usleep(500000);
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
@@ -78,7 +78,7 @@ int main( int argc, char * argv [] )
 
 	for(int j=0; j<16; j++) {
 		pose.set_phi(50, a);
-		a += 1.;
+		a += 2.;
 
 		std::ostringstream msg;
 		msg << "Tottal energy=" << scorefxn->score(pose);
@@ -89,16 +89,15 @@ int main( int argc, char * argv [] )
 		//TR << "Sending energies..." << std::endl;
 		pymol.send_energy(pose);
 
-		usleep(1000000);
+		usleep(500000);
 		//TR << a << std::endl ;
 	}
 
 	for(int j=0; j<1000; j++) {
 		for(unsigned int r=1; r<=pose.total_residue(); r++) {
-			std::map<int, int> C = utility::tools::make_map(int(r), int(protocols::moves::XC_white),
-															int(1+pose.total_residue() - r), int(protocols::moves::XC_red) );
+			std::map<int, int> C = utility::tools::make_map(int(r), int(protocols::moves::XC_white), int(1+pose.total_residue() - r), int(protocols::moves::XC_red) );
 			pymol.send_colors(pose, C );
-			usleep(1000000);
+			usleep(500000);
 		}
 	}
 

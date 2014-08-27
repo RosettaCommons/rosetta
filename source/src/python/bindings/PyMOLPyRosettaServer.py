@@ -306,8 +306,8 @@ class PR_PyMOLServer:
         for i in xrange(0, len(s), 8):
             score = ('%s' % s[(i + 6):(i + 8)])
             color = palette + score
-            target = '%s and chain %s and resi %s' % (name, s[i],
-                                                      s[(i + 1):(i + 6)])
+            target = '%s and chain %s and resi %s' % (name, s[i], s[(i + 1):(i + 6)])
+            #print 'Color: %s, target:%s' % (color, target)
             pymol.cmd.color(color, target)
 
     # Code for processing commands from PyRosetta goes here within the if
@@ -330,7 +330,7 @@ class PR_PyMOLServer:
 
 
         # String is just text that we need to print.
-        if ptype == 'Text    ': 
+        if ptype == 'Text    ':
             print data.tostring()
 
 
@@ -349,13 +349,15 @@ class PR_PyMOLServer:
         # String is a pdb file with compression.
         elif ptype.startswith('PDB.'):
             #print 'Getting PDB packet "%s"...' % name
-            
+
             # Decompress.
             if ptype.endswith('.gzip'):
                 s = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
             elif ptype.endswith('.bz2 '):
                 s = bz2.decompress(data)
-            
+
+            #print 'Got compressed PDB:', name
+
             pymol.cmd.read_pdbstr(s, name, flags ^ 1)
             if flags:  # Go to the new frame.
                 pymol.cmd.frame(pymol.cmd.count_frames())
@@ -366,12 +368,11 @@ class PR_PyMOLServer:
             #print 'Getting energy packet "%s"...' % name
             e_type_len = ord(data[0])
             e_type = data[1:(1 + e_type_len)].tostring()
-            #print 'etype=%s  msg=%s' % (e_type, s)
-            
-            # Decompress.            
+            #print 'etype=%s  msg=%s' % (e_type, data)
+
+            # Decompress.
             if ptype.endswith('.gzip'):
-                s = gzip.GzipFile('', 'r', 0,
-                                  StringIO(data[(1 + e_type_len):])).read()
+                s = gzip.GzipFile('', 'r', 0, StringIO(data[(1 + e_type_len):])).read()
             elif ptype.endswith('.bz2'):
                 s = bz2.decompress(data[(1 + e_type_len):])
             #print 'Compression stats: %s-->%s' % (len(data[(1 + e_type_len):]),
@@ -382,6 +383,7 @@ class PR_PyMOLServer:
                 #    pymol.cmd.color('R%s' % s[(i + 5):(i + 7)],
                 #                    '%s and chain %s and resi %s' % (name,
                 #                                    s[i], s[(i + 1):(i + 5)]))
+                #print 'Coloring model:', name
                 self._color_model(name, e_type, s)
             except pymol.parsing.QuietException:
                 print "Coloring failed..."
@@ -396,7 +398,7 @@ class PR_PyMOLServer:
             try:
                 for i in range(0, len(data), size + 6):
                     dat = data[(i + 6):(i + 6 + size)]
-                    sel = '%s and name ca and chain %s and resi %s' % (name, 
+                    sel = '%s and name ca and chain %s and resi %s' % (name,
                                           data[i + 5], data[i:(i + 5)].strip())
                     pymol.cmd.label(sel, dat)
             except pymol.parsing.QuietException:
@@ -434,7 +436,7 @@ class PR_PyMOLServer:
 
                 # Convert top positions to xyz coordinates (assumes CA position)
                 top_plane_coords = extract_CNTR_coords( name, "C", top_positions )
- 
+
                 # Convert bottom positions to xyz coordiantes (assumes CA position)
                 bottom_plane_coords = extract_CNTR_coords( name, "D", bottom_positions )
 
@@ -466,7 +468,7 @@ class PR_PyMOLServer:
                     don_res = data[(c + 10):(c + 15)].strip()
                     don_chain = data[c + 15]
                     don_name = data[(c + 16):(c + 20)].strip()
-                    
+
                     # Make selection.
                     hbname = 'hb_' + acc_res + acc_chain + acc_name + '_' + \
                                     don_res + don_chain + don_name + '_' + name
@@ -475,7 +477,7 @@ class PR_PyMOLServer:
                                        ' and res ' + acc_res + ' and name ' +
                                        acc_name,
                                        name + ' and chain ' + don_chain +
-                                       ' and res ' + don_res + ' and name ' + 
+                                       ' and res ' + don_res + ' and name ' +
                                        don_name)
                     pymol.cmd.color('Hb%s' % data[(c + 20):(c + 22)], hbname)
                 pymol.cmd.sync()  # Ensures above is complete before continuing.
@@ -514,7 +516,7 @@ class PR_PyMOLServer:
             try:
                 for i in range(0, len(data), size + 6):
                     dat = data[(i + 6):(i + 6 + size)]
-                    sel = '%s and chain %s and resi %s' % (name, data[i + 5], 
+                    sel = '%s and chain %s and resi %s' % (name, data[i + 5],
                                                        data[i:(i + 5)].strip())
                     color = 'blue'
                     if int(dat):
@@ -575,7 +577,7 @@ class PR_PyMOLServer:
             except pymol.parsing.QuietException:
                 print "Commands failed..."
                 print "Did you forget to send the pose geometry first?"
-                
+
 
         #######################################################################
         # Foldtree diagram.
@@ -594,7 +596,7 @@ class PR_PyMOLServer:
             # Process the chains.
             total = float(data[:4])
             data = data[4:]
-            
+
             # Get the start points.
             nchains = int(data[:2])
             data = data[2:]
@@ -602,7 +604,7 @@ class PR_PyMOLServer:
             for i in xrange(nchains):
                 chains.append(int(data[:4]))
                 data = data[4:]
-            
+
             # Visualize the chains.
             chains.append(total)
             for i in xrange(len(chains) - 1):
@@ -637,7 +639,7 @@ class PR_PyMOLServer:
                 cut = jumps[j][2] - 1
 
                 jump = 'jump_' + str(j + 1) + '_' + name
-                
+
                 # Draw the jump as a bridge.
                 # Start bridge at jump point.
                 add_point(jump, [start/total * scale, 0, 0], connect)
@@ -652,7 +654,7 @@ class PR_PyMOLServer:
                           False, False, '', 0, str(jumps[j][1]))
                 # Down one r to stop bridge.
                 add_point(jump, [stop/total * scale, 0, 0], connect)
-                
+
                 # Draw the cutpoint.
                 # Up 1/2 r from cutpoint.
                 add_point(jump, [cut/total * scale, cylx/2, cyly/2], '', False,
@@ -729,7 +731,7 @@ class PR_PyMOLServer:
 
 ###############################################################################
 # Membranes
-class XYZCoord(): 
+class XYZCoord():
     """
     Class for storing xyz coord or just a triple of real values
     """
@@ -742,18 +744,18 @@ class XYZCoord():
     def __str__(self):
         return "(%8.3f, %8.3f, %8.3f)" % (self.x, self.y, self.z)
 
-def extract_CNTR_coords( name, chain, points ): 
+def extract_CNTR_coords( name, chain, points ):
     """
     Use the cmd.get_atom_coords method in the PyMol API to grab the center
     coordinate of the virtual atom. This will eventually define the membrane plane
     """
-    
+
     # Create pymol selection
-    id = "/" + name + "//" + chain + "/" + "MEM`" 
+    id = "/" + name + "//" + chain + "/" + "MEM`"
     id_end = "/CNTR"
-    
+
     coords = []
-    for point in points: 
+    for point in points:
 
         cntr_coord = cmd.get_atom_coords( id + str(point) + id_end )
 
@@ -766,7 +768,7 @@ def extract_CNTR_coords( name, chain, points ):
 
     return coords
 
-def normalize( normal ): 
+def normalize( normal ):
     """
     Ensure that the provided normal is a unit normal_vector
     """
@@ -807,7 +809,7 @@ def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
         top_plane.append( VERTEX )
         top_plane.append( i.x )
         top_plane.append( i.y )
-        top_plane.append( i.z )    
+        top_plane.append( i.z )
 
     top_plane.append( END )
 
@@ -825,7 +827,7 @@ def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
         bottom_plane.append( VERTEX )
         bottom_plane.append( i.x )
         bottom_plane.append( i.y )
-        bottom_plane.append( i.z )    
+        bottom_plane.append( i.z )
 
     bottom_plane.append( END )
 
@@ -837,7 +839,7 @@ def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
 def make_axis(name, ends, dr, scale=False, axis_color='', num=0):
     """
     Make an axis 'name' from 'ends[0]' to 'ends[1]' on the 'dr' (direction).
-    
+
     'scale' bool tells to label axis or not; 'axis_color' determines the axis
     color; 'num' allows intermediate scale points.
     """
@@ -884,7 +886,7 @@ def make_axis(name, ends, dr, scale=False, axis_color='', num=0):
 def scale_axes(name='x_axis or y_axis or z_axis'):
     """
     Labels the selection name.
-    
+
     Used here for convenience: axis point value str in resn.
     """
     pymol.cmd.hide('label', name)
@@ -894,7 +896,7 @@ def scale_axes(name='x_axis or y_axis or z_axis'):
 def get_ends(data):
     """
     Determines the ends for axes from list.
-    
+
     Defaults to min, max, but if not pos/neg.
     Determines based on closest point.
     """
@@ -944,7 +946,7 @@ def add_point(name, point, connect='', rescale=False, scale=False,
               axis_color='', num=0, banner=''):
     """
     Adds a point to existing data, reconnecting points optionally.
-    
+
     Adds 'point' to 'name' and connects it with color 'connect' (empty for no
     connection).
     'rescale' will rescale the axes; 'scale' will label the scales;
@@ -999,7 +1001,7 @@ def connect_points(name, color='red'):
     pymol.cmd.color(color,name)
 
 
-def plot3d(name, x_array, y_array, z_array=[], connect='red', scale=True, 
+def plot3d(name, x_array, y_array, z_array=[], connect='red', scale=True,
            axis_color='blue', num=0):
     """
     Default plotting tool with optional z points, connection, and axis color.

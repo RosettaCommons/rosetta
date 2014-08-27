@@ -1803,7 +1803,7 @@ class ModuleBuilder:
         with file(rosetta_objs_list, 'w') as f: f.write( ' '.join(objs_list) )  # + [ lib_path + '/'+ o for o in rosetta_objs]
 
         #print objs_list  -Wl,-B,static
-        linker_cmd = "cd %(dest)s && %(compiler)s @%(rosetta_objs_list)s %(add_option)s -lstdc++ -lz" \
+        linker_cmd = "cd %(dest)s && gcc @%(rosetta_objs_list)s %(add_option)s -lstdc++ -lz" \
                      " -lmini_static -l%(python_lib)s -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
         linker_dict = dict(add_option=self.add_loption, dst=self.all_at_once_lib, libpaths=self.libpaths,
                            runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib, rosetta_objs_list=rosetta_objs_list,
