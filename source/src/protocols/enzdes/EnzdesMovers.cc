@@ -16,6 +16,7 @@
 
 // AUTO-REMOVED #include <protocols/enzdes/EnzdesFixBBProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
+#include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
@@ -541,6 +542,48 @@ RepackLigandSiteWithoutLigandMover::separate_protein_and_ligand(
 core::pack::task::PackerTaskCOP
 RepackLigandSiteWithoutLigandMover::get_ptask() const {
 	return ptask_;
+}
+
+//-------UpdateEnzdesHeaderMover----------//
+
+moves::MoverOP
+UpdateEnzdesHeaderMoverCreator::create_mover() const
+{
+	return new UpdateEnzdesHeaderMover();
+}
+
+std::string
+UpdateEnzdesHeaderMoverCreator::keyname() const
+{
+	return UpdateEnzdesHeaderMoverCreator::mover_name();
+}
+
+std::string
+UpdateEnzdesHeaderMoverCreator::mover_name()
+{
+	return "UpdateEnzdesHeader";
+}
+
+UpdateEnzdesHeaderMover::UpdateEnzdesHeaderMover(){}
+
+UpdateEnzdesHeaderMover::~UpdateEnzdesHeaderMover(){}
+
+void
+UpdateEnzdesHeaderMover::apply(
+	core::pose::Pose & pose )
+{
+	enzutil::create_remark_headers_from_cstcache( pose );
+}
+
+std::string
+UpdateEnzdesHeaderMover::get_name() const {
+	return UpdateEnzdesHeaderMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+UpdateEnzdesHeaderMover::clone() const
+{
+	return protocols::moves::MoverOP( new UpdateEnzdesHeaderMover( *this ) );
 }
 
 } //enzdes

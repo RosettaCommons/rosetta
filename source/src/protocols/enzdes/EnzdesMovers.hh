@@ -257,6 +257,26 @@ private:
     bool separate_prt_ligand_;
 };
 
+/// @brief mover that updates the enzdes pdb header, for use in cases where catalytic residues may be designed
+class UpdateEnzdesHeaderMover : public protocols::moves::Mover
+{
+
+public:
+	UpdateEnzdesHeaderMover();
+
+	~UpdateEnzdesHeaderMover();
+
+	void
+	apply( core::pose::Pose & pose );
+
+	virtual std::string get_name() const;
+
+	protocols::moves::MoverOP clone() const;
+
+private:
+
+};
+
 
 } //enzdes
 } //protocols
