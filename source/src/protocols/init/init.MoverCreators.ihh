@@ -282,6 +282,7 @@
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
+#include <protocols/simple_moves/BoltzmannRotamerMoverCreator.hh>
 #include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
 #include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
 #include <protocols/simple_moves/ConstraintSetMoverCreator.hh>

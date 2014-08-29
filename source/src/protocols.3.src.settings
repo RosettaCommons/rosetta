@@ -555,6 +555,7 @@ sources = {
 		"BackboneMover",
 		"BBConRotMover",
 		"BBGaussianMover",
+		"BoltzmannRotamerMover",
 		"ChainSplitMover",
 		"ClearConstraintsMover",
 		"ConsensusDesignMover",

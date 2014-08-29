@@ -295,6 +295,7 @@ static MoverRegistrator< seeded_abinitio::SegmentHybridizerCreator > SegmentHybr
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
+static MoverRegistrator< simple_moves::BoltzmannRotamerMoverCreator > reg_BoltzmannRotamerMoverCreator;
 static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearConstraintsMoverCreator;
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
