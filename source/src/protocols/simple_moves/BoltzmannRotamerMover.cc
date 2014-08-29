@@ -195,7 +195,6 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		// iterator over each rotamer
 		for(core::Size i = 1; i <= one_body_energies.size(); i++) {
 			core::chemical::AA aa_type = (*rotset->rotamer(i)).type().aa();
-			core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
 			core::PackerEnergy move_score = one_body_energies[i];
 			core::Real boltzmann_factor = std::exp((init_score - move_score) / temperature_);
 			if (boltzmann_factor > 0) {
@@ -278,7 +277,6 @@ BoltzmannRotamerMover::select_rotamer(
 {
 	utility::vector1<std::pair<core::Size, core::Real > > boltzmann_probs;
 	for(core::Size rot = 1; rot <= boltzmann_factors.size(); rot++) {
-		core::Size rotamer_id = boltzmann_factors[rot].first;
 		core::Real boltzmann_probability = boltzmann_factors[rot].second / partition_function;
 		if (bias_sampling_)
 			boltzmann_probs.push_back(std::make_pair(rot, boltzmann_probability));
