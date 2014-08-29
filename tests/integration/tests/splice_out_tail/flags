@@ -1,0 +1,21 @@
+-constant_seed 1
+-TailSegment::refine_cycles 2
+-linmem_ig 10
+-use_input_sc
+-extrachi_cutoff 5
+-ignore_unrecognized_res
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+
+-s 2BRR.ppk.pdb
+-jd2:ntrials 2
+-max_retry_job 2
+-parser:protocol splice_out_H3.xml
+-overwrite
+-use_occurrence_data
+-pdb_comments true
+-unmute protocols.simple_filters.ScoreTypeFilter
+-parser:script_vars source_pdb=2BRR.ppk.pdb
+-parser:script_vars  source=1AHW.pdb
+-out:prefix  H3_1AHW_
+
+

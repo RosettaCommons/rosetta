@@ -756,7 +756,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			llc.apply(pose);
 		//	protocols::simple_moves::CutChainMover ccm;
 		//	core::Size cut_site_after_llc(ccm.chain_cut(pose,from_res(),to_res()+residue_diff));
-			if (tail_segment_!="")
+			if (boost::iequals(tail_segment_, "c"))
 				tail_fold_tree(pose,cut_vl_vh_after_llc,0);
 			else
 				fold_tree(pose,from_res(),to_res()+residue_diff,cut_site);//llc changes fold tree when new loop is longer then old loop
@@ -1149,12 +1149,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					TR << "Tail_start:" << tail_start << ", Tail_end: " << tail_end << " disulfide res: " << disulfide_res<< "residue diff: " << res_diff << std::endl;
 					//Because we are copying dihedral angles from the source pdb we have to make sure the tail start/end of the source pdb
 					//is at leaset the same lenght as the pose. This conditional should only hold for n-ter tails because the the seqeunce length from start to Cys is constant. For C-ter tail we are copying the stretch from the source PDB so there is no problem.
-					TR<<"tail_start + res_diff="<<tail_start + res_diff<<std::endl;
+					TR<<"tail_start + res_diff="<<int (tail_start + res_diff)<<std::endl;
 					if (((boost::iequals(tail_segment_, "n")) && (tail_start + res_diff < 1))) {
 						utility_exit_with_message("Source pdb tail must be at least the same length as the template PDB\n");
 					}
 
-					for (core::Size i = tail_start; i <= tail_end; ++i) {
+					for (int i = (int) tail_start; i <= (int) tail_end; ++i) {
 						/// Feed the source_pose dofs into the BBDofs array
 						BBDofs residue_dofs;
 						//TR<<"Copying the following dihedral angles from source pdb:"<< std::endl;

@@ -36,6 +36,7 @@
 #include <utility/vector0.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
+#include <core/chemical/VariantType.hh>
 
 
 namespace protocols {
@@ -101,6 +102,10 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 		start_tree_at_chain( tag->getOption< char >( "start_tree_at_chain", '\0' ) );
 		return;
 	}
+	if( tag->hasOption( "ab_fold_tree" ) ){
+		ab_fold_tree( tag->getOption< bool >( "ab_fold_tree") );
+			return;
+		}
 	std::string const ft_name( tag->getOption< std::string >( "fold_tree_file", "" ) );
 	if( ft_name != "" ){
 		utility::io::izstream data( ft_name );
@@ -185,12 +190,61 @@ SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const h
 }
 
 void
+SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
+{
+	using namespace protocols::rosetta_scripts;
+	core::kinematics::FoldTree ft;
+	ft.clear();
+	protocols::simple_moves::CutChainMover ccm;
+	core::Size vl_vh_cut=ccm.chain_cut(pose);//find cut between VL/VH
+	core::conformation::Conformation const & conf(pose.conformation());
+	utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain
+	//find all cysteines in the pose
+	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+		if (pose.residue(i).has_variant_type(core::chemical::DISULFIDE)) {
+			cys_pos.push_back(i);
+		}
+	}
+	/// build simple ft for the cut
+	ft.add_edge(1, cys_pos[1], -1);
+	ft.add_edge(cys_pos[1], cys_pos[2], -1);
+	ft.add_edge(cys_pos[2],vl_vh_cut , -1);
+	ft.add_edge(cys_pos[3],vl_vh_cut+1 , -1);
+	ft.add_edge(cys_pos[4],cys_pos[3], -1);
+	ft.add_edge(cys_pos[4],conf.chain_end(1), -1);
+	ft.add_edge(cys_pos[2],cys_pos[4], 1);
+
+	core::Size AB_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, 1, conf.chain_end(1) );
+	TR<<"Antibody center of mass is residue: "<<AB_CoM<<std::endl;
+	core::Size cys_CoM=find_nearest_disulfide(pose, AB_CoM);
+	if (conf.num_chains()>1){
+
+		core::Size Lig_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(2), conf.chain_end(2) );
+		ft.add_edge(cys_CoM,Lig_CoM, 2);
+		ft.add_edge(conf.chain_begin(2),Lig_CoM, -1);
+		ft.add_edge(Lig_CoM, conf.chain_end(2),-1);
+	}
+
+	ft.delete_self_edges();
+	ft.reorder(cys_CoM);
+	ft.check_fold_tree();
+	TR << "Antibody fold_tree: " << ft << std::endl;
+	pose.fold_tree(ft);
+	return;
+}
+
+
+void
 SetAtomTree::apply( core::pose::Pose & pose )
 {
 	if( fold_tree_ ){
 		TR<<"Applying fold_tree: "<<*fold_tree_<<std::endl;
 		pose.fold_tree( *fold_tree_ );
 
+		return;
+	}
+	if (ab_fold_tree_){
+		set_ab_fold_tree(pose);
 		return;
 	}
 	if( docking_ft_ ){

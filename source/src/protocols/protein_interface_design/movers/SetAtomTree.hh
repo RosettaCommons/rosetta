@@ -46,6 +46,7 @@ public :
 	core::kinematics::FoldTreeOP create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_ = 0, std::string const connect_to = "", std::string connect_from = "" );//if connect_to or connect_from = "" optimal_connection_point is invoked
 	bool simple_ft() const {return simple_ft_; }
 	void simple_ft( bool const s ){ simple_ft_ = s; }
+	void set_ab_fold_tree( core::pose::Pose & pose);
 	void two_parts_chain1( bool const t ){ two_parts_chain1_ = t; }
 	bool two_parts_chain1() const{ return two_parts_chain1_; }
 
@@ -53,6 +54,8 @@ public :
 	void fold_tree( core::kinematics::FoldTreeOP ft_ );
 	char start_tree_at_chain() const{ return start_tree_at_chain_; }
 	void start_tree_at_chain( char const c ){ start_tree_at_chain_ = c; }
+	void ab_fold_tree(bool b){ab_fold_tree_=b;}
+	bool ab_fold_tree(){return ab_fold_tree_;}
 private :
 	bool docking_ft_, simple_ft_, two_parts_chain1_; //dflt false; false; false; two-parts-chain1 is intended for cases where chain1 has a cut and we want to optimize the jump between part1 and part2 along with the jump between chain1 and chain2
 	char start_tree_at_chain_; //dflt ''; if set, start the fold tree in the defined chain, and put all other chains beyond that jump
@@ -60,6 +63,7 @@ private :
 	std::string resnum_, connect_to_, anchor_res_, connect_from_; //as parsed
 	core::Size host_chain_; //dflt 2
 	core::kinematics::FoldTreeOP fold_tree_; // dflt NULL; if set just use it without any other options. Reading a foldtree from file parses the fold tree at parse time and then just applies it at apply.
+	bool ab_fold_tree_; //dflt false;
 };
 
 } // movers
