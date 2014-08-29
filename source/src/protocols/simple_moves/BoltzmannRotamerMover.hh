@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author Noah Ollikainen
+/// @file protocols/simple_moves/BoltzmannRotamerMover.hh
+/// @brief definition of BoltzmannRotamerMover class and functions
+/// @author Noah Ollikainen (nollikai@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_BoltzmannRotamerMover_hh
 #define INCLUDED_protocols_simple_moves_BoltzmannRotamerMover_hh
@@ -55,12 +55,10 @@ public:
 	// default constructor
 	BoltzmannRotamerMover();
 
-	///@brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
-	/// WARNING TO ANY DESIGNER WHO PASSES IN A TASK: YOUR DESIGN STEPS WILL BE UNDONE
-	/// AS THIS TASK CONCEIVES OF THE INPUT SEQUENCE THAT CORRESPONDS TO THE ORIGINAL SEQUENCE
+	///@brief constructor with PackerTask
 	BoltzmannRotamerMover(
 		ScoreFunctionCOP scorefxn_in,
-		PackerTask & task_in
+		PackerTaskOP & task_in
 	);
 
 	///@brief constructor with TaskFactory
@@ -85,12 +83,24 @@ public:
 	virtual std::string get_name() const;
 	virtual void show(std::ostream & output=std::cout) const;
 
-	//PackerTaskMover/BoltzmannRotamerMover needs to have a parent class that implements this?
-	//bool task_is_valid( core::pose::Pose const & pose ) const;
-
+	// helpers
+	core::Size select_rotamer(
+		utility::vector1<std::pair<core::Size, core::Real> > const & boltzmann_factors,
+		core::Real const & partition_function);
+	
 	// setters
-	void score_function( core::scoring::ScoreFunctionCOP sf );
-	void task_factory( core::pack::task::TaskFactoryCOP tf );
+	void set_score_function( core::scoring::ScoreFunctionCOP sf );
+	void set_task_factory( core::pack::task::TaskFactoryCOP tf );
+	void set_resnum( core::Size resnum );
+	void set_temperature( core::Real temperature );
+	void set_bias_sampling( bool bias_sampling );
+	void set_randomize_resnum( bool randomize_resnum );
+	
+	// getters
+	core::Size get_resnum() const;
+	core::Real get_temperature() const;
+	bool get_bias_sampling() const;
+	bool get_randomize_resnum() const;
 
 public:
 
@@ -113,22 +123,26 @@ protected:
 
 private:
 
-	/// @brief RotamerTrailsMover does not have its own score function, rather, it shares
-	/// one with other classes -- CAUTION: the score function is externally modifiable.
 	ScoreFunctionCOP scorefxn_;
 
-	/// @brief use a PackerTask ONLY for fixed-sequence work.
-	/// WARNING TO ANY DESIGNER WHO PASSES IN A TASK: YOUR DESIGN STEPS WILL BE UNDONE
-	/// AS THIS TASK CONCEIVES OF THE INPUT SEQUENCE THAT CORRESPONDS TO THE ORIGINAL SEQUENCE
-	///If a factory is present it overwrites this task with each call to apply()
 	PackerTaskOP task_;
 
-	///@brief TaskFactory allows for nonconstant sequences to be used with BoltzmannRotamerMover
-	///CAUTION: the factory is externally modifiable.
 	TaskFactoryCOP factory_;
 
-	/// @brief showing contents of PackerTask ( default false )
 	bool show_packer_task_;
+	
+	/// @brief residue number specifying the next residue to move
+	core::Size resnum_;
+	
+	/// @brief kT value used for Boltzmann probability calculation
+	core::Real temperature_;
+	
+	/// @brief if true, bias rotamer selection based on energy
+	bool bias_sampling_;
+	
+	/// @brief if true, choose a random residue for the next move
+	bool randomize_resnum_;
+	
 };  // class BoltzmannRotamerMover
 
 std::ostream &operator<< (std::ostream &os, BoltzmannRotamerMover const &mover);

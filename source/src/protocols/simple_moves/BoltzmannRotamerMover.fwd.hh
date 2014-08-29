@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file protocols/simple_moves/BoltzmannRotamerMover.fwd.hh
 /// @brief
-/// @author Noah Ollikainen
+/// @author Noah Ollikainen (nollikai@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_BoltzmannRotamerMover_fwd_hh
 #define INCLUDED_protocols_simple_moves_BoltzmannRotamerMover_fwd_hh
