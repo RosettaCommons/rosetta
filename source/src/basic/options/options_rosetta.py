@@ -3383,6 +3383,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'limit_total_structures', 'Integer', desc="Only retain the first N structures (ordered by cluster number)", default = '-1' ),
 		Option( 'max_total_cluster','Integer', desc="Only ever make N clusters or less", default = '1000'),
 		Option( 'gdtmm', 'Boolean', desc="Cluster by gdtmm instead of RMS", default = 'false' ),
+        Option( 'skip_align', 'Boolean', desc="Cluster without aligning the structures", default = 'false' ),
 		Option( 'sort_groups_by_energy', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
 		Option( 'sort_groups_by_size', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
 		Option( 'remove_singletons', 'Boolean', desc="Get rid of single-member clusters", default = 'false' ),

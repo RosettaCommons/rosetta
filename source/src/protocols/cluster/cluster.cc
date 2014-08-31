@@ -191,6 +191,7 @@ GatherPosesMover::get_distance_measure(
 		// no residues excluded from the native.
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
 					core::pose::symmetry::is_symmetric( pose1 ) ) return scoring::CA_rmsd_symmetric( pose1, pose2 );
+        if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
 		if ( pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_all_atom_ ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_protein_backbone_ ) return scoring::rmsd_with_super( pose1, pose2, scoring::is_protein_backbone );
