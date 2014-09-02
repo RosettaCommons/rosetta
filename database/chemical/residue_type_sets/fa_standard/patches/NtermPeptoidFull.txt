@@ -1,7 +1,7 @@
 ## Peptoid N Terminus Patch by Doug Renfrew (renfrew@nyu.edu)
 
 NAME NtermPeptoidFull
-TYPES LOWER_TERMINUS
+TYPES LOWER_TERMINUS_VARIANT
 
 #############################################################################################
 ## general requirements
@@ -10,7 +10,7 @@ TYPES LOWER_TERMINUS
 #############################################################################################
 BEGIN_SELECTOR
 PROPERTY PEPTOID
-NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
 END_SELECTOR
 
 #############################################################################################

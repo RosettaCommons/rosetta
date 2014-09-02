@@ -135,7 +135,7 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 									 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 									 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ){
 			if ( pose.residue(i).is_RNA() ) {
-				pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
+				pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i );
 			}
 		}
 
@@ -602,9 +602,9 @@ apply_pucker(
 		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res_to_add );
 		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res_to_add + 1 );
 
-		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_add );
+		remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, res_to_add );
 		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
-		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_add + 1 );
+		remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, res_to_add + 1 );
 
 		if ( pose.residue_type( res_to_add ).is_RNA() ){
 			// could also keep track of alpha, beta, etc.
@@ -854,12 +854,14 @@ apply_pucker(
 		using namespace ObjexxFCL;
 
 		runtime_assert( pose.total_residue() >= seq_num );
-		if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) return;
+		if ( pose.residue_type( seq_num ).has_variant_type( VIRTUAL_RNA_RESIDUE ) ) return;
 
 		//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
-		if ( pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ){
-			TR << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num = " << seq_num << " before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" << std::endl;
-			pose::remove_variant_type_from_pose_residue( pose, "PROTONATED_H1_ADENOSINE", seq_num );
+		if ( pose.residue( seq_num ).has_variant_type( PROTONATED_H1_ADENOSINE ) ){
+			TR << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num = " << seq_num <<
+					" before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" <<
+					std::endl;
+			pose::remove_variant_type_from_pose_residue( pose, PROTONATED_H1_ADENOSINE, seq_num );
 		}
 
 		//OK PROTONATED_H1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
@@ -890,11 +892,11 @@ apply_pucker(
 			}
 		}
 
-		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", seq_num );
+		pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
 
 		// what? why not just use virtual phosphate? --rd2013
 		if ( ( pose.total_residue() != seq_num ) &&  ( !is_cutpoint_open ) ) { //April 6, 2011
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num + 1 );
+			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE_UPPER, seq_num + 1 );
 		}
 	}
 
@@ -906,8 +908,8 @@ apply_pucker(
 		using namespace ObjexxFCL;
 
 		runtime_assert( seq_num < pose.total_residue() );
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", seq_num );
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num + 1 );
+		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
+		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE_UPPER, seq_num + 1 );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -916,16 +918,18 @@ apply_pucker(
 
 		using namespace ObjexxFCL;
 
-		if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ) return false;
+		if ( ! pose.residue( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return false;
 
 		if ( ( seq_num + 1 ) > pose.total_residue() ){ //Check in range
 			TR << "( seq_num + 1 ) = " << ( seq_num + 1 )  << std::endl;
 			utility_exit_with_message( "( seq_num + 1 ) > pose.total_residue()!" );
 		}
 
-		if ( pose.residue( seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) == false ){
+		if ( ! pose.residue( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ){
 			TR << "Problem seq_num = " << seq_num << std::endl;
-			utility_exit_with_message( "res ( " + string_of( seq_num ) + " ) has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num + 1 ( " + string_of( seq_num + 1 ) + " )does not have variant_type VIRTUAL_RNA_RESIDUE_UPPER" );
+			utility_exit_with_message( "res ( " + string_of( seq_num ) +
+					" ) has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num + 1 ( " + string_of( seq_num + 1 ) +
+					" )does not have variant_type VIRTUAL_RNA_RESIDUE_UPPER" );
 		}
 
 		return true;

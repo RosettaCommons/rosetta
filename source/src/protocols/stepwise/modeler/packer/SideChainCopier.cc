@@ -68,7 +68,7 @@ using namespace core::conformation;
 			Size const n = copy_res_[i];
 			if ( pose.residue_type( n ).is_RNA() ) {
 				if ( !copy_o2prime_hydrogens_ ) continue;
-				make_variants_match( pose, reference_pose_, n, "VIRTUAL_O2PRIME_HYDROGEN" );
+				make_variants_match( pose, reference_pose_, n, core::chemical::VIRTUAL_O2PRIME_HYDROGEN );
 				id::TorsionID torsion_id( i, id::CHI, 4 ); // 2'-OH
 				if ( std::abs( pose.torsion( torsion_id ) - reference_pose_.torsion( torsion_id ) ) < ho2prime_tolerance ) continue;
 				pose.set_torsion( torsion_id, reference_pose_.torsion( torsion_id ) );

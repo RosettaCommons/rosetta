@@ -150,7 +150,8 @@ namespace sugar {
 			if ( check_is_working_res( full_sugar_res, working_parameters_ ) ){
 
 				Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, working_parameters_ );
-				bool const sugar_is_virtual = pose.residue( working_sugar_res ).has_variant_type( "VIRTUAL_RIBOSE" );
+				bool const sugar_is_virtual =
+						pose.residue( working_sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
 
 				TR.Debug << " | working_sugar_res = " << working_sugar_res;
 				output_boolean( " sugar_is_virtual = ", sugar_is_virtual, TR.Debug );
@@ -169,7 +170,8 @@ namespace sugar {
 						runtime_assert( working_sugar_res == ( working_bulge_res + 1 ) );
 						runtime_assert( working_sugar_res == ( working_ref_res + 2 ) );
 					}
-					runtime_assert( pose.residue( working_bulge_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) );
+					runtime_assert(
+							pose.residue( working_bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) );
 
 					SugarModeling curr_modeling = SugarModeling();
 					curr_modeling = SugarModeling( working_sugar_res, working_ref_res );

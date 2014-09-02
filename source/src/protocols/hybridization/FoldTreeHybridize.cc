@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file  protocols/hybridization/FoldTreeHybridize.cc
 /// @brief Align a random jump to template
-/// @detailed
 /// @author Yifan Song, David Kim
 
 #include <protocols/hybridization/FoldTreeHybridize.hh>
@@ -35,7 +34,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -305,11 +304,12 @@ FoldTreeHybridize::revert_loops_to_original(core::pose::Pose & pose, Loops loops
 
 	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
 		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
-			utility::vector1< VariantType > variant_types = pose.residue_type(ires).variant_types();
+			utility::vector1< std::string > variant_types = pose.residue_type(ires).properties().get_list_of_variants();
 			MutateResidue mutate_mover(ires, sequence[ires-1]);
 			mutate_mover.apply(pose);
 			for (Size i_var = 1; i_var <=variant_types.size(); ++i_var) {
-				core::pose::add_variant_type_to_pose_residue(pose, variant_types[i_var], ires);
+				core::pose::add_variant_type_to_pose_residue(pose,
+						core::chemical::ResidueProperties::get_variant_from_string( variant_types[i_var] ), ires);
 			}
 		}
 	}

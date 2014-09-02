@@ -539,10 +539,10 @@ void
 RNA_DMS_Potential::update_virtual_base_if_necessary( pose::Pose & pose, Size const i ){
 	// virtualize adenosine where probe would stick, or will get weird clashes. Note also that
 	// this should be constant contribution to all A's.
-	add_variant_type_to_pose_residue( pose, "VIRTUAL_BASE", i );
+	add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE, i );
 	for ( Size j = 1; j <= pose.total_residue(); j++ ){
 		if ( i == j ) continue;
-		remove_variant_type_from_pose_residue( pose, "VIRTUAL_BASE", j );
+		remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_BASE, j );
 	}
 }
 

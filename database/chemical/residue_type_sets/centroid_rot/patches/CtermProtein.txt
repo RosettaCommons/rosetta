@@ -2,14 +2,14 @@
 ## I would like to redo this in YAML! no begin_ end_ blocks!
 
 NAME CtermProteinFull
-TYPES UPPER_TERMINUS
+TYPES UPPER_TERMINUS_VARIANT
 
 ## general requirements for this patch
 ## require protein, ignore anything that's already nterm patched:
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN
-NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
 END_SELECTOR
 
 BEGIN_CASE ### THE GENERAL CASE ##########################################

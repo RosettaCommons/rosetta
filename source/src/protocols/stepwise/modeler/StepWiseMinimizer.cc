@@ -250,7 +250,7 @@ namespace modeler {
 																			pose::Pose const & pose,
 																			Size const j ){
 		if ( mm.get_chi( j ) ) return;
-		if ( pose.residue(j).has_variant_type( "VIRTUAL_RESIDUE" ) ) return;
+		if ( pose.residue(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) return;
 		if ( pose.residue(j).is_protein() ){
 			mm.set_chi( j, true );
 		} else if ( pose.residue(j).is_RNA() ){

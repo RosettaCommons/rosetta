@@ -277,9 +277,9 @@ namespace mover {
 		Size actual_offset = offset;
 		if ( swa_move_.attachment_type() == BOND_TO_PREVIOUS ){
 			runtime_assert( offset == 1 );
-			remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
-			remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_build_off ); // got to be safe.
-			remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, res_to_build_off ); // got to be safe.
 			//			fix_protein_jump_atom( pose, res_to_build_off, " N  " );
 			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 			suite_num_ = res_to_add - 1;
@@ -303,9 +303,9 @@ namespace mover {
 												default_jump_atom( pose.residue( res_to_add ) ) );
 			pose.fold_tree( f );
 
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
 			if ( res_to_add_in_full_model_numbering_ < res_list[ res_to_build_off+1 ]-1 ) {
-				add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
+				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
 			}
 			suite_num_ = 0;
 		}
@@ -348,10 +348,10 @@ namespace mover {
 		Size actual_offset = offset;
 		if ( swa_move_.attachment_type() == BOND_TO_NEXT ){
 			runtime_assert( offset == 1 );
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE",    res_to_build_off ); // got to be safe.
-			remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_build_off ); // got to be safe.
-			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS",       res_to_build_off ); // got to be safe.
-			remove_variant_type_from_pose_residue( pose, "N_ACETYLATION",        res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE,    res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT,       res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION,        res_to_build_off ); // got to be safe.
 			pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 			suite_num_ = res_to_add;
 		} else {
@@ -375,9 +375,9 @@ namespace mover {
 			pose.fold_tree( f );
 
 			if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1) {
-				add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
-				if ( !pose.residue_type( res_to_add+1).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
-					add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add+1 );
+				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, res_to_add );
+				if ( !pose.residue_type( res_to_add+1).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ){
+					add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add+1 );
 				}
 			}
 			suite_num_ = 0;

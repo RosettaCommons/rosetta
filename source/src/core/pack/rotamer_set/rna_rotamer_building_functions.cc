@@ -295,7 +295,7 @@ build_proton_chi_rotamers(
 												proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 
 					if ( include_virtual_side_chain ) {
-						runtime_assert( !rot->has_variant_type( "VIRTUAL_SIDE_CHAIN" ) );
+						runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) );
 						static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential; // I think this is OK.
 						Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
 						if ( n_min == 0 || rna_torsion < rna_torsion_min ){
@@ -306,7 +306,7 @@ build_proton_chi_rotamers(
 
 			}
 			if ( include_virtual_side_chain ){
-				ResidueOP rot = core::pose::add_variant_type_to_residue( *rotamers[ n_min ], "VIRTUAL_O2PRIME_HYDROGEN", pose);
+				ResidueOP rot = core::pose::add_variant_type_to_residue( *rotamers[ n_min ], chemical::VIRTUAL_O2PRIME_HYDROGEN, pose);
 				rotamers.push_back( rot );
 			}
 		}
@@ -326,7 +326,7 @@ build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP >
 	Size const number_of_starting_rotamers = rotamers.size();
 	for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {
 
-		runtime_assert( rotamers[n]->has_variant_type( "FIVE_PRIME_PACKABLE_PHOSPHATE" ) );
+		runtime_assert( rotamers[n]->has_variant_type( chemical::FIVE_PRIME_PACKABLE_PHOSPHATE ) );
 		// this nested iteration is totally ghetto -- would be better to unify with fang's protocols/rotamer_sample/rna/RNA_SuiteRotamer code.
 		for ( Size i = 1; i <= full_torsions.size(); i++ ){
 			for ( Size j = 1; j <= full_torsions.size(); j++ ){
@@ -348,7 +348,7 @@ build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP >
 
 		if ( allow_phosphate_virtualization ){
 			//also add a rotamer that removes this variant!
-			ResidueOP new_rsd = remove_variant_type_from_residue( *rotamers[n], "FIVE_PRIME_PACKABLE_PHOSPHATE", pose );
+			ResidueOP new_rsd = remove_variant_type_from_residue( *rotamers[n], chemical::FIVE_PRIME_PACKABLE_PHOSPHATE, pose );
 			rotamers.push_back( new_rsd );
 		}
 
@@ -371,7 +371,7 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 	for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {
 		utility::vector1< Real > const epsilon_torsions  = get_epsilon_torsions( rotamers[n]->mainchain_torsion( DELTA ),
 																																						 true /*extra epsilon*/, 10.0 /*bin size*/ );
-		runtime_assert( rotamers[n]->has_variant_type( "THREE_PRIME_PACKABLE_PHOSPHATE" ) );
+		runtime_assert( rotamers[n]->has_variant_type( chemical::THREE_PRIME_PACKABLE_PHOSPHATE ) );
 		// this nested iteration is totally ghetto -- would be better to unify with fang's protocols/rotamer_sample/rna/RNA_SuiteRotamer code.
 		for ( Size i = 1; i <= epsilon_torsions.size(); i++ ){
 			for ( Size j = 1; j <= full_torsions.size(); j++ ){
@@ -388,7 +388,7 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 
 		if ( allow_phosphate_virtualization ){
 			//also add a rotamer that removes this variant!
-			ResidueOP new_rsd = remove_variant_type_from_residue( *rotamers[n], "THREE_PRIME_PACKABLE_PHOSPHATE", pose );
+			ResidueOP new_rsd = remove_variant_type_from_residue( *rotamers[n], chemical::THREE_PRIME_PACKABLE_PHOSPHATE, pose );
 			rotamers.push_back( new_rsd );
 		}
 

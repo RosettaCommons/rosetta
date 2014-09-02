@@ -9,7 +9,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/hotspot_hashing/movers/PlaceSurfaceProbe.cc
-/// @brief
 /// @author Alex Ford fordas@uw.edu
 //
 
@@ -20,6 +19,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
@@ -135,7 +135,7 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 
 	core::pose::Pose residue_pose;
 
-	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, "VIRTUAL_BB", target_pose);
+	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, core::chemical::VIRTUAL_BB, target_pose);
 	StubGenerator::placeResidueOnPose(residue_pose, virtual_bb_residue);
 
 	SearchPatternOP sampled_surface_pattern(
@@ -172,7 +172,7 @@ SearchPatternOP PlaceSurfaceProbe::create_partitioned_search_pattern(core::pose:
 
 	core::pose::Pose residue_pose;
 
-	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, "VIRTUAL_BB", target_pose);
+	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, core::chemical::VIRTUAL_BB, target_pose);
 	StubGenerator::placeResidueOnPose(residue_pose, virtual_bb_residue);
 
 	SearchPatternOP sampled_surface_pattern(

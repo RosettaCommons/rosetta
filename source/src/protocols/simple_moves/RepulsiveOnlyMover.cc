@@ -18,7 +18,6 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
@@ -63,11 +62,11 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 				if ( ! pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ){
 					core::pose::remove_lower_terminus_type_from_pose_residue( pose, i );
 					core::pose::remove_upper_terminus_type_from_pose_residue( pose, i );
-					core::pose::add_variant_type_to_pose_residue( pose, "REPLONLY", i );
+					core::pose::add_variant_type_to_pose_residue( pose, core::chemical::REPLONLY, i );
 				}
 			}else {
 				if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY )){
-					core::pose::remove_variant_type_from_pose_residue( pose, "REPLONLY", i );
+					core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::REPLONLY, i );
 				}
 			}
 		}
@@ -84,7 +83,7 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 			if ( ! pose.residue( replonly_rsd[i] ).has_variant_type( core::chemical::REPLONLY ) ){
 				core::pose::remove_lower_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::remove_upper_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
-				core::pose::add_variant_type_to_pose_residue( pose, "REPLONLY", replonly_rsd[i] );
+				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::REPLONLY, replonly_rsd[i] );
 			}
 		}
 	}

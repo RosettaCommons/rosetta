@@ -9,7 +9,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/hotspot_hashing/movers/PlaceProbeMover.cc
-/// @brief
 /// @author Alex Ford fordas@uw.edu
 //
 
@@ -25,6 +24,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
@@ -282,7 +282,7 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP tag,
 
 	// Initialize residue representation
 	target_residue_ = StubGenerator::getStubByName( residue_name_ );
-	target_residue_ = core::pose::add_variant_type_to_residue( *target_residue_, "SC_FRAGMENT", target_pose );
+	target_residue_ = core::pose::add_variant_type_to_residue( *target_residue_, core::chemical::SC_FRAGMENT, target_pose );
 }
 
 	

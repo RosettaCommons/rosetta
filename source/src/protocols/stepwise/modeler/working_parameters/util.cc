@@ -312,13 +312,13 @@ bool
 figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res ){
 	kinematics::FoldTree const & f = pose.fold_tree();
 	if ( rebuild_res > 1 &&
-			 pose.residue( rebuild_res - 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
+			 pose.residue( rebuild_res - 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
 			 ( !f.is_cutpoint( rebuild_res - 1 ) ||
 				 is_cutpoint_closed( pose, rebuild_res - 1 ) ) &&
 			 !f.is_cutpoint( rebuild_res ) &&
 			 f.jump_nr( rebuild_res - 1, rebuild_res + 1) > 0 ) return true;
 	if ( rebuild_res < pose.total_residue() &&
-			 pose.residue( rebuild_res + 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
+			 pose.residue( rebuild_res + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
 			 ( !f.is_cutpoint( rebuild_res ) ||
 				 is_cutpoint_closed( pose, rebuild_res ) ) &&
 			 !f.is_cutpoint( rebuild_res - 1 ) &&
@@ -332,8 +332,8 @@ figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const f
 	if ( !floating_base &&
 			 sampler::rna::modeler_sugar_at_five_prime(  pose, rebuild_suite ) &&
 			 sampler::rna::modeler_sugar_at_three_prime( pose, rebuild_suite ) ){
-		if ( !pose.residue( rebuild_suite ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
-				 !pose.residue( rebuild_suite + 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) ) {
+		if ( !pose.residue( rebuild_suite ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
+				 !pose.residue( rebuild_suite + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
 			return true;
 		}
 	}

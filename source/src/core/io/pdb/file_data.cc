@@ -1600,7 +1600,7 @@ build_pose_as_is1(
 			id::AtomID const id( atomi, seqpos );
 			if ( missing[ id ] && rsd.atom_name(atomi) == " P  " ) {
 				TR << "Virtualizing missing phosphate that was built in at seqpos " << seqpos << std::endl;
-				core::pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_DNA_PHOSPHATE", seqpos );
+				core::pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_DNA_PHOSPHATE, seqpos );
 				break;
 			}
 		}

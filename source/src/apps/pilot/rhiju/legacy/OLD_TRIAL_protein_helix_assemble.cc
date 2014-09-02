@@ -21,9 +21,10 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -225,7 +226,9 @@ pack_sidechains( pose::Pose & pose ){
     pack_task_->nonconst_residue_task(i).or_ex3( true );
     pack_task_->nonconst_residue_task(i).or_ex4( true );
     pack_task_->nonconst_residue_task(i).or_include_current( true );
-    if ( pose.residue(i).has_variant_type( "VIRTUAL_RESIDUE" ) ) pack_task_->nonconst_residue_task(i).prevent_repacking();
+    if ( pose.residue(i).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) {
+    	pack_task_->nonconst_residue_task(i).prevent_repacking();
+    }
   }
 
 

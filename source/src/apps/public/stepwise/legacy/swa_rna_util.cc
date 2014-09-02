@@ -367,20 +367,23 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 		bool is_prepend = false;
 		bool both_pose_res_is_virtual = false;
 
-		if ( pose_one.residue( seq_num_one ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) && pose_two.residue( seq_num_two ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+		if ( pose_one.residue( seq_num_one ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
+				pose_two.residue( seq_num_two ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 			both_pose_res_is_virtual = true;
 		}
 
 		if ( ( seq_num_one + 1 ) <= pose_one.total_residue() ){
-			if ( pose_one.residue( seq_num_one ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-				if ( pose_one.residue( seq_num_one + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) == false ){ //consistency_check
-					utility_exit_with_message( "pose_one's seq_num_one = " + string_of( seq_num_one ) + " is a virtual res but seq_num_one + 1 is not a virtual_res_upper!" );
+			if ( pose_one.residue( seq_num_one ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+				if ( ! pose_one.residue( seq_num_one + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ) { //consistency_check
+					utility_exit_with_message( "pose_one's seq_num_one = " + string_of( seq_num_one ) +
+							" is a virtual res but seq_num_one + 1 is not a virtual_res_upper!" );
 				}
 			}
 
-			if ( pose_two.residue( seq_num_two ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-				if ( pose_two.residue( seq_num_two + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) == false ){ //consistency_check
-					utility_exit_with_message( "pose_two's seq_num_two = " + string_of( seq_num_two ) + " is a virtual res but seq_num_two + 1 is not a virtual_res_upper!" );
+			if ( pose_two.residue( seq_num_two ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+				if ( ! pose_two.residue( seq_num_two + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ) { //consistency_check
+					utility_exit_with_message( "pose_two's seq_num_two = " + string_of( seq_num_two ) +
+							" is a virtual res but seq_num_two + 1 is not a virtual_res_upper!" );
 				}
 			}
 		}
@@ -668,8 +671,10 @@ calculate_pairwise_RMSD(){
 	for ( Size n = 1; n <= rmsd_res_pair_list.size(); n++ ){
 		Size native_rmsd_res = rmsd_res_pair_list[n].first;
 		Size decoy_rmsd_res = rmsd_res_pair_list[n].second;
-		output_boolean( "is_native_virtual_res( " + string_of( native_rmsd_res ) + " ) = ", native_pose.residue( native_rmsd_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
-		output_boolean( " | is_decoy_virtual_res( " + string_of( decoy_rmsd_res ) + " ) = ", decoy_pose.residue( decoy_rmsd_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
+		output_boolean( "is_native_virtual_res( " + string_of( native_rmsd_res ) + " ) = ",
+				native_pose.residue( native_rmsd_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ), TR );
+		output_boolean( " | is_decoy_virtual_res( " + string_of( decoy_rmsd_res ) + " ) = ",
+				decoy_pose.residue( decoy_rmsd_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ), TR );
 		std::cout << std::endl;
 	}
 
@@ -1402,7 +1407,7 @@ pdb_to_silent_file(){
 		}
 
 		for ( Size ii = 1; ii <= virtual_sugar_list.size(); ii++ ){
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", virtual_sugar_list[ii] );
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, virtual_sugar_list[ii] );
 		}
 
 		viewer_pose = pose;

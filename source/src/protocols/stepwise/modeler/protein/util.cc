@@ -86,8 +86,8 @@ namespace protein {
 		if ( !pose_1.residue_type( base_res ).is_protein() ) return;
 		if ( !pose_2.residue_type( base_res2 ).is_protein() ) return;
 
-		if ( pose_1.residue_type( base_res ).has_variant_type( "VIRTUAL_RESIDUE" ) ) return;
-		if ( pose_2.residue_type( base_res2 ).has_variant_type( "VIRTUAL_RESIDUE" ) ) return;
+		if ( pose_1.residue_type( base_res ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) return;
+		if ( pose_2.residue_type( base_res2 ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) return;
 
 		{
 			AtomID atom1(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", base_res ), pose_1 ));

@@ -12,6 +12,7 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 // Unit header
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 
 // Basic headers
@@ -20,6 +21,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
+#include <utility/exit.hh>
 
 // C++ headers
 #include <map>
@@ -37,30 +40,18 @@ using namespace core;
 
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
-// Default constructor
-ResidueProperties::ResidueProperties() : utility::pointer::ReferenceCount()
+// Constructor with owning ResidueType
+ResidueProperties::ResidueProperties( ResidueTypeCAP residue_type ) : utility::pointer::ReferenceCount()
 {
-	init();
+	init( residue_type );
 }
 
-// Copy constructor
-ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy ) :
+// "Copy constructor"
+ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy, ResidueTypeCAP new_owner ) :
 		utility::pointer::ReferenceCount( object_to_copy )
 {
+	residue_type_ = new_owner;
 	copy_data( *this, object_to_copy );
-}
-
-// Assignment operator
-ResidueProperties &
-ResidueProperties::operator=( ResidueProperties const & object_to_copy )
-{
-	// Abort self-assignment.
-	if ( this == &object_to_copy ) {
-		return *this;
-	}
-
-	copy_data( *this, object_to_copy );
-	return *this;
 }
 
 // Destructor
@@ -75,12 +66,19 @@ ResidueProperties::show( std::ostream & output ) const
 	using namespace std;
 	using namespace utility;
 
+	output << " Properties:";
 	vector1< string > const & properties( get_list_of_properties() );
 	Size const n_properties( properties.size() );
-
-	output << " Properties:";
 	for ( core::uint i = 1; i <= n_properties; ++i ) {
 		output << ' ' << properties[ i ];
+	}
+	output << endl;
+
+	output << " Variant types:";
+	vector1< string > const & variants( get_list_of_variants() );
+	Size const n_variants( variants.size() );
+	for ( core::uint i = 1; i <= n_variants; ++i ) {
+		output << ' ' << variants[ i ];
 	}
 	output << endl;
 }
@@ -90,33 +88,84 @@ ResidueProperties::show( std::ostream & output ) const
 bool
 ResidueProperties::has_property( std::string const & property ) const
 {
-	// TODO: Wrap in try/catch.
-	// tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
-	return general_property_status_[ get_property_from_string( property ) ];
+	using namespace std;
+	using namespace utility::excn;
+
+	try {
+		return general_property_status_[ get_property_from_string( property ) ];
+	} catch ( EXCN_Msg_Exception const & e ) {
+		TR.Warning << e.msg() << endl;
+	}
+	return false;
 }
 
 void
 ResidueProperties::set_property( std::string const & property, bool const setting )
 {
-	general_property_status_[ get_property_from_string( property ) ] = setting;
+	using namespace std;
+	using namespace utility::excn;
+
+	try {
+		general_property_status_[ get_property_from_string( property ) ] = setting;
+	} catch ( EXCN_Msg_Exception const & e ) {
+		utility_exit_with_message( e.msg() );
+	}
 }
 
 
-/// @note  This function was copied from its old location in ResidueType.
 bool
-ResidueProperties::has_variant_type( VariantType const & variant_type ) const
+ResidueProperties::is_variant_type( std::string const & variant_type ) const
 {
 	using namespace std;
+	using namespace utility::excn;
 
-	return ( find( variant_types_.begin(), variant_types_.end(), variant_type ) != variant_types_.end() );
+	try {
+		return variant_type_status_[ get_variant_from_string( variant_type ) ];
+	} catch ( EXCN_Msg_Exception const & e ) {
+		if ( ! has_custom_variant_types_ ) {
+			TR.Warning << e.msg() << endl;
+		} else {
+			return custom_variant_types_.has_value( variant_type );
+		}
+	}
+	return false;
 }
 
-/// @note  This function was copied from its old location in ResidueType.
 void
-ResidueProperties::add_variant_type( VariantType const & variant_type )
+ResidueProperties::set_variant_type( std::string const & variant_type, bool const setting )
 {
-	if ( ! has_variant_type( variant_type ) ) {
-		variant_types_.push_back( variant_type );
+	using namespace std;
+	using namespace utility;
+	using namespace utility::excn;
+
+	try {
+		variant_type_status_[ get_variant_from_string( variant_type ) ] = setting;
+	} catch ( EXCN_Msg_Exception const & e ) {
+		if ( ! has_custom_variant_types_ ) {
+			utility_exit_with_message( e.msg() );
+		} else {
+			if ( setting /* == true */ ) {
+				if ( custom_variant_types_.has_value( variant_type ) ) {
+					TR.Warning << "Custom variant " << variant_type <<
+							" already exists in " << residue_type_->name() << endl;
+				} else {
+					TR.Info << "Adding the custom variant " << variant_type <<
+							" to " << residue_type_->name() << endl;
+					custom_variant_types_.push_back( variant_type );
+				}
+			} else /* setting == false */ {
+				vector1< string >::iterator i =
+						find( custom_variant_types_.begin(), custom_variant_types_.end(), variant_type );
+				if ( i == custom_variant_types_.end() ) {
+					utility_exit_with_message( "Rosetta does not recognize the custom variant " + variant_type +
+							" in " + residue_type_->name() );
+				} else {
+					TR.Info << "Removing the custom variant " << variant_type <<
+							" from " << residue_type_->name() << endl;
+					custom_variant_types_.erase( i );
+				}
+			}
+		}
 	}
 }
 
@@ -149,9 +198,35 @@ ResidueProperties::get_list_of_properties() const
 
 	vector1< string > list;
 
-	for ( ResidueProperty property = FIRST_PROPERTY; property <= N_RESIDUE_PROPERTIES; ++property ) {
+	for ( ResidueProperty property = FIRST_PROPERTY; property <= N_PROPERTIES; ++property ) {
 		if ( general_property_status_[ property ] ) {
 			list.push_back( get_string_from_property( property ) );
+		}
+	}
+
+	return list;
+}
+
+// Generate and return a list of strings representing the VariantTypes of this ResidueType.
+utility::vector1< std::string >
+ResidueProperties::get_list_of_variants() const
+{
+	using namespace std;
+	using namespace utility;
+
+	vector1< string > list;
+
+	for ( VariantType variant = FIRST_VARIANT; variant <= N_VARIANTS; ++variant ) {
+		if ( variant_type_status_[ variant ] ) {
+			list.push_back( get_string_from_variant( variant ) );
+		}
+	}
+
+	// Consider "custom" variants if necessary.
+	if ( has_custom_variant_types_ ) {
+		Size const n_custom_variants( custom_variant_types_.size() );
+		for ( core::uint i = 1; i <= n_custom_variants; ++i ) {
+			list.push_back( custom_variant_types_[ i ] );
 		}
 	}
 
@@ -162,9 +237,12 @@ ResidueProperties::get_list_of_properties() const
 // Private methods ////////////////////////////////////////////////////////////
 // Initialize data members.
 void
-ResidueProperties::init()
+ResidueProperties::init( ResidueTypeCAP residue_type )
 {
-	general_property_status_.resize( N_RESIDUE_PROPERTIES, false );
+	residue_type_ = residue_type;
+	general_property_status_.resize( N_PROPERTIES, false );
+	variant_type_status_.resize( N_VARIANTS, false );
+	has_custom_variant_types_ = false;
 }
 
 // Copy all data members from <from> to <to>.
@@ -172,7 +250,9 @@ void
 ResidueProperties::copy_data( ResidueProperties & to, ResidueProperties const & from )
 {
 	to.general_property_status_ = from.general_property_status_;
-	to.variant_types_ = from.variant_types_;
+	to.variant_type_status_ = from.variant_type_status_;
+	to.has_custom_variant_types_ = from.has_custom_variant_types_;
+	to.custom_variant_types_ = from.custom_variant_types_;
 	to.numeric_properties_ = from.numeric_properties_;
 	to.string_properties_ = from.string_properties_;
 }
@@ -194,6 +274,15 @@ operator++( ResidueProperty & property )
 {
 	property = static_cast< ResidueProperty >( static_cast< int >( property ) + 1 );
 	return property;
+}
+
+// This allows one to use a for loop with VariantType enum values.
+// This is safe, because the VariantType values are set automatically before compiling.
+VariantType &
+operator++( VariantType & variant )
+{
+	variant = static_cast< VariantType >( static_cast< int >( variant ) + 1 );
+	return variant;
 }
 
 }  // namespace chemical

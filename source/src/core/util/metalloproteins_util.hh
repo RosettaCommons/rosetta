@@ -26,7 +26,6 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
@@ -74,28 +73,6 @@ add_covalent_linkage(
 	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed? 
 );
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief: This is a helper function for the add_covalent_linkage function.  You probably don't want to call it directly, unless you
-/// really know what you're doing.
-/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
-/// stolen from Florian's EnzConstraintParameters.cc (colourful comments and all) in protocols/toolbox/match_enzdes_utils, and was
-/// modified to permit deletion of unnecessary protons and to remove EnzDes-specific stuff.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE
-/// LIST, AND IS CURRENTLY NOT THREADSAFE.
-/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-add_covalent_linkage_helper(
-	core::pose::Pose & pose,
-	//EnzCstTemplateResOP template_res,
-	core::Size const res_pos,
-	core::Size const Atpos,
-	numeric::xyzVector < core::Real > const partner_xyz, //Coordinates of the atom to which this will be bonded
-	//core::Real itorsion,
-	//core::Real iangle,
-	//core::Real idis,
- 	std::string & res_varname,
-	bool const remove_hydrogens
- );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function that generates a list of metal-binding atoms that coordinate a metal in a protein.

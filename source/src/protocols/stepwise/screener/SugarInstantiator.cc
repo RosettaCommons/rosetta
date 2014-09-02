@@ -53,7 +53,7 @@ namespace screener {
 	bool
 	SugarInstantiator::check_moving_sugar( pose::Pose & pose, Size const moving_res ){
 
-		if ( !pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) return false; // nothing to do.
+		if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false; // nothing to do.
 
 		bool instantiate_sugar( false );
 		Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );

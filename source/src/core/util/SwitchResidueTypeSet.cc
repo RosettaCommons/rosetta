@@ -17,11 +17,13 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -31,6 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
+#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/pack/task/TaskFactory.hh>
@@ -38,21 +41,15 @@
 
 #include <core/util/disulfide_util.hh>
 
-// Basic Headers
+// Basic Header
 #include <basic/Tracer.hh>
 
 // Option Headers
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
+// Utility header
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
-
-
 
 
 namespace core {
@@ -295,7 +292,7 @@ switch_to_residue_type_set(
 			core::chemical::ResidueTypeCOPs const & rsd_types( target_residue_type_set->name3_map( rsd.name().substr(0,3) ) );
 			for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 				core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-				if ( rsd.type().variants_match( new_rsd_type ) ) {
+				if ( variants_match( rsd.type(), new_rsd_type ) ) {
 					new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
 					break;
 				}

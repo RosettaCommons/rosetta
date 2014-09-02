@@ -339,12 +339,12 @@ namespace protein {
 		protocols::farna::make_phosphate_nomenclature_matches_mini( import_pose );
 
 		// No virtual anything!
-		utility::vector1< std::string > remove_variants;
-		remove_variants.push_back( "VIRTUAL_PHOSPHATE" );
-		remove_variants.push_back( "VIRTUAL_O2PRIME_HYDROGEN" );
-		remove_variants.push_back( "CUTPOINT_LOWER" );
-		remove_variants.push_back( "CUTPOINT_UPPER" );
-		// Also remove VIRTUAL_RESIDUE variant?
+		utility::vector1< core::chemical::VariantType > remove_variants;
+		remove_variants.push_back( core::chemical::VIRTUAL_PHOSPHATE );
+		remove_variants.push_back( core::chemical::VIRTUAL_O2PRIME_HYDROGEN );
+		remove_variants.push_back( core::chemical::CUTPOINT_LOWER );
+		remove_variants.push_back( core::chemical::CUTPOINT_UPPER );
+		// Also remove VIRTUAL_RESIDUE_VARIANT variant?
 
 		for ( Size n = 1; n <= import_pose.total_residue(); n++  ) {
 			for ( Size i = 1; i <= remove_variants.size(); i++ ){

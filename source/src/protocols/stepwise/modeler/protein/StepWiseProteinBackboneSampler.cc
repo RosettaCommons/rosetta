@@ -240,7 +240,7 @@ namespace protein {
 
 		 // A few special cases first.
 		 if ( n == 1
-					&& !pose.residue( 1 ).has_variant_type( "N_ACETYLATION" )
+					&& !pose.residue( 1 ).has_variant_type( core::chemical::N_ACETYLATION )
 					//&& !pose.residue( 1 ).has_variant_type( "LOWER_TERMINUS" )  /*new!*/
 					){
 
@@ -250,8 +250,8 @@ namespace protein {
 			 get_main_chain_torsion_set_list_n_terminus( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
 
 		 } else if ( n == pose.total_residue()
-								 && !pose.residue( n ).has_variant_type( "C_METHYLAMIDATION" )
-								 && !pose.residue( n ).has_variant_type( "UPPER_TERMINUS" ) /*new!*/
+								 && !pose.residue( n ).has_variant_type( core::chemical::C_METHYLAMIDATION )
+								 && !pose.residue( n ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) /*new!*/
 								 ){
 			 // DEFUNCT: If we're at the C-terminal, there's no point in modeler psi -- just an oxygen.
 			 // basically slave the psi to the phi.
@@ -886,11 +886,11 @@ namespace protein {
 	void
 	StepWiseProteinBackboneSampler::convert_to_centroid( core::pose::Pose & pose ) {
 
-		core::pose::remove_variant_type_from_pose_residue( pose, "N_ACETYLATION", 1 );
-		core::pose::add_variant_type_to_pose_residue( pose, "LOWER_TERMINUS", 1 );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION, 1 );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
 
-		core::pose::remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", pose.total_residue() );
-		core::pose::add_variant_type_to_pose_residue( pose, "UPPER_TERMINUS", pose.total_residue() );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, pose.total_residue() );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.total_residue() );
 
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 

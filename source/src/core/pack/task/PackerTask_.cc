@@ -33,6 +33,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <core/pose/PDBInfo.hh>
@@ -117,13 +118,13 @@ ResidueLevelTask_::ResidueLevelTask_(
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
-		ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( original_residue.type(), "VIRTUAL_SIDE_CHAIN" ) );
+		ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 			ResidueTypeCOPs const & aas( residue_set.aa_map( chemical::AA( ii )));
 			for ( ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(),
 					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-				if ( match_residue_type.variants_match(**aas_iter )) {
+				if ( variants_match( match_residue_type, **aas_iter ) ) {
 					allowed_residue_types_.push_back( *aas_iter );
 				}
 			}
@@ -136,12 +137,13 @@ ResidueLevelTask_::ResidueLevelTask_(
 	  ResidueTypeCOPs dna_types( ResidueSelector().set_property("DNA").select( residue_set ) );
 		for ( ResidueTypeCOPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
 		      type != end; ++type ) {
-			if ( original_residue.type().nonadduct_variants_match( **type ) ) {
+			if ( nonadduct_variants_match( original_residue.type(), **type ) ) {
 				allowed_residue_types_.push_back( *type );
 			}
 		}
 	} else if ( original_residue.is_RNA() ) {
-		ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( original_residue.type(), "VIRTUAL_O2PRIME_HYDROGEN" ) );
+		ResidueType const & match_residue_type(
+				residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 		allowed_residue_types_.push_back( & match_residue_type );
 	} else {
 		// for non-amino acids, default is to include only the existing residuetype
@@ -880,7 +882,7 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 	chemical::ResidueTypeCOPs const & aas( residue_set.interchangeability_group_map( interchangeability_group ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-		if ( original_residue_type_->variants_match( **aas_iter ) &&
+		if ( variants_match( *original_residue_type_, **aas_iter ) &&
 				 (*aas_iter)->aa() >= chemical::num_canonical_aas && // cannot be used to add canonical amino acids
 				std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==	allowed_residue_types_.end() /* haven't already added it */)
 		{
@@ -948,7 +950,7 @@ ResidueLevelTask_::allow_aa(
 
 	for ( chemical::ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-		if ( original_residue_type_->variants_match( **aas_iter ) &&
+		if ( variants_match( *original_residue_type_, **aas_iter ) &&
 				 ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==
 					 allowed_residue_types_.end() ) /* haven't already added it */ ) {
 			allowed_residue_types_.push_back( *aas_iter );

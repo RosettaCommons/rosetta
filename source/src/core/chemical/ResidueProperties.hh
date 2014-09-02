@@ -15,11 +15,10 @@
 #define INCLUDED_core_chemical_ResidueProperties_HH
 
 // Unit headers
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueProperties.fwd.hh>
 #include <core/chemical/ResidueProperty.hh>
-
-// Package headers
-#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -43,17 +42,27 @@ namespace chemical {
 /// improvements. ~Labonte
 class ResidueProperties : public utility::pointer::ReferenceCount {
 public:  // Standard methods //////////////////////////////////////////////////
-	/// @brief  Default constructor
-	ResidueProperties();
+	/// @brief  Constructor with owning ResidueType
+	ResidueProperties( ResidueTypeCAP residue_type );
 
 	/// @brief  Copy constructor
-	ResidueProperties( ResidueProperties const & object_to_copy );
-
-	// Assignment operator
-	ResidueProperties & operator=( ResidueProperties const & object_to_copy );
+	ResidueProperties( ResidueProperties const & object_to_copy, ResidueTypeCAP new_owner );
 
 	// Destructor
 	virtual ~ResidueProperties();
+
+private:
+	// Empty constructor -- should not ever be called; not implemented
+	// An instance of ResidueProperties must have a pointer back to its owning ResidueType.
+	ResidueProperties();
+
+	// Copy constructor -- should not ever be called; not implemented
+	// An instance of ResidueProperties must have a pointer back to its owning ResidueType.
+	ResidueProperties( ResidueProperties const & object_to_copy );
+
+	// Assignment operator -- should not ever be called; not implemented
+	// An instance of ResidueProperties must have a pointer back to its owning ResidueType.
+	ResidueProperties & operator=( ResidueProperties const & object_to_copy );
 
 
 public:  // Standard Rosetta methods //////////////////////////////////////////
@@ -84,19 +93,41 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 	void set_property( std::string const & property, bool const setting );
 
 
-	/// @brief get all the variant types for this ResidueType
-	utility::vector1< VariantType > const &
-	variant_types() const
+	/// @brief  Get whether or not this ResidueType is of the requested VariantType.
+	bool
+	is_variant_type( VariantType const variant_type ) const
 	{
-		return variant_types_;
+		return variant_type_status_[ variant_type ];
 	}
 
-	/// @brief  Get whether or not this ResidueType has the requested VariantType.
-	bool has_variant_type( VariantType const & variant_type ) const;
+	/// @brief  Get whether or not this ResidueType is of the requested VariantType by string.
+	bool is_variant_type( std::string const & variant_type ) const;
 
-	/// @brief Add a variant type to this ResidueType.
-	void add_variant_type( VariantType const & variant_type );
+	/// @brief Set the status of a given VariantType for this ResidueType.
+	void
+	set_variant_type( VariantType const variant_type, bool const setting )
+	{
+		variant_type_status_[ variant_type ] = setting;
+	}
 
+	/// @brief Set the status of a given VariantType for this ResidueType by string.
+	void set_variant_type( std::string const & variant_type, bool const setting );
+
+	/// @brief Does this ResidueType contain additional VariantTypes than the standard list?
+	bool
+	has_custom_variant_types() const
+	{
+		return has_custom_variant_types_;
+	}
+
+	/// @brief   Turn on the ability to create VariantTypes "on-the-fly".
+	/// @details Custom" VariantTypes as strings are permitted for the enzdes and metalloproteins cases.
+	/// Do not enable unless you have a good reason to, as string look-ups are less efficient and more error-prone.
+	void
+	enable_custom_variant_types()
+	{
+		has_custom_variant_types_ = true;
+	}
 
 	///@brief  Add a numeric property.
 	void add_numeric_property( std::string const & tag, core::Real const value );
@@ -121,33 +152,77 @@ public:  // Other public methods //////////////////////////////////////////////
 	/// @brief  Generate and return a list of strings representing the properties of this ResidueType.
 	utility::vector1< std::string > get_list_of_properties() const;
 
+	/// @brief  Generate and return a list of strings representing the VariantTypes of this ResidueType.
+	utility::vector1< std::string > get_list_of_variants() const;
 
-private: // Private methods ///////////////////////////////////////////////////
+	/// @brief  Return a list of custom VariantTypes only for this ResidueType.
+	utility::vector1< std::string >
+	get_list_of_custom_variants() const
+	{
+		return custom_variant_types_;
+	}
+
+	// TODO: Add n_properties() and size() and search for get_list_of_properties().size() calls.
+	// TODO: Add n_variants() and search for get_list_of_variants().size() calls.
+	// TODO: Add is_not_a_variant() and search for get_list_of_variants().empty()  calls.
+
+
+private:  // Private methods //////////////////////////////////////////////////
 	// Initialize data members.
-	void init();
+	void init( ResidueTypeCAP residue_type );
 
 	// Copy all data members from <from> to <to>.
 	void copy_data( ResidueProperties & to, ResidueProperties const & from );
 
 
-private: // Static constant data access
-	// Get the ResidueProperty enum value from the corresponding sting.
-	// This private static class method is defined in property_mappings.cc,
-	// which is auto-generated by the add_residue_properties.py script.
-	static ResidueProperty const & get_property_from_string( std::string const & property);
+private:  // Static constant data access
+	// Get the ResidueProperty enum value from the corresponding string.
+	// This private static class method is defined in ResidueProperty_mappings.cc,
+	// which is auto-generated by the add_ResidueType_enum_files.py script.
+	static ResidueProperty const & get_property_from_string( std::string const & property );
 
 	// Get a string from the corresponding ResidueProperty enum value.
-	// This private static class method is defined in property_mappings.cc,
-	// which is auto-generated by the add_residue_properties.py script.
+	// This private static class method is defined in ResidueProperty_mappings.cc,
+	// which is auto-generated by the add_ResidueType_enum_files.py script.
 	static std::string const & get_string_from_property( ResidueProperty const property );
 
 
-private: // Private data //////////////////////////////////////////////////////
+public:  // FIXME: Reset this to private; I made it public to work as a temp fix for the following files:
+	// - ZnHash.cc
+	// - EnzdesBaseProtocol.cc
+	// - SecondaryMatchProtocol.cc
+	// - SaveAndRetrieveSidechains.cc
+	// - pose_manipulation.cc
+	// - ModifyVariantTypeMover.cc
+	// - ReturnSidechainMover.cc
+	// - EnzConstraintParameters.cc
+	// - FoldTreeHybridize.cc
+	// - protocols/stepwise/modeler/rna/util.cc
+	// Get the VariantType enum value from the corresponding string.
+	// This private static class method is defined in VariantType_mappings.cc,
+	// which is auto-generated by the add_ResidueType_enum_files.py script.
+	static VariantType const & get_variant_from_string( std::string const & variant );
+
+public:  // FIXME: Reset this to private; I made it public to work as a temp fix for ResidueTypeSet.cc.
+	// Get a string from the corresponding VariantType enum value.
+	// This private static class method is defined in VariantType_mappings.cc,
+	// which is auto-generated by the add_ResidueType_enum_files.py script.
+	static std::string const & get_string_from_variant( VariantType const variant );
+
+
+private:  // Private data /////////////////////////////////////////////////////
+	// Back pointer to the owning ResidueType
+	ResidueTypeCAP residue_type_;  // useful for tracer output
+
 	// Storage of general properties.
 	utility::vector1< bool > general_property_status_;  // indexed by ResidueProperty
 
 	// The patch operations/variant types that describe this residue.
-	utility::vector1< VariantType > variant_types_;
+	utility::vector1< bool > variant_type_status_;  // indexed by VariantType
+
+	// "Custom" variants as strings are permitted for the enzdes and metalloproteins cases.
+	bool has_custom_variant_types_;
+	utility::vector1< std::string > custom_variant_types_;
 
 	// Arbitrary numeric properties with string names.
 	std::map<std::string,core::Real> numeric_properties_;
@@ -162,6 +237,9 @@ std::ostream & operator<<( std::ostream & output, ResidueProperties const & obje
 
 // This allows one to use a for loop with ResidueProperty enum values.
 ResidueProperty & operator++( ResidueProperty & property );
+
+// This allows one to use a for loop with VariantType enum values.
+VariantType & operator++( VariantType & variant );
 
 }  // namespace chemical
 }  // namespace core

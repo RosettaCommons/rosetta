@@ -9,7 +9,7 @@
 
 /// @file	 CarbohydrateInfo.cxxtest.hh
 /// @brief   Test suite for CarbohydrateInfo
-/// @author  labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -28,8 +28,7 @@
 
 
 class CarbohydrateInfoTests : public CxxTest::TestSuite {
-public:
-	// Standard methods ////////////////////////////////////////////////////////
+public:  // Standard methods //////////////////////////////////////////////////
 	// Initialization
 	void setUp()
 	{
@@ -68,7 +67,7 @@ public:
 	{}
 
 
-	// Tests ///////////////////////////////////////////////////////////////////
+public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that CarbohydrateInfo.short_name_ is assigned correctly.
 	void test_Pose_chain_sequence_w_polysaccharide()
 	{
@@ -148,8 +147,7 @@ public:
 	}
 
 
-private:
-	// Private data ////////////////////////////////////////////////////////////
+private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose maltotriose_;  // a (1alpha->4) trisaccharide of D-glucose
 	core::pose::Pose isomaltose_;  // a (1alpha->6) disaccharide of D-glucose
 	core::pose::Pose branched_fragment_;  // a branched fragment of amylopectin

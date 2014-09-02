@@ -1502,8 +1502,9 @@ virtualize_bulges( core::pose::Pose & input_pose,
 	if ( !allow_pre_virtualize ){
 		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ){
 			if ( !input_pose.residue( seq_num ).is_RNA() ) continue; //Fang's electron density code
-			if ( input_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-				utility_exit_with_message( "allow_pre_virtualize == false but seq_num = " + string_of( seq_num ) + "  is already virtualized!!" );
+			if ( input_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+				utility_exit_with_message( "allow_pre_virtualize == false but seq_num = " + string_of( seq_num ) +
+						"  is already virtualized!!" );
 			}
 		}
 	}
@@ -1527,12 +1528,12 @@ virtualize_bulges( core::pose::Pose & input_pose,
 			if ( !input_pose.residue( seq_num ).is_RNA() ) continue; //Fang's electron density code
 			if ( allow_bulge_res_list.has_value( seq_num ) == false ) continue;
 
-			if ( input_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-				if ( input_pose.residue( seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) == false ){ //consistency_check
+			if ( input_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
+				if ( ! input_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) ) { //consistency_check
 					utility_exit_with_message( "seq_num = " + string_of( seq_num ) + "  is a virtual res but seq_num + 1 is not a virtual_res_upper!" );
 				}
 
-				if ( base_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ){ //consistency check
+				if ( ! base_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) { //consistency check
 					utility_exit_with_message( "input_pose have virtual at seq_num = " + string_of( seq_num ) + "  but input_pose doesn't!" );
 				}
 
@@ -1541,11 +1542,15 @@ virtualize_bulges( core::pose::Pose & input_pose,
 
 			if ( allow_consecutive_bulges == false ){
 				if ( ( seq_num + 1 ) <= total_res ){
-					if ( input_pose.residue( seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+					if ( input_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+						continue;
+					}
 				}
 
 				if ( ( seq_num - 1 ) >= 1 ){
-					if ( input_pose.residue( seq_num - 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+					if ( input_pose.residue( seq_num - 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+						continue;
+					}
 				}
 			}
 

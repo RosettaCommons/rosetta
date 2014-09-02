@@ -17,8 +17,8 @@ def update_options():
 	cmd = 'cd ..; ./update_options.sh'
 	os.system(cmd)
 
-def update_residue_properties():
-	cmd = 'cd ..; ./update_residue_properties.sh'
+def update_ResidueType_enum_files():
+	cmd = 'cd ..; ./update_ResidueType_enum_files.sh'
 	os.system(cmd)
 
 
@@ -111,7 +111,7 @@ os.chdir( rosetta_cmake_directory or "./" )
 
 update_version()
 update_options()
-update_residue_properties()
+update_ResidueType_enum_files()
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
 

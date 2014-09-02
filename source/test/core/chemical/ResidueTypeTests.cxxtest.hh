@@ -11,6 +11,7 @@
 /// @brief unit tests for ResidueType
 /// @author Matthew O'Meara
 /// @author Rocco Moretti (rmorettiase@gmail.com)
+/// @author Labonte <JWLabonte@jhu.edu>
 
 
 // Test Headers
@@ -48,14 +49,13 @@
 #include <utility/io/izstream.hh>
 #include <numeric/xyzVector.io.hh>
 #include <basic/Tracer.hh>
-
-
+#include <basic/options/option.hh>
+#include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 // C++ Headers
 #include <string>
 #include <ostream>
 #include <boost/graph/adjacency_list.hpp>
-//#include <boost/tuple.hpp>
 
 using std::endl;
 using std::string;
@@ -144,11 +144,11 @@ public:
 		TS_ASSERT_EQUALS( rsd.natoms(), (core::Size) 0);
 		TS_ASSERT_EQUALS( rsd.nheavyatoms(), (core::Size) 0);
 
-		rsd.add_property("PROTEIN");
-		TS_ASSERT(rsd.has_property("PROTEIN"));
+		rsd.add_property( "PROTEIN" );
+		TS_ASSERT( rsd.has_property( "PROTEIN" ) );
 
-		rsd.add_numeric_property("foo",1.5);
-		TS_ASSERT_EQUALS(rsd.get_numeric_property("foo"),1.5);
+		rsd.add_numeric_property( "foo", 1.5 );
+		TS_ASSERT_EQUALS( rsd.get_numeric_property( "foo" ), 1.5 );
 
 		// Build an "Alanine"
 		add_atom( rsd, atom_types," N ", "Nbb", "NH1", -0.47);
@@ -489,6 +489,78 @@ public:
 			}
 			paramslist >> filename;
 		}
+	}
+
+	void test_variant_matching()
+	{
+		using namespace basic::options;
+		using namespace core::chemical;
+
+		// Set up test ResidueTypes.
+		ChemicalManager * manager( ChemicalManager::get_instance() );
+		AtomTypeSetCAP atom_types = manager->atom_type_set( FA_STANDARD );
+		ElementSetCAP element_types = manager->element_set( "default" );
+		MMAtomTypeSetCAP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
+		OrbitalTypeSetCAP orbital_types = manager->orbital_type_set( FA_STANDARD );
+
+		ResidueType res1( atom_types, element_types, mm_atom_types, orbital_types );
+		res1.add_variant_type( UPPER_TERMINUS_VARIANT );
+		res1.add_variant_type( LOWER_TERMINUS_VARIANT );
+
+		ResidueType res2( res1 );
+
+		ResidueType res3( res1 );
+		res3.add_variant_type( PROTONATED );
+
+		ResidueType res4( res1 );
+		res4.add_variant_type( ADDUCT_VARIANT );
+
+		ResidueType res5( res1 );
+		res5.add_variant_type( REPLONLY );
+		res5.add_variant_type( SPECIAL_ROT );
+
+		// Check all three varieties of comparisons.
+		TS_TRACE( "Testing variant comparisons using VariantType enums." );
+
+		TS_ASSERT( variants_match( res1, res2 ) );
+		TS_ASSERT( ! variants_match( res1, res3 ) );
+		option[ OptionKeys::pH::pH_mode ]( true );
+		TS_ASSERT( variants_match( res1, res3 ) );  // These should match in pH mode.
+		TS_ASSERT( ! variants_match( res1, res4 ) );
+		TS_ASSERT( ! variants_match( res1, res5 ) );
+
+		TS_ASSERT( nonadduct_variants_match( res1, res2 ) );
+		TS_ASSERT( ! nonadduct_variants_match( res1, res3 ) );
+		TS_ASSERT( nonadduct_variants_match( res1, res4 ) );
+		TS_ASSERT( ! nonadduct_variants_match( res1, res5 ) );
+
+		vector1< VariantType > exceptions;
+		exceptions.push_back( REPLONLY );
+		exceptions.push_back( SPECIAL_ROT );
+		TS_ASSERT( variants_match_with_exceptions( res1, res2, exceptions ) );
+		TS_ASSERT( ! variants_match_with_exceptions( res1, res3, exceptions ) );
+		TS_ASSERT( ! variants_match_with_exceptions( res1, res4, exceptions ) );
+		TS_ASSERT( variants_match_with_exceptions( res1, res5, exceptions ) );
+
+		// Check for comparisons when "custom" VariantTypes are involved.
+		TS_TRACE( "Testing variant comparisons using custom VariantTypes." );
+
+		res2.enable_custom_variant_types();
+		TS_ASSERT( variants_match( res1, res2 ) );
+
+		res2.add_variant_type( "FUNKY" );
+		TS_ASSERT( ! variants_match( res1, res2 ) );
+
+		res3.enable_custom_variant_types();
+		TS_ASSERT( ! variants_match( res2, res3 ) );
+
+		res3.add_variant_type( "TUBULAR" );
+		TS_ASSERT( ! variants_match( res2, res3 ) );
+
+		res2.add_variant_type( "TUBULAR" );
+		res3.add_variant_type( "FUNKY" );
+		TS_ASSERT( variants_match( res2, res3 ) );
+		TS_ASSERT( ! nonadduct_variants_match( res2, res3 ) );
 	}
 
 	//test functions in bond support and ring detection. If this fails, those functions were altered

@@ -120,13 +120,16 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 		if ( virtual_sugar_is_from_prior_step_ ){ //Virtualize the other partition since it doesn't exist in prior step!
 			for ( Size ii = 1; ii <= working_moving_partition_res.size(); ii++ ){
 				Size const seq_num = working_moving_partition_res[ii];
-				if ( viewer_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+				if ( viewer_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 					already_virtualized_res_list.push_back( seq_num );
 					continue;
 				}
-				pose::add_variant_type_to_pose_residue( viewer_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
+				pose::add_variant_type_to_pose_residue( viewer_pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
 			}
-			if ( working_parameters_->gap_size() == 0 ) pose::add_variant_type_to_pose_residue( viewer_pose, "VIRTUAL_PHOSPHATE", working_parameters_->five_prime_chain_break_res() + 1 );
+			if ( working_parameters_->gap_size() == 0 ) {
+				pose::add_variant_type_to_pose_residue( viewer_pose,
+						core::chemical::VIRTUAL_PHOSPHATE, working_parameters_->five_prime_chain_break_res() + 1 );
+			}
 		}
 
 		TR.Debug << "minimize_all_sampled_floating_bases pose # " << n << " out of " << pose_data_list.size() << " " << std::endl;;
@@ -136,9 +139,12 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 			for ( Size ii = 1; ii <= working_moving_partition_res.size(); ii++ ){
 				Size const seq_num = working_moving_partition_res[ii];
 				if ( already_virtualized_res_list.has_value( seq_num ) ) continue;
-				pose::remove_variant_type_from_pose_residue( viewer_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
+				pose::remove_variant_type_from_pose_residue( viewer_pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
 			}
-			if ( working_parameters_->gap_size() == 0 ) pose::remove_variant_type_from_pose_residue( viewer_pose, "VIRTUAL_PHOSPHATE", working_parameters_->five_prime_chain_break_res() + 1 );
+			if ( working_parameters_->gap_size() == 0 ) {
+				pose::remove_variant_type_from_pose_residue( viewer_pose,
+						core::chemical::VIRTUAL_PHOSPHATE, working_parameters_->five_prime_chain_break_res() + 1 );
+			}
 		}
 
 		( *pose_data_list[n] ) = viewer_pose;
@@ -177,12 +183,13 @@ is_sugar_virtual( core::pose::Pose const & pose, core::Size const sugar_res, cor
 		utility_exit_with_message( "sugar_res < 1 || sugar_res > nres( " + string_of( nres ) + " )!. sugar_res = " + string_of( sugar_res ) );
 	}
 
-	if ( pose.residue( sugar_res ).has_variant_type( "VIRTUAL_RIBOSE" ) ) {
+	if ( pose.residue( sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
 
 		//bulge consistency checks:
 		runtime_assert ( bulge_res > 1 && bulge_res < nres );
 		// will virtualize any bulge residues...
-		if ( !pose.residue( bulge_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) && !bulge_residues_to_virtualize.has( bulge_res ) ) bulge_residues_to_virtualize.push_back( bulge_res );
+		if ( !pose.residue( bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
+				!bulge_residues_to_virtualize.has( bulge_res ) ) bulge_residues_to_virtualize.push_back( bulge_res );
 
 		return true;
 	} else{
@@ -208,7 +215,8 @@ modeler_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data
 			SugarModeling const & curr_modeling = sugar_modeling_list[n];
 			Size const sugar_ID = sugar_ID_counter_list[n];
 			tag_into_pose( *start_pose, tag_from_pose( *start_pose ) + tag_from_pose( *curr_modeling.pose_list[sugar_ID] ) );
-			pose::remove_variant_type_from_pose_residue( *start_pose, "VIRTUAL_RIBOSE", curr_modeling.moving_res );
+			pose::remove_variant_type_from_pose_residue( *start_pose,
+					core::chemical::VIRTUAL_RIBOSE, curr_modeling.moving_res );
 			copy_bulge_res_and_sugar_torsion( curr_modeling, *start_pose, ( *curr_modeling.pose_list[sugar_ID] ) );
 		}
 
@@ -255,8 +263,8 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 	using namespace core::id;
 
 	if ( instantiate_sugar ){
-		runtime_assert( pose.residue( sugar_modeling.moving_res ).has_variant_type( "VIRTUAL_RIBOSE" ) );
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sugar_modeling.moving_res );
+		runtime_assert( pose.residue( sugar_modeling.moving_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) );
+		pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, sugar_modeling.moving_res );
 }
 
 	//This is map from sub numbering to input_res numbering..
@@ -304,7 +312,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		utility::vector1< utility::vector1< Size > > possible_reference_res_lists;
 
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			if ( !pose.residue( n ).has_variant_type( "VIRTUAL_RIBOSE" ) ) continue;
+			if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
 			virtual_sugar_res.push_back( n );
 			reference_res_for_each_virtual_sugar[ n ] = 0;
 			utility::vector1< Size > possible_reference_res = get_possible_reference_res_list_from_pose_without_fold_tree( n, pose,
@@ -359,7 +367,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		Size i = virtual_sugar_res - 1;
 		while ( i >= 1 ){
 			if ( pose.fold_tree().is_cutpoint(i) ) break;
-			if ( !pose.residue( i ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( !pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 				if ( i != moving_suite  ){
 					return i;
 				}
@@ -378,7 +386,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		Size i = virtual_sugar_res + 1;
 		while ( i <= pose.total_residue() ){
 			if ( pose.fold_tree().is_cutpoint( i - 1 ) ) break;
-			if ( !pose.residue( i ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( !pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 				if ( i != (moving_suite - 1) ){
 					return i;
 				}
@@ -418,7 +426,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		std::map< Size, Size > reference_res_for_each_virtual_sugar;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 
-			if ( !pose.residue( n ).has_variant_type( "VIRTUAL_RIBOSE" ) ) continue;
+			if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
 			Size possible_reference_res = look_for_jumps( n, pose, true /*force_upstream*/ );
 
 			if ( !possible_reference_res ){

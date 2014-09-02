@@ -874,7 +874,7 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 
 			// option to use make backbone invisible
 			if ( new_set->sc_only() ) {
-				core::pose::add_variant_type_to_pose_residue( working_pose, "SHOVE_BB", pose.total_residue() );
+				core::pose::add_variant_type_to_pose_residue( working_pose, core::chemical::SHOVE_BB, pose.total_residue() );
 			}
 			core::Real const score = get_residue_score_( working_pose, scorefxn, placed_seqpos );
 			TR << stub_it->first << " " << score << "\n";
@@ -1079,7 +1079,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 	// option to use make backbone invisible (defaults true), overridden by threemer
 	if ( sc_only_ ) {
 		for( core::Size i = pose.total_residue() - hotspot_length() + 1; i <= pose.total_residue(); ++i ) {
-			core::pose::add_variant_type_to_pose_residue( pose, "SHOVE_BB", i );
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, i );
 		}
 	}
 

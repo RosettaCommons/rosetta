@@ -1,7 +1,7 @@
 ## Peptoid C Terminus Patch by Doug Renfrew (renfrew@nyu.edu)
 
 NAME CtermPeptoidFull
-TYPES UPPER_TERMINUS
+TYPES UPPER_TERMINUS_VARIANT
 
 #############################################################################################
 ## general requirements
@@ -10,7 +10,7 @@ TYPES UPPER_TERMINUS
 #############################################################################################
 BEGIN_SELECTOR
 PROPERTY PEPTOID
-NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
 END_SELECTOR
 
 #############################################################################################

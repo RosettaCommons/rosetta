@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.cc
-/// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 
 // Unit headers
@@ -16,26 +15,29 @@
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechainsCreator.hh>
 
 // Project headers
-#include <utility/tag/Tag.hh>
-#include <core/pose/Pose.hh>
-#include <basic/Tracer.hh>
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-//for putting back right variants
-
-//Auto Headers
-#include <core/pose/util.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+
+// Utility headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -132,24 +134,32 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 			pose.replace_residue( res, init_pose_->residue( res ), true/*orient_backbone*/ );
 		}
 	}
-	 if (ensure_variant_matching_){
+	if (ensure_variant_matching_){
 		//make sure variants match, if not put back the initial variants
-    using namespace core;
-    for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+		using namespace core;
+		for (core::uint i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			if ( ! variants_match( pose.residue_type( i ), init_pose_->residue_type( i ) ) ) {
+				utility::vector1< std::string > const new_var_types(
+						pose.residue_type( i ).properties().get_list_of_variants() );
+				utility::vector1< std::string > const old_var_types(
+						init_pose_->residue_type( i ).properties().get_list_of_variants() );
+				for ( utility::vector1< std::string >::const_iterator newvars = new_var_types.begin();
+						newvars != new_var_types.end(); ++newvars ) {
+					if( ! (init_pose_->residue_type( i ).has_variant_type( *newvars ) ) ) {
+						core::pose::remove_variant_type_from_pose_residue( pose,
+								core::chemical::ResidueProperties::get_variant_from_string( *newvars ), i );
+					}
+				}
 
-      if( !(pose.residue_type( i ).variants_match( init_pose_->residue_type( i ) ) ) ){
-
-        utility::vector1< std::string > const new_var_types( pose.residue_type( i ).variant_types() );
-        utility::vector1< std::string > const old_var_types( init_pose_->residue_type( i ).variant_types() );
-        for( utility::vector1< std::string >::const_iterator newvars = new_var_types.begin(); newvars  != new_var_types.end(); ++newvars ){
-          if( ! (init_pose_->residue_type( i ).has_variant_type( *newvars ) ) ) core::pose::remove_variant_type_from_pose_residue( pose, *newvars, i );
-        }
-
-        for( utility::vector1< std::string >::const_iterator oldvars = old_var_types.begin(); oldvars  != old_var_types.end(); ++oldvars ){
-          if( !pose.residue_type( i ).has_variant_type( *oldvars ) ) core::pose::add_variant_type_to_pose_residue( pose, *oldvars, i );
-        }
-      } //if variants don't match
-    }
+				for ( utility::vector1< std::string >::const_iterator oldvars = old_var_types.begin();
+						oldvars != old_var_types.end(); ++oldvars ) {
+					if( !pose.residue_type( i ).has_variant_type( *oldvars ) ) {
+						core::pose::add_variant_type_to_pose_residue( pose,
+								core::chemical::ResidueProperties::get_variant_from_string( *oldvars ), i );
+					}
+				}
+			} //if variants don't match
+		}
 	}
 	if ( jumpid_ > 0 ) {
 		pose.set_jump( rb_jump, new_jump );

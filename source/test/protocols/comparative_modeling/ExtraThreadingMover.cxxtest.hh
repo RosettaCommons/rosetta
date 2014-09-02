@@ -17,8 +17,6 @@
 #include <test/core/init_util.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
@@ -50,7 +48,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>

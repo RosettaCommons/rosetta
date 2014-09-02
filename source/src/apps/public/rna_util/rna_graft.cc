@@ -82,7 +82,7 @@ void
 unvirtualize_phosphates( pose::Pose & pose, utility::vector1< Size > const & unvirtualize_phosphate_residues  ){
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
 		if ( !unvirtualize_phosphate_residues.has_value( pose.pdb_info()->number( n ) ) ) continue;
-		core::pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
+		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 	}
 }
 
@@ -373,7 +373,9 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	// chain boundaries -- make sure they are virtualized [this could be semi-dangerous for group I ribozymes with
 	// discontinuous numbering -- so don't do it?
 	for ( Size n = 1; n <= resnum_target.size(); n++ ){
-		if ( n == 1 || ( resnum_target[n] > resnum_target[n-1] + 1 ) )  add_variant_type_to_pose_residue( pose_target, "VIRTUAL_PHOSPHATE", n );
+		if ( n == 1 || ( resnum_target[n] > resnum_target[n-1] + 1 ) ) {
+			add_variant_type_to_pose_residue( pose_target, core::chemical::VIRTUAL_PHOSPHATE, n );
+		}
 	}
 
 	// Need to fill in PDBInfo!

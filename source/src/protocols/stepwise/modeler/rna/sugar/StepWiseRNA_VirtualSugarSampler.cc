@@ -189,8 +189,7 @@ StepWiseRNA_VirtualSugarSampler::apply( utility::vector1< PoseOP > & pose_list,
 //  Virtualize phosphate 5' to any chainbreak. [I thought this would already be done...]
 //
 void
-StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pose_list,
-																														pose::Pose & pose ){
+StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pose_list, pose::Pose & pose ) {
 
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
@@ -205,8 +204,8 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	clock_t const time_start( clock() );
 	//July 28th, 2011 Could set extra_chi here, BUT necessary?
 	RNA_NucleosideStepWiseSampler sampler( sugar_modeling_.moving_res,
-																 sugar_modeling_.moving_res_pucker_state,
-																 sugar_modeling_.moving_res_base_state );
+			sugar_modeling_.moving_res_pucker_state,
+			sugar_modeling_.moving_res_base_state );
 	sampler.set_idealize_coord(   use_phenix_geo_ );
 	sampler.set_skip_same_pucker( use_phenix_geo_ );
 	sampler.set_random( choose_random_ );
@@ -234,7 +233,8 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	}
 
 	pose::Pose pose_init = pose;//Hard copy
-	pose::remove_variant_type_from_pose_residue( pose_init, "VIRTUAL_RIBOSE", sugar_modeling_.moving_res );
+	pose::remove_variant_type_from_pose_residue( pose_init,
+			core::chemical::VIRTUAL_RIBOSE, sugar_modeling_.moving_res );
 
 	Size count( 0 );
 	sugar_setup_success_ = false;
@@ -650,7 +650,8 @@ StepWiseRNA_VirtualSugarSampler::initialize_pose_variants_for_chain_closure( uti
 		Pose & pose = *(pose_list[n]);
 		// in legacy mode this occurs above in 'setup'. but it really should be here.
 		if ( !legacy_mode_)	setup_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
-		pose::add_variant_type_to_pose_residue(  pose, "VIRTUAL_PHOSPHATE", sugar_modeling_.five_prime_chain_break + 1 );
+		pose::add_variant_type_to_pose_residue(  pose,
+				core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.five_prime_chain_break + 1 );
 		core::pose::rna::remove_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
 
 		// this used to happen inside StepWiseModeler (and not get reverted) -- special for bulge cases, so moved out here.
@@ -667,7 +668,8 @@ StepWiseRNA_VirtualSugarSampler::restore_pose_variants_after_chain_closure( util
 	for ( Size n = 1; n <= pose_list.size(); n++ ){
 		Pose & pose = *(pose_list[n]);
 		remove_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE",  sugar_modeling_.five_prime_chain_break + 1 );
+		pose::remove_variant_type_from_pose_residue( pose,
+				core::chemical::VIRTUAL_PHOSPHATE,  sugar_modeling_.five_prime_chain_break + 1 );
 		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
 		( *modeler_scorefxn )( pose ); //for output purposes...
 	}
@@ -677,10 +679,11 @@ StepWiseRNA_VirtualSugarSampler::restore_pose_variants_after_chain_closure( util
 void
 StepWiseRNA_VirtualSugarSampler::reinstantiate_backbone_at_moving_res( core::pose::Pose & pose, core::Size const rebuild_res,
 																																			 Size const five_prime_chain_break_res ) {
-	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", rebuild_res ); //May 31, 2010
-	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", rebuild_res );
+	pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, rebuild_res ); //May 31, 2010
+	pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, rebuild_res );
 	if ( rebuild_res == five_prime_chain_break_res + 1 ) {
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", rebuild_res ); //this virtual_phosphate was added to pose at the beginning of this function.
+		pose::remove_variant_type_from_pose_residue( pose,
+				core::chemical::VIRTUAL_PHOSPHATE, rebuild_res ); //this virtual_phosphate was added to pose at the beginning of this function.
 	}
 }
 
@@ -728,9 +731,9 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 
 	// moving residues's phosphate could be part of distal partition...
 	moving_phosphate_virtualized_ = false;
-	if ( !pose.residue( sugar_modeling_.moving_res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) &&
-			 !pose.residue( sugar_modeling_.moving_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" /*same as virtual phosphate*/ ) ){
-		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", sugar_modeling_.moving_res );
+	if ( !pose.residue( sugar_modeling_.moving_res ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
+			 !pose.residue( sugar_modeling_.moving_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER /*same as virtual phosphate*/ ) ){
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.moving_res );
 		// If phosphate instantiated, I thought there should always be a connection to a distal 5' residue..
 		// but that's not the case at a cutpoint_closed. -- rhiju.
 		//		runtime_assert( distal_partition_res_.has_value( sugar_modeling_.moving_res - 1 ) )
@@ -742,10 +745,10 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 
 	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ){
 		Size const seq_num = distal_partition_res_[ii];
-		if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+		if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 			already_virtualized_res_list_.push_back( seq_num );
 		} else {
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", seq_num );
+			pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
 		}
 	}
 
@@ -766,12 +769,13 @@ StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( utility::vector
 void
 StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( pose::Pose & current_pose ){
 
-	if ( moving_phosphate_virtualized_ ) pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_PHOSPHATE", sugar_modeling_.moving_res );
+	if ( moving_phosphate_virtualized_ ) pose::remove_variant_type_from_pose_residue( current_pose,
+			core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.moving_res );
 
 	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ){
 		Size const seq_num = distal_partition_res_[ii];
 		if ( already_virtualized_res_list_.has_value( seq_num ) ) continue;
-		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
+		pose::remove_variant_type_from_pose_residue( current_pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
 	}
 
 	phosphate::copy_over_phosphate_variants( current_pose, *pose_with_original_terminal_phosphates_, distal_partition_res_ );

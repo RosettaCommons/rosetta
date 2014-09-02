@@ -108,7 +108,7 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 	} else {
 		core::chemical::ResidueTypeSet const & res1_set( res_res1.residue_type_set() );
 		core::chemical::ResidueType const & working_res1_type(
-			res1_set.get_residue_type_with_variant_added( res_res1.type(), "VIRTUAL_BB" ) );
+			res1_set.get_residue_type_with_variant_added( res_res1.type(), core::chemical::VIRTUAL_BB ) );
 		core::conformation::ResidueOP working_res1 = 
 			core::conformation::ResidueFactory::create_residue( working_res1_type );
 		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms(
@@ -116,7 +116,7 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 
 		core::chemical::ResidueTypeSet const & res2_set( res_res2.residue_type_set() );
 		core::chemical::ResidueType const & working_res2_type(
-			res2_set.get_residue_type_with_variant_added( res_res2.type(), "VIRTUAL_BB" ) );
+			res2_set.get_residue_type_with_variant_added( res_res2.type(), core::chemical::VIRTUAL_BB ) );
 		core::conformation::ResidueOP working_res2 = 
 			core::conformation::ResidueFactory::create_residue( working_res2_type );
 		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms(

@@ -51,11 +51,11 @@ namespace phosphate {
 	remove_terminal_phosphates( pose::Pose & pose, utility::vector1< Size > const & res_list ){
 		for ( Size i = 1; i <= res_list.size(); i++ ){
 			Size const & n = res_list[ i ];
-			if ( pose.residue(n).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
-				remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", n );
-				add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
+			if ( pose.residue(n).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ){
+				remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, n );
+				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 			}
-			remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", n );
+			remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, n );
 		}
 	}
 
@@ -98,9 +98,9 @@ namespace phosphate {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	copy_over_phosphate_variants( pose::Pose & pose_input,
-																pose::Pose const & reference_pose,
-																utility::vector1< PhosphateMove > const & phosphate_move_list ) {
-
+			pose::Pose const & reference_pose,
+			utility::vector1< PhosphateMove > const & phosphate_move_list )
+	{
 		using namespace core::id;
 		using namespace core::chemical;
 		using namespace core::chemical::rna;
@@ -119,16 +119,16 @@ namespace phosphate {
 			if ( terminus == FIVE_PRIME_PHOSPHATE ){
 				if ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) ) { // may be copying to a pose that no longer has terminus
 					bool added_new_phosphate( false );
-					if ( pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
-						make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
-						make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
-						make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
+					if ( pose.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ){
+						make_variants_match( pose, reference_pose, n, core::chemical::FIVE_PRIME_PHOSPHATE );
+						make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_PHOSPHATE );
+						make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_RIBOSE );
 					} else { // order matters, since there's not variant with both virtual phosphate and five prime phosphate
-						make_variants_match( pose, reference_pose, n, LOWER_TERMINUS_VARIANT );
-						make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-						make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
-						make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
-						added_new_phosphate = pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" );
+						make_variants_match( pose, reference_pose, n, core::chemical::LOWER_TERMINUS_VARIANT );
+						make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_RIBOSE );
+						make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_PHOSPHATE );
+						make_variants_match( pose, reference_pose, n, core::chemical::FIVE_PRIME_PHOSPHATE );
+						added_new_phosphate = pose.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE );
 					}
 					if ( added_new_phosphate ){
 						correctly_position_five_prime_phosphate( pose, n);
@@ -140,9 +140,9 @@ namespace phosphate {
 			} else {
 				runtime_assert( terminus == THREE_PRIME_PHOSPHATE );
 				if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) {
-					make_variants_match( pose, reference_pose, n, UPPER_TERMINUS_VARIANT );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-					make_variants_match( pose, reference_pose, n, "THREE_PRIME_PHOSPHATE" );
+					make_variants_match( pose, reference_pose, n, core::chemical::UPPER_TERMINUS_VARIANT );
+					make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_RIBOSE );
+					make_variants_match( pose, reference_pose, n, core::chemical::THREE_PRIME_PHOSPHATE );
 					torsion_ids.push_back( TorsionID( n, id::BB, EPSILON ) );
 					torsion_ids.push_back( TorsionID( n, id::BB, ZETA ) );
 				}
@@ -152,7 +152,7 @@ namespace phosphate {
 				pose.set_torsion( torsion_ids[m], reference_pose.torsion( torsion_ids[m] ) );
 			}
 
-			make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
+			make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_RIBOSE );
 
 		}
 

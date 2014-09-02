@@ -87,12 +87,12 @@ namespace checker {
 
 			conformation::Residue const & residue_object = pose.residue( seq_num );
 
-			if ( residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( residue_object.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 				TR.Debug << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
 				is_virtual_base_( seq_num ) = true;
 			}
 
-			if ( residue_object.has_variant_type( "BULGE" ) ){
+			if ( residue_object.has_variant_type( core::chemical::BULGE ) ){
 				TR.Debug << "Residue " << seq_num << " is a BULGE!" << std::endl;
 				is_virtual_base_( seq_num ) = true;
 			}

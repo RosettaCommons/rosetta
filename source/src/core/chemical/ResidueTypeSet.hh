@@ -29,7 +29,7 @@
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -173,23 +173,18 @@ public:
 	bool has_name( std::string const & name ) const;
 
 	/// @brief query if any ResidueTypes in the set have a "name3" tat matches the input name3
-	bool
-	has_name3( std::string const & name3 ) const;
+	bool has_name3( std::string const & name3 ) const;
 
-	/// @brief query a variant ResidueType by its base ResidueType and VariantType
-	///
-	/// @note currently, this will not work for variant types defined as alternate
-	/// base residues (ie different params files)
-	ResidueType const &
-	get_residue_type_with_variant_added( ResidueType const & init_rsd, VariantType const & new_type ) const;
+	/// @brief Query a variant ResidueType by its base ResidueType and VariantType
+	ResidueType const & get_residue_type_with_variant_added(
+			ResidueType const & init_rsd,
+			VariantType const new_type ) const;
 
 
 	/// @brief return the residuetype we get from variant rsd type after removing the desired variant type
-	///
-	/// @note currently, this will not work for variant types defined as alternate
-	/// base residues (ie different params files)
-	ResidueType const &
-	get_residue_type_with_variant_removed( ResidueType const & init_rsd, VariantType const & old_type ) const;
+	ResidueType const & get_residue_type_with_variant_removed(
+			ResidueType const & init_rsd,
+			VariantType const old_type ) const;
 
 
 	/// @brief query ResidueTypes by their AA enum type

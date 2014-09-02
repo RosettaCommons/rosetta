@@ -448,7 +448,8 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	if ( options_->o2prime_legacy_mode() ) add_virtual_O2Prime_hydrogen( *screening_pose_ );
 	//	phosphate::remove_terminal_phosphates( *screening_pose_ ); // to be deprecated with new atr/rep check.
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
-		add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014 // to be deprecated with new atr/rep check.
+		add_variant_type_to_pose_residue( *screening_pose_, core::chemical::VIRTUAL_PHOSPHATE,
+				rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014 // to be deprecated with new atr/rep check.
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -469,8 +470,8 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	// virtual sugars even at residues that have instantiated sugars -- we can quickly screen this pose,
 	// and it provides the appropriate baseline atr/rep for checking contacts and clashes.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_, "VIRTUAL_RIBOSE",
-																							residue_alternative_sets_[ n ].representative_seqpos() );
+		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_,
+				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
 	}
 	// following is to check atr/rep even on sugars that will remain virtualized.
 	bool const use_loose_rep_cutoff = ( kic_modeler_ || moving_partition_res_.size() > 1 /* is_internal */ );
@@ -480,12 +481,13 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	}
 	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::remove_variant_type_from_pose_residue( *screening_pose_, "VIRTUAL_RIBOSE",
-																								 residue_alternative_sets_[ n ].representative_seqpos() );
+		pose::remove_variant_type_from_pose_residue( *screening_pose_,
+				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
 	}
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
-		rna_chain_closable_geometry_checkers_.push_back( new checker::RNA_ChainClosableGeometryChecker( rna_five_prime_chain_breaks_[n], rna_three_prime_chain_breaks_[n], rna_chain_break_gap_sizes_[n] ) );
+		rna_chain_closable_geometry_checkers_.push_back( new checker::RNA_ChainClosableGeometryChecker(
+				rna_five_prime_chain_breaks_[n], rna_three_prime_chain_breaks_[n], rna_chain_break_gap_sizes_[n] ) );
 	}
 
 	screening_pose_->remove_constraints(); // chain closure actually assumes no constraints in pose -- it sets up its own constraints.

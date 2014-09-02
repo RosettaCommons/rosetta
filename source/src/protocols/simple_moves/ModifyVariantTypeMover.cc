@@ -18,10 +18,10 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/util.hh>
@@ -55,30 +55,27 @@ namespace simple_moves {
 static basic::Tracer TR( "protocols.simple_moves.ModifyVariantTypeMover" );
 
 
-/// ModifyVariantTypeMover; based on the protocols::moves::Mover basis class
+// ModifyVariantTypeMover; based on the protocols::moves::Mover basis class
 ModifyVariantTypeMover::ModifyVariantTypeMover() :
-  protocols::moves::Mover("ModifyVariantType"),
-  task_factory_(NULL),
-  add_target_types_(),
-  remove_target_types_()
-  {}
+		protocols::moves::Mover("ModifyVariantType"),
+		task_factory_(NULL),
+		add_target_types_(),
+		remove_target_types_()
+{}
 
 // @brief apply function here
 void
 ModifyVariantTypeMover::apply( core::pose::Pose & pose ) 
 {
 	// Create map of target residues using taskoperation
-  core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 
-  if ( task_factory_ != 0 )
-	{
-    task = task_factory_->create_task_and_apply_taskoperations( pose );
+	if ( task_factory_ != 0 ) {
+		task = task_factory_->create_task_and_apply_taskoperations( pose );
 		TR.Debug << "Initializing from packer task." << std::endl;
-  }
-	else
-	{
+	} else {
 		TR.Debug << "No packer task specified, using default task." << std::endl;
-  }
+	}
 
 	for (core::Size resi = 1; resi <= pose.n_residue(); resi++)
 	{
@@ -87,14 +84,14 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 			core::chemical::ResidueTypeSet const & rsd_set(pose.residue(resi).residue_type_set());
 			core::chemical::ResidueTypeCOP new_rsd_type(pose.residue(resi).type());
 
-			BOOST_FOREACH(std::string remove_type, remove_target_types_)
-			{
-				new_rsd_type = rsd_set.get_residue_type_with_variant_removed( *new_rsd_type, remove_type);
+			BOOST_FOREACH( std::string remove_type, remove_target_types_ ) {
+				new_rsd_type = rsd_set.get_residue_type_with_variant_removed( *new_rsd_type,
+						core::chemical::ResidueProperties::get_variant_from_string( remove_type ) );
 			}
 
-			BOOST_FOREACH(std::string add_type, add_target_types_)
-			{
-				new_rsd_type = rsd_set.get_residue_type_with_variant_added( *new_rsd_type, add_type);
+			BOOST_FOREACH( std::string add_type, add_target_types_ ) {
+				new_rsd_type = rsd_set.get_residue_type_with_variant_added( *new_rsd_type,
+						core::chemical::ResidueProperties::get_variant_from_string( add_type ) );
 			}
 
 			core::pose::replace_pose_residue_copying_existing_coordinates( pose, resi, *new_rsd_type );

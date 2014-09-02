@@ -170,7 +170,10 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 
 			// append the new residue and set its backbone virtual (emulate de novo hashing)
 			(*target_chain_it)->append_residue_by_jump( residue, (*target_chain_it)->total_residue(), "", "", true );
-			if( option[hotspot::sc_only]() ) core::pose::add_variant_type_to_pose_residue( **target_chain_it, "SHOVE_BB", (*target_chain_it)->total_residue() );
+			if( option[hotspot::sc_only]() ) {
+				core::pose::add_variant_type_to_pose_residue( **target_chain_it,
+						core::chemical::SHOVE_BB, (*target_chain_it)->total_residue() );
+			}
 
 			//Size const pdb_seqpos = residue->seqpos() + pose.conformation().chain_begin( chain2 ) - 1;
 			Size const placed_seqpos = (*target_chain_it)->total_residue();

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   core/chemical/Patch.hh
 /// @author Phil Bradley
 
 // See Patch.cc to understand what's going on.
@@ -30,7 +30,7 @@ namespace core {
 namespace chemical {
 
 /// @brief the string used to create new residue names after patching
-extern std::string const patch_linker;
+extern std::string const PATCH_LINKER;
 
 /// @brief helper function, returns the base residue name prior to any patching
 std::string
@@ -124,7 +124,7 @@ public:
 
 	/// @brief the variant types created by applying this patch
 	virtual
-	utility::vector1< VariantType > const &
+	utility::vector1< std::string > const &
 	types() const
 	{
 		return types_;
@@ -136,7 +136,7 @@ private:
 	std::string name_;
 
 	/// @brief variant types created by the patch
-	utility::vector1< VariantType > types_;
+	utility::vector1< std::string > types_;
 
 	/// @brief criteria to select ResidueTypes to which the patch is applied
 	ResidueSelector selector_;

@@ -16,13 +16,12 @@
 // Unit headers
 #include <devel/znhash/ZnHash.hh>
 
-// Protocols headers
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-
 // Core headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -40,6 +39,7 @@
 // Protocols headers
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -885,12 +885,18 @@ ZnCoordinationScorer::insert_match_onto_pose(
 
 		// find the appropriate residue type for this position
 		core::chemical::ResidueTypeCOP newrestype( & matchres.type() );
-		utility::vector1< core::chemical::VariantType > const & matchres_variants
-			= matchres.type().variant_types();
+		utility::vector1< std::string > const & matchres_variants =
+				matchres.type().properties().get_list_of_variants();
 		for ( Size jj = 1; jj <= matchres_variants.size(); ++jj ) {
 			if ( ! dstres.type().has_variant_type( matchres_variants[ jj ]  )) {
 				core::chemical::ResidueTypeCOP variantfree_newrestype;
-				variantfree_newrestype = & ( restypeset.get_residue_type_with_variant_removed( *newrestype, matchres_variants[jj] ));
+				// TODO: Refactor this to avoid working with strings.
+				variantfree_newrestype = & (
+						restypeset.get_residue_type_with_variant_removed(
+								*newrestype,
+								core::chemical::ResidueProperties::get_variant_from_string( matchres_variants[ jj ] )
+						)
+				);
 				if ( ! variantfree_newrestype  ) {
 					std::cerr << "Error could not remove variant " << matchres_variants[ jj ] << " from restype " <<
 						newrestype->name() << std::endl;
@@ -900,12 +906,18 @@ ZnCoordinationScorer::insert_match_onto_pose(
 				}
 			}
 		}
-		utility::vector1< core::chemical::VariantType > const & dstres_variants
-			= dstres.type().variant_types();
+		utility::vector1< std::string > const & dstres_variants =
+				dstres.type().properties().get_list_of_variants();
 		for ( Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
 			if ( ! newrestype->has_variant_type( dstres_variants[ jj ]  )) {
 				core::chemical::ResidueTypeCOP variantful_newrestype;
-				variantful_newrestype = & ( restypeset.get_residue_type_with_variant_added( *newrestype, dstres_variants[jj] ));
+				// TODO: Refactor this to avoid working with strings.
+				variantful_newrestype = & (
+						restypeset.get_residue_type_with_variant_added(
+								*newrestype,
+								core::chemical::ResidueProperties::get_variant_from_string( dstres_variants[ jj ] )
+						)
+				);
 				if ( ! variantful_newrestype  ) {
 					std::cerr << "Error could not add variant " << dstres_variants[ jj ] << " to restype " <<
 						newrestype->name() << std::endl;
@@ -917,15 +929,15 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		}
 
 		// This should be unreachable.
-		if ( ! newrestype->variants_match( dstres.type() ) ) {
+		if ( ! variants_match( *newrestype, dstres.type() ) ) {
 			std::cerr << "ERROR: could not get newrestype and dstres to agree on variant types.\n";
 			std::cerr << "Dstres (" << dstres.name() << ") variants:\n";
 			for ( Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
 				std::cerr << "  " << dstres_variants[ jj ] << "\n";
 			}
 			std::cerr << "Newrestype variants:\n" << std::endl;
-			for ( Size jj = 1; jj <= newrestype->variant_types().size(); ++jj ) {
-				std::cerr << "  " << newrestype->variant_types()[ jj ] << "\n";
+			for ( Size jj = 1; jj <= newrestype->properties().get_list_of_variants().size(); ++jj ) {
+				std::cerr << "  " << newrestype->properties().get_list_of_variants()[ jj ] << "\n";
 			}
 
 			utility_exit_with_message( "Could not match the variant types for newres and dstres" );

@@ -1,0 +1,119 @@
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available
+# (c) under license.
+# (c) The Rosetta software is developed by the contributing members of the
+# (c) Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org.
+# (c) Questions about this can be addressed to University of Washington UW
+# (c) TechTransfer, email: license@u.washington.edu.
+
+
+# To add a new variant type to Rosetta for use in .params files, patch files,
+# and ResidueTypes, simply add a string to this list and run
+# update_ResidueType_enum_files.py.
+
+# This is Part 2 of a major refactor of the properties system.
+
+# Comments added inline with a variant type will be converted to C++ comments,
+# so please feel free to add clarifications/definitions here.
+
+# WARNING: BE CAREFUL NOT TO DUPLICATE A VARIANT TYPE!
+
+##############################################################################
+
+UPPER_TERMINUS_VARIANT  # C-terminus cap
+LOWER_TERMINUS_VARIANT  # N-terminus cap
+UPPERTERM_TRUNC_VARIANT  # C-terminus truncation
+LOWERTERM_TRUNC_VARIANT  # N-terminus truncation
+CUTPOINT_LOWER  # for use during loop modeling, at positions before a cutpoint
+CUTPOINT_UPPER  # for use during loop modeling, at positions after a cutpoint
+
+DISULFIDE
+
+BRANCH_POINT_VARIANT  # used for branched polymers and glycosylations
+BRANCH_LOWER_TERMINUS_VARIANT  # used for branched polymers and glycosylations
+
+ADDUCT_VARIANT
+
+METHYLATION
+
+CENTROID_HA
+
+PROTONATED
+DEPROTONATED
+ALTERNATIVE_PROTONATION
+
+SPECIAL_ROT  # generic VariantType that allows for differential scoring of a set of residues/rotamers
+
+HYDROXYLATION1  # used specifically for hydroxylated Pro
+HYDROXYLATION2  # used specifically for hydroxylated Pro
+
+PHOSPHORYLATION  # used for PTM patches
+ACETYLATION  # used for PTM patches
+SULFATION  # used for PTM patches
+CARBOXYLATION  # used for PTM patches
+HYDROXYLATION  # used for PTM patches
+DIMETHYLATION  # used for PTM patches
+TRIMETHYLATION  # used for PTM patches
+DIIODINATION  # used for PTM patches
+
+ACETYLATED_NTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
+METHYLATED_CTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
+PHOSPHONATE_UPPER_VARIANT  # for terminal amino phosphonic acids
+
+VIRTUAL_DNA_PHOSPHATE
+VIRTUAL_PHOSPHATE # in wide use for RNA -- 'default' 5' ending for fragment assembly & stepwise
+VIRTUAL_RIBOSE    # in use for RNA during stepwise assembly
+
+VIRTUAL_BB               # useful for docking nucleobases
+VIRTUAL_BACKBONE_EXCEPT_C1PRIME   # not in use, may deprecated along with turner_rules_test
+VIRTUAL_BASE             # not in wide use, may deprecated in future
+VIRTUAL_BASE_HEAVY_ATOM  # not in use, may deprecated along with old swa_rna_main in 2015
+VIRTUAL_RNA_RESIDUE      # not in use, may deprecated along with old swa_rna_main in 2015
+VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE  # not in use, may deprecated along with old swa_rna_main in 2015
+VIRTUAL_RNA_RESIDUE_UPPER  # not in use, may deprecated along with old swa_rna_main in 2015
+BULGE   # not in use, may deprecated along with old swa_rna_main in 2015
+
+VIRTUAL_O2PRIME_HYDROGEN # important for stepwise RNA code
+VIRTUAL_SIDE_CHAIN       # important for stepwise protein code.
+THREE_PRIME_END_OH         # alternative terminal variant in real RNAs, keep this.
+THREE_PRIME_PHOSPHATE      # alternative terminal variant in real RNAs, keep this.
+FIVE_PRIME_END_OH          # alternative terminal variant in real RNAs, keep this.
+FIVE_PRIME_END_PHOSPHATE   # alternative terminal variant in real RNAs, keep this.
+FIVE_PRIME_PHOSPHATE       # alternative terminal variant in real RNAs, keep this.
+
+THREE_PRIME_PACKABLE_PHOSPHATE  # experimental terminal variant -- deprecate in 2015 if not in use by then.
+FIVE_PRIME_PACKABLE_PHOSPHATE   # experimental terminal variant -- deprecate in 2015 if not in use by then.
+PROTONATED_H1_ADENOSINE # in use in RNA -- functionally important protonation state
+
+
+N_ACETYLATION      # for stepwise assembly (SWA) code; different geometry/atoms then ACETYLATED_NTERMINUS above
+C_METHYLAMIDATION  # for stepwise assembly (SWA) code; distinct from METHYLATED_CTERMINUS above
+
+REPLONLY  # Only the repulsive energy will be considered during structure calculations on this residue.
+
+NTERM_CONNECT  # for cyclic peptides
+CTERM_CONNECT  # for cyclic peptides
+
+OOP_PRE  # used for oligooxopiperazines (OOPs)
+OOP_POST  # used for oligooxopiperazines (OOPs)
+HBS_PRE  # used for hydrogen bond surrogates
+HBS_POST  # used for hydrogen bond surrogates
+
+C1_MODIFIED_SUGAR  # for any saccharide residue modified at the 1 position
+C2_MODIFIED_SUGAR  # for any saccharide residue modified at the 2 position
+C3_MODIFIED_SUGAR  # for any saccharide residue modified at the 3 position
+C4_MODIFIED_SUGAR  # for any saccharide residue modified at the 4 position
+C5_MODIFIED_SUGAR  # for any saccharide residue modified at the 5 position
+C6_MODIFIED_SUGAR  # for any saccharide residue modified at the 6 position
+C7_MODIFIED_SUGAR  # for any saccharide residue modified at the 7 position
+C8_MODIFIED_SUGAR  # for any saccharide residue modified at the 8 position
+C9_MODIFIED_SUGAR  # for any saccharide residue modified at the 9 position
+
+SIDECHAIN_CONJUGATION  # used for chemically conjugable residues and side-chain conjugation (like ubiquitination)
+
+SC_FRAGMENT  # used by PlaceProbeMover.cc and hotspot hashing
+SHOVE_BB  # used by MapHotSpot.cc, HotspotStubSet.cc, ShoveResidueMover.cc, and TryRotamers.cc
+
+VIRTUAL_RESIDUE_VARIANT
+VIRTUAL_NTERM

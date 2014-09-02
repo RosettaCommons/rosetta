@@ -7,10 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file util.hh
-/// @brief
-/// @detailed
-///
+/// @file   protocols/stepwise/modeler/util.hh
 /// @author Rhiju Das
 
 
@@ -18,12 +15,12 @@
 #define INCLUDED_protocols_stepwise_StepWiseUtil_HH
 
 #include <core/types.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <utility/vector1.hh>
@@ -168,11 +165,11 @@ namespace modeler {
 	bool
 	check_for_fixed_domain( pose::Pose const & pose );
 
-	void
-	make_variants_match( pose::Pose & pose,
-											 pose::Pose const & reference_pose,
-											 Size const & n,
-											 chemical::VariantType const variant_type );
+	void make_variants_match(
+			pose::Pose & pose,
+			pose::Pose const & reference_pose,
+			Size const n,
+			chemical::VariantType const variant_type );
 
 	void
 	try_reroot_at_fixed_domain( pose::Pose & pose );

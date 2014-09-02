@@ -22,7 +22,6 @@
 #include <core/scoring/rms_util.hh>
 
 #include <numeric/model_quality/rms.hh>
-// AUTO-REMOVED #include <numeric/model_quality/maxsub.hh>
 #include <numeric/xyzVector.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -51,7 +50,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>

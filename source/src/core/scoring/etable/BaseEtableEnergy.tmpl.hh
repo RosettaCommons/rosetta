@@ -67,7 +67,6 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <basic/options/option.hh>
 
@@ -99,7 +98,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>

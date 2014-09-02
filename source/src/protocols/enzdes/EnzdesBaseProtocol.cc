@@ -8,8 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/enzdes/EnzdesBaseProtocol.cc
-///
-/// @brief
 /// @author Florian Richter, floric@u.washington.edu
 
 
@@ -34,12 +32,11 @@
 //project headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -53,7 +50,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
- //needed for adding variant types in cst opt
+//needed for adding variant types in cst opt
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <basic/Tracer.hh>
 
@@ -61,13 +58,11 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/io/izstream.hh>
 
 
 // option key includes
-
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
@@ -672,19 +667,23 @@ EnzdesBaseProtocol::cst_minimize(
 		//put back the right variants
 			for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
 
-				if( !pose.residue_type( i ).variants_match( old_Pose.residue_type( i ) ) ){
+				if ( ! variants_match( pose.residue_type( i ), old_Pose.residue_type( i ) ) ) {
 
-					utility::vector1< std::string > const new_var_types( pose.residue_type( i ).variant_types() );
-					utility::vector1< std::string > const old_var_types( old_Pose.residue_type( i ).variant_types() );
+					utility::vector1< std::string > const new_var_types( pose.residue_type( i ).properties().get_list_of_variants() );
+					utility::vector1< std::string > const old_var_types( old_Pose.residue_type( i ).properties().get_list_of_variants() );
 					for( utility::vector1< std::string >::const_iterator newvars = new_var_types.begin(); newvars  != new_var_types.end(); ++newvars ){
-						if( !old_Pose.residue_type( i ).has_variant_type( *newvars ) ) core::pose::remove_variant_type_from_pose_residue( pose, *newvars, i );
+						if( !old_Pose.residue_type( i ).has_variant_type( *newvars ) ) {
+							core::pose::remove_variant_type_from_pose_residue( pose,
+									core::chemical::ResidueProperties::get_variant_from_string( *newvars ), i );
+						}
 					}
 
 					for( utility::vector1< std::string >::const_iterator oldvars = old_var_types.begin(); oldvars  != old_var_types.end(); ++oldvars ){
-						if( !pose.residue_type( i ).has_variant_type( *oldvars ) ) core::pose::add_variant_type_to_pose_residue( pose, *oldvars, i );
+						if( !pose.residue_type( i ).has_variant_type( *oldvars ) ) {
+							core::pose::add_variant_type_to_pose_residue( pose,
+									core::chemical::ResidueProperties::get_variant_from_string( *oldvars ), i );
+						}
 					}
-
-
 				} //if variants don't match
 			}
 		} //if bb_min

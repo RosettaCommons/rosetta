@@ -15,10 +15,9 @@
 #ifndef INCLUDED_core_pose_MiniPose_HH
 #define INCLUDED_core_pose_MiniPose_HH
 
-
 // type headers
 #include <core/pose/MiniPose.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -30,61 +29,54 @@
 namespace core {
 namespace pose {
 
-	/**
-		 A very simple bag to hold xyz and fold_tree and sequence only. Kind of like a silent struct, but
-		 not quite (silent_structs don't necessarily have xyz). Kind of like a Conformation but without the
-		 overtree of an atom_tree.
-	**/
+/// @brief lightweight version of the pose with stuff I need.
+// @details A very simple bag to hold xyz and fold_tree and sequence only. Kind of like a silent struct, but
+/// not quite (silent_structs don't necessarily have xyz). Kind of like a Conformation but without the
+/// overtree of an atom_tree.
+/// @remark Should save memory compared to keeping the full pose (which includes atom_tree, energies etc.)
+/// This is a bit like the SilentStruct -- although that class
+/// has gotten a bit complicated -- easier to start from scratch.
+class MiniPose : public utility::pointer::ReferenceCount  {
 
-	// lightweight version of the pose with stuff I need.
-	// Should save memory compared to keeping the full pose (which includes atom_tree, energies etc.)
-	// This is a bit like the SilentStruct -- although that class
-	// has gotten a bit complicated -- easier to start from scratch.
-	class MiniPose : public utility::pointer::ReferenceCount  {
+public:
+	MiniPose( core::pose::Pose const & pose );
 
-	public:
+	MiniPose( utility::vector1< utility::vector1< PointPosition > > const & coords,
+						core::kinematics::FoldTree const & fold_tree,
+						std::string const & sequence );
 
-		MiniPose( core::pose::Pose const & pose );
+	virtual ~MiniPose(); // auto-removing definition from header{};
 
-		MiniPose( utility::vector1< utility::vector1< PointPosition > > const & coords,
-							core::kinematics::FoldTree const & fold_tree,
-							std::string const & sequence );
+	core::kinematics::FoldTree const & fold_tree() const;
 
-		virtual ~MiniPose(); // auto-removing definition from header{};
+	utility::vector1< utility::vector1< PointPosition > > const & coords() const;
 
-		core::kinematics::FoldTree const & fold_tree() const;
+	utility::vector1< utility::vector1< std::string > > const & atom_names_list() const;
 
-		utility::vector1< utility::vector1< PointPosition > > const & coords() const;
+	utility::vector1< utility::vector1< std::string > > const & variant_types_list() const;
 
-		utility::vector1< utility::vector1< std::string > > const & atom_names_list() const;
+	Size size() const;
 
-		utility::vector1< utility::vector1< core::chemical::VariantType > > const & variant_types_list() const;
+	Size total_residue() const;
 
-		Size size() const;
+	std::string const & sequence() const;
 
-		Size total_residue() const;
+	PointPosition const & xyz( core::id::AtomID atom_id ) const;
 
-		std::string const & sequence() const;
+	std::string const & atom_name( core::id::AtomID atom_id ) const;
 
-		PointPosition const & xyz( core::id::AtomID atom_id ) const;
+	utility::vector1< std::string > const & variant_types( Size const seq_num) const;
 
-		std::string const & atom_name( core::id::AtomID atom_id ) const;
-
-		utility::vector1< core::chemical::VariantType > const & variant_types( Size const seq_num) const;
-
-	private: //data
-
- 		utility::vector1< utility::vector1< PointPosition > > coords_;
-		core::kinematics::FoldTree fold_tree_;
-		std::string sequence_;
-		utility::vector1< utility::vector1< std::string > > atom_names_list_;
-		utility::vector1< utility::vector1< core::chemical::VariantType > > variant_types_list_;
-
-	};
+private: //data
+	utility::vector1< utility::vector1< PointPosition > > coords_;
+	core::kinematics::FoldTree fold_tree_;
+	std::string sequence_;
+	utility::vector1< utility::vector1< std::string > > atom_names_list_;
+	utility::vector1< utility::vector1< std::string > > variant_types_list_;
+};
 
 
 } // namespace pose
 } // namespace core
-
 
 #endif // INCLUDED_core_pose_MiniPose_HH

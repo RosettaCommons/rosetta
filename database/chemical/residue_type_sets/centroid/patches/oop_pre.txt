@@ -1,7 +1,7 @@
-## fullatom protein oop_pre patch, used for oligooxopiperazine (OOPs) 
+## fullatom protein oop_pre patch, used for oligooxopiperazine (OOPs)
 ## By Kevin Drew, May 2011, kdrew@nyu.edu
 
-NAME oop_pre 
+NAME oop_pre
 TYPES OOP_PRE
 
 ## general requirements for this patch
@@ -10,7 +10,7 @@ BEGIN_SELECTOR
 PROPERTY PROTEIN
 NOT VARIANT_TYPE OOP_PRE
 NOT VARIANT_TYPE OOP_POST
-NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
 NOT VARIANT_TYPE CUTPOINT_UPPER # problems with deleting H because CUTPOINT_UPPER uses H as stub
 NOT VARIANT_TYPE N_ACETYLATION # would not have two N mods
 NOT AA PRO # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
@@ -22,7 +22,7 @@ END_SELECTOR
 BEGIN_CASE ### n-terminal ##########################################
 
 BEGIN_SELECTOR
-VARIANT_TYPE LOWER_TERMINUS
+VARIANT_TYPE LOWER_TERMINUS_VARIANT
 END_SELECTOR
 
 ## these are the operations involved
@@ -32,10 +32,10 @@ ADD_ATOM VZP  VIRT 	 VIRT  	0.00 ## VZP is a virtual atom that substitutes for C
 #ADD_ATOM VZP  CH2	CT2		0.00 ## VZP is a virtual atom that substitutes for CZP in oop post
 ADD_ATOM 1HYP  VIRT 	 VIRT  	0.00 ## 1HYP is for hydrogen off CYP, Hapo, HA and charge are from 1HB in TYR
 ADD_ATOM 2HYP  VIRT 	 VIRT  	0.00 ## 2HYP is for hydrogen off CYP, Hapo, HA and charge are from 1HB in TYR
-ADD_BOND  N   CYP    
+ADD_BOND  N   CYP
 ADD_BOND  CYP  VZP
-ADD_BOND  CYP  1HYP 
-ADD_BOND  CYP  2HYP 
+ADD_BOND  CYP  1HYP
+ADD_BOND  CYP  2HYP
 
 SET_BACKBONE_HEAVYATOM CYP
 SET_BACKBONE_HEAVYATOM VZP
@@ -43,14 +43,14 @@ SET_BACKBONE_HEAVYATOM VZP
 ## The information for the following was taken from an average of OOP crystal structures and OOP_MONOMER_PUCKUP_CHI1300_OPT, minimized by Gaussian
 ##
 #kdrew: puckUP conformation
-SET_ICOOR CYP   41.5503   66.5161   1.4592  N  CA  C  
+SET_ICOOR CYP   41.5503   66.5161   1.4592  N  CA  C
 SET_ICOOR 1HYP  57.5499	69.9817  0.9764  CYP   N  CA
 #kdrew: set 2nd H relative to 1st H
-SET_ICOOR 2HYP  119.1912	70.066 0.9903  CYP   N  1HYP 
+SET_ICOOR 2HYP  119.1912	70.066 0.9903  CYP   N  1HYP
 SET_ICOOR VZP  -120.7064	70.5547		1.497	CYP N 1HYP #180 - 109.4453
 #kdrew: setup connection to oop_pre
 #SET_ICOOR CONN3 -120.7064	70.5547		1.497	CYP N 1HYP #180 - 109.4453
-ADD_CONNECT CYP ICOOR  41.5503   66.5161   1.4592  N  CA  C  
+ADD_CONNECT CYP ICOOR  41.5503   66.5161   1.4592  N  CA  C
 
 ADD_ATOM  H   VIRT VIRT 0.00
 ADD_BOND  N   H
@@ -74,10 +74,10 @@ ADD_ATOM VZP  VIRT 	 VIRT  	0.00 ## VZP is a virtual atom that substitutes for C
 #ADD_ATOM VZP  CH2	CT2		0.00 ## VZP is a virtual atom that substitutes for CZP in oop post
 ADD_ATOM 1HYP VIRT 	 VIRT  	0.00  ## 1HYP is for hydrogen off CYP, Hapo, HA and charge are from 1HB in TYR
 ADD_ATOM 2HYP VIRT 	 VIRT  	0.00  ## 2HYP is for hydrogen off CYP, Hapo, HA and charge are from 1HB in TYR
-ADD_BOND  N   CYP    
+ADD_BOND  N   CYP
 ADD_BOND  CYP  VZP
-ADD_BOND  CYP  1HYP 
-ADD_BOND  CYP  2HYP 
+ADD_BOND  CYP  1HYP
+ADD_BOND  CYP  2HYP
 
 SET_BACKBONE_HEAVYATOM CYP
 SET_BACKBONE_HEAVYATOM VZP
@@ -85,14 +85,14 @@ SET_BACKBONE_HEAVYATOM VZP
 ## The information for the following was taken from an average of OOP crystal structures and OOP_MONOMER_PUCKUP_CHI1300_OPT, minimized by Gaussian
 ##
 #kdrew: puckUP conformation
-SET_ICOOR CYP   41.5503   66.5161   1.4592  N  CA  C  
+SET_ICOOR CYP   41.5503   66.5161   1.4592  N  CA  C
 SET_ICOOR 1HYP  57.55  69.9817  0.9764  CYP   N  CA
 #kdrew: set 2nd H relative to 1st H
-SET_ICOOR 2HYP  119.1912	70.066 0.9903  CYP   N  1HYP 
+SET_ICOOR 2HYP  119.1912	70.066 0.9903  CYP   N  1HYP
 SET_ICOOR VZP  -120.7064	70.5547		1.497	CYP N 1HYP
 #kdrew: setup connection to oop_post, icoors are bogus (following example from CtermConnect which has C relative to itself?)
-#ADD_CONNECT CYP ICOOR  41.5503   66.5161   1.4592  N  CA  C  
-ADD_CONNECT CYP ICOOR  180.0  60.0   1.467  CYP	N  CA  
+#ADD_CONNECT CYP ICOOR  41.5503   66.5161   1.4592  N  CA  C
+ADD_CONNECT CYP ICOOR  180.0  60.0   1.467  CYP	N  CA
 
 #kdrew: raises assertion on line 1135 of ResidueType.cc, unless NOT VARIANT_TYPE CUTPOINT_UPPER
 DELETE_ATOM H

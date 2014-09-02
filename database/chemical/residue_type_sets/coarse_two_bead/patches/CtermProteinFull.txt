@@ -1,13 +1,13 @@
 ## fullatom protein c-terminus patch
 
 NAME CtermProteinFull
-TYPES UPPER_TERMINUS
+TYPES UPPER_TERMINUS_VARIANT
 
 ## general requirements for this patch
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN
-NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one

@@ -22,9 +22,6 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -43,7 +40,6 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -62,7 +58,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>

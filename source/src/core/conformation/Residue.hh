@@ -1806,17 +1806,16 @@ public:
 	}
 
 
-	/// @brief Returns true if the residue has  <property>
-	/// Generic property access -- SLOW!!!!!
+	/// @brief Return true if the residue has <property>.
 	bool
 	has_property( std::string const & property ) const
 	{
 		return rsd_type_.has_property( property );
 	}
 
-	/// @brief  Generic variant access -- SLOW!!!!!
+	/// @brief  Generic variant access
 	bool
-	has_variant_type( chemical::VariantType const & variant_type ) const
+	has_variant_type( chemical::VariantType const variant_type ) const
 	{
 		return rsd_type_.has_variant_type( variant_type );
 	}

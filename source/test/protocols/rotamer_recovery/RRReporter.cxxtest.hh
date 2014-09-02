@@ -23,7 +23,6 @@
 #include <test/core/init_util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
 // C++ Headers
@@ -48,7 +47,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>

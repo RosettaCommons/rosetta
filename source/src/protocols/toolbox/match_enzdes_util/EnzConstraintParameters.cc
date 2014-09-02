@@ -8,20 +8,25 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file IO-functionality for enzyme design constraints
-/// @brief
 /// @author Florian Richter, floric@u.washington.edu
 
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
-
 
 // Package headers
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+// Project headers
+#include <core/types.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/chemical/ChemicalManager.hh> //need for changing residue type sets
+#include <core/chemical/ResidueTypeSet.hh> //have to include complete file
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/Patch.hh> //needed for residue type base name function
 #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -34,44 +39,34 @@
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/CharmmPeriodicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
-
-// Project headers
-#include <core/types.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/ChemicalManager.hh> //need for changing residue type sets
-#include <core/chemical/ResidueTypeSet.hh> //have to include complete file
-#include <core/chemical/Patch.hh> //needed for residue type base name function
- //needed for adding variant types
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>  //needed for writing out .params files
+#include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh> //needed for clean residue type modification
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
+#include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Remarks.hh> //reading remarks
-#include <basic/options/option.hh> //options
 #include <core/id/SequenceMapping.hh>
+
+// Basic headers
+#include <basic/options/option.hh> //options
+#include <basic/Tracer.hh>
+#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/string_util.hh>
+#include <utility/vector1.hh>
+#include <utility/string_util.hh>
+
+// External header
+#include <ObjexxFCL/string.functions.hh>
+
+// C++ headers
 #include <iostream>
 #include <string>
 #include <sstream>
-
-#include <basic/Tracer.hh>
-
-// option key includes
-
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-
-#include <core/pose/util.hh>
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <utility/vector1.hh>
-
-#include <utility/string_util.hh>
 
 
 static basic::Tracer tr("protocols.toolbox.match_enzdes_util.EnzConstraintParameters");
@@ -126,23 +121,31 @@ CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
 
 		core::conformation::Residue newA_res( restype_set_->name_map(resA_basename_), true);
 
-		utility::vector1< std::string > curA_variants = pose.residue_type( resA_seqpos_ ).variant_types();
+		utility::vector1< std::string > curA_variants =
+				pose.residue_type( resA_seqpos_ ).properties().get_list_of_variants();
 		replace_residue_keeping_all_atom_positions( pose, newA_res, resA_seqpos_ );
 
-		for(core::Size var = 1; var <= curA_variants.size(); var++){
+		for ( core::Size var = 1; var <= curA_variants.size(); ++var ) {
 			if( curA_variants[ var ] != resA_varname_ ){
-				core::pose::add_variant_type_to_pose_residue( pose, curA_variants[ var ], resA_seqpos_ );
+				core::pose::add_variant_type_to_pose_residue(
+						pose,
+						core::chemical::ResidueProperties::get_variant_from_string( curA_variants[ var ] ),
+						resA_seqpos_ );
 			}
 		}
 
 		core::conformation::Residue newB_res( restype_set_->name_map(resB_basename_), true);
 
-		utility::vector1< std::string > curB_variants = pose.residue_type( resB_seqpos_ ).variant_types();
+		utility::vector1< std::string > curB_variants =
+				pose.residue_type( resB_seqpos_ ).properties().get_list_of_variants();
 		replace_residue_keeping_all_atom_positions( pose, newB_res, resB_seqpos_ );
 
-		for(core::Size var = 1; var <= curB_variants.size(); var++){
+		for ( core::Size var = 1; var <= curB_variants.size(); ++var ) {
 			if( curB_variants[ var ] != resB_varname_ ){
-				core::pose::add_variant_type_to_pose_residue( pose, curB_variants[ var ], resB_seqpos_ );
+				core::pose::add_variant_type_to_pose_residue(
+						pose,
+						core::chemical::ResidueProperties::get_variant_from_string( curB_variants[ var ] ),
+						resB_seqpos_ );
 			}
 		}
 		//std::cerr << "done removing covalent connection between res " << resA_seqpos_ << " and res " << resB_seqpos_ << std::endl;
@@ -496,7 +499,6 @@ EnzConstraintParameters::generate_active_pose_constraints(
 } //add_constraints_to_cst_set
 
 
-
 void
 EnzConstraintParameters::make_constraint_covalent(
 	core::pose::Pose & pose,
@@ -539,8 +541,6 @@ EnzConstraintParameters::make_constraint_covalent(
 } //make_constraint_covalent
 
 
-
-
 /// @brief helper function so stuff doesn't need to be written twice
 void
 EnzConstraintParameters::make_constraint_covalent_helper(
@@ -552,7 +552,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 	core::Real iangle,
 	core::Real idis,
  	std::string & res_varname
- ) const
+) const
 {
 	//std::cout << "APL DEBUG EnzConstraintParameters.cc::make_constraint_covalent_helper begin" << std::endl;
 
@@ -561,17 +561,12 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 
 	std::string res_atom = pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos(pose, res_pos) )->atom1_[Atpos].atomno() );
 
-	//need to remove whitespace, why the f is this so clumsy in c++?!?
-	int whitespace_pos = res_atom.find(" ");
-	while( whitespace_pos != -1 ) {
-		res_atom.erase(whitespace_pos, 1 );
-		whitespace_pos = res_atom.find(" ");
-	}
+	ObjexxFCL::strip_whitespace( res_atom );
 
-	std::string current_pose_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
-	std::string current_pose_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
+	std::string current_residue_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
+	std::string current_residue_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
 
-	res_varname = "_connect" + res_atom;
+	res_varname = "_connect" + res_atom;  // FIXME: variant names and patch names are not the same thing! ~Labonte
 	{// scope
 		// Find a name for the new residue type / variant name that will be added to the existing
 		// residue so that, if the existing residue already has this variant type, then the
@@ -591,7 +586,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 			}
 		}
 	}
-	std::string res_type_mod_name( current_pose_type_basename + res_varname + current_pose_type_patches_name );
+	std::string res_type_mod_name( current_residue_type_basename + res_varname + current_residue_type_patches_name );
 
 	//check whether the modified residues have already been created earlier
 	if( !restype_set_->has_name(res_type_mod_name) ){
@@ -622,7 +617,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 			std::string const base_name( residue_type_base_name( *(*res_it) ) );
 			//std::cerr << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl;
 
-			if( current_pose_type_basename == base_name ){
+			if( current_residue_type_basename == base_name ){
 
 				ResidueTypeOP mod_res;
 				core::Size con_res(0);
@@ -634,6 +629,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 				con_res = mod_res->add_residue_connection( res_atom );
 				mod_res->name( new_name );
 				assert( ! mod_res->has_variant_type( res_varname ) );
+				mod_res->enable_custom_variant_types();
 				mod_res->add_variant_type( res_varname ); //necessary to restrict the packer to only use this residue variant in packing
 
 				mod_res->set_icoor( "CONN"+string_of( con_res ), itorsion, iangle, idis, res_atom, pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos( pose, res_pos) )->atom2_[Atpos].atomno() ), pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos(pose, res_pos) )->atom3_[Atpos].atomno() ), true );

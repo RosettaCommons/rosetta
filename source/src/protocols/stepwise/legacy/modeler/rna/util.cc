@@ -209,17 +209,20 @@ namespace rna {
 			bool is_prepend = false;
 			bool both_pose_res_is_virtual = false;
 
-			if ( pose1.residue( full_seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) && pose2.residue( full_seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( pose1.residue( full_seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
+					pose2.residue( full_seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 				both_pose_res_is_virtual = true;
 			}
 
 			if ( ( full_seq_num + 1 ) <= total_res ){
-				if ( pose1.residue( full_seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-					runtime_assert ( pose1.residue( full_seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) );
+				if ( pose1.residue( full_seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
+					runtime_assert ( pose1.residue( full_seq_num + 1 ).has_variant_type(
+							core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) );
 				}
 
-				if ( pose2.residue( full_seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-					runtime_assert ( pose2.residue( full_seq_num + 1 ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) );
+				if ( pose2.residue( full_seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
+					runtime_assert ( pose2.residue( full_seq_num + 1 ).has_variant_type(
+							core::chemical::VIRTUAL_RNA_RESIDUE_UPPER ) );
 				}
 			}
 
@@ -384,7 +387,7 @@ namespace rna {
 			TR.Debug << " seq_num = " << seq_num << " delta angle = " << delta << std::endl;
 
 /////////////////////////
-			if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 				TR.Debug << "Warning: delta angle is out of range for virtual_residue at seq_num " << seq_num << "!" << std::endl;
 			} else{
 				//This part is now obsolete .... Apr 30, 2010...

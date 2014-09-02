@@ -1095,9 +1095,9 @@ namespace protein {
 		utility::vector1< Size > const & is_working_res( working_parameters_->is_working_res() );
 		std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 
-		for ( Size n = 1; n <= bulge_res_.size(); n++ ) {
+		for ( Size n = 1; n <= bulge_res_.size(); ++n ) {
 			if ( !is_working_res[ bulge_res_[ n ] ] ) continue;
-			pose::add_variant_type_to_pose_residue( pose, "BULGE", 	full_to_sub[ bulge_res_[ n ] ] );
+			pose::add_variant_type_to_pose_residue( pose, core::chemical::BULGE, full_to_sub[ bulge_res_[ n ] ] );
 		}
 
 
@@ -1114,8 +1114,8 @@ namespace protein {
 		for ( Size n = 1; n <= pose.total_residue()-1; n++ ) {
 			if ( (pose.residue( n ).is_RNA() && pose.residue( n+1).is_protein())  ||
 					 (pose.residue( n ).is_protein() && pose.residue( n+1).is_RNA()) ){
-				pose::add_variant_type_to_pose_residue( pose, "UPPER_TERMINUS", 	n  );
-				pose::add_variant_type_to_pose_residue( pose, "LOWER_TERMINUS", 	n+1 );
+				pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, n  );
+				pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, n+1 );
 			}
 		}
 
@@ -1397,7 +1397,7 @@ namespace protein {
 				utility_exit_with_message( "Should not be trying to virtualize phosphate on close cutpoint residue!" );
 			}
 
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", full_to_sub[ chain_start ] );
+			pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, full_to_sub[ chain_start ] );
 		}
 	}
 
@@ -1451,16 +1451,16 @@ namespace protein {
 			Size const potential_Nterm_res = full_to_sub[ chain_start ];
 			if ( !is_working_cutpoint_closed( potential_Nterm_res-1, full_to_sub ) &&
 					 pose.residue( potential_Nterm_res ).is_protein() &&
-					 !pose.residue( potential_Nterm_res ).has_variant_type( "LOWER_TERMINUS") ) {
-				pose::add_variant_type_to_pose_residue( pose, "N_ACETYLATION", potential_Nterm_res );
+					 !pose.residue( potential_Nterm_res ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
+				pose::add_variant_type_to_pose_residue( pose, core::chemical::N_ACETYLATION, potential_Nterm_res );
 			}
 
 			Size const chain_end = chain_boundaries[ n ].second;
 			Size const potential_Cterm_res = full_to_sub[ chain_end ];
 			if ( !is_working_cutpoint_closed( potential_Cterm_res, full_to_sub ) &&
 					 pose.residue( potential_Cterm_res ).is_protein() &&
-					 !pose.residue( potential_Cterm_res ).has_variant_type( "UPPER_TERMINUS") ) {
-				pose::add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", potential_Cterm_res );
+					 !pose.residue( potential_Cterm_res ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) {
+				pose::add_variant_type_to_pose_residue( pose, core::chemical::C_METHYLAMIDATION, potential_Cterm_res );
 			}
 
 
@@ -1484,7 +1484,8 @@ namespace protein {
 		for(Size i=1; i<=virtual_res_list_.size(); i++){
 			Size const seq_num=virtual_res_list_[i];
 			if (full_to_sub.find( seq_num ) != full_to_sub.end() ) {
-				pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RESIDUE", full_to_sub[ seq_num] );
+				pose::add_variant_type_to_pose_residue( pose,
+						core::chemical::VIRTUAL_RESIDUE_VARIANT, full_to_sub[ seq_num] );
 			}
 		}
 	}

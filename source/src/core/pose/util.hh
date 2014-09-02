@@ -27,7 +27,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
@@ -395,34 +395,29 @@ replace_pose_residue_copying_existing_coordinates(
 	core::chemical::ResidueType const & new_rsd_type
 	);
 
-conformation::ResidueOP
-remove_variant_type_from_residue(
-	conformation::Residue const & old_rsd,
-	core::chemical::VariantType const & variant_type,
-	pose::Pose const & pose
-	);
+/// @brief Remove variant from an existing residue.
+conformation::ResidueOP remove_variant_type_from_residue(
+		conformation::Residue const & old_rsd,
+		core::chemical::VariantType const variant_type,
+		pose::Pose const & pose );
 
+/// @brief Construct a variant of an existing residue.
+conformation::ResidueOP add_variant_type_to_residue(
+		conformation::Residue const & old_rsd,
+		core::chemical::VariantType const variant_type,
+		pose::Pose const & pose );
 
-conformation::ResidueOP
-add_variant_type_to_residue(
-	conformation::Residue const & old_rsd,
-	core::chemical::VariantType const & variant_type,
-	pose::Pose const & pose
-	);
+/// @brief Construct a variant of an existing pose residue.
+void add_variant_type_to_pose_residue(
+		pose::Pose & pose,
+		chemical::VariantType const variant_type,
+		Size const seqpos );
 
-void
-add_variant_type_to_pose_residue(
-	pose::Pose & pose,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-	);
-
-void
-remove_variant_type_from_pose_residue(
-	pose::Pose & pose,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-	);
+/// @brief Construct a non-variant of an existing pose residue.
+void remove_variant_type_from_pose_residue(
+		pose::Pose & pose,
+		chemical::VariantType const variant_type,
+		Size const seqpos );
 
 
 void

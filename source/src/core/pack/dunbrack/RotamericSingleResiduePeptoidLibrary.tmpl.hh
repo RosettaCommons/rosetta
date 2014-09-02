@@ -74,10 +74,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
-//XRW_B_T1
-//#include <core/coarse/Translator.fwd.hh>
-//XRW_E_T1
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.fwd.hh>

@@ -379,22 +379,22 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		//NOTES: June 16, 2011
 		//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  OP2 and OP1?
 		//Also should then check that pose.residue_type(i).variant_types() is the empty?
-		utility::vector1< std::string > variant_type_list;
-		variant_type_list.push_back( "VIRTUAL_PHOSPHATE" );
-		variant_type_list.push_back( "VIRTUAL_O2PRIME_HYDROGEN" );
-		variant_type_list.push_back( "CUTPOINT_LOWER" );
-		variant_type_list.push_back( "CUTPOINT_UPPER" );
-		variant_type_list.push_back( "VIRTUAL_RNA_RESIDUE" );
-		variant_type_list.push_back( "VIRTUAL_RNA_RESIDUE_UPPER" );
-		variant_type_list.push_back( "BULGE" );
-		variant_type_list.push_back( "VIRTUAL_RIBOSE" );
-		variant_type_list.push_back( "PROTONATED_H1_ADENOSINE" );
-		variant_type_list.push_back( "3PRIME_END_OH" ); 				//Fang's electron density code
-		variant_type_list.push_back( "5PRIME_END_PHOSPHATE" ); //Fang's electron density code
-		variant_type_list.push_back( "5PRIME_END_OH" ); 				//Fang's electron density code
+		utility::vector1< core::chemical::VariantType > variant_type_list;
+		variant_type_list.push_back( core::chemical::VIRTUAL_PHOSPHATE );
+		variant_type_list.push_back( core::chemical::VIRTUAL_O2PRIME_HYDROGEN );
+		variant_type_list.push_back( core::chemical::CUTPOINT_LOWER );
+		variant_type_list.push_back( core::chemical::CUTPOINT_UPPER );
+		variant_type_list.push_back( core::chemical::VIRTUAL_RNA_RESIDUE );
+		variant_type_list.push_back( core::chemical::VIRTUAL_RNA_RESIDUE_UPPER );
+		variant_type_list.push_back( core::chemical::BULGE );
+		variant_type_list.push_back( core::chemical::VIRTUAL_RIBOSE );
+		variant_type_list.push_back( core::chemical::PROTONATED_H1_ADENOSINE );
+		variant_type_list.push_back( core::chemical::THREE_PRIME_END_OH ); 				//Fang's electron density code
+		variant_type_list.push_back( core::chemical::FIVE_PRIME_END_PHOSPHATE ); //Fang's electron density code
+		variant_type_list.push_back( core::chemical::FIVE_PRIME_END_OH ); 				//Fang's electron density code
 		for ( Size seq_num = 1; seq_num <= start_pose.total_residue(); seq_num++  ) {
 			for ( Size k = 1; k <= variant_type_list.size(); ++k ) {
-				std::string const & variant_type = variant_type_list[k];
+				core::chemical::VariantType const variant_type = variant_type_list[k];
 				if ( start_pose.residue( seq_num ).has_variant_type( variant_type ) ) {
 					remove_variant_type_from_pose_residue( start_pose, variant_type, seq_num );
 				}
@@ -421,15 +421,15 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 			if ( has_virtual_rna_residue_variant_type( start_pose_with_variant, n ) ){
 				apply_virtual_rna_residue_variant_type( pose, full_to_sub[ input_res[n] ], working_cutpoint_closed_list ) ;
 			}
-			if ( start_pose_with_variant.residue( n ).has_variant_type( "VIRTUAL_RIBOSE" ) ){
-				add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", full_to_sub[ input_res[n] ] );
+			if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+				add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, full_to_sub[ input_res[n] ] );
 			}
-			if ( start_pose_with_variant.residue( n ).has_variant_type( "3PRIME_END_OH" ) ) { // are these still in use?
-				add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", full_to_sub[ input_res[n] ] );
-			} else if ( start_pose_with_variant.residue( n ).has_variant_type( "5PRIME_END_PHOSPHATE" ) ) {
-				add_variant_type_to_pose_residue( pose, "5PRIME_END_PHOSPHATE", full_to_sub[ input_res[n] ] );
-			} else if ( start_pose_with_variant.residue( n ).has_variant_type( "5PRIME_END_OH" ) ) {
-				add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", full_to_sub[ input_res[n] ] );
+			if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::THREE_PRIME_END_OH ) ) { // are these still in use?
+				add_variant_type_to_pose_residue( pose, core::chemical::THREE_PRIME_END_OH, full_to_sub[ input_res[n] ] );
+			} else if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_END_PHOSPHATE ) ) {
+				add_variant_type_to_pose_residue( pose, core::chemical::FIVE_PRIME_END_PHOSPHATE, full_to_sub[ input_res[n] ] );
+			} else if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_END_OH ) ) {
+				add_variant_type_to_pose_residue( pose, core::chemical::FIVE_PRIME_END_OH, full_to_sub[ input_res[n] ] );
 			}
 			do_checks_and_apply_protonated_H1_adenosine_variant( pose, start_pose_with_variant, n, i, input_res, full_to_sub );
 		}
@@ -454,9 +454,9 @@ StepWiseRNA_PoseSetup::do_checks_and_apply_protonated_H1_adenosine_variant( pose
 
 	if ( i > silent_files_in_.size() ) { // not a silent file, read in from pdb text file. May 04, 2011
 		//start_pose_with_variant does not have PROTONATED_H1_ADENOSINE variant type since the input_pdb does not have the variant type or loses the variant when imported into Rosetta.
-		runtime_assert( !start_pose_with_variant.residue( n ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ); //May 03, 2011
+		runtime_assert( !start_pose_with_variant.residue( n ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ); //May 03, 2011
 	} else{ // from silent file -- may have information on variants.
-		if ( start_pose_with_variant.residue( n ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ) { //May 03, 2011
+		if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ) { //May 03, 2011
 			runtime_assert( start_pose_with_variant.residue( n ).aa() == core::chemical::na_rad );
 			runtime_assert( working_parameters_->protonated_H1_adenosine_list().has_value( input_res[n] ) );
 		}
@@ -664,7 +664,7 @@ StepWiseRNA_PoseSetup::apply_virtual_phosphate_variants( pose::Pose & pose ) con
 		}
 		if ( !pose.residue_type( full_to_sub[ chain_start ] ).is_RNA() ) continue;
 
-		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", full_to_sub[ chain_start ] );
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, full_to_sub[ chain_start ] );
 	}
 }
 
@@ -710,14 +710,14 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 
 		Size const k = working_terminal_res[ i ];
 		Residue const & rsd1( pose.residue( k ) );
-		if ( rsd1.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+		if ( rsd1.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 			TR.Debug << "rsd1.has_variant_type( \"VIRTUAL_RNA_RESIDUE\" ), seq_num = " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 			continue;
 		}
 		for ( Size m = 1; m <= nres; m++ ) {
 
 			Residue const & rsd2( pose.residue( m ) );
-			if ( rsd2.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( rsd2.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				 TR.Debug << "rsd2.has_variant_type( \"VIRTUAL_RNA_RESIDUE\" ), seq_num = " << m << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 				 continue;
 			}
@@ -775,8 +775,10 @@ void
 StepWiseRNA_PoseSetup::virtualize_sugar_and_backbone_at_moving_res( pose::Pose & pose ) const {
 	////////Only base is instantiated in 'floating base' at moving res /////////////////////////////
 	Size const moving_res = working_parameters_->working_moving_res();
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res ); //This is unique to floating_base_mode
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res); //This is unique to floating_base_mode
+	pose::add_variant_type_to_pose_residue( pose,
+			core::chemical::VIRTUAL_PHOSPHATE, moving_res ); //This is unique to floating_base_mode
+	pose::add_variant_type_to_pose_residue( pose,
+			core::chemical::VIRTUAL_RIBOSE, moving_res); //This is unique to floating_base_mode
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -819,12 +821,15 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but pose.residue( seq_num ).aa() != core::chemical::na_rad, seq_num = " + string_of( seq_num ) );
 			}
 
-			if ( pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) == false && pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ){
-				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
-				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
+			if ( ! pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) &&
+					! pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
+				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP(
+						working_parameters_ ), "DEBUG working_parameters", TR.Debug );
+				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but "
+						"residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
 			}
 		} else{
-			if ( pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ){
+			if ( pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ){
 
 				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				TR.Debug << "ERROR: seq_num = " << seq_num << std::endl;
@@ -880,7 +885,7 @@ StepWiseRNA_PoseSetup::apply_bulge_variants( pose::Pose & pose ) const {
 		Size const seq_num = bulge_res_[i];
 		runtime_assert ( !terminal_res.has_value( seq_num ) );
 		if ( full_to_sub.find( seq_num ) == full_to_sub.end() ) continue;
-		pose::add_variant_type_to_pose_residue( pose, "BULGE", 	full_to_sub.find( seq_num )->second );
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::BULGE, full_to_sub.find( seq_num )->second );
 	}
 
 

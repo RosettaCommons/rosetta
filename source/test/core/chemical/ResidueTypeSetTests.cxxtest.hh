@@ -27,7 +27,7 @@
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -117,7 +117,7 @@ public:
 		ResidueType const & decorated( rtset.name_map("QC1:1pqcTestPatch") );
 
 		// This is here mainly to make sure it doesn't crash.
-		ResidueType const & dec_gen( rtset.get_residue_type_with_variant_added( plain, "TESTPATCH" ) );
+		ResidueType const & dec_gen( rtset.get_residue_type_with_variant_added( plain, SPECIAL_ROT ) );
 
 		TS_ASSERT_EQUALS( plain.natoms(), 43 );
 		TS_ASSERT_EQUALS( decorated.natoms(), 48 );

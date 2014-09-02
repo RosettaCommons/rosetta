@@ -1,7 +1,7 @@
 ## Acetylated Nterminus and Dimethylated C terminus Patch by Doug Renfrew (renfrew@nyu.edu)
 
 NAME AcetylatedNtermDimethylatedCtermPeptoidFull
-TYPES LOWER_TERMINUS UPPER_TERMINUS METHYLATED_CTERMINUS ACETYLATED_NTERMINUS
+TYPES LOWER_TERMINUS_VARIANT UPPER_TERMINUS_VARIANT METHYLATED_CTERMINUS_VARIANT ACETYLATED_NTERMINUS_VARIANT
 
 #############################################################################################
 ## general requirements
@@ -10,14 +10,14 @@ TYPES LOWER_TERMINUS UPPER_TERMINUS METHYLATED_CTERMINUS ACETYLATED_NTERMINUS
 #############################################################################################
 BEGIN_SELECTOR
 PROPERTY PEPTOID
-NOT VARIANT_TYPE LOWER_TERMINUS
-NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
 END_SELECTOR
 
 
 #############################################################################################
 ## cis case
-## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-Naphyly-DME dipeptoid 
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-Naphyly-DME dipeptoid
 #############################################################################################
 BEGIN_CASE
 BEGIN_SELECTOR
@@ -51,10 +51,10 @@ ADD_BOND 1HP2 CP2
 ADD_BOND 2HP2 CP2
 ADD_BOND 3HP2 CP2
 
-SET_ICOOR  CO    74.800000   65.200000    1.367000   N     CA    C 
+SET_ICOOR  CO    74.800000   65.200000    1.367000   N     CA    C
 #SET_ICOOR  CP2  179.600000   60.80000     1.517000   CO    N     CA
 SET_ICOOR  CP2    0.000000   60.80000     1.517000   CO    N     CA
-SET_ICOOR 1HP2  178.776618   72.966451    1.079466   CP2   CO    N  
+SET_ICOOR 1HP2  178.776618   72.966451    1.079466   CP2   CO    N
 SET_ICOOR 2HP2 -119.133865   68.303471    1.083654   CP2   CO   1HP2
 SET_ICOOR 3HP2 -121.451212   67.841634    1.083820   CP2   CO   2HP2
 SET_ICOOR  OP1  179.865800   59.207267    1.202175   CO    N     CP2
@@ -88,13 +88,13 @@ ADD_BOND 1HQ  CQ
 ADD_BOND 2HQ  CQ
 ADD_BOND 3HQ  CQ
 
-SET_ICOOR  NM   177.630147   63.808201    1.362844   C     CA    O  
-SET_ICOOR  CN   173.829536   61.778867    1.450721   NM    C     CA 
-SET_ICOOR 1HN    22.980012   70.652900    1.076068   CN    NM    C  
+SET_ICOOR  NM   177.630147   63.808201    1.362844   C     CA    O
+SET_ICOOR  CN   173.829536   61.778867    1.450721   NM    C     CA
+SET_ICOOR 1HN    22.980012   70.652900    1.076068   CN    NM    C
 SET_ICOOR 2HN  -120.286598   68.713973    1.087571   CN    NM   1HN
 SET_ICOOR 3HN  -119.971761   70.522778    1.084282   CN    NM   2HN
-SET_ICOOR  CQ  -161.351743   56.428189    1.448434   NM    C     CN 
-SET_ICOOR 1HQ    79.046364   67.564243    1.087697   CQ    NM    C  
+SET_ICOOR  CQ  -161.351743   56.428189    1.448434   NM    C     CN
+SET_ICOOR 1HQ    79.046364   67.564243    1.087697   CQ    NM    C
 SET_ICOOR 2HQ   119.518950   71.514073    1.082308   CQ    NM   1HQ
 SET_ICOOR 3HQ   117.893903   68.300312    1.080462   CQ    NM   2HQ
 
@@ -108,7 +108,7 @@ END_CASE
 
 #############################################################################################
 ## general case
-## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-Naphyly-DME dipeptoid 
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-Naphyly-DME dipeptoid
 #############################################################################################
 BEGIN_CASE
 
@@ -133,9 +133,9 @@ ADD_BOND 1HP2 CP2
 ADD_BOND 2HP2 CP2
 ADD_BOND 3HP2 CP2
 
-SET_ICOOR  CO   167.209      52.954       1.367000   N     CA1    CA 
+SET_ICOOR  CO   167.209      52.954       1.367000   N     CA1    CA
 SET_ICOOR  CP2  179.600000   60.80000     1.517000   CO    N     CA
-SET_ICOOR 1HP2  178.776618   72.966451    1.079466   CP2   CO    N  
+SET_ICOOR 1HP2  178.776618   72.966451    1.079466   CP2   CO    N
 SET_ICOOR 2HP2 -119.133865   68.303471    1.083654   CP2   CO   1HP2
 SET_ICOOR 3HP2 -121.451212   67.841634    1.083820   CP2   CO   2HP2
 SET_ICOOR  OP1  179.865800   59.207267    1.202175   CO    N     CP2
@@ -169,13 +169,13 @@ ADD_BOND 1HQ  CQ
 ADD_BOND 2HQ  CQ
 ADD_BOND 3HQ  CQ
 
-SET_ICOOR  NM   177.630147   63.808201    1.362844   C     CA    O  
-SET_ICOOR  CN   173.829536   61.778867    1.450721   NM    C     CA 
-SET_ICOOR 1HN    22.980012   70.652900    1.076068   CN    NM    C  
+SET_ICOOR  NM   177.630147   63.808201    1.362844   C     CA    O
+SET_ICOOR  CN   173.829536   61.778867    1.450721   NM    C     CA
+SET_ICOOR 1HN    22.980012   70.652900    1.076068   CN    NM    C
 SET_ICOOR 2HN  -120.286598   68.713973    1.087571   CN    NM   1HN
 SET_ICOOR 3HN  -119.971761   70.522778    1.084282   CN    NM   2HN
-SET_ICOOR  CQ  -161.351743   56.428189    1.448434   NM    C     CN 
-SET_ICOOR 1HQ    79.046364   67.564243    1.087697   CQ    NM    C  
+SET_ICOOR  CQ  -161.351743   56.428189    1.448434   NM    C     CN
+SET_ICOOR 1HQ    79.046364   67.564243    1.087697   CQ    NM    C
 SET_ICOOR 2HQ   119.518950   71.514073    1.082308   CQ    NM   1HQ
 SET_ICOOR 3HQ   117.893903   68.300312    1.080462   CQ    NM   2HQ
 

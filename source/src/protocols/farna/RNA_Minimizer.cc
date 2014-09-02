@@ -265,7 +265,10 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 			if ( !allow_insert_->get( rna_torsion_id, pose.conformation() ) ) continue;
 
 			// this is not general. Sigh:
-			if ( pose.residue(i).has_variant_type("VIRTUAL_PHOSPHATE") && ( j == 1 || j == 2 || j == 3 ) ) continue;
+			if ( pose.residue(i).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
+					( j == 1 || j == 2 || j == 3 ) ) {
+				continue;
+			}
 			mm.set( rna_torsion_id, true );
 
 		}

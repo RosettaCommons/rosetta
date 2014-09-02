@@ -286,7 +286,8 @@ public:
 
 			if ((!refine_stage_) && (!rotamer_prot_stats_)){
 
-				if ( ( old_pose_.residue( res_no ).name() != curr_pose_.residue( res_no ).name() ) && (!curr_pose_.residue( res_no ).has_variant_type("PROTONATED")) && ( curr_pH != 1.0 ) ){
+				if ( ( old_pose_.residue( res_no ).name() != curr_pose_.residue( res_no ).name() ) &&
+						(!curr_pose_.residue( res_no ).has_variant_type(core::chemical::PROTONATED)) && ( curr_pH != 1.0 ) ){
 
 					core::conformation::Residue const & res1 = curr_pose_.residue( res_no );
 					for ( Size ii = 1; ii <= curr_pose_.total_residue(); ++ii ) {
@@ -309,7 +310,8 @@ public:
 
 			if (refine_stage_){
 
-				if ( (old_pose_.residue( res_no ).name() != curr_pose_.residue( res_no ).name()) && (!curr_pose_.residue( res_no ).has_variant_type("PROTONATED")) ){
+				if ( (old_pose_.residue( res_no ).name() != curr_pose_.residue( res_no ).name()) &&
+						(!curr_pose_.residue( res_no ).has_variant_type(core::chemical::PROTONATED)) ){
 
 /*
 					TR << "Res_E of pose1:" << pdb_file_name_ << "\t" << old_pose_.residue( res_no ).name() << "\t" << old_pose_.pdb_info()->pose2pdb( res_no ) << "\tweighted_scores:\t" << old_pose_.energies().residue_total_energies( res_no ).weighted_string_of( score_fxn->weights() ) <<"\ttotal_score:\t"<< old_pose_.energies().residue_total_energies( res_no ).dot( score_fxn->weights() ) << std::endl;

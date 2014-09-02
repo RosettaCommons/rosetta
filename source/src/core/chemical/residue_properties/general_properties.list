@@ -1,6 +1,16 @@
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available
+# (c) under license.
+# (c) The Rosetta software is developed by the contributing members of the
+# (c) Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org.
+# (c) Questions about this can be addressed to University of Washington UW
+# (c) TechTransfer, email: license@u.washington.edu.
+
+
 # To add a new property to Rosetta for use in .params files, patch files, and
 # ResidueTypes, simply add a string to this list and run
-# add_residue_properties.py.
+# update_ResidueType_enum_files.py.
 # (You may also consider adding new is_ accessors to ResidueType and Residue.)
 
 # This is Part 1 of a major refactor of the properties system.  Eventually,

@@ -83,8 +83,8 @@ residue_selector_single_from_line( std::string const & line )
 		if ( !properties.empty() ) return new Selector_PROPERTY( properties, desired_result );
 
 	} else if ( tag == "VARIANT_TYPE" ) {
-		VariantType variant_type;
-		utility::vector1< VariantType > variant_types;
+		std::string variant_type;
+		utility::vector1< std::string > variant_types;
 		l >> variant_type;
 		while ( !l.fail() && variant_type[0] != '#' ) {
 			variant_types.push_back( variant_type );

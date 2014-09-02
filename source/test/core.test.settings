@@ -20,6 +20,7 @@ sources = {
 		"Elements",
 		"MMAtomTypeSet",
 		"OrbitalTests",
+		"ResidueProperties",
 		"ResidueTypeBloatTests",
 		"ResidueTypeTests",
 		"ResidueTypeSetTests",

@@ -33,7 +33,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/ResidueProperties.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
@@ -50,6 +49,7 @@
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/RingConformerSet.fwd.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -1470,20 +1470,21 @@ public:
 	std::string get_string_property(std::string const & tag) const;
 
 
-	/// @brief Get all the variant types for this ResidueType.
-	utility::vector1< VariantType > const & variant_types() const;
-
 	/// @brief Add a variant type to this ResidueType.
-	void add_variant_type( VariantType const & variant_type );
+	void add_variant_type( VariantType const variant_type );
+
+	/// @brief Add a variant type to this ResidueType by string.
+	void add_variant_type( std::string const & variant_type );
 
 	/// @brief  Generic variant access.
-	bool has_variant_type( VariantType const & variant_type ) const;
+	bool has_variant_type( VariantType const variant_type ) const;
 
-	/// @brief  Does this residue have exactly the same set of properties as residue other?
-	bool variants_match( ResidueType const & other ) const;
+	// TODO: Find a way to remove this; it only exists because of how ResidueSelectors are currently written. ~Labonte
+	/// @brief  Generic variant access by string.
+	bool has_variant_type( std::string const & variant_type ) const;
 
-	/// @brief similar to variants_match(), but allows different adduct-modified states
-	bool nonadduct_variants_match( ResidueType const & other ) const;
+	/// @brief  Turn on the ability to create VariantTypes "on-the-fly".
+	void enable_custom_variant_types();
 
 
 	///////////////////////////////////////////////////////////////////////////

@@ -4,9 +4,9 @@ echo 'Updating Rosetta options system...'
 
 ./update_options.sh
 
-echo 'Updating ResidueType properties...'
+echo 'Updating ResidueType enum files...'
 
-./update_residue_properties.sh
+./update_ResidueType_enum_files.sh
 
 echo 'Building documentation for each src/doxygen.*...'
 

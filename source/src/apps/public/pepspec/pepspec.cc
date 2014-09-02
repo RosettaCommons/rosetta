@@ -828,7 +828,7 @@ void add_pep_res(
 			pose.set_omega( pep_end - 1, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_end );
 			pose.conformation().update_polymeric_connection( pep_end - 1 );
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pep_end );
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_BB, pep_end );
 		}
 
 		if( add_nterm ){
@@ -838,7 +838,7 @@ void add_pep_res(
 			pose.set_omega( pep_begin, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_begin );
 			pose.conformation().update_polymeric_connection( pep_begin + 1 );
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pep_begin );
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_BB, pep_begin );
 		}
 
 		//replace termini
@@ -1828,13 +1828,13 @@ RunPepSpec()
 
 			//switch back to fullatom
 			if( option[ pepspec::add_buffer_res ] ){
-				core::pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_BB", pep_begin );
-				core::pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_BB", pep_end );
+				core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_BB, pep_begin );
+				core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_BB, pep_end );
 			}
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 			if( option[ pepspec::add_buffer_res ] ){
-				core::pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pep_begin );
-				core::pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pep_end );
+				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_BB, pep_begin );
+				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_BB, pep_end );
 			}
 
 			//replace prot residues w/ original rotamers

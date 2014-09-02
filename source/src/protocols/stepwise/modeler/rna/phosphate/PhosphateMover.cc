@@ -117,57 +117,54 @@ namespace phosphate {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	PhosphateMover::setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pose & pose ){
-
+	PhosphateMover::setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pose & pose )
+	{
 		Size const sample_res = phosphate_move_.rsd();
 
-		if ( pose.residue( sample_res ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
+		if ( pose.residue( sample_res ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ){
 
-			runtime_assert( !pose.residue( sample_res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
-			if ( pose.residue( sample_res ).has_variant_type( "VIRTUAL_RIBOSE" ) ){
+			runtime_assert( !pose.residue( sample_res ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) );
+			if ( pose.residue( sample_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ){
 				std::cerr << pose.fold_tree() << std::endl;
 				std::cerr << pose.annotated_sequence() << std::endl;
 				std::cerr << phosphate_move_ << std::endl;
 			}
 
-			runtime_assert( !pose.residue( sample_res ).has_variant_type( "VIRTUAL_RIBOSE" ) );
+			runtime_assert( !pose.residue( sample_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) );
 
 			pose_free_ = pose.clone();
-			remove_variant_type_from_pose_residue( *pose_free_, "FIVE_PRIME_PHOSPHATE", sample_res );
-			add_variant_type_to_pose_residue( *pose_free_, "VIRTUAL_PHOSPHATE", sample_res );
+			remove_variant_type_from_pose_residue( *pose_free_, core::chemical::FIVE_PRIME_PHOSPHATE, sample_res );
+			add_variant_type_to_pose_residue( *pose_free_, core::chemical::VIRTUAL_PHOSPHATE, sample_res );
 
 		} else {
-			runtime_assert( !pose.residue( sample_res ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) );
-			runtime_assert( pose.residue( sample_res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
+			runtime_assert( !pose.residue( sample_res ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) );
+			runtime_assert( pose.residue( sample_res ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) );
 
 			pose_free_ = pose.clone();
 
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", sample_res );
-			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS",    sample_res );
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE",    sample_res );
-			add_variant_type_to_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", sample_res );
+			remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, sample_res );
+			remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, sample_res );
+			remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE,    sample_res );
+			add_variant_type_to_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, sample_res );
 			correctly_position_five_prime_phosphate( pose, sample_res );
-
 		}
-
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	PhosphateMover::setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose ){
-
+	PhosphateMover::setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose )
+	{
 		Size const sample_res = phosphate_move_.rsd();
 
-		if ( pose.residue( phosphate_move_.rsd() ).has_variant_type( "THREE_PRIME_PHOSPHATE" ) ){
+		if ( pose.residue( phosphate_move_.rsd() ).has_variant_type( core::chemical::THREE_PRIME_PHOSPHATE ) ){
 			pose_free_ = pose.clone();
-			remove_variant_type_from_pose_residue( *pose_free_, "THREE_PRIME_PHOSPHATE", sample_res );
+			remove_variant_type_from_pose_residue( *pose_free_, core::chemical::THREE_PRIME_PHOSPHATE, sample_res );
 		} else {
 			pose_free_ = pose.clone();
-			remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS",    sample_res );
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sample_res );
-			add_variant_type_to_pose_residue( pose, "THREE_PRIME_PHOSPHATE", sample_res );
+			remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, sample_res );
+			remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, sample_res );
+			add_variant_type_to_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, sample_res );
 		}
-
 	}
 
 

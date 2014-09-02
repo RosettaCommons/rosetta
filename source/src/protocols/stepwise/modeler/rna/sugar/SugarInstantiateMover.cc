@@ -42,8 +42,12 @@ namespace sugar {
 
 	void
 	SugarInstantiateMover::apply( pose::Pose & pose ){
-		if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) )           pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ ); //May 31, 2010
-		if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ) pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
+		if ( pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+			pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, moving_res_ ); //May 31, 2010
+		}
+		if ( pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
+			pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, moving_res_ );
+		}
 	}
 
 } //sugar

@@ -15,33 +15,29 @@
 // Unit Headers
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 
-// Package Headers
-
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh>
-
-#include <core/scoring/Energies.hh>
-
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-
+#include <core/types.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
+
+// Basic Headers
+#include <basic/Tracer.hh>
 
 // Utility Headers
-#include <basic/Tracer.hh>
-#include <core/types.hh>
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string> //making sure that residue_type.name() comparison works
 
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
-#include <utility/vector1.hh>
-
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
 
 using basic::T;
 using basic::Error;
@@ -55,18 +51,19 @@ namespace protocols {
 namespace simple_moves {
 
 ///@details this code was copied from protocols/loops/loops_main.cc:187-204, revision 21282
-void ReturnSidechainMover::apply( core::pose::Pose & pose ){
-
+void
+ReturnSidechainMover::apply( core::pose::Pose & pose )
+{
 	core::pose::Pose saved_input_pose(remembered_pose_);
 	core::Size nres( end_res_ - start_res_ + 1 );
 
-  //symmetry
-  core::conformation::symmetry::SymmetryInfoCOP symm_info;
-  if ( core::pose::symmetry::is_symmetric(remembered_pose_) ) {
-    core::conformation::symmetry::SymmetricConformation & SymmConf (
-      dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
-    symm_info = SymmConf.Symmetry_Info();
-  }
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(remembered_pose_) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+				dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
 
 	if( nres != saved_input_pose.total_residue() )
 		utility_exit_with_message("ReturnSidechainMover used with poses of different length; aborting");
@@ -93,20 +90,23 @@ void ReturnSidechainMover::apply( core::pose::Pose & pose ){
 				utility_exit_with_message("ReturnSidechainMover used with poses of different sequence; aborting");
 
 			//we need to check variant types in case there are cutpoints for loop modeling or whatever
-			if ( ! rsd_type.variants_match( saved_rsd_type) ) {
-				utility::vector1<core::chemical::VariantType> const & variant_types ( rsd_type.variant_types() );
-				utility::vector1<core::chemical::VariantType> missing_variant_types;
+			if ( ! variants_match( rsd_type, saved_rsd_type ) ) {
+				utility::vector1< std::string > const & variant_types ( rsd_type.properties().get_list_of_variants() );
+				utility::vector1< std::string > missing_variant_types;
 
-				for ( utility::vector1<core::chemical::VariantType>::const_iterator it = variant_types.begin(),
-								it_end=variant_types.end(); it != it_end; ++it ) {
-					if ( !saved_rsd_type.has_variant_type( *it ) ) missing_variant_types.push_back( *it );
+				for ( utility::vector1< std::string >::const_iterator it = variant_types.begin(),
+						it_end=variant_types.end(); it != it_end; ++it ) {
+					if ( !saved_rsd_type.has_variant_type( *it ) ) {
+						missing_variant_types.push_back( *it );
+					}
 				}
 
-				for ( utility::vector1<core::chemical::VariantType>::const_iterator it = missing_variant_types.begin(),
-								it_end=missing_variant_types.end(); it != it_end; ++it ) {
-					core::pose::add_variant_type_to_pose_residue( saved_input_pose, *it, i);
+				for ( utility::vector1< std::string >::const_iterator it = missing_variant_types.begin(),
+						it_end=missing_variant_types.end(); it != it_end; ++it ) {
+					core::pose::add_variant_type_to_pose_residue( saved_input_pose,
+							core::chemical::ResidueProperties::get_variant_from_string( *it ), i);
 				}
-			}//checking variants
+			} //checking variants
 
 			pose.replace_residue(i, saved_input_pose.residue(j), true );
 		}

@@ -1,7 +1,7 @@
 NAME linoleate             # cis,cis-9,12-octadecadienoate
 IO_STRING EIC Z            # stupid 3-letter code from the PDB
 TYPE POLYMER               # POLYMER is selected here, because this is a "cap" for polymers such as glycolipids.
-VARIANT BRANCH_LOWER_TERMINUS UPPER_TERMINUS
+VARIANT BRANCH_LOWER_TERMINUS_VARIANT UPPER_TERMINUS_VARIANT
 AA UNK
 
 # Main-chain atoms:

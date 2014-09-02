@@ -161,7 +161,7 @@ namespace
 				{
 					core::chemical::ResidueType const & restype(
 							residue_set->get_residue_type_with_variant_added(
-								residue_set->name_map( "ALA" ), "SC_FRAGMENT"));
+								residue_set->name_map( "ALA" ), core::chemical::SC_FRAGMENT));
 					residue = core::conformation::ResidueFactory::create_residue( restype );
 
 					// Check orient atom selection
@@ -216,7 +216,7 @@ namespace
 				{
 					core::chemical::ResidueType const & restype(
 							residue_set->get_residue_type_with_variant_added(
-								residue_set->name_map( "TYR" ), "SC_FRAGMENT"));
+								residue_set->name_map( "TYR" ), core::chemical::SC_FRAGMENT));
 					residue = core::conformation::ResidueFactory::create_residue( restype );
 
 					// Check orient atom selection

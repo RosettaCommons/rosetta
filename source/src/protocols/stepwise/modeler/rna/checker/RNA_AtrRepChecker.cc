@@ -131,13 +131,13 @@ namespace checker {
 
 		if ( moving_suite > 0 ){
 			// suite atoms will be sampled -- not in correct conformation yet.
-			pose::remove_variant_type_from_pose_residue( base_pose_screen, "FIVE_PRIME_PHOSPHATE", moving_suite + 1 );
-			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", moving_suite + 1 ); //May 7...
+			pose::remove_variant_type_from_pose_residue( base_pose_screen, core::chemical::FIVE_PRIME_PHOSPHATE, moving_suite + 1 );
+			pose::add_variant_type_to_pose_residue( base_pose_screen, core::chemical::VIRTUAL_PHOSPHATE, moving_suite + 1 ); //May 7...
 			if ( sampler::rna::modeler_sugar_at_five_prime( base_pose_screen, moving_suite ) ) {
-				add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", moving_suite );
+				add_variant_type_to_pose_residue( base_pose_screen, core::chemical::VIRTUAL_RIBOSE, moving_suite );
 			}
 			if ( sampler::rna::modeler_sugar_at_three_prime( base_pose_screen, moving_suite ) ){
-				add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", moving_suite+1 );
+				add_variant_type_to_pose_residue( base_pose_screen, core::chemical::VIRTUAL_RIBOSE, moving_suite+1 );
 			}
 		}
 

@@ -236,7 +236,7 @@ RotamerSets::build_rotamers(
 					//residues.  These positions don't have a complete connect record.
 
 					if ((*itr)->seqpos() == 1 && copies[jj] != 1  ){
-					  if (cloneRes->has_variant_type("LOWER_TERMINUS")) {
+					  if (cloneRes->has_variant_type( chemical::LOWER_TERMINUS_VARIANT )) {
 						  cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 					  }
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
@@ -246,7 +246,7 @@ RotamerSets::build_rotamers(
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 					else if ( (*itr)->seqpos() == asym_length && copies[jj] != (int) asym_length ){
-						if (cloneRes->has_variant_type("UPPER_TERMINUS")) {
+						if (cloneRes->has_variant_type( chemical::UPPER_TERMINUS_VARIANT )) {
 							cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 						}
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);

@@ -1,15 +1,15 @@
 ## full-atom carbohydrate (_->3)-branch patch
 
 NAME ->3)-branch
-TYPES BRANCH_POINT
+TYPES BRANCH_POINT_VARIANT
 
 BEGIN_SELECTOR
 PROPERTY CARBOHYDRATE
 PROPERTY ALDOSE
-#NOT VARIANT_TYPE BRANCH_POINT   # can have multiple branches of a single residue
+#NOT VARIANT_TYPE BRANCH_POINT_VARIANT   # can have multiple branches of a single residue
 NOT VARIANT_TYPE C3_MODIFIED_SUGAR
-#NOT VARIANT_TYPE BRANCH_LOWER_TERMINUS
-NOT VARIANT_TYPE UPPER_TERMINUS  # An upper terminus branch point is meaningless.
+#NOT VARIANT_TYPE BRANCH_LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT  # An upper terminus branch point is meaningless.
 END_SELECTOR
 
 BEGIN_CASE

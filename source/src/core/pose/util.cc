@@ -256,7 +256,7 @@ pdbslice( core::pose::Pose & new_pose,
 
 			if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ ||
 					 residue_to_add->is_lower_terminus() ||
-					 residue_to_add->has_variant_type( "N_ACETYLATION") ||
+					 residue_to_add->has_variant_type( N_ACETYLATION ) ||
 					 (i>1 && pose.fold_tree().is_cutpoint( slice_res[i-1] ) ) ){
 				if( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ){
 
@@ -1468,16 +1468,12 @@ replace_pose_residue_copying_existing_coordinates(
 
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief removes variant from an existing residue
-/// @details
-/// @note
+
 core::conformation::ResidueOP
 remove_variant_type_from_residue(
-	core::conformation::Residue const & old_rsd,
-	core::chemical::VariantType const & variant_type,
-	pose::Pose const & pose
-	)
+		core::conformation::Residue const & old_rsd,
+		core::chemical::VariantType const variant_type,
+		pose::Pose const & pose )
 {
 	if ( !old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
@@ -1491,22 +1487,20 @@ remove_variant_type_from_residue(
 			new_rsd->set_chi( chino, old_rsd.chi( chino ) );
 		}
 	} else {
-		TR << "The chi angles will not be updated and your dunbrack score for this rotamer will be huge; this function is only meant to add a variant type to a residue of the same type" << std::endl;
+		TR << "The chi angles will not be updated and your dunbrack score for this rotamer will be huge; "
+				"this function is only meant to add a variant type to a residue of the same type" << std::endl;
 	}
 
 	return new_rsd;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief construct a variant of an existing residue
-/// @details
-/// @note
+
 conformation::ResidueOP
 add_variant_type_to_residue(
-	conformation::Residue const & old_rsd,
-	chemical::VariantType const & variant_type,
-	pose::Pose const & pose
-	) {
+		conformation::Residue const & old_rsd,
+		chemical::VariantType const variant_type,
+		pose::Pose const & pose )
+{
 
 	if ( old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
@@ -1520,22 +1514,21 @@ add_variant_type_to_residue(
 			new_rsd->set_chi( chino, old_rsd.chi( chino ) );
 		}
 	} else {
-		TR << "The chi angles will not be updated and your dunbrack score for this rotamer will be huge; this function is only meant to add a variant type to a residue of the same type" << std::endl;
+		TR << "The chi angles will not be updated and your dunbrack score for this rotamer will be huge; "
+				"this function is only meant to add a variant type to a residue of the same type" << std::endl;
 	}
 
 	return new_rsd;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief construct a variant of an existing pose residue
-/// @details eg make a terminus variant, and replace the orignal in pose.
-/// @note this copies any atoms in common between old and new residues, rebuild the others
+
+/// @details E.g., make a terminus variant, and replace the original in pose.
+/// @note This copies any atoms in common between old and new residues, rebuilding the others.
 void
 add_variant_type_to_pose_residue(
-	pose::Pose & pose,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-	)
+		pose::Pose & pose,
+		chemical::VariantType const variant_type,
+		Size const seqpos )
 {
 	runtime_assert( seqpos != 0 );
 	if ( pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
@@ -1558,16 +1551,14 @@ add_variant_type_to_pose_residue(
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief construct a non-variant of an existing pose residue
-/// @details eg remove a terminus variant, and replace the orignal in pose.
-/// @note this copies any atoms in common between old and new residues, rebuild the others
+
+/// @details E.g., remove a terminus variant, and replace the original in pose.
+/// @note This copies any atoms in common between old and new residues, rebuilding the others.
 void
 remove_variant_type_from_pose_residue(
-	pose::Pose & pose,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-	)
+		pose::Pose & pose,
+		chemical::VariantType const variant_type,
+		Size const seqpos )
 {
 	if ( !pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
 
@@ -2105,7 +2096,7 @@ initialize_disulfide_bonds(
 	Pose & pose
 ) {
 
-		// disulfides
+	// disulfides
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	// Fix disulfides if a file is given
@@ -2367,42 +2358,41 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 	}
 }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// try to unify all cutpoint addition into this function.
-	void
-	correctly_add_cutpoint_variants( core::pose::Pose & pose,
-																	 Size const cutpoint_res,
-																	 bool const check_fold_tree /* = true*/){
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// try to unify all cutpoint addition into this function.
+void
+correctly_add_cutpoint_variants( core::pose::Pose & pose,
+		Size const cutpoint_res,
+		bool const check_fold_tree /* = true*/ )
+{
+	using namespace core::chemical;
 
-		using namespace core::chemical;
+	runtime_assert( cutpoint_res < pose.total_residue() );
+	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
 
-		runtime_assert( cutpoint_res < pose.total_residue() );
-		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
+	remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, cutpoint_res );
+	remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, cutpoint_res );
+	remove_variant_type_from_pose_residue( pose, C_METHYLAMIDATION, cutpoint_res );
 
-		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, cutpoint_res );
-		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", cutpoint_res );
-		remove_variant_type_from_pose_residue( pose, "C_METHYLAMIDATION", cutpoint_res );
+	remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, cutpoint_res + 1 );
+	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, cutpoint_res + 1 );
+	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, cutpoint_res + 1 );
+	remove_variant_type_from_pose_residue( pose, N_ACETYLATION, cutpoint_res + 1);
 
-		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, cutpoint_res + 1 );
-		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, cutpoint_res + 1 );
-		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", cutpoint_res + 1 );
-		remove_variant_type_from_pose_residue( pose, "N_ACETYLATION", cutpoint_res + 1);
+	if ( pose.residue_type( cutpoint_res ).is_RNA() )	 rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res );
 
-		if ( pose.residue_type( cutpoint_res ).is_RNA() )	 rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res );
+	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
+	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res + 1 );
 
-		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
-		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res + 1 );
-
-		// important -- to prevent artificial penalty from steric clash.
-		if ( pose.residue_type( cutpoint_res ).is_NA() ) {
-			runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_NA() );
-			pose.conformation().declare_chemical_bond( cutpoint_res, " O3'", cutpoint_res+1, " P  " );
-		}	else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
-			runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
-			pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
-		}
+	// important -- to prevent artificial penalty from steric clash.
+	if ( pose.residue_type( cutpoint_res ).is_NA() ) {
+		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_NA() );
+		pose.conformation().declare_chemical_bond( cutpoint_res, " O3'", cutpoint_res+1, " P  " );
+	}	else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
+		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
+		pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
 	}
-
+}
 
 } // pose
 } // core

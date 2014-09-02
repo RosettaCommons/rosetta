@@ -72,7 +72,7 @@ SpecialRotamerEnergy::residue_energy(
 	core::scoring::EnergyMap & emap
 ) const
 {
-	if ( rsd.has_variant_type("SPECIAL_ROT") ) {
+	if ( rsd.has_variant_type( core::chemical::SPECIAL_ROT ) ) {
 		emap[ core::scoring::special_rot ] = 1.0;
 	}
 }

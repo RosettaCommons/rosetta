@@ -1,11 +1,11 @@
 ## full-atom carbohydrate lower (reducing end) terminus patch
 
 NAME reducing_end
-TYPES LOWER_TERMINUS
+TYPES LOWER_TERMINUS_VARIANT
 
 BEGIN_SELECTOR
 PROPERTY CARBOHYDRATE
-NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
 END_SELECTOR
 
 BEGIN_CASE ## ALDOSE ##########################################################

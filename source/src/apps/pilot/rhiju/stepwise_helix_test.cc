@@ -309,7 +309,7 @@ setup_hydrophobic_cbetas( pose::Pose const & pose,
 	for ( Size n = 1; n <= subset_res.size(); n++ ) {
 		Size const i = subset_res[ n ];
 
-		if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_RESIDUE" ) ) continue;
+		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 		if ( check_hydrophobic( pose.aa( i ) ) ) pose_hydrophobic_cbetas.push_back( pose.xyz( id::NamedAtomID( " CB ", i )  ) );
 
 	}
@@ -327,7 +327,7 @@ setup_backbone_atoms( pose::Pose const & pose, 	utility::vector1< Vector > & bac
 	for ( Size n = 1; n <= subset_res.size(); n++ ) {
 		Size const i = subset_res[ n ];
 
-		if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_RESIDUE" ) ) continue;
+		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 		for ( Size j = 1; j <= pose.residue_type( i ).first_sidechain_atom(); j++ ){
 
@@ -571,7 +571,9 @@ pack_it( pose::Pose & pose ){
 		pack_task_->nonconst_residue_task(i).or_ex1( true );
 		pack_task_->nonconst_residue_task(i).or_ex2( true );
 		pack_task_->nonconst_residue_task(i).or_include_current( true );
-		if ( pose.residue(i).has_variant_type( "VIRTUAL_RESIDUE" ) ) pack_task_->nonconst_residue_task(i).prevent_repacking();
+		if ( pose.residue(i).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) {
+			pack_task_->nonconst_residue_task(i).prevent_repacking();
+		}
 	}
 
 	pack::pack_rotamers(  pose, *scorefxn_, pack_task_ );

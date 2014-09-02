@@ -9,7 +9,6 @@
 
 
 /// @file protocols/protein_interface_design/movers/TryRotamers.cc
-/// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
 // Unit headers
@@ -17,45 +16,49 @@
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
 
 // Package headers
+#include <protocols/protein_interface_design/design_utils.hh>
 
 // Project headers
-#include <core/kinematics/Edge.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
-#include <core/chemical/AA.hh>
-#include <boost/foreach.hpp>
-#include <algorithm>
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/protein_interface_design/design_utils.hh>
-#include <core/pose/Pose.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-
-#include <protocols/protein_interface_design/util.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
-
 #include <core/graph/Graph.hh>
-#include <protocols/moves/MoverStatus.hh>
-#include <basic/Tracer.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/kinematics/Edge.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverStatus.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/protein_interface_design/util.hh>
+#include <protocols/rosetta_scripts/util.hh>
+
+// Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 
+// External headers
+#include <boost/foreach.hpp>
+
+// C++ headers
+#include <algorithm>
 
 
 namespace protocols {
@@ -153,7 +156,7 @@ copy_hotspot_to_pose( core::pose::Pose const & src, core::pose::Pose & dest, cor
 	ResidueOP new_res = ResidueFactory::create_residue( restype );
 
 	dest.append_residue_by_jump( *new_res, dest.total_residue(),"","",true/*new chain*/ );
-	core::pose::add_variant_type_to_pose_residue( dest, "SHOVE_BB", dest.total_residue() );
+	core::pose::add_variant_type_to_pose_residue( dest, core::chemical::SHOVE_BB, dest.total_residue() );
 	dest.fold_tree( new_ft );
 	using namespace core::chemical;
 	core::pose::add_upper_terminus_type_to_pose_residue( dest, src_resi );

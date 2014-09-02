@@ -614,30 +614,35 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 		if ( protonated_H1_adenosine_list.has_value( seq_num ) ){
 
-			runtime_assert( rebuild_pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) );
+			runtime_assert( rebuild_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) );
 
 			if ( has_virtual_rna_residue_variant_type( start_pose, seq_num ) ){
 
-				if ( start_pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ){
-					utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) of start_pose has PROTONATED_H1_ADENOSINE variant type but is a virtual_residue!" );
+				if ( start_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ) {
+					utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) of start_pose has "
+							"PROTONATED_H1_ADENOSINE variant type but is a virtual_residue!" );
 				}
 
 				//This ensures that the Adenosine base have the same atom_list in the start and rebuild pose!
-				pose::remove_variant_type_from_pose_residue( rebuild_pose, "PROTONATED_H1_ADENOSINE", seq_num );
-				std::cout << "removing PROTONATED_H1_ADENOSINE from seq_num " << seq_num << " of rebuild_pose since this seq_num is a virtual_residue in start_pose!" << std::endl;
+				pose::remove_variant_type_from_pose_residue(
+						rebuild_pose, core::chemical::PROTONATED_H1_ADENOSINE, seq_num );
+				std::cout << "removing PROTONATED_H1_ADENOSINE from seq_num " << seq_num <<
+						" of rebuild_pose since this seq_num is a virtual_residue in start_pose!" << std::endl;
 
 			} else{
 
-				if ( start_pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) == false ){
-					utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) is in protonated_H1_adenosine_list but start_pose does not have PROTONATED_H1_ADENOSINE variant type!" );
+				if ( ! start_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ) {
+					utility_exit_with_message( "seq_num( " + string_of( seq_num ) +" ) is in protonated_H1_adenosine_list "
+							"but start_pose does not have PROTONATED_H1_ADENOSINE variant type!" );
 				}
 
 			}
 
 		} else{
 
-			if ( rebuild_pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ){
-				utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) is not in protonated_H1_adenosine_list but rebuild_pose has PROTONATED_H1_ADENOSINE variant type!" );
+			if ( rebuild_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ){
+				utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) is not in "
+						"protonated_H1_adenosine_list but rebuild_pose has PROTONATED_H1_ADENOSINE variant type!" );
 			}
 
 		}
@@ -694,11 +699,11 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	////////////////////////////////////////////////////////////////////////////////////
 	for ( Size seq_num = 1; seq_num <= output_pose.total_residue(); seq_num++ ){
 
-		if ( output_pose.residue( seq_num ).has_variant_type( "CUTPOINT_LOWER" ) ){
+		if ( output_pose.residue( seq_num ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
 
 			if ( seq_num == output_pose.total_residue() ) utility_exit_with_message( "seq_num == output_pose.total_residue() has CUTPOINT_LOWER variant_type!" );
 			if ( !output_pose.fold_tree().is_cutpoint( seq_num ) ) utility_exit_with_message( "seq_num ( " + string_of( seq_num ) + " ) is not a cutpoint!" );
-			runtime_assert ( output_pose.residue( seq_num + 1 ).has_variant_type( "CUTPOINT_UPPER" ) );
+			runtime_assert ( output_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) );
 
 			////////////////////Copy the chain_break torsions///////////////////////////////////
 			/////Important to copy torsion before calling rna_loop_closer///////////////////////

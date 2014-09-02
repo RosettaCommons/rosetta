@@ -208,7 +208,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 is_sugar_virtual( pose::Pose const & pose, Size const & n ){
-	return ( pose.residue( n ).has_variant_type( "VIRTUAL_RIBOSE" ) );
+	return ( pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

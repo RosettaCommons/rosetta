@@ -23,7 +23,6 @@
 #include <set>
 
 // Utility headers
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -32,10 +31,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>

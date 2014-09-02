@@ -8,11 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/enzdes/SecondaryMatchProtocol.cc
-///
-/// @brief
 /// @author Florian Richter
-
-
 
 #include <protocols/enzdes/SecondaryMatchProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
@@ -27,7 +23,9 @@
 #include <protocols/enzdes/EnzdesTaskOperations.fwd.hh>
 
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -227,6 +225,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 	toolbox::match_enzdes_util::EnzCstTemplateResCOP present_template,
 	toolbox::match_enzdes_util::EnzConstraintIOCOP cstio)
 {
+	using namespace toolbox::match_enzdes_util;
 
 	utility::vector1< core::conformation::ResidueOP > found_res_this_param;
 
@@ -234,14 +233,17 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 	utility::vector1< core::Size > target_residues;
 
 	tr.Info << "Trying to add interaction of pose residue(s) ";
-	for( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_begin(), pos_end = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_end();
-			 pos_it != pos_end; ++pos_it ){
+	for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator
+			pos_it = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_begin(),
+			pos_end = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_end();
+			pos_it != pos_end; ++pos_it ){
 		target_residues.push_back( pos_it->first );
 		tr.Info << pose.residue_type( pos_it->first ).name() << " " << pos_it->first << ", ";
 	}
 
 	if( target_residues.size() != 1 ){
-		utility_exit_with_message("Error: there are more (or less) than 1 target residue. This protocol isn't setup to handle dealing with multiple target residues yet( and it shouldn't necesseraly be.");
+		utility_exit_with_message("Error: there are more (or less) than 1 target residue. "
+				"This protocol isn't setup to handle dealing with multiple target residues yet( and it shouldn't necessarily be.");
 	}
 	core::Size target_residue = target_residues[1];
 
@@ -278,17 +280,20 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 			if( ! restype_possible_at_position( pose, & trial_res.type(), & pose.residue( target_residue ), *pos_try_it ) ) continue;
 
 			utility::vector1< std::string > current_variants;
-			bool variants_match = pose.residue_type( *pos_try_it).variants_match( trial_res.type() );
+			bool match = variants_match( pose.residue_type( *pos_try_it ), trial_res.type() );
 
-			if( !variants_match ){
-				current_variants = pose.residue_type( *pos_try_it ).variant_types();
+			if( ! match ){
+				current_variants = pose.residue_type( *pos_try_it ).properties().get_list_of_variants();
 			}
 
 			pose.replace_residue( *pos_try_it, trial_res, true);
 
-			if( !variants_match ){
-				for(core::Size var = 1; var <= current_variants.size(); var++){
-					core::pose::add_variant_type_to_pose_residue( pose, current_variants[ var ], *pos_try_it );
+			if( ! match ){
+				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+					core::pose::add_variant_type_to_pose_residue(
+							pose,
+							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ),
+							*pos_try_it );
 				}
 			}
 
@@ -351,9 +356,12 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			pose.replace_residue( *pos_try_it, ala_res, true);
 
-			if( !variants_match ){
-				for(core::Size var = 1; var <= current_variants.size(); var++){
-					core::pose::add_variant_type_to_pose_residue( pose, current_variants[ var ], *pos_try_it );
+			if( ! match ){
+				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+					core::pose::add_variant_type_to_pose_residue(
+							pose,
+							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ),
+							*pos_try_it );
 				}
 			}
 
@@ -380,8 +388,8 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 	utility::vector1< bool > allowed_res( pose.total_residue() );
 	std::set< core::Size > interface_res;
 	interface_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
-  DetectProteinLigandInterfaceOP lig_prot_interface = new DetectProteinLigandInterface();
-  lig_prot_interface->find_design_interface(pose, interface_res, cut1_, cut2_, cut3_, cut4_, allowed_res, dummy );
+	DetectProteinLigandInterfaceOP lig_prot_interface = new DetectProteinLigandInterface();
+	lig_prot_interface->find_design_interface(pose, interface_res, cut1_, cut2_, cut3_, cut4_, allowed_res, dummy );
 
 	//utility::vector1< core::Size > cat_res = catalytic_res();
 

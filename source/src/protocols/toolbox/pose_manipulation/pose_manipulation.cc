@@ -20,9 +20,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-//#include <core/chemical/VariantType.hh>
- //needed for adding variant types
-
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -47,9 +46,7 @@
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loops.hh>
 
-
 // Utility Headers
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
@@ -60,7 +57,6 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-// C++ Headers
 
 namespace protocols {
 namespace toolbox {
@@ -118,25 +114,26 @@ construct_poly_uniq_restype_pose(
 
 			utility::vector1< std::string > current_variants;
 
-			bool variants_match = cur_restype->variants_match( replace_res.type() );
-			//TR<< "replacing: " << *pos_it << std::endl;
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "replacing: " << *pos_it << std::endl;
+			}
 
-			if( !variants_match ){
-
-				current_variants = cur_restype->variant_types();
+			if ( ! variants_match( *cur_restype, replace_res.type() ) ) {
+				current_variants = cur_restype->properties().get_list_of_variants();
 				chemical::ResidueTypeCOP var_replace_type = & ( replace_res.type() );
 
-				for(core::Size var = 1; var <= current_variants.size(); var++){
-					var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type, current_variants[ var ] ));
+				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+					var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type,
+							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ) );
 				}
 
 				//runtime_assert( var_replace_type->name3() == "ALA" );
 				conformation::Residue const var_replace_res( *var_replace_type, true );
 
 				pose.replace_residue( *pos_it, var_replace_res, true );
+			} else {
+				pose.replace_residue( *pos_it, replace_res, true);
 			}
-
-			else	pose.replace_residue( *pos_it, replace_res, true);
 
 		} //iterator over positions to replace
 
@@ -172,27 +169,25 @@ construct_poly_XXX_pose(
 				}
 			utility::vector1< std::string > current_variants;
 
-			bool variants_match = cur_restype->variants_match( replace_res.type() );
-
-			if( !variants_match ){
-
-				current_variants = cur_restype->variant_types();
+			if ( ! variants_match( *cur_restype, replace_res.type() ) ) {
+				current_variants = cur_restype->properties().get_list_of_variants();
 				chemical::ResidueTypeCOP var_replace_type = & replace_res.type();
 
-				for(core::Size var = 1; var <= current_variants.size(); var++){
-						if(( cur_restype->has_variant_type( chemical::DISULFIDE ) && keep_disulfide_cys)|| (!cur_restype->has_variant_type( chemical::DISULFIDE ))) 
-						var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type, current_variants[ var ] ));
+				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+					if ( ( cur_restype->has_variant_type( chemical::DISULFIDE ) && keep_disulfide_cys) ||
+							( ! cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
+						var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type,
+								chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ) );
+					}
 				}
 
 				runtime_assert( var_replace_type->name3() == aa );
 				conformation::Residue const var_replace_res( *var_replace_type, true );
 				pose.replace_residue( *pos_it, var_replace_res, true );
+			} else {
+				pose.replace_residue( *pos_it, replace_res, true);
 			}
-
-			else	pose.replace_residue( *pos_it, replace_res, true);
-
 		} //iterator over positions to replace
-
 } // construct_poly_XXX_pose function
 
 

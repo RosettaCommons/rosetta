@@ -9,7 +9,7 @@
 
 /// @file StepWiseProteinMinimizer
 /// @brief Not particularly fancy, just minimizes a list of poses.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -225,7 +225,7 @@ namespace protein {
 					 ++iter ){
 
 				Size j( (*iter)->get_other_ind( i ) );
-				if ( pose.residue(j).has_variant_type( "VIRTUAL_RESIDUE" ) ) continue;
+				if ( pose.residue(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 				if ( pose.residue(j).is_protein() ){
 					mm.set_chi( j, true );

@@ -170,7 +170,7 @@ TryRotamers::apply ( pose::Pose & pose )
 	}
 
 	BOOST_FOREACH( core::Size const resid, shove_residues_ )
-		core::pose::add_variant_type_to_pose_residue( pose, "SHOVE_BB", resid );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, resid );
 
 	if (solo_res_) {
 		core::pose::add_lower_terminus_type_to_pose_residue( pose, pose.total_residue() ); //prolly critical so that the dunbrack library uses neutral phi

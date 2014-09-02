@@ -9,7 +9,6 @@
 
 
 /// @file protocols/protein_interface_design/movers/ShoveResidueMover.cc
-/// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 
 // Unit headers
@@ -17,28 +16,32 @@
 #include <protocols/protein_interface_design/movers/ShoveResidueMoverCreator.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <utility/tag/Tag.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/graph/Graph.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/selection.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/protein_interface_design/util.hh>
-#include <utility/string_util.hh>
-
-#include <core/graph/Graph.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <boost/foreach.hpp>
+
+// Basic headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <core/pose/util.hh>
+// Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
+
+// External headers
+#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -100,9 +103,9 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 
 		}
 		if ( remove_shove_variant_ ) {
-			core::pose::remove_variant_type_from_pose_residue( pose, "SHOVE_BB", resid );
+			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::SHOVE_BB, resid );
 		} else {
-			core::pose::add_variant_type_to_pose_residue( pose, "SHOVE_BB", resid );
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, resid );
 		}
 	}
 }

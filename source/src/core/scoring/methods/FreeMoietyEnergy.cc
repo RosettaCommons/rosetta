@@ -92,36 +92,35 @@ FreeMoietyEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-
 	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
 	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 
-	if ( rsd.has_variant_type( "VIRTUAL_PHOSPHATE" ) ){
+	if ( rsd.has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ){
 		Size const seqpos_in_full_model = res_list[ rsd.seqpos() ];
 		if ( seqpos_in_full_model > 1 && !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ){
 			emap[ free_suite ] += free_suite_bonus_;
 		}
 	}
-	if ( rsd.has_variant_type( "FIVE_PRIME_PACKABLE_PHOSPHATE" ) ){ // this always comes with a virtual phosphate
+	if ( rsd.has_variant_type( chemical::FIVE_PRIME_PACKABLE_PHOSPHATE ) ){ // this always comes with a virtual phosphate
 		emap[ free_suite ] += pack_phosphate_penalty_;
 	}
-	if ( rsd.has_variant_type( "THREE_PRIME_PACKABLE_PHOSPHATE" ) ){
+	if ( rsd.has_variant_type( chemical::THREE_PRIME_PACKABLE_PHOSPHATE ) ){
 		emap[ free_suite ] += pack_phosphate_penalty_;
 	}
-	if ( rsd.has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
+	if ( rsd.has_variant_type( chemical::FIVE_PRIME_PHOSPHATE ) ){
 		// weird, I know. these variants should go on as intermediates in stepwise assembly, replacing
 		// virtual phosphates. Ideally the bonus & the penalty should cancel, but somehow that is too stringent
 		// and would end up disallowing phosphates from ever being instantiated.
 		emap[ free_suite ] += free_suite_bonus_ + pack_phosphate_penalty_;
 	}
-	if ( rsd.has_variant_type( "THREE_PRIME_PHOSPHATE" ) ){
+	if ( rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ){
 		emap[ free_suite ] += pack_phosphate_penalty_;
 	}
-	if ( rsd.has_variant_type( "VIRTUAL_RIBOSE" ) )	emap[ free_suite ] += free_sugar_bonus_;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RIBOSE ) )	emap[ free_suite ] += free_sugar_bonus_;
 
-	if ( rsd.has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) )	emap[ free_2HOprime ] += free_2HOprime_bonus_;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) )	emap[ free_2HOprime ] += free_2HOprime_bonus_;
 
-	if ( rsd.has_variant_type( "VIRTUAL_SIDE_CHAIN" ) ) 	emap[ free_side_chain ] += free_side_chain_bonus_ * rsd.nchi() ;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) ) 	emap[ free_side_chain ] += free_side_chain_bonus_ * rsd.nchi() ;
 
 }
 

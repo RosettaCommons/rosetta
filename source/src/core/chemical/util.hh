@@ -9,51 +9,65 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/chemical/util.hh
-///
 /// @brief Utilities for modifying and utilizing Residues and other core::chemical classes.
-/// @author
 
-#ifndef INCLUDED_core_chemical_util_hh
-#define INCLUDED_core_chemical_util_hh
-
+#ifndef INCLUDED_core_chemical_util_HH
+#define INCLUDED_core_chemical_util_HH
 
 // Unit headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/VariantType.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+
+// C++ header
 #include <string>
+
 
 namespace core {
 namespace chemical {
 
+/// @brief  Return a constant access pointer to the ResidueTypeSet specified by the command-line options.
 core::chemical::ResidueTypeSetCAP rsd_set_from_cmd_line();
 
-void
-add_atom_type_set_parameters_from_command_line(
+/// @brief  Add additional parameter files not present in <atom-set-name>/extras.txt.
+void add_atom_type_set_parameters_from_command_line(
 		std::string const & atom_type_set_tag,
-		AtomTypeSet & atom_type_set
-		);
+		AtomTypeSet & atom_type_set );
 
-void
-modify_atom_properties_from_command_line(
+/// @brief  Modify atom_type properties from the command line.
+void modify_atom_properties_from_command_line(
 		std::string const & atom_type_set_tag,
-		AtomTypeSet & atom_type_set
-		);
+		AtomTypeSet & atom_type_set );
 
-/// @brief Return a string representing the Icoord tree of the Restype
-/// @details Mainly intended for debugging purposes.
-std::string
-formatted_icoord_tree(core::chemical::ResidueType const & restype);
+
+/// @brief Return a string representing the internal coordinates tree of this ResidueType.
+std::string formatted_icoord_tree( core::chemical::ResidueType const & restype );
 
 /// @brief Utility to examine chi output.
-void
-print_chis(std::ostream & out, ResidueType const & res);
+void print_chis( std::ostream & out, ResidueType const & res );
 
-std::string
-fixup_patches( std::string string_in );
 
-} // namespace chemical
-} // namespace core
+/// @brief Replaces the deprecated "_p:" linker connecting ResidueType base names with their patch names with ":".
+std::string fixup_patches( std::string string_in );
 
-#endif
+
+/// @brief  Are these two residues patched in exactly the same way, ignoring any VariantTypes in the list of exceptions?
+bool variants_match_with_exceptions(
+		ResidueType const & res1,
+		ResidueType const & res2,
+		utility::vector1< VariantType > list_of_variants_to_ignore );
+
+/// @brief  Are these two residues patched in exactly the same way?
+bool variants_match( ResidueType const & res1, ResidueType const & res2 );
+
+/// @brief  Similar to variants_match(), but allows different adduct-modified states.
+bool nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 );
+
+}  // namespace chemical
+}  // namespace core
+
+#endif  // INCLUDED_core_chemical_util_HH

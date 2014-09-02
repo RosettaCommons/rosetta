@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_Util
-/// @brief Util functions for Stepwise Assembly RNA.
-/// @detailed
+/// @file   protocols/stepwise/modeler/rna/util.cc
+/// @brief  Util functions for Stepwise Assembly RNA.
 /// @author Parin Sripakdeevong
 
 
@@ -29,7 +28,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -115,13 +114,15 @@ namespace rna {
 
 		if ( apply_check ){
 			//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
-			if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-				utility_exit_with_message( "Cannot apply PROTONATED_H1_ADENOSINE variant_type to seq_num: " + ObjexxFCL::string_of( seq_num ) + ". This residue have a incompatible VIRTUAL_RNA_RESIDUE variant type."  );
+			if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
+				utility_exit_with_message( "Cannot apply PROTONATED_H1_ADENOSINE variant_type to seq_num: " +
+						ObjexxFCL::string_of( seq_num ) + ". This residue have a incompatible VIRTUAL_RNA_RESIDUE variant type."  );
 			}
 		}
 
-		if ( pose.residue( seq_num ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ){
-			TR << "WARNING pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num = " << seq_num << ", early RETURN!" << std::endl;
+		if ( pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_H1_ADENOSINE ) ){
+			TR << "WARNING pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num = " << seq_num <<
+					", early RETURN!" << std::endl;
 			return;
 			//utility_exit_with_message("pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " + ObjexxFCL::string_of(seq_num));
 		}
@@ -134,7 +135,7 @@ namespace rna {
 			utility_exit_with_message( "working_seq_num = " + ObjexxFCL::string_of( seq_num ) + " cannot have PROTONATED_H1_ADENOSINE variant type since it is not a adenosine!" );
 		}
 
-		pose::add_variant_type_to_pose_residue( pose, "PROTONATED_H1_ADENOSINE", seq_num );
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::PROTONATED_H1_ADENOSINE, seq_num );
 
 	}
 
@@ -145,21 +146,22 @@ namespace rna {
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			utility::vector1< core::chemical::VariantType > target_variants( pose.residue( seq_num ).type().variant_types() );
-			runtime_assert ( target_variants.size() == pose.residue( seq_num ).type().variant_types().size() );
+			utility::vector1< std::string > target_variants( pose.residue( seq_num ).type().properties().get_list_of_variants() );
+			runtime_assert ( target_variants.size() == pose.residue( seq_num ).type().properties().get_list_of_variants().size() );
 			Size skip_variant_count = 0;
 			for ( Size i = 1; i <= target_variants.size(); i++ ) {
 				runtime_assert ( pose.residue( seq_num ).type().has_variant_type( target_variants[i] ) );
 				bool skip_this_variant = false;
-				if ( target_variants[i] == "LOWER_TERMINUS" ) skip_this_variant = true;
-				if ( target_variants[i] == "UPPER_TERMINUS" ) skip_this_variant = true;
+				if ( target_variants[i] == "LOWER_TERMINUS_VARIANT" ) skip_this_variant = true;
+				if ( target_variants[i] == "UPPER_TERMINUS_VARIANT" ) skip_this_variant = true;
 				if ( skip_this_variant ){
 					skip_variant_count++;
 					continue;
 				}
-				pose::remove_variant_type_from_pose_residue( pose, target_variants[i], seq_num );
+				pose::remove_variant_type_from_pose_residue( pose,
+						core::chemical::ResidueProperties::get_variant_from_string( target_variants[i] ), seq_num );
 			}
-			runtime_assert( pose.residue( seq_num ).type().variant_types().size() == skip_variant_count );
+			runtime_assert( pose.residue( seq_num ).type().properties().get_list_of_variants().size() == skip_variant_count );
 		}
 
 	}
@@ -346,7 +348,8 @@ namespace rna {
 		}
 
 		bool const method_1 = ( non_virtual_atom_count < 8 );
-		bool const method_2 = ( rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) || rsd.has_variant_type( "BULGE" ) );
+		bool const method_2 = ( rsd.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ||
+				rsd.has_variant_type( core::chemical::BULGE ) );
 
 		if ( method_1 != method_2 ){
 			TR << "residue " << rsd.seqpos() << " non virtual atoms: " << non_virtual_atom_count << std::endl;
@@ -630,7 +633,7 @@ namespace rna {
 	add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
 	  for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
 			if ( !pose.residue( i ).is_RNA() ) continue;
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", i );
+			pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
 	  }
 	}
 
@@ -649,8 +652,8 @@ namespace rna {
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ){
 			if ( !pose.residue( i ).is_RNA() ) continue;
-			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ){
-				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", i );
+			if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ){
+				pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
 			}
 		}
 		return true;
@@ -677,8 +680,14 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Real
-	rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, utility::vector1 < Size > const & residue_list, std::map< core::Size, core::Size > const & full_to_sub, std::map< core::Size, bool > const & is_prepend_map, bool const verbose, bool const ignore_virtual_atom ){
-
+	rmsd_over_residue_list(
+			pose::Pose const & pose1,
+			pose::Pose const & pose2,
+			utility::vector1 < Size > const & residue_list, std::map< core::Size, core::Size > const & full_to_sub,
+			std::map< core::Size, bool > const & is_prepend_map,
+			bool const verbose,
+			bool const ignore_virtual_atom )
+	{
 		if ( verbose ){
 			output_title_text( "Enter rmsd_over_residue_list function", TR );
 			output_boolean( "ignore_virtual_atom = ", ignore_virtual_atom, TR ); TR << std::endl;
@@ -694,8 +703,8 @@ namespace rna {
  			Size const seq_num = full_to_sub.find( full_seq_num )->second;
 			bool is_prepend = is_prepend_map.find( full_seq_num )->second;
 			bool both_pose_res_is_virtual = false;
-			if ( pose1.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) &&
-					 pose2.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( pose1.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
+					 pose2.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 				both_pose_res_is_virtual = true;
 			}
 
@@ -1319,7 +1328,8 @@ namespace rna {
 			if ( ( delta >  - 0.01 && delta < 0.01 ) || ( nu_2 >  - 0.01 && nu_2 < 0.01 ) || ( nu_1 >  - 0.01 && nu_1 < 0.01 ) ){ //observation is that messed up structure will have delta value of zero
 				TR.Debug << "Warning: " << tag << " is probably a messed up pose, will be ignored" << std::endl;
 				TR.Debug << " seq_num = " << seq_num << " delta = " << delta << " chi = " << chi << " nu_2 = " << nu_2 << " nu_1 = " << nu_1 << std::endl;
-				if ( ( rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == true ) || ( rsd.has_variant_type( "VIRTUAL_RIBOSE" ) == true ) ){ //Implement on Oct 28,2010
+				if ( ( rsd.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) ||
+						( rsd.has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) ){ //Implement on Oct 28,2010
 					TR.Debug << "OK lets NOT ignore yet since this rsd has virtual_res or virtual_sugar variant type..continue checking.. " << std::endl;
 				} else{
 					return true;
@@ -1830,7 +1840,7 @@ get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & mi
 void
 remove_all_virtual_phosphates( core::pose::Pose & pose ){
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
+		pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 	}
 }
 

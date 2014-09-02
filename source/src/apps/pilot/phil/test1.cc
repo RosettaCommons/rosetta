@@ -11,11 +11,33 @@
 /// @brief  Some simple examples of how to use basic functionality + some DNA functionality
 /// @author Phil Bradley (pbradley@fhcrc.org)
 
-// libRosetta headers
+// Project headers
+#include <devel/init.hh>
+
 #include <protocols/frags/VallData.hh>
 #include <protocols/frags/TorsionFragment.hh>
-// AUTO-REMOVED #include <devel/dna/protocols.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/OutputMovers.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <protocols/moves/RepeatMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/viewer/viewers.hh>
+#include <protocols/viewer/visualize.hh>
 
+#include <core/init/init.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/types.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/scoring/sasa.hh>
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>
 #include <core/scoring/dna/BasePartner.hh>
@@ -24,135 +46,72 @@
 #include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/Methods.hh>
-#include <utility/excn/Exceptions.hh>
-
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/OutputMovers.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-//#include <protocols/moves/rigid_body_moves.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-
-#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
-#include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
-#include <protocols/loops/loops_main.hh>
-
-#include <protocols/viewer/viewers.hh>
-
-#include <core/types.hh>
-
-#include <core/scoring/sasa.hh>
-
-#include <basic/prof.hh> // profiling
-#include <core/pose/datacache/CacheableDataType.hh> // profiling
-#include <basic/datacache/BasicDataCache.hh>
-
-#include <core/sequence/DerivedSequenceMapping.hh>
-#include <core/sequence/util.hh>
-
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
-
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/hbonds.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/util.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/sequence/DerivedSequenceMapping.hh>
+#include <core/sequence/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
+#include <core/pose/datacache/CacheableDataType.hh> // profiling
+#include <core/import_pose/import_pose.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rtmin.hh>
 #include <core/pack/min_pack.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/VariantType.hh>
-
-#include <core/chemical/ChemicalManager.hh>
-
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
-
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/viewer/visualize.hh>
-#include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
-#include <core/id/AtomID_Map.hh>
-
-// AUTO-REMOVED #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
-
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-
-#include <basic/options/util.hh>//option.hh>
-//#include <basic/options/after_opts.hh>
-
+// Basic headers
+#include <basic/options/util.hh>
+#include <basic/prof.hh> // profiling
+#include <basic/datacache/BasicDataCache.hh>
 #include <basic/basic.hh>
-
-// AUTO-REMOVED #include <basic/database/open.hh>
-
-#include <core/init/init.hh>
-#include <devel/init.hh>
-
-#include <core/io/pdb/pose_io.hh>
-
-#include <utility/vector1.hh>
-
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-
-//REMOVE LATER!
-//#include <utility/io/izstream.hh>
-
-
-// C++ headers
-//#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <basic/Tracer.hh>
-
-// option key includes
-
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/phil.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <core/import_pose/import_pose.hh>
+// Utility headers
 #include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
+
+// Numeric headers
+#include <numeric/xyzVector.hh>
+#include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 
-//Auto Headers
-#include <core/pose/util.tmpl.hh>
+// External headers
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 
+// C++ headers
+#include <fstream>
+#include <iostream>
+#include <string>
 
 
 static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
-
 
 
 ////////////////////////////////////////////////
@@ -545,8 +504,9 @@ set_fullatom_flag_test()
 		ResidueTypeSetCAP fullatom_residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
-			for ( Size j=1; j<=rsd.type().variant_types().size(); j++ ) {
-				std::cout << rsd.type().variant_types()[j] << std::endl;
+			utility::vector1< std::string > const & variant_types( rsd.type().properties().get_list_of_variants() );
+			for ( Size j=1; j<=variant_types.size(); ++j ) {
+				std::cout << variant_types[j] << std::endl;
 			}
 			// get all residue types with same AA
 			ResidueTypeCOPs const & rsd_types( fullatom_residue_set->aa_map( rsd.aa() ) );
@@ -554,7 +514,7 @@ set_fullatom_flag_test()
 			// now look for a rsdtype with same variants
 			for ( Size j=1; j<= rsd_types.size(); ++j ) {
 				ResidueType const & new_rsd_type( *rsd_types[j] );
-				if ( rsd.type().variants_match( new_rsd_type ) ) {
+				if ( variants_match( rsd.type(), new_rsd_type ) ) {
 					new_rsd = ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
 					break;
 				}
@@ -2626,7 +2586,7 @@ bk_test2()
 
 
 	core::pose::remove_variant_type_from_pose_residue( pose2, UPPER_TERMINUS_VARIANT, nres2 );
-	core::pose::add_variant_type_to_pose_residue( pose2, VariantType("CTERM_CONNECT"), nres2 );
+	core::pose::add_variant_type_to_pose_residue( pose2, CTERM_CONNECT, nres2 );
 
 
 	// determine the desired connection points

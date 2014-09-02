@@ -7,37 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file   core/chemical/adduct_util.cc
 /// @author Jim Havranek
 
 
 // Unit header
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/Patch.hh>
-// Commented by inclean daemon #include <core/chemical/VariantType.hh>
 
-// Rosetta headers
-// Commented by inclean daemon #include <core/conformation/Residue.hh>
+// Project headers
+#include <core/chemical/VariantType.hh>
 
-// ObjexxFCL headers
+// Basic headers
+#include <basic/Tracer.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
 
 // Utility headers
-//#include <utility/io/izstream.hh>
-// Commented by inclean daemon #include <utility/options/StringVectorOption.hh>
-
-// C++ headers
-// Commented by inclean daemon #include <string>
-// Commented by inclean daemon #include <map>
-
-#include <basic/Tracer.hh>
-
-#include <core/chemical/VariantType.hh>
 #include <utility/vector1.hh>
 #include <utility/options/StringVectorOption.hh>
+
 
 static basic::Tracer TR("core.chemical.adduct_util");
 

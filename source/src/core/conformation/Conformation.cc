@@ -1653,8 +1653,8 @@ Conformation::update_polymeric_connection(
 	bool const disconnected(
 		lower.chain() != upper.chain() || lower.is_upper_terminus() ||
 		upper.is_lower_terminus() || !lower.is_polymer() || !upper.is_polymer() ||
-		lower.has_variant_type( "C_METHYLAMIDATION" ) ||
-		upper.has_variant_type( "N_ACETYLATION" ) );
+		lower.has_variant_type( chemical::C_METHYLAMIDATION ) ||
+		upper.has_variant_type( chemical::N_ACETYLATION ) );
 
 
 	if ( !disconnected ) set_polymeric_connection( lower_seqpos, lower_seqpos+1 );
@@ -3333,10 +3333,10 @@ Conformation::backbone_torsion_angle_atoms(
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "OVU1" );
-			} else if ( rsd.has_variant_type( "N_ACETYLATION" ) ) {
+			} else if ( rsd.has_variant_type( chemical::N_ACETYLATION ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( " CP " );
-			} else if ( rsd.has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
+			} else if ( rsd.has_variant_type( chemical::FIVE_PRIME_PHOSPHATE ) ){
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "XO3'" );
 			} else if ( seqpos==1 /*<-- only necessary for this case?*/ && rsd.has_lower_connect() && !rsd.connection_incomplete( rsd.type().lower_connect_id() ) ) {
@@ -3410,7 +3410,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id4.rsd()    = seqpos;
 					id4.atomno() = rsd.atom_index( "OVL2" );
 				}
-			} else if ( rsd.has_variant_type( "C_METHYLAMIDATION" ) ) {
+			} else if ( rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ) {
 				//ugly.
 				id3.rsd() = seqpos;
 				id4.rsd() = seqpos;
@@ -3422,7 +3422,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id3.atomno() = rsd.atom_index( " NR ");
 					id4.atomno() = rsd.atom_index( " CS ");
 				}
-			} else if ( rsd.has_variant_type( "THREE_PRIME_PHOSPHATE" ) ) {
+			} else if ( rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ) {
 				//ugly again. -- rhiju.
 				id3.rsd() = seqpos;
 				id4.rsd() = seqpos;

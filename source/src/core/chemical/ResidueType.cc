@@ -116,7 +116,7 @@ ResidueType::ResidueType(
 		ncaa_rotlib_n_rots_( 0 ),
 		use_peptoid_rotlib_( false ),
 		peptoid_rotlib_n_rots_( 0 ),
-		properties_( new ResidueProperties ),
+		properties_( new ResidueProperties( this ) ),
 		aa_( aa_unk ),
 		rotamer_aa_( aa_unk ),
 		backbone_aa_( aa_unk ),
@@ -216,7 +216,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		peptoid_rotlib_path_( residue_type.peptoid_rotlib_path_),
 		peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
 		peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
-		properties_( new ResidueProperties( *residue_type.properties_ ) ),
+		properties_( new ResidueProperties( *residue_type.properties_, this ) ),
 		aa_( residue_type.aa_ ),
 		rotamer_aa_( residue_type.rotamer_aa_ ),
 		backbone_aa_( residue_type.backbone_aa_ ),
@@ -1969,84 +1969,37 @@ ResidueType::get_string_property(std::string const & tag) const
 }
 
 
-utility::vector1< VariantType > const &
-ResidueType::variant_types() const
+void
+ResidueType::add_variant_type( VariantType const variant_type )
 {
-	return properties_->variant_types();
+	properties_->set_variant_type( variant_type, true );
 }
 
 void
-ResidueType::add_variant_type( VariantType const & variant_type )
+ResidueType::add_variant_type( std::string const & variant_type )
 {
-	properties_->add_variant_type( variant_type );
+	properties_->set_variant_type( variant_type, true );
 }
 
 bool
-ResidueType::has_variant_type( VariantType const & variant_type ) const
+ResidueType::has_variant_type( VariantType const variant_type ) const
 {
-	return properties_->has_variant_type( variant_type );
+	return properties_->is_variant_type( variant_type );
 }
 
 bool
-ResidueType::variants_match( ResidueType const & other ) const
+ResidueType::has_variant_type( std::string const & variant_type ) const
 {
-	utility::vector1< VariantType > const my_variant_types( properties_->variant_types() );
-	if ( ! basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) {
-		for ( Size ii = 1; ii <= my_variant_types.size(); ++ii ) {
-			if ( ! other.has_variant_type( my_variant_types[ ii ] ) ) {
-				return false;
-			}
-		}
-		return ( my_variant_types.size() == other.variant_types().size() );
-	}
-
-	//needed for protonated versions of the residues
-	else {
-		int this_variant_count_offset( 0 );
-		for ( Size ii = 1; ii <= my_variant_types.size(); ++ii ) {
-			if ( my_variant_types[ii] == PROTONATED || my_variant_types[ii] == DEPROTONATED ) {
-				this_variant_count_offset = 1;
-				continue;
-			}
-			if ( ! other.has_variant_type( my_variant_types[ ii ] ) ) {
-				return false;
-			}
-		}
-
-		int other_variant_count_offset( 0 );
-		if( other.has_variant_type( PROTONATED ) || other.has_variant_type( DEPROTONATED ) ) {
-			other_variant_count_offset = 1;
-		}
-
-		return ( ( my_variant_types.size() - this_variant_count_offset ) ==
-				( other.variant_types().size() - other_variant_count_offset ) );
-	}
+	return properties_->is_variant_type( variant_type );
 }
 
-bool
-ResidueType::nonadduct_variants_match( ResidueType const & other ) const
+/// @details Custom" VariantTypes as strings are permitted for the enzdes and metalloproteins cases.
+/// Do not enable unless you have a good reason to, as string look-ups are less efficient and more error-prone.
+void
+ResidueType::enable_custom_variant_types()
 {
-	int this_variant_count_offset( 0 );
-	utility::vector1< VariantType > const my_variant_types( properties_->variant_types() );
-	for ( Size ii = 1; ii <= my_variant_types.size(); ++ii ) {
-		if ( my_variant_types[ii] == ADDUCT_VARIANT ) {
-			this_variant_count_offset = 1;
-			continue;
-		}
-		if ( ! other.has_variant_type( my_variant_types[ ii ] ) ) {
-			return false;
-		}
-	}
-
-	int other_variant_count_offset( 0 );
-	if( other.has_variant_type( ADDUCT_VARIANT ) ) {
-		other_variant_count_offset = 1;
-	}
-
-	return ( ( my_variant_types.size() - this_variant_count_offset ) ==
-			( other.variant_types().size() - other_variant_count_offset ) );
+	properties_->enable_custom_variant_types();
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3655,14 +3608,6 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 	output << name_ << " (" << name3_ << ", " << name1_ << "):" << endl;
 
 	properties_->show( output );
-
-	output << " Variant types:";
-	vector1< VariantType > const variant_types( properties_->variant_types() );
-	Size const n_variant_types( variant_types.size() );
-	for ( core::uint i = 1; i <= n_variant_types; ++i ) {
-		output << ' ' << variant_types[ i ];
-	}
-	output << endl;
 
 	output << " Main-chain atoms:";
 	Size const n_mainchain_atoms(mainchain_atoms_indices_.size() );

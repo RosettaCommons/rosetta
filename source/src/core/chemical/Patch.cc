@@ -182,20 +182,20 @@ PatchCase::~PatchCase() {}
 static basic::Tracer tr("core.chemical");
 
 /// @brief the string used to generate new residue names
-std::string const patch_linker( ":" );
+std::string const PATCH_LINKER( ":" );
 // Changed from '_p:' to ':' for conciseness. Backward compatibility fixes throughout code.
 // std::string const patch_linker( "_p:" );
 
 std::string
 residue_type_base_name( ResidueType const & rsd_type )
 {
-	return rsd_type.name().substr( 0, rsd_type.name().find( patch_linker ) );
+	return rsd_type.name().substr( 0, rsd_type.name().find( PATCH_LINKER ) );
 }
 
 std::string
 residue_type_all_patches_name( ResidueType const & rsd_type )
 {
-	Size spos = rsd_type.name().find( patch_linker );
+	Size spos = rsd_type.name().find( PATCH_LINKER );
 	if( spos < rsd_type.name().length() ) return rsd_type.name().substr( spos );
 	else return "";
 }
@@ -298,7 +298,7 @@ Patch::read_file( std::string const & filename )
 		if ( tag == "NAME" ) {
 			l >> name_;
 		} else if ( tag == "TYPES" ) {
-			VariantType t;
+			std::string t;
 			l >> t;
 			while ( !l.fail() ) {
 				types_.push_back( t );
@@ -370,11 +370,11 @@ Patch::apply( ResidueType const & rsd_type ) const
 				// patch succeeded!
 				//	tr.Debug << "name of patched residue " << patched_rsd_type->name() << std::endl;
 				if ( !replaces_residue_type_ ) {
-					for ( utility::vector1< VariantType >::const_iterator iter=types_.begin(),
+					for ( utility::vector1< std::string >::const_iterator iter=types_.begin(),
 							iter_end = types_.end(); iter != iter_end; ++iter ) {
 						patched_rsd_type->add_variant_type( *iter );
 					}
-					std::string name_new = patched_rsd_type->name() + patch_linker + name_;
+					std::string name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
 					patched_rsd_type->name( name_new );
 				}
 				tr.Debug << "successfully patched: " << rsd_type.name() <<

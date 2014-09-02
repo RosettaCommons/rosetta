@@ -6,11 +6,11 @@ TYPES N_ACETYLATION
 BEGIN_SELECTOR
 PROPERTY PROTEIN
 NOT VARIANT_TYPE N_ACETYLATION
-NOT VARIANT_TYPE UPPER_TERMINUS
-NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
 NOT VARIANT_TYPE CUTPOINT_UPPER
 NOT VARIANT_TYPE CUTPOINT_LOWER
-NOT VARIANT_TYPE ACETYLATED_NTERMINUS
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
 CMDLINE_SELECTOR PEPTIDE_CAP
 END_SELECTOR
 
@@ -25,7 +25,7 @@ ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group...
 #ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -37,14 +37,14 @@ ADD_BOND  CP   OCP
 
 #SET_ICOOR  CP    84.91  78.20  1.728  N    CA   CG
 SET_ICOOR  CP   180.00  63.799957  1.328686  N    CA   CG
-SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  -179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -65,7 +65,7 @@ ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group...
 #ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -76,14 +76,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP    84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  -179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -95,7 +95,7 @@ END_CASE
 
 ###########################################
 
-BEGIN_CASE ### DPRO 
+BEGIN_CASE ### DPRO
 BEGIN_SELECTOR
 NAME3 DPR
 END_SELECTOR
@@ -143,7 +143,7 @@ END_SELECTOR
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -154,14 +154,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP   -84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ  -179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ  -179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP -180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ  -119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ  -120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ  -119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ  -120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -181,7 +181,7 @@ END_SELECTOR
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -192,14 +192,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP    84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  -179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -219,7 +219,7 @@ END_SELECTOR
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -230,14 +230,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP    -84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ   -179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   -179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  -180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   -119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   -120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   -119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   -120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -257,7 +257,7 @@ END_SELECTOR
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -268,14 +268,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP    84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  -179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -295,7 +295,7 @@ END_SELECTOR
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -306,14 +306,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP    -84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ   -179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   -179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  -180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   -119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   -120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   -119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   -120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -331,7 +331,7 @@ prepends the main chain atoms which shifts the backbone torsion
 numbering and people wont be able to use the pose.set_phi/psi()
 functions. -- Doug
 ###########################################
-BEGIN_CASE ### MAL 
+BEGIN_CASE ### MAL
 BEGIN_SELECTOR
 NAME3 MAL
 END_SELECTOR
@@ -345,19 +345,19 @@ ADD_ATOM  CQ  CH3    CT3  -0.27
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
-SET_ICOOR  CP    -53.987421   58.601240    1.360895   N     CA    C 
-SET_ICOOR  OCP   -13.339096   57.486387    1.201197   CP    N     CA 
-SET_ICOOR  CQ    179.655760   64.751350    1.512311   CP    N     OCP 
-#SET_ICOOR 1HQ   -84.044006   71.278413    1.085649   CQ    CP    N  
+SET_ICOOR  CP    -53.987421   58.601240    1.360895   N     CA    C
+SET_ICOOR  OCP   -13.339096   57.486387    1.201197   CP    N     CA
+SET_ICOOR  CQ    179.655760   64.751350    1.512311   CP    N     OCP
+#SET_ICOOR 1HQ   -84.044006   71.278413    1.085649   CQ    CP    N
 #SET_ICOOR 2HQ   119.869337   67.924011    1.083706   CQ    CP   1HQ
 #SET_ICOOR 3HQ   121.874854   70.998464    1.080460   CQ    CP   2HQ
 
@@ -381,19 +381,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP  -150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ  122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ  120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -416,19 +416,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP  -150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ  122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ  120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -451,19 +451,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP  -150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ  122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ  120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -486,19 +486,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP  -150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ  122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ  120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -521,19 +521,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP  -150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ  122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ  120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -556,19 +556,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP   150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ -122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ -120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -591,19 +591,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP   150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ -122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ -120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -626,19 +626,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP   150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ -122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ -120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -661,19 +661,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP   150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP    2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ   178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ  136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ -122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ -120.977283   71.438584    1.084823   CQ    CP   2HQ
 
@@ -690,7 +690,7 @@ ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group...
 #ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -701,14 +701,14 @@ ADD_BOND  CP   OCP
 #ADD_BOND  CQ  3HQ
 
 SET_ICOOR  CP    -84.91  78.20  1.728  N    CA   CG
-SET_ICOOR  CQ   -179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   -179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  -180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   -119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   -120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   -119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   -120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -727,7 +727,7 @@ END_SELECTOR
 ADD_ATOM  CP  CNH2 CC    0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  CH3  CT3  -0.27  ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55  ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA    0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA    0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA    0.09
 #ADD_ATOM 3HQ  Hapo HA    0.09
 
@@ -749,16 +749,16 @@ ADD_BOND  CP   OCP
 
 #SET_ICOOR  CP    84.91  78.20  1.728  N    CA   Pbb
 SET_ICOOR  CP   180.00  63.799957  1.328686  N    CA   H
-SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  180.00  61.19  1.230  CP   N    CQ
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  -179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ
 
-#SET_ICOOR H   -179.999878   60.850006    1.010001   N     CA  
+#SET_ICOOR H   -179.999878   60.850006    1.010001   N     CA
 
 SET_POLYMER_CONNECT LOWER NONE
 
@@ -774,7 +774,7 @@ ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
 ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group...
 #ADD_ATOM  CQ  CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
 ADD_ATOM  OCP ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
-#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ 
+#ADD_ATOM 1HQ  Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for 2HQ and 3HQ
 #ADD_ATOM 2HQ  Hapo HA   0.09
 #ADD_ATOM 3HQ  Hapo HA   0.09
 ADD_BOND  N    CP
@@ -789,15 +789,15 @@ ADD_BOND  CP   OCP
 #ADD_BOND N   H
 
 SET_ICOOR  CP   180.00  63.799957  1.328686  N    CA   H
-SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA 
+SET_ICOOR  CQ   179.44  61.13  1.511  CP   N    CA
 SET_ICOOR  OCP  180.00  61.19  1.230  CP   N    CQ
 SET_ICOOR  H   -180.000000   60.849998    1.010000   N     CA  CP
 
-## The information for the added hydrogens was copied from the 3 hydrogens 
+## The information for the added hydrogens was copied from the 3 hydrogens
 ##   bonded to the delta carbon of Ile
 #SET_ICOOR 1HQ  -179.974518  70.500000  1.090290  CQ  CP  N
-#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ 
-#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ 
+#SET_ICOOR 2HQ   119.989571  70.500000  1.090575  CQ  CP 1HQ
+#SET_ICOOR 3HQ   120.044632  70.500000  1.089057  CQ  CP 2HQ
 
 # Need to prevent these from repacking
 SET_BACKBONE_HEAVYATOM CP
@@ -826,19 +826,19 @@ ADD_ATOM  CQ  VIRT CT3   0.00 ## This is the methyl carbon of the acetyl group..
 
 SET_BACKBONE_HEAVYATOM CP
 SET_BACKBONE_HEAVYATOM OCP
-SET_BACKBONE_HEAVYATOM CQ 
+SET_BACKBONE_HEAVYATOM CQ
 
 ADD_BOND  CP  N
 ADD_BOND  OCP CP
 ADD_BOND  CQ  CP
-#ADD_BOND 1HQ CQ 
-#ADD_BOND 2HQ CQ 
-#ADD_BOND 3HQ CQ 
+#ADD_BOND 1HQ CQ
+#ADD_BOND 2HQ CQ
+#ADD_BOND 3HQ CQ
 
 SET_ICOOR  CP  -150.000169   57.684068    1.348791   N     CA    C
-SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA 
-SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP 
-#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N 
+SET_ICOOR  OCP   -2.200808   57.317771    1.203828   CP    N     CA
+SET_ICOOR  CQ  -178.916686   64.195695    1.513616   CP    N     OCP
+#SET_ICOOR 1HQ -136.216863   71.360284    1.082267   CQ    CP    N
 #SET_ICOOR 2HQ  122.078056   66.682399    1.083159   CQ    CP   1HQ
 #SET_ICOOR 3HQ  120.977283   71.438584    1.084823   CQ    CP   2HQ
 

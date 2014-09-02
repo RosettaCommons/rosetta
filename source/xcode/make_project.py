@@ -17,8 +17,8 @@ os.chdir( starting_directory )
 # (re)generate options files
 os.system( 'cd ..; ./update_options.sh' )
 
-# (re)generate residue property files
-os.system( 'cd ..; ./update_residue_properties.sh' )
+# (re)generate ResidueType enum files
+os.system( 'cd ..; ./update_ResidueType_enum_files.sh' )
 
 def project_callback(project, project_path, project_files):
 

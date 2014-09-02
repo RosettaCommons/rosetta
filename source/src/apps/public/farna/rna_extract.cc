@@ -105,8 +105,8 @@ extract_pdbs_test()
 
 		if( option[ remove_variant_cutpoint_atoms ]()==true ){
 			for ( Size n = 1; n <= pose.total_residue(); n++  ) {
-				pose::remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", n );
-				pose::remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", n );
+				pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, n );
+				pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, n );
 			}
 		}
 

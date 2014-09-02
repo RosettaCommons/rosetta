@@ -7,8 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file   core/conformation/util.cc
 /// @author Phil Bradley
 
 
@@ -29,6 +28,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/IdealBondLengthSet.hh>
 #include <core/chemical/rna/util.hh> // for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
@@ -598,18 +598,14 @@ replace_conformation_residue_copying_existing_coordinates(
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief construct a variant of an existing pose residue
-/// @details eg make a terminus variant, and replace the orignal in pose.
-/// @note this copies any atoms in common between old and new residues, rebuild the others
+/// @details E.g., make a terminus variant, and replace the original in pose.
+/// @note This copies any atoms in common between old and new residues, rebuilding the others.
 void
 add_variant_type_to_conformation_residue(
-	conformation::Conformation & conformation,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-)
+		conformation::Conformation & conformation,
+		chemical::VariantType const variant_type,
+		Size const seqpos )
 {
-
 	Residue const & old_rsd( conformation.residue( seqpos ) );
 
 	// the type of the desired variant residue
@@ -619,18 +615,15 @@ add_variant_type_to_conformation_residue(
 	core::conformation::replace_conformation_residue_copying_existing_coordinates( conformation, seqpos, new_rsd_type );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief construct a non-variant of an existing pose residue
-/// @details eg remove a terminus variant, and replace the orignal in pose.
-/// @note this copies any atoms in common between old and new residues, rebuild the others
+
+/// @details E.g., remove a terminus variant, and replace the original in pose.
+/// @note This copies any atoms in common between old and new residues, rebuilding the others.
 void
 remove_variant_type_from_conformation_residue(
-	conformation::Conformation & conformation,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-)
+		conformation::Conformation & conformation,
+		chemical::VariantType const variant_type,
+		Size const seqpos )
 {
-
 	Residue const & old_rsd( conformation.residue( seqpos ) );
 
 	// the type of the desired variant residue
@@ -1783,15 +1776,15 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 
 	// Track the variant types of the old residue type.  We want the
 	// new residue to have the same variant type as the old.
-	utility::vector1< chemical::VariantType > variant_types = res.type().variant_types();
+	utility::vector1< std::string > variant_types = res.type().properties().get_list_of_variants();
 
 	// check and handle disulfide state
 	if ( res.has_variant_type( chemical::DISULFIDE ) && cys_type_name3 == "CYS" ) {
 		// if the old residue has DISULFIDE variant type then we are removing a
 		// disulfide, so remove the variant type from the list
-		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), chemical::DISULFIDE ) );
-	} else {
-		if ( cys_type_name3 == "CYD" )	variant_types.push_back( chemical::DISULFIDE );	// creating a disulfide
+		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
+	} else if ( cys_type_name3 == "CYD" ) {
+		variant_types.push_back( "DISULFIDE" );  // creating a disulfide
 	}
 
 	// Run through all possible new residue types.

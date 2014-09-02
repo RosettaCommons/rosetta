@@ -19,7 +19,7 @@
 // Package Headers
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
@@ -173,7 +173,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 
 				bool const is_polymer( rsd_type.is_polymer() );
 				// pick a ResidueType
-				Size nvariants = rsd_type.variant_types().size();
+				Size nvariants = rsd_type.properties().get_list_of_variants().size();
 				if ( is_polymer && ( is_terminus && ( nvariants == 0 ) ) ) continue;
 				if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ||
 						is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;

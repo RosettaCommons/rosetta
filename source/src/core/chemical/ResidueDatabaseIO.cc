@@ -1105,17 +1105,15 @@ void
 ResidueDatabaseIO::report_residue_type_variant(
 	std::string const & residue_type_set_name,
 	ResidueType const & res_type,
-	utility::sql_database::sessionOP db_session
-)  {
-	BOOST_FOREACH(std::string const & variant_type, res_type.variant_types()){
-
+	utility::sql_database::sessionOP db_session )
+{
+	BOOST_FOREACH( std::string const & variant_type, res_type.properties().get_list_of_variants() ) {
 		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_variant_type (residue_type_set_name, residue_type_name, variant_type) VALUES (?,?,?);"
 			<< residue_type_set_name
 			<< res_type.name()
 			<< variant_type;
 		basic::database::safely_write_to_database(stmt);
-
 	}
 }
 

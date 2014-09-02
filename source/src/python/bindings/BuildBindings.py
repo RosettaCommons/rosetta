@@ -308,7 +308,7 @@ def main(args):
         #bindings_path = os.path.abspath('rosetta.windows')
         #if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
         execute('Updating Rosetta options...', 'cd ./../../../ && ./update_options.sh')
-        execute('Updating residue properties...', 'cd ./../../../ && ./update_residue_properties.sh')
+        execute('Updating ResidueType enum files...', 'cd ./../../../ && ./update_ResidueType_enum_files.sh')
         execute('Generating svn_version files...', 'cd ./../../../ && python version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         #shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 

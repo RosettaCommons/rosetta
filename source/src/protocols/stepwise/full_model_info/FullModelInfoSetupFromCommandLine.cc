@@ -606,14 +606,15 @@ namespace full_model_info {
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
 	add_virtual_sugar_res( pose::Pose & pose,
-												 vector1< Size > const & res_list,
-												 vector1< Size > const & virtual_sugar_res ){
+			vector1< Size > const & res_list,
+			vector1< Size > const & virtual_sugar_res )
+	{
 		for ( Size n = 1; n <= virtual_sugar_res.size(); n++ ){
 			if ( !res_list.has_value( virtual_sugar_res[ n ] ) ) continue;
 			Size const i = res_list.index( virtual_sugar_res[ n ] );
 			runtime_assert( i == 1 || pose.fold_tree().is_cutpoint( i - 1 ) );
 			runtime_assert( i == pose.total_residue() || pose.fold_tree().is_cutpoint( i ) );
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", i );
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, i );
 		}
 	}
 

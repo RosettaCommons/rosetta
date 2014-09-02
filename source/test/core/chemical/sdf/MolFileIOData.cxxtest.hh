@@ -293,7 +293,7 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 		TR << std::endl;
 		return false;
 	}
-	if( ! rsd1.variants_match( rsd2 ) ) {
+	if( ! variants_match( rsd1, rsd2 ) ) {
 		TR << "Variants Mismatch" << std::endl;
 		return false;
 	}

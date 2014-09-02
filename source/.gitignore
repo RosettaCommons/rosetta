@@ -15,7 +15,9 @@
 /src/basic/options/full-options-list.md
 /src/basic/options/options.dox
 /src/core/chemical/ResidueProperty.hh
-/src/core/chemical/property_mappings.cc
+/src/core/chemical/ResidueProperty_mappings.cc
+/src/core/chemical/VariantType.hh
+/src/core/chemical/VariantType_mappings.cc
 /tools/build/user.settings
 /tools/build/user.options
 /tools/build/site.settings

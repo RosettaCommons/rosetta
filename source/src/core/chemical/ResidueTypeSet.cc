@@ -29,6 +29,7 @@
 
 // Rosetta headers
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/residue_io.hh>
@@ -602,30 +603,33 @@ ResidueTypeSet::select_residues(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @details return the first match with both base ResidueType id and variant_type
-/// name. Abort if there is no match
-///
-/// @note currently, this will not work for variant types defined as alternate
-/// base residues (ie different params files)
+/// @details Return the first match with both base ResidueType id and variant_type name.  Abort if there is no match.
+/// @note    Currently, this will not work for variant types defined as alternate base residues (i.e., different .params
+/// files).
+/// @remark  TODO: This should be refactored to make better use of the new ResidueProperties system. ~Labonte
 ResidueType const &
-ResidueTypeSet::get_residue_type_with_variant_added( ResidueType const & init_rsd, VariantType const & new_type ) const
+ResidueTypeSet::get_residue_type_with_variant_added(
+		ResidueType const & init_rsd,
+		VariantType const new_type ) const
 {
 	if ( init_rsd.has_variant_type( new_type ) ) return init_rsd;
 
-	// find all residues with the same base name as init_rsd
+	// Find all residues with the same base name as init_rsd.
 	std::string const base_name( residue_type_base_name( init_rsd ) );
 
 	// the desired set of variant types:
-	utility::vector1< VariantType > target_variants( init_rsd.variant_types() );
-	if ( !init_rsd.has_variant_type(new_type) ) target_variants.push_back( new_type );
+	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );
+	if ( !init_rsd.has_variant_type(new_type) ) {
+		target_variants.push_back( ResidueProperties::get_string_from_variant( new_type ) );
+	}
 
 	Size const nvar( target_variants.size() );
 
-	// now look for residue_type with same base_name and the desired set of variants
+	// Now look for residue_type with same base_name and the desired set of variants
 	for ( ResidueTypeOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
-		if ( residue_type_base_name( rsd ) == base_name && rsd.variant_types().size() == nvar ) {
+		if ( residue_type_base_name( rsd ) == base_name && rsd.properties().get_list_of_variants().size() == nvar ) {
 			bool match( true );
 			for ( Size i=1; i<= nvar; ++i ) {
 				if ( !rsd.has_variant_type( target_variants[i] ) ) {
@@ -638,14 +642,20 @@ ResidueTypeSet::get_residue_type_with_variant_added( ResidueType const & init_rs
 			}
 		}
 	}
-	utility_exit_with_message( "unable to find desired variant residue: "+init_rsd.name()+" "+base_name+" "+new_type);
+	utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
+			ResidueProperties::get_string_from_variant( new_type ) );
 	// wont get here:
 	return *( name_map_.begin()->second );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @note    Currently, this will not work for variant types defined as alternate base residues (i.e., different .params
+/// files).
+/// @remark  TODO: This should be refactored to make better use of the new ResidueProperties system. ~Labonte
 ResidueType const &
-ResidueTypeSet::get_residue_type_with_variant_removed( ResidueType const & init_rsd, VariantType const & old_type) const
+ResidueTypeSet::get_residue_type_with_variant_removed(
+		ResidueType const & init_rsd,
+		VariantType const old_type) const
 {
 	if ( !init_rsd.has_variant_type( old_type ) ) return init_rsd; // already done
 
@@ -653,8 +663,9 @@ ResidueTypeSet::get_residue_type_with_variant_removed( ResidueType const & init_
 	std::string const base_name( residue_type_base_name( init_rsd ) );
 
 	// the desired set of variant types:
-	utility::vector1< VariantType > target_variants( init_rsd.variant_types() );
-	target_variants.erase( std::find( target_variants.begin(), target_variants.end(), old_type ) );
+	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );
+	target_variants.erase( std::find( target_variants.begin(), target_variants.end(),
+			ResidueProperties::get_string_from_variant( old_type ) ) );
 
 	Size const nvar( target_variants.size() );
 
@@ -662,7 +673,7 @@ ResidueTypeSet::get_residue_type_with_variant_removed( ResidueType const & init_
 	for ( ResidueTypeOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
-		if ( residue_type_base_name( rsd ) == base_name && rsd.variant_types().size() == nvar ) {
+		if ( residue_type_base_name( rsd ) == base_name && rsd.properties().get_list_of_variants().size() == nvar ) {
 			bool match( true );
 			for ( Size i=1; i<= nvar; ++i ) {
 				if ( !rsd.has_variant_type( target_variants[i] ) ) {
@@ -675,7 +686,8 @@ ResidueTypeSet::get_residue_type_with_variant_removed( ResidueType const & init_
 			}
 		}
 	}
-	utility_exit_with_message( "unable to find desired non-variant residue: "+init_rsd.name()+" "+base_name+" "+old_type);
+	utility_exit_with_message( "unable to find desired non-variant residue: " + init_rsd.name() + " " + base_name +
+			" " + ResidueProperties::get_string_from_variant( old_type ) );
 	// wont get here:
 	return *( name_map_.begin()->second );
 }

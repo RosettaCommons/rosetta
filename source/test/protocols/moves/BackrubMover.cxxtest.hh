@@ -18,13 +18,6 @@
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
-// Core Headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
 // Protocol Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/backrub/BackrubMover.hh>
@@ -50,7 +43,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>

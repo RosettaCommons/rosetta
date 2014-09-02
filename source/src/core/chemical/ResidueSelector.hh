@@ -41,6 +41,7 @@
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -181,7 +182,7 @@ private:
 class Selector_VARIANT_TYPE : public ResidueSelectorSingle {
 public:
 	Selector_VARIANT_TYPE(
-		utility::vector1< VariantType > const & variants_in,
+		utility::vector1< std::string > const & variants_in,
 		bool const result
 	):
 		ResidueSelectorSingle( result ),
@@ -191,7 +192,7 @@ public:
 	// select by VARIANT_TYPE
 	bool
 	operator[]( ResidueType const & rsd ) const {
-		for ( utility::vector1< VariantType >::const_iterator it = variants_.begin(),
+		for ( utility::vector1< std::string >::const_iterator it = variants_.begin(),
 						it_end = variants_.end(); it!= it_end; ++it ) {
 			if ( rsd.has_variant_type( *it ) ) return desired_result();
 		}
@@ -200,7 +201,7 @@ public:
 
 	// data
 private:
-	utility::vector1< VariantType > variants_;
+	utility::vector1< std::string > variants_;
 };
 
 
@@ -245,7 +246,7 @@ private:
 class Selector_MATCH_VARIANTS : public ResidueSelectorSingle {
 public:
 	Selector_MATCH_VARIANTS(
-		utility::vector1< VariantType > const & variants_in,
+		utility::vector1< std::string > const & variants_in,
 		bool const result
 	):
 		ResidueSelectorSingle( result ),
@@ -255,17 +256,17 @@ public:
 	// select by VARIANT_TYPE
 	bool
 	operator[]( ResidueType const & rsd ) const {
-		for ( utility::vector1< VariantType >::const_iterator it = variants_.begin(),
+		for ( utility::vector1< std::string >::const_iterator it = variants_.begin(),
 						it_end = variants_.end(); it!= it_end; ++it ) {
 			if ( !rsd.has_variant_type( *it ) ) return !desired_result(); // rsd is missing one of our variants
 		}
-		if ( rsd.variant_types().size() == variants_.size() ) return desired_result();
+		if ( rsd.properties().get_list_of_variants().size() == variants_.size() ) return desired_result();
 		return !desired_result(); // residue has an extra variant
 	}
 
 	// data
 private:
-	utility::vector1< VariantType > variants_;
+	utility::vector1< std::string > variants_;
 };
 
 
@@ -282,7 +283,7 @@ public:
 	// select by VARIANT_TYPE
 	bool
 	operator[]( ResidueType const & rsd ) const {
-		return ( rsd.variant_types().empty() == desired_result() );
+		return ( rsd.properties().get_list_of_variants().empty() == desired_result() );
 	}
 };
 
@@ -395,7 +396,7 @@ public:
 	ResidueSelector & // allow chaining
 	match_variants( ResidueType const & rsd_type_to_match )
 	{
-		selectors_.push_back( new Selector_MATCH_VARIANTS( rsd_type_to_match.variant_types(), true ) );
+		selectors_.push_back( new Selector_MATCH_VARIANTS( rsd_type_to_match.properties().get_list_of_variants(), true ) );
 		return *this;
 	}
 

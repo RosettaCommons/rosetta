@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   core/conformation/util.hh
 /// @author Phil Bradley
 
 
@@ -16,30 +16,33 @@
 
 
 // Unit headers
+#include <core/conformation/Conformation.fwd.hh>
+
+// Package headers
+#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 #include <core/chemical/ResidueConnection.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
+
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
 
-// Utility headers
-
 // C++ headers
 #include <iosfwd>
+#include <string>
+
 
 namespace core {
 namespace conformation {
@@ -113,21 +116,17 @@ replace_conformation_residue_copying_existing_coordinates(
 	chemical::ResidueType const & new_rsd_type
 );
 
+/// @brief Construct a variant of an existing conformation residue.
+void add_variant_type_to_conformation_residue(
+		conformation::Conformation & conformation,
+		chemical::VariantType const variant_type,
+		Size const seqpos );
 
-void
-add_variant_type_to_conformation_residue(
-	conformation::Conformation & conformation,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-);
-
-
-void
-remove_variant_type_from_conformation_residue(
-	conformation::Conformation & conformation,
-	chemical::VariantType const & variant_type,
-	Size const seqpos
-);
+/// @brief Construct a non-variant of an existing conformation residue.
+void remove_variant_type_from_conformation_residue(
+		conformation::Conformation & conformation,
+		chemical::VariantType const variant_type,
+		Size const seqpos );
 
 
 void

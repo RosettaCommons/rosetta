@@ -431,9 +431,9 @@ RotamerSet_::build_rotamers_for_concrete(
 						n_min = n; fa_dun_min = fa_dun;
 					}
 					// hack for now. PackerTask must be instantiated with a pose without virtual sidechains.
-					runtime_assert( !suggested_rotamers[n]->has_variant_type( "VIRTUAL_SIDE_CHAIN" ) );
+					runtime_assert( !suggested_rotamers[n]->has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) );
 				}
-				ResidueOP rot = core::pose::add_variant_type_to_residue( *suggested_rotamers[ n_min ], "VIRTUAL_SIDE_CHAIN", pose);
+				ResidueOP rot = core::pose::add_variant_type_to_residue( *suggested_rotamers[ n_min ], chemical::VIRTUAL_SIDE_CHAIN, pose);
 				push_back_rotamer( rot );
 			}
 		}

@@ -692,9 +692,15 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 					for ( Size n = 1; n <= force_north_sugar_list.size(); n++ ){
 						Size const seq_num = force_north_sugar_list[n];
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "BULGE" ) ) continue;
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RIBOSE" ) ) continue;
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+							continue;
+						}
 						if ( get_residue_pucker_state( (*pose_op), seq_num ) != NORTH ){
 							pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have north_sugar at seq_num = " << seq_num << std::endl;
@@ -703,9 +709,15 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 					for ( Size n = 1; n <= force_south_sugar_list.size(); n++ ){
 						Size const seq_num = force_south_sugar_list[n];
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "BULGE" ) ) continue;
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RIBOSE" ) ) continue;
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+							continue;
+						}
 						if ( get_residue_pucker_state( (*pose_op), seq_num ) != SOUTH ){
 							 pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have south_sugar at seq_num = " << seq_num << std::endl;
@@ -714,9 +726,15 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 					for ( Size n = 1; n <= force_syn_chi_res_list.size(); n++ ){
 						Size const seq_num = force_syn_chi_res_list[n];
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "BULGE" ) ) continue;
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RIBOSE" ) ) continue;
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+							continue;
+						}
+						if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+							continue;
+						}
 						if ( get_residue_base_state( (*pose_op), seq_num ) != SYN ){
 						 	pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have syn_chi at seq_num = " << seq_num << std::endl;
@@ -725,7 +743,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 					for ( Size n = 1; n <= working_filter_virtual_res_list.size(); n++ ){
 						Size const seq_num = working_filter_virtual_res_list[n];
-						if ( (*pose_op).residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ){
+						if ( ! (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 							pass_filter = false;
 							if ( filter_verbose ) TR << "pose = " << tag << " doesn't have virtual_rna_residue variant_type at seq_num = " << seq_num << std::endl;
 						}
@@ -921,11 +939,15 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 			//Important only if both pose are real
 			same_sugar_pucker_list[i] = is_same_sugar_pucker( current_pose, cluster_center_pose, seq_num );
 
-			bool const current_is_virtual_res = current_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" );
-			bool const center_is_virtual_res = cluster_center_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" );
+			bool const current_is_virtual_res =
+					current_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE );
+			bool const center_is_virtual_res =
+					cluster_center_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE );
 
-			bool const current_is_virtual_sugar = current_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RIBOSE" );
-			bool const center_is_virtual_sugar = cluster_center_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RIBOSE" );
+			bool const current_is_virtual_sugar =
+					current_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
+			bool const center_is_virtual_sugar =
+					cluster_center_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
 
 
 			if ( ignore_unmatched_virtual_res_ == false ){ //Sep 07. 2011
@@ -989,7 +1011,8 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
  				Size const seq_num = full_to_sub.find( full_seq_num )->second;
 				bool is_prepend = is_prepend_map.find( full_seq_num )->second;
 				bool both_pose_res_is_virtual = false;
-				if ( current_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) && cluster_center_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+				if ( current_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
+						cluster_center_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 					both_pose_res_is_virtual = true;
 				}
 				TR << "full_seq_num = " << full_seq_num << " seq_num = " << seq_num;
@@ -1001,10 +1024,13 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 				TR << " rmsd_list[" << i << "] = " << rmsd_list[i];
 
 				if ( ignore_unmatched_virtual_res_ ){
-					if ( current_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) != cluster_center_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+					if ( current_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) !=
+							cluster_center_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
 						TR << " Ignoring unmatched_virtual_res = ";
-						output_boolean( " curr_virt = ", current_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
-						output_boolean( " center_virt = ", cluster_center_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
+						output_boolean( " curr_virt = ", current_pose.residue( seq_num ).has_variant_type(
+								core::chemical::VIRTUAL_RNA_RESIDUE ), TR );
+						output_boolean( " center_virt = ", cluster_center_pose.residue( seq_num ).has_variant_type(
+								core::chemical::VIRTUAL_RNA_RESIDUE ), TR );
 					}
 				}
 

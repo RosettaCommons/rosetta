@@ -120,14 +120,14 @@ namespace packer {
 		for ( Size n = 1; n <= moving_partition_res.size(); n++ ){
 
 			Size const i = moving_partition_res[ n ];
-			if ( pose.residue_type(i).has_variant_type( "VIRTUAL_RESIDUE" ) ) continue;
+			if ( pose.residue_type(i).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
  			for ( graph::Graph::EdgeListConstIter
 							iter = energy_graph.get_node( i )->const_edge_list_begin();
 						iter != energy_graph.get_node( i )->const_edge_list_end();
 						++iter ){
  				Size const j( (*iter)->get_other_ind( i ) );
- 				if ( pose.residue_type(j).has_variant_type( "VIRTUAL_RESIDUE" ) ) continue;
+ 				if ( pose.residue_type(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 				if ( checked_pair[ i ][ j ] ) continue;
 				if ( interface_res[ i ] && interface_res[ j ] ) continue;
