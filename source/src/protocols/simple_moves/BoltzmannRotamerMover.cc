@@ -121,7 +121,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover( BoltzmannRotamerMover const & rval
 	show_packer_task_( rval.show_packer_task_ ),
 	resnum_( rval.resnum_ ),
 	temperature_( rval.temperature_ ),
-	bias_sampling_( rval.temperature_ ),
+	bias_sampling_( rval.bias_sampling_ ),
 	randomize_resnum_( rval.randomize_resnum_ )
 {}
 
@@ -150,6 +150,9 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		TR << *ptask;
 	}
 	
+	if (resnum_ == 0) 
+		randomize_resnum_ = true;
+		
 	if (randomize_resnum_) {
 		utility::vector1< core::Size > move_positions;
 		for(core::Size i = 1; i <= ptask->total_residue(); i++) {
