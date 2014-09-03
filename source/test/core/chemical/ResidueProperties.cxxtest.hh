@@ -19,6 +19,13 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 
+// Package headers
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/MMAtomType.hh>
+
 // Utility header
 #include <utility/excn/EXCN_Base.hh>
 
@@ -36,7 +43,15 @@ public:  // Standard methods //////////////////////////////////////////////////
 	void setUp()
 	{
 		core_init();
-		ResidueTypeCAP residue_type;
+
+		ChemicalManager * manager( ChemicalManager::get_instance() );
+		AtomTypeSetCAP atom_types = manager->atom_type_set( FA_STANDARD );
+		ElementSetCAP element_types = manager->element_set( "default" );
+		MMAtomTypeSetCAP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
+		orbitals::OrbitalTypeSetCAP orbital_types = manager->orbital_type_set( FA_STANDARD );
+		ResidueTypeAP residue_type = new ResidueType( atom_types, element_types, mm_atom_types, orbital_types );
+		residue_type->name( "test_residue" );
+
 		test_properties_ = new ResidueProperties( residue_type );
 	}
 
@@ -99,7 +114,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 				test_properties_->set_variant_type( "GNARLY", false ),
 				EXCN_Base const & e,
 				e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: Rosetta does not recognize the custom variant: GNARLY\n\n" );
+				"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue\n\n" );
 
 		TS_ASSERT( test_properties_->is_variant_type( SC_FRAGMENT ) );
 		TS_ASSERT( test_properties_->is_variant_type( "SC_FRAGMENT" ) );
