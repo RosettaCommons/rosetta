@@ -79,7 +79,7 @@ def pose_scoring(pose, display_residues = []):
     # create a PyMOL_Mover for exporting structures directly to PyMOL
     pymover = PyMOL_Mover()
 
-    # 1. score the pose using the default fullatom (fa) ScoreFunction
+    # 1. score the pose using the default full-atom (fa) ScoreFunction
     # a ScoreFunction is essentially a list of weights indicating which
     #    ScoreTypes are "on" and how they are scaled when summed together
     # ScoreTypes define what scoring methods are performed on the pose
@@ -88,56 +88,53 @@ def pose_scoring(pose, display_residues = []):
     # the 1st (a) and 2nd (b) methods are only present since PyRosetta v2.0
     #
     # a. this method returns the hard-coded set of weights for the standard
-    #    fullatom ScoreFunction
+    #    fullatom ScoreFunction, which is currently called "talaris2013"
     fa_scorefxn = get_fa_scorefxn()
-    # b. this method returns a ScoreFunction with its weights set by loading
-    #    weights from 'score12_full.wts'
-    full_scorefxn = create_score_function('score12_full')
-    # c. this method returns a ScoreFunction with its weights set based on files
-    #    stored in the minirosetta_database/scoring/weights (.wts files)
-    #    this method sets the weights based on 'standard.wts' and then corrects
-    #    them based on 'score12.wts_patch'
 
+    # b. this method returns a ScoreFunction with its weights set based on
+    #    files stored in the database/scoring/weights (.wts files)
+    full_scorefxn = create_score_function('talaris2013')
+
+    # c. this method sets the weights based on 'talaris2013.wts' and then
+    #    corrects them based on 'docking.wts_patch'
     ws_patch_scorefxn = create_score_function_ws_patch('talaris2013', 'docking')
 
     # d. this method returns a ScoreFunction with its weights set by loading
-    #    weights from 'standard.wts' followed by an adjustment by setting
-    #    weights from 'score12.wts_patch'
+    #    weights from 'talaris2013' followed by an adjustment by setting
+    #    weights from 'docking.wts_patch'
     patch_scorefxn = create_score_function('talaris2013')
     patch_scorefxn.apply_patch_from_file('docking')
 
     # e. here an empty ScoreFunction is created and the weights are set manually
     scorefxn = ScoreFunction()
-    scorefxn.set_weight(fa_atr, 0.800)    # fullatom attractive score
-    scorefxn.set_weight(fa_rep, 0.440)    # fullatom repulsive score
-    scorefxn.set_weight(fa_sol, 0.650)    # fullatom solvation score
-    scorefxn.set_weight(fa_intra_rep, 0.004)
+    scorefxn.set_weight(fa_atr, 0.800)    # full-atom attractive score
+    scorefxn.set_weight(fa_rep, 0.440)    # full-atom repulsive score
+    scorefxn.set_weight(fa_sol, 0.750)    # full-atom solvation score
+    scorefxn.set_weight(fa_intra_rep, 0.004)    # f.a. intraresidue rep. score
+    scorefxn.set_weight(fa_elec, 0.700)    # full-atom electronic score
     scorefxn.set_weight(pro_close, 1.000)    # proline closure
-    scorefxn.set_weight(fa_pair, 0.490)    # pair interaction score
-    scorefxn.set_weight(hbond_sr_bb, 0.585)    # short-range hbonding
+    scorefxn.set_weight(hbond_sr_bb, 1.170)    # short-range hbonding
     scorefxn.set_weight(hbond_lr_bb, 1.170)    # long-range hbonding
     scorefxn.set_weight(hbond_bb_sc, 1.170)    # backbone-sidechain hbonding
     scorefxn.set_weight(hbond_sc, 1.100)    # sidechain-sidechain hbonding
-    scorefxn.set_weight(dslf_ss_dst, 0.500)    # disulfide distance score
-    scorefxn.set_weight(dslf_cs_ang, 2.000)    # disulfide angle score
-    scorefxn.set_weight(dslf_ss_dih, 5.000)    # disulfide dihedral score
-    scorefxn.set_weight(dslf_ca_dih, 5.000)    # disulfide alpha carbon score
+    scorefxn.set_weight(dslf_fa13, 1.000)    # disulfide full-atom score
     scorefxn.set_weight(rama, 0.200)    # ramachandran score
     scorefxn.set_weight(omega, 0.500)    # omega torsion score
     scorefxn.set_weight(fa_dun, 0.560)    # fullatom Dunbrack rotamer score
     scorefxn.set_weight(p_aa_pp, 0.320)
     scorefxn.set_weight(ref, 1.000)    # reference identity score
 
-    # all of the above ScoreFunctions have the same weights and thus return
-    #    the same score for an input pose
+    # ScoreFunction a, b, and e above have the same weights and thus return
+    #    the same score for an input pose.  Likewise, c and d should return the
+    #    same scores.
     # 2. output the ScoreFunction evaluations
-    ws_patch_scorefxn(pose)    # to prevent verbose output on the next line
+    #ws_patch_scorefxn(pose)    # to prevent verbose output on the next line
     print '='*80
-    print 'ScoreFunction 1:', fa_scorefxn(pose)
-    print 'ScoreFunction 2:', full_scorefxn(pose)
-    print 'ScoreFunction 3:', ws_patch_scorefxn(pose)
-    print 'ScoreFunction 4:', patch_scorefxn(pose)
-    print 'ScoreFunction 5:', scorefxn(pose)
+    print 'ScoreFunction a:', fa_scorefxn(pose)
+    print 'ScoreFunction b:', full_scorefxn(pose)
+    print 'ScoreFunction c:', ws_patch_scorefxn(pose)
+    print 'ScoreFunction d:', patch_scorefxn(pose)
+    print 'ScoreFunction e:', scorefxn(pose)
     pose_score = scorefxn(pose)
 
     # 3. obtain the pose Energies object and all the residue total scores

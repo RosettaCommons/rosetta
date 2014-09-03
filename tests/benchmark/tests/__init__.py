@@ -75,9 +75,9 @@ def execute(message, commandline, return_=False, untilSuccesses=False):
     if return_ == 'tuple': return(res, output)
 
     if res:
-        TR("\nEncounter error while executing: " + commandline )
+        TR("\nEncounter error while executing: " + commandline)
         if return_==True: return True
-        else: raise BenchmarkBuildError()
+        else: raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)
 
     if return_ == 'output': return output
     else: return False

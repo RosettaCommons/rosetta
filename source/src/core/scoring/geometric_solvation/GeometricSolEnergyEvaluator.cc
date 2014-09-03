@@ -726,7 +726,6 @@ GeometricSolEnergyEvaluator::get_acceptor_base_atm_xyz( conformation::Residue co
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline
 void
 GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	Size const & acc_atm,

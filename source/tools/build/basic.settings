@@ -58,7 +58,9 @@ lists of strings.
 
 """
 
-import os
+import os, commands
+
+shell_gcc = commands.getoutput('which gcc').split()[0]
 
 settings = {
     "base" : {
@@ -666,6 +668,44 @@ settings = {
         },
     },
 
+    "gcc, macos, pyrosetta" : {
+        "appends" : {
+           "libraries"  : [ "stdc++", ],
+	},
+        "removes" : {
+            "flags" : {
+                "warn" : [
+                    # We turn off warnings as errors for Python build
+                    # only because the automatic Python interface wrapping
+                    # can introduce warnings.
+                    "Werror",
+                ],
+            },
+        },
+        "overrides" : {  # for Mac PyRosetta builds we use GCC from user environment instead of system one
+            "cc" :  shell_gcc,
+            "cxx" : shell_gcc,
+        },
+    },
+    "gcc, macos, pyrosetta_debug" : {
+        "appends" : {
+           "libraries"  : [ "stdc++", ],
+	},
+        "removes" : {
+            "flags" : {
+                "warn" : [
+                    # We turn off warnings as errors for Python build
+                    # only because the automatic Python interface wrapping
+                    # can introduce warnings.
+                    "Werror",
+                ],
+            },
+        },
+        "overrides" : { # for Mac PyRosetta builds we use GCC from user environment instead of system one
+            "cc" :  shell_gcc,
+            "cxx" : shell_gcc,
+        },
+    },
 
     # cats ####################################################################
 

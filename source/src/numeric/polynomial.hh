@@ -50,7 +50,6 @@ public:
 	virtual ~Polynomial_1d();
 
 	// check that the polynomial parameters are well formed
-	inline
 	void
 	check_invariants() const;
 

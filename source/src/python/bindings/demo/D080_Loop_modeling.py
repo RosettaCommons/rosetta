@@ -67,23 +67,24 @@ The method sample_single_loop_modeling:
 2.  creates a copy of the pose (fullatom) for reference
 3.  creates a Loop object defining the loop region
 4.  modifies the pose FoldTree using the Loop
-5.  creates a MoveMap object with all chi torsions and
+5.  sets the cut-point residues as cut-point variants
+6.  creates a MoveMap object with all chi torsions and
         the loop region backbone torsions free
-6.  sets up a ClassicFragmentMover for inserting fragments backbone
+7.  sets up a ClassicFragmentMover for inserting fragments backbone
         torsions into the loop region
-7.  creates a low resolution (centroid) CCD loop closure Mover
+8.  creates a low resolution (centroid) CCD loop closure Mover
         (for closing centroid loops)
-8.  creates low and high resolution ScoreFunctions
-9.  sets up a PackRotamersMover for sidechain packing
-10. sets up a high resolution CCD loop closure Mover
+9.  creates low and high resolution ScoreFunctions
+10. sets up a PackRotamersMover for sidechain packing
+11. sets up a high resolution CCD loop closure Mover
         (for fullatom loop optimization)
-11. creates Movers for switching between fullatom and centroid and for
+12. creates Movers for switching between fullatom and centroid and for
         recovering the original sidechain conformations of the fullatom pose
-12. creates a copy of the pose (centroid) for reference
-13. creates the geometric "temperature" decrement for simulated annealing
-14. creates a PyMOL_Mover for exporting structures to PyMOL
-15. creates a (Py)JobDistributor for managing multiple trajectories
-16. performs the loop modeling protocol, for each trajectory:
+13. creates a copy of the pose (centroid) for reference
+14. creates the geometric "temperature" decrement for simulated annealing
+15. creates a PyMOL_Mover for exporting structures to PyMOL
+16. creates a (Py)JobDistributor for managing multiple trajectories
+17. performs the loop modeling protocol, for each trajectory:
         a.  reset necessary variables for the new trajectory
                 -reload the starting pose (centroid)
                 -change the pose's PDBInfo.name, for exporting to PyMOL
@@ -185,13 +186,16 @@ def sample_single_loop_modeling(pdb_filename,
     ####    that is creates jumps +/- 1 residue from their corresponding loop
     ####    endpoints and requires a third argument, the FoldTree to setup
 
-    # 5. create the MoveMap, allow the loop region backbone and
+    # 5. sets the cut-point residues as cut-point variants
+    add_single_cutpoint_variant(p, my_loop)
+
+    # 6. create the MoveMap, allow the loop region backbone and
     #    all chi torsions to be free
     movemap = MoveMap()
     movemap.set_bb_true_range(loop_begin, loop_end)
     movemap.set_chi(True)    # sets all chi torsions free
 
-    # 6. setup the fragment Mover
+    # 7. setup the fragment Mover
     # this "try--except" is used to catch improper fragment files
     try:
         fragset = ConstantLengthFragSet(frag_length, frag_filename)
@@ -203,10 +207,10 @@ def sample_single_loop_modeling(pdb_filename,
             frag_file and that frag_file is valid')
     fragment_mover = ClassicFragmentMover(fragset, movemap)
 
-    # 7. create a Mover for loop modeling using CCD (low resolution)
+    # 8. create a Mover for loop modeling using CCD (low resolution)
     ccd_closure = CCDLoopClosureMover(my_loop, movemap)
 
-    # 8. create ScoreFunctions
+    # 9. create ScoreFunctions
     # for centroid, use the default centroid ScoreFunction with chainbreak on
     scorefxn_low = create_score_function('cen_std')
     # the chainbreak ScoreType exists to penalize broken bonds
@@ -218,13 +222,13 @@ def sample_single_loop_modeling(pdb_filename,
     # for fullatom, used for packing and scoring final output
     scorefxn_high = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 
-    # 9. setup sidechain packing Mover
+    # 10. setup sidechain packing Mover
     task_pack = TaskFactory.create_packer_task(starting_p)
     task_pack.restrict_to_repacking()    # prevents design, packing only
     task_pack.or_include_current(True)    # considers original sidechains
     pack = PackRotamersMover(scorefxn_high, task_pack)
 
-    # 10. setup the high resolution refinement
+    # 11. setup the high resolution refinement
     # by creating a Loops object,
     #    (note: Loops is basically a list of Loop objects),
     sample_loops = Loops()
@@ -250,7 +254,7 @@ def sample_single_loop_modeling(pdb_filename,
     loop_refine.outer_cycles(outer_cycles_high)
     loop_refine.max_inner_cycles(inner_cycles_high)
 
-    # 11. create centroid <--> fullatom conversion Movers
+    # 12. create centroid <--> fullatom conversion Movers
     to_centroid = SwitchResidueTypeSetMover('centroid')
     to_fullatom = SwitchResidueTypeSetMover('fa_standard')
     # and a Mover to recover sidechain conformations
@@ -263,18 +267,18 @@ def sample_single_loop_modeling(pdb_filename,
     #    into the input pose
     recover_sidechains = ReturnSidechainMover(starting_p)
 
-    # 12. create a reference copy of the pose in centroid
+    # 13. create a reference copy of the pose in centroid
     # the first stage of each trajectory is in centroid
     #    so a centroid reference is needed and the pose must start in centroid
     to_centroid.apply(p)
     starting_p_centroid = Pose()
     starting_p_centroid.assign(p)
 
-    # 13. create the geometric "temperature" increment for simulated annealing
+    # 14. create the geometric "temperature" increment for simulated annealing
     gamma = pow((final_temp_low/init_temp_low),
         (1.0/(outer_cycles_low*inner_cycles_low)))
 
-    # 14. create a PyMOL_Mover for exporting structures to PyMOL
+    # 15. create a PyMOL_Mover for exporting structures to PyMOL
     pymov = PyMOL_Mover()
     # uncomment the line below to load structures into successive states
     #pymov.keep_history(True)
@@ -282,7 +286,7 @@ def sample_single_loop_modeling(pdb_filename,
     pymov.apply(starting_p)
     pymov.send_energy(starting_p)
 
-    # 15. create a (Py)JobDistributor
+    # 16. create a (Py)JobDistributor
     # a PyJobDistributor uses the job_output argument to name all output files
     #    and performs the specified number (int) of jobs
     # a ScoreFunction is required since the PyJobDistributor output .fasc file
@@ -290,7 +294,7 @@ def sample_single_loop_modeling(pdb_filename,
     jd = PyJobDistributor(job_output, jobs, scorefxn_high)
     jd.native_pose = starting_p
 
-    # 16. perform the loop modeling protocol
+    # 17. perform the loop modeling protocol
     counter = 0    # for exporting to PyMOL
     while not jd.job_complete:
         # a. set necessary variables for the new trajectory

@@ -1,3 +1,5 @@
+import rosetta.protocols.environment
+
 import loop_mover
 
 import loop_mover.perturb

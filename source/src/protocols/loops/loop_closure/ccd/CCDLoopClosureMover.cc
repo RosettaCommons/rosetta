@@ -493,9 +493,12 @@ CCDLoopClosureMover::get_anchors( conformation::Residue const & residue ) const
 		anchors.push_back( residue.atom( first_upper_mainchain_atom ).xyz() );
 		anchors.push_back( residue.atom( second_upper_mainchain_atom ).xyz() );
 	} else {
-		throw utility::excn::EXCN_BadInput(
-				"CCDLoopClosureMover::get_anchors( core::conformation::Residue const & residue ): "
+		std::string const msg( "CCDLoopClosureMover::get_anchors( core::conformation::Residue const & residue ): "
 				"Residue is not a cutpoint variant! You must add cutpoint variants before applying this Mover." );
+		#ifdef PYROSETTA
+		  PyAssert( false, msg );
+		#endif
+		throw utility::excn::EXCN_BadInput( msg );
 	}
 
 	return anchors;
