@@ -314,6 +314,7 @@
 #include <protocols/simple_moves/ScoreMoverCreator.hh>
 #include <protocols/simple_moves/SequenceProfileMoverCreator.hh>
 #include <protocols/simple_moves/SetTorsionCreator.hh>
+#include <protocols/simple_moves/ShortBackrubMoverCreator.hh>
 #include <protocols/simple_moves/SuperimposeMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
