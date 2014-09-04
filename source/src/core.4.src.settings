@@ -166,6 +166,7 @@ sources = {
 		"NeighborhoodResidueSelector",
 		"AndResidueSelector",
 		"ChainSelector",
+		"ClashBasedRepackShellSelector",
 		"InterGroupInterfaceByVectorSelector",
 		"NotResidueSelector",
 		"NumNeighborsSelector",

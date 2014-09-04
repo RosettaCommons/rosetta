@@ -35,6 +35,12 @@ public:
   virtual std::string keyname() const;
 };
 
+class ClashBasedRepackShellSelectorCreator : public ResidueSelectorCreator {
+public:
+  virtual ResidueSelectorOP create_residue_selector() const;
+  virtual std::string keyname() const;
+};
+
 class InterGroupInterfaceByVectorSelectorCreator : public ResidueSelectorCreator {
 public:
   virtual ResidueSelectorOP create_residue_selector() const;

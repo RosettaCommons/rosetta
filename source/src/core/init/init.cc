@@ -582,6 +582,7 @@ static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCrea
 using namespace core::pack::task::residue_selector;
 static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
+static ResidueSelectorRegistrator< ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
 static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;
 static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
 static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;
