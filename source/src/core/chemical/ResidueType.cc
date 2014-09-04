@@ -55,6 +55,7 @@
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 // Utility headers
+#include <utility/numbers.hh>
 #include <utility/PyAssert.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/ring_detection.hh>
@@ -847,8 +848,6 @@ ResidueType::aromatic_atoms(){
 }
 
 
-
-
 /// @note this does not set xyz coordinates for the added atom
 VD
 ResidueType::add_atom(
@@ -867,19 +866,8 @@ ResidueType::add_atom(
 	// the next calls will fail if the type name is unrecognized
 	Size const mm_type( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
 
-	//get the element information
+	// Element information will be set by set_atom_type() below.
 	ElementCOP element;
-	if( elements_ )	{ // Be robust if elements_ isn't defined.
-		int const type( atom_types_->atom_type_index( atom_type_name ) );
-		std::string const & element_name= (*atom_types_)[type].element();
-		int const element_index = elements_->element_index(element_name);
-		//std::cout << elements_->element_index(element_name) << " " << element_name << std::endl;
-		element = (*elements_)[element_index];
-		mass_ += element->weight();
-		//mass_ += (*elements_)[element_index]->weight();
-	} else {
-		tr.Warning << "WARNING Elements set undefined." << std::endl;
-	}
 
 	Atom atom(
 			atom_name,
@@ -1007,49 +995,67 @@ ResidueType::delete_atom_alias( std::string const & alias ) {
 	}
 }
 
-/// @brief Set atom type, correctly updating internal state.
+
+/// @details Set atom type, correctly updating internal state.
+/// @note    This method also sets/updates the atom's element and the residue's mass.
 void
-ResidueType::set_atom_type(
-		VD atom,
-		std::string const & atom_type_name
-)
+ResidueType::set_atom_type( VD atom, std::string const & atom_type_name )
 {
-	assert( has(atom) );
+	assert( has( atom ) );
 	Atom & a = graph_[ atom ];
 
-	int const old_atom_type_index = a.atom_type_index();
-	if( old_atom_type_index ) {
-		if ( (*atom_types_)[old_atom_type_index].is_acceptor() ) --n_hbond_acceptors_;
-		if ( (*atom_types_)[old_atom_type_index].is_donor() ) --n_hbond_donors_;
+	// If this is a re-setting, update H-bonding counts accordingly....
+	core::uint const old_atom_type_index( a.atom_type_index() );
+	if ( old_atom_type_index ) {
+		if ( ( *atom_types_ )[ old_atom_type_index ].is_acceptor() ) { --n_hbond_acceptors_; }
+		if ( ( *atom_types_ )[ old_atom_type_index ].is_donor() ) { --n_hbond_donors_; }
 	}
 
-	// Has internal check for invalid type name
-	int const atom_type_index = atom_types_->atom_type_index( atom_type_name );
-	AtomType const & atype = (*atom_types_)[atom_type_index];
+	// ...and update mass accordingly.
+	if ( a.element_type() ) {
+		mass_ -= a.element_type()->weight();
+	}
 
-	if ( atype.is_acceptor() ) ++n_hbond_acceptors_;
-	if ( atype.is_donor() ) ++n_hbond_donors_;
+	// Get the new AtomType and its index.
+	// (includes internal check for invalid type name)
+	core::uint const atom_type_index = atom_types_->atom_type_index( atom_type_name );
+	AtomType const & atype = ( *atom_types_ )[atom_type_index];
 
+	// Set/update AtomType index.
 	a.atom_type_index( atom_type_index );
-	a.is_polar_hydrogen(atype.is_polar_hydrogen());
-	a.is_hydrogen(atype.is_hydrogen());
-	a.is_haro(atype.is_haro());
-	a.is_acceptor(atype.is_acceptor());
-	a.is_virtual(atype.is_virtual());
-	a.has_orbitals(atype.atom_has_orbital());
+
+	// Set/update H-bonding counts.
+	if ( atype.is_acceptor() ) { ++n_hbond_acceptors_; }
+	if ( atype.is_donor() ) { ++n_hbond_donors_; }
+
+	// Set/update element and mass.
+	if ( elements_ ) {  // Be robust if elements_ isn't defined.
+		std::string const & element_name( ( *atom_types_ )[ atom_type_index ].element() );
+		core::uint const element_index = elements_->element_index( element_name );
+		//tr.Trace << elements_->element_index( element_name ) << ' ' << element_name << std::endl;
+		a.element_type( ( *elements_ )[ element_index ] );
+		mass_ += a.element_type()->weight();
+	} else {
+		tr.Warning << "WARNING Elements set undefined." << std::endl;
+	}
+
+	// Set/update the atom's properties.
+	a.is_polar_hydrogen( atype.is_polar_hydrogen() );
+	a.is_hydrogen( atype.is_hydrogen() );
+	a.is_haro( atype.is_haro() );
+	a.is_acceptor( atype.is_acceptor() );
+	a.is_virtual( atype.is_virtual() );
+	a.has_orbitals( atype.atom_has_orbital() );
 }
 
 
-/// @brief set mm atom type
 void
-ResidueType::set_mm_atom_type(
-		std::string const & atom_name,
-		std::string const & mm_atom_type_name
-)
+ResidueType::set_mm_atom_type( std::string const & atom_name, std::string const & mm_atom_type_name )
 {
-	int const mm_type_index = mm_atom_types_->atom_type_index( mm_atom_type_name );
+	core::uint const mm_type_index = mm_atom_types_->atom_type_index( mm_atom_type_name );
 	Atom & a = graph_[ atom_name_to_vd_[atom_name] ];
 	a.mm_atom_type_index( mm_type_index );
+	a.mm_name( mm_atom_type_name );
 }
 
 /// @brief Get the MM atom_type for this atom by its index number in this residue

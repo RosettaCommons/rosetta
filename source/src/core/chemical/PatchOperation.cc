@@ -464,6 +464,9 @@ SetAtomType::apply( ResidueType & rsd ) const
 	return false;
 }
 
+
+// SetIO_String //////////////////////////////////////////////////////////////
+
 SetIO_String::SetIO_String(
 	std::string const & name3,
 	char const name1
@@ -508,6 +511,8 @@ AppendInterchangeabilityGroup_String::apply( ResidueType & rsd ) const
 }
 
 
+// SetMMAtomType //////////////////////////////////////////////////////////////
+
 SetMMAtomType::SetMMAtomType(
 	std::string const & atom_name_in,
 	std::string const & mm_atom_type_name_in
@@ -519,16 +524,21 @@ SetMMAtomType::SetMMAtomType(
 bool
 SetMMAtomType::apply( ResidueType & rsd ) const
 {
-	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "SetAtomType::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
-		return true; // failure
+	if ( ! rsd.has( atom_name_ ) ) {
+		if ( TR_PatchOperations.Debug.visible() ) {
+			TR_PatchOperations.Debug << "SetMMAtomType::apply failed: " <<
+					rsd.name() << " is missing atom: " << atom_name_ << std::endl;
+		}
+		return true;  // failure
 	} else {
-		//std::cout << "SetAtomType::apply: " << atom_name_ << ' ' << mm_atom_type_name_ << std::endl;
+		//TR_PatchOperations.Trace << "SetMMAtomType::apply: " << atom_name_ << ' ' << mm_atom_type_name_ << std::endl;
 		rsd.set_mm_atom_type( atom_name_, mm_atom_type_name_ );
 	}
 	return false;
 }
 
+
+// SetICoor //////////////////////////////////////////////////////////////////
 
 // helper function
 std::string
