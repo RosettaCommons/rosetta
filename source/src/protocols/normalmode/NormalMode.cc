@@ -195,7 +195,7 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 			torsions_using_.push_back( ires );
 	}
 	
-	Vector xyzCA, xyzN, xyzC(0.0);
+	Vector xyzCA(0.0), xyzN(0.0), xyzC(0.0);
 	Size n( 0 );
 
 	//std::cout << "prepare_coord, nmode " << torsions_using_.size() << std::endl;
@@ -204,6 +204,7 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 		Size const ires = torsions_using_[i];
 		//std::cout << "i/ires " << i << " " << ires << std::endl;
 		conformation::Residue const &rsd( pose.residue( ires ) );
+		assert( rsd.type().is_protein() );
 
 		for( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ){
 			std::string const atmname( rsd.atom_name( iatm ) );
