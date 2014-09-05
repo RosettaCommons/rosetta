@@ -35,7 +35,7 @@ parser.add_argument('--mm', action='store_true',
 args = parser.parse_args()
 
 # Initialize Rosetta.
-init(extra_options='-include_sugars -mute all')
+init(extra_options='-include_sugars -override_rsd_type_limit -mute all')
 
 # Load pdb file.
 initial_pose = pose_from_pdb(args.pdb_filename)

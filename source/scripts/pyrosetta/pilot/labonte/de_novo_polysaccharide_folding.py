@@ -61,7 +61,7 @@ parser.add_argument('--min_type', default='linmin',
 args = parser.parse_args()
 
 # Initialize Rosetta.
-init(extra_options='-include_sugars -mute all')
+init(extra_options='-include_sugars -override_rsd_type_limit -mute all')
 
 # Format sequence.
 sequence = args.monosaccharide_name + ("-" + args.linkage + "-" + \

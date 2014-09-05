@@ -14,11 +14,14 @@ ATOM  C8  CH1  CT1   0.14
 ATOM  O8  OOC   OS  -0.66
 # Other backbone heavy atoms:
 ATOM  O6  OOC   OS  -0.13
+ATOM_ALIAS  O6   O  
 ATOM  VO6 VIRT VIRT  0.00  # to superimpose with O6
 # Side-chain heavy atoms:
 ATOM  C1  COO   CC   0.52
 ATOM 1O1  OOC   OC  -0.76
+ATOM_ALIAS 1O1   O1A
 ATOM 2O1  OOC   OC  -0.76
+ATOM_ALIAS 2O1   O1B
 ATOM  O2  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atom by patch for lower terminus
 ATOM  O3  VIRT VIRT  0.00  # allows for consistent chi angles
 ATOM  O4  OH   OH1  -0.66

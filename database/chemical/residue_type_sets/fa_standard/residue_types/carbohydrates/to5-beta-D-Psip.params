@@ -12,6 +12,7 @@ ATOM  O5  OH    OS  -0.36
 # Other backbone heavy atoms:
 ATOM  C6  CH2  CT2   0.08
 ATOM  O6  OOC   OS  -0.36
+ATOM_ALIAS  O6   O  
 ATOM  VO6 VIRT VIRT  0.00
 # Side-chain heavy atoms:
 ATOM  C1  CH2  CT2   0.15

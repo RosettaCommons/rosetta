@@ -12,6 +12,7 @@ ATOM  O4  OH    OS  -0.38
 # Other backbone heavy atoms:
 ATOM  C5  CH1  CT1   0.11
 ATOM  O5  OOC   OS  -0.34
+ATOM_ALIAS  O5   O  
 ATOM  VO5 VIRT VIRT  0.00  # to O5; allows for consistent chi angles
 # Side-chain heavy atoms:
 ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus

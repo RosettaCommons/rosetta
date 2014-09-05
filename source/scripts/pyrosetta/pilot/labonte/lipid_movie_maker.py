@@ -2,7 +2,7 @@ from rosetta import *
 from random import *
 
 init(extra_options="-include_sugars -include_lipids -read_pdb_link_records " +
-                   "-enable_branching -mute core -mute protocols")
+                   "-override_rsd_type_limit -mute core -mute protocols")
 
 FILEPATH = "lipid_movie/GalCer_frame"
 

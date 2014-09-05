@@ -108,10 +108,10 @@ def parse_arguments():
     parser.add_argument('--n_decoys', type=int, default=10,
                         help='the number of docking decoys ' +
                         '(Setting to 0 simply pre-packs the structure.)')
-    parser.add_argument('--rot', type=float, default=8.0,
+    parser.add_argument('--rot', type=float, default=2.0,
                         help='the mean rotation (in degrees) for rigid-body ' +
                              'moves')
-    parser.add_argument('--trans', type=float, default=3.0,
+    parser.add_argument('--trans', type=float, default=0.5,
                         help='the mean translation (in Angstroms) for rigid-' +
                              'body moves')
     parser.add_argument('--Hbond_mult', type=float, default=1.0,

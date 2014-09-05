@@ -3,7 +3,7 @@ from rosetta.core.chemical.carbohydrates import CarbohydrateInfo
 from rosetta.protocols.simple_moves import RingConformationMover
 
 init(extra_options="-include_sugars -read_pdb_link_records " +
-                   "-enable_branching -mute core -mute protocols")
+                   "-override_rsd_type_limit -mute core -mute protocols")
 
 pose = pose_from_pdb("N-linked_14-mer_glycan.pdb")
 

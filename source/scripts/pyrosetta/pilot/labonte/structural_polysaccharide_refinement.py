@@ -138,7 +138,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('pdb_filename',
                         help='the filename of the PDB structure to be' +
-                        ' evaluated; must contain a single saccharide residue')
+                        ' evaluated')
     parser.add_argument('--mute', action='store_true',
                         help='flag to mute output for cycles')
     parser.add_argument('--make_movie', action='store_true',
@@ -168,8 +168,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Initialize Rosetta.
-    init(extra_options='-include_sugars -read_pdb_link_records ' +
-                       '-enable_branching -mute all')
+    init(extra_options='-include_sugars -read_pdb_link_records '
+                       '-override_rsd_type_limit -mute all')
 
     # Create pose.
     print 'Loading pose from:', args.pdb_filename
