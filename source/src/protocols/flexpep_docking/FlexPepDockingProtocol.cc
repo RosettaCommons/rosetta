@@ -1194,18 +1194,27 @@ FlexPepDockingProtocol::addLowResStatistics
 	FArray1D_bool native_interface_residues ( native_CEN.total_residue(), false );
 	markNativeInterface(superpos_partner, native_interface_residues);
 	// add all peptide RMSD:
+  using core::scoring::rmsd_with_super;
 	using core::scoring::rmsd_no_super_subset;
 	using core::scoring::is_protein_CA;
 	using core::scoring::is_protein_backbone;
-	cur_job->add_string_real_pair( "rmsCA_lowres",
+  if(!flags_.pep_fold_only){
+	  cur_job->add_string_real_pair( "rmsCA_lowres",
 		rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, superpos_partner, is_protein_CA ) );
-	cur_job->add_string_real_pair( "rmsBB_lowres",
+	  cur_job->add_string_real_pair( "rmsBB_lowres",
 		rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, superpos_partner, is_protein_backbone ) );
-	// add peptide interface-only RMSD:
-	cur_job->add_string_real_pair( "rmsCA_intrf_lowres",
-		rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, native_interface_residues, is_protein_CA ) );
-	cur_job->add_string_real_pair( "rmsBB_intrf_lowres",
+	  // add peptide interface-only RMSD:
+    cur_job->add_string_real_pair( "rmsCA_intrf_lowres",
+    rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, native_interface_residues, is_protein_CA ) );
+    cur_job->add_string_real_pair( "rmsBB_intrf_lowres",
 		rmsd_no_super_subset( native_CEN, pose_after_lowres_CEN, native_interface_residues, is_protein_backbone ) );
+  }
+  else if(!flags_.pep_fold_only){
+    cur_job->add_string_real_pair( "rmsCA_lowres",
+		rmsd_with_super( native_CEN, pose_after_lowres_CEN, is_protein_CA ) );
+	  cur_job->add_string_real_pair( "rmsBB_lowres",
+		rmsd_with_super( native_CEN, pose_after_lowres_CEN, is_protein_backbone ) );
+  }
 }
 
 
@@ -1262,10 +1271,13 @@ FlexPepDockingProtocol::storeJobStatistics
 
 
 	// start pose statistics:
+  using core::scoring::rmsd_with_super;
 	using core::scoring::rmsd_no_super_subset;
 	using core::scoring::is_protein_CA;
 	using core::scoring::is_protein_backbone;
 	using core::scoring::is_polymer_heavyatom;
+
+  if (! flags_.pep_fold_only )	{
 	cur_job->add_string_real_pair( "startRMSca",
 		rmsd_no_super_subset( native_pose, start_pose, superpos_partner, is_protein_CA )	);
 	cur_job->add_string_real_pair( "startRMSbb",
@@ -1299,7 +1311,25 @@ FlexPepDockingProtocol::storeJobStatistics
 	else {
 		cur_job->add_string_real_pair( "rmsALL_if", -1.0 ); // invalid RMS on all atoms in design mode
 	}
+  }
 
+  if ( flags_.pep_fold_only )	{
+	cur_job->add_string_real_pair( "startRMSca",
+		rmsd_with_super( native_pose, start_pose, is_protein_CA )	);
+	cur_job->add_string_real_pair( "startRMSbb",
+		rmsd_with_super( native_pose, start_pose, is_protein_backbone ) );
+	cur_job->add_string_real_pair( "startRMSall",
+		rmsd_with_super(native_pose, start_pose, is_polymer_heavyatom ) );
+
+	// final pose statistics - all peptide residues:
+	cur_job->add_string_real_pair( "rmsCA",
+		rmsd_with_super( native_pose, final_pose, is_protein_CA ) );
+	cur_job->add_string_real_pair( "rmsBB",
+		rmsd_with_super( native_pose, final_pose, is_protein_backbone ) );
+	cur_job->add_string_real_pair( "rmsALL",
+		rmsd_no_super_subset( native_pose, final_pose, superpos_partner, is_polymer_heavyatom ) );
+  }
+  
  	if(flags_.score_only)
 		{
 			if(!flags_.pep_fold_only){
@@ -1358,6 +1388,9 @@ FlexPepDockingProtocol::storeJobStatistics
 
 	// low-res stats:
 	if(flags_.lowres_preoptimize || flags_.lowres_abinitio) {
+		addLowResStatistics(start_pose, pose_after_lowres);
+	}
+  if(flags_.pep_fold_only) {
 		addLowResStatistics(start_pose, pose_after_lowres);
 	}
 
