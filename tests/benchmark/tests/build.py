@@ -51,7 +51,7 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     memory = config['memory']
     jobs = config['cpu_count']
 
-    if test.startswith('PyRosetta'): jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 1Gb per memory per thread
+    if platform['os'] != 'windows'  and  test.startswith('PyRosetta'): jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 1Gb per memory per thread
 
     TR = Tracer(verbose)
 

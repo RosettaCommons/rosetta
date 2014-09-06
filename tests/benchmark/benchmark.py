@@ -13,8 +13,9 @@
 ## @author Sergey Lyskov
 
 
-import os, sys, imp, shutil, json, platform, commands
+import os, os.path, sys, imp, shutil, json, platform, commands
 
+from ConfigParser import ConfigParser
 import argparse
 
 from tests import *  # Tests states and key names
@@ -54,7 +55,9 @@ def main(args):
 
     parser.add_argument("--suffix", default='', help="Specify ending suffix for test output dir. This is useful when you want to save test results in different dir for later comparison." )
 
-    parser.add_argument("--compare", nargs=2, help="Do not run the tests but instead compare precious results. Use --compare suffix1 suffix2" )
+    parser.add_argument("--compare", nargs=2, help="Do not run the tests but instead compare previous results. Use --compare suffix1 suffix2" )
+
+    parser.add_argument("--config", default='benchmark.ini', action="store", help="Location of .ini file with additional options configuration. Optional.")
 
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
@@ -69,7 +72,14 @@ def main(args):
     elif Platform['os'] == 'Linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
     elif Platform['os'] == 'Mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[2]) / 1024 / 1024 / 1024
 
-    config = dict(cpu_count=Options.jobs, memory=memory)
+
+    if os.path.isfile('benchmark.ini'):
+        Config = ConfigParser( dict(here=os.path.abspath('./') ) )
+        Config.readfp( file(Options.config) )
+        config = Config.items('config')
+    else: config = {}
+
+    config = dict(config, cpu_count=Options.jobs, memory=memory)
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
 
     if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
@@ -115,8 +125,7 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
-            try: api_version = test_suite._api_version_
-            except AttributeError as e: api_version = ''
+            api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
 
             if api_version < '1.0':
                 res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)

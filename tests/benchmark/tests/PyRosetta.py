@@ -12,7 +12,7 @@
 ## @brief  PyRosetta binding self tests
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands
+import os, os.path, json, commands, shutil
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -76,6 +76,8 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     buildings_path = buildings_path_output[1].split()[-1]
     if not (buildings_path  and  os.path.isdir(buildings_path) ): raise BenchmarkError('Could not retrieve valid PyRosetta bindings binary path!\nCommand line:{}\nResult:{}\n'.format(command_line, buildings_path_output))
     TR('Bindings build path is:{}'.format(buildings_path))
+
+    shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
 
     if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py'.format(buildings_path=buildings_path), return_='tuple')
 
