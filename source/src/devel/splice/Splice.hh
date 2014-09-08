@@ -394,7 +394,7 @@ private:
 	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_H3_seq_map_; /* This object will store the H3 seqeunces of all PDBs in the database. The logic for this is that the H3*/
 	bool superimposed_; //dflt true; when doing splice out, is the source pdb superimposed on the template pdb? This is usually the case. If it isn't we expect the user to specify the stem sites on the source and template exactly. Only dihedral restraints will be used in this case.
 	core::Size source_pdb_from_res_, source_pdb_to_res_; //dflt 0,0; see above superimposed.
-
+	bool ignore_chain_break_;//dflt false, if we want to ignore the checking if the source PDB has a chainbreak
 
 };
 

@@ -31,6 +31,5 @@
         </APPLY_TO_POSE>
         <PROTOCOLS>
                 <Add mover=splice_seqconstraints/>
-                <Add filter=designable/>
         </PROTOCOLS>
 </dock_design>

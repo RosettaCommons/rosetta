@@ -9,8 +9,6 @@
 -jd2:ntrials 1
 -overwrite
 
--loops:outer_cycles    2
--loops:max_inner_cycles 2
 -out:file:fullatom
 
 -pdb_comments true ## this is the mover reades the comments in the input pdb file. The comments contain the pdb segments comprising the input pdb

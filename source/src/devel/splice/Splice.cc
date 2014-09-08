@@ -403,7 +403,6 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
   pose_positions.clear(); template_positions.clear();
 	pose_positions.push_back( source_pdb_from_res() -1 );
 	pose_positions.push_back( source_pdb_from_res() );
-	TR<<"source_pdb_from_res:"<<source_pdb_from_res()<<std::endl;
 	pose_positions.push_back( source_pdb_from_res() +1 );
 	pose_positions.push_back( source_pdb_to_res() -1 );
 	pose_positions.push_back( source_pdb_to_res() );
@@ -414,8 +413,18 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 	template_positions.push_back( to_res() -1 );
 	template_positions.push_back( to_res() );
 	template_positions.push_back( to_res() +1 );
-  utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( source_pose, pose_positions ) ), ref_coords( coords( pose/*this is the starting pose, the structure on which we want to graft the loop from the source protein*/, template_positions )
-);
+	if (protein_family_=="antibodies"){//The numbering is so the postions are XXC (the disulfide and 2 aa before)
+	  	pose_positions.clear(); template_positions.clear();
+			template_positions.push_back( from_res()-1);
+			template_positions.push_back( to_res()+1);
+			pose_positions.push_back( source_pdb_from_res()-1 );
+			pose_positions.push_back( source_pdb_to_res() +1);
+
+	};
+	TR<<" template scafold_res: "<<from_res() -4<<",source scafold_res: "<<source_pdb_from_res() -1<<std::endl;
+  utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( source_pose, pose_positions ) ), ref_coords( coords( pose/*this is the starting pose, the structure on which we want to graft the loop from the source protein*/, template_positions ));
+  TR<<"template ref coords: "<<ref_coords[1][1]<<std::endl;
+  TR<<"source ref coords: "<<init_coords[1][1]<<std::endl;
 
   numeric::xyzMatrix< core::Real > rotation;
   numeric::xyzVector< core::Real > to_init_center, to_fit_center;
@@ -562,7 +571,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				}
 				protocols::simple_moves::CutChainMover ccm;
 				core::Size source_pdb_cut(ccm.chain_cut(*source_pose_,nearest_to_from,nearest_to_to));
-				if (source_pdb_cut!=0)//found cut site in source pose
+				if (source_pdb_cut!=0 && !ignore_chain_break_)//found cut site in source pose
 					utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
 				TR << "nearest_to_from: " << nearest_to_from << " nearest_to_to: " << nearest_to_to << std::endl;
 				TR << "from_res():"<<from_res()<<"to_res():"<<to_res()<<std::endl;
@@ -1495,6 +1504,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 		void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
 			utility::vector1<TagCOP> const sub_tags(tag->getTags());
 			mover_name_=tag->getOption<std::string>("name");//for debugging purposes
+			ignore_chain_break_=tag->getOption<bool>("ignore_chain_break",false);//for debugging purposes
 			debug_=tag->getOption<bool>("debug", false);
 			min_seg_=tag->getOption<bool>("min_seg", false);
 			CG_const_=tag->getOption<bool>("CG_const", false);
@@ -1509,13 +1519,6 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
         core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
       }
 
-			if( !superimposed() ){
-				source_pdb_from_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_from_res", "0"), *source_pose_));
-      	source_pdb_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_to_res", "0"), *source_pose_));
-				//source_pdb_from_res( tag->getOption< core::Size >( "source_pdb_from_res" ) );
-				//source_pdb_to_res( tag->getOption< core::Size >( "source_pdb_to_res" ) );
-				runtime_assert( source_pdb_from_res() > 0 && source_pdb_to_res() > source_pdb_from_res() );
-			}
 
 			if ((tag->hasOption("tail_segment"))
 					&& !(((boost::iequals/*BOOST function for comparing strings */(tail_segment_, "c")))
@@ -1551,7 +1554,16 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				pdb_to_H3_seq_map_=read_H3_seq(protein_family_to_database_.find(protein_family_)->second);
 			}
 		}
-//complex if staement to ensure that user provied both segment flag and protein family flag
+			if( !superimposed() ){
+							source_pdb_from_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_from_res", "0"), *source_pose_));
+			      	source_pdb_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_to_res", "0"), *source_pose_));
+							if (protein_family_=="antibodies"){
+								source_pdb_from_res(protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,1)+1);
+								source_pdb_to_res(protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,source_pose_->total_residue())-1);
+							}
+							runtime_assert( source_pdb_from_res() > 0 && source_pdb_to_res() > source_pdb_from_res() );
+						}
+//complex if statement to ensure that user provided both segment flag and protein family flag
 		if ((!(tag->hasOption("segment")) && (tag->hasOption("protein_family")))
 				|| ((tag->hasOption("segment")) && (!tag->hasOption("protein_family")))) {
 			utility_exit_with_message(
@@ -2717,8 +2729,8 @@ void Splice::rb_adjust_template(core::pose::Pose const & pose) const {
 	//	pose.dump_pdb( "pose.pdb" );
 	//	runtime_assert( 0 );
 }
-/// @brief Since we want to minimally perturb the actice site conformation (whether it be binding or catalytic) the cut site should be placed furthest away.
-/// For each protein family we will probaly need specail definitions unless we find a more genral way. For antibodies I go from the conserved Trp res at the base of CDR1
+/// @brief Since we want to minimally perturb the active site confirmation (whether it be binding or catalytic) the cut site should be placed farthest away.
+/// For each protein family we will probably need special definitions unless we find a more general way. For antibodies I go from the conserved Trp res at the base of CDR1
 /// and then continue going to the C-ter until I find the distal loops.
 core::Size Splice::find_non_active_site_cut_site(core::pose::Pose const & pose) {
 	using namespace core::sequence;
@@ -2754,6 +2766,7 @@ core::Size Splice::find_non_active_site_cut_site(core::pose::Pose const & pose) 
 
 	return 0;
 }
+
 
 
 

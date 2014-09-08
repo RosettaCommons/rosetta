@@ -151,8 +151,8 @@ CutChainMover::chain_cut( core::pose::Pose & pose)
 	core::Size cut_pos = 0;
 	for( core::Size resj = pose.conformation().chain_begin( chain_id_ ); resj <= pose.conformation().chain_end( chain_id_ )-1; ++resj ){
 		core::Real const distance = pose.residue( resj+1 ).xyz( "N" ).distance(pose.residue( resj ).xyz( "C" ));
-//			TR<<"distance is: "<<distance<<std::endl;
-//			TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
+			//TR<<"distance is: "<<distance<<std::endl;
+			//TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
 		if( distance > bond_length()){
 			cut_pos = resj;
 			TR<<"Found cut at: "<<resj<<std::endl;
