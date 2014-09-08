@@ -743,8 +743,9 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			//if we are adding a c-terminal tail then we change the length at the end of the segment
 			if (boost::iequals(tail_segment_, "c")) {
 				llc.loop_start(find_nearest_disulfide(pose,from_res())+1);
-				if (segment_type_=="L3")
-					llc.loop_end(vl_vh_cut);
+				if (segment_type_=="L3"){
+					llc.loop_end(std::min(vl_vh_cut+residue_diff,vl_vh_cut-1));
+				}
 				else if (segment_type_=="H3"){
 					core::conformation::Conformation const & conf(pose.conformation());
 						llc.loop_end(conf.chain_end(1)+residue_diff);//Asuming that the ligand is chain 2;
