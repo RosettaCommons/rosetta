@@ -291,7 +291,7 @@ private:
 	ScValue SubCir(Vec3 const &cen, ScValue const rad, Vec3 const &north, ScValue const density, std::vector<Vec3> &points);
 
 	// Sort callback
-	static int _atom_distance_cb(void *a1, void *a2);
+	// static int _atom_distance_cb(void *a1, void *a2);
 };
 
 } //namespace sc

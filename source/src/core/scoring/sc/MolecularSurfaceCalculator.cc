@@ -510,14 +510,29 @@ int MolecularSurfaceCalculator::CalcDotsForAllAtoms(std::vector<Atom> & )
 	return 1;
 }
 
+/// @brief A small struct to report which of two atoms is closer to a given atom:
+struct
+CloserToAtom {
+	bool operator() ( Atom * a1, Atom * a2 ) {
+		MolecularSurfaceCalculator::ScValue d1 = ref_atom_->distance( * a1 );
+		MolecularSurfaceCalculator::ScValue d2 = ref_atom_->distance( * a2 );
+		return d1 < d2;
+	}
+	CloserToAtom( Atom * reference_atom ) {
+		ref_atom_ = reference_atom;
+	}
+private:
+	Atom * ref_atom_;
+};
+
 // Private atom distance sort callback used below
-Atom *_atom_distance_ref = NULL;
-int MolecularSurfaceCalculator::_atom_distance_cb(void *a1, void *a2)
-{
-	ScValue d1 = _atom_distance_ref->distance(*((Atom*)a1));
-	ScValue d2 = _atom_distance_ref->distance(*((Atom*)a2));
-	return d1 < d2 ? -1: (d2 > d1 ? 1 : 0);
-}
+// Atom *_atom_distance_ref = NULL;
+//int MolecularSurfaceCalculator::_atom_distance_cb(void *a1, void *a2)
+//{
+//	ScValue d1 = _atom_distance_ref->distance(*((Atom*)a1));
+//	ScValue d2 = _atom_distance_ref->distance(*((Atom*)a2));
+//	return d1 < d2 ? -1: (d2 > d1 ? 1 : 0);
+//}
 
 // Calculate surface dots around a single atom (main loop in original code)
 int MolecularSurfaceCalculator::FindNeighbordsAndBuriedAtoms(Atom &atom1)
@@ -526,9 +541,12 @@ int MolecularSurfaceCalculator::FindNeighbordsAndBuriedAtoms(Atom &atom1)
 		return 0;
 
 	// sort neighbors by distance from atom1
-	_atom_distance_ref = &atom1;
-	std::sort(atom1.neighbors.begin(), atom1.neighbors.end(), MolecularSurfaceCalculator::_atom_distance_cb);
-	_atom_distance_ref = NULL;
+	//_atom_distance_ref = &atom1;
+
+
+	CloserToAtom closer_to_atom1( &atom1 );
+	std::sort(atom1.neighbors.begin(), atom1.neighbors.end(), closer_to_atom1 );
+	//_atom_distance_ref = NULL;
 
 	SecondLoop(atom1);
 
