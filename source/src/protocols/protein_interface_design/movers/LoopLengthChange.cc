@@ -63,7 +63,7 @@ LoopLengthChangeCreator::mover_name()
 
 LoopLengthChange::LoopLengthChange() :
 	Mover( LoopLengthChangeCreator::mover_name() ),
-	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 )
+	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false)
 {
 }
 
@@ -113,11 +113,16 @@ LoopLengthChange::apply( core::pose::Pose & pose )
     ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
     ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
     for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
-    //	TR<<"loop_end()- leng =" <<loop_end() - leng<<std::endl;
-      pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
-     // string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
-//      pose.dump_pdb("llc_res_"+res+".pdb");
-//      pose.set_omega(loop_end()+leng-1,180.0);
+    	//	TR<<"loop_end()- leng =" <<loop_end() - leng<<std::endl;
+    	if (tail_segment_)
+    		pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
+
+
+    	else
+    		pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
+    	// string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
+    	//      pose.dump_pdb("llc_res_"+res+".pdb");
+    	//      pose.set_omega(loop_end()+leng-1,180.0);
 
 
     }
@@ -187,6 +192,11 @@ int
 LoopLengthChange::delta() const{
   return( delta_ );
 }
+void
+LoopLengthChange::tail( bool b ){
+	tail_segment_ = b;
+}
+
 } //movers
 } //protein_interface_design
 } //protocols

@@ -413,15 +413,27 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 	template_positions.push_back( to_res() -1 );
 	template_positions.push_back( to_res() );
 	template_positions.push_back( to_res() +1 );
-	if (protein_family_=="antibodies"){//The numbering is so the postions are XXC (the disulfide and 2 aa before)
-	  	pose_positions.clear(); template_positions.clear();
-			template_positions.push_back( from_res()-1);
-			template_positions.push_back( to_res()+1);
-			pose_positions.push_back( source_pdb_from_res()-1 );
-			pose_positions.push_back( source_pdb_to_res() +1);
+	if (protein_family_=="antibodies"){//For antibodies I want to align using the disulfides
+		utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain, I assume that the order is VL and then VH, Gideon Lapidoth
+		pose_positions.clear(); template_positions.clear();
+		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+			if (pose.residue(i).has_variant_type(core::chemical::DISULFIDE)) {
+				cys_pos.push_back(i);
+			}
+		}
 
+		if( (segment_type_ =="L1_L2") ||(segment_type_ =="L3")) {
+			template_positions.push_back(cys_pos[1]);
+			template_positions.push_back(cys_pos[2]);
+		}
+		else if  (segment_type_=="H1_H2"||segment_type_=="H3"){
+			template_positions.push_back(cys_pos[3]);
+			template_positions.push_back(cys_pos[4]);
+		}
+		pose_positions.push_back( protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,1));
+		pose_positions.push_back( protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,source_pose_->total_residue()));
 	};
-	TR<<" template scafold_res: "<<from_res() -4<<",source scafold_res: "<<source_pdb_from_res() -1<<std::endl;
+	TR<<" template scafold_res: "<<from_res() -1<<",source scafold_res: "<<source_pdb_from_res() -1<<std::endl;
   utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( source_pose, pose_positions ) ), ref_coords( coords( pose/*this is the starting pose, the structure on which we want to graft the loop from the source protein*/, template_positions ));
   TR<<"template ref coords: "<<ref_coords[1][1]<<std::endl;
   TR<<"source ref coords: "<<init_coords[1][1]<<std::endl;
@@ -434,7 +446,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
   apply_superposition_transform( source_pose, rotation, to_init_center, to_fit_center );
 	/// DEBUGGING
 	if( debug_)
-		source_pose.dump_pdb( "superimposed_source_pose.pdb" );
+		source_pose.dump_pdb( mover_name_+"superimposed_source_pose.pdb" );
 }
 
 		void Splice::apply(core::pose::Pose & pose) {
@@ -539,12 +551,11 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//Check if there are chain_breaks in the source PDB, if so exit with error msg. gideon 24jun14
 
 				if( !superimposed() ){
+					superimpose_source_on_pose( pose, *source_pose_ );
 					nearest_to_from = source_pdb_from_res();
 					nearest_to_to   = source_pdb_to_res();
-					TR<<"source_pdb_from_Res: "<<source_pdb_from_res()<<std::endl;
-					superimpose_source_on_pose( pose, *source_pose_ );
 				}
-				else if (segment_type_=="H3"&& (tail_segment_=="c")){
+				if (segment_type_=="H3"&& (tail_segment_=="c")){
 					nearest_to_from = find_nearest_res(*source_pose_, pose,from_res()/*should be the 2 vh cys on template*/, 1);//start res is nearest disulfide on source_pdb
 					nearest_to_to = source_pose_->total_residue();
 				}
@@ -744,7 +755,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			if (boost::iequals(tail_segment_, "c")) {
 				llc.loop_start(find_nearest_disulfide(pose,from_res())+1);
 				if (segment_type_=="L3"){
-					llc.loop_end(std::min(vl_vh_cut+residue_diff,vl_vh_cut-1));
+					llc.tail(1);
+					llc.loop_end(vl_vh_cut-1);
 				}
 				else if (segment_type_=="H3"){
 					core::conformation::Conformation const & conf(pose.conformation());
