@@ -284,7 +284,8 @@ if __name__ == '__main__':
     if args.ref:
         if not args.ref.endswith('.pdb'):
             exit('Reference file must have the ".pdb" file extension.')
-        jd.native_pose = args.ref
+        ref_pose = pose_from_pdb(args.ref)
+        #jd.native_pose = ref_pose
 
     # Begin docking protocol.
     print "\nDocking..."
@@ -337,4 +338,7 @@ if __name__ == '__main__':
 
         print '  Final Score for decoy', jd.current_num, ':', sf(pose)
         #sf.show(pose)  # TEMP
+        if args.ref:
+            rmsd = non_peptide_heavy_atom_RMSD(pose, ref_pose)
+            jd.additional_decoy_info = 'ligand_rmsd: ' + str(round(rmsd, 2))
         jd.output_decoy(pose)

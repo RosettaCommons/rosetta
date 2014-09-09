@@ -439,6 +439,7 @@ is_protein_sidechain_heavyatom(
 	return rsd.is_protein() && (rsd.first_sidechain_atom() <= atomno ) && ( !rsd.atom_is_hydrogen( atomno ) );
 }
 
+/// @note "Ligand" here means not "polymer" in the Rosetta sense.
 bool
 is_ligand_heavyatom(
 	core::pose::Pose const & pose1,
@@ -451,6 +452,7 @@ is_ligand_heavyatom(
 	return !rsd.is_polymer() && !rsd.atom_is_hydrogen(atomno);
 }
 
+/// @note "Ligand" here means not "polymer" in the Rosetta sense.
 bool
 is_ligand_heavyatom_residues(
 		core::conformation::Residue const & residue1,
@@ -470,6 +472,20 @@ is_polymer_heavyatom(
 {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return rsd.is_polymer() && !rsd.atom_is_hydrogen(atomno);
+}
+
+/// @details This is a "predicate" function intended for use with RMSD-calculating functions.
+/// @remarks This is useful for oligosaccharide ligands, which are "polymers" in the Rosetta sense and do not have CAs.
+/// @author  Labonte <JWLabonte@jhu.edu>
+bool
+is_non_peptide_heavy_atom(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & /* pose2 */,
+		core::uint const resno,
+		core::uint const atomno )
+{
+	core::conformation::Residue const & rsd = pose1.residue( resno );
+	return ! rsd.is_protein() && ! rsd.atom_is_hydrogen( atomno );
 }
 
 bool
@@ -541,6 +557,16 @@ bool ExcludedResPredicate::operator()(
 
 /////////////////////////////////////////////////////////////////////////
 
+/// @details This does NOT perform a superimposition first.
+/// @note    This is simply a wrapper for use in PyRosetta, since PyRosetta cannot use the templated function
+/// rmsd_no_super() directly.
+/// @author  Labonte <JWLabonte@jhu.edu>
+core::DistanceSquared
+non_peptide_heavy_atom_RMSD( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
+{
+	return rmsd_no_super( pose1, pose2, is_non_peptide_heavy_atom );
+}
+
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
@@ -570,7 +596,7 @@ CA_rmsd(
 	return rms;
 } // CA_rmsd
 
-/// @detail Populates the output parameter with the xyz coordinates of
+/// @details Populates the output parameter with the xyz coordinates of
 /// a subset of <pose>'s CA atoms, which are specified in <residues>
 void retrieve_coordinates(const core::pose::Pose& pose,
 													const utility::vector1<core::Size>& residues,
@@ -592,6 +618,9 @@ void retrieve_coordinates(const core::pose::Pose& pose,
 	}
 }
 
+/// @details Computes the root mean squared deviation between zero or more
+/// CA residues in pose1 and pose2, whose correspondence is specified in
+/// the map parameter.
 core::Real CA_rmsd(const core::pose::Pose& pose1,
 									 const core::pose::Pose& pose2,
 									 const std::map<core::Size, core::Size>& residues) {
@@ -616,6 +645,8 @@ core::Real CA_rmsd(const core::pose::Pose& pose1,
 	return numeric::model_quality::rms_wrapper(residues.size(), p1, p2);
 }
 
+/// @details Computes the gdtmm between zero or more CA residues in pose1
+/// and pose2, whose correspondence is specified in the map parameter.
 core::Real CA_gdtmm(const core::pose::Pose& pose1,
 										const core::pose::Pose& pose2,
 										const std::map<core::Size, core::Size>& residues) {
@@ -1043,8 +1074,6 @@ xyz_gdttm(
 ///     atom_map[ id1 ] = id2;
 ///   }
 ///   superimpose_pose( pose1, pose2, atom_map );
-///
-
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
@@ -1218,9 +1247,9 @@ CA_rmsd_symmetric(
   return rms;
 }
 
-// @details This is a recursive algorithm to generate all combinations of
-// n digits where a number can only occur once in the sequence.
-// The size scales as N! so don't use this for large values of N!!!
+/// @details This is a recursive algorithm to generate all combinations of
+/// n digits where a number can only occur once in the sequence.
+/// The size scales as N! so don't use this for large values of N!!!
 void
 create_shuffle_map_recursive_rms(
 	std::vector<int> sequence,
@@ -1572,7 +1601,7 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 	}
 }
 
-/// @detail Computes the RMSD of the jump residues (jump point +/- 1 residue) of
+/// @details Computes the RMSD of the jump residues (jump point +/- 1 residue) of
 /// <model> and <reference>. Jump residues are identified by scanning <reference>'s
 /// FoldTree. Results are stored in the output parameter <rmsds>, keyed by the index
 /// of the jump point. For example,

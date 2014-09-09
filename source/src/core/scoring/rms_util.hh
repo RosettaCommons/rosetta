@@ -99,15 +99,12 @@ automorphic_rmsd(
 	bool superimpose
 );
 
-/// @detail Computes the root mean squared deviation between zero or more
-/// CA residues in pose1 and pose2, whose correspondence is specified in
-/// the map parameter.
+/// @brief  Compute the CA RMSD between two poses.
 core::Real CA_rmsd(const core::pose::Pose& pose1,
 									 const core::pose::Pose& pose2,
 									 const std::map<core::Size, core::Size>& residues);
 
-/// @detail Computes the gdtmm between zero or more CA residues in pose1
-/// and pose2, whose correspondence is specified in the map parameter.
+/// @brief  Compute the CA RMSD between two poses.
 core::Real CA_gdtmm(const core::pose::Pose& pose1,
 										const core::pose::Pose& pose2,
 										const std::map<core::Size, core::Size>& residues);
@@ -177,6 +174,13 @@ is_ligand_heavyatom_residues(
 		core::conformation::Residue const &, // residue2
 		core::Size atomno
 );
+
+/// @brief Return true if the pose residues and atoms specified are non-peptide heavy atoms.
+bool is_non_peptide_heavy_atom(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & /* pose2 */,
+		core::uint const resno,
+		core::uint const atomno );
 
 bool
 is_heavyatom(
@@ -280,6 +284,9 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////
+
+/// @brief Return the RMSD of the non-peptide heavy atoms of two poses.
+core::DistanceSquared non_peptide_heavy_atom_RMSD( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 
 /// @brief Compute rmsd for residues between start and end.
 /// If start and end aren't specified, use the entire pose.
