@@ -759,8 +759,9 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					llc.loop_end(vl_vh_cut-1);
 				}
 				else if (segment_type_=="H3"){
-					core::conformation::Conformation const & conf(pose.conformation());
-						llc.loop_end(conf.chain_end(1)+residue_diff);//Asuming that the ligand is chain 2;
+						core::conformation::Conformation const & conf(pose.conformation());
+						llc.tail(1);
+						llc.loop_end(conf.chain_end(1)-2);//Asuming that the ligand is chain 2;
 				}
 				else
 					utility_exit_with_message("Attempting to copy c-ter tail stretch from source PDB but segment type is not H3 or L3. Failing\n");
