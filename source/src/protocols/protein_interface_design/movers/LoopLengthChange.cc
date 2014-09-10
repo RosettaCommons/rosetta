@@ -112,18 +112,21 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 
     ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
     ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
-    for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
-    	//	TR<<"loop_end()- leng =" <<loop_end() - leng<<std::endl;
-    	if (tail_segment_)
-    		pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
-
+    core::Size count = 0;
+		for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
+			//	TR<<"loop_end()- leng =" <<loop_end() - leng<<std::endl;
+    	if (tail_segment_){
+    		TR << "DEBUG: Now appending the " << count << "th residue to " << loop_end()+1 << " delta is " << delta() << std::endl;
+				pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()+1+count, true/*build_ideal*/);
+				
+			}
 
     	else
     		pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
     	// string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
     	//      pose.dump_pdb("llc_res_"+res+".pdb");
     	//      pose.set_omega(loop_end()+leng-1,180.0);
-
+			++count;
 
     }
   }
