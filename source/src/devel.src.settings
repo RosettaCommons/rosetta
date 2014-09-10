@@ -209,6 +209,7 @@ sources = {
 		"option",
 	],
         "devel/splice": [
+				"AddFoldUnit",
 				"AlignEndsMover",
 		"Splice",
 		"SpliceSegment",
@@ -216,7 +217,8 @@ sources = {
 		"RBInMover",
 		"DesignInterfacesOperation",
 		"FindEndpointsOperation",
-		"TailSegmentMover"
+		"TailSegmentMover",
+		"FoldUnitsFilter"
         ],
 	#"devel/ssrbrelax": [
 	#	"SSRbClass",

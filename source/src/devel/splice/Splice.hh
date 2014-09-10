@@ -32,8 +32,6 @@
 #include <basic/database/open.hh>
 #include <core/pack/task/PackerTask.hh>
 
-
-
 namespace devel {
 namespace splice {
 
@@ -69,7 +67,7 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		typedef bbdof_list::iterator iterator;
 		typedef bbdof_list::const_iterator const_iterator;
 
-		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ), source_pdb_("") { clear(); }
+		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ), source_pdb_(""), aa_sequence_(""), dssp_("") { clear(); }
 		virtual ~ResidueBBDofs();
 		void cut_site( core::Size const c ){ cut_site_ = c; }
 		core::Size cut_site() const { return cut_site_; }
@@ -91,10 +89,17 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		void tail_segment( std::string const s ){ tail_segment_ = s; }
 		core::Size disulfide() const{ return disulfide_; }
 		void disulfide( core::Size const s ){ disulfide_ = s; }
+		void aa_sequence( std::string const s ){ aa_sequence_ = s; }
+		std::string aa_sequence() const{ return aa_sequence_; }
+		void dssp( std::string const s ){ dssp_ = s; }
+		std::string dssp() const{ return dssp_; }
+
+
 	private:
 		core::Size cut_site_, start_loop_, stop_loop_, disulfide_/*what is the disulfide on the template*/;
 		bbdof_list bbdofs_;
 		std::string source_pdb_, tail_segment_/*either n or c*/; // the source pdb from which the loop is taken
+		std::string aa_sequence_, dssp_;
 };
 
 

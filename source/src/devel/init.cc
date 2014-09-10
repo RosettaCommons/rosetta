@@ -51,9 +51,11 @@
 #include <devel/splice/DesignInterfacesOperationCreator.hh>
 #include <devel/splice/FindEndpointsOperationCreator.hh>
 #include <devel/splice/AlignEndsMoverCreator.hh>
+#include <devel/splice/AddFoldUnitCreator.hh>
 #include <devel/cutoutdomain/CutOutDomainCreator.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
 #include <devel/splice/RBInMoverCreator.hh>
+#include <devel/splice/FoldUnitsFilterCreator.hh>
 
 // Filter creators
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
@@ -119,6 +121,7 @@ static protocols::moves::MoverRegistrator< devel::splice::RBInMoverCreator > reg
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
 static protocols::moves::MoverRegistrator< devel::splice::AlignEndsMoverCreator > reg_AlignEndsMoverCreator;
+static protocols::moves::MoverRegistrator< devel::splice::AddFoldUnitMoverCreator > reg_AddFoldUnitCreator;
 static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
 
 // Task creators
@@ -140,7 +143,7 @@ static protocols::filters::FilterRegistrator< devel::replica_docking::LrmsdFilte
 static protocols::filters::FilterRegistrator< devel::replica_docking::FnonnatFilterCreator > FnonnatCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::CaIrmsdFilterCreator > CaIrmsdCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::buns::BuriedUnsatHbondFilter2Creator > BuriedUnsatHbondFilter2_registrator;
-
+static protocols::filters::FilterRegistrator< devel::splice::FoldUnitsFilterCreator > reg_FoldUnitsFilter_registrator;
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
 void init( int argc, char * argv [] )
