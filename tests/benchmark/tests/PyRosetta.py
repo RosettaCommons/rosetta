@@ -21,10 +21,8 @@ _api_version_ = '1.0'  # api version
 
 
 def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    memory = config['memory']
-    jobs = config['cpu_count']
-
-    jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 1Gb per memory per thread
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 1Gb per memory per thread
 
     TR = Tracer(verbose)
 
@@ -52,10 +50,8 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
 
 def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    memory = config['memory']
-    jobs = config['cpu_count']
-
-    jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 1Gb per memory per thread
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= 1.0 else max(1, int(memory) )  # PyRosetta builds require at least 2Gb per memory per thread
 
     TR = Tracer(verbose)
 
@@ -63,32 +59,48 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
-
     command_line = 'cd {rosetta_dir}/source && BuildPyRosetta.sh -u --monolith -j{jobs}'.format(rosetta_dir=rosetta_dir, compiler=compiler, jobs=jobs, extras=extras)
 
-    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
-
-    if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
+    if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
+    else:
+        res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
+        if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
-    buildings_path_output = execute('Getting buindings build path...', command_line + ' --print-build-path', return_='tuple')
-    buildings_path = buildings_path_output[1].split()[-1]
-    if not (buildings_path  and  os.path.isdir(buildings_path) ): raise BenchmarkError('Could not retrieve valid PyRosetta bindings binary path!\nCommand line:{}\nResult:{}\n'.format(command_line, buildings_path_output))
-    TR('Bindings build path is:{}'.format(buildings_path))
+    if res:
+        res_code = _S_build_failed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
 
-    shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
+    else:
+        buildings_path_output = execute('Getting buindings build path...', command_line + ' --print-build-path', return_='tuple')
+        buildings_path = buildings_path_output[1].split()[-1]
+        if not (buildings_path  and  os.path.isdir(buildings_path) ): raise BenchmarkError('Could not retrieve valid PyRosetta bindings binary path!\nCommand line:{}\nResult:{}\n'.format(command_line, buildings_path_output))
+        TR('Bindings build path is:{}'.format(buildings_path))
 
-    if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py'.format(buildings_path=buildings_path), return_='tuple')
+        shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
 
-    res_code = _S_failed_ if res else _S_finished_
-    if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
-    output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
-    r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-    # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-    json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        memory = config['memory'];  jobs = config['cpu_count']
+        if platform['os'] != 'windows': jobs = jobs if memory/jobs >= 2.0 else max(1, int(memory/2) )  # PyRosetta tests require at least 2Gb per memory per thread
 
-    return r
+        if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs), return_='tuple')
+
+        json_file = buildings_path + '/.test_bindings.json'
+        results = json.load( file(json_file) )
+
+        #res_code = _S_failed_ if res else _S_finished_
+
+        if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+        output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
+
+        #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        results[_LogKey_] = output
+
+        # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+
+    return results
 
 
 

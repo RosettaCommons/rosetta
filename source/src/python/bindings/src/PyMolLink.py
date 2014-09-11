@@ -295,13 +295,13 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
             name = p1 or p3
 
             # Workaround for annoying issue with paths as the name.
-            if '/' in name:
-                print 'The name "' + name + '" may cause problems for PyMOL.'
-                print 'The displayed name will be different in PyMOL.'
-                print 'You can change the Pose (PDBInfo) name using:'
-                print 'pose.pdb_info().name(<new_name>)'
-
-                name = name.split( '/' )[-1]
+            name = name.replace('/', '.')
+            # if '/' in name:
+            #     print 'The name "' + name + '" may cause problems for PyMOL.'
+            #     print 'The displayed name will be different in PyMOL.'
+            #     print 'You can change the Pose (PDBInfo) name using:'
+            #     print 'pose.pdb_info().name(<new_name>)'
+            #     name = name.split( '/' )[-1]
 
             return name[:255]
 

@@ -25,7 +25,9 @@ import math
 
 MAX_KIC_BUILD_ATTEMPTS = 10000
 
-init()
+
+# Kale: to reduce test time even further try options: -loops:outer_cycles 1 -loops:max_inner_cycles 1
+init(extra_options='-run:test_cycles True')  # -loops:test_cycles is only needed for self-test, please make sure to remove it on production run
 
 p = pose_from_pdb( "test/data/2cpl_min.pdb" )
 
@@ -107,8 +109,8 @@ scorefxn_low( p )
 linmin_mover.apply( p )
 
 print "centroid stage loop KIC remodeling"
-outer_cycles = 10
-inner_cycles = 30
+outer_cycles = 1 # 10 # inner_cycles and outer_cycles should be much higher in production run!
+inner_cycles = 1 # 30
 init_temp = 2.0
 final_temp = 1.0
 gamma = math.pow( ( final_temp/init_temp ),( 1.0/( outer_cycles*inner_cycles ) ) )
