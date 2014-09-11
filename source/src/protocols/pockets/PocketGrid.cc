@@ -782,13 +782,23 @@ void PocketGrid::recenter( core::conformation::Residue const & central_rsd ){
 	center(3)=0.0;
 	core::Size count=0;
 	for(Size i = 1, i_end = central_rsd.nheavyatoms(); i <= i_end; ++i) {
-		if (central_rsd.atom(i).type()<18||central_rsd.atom(i).type()>21){
+		//if (central_rsd.atom(i).type()<18||central_rsd.atom(i).type()>21){
+		if (!central_rsd.atom_is_backbone(i) && !central_rsd.atom_is_hydrogen(i)){
 			center(1)+=central_rsd.atom(i).xyz()(1);
 			center(2)+=central_rsd.atom(i).xyz()(2);
 			center(3)+=central_rsd.atom(i).xyz()(3);
 			count++;
 		}
 	}
+
+	//Use CA if glycine
+	if(!count){
+		center(1)=central_rsd.xyz("CA")(1);
+		center(2)=central_rsd.xyz("CA")(2);
+		center(3)=central_rsd.xyz("CA")(3);
+		count++;
+	}
+
 	if (count) {
 		center(1)/=count;
 		center(2)/=count;
@@ -825,14 +835,26 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueOP > const & 
 		core::Size local_count=0;
 
 		assert( central_rsd->is_protein() );
+		int rcount=0;
 		for(Size i = 1, i_end = central_rsd->nheavyatoms(); i <= i_end; ++i) {
-			if (central_rsd->atom(i).type()<18||central_rsd->atom(i).type()>21){
+			//if (central_rsd->atom(i).type()<18||central_rsd->atom(i).type()>21){
+			if (!central_rsd->atom_is_backbone(i) && !central_rsd->atom_is_hydrogen(i)){
 				local_center(1)+=central_rsd->atom(i).xyz()(1);
 				local_center(2)+=central_rsd->atom(i).xyz()(2);
 				local_center(3)+=central_rsd->atom(i).xyz()(3);
 				local_count++;
+				rcount++;
 			}
 		}
+
+    //Use CA if glycine
+    if (!rcount){
+      local_center(1)=central_rsd->xyz("CA")(1);
+      local_center(2)=central_rsd->xyz("CA")(2);
+      local_center(3)=central_rsd->xyz("CA")(3);
+      local_count++;
+    }
+
 		if (local_count) {
 			local_center(1)/=local_count;
 			local_center(2)/=local_count;
