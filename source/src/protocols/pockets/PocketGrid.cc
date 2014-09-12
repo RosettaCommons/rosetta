@@ -4480,7 +4480,7 @@ void ElectrostaticpotentialGrid::get_DELPHI_espGrid_values( std::string const & 
 		return;
 }
 
-ElectrostaticpotentialGrid::ElectrostaticpotentialGrid( std::string const & input_espGrid_filename, core::pose::Pose const & protein, PocketGrid const & pocket_grid, bool delphi ) {
+ElectrostaticpotentialGrid::ElectrostaticpotentialGrid( std::string const & input_espGrid_filename, core::pose::Pose const &, PocketGrid const &, bool delphi ) {
 
 	if(delphi==false){//Read as OpenEye ZAP grid
 		get_ZAP_espGrid_values( input_espGrid_filename );
@@ -4888,7 +4888,7 @@ void ElectrostaticpotentialGrid::write_connollySurface_to_pdb( std::list< numeri
 
 }
 
-	void  ElectrostaticpotentialGrid::mark_buried_solvent_points( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
+	void  ElectrostaticpotentialGrid::mark_buried_solvent_points( core::pose::Pose const &, std::list< numeric::xyzVector<core::Real> > const & ) {
 
 		bool found_protein;
 		for (Size iz=0; iz<espGrid_dim_.z(); ++iz){

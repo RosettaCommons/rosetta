@@ -147,7 +147,7 @@ void NonPlaidFingerprint::setup_from_PlaidFingerprint( PlaidFingerprint const & 
   return;
 }
 
-void NonPlaidFingerprint::setup_from_espGrid( std::string const & input_filename, core::pose::Pose const & protein_pose, bool delphi ) {
+void NonPlaidFingerprint::setup_from_espGrid( std::string const & input_filename, core::pose::Pose const &, bool delphi ) {
 
 	ElectrostaticpotentialGrid eGrid;
 	if(delphi){
