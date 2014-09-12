@@ -18,6 +18,7 @@
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <protocols/pockets/DarcParticleSwarmMinimizer.fwd.hh>
 #include <protocols/pockets/Fingerprint.hh>
+#include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/types.hh>
 #include <core/conformation/Residue.hh>
@@ -32,10 +33,11 @@ public:
 
   using core::optimization::ParticleSwarmMinimizer::run;
 
-  DarcParticleSwarmMinimizer( NonPlaidFingerprint & nfp_in, PlaidFingerprint & pfp_in,
+  DarcParticleSwarmMinimizer( FingerprintManager & fpmanager_in, NonPlaidFingerprint & nfp_in, PlaidFingerprint & pfp_in,
 		core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight,
 		core::optimization::Multivec p_min, core::optimization::Multivec p_max) :
 		core::optimization::ParticleSwarmMinimizer(p_min, p_max),
+		fpmanager_( fpmanager_in ),
 		nfp_( nfp_in ),
 		pfp_( pfp_in ),
 		missing_pt_(missing_point_weight),
@@ -49,10 +51,15 @@ public:
   private:
 
   void fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi, std::vector<basic::gpu::float4> & ligand_maxmin_phipsi );
+  void fill_atom_arrays_multiple_origin_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi, std::vector<basic::gpu::float4> & ligand_maxmin_phipsi, numeric::xyzVector<core::Real> const & origin_offset );
+  void fill_atom_arrays_for_electrostatics_( core::Size particle_inx, core::pose::Pose ligand_pose_for_elec_calc, std::vector<basic::gpu::float4> & atoms_coors_and_charge );
   core::Real DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi );
+  core::Real DarcPSO_fp_compare_multiple_origin_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi );
+	core::Real DarcPSO_elsts_score_( core::Size particle_inx, core::Size dim_x, core::Size dim_y, core::Size dim_z, core::Real mid_x, core::Real mid_y, core::Real mid_z, core::Real spacing, std::vector < std::vector < std::vector <core::Real> > > espGrid, std::vector < std::vector < std::vector <ElectrostaticpotentialGrid::PtType> > > typGrid, std::vector<basic::gpu::float4> & atom_coors_charge );
 
   NonPlaidFingerprint & nfp_;
   PlaidFingerprint & pfp_;
+	FingerprintManager & fpmanager_;
   core::Real missing_pt_;
   core::Real steric_;
   core::Real extra_pt_;

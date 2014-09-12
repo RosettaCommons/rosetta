@@ -301,7 +301,6 @@ std::cout<<"no template contact list\n";
   }else{
 std::cout<<"no source contact list\n";
 
-
     // align comparison pose to template pose
 	//	protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover( template_pose );
         protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover();

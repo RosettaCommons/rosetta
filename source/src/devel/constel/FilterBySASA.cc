@@ -101,7 +101,7 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 /// 	1. The residues forming the constellation have non-zero occupancy only for
 ///   	the atoms that belong to the constellation. This is guaranteed if the
 /// 		residues forming the constellation had their indexes previously passed
-/// 		as arguments to function "zero_occ_for_deleted_atoms()".
+/// 		as arguments to function "SingResCnlCrea::zero_occ_for_deleted_atoms()".
 /// 	2. Pose ps has the same per-atom solvent accessibility as the pose passed
 ///    	to function init().
 ///

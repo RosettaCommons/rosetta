@@ -14,6 +14,7 @@
 /// Unit headers
 #include <protocols/pockets/FingerprintMultifunc.hh>
 #include <protocols/pockets/Fingerprint.hh>
+#include <protocols/pockets/PocketGrid.hh>
 
 #include <cmath>
 

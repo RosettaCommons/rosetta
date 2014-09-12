@@ -26,6 +26,8 @@
 
 
 using namespace core;
+using namespace std;
+
 
 namespace protocols {
 namespace pockets {
@@ -39,8 +41,10 @@ public: // Constructor/Destructor
 	PocketExemplarMultifunc(std::string const input_pdb_name, std::string const resid, core::Real const c_rad, core::Real const rep_weight, utility::vector1<core::Real>& p_min, utility::vector1<core::Real>& p_max);
 
 	/// @brief Destructor
+	inline
 	virtual
-	~PocketExemplarMultifunc();
+	~PocketExemplarMultifunc()
+	{}
 
 public: // Methods
 

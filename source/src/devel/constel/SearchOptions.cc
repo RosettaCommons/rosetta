@@ -14,6 +14,7 @@
 /// @author jk
 /// @author Andrea Bazzoli
 
+#include <devel/constel/SingResCnlCrea.hh>
 #include <devel/constel/MasterFilter.hh>
 #include <devel/constel/NeighTeller.hh>
 #include <devel/constel/Primitives.hh>
@@ -103,8 +104,8 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 						char aaje = ( aai == saa1 ) ? tgtmuts[4] : tgtmuts[1];
 
 						Pose pose_mut = pose_init;
-						zero_occ_for_deleted_atoms( pose_mut, i, aaie );
-						zero_occ_for_deleted_atoms( pose_mut, j, aaje );
+						SingResCnlCrea::zero_occ_for_deleted_atoms( pose_mut, i, aaie );
+						SingResCnlCrea::zero_occ_for_deleted_atoms( pose_mut, j, aaje );
 						utility::vector1<Size> cnl;
 						cnl.push_back(i);
 						cnl.push_back(j);
@@ -163,24 +164,19 @@ void triple_constel_set(int const target_pdb_number,
 	// search for (target, neighbor, other) triples
 	NeighTeller ngbtel(pose_init);
 	UJ = UK;
-	for ( Size j = 1; j <= UJ; ++j ) {
+	for ( Size j = 1; j <= UJ; ++j )
 		if ( interacting_residue.at(j) ) {
 			core::conformation::Residue const& rj = pose_init.residue(j);
-			for ( Size k = 1; k <= UK; ++k ) {
-				if (k!=target_rosetta_resnum) {
-					if (!interacting_residue.at(k)) {
-						if (ngbtel.isneigh(rj, pose_init.residue(k), pose_init)) {
-							if (j<k) {
+			for ( Size k = 1; k <= UK; ++k )
+				if(k!=target_rosetta_resnum)
+					if(!interacting_residue.at(k))
+						if(ngbtel.isneigh(rj, pose_init.residue(k), pose_init)) {
+							if(j<k)
 								triple_constel_set_idx3(target_rosetta_resnum, j, k, pose_init );
-							} else {
+							else
 								triple_constel_set_idx3(target_rosetta_resnum, k, j, pose_init );
-							}
 						}
-					}
-				}
-			}
 		}
-	}
 }
 
 } // constel

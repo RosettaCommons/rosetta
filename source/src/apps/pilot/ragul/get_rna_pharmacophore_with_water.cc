@@ -153,7 +153,6 @@ int main( int argc, char * argv [] ){
 	std::string const input_protein_pose = option[ input_protein ];
 	int const sasa_cutoff = option[ rna_base_sasa_cutoff ];
 
-
 	pose::Pose rna_pose, protein_pose;
 	core::import_pose::pose_from_pdb( rna_pose, input_rna_pose );
 	core::import_pose::pose_from_pdb( protein_pose, input_protein_pose );
@@ -172,11 +171,11 @@ int main( int argc, char * argv [] ){
 		pose::Pose temp_protein_rnabase_pose = protein_pose;
 		temp_protein_rnabase_pose.append_residue_by_jump(rna_pose.residue(ir), protein_pose.total_residue(),"", "",  true);
 		/*print pdb pose
-		std::stringstream ss;
-    ss << ir;
-		std::string s(ss.str());
-		std::string tmp = s + "_out.pdb";
-		temp_protein_rnabase_pose.dump_pdb(tmp);
+			std::stringstream ss;
+			ss << ir;
+			std::string s(ss.str());
+			std::string tmp = s + "_out.pdb";
+			temp_protein_rnabase_pose.dump_pdb(tmp);
 		*/
 
 		//Set-up atomID for SASA calculations by atom

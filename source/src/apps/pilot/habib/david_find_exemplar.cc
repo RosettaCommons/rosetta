@@ -86,6 +86,7 @@ static basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
 
 /// General testing code
 int main( int argc, char * argv [] ) {
+
   try {
 
 	//NEW_OPT( pocket1_fname, "pocket", "fname" );
@@ -115,11 +116,11 @@ int main( int argc, char * argv [] ) {
   }
 
 	TR << "Done!" << std::endl;
-        } catch ( utility::excn::EXCN_Base const & e ) {
-                std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-        }
-	return 0;
+	}
 
+	return 0;
 }
 

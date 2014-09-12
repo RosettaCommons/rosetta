@@ -15,8 +15,6 @@
 #include <protocols/outputter/SilentFileOutputter.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <core/io/silent/SilentStructFactory.hh>
-
 // tracer
 #include <basic/Tracer.hh>
 
