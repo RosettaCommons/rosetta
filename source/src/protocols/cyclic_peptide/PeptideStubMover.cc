@@ -136,7 +136,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
                 else if (stub_mode_[istub] == insert) {
                     if ( stub_insert_pos_[istub] != 0 ) {
                         pose.insert_residue_by_bond(*new_rsd, stub_insert_pos_[istub], anchor_rsd, true, stub_anchor_rsd_connecting_atom_[istub], stub_rsd_connecting_atom_[istub], false, true);
-                        //pose.dump_pdb("test.pdb");
+                        pose.dump_pdb("test.pdb");
                     } else {
                         pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd, true);
                     }

@@ -58,7 +58,6 @@ enum selector_type {
 	lowest_energy_selector, //Uses whatever scorefunction is passed to the selector
 	boltzmann_energy_selector, //Randomly picks weighted by exp(-E/kbt).
 	lowest_rmsd_selector, //Picks the loop conformation closest to the original
-	lowest_delta_torsion_selector, //Picks the loop conformation closest to the original (in torsion space), avoid flip at ends
 
 	unknown_selector, //Keep this second-to-last.
 	end_of_selector_list = unknown_selector //Keep this last.
@@ -117,7 +116,6 @@ public:
 	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
-	/// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- The list of (AtomID, original XYZ coordinates of atoms) representing the chain that was closed.
 	/// @param[in] torsions -- Matrix of [closure attempt #][solution #][torsion #] with torsion values for each torsion angle in the chain.  A selector will pick one solution.
 	/// @param[in] bondangles -- Matrix of [closure attempt #][solution #][angle #] with bond angle values for each bond angle in the chain.  A selector will pick one solution.
@@ -128,7 +126,6 @@ public:
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose, //The original pose
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
-		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
@@ -184,7 +181,6 @@ private:
 		core::Size &chosen_solution,
 		core::scoring::ScoreFunctionOP sfxn,
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
-		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
@@ -198,28 +194,16 @@ private:
 	/// @brief Applies a lowest_rmsd_selector selector.
 	/// @details This picks the solution with the lowest RMSD from the starting pose.
 	void apply_lowest_rmsd_selector( 
-		utility::vector1<core::Size> const &nsol_for_attempt,
-		core::Size const total_solutions,
-		core::Size &chosen_attempt_number,
-		core::Size &chosen_solution,
-		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
-		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
-		core::pose::Pose const &ref_loop_pose
-	) const;
-
-	/// @brief Applies a lowest_delta_torsion_selector.
-	/// @details This picks the solution with the lowest RMSD from the starting pose.
-	void apply_lowest_delta_torsion_selector(
-		utility::vector1<core::Size> const &nsol_for_attempt,
-		core::Size const total_solutions,
-		core::Size &chosen_attempt_number,
-		core::Size &chosen_solution,
-		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
-		core::pose::Pose const &pose
+			utility::vector1<core::Size> const &nsol_for_attempt,
+			core::Size const total_solutions,
+			core::Size &chosen_attempt_number,
+			core::Size &chosen_solution,
+			utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
+			utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+			utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
+			utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
+			utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
+			core::pose::Pose const &ref_loop_pose
 	) const;
 
 }; //GeneralizedKICselector class

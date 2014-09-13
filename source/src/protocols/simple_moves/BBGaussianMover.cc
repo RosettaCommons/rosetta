@@ -148,7 +148,6 @@ void BBGaussianMover::init()
 
     fix_short_segment_ = option[bbg::fix_short_segment];
     use_all_pivot_res_ = false;
-    shrink_frag_ends_ = false;
     auto_adjust_factorA_ = false;
 
     N_auto_all = 0;
@@ -275,7 +274,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
     Size nseg = available_seg_list_.size();
     //check logic
     if (use_all_pivot_res_) {
-        if ( n_dof_angle_ != (n_pert_res_-nseg)*2 + (shrink_frag_ends_ ? 0 : 2*nseg) ) {
+        if ( n_dof_angle_ != (n_pert_res_-nseg)*2 ) {
             TR.Debug << "DOF=" << n_dof_angle_ << " N_RES=" << n_pert_res_ << " N_SEG=" << nseg << std::endl;
             throw utility::excn::EXCN_RosettaScriptsOption( " BBG: dof and res number mismatch" );
         }
@@ -307,12 +306,8 @@ core::Real BBGaussianMover::cholesky_fw(Matrix &a, Size n, Vector &delta, Vector
         for (j=i;j<=n;j++) {
             for (sum=a[i][j],k=i-1;k>=1;k--) sum -= a[i][k]*a[j][k];
             if (i == j) {
-							if (sum>0.0) {
+                runtime_assert(sum>0.0);
                 p[i]=sqrt(sum);
-							}
-							else {
-								throw utility::excn::EXCN_RosettaScriptsOption( " BBG: Cholesky decomposition failed, may be a wrong structure" );
-							}
             }
             else {
                 a[j][i]=sum/p[i];
@@ -347,12 +342,8 @@ core::Real BBGaussianMover::cholesky_bw(Matrix &a, Size n, Vector &dphi, Vector 
         for (j=i;j<=n;j++) {
             for (sum=a[i][j],k=i-1;k>=1;k--) sum -= a[i][k]*a[j][k];
             if (i == j) {
-							if (sum>0.0) {
+                runtime_assert(sum>0.0);
                 p[i]=sqrt(sum);
-							}
-							else {
-								throw utility::excn::EXCN_RosettaScriptsOption( " BBG: Cholesky decomposition failed, may be a wrong structure" );
-							}
             }
             else {
                 a[j][i]=sum/p[i];
@@ -472,20 +463,19 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
         for (Size seg=1, eseg=available_seg_list_.size(); seg<=eseg; seg++) {
             Size left = available_seg_list_[seg].first;
             Size right = available_seg_list_[seg].second;
-            for (Size j=right; j>=left; j--) {
+            for (Size j=left; j<=right; j++) {
                 //check count
                 runtime_assert(n_dof>0);
                 //conformation::Residue const & rsd( pose.residue( j ) );
-                if ( j<right || (!shrink_frag_ends_) ) {
-                    //skip j==right, unless shrink==false
+                if (j<right) {
                     pose.set_psi(j, basic::periodic_range( pose.psi(j)+dphi[n_dof--], 360.0 ) );
                 }
-                if (j>left || (!shrink_frag_ends_) ) {
-                    //skip j==left, unless shring==false
+                if (j>left) {
                     pose.set_phi(j, basic::periodic_range( pose.phi(j)+dphi[n_dof--], 360.0 ) );
                 }
             }
         }
+        runtime_assert(n_dof==0);
     }
     else {
         //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
@@ -495,7 +485,6 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
             pose.set_phi(ndx, basic::periodic_range( pose.phi(ndx)+dphi[n_dof--], 360.0 ) );
         }
     }
-    runtime_assert(n_dof==0);
 
     return W_old;
 }
@@ -514,7 +503,7 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
             }
             else {
                 throw utility::excn::EXCN_RosettaScriptsOption( " BBG: No lock atom found on res (end)" );
-            }
+            }   
         }
         else {
             conformation::Residue const & rsd_end( pose.residue( end_atom_list_[i].first ) );
@@ -524,6 +513,7 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
             else {
                 throw utility::excn::EXCN_RosettaScriptsOption( " BBG: No lock atom found on res (lock)" );
             }
+            
         }
 
         Size n_dof = n_dof_angle_;
@@ -533,18 +523,19 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
             for (Size seg=1, eseg=available_seg_list_.size(); seg<=eseg; seg++) {
                 Size left = available_seg_list_[seg].first;
                 Size right = available_seg_list_[seg].second;
-                for (Size j=right; j>=left; j--) {
+                for (Size j=left; j<=right; j++) {
                     //check count
                     runtime_assert(n_dof>0);
                     conformation::Residue const & rsd( pose.residue( j ) );
-                    if ( j<right || (!shrink_frag_ends_) ) {
+                    if (j<right) {
                         matrix_dRdPhi[i][n_dof--] = get_dRdPhi(rsd.atom("CA").xyz(), rsd.atom("C").xyz(), end_xyz);
                     }
-                    if ( j>left || (!shrink_frag_ends_) ) {
+                    if (j>left) {
                         matrix_dRdPhi[i][n_dof--] = get_dRdPhi(rsd.atom("N").xyz(), rsd.atom("CA").xyz(), end_xyz);
                     }
                 }
             }
+            runtime_assert(n_dof==0);
         }
         else {
             //use N, should be continous
@@ -556,7 +547,6 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
                 matrix_dRdPhi[i][n_dof--] = get_dRdPhi(rsd.atom("N").xyz(), rsd.atom("CA").xyz(), end_xyz);
             }
         }
-        runtime_assert(n_dof==0);
     }
 }
 
@@ -604,42 +594,6 @@ void BBGaussianMover::apply(Pose &pose)
     last_proposal_density_ratio_ = W_new / W_old;
 }
 
-void BBGaussianMover::init_kic_loop(Size looplength, core::kinematics::MoveMapCOP mm)
-{
-    //restrain the last residue
-    end_atom_list_.erase(end_atom_list_.begin(), end_atom_list_.end());
-    end_atom_list_.push_back(std::pair<Size, std::string>(looplength, "N"));
-    end_atom_list_.push_back(std::pair<Size, std::string>(looplength, "CA"));
-    //end_atom_list_.push_back(std::pair<Size, std::string>(looplength-1, "C"));
-
-    n_end_atom_ = 2;
-
-    //setup dof
-    //n_pert_res_ = looplength-2; // the first and the last res are anchor
-    //n_dof_angle_ = n_pert_res_ * 2 - 2; // two angles for each mobile res
-    n_pert_res_ = 0;
-    n_dof_angle_ = 0;
-    for (Size i=1; i<=looplength; i++) {
-        if (mm->get_bb(i)) {
-            ++n_pert_res_;
-            n_dof_angle_+=2;
-        }
-    }
-    //n_dof_angle_ -= 2;
-
-    use_all_pivot_res_ = true; // use phi/psi for all res
-    shrink_frag_ends_ = false; // don't shrink
-    auto_adjust_factorA_ = true; // need to be auto
-    fix_short_segment_ = true; // don't randomly pertub loop ends
-
-    TR.Debug << "DOF=" << n_dof_angle_ << " N_RES=" << n_pert_res_ << " END=" << n_end_atom_ << std::endl;
-    TR.Debug << "factorA=" << factorA_ << " factorB=" << factorB_ << std::endl;
-
-    movemap(mm);
-    //allocate the vector and matrix
-    resize(end_atom_list_.size(), n_dof_angle_, n_pert_res_);
-}
-
 void BBGaussianMover::parse_my_tag(
     TagCOP const tag,
     basic::datacache::DataMap & data,
@@ -675,24 +629,6 @@ void BBGaussianMover::parse_my_tag(
         n_pert_res_ = tag->getOption< Size >("pivot", 4);
 
         use_all_pivot_res_ = tag->getOption< bool >("use_all", false);
-
-        //the logic here is:
-        //by default, shrink should be false
-        //if use all res, set shrink to be true
-        //unless manually set it to be false
-        //a little bit confuse but no need to change the old scripts
-        if (use_all_pivot_res_) {
-            shrink_frag_ends_ = true;
-        }
-        else {
-            shrink_frag_ends_ = false;
-        }
-
-        if (tag->hasOption("shrink")) {
-            //
-            shrink_frag_ends_ = tag->getOption< bool >("shrink", false);
-        }
-
         auto_adjust_factorA_ = tag->getOption< bool >("autoA", false);
         fix_short_segment_ = tag->getOption< bool >("fix_tail", fix_short_segment_);
 

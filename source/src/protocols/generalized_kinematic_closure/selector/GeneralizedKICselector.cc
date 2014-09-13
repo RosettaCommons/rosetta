@@ -36,7 +36,6 @@
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 #include <numeric/random/random.hh>
 #include <numeric/model_quality/rms.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -95,9 +94,6 @@ std::string GeneralizedKICselector::get_selector_type_name( core::Size const sel
 		case lowest_rmsd_selector:
 			returnstring = "lowest_rmsd_selector";
 			break;
-		case lowest_delta_torsion_selector:
-			returnstring = "lowest_delta_torsion_selector";
-			break;
 		default:
 			returnstring = "unknown_selector";
 			break;
@@ -141,7 +137,6 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 /// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 /// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 /// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
-/// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
 /// @param[in] atomlist -- The list of (AtomID, original XYZ coordinates of atoms) representing the chain that was closed.
 /// @param[in] torsions -- Matrix of [closure attempt #][solution #][torsion #] with torsion values for each torsion angle in the chain.  A selector will pick one solution.
 /// @param[in] bondangles -- Matrix of [closure attempt #][solution #][angle #] with bond angle values for each bond angle in the chain.  A selector will pick one solution.
@@ -152,7 +147,6 @@ void GeneralizedKICselector::apply (
 	core::pose::Pose &pose,
 	core::pose::Pose const &original_pose, //The original pose
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
-	utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
 	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
@@ -176,24 +170,19 @@ void GeneralizedKICselector::apply (
 		break;
 	case lowest_energy_selector:
 		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, selector_sfxn_, residue_map, tail_residue_map, atomlist, torsions,	bondangles,
+			chosen_solution, selector_sfxn_, residue_map, atomlist, torsions,	bondangles,
 			bondlengths, pose, original_pose, boltzmann_kbt_, false
 		);
 		break;
 	case boltzmann_energy_selector:
 		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, selector_sfxn_, residue_map, tail_residue_map, atomlist, torsions,	bondangles,
+			chosen_solution, selector_sfxn_, residue_map, atomlist, torsions,	bondangles,
 			bondlengths, pose, original_pose, boltzmann_kbt_, true
 		); //Recycle this function from lowest_energy_selector to avoid code duplication
 		break;
 	case lowest_rmsd_selector:
 		apply_lowest_rmsd_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
 			chosen_solution, residue_map, atomlist, torsions,	bondangles, bondlengths, pose
-		);
-		break;
-	case lowest_delta_torsion_selector:
-		apply_lowest_delta_torsion_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, atomlist, torsions, pose //original_pose
 		);
 		break;
 	default:
@@ -263,7 +252,6 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 	core::Size &chosen_solution,
 	core::scoring::ScoreFunctionOP sfxn,
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
-	utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map,
 	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
@@ -295,10 +283,10 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 		if(nsol_for_attempt[i]==0) continue;
 		for(core::Size j=1; j<=nsol_for_attempt[i]; ++j) { //Loop through all solutions for this attempt
 			set_loop_pose( looppose, atomlist, torsions[i][j], bondangles[i][j], bondlengths[i][j]);
-			copy_loop_pose_to_original( fullpose, looppose, residue_map, tail_residue_map);
+			copy_loop_pose_to_original( fullpose, looppose, residue_map);
 			(*my_sfxn)(fullpose);
 			if(!use_boltzmann) { //If we're just finding the lowest-energy solution:
-				TR.Debug << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << std::endl;
+				TR << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << std::endl;
 				if(lowest_energy_attempt==0 || fullpose.energies().total_energy() < lowest_energy) {
 					lowest_energy=fullpose.energies().total_energy();
 					lowest_energy_attempt=i;
@@ -307,13 +295,13 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 			} else { //If we're randomly picking weighted by Boltzmann factors:
 				boltzmann_factors.push_back( exp(-fullpose.energies().total_energy() / boltzmann_kbt) );
 				boltzmann_factor_accumulator += boltzmann_factors[boltzmann_factors.size()]; //For normalization
-				TR.Debug << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
+				TR << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
 			}
 		}
 	}
 
 	if(!use_boltzmann) { //If we're picking the lowest-energy solution:
-		TR.Debug << "Lowest energy found = " << lowest_energy << std::endl;
+		TR << "Lowest energy found = " << lowest_energy << std::endl;
 		chosen_attempt_number = lowest_energy_attempt;
 		chosen_solution = lowest_energy_solution;
 	} else { //If we're choosing randomly
@@ -339,13 +327,11 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 				}
 				if(breaknow) break;
 			}
-			if(!breaknow) TR.Debug << "Boltzmann energy selector did not converge.  Trying again.  Final accumulator= " << accumulator << " randnum=" << randnum << std::endl; //DELETE
+			if(!breaknow) TR << "Boltzmann energy selector did not converge.  Trying again.  Final accumulator= " << accumulator << " randnum=" << randnum << std::endl; //DELETE
 		}
 	}
 
 	TR.flush();
-	TR.Debug.flush();
-	TR.Warning.flush();
 
 	return;
 }
@@ -411,65 +397,10 @@ void GeneralizedKICselector::apply_lowest_rmsd_selector(
 
 			//Calculate RMSD here for all atoms in the chain of atoms to be closed:
 			rmsd_current = rms_wrapper(atomlist.size()-6, ref_chain, cur_chain);
-			TR.Debug << "Attempt " << i << " solution " << j << " rmsd=" << rmsd_current << std::endl;
+			TR << "Attempt " << i << " solution " << j << " rmsd=" << rmsd_current << std::endl;
 
 			if(attempt_lowest==0 || rmsd_current < rmsd_lowest) {
 				rmsd_lowest=rmsd_current;
-				attempt_lowest=i;
-				solution_lowest=j;
-			}
-		}
-	}
-
-	chosen_attempt_number=attempt_lowest;
-	chosen_solution=solution_lowest;
-
-	TR.flush();
-	TR.Debug.flush();
-	TR.Warning.flush();
-
-	return;
-}
-
-/// @brief Applies a lowest_delta_torsion_selector selector.
-/// @details This picks the solution with the lowest delta torsion from the starting pose.
-void GeneralizedKICselector::apply_lowest_delta_torsion_selector( 
-		utility::vector1<core::Size> const &nsol_for_attempt,
-		core::Size const /*total_solutions*/,
-		core::Size &chosen_attempt_number,
-		core::Size &chosen_solution,
-		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
-		core::pose::Pose const &ref_pose
-) const {
-	using namespace protocols::generalized_kinematic_closure;
-	using namespace ObjexxFCL;
-	using namespace numeric::model_quality;
-
-	//Vars for finding lowest RMSD:
-	core::Real dtor_current = 0.0;
-	core::Real dtor_lowest = 0.0;
-	core::Size attempt_lowest = 0;
-	core::Size solution_lowest = 0;
-
-	for(core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i) { //Loop through all attempts
-		for(core::Size j=1; j<=nsol_for_attempt[i]; ++j) { //Loop through all solutions to this attempt
-			//Calculate delta torsion
-			dtor_current = 0;
-			//actually only 6 tors change, but we don't know the pivot at this point, do we?
-			//be careful! don't perturb pivot atoms
-			for(core::Size k=2, kmax=(torsions[i][j].size()-2); k<=kmax; ++k){ //loop torsion angles
-				core::Real tor = ref_pose.conformation().torsion_angle(atomlist[k-1].first, atomlist[k].first, atomlist[k+1].first, atomlist[k+2].first);
-				core::Real dtor = tor - numeric::conversions::radians(torsions[i][j][k]);
-				if (dtor>numeric::constants::f::pi) dtor -= numeric::constants::f::pi_2;
-				if (dtor<-numeric::constants::f::pi) dtor += numeric::constants::f::pi_2;
-				//std::cout << k << "->" << numeric::conversions::degrees(dtor) << " " << torsions[i][j][k] << std::endl;
-				dtor_current += dtor*dtor;
-			}
-			TR << "Attempt " << i << " solution " << j << " dtor=" << dtor_current << std::endl;
-
-			if(attempt_lowest==0 || dtor_current < dtor_lowest) {
-				dtor_lowest=dtor_current;
 				attempt_lowest=i;
 				solution_lowest=j;
 			}

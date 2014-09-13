@@ -98,9 +98,7 @@ void set_loop_pose (
 	using namespace numeric::conversions;
 	using namespace core::id;
 
-	TR.Debug << "Setting loop conformation based on solution from generalized kinematic closure." << std::endl; TR.Debug.flush(); //DELETE ME
-
-	//pose.dump_pdb("before.pdb"); //DELETE ME -- for debugging only.
+	TR << "Setting loop conformation based on solution from generalized kinematic closure." << std::endl; TR.flush(); //DELETE ME
 
 	for(core::Size ii=1, iimax=(b_len.size()-1); ii<=iimax; ++ii) { //Set bond lengths
 		pose.conformation().set_bond_length( atomlist[ii].first, atomlist[ii+1].first, b_len[ii] );
@@ -140,8 +138,6 @@ void set_loop_pose (
 
 	pose.update_residue_neighbors();
 
-	//pose.dump_pdb("after.pdb"); //DELETE ME -- for debugging only.
-
 	TR.flush();
 
 	return;
@@ -152,30 +148,25 @@ void set_loop_pose (
 void copy_loop_pose_to_original (
 	core::pose::Pose &original_pose,
 	core::pose::Pose const &loop_pose,
-	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
-	utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
 ) {
-	core::Size nres = residue_map.size();
+	core::Size const nres = residue_map.size();
 	if(nres==0) return;
 
-	for(core::Size repeats=1; repeats<=2; ++repeats) {
-		for(core::Size ir=1; ir<=nres; ++ir) { //Loop through all residues in the residue map (repeats==1), then in the tail_residue_map (repeats==2)
-			core::Size const loop_index = ((repeats==1)?residue_map[ir].first:tail_residue_map[ir].first);
-			core::Size const original_pose_index = ((repeats==1)?residue_map[ir].second:tail_residue_map[ir].second);
-			core::Size const natom = loop_pose.residue( loop_index ).natoms();
-			for(core::Size ia=1; ia<=natom; ++ia) { //Loop through all atoms in the current residue.
-				std::string const curatom = loop_pose.residue(loop_index).atom_name(ia);
-				assert( original_pose.residue(original_pose_index).has( curatom ) ); //It shouldn't be possible for the original pose to lack this atom, but let's check in any case
-				original_pose.set_xyz(core::id::NamedAtomID( curatom, original_pose_index ), loop_pose.residue(loop_index).xyz(ia)); //Copy the xyz coordinates of each atom.
-			}
+	for(core::Size ir=1; ir<=nres; ++ir) { //Loop through all residues in the residue map.
+		core::Size const loop_index = residue_map[ir].first;
+		core::Size const original_pose_index = residue_map[ir].second;
+		core::Size const natom = loop_pose.residue( loop_index ).natoms();
+		for(core::Size ia=1; ia<=natom; ++ia) { //Loop through all atoms in the current residue.
+			std::string const curatom = loop_pose.residue(loop_index).atom_name(ia);
+			assert( original_pose.residue(original_pose_index).has( curatom ) ); //It shouldn't be possible for the original pose to lack this atom, but let's check in any case
+			original_pose.set_xyz(core::id::NamedAtomID( curatom, original_pose_index ), loop_pose.residue(loop_index).xyz(ia)); //Copy the xyz coordinates of each atom.
 		}
-		nres=tail_residue_map.size();
-		if(nres==0) break;
 	}
 
 	original_pose.update_residue_neighbors();
 
-	TR.Debug << "Copied coordinates of the loop pose to the original pose." << std::endl;  TR.Debug.flush(); //DELETE ME.
+	TR << "Copied coordinates of the loop pose to the original pose." << std::endl;  TR.flush(); //DELETE ME.
 
 	return;
 }
@@ -197,11 +188,11 @@ void general_set_phi (
 		return;
 	}
 	if(pose.residue(residue_index).is_lower_terminus()) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_phi, but this is a lower terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this is a lower terminus.  Skipping." << std::endl;  TR.Warning.flush();
 		return;
 	}
 	if(pose.residue(residue_index).connection_incomplete(N_connection_index)) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_phi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_phi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Warning.flush();
 		return; //If nothing is attached here, we can't set this phi.
 	}
 
@@ -242,11 +233,11 @@ void general_set_psi (
 		--C_connection_index;
 	}
 	if(pose.residue(residue_index).is_upper_terminus()) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_psi, but this is an upper terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this is an upper terminus.  Skipping." << std::endl;  TR.Warning.flush();
 		return;
 	}
 	if(pose.residue(residue_index).connection_incomplete(C_connection_index)) {
-		TR.Debug << "Residue " << residue_index << " was passed to general_set_psi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Debug.flush();
+		TR.Warning << "Residue " << residue_index << " was passed to general_set_psi, but this isn't connected to anything at its N-terminus.  Skipping." << std::endl;  TR.Warning.flush();
 		return; //If nothing is attached here, we can't set this phi.
 	}
 

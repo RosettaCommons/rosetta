@@ -414,7 +414,7 @@ dump_connect_info(
 				//core::kinematics::tree::AtomCOP  nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
 				//if( ( nbr->parent() != atom ) && ( atom->parent() != nbr ) ) continue;
 
-				out << "CONECT" << I(5,atom_id_output[ atom_id ]) << I(5,atom_id_output[  nbr_id  ]) << std::endl;
+				out << "CONECT" << I(5,atom_id_output[ atom_id ]-1) << I(5,atom_id_output[  nbr_id  ]-1) << std::endl; //Since the list is zero-based, need to subtract one from both.
 
 			}
 		}
@@ -433,15 +433,16 @@ dump_connect_info(
 
 	// It might be better to put this in file_data.cc, and to make use of the file_data to get the
 	// numbering exactly right.
-	Size count( 0 );
+	Size count( 1 ); //This was starting at zero, but it meant that connections to the first residue's nitrogen never were written out.  We'll have to subtract 1 from each atom on output, now.
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		 for ( Size j=1; j<= pose.residue(i).natoms(); ++j ) {
+		 conformation::Residue const & rsd( pose.residue(i) );
+		 for ( Size j=1; j<= rsd.natoms(); ++j ) {
 
 			 //skip outputting virtual atom unless specified
 			 atom_id_output[ id::AtomID(j,i) ] = 0;
 
-			 if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&	pose.residue(i).is_virtual( j ) ) continue;
+			 if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&	rsd.is_virtual( j ) ) continue;
 
 			 count++;
 			 atom_id_output[ id::AtomID(j,i) ] = count;

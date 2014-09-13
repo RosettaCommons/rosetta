@@ -30,9 +30,6 @@
 		--Took out all references to the Alglib library, because of the asenine Rosettacommons rules
 		about third-party libraries.
 		--Added a PCA function to the numeric library, and linked this to that.
-	--Modified 11 Aug 2014:
-		--Added an option to ignore entire chains in the RMSD calculation.
-		--Added an option to skip PCA analysis.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -109,7 +106,6 @@ OPT_KEY( Boolean, v_weightbyenergy ) //Weight by energy when calculating cluster
 OPT_KEY( Real, v_kbt ) //The value of k_B*T to use when weighting by energy.  1.0 by default.
 OPT_KEY( Boolean, v_CB ) //Should beta carbons be used in Cartesian clustering?
 OPT_KEY( IntegerVector, v_ignoreresidue) //Residues to ignore in alignments.
-OPT_KEY( IntegerVector, v_ignorechain) //Chains to ignore in the RMSD calculation.
 OPT_KEY( Integer, v_limit_structures_per_cluster) //Structures to output per cluster.
 OPT_KEY( Boolean, v_cyclic) //Is there a peptide bond between the N- and C-termini?  False by default.
 OPT_KEY( Boolean, v_cluster_cyclic_permutations) //Should cyclic permutations be clustered together?  False by default.
@@ -120,7 +116,6 @@ OPT_KEY( Boolean, v_homooligomer_swap) //Try swapping homoolgigomer chains when 
 OPT_KEY( Boolean, v_silentoutput) //Use silent files as output?  Default false.
 OPT_KEY( File, v_cst_file) //Constraint file.  Default unused.
 OPT_KEY( StringVector, v_extra_rms_atoms) //Extra atoms to use in the RMSD calculation.
-OPT_KEY( Boolean, v_skip_PCA) //Option to skip the principal component analysis.
 
 void register_options() {
 	using namespace basic::options;
@@ -135,7 +130,6 @@ void register_options() {
 	NEW_OPT ( v_kbt, "The value of k_b*T to use when weighting by exp(-E/(k_B*T)).  1.0 by default.", 1.0);
 	NEW_OPT ( v_CB, "If clustering by backbone Cartesian coordinates, should beta carbons be included?  Default true.", true);
 	NEW_OPT ( v_ignoreresidue, "List of residues to ignore in alignments for clustering.  Default empty list.", empty_vector);
-	NEW_OPT ( v_ignorechain, "List of chains to ignore in alignments for clustering.  Default empty list.", empty_vector);
 	NEW_OPT ( v_limit_structures_per_cluster, "Maximum number of structures to output per cluster.  Default no limit.", 0);
 	NEW_OPT ( v_cyclic, "If true, constraints are added to make a peptide bond between the N- and C-termini.  If false (default), the termini are free.  Default false.", false);
 	NEW_OPT ( v_cluster_cyclic_permutations, "If true, all cyclic permutations are tried when comparing two structures for clustering.  Requires \"-v_cyclic true\".  Default false.", false);
@@ -146,7 +140,6 @@ void register_options() {
 	NEW_OPT ( v_silentoutput, "Write output to a silent file instead of to separate PDBs.  This will create two files: one that only contains the first member of each cluster, and one that contains everything.  Default false.", false);
 	NEW_OPT ( v_cst_file, "A user-specified constraints file.  Default unused.", "" );
 	NEW_OPT ( v_extra_rms_atoms, "A list of additional atoms to use in the RMSD calculation, in the format \"residue:atomname residue:atomname residue:atomname\".  For example, \"-v_extra_rms_atoms 7:SG 12:CG 12:CD 12:CE 12:NZ 14:OG\".  Default empty list.", "");
-	NEW_OPT ( v_skip_PCA, "If true, skips the principal component analysis performed by default.  False by default (so that PCA analysis IS performed by default.)", false);
 }
 
 using namespace core;
@@ -196,14 +189,8 @@ use_in_rmsd_offset(
 	signed int resno=resno2-pose1_offset;
 	if(resno<=0) resno+=pose1.n_residue();
 
-	if(option[v_ignorechain]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignorechain]().size(); ++i) {
-			if(pose2.residue(resno2).chain()==static_cast<core::Size>(option[v_ignorechain]()[i])) return false; //If this chain is to be ignored, return false.
-		}
-	}
-
-	if(option[v_ignoreresidue]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) if (resno2 == static_cast<core::Size>(option[v_ignoreresidue]()[i])) return false; //If this residue is to be ignored, return false.
+	if(option[v_ignoreresidue].size()>0) {
+		for(core::Size i=1; i<=option[v_ignoreresidue].size(); i++) if (resno2 == static_cast<core::Size>(option[v_ignoreresidue][i])) return false; //If this residue is to be ignored, return false.
 	}
 
 	if(pose1.residue(resno).has( "N") && pose2.residue(resno2).has( "N") && pose1.residue(resno).atom_index( "N")==atomno) return true;
@@ -236,13 +223,8 @@ use_in_rmsd(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(option[v_ignorechain]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignorechain].size(); ++i)
-			if(pose1.residue(resno).chain()==static_cast<core::Size>(option[v_ignorechain]()[i]) || pose2.residue(resno).chain()==static_cast<core::Size>(option[v_ignorechain]()[i])) return false; //If this chain is to be ignored, return false.
-	}
-
-	if(option[v_ignoreresidue]().size()>0) {
-		for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) if (resno == static_cast<core::Size>(option[v_ignoreresidue]()[i])) return false; //If this residue is to be ignored, return false.
+	if(option[v_ignoreresidue].size()>0) {
+		for(core::Size i=1; i<=option[v_ignoreresidue].size(); i++) if (resno == static_cast<core::Size>(option[v_ignoreresidue][i])) return false; //If this residue is to be ignored, return false.
 	}
 
 	if(pose1.residue(resno).has( "N") && pose2.residue(resno).has( "N") && pose1.residue(resno).atom_index( "N")==atomno) return true;
@@ -420,7 +402,6 @@ void storeposedata(
 	if(clustermode==1) {
 		core::Size alignmentdatasize = 0;
 		for(core::Size ir=1; ir<=nres; ir++) {
-			if(is_in_list(pose.residue(ir).chain(), option[v_ignorechain]())) continue; //Skip this residue if it's in the chain ignore list.
 			if(is_in_list(ir, option[v_ignoreresidue]())) continue; //Skip this residue if it's in the ignore list.
 			if(!pose.residue(ir).type().is_alpha_aa() && !pose.residue(ir).type().is_beta_aa()) continue; //Skip this if not an alpha or beta amino acid
 			for(core::Size ia=1,iamax=pose.residue(ir).natoms(); ia<=iamax; ia++) {
@@ -465,9 +446,6 @@ void storeposedata(
 									break;
 								}
 							}
-						}
-						if(option[v_ignorechain].size() > 0 && is_in_list(pose.residue(ir).chain(), option[v_ignorechain]())) {
-							useresidue=false;
 						}
 					}
 					if(useresidue && use_in_rmsd(pose, pose, ir, ia, extra_atom_list)) { //Store data for Cartesian alignment:
@@ -890,20 +868,8 @@ core::Real calc_dist(
 			if(firstpose.residue(ir).is_upper_terminus() || ir==nresidues) curres_torsioncount-=2;
 			if(is_beta_aminoacid(firstpose, ir)) curres_torsioncount++;
 
-			includeme=true;
-
-			if(option[v_ignorechain].size()>0) {
-				for(core::Size j=1; j<=(core::Size)option[v_ignorechain].size(); ++j) {
-					if(firstpose.residue(ir).chain() == static_cast<core::Size>(option[v_ignorechain][j])) {
-						includeme=false;
-						index+=curres_torsioncount; //Increment the dihedral angle index to skip this residue.
-						break;
-					}
-				}
-			}
-
-			if(option[v_ignoreresidue].size()>0 && includeme) {
-				//includeme=true;
+			if(option[v_ignoreresidue].size()>0) {
+				includeme=true;
 				for(core::Size j=1; j<=(core::Size)option[v_ignoreresidue].size(); j++) {
 					if( ir == static_cast<core::Size>(option[v_ignoreresidue][j])) {
 						includeme=false;
@@ -1553,18 +1519,6 @@ int main( int argc, char * argv [] ) {
 	if(option[v_mutate_to_ala]())
 		printf("The -v_mutate_to_ala flag was set.  Input structures will be mutated to a chain of (alpha-D-, alpha-L-, or beta-3-) alanines (with the exception of cysteine residues).\n");
 
-	//Check that the user hasn't specified the same chain multiple times in -v_ignorechain:
-	if(option[v_ignorechain]().size()>1) {
-		for(core::Size i=2; i<=option[v_ignorechain]().size(); ++i) {
-			for(core::Size j=1; j<=i; ++j) {
-				if(option[v_ignorechain]()[i]==option[v_ignorechain]()[j]) {
-					printf("Error!  The same chain must not be specified multiple times with the -v_ignorechain flag.  Crashing gracelessly.\n");
-					fflush(stdout); exit(1);
-				}
-			}
-		}
-	}
-
 	//Check that the user hasn't specified the same residue multiple times in -v_ignoreresidue:
 	if(option[v_ignoreresidue]().size()>1) {
 		for(core::Size i=2; i<=option[v_ignoreresidue]().size(); i++) {
@@ -1776,14 +1730,12 @@ int main( int argc, char * argv [] ) {
 		sortclusterlist(cluster_sortedbyenergy, poseenergies); //Sort the list of states in this cluster by energy
 		clusterlist_sortedbyenergy.push_back(cluster_sortedbyenergy); //Add the list of states in this cluster to the list of states in each cluster
 		utility::vector1 < utility::vector1 < core::Real > > pca_vector_list; //A place to store the PCA vectors
-		utility::vector1 < core::Real > coeff_list; //A place to store coefficients (amplitudes) for each PCA vector 
-		if(!option[v_skip_PCA]()) {
-			shift_center_and_PCA(clustcenter, pca_vector_list, coeff_list, lowestE_index, posedata, poseenergies,
-				cluster_sortedbyenergy, cluster_count, clustermode, firstpose, cluster_offsets,
-				cluster_oligomer_permutations, extra_atom_list);
-			output_PCA(pca_vector_list, coeff_list, cluster_count);
-			clustcenter_list.push_back(clustcenter); //Store the current cluster center
-		}
+		utility::vector1 < core::Real > coeff_list; //A place to store coefficients (amplitudes) for each PCA vector
+		shift_center_and_PCA(clustcenter, pca_vector_list, coeff_list, lowestE_index, posedata, poseenergies,
+			cluster_sortedbyenergy, cluster_count, clustermode, firstpose, cluster_offsets,
+			cluster_oligomer_permutations, extra_atom_list);
+		output_PCA(pca_vector_list, coeff_list, cluster_count);
+		clustcenter_list.push_back(clustcenter); //Store the current cluster center
 
 		bool juststartedsearch=true;
 		for(core::Size i=1; i<=poseenergies.size(); i++) {

@@ -961,7 +961,6 @@ sources = {
 	],
 	"pilot/vmullig" : [
 		#"bettercluster",
-		#"design_cycpeptide_MPI",
 	],
 
 	# Z ######################################################################

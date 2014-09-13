@@ -76,7 +76,7 @@ public:
 	//go through all the residue, count how many movable residue passed
 	//count > n_pert_res (depends on the n_dof_angle)
 	//stop by frozen res and cut point
-	//DONE: apply smallmover to the end segment if their length is not
+	//TODO: apply smallmover to the end segment if their length is not
 	//satisfy the n_pert_res_, dof: L-(n-1) => L+(n+1)
 
 	void apply(Pose &pose);
@@ -84,7 +84,7 @@ public:
 	void init();
 	void resize(Size, Size, Size);
 
- 	void factorA( Real const fA );
+  void factorA( Real const fA );
 	void factorB( Real const fB );
 
 	void get_G();
@@ -116,9 +116,6 @@ public:
 	torsion_id_ranges( core::pose::Pose & /*pose*/ ) {
 		return utility::vector1<core::id::TorsionID_Range>();
 	}
-
-	// for kic
-	void init_kic_loop(Size looplength, core::kinematics::MoveMapCOP mm);
 
 protected:
     void setup_list(Pose const &);
@@ -194,7 +191,6 @@ protected:
 	bool use_all_pivot_res_;
 	bool auto_adjust_factorA_; //P(lastP<0.6)<0.4
 	bool fix_short_segment_;
-	bool shrink_frag_ends_; //when use_all_pivot_res_=true and no kic, this should be true
 };
 
 /// @brief a particular gaussian mover from the original paper
