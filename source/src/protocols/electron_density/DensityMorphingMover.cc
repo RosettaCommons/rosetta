@@ -228,7 +228,7 @@ DensityMorphingMover::parse_my_tag(
 		Pose const &)
 {
 	if ( tag->hasOption("frag_size") ) {
-		frag_size_ = tag->getOption<core::Real>("frag_size");
+		frag_size_ = (core::Size)(tag->getOption<core::Real>("frag_size"));
 	}
 	if ( tag->hasOption("search_radius") ) {
 		search_radius_ = tag->getOption<core::Real>("search_radius");

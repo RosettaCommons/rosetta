@@ -2760,10 +2760,10 @@ core::Real NonPlaidFingerprint::get_interpolated_esp_energy(numeric::xyzVector<c
 		core::Real	Yd = (Y-Y0)/(Y1-Y0);
 		core::Real	Zd = (Z-Z0)/(Z1-Z0);
 
-		core::Real C00 = espGrid_[X0][Y0][Z0]*(1-Xd) + espGrid_[X1][Y0][Z0]*Xd;
-		core::Real C10 = espGrid_[X0][Y1][Z0]*(1-Xd) + espGrid_[X1][Y1][Z0]*Xd;
-		core::Real C01 = espGrid_[X0][Y0][Z1]*(1-Xd) + espGrid_[X1][Y0][Z1]*Xd;
-		core::Real C11 = espGrid_[X0][Y1][Z1]*(1-Xd) + espGrid_[X1][Y1][Z1]*Xd;
+		core::Real C00 = espGrid_[Size(X0)][Size(Y0)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z0)]*Xd;
+		core::Real C10 = espGrid_[Size(X0)][Size(Y1)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z0)]*Xd;
+		core::Real C01 = espGrid_[Size(X0)][Size(Y0)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z1)]*Xd;
+		core::Real C11 = espGrid_[Size(X0)][Size(Y1)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z1)]*Xd;
 		core::Real C0 = C00*(1-Yd) + C10*Yd;
 		core::Real C1 = C01*(1-Yd) + C11*Yd;
 		core::Real C = C0*(1-Zd) + C1*Zd;
@@ -2809,24 +2809,24 @@ core::Real NonPlaidFingerprint::get_interpolated_esp_energy_with_type(numeric::x
 		core::Real	Yd = (Y-Y0)/(Y1-Y0);
 		core::Real	Zd = (Z-Z0)/(Z1-Z0);
 
-		core::Real C00 = espGrid_[X0][Y0][Z0]*(1-Xd) + espGrid_[X1][Y0][Z0]*Xd;
-		core::Real C10 = espGrid_[X0][Y1][Z0]*(1-Xd) + espGrid_[X1][Y1][Z0]*Xd;
-		core::Real C01 = espGrid_[X0][Y0][Z1]*(1-Xd) + espGrid_[X1][Y0][Z1]*Xd;
-		core::Real C11 = espGrid_[X0][Y1][Z1]*(1-Xd) + espGrid_[X1][Y1][Z1]*Xd;
+		core::Real C00 = espGrid_[Size(X0)][Size(Y0)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z0)]*Xd;
+		core::Real C10 = espGrid_[Size(X0)][Size(Y1)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z0)]*Xd;
+		core::Real C01 = espGrid_[Size(X0)][Size(Y0)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z1)]*Xd;
+		core::Real C11 = espGrid_[Size(X0)][Size(Y1)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z1)]*Xd;
 		core::Real C0 = C00*(1-Yd) + C10*Yd;
 		core::Real C1 = C01*(1-Yd) + C11*Yd;
 		core::Real C = C0*(1-Zd) + C1*Zd;
 		//std::cout<<"Found_s : "<<C<<" "<<atom_charge<<" "<<C * atom_charge<<std::endl;
 		atm_esp_energy = C * atom_charge;
 
-		if ( ( typGrid_[X0][Y0][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X0][Y1][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X0][Y0][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X0][Y1][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X1][Y0][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X1][Y1][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X1][Y0][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				 ( typGrid_[X1][Y1][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ) {
+		if ( ( typGrid_[Size(X0)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X0)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X0)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X0)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X1)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X1)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X1)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				 ( typGrid_[Size(X1)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ) {
 			//	std::cout<<"\nFound_protein"<<std::endl;
 			// return zero if the energy is favourable and the atom goes into protein
 			if (atm_esp_energy < 0.) atm_esp_energy = 0.;

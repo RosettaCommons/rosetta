@@ -2999,13 +2999,13 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 				if (closest<101.){
 					int txdim = (int) ceil(p1->x-p2->x/stepSize_)+(int)ceil(3./stepSize_);
 					core::Real txcorn=(core::Real)std::floor(std::min(p1->x,p2->x)-1.0);
-					int txoff = floor((txcorn-xcorn_)/stepSize_ + 0.5);
+					int txoff = (int)floor((txcorn-xcorn_)/stepSize_ + 0.5);
 					int tydim = (int) ceil(p1->y-p2->y/stepSize_)+(int)ceil(3./stepSize_);
 					core::Real tycorn=(core::Real)std::floor(std::min(p1->y,p2->y)-1.0);
-					int tyoff = floor((tycorn-ycorn_)/stepSize_ + 0.5);
+					int tyoff = (int)floor((tycorn-ycorn_)/stepSize_ + 0.5);
 					int tzdim = (int) ceil(p1->z-p2->z/stepSize_)+(int)ceil(3./stepSize_);
 					core::Real tzcorn=(core::Real)std::floor(std::min(p1->z,p2->z)-1.0);
-					int tzoff = floor((tzcorn-zcorn_)/stepSize_ + 0.5);
+					int tzoff = (int)floor((tzcorn-zcorn_)/stepSize_ + 0.5);
 					std::vector < std::vector < std::vector <PtType> > > tmpgrid_;
 					tmpgrid_.resize(txdim);
 					for (int tx=0;tx<txdim;tx++){
@@ -3030,9 +3030,9 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 					
 					//take away already exemplar points
 					int x,y,z;
-					x=floor((p1->x - txcorn)/stepSize_ + 0.5);
-					y=floor((p1->y - tycorn)/stepSize_ + 0.5);
-					z=floor((p1->z - tzcorn)/stepSize_ + 0.5);
+					x=(int)floor((p1->x - txcorn)/stepSize_ + 0.5);
+					y=(int)floor((p1->y - tycorn)/stepSize_ + 0.5);
+					z=(int)floor((p1->z - tzcorn)/stepSize_ + 0.5);
 					for (int tx=x-1;tx<x+1;tx++){		
 						if (tx<0) continue;
 						for (int ty=y-1;ty<y+1;ty++){		
@@ -3043,9 +3043,9 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 							}
 						}
 					}
-					x=floor((p2->x - txcorn)/stepSize_ + 0.5);
-					y=floor((p2->y - tycorn)/stepSize_ + 0.5);
-					z=floor((p2->z - tzcorn)/stepSize_ + 0.5);
+					x=(int)floor((p2->x - txcorn)/stepSize_ + 0.5);
+					y=(int)floor((p2->y - tycorn)/stepSize_ + 0.5);
+					z=(int)floor((p2->z - tzcorn)/stepSize_ + 0.5);
 					for (int tx=x-1;tx<x+1;tx++){		
 						if (tx<0) continue;
 						for (int ty=y-1;ty<y+1;ty++){		
@@ -3351,9 +3351,9 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		outPDB_stream.open("highesp.pdb", std::ios::out);
 		Size count = 1;
 		core::Real prot_grid_dist;
-		for(int x=0+xskip,newx=0; x<(xskip+xdim_); ++x,++newx){
-			for(int y=0+yskip,newy=0; y<(yskip+ydim_); ++y,++newy){
-				for(int z=0+zskip,newz=0; z<(zskip+zdim_); ++z,++newz){
+		for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+xdim_); ++x,++newx){
+			for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+ydim_); ++y,++newy){
+				for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+zdim_); ++z,++newz){
 
 					numeric::xyzVector<core::Real> grid_coord, prot_coord;
 					grid_coord.x() = newx * newG.espGrid_spacing_ + ( newG.espGrid_mid_.x() - ((static_cast<core::Real>(newG.espGrid_dim_.x()-1)/2) * newG.espGrid_spacing_) );
@@ -3567,9 +3567,9 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		utility::io::ozstream outPDB_stream;
 		outPDB_stream.open("highesp.pdb", std::ios::out);
 		Size count = 1;
-		for(int x=0+xskip,newx=0; x<(xskip+xdim_); ++x,++newx){
-			for(int y=0+yskip,newy=0; y<(yskip+ydim_); ++y,++newy){
-				for(int z=0+zskip,newz=0; z<(zskip+zdim_); ++z,++newz){
+		for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+xdim_); ++x,++newx){
+			for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+ydim_); ++y,++newy){
+				for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+zdim_); ++z,++newz){
 					//Assign potentials only for pocket points, all other points are set to zeroa
 					if ( grid_[newx][newy][newz]==POCKET || grid_[newx][newy][newz]==PO_SURF || grid_[newx][newy][newz]==PO_BURIED || grid_[newx][newy][newz]==T_SURFACE || grid_[newx][newy][newz]==ST_SURFACE || grid_[newx][newy][newz]==TP_POCKET || grid_[newx][newy][newz]==TP_SURF || grid_[newx][newy][newz]==TP_BURIED || grid_[newx][newy][newz]==PO_EDGE || grid_[newx][newy][newz]==TP_EDGE ) {
 
@@ -4431,15 +4431,15 @@ void ElectrostaticpotentialGrid::get_DELPHI_espGrid_values( std::string const & 
 			}
 			if(linenum == 4){
 				std::string dimX = line.substr(2,3);
-				espGrid_dim_.x() = atof(dimX.c_str());
+				espGrid_dim_.x() = (core::Size)(atof(dimX.c_str()));
 			}
 			if(linenum == 5){
 				std::string dimY = line.substr(2,3);
-				espGrid_dim_.y() = atof(dimY.c_str());
+				espGrid_dim_.y() = (core::Size)(atof(dimY.c_str()));
 			}
 			if(linenum == 6){
 				std::string dimZ = line.substr(2,3);
-				espGrid_dim_.z() = atof(dimZ.c_str());
+				espGrid_dim_.z() = (core::Size)(atof(dimZ.c_str()));
 			}
 			if(linenum == 4){
 				std::string spacing = line.substr(7,12);
@@ -4518,11 +4518,11 @@ void ElectrostaticpotentialGrid::get_oegrid_dimensions( std::string const & inpu
     }
     if(linenum == 3){
       std::string dimX = line.substr(6,6);
-      espGrid_dim_.x() = atof(dimX.c_str());
+      espGrid_dim_.x() = (core::Size)(atof(dimX.c_str()));
       std::string dimY = line.substr(13,6);
-      espGrid_dim_.y() = atof(dimY.c_str());
+      espGrid_dim_.y() = (core::Size)(atof(dimY.c_str()));
       std::string dimZ = line.substr(20,6);
-      espGrid_dim_.z() = atof(dimZ.c_str());
+      espGrid_dim_.z() = (core::Size)(atof(dimZ.c_str()));
     }
     if(linenum == 4){
       std::string spacing = line.substr(10,12);
@@ -4604,9 +4604,9 @@ void  ElectrostaticpotentialGrid::resize_espGrid_to_match_pocketGrid( std::strin
 		}
 	}
 
-	for(int x=0+xskip,newx=0; x<(xskip+tmp_espGrid_dim.x()); ++x,++newx){
-		for(int y=0+yskip,newy=0; y<(yskip+tmp_espGrid_dim.y()); ++y,++newy){
-			for(int z=0+zskip,newz=0; z<(zskip+tmp_espGrid_dim.z()); ++z,++newz){
+	for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+tmp_espGrid_dim.x()); ++x,++newx){
+		for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+tmp_espGrid_dim.y()); ++y,++newy){
+			for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+tmp_espGrid_dim.z()); ++z,++newz){
 				tmp_espGrid[newx][newy][newz] = espGrid_[x][y][z];
 			}
 		}
@@ -4745,9 +4745,9 @@ void ElectrostaticpotentialGrid::mark_atom_espGrid_points( numeric::xyzVector<co
  maxY = std::min( floor( (ycen + radius) + 0.5 ), espGrid_dim_.y() -1.);
  maxZ = std::min( floor( (zcen + radius) + 0.5 ), espGrid_dim_.z() -1.);
 
- for (int xIter=minX; xIter<=maxX; ++xIter){
-   for (int yIter=minY; yIter<=maxY; ++yIter){
-		 for (int zIter=minZ; zIter<=maxZ; ++zIter){
+ for (int xIter=(int)minX; xIter<=(int)maxX; ++xIter){
+   for (int yIter=(int)minY; yIter<=(int)maxY; ++yIter){
+		 for (int zIter=(int)minZ; zIter<=(int)maxZ; ++zIter){
 			 core::Real xcoord = xIter * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()+1)/2) * espGrid_spacing_) );
 			 core::Real ycoord = yIter * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) );
 			 core::Real zcoord = zIter * espGrid_spacing_ + ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()+1)/2) * espGrid_spacing_) );

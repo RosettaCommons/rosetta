@@ -210,11 +210,11 @@ int main( int argc, char * argv [] ) {
 			}
 			if(linenum == 3){
 				std::string dimX = line.substr(6,6);
-				esp_xdim = atof(dimX.c_str());
+				esp_xdim = (core::Size)atof(dimX.c_str());
 				std::string dimY = line.substr(13,6);
-				esp_ydim = atof(dimY.c_str());
+				esp_ydim = (core::Size)atof(dimY.c_str());
 				std::string dimZ = line.substr(20,6);
-				esp_zdim = atof(dimZ.c_str());
+				esp_zdim = (core::Size)atof(dimZ.c_str());
 			}
 			if(linenum == 4){
 				std::string spacing = line.substr(10,12);

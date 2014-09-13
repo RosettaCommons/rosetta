@@ -482,24 +482,25 @@ DarcParticleSwarmMinimizer::DarcPSO_elsts_score_(
 			core::Real Yd = (Y-Y0)/(Y1-Y0);
 			core::Real Zd = (Z-Z0)/(Z1-Z0);
 
-			core::Real C00 = espGrid[X0][Y0][Z0]*(1-Xd) + espGrid[X1][Y0][Z0]*Xd;
-			core::Real C10 = espGrid[X0][Y1][Z0]*(1-Xd) + espGrid[X1][Y1][Z0]*Xd;
-			core::Real C01 = espGrid[X0][Y0][Z1]*(1-Xd) + espGrid[X1][Y0][Z1]*Xd;
-			core::Real C11 = espGrid[X0][Y1][Z1]*(1-Xd) + espGrid[X1][Y1][Z1]*Xd;
+
+			core::Real C00 = espGrid[Size(X0)][Size(Y0)][Size(Z0)]*(1-Xd) + espGrid[Size(X1)][Size(Y0)][Size(Z0)]*Xd;
+			core::Real C10 = espGrid[Size(X0)][Size(Y1)][Size(Z0)]*(1-Xd) + espGrid[Size(X1)][Size(Y1)][Size(Z0)]*Xd;
+			core::Real C01 = espGrid[Size(X0)][Size(Y0)][Size(Z1)]*(1-Xd) + espGrid[Size(X1)][Size(Y0)][Size(Z1)]*Xd;
+			core::Real C11 = espGrid[Size(X0)][Size(Y1)][Size(Z1)]*(1-Xd) + espGrid[Size(X1)][Size(Y1)][Size(Z1)]*Xd;
 			core::Real C0 = C00*(1-Yd) + C10*Yd;
 			core::Real C1 = C01*(1-Yd) + C11*Yd;
 			core::Real C = C0*(1-Zd) + C1*Zd;
 
 			atm_esp_energy = C * curr_charge;
 
-			if ( ( typGrid[X0][Y0][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X0][Y1][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X0][Y0][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X0][Y1][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X1][Y0][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X1][Y1][Z0] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X1][Y0][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					 ( typGrid[X1][Y1][Z1] == ElectrostaticpotentialGrid::PROTEIN ) ) {
+			if ( ( typGrid[Size(X0)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X0)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X0)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X0)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X1)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X1)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X1)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					 ( typGrid[Size(X1)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ) {
 				if (atm_esp_energy < 0.) atm_esp_energy = 0.;
 			}
 		}

@@ -305,17 +305,7 @@ namespace protocols {
 						for ( Size j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
 								core::conformation::Residue const & rsd( protein_pose.conformation().residue(j) );
 
-								int offset = 9;
-								if (rsd.seqpos() < 72) offset=3;
-								offset=0;
 								int target=0;
-								core::Size total_atoms(0);
-								using namespace basic::options;
-								if (option[ OptionKeys::fingerprint::include_hydrogens ]()){
-										total_atoms = rsd.natoms();
-								} else {
-										total_atoms = rsd.nheavyatoms();
-								}
 
 								//fill in points that are ideal for a hydrogen acceptor with an O
 								for ( core::chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
@@ -340,9 +330,6 @@ namespace protocols {
 								for ( core::chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 										Size const aatm( *anum );
 										// Skip buried residues
-										int offset = 9;
-										if (rsd.seqpos() < 72) offset=3;
-										offset=0;
 										if (atom_sasas(j, aatm) < 0.1) {
 												//std::cout<<rsd.seqpos()+offset<<" Acceptor "<<rsd.name()<<" "<<rsd.atom_name(aatm)<<" SASA "<<atom_sasas(j, aatm)<<" being ignored"<<std::endl;
 												continue;
@@ -354,19 +341,17 @@ namespace protocols {
 										numeric::xyzVector<core::Real> const & aatm_base2_xyz( rsd.xyz( rsd.abase2( aatm ) ) );
 										Hybridization const & hybrid( rsd.atom_type(aatm).hybridization() );
 
-										core::Real theta(0.0), step_size(0.0);
+										core::Real theta(0.0);
 										utility::vector1< core::Real > phi_list, phi_steps;
 										phi_steps.push_back(  0 );
 										switch( hybrid ) {
 												case SP2_HYBRID:
 														theta = 180.0 - 120.0;
-														step_size = 15.0;
 														phi_list.push_back(   0.0 );
 														phi_list.push_back( 180.0 );
 														break;
 												case SP3_HYBRID:
 														theta = 180.0 - 109.0;
-														step_size = 10.0;
 														phi_list.push_back( 120.0 );
 														phi_list.push_back( 240.0 );
 														break;
@@ -380,7 +365,6 @@ namespace protocols {
 																phi_steps.clear();
 																phi_steps.push_back( 0.0 );
 																phi_list.push_back( 0.0 ); // doesnt matter
-																step_size = 0.0; // doesnt matter
 																break;
 														}
 												default:

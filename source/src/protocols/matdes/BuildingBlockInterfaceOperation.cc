@@ -117,7 +117,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
 			if( multicomponent_ ) {
 				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
-				if (find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end()) {
+				if (find(comp_chains.begin(),comp_chains.end(),(core::Size)pose.chain(jr))==comp_chains.end()) {
 					if (get_component_of_residue(pose,jr)=='A') {
 						select_comp1_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
 								"\"+"); // TODO: Jacob

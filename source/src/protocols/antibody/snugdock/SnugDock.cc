@@ -253,7 +253,7 @@ void SnugDock::init() {
 		h3_filter_ = true;
 	}
 	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
+		h3_filter_tolerance_  = (Size)(option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]()) ;
 	} else {
 		h3_filter_tolerance_ = 20;
 	}

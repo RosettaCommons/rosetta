@@ -215,14 +215,14 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 			if (boltzmann_factors[aa_type].size() > 0) {
 				aa_count += 1;
 				core::Real rot = select_rotamer(boltzmann_factors[aa_type], rotamer_partition_funtions[aa_type]);
-				selected_rotamers.push_back(std::make_pair(boltzmann_factors[aa_type][rot].first,boltzmann_factors[aa_type][rot].second));
-				amino_acid_partition_function += boltzmann_factors[aa_type][rot].second;
+				selected_rotamers.push_back(std::make_pair(boltzmann_factors[aa_type][(core::Size)rot].first,boltzmann_factors[aa_type][(core::Size)rot].second));
+				amino_acid_partition_function += boltzmann_factors[aa_type][(core::Size)rot].second;
 			}
 		}
 		
 		// select an amino acid and get the id of its selected rotamer
 		core::Real final_aa = select_rotamer(selected_rotamers, amino_acid_partition_function);
-		final_rot_id = selected_rotamers[final_aa].first;
+		final_rot_id = selected_rotamers[(core::Size)final_aa].first;
 
 	}
 	
@@ -246,11 +246,11 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		
 		// select a rotamer and get its id
 		core::Real rot = select_rotamer(boltzmann_factors[1], rotamer_partition_funtions[1]);
-		final_rot_id = boltzmann_factors[1][rot].first;
+		final_rot_id = boltzmann_factors[1][(core::Size)rot].first;
 	}
 	
 	// replace resnum_ with the selected rotamer
-	core::conformation::ResidueOP newresidue(  rotset->rotamer( final_rot_id )->clone() );
+	core::conformation::ResidueOP newresidue(  rotset->rotamer( (core::Size)(final_rot_id) )->clone() );
 	pose.replace_residue (resnum_, *newresidue, false );
 	
 }
@@ -291,10 +291,10 @@ BoltzmannRotamerMover::select_rotamer(
 	core::Real random_prob = RG.uniform();
 	while ( random_prob > 0 ) {
 		rotnum++;
-		random_prob -= boltzmann_probs[rotnum].second;
+		random_prob -= boltzmann_probs[(core::Size)rotnum].second;
 		if ( rotnum == boltzmann_probs.size() ) break;
 	}
-	return boltzmann_probs[rotnum].first;
+	return boltzmann_probs[(core::Size)rotnum].first;
 }
 
 // setters

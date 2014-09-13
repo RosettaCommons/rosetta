@@ -2346,21 +2346,21 @@ RemodelMover::parse_my_tag(
 	TR << "Setting match_rt_limit " << rosetta_scripts_match_rt_limit_ << std::endl;
 
 	if( tag->hasOption("min_disulfides") ) {
-		rosetta_scripts_min_disulfides_ = tag->getOption< core::Real >( "min_disulfides", 1 );
+		rosetta_scripts_min_disulfides_ = (core::Size)(tag->getOption< core::Real >( "min_disulfides", 1 ));
 	}	else {
 		rosetta_scripts_min_disulfides_ = 1;
 	}
 	TR << "Setting min_disulfides " << rosetta_scripts_min_disulfides_ << std::endl;
 
 	if( tag->hasOption("max_disulfides") ) {
-		rosetta_scripts_max_disulfides_ = tag->getOption< core::Real >( "max_disulfides", 1 );
+		rosetta_scripts_max_disulfides_ = (core::Size)(tag->getOption< core::Real >( "max_disulfides", 1 ));
 	}	else {
 		rosetta_scripts_max_disulfides_ = 1;
 	}
 	TR << "Setting max_disulfides " << rosetta_scripts_max_disulfides_ << std::endl;
 
 	if( tag->hasOption("min_loop") ) {
-		rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 );
+		rosetta_scripts_min_loop_ = (core::Size)(tag->getOption< core::Real >( "min_loop", 1 ));
 	}	else {
 		rosetta_scripts_min_loop_ = 1;
 	}
