@@ -281,7 +281,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
   else
             energy_per_residue_filter_tracer << std::endl;
 
-	bool pass;
+	bool pass = false;
 	core::Real energy=0;
 
   for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {

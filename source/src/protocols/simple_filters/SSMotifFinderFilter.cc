@@ -96,7 +96,7 @@ core::Real
 res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, utility::vector1< core::Size > const template_res_for_rmsd, core::pose::Pose const & copy_pose, core::pose::Pose const & template_pose ){
 //two_res_rmsd( core::conformation::Residue const & r1, core::conformation::Residue const & r2 ){
 	core::Real rmsd( 0.0 );
-	core::Size count = 0.0;	
+	core::Size count = core::Size(0.0);	
 	runtime_assert( pose_res_for_rmsd.size() == template_res_for_rmsd.size() );	
 
 	for (core::Size i = 1; i <= pose_res_for_rmsd.size(); i++){

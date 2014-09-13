@@ -63,6 +63,8 @@ class CoordinateArray_RMSD_FlatLookup : public FlatLookup<Real *, numeric::Size,
 
   numeric::alignment::QCP_Kernel<Real> kernel;
 
+	virtual ~CoordinateArray_RMSD_FlatLookup() {}
+
 };
 
 }

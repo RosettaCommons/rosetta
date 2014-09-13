@@ -224,7 +224,7 @@ GeneticAlgorithmBase::fill_with_perturbations_of_existing_entities( core::Size s
 	TR << "creating an additional " << size - generations_[ current_generation_ ].size() << " sequences" << std::endl;
 
 	while ( generations_[ current_generation_ ].size() < size ) {
-		core::Size seed_sequence = numeric::random::uniform() * start_size + 1;
+		core::Size seed_sequence = core::Size(numeric::random::uniform() * start_size + 1);
 		EntityOP child = generations_[ current_generation_ ][ seed_sequence ]->clone();
 		entity_randomizer_->mutate( *child );
 		TR << "fill_with_perturbations_of_existing_entities ";

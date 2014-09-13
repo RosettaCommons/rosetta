@@ -246,7 +246,7 @@ void ddG::parse_my_tag(
 		}
 	}
 
-	if(std::find(chain_ids_.begin(),chain_ids_.end(),1) != chain_ids_.end())
+	if(std::find(chain_ids_.begin(),chain_ids_.end(),(core::Size)1) != chain_ids_.end())
 	{
 		throw utility::excn::EXCN_RosettaScriptsOption("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
 	}

@@ -36,9 +36,9 @@ void UniformPerturber::perturb_subset(
 	using numeric::conversions::DEGREES;
 
 	BOOST_FOREACH(Real residue, residues) {
-		problem->perturb_phi(residue, 360 * uniform(), DEGREES);
-		problem->perturb_psi(residue, 360 * uniform(), DEGREES);
-		problem->perturb_omega(residue, 360 * uniform(), DEGREES);
+		problem->perturb_phi(core::Size(residue), 360 * uniform(), DEGREES);
+		problem->perturb_psi(core::Size(residue), 360 * uniform(), DEGREES);
+		problem->perturb_omega(core::Size(residue), 360 * uniform(), DEGREES);
 	}
 }
 

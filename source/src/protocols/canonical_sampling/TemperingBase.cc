@@ -222,7 +222,7 @@ TemperingBase::initialize_simulation(
 void
 TemperingBase::observe_after_metropolis(	MetropolisHastingsMover const & mhm ) {
 	if ( mhm.current_trial() && mhm.current_trial() % io_stride_ == 0 ) {
-		core::Size output_ct( floor( mhm.current_trial() / io_stride_ ) );
+		core::Size output_ct( core::Size(floor( mhm.current_trial() / io_stride_ ) ));
 		trial_counter_.write_to_file( stats_file_, mhm.output_name() + utility::to_string( output_ct ) );
 	}
 }

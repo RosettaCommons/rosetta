@@ -167,7 +167,7 @@ PSSM2BfactorMover::parse_my_tag(
 		core::pose::Pose const & )
 {
 	max_value( tag->getOption< core::Real >( "Value_for_blue", 5.0 ) );
-	chain_num( tag->getOption< core::Real >( "chain_num", 1 ) );
+	chain_num( tag->getOption< core::Size >( "chain_num", core::Size(1) ) );
 	min_value( tag->getOption< core::Real >( "Value_for_red", -1.0 ));
 	TR<<"PSSM2Bfactor sets Value_for_blue: "<<max_value_<<" Value_for_red: "<<min_value_<<std::endl;
 }

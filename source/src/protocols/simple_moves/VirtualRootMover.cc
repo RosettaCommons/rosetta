@@ -79,10 +79,10 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 			TR << "Virtual root not added as removable by VirtualRootMover - not removing root." << std::endl;
 			return;
 		}
-		if( pose.residue( virtroot ).aa() != core::chemical::aa_vrt || virtroot != pose.fold_tree().root() ) {
+		if( pose.residue((core::Size)virtroot ).aa() != core::chemical::aa_vrt || virtroot != pose.fold_tree().root() ) {
 			TR.Warning << "Residue added by VirtualRootMover no longer virtual root - not removing root." << std::endl;
 		} else {
-			pose.conformation().delete_residue_slow(virtroot);
+			pose.conformation().delete_residue_slow((core::Size)virtroot);
 		}
 		core::pose::clearPoseExtraScore( pose, "VirtualRootMover_root");
 	} else {

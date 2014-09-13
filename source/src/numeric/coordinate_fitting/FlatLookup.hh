@@ -16,7 +16,7 @@ template <class QueryType, class EntryType, class Real=double>
 class FlatLookup
 {
   public:
-    ~FlatLookup() {};
+    virtual ~FlatLookup() {}
 
     template <class InputIterator>
     void initialize(InputIterator first, InputIterator last)

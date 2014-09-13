@@ -42,7 +42,7 @@ public:
 	DistanceHistogram(void) :
 		factor_(10.0),
 		max_dist_(300),
-		h_(factor_*max_dist_, 0) // apl -- I really think you want to initialize the counts to 0
+		h_(core::Size(factor_*max_dist_), 0) // apl -- I really think you want to initialize the counts to 0
 	{}
 
 	/// @brief  Returns the number of counts for a given distance

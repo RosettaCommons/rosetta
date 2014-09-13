@@ -109,6 +109,8 @@ protected: // Derived class interface
 		ResourceTag const & resource_tag);
 
 public:
+	virtual ~ResourceManager() {}
+
 	/// @brief Does a resource with a given name exist?
 	virtual
 	bool
